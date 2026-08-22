@@ -1,0 +1,5 @@
+{
+	"extends": "@delacour/tsconfig/tsconfig.base.json",
+	"compilerOptions": { "outDir": "./dist" },
+	"include": ["src"]
+}

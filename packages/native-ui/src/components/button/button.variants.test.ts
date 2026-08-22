@@ -1,10 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import {
+	BUTTON_FOREGROUND_TOKEN,
 	BUTTON_ICON_SIZE,
 	BUTTON_SIZES,
+	BUTTON_SPINNER_PLACEMENTS,
 	BUTTON_VARIANTS,
 	buttonLabelVariants,
 	buttonVariants,
+	resolveButtonLayout,
 } from "./button.variants";
 
 describe("buttonVariants", () => {
@@ -56,8 +59,88 @@ describe("buttonVariants", () => {
 		expect(buttonVariants({ isDisabled: false })).not.toContain("opacity-50");
 	});
 
+	test("loading does not dim on its own, and dims only when asked", () => {
+		expect(buttonVariants({ isLoading: true })).not.toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: true })).not.toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true })).toContain("opacity-50");
+	});
+
+	test("disabled still dims regardless of loading state", () => {
+		expect(buttonVariants({ isDisabled: true, isLoading: true })).toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: false, isDisabled: true, isLoading: true })).toContain("opacity-50");
+	});
+
+	test("neither loading flag touches the root's text colour rule", () => {
+		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true })).not.toMatch(/\btext-(?!center\b)/);
+	});
+
 	test("merges an incoming className last", () => {
 		expect(buttonVariants({ className: "bg-info" })).toContain("bg-info");
+	});
+});
+
+describe("resolveButtonLayout", () => {
+	test("shows no spinner when not loading, whatever the placement", () => {
+		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
+			expect(resolveButtonLayout({ spinnerPlacement })).toEqual({
+				isIconOnly: false,
+				isSpinnerOnly: false,
+				spinnerSide: null,
+			});
+		}
+	});
+
+	test("places the spinner on the side it was asked for", () => {
+		expect(resolveButtonLayout({ isLoading: true, spinnerPlacement: "start" }).spinnerSide).toBe("start");
+		expect(resolveButtonLayout({ isLoading: true, spinnerPlacement: "end" }).spinnerSide).toBe("end");
+	});
+
+	test("defaults to a start-placed spinner", () => {
+		expect(resolveButtonLayout({ isLoading: true }).spinnerSide).toBe("start");
+	});
+
+	test("only replaces the content and squares the footprint", () => {
+		expect(resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" })).toEqual({
+			isIconOnly: true,
+			isSpinnerOnly: true,
+			spinnerSide: null,
+		});
+	});
+
+	test("only squares a button that was not icon-only to begin with", () => {
+		const layout = resolveButtonLayout({ isIconOnly: false, isLoading: true, spinnerPlacement: "only" });
+		expect(layout.isIconOnly).toBe(true);
+	});
+
+	test("keeps an icon-only button square through every placement", () => {
+		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
+			expect(resolveButtonLayout({ isIconOnly: true, isLoading: true, spinnerPlacement }).isIconOnly).toBe(true);
+		}
+	});
+
+	test("never shows both a side spinner and replaced content", () => {
+		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
+			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement });
+			expect(layout.isSpinnerOnly && layout.spinnerSide !== null).toBe(false);
+		}
+	});
+});
+
+describe("resolveButtonLayout feeding buttonVariants", () => {
+	test("a loading-only button gets the square width and no horizontal padding", () => {
+		for (const size of BUTTON_SIZES) {
+			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" });
+			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size });
+			expect(cls).toMatch(/\bw-(9|11|13)\b/);
+			expect(cls).not.toMatch(/\bpx-\d/);
+		}
+	});
+
+	test("a start-placed spinner keeps the button's normal padding", () => {
+		const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "start" });
+		const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size: "md" });
+		expect(cls).toMatch(/\bpx-4\b/);
+		expect(cls).not.toMatch(/\bw-\d/);
 	});
 });
 
@@ -83,6 +166,17 @@ describe("buttonLabelVariants", () => {
 		expect(buttonLabelVariants({ size: "sm" })).toContain("text-sm");
 		expect(buttonLabelVariants({ size: "md" })).toContain("text-base");
 		expect(buttonLabelVariants({ size: "lg" })).toContain("text-lg");
+	});
+});
+
+describe("BUTTON_FOREGROUND_TOKEN", () => {
+	test("names a foreground for every variant", () => {
+		// Load-bearing for the Spinner's colour as well as the Icon's: a variant
+		// missing here would leave a composed spinner untinted.
+		for (const variant of BUTTON_VARIANTS) {
+			expect(typeof BUTTON_FOREGROUND_TOKEN[variant]).toBe("string");
+			expect(BUTTON_FOREGROUND_TOKEN[variant].length).toBeGreaterThan(0);
+		}
 	});
 });
 

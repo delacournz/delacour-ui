@@ -12,8 +12,11 @@ export const BUTTON_VARIANTS = [
 
 export const BUTTON_SIZES = ["sm", "md", "lg"] as const;
 
+export const BUTTON_SPINNER_PLACEMENTS = ["start", "end", "only"] as const;
+
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export type ButtonSize = (typeof BUTTON_SIZES)[number];
+export type ButtonSpinnerPlacement = (typeof BUTTON_SPINNER_PLACEMENTS)[number];
 
 /** Icon edge length paired with each button size, in points. */
 export const BUTTON_ICON_SIZE: Record<ButtonSize, number> = {
@@ -68,6 +71,14 @@ export const buttonVariants = tv({
 			true: "opacity-50",
 			false: "",
 		},
+		isLoading: {
+			true: "",
+			false: "",
+		},
+		isDimmedWhileLoading: {
+			true: "",
+			false: "",
+		},
 	},
 	compoundVariants: [
 		// A square footprint replaces horizontal padding entirely, so the two
@@ -78,14 +89,53 @@ export const buttonVariants = tv({
 		{ isIconOnly: false, size: "sm", class: "px-3" },
 		{ isIconOnly: false, size: "md", class: "px-4" },
 		{ isIconOnly: false, size: "lg", class: "px-5" },
+		// Loading is not a disabled state. The button keeps full contrast — the
+		// spinner already says the press landed — unless the caller opts in.
+		{ isLoading: true, isDimmedWhileLoading: true, class: "opacity-50" },
 	],
 	defaultVariants: {
 		variant: "primary",
 		size: "md",
 		isIconOnly: false,
 		isDisabled: false,
+		isLoading: false,
+		isDimmedWhileLoading: false,
 	},
 });
+
+/** Layout facts for a button, once loading state and spinner placement are folded together. */
+export type ButtonLayout = {
+	/** Square footprint — an icon-only button, or one showing nothing but its spinner. */
+	isIconOnly: boolean;
+	/** The spinner has replaced the children entirely. */
+	isSpinnerOnly: boolean;
+	/** Side the spinner is composed onto, or null when no spinner is shown. */
+	spinnerSide: "start" | "end" | null;
+};
+
+/**
+ * Folds `isLoading` and `spinnerPlacement` into the facts the root needs.
+ *
+ * `only` collapses to the same square footprint as `isIconOnly` rather than
+ * introducing a second width axis in {@link buttonVariants}: a square that also
+ * matched the `px-*` compounds would squeeze its own content, and tailwind-merge
+ * would not resolve it because width and padding do not conflict.
+ *
+ * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveButtonLayout({
+	isIconOnly = false,
+	isLoading = false,
+	spinnerPlacement = "start",
+}: {
+	isIconOnly?: boolean;
+	isLoading?: boolean;
+	spinnerPlacement?: ButtonSpinnerPlacement;
+}): ButtonLayout {
+	if (!isLoading) return { isIconOnly, isSpinnerOnly: false, spinnerSide: null };
+	if (spinnerPlacement === "only") return { isIconOnly: true, isSpinnerOnly: true, spinnerSide: null };
+	return { isIconOnly, isSpinnerOnly: false, spinnerSide: spinnerPlacement };
+}
 
 /** Styling for the button label. Owns the text colour for each surface. */
 export const buttonLabelVariants = tv({

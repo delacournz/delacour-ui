@@ -9,7 +9,7 @@ import {
 	type Ref,
 	useMemo,
 } from "react";
-import type { ViewProps } from "react-native";
+import type { AccessibilityState, ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Presets } from "react-native-pulsar";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
@@ -84,6 +84,13 @@ export type PressableProps = Omit<ViewProps, "style"> & {
 	children?: ReactNode;
 	className?: string;
 	disabled?: boolean;
+	/**
+	 * Work is in flight: presses are blocked and a screen reader announces the
+	 * element as busy, but not as disabled. Use this over `disabled` for a
+	 * temporary state the component clears itself, so assistive tech reports a
+	 * control that is momentarily unavailable rather than one that is inert.
+	 */
+	busy?: boolean;
 	onPress?: () => void;
 	onLongPress?: () => void;
 	/** Haptic played on press-in. Off by default. */
@@ -112,20 +119,23 @@ export function Pressable({
 	children,
 	className,
 	disabled = false,
+	busy = false,
 	onPress,
 	onLongPress,
 	haptic = false,
 	pressedScale = 0.97,
 	pressedOpacity = 0.9,
 	asChild = false,
+	accessibilityState,
 	ref,
 	...props
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
+	const interactive = !disabled && !busy;
 
 	const gesture = useMemo(() => {
 		const tap = Gesture.Tap()
-			.enabled(!disabled)
+			.enabled(interactive)
 			.shouldCancelWhenOutside(true)
 			.onBegin(() => {
 				"worklet";
@@ -144,7 +154,7 @@ export function Pressable({
 		if (!onLongPress) return tap;
 
 		const longPress = Gesture.LongPress()
-			.enabled(!disabled)
+			.enabled(interactive)
 			.shouldCancelWhenOutside(true)
 			.onStart(() => {
 				"worklet";
@@ -152,16 +162,21 @@ export function Pressable({
 			});
 
 		return Gesture.Simultaneous(tap, longPress);
-	}, [disabled, haptic, onLongPress, onPress, pressed]);
+	}, [haptic, interactive, onLongPress, onPress, pressed]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: 1 - pressed.value * (1 - pressedOpacity),
 		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
 	}));
 
+	// Built once and spread at both render sites: a caller-supplied
+	// `accessibilityState` merges into it rather than being clobbered by the
+	// `{...props}` spread that lands after it.
+	const state: AccessibilityState = { ...accessibilityState, busy, disabled };
+
 	const content = asChild ? (
 		renderAsChild(children, {
-			accessibilityState: { disabled },
+			accessibilityState: state,
 			accessible: true,
 			className,
 			ref,
@@ -171,7 +186,7 @@ export function Pressable({
 	) : (
 		<Animated.View
 			accessibilityRole="button"
-			accessibilityState={{ disabled }}
+			accessibilityState={state}
 			// Without this the view is not an accessibility element on iOS, and the
 			// role, state and label above never reach VoiceOver — a composed label
 			// on an icon-only button included. It also merges the children into one

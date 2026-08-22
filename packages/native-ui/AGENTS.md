@@ -34,11 +34,17 @@ src/
 ├── components/
 │   ├── button/
 │   │   ├── index.ts              → @delacour/native-ui/button
-│   │   ├── button.tsx            Root, compound parts, useButton()
+│   │   ├── button.tsx            Root, compound parts
+│   │   ├── button.context.tsx    ButtonContext, useButton(), useButtonContext()
 │   │   ├── button.variants.ts    Pure tv() definitions, no RN imports
 │   │   └── button.variants.test.ts
 │   ├── icon/
-│   └── pressable/
+│   ├── pressable/
+│   └── spinner/
+│       ├── index.ts              → @delacour/native-ui/spinner
+│       ├── spinner.tsx           Root, Spinner.Content, default arc glyph
+│       ├── spinner.variants.ts   Pure tv() + resolvers, no RN imports
+│       └── spinner.variants.test.ts
 ├── hooks/            use-controllable-state, use-theme-color
 ├── icons/central.ts  Central Icons re-export
 ├── lib/              cn, merge-props, compose-refs, slot
@@ -75,6 +81,15 @@ sibling, never inline in the component. Example: `button.variants.ts`.
    `@delacour/native-ui/button`. This is what lets an app skip resolving
    optional peers it never uses. A component folder's own `index.ts` is its
    entry point, not a barrel — never add a top-level `src/index.ts`.
+
+   *One exception, and it exists to prevent a cycle:* a **leaf** module —
+   `button.context.tsx`, `button.variants.ts` — may be imported directly across
+   component folders. `Spinner` reads the button's context, and `Button` renders
+   a `Spinner`; if `spinner.tsx` imported `../button`, that index would pull
+   `button.tsx` straight back in. Metro serves a partially initialised module
+   for a cycle, so `ButtonContext` would be `undefined` at import time and the
+   app would red-box on a cold start. Do not "tidy" these imports back to
+   `../button`.
 4. **Run `bun run gen-exports`** after adding or removing a component folder or
    a file under `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
    `exports` map. A component folder without an `index.ts` fails the script.
@@ -118,6 +133,52 @@ The reference implementation for the patterns above.
 - **`feedback`**: `scale` (default) or `none`. Press feedback is the spring
   scale and nothing else. **Do not add ripple, ink, glow or highlight overlays**
   — no wash layers on pressables in this library.
+- **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
+  `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
+  children and collapses the button to the same square footprint as
+  `isIconOnly`, carrying the label onto `accessibilityLabel` so a screen reader
+  still has a name to read.
+- **Loading is not disabled.** `isLoading` blocks the press and announces the
+  button as *busy*, but keeps full contrast: the spinner already says the press
+  landed, and dimming reads as "this control is unavailable". `isDimmedWhileLoading`
+  opts into the faded treatment where a caller wants it.
+- **The width snap while loading is deliberate.** There is no layout animation:
+  Pressable's `Animated.View` already runs a `useAnimatedStyle` on `opacity` and
+  `transform`, and a native layout transition on the same view fights it for
+  prop ownership. A caller who needs a stable width pins it (`w-full`, `min-w-*`).
+
+## Spinner
+
+An animated loading indicator. Compound root plus `Spinner.Content`, the part
+that rotates.
+
+- **Sizes**: `sm`/`md`/`lg` (16/24/32pt), or an explicit number.
+  **Colours**: `default`, `success`, `warning`, `danger`, plus any token the
+  theme emits (`primary-foreground`, `muted-foreground`) or a literal
+  (`#EC4899`). A Tailwind palette name like `emerald-500` only resolves if some
+  utility class already pulled that variable into the build — otherwise the
+  token is unresolved and nothing is drawn. Prefer the semantic tokens.
+- **Size and colour are inherited, not passed.** Inside a `Button` the spinner
+  reads that button's context and comes out at its icon size in its variant's
+  foreground; elsewhere it falls back to the nearest `IconDefaultsProvider`,
+  then to `md` on `foreground`. An explicit `size` or `color` always wins — the
+  same precedence `Icon` follows.
+- **Any child is the glyph**, wrapped in a `Spinner.Content` automatically so it
+  still rotates. Write `Spinner.Content` out by hand only to set a `speed`.
+- **The default glyph is drawn from SVG primitives**, not a Central Icon — the
+  set has no loader glyph. Rule 5 governs *icons*; primitives are fine.
+- **The rotation sets `ReduceMotion.Never` deliberately.** Under the default
+  `System` policy `withTiming` completes instantly while the OS reduce-motion
+  setting is on, so `withRepeat(-1)` would spin a zero-length animation forever.
+  A status indicator is not decorative motion.
+
+## Pressable
+
+- **`disabled` vs `busy`.** Both block the gesture; only `disabled` announces
+  the control as disabled. Use `busy` for a temporary state the component clears
+  itself, so assistive tech reports a control that is momentarily unavailable
+  rather than one that is inert. Neither applies any opacity — that is the
+  caller's variant's job.
 
 ## Theming
 
@@ -138,6 +199,10 @@ definitions live in `*.variants.ts` files free of React Native imports.
 Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.
 
+This is also why a component's pure decisions belong in its `*.variants.ts`
+rather than inline in the `.tsx` — `resolveButtonLayout` and `resolveSpinnerSize`
+live there so the whole matrix is reachable from `bun test`.
+
 ## Adding a component
 
 1. `src/components/{name}/{name}.tsx`, plus `{name}.variants.ts` if it has
@@ -145,7 +210,7 @@ become necessary, add `jest-expo` to the playground rather than to this package.
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
 3. Write the variant tests first; they are the part `bun test` can reach.
 4. `bun run gen-exports`.
-5. Render it in `apps/playground/src/app/index.tsx` and check it on a simulator.
+5. Render it in `apps/playground/app/index.tsx` and check it on a simulator.
 
 ## Consuming from an app
 

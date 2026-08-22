@@ -1,0 +1,10 @@
+{
+	"name": "@delacour/tsconfig",
+	"version": "1.0.0",
+	"description": "Shared TypeScript configurations",
+	"files": [
+		"tsconfig.base.json",
+		"tsconfig.react.json",
+		"tsconfig.react-native.json"
+	]
+}

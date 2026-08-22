@@ -1,0 +1,11 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"lib": ["ES2023"],
+		"moduleResolution": "bundler",
+		"allowJs": true,
+		"resolveJsonModule": true,
+		"types": []
+	}
+}

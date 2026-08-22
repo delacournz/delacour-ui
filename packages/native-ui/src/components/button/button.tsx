@@ -2,7 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableFeedback, type PressableProps } from "../pressable";
+import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
 import { type ButtonContextValue, ButtonProvider, useButtonContext } from "./button.context";
 import {
@@ -17,15 +17,6 @@ import {
 	resolveButtonLayout,
 } from "./button.variants";
 
-/**
- * How the button reacts to a press.
- *
- * A deliberate subset of the pressable vocabulary: press feedback on a button
- * is the spring scale and nothing else. Narrowed from `PressableFeedback`
- * rather than spelled out again, so a rename there cannot leave this behind.
- */
-export type ButtonFeedback = Extract<PressableFeedback, "scale" | "none">;
-
 function useButtonPart(component: string): ButtonContextValue {
 	const context = useButtonContext();
 	if (!context) {
@@ -34,10 +25,7 @@ function useButtonPart(component: string): ButtonContextValue {
 	return context;
 }
 
-export type ButtonProps = Omit<
-	PressableProps,
-	"busy" | "children" | "disabled" | "feedback" | "pressedOpacity" | "pressedScale"
-> & {
+export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" | "pressedOpacity" | "pressedScale"> & {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
 	/** Square footprint for a button whose only content is an icon. */
@@ -45,12 +33,10 @@ export type ButtonProps = Omit<
 	isDisabled?: boolean;
 	/** Work is in flight: a spinner is composed in and presses are blocked. */
 	isLoading?: boolean;
-	/** Where the spinner sits. `only` replaces the content and squares the button. */
+	/** Where the spinner sits. `only` replaces the content, keeping the footprint. */
 	spinnerPlacement?: ButtonSpinnerPlacement;
 	/** Fade the button while loading, the way `isDisabled` does. Off by default. */
 	isDimmedWhileLoading?: boolean;
-	/** Narrower than a pressable's — see {@link ButtonFeedback}. */
-	feedback?: ButtonFeedback;
 	children?: ReactNode;
 };
 
@@ -72,6 +58,10 @@ export type ButtonProps = Omit<
  * `isLoading` blocks presses and announces the button as busy, but does not dim
  * it: a spinner already says the press landed. `isDimmedWhileLoading` opts into
  * the faded treatment.
+ *
+ * A button is a `Pressable`, so `feedback`, `haptic` and the rest are inherited
+ * rather than restated here. Only the default differs: `scale`, the spring the
+ * rest of the library's controls press with.
  *
  * @example
  * <Button haptic="selection" onPress={next}>

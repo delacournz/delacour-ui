@@ -8,6 +8,7 @@ import {
 } from "@delacour/native-ui/button";
 import { Icon } from "@delacour/native-ui/icon";
 import { IconArrowRight, IconHeart, IconPlusMedium, IconTrashCan } from "@delacour/native-ui/icons/central";
+import { PRESSABLE_FEEDBACKS } from "@delacour/native-ui/pressable";
 import { Spinner } from "@delacour/native-ui/spinner";
 import type { ReactElement } from "react";
 import { useState } from "react";
@@ -17,7 +18,6 @@ import { Section } from "@/components/section";
 import { useTransientLoading } from "@/hooks/use-transient-loading";
 
 const HAPTICS = ["selection", "light", "medium", "heavy", "success", "warning", "error"] as const;
-const FEEDBACKS = ["scale", "none"] as const;
 
 function LoadingButton({
 	spinnerPlacement,
@@ -152,10 +152,10 @@ export default function ButtonGallery(): ReactElement {
 
 			<Section title="Feedback">
 				<Text className="text-muted-foreground text-sm">
-					`scale` springs the button down on press; `none` disables the animation entirely.
+					Inherited from Pressable, so a button takes the whole vocabulary. `scale` is the default.
 				</Text>
 				<View className="gap-3">
-					{FEEDBACKS.map((feedback) => (
+					{PRESSABLE_FEEDBACKS.map((feedback) => (
 						<Button feedback={feedback} key={feedback} onPress={bump} variant="secondary">
 							{feedback}
 						</Button>

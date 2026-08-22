@@ -141,15 +141,14 @@ The reference implementation for the patterns above.
   that *consecutive* strings collapse into one label — `Row {i}` is a single
   piece of text, and wrapping each part separately would space them apart by
   the button's own `gap`.
-- **`feedback`**: `scale` (default) or `none` — a deliberate subset of the
-  pressable vocabulary, narrowed with `Extract` so a rename there cannot leave
-  it behind. `ButtonProps` omits `feedback` from `PressableProps` before
-  redeclaring it: an intersection would *reduce* the two unions rather than
-  replace one with the other, which happens to give the same answer today but
-  would silently drop a member if either union changed. Press feedback on a
-  button is the spring scale and nothing else.
-  **Do not add ripple, ink, glow or highlight overlays** — no wash layers on
-  pressables in this library.
+- **A button is a `Pressable`.** `ButtonProps` extends `PressableProps`, so
+  `feedback`, `haptic` and the rest are inherited rather than restated; only the
+  default differs, `scale`. It carried a narrowed `ButtonFeedback` union for a
+  while — that is gone, because a second definition of a prop the button does
+  not change is a definition that can drift. **Do not add ripple, ink, glow or
+  highlight overlays** — no wash layers on pressables in this library. That rule
+  is about wash layers, not the opacity axis, which `fade` and `scale-fade` are
+  welcome to use.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and centres the spinner in the footprint the button already has,

@@ -1,4 +1,4 @@
-export { Button, type ButtonFeedback, type ButtonLabelProps, type ButtonProps, type ButtonSlotProps } from "./button";
+export { Button, type ButtonLabelProps, type ButtonProps, type ButtonSlotProps } from "./button";
 export { type ButtonContextValue, ButtonProvider, useButton, useButtonContext } from "./button.context";
 export {
 	BUTTON_FOREGROUND_TOKEN,

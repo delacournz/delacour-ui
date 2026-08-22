@@ -34,7 +34,10 @@ function useButtonPart(component: string): ButtonContextValue {
 	return context;
 }
 
-export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" | "pressedScale" | "pressedOpacity"> & {
+export type ButtonProps = Omit<
+	PressableProps,
+	"busy" | "children" | "disabled" | "feedback" | "pressedOpacity" | "pressedScale"
+> & {
 	variant?: ButtonVariant;
 	size?: ButtonSize;
 	/** Square footprint for a button whose only content is an icon. */
@@ -46,6 +49,7 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 	spinnerPlacement?: ButtonSpinnerPlacement;
 	/** Fade the button while loading, the way `isDisabled` does. Off by default. */
 	isDimmedWhileLoading?: boolean;
+	/** Narrower than a pressable's — see {@link ButtonFeedback}. */
 	feedback?: ButtonFeedback;
 	children?: ReactNode;
 };

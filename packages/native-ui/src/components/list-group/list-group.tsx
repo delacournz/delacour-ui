@@ -2,7 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 import { IconChevronRight } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableFeedback, type PressableProps } from "../pressable";
+import { Pressable, type PressableProps } from "../pressable";
 import { Separator } from "../separator";
 import { type ListGroupContextValue, ListGroupProvider, useListGroupContext } from "./list-group.context";
 import {
@@ -113,12 +113,7 @@ function isSeparator(node: ReactNode): boolean {
 	return isValidElement(node) && node.type === Separator;
 }
 
-export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled" | "feedback"> & {
-	/**
-	 * How the row moves under a press. Defaults to `fade`: a full-bleed row that
-	 * scales reads as the whole card flexing rather than as one row responding.
-	 */
-	feedback?: PressableFeedback;
+export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled"> & {
 	isDisabled?: boolean;
 	children?: ReactNode;
 };
@@ -131,6 +126,11 @@ export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled" | 
  * suffix. React Native cannot render a string outside a `<Text>`, so the wrap is
  * not a convenience — without it `<ListGroup.Item>Wi-Fi</ListGroup.Item>` would
  * crash.
+ *
+ * A row is a `Pressable`, so `feedback`, `haptic` and the rest come from there
+ * rather than being restated here. Only the default differs: `fade`, because a
+ * full-bleed row that scales reads as the whole card flexing rather than as one
+ * row responding.
  */
 function ListGroupItem({
 	feedback = "fade",

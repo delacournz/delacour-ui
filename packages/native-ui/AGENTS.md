@@ -143,7 +143,11 @@ The reference implementation for the patterns above.
   the button's own `gap`.
 - **`feedback`**: `scale` (default) or `none` — a deliberate subset of the
   pressable vocabulary, narrowed with `Extract` so a rename there cannot leave
-  it behind. Press feedback on a button is the spring scale and nothing else.
+  it behind. `ButtonProps` omits `feedback` from `PressableProps` before
+  redeclaring it: an intersection would *reduce* the two unions rather than
+  replace one with the other, which happens to give the same answer today but
+  would silently drop a member if either union changed. Press feedback on a
+  button is the spring scale and nothing else.
   **Do not add ripple, ink, glow or highlight overlays** — no wash layers on
   pressables in this library.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
@@ -206,10 +210,14 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 - **The root clips.** `overflow-hidden` is load-bearing: a pressed row fades to
   the edge of its own box, and the first and last rows would square off the
   group's corners without it.
-- **`feedback`**: the full `PressableFeedback` vocabulary, forwarded straight to
-  `Pressable` — the row picks a different default, it does not own a second
-  mapping. `fade` is that default, because a full-bleed row that scales reads as
-  the whole card flexing rather than as one row responding.
+- **A row is a `Pressable`.** `ListGroupItemProps` extends `PressableProps`, so
+  `feedback`, `haptic`, `pressedScale` and the rest are inherited rather than
+  restated — the row owns no vocabulary of its own. Only the default differs:
+  `feedback` defaults to `fade`, because a full-bleed row that scales reads as
+  the whole card flexing rather than as one row responding. A prop is only
+  redeclared where it genuinely changes, as `Button` does with its narrower
+  union; redeclaring one unchanged just to hang a doc comment on it puts a
+  second definition in the tree that can drift.
 - **Icons are composed, never passed as props.** `ItemPrefix` wraps its subtree
   in an `IconDefaultsProvider` carrying `LIST_GROUP_ICON_SIZE[size]` and
   `foreground`, so a bare `<Icon icon={IconUser} />` needs nothing said at the

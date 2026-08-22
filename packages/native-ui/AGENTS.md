@@ -39,7 +39,14 @@ src/
 │   │   ├── button.variants.ts    Pure tv() definitions, no RN imports
 │   │   └── button.variants.test.ts
 │   ├── icon/
+│   ├── list-group/
+│   │   ├── index.ts              → @delacour/native-ui/list-group
+│   │   ├── list-group.tsx        Root, Item and the five Item slots
+│   │   ├── list-group.context.tsx  ListGroupContext, useListGroup()
+│   │   ├── list-group.variants.ts  Pure tv() + feedback map, no RN imports
+│   │   └── list-group.variants.test.ts
 │   ├── pressable/
+│   ├── separator/
 │   └── spinner/
 │       ├── index.ts              → @delacour/native-ui/spinner
 │       ├── spinner.tsx           Root, Spinner.Content, default arc glyph
@@ -172,6 +179,60 @@ that rotates.
   setting is on, so `withRepeat(-1)` would spin a zero-length animation forever.
   A status indicator is not decorative motion.
 
+## ListGroup
+
+A surface grouping related rows. Compound root plus `ListGroup.Item` and its
+five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
+`ItemSuffix`.
+
+- **Variants**: `default`, `secondary`, `tertiary`, `transparent`.
+  **Sizes**: `sm`, `md`, `lg`. Size is not decoration — it drives the row
+  metrics, the title and description type scale, both icon sizes *and* the
+  divider inset, which is why those five numbers live in one axis rather than
+  five magic values.
+- **Dividers are inserted, not written out.** The root walks its children and
+  puts a `Separator` between adjacent ones, inset to line up with the rows'
+  padding. A `Separator` placed by hand suppresses the automatic one on either
+  side of it, so a caller can make one gap full-bleed without turning the
+  feature off; `isDivided={false}` turns it off entirely. `Children.toArray`
+  drops the nulls a conditional child leaves behind, so a row rendered only
+  some of the time does not strand a divider.
+- **The root clips.** `overflow-hidden` is load-bearing: a pressed row fades to
+  the edge of its own box, and the first and last rows would square off the
+  group's corners without it.
+- **`feedback`**: `fade` (default), `scale` or `none`, resolved through
+  `LIST_GROUP_ITEM_FEEDBACK` into `Pressable`'s `pressedOpacity` /
+  `pressedScale`. `fade` is the default because a full-bleed row that scales
+  reads as the whole card flexing rather than as one row responding. There is
+  no ripple or highlight option — see the Button rules.
+- **Icons are composed, never passed as props.** `ItemPrefix` wraps its subtree
+  in an `IconDefaultsProvider` carrying `LIST_GROUP_ICON_SIZE[size]` and
+  `foreground`, so a bare `<Icon icon={IconUser} />` needs nothing said at the
+  call site. `ItemSuffix` draws a chevron when it has no children of its own;
+  `iconProps` tunes that glyph and is ignored once it does.
+- **String children** are wrapped in an `ItemContent` around an `ItemTitle`
+  automatically, consecutive strings collapsing into one — the same rule, and
+  the same reason, as `Button`.
+- **Title colour goes on the title.** `listGroupItemVariants` carries no
+  `text-*`; a row is a `View` and cannot cascade colour to a `Text`. The tests
+  assert this.
+
+## Separator
+
+A one-pixel rule, hidden from assistive technology — a line between every row
+carries nothing a screen reader can use, and announcing them buries the rows.
+
+- **Orientations**: `horizontal` (default), `vertical`.
+- **The long axis is `self-stretch`, never `w-full` / `h-full`.** Yoga resolves
+  a percentage length against the parent's content box and then adds the
+  margins on top, so an inset `w-full` line starts 16pt in and runs 16pt past
+  the far edge — a gap down one side and none down the other. Stretching
+  subtracts the margins instead, which is what an inset divider needs. Do not
+  "fix" this back to a percentage width.
+- **A filled box, not a border**, so a caller insets it with a plain `mx-*`
+  without fighting a border's own box model. This is how `ListGroup` positions
+  the dividers it inserts.
+
 ## Pressable
 
 - **`disabled` vs `busy`.** Both block the gesture; only `disabled` announces
@@ -210,7 +271,8 @@ live there so the whole matrix is reachable from `bun test`.
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
 3. Write the variant tests first; they are the part `bun test` can reach.
 4. `bun run gen-exports`.
-5. Render it in `apps/playground/app/index.tsx` and check it on a simulator.
+5. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
+   it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.
 
 ## Consuming from an app
 

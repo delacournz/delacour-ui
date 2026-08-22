@@ -1,0 +1,16 @@
+{
+	"name": "@delacour/biome-config",
+	"version": "1.0.0",
+	"description": "Shared Biome configurations",
+	"exports": {
+		"./root.jsonc": "./root.jsonc",
+		"./react.jsonc": "./react.jsonc"
+	},
+	"files": [
+		"root.jsonc",
+		"react.jsonc"
+	],
+	"peerDependencies": {
+		"@biomejs/biome": "^2.0.0"
+	}
+}

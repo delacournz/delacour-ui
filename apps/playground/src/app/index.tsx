@@ -4,6 +4,7 @@ import {
 	IconArrowsRepeatCircle,
 	IconBulletList,
 	IconCursorClick,
+	IconDivider,
 	IconSquareCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
@@ -33,6 +34,12 @@ const COMPONENTS = [
 		icon: IconCursorClick,
 		title: "Pressable",
 		description: "Gestures, haptics, asChild",
+	},
+	{
+		href: "/separator",
+		icon: IconDivider,
+		title: "Separator",
+		description: "Orientations, insets, weight",
 	},
 	{
 		href: "/spinner",

@@ -179,19 +179,6 @@ export default function ListGroupGallery(): ReactElement {
 					</ListGroup>
 				</View>
 			</Section>
-
-			<Section title="Separator on its own">
-				<View className="gap-3">
-					<Text className="text-base text-foreground">Above</Text>
-					<Separator />
-					<Text className="text-base text-foreground">Below</Text>
-					<View className="flex-row items-center gap-3">
-						<Text className="text-base text-foreground">Left</Text>
-						<Separator className="h-4" orientation="vertical" />
-						<Text className="text-base text-foreground">Right</Text>
-					</View>
-				</View>
-			</Section>
 		</GalleryScreen>
 	);
 }

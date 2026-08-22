@@ -1,6 +1,6 @@
 import { Icon } from "@delacour/native-ui/icon";
 import { IconHeart } from "@delacour/native-ui/icons/central";
-import { Pressable } from "@delacour/native-ui/pressable";
+import { PRESSABLE_FEEDBACKS, Pressable } from "@delacour/native-ui/pressable";
 import type { ReactElement } from "react";
 import { useState } from "react";
 import { Text, View } from "react-native";
@@ -24,9 +24,29 @@ export default function PressableGallery(): ReactElement {
 
 	return (
 		<GalleryScreen subtitle={`Pressed ${pressCount} times`} title="Pressable">
-			<Section title="Press feedback">
+			<Section title="Named feedback">
 				<Text className="text-muted-foreground text-sm">
-					`pressedScale` and `pressedOpacity` are interpolated on the UI thread; 1 is the neutral value on either axis.
+					The vocabulary every pressable in the library shares. `scale-fade` moves both axes at once, taking each from
+					the mode that owns it.
+				</Text>
+				<View className="gap-3">
+					{PRESSABLE_FEEDBACKS.map((feedback) => (
+						<Pressable
+							className="rounded-xl border border-border bg-card p-4"
+							feedback={feedback}
+							key={feedback}
+							onPress={bump}
+						>
+							<Text className="font-semibold text-base text-card-foreground">{feedback}</Text>
+						</Pressable>
+					))}
+				</View>
+			</Section>
+
+			<Section title="Explicit values">
+				<Text className="text-muted-foreground text-sm">
+					`pressedScale` and `pressedOpacity` cover what the named modes do not, and each wins on the axis it names. 1
+					is the neutral value on either.
 				</Text>
 				<View className="gap-3">
 					{PRESS_STYLES.map((style) => (

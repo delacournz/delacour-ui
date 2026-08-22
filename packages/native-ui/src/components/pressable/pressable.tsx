@@ -15,6 +15,7 @@ import { Presets } from "react-native-pulsar";
 import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
+import { type PressableFeedback, resolvePressedState } from "./pressable.variants";
 
 const PRESS_SPRING = { damping: 18, mass: 0.4, stiffness: 320 } as const;
 
@@ -95,9 +96,14 @@ export type PressableProps = Omit<ViewProps, "style"> & {
 	onLongPress?: () => void;
 	/** Haptic played on press-in. Off by default. */
 	haptic?: false | HapticFeedback;
-	/** Scale at full press. 1 disables the scale. */
+	/**
+	 * How the press moves the element: `scale`, `fade`, `scale-fade` or `none`.
+	 * `pressedScale` / `pressedOpacity` still win on the axis they name.
+	 */
+	feedback?: PressableFeedback;
+	/** Scale at full press. 1 disables the scale. Overrides `feedback`. */
 	pressedScale?: number;
-	/** Opacity at full press. 1 disables the fade. */
+	/** Opacity at full press. 1 disables the fade. Overrides `feedback`. */
 	pressedOpacity?: number;
 	/** Render into the single child element instead of emitting a View. */
 	asChild?: boolean;
@@ -111,6 +117,10 @@ export type PressableProps = Omit<ViewProps, "style"> & {
  * shared value, a spring maps it to scale and opacity, and the haptic fires in
  * the same worklet. Only `onPress` and `onLongPress` cross back to JS.
  *
+ * How far each axis travels comes from `feedback`, the named vocabulary every
+ * pressable in this library shares, or from `pressedScale` / `pressedOpacity`
+ * for a value the named modes do not cover.
+ *
  * Built on the Gesture API rather than a ready-made pressable so the animation,
  * the haptic and the gesture stay on one thread, and so nothing depends on
  * Gesture Handler's own `Pressable`, which was renamed in its v3.
@@ -123,8 +133,9 @@ export function Pressable({
 	onPress,
 	onLongPress,
 	haptic = false,
-	pressedScale = 0.97,
-	pressedOpacity = 0.9,
+	feedback,
+	pressedScale,
+	pressedOpacity,
 	asChild = false,
 	accessibilityState,
 	ref,
@@ -132,6 +143,10 @@ export function Pressable({
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
 	const interactive = !disabled && !busy;
+	// Destructured to primitives on purpose. Reanimated's plugin collects what
+	// the worklet closes over, and a fresh object each render would rebuild the
+	// animated style every render.
+	const { opacity: targetOpacity, scale: targetScale } = resolvePressedState(feedback, pressedScale, pressedOpacity);
 
 	const gesture = useMemo(() => {
 		const tap = Gesture.Tap()
@@ -165,8 +180,8 @@ export function Pressable({
 	}, [haptic, interactive, onLongPress, onPress, pressed]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
-		opacity: 1 - pressed.value * (1 - pressedOpacity),
-		transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
+		opacity: 1 - pressed.value * (1 - targetOpacity),
+		transform: [{ scale: 1 - pressed.value * (1 - targetScale) }],
 	}));
 
 	// Built once and spread at both render sites: a caller-supplied

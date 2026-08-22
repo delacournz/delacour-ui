@@ -2,16 +2,14 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 import { IconChevronRight } from "../../icons/central";
 import { Icon, IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableProps } from "../pressable";
+import { Pressable, type PressableFeedback, type PressableProps } from "../pressable";
 import { Separator } from "../separator";
 import { type ListGroupContextValue, ListGroupProvider, useListGroupContext } from "./list-group.context";
 import {
 	LIST_GROUP_FOREGROUND_TOKEN,
 	LIST_GROUP_ICON_SIZE,
-	LIST_GROUP_ITEM_FEEDBACK,
 	LIST_GROUP_SUFFIX_ICON_SIZE,
 	LIST_GROUP_SUFFIX_ICON_TOKEN,
-	type ListGroupItemFeedback,
 	type ListGroupSize,
 	type ListGroupVariant,
 	listGroupDividerVariants,
@@ -115,9 +113,12 @@ function isSeparator(node: ReactNode): boolean {
 	return isValidElement(node) && node.type === Separator;
 }
 
-export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled" | "pressedOpacity" | "pressedScale"> & {
-	/** How the row moves under a press. */
-	feedback?: ListGroupItemFeedback;
+export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled" | "feedback"> & {
+	/**
+	 * How the row moves under a press. Defaults to `fade`: a full-bleed row that
+	 * scales reads as the whole card flexing rather than as one row responding.
+	 */
+	feedback?: PressableFeedback;
 	isDisabled?: boolean;
 	children?: ReactNode;
 };
@@ -139,15 +140,13 @@ function ListGroupItem({
 	...props
 }: ListGroupItemProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.Item");
-	const press = LIST_GROUP_ITEM_FEEDBACK[feedback];
 	const content = useMemo(() => wrapTextChildren(children), [children]);
 
 	return (
 		<Pressable
 			className={listGroupItemVariants({ className, isDisabled, size })}
 			disabled={isDisabled}
-			pressedOpacity={press.opacity}
-			pressedScale={press.scale}
+			feedback={feedback}
 			{...props}
 		>
 			{content}

@@ -1,11 +1,7 @@
 import { Icon } from "@delacour/native-ui/icon";
 import { IconArrowRight, IconBell, IconGlobe, IconLock, IconUser } from "@delacour/native-ui/icons/central";
-import {
-	LIST_GROUP_ITEM_FEEDBACKS,
-	LIST_GROUP_SIZES,
-	LIST_GROUP_VARIANTS,
-	ListGroup,
-} from "@delacour/native-ui/list-group";
+import { LIST_GROUP_SIZES, LIST_GROUP_VARIANTS, ListGroup } from "@delacour/native-ui/list-group";
+import { PRESSABLE_FEEDBACKS } from "@delacour/native-ui/pressable";
 import { Separator } from "@delacour/native-ui/separator";
 import { Spinner } from "@delacour/native-ui/spinner";
 import type { ReactElement } from "react";
@@ -131,10 +127,11 @@ export default function ListGroupGallery(): ReactElement {
 
 			<Section title="Press feedback">
 				<Text className="text-muted-foreground text-sm">
-					`fade` is the default: a full-bleed row that scales reads as the whole card flexing.
+					`fade` is the default: a full-bleed row that scales reads as the whole card flexing. `scale-fade` does both at
+					once.
 				</Text>
 				<ListGroup>
-					{LIST_GROUP_ITEM_FEEDBACKS.map((feedback) => (
+					{PRESSABLE_FEEDBACKS.map((feedback) => (
 						<ListGroup.Item feedback={feedback} haptic="selection" key={feedback} onPress={bump}>
 							<ListGroup.ItemContent>
 								<ListGroup.ItemTitle>{feedback}</ListGroup.ItemTitle>

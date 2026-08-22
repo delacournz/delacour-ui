@@ -46,6 +46,10 @@ src/
 │   │   ├── list-group.variants.ts  Pure tv() + feedback map, no RN imports
 │   │   └── list-group.variants.test.ts
 │   ├── pressable/
+│   │   ├── index.ts              → @delacour/native-ui/pressable
+│   │   ├── pressable.tsx         The Gesture API primitive
+│   │   ├── pressable.variants.ts   Shared feedback vocabulary, no RN imports
+│   │   └── pressable.variants.test.ts
 │   ├── separator/
 │   └── spinner/
 │       ├── index.ts              → @delacour/native-ui/spinner
@@ -137,9 +141,11 @@ The reference implementation for the patterns above.
   that *consecutive* strings collapse into one label — `Row {i}` is a single
   piece of text, and wrapping each part separately would space them apart by
   the button's own `gap`.
-- **`feedback`**: `scale` (default) or `none`. Press feedback is the spring
-  scale and nothing else. **Do not add ripple, ink, glow or highlight overlays**
-  — no wash layers on pressables in this library.
+- **`feedback`**: `scale` (default) or `none` — a deliberate subset of the
+  pressable vocabulary, narrowed with `Extract` so a rename there cannot leave
+  it behind. Press feedback on a button is the spring scale and nothing else.
+  **Do not add ripple, ink, glow or highlight overlays** — no wash layers on
+  pressables in this library.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and collapses the button to the same square footprint as
@@ -200,11 +206,10 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 - **The root clips.** `overflow-hidden` is load-bearing: a pressed row fades to
   the edge of its own box, and the first and last rows would square off the
   group's corners without it.
-- **`feedback`**: `fade` (default), `scale` or `none`, resolved through
-  `LIST_GROUP_ITEM_FEEDBACK` into `Pressable`'s `pressedOpacity` /
-  `pressedScale`. `fade` is the default because a full-bleed row that scales
-  reads as the whole card flexing rather than as one row responding. There is
-  no ripple or highlight option — see the Button rules.
+- **`feedback`**: the full `PressableFeedback` vocabulary, forwarded straight to
+  `Pressable` — the row picks a different default, it does not own a second
+  mapping. `fade` is that default, because a full-bleed row that scales reads as
+  the whole card flexing rather than as one row responding.
 - **Icons are composed, never passed as props.** `ItemPrefix` wraps its subtree
   in an `IconDefaultsProvider` carrying `LIST_GROUP_ICON_SIZE[size]` and
   `foreground`, so a bare `<Icon icon={IconUser} />` needs nothing said at the
@@ -235,6 +240,21 @@ carries nothing a screen reader can use, and announcing them buries the rows.
 
 ## Pressable
 
+- **`feedback` is the shared vocabulary**: `scale`, `fade`, `scale-fade`,
+  `none`, defined once in `pressable.variants.ts`. Every pressable in the
+  library resolves through it rather than keeping a private map — `Button`
+  narrows it, `ListGroup.Item` forwards it whole.
+- **`scale-fade` is composed, not spelled out.** Its scale comes from `scale`
+  and its opacity from `fade`, so tuning either single-axis mode carries
+  through and the name keeps describing what the mode does. A test asserts it.
+- **`pressedScale` / `pressedOpacity` win on the axis they name**, and leave the
+  other to `feedback`. They are the escape hatch for a value the named modes do
+  not cover, not an alternative API — `??` is the merge, so an explicit `0` is a
+  value rather than an absence.
+- **The no-feedback fallback is unnamed on purpose.** A bare `Pressable` presses
+  to `{ opacity: 0.9, scale: 0.97 }`, which fades less than `fade` does. Naming
+  it would either change what a bare pressable has always done or force
+  `scale-fade` to fade less than `fade`.
 - **`disabled` vs `busy`.** Both block the gesture; only `disabled` announces
   the control as disabled. Use `busy` for a temporary state the component clears
   itself, so assistive tech reports a control that is momentarily unavailable

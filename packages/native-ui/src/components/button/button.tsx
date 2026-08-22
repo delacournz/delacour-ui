@@ -2,7 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { Text, type TextProps, View, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableProps } from "../pressable";
+import { Pressable, type PressableFeedback, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
 import { type ButtonContextValue, ButtonProvider, useButtonContext } from "./button.context";
 import {
@@ -17,8 +17,14 @@ import {
 	resolveButtonLayout,
 } from "./button.variants";
 
-/** How the button reacts to a press. */
-export type ButtonFeedback = "scale" | "none";
+/**
+ * How the button reacts to a press.
+ *
+ * A deliberate subset of the pressable vocabulary: press feedback on a button
+ * is the spring scale and nothing else. Narrowed from `PressableFeedback`
+ * rather than spelled out again, so a rename there cannot leave this behind.
+ */
+export type ButtonFeedback = Extract<PressableFeedback, "scale" | "none">;
 
 function useButtonPart(component: string): ButtonContextValue {
 	const context = useButtonContext();
@@ -42,11 +48,6 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 	isDimmedWhileLoading?: boolean;
 	feedback?: ButtonFeedback;
 	children?: ReactNode;
-};
-
-const FEEDBACK_SCALE: Record<ButtonFeedback, number> = {
-	scale: 0.97,
-	none: 1,
 };
 
 /**
@@ -135,8 +136,7 @@ export function Button({
 					})
 				)}
 				disabled={isDisabled}
-				pressedOpacity={1}
-				pressedScale={FEEDBACK_SCALE[feedback]}
+				feedback={feedback}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>{content}</IconDefaultsProvider>

@@ -1,8 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
 	LIST_GROUP_ICON_SIZE,
-	LIST_GROUP_ITEM_FEEDBACK,
-	LIST_GROUP_ITEM_FEEDBACKS,
 	LIST_GROUP_SIZES,
 	LIST_GROUP_SUFFIX_ICON_SIZE,
 	LIST_GROUP_VARIANTS,
@@ -181,40 +179,6 @@ describe("listGroupItemDescriptionVariants", () => {
 			const description = scale.findIndex((step) => listGroupItemDescriptionVariants({ size }).includes(step));
 			expect(description).toBeGreaterThanOrEqual(0);
 			expect(description).toBeLessThan(title);
-		}
-	});
-});
-
-describe("LIST_GROUP_ITEM_FEEDBACK", () => {
-	test("covers every named feedback", () => {
-		for (const feedback of LIST_GROUP_ITEM_FEEDBACKS) {
-			expect(LIST_GROUP_ITEM_FEEDBACK[feedback]).toBeDefined();
-		}
-	});
-
-	// These feed Pressable's `pressedOpacity` / `pressedScale` directly, where 1
-	// is the neutral value on either axis — so each mode moves exactly one of them.
-	test("fade dims without scaling", () => {
-		expect(LIST_GROUP_ITEM_FEEDBACK.fade.scale).toBe(1);
-		expect(LIST_GROUP_ITEM_FEEDBACK.fade.opacity).toBeLessThan(1);
-	});
-
-	test("scale shrinks without dimming", () => {
-		expect(LIST_GROUP_ITEM_FEEDBACK.scale.opacity).toBe(1);
-		expect(LIST_GROUP_ITEM_FEEDBACK.scale.scale).toBeLessThan(1);
-	});
-
-	test("none moves neither axis", () => {
-		expect(LIST_GROUP_ITEM_FEEDBACK.none).toEqual({ opacity: 1, scale: 1 });
-	});
-
-	test("every mode stays within the range Pressable interpolates over", () => {
-		for (const feedback of LIST_GROUP_ITEM_FEEDBACKS) {
-			const { opacity, scale } = LIST_GROUP_ITEM_FEEDBACK[feedback];
-			expect(opacity).toBeGreaterThan(0);
-			expect(opacity).toBeLessThanOrEqual(1);
-			expect(scale).toBeGreaterThan(0);
-			expect(scale).toBeLessThanOrEqual(1);
 		}
 	});
 });

@@ -4,11 +4,8 @@ export const LIST_GROUP_VARIANTS = ["default", "secondary", "tertiary", "transpa
 
 export const LIST_GROUP_SIZES = ["sm", "md", "lg"] as const;
 
-export const LIST_GROUP_ITEM_FEEDBACKS = ["fade", "scale", "none"] as const;
-
 export type ListGroupVariant = (typeof LIST_GROUP_VARIANTS)[number];
 export type ListGroupSize = (typeof LIST_GROUP_SIZES)[number];
-export type ListGroupItemFeedback = (typeof LIST_GROUP_ITEM_FEEDBACKS)[number];
 
 /** Edge length paired with each size for an icon in `ListGroup.ItemPrefix`, in points. */
 export const LIST_GROUP_ICON_SIZE: Record<ListGroupSize, number> = {
@@ -29,20 +26,6 @@ export const LIST_GROUP_FOREGROUND_TOKEN = "foreground";
 
 /** Theme token the default trailing chevron inherits. */
 export const LIST_GROUP_SUFFIX_ICON_TOKEN = "muted-foreground";
-
-/**
- * How a row moves under a press, as the two values `Pressable` interpolates
- * towards — 1 being the neutral value on either axis.
- *
- * `fade` is the default because a full-bleed row that scales reads as the whole
- * card flexing rather than as one row responding. There is no third option
- * involving a highlight or ripple layer; AGENTS.md rules those out.
- */
-export const LIST_GROUP_ITEM_FEEDBACK: Record<ListGroupItemFeedback, { opacity: number; scale: number }> = {
-	fade: { opacity: 0.6, scale: 1 },
-	scale: { opacity: 1, scale: 0.97 },
-	none: { opacity: 1, scale: 1 },
-};
 
 /**
  * Styling for the list group root.

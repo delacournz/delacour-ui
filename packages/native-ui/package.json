@@ -1,0 +1,63 @@
+{
+	"name": "@delacour/native-ui",
+	"version": "0.1.0",
+	"description": "React Native UI components — Uniwind, Reanimated, Gesture Handler",
+	"type": "module",
+	"exports": {
+		"./styles": "./src/styles/index.css",
+		"./styles/base": "./src/styles/base.css",
+		"./styles/tokens": "./src/styles/tokens.css",
+		"./styles/theme": "./src/styles/theme.css",
+		"./button": "./src/components/button/index.ts",
+		"./icon": "./src/components/icon/index.ts",
+		"./pressable": "./src/components/pressable/index.ts",
+		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
+		"./hooks/use-theme-color": "./src/hooks/use-theme-color.ts",
+		"./lib/cn": "./src/lib/cn.ts",
+		"./lib/compose-refs": "./src/lib/compose-refs.ts",
+		"./lib/merge-props": "./src/lib/merge-props.ts",
+		"./lib/slot": "./src/lib/slot.tsx",
+		"./icons/central": "./src/icons/central.ts"
+	},
+	"scripts": {
+		"check": "biome check ./src",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"gen-exports": "bun scripts/gen-exports.ts"
+	},
+	"dependencies": {
+		"clsx": "^2.1.1",
+		"tailwind-merge": "^3.6.0",
+		"tailwind-variants": "^3.3.1"
+	},
+	"peerDependencies": {
+		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+		"@gorhom/bottom-sheet": "^5.2.8",
+		"react": ">=19",
+		"react-native": ">=0.81",
+		"react-native-gesture-handler": ">=2.28",
+		"react-native-pulsar": "^1.7.0",
+		"react-native-reanimated": ">=4",
+		"react-native-safe-area-context": ">=5",
+		"react-native-screens": ">=4.16",
+		"react-native-svg": ">=15",
+		"react-native-worklets": ">=0.5",
+		"tailwindcss": "^4",
+		"uniwind": "^1.11.0"
+	},
+	"peerDependenciesMeta": {
+		"@gorhom/bottom-sheet": {
+			"optional": true
+		},
+		"react-native-screens": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"@delacour/biome-config": "workspace:*",
+		"@delacour/tsconfig": "workspace:*",
+		"@types/bun": "^1.3.8",
+		"@types/react": "^19.2.0",
+		"typescript": "^5.9.3"
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		"includes": ["src/**/*", "scripts/**/*", "package.json"]
+	},
+	"css": {
+		"parser": { "tailwindDirectives": true }
+	},
+	"overrides": [
+		{
+			// Light and dark deliberately redefine the same token names inside
+			// their own `@variant` scopes; Biome reads them as one flat block.
+			"includes": ["src/styles/theme.css"],
+			"linter": {
+				"rules": {
+					"suspicious": { "noDuplicateCustomProperties": "off" }
+				}
+			}
+		}
+	]
+}

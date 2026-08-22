@@ -1,0 +1,23 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		"includes": ["src/**/*", "app/**/*", "!src/uniwind-types.d.ts"]
+	},
+	"css": {
+		"parser": { "tailwindDirectives": true }
+	},
+	"overrides": [
+		{
+			// Expo Router derives route names from filenames; its conventions
+			// (_layout, [id], +not-found) are not kebab-case.
+			"includes": ["app/**/*"],
+			"linter": {
+				"rules": {
+					"style": { "useFilenamingConvention": "off" }
+				}
+			}
+		}
+	]
+}

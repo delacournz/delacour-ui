@@ -1,0 +1,43 @@
+{
+	"name": "@delacour/playground",
+	"version": "0.1.0",
+	"private": true,
+	"main": "index.ts",
+	"scripts": {
+		"prebuild": "bun expo prebuild",
+		"ensure-prebuild": "bun scripts/ensure-prebuild.ts",
+		"start": "bun ensure-prebuild && bun expo start --dev-client --clear",
+		"dev": "bun ensure-prebuild && bun expo start --dev-client --clear --port 8088",
+		"android": "bun ensure-prebuild && expo run:android --device --port 8088",
+		"ios": "bun ensure-prebuild && expo run:ios --device --port 8088",
+		"check": "biome check ./src",
+		"typecheck": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+		"@delacour/native-ui": "workspace:*",
+		"@gorhom/bottom-sheet": "^5.2.8",
+		"expo": "~57.0.15",
+		"expo-constants": "~57.0.13",
+		"expo-dev-client": "~57.0.14",
+		"expo-linking": "~57.0.7",
+		"expo-router": "~57.0.15",
+		"expo-status-bar": "~57.0.1",
+		"react": "catalog:",
+		"react-native": "catalog:",
+		"react-native-gesture-handler": "catalog:",
+		"react-native-pulsar": "^1.7.0",
+		"react-native-reanimated": "catalog:",
+		"react-native-safe-area-context": "catalog:",
+		"react-native-screens": "catalog:",
+		"react-native-svg": "catalog:",
+		"react-native-worklets": "catalog:",
+		"tailwindcss": "^4.3.3",
+		"uniwind": "^1.11.0"
+	},
+	"devDependencies": {
+		"@delacour/biome-config": "workspace:*",
+		"@types/react": "~19.2.2",
+		"typescript": "^5.9.3"
+	}
+}

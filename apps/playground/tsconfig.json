@@ -1,0 +1,18 @@
+{
+	"extends": "expo/tsconfig.base",
+	"compilerOptions": {
+		"strict": true,
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["./src/*"],
+			// Bun materialises a second copy of these under this app's
+			// node_modules. TypeScript treats the two paths as different
+			// modules, so uniwind's `className` augmentation — applied to the
+			// workspace-root copy — would not reach components resolved from
+			// the nested one. Pin both to the root copy.
+			"react-native": ["../../node_modules/react-native"],
+			"react-native/*": ["../../node_modules/react-native/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+}

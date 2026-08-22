@@ -99,17 +99,19 @@ describe("resolveButtonLayout", () => {
 		expect(resolveButtonLayout({ isLoading: true }).spinnerSide).toBe("start");
 	});
 
-	test("only replaces the content and squares the footprint", () => {
+	test("only replaces the content and leaves the footprint alone", () => {
 		expect(resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" })).toEqual({
-			isIconOnly: true,
+			isIconOnly: false,
 			isSpinnerOnly: true,
 			spinnerSide: null,
 		});
 	});
 
-	test("only squares a button that was not icon-only to begin with", () => {
+	test("only leaves a stretched button unsquared", () => {
+		// Squaring it would defeat the parent's `alignItems: stretch` and pin the
+		// button to the left edge the moment it started loading.
 		const layout = resolveButtonLayout({ isIconOnly: false, isLoading: true, spinnerPlacement: "only" });
-		expect(layout.isIconOnly).toBe(true);
+		expect(layout.isIconOnly).toBe(false);
 	});
 
 	test("keeps an icon-only button square through every placement", () => {
@@ -127,9 +129,18 @@ describe("resolveButtonLayout", () => {
 });
 
 describe("resolveButtonLayout feeding buttonVariants", () => {
-	test("a loading-only button gets the square width and no horizontal padding", () => {
+	test("a loading-only button keeps its padding and takes no fixed width", () => {
 		for (const size of BUTTON_SIZES) {
 			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" });
+			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size });
+			expect(cls).toMatch(/\bpx-\d/);
+			expect(cls).not.toMatch(/\bw-\d/);
+		}
+	});
+
+	test("an icon-only button still gets its square width while loading", () => {
+		for (const size of BUTTON_SIZES) {
+			const layout = resolveButtonLayout({ isIconOnly: true, isLoading: true, spinnerPlacement: "only" });
 			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size });
 			expect(cls).toMatch(/\bw-(9|11|13)\b/);
 			expect(cls).not.toMatch(/\bpx-\d/);

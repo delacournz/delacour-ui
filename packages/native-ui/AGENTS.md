@@ -152,17 +152,26 @@ The reference implementation for the patterns above.
   pressables in this library.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
-  children and collapses the button to the same square footprint as
-  `isIconOnly`, carrying the label onto `accessibilityLabel` so a screen reader
-  still has a name to read.
+  children and centres the spinner in the footprint the button already has,
+  carrying the label onto `accessibilityLabel` so a screen reader still has a
+  name to read. `only` never squares the button on its own; pair it with
+  `isIconOnly` when a square is what you want.
 - **Loading is not disabled.** `isLoading` blocks the press and announces the
   button as *busy*, but keeps full contrast: the spinner already says the press
   landed, and dimming reads as "this control is unavailable". `isDimmedWhileLoading`
   opts into the faded treatment where a caller wants it.
-- **The width snap while loading is deliberate.** There is no layout animation:
-  Pressable's `Animated.View` already runs a `useAnimatedStyle` on `opacity` and
-  `transform`, and a native layout transition on the same view fights it for
-  prop ownership. A caller who needs a stable width pins it (`w-full`, `min-w-*`).
+- **A stretched button does not change width while loading**, because `only`
+  keeps its footprint. In a *content-width* container — a `flex-row` — it still
+  shrinks to the spinner, and that snap is un-animated on purpose: Pressable's
+  `Animated.View` already runs a `useAnimatedStyle` on `opacity` and `transform`,
+  and a native layout transition on the same view fights it for prop ownership.
+  A caller who needs a stable width in a row pins it (`w-full`, `min-w-*`).
+- **A definite width defeats `alignItems: stretch`.** A stretch-aligned child
+  with a definite cross size resolves to cross-*start*, not centre — so any
+  control that conditionally takes a fixed width inside a gap column jumps to
+  the left edge unless it also sets `self-center`. This is what made an earlier
+  `only` implementation collapse a full-width button into a small box flush
+  left. Prefer not taking the width at all.
 
 ## Spinner
 

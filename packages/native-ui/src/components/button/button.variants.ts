@@ -105,7 +105,7 @@ export const buttonVariants = tv({
 
 /** Layout facts for a button, once loading state and spinner placement are folded together. */
 export type ButtonLayout = {
-	/** Square footprint — an icon-only button, or one showing nothing but its spinner. */
+	/** Square footprint. Loading never turns this on by itself. */
 	isIconOnly: boolean;
 	/** The spinner has replaced the children entirely. */
 	isSpinnerOnly: boolean;
@@ -116,10 +116,12 @@ export type ButtonLayout = {
 /**
  * Folds `isLoading` and `spinnerPlacement` into the facts the root needs.
  *
- * `only` collapses to the same square footprint as `isIconOnly` rather than
- * introducing a second width axis in {@link buttonVariants}: a square that also
- * matched the `px-*` compounds would squeeze its own content, and tailwind-merge
- * would not resolve it because width and padding do not conflict.
+ * `only` swaps the content out but leaves the footprint alone — it never squares
+ * a button the caller did not already mark `isIconOnly`. Taking a fixed width
+ * here would defeat the parent's `alignItems: stretch`, and a stretch-aligned
+ * child with a definite cross size resolves to cross-*start*: a full-width
+ * button would snap to a small box flush against the left edge the moment it
+ * started loading. Pair `only` with `isIconOnly` when a square is wanted.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
@@ -133,7 +135,7 @@ export function resolveButtonLayout({
 	spinnerPlacement?: ButtonSpinnerPlacement;
 }): ButtonLayout {
 	if (!isLoading) return { isIconOnly, isSpinnerOnly: false, spinnerSide: null };
-	if (spinnerPlacement === "only") return { isIconOnly: true, isSpinnerOnly: true, spinnerSide: null };
+	if (spinnerPlacement === "only") return { isIconOnly, isSpinnerOnly: true, spinnerSide: null };
 	return { isIconOnly, isSpinnerOnly: false, spinnerSide: spinnerPlacement };
 }
 

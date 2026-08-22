@@ -45,6 +45,16 @@ function LoadingButton({
 	);
 }
 
+function IconOnlyLoadingButton(): ReactElement {
+	const [isLoading, start] = useTransientLoading();
+
+	return (
+		<Button accessibilityLabel="Favourite" isIconOnly isLoading={isLoading} onPress={start} spinnerPlacement="only">
+			<Icon icon={IconHeart} />
+		</Button>
+	);
+}
+
 function SizedLoadingButton({ size }: { size: (typeof BUTTON_SIZES)[number] }): ReactElement {
 	const [isLoading, start] = useTransientLoading();
 
@@ -183,10 +193,18 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Spinner placement">
+				<Text className="text-muted-foreground text-sm">
+					`only` drops the label but keeps the button&apos;s footprint — these stay full width while loading. Pair it
+					with `isIconOnly` for a square.
+				</Text>
 				<View className="gap-3">
 					{BUTTON_SPINNER_PLACEMENTS.map((placement) => (
 						<LoadingButton key={placement} label={`placement ${placement}`} spinnerPlacement={placement} />
 					))}
+				</View>
+				<View className="flex-row items-center gap-3">
+					<IconOnlyLoadingButton />
+					<Text className="text-muted-foreground text-sm">isIconOnly + only</Text>
 				</View>
 			</Section>
 

@@ -34,15 +34,26 @@ src/
 ├── components/
 │   ├── button/
 │   │   ├── index.ts              → @delacour/native-ui/button
-│   │   ├── button.tsx            Root, compound parts
-│   │   ├── button.context.tsx    ButtonContext, useButton(), useButtonContext()
+│   │   ├── button.tsx            Root + the Object.assign compound surface
+│   │   ├── button-label.tsx      Button.Label
+│   │   ├── button-start-content.tsx  Button.StartContent
+│   │   ├── button-end-content.tsx    Button.EndContent
+│   │   ├── button.context.tsx    ButtonContext, useButton(), useButtonContext(), useButtonPart()
+│   │   ├── button.types.ts       Prop types shared by two or more parts
 │   │   ├── button.variants.ts    Pure tv() definitions, no RN imports
 │   │   └── button.variants.test.ts
 │   ├── icon/
 │   ├── list-group/
 │   │   ├── index.ts              → @delacour/native-ui/list-group
-│   │   ├── list-group.tsx        Root, Item and the five Item slots
-│   │   ├── list-group.context.tsx  ListGroupContext, useListGroup()
+│   │   ├── list-group.tsx        Root + the Object.assign compound surface
+│   │   ├── list-group-item.tsx   ListGroup.Item, and the bare-text wrap it owns
+│   │   ├── list-group-item-prefix.tsx       ListGroup.ItemPrefix
+│   │   ├── list-group-item-content.tsx      ListGroup.ItemContent
+│   │   ├── list-group-item-title.tsx        ListGroup.ItemTitle
+│   │   ├── list-group-item-description.tsx  ListGroup.ItemDescription
+│   │   ├── list-group-item-suffix.tsx       ListGroup.ItemSuffix
+│   │   ├── list-group.context.tsx  ListGroupContext, useListGroup(), useListGroupPart()
+│   │   ├── list-group.types.ts     Prop types shared by two or more parts
 │   │   ├── list-group.variants.ts  Pure tv() + feedback map, no RN imports
 │   │   └── list-group.variants.test.ts
 │   ├── pressable/
@@ -53,7 +64,10 @@ src/
 │   ├── separator/
 │   └── spinner/
 │       ├── index.ts              → @delacour/native-ui/spinner
-│       ├── spinner.tsx           Root, Spinner.Content, default arc glyph
+│       ├── spinner.tsx           Root + the Object.assign compound surface
+│       ├── spinner-content.tsx   Spinner.Content, the rotating layer
+│       ├── spinner-arc.tsx       The default arc glyph
+│       ├── spinner.context.tsx   SpinnerContext, useSpinner(), useSpinnerContext()
 │       ├── spinner.variants.ts   Pure tv() + resolvers, no RN imports
 │       └── spinner.variants.test.ts
 ├── hooks/            use-controllable-state, use-theme-color
@@ -77,7 +91,8 @@ size and colour for its whole subtree instead of every call site repeating them.
 through context with dot-notation sub-components, plus a `useX()` hook so a
 custom child can match the parent without prop drilling. Example: `Button` with
 `Button.Label`, `Button.StartContent`, `Button.EndContent` and `useButton()`.
-Reach for this over adding boolean props.
+Reach for this over adding boolean props. See **Compound component layout**
+below for how the files are arranged.
 
 **C — `tv()` variants.** Size and variant axes defined in a `*.variants.ts`
 sibling, never inline in the component. Example: `button.variants.ts`.
@@ -101,6 +116,15 @@ sibling, never inline in the component. Example: `button.variants.ts`.
    for a cycle, so `ButtonContext` would be `undefined` at import time and the
    app would red-box on a cold start. Do not "tidy" these imports back to
    `../button`.
+
+   *The same hazard applies inside a folder.* Now that compound parts have their
+   own files, there are two new ways to close a cycle. **A part must never
+   import its own folder's `index.ts`, and never import its own root**
+   (`./button`, `./spinner`). It reaches shared state through the
+   `{name}.context.tsx` leaf and shared prop types through `{name}.types.ts` —
+   both import nothing but React and React Native types. `spinner.context.tsx`
+   exists precisely for this: `SpinnerContent` needs `useSpinner`, and reading it
+   from `./spinner` would close `spinner.tsx ⇄ spinner-content.tsx`.
 4. **Run `bun run gen-exports`** after adding or removing a component folder or
    a file under `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
    `exports` map. A component folder without an `index.ts` fails the script.
@@ -189,7 +213,13 @@ that rotates.
   then to `md` on `foreground`. An explicit `size` or `color` always wins — the
   same precedence `Icon` follows.
 - **Any child is the glyph**, wrapped in a `Spinner.Content` automatically so it
-  still rotates. Write `Spinner.Content` out by hand only to set a `speed`.
+  still rotates — a custom icon or asset needs nothing but to be passed in.
+  `Spinner.Content` is the rotating layer itself, so write it out by hand only
+  when that layer needs styling.
+- **`speed` belongs to the root**, not to `Spinner.Content`. It rides the
+  spinner's context alongside the resolved size and colour, so every part of the
+  spinner turns at one rate and a caller never reaches past the root to set it:
+  `<Spinner speed={0.7}>` — 1 is one full turn per 900ms.
 - **The default glyph is drawn from SVG primitives**, not a Central Icon — the
   set has no loader glyph. Rule 5 governs *icons*; primitives are fine.
 - **The rotation sets `ReduceMotion.Never` deliberately.** Under the default
@@ -303,12 +333,68 @@ live there so the whole matrix is reachable from `bun test`.
 ## Adding a component
 
 1. `src/components/{name}/{name}.tsx`, plus `{name}.variants.ts` if it has
-   variants, plus an `index.ts` re-exporting the component and its types.
+   variants, plus an `index.ts` re-exporting the component and its types. A
+   compound component adds one file per part, a `{name}.context.tsx` and a
+   `{name}.types.ts` — see **Compound component layout**.
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
 3. Write the variant tests first; they are the part `bun test` can reach.
 4. `bun run gen-exports`.
 5. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
    it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.
+
+## Compound component layout
+
+One file per part. `button.tsx` holds the root and nothing else the parts need,
+`button-label.tsx` holds `Button.Label`. The point is navigability: a part has a
+path of its own rather than a line number in a 270-line file.
+
+The root file ends with a single `Object.assign` naming every slot:
+
+```tsx
+function ButtonRoot({ … }: ButtonProps): ReactElement { … }
+
+/**
+ * Full doc comment, with @example blocks, lives HERE — on the const.
+ */
+export const Button = Object.assign(ButtonRoot, {
+	/** One line per slot. This is what hovering `<Button.Label>` shows. */
+	Label: ButtonLabel,
+	StartContent: ButtonStartContent,
+	EndContent: ButtonEndContent,
+	displayName: "Button",
+});
+```
+
+Five things about that block are load-bearing:
+
+1. **The root must be a `function` declaration.** Passing a function
+   *expression* to `Object.assign` takes it off React Compiler's known-HOC list,
+   and the component is dropped from compilation silently — no warning, the
+   memoization simply disappears.
+2. **The doc comment goes on the `const`, never on `XRoot`.** A doc left on the
+   private root hovers as empty at the call site; the `@example` blocks are lost.
+3. **Per-slot one-liners are the reason to prefer `Object.assign`** over
+   `Button.Label = ButtonLabel`. They surface on hover at `<Button.Label>`,
+   where the trailing-assignment form showed nothing.
+4. **`displayName` is required.** React DevTools reads `displayName || name`, so
+   without it every tree row, error stack and profiler entry reads `ButtonRoot`.
+   It must sit inside the object or on the root *before* the assign —
+   `Button.displayName = …` afterwards is a type error.
+5. **A slot may not be named `name`, `length`, `caller` or `arguments`.** Those
+   are non-writable on a function and `Object.assign` throws at module init.
+
+Helpers follow their caller, not the root: `wrapTextChildren` lives in
+`list-group-item.tsx` because `ListGroup.Item` wraps its own bare text, while
+`withDividers` stays in `list-group.tsx` because the root inserts the dividers.
+Putting a part's helper in the root file closes a cycle.
+
+`{name}.types.ts` holds **only** prop types shared by two or more modules in the
+folder (`ButtonSlotProps`, `ListGroupSlotProps`, `ListGroupTextProps`). A type
+with exactly one consumer stays in that consumer's file.
+
+Parts are exported from their own module so the root can import them, but are
+**not** re-exported from `index.ts` — the public surface stays the root, its prop
+types, its context and its variants. Nothing outside reaches past the index.
 
 ## Consuming from an app
 

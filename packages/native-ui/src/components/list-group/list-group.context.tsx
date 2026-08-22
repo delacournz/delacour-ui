@@ -46,3 +46,19 @@ export function useListGroup(): ListGroupContextValue {
 	}
 	return context;
 }
+
+/**
+ * The enclosing list group's context, for a compound part that cannot work
+ * without one.
+ *
+ * Internal: deliberately not re-exported from `index.ts`. A caller outside the
+ * library wants {@link useListGroup}, whose error message names the hook rather
+ * than a part.
+ */
+export function useListGroupPart(component: string): ListGroupContextValue {
+	const context = useListGroupContext();
+	if (!context) {
+		throw new Error(`${component} must be rendered inside a <ListGroup>.`);
+	}
+	return context;
+}

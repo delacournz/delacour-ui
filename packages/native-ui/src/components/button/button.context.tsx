@@ -46,3 +46,19 @@ export function useButton(): ButtonContextValue {
 	}
 	return context;
 }
+
+/**
+ * The enclosing button's context, for a compound part that cannot work without
+ * one.
+ *
+ * Internal: deliberately not re-exported from `index.ts`. A caller outside the
+ * library wants {@link useButton}, whose error message names the hook rather
+ * than a part.
+ */
+export function useButtonPart(component: string): ButtonContextValue {
+	const context = useButtonContext();
+	if (!context) {
+		throw new Error(`${component} must be rendered inside a <Button>.`);
+	}
+	return context;
+}

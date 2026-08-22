@@ -1,10 +1,9 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
-import { Text, type TextProps, View, type ViewProps } from "react-native";
 import { cn } from "../../lib/cn";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
-import { type ButtonContextValue, ButtonProvider, useButtonContext } from "./button.context";
+import { type ButtonContextValue, ButtonProvider } from "./button.context";
 import {
 	BUTTON_FOREGROUND_TOKEN,
 	BUTTON_ICON_SIZE,
@@ -12,18 +11,12 @@ import {
 	type ButtonSize,
 	type ButtonSpinnerPlacement,
 	type ButtonVariant,
-	buttonLabelVariants,
 	buttonVariants,
 	resolveButtonLayout,
 } from "./button.variants";
-
-function useButtonPart(component: string): ButtonContextValue {
-	const context = useButtonContext();
-	if (!context) {
-		throw new Error(`${component} must be rendered inside a <Button>.`);
-	}
-	return context;
-}
+import { ButtonEndContent } from "./button-end-content";
+import { ButtonLabel } from "./button-label";
+import { ButtonStartContent } from "./button-start-content";
 
 export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" | "pressedOpacity" | "pressedScale"> & {
 	variant?: ButtonVariant;
@@ -40,44 +33,7 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 	children?: ReactNode;
 };
 
-/**
- * A pressable action, composed from parts rather than configured by flags.
- *
- * `variant`, `size` and the button's state reach the sub-components through
- * context, so `Button.Label` picks its own text colour. That indirection is not
- * incidental: a React Native `View` does not cascade colour to a `Text`
- * descendant the way a DOM element would, so a colour set on the root is lost.
- *
- * Plain string or number children are wrapped in a `Button.Label`
- * automatically; pass the compound parts when a layout needs more control.
- *
- * Icons are composed in, not passed as props. Anything in the subtree inherits
- * the button's icon size and its variant's colour, so an `Icon` needs nothing
- * but the glyph — and a `Spinner` needs nothing at all.
- *
- * `isLoading` blocks presses and announces the button as busy, but does not dim
- * it: a spinner already says the press landed. `isDimmedWhileLoading` opts into
- * the faded treatment.
- *
- * A button is a `Pressable`, so `feedback`, `haptic` and the rest are inherited
- * rather than restated here. Only the default differs: `scale`, the spring the
- * rest of the library's controls press with.
- *
- * @example
- * <Button haptic="selection" onPress={next}>
- *   <Button.Label>Continue</Button.Label>
- *   <Icon icon={IconArrowRight} />
- * </Button>
- *
- * @example
- * <Button isLoading={isSaving} onPress={save}>Save</Button>
- *
- * @example
- * <Button accessibilityLabel="Favourite" isIconOnly variant="ghost">
- *   <Icon icon={IconHeart} />
- * </Button>
- */
-export function Button({
+function ButtonRoot({
 	variant = "primary",
 	size = "md",
 	isIconOnly = false,
@@ -232,23 +188,49 @@ function wrapTextChildren(children: ReactNode): ReactNode {
 	return output;
 }
 
-export type ButtonLabelProps = TextProps & { className?: string };
-
-function ButtonLabel({ className, ...props }: ButtonLabelProps): ReactElement {
-	const { variant, size } = useButtonPart("Button.Label");
-	return <Text className={buttonLabelVariants({ className, size, variant })} {...props} />;
-}
-
-export type ButtonSlotProps = ViewProps & { className?: string };
-
-function ButtonStartContent({ className, ...props }: ButtonSlotProps): ReactElement {
-	return <View className={cn("items-center justify-center", className)} {...props} />;
-}
-
-function ButtonEndContent({ className, ...props }: ButtonSlotProps): ReactElement {
-	return <View className={cn("items-center justify-center", className)} {...props} />;
-}
-
-Button.Label = ButtonLabel;
-Button.StartContent = ButtonStartContent;
-Button.EndContent = ButtonEndContent;
+/**
+ * A pressable action, composed from parts rather than configured by flags.
+ *
+ * `variant`, `size` and the button's state reach the sub-components through
+ * context, so `Button.Label` picks its own text colour. That indirection is not
+ * incidental: a React Native `View` does not cascade colour to a `Text`
+ * descendant the way a DOM element would, so a colour set on the root is lost.
+ *
+ * Plain string or number children are wrapped in a `Button.Label`
+ * automatically; pass the compound parts when a layout needs more control.
+ *
+ * Icons are composed in, not passed as props. Anything in the subtree inherits
+ * the button's icon size and its variant's colour, so an `Icon` needs nothing
+ * but the glyph — and a `Spinner` needs nothing at all.
+ *
+ * `isLoading` blocks presses and announces the button as busy, but does not dim
+ * it: a spinner already says the press landed. `isDimmedWhileLoading` opts into
+ * the faded treatment.
+ *
+ * A button is a `Pressable`, so `feedback`, `haptic` and the rest are inherited
+ * rather than restated here. Only the default differs: `scale`, the spring the
+ * rest of the library's controls press with.
+ *
+ * @example
+ * <Button haptic="selection" onPress={next}>
+ *   <Button.Label>Continue</Button.Label>
+ *   <Icon icon={IconArrowRight} />
+ * </Button>
+ *
+ * @example
+ * <Button isLoading={isSaving} onPress={save}>Save</Button>
+ *
+ * @example
+ * <Button accessibilityLabel="Favourite" isIconOnly variant="ghost">
+ *   <Icon icon={IconHeart} />
+ * </Button>
+ */
+export const Button = Object.assign(ButtonRoot, {
+	/** The button's text. Picks its colour and type scale from the button's variant and size. */
+	Label: ButtonLabel,
+	/** A centred wrapper for leading content that is not an `Icon`. */
+	StartContent: ButtonStartContent,
+	/** A centred wrapper for trailing content that is not an `Icon`. */
+	EndContent: ButtonEndContent,
+	displayName: "Button",
+});

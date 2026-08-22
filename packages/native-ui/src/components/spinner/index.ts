@@ -1,4 +1,5 @@
-export { Spinner, type SpinnerContentProps, type SpinnerProps, useSpinner } from "./spinner";
+export { Spinner, type SpinnerProps } from "./spinner";
+export { useSpinner } from "./spinner.context";
 export {
 	resolveSpinnerColor,
 	resolveSpinnerSize,
@@ -14,3 +15,4 @@ export {
 	spinnerContentVariants,
 	spinnerVariants,
 } from "./spinner.variants";
+export type { SpinnerContentProps } from "./spinner-content";

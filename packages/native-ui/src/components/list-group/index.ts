@@ -1,18 +1,11 @@
-export {
-	ListGroup,
-	type ListGroupIconProps,
-	type ListGroupItemProps,
-	type ListGroupItemSuffixProps,
-	type ListGroupProps,
-	type ListGroupSlotProps,
-	type ListGroupTextProps,
-} from "./list-group";
+export { ListGroup, type ListGroupProps } from "./list-group";
 export {
 	type ListGroupContextValue,
 	ListGroupProvider,
 	useListGroup,
 	useListGroupContext,
 } from "./list-group.context";
+export type { ListGroupSlotProps, ListGroupTextProps } from "./list-group.types";
 export {
 	LIST_GROUP_FOREGROUND_TOKEN,
 	LIST_GROUP_ICON_SIZE,
@@ -32,3 +25,5 @@ export {
 	listGroupItemVariants,
 	listGroupVariants,
 } from "./list-group.variants";
+export type { ListGroupItemProps } from "./list-group-item";
+export type { ListGroupIconProps, ListGroupItemSuffixProps } from "./list-group-item-suffix";

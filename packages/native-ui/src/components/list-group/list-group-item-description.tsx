@@ -1,0 +1,11 @@
+import type { ReactElement } from "react";
+import { Text } from "react-native";
+import { useListGroupPart } from "./list-group.context";
+import type { ListGroupTextProps } from "./list-group.types";
+import { listGroupItemDescriptionVariants } from "./list-group.variants";
+
+/** The row's secondary line, a step down in scale and on the muted token. */
+export function ListGroupItemDescription({ className, ...props }: ListGroupTextProps): ReactElement {
+	const { size } = useListGroupPart("ListGroup.ItemDescription");
+	return <Text className={listGroupItemDescriptionVariants({ className, size })} {...props} />;
+}

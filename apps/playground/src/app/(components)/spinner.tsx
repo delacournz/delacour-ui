@@ -48,7 +48,7 @@ export default function SpinnerGallery(): ReactElement {
 
 			<Section title="Custom glyph">
 				<Text className="text-muted-foreground text-sm">
-					A bare child is wrapped automatically so it still rotates. `Spinner.Content` sets the speed.
+					A bare child is wrapped automatically so it still rotates. `speed` sets the rate.
 				</Text>
 				<View className="flex-row items-center gap-6">
 					<View className="items-center gap-2">
@@ -58,17 +58,13 @@ export default function SpinnerGallery(): ReactElement {
 						<Text className="text-muted-foreground text-xs">bare child</Text>
 					</View>
 					<View className="items-center gap-2">
-						<Spinner color="warning" size="lg">
-							<Spinner.Content speed={0.4}>
-								<Icon icon={IconArrowsRepeatCircle} />
-							</Spinner.Content>
+						<Spinner color="warning" size="lg" speed={0.4}>
+							<Icon icon={IconArrowsRepeatCircle} />
 						</Spinner>
 						<Text className="text-muted-foreground text-xs">speed 0.4</Text>
 					</View>
 					<View className="items-center gap-2">
-						<Spinner size="lg">
-							<Spinner.Content speed={2.5} />
-						</Spinner>
+						<Spinner size="lg" speed={2.5} />
 						<Text className="text-muted-foreground text-xs">speed 2.5</Text>
 					</View>
 				</View>

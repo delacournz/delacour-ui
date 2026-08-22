@@ -1,5 +1,6 @@
-export { Button, type ButtonLabelProps, type ButtonProps, type ButtonSlotProps } from "./button";
+export { Button, type ButtonProps } from "./button";
 export { type ButtonContextValue, ButtonProvider, useButton, useButtonContext } from "./button.context";
+export type { ButtonSlotProps } from "./button.types";
 export {
 	BUTTON_FOREGROUND_TOKEN,
 	BUTTON_ICON_SIZE,
@@ -15,3 +16,4 @@ export {
 	buttonVariants,
 	resolveButtonLayout,
 } from "./button.variants";
+export type { ButtonLabelProps } from "./button-label";

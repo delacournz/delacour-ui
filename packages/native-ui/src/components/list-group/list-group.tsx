@@ -1,34 +1,19 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
-import { Text, type TextProps, View, type ViewProps } from "react-native";
-import { IconChevronRight } from "../../icons/central";
-import { Icon, IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableProps } from "../pressable";
+import { View, type ViewProps } from "react-native";
 import { Separator } from "../separator";
-import { type ListGroupContextValue, ListGroupProvider, useListGroupContext } from "./list-group.context";
+import { type ListGroupContextValue, ListGroupProvider } from "./list-group.context";
 import {
-	LIST_GROUP_FOREGROUND_TOKEN,
-	LIST_GROUP_ICON_SIZE,
-	LIST_GROUP_SUFFIX_ICON_SIZE,
-	LIST_GROUP_SUFFIX_ICON_TOKEN,
 	type ListGroupSize,
 	type ListGroupVariant,
 	listGroupDividerVariants,
-	listGroupItemContentVariants,
-	listGroupItemDescriptionVariants,
-	listGroupItemPrefixVariants,
-	listGroupItemSuffixVariants,
-	listGroupItemTitleVariants,
-	listGroupItemVariants,
 	listGroupVariants,
 } from "./list-group.variants";
-
-function useListGroupPart(component: string): ListGroupContextValue {
-	const context = useListGroupContext();
-	if (!context) {
-		throw new Error(`${component} must be rendered inside a <ListGroup>.`);
-	}
-	return context;
-}
+import { ListGroupItem } from "./list-group-item";
+import { ListGroupItemContent } from "./list-group-item-content";
+import { ListGroupItemDescription } from "./list-group-item-description";
+import { ListGroupItemPrefix } from "./list-group-item-prefix";
+import { ListGroupItemSuffix } from "./list-group-item-suffix";
+import { ListGroupItemTitle } from "./list-group-item-title";
 
 export type ListGroupProps = ViewProps & {
 	variant?: ListGroupVariant;
@@ -39,34 +24,7 @@ export type ListGroupProps = ViewProps & {
 	children?: ReactNode;
 };
 
-/**
- * A surface grouping related rows under one rounded, clipped container.
- *
- * `size` and `variant` reach the sub-components through context, so a row's
- * title picks its own text colour and type scale. That indirection is not
- * incidental: a React Native `View` does not cascade colour to a `Text`
- * descendant the way a DOM element would.
- *
- * Dividers are inserted between adjacent children rather than written out at
- * every call site, inset to line up with the rows' own padding. A `Separator`
- * placed by hand is respected — no divider is added on either side of it — so a
- * caller can still control one gap without turning the whole feature off.
- *
- * @example
- * <ListGroup>
- *   <ListGroup.Item onPress={openProfile}>
- *     <ListGroup.ItemPrefix>
- *       <Icon icon={IconUser} />
- *     </ListGroup.ItemPrefix>
- *     <ListGroup.ItemContent>
- *       <ListGroup.ItemTitle>Personal info</ListGroup.ItemTitle>
- *       <ListGroup.ItemDescription>Name, email, phone</ListGroup.ItemDescription>
- *     </ListGroup.ItemContent>
- *     <ListGroup.ItemSuffix />
- *   </ListGroup.Item>
- * </ListGroup>
- */
-export function ListGroup({
+function ListGroupRoot({
 	variant = "default",
 	size = "md",
 	isDivided = true,
@@ -113,162 +71,45 @@ function isSeparator(node: ReactNode): boolean {
 	return isValidElement(node) && node.type === Separator;
 }
 
-export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled"> & {
-	isDisabled?: boolean;
-	children?: ReactNode;
-};
-
 /**
- * One row of a list group.
+ * A surface grouping related rows under one rounded, clipped container.
  *
- * Plain string or number children are wrapped in a title inside a content
- * column; pass the compound parts when a row needs a prefix, a description or a
- * suffix. React Native cannot render a string outside a `<Text>`, so the wrap is
- * not a convenience — without it `<ListGroup.Item>Wi-Fi</ListGroup.Item>` would
- * crash.
+ * `size` and `variant` reach the sub-components through context, so a row's
+ * title picks its own text colour and type scale. That indirection is not
+ * incidental: a React Native `View` does not cascade colour to a `Text`
+ * descendant the way a DOM element would.
  *
- * A row is a `Pressable`, so `feedback`, `haptic` and the rest come from there
- * rather than being restated here. Only the default differs: `fade`, because a
- * full-bleed row that scales reads as the whole card flexing rather than as one
- * row responding.
+ * Dividers are inserted between adjacent children rather than written out at
+ * every call site, inset to line up with the rows' own padding. A `Separator`
+ * placed by hand is respected — no divider is added on either side of it — so a
+ * caller can still control one gap without turning the whole feature off.
+ *
+ * @example
+ * <ListGroup>
+ *   <ListGroup.Item onPress={openProfile}>
+ *     <ListGroup.ItemPrefix>
+ *       <Icon icon={IconUser} />
+ *     </ListGroup.ItemPrefix>
+ *     <ListGroup.ItemContent>
+ *       <ListGroup.ItemTitle>Personal info</ListGroup.ItemTitle>
+ *       <ListGroup.ItemDescription>Name, email, phone</ListGroup.ItemDescription>
+ *     </ListGroup.ItemContent>
+ *     <ListGroup.ItemSuffix />
+ *   </ListGroup.Item>
+ * </ListGroup>
  */
-function ListGroupItem({
-	feedback = "fade",
-	isDisabled = false,
-	className,
-	children,
-	...props
-}: ListGroupItemProps): ReactElement {
-	const { size } = useListGroupPart("ListGroup.Item");
-	const content = useMemo(() => wrapTextChildren(children), [children]);
-
-	return (
-		<Pressable
-			className={listGroupItemVariants({ className, isDisabled, size })}
-			disabled={isDisabled}
-			feedback={feedback}
-			{...props}
-		>
-			{content}
-		</Pressable>
-	);
-}
-
-/**
- * Wraps bare text children in a title inside a content column.
- *
- * Consecutive strings and numbers are collected into a single title rather than
- * one each — `Row {index}` is one piece of text, and wrapping the parts
- * separately would space them apart by the row's gap.
- */
-function wrapTextChildren(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(
-			<ListGroupItemContent key={`content-${output.length}`}>
-				<ListGroupItemTitle>{run.join("")}</ListGroupItemTitle>
-			</ListGroupItemContent>
-		);
-		run = [];
-	};
-
-	for (const child of items) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output;
-}
-
-export type ListGroupSlotProps = ViewProps & { className?: string; children?: ReactNode };
-
-/**
- * The leading slot of a row.
- *
- * Its subtree inherits the list group's icon size and the foreground token, so a
- * bare `<Icon icon={IconWifi} />` comes out right with nothing said at the call
- * site — the same cascade a `Button` gives its icons.
- */
-function ListGroupItemPrefix({ className, children, ...props }: ListGroupSlotProps): ReactElement {
-	const { size } = useListGroupPart("ListGroup.ItemPrefix");
-	const iconDefaults = useMemo(
-		() => ({ color: LIST_GROUP_FOREGROUND_TOKEN, size: LIST_GROUP_ICON_SIZE[size] }),
-		[size]
-	);
-
-	return (
-		<View className={listGroupItemPrefixVariants({ className })} {...props}>
-			<IconDefaultsProvider value={iconDefaults}>{children}</IconDefaultsProvider>
-		</View>
-	);
-}
-
-/** The text column of a row, taking whatever width the prefix and suffix leave. */
-function ListGroupItemContent({ className, ...props }: ListGroupSlotProps): ReactElement {
-	return <View className={listGroupItemContentVariants({ className })} {...props} />;
-}
-
-export type ListGroupIconProps = {
-	/** Edge length in points. Defaults to the list group's suffix icon size. */
-	size?: number;
-	/** A theme colour token or a literal. Defaults to `muted-foreground`. */
-	color?: string;
-};
-
-export type ListGroupItemSuffixProps = ListGroupSlotProps & {
-	/** Tunes the default chevron. Ignored once the suffix has children of its own. */
-	iconProps?: ListGroupIconProps;
-};
-
-/**
- * The trailing slot of a row, showing a chevron unless given content.
- *
- * The chevron is a hint that the row leads somewhere, so it sits on the muted
- * token and a step below the leading icon rather than competing with either.
- */
-function ListGroupItemSuffix({ className, iconProps, children, ...props }: ListGroupItemSuffixProps): ReactElement {
-	const { size } = useListGroupPart("ListGroup.ItemSuffix");
-	const hasContent = Children.toArray(children).length > 0;
-
-	return (
-		<View className={listGroupItemSuffixVariants({ className })} {...props}>
-			{hasContent ? (
-				children
-			) : (
-				<Icon
-					color={iconProps?.color ?? LIST_GROUP_SUFFIX_ICON_TOKEN}
-					icon={IconChevronRight}
-					size={iconProps?.size ?? LIST_GROUP_SUFFIX_ICON_SIZE[size]}
-				/>
-			)}
-		</View>
-	);
-}
-
-export type ListGroupTextProps = TextProps & { className?: string };
-
-function ListGroupItemTitle({ className, ...props }: ListGroupTextProps): ReactElement {
-	const { size } = useListGroupPart("ListGroup.ItemTitle");
-	return <Text className={listGroupItemTitleVariants({ className, size })} {...props} />;
-}
-
-function ListGroupItemDescription({ className, ...props }: ListGroupTextProps): ReactElement {
-	const { size } = useListGroupPart("ListGroup.ItemDescription");
-	return <Text className={listGroupItemDescriptionVariants({ className, size })} {...props} />;
-}
-
-ListGroup.Item = ListGroupItem;
-ListGroup.ItemPrefix = ListGroupItemPrefix;
-ListGroup.ItemContent = ListGroupItemContent;
-ListGroup.ItemTitle = ListGroupItemTitle;
-ListGroup.ItemDescription = ListGroupItemDescription;
-ListGroup.ItemSuffix = ListGroupItemSuffix;
+export const ListGroup = Object.assign(ListGroupRoot, {
+	/** One row of a list group. Bare text children are wrapped in a title inside a content column. */
+	Item: ListGroupItem,
+	/** The leading slot of a row. Its subtree inherits the group's icon size and foreground token. */
+	ItemPrefix: ListGroupItemPrefix,
+	/** The text column of a row, taking whatever width the prefix and suffix leave. */
+	ItemContent: ListGroupItemContent,
+	/** The row's primary line. Carries its own colour — a `View` cannot cascade one to a `Text`. */
+	ItemTitle: ListGroupItemTitle,
+	/** The row's secondary line, a step down in scale and on the muted token. */
+	ItemDescription: ListGroupItemDescription,
+	/** The trailing slot of a row, showing a chevron unless given content. */
+	ItemSuffix: ListGroupItemSuffix,
+	displayName: "ListGroup",
+});

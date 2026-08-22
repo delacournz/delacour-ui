@@ -1,0 +1,6 @@
+[install]
+# Metro resolves modules by walking node_modules directories and cannot see
+# through Bun's default isolated layout (packages hidden under node_modules/.bun).
+# A hoisted, flat node_modules is what React Native tooling expects; without
+# this, Metro fails to resolve @expo/metro-runtime and the bundle never builds.
+linker = "hoisted"

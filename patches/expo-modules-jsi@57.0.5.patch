@@ -1,0 +1,57 @@
+diff --git a/node_modules/expo-modules-jsi/.bun-tag-49ecb77073bb77de b/.bun-tag-49ecb77073bb77de
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h b/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h
+index 6115e87a6e430f55570fbf759283dca0cca1ee80..31772656ad27285e1e0ddf1a24b44d5817acfac5 100644
+--- a/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h
++++ b/apple/Sources/ExpoModulesJSI-Cxx/include/RuntimeScheduler.h
+@@ -5,6 +5,13 @@
+ #include <atomic>
+ #include <swift/bridging>
+ 
++namespace expo {
++class RuntimeScheduler;
++} // namespace expo
++
++void retainRuntimeScheduler(expo::RuntimeScheduler *scheduler);
++void releaseRuntimeScheduler(expo::RuntimeScheduler *scheduler);
++
+ namespace expo {
+ 
+ /**
+@@ -18,7 +25,7 @@ namespace expo {
+  Priority values mirror facebook::react::SchedulerPriority — kept here as a
+  plain enum so we don't include the React header.
+  */
+-class RuntimeScheduler {
++class SWIFT_SHARED_REFERENCE(retainRuntimeScheduler, releaseRuntimeScheduler) RuntimeScheduler {
+ public:
+   enum class Priority : int {
+     ImmediatePriority = 1,
+@@ -50,7 +57,7 @@ public:
+    `scheduleTask` dispatches through `fn`, which the host implements against
+    the real react::RuntimeScheduler.
+    */
+-  SWIFT_RETURNS_RETAINED RuntimeScheduler(void *scheduler, ScheduleFn fn) noexcept
++  RuntimeScheduler(void *scheduler, ScheduleFn fn) noexcept
+       : nativeScheduler(scheduler), scheduleFn(fn) {}
+ 
+   /**
+@@ -58,7 +65,7 @@ public:
+    caller's thread — intended for standalone runtimes (e.g. tests) that have
+    no React scheduler.
+    */
+-  SWIFT_RETURNS_RETAINED RuntimeScheduler() {}
++  RuntimeScheduler() {}
+ 
+   RuntimeScheduler(const RuntimeScheduler &) = delete;
+ 
+@@ -87,7 +94,7 @@ public:
+       delete this;
+     }
+   }
+-} SWIFT_SHARED_REFERENCE(retainRuntimeScheduler, releaseRuntimeScheduler);
++};
+ 
+ } // namespace expo
+ 

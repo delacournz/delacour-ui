@@ -160,11 +160,23 @@ export function Pressable({
 	}));
 
 	const content = asChild ? (
-		renderAsChild(children, { accessibilityState: { disabled }, className, ref, style: animatedStyle, ...props })
+		renderAsChild(children, {
+			accessibilityState: { disabled },
+			accessible: true,
+			className,
+			ref,
+			style: animatedStyle,
+			...props,
+		})
 	) : (
 		<Animated.View
 			accessibilityRole="button"
 			accessibilityState={{ disabled }}
+			// Without this the view is not an accessibility element on iOS, and the
+			// role, state and label above never reach VoiceOver — a composed label
+			// on an icon-only button included. It also merges the children into one
+			// element, which is what a control should be.
+			accessible
 			className={className}
 			ref={ref}
 			style={animatedStyle}

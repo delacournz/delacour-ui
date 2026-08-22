@@ -4,7 +4,6 @@
 @import "@delacour/native-ui/styles";
 
 @source "../**/*.{ts,tsx}";
-@source "../../app/**/*.{ts,tsx}";
 
 /* Real workspace path, not node_modules: Bun symlinks workspace packages and
    Tailwind's scanner cannot follow symlinks, so the library's classes would be

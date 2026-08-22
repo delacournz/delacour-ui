@@ -3,7 +3,7 @@
 	"extends": "//",
 	"root": false,
 	"files": {
-		"includes": ["src/**/*", "app/**/*", "!src/uniwind-types.d.ts"]
+		"includes": ["src/**/*", "!src/uniwind-types.d.ts"]
 	},
 	"css": {
 		"parser": { "tailwindDirectives": true }
@@ -12,7 +12,7 @@
 		{
 			// Expo Router derives route names from filenames; its conventions
 			// (_layout, [id], +not-found) are not kebab-case.
-			"includes": ["app/**/*"],
+			"includes": ["src/app/**/*"],
 			"linter": {
 				"rules": {
 					"style": { "useFilenamingConvention": "off" }

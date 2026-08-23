@@ -52,8 +52,14 @@ export type HapticFeedback = "selection" | "light" | "medium" | "heavy" | "succe
  * Every branch is a worklet, so this runs inside the gesture callback itself —
  * the tap and the haptic land in the same frame rather than waiting on a round
  * trip to the JS thread.
+ *
+ * Exported because it is the library's *only* haptic vocabulary, and a second
+ * component with a gesture of its own — `Slider`, whose pan ticks as the value
+ * crosses a step — must reach this switch rather than fork one. It is safe to
+ * import across a component folder: nothing in `pressable/` imports a component
+ * that could import it back, so there is no cycle for Metro to serve half of.
  */
-function playHaptic(feedback: HapticFeedback): void {
+export function playHaptic(feedback: HapticFeedback): void {
 	"worklet";
 	switch (feedback) {
 		case "selection":

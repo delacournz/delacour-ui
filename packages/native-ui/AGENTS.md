@@ -144,6 +144,17 @@ src/
 │   ├── separator/
 │   │   ├── index.ts              → @delacour/native-ui/separator
 │   │   └── separator.tsx         The tv() and the component, in one file
+│   ├── slider/
+│   │   ├── index.ts              → @delacour/native-ui/slider
+│   │   ├── slider.tsx            Root + the Object.assign compound surface
+│   │   ├── slider-output.tsx     Slider.Output, the Text.Label readout
+│   │   ├── slider-track.tsx      Slider.Track — owns the pan, the measurement, the haptic
+│   │   ├── slider-fill.tsx       Slider.Fill
+│   │   ├── slider-thumb.tsx      Slider.Thumb, and the whole accessibility surface
+│   │   ├── slider.context.tsx    SliderContext, useSlider(), useSliderContext(), useSliderPart()
+│   │   ├── slider.types.ts       Prop types shared by two or more parts
+│   │   ├── slider.variants.ts    Pure tv() slots + the geometry worklets, no RN imports
+│   │   └── slider.variants.test.ts
 │   ├── spinner/
 │   │   ├── index.ts              → @delacour/native-ui/spinner
 │   │   ├── spinner.tsx           Root + the Object.assign compound surface
@@ -653,6 +664,183 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   agreeing. The two-step offset is what leaves the tick breathing room, and a
   test pins the *offset* rather than the points, so the icon scale can be
   retuned without the test becoming a transcript of it.
+
+## Slider
+
+A value picked by dragging along a track — one value, or a range. Compound root
+plus `Slider.Output`, `Slider.Track`, `Slider.Fill` and `Slider.Thumb`. The
+package's first drag-driven control, and its first `Gesture.Pan()`.
+
+- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+  Badge's and Checkbox's set. **Sizes**: `sm`, `md`, `lg`, driving the groove's
+  thickness, the thumb's diameter and the readout's type step.
+  **Orientations**: `horizontal`, `vertical`.
+- **The anatomy is written out, never assembled from props.** A range's thumb
+  count is *data*, so `Slider.Track` takes a function and is handed the settled
+  state to map over. `Radio` composes its own indicator in because a radio has
+  exactly one; a slider does not know how many it has until it is told.
+- **The root is not a `Pressable`, and neither is the thumb.** Three reasons and
+  all of them structural. `Pressable` mounts a `Gesture.Tap()` whose `onEnd`
+  fires `onPress`, so every tap-to-position would also fire a press. Its root
+  `Animated.View` already owns `opacity` and `transform` through a
+  `useAnimatedStyle` of its own, and the thumb's position *is* a `transform` —
+  two animated styles on one node fight for the same prop, the rule
+  `Radio.Indicator` states and the reason `Radio` takes no `asChild`. And a thumb
+  wrapped in its own `Pressable` would nest a descendant `Tap` inside the track's
+  ancestor `Pan`, leaving two recognisers to negotiate for one drag. What is
+  inherited is the *vocabulary*: `HapticFeedback` and `playHaptic` come from
+  `pressable.tsx`, which is exported for exactly this — one haptic switch in the
+  library, never a second.
+- **`Slider.Thumb` holds no gesture at all.** One pan on the track drives every
+  thumb, because a press 40pt along an empty groove should still lift the thumb it
+  is about to move, and a per-thumb gesture cannot know that. The grabbed scale is
+  therefore driven by an `activeIndex` shared value the track writes, not by a
+  press state the thumb owns.
+- **The value is written in `onBegin`, not only in `onUpdate`.** This is the one
+  that will bite a rewrite. A pan activates on the first *movement*, so a
+  stationary tap never reaches `onStart` or `onUpdate`: a slider that computed
+  only there would tick, lift its thumb, and then not move it. `onFinalize` is
+  likewise where the drag is reported finished, because it is the only callback
+  that fires on every path, the never-activated one included.
+- **`minDistance(0)` is what wins the touch from a scroll view**, and it is not
+  tuning. `Screen.ScrollArea` renders React Native's own `ScrollView`
+  (`Animated.ScrollView`), not Gesture Handler's, so there is no sibling handler
+  to negotiate with — the two race, and a pan that activates on the first move
+  beats a scroll view's ten-point slop on both platforms. Which is also why there
+  is **no `activeOffsetX`**: waiting for the axis to declare itself hands the
+  scroll the first move and puts a dead zone at the start of every drag.
+  **`blocksExternalGesture` is not the escape hatch it looks like** — it resolves
+  a ref to a handler tag, a plain `ScrollView` has none, and Gesture Handler drops
+  the call without an error. If Android ever hands a drag to the scroll anyway,
+  the documented fix is a nested `GestureHandlerRootView` around the slider, not
+  an offset filter.
+- **`shouldCancelWhenOutside(false)`**, where `Pressable`'s tap sets it `true`.
+  Dragging a thumb to the far end routinely leaves the track's bounds, and the
+  value has to keep tracking rather than the gesture giving up half way.
+- **On iOS, a slider inside a scroll view feels late until
+  `delaysContentTouches={false}`.** UIScrollView's default holds touch delivery to
+  its descendants for about 150ms while it decides whether the touch is a scroll.
+  Nothing inside this component can reach that — it is a prop on the scrollable,
+  so it belongs at the call site.
+- **The groove is not the touch target.** A `md` track is six points thick, which
+  is nothing to aim at, so the drag is claimed on a transparent `touchArea` padded
+  out to a real one. It is padded on the **cross axis only**, so the two boxes
+  share an origin along the axis the value is measured on — the pan reads its
+  offset straight off the touch with no gutter to correct for. Pad the main axis
+  and every value is wrong by the padding, silently, and visibly only at the ends.
+- **The colour paints the fill and nothing else.** An empty groove is the same
+  chrome at every colour, the way an unticked checkbox is `border-input bg-card`
+  however it is coloured — so the axis has one slot to paint rather than a matrix,
+  and a test asserts the track and the thumb really do not move with it. Invalid
+  outranks the colour on the fill, the precedence `Checkbox` sets on its border.
+- **`default` and `primary` name different tokens this theme tunes to the same
+  value.** `foreground` is the page's ink and `primary` is the brand's action
+  colour; both are `#262626` today, which is the situation `Badge` already
+  documents for its neutral end. Collapsing them into one token would be the
+  drift, not the duplication — an app that re-themes `primary` to blue wants
+  `color="primary"` blue and `color="default"` still ink. A test pins that the
+  four *semantic* colours stay distinct from each other and from both neutrals,
+  and that every token named is declared in **both** variants of `theme.css`.
+- **The thumb takes a border, never a shadow.** Nothing else in this package draws
+  one, and React Native's shadow props diverge between platforms in a way a
+  one-pixel border does not. A test sweeps the whole matrix for the absence.
+- **The track centres the thumb; the thumb carries no offset of its own.** A thumb
+  is wider than the groove it runs in, so it has to overhang on the cross axis. An
+  absolutely-positioned child with no cross-axis inset is placed at the static
+  position the parent's `items-center` decides, which puts the centring in one
+  class rather than in a runtime margin the layout has to measure first. That is
+  why the track is `flex-row` when horizontal: `items-center` centres on the
+  *cross* axis, and a column track would centre the wrong one.
+- **Every length is measured, never tabulated.** `trackSize` and `thumbSize` come
+  from their own `onLayout` — `size-icon-xl` cannot be read from JavaScript, and a
+  table of numbers here would be `tokens.css` restated in TypeScript, the drift
+  `tokens.test.ts` exists to catch everywhere else. A measured `0` therefore means
+  **not measured yet**, never "a track with no length": every geometry helper
+  guards `travel <= 0` and the thumb renders at `opacity: 0` until the track has
+  reported, because a thumb drawn before then sits at a garbage offset for a frame
+  and reads as a flicker on every mount.
+- **The fill meets the thumb's centre, not its edge.** The thumb travels
+  `trackSize - thumbSize` and sits half its own width in from wherever its box
+  starts, so the fill carries that half-width — without it there is a sliver of
+  empty groove that grows and shrinks as you drag. A lone thumb fills from the
+  start of the track, because that is what a single value means; a range fills
+  *between* its thumbs, because the ends are what the caller excluded.
+- **The vertical axis turns around in exactly two places**: `valueFromOffset`'s
+  inversion and the sign of the thumb's translate. Not in a `flex-col-reverse` —
+  the fill and the thumb are absolutely positioned, so a `flexDirection` never
+  reaches them, and a reversed column flips every `justify-*` inside the track as
+  well. A test asserts the two orientations are mirror images, reading a vertical
+  track from the far end and a horizontal one from the near end and demanding the
+  same value. A vertical slider needs a **definite height** from its parent.
+- **Both ends of the range are always stops**, even when the step does not divide
+  it. 0–100 by 7 reaches 0, 7, 14 … 98 and then 100, because a slider whose
+  maximum cannot be reached by dragging all the way to the end is a slider that
+  lies about its own range. A tie goes to the regular stop, so the extra one only
+  ever appears at the very end of the drag.
+- **Snapping happens on the UI thread, and that is what bounds the re-renders.**
+  `positions` holds *snapped* values, so the mirror back to React fires on a step
+  crossing rather than on a frame — a full-width drag at the default step is a few
+  dozen commits, not a hundred and twenty a second. `step={0}` is continuous and
+  does re-render per frame; that is the trade for `formatOptions`, since `Intl` is
+  not available to a worklet and a readout derived on the UI thread could not
+  format a currency. If it ever profiles badly the escape hatch is an
+  `Animated.Text` fed by a `useDerivedValue`, which `Text` already renders.
+- **`positions` is one `SharedValue<number[]>`, reassigned and never mutated.**
+  One shared value per thumb is not available — a thumb count is data and hooks
+  cannot be called in a loop — so the array is the shape. `positions.value[0] = x`
+  updates nothing and fails **silently**: an array element has no setter behind
+  it. Always build a new array and assign it.
+- **A drag stops the root syncing the shared value from React state.** The mirror
+  hop back would otherwise round-trip through a render and land on the thumb a
+  frame late, dragging it backwards on every commit — a jitter only a fast drag
+  reveals. The guard is a ref, because nothing renders differently for it. Its
+  counterpart is `settledDrags`, a counter bumped on release whose only job is to
+  give the sync effect something to re-run on: a **controlled parent that rejects
+  a dragged value** leaves `current` unchanged, and without the token the thumb
+  would stay where the finger let go instead of snapping back.
+- **The shape is the caller's, and it is locked on first render.** A slider given
+  a number reports a number; one given an array reports an array. Switching warns
+  in development and follows the caller, the lock-and-warn `useControllableState`
+  already runs for controlled versus uncontrolled — a slider that silently started
+  reporting an array to a caller holding a number is a bug with no error attached.
+- **The haptic is rate-limited by distance, not by a clock.** "Tick when the
+  snapped value changed" is not a limit on its own: 0–100 in whole steps across a
+  300pt track is a step every three points, and a flick crosses a hundred of them
+  in a fifth of a second — a buzz, and a hundred synchronous calls into the haptic
+  engine to produce it. `shouldTickHaptic` gates on `SLIDER_HAPTIC_MIN_TRAVEL`,
+  which keeps the rule pure so `bun test` reaches it and makes it degrade the right
+  way: a coarse scale ticks on every stop, a fine one thins to a cadence a hand can
+  feel. Either **end** of the range always ticks — it is the one moment a slider
+  has something to say the screen does not already show. The grab itself always
+  confirms, the way a press does. A continuous slider never ticks, because there
+  is no stop to land on.
+- **`accessibilityRole="adjustable"` on the thumb, and this is the package's first
+  `accessibilityValue`.** It is not polish: the thumb holds no gesture, so without
+  `accessibilityActions` and `onAccessibilityAction` there is no assistive path to
+  the value **at all** — a VoiceOver or TalkBack swipe would have nothing to call.
+  The increment steps by `step`, or by a tenth of the range when the slider is
+  continuous. `updateValue` is the one way into the value that has no gesture
+  behind it, and it runs the same snap and the same clamp the pan does.
+- **A worklet crosses back to JS with `scheduleOnRN`**, never `runOnJS` — see
+  **Pressable**. `onFinalize` queues `setDragging(false)` *before* `commitEnd`, and
+  the order is load-bearing: the root has to have stopped treating this as a live
+  drag before it is asked to re-sync.
+- **Every exported worklet in `slider.variants.ts` is flat.** None of them calls
+  another. A module-scope worklet is rewritten into a factory call that runs at
+  import time in source order, so a worklet calling a sibling works only while the
+  sibling happens to be declared first — and a tidy-up that reorders the file
+  crashes the UI thread with `undefined is not a function`. That is the real shape
+  of the `clampUnit` incident the **Screen** section records: not "cross-module is
+  unsafe" — `screen.variants.ts`'s own resolvers are imported into
+  `useAnimatedStyle` and work — but "a module-scope worklet must not depend on one
+  declared below it". The pan's own shared helper lives *inside* the `useMemo`
+  beside its callers, where ordinary closure capture applies.
+- **There is no `Slider.Group`**, so the axis ladder is two rungs rather than
+  three: the slider's own props, then an enclosing `Field`. A `Field` reaches the
+  two *state* axes only, and a test pins that it cannot acquire a paint axis by
+  accident. The slider does **not** register `field.registerPress` the way a
+  `Checkbox` does — a row-wide press has no meaning for a control whose value is a
+  position.
 
 ## Badge
 

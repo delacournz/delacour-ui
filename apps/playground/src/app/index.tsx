@@ -10,6 +10,7 @@ import {
 	IconFontStyle,
 	IconLayoutTopBottom,
 	IconParagraph,
+	IconSettingsSliderHor,
 	IconSquareCheck,
 	IconSquareCursor,
 	IconTag,
@@ -85,6 +86,12 @@ const COMPONENTS = [
 		icon: IconLayoutTopBottom,
 		title: "Screen",
 		description: "Navbar, footer, scrollables, keyboard",
+	},
+	{
+		href: "/slider",
+		icon: IconSettingsSliderHor,
+		title: "Slider",
+		description: "Range, orientation, colours, steps",
 	},
 	{
 		href: "/spinner",

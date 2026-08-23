@@ -20,6 +20,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
+		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./text": "./src/components/text/index.ts",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",

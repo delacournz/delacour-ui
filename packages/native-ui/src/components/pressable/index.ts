@@ -1,4 +1,4 @@
-export { type HapticFeedback, Pressable, type PressableProps } from "./pressable";
+export { type HapticFeedback, Pressable, type PressableProps, playHaptic } from "./pressable";
 export {
 	PRESSABLE_FEEDBACK,
 	PRESSABLE_FEEDBACK_FALLBACK,

@@ -764,6 +764,35 @@ class is the better name for them. A colour class cannot express a literal
 `useThemeColor` already covers both — so a colour-class path would leave two
 colour systems in the package rather than replacing one.
 
+**A navigator paints its own chrome from its own theme**, and nothing connects
+that to these tokens. `expo-router` mounts its `NavigationContainer` with no
+`theme`, so React Navigation's light default stands however dark the app is —
+and on iOS the native stack hands `colors.background` to the
+`UINavigationController`'s view, which is the slab visible between the cards
+during a push and at their rounded corners. That layer is set from the theme
+with no escape hatch, so a `contentStyle` in `screenOptions` cannot reach it;
+only a theme fixes it.
+
+`useNavigationTheme()` returns the six colours React Navigation's theme has,
+resolved from these tokens, plus whether the active theme is dark. It returns
+**plain values, not a `Theme`**, and imports nothing from a navigation library —
+this package takes no navigation dependency, the same reason
+`Screen.Navbar.BackButton` takes an `onPress` rather than calling a router. The
+app spreads them over the framework's own base theme, which also supplies
+`fonts`, whose shape is platform-specific and would drift if restated here.
+
+`dark` comes from Uniwind's active theme, never React Native's `useColorScheme`:
+an app that lets the user force light or dark against the system setting would
+otherwise theme its navigator the wrong way round. A slot resolving to nothing
+is omitted rather than returned as `undefined`, so spreading the result cannot
+punch a hole in the base theme.
+
+The mapping lives in `lib/navigation-theme.ts`, free of React Native imports,
+and a test asserts every token it names is declared in **both** variants of
+`theme.css`. A slot pointing at a token no theme emits would resolve to
+`undefined`, be dropped, and silently leave the light default in place — the
+exact failure the hook exists to fix.
+
 ## Testing
 
 `bun test` covers **pure logic only**: `cn`, `mergeProps`, `composeRefs`, and

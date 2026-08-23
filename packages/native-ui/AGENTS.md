@@ -94,14 +94,20 @@ src/
 │   ├── separator/
 │   │   ├── index.ts              → @delacour/native-ui/separator
 │   │   └── separator.tsx         The tv() and the component, in one file
-│   └── spinner/
-│       ├── index.ts              → @delacour/native-ui/spinner
-│       ├── spinner.tsx           Root + the Object.assign compound surface
-│       ├── spinner-content.tsx   Spinner.Content, the rotating layer
-│       ├── spinner-arc.tsx       The default arc glyph
-│       ├── spinner.context.tsx   SpinnerContext, useSpinner(), useSpinnerContext()
-│       ├── spinner.variants.ts   Pure tv() slots + resolvers, no RN imports
-│       └── spinner.variants.test.ts
+│   ├── spinner/
+│   │   ├── index.ts              → @delacour/native-ui/spinner
+│   │   ├── spinner.tsx           Root + the Object.assign compound surface
+│   │   ├── spinner-content.tsx   Spinner.Content, the rotating layer
+│   │   ├── spinner-arc.tsx       The default arc glyph
+│   │   ├── spinner.context.tsx   SpinnerContext, useSpinner(), useSpinnerContext()
+│   │   ├── spinner.variants.ts   Pure tv() slots + resolvers, no RN imports
+│   │   └── spinner.variants.test.ts
+│   └── text/
+│       ├── index.ts              → @delacour/native-ui/text
+│       ├── text.tsx              Root, all twelve presets, the Object.assign surface
+│       ├── text.context.tsx      TextClassProvider, useTextClass()
+│       ├── text.variants.ts      Pure tv() + resolveTextClass, no RN imports
+│       └── text.variants.test.ts
 ├── hooks/            use-controllable-state, use-theme-color, use-keyboard-state-sync
 ├── icons/central.ts  Central Icons re-export
 ├── lib/              cn, tv, merge-props, compose-refs, slot, keyboard-animation
@@ -461,6 +467,83 @@ whole-screen states.
   renders "keyboard open" over a keyboard that is not there. `Screen.Footer` runs
   the same repair on mount as a backstop.
 
+## Text
+
+The library's type scale, and the one component that reproduces React Native's
+own text inheritance through classNames. Compound root plus twelve presets:
+`Display`, `Title`, `Header`, `Subheader`, `Paragraph`, `Label`, `Caption`,
+`Overline`, and the four inline ones — `Strong`, `Emphasis`, `Link`, `Code`.
+
+- **Every `Text` publishes its resolved class to its subtree**, and merges the
+  one it inherited. Natively a nested `<Text>` inherits the parent's *style
+  object* and overrides only the keys it sets; Uniwind compiles each `className`
+  independently, so the parent's resolved class has to be threaded through and
+  beaten per-axis instead. `resolveTextClass` is that chain, weakest first:
+  `TEXT_BASE_CLASS`, the inherited class, this text's named axes, the caller's
+  `className`. It is the ladder `resolveIconSizeClass` already follows.
+- **`textVariants` has no `defaultVariants`, and must not gain any.** An axis the
+  caller did not name has to emit *nothing* so it falls through to the enclosing
+  text's class — that fall-through is the whole feature. A default would emit
+  from inside the same call, ahead of the inherited class in the merge, and every
+  nested `Text` would snap back to it. `iconVariants` carries the same rule for
+  the same reason. The fallback lives in `TEXT_BASE_CLASS` instead.
+- **`TEXT_BASE_CLASS` is applied unconditionally**, never guarded behind "am I
+  nested". Under true nesting it is a no-op — the parent's string already names
+  every axis, so tailwind-merge drops it. It only does work under a *partial*
+  provider, a `Button` publishing nothing but `text-primary-foreground`, where
+  guarding it would leave a nested `Text` with a colour and no size at all,
+  collapsing to React Native's own 14pt default.
+- **The correctness property is a fixpoint**: for every class this resolver can
+  produce, a nested `Text` with no props of its own resolves to *exactly* its
+  parent's string, at any depth. The tests assert it across the matrix. Anything
+  that breaks it makes inheritance lossy in a way only a screen would reveal.
+- **A variant names type, never a line height.** tailwind-merge lists `leading`
+  among `font-size`'s conflicting groups, so a `text-lg` from the `size` axis
+  silently deletes a `leading-6` written beside a `text-base` — no error, just a
+  paragraph that loses its leading when someone resizes it. Tailwind v4's
+  `--text-*--line-height` companions survive `tokens.css`'s size-only overrides,
+  so every step already carries a paired leading. Prose needing its own gets a
+  `--text-paragraph` / `--text-paragraph--line-height` **pair**, registered in
+  `tokens.ts` — one utility carrying both.
+- **`color` is page-level only — no `-foreground` family.** `X-foreground` means
+  "content drawn on an `X` surface" (rule 10), and mapping a surface variant to
+  its foreground is already each surface component's job
+  (`BUTTON_FOREGROUND_TOKEN`, `LIST_GROUP_FOREGROUND_TOKEN`). A second copy of
+  that map here could drift from it. Text on a coloured surface writes the
+  utility in a `className`.
+- **`align` is `left`/`center`/`right`, never `start`/`end`.** React Native's
+  `textAlign` accepts `auto | left | right | center | justify` and nothing else,
+  so Tailwind v4's logical-property utilities resolve to a value RN rejects.
+  `transform: "none"` emits `normal-case` rather than an empty string, so it can
+  actually clear an `Overline`'s `uppercase`.
+- **A nested `Text.Code` cannot be padded.** A nested `<Text>` is laid out by the
+  platform's text engine — an `NSAttributedString` run on iOS, a `Span` on
+  Android — and both ignore padding, margin and border radius on an inner
+  `<Text>`. Only the background survives. The compound variant applies the pill
+  treatment to the standalone case only; a code *block* is a `View` the caller
+  wraps around it.
+- **Anything can publish into the cascade, not just a `Text`.** `Button` wraps
+  its children in a `TextClassProvider` carrying the label's treatment beside the
+  `IconDefaultsProvider` it already renders, so a bare `<Text>` composed into one
+  needs nothing at the call site — the payoff `Icon` already had. Publish a
+  treatment only where **one** covers the whole subtree: a `ListGroup` row
+  (title + description), a navbar (title + subtitle) and `Screen.Error` (title +
+  message) each carry two, and one provider cannot serve both, so their parts
+  keep per-part classes.
+- **It renders `Animated.Text`.** Animated text styles work anywhere with no
+  opt-in, at the cost of a Reanimated wrapper per text node. If a long list ever
+  profiles badly, the escape hatch is to base the root on RN's `Text` and let app
+  code write `<Animated.Text className={useTextClass()} style={…} />` — the
+  cascade is on context, so that inherits correctly. Measure first.
+- **OS font scaling is respected and capped.** `allowFontScaling` is left at
+  React Native's default; `maxFontSizeMultiplier` defaults to
+  `TEXT_MAX_FONT_SIZE_MULTIPLIER`. The cap exists for the fixed-height chrome —
+  `h-button-*` and `h-navbar-row` cannot grow, so an uncapped multiplier clips a
+  label rather than enlarging it. Both stay overridable per call site.
+- **No `asChild`.** `Slot` throws on a non-element child and a `Text`'s child is
+  usually a string, so it would be unusable in the shape people would reach for.
+  There is also nothing to donate: `useTextClass()` hands the class over directly.
+
 ## Separator
 
 A one-pixel rule, hidden from assistive technology — a line between every row
@@ -687,6 +770,16 @@ Five things about that block are load-bearing:
    `Button.displayName = …` afterwards is a type error.
 5. **A slot may not be named `name`, `length`, `caller` or `arguments`.** Those
    are non-writable on a function and `Object.assign` throws at module init.
+
+**One carve-out: a part that is a pure preset lives in the root file.** A part
+naming a variant and nothing else — reading no context, holding no logic, no
+state — has nothing to navigate *to*, so a file of its own would be folder weight
+without the payoff this rule exists for. `Text` is the one that qualifies today:
+its twelve presets are `function` declarations in `text.tsx`, each with its own
+doc comment, and it needs no shared-implementation leaf because there are no part
+files to close a cycle with. A part that calls a `useXPart` hook or wraps its own
+children — `Button.Label`, `ListGroup.Item` — does **not** qualify. Do not
+"tidy" `Text`'s presets into twelve files.
 
 Helpers follow their caller, not the root: `wrapTextChildren` lives in
 `list-group-item.tsx` because `ListGroup.Item` wraps its own bare text, while

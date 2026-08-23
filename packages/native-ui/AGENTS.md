@@ -722,12 +722,18 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   its descendants for about 150ms while it decides whether the touch is a scroll.
   Nothing inside this component can reach that — it is a prop on the scrollable,
   so it belongs at the call site.
-- **The groove is not the touch target.** A `md` track is six points thick, which
-  is nothing to aim at, so the drag is claimed on a transparent `touchArea` padded
-  out to a real one. It is padded on the **cross axis only**, so the two boxes
-  share an origin along the axis the value is measured on — the pan reads its
-  offset straight off the touch with no gutter to correct for. Pad the main axis
-  and every value is wrong by the padding, silently, and visibly only at the ends.
+- **The groove is not the touch target on its own.** A `sm` track is sixteen
+  points, so the drag is claimed on a transparent `touchArea` whose padding brings
+  it up to 44. The thickness and that padding live in the **same compound cell**,
+  because they are one number: they sum to 44 at every size, and a test asserts
+  the sum rather than the parts so the ladder can be retuned without the test
+  becoming a transcript of it. Split them across two variants and a retune of the
+  thickness silently shrinks the target.
+- **That padding is on the cross axis only**, and this is the load-bearing half.
+  The two boxes share an origin along the axis the value is measured on, so the
+  pan reads its offset straight off the touch with no gutter to correct for. Pad
+  the main axis and every value is wrong by the padding, silently, and visibly
+  only at the ends.
 - **The colour paints the fill and nothing else.** An empty groove is the same
   chrome at every colour, the way an unticked checkbox is `border-input bg-card`
   however it is coloured — so the axis has one slot to paint rather than a matrix,
@@ -744,27 +750,52 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
 - **The thumb takes a border, never a shadow.** Nothing else in this package draws
   one, and React Native's shadow props diverge between platforms in a way a
   one-pixel border does not. A test sweeps the whole matrix for the absence.
-- **The track centres the thumb; the thumb carries no offset of its own.** A thumb
-  is wider than the groove it runs in, so it has to overhang on the cross axis. An
+- **The thumb's diameter is the track's thickness**, and that is geometry rather
+  than decoration. It is what lets `fillExtent` land exactly on both extremes —
+  one thumb's width of fill at the minimum, so the handle covers it completely
+  and a slider at rest shows a plain track; the track's full length at the
+  maximum, with no sliver of empty groove past the handle; and one thumb's width
+  again for a collapsed range, so the fill does not blink out from under two
+  thumbs dragged together. Inset the thumb inside the track by any padding and
+  every one of those is off by the inset, at every size. One step per size
+  therefore drives both, and a test asserts the two classes name the same one.
+- **That step is a plain spacing step, not a token.** It is one number read in one
+  component, which is the trade `Radio` already makes for the dot inside its ring.
+  `Checkbox` reads `--spacing-icon-*` for its square and should keep doing so: a
+  glyph in a box is a mark on the icon scale, where a slider's thumb is the body
+  of the control itself. This is why the thumb stopped reading that scale.
+- **The track still centres the thumb, and now has nothing to centre.** An
   absolutely-positioned child with no cross-axis inset is placed at the static
-  position the parent's `items-center` decides, which puts the centring in one
-  class rather than in a runtime margin the layout has to measure first. That is
-  why the track is `flex-row` when horizontal: `items-center` centres on the
-  *cross* axis, and a column track would centre the wrong one.
+  position the parent's `items-center` decides. That did the work while the thumb
+  overhung a hairline groove; it is a no-op now the two are the same size. It
+  stays because it is load-bearing again the moment those sizes are allowed to
+  differ, and because it is why the track is `flex-row` when horizontal:
+  `items-center` centres on the *cross* axis, and a column track would centre the
+  wrong one.
 - **Every length is measured, never tabulated.** `trackSize` and `thumbSize` come
-  from their own `onLayout` — `size-icon-xl` cannot be read from JavaScript, and a
+  from their own `onLayout` — `size-5` cannot be read from JavaScript, and a
   table of numbers here would be `tokens.css` restated in TypeScript, the drift
   `tokens.test.ts` exists to catch everywhere else. A measured `0` therefore means
   **not measured yet**, never "a track with no length": every geometry helper
   guards `travel <= 0` and the thumb renders at `opacity: 0` until the track has
   reported, because a thumb drawn before then sits at a garbage offset for a frame
   and reads as a flicker on every mount.
-- **The fill meets the thumb's centre, not its edge.** The thumb travels
-  `trackSize - thumbSize` and sits half its own width in from wherever its box
-  starts, so the fill carries that half-width — without it there is a sliver of
-  empty groove that grows and shrinks as you drag. A lone thumb fills from the
+- **The fill runs to the thumb's far edge**, which is the `+ thumbSize` in
+  `fillExtent` and the reason both extremes come out exact. It used to stop at the
+  thumb's *centre*, which was correct but invisible while a large disc overhung a
+  hairline groove; with the thumb now the same size as the track, a half-thumb of
+  bar would sit unfilled at the maximum in plain view. A lone thumb fills from the
   start of the track, because that is what a single value means; a range fills
-  *between* its thumbs, because the ends are what the caller excluded.
+  *between* its thumbs, because the ends are what the caller excluded. The extent
+  is floored at one thumb so a collapsed range never disappears.
+- **The pixel arithmetic is a function, not four lines in `slider-fill.tsx`.**
+  `fillExtent` earns its place because what it encodes is not self-evident — it is
+  the whole justification for the thumb's size — and inline in a `.tsx` no test
+  could reach it. `travel` and the touch's `position` are the opposite case and
+  stay written out: `trackSize - thumbSize` and `along - thumbSize / 2` appear in
+  three files and are self-evident, and routing them through a cross-module
+  worklet would add a call in three per-frame paths to hide arithmetic nobody
+  would get wrong.
 - **The vertical axis turns around in exactly two places**: `valueFromOffset`'s
   inversion and the sign of the thumb's translate. Not in a `flex-col-reverse` —
   the fill and the thumb are absolutely positioned, so a `flexDirection` never

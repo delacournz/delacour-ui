@@ -1,6 +1,5 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import type { IconSize } from "../icon/icon.variants";
 import type { TextSize } from "../text/text.variants";
 
 /** What a filled track means. Badge's and Checkbox's set, reusing tokens the theme already has. */
@@ -65,18 +64,6 @@ export const SLIDER_THUMB_ANIMATION = { restScale: 1, grabbedScale: 1.15 } as co
 export const SLIDER_OUTPUT_TEXT_SIZE: Record<SliderSize, TextSize> = { sm: "sm", md: "md", lg: "lg" };
 
 /**
- * The step on the shared icon scale the thumb is drawn at.
- *
- * A slider's thumb mints no scale of its own — it reads `--spacing-icon-*`, the
- * way a `Checkbox`'s square does. A private `--spacing-slider-*` would be three
- * numbers that have to be retuned in step with three others forever, and nothing
- * would notice when they stopped agreeing. A test pins the *step names* and that
- * they ascend, not the points, so the icon scale can be retuned without the test
- * becoming a transcript of it.
- */
-export const SLIDER_THUMB_ICON_STEP: Record<SliderSize, IconSize> = { sm: "lg", md: "xl", lg: "2xl" };
-
-/**
  * How far a drag must travel between two haptic ticks, in points.
  *
  * A pan updates at the display's refresh rate, so "tick whenever the snapped
@@ -127,21 +114,38 @@ export const SLIDER_RANGE_SEPARATOR = " – ";
  * edge against the groove behind it. `border-border` is a divider's weight and
  * disappears into `bg-secondary` in light mode.
  *
- * **The groove is not the touch target.** A `md` track is six points thick, which
- * is nothing to aim at, so the drag is claimed on a transparent `touchArea`
- * padded out to a real one. It is padded on the **cross axis only** — the two
- * boxes therefore share an origin along the axis the value is measured on, which
- * is what lets the pan read its offset straight off the touch without correcting
- * for a gutter it cannot see. Pad the main axis and every value is wrong by the
- * padding, silently and only at the ends.
+ * **The thumb's diameter is the track's thickness**, and that is load-bearing
+ * rather than decorative. It is what lets {@link fillExtent} land exactly on both
+ * extremes — one thumb's width of fill at the minimum, the track's full length at
+ * the maximum — with no inset to leave stray colour at one end and empty groove at
+ * the other. One step per size therefore drives both, and a test asserts the two
+ * classes name the same one. It is a plain spacing step and not a token: this is
+ * one number read in one component, the trade `Radio` already makes for the dot
+ * inside its ring. `Checkbox` reads `--spacing-icon-*` for its square and should
+ * keep doing so — a glyph in a box is a mark on the icon scale, where a slider's
+ * thumb is the body of the control itself.
  *
- * **The track centres the thumb; the thumb carries no offset of its own.** A
- * thumb is wider than the groove it runs in, so it has to overhang on the cross
- * axis. An absolutely-positioned child with no cross-axis inset is placed at the
- * static position the parent's `items-center` decides, which puts the centring in
- * one class rather than in a runtime margin the layout has to measure first. That
- * is why the track is `flex-row` when horizontal: `items-center` centres on the
- * *cross* axis, and a column track would centre the wrong one.
+ * **The groove is not the touch target on its own.** A `sm` track is sixteen
+ * points, so the drag is claimed on a transparent `touchArea` whose padding brings
+ * it up to 44. The thickness and that padding live in the *same* compound cell
+ * because they are one number — they sum to 44 at every size, and a test asserts
+ * the sum rather than the parts. Split across two variants, a retune of the
+ * thickness silently shrinks the target.
+ *
+ * That padding is on the **cross axis only**. The two boxes therefore share an
+ * origin along the axis the value is measured on, which is what lets the pan read
+ * its offset straight off the touch without correcting for a gutter it cannot see.
+ * Pad the main axis and every value is wrong by the padding, silently, and
+ * visibly only at the ends.
+ *
+ * **The track still centres the thumb, and now has nothing to centre.** An
+ * absolutely-positioned child with no cross-axis inset is placed at the static
+ * position the parent's `items-center` decides — which did the work when the thumb
+ * overhung a hairline groove, and is a no-op now that the two are the same size.
+ * It stays because the moment those sizes are allowed to differ it is load-bearing
+ * again, and because it is why the track is `flex-row` when horizontal:
+ * `items-center` centres on the *cross* axis, and a column track would centre the
+ * wrong one.
  *
  * **The fade lands on the root**, which is a plain `View` here rather than a
  * `Pressable` — so unlike `Radio`, an `opacity-50` class on it is not overwritten
@@ -172,23 +176,23 @@ export const sliderVariants = tv({
 		orientation: {
 			horizontal: {
 				root: "w-full gap-2",
-				touchArea: "w-full flex-row py-3",
+				touchArea: "w-full flex-row",
 				track: "w-full flex-row",
 				fill: "bottom-0 top-0",
 				thumb: "left-0",
 			},
 			vertical: {
 				root: "h-full items-center gap-2",
-				touchArea: "h-full flex-col px-3",
+				touchArea: "h-full flex-col",
 				track: "h-full justify-end",
 				fill: "left-0 right-0",
 				thumb: "bottom-0",
 			},
 		},
 		size: {
-			sm: { thumb: "size-icon-lg" },
-			md: { thumb: "size-icon-xl" },
-			lg: { thumb: "size-icon-2xl" },
+			sm: { thumb: "size-4" },
+			md: { thumb: "size-5" },
+			lg: { thumb: "size-6" },
 		},
 		// The empty branches are load-bearing typing, not placeholders. `tv` derives
 		// the prop type from the declared keys, so a map with only `true` types the
@@ -202,12 +206,16 @@ export const sliderVariants = tv({
 		// orientation, because it is the *cross* axis of whichever way the track
 		// runs. Six cells rather than a second size scale, so the two orientations
 		// cannot drift to different weights.
-		{ orientation: "horizontal", size: "sm", class: { track: "h-1" } },
-		{ orientation: "horizontal", size: "md", class: { track: "h-1.5" } },
-		{ orientation: "horizontal", size: "lg", class: { track: "h-2" } },
-		{ orientation: "vertical", size: "sm", class: { track: "w-1" } },
-		{ orientation: "vertical", size: "md", class: { track: "w-1.5" } },
-		{ orientation: "vertical", size: "lg", class: { track: "w-2" } },
+		//
+		// The touch padding rides in the same cell, because the two are one number:
+		// they sum to 44pt at every size, and splitting them across two variants is
+		// how a retune of the thickness silently shrinks the target.
+		{ orientation: "horizontal", size: "sm", class: { track: "h-4", touchArea: "py-3.5" } },
+		{ orientation: "horizontal", size: "md", class: { track: "h-5", touchArea: "py-3" } },
+		{ orientation: "horizontal", size: "lg", class: { track: "h-6", touchArea: "py-2.5" } },
+		{ orientation: "vertical", size: "sm", class: { track: "w-4", touchArea: "px-3.5" } },
+		{ orientation: "vertical", size: "md", class: { track: "w-5", touchArea: "px-3" } },
+		{ orientation: "vertical", size: "lg", class: { track: "w-6", touchArea: "px-2.5" } },
 		// `color` is the only axis painting the fill, so its six cells could be a
 		// plain variant. They are compounds so that `isInvalid` below, emitted after
 		// them, can beat every one — the ordering `Radio` leans on for its ring.
@@ -421,6 +429,58 @@ export function fillBounds(
 	const end = Math.min(Math.max((highest - minValue) / span, 0), 1);
 
 	return { start, end: Math.max(start, end) };
+}
+
+/**
+ * The fill's box in points: where it starts along the track, and how long it is.
+ *
+ * Takes {@link fillBounds}' two 0–1 positions into the track's own frame. It is a
+ * function rather than four lines inside `slider-fill.tsx` because the property it
+ * encodes is not self-evident and is the whole reason the thumb is drawn the size
+ * it is — a `+ thumbSize` at the far end, which lands exactly on both extremes:
+ *
+ * - at the **minimum** the extent is one thumb, so the handle covers the fill
+ *   completely and a slider at rest shows a plain track;
+ * - at the **maximum** the extent is `travel + thumbSize`, the track's full
+ *   length, with no sliver of empty groove past the handle;
+ * - a **collapsed range** is one thumb wide rather than zero, so the fill does not
+ *   blink out from under two thumbs dragged together.
+ *
+ * All three hold only because the thumb's diameter equals the track's thickness.
+ * Inset the thumb inside the track and every one of them is off by the inset — a
+ * few points of stray colour at one end and of empty groove at the other, at every
+ * size. This is the arithmetic that pays for that proportion, so it is the
+ * arithmetic `bun test` has to be able to reach.
+ *
+ * It replaced a `+ thumbSize / 2`, which stopped the fill at the thumb's *centre*.
+ * That was correct but invisible while a large disc overhung a hairline groove; it
+ * would now leave the last half-thumb of the bar unfilled, in plain view.
+ *
+ * `travel <= 0` draws nothing: a measured `0` means *not measured yet*, and a bar
+ * sized off it would flash at a garbage length on the frame before layout lands.
+ */
+export function fillExtent({
+	start,
+	end,
+	travel,
+	thumbSize,
+	isRange,
+}: {
+	start: number;
+	end: number;
+	travel: number;
+	thumbSize: number;
+	isRange: boolean;
+}): { offset: number; extent: number } {
+	"worklet";
+	if (travel <= 0) return { offset: 0, extent: 0 };
+
+	const from = isRange ? Math.min(Math.max(start, 0), 1) : 0;
+	const to = Math.min(Math.max(end, 0), 1);
+	const offset = from * travel;
+	const extent = Math.max(to * travel + thumbSize - offset, thumbSize);
+
+	return { offset, extent };
 }
 
 /**

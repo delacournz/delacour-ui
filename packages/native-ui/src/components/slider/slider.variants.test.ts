@@ -1,11 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
 	clampThumb,
 	fillBounds,
+	fillExtent,
 	formatSliderValue,
 	fromValueArray,
 	nearestThumbIndex,
@@ -24,7 +24,6 @@ import {
 	SLIDER_SIZES,
 	SLIDER_STEP,
 	SLIDER_THUMB_ANIMATION,
-	SLIDER_THUMB_ICON_STEP,
 	SLIDER_THUMB_SPRING,
 	shouldTickHaptic,
 	sliderVariants,
@@ -33,7 +32,6 @@ import {
 	valueFromOffset,
 } from "./slider.variants";
 
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
 const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** How many times theme.css declares a `--color-*` token — once per variant, so two. */
@@ -44,13 +42,6 @@ function themeDeclarations(token: string): number {
 /** The bare colour a `bg-*` class names — `bg-success` yields `success`. */
 function backgroundToken(value: string): string | undefined {
 	return value.match(/\bbg-([\w-]+)\b/)?.[1];
-}
-
-/** Points behind a `--spacing-*` token, failing loudly rather than yielding NaN. */
-function spacingPx(token: string): number {
-	const value = TOKENS_CSS.match(new RegExp(`--spacing-${token}:\\s*([\\d.]+)px;`))?.[1];
-	if (value === undefined) throw new Error(`tokens.css defines no --spacing-${token}`);
-	return Number(value);
 }
 
 /**
@@ -73,11 +64,21 @@ function widthStep(value: string): number {
 	return Number(value.match(/\bw-(\d+(?:\.\d+)?)\b/)?.[1]);
 }
 
-/** Position of a slot's `size-icon-*` token on the shared icon scale. */
-function iconStep(value: string): number {
-	const token = value.match(/\bsize-(icon-[\w-]+)\b/)?.[1];
-	return ICON_SIZE_TOKENS.indexOf(token as (typeof ICON_SIZE_TOKENS)[number]);
+/** The `size-*` step a class string sets — `size-5` yields 5. */
+function sizeStep(value: string): number {
+	return Number(value.match(/\bsize-(\d+(?:\.\d+)?)\b/)?.[1]);
 }
+
+/** The `py-*` / `px-*` step a class string sets — `py-3.5` yields 3.5. */
+function paddingStep(value: string): number {
+	return Number(value.match(/\bp[xy]-(\d+(?:\.\d+)?)\b/)?.[1]);
+}
+
+/** Tailwind's spacing scale is quarter-rem steps, so a step is four points. */
+const POINTS_PER_STEP = 4;
+
+/** The tap target every control in this library has to clear. */
+const MINIMUM_TARGET_PT = 44;
 
 /** Every combination of the axes that paint a slider, as `tv` props. */
 function everyCell(): {
@@ -102,14 +103,9 @@ function everyCell(): {
 	return cells;
 }
 
-describe("the token reader", () => {
+describe("the theme reader", () => {
 	// Guard: every assertion below that reads tokens.css is worthless if the
 	// parse silently found nothing. The suite must not be able to go green empty.
-	test("finds the icon scale", () => {
-		expect(spacingPx("icon-lg")).toBeGreaterThan(0);
-		expect(ICON_SIZE_TOKENS.length).toBeGreaterThan(0);
-	});
-
 	test("finds both variants of the theme", () => {
 		expect(themeDeclarations("primary")).toBe(2);
 	});
@@ -209,6 +205,11 @@ describe("sliderVariants", () => {
 		for (const size of SLIDER_SIZES) {
 			const horizontal = cls(sliderVariants({ orientation: "horizontal", size }).track());
 			const vertical = cls(sliderVariants({ orientation: "vertical", size }).track());
+			// Both extractors yield NaN for anything that is not a numeric step, and
+			// `expect(NaN).toBe(NaN)` *passes* — so without this the test would go
+			// falsely green the moment the thickness stopped being a plain class.
+			expect(Number.isFinite(heightStep(horizontal))).toBe(true);
+			expect(Number.isFinite(widthStep(vertical))).toBe(true);
 			expect(heightStep(horizontal)).toBe(widthStep(vertical));
 			expect(horizontal).toMatch(/\bw-full\b/);
 			expect(vertical).toMatch(/\bh-full\b/);
@@ -226,6 +227,23 @@ describe("sliderVariants", () => {
 		expect(vertical).not.toMatch(/\b(py|pt|pb|p)-\d/);
 	});
 
+	// The thickness and its padding live in one compound cell because they are one
+	// number. Asserting the sum rather than the parts is what lets the ladder be
+	// retuned without the test becoming a transcript of it.
+	test("brings every size up to a 44pt target, track plus padding", () => {
+		for (const size of SLIDER_SIZES) {
+			for (const orientation of SLIDER_ORIENTATIONS) {
+				const slots = sliderVariants({ orientation, size });
+				const track = cls(slots.track());
+				const thickness = orientation === "horizontal" ? heightStep(track) : widthStep(track);
+				const padding = paddingStep(cls(slots.touchArea()));
+				expect(Number.isFinite(thickness)).toBe(true);
+				expect(Number.isFinite(padding)).toBe(true);
+				expect((thickness + padding * 2) * POINTS_PER_STEP).toBe(MINIMUM_TARGET_PT);
+			}
+		}
+	});
+
 	test("thickens the track as the size steps up", () => {
 		const steps = SLIDER_SIZES.map((size) =>
 			heightStep(cls(sliderVariants({ orientation: "horizontal", size }).track()))
@@ -234,26 +252,29 @@ describe("sliderVariants", () => {
 		expect(new Set(steps).size).toBe(SLIDER_SIZES.length);
 	});
 
-	// The thumb reads the scale `Icon` and `Spinner` share rather than minting a
-	// private `--spacing-slider-*`, the way a Checkbox's square does. The test
-	// pins the step names and their ordering, never the points, so the icon scale
-	// can be retuned without the test becoming a transcript of it.
-	test("sizes the thumb on the shared icon scale, ascending", () => {
-		const steps = SLIDER_SIZES.map((size) => iconStep(cls(sliderVariants({ size }).thumb())));
-		expect(steps.every((step) => step >= 0)).toBe(true);
+	// The invariant the whole geometry rests on. `fillExtent` lands exactly on both
+	// extremes only while these two are the same number: inset the thumb inside the
+	// track and there is stray colour at the minimum and empty groove at the
+	// maximum, at every size.
+	test("draws the thumb at exactly the track's thickness", () => {
+		for (const size of SLIDER_SIZES) {
+			const thumb = sizeStep(cls(sliderVariants({ size }).thumb()));
+			const horizontal = heightStep(cls(sliderVariants({ orientation: "horizontal", size }).track()));
+			const vertical = widthStep(cls(sliderVariants({ orientation: "vertical", size }).track()));
+			expect(Number.isFinite(thumb)).toBe(true);
+			expect(thumb).toBe(horizontal);
+			expect(thumb).toBe(vertical);
+		}
+	});
+
+	test("steps the thumb up with the size, in step with the track", () => {
+		const steps = SLIDER_SIZES.map((size) => sizeStep(cls(sliderVariants({ size }).thumb())));
 		expect(steps).toEqual([...steps].sort((a, b) => a - b));
 		expect(new Set(steps).size).toBe(SLIDER_SIZES.length);
 	});
 
-	test("names an icon step the scale actually has for every size", () => {
-		for (const size of SLIDER_SIZES) {
-			expect(ICON_SIZE_TOKENS).toContain(`icon-${SLIDER_THUMB_ICON_STEP[size]}`);
-			expect(spacingPx(`icon-${SLIDER_THUMB_ICON_STEP[size]}`)).toBeGreaterThan(0);
-		}
-	});
-
-	// The thumb overflows a track thinner than itself, so the track centres it on
-	// the cross axis and the thumb takes no offset of its own.
+	// The centring is a no-op while the thumb and the track are the same size, and
+	// stays because it is load-bearing again the moment they are allowed to differ.
 	test("centres the thumb from the track, at every size", () => {
 		for (const size of SLIDER_SIZES) {
 			for (const orientation of SLIDER_ORIENTATIONS) {
@@ -261,9 +282,6 @@ describe("sliderVariants", () => {
 				expect(track).toMatch(/\bitems-center\b/);
 				expect(track).toMatch(/\brelative\b/);
 			}
-			expect(spacingPx(`icon-${SLIDER_THUMB_ICON_STEP[size]}`)).toBeGreaterThan(
-				heightStep(cls(sliderVariants({ orientation: "horizontal", size }).track())) * 4
-			);
 		}
 	});
 
@@ -273,7 +291,7 @@ describe("sliderVariants", () => {
 	});
 
 	test("hands a caller's className to the slot it names", () => {
-		expect(sliderVariants({}).track({ className: "h-4" })).toMatch(/\bh-4\b/);
+		expect(sliderVariants({}).track({ className: "h-8" })).toMatch(/\bh-8\b/);
 		expect(sliderVariants({}).fill({ className: "bg-accent" })).toMatch(/\bbg-accent\b/);
 	});
 });
@@ -503,6 +521,77 @@ describe("fillBounds", () => {
 			expect(end).toBeGreaterThanOrEqual(start);
 			expect(start).toBeGreaterThanOrEqual(0);
 			expect(end).toBeLessThanOrEqual(1);
+		}
+	});
+});
+
+describe("fillExtent", () => {
+	// The thumb's diameter *is* the track's thickness, and these two properties are
+	// the whole reason for that. Neither holds if the thumb is inset inside the
+	// track: an inset leaves stray colour at the minimum and empty groove at the
+	// maximum, at every size.
+	test("draws exactly one thumb at the minimum, so no colour escapes it", () => {
+		for (const thumbSize of [16, 20, 24]) {
+			const { offset, extent } = fillExtent({ start: 0, end: 0, travel: 300, thumbSize, isRange: false });
+			expect(offset).toBe(0);
+			expect(extent).toBe(thumbSize);
+		}
+	});
+
+	test("reaches the far end of the track at the maximum", () => {
+		for (const thumbSize of [16, 20, 24]) {
+			const travel = 300;
+			const { offset, extent } = fillExtent({ start: 0, end: 1, travel, thumbSize, isRange: false });
+			expect(offset + extent).toBe(travel + thumbSize);
+		}
+	});
+
+	// A range starts at its own first thumb rather than at the track's edge, which
+	// is what makes it read as a span rather than as a fill with a hole in it.
+	test("starts a range at its first thumb, not at the track's edge", () => {
+		const { offset, extent } = fillExtent({ start: 0.2, end: 0.8, travel: 300, thumbSize: 20, isRange: true });
+		expect(offset).toBe(60);
+		expect(extent).toBe(0.6 * 300 + 20);
+	});
+
+	test("fills the whole track for a range spanning it end to end", () => {
+		const { offset, extent } = fillExtent({ start: 0, end: 1, travel: 300, thumbSize: 20, isRange: true });
+		expect(offset).toBe(0);
+		expect(offset + extent).toBe(320);
+	});
+
+	// Two thumbs dragged onto one another are still two thumbs. Collapsing to zero
+	// would blink the fill out from under them.
+	test("collapses a range to one thumb's width, never to nothing", () => {
+		for (const at of [0, 0.5, 1]) {
+			const { extent } = fillExtent({ start: at, end: at, travel: 300, thumbSize: 20, isRange: true });
+			expect(extent).toBe(20);
+		}
+	});
+
+	test("never returns a negative extent or an offset past the travel", () => {
+		for (const start of [-0.5, 0, 0.3, 0.9, 1, 1.5]) {
+			for (const end of [-0.5, 0, 0.3, 0.9, 1, 1.5]) {
+				for (const isRange of [false, true]) {
+					const { offset, extent } = fillExtent({ start, end, travel: 300, thumbSize: 20, isRange });
+					expect(extent).toBeGreaterThanOrEqual(0);
+					expect(offset).toBeGreaterThanOrEqual(0);
+					expect(offset).toBeLessThanOrEqual(300);
+					expect(offset + extent).toBeLessThanOrEqual(320);
+				}
+			}
+		}
+	});
+
+	// A measured 0 means "not measured yet". Drawing anything then puts a garbage
+	// bar on screen for a frame; dividing into it puts NaN on the UI thread, which
+	// no later frame recovers from.
+	test("draws nothing before the track has been measured", () => {
+		for (const travel of [0, -20]) {
+			expect(fillExtent({ start: 0, end: 0.5, travel, thumbSize: 20, isRange: false })).toEqual({
+				offset: 0,
+				extent: 0,
+			});
 		}
 	});
 });

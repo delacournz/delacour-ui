@@ -9,6 +9,7 @@ export type { SliderRenderChildren, SliderRenderProps } from "./slider.types";
 export {
 	clampThumb,
 	fillBounds,
+	fillExtent,
 	formatSliderValue,
 	fromValueArray,
 	nearestThumbIndex,
@@ -27,7 +28,6 @@ export {
 	SLIDER_SIZES,
 	SLIDER_STEP,
 	SLIDER_THUMB_ANIMATION,
-	SLIDER_THUMB_ICON_STEP,
 	SLIDER_THUMB_SPRING,
 	type SliderAxes,
 	type SliderColor,

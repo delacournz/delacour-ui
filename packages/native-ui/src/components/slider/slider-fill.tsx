@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import type { ViewProps } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { useSliderPart } from "./slider.context";
-import { fillBounds, sliderVariants } from "./slider.variants";
+import { fillBounds, fillExtent, sliderVariants } from "./slider.variants";
 
 export type SliderFillProps = Omit<ViewProps, "children" | "style"> & {
 	className?: string;
@@ -16,11 +16,12 @@ export type SliderFillProps = Omit<ViewProps, "children" | "style"> & {
  * the ends are what the caller excluded. {@link fillBounds} is that decision and
  * is pure, so `bun test` sweeps it.
  *
- * **Both ends land on a thumb's centre, not on its edge.** The thumb travels
- * `trackSize - thumbSize` and sits `thumbSize / 2` in from wherever its box
- * starts, so the fill has to carry that half-width or it stops short of the
- * handle at one end and runs out from under it at the other — visible as a sliver
- * of empty groove that grows and shrinks as you drag.
+ * **The far end lands on the thumb's far edge**, which is what makes both extremes
+ * exact: one thumb's width of fill at the minimum, so the handle covers it
+ * completely and a slider at rest shows a plain track, and the track's full length
+ * at the maximum, with no sliver of empty groove past the handle. That works only
+ * because the thumb's diameter is the track's thickness — {@link fillExtent} is
+ * where the arithmetic lives, and where `bun test` can hold it down.
  *
  * The extent is an animated style rather than a class because it is a measured
  * length in points, and a class cannot name one. The *colour* is a class, which
@@ -37,20 +38,23 @@ export function SliderFill({ className, ...props }: SliderFillProps): ReactEleme
 
 	const fillStyle = useAnimatedStyle(() => {
 		const thumb = thumbSize.value;
-		const travel = trackSize.value - thumb;
 		const values = positions.value;
 		const bounds = fillBounds(values, minValue, maxValue);
-		const half = thumb / 2;
-
-		// Held at zero until both layouts have landed. A measured 0 means "not
-		// measured yet", never "a track with no length", and dividing into it would
-		// put NaN on the UI thread — which no later frame recovers from.
-		const from = travel <= 0 ? 0 : values.length > 1 ? bounds.start * travel + half : 0;
-		const to = travel <= 0 ? 0 : bounds.end * travel + half;
+		// Both helpers hold themselves at zero until the layouts have landed. A
+		// measured 0 means "not measured yet", never "a track with no length", and
+		// dividing into it would put NaN on the UI thread — which no later frame
+		// recovers from.
+		const { offset, extent } = fillExtent({
+			end: bounds.end,
+			isRange: values.length > 1,
+			start: bounds.start,
+			thumbSize: thumb,
+			travel: trackSize.value - thumb,
+		});
 
 		// The same keys every frame, so Reanimated is never asked to swap a style's
 		// shape mid-animation.
-		return isVertical ? { bottom: from, height: to - from } : { left: from, width: to - from };
+		return isVertical ? { bottom: offset, height: extent } : { left: offset, width: extent };
 	});
 
 	return (

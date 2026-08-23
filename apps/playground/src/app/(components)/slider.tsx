@@ -66,8 +66,8 @@ export default function SliderGallery(): ReactElement {
 					))}
 				</View>
 				<Text.Caption color="muted">
-					The groove thickens and the thumb steps up the shared icon scale. The readout names a Text size rather than
-					restating a type scale.
+					The groove thickens and the thumb steps with it — one number per size drives both, which is what lets the fill
+					land exactly on the track's end. The readout names a Text size rather than restating a type scale.
 				</Text.Caption>
 			</Section>
 

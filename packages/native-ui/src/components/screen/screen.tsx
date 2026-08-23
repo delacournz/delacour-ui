@@ -26,10 +26,12 @@ import { ScreenView } from "./screen-view";
  * `placement="overlay"`, floating above the content with the content insetting
  * itself to match; `placement="static"` puts either in the flow instead.
  *
- * Requires a `SafeAreaProvider` and a `KeyboardProvider` above it. Mount
- * `<KeyboardStateSync />` inside the keyboard provider too — without it a
- * keyboard that vanishes without notice leaves every screen in the app
- * believing it is still open.
+ * Requires `DelacourProvider` at the app's root — it mounts the safe-area
+ * provider, the keyboard provider and the `<KeyboardStateSync />` a screen
+ * depends on. Compose those by hand only in an app that already has a root
+ * stack of its own, and keep the state sync: without it a keyboard that
+ * vanishes without notice leaves every screen in the app believing it is still
+ * open.
  *
  * @example
  * // Navbar, scrolling body and a footer action.

@@ -67,6 +67,9 @@ src/
 │   │   ├── pressable.tsx         The Gesture API primitive
 │   │   ├── pressable.variants.ts   Shared feedback vocabulary, no RN imports
 │   │   └── pressable.variants.test.ts
+│   ├── provider/
+│   │   ├── index.ts              → @delacour/native-ui/provider
+│   │   └── provider.tsx          DelacourProvider — the app's root layer stack
 │   ├── screen/
 │   │   ├── index.ts              → @delacour/native-ui/screen
 │   │   ├── screen.tsx            The Object.assign compound surface
@@ -455,17 +458,86 @@ whole-screen states.
 - **A nested `<Screen>` passes the outer context through** rather than shadowing
   it, so `Screen.Loading` returned from inside a screen does not start a second,
   unread set of measurements.
-- **Two optional peers.** `react-native-keyboard-controller` and
-  `@legendapp/list` are `peerDependenciesMeta.optional`, so an app that never
-  imports `Screen` never resolves them.
-- **The app must mount `SafeAreaProvider` → `KeyboardProvider` →
-  `<KeyboardStateSync />`.** That last one is not optional polish:
+- **One optional peer.** `@legendapp/list` is `peerDependenciesMeta.optional`,
+  so an app that never imports `Screen` never resolves it.
+  `react-native-keyboard-controller` used to be the second — see
+  **DelacourProvider** for why it stopped.
+- **The app must mount `DelacourProvider` at its root.** It supplies the gesture
+  root, `SafeAreaProvider`, `KeyboardProvider` and — the one that is not optional
+  polish — `<KeyboardStateSync />` inside the keyboard provider.
   `KeyboardProvider` owns exactly one pair of shared animation values for the
   whole app, and on iOS they are written only from the `will` events. Any
   teardown that skips one — an interactive dismiss interrupted by navigation, a
   stack pop, an app suspend — pins them open app-wide, and every screen then
   renders "keyboard open" over a keyboard that is not there. `Screen.Footer` runs
   the same repair on mount as a backstop.
+
+## DelacourProvider
+
+Every provider an app needs at its root, in one component. Mount it once, around
+everything — a root layout, an `App.tsx`.
+
+- **Four layers, outermost first**: `GestureHandlerRootView` →
+  `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside the
+  children. The order is not stylistic. The gesture root has to be an ancestor
+  native view of every handler a `Pressable` creates, and its absence is
+  *silent* — no error, no warning, presses simply stop landing.
+  `KeyboardStateSync` has to be a CHILD of `KeyboardProvider`, because it calls
+  `useKeyboardContext()`.
+- **`initialMetrics` defaults to `initialWindowMetrics`, and that is
+  load-bearing.** `SafeAreaProvider` renders `null` — not unstyled children,
+  *nothing* — until its native view reports the first `onInsetsChange`, so
+  without the seed every cold start shows a blank frame. The seed is a snapshot
+  taken at native module init, so it is stale when the app launches into a
+  rotated or split-screen window — stale for exactly one commit, because the
+  native measurement overwrites it. A blank frame on every launch is the worse
+  trade. `initialMetrics={null}` opts out: a default parameter only fires on
+  `undefined`, so `null` is a value rather than an absence, the same rule
+  `pressedScale` follows.
+- **`style` reaches the gesture root and carries no default.**
+  `GestureHandlerRootView` applies its own `{ flex: 1 }` whenever `style` is
+  undefined, so merging one in here would both duplicate it and make the prop
+  behave differently than it does upstream. Pass a style and that `flex: 1` is
+  gone — include it yourself.
+- **No per-layer escape hatches, and no layer-named props.** No
+  `gestureHandler={false}`, no `safeAreaProps`, no `keyboardProps`. A boolean
+  that turns off the gesture root has "nothing responds to a press" as its
+  failure mode, which is the least debuggable outcome in the package. And a prop
+  surface that names the layers changes shape every time a layer is added:
+  `children`, `style` and `initialMetrics` say nothing about what is inside, so a
+  future `BottomSheetModalProvider` or portal host is an edit to one file rather
+  than a breaking change. An app that genuinely needs a different stack composes
+  the providers by hand — they are all public from their own packages, and this
+  is a convenience, not a gate.
+- **A new layer goes innermost.** Anything that draws above the app — a
+  bottom-sheet modal provider, a portal host, a toast host — has to sit inside
+  every provider it reads, so it wraps `{children}` and nothing else moves. A
+  layer that brings a new native peer is a peer-dependency decision first.
+- **Deliberately not idempotent.** It does not detect an enclosing copy of
+  itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
+  `SafeAreaProvider` seeds from the parent's insets and costs a native view;
+  nesting `KeyboardProvider` is the one that actually breaks — two pairs of
+  shared values, two sets of native observers, and the outer `KeyboardStateSync`
+  repairing values nobody reads. That is also the only layer that cannot be
+  detected: `useKeyboardContext()` returns a module-private default object
+  outside a provider, that object is not exported, and the hook `console.warn`s
+  whenever it hands one back, so a detection read would print a warning in every
+  correctly-mounted app. A guard covering the two harmless layers and missing the
+  harmful one is worse than none — it teaches callers that nesting is fine.
+- **`react-native-keyboard-controller` is a required peer because of this
+  component.** It was optional while `Screen` was the only importer: an app that
+  never imported `Screen` never resolved it. The recommended root now imports it,
+  so every app resolves it, and the flag had stopped describing reality — all it
+  still did was suppress the install warning that would have explained the Metro
+  resolution error coming out of the app's root layout. Rule 3's promise is
+  per-subpath and survives intact: `/button` still pulls nothing
+  keyboard-related.
+- **Nothing here for `bun test`, and no `provider.variants.ts` to give it
+  some.** The component is four nested elements and one default parameter;
+  extracting a `resolveInitialMetrics()` would be a unit test of `??`. The rule
+  that pure decisions live in a `*.variants.ts` has no decision here to
+  relocate.
+- **No gallery route.** See **Adding a component**.
 
 ## Text
 
@@ -729,6 +801,12 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
 4. `bun run gen-exports`.
 5. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
    it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.
+   *A component with nothing to render skips this.* `DelacourProvider` has no
+   gallery and no row: the playground's own `_layout.tsx` is its harness and
+   every route in the app renders downstream of it, which is a stronger check
+   than a readout page could be. Name the routes that prove each layer instead —
+   `/pressable` for the gesture root, `/screen/navbar` for the insets,
+   `/screen/form` for the keyboard.
 
 ## Compound component layout
 
@@ -804,23 +882,39 @@ types, its context and its variants. Nothing outside reaches past the index.
 @source '../../../../packages/native-ui/src';
 ```
 
-`Screen` additionally needs three providers above it, outermost first:
+Wrap the app's root in `DelacourProvider` — the gesture root every `Pressable`
+needs above it, the safe-area provider and the keyboard provider `Screen` reads,
+and the keyboard state sync that keeps them honest:
+
+```tsx
+import { DelacourProvider } from "@delacour/native-ui/provider";
+
+<DelacourProvider>{children}</DelacourProvider>;
+```
+
+Compose the four by hand only in an app that already has a root stack of its
+own — and then `<KeyboardStateSync />` is required, not optional polish, and must
+be a child of `KeyboardProvider`:
 
 ```tsx
 import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
 
-<SafeAreaProvider>
-  <KeyboardProvider>
-    <KeyboardStateSync />
-    {children}
-  </KeyboardProvider>
-</SafeAreaProvider>;
+<GestureHandlerRootView>
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <KeyboardProvider>
+      <KeyboardStateSync />
+      {children}
+    </KeyboardProvider>
+  </SafeAreaProvider>
+</GestureHandlerRootView>;
 ```
 
-`KeyboardStateSync` is required, not optional — see **Screen** for what breaks
-without it.
+See **Screen** for what breaks without the state sync, and **DelacourProvider**
+for why the safe-area provider is seeded and why the gesture root takes no
+`style`.
 
 ```tsx
 import { Button } from "@delacour/native-ui/button";

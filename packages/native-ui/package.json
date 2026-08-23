@@ -12,6 +12,7 @@
 		"./icon": "./src/components/icon/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
+		"./provider": "./src/components/provider/index.ts",
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
@@ -61,9 +62,6 @@
 			"optional": true
 		},
 		"@legendapp/list": {
-			"optional": true
-		},
-		"react-native-keyboard-controller": {
 			"optional": true
 		},
 		"react-native-screens": {

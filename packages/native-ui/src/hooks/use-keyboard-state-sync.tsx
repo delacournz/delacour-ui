@@ -67,7 +67,8 @@ export function reconcileKeyboardAnimation({ progress, height }: KeyboardAnimati
  * - Gating each reader behind a screen-local flag adds a second driver to every
  *   consumer and still leaves the globals wrong for the next screen.
  *
- * Mount ONCE, directly inside `<KeyboardProvider>`.
+ * Mount ONCE, directly inside `<KeyboardProvider>` — or let
+ * `DelacourProvider` do it.
  */
 export function useKeyboardStateSync(): void {
 	const { reanimated } = useKeyboardContext();
@@ -111,6 +112,9 @@ export function useKeyboardStateSync(): void {
 
 /**
  * Render-free host for {@link useKeyboardStateSync}, to drop into a layout tree.
+ *
+ * `DelacourProvider` already mounts this — write it out only when composing the
+ * root providers by hand.
  *
  * @example
  * <KeyboardProvider>

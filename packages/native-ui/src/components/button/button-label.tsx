@@ -21,3 +21,4 @@ export function ButtonLabel({ className, ...props }: ButtonLabelProps): ReactEle
 	const { variant, size } = useButtonPart("Button.Label");
 	return <Text className={buttonVariants({ size, variant }).label({ className })} {...props} />;
 }
+ButtonLabel.displayName = "DelacourUI.Button.Label";

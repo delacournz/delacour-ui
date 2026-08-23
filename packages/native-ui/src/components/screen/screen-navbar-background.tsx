@@ -42,3 +42,4 @@ export const ScreenNavbarBackground = memo(function ScreenNavbarBackground({
 		</View>
 	);
 });
+ScreenNavbarBackground.displayName = "DelacourUI.Screen.Navbar.Background";

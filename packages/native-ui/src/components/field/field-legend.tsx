@@ -31,3 +31,4 @@ export function FieldLegend({ className, variant = "legend", ...props }: FieldLe
 
 	return <Text.Paragraph className={legendClassName} {...props} />;
 }
+FieldLegend.displayName = "DelacourUI.Field.Legend";

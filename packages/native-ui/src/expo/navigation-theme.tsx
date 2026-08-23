@@ -55,3 +55,4 @@ export function NavigationTheme({ children }: NavigationThemeProps): ReactElemen
 
 	return <ThemeProvider value={value}>{children}</ThemeProvider>;
 }
+NavigationTheme.displayName = "DelacourUI.NavigationTheme";

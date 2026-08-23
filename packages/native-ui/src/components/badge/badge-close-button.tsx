@@ -45,3 +45,4 @@ export function BadgeCloseButton({
 		</Pressable>
 	);
 }
+BadgeCloseButton.displayName = "DelacourUI.Badge.CloseButton";

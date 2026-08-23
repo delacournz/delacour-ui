@@ -19,3 +19,4 @@ export type FieldGroupProps = ViewProps & { className?: string };
 export function FieldGroup({ className, ...props }: FieldGroupProps): ReactElement {
 	return <View className={fieldVariants().group({ className })} {...props} />;
 }
+FieldGroup.displayName = "DelacourUI.Field.Group";

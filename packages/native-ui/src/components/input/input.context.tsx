@@ -48,6 +48,7 @@ export function InputGroupProvider({
 }): ReactElement {
 	return <InputGroupContext value={value}>{children}</InputGroupContext>;
 }
+InputGroupProvider.displayName = "DelacourUI.Input.Group.Provider";
 
 /** The enclosing group's context, or null for a field standing on its own. */
 export function useInputGroupContext(): InputGroupContextValue | null {

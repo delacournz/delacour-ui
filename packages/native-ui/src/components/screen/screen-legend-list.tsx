@@ -87,3 +87,4 @@ export function ScreenLegendList<ItemT>({
 		/>
 	);
 }
+ScreenLegendList.displayName = "DelacourUI.Screen.LegendList";

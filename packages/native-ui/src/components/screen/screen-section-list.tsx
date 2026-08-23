@@ -62,3 +62,4 @@ export function ScreenSectionList<ItemT, SectionT = DefaultSectionT>({
 		/>
 	);
 }
+ScreenSectionList.displayName = "DelacourUI.Screen.SectionList";

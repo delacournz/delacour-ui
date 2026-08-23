@@ -107,5 +107,5 @@ export const Screen = Object.assign(ScreenRoot, {
 	Loading: ScreenLoading,
 	/** A whole screen explaining that something failed. */
 	Error: ScreenError,
-	displayName: "Screen",
+	displayName: "DelacourUI.Screen",
 });

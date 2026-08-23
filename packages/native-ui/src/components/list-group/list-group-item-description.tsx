@@ -9,3 +9,4 @@ export function ListGroupItemDescription({ className, ...props }: ListGroupTextP
 	const { size } = useListGroupPart("ListGroup.ItemDescription");
 	return <Text className={listGroupVariants({ size }).description({ className })} {...props} />;
 }
+ListGroupItemDescription.displayName = "DelacourUI.ListGroup.ItemDescription";

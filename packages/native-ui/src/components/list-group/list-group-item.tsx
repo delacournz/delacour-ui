@@ -45,6 +45,7 @@ export function ListGroupItem({
 		</Pressable>
 	);
 }
+ListGroupItem.displayName = "DelacourUI.ListGroup.Item";
 
 /**
  * Wraps bare text children in a title inside a content column.

@@ -29,6 +29,7 @@ export function SpinnerProvider({
 }): ReactElement {
 	return <SpinnerContext value={value}>{children}</SpinnerContext>;
 }
+SpinnerProvider.displayName = "DelacourUI.Spinner.Provider";
 
 /** The enclosing spinner's context, or null outside a `<Spinner>`. */
 export function useSpinnerContext(): SpinnerContextValue | null {

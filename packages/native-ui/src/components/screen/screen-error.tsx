@@ -58,3 +58,4 @@ export function ScreenError({
 		</ScreenRoot>
 	);
 }
+ScreenError.displayName = "DelacourUI.Screen.Error";

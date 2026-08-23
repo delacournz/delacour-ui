@@ -33,3 +33,4 @@ export function ScreenHeader({ insets, className, children, style, ...props }: S
 		</View>
 	);
 }
+ScreenHeader.displayName = "DelacourUI.Screen.Header";

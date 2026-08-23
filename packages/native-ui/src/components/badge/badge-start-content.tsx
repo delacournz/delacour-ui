@@ -13,3 +13,4 @@ import { badgeVariants } from "./badge.variants";
 export function BadgeStartContent({ className, ...props }: BadgeSlotProps): ReactElement {
 	return <View className={badgeVariants().startContent({ className })} {...props} />;
 }
+BadgeStartContent.displayName = "DelacourUI.Badge.StartContent";

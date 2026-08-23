@@ -219,6 +219,7 @@ export function Pressable({
 
 	return <GestureDetector gesture={gesture}>{content}</GestureDetector>;
 }
+Pressable.displayName = "DelacourUI.Pressable";
 
 /**
  * Renders the pressable's props into its single child, with no wrapper element.

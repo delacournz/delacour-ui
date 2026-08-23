@@ -43,6 +43,7 @@ type IconGlyphProps = Omit<SvgProps, "color" | "width" | "height"> & {
 function IconGlyph({ glyph: Glyph, className: _sizedBy, ...props }: IconGlyphProps): ReactElement {
 	return <Glyph {...props} />;
 }
+IconGlyph.displayName = "DelacourUI.Icon.Glyph";
 
 /**
  * Turns a `size-*` class into the glyph's `size` **prop**.
@@ -88,3 +89,4 @@ export function Icon({ icon, size, color, className, ...props }: IconProps): Rea
 		/>
 	);
 }
+Icon.displayName = "DelacourUI.Icon";

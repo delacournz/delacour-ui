@@ -52,3 +52,4 @@ export function ListGroupItemSuffix({
 		</View>
 	);
 }
+ListGroupItemSuffix.displayName = "DelacourUI.ListGroup.ItemSuffix";

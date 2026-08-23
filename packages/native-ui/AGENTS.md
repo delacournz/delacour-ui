@@ -153,6 +153,7 @@ src/
 ├── icons/central.ts  Central Icons re-export
 ├── lib/              cn, tv, merge-props, compose-refs, slot, keyboard-animation
 ├── styles/           index / base / tokens / theme CSS, plus tokens.ts
+├── display-name.test.ts  The package-wide displayName check — see rule 12
 └── uniwind-env.d.ts  /// <reference types="uniwind/types" />
 ```
 
@@ -269,6 +270,15 @@ its slot set, so a sibling would buy nothing but a second file to open.
     variant names) and adds `tertiary`, where the web package uses
     `destructive`. `X-foreground` always means "content drawn on an `X`
     surface" — keep that meaning when adding a token.
+12. **Every component carries a `DelacourUI.`-prefixed `displayName`.** Not just
+    compound roots — every part, every context provider, every internal leaf that
+    renders. React DevTools reads `displayName || name`, so an unnamed component
+    shows its private symbol (`ScreenNavbarTitle`) in every tree row, error stack
+    and profiler entry instead of its place in the API
+    (`DelacourUI.Screen.Navbar.Title`). The derivation and the two legal
+    assignment forms are in **Compound component layout**;
+    `src/display-name.test.ts` fails the build with the name of any component
+    that lacks one.
 
 ## Button
 
@@ -1090,6 +1100,13 @@ reasoning lives in its doc comment and the behaviour is checked on a simulator.
 A new single-element component that colocates its `tv()` takes the same trade.
 A component with parts, or with a pure resolver, does not get to make it.
 
+`src/display-name.test.ts` is the one test that reaches a `.tsx` at all, and it
+does it by reading the file as **text** — walking `src/` with `node:fs`, matching
+component declarations against `displayName` assignments, and importing nothing.
+That is the move available whenever a convention is real but no renderer can
+check it: assert against the source. `styles/tokens.test.ts` reads `tokens.css`
+the same way.
+
 Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.
 
@@ -1105,11 +1122,14 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
    a pure resolver, adds a `{name}.variants.ts` for its slotted `tv()`; a single
    styled element declares the `tv()` in its own file instead. A
    compound component adds one file per part, a `{name}.context.tsx` and a
-   `{name}.types.ts` — see **Compound component layout**.
+   `{name}.types.ts` — see **Compound component layout**. Give every component
+   in it a `DelacourUI.`-prefixed `displayName`, parts and providers included
+   (rule 12).
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
 3. Write the variant tests first where there is a `{name}.variants.ts` — that is
    the part `bun test` can reach. A colocated `tv()` has none, so state its rules
-   in the doc comment and verify them on a simulator at step 5.
+   in the doc comment and verify them on a simulator at step 5. `bun test` also
+   fails with the name of any component still missing a `displayName`.
 4. `bun run gen-exports`.
 5. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
    it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.
@@ -1139,8 +1159,15 @@ export const Button = Object.assign(ButtonRoot, {
 	Label: ButtonLabel,
 	StartContent: ButtonStartContent,
 	EndContent: ButtonEndContent,
-	displayName: "Button",
+	displayName: "DelacourUI.Button",
 });
+```
+
+and every part file ends with its own, on the line after the closing brace:
+
+```tsx
+export function ButtonLabel({ className, ...props }: ButtonLabelProps): ReactElement { … }
+ButtonLabel.displayName = "DelacourUI.Button.Label";
 ```
 
 Five things about that block are load-bearing:
@@ -1154,10 +1181,43 @@ Five things about that block are load-bearing:
 3. **Per-slot one-liners are the reason to prefer `Object.assign`** over
    `Button.Label = ButtonLabel`. They surface on hover at `<Button.Label>`,
    where the trailing-assignment form showed nothing.
-4. **`displayName` is required.** React DevTools reads `displayName || name`, so
-   without it every tree row, error stack and profiler entry reads `ButtonRoot`.
-   It must sit inside the object or on the root *before* the assign —
-   `Button.displayName = …` afterwards is a type error.
+4. **`displayName` is required, on every component, and it is
+   `DelacourUI.` + the component's dotted path in the public API.** React
+   DevTools reads `displayName || name`, so without it every tree row, error
+   stack and profiler entry reads `ButtonRoot`.
+
+   ```
+   DelacourUI.Button                 root
+   DelacourUI.Button.Label           slot — the Object.assign key, verbatim
+   DelacourUI.Input.Group            nested compound root
+   DelacourUI.Input.Group.Prefix     nested slot
+   DelacourUI.Text.Display           preset
+   ```
+
+   **Every** component takes one, not only the roots — a part, a context
+   provider (`DelacourUI.Badge.Provider`, `DelacourUI.Text.ClassProvider`) and an
+   internal leaf nobody imports (`DelacourUI.Spinner.Arc`,
+   `DelacourUI.Screen.Footer.Background`) all appear in a DevTools tree, so all
+   three need a name that says where they sit. A non-slot component dots under
+   whatever owns it.
+
+   There are two legal forms and no third. A root's goes **inside the
+   `Object.assign`**; everything else takes a trailing statement on the line
+   after its closing brace, as `button-label.tsx` does above and as the two
+   `memo` consts in `screen/` do after their `});`. `Button.displayName = …`
+   *after* the assign is a type error.
+
+   Three names do not fall out of the rule mechanically. `DelacourProvider` is
+   `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this
+   matches its export subpath. `ListGroup`'s slots keep the flat keys the assign
+   gives them — `DelacourUI.ListGroup.ItemPrefix`, never `.Item.Prefix`. And
+   `ScreenRoot` is named by the assign in `screen.tsx` rather than in
+   `screen-root.tsx`, the one root that lives in a different file from its own
+   compound surface — do not add a second assignment beside the declaration.
+
+   `src/display-name.test.ts` enforces all of this. It reads the `.tsx` tree as
+   source text rather than importing it, so it works where no renderer does; a
+   new component fails `bun test` by name until it is named.
 5. **A slot may not be named `name`, `length`, `caller` or `arguments`.** Those
    are non-writable on a function and `Object.assign` throws at module init.
 

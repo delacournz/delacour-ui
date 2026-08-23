@@ -65,3 +65,4 @@ export function ScreenFlatList<ItemT>({
 		/>
 	);
 }
+ScreenFlatList.displayName = "DelacourUI.Screen.FlatList";

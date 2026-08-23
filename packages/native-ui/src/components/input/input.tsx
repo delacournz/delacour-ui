@@ -169,5 +169,5 @@ function InputRoot({
 export const Input = Object.assign(InputRoot, {
 	/** A row that puts prefix and suffix content inside the field's own box. */
 	Group: InputGroup,
-	displayName: "Input",
+	displayName: "DelacourUI.Input",
 });

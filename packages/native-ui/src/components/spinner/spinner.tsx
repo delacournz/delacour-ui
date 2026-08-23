@@ -124,5 +124,5 @@ function wrapSpinnerChildren(children: ReactNode): ReactNode {
 export const Spinner = Object.assign(SpinnerRoot, {
 	/** The rotating layer. Wraps a custom glyph or asset so it spins; applied automatically. */
 	Content: SpinnerContent,
-	displayName: "Spinner",
+	displayName: "DelacourUI.Spinner",
 });

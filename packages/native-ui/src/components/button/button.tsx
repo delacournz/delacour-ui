@@ -255,5 +255,5 @@ export const Button = Object.assign(ButtonRoot, {
 	StartContent: ButtonStartContent,
 	/** A centred wrapper for trailing content that is not an `Icon`. */
 	EndContent: ButtonEndContent,
-	displayName: "Button",
+	displayName: "DelacourUI.Button",
 });

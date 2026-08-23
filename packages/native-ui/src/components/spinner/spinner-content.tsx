@@ -60,3 +60,4 @@ export function SpinnerContent({ className, style, children, ...props }: Spinner
 		</Animated.View>
 	);
 }
+SpinnerContent.displayName = "DelacourUI.Spinner.Content";

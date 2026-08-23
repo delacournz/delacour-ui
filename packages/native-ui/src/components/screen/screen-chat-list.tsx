@@ -150,6 +150,7 @@ export function ScreenChatList<ItemT>(props: ScreenChatListProps<ItemT>): ReactE
 	if (props.variant === "flat") return <ScreenChatListFlat {...props} />;
 	return <ScreenChatListLegend {...props} />;
 }
+ScreenChatList.displayName = "DelacourUI.Screen.ChatList";
 
 /**
  * The composer clearance, as two separately visible bands.
@@ -301,6 +302,7 @@ function ScreenChatListFlat<ItemT>({
 		/>
 	);
 }
+ScreenChatListFlat.displayName = "DelacourUI.Screen.ChatList.Flat";
 
 function ScreenChatListLegend<ItemT>({
 	header,
@@ -431,6 +433,7 @@ function ScreenChatListLegend<ItemT>({
 		/>
 	);
 }
+ScreenChatListLegend.displayName = "DelacourUI.Screen.ChatList.Legend";
 
 /** Re-exported so a caller can type its own `renderItem` for the legend variant. */
 export type { LegendListProps, LegendListRef, LegendListRenderItemProps };

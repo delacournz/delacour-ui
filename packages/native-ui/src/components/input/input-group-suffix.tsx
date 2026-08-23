@@ -12,3 +12,4 @@ import { InputGroupDecorator } from "./input-group-decorator";
 export function InputGroupSuffix(props: InputSlotProps): ReactElement {
 	return <InputGroupDecorator part="Input.Group.Suffix" {...props} />;
 }
+InputGroupSuffix.displayName = "DelacourUI.Input.Group.Suffix";

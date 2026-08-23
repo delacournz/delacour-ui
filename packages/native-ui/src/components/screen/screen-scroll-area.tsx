@@ -77,3 +77,4 @@ export function ScreenScrollArea({
 		</Scroll>
 	);
 }
+ScreenScrollArea.displayName = "DelacourUI.Screen.ScrollArea";

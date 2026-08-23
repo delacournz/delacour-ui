@@ -30,3 +30,4 @@ export function FieldLabel({ className, color, ...props }: FieldTextProps): Reac
 		/>
 	);
 }
+FieldLabel.displayName = "DelacourUI.Field.Label";

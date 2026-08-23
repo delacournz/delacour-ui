@@ -44,6 +44,7 @@ export function InputGroupDecorator({
 		</View>
 	);
 }
+InputGroupDecorator.displayName = "DelacourUI.Input.Group.Decorator";
 
 /**
  * Wraps bare text children in a `Text`.

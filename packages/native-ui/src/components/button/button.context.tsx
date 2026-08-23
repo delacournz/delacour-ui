@@ -26,6 +26,7 @@ const ButtonContext = createContext<ButtonContextValue | null>(null);
 export function ButtonProvider({ value, children }: { value: ButtonContextValue; children: ReactNode }): ReactElement {
 	return <ButtonContext value={value}>{children}</ButtonContext>;
 }
+ButtonProvider.displayName = "DelacourUI.Button.Provider";
 
 /** The enclosing button's context, or null outside a `<Button>`. */
 export function useButtonContext(): ButtonContextValue | null {

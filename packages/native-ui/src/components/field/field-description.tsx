@@ -26,3 +26,4 @@ export function FieldDescription({ className, color, ...props }: FieldTextProps)
 		/>
 	);
 }
+FieldDescription.displayName = "DelacourUI.Field.Description";

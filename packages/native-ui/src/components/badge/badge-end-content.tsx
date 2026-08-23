@@ -12,3 +12,4 @@ import { badgeVariants } from "./badge.variants";
 export function BadgeEndContent({ className, ...props }: BadgeSlotProps): ReactElement {
 	return <View className={badgeVariants().endContent({ className })} {...props} />;
 }
+BadgeEndContent.displayName = "DelacourUI.Badge.EndContent";

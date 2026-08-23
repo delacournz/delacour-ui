@@ -66,3 +66,4 @@ export function ScreenContent({
 		</KeyboardGestureArea>
 	);
 }
+ScreenContent.displayName = "DelacourUI.Screen.Content";

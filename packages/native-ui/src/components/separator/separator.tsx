@@ -82,3 +82,4 @@ export function Separator({ orientation = "horizontal", className, ...props }: S
 		/>
 	);
 }
+Separator.displayName = "DelacourUI.Separator";

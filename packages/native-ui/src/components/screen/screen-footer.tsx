@@ -167,3 +167,4 @@ export function ScreenFooter({
 		</View>
 	);
 }
+ScreenFooter.displayName = "DelacourUI.Screen.Footer";

@@ -41,6 +41,7 @@ export function FieldSeparator({ className, children, ...props }: FieldSeparator
 		</View>
 	);
 }
+FieldSeparator.displayName = "DelacourUI.Field.Separator";
 
 /** Whether there is a label to make room for between the rules. */
 function hasContent(children: ReactNode): boolean {

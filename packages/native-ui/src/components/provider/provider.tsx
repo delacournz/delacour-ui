@@ -92,3 +92,4 @@ export function DelacourProvider({
 		</GestureHandlerRootView>
 	);
 }
+DelacourProvider.displayName = "DelacourUI.Provider";

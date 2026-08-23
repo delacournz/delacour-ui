@@ -13,3 +13,4 @@ import { InputGroupDecorator } from "./input-group-decorator";
 export function InputGroupPrefix(props: InputSlotProps): ReactElement {
 	return <InputGroupDecorator part="Input.Group.Prefix" {...props} />;
 }
+InputGroupPrefix.displayName = "DelacourUI.Input.Group.Prefix";

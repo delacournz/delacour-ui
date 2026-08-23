@@ -25,6 +25,7 @@ const BadgeContext = createContext<BadgeContextValue | null>(null);
 export function BadgeProvider({ value, children }: { value: BadgeContextValue; children: ReactNode }): ReactElement {
 	return <BadgeContext value={value}>{children}</BadgeContext>;
 }
+BadgeProvider.displayName = "DelacourUI.Badge.Provider";
 
 /** The enclosing badge's context, or null outside a `<Badge>`. */
 export function useBadgeContext(): BadgeContextValue | null {

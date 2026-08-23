@@ -28,3 +28,4 @@ export function ScreenNavbarTitle({ className, children, ...props }: ScreenNavba
 		</Text>
 	);
 }
+ScreenNavbarTitle.displayName = "DelacourUI.Screen.Navbar.Title";

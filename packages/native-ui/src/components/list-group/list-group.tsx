@@ -112,5 +112,5 @@ export const ListGroup = Object.assign(ListGroupRoot, {
 	ItemDescription: ListGroupItemDescription,
 	/** The trailing slot of a row, showing a chevron unless given content. */
 	ItemSuffix: ListGroupItemSuffix,
-	displayName: "ListGroup",
+	displayName: "DelacourUI.ListGroup",
 });

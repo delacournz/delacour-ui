@@ -188,5 +188,5 @@ export const Badge = Object.assign(BadgeRoot, {
 	EndContent: BadgeEndContent,
 	/** The trailing dismiss control. Composed in automatically whenever `onClose` is set. */
 	CloseButton: BadgeCloseButton,
-	displayName: "Badge",
+	displayName: "DelacourUI.Badge",
 });

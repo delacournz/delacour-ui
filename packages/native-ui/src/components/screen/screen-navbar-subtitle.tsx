@@ -23,3 +23,4 @@ export function ScreenNavbarSubtitle({ className, children, ...props }: ScreenNa
 		</Text>
 	);
 }
+ScreenNavbarSubtitle.displayName = "DelacourUI.Screen.Navbar.Subtitle";

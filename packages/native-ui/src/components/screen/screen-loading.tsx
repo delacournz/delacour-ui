@@ -47,3 +47,4 @@ export function ScreenLoading({ title, onBack, showNavbar = true }: ScreenLoadin
 		</ScreenRoot>
 	);
 }
+ScreenLoading.displayName = "DelacourUI.Screen.Loading";

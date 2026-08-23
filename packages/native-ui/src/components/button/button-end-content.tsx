@@ -12,3 +12,4 @@ import { buttonVariants } from "./button.variants";
 export function ButtonEndContent({ className, ...props }: ButtonSlotProps): ReactElement {
 	return <View className={buttonVariants().endContent({ className })} {...props} />;
 }
+ButtonEndContent.displayName = "DelacourUI.Button.EndContent";

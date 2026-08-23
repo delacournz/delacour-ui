@@ -76,3 +76,4 @@ export function ScreenNavbarBackButton({
 		</Pressable>
 	);
 }
+ScreenNavbarBackButton.displayName = "DelacourUI.Screen.Navbar.BackButton";

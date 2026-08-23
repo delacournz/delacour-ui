@@ -21,3 +21,4 @@ export function FieldContent({ className, ...props }: FieldContentProps): ReactE
 
 	return <View className={fieldVariants({ isDisabled, isInvalid }).content({ className })} {...props} />;
 }
+FieldContent.displayName = "DelacourUI.Field.Content";

@@ -19,3 +19,4 @@ export type FieldSetProps = ViewProps & { className?: string };
 export function FieldSet({ className, ...props }: FieldSetProps): ReactElement {
 	return <View className={fieldVariants().set({ className })} {...props} />;
 }
+FieldSet.displayName = "DelacourUI.Field.Set";

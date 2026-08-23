@@ -42,3 +42,4 @@ export function Slot({ children, ...slotProps }: SlotProps): ReactElement {
 
 	return cloneElement(child, merged);
 }
+Slot.displayName = "DelacourUI.Slot";

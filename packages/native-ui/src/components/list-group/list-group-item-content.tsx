@@ -7,3 +7,4 @@ import { listGroupVariants } from "./list-group.variants";
 export function ListGroupItemContent({ className, ...props }: ListGroupSlotProps): ReactElement {
 	return <View className={listGroupVariants().content({ className })} {...props} />;
 }
+ListGroupItemContent.displayName = "DelacourUI.ListGroup.ItemContent";

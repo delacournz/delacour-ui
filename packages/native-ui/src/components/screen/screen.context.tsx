@@ -122,6 +122,7 @@ export function ScreenProvider({ parentContext = null, debug = false, children }
 
 	return <ScreenContext value={value}>{children}</ScreenContext>;
 }
+ScreenProvider.displayName = "DelacourUI.Screen.Provider";
 
 /** The enclosing screen's context, or null outside a `<Screen>`. */
 export function useScreenContext(): ScreenContextValue | null {

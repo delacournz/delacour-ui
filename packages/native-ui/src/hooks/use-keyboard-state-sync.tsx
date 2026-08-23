@@ -126,6 +126,7 @@ export function KeyboardStateSync(): null {
 	useKeyboardStateSync();
 	return null;
 }
+KeyboardStateSync.displayName = "DelacourUI.KeyboardStateSync";
 
 /**
  * Screen-level repair, for a surface that mounts into an already-poisoned

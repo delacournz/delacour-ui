@@ -14,3 +14,4 @@ export function ListGroupItemTitle({ className, ...props }: ListGroupTextProps):
 	const { size } = useListGroupPart("ListGroup.ItemTitle");
 	return <Text className={listGroupVariants({ size }).title({ className })} {...props} />;
 }
+ListGroupItemTitle.displayName = "DelacourUI.ListGroup.ItemTitle";

@@ -21,3 +21,4 @@ export function BadgeLabel({ className, ...props }: BadgeLabelProps): ReactEleme
 	const { variant, color, size } = useBadgePart("Badge.Label");
 	return <Text className={badgeVariants({ size, variant, color }).label({ className })} {...props} />;
 }
+BadgeLabel.displayName = "DelacourUI.Badge.Label";

@@ -41,6 +41,7 @@ export function TextClassProvider({
 }): ReactElement {
 	return <TextClassContext value={value}>{children}</TextClassContext>;
 }
+TextClassProvider.displayName = "DelacourUI.Text.ClassProvider";
 
 /**
  * The classes the nearest enclosing `Text` or `TextClassProvider` published, or

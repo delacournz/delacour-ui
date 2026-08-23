@@ -87,3 +87,4 @@ export function SpinnerArc(): ReactElement {
 		</Svg>
 	);
 }
+SpinnerArc.displayName = "DelacourUI.Spinner.Arc";

@@ -12,3 +12,4 @@ import { buttonVariants } from "./button.variants";
 export function ButtonStartContent({ className, ...props }: ButtonSlotProps): ReactElement {
 	return <View className={buttonVariants().startContent({ className })} {...props} />;
 }
+ButtonStartContent.displayName = "DelacourUI.Button.StartContent";

@@ -41,6 +41,7 @@ const FieldContext = createContext<FieldContextValue | null>(null);
 export function FieldProvider({ value, children }: { value: FieldContextValue; children: ReactNode }): ReactElement {
 	return <FieldContext value={value}>{children}</FieldContext>;
 }
+FieldProvider.displayName = "DelacourUI.Field.Provider";
 
 /**
  * The enclosing field's state, or null outside a `<Field>`.

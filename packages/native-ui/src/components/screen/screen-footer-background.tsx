@@ -57,3 +57,4 @@ export const ScreenFooterBackground = memo(function ScreenFooterBackground({
 		</View>
 	);
 });
+ScreenFooterBackground.displayName = "DelacourUI.Screen.Footer.Background";

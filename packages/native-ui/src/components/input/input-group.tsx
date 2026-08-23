@@ -123,5 +123,5 @@ export const InputGroup = Object.assign(InputGroupRoot, {
 	Prefix: InputGroupPrefix,
 	/** Trailing content inside the box — a clear button, a unit, a reveal toggle. */
 	Suffix: InputGroupSuffix,
-	displayName: "Input.Group",
+	displayName: "DelacourUI.Input.Group",
 });

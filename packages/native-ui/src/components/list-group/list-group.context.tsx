@@ -26,6 +26,7 @@ export function ListGroupProvider({
 }): ReactElement {
 	return <ListGroupContext value={value}>{children}</ListGroupContext>;
 }
+ListGroupProvider.displayName = "DelacourUI.ListGroup.Provider";
 
 /** The enclosing list group's context, or null outside a `<ListGroup>`. */
 export function useListGroupContext(): ListGroupContextValue | null {

@@ -107,5 +107,5 @@ export const Field = Object.assign(FieldRoot, {
 	Content: FieldContent,
 	/** A rule between sections, optionally labelled between two rules. */
 	Separator: FieldSeparator,
-	displayName: "Field",
+	displayName: "DelacourUI.Field",
 });

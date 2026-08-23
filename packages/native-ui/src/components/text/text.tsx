@@ -87,16 +87,19 @@ function TextRoot({
 function TextDisplay(props: TextPresetProps): ReactElement {
 	return <TextRoot accessibilityRole="header" variant="display" {...props} />;
 }
+TextDisplay.displayName = "DelacourUI.Text.Display";
 
 /** A screen or card title — 24pt bold. Announced as a heading. */
 function TextTitle(props: TextPresetProps): ReactElement {
 	return <TextRoot accessibilityRole="header" variant="title" {...props} />;
 }
+TextTitle.displayName = "DelacourUI.Text.Title";
 
 /** A section heading — 20pt semibold. Announced as a heading. */
 function TextHeader(props: TextPresetProps): ReactElement {
 	return <TextRoot accessibilityRole="header" variant="header" {...props} />;
 }
+TextHeader.displayName = "DelacourUI.Text.Header";
 
 /**
  * The secondary line under a title — 18pt on the muted token.
@@ -107,6 +110,7 @@ function TextHeader(props: TextPresetProps): ReactElement {
 function TextSubheader(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="subheader" {...props} />;
 }
+TextSubheader.displayName = "DelacourUI.Text.Subheader";
 
 /**
  * A block of prose — 16pt on the foreground token.
@@ -118,21 +122,25 @@ function TextSubheader(props: TextPresetProps): ReactElement {
 function TextParagraph(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="paragraph" {...props} />;
 }
+TextParagraph.displayName = "DelacourUI.Text.Paragraph";
 
 /** A control label or compact UI string — 14pt medium. */
 function TextLabel(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="label" {...props} />;
 }
+TextLabel.displayName = "DelacourUI.Text.Label";
 
 /** Supporting copy under a label or a title — 14pt on the muted token. */
 function TextCaption(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="caption" {...props} />;
 }
+TextCaption.displayName = "DelacourUI.Text.Caption";
 
 /** An eyebrow above a section — 12pt semibold, uppercase, muted. */
 function TextOverline(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="overline" {...props} />;
 }
+TextOverline.displayName = "DelacourUI.Text.Overline";
 
 /**
  * Inline emphasis by weight.
@@ -144,11 +152,13 @@ function TextOverline(props: TextPresetProps): ReactElement {
 function TextStrong(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="strong" {...props} />;
 }
+TextStrong.displayName = "DelacourUI.Text.Strong";
 
 /** Inline emphasis by slant. Inherits size, weight and colour from the text around it. */
 function TextEmphasis(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="emphasis" {...props} />;
 }
+TextEmphasis.displayName = "DelacourUI.Text.Emphasis";
 
 /**
  * A tappable run of text. `onPress` rides through from React Native's own
@@ -160,6 +170,7 @@ function TextEmphasis(props: TextPresetProps): ReactElement {
 function TextLink(props: TextPresetProps): ReactElement {
 	return <TextRoot accessibilityRole="link" variant="link" {...props} />;
 }
+TextLink.displayName = "DelacourUI.Text.Link";
 
 /**
  * Inline code, monospaced on a muted background.
@@ -177,6 +188,7 @@ function TextLink(props: TextPresetProps): ReactElement {
 function TextCode(props: TextPresetProps): ReactElement {
 	return <TextRoot variant="code" {...props} />;
 }
+TextCode.displayName = "DelacourUI.Text.Code";
 
 /**
  * A piece of text, and the type scale the whole library draws from.
@@ -235,5 +247,5 @@ export const Text = Object.assign(TextRoot, {
 	Link: TextLink,
 	/** Inline code, monospaced. Padded only when it stands alone. */
 	Code: TextCode,
-	displayName: "Text",
+	displayName: "DelacourUI.Text",
 });

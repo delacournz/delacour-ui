@@ -21,6 +21,7 @@ const IconDefaultsContext = createContext<IconDefaults | null>(null);
 export function IconDefaultsProvider({ value, children }: { value: IconDefaults; children: ReactNode }): ReactElement {
 	return <IconDefaultsContext value={value}>{children}</IconDefaultsContext>;
 }
+IconDefaultsProvider.displayName = "DelacourUI.Icon.DefaultsProvider";
 
 /** Icon defaults from the nearest provider, or null outside one. */
 export function useIconDefaults(): IconDefaults | null {

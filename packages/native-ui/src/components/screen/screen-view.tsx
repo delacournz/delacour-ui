@@ -56,3 +56,4 @@ export function ScreenView({ className, style, children, ...props }: ScreenViewP
 		</Animated.View>
 	);
 }
+ScreenView.displayName = "DelacourUI.Screen.View";

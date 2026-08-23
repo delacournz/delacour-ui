@@ -27,3 +27,4 @@ export function ListGroupItemPrefix({ className, children, ...props }: ListGroup
 		</View>
 	);
 }
+ListGroupItemPrefix.displayName = "DelacourUI.ListGroup.ItemPrefix";

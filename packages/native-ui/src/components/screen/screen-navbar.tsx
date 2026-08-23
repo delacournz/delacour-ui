@@ -150,5 +150,5 @@ export const ScreenNavbar = Object.assign(ScreenNavbarRoot, {
 	Subtitle: ScreenNavbarSubtitle,
 	/** The leading control. Takes an `onPress` — this library wires no router of its own. */
 	BackButton: ScreenNavbarBackButton,
-	displayName: "Screen.Navbar",
+	displayName: "DelacourUI.Screen.Navbar",
 });

@@ -46,6 +46,7 @@ export function FieldError({ className, color, children, ...props }: FieldErrorP
 		</Text.Caption>
 	);
 }
+FieldError.displayName = "DelacourUI.Field.Error";
 
 /**
  * Whether there is anything worth drawing a line of danger text for.

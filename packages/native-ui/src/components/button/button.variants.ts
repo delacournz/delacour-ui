@@ -1,4 +1,5 @@
-import { tv, type VariantProps } from "tailwind-variants";
+import type { VariantProps } from "tailwind-variants";
+import { tv } from "../../lib/tv";
 
 export const BUTTON_VARIANTS = [
 	"primary",
@@ -18,13 +19,6 @@ export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export type ButtonSize = (typeof BUTTON_SIZES)[number];
 export type ButtonSpinnerPlacement = (typeof BUTTON_SPINNER_PLACEMENTS)[number];
 
-/** Icon edge length paired with each button size, in points. */
-export const BUTTON_ICON_SIZE: Record<ButtonSize, number> = {
-	sm: 16,
-	md: 18,
-	lg: 20,
-};
-
 /** Theme token whose value gives icons and text their colour on each surface. */
 export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
 	primary: "primary-foreground",
@@ -37,61 +31,72 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
 };
 
 /**
- * Styling for the button root.
+ * Styling for every part of a button.
  *
- * Holds no `text-*` utility: a React Native `View` does not cascade colour to a
- * `Text` descendant, so label colour lives in {@link buttonLabelVariants} and
- * icon colour is resolved from {@link BUTTON_FOREGROUND_TOKEN}.
+ * One slotted `tv()` rather than a call per part, so `size` and `variant` are
+ * declared once.
+ *
+ * A size names tokens rather than raw utilities: `h-button-md` for the height,
+ * `text-button-md` for the label, `size-icon-md` for a composed glyph. The
+ * values live in `tokens.css`, so a button's icon and the spinner that replaces
+ * it resolve to the same edge length by construction rather than by two numbers
+ * happening to agree. `cn` has to know these token names — see `lib/cn.ts`. The root holds no `text-*` utility: a React Native `View` does
+ * not cascade colour to a `Text` descendant, so label colour lives on the
+ * `label` slot and icon colour is resolved from {@link BUTTON_FOREGROUND_TOKEN}.
+ *
+ * `overflow-hidden` on the root is load-bearing rather than tidiness — a pressed
+ * button fades to the edge of its own box.
  *
  * Free of React Native imports so it stays unit-testable — `bun test` cannot
  * parse React Native's Flow-typed source. See AGENTS.md.
  */
 export const buttonVariants = tv({
-	base: "flex-row items-center justify-center gap-2 rounded-lg border border-transparent",
+	slots: {
+		root: "flex-row items-center justify-center gap-2 overflow-hidden rounded-lg border border-transparent",
+		label: "text-center font-semibold",
+		startContent: "items-center justify-center",
+		endContent: "items-center justify-center",
+		/** Edge length an `Icon` or `Spinner` composed into the button inherits. */
+		icon: "",
+	},
 	variants: {
 		variant: {
-			primary: "bg-primary",
-			secondary: "bg-secondary",
-			tertiary: "bg-tertiary",
-			outline: "border-border bg-transparent",
-			ghost: "border-transparent bg-transparent",
-			danger: "bg-danger",
-			"danger-soft": "bg-danger-soft",
+			primary: { root: "bg-primary", label: "text-primary-foreground" },
+			secondary: { root: "bg-secondary", label: "text-secondary-foreground" },
+			tertiary: { root: "bg-tertiary", label: "text-tertiary-foreground" },
+			outline: { root: "border-border bg-transparent", label: "text-foreground" },
+			ghost: { root: "border-transparent bg-transparent", label: "text-foreground" },
+			danger: { root: "bg-danger", label: "text-danger-foreground" },
+			"danger-soft": { root: "bg-danger-soft", label: "text-danger-soft-foreground" },
 		},
 		size: {
-			sm: "h-9 gap-1.5 rounded-md",
-			md: "h-11",
-			lg: "h-13",
+			sm: { root: "h-button-sm gap-1.5 rounded-md", label: "text-button-sm", icon: "size-icon-sm" },
+			md: { root: "h-button-md", label: "text-button-md", icon: "size-icon-md" },
+			lg: { root: "h-button-lg", label: "text-button-lg", icon: "size-icon-lg" },
 		},
-		isIconOnly: {
-			true: "",
-			false: "",
-		},
-		isDisabled: {
-			true: "opacity-50",
-			false: "",
-		},
-		isLoading: {
-			true: "",
-			false: "",
-		},
-		isDimmedWhileLoading: {
-			true: "",
-			false: "",
-		},
+		// The empty `false` branches are load-bearing typing, not placeholders.
+		// `tv` derives the prop type from the declared keys, so a map with only
+		// `true` types the prop as `true` rather than `boolean` and rejects
+		// `buttonVariants({ isIconOnly: layout.isIconOnly })`. The compound
+		// variants below would match without them — `tv` compares against
+		// `defaultVariants` plus props and never reads this map.
+		isIconOnly: { true: {}, false: {} },
+		isDisabled: { true: { root: "opacity-50" }, false: {} },
+		isLoading: { true: {}, false: {} },
+		isDimmedWhileLoading: { true: {}, false: {} },
 	},
 	compoundVariants: [
 		// A square footprint replaces horizontal padding entirely, so the two
 		// are declared together rather than fighting each other in the merge.
-		{ isIconOnly: true, size: "sm", class: "w-9" },
-		{ isIconOnly: true, size: "md", class: "w-11" },
-		{ isIconOnly: true, size: "lg", class: "w-13" },
-		{ isIconOnly: false, size: "sm", class: "px-3" },
-		{ isIconOnly: false, size: "md", class: "px-4" },
-		{ isIconOnly: false, size: "lg", class: "px-5" },
+		{ isIconOnly: true, size: "sm", class: { root: "w-button-sm" } },
+		{ isIconOnly: true, size: "md", class: { root: "w-button-md" } },
+		{ isIconOnly: true, size: "lg", class: { root: "w-button-lg" } },
+		{ isIconOnly: false, size: "sm", class: { root: "px-3" } },
+		{ isIconOnly: false, size: "md", class: { root: "px-4" } },
+		{ isIconOnly: false, size: "lg", class: { root: "px-5" } },
 		// Loading is not a disabled state. The button keeps full contrast — the
 		// spinner already says the press landed — unless the caller opts in.
-		{ isLoading: true, isDimmedWhileLoading: true, class: "opacity-50" },
+		{ isLoading: true, isDimmedWhileLoading: true, class: { root: "opacity-50" } },
 	],
 	defaultVariants: {
 		variant: "primary",
@@ -139,29 +144,24 @@ export function resolveButtonLayout({
 	return { isIconOnly, isSpinnerOnly: false, spinnerSide: spinnerPlacement };
 }
 
-/** Styling for the button label. Owns the text colour for each surface. */
-export const buttonLabelVariants = tv({
-	base: "text-center font-semibold",
-	variants: {
-		variant: {
-			primary: "text-primary-foreground",
-			secondary: "text-secondary-foreground",
-			tertiary: "text-tertiary-foreground",
-			outline: "text-foreground",
-			ghost: "text-foreground",
-			danger: "text-danger-foreground",
-			"danger-soft": "text-danger-soft-foreground",
-		},
-		size: {
-			sm: "text-sm",
-			md: "text-base",
-			lg: "text-lg",
-		},
-	},
-	defaultVariants: {
-		variant: "primary",
-		size: "md",
-	},
-});
+/**
+ * Index of the child the spinner should replace, or null to insert one.
+ *
+ * A loading button swaps its icon for the spinner rather than showing both.
+ * Adding one would push the label sideways the moment work started and pull it
+ * back when it finished — and with the spinner and the icon drawn at the same
+ * `size-icon-*` token, replacing costs no layout at all.
+ *
+ * `start` takes the first icon and `end` the last, so the spinner lands on the
+ * side the caller asked for even when the button holds an icon at both ends.
+ * With no icon to take there is nothing to swap and the caller gets the
+ * inserted spinner the button has always shown.
+ *
+ * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveSpinnerSwapIndex(isIcon: readonly boolean[], side: "start" | "end"): number | null {
+	const index = side === "start" ? isIcon.indexOf(true) : isIcon.lastIndexOf(true);
+	return index === -1 ? null : index;
+}
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>;

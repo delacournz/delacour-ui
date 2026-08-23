@@ -40,9 +40,14 @@ src/
 │   │   ├── button-end-content.tsx    Button.EndContent
 │   │   ├── button.context.tsx    ButtonContext, useButton(), useButtonContext(), useButtonPart()
 │   │   ├── button.types.ts       Prop types shared by two or more parts
-│   │   ├── button.variants.ts    Pure tv() definitions, no RN imports
+│   │   ├── button.variants.ts    Pure tv() slots, no RN imports
 │   │   └── button.variants.test.ts
 │   ├── icon/
+│   │   ├── index.ts              → @delacour/native-ui/icon
+│   │   ├── icon.tsx              Icon, and the one withUniwind wrapper (see rule 6)
+│   │   ├── icon.context.tsx      IconDefaults, IconDefaultsProvider, useIconDefaults()
+│   │   ├── icon.variants.ts      Pure tv() + the size-class ladder, no RN imports
+│   │   └── icon.variants.test.ts
 │   ├── list-group/
 │   │   ├── index.ts              → @delacour/native-ui/list-group
 │   │   ├── list-group.tsx        Root + the Object.assign compound surface
@@ -54,7 +59,7 @@ src/
 │   │   ├── list-group-item-suffix.tsx       ListGroup.ItemSuffix
 │   │   ├── list-group.context.tsx  ListGroupContext, useListGroup(), useListGroupPart()
 │   │   ├── list-group.types.ts     Prop types shared by two or more parts
-│   │   ├── list-group.variants.ts  Pure tv() + feedback map, no RN imports
+│   │   ├── list-group.variants.ts  Pure tv() slots, no RN imports
 │   │   └── list-group.variants.test.ts
 │   ├── pressable/
 │   │   ├── index.ts              → @delacour/native-ui/pressable
@@ -68,12 +73,12 @@ src/
 │       ├── spinner-content.tsx   Spinner.Content, the rotating layer
 │       ├── spinner-arc.tsx       The default arc glyph
 │       ├── spinner.context.tsx   SpinnerContext, useSpinner(), useSpinnerContext()
-│       ├── spinner.variants.ts   Pure tv() + resolvers, no RN imports
+│       ├── spinner.variants.ts   Pure tv() slots + resolvers, no RN imports
 │       └── spinner.variants.test.ts
 ├── hooks/            use-controllable-state, use-theme-color
 ├── icons/central.ts  Central Icons re-export
-├── lib/              cn, merge-props, compose-refs, slot
-├── styles/           index / base / tokens / theme CSS
+├── lib/              cn, tv, merge-props, compose-refs, slot
+├── styles/           index / base / tokens / theme CSS, plus tokens.ts
 └── uniwind-env.d.ts  /// <reference types="uniwind/types" />
 ```
 
@@ -97,11 +102,16 @@ below for how the files are arranged.
 **C — `tv()` variants.** Size and variant axes defined in a `*.variants.ts`
 sibling, never inline in the component. Example: `button.variants.ts`.
 
+A component with more than one styled part uses **one slotted `tv()`**, so a
+shared axis is declared once rather than restated per part. `Button`,
+`ListGroup` and `Spinner` all do. `Separator` stays flat because it has a single
+element, and `Pressable` holds no `tv()` at all — see its section for why.
+
 ## Rules
 
 1. **Text colour goes on the `Text`, never the parent.** A React Native `View`
    does not cascade colour to a `Text` descendant the way a DOM element does.
-   `buttonLabelVariants` owns `text-*`; `buttonVariants` must not.
+   `buttonVariants`' `label` slot owns `text-*`; its `root` slot must not.
 2. **No `"use client"`.** That is an RSC directive; it means nothing here.
 3. **No package-wide barrel.** Import from the subpath:
    `@delacour/native-ui/button`. This is what lets an app skip resolving
@@ -110,12 +120,18 @@ sibling, never inline in the component. Example: `button.variants.ts`.
 
    *One exception, and it exists to prevent a cycle:* a **leaf** module —
    `button.context.tsx`, `button.variants.ts` — may be imported directly across
-   component folders. `Spinner` reads the button's context, and `Button` renders
-   a `Spinner`; if `spinner.tsx` imported `../button`, that index would pull
-   `button.tsx` straight back in. Metro serves a partially initialised module
-   for a cycle, so `ButtonContext` would be `undefined` at import time and the
-   app would red-box on a cold start. Do not "tidy" these imports back to
-   `../button`.
+   component folders. The hazard is real: `Button` renders a `Spinner`, so if
+   `spinner.tsx` imported `../button`, that index would pull `button.tsx`
+   straight back in. Metro serves a partially initialised module for a cycle, so
+   `ButtonContext` would be `undefined` at import time and the app would red-box
+   on a cold start. If a cross-folder import is ever needed, reach for the leaf
+   and never for `../button`.
+
+   *`Spinner` no longer needs one at all.* It used to read the button's context
+   to recompute the icon size and foreground the button had **already** published
+   through `IconDefaultsProvider` around the very subtree the spinner sits in.
+   One inheritance path is now the whole story — `useIconDefaults()`. Do not add
+   the second one back.
 
    *The same hazard applies inside a folder.* Now that compound parts have their
    own files, there are two new ways to close a cycle. **A part must never
@@ -133,10 +149,24 @@ sibling, never inline in the component. Example: `button.variants.ts`.
    `View`, `Text`, `Pressable`, `Animated.View` and friends already accept
    `className`. `withUniwind` is only for third-party components (`expo-image`,
    `expo-blur`), and a given component may only be wrapped once, in one file.
+
+   *Central Icons is the one carve-out, and it is already spent.* `icon.tsx`
+   wraps a local `IconGlyph` proxy that takes the glyph as **data**, so a single
+   wrapper covers the whole two-thousand-icon set instead of one per glyph —
+   still one component wrapped once, in one file. Do not wrap a Central Icon
+   directly, do not wrap the proxy anywhere else, and do not add a second
+   wrapper for `Svg`. See **Sizing** for why the wrapper has to exist at all.
 7. **Native modules are peer dependencies, never dependencies.** Two copies of
    a native module register twice and break at runtime.
-8. **`cn()` for every caller-supplied `className`.** Uniwind does not
-   deduplicate conflicting utilities on its own.
+8. **`cn()` for every caller-supplied `className`, and `tv` from `lib/tv`.**
+   Uniwind does not deduplicate conflicting utilities on its own. There are
+   **two** mergers here and both need the semantic size tokens: `cn()` merges a
+   caller's className, and `tv()` merges slots and variants through a
+   tailwind-merge instance of its own. Never import `tv` from
+   `tailwind-variants` directly — a bare `tv` does not know what `button-md`
+   is, drops `text-button-md` into tailwind-merge's text *colour* group, and
+   silently strips the label's colour. `src/styles/tokens.ts` holds the one
+   config both are built from.
 9. **No `any`.** Discriminated unions over loose types.
 10. **Token names diverge from the web package where the mobile kit needs
     them to.** This package uses `danger` / `danger-soft` (matching the button
@@ -152,7 +182,7 @@ The reference implementation for the patterns above.
   `danger`, `danger-soft`. **Sizes**: `sm`, `md`, `lg`.
 - **Icons are composed, never passed as props.** Put an `Icon` in the children,
   before or after the label. The button wraps its subtree in an
-  `IconDefaultsProvider` carrying `BUTTON_ICON_SIZE[size]` and
+  `IconDefaultsProvider` carrying `buttonVariants({ size }).icon()` and
   `BUTTON_FOREGROUND_TOKEN[variant]`, so a bare `<Icon icon={IconPlus} />`
   comes out the right size and colour with nothing said at the call site. An
   explicit `size` or `color` on the icon still wins. `Button.StartContent` /
@@ -173,6 +203,15 @@ The reference implementation for the patterns above.
   highlight overlays** — no wash layers on pressables in this library. That rule
   is about wash layers, not the opacity axis, which `fade` and `scale-fade` are
   welcome to use.
+- **`isLoading` replaces the icon, it does not join it.** The spinner takes the
+  place of the composed `Icon` on the side `spinnerPlacement` names — the first
+  at `start`, the last at `end` — so the label does not shift when work begins
+  and shift back when it ends. The swap costs no layout because both glyphs are
+  drawn at the button's own `size-icon-*` token: the root publishes one class
+  and the icon and the spinner both read it. With no icon to take, the spinner
+  is inserted as before. Only a bare `Icon` is swapped; a `Button.StartContent`
+  wraps content of unknown height, and replacing one could resize the button.
+  `resolveSpinnerSwapIndex` is the pure decision and is unit-tested.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and centres the spinner in the footprint the button already has,
@@ -201,17 +240,24 @@ The reference implementation for the patterns above.
 An animated loading indicator. Compound root plus `Spinner.Content`, the part
 that rotates.
 
-- **Sizes**: `sm`/`md`/`lg` (16/24/32pt), or an explicit number.
+- **Sizes**: the icon scale, shared outright — `SPINNER_SIZES` *is*
+  `ICON_SIZES`, `xs`…`2xl` (14/16/18/20/24/32pt) — or an explicit number. A
+  spinner stands in for an icon, so the two must agree on what `md` means. **The root is the only sized box** — `Spinner.Content` is
+  `size-full` and the arc carries no width or height at all, because
+  react-native-svg resolves both to `'100%'` when neither is set. That
+  `size-full` is load-bearing: content-size the middle layer and the percentage
+  resolves against an indefinite parent, collapsing the glyph to zero.
   **Colours**: `default`, `success`, `warning`, `danger`, plus any token the
   theme emits (`primary-foreground`, `muted-foreground`) or a literal
   (`#EC4899`). A Tailwind palette name like `emerald-500` only resolves if some
   utility class already pulled that variable into the build — otherwise the
   token is unresolved and nothing is drawn. Prefer the semantic tokens.
-- **Size and colour are inherited, not passed.** Inside a `Button` the spinner
-  reads that button's context and comes out at its icon size in its variant's
-  foreground; elsewhere it falls back to the nearest `IconDefaultsProvider`,
-  then to `md` on `foreground`. An explicit `size` or `color` always wins — the
-  same precedence `Icon` follows.
+- **Size and colour are inherited, not passed** — through exactly one path, the
+  nearest `IconDefaultsProvider`, falling back to `md` on `foreground`. A
+  `Button` already wraps the spinner it composes in with its own icon class and
+  variant foreground, so the spinner does **not** read the button's context: a
+  second path would recompute the same two values and could drift from them. An
+  explicit `size` or `color` always wins — the precedence `Icon` follows.
 - **Any child is the glyph**, wrapped in a `Spinner.Content` automatically so it
   still rotates — a custom icon or asset needs nothing but to be passed in.
   `Spinner.Content` is the rotating layer itself, so write it out by hand only
@@ -257,15 +303,14 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
   union; redeclaring one unchanged just to hang a doc comment on it puts a
   second definition in the tree that can drift.
 - **Icons are composed, never passed as props.** `ItemPrefix` wraps its subtree
-  in an `IconDefaultsProvider` carrying `LIST_GROUP_ICON_SIZE[size]` and
-  `foreground`, so a bare `<Icon icon={IconUser} />` needs nothing said at the
+  in an `IconDefaultsProvider` carrying the `prefixIcon` slot — a step on the
+  shared icon scale, like every other glyph in the library — and `foreground`, so a bare `<Icon icon={IconUser} />` needs nothing said at the
   call site. `ItemSuffix` draws a chevron when it has no children of its own;
   `iconProps` tunes that glyph and is ignored once it does.
 - **String children** are wrapped in an `ItemContent` around an `ItemTitle`
   automatically, consecutive strings collapsing into one — the same rule, and
   the same reason, as `Button`.
-- **Title colour goes on the title.** `listGroupItemVariants` carries no
-  `text-*`; a row is a `View` and cannot cascade colour to a `Text`. The tests
+- **Title colour goes on the title.** The `item` slot carries no `text-*`; a row is a `View` and cannot cascade colour to a `Text`. The tests
   assert this.
 
 ## Separator
@@ -286,6 +331,11 @@ carries nothing a screen reader can use, and announcing them buries the rows.
 
 ## Pressable
 
+- **`pressable.variants.ts` holds no `tv()`, on purpose.** Its values are
+  opacity and scale *interpolation targets* read by a worklet on the UI thread
+  (`1 - pressed.value * (1 - targetOpacity)`), not styles. A worklet cannot
+  compile a className, so `tv` is the wrong tool here — a deliberate exception
+  to pattern C, not an oversight.
 - **`feedback` is the shared vocabulary**: `scale`, `fade`, `scale-fade`,
   `none`, defined once in `pressable.variants.ts`. Every pressable in the
   library resolves through it rather than keeping a private map — `Button`
@@ -307,6 +357,81 @@ carries nothing a screen reader can use, and announcing them buries the rows.
   rather than one that is inert. Neither applies any opacity — that is the
   caller's variant's job.
 
+## Sizing
+
+**An icon's size is a class, and it drives the glyph's `size` prop — not a
+style.** That indirection is forced, not stylistic. `CentralIconBase` spreads
+its props onto `<Svg>` *before* setting its own `width`/`height` from `size`,
+and `react-native-svg`'s `Svg.render()` then merges `{...style, ...props}` (props
+win) and pushes the width/height-derived styles onto the root **last**. A
+`size-4` that resolved to `style.width` is overridden every single time.
+
+So `icon.tsx` runs the class through `withUniwind` in manual mode to recover the
+width and hands that number to the glyph:
+
+```tsx
+const StyledIconGlyph = withUniwind(IconGlyph, {
+	size: { fromClassName: "className", styleProperty: "width" },
+});
+```
+
+`withUniwind` is called at **module scope**. In render it would mint a new
+component type every frame and remount the icon.
+
+**Precedence, weakest source first.** The first four are one `cn()` chain, so the
+last `size-*` wins; the fifth is a different mechanism entirely, which is what
+makes "inherited class plus caller-supplied number" resolve correctly.
+
+| Source | How it wins |
+| --- | --- |
+| `ICON_FALLBACK_SIZE_CLASS` | first in the chain |
+| the enclosing `IconDefaultsProvider`'s `className` | second |
+| a named `size="lg"` | third |
+| the caller's `className` | last in the chain |
+| a numeric `size={18}` | **bypasses the chain** — `withManualUniwind` skips its mapping when the target prop is already defined |
+
+`resolveIconSizeClass` builds that chain, and `resolveSpinnerRootClass` does the
+same for a spinner's root. Both are pure, so the whole ladder is reachable from
+`bun test`.
+
+**A numeric size can never become a class.** Tailwind's scanner is static, so a
+runtime `` `size-[${n}px]` `` is never compiled and Uniwind's store has nothing to
+look up — it would silently draw nothing. Named sizes are classes; the numeric
+escape hatch stays a prop (`Icon`) or an inline `style` (a `Spinner` root, which
+drops its size class entirely in that case rather than leaving a loser behind).
+
+**Overriding through `className` uses `size-*`, not `w-*` with `h-*`.**
+tailwind-merge conflicts `size` into `w`/`h` but not the reverse, so a trailing
+`w-6` will not clear a leading `size-5`.
+
+**Sizes are semantic tokens, not raw utilities.** `tokens.css` owns the values
+in Tailwind's own namespaces, so they compile to ordinary utilities:
+
+| Token | Utility | What it sizes |
+| --- | --- | --- |
+| `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
+| `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
+| `--text-button-*` | `text-button-md` | a button's label, paired with its height |
+
+**`Icon` and `Spinner` share one scale.** `SPINNER_SIZES` *is* `ICON_SIZES`, so
+`size="md"` is the same edge length in both and one can stand in for the other
+with nothing moving. A component indexes that scale at its own step name rather
+than restating a number: a button's `sm`/`md`/`lg` icon is
+`icon-sm`/`icon-md`/`icon-lg`. That is what makes the button's loading swap
+free — see **Button**.
+
+A token is named for what it sizes, not for an abstract category: only `Button`
+uses the `button-*` scale today, so calling it that keeps the name honest. A
+future control that genuinely shares these heights gets its own namespace rather
+than borrowing this one — `--spacing-input-*` reading `h-button-md` would be
+worse than one more scale.
+
+**Adding a token means editing two files.** Put the value in `tokens.css` and
+the name in `src/styles/tokens.ts`. Miss the second and tailwind-merge stops
+recognising the utility, so a caller's override quietly stops working;
+`tokens.test.ts` asserts the two lists match, and reads the CSS to check the
+scale still ascends.
+
 ## Theming
 
 Tokens are CSS variables under `@variant light` / `@variant dark` in
@@ -314,6 +439,13 @@ Tokens are CSS variables under `@variant light` / `@variant dark` in
 `text-muted-foreground` — and never a raw palette colour or a `dark:` prefix;
 the variable swap handles the theme. For a prop that needs a colour *value*
 rather than a class (an icon's `color`, a gradient stop), use `useThemeColor`.
+
+**An icon's size is a class; an icon's colour is a token.** The asymmetry is
+deliberate. Tailwind's spacing scale genuinely owns 14/16/18/20/22/24/32, so a
+class is the better name for them. A colour class cannot express a literal
+(`#EC4899`) or reach an SVG paint prop like a gradient's `stopColor`, and
+`useThemeColor` already covers both — so a colour-class path would leave two
+colour systems in the package rather than replacing one.
 
 ## Testing
 
@@ -327,8 +459,9 @@ Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.
 
 This is also why a component's pure decisions belong in its `*.variants.ts`
-rather than inline in the `.tsx` — `resolveButtonLayout` and `resolveSpinnerSize`
-live there so the whole matrix is reachable from `bun test`.
+rather than inline in the `.tsx` — `resolveButtonLayout`, `resolveIconSizeClass`
+and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
+`bun test`.
 
 ## Adding a component
 

@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { Text, type TextProps } from "react-native";
 import { useButtonPart } from "./button.context";
-import { buttonLabelVariants } from "./button.variants";
+import { buttonVariants } from "./button.variants";
 
 export type ButtonLabelProps = TextProps & { className?: string };
 
@@ -14,5 +14,5 @@ export type ButtonLabelProps = TextProps & { className?: string };
  */
 export function ButtonLabel({ className, ...props }: ButtonLabelProps): ReactElement {
 	const { variant, size } = useButtonPart("Button.Label");
-	return <Text className={buttonLabelVariants({ className, size, variant })} {...props} />;
+	return <Text className={buttonVariants({ size, variant }).label({ className })} {...props} />;
 }

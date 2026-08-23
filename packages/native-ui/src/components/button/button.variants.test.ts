@@ -1,81 +1,109 @@
 import { describe, expect, test } from "bun:test";
+import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BUTTON_FOREGROUND_TOKEN,
-	BUTTON_ICON_SIZE,
 	BUTTON_SIZES,
 	BUTTON_SPINNER_PLACEMENTS,
 	BUTTON_VARIANTS,
-	buttonLabelVariants,
 	buttonVariants,
 	resolveButtonLayout,
+	resolveSpinnerSwapIndex,
 } from "./button.variants";
 
-describe("buttonVariants", () => {
+/** The `--spacing-button-*` token a root class string sets its height from. */
+function heightToken(cls: string): string | undefined {
+	return cls.match(/\bh-(button-[\w-]+)\b/)?.[1];
+}
+
+/** The `--spacing-button-*` token a root class string sets its width from. */
+function widthToken(cls: string): string | undefined {
+	return cls.match(/\bw-(button-[\w-]+)\b/)?.[1];
+}
+
+/**
+ * Position of a slot's `size-icon-*` token on the shared icon scale.
+ *
+ * Compares by step rather than by points, so the test says what it means and
+ * survives a token being retuned in `tokens.css`. `tokens.test.ts` keeps the
+ * array ordered, and asserts the icon actually fits inside the button height.
+ */
+function iconStep(cls: string): number {
+	const token = cls.match(/\bsize-(icon-[\w-]+)\b/)?.[1];
+	return ICON_SIZE_TOKENS.indexOf(token as (typeof ICON_SIZE_TOKENS)[number]);
+}
+
+describe("buttonVariants root slot", () => {
 	test("defaults to the primary md variant", () => {
-		const cls = buttonVariants();
+		const cls = buttonVariants().root();
 		expect(cls).toContain("bg-primary");
-		expect(cls).toContain("h-11");
+		expect(cls).toContain("h-button-md");
+	});
+
+	test("clips, so a pressed row fades to the edge of its own box", () => {
+		expect(buttonVariants().root()).toContain("overflow-hidden");
 	});
 
 	test("gives every variant a distinct root treatment", () => {
-		const seen = new Set(BUTTON_VARIANTS.map((variant) => buttonVariants({ variant })));
+		const seen = new Set(BUTTON_VARIANTS.map((variant) => buttonVariants({ variant }).root()));
 		expect(seen.size).toBe(BUTTON_VARIANTS.length);
 	});
 
 	test("maps each variant to its surface", () => {
-		expect(buttonVariants({ variant: "primary" })).toContain("bg-primary");
-		expect(buttonVariants({ variant: "secondary" })).toContain("bg-secondary");
-		expect(buttonVariants({ variant: "tertiary" })).toContain("bg-tertiary");
-		expect(buttonVariants({ variant: "danger" })).toContain("bg-danger");
-		expect(buttonVariants({ variant: "danger-soft" })).toContain("bg-danger-soft");
+		expect(buttonVariants({ variant: "primary" }).root()).toContain("bg-primary");
+		expect(buttonVariants({ variant: "secondary" }).root()).toContain("bg-secondary");
+		expect(buttonVariants({ variant: "tertiary" }).root()).toContain("bg-tertiary");
+		expect(buttonVariants({ variant: "danger" }).root()).toContain("bg-danger");
+		expect(buttonVariants({ variant: "danger-soft" }).root()).toContain("bg-danger-soft");
 	});
 
 	test("outline draws a border, ghost does not", () => {
-		expect(buttonVariants({ variant: "outline" })).toContain("border-border");
-		expect(buttonVariants({ variant: "outline" })).toContain("bg-transparent");
-		expect(buttonVariants({ variant: "ghost" })).toContain("bg-transparent");
-		expect(buttonVariants({ variant: "ghost" })).toContain("border-transparent");
+		expect(buttonVariants({ variant: "outline" }).root()).toContain("border-border");
+		expect(buttonVariants({ variant: "outline" }).root()).toContain("bg-transparent");
+		expect(buttonVariants({ variant: "ghost" }).root()).toContain("bg-transparent");
+		expect(buttonVariants({ variant: "ghost" }).root()).toContain("border-transparent");
 	});
 
 	test("gives every size a distinct height", () => {
-		const seen = new Set(BUTTON_SIZES.map((size) => buttonVariants({ size })));
+		const seen = new Set(BUTTON_SIZES.map((size) => buttonVariants({ size }).root()));
 		expect(seen.size).toBe(BUTTON_SIZES.length);
-		expect(buttonVariants({ size: "sm" })).toContain("h-9");
-		expect(buttonVariants({ size: "md" })).toContain("h-11");
-		expect(buttonVariants({ size: "lg" })).toContain("h-13");
+		expect(buttonVariants({ size: "sm" }).root()).toContain("h-button-sm");
+		expect(buttonVariants({ size: "md" }).root()).toContain("h-button-md");
+		expect(buttonVariants({ size: "lg" }).root()).toContain("h-button-lg");
 	});
 
 	test("icon-only swaps horizontal padding for a square width", () => {
 		for (const size of BUTTON_SIZES) {
-			const iconOnly = buttonVariants({ isIconOnly: true, size });
-			expect(iconOnly).toMatch(/\bw-(9|11|13)\b/);
+			const iconOnly = buttonVariants({ isIconOnly: true, size }).root();
+			expect(iconOnly).toMatch(/\bw-button-(sm|md|lg)\b/);
 			expect(iconOnly).not.toMatch(/\bpx-\d/);
 		}
-		expect(buttonVariants({ isIconOnly: false, size: "md" })).toMatch(/\bpx-\d/);
+		expect(buttonVariants({ isIconOnly: false, size: "md" }).root()).toMatch(/\bpx-\d/);
 	});
 
 	test("adds the disabled treatment only when disabled", () => {
-		expect(buttonVariants({ isDisabled: true })).toContain("opacity-50");
-		expect(buttonVariants({ isDisabled: false })).not.toContain("opacity-50");
+		expect(buttonVariants({ isDisabled: true }).root()).toContain("opacity-50");
+		expect(buttonVariants({ isDisabled: false }).root()).not.toContain("opacity-50");
 	});
 
 	test("loading does not dim on its own, and dims only when asked", () => {
-		expect(buttonVariants({ isLoading: true })).not.toContain("opacity-50");
-		expect(buttonVariants({ isDimmedWhileLoading: true })).not.toContain("opacity-50");
-		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true })).toContain("opacity-50");
+		expect(buttonVariants({ isLoading: true }).root()).not.toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: true }).root()).not.toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true }).root()).toContain("opacity-50");
 	});
 
 	test("disabled still dims regardless of loading state", () => {
-		expect(buttonVariants({ isDisabled: true, isLoading: true })).toContain("opacity-50");
-		expect(buttonVariants({ isDimmedWhileLoading: false, isDisabled: true, isLoading: true })).toContain("opacity-50");
+		expect(buttonVariants({ isDisabled: true, isLoading: true }).root()).toContain("opacity-50");
+		expect(buttonVariants({ isDimmedWhileLoading: false, isDisabled: true, isLoading: true }).root()).toContain(
+			"opacity-50"
+		);
 	});
 
 	test("neither loading flag touches the root's text colour rule", () => {
-		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true })).not.toMatch(/\btext-(?!center\b)/);
+		expect(buttonVariants({ isDimmedWhileLoading: true, isLoading: true }).root()).not.toMatch(/\btext-(?!center\b)/);
 	});
 
 	test("merges an incoming className last", () => {
-		expect(buttonVariants({ className: "bg-info" })).toContain("bg-info");
+		expect(buttonVariants().root({ className: "bg-info" })).toContain("bg-info");
 	});
 });
 
@@ -132,51 +160,118 @@ describe("resolveButtonLayout feeding buttonVariants", () => {
 	test("a loading-only button keeps its padding and takes no fixed width", () => {
 		for (const size of BUTTON_SIZES) {
 			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" });
-			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size });
+			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size }).root();
 			expect(cls).toMatch(/\bpx-\d/);
-			expect(cls).not.toMatch(/\bw-\d/);
+			expect(cls).not.toMatch(/\bw-button-/);
 		}
 	});
 
 	test("an icon-only button still gets its square width while loading", () => {
 		for (const size of BUTTON_SIZES) {
 			const layout = resolveButtonLayout({ isIconOnly: true, isLoading: true, spinnerPlacement: "only" });
-			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size });
-			expect(cls).toMatch(/\bw-(9|11|13)\b/);
+			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size }).root();
+			expect(cls).toMatch(/\bw-button-(sm|md|lg)\b/);
 			expect(cls).not.toMatch(/\bpx-\d/);
 		}
 	});
 
 	test("a start-placed spinner keeps the button's normal padding", () => {
 		const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "start" });
-		const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size: "md" });
+		const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size: "md" }).root();
 		expect(cls).toMatch(/\bpx-4\b/);
-		expect(cls).not.toMatch(/\bw-\d/);
+		expect(cls).not.toMatch(/\bw-button-/);
 	});
 });
 
-describe("buttonLabelVariants", () => {
+describe("buttonVariants label slot", () => {
 	test("carries the text colour, which the root must not", () => {
 		for (const variant of BUTTON_VARIANTS) {
-			expect(buttonLabelVariants({ variant })).toMatch(/\btext-/);
-			expect(buttonVariants({ variant })).not.toMatch(/\btext-(?!center\b)/);
+			expect(buttonVariants({ variant }).label()).toMatch(/\btext-/);
+			expect(buttonVariants({ variant }).root()).not.toMatch(/\btext-(?!center\b)/);
 		}
 	});
 
 	test("pairs each surface with its own foreground", () => {
-		expect(buttonLabelVariants({ variant: "primary" })).toContain("text-primary-foreground");
-		expect(buttonLabelVariants({ variant: "secondary" })).toContain("text-secondary-foreground");
-		expect(buttonLabelVariants({ variant: "tertiary" })).toContain("text-tertiary-foreground");
-		expect(buttonLabelVariants({ variant: "danger" })).toContain("text-danger-foreground");
-		expect(buttonLabelVariants({ variant: "danger-soft" })).toContain("text-danger-soft-foreground");
-		expect(buttonLabelVariants({ variant: "outline" })).toContain("text-foreground");
-		expect(buttonLabelVariants({ variant: "ghost" })).toContain("text-foreground");
+		expect(buttonVariants({ variant: "primary" }).label()).toContain("text-primary-foreground");
+		expect(buttonVariants({ variant: "secondary" }).label()).toContain("text-secondary-foreground");
+		expect(buttonVariants({ variant: "tertiary" }).label()).toContain("text-tertiary-foreground");
+		expect(buttonVariants({ variant: "danger" }).label()).toContain("text-danger-foreground");
+		expect(buttonVariants({ variant: "danger-soft" }).label()).toContain("text-danger-soft-foreground");
+		expect(buttonVariants({ variant: "outline" }).label()).toContain("text-foreground");
+		expect(buttonVariants({ variant: "ghost" }).label()).toContain("text-foreground");
 	});
 
 	test("scales label text with size", () => {
-		expect(buttonLabelVariants({ size: "sm" })).toContain("text-sm");
-		expect(buttonLabelVariants({ size: "md" })).toContain("text-base");
-		expect(buttonLabelVariants({ size: "lg" })).toContain("text-lg");
+		expect(buttonVariants({ size: "sm" }).label()).toContain("text-button-sm");
+		expect(buttonVariants({ size: "md" }).label()).toContain("text-button-md");
+		expect(buttonVariants({ size: "lg" }).label()).toContain("text-button-lg");
+	});
+});
+
+describe("buttonVariants content slots", () => {
+	test("centre their subtree", () => {
+		expect(buttonVariants().startContent()).toContain("items-center");
+		expect(buttonVariants().endContent()).toContain("items-center");
+	});
+
+	test("do not vary, so a slot outside a Button is still styled", () => {
+		for (const size of BUTTON_SIZES) {
+			expect(buttonVariants({ size }).startContent()).toBe(buttonVariants().startContent());
+			expect(buttonVariants({ size }).endContent()).toBe(buttonVariants().endContent());
+		}
+	});
+
+	test("merge an incoming className", () => {
+		expect(buttonVariants().startContent({ className: "gap-1" })).toContain("gap-1");
+	});
+});
+
+describe("resolveSpinnerSwapIndex", () => {
+	test("takes the first icon at the start and the last at the end", () => {
+		const icons = [true, false, true];
+		expect(resolveSpinnerSwapIndex(icons, "start")).toBe(0);
+		expect(resolveSpinnerSwapIndex(icons, "end")).toBe(2);
+	});
+
+	test("finds an icon wherever it sits among the children", () => {
+		expect(resolveSpinnerSwapIndex([false, false, true], "start")).toBe(2);
+		expect(resolveSpinnerSwapIndex([true, false, false], "end")).toBe(0);
+	});
+
+	// With nothing to replace the spinner is inserted instead, which is what the
+	// button did for every case before the swap existed.
+	test("reports nothing to swap when no child is an icon", () => {
+		expect(resolveSpinnerSwapIndex([false, false], "start")).toBeNull();
+		expect(resolveSpinnerSwapIndex([], "end")).toBeNull();
+	});
+
+	test("takes the only icon from either side", () => {
+		expect(resolveSpinnerSwapIndex([false, true], "start")).toBe(1);
+		expect(resolveSpinnerSwapIndex([false, true], "end")).toBe(1);
+	});
+});
+
+describe("buttonVariants icon slot", () => {
+	test("gives every size a distinct icon token, increasing with it", () => {
+		const steps = BUTTON_SIZES.map((size) => iconStep(buttonVariants({ size }).icon()));
+		expect(steps).not.toContain(-1);
+		expect(new Set(steps).size).toBe(BUTTON_SIZES.length);
+		expect([...steps]).toEqual([...steps].sort((a, b) => a - b));
+	});
+
+	// The button indexes the shared icon scale at its own step name, which is
+	// what makes a composed Icon and the Spinner that replaces it the same box.
+	test("names the icon token matching the button's own size", () => {
+		for (const size of BUTTON_SIZES) {
+			expect(buttonVariants({ size }).icon()).toBe(`size-icon-${size}`);
+		}
+	});
+
+	// An icon takes a colour value rather than a class — the slot sizes it only.
+	test("carries no colour", () => {
+		for (const size of BUTTON_SIZES) {
+			expect(buttonVariants({ size }).icon()).not.toMatch(/\b(bg|text|border)-/);
+		}
 	});
 });
 
@@ -191,11 +286,14 @@ describe("BUTTON_FOREGROUND_TOKEN", () => {
 	});
 });
 
-describe("BUTTON_ICON_SIZE", () => {
-	test("defines one icon size per button size, increasing with it", () => {
-		const sizes = BUTTON_SIZES.map((size) => BUTTON_ICON_SIZE[size]);
-		expect(sizes).toHaveLength(BUTTON_SIZES.length);
-		expect(sizes.every((n) => typeof n === "number" && n > 0)).toBe(true);
-		expect([...sizes]).toEqual([...sizes].sort((a, b) => a - b));
+describe("an icon-only button's footprint", () => {
+	test("is as wide as it is tall at every size", () => {
+		// Both axes name the same button token, so the square cannot drift the
+		// way two hand-picked numbers could.
+		for (const size of BUTTON_SIZES) {
+			const token = heightToken(buttonVariants({ size }).root());
+			expect(token).toBeDefined();
+			expect(widthToken(buttonVariants({ isIconOnly: true, size }).root())).toBe(token);
+		}
 	});
 });

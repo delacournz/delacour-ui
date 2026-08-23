@@ -19,6 +19,26 @@ import { useTransientLoading } from "@/hooks/use-transient-loading";
 
 const HAPTICS = ["selection", "light", "medium", "heavy", "success", "warning", "error"] as const;
 
+function SwapButton({
+	spinnerPlacement,
+	label,
+	both = false,
+}: {
+	spinnerPlacement: ButtonSpinnerPlacement;
+	label: string;
+	both?: boolean;
+}): ReactElement {
+	const [isLoading, start] = useTransientLoading();
+
+	return (
+		<Button isLoading={isLoading} onPress={start} spinnerPlacement={spinnerPlacement}>
+			{both || spinnerPlacement === "start" ? <Icon icon={IconHeart} /> : null}
+			<Button.Label>{label}</Button.Label>
+			{both || spinnerPlacement === "end" ? <Icon icon={IconArrowRight} /> : null}
+		</Button>
+	);
+}
+
 function LoadingButton({
 	spinnerPlacement,
 	isDimmedWhileLoading = false,
@@ -181,6 +201,20 @@ export default function ButtonGallery(): ReactElement {
 					{BUTTON_VARIANTS.map((variant) => (
 						<LoadingButton key={variant} label={variant} spinnerPlacement="start" variant={variant} />
 					))}
+				</View>
+			</Section>
+
+			<Section title="Loading replaces the icon">
+				<Text className="text-muted-foreground text-sm">
+					The spinner takes the icon&apos;s place rather than joining it, so the label does not move. Both are drawn at
+					the button&apos;s icon token, so the swap costs no layout. With an icon at each end, the placement decides
+					which one goes.
+				</Text>
+				<View className="gap-3">
+					<SwapButton label="Start icon" spinnerPlacement="start" />
+					<SwapButton label="End icon" spinnerPlacement="end" />
+					<SwapButton both label="Both, start wins" spinnerPlacement="start" />
+					<SwapButton both label="Both, end wins" spinnerPlacement="end" />
 				</View>
 			</Section>
 

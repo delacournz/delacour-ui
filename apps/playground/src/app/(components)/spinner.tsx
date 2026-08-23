@@ -8,9 +8,9 @@ import { Section } from "@/components/section";
 
 export default function SpinnerGallery(): ReactElement {
 	return (
-		<GalleryScreen subtitle="Size and colour are inherited, not passed" title="Spinner">
+		<GalleryScreen subtitle="Named sizes are shared with Icon" title="Spinner">
 			<Section title="Sizes">
-				<View className="flex-row items-center gap-6">
+				<View className="flex-row flex-wrap items-center gap-6">
 					{SPINNER_SIZES.map((size) => (
 						<View className="items-center gap-2" key={size}>
 							<Spinner size={size} />

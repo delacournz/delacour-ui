@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { Text } from "react-native";
 import { useListGroupPart } from "./list-group.context";
 import type { ListGroupTextProps } from "./list-group.types";
-import { listGroupItemTitleVariants } from "./list-group.variants";
+import { listGroupVariants } from "./list-group.variants";
 
 /**
  * The row's primary line.
@@ -12,5 +12,5 @@ import { listGroupItemTitleVariants } from "./list-group.variants";
  */
 export function ListGroupItemTitle({ className, ...props }: ListGroupTextProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.ItemTitle");
-	return <Text className={listGroupItemTitleVariants({ className, size })} {...props} />;
+	return <Text className={listGroupVariants({ size }).title({ className })} {...props} />;
 }

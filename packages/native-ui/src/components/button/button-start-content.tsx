@@ -1,7 +1,7 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import { cn } from "../../lib/cn";
 import type { ButtonSlotProps } from "./button.types";
+import { buttonVariants } from "./button.variants";
 
 /**
  * A centred wrapper for leading content that is not an `Icon`.
@@ -10,5 +10,5 @@ import type { ButtonSlotProps } from "./button.types";
  * variant's colour from the root's `IconDefaultsProvider`.
  */
 export function ButtonStartContent({ className, ...props }: ButtonSlotProps): ReactElement {
-	return <View className={cn("items-center justify-center", className)} {...props} />;
+	return <View className={buttonVariants().startContent({ className })} {...props} />;
 }

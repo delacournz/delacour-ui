@@ -1,4 +1,5 @@
-import { tv, type VariantProps } from "tailwind-variants";
+import type { VariantProps } from "tailwind-variants";
+import { tv } from "../../lib/tv";
 
 export const SEPARATOR_ORIENTATIONS = ["horizontal", "vertical"] as const;
 

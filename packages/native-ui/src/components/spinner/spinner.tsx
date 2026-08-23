@@ -1,17 +1,14 @@
 import { Children, type ComponentProps, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
 import Animated, { Easing, FadeIn, FadeOut } from "react-native-reanimated";
 import { useThemeColor } from "../../hooks/use-theme-color";
-import { cn } from "../../lib/cn";
-import { useButtonContext } from "../button/button.context";
-import { BUTTON_FOREGROUND_TOKEN, BUTTON_ICON_SIZE } from "../button/button.variants";
 import { IconDefaultsProvider, useIconDefaults } from "../icon";
 import { type SpinnerContextValue, SpinnerProvider } from "./spinner.context";
 import {
 	resolveSpinnerColor,
-	resolveSpinnerSize,
+	resolveSpinnerRootClass,
+	SPINNER_GLYPH_SIZE_CLASS,
 	type SpinnerColor,
 	type SpinnerSize,
-	spinnerVariants,
 } from "./spinner.variants";
 import { SpinnerContent } from "./spinner-content";
 
@@ -44,23 +41,28 @@ function SpinnerRoot({
 	children,
 	...props
 }: SpinnerProps): ReactElement | null {
-	const button = useButtonContext();
+	// One inheritance path, not two. A Button wraps its whole subtree — the
+	// spinner it composes in included — in an `IconDefaultsProvider` carrying
+	// that button's icon class and its variant's foreground, so reading the
+	// button's own context here would recompute the same two values.
 	const iconDefaults = useIconDefaults();
 
-	const inheritedSize = button ? BUTTON_ICON_SIZE[button.size] : iconDefaults?.size;
-	const inheritedColor = button ? BUTTON_FOREGROUND_TOKEN[button.variant] : iconDefaults?.color;
+	// A number is not a class: Tailwind's scanner is static, so a runtime
+	// `size-[40px]` is never compiled. The numeric escape hatch rides `style`.
+	const numericSize = typeof size === "number" ? size : undefined;
 
-	const resolvedSize = resolveSpinnerSize(size, inheritedSize);
-	const colorToken = resolveSpinnerColor(color, inheritedColor);
+	const rootClassName = resolveSpinnerRootClass({ className, inherited: iconDefaults?.className, size });
+	const colorToken = resolveSpinnerColor(color, iconDefaults?.color);
 	const resolvedColor = useThemeColor(colorToken);
 
 	const context = useMemo<SpinnerContextValue>(
-		() => ({ size: resolvedSize, color: resolvedColor, isLoading, speed }),
-		[resolvedSize, resolvedColor, isLoading, speed]
+		() => ({ color: resolvedColor, isLoading, speed }),
+		[resolvedColor, isLoading, speed]
 	);
 
-	// A glyph composed into the spinner adopts these unless told otherwise.
-	const iconContext = useMemo(() => ({ size: resolvedSize, color: colorToken }), [resolvedSize, colorToken]);
+	// A glyph composed into the spinner adopts these unless told otherwise. It
+	// fills rather than taking a step, so it matches at a numeric size too.
+	const iconContext = useMemo(() => ({ className: SPINNER_GLYPH_SIZE_CLASS, color: colorToken }), [colorToken]);
 
 	const content = useMemo(() => wrapSpinnerChildren(children), [children]);
 
@@ -71,10 +73,10 @@ function SpinnerRoot({
 			<Animated.View
 				accessibilityRole="progressbar"
 				accessibilityState={{ busy: true }}
-				className={cn(spinnerVariants(), className)}
+				className={rootClassName}
 				entering={ENTERING}
 				exiting={EXITING}
-				style={{ height: resolvedSize, width: resolvedSize }}
+				style={numericSize === undefined ? undefined : { height: numericSize, width: numericSize }}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconContext}>{content}</IconDefaultsProvider>

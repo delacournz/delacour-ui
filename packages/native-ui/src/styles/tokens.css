@@ -15,7 +15,28 @@
 	--text-2xl: 24px;
 	--text-3xl: 30px;
 
-	--control-height-sm: 36px;
-	--control-height-md: 44px;
-	--control-height-lg: 52px;
+	/* Button heights, and the square footprint of an icon-only one. */
+	--spacing-button-sm: 36px;
+	--spacing-button-md: 44px;
+	--spacing-button-lg: 52px;
+
+	/* Label type scale, one step paired with each button height above. */
+	--text-button-sm: 14px;
+	--text-button-md: 16px;
+	--text-button-lg: 18px;
+
+	/*
+	 * The icon scale, shared by `Icon` and `Spinner` so a named size means the
+	 * same edge length in both and one can replace the other without the
+	 * layout moving. `size-icon-md`.
+	 *
+	 * A component's own size axis indexes into this scale rather than restating
+	 * a number: a button's sm/md/lg icon is icon-sm/md/lg.
+	 */
+	--spacing-icon-xs: 14px;
+	--spacing-icon-sm: 16px;
+	--spacing-icon-md: 18px;
+	--spacing-icon-lg: 20px;
+	--spacing-icon-xl: 24px;
+	--spacing-icon-2xl: 32px;
 }

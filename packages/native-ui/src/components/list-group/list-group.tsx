@@ -2,12 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { View, type ViewProps } from "react-native";
 import { Separator } from "../separator";
 import { type ListGroupContextValue, ListGroupProvider } from "./list-group.context";
-import {
-	type ListGroupSize,
-	type ListGroupVariant,
-	listGroupDividerVariants,
-	listGroupVariants,
-} from "./list-group.variants";
+import { type ListGroupSize, type ListGroupVariant, listGroupVariants } from "./list-group.variants";
 import { ListGroupItem } from "./list-group-item";
 import { ListGroupItemContent } from "./list-group-item-content";
 import { ListGroupItemDescription } from "./list-group-item-description";
@@ -34,11 +29,17 @@ function ListGroupRoot({
 }: ListGroupProps): ReactElement {
 	const context = useMemo<ListGroupContextValue>(() => ({ size, variant }), [size, variant]);
 
-	const content = useMemo(() => (isDivided ? withDividers(children, size) : children), [children, isDivided, size]);
+	const slots = listGroupVariants({ size, variant });
+	const dividerClassName = slots.divider();
+
+	const content = useMemo(
+		() => (isDivided ? withDividers(children, dividerClassName) : children),
+		[children, isDivided, dividerClassName]
+	);
 
 	return (
 		<ListGroupProvider value={context}>
-			<View className={listGroupVariants({ className, size, variant })} {...props}>
+			<View className={slots.root({ className })} {...props}>
 				{content}
 			</View>
 		</ListGroupProvider>
@@ -53,13 +54,13 @@ function ListGroupRoot({
  * conditional child leaves behind, so a row rendered only some of the time does
  * not strand a divider where nothing follows it.
  */
-function withDividers(children: ReactNode, size: ListGroupSize): ReactNode {
+function withDividers(children: ReactNode, dividerClassName: string): ReactNode {
 	const items = Children.toArray(children);
 	const output: ReactNode[] = [];
 
 	for (const [index, child] of items.entries()) {
 		if (index > 0 && !isSeparator(items[index - 1]) && !isSeparator(child)) {
-			output.push(<Separator className={listGroupDividerVariants({ size })} key={`divider-${index}`} />);
+			output.push(<Separator className={dividerClassName} key={`divider-${index}`} />);
 		}
 		output.push(child);
 	}

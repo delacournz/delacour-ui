@@ -8,9 +8,8 @@ import Animated, {
 	withRepeat,
 	withTiming,
 } from "react-native-reanimated";
-import { cn } from "../../lib/cn";
 import { useSpinner } from "./spinner.context";
-import { SPINNER_DURATION_MS, spinnerContentVariants } from "./spinner.variants";
+import { SPINNER_DURATION_MS, spinnerVariants } from "./spinner.variants";
 import { SpinnerArc } from "./spinner-arc";
 
 export type SpinnerContentProps = Omit<ComponentProps<typeof Animated.View>, "children"> & {
@@ -25,11 +24,11 @@ export type SpinnerContentProps = Omit<ComponentProps<typeof Animated.View>, "ch
  * to spin. The spinner wraps a bare child in it automatically, which leaves
  * writing it out by hand for when the rotating layer itself needs styling.
  *
- * Size, colour and speed all come from the spinner's context — there is nothing
- * to pass down to it.
+ * Colour and speed come from the spinner's context, and it fills the root
+ * rather than taking a size — there is nothing to pass down to it.
  */
 export function SpinnerContent({ className, style, children, ...props }: SpinnerContentProps): ReactElement {
-	const { color, size, speed } = useSpinner();
+	const { speed } = useSpinner();
 	const angle = useSharedValue(0);
 
 	useEffect(() => {
@@ -56,8 +55,8 @@ export function SpinnerContent({ className, style, children, ...props }: Spinner
 	}));
 
 	return (
-		<Animated.View className={cn(spinnerContentVariants(), className)} style={[animatedStyle, style]} {...props}>
-			{children ?? <SpinnerArc color={color} size={size} />}
+		<Animated.View className={spinnerVariants().content({ className })} style={[animatedStyle, style]} {...props}>
+			{children ?? <SpinnerArc />}
 		</Animated.View>
 	);
 }

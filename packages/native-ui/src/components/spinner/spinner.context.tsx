@@ -1,8 +1,6 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 
 export type SpinnerContextValue = {
-	/** Resolved edge length in points. */
-	size: number;
 	/** Resolved colour value, ready for an SVG stroke. */
 	color: string | undefined;
 	/** Rotation speed multiplier. 1 is one full turn per 900ms. */
@@ -14,7 +12,7 @@ export type SpinnerContextValue = {
 const SpinnerContext = createContext<SpinnerContextValue | null>(null);
 
 /**
- * Supplies the enclosing spinner's resolved size, colour and speed to its subtree.
+ * Supplies the enclosing spinner's resolved colour and speed to its subtree.
  *
  * Lives in its own module, importing nothing at all, so the parts the spinner
  * renders — `Spinner.Content` and the default arc glyph — can read it without
@@ -38,10 +36,10 @@ export function useSpinnerContext(): SpinnerContextValue | null {
 }
 
 /**
- * Reads the enclosing spinner's resolved size, colour and speed.
+ * Reads the enclosing spinner's resolved colour and speed.
  *
- * Lets a custom glyph match the spinner without any of them being passed down
- * to it. Throws outside a `<Spinner>` — use {@link useSpinnerContext}
+ * Lets a custom glyph match the spinner without either being passed down to
+ * it. Size is not here: the root sizes itself and everything under it fills. Throws outside a `<Spinner>` — use {@link useSpinnerContext}
  * where the enclosing spinner is optional.
  */
 export function useSpinner(): SpinnerContextValue {

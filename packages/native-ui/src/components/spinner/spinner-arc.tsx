@@ -2,11 +2,6 @@ import { type ReactElement, useId } from "react";
 import Svg, { Defs, LinearGradient, Path, Stop } from "react-native-svg";
 import { useSpinnerContext } from "./spinner.context";
 
-type SpinnerArcProps = {
-	size?: number;
-	color?: string;
-};
-
 /**
  * The default glyph: a ring whose stroke fades from opaque to transparent
  * around the circle.
@@ -15,17 +10,18 @@ type SpinnerArcProps = {
  * one alone cannot carry the stroke all the way round. Central Icons has no
  * loader glyph, so this is drawn from SVG primitives rather than imported.
  *
- * The viewBox is fixed at 24 and only `width`/`height` change, so the stroke
- * stays proportional at every size with no geometry to recompute.
+ * It carries no width or height on purpose. react-native-svg resolves both to
+ * `'100%'` when neither is set, so the arc fills whatever box the spinner root
+ * sized — one place decides the size instead of threading a number down. The
+ * viewBox stays fixed at 24, so the stroke stays proportional at every size
+ * with no geometry to recompute.
  *
  * Reads the spinner context optionally rather than through `useSpinner`: the
- * arc is also the fallback glyph and must not throw where a size and colour
- * were passed to it directly.
+ * arc is also the fallback glyph and must not throw outside a `<Spinner>`.
  */
-export function SpinnerArc({ size, color }: SpinnerArcProps): ReactElement {
+export function SpinnerArc(): ReactElement {
 	const spinner = useSpinnerContext();
-	const resolvedSize = size ?? spinner?.size;
-	const resolvedColor = color ?? spinner?.color;
+	const resolvedColor = spinner?.color;
 
 	// An SVG gradient is referenced by id, and ids are global to the document.
 	// React 19 emits `«r1»`-style ids, whose delimiters are invalid in `url(#…)`.
@@ -34,7 +30,7 @@ export function SpinnerArc({ size, color }: SpinnerArcProps): ReactElement {
 	const tailId = `spinner-tail-${id}`;
 
 	return (
-		<Svg fill="none" height={resolvedSize} viewBox="0 0 24 24" width={resolvedSize}>
+		<Svg fill="none" viewBox="0 0 24 24">
 			<Defs>
 				<LinearGradient id={leadId} x1="0" x2="0" y1="0" y2="1">
 					<Stop offset="0" stopColor={resolvedColor} stopOpacity={1} />

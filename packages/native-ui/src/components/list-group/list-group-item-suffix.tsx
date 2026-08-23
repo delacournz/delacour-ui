@@ -1,20 +1,19 @@
 import { Children, type ReactElement } from "react";
 import { View } from "react-native";
 import { IconChevronRight } from "../../icons/central";
-import { Icon } from "../icon";
+import { cn } from "../../lib/cn";
+import { Icon, type IconSize } from "../icon";
 import { useListGroupPart } from "./list-group.context";
 import type { ListGroupSlotProps } from "./list-group.types";
-import {
-	LIST_GROUP_SUFFIX_ICON_SIZE,
-	LIST_GROUP_SUFFIX_ICON_TOKEN,
-	listGroupItemSuffixVariants,
-} from "./list-group.variants";
+import { LIST_GROUP_SUFFIX_ICON_TOKEN, listGroupVariants } from "./list-group.variants";
 
 export type ListGroupIconProps = {
-	/** Edge length in points. Defaults to the list group's suffix icon size. */
-	size?: number;
+	/** A named size, or an edge length in points. Beats `className`. */
+	size?: IconSize | number;
 	/** A theme colour token or a literal. Defaults to `muted-foreground`. */
 	color?: string;
+	/** A `size-*` utility, beating the group's own suffix size. */
+	className?: string;
 };
 
 export type ListGroupItemSuffixProps = ListGroupSlotProps & {
@@ -35,17 +34,19 @@ export function ListGroupItemSuffix({
 	...props
 }: ListGroupItemSuffixProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.ItemSuffix");
+	const slots = listGroupVariants({ size });
 	const hasContent = Children.toArray(children).length > 0;
 
 	return (
-		<View className={listGroupItemSuffixVariants({ className })} {...props}>
+		<View className={slots.suffix({ className })} {...props}>
 			{hasContent ? (
 				children
 			) : (
 				<Icon
+					className={cn(slots.suffixIcon(), iconProps?.className)}
 					color={iconProps?.color ?? LIST_GROUP_SUFFIX_ICON_TOKEN}
 					icon={IconChevronRight}
-					size={iconProps?.size ?? LIST_GROUP_SUFFIX_ICON_SIZE[size]}
+					size={iconProps?.size}
 				/>
 			)}
 		</View>

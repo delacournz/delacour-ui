@@ -1,18 +1,17 @@
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } from "react";
-import { cn } from "../../lib/cn";
-import { IconDefaultsProvider } from "../icon";
+import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
 import { type ButtonContextValue, ButtonProvider } from "./button.context";
 import {
 	BUTTON_FOREGROUND_TOKEN,
-	BUTTON_ICON_SIZE,
 	type ButtonLayout,
 	type ButtonSize,
 	type ButtonSpinnerPlacement,
 	type ButtonVariant,
 	buttonVariants,
 	resolveButtonLayout,
+	resolveSpinnerSwapIndex,
 } from "./button.variants";
 import { ButtonEndContent } from "./button-end-content";
 import { ButtonLabel } from "./button-label";
@@ -59,10 +58,20 @@ function ButtonRoot({
 
 	const content = useMemo(() => composeContent(children, layout), [children, layout]);
 
+	const slots = buttonVariants({
+		isDimmedWhileLoading,
+		isDisabled,
+		isIconOnly: layout.isIconOnly,
+		isLoading,
+		size,
+		variant,
+	});
+
 	// Icons and spinners composed into the button adopt these unless told otherwise.
+	const iconClassName = slots.icon();
 	const iconDefaults = useMemo(
-		() => ({ size: BUTTON_ICON_SIZE[size], color: BUTTON_FOREGROUND_TOKEN[variant] }),
-		[size, variant]
+		() => ({ className: iconClassName, color: BUTTON_FOREGROUND_TOKEN[variant] }),
+		[iconClassName, variant]
 	);
 
 	const label = accessibilityLabel ?? (layout.isSpinnerOnly ? textOf(children) : undefined);
@@ -73,18 +82,7 @@ function ButtonRoot({
 				accessibilityLabel={label}
 				accessibilityRole="button"
 				busy={isLoading}
-				className={cn(
-					"overflow-hidden",
-					buttonVariants({
-						className,
-						isDimmedWhileLoading,
-						isDisabled,
-						isIconOnly: layout.isIconOnly,
-						isLoading,
-						size,
-						variant,
-					})
-				)}
+				className={slots.root({ className })}
 				disabled={isDisabled}
 				feedback={feedback}
 				{...props}
@@ -96,40 +94,58 @@ function ButtonRoot({
 }
 
 /**
- * Composes the spinner around the button's children.
+ * Composes the spinner into the button's children.
+ *
+ * A loading button **replaces** its icon rather than showing both. Adding a
+ * spinner alongside would push the label sideways the moment work started and
+ * pull it back when it finished; swapping costs no layout at all, because the
+ * spinner and the icon are drawn at the same `size-icon-*` token — the button
+ * publishes one class and both read it.
+ *
+ * `start` takes the first icon and `end` the last, so the spinner lands on the
+ * side the caller asked for even when the button holds an icon at both ends.
+ * With no icon to take, the spinner is inserted instead and the root's own
+ * `gap` spaces it off the label.
  *
  * `only` drops the children: the button has already collapsed to a square, so a
- * label would have nowhere to sit. Every other placement leaves the children
- * untouched and lets the root's own `gap` space the spinner off them, exactly
- * as it does for a composed `Icon`.
+ * label would have nowhere to sit.
  *
  * The spinner is emitted bare — it reads its size and colour from the button's
  * context, so nothing is passed here.
  */
 function composeContent(children: ReactNode, layout: ButtonLayout): ReactNode {
 	if (layout.isSpinnerOnly) return <Spinner />;
+	if (layout.spinnerSide === null) return wrapTextChildren(children);
 
-	const wrapped = wrapTextChildren(children);
+	const items = Children.toArray(wrapTextChildren(children));
+	const swapAt = resolveSpinnerSwapIndex(items.map(isIcon), layout.spinnerSide);
 
-	if (layout.spinnerSide === "start") {
-		return (
-			<>
-				<Spinner />
-				{wrapped}
-			</>
-		);
+	if (swapAt !== null) {
+		return items.map((child, index) => (index === swapAt ? <Spinner key="spinner" /> : child));
 	}
 
-	if (layout.spinnerSide === "end") {
-		return (
-			<>
-				{wrapped}
-				<Spinner />
-			</>
-		);
-	}
+	return layout.spinnerSide === "start" ? (
+		<>
+			<Spinner />
+			{items}
+		</>
+	) : (
+		<>
+			{items}
+			<Spinner />
+		</>
+	);
+}
 
-	return wrapped;
+/**
+ * Whether a child is an `Icon` the spinner can stand in for.
+ *
+ * Only a bare `Icon` qualifies. A `Button.StartContent` wraps arbitrary content
+ * whose height the button does not know, so replacing one could resize the
+ * button — the thing this swap exists to avoid.
+ */
+function isIcon(child: ReactNode): boolean {
+	return isValidElement(child) && child.type === Icon;
 }
 
 /**

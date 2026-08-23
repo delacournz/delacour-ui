@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS } from "../styles/tokens";
 import { cn } from "./cn";
 
 describe("cn", () => {
@@ -29,5 +30,40 @@ describe("cn", () => {
 
 	test("returns an empty string for no input", () => {
 		expect(cn()).toBe("");
+	});
+});
+
+// Without these, tailwind-merge treats `h-button-md` as an unrecognised
+// utility and keeps it alongside a caller's `h-12`. Both would apply and the
+// winner would be whichever uniwind resolved last — the exact failure `cn`
+// exists to prevent, and an invisible one, since nothing errors.
+describe("cn with the semantic size tokens", () => {
+	test("a caller's plain utility replaces a token one", () => {
+		for (const token of BUTTON_SIZE_TOKENS) {
+			expect(cn(`h-${token}`, "h-12")).toBe("h-12");
+			expect(cn(`w-${token}`, "w-12")).toBe("w-12");
+		}
+		for (const token of ICON_SIZE_TOKENS) {
+			expect(cn(`size-${token}`, "size-6")).toBe("size-6");
+		}
+		for (const token of BUTTON_TEXT_TOKENS) {
+			expect(cn(`text-${token}`, "text-lg")).toBe("text-lg");
+		}
+	});
+
+	test("a token utility replaces a plain one", () => {
+		expect(cn("h-12", "h-button-sm")).toBe("h-button-sm");
+		expect(cn("size-6", "size-icon-xs")).toBe("size-icon-xs");
+		expect(cn("text-lg", "text-button-sm")).toBe("text-button-sm");
+	});
+
+	test("one token replaces another on the same axis", () => {
+		expect(cn("size-icon-sm", "size-icon-2xl")).toBe("size-icon-2xl");
+		expect(cn("h-button-sm", "h-button-lg")).toBe("h-button-lg");
+	});
+
+	test("tokens on different axes both survive", () => {
+		expect(cn("h-button-md", "w-button-md")).toBe("h-button-md w-button-md");
+		expect(cn("size-icon-md", "text-button-md")).toBe("size-icon-md text-button-md");
 	});
 });

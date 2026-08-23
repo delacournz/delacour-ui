@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { IconDefaultsProvider } from "../icon";
 import { useListGroupPart } from "./list-group.context";
 import type { ListGroupSlotProps } from "./list-group.types";
-import { LIST_GROUP_FOREGROUND_TOKEN, LIST_GROUP_ICON_SIZE, listGroupItemPrefixVariants } from "./list-group.variants";
+import { LIST_GROUP_FOREGROUND_TOKEN, listGroupVariants } from "./list-group.variants";
 
 /**
  * The leading slot of a row.
@@ -14,13 +14,15 @@ import { LIST_GROUP_FOREGROUND_TOKEN, LIST_GROUP_ICON_SIZE, listGroupItemPrefixV
  */
 export function ListGroupItemPrefix({ className, children, ...props }: ListGroupSlotProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.ItemPrefix");
+	const slots = listGroupVariants({ size });
+	const iconClassName = slots.prefixIcon();
 	const iconDefaults = useMemo(
-		() => ({ color: LIST_GROUP_FOREGROUND_TOKEN, size: LIST_GROUP_ICON_SIZE[size] }),
-		[size]
+		() => ({ className: iconClassName, color: LIST_GROUP_FOREGROUND_TOKEN }),
+		[iconClassName]
 	);
 
 	return (
-		<View className={listGroupItemPrefixVariants({ className })} {...props}>
+		<View className={slots.prefix({ className })} {...props}>
 			<IconDefaultsProvider value={iconDefaults}>{children}</IconDefaultsProvider>
 		</View>
 	);

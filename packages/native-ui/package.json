@@ -21,6 +21,7 @@
 		"./lib/compose-refs": "./src/lib/compose-refs.ts",
 		"./lib/merge-props": "./src/lib/merge-props.ts",
 		"./lib/slot": "./src/lib/slot.tsx",
+		"./lib/tv": "./src/lib/tv.ts",
 		"./icons/central": "./src/icons/central.ts"
 	},
 	"scripts": {

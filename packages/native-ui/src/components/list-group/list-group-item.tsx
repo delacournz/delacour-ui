@@ -1,7 +1,7 @@
 import { Children, type ReactElement, type ReactNode, useMemo } from "react";
 import { Pressable, type PressableProps } from "../pressable";
 import { useListGroupPart } from "./list-group.context";
-import { listGroupItemVariants } from "./list-group.variants";
+import { listGroupVariants } from "./list-group.variants";
 import { ListGroupItemContent } from "./list-group-item-content";
 import { ListGroupItemTitle } from "./list-group-item-title";
 
@@ -36,7 +36,7 @@ export function ListGroupItem({
 
 	return (
 		<Pressable
-			className={listGroupItemVariants({ className, isDisabled, size })}
+			className={listGroupVariants({ isDisabled, size }).item({ className })}
 			disabled={isDisabled}
 			feedback={feedback}
 			{...props}

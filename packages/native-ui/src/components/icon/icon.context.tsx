@@ -1,8 +1,8 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 
 export type IconDefaults = {
-	/** Edge length in points. */
-	size: number;
+	/** Classes an unstyled `Icon` in this subtree adopts, e.g. `size-4.5`. */
+	className: string;
 	/** Theme colour token, e.g. `primary-foreground`. */
 	color: string;
 };

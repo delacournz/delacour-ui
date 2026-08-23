@@ -68,7 +68,7 @@ export function ScreenScrollArea({
 			showsVerticalScrollIndicator={false}
 			{...(keyboardAware ? { bottomOffset: footerClearance } : null)}
 			{...props}
-			contentContainerClassName={cn(screenVariants().scrollContent(), contentContainerClassName)}
+			contentContainerClassName={cn(screenVariants().scrollContent({ className: "py-0" }), contentContainerClassName)}
 		>
 			<Animated.View style={insetTopAnimatedStyle} />
 			{header}

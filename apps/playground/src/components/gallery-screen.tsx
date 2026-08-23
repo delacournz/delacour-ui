@@ -1,10 +1,7 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconChevronLeft } from "@delacour/native-ui/icons/central";
+import { Screen } from "@delacour/native-ui/screen";
 import { useRouter } from "expo-router";
 import type { ReactElement, ReactNode } from "react";
-import { ScrollView, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 
 export type GalleryScreenProps = {
 	title: string;
@@ -13,37 +10,42 @@ export type GalleryScreenProps = {
 };
 
 /**
- * The frame every component gallery sits in: safe-area padding, a back row and
- * a scrolling body.
+ * The frame every component gallery sits in.
  *
- * Deliberately a ScrollView rather than a static screen: it exercises the
- * tap-versus-scroll gesture conflict, which is the thing most likely to break in
- * a component built on the Gesture API.
+ * The title and subtitle ride on the back button rather than heading the
+ * content. They stay put while the body scrolls, they share the control's tap
+ * target — the whole "‹ Button / Pressed 3 times" block goes back — and the
+ * gallery's first row starts at the top of the viewport instead of below a
+ * heading that repeats what the row the user just tapped already said.
  *
- * The back control is a `Button` rather than a native stack header — the root
- * layout runs with `headerShown: false`, and a React Navigation header would
- * need its colours themed separately from the Uniwind token set.
+ * Deliberately a `Screen.ScrollArea` rather than a static body: it exercises
+ * the tap-versus-scroll gesture conflict, which is the thing most likely to
+ * break in a component built on the Gesture API.
+ *
+ * Carries no safe-area arithmetic of its own. The navbar publishes its measured
+ * height into the screen context and the scroll area reserves exactly that, so
+ * the notch and the home indicator are handled without this file naming either.
+ *
+ * The stacked pair is `min-w-0 flex-1` so a long title truncates to one line
+ * rather than pushing the row wider than the bar.
+ *
+ * The back control is wired to expo-router here — the library takes no
+ * navigation dependency, so the router stays in the app.
  */
 export function GalleryScreen({ title, subtitle, children }: GalleryScreenProps): ReactElement {
-	const insets = useSafeAreaInsets();
 	const router = useRouter();
 
 	return (
-		<ScrollView
-			className="flex-1 bg-background"
-			contentContainerClassName="gap-8 p-5"
-			contentContainerStyle={{ paddingBottom: insets.bottom + 32, paddingTop: insets.top + 16 }}
-		>
-			<View className="flex-row items-center gap-3">
-				<Button accessibilityLabel="Back" haptic="light" isIconOnly onPress={() => router.back()} variant="secondary">
-					<Icon icon={IconChevronLeft} />
-				</Button>
-				<View className="flex-1 gap-0.5">
-					<Text className="font-bold text-2xl text-foreground">{title}</Text>
-					{subtitle ? <Text className="text-muted-foreground text-sm">{subtitle}</Text> : null}
-				</View>
-			</View>
-			{children}
-		</ScrollView>
+		<Screen>
+			<Screen.Navbar>
+				<Screen.Navbar.BackButton onPress={() => router.back()}>
+					<View className="min-w-0 flex-1">
+						<Screen.Navbar.Title>{title}</Screen.Navbar.Title>
+						{subtitle ? <Screen.Navbar.Subtitle>{subtitle}</Screen.Navbar.Subtitle> : null}
+					</View>
+				</Screen.Navbar.BackButton>
+			</Screen.Navbar>
+			<Screen.ScrollArea contentContainerClassName="gap-8 p-5">{children}</Screen.ScrollArea>
+		</Screen>
 	);
 }

@@ -5,6 +5,7 @@ import {
 	IconBulletList,
 	IconCursorClick,
 	IconDivider,
+	IconLayoutTopBottom,
 	IconSquareCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
@@ -40,6 +41,12 @@ const COMPONENTS = [
 		icon: IconDivider,
 		title: "Separator",
 		description: "Orientations, insets, weight",
+	},
+	{
+		href: "/screen",
+		icon: IconLayoutTopBottom,
+		title: "Screen",
+		description: "Navbar, footer, scrollables, keyboard",
 	},
 	{
 		href: "/spinner",

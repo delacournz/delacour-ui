@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS } from "./tokens";
+import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS, SCREEN_SIZE_TOKENS } from "./tokens";
 
 const CSS = readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8");
 
@@ -32,7 +32,7 @@ describe("tokens.ts and tokens.css", () => {
 			.filter((name) => name.startsWith("spacing-"))
 			.map((name) => name.replace("spacing-", ""))
 			.sort();
-		const registered = [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS].sort();
+		const registered = [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS].sort();
 		expect(declared).toEqual(registered);
 	});
 

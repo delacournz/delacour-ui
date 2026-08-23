@@ -18,6 +18,14 @@ export const BUTTON_SIZE_TOKENS = ["button-sm", "button-md", "button-lg"] as con
 /** Suffixes in the `--spacing-*` namespace: `size-icon-md`. */
 export const ICON_SIZE_TOKENS = ["icon-xs", "icon-sm", "icon-md", "icon-lg", "icon-xl", "icon-2xl"] as const;
 
+/**
+ * Suffixes in the `--spacing-*` namespace: `h-navbar-row`, `px-screen-gutter`.
+ *
+ * Not a scale — two independent measurements of a screen's chrome — so unlike
+ * the icon and button tokens their order carries no meaning.
+ */
+export const SCREEN_SIZE_TOKENS = ["navbar-row", "screen-gutter"] as const;
+
 /** Suffixes in the `--text-*` namespace: `text-button-md`. */
 export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as const;
 
@@ -34,7 +42,7 @@ export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as con
 export const TW_MERGE_CONFIG = {
 	extend: {
 		theme: {
-			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS],
+			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS],
 			text: [...BUTTON_TEXT_TOKENS],
 		},
 	},

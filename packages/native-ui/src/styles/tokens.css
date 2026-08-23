@@ -39,4 +39,18 @@
 	--spacing-icon-lg: 20px;
 	--spacing-icon-xl: 24px;
 	--spacing-icon-2xl: 32px;
+
+	/*
+	 * Screen chrome. `h-navbar-row` is the navbar's control row on its own —
+	 * the safe-area band above it is padding, not part of this number, so one
+	 * value holds across every device.
+	 *
+	 * `px-screen-gutter` is the horizontal gutter `Screen.Header`,
+	 * `Screen.Navbar` and a screen's own content all line up against. It is one
+	 * token rather than three `px-5`s so a change moves every edge together.
+	 *
+	 * The footer's padding is deliberately NOT here — see `screen.variants.ts`.
+	 */
+	--spacing-navbar-row: 56px;
+	--spacing-screen-gutter: 20px;
 }

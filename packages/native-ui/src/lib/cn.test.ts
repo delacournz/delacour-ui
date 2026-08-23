@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS } from "../styles/tokens";
+import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS, SCREEN_SIZE_TOKENS } from "../styles/tokens";
 import { cn } from "./cn";
 
 describe("cn", () => {
@@ -49,12 +49,20 @@ describe("cn with the semantic size tokens", () => {
 		for (const token of BUTTON_TEXT_TOKENS) {
 			expect(cn(`text-${token}`, "text-lg")).toBe("text-lg");
 		}
+		// The screen tokens are read on two different axes — `h-navbar-row` sizes
+		// the navbar's row, `px-screen-gutter` its horizontal padding — so both
+		// have to be recognised, not just the one each token was named for.
+		for (const token of SCREEN_SIZE_TOKENS) {
+			expect(cn(`h-${token}`, "h-12")).toBe("h-12");
+			expect(cn(`px-${token}`, "px-8")).toBe("px-8");
+		}
 	});
 
 	test("a token utility replaces a plain one", () => {
 		expect(cn("h-12", "h-button-sm")).toBe("h-button-sm");
 		expect(cn("size-6", "size-icon-xs")).toBe("size-icon-xs");
 		expect(cn("text-lg", "text-button-sm")).toBe("text-button-sm");
+		expect(cn("px-8", "px-screen-gutter")).toBe("px-screen-gutter");
 	});
 
 	test("one token replaces another on the same axis", () => {

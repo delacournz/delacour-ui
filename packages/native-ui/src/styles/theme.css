@@ -75,3 +75,32 @@
 		}
 	}
 }
+
+@layer theme {
+	:root {
+		/*
+		 * The one font family this package names.
+		 *
+		 * Tailwind's default `--font-mono` is a comma-separated web stack, and
+		 * React Native's `fontFamily` takes a single family name with no fallback
+		 * list — the whole string would resolve to nothing and quietly fall back
+		 * to the system sans, which is the opposite of what `Text.Code` is for.
+		 *
+		 * No single name works on both platforms: iOS has Menlo and not
+		 * `monospace`, Android the reverse. Both ship with the OS, so nothing has
+		 * to be loaded through `expo-font` and a consuming app needs no plugin.
+		 *
+		 * This cannot live in `tokens.css`: platform selection needs `@variant`,
+		 * and `@theme {}` accepts custom properties only. It also needs the
+		 * `noDuplicateCustomProperties` exemption `biome.jsonc` scopes to this
+		 * file — the same one `light` and `dark` already rely on.
+		 */
+		@variant ios {
+			--font-mono: "Menlo";
+		}
+
+		@variant android {
+			--font-mono: "monospace";
+		}
+	}
+}

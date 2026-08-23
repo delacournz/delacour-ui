@@ -15,6 +15,7 @@
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
+		"./text": "./src/components/text/index.ts",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",
 		"./hooks/use-theme-color": "./src/hooks/use-theme-color.ts",

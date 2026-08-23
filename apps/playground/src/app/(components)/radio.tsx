@@ -202,7 +202,12 @@ export default function RadioGallery(): ReactElement {
 				<Radio.Group accessibilityLabel="Custom indicator" defaultSelected="a">
 					<Radio value="a">
 						<Radio.Indicator className="border-success">
-							<Icon color="success" icon={IconCheckmark1Small} size="xs" />
+							{({ isSelected }) => (
+								<Icon
+									color={isSelected ? "success" : "muted-foreground"}
+									icon={IconCheckmark1Small}
+								/>
+							)}
 						</Radio.Indicator>
 						<Radio.Label>Children replace the dot</Radio.Label>
 					</Radio>

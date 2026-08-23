@@ -4,10 +4,16 @@ import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-na
 import { useRadioPart } from "./radio.context";
 import { RADIO_DOT_SPRING, radioVariants } from "./radio.variants";
 
-export type RadioIndicatorProps = ViewProps & {
+export type RadioIndicatorChildrenProps = {
+	isSelected: boolean;
+	isInvalid: boolean;
+	size: "lg" | "md" | "sm";
+	variant: "primary" | "secondary";
+};
+export type RadioIndicatorProps = Omit<ViewProps, "children"> & {
 	className?: string;
 	/** Replaces the dot. The ring, its size and its colours are still the radio's. */
-	children?: ReactNode;
+	children?: ReactNode | ((props: RadioIndicatorChildrenProps) => ReactNode);
 	/** Props for the dot's own `Animated.View`, for a caller restyling it in place. */
 	dotProps?: Omit<ComponentProps<typeof Animated.View>, "children" | "className"> & { className?: string };
 };
@@ -58,9 +64,21 @@ export function RadioIndicator({ className, children, dotProps, ...props }: Radi
 
 	const slots = radioVariants({ isInvalid, isSelected, size, variant });
 
+	const renderChildren = () => {
+		if (typeof children === "function") {
+			return children({ isSelected, isInvalid, size, variant });
+		}
+
+		if (children) {
+			return children;
+		}
+
+		return null;
+	};
+
 	return (
 		<View className={slots.indicator({ className })} {...props}>
-			{children ?? (
+			{renderChildren() ?? (
 				<Animated.View
 					{...dotProps}
 					className={slots.dot({ className: dotProps?.className })}

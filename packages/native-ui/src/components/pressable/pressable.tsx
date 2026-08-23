@@ -12,7 +12,8 @@ import {
 import type { AccessibilityState, ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Presets } from "react-native-pulsar";
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
 import { type PressableFeedback, resolvePressedState } from "./pressable.variants";
@@ -159,7 +160,7 @@ export function Pressable({
 			})
 			.onEnd(() => {
 				"worklet";
-				if (onPress) runOnJS(onPress)();
+				if (onPress) scheduleOnRN(onPress);
 			})
 			.onFinalize(() => {
 				"worklet";
@@ -173,7 +174,7 @@ export function Pressable({
 			.shouldCancelWhenOutside(true)
 			.onStart(() => {
 				"worklet";
-				runOnJS(onLongPress)();
+				scheduleOnRN(onLongPress);
 			});
 
 		return Gesture.Simultaneous(tap, longPress);

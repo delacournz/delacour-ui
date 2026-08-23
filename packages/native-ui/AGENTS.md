@@ -11,6 +11,7 @@ React Native component kit. Do not add one, and do not port patterns from one.
 - **Uniwind** — Tailwind v4 for React Native (`className` on RN components)
 - **tailwind-variants** (`tv`) — variant systems
 - **react-native-reanimated** — UI-thread animation
+- **react-native-worklets** — worklet threading (`scheduleOnRN`, `scheduleOnUI`)
 - **react-native-gesture-handler** — the Gesture API
 - **react-native-pulsar** — worklet-callable haptics
 - **Central Icons** — the icon set (never Lucide, Hugeicons, or anything else)
@@ -507,6 +508,14 @@ carries nothing a screen reader can use, and announcing them buries the rows.
   itself, so assistive tech reports a control that is momentarily unavailable
   rather than one that is inert. Neither applies any opacity — that is the
   caller's variant's job.
+- **A worklet crosses back to JS with `scheduleOnRN`**, imported from
+  `react-native-worklets` — never Reanimated's `runOnJS`, which since Reanimated 4
+  is a deprecated shim that forwards to exactly that call. `scheduleOnRN(fn, ...args)`
+  takes the arguments itself, so there is no second call: `runOnJS(onPress)()`
+  becomes `scheduleOnRN(onPress)`. The same rename covers `runOnUI` →
+  `scheduleOnUI`, which `use-keyboard-state-sync` already uses. A Biome
+  `noRestrictedImports` rule in `@delacour/biome-config` fails the build on the
+  deprecated names, so this cannot regress quietly.
 
 ## Sizing
 

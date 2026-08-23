@@ -47,7 +47,31 @@
 				"useSingleVarDeclarator": "error",
 				"useNumberNamespace": "error",
 				"noInferrableTypes": "error",
-				"noUselessElse": "error"
+				"noUselessElse": "error",
+				"noRestrictedImports": {
+					"level": "error",
+					"options": {
+						"paths": {
+							"react-native-reanimated": {
+								"importNames": [
+									"runOnJS",
+									"runOnUI",
+									"runOnRuntime",
+									"createWorkletRuntime",
+									"executeOnUIRuntimeSync",
+									"makeShareableCloneRecursive",
+									"isWorkletFunction",
+									"WorkletRuntime"
+								],
+								"message": "Deprecated in Reanimated 4. Import the equivalent from react-native-worklets: runOnJS -> scheduleOnRN, runOnUI -> scheduleOnUI, runOnRuntime -> scheduleOnRuntime, executeOnUIRuntimeSync -> runOnUISync, makeShareableCloneRecursive -> createSerializable. createWorkletRuntime, isWorkletFunction and WorkletRuntime import directly from react-native-worklets."
+							},
+							"react-native-worklets": {
+								"importNames": ["runOnJS", "runOnUI"],
+								"message": "Deprecated. Use scheduleOnRN / scheduleOnUI."
+							}
+						}
+					}
+				}
 			},
 			"complexity": {
 				"noExcessiveCognitiveComplexity": "warn"

@@ -4,6 +4,7 @@ import {
 	IconArrowsRepeatCircle,
 	IconBulletList,
 	IconCursorClick,
+	IconDiamond,
 	IconDivider,
 	IconFontStyle,
 	IconLayoutTopBottom,
@@ -65,6 +66,25 @@ const COMPONENTS = [
 ] as const;
 
 /**
+ * Brand art, not part of the library — the row is a way to eyeball the app icon
+ * against the component that redraws it, which is only ever a development
+ * concern. `__DEV__` is compiled to `false` in a release bundle, so Metro's
+ * dead-code pass drops the row and this array with it.
+ */
+const DEV_COMPONENTS = [
+	{
+		href: "/delacour-mark",
+		icon: IconDiamond,
+		title: "DelacourMark",
+		description: "The app icon, as react-native-svg",
+	},
+] as const;
+
+type ComponentRow = (typeof COMPONENTS)[number] | (typeof DEV_COMPONENTS)[number];
+
+const VISIBLE_COMPONENTS: readonly ComponentRow[] = __DEV__ ? [...COMPONENTS, ...DEV_COMPONENTS] : COMPONENTS;
+
+/**
  * The playground index: one row per component in the library.
  *
  * Doubles as the ListGroup's own smoke test — automatic dividers, the leading
@@ -103,7 +123,7 @@ export default function Index(): ReactElement {
 			</View>
 
 			<ListGroup>
-				{COMPONENTS.map((component) => (
+				{VISIBLE_COMPONENTS.map((component) => (
 					<ListGroup.Item haptic="selection" key={component.href} onPress={() => router.push(component.href)}>
 						<ListGroup.ItemPrefix>
 							<Icon icon={component.icon} />

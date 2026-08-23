@@ -1,0 +1,24 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+	<!--
+		Delacour app-icon master art. The house palette: #18181B card, #FBBF24
+		stroke. Sharp miter joins, unrounded corners, unbroken crossings.
+
+		Full-bleed square by design — iOS applies its own mask and Android takes
+		the glyph into its adaptive safe zone, so nothing here is pre-rounded and
+		nothing carries a drop shadow.
+
+		Two 262.4px squares rotated 45° about cy 428.5 / 595.5, stroke 66.4,
+		miter joins. They overlap opaquely.
+
+		This file is the authored source. `scripts/generate-icons.ts` rasterises
+		it into the PNGs `app.config.ts` points at, and
+		`src/components/delacour-mark/` redraws it with react-native-svg. Both
+		read one set of constants, and `delacour-mark.geometry.test.ts` pins those
+		constants to the numbers below — edit them together or the test fails.
+	-->
+	<rect width="1024" height="1024" fill="#18181B"/>
+	<g fill="none" stroke="#FBBF24" stroke-width="66.4" stroke-linejoin="miter" stroke-miterlimit="10">
+		<rect x="380.8" y="297.3" width="262.4" height="262.4" transform="rotate(45 512 428.5)"/>
+		<rect x="380.8" y="464.3" width="262.4" height="262.4" transform="rotate(45 512 595.5)"/>
+	</g>
+</svg>

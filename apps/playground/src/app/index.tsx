@@ -3,6 +3,7 @@ import { Icon } from "@delacour/native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
 	IconBulletList,
+	IconCircleRecord,
 	IconCursorClick,
 	IconDiamond,
 	IconDivider,
@@ -59,6 +60,12 @@ const COMPONENTS = [
 		icon: IconCursorClick,
 		title: "Pressable",
 		description: "Gestures, haptics, asChild",
+	},
+	{
+		href: "/radio",
+		icon: IconCircleRecord,
+		title: "Radio",
+		description: "Groups, selection, sizes, orientation",
 	},
 	{
 		href: "/separator",

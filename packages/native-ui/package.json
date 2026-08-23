@@ -16,6 +16,7 @@
 		"./list-group": "./src/components/list-group/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
 		"./provider": "./src/components/provider/index.ts",
+		"./radio": "./src/components/radio/index.ts",
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",

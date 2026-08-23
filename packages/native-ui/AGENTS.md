@@ -734,11 +734,17 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   pan reads its offset straight off the touch with no gutter to correct for. Pad
   the main axis and every value is wrong by the padding, silently, and visibly
   only at the ends.
-- **The colour paints the fill and nothing else.** An empty groove is the same
-  chrome at every colour, the way an unticked checkbox is `border-input bg-card`
-  however it is coloured — so the axis has one slot to paint rather than a matrix,
-  and a test asserts the track and the thumb really do not move with it. Invalid
-  outranks the colour on the fill, the precedence `Checkbox` sets on its border.
+- **The colour paints the fill, the capsule and the knob — never the groove.** An
+  empty groove is the same chrome at every colour, the way an unticked checkbox is
+  `border-input bg-card` however it is coloured, and a test asserts that. Invalid
+  outranks the colour on all three, the precedence `Checkbox` sets on its border.
+- **The capsule takes the fill's own colour, and the knob takes that colour's
+  `-foreground`.** The first is what makes the handle read as the leading end of
+  the fill rather than as something sitting on top of it — same colour, no seam.
+  The second is rule 11 doing its job: a single pale knob would be unreadable on
+  `warning`, whose foreground is near-black, so the knob follows the surface it
+  sits on. A test pins the pair rather than trusting two maps to stay in step, and
+  checks every token it names exists in both variants of `theme.css`.
 - **`default` and `primary` name different tokens this theme tunes to the same
   value.** `foreground` is the page's ink and `primary` is the brand's action
   colour; both are `#262626` today, which is the situation `Badge` already
@@ -747,23 +753,33 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   `color="primary"` blue and `color="default"` still ink. A test pins that the
   four *semantic* colours stay distinct from each other and from both neutrals,
   and that every token named is declared in **both** variants of `theme.css`.
-- **The thumb takes a border, never a shadow.** Nothing else in this package draws
-  one, and React Native's shadow props diverge between platforms in a way a
-  one-pixel border does not. A test sweeps the whole matrix for the absence.
-- **The thumb's diameter is the track's thickness**, and that is geometry rather
-  than decoration. It is what lets `fillExtent` land exactly on both extremes —
-  one thumb's width of fill at the minimum, so the handle covers it completely
-  and a slider at rest shows a plain track; the track's full length at the
-  maximum, with no sliver of empty groove past the handle; and one thumb's width
-  again for a collapsed range, so the fill does not blink out from under two
-  thumbs dragged together. Inset the thumb inside the track by any padding and
-  every one of those is off by the inset, at every size. One step per size
-  therefore drives both, and a test asserts the two classes name the same one.
-- **That step is a plain spacing step, not a token.** It is one number read in one
+- **The handle is two nodes: a capsule and a knob.** The capsule carries the
+  colour, the size and the position; the knob is the pale bar inside it, held off
+  the capsule's edge by its padding, and the only thing that moves when a finger
+  lands. One node could not be both the surface and the thing inset within it.
+- **Neither takes a shadow**, and the capsule takes no border either. Nothing else
+  in this package draws a shadow, and React Native's shadow props diverge between
+  platforms in a way a flat fill does not; a test sweeps the whole matrix for the
+  absence. The capsule is a solid block of the fill's colour, so its edge is
+  already the boundary between the fill and the groove — a border would be a
+  second line drawn over one that is already there.
+- **The capsule is flush across the track and longer along it.** The flush half is
+  geometry rather than decoration: it is what lets `fillExtent` land exactly on
+  both extremes — one capsule's length of fill at the minimum, so the handle covers
+  it completely and a slider at rest shows a plain groove; the track's full length
+  at the maximum, with no sliver past the handle; and one capsule's length again
+  for a collapsed range, so the fill does not blink out from under two handles
+  dragged together. Inset the capsule inside the track by any padding and every one
+  of those is off by the inset, at every size. The long axis is two steps up from
+  the short one, which is what makes a handle you can tell apart from the groove.
+- **Both are plain spacing steps, not tokens.** They are numbers read in one
   component, which is the trade `Radio` already makes for the dot inside its ring.
   `Checkbox` reads `--spacing-icon-*` for its square and should keep doing so: a
-  glyph in a box is a mark on the icon scale, where a slider's thumb is the body
-  of the control itself. This is why the thumb stopped reading that scale.
+  glyph in a box is a mark on the icon scale, where a slider's handle is the body
+  of the control itself. This is why the handle stopped reading that scale.
+- **The capsule's size lives in the same six compound cells as the track's
+  thickness**, not in a `size`-only variant, because its two axes differ and only
+  the orientation knows which is which.
 - **The track still centres the thumb, and now has nothing to centre.** An
   absolutely-positioned child with no cross-axis inset is placed at the static
   position the parent's `items-center` decides. That did the work while the thumb

@@ -1,4 +1,4 @@
-import { type ReactElement, useCallback } from "react";
+import { type ComponentProps, type ReactElement, useCallback } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue, withSpring } from "react-native-reanimated";
 import { useSliderPart } from "./slider.context";
@@ -17,6 +17,14 @@ export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
 	/** Which value this thumb drives. `0` unless the slider holds a range. */
 	index?: number;
 	className?: string;
+	/**
+	 * Passed to the knob inside the capsule.
+	 *
+	 * A prop rather than a `classNames` map, which is the shape `Radio.Indicator`
+	 * already uses for its dot: one escape hatch, named after the thing it reaches,
+	 * and it carries every `View` prop rather than only a class.
+	 */
+	knobProps?: Omit<ComponentProps<typeof Animated.View>, "children" | "className" | "style"> & { className?: string };
 };
 
 /**
@@ -49,7 +57,7 @@ export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
  * gestures call. Without them a slider with no gesture on its thumb would have no
  * assistive path to its value at all.
  */
-export function SliderThumb({ index = 0, className, ...props }: SliderThumbProps): ReactElement {
+export function SliderThumb({ index = 0, className, knobProps, ...props }: SliderThumbProps): ReactElement {
 	const {
 		positions,
 		trackSize,
@@ -68,6 +76,7 @@ export function SliderThumb({ index = 0, className, ...props }: SliderThumbProps
 		updateValue,
 	} = useSliderPart("Slider.Thumb");
 	const isVertical = orientation === "vertical";
+	const slots = sliderVariants({ color, isDisabled, isInvalid, orientation, size });
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
@@ -78,13 +87,10 @@ export function SliderThumb({ index = 0, className, ...props }: SliderThumbProps
 		[isVertical, thumbSize]
 	);
 
-	const scale = useDerivedValue(() =>
-		withSpring(
-			activeIndex.value === index ? SLIDER_THUMB_ANIMATION.grabbedScale : SLIDER_THUMB_ANIMATION.restScale,
-			SLIDER_THUMB_SPRING
-		)
-	);
-
+	// The capsule carries the position and the knob carries the squeeze, on two
+	// different nodes. Two animated styles on *one* node fight for the same prop
+	// and the later one silently wins — the rule `Radio.Indicator` states — and
+	// scaling the capsule would push it past the track it sits flush inside.
 	const thumbStyle = useAnimatedStyle(() => {
 		const measured = trackSize.value;
 		const travel = measured - thumbSize.value;
@@ -93,14 +99,23 @@ export function SliderThumb({ index = 0, className, ...props }: SliderThumbProps
 
 		return {
 			opacity: measured > 0 ? 1 : 0,
-			// A vertical slider counts up from the bottom, so the thumb is anchored
+			// A vertical slider counts up from the bottom, so the handle is anchored
 			// there and travels the other way. This sign and `valueFromOffset`'s
 			// inversion are the only two places the axis turns around.
-			transform: isVertical
-				? [{ translateY: -offset }, { scale: scale.value }]
-				: [{ translateX: offset }, { scale: scale.value }],
+			transform: isVertical ? [{ translateY: -offset }] : [{ translateX: offset }],
 		};
 	});
+
+	// Derived rather than branched inside the style above: it depends only on which
+	// thumb is being dragged, so the spring is evaluated when the grab changes
+	// rather than on every frame of the drag.
+	const scale = useDerivedValue(() =>
+		withSpring(
+			activeIndex.value === index ? SLIDER_THUMB_ANIMATION.grabbedScale : SLIDER_THUMB_ANIMATION.restScale,
+			SLIDER_THUMB_SPRING
+		)
+	);
+	const knobStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
 	const value = values[index] ?? minValue;
 	const nudge = step > 0 ? step : (maxValue - minValue) / CONTINUOUS_ACCESSIBILITY_STEPS;
@@ -125,12 +140,14 @@ export function SliderThumb({ index = 0, className, ...props }: SliderThumbProps
 				text: formatSliderValue([value], formatOptions),
 			}}
 			accessible
-			className={sliderVariants({ color, isDisabled, isInvalid, orientation, size }).thumb({ className })}
+			className={slots.thumb({ className })}
 			onAccessibilityAction={handleAccessibilityAction}
 			onLayout={handleLayout}
 			style={thumbStyle}
 			{...props}
-		/>
+		>
+			<Animated.View {...knobProps} className={slots.knob({ className: knobProps?.className })} style={knobStyle} />
+		</Animated.View>
 	);
 }
 SliderThumb.displayName = "DelacourUI.Slider.Thumb";

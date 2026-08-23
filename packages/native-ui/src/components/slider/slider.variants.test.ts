@@ -64,11 +64,6 @@ function widthStep(value: string): number {
 	return Number(value.match(/\bw-(\d+(?:\.\d+)?)\b/)?.[1]);
 }
 
-/** The `size-*` step a class string sets — `size-5` yields 5. */
-function sizeStep(value: string): number {
-	return Number(value.match(/\bsize-(\d+(?:\.\d+)?)\b/)?.[1]);
-}
-
 /** The `py-*` / `px-*` step a class string sets — `py-3.5` yields 3.5. */
 function paddingStep(value: string): number {
 	return Number(value.match(/\bp[xy]-(\d+(?:\.\d+)?)\b/)?.[1]);
@@ -144,14 +139,33 @@ describe("sliderVariants", () => {
 		expect(painted.size).toBe(SLIDER_COLORS.length);
 	});
 
-	// The empty track is chrome at every colour, the way an unticked checkbox is
-	// `border-input bg-card` however it is coloured — so the colour axis has one
-	// slot to paint rather than a matrix.
-	test("leaves the track and the thumb the same at every colour", () => {
+	// The empty groove is chrome at every colour, the way an unticked checkbox is
+	// `border-input bg-card` however it is coloured. The capsule is not: it takes
+	// the fill's own colour so the two meet with no seam.
+	test("leaves the groove alone at every colour, and paints the capsule with the fill", () => {
 		const tracks = new Set(SLIDER_COLORS.map((color) => cls(sliderVariants({ color }).track())));
-		const thumbs = new Set(SLIDER_COLORS.map((color) => cls(sliderVariants({ color }).thumb())));
 		expect(tracks.size).toBe(1);
-		expect(thumbs.size).toBe(1);
+
+		for (const color of SLIDER_COLORS) {
+			const slots = sliderVariants({ color });
+			expect(backgroundToken(cls(slots.thumb()))).toBe(backgroundToken(cls(slots.fill())));
+		}
+	});
+
+	// Rule 11: `X-foreground` is content drawn on an `X` surface. The knob sits on
+	// the capsule, so its colour is that capsule's foreground and nothing else —
+	// two maps that can drift is how a handle ends up invisible on one colour.
+	test("gives the knob the capsule's own foreground, at every colour", () => {
+		for (const color of [...SLIDER_COLORS, "danger"] as const) {
+			for (const isInvalid of [false, true]) {
+				const slots = sliderVariants({ color, isInvalid });
+				const capsule = backgroundToken(cls(slots.thumb()));
+				const knob = backgroundToken(cls(slots.knob()));
+				// `foreground` is the page's ink, and what is drawn on ink is the page.
+				expect(knob).toBe(capsule === "foreground" ? "background" : `${capsule}-foreground`);
+				expect(themeDeclarations(knob as string)).toBe(2);
+			}
+		}
 	});
 
 	test("reddens the fill when invalid, whatever the colour", () => {
@@ -162,19 +176,16 @@ describe("sliderVariants", () => {
 
 	// Nothing in this package draws a shadow, and RN's shadow props diverge
 	// between platforms in a way a one-pixel border does not.
-	test("gives the thumb a border and never a shadow", () => {
+	test("draws no shadow anywhere", () => {
 		for (const cell of everyCell()) {
 			const slots = sliderVariants(cell);
-			// A width *and* a colour: `border` alone leaves the ring at React Native's
-			// default black, which is invisible in dark mode and wrong in light.
-			expect(cls(slots.thumb())).toMatch(/(^|\s)border(\s|$)/);
-			expect(cls(slots.thumb())).toMatch(/\bborder-(?!\d)[\w-]+/);
 			for (const slot of [
 				slots.root(),
 				slots.touchArea(),
 				slots.track(),
 				slots.fill(),
 				slots.thumb(),
+				slots.knob(),
 				slots.output(),
 			]) {
 				expect(cls(slot)).not.toMatch(/shadow/);
@@ -193,6 +204,7 @@ describe("sliderVariants", () => {
 				slots.track(),
 				slots.fill(),
 				slots.thumb(),
+				slots.knob(),
 				slots.output(),
 			]) {
 				expect(cls(slot)).not.toMatch(/\btext-(?!ellipsis|clip)/);
@@ -256,21 +268,38 @@ describe("sliderVariants", () => {
 	// extremes only while these two are the same number: inset the thumb inside the
 	// track and there is stray colour at the minimum and empty groove at the
 	// maximum, at every size.
-	test("draws the thumb at exactly the track's thickness", () => {
+	test("draws the capsule flush across the track and longer along it", () => {
 		for (const size of SLIDER_SIZES) {
-			const thumb = sizeStep(cls(sliderVariants({ size }).thumb()));
-			const horizontal = heightStep(cls(sliderVariants({ orientation: "horizontal", size }).track()));
-			const vertical = widthStep(cls(sliderVariants({ orientation: "vertical", size }).track()));
-			expect(Number.isFinite(thumb)).toBe(true);
-			expect(thumb).toBe(horizontal);
-			expect(thumb).toBe(vertical);
+			for (const orientation of SLIDER_ORIENTATIONS) {
+				const isVertical = orientation === "vertical";
+				const track = cls(sliderVariants({ orientation, size }).track());
+				const thumb = cls(sliderVariants({ orientation, size }).thumb());
+				const across = isVertical ? widthStep : heightStep;
+				const along = isVertical ? heightStep : widthStep;
+
+				expect(Number.isFinite(across(thumb))).toBe(true);
+				expect(Number.isFinite(along(thumb))).toBe(true);
+				// Flush on the cross axis: this is what makes `fillExtent` exact.
+				expect(across(thumb)).toBe(across(track));
+				// A capsule, not a disc.
+				expect(along(thumb)).toBeGreaterThan(across(thumb));
+			}
 		}
 	});
 
-	test("steps the thumb up with the size, in step with the track", () => {
-		const steps = SLIDER_SIZES.map((size) => sizeStep(cls(sliderVariants({ size }).thumb())));
+	test("steps the capsule up with the size, in step with the track", () => {
+		const steps = SLIDER_SIZES.map((size) =>
+			heightStep(cls(sliderVariants({ orientation: "horizontal", size }).thumb()))
+		);
 		expect(steps).toEqual([...steps].sort((a, b) => a - b));
 		expect(new Set(steps).size).toBe(SLIDER_SIZES.length);
+	});
+
+	// The padding is what leaves the knob room to shrink into without the capsule
+	// moving, and it is the only thing separating the knob from the capsule's edge.
+	test("insets the knob inside the capsule", () => {
+		expect(cls(sliderVariants({}).thumb())).toMatch(/\bp-\d/);
+		expect(cls(sliderVariants({}).knob())).toMatch(/\bflex-1\b/);
 	});
 
 	// The centring is a no-op while the thumb and the track are the same size, and
@@ -316,12 +345,12 @@ describe("the thumb's animation", () => {
 		expect(SLIDER_THUMB_SPRING.stiffness).toBeGreaterThan(0);
 	});
 
-	// The grabbed thumb grows rather than shrinking: a slider's thumb travels out
-	// from under the finger, so it has to stay findable while it is covered.
-	test("grows the grabbed thumb, and rests at its drawn size", () => {
+	// The knob shrinks, the way every pressable in this library does. Growing would
+	// push the capsule past the track it sits flush inside.
+	test("squeezes the grabbed knob, and rests at its drawn size", () => {
 		expect(SLIDER_THUMB_ANIMATION.restScale).toBe(1);
-		expect(SLIDER_THUMB_ANIMATION.grabbedScale).toBeGreaterThan(SLIDER_THUMB_ANIMATION.restScale);
-		expect(SLIDER_THUMB_ANIMATION.grabbedScale).toBeLessThanOrEqual(1.5);
+		expect(SLIDER_THUMB_ANIMATION.grabbedScale).toBeLessThan(SLIDER_THUMB_ANIMATION.restScale);
+		expect(SLIDER_THUMB_ANIMATION.grabbedScale).toBeGreaterThanOrEqual(0.75);
 	});
 });
 

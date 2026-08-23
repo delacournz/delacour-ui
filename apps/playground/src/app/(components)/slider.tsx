@@ -45,8 +45,8 @@ export default function SliderGallery(): ReactElement {
 					))}
 				</View>
 				<Text.Caption color="muted">
-					The colour paints the fill and nothing else — an empty groove is the same chrome at every one, the way an
-					unticked checkbox is. default and primary name different tokens this theme tunes alike.
+					The colour paints the fill and the handle's capsule with one token, so the two meet with no seam. The knob
+					takes that colour's foreground — which is why it is white on info and near-black on warning.
 				</Text.Caption>
 			</Section>
 

@@ -43,14 +43,16 @@ export const SLIDER_STEP = 1;
 export const SLIDER_THUMB_SPRING = { damping: 18, mass: 0.4, stiffness: 320 } as const;
 
 /**
- * How far the grabbed thumb travels on the scale axis.
+ * How far the grabbed handle's knob travels on the scale axis.
  *
- * It **grows**, where every other pressable in this library shrinks. A button
- * stays under the finger that pressed it, so shrinking reads as give; a slider's
- * thumb travels out from under the finger the moment the drag starts, and a thumb
- * that shrank as it disappeared under a fingertip would leave nothing to aim at.
+ * It **shrinks**, the way every other pressable in this library does, and it is
+ * the *knob* that moves rather than the capsule around it. Scaling the capsule
+ * would push it past the track it sits flush inside — a bulge on both edges every
+ * time a finger lands. The knob is a descendant with padding to spare, so the
+ * squeeze happens entirely within the handle's own footprint and the capsule
+ * stays exactly where the value says it is.
  */
-export const SLIDER_THUMB_ANIMATION = { restScale: 1, grabbedScale: 1.15 } as const;
+export const SLIDER_THUMB_ANIMATION = { restScale: 1, grabbedScale: 0.9 } as const;
 
 /**
  * The `Text` size step each slider size hands its output.
@@ -94,10 +96,15 @@ export const SLIDER_RANGE_SEPARATOR = " – ";
  * a cycle (AGENTS.md rule 3) yet all three read the same `color`, `size` and
  * `orientation`.
  *
- * **The colour paints the fill and nothing else.** An empty track is the same
- * chrome at every colour, the way an unticked checkbox is `border-input bg-card`
- * however it is coloured — so the colour axis has one slot to paint rather than a
- * matrix, and a test asserts the track and the thumb really do not move with it.
+ * **The colour paints the fill, the capsule and the knob — never the groove.** An
+ * empty track is the same chrome at every colour, the way an unticked checkbox is
+ * `border-input bg-card` however it is coloured, and a test asserts that. The
+ * capsule takes the fill's *own* colour so the two meet with no seam and the
+ * handle reads as the leading end of the fill rather than as something sitting on
+ * top of it; the knob is that colour's `-foreground`, which is what the token
+ * means (rule 11) and what keeps it legible on all six. A single pale knob would
+ * be unreadable on `warning`, and a test pins the pair rather than trusting two
+ * maps to stay in step.
  *
  * **`default` and `primary` name different tokens that this theme tunes to the
  * same value.** `foreground` is the page's ink and `primary` is the brand's
@@ -106,24 +113,36 @@ export const SLIDER_RANGE_SEPARATOR = " – ";
  * would be the drift, not the duplication: an app that re-themes `primary` to
  * blue wants `color="primary"` blue and `color="default"` still ink.
  *
- * **The thumb takes a border, never a shadow.** Nothing else in this package
- * draws one, and React Native's shadow props diverge between platforms in a way a
- * one-pixel border does not — a test pins that absence across the whole matrix.
- * The ring is `border-input` rather than `border-border`: it is the chrome of a
- * *control*, the same token a resting checkbox wears, and it needs to hold its
- * edge against the groove behind it. `border-border` is a divider's weight and
- * disappears into `bg-secondary` in light mode.
+ * **The handle is two nodes: a capsule and a knob.** The capsule carries the
+ * colour, the size and the position; the knob is the pale bar inside it and the
+ * only thing that moves when a finger lands. Two nodes rather than one because a
+ * single view cannot be both the surface and the thing inset within it, and
+ * because two animated styles on one node fight for the same prop — see
+ * {@link SLIDER_THUMB_ANIMATION}.
  *
- * **The thumb's diameter is the track's thickness**, and that is load-bearing
- * rather than decorative. It is what lets {@link fillExtent} land exactly on both
- * extremes — one thumb's width of fill at the minimum, the track's full length at
- * the maximum — with no inset to leave stray colour at one end and empty groove at
- * the other. One step per size therefore drives both, and a test asserts the two
- * classes name the same one. It is a plain spacing step and not a token: this is
- * one number read in one component, the trade `Radio` already makes for the dot
- * inside its ring. `Checkbox` reads `--spacing-icon-*` for its square and should
- * keep doing so — a glyph in a box is a mark on the icon scale, where a slider's
- * thumb is the body of the control itself.
+ * **Neither takes a shadow.** Nothing else in this package draws one, and React
+ * Native's shadow props diverge between platforms in a way a flat fill does not.
+ * A test pins that absence across the whole matrix. The capsule needs no border
+ * either: it is a solid block of the fill's colour, so its edge is already the
+ * boundary between the fill and the groove.
+ *
+ * **The capsule is flush across the track and longer along it**, and the flush
+ * half is load-bearing rather than decorative. It is what lets {@link fillExtent}
+ * land exactly on both extremes — one capsule's length of fill at the minimum, the
+ * track's full length at the maximum — with no inset to leave stray colour at one
+ * end and empty groove at the other. So the cross axis takes the track's own step
+ * and a test asserts the two classes name the same one, while the long axis is two
+ * steps up from it: a handle you can tell apart from the groove it runs in.
+ *
+ * Both are plain spacing steps rather than tokens: these are numbers read in one
+ * component, the trade `Radio` already makes for the dot inside its ring.
+ * `Checkbox` reads `--spacing-icon-*` for its square and should keep doing so — a
+ * glyph in a box is a mark on the icon scale, where a slider's handle is the body
+ * of the control itself.
+ *
+ * Because the two axes differ and only the orientation knows which is which, the
+ * capsule's size lives in the same six compound cells as the track's thickness
+ * rather than in a `size`-only variant.
  *
  * **The groove is not the touch target on its own.** A `sm` track is sixteen
  * points, so the drag is claimed on a transparent `touchArea` whose padding brings
@@ -169,8 +188,10 @@ export const sliderVariants = tv({
 		track: "relative items-center rounded-full bg-secondary",
 		/** The painted part of the groove. Its extent is an animated style, never a class. */
 		fill: "absolute rounded-full",
-		/** The grab handle. Its position and its scale are one animated style. */
-		thumb: "absolute rounded-full border border-input bg-background",
+		/** The handle's capsule. Painted in the fill's own colour, so the two join seamlessly. */
+		thumb: "absolute justify-center rounded-full p-0.5",
+		/** The pale bar inside the capsule, and the only part that moves under a finger. */
+		knob: "flex-1 rounded-full",
 	},
 	variants: {
 		orientation: {
@@ -189,11 +210,10 @@ export const sliderVariants = tv({
 				thumb: "bottom-0",
 			},
 		},
-		size: {
-			sm: { thumb: "size-4" },
-			md: { thumb: "size-5" },
-			lg: { thumb: "size-6" },
-		},
+		// Empty because a capsule's two axes differ and only the orientation knows
+		// which is which — the six cells below carry both. Declared anyway so `size`
+		// stays a variant `tv` can type and default.
+		size: { sm: {}, md: {}, lg: {} },
 		// The empty branches are load-bearing typing, not placeholders. `tv` derives
 		// the prop type from the declared keys, so a map with only `true` types the
 		// prop as `true` rather than `boolean`.
@@ -210,25 +230,31 @@ export const sliderVariants = tv({
 		// The touch padding rides in the same cell, because the two are one number:
 		// they sum to 44pt at every size, and splitting them across two variants is
 		// how a retune of the thickness silently shrinks the target.
-		{ orientation: "horizontal", size: "sm", class: { track: "h-4", touchArea: "py-3.5" } },
-		{ orientation: "horizontal", size: "md", class: { track: "h-5", touchArea: "py-3" } },
-		{ orientation: "horizontal", size: "lg", class: { track: "h-6", touchArea: "py-2.5" } },
-		{ orientation: "vertical", size: "sm", class: { track: "w-4", touchArea: "px-3.5" } },
-		{ orientation: "vertical", size: "md", class: { track: "w-5", touchArea: "px-3" } },
-		{ orientation: "vertical", size: "lg", class: { track: "w-6", touchArea: "px-2.5" } },
-		// `color` is the only axis painting the fill, so its six cells could be a
+		{ orientation: "horizontal", size: "sm", class: { track: "h-4", touchArea: "py-3.5", thumb: "h-4 w-6" } },
+		{ orientation: "horizontal", size: "md", class: { track: "h-5", touchArea: "py-3", thumb: "h-5 w-7" } },
+		{ orientation: "horizontal", size: "lg", class: { track: "h-6", touchArea: "py-2.5", thumb: "h-6 w-8" } },
+		{ orientation: "vertical", size: "sm", class: { track: "w-4", touchArea: "px-3.5", thumb: "w-4 h-6" } },
+		{ orientation: "vertical", size: "md", class: { track: "w-5", touchArea: "px-3", thumb: "w-5 h-7" } },
+		{ orientation: "vertical", size: "lg", class: { track: "w-6", touchArea: "px-2.5", thumb: "w-6 h-8" } },
+		// `color` is the only axis painting these three, so its six cells could be a
 		// plain variant. They are compounds so that `isInvalid` below, emitted after
 		// them, can beat every one — the ordering `Radio` leans on for its ring.
-		{ color: "default", class: { fill: "bg-foreground" } },
-		{ color: "primary", class: { fill: "bg-primary" } },
-		{ color: "success", class: { fill: "bg-success" } },
-		{ color: "warning", class: { fill: "bg-warning" } },
-		{ color: "danger", class: { fill: "bg-danger" } },
-		{ color: "info", class: { fill: "bg-info" } },
+		//
+		// The capsule takes the fill's own colour rather than a chrome of its own, so
+		// the two meet with no seam and the handle reads as the leading end of the
+		// fill rather than as something sitting on top of it. The knob is that
+		// colour's `-foreground`, which is what the token means (rule 11) and what
+		// keeps it legible on all six.
+		{ color: "default", class: { fill: "bg-foreground", thumb: "bg-foreground", knob: "bg-background" } },
+		{ color: "primary", class: { fill: "bg-primary", thumb: "bg-primary", knob: "bg-primary-foreground" } },
+		{ color: "success", class: { fill: "bg-success", thumb: "bg-success", knob: "bg-success-foreground" } },
+		{ color: "warning", class: { fill: "bg-warning", thumb: "bg-warning", knob: "bg-warning-foreground" } },
+		{ color: "danger", class: { fill: "bg-danger", thumb: "bg-danger", knob: "bg-danger-foreground" } },
+		{ color: "info", class: { fill: "bg-info", thumb: "bg-info", knob: "bg-info-foreground" } },
 		// Invalid outranks the colour, the way it does on a checkbox's border. A
 		// slider that stayed green while its value was rejected would drop its only
 		// signal exactly while the value is being corrected.
-		{ isInvalid: true, class: { fill: "bg-danger" } },
+		{ isInvalid: true, class: { fill: "bg-danger", thumb: "bg-danger", knob: "bg-danger-foreground" } },
 	],
 	defaultVariants: {
 		color: SLIDER_DEFAULT_COLOR,

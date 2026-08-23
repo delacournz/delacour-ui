@@ -1,43 +1,21 @@
-import { Button } from "@delacour/native-ui/button";
+import { Checkbox } from "@delacour/native-ui/checkbox";
 import { Field } from "@delacour/native-ui/field";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconFormSquare, IconSquareCheck } from "@delacour/native-ui/icons/central";
 import { Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
-import { type ReactElement, useState } from "react";
+import type { ReactElement } from "react";
 import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
-
-/**
- * A stand-in for the `Checkbox` this package does not have yet.
- *
- * A horizontal field exists for a control that sits beside its label rather than
- * under it, and every such control here is still unbuilt. This is a `Button`
- * wearing a check glyph — enough to judge the layout, and deliberately not a
- * component anyone should reach for.
- */
-function CheckboxStandIn({ label }: { label: string }): ReactElement {
-	const [isChecked, setChecked] = useState(false);
-
-	return (
-		<Button
-			accessibilityLabel={label}
-			isIconOnly
-			onPress={() => setChecked((current) => !current)}
-			size="sm"
-			variant={isChecked ? "primary" : "outline"}
-		>
-			<Icon icon={isChecked ? IconSquareCheck : IconFormSquare} />
-		</Button>
-	);
-}
 
 /**
  * The two orientations.
  *
  * There is no `responsive` third. shadcn's switches on a CSS container query,
  * which React Native does not have.
+ *
+ * The horizontal rows hold a real `Checkbox`, which makes the invalid section
+ * below the live proof of the state cascade rather than a mock-up of it: nothing
+ * on those boxes says `isInvalid`, and they redden from the `Field` alone.
  */
 export default function FieldOrientationDemo(): ReactElement {
 	return (
@@ -52,17 +30,18 @@ export default function FieldOrientationDemo(): ReactElement {
 
 			<Section title="Horizontal">
 				<Text.Caption>
-					Label beside control, for something small enough to sit on one line. The controls below stand in for the
-					`Checkbox` and `Switch` this package has yet to build.
+					Label beside control, for something small enough to sit on one line. The box carries no label of its own — the
+					field already named it, and a `Checkbox.Label` here would name it twice. Tap anywhere on the row, not just the
+					box.
 				</Text.Caption>
 				<Field.Group>
 					<Field orientation="horizontal">
 						<Field.Label>Subscribe to the newsletter</Field.Label>
-						<CheckboxStandIn label="Subscribe to the newsletter" />
+						<Checkbox color="primary" />
 					</Field>
 					<Field orientation="horizontal">
 						<Field.Label>Show read receipts</Field.Label>
-						<CheckboxStandIn label="Show read receipts" />
+						<Checkbox color="primary" defaultChecked />
 					</Field>
 				</Field.Group>
 			</Section>
@@ -78,26 +57,39 @@ export default function FieldOrientationDemo(): ReactElement {
 							<Field.Label>Sync across devices</Field.Label>
 							<Field.Description>Your drafts follow you to every device you sign in on.</Field.Description>
 						</Field.Content>
-						<CheckboxStandIn label="Sync across devices" />
+						<Checkbox color="primary" defaultChecked />
 					</Field>
 					<Field orientation="horizontal">
 						<Field.Content>
 							<Field.Label>Delete after 30 days</Field.Label>
 							<Field.Description>Applies to items in the archive only.</Field.Description>
 						</Field.Content>
-						<CheckboxStandIn label="Delete after 30 days" />
+						<Checkbox color="primary" />
 					</Field>
 				</View>
 			</Section>
 
 			<Section title="Horizontal and invalid">
-				<Text.Caption>The cascade works on either axis.</Text.Caption>
+				<Text.Caption>
+					The cascade works on either axis, and it reaches the control. The checkbox below names no state of its own —
+					both it and the label turn danger from the `Field`.
+				</Text.Caption>
 				<Field isInvalid orientation="horizontal">
 					<Field.Content>
 						<Field.Label>Accept the terms</Field.Label>
 						<Field.Error>You must accept the terms to continue.</Field.Error>
 					</Field.Content>
-					<CheckboxStandIn label="Accept the terms" />
+					<Checkbox />
+				</Field>
+			</Section>
+
+			<Section title="Horizontal and disabled">
+				<Text.Caption>
+					The same channel carries `isDisabled`, so the box blocks its own press and fades with the label naming it.
+				</Text.Caption>
+				<Field isDisabled orientation="horizontal">
+					<Field.Label>Share anonymous usage data</Field.Label>
+					<Checkbox color="primary" defaultChecked />
 				</Field>
 			</Section>
 		</GalleryScreen>

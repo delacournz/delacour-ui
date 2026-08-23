@@ -6,6 +6,7 @@ import {
 	FIELD_TEXT_PARTS,
 	type FieldTextPart,
 	fieldVariants,
+	resolveFieldInteractive,
 	resolveFieldTextColor,
 } from "./field.variants";
 
@@ -198,5 +199,18 @@ describe("resolveFieldTextColor", () => {
 		for (const part of FIELD_TEXT_PARTS) {
 			expect(() => resolveFieldTextColor(part as FieldTextPart, true)).not.toThrow();
 		}
+	});
+});
+
+describe("resolveFieldInteractive", () => {
+	test("leaves a field of static text inert", () => {
+		// No control has offered a press, so the row stays a View. Mounting a
+		// gesture detector under every label and description in a form would
+		// announce static text as something you can activate.
+		expect(resolveFieldInteractive(null)).toBe(false);
+	});
+
+	test("hands the row to a control that offered one", () => {
+		expect(resolveFieldInteractive(() => undefined)).toBe(true);
 	});
 });

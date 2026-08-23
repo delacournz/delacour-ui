@@ -1,7 +1,8 @@
-import { type ReactElement, useMemo } from "react";
+import { type ReactElement, useCallback, useMemo, useState } from "react";
 import { View, type ViewProps } from "react-native";
+import { Pressable } from "../pressable";
 import { type FieldContextValue, FieldProvider } from "./field.context";
-import { type FieldOrientation, fieldVariants } from "./field.variants";
+import { type FieldOrientation, fieldVariants, resolveFieldInteractive } from "./field.variants";
 import { FieldContent } from "./field-content";
 import { FieldDescription } from "./field-description";
 import { FieldError } from "./field-error";
@@ -28,16 +29,41 @@ function FieldRoot({
 	className,
 	...props
 }: FieldProps): ReactElement {
+	// State rather than a ref, because the answer changes what the row renders
+	// as. A control registers in an effect, so this costs one extra render on
+	// mount and none afterwards — the registered callback is stable.
+	const [controlPress, setControlPress] = useState<(() => void) | null>(null);
+
+	// The updater form would call `press` instead of storing it.
+	const registerPress = useCallback((press: (() => void) | null) => setControlPress(() => press), []);
+
 	const context = useMemo<FieldContextValue>(
-		() => ({ isDisabled, isInvalid, orientation }),
-		[isDisabled, isInvalid, orientation]
+		() => ({ isDisabled, isInvalid, orientation, registerPress }),
+		[isDisabled, isInvalid, orientation, registerPress]
 	);
+
+	const rootClassName = fieldVariants({ isDisabled, isInvalid, orientation }).root({ className });
+
+	// A field is layout until a control asks for the row — see `resolveFieldInteractive`.
+	if (!resolveFieldInteractive(controlPress)) {
+		return (
+			<FieldProvider value={context}>
+				<View accessibilityRole="none" className={rootClassName} {...props} />
+			</FieldProvider>
+		);
+	}
 
 	return (
 		<FieldProvider value={context}>
-			<View
-				accessibilityRole="none"
-				className={fieldVariants({ isDisabled, isInvalid, orientation }).root({ className })}
+			<Pressable
+				// The control inside is the accessibility element, not this row.
+				// Without it a screen reader would announce the label twice and
+				// offer a wrapper with no state of its own.
+				accessible={false}
+				className={rootClassName}
+				disabled={isDisabled}
+				feedback="none"
+				onPress={controlPress}
 				{...props}
 			/>
 		</FieldProvider>
@@ -50,7 +76,7 @@ function FieldRoot({
  * The layout every form in this library repeats, done once — and the one place a
  * field's state is written down. `<Field isInvalid>` turns the label danger
  * **and the control inside it too**, with nothing said at the control: `Input`
- * reads this field's context, and `Checkbox` and `Radio` will read the same one.
+ * and `Checkbox` both read this field's context, and `Radio` will read the same one.
  *
  * That cascade is a React context rather than a class because it has to be.
  * Uniwind's data selectors match against the props of the component carrying the
@@ -59,6 +85,13 @@ function FieldRoot({
  *
  * A control's own prop still wins, so one field inside an invalid group can opt
  * out with `<Input isInvalid={false} />`.
+ *
+ * **The whole row drives the control**, once one offers a press through the same
+ * context — so tapping "Accept the terms", or the description under it, ticks
+ * the `Checkbox` beside it. A checkbox in a form is a small square next to a
+ * sentence, and the sentence is the part people aim at. The row is a `Pressable`
+ * with `feedback="none"` only while a control has registered; a field of static
+ * text mounts no gesture detector at all.
  *
  * The text parts render the `Text` presets and pass a colour, never a size —
  * `Field.Label` *is* `Text.Label`. There is no `Field.Title`: on the web it

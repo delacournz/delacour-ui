@@ -8,6 +8,15 @@ export type FieldContextValue = {
 	isDisabled: boolean;
 	/** Which way the field's parts are laid out. */
 	orientation: FieldOrientation;
+	/**
+	 * A control inside offers its press here, so the whole row can drive it.
+	 *
+	 * The counterpart of `isInvalid` travelling the other way: state cascades
+	 * down, and the one thing a control can hand back up is "tapping my label
+	 * should do this". Pass `null` on unmount. A field holds one control, so a
+	 * second registration replaces the first.
+	 */
+	registerPress: (press: (() => void) | null) => void;
 };
 
 const FieldContext = createContext<FieldContextValue | null>(null);

@@ -10,6 +10,7 @@ import {
 	IconFontStyle,
 	IconLayoutTopBottom,
 	IconParagraph,
+	IconSquareCheck,
 	IconSquareCursor,
 	IconTag,
 	IconWindowCursor,
@@ -36,6 +37,12 @@ const COMPONENTS = [
 		icon: IconSquareCursor,
 		title: "Button",
 		description: "Variants, sizes, icons, loading",
+	},
+	{
+		href: "/checkbox",
+		icon: IconSquareCheck,
+		title: "Checkbox",
+		description: "Colours, sizes, indeterminate, groups",
 	},
 	{
 		href: "/field",

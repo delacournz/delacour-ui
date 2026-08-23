@@ -10,6 +10,7 @@ export {
 	type FieldTextPart,
 	type FieldVariantProps,
 	fieldVariants,
+	resolveFieldInteractive,
 	resolveFieldTextColor,
 } from "./field.variants";
 export type { FieldContentProps } from "./field-content";

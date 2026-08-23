@@ -47,6 +47,10 @@
 	 *
 	 * A component's own size axis indexes into this scale rather than restating
 	 * a number: a button's sm/md/lg icon is icon-sm/md/lg.
+	 *
+	 * It sizes more than glyphs. A `Checkbox`'s square reads it too, two steps
+	 * above the tick it holds, rather than minting a scale that would have to be
+	 * retuned in step with this one forever.
 	 */
 	--spacing-icon-xs: 14px;
 	--spacing-icon-sm: 16px;

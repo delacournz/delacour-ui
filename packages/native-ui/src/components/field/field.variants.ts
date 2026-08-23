@@ -115,4 +115,22 @@ export function resolveFieldTextColor(part: FieldTextPart, isInvalid: boolean): 
 	}
 }
 
+/**
+ * Whether the field's row should render as a `Pressable` rather than a `View`.
+ *
+ * Only once a control inside has offered a press. A field is layout until then,
+ * and mounting a `GestureDetector` regardless would put one under every label
+ * and description in a form — the same thing `Badge` refuses to do for a list of
+ * fifty tags, and for the same reason: assistive technology would announce a row
+ * of static text as something you can activate.
+ *
+ * A type predicate rather than a plain boolean, so the branch that renders the
+ * `Pressable` gets a non-null `onPress` out of the same check that decided it.
+ *
+ * Pure, so the decision is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveFieldInteractive(press: (() => void) | null): press is () => void {
+	return press !== null;
+}
+
 export type FieldVariantProps = VariantProps<typeof fieldVariants>;

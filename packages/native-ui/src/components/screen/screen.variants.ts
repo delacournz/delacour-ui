@@ -47,7 +47,7 @@ export const screenVariants = tv({
 		root: "flex-1 bg-background",
 		content: "flex-1 bg-background",
 		view: "flex-1",
-		header: "px-screen-gutter pt-5 pb-2",
+		header: "",
 		/**
 		 * Above the content it overlays. The navbar is the FIRST child of a
 		 * screen, so without a raised z-index a later sibling paints over it —
@@ -67,9 +67,9 @@ export const screenVariants = tv({
 		 * it actively fought a title stacked above a subtitle, centring one line in a
 		 * column that should read left-aligned.
 		 */
-		navbarTitle: "text-foreground text-lg",
+		navbarTitle: "text-foreground text-lg font-semibold leading-tight",
 		navbarSubtitle: "text-muted-foreground text-sm",
-		backButton: "flex-row items-center gap-1",
+		backButton: "flex-row items-center gap-2",
 		footer: "",
 		/**
 		 * The footer's own backing, filling the box that travels with the keyboard.
@@ -400,7 +400,7 @@ export function resolveScreenViewPadding(state: {
 			: 0
 		: state.safeAreaBottom;
 
-	return { paddingBottom, paddingTop };
+	return { paddingBottom, paddingTop: paddingTop };
 }
 
 export type ScreenVariantProps = VariantProps<typeof screenVariants>;

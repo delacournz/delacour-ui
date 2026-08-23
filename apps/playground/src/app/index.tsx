@@ -9,6 +9,7 @@ import {
 	IconFontStyle,
 	IconLayoutTopBottom,
 	IconSquareCursor,
+	IconWindowCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Screen } from "@delacour/native-ui/screen";
@@ -26,6 +27,12 @@ const COMPONENTS = [
 		icon: IconSquareCursor,
 		title: "Button",
 		description: "Variants, sizes, icons, loading",
+	},
+	{
+		href: "/input",
+		icon: IconWindowCursor,
+		title: "Input",
+		description: "Variants, sizes, prefix and suffix",
 	},
 	{
 		href: "/list-group",

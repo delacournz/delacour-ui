@@ -6,6 +6,14 @@ import { View } from "react-native";
 export type GalleryScreenProps = {
 	title: string;
 	subtitle?: string;
+	/**
+	 * Scroll the focused field clear of the keyboard.
+	 *
+	 * Off by default, because it is only ever the right answer for a gallery
+	 * that holds a text field, and `Screen.ScrollArea` is the one that knows how
+	 * to do it — this only forwards the prop under the name it already has.
+	 */
+	keyboardAware?: boolean;
 	children: ReactNode;
 };
 
@@ -32,7 +40,7 @@ export type GalleryScreenProps = {
  * The back control is wired to expo-router here — the library takes no
  * navigation dependency, so the router stays in the app.
  */
-export function GalleryScreen({ title, subtitle, children }: GalleryScreenProps): ReactElement {
+export function GalleryScreen({ title, subtitle, keyboardAware, children }: GalleryScreenProps): ReactElement {
 	const router = useRouter();
 
 	return (
@@ -45,7 +53,9 @@ export function GalleryScreen({ title, subtitle, children }: GalleryScreenProps)
 					</View>
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
-			<Screen.ScrollArea contentContainerClassName="gap-8">{children}</Screen.ScrollArea>
+			<Screen.ScrollArea contentContainerClassName="gap-8" keyboardAware={keyboardAware}>
+				{children}
+			</Screen.ScrollArea>
 		</Screen>
 	);
 }

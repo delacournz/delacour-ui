@@ -67,6 +67,8 @@ src/
 │   │   ├── pressable.variants.ts   Shared feedback vocabulary, no RN imports
 │   │   └── pressable.variants.test.ts
 │   ├── separator/
+│   │   ├── index.ts              → @delacour/native-ui/separator
+│   │   └── separator.tsx         The tv() and the component, in one file
 │   └── spinner/
 │       ├── index.ts              → @delacour/native-ui/spinner
 │       ├── spinner.tsx           Root + the Object.assign compound surface
@@ -99,13 +101,22 @@ custom child can match the parent without prop drilling. Example: `Button` with
 Reach for this over adding boolean props. See **Compound component layout**
 below for how the files are arranged.
 
-**C — `tv()` variants.** Size and variant axes defined in a `*.variants.ts`
-sibling, never inline in the component. Example: `button.variants.ts`.
+**C — `tv()` variants.** Size and variant axes defined in a `tv()`, never inline
+at the call site. Where that `tv()` lives depends on how many parts read it.
 
-A component with more than one styled part uses **one slotted `tv()`**, so a
-shared axis is declared once rather than restated per part. `Button`,
-`ListGroup` and `Spinner` all do. `Separator` stays flat because it has a single
-element, and `Pressable` holds no `tv()` at all — see its section for why.
+A component with more than one styled part uses **one slotted `tv()` in a
+`*.variants.ts` sibling**, so a shared axis is declared once rather than restated
+per part. `Button`, `ListGroup` and `Spinner` all do, and the sibling is what
+makes it possible: the slot set is read by files that cannot import each other's
+roots without closing a cycle (rule 3), so it needs a leaf of its own. The same
+file is where that component's pure resolvers live — see **Testing**.
+
+A component that is a **single styled element with no pure resolvers** declares
+its `tv()` above the component in its own file and exports it from there, the way
+shadcn/ui does. `Separator` is the one that qualifies today. Nothing else shares
+its slot set, so a sibling would buy nothing but a second file to open.
+
+`Pressable` holds no `tv()` at all — see its section for why.
 
 ## Rules
 
@@ -318,6 +329,10 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 A one-pixel rule, hidden from assistive technology — a line between every row
 carries nothing a screen reader can use, and announcing them buries the rows.
 
+- **`separatorVariants` lives in `separator.tsx`**, above the component, not in a
+  `*.variants.ts` sibling — the pattern C carve-out. That file imports React
+  Native, so the `tv()` is not reachable from `bun test`; the exclusive-axis and
+  `self-stretch` rules below are stated in its doc comment instead of asserted.
 - **Orientations**: `horizontal` (default), `vertical`.
 - **The long axis is `self-stretch`, never `w-full` / `h-full`.** Yoga resolves
   a percentage length against the parent's content box and then adds the
@@ -452,8 +467,14 @@ colour systems in the package rather than replacing one.
 `bun test` covers **pure logic only**: `cn`, `mergeProps`, `composeRefs`, and
 the `tv()` variant functions. It cannot render components — React Native ships
 Flow-typed source that Bun's transpiler cannot parse, and
-`@testing-library/react-native` needs a Jest transform. This is why variant
-definitions live in `*.variants.ts` files free of React Native imports.
+`@testing-library/react-native` needs a Jest transform. This is why a slotted
+variant definition lives in a `*.variants.ts` file free of React Native imports.
+
+`separatorVariants` is the deliberate exception. It sits in `separator.tsx`, so
+`bun test` cannot reach it and its class strings are asserted nowhere — the
+reasoning lives in its doc comment and the behaviour is checked on a simulator.
+A new single-element component that colocates its `tv()` takes the same trade.
+A component with parts, or with a pure resolver, does not get to make it.
 
 Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.
@@ -465,12 +486,16 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
 
 ## Adding a component
 
-1. `src/components/{name}/{name}.tsx`, plus `{name}.variants.ts` if it has
-   variants, plus an `index.ts` re-exporting the component and its types. A
+1. `src/components/{name}/{name}.tsx`, plus an `index.ts` re-exporting the
+   component and its types. A component with more than one styled part, or with
+   a pure resolver, adds a `{name}.variants.ts` for its slotted `tv()`; a single
+   styled element declares the `tv()` in its own file instead. A
    compound component adds one file per part, a `{name}.context.tsx` and a
    `{name}.types.ts` — see **Compound component layout**.
 2. Build interaction on `Pressable` — never on a bare `TouchableOpacity`.
-3. Write the variant tests first; they are the part `bun test` can reach.
+3. Write the variant tests first where there is a `{name}.variants.ts` — that is
+   the part `bun test` can reach. A colocated `tv()` has none, so state its rules
+   in the doc comment and verify them on a simulator at step 5.
 4. `bun run gen-exports`.
 5. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
    it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.

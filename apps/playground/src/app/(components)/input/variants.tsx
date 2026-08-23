@@ -1,19 +1,10 @@
+import { Field } from "@delacour/native-ui/field";
 import { INPUT_VARIANTS, Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
-import { type ReactElement, type ReactNode, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
-
-/** A labelled field, so a row of them reads as a form rather than a stack of boxes. */
-function Field({ children, label }: { children: ReactNode; label: string }): ReactElement {
-	return (
-		<View className="gap-1.5">
-			<Text.Label>{label}</Text.Label>
-			{children}
-		</View>
-	);
-}
 
 /**
  * The two variants across every state the box can be in.
@@ -34,7 +25,8 @@ export default function InputVariantsDemo(): ReactElement {
 				</Text.Caption>
 				<View className="gap-4">
 					{INPUT_VARIANTS.map((variant) => (
-						<Field key={variant} label={variant}>
+						<Field key={variant}>
+							<Field.Label>{variant}</Field.Label>
 							<Input onChangeText={setValue} placeholder="Type here" value={value} variant={variant} />
 						</Field>
 					))}
@@ -45,7 +37,8 @@ export default function InputVariantsDemo(): ReactElement {
 				<Text.Caption>Tap a field. The border moves to the ring token and returns on blur.</Text.Caption>
 				<View className="gap-4">
 					{INPUT_VARIANTS.map((variant) => (
-						<Field key={variant} label={variant}>
+						<Field key={variant}>
+							<Field.Label>{variant}</Field.Label>
 							<Input placeholder="Tap me" variant={variant} />
 						</Field>
 					))}
@@ -59,7 +52,8 @@ export default function InputVariantsDemo(): ReactElement {
 				</Text.Caption>
 				<View className="gap-4">
 					{INPUT_VARIANTS.map((variant) => (
-						<Field key={variant} label={variant}>
+						<Field key={variant}>
+							<Field.Label>{variant}</Field.Label>
 							<Input defaultValue="not-an-email" isInvalid variant={variant} />
 						</Field>
 					))}
@@ -70,7 +64,8 @@ export default function InputVariantsDemo(): ReactElement {
 				<Text.Caption>`isDisabled` fades the box and blocks editing — the field cannot be focused at all.</Text.Caption>
 				<View className="gap-4">
 					{INPUT_VARIANTS.map((variant) => (
-						<Field key={variant} label={variant}>
+						<Field key={variant}>
+							<Field.Label>{variant}</Field.Label>
 							<Input defaultValue="Locked" isDisabled variant={variant} />
 						</Field>
 					))}

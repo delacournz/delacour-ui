@@ -1,4 +1,5 @@
 import { Button } from "@delacour/native-ui/button";
+import { Field } from "@delacour/native-ui/field";
 import { INPUT_SIZES, Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
@@ -21,10 +22,10 @@ export default function InputSizesDemo(): ReactElement {
 				<Text.Caption>Size drives the box height, the value's type scale and a decorator's icon together.</Text.Caption>
 				<View className="gap-4">
 					{INPUT_SIZES.map((size) => (
-						<View className="gap-1.5" key={size}>
-							<Text.Label>{size}</Text.Label>
+						<Field key={size}>
+							<Field.Label>{size}</Field.Label>
 							<Input placeholder={`Size ${size}`} size={size} />
-						</View>
+						</Field>
 					))}
 				</View>
 			</Section>

@@ -1,4 +1,5 @@
 import { Button } from "@delacour/native-ui/button";
+import { Field } from "@delacour/native-ui/field";
 import { Icon } from "@delacour/native-ui/icon";
 import {
 	IconAt,
@@ -11,20 +12,10 @@ import {
 } from "@delacour/native-ui/icons/central";
 import { INPUT_SIZES, Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
-import { type ReactElement, type ReactNode, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
-
-/** A labelled field, so a stack of them reads as a form. */
-function Field({ children, label }: { children: ReactNode; label: string }): ReactElement {
-	return (
-		<View className="gap-1.5">
-			<Text.Label>{label}</Text.Label>
-			{children}
-		</View>
-	);
-}
 
 /** A search field whose clear button appears only once there is something to clear. */
 function SearchField(): ReactElement {
@@ -90,10 +81,12 @@ export default function InputGroupDemo(): ReactElement {
 					difference here is the design failing at the one thing it exists to guarantee.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="On its own">
+					<Field>
+						<Field.Label>On its own</Field.Label>
 						<Input placeholder="A lone field" />
 					</Field>
-					<Field label="In a group">
+					<Field>
+						<Field.Label>In a group</Field.Label>
 						<Input.Group>
 							<Input.Group.Prefix>
 								<Icon icon={IconMagnifyingGlass} />
@@ -110,7 +103,8 @@ export default function InputGroupDemo(): ReactElement {
 					decorator.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="Prefix">
+					<Field>
+						<Field.Label>Prefix</Field.Label>
 						<Input.Group>
 							<Input.Group.Prefix>
 								<Icon icon={IconAt} />
@@ -118,7 +112,8 @@ export default function InputGroupDemo(): ReactElement {
 							<Input autoCapitalize="none" inputMode="email" placeholder="Email" />
 						</Input.Group>
 					</Field>
-					<Field label="Suffix">
+					<Field>
+						<Field.Label>Suffix</Field.Label>
 						<Input.Group>
 							<Input placeholder="Amount" inputMode="decimal" />
 							<Input.Group.Suffix>
@@ -126,7 +121,8 @@ export default function InputGroupDemo(): ReactElement {
 							</Input.Group.Suffix>
 						</Input.Group>
 					</Field>
-					<Field label="Both">
+					<Field>
+						<Field.Label>Both</Field.Label>
 						<Input.Group>
 							<Input.Group.Prefix>
 								<Icon icon={IconCurrencyDollar} />
@@ -146,14 +142,16 @@ export default function InputGroupDemo(): ReactElement {
 					written as itself rather than as markup.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="Currency">
+					<Field>
+						<Field.Label>Currency</Field.Label>
 						<Input.Group>
 							<Input.Group.Prefix>$</Input.Group.Prefix>
 							<Input inputMode="decimal" placeholder="0.00" />
 							<Input.Group.Suffix>NZD</Input.Group.Suffix>
 						</Input.Group>
 					</Field>
-					<Field label="Domain">
+					<Field>
+						<Field.Label>Domain</Field.Label>
 						<Input.Group>
 							<Input.Group.Prefix>https://</Input.Group.Prefix>
 							<Input autoCapitalize="none" placeholder="example" />
@@ -169,10 +167,12 @@ export default function InputGroupDemo(): ReactElement {
 					grouped box behaves the way a lone field's does, edge to edge.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="Clear">
+					<Field>
+						<Field.Label>Clear</Field.Label>
 						<SearchField />
 					</Field>
-					<Field label="Reveal">
+					<Field>
+						<Field.Label>Reveal</Field.Label>
 						<PasswordField />
 					</Field>
 				</View>

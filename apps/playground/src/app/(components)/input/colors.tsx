@@ -1,21 +1,12 @@
+import { Field } from "@delacour/native-ui/field";
 import { Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
-import type { ReactElement, ReactNode } from "react";
+import type { ReactElement } from "react";
 import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
 
 const SELECTION_ACCENTS = ["accent-primary", "accent-info", "accent-success", "accent-warning"] as const;
-
-/** A labelled field, so a stack of them reads as a form. */
-function Field({ children, label }: { children: ReactNode; label: string }): ReactElement {
-	return (
-		<View className="gap-1.5">
-			<Text.Label>{label}</Text.Label>
-			{children}
-		</View>
-	);
-}
 
 /**
  * The three colours a `TextInput` takes as a value rather than a style.
@@ -33,7 +24,8 @@ export default function InputColorsDemo(): ReactElement {
 					Nothing is passed here. The placeholder is the muted token and the caret is primary, so both follow the theme
 					— toggle light and dark from the gallery index and they move with it.
 				</Text.Caption>
-				<Field label="Default">
+				<Field>
+					<Field.Label>Default</Field.Label>
 					<Input defaultValue="Select this text" placeholder="A themed placeholder" />
 				</Field>
 			</Section>
@@ -44,10 +36,12 @@ export default function InputColorsDemo(): ReactElement {
 					`placeholderTextColorClassName` is removed from the prop surface so the two cannot disagree.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="accent-foreground">
+					<Field>
+						<Field.Label>accent-foreground</Field.Label>
 						<Input placeholderColorClassName="accent-foreground" placeholder="Full contrast" />
 					</Field>
-					<Field label="accent-info">
+					<Field>
+						<Field.Label>accent-info</Field.Label>
 						<Input placeholderColorClassName="accent-info" placeholder="Informational" />
 					</Field>
 				</View>
@@ -60,7 +54,8 @@ export default function InputColorsDemo(): ReactElement {
 				</Text.Caption>
 				<View className="gap-4">
 					{SELECTION_ACCENTS.map((accent) => (
-						<Field key={accent} label={accent}>
+						<Field key={accent}>
+							<Field.Label>{accent}</Field.Label>
 							<Input defaultValue="Select this text" selectionColorClassName={accent} />
 						</Field>
 					))}
@@ -73,10 +68,12 @@ export default function InputColorsDemo(): ReactElement {
 					is a default, not a rule.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="Invalid, untouched">
+					<Field>
+						<Field.Label>Invalid, untouched</Field.Label>
 						<Input defaultValue="Select this text" isInvalid />
 					</Field>
-					<Field label="Invalid, overridden">
+					<Field>
+						<Field.Label>Invalid, overridden</Field.Label>
 						<Input defaultValue="Select this text" isInvalid selectionColorClassName="accent-info" />
 					</Field>
 				</View>

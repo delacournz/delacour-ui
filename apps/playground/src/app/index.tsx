@@ -8,6 +8,7 @@ import {
 	IconDivider,
 	IconFontStyle,
 	IconLayoutTopBottom,
+	IconParagraph,
 	IconSquareCursor,
 	IconTag,
 	IconWindowCursor,
@@ -34,6 +35,12 @@ const COMPONENTS = [
 		icon: IconSquareCursor,
 		title: "Button",
 		description: "Variants, sizes, icons, loading",
+	},
+	{
+		href: "/field",
+		icon: IconParagraph,
+		title: "Field",
+		description: "Form layout, grouping, state cascade",
 	},
 	{
 		href: "/input",

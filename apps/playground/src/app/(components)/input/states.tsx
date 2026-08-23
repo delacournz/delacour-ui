@@ -1,6 +1,7 @@
+import { Field } from "@delacour/native-ui/field";
 import { Input } from "@delacour/native-ui/input";
 import { Text } from "@delacour/native-ui/text";
-import { type ReactElement, type ReactNode, useState } from "react";
+import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
@@ -13,16 +14,6 @@ const KEYBOARDS = [
 	{ inputMode: "url", label: "URL", placeholder: "https://example.com" },
 	{ inputMode: "search", label: "Search", placeholder: "Search" },
 ] as const;
-
-/** A labelled field, so a stack of them reads as a form. */
-function Field({ children, label }: { children: ReactNode; label: string }): ReactElement {
-	return (
-		<View className="gap-1.5">
-			<Text.Label>{label}</Text.Label>
-			{children}
-		</View>
-	);
-}
 
 /**
  * The states a field reports, and the React Native props it passes straight
@@ -43,7 +34,8 @@ export default function InputStatesDemo(): ReactElement {
 					Type an `@`. The border, the caret and the selection highlight leave danger together — one state, not three
 					places that have to be kept in step.
 				</Text.Caption>
-				<Field label="Email">
+				<Field>
+					<Field.Label>Email</Field.Label>
 					<Input
 						autoCapitalize="none"
 						inputMode="email"
@@ -61,10 +53,12 @@ export default function InputStatesDemo(): ReactElement {
 					shown rather than withheld.
 				</Text.Caption>
 				<View className="gap-4">
-					<Field label="Disabled">
+					<Field>
+						<Field.Label>Disabled</Field.Label>
 						<Input defaultValue="Cannot be edited" isDisabled />
 					</Field>
-					<Field label="Read-only">
+					<Field>
+						<Field.Label>Read-only</Field.Label>
 						<Input defaultValue="INV-2026-0041" editable={false} />
 					</Field>
 				</View>
@@ -72,7 +66,8 @@ export default function InputStatesDemo(): ReactElement {
 
 			<Section title="Secure">
 				<Text.Caption>`secureTextEntry` is a `TextInput` prop, passed through untouched.</Text.Caption>
-				<Field label="Password">
+				<Field>
+					<Field.Label>Password</Field.Label>
 					<Input autoCapitalize="none" defaultValue="hunter2" secureTextEntry textContentType="password" />
 				</Field>
 			</Section>
@@ -81,7 +76,8 @@ export default function InputStatesDemo(): ReactElement {
 				<Text.Caption>Every `TextInput` prop is inherited — these set nothing but `inputMode`.</Text.Caption>
 				<View className="gap-4">
 					{KEYBOARDS.map((keyboard) => (
-						<Field key={keyboard.inputMode} label={keyboard.label}>
+						<Field key={keyboard.inputMode}>
+							<Field.Label>{keyboard.label}</Field.Label>
 							<Input inputMode={keyboard.inputMode} placeholder={keyboard.placeholder} />
 						</Field>
 					))}

@@ -1,22 +1,12 @@
 import { Button } from "@delacour/native-ui/button";
+import { Field } from "@delacour/native-ui/field";
 import { Icon } from "@delacour/native-ui/icon";
 import { IconAt, IconCurrencyDollar, IconMagnifyingGlass } from "@delacour/native-ui/icons/central";
 import { Input } from "@delacour/native-ui/input";
 import { Screen } from "@delacour/native-ui/screen";
 import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
-import { type ReactElement, type ReactNode, useState } from "react";
-import { View } from "react-native";
-
-/** A labelled field, the shape an app actually writes. */
-function Field({ children, label }: { children: ReactNode; label: string }): ReactElement {
-	return (
-		<View className="gap-1.5">
-			<Text.Label>{label}</Text.Label>
-			{children}
-		</View>
-	);
-}
+import { type ReactElement, useState } from "react";
 
 /**
  * `Input` in the composition it exists for: a real form under a sticky footer.
@@ -49,11 +39,13 @@ export default function InputFormDemo(): ReactElement {
 					a keyboard height or a safe-area inset.
 				</Text.Caption>
 
-				<Field label="Full name">
+				<Field>
+					<Field.Label>Full name</Field.Label>
 					<Input placeholder="Ada Lovelace" textContentType="name" />
 				</Field>
 
-				<Field label="Email">
+				<Field>
+					<Field.Label>Email</Field.Label>
 					<Input.Group isInvalid={isEmailInvalid}>
 						<Input.Group.Prefix>
 							<Icon icon={IconAt} />
@@ -72,11 +64,13 @@ export default function InputFormDemo(): ReactElement {
 					) : null}
 				</Field>
 
-				<Field label="Company">
+				<Field>
+					<Field.Label>Company</Field.Label>
 					<Input placeholder="Optional" />
 				</Field>
 
-				<Field label="Website">
+				<Field>
+					<Field.Label>Website</Field.Label>
 					<Input.Group>
 						<Input.Group.Prefix>https://</Input.Group.Prefix>
 						<Input autoCapitalize="none" inputMode="url" placeholder="example" />
@@ -84,7 +78,8 @@ export default function InputFormDemo(): ReactElement {
 					</Input.Group>
 				</Field>
 
-				<Field label="Budget">
+				<Field>
+					<Field.Label>Budget</Field.Label>
 					<Input.Group>
 						<Input.Group.Prefix>
 							<Icon icon={IconCurrencyDollar} />
@@ -94,7 +89,8 @@ export default function InputFormDemo(): ReactElement {
 					</Input.Group>
 				</Field>
 
-				<Field label="Referred by">
+				<Field>
+					<Field.Label>Referred by</Field.Label>
 					<Input.Group>
 						<Input.Group.Prefix>
 							<Icon icon={IconMagnifyingGlass} />
@@ -103,19 +99,23 @@ export default function InputFormDemo(): ReactElement {
 					</Input.Group>
 				</Field>
 
-				<Field label="Street">
+				<Field>
+					<Field.Label>Street</Field.Label>
 					<Input placeholder="12 Cuba Street" textContentType="streetAddressLine1" />
 				</Field>
 
-				<Field label="City">
+				<Field>
+					<Field.Label>City</Field.Label>
 					<Input placeholder="Wellington" textContentType="addressCity" />
 				</Field>
 
-				<Field label="Postcode">
+				<Field>
+					<Field.Label>Postcode</Field.Label>
 					<Input inputMode="numeric" placeholder="6011" textContentType="postalCode" />
 				</Field>
 
-				<Field label="Notes">
+				<Field>
+					<Field.Label>Notes</Field.Label>
 					<Input multiline onChangeText={setNotes} placeholder="Anything else" size="lg" value={notes} />
 				</Field>
 			</Screen.ScrollArea>

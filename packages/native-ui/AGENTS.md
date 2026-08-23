@@ -327,6 +327,25 @@ that rotates.
   `<Spinner speed={0.7}>` — 1 is one full turn per 900ms.
 - **The default glyph is drawn from SVG primitives**, not a Central Icon — the
   set has no loader glyph. Rule 5 governs *icons*; primitives are fine.
+- **The arc's caps are `butt`, and its round head is a separate `Circle`.** The
+  two half-rings share the endpoint at the bottom of the ring, where both sit at
+  `SPINNER_ARC_JOINT_OPACITY`. Round caps there stack, and two semi-transparent
+  discs composite to roughly 0.8 alpha — a bright dot straddling the joint,
+  opposite the head, at every size. Butt caps abut instead, and the one end that
+  wants rounding gets a disc of its own, drawn last so it sits on top; the tail
+  terminates fully transparent at that same point, so its flat end is invisible.
+  Do not put `strokeLinecap="round"` back.
+- **The gradient stops are angle-compensated, and run in user space.** A linear
+  gradient fades along its axis and that axis is `y`, but a point at angle θ
+  clockwise from the top sits at `y = 12 - 10·cos θ` — so two stops alone make
+  the fade stall near 3 and 9 o'clock and race through 12 and 6, and the ring
+  reads as a bright chunk beside a flat grey quadrant rather than as an even
+  comet. `spinnerArcStops` places each stop at the offset the arc actually
+  occupies at that angle while stepping the opacity evenly, which inverts the
+  skew; it is pure, so `bun test` pins the whole ladder.
+  `gradientUnits="userSpaceOnUse"` then keeps the endpoints exact, where an
+  object bounding box would leave open whether a given renderer includes the
+  stroke — which shifts both ends off 0 and 1 and clips the head and the tail.
 - **The rotation sets `ReduceMotion.Never` deliberately.** Under the default
   `System` policy `withTiming` completes instantly while the OS reduce-motion
   setting is on, so `withRepeat(-1)` would spin a zero-length animation forever.

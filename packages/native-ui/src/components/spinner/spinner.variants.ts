@@ -27,6 +27,61 @@ export const SPINNER_COLOR_TOKEN: Record<SpinnerColor, string> = {
 /** One full turn, in milliseconds, at speed 1. */
 export const SPINNER_DURATION_MS = 900;
 
+/**
+ * Stroke width of the default arc, in viewBox units.
+ *
+ * The head cap is a circle of half this radius, so the two cannot be tuned
+ * apart — see `spinner-arc.tsx` for why the head is drawn separately at all.
+ */
+export const SPINNER_ARC_STROKE_WIDTH = 2.5;
+
+/** Alpha at the comet's head, and at the far end of its tail. */
+export const SPINNER_ARC_HEAD_OPACITY = 1;
+export const SPINNER_ARC_TAIL_OPACITY = 0;
+
+/**
+ * Alpha where the two half-rings meet, opposite the head.
+ *
+ * Derived, never picked. Each half is a straight ramp, so the joint has to be
+ * the midpoint of the two ends or the ramps meet at different slopes and crease
+ * the ring — a soft bright wedge on one side of the joint, visible even though
+ * the alpha itself is continuous there. Held at 0.55 for a while, which is what
+ * that crease was.
+ */
+export const SPINNER_ARC_JOINT_OPACITY = (SPINNER_ARC_HEAD_OPACITY + SPINNER_ARC_TAIL_OPACITY) / 2;
+
+/** Gradient steps per half-ring. Eight holds the residual skew under 0.01 alpha. */
+export const SPINNER_ARC_STOP_COUNT = 8;
+
+/** One `<Stop>` of a half-ring's gradient. */
+export type SpinnerArcStop = { offset: number; opacity: number };
+
+/**
+ * Gradient stops that dim a half-ring at a constant rate per degree of turn.
+ *
+ * A linear gradient interpolates along its axis, and the axis here is `y` — but
+ * a point at angle θ clockwise from the top sits at `y = 12 - 10·cos θ`, so two
+ * stops alone make the fade stall near 3 and 9 o'clock and race through 12 and
+ * 6. The ring then reads as a bright chunk beside a flat grey quadrant rather
+ * than as an even comet.
+ *
+ * Each stop is therefore placed at the offset the arc actually occupies at that
+ * angle while its opacity steps evenly, which inverts the skew. Both half-rings
+ * share the resulting offset ladder; only the endpoints differ.
+ *
+ * Pure, so the whole ladder is reachable from `bun test`. See AGENTS.md.
+ */
+export function spinnerArcStops(from: number, to: number): SpinnerArcStop[] {
+	return Array.from({ length: SPINNER_ARC_STOP_COUNT + 1 }, (_unused, index) => {
+		const turn = index / SPINNER_ARC_STOP_COUNT;
+
+		return {
+			offset: (1 - Math.cos(Math.PI * turn)) / 2,
+			opacity: from + (to - from) * turn,
+		};
+	});
+}
+
 /** Edge length used with no `size` prop and nothing to inherit from — 24pt. */
 export const SPINNER_FALLBACK_SIZE_CLASS = "size-icon-xl";
 

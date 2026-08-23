@@ -4,11 +4,17 @@ import {
 	isSpinnerSize,
 	resolveSpinnerColor,
 	resolveSpinnerRootClass,
+	SPINNER_ARC_HEAD_OPACITY,
+	SPINNER_ARC_JOINT_OPACITY,
+	SPINNER_ARC_STOP_COUNT,
+	SPINNER_ARC_STROKE_WIDTH,
+	SPINNER_ARC_TAIL_OPACITY,
 	SPINNER_COLOR_TOKEN,
 	SPINNER_COLORS,
 	SPINNER_FALLBACK_SIZE_CLASS,
 	SPINNER_GLYPH_SIZE_CLASS,
 	SPINNER_SIZES,
+	spinnerArcStops,
 	spinnerVariants,
 } from "./spinner.variants";
 
@@ -169,5 +175,99 @@ describe("spinnerVariants content slot", () => {
 
 	test("carries no colour", () => {
 		expect(spinnerVariants().content()).not.toMatch(/\b(text|bg|border)-/);
+	});
+});
+
+/** The arc's geometry, restated here so a test compares against it rather than against itself. */
+const ARC_CENTRE = 12;
+const ARC_RADIUS = 10;
+
+/**
+ * Where a gradient running from `y = 2` to `y = 22` lands on the arc, a given
+ * fraction of a half-turn clockwise from the top.
+ *
+ * This is the arc's real position — `y = 12 - 10·cos θ` — not a restatement of
+ * the resolver's formula, so the linearity test below has something independent
+ * to check against.
+ */
+function arcOffsetAtHalfTurn(turn: number): number {
+	const y = ARC_CENTRE - ARC_RADIUS * Math.cos(Math.PI * turn);
+	return (y - (ARC_CENTRE - ARC_RADIUS)) / (ARC_RADIUS * 2);
+}
+
+describe("spinnerArcStops", () => {
+	test("spans the whole gradient axis, from one endpoint to the other", () => {
+		const stops = spinnerArcStops(1, 0.55);
+		expect(stops).toHaveLength(SPINNER_ARC_STOP_COUNT + 1);
+		expect(stops.at(0)).toEqual({ offset: 0, opacity: 1 });
+		expect(stops.at(-1)).toEqual({ offset: 1, opacity: 0.55 });
+	});
+
+	test("places every stop where the arc actually is at that angle", () => {
+		const stops = spinnerArcStops(SPINNER_ARC_HEAD_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		for (const [index, stop] of stops.entries()) {
+			expect(stop.offset).toBeCloseTo(arcOffsetAtHalfTurn(index / SPINNER_ARC_STOP_COUNT), 10);
+		}
+	});
+
+	// The whole point of the resolver. A two-stop gradient dims linearly in `y`,
+	// and the arc's `y` goes as -cos θ, so the fade stalls at the sides and races
+	// through the top and bottom — a white chunk beside a flat grey quadrant.
+	test("dims by a constant step per equal turn of the arc", () => {
+		const stops = spinnerArcStops(1, 0.55);
+		const deltas = stops.slice(1).map((stop, index) => stop.opacity - (stops[index]?.opacity ?? 0));
+		for (const delta of deltas) {
+			expect(delta).toBeCloseTo(-0.45 / SPINNER_ARC_STOP_COUNT, 10);
+		}
+	});
+
+	test("advances monotonically along both axes", () => {
+		const stops = spinnerArcStops(SPINNER_ARC_TAIL_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		for (const [index, stop] of stops.slice(1).entries()) {
+			const previous = stops[index];
+			expect(previous).toBeDefined();
+			expect(stop.offset).toBeGreaterThan(previous?.offset ?? 0);
+			expect(stop.opacity).toBeGreaterThan(previous?.opacity ?? 0);
+		}
+	});
+
+	// The two half-rings are painted by separate gradients on one shared axis, so
+	// a stop ladder that differed between them would kink the fade at the joint.
+	test("gives both half-rings one offset ladder", () => {
+		const lead = spinnerArcStops(SPINNER_ARC_HEAD_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		const tail = spinnerArcStops(SPINNER_ARC_TAIL_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		expect(tail.map((stop) => stop.offset)).toEqual(lead.map((stop) => stop.offset));
+	});
+
+	// The two ramps are drawn separately but read as one. Anything other than the
+	// midpoint gives them different slopes, and the ring creases at the joint —
+	// a soft bright wedge on one side of it, even though the alpha is continuous.
+	test("carries one straight ramp across both half-rings", () => {
+		const lead = spinnerArcStops(SPINNER_ARC_HEAD_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		const tail = spinnerArcStops(SPINNER_ARC_TAIL_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		const leadStep = (SPINNER_ARC_JOINT_OPACITY - SPINNER_ARC_HEAD_OPACITY) / SPINNER_ARC_STOP_COUNT;
+		const tailStep = (SPINNER_ARC_TAIL_OPACITY - SPINNER_ARC_JOINT_OPACITY) / SPINNER_ARC_STOP_COUNT;
+
+		expect(leadStep).toBeCloseTo(tailStep, 10);
+		expect(SPINNER_ARC_JOINT_OPACITY).toBeCloseTo((SPINNER_ARC_HEAD_OPACITY + SPINNER_ARC_TAIL_OPACITY) / 2, 10);
+		expect(lead.at(-1)?.opacity).toBe(tail.at(-1)?.opacity);
+	});
+
+	// Both halves terminate at the bottom of the ring. Meeting on one value is
+	// what lets their butt caps abut without a seam — and what makes the round
+	// caps they used to carry compound into a visible dot.
+	test("brings the two half-rings to the same opacity where they meet", () => {
+		const lead = spinnerArcStops(SPINNER_ARC_HEAD_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		const tail = spinnerArcStops(SPINNER_ARC_TAIL_OPACITY, SPINNER_ARC_JOINT_OPACITY);
+		expect(lead.at(-1)?.opacity).toBe(SPINNER_ARC_JOINT_OPACITY);
+		expect(tail.at(-1)?.opacity).toBe(SPINNER_ARC_JOINT_OPACITY);
+	});
+});
+
+describe("SPINNER_ARC_STROKE_WIDTH", () => {
+	// The head cap is a circle of half this radius drawn at the top of the ring,
+	// so an over-wide stroke would clip against the viewBox rather than warn.
+	test("leaves the ring inside the 24-unit viewBox", () => {
+		expect(ARC_RADIUS + SPINNER_ARC_STROKE_WIDTH / 2).toBeLessThanOrEqual(ARC_CENTRE);
 	});
 });

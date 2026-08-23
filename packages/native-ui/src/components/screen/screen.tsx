@@ -41,7 +41,7 @@ import { ScreenView } from "./screen-view";
  *   </Screen.Navbar>
  *   <Screen.ScrollArea contentContainerClassName="gap-4 px-5">
  *     <Screen.Header>
- *       <Text className="text-foreground">Notifications</Text>
+ *       <Text.Header>Notifications</Text.Header>
  *     </Screen.Header>
  *     {rows}
  *   </Screen.ScrollArea>
@@ -64,7 +64,7 @@ import { ScreenView } from "./screen-view";
  * <Screen>
  *   <Screen.Navbar />
  *   <Screen.View className="items-center justify-center">
- *     <Text className="text-foreground">Nothing here yet</Text>
+ *     <Text>Nothing here yet</Text>
  *   </Screen.View>
  * </Screen>
  *

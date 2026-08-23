@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
-import { Text, type TextProps } from "react-native";
+import type { TextProps } from "react-native";
+import { Text } from "../text";
 import { screenVariants } from "./screen.variants";
 
 export type ScreenNavbarSubtitleProps = Omit<TextProps, "children"> & {

@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Text } from "react-native";
+import { Text } from "../text";
 import { useListGroupPart } from "./list-group.context";
 import type { ListGroupTextProps } from "./list-group.types";
 import { listGroupVariants } from "./list-group.variants";

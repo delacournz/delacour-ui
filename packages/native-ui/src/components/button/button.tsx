@@ -2,6 +2,7 @@ import { Children, isValidElement, type ReactElement, type ReactNode, useMemo } 
 import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
+import { TextClassProvider } from "../text/text.context";
 import { type ButtonContextValue, ButtonProvider } from "./button.context";
 import {
 	BUTTON_FOREGROUND_TOKEN,
@@ -87,7 +88,9 @@ function ButtonRoot({
 				feedback={feedback}
 				{...props}
 			>
-				<IconDefaultsProvider value={iconDefaults}>{content}</IconDefaultsProvider>
+				<IconDefaultsProvider value={iconDefaults}>
+					<TextClassProvider value={slots.label()}>{content}</TextClassProvider>
+				</IconDefaultsProvider>
 			</Pressable>
 		</ButtonProvider>
 	);
@@ -218,6 +221,10 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * Icons are composed in, not passed as props. Anything in the subtree inherits
  * the button's icon size and its variant's colour, so an `Icon` needs nothing
  * but the glyph — and a `Spinner` needs nothing at all.
+ *
+ * Text works the same way: the button publishes its label treatment through a
+ * `TextClassProvider`, so a bare `<Text>` composed in comes out at the label's
+ * colour and type scale without being told to.
  *
  * `isLoading` blocks presses and announces the button as busy, but does not dim
  * it: a spinner already says the press landed. `isDimmedWhileLoading` opts into

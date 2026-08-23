@@ -1,5 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import { Text } from "../text";
 import { screenVariants } from "./screen.variants";
 import { ScreenContent } from "./screen-content";
 import { ScreenNavbar } from "./screen-navbar";

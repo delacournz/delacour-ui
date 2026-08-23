@@ -43,6 +43,23 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
+		// Mirrors --color-background in packages/native-ui/src/styles/theme.css.
+		// Restated rather than imported because prebuild runs in Node and cannot
+		// read the CSS; every other consumer of the colour reads the token.
+		//
+		// Without the dark variant the generated storyboard hardcodes white and
+		// declares appearance="light", so a dark-mode cold start flashes white
+		// before React mounts.
+		[
+			"expo-splash-screen",
+			{
+				backgroundColor: "#ffffff",
+				dark: { backgroundColor: "#0a0a0a" },
+			},
+		],
+		// Required for the root view background to be settable at all on iOS,
+		// and what SystemUI.setBackgroundColorAsync drives at runtime.
+		"expo-system-ui",
 		[
 			"expo-dev-client",
 			{

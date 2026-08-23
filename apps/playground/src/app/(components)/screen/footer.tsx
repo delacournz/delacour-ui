@@ -33,7 +33,7 @@ export default function ScreenFooterDemo(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6 px-5">
+			<Screen.ScrollArea contentContainerClassName="gap-6">
 				<Section title="Placement">
 					<View className="flex-row gap-2">
 						{(["overlay", "static"] as const).map((value) => (

@@ -55,7 +55,7 @@ export default function ScreenStatesDemo(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6 p-5">
+			<Screen.ScrollArea contentContainerClassName="gap-6">
 				<Section title="States">
 					<View className="gap-2">
 						<Button onPress={() => setState("loading")}>Screen.Loading</Button>

@@ -23,7 +23,7 @@ const COMPOSER_BASE_HEIGHT = 44;
 
 function Bubble({ message }: { message: Message }): ReactElement {
 	return (
-		<View className={`px-4 py-1 ${message.mine ? "items-end" : "items-start"}`}>
+		<View className={`py-1 ${message.mine ? "items-end" : "items-start"}`}>
 			<View className={`max-w-[80%] rounded-2xl px-3 py-2 ${message.mine ? "bg-primary" : "bg-secondary"}`}>
 				<Text className={message.mine ? "text-primary-foreground" : "text-secondary-foreground"}>{message.body}</Text>
 			</View>

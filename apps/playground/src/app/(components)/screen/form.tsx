@@ -36,7 +36,7 @@ export default function ScreenFormDemo(): ReactElement {
 				<Screen.Navbar.BackButton glyph="close" onPress={() => router.back()} />
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-4 px-5 pt-4" keyboardAware>
+			<Screen.ScrollArea contentContainerClassName="gap-4" keyboardAware>
 				<Text.Caption>Tap the last field. It should sit directly above the Save button, not behind it.</Text.Caption>
 
 				{FIELDS.map((field) => (

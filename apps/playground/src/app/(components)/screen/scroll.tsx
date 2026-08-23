@@ -46,7 +46,7 @@ export default function ScreenScrollDemo(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-4 px-5">
+			<Screen.ScrollArea contentContainerClassName="gap-4">
 				<Screen.Header className="px-0">
 					<Text.Caption>
 						The navbar is {placement}, and draws its hairline at rest. The Navbar demo has the fadeBorderOnScroll

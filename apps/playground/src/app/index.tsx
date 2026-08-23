@@ -11,11 +11,11 @@ import {
 	IconSquareCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
+import { Screen } from "@delacour/native-ui/screen";
 import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { ScrollView, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { View } from "react-native";
 import { Uniwind, useUniwind } from "uniwind";
 
 const THEMES = ["light", "dark", "system"] as const;
@@ -92,50 +92,47 @@ const VISIBLE_COMPONENTS: readonly ComponentRow[] = __DEV__ ? [...COMPONENTS, ..
  * regression in any of them is visible before a gallery is even opened.
  */
 export default function Index(): ReactElement {
-	const insets = useSafeAreaInsets();
 	const router = useRouter();
 	const { theme, hasAdaptiveThemes } = useUniwind();
 
 	const activeTheme = hasAdaptiveThemes ? "system" : theme;
 
 	return (
-		<ScrollView
-			className="flex-1 bg-background"
-			contentContainerClassName="gap-6 p-5"
-			contentContainerStyle={{ paddingBottom: insets.bottom + 32, paddingTop: insets.top + 16 }}
-		>
-			<View className="gap-1">
-				<Text.Display>native-ui</Text.Display>
-				<Text.Paragraph color="muted">{COMPONENTS.length} components</Text.Paragraph>
-			</View>
+		<Screen>
+			<Screen.ScrollArea contentContainerClassName="gap-6">
+				<View className="gap-1">
+					<Text.Display>native-ui</Text.Display>
+					<Text.Paragraph color="muted">{COMPONENTS.length} components</Text.Paragraph>
+				</View>
 
-			<View className="flex-row gap-2">
-				{THEMES.map((name) => (
-					<Button
-						key={name}
-						onPress={() => Uniwind.setTheme(name)}
-						size="sm"
-						variant={activeTheme === name ? "primary" : "outline"}
-					>
-						{name}
-					</Button>
-				))}
-			</View>
+				<View className="flex-row gap-2">
+					{THEMES.map((name) => (
+						<Button
+							key={name}
+							onPress={() => Uniwind.setTheme(name)}
+							size="sm"
+							variant={activeTheme === name ? "primary" : "outline"}
+						>
+							{name}
+						</Button>
+					))}
+				</View>
 
-			<ListGroup>
-				{VISIBLE_COMPONENTS.map((component) => (
-					<ListGroup.Item haptic="selection" key={component.href} onPress={() => router.push(component.href)}>
-						<ListGroup.ItemPrefix>
-							<Icon icon={component.icon} />
-						</ListGroup.ItemPrefix>
-						<ListGroup.ItemContent>
-							<ListGroup.ItemTitle>{component.title}</ListGroup.ItemTitle>
-							<ListGroup.ItemDescription>{component.description}</ListGroup.ItemDescription>
-						</ListGroup.ItemContent>
-						<ListGroup.ItemSuffix />
-					</ListGroup.Item>
-				))}
-			</ListGroup>
-		</ScrollView>
+				<ListGroup>
+					{VISIBLE_COMPONENTS.map((component) => (
+						<ListGroup.Item haptic="selection" key={component.href} onPress={() => router.push(component.href)}>
+							<ListGroup.ItemPrefix>
+								<Icon icon={component.icon} />
+							</ListGroup.ItemPrefix>
+							<ListGroup.ItemContent>
+								<ListGroup.ItemTitle>{component.title}</ListGroup.ItemTitle>
+								<ListGroup.ItemDescription>{component.description}</ListGroup.ItemDescription>
+							</ListGroup.ItemContent>
+							<ListGroup.ItemSuffix />
+						</ListGroup.Item>
+					))}
+				</ListGroup>
+			</Screen.ScrollArea>
+		</Screen>
 	);
 }

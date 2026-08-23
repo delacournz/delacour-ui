@@ -93,7 +93,7 @@ export default function ScreenGallery(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6 p-5">
+			<Screen.ScrollArea contentContainerClassName="gap-6">
 				<ListGroup>
 					{DEMOS.map((demo) => (
 						<ListGroup.Item haptic="selection" key={demo.href} onPress={() => router.push(demo.href)}>

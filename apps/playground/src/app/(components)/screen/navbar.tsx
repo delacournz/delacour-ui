@@ -70,7 +70,7 @@ export default function ScreenNavbarDemo(): ReactElement {
 				{layout === "close only" ? <Screen.Navbar.BackButton glyph="close" onPress={() => router.back()} /> : null}
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6 p-5">
+			<Screen.ScrollArea contentContainerClassName="gap-6">
 				<Section title="Layout">
 					<View className="flex-row flex-wrap gap-2">
 						{LAYOUTS.map((value) => (

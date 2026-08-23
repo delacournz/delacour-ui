@@ -45,7 +45,7 @@ export function GalleryScreen({ title, subtitle, children }: GalleryScreenProps)
 					</View>
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
-			<Screen.ScrollArea contentContainerClassName="gap-8 p-5">{children}</Screen.ScrollArea>
+			<Screen.ScrollArea contentContainerClassName="gap-8">{children}</Screen.ScrollArea>
 		</Screen>
 	);
 }

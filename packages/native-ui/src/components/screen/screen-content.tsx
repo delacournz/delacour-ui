@@ -36,6 +36,11 @@ export type ScreenContentProps = ScreenInsetProps & {
  * No edges are inset by default: a screen with an overlay navbar wants its
  * content to run under the notch, and only the caller knows which edges matter.
  *
+ * The insets sit on an outer box and the caller's `className` on an inner one,
+ * so the two add rather than fight. Collapsed onto one box the inset style beat
+ * the class outright and `<Screen.Content className="p-5">` got no padding at
+ * all — see `resolveScreenEdgePadding` for why.
+ *
  * @example
  * <Screen.Content insets={["bottom"]}>
  *   <Screen.ScrollArea>{rows}</Screen.ScrollArea>
@@ -53,12 +58,10 @@ export function ScreenContent({
 
 	return (
 		<KeyboardGestureArea interpolator="ios" style={{ flex: 1 }} textInputNativeID={textInputNativeID}>
-			<View
-				className={screenVariants().content({ className })}
-				style={[resolveScreenEdgePadding(insets, safeArea), style]}
-				{...props}
-			>
-				{children}
+			<View className="flex-1" style={resolveScreenEdgePadding(insets, safeArea)}>
+				<View className={screenVariants().content({ className })} style={style} {...props}>
+					{children}
+				</View>
 			</View>
 		</KeyboardGestureArea>
 	);

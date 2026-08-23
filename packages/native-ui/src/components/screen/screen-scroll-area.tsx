@@ -3,7 +3,9 @@ import type { ScrollViewProps } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
 import { withUniwind } from "uniwind";
+import { cn } from "../../lib/cn";
 import type { ScreenScrollableProps } from "./screen.types";
+import { screenVariants } from "./screen.variants";
 import { useScreenFooterKeyboardClearance, useScreenScrollInsets } from "./use-screen-scroll-insets";
 
 // `contentContainerClassName` only resolves on a uniwind-wrapped component, and
@@ -66,7 +68,7 @@ export function ScreenScrollArea({
 			showsVerticalScrollIndicator={false}
 			{...(keyboardAware ? { bottomOffset: footerClearance } : null)}
 			{...props}
-			contentContainerClassName={contentContainerClassName}
+			contentContainerClassName={cn(screenVariants().scrollContent(), contentContainerClassName)}
 		>
 			<Animated.View style={insetTopAnimatedStyle} />
 			{header}

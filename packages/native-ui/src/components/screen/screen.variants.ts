@@ -47,7 +47,34 @@ export const screenVariants = tv({
 		root: "flex-1 bg-background",
 		content: "flex-1 bg-background",
 		view: "flex-1",
-		header: "",
+		/**
+		 * The default padding inside a scrollable, on the token every other edge of
+		 * the screen lines up with.
+		 *
+		 * The library owns it so a screen does not repeat it — twelve call sites
+		 * writing `p-5`, `px-5`, `py-5` and `px-5 pt-4` by hand is how they drifted
+		 * apart. A caller overrides per axis (`px-0` for full-bleed rows) and
+		 * tailwind-merge resolves it, because `screen-gutter` is registered in
+		 * `styles/tokens.ts`.
+		 *
+		 * On a virtualised list this is not a double count. Content-container
+		 * padding wraps `ListHeaderComponent`, so the order down the screen is
+		 * padding, then the navbar spacer, then the rows — and the spacer sits
+		 * behind the overlaying navbar, leaving exactly one gutter of visible
+		 * breathing room, the same as a scroll area.
+		 */
+		scrollContent: "p-screen-gutter",
+		/**
+		 * A titled block inside a scrollable, which already carries the gutter and
+		 * the vertical rhythm — so the header adds neither, or every screen would
+		 * need `px-0` to undo the second one.
+		 *
+		 * `gap-1` is its OWN rhythm, between a title and whatever sits under it,
+		 * and it is deliberately not the empty string: `tv()` returns `undefined`
+		 * for a slot with no classes at all, which reads as a bug at the call site
+		 * and breaks any test that asserts on it.
+		 */
+		header: "gap-1",
 		/**
 		 * Above the content it overlays. The navbar is the FIRST child of a
 		 * screen, so without a raised z-index a later sibling paints over it —
@@ -89,7 +116,19 @@ export const screenVariants = tv({
 		 * divider belonging to the content.
 		 */
 		footerBorder: "absolute top-0 right-0 left-0 h-px",
-		footerContent: "gap-2",
+		/**
+		 * The footer's measured content box, and the owner of its HORIZONTAL
+		 * padding.
+		 *
+		 * Horizontal lives here rather than in the sticky view's inline style so it
+		 * can use the same gutter token as the content above — a footer button used
+		 * to sit at 16 while the content sat at 20, on every screen with a footer.
+		 * The vertical stays inline, because `footerOccupancy` has to add the same
+		 * numbers to a height measured at runtime and a class is unreadable from
+		 * JS. Only the axis that was wrong moved, so the occupancy maths is
+		 * untouched.
+		 */
+		footerContent: "gap-2 px-screen-gutter",
 		loading: "flex-1 items-center justify-center",
 		errorContent: "flex-1 items-center justify-center gap-2 px-screen-gutter",
 		errorTitle: "text-center font-semibold text-foreground text-lg",
@@ -194,10 +233,10 @@ export type ScreenEdgeInsets = { top: number; right: number; bottom: number; lef
 
 /** Padding for a container insetting itself against some of the safe area. */
 export type ScreenEdgePadding = {
-	paddingTop: number;
-	paddingRight: number;
-	paddingBottom: number;
-	paddingLeft: number;
+	paddingTop?: number;
+	paddingRight?: number;
+	paddingBottom?: number;
+	paddingLeft?: number;
 };
 
 /**
@@ -209,8 +248,14 @@ export type ScreenEdgePadding = {
  * hook is also the same source the footer's occupancy maths reads, so a
  * container's inset and the reserve computed against it cannot disagree.
  *
- * An edge the caller did not name gets 0, never `undefined`, so the object can
- * be spread over a style without punching holes in what it merges onto.
+ * **Only the edges asked for appear.** An unrequested edge is absent, not `0`.
+ * A `0` here is not a harmless absence — it is a value, and it wins: uniwind
+ * puts a className's style first and the `style` prop second, and Yoga resolves
+ * a longhand edge ahead of the `padding` shorthand a class compiles to,
+ * treating `0` as defined. So four unconditional zeroes silently erased every
+ * side of a caller's `p-5`. Emitting a partial is half the fix; the other half
+ * is that a caller's className belongs on a different box entirely — see
+ * `screen-header.tsx`.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
@@ -218,14 +263,15 @@ export function resolveScreenEdgePadding(
 	edges: readonly ScreenEdge[] | undefined,
 	insets: ScreenEdgeInsets
 ): ScreenEdgePadding {
-	const wanted = (edge: ScreenEdge): number => (edges?.includes(edge) ? insets[edge] : 0);
+	const padding: ScreenEdgePadding = {};
+	if (!edges?.length) return padding;
 
-	return {
-		paddingBottom: wanted("bottom"),
-		paddingLeft: wanted("left"),
-		paddingRight: wanted("right"),
-		paddingTop: wanted("top"),
-	};
+	if (edges.includes("top")) padding.paddingTop = insets.top;
+	if (edges.includes("right")) padding.paddingRight = insets.right;
+	if (edges.includes("bottom")) padding.paddingBottom = insets.bottom;
+	if (edges.includes("left")) padding.paddingLeft = insets.left;
+
+	return padding;
 }
 
 /*
@@ -370,6 +416,29 @@ export function resolveScrollBottomInset(state: {
 	if (state.footerPlacement === "static") return keyboardBand;
 
 	return footerOccupancy(state.footerHeight, fadingSafeArea) + keyboardBand;
+}
+
+/**
+ * The height of a scrollable's top spacer.
+ *
+ * Mirrors the top half of {@link resolveScreenViewPadding}, including the
+ * fallback that matters most: with NO navbar mounted the spacer is the raw
+ * safe-area inset, not zero. Without it a screen that skips the navbar runs its
+ * first row under the notch — the scroll area had no fallback while the static
+ * body did, so the two disagreed about the same screen.
+ *
+ * A `static` navbar contributes nothing: it already took its space in the flow.
+ *
+ * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveScrollTopInset(state: {
+	navbarHeight: number;
+	navbarPlacement: ScreenPlacement;
+	safeAreaTop: number;
+}): number {
+	"worklet";
+	if (state.navbarHeight <= 0) return state.safeAreaTop;
+	return state.navbarPlacement === "overlay" ? state.navbarHeight : 0;
 }
 
 /**

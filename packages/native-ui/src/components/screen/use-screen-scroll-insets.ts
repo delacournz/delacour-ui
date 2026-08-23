@@ -16,6 +16,7 @@ import {
 	footerAboveKeyboard,
 	footerOccupancy,
 	resolveScrollBottomInset,
+	resolveScrollTopInset,
 	type ScreenScrollInsetMode,
 } from "./screen.variants";
 
@@ -164,7 +165,7 @@ export function useScreenFooterKeyboardClearance(): number {
  */
 export function useScreenScrollInsets(mode: ScreenScrollInsetMode) {
 	const { navbar, footer, scrollY, contentHeight, layoutHeight } = useScreenPart("a Screen scrollable");
-	const { bottom } = useSafeAreaInsets();
+	const { bottom, top } = useSafeAreaInsets();
 	const keyboard = useReanimatedKeyboardAnimation();
 
 	const scrollHandler = useAnimatedScrollHandler({
@@ -182,10 +183,14 @@ export function useScreenScrollInsets(mode: ScreenScrollInsetMode) {
 	});
 
 	const insetTopAnimatedStyle = useAnimatedStyle(() => {
-		// A static navbar already took its space in the flow; only an overlay one
-		// needs the content to make room.
-		return { height: navbar.placement.value === "overlay" ? navbar.height.value : 0 };
-	}, []);
+		return {
+			height: resolveScrollTopInset({
+				navbarHeight: navbar.height.value,
+				navbarPlacement: navbar.placement.value,
+				safeAreaTop: top,
+			}),
+		};
+	}, [top]);
 
 	const insetBottomAnimatedStyle = useAnimatedStyle(() => {
 		return {

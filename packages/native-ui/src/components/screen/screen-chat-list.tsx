@@ -7,6 +7,7 @@ import { KeyboardChatScrollView, type KeyboardChatScrollViewProps } from "react-
 import Animated, { type SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { withUniwind } from "uniwind";
+import { cn } from "../../lib/cn";
 import { useScreenDebug } from "./screen.context";
 import type { ScreenScrollableProps } from "./screen.types";
 import { SCREEN_DEBUG_COLORS } from "./screen-debug";
@@ -49,6 +50,16 @@ type StyledKeyboardAwareLegendListComponent = <ItemT>(
 const StyledKeyboardAwareLegendList = withUniwind(
 	KeyboardAwareLegendList
 ) as unknown as StyledKeyboardAwareLegendListComponent;
+
+/**
+ * A chat gets the horizontal gutter but no vertical padding of its own.
+ *
+ * Its bubbles carry their own vertical rhythm, and both ends are already spoken
+ * for: the navbar spacer at the top and a composer clearance at the bottom that
+ * is computed to the point. Padding the container would push the newest message
+ * off that reserve.
+ */
+const CHAT_CONTENT_CLASS = "px-screen-gutter";
 
 /** How the keyboard moves a chat list, shared by both variants. */
 type ChatKeyboardProps = {
@@ -278,7 +289,7 @@ function ScreenChatListFlat<ItemT>({
 			keyboardShouldPersistTaps="handled"
 			showsVerticalScrollIndicator={false}
 			{...props}
-			contentContainerClassName={contentContainerClassName}
+			contentContainerClassName={cn(CHAT_CONTENT_CLASS, contentContainerClassName)}
 			contentContainerStyle={
 				debug ? [contentContainerStyle, { backgroundColor: SCREEN_DEBUG_COLORS.listContent }] : contentContainerStyle
 			}
@@ -396,7 +407,7 @@ function ScreenChatListLegend<ItemT>({
 			{...(props as AnimatedLegendListProps<ItemT>)}
 			alignItemsAtEnd={alignItemsAtEnd}
 			applyWorkaroundForContentInsetHitTestBug={applyWorkaroundForContentInsetHitTestBug}
-			contentContainerClassName={contentContainerClassName}
+			contentContainerClassName={cn(CHAT_CONTENT_CLASS, contentContainerClassName)}
 			contentContainerStyle={
 				debug ? [contentContainerStyle, { backgroundColor: SCREEN_DEBUG_COLORS.listContent }] : contentContainerStyle
 			}

@@ -19,6 +19,7 @@ export {
 	resolveScreenEdgePadding,
 	resolveScreenViewPadding,
 	resolveScrollBottomInset,
+	resolveScrollTopInset,
 	SCREEN_BORDER_FADE_DISTANCE,
 	SCREEN_EDGES,
 	SCREEN_FLOATING_BOTTOM_GAP,

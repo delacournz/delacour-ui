@@ -4,7 +4,9 @@ import { type ReactElement, type Ref, useMemo } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { withUniwind } from "uniwind";
+import { cn } from "../../lib/cn";
 import type { ScreenScrollableProps } from "./screen.types";
+import { screenVariants } from "./screen.variants";
 import { resolveListComponent } from "./screen-list-component";
 import { useScreenScrollInsets } from "./use-screen-scroll-insets";
 
@@ -46,6 +48,7 @@ export type ScreenLegendListProps<ItemT> = Omit<AnimatedLegendListProps<ItemT>, 
  */
 export function ScreenLegendList<ItemT>({
 	header,
+	contentContainerClassName,
 	ListHeaderComponent: ListHeaderComponentProp,
 	ListFooterComponent: ListFooterComponentProp,
 	...props
@@ -77,6 +80,7 @@ export function ScreenLegendList<ItemT>({
 		<StyledAnimatedLegendList
 			showsVerticalScrollIndicator={false}
 			{...(props as AnimatedLegendListProps<ItemT>)}
+			contentContainerClassName={cn(screenVariants().scrollContent(), contentContainerClassName)}
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}

@@ -1,7 +1,9 @@
 import { type ReactElement, useMemo } from "react";
 import { type DefaultSectionT, SectionList, type SectionListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { cn } from "../../lib/cn";
 import type { ScreenScrollableProps } from "./screen.types";
+import { screenVariants } from "./screen.variants";
 import { resolveListComponent } from "./screen-list-component";
 import { useScreenScrollInsets } from "./use-screen-scroll-insets";
 
@@ -21,6 +23,7 @@ export type ScreenSectionListProps<ItemT, SectionT = DefaultSectionT> = Omit<
  */
 export function ScreenSectionList<ItemT, SectionT = DefaultSectionT>({
 	header,
+	contentContainerClassName,
 	ListHeaderComponent: ListHeaderComponentProp,
 	ListFooterComponent: ListFooterComponentProp,
 	...props
@@ -52,6 +55,7 @@ export function ScreenSectionList<ItemT, SectionT = DefaultSectionT>({
 		<AnimatedSectionList
 			showsVerticalScrollIndicator={false}
 			{...props}
+			contentContainerClassName={cn(screenVariants().scrollContent(), contentContainerClassName)}
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}

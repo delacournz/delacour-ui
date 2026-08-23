@@ -51,9 +51,9 @@ export type ScreenFooterProps = ScreenPlacementProps & {
  * two must agree, which is why the padding is applied from the same constants
  * rather than as a class.
  *
- * The padding IS a style rather than a `p-4` for that reason alone. A class is
- * unreadable from JS, so the reserve would have to restate the number and the
- * two could drift — the failure being a list whose last row hides under the
+ * The VERTICAL padding is a style rather than a class for that reason alone. A
+ * class is unreadable from JS, so the reserve would have to restate the number
+ * and the two could drift — the failure being a list whose last row hides under the
  * footer only on some devices.
  *
  * Four nested boxes, each with one job:
@@ -149,7 +149,7 @@ export function ScreenFooter({
 				// and animating padding leaves a visible gap between the two
 				// mid-transition.
 				offset={{ closed: 0, opened: bottom }}
-				style={{ padding: SCREEN_FOOTER_PADDING, paddingBottom: SCREEN_FLOATING_BOTTOM_GAP }}
+				style={{ paddingBottom: SCREEN_FLOATING_BOTTOM_GAP, paddingTop: SCREEN_FOOTER_PADDING }}
 			>
 				<ScreenFooterBackground fadeOnScroll={fadeBorderOnScroll} placement={placement} />
 				<View

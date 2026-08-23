@@ -8,6 +8,7 @@ import {
 	resolveScreenEdgePadding,
 	resolveScreenViewPadding,
 	resolveScrollBottomInset,
+	resolveScrollTopInset,
 	SCREEN_BORDER_FADE_DISTANCE,
 	SCREEN_EDGES,
 	SCREEN_FLOATING_BOTTOM_GAP,
@@ -182,6 +183,32 @@ describe("screenVariants placement", () => {
 	});
 });
 
+describe("every slot", () => {
+	// `tv()` returns undefined for a slot with no classes at all, not "". Blanking
+	// a slot therefore hands `className={undefined}` to a View and reads as a bug
+	// at the call site — it has already happened twice in this component, to
+	// `footerSafeArea` and then to `header`. A slot that genuinely needs no
+	// classes should be deleted, not emptied.
+	// `tv()` synthesises a `base` slot for the whole component whether or not one
+	// was declared. Nothing here renders it, and it is undefined by construction.
+	const declared = (slots: Record<string, () => string | undefined>) =>
+		Object.entries(slots).filter(([name]) => name !== "base");
+
+	test("resolves to a string, never undefined", () => {
+		for (const [name, slot] of declared(screenVariants())) {
+			expect(typeof slot(), `slot "${name}"`).toBe("string");
+		}
+	});
+
+	test("resolves to a string at either placement", () => {
+		for (const placement of SCREEN_PLACEMENTS) {
+			for (const [name, slot] of declared(screenVariants({ placement }))) {
+				expect(typeof slot(), `slot "${name}" at placement "${placement}"`).toBe("string");
+			}
+		}
+	});
+});
+
 describe("screenVariants colour", () => {
 	test("keeps text colour off every container", () => {
 		const slots = screenVariants();
@@ -219,9 +246,25 @@ describe("screenVariants colour", () => {
 });
 
 describe("screenVariants sizing", () => {
-	test("lines the header and the navbar row up on one gutter token", () => {
-		expect(screenVariants().header()).toContain("px-screen-gutter");
-		expect(screenVariants().navbarRow()).toContain("px-screen-gutter");
+	test("puts every horizontal edge of the screen on one gutter token", () => {
+		// The navbar's row, a scrollable's content and the footer's content all
+		// line up. A footer button used to sit at 16 while the content above it
+		// sat at 20, on every screen with a footer.
+		for (const slot of ["navbarRow", "scrollContent", "footerContent"] as const) {
+			expect(screenVariants()[slot]()).toContain("screen-gutter");
+		}
+	});
+
+	test("keeps the gutter off the header, whose container already has one", () => {
+		// A header adding its own would double it, which is why every call site
+		// used to need `px-0` to undo it.
+		expect(screenVariants().header()).not.toContain("screen-gutter");
+	});
+
+	test("pads a scrollable on all four sides, not just horizontally", () => {
+		// Vertical breathing room is the half that went missing: the animated
+		// spacers clear the chrome exactly, leaving content flush against it.
+		expect(screenVariants().scrollContent()).toBe("p-screen-gutter");
 	});
 
 	test("sizes the navbar's control row from its token, not a raw utility", () => {
@@ -260,33 +303,17 @@ describe("resolveScreenEdgePadding", () => {
 	const LANDSCAPE = { bottom: 21, left: 59, right: 59, top: 0 };
 
 	test("insets nothing by default — a container is not safe-area aware unless asked", () => {
-		expect(resolveScreenEdgePadding(undefined, INSETS)).toEqual({
-			paddingBottom: 0,
-			paddingLeft: 0,
-			paddingRight: 0,
-			paddingTop: 0,
-		});
-		expect(resolveScreenEdgePadding([], INSETS)).toEqual({
-			paddingBottom: 0,
-			paddingLeft: 0,
-			paddingRight: 0,
-			paddingTop: 0,
-		});
+		expect(resolveScreenEdgePadding(undefined, INSETS)).toEqual({});
+		expect(resolveScreenEdgePadding([], INSETS)).toEqual({});
 	});
 
-	test("pads only the edges it was given", () => {
-		expect(resolveScreenEdgePadding(["bottom"], INSETS)).toEqual({
-			paddingBottom: 34,
-			paddingLeft: 0,
-			paddingRight: 0,
-			paddingTop: 0,
-		});
-		expect(resolveScreenEdgePadding(["top"], INSETS)).toEqual({
-			paddingBottom: 0,
-			paddingLeft: 0,
-			paddingRight: 0,
-			paddingTop: 59,
-		});
+	test("pads only the edges it was given, and omits the rest entirely", () => {
+		// Absent, never 0. A 0 is not a harmless absence — uniwind puts a class's
+		// style first and the `style` prop second, and Yoga resolves a longhand
+		// edge ahead of the `padding` a class compiles to, treating 0 as defined.
+		// Four unconditional zeroes silently erased every side of a caller's p-5.
+		expect(resolveScreenEdgePadding(["bottom"], INSETS)).toEqual({ paddingBottom: 34 });
+		expect(resolveScreenEdgePadding(["top"], INSETS)).toEqual({ paddingTop: 59 });
 	});
 
 	test("takes each edge's own inset, not one number for all four", () => {
@@ -298,13 +325,8 @@ describe("resolveScreenEdgePadding", () => {
 		});
 	});
 
-	test("returns 0 rather than undefined for an edge left out", () => {
-		// The result is spread over a style, so a hole would punch through
-		// whatever it merges onto instead of leaving that padding alone.
-		const padding = resolveScreenEdgePadding(["top"], INSETS);
-		for (const value of Object.values(padding)) {
-			expect(typeof value).toBe("number");
-		}
+	test("names no key at all for an edge left out", () => {
+		expect("paddingTop" in resolveScreenEdgePadding(["bottom"], INSETS)).toBe(false);
 	});
 
 	test("does not care what order the edges are named in", () => {
@@ -536,6 +558,45 @@ describe("resolveFooterBorderOpacity", () => {
 			const opacity = resolveFooterBorderOpacity({ ...MIDDLE, fadeOnScroll: true, scrollY });
 			expect(opacity).toBeGreaterThanOrEqual(0);
 			expect(opacity).toBeLessThanOrEqual(1);
+		}
+	});
+});
+
+describe("resolveScrollTopInset", () => {
+	const NAVBAR = { navbarHeight: 96, navbarPlacement: "overlay", safeAreaTop: 59 } as const;
+
+	test("clears an overlay navbar by its measured height, safe-area band included", () => {
+		expect(resolveScrollTopInset(NAVBAR)).toBe(96);
+	});
+
+	test("reserves nothing for a static navbar, which took its own space in the flow", () => {
+		expect(resolveScrollTopInset({ ...NAVBAR, navbarPlacement: "static" })).toBe(0);
+	});
+
+	test("falls back to the safe-area inset with no navbar, so content clears the notch", () => {
+		// The failure this exists for: a screen that skips the navbar had no top
+		// reserve at all and ran its first row under the status bar, while
+		// Screen.View on the same screen padded itself correctly.
+		expect(resolveScrollTopInset({ ...NAVBAR, navbarHeight: 0 })).toBe(59);
+		expect(resolveScrollTopInset({ ...NAVBAR, navbarHeight: 0, navbarPlacement: "static" })).toBe(59);
+	});
+
+	test("agrees with a static body on the same screen", () => {
+		// The two run in different components; a screen swapping a scroll area for
+		// Screen.View must not shift its content.
+		for (const navbarHeight of [0, 96]) {
+			for (const navbarPlacement of SCREEN_PLACEMENTS) {
+				const scroll = resolveScrollTopInset({ navbarHeight, navbarPlacement, safeAreaTop: 59 });
+				const view = resolveScreenViewPadding({
+					footerHeight: 0,
+					footerPlacement: "overlay",
+					navbarHeight,
+					navbarPlacement,
+					safeAreaBottom: 34,
+					safeAreaTop: 59,
+				});
+				expect(scroll).toBe(view.paddingTop);
+			}
 		}
 	});
 });

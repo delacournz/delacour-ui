@@ -1,7 +1,9 @@
 import { type ReactElement, useMemo } from "react";
 import { FlatList, type FlatListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
+import { cn } from "../../lib/cn";
 import type { ScreenScrollableProps } from "./screen.types";
+import { screenVariants } from "./screen.variants";
 import { resolveListComponent } from "./screen-list-component";
 import { useScreenScrollInsets } from "./use-screen-scroll-insets";
 
@@ -24,6 +26,7 @@ export type ScreenFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> 
  */
 export function ScreenFlatList<ItemT>({
 	header,
+	contentContainerClassName,
 	ListHeaderComponent: ListHeaderComponentProp,
 	ListFooterComponent: ListFooterComponentProp,
 	...props
@@ -55,6 +58,7 @@ export function ScreenFlatList<ItemT>({
 		<AnimatedFlatList
 			showsVerticalScrollIndicator={false}
 			{...props}
+			contentContainerClassName={cn(screenVariants().scrollContent(), contentContainerClassName)}
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}

@@ -7,11 +7,17 @@ import { resolveScreenEdgePadding, screenVariants } from "./screen.variants";
 export type ScreenHeaderProps = ScreenInsetProps;
 
 /**
- * A titled block at the top of a screen's content, on the screen's own gutter.
+ * A titled block at the top of a screen's content.
  *
- * Two nested views rather than one: the safe-area padding and the header's own
- * padding are different concerns, and collapsing them would make
- * `insets={["top"]}` silently replace the top padding instead of adding to it.
+ * Carries no gutter and no vertical padding: the scrollable it sits in already
+ * has both, and a header adding its own would double them at every call site.
+ * What is left is a semantic block with its own `gap-1` and optional safe-area
+ * insets.
+ *
+ * Two nested views rather than one: the safe-area padding and anything the
+ * caller adds are different concerns, and collapsing them would make
+ * `insets={["top"]}` silently replace that padding instead of adding to it —
+ * the failure the rest of this component was fixed for.
  *
  * Scrolls with the content — it is passed to a scrollable's `header` prop, not
  * pinned. `Screen.Navbar` is the pinned one.

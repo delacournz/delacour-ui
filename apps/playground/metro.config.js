@@ -23,6 +23,7 @@ config.resolver.extraNodeModules = {
 	react: path.resolve(workspaceRoot, "node_modules/react"),
 	"react-native": path.resolve(workspaceRoot, "node_modules/react-native"),
 	"react-native-gesture-handler": path.resolve(workspaceRoot, "node_modules/react-native-gesture-handler"),
+	"react-native-keyboard-controller": path.resolve(workspaceRoot, "node_modules/react-native-keyboard-controller"),
 	"react-native-reanimated": path.resolve(workspaceRoot, "node_modules/react-native-reanimated"),
 	"react-native-safe-area-context": path.resolve(workspaceRoot, "node_modules/react-native-safe-area-context"),
 	"react-native-svg": path.resolve(workspaceRoot, "node_modules/react-native-svg"),

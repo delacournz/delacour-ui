@@ -111,6 +111,7 @@ src/
 │       ├── text.context.tsx      TextClassProvider, useTextClass()
 │       ├── text.variants.ts      Pure tv() + resolveTextClass, no RN imports
 │       └── text.variants.test.ts
+├── expo/             Expo-only entry points — navigation-theme
 ├── hooks/            use-controllable-state, use-theme-color, use-keyboard-state-sync
 ├── icons/central.ts  Central Icons re-export
 ├── lib/              cn, tv, merge-props, compose-refs, slot, keyboard-animation
@@ -186,11 +187,24 @@ its slot set, so a sibling would buy nothing but a second file to open.
    both import nothing but React and React Native types. `spinner.context.tsx`
    exists precisely for this: `SpinnerContent` needs `useSpinner`, and reading it
    from `./spinner` would close `spinner.tsx ⇄ spinner-content.tsx`.
-4. **Run `bun run gen-exports`** after adding or removing a component folder or
-   a file under `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
-   `exports` map. A component folder without an `index.ts` fails the script.
+4. **Anything importing an Expo package lives in `src/expo/`.** That directory
+   is the one place a framework dependency is allowed, and the import path says
+   so: `@delacour/native-ui/expo/navigation-theme`. Everything under it depends
+   on an **optional** peer, which is what the granular exports make safe — an
+   app that never imports `./expo/*` never resolves them, and one on a
+   different navigator keeps the rest of the library.
+
+   Elsewhere the no-framework rule still holds. `useNavigationTheme` returns
+   plain colour values from `src/hooks/`, and only the component that feeds them
+   to `ThemeProvider` sits under `expo/`. That split is deliberate: the values
+   are useful to any navigator, and `Screen.Navbar.BackButton` still takes an
+   `onPress` rather than calling a router.
+
 5. **Central Icons only**, via `@delacour/native-ui/icons/central`.
-6. **Never wrap a React Native or Reanimated component with `withUniwind`.**
+6. **Run `bun run gen-exports`** after adding or removing a component folder or
+   a file under `src/expo`, `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
+   `exports` map. A component folder without an `index.ts` fails the script.
+7. **Never wrap a React Native or Reanimated component with `withUniwind`.**
    `View`, `Text`, `Pressable`, `Animated.View` and friends already accept
    `className`. `withUniwind` is only for third-party components (`expo-image`,
    `expo-blur`), and a given component may only be wrapped once, in one file.
@@ -201,9 +215,9 @@ its slot set, so a sibling would buy nothing but a second file to open.
    still one component wrapped once, in one file. Do not wrap a Central Icon
    directly, do not wrap the proxy anywhere else, and do not add a second
    wrapper for `Svg`. See **Sizing** for why the wrapper has to exist at all.
-7. **Native modules are peer dependencies, never dependencies.** Two copies of
+8. **Native modules are peer dependencies, never dependencies.** Two copies of
    a native module register twice and break at runtime.
-8. **`cn()` for every caller-supplied `className`, and `tv` from `lib/tv`.**
+9. **`cn()` for every caller-supplied `className`, and `tv` from `lib/tv`.**
    Uniwind does not deduplicate conflicting utilities on its own. There are
    **two** mergers here and both need the semantic size tokens: `cn()` merges a
    caller's className, and `tv()` merges slots and variants through a
@@ -212,8 +226,8 @@ its slot set, so a sibling would buy nothing but a second file to open.
    is, drops `text-button-md` into tailwind-merge's text *colour* group, and
    silently strips the label's colour. `src/styles/tokens.ts` holds the one
    config both are built from.
-9. **No `any`.** Discriminated unions over loose types.
-10. **Token names diverge from the web package where the mobile kit needs
+10. **No `any`.** Discriminated unions over loose types.
+11. **Token names diverge from the web package where the mobile kit needs
     them to.** This package uses `danger` / `danger-soft` (matching the button
     variant names) and adds `tertiary`, where the web package uses
     `destructive`. `X-foreground` always means "content drawn on an `X`
@@ -780,6 +794,10 @@ this package takes no navigation dependency, the same reason
 `Screen.Navbar.BackButton` takes an `onPress` rather than calling a router. The
 app spreads them over the framework's own base theme, which also supplies
 `fonts`, whose shape is platform-specific and would drift if restated here.
+
+`NavigationTheme` in `src/expo/` does the wiring — it is the one place
+`expo-router` is imported, behind an optional peer (rule 4), so an app on a
+different navigator uses the hook directly and skips it.
 
 `dark` comes from Uniwind's active theme, never React Native's `useColorScheme`:
 an app that lets the user force light or dark against the system setting would

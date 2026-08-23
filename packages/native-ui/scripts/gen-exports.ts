@@ -7,8 +7,13 @@
  * everything.
  *
  * Components live one per folder and are exported at their folder's `index.ts`
- * (`src/components/button/` → `./button`). Hooks, lib helpers and icons are
- * flat files exported individually.
+ * (`src/components/button/` → `./button`). Hooks, lib helpers, icons and the
+ * Expo-only entry points are flat files exported individually.
+ *
+ * `src/expo/` is where anything that imports an Expo package lives, kept apart
+ * so the coupling is visible in the import path rather than buried. Everything
+ * under it depends on an optional peer, which is exactly what the granular
+ * exports make safe: an app that never imports `./expo/*` never resolves them.
  *
  * Usage: bun scripts/gen-exports.ts
  */
@@ -87,6 +92,7 @@ async function main(): Promise<void> {
 	const exports = {
 		...FIXED_EXPORTS,
 		...sorted(await collectComponents()),
+		...sorted(await collectFiles("src/expo", "expo/")),
 		...sorted(await collectFiles("src/hooks", "hooks/")),
 		...sorted(await collectFiles("src/lib", "lib/")),
 		...sorted(await collectFiles("src/icons", "icons/")),

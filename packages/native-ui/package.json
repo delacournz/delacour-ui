@@ -8,6 +8,7 @@
 		"./styles/base": "./src/styles/base.css",
 		"./styles/tokens": "./src/styles/tokens.css",
 		"./styles/theme": "./src/styles/theme.css",
+		"./badge": "./src/components/badge/index.ts",
 		"./button": "./src/components/button/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",

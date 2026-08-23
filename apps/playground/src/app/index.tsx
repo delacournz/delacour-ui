@@ -9,6 +9,7 @@ import {
 	IconFontStyle,
 	IconLayoutTopBottom,
 	IconSquareCursor,
+	IconTag,
 	IconWindowCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
@@ -22,6 +23,12 @@ import { Uniwind, useUniwind } from "uniwind";
 const THEMES = ["light", "dark", "system"] as const;
 
 const COMPONENTS = [
+	{
+		href: "/badge",
+		icon: IconTag,
+		title: "Badge",
+		description: "Variants, colours, sizes, dismiss",
+	},
 	{
 		href: "/button",
 		icon: IconSquareCursor,

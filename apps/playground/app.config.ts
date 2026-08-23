@@ -1,9 +1,9 @@
 import type { ExpoConfig } from "expo/config";
 
 const expoConfig: ExpoConfig = {
-	name: "playground",
-	slug: "playground",
-	scheme: "playground",
+	name: "Delacour UI",
+	slug: "delacour-ui-playground",
+	scheme: "dlc-ui-playground",
 	version: "0.0.0",
 	orientation: "portrait",
 	userInterfaceStyle: "automatic",

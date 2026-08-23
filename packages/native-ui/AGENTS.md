@@ -49,6 +49,17 @@ src/
 │   │   ├── icon.context.tsx      IconDefaults, IconDefaultsProvider, useIconDefaults()
 │   │   ├── icon.variants.ts      Pure tv() + the size-class ladder, no RN imports
 │   │   └── icon.variants.test.ts
+│   ├── input/
+│   │   ├── index.ts              → @delacour/native-ui/input
+│   │   ├── input.tsx             Root + the Object.assign compound surface
+│   │   ├── input-group.tsx       Input.Group, plus its own nested surface
+│   │   ├── input-group-decorator.tsx  The shared body behind both decorators
+│   │   ├── input-group-prefix.tsx     Input.Group.Prefix
+│   │   ├── input-group-suffix.tsx     Input.Group.Suffix
+│   │   ├── input.context.tsx     InputGroupProvider, useInputGroup(), useInputGroupPart()
+│   │   ├── input.types.ts        Prop types shared by two or more parts
+│   │   ├── input.variants.ts     Pure tv() slots + resolvers, no RN imports
+│   │   └── input.variants.test.ts
 │   ├── list-group/
 │   │   ├── index.ts              → @delacour/native-ui/list-group
 │   │   ├── list-group.tsx        Root + the Object.assign compound surface
@@ -293,6 +304,80 @@ The reference implementation for the patterns above.
   the left edge unless it also sets `self-center`. This is what made an earlier
   `only` implementation collapse a full-width button into a small box flush
   left. Prefer not taking the width at all.
+
+## Input
+
+A text field, and the box that can hold content beside it. Root plus
+`Input.Group` and its two decorators, `Prefix` and `Suffix`.
+
+- **Variants**: `primary`, `secondary`. **Sizes**: `sm`, `md`, `lg` — the box
+  height, the value's type scale and a decorator's icon step, on one axis.
+- **The box is one slot with two homes, and that is the whole design.** The
+  `root` slot of `inputVariants` lands on the `TextInput` when a field stands
+  alone and on `Input.Group`'s row when it does not. `resolveInputFieldClass` is
+  the decision, and it is pure, so `input.variants.test.ts` sweeps the entire
+  matrix and asserts that every chrome utility a lone field wears is present on
+  the group's row. A grouped field is therefore the *same* box rather than a
+  similar one. **Do not give `Input.Group` a border, background or height of its
+  own** — a second class string is a second thing that can drift, and the drift
+  would be a one-pixel difference nobody notices until it is shipped.
+- **The group owns the axes, because it owns the box.** `variant`, `size`,
+  `isInvalid` and `isDisabled` live on `Input.Group`, and an `Input` inside one
+  reads them from context — the same way a `ListGroup.Item` takes no `variant`.
+  The field's own copies of those props are ignored while it is grouped. One box,
+  one set of axes; two would be two answers to the same question.
+- **Uniwind bridges the three colour *props*, so rule 7 is untouched.** A
+  `TextInput`'s placeholder, caret and selection take a colour value, not a
+  style, and uniwind's own `TextInput` — which is what a plain
+  `import { TextInput } from "react-native"` resolves to, via its Metro
+  resolver — accepts a className for each and compiles it to `styles.accentColor`.
+  So this component wraps nothing in `withUniwind`, and the `Icon` carve-out
+  stays spent exactly once.
+- **Those classNames must be `accent-*` utilities.** `accent-muted-foreground`,
+  never `text-muted-foreground`. Uniwind reads only `accentColor` off the
+  compiled class, so anything else resolves to nothing: it warns once in
+  development and leaves the prop undefined, which renders as the platform
+  default rather than as an error. The defaults live in `input.variants.ts`.
+- **`placeholderTextColorClassName` is `Omit`ed from `InputProps`.** Uniwind's
+  name and ours would otherwise both reach the same colour, and a caller setting
+  one while the component set the other is a bug with no error attached.
+  `selectionColorClassName` keeps uniwind's name because it already is the name
+  this package would have chosen; only its default is supplied here.
+- **Focus is React state, not a `focus:` class.** Uniwind's `TextInput` does
+  track its own focus, and `focus:border-ring` would work on a lone field — and
+  do nothing at all for the box `Input.Group` draws around a grouped one, since a
+  `View` cannot see a sibling's focus. One state, read by an `isFocused` variant,
+  keeps the two identical and puts the decision somewhere `bun test` can reach.
+- **Invalid outranks focus.** A field that went grey the moment it was tapped
+  would drop the only signal it has that its value is wrong, exactly while the
+  value is being corrected. The border, the caret and the decorators all stay
+  danger.
+- **A multiline field turns its height into a floor**, and the row aligns to the
+  top with it — centred decorators would drift down the side of a paragraph
+  instead of sitting on its first line. `py-0` on the single-line branch is
+  load-bearing on Android, where the platform's own vertical padding would
+  otherwise push the value off centre inside a fixed height.
+- **Prefix and suffix share one `decorator` slot and one implementation.** They
+  are the same box in different places — the row's `gap` is what separates
+  them — so a second identical slot would only be a second thing to keep in step.
+  `input-group-decorator.tsx` is the shared leaf; the two part files name it.
+- **A decorator wraps bare text in a `Text`.** `<Input.Group.Prefix>$</...>` is
+  the shortest thing anyone will write and React Native cannot render a string
+  outside a `<Text>`, so it would crash. Consecutive strings collapse into one —
+  the same rule, and the same reason, as `Button`.
+- **Pressing the group focuses the field.** A lone field is its own tap target
+  edge to edge; a grouped one only covers the middle of the box, so the group is
+  a `Pressable` with `feedback="none"` whose press focuses the field through the
+  ref it shares on context. A `Button` inside a decorator still receives its own
+  press.
+- **There is no `Input.Label`, `Input.Description` or `Input.ErrorMessage`.**
+  `Text.Label` and `Text.Caption` already are those, and a label defined twice is
+  a type scale that can drift. `apps/playground`'s `/input/form` is what the
+  trade looks like at a call site.
+- **`--spacing-input-*` is its own scale**, matching `--spacing-button-*` in
+  value and not in name — this is the case **Sizing** anticipated. A token test
+  asserts the two stay level, so either can be retuned without silently dragging
+  the other along.
 
 ## Spinner
 
@@ -760,6 +845,8 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
 | `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
 | `--text-button-*` | `text-button-md` | a button's label, paired with its height |
+| `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
+| `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
 
@@ -770,11 +857,13 @@ than restating a number: a button's `sm`/`md`/`lg` icon is
 `icon-sm`/`icon-md`/`icon-lg`. That is what makes the button's loading swap
 free — see **Button**.
 
-A token is named for what it sizes, not for an abstract category: only `Button`
-uses the `button-*` scale today, so calling it that keeps the name honest. A
-future control that genuinely shares these heights gets its own namespace rather
-than borrowing this one — `--spacing-input-*` reading `h-button-md` would be
-worse than one more scale.
+A token is named for what it sizes, not for an abstract category, and a control
+that shares another's heights gets its own namespace rather than borrowing one.
+`Input` is the case this rule was written for: `--spacing-input-*` names the same
+36/44/52 as `--spacing-button-*` rather than reading `h-button-md`, so a field
+and the button beside it can be retuned independently. They are meant to stay
+level, so `tokens.test.ts` asserts that outright — which is the difference
+between a coupling that is checked and one that is merely hoped for.
 
 **Adding a token means editing two files.** Put the value in `tokens.css` and
 the name in `src/styles/tokens.ts`. Miss the second and tailwind-merge stops

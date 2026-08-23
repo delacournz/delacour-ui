@@ -1,7 +1,14 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { BUTTON_SIZE_TOKENS, BUTTON_TEXT_TOKENS, ICON_SIZE_TOKENS, SCREEN_SIZE_TOKENS } from "./tokens";
+import {
+	BUTTON_SIZE_TOKENS,
+	BUTTON_TEXT_TOKENS,
+	ICON_SIZE_TOKENS,
+	INPUT_SIZE_TOKENS,
+	INPUT_TEXT_TOKENS,
+	SCREEN_SIZE_TOKENS,
+} from "./tokens";
 
 const CSS = readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8");
 
@@ -32,7 +39,7 @@ describe("tokens.ts and tokens.css", () => {
 			.filter((name) => name.startsWith("spacing-"))
 			.map((name) => name.replace("spacing-", ""))
 			.sort();
-		const registered = [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS].sort();
+		const registered = [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...INPUT_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS].sort();
 		expect(declared).toEqual(registered);
 	});
 
@@ -42,6 +49,14 @@ describe("tokens.ts and tokens.css", () => {
 			.map((name) => name.replace("text-", ""))
 			.sort();
 		expect(declared).toEqual([...BUTTON_TEXT_TOKENS].sort());
+	});
+
+	test("declare exactly the same input text tokens", () => {
+		const declared = [...TOKENS.keys()]
+			.filter((name) => name.startsWith("text-input-"))
+			.map((name) => name.replace("text-", ""))
+			.sort();
+		expect(declared).toEqual([...INPUT_TEXT_TOKENS].sort());
 	});
 });
 
@@ -75,5 +90,37 @@ describe("the button scale", () => {
 	test("scales the label with the height", () => {
 		const text = BUTTON_TEXT_TOKENS.map((token) => px(`text-${token}`));
 		expect(text).toEqual([...text].sort((a, b) => a - b));
+	});
+});
+
+describe("the input scale", () => {
+	test("ascends in the order the registry lists it", () => {
+		const values = INPUT_SIZE_TOKENS.map((token) => px(`spacing-${token}`));
+		expect(values).toEqual([...values].sort((a, b) => a - b));
+		expect(new Set(values).size).toBe(INPUT_SIZE_TOKENS.length);
+	});
+
+	test("pairs each height with a text size and an icon that fit inside it", () => {
+		for (const [index, token] of INPUT_SIZE_TOKENS.entries()) {
+			const height = px(`spacing-${token}`);
+			expect(px(`text-${INPUT_TEXT_TOKENS[index]}`)).toBeLessThan(height);
+			// A decorator's icon indexes the shared scale at the same step name.
+			expect(px(`spacing-icon-${token.replace("input-", "")}`)).toBeLessThan(height);
+		}
+	});
+
+	test("scales the text with the height", () => {
+		const text = INPUT_TEXT_TOKENS.map((token) => px(`text-${token}`));
+		expect(text).toEqual([...text].sort((a, b) => a - b));
+	});
+
+	// `Input` and `Button` are the two controls a form puts side by side, so a
+	// field that stood a step taller than the button beside it would read as a
+	// mistake. They are separate scales precisely so this is asserted rather
+	// than assumed — see the note in tokens.css.
+	test("stands exactly as tall as the button beside it", () => {
+		for (const [index, token] of INPUT_SIZE_TOKENS.entries()) {
+			expect(px(`spacing-${token}`)).toBe(px(`spacing-${BUTTON_SIZE_TOKENS[index]}`));
+		}
 	});
 });

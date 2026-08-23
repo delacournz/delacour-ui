@@ -26,8 +26,20 @@ export const ICON_SIZE_TOKENS = ["icon-xs", "icon-sm", "icon-md", "icon-lg", "ic
  */
 export const SCREEN_SIZE_TOKENS = ["navbar-row", "screen-gutter"] as const;
 
+/**
+ * Suffixes in the `--spacing-*` namespace: `h-input-md`, `min-h-input-md`.
+ *
+ * Read on two axes, unlike the button's: a single-line field takes the height
+ * as a fixed one and a multiline field takes it as a floor, so both `h-` and
+ * `min-h-` have to be recognised.
+ */
+export const INPUT_SIZE_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
+
 /** Suffixes in the `--text-*` namespace: `text-button-md`. */
 export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as const;
+
+/** Suffixes in the `--text-*` namespace: `text-input-md`. */
+export const INPUT_TEXT_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
 
 /**
  * The tailwind-merge extension both mergers in this package are built from.
@@ -42,8 +54,8 @@ export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as con
 export const TW_MERGE_CONFIG = {
 	extend: {
 		theme: {
-			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS],
-			text: [...BUTTON_TEXT_TOKENS],
+			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...INPUT_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS],
+			text: [...BUTTON_TEXT_TOKENS, ...INPUT_TEXT_TOKENS],
 		},
 	},
 } as const;

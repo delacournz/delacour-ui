@@ -26,6 +26,21 @@
 	--text-button-lg: 18px;
 
 	/*
+	 * Field heights, and the type scale paired step-for-step with them.
+	 *
+	 * A scale of its own rather than `--spacing-button-*`, even though the
+	 * numbers agree today: a control that borrowed the button's would retune
+	 * silently whenever the button's did.
+	 */
+	--spacing-input-sm: 36px;
+	--spacing-input-md: 44px;
+	--spacing-input-lg: 52px;
+
+	--text-input-sm: 14px;
+	--text-input-md: 16px;
+	--text-input-lg: 18px;
+
+	/*
 	 * The icon scale, shared by `Icon` and `Spinner` so a named size means the
 	 * same edge length in both and one can replace the other without the
 	 * layout moving. `size-icon-md`.

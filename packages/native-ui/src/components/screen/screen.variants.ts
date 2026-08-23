@@ -130,7 +130,7 @@ export const screenVariants = tv({
 		 */
 		footerContent: "gap-2 px-screen-gutter",
 		loading: "flex-1 items-center justify-center",
-		errorContent: "flex-1 items-center justify-center gap-2 px-screen-gutter",
+		errorContent: "flex-1 items-center justify-center gap-3 px-screen-gutter",
 		errorTitle: "text-center font-semibold text-foreground text-lg",
 		errorMessage: "text-center text-muted-foreground text-sm",
 	},

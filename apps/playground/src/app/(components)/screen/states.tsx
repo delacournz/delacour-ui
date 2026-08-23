@@ -30,7 +30,7 @@ export default function ScreenStatesDemo(): ReactElement {
 				message="The request timed out before the server answered. Check your connection and try again."
 				onBack={() => setState("picker")}
 			>
-				<Button haptic="medium" onPress={() => setState("loading")}>
+				<Button haptic="medium" onPress={() => setState("loading")} size="sm">
 					Try again
 				</Button>
 			</Screen.Error>
@@ -40,7 +40,7 @@ export default function ScreenStatesDemo(): ReactElement {
 	if (state === "error-bare") {
 		return (
 			<Screen.Error message="No navbar — for a root screen with nowhere to go back to." showNavbar={false}>
-				<Button onPress={() => setState("picker")} variant="outline">
+				<Button onPress={() => setState("picker")} variant="outline" size="sm">
 					Back to the picker
 				</Button>
 			</Screen.Error>

@@ -31,7 +31,7 @@ export type ScreenErrorProps = {
  *
  * @example
  * <Screen.Error message={error.message} onBack={() => router.back()}>
- *   <Button onPress={refetch}>Try again</Button>
+ *   <Button onPress={refetch} size="sm">Try again</Button>
  * </Screen.Error>
  */
 export function ScreenError({
@@ -48,8 +48,10 @@ export function ScreenError({
 			{showNavbar ? <ScreenNavbar>{onBack ? <ScreenNavbar.BackButton onPress={onBack} /> : null}</ScreenNavbar> : null}
 			<ScreenContent insets={["bottom"]}>
 				<View className={slots.errorContent()}>
-					<Text className={slots.errorTitle()}>{title}</Text>
-					<Text className={slots.errorMessage()}>{message}</Text>
+					<View className="gap-1">
+						<Text className={slots.errorTitle()}>{title}</Text>
+						<Text className={slots.errorMessage()}>{message}</Text>
+					</View>
 					{children}
 				</View>
 			</ScreenContent>

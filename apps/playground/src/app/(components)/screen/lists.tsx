@@ -1,8 +1,9 @@
 import { Button } from "@delacour/native-ui/button";
 import { Screen } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 type Engine = "flat" | "section" | "legend";
 
@@ -23,7 +24,7 @@ function RowView({ row }: { row: Row }): ReactElement {
 	return (
 		<View className="gap-0.5 border-border border-b px-5 py-3">
 			<Text className="font-medium text-base text-foreground">{row.title}</Text>
-			<Text className="text-muted-foreground text-sm">{row.detail}</Text>
+			<Text.Caption>{row.detail}</Text.Caption>
 		</View>
 	);
 }

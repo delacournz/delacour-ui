@@ -1,9 +1,10 @@
 import { Icon } from "@delacour/native-ui/icon";
 import { IconHeart } from "@delacour/native-ui/icons/central";
 import { PRESSABLE_FEEDBACKS, Pressable } from "@delacour/native-ui/pressable";
+import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
 
@@ -25,10 +26,10 @@ export default function PressableGallery(): ReactElement {
 	return (
 		<GalleryScreen subtitle={`Pressed ${pressCount} times`} title="Pressable">
 			<Section title="Named feedback">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					The vocabulary every pressable in the library shares. `scale-fade` moves both axes at once, taking each from
 					the mode that owns it.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{PRESSABLE_FEEDBACKS.map((feedback) => (
 						<Pressable
@@ -44,10 +45,10 @@ export default function PressableGallery(): ReactElement {
 			</Section>
 
 			<Section title="Explicit values">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					`pressedScale` and `pressedOpacity` cover what the named modes do not, and each wins on the axis it names. 1
 					is the neutral value on either.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{PRESS_STYLES.map((style) => (
 						<Pressable
@@ -58,18 +59,18 @@ export default function PressableGallery(): ReactElement {
 							pressedScale={style.pressedScale}
 						>
 							<Text className="font-semibold text-card-foreground text-base">{style.label}</Text>
-							<Text className="text-muted-foreground text-sm">
+							<Text.Caption>
 								scale {style.pressedScale}, opacity {style.pressedOpacity}
-							</Text>
+							</Text.Caption>
 						</Pressable>
 					))}
 				</View>
 			</Section>
 
 			<Section title="Haptics">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					The haptic fires inside the gesture worklet, so it lands in the same frame as the press.
-				</Text>
+				</Text.Caption>
 				<View className="flex-row flex-wrap gap-2">
 					{HAPTICS.map((haptic) => (
 						<Pressable
@@ -92,15 +93,15 @@ export default function PressableGallery(): ReactElement {
 					onPress={() => setLastEvent("press")}
 				>
 					<Text className="font-semibold text-card-foreground text-base">Press or hold</Text>
-					<Text className="text-muted-foreground text-sm">Last event: {lastEvent}</Text>
+					<Text.Caption>Last event: {lastEvent}</Text.Caption>
 				</Pressable>
 			</Section>
 
 			<Section title="Disabled and busy">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Both block the gesture; only `disabled` announces the control as disabled. Neither applies any opacity — that
 					is the caller&apos;s job.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					<Pressable className="rounded-xl bg-secondary p-4 opacity-50" disabled onPress={bump}>
 						<Text className="text-base text-secondary-foreground">disabled</Text>
@@ -115,17 +116,15 @@ export default function PressableGallery(): ReactElement {
 				<Pressable asChild haptic="medium" onPress={bump}>
 					<View className="gap-1 rounded-xl border border-border bg-card p-4">
 						<Text className="font-semibold text-card-foreground text-lg">Composed card</Text>
-						<Text className="text-muted-foreground text-sm">
-							Pressable renders into this View — no extra wrapper in the tree.
-						</Text>
+						<Text.Caption>Pressable renders into this View — no extra wrapper in the tree.</Text.Caption>
 					</View>
 				</Pressable>
 			</Section>
 
 			<Section title="Scroll check">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Drag from anywhere, including on a row, and the list should scroll rather than the row swallowing the gesture.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{Array.from({ length: 8 }, (_, i) => (
 						<Pressable

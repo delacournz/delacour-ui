@@ -4,9 +4,10 @@ import { LIST_GROUP_SIZES, LIST_GROUP_VARIANTS, ListGroup } from "@delacour/nati
 import { PRESSABLE_FEEDBACKS } from "@delacour/native-ui/pressable";
 import { Separator } from "@delacour/native-ui/separator";
 import { Spinner } from "@delacour/native-ui/spinner";
+import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
 
@@ -39,9 +40,9 @@ export default function ListGroupGallery(): ReactElement {
 			</Section>
 
 			<Section title="Sizes">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Size drives the row metrics, the type scale, both icon sizes and the divider inset together.
-				</Text>
+				</Text.Caption>
 				<View className="gap-4">
 					{LIST_GROUP_SIZES.map((size) => (
 						<ListGroup key={size} size={size}>
@@ -76,9 +77,9 @@ export default function ListGroupGallery(): ReactElement {
 					<ListGroup.Item onPress={bump}>Bluetooth</ListGroup.Item>
 					<ListGroup.Item onPress={bump}>Airplane mode</ListGroup.Item>
 				</ListGroup>
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					A bare string child is wrapped in a title inside a content column — React Native would crash on it otherwise.
-				</Text>
+				</Text.Caption>
 			</Section>
 
 			<Section title="Custom suffix">
@@ -91,7 +92,7 @@ export default function ListGroupGallery(): ReactElement {
 							<ListGroup.ItemTitle>Language</ListGroup.ItemTitle>
 						</ListGroup.ItemContent>
 						<ListGroup.ItemSuffix>
-							<Text className="text-muted-foreground text-sm">English</Text>
+							<Text.Caption>English</Text.Caption>
 						</ListGroup.ItemSuffix>
 					</ListGroup.Item>
 					<ListGroup.Item onPress={bump}>
@@ -126,10 +127,10 @@ export default function ListGroupGallery(): ReactElement {
 			</Section>
 
 			<Section title="Press feedback">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					`fade` is the default: a full-bleed row that scales reads as the whole card flexing. `scale-fade` does both at
 					once.
-				</Text>
+				</Text.Caption>
 				<ListGroup>
 					{PRESSABLE_FEEDBACKS.map((feedback) => (
 						<ListGroup.Item feedback={feedback} haptic="selection" key={feedback} onPress={bump}>
@@ -163,9 +164,9 @@ export default function ListGroupGallery(): ReactElement {
 			</Section>
 
 			<Section title="Dividers">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Off entirely with {"`isDivided={false}`"}; a hand-placed Separator suppresses the automatic one at that gap.
-				</Text>
+				</Text.Caption>
 				<View className="gap-4">
 					<ListGroup isDivided={false}>
 						<ListGroup.Item onPress={bump}>No divider</ListGroup.Item>

@@ -1,8 +1,9 @@
 import { Button } from "@delacour/native-ui/button";
 import { Screen, type ScreenPlacement } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 import { Section } from "@/components/section";
 
 /**
@@ -64,11 +65,11 @@ export default function ScreenFooterDemo(): ReactElement {
 						placeholderTextColor="#9CA3AF"
 						value={draft}
 					/>
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						{sticky
 							? "The footer rides the keyboard and sits flush on top of it."
 							: "The footer stays put and the keyboard covers it."}
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				<Section title="Top hairline">
@@ -88,23 +89,23 @@ export default function ScreenFooterDemo(): ReactElement {
 							fade at the end
 						</Button>
 					</View>
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						{placement === "overlay"
 							? "Only a static footer draws one — an overlay footer floats over the content."
 							: fadeBorderOnScroll
 								? "Drawn while there is content below, fading out over the last 20pt of the scroll."
 								: "Drawn from the first frame, separating the footer from the content above it."}
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				<Section title="Content">
 					<Button onPress={() => setTwoUp((current) => !current)} size="sm" variant="outline">
 						{twoUp ? "One action" : "Two actions"}
 					</Button>
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						The footer measures its content, so growing it re-reserves the scroll area's clearance with nothing said at
 						the call site.
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				{Array.from({ length: 14 }, (_, index) => (

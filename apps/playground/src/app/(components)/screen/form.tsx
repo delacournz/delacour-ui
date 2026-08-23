@@ -1,8 +1,9 @@
 import { Button } from "@delacour/native-ui/button";
 import { Screen } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, TextInput, View } from "react-native";
+import { TextInput, View } from "react-native";
 
 const FIELDS = [
 	"Full name",
@@ -36,13 +37,11 @@ export default function ScreenFormDemo(): ReactElement {
 			</Screen.Navbar>
 
 			<Screen.ScrollArea contentContainerClassName="gap-4 px-5 pt-4" keyboardAware>
-				<Text className="text-muted-foreground text-sm">
-					Tap the last field. It should sit directly above the Save button, not behind it.
-				</Text>
+				<Text.Caption>Tap the last field. It should sit directly above the Save button, not behind it.</Text.Caption>
 
 				{FIELDS.map((field) => (
 					<View className="gap-1.5" key={field}>
-						<Text className="font-medium text-foreground text-sm">{field}</Text>
+						<Text.Label>{field}</Text.Label>
 						<TextInput
 							className="h-button-md rounded-lg border border-border bg-card px-3 text-base text-foreground"
 							onChangeText={(text) => setValues((current) => ({ ...current, [field]: text }))}

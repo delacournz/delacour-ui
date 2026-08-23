@@ -11,9 +11,10 @@ import {
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Screen } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 const DEMOS = [
 	{
@@ -108,10 +109,10 @@ export default function ScreenGallery(): ReactElement {
 					))}
 				</ListGroup>
 
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					This page names no safe-area inset and no navbar height. The navbar measures itself into the screen context
 					and the scroll area reserves exactly that.
-				</Text>
+				</Text.Caption>
 			</Screen.ScrollArea>
 		</Screen>
 	);

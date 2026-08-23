@@ -2,9 +2,10 @@ import { Button } from "@delacour/native-ui/button";
 import { Icon } from "@delacour/native-ui/icon";
 import { IconMagnifyingGlass, IconSettingsGear1 } from "@delacour/native-ui/icons/central";
 import { Screen, type ScreenPlacement } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Section } from "@/components/section";
 
 const LAYOUTS = ["back + title", "title + subtitle", "centre + actions", "close only"] as const;
@@ -98,11 +99,11 @@ export default function ScreenNavbarDemo(): ReactElement {
 							</Button>
 						))}
 					</View>
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						{placement === "overlay"
 							? "Content scrolls under the bar, which floats over it."
 							: "The bar sits in the flow. Content starts below it and never passes beneath."}
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				<Section title="Bottom hairline">
@@ -122,18 +123,18 @@ export default function ScreenNavbarDemo(): ReactElement {
 							fade on scroll
 						</Button>
 					</View>
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						{fadeBorderOnScroll
 							? "Undivided at rest. Scroll and the line ramps in over the first 20pt."
 							: "Drawn from the first frame, so content starting flush against the bar still reads as separate."}
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				<Section title="Long titles">
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						Pick “title + subtitle”. The leading slot is min-w-0 and flex-1, so a long name truncates to one line rather
 						than pushing the actions off the right edge.
-					</Text>
+					</Text.Caption>
 				</Section>
 
 				{Array.from({ length: 12 }, (_, index) => (

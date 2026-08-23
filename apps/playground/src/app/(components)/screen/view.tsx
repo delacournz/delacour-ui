@@ -1,8 +1,9 @@
 import { Button } from "@delacour/native-ui/button";
 import { SCREEN_EDGES, Screen, type ScreenEdge } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 /**
  * A non-scrolling body, and the safe-area edges `Screen.Content` can inset.
@@ -37,7 +38,7 @@ export default function ScreenViewDemo(): ReactElement {
 			<Screen.Content insets={edges}>
 				<Screen.View className="gap-4 px-5">
 					<View className="flex-1 items-center justify-center gap-2 rounded-xl border border-border border-dashed">
-						<Text className="font-semibold text-foreground text-lg">Screen.View</Text>
+						<Text.Title>Screen.View</Text.Title>
 						<Text className="px-6 text-center text-muted-foreground text-sm">
 							This box is padded for the navbar above and the footer below, both measured rather than named.
 						</Text>

@@ -3,9 +3,10 @@ import { Icon } from "@delacour/native-ui/icon";
 import { IconBug, IconLayoutTopBottom } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Screen } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 const ROWS = Array.from({ length: 24 }, (_, index) => index + 1);
 
@@ -47,10 +48,10 @@ export default function ScreenScrollDemo(): ReactElement {
 
 			<Screen.ScrollArea contentContainerClassName="gap-4 px-5">
 				<Screen.Header className="px-0">
-					<Text className="text-muted-foreground text-sm">
+					<Text.Caption>
 						The navbar is {placement}, and draws its hairline at rest. The Navbar demo has the fadeBorderOnScroll
 						toggle.
-					</Text>
+					</Text.Caption>
 				</Screen.Header>
 
 				<View className="flex-row gap-2">

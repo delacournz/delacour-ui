@@ -10,9 +10,10 @@ import { Icon } from "@delacour/native-ui/icon";
 import { IconArrowRight, IconHeart, IconPlusMedium, IconTrashCan } from "@delacour/native-ui/icons/central";
 import { PRESSABLE_FEEDBACKS } from "@delacour/native-ui/pressable";
 import { Spinner } from "@delacour/native-ui/spinner";
+import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { GalleryScreen } from "@/components/gallery-screen";
 import { Section } from "@/components/section";
 import { useTransientLoading } from "@/hooks/use-transient-loading";
@@ -171,9 +172,9 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Feedback">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Inherited from Pressable, so a button takes the whole vocabulary. `scale` is the default.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{PRESSABLE_FEEDBACKS.map((feedback) => (
 						<Button feedback={feedback} key={feedback} onPress={bump} variant="secondary">
@@ -194,9 +195,9 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Loading, every variant">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Nothing is passed to the spinner — it reads the button&apos;s variant and size from context.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{BUTTON_VARIANTS.map((variant) => (
 						<LoadingButton key={variant} label={variant} spinnerPlacement="start" variant={variant} />
@@ -205,11 +206,11 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Loading replaces the icon">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					The spinner takes the icon&apos;s place rather than joining it, so the label does not move. Both are drawn at
 					the button&apos;s icon token, so the swap costs no layout. With an icon at each end, the placement decides
 					which one goes.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					<SwapButton label="Start icon" spinnerPlacement="start" />
 					<SwapButton label="End icon" spinnerPlacement="end" />
@@ -227,10 +228,10 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Spinner placement">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					`only` drops the label but keeps the button&apos;s footprint — these stay full width while loading. Pair it
 					with `isIconOnly` for a square.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{BUTTON_SPINNER_PLACEMENTS.map((placement) => (
 						<LoadingButton key={placement} label={`placement ${placement}`} spinnerPlacement={placement} />
@@ -238,14 +239,14 @@ export default function ButtonGallery(): ReactElement {
 				</View>
 				<View className="flex-row items-center gap-3">
 					<IconOnlyLoadingButton />
-					<Text className="text-muted-foreground text-sm">isIconOnly + only</Text>
+					<Text.Caption>isIconOnly + only</Text.Caption>
 				</View>
 			</Section>
 
 			<Section title="Loading and dimming">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Loading blocks the press but keeps full contrast. `isDimmedWhileLoading` fades it like `isDisabled`.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					<LoadingButton label="full contrast" spinnerPlacement="start" variant="secondary" />
 					<LoadingButton isDimmedWhileLoading label="dimmed" spinnerPlacement="start" variant="secondary" />
@@ -253,9 +254,9 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Loading in a row">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Not full width, so the width snaps when the spinner appears. Deliberately un-animated.
-				</Text>
+				</Text.Caption>
 				<View className="flex-row flex-wrap items-center gap-3">
 					<LoadingButton label="Save" spinnerPlacement="start" />
 					<LoadingButton label="Sync" spinnerPlacement="end" variant="outline" />
@@ -264,9 +265,7 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Spinner overrides the button">
-				<Text className="text-muted-foreground text-sm">
-					An explicit colour on a composed spinner still wins over the button&apos;s context.
-				</Text>
+				<Text.Caption>An explicit colour on a composed spinner still wins over the button&apos;s context.</Text.Caption>
 				<Button onPress={bump} variant="primary">
 					<Spinner color="#EC4899" />
 					<Button.Label>Explicit pink</Button.Label>
@@ -286,10 +285,10 @@ export default function ButtonGallery(): ReactElement {
 			</Section>
 
 			<Section title="Scroll check">
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Drag from anywhere, including on a button, and the list should scroll rather than the button swallowing the
 					gesture.
-				</Text>
+				</Text.Caption>
 				<View className="gap-3">
 					{Array.from({ length: 8 }, (_, i) => (
 						<Button haptic="selection" key={i} onPress={bump} variant="secondary">

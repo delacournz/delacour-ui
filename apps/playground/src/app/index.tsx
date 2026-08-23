@@ -5,13 +5,15 @@ import {
 	IconBulletList,
 	IconCursorClick,
 	IconDivider,
+	IconFontStyle,
 	IconLayoutTopBottom,
 	IconSquareCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Uniwind, useUniwind } from "uniwind";
 
@@ -54,6 +56,12 @@ const COMPONENTS = [
 		title: "Spinner",
 		description: "Sizes, colours, custom glyphs",
 	},
+	{
+		href: "/text",
+		icon: IconFontStyle,
+		title: "Text",
+		description: "Type scale, presets, inline nesting",
+	},
 ] as const;
 
 /**
@@ -77,8 +85,8 @@ export default function Index(): ReactElement {
 			contentContainerStyle={{ paddingBottom: insets.bottom + 32, paddingTop: insets.top + 16 }}
 		>
 			<View className="gap-1">
-				<Text className="font-bold text-3xl text-foreground">native-ui</Text>
-				<Text className="text-base text-muted-foreground">{COMPONENTS.length} components</Text>
+				<Text.Display>native-ui</Text.Display>
+				<Text.Paragraph color="muted">{COMPONENTS.length} components</Text.Paragraph>
 			</View>
 
 			<View className="flex-row gap-2">

@@ -1,5 +1,6 @@
+import { Text } from "@delacour/native-ui/text";
 import type { ReactElement, ReactNode } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 
 export type SectionProps = {
 	title: string;
@@ -10,7 +11,7 @@ export type SectionProps = {
 export function Section({ title, children }: SectionProps): ReactElement {
 	return (
 		<View className="gap-3">
-			<Text className="font-semibold text-muted-foreground text-sm uppercase tracking-wide">{title}</Text>
+			<Text.Overline size="sm">{title}</Text.Overline>
 			{children}
 		</View>
 	);

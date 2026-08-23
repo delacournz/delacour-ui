@@ -1,8 +1,9 @@
 import { Button } from "@delacour/native-ui/button";
 import { Screen } from "@delacour/native-ui/screen";
+import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Section } from "@/components/section";
 
 type State = "picker" | "loading" | "error" | "error-bare";
@@ -67,10 +68,10 @@ export default function ScreenStatesDemo(): ReactElement {
 					</View>
 				</Section>
 
-				<Text className="text-muted-foreground text-sm">
+				<Text.Caption>
 					Each is a whole Screen, returned in place of the route's content. Nesting one inside another Screen is safe
 					too — the provider passes the outer context through rather than shadowing it.
-				</Text>
+				</Text.Caption>
 			</Screen.ScrollArea>
 		</Screen>
 	);

@@ -203,10 +203,7 @@ export default function RadioGallery(): ReactElement {
 					<Radio value="a">
 						<Radio.Indicator className="border-success">
 							{({ isSelected }) => (
-								<Icon
-									color={isSelected ? "success" : "muted-foreground"}
-									icon={IconCheckmark1Small}
-								/>
+								<Icon color={isSelected ? "success" : "muted-foreground"} icon={IconCheckmark1Small} />
 							)}
 						</Radio.Indicator>
 						<Radio.Label>Children replace the dot</Radio.Label>

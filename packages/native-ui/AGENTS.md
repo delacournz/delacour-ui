@@ -54,6 +54,21 @@ src/
 │   │   ├── button.types.ts       Prop types shared by two or more parts
 │   │   ├── button.variants.ts    Pure tv() slots, no RN imports
 │   │   └── button.variants.test.ts
+│   ├── field/
+│   │   ├── index.ts              → @delacour/native-ui/field
+│   │   ├── field.tsx             Root + the Object.assign compound surface
+│   │   ├── field-set.tsx         Field.Set
+│   │   ├── field-legend.tsx      Field.Legend
+│   │   ├── field-group.tsx       Field.Group
+│   │   ├── field-content.tsx     Field.Content
+│   │   ├── field-label.tsx       Field.Label
+│   │   ├── field-description.tsx Field.Description
+│   │   ├── field-error.tsx       Field.Error
+│   │   ├── field-separator.tsx   Field.Separator
+│   │   ├── field.context.tsx     FieldProvider, useField(), useFieldPart()
+│   │   ├── field.types.ts        Prop types shared by two or more parts
+│   │   ├── field.variants.ts     Pure tv() slots + resolvers, no RN imports
+│   │   └── field.variants.test.ts
 │   ├── icon/
 │   │   ├── index.ts              → @delacour/native-ui/icon
 │   │   ├── icon.tsx              Icon, and the one withUniwind wrapper (see rule 6)
@@ -337,6 +352,13 @@ A text field, and the box that can hold content beside it. Root plus
   reads them from context — the same way a `ListGroup.Item` takes no `variant`.
   The field's own copies of those props are ignored while it is grouped. One box,
   one set of axes; two would be two answers to the same question.
+- **The two state axes have three sources, and the nearest wins:**
+  `Input.Group` → the `Input`'s own prop → the enclosing `Field`. An `Input`
+  inside `<Field isInvalid>` turns danger with nothing said at the call site, and
+  `<Input isInvalid={false} />` opts that one control out. `Input.Group` reads
+  the `Field` too, or a decorated field inside an invalid one would stay calm
+  while its label went red. Both are `??` chains, so an explicit `false` is a
+  value rather than an absence — the rule `pressedScale` already follows.
 - **Uniwind bridges the three colour *props*, so rule 7 is untouched.** A
   `TextInput`'s placeholder, caret and selection take a colour value, not a
   style, and uniwind's own `TextInput` — which is what a plain
@@ -389,6 +411,69 @@ A text field, and the box that can hold content beside it. Root plus
   value and not in name — this is the case **Sizing** anticipated. A token test
   asserts the two stay level, so either can be retuned without silently dragging
   the other along.
+
+## Field
+
+A form field's layout, and the one place its state is written down. Root plus
+`Field.Set`, `Field.Legend`, `Field.Group`, `Field.Content`, `Field.Label`,
+`Field.Description`, `Field.Error` and `Field.Separator`.
+
+- **Orientations**: `vertical` (default), `horizontal`.
+- **The cascade is a context, and it had to be.** `<Field isInvalid>` reddens the
+  control inside it, not just its own label. On the web shadcn does that with
+  `group-data-[invalid=true]/field:` — a parent-scoped selector. Uniwind has no
+  equivalent: its compiler reads `data-*` off a **single flat selector**
+  (`bundler/css-processor/processor.ts`) and its runtime matches them against
+  `props[attribute]` on **the component carrying the class**
+  (`core/native/store.ts`), so no class on a `Field` can reach the `Input`
+  inside it. There is no `group-*`, no `peer-*`, no `:has()`. Do not go looking
+  for one again.
+- **A data-attribute class would also leave `bun test`.** Even for a part styling
+  itself, `data-invalid:text-danger` moves the decision from `field.variants.ts`
+  into uniwind's runtime matcher, where no unit test can see it. The parts style
+  themselves from `tv()` booleans; the context is only for crossing a component
+  boundary.
+- **The text parts render the `Text` presets and pass a colour, never a scale.**
+  `Field.Label` *is* `Text.Label`; `Field.Description` and `Field.Error` are
+  `Text.Caption`. `resolveFieldTextColor` picks the colour and returns
+  `undefined` to mean "leave the preset's own alone" — which is exactly what
+  `Text`'s unnamed axes do. A `text-sm font-medium` in a slot here would be a
+  second definition of `Text.Label`, the thing that kept `Input` from shipping a
+  label part at all. A test asserts the text slots carry no size, weight or
+  colour.
+- **The gap ladder is the component.** `content` 0.5 → `root` 1.5 → `set` 4 →
+  `group` 5. A label attaches to the control beneath it rather than the one above
+  purely because the gap inside a field is tighter than the gap between two, and
+  nothing else is doing that work. The test pins the **ordering**, not the
+  numbers, so the spacing can be retuned without the test becoming a transcript
+  of it.
+- **Only the label fades when disabled.** The control dims itself, and a dimmed
+  description stacked on a dimmed control reads as two problems rather than one
+  state. The description stays muted when invalid too, so an appearing
+  `Field.Error` is the one line that changed.
+- **`Field.Error` renders nothing when it has no children**, so
+  `<Field.Error>{error}</Field.Error>` removes itself once the value is fixed.
+  It is deliberately **not** gated on `isInvalid`: a part that swallowed children
+  a caller actually wrote, because of a prop on a sibling, would be a part whose
+  absence is unexplainable from the call site. shadcn's `errors` array prop is
+  not ported — it exists to accept react-hook-form and Standard Schema shapes,
+  and this package takes no form dependency.
+- **`Field.Separator` draws two rules, not one with a label on top.** The web
+  version absolutely-positions a single rule and punches a hole in it with an
+  opaque `bg-background` label, which is invisible only while the separator sits
+  on exactly that colour — on a card or a sheet the hole shows as a block of the
+  wrong shade. Two rules and a gap assume nothing about what is behind them. The
+  playground's `/field/grouping` has the card case on screen.
+- **`Field.Group` inserts no dividers**, unlike `ListGroup`. A list of rows
+  without lines is a wall of text; fields are already held apart by whitespace,
+  and a rule between every one is noise.
+- **There is no `Field.Title`.** On the web it exists because a `<div>` is not a
+  `<label>` — label-styled text with nothing to point `htmlFor` at. React Native
+  has neither element nor association, so it and `Field.Label` would render the
+  same `Text`.
+- **A set holds no state.** `isInvalid` and `isDisabled` live on each `Field`,
+  because a whole section turning danger says less than the one field that is
+  actually wrong.
 
 ## Badge
 

@@ -1,6 +1,7 @@
 import { type ReactElement, type Ref, useCallback, useState } from "react";
 import { TextInput, type TextInputProps } from "react-native";
 import { composeRefs } from "../../lib/compose-refs";
+import { useFieldContext } from "../field/field.context";
 import { useInputGroupContext } from "./input.context";
 import {
 	type InputSize,
@@ -26,9 +27,15 @@ export type InputProps = Omit<TextInputProps, "placeholderTextColorClassName"> &
 	variant?: InputVariant;
 	/** Size of the box and the value's type scale. Ignored inside an `Input.Group`. */
 	size?: InputSize;
-	/** Reports an invalid value. Ignored inside an `Input.Group`. */
+	/**
+	 * Reports an invalid value. Ignored inside an `Input.Group`, which owns it;
+	 * inherited from an enclosing `Field` when neither names it.
+	 */
 	isInvalid?: boolean;
-	/** Blocks editing and fades the field. Ignored inside an `Input.Group`. */
+	/**
+	 * Blocks editing and fades the field. Ignored inside an `Input.Group`, which
+	 * owns it; inherited from an enclosing `Field` when neither names it.
+	 */
 	isDisabled?: boolean;
 	/**
 	 * Placeholder colour, as an `accent-*` utility — `accent-muted-foreground`.
@@ -59,14 +66,19 @@ function InputRoot({
 	...props
 }: InputProps): ReactElement {
 	const group = useInputGroupContext();
+	const field = useFieldContext();
 	const [ownFocused, setOwnFocused] = useState(false);
 
+	// Nearest wins, and there are three sources for the two state axes.
+	//
 	// Inside a group the box belongs to the group, so the axes that draw one do
-	// too — the same way a `ListGroup.Item` takes no `variant`. Reading them
-	// from the field as well would put two answers where there is one box.
+	// too — the same way a `ListGroup.Item` takes no `variant`. An enclosing
+	// `Field` is the outermost of the three and therefore the last fallback, so
+	// a field with no props of its own turns danger with the `Field` around it
+	// while `<Input isInvalid={false} />` still opts out of one.
 	const resolved = {
-		isDisabled: group?.isDisabled ?? isDisabled ?? false,
-		isInvalid: group?.isInvalid ?? isInvalid ?? false,
+		isDisabled: group?.isDisabled ?? isDisabled ?? field?.isDisabled ?? false,
+		isInvalid: group?.isInvalid ?? isInvalid ?? field?.isInvalid ?? false,
 		size: group?.size ?? size ?? "md",
 		variant: group?.variant ?? variant ?? "primary",
 	};

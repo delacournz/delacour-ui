@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import type { TextInput } from "react-native";
+import { useFieldContext } from "../field/field.context";
 import { Pressable } from "../pressable";
 import { type InputGroupContextValue, InputGroupProvider } from "./input.context";
 import { type InputSize, type InputVariant, resolveInputGroupClass } from "./input.variants";
@@ -11,9 +12,15 @@ export type InputGroupProps = {
 	variant?: InputVariant;
 	/** Size of the box, the field's type scale and a decorator's icon. */
 	size?: InputSize;
-	/** Reports an invalid value: the border, the caret and the decorators all turn danger. */
+	/**
+	 * Reports an invalid value: the border, the caret and the decorators all turn
+	 * danger. Inherited from an enclosing `Field` when it is not given.
+	 */
 	isInvalid?: boolean;
-	/** Disables the field inside and fades the whole box. */
+	/**
+	 * Disables the field inside and fades the whole box. Inherited from an
+	 * enclosing `Field` when it is not given.
+	 */
 	isDisabled?: boolean;
 	className?: string;
 	children?: ReactNode;
@@ -22,17 +29,34 @@ export type InputGroupProps = {
 function InputGroupRoot({
 	variant = "primary",
 	size = "md",
-	isInvalid = false,
-	isDisabled = false,
+	isInvalid,
+	isDisabled,
 	className,
 	children,
 }: InputGroupProps): ReactElement {
 	const fieldRef = useRef<TextInput | null>(null);
+	const field = useFieldContext();
 	const [isFocused, setFocused] = useState(false);
 
+	// An enclosing `Field` is the outermost source, so it is the last fallback:
+	// a group inside an invalid field turns danger with it, and a group that
+	// names its own state overrides that. These are deliberately not defaulted
+	// in the destructure — `false` there would swallow the field before it was
+	// ever consulted.
+	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
+	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
+
 	const context = useMemo<InputGroupContextValue>(
-		() => ({ fieldRef, isDisabled, isFocused, isInvalid, setFocused, size, variant }),
-		[isDisabled, isFocused, isInvalid, size, variant]
+		() => ({
+			fieldRef,
+			isDisabled: resolvedIsDisabled,
+			isFocused,
+			isInvalid: resolvedIsInvalid,
+			setFocused,
+			size,
+			variant,
+		}),
+		[resolvedIsDisabled, isFocused, resolvedIsInvalid, size, variant]
 	);
 
 	// A lone field is its own tap target edge to edge. Inside a group the field
@@ -44,8 +68,15 @@ function InputGroupRoot({
 		<InputGroupProvider value={context}>
 			<Pressable
 				accessible={false}
-				className={resolveInputGroupClass({ className, isDisabled, isFocused, isInvalid, size, variant })}
-				disabled={isDisabled}
+				className={resolveInputGroupClass({
+					className,
+					isDisabled: resolvedIsDisabled,
+					isFocused,
+					isInvalid: resolvedIsInvalid,
+					size,
+					variant,
+				})}
+				disabled={resolvedIsDisabled}
 				feedback="none"
 				onPress={focusField}
 			>

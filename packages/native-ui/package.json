@@ -10,6 +10,7 @@
 		"./styles/theme": "./src/styles/theme.css",
 		"./badge": "./src/components/badge/index.ts",
 		"./button": "./src/components/button/index.ts",
+		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",

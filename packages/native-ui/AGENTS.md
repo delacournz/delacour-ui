@@ -163,6 +163,17 @@ src/
 │   │   ├── spinner.context.tsx   SpinnerContext, useSpinner(), useSpinnerContext()
 │   │   ├── spinner.variants.ts   Pure tv() slots + resolvers, no RN imports
 │   │   └── spinner.variants.test.ts
+│   ├── switch/
+│   │   ├── index.ts              → @delacour/native-ui/switch
+│   │   ├── switch.tsx            Root — owns the pan, the state and the track
+│   │   ├── switch-thumb.tsx      Switch.Thumb, the knob and its one animated style
+│   │   ├── switch-content.tsx    The shared body behind both content layers
+│   │   ├── switch-start-content.tsx  Switch.StartContent
+│   │   ├── switch-end-content.tsx    Switch.EndContent
+│   │   ├── switch.context.tsx    SwitchContext, useSwitch(), useSwitchContext(), useSwitchPart()
+│   │   ├── switch.types.ts       Prop types shared by two or more parts
+│   │   ├── switch.variants.ts    Pure tv() slots + the release worklet, no RN imports
+│   │   └── switch.variants.test.ts
 │   └── text/
 │       ├── index.ts              → @delacour/native-ui/text
 │       ├── text.tsx              Root, all twelve presets, the Object.assign surface
@@ -888,6 +899,120 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   accident. The slider does **not** register `field.registerPress` the way a
   `Checkbox` does — a row-wide press has no meaning for a control whose value is a
   position.
+
+## Switch
+
+A binary preference, flipped by a tap or by dragging its thumb. Compound root
+plus `Switch.Thumb`, `Switch.StartContent` and `Switch.EndContent`. It inherits
+almost every structural decision from **Slider**, which is the section to read
+first — what follows is only where a switch differs.
+
+- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+  Badge's, Checkbox's and Slider's set. **Sizes**: `sm`, `md`, `lg`. There is no
+  `variant` axis: a switch has one shape, and a second way to paint it would be
+  a second thing to keep in step with the checkbox beside it.
+- **The root is not a `Pressable`**, for `Slider`'s three reasons: its
+  `Gesture.Tap()` would fire `onPress` on every toggle, its root `Animated.View`
+  already owns `transform` — which is exactly what a thumb's position is — and a
+  thumb inside its own pressable would nest a descendant recogniser in the
+  root's. `HapticFeedback` and `playHaptic` are imported from `pressable.tsx`,
+  which is what that export is for.
+- **One `Gesture.Pan()` serves the tap and the drag, and there is no `Tap` to
+  race it.** A release whose finger barely moved *is* the tap, which
+  `resolveSwitchRelease` decides along with everything else: tap slop first, then
+  a flick's velocity, then the position. Two recognisers would have to negotiate
+  which one owned a press that turned into a drag, and the negotiation is the
+  bug — this way there is nothing to arbitrate.
+- **`distance` is the larger of the two axes, not the along-track
+  translation.** A vertical swipe that began on the switch moves nothing
+  horizontally, so reading only that axis would call every attempt to scroll past
+  the control a tap and toggle it. Reading both means such a swipe is movement
+  with no travel, which settles back to the state it started in — the switch is
+  left alone.
+- **The value is settled in `onFinalize`, and only there.** Unlike a slider there
+  is nothing to write on `onBegin`: a switch has no position to move a handle to,
+  only a state to end up in. `onFinalize` is still the callback because it is the
+  one that fires on every path, the never-activated one included — which is
+  exactly the path a stationary tap takes.
+- **`minDistance(0)` and `shouldCancelWhenOutside(false)`**, for the reasons
+  **Slider** sets out. The cost is the same one: a drag that starts on the switch
+  is the switch's, so you cannot scroll a list by putting your finger on one.
+- **The geometry is one number.** The thumb reads `--spacing-icon-*`; the track
+  is the thumb plus twice `SWITCH_THUMB_INSET`, and one thumb longer than it is
+  tall — so **the thumb travels exactly its own width**. No `--spacing-switch-*`
+  was minted, the call `Checkbox` makes for its square and `Slider` for its
+  handle. A test reads `tokens.css` and asserts the arithmetic rather than the
+  points, so the icon scale can be retuned and the pill stays in proportion.
+- **The track and its touch padding ride in the same size cell**, summing to 44pt
+  at every size, and the test asserts the sum rather than the parts — `Slider`'s
+  rule, and the trap it names: split them across two variants and a shorter track
+  silently shrinks the target.
+- **Every colour on the control is interpolated, so the `tv()` describes almost
+  none of it.** The track, the thumb and both content layers fade between two
+  token *values* off the one `progress`, and a colour being interpolated cannot
+  be a class — `Checkbox`'s border, four times over. The slot set keeps
+  `bg-secondary` and `bg-background` as the resting appearance those styles start
+  from and names no colour anywhere else; the maps are the single source. There
+  is deliberately **no `color` axis in the `tv()`** — a `bg-*` per colour there
+  would be a second source for one surface, which is how a class and a style end
+  up disagreeing for a frame on every toggle.
+- **The thumb takes the `-foreground` of the track it is travelling on**, so a
+  pale knob is never left unreadable on `warning`. `default` is the exception the
+  theme forces: there is no `--color-foreground-foreground`, and `background` is
+  what content drawn on the page's ink actually is. A test pins the whole map
+  against the track's.
+- **`Switch.StartContent` and `.EndContent` crossfade themselves.** Start sits at
+  the leading edge, which the knob vacates as the switch turns **on**, so it fades
+  in with `progress`; end is the mirror. That is the whole reason both can be
+  written once with no `isSelected &&` at the call site — the knob reads as
+  uncovering the other end rather than sliding over content that was always
+  there. Each layer is exactly the thumb's footprint at its own end, so a glyph is
+  centred on the space the knob will vacate rather than beside it, and each
+  publishes an `IconDefaultsProvider` and a `TextClassProvider` for the surface it
+  sits on: the coloured track for start, the resting one for end.
+- **A glyph's colour is a token and a `Text`'s is a class**, so
+  `SWITCH_CONTENT_TEXT_CLASS` exists beside `SWITCH_THUMB_TOKEN` rather than being
+  derived from it — Tailwind's scanner is static, so a runtime `text-${token}` is
+  never compiled and would silently draw nothing. A test pins every entry against
+  the token it must agree with.
+- **The thumb is drawn last however the children were written.** Every part is
+  absolutely positioned and React Native paints later siblings on top, so a
+  `Switch.Thumb` written first — which is the order the anatomy reads best in —
+  would slide *under* the content layers. The root reorders rather than leaving a
+  gotcha in the API, and composes one in when the children hold none, so
+  `<Switch />` is already a complete control.
+- **The thumb does not grow when grabbed**, unlike a `Slider`'s. The track clips,
+  so a scaled knob would be cut off by its own capsule — and a knob already
+  following the finger does not need a second signal that it was grabbed.
+- **The haptic fires at the commit, never at the grab.** A slider ticks on grab
+  because the grab already moves the value; a switch dragged half way and released
+  back has changed nothing, and one that buzzed for it would be reporting a state
+  change that did not happen. Default `haptic="selection"`, matching `Checkbox`.
+- **`settledDrags` and the `isDragging` ref are `Slider`'s, verbatim in shape.**
+  A controlled parent that rejects a dragged value leaves the state unchanged, so
+  without a token that moves on every release the sync effect has nothing to
+  re-run on and the thumb stays where the finger let go. The playground's
+  `/switch` has a switch that rejects every change, so the spring-back is on
+  screen rather than merely asserted.
+- **Reduce motion is left at Reanimated's default `System`**, with `Radio` and
+  `Checkbox` and against `Spinner`. The state is carried by the thumb's
+  *position*, so snapping straight to it is the right degradation.
+- **The accessibility surface is written out, because there is no `Pressable` to
+  inherit it from.** `accessibilityRole="switch"` and a checked state announce it;
+  `onAccessibilityTap` and an `activate` entry in `accessibilityActions` are what
+  actually flip it, on iOS and Android respectively. Without them the switch would
+  announce its state and offer no way to change it — the same gap
+  `Slider.Thumb`'s `adjustable` actions close.
+- **There is no `Switch.Label` and no `Switch.Group`.** The track is a fixed pill
+  and a label cannot sit inside it, so the name is a `Field.Label` or a
+  `ListGroup.ItemTitle` a row away — and unlike `Slider`, the switch **does**
+  register `field.registerPress`, because a row-wide press means exactly what a
+  tap on the pill means. A switch is a binary preference, not one of a set, so
+  there is nothing for a group to own; the axis ladder is two rungs, the switch's
+  own props then an enclosing `Field`.
+- **RTL is not handled.** The thumb travels on `translateX`, which does not flip,
+  and nothing else in this package handles it yet. Stated here rather than
+  half-solved.
 
 ## Badge
 

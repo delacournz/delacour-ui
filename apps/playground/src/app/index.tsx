@@ -14,6 +14,7 @@ import {
 	IconSquareCheck,
 	IconSquareCursor,
 	IconTag,
+	IconToggle,
 	IconWindowCursor,
 } from "@delacour/native-ui/icons/central";
 import { ListGroup } from "@delacour/native-ui/list-group";
@@ -98,6 +99,12 @@ const COMPONENTS = [
 		icon: IconArrowsRepeatCircle,
 		title: "Spinner",
 		description: "Sizes, colours, custom glyphs",
+	},
+	{
+		href: "/switch",
+		icon: IconToggle,
+		title: "Switch",
+		description: "Drag or tap, colours, sizes, end content",
 	},
 	{
 		href: "/text",

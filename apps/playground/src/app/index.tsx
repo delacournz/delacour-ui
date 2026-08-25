@@ -3,6 +3,7 @@ import { Icon } from "@delacour/native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
 	IconBulletList,
+	IconChevronGrabberVertical,
 	IconCircleRecord,
 	IconCursorClick,
 	IconDiamond,
@@ -29,6 +30,12 @@ import { Uniwind, useUniwind } from "uniwind";
 const THEMES = ["light", "dark", "system"] as const;
 
 const COMPONENTS = [
+	{
+		href: "/accordion",
+		icon: IconChevronGrabberVertical,
+		title: "Accordion",
+		description: "Selection modes, measured panels, indicators",
+	},
 	{
 		href: "/badge",
 		icon: IconTag,

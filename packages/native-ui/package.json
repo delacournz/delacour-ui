@@ -9,6 +9,7 @@
 		"./styles/tokens": "./src/styles/tokens.css",
 		"./styles/theme": "./src/styles/theme.css",
 		"./badge": "./src/components/badge/index.ts",
+		"./bottom-sheet": "./src/components/bottom-sheet/index.ts",
 		"./button": "./src/components/button/index.ts",
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./field": "./src/components/field/index.ts",
@@ -69,9 +70,6 @@
 		"uniwind": "^1.11.0"
 	},
 	"peerDependenciesMeta": {
-		"@gorhom/bottom-sheet": {
-			"optional": true
-		},
 		"@legendapp/list": {
 			"optional": true
 		},

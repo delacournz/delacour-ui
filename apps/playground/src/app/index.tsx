@@ -8,6 +8,7 @@ import {
 	IconDiamond,
 	IconDivider,
 	IconFontStyle,
+	IconLayoutBottomFull,
 	IconLayoutTopBottom,
 	IconParagraph,
 	IconSettingsSliderHor,
@@ -33,6 +34,12 @@ const COMPONENTS = [
 		icon: IconTag,
 		title: "Badge",
 		description: "Variants, colours, sizes, dismiss",
+	},
+	{
+		href: "/bottom-sheet",
+		icon: IconLayoutBottomFull,
+		title: "Bottom sheet",
+		description: "Overlay, snap points, sticky footer, keyboard",
 	},
 	{
 		href: "/button",

@@ -1,3 +1,4 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import type { ReactElement, ReactNode } from "react";
 import type { StyleProp, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -37,7 +38,7 @@ export type DelacourProviderProps = {
  * Mount it ONCE, around everything — a root layout, an `App.tsx`. It is not
  * idempotent and does not detect an enclosing copy of itself; see AGENTS.md.
  *
- * Four layers, outermost first, and the order is not stylistic:
+ * Five layers, outermost first, and the order is not stylistic:
  *
  * 1. `GestureHandlerRootView` — an ancestor native view every gesture handler
  *    `Pressable` creates has to attach to. Its absence is silent: no error, no
@@ -51,6 +52,15 @@ export type DelacourProviderProps = {
  *    `will` events, so a keyboard that vanishes without one — an interactive
  *    dismiss interrupted by navigation, a stack pop, an app suspend — leaves
  *    every screen in the app believing it is still open.
+ * 5. `BottomSheetModalProvider` — the host every `BottomSheet` portals into. It
+ *    goes innermost because it draws ABOVE the app and reads every layer over
+ *    it: the gesture root for the pan, the safe area for its insets, and the
+ *    keyboard values a sheet's footer rides. It wraps `{children}` and nothing
+ *    else moves, which is what a new layer here always looks like.
+ *
+ * `KeyboardStateSync` stays a SIBLING of it rather than a child. The repair is
+ * global and has to run for the whole app's lifetime; inside a layer that can
+ * remount it would be torn down with it.
  *
  * There are no per-layer escape hatches and no layer-named props on purpose.
  * An app that needs a different stack composes the providers by hand; they are
@@ -86,7 +96,7 @@ export function DelacourProvider({
 			<SafeAreaProvider initialMetrics={initialMetrics}>
 				<KeyboardProvider>
 					<KeyboardStateSync />
-					{children}
+					<BottomSheetModalProvider>{children}</BottomSheetModalProvider>
 				</KeyboardProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

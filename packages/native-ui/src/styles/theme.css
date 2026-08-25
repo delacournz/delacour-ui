@@ -41,6 +41,17 @@
 			--color-border: #e6e6e6;
 			--color-input: #dcdcdc;
 			--color-ring: #a1a1a1;
+
+			/*
+			 * The scrim a BottomSheet draws over the app it covers.
+			 *
+			 * A surface token with no `-foreground`: nothing is ever drawn on it,
+			 * and the sheet in front carries its own. It is not `bg-black/50` at a
+			 * call site because a pure-black scrim over a near-black dark theme is
+			 * nearly invisible — the two variants below differ on purpose, and the
+			 * alpha lives with the colour so a caller never has to restate it.
+			 */
+			--color-overlay: rgba(0, 0, 0, 0.45);
 		}
 
 		@variant dark {
@@ -84,6 +95,7 @@
 			--color-border: #2b2b2b;
 			--color-input: #333333;
 			--color-ring: #737373;
+			--color-overlay: rgba(0, 0, 0, 0.65);
 		}
 	}
 }

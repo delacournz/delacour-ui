@@ -191,6 +191,12 @@ export const SWITCH_INVALID_CONTENT_TEXT_CLASS = "text-danger-foreground";
  * the travel comes out at exactly one thumb width. A test reads `tokens.css` and
  * pins it, so the icon scale can be retuned and the pill stays in proportion.
  *
+ * **Every slot that can hold a caller's content centres it.** The thumb and both
+ * content layers are boxes a glyph is dropped into, and a `View` lays a child out
+ * at flex-start by default — so a glyph in a knob that did not centre sits up
+ * against its top-left corner, inside a circle, which reads as a mispositioned
+ * icon rather than as a missing class. A test sweeps all three.
+ *
  * **`overflow-hidden` on the track is load-bearing, not tidiness.** A caller's
  * `Switch.StartContent` is arbitrary content sitting inside a fully rounded
  * capsule, and without the clip a wide glyph paints over the track's own edge.
@@ -221,7 +227,7 @@ export const switchVariants = tv({
 		/** The capsule. Its colour is an animated style, never a class. */
 		track: "relative justify-center overflow-hidden rounded-full bg-secondary",
 		/** The knob. Its position and its colour are one animated style. */
-		thumb: "absolute left-0.5 rounded-full border border-border bg-background",
+		thumb: "absolute left-0.5 items-center justify-center rounded-full border border-border bg-background",
 		/** Behind the thumb at the leading edge. Revealed as the switch turns on. */
 		startContent: "absolute left-0.5 items-center justify-center",
 		/** Behind the thumb at the trailing edge. Revealed as the switch turns off. */

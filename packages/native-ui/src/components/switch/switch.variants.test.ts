@@ -202,6 +202,19 @@ describe("switchVariants slots", () => {
 		}
 	});
 
+	test("every slot that can hold content centres it", () => {
+		// A View lays a child out at flex-start by default, so a glyph dropped into
+		// an uncentred knob sits against its top-left corner inside a circle — which
+		// reads as a mispositioned icon rather than as a missing class.
+		for (const size of SWITCH_SIZES) {
+			const slots = slotsFor(size);
+			for (const value of [slots.thumb(), slots.startContent(), slots.endContent()]) {
+				expect(cls(value)).toMatch(/\bitems-center\b/);
+				expect(cls(value)).toMatch(/\bjustify-center\b/);
+			}
+		}
+	});
+
 	test("the track clips, so composed content cannot paint over the capsule's edge", () => {
 		for (const size of SWITCH_SIZES) {
 			expect(cls(slotsFor(size).track())).toMatch(/\boverflow-hidden\b/);

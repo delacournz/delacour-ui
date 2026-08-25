@@ -29,6 +29,8 @@ import {
 	resolveSwitchAxes,
 	resolveSwitchRelease,
 	resolveSwitchTrackTokens,
+	SWITCH_PRESS_ANIMATION,
+	SWITCH_PRESS_SPRING,
 	SWITCH_THUMB_INSET,
 	SWITCH_THUMB_SPRING,
 	type SwitchColor,
@@ -90,6 +92,10 @@ function SwitchRoot({
 	// grab rather than to the leading edge — picking up a half-travelled thumb
 	// mid-spring does not snap it to the finger.
 	const grabbed = useSharedValue(0);
+	// Whether a finger is down, driving the track's press scale. A shared value
+	// rather than state: nothing renders differently for it, so a commit on every
+	// touch would be pure cost.
+	const isPressed = useSharedValue(0);
 
 	// A ref rather than state: the pan reads it twice a drag and nothing renders
 	// differently for it, so a re-render on touch-down would be pure cost.
@@ -142,6 +148,7 @@ function SwitchRoot({
 				.onBegin(() => {
 					"worklet";
 					grabbed.value = progress.value;
+					isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
 					scheduleOnRN(setDragging, true);
 				})
 				.onUpdate((event) => {
@@ -168,6 +175,7 @@ function SwitchRoot({
 					});
 
 					progress.value = withSpring(target ? 1 : 0, SWITCH_THUMB_SPRING);
+					isPressed.value = withSpring(0, SWITCH_PRESS_SPRING);
 					// At the commit, never at the grab. A drag taken half way and
 					// released back has changed nothing, and a switch that buzzed for it
 					// would be reporting a state change that did not happen.
@@ -179,7 +187,7 @@ function SwitchRoot({
 					scheduleOnRN(setDragging, false);
 					scheduleOnRN(commit, target);
 				}),
-		[axes.isDisabled, commit, grabbed, haptic, progress, selected, setDragging, thumbWidth, trackWidth]
+		[axes.isDisabled, commit, grabbed, haptic, isPressed, progress, selected, setDragging, thumbWidth, trackWidth]
 	);
 
 	const toggle = useCallback(() => {
@@ -208,8 +216,24 @@ function SwitchRoot({
 	const restColor = useThemeColor(trackTokens.rest) ?? "transparent";
 	const activeColor = useThemeColor(trackTokens.active) ?? "transparent";
 
+	// One animated style on one node: the colour the switch travels through and
+	// the press scale are two entries here rather than two `useAnimatedStyle`
+	// calls, because two on one view fight for the same props and the later one
+	// silently wins — the rule `Radio.Indicator` states.
+	//
+	// The colour interpolates off `progress` rather than running a timing of its
+	// own against `selected`, so the track colours *with the finger* through a
+	// drag instead of snapping when it is let go. A separate timing would also be
+	// a second clock the position could drift from.
 	const trackStyle = useAnimatedStyle(() => ({
 		backgroundColor: interpolateColor(progress.value, [0, 1], [restColor, activeColor]),
+		transform: [
+			{
+				scale:
+					SWITCH_PRESS_ANIMATION.restScale -
+					isPressed.value * (SWITCH_PRESS_ANIMATION.restScale - SWITCH_PRESS_ANIMATION.pressedScale),
+			},
+		],
 	}));
 
 	const context = useMemo<SwitchContextValue>(
@@ -295,11 +319,43 @@ const ACCESSIBILITY_ACTIONS = [{ name: "activate" }] as const;
  */
 function withThumb(children: ReactNode): ReactNode {
 	const items = Children.toArray(children);
-	const isThumb = items.map((child) => isValidElement(child) && child.type === SwitchThumb);
+	const isThumb = items.map(isSwitchThumbElement);
 
 	if (!hasThumbChild(isThumb)) return [...items, <SwitchThumb key="thumb" />];
 
 	return [...items.filter((_, index) => !isThumb[index]), ...items.filter((_, index) => isThumb[index])];
+}
+
+/**
+ * Whether a child is a `Switch.Thumb`.
+ *
+ * **Reference equality is asked first and is not trusted alone.** A consuming
+ * app compiles this package's source itself — the package ships raw `.tsx` — so
+ * the function this module holds and the one behind a caller's `<Switch.Thumb>`
+ * are only the same object while nothing has rewritten the binding in between.
+ * React Compiler does exactly that, and Metro can serve two instances of one
+ * module through a workspace symlink; either leaves an element whose `type` is a
+ * different object standing for the same component.
+ *
+ * The failure is silent and specific: detection returns false, a second thumb is
+ * composed in on top of the caller's, and because the two are the same size and
+ * colour the only visible symptom is that anything *inside* the caller's knob
+ * disappears under the default one. It cost an afternoon to find, which is why
+ * the check no longer rests on identity.
+ *
+ * `displayName` is what it rests on instead. Rule 12 requires every component in
+ * this package to carry one, `display-name.test.ts` enforces that they are
+ * present and unique, and it survives every rewrite above because it is a
+ * property assigned to the function rather than the function itself. Read off
+ * the element's own `type`, which is a function today and would be an object if
+ * this part were ever wrapped in `memo`.
+ */
+function isSwitchThumbElement(child: ReactNode): boolean {
+	if (!isValidElement(child)) return false;
+	if (child.type === SwitchThumb) return true;
+
+	const type = child.type as { displayName?: string } | null;
+	return type?.displayName !== undefined && type.displayName === SwitchThumb.displayName;
 }
 
 /**

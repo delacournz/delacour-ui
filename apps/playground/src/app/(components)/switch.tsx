@@ -73,8 +73,9 @@ export default function SwitchGallery(): ReactElement {
 
 			<Section title="Sizes">
 				<Text.Caption>
-					The thumb reads the shared icon scale and everything else follows: the track is the thumb plus twice the
-					inset, and one thumb longer than it is tall — so the thumb always travels exactly its own width.
+					The knob is a rounded rectangle lying on its side, not a disc: as wide as the track is tall, and shorter than
+					it by twice the vertical inset. Both are fully rounded, so the two capsules come out concentric by
+					construction rather than by a number.
 				</Text.Caption>
 				<View className="gap-3">
 					{SWITCH_SIZES.map((size) => (
@@ -114,12 +115,20 @@ export default function SwitchGallery(): ReactElement {
 				</Text.Caption>
 				<View className="flex-row items-center gap-4">
 					<Switch color="success" defaultSelected size="lg">
-						<Switch.StartContent>ON</Switch.StartContent>
-						<Switch.EndContent>OFF</Switch.EndContent>
+						<Switch.StartContent>
+							<Text>ON</Text>
+						</Switch.StartContent>
+						<Switch.EndContent>
+							<Text>OFF</Text>
+						</Switch.EndContent>
 					</Switch>
 					<Switch color="danger" size="lg">
-						<Switch.StartContent>ON</Switch.StartContent>
-						<Switch.EndContent>OFF</Switch.EndContent>
+						<Switch.StartContent>
+							<Text>ON</Text>
+						</Switch.StartContent>
+						<Switch.EndContent>
+							<Text>OFF</Text>
+						</Switch.EndContent>
 					</Switch>
 				</View>
 			</Section>

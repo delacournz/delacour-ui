@@ -47,10 +47,10 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  * drawn before then sits at a garbage offset for a frame, which reads as a
  * flicker on every mount.
  *
- * **It does not grow when grabbed**, unlike a `Slider`'s. The track clips, so a
- * scaled knob would be cut off by its own capsule — and a control whose knob is
- * already following the finger does not need a second signal that it was
- * grabbed.
+ * **It does not scale when grabbed, and the track does instead.** The track
+ * clips, so a scaled knob would be cut off by its own capsule — a bite taken out
+ * of the knob rather than an acknowledgement of the press. The outermost node is
+ * the one thing nothing can crop, so that is where the press feedback lives.
  */
 export function SwitchThumb({ className, children, ...props }: SwitchThumbProps): ReactElement {
 	const { color, size, isInvalid, isDisabled, progress, trackWidth, thumbWidth } = useSwitchPart("Switch.Thumb");

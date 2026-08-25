@@ -937,12 +937,37 @@ first — what follows is only where a switch differs.
 - **`minDistance(0)` and `shouldCancelWhenOutside(false)`**, for the reasons
   **Slider** sets out. The cost is the same one: a drag that starts on the switch
   is the switch's, so you cannot scroll a list by putting your finger on one.
-- **The geometry is one number.** The thumb reads `--spacing-icon-*`; the track
-  is the thumb plus twice `SWITCH_THUMB_INSET`, and one thumb longer than it is
-  tall — so **the thumb travels exactly its own width**. No `--spacing-switch-*`
-  was minted, the call `Checkbox` makes for its square and `Slider` for its
-  handle. A test reads `tokens.css` and asserts the arithmetic rather than the
-  points, so the icon scale can be retuned and the pill stays in proportion.
+- **The knob is a rounded rectangle lying on its side, not a disc**, and it is
+  the reason the thumb stopped reading `--spacing-icon-*`. That scale is where a
+  *glyph* belongs; a knob is the body of the control rather than a mark drawn on
+  it — the move `Slider`'s handle already made, and why `Checkbox` still reads
+  that scale for a square that really is a glyph in a box. No
+  `--spacing-switch-*` was minted either way; the thumb is plain spacing steps.
+- **Three relationships hold at every size, and the tests pin each rather than
+  the points.** The knob's width is the track's height; its height is that less
+  twice `SWITCH_THUMB_INSET`; and because both are `rounded-full`, the two
+  capsules come out **concentric** — each radius is half its own height, so the
+  difference is exactly that inset. It is the subtraction `Checkbox`'s fill makes
+  against its border, arrived at by construction rather than by a number.
+- **One inset, all four sides, and only two of them are written down.**
+  Horizontally it is a class the travel maths subtracts twice; vertically it is
+  never written at all, because the track is `justify-center` and an absolutely
+  positioned child with no vertical inset is centred by its parent — `Slider`'s
+  rule, where the track centres the thumb and the thumb carries no offset of its
+  own. On that axis the constant is a relationship a test pins, not a value
+  anything reads.
+- **A content layer is as wide as the travel, not as wide as the knob.** It
+  occupies exactly the space the knob vacates at its own end, which is what the
+  travel *is*. Size it like the knob and the far layer reaches under a knob drawn
+  on top of it, and its text is clipped — visible only at the size where the text
+  is longest, which is the last place anyone looks.
+- **The knob draws no border and no shadow.** A border is a second line where
+  there is already a boundary, and against a saturated track it reads as a dark
+  ring rather than as definition; `Slider`'s handle dropped its own for the same
+  reason. Contrast at rest comes from the track instead, which is why
+  `SWITCH_TRACK_REST_TOKEN` is `input` — the chrome a field's own box wears, a
+  step darker than the page in light and a step lighter in dark, so a knob
+  painted the page's own colour reads against it at either end of the theme.
 - **The track and its touch padding ride in the same size cell**, summing to 44pt
   at every size, and the test asserts the sum rather than the parts — `Slider`'s
   rule, and the trap it names: split them across two variants and a shorter track
@@ -981,9 +1006,21 @@ first — what follows is only where a switch differs.
   would slide *under* the content layers. The root reorders rather than leaving a
   gotcha in the API, and composes one in when the children hold none, so
   `<Switch />` is already a complete control.
-- **The thumb does not grow when grabbed**, unlike a `Slider`'s. The track clips,
-  so a scaled knob would be cut off by its own capsule — and a knob already
-  following the finger does not need a second signal that it was grabbed.
+- **The track scales on press, and the thumb does not** — the reverse of
+  `Slider`, which grows its handle. The track clips, so a scaled knob would be
+  cut off by its own capsule: a bite taken out of the knob rather than an
+  acknowledgement of the press. The outermost node is the one thing nothing can
+  crop, so that is where the feedback lives, on `Pressable`'s own `PRESS_SPRING`
+  so a switch and a button answer a touch identically.
+- **The thumb's own spring is critically damped**, where every other spring in
+  this package overshoots a little. A wider knob travels a shorter distance
+  inside a track that clips it, so an overshoot has nowhere to go — it would
+  visibly squash against the end of its own capsule on every toggle. A test pins
+  the damping ratio at or above one, and below the point where it crawls.
+- **The colours interpolate off `progress`, not off a timing of their own.** The
+  track therefore colours *with the finger* through a drag rather than snapping
+  when it is let go, and there is no second clock for the position to drift
+  from — the reason all four animated properties read one shared value.
 - **The haptic fires at the commit, never at the grab.** A slider ticks on grab
   because the grab already moves the value; a switch dragged half way and released
   back has changed nothing, and one that buzzed for it would be reporting a state
@@ -1010,6 +1047,26 @@ first — what follows is only where a switch differs.
   tap on the pill means. A switch is a binary preference, not one of a set, so
   there is nothing for a group to own; the axis ladder is two rungs, the switch's
   own props then an enclosing `Field`.
+- **A part is recognised by its `displayName`, never by reference alone.** The
+  root composes a `Switch.Thumb` in when the children hold none, which means it
+  has to *ask* whether a child is one — and `child.type === SwitchThumb` is not a
+  safe way to ask. This package ships raw `.tsx` for the consuming app to
+  compile, so React Compiler rewrites the binding on the way through, and Metro
+  can serve two instances of one module through a workspace symlink; either
+  leaves an element whose `type` is a different object standing for the same
+  component. The failure is silent and nearly invisible: detection returns false,
+  a second knob is composed on top of the caller's, and because the two are the
+  same size and colour the only symptom is that **anything inside the caller's
+  knob disappears**. `displayName` survives all of it — rule 12 requires one and
+  `display-name.test.ts` enforces that they are present and unique — so that is
+  what `isSwitchThumbElement` asks for, with reference equality kept only as the
+  fast path.
+
+  **`Radio` and `ListGroup` still ask the unsafe question** (`radio.tsx`'s
+  indicator detection, and the divider and icon-swap walks elsewhere). Nobody has
+  reported it because their duplicates overlap invisibly rather than hiding
+  content — a second ring exactly behind the first. Worth fixing the next time
+  one of them is touched.
 - **RTL is not handled.** The thumb travels on `translateX`, which does not flip,
   and nothing else in this package handles it yet. Stated here rather than
   half-solved.

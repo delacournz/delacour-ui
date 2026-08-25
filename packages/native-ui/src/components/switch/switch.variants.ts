@@ -22,21 +22,6 @@ export const SWITCH_DEFAULT_COLOR: SwitchColor = "default";
 export const SWITCH_DEFAULT_SIZE: SwitchSize = "md";
 
 /**
- * The step on the shared icon scale the thumb is drawn at.
- *
- * A switch mints no scale of its own — the thumb reads `--spacing-icon-*`, the
- * way a `Checkbox`'s square and a `Slider`'s handle do, and every other length
- * on the control is derived from it: the track is the thumb plus twice
- * {@link SWITCH_THUMB_INSET}, and it is that much longer than it is tall, so the
- * thumb travels **exactly its own width**. A private `--spacing-switch-*` would
- * be three numbers that have to be retuned in step with three others forever,
- * and nothing would notice when they stopped agreeing. A test reads `tokens.css`
- * and asserts the arithmetic rather than the points, so the icon scale can be
- * retuned without the test becoming a transcript of it.
- */
-export const SWITCH_THUMB_ICON_STEP: Record<SwitchSize, IconSize> = { sm: "lg", md: "xl", lg: "2xl" };
-
-/**
  * The step every glyph on this control is drawn at — inside the knob, or at
  * either end of the track. One step rather than two, so a tick inside the thumb
  * and a tick behind it are the same mark. The `glyph` slot writes it out and a
@@ -45,25 +30,61 @@ export const SWITCH_THUMB_ICON_STEP: Record<SwitchSize, IconSize> = { sm: "lg", 
 export const SWITCH_CONTENT_ICON_STEP: Record<SwitchSize, IconSize> = { sm: "xs", md: "sm", lg: "md" };
 
 /**
- * How far the thumb sits from the track's edge, in points.
+ * How far the knob sits inside the track, on every side, in points.
  *
- * A number rather than a token because it is one gap read in one component —
- * the trade `Radio` makes for the dot inside its ring. It is written into the
- * `thumb`, `startContent` and `endContent` slots as `left-0.5` / `right-0.5`,
- * and a test asserts the class really is this value: the travel maths subtracts
- * it twice, so a slot and this constant disagreeing is a thumb that stops short
- * of the far edge by a point at every size.
+ * One number rather than two. Horizontally it is written into the `thumb`,
+ * `startContent` and `endContent` slots as `left-0.75` / `right-0.75` and
+ * subtracted twice by {@link switchTravel}, so a slot and this constant
+ * disagreeing is a knob that stops short of the far edge at every size — a test
+ * pins the class against it.
+ *
+ * Vertically it is never written at all. The track is `justify-center`, so an
+ * absolutely positioned child with no vertical inset is centred by its parent —
+ * `Slider`'s rule, where the track centres the thumb and the thumb carries no
+ * offset of its own. On that axis this is a *relationship* a test pins,
+ * `(track height − knob height) / 2`, rather than a value anything reads.
+ *
+ * It is also what makes the two capsules concentric: both are `rounded-full`, so
+ * each radius is half its own height and the difference between them is exactly
+ * this inset. That is the subtraction `Checkbox`'s fill makes against its
+ * border, arrived at by construction rather than by a second number.
+ *
+ * Three rather than two because two left the knob looking wedged against the
+ * ends — a rounded rectangle needs a little more air around it than a disc,
+ * whose curve already reads as clearance.
  */
-export const SWITCH_THUMB_INSET = 2;
+export const SWITCH_THUMB_INSET = 3;
 
 /**
  * The spring the thumb settles on after a tap or a release.
  *
- * Deliberately near `Pressable`'s `PRESS_SPRING`, a touch stiffer: the thumb
- * settles inside a track it must not visibly bounce out of, and a switch that
- * overshot its own capsule would read as a wobble rather than as a snap.
+ * **Critically damped on purpose**, where every other spring in this package
+ * overshoots a little. A wider thumb travels a shorter distance inside a track
+ * that clips it, so an overshoot has nowhere to go: the knob would visibly
+ * squash against the end of its own capsule on every toggle. A test pins the
+ * damping ratio at or above one, so a retune cannot quietly reintroduce it.
  */
-export const SWITCH_THUMB_SPRING = { damping: 20, mass: 0.4, stiffness: 320 } as const;
+export const SWITCH_THUMB_SPRING = { damping: 26, mass: 0.4, stiffness: 400 } as const;
+
+/**
+ * The spring the whole control settles on when it is pressed and released.
+ *
+ * Deliberately `Pressable`'s own `PRESS_SPRING`: a switch responding to a touch
+ * is the same event as a button responding to one, and two springs a frame apart
+ * would read as two things happening. `Slider` copies it for the same reason.
+ */
+export const SWITCH_PRESS_SPRING = { damping: 18, mass: 0.4, stiffness: 320 } as const;
+
+/**
+ * How far the whole control shrinks while a finger is on it.
+ *
+ * The **track** scales, not the thumb — the track is the outermost node, so it
+ * is the one thing `overflow-hidden` cannot clip, and scaling the knob inside a
+ * capsule that crops it would take a bite out of the knob rather than acknowledge
+ * the press. It is also the only press feedback this control has: until a drag
+ * actually moves the thumb, nothing else says the touch landed.
+ */
+export const SWITCH_PRESS_ANIMATION = { restScale: 1, pressedScale: 0.96 } as const;
 
 /**
  * How far a release may have travelled and still count as a tap, in points.
@@ -104,8 +125,16 @@ export const SWITCH_TRACK_TOKEN: Record<SwitchColor, string> = {
 	info: "info",
 };
 
-/** The track a switch that is off wears — the same chrome a field's box does. */
-export const SWITCH_TRACK_REST_TOKEN = "secondary";
+/**
+ * The track a switch that is off wears.
+ *
+ * `input` rather than `secondary`, and it is the token that makes the knob
+ * legible without a border: it is the chrome a field's own box wears, a step
+ * darker than the page in light and a step lighter in dark, so a knob painted
+ * the page's own colour reads against it at either end of the theme. `secondary`
+ * sits too close to the surface behind it for that.
+ */
+export const SWITCH_TRACK_REST_TOKEN = "input";
 
 /** The track, on or off, once the switch is reporting an invalid value. */
 export const SWITCH_INVALID_TRACK_TOKEN = "danger";
@@ -186,10 +215,33 @@ export const SWITCH_INVALID_CONTENT_TEXT_CLASS = "text-danger-foreground";
  * two variants and a retune of the track silently shrinks the target — the trap
  * `Slider` names, and a test asserts the sum rather than the parts.
  *
- * **The track's width is its height plus one thumb.** That is the whole geometry
- * of the control: with the thumb inset by {@link SWITCH_THUMB_INSET} at each end,
- * the travel comes out at exactly one thumb width. A test reads `tokens.css` and
- * pins it, so the icon scale can be retuned and the pill stays in proportion.
+ * **The thumb is as wide as the track is tall, and shorter than it.** It is a
+ * rounded rectangle lying on its side, not a disc — which is why it stopped
+ * reading `--spacing-icon-*` and became plain spacing steps. That is the move
+ * `Slider`'s handle already made, and for the same reason: the icon scale is
+ * where a *glyph* belongs, and a knob is the body of the control rather than a
+ * mark drawn on it. `Checkbox` still reads that scale because its square really
+ * is a glyph in a box.
+ *
+ * Three relationships hold at every size and a test pins each, so the ladder can
+ * be retuned without the test becoming a transcript of it: the thumb's width is
+ * the track's height, its height is that less twice
+ * {@link SWITCH_THUMB_INSET}, and the two capsules are therefore concentric.
+ *
+ * **The knob draws no border and no shadow.** A border is a second line drawn
+ * where there is already a boundary — the knob is a solid block against a track
+ * of a different colour — and against a saturated track it reads as a dark ring
+ * rather than as definition. `Slider`'s handle dropped its own for the same
+ * reason. Contrast at rest comes from the track's colour instead, which is why
+ * {@link SWITCH_TRACK_REST_TOKEN} is `input`.
+ *
+ * **A content layer is as wide as the thumb's travel, not as wide as the
+ * thumb.** It occupies exactly the space the knob vacates at its own end — which
+ * is what the travel *is* — so the two layers and the thumb tile the track
+ * instead of overlapping. Size them like the knob and they reach under it: the
+ * far layer's text is then clipped by a knob drawn on top of it, visible only at
+ * the size where the text is longest. They keep the thumb's *height*, so a glyph
+ * at either end sits on the knob's own centre line.
  *
  * **Every slot that can hold a caller's content centres it.** The thumb and both
  * content layers are boxes a glyph is dropped into, and a `View` lays a child out
@@ -225,13 +277,13 @@ export const switchVariants = tv({
 		/** The transparent box the drag is claimed on. Padded on the cross axis only. */
 		touchArea: "self-start items-center justify-center",
 		/** The capsule. Its colour is an animated style, never a class. */
-		track: "relative justify-center overflow-hidden rounded-full bg-secondary",
+		track: "relative justify-center overflow-hidden rounded-full bg-input",
 		/** The knob. Its position and its colour are one animated style. */
-		thumb: "absolute left-0.5 items-center justify-center rounded-full border border-border bg-background",
+		thumb: "absolute left-0.75 items-center justify-center rounded-full bg-background",
 		/** Behind the thumb at the leading edge. Revealed as the switch turns on. */
-		startContent: "absolute left-0.5 items-center justify-center",
+		startContent: "absolute left-0.75 items-center justify-center",
 		/** Behind the thumb at the trailing edge. Revealed as the switch turns off. */
-		endContent: "absolute right-0.5 items-center justify-center",
+		endContent: "absolute right-0.75 items-center justify-center",
 		/** Edge length any glyph on this control inherits — inside the knob, or at either end. */
 		glyph: "",
 		/** Handed to a `TextClassProvider`, never worn by a `View`. Its colour is added per end. */
@@ -242,29 +294,29 @@ export const switchVariants = tv({
 			sm: {
 				touchArea: "py-2.5",
 				track: "h-6 w-11",
-				thumb: "size-icon-lg",
-				startContent: "size-icon-lg",
-				endContent: "size-icon-lg",
+				thumb: "h-4.5 w-6",
+				startContent: "h-4.5 w-3.5",
+				endContent: "h-4.5 w-3.5",
 				glyph: "size-icon-xs",
-				contentText: "text-[10px]",
+				contentText: "text-[9px]",
 			},
 			md: {
 				touchArea: "py-2",
 				track: "h-7 w-13",
-				thumb: "size-icon-xl",
-				startContent: "size-icon-xl",
-				endContent: "size-icon-xl",
+				thumb: "h-5.5 w-7",
+				startContent: "h-5.5 w-4.5",
+				endContent: "h-5.5 w-4.5",
 				glyph: "size-icon-sm",
-				contentText: "text-xs",
+				contentText: "text-[10px]",
 			},
 			lg: {
 				touchArea: "py-1",
 				track: "h-9 w-17",
-				thumb: "size-icon-2xl",
-				startContent: "size-icon-2xl",
-				endContent: "size-icon-2xl",
+				thumb: "h-7.5 w-9",
+				startContent: "h-7.5 w-6.5",
+				endContent: "h-7.5 w-6.5",
 				glyph: "size-icon-md",
-				contentText: "text-sm",
+				contentText: "text-xs",
 			},
 		},
 		// The empty `false` branch is load-bearing typing, not a placeholder. `tv`
@@ -375,6 +427,7 @@ export function switchTravel({
 }: {
 	trackWidth: number;
 	thumbWidth: number;
+	/** {@link SWITCH_THUMB_INSET}. Taken off both ends. */
 	inset: number;
 }): number {
 	"worklet";

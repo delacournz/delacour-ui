@@ -20,9 +20,9 @@ import {
 	SWITCH_INVALID_CONTENT_TEXT_CLASS,
 	SWITCH_INVALID_THUMB_TOKEN,
 	SWITCH_INVALID_TRACK_TOKEN,
+	SWITCH_PRESS_ANIMATION,
 	SWITCH_SIZES,
 	SWITCH_TAP_SLOP,
-	SWITCH_THUMB_ICON_STEP,
 	SWITCH_THUMB_INSET,
 	SWITCH_THUMB_REST_TOKEN,
 	SWITCH_THUMB_SPRING,
@@ -71,13 +71,6 @@ function utilityPx(value: string, prefix: string): number {
 	return Number(match[1]) * SPACING_STEP;
 }
 
-/** The points a `size-icon-*` utility resolves to, via `tokens.css`. */
-function iconUtilityPx(value: string): number {
-	const match = value.match(/\bsize-(icon-[\w-]+)\b/);
-	if (!match) throw new Error(`no \`size-icon-*\` in "${value}"`);
-	return spacingPx(match[1]);
-}
-
 /** Every slot for one size, disabled off. */
 function slotsFor(size: (typeof SWITCH_SIZES)[number]) {
 	return switchVariants({ size, isDisabled: false });
@@ -94,46 +87,57 @@ describe("switchVariants defaults", () => {
 });
 
 describe("switch geometry", () => {
-	test("every thumb step is a size the icon scale actually has, and they ascend", () => {
-		const steps = SWITCH_SIZES.map((size) => SWITCH_THUMB_ICON_STEP[size]);
-		for (const step of steps) expect(ICON_SIZES).toContain(step);
-
-		const points = steps.map((step) => spacingPx(`icon-${step}`));
-		expect(points).toEqual([...points].sort((a, b) => a - b));
-		expect(new Set(points).size).toBe(points.length);
-	});
-
-	test("every content step is a size the icon scale has, and sits below the thumb's", () => {
+	test("every content step is a size the icon scale has, and fits inside the knob", () => {
 		for (const size of SWITCH_SIZES) {
 			const step = SWITCH_CONTENT_ICON_STEP[size];
 			expect(ICON_SIZES).toContain(step);
-			// A glyph beside the knob, not a second knob.
-			expect(spacingPx(`icon-${step}`)).toBeLessThan(spacingPx(`icon-${SWITCH_THUMB_ICON_STEP[size]}`));
+			// A glyph in a knob, not a second knob.
+			expect(spacingPx(`icon-${step}`)).toBeLessThan(utilityPx(cls(slotsFor(size).thumb()), "h"));
 		}
 	});
 
-	test("the track's height is the thumb plus twice the inset", () => {
+	test("the thumb is wider than it is tall at every size", () => {
+		// The shape of the control: a rounded rectangle lying on its side, not a
+		// disc. A size that came out square would be a size nobody noticed.
+		for (const size of SWITCH_SIZES) {
+			const thumb = cls(slotsFor(size).thumb());
+			expect(utilityPx(thumb, "w")).toBeGreaterThan(utilityPx(thumb, "h"));
+		}
+	});
+
+	test("the thumb is as wide as the track is tall", () => {
 		for (const size of SWITCH_SIZES) {
 			const slots = slotsFor(size);
-			const thumb = iconUtilityPx(cls(slots.thumb()));
-			expect(utilityPx(cls(slots.track()), "h")).toBe(thumb + SWITCH_THUMB_INSET * 2);
+			expect(utilityPx(cls(slots.thumb()), "w")).toBe(utilityPx(cls(slots.track()), "h"));
 		}
 	});
 
-	test("the track's width is its height plus one thumb, so the travel is one thumb", () => {
+	test("the thumb's height is the track's less twice the vertical inset", () => {
+		// Never written as a class — the track is `justify-center`, so the parent
+		// centres it. This is the relationship that inset actually describes.
 		for (const size of SWITCH_SIZES) {
 			const slots = slotsFor(size);
-			const track = cls(slots.track());
-			const thumb = iconUtilityPx(cls(slots.thumb()));
-			const height = utilityPx(track, "h");
-			const width = utilityPx(track, "w");
-
-			expect(width).toBe(height + thumb);
-			expect(switchTravel({ trackWidth: width, thumbWidth: thumb, inset: SWITCH_THUMB_INSET })).toBe(thumb);
+			const track = utilityPx(cls(slots.track()), "h");
+			expect(utilityPx(cls(slots.thumb()), "h")).toBe(track - SWITCH_THUMB_INSET * 2);
 		}
 	});
 
-	test("the inset written into the slots is the constant the travel subtracts", () => {
+	test("the two capsules are concentric", () => {
+		// Both are `rounded-full`, so each radius is half its own height and the
+		// difference is the vertical inset — the subtraction `Checkbox`'s fill
+		// makes against its border, arrived at by construction rather than a number.
+		for (const size of SWITCH_SIZES) {
+			const slots = slotsFor(size);
+			expect(cls(slots.track())).toMatch(/\brounded-full\b/);
+			expect(cls(slots.thumb())).toMatch(/\brounded-full\b/);
+
+			const trackRadius = utilityPx(cls(slots.track()), "h") / 2;
+			const thumbRadius = utilityPx(cls(slots.thumb()), "h") / 2;
+			expect(trackRadius - thumbRadius).toBe(SWITCH_THUMB_INSET);
+		}
+	});
+
+	test("the horizontal inset written into the slots is the one the travel subtracts", () => {
 		// The maths takes it off twice. A slot and the constant disagreeing is a
 		// thumb that stops a point short of the far edge, at every size.
 		for (const size of SWITCH_SIZES) {
@@ -141,6 +145,25 @@ describe("switch geometry", () => {
 			expect(utilityPx(cls(slots.thumb()), "left")).toBe(SWITCH_THUMB_INSET);
 			expect(utilityPx(cls(slots.startContent()), "left")).toBe(SWITCH_THUMB_INSET);
 			expect(utilityPx(cls(slots.endContent()), "right")).toBe(SWITCH_THUMB_INSET);
+		}
+	});
+
+	test("the thumb travels the length the track leaves it, and it is a real distance", () => {
+		for (const size of SWITCH_SIZES) {
+			const slots = slotsFor(size);
+			const track = cls(slots.track());
+			const thumbWidth = utilityPx(cls(slots.thumb()), "w");
+			const travel = switchTravel({
+				inset: SWITCH_THUMB_INSET,
+				thumbWidth,
+				trackWidth: utilityPx(track, "w"),
+			});
+
+			expect(travel).toBe(utilityPx(track, "w") - thumbWidth - SWITCH_THUMB_INSET * 2);
+			// Short enough and the drag has no room; longer than the thumb and the
+			// knob reads as lost in the track rather than filling it.
+			expect(travel).toBeGreaterThan(0);
+			expect(travel).toBeLessThanOrEqual(thumbWidth);
 		}
 	});
 
@@ -158,22 +181,54 @@ describe("switch geometry", () => {
 
 	test("the glyph slot is the step the map names", () => {
 		// Two places name it — the slot, because Tailwind's scanner is static, and
-		// the map, because the comparison below needs a value. The pin is what keeps
-		// them one decision.
+		// the map, because the comparison above needs a value.
 		for (const size of SWITCH_SIZES) {
 			expect(cls(slotsFor(size).glyph())).toBe(`size-icon-${SWITCH_CONTENT_ICON_STEP[size]}`);
 		}
 	});
 
-	test("the content layers share the thumb's footprint", () => {
-		// Each sits exactly where the thumb rests at its own end, so a glyph is
-		// centred on the space the knob will vacate rather than beside it.
+	test("a content layer is exactly the space the knob vacates", () => {
+		// The travel, not the thumb's width. Size them like the knob and the two
+		// layers plus the thumb are wider than the track: the far layer reaches
+		// under the knob, and its text is clipped by a knob drawn on top of it.
 		for (const size of SWITCH_SIZES) {
 			const slots = slotsFor(size);
-			const thumb = iconUtilityPx(cls(slots.thumb()));
-			expect(iconUtilityPx(cls(slots.startContent()))).toBe(thumb);
-			expect(iconUtilityPx(cls(slots.endContent()))).toBe(thumb);
+			const thumb = cls(slots.thumb());
+			const travel = switchTravel({
+				inset: SWITCH_THUMB_INSET,
+				thumbWidth: utilityPx(thumb, "w"),
+				trackWidth: utilityPx(cls(slots.track()), "w"),
+			});
+
+			for (const layer of [cls(slots.startContent()), cls(slots.endContent())]) {
+				expect(utilityPx(layer, "w")).toBe(travel);
+				// The knob's height, so a glyph at either end sits on its centre line.
+				expect(utilityPx(layer, "h")).toBe(utilityPx(thumb, "h"));
+			}
 		}
+	});
+
+	test("a resting thumb never overlaps the layer at the other end", () => {
+		// The one that has to hold: the visible layer is always the far one, and a
+		// knob reaching into it clips whatever it holds — a glyph is small enough to
+		// survive that, so it only shows up at the size where the text is longest.
+		// The near layer is under the knob by design, and faded to nothing anyway.
+		for (const size of SWITCH_SIZES) {
+			const slots = slotsFor(size);
+			const trackWidth = utilityPx(cls(slots.track()), "w");
+			const thumbWidth = utilityPx(cls(slots.thumb()), "w");
+			const layerWidth = utilityPx(cls(slots.startContent()), "w");
+
+			const thumbFarEdge = SWITCH_THUMB_INSET + thumbWidth;
+			const layerNearEdge = trackWidth - SWITCH_THUMB_INSET - layerWidth;
+			expect(thumbFarEdge).toBeLessThanOrEqual(layerNearEdge);
+		}
+	});
+
+	test("the size ladder ascends", () => {
+		const tracks = SWITCH_SIZES.map((size) => utilityPx(cls(slotsFor(size).track()), "h"));
+		expect(tracks).toEqual([...tracks].sort((a, b) => a - b));
+		expect(new Set(tracks).size).toBe(tracks.length);
 	});
 });
 
@@ -184,7 +239,7 @@ describe("switchVariants slots", () => {
 		// produce for a frame on every toggle.
 		for (const size of SWITCH_SIZES) {
 			const slots = slotsFor(size);
-			expect(cls(slots.track())).toMatch(/\bbg-secondary\b/);
+			expect(cls(slots.track())).toMatch(/\bbg-input\b/);
 			expect(cls(slots.thumb())).toMatch(/\bbg-background\b/);
 			expect(cls(slots.track())).not.toMatch(/\bbg-(primary|success|warning|danger|info)\b/);
 			expect(cls(slots.thumb())).not.toMatch(/\bbg-(primary|success|warning|danger|info)\b/);
@@ -238,6 +293,14 @@ describe("switchVariants slots", () => {
 			expect(cls(slots.touchArea())).toMatch(/\bopacity-50\b/);
 			expect(cls(slots.track())).not.toMatch(/\bopacity-/);
 			expect(cls(slots.thumb())).not.toMatch(/\bopacity-/);
+		}
+	});
+
+	test("the knob draws no border", () => {
+		// A second line where there is already a boundary. Against a saturated track
+		// it reads as a dark ring rather than as definition.
+		for (const size of SWITCH_SIZES) {
+			expect(cls(slotsFor(size).thumb())).not.toMatch(/\bborder\b|\bborder-/);
 		}
 	});
 
@@ -443,12 +506,25 @@ describe("hasThumbChild", () => {
 });
 
 describe("SWITCH_THUMB_SPRING", () => {
-	test("it settles without a visible bounce out of a capsule it sits inside", () => {
-		// Underdamped enough to feel sprung, damped enough not to overshoot the
-		// track it is clipped by.
+	test("it does not overshoot", () => {
+		// A wider thumb travels a shorter distance inside a track that clips it, so
+		// an overshoot has nowhere to go — the knob would visibly squash against the
+		// end of its own capsule on every toggle.
 		const critical = 2 * Math.sqrt(SWITCH_THUMB_SPRING.stiffness * SWITCH_THUMB_SPRING.mass);
-		expect(SWITCH_THUMB_SPRING.damping).toBeLessThan(critical);
-		expect(SWITCH_THUMB_SPRING.damping / critical).toBeGreaterThan(0.5);
+		expect(SWITCH_THUMB_SPRING.damping / critical).toBeGreaterThanOrEqual(1);
+	});
+
+	test("it is not so overdamped that it crawls", () => {
+		const critical = 2 * Math.sqrt(SWITCH_THUMB_SPRING.stiffness * SWITCH_THUMB_SPRING.mass);
+		expect(SWITCH_THUMB_SPRING.damping / critical).toBeLessThan(1.3);
+	});
+});
+
+describe("SWITCH_PRESS_ANIMATION", () => {
+	test("a press shrinks the control without collapsing it", () => {
+		expect(SWITCH_PRESS_ANIMATION.restScale).toBe(1);
+		expect(SWITCH_PRESS_ANIMATION.pressedScale).toBeLessThan(1);
+		expect(SWITCH_PRESS_ANIMATION.pressedScale).toBeGreaterThan(0.9);
 	});
 });
 

@@ -298,7 +298,7 @@ export const switchVariants = tv({
 				startContent: "h-4.5 w-3.5",
 				endContent: "h-4.5 w-3.5",
 				glyph: "size-icon-xs",
-				contentText: "text-[9px]",
+				contentText: "text-[8px]",
 			},
 			md: {
 				touchArea: "py-2",
@@ -316,7 +316,7 @@ export const switchVariants = tv({
 				startContent: "h-7.5 w-6.5",
 				endContent: "h-7.5 w-6.5",
 				glyph: "size-icon-md",
-				contentText: "text-xs",
+				contentText: "text-[10px]",
 			},
 		},
 		// The empty `false` branch is load-bearing typing, not a placeholder. `tv`

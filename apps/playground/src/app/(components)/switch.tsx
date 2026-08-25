@@ -43,6 +43,8 @@ export default function SwitchGallery(): ReactElement {
 
 	const enabled = Object.values(settings).filter(Boolean).length;
 
+	const toggleSetting = (key: string) => setSettings((current) => ({ ...current, [key]: !current[key] }));
+
 	return (
 		<GalleryScreen subtitle={`${enabled} of ${SETTINGS.length} settings on`} title="Switch">
 			<Section title="Tap or drag">
@@ -200,12 +202,13 @@ export default function SwitchGallery(): ReactElement {
 
 			<Section title="In a settings list">
 				<Text.Caption>
-					The row is a `ListGroup.Item` with the switch in its suffix. The row's own press is separate from the
-					switch's, so a tap on the pill toggles and a tap on the row does not.
+					The row is a `ListGroup.Item` with the switch in its suffix, and the row's own press toggles the same setting
+					— a row that animates under your finger has to do something, or the feedback is promising an action it does
+					not have. Tapping the pill toggles once, not twice: the switch's pan claims the touch from the row.
 				</Text.Caption>
 				<ListGroup>
 					{SETTINGS.map((setting) => (
-						<ListGroup.Item key={setting.key}>
+						<ListGroup.Item key={setting.key} onPress={() => toggleSetting(setting.key)}>
 							<ListGroup.ItemPrefix>
 								<Icon icon={IconBell} />
 							</ListGroup.ItemPrefix>
@@ -218,7 +221,7 @@ export default function SwitchGallery(): ReactElement {
 									accessibilityLabel={setting.title}
 									color="success"
 									isSelected={settings[setting.key] ?? false}
-									onSelectedChange={(next) => setSettings((current) => ({ ...current, [setting.key]: next }))}
+									onSelectedChange={() => toggleSetting(setting.key)}
 									size="sm"
 								/>
 							</ListGroup.ItemSuffix>

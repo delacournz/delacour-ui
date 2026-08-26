@@ -4,11 +4,6 @@ description: A compact label for status, category or count.
 icon: Tag
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Badge } from "@delacour/native-ui/badge";
 ```
@@ -78,3 +73,60 @@ where it shows would make the badge two points wider the moment a caller switche
 The root wraps its subtree in an `IconDefaultsProvider` and a `TextClassProvider`, so a bare
 `<Icon>` or `<Text>` inside a badge comes out at the right size and colour with nothing said at the
 call site. String children are wrapped in a `Badge.Label` automatically.
+
+## API
+
+A badge is a `Pressable`, so `feedback`, `haptic`, `onPress` and the rest are inherited rather than
+restated — see [Pressable](/docs/native/components/pressable). `asChild`, `busy` and `disabled` are
+withheld: use `isDisabled`, which the parts read through context.
+
+<TypeTable
+  type={{
+    variant: { type: '"solid" | "soft" | "outline" | "ghost"', default: '"solid"' },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: { type: "boolean", description: "Fades the badge and blocks both its press and its close button." },
+    onClose: {
+      type: "() => void",
+      description: "Composes a `Badge.CloseButton` in when the badge holds none of its own.",
+    },
+    closeAccessibilityLabel: {
+      type: "string",
+      default: '"Remove"',
+      description: "The name a screen reader reads for that composed button.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Badge.Label` automatically." },
+  }}
+/>
+
+### `Badge.Label`
+
+The badge's text. Picks its colour and type scale from the badge's variant, colour and size.
+Extends React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### `Badge.CloseButton`
+
+The dismiss pressable. Defaults its `accessibilityLabel` to `"Remove"` and its `feedback` to
+`fade` — a badge that scaled on the close button's press would flex the whole chip. Extends
+`PressableProps`.
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Remove"' },
+    onPress: { type: "() => void" },
+    className: { type: "string" },
+  }}
+/>
+
+### `Badge.StartContent` / `Badge.EndContent`
+
+Centred wrappers for leading and trailing content that is not an `Icon`. An `Icon` needs neither —
+it inherits the badge's icon size and its colour from the subtree.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

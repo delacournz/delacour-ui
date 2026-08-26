@@ -155,11 +155,13 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   Screen, BottomSheet and DelacourProvider — have no captured demos yet, so their cards on the
   components index show a placeholder. `apps/playground/src/demos/demos.test.ts` fails by name for
   a library component with no demo, so that list stays honest on its own.
-- Seven pages carry a **"prop tables in progress"** callout: they have previews and a summary, and
-  still want a hand-written `<TypeTable>`. Five carry the older **"reference docs in progress"**
-  callout, meaning they have neither previews nor examples yet. Both shrink as coverage lands —
-  and the wording is worth keeping accurate, because a callout that over-reports what is missing
-  is worse than no callout.
+- **Every component page now carries a hand-written `<TypeTable>`.** The "prop tables in progress"
+  and "reference docs in progress" callouts are gone; do not reintroduce one without the gap it
+  names being real, because a callout that over-reports what is missing is worse than none.
+  Source props from the component's own file — `ButtonProps` is in `button.tsx`, not in
+  `*.types.ts`, which holds only shapes shared by two or more modules. Where a shape *is* shared
+  (`ScreenInsetProps`, `ScreenPlacementProps`, `ScreenScrollableProps`), document it once and let
+  the part tables stay short.
 - Component prose lives per component at `packages/native-ui/src/components/<name>/AGENTS.md`,
   indexed from the package's own `AGENTS.md`. `src/docs.test.ts` fails the build on a component
   missing either, so that index is a reliable place to start when writing a page here.

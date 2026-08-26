@@ -4,11 +4,6 @@ description: The Gesture API primitive every pressable in the library is built o
 icon: Hand
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Pressable } from "@delacour/native-ui/pressable";
 ```
@@ -95,3 +90,43 @@ import {
   resolvePressedState,
 } from "@delacour/native-ui/pressable";
 ```
+
+## API
+
+Every pressable in the library extends this — `Button`, `ListGroup.Item`, `Accordion.Trigger`,
+`Checkbox` and `Radio` all inherit the vocabulary rather than restating it. `ViewProps` passes
+through, minus `style`.
+
+<TypeTable
+  type={{
+    feedback: {
+      type: '"scale" | "fade" | "scale-fade" | "none"',
+      description: "How the press moves the element. `pressedScale` / `pressedOpacity` still win on the axis they name.",
+    },
+    pressedScale: { type: "number", description: "Scale at full press. 1 disables the scale, and overrides `feedback`." },
+    pressedOpacity: { type: "number", description: "Opacity at full press. 1 disables the fade, and overrides `feedback`." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: "false",
+      description: "Played on press-in, from the UI thread — the tap and the haptic land in the same frame.",
+    },
+    onPress: { type: "() => void" },
+    onLongPress: { type: "() => void" },
+    disabled: { type: "boolean", description: "Blocks the gesture and announces the control as disabled." },
+    busy: {
+      type: "boolean",
+      description: "Blocks the gesture and announces the control as busy, not disabled. For a temporary state the component clears itself.",
+    },
+    asChild: { type: "boolean", description: "Render into the single child element instead of emitting a View." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+    ref: { type: "Ref<Animated.View>" },
+  }}
+/>
+
+<Callout>
+Neither `disabled` nor `busy` applies any opacity of its own — that is the caller's variant's job.
+A bare `Pressable` with no `feedback` presses to `{ opacity: 0.9, scale: 0.97 }`, which fades less
+than `fade` does; the fallback is unnamed on purpose, so naming it could not change what a bare
+pressable has always done.
+</Callout>

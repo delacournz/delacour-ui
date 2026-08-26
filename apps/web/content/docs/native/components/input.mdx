@@ -4,11 +4,6 @@ description: A text field, and the box that can hold content beside it.
 icon: TextCursorInput
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Input } from "@delacour/native-ui/input";
 ```
@@ -92,3 +87,47 @@ decorators would drift down the side of a paragraph instead of sitting on its fi
 
 `Text.Label` and `Text.Caption` already are those, and a label defined twice is a type scale that
 can drift. Use [`Field`](/docs/native/components/field) for the surrounding structure.
+
+## API
+
+Extends React Native's `TextInputProps`. `placeholderTextColorClassName` is withheld in favour of
+`placeholderColorClassName`, which is the name the rest of the library uses.
+
+<TypeTable
+  type={{
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isInvalid: { type: "boolean", description: "Turns the border danger. Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean" },
+    placeholderColorClassName: {
+      type: "string",
+      description: "A class for the placeholder's colour. React Native takes a colour value here, not a style, so it is resolved rather than applied.",
+    },
+    selectionColorClassName: { type: "string", description: "A class for the caret and selection colour." },
+    className: { type: "string" },
+    ref: { type: "Ref<TextInput>" },
+  }}
+/>
+
+### `Input.Group`
+
+Puts a prefix or a suffix inside the input's own border, and publishes the shared axes so the
+input inside does not restate them.
+
+<TypeTable
+  type={{
+    variant: { type: '"primary" | "secondary"' },
+    size: { type: '"sm" | "md" | "lg"' },
+    isInvalid: { type: "boolean" },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `Input.Prefix` / `Input.Suffix`
+
+Content drawn inside the group's border, before or after the field. An `Icon` inside one inherits
+the input's icon size and a muted foreground.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

@@ -4,11 +4,6 @@ description: One choice from a set, with a trailing indicator row.
 icon: CircleDot
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Radio } from "@delacour/native-ui/radio";
 ```
@@ -73,3 +68,69 @@ import {
   RADIO_LABEL_TEXT_SIZE,
 } from "@delacour/native-ui/radio";
 ```
+
+## API
+
+A radio is a `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable).
+
+<TypeTable
+  type={{
+    value: {
+      type: "string",
+      description: "Identifies this radio to an enclosing `Radio.Group`. Required inside one.",
+    },
+    isSelected: { type: "boolean", description: "Controlled. Ignored inside a group, which owns the selection." },
+    defaultSelected: { type: "boolean" },
+    onSelected: {
+      type: "(isSelected: boolean) => void",
+      description: "Only ever called with `true` — a radio does not deselect itself. Ignored inside a group.",
+    },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Radio.Label` automatically." },
+  }}
+/>
+
+### `Radio.Group`
+
+Owns which radio is selected. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    selected: { type: "string | null", description: "Controlled. `null` is a controlled empty, not an absence." },
+    defaultSelected: { type: "string | null" },
+    onSelected: { type: "(value: string) => void" },
+    variant: { type: '"primary" | "secondary"' },
+    size: { type: '"sm" | "md" | "lg"' },
+    orientation: { type: '"vertical" | "horizontal"', default: '"vertical"' },
+    isInvalid: { type: "boolean" },
+    isDisabled: { type: "boolean", description: "Blocks every radio. A radio's own prop still overrides it." },
+    className: { type: "string" },
+  }}
+/>
+
+### `Radio.Indicator`
+
+The dot. Composed in when a radio holds none of its own; write it out to restyle it or to replace
+the glyph entirely.
+
+<TypeTable
+  type={{
+    children: {
+      type: "ReactNode | ((props: RadioIndicatorChildrenProps) => ReactNode)",
+      description: "A render function receives `{ isSelected, isInvalid, size, variant }`.",
+    },
+    dotProps: { type: "Animated.ViewProps & { className?: string }", description: "Reaches the inner dot without replacing it." },
+    className: { type: "string" },
+  }}
+/>
+
+### `Radio.Label`
+
+The radio's text, wired as its accessible name. Extends React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

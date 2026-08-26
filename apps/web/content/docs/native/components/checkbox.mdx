@@ -4,11 +4,6 @@ description: A box that is ticked or not — alone, or as one of a group sharing
 icon: SquareCheck
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Checkbox } from "@delacour/native-ui/checkbox";
 ```
@@ -111,3 +106,70 @@ The box mints no scale of its own — it reads `--spacing-icon-*` two steps abov
 
 Only a **bare** box gets `hitSlop`. Once there is a label the row is already a wide target, and slop
 on top of that would overlap the row below.
+
+## API
+
+A checkbox is a `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable). `onPress` is withheld in favour of
+`onCheckedChange`, and `disabled` in favour of `isDisabled`, which the label reads through context.
+
+<TypeTable
+  type={{
+    isChecked: { type: "boolean", description: "Controlled. Pair with `onCheckedChange`." },
+    defaultChecked: { type: "boolean", description: "The starting state while uncontrolled." },
+    onCheckedChange: { type: "(isChecked: boolean) => void" },
+    isIndeterminate: {
+      type: "boolean",
+      description: "Draws a dash rather than a tick and reports `mixed` to a screen reader — a parent row over children only partly selected.",
+    },
+    value: {
+      type: "string",
+      description: "Identifies this box to an enclosing `Checkbox.Group`. Required inside one, ignored outside.",
+    },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    alignment: {
+      type: '"start" | "end"',
+      default: '"start"',
+      description: "Which side of the label the box sits on.",
+    },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Checkbox.Label` automatically." },
+  }}
+/>
+
+### `Checkbox.Group`
+
+Owns the selection for the boxes inside it, and publishes the shared axes so each one does not
+restate them. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    checked: { type: "string[]", description: "Controlled. The `value` of each checked box." },
+    defaultChecked: { type: "string[]" },
+    onChecked: { type: "(checked: string[]) => void" },
+    color: { type: '"default" | "primary" | "success" | "warning" | "danger" | "info"' },
+    size: { type: '"sm" | "md" | "lg"' },
+    alignment: { type: '"start" | "end"' },
+    isInvalid: { type: "boolean" },
+    isDisabled: { type: "boolean", description: "Blocks every box. A box's own prop still overrides it." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `Checkbox.Label`
+
+The checkbox's text, wired as its accessible name. Extends React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+<Callout>
+Inside a group, a checkbox's `value` is required — the group tracks selection by it. A box without
+one is invisible to the group's `checked` array, so it renders but never reports.
+</Callout>

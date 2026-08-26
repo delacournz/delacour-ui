@@ -4,11 +4,6 @@ description: A surface grouping related rows, with dividers inserted for you.
 icon: List
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { ListGroup } from "@delacour/native-ui/list-group";
 ```
@@ -75,4 +70,65 @@ String children are wrapped in an `ItemContent` around an `ItemTitle` automatica
 <Callout type="warn">
 Title colour goes on the title. The `item` slot carries no `text-*` — a row is a `View` and cannot
 cascade colour to a `Text`. The tests assert this.
+</Callout>
+
+## API
+
+<TypeTable
+  type={{
+    variant: { type: '"default" | "secondary" | "tertiary" | "transparent"', default: '"default"' },
+    size: {
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Drives the row metrics, both type scales, both icon sizes and the divider inset — five numbers on one axis.",
+    },
+    isDivided: { type: "boolean", default: "true", description: "Insert a `Separator` between adjacent rows." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `ListGroup.Item`
+
+A row. A `Pressable`, so `feedback`, `haptic` and the rest are inherited — only the default
+differs: `fade`, because a full-bleed row that scales reads as the whole card flexing.
+
+<TypeTable
+  type={{
+    onPress: { type: "() => void" },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+    children: {
+      type: "ReactNode",
+      description: "Bare strings become an `ItemContent` around an `ItemTitle` automatically.",
+    },
+  }}
+/>
+
+### `ListGroup.ItemPrefix` / `ItemContent` / `ItemSuffix`
+
+The row's three regions. `ItemPrefix` wraps its subtree in icon defaults, so a bare `Icon` needs
+nothing said at the call site. `ItemSuffix` draws a chevron when it has no children of its own.
+
+<TypeTable
+  type={{
+    iconProps: {
+      type: "{ size?: IconSize | number; color?: string; className?: string }",
+      description: "`ItemSuffix` only. Tunes the default chevron, and is ignored once the suffix has children.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `ListGroup.ItemTitle` / `ItemDescription`
+
+The row's two lines of text. Extend React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+<Callout>
+Title colour goes on the title, never on the row. A row is a `View`, and a React Native `View` does
+not cascade colour to a `Text` descendant the way a DOM element would — so the `item` slot carries
+no `text-*` at all. The variants tests assert it.
 </Callout>

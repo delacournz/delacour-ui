@@ -27,7 +27,8 @@ Unlike shadcn, the target is Expo, which changes real things:
   `node_modules` symlink a monorepo creates, and a missed glob strips every
   class from a release build without erroring.
 - **`delacour doctor`** checks all of it, plus New Architecture, path aliases,
-  `GestureHandlerRootView`, and duplicate copies of a native module.
+  `GestureHandlerRootView`, whether anything actually imports the CSS entry, and duplicate copies
+  of a native module.
 
 ## Commands
 
@@ -125,12 +126,27 @@ a consumer would, runs `init` and adds **every** item, then runs `tsc --noEmit` 
 result. A clean typecheck is the proof that all of it resolves.
 
 ```bash
-bun run verify:expo                  # the full run: installs from npm, ~2 minutes
+bun run verify:expo                  # scaffold, install, add everything, typecheck
+bun run verify:expo --bundle         # ...and compile it with Metro
+bun run verify:expo --simulator      # ...and build a dev client and launch it
 bun run verify:expo --no-install     # structure only, offline
 bun run verify:expo --only button    # one component and its closure
 bun run verify:expo --keep           # leave the app behind to poke at
 bun run verify:expo --verbose        # stream every subprocess
 ```
+
+Four levels, each catching what the one below cannot:
+
+| Level | Proves | Cost |
+| --- | --- | --- |
+| `--no-install` | The right files land, with the right imports | seconds, offline |
+| *(default)* | Every import resolves and every type lines up (`tsc`) | ~2 min |
+| `--bundle` | Metro resolves every module and **Uniwind compiles every class** | +~1 min |
+| `--simulator` | The components actually render on a device | +~10 min, needs Xcode |
+
+`--bundle` is the one worth understanding. `tsc` says nothing about `className`, because Uniwind
+compiles it in a *Metro transform* — a class the scanner never saw is dropped silently rather than
+reported. Only a real bundle exercises that path.
 
 `--all` adds components and what they pull in, so the run also names the standalone utilities
 explicitly — a verification pass has to cover the whole registry, not most of it.

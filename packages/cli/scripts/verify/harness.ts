@@ -172,6 +172,15 @@ type RunOptions = {
 	cwd: string;
 	reporter: Reporter;
 	label: string;
+	/**
+	 * Return the output instead of throwing on a non-zero exit.
+	 *
+	 * For a command whose *failure* carries the information — `doctor --json`
+	 * exits 1 precisely when it has something to report. Throwing truncated the
+	 * JSON to the last 25 lines, so a legitimate failing check surfaced as
+	 * "produced no parseable report" and hid what had actually failed.
+	 */
+	allowFailure?: boolean;
 };
 
 /**
@@ -189,7 +198,7 @@ export async function run(command: string, args: string[], options: RunOptions):
 	const output = `${result.stdout}${result.stderr}`;
 	if (options.reporter.verbose) options.reporter.detail(output.trim().split("\n").join("\n      "));
 
-	if (result.exitCode !== 0) {
+	if (result.exitCode !== 0 && !options.allowFailure) {
 		const tail = output.trim().split("\n").slice(-25).join("\n      ");
 		throw new Error(`${options.label} failed (exit ${result.exitCode}):\n      ${tail}`);
 	}

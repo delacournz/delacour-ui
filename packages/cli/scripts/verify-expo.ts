@@ -154,12 +154,13 @@ try {
 		}
 	}
 
+	// Always, not only under --bundle. This is the step that performs the CLI's
+	// own documented follow-up — importing the CSS entry — so skipping it left
+	// the default level checking an app that was knowingly misconfigured.
+	reporter.step("Writing a screen that mounts every component");
+	await writeVerifyScreen({ appDir, config: await readConfig(join(appDir, "delacour.json")), reporter });
+
 	if (options.bundle) {
-		const config = await readConfig(join(appDir, "delacour.json"));
-
-		reporter.step("Writing a screen that mounts every component");
-		await writeVerifyScreen({ appDir, config, reporter });
-
 		reporter.step("Bundling with Metro (expo export)");
 		await bundleWithMetro(appDir, reporter);
 		reporter.pass("Metro resolved every module and Uniwind compiled every class");

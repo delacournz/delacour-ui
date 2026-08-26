@@ -194,7 +194,10 @@ export const CHECKS: Check[] = [
 				cwd: appDir,
 				reporter,
 				label: "delacour doctor",
-			}).catch((error: Error) => error.message);
+				// doctor exits 1 exactly when it has findings, which is the case
+				// this check exists to report.
+				allowFailure: true,
+			});
 
 			const json = output.slice(output.indexOf("["), output.lastIndexOf("]") + 1);
 			let checks: { name: string; status: string; detail: string }[];

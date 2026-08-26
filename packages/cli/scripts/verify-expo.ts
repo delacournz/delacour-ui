@@ -2,8 +2,10 @@
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { readConfig } from "../src/config/resolve";
 import { CHECKS, standaloneItems } from "./verify/checks";
 import { buildCli, type Reporter, runCli, scaffoldExpoApp } from "./verify/harness";
+import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
 
 /**
  * Proves the CLI works against a real Expo app, for every component at once.
@@ -26,6 +28,8 @@ import { buildCli, type Reporter, runCli, scaffoldExpoApp } from "./verify/harne
  *   bun run verify:expo                # the full run
  *   bun run verify:expo --no-install   # structure only, no network
  *   bun run verify:expo --keep         # leave the app behind to poke at
+ *   bun run verify:expo --bundle       # also compile it with Metro
+ *   bun run verify:expo --simulator    # also build a dev client and launch it
  *   bun run verify:expo --only button,input
  */
 
@@ -35,6 +39,10 @@ type Options = {
 	registry: string;
 	only: string[] | null;
 	verbose: boolean;
+	/** Run the components through Metro, which is the only stage that exercises the Uniwind transform. */
+	bundle: boolean;
+	/** Build a dev client and launch it. Implies `bundle`. Needs a Mac with Xcode. */
+	simulator: boolean;
 };
 
 function parseOptions(argv: string[]): Options {
@@ -45,10 +53,14 @@ function parseOptions(argv: string[]): Options {
 
 	const only = value("--only");
 
+	const simulator = argv.includes("--simulator");
+
 	return {
 		install: !argv.includes("--no-install"),
-		keep: argv.includes("--keep"),
+		keep: argv.includes("--keep") || simulator,
 		verbose: argv.includes("--verbose"),
+		bundle: argv.includes("--bundle") || simulator,
+		simulator,
 		registry: value("--registry") ?? join(import.meta.dirname, "../../../registry"),
 		only: only ? only.split(",").map((name) => name.trim()) : null,
 	};
@@ -110,6 +122,17 @@ try {
 		}
 	}
 
+	if (options.bundle) {
+		const config = await readConfig(join(appDir, "delacour.json"));
+
+		reporter.step("Writing a screen that mounts every component");
+		await writeVerifyScreen({ appDir, config, reporter });
+
+		reporter.step("Bundling with Metro (expo export)");
+		await bundleWithMetro(appDir, reporter);
+		reporter.pass("Metro resolved every module and Uniwind compiled every class");
+	}
+
 	for (const check of CHECKS) {
 		if (check.needsInstall && !options.install) {
 			reporter.step(`${check.name} — skipped (--no-install)`);
@@ -125,6 +148,12 @@ try {
 			reporter.fail(result.summary);
 			for (const line of result.details ?? []) reporter.detail(line);
 		}
+	}
+	if (options.simulator && failures === 0) {
+		reporter.step("Building a dev client and launching it (this takes a while)");
+		await bootOnSimulator(appDir, reporter);
+		reporter.pass("the app is running on a simulator");
+		reporter.detail("Verify what it renders with argent; the app is left in place below.");
 	}
 } finally {
 	if (options.keep) console.log(`\nApp left at ${appDir}`);

@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on switch/tap-or-drag and has settled —
+  three switches, all on. The capture script navigates there before running this.
+steps:
+  - echo: Toggling all three off, largest first
+  - tap: { id: switch-lg }
+  - wait: 500
+  - tap: { id: switch-md }
+  - wait: 500
+  - tap: { id: switch-sm }
+  - wait: 800
+  - echo: And back on, so the clip loops without a jump cut
+  - tap: { id: switch-sm }
+  - wait: 500
+  - tap: { id: switch-md }
+  - wait: 500
+  - tap: { id: switch-lg }

@@ -4,14 +4,16 @@ description: A screen's frame — pinned chrome, a content region, and whatever 
 icon: LayoutTemplate
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Screen } from "@delacour/native-ui/screen";
 ```
+
+<Preview id="screen/anatomy" />
 
 ```tsx
 <Screen>
@@ -47,6 +49,8 @@ A `static` footer is opaque; an `overlay` footer is not — content is meant to 
 whatever you put inside brings its own surface.
 
 ## Parts
+
+<Preview id="screen/a-pushed-screen" />
 
 | Part | What it is |
 | --- | --- |
@@ -94,6 +98,8 @@ The green occupancy band's edge must land on the footer's red one; a red sliver 
 reserve is short. `SCREEN_DEBUG_COLORS` is exported so a composer can paint matching bands.
 
 ## Requirements
+
+<Preview id="screen/loading-and-error" />
 
 <Callout type="warn">
 The app must mount [`DelacourProvider`](/docs/native/components/provider) at its root. `Screen`

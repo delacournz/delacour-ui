@@ -8,6 +8,8 @@ icon: SquarePen
 import { Field } from "@delacour/native-ui/field";
 ```
 
+<Preview id="field/anatomy/all-four" />
+
 ```tsx
 <Field>
   <Field.Label>Email</Field.Label>
@@ -17,6 +19,8 @@ import { Field } from "@delacour/native-ui/field";
 ```
 
 ## The state cascade
+
+<Preview id="field/states/one-flag-three-things" />
 
 `isInvalid` and `isDisabled` live on the `Field` and reach the control inside it.
 
@@ -68,6 +72,8 @@ than firing both.
 
 ## Orientation
 
+<Preview id="field/orientation/horizontal-with-a-description" />
+
 ```tsx
 <Field orientation="vertical">…</Field>
 <Field orientation="horizontal">…</Field>
@@ -77,6 +83,8 @@ than firing both.
 `Field.Content` to group the label with its description as one block.
 
 ## Sets and groups
+
+<Preview id="field/grouping/set-and-legend" />
 
 ```tsx
 <Field.Set>
@@ -112,6 +120,8 @@ text; fields are already held apart by whitespace, and a rule between every one 
 section turning danger says less than the one field that is actually wrong.
 
 ## Separators
+
+<Preview id="field/grouping/separator" />
 
 ```tsx
 <Field.Separator />

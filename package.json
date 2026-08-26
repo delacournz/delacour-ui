@@ -14,7 +14,8 @@
 		"lint": "turbo lint",
 		"fmt": "turbo fmt",
 		"test": "turbo test",
-		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f"
+		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
+		"previews": "turbo previews --filter=@delacour/playground"
 	},
 	"workspaces": {
 		"packages": [

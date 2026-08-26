@@ -16,6 +16,7 @@ import {
 	IconSettingsSliderHor,
 	IconSquareCheck,
 	IconSquareCursor,
+	IconStar,
 	IconTag,
 	IconToggle,
 	IconWindowCursor,
@@ -66,6 +67,12 @@ const COMPONENTS = [
 		icon: IconParagraph,
 		title: "Field",
 		description: "Form layout, grouping, state cascade",
+	},
+	{
+		href: "/icon",
+		icon: IconStar,
+		title: "Icon",
+		description: "The size scale, colour tokens, inherited defaults",
 	},
 	{
 		href: "/input",

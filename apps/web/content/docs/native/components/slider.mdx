@@ -4,11 +4,6 @@ description: A value picked from a range by dragging a handle along a track.
 icon: SlidersHorizontal
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
-</Callout>
-
 ```tsx
 import { Slider } from "@delacour/native-ui/slider";
 ```
@@ -35,6 +30,9 @@ The package's first drag-driven control, and its first `Gesture.Pan()`.
 
 ## Anatomy
 
+<Preview id="slider/anatomy" />
+<Preview id="slider/sizes" />
+
 | Part | What it is |
 | --- | --- |
 | `Slider` | Owns the value, the gesture and the axes |
@@ -49,6 +47,8 @@ own indicator in because a radio has exactly one; a slider does not know how man
 is told.
 
 ## Ranges
+
+<Preview id="slider/a-range" />
 
 Pass an array and the slider becomes a range, one thumb per entry.
 
@@ -74,6 +74,9 @@ development and the slider keeps following you.
 </Callout>
 
 ## The whole track is the target
+
+<Preview id="slider/colours" />
+<Preview id="slider/vertical" />
 
 Touching down grabs the nearest thumb and moves it to the finger; there is no separate tap mode.
 `Slider.Thumb` holds no gesture of its own, which is what makes a press on empty track lift the

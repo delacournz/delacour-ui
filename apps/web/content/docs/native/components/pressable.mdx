@@ -4,9 +4,9 @@ description: The Gesture API primitive every pressable in the library is built o
 icon: Hand
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
@@ -20,6 +20,9 @@ import { Pressable } from "@delacour/native-ui/pressable";
 ```
 
 ## Feedback
+
+<Preview id="pressable/named-feedback" />
+<Preview id="pressable/explicit-values" />
 
 `scale`, `fade`, `scale-fade`, `none` — the shared vocabulary, defined once. Every pressable in the
 library resolves through it rather than keeping a private map: `Button` narrows it,
@@ -48,6 +51,8 @@ Neither applies any opacity — that is the caller's variant's job.
 
 ## `asChild`
 
+<Preview id="pressable/as-child" />
+
 Renders into the single child element instead of emitting a `View`.
 
 ## Why there is no `tv()` here
@@ -64,6 +69,8 @@ helper resolves perfectly.
 </Callout>
 
 ## Crossing back to JS
+
+<Preview id="pressable/haptics" />
 
 Use `scheduleOnRN` from `react-native-worklets`, never Reanimated's `runOnJS` — since Reanimated 4
 that is a deprecated shim forwarding to exactly this call.

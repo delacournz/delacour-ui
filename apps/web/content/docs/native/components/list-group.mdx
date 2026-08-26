@@ -4,14 +4,16 @@ description: A surface grouping related rows, with dividers inserted for you.
 icon: List
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { ListGroup } from "@delacour/native-ui/list-group";
 ```
+
+<Preview id="list-group/custom-suffix" />
 
 ```tsx
 <ListGroup>
@@ -34,6 +36,8 @@ values.
 
 ## Dividers are inserted, not written out
 
+<Preview id="list-group/dividers" />
+
 The root walks its children and puts a `Separator` between adjacent ones, inset to line up with the
 rows' padding.
 
@@ -55,6 +59,9 @@ are inherited rather than restated. Only the default differs: `fade`, because a 
 scales reads as the whole card flexing rather than as one row responding.
 
 ## Slots are flat
+
+<Preview id="list-group/variants" />
+<Preview id="list-group/sizes" />
 
 `ListGroup.ItemPrefix`, never `ListGroup.Item.Prefix` — the keys are deliberately flat, and the
 `displayName`s match (`DelacourUI.ListGroup.ItemPrefix`).

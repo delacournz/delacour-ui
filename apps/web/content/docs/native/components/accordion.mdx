@@ -4,11 +4,6 @@ description: Sections that expand and collapse, animated from a measured height.
 icon: ChevronsUpDown
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
-</Callout>
-
 ```tsx
 import { Accordion } from "@delacour/native-ui/accordion";
 ```
@@ -32,6 +27,9 @@ accordion is the same kind of thing. **Sizes:** `sm`, `md`, `lg`.
 
 ## Anatomy
 
+<Preview id="accordion/variants" />
+<Preview id="accordion/sizes" />
+
 | Part | What it is |
 | --- | --- |
 | `Accordion` | The surface. Owns the selection mode and the shared axes |
@@ -46,6 +44,8 @@ Dividers between adjacent items are inserted for you, the way `ListGroup` does i
 placed by hand is never doubled; `isDivided={false}` turns the feature off.
 
 ## Selection
+
+<Preview id="accordion/one-at-a-time" />
 
 The root is a discriminated union on `selectionMode`.
 
@@ -87,6 +87,9 @@ leave the indicator stuck pointing the wrong way. Only a value no layout can pro
 </Callout>
 
 ## Custom indicators
+
+<Preview id="accordion/a-glyph-beside-the-title" />
+<Preview id="accordion/a-custom-indicator" />
 
 An indicator has to be a **direct** `Accordion.Indicator` child of the trigger — the trigger finds
 it by element type, so a wrapped one is invisible and a second default gets composed in beside it.

@@ -4,14 +4,16 @@ description: A one-pixel rule, hidden from assistive technology.
 icon: Minus
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Separator } from "@delacour/native-ui/separator";
 ```
+
+<Preview id="separator/orientations" />
 
 ```tsx
 <Separator />
@@ -34,6 +36,10 @@ can use, and announcing them buries the rows.
 />
 
 ## Two rules it follows
+
+<Preview id="separator/weight-and-colour" />
+<Preview id="separator/stretching-to-a-parent" />
+<Preview id="separator/inside-a-list-group" />
 
 **The long axis is `self-stretch`, never `w-full` / `h-full`.** Yoga resolves a percentage length
 against the parent's content box and *then* adds the margins on top, so an inset `w-full` line

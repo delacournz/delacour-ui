@@ -17,6 +17,8 @@ outside a `<Text>`, so every component here that takes free-form children does t
 
 ## Variants
 
+<Preview id="button/variants" />
+
 <Tabs items={["primary", "secondary", "tertiary", "outline", "ghost", "danger", "danger-soft"]}>
   <Tab value="primary">
     ```tsx
@@ -59,6 +61,8 @@ outside a `<Text>`, so every component here that takes free-form children does t
 
 ## Sizes
 
+<Preview id="button/sizes" />
+
 ```tsx
 <Button size="sm">Small</Button>
 <Button size="md">Medium</Button>
@@ -69,6 +73,9 @@ A size is one axis driving four values: the height (`--spacing-button-*`), the l
 (`--text-button-*`), the icon step (`--spacing-icon-*`) and the horizontal padding.
 
 ## Icons
+
+<Preview id="button/both-icons-every-variant" />
+<Preview id="button/icon-only" />
 
 Icons are **composed, never passed as props**. Put an `Icon` in the children, before or after the
 label.
@@ -176,6 +183,8 @@ function ButtonCount({ count }: { count: number }) {
 ```
 
 ## Anatomy
+
+<Preview id="button/compound-parts" />
 
 <TypeTable
   type={{

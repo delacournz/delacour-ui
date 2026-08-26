@@ -4,14 +4,16 @@ description: An animated loading indicator that stands in for an icon.
 icon: LoaderCircle
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Spinner } from "@delacour/native-ui/spinner";
 ```
+
+<Preview id="spinner/sizes" />
 
 ```tsx
 <Spinner />
@@ -32,6 +34,8 @@ semantic tokens.
 </Callout>
 
 ## Size and colour are inherited
+
+<Preview id="spinner/colours" />
 
 Through exactly one path: the nearest `IconDefaultsProvider`, falling back to `md` on `foreground`.
 A `Button` already wraps the spinner it composes in with its own icon class and variant foreground,

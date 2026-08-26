@@ -4,14 +4,16 @@ description: A text field, and the box that can hold content beside it.
 icon: TextCursorInput
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Input } from "@delacour/native-ui/input";
 ```
+
+<Preview id="input/variants/at-rest" />
 
 ```tsx
 <Input value={email} onChangeText={setEmail} placeholder="you@example.com" />
@@ -21,6 +23,9 @@ import { Input } from "@delacour/native-ui/input";
 type scale and a decorator's icon step, on one axis.
 
 ## Groups
+
+<Preview id="input/group/icons" />
+<Preview id="input/group/text-affixes" />
 
 ```tsx
 <Input.Group>
@@ -53,6 +58,8 @@ different places, and the row's `gap` is what separates them.
 
 ## State precedence
 
+<Preview id="input/variants/invalid" />
+
 `Input.Group` → the `Input`'s own prop → the enclosing `Field`. Both are `??` chains, so an
 explicit `false` is a value rather than an absence.
 
@@ -75,6 +82,8 @@ otherwise both reach the same colour. `selectionColorClassName` keeps Uniwind's 
 default is supplied here.
 
 ## Multiline
+
+<Preview id="input/sizes/sizes" />
 
 A multiline field turns its height into a floor, and the row aligns to the top with it — centred
 decorators would drift down the side of a paragraph instead of sitting on its first line.

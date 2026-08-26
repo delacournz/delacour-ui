@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { COMPONENTS } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
 import { appName, gitConfig } from "@/lib/shared";
 
@@ -43,28 +44,6 @@ const FEATURES = [
 		title: "Peers, not dependencies",
 		body: "Every native module is a peer, and granular export subpaths make the optional ones genuinely optional. Import /button and nothing keyboard-related resolves.",
 	},
-];
-
-const COMPONENTS = [
-	{ name: "Button", slug: "button" },
-	{ name: "Pressable", slug: "pressable" },
-	{ name: "Field", slug: "field" },
-	{ name: "Input", slug: "input" },
-	{ name: "Checkbox", slug: "checkbox" },
-	{ name: "Radio", slug: "radio" },
-	{ name: "Switch", slug: "switch" },
-	{ name: "Slider", slug: "slider" },
-	{ name: "Text", slug: "text" },
-	{ name: "Badge", slug: "badge" },
-	{ name: "Icon", slug: "icon" },
-	{ name: "ListGroup", slug: "list-group" },
-	{ name: "Separator", slug: "separator" },
-	{ name: "Accordion", slug: "accordion" },
-	{ name: "Spinner", slug: "spinner" },
-	{ name: "BottomSheet", slug: "bottom-sheet" },
-	{ name: "Tabs", slug: "tabs" },
-	{ name: "Screen", slug: "screen" },
-	{ name: "DelacourProvider", slug: "provider" },
 ];
 
 const EXAMPLE = `import { Button } from "@delacour/native-ui/button";

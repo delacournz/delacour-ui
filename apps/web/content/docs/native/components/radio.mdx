@@ -4,14 +4,16 @@ description: One choice from a set, with a trailing indicator row.
 icon: CircleDot
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Radio } from "@delacour/native-ui/radio";
 ```
+
+<Preview id="radio/variants-and-states" />
 
 ```tsx
 <Radio.Group value={plan} onValueChange={setPlan}>
@@ -38,10 +40,16 @@ leading dots turns the labels into a second column.
 
 ## The dot
 
+<Preview id="radio/sizes" />
+
 A spring, not a timing — `RADIO_DOT_SPRING`. A dot that eases in reads as a fade; a dot that
 springs reads as a selection landing.
 
 ## Groups
+
+<Preview id="radio/per-option-description" />
+<Preview id="radio/inside-a-field" />
+<Preview id="radio/trailing-indicator-as-a-settings-row" />
 
 The group owns the selected value; a `Radio` inside one takes no `checked` prop. Precedence follows
 `Checkbox.Group`'s ladder — `own ?? group ?? field ?? default` — for the shared axes.

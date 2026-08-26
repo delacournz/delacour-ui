@@ -15,6 +15,9 @@ import { Text } from "@delacour/native-ui/text";
 
 ## Presets
 
+<Preview id="text/type-scale" />
+<Preview id="text/inline-presets" />
+
 Eight block presets, largest first.
 
 | Preset | Treatment | Use for |
@@ -38,6 +41,8 @@ Four inline presets, which emit only a delta and inherit everything else.
 | `Text.Code` | Monospaced. Padded only when it stands alone |
 
 ## Inheritance
+
+<Preview id="text/nesting" />
 
 Every `Text` publishes its resolved class to its subtree, and merges the one it inherited.
 
@@ -99,6 +104,8 @@ would snap back to it. The fallback lives in `TEXT_BASE_CLASS` instead.
 
 ## Colour
 
+<Preview id="text/colour" />
+
 `color` is **page-level only** — there is no `-foreground` family here.
 
 ```tsx
@@ -118,6 +125,8 @@ and `h-navbar-row` cannot grow and an uncapped multiplier would clip a label rat
 it. Both stay overridable per call site.
 
 ## Gotchas
+
+<Preview id="text/truncation" />
 
 <Callout type="warn" title="A nested Text.Code cannot be padded">
 A nested `<Text>` is laid out by the platform's text engine — an `NSAttributedString` run on iOS,

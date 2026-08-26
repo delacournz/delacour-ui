@@ -4,24 +4,34 @@ description: An on/off control with a thumb you can drag as well as tap.
 icon: ToggleLeft
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
-</Callout>
-
 ```tsx
 import { Switch } from "@delacour/native-ui/switch";
 ```
 
-```tsx
-<Switch isSelected={notify} onSelectedChange={setNotify} />
-```
+<Preview id="switch/tap-or-drag" />
 
-**Colours:** `default`, `primary`, `success`, `warning`, `danger`, `info` — Badge's, Checkbox's and
-Slider's set. **Sizes:** `sm`, `md`, `lg`.
+One `Gesture.Pan()` drives the whole control. A tap toggles it; a drag takes the thumb with your
+finger, and letting go settles by position — or by the flick's velocity if you release fast. Drag
+one half way and back and it commits nothing.
 
 Leave `isSelected` off and the switch holds its own state; `defaultSelected` sets the starting
 point.
+
+## Colours
+
+<Preview id="switch/colours" />
+
+`default`, `primary`, `success`, `warning`, `danger`, `info` — Badge's, Checkbox's and Slider's set.
+An off switch is the same chrome at all six: the colour only says what being *on* means. Both the
+track and the knob fade between two token values, driven by the thumb's own travel.
+
+## Sizes
+
+<Preview id="switch/sizes" />
+
+`sm`, `md`, `lg`. The knob is a rounded rectangle lying on its side, not a disc — as wide as the
+track is tall, and shorter than it by twice the vertical inset. Both are fully rounded, so the two
+capsules come out concentric by construction rather than by a number.
 
 ## Anatomy
 
@@ -32,12 +42,11 @@ point.
 | `Switch.StartContent` | Behind the thumb at the leading edge — revealed as the switch turns on |
 | `Switch.EndContent` | Behind the thumb at the trailing edge — revealed as the switch turns off |
 
-```tsx
-<Switch isSelected={on} onSelectedChange={setOn} color="success">
-  <Switch.StartContent><Icon icon={IconCheck} /></Switch.StartContent>
-  <Switch.EndContent><Icon icon={IconClose} /></Switch.EndContent>
-</Switch>
-```
+<Preview id="switch/start-and-end-content" />
+
+Both layers are written once with no conditionals. `StartContent` is revealed as the switch turns
+on and `EndContent` as it turns off, each fading with the thumb's travel — so the knob reads as
+uncovering the other end. The glyphs take their size step and colour from the switch.
 
 <Callout>
 A hand-written `Switch.Thumb` is **moved to the end** of the children for you. Every part here is
@@ -69,11 +78,15 @@ the later one silently wins.
 
 ## State inside a Field
 
+<Preview id="switch/in-a-settings-list" />
+
 `isDisabled` and `isInvalid` are inherited from an enclosing `Field`, and the switch registers its
 toggle with the field — so the whole row drives it and a form switch can be a bare `<Switch />`
 with `Field.Label` naming it. See [Field](/docs/native/components/field).
 
 ## Accessibility
+
+<Preview id="switch/disabled-and-invalid" />
 
 The root is not a `Pressable`, so there is no touch responder for TalkBack's activation to land on.
 The component supplies `accessibilityActions` and `onAccessibilityTap` itself, and marks the root

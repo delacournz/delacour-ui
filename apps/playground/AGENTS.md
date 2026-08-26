@@ -24,6 +24,7 @@ bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from assets/icon-source.svg
 bun run check              # Biome
 bun run typecheck          # tsc --noEmit
+bun run gen-demos          # regenerate src/demos/registry.ts
 ```
 
 **Never launch against Expo Go.** The app depends on native modules Expo Go does
@@ -42,8 +43,11 @@ src/
 ├── app/                          expo-router routes
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
 │   ├── index.tsx                 the component index — a ListGroup of every gallery
+│   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   └── (components)/             one route per component, grouped without a path segment
+├── demos/                        one file per demo — see demos/AGENTS.md
 ├── components/
+│   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── gallery-screen.tsx        GalleryScreen — the frame every gallery sits in
 │   ├── section.tsx               Section — a labelled block within a gallery
 │   └── delacour-mark/            the wordmark, rendered by its own gallery
@@ -71,23 +75,129 @@ it fits on a page:
 Start with a single file. Split it the moment the page needs a second heading
 that is really a second subject.
 
-## Adding a gallery page
+## Demos, galleries and the preview route
 
-1. `src/app/(components)/{name}.tsx`, wrapping the body in `GalleryScreen` and
-   grouping demos with `Section`.
-2. **Add a row to `COMPONENTS` in `src/app/index.tsx`** — `href`, `icon`,
-   `title`, `description`. The array is alphabetical by title. A gallery with no
-   row is a page only a URL reaches, and nobody types URLs on a phone.
-3. Pick the icon from `@delacour/native-ui/icons/central`. Central Icons only,
-   the same rule the library follows.
-4. Run it on a simulator and actually interact with it. That is the whole point
-   of this app — `bun test` in the library cannot render anything.
+**A gallery is not written by hand any more — it is rendered from a demo group.**
+Each demo is one file under [`src/demos/`](src/demos/AGENTS.md) exporting a
+`Demo` component and a `meta` object, and the route is a six-line shell:
 
-**`GalleryScreen` carries the title on the back button**, not above the content,
-so the first row starts at the top of the viewport. It is deliberately a
-`Screen.ScrollArea` rather than a static body: that exercises the tap-versus-scroll
-gesture conflict, which is what most often breaks in a component built on the
-Gesture API. Pass `keyboardAware` only for a gallery holding a text field.
+```tsx
+export default function SwitchGallery(): ReactElement {
+	return <DemoGallery demos={switchDemos} title="Switch" />;
+}
+```
+
+That indirection buys three things from one file: the gallery section, a
+chrome-free frame the capture pipeline photographs for the documentation site,
+and — because the file's own source is the published snippet — a code sample
+that cannot drift from the component it shows.
+
+`DemoGallery` composes `GalleryScreen` and `Section` rather than replacing them,
+so a screen that genuinely needs hand-writing still can. The five folder index
+routes still are: they are `ListGroup` navigation, not demos.
+
+### Adding a demo
+
+1. Write `src/demos/<component>/<name>.tsx` — the contract, the import
+   allowlist and the capture options are in
+   [`src/demos/AGENTS.md`](src/demos/AGENTS.md).
+2. Add it to that folder's `index.ts` **in the position it should be read**.
+   Order is editorial and lives in the barrel; completeness is mechanical and
+   lives in the generated `registry.ts`.
+3. `bun dev`, then open the component's gallery and interact with it. That is
+   still the whole point of this app — `bun test` in the library cannot render
+   anything.
+
+### Adding a component's first gallery
+
+As above, plus: create `src/app/(components)/{name}.tsx` as the shell, and **add
+a row to `COMPONENTS` in `src/app/index.tsx`** — `href`, `icon`, `title`,
+`description`, alphabetical by title, icon from
+`@delacour/native-ui/icons/central`. A gallery with no row is a page only a URL
+reaches, and nobody types URLs on a phone.
+
+`GalleryScreen` carries the title on the back button, not above the content, so
+the first row starts at the top of the viewport. It is deliberately a
+`Screen.ScrollArea`: that exercises the tap-versus-scroll gesture conflict,
+which is what most often breaks in a component built on the Gesture API.
+`keyboardAware` is ORed across the group, so the demo holding the text field is
+the one that declares it.
+
+### `src/app/preview.tsx`
+
+The capture frame: one demo, centred, no navbar, no status bar, no safe-area
+padding. Reached only by deep link, and never linked to from the app.
+
+```
+dlc-ui-playground://preview?component=switch&demo=colours&theme=dark
+```
+
+Three things in it are load-bearing, and each has a failure attached:
+
+- **It is a flat route with search params, not a catch-all.** Re-opening the
+  same route with different params makes React Navigation `navigate`, which
+  merges them in place. A capture run visits every demo in both themes; a
+  catch-all would push that many screens and play a card transition on each.
+- **The one-pixel sentinel** publishes `preview-ready:<id>:<theme>` as an
+  accessibility label, and only once the requested theme is the live one. It is
+  the capture script's gate. Without it a deep link that silently failed to
+  navigate photographs the *previous* demo under the next demo's filename, and
+  the first place anyone notices is the published documentation.
+- **The theme is set in a layout effect.** In render, `Uniwind.setTheme` updates
+  a store the whole tree subscribes to and React reports "cannot update a
+  component while rendering a different component" — which puts a LogBox banner
+  along the bottom of every captured frame. In a plain effect it lands after the
+  first paint, which is too late. A layout effect is between the two.
+
+## Capturing preview media
+
+`bun run previews` (from the repo root) drives a simulator, photographs every demo that opts into
+capture in both themes, and writes the media and manifest the documentation site reads:
+
+```bash
+bun run previews                      # everything, incremental
+bun run previews -- --only switch     # one component, or one demo
+bun run previews -- --force           # ignore the source hashes
+bun run previews -- --dev             # against a dev client already on Metro
+```
+
+**It writes into another workspace** — `apps/web/public/previews/**` and
+`apps/web/src/previews/manifest.ts`. Both are generated; neither is edited by hand. The script
+lives here because everything it reads lives here: the demos, the scheme, the bundle id, the
+prebuild guard and the native project.
+
+**A run is incremental.** Each demo's source, meta, flow and the encode settings hash together, and
+an unchanged demo whose files are present is skipped. That is what keeps committed media from
+becoming permanent churn in a repository that cannot delta-compress it — a run after touching one
+component rewrites that component and nothing else. The same hash is the media's `?v=`
+cache-buster, because Vite copies `public/` with no content hashing of its own.
+
+The script fails the run if the media directory passes its size budget, naming the largest files.
+Raise `BUDGET_BYTES` in `scripts/previews/config.ts` deliberately or not at all.
+
+### Static and animated
+
+A demo with no `capture.flow` is a screenshot. One that names a flow is recorded: the script pads,
+replays the flow from `.argent/flows/previews/`, pads again, then crops and encodes the clip and
+takes its poster from the clip's own first frame. See [`.argent/AGENTS.md`](../../.argent/AGENTS.md)
+for the flows themselves — and for the two argent behaviours that will otherwise cost you an hour.
+
+### Release, not the dev client
+
+`--dev` exists for authoring and is not how media should be published. A Release build has no
+dev-launcher screen, no dev menu, no LogBox overlay along the bottom of every frame, and no Fast
+Refresh to reload something mid-recording — and Reanimated and Hermes run at production speed,
+which is what the documentation should actually show.
+
+### If a capture looks wrong
+
+| Symptom | Cause |
+| --- | --- |
+| Rows collapsed, text missing | The demo is a container and needs `capture.align: "stretch"` |
+| Empty box | The demo mounts into a portal; it needs `capture.frame: "device"` |
+| A control caught mid-animation | The idle gate settled early — the demo probably animates for longer than it looks |
+| The clip jump-cuts at the loop | Its flow does not return the UI to where it started |
+| A clip of a motionless screen | The flow's `id:` selectors found nothing; see the devtools note in `.argent/AGENTS.md` |
 
 ## `_layout.tsx` is `DelacourProvider`'s only test
 

@@ -30,8 +30,14 @@ bun run check              # Biome lint + format
 bun run lint               # lint only
 bun run fmt                # format only
 bun test                   # unit tests
+bun run previews           # recapture component preview media from a simulator
 bun run nuke               # delete every node_modules and reinstall from scratch
 ```
+
+`previews` is the odd one out: it drives an iOS simulator, so it needs a Mac with Xcode and it is
+deliberately **not** part of `build`. Its output — `apps/web/public/previews/**` and
+`apps/web/src/previews/manifest.ts` — is committed, which is what lets the docs site deploy on a
+machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
 
 Turbo caching is **off** for every task but `build` (`cache: false` in
 `turbo.jsonc`), so a run always reflects the tree as it is now.
@@ -125,5 +131,6 @@ caught it for fifteen commits.
 
 `apps/*/ios`, `apps/*/android` (`expo prebuild`), `.expo`, `.turbo`,
 `apps/playground/src/uniwind-types.d.ts` (Uniwind's Metro plugin),
-`apps/playground/assets/icon*.png` (`bun run icons`), and `native-ui`'s
+`apps/playground/assets/icon*.png` (`bun run icons`),
+`apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `native-ui`'s
 `package.json` `exports` map (`bun run gen-exports`).

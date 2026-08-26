@@ -395,14 +395,28 @@ and `resolveSpinnerRootClass` live there so the whole matrix is reachable from
    fails by name until both exist. Match the neighbouring files: a bullet opens
    with a bold claim and then explains the failure it prevents.
 5. `bun run gen-exports`.
-6. Render it in `apps/playground/src/app/(components)/{name}.tsx`, add a row for
-   it to the `ListGroup` on `src/app/index.tsx`, and check it on a simulator.
+6. Write its demos in `apps/playground/src/demos/{name}/`, list them in that
+   folder's `index.ts`, and render them from
+   `apps/playground/src/app/(components)/{name}.tsx` — a six-line `DemoGallery`
+   shell. Add a row for it to the `ListGroup` on `src/app/index.tsx`, and check
+   it on a simulator. A demo is one file that becomes four things: the gallery
+   section, the chrome-free capture frame, the published media and the
+   documentation snippet — so the contract it has to satisfy is stricter than a
+   gallery's was. It is written down in
+   [`apps/playground/src/demos/AGENTS.md`](../../apps/playground/src/demos/AGENTS.md).
+   `bun test` fails by name for a component with no demo.
+
    *A component with nothing to render skips this.* `DelacourProvider` has no
-   gallery and no row: the playground's own `_layout.tsx` is its harness and
+   demos and no row: the playground's own `_layout.tsx` is its harness and
    every route in the app renders downstream of it, which is a stronger check
    than a readout page could be. Name the routes that prove each layer instead —
    `/pressable` for the gesture root, `/screen/navbar` for the insets,
    `/screen/form` for the keyboard.
+
+7. Mark four to six of those demos `capture`, one of them `hero`, and run
+   `bun run previews` from the repo root to photograph them. That is what puts
+   the component on the documentation site; a component with no captured demo
+   shows a placeholder on the components index.
 
 ## Compound component layout
 

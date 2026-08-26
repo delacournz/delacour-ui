@@ -4,14 +4,11 @@ description: A row of tabs and the panels they switch between, with a swipeable 
 icon: LayoutGrid
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
-</Callout>
-
 ```tsx
 import { Tabs } from "@delacour/native-ui/tabs";
 ```
+
+<Preview id="tabs/variants/every-variant" />
 
 ```tsx
 <Tabs value={tab} onValueChange={setTab}>
@@ -31,6 +28,8 @@ underline rule. **Sizes:** `sm`, `md`, `lg`: the trigger's floor and padding, th
 label's `Text` step and the glyph step a composed `Icon` inherits, on one axis.
 
 ## Anatomy
+
+<Preview id="tabs/sizes/every-size" />
 
 | Part | What it is |
 | --- | --- |
@@ -90,6 +89,8 @@ yours to settle — the pager publishes its pan on `useTabsMotion()`, and you wr
 
 ## The indicator
 
+<Preview id="tabs/scrolling/twelve-tabs" />
+
 It animates `width` and `translateX`, never `scaleX`. A scale is cheaper and wrong three times
 over: `rounded-full` stretches to an ellipse at the 2.3× a short tab to a long one asks for, a
 border thickens on two edges only, and any children you pass are squashed with it.
@@ -105,6 +106,8 @@ rather than adding or removing content.
 
 ## Labels
 
+<Preview id="tabs/composition/composed-icons-and-a-render-prop" />
+
 The label's colour **crossfades**, off the same `position` everything else reads, so it fades with
 the capsule arriving rather than flipping at a midpoint. That means it is a style, not a class — the
 `label` slot names no colour at all, and a test enforces it.
@@ -117,6 +120,8 @@ swaps at the midpoint with a hysteresis band. On a trigger holding both a glyph 
 glyph steps while the text fades.
 
 ## Separators
+
+<Preview id="tabs/composition/separators" />
 
 A separator fades only while the pager is crossing it. At rest the bar shows every rule it has; a
 drag dips the one it travels over and brings it back.

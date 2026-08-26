@@ -5,6 +5,8 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { Preview } from "@/components/preview";
+import { PreviewGrid } from "@/components/preview-grid";
 
 /**
  * `defaultMdxComponents` already carries `Callout`, `Card` and `Cards`. The rest
@@ -19,6 +21,8 @@ export function getMDXComponents(components?: MDXComponents) {
 		File,
 		Files,
 		Folder,
+		Preview,
+		PreviewGrid,
 		Step,
 		Steps,
 		Tab,

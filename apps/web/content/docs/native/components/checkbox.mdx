@@ -4,14 +4,16 @@ description: A box that is ticked or not — alone, or as one of a group sharing
 icon: SquareCheck
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
+<Callout title="Prop tables in progress">
+The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
+written — until then, the component's own source is the reference.
 </Callout>
 
 ```tsx
 import { Checkbox } from "@delacour/native-ui/checkbox";
 ```
+
+<Preview id="checkbox/colours" />
 
 ```tsx
 <Checkbox checked={accepted} onCheckedChange={setAccepted}>
@@ -36,6 +38,9 @@ Use `Field.Label` in a horizontal `Field`, and `Checkbox.Label` everywhere else.
 
 ## Groups
 
+<Preview id="checkbox/checkbox-group" />
+<Preview id="checkbox/inside-a-field" />
+
 ```tsx
 <Checkbox.Group value={selected} onValueChange={setSelected}>
   <Checkbox value="email"><Checkbox.Label>Email</Checkbox.Label></Checkbox>
@@ -57,6 +62,8 @@ that also carries shared defaults, which makes it the same kind of thing as `Fie
 group `lg`" and "make this one danger" are different questions and both get an answer.
 
 ## Indeterminate
+
+<Preview id="checkbox/indeterminate" />
 
 `isIndeterminate` paints the surface and swaps the glyph, and reports `checked="mixed"` — so a
 "select all" row says what it means rather than claiming a half-truth.
@@ -96,6 +103,8 @@ landing is the confirmation). Both are ordinary props — `haptic={false}` silen
 where a side effect goes.
 
 ## Sizing
+
+<Preview id="checkbox/sizes" />
 
 The box mints no scale of its own — it reads `--spacing-icon-*` two steps above its own glyph:
 18/14, 20/16, 24/18. The test pins the *offset*, not the points.

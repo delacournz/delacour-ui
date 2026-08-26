@@ -3,7 +3,10 @@
 	"extends": "//",
 	"root": false,
 	"files": {
-		"includes": ["src/**/*", "!src/routeTree.gen.ts"]
+		// `previews/manifest.ts` is written by the capture run in apps/playground.
+		// Without the exclusion the pre-commit hook reformats it every time, and
+		// the next capture writes it straight back.
+		"includes": ["src/**/*", "!src/routeTree.gen.ts", "!src/previews/manifest.ts"]
 	},
 	"css": {
 		"parser": { "tailwindDirectives": true }

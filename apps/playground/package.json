@@ -7,13 +7,15 @@
 		"prebuild": "bun expo prebuild",
 		"icons": "bun scripts/generate-icons.ts",
 		"ensure-prebuild": "bun scripts/ensure-prebuild.ts",
-		"start": "bun ensure-prebuild && bun expo start --dev-client --clear",
-		"dev": "bun ensure-prebuild && bun expo start --dev-client --clear --port 8088",
-		"android": "bun ensure-prebuild && expo run:android --device --port 8088",
-		"ios": "bun ensure-prebuild && expo run:ios --device --port 8088",
+		"start": "bun ensure-prebuild && bun gen-demos && bun expo start --dev-client --clear",
+		"dev": "bun ensure-prebuild && bun gen-demos && bun expo start --dev-client --clear --port 8088",
+		"android": "bun ensure-prebuild && bun gen-demos && expo run:android --device --port 8088",
+		"ios": "bun ensure-prebuild && bun gen-demos && expo run:ios --device --port 8088",
 		"check": "biome check ./src",
 		"test": "bun test",
-		"typecheck": "tsc --noEmit"
+		"typecheck": "tsc --noEmit",
+		"gen-demos": "bun scripts/gen-demo-registry.ts",
+		"previews": "bun scripts/capture-previews.ts"
 	},
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",

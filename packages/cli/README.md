@@ -129,8 +129,15 @@ Run it from the repository root (`bun run verify:expo`) or from this package. `-
 everything.
 
 The app is built at **`packages/cli/.verify/app`** — gitignored, and below `packages/cli`, which the
-workspace globs do not reach, so Bun never treats it as a workspace member. `node_modules` is kept
-between runs, which turns a two-minute install into seconds; `--fresh` reinstalls from scratch.
+workspace globs do not reach, so Bun never treats it as a workspace member.
+
+| | |
+| --- | --- |
+| *(default)* | Removes the directory afterwards, `node_modules` included — around half a gigabyte. |
+| `--keep` | Leaves everything. The next run reuses the install: **~5s instead of ~2 min**. |
+| `--fresh` | Discards whatever a previous `--keep` left, before starting. |
+
+`--simulator` implies `--keep`, since the point of it is an app you can open.
 
 ```bash
 bun run verify:expo                  # scaffold, install, add everything, typecheck

@@ -1,4 +1,4 @@
-import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readdir, rm, stat, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { x } from "tinyexec";
 
@@ -132,11 +132,13 @@ export type ScaffoldOptions = {
 };
 
 /**
- * Empties the app directory, keeping `node_modules` unless `fresh`.
+ * Empties the app directory at the *start* of a run, keeping `node_modules`
+ * unless `fresh`.
  *
- * Reusing the install is the whole reason this lives in the repository, and it
- * is safe: the scaffold's `package.json` is written fresh every run, so `bun
- * install` reconciles anything that changed.
+ * Reusing the install is what makes a repeat run fast, and it is safe: the
+ * scaffold's `package.json` is written fresh every run, so `bun install`
+ * reconciles anything that changed. Only a run that was told to `--keep`
+ * leaves an install for the next one to find.
  */
 export async function resetVerifyDir(dir: string, options: { fresh?: boolean }): Promise<void> {
 	if (options.fresh) {
@@ -241,4 +243,42 @@ export async function run(command: string, args: string[], options: RunOptions):
 	}
 
 	return output;
+}
+
+/**
+ * Removes the app directory outright — `node_modules` included.
+ *
+ * This is what "cleaning up" has to mean. Keeping the install while deleting
+ * everything around it left half a gigabyte in a directory that looked empty,
+ * which is a worse outcome than either cleaning up or not.
+ */
+export async function removeVerifyDir(dir: string, reporter: Reporter): Promise<void> {
+	const size = await directorySize(dir);
+	await rm(dir, { recursive: true, force: true });
+
+	if (size > 0)
+		reporter.detail(
+			`Cleaned up ${dir.split("/").slice(-2).join("/")} (${formatSize(size)}) — \`--keep\` to retain it.`
+		);
+}
+
+async function directorySize(dir: string): Promise<number> {
+	let total = 0;
+
+	try {
+		for (const entry of await readdir(dir, { recursive: true, withFileTypes: true })) {
+			if (!entry.isFile()) continue;
+			total += (await stat(join(entry.parentPath, entry.name)).catch(() => ({ size: 0 }))).size;
+		}
+	} catch {
+		return 0;
+	}
+
+	return total;
+}
+
+function formatSize(bytes: number): string {
+	if (bytes > 1_000_000_000) return `${(bytes / 1_000_000_000).toFixed(1)}GB`;
+	if (bytes > 1_000_000) return `${Math.round(bytes / 1_000_000)}MB`;
+	return `${Math.round(bytes / 1000)}KB`;
 }

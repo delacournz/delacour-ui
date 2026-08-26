@@ -105,8 +105,14 @@ the stock Metro config so the *patch* path is exercised, adds every item, and ty
 | `--bundle` | Metro resolves every module and **Uniwind compiles every class**. |
 | `--simulator` | The components render on a device. Needs a Mac with Xcode. |
 
-The app is built at `.verify/app` — gitignored, outside the workspace globs, and its
-`node_modules` is reused between runs (`--fresh` to discard it). Living inside the monorepo costs
+The app is built at `.verify/app` — gitignored and outside the workspace globs. The default run
+removes it afterwards, `node_modules` and all; `--keep` retains it and makes the next run take
+seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left.
+
+<!-- Cleaning up means all of it. -->
+An earlier version kept `node_modules` through cleanup, on the theory that it was only a cache.
+That left half a gigabyte inside a directory emptied of everything else — worse than either
+cleaning up or not, and invisible because the directory looked bare. Living inside the monorepo costs
 one thing: `doctor`'s duplicate-native-module check warns, because the repository root holds the
 same packages. Do not "fix" that by contorting `doctor` for the harness's benefit — the warning is
 accurate for where the app sits, and the guard that matters reads only the app's own

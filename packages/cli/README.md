@@ -125,6 +125,9 @@ classified, a type that only resolves inside this monorepo.
 a consumer would, runs `init` and adds **every** item, then runs `tsc --noEmit` against the
 result. A clean typecheck is the proof that all of it resolves.
 
+Run it from the repository root (`bun run verify:expo`) or from this package. `--help` lists
+everything.
+
 ```bash
 bun run verify:expo                  # scaffold, install, add everything, typecheck
 bun run verify:expo --bundle         # ...and compile it with Metro

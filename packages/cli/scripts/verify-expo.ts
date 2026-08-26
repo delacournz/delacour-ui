@@ -66,6 +66,38 @@ function parseOptions(argv: string[]): Options {
 	};
 }
 
+const HELP = `delacour verify:expo — prove the CLI produces a working Expo app
+
+  Scaffolds a real Expo app in a temp directory, installs Uniwind and Tailwind,
+  runs \`delacour init\`, adds every registry item, and checks the result.
+
+Usage
+  bun run verify:expo [options]
+
+Levels, each catching what the one above cannot
+  --no-install     the right files land, with the right imports (offline, seconds)
+  (default)        every import resolves and every type lines up (tsc)
+  --bundle         Metro resolves every module and Uniwind compiles every class
+  --simulator      the components render on a device (needs a Mac with Xcode)
+
+Options
+  --only <names>   comma-separated components instead of the whole registry
+  --keep           leave the app in place afterwards (implied by --simulator)
+  --registry <p>   a registry directory or URL (default: this repo's)
+  --verbose        stream every subprocess
+  --help           this
+
+Notes
+  --simulator builds a dev client in Release, so the JS is embedded and the app
+  renders without a Metro server. Expo Go cannot load it: Reanimated, Gesture
+  Handler and the keyboard controller are native modules.
+`;
+
+if (process.argv.includes("--help") || process.argv.includes("-h")) {
+	console.log(HELP);
+	process.exit(0);
+}
+
 const options = parseOptions(process.argv.slice(2));
 const reporter: Reporter = {
 	step: (message) => console.log(`\n\x1b[36m→\x1b[0m ${message}`),

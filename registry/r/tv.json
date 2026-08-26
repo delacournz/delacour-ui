@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tv",
+	"type": "registry:lib",
+	"title": "tv",
+	"description": "tailwind-variants, taught the library's semantic size tokens.",
+	"registryDependencies": [
+		"styles"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "lib/tv.ts",
+			"target": "tv.ts",
+			"namespace": "lib",
+			"content": "import { createTV } from \"tailwind-variants\";\nimport { TW_MERGE_CONFIG } from \"@registry/styles/tokens\";\n\n/**\n * `tailwind-variants`, taught the semantic size tokens from `tokens.css`.\n *\n * Import `tv` from here in every `*.variants.ts` — never from\n * `tailwind-variants` directly. `tv()` merges its own slots and variants\n * through a tailwind-merge instance it builds itself, entirely separate from\n * the one behind `cn()`, and a bare `tv` does not know what `button-md` is.\n *\n * That is not a cosmetic gap. An unrecognised `text-button-md` lands in\n * tailwind-merge's text *colour* group alongside `text-primary-foreground`, the\n * two are judged to conflict, and the label loses its colour — no error, just a\n * button whose text quietly renders in the wrong shade.\n *\n * Free of React Native imports so variants files stay unit-testable. See\n * AGENTS.md.\n */\nexport const tv = createTV({ twMergeConfig: TW_MERGE_CONFIG });\n"
+		}
+	]
+}

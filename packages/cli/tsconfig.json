@@ -1,0 +1,10 @@
+{
+	"extends": "@delacour/tsconfig/tsconfig.base.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"lib": ["es2023"],
+		"types": ["bun", "node"]
+	},
+	"include": ["src/**/*.ts"]
+}

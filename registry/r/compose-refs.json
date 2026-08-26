@@ -1,0 +1,19 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "compose-refs",
+	"type": "registry:lib",
+	"title": "composeRefs",
+	"description": "Merges several refs onto one node.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "lib/compose-refs.ts",
+			"target": "compose-refs.ts",
+			"namespace": "lib",
+			"content": "import type { Ref } from \"react\";\n\ntype RefCleanup = () => void;\n\n/**\n * Fans a single node out to several refs.\n *\n * React 19 lets a callback ref return a cleanup function. When any of the given\n * refs does, the composed ref returns a cleanup of its own that runs each child\n * cleanup and nulls out every object ref.\n */\nexport function composeRefs<T>(...refs: (Ref<T> | undefined)[]): (node: T | null) => RefCleanup | undefined {\n\treturn (node) => {\n\t\tconst cleanups: RefCleanup[] = [];\n\n\t\tfor (const ref of refs) {\n\t\t\tif (!ref) continue;\n\n\t\t\tif (typeof ref === \"function\") {\n\t\t\t\tconst result = ref(node);\n\t\t\t\tif (typeof result === \"function\") cleanups.push(result);\n\t\t\t\tcontinue;\n\t\t\t}\n\n\t\t\tref.current = node;\n\t\t}\n\n\t\tif (cleanups.length === 0) return undefined;\n\n\t\treturn () => {\n\t\t\tfor (const cleanup of cleanups) cleanup();\n\t\t\tfor (const ref of refs) {\n\t\t\t\tif (ref && typeof ref !== \"function\") ref.current = null;\n\t\t\t}\n\t\t};\n\t};\n}\n"
+		}
+	]
+}

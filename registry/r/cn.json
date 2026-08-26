@@ -1,0 +1,24 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "cn",
+	"type": "registry:lib",
+	"title": "cn",
+	"description": "Class merging that understands the library's semantic size tokens.",
+	"registryDependencies": [
+		"styles"
+	],
+	"dependencies": [
+		"clsx",
+		"tailwind-merge"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "lib/cn.ts",
+			"target": "cn.ts",
+			"namespace": "lib",
+			"content": "import { type ClassValue, clsx } from \"clsx\";\nimport { extendTailwindMerge } from \"tailwind-merge\";\nimport { TW_MERGE_CONFIG } from \"@registry/styles/tokens\";\n\n/**\n * tailwind-merge, taught the semantic size tokens from `tokens.css`.\n *\n * Registering them is load-bearing rather than tidiness. tailwind-merge only\n * treats two classes as conflicting when it recognises both as members of the\n * same group, and `button-md` is not a value it knows. Left unregistered,\n * `cn(\"h-button-md\", \"h-12\")` returns *both* classes: they each resolve to a\n * height, uniwind applies whichever it saw last, and a caller's override works\n * or does not depending on class order. Nothing throws, so the failure is\n * silent — which is why `cn.test.ts` asserts every token here.\n *\n * `tv()` needs the same treatment for its own merger — see `lib/tv.ts`.\n */\nconst twMerge = extendTailwindMerge(TW_MERGE_CONFIG);\n\n/**\n * Merges class names and resolves Tailwind conflicts so the last utility wins.\n *\n * Uniwind does not deduplicate conflicting classes on its own — both would be\n * applied and the winner would be undefined. Always route a caller-supplied\n * `className` through this before handing it to a component.\n */\nexport function cn(...inputs: ClassValue[]): string {\n\treturn twMerge(clsx(inputs));\n}\n"
+		}
+	]
+}

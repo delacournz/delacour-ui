@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "expo",
+	"type": "registry:lib",
+	"title": "Navigation theme",
+	"description": "Hands expo-router's navigator this library's colours, including the slab behind a push.",
+	"registryDependencies": [
+		"use-navigation-theme"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"expo-router"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "expo/navigation-theme.tsx",
+			"target": "expo/navigation-theme.tsx",
+			"namespace": "lib",
+			"content": "import { DarkTheme, DefaultTheme, ThemeProvider } from \"expo-router\";\nimport { type ReactElement, type ReactNode, useMemo } from \"react\";\nimport { useNavigationTheme } from \"@registry/hooks/use-navigation-theme\";\n\nexport type NavigationThemeProps = {\n\tchildren: ReactNode;\n};\n\n/**\n * Hands the navigator this library's theme colours.\n *\n * Mount it around a `Stack`, `Tabs` or `Drawer`, inside `DelacourProvider`.\n *\n * Not decoration. `expo-router` mounts its `NavigationContainer` with no\n * `theme`, so React Navigation's light default stands however dark the app is —\n * and on iOS the native stack hands `colors.background` to the\n * `UINavigationController`'s view, which is the slab visible between the cards\n * during a push and at their rounded corners. That layer is set from the theme\n * with no escape hatch, so a `contentStyle` in `screenOptions` cannot reach it.\n *\n * `ThemeProvider` comes from `expo-router`, which vendors React Navigation:\n * `@react-navigation/native` is not a package this monorepo can resolve.\n *\n * The framework's own base theme is spread underneath rather than replaced,\n * because `ReactNavigation.Theme` also carries `fonts`, whose shape is\n * platform-specific — restating it here would be a second definition able to\n * drift from the one React Navigation actually ships. Only the colours this\n * library owns are overridden, and `DarkTheme`'s `rgb(1, 1, 1)` background is\n * exactly the kind of near-miss that makes overriding worth doing.\n *\n * Re-renders on a theme change and nothing else, so keep it below the\n * providers — they have no reason to remount when the palette swaps.\n *\n * @example\n * // app/_layout.tsx\n * import { DelacourProvider } from \"@registry/ui/provider\";\n * import { NavigationTheme } from \"@registry/lib/expo/navigation-theme\";\n * import { Stack } from \"expo-router\";\n *\n * export default function RootLayout() {\n *   return (\n *     <DelacourProvider>\n *       <NavigationTheme>\n *         <Stack screenOptions={{ headerShown: false }} />\n *       </NavigationTheme>\n *     </DelacourProvider>\n *   );\n * }\n */\nexport function NavigationTheme({ children }: NavigationThemeProps): ReactElement {\n\tconst { dark, colors } = useNavigationTheme();\n\tconst base = dark ? DarkTheme : DefaultTheme;\n\n\tconst value = useMemo(() => ({ ...base, colors: { ...base.colors, ...colors }, dark }), [base, colors, dark]);\n\n\treturn <ThemeProvider value={value}>{children}</ThemeProvider>;\n}\nNavigationTheme.displayName = \"DelacourUI.NavigationTheme\";\n"
+		}
+	]
+}

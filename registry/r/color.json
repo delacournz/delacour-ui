@@ -1,0 +1,19 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "color",
+	"type": "registry:lib",
+	"title": "isLiteralColor",
+	"description": "Tells a literal colour from a theme token name.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "lib/color.ts",
+			"target": "color.ts",
+			"namespace": "lib",
+			"content": "const FUNCTIONAL_COLOR = /^[a-z][a-z-]*\\(/i;\n\n/**\n * True when a string is a literal CSS colour rather than a theme token name.\n *\n * Theme tokens (`foreground`, `danger-soft-foreground`, `emerald-500`) are\n * resolved through a CSS variable; literals are handed to the platform as-is.\n * The two are told apart by shape: a literal is either hex or a functional\n * notation, and no token name can look like either.\n */\nexport function isLiteralColor(value: string): boolean {\n\treturn value.startsWith(\"#\") || FUNCTIONAL_COLOR.test(value);\n}\n"
+		}
+	]
+}

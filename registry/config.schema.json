@@ -1,0 +1,116 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"framework": {
+			"default": "expo",
+			"type": "string",
+			"enum": [
+				"expo",
+				"react-native"
+			]
+		},
+		"typescript": {
+			"default": true,
+			"type": "boolean"
+		},
+		"registry": {
+			"default": {},
+			"type": "object",
+			"properties": {
+				"url": {
+					"type": "string"
+				},
+				"ref": {
+					"type": "string"
+				}
+			}
+		},
+		"registries": {
+			"default": {},
+			"type": "object",
+			"propertyNames": {
+				"type": "string"
+			},
+			"additionalProperties": {
+				"type": "string"
+			}
+		},
+		"paths": {
+			"type": "object",
+			"properties": {
+				"ui": {
+					"type": "string"
+				},
+				"lib": {
+					"type": "string"
+				},
+				"hooks": {
+					"type": "string"
+				},
+				"styles": {
+					"type": "string"
+				},
+				"icons": {
+					"type": "string"
+				}
+			},
+			"required": [
+				"ui",
+				"lib",
+				"hooks",
+				"styles",
+				"icons"
+			]
+		},
+		"aliases": {
+			"default": {},
+			"type": "object",
+			"properties": {
+				"ui": {
+					"type": "string"
+				},
+				"lib": {
+					"type": "string"
+				},
+				"hooks": {
+					"type": "string"
+				},
+				"styles": {
+					"type": "string"
+				},
+				"icons": {
+					"type": "string"
+				}
+			}
+		},
+		"app": {
+			"default": {},
+			"type": "object",
+			"properties": {
+				"root": {
+					"default": ".",
+					"type": "string"
+				},
+				"css": {
+					"default": "src/styles/global.css",
+					"type": "string"
+				},
+				"metroConfig": {
+					"default": "metro.config.js",
+					"type": "string"
+				},
+				"uniwindTypes": {
+					"default": "src/uniwind-types.d.ts",
+					"type": "string"
+				}
+			}
+		}
+	},
+	"required": [
+		"paths"
+	]
+}

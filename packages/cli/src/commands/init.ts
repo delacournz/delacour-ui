@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { dirname, join, relative, resolve, sep } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
 import { findConfig, type ResolvedConfig, readConfig } from "../config/resolve";
 import { CONFIG_FILENAME, CONFIG_SCHEMA_URL, type Config, type ConfigPaths } from "../config/schema";
@@ -67,7 +67,7 @@ export async function init(components: string[], options: InitOptions): Promise<
 	// a fresh project is renderable before a single component is chosen.
 	await add(["styles", ...components], { ...options, cwd: root, overwrite: true });
 
-	printFollowUps(resolved, project, output);
+	printFollowUps(resolved, output);
 	output.outro(`Ready. ${style.code("delacour add button")} to get started.`);
 }
 
@@ -215,7 +215,7 @@ async function wireUpApp(config: ResolvedConfig, output: Output): Promise<void> 
  * `doctor` re-checks all of them, so this list is a starting point rather than
  * the only chance to see it.
  */
-function printFollowUps(config: ResolvedConfig, project: ProjectInfo, output: Output): void {
+function printFollowUps(config: ResolvedConfig, output: Output): void {
 	const items: string[] = [];
 
 	if (Object.keys(config.aliases).length > 0) {
@@ -224,11 +224,13 @@ function printFollowUps(config: ResolvedConfig, project: ProjectInfo, output: Ou
 		);
 	}
 
+	// First, because it is the only one of the three that produces no error at
+	// all — the app boots and renders every component unstyled.
 	items.push(
-		`Wrap the app root in ${style.code("<GestureHandlerRootView style={{ flex: 1 }}>")} — presses do nothing without it.`
+		`Import ${style.code(`"${config.aliases.styles ?? "."}/${basename(config.app.resolved.css)}"`)} as the first statement of your root layout — without it every component renders unstyled.`
 	);
 	items.push(
-		`Import ${style.code(`"./${toPosix(relative(project.appRoot ?? config.root, config.app.resolved.css))}"`)} from your root layout.`
+		`Wrap the app root in ${style.code("<GestureHandlerRootView style={{ flex: 1 }}>")} — presses do nothing without it.`
 	);
 
 	output.info(

@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
-import { join, relative } from "node:path";
+import { basename, dirname, join, relative, resolve } from "node:path";
 import * as clack from "@clack/prompts";
 import { x } from "tinyexec";
 import { loadConfig, type ResolvedConfig } from "../config/resolve";
@@ -65,6 +65,7 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkTailwindSources(config),
 		checkTsconfigPaths(config, expoConfig),
 		checkUniwindTypes(config),
+		await checkCssEntryImported(config),
 		await checkGestureHandlerRoot(config),
 		await checkDuplicateNativeModules(project),
 	];
@@ -265,6 +266,99 @@ function checkUniwindTypes(config: ResolvedConfig): Check {
 	}
 
 	return { name: "Uniwind types", status: "pass", detail: "uniwind-env.d.ts present" };
+}
+
+/**
+ * The Tailwind entry has to be imported by the app, not merely named in
+ * `metro.config.js`.
+ *
+ * `withUniwindConfig`'s `cssEntryFile` tells the transformer which file to
+ * compile; it does not put that file in the bundle. If nothing imports it, the
+ * app builds, boots and renders every component **completely unstyled** — no
+ * padding, no colours, spinners drawn at their natural SVG size. Nothing is
+ * logged, and the components themselves are fine, so the search starts in
+ * exactly the wrong place.
+ *
+ * Found by booting a scaffolded app on a simulator, which is the only stage
+ * that could have found it.
+ */
+async function checkCssEntryImported(config: ResolvedConfig): Promise<Check> {
+	const entry = config.app.resolved.css;
+	const importers = await filesImporting(config.app.resolved.root, entry);
+
+	if (importers.length > 0) {
+		return {
+			name: "CSS entry",
+			status: "pass",
+			detail: `imported by ${relative(config.app.resolved.root, importers[0] as string)}`,
+		};
+	}
+
+	return {
+		name: "CSS entry",
+		status: "fail",
+		detail: `nothing imports ${config.app.css}`,
+		fix: `Add \`import "${importSpecifierFor(config)}";\` as the first statement of your root layout — without it every component renders unstyled.`,
+	};
+}
+
+/** The specifier a root layout would use, preferring the alias when there is one. */
+function importSpecifierFor(config: ResolvedConfig): string {
+	const alias = config.aliases.styles;
+	if (alias) return `${alias.replace(/\/+$/, "")}/${basename(config.app.resolved.css)}`;
+	return `./${basename(config.app.resolved.css)}`;
+}
+
+/**
+ * Source files that import `target`, resolved rather than string-matched — a
+ * project may reach its entry by alias, by relative path, or from a directory
+ * two levels up.
+ */
+async function filesImporting(root: string, target: string): Promise<string[]> {
+	let entries: string[];
+	try {
+		entries = await readdir(root, { recursive: true });
+	} catch {
+		return [];
+	}
+
+	const found: string[] = [];
+
+	for (const entry of entries) {
+		if (!/\.tsx?$/.test(entry) || entry.includes("node_modules")) continue;
+
+		const path = join(root, entry);
+		const content = await read(path);
+		if (content && cssImportsIn(content, path).some((imported) => matchesEntry(imported, target))) found.push(path);
+	}
+
+	return found;
+}
+
+/**
+ * Side-effect CSS imports in a file, resolved where they are relative.
+ *
+ * Comment lines are skipped, and that is load-bearing rather than defensive:
+ * the copied `provider.tsx` carries `import "../styles/global.css";` inside a
+ * doc comment, which would otherwise satisfy the very check this exists for.
+ */
+function cssImportsIn(content: string, path: string): string[] {
+	const imports: string[] = [];
+
+	for (const line of content.split("\n")) {
+		const trimmed = line.trimStart();
+		if (trimmed.startsWith("*") || trimmed.startsWith("//") || trimmed.startsWith("/*")) continue;
+
+		const specifier = /^import\s+["']([^"']+\.css)["']/.exec(trimmed)?.[1];
+		if (specifier) imports.push(specifier.startsWith(".") ? resolve(dirname(path), specifier) : specifier);
+	}
+
+	return imports;
+}
+
+/** An alias import cannot be resolved without the alias map, so fall back to the filename. */
+function matchesEntry(imported: string, target: string): boolean {
+	return imported === target || (!imported.startsWith("/") && basename(imported) === basename(target));
 }
 
 /**

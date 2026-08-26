@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { x } from "tinyexec";
 
@@ -111,10 +111,47 @@ export function App() {
 }
 `;
 
+/**
+ * Where the scaffolded app lives: `packages/cli/.verify/app`.
+ *
+ * Inside the repository rather than the system temp directory, so a kept app is
+ * somewhere you can actually find and open — and so `node_modules` survives
+ * between runs, which turns a two-minute install into seconds.
+ *
+ * It sits below `packages/cli`, which the workspace globs (`packages/*`) do not
+ * reach, so Bun never treats it as a workspace member. Biome and `tsconfig`
+ * scope themselves to `src` and `scripts`, and it is gitignored.
+ */
+export const VERIFY_DIR = join(import.meta.dirname, "../../.verify/app");
+
 export type ScaffoldOptions = {
 	install: boolean;
 	reporter: Reporter;
+	/** Delete `node_modules` too, rather than reusing it. */
+	fresh?: boolean;
 };
+
+/**
+ * Empties the app directory, keeping `node_modules` unless `fresh`.
+ *
+ * Reusing the install is the whole reason this lives in the repository, and it
+ * is safe: the scaffold's `package.json` is written fresh every run, so `bun
+ * install` reconciles anything that changed.
+ */
+export async function resetVerifyDir(dir: string, options: { fresh?: boolean }): Promise<void> {
+	if (options.fresh) {
+		await rm(dir, { recursive: true, force: true });
+		await mkdir(dir, { recursive: true });
+		return;
+	}
+
+	await mkdir(dir, { recursive: true });
+
+	for (const entry of await readdir(dir)) {
+		if (entry === "node_modules") continue;
+		await rm(join(dir, entry), { recursive: true, force: true });
+	}
+}
 
 export async function scaffoldExpoApp(dir: string, options: ScaffoldOptions): Promise<void> {
 	const files: [string, string][] = [

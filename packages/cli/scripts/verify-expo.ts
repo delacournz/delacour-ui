@@ -1,10 +1,8 @@
 #!/usr/bin/env bun
-import { mkdtemp, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { readConfig } from "../src/config/resolve";
 import { CHECKS, standaloneItems } from "./verify/checks";
-import { buildCli, type Reporter, runCli, scaffoldExpoApp } from "./verify/harness";
+import { buildCli, type Reporter, resetVerifyDir, runCli, scaffoldExpoApp, VERIFY_DIR } from "./verify/harness";
 import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
 
 /**
@@ -28,6 +26,7 @@ import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/re
  *   bun run verify:expo                # the full run
  *   bun run verify:expo --no-install   # structure only, no network
  *   bun run verify:expo --keep         # leave the app behind to poke at
+ *   bun run verify:expo --fresh        # reinstall rather than reuse node_modules
  *   bun run verify:expo --bundle       # also compile it with Metro
  *   bun run verify:expo --simulator    # also build a dev client and launch it
  *   bun run verify:expo --only button,input
@@ -39,6 +38,8 @@ type Options = {
 	registry: string;
 	only: string[] | null;
 	verbose: boolean;
+	/** Discard `node_modules` as well, rather than reusing the previous install. */
+	fresh: boolean;
 	/** Run the components through Metro, which is the only stage that exercises the Uniwind transform. */
 	bundle: boolean;
 	/** Build a dev client and launch it. Implies `bundle`. Needs a Mac with Xcode. */
@@ -59,6 +60,7 @@ function parseOptions(argv: string[]): Options {
 		install: !argv.includes("--no-install"),
 		keep: argv.includes("--keep") || simulator,
 		verbose: argv.includes("--verbose"),
+		fresh: argv.includes("--fresh"),
 		bundle: argv.includes("--bundle") || simulator,
 		simulator,
 		registry: value("--registry") ?? join(import.meta.dirname, "../../../registry"),
@@ -83,6 +85,7 @@ Levels, each catching what the one above cannot
 Options
   --only <names>   comma-separated components instead of the whole registry
   --keep           leave the app in place afterwards (implied by --simulator)
+  --fresh          reinstall from scratch instead of reusing node_modules
   --registry <p>   a registry directory or URL (default: this repo's)
   --verbose        stream every subprocess
   --help           this
@@ -107,14 +110,16 @@ const reporter: Reporter = {
 	verbose: options.verbose,
 };
 
-const appDir = await mkdtemp(join(tmpdir(), "delacour-verify-"));
+const appDir = VERIFY_DIR;
+await resetVerifyDir(appDir, { fresh: options.fresh });
+
 let failures = 0;
 
 try {
 	reporter.step("Building the CLI");
 	const cli = await buildCli(reporter);
 
-	reporter.step(`Scaffolding an Expo app in ${appDir}`);
+	reporter.step(`Scaffolding an Expo app in ${relative(process.cwd(), appDir)}`);
 	await scaffoldExpoApp(appDir, { install: options.install, reporter });
 
 	reporter.step("delacour init");
@@ -189,8 +194,10 @@ try {
 		reporter.detail("Verify what it renders with argent; the app is left in place below.");
 	}
 } finally {
-	if (options.keep) console.log(`\nApp left at ${appDir}`);
-	else await rm(appDir, { recursive: true, force: true });
+	// `node_modules` is kept either way — it is what makes the next run fast, and
+	// it holds nothing worth reading.
+	if (options.keep) console.log(`\nApp left at ${relative(process.cwd(), appDir)}`);
+	else await resetVerifyDir(appDir, { fresh: false });
 }
 
 console.log(

@@ -105,6 +105,13 @@ the stock Metro config so the *patch* path is exercised, adds every item, and ty
 | `--bundle` | Metro resolves every module and **Uniwind compiles every class**. |
 | `--simulator` | The components render on a device. Needs a Mac with Xcode. |
 
+The app is built at `.verify/app` — gitignored, outside the workspace globs, and its
+`node_modules` is reused between runs (`--fresh` to discard it). Living inside the monorepo costs
+one thing: `doctor`'s duplicate-native-module check warns, because the repository root holds the
+same packages. Do not "fix" that by contorting `doctor` for the harness's benefit — the warning is
+accurate for where the app sits, and the guard that matters reads only the app's own
+`node_modules`.
+
 `--bundle` is the level worth understanding: `tsc` says nothing about `className`, because Uniwind
 compiles it in a Metro transform, and a class the scanner never saw is dropped with nothing logged.
 

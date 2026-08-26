@@ -128,6 +128,10 @@ result. A clean typecheck is the proof that all of it resolves.
 Run it from the repository root (`bun run verify:expo`) or from this package. `--help` lists
 everything.
 
+The app is built at **`packages/cli/.verify/app`** — gitignored, and below `packages/cli`, which the
+workspace globs do not reach, so Bun never treats it as a workspace member. `node_modules` is kept
+between runs, which turns a two-minute install into seconds; `--fresh` reinstalls from scratch.
+
 ```bash
 bun run verify:expo                  # scaffold, install, add everything, typecheck
 bun run verify:expo --bundle         # ...and compile it with Metro
@@ -150,6 +154,17 @@ Four levels, each catching what the one below cannot:
 `--bundle` is the one worth understanding. `tsc` says nothing about `className`, because Uniwind
 compiles it in a *Metro transform* — a class the scanner never saw is dropped silently rather than
 reported. Only a real bundle exercises that path.
+
+#### One warning is expected
+
+`doctor` reports **"Native modules — two copies of react-native, …"** against the scaffolded app.
+That is an artefact of the app living inside this monorepo, whose root `node_modules` holds the
+same packages. It is a warning rather than a failure, and the run passes.
+
+It does not weaken the check that matters. "Every package imported is actually installed" reads
+**only the app's own `node_modules`**, so a package the registry failed to declare is still caught
+even though `tsc` would have resolved it from the repository root — verified by deleting one and
+watching the check fire.
 
 `--all` adds components and what they pull in, so the run also names the standalone utilities
 explicitly — a verification pass has to cover the whole registry, not most of it.

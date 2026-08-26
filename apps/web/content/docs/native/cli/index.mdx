@@ -1,0 +1,106 @@
+---
+title: Overview
+description: Copy component source into your project instead of installing a package.
+icon: Terminal
+---
+
+`delacour` copies the library's source into your repository. You end up owning
+`button.tsx` — you can read it, edit it, and delete the parts you do not want. There is no
+package to upgrade and no release cadence to wait on.
+
+```bash
+bunx delacour@latest init
+bunx delacour@latest add button
+```
+
+That writes real files into your app:
+
+```txt
+src/
+├── components/ui/button/     button.tsx, button.variants.ts, index.ts, AGENTS.md, …
+├── lib/                      cn.ts, tv.ts
+└── styles/                   tokens.css, theme.css, base.css, index.css
+```
+
+## Which delivery should you use?
+
+Both are supported and they hold the same components. The choice is about who owns the code.
+
+| | [Install the package](/docs/native/getting-started/installation) | This CLI |
+| --- | --- | --- |
+| Upgrades | `bun update` | `delacour diff`, then decide |
+| Editing a component | Fork or wrap it | Edit the file |
+| Import path | `@delacour/native-ui/button` | `@/components/ui/button` |
+| New components | Arrive with the package | `delacour add` when you want one |
+| Bundle | Only the subpaths you import | Only the files you added |
+
+<Callout title="You can start with one and move to the other">
+The components are identical — the CLI copies the same source the package ships. Running
+`delacour add button` in a project that already installs `@delacour/native-ui` gives you a local
+copy to edit; delete the package import and point at the new path.
+</Callout>
+
+## Why this is not just shadcn for React Native
+
+The copy-in model is shadcn's. What is different is everything Expo makes different, and each of
+these is a failure that produces **no error at all** when it goes wrong:
+
+<Cards>
+  <Card title="Native modules go through expo install" href="/docs/native/cli/commands">
+    `bun add react-native-reanimated` fetches the newest release, which on any older SDK does not
+    compile. The CLI asks the SDK what it supports.
+  </Card>
+  <Card title="Metro is wrapped, outermost" href="/docs/native/cli/init">
+    `withUniwindConfig` installs the transform that compiles `className`. A wrapper applied after
+    it can replace the transformer and leave every component unstyled.
+  </Card>
+  <Card title="@source globs use real paths" href="/docs/native/cli/monorepo">
+    Tailwind's scanner does not follow the symlink a monorepo creates, and a glob that misses your
+    components strips their classes from the release build.
+  </Card>
+  <Card title="doctor checks all of it" href="/docs/native/cli/troubleshooting">
+    New Architecture, `tsconfigPaths`, the gesture root, duplicate native modules. Nine checks,
+    each with the fix.
+  </Card>
+</Cards>
+
+## What `init` will and will not touch
+
+<Steps>
+<Step>
+### Writes `delacour.json`
+
+Where components go, and how they should import each other. See
+[Configuration](/docs/native/cli/configuration).
+</Step>
+
+<Step>
+### Wires Metro and your Tailwind entry
+
+`metro.config.js` gets the Uniwind wrapper; `global.css` gets an `@import` and the `@source`
+globs, inside a marked block it is safe to re-run over.
+</Step>
+
+<Step>
+### Copies the theme
+
+The `styles` item — tokens, palette, and the Uniwind type shim — so a fresh project renders
+before you have chosen a single component.
+</Step>
+
+<Step>
+### Prints what it will not do
+
+`tsconfig.json` and `app.config.ts` are read, never written. Three things need a human, and
+`delacour doctor` re-checks every one of them.
+</Step>
+</Steps>
+
+## Next
+
+<Cards>
+  <Card title="Set up a project" href="/docs/native/cli/init" />
+  <Card title="Every command" href="/docs/native/cli/commands" />
+  <Card title="delacour.json" href="/docs/native/cli/configuration" />
+  <Card title="Use it from an agent" href="/docs/native/cli/mcp" />
+</Cards>

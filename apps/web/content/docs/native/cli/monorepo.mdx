@@ -1,0 +1,142 @@
+---
+title: Monorepos
+description: A shared package or straight into the app — and the symlink that silently strips your styles.
+icon: FolderTree
+---
+
+Components can live in the app that uses them, or in a package several apps share. The CLI decides
+from where you run it.
+
+```bash
+cd apps/mobile && bunx delacour init     # into the app
+cd packages/ui && bunx delacour init     # into a shared package
+```
+
+Running inside a package that is not the app **is** the answer — there is no prompt and no flag.
+From the repository root, `init` asks.
+
+## What changes between the two
+
+`delacour.json` lives wherever the components live. What moves is `app.root`, and with it every
+file the CLI has to touch but does not own.
+
+<Tabs items={["In the app", "In a shared package"]}>
+<Tab value="In the app">
+
+```json title="apps/mobile/delacour.json"
+{
+  "paths": { "ui": "src/components/ui", "lib": "src/lib" },
+  "app": { "root": ".", "css": "src/styles/global.css" }
+}
+```
+
+```txt
+apps/mobile/
+├── delacour.json
+├── metro.config.js
+└── src/
+    ├── components/ui/button/
+    ├── lib/
+    └── styles/global.css
+```
+
+</Tab>
+<Tab value="In a shared package">
+
+```json title="packages/ui/delacour.json"
+{
+  "paths": { "ui": "src/components/ui", "lib": "src/lib" },
+  "app": { "root": "../../apps/mobile", "css": "src/styles/global.css" }
+}
+```
+
+```txt
+packages/ui/
+├── delacour.json
+└── src/components/ui/button/
+
+apps/mobile/
+├── metro.config.js          ← still wired here
+└── src/styles/global.css    ← and here
+```
+
+</Tab>
+</Tabs>
+
+<Callout title="Metro belongs to the app, always">
+Metro, the Tailwind entry and the native dependencies are the app's, whatever package the
+components sit in. `init` finds the Expo app — up from where you ran it, then across `apps/` — and
+wires that one. `expo install` runs there too: two copies of a native module register twice and
+break at runtime.
+</Callout>
+
+## The symlink that costs you every style
+
+This is the failure worth reading twice, because nothing reports it and it only shows up in a
+release build.
+
+Tailwind compiles the classes it finds by scanning source text. Your package manager links a
+workspace package into `node_modules`, and **Tailwind's scanner does not follow symlinks**. A
+`@source` pointing at the linked copy therefore contributes nothing at all: no error, no warning,
+and every class your components use is dropped from the build.
+
+```css title="apps/mobile/src/styles/global.css"
+/* Silently scans nothing. */
+@source "../../node_modules/@acme/ui/src";
+
+/* The real directory. This is what init writes. */
+@source "../../../../packages/ui/src/components/ui";
+```
+
+`init` computes those globs from where the files actually landed on disk, so the real path is what
+comes out. `delacour doctor` re-checks the coverage afterwards, resolving symlinks as it goes.
+
+## One copy of each native module
+
+A monorepo invites a second copy: the package manager can materialise `react-native-reanimated`
+under the app while the workspace root holds another. Two registrations of a native module break
+at runtime.
+
+`delacour doctor` warns when it finds duplicates. The fix is Metro's resolver:
+
+```js title="apps/mobile/metro.config.js"
+config.resolver.extraNodeModules = {
+  "react-native": path.resolve(workspaceRoot, "node_modules/react-native"),
+  "react-native-reanimated": path.resolve(workspaceRoot, "node_modules/react-native-reanimated"),
+  "react-native-gesture-handler": path.resolve(workspaceRoot, "node_modules/react-native-gesture-handler"),
+};
+```
+
+Keep `withUniwindConfig` the outermost wrapper around whatever else you add.
+
+## Several apps, one package
+
+Point each app's Tailwind entry at the package and give each its own Metro wrapper. `delacour.json`
+names one app in `app.root` — the one `init` and `doctor` work against — so run `doctor` from each
+app's directory to check the others:
+
+```bash
+bunx delacour doctor --cwd apps/mobile
+bunx delacour doctor --cwd apps/tablet
+```
+
+<Callout type="warn">
+`--cwd apps/tablet` finds the nearest `delacour.json` walking upwards. If your second app has no
+config of its own, it resolves the shared package's — which names the *first* app in `app.root`.
+Give each app a `delacour.json` when they diverge.
+</Callout>
+
+## Sharing without a package
+
+You do not need a workspace package at all. Point two apps at the same directory with `paths`
+containing `../`, and both get the same files with no publishing step:
+
+```json title="apps/mobile/delacour.json"
+{
+  "paths": { "ui": "../../shared/components/ui", "lib": "../../shared/lib" },
+  "app": { "root": "." }
+}
+```
+
+`aliases` will be empty unless a `tsconfig` mapping covers that directory, so the imports come out
+relative — which resolves without `experiments.tsconfigPaths`.

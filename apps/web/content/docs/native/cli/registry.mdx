@@ -1,0 +1,155 @@
+---
+title: The registry
+description: Where components come from, how a version is pinned, and how to serve your own.
+icon: Package
+---
+
+The registry is JSON committed to the repository and read straight off
+`raw.githubusercontent.com`. There is no service to host and nothing to keep running — and nothing
+to be down when you run `add`.
+
+```txt
+registry/
+├── registry.json      the index: names, descriptions, dependencies — no file contents
+├── r/button.json      one item, contents inlined
+└── config.schema.json the JSON Schema behind delacour.json's $schema
+```
+
+`add button` costs two small requests: the index, to resolve what button pulls in, and the items
+it actually needs. Everything fetched is cached under your cache directory and revalidated with an
+ETag, so a repeated `add` costs a 304 and an `add` on a flaky connection still works from what is
+already there.
+
+## An item
+
+```json title="registry/r/button.json"
+{
+  "name": "button",
+  "type": "registry:ui",
+  "title": "Button",
+  "description": "A pressable action composed from parts, with variants, sizes and a loading state.",
+  "registryDependencies": ["icon", "pressable", "spinner", "text", "tv"],
+  "dependencies": ["tailwind-variants"],
+  "expoDependencies": [],
+  "devDependencies": [],
+  "files": [{ "path": "components/button/button.tsx", "target": "button/button.tsx", "namespace": "ui", "content": "…" }]
+}
+```
+
+The dependency list is split three ways on purpose, and it is the split that decides whether an
+Expo build compiles:
+
+<TypeTable
+  type={{
+    registryDependencies: { type: "string[]", description: "Other items to copy. Nothing is installed." },
+    dependencies: { type: "string[]", description: "npm packages, installed with your package manager." },
+    expoDependencies: { type: "string[]", description: "Installed with expo install, so the SDK resolves the version." },
+    devDependencies: { type: "string[]", description: "Installed as devDependencies." },
+  }}
+/>
+
+<Callout title="Why expoDependencies is its own field">
+Expo pins every native module to a version its SDK can build. `bun add react-native-reanimated`
+fetches the newest release instead, which on any older SDK is a package that fails at the linker
+rather than at install time. A single `dependencies` field cannot express that difference.
+</Callout>
+
+Each item also carries the component's `AGENTS.md`, rewritten to cite your paths rather than the
+package's — so an agent working in your repository gets the design rules next to the code.
+
+## Pinning a version
+
+The CLI is published with the git ref it was built from baked in, so a given version always reads
+the registry it shipped against. Override it three ways, in this order:
+
+```bash
+bunx delacour add tabs --ref main          # 1. the flag
+```
+
+```json title="delacour.json"
+{ "registry": { "ref": "v0.2.0" } }        // 2. the config
+```
+
+```bash
+DELACOUR_REGISTRY_REF=main bunx delacour add tabs   # 3. the environment
+```
+
+`--ref main` is how you take a component that has landed since your CLI was published. `bunx
+delacour@latest` gets you both the newest CLI and its matching registry.
+
+## Reading from somewhere else
+
+`--registry` accepts three shapes, and so does `registry.url` in the config.
+
+<Tabs items={["A fork", "A hosted registry", "A local path"]}>
+<Tab value="A fork">
+
+```bash
+bunx delacour add button --registry github:acme/ui --ref main
+```
+
+Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shorthand
+(`github:acme/ui#next`) wins over `--ref`.
+
+</Tab>
+<Tab value="A hosted registry">
+
+```bash
+bunx delacour add card --registry https://ui.acme.com/r
+```
+
+Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
+`r/<name>.json` at that base.
+
+</Tab>
+<Tab value="A local path">
+
+```bash
+bunx delacour add button --registry ./registry
+```
+
+Reads from disk, skipping the network and the cache entirely. This is how the CLI's own tests run,
+and it is the fastest way to try a change to a component before publishing it.
+
+</Tab>
+</Tabs>
+
+<Callout type="warn" title="A registry is code you are about to run">
+Everything fetched is validated before a byte is written — a `target` that tries to escape its
+namespace is rejected rather than followed. That guard is real, but it is not a substitute for
+trusting the registry you point at.
+</Callout>
+
+## Building your own
+
+The registry is **derived** from the library's source rather than maintained beside it: one item
+per component folder, dependencies read off the imports, and imports rewritten into portable
+placeholders. There is no hand-written index to drift.
+
+```bash
+bun --filter delacour run registry:build
+```
+
+The build refuses to guess. A component folder with no metadata fails it, and so does an npm import
+nobody has classified as `expo install` or plain — because the default would be the one that
+installs a native module at a version the SDK cannot build.
+
+Imports are canonicalised at build time and substituted at `add` time:
+
+```tsx
+// in the library
+import { Icon } from "../icon";
+import { cn } from "../../lib/cn";
+
+// in the registry
+import { Icon } from "@registry/ui/icon";
+import { cn } from "@registry/lib/cn";
+
+// in your project
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/cn";
+```
+
+That is why `add` needs no TypeScript parser: the parsing happened once, in the registry build,
+against source we control. An import that lands in the same directory is left alone, so a copied
+file reads the way the original does.

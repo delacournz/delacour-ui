@@ -1,0 +1,131 @@
+---
+title: delacour.json
+description: Where components go, how they import each other, and which app to wire up.
+icon: Settings
+---
+
+Written by `init`, next to your components. The nearest one wins, walking up from `--cwd`.
+
+```json title="delacour.json"
+{
+  "$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/config.schema.json",
+  "framework": "expo",
+  "typescript": true,
+  "registry": {},
+  "registries": {},
+  "paths": {
+    "ui": "src/components/ui",
+    "lib": "src/lib",
+    "hooks": "src/hooks",
+    "styles": "src/styles",
+    "icons": "src/lib/icons"
+  },
+  "aliases": {
+    "ui": "@/components/ui",
+    "lib": "@/lib",
+    "hooks": "@/hooks",
+    "styles": "@/styles",
+    "icons": "@/lib/icons"
+  },
+  "app": {
+    "root": ".",
+    "css": "src/styles/global.css",
+    "metroConfig": "metro.config.js",
+    "uniwindTypes": "src/uniwind-types.d.ts"
+  }
+}
+```
+
+The `$schema` URL is generated from the same definitions the CLI validates against, so editor
+completions cannot describe a shape the CLI would then reject.
+
+## `paths` and `aliases` are not the same thing
+
+This is the one part of the file worth understanding. They answer two different questions:
+
+- **`paths`** — where a file lands on disk, relative to `delacour.json`.
+- **`aliases`** — what other files import it as.
+
+They coincide only when the project has path aliases configured. Many Expo apps do not, and Metro
+resolves `tsconfig` paths only with `experiments.tsconfigPaths` turned on. Keeping them separate
+means two things: `add` never has to parse a `tsconfig` to work out where anything went, and a
+project with no aliases at all still gets imports that resolve.
+
+<Callout title="An empty aliases object is a valid configuration">
+Leave a namespace out and imports into it are written as **relative paths**, computed from where
+the files actually landed. Delete `aliases` entirely and every import is relative.
+</Callout>
+
+```tsx
+// aliases.ui set
+import { Icon } from "@/components/ui/icon";
+
+// aliases.ui absent
+import { Icon } from "../icon";
+```
+
+`init` fills `aliases` in by reading a wildcard mapping like `"@/*": ["./src/*"]` out of
+`tsconfig.json`. It never writes to that file.
+
+### The five namespaces
+
+<TypeTable
+  type={{
+    ui: { type: "string", description: "Component folders. Each becomes a directory: ui/button/button.tsx.", default: "src/components/ui" },
+    lib: { type: "string", description: "cn, tv, slot, and the expo/ integration helpers.", default: "src/lib" },
+    hooks: { type: "string", description: "useControllableState, useThemeColor, and friends.", default: "src/hooks" },
+    styles: { type: "string", description: "tokens.css, theme.css, base.css, and the Uniwind type shim.", default: "src/styles" },
+    icons: { type: "string", description: "The Central Icons re-export.", default: "src/lib/icons" },
+  }}
+/>
+
+## `app`
+
+Which Expo app to wire up. Every path here is relative to `app.root`, and `app.root` itself is
+relative to `delacour.json`.
+
+<TypeTable
+  type={{
+    root: { type: "string", description: "The Expo app root. `.` when the components live in the app itself.", default: "." },
+    css: { type: "string", description: "The Tailwind entry Metro compiles.", default: "src/styles/global.css" },
+    metroConfig: { type: "string", default: "metro.config.js" },
+    uniwindTypes: { type: "string", description: "Where Uniwind writes its generated className types.", default: "src/uniwind-types.d.ts" },
+  }}
+/>
+
+This block exists because the components and the app are not always the same package. Metro, the
+Tailwind entry and the native dependencies always belong to the **app**, even when the components
+live in a shared package — see [Monorepos](/docs/native/cli/monorepo).
+
+## `registry`
+
+```json
+{
+  "registry": { "ref": "v0.2.0" }
+}
+```
+
+<TypeTable
+  type={{
+    "registry.url": { type: "string", description: "Repository base, or a hosted registry. Defaults to this project's." },
+    "registry.ref": { type: "string", description: "Git ref to read at. Defaults to the tag the CLI was published from." },
+    registries: { type: "Record<string, string>", description: "Extra registries by namespace, for third-party components." },
+  }}
+/>
+
+Covered in [The registry](/docs/native/cli/registry).
+
+## The rest
+
+<TypeTable
+  type={{
+    framework: { type: '"expo" | "react-native"', description: "Set by init from whether expo is a dependency.", default: '"expo"' },
+    typescript: { type: "boolean", default: "true" },
+  }}
+/>
+
+## Changing it later
+
+Edit the file and re-run `add` for anything already copied — the CLI writes to whatever `paths`
+says now, so old files stay where they were. `delacour info` prints the resolved absolute paths,
+which is the quickest way to check a change landed the way you meant.

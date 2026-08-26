@@ -1,0 +1,117 @@
+---
+title: MCP server
+description: Give a coding agent the real components instead of plausible ones.
+icon: Bot
+---
+
+```bash
+delacour mcp
+```
+
+An MCP server over stdio, exposing the same functions the commands call. Ask an agent for "a
+button" without it and you get plausible JSX — the right shape, and none of the parts that matter
+here: the icon that inherits its size from the button's context, the spinner that *replaces* the
+icon so the label does not shift, the `expo install` route for the native modules underneath.
+
+With it, the agent reads the real component and copies it.
+
+## Wiring it up
+
+<Tabs items={["Claude Code", "Cursor", "Any MCP client"]}>
+<Tab value="Claude Code">
+
+```bash
+claude mcp add delacour -- bunx delacour@latest mcp
+```
+
+</Tab>
+<Tab value="Cursor">
+
+```json title=".cursor/mcp.json"
+{
+  "mcpServers": {
+    "delacour": {
+      "command": "bunx",
+      "args": ["delacour@latest", "mcp"]
+    }
+  }
+}
+```
+
+</Tab>
+<Tab value="Any MCP client">
+
+```json
+{
+  "command": "bunx",
+  "args": ["delacour@latest", "mcp", "--cwd", "/path/to/your/app"]
+}
+```
+
+`--cwd` decides which `delacour.json` applies. Omit it when the client already runs the server
+from your project root.
+
+</Tab>
+</Tabs>
+
+`--registry` and `--ref` work here too, so an agent can be pointed at a fork or pinned to a
+version.
+
+## The tools
+
+<TypeTable
+  type={{
+    list_components: {
+      type: "() => string",
+      description: "Every component and utility, with what each is for. The agent should call this before writing any React Native UI.",
+    },
+    get_component: {
+      type: "(name) => string",
+      description: "One item in full: its source files, what it copies in, what it installs, and its design notes.",
+    },
+    add_components: {
+      type: "(names, overwrite?, install?) => string",
+      description: "Copies components in, with rewritten imports and the right install route.",
+    },
+    check_project: {
+      type: "() => string",
+      description: "Runs the doctor checks and reports each with its fix.",
+    },
+  }}
+/>
+
+`check_project` is the one worth pointing an agent at explicitly. When a component renders
+unstyled or a press does nothing, there is no error message to read — the agent will otherwise
+start rewriting working code. Those failures are
+[configuration](/docs/native/cli/troubleshooting), and this names them.
+
+## Copying beats generating
+
+`get_component` returns the component's `AGENTS.md` alongside its source, rewritten to cite your
+own import paths. That document is where the reasoning lives — why `isLoading` swaps the icon
+rather than joining it, why a `View` cannot cascade colour to a `Text`, why the separator stretches
+instead of taking a percentage width.
+
+An agent that has read it edits the component correctly. An agent that has not writes something
+that renders and is subtly wrong.
+
+<Callout title="The same prose ships with the files">
+`add` writes each component's `AGENTS.md` next to its source, so the notes are in your repository
+whether or not the MCP server is running. That is a real advantage of owning the code: the design
+rules travel with it.
+</Callout>
+
+## Without MCP
+
+Every tool has a command behind it, so an agent with shell access needs nothing installed:
+
+```bash
+delacour list --json
+delacour view button --json
+delacour add button --yes
+delacour doctor --json
+```
+
+See also [`llms.txt`](/docs/native/getting-started/llms) for handing an agent the whole library as
+context, and [Agents](/docs/native/getting-started/agents) for the conventions it should follow
+when editing these components.

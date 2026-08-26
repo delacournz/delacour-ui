@@ -1,0 +1,19 @@
+{
+	"title": "CLI",
+	"icon": "Terminal",
+	"root": true,
+	"pages": [
+		"---Overview---",
+		"index",
+		"init",
+		"---Guides---",
+		"monorepo",
+		"troubleshooting",
+		"---Reference---",
+		"commands",
+		"configuration",
+		"registry",
+		"---UI for Agents---",
+		"mcp"
+	]
+}

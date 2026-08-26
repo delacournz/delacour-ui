@@ -4,8 +4,9 @@ A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/doc
 library namespaced at `/docs/native/*` so a second library can be added later without a URL
 migration.
 
-Documents `@delacour/native-ui`. It does **not** import or render its components — see
-**Why there are no live previews**.
+Documents `@delacour/native-ui` and the `delacour` CLI that copies its components into a
+consumer's repository. It does **not** import or render those components — see **Why there are no
+live previews**.
 
 ## Stack
 
@@ -31,6 +32,7 @@ content/docs/native/
 ├── meta.json              the /docs/native namespace
 ├── getting-started/       root folder → navbar tab
 ├── components/            root folder → navbar tab
+├── cli/                   root folder → navbar tab
 └── releases/              root folder → navbar tab
 
 src/
@@ -68,6 +70,16 @@ The page slots must come from the **matching** package: `fumadocs-ui/layouts/not
 3. Sidebar section headings are separators — `"---Section Name---"` entries in `pages`.
 4. Frontmatter takes `title`, `description` and `icon` (any Lucide name — resolved by
    `lucideIconsPlugin()` in `src/lib/source.ts`).
+
+### A CLI page
+
+`content/docs/native/cli/` documents `packages/cli`, not the library. It is a root folder of the
+**native** namespace rather than a `/docs/cli` namespace of its own, because the CLI is how this
+library is delivered rather than a second library — and `src/lib/layout.shared.tsx` only links
+into `native`, so a top-level namespace would render but be unreachable from the nav.
+
+Command flags are transcribed from `delacour <command> --help`. When one changes, that output is
+the source of truth; nothing checks the pages against it.
 
 ### A component page
 

@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: The nine doctor checks, and the silent failure each one exists to catch.
+description: The ten doctor checks, and the silent failure each one exists to catch.
 icon: Stethoscope
 ---
 
@@ -30,9 +30,28 @@ the exit code is non-zero when a check fails.
 
 ### My components render, but with no styles
 
-Almost always Tailwind's `@source` coverage, and almost always only in a release build. Tailwind
-compiles the classes it finds in source text, so a glob that does not reach your components means
-those classes were never compiled.
+Three causes, in the order worth checking.
+
+**Nothing imports the CSS entry.** `withUniwindConfig`'s `cssEntryFile` tells the transformer which
+file to compile — it does not put that file in the bundle. If no module imports it, the app builds,
+boots and renders every component completely unstyled, with nothing logged.
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+```
+
+First statement, in the root layout. `delacour doctor` checks this, and is careful to ignore a doc
+comment that merely names the import.
+
+<Callout>
+The signature is unmistakable once you have seen it: no padding, no gaps, no colours, and spinners
+drawn at their natural SVG size rather than the icon scale. Every component is *mounting* — it is
+only the classes that never arrived.
+</Callout>
+
+**Tailwind's `@source` coverage**, and usually only in a release build. Tailwind compiles the
+classes it finds in source text, so a glob that does not reach your components means those classes
+were never compiled.
 
 In a monorepo, the usual cause is a `@source` pointing through `node_modules` — the scanner does
 not follow symlinks, so it scans nothing. See [Monorepos](/docs/native/cli/monorepo).
@@ -42,7 +61,7 @@ bunx delacour doctor    # "Tailwind sources — not scanned: …"
 bunx delacour init -f   # rewrites the managed @source block
 ```
 
-The second suspect is Metro. If `withUniwindConfig` is present but not the **outermost** wrapper,
+**Metro's wrapper ordering.** If `withUniwindConfig` is present but not the **outermost** wrapper,
 something applied after it can replace `config.transformer`, and `className` stops compiling
 entirely. `doctor` checks the ordering, not just the presence.
 
@@ -129,6 +148,10 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
     "New Architecture": { type: "check", description: "newArchEnabled is on. Reanimated 4 does not run without it." },
     Uniwind: { type: "check", description: "uniwind and tailwindcss are installed." },
     Metro: { type: "check", description: "withUniwindConfig is present, outermost, and points at the configured CSS entry." },
+    "CSS entry": {
+      type: "check",
+      description: "Something actually imports the Tailwind entry. Naming it in metro.config.js does not put it in the bundle.",
+    },
     "Tailwind sources": { type: "check", description: "The @source globs cover every directory holding copied code, resolving symlinks." },
     "Path aliases": { type: "check", description: "experiments.tsconfigPaths is on when delacour.json uses aliases." },
     "Uniwind types": { type: "check", description: "uniwind-env.d.ts is present — without it, className is a type error." },

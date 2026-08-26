@@ -102,6 +102,16 @@ the imports it saves, and in a monorepo the same alias often already means somet
 
 `init` prints these, and `delacour doctor` checks all of them afterwards.
 
+### Import the CSS entry
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+```
+
+First statement of the root layout. `withUniwindConfig`'s `cssEntryFile` names the file for the
+transformer; it does not put it in the bundle. Skip this and the app builds, boots and renders
+every component **completely unstyled**, with nothing logged.
+
 ### Mount the provider
 
 Every pressable in the library is a Gesture Handler detector, and a detector outside a

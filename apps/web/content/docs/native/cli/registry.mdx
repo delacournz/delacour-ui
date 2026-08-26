@@ -182,9 +182,18 @@ It also asserts what a build alone cannot:
 
 ```bash
 bun --filter delacour run verify:expo --no-install     # structure only, offline
+bun --filter delacour run verify:expo --bundle         # ...and compile it with Metro
+bun --filter delacour run verify:expo --simulator      # ...and render it on a device
 bun --filter delacour run verify:expo --only button    # one component and its closure
-bun --filter delacour run verify:expo --keep           # leave the app behind
 ```
+
+<Callout title="A clean tsc is not the whole story">
+Uniwind compiles `className` in a **Metro transform**, so a class the scanner never saw is dropped
+from the build with nothing logged — and `tsc` cannot see that at all. `--bundle` runs
+`expo export`, which is the whole pipeline short of the native build, and is the cheapest stage
+that catches it. `--simulator` goes one further and builds a dev client, because Reanimated,
+Gesture Handler and the keyboard controller are native modules Expo Go cannot load.
+</Callout>
 
 CI runs the offline pass on every push and the full pass in its own job. If you maintain a fork or
 your own registry, point it at yours with `--registry`.

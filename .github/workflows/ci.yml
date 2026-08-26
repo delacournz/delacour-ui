@@ -54,6 +54,9 @@ jobs:
       # every item, then typechecks the result. A clean tsc is the proof that
       # every copied component resolves every import it makes — which no fixture
       # test can establish, because a fixture has no dependency tree.
-      - name: Scaffold, install and typecheck
+      # --bundle also runs the components through Metro, which is the only stage
+      # that exercises Uniwind's transform. A class the scanner never saw is
+      # dropped from the build silently, and tsc cannot see that at all.
+      - name: Scaffold, install, typecheck and bundle
         working-directory: packages/cli
-        run: bun run verify:expo
+        run: bun run verify:expo --bundle

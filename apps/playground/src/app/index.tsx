@@ -2,6 +2,7 @@ import { Button } from "@delacour/native-ui/button";
 import { Icon } from "@delacour/native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
+	IconBrowserTabs,
 	IconBulletList,
 	IconChevronGrabberVertical,
 	IconCircleRecord,
@@ -119,6 +120,12 @@ const COMPONENTS = [
 		icon: IconToggle,
 		title: "Switch",
 		description: "Drag or tap, colours, sizes, end content",
+	},
+	{
+		href: "/tabs",
+		icon: IconBrowserTabs,
+		title: "Tabs",
+		description: "Variants, sizes, swipe, scrolling",
 	},
 	{
 		href: "/text",

@@ -25,6 +25,7 @@
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./switch": "./src/components/switch/index.ts",
+		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",

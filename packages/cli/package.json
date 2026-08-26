@@ -31,6 +31,7 @@
 		"build:check": "bun scripts/check-bundle.ts",
 		"dev": "tsdown --watch",
 		"registry:build": "bun src/registry/cli.ts",
+		"verify:expo": "bun scripts/verify-expo.ts",
 		"check": "biome check ./src",
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",

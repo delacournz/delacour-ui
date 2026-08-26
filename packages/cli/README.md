@@ -109,9 +109,31 @@ a JS reload alone will red-box.
 ```bash
 bun run registry:build   # rebuild registry/ from packages/native-ui
 bun test                 # unit + end-to-end against the local registry
+bun run verify:expo      # scaffold a real Expo app, add everything, typecheck it
 bun run build            # bundle dist/index.js
 bun run build:check      # assert the bundle stayed small and executable
 ```
+
+### `verify:expo`
+
+`bun test` copies files into a fixture and asserts on the result. That catches a broken path but
+not a broken *component* — an import naming a package nobody installed, a peer the registry never
+classified, a type that only resolves inside this monorepo.
+
+`verify:expo` scaffolds a real Expo app in a temp directory, installs Uniwind and Tailwind the way
+a consumer would, runs `init` and adds **every** item, then runs `tsc --noEmit` against the
+result. A clean typecheck is the proof that all of it resolves.
+
+```bash
+bun run verify:expo                  # the full run: installs from npm, ~2 minutes
+bun run verify:expo --no-install     # structure only, offline
+bun run verify:expo --only button    # one component and its closure
+bun run verify:expo --keep           # leave the app behind to poke at
+bun run verify:expo --verbose        # stream every subprocess
+```
+
+`--all` adds components and what they pull in, so the run also names the standalone utilities
+explicitly — a verification pass has to cover the whole registry, not most of it.
 
 The registry is **derived** from `packages/native-ui/src` — one item per
 component folder, dependencies read off the imports. There is no `registry.json`

@@ -612,6 +612,11 @@ Then run `bun --filter delacour run registry:build` and commit `registry/`. CI
 fails if it is stale, since the registry is served straight out of the
 repository.
 
+`bun --filter delacour run verify:expo` is the check worth running before you
+believe it: it scaffolds a real Expo app, adds every item, and typechecks the
+result. A component whose imports only resolve inside this monorepo passes
+`bun test` and fails there.
+
 A component folder that follows the rules above needs nothing else. Relative
 imports crossing a folder — `../icon`, `../../lib/cn` — are rewritten to
 placeholders at build time and resolved to the consumer's own aliases at `add`

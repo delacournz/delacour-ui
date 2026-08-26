@@ -63,7 +63,7 @@ export function TabsSeparator({
 
 	// The slot is positioning and a height, and it goes on the wrapper: a vertical
 	// `Separator` is `self-stretch`, so it takes its length from whatever holds it
-	// rather than naming one — see the Separator section of AGENTS.md.
+	// rather than naming one — see ../separator/AGENTS.md.
 	return (
 		<Animated.View className={slots.separator({ className })} style={fadeStyle} {...props}>
 			<Separator orientation="vertical" {...separatorProps} />

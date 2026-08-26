@@ -34,7 +34,7 @@ type IconGlyphProps = Omit<SvgProps, "color" | "width" | "height"> & {
  * This one indirection is what keeps the whole Central Icons set to a *single*
  * `withUniwind` wrapper: the wrapper goes on this component, which takes the
  * glyph as data, rather than on each of the two thousand icon components.
- * AGENTS.md rule 6 caps a component at one wrapper in one file — this is it.
+ * AGENTS.md rule 7 caps a component at one wrapper in one file — this is it.
  *
  * The className must not reach the glyph. `withManualUniwind` spreads the
  * original props straight through, and `CentralIconBase` would forward a stray

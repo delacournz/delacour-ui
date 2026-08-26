@@ -20,8 +20,10 @@ export type RadioLabelProps = TextPresetProps;
  *
  * **It does not redden while invalid.** The ring already carries that, and a
  * `Field.Error` under the group says what is actually wrong; five labels turning
- * red would read as five wrong answers. Disabled needs nothing either — the
- * row's own `opacity-50` fades the ring and the label together, as one control.
+ * red would read as five wrong answers. Disabled needs nothing here either: the
+ * `label` slot carries its own `opacity-50`, and the `indicator` slot carries a
+ * matching one, so the ring and the label fade together as one control. Neither
+ * fade may move to the `root` — see {@link radioVariants}.
  */
 export function RadioLabel({ className, size, ...props }: RadioLabelProps): ReactElement {
 	const { size: radioSize, variant, isSelected, isInvalid } = useRadioPart("Radio.Label");

@@ -15,8 +15,8 @@ const SRC = import.meta.dirname;
  *
  * The corpus spans every file at once rather than checking each in isolation,
  * because `ScreenRoot` is declared in `screen-root.tsx` and named by the
- * `Object.assign` in `screen.tsx` — see **Screen** in AGENTS.md for why the two
- * cannot share a file.
+ * `Object.assign` in `screen.tsx` — see components/screen/AGENTS.md for why the
+ * two cannot share a file.
  */
 
 /** Every `.tsx` under `src/`, as a path → source map. */

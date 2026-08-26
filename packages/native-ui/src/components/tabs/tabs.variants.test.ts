@@ -18,6 +18,7 @@ import {
 	resolveSettleIndex,
 	resolveTabIndex,
 	resolveTabOrder,
+	resolveTabSelectedness,
 	resolveTabsTriggerState,
 	resolveVisualIndex,
 	shouldEmitTabChange,
@@ -90,7 +91,6 @@ function textColors(value: string): string[] {
 type Cell = {
 	isDisabled: boolean;
 	isScrollable: boolean;
-	isSelected: boolean;
 	size: (typeof TABS_SIZES)[number];
 	variant: (typeof TABS_VARIANTS)[number];
 };
@@ -100,11 +100,9 @@ function everyCell(): Cell[] {
 	const cells: Cell[] = [];
 	for (const variant of TABS_VARIANTS) {
 		for (const size of TABS_SIZES) {
-			for (const isSelected of [false, true]) {
-				for (const isDisabled of [false, true]) {
-					for (const isScrollable of [false, true]) {
-						cells.push({ isDisabled, isScrollable, isSelected, size, variant });
-					}
+			for (const isDisabled of [false, true]) {
+				for (const isScrollable of [false, true]) {
+					cells.push({ isDisabled, isScrollable, size, variant });
 				}
 			}
 		}
@@ -123,7 +121,7 @@ describe("the token readers", () => {
 
 describe("the matrix", () => {
 	test("covers every axis", () => {
-		expect(CELLS).toHaveLength(TABS_VARIANTS.length * TABS_SIZES.length * 2 * 2 * 2);
+		expect(CELLS).toHaveLength(TABS_VARIANTS.length * TABS_SIZES.length * 2 * 2);
 	});
 });
 
@@ -320,35 +318,12 @@ describe("the label slot", () => {
 		}
 	});
 
-	test("names a colour in every cell", () => {
-		for (const cell of CELLS) expect(textColors(cls(tabsVariants(cell).label()))).toHaveLength(1);
-	});
-
-	test("changes only its colour when the tab is selected", () => {
-		for (const variant of TABS_VARIANTS) {
-			for (const size of TABS_SIZES) {
-				const unselected = cls(tabsVariants({ isSelected: false, size, variant }).label())
-					.split(" ")
-					.sort();
-				const selected = cls(tabsVariants({ isSelected: true, size, variant }).label())
-					.split(" ")
-					.sort();
-				const removed = unselected.filter((name) => !selected.includes(name));
-				const added = selected.filter((name) => !unselected.includes(name));
-				expect(removed).toHaveLength(1);
-				expect(added).toHaveLength(1);
-				expect(removed[0]).toMatch(/^text-/);
-				expect(added[0]).toMatch(/^text-/);
-			}
-		}
-	});
-
-	test("gives the selected label a colour of its own, in every variant", () => {
-		for (const variant of TABS_VARIANTS) {
-			const unselected = textColors(cls(tabsVariants({ isSelected: false, variant }).label()))[0];
-			const selected = textColors(cls(tabsVariants({ isSelected: true, variant }).label()))[0];
-			expect(selected).not.toBe(unselected);
-		}
+	test("names no colour at all, in any cell", () => {
+		// The label's colour fades between two tokens on the UI thread, so it is an
+		// animated style. A class here would be a second source for one colour, and
+		// a class and a style disagreeing for a frame is what `Checkbox`'s animated
+		// border exists to avoid. `TABS_FOREGROUND_TOKEN` is the matrix instead.
+		for (const cell of CELLS) expect(textColors(cls(tabsVariants(cell).label()))).toHaveLength(0);
 	});
 
 	test("fades when the trigger is disabled, and only then", () => {
@@ -359,13 +334,8 @@ describe("the label slot", () => {
 		}
 	});
 
-	test("declares every colour it names in both themes", () => {
-		for (const cell of CELLS) {
-			for (const color of textColors(cls(tabsVariants(cell).label()))) {
-				expect(LIGHT.has(color)).toBe(true);
-				expect(DARK.has(color)).toBe(true);
-			}
-		}
+	test("merges an incoming className last", () => {
+		expect(tabsVariants().label({ className: "shrink-0" })).toContain("shrink-0");
 	});
 });
 
@@ -421,8 +391,9 @@ describe("the pager slots", () => {
 describe("the variant matrix", () => {
 	test("gives every variant a treatment of its own, across the track, the indicator and the selected label", () => {
 		const treatments = TABS_VARIANTS.map((variant) => {
-			const slots = tabsVariants({ isSelected: true, variant });
-			return [cls(slots.list()), cls(slots.indicator()), cls(slots.label())].join("|");
+			const slots = tabsVariants({ variant });
+			const tokens = TABS_FOREGROUND_TOKEN[variant];
+			return [cls(slots.list()), cls(slots.indicator()), tokens.selected, tokens.unselected].join("|");
 		});
 		expect(new Set(treatments).size).toBe(TABS_VARIANTS.length);
 	});
@@ -482,15 +453,18 @@ describe("TABS_FOREGROUND_TOKEN", () => {
 		}
 	});
 
-	test("pairs each token with the colour its own label slot resolves to", () => {
+	test("gives the selected end a colour of its own, in every variant", () => {
+		// Two ends collapsing means the label crossfades from a colour to itself and
+		// selecting a tab changes nothing about its text.
 		for (const variant of TABS_VARIANTS) {
-			expect(textColors(cls(tabsVariants({ isSelected: true, variant }).label()))[0]).toBe(
-				TABS_FOREGROUND_TOKEN[variant].selected
-			);
-			expect(textColors(cls(tabsVariants({ isSelected: false, variant }).label()))[0]).toBe(
-				TABS_FOREGROUND_TOKEN[variant].unselected
-			);
+			expect(TABS_FOREGROUND_TOKEN[variant].selected).not.toBe(TABS_FOREGROUND_TOKEN[variant].unselected);
 		}
+	});
+
+	test("is the only place either colour is named", () => {
+		// If a colour ever reappears on the `label` slot, the fade and the class
+		// become two sources for one value. This is the test that catches it.
+		for (const cell of CELLS) expect(textColors(cls(tabsVariants(cell).label()))).toHaveLength(0);
 	});
 
 	test("declares every token it names in both themes", () => {
@@ -921,6 +895,38 @@ describe("resolveSettleIndex", () => {
 	});
 });
 
+describe("resolveTabSelectedness", () => {
+	test("reads fully selected when the pager sits on the tab", () => {
+		expect(resolveTabSelectedness(1, 1)).toBe(1);
+	});
+
+	test("reads not selected at all once a whole tab away", () => {
+		expect(resolveTabSelectedness(0, 1)).toBe(0);
+		expect(resolveTabSelectedness(0, 3)).toBe(0);
+	});
+
+	test("splits evenly between two neighbours at the midpoint of a drag", () => {
+		expect(resolveTabSelectedness(0, 0.5)).toBeCloseTo(0.5);
+		expect(resolveTabSelectedness(1, 0.5)).toBeCloseTo(0.5);
+	});
+
+	test("is symmetric, so approaching from either side fades the same", () => {
+		expect(resolveTabSelectedness(1, 0.7)).toBeCloseTo(resolveTabSelectedness(1, 1.3));
+	});
+
+	test("stays within 0 and 1 across a rubber-banded overscroll", () => {
+		for (const position of [-TABS_PAN.overscroll, 0, 0.25, 1, 2.5, 3 + TABS_PAN.overscroll]) {
+			const value = resolveTabSelectedness(1, position);
+			expect(value).toBeGreaterThanOrEqual(0);
+			expect(value).toBeLessThanOrEqual(1);
+		}
+	});
+
+	test("reads nothing for a tab no panel claims", () => {
+		expect(resolveTabSelectedness(-1, 0)).toBe(0);
+	});
+});
+
 describe("resolveVisualIndex", () => {
 	test("holds the current tab until the pager is most of the way to the next", () => {
 		expect(resolveVisualIndex(1.4, 1, 3)).toBe(1);
@@ -945,24 +951,38 @@ describe("resolveVisualIndex", () => {
 });
 
 describe("resolveSeparatorOpacity", () => {
-	test("hides the rule for the whole of a swipe between the pair it sits in", () => {
-		expect(resolveSeparatorOpacity(0, 0, 1)).toBe(0);
+	test("shows the rule while the pager is parked on either of its neighbours", () => {
+		// The bar at rest shows every rule it has. The earlier shape hid the ones
+		// flanking the active tab, which on a three-tab bar left exactly one visible
+		// over on the far side and changed the set on every tab change.
+		expect(resolveSeparatorOpacity(0, 0, 1)).toBe(1);
+		expect(resolveSeparatorOpacity(1, 0, 1)).toBe(1);
+	});
+
+	test("hides it while the pager is crossing it", () => {
 		expect(resolveSeparatorOpacity(0.5, 0, 1)).toBe(0);
-		expect(resolveSeparatorOpacity(1, 0, 1)).toBe(0);
 	});
 
-	test("shows it fully once the pager is well clear", () => {
-		expect(resolveSeparatorOpacity(3, 0, 1)).toBe(1);
+	test("dips and returns across a full swipe over it", () => {
+		const ramp = [0, 0.25, 0.5, 0.75, 1].map((p) => resolveSeparatorOpacity(p, 0, 1));
+		expect(ramp[0]).toBe(1);
+		expect(ramp[2]).toBe(0);
+		expect(ramp[4]).toBe(1);
+		expect(ramp[1]).toBeLessThan(1);
+		expect(ramp[1]).toBeCloseTo(ramp[3]);
 	});
 
-	test("fades it as a swipe approaches", () => {
-		const near = resolveSeparatorOpacity(1 + TABS_SEPARATOR_FADE.hold + 0.1, 0, 1);
-		expect(near).toBeGreaterThan(0);
-		expect(near).toBeLessThan(1);
+	test("stays fully visible for a gap the pager is nowhere near", () => {
+		expect(resolveSeparatorOpacity(4, 0, 1)).toBe(1);
+		expect(resolveSeparatorOpacity(-2, 0, 1)).toBe(1);
 	});
 
-	test("holds it out for a little way past its own neighbours", () => {
-		expect(resolveSeparatorOpacity(1 + TABS_SEPARATOR_FADE.hold / 2, 0, 1)).toBe(0);
+	test("never leaves the 0 to 1 range, across a rubber-banded overscroll", () => {
+		for (const position of [-TABS_PAN.overscroll, 0, 0.5, 1, 2, 3 + TABS_PAN.overscroll]) {
+			const value = resolveSeparatorOpacity(position, 1, 2);
+			expect(value).toBeGreaterThanOrEqual(0);
+			expect(value).toBeLessThanOrEqual(1);
+		}
 	});
 
 	test("stays visible for a pair naming a tab nothing claims", () => {
@@ -972,6 +992,7 @@ describe("resolveSeparatorOpacity", () => {
 
 	test("reads the pair in either order", () => {
 		expect(resolveSeparatorOpacity(0.5, 1, 0)).toBe(0);
+		expect(resolveSeparatorOpacity(0, 1, 0)).toBe(1);
 	});
 });
 

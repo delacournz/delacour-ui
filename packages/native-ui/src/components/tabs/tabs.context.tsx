@@ -90,6 +90,8 @@ export type TabsListValue = {
 export type TabsTriggerContextValue = {
 	/** What this trigger is called, and the `Tabs.Content` it selects. */
 	value: string;
+	/** This trigger's place in the order, or `-1` when no panel claims its value. */
+	index: number;
 	/** Whether this trigger is the settled selection — what accessibility reads. */
 	isSelected: boolean;
 	/** Whether this trigger is the one currently painted as selected. */

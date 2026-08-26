@@ -38,12 +38,14 @@ export const TABS_LABEL_TEXT_SIZE: Record<TabsSize, TextSize> = { sm: "sm", md: 
 /**
  * The theme token a trigger's label and any glyph beside it take.
  *
- * Nested rather than flat, so adding a variant is a compile error in three places
- * instead of a silent gap in one. It exists because a trigger publishes an
- * `IconDefaultsProvider`, and a colour that has to reach an SVG paint prop cannot
- * be a class. A test pins every entry to the token its own `label` slot resolves
- * to — two maps that can drift is how a tab ends up with a grey glyph beside
- * white text.
+ * Nested rather than flat, so adding a variant is a compile error in two places
+ * instead of a silent gap in one.
+ *
+ * This is the **only** place either colour is named. The label crossfades between
+ * them on the UI thread and a composed `Icon` takes one of them as a resolved
+ * value, and neither of those can be a class — so the `label` slot carries no
+ * colour at all and this map is what `bun test` sweeps instead. `Checkbox`'s
+ * animated border makes the same trade for the same reason.
  */
 export const TABS_FOREGROUND_TOKEN: Record<TabsVariant, { selected: string; unselected: string }> = {
 	primary: { selected: "elevated-foreground", unselected: "muted-foreground" },
@@ -102,12 +104,13 @@ export const TABS_PAN = { activateX: 10, failY: 14, flingVelocity: 0.5, overscro
 export const TABS_VISUAL_HYSTERESIS = 0.08;
 
 /**
- * The ramp a separator fades on, in index units away from the pair it sits between.
+ * The ramp a separator fades on, in index units either side of the gap it fills.
  *
- * `hold` keeps it fully out for a little way past its own neighbours, so a settled
- * tab does not leave a faint line at its shoulder.
+ * `hold` keeps it fully out for a little way either side of dead centre, so the
+ * rule is properly gone while the capsule is over it rather than flickering
+ * through a thin band.
  */
-export const TABS_SEPARATOR_FADE = { distance: 0.75, hold: 0.25 } as const;
+export const TABS_SEPARATOR_FADE = { distance: 0.45, hold: 0.1 } as const;
 
 /** Points of the neighbouring trigger left visible by `scrollAlign` `start` and `end`. */
 export const TABS_SCROLL_INSET = 16;
@@ -414,6 +417,29 @@ export function resolveSettleIndex(state: {
 }
 
 /**
+ * How selected one tab is right now, 0 to 1, from where the pager sits.
+ *
+ * `1` when the pager is squarely on this tab, `0` once it is a whole tab away,
+ * and linear in between — so two neighbours read `0.5` each at the midpoint of a
+ * drag. This is what the label's colour crossfades on, and because `position` is
+ * written by the pan *and* by the settle spring, one function covers a finger
+ * dragging, a flick, and a plain tap without knowing which is happening.
+ *
+ * Distinct from {@link resolveVisualIndex}, which is a discrete swap for the
+ * things that cannot fade — a composed `Icon` takes its colour as a resolved
+ * value, not a style, so it has no way to be half way between two.
+ *
+ * Self-contained, for the reason {@link resolvePanPosition} gives.
+ */
+export function resolveTabSelectedness(index: number, position: number): number {
+	"worklet";
+	if (index < 0) return 0;
+	const distance = Math.abs(position - index);
+	if (distance >= 1) return 0;
+	return 1 - distance;
+}
+
+/**
  * Which tab is VISUALLY current — the one the indicator mostly covers.
  *
  * Distinct from the settled index, and both names are needed. The settled index is
@@ -441,26 +467,34 @@ export function resolveVisualIndex(position: number, current: number, count: num
 /**
  * How visible a separator is, given where the pager sits.
  *
- * Driven by `position` rather than by the settled value, so the rule retreats as a
- * finger drags a tab up against it rather than blinking away at release — which is
- * the whole reason this is an animation and not a conditional render.
+ * A rule fades out only while the pager is **crossing** it, and is fully present
+ * the rest of the time — including when the pager is parked on either of the two
+ * tabs it sits between. So a bar at rest always shows every one of its rules, and
+ * a drag dips the single rule it travels over and brings it back.
  *
- * The distance is measured OUTSIDE the pair, so a separator stays fully hidden for
- * the whole of a swipe between the two tabs it sits between rather than peeking
- * back at the midpoint.
+ * The first shape of this hid every rule *flanking* the active tab, which is a
+ * different thing and reads badly: on a three-tab bar it leaves exactly one rule
+ * visible, over on the far side, looking arbitrary — and the set of visible rules
+ * changed every time the tab did, so the bar never looked still. Measuring from
+ * the gap's own midpoint instead makes the fade mean one thing: the capsule is
+ * on top of this rule right now.
  *
- * A pair naming a tab nothing claims returns 1: a separator that vanished for an
- * unexplainable reason would be worse than one that never fades.
+ * Driven by `position` rather than by the settled value, so the rule retreats
+ * under a finger and comes back if the drag is abandoned — which is the whole
+ * reason it is an animation and not a conditional render.
+ *
+ * A pair naming a tab nothing claims returns 1: a separator that vanished for a
+ * reason unexplainable from the call site would be worse than one that never
+ * fades.
+ *
+ * Self-contained, for the reason {@link resolvePanPosition} gives.
  */
 export function resolveSeparatorOpacity(position: number, leftIndex: number, rightIndex: number): number {
 	"worklet";
 	if (leftIndex < 0 || rightIndex < 0) return 1;
 
-	const low = Math.min(leftIndex, rightIndex);
-	const high = Math.max(leftIndex, rightIndex);
-	let distance = 0;
-	if (position < low) distance = low - position;
-	else if (position > high) distance = position - high;
+	const midpoint = (leftIndex + rightIndex) / 2;
+	const distance = Math.abs(position - midpoint);
 
 	const span = TABS_SEPARATOR_FADE.distance - TABS_SEPARATOR_FADE.hold;
 	if (span <= 0) return distance > TABS_SEPARATOR_FADE.hold ? 1 : 0;
@@ -568,7 +602,16 @@ export const tabsVariants = tv({
 		indicator: "absolute",
 		/** The pressable. Paints no surface — the indicator does. */
 		trigger: "flex-row items-center justify-center",
-		/** Handed to a `Text.Label`. Colour and layout, never a scale. */
+		/**
+		 * Handed to a `Text.Label`. Layout only — no scale, and no colour.
+		 *
+		 * The colour is an animated style rather than a class, because it *fades*:
+		 * it interpolates between the two values {@link TABS_FOREGROUND_TOKEN}
+		 * names, off the same `position` everything else in the component reads. A
+		 * class here would be a second source for one colour, and a class and a
+		 * style disagreeing for a frame is exactly what `Checkbox`'s animated border
+		 * exists to avoid.
+		 */
 		label: "shrink",
 		/** Published to any glyph composed into a trigger, so a bare `Icon` needs nothing said. */
 		icon: "",
@@ -607,7 +650,6 @@ export const tabsVariants = tv({
 		// which Yoga resolves to zero in a content-sized row — the same collapse
 		// `Radio`'s label avoids by taking `shrink` rather than `flex-1`.
 		isScrollable: { true: {}, false: { trigger: "flex-1" } },
-		isSelected: { true: {}, false: {} },
 		isDisabled: { true: { label: "opacity-50" }, false: {} },
 	},
 	compoundVariants: [
@@ -618,20 +660,11 @@ export const tabsVariants = tv({
 		{ variant: "primary", size: "sm", class: { list: "p-0.5" } },
 		{ variant: "primary", size: "md", class: { list: "p-1" } },
 		{ variant: "primary", size: "lg", class: { list: "p-1" } },
-
-		// All six label cells live here rather than three plus a plain branch, so a
-		// variant can change its unselected treatment without a class moving between
-		// blocks — Radio's four-cell reason.
-		{ variant: "primary", isSelected: false, class: { label: "text-muted-foreground" } },
-		{ variant: "primary", isSelected: true, class: { label: "text-elevated-foreground" } },
-		{ variant: "secondary", isSelected: false, class: { label: "text-muted-foreground" } },
-		{ variant: "secondary", isSelected: true, class: { label: "text-foreground" } },
 	],
 	defaultVariants: {
 		variant: TABS_DEFAULT_VARIANT,
 		size: TABS_DEFAULT_SIZE,
 		isScrollable: false,
-		isSelected: false,
 		isDisabled: false,
 	},
 });

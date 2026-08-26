@@ -169,6 +169,19 @@ function TabsRoot({
 	// repairs any divergence between where `position` is heading and what React
 	// says is selected. Two ref reads and a comparison — the guard is what keeps it
 	// from being three springs a second.
+	//
+	// **It registers no cleanup, and that is the whole of a bug this component
+	// shipped once.** `Checkbox` and `Switch` end their effects with
+	// `cancelAnimation`, and both can: their effect starts a fresh animation on
+	// every run, so a cleanup that cancels the previous one always has a
+	// replacement behind it. This effect does not — its `none` branch returns
+	// early — and the commit that runs the cleanup is the one the *gesture* just
+	// caused. So a swipe would start its settle spring, `commitFromPan` would
+	// re-render, the previous run's cleanup would cancel that spring, and the new
+	// run would take the `none` branch and restart nothing. The pager froze part
+	// way between two panels, intermittently, depending on whether the commit beat
+	// the spring. An in-flight spring on an unmounted bar is harmless — the shared
+	// value goes with the component — so there is nothing here to clean up.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: `commits` is the re-run token, see above
 	useEffect(() => {
 		const mode = resolveReconcileMode({
@@ -181,9 +194,6 @@ function TabsRoot({
 
 		target.current = { index: selectedIndex, value: selected };
 		position.value = mode === "jump" ? selectedIndex : withSpring(selectedIndex, TABS_SETTLE_SPRING);
-
-		// Without this a bar unmounted mid-travel leaves its spring running.
-		return () => cancelAnimation(position);
 	}, [commits, position, selected, selectedIndex]);
 
 	const panGesture = useMemo(

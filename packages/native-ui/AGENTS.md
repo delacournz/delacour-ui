@@ -1476,6 +1476,19 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   reducer bump rides alongside every commit for `Switch`'s reason: a controlled
   parent that rejects a change re-renders nothing, so a reconcile waiting on the
   parent's commit would never run.
+- **The reconcile effect registers no cleanup, and that is load-bearing.**
+  `Checkbox` and `Switch` both end their spring effects with `cancelAnimation`,
+  and both can afford to: their effect starts a fresh animation on *every* run,
+  so a cleanup cancelling the previous one always has a replacement behind it.
+  This one does not — its `none` branch returns early — and the commit that runs
+  the cleanup is the very one the gesture just caused. A swipe would start its
+  settle spring, `commitFromPan` would re-render, the previous run's cleanup
+  would cancel that spring, and the new run would take `none` and restart
+  nothing: the pager froze part way between two panels, intermittently, according
+  to whether the commit beat the spring. Before copying a `cancelAnimation`
+  cleanup into a new component, check that every path through the effect starts
+  an animation. An in-flight spring on an unmounted component is harmless — the
+  shared value goes with it.
 - **`onValueChange` fires once, from `onFinalize`, before the spring finishes.** The
   trigger highlights the moment the finger lifts rather than 300ms later.
   Driving it off `position` crossing a midpoint would fire it several times per
@@ -1542,15 +1555,48 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   a tug-of-war the user feels as the bar snapping backwards mid-flick.
   `resolveScrollOffset` clamps at both ends, and `none` returns the current
   offset rather than 0 — "leave the bar alone", not "send it home".
-- **`visualIndex` is why every colour in the component is still a class.** A
-  capsule halfway through a drag would otherwise carry the incoming tab's
-  *unselected* label colour on top of the fill it has already covered,
-  unreadable for the whole travel. One `useAnimatedReaction` with a hysteresis band — a finger held at the
-  midpoint would flip it every frame, and each flip is a commit — swaps the
-  painted selection while the settled one stays put for accessibility.
-  `interpolateColor` was the alternative and loses because an `Icon`'s colour is
-  a resolved *value*: the label would crossfade while the glyph beside it
-  snapped, and both colours would leave `bun test` for uniwind's runtime.
+- **A separator fades only while the pager is crossing it.** At rest a bar shows
+  every rule it has; a drag dips the one it travels over and brings it back. The
+  first shape hid every rule *flanking* the active tab, which is a different
+  thing and reads badly — on a three-tab bar it leaves exactly one rule visible
+  over on the far side, and the set changed on every tab change so the bar never
+  looked still. Measuring from the gap's own midpoint makes the fade mean one
+  thing: the capsule is on top of this rule right now.
+- **A faded separator still takes its width**, so the row never reflows as the
+  fade runs. That also means separators make a bar wider — enough to tip a row
+  that only just fits into one that scrolls, at which point `scrollAlign` starts
+  moving it for no reason a user can see. Reach for `Tabs.ScrollView` when the
+  tabs genuinely do not fit, not by default.
+- **A render prop must not change a trigger's size.** A trigger's width *is* the
+  indicator's geometry, so content that appears only on selection — a badge, a
+  count — re-measures the row and shifts the whole bar every time the tab
+  changes. Swap a treatment rather than adding or removing content: the
+  playground's composition demo switches a `Badge`'s `variant` and keeps it
+  mounted throughout.
+- **The label's colour crossfades; it is a style, not a class.** It interpolates
+  between the two values `TABS_FOREGROUND_TOKEN` names, off the same `position`
+  the capsule and the panels read — so it fades *with* the capsule arriving
+  rather than flipping the moment a midpoint is crossed. One function covers a
+  finger dragging, a flick and a plain tap without knowing which is happening,
+  because all three write that one value. `Checkbox`'s animated border makes the
+  same trade for the same reason: a colour that travels cannot be a class.
+  `resolveTabSelectedness` is the ramp, and it is pure, so `bun test` reaches it.
+- **The `label` slot therefore names no colour at all, and a test enforces that.**
+  Two sources for one colour is how a class and a style end up disagreeing for a
+  frame on every commit. `TABS_FOREGROUND_TOKEN` is the whole matrix now, swept
+  for distinctness and asserted present in both themes — the decision stayed
+  reachable from `bun test`, it just moved from class strings to token names.
+- **`visualIndex` survives for the things that cannot fade.** A composed `Icon`
+  takes its colour as a resolved *value* rather than a style, so it has no way to
+  be half way between two; it swaps at the midpoint, with a hysteresis band
+  because a finger held exactly there would otherwise flip it every frame and
+  each flip is a commit. That leaves a visible mismatch on a trigger holding both
+  a glyph and a label — the glyph steps while the text fades. Fixing it means
+  crossfading two stacked copies of the trigger's content, which renders a
+  caller's children twice; not worth it until a design needs it.
+- **The trigger's `TextClassProvider` carries no colour either**, following the
+  slot. A bare `<Text>` composed into a trigger takes the page colour; reach for
+  `Tabs.Label` when it should read as part of the tab.
 - **The axis ladder is `own ?? root ?? default`, `Checkbox`'s and not
   `Radio.Group`'s.** A radio group puts itself first because escaping a disabled
   form group is a bug; a tab bar's disabled state is transient chrome and the

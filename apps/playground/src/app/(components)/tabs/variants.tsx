@@ -60,6 +60,12 @@ export default function TabsVariantsGallery(): ReactElement {
 				Drag any of them sideways. The capsule tracks the finger and the panel comes with it, because both read the same
 				shared value rather than each running a clock of their own.
 			</Text.Caption>
+
+			<Text.Caption color="muted">
+				Drag slowly and watch the labels: they crossfade between the two colours rather than flipping at the midpoint,
+				because the colour interpolates off that same value. A tap fades too — the settle spring writes the value the
+				label reads, so there is no second path to keep in step.
+			</Text.Caption>
 		</GalleryScreen>
 	);
 }

@@ -1,6 +1,6 @@
 import { Badge } from "@delacour/native-ui/badge";
 import { Icon } from "@delacour/native-ui/icon";
-import { IconBell, IconSettingsGear1, IconUser } from "@delacour/native-ui/icons/central";
+import { IconBell, IconUser } from "@delacour/native-ui/icons/central";
 import { Tabs, useTabsMotion } from "@delacour/native-ui/tabs";
 import { Text } from "@delacour/native-ui/text";
 import { type ReactElement, useMemo } from "react";
@@ -39,44 +39,24 @@ function CardStrip(): ReactElement {
 export default function TabsCompositionGallery(): ReactElement {
 	return (
 		<GalleryScreen subtitle="Every part, and two nested gestures" title="Composition">
-			<Section title="Separators, icons and a render prop">
+			<Section title="Separators">
 				<Tabs variant="secondary">
 					<Tabs.List>
-						<Tabs.ScrollView>
-							<Tabs.Indicator />
-							<Tabs.Trigger value="profile">
-								<Icon icon={IconUser} />
-								<Tabs.Label>Profile</Tabs.Label>
-							</Tabs.Trigger>
-							<Tabs.Separator betweenValues={["profile", "alerts"]} />
-							<Tabs.Trigger value="alerts">
-								{({ isSelected }) => (
-									<>
-										<Icon icon={IconBell} />
-										<Tabs.Label>Alerts</Tabs.Label>
-										{isSelected ? (
-											<Badge color="danger" size="sm" variant="solid">
-												3
-											</Badge>
-										) : null}
-									</>
-								)}
-							</Tabs.Trigger>
-							<Tabs.Separator betweenValues={["alerts", "settings"]} />
-							<Tabs.Trigger value="settings">
-								<Icon icon={IconSettingsGear1} />
-								<Tabs.Label>Settings</Tabs.Label>
-							</Tabs.Trigger>
-						</Tabs.ScrollView>
+						<Tabs.Indicator />
+						<Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+						<Tabs.Separator betweenValues={["overview", "activity"]} />
+						<Tabs.Trigger value="activity">Activity</Tabs.Trigger>
+						<Tabs.Separator betweenValues={["activity", "settings"]} />
+						<Tabs.Trigger value="settings">Settings</Tabs.Trigger>
 					</Tabs.List>
-					<Tabs.Content value="profile">
+					<Tabs.Content value="overview">
 						<View className="h-20 justify-center rounded-lg bg-secondary px-4">
-							<Text.Paragraph>Your profile.</Text.Paragraph>
+							<Text.Paragraph>Everything at a glance.</Text.Paragraph>
 						</View>
 					</Tabs.Content>
-					<Tabs.Content value="alerts">
+					<Tabs.Content value="activity">
 						<View className="h-20 justify-center rounded-lg bg-secondary px-4">
-							<Text.Paragraph>Three unread alerts.</Text.Paragraph>
+							<Text.Paragraph>What changed, and when.</Text.Paragraph>
 						</View>
 					</Tabs.Content>
 					<Tabs.Content value="settings">
@@ -88,15 +68,71 @@ export default function TabsCompositionGallery(): ReactElement {
 			</Section>
 
 			<Text.Caption color="muted">
-				The rules between the tabs retreat as the indicator approaches and come back if a drag is abandoned — they read
-				the pager&apos;s position, not the settled value, so they fade with the finger rather than blinking away at
-				release.
+				Every rule is present at rest. Drag sideways and the one the capsule is crossing dips out and comes back — it
+				reads the pager&apos;s position, not the settled value, so it fades under the finger and returns if the drag is
+				abandoned. The fade means one thing: the indicator is on top of this rule right now.
+			</Text.Caption>
+
+			<Text.Caption color="muted">
+				A faded rule still takes its width, so the row never reflows while the fade runs. That does make a bar wider —
+				enough to tip a row that only just fits into one that scrolls, at which point `scrollAlign` starts moving it for
+				no reason a reader can see. This one has room, so it takes no `Tabs.ScrollView`.
+			</Text.Caption>
+
+			<Section title="Composed icons and a render prop">
+				<Tabs variant="secondary">
+					<Tabs.List>
+						<Tabs.Indicator />
+						<Tabs.Trigger value="alerts">
+							{({ isSelected }) => (
+								<>
+									<Icon icon={IconBell} />
+									<Tabs.Label>Alerts</Tabs.Label>
+									<Badge color="danger" size="sm" variant={isSelected ? "solid" : "soft"}>
+										3
+									</Badge>
+								</>
+							)}
+						</Tabs.Trigger>
+						<Tabs.Trigger value="profile">
+							<Icon icon={IconUser} />
+							<Tabs.Label>Profile</Tabs.Label>
+						</Tabs.Trigger>
+					</Tabs.List>
+					<Tabs.Content value="alerts">
+						<View className="h-20 justify-center rounded-lg bg-secondary px-4">
+							<Text.Paragraph>Three unread alerts.</Text.Paragraph>
+						</View>
+					</Tabs.Content>
+					<Tabs.Content value="profile">
+						<View className="h-20 justify-center rounded-lg bg-secondary px-4">
+							<Text.Paragraph>Your profile.</Text.Paragraph>
+						</View>
+					</Tabs.Content>
+				</Tabs>
+			</Section>
+
+			<Text.Caption color="muted">
+				Two tabs rather than three, because a non-scrolling bar splits its width evenly and an icon, a label and a badge
+				do not fit in a third of this screen — the labels truncate. That is the trade a bar without a `Tabs.ScrollView`
+				makes: every tab gets equal room, whether or not it needs it.
 			</Text.Caption>
 
 			<Text.Caption color="muted">
 				The glyphs are composed, never passed as props: the trigger publishes its size step and its variant&apos;s
-				foreground, so a bare `Icon` comes out right with nothing said here. The badge appears through the render prop,
-				which is the escape hatch for anything a class cannot express.
+				foreground, so a bare `Icon` comes out right with nothing said here. The badge switches `variant` through the
+				render prop, which is the escape hatch for anything a class cannot express.
+			</Text.Caption>
+
+			<Text.Caption color="muted">
+				Note what the render prop does *not* do: it never adds or removes content. A badge that appeared only when
+				selected would change that trigger&apos;s width, and a trigger&apos;s width is the indicator&apos;s geometry —
+				the bar would re-measure and shift on every tab change. Swap a treatment, not a size.
+			</Text.Caption>
+
+			<Text.Caption color="muted">
+				The glyph still steps at the midpoint while the label beside it fades: an `Icon` takes its colour as a resolved
+				value rather than a style, so it has no way to be half way between two.
 			</Text.Caption>
 
 			<Section title="A restyled indicator, and a disabled tab">

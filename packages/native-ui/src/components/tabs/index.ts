@@ -35,6 +35,7 @@ export {
 	resolveSettleIndex,
 	resolveTabIndex,
 	resolveTabOrder,
+	resolveTabSelectedness,
 	resolveTabsTriggerState,
 	resolveVisualIndex,
 	shouldEmitTabChange,

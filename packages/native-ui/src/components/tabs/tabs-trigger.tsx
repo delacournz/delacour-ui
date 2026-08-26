@@ -85,6 +85,7 @@ export function TabsTrigger({
 	const { isDisabled: settledIsDisabled } = resolveTabsTriggerState({ own: isDisabled, root: bar.isDisabled });
 	const isSelected = bar.value === value;
 	const isVisuallySelected = bar.order[bar.visualIndex] === value;
+	const index = bar.order.indexOf(value);
 
 	const { registerValue } = bar;
 	useEffect(() => registerValue(value), [registerValue, value]);
@@ -108,14 +109,13 @@ export function TabsTrigger({
 	}, [bar, onPress, value]);
 
 	const context = useMemo<TabsTriggerContextValue>(
-		() => ({ isDisabled: settledIsDisabled, isSelected, isVisuallySelected, value }),
-		[settledIsDisabled, isSelected, isVisuallySelected, value]
+		() => ({ index, isDisabled: settledIsDisabled, isSelected, isVisuallySelected, value }),
+		[index, settledIsDisabled, isSelected, isVisuallySelected, value]
 	);
 
 	const slots = tabsVariants({
 		isDisabled: settledIsDisabled,
 		isScrollable,
-		isSelected: isVisuallySelected,
 		size: bar.size,
 		variant: bar.variant,
 	});
@@ -133,6 +133,11 @@ export function TabsTrigger({
 
 	// One treatment covers the whole subtree — a tab has a label and no description
 	// part — which is the condition for publishing into the cascade.
+	//
+	// It carries no colour, because the `label` slot no longer names one: the
+	// label's colour fades, and a class here would be a second source for it. A
+	// bare `<Text>` composed into a trigger therefore takes the page colour; reach
+	// for `Tabs.Label` when it should read as part of the tab.
 	const labelClassName = slots.label();
 	const labelClass = useMemo(
 		() => resolveTextClass({ className: labelClassName, size: TABS_LABEL_TEXT_SIZE[bar.size], variant: "label" }),

@@ -1,0 +1,75 @@
+---
+title: Styling
+description: How className merging, tv() slots and the two mergers fit together.
+icon: Brush
+---
+
+## `cn()` for every caller-supplied `className`
+
+Uniwind does not deduplicate conflicting utilities on its own. A caller's `className` has to go
+through `cn()` or it will not beat the component's own classes.
+
+```tsx
+import { cn } from "@delacour/native-ui/lib/cn";
+
+<View className={cn(variants.root(), className)} />;
+```
+
+## `tv` comes from `lib/tv`, never from `tailwind-variants`
+
+There are **two** mergers in the library and both need the semantic size tokens: `cn()` merges a
+caller's className, and `tv()` merges slots and variants through a tailwind-merge instance of its
+own.
+
+<Callout type="warn">
+A bare `tv` from `tailwind-variants` does not know what `button-md` is. It drops `text-button-md`
+into tailwind-merge's text **colour** group, and silently strips the label's colour.
+</Callout>
+
+```tsx
+import { tv } from "@delacour/native-ui/lib/tv";
+```
+
+`src/styles/tokens.ts` holds the one config both mergers are built from.
+
+## Where a `tv()` lives
+
+A component with **more than one styled part** puts one slotted `tv()` in a `*.variants.ts`
+sibling. That sibling is what makes it possible: the slot set is read by files that cannot import
+each other's roots without closing a cycle, so it needs a leaf of its own. It is also where that
+component's pure resolvers live, which is what makes them reachable from `bun test`.
+
+A component that is a **single styled element with no pure resolvers** declares its `tv()` above
+the component in its own file. `Separator` is the one that qualifies today.
+
+`Pressable` holds no `tv()` at all — its values are opacity and scale *interpolation targets* read
+by a worklet on the UI thread, not styles, and a worklet cannot compile a className.
+
+## Overriding sizes
+
+Use `size-*`, not `w-*` with `h-*`. tailwind-merge conflicts `size` into `w`/`h` but not the
+reverse, so a trailing `w-6` will not clear a leading `size-5`.
+
+```tsx
+<Icon icon={IconHeart} className="size-8" />
+```
+
+## What does not work
+
+**`group-*`, `peer-*` and `:has()` do not exist.** Uniwind's compiler reads `data-*` off a single
+flat selector and its runtime matches them against props on **the component carrying the class**.
+No class on a parent can reach a child. This is why `Field` cascades its state through a React
+context instead of a parent-scoped selector — see [Field](/docs/native/components/field).
+
+**Safe-area utilities resolve to zero.** `pt-safe` and friends compile to
+`env(safe-area-inset-top)`, which is nothing on React Native. The class applies, nothing moves, and
+a navbar draws over the status bar with no error anywhere. Use `useSafeAreaInsets()`.
+
+**A runtime template class is never compiled.** Tailwind's scanner is static, so
+`` `size-[${n}px]` `` has nothing in Uniwind's store to look up and silently draws nothing. Named
+sizes are classes; the numeric escape hatch stays a prop or an inline `style`.
+
+**A variant may not name a line height.** tailwind-merge lists `leading` among `font-size`'s
+conflicting groups, so a `text-lg` from a `size` axis silently deletes a `leading-6` written beside
+a `text-base`. Every step in `tokens.css` already carries a paired
+`--text-*--line-height`; prose needing its own gets a **pair**, registered in `tokens.ts`.

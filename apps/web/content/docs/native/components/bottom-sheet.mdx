@@ -1,0 +1,135 @@
+---
+title: BottomSheet
+description: A sheet that rises from the bottom edge, built on @gorhom/bottom-sheet.
+icon: PanelBottom
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
+```
+
+```tsx
+<BottomSheet>
+  <BottomSheet.Trigger asChild>
+    <Button>Open</Button>
+  </BottomSheet.Trigger>
+
+  <BottomSheet.Portal>
+    <BottomSheet.Overlay />
+    <BottomSheet.Container>
+      <BottomSheet.Content>
+        <BottomSheet.Title>Filters</BottomSheet.Title>
+        <BottomSheet.Description>Narrow the list down.</BottomSheet.Description>
+        <BottomSheet.Close />
+      </BottomSheet.Content>
+    </BottomSheet.Container>
+  </BottomSheet.Portal>
+</BottomSheet>
+```
+
+There is no size axis and no colour axis: a sheet has one shape and one surface.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `BottomSheet` | State only — the root renders no view at all |
+| `BottomSheet.Trigger` | The control that opens the sheet. `asChild` to make a `Button` the trigger |
+| `BottomSheet.Portal` | Everything drawn above the app. Lifts the overlay out to the container |
+| `BottomSheet.Overlay` | The scrim. Written beside the container, drawn as its backdrop |
+| `BottomSheet.Container` | The sheet itself. Every gorhom prop passes through it |
+| `BottomSheet.Content` | The sheet's body, sized to itself under `enableDynamicSizing` |
+| `BottomSheet.ScrollView` | A scrolling body. Needs `enableDynamicSizing={false}` and snap points |
+| `BottomSheet.Close` | The dismiss control, positioned out of the content's flow |
+| `BottomSheet.Title` | The sheet's heading — a `Text.Header` with the close control's clearance |
+| `BottomSheet.Description` | Supporting copy under the title |
+| `BottomSheet.Footer` | Controls at the bottom. `sticky` pins them above the keyboard |
+
+<Callout title="Two parts are not drawn where they are written">
+That is the component. `Portal` hoists `Overlay` into gorhom's `backdropComponent`, and
+`Container` hoists a sticky `Footer` into its `footerComponent`. Writing them in the tree is what
+keeps the anatomy readable; hoisting them is what makes gorhom render them correctly.
+</Callout>
+
+## One callback for every path
+
+`onOpenChange` fires whenever the sheet opens or closes — a trigger, a swipe down, a press on the
+backdrop, `BottomSheet.Close`, or a controlled `isOpen`.
+
+Deliberately one callback: gorhom's own `onClose` fires for the gesture alone, which is the shape
+that makes a caller wire three handlers and still miss one.
+
+## Text input inside a sheet
+
+Use `useBottomSheetInput()` and spread what it returns onto the field. The `ref` is not optional
+polish.
+
+```tsx
+import { useBottomSheetInput } from "@delacour/native-ui/bottom-sheet";
+
+const input = useBottomSheetInput();
+
+<Input {...input} value={query} onChangeText={setQuery} />;
+```
+
+The scrim is also rebuilt for this reason: gorhom's full-screen backdrop mounts a `Gesture.Tap()`
+that steals a `TextInput`'s tap. `BottomSheet.Overlay` passes `pressBehavior="none"` and lays a
+`Pressable` only over the band **above** the sheet, sized from its animated position.
+
+That covers the keyboard half. A *drag* across a field can still be claimed by the sheet's content
+pan — pass `enableContentPanningGesture={false}` on the container when that bites.
+
+<Callout type="warn">
+Do not put a `KeyboardStickyView` inside a sheet. It is a third mechanism moving the same view,
+and it fights the other two every frame.
+</Callout>
+
+## Accessibility
+
+`BottomSheet.Content` sets `accessible={false}` by default, and it is the least obvious line in the
+component. gorhom marks its content container `accessible`; on iOS an `accessible` container
+collapses its whole subtree into **one** element, so every field, button and line of copy inside
+becomes unreachable to VoiceOver.
+
+## Gotchas
+
+<Callout type="warn" title="BottomSheet.Container takes no className">
+Use `backgroundClassName`. The container's own `style` is forwarded to gorhom, which passes
+`[StyleSheet.absoluteFill, backgroundStyle]` — dropping it renders the sheet transparent over the
+app.
+</Callout>
+
+<Callout type="warn" title="Scrolling needs snap points">
+`BottomSheet.ScrollView` requires `enableDynamicSizing={false}` and explicit `snapPoints` on the
+container. It also puts its classes on an inner `View` rather than gorhom's content container:
+Uniwind compiles `contentContainerClassName` into an array, gorhom reads `paddingBottom` off a
+flattened style, and the last row would hide behind a pinned footer.
+</Callout>
+
+## Requirements
+
+`@gorhom/bottom-sheet` is a **required** peer, and the app must mount
+[`DelacourProvider`](/docs/native/components/provider) — it supplies the modal provider the sheet
+presents into.
+
+## API
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controlled open state. Leave it off and the sheet holds its own." },
+    defaultOpen: { type: "boolean", description: "Initial open state while uncontrolled." },
+    onOpenChange: {
+      type: "(isOpen: boolean) => void",
+      description: "Called whenever the sheet opens or closes — by a trigger, a swipe down, a press on the backdrop, BottomSheet.Close, or a controlled isOpen.",
+    },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+The root takes no `ViewProps` — it renders no view. Layout and styling belong on `Container`,
+`Content` and `Footer`.

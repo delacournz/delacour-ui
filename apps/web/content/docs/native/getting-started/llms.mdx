@@ -1,0 +1,30 @@
+---
+title: LLMs.txt
+description: Machine-readable copies of every page on this site.
+icon: Bot
+---
+
+Every page here is available as plain Markdown, and the whole site is available as a single file.
+
+| Endpoint | What it is |
+| --- | --- |
+| [`/llms.txt`](/llms.txt) | An index of every page, with titles and descriptions |
+| [`/llms-full.txt`](/llms-full.txt) | Every page's full content, concatenated |
+| `<page>.md` | Any docs URL with `.md` appended returns that page as Markdown |
+
+```bash
+curl https://delacour.co.nz/docs/native/components/button.md
+```
+
+Content negotiation also works: a request to any docs page with `Accept: text/markdown` is
+redirected to the `.md` representation.
+
+```bash
+curl -L -H "Accept: text/markdown" https://delacour.co.nz/docs/native/components/button
+```
+
+## Copying a page
+
+Every docs page has a **Copy Markdown** control at the top, next to the title. It copies the
+source of the page you are reading — frontmatter stripped, code blocks intact — which is the form
+to paste into a model's context.

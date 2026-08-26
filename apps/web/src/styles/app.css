@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@import "fumadocs-ui/css/neutral.css";
+@import "fumadocs-ui/css/preset.css";
+
+/*
+ * The library's own scale — radii, type steps, `--spacing-icon-*`,
+ * `--spacing-button-*`. Pure Tailwind v4 `@theme`, so it works unchanged here.
+ *
+ * Its sibling `theme.css` is deliberately NOT imported: that file wires its
+ * light/dark palette through uniwind's `@variant light` (and `ios` / `android`),
+ * none of which exist outside React Native. The palette below is those same
+ * values, transcribed onto the `--color-fd-*` names Fumadocs paints from.
+ */
+@import "@delacour/native-ui/styles/tokens";
+
+@theme {
+	--color-fd-background: #ffffff;
+	--color-fd-foreground: #262626;
+	--color-fd-muted: #f1f1f1;
+	--color-fd-muted-foreground: #6f6f6f;
+	--color-fd-popover: #ffffff;
+	--color-fd-popover-foreground: #262626;
+	/* `card` and `background` are both #ffffff in the library; a docs card needs
+	   to read as a surface, so it takes `tertiary` instead. */
+	--color-fd-card: #f8f8f8;
+	--color-fd-card-foreground: #262626;
+	--color-fd-border: #e6e6e6;
+	--color-fd-primary: #262626;
+	--color-fd-primary-foreground: #fafafa;
+	--color-fd-secondary: #f1f1f1;
+	--color-fd-secondary-foreground: #262626;
+	--color-fd-accent: #f1f1f1;
+	--color-fd-accent-foreground: #262626;
+	--color-fd-ring: #a1a1a1;
+
+	--color-fd-error: #ef4444;
+	--color-fd-warning: #f59e0b;
+	--color-fd-success: #10b981;
+	--color-fd-info: #3b82f6;
+}
+
+.dark {
+	--color-fd-background: #0a0a0a;
+	--color-fd-foreground: #f5f5f5;
+	--color-fd-muted: #262626;
+	--color-fd-muted-foreground: #a1a1a1;
+	--color-fd-popover: #141414;
+	--color-fd-popover-foreground: #f5f5f5;
+	--color-fd-card: #141414;
+	--color-fd-card-foreground: #f5f5f5;
+	--color-fd-border: #2b2b2b;
+	--color-fd-primary: #f5f5f5;
+	--color-fd-primary-foreground: #262626;
+	--color-fd-secondary: #262626;
+	--color-fd-secondary-foreground: #f5f5f5;
+	--color-fd-accent: #262626;
+	--color-fd-accent-foreground: #f5f5f5;
+	--color-fd-ring: #737373;
+
+	--color-fd-error: #f05252;
+}
+
+/* `neutral.css` lifts the sidebar a shade in dark; keep that, on our greys. */
+.dark #nd-sidebar {
+	--color-fd-muted: #1c1c1c;
+	--color-fd-secondary: #1c1c1c;
+	--color-fd-muted-foreground: #d4d4d4;
+}
+
+html {
+	scrollbar-gutter: stable;
+}
+
+html > body[data-scroll-locked] {
+	margin-right: 0px !important;
+	--removed-body-scroll-bar-size: 0px !important;
+}

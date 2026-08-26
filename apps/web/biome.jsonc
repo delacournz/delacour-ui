@@ -1,0 +1,35 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		"includes": ["src/**/*", "!src/routeTree.gen.ts"]
+	},
+	"css": {
+		"parser": { "tailwindDirectives": true }
+	},
+	"overrides": [
+		{
+			// react-remove-scroll writes an inline `margin-right` on <body> to
+			// compensate for the scrollbar it hides. Only `!important` beats an
+			// inline style, and `scrollbar-gutter: stable` already reserves the
+			// space — without these the whole page shifts every time a dialog opens.
+			"includes": ["src/styles/app.css"],
+			"linter": {
+				"rules": {
+					"complexity": { "noImportantStyles": "off" }
+				}
+			}
+		},
+		{
+			// TanStack Router derives routes from filenames; `__root`, `$`,
+			// `{$}[.]md` and `llms[.]txt` are its conventions, not kebab-case.
+			"includes": ["src/routes/**/*"],
+			"linter": {
+				"rules": {
+					"style": { "useFilenamingConvention": "off" }
+				}
+			}
+		}
+	]
+}

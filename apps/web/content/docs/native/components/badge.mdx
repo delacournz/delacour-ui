@@ -1,0 +1,71 @@
+---
+title: Badge
+description: A compact label for status, category or count.
+icon: Tag
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Badge } from "@delacour/native-ui/badge";
+```
+
+```tsx
+<Badge color="success">Active</Badge>
+```
+
+## Two axes, not one
+
+`variant` says how the surface is painted — `solid`, `soft`, `outline`, `ghost`. `color` says what
+it means — `default`, `primary`, `success`, `warning`, `danger`, `info`. **Sizes:** `sm`, `md`, `lg`.
+
+`Button` collapses the two into a single enum and a badge deliberately does not: six semantic
+colours are the point of this component rather than an afterthought, and one axis would need
+thirteen names to say what two say with ten.
+
+Neither axis paints a surface alone, so all twenty-four pairings live in `compoundVariants`. A test
+asserts every cell is distinct — two cells collapsing means a caller can set an axis and see
+nothing change.
+
+## Content until given something to do
+
+With no `onPress` and no `onLongPress` the root is a plain `View`. Mounting a `GestureDetector`
+regardless would put one under every tag in a list of fifty and announce each of them to assistive
+technology as a button with no action.
+
+Supply either handler and the root becomes a `Pressable`, inheriting `feedback`, `haptic` and the
+rest; only the default differs — `scale`.
+
+## Dismissing
+
+```tsx
+<Badge onClose={remove}>Design</Badge>
+```
+
+`onClose` is its own pressable — a `Badge.CloseButton` composed in at the end — so its tap is
+claimed by the inner detector and never also fires the badge's `onPress`. It presses with `fade`
+rather than the root's `scale`: a spring on a glyph that small reads as a jitter.
+
+Reach for the part by hand only to place it somewhere other than last.
+
+## A size is padding, never a height
+
+`Text` respects OS font scaling, so a fixed height clips the label at a large accessibility step
+instead of growing with it. A test asserts the root carries no `h-*` at any size.
+
+<Callout type="warn">
+`self-start` is load-bearing. A badge is sized by its content, and inside a gap column every child
+is stretch-aligned by default — without it a one-word badge spans the whole screen.
+</Callout>
+
+The border is reserved on every variant, transparent until `outline` colours it — declaring it only
+where it shows would make the badge two points wider the moment a caller switched variant.
+
+## Icons and text inherit
+
+The root wraps its subtree in an `IconDefaultsProvider` and a `TextClassProvider`, so a bare
+`<Icon>` or `<Text>` inside a badge comes out at the right size and colour with nothing said at the
+call site. String children are wrapped in a `Badge.Label` automatically.

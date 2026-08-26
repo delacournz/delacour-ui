@@ -45,3 +45,10 @@ expo-env.d.ts
 /apps/*/ios
 /apps/*/android
 *.orig.*
+
+# TanStack Start / Vite / Nitro build artefacts and fumadocs-mdx generated content.
+.output
+.nitro
+.tanstack
+.vite
+.source

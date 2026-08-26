@@ -1,0 +1,118 @@
+---
+title: Switch
+description: An on/off control with a thumb you can drag as well as tap.
+icon: ToggleLeft
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Switch } from "@delacour/native-ui/switch";
+```
+
+```tsx
+<Switch isSelected={notify} onSelectedChange={setNotify} />
+```
+
+**Colours:** `default`, `primary`, `success`, `warning`, `danger`, `info` — Badge's, Checkbox's and
+Slider's set. **Sizes:** `sm`, `md`, `lg`.
+
+Leave `isSelected` off and the switch holds its own state; `defaultSelected` sets the starting
+point.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Switch` | The track. Owns the gesture, the spring and the state |
+| `Switch.Thumb` | The knob. Composed in automatically; write it out to restyle it or fill it |
+| `Switch.StartContent` | Behind the thumb at the leading edge — revealed as the switch turns on |
+| `Switch.EndContent` | Behind the thumb at the trailing edge — revealed as the switch turns off |
+
+```tsx
+<Switch isSelected={on} onSelectedChange={setOn} color="success">
+  <Switch.StartContent><Icon icon={IconCheck} /></Switch.StartContent>
+  <Switch.EndContent><Icon icon={IconClose} /></Switch.EndContent>
+</Switch>
+```
+
+<Callout>
+A hand-written `Switch.Thumb` is **moved to the end** of the children for you. Every part here is
+absolutely positioned and React Native paints later siblings on top, so a thumb written first —
+which is the order the anatomy reads best in — would slide *under* the content layers.
+</Callout>
+
+## Drag as well as tap
+
+The whole track is the target. A tap toggles; a drag carries the thumb and commits on release,
+with a fling past `SWITCH_FLING_VELOCITY` counting as a flip even when the thumb has not crossed
+the middle.
+
+Movement is measured as `Math.max(|translationX|, |translationY|)`. A vertical swipe that began on
+the switch has to count as movement, or every attempt to scroll past the control would read as a
+tap and toggle it.
+
+The haptic fires at the commit, never at the grab.
+
+## The spring is critically damped
+
+`SWITCH_THUMB_SPRING` has no overshoot, and that is deliberate: a wider thumb travels a shorter
+distance inside a track that clips it, so an overshoot has nowhere to go — the knob would visibly
+squash against the end of its own capsule on every toggle.
+
+The colour the switch travels through and the press scale are **two entries in one**
+`useAnimatedStyle`, not two calls. Two animated styles on one view fight for the same props and
+the later one silently wins.
+
+## State inside a Field
+
+`isDisabled` and `isInvalid` are inherited from an enclosing `Field`, and the switch registers its
+toggle with the field — so the whole row drives it and a form switch can be a bare `<Switch />`
+with `Field.Label` naming it. See [Field](/docs/native/components/field).
+
+## Accessibility
+
+The root is not a `Pressable`, so there is no touch responder for TalkBack's activation to land on.
+The component supplies `accessibilityActions` and `onAccessibilityTap` itself, and marks the root
+`accessible` — without that the view is not an accessibility element on iOS and its role and state
+never reach VoiceOver.
+
+<Callout type="warn">
+There is no `Switch.Label` and no `Switch.Group` — use `Field`. And **RTL is not handled**: the
+thumb travels on `translateX`, which does not flip.
+</Callout>
+
+## API
+
+<TypeTable
+  type={{
+    isSelected: { type: "boolean", description: "Controlled state. Pass nothing and the switch holds its own." },
+    defaultSelected: { type: "boolean", description: "Starting state while uncontrolled." },
+    onSelectedChange: { type: "(isSelected: boolean) => void" },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      default: '"default"',
+      description: "What a switch that is on means.",
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: {
+      type: "boolean",
+      description: "Blocks the gesture and fades the control. Inherited from an enclosing Field.",
+    },
+    isInvalid: {
+      type: "boolean",
+      description: "Reports an invalid value. Inherited from an enclosing Field.",
+    },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      description: "Played when a press or a drag actually flips it.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+`ViewProps`, minus `children` and `style` — the root writes its own animated style.

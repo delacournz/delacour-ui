@@ -1,0 +1,6 @@
+{
+	"title": "Releases",
+	"icon": "Rocket",
+	"root": true,
+	"pages": ["index"]
+}

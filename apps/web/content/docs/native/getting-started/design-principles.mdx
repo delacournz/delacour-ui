@@ -1,0 +1,77 @@
+---
+title: Design Principles
+description: The rules every component in the library follows, and why.
+icon: Compass
+---
+
+## Compose, do not configure
+
+Icons are children, never props. A `Button` wraps its subtree in an `IconDefaultsProvider`
+carrying the right size and the variant's foreground colour, so a bare `<Icon>` inside one needs
+nothing said at the call site.
+
+```tsx
+<Button variant="danger">
+  <Icon icon={IconTrash} />
+  <Button.Label>Delete</Button.Label>
+</Button>
+```
+
+Reach for a compound part before adding a boolean prop. A boolean answers one question; a part
+answers every question of that shape.
+
+## Text colour goes on the `Text`, never the parent
+
+A React Native `View` does not cascade colour to a `Text` descendant the way a DOM element does.
+Every slot set in the library puts `text-*` on its label slot and keeps it off the root. Tests
+assert this per component.
+
+## Semantic tokens, never raw palette colours
+
+Components name `bg-background`, `text-muted-foreground`, `border-input`. Never `bg-neutral-900`,
+never a `dark:` prefix — the CSS variable swap handles the theme. Where a prop needs a colour
+*value* rather than a class (an icon's `color`, a gradient stop), use `useThemeColor`.
+
+`X-foreground` always means "content drawn on an `X` surface". Keep that meaning when adding a
+token.
+
+## One scale, indexed at your own step
+
+`SPINNER_SIZES` *is* `ICON_SIZES`, so a spinner can stand in for an icon with nothing moving. A
+button's `sm`/`md`/`lg` icon is `icon-sm`/`icon-md`/`icon-lg` — indexed, not restated. A
+`Checkbox`'s square reads the same scale two steps above its own tick rather than minting a
+private one.
+
+A control that shares another's heights still gets its own namespace: `--spacing-input-*` names
+the same 36/44/52 as `--spacing-button-*` so the two can be retuned independently. A test asserts
+they stay level, which is the difference between a coupling that is checked and one that is
+merely hoped for.
+
+See [Sizing](/docs/native/getting-started/sizing).
+
+## Pure decisions live where tests can reach them
+
+`bun test` cannot render components — React Native ships Flow-typed source that Bun's transpiler
+cannot parse. So every pure decision moves into a `*.variants.ts` file free of React Native
+imports, where the whole matrix is reachable.
+
+`resolveButtonLayout`, `resolveIconSizeClass`, `resolveCheckboxFilled`, `toggleCheckedValue`,
+`footerOccupancy` — all of them are ordinary functions with ordinary tests.
+
+## No package-wide barrel
+
+Import from the subpath. This is what lets an app skip resolving optional peers it never uses, and
+it is also what keeps import cycles impossible: a component folder's `index.ts` is its entry point,
+not a re-export hub.
+
+## Native modules are peers, never dependencies
+
+Two copies of a native module register twice and break at runtime. Every native dependency in this
+library is a peer, and the granular exports make the optional ones genuinely optional.
+
+## No framework dependency
+
+The library takes no navigation dependency and no form dependency. `Screen.Navbar.BackButton`
+takes an `onPress`; `Screen.Footer` takes an `isFocused`. Anything that must import an Expo
+package lives under `src/expo/` behind an optional peer, so an app on a different navigator keeps
+the rest of the library.

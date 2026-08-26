@@ -1,0 +1,42 @@
+---
+title: DelacourProvider
+description: Every provider an app needs at its root, in one component.
+icon: Layers
+---
+
+```tsx
+import { DelacourProvider } from "@delacour/native-ui/provider";
+
+<DelacourProvider>{children}</DelacourProvider>;
+```
+
+Four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` → `KeyboardProvider` →
+`<KeyboardStateSync />` beside the children.
+
+The full explanation — why the order is load-bearing, why the safe-area provider is seeded, why the
+keyboard sync is required and why the component is deliberately not idempotent — is in
+[Provider](/docs/native/getting-started/provider).
+
+## API
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", required: true },
+    style: {
+      type: "StyleProp<ViewStyle>",
+      description: "Reaches the gesture root. Carries no default — GestureHandlerRootView applies its own { flex: 1 } only while this is undefined, so passing a style means including it yourself.",
+    },
+    initialMetrics: {
+      type: "Metrics | null",
+      default: "initialWindowMetrics",
+      description: "Seeds SafeAreaProvider so a cold start does not render a blank frame. Pass null to opt out — a default parameter only fires on undefined, so null is a value rather than an absence.",
+    },
+  }}
+/>
+
+## No gallery route
+
+`DelacourProvider` has no playground screen and no row on its index. The playground's own
+`_layout.tsx` is its harness, and every route in the app renders downstream of it — a stronger
+check than a readout page could be. The routes that prove each layer: `/pressable` for the gesture
+root, `/screen/navbar` for the insets, `/screen/form` for the keyboard.

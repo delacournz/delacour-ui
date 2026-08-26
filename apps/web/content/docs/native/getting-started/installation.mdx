@@ -1,0 +1,123 @@
+---
+title: Installation
+description: Install the package, wire up Tailwind, and mount the root provider.
+icon: Download
+---
+
+## Install
+
+The library ships raw `.tsx` — Uniwind's transform must run in **your** app's Metro pipeline, so a
+precompiled build would arrive with its classNames already dead. That means its native
+dependencies are peers, not dependencies: two copies of a native module register twice and break
+at runtime.
+
+```package-install
+@delacour/native-ui
+```
+
+### Peer dependencies
+
+Required:
+
+```bash
+bun add react-native-reanimated react-native-worklets react-native-gesture-handler \
+  react-native-safe-area-context react-native-keyboard-controller react-native-svg \
+  react-native-pulsar uniwind tailwindcss @gorhom/bottom-sheet \
+  @central-icons-react-native/round-outlined-radius-1-stroke-1.5
+```
+
+Optional — resolved only if you import the subpath that needs them:
+
+| Package | Needed by |
+| --- | --- |
+| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` (the default `legend` variant) |
+| `expo-router` | `@delacour/native-ui/expo/navigation-theme` |
+| `react-native-screens` | native stack navigation |
+
+## Wire up the CSS
+
+Import the library's styles into your app's Tailwind entry, then point Tailwind's scanner at the
+package source.
+
+```css title="global.css"
+@import "@delacour/native-ui/styles";
+@source "../../../../packages/native-ui/src";
+```
+
+<Callout type="warn" title="Use the real workspace path">
+Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. A
+`@source` pointing at `node_modules/@delacour/native-ui` resolves to nothing, and every class the
+library uses is silently dropped from your production build. Point it at the actual directory.
+</Callout>
+
+The `@delacour/native-ui/styles` barrel is three files: `base.css` (`tailwindcss` + `uniwind`),
+`tokens.css` (the `@theme` scale) and `theme.css` (the light/dark palette). Import them
+individually if you need to reorder them.
+
+## Mount the provider
+
+Wrap your app's root — once, around everything.
+
+```tsx title="app/_layout.tsx"
+import { DelacourProvider } from "@delacour/native-ui/provider";
+
+export default function RootLayout() {
+  return <DelacourProvider>{children}</DelacourProvider>;
+}
+```
+
+`DelacourProvider` is four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider`
+→ `KeyboardProvider` → `<KeyboardStateSync />` beside the children. The order is load-bearing —
+see [Provider](/docs/native/getting-started/provider) for what breaks at each layer.
+
+<Callout type="warn">
+Without the gesture root, presses stop landing. Silently — no error, no warning.
+</Callout>
+
+### Composing the layers by hand
+
+Only if your app already has a root stack of its own. `<KeyboardStateSync />` is **required**, not
+optional polish, and must be a child of `KeyboardProvider`.
+
+```tsx
+import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
+
+<GestureHandlerRootView>
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <KeyboardProvider>
+      <KeyboardStateSync />
+      {children}
+    </KeyboardProvider>
+  </SafeAreaProvider>
+</GestureHandlerRootView>;
+```
+
+## Import from subpaths
+
+There is no package-wide barrel, and that is deliberate: it is what lets an app skip resolving
+optional peers it never uses.
+
+```tsx
+import { Button } from "@delacour/native-ui/button";
+import { Icon } from "@delacour/native-ui/icon";
+import { IconHeart } from "@delacour/native-ui/icons/central";
+```
+
+```tsx
+// This does not exist, and will not be added.
+import { Button } from "@delacour/native-ui";
+```
+
+## Verify
+
+```tsx
+import { Button } from "@delacour/native-ui/button";
+
+<Button onPress={() => console.log("pressed")}>Press me</Button>;
+```
+
+A string child is wrapped in a `Button.Label` for you. If the button renders but does not respond,
+the gesture root is missing above it.

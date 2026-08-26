@@ -1,0 +1,103 @@
+---
+title: Composition
+description: Compound components, the context hooks, and the rules for composing your own parts.
+icon: Blocks
+---
+
+Most components in the library are a root plus dot-notation parts. The root shares its axes —
+`variant`, `size`, `isDisabled` — through a context, so a part never takes them as props.
+
+```tsx
+<Button variant="danger" size="lg">
+  <Icon icon={IconTrash} />
+  <Button.Label>Delete</Button.Label>
+</Button>
+```
+
+`Button.Label` names no variant and no size. It reads both.
+
+## The `useX()` hooks
+
+Every compound root exports a hook so a **custom** child can match the parent without prop
+drilling.
+
+```tsx
+import { Button, useButton } from "@delacour/native-ui/button";
+
+function ButtonBadge({ count }: { count: number }) {
+  const { variant, size, isDisabled } = useButton();
+  return <Badge color={variant === "danger" ? "danger" : "default"}>{count}</Badge>;
+}
+
+<Button variant="danger">
+  <Button.Label>Delete</Button.Label>
+  <ButtonBadge count={3} />
+</Button>;
+```
+
+## Icons and text inherit
+
+A root that can publish **one** treatment covering its whole subtree does. `Button` and `Badge`
+wrap their children in both an `IconDefaultsProvider` and a `TextClassProvider`, so a bare
+`<Icon>` or `<Text>` inside one comes out matching with nothing said at the call site.
+
+A root whose parts carry **two** treatments does not publish — one provider cannot serve both. A
+`ListGroup` row has a title and a description; a navbar has a title and a subtitle;
+`Screen.Error` has a title and a message. Those keep per-part classes.
+
+## String children are wrapped
+
+React Native crashes on bare text outside a `<Text>`, so every component that accepts free-form
+children wraps a string child in its own label part.
+
+```tsx
+<Button>Save</Button>
+// is
+<Button><Button.Label>Save</Button.Label></Button>
+```
+
+<Callout>
+**Consecutive** strings collapse into one label. `Row {i}` is a single piece of text — wrapping
+each part separately would space them apart by the component's own `gap`.
+</Callout>
+
+## State cascades through context, not through selectors
+
+Uniwind has no `group-*`, no `peer-*` and no `:has()`. Its compiler reads `data-*` off a single
+flat selector, and its runtime matches them against props on the component carrying the class — so
+no class on a parent can reach a child.
+
+That is why `<Field isInvalid>` reddens the `Input` inside it through a React context rather than
+through a parent-scoped selector. Do not go looking for a selector-based path; there isn't one.
+
+## Precedence, and why it differs between components
+
+Two ladders exist in the library and they are deliberately different.
+
+**`Input.Group` puts itself first**: `group → own prop → field`. It owns the one box a grouped
+field renders into, and two answers to one question is not a state worth expressing.
+
+**`Checkbox.Group` puts the child first**: `own → group → field → default`. It owns no box. It is
+a state controller that also carries shared defaults, which makes it the same kind of thing as
+`Field` — a wrapper a control overrides. "Make the group `lg`" and "make this one danger" are
+different questions and both get an answer.
+
+Both are `??` chains and never `||`, so an explicit `isDisabled={false}` opts a child out of a
+disabled group.
+
+## Writing your own part
+
+Read the shared state from the component's context hook, and merge the caller's `className`
+through `cn()`.
+
+```tsx
+import { cn } from "@delacour/native-ui/lib/cn";
+import { useButton } from "@delacour/native-ui/button";
+import { Text } from "@delacour/native-ui/text";
+
+export function ButtonHint({ className, ...props }: TextProps) {
+  const { size } = useButton();
+  return <Text.Caption className={cn(size === "lg" && "text-base", className)} {...props} />;
+}
+ButtonHint.displayName = "App.ButtonHint";
+```

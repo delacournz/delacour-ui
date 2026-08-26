@@ -1,0 +1,111 @@
+---
+title: Theming
+description: Tokens, the light and dark palettes, and theming a navigator from them.
+icon: Palette
+---
+
+Tokens are CSS variables declared under `@variant light` / `@variant dark` in the library's
+`theme.css`. Components reference semantic names and never a raw palette colour or a `dark:`
+prefix — the variable swap handles the theme.
+
+## The palette
+
+| Token | Meaning |
+| --- | --- |
+| `background` / `foreground` | The page and the text on it |
+| `card` / `card-foreground` | A raised surface |
+| `elevated` / `elevated-foreground` | A surface that must sit **above** `muted` in both themes — what `Tabs`' capsule is painted on |
+| `popover` / `popover-foreground` | A floating surface |
+| `primary` / `primary-foreground` | The strongest action |
+| `secondary` / `secondary-foreground` | The second-strongest |
+| `tertiary` / `tertiary-foreground` | A quiet fill |
+| `muted` / `muted-foreground` | De-emphasised text and fills |
+| `accent` / `accent-foreground` | Hover and selection |
+| `danger`, `success`, `warning`, `info` | Semantic states, each with a `-foreground` |
+| `danger-soft`, `success-soft`, `warning-soft`, `info-soft` | Their tinted variants, each with a `-foreground` |
+| `border`, `input`, `ring` | Chrome — a divider, a field's edge, a focus ring |
+| `overlay` | The scrim behind a sheet or a dialog |
+
+<Callout>
+This package uses `danger` / `danger-soft`, matching the button variant names, and adds
+`tertiary`. `X-foreground` always means "content drawn on an `X` surface" — keep that meaning when
+adding a token.
+</Callout>
+
+## Overriding a token
+
+Redeclare it in your own CSS, after the library's import.
+
+```css title="global.css"
+@import "@delacour/native-ui/styles";
+
+@layer theme {
+  :root {
+    @variant light {
+      --color-primary: #1d4ed8;
+      --color-primary-foreground: #ffffff;
+    }
+    @variant dark {
+      --color-primary: #60a5fa;
+      --color-primary-foreground: #0a0a0a;
+    }
+  }
+}
+```
+
+## Reading a colour from JavaScript
+
+A class cannot express a literal (`#EC4899`) and cannot reach an SVG paint prop like a gradient's
+`stopColor`. For a prop that needs a colour *value*, use `useThemeColor`.
+
+```tsx
+import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
+
+const danger = useThemeColor("danger");
+```
+
+<Callout title="Size is a class, colour is a token">
+The asymmetry is deliberate. Tailwind's spacing scale genuinely owns 14/16/18/20/22/24/32, so a
+class is the better name for those. A colour class could not express a literal or reach an SVG
+paint prop, and `useThemeColor` already covers both — so a colour-class path would leave two
+colour systems in the package rather than replacing one.
+</Callout>
+
+## Theming a navigator
+
+A navigator paints its own chrome from its own theme, and nothing connects that to these tokens.
+`expo-router` mounts its `NavigationContainer` with no `theme`, so React Navigation's light
+default stands however dark your app is. On iOS the native stack hands `colors.background` to the
+`UINavigationController`'s view — the slab visible between cards during a push, and at their
+rounded corners. That layer has no escape hatch: a `contentStyle` in `screenOptions` cannot reach
+it. Only a theme fixes it.
+
+```tsx title="app/_layout.tsx"
+import { NavigationTheme } from "@delacour/native-ui/expo/navigation-theme";
+
+<DelacourProvider>
+  <NavigationTheme>
+    <Stack />
+  </NavigationTheme>
+</DelacourProvider>;
+```
+
+On a different navigator, use the hook directly. It returns **plain values, not a `Theme`** — the
+library imports nothing from a navigation package.
+
+```tsx
+import { useNavigationTheme } from "@delacour/native-ui/hooks/use-navigation-theme";
+
+const { dark, ...colors } = useNavigationTheme();
+
+<NavigationContainer theme={{ ...DefaultTheme, dark, colors: { ...DefaultTheme.colors, ...colors } }}>
+```
+
+Spread them over the framework's own base theme, which also supplies `fonts` — a platform-specific
+shape that would drift if restated here.
+
+<Callout type="warn">
+`dark` comes from Uniwind's active theme, never React Native's `useColorScheme`. An app that lets
+the user force light or dark against the system setting would otherwise theme its navigator the
+wrong way round.
+</Callout>

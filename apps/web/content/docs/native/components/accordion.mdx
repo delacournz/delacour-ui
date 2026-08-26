@@ -1,0 +1,147 @@
+---
+title: Accordion
+description: Sections that expand and collapse, animated from a measured height.
+icon: ChevronsUpDown
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Accordion } from "@delacour/native-ui/accordion";
+```
+
+```tsx
+<Accordion>
+  <Accordion.Item value="shipping">
+    <Accordion.Trigger>
+      <Accordion.Title>Shipping</Accordion.Title>
+      <Accordion.Description>Rates and delivery times</Accordion.Description>
+    </Accordion.Trigger>
+    <Accordion.Content>
+      <Text.Paragraph>Free over $50. Two to four working days.</Text.Paragraph>
+    </Accordion.Content>
+  </Accordion.Item>
+</Accordion>
+```
+
+**Variants:** `default`, `secondary`, `tertiary`, `transparent` — `ListGroup`'s set, because an
+accordion is the same kind of thing. **Sizes:** `sm`, `md`, `lg`.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Accordion` | The surface. Owns the selection mode and the shared axes |
+| `Accordion.Item` | One section: a trigger, and the panel it discloses |
+| `Accordion.Trigger` | The row that opens the item. A `Pressable`, so it inherits the whole vocabulary |
+| `Accordion.Title` | The trigger's primary line. Bare string children become one automatically |
+| `Accordion.Description` | The trigger's secondary line, stacked under the title |
+| `Accordion.Indicator` | The glyph that turns as the panel opens. Composed in when a trigger holds none |
+| `Accordion.Content` | The measured, clipped panel. Mounts on first expand and stays mounted |
+
+Dividers between adjacent items are inserted for you, the way `ListGroup` does it. A `Separator`
+placed by hand is never doubled; `isDivided={false}` turns the feature off.
+
+## Selection
+
+The root is a discriminated union on `selectionMode`.
+
+```tsx
+<Accordion value={open} onValueChange={setOpen}>…</Accordion>
+
+<Accordion selectionMode="multiple" value={open} onValueChange={setOpen}>…</Accordion>
+```
+
+In `single` mode the value is `string | null` — `null` is a controlled *empty*, not an absence. In
+`multiple` mode it is `string[]`.
+
+<Callout title="isCollapsible bounds the set, never a single item">
+With `isCollapsible={false}` the **last** open item is refused. In `multiple` mode an item still
+closes while another is open. Reading it as "no item may ever close" would make a multiple
+accordion add-only.
+</Callout>
+
+A refused tap returns its own input by identity, so it neither re-renders nor reports an
+`onValueChange` for a change that did not happen.
+
+## The animation
+
+The panel's height, the panel's opacity and the indicator's rotation all read **one** `progress`
+shared value, so they cannot drift out of step by a frame.
+
+The spring is critically damped: an overshoot would draw the panel taller than its content
+measured, flashing the surface behind it for a frame at the end of every expand.
+
+The fade runs ahead of the height (`ACCORDION_CONTENT_FADE`). A panel whose opacity tracked its
+height linearly would be half transparent at the midpoint of every expand, which reads as content
+struggling to arrive rather than as a panel opening.
+
+<Callout>
+`ACCORDION_UNMEASURED` is **negative**, and that is load-bearing. A panel that measured `0` is a
+real answer — a panel whose content rendered nothing — and treating it as "still waiting" would
+leave the indicator stuck pointing the wrong way. Only a value no layout can produce can mean
+*unmeasured*.
+</Callout>
+
+## Custom indicators
+
+An indicator has to be a **direct** `Accordion.Indicator` child of the trigger — the trigger finds
+it by element type, so a wrapped one is invisible and a second default gets composed in beside it.
+
+Use its render function to swap the glyph on state, and `isAnimated={false}` to opt out of the
+rotation when the glyph itself carries the change (a plus becoming a minus).
+
+```tsx
+<Accordion.Trigger>
+  <Accordion.Title>Details</Accordion.Title>
+  <Accordion.Indicator isAnimated={false}>
+    {({ isExpanded }) => <Icon icon={isExpanded ? IconMinus : IconPlus} />}
+  </Accordion.Indicator>
+</Accordion.Trigger>
+```
+
+<Callout type="warn">
+The disabled fade lands on the **item**, never on the trigger. The trigger is a `Pressable` whose
+`Animated.View` writes `opacity` every frame, so a class there is silently overwritten.
+</Callout>
+
+An item is expected to hold an `Accordion.Content`. One without a panel has nothing to measure, so
+its indicator stays put.
+
+## API
+
+<TypeTable
+  type={{
+    selectionMode: {
+      type: '"single" | "multiple"',
+      default: '"single"',
+      description: "Whether one item may be open at a time, or any number of them.",
+    },
+    value: {
+      type: "string | null | string[]",
+      description: "Controlled. In single mode, null is a controlled empty rather than an absence.",
+    },
+    defaultValue: { type: "string | null | string[]", description: "Which item(s) start open while uncontrolled." },
+    onValueChange: { type: "(value: string | null) => void | (value: string[]) => void" },
+    variant: {
+      type: '"default" | "secondary" | "tertiary" | "transparent"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDivided: { type: "boolean", default: "true", description: "Draw a divider between adjacent items." },
+    isDisabled: {
+      type: "boolean",
+      description: "Blocks every trigger and fades every row. An item's own prop still overrides it.",
+    },
+    isCollapsible: {
+      type: "boolean",
+      default: "true",
+      description: "Whether the last open item may be closed. Bounds the set, never a single item.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>

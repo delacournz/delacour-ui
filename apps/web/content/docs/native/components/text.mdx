@@ -1,0 +1,219 @@
+---
+title: Text
+description: The type scale, and the one component that reproduces React Native's text inheritance through classNames.
+icon: Type
+---
+
+```tsx
+import { Text } from "@delacour/native-ui/text";
+```
+
+```tsx
+<Text.Title>Settings</Text.Title>
+<Text.Paragraph>Manage how the app behaves on this device.</Text.Paragraph>
+```
+
+## Presets
+
+Eight block presets, largest first.
+
+| Preset | Treatment | Use for |
+| --- | --- | --- |
+| `Text.Display` | 30pt bold, announced as a heading | A screen's one hero line |
+| `Text.Title` | 24pt bold, announced as a heading | A screen or card title |
+| `Text.Header` | 20pt semibold, announced as a heading | A section heading |
+| `Text.Subheader` | 18pt muted | The secondary line under a title — not a fourth heading level |
+| `Text.Paragraph` | 16pt | A block of prose. The same treatment a bare `<Text>` renders |
+| `Text.Label` | 14pt medium | A control label or compact UI string |
+| `Text.Caption` | 14pt on the muted token | Supporting copy |
+| `Text.Overline` | 12pt semibold, uppercase, muted | An eyebrow above a section |
+
+Four inline presets, which emit only a delta and inherit everything else.
+
+| Preset | Treatment |
+| --- | --- |
+| `Text.Strong` | Emphasis by weight |
+| `Text.Emphasis` | Emphasis by slant |
+| `Text.Link` | A tappable run on the `info` token. Takes `onPress` |
+| `Text.Code` | Monospaced. Padded only when it stands alone |
+
+## Inheritance
+
+Every `Text` publishes its resolved class to its subtree, and merges the one it inherited.
+
+```tsx
+<Text.Paragraph>
+  Sign in with <Text.Strong>your work account</Text.Strong> to continue.
+</Text.Paragraph>
+```
+
+`Text.Strong` comes out at the paragraph's size and colour with only the weight changed — it emits
+a weight and nothing else.
+
+Natively a nested `<Text>` inherits the parent's *style object* and overrides only the keys it
+sets. Uniwind compiles each `className` independently, so the parent's resolved class has to be
+threaded through a context and beaten per-axis instead. The merge order, weakest first:
+
+1. `TEXT_BASE_CLASS`
+2. the inherited class
+3. this text's named axes
+4. the caller's `className`
+
+<Callout title="The correctness property">
+For every class this resolver can produce, a nested `Text` with no props of its own resolves to
+*exactly* its parent's string — at any depth. The tests assert it across the whole matrix.
+</Callout>
+
+### Anything can publish into the cascade
+
+A `Button` wraps its children in a `TextClassProvider` carrying the label's treatment, so a bare
+`<Text>` composed into one needs nothing at the call site.
+
+```tsx
+import { useTextClass } from "@delacour/native-ui/text";
+
+const inherited = useTextClass();
+```
+
+Publish a treatment only where **one** covers the whole subtree. A `ListGroup` row (title +
+description), a navbar (title + subtitle) and `Screen.Error` (title + message) each carry two, and
+one provider cannot serve both — so their parts keep per-part classes.
+
+## Axes
+
+```tsx
+<Text size="lg" weight="semibold" color="muted" align="center" transform="uppercase">
+  Heads up
+</Text>
+```
+
+Each axis beats the variant's own value and anything inherited. Omit an axis and it falls through
+to the enclosing text.
+
+<Callout type="warn">
+`textVariants` has **no** `defaultVariants`, and must not gain any. An axis the caller did not name
+has to emit nothing so it falls through — that fall-through is the whole feature. A default would
+emit from inside the same call, ahead of the inherited class in the merge, and every nested `Text`
+would snap back to it. The fallback lives in `TEXT_BASE_CLASS` instead.
+</Callout>
+
+## Colour
+
+`color` is **page-level only** — there is no `-foreground` family here.
+
+```tsx
+<Text color="danger">Could not save</Text>
+```
+
+`X-foreground` means "content drawn on an `X` surface", and mapping a surface variant to its
+foreground is each surface component's job (`BUTTON_FOREGROUND_TOKEN`,
+`LIST_GROUP_FOREGROUND_TOKEN`). A second copy of that map here could drift from it. Text on a
+coloured surface writes the utility in a `className`.
+
+## Font scaling
+
+`allowFontScaling` is left at React Native's default. `maxFontSizeMultiplier` defaults to
+`TEXT_MAX_FONT_SIZE_MULTIPLIER` — the cap exists for the fixed-height chrome, where `h-button-*`
+and `h-navbar-row` cannot grow and an uncapped multiplier would clip a label rather than enlarge
+it. Both stay overridable per call site.
+
+## Gotchas
+
+<Callout type="warn" title="A nested Text.Code cannot be padded">
+A nested `<Text>` is laid out by the platform's text engine — an `NSAttributedString` run on iOS,
+a `Span` on Android — and both ignore padding, margin and border radius on an inner `<Text>`. Only
+the background survives. The pill treatment applies to the standalone case only; a code *block* is
+a `View` you wrap around it.
+</Callout>
+
+<Callout type="warn" title="align is left / center / right">
+Never `start` / `end`. React Native's `textAlign` accepts `auto | left | right | center | justify`
+and nothing else, so Tailwind's logical-property utilities resolve to a value RN rejects.
+</Callout>
+
+<Callout type="warn" title="An arbitrary font size must be a length">
+Write `text-[17px]` or `text-(length:--x)`. A bare `text-[var(--x)]` is ambiguous to
+tailwind-merge, which files it under colour — so it will not override the inherited size.
+</Callout>
+
+<Callout title="No asChild">
+`Slot` throws on a non-element child and a `Text`'s child is usually a string, so it would be
+unusable in the shape people would reach for. There is also nothing to donate — `useTextClass()`
+hands the class over directly.
+</Callout>
+
+## Performance
+
+`Text` renders `Animated.Text`, so animated text styles work anywhere with no opt-in — at the cost
+of a Reanimated wrapper per text node. If a long list ever profiles badly, the escape hatch is
+`<Animated.Text className={useTextClass()} style={…} />` in app code; the cascade is on context, so
+it inherits correctly. Measure first.
+
+## API
+
+### `TextProps`
+
+`Animated.Text`'s props, minus `className`, plus:
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"display" | "title" | "header" | "subheader" | "paragraph" | "label" | "caption" | "overline" | "strong" | "emphasis" | "link" | "code"',
+      description: "The named role. Omit it and the text inherits, falling back to the base treatment.",
+    },
+    size: {
+      type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"',
+      description: "A step on the type scale. Beats the variant's own size.",
+    },
+    weight: {
+      type: '"normal" | "medium" | "semibold" | "bold"',
+    },
+    color: {
+      type: '"default" | "muted" | "danger" | "success" | "warning" | "info"',
+      description: "A page-level text colour. For text on a coloured surface, use a className — that mapping belongs to the surface.",
+    },
+    align: {
+      type: '"left" | "center" | "right"',
+      description: "Never start / end: React Native's textAlign rejects logical values.",
+    },
+    transform: {
+      type: '"none" | "uppercase" | "lowercase" | "capitalize"',
+      description: '"none" emits normal-case rather than an empty string, so it can clear an Overline\'s uppercase.',
+    },
+    className: {
+      type: "string",
+      description: "Merged last, so it beats every named axis and anything inherited.",
+    },
+  }}
+/>
+
+### `useTextClass()`
+
+Returns the resolved class of the nearest enclosing `Text` or `TextClassProvider`.
+
+<TypeTable
+  type={{
+    "(returns)": { type: "string | undefined", required: true },
+  }}
+/>
+
+## Exported constants
+
+```tsx
+import {
+  TEXT_VARIANTS,
+  TEXT_INLINE_VARIANTS,
+  TEXT_SIZES,
+  TEXT_WEIGHTS,
+  TEXT_COLORS,
+  TEXT_ALIGNS,
+  TEXT_TRANSFORMS,
+  TEXT_BASE_CLASS,
+  TEXT_MAX_FONT_SIZE_MULTIPLIER,
+  textVariants,
+  resolveTextClass,
+} from "@delacour/native-ui/text";
+```
+
+`TEXT_VARIANTS` is ordered — block presets first, largest first — and the tests read that order to
+assert the type scale descends. A new block role goes in at its step, not on the end.

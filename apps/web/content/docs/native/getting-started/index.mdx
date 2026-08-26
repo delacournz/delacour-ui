@@ -1,0 +1,83 @@
+---
+title: Introduction
+description: A React Native component library built on Uniwind, Reanimated and the Gesture API.
+icon: BookOpen
+---
+
+Delacour UI Native is a React Native component library styled with [Uniwind](https://uniwind.dev)
+(Tailwind CSS v4 for React Native), animated with
+[Reanimated](https://docs.swmansion.com/react-native-reanimated/), and driven by the
+[Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/) API. Every component
+composes rather than configures: you build a button out of a label and an icon, not out of
+fifteen boolean props.
+
+```tsx
+import { Button } from "@delacour/native-ui/button";
+import { Icon } from "@delacour/native-ui/icon";
+import { IconArrowRight } from "@delacour/native-ui/icons/central";
+
+<Button haptic="selection" onPress={next}>
+  <Button.Label>Continue</Button.Label>
+  <Icon icon={IconArrowRight} />
+</Button>;
+```
+
+The icon above names no size and no colour. The button publishes both to its subtree, so a bare
+`<Icon>` inside one comes out matching the label it sits beside.
+
+## The three patterns
+
+Every component in the library is one of three shapes. Knowing which one you are looking at tells
+you where its styles live and how to extend it.
+
+<Cards>
+  <Card title="Styled wrapper" href="/docs/native/components/icon">
+    No state. Props map to classes. `Icon` is the reference — it also reads
+    `IconDefaultsProvider`, so a parent can set size and colour for a whole subtree.
+  </Card>
+  <Card title="Compound + context" href="/docs/native/components/button">
+    A root shares `variant`, `size` and `isDisabled` through context with dot-notation parts, plus
+    a `useX()` hook so a custom child can match the parent without prop drilling.
+  </Card>
+  <Card title="`tv()` variants" href="/docs/native/getting-started/styling">
+    Size and variant axes are declared in a `tv()` slot set, never inline at the call site.
+  </Card>
+</Cards>
+
+## What makes it different
+
+<Cards>
+  <Card title="Composition over booleans">
+    Icons are children, not props. Loading state swaps the icon it replaces rather than joining it,
+    so nothing shifts when work begins.
+  </Card>
+  <Card title="One scale, shared">
+    `Icon` and `Spinner` resolve `md` to the same edge length. A `Checkbox`'s square reads the icon
+    scale two steps up rather than minting its own.
+  </Card>
+  <Card title="Themed by CSS variables">
+    Components name `bg-background` and `text-muted-foreground`, never a raw palette colour and
+    never a `dark:` prefix. Swapping the variables swaps the theme.
+  </Card>
+  <Card title="Ships as source">
+    No build step. Uniwind's transform has to run inside your app's Metro pipeline, so the package
+    ships raw `.tsx` and your bundler compiles it.
+  </Card>
+</Cards>
+
+## Scope
+
+This library is React Native only — iOS and Android, Expo or bare. It takes no navigation
+dependency and no form-library dependency. Where a component needs to talk to a router it takes a
+callback instead: `Screen.Navbar.BackButton` has an `onPress`, not a `router.back()`.
+
+## Next
+
+<Cards>
+  <Card title="Installation" href="/docs/native/getting-started/installation">
+    Install the package, wire up the CSS, mount the provider.
+  </Card>
+  <Card title="All components" href="/docs/native/components">
+    The full list, grouped by what they do.
+  </Card>
+</Cards>

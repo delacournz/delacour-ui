@@ -1,0 +1,90 @@
+---
+title: Icons
+description: Central Icons, inherited defaults, and the one withUniwind wrapper.
+icon: Shapes
+---
+
+The library uses [Central Icons](https://centralicons.com) exclusively, re-exported from a single
+subpath.
+
+```tsx
+import { Icon } from "@delacour/native-ui/icon";
+import { IconHeart, IconPlus, IconTrash } from "@delacour/native-ui/icons/central";
+
+<Icon icon={IconHeart} />;
+```
+
+<Callout type="warn">
+Never Lucide, Hugeicons, or any other set. One icon set is what keeps stroke weight, corner radius
+and optical sizing consistent across every component.
+</Callout>
+
+## Icons inherit
+
+A bare `<Icon>` inside a `Button`, `Badge` or `ListGroup.ItemPrefix` needs no `size` and no
+`color` — the parent publishes both through an `IconDefaultsProvider` wrapping its subtree.
+
+```tsx
+<Button variant="danger" size="lg">
+  <Icon icon={IconTrash} />
+  <Button.Label>Delete</Button.Label>
+</Button>
+```
+
+An explicit `size` or `color` on the icon still wins. See
+[Sizing](/docs/native/getting-started/sizing#precedence-weakest-first) for the full ladder.
+
+## Publishing defaults yourself
+
+```tsx
+import { IconDefaultsProvider } from "@delacour/native-ui/icon";
+
+<IconDefaultsProvider className="size-icon-lg" color="muted-foreground">
+  <Icon icon={IconPlus} />
+  <Icon icon={IconHeart} />
+</IconDefaultsProvider>;
+```
+
+## Sizes
+
+Named steps are classes on the shared icon scale — `xs` 14, `sm` 16, `md` 18, `lg` 20, `xl` 24, `2xl` 32. A number
+is an escape hatch that bypasses the class chain entirely.
+
+```tsx
+<Icon icon={IconHeart} size="lg" />
+<Icon icon={IconHeart} className="size-icon-xl" />
+<Icon icon={IconHeart} size={18} />
+```
+
+<Callout type="warn">
+A runtime template class is never compiled. `` className={`size-[${n}px]`} `` has nothing in
+Uniwind's store to look up and silently draws nothing. Use the numeric prop.
+</Callout>
+
+## Colours
+
+`color` takes a theme token name or a literal.
+
+```tsx
+<Icon icon={IconHeart} color="danger" />
+<Icon icon={IconHeart} color="muted-foreground" />
+<Icon icon={IconHeart} color="#EC4899" />
+```
+
+<Callout>
+A Tailwind palette name like `emerald-500` only resolves if some utility class already pulled that
+variable into the build. Prefer the semantic tokens.
+</Callout>
+
+## Why there is exactly one `withUniwind` wrapper
+
+`View`, `Text`, `Pressable` and `Animated.View` already accept `className`. `withUniwind` is only
+for third-party components, and a given component may only be wrapped once, in one file.
+
+Central Icons is the one carve-out and it is already spent: `icon.tsx` wraps a local `IconGlyph`
+proxy that takes the glyph as **data**, so a single wrapper covers the whole two-thousand-icon set
+instead of one per glyph. Do not wrap a Central Icon directly, do not wrap the proxy anywhere
+else, and do not add a second wrapper for `Svg`.
+
+The wrapper is also called at **module scope**. In render it would mint a new component type every
+frame and remount the icon.

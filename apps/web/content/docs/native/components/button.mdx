@@ -1,0 +1,290 @@
+---
+title: Button
+description: A pressable action, with composed icons and a loading state that costs no layout.
+icon: MousePointerClick
+---
+
+```tsx
+import { Button } from "@delacour/native-ui/button";
+```
+
+```tsx
+<Button onPress={save}>Save</Button>
+```
+
+A string child is wrapped in a `Button.Label` automatically. React Native crashes on bare text
+outside a `<Text>`, so every component here that takes free-form children does the same.
+
+## Variants
+
+<Tabs items={["primary", "secondary", "tertiary", "outline", "ghost", "danger", "danger-soft"]}>
+  <Tab value="primary">
+    ```tsx
+    <Button variant="primary">Continue</Button>
+    ```
+    The strongest action on the screen. One per view.
+  </Tab>
+  <Tab value="secondary">
+    ```tsx
+    <Button variant="secondary">Continue</Button>
+    ```
+  </Tab>
+  <Tab value="tertiary">
+    ```tsx
+    <Button variant="tertiary">Continue</Button>
+    ```
+  </Tab>
+  <Tab value="outline">
+    ```tsx
+    <Button variant="outline">Continue</Button>
+    ```
+  </Tab>
+  <Tab value="ghost">
+    ```tsx
+    <Button variant="ghost">Continue</Button>
+    ```
+  </Tab>
+  <Tab value="danger">
+    ```tsx
+    <Button variant="danger">Delete</Button>
+    ```
+  </Tab>
+  <Tab value="danger-soft">
+    ```tsx
+    <Button variant="danger-soft">Delete</Button>
+    ```
+    A destructive action that is not the primary one on the screen.
+  </Tab>
+</Tabs>
+
+## Sizes
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="md">Medium</Button>
+<Button size="lg">Large</Button>
+```
+
+A size is one axis driving four values: the height (`--spacing-button-*`), the label's type scale
+(`--text-button-*`), the icon step (`--spacing-icon-*`) and the horizontal padding.
+
+## Icons
+
+Icons are **composed, never passed as props**. Put an `Icon` in the children, before or after the
+label.
+
+```tsx
+import { Icon } from "@delacour/native-ui/icon";
+import { IconArrowRight, IconTrash } from "@delacour/native-ui/icons/central";
+
+<Button onPress={next}>
+  <Button.Label>Continue</Button.Label>
+  <Icon icon={IconArrowRight} />
+</Button>
+
+<Button variant="danger" onPress={remove}>
+  <Icon icon={IconTrash} />
+  <Button.Label>Delete</Button.Label>
+</Button>
+```
+
+The button wraps its subtree in an `IconDefaultsProvider` carrying the size and the variant's
+foreground token, so a bare `<Icon>` comes out right with nothing said at the call site. An
+explicit `size` or `color` on the icon still wins.
+
+`Button.StartContent` and `Button.EndContent` are for wrapping leading or trailing content that is
+**not** an `Icon`.
+
+### Icon-only
+
+```tsx
+<Button isIconOnly accessibilityLabel="Favourite" variant="ghost">
+  <Icon icon={IconHeart} />
+</Button>
+```
+
+<Callout type="warn">
+Always pair `isIconOnly` with an `accessibilityLabel`. There is no text for a screen reader to
+fall back on.
+</Callout>
+
+## Loading
+
+```tsx
+<Button isLoading onPress={save}>Save</Button>
+```
+
+`isLoading` composes a `Spinner` in and blocks presses.
+
+**The spinner replaces the icon, it does not join it.** It takes the place of the composed `Icon`
+on the side `spinnerPlacement` names — the first at `start`, the last at `end` — so the label does
+not shift when work begins and shift back when it ends. The swap costs no layout because both
+glyphs are drawn at the button's own `size-icon-*` token. Only a bare `Icon` is swapped; a
+`Button.StartContent` wraps content of unknown height, and replacing one could resize the button.
+
+### Placement
+
+```tsx
+<Button isLoading spinnerPlacement="start">Save</Button>
+<Button isLoading spinnerPlacement="end">Save</Button>
+<Button isLoading spinnerPlacement="only">Save</Button>
+```
+
+`only` drops the children and centres the spinner in the footprint the button already has,
+carrying the label onto `accessibilityLabel` so a screen reader still has a name to read. It does
+not square the button on its own — pair it with `isIconOnly` when a square is what you want.
+
+<Callout title="Loading is not disabled">
+`isLoading` blocks the press and announces the button as *busy*, but keeps full contrast. The
+spinner already says the press landed, and dimming reads as "this control is unavailable". Pass
+`isDimmedWhileLoading` to opt into the faded treatment.
+</Callout>
+
+<Callout type="warn" title="Width in a content-width container">
+A stretched button keeps its width while loading, because `only` keeps its footprint. Inside a
+`flex-row` it still shrinks to the spinner, and that snap is un-animated on purpose: `Pressable`'s
+`Animated.View` already runs a `useAnimatedStyle` on `opacity` and `transform`, and a native
+layout transition on the same view fights it for prop ownership. Pin the width (`w-full`,
+`min-w-*`) if you need it stable.
+</Callout>
+
+## Press feedback and haptics
+
+A button **is** a `Pressable`. `feedback`, `haptic`, `pressedScale` and the rest are inherited
+rather than restated; only the default differs — `scale`.
+
+```tsx
+<Button feedback="fade">Fade on press</Button>
+<Button haptic="selection">With haptic</Button>
+<Button pressedScale={0.92}>Deeper press</Button>
+```
+
+<Callout type="warn">
+Do not add ripple, ink, glow or highlight overlays. There are no wash layers on pressables in this
+library.
+</Callout>
+
+## Reading the button's state
+
+```tsx
+import { useButton } from "@delacour/native-ui/button";
+
+function ButtonCount({ count }: { count: number }) {
+  const { variant, size, isDisabled } = useButton();
+  // …
+}
+```
+
+## Anatomy
+
+<TypeTable
+  type={{
+    "Button": {
+      type: "ButtonRoot",
+      description: "The pressable. Publishes variant, size and disabled state to its subtree, plus icon and text defaults.",
+    },
+    "Button.Label": {
+      type: "ButtonLabelProps",
+      description: "The button's text. Carries its own colour and type scale, read from the button's context — a View does not cascade colour to a Text descendant.",
+    },
+    "Button.StartContent": {
+      type: "ButtonSlotProps",
+      description: "A centred wrapper for leading content that is not an Icon.",
+    },
+    "Button.EndContent": {
+      type: "ButtonSlotProps",
+      description: "A centred wrapper for trailing content that is not an Icon.",
+    },
+  }}
+/>
+
+## API
+
+### `ButtonProps`
+
+Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity` and
+`pressedScale`.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"primary" | "secondary" | "tertiary" | "outline" | "ghost" | "danger" | "danger-soft"',
+      default: '"primary"',
+      description: "How the surface is painted.",
+    },
+    size: {
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Height, label type scale, icon step and padding, on one axis.",
+    },
+    isIconOnly: {
+      type: "boolean",
+      default: "false",
+      description: "Square footprint for a button whose only content is an icon. Requires an accessibilityLabel.",
+    },
+    isDisabled: {
+      type: "boolean",
+      default: "false",
+      description: "Blocks the press and announces the control as disabled.",
+    },
+    isLoading: {
+      type: "boolean",
+      default: "false",
+      description: "Work is in flight: a spinner is composed in and presses are blocked. Announced as busy, not disabled.",
+    },
+    spinnerPlacement: {
+      type: '"start" | "end" | "only"',
+      default: '"start"',
+      description: "Where the spinner sits. `only` replaces the content, keeping the footprint.",
+    },
+    isDimmedWhileLoading: {
+      type: "boolean",
+      default: "false",
+      description: "Fade the button while loading, the way isDisabled does.",
+    },
+    onPress: { type: "() => void" },
+    onLongPress: { type: "() => void" },
+    feedback: {
+      type: '"scale" | "fade" | "scale-fade" | "none"',
+      default: '"scale"',
+      description: "How the press moves the element. pressedScale / pressedOpacity still win on the axis they name.",
+    },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: "false",
+      description: "Haptic played on press-in.",
+    },
+    children: { type: "ReactNode" },
+    className: { type: "string" },
+  }}
+/>
+
+### `ButtonLabelProps`
+
+React Native's `TextProps`, plus `className`.
+
+### `useButton()`
+
+<TypeTable
+  type={{
+    variant: { type: "ButtonVariant", required: true },
+    size: { type: "ButtonSize", required: true },
+    isDisabled: { type: "boolean", required: true },
+  }}
+/>
+
+## Exported constants
+
+```tsx
+import {
+  BUTTON_VARIANTS,
+  BUTTON_SIZES,
+  BUTTON_SPINNER_PLACEMENTS,
+  BUTTON_FOREGROUND_TOKEN,
+  buttonVariants,
+} from "@delacour/native-ui/button";
+```
+
+`BUTTON_FOREGROUND_TOKEN` maps each variant to the theme token its icons and text are drawn in.
+`buttonVariants` is the `tv()` slot set — useful when building a component that has to match a
+button exactly.

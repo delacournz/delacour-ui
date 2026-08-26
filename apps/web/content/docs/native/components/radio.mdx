@@ -1,0 +1,67 @@
+---
+title: Radio
+description: One choice from a set, with a trailing indicator row.
+icon: CircleDot
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Radio } from "@delacour/native-ui/radio";
+```
+
+```tsx
+<Radio.Group value={plan} onValueChange={setPlan}>
+  <Radio value="monthly"><Radio.Label>Monthly</Radio.Label></Radio>
+  <Radio value="annual"><Radio.Label>Annual</Radio.Label></Radio>
+</Radio.Group>
+```
+
+**Variants:** `primary`, `secondary`. **Sizes:** `sm`, `md`, `lg`. **Orientations:** `vertical`,
+`horizontal`.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Radio` | One option. A `Pressable` that selects its `value` in the enclosing group |
+| `Radio.Label` | The option's text, inside the tap target |
+| `Radio.Indicator` | The dot. Accepts custom children to replace the default glyph |
+| `Radio.Group` | Owns the selected value and the shared axes |
+
+The row puts the indicator **last** — the label leads, the state trails. That is the opposite of
+`Checkbox`, and it is deliberate: a radio group is read as a list of choices, and a column of
+leading dots turns the labels into a second column.
+
+## The dot
+
+A spring, not a timing — `RADIO_DOT_SPRING`. A dot that eases in reads as a fade; a dot that
+springs reads as a selection landing.
+
+## Groups
+
+The group owns the selected value; a `Radio` inside one takes no `checked` prop. Precedence follows
+`Checkbox.Group`'s ladder — `own ?? group ?? field ?? default` — for the shared axes.
+
+```tsx
+import { useRadio, useRadioGroup } from "@delacour/native-ui/radio";
+```
+
+## Exports
+
+```tsx
+import {
+  Radio,
+  type RadioProps,
+  RADIO_VARIANTS,
+  RADIO_SIZES,
+  RADIO_ORIENTATIONS,
+  RADIO_DOT_SPRING,
+  RADIO_DEFAULT_SIZE,
+  RADIO_DEFAULT_VARIANT,
+  RADIO_LABEL_TEXT_SIZE,
+} from "@delacour/native-ui/radio";
+```

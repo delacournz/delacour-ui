@@ -1,0 +1,71 @@
+---
+title: Provider
+description: Every provider an app needs at its root, in one component.
+icon: Layers
+---
+
+Mount `DelacourProvider` once, around everything.
+
+```tsx title="app/_layout.tsx"
+import { DelacourProvider } from "@delacour/native-ui/provider";
+
+<DelacourProvider>{children}</DelacourProvider>;
+```
+
+## The four layers
+
+Outermost first. The order is not stylistic.
+
+| Layer | Why it is where it is |
+| --- | --- |
+| `GestureHandlerRootView` | Must be an ancestor **native view** of every handler a `Pressable` creates. Its absence is silent — no error, presses simply stop landing. |
+| `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
+| `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
+| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. |
+
+## Why the safe-area seed matters
+
+`SafeAreaProvider` renders `null` — not unstyled children, *nothing* — until its native view
+reports the first `onInsetsChange`. Without the seed, every cold start shows a blank frame.
+
+The seed is a snapshot taken at native module init, so it is stale when the app launches into a
+rotated or split-screen window — stale for exactly one commit, because the native measurement
+overwrites it. A blank frame on every launch is the worse trade.
+
+Pass `initialMetrics={null}` to opt out. A default parameter only fires on `undefined`, so `null`
+is a value rather than an absence.
+
+## Why the keyboard sync is required
+
+`KeyboardProvider` owns exactly one pair of shared animation values for the whole app, and on iOS
+they are written only from the `will` events. Any teardown that skips one — an interactive dismiss
+interrupted by navigation, a stack pop, an app suspend — pins them open app-wide. Every screen
+then renders "keyboard open" over a keyboard that is not there.
+
+`Screen.Footer` runs the same repair on mount as a backstop, but the provider-level sync is what
+keeps the values honest between screens.
+
+## `style` reaches the gesture root, and carries no default
+
+`GestureHandlerRootView` applies its own `{ flex: 1 }` whenever `style` is undefined. Pass a style
+and that `flex: 1` is gone — include it yourself.
+
+```tsx
+<DelacourProvider style={{ flex: 1, backgroundColor: "#000" }}>{children}</DelacourProvider>
+```
+
+## What it deliberately does not do
+
+**No per-layer escape hatches.** No `gestureHandler={false}`, no `safeAreaProps`, no
+`keyboardProps`. A boolean that turns off the gesture root has "nothing responds to a press" as
+its failure mode, which is the least debuggable outcome in the package. And a prop surface that
+names the layers changes shape every time a layer is added.
+
+**Not idempotent.** It does not detect an enclosing copy of itself. Nesting
+`GestureHandlerRootView` costs a `View`; nesting `SafeAreaProvider` costs a native view; nesting
+`KeyboardProvider` actually breaks — two pairs of shared values, two sets of native observers.
+That is also the one layer that cannot be detected, so a guard covering the two harmless layers
+and missing the harmful one would be worse than none.
+
+If you genuinely need a different stack, compose the providers by hand. They are all public from
+their own packages — see [Installation](/docs/native/getting-started/installation#composing-the-layers-by-hand).

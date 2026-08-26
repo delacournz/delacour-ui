@@ -1,0 +1,139 @@
+---
+title: Slider
+description: A value picked from a range by dragging a handle along a track.
+icon: SlidersHorizontal
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Slider } from "@delacour/native-ui/slider";
+```
+
+```tsx
+<Slider value={volume} onChange={setVolume}>
+  <Slider.Output />
+  <Slider.Track>
+    {() => (
+      <>
+        <Slider.Fill />
+        <Slider.Thumb />
+      </>
+    )}
+  </Slider.Track>
+</Slider>
+```
+
+**Colours:** `default`, `primary`, `success`, `warning`, `danger`, `info`. **Sizes:** `sm`, `md`,
+`lg` — the groove's thickness, the thumb's diameter and the readout's type step.
+**Orientations:** `horizontal`, `vertical`.
+
+The package's first drag-driven control, and its first `Gesture.Pan()`.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Slider` | Owns the value, the gesture and the axes |
+| `Slider.Output` | The current value, formatted. Give it a function to label it yourself |
+| `Slider.Track` | The groove the thumbs run along, and the surface the drag is claimed on |
+| `Slider.Fill` | The painted part of the groove, from the minimum — or between two thumbs |
+| `Slider.Thumb` | The grab handle. `index` picks which value it drives in a range |
+
+**The anatomy is written out, never assembled from props.** A range's thumb count is *data*, so
+`Slider.Track` takes a function and is handed the settled state to map over. `Radio` composes its
+own indicator in because a radio has exactly one; a slider does not know how many it has until it
+is told.
+
+## Ranges
+
+Pass an array and the slider becomes a range, one thumb per entry.
+
+```tsx
+<Slider value={[20, 80]} onChange={setRange}>
+  <Slider.Track>
+    {({ values }) => (
+      <>
+        <Slider.Fill />
+        {values.map((_, index) => (
+          <Slider.Thumb index={index} key={index} />
+        ))}
+      </>
+    )}
+  </Slider.Track>
+</Slider>
+```
+
+<Callout type="warn">
+Which shape you speak is **locked on first render**. A slider that silently started reporting an
+array to a caller holding a number would be a bug with no error attached, so a flip warns once in
+development and the slider keeps following you.
+</Callout>
+
+## The whole track is the target
+
+Touching down grabs the nearest thumb and moves it to the finger; there is no separate tap mode.
+`Slider.Thumb` holds no gesture of its own, which is what makes a press on empty track lift the
+handle it is about to move.
+
+That is also why the accessibility role and actions live on the thumb — with no gesture there, they
+are the only path assistive technology has to the value.
+
+## Two change callbacks
+
+`onChange` fires on every change during the drag. `onChangeEnd` fires once, when the drag is
+released — that is where a network write belongs.
+
+## Steps and haptics
+
+`step` is the increment the value snaps to; `0` is continuous. Haptics are rate-limited by
+**distance** rather than a clock (`SLIDER_HAPTIC_MIN_TRAVEL`), a continuous slider never ticks, and
+both ends of the range always do.
+
+## Gotchas
+
+<Callout type="warn" title="A vertical slider needs a definite height">
+It counts up from the bottom and fills whatever it is given, so a wrapper with `h-48` or `flex-1`
+is not optional.
+</Callout>
+
+<Callout type="warn" title="Inside a ScrollView on iOS">
+The slider feels late until the scrollable sets `delaysContentTouches={false}`. That is a prop at
+your call site, not something the component can set.
+</Callout>
+
+## API
+
+<TypeTable
+  type={{
+    value: { type: "number | number[]", description: "Controlled value. An array makes it a range, one thumb per entry." },
+    defaultValue: { type: "number | number[]", description: "Starting value while uncontrolled." },
+    minValue: { type: "number", default: "0" },
+    maxValue: { type: "number", default: "100" },
+    step: { type: "number", default: "1", description: "The increment the value snaps to. 0 is continuous, and never ticks." },
+    formatOptions: { type: "Intl.NumberFormatOptions", description: "Passed to Intl.NumberFormat by Slider.Output." },
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description: "vertical counts up from the bottom, and needs a definite height.",
+    },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      default: '"default"',
+      description: "What the filled part of the track means.",
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: { type: "boolean", description: "Blocks the drag and fades the control. Inherited from an enclosing Field." },
+    isInvalid: { type: "boolean", description: "Reports an invalid value. Inherited from an enclosing Field." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      description: "Played on grab and as the value crosses a step.",
+    },
+    onChange: { type: "(value: number | number[]) => void", description: "Fires on every change during the drag." },
+    onChangeEnd: { type: "(value: number | number[]) => void", description: "Fires once, when the drag is released." },
+    children: { type: "ReactNode" },
+  }}
+/>

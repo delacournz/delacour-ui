@@ -1,0 +1,63 @@
+---
+title: Sizing
+description: The semantic token scales, and the precedence ladder an icon's size resolves through.
+icon: Ruler
+---
+
+Sizes are semantic tokens, not raw utilities. `tokens.css` owns the values in Tailwind's own
+namespaces, so they compile to ordinary utilities.
+
+| Token | Utility | What it sizes |
+| --- | --- | --- |
+| `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
+| `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
+| `--text-button-*` | `text-button-md` | a button's label, paired with its height |
+| `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
+| `--text-input-*` | `text-input-md` | a field's value, paired with its height |
+| `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
+| `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
+
+A token is named for what it sizes, not for an abstract category. A control that shares another's
+heights gets its own namespace rather than borrowing one — `--spacing-input-*` names the same
+36/44/52 as `--spacing-button-*` so a field and the button beside it can be retuned
+independently. They are meant to stay level, and a test asserts that outright.
+
+## `Icon` and `Spinner` share one scale
+
+`SPINNER_SIZES` *is* `ICON_SIZES` — `xs` through `2xl`, 14/16/18/20/24/32pt — so `size="md"` is
+the same edge length in both and one can stand in for the other with nothing moving. That is what
+makes a button's loading swap free: both glyphs are drawn at the button's own `size-icon-*` token,
+so replacing one with the other costs no layout.
+
+A component indexes that scale at its own step name rather than restating a number. A
+`Checkbox`'s square reads it two steps above its own tick — 18/14, 20/16, 24/18 — and the test
+pins the *offset* rather than the points, so the icon scale can be retuned without the test
+becoming a transcript of it.
+
+## An icon's size is a class that drives a prop
+
+`CentralIconBase` spreads its props onto `<Svg>` *before* setting its own `width`/`height` from
+`size`, and `react-native-svg` then merges `{...style, ...props}` with props winning. A `size-4`
+that resolved to `style.width` is overridden every single time.
+
+So `Icon` runs the class through `withUniwind` in manual mode to recover the width, and hands that
+number to the glyph. The indirection is forced, not stylistic.
+
+### Precedence, weakest first
+
+The first four are one `cn()` chain, so the last `size-*` wins. The fifth is a different mechanism
+entirely, which is what makes "inherited class plus caller-supplied number" resolve correctly.
+
+| Source | How it wins |
+| --- | --- |
+| `ICON_FALLBACK_SIZE_CLASS` | first in the chain |
+| the enclosing `IconDefaultsProvider`'s `className` | second |
+| a named `size="lg"` | third |
+| the caller's `className` | last in the chain |
+| a numeric `size={18}` | **bypasses the chain** — the manual mapping is skipped when the target prop is already defined |
+
+## Adding a token means editing two files
+
+Put the value in `tokens.css` and the name in `src/styles/tokens.ts`. Miss the second and
+tailwind-merge stops recognising the utility, so a caller's override quietly stops working.
+`tokens.test.ts` asserts the two lists match and reads the CSS to check the scale still ascends.

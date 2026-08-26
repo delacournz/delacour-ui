@@ -1,0 +1,37 @@
+---
+title: AGENTS.md
+description: The in-repo manual coding agents read before touching the library.
+icon: FileCode
+---
+
+The library documents itself in-repo, for agents working **inside** the package. If you are
+consuming it, the handbook you are reading now is the right document.
+
+| Where | What it is |
+| --- | --- |
+| `packages/native-ui/AGENTS.md` | The package manual — stack, rules, the three component patterns, sizing, theming, testing, and an index table of every component |
+| `packages/native-ui/src/components/<name>/AGENTS.md` | One file per component, covering its own design decisions in full |
+| `packages/native-ui/README.md` | The human-facing introduction |
+
+## What it covers that this site does not
+
+- The reasoning behind each component's edge cases, in full — why `Spinner`'s arc caps are `butt`,
+  why `Checkbox`'s fill radius is a number rather than a token, why `Tabs`' settle lives in
+  `onFinalize` rather than `onEnd`.
+- The compound-component file layout, and the five load-bearing properties of the closing
+  `Object.assign`.
+- The `displayName` convention: every component carries a `DelacourUI.`-prefixed name matching its
+  dotted path in the public API, enforced by a test that reads the source as text.
+- How to add a component, end to end.
+
+<Callout>
+`src/docs.test.ts` fails the build for a component folder with no `AGENTS.md`, for a doc that is
+only a heading, and for a component missing from the package doc's index table. Documentation is a
+build gate there, not a convention.
+</Callout>
+
+## Pointing an agent at this site instead
+
+For an agent writing app code against the package, start from
+[`/llms.txt`](/docs/native/getting-started/llms) — it indexes every page here, and any page can be
+fetched as Markdown by appending `.md` to its URL.

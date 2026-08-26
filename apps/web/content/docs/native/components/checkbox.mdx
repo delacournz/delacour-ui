@@ -1,0 +1,104 @@
+---
+title: Checkbox
+description: A box that is ticked or not — alone, or as one of a group sharing a value list.
+icon: SquareCheck
+---
+
+<Callout title="Reference docs in progress">
+The summary and API surface below are current. Worked examples and full prop tables are still
+being written — until then, `apps/playground` renders every case on a simulator.
+</Callout>
+
+```tsx
+import { Checkbox } from "@delacour/native-ui/checkbox";
+```
+
+```tsx
+<Checkbox checked={accepted} onCheckedChange={setAccepted}>
+  <Checkbox.Label>Accept the terms</Checkbox.Label>
+</Checkbox>
+```
+
+**Colours:** `default`, `primary`, `success`, `warning`, `danger`, `info`. **Sizes:** `sm`, `md`,
+`lg`. **Alignment:** `start`, `end`.
+
+There is no `variant` axis: a checkbox has one shape, and a second way to paint it would be a
+second thing to keep in step with the radio beside it.
+
+## The root draws the box
+
+`<Checkbox />` on its own is a complete control. Anything composed inside lands *beside* the box
+and shares its tap target — which is exactly why `Checkbox.Label` exists next to `Field.Label`.
+`Field.Label` names a control from a row away; this one is inside the pressable, so tapping the
+words toggles the box.
+
+Use `Field.Label` in a horizontal `Field`, and `Checkbox.Label` everywhere else.
+
+## Groups
+
+```tsx
+<Checkbox.Group value={selected} onValueChange={setSelected}>
+  <Checkbox value="email"><Checkbox.Label>Email</Checkbox.Label></Checkbox>
+  <Checkbox value="push"><Checkbox.Label>Push</Checkbox.Label></Checkbox>
+</Checkbox.Group>
+```
+
+The group's state is one array of the children's `value`s. A grouped checkbox with no `value`
+throws by name — group membership is invisible in the child's props at compile time, so it cannot
+be a type error.
+
+The group is a plain `View` with no role. Lay the children out any other way with a `className` —
+`flex-row flex-wrap` for a row.
+
+### Precedence: `own ?? group ?? field ?? default`
+
+Deliberately not `Input.Group`'s order. `Checkbox.Group` owns no box — it is a state controller
+that also carries shared defaults, which makes it the same kind of thing as `Field`. "Make the
+group `lg`" and "make this one danger" are different questions and both get an answer.
+
+## Indeterminate
+
+`isIndeterminate` paints the surface and swaps the glyph, and reports `checked="mixed"` — so a
+"select all" row says what it means rather than claiming a half-truth.
+
+`isFilled`, not `isChecked`, is the `tv` axis: checked and indeterminate both paint the surface and
+only the glyph tells them apart.
+
+## Colour paints the indicator, not the box
+
+An unticked box is `border-input bg-card` at every colour — the same chrome a field wears, because
+it is the same kind of thing. Only the border has to know both states.
+
+**Invalid outranks the colour**, on the border and the fill, ticked or not.
+
+## The animation
+
+Three gestures off one shared value, so they cannot drift:
+
+1. **The fill** fades and scales **from the centre**. A box is filled, not slid into — there is no
+   edge a checkbox is filled *from*, so a `translateX` here would read as a panel arriving.
+2. **The tick** sits behind a container whose width opens from the box's left edge, so the stroke
+   is drawn on when ticking and taken back when unticking. It is held by `tickDelay` until the
+   surface it is drawn on is most of the way there.
+3. **The border** comes last, held by `borderDelay` until the surface is near the edge, so it reads
+   as the fill *arriving* at the border rather than as an outline changing on its own.
+
+Reduce-motion takes Reanimated's default `System` policy here, unlike `Spinner`: the state change
+is the point and the travel is decoration.
+
+## Press defaults
+
+The root **is** a `Pressable`. Two defaults differ and only two: `feedback="fade"` (a spring on a
+20pt square reads as a jitter) and `haptic="selection"` (a checkbox is a state toggle, and the tick
+landing is the confirmation). Both are ordinary props — `haptic={false}` silences it.
+
+`onPress` is `Omit`ed rather than forwarded: the press **is** the toggle, and `onCheckedChange` is
+where a side effect goes.
+
+## Sizing
+
+The box mints no scale of its own — it reads `--spacing-icon-*` two steps above its own glyph:
+18/14, 20/16, 24/18. The test pins the *offset*, not the points.
+
+Only a **bare** box gets `hitSlop`. Once there is a label the row is already a wide target, and slop
+on top of that would overlap the row below.

@@ -1,0 +1,84 @@
+---
+title: Releases
+description: What has landed in @delacour/native-ui, newest first.
+icon: Rocket
+---
+
+<Callout type="warn" title="Pre-1.0">
+`@delacour/native-ui` is at `0.1.0`. The API is still moving — component surfaces, prop names and
+token names can all change between versions. Pin an exact version.
+</Callout>
+
+## Unreleased
+
+### Added
+
+- **Tabs** — a row of tabs and the panels they switch between. One shared value drives the pager's
+  translation, the measured indicator's frame and every separator's opacity, with a swipeable pager
+  that gives up the vertical axis so it works inside a scroll view.
+- **BottomSheet** — a sheet on `@gorhom/bottom-sheet`, with the scrim rebuilt so a `TextInput`
+  inside one still receives its taps.
+- **Accordion** — sections animated from a measured height, with `single` and `multiple` selection
+  as a discriminated union.
+- **Slider** — a value or a range picked by dragging. The package's first `Gesture.Pan()`.
+- **Switch** — an on/off control with a thumb you can drag as well as tap.
+- **Checkbox** — a box that is ticked or not, with `Checkbox.Label` and `Checkbox.Group`. Six
+  colours, three sizes, two alignments, an indeterminate state, and a three-part animation driven
+  off one shared value.
+- **Radio** — one choice from a set, with `Radio.Label`, `Radio.Indicator` and `Radio.Group`. The
+  indicator trails the label rather than leading it. `Radio.Indicator` accepts custom children in
+  place of the default dot.
+- **Field** — the form layout and its state cascade. `Field.Set`, `.Legend`, `.Group`, `.Label`,
+  `.Description`, `.Error`, `.Content` and `.Separator`. The whole row drives the control once one
+  registers a press.
+- **Input** — a text field plus `Input.Group` with `Prefix` and `Suffix` decorators. One box slot
+  with two homes, so a grouped field is the same box rather than a similar one.
+- **Badge** — a compact label for status, category or count. Four surface variants × six semantic
+  colours, plus `Badge.CloseButton` for a dismissible tag.
+- **Text** — the type scale and the inheritance cascade, with twelve presets. Every `Text`
+  publishes its resolved class to its subtree and merges the one it inherited.
+- **Screen** — the screen frame. Self-measuring navbar and footer, four scrollables, two
+  whole-screen states, and a `debug` mode that paints every layer.
+- **DelacourProvider** — the four root providers in one component.
+- **ListGroup** and **Separator** — a row surface with dividers inserted for you, and the rule it
+  inserts.
+- **Spinner** — an angle-compensated gradient arc that shares the icon scale, wired into
+  `Button`'s `isLoading`.
+- **Expo entry point** — `@delacour/native-ui/expo/navigation-theme`, plus `useNavigationTheme()`
+  for apps on a different navigator.
+- **`DelacourUI.*` display names** on every component, enforced by a test that reads the source
+  as text.
+- **`elevated` / `elevated-foreground` tokens**, minted for a surface that has to sit above
+  `muted` in both themes.
+- **Per-component `AGENTS.md`**, with `src/docs.test.ts` failing the build on a component that
+  is undocumented or missing from the package doc's index.
+- **Tokenised sizes** — `--spacing-button-*`, `--spacing-icon-*`, `--spacing-input-*`,
+  `--text-button-*`, `--text-input-*`, `--spacing-navbar-row`, `--spacing-screen-gutter`. `Icon`
+  and `Spinner` share one scale.
+- **`scale-fade` press feedback**, composed from `scale` and `fade` rather than spelled out.
+
+### Changed
+
+- Compound components moved to one file per part, with the surface assembled by a closing
+  `Object.assign`.
+- `Button`, `ListGroup` and `Screen` migrated onto `Text` rather than carrying their own type
+  scales.
+- Worklets cross back to JS with `scheduleOnRN` from `react-native-worklets`, not Reanimated's
+  deprecated `runOnJS` shim. A Biome rule fails the build on the old names.
+- `Button` and `ListGroup.Item` inherit `feedback` from `Pressable` instead of restating it.
+- `Separator`'s `tv()` moved into `separator.tsx` — the pattern C carve-out for a single styled
+  element with no pure resolvers.
+
+### Fixed
+
+- `Button` keeps its footprint when the spinner replaces a composed icon, so the label no longer
+  shifts when work begins.
+- Literal colours are no longer looked up as CSS variables.
+- The spinner arc's joint no longer composites into a bright dot opposite the head.
+- An inline padding no longer erases a caller's `className`.
+- Pressables are exposed to assistive technology.
+
+---
+
+Full history lives in the repository. Every commit is scoped and prefixed —
+`git log --oneline -- packages/native-ui`.

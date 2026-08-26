@@ -1,0 +1,57 @@
+name: Release CLI
+
+# The registry is served straight off this repository, so a published CLI is
+# only correct if `registry/` matches the source it was built from. That is what
+# the drift check below enforces — a tag whose registry is stale would hand
+# `add` components that no longer exist.
+on:
+  push:
+    tags:
+      - "delacour@*"
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - run: bun install --frozen-lockfile
+
+      - name: Rebuild the registry
+        working-directory: packages/cli
+        run: bun run registry:build
+
+      - name: Fail if the committed registry is stale
+        run: |
+          if [ -n "$(git status --porcelain registry/)" ]; then
+            echo "registry/ does not match packages/native-ui. Run 'bun --filter delacour run registry:build' and commit the result."
+            git --no-pager diff --stat registry/
+            exit 1
+          fi
+
+      - run: bun run typecheck
+      - run: bun run check
+      - run: bun test
+
+      - name: Build
+        working-directory: packages/cli
+        env:
+          # Bake the tag into the bundle, so this release always reads the
+          # registry it shipped against.
+          DELACOUR_REGISTRY_REF: ${{ github.ref_name }}
+        run: bun run build && bun run build:check
+
+      - name: Publish
+        working-directory: packages/cli
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: bun publish --access public

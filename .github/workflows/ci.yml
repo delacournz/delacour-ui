@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run typecheck
+      - run: bun run check
+      - run: bun test
+
+      # The registry is committed, so a component change that does not rebuild
+      # it would publish a registry describing the previous version.
+      - name: Check the registry is current
+        working-directory: packages/cli
+        run: bun run registry:build
+
+      - run: git diff --exit-code registry/

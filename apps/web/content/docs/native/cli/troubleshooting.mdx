@@ -109,6 +109,18 @@ bunx delacour@latest add tabs --ref main
 
 See [The registry](/docs/native/cli/registry).
 
+### A copied component does not typecheck
+
+That is a registry defect rather than something wrong with your project — an import the registry
+did not account for, or a package it failed to declare. Confirm it against a clean app:
+
+```bash
+bun --filter delacour run verify:expo --only <component>
+```
+
+If that run is clean, the difference is your project: check `delacour info` for where files landed,
+and `tsconfig.json` for an alias that resolves somewhere unexpected.
+
 ## The full check list
 
 <TypeTable

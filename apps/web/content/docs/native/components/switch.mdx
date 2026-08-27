@@ -4,36 +4,97 @@ description: An on/off control with a thumb you can drag as well as tap.
 icon: ToggleLeft
 ---
 
+<Preview id="switch/tap-or-drag" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="switch" />
+
+## Usage
+
 ```tsx
 import { Switch } from "@delacour/native-ui/switch";
 ```
 
+```tsx
+<Switch isSelected={notify} onSelectedChange={setNotify} />
+```
+
+## Tap or drag
+
+A tap toggles; a drag carries the thumb and settles on release by position, or by the flick's
+velocity if you let go fast.
+
 <Preview id="switch/tap-or-drag" />
-
-One `Gesture.Pan()` drives the whole control. A tap toggles it; a drag takes the thumb with your
-finger, and letting go settles by position — or by the flick's velocity if you release fast. Drag
-one half way and back and it commits nothing.
-
-Leave `isSelected` off and the switch holds its own state; `defaultSelected` sets the starting
-point.
 
 ## Colours
 
+`color` says what being *on* means — an off switch is the same chrome at all six.
+
 <Preview id="switch/colours" />
 
-`default`, `primary`, `success`, `warning`, `danger`, `info` — Badge's, Checkbox's and Slider's set.
-An off switch is the same chrome at all six: the colour only says what being *on* means. Both the
-track and the knob fade between two token values, driven by the thumb's own travel.
+```tsx
+<Switch color="default" />
+<Switch color="primary" />
+<Switch color="success" />
+<Switch color="warning" />
+<Switch color="danger" />
+<Switch color="info" />
+```
 
 ## Sizes
 
 <Preview id="switch/sizes" />
 
-`sm`, `md`, `lg`. The knob is a rounded rectangle lying on its side, not a disc — as wide as the
-track is tall, and shorter than it by twice the vertical inset. Both are fully rounded, so the two
-capsules come out concentric by construction rather than by a number.
+```tsx
+<Switch size="sm" />
+<Switch size="md" />
+<Switch size="lg" />
+```
 
-## Anatomy
+## Start and end content
+
+Both layers are written once with no conditionals — `StartContent` is revealed as the switch turns
+on and `EndContent` as it turns off, each fading with the thumb's travel.
+
+<Preview id="switch/start-and-end-content" />
+
+```tsx
+import { Icon } from "@delacour/native-ui/icon";
+import { IconCheckmark1Small, IconX } from "@delacour/native-ui/icons/central";
+
+<Switch color="primary" defaultSelected>
+  <Switch.StartContent>
+    <Icon icon={IconCheckmark1Small} />
+  </Switch.StartContent>
+  <Switch.EndContent>
+    <Icon icon={IconX} />
+  </Switch.EndContent>
+</Switch>
+```
+
+The glyphs take their size step and colour from the switch.
+
+## States
+
+<Preview id="switch/disabled-and-invalid" />
+
+```tsx
+<Switch isDisabled />
+<Switch isInvalid />
+```
+
+## In a settings list
+
+The row's own press toggles the switch, in a `ListGroup.Item` or in an enclosing
+[`Field`](/docs/native/components/field) — so a form switch can be a bare `<Switch />` with
+`Field.Label` naming it.
+
+<Preview id="switch/in-a-settings-list" />
+
+## API Reference
+
+### Anatomy
 
 | Part | What it is |
 | --- | --- |
@@ -42,63 +103,9 @@ capsules come out concentric by construction rather than by a number.
 | `Switch.StartContent` | Behind the thumb at the leading edge — revealed as the switch turns on |
 | `Switch.EndContent` | Behind the thumb at the trailing edge — revealed as the switch turns off |
 
-<Preview id="switch/start-and-end-content" />
+### Switch
 
-Both layers are written once with no conditionals. `StartContent` is revealed as the switch turns
-on and `EndContent` as it turns off, each fading with the thumb's travel — so the knob reads as
-uncovering the other end. The glyphs take their size step and colour from the switch.
-
-<Callout>
-A hand-written `Switch.Thumb` is **moved to the end** of the children for you. Every part here is
-absolutely positioned and React Native paints later siblings on top, so a thumb written first —
-which is the order the anatomy reads best in — would slide *under* the content layers.
-</Callout>
-
-## Drag as well as tap
-
-The whole track is the target. A tap toggles; a drag carries the thumb and commits on release,
-with a fling past `SWITCH_FLING_VELOCITY` counting as a flip even when the thumb has not crossed
-the middle.
-
-Movement is measured as `Math.max(|translationX|, |translationY|)`. A vertical swipe that began on
-the switch has to count as movement, or every attempt to scroll past the control would read as a
-tap and toggle it.
-
-The haptic fires at the commit, never at the grab.
-
-## The spring is critically damped
-
-`SWITCH_THUMB_SPRING` has no overshoot, and that is deliberate: a wider thumb travels a shorter
-distance inside a track that clips it, so an overshoot has nowhere to go — the knob would visibly
-squash against the end of its own capsule on every toggle.
-
-The colour the switch travels through and the press scale are **two entries in one**
-`useAnimatedStyle`, not two calls. Two animated styles on one view fight for the same props and
-the later one silently wins.
-
-## State inside a Field
-
-<Preview id="switch/in-a-settings-list" />
-
-`isDisabled` and `isInvalid` are inherited from an enclosing `Field`, and the switch registers its
-toggle with the field — so the whole row drives it and a form switch can be a bare `<Switch />`
-with `Field.Label` naming it. See [Field](/docs/native/components/field).
-
-## Accessibility
-
-<Preview id="switch/disabled-and-invalid" />
-
-The root is not a `Pressable`, so there is no touch responder for TalkBack's activation to land on.
-The component supplies `accessibilityActions` and `onAccessibilityTap` itself, and marks the root
-`accessible` — without that the view is not an accessibility element on iOS and its role and state
-never reach VoiceOver.
-
-<Callout type="warn">
-There is no `Switch.Label` and no `Switch.Group` — use `Field`. And **RTL is not handled**: the
-thumb travels on `translateX`, which does not flip.
-</Callout>
-
-## API
+`ViewProps`, minus `children` and `style` — the root writes its own animated style.
 
 <TypeTable
   type={{
@@ -128,4 +135,7 @@ thumb travels on `translateX`, which does not flip.
   }}
 />
 
-`ViewProps`, minus `children` and `style` — the root writes its own animated style.
+<Callout type="warn">
+There is no `Switch.Label` and no `Switch.Group` — use `Field`. And **RTL is not handled**: the
+thumb travels on `translateX`, which does not flip.
+</Callout>

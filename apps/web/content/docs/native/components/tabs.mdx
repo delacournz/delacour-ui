@@ -4,11 +4,17 @@ description: A row of tabs and the panels they switch between, with a swipeable 
 icon: LayoutGrid
 ---
 
+<Preview id="tabs/variants/every-variant" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="tabs" />
+
+## Usage
+
 ```tsx
 import { Tabs } from "@delacour/native-ui/tabs";
 ```
-
-<Preview id="tabs/variants/every-variant" />
 
 ```tsx
 <Tabs value={tab} onValueChange={setTab}>
@@ -23,13 +29,107 @@ import { Tabs } from "@delacour/native-ui/tabs";
 </Tabs>
 ```
 
-**Variants:** `primary` — a fully rounded capsule inside a muted track — and `secondary`, an
-underline rule. **Sizes:** `sm`, `md`, `lg`: the trigger's floor and padding, the gap ladder, the
-label's `Text` step and the glyph step a composed `Icon` inherits, on one axis.
+## Variants
 
-## Anatomy
+`primary` is a fully rounded capsule inside a muted track; `secondary` is an underline rule.
+
+<Preview id="tabs/variants/every-variant" />
+
+```tsx
+<Tabs variant="primary">…</Tabs>
+<Tabs variant="secondary">…</Tabs>
+```
+
+## Sizes
+
+One axis drives the trigger's floor and padding, the gap ladder, the label's `Text` step and the
+glyph step a composed `Icon` inherits.
 
 <Preview id="tabs/sizes/every-size" />
+
+```tsx
+<Tabs size="sm">…</Tabs>
+<Tabs size="md">…</Tabs>
+<Tabs size="lg">…</Tabs>
+```
+
+## Controlled
+
+Pass `value` and `onValueChange`; omit both and the bar holds its own state from `defaultValue`.
+
+```tsx
+<Tabs onValueChange={setTab} value={tab ?? null}>…</Tabs>
+```
+
+<Callout type="warn" title="value is string | null, never undefined">
+`null` means "controlled, nothing selected". Omitting the prop is what makes the bar uncontrolled,
+so a `useState<string>()` seeded with `undefined` would silently hand the component its own state
+and then switch it to controlled on the first press. Pass `tab ?? null`.
+</Callout>
+
+## Swiping
+
+`isSwipeable` is exactly one thing: whether the pan is enabled. Every panel mounts either way — use
+`Tabs.Content`'s function children for the per-panel mounting decision.
+
+```tsx
+<Tabs isSwipeable={false}>…</Tabs>
+```
+
+The pan claims sideways and gives up vertical, so a pager works inside
+[`Screen.ScrollArea`](/docs/native/components/screen). A horizontal scrollable *inside* a panel is
+yours to settle — the pager publishes its pan on `useTabsMotion()`, and you write
+`Gesture.Native().blocksExternalGesture(panGesture)`.
+
+## Scrolling
+
+Wrap the row in a `Tabs.ScrollView` when the tabs genuinely do not fit. The bar tracks the finger
+through a drag, and a hand-scroll always wins.
+
+<Preview id="tabs/scrolling/twelve-tabs" />
+
+```tsx
+<Tabs.ScrollView>
+  <Tabs.List>…</Tabs.List>
+</Tabs.ScrollView>
+```
+
+## Labels and icons
+
+Selection changes the label's colour and nothing else — it crossfades off the same value the capsule
+reads, while a composed `Icon` swaps at the midpoint.
+
+<Preview id="tabs/composition/composed-icons-and-a-render-prop" />
+
+```tsx
+<Tabs.Trigger value="inbox">
+  <Icon icon={IconInbox} />
+  <Tabs.Label>Inbox</Tabs.Label>
+</Tabs.Trigger>
+```
+
+<Callout type="warn" title="A render prop must not change a trigger's size">
+A trigger's width **is** the indicator's geometry, so content that appears only on selection — a
+badge, a count — re-measures the row and shifts the whole bar on every tab change. Swap a treatment
+rather than adding or removing content.
+</Callout>
+
+## Separators
+
+A separator fades only while the pager is crossing it, and still takes its width while faded, so the
+row never reflows.
+
+<Preview id="tabs/composition/separators" />
+
+```tsx
+<Tabs.Trigger value="overview">Overview</Tabs.Trigger>
+<Tabs.Separator betweenValues={["overview", "activity"]} />
+<Tabs.Trigger value="activity">Activity</Tabs.Trigger>
+```
+
+## API Reference
+
+### Anatomy
 
 | Part | What it is |
 | --- | --- |
@@ -42,113 +142,16 @@ label's `Text` step and the glyph step a composed `Icon` inherits, on one axis.
 | `Tabs.Separator` | A hairline between two tabs, which retreats as either is approached |
 | `Tabs.Content` | One panel. Must be a **direct child** of `Tabs` |
 
-## The panels are the order of record
-
-The root walks its own children for `Tabs.Content`, and their **source order** is the tab order.
-Triggers are not walked — each finds its place by looking its `value` up in that list, so a trigger
-can sit behind a wrapper or come out of a `.map()`.
+The panels' source order is the tab order. Triggers are not walked — each finds its place by looking
+its `value` up in that list, so a trigger can sit behind a wrapper or come out of a `.map()`.
 
 <Callout type="warn">
-`Tabs.Content` must be a direct child of `Tabs`. Triggers may be nested; panels may not.
+`Tabs.Content` must be a direct child of `Tabs`. Triggers may be nested; panels may not. Writing the
+triggers in a different order from the panels puts the indicator on the wrong tab, so the list checks
+the measured positions ascend and warns by name in development.
 </Callout>
 
-Writing the triggers in a different order from the panels puts the indicator on the wrong tab, with
-nothing in the source to point at — so the list checks the measured `x` values ascend and warns by
-name in development.
-
-## Everything moves off one shared value
-
-`position` is a float index into the panels' order. A press springs it, a drag writes it directly,
-and the pager's translation, the indicator's frame and every separator's opacity are three readings
-of it. Two clocks is how a capsule ends up a frame behind the panel it is meant to be sitting on.
-
-`onValueChange` fires **once**, when the finger lifts, before the spring finishes — so the trigger
-highlights immediately rather than 300ms later. It is never called for a re-press of the current
-tab.
-
-<Callout type="warn" title="value is string | null, never undefined">
-`null` means "controlled, nothing selected". Omitting the prop is what makes the bar uncontrolled,
-so a `useState<string>()` seeded with `undefined` would silently hand the component its own state
-and then switch it to controlled on the first press. Pass `tab ?? null`.
-</Callout>
-
-## Swiping
-
-`isSwipeable` is exactly one thing: whether the pan is enabled. It does **not** change what mounts.
-Every panel mounts either way — you cannot drag to a panel that is not there, and one that
-unmounted would lose what was typed into it.
-
-There is no `isLazy`, because "lazy" is not one thing: a form wants to stay mounted, a video wants
-to stop, and a report wants never to have been built. Use `Tabs.Content`'s function children for
-the per-panel decision.
-
-The pan claims sideways and gives up vertical, so a pager works inside
-[`Screen.ScrollArea`](/docs/native/components/screen). A horizontal scrollable *inside* a panel is
-yours to settle — the pager publishes its pan on `useTabsMotion()`, and you write
-`Gesture.Native().blocksExternalGesture(panGesture)`.
-
-## The indicator
-
-<Preview id="tabs/scrolling/twelve-tabs" />
-
-It animates `width` and `translateX`, never `scaleX`. A scale is cheaper and wrong three times
-over: `rounded-full` stretches to an ellipse at the 2.3× a short tab to a long one asks for, a
-border thickens on two edges only, and any children you pass are squashed with it.
-
-The cost is bounded because the indicator is absolutely positioned — its size change never dirties
-a sibling, so the row's layout stays settled.
-
-<Callout type="warn" title="A render prop must not change a trigger's size">
-A trigger's width **is** the indicator's geometry, so content that appears only on selection — a
-badge, a count — re-measures the row and shifts the whole bar on every tab change. Swap a treatment
-rather than adding or removing content.
-</Callout>
-
-## Labels
-
-<Preview id="tabs/composition/composed-icons-and-a-render-prop" />
-
-The label's colour **crossfades**, off the same `position` everything else reads, so it fades with
-the capsule arriving rather than flipping at a midpoint. That means it is a style, not a class — the
-`label` slot names no colour at all, and a test enforces it.
-
-Selection changes the label's colour and nothing else. A weight change would re-measure the label,
-which moves the frame the indicator is sitting on, on every tap.
-
-A composed `Icon` takes its colour as a resolved value, so it cannot be half way between two — it
-swaps at the midpoint with a hysteresis band. On a trigger holding both a glyph and a label the
-glyph steps while the text fades.
-
-## Separators
-
-<Preview id="tabs/composition/separators" />
-
-A separator fades only while the pager is crossing it. At rest the bar shows every rule it has; a
-drag dips the one it travels over and brings it back.
-
-A faded separator still takes its width, so the row never reflows. That also means separators make
-a bar wider — enough to tip a row that only just fits into one that scrolls. Reach for
-`Tabs.ScrollView` when the tabs genuinely do not fit, not by default.
-
-## The elevated token
-
-The capsule is painted on `elevated`, a theme token minted for it. The surface has to sit *above*
-`muted` in both themes and nothing in the neutral ramp did: `card` is the same white as
-`background` in light and **darker** than `muted` in dark, so a capsule painted on it reads as
-raised in one theme and sunken in the other.
-
-## Deliberate omissions
-
-No `Tabs.ListBackground` and no `background` prop — `bg-muted` on the `list` slot is the whole
-feature, and `variant` already says whether there is one. No public pager, no `orientation` (a
-vertical tab bar is a sidebar, a different component), and no router prop: `onValueChange` is where
-your app calls its router.
-
-There is no `Field` rung on the axis ladder and no `isInvalid`. Tabs are navigation — nothing here
-has a value that can be wrong, and a `Field` around a `Tabs` would grey out a navigation bar from a
-form's state.
-
-## API
+### Tabs
 
 <TypeTable
   type={{
@@ -162,7 +165,7 @@ form's state.
     },
     onValueChange: {
       type: "(value: string) => void",
-      description: "Called with the newly selected value. Never called for a re-press of the current one.",
+      description: "Called with the newly selected value, once, when the finger lifts. Never called for a re-press of the current one.",
     },
     variant: { type: '"primary" | "secondary"', default: '"primary"' },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },

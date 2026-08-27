@@ -88,3 +88,8 @@ own text inheritance through classNames. Compound root plus twelve presets:
 - **No `asChild`.** `Slot` throws on a non-element child and a `Text`'s child is
   usually a string, so it would be unusable in the shape people would reach for.
   There is also nothing to donate: `useTextClass()` hands the class over directly.
+- **`TEXT_VARIANTS` is ordered — block presets first, largest first.** The tests
+  read that order to assert the type scale descends, so a new block role goes in
+  at its step rather than on the end; appended, it would pass a suite that is no
+  longer checking anything. `TEXT_INLINE_VARIANTS` is the tail of the same list
+  and carries no scale, so it has no such constraint.

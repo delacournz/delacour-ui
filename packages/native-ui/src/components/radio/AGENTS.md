@@ -106,6 +106,10 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   rather than gated on `isSelected`, or the dot would vanish on the frame the
   state flips instead of shrinking. A test asserts the spring actually springs:
   non-zero mass and stiffness, and damping below critical.
+- **It is a spring rather than a timing, and that is the whole of the choice.**
+  A dot that eases in reads as a fade — a mark arriving on the surface. A dot
+  that springs reads as a selection landing, which is what a press on a radio row
+  actually is.
 - **Reduce motion is left at Reanimated's default `System`, deliberately the
   opposite call to `Spinner`'s `ReduceMotion.Never`** — and with `Checkbox`,
   `Switch` and `Accordion`. The spinner needs `Never` because a zero-length

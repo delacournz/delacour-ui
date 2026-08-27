@@ -4,24 +4,74 @@ description: Central Icons, sized and coloured by inheritance.
 icon: Shapes
 ---
 
+<Preview id="icon/the-size-scale" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="icon" />
+
+## Usage
+
 ```tsx
 import { Icon } from "@delacour/native-ui/icon";
 import { IconHeart } from "@delacour/native-ui/icons/central";
-
-<Icon icon={IconHeart} />;
 ```
+
+```tsx
+<Icon icon={IconHeart} />
+```
+
+## Sizes
+
+`xs` 14, `sm` 16, `md` 18, `lg` 20, `xl` 24, `2xl` 32 — the shared icon scale, which `Spinner`
+reads too.
 
 <Preview id="icon/the-size-scale" />
 
-**Sizes:** `xs` 14, `sm` 16, `md` 18, `lg` 20, `xl` 24, `2xl` 32 — the shared icon scale, which
-`Spinner` reads too.
+```tsx
+<Icon icon={IconHeart} size="sm" />
+<Icon icon={IconHeart} size={22} />
+```
 
-The full guide is [Icons](/docs/native/getting-started/icons); the precedence ladder is in
-[Sizing](/docs/native/getting-started/sizing#precedence-weakest-first).
+A named step is a class; a number bypasses the class chain entirely. The precedence ladder is in
+[Sizing](/docs/native/getting-started/sizing#precedence-weakest-first), and the full guide to the
+set is [Icons](/docs/native/getting-started/icons).
 
-## Props
+## Colour
 
 <Preview id="icon/colour-is-a-token" />
+
+```tsx
+<Icon icon={IconHeart} color="danger" />
+<Icon icon={IconHeart} color="#EC4899" />
+```
+
+## Inherited defaults
+
+A bare `<Icon>` takes its size and colour from the nearest provider.
+
+<Preview id="icon/inherited-from-a-button" />
+
+```tsx
+import { IconDefaultsProvider } from "@delacour/native-ui/icon";
+
+<IconDefaultsProvider className="size-icon-lg" color="muted-foreground">
+  {children}
+</IconDefaultsProvider>;
+```
+
+## A subtree of defaults
+
+<Preview id="icon/a-subtree-of-defaults" />
+
+`Button`, `Badge` and `ListGroup.ItemPrefix` all publish into this, so a bare `<Icon>` inside one
+needs nothing at the call site. An explicit `size` or `color` still wins.
+
+## API Reference
+
+### IconProps
+
+Extends `SvgProps`, minus `color`, `width` and `height`.
 
 <TypeTable
   type={{
@@ -38,27 +88,14 @@ The full guide is [Icons](/docs/native/getting-started/icons); the precedence la
       type: "string",
       description: "A theme token name (danger, muted-foreground) or a literal (#EC4899).",
     },
-    className: { type: "string" },
+    className: {
+      type: "string",
+      description: "Use size-*, not w-* with h-*: tailwind-merge conflicts size into w/h but not the reverse.",
+    },
   }}
 />
 
-## Publishing defaults
-
-<Preview id="icon/inherited-from-a-button" />
-<Preview id="icon/a-subtree-of-defaults" />
-
-```tsx
-import { IconDefaultsProvider } from "@delacour/native-ui/icon";
-
-<IconDefaultsProvider className="size-icon-lg" color="muted-foreground">
-  {children}
-</IconDefaultsProvider>;
-```
-
-`Button`, `Badge` and `ListGroup.ItemPrefix` all publish into this, so a bare `<Icon>` inside one
-needs nothing at the call site.
-
-## Exports
+### Exports
 
 ```tsx
 import {

@@ -136,9 +136,10 @@ export default function RootLayout() {
 }
 ```
 
-`DelacourProvider` is four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
-`KeyboardProvider` → `<KeyboardStateSync />` beside the children. The order is load-bearing — see
-[Provider](/docs/native/getting-started/provider) for what breaks at each layer.
+`DelacourProvider` is five layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
+`KeyboardProvider` → `<KeyboardStateSync />` beside the children → `BottomSheetModalProvider` around
+them. The order is load-bearing — see [Provider](/docs/native/getting-started/provider) for what
+breaks at each layer.
 
 <Callout type="warn">
 Without the gesture root, presses stop landing. Silently — no error, no warning.
@@ -150,6 +151,7 @@ Only if your app already has a root stack of its own. `<KeyboardStateSync />` is
 optional polish, and must be a child of `KeyboardProvider`.
 
 ```tsx
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -159,7 +161,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
   <SafeAreaProvider initialMetrics={initialWindowMetrics}>
     <KeyboardProvider>
       <KeyboardStateSync />
-      {children}
+      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
     </KeyboardProvider>
   </SafeAreaProvider>
 </GestureHandlerRootView>;

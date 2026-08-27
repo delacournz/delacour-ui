@@ -4,20 +4,48 @@ description: A text field, and the box that can hold content beside it.
 icon: TextCursorInput
 ---
 
+<Preview id="input/variants/at-rest" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="input" />
+
+## Usage
+
 ```tsx
 import { Input } from "@delacour/native-ui/input";
 ```
-
-<Preview id="input/variants/at-rest" />
 
 ```tsx
 <Input value={email} onChangeText={setEmail} placeholder="you@example.com" />
 ```
 
-**Variants:** `primary`, `secondary`. **Sizes:** `sm`, `md`, `lg` — the box height, the value's
-type scale and a decorator's icon step, on one axis.
+## Variants
+
+Use the `variant` prop to change how the box is painted.
+
+<Preview id="input/variants/at-rest" />
+
+```tsx
+<Input variant="primary" />
+<Input variant="secondary" />
+```
+
+## Sizes
+
+One axis drives the box height, the value's type scale and a decorator's icon step.
+
+<Preview id="input/sizes/sizes" />
+
+```tsx
+<Input size="sm" />
+<Input size="md" />
+<Input size="lg" />
+```
 
 ## Groups
+
+Use `Input.Group` to put a prefix or a suffix inside the field's own border.
 
 <Preview id="input/group/icons" />
 <Preview id="input/group/text-affixes" />
@@ -30,41 +58,33 @@ type scale and a decorator's icon step, on one axis.
 </Input.Group>
 ```
 
-**The box is one slot with two homes, and that is the whole design.** The `root` slot lands on the
-`TextInput` when a field stands alone and on `Input.Group`'s row when it does not. A grouped field
-is therefore the *same* box rather than a similar one — the test sweeps the entire matrix and
-asserts every chrome utility a lone field wears is present on the group's row.
+`variant`, `size`, `isInvalid` and `isDisabled` live on the group, and an `Input` inside one reads
+them from context. Pressing anywhere on the group focuses the field; a `Button` inside a decorator
+still receives its own press.
 
-<Callout type="warn">
-Do not give `Input.Group` a border, background or height of its own. A second class string is a
-second thing that can drift, and the drift would be a one-pixel difference nobody notices until it
-is shipped.
-</Callout>
+## States
 
-**The group owns the axes, because it owns the box.** `variant`, `size`, `isInvalid` and
-`isDisabled` live on `Input.Group`, and an `Input` inside one reads them from context.
-
-Pressing the group focuses the field: a lone field is its own tap target edge to edge, but a
-grouped one only covers the middle of the box. A `Button` inside a decorator still receives its own
-press.
-
-Prefix and suffix share one `decorator` slot and one implementation — they are the same box in
-different places, and the row's `gap` is what separates them.
-
-## State precedence
+The two state axes resolve `Input.Group` → the `Input`'s own prop → the enclosing `Field`, and both
+are `??` chains, so an explicit `false` is a value rather than an absence.
 
 <Preview id="input/variants/invalid" />
 
-`Input.Group` → the `Input`'s own prop → the enclosing `Field`. Both are `??` chains, so an
-explicit `false` is a value rather than an absence.
-
-**Invalid outranks focus.** A field that went grey the moment it was tapped would drop the only
-signal it has that its value is wrong, exactly while the value is being corrected.
+```tsx
+<Input isInvalid />
+<Input isDisabled />
+```
 
 ## Placeholder, caret and selection colours
 
-These take a colour *value*, not a style. Uniwind's own `TextInput` accepts a className for each
-and compiles it to `styles.accentColor` — so this component wraps nothing in `withUniwind`.
+These take a colour *value*, not a style, so they are named as classes and resolved rather than
+applied.
+
+```tsx
+<Input
+  placeholderColorClassName="accent-muted-foreground"
+  selectionColorClassName="accent-info"
+/>
+```
 
 <Callout type="warn" title="They must be accent-* utilities">
 `accent-muted-foreground`, never `text-muted-foreground`. Uniwind reads only `accentColor` off the
@@ -72,23 +92,9 @@ compiled class, so anything else resolves to nothing: it warns once in developme
 prop undefined, which renders as the platform default rather than as an error.
 </Callout>
 
-`placeholderTextColorClassName` is `Omit`ed from `InputProps` — Uniwind's name and ours would
-otherwise both reach the same colour. `selectionColorClassName` keeps Uniwind's name; only its
-default is supplied here.
+## API Reference
 
-## Multiline
-
-<Preview id="input/sizes/sizes" />
-
-A multiline field turns its height into a floor, and the row aligns to the top with it — centred
-decorators would drift down the side of a paragraph instead of sitting on its first line.
-
-## No label, description or error parts
-
-`Text.Label` and `Text.Caption` already are those, and a label defined twice is a type scale that
-can drift. Use [`Field`](/docs/native/components/field) for the surrounding structure.
-
-## API
+### Input
 
 Extends React Native's `TextInputProps`. `placeholderTextColorClassName` is withheld in favour of
 `placeholderColorClassName`, which is the name the rest of the library uses.
@@ -109,7 +115,7 @@ Extends React Native's `TextInputProps`. `placeholderTextColorClassName` is with
   }}
 />
 
-### `Input.Group`
+### Input.Group
 
 Puts a prefix or a suffix inside the input's own border, and publishes the shared axes so the
 input inside does not restate them.
@@ -125,7 +131,7 @@ input inside does not restate them.
   }}
 />
 
-### `Input.Prefix` / `Input.Suffix`
+### Input.Group.Prefix / Input.Group.Suffix
 
 Content drawn inside the group's border, before or after the field. An `Icon` inside one inherits
 the input's icon size and a muted foreground.

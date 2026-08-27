@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The four layers
+## The five layers
 
 Outermost first. The order is not stylistic.
 
@@ -21,7 +21,8 @@ Outermost first. The order is not stylistic.
 | `GestureHandlerRootView` | Must be an ancestor **native view** of every handler a `Pressable` creates. Its absence is silent — no error, presses simply stop landing. |
 | `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
-| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. |
+| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the sheet host, not a parent of it. |
+| `BottomSheetModalProvider` | The host every `BottomSheet` portals into, innermost around the children. |
 
 ## Why the safe-area seed matters
 

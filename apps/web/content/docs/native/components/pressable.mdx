@@ -4,6 +4,14 @@ description: The Gesture API primitive every pressable in the library is built o
 icon: Hand
 ---
 
+<Preview id="pressable/named-feedback" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="pressable" />
+
+## Usage
+
 ```tsx
 import { Pressable } from "@delacour/native-ui/pressable";
 ```
@@ -16,82 +24,71 @@ import { Pressable } from "@delacour/native-ui/pressable";
 
 ## Feedback
 
+`scale`, `fade`, `scale-fade` and `none` are the shared vocabulary — every pressable in the library
+resolves through it rather than keeping a private map.
+
 <Preview id="pressable/named-feedback" />
-<Preview id="pressable/explicit-values" />
 
-`scale`, `fade`, `scale-fade`, `none` — the shared vocabulary, defined once. Every pressable in the
-library resolves through it rather than keeping a private map: `Button` narrows it,
-`ListGroup.Item` forwards it whole.
+```tsx
+<Pressable feedback="scale">…</Pressable>
+<Pressable feedback="fade">…</Pressable>
+<Pressable feedback="scale-fade">…</Pressable>
+<Pressable feedback="none">…</Pressable>
+```
 
-`scale-fade` is **composed**, not spelled out: its scale comes from `scale` and its opacity from
-`fade`, so tuning either single-axis mode carries through.
+## Explicit values
 
 `pressedScale` and `pressedOpacity` win on the axis they name and leave the other to `feedback`.
-They are the escape hatch for a value the named modes do not cover — `??` is the merge, so an
-explicit `0` is a value rather than an absence.
 
-<Callout>
-A bare `Pressable` with no `feedback` presses to `{ opacity: 0.9, scale: 0.97 }`, which fades less
-than `fade` does. That fallback is unnamed on purpose: naming it would either change what a bare
-pressable has always done, or force `scale-fade` to fade less than `fade`.
-</Callout>
+<Preview id="pressable/explicit-values" />
 
-## `disabled` vs `busy`
+```tsx
+<Pressable pressedScale={0.92}>…</Pressable>
+<Pressable feedback="scale" pressedOpacity={0.5}>…</Pressable>
+```
+
+## Disabled and busy
 
 Both block the gesture; only `disabled` announces the control as disabled. Use `busy` for a
-temporary state the component clears itself, so assistive tech reports a control that is
-momentarily unavailable rather than one that is inert.
+temporary state the component clears itself.
 
-Neither applies any opacity — that is the caller's variant's job.
+```tsx
+<Pressable disabled>…</Pressable>
+<Pressable busy>…</Pressable>
+```
 
-## `asChild`
+## Haptics
 
-<Preview id="pressable/as-child" />
-
-Renders into the single child element instead of emitting a `View`.
-
-## Why there is no `tv()` here
-
-Its values are opacity and scale **interpolation targets** read by a worklet on the UI thread
-(`1 - pressed.value * (1 - targetOpacity)`), not styles. A worklet cannot compile a className, so
-`tv` is the wrong tool — a deliberate exception, not an oversight.
-
-<Callout type="warn" title="Worklets must be self-contained">
-A worklet cannot rely on a module-scope helper. Factoring a shared clamp into a `clampUnit`
-helper — itself marked `"worklet"` — crashes the UI thread with `undefined is not a function`: it
-is not captured into the worklet's closure. No unit test sees it, because on the JS thread the
-helper resolves perfectly.
-</Callout>
-
-## Crossing back to JS
+`haptic` plays inside the gesture worklet, so the tap and the haptic land in the same frame.
 
 <Preview id="pressable/haptics" />
 
-Use `scheduleOnRN` from `react-native-worklets`, never Reanimated's `runOnJS` — since Reanimated 4
-that is a deprecated shim forwarding to exactly this call.
+```tsx
+<Pressable haptic="selection">…</Pressable>
+```
+
+## asChild
+
+Renders into the single child element instead of emitting a `View`.
+
+<Preview id="pressable/as-child" />
+
+```tsx
+<Pressable asChild haptic="medium">
+  <View className="rounded-xl border border-border bg-card p-4">…</View>
+</Pressable>
+```
+
+## Worklets
+
+Cross back to JS with `scheduleOnRN` from `react-native-worklets`, never Reanimated's `runOnJS` —
+since Reanimated 4 that is a deprecated shim forwarding to exactly this call.
 
 ```tsx
 scheduleOnRN(onPress);          // not runOnJS(onPress)()
 ```
 
-A Biome `noRestrictedImports` rule in `@delacour/biome-config` fails the build on the deprecated
-names, so this cannot regress quietly.
-
-## Exports
-
-```tsx
-import {
-  Pressable,
-  type PressableProps,
-  type HapticFeedback,
-  PRESSABLE_FEEDBACK,
-  PRESSABLE_FEEDBACKS,
-  PRESSABLE_FEEDBACK_FALLBACK,
-  resolvePressedState,
-} from "@delacour/native-ui/pressable";
-```
-
-## API
+## API Reference
 
 Every pressable in the library extends this — `Button`, `ListGroup.Item`, `Accordion.Trigger`,
 `Checkbox` and `Radio` all inherit the vocabulary rather than restating it. `ViewProps` passes
@@ -124,9 +121,20 @@ through, minus `style`.
   }}
 />
 
-<Callout>
 Neither `disabled` nor `busy` applies any opacity of its own — that is the caller's variant's job.
 A bare `Pressable` with no `feedback` presses to `{ opacity: 0.9, scale: 0.97 }`, which fades less
-than `fade` does; the fallback is unnamed on purpose, so naming it could not change what a bare
-pressable has always done.
-</Callout>
+than `fade` does.
+
+### Exports
+
+```tsx
+import {
+  Pressable,
+  type PressableProps,
+  type HapticFeedback,
+  PRESSABLE_FEEDBACK,
+  PRESSABLE_FEEDBACKS,
+  PRESSABLE_FEEDBACK_FALLBACK,
+  resolvePressedState,
+} from "@delacour/native-ui/pressable";
+```

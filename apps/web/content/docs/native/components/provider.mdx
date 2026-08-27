@@ -4,20 +4,36 @@ description: Every provider an app needs at its root, in one component.
 icon: Layers
 ---
 
+## Installation
+
+<ComponentInstall name="provider" />
+
+## Usage
+
 ```tsx
 import { DelacourProvider } from "@delacour/native-ui/provider";
-
-<DelacourProvider>{children}</DelacourProvider>;
 ```
 
-Four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` → `KeyboardProvider` →
-`<KeyboardStateSync />` beside the children.
+```tsx
+<DelacourProvider>{children}</DelacourProvider>
+```
 
-The full explanation — why the order is load-bearing, why the safe-area provider is seeded, why the
-keyboard sync is required and why the component is deliberately not idempotent — is in
-[Provider](/docs/native/getting-started/provider).
+Mount it once, around everything — a root layout, an `App.tsx`.
 
-## API
+## Layers
+
+Five, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
+`KeyboardProvider` → `<KeyboardStateSync />` beside the children →
+`BottomSheetModalProvider` around them.
+
+<Callout type="warn">
+The order is load-bearing, and one failure is silent: without the gesture root every `Pressable`
+stops responding — no error, no warning, presses simply stop landing. Nesting a second copy of the
+provider breaks the keyboard values the same quiet way, so mount exactly one. The full reasoning is
+in [Provider](/docs/native/getting-started/provider).
+</Callout>
+
+## API Reference
 
 <TypeTable
   type={{
@@ -33,10 +49,3 @@ keyboard sync is required and why the component is deliberately not idempotent �
     },
   }}
 />
-
-## No gallery route
-
-`DelacourProvider` has no playground screen and no row on its index. The playground's own
-`_layout.tsx` is its harness, and every route in the app renders downstream of it — a stronger
-check than a readout page could be. The routes that prove each layer: `/pressable` for the gesture
-root, `/screen/navbar` for the insets, `/screen/form` for the keyboard.

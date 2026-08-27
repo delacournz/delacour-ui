@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "compose-refs",
+	"type": "registry:lib",
+	"title": "composeRefs",
+	"description": "Merges several refs onto one node.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/compose-refs.ts",
+			"target": "compose-refs.ts",
+			"namespace": "lib"
+		}
+	]
+}

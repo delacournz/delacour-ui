@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "navigation-theme",
+	"type": "registry:lib",
+	"title": "navigationTheme",
+	"description": "Maps the theme's tokens onto the colours React Navigation asks for.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/navigation-theme.ts",
+			"target": "navigation-theme.ts",
+			"namespace": "lib"
+		}
+	]
+}

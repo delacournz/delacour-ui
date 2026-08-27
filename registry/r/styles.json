@@ -1,0 +1,47 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "styles",
+	"type": "registry:style",
+	"title": "Styles",
+	"description": "Tailwind base, the semantic size tokens, and the light and dark theme palettes.",
+	"registryDependencies": [],
+	"dependencies": [
+		"tailwindcss"
+	],
+	"expoDependencies": [
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/styles/base.css",
+			"target": "base.css",
+			"namespace": "styles"
+		},
+		{
+			"path": "files/styles/index.css",
+			"target": "index.css",
+			"namespace": "styles"
+		},
+		{
+			"path": "files/styles/theme.css",
+			"target": "theme.css",
+			"namespace": "styles"
+		},
+		{
+			"path": "files/styles/tokens.css",
+			"target": "tokens.css",
+			"namespace": "styles"
+		},
+		{
+			"path": "files/styles/tokens.ts",
+			"target": "tokens.ts",
+			"namespace": "styles"
+		},
+		{
+			"path": "files/styles/uniwind-env.d.ts",
+			"target": "uniwind-env.d.ts",
+			"namespace": "styles"
+		}
+	]
+}

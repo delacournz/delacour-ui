@@ -1,0 +1,10 @@
+{
+	"name": "fixture-expo-app",
+	"private": true,
+	"dependencies": {
+		"expo": "~57.0.15",
+		"expo-router": "~57.0.15",
+		"react": "19.2.3",
+		"react-native": "0.86.2"
+	}
+}

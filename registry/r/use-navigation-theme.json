@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-navigation-theme",
+	"type": "registry:hook",
+	"title": "useNavigationTheme",
+	"description": "Resolves the theme's colours for the active scheme, ready for a navigator.",
+	"registryDependencies": [
+		"navigation-theme",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/hooks/use-navigation-theme.ts",
+			"target": "use-navigation-theme.ts",
+			"namespace": "hooks"
+		}
+	]
+}

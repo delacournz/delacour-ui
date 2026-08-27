@@ -4,11 +4,6 @@ description: A screen's frame — pinned chrome, a content region, and whatever 
 icon: LayoutTemplate
 ---
 
-<Callout title="Prop tables in progress">
-The previews and the summary below are current. Full `<TypeTable>` prop tables are still being
-written — until then, the component's own source is the reference.
-</Callout>
-
 ```tsx
 import { Screen } from "@delacour/native-ui/screen";
 ```
@@ -124,3 +119,144 @@ There is no `Navbar.Action` — `Button` already owns that vocabulary, so a navb
 
 `@legendapp/list` is `peerDependenciesMeta.optional`, so an app that never imports `Screen` never
 resolves it.
+
+## API
+
+`Screen` is the root. It renders a `View` and passes `ViewProps` through.
+
+<TypeTable
+  type={{
+    debug: {
+      type: "boolean",
+      description: "Paint the layout layers in debug colours — the footer's bands, a scrollable's spacers, a chat list's composer clearance. Deliberately not gated behind __DEV__: a reserve only goes wrong on a release build.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Shared shapes
+
+Three prop shapes are shared between parts rather than restated, which is why the tables below are
+short.
+
+<TypeTable
+  type={{
+    "ScreenInsetProps": {
+      type: "ViewProps & { insets?: ScreenEdge[] }",
+      description: "`Content` and `Header`. `insets` names the safe-area edges to pad against — none by default.",
+    },
+    "ScreenPlacementProps": {
+      type: "ViewProps & { placement?: \"overlay\" | \"static\" }",
+      description: "`Navbar` and `Footer`. `overlay` floats the part and the content insets itself by the measured height; `static` puts it in the flow.",
+    },
+    "ScreenScrollableProps": {
+      type: "{ header?: ReactNode; className?: string; contentContainerClassName?: string }",
+      description: "Every scrollable. `header` is separate from a list's own ListHeaderComponent so a caller can use both without interleaving them.",
+    },
+  }}
+/>
+
+### `Screen.Navbar`
+
+Pinned chrome at the top. Publishes its measured height, which is what everything below it clears.
+
+<TypeTable
+  type={{
+    placement: { type: '"overlay" | "static"', default: '"overlay"' },
+    actions: { type: "ReactNode", description: "Trailing content, laid out against the far edge." },
+    center: { type: "ReactNode", description: "Content centred independently of the leading and trailing regions." },
+    fadeBorderOnScroll: { type: "boolean", description: "Fade the bottom border in as content scrolls under it." },
+    backgroundClassName: { type: "string", description: "The navbar's own surface, behind its content." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `Screen.Footer`
+
+Pinned chrome at the bottom, and the part that rides the keyboard.
+
+<TypeTable
+  type={{
+    placement: { type: '"overlay" | "static"', default: '"overlay"' },
+    sticky: { type: "boolean", description: "Keep the footer against the keyboard as it opens, rather than behind it." },
+    isFocused: { type: "boolean", description: "Whether a field inside the footer holds focus, which changes the clearance it asks for." },
+    fadeBorderOnScroll: { type: "boolean" },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `Screen.Content` / `Screen.Header` / `Screen.View`
+
+`Content` and `Header` take `ScreenInsetProps`; `View` is a plain `ViewProps` box that clears the
+chrome without scrolling.
+
+<TypeTable
+  type={{
+    insets: { type: '("top" | "right" | "bottom" | "left")[]', description: "`Content` and `Header` only." },
+    textInputNativeID: { type: "string", description: "`Content` only. Ties the region to a field for keyboard avoidance." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### The scrollables
+
+`Screen.ScrollArea`, `Screen.FlatList`, `Screen.SectionList`, `Screen.LegendList` and
+`Screen.ChatList` each extend their underlying list's own props plus `ScreenScrollableProps`. They
+insert the navbar and footer spacers for you, so content clears the chrome without a manual
+`contentContainerStyle`.
+
+<TypeTable
+  type={{
+    header: { type: "ReactNode", description: "Above the content, below the navbar spacer." },
+    keyboardAware: {
+      type: "boolean",
+      default: "false",
+      description: "`ScrollArea` only. Scrolls the focused field clear of both the keyboard and a sticky footer.",
+    },
+    contentContainerClassName: { type: "string" },
+    className: { type: "string" },
+  }}
+/>
+
+### `Screen.Error` / `Screen.Loading`
+
+Whole-screen states, each with its own navbar so a back gesture still works.
+
+<TypeTable
+  type={{
+    title: { type: "string" },
+    message: { type: "string", description: "`Error` only, and required — a state with nothing to say is not one." },
+    onBack: { type: "() => void" },
+    showNavbar: { type: "boolean", description: "Draw the navbar above the state." },
+    children: { type: "ReactNode", description: "`Error` only — actions below the message." },
+  }}
+/>
+
+### `Screen.NavbarBackButton`
+
+A `Pressable`, so the vocabulary is inherited. `onPress` is **required**: a back button that does
+nothing is worse than none.
+
+<TypeTable
+  type={{
+    onPress: { type: "() => void", description: "Required." },
+    onBeforeBack: {
+      type: "() => boolean",
+      description: "Return false to cancel the navigation — an unsaved-changes guard.",
+    },
+    glyph: { type: "ScreenBackButtonGlyph", description: "Which chevron or arrow to draw." },
+    className: { type: "string" },
+  }}
+/>
+
+### `Screen.NavbarTitle` / `NavbarSubtitle` / `NavbarBackground` / `FooterBackground`
+
+The two text parts are `Text` presets and take its props. The two background parts take `ViewProps`
+and exist for a surface that has to sit behind the chrome rather than inside it — reach for
+`backgroundClassName` on the navbar first.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

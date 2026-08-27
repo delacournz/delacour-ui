@@ -1,0 +1,24 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-keyboard-state-sync",
+	"type": "registry:hook",
+	"title": "useKeyboardStateSync",
+	"description": "Keeps the keyboard's height and progress on the UI thread, for layout that tracks it.",
+	"registryDependencies": [
+		"keyboard-animation"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/hooks/use-keyboard-state-sync.tsx",
+			"target": "use-keyboard-state-sync.tsx",
+			"namespace": "hooks"
+		}
+	]
+}

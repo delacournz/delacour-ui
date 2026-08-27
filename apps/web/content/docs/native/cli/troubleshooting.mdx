@@ -1,0 +1,211 @@
+---
+title: Troubleshooting
+description: The ten doctor checks, and the silent failure each one exists to catch.
+icon: Stethoscope
+---
+
+```bash
+bunx delacour doctor
+```
+
+```txt
+✓ Expo             SDK ~57.0.15, react-native 0.86.2
+✓ New Architecture enabled
+✓ Uniwind          uniwind and tailwindcss installed
+✓ Metro            wrapped, outermost, pointing at the configured entry
+✗ Tailwind sources not scanned: src/components/ui
+    → Classes in those files are dropped from release builds.
+! Gesture Handler  no GestureHandlerRootView found
+    → Wrap your root layout in <GestureHandlerRootView style={{ flex: 1 }}>.
+```
+
+Every check here exists because the thing it catches produces **no error**. A React Native app
+with any of these wrong builds fine, boots fine, and is quietly wrong — which is why this command
+exists at all and shadcn has no equivalent.
+
+`--fast` skips the two checks that shell out to the Expo CLI. `--json` prints the results for CI;
+the exit code is non-zero when a check fails.
+
+## Symptom → cause
+
+### My components render, but with no styles
+
+Three causes, in the order worth checking.
+
+**Nothing imports the CSS entry.** `withUniwindConfig`'s `cssEntryFile` tells the transformer which
+file to compile — it does not put that file in the bundle. If no module imports it, the app builds,
+boots and renders every component completely unstyled, with nothing logged.
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+```
+
+First statement, in the root layout. `delacour doctor` checks this, and is careful to ignore a doc
+comment that merely names the import.
+
+<Callout>
+The signature is unmistakable once you have seen it: no padding, no gaps, no colours, and spinners
+drawn at their natural SVG size rather than the icon scale. Every component is *mounting* — it is
+only the classes that never arrived.
+</Callout>
+
+**Tailwind's `@source` coverage**, and usually only in a release build. Tailwind compiles the
+classes it finds in source text, so a glob that does not reach your components means those classes
+were never compiled.
+
+In a monorepo, the usual cause is a `@source` pointing through `node_modules` — the scanner does
+not follow symlinks, so it scans nothing. See [Monorepos](/docs/native/cli/monorepo).
+
+```bash
+bunx delacour doctor    # "Tailwind sources — not scanned: …"
+bunx delacour init -f   # rewrites the managed @source block
+```
+
+**Metro's wrapper ordering.** If `withUniwindConfig` is present but not the **outermost** wrapper,
+something applied after it can replace `config.transformer`, and `className` stops compiling
+entirely. `doctor` checks the ordering, not just the presence.
+
+### Presses do nothing
+
+No `GestureHandlerRootView` above the component. Every pressable in this library is a Gesture
+Handler detector, and a detector outside the root never receives a touch — no error, no warning.
+
+```tsx title="app/_layout.tsx"
+import { DelacourProvider } from "@/components/ui/provider";
+
+export default function RootLayout() {
+  return <DelacourProvider>{children}</DelacourProvider>;
+}
+```
+
+### `Unable to resolve "@/components/ui/button"`
+
+Metro does not read `tsconfig` path mappings unless you ask it to:
+
+```ts title="app.config.ts"
+experiments: { tsconfigPaths: true }
+```
+
+`doctor` only raises this when `native-components.json` actually has aliases. If it does not, your imports
+are relative and this is not your problem.
+
+### A red box naming a module I just installed
+
+A native module is not live until the app is rebuilt — a JavaScript reload cannot pick it up,
+because the module is not in the binary. `add` warns when it installs one.
+
+```bash
+npx expo run:ios     # or run:android
+```
+
+### Something breaks only in a monorepo
+
+Two copies of a native module registering twice. `doctor` warns when it finds
+`react-native-reanimated` (or friends) under both the app and the workspace root; pin them in
+Metro's `resolver.extraNodeModules`.
+
+### A worklet error, or Reanimated refusing to build
+
+Reanimated 4 is New Architecture only. `doctor` reads your resolved Expo config and fails if
+`newArchEnabled` is off.
+
+### `add` overwrote something I had edited
+
+It asks first — unless you passed `--overwrite`, or ran non-interactively without it, in which
+case it refuses and names the files. To see what you had changed before deciding:
+
+```bash
+bunx delacour diff button
+```
+
+### The registry does not have a component I can see on this site
+
+Your CLI is pinned to the ref it was published from. Take the newest:
+
+```bash
+bunx delacour@latest add tabs --ref main
+```
+
+See [The registry](/docs/native/cli/registry).
+
+### Every `className` is a type error in a monorepo
+
+```
+Type '{ children: Element; className: string; … }' is not assignable to type
+  'IntrinsicAttributes & Omit<AnimatedProps<Readonly<ViewProps>>, "ref">'
+```
+
+`uniwind-env.d.ts` is one line — `/// <reference types="uniwind/types" />` — and it is what gives a
+React Native component a `className` prop in TypeScript at all. In a shared package it lands beside
+the components, **outside the app's `tsconfig` include**, and nothing imports it: a declaration file
+holding only a triple-slash reference cannot be reached by an import. So the augmentation never
+loads for the app.
+
+`init` writes a copy into the app for you, and `doctor` fails when it is missing. If you are
+adopting a package by hand, add it yourself:
+
+```ts title="apps/mobile/uniwind-env.d.ts"
+/// <reference types="uniwind/types" />
+```
+
+### `Ref<never>`, or two copies of React Native's types
+
+```
+Type 'Ref<never> | undefined' is not assignable to type 'AnimatedComponentRef<typeof View>'
+```
+
+A Bun workspace installing with the default isolated layout. Packages sit under
+`node_modules/.bun/…` and are linked from each package, so the shared package resolves React Native
+at a different realpath than the app — TypeScript treats them as different modules and generics
+collapse to `never`. Metro cannot follow that layout either.
+
+```toml title="bunfig.toml"
+[install]
+linker = "hoisted"
+```
+
+### A copied component does not typecheck
+
+That is a registry defect rather than something wrong with your project — an import the registry
+did not account for, or a package it failed to declare. Confirm it against a clean app:
+
+```bash
+bun --filter delacour run verify:expo --only <component>
+```
+
+If that run is clean, the difference is your project: check `delacour info` for where files landed,
+and `tsconfig.json` for an alias that resolves somewhere unexpected.
+
+## The full check list
+
+<TypeTable
+  type={{
+    Expo: { type: "check", description: "An expo dependency exists; reports the SDK and React Native versions." },
+    "New Architecture": { type: "check", description: "newArchEnabled is on. Reanimated 4 does not run without it." },
+    Uniwind: { type: "check", description: "uniwind and tailwindcss are installed." },
+    Metro: { type: "check", description: "withUniwindConfig is present, outermost, and points at the configured CSS entry." },
+    "CSS entry": {
+      type: "check",
+      description: "Something actually imports the Tailwind entry. Naming it in metro.config.js does not put it in the bundle.",
+    },
+    "Tailwind sources": { type: "check", description: "The @source globs cover every directory holding copied code, resolving symlinks." },
+    "Path aliases": { type: "check", description: "experiments.tsconfigPaths is on when native-components.json uses aliases." },
+    "Uniwind types": {
+      type: "check",
+      description:
+        "uniwind-env.d.ts is present, and loadable by the app — in a shared package a copy beside the components is outside the app's tsconfig include and never loads.",
+    },
+    "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
+    "Native modules": { type: "check", description: "One copy of each native module, not two." },
+  }}
+/>
+
+## When doctor is not enough
+
+```bash
+bunx delacour info
+```
+
+Prints the resolved config and everything that was detected — package manager, workspace root, app
+root, the path aliases found in `tsconfig.json`, and the absolute directory for each namespace.
+Start there when files are landing somewhere you did not expect.

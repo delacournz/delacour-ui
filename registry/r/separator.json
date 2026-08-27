@@ -1,0 +1,35 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "separator",
+	"type": "registry:ui",
+	"title": "Separator",
+	"description": "A one-pixel rule, hidden from assistive technology.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/separator/AGENTS.md",
+			"target": "separator/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/separator/index.ts",
+			"target": "separator/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/separator/separator.tsx",
+			"target": "separator/separator.tsx",
+			"namespace": "ui"
+		}
+	]
+}

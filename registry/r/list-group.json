@@ -1,0 +1,86 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "list-group",
+	"type": "registry:ui",
+	"title": "List Group",
+	"description": "A surface grouping related rows, with dividers inserted automatically.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"separator",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/list-group/AGENTS.md",
+			"target": "list-group/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/index.ts",
+			"target": "list-group/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item-content.tsx",
+			"target": "list-group/list-group-item-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item-description.tsx",
+			"target": "list-group/list-group-item-description.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item-prefix.tsx",
+			"target": "list-group/list-group-item-prefix.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item-suffix.tsx",
+			"target": "list-group/list-group-item-suffix.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item-title.tsx",
+			"target": "list-group/list-group-item-title.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group-item.tsx",
+			"target": "list-group/list-group-item.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group.context.tsx",
+			"target": "list-group/list-group.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group.tsx",
+			"target": "list-group/list-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group.types.ts",
+			"target": "list-group/list-group.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/list-group/list-group.variants.ts",
+			"target": "list-group/list-group.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

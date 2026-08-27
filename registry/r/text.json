@@ -1,0 +1,48 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "text",
+	"type": "registry:ui",
+	"title": "Text",
+	"description": "Typography: the type scale, weights and the page-level colours.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"cn",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/text/AGENTS.md",
+			"target": "text/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/text/index.ts",
+			"target": "text/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/text/text.context.tsx",
+			"target": "text/text.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/text/text.tsx",
+			"target": "text/text.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/text/text.variants.ts",
+			"target": "text/text.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

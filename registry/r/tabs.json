@@ -1,0 +1,101 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tabs",
+	"type": "registry:ui",
+	"title": "Tabs",
+	"description": "A swipeable pager with an indicator measured against the active tab.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"pressable",
+		"separator",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/tabs/AGENTS.md",
+			"target": "tabs/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/index.ts",
+			"target": "tabs/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-content.tsx",
+			"target": "tabs/tabs-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-indicator.tsx",
+			"target": "tabs/tabs-indicator.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-label.tsx",
+			"target": "tabs/tabs-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-list.tsx",
+			"target": "tabs/tabs-list.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-pager.tsx",
+			"target": "tabs/tabs-pager.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-scroll-view.tsx",
+			"target": "tabs/tabs-scroll-view.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-separator.tsx",
+			"target": "tabs/tabs-separator.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs-trigger.tsx",
+			"target": "tabs/tabs-trigger.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs.context.tsx",
+			"target": "tabs/tabs.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs.tsx",
+			"target": "tabs/tabs.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs.types.ts",
+			"target": "tabs/tabs.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/tabs/tabs.variants.ts",
+			"target": "tabs/tabs.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

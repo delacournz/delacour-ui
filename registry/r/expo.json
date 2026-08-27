@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "expo",
+	"type": "registry:lib",
+	"title": "Navigation theme",
+	"description": "Hands expo-router's navigator this library's colours, including the slab behind a push.",
+	"registryDependencies": [
+		"use-navigation-theme"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"expo-router"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/expo/navigation-theme.tsx",
+			"target": "expo/navigation-theme.tsx",
+			"namespace": "lib"
+		}
+	]
+}

@@ -1,0 +1,20 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "icons",
+	"type": "registry:lib",
+	"title": "Icons",
+	"description": "The Central Icons set, re-exported so components import glyphs from one place.",
+	"registryDependencies": [],
+	"dependencies": [
+		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/icons/central.ts",
+			"target": "central.ts",
+			"namespace": "icons"
+		}
+	]
+}

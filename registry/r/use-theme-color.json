@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-theme-color",
+	"type": "registry:hook",
+	"title": "useThemeColor",
+	"description": "Resolves a theme token to the colour the active scheme gives it.",
+	"registryDependencies": [
+		"color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/hooks/use-theme-color.ts",
+			"target": "use-theme-color.ts",
+			"namespace": "hooks"
+		}
+	]
+}

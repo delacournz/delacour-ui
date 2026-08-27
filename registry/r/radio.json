@@ -1,0 +1,66 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "radio",
+	"type": "registry:ui",
+	"title": "Radio",
+	"description": "A radio and the group that owns which one is selected.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"field",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/radio/AGENTS.md",
+			"target": "radio/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/index.ts",
+			"target": "radio/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio-group.tsx",
+			"target": "radio/radio-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio-indicator.tsx",
+			"target": "radio/radio-indicator.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio-label.tsx",
+			"target": "radio/radio-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio.context.tsx",
+			"target": "radio/radio.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio.tsx",
+			"target": "radio/radio.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/radio/radio.variants.ts",
+			"target": "radio/radio.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

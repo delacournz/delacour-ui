@@ -1,0 +1,5 @@
+# `registry/` is written by `bun --filter delacour run registry:build` from
+# `packages/native-ui/src`. Marked generated so a pull request diff collapses it
+# by default and it stays out of language statistics — the source of a change is
+# always the library, never the copy here.
+registry/** linguist-generated=true

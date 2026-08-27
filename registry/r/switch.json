@@ -1,0 +1,80 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "switch",
+	"type": "registry:ui",
+	"title": "Switch",
+	"description": "An on/off control whose thumb can be dragged as well as tapped.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"field",
+		"icon",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/switch/AGENTS.md",
+			"target": "switch/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/index.ts",
+			"target": "switch/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch-content.tsx",
+			"target": "switch/switch-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch-end-content.tsx",
+			"target": "switch/switch-end-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch-start-content.tsx",
+			"target": "switch/switch-start-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch-thumb.tsx",
+			"target": "switch/switch-thumb.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch.context.tsx",
+			"target": "switch/switch.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch.tsx",
+			"target": "switch/switch.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch.types.ts",
+			"target": "switch/switch.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/switch/switch.variants.ts",
+			"target": "switch/switch.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

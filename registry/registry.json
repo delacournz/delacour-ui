@@ -1,0 +1,917 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/index.schema.json",
+	"name": "delacour",
+	"homepage": "https://github.com/delacournz/delacour-ui",
+	"items": [
+		{
+			"name": "accordion",
+			"type": "registry:ui",
+			"title": "Accordion",
+			"description": "Collapsible sections whose panels animate to their measured height.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/accordion/accordion-content.tsx",
+				"ui/accordion/accordion-description.tsx",
+				"ui/accordion/accordion-indicator.tsx",
+				"ui/accordion/accordion-item.tsx",
+				"ui/accordion/accordion-title.tsx",
+				"ui/accordion/accordion-trigger.tsx",
+				"ui/accordion/accordion.context.tsx",
+				"ui/accordion/accordion.tsx",
+				"ui/accordion/accordion.types.ts",
+				"ui/accordion/accordion.variants.ts",
+				"ui/accordion/AGENTS.md",
+				"ui/accordion/index.ts"
+			]
+		},
+		{
+			"name": "badge",
+			"type": "registry:ui",
+			"title": "Badge",
+			"description": "A compact label for status or a count, composed from parts like the button.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/badge/AGENTS.md",
+				"ui/badge/badge-close-button.tsx",
+				"ui/badge/badge-end-content.tsx",
+				"ui/badge/badge-label.tsx",
+				"ui/badge/badge-start-content.tsx",
+				"ui/badge/badge.context.tsx",
+				"ui/badge/badge.tsx",
+				"ui/badge/badge.types.ts",
+				"ui/badge/badge.variants.ts",
+				"ui/badge/index.ts"
+			]
+		},
+		{
+			"name": "bottom-sheet",
+			"type": "registry:ui",
+			"title": "Bottom Sheet",
+			"description": "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-keyboard-state-sync"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"@gorhom/bottom-sheet",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/bottom-sheet/AGENTS.md",
+				"ui/bottom-sheet/bottom-sheet-background.tsx",
+				"ui/bottom-sheet/bottom-sheet-close.tsx",
+				"ui/bottom-sheet/bottom-sheet-container.tsx",
+				"ui/bottom-sheet/bottom-sheet-content.tsx",
+				"ui/bottom-sheet/bottom-sheet-description.tsx",
+				"ui/bottom-sheet/bottom-sheet-footer.tsx",
+				"ui/bottom-sheet/bottom-sheet-handle.tsx",
+				"ui/bottom-sheet/bottom-sheet-overlay.tsx",
+				"ui/bottom-sheet/bottom-sheet-portal.tsx",
+				"ui/bottom-sheet/bottom-sheet-scroll-view.tsx",
+				"ui/bottom-sheet/bottom-sheet-title.tsx",
+				"ui/bottom-sheet/bottom-sheet-trigger.tsx",
+				"ui/bottom-sheet/bottom-sheet.context.tsx",
+				"ui/bottom-sheet/bottom-sheet.tsx",
+				"ui/bottom-sheet/bottom-sheet.variants.ts",
+				"ui/bottom-sheet/index.ts",
+				"ui/bottom-sheet/use-bottom-sheet-input.ts"
+			]
+		},
+		{
+			"name": "button",
+			"type": "registry:ui",
+			"title": "Button",
+			"description": "A pressable action composed from parts, with variants, sizes and a loading state.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"spinner",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/button/AGENTS.md",
+				"ui/button/button-end-content.tsx",
+				"ui/button/button-label.tsx",
+				"ui/button/button-start-content.tsx",
+				"ui/button/button.context.tsx",
+				"ui/button/button.tsx",
+				"ui/button/button.types.ts",
+				"ui/button/button.variants.ts",
+				"ui/button/index.ts"
+			]
+		},
+		{
+			"name": "checkbox",
+			"type": "registry:ui",
+			"title": "Checkbox",
+			"description": "A checkbox with an indeterminate state, and a group that owns the selection.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/checkbox/AGENTS.md",
+				"ui/checkbox/checkbox-box.tsx",
+				"ui/checkbox/checkbox-group.tsx",
+				"ui/checkbox/checkbox-label.tsx",
+				"ui/checkbox/checkbox.context.tsx",
+				"ui/checkbox/checkbox.tsx",
+				"ui/checkbox/checkbox.types.ts",
+				"ui/checkbox/checkbox.variants.ts",
+				"ui/checkbox/index.ts"
+			]
+		},
+		{
+			"name": "cn",
+			"type": "registry:lib",
+			"title": "cn",
+			"description": "Class merging that understands the library's semantic size tokens.",
+			"registryDependencies": [
+				"styles"
+			],
+			"dependencies": [
+				"clsx",
+				"tailwind-merge"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/cn.ts"
+			]
+		},
+		{
+			"name": "color",
+			"type": "registry:lib",
+			"title": "isLiteralColor",
+			"description": "Tells a literal colour from a theme token name.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/color.ts"
+			]
+		},
+		{
+			"name": "compose-refs",
+			"type": "registry:lib",
+			"title": "composeRefs",
+			"description": "Merges several refs onto one node.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/compose-refs.ts"
+			]
+		},
+		{
+			"name": "expo",
+			"type": "registry:lib",
+			"title": "Navigation theme",
+			"description": "Hands expo-router's navigator this library's colours, including the slab behind a push.",
+			"registryDependencies": [
+				"use-navigation-theme"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"expo-router"
+			],
+			"devDependencies": [],
+			"files": [
+				"lib/expo/navigation-theme.tsx"
+			]
+		},
+		{
+			"name": "field",
+			"type": "registry:ui",
+			"title": "Field",
+			"description": "One control with its label, description and error — and the state they all read.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"pressable",
+				"separator",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/field/AGENTS.md",
+				"ui/field/field-content.tsx",
+				"ui/field/field-description.tsx",
+				"ui/field/field-error.tsx",
+				"ui/field/field-group.tsx",
+				"ui/field/field-label.tsx",
+				"ui/field/field-legend.tsx",
+				"ui/field/field-separator.tsx",
+				"ui/field/field-set.tsx",
+				"ui/field/field.context.tsx",
+				"ui/field/field.tsx",
+				"ui/field/field.types.ts",
+				"ui/field/field.variants.ts",
+				"ui/field/index.ts"
+			]
+		},
+		{
+			"name": "icon",
+			"type": "registry:ui",
+			"title": "Icon",
+			"description": "A Central Icons glyph that inherits size and colour from the surrounding component.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-svg",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/icon/AGENTS.md",
+				"ui/icon/icon.context.tsx",
+				"ui/icon/icon.tsx",
+				"ui/icon/icon.variants.ts",
+				"ui/icon/index.ts"
+			]
+		},
+		{
+			"name": "icons",
+			"type": "registry:lib",
+			"title": "Icons",
+			"description": "The Central Icons set, re-exported so components import glyphs from one place.",
+			"registryDependencies": [],
+			"dependencies": [
+				"@central-icons-react-native/round-outlined-radius-1-stroke-1.5"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"icons/central.ts"
+			]
+		},
+		{
+			"name": "input",
+			"type": "registry:ui",
+			"title": "Input",
+			"description": "A text field, with a group that puts a prefix or suffix inside its border.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"cn",
+				"compose-refs",
+				"field",
+				"icon",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/input/AGENTS.md",
+				"ui/input/index.ts",
+				"ui/input/input-group-decorator.tsx",
+				"ui/input/input-group-prefix.tsx",
+				"ui/input/input-group-suffix.tsx",
+				"ui/input/input-group.tsx",
+				"ui/input/input.context.tsx",
+				"ui/input/input.tsx",
+				"ui/input/input.types.ts",
+				"ui/input/input.variants.ts"
+			]
+		},
+		{
+			"name": "keyboard-animation",
+			"type": "registry:lib",
+			"title": "keyboardAnimation",
+			"description": "The timing the keyboard opens with, so content moving with it stays in step.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/keyboard-animation.ts"
+			]
+		},
+		{
+			"name": "list-group",
+			"type": "registry:ui",
+			"title": "List Group",
+			"description": "A surface grouping related rows, with dividers inserted automatically.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/list-group/AGENTS.md",
+				"ui/list-group/index.ts",
+				"ui/list-group/list-group-item-content.tsx",
+				"ui/list-group/list-group-item-description.tsx",
+				"ui/list-group/list-group-item-prefix.tsx",
+				"ui/list-group/list-group-item-suffix.tsx",
+				"ui/list-group/list-group-item-title.tsx",
+				"ui/list-group/list-group-item.tsx",
+				"ui/list-group/list-group.context.tsx",
+				"ui/list-group/list-group.tsx",
+				"ui/list-group/list-group.types.ts",
+				"ui/list-group/list-group.variants.ts"
+			]
+		},
+		{
+			"name": "merge-props",
+			"type": "registry:lib",
+			"title": "mergeProps",
+			"description": "Merges slot props onto a child's own.",
+			"registryDependencies": [
+				"cn"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/merge-props.ts"
+			]
+		},
+		{
+			"name": "navigation-theme",
+			"type": "registry:lib",
+			"title": "navigationTheme",
+			"description": "Maps the theme's tokens onto the colours React Navigation asks for.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/navigation-theme.ts"
+			]
+		},
+		{
+			"name": "pressable",
+			"type": "registry:ui",
+			"title": "Pressable",
+			"description": "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",
+			"categories": [
+				"primitives"
+			],
+			"registryDependencies": [
+				"compose-refs",
+				"merge-props"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-pulsar",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/pressable/AGENTS.md",
+				"ui/pressable/index.ts",
+				"ui/pressable/pressable.tsx",
+				"ui/pressable/pressable.variants.ts"
+			]
+		},
+		{
+			"name": "provider",
+			"type": "registry:ui",
+			"title": "Provider",
+			"description": "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
+			"categories": [
+				"primitives"
+			],
+			"registryDependencies": [
+				"use-keyboard-state-sync"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"@gorhom/bottom-sheet",
+				"react-native-gesture-handler",
+				"react-native-keyboard-controller",
+				"react-native-safe-area-context"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/provider/AGENTS.md",
+				"ui/provider/index.ts",
+				"ui/provider/provider.tsx"
+			]
+		},
+		{
+			"name": "radio",
+			"type": "registry:ui",
+			"title": "Radio",
+			"description": "A radio and the group that owns which one is selected.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/radio/AGENTS.md",
+				"ui/radio/index.ts",
+				"ui/radio/radio-group.tsx",
+				"ui/radio/radio-indicator.tsx",
+				"ui/radio/radio-label.tsx",
+				"ui/radio/radio.context.tsx",
+				"ui/radio/radio.tsx",
+				"ui/radio/radio.variants.ts"
+			]
+		},
+		{
+			"name": "screen",
+			"type": "registry:ui",
+			"title": "Screen",
+			"description": "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"spinner",
+				"text",
+				"tv",
+				"use-keyboard-state-sync"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"@legendapp/list",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/screen/AGENTS.md",
+				"ui/screen/index.ts",
+				"ui/screen/screen-chat-list.tsx",
+				"ui/screen/screen-content.tsx",
+				"ui/screen/screen-debug.ts",
+				"ui/screen/screen-error.tsx",
+				"ui/screen/screen-flat-list.tsx",
+				"ui/screen/screen-footer-background.tsx",
+				"ui/screen/screen-footer.tsx",
+				"ui/screen/screen-header.tsx",
+				"ui/screen/screen-legend-list.tsx",
+				"ui/screen/screen-list-component.tsx",
+				"ui/screen/screen-loading.tsx",
+				"ui/screen/screen-navbar-back-button.tsx",
+				"ui/screen/screen-navbar-background.tsx",
+				"ui/screen/screen-navbar-subtitle.tsx",
+				"ui/screen/screen-navbar-title.tsx",
+				"ui/screen/screen-navbar.tsx",
+				"ui/screen/screen-root.tsx",
+				"ui/screen/screen-scroll-area.tsx",
+				"ui/screen/screen-section-list.tsx",
+				"ui/screen/screen-view.tsx",
+				"ui/screen/screen.context.tsx",
+				"ui/screen/screen.tsx",
+				"ui/screen/screen.types.ts",
+				"ui/screen/screen.variants.ts",
+				"ui/screen/use-screen-scroll-insets.ts"
+			]
+		},
+		{
+			"name": "separator",
+			"type": "registry:ui",
+			"title": "Separator",
+			"description": "A one-pixel rule, hidden from assistive technology.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/separator/AGENTS.md",
+				"ui/separator/index.ts",
+				"ui/separator/separator.tsx"
+			]
+		},
+		{
+			"name": "slider",
+			"type": "registry:ui",
+			"title": "Slider",
+			"description": "A value along a track, dragged by a handle that follows the gesture.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/slider/AGENTS.md",
+				"ui/slider/index.ts",
+				"ui/slider/slider-fill.tsx",
+				"ui/slider/slider-output.tsx",
+				"ui/slider/slider-thumb.tsx",
+				"ui/slider/slider-track.tsx",
+				"ui/slider/slider.context.tsx",
+				"ui/slider/slider.tsx",
+				"ui/slider/slider.types.ts",
+				"ui/slider/slider.variants.ts"
+			]
+		},
+		{
+			"name": "slot",
+			"type": "registry:lib",
+			"title": "Slot",
+			"description": "Renders into a child element instead of a wrapper.",
+			"registryDependencies": [
+				"compose-refs",
+				"merge-props"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/slot.tsx"
+			]
+		},
+		{
+			"name": "spinner",
+			"type": "registry:ui",
+			"title": "Spinner",
+			"description": "An animated loading indicator drawn on the icon scale.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/spinner/AGENTS.md",
+				"ui/spinner/index.ts",
+				"ui/spinner/spinner-arc.tsx",
+				"ui/spinner/spinner-content.tsx",
+				"ui/spinner/spinner.context.tsx",
+				"ui/spinner/spinner.tsx",
+				"ui/spinner/spinner.variants.ts"
+			]
+		},
+		{
+			"name": "styles",
+			"type": "registry:style",
+			"title": "Styles",
+			"description": "Tailwind base, the semantic size tokens, and the light and dark theme palettes.",
+			"registryDependencies": [],
+			"dependencies": [
+				"tailwindcss"
+			],
+			"expoDependencies": [
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"styles/base.css",
+				"styles/index.css",
+				"styles/theme.css",
+				"styles/tokens.css",
+				"styles/tokens.ts",
+				"styles/uniwind-env.d.ts"
+			]
+		},
+		{
+			"name": "switch",
+			"type": "registry:ui",
+			"title": "Switch",
+			"description": "An on/off control whose thumb can be dragged as well as tapped.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/switch/AGENTS.md",
+				"ui/switch/index.ts",
+				"ui/switch/switch-content.tsx",
+				"ui/switch/switch-end-content.tsx",
+				"ui/switch/switch-start-content.tsx",
+				"ui/switch/switch-thumb.tsx",
+				"ui/switch/switch.context.tsx",
+				"ui/switch/switch.tsx",
+				"ui/switch/switch.types.ts",
+				"ui/switch/switch.variants.ts"
+			]
+		},
+		{
+			"name": "tabs",
+			"type": "registry:ui",
+			"title": "Tabs",
+			"description": "A swipeable pager with an indicator measured against the active tab.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/tabs/AGENTS.md",
+				"ui/tabs/index.ts",
+				"ui/tabs/tabs-content.tsx",
+				"ui/tabs/tabs-indicator.tsx",
+				"ui/tabs/tabs-label.tsx",
+				"ui/tabs/tabs-list.tsx",
+				"ui/tabs/tabs-pager.tsx",
+				"ui/tabs/tabs-scroll-view.tsx",
+				"ui/tabs/tabs-separator.tsx",
+				"ui/tabs/tabs-trigger.tsx",
+				"ui/tabs/tabs.context.tsx",
+				"ui/tabs/tabs.tsx",
+				"ui/tabs/tabs.types.ts",
+				"ui/tabs/tabs.variants.ts"
+			]
+		},
+		{
+			"name": "text",
+			"type": "registry:ui",
+			"title": "Text",
+			"description": "Typography: the type scale, weights and the page-level colours.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/text/AGENTS.md",
+				"ui/text/index.ts",
+				"ui/text/text.context.tsx",
+				"ui/text/text.tsx",
+				"ui/text/text.variants.ts"
+			]
+		},
+		{
+			"name": "tv",
+			"type": "registry:lib",
+			"title": "tv",
+			"description": "tailwind-variants, taught the library's semantic size tokens.",
+			"registryDependencies": [
+				"styles"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/tv.ts"
+			]
+		},
+		{
+			"name": "use-controllable-state",
+			"type": "registry:hook",
+			"title": "useControllableState",
+			"description": "State that works controlled or uncontrolled from the same prop pair.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-controllable-state.ts"
+			]
+		},
+		{
+			"name": "use-keyboard-state-sync",
+			"type": "registry:hook",
+			"title": "useKeyboardStateSync",
+			"description": "Keeps the keyboard's height and progress on the UI thread, for layout that tracks it.",
+			"registryDependencies": [
+				"keyboard-animation"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-keyboard-state-sync.tsx"
+			]
+		},
+		{
+			"name": "use-navigation-theme",
+			"type": "registry:hook",
+			"title": "useNavigationTheme",
+			"description": "Resolves the theme's colours for the active scheme, ready for a navigator.",
+			"registryDependencies": [
+				"navigation-theme",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-navigation-theme.ts"
+			]
+		},
+		{
+			"name": "use-theme-color",
+			"type": "registry:hook",
+			"title": "useThemeColor",
+			"description": "Resolves a theme token to the colour the active scheme gives it.",
+			"registryDependencies": [
+				"color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-theme-color.ts"
+			]
+		}
+	]
+}

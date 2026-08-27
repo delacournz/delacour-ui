@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-controllable-state",
+	"type": "registry:hook",
+	"title": "useControllableState",
+	"description": "State that works controlled or uncontrolled from the same prop pair.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/hooks/use-controllable-state.ts",
+			"target": "use-controllable-state.ts",
+			"namespace": "hooks"
+		}
+	]
+}

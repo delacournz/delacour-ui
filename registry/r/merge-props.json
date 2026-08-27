@@ -1,0 +1,20 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "merge-props",
+	"type": "registry:lib",
+	"title": "mergeProps",
+	"description": "Merges slot props onto a child's own.",
+	"registryDependencies": [
+		"cn"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/merge-props.ts",
+			"target": "merge-props.ts",
+			"namespace": "lib"
+		}
+	]
+}

@@ -1,0 +1,69 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "button",
+	"type": "registry:ui",
+	"title": "Button",
+	"description": "A pressable action composed from parts, with variants, sizes and a loading state.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"icon",
+		"pressable",
+		"spinner",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/button/AGENTS.md",
+			"target": "button/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button-end-content.tsx",
+			"target": "button/button-end-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button-label.tsx",
+			"target": "button/button-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button-start-content.tsx",
+			"target": "button/button-start-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button.context.tsx",
+			"target": "button/button.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button.tsx",
+			"target": "button/button.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button.types.ts",
+			"target": "button/button.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/button.variants.ts",
+			"target": "button/button.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/button/index.ts",
+			"target": "button/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

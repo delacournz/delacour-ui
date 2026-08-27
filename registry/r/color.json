@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "color",
+	"type": "registry:lib",
+	"title": "isLiteralColor",
+	"description": "Tells a literal colour from a theme token name.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/color.ts",
+			"target": "color.ts",
+			"namespace": "lib"
+		}
+	]
+}

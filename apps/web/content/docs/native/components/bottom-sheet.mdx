@@ -4,11 +4,6 @@ description: A sheet that rises from the bottom edge, built on @gorhom/bottom-sh
 icon: PanelBottom
 ---
 
-<Callout title="Reference docs in progress">
-The summary and API surface below are current. Worked examples and full prop tables are still
-being written — until then, `apps/playground` renders every case on a simulator.
-</Callout>
-
 ```tsx
 import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
 ```
@@ -133,3 +128,97 @@ presents into.
 
 The root takes no `ViewProps` — it renders no view. Layout and styling belong on `Container`,
 `Content` and `Footer`.
+
+### `BottomSheet.Trigger`
+
+Opens the sheet. A `Pressable`, so it inherits the whole vocabulary — `asChild` renders into your
+own element instead of emitting a `View`.
+
+<TypeTable
+  type={{
+    asChild: { type: "boolean", description: "Render into the single child element rather than wrapping it." },
+    onPress: { type: "() => void", description: "Called after the sheet is told to open, not instead of it." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `BottomSheet.Container`
+
+The modal itself. Extends `@gorhom/bottom-sheet`'s `BottomSheetModalProps` — `snapPoints`,
+`enableDynamicSizing`, `index` and the rest pass straight through. The component slots
+(`backdropComponent`, `backgroundComponent`, `footerComponent`, `handleComponent`) and `onDismiss`
+are withheld: the compound parts fill them.
+
+<TypeTable
+  type={{
+    backgroundClassName: { type: "string", description: "The sheet's own surface." },
+    handleClassName: { type: "string", description: "The area around the grabber." },
+    handleIndicatorClassName: { type: "string", description: "The grabber itself." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `BottomSheet.Content`
+
+The padded region inside the sheet. Extends `ViewProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### `BottomSheet.ScrollView`
+
+Scrollable content that hands its gesture to the sheet at the top of the scroll. Extends Gorhom's
+`BottomSheetScrollViewProps`; `contentContainerStyle` and `enableFooterMarginAdjustment` are
+withheld — the first has a `className` equivalent, the second is managed for you.
+
+<TypeTable
+  type={{
+    className: { type: "string" },
+    contentContainerClassName: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `BottomSheet.Footer`
+
+Pinned below the content.
+
+<TypeTable
+  type={{
+    sticky: { type: "boolean", description: "Keep the footer against the sheet's bottom edge as it moves." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### `BottomSheet.Overlay`
+
+The backdrop. Composed in with sensible defaults when the sheet holds none.
+
+<TypeTable
+  type={{
+    opacity: { type: "number", description: "The backdrop's opacity when fully shown." },
+    appearsOnIndex: { type: "number" },
+    disappearsOnIndex: { type: "number" },
+    isCloseOnPress: { type: "boolean", description: "Whether a press on the backdrop dismisses the sheet." },
+    enableTouchThrough: { type: "boolean", description: "Let touches reach what is behind the backdrop." },
+    accessibilityLabel: { type: "string" },
+    onPress: { type: "() => void" },
+    className: { type: "string" },
+  }}
+/>
+
+### `BottomSheet.Title` / `Description` / `Close` / `Handle` / `Background` / `Portal`
+
+`Title` and `Description` are `Text` presets and take its props. `Close` is a `Pressable` that
+dismisses the sheet, defaulting its `accessibilityLabel` to `"Close"` and its `feedback` to `fade`.
+`Handle` and `Background` replace the grabber and the surface outright — reach for
+`handleClassName` and `backgroundClassName` on `Container` first. `Portal` takes only `children`.
+
+<TypeTable
+  type={{
+    className: { type: "string" },
+    indicatorClassName: { type: "string", description: "`Handle` only — the grabber inside it." },
+    children: { type: "ReactNode" },
+  }}
+/>

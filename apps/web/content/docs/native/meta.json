@@ -1,5 +1,5 @@
 {
 	"title": "Native",
 	"description": "React Native components for Expo and bare React Native.",
-	"pages": ["getting-started", "components", "releases"]
+	"pages": ["getting-started", "components", "cli", "releases"]
 }

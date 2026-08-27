@@ -1,0 +1,206 @@
+---
+title: The registry
+description: Where components come from, how a version is pinned, and how to serve your own.
+icon: Package
+---
+
+The registry is committed to the repository and read straight off `raw.githubusercontent.com`.
+There is no service to host and nothing to keep running — and nothing to be down when you run
+`add`.
+
+```txt
+registry/
+├── registry.json                  the index: names, descriptions, dependencies
+├── r/button.json                  one item: what it is, what it needs, which files
+├── files/ui/button/button.tsx     the files themselves
+└── config.schema.json             the JSON Schema behind native-components.json's $schema
+```
+
+An item **references** its files rather than carrying them. shadcn inlines each file as a string
+inside the item JSON; the cost of that is a megabyte of escaped source that no reviewer can read
+and `git` cannot diff. Written out, `files/ui/button/button.tsx` is the TypeScript it looks like —
+you can open it on GitHub and see exactly what `add` is about to copy.
+
+`add button` resolves the graph from the index, fetches the handful of items it needs, then their
+files. Everything fetched is cached under your cache directory and revalidated with an ETag, so a
+repeated `add` costs a 304 and an `add` on a flaky connection still works from what is already
+there. The ref pins the whole tree at once, so an item and its files can never disagree.
+
+## An item
+
+```json title="registry/r/button.json"
+{
+  "name": "button",
+  "type": "registry:ui",
+  "title": "Button",
+  "description": "A pressable action composed from parts, with variants, sizes and a loading state.",
+  "registryDependencies": ["icon", "pressable", "spinner", "text", "tv"],
+  "dependencies": ["tailwind-variants"],
+  "expoDependencies": [],
+  "devDependencies": [],
+  "files": [{ "path": "files/ui/button/button.tsx", "target": "button/button.tsx", "namespace": "ui" }]
+}
+```
+
+`path` is where the file lives in the registry; `namespace` and `target` are where it lands in your
+project. A file that inlines `content` is rejected rather than ignored, so a shadcn-shaped item
+fails with a message rather than a 404 halfway through a copy.
+
+The dependency list is split three ways on purpose, and it is the split that decides whether an
+Expo build compiles:
+
+<TypeTable
+  type={{
+    registryDependencies: { type: "string[]", description: "Other items to copy. Nothing is installed." },
+    dependencies: { type: "string[]", description: "npm packages, installed with your package manager." },
+    expoDependencies: { type: "string[]", description: "Installed with expo install, so the SDK resolves the version." },
+    devDependencies: { type: "string[]", description: "Installed as devDependencies." },
+  }}
+/>
+
+<Callout title="Why expoDependencies is its own field">
+Expo pins every native module to a version its SDK can build. `bun add react-native-reanimated`
+fetches the newest release instead, which on any older SDK is a package that fails at the linker
+rather than at install time. A single `dependencies` field cannot express that difference.
+</Callout>
+
+Each item also carries the component's `AGENTS.md`, rewritten to cite your paths rather than the
+package's — so an agent working in your repository gets the design rules next to the code.
+
+## Pinning a version
+
+The CLI is published with the git ref it was built from baked in, so a given version always reads
+the registry it shipped against. Override it two ways, in this order:
+
+```bash
+bunx delacour add tabs --ref main          # 1. the flag
+```
+
+```json title="native-components.json"
+{ "registry": { "ref": "v0.2.0" } }        // 2. the config
+```
+
+`--ref main` is how you take a component that has landed since your CLI was published. `bunx
+delacour@latest` gets you both the newest CLI and its matching registry.
+
+## Reading from somewhere else
+
+`--registry` accepts three shapes, and so does `registry.url` in the config.
+
+<Tabs items={["A fork", "A hosted registry", "A local path"]}>
+<Tab value="A fork">
+
+```bash
+bunx delacour add button --registry github:acme/ui --ref main
+```
+
+Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shorthand
+(`github:acme/ui#next`) wins over `--ref`.
+
+</Tab>
+<Tab value="A hosted registry">
+
+```bash
+bunx delacour add card --registry https://ui.acme.com/r
+```
+
+Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json`,
+`r/<name>.json` and every `path` those items name, at that base.
+
+</Tab>
+<Tab value="A local path">
+
+```bash
+bunx delacour add button --registry ./registry
+```
+
+Reads from disk, skipping the network and the cache entirely. This is how the CLI's own tests run,
+and it is the fastest way to try a change to a component before publishing it.
+
+</Tab>
+</Tabs>
+
+<Callout type="warn" title="A registry is code you are about to run">
+Everything fetched is validated before a byte is written — a `target` that tries to escape its
+namespace is rejected rather than followed. That guard is real, but it is not a substitute for
+trusting the registry you point at.
+</Callout>
+
+## Building your own
+
+The registry is **derived** from the library's source rather than maintained beside it: one item
+per component folder, dependencies read off the imports, and imports rewritten into portable
+placeholders. There is no hand-written index to drift.
+
+```bash
+bun --filter delacour run registry:build
+```
+
+The build refuses to guess. A component folder with no metadata fails it, and so does an npm import
+nobody has classified as `expo install` or plain — because the default would be the one that
+installs a native module at a version the SDK cannot build.
+
+Imports are canonicalised at build time and substituted at `add` time:
+
+```tsx
+// in the library
+import { Icon } from "../icon";
+import { cn } from "../../lib/cn";
+
+// in the registry
+import { Icon } from "@registry/ui/icon";
+import { cn } from "@registry/lib/cn";
+
+// in your project
+import { Icon } from "@/components/ui/icon";
+import { cn } from "@/lib/cn";
+```
+
+That is why `add` needs no TypeScript parser: the parsing happened once, in the registry build,
+against source we control. An import that lands in the same directory is left alone, so a copied
+file reads the way the original does.
+
+## Verifying a registry
+
+```bash
+bun --filter delacour run verify:expo
+```
+
+Scaffolds a real Expo app in a temp directory, installs Uniwind and Tailwind, runs `init`, adds
+**every** item, and then runs `tsc --noEmit` over the result. A clean typecheck is the proof that
+every copied component resolves every import it makes — which no fixture can establish, because a
+fixture has no dependency tree to resolve against.
+
+It also asserts what a build alone cannot:
+
+<TypeTable
+  type={{
+    "schema": { type: "check", description: "Every item validates against the published item schema." },
+    "index": { type: "check", description: "registry.json and the files under r/ name the same items." },
+    "documents": { type: "check", description: "Every path an item names exists under files/, and none is orphaned." },
+    "files": { type: "check", description: "Every file each item declares actually landed on disk." },
+    "placeholders": { type: "check", description: "No @registry/ placeholder and no source-package reference survived." },
+    "relative imports": { type: "check", description: "Every relative import resolves to a file that exists." },
+    "packages": { type: "check", description: "Every package imported is installed — the registry declared it." },
+    "wiring": { type: "check", description: "delacour doctor passes against the generated app." },
+    "types": { type: "check", description: "tsc --noEmit is clean." },
+  }}
+/>
+
+```bash
+bun --filter delacour run verify:expo --no-install     # structure only, offline
+bun --filter delacour run verify:expo --bundle         # ...and compile it with Metro
+bun --filter delacour run verify:expo --simulator      # ...and render it on a device
+bun --filter delacour run verify:expo --only button    # one component and its closure
+```
+
+<Callout title="A clean tsc is not the whole story">
+Uniwind compiles `className` in a **Metro transform**, so a class the scanner never saw is dropped
+from the build with nothing logged — and `tsc` cannot see that at all. `--bundle` runs
+`expo export`, which is the whole pipeline short of the native build, and is the cheapest stage
+that catches it. `--simulator` goes one further and builds a dev client, because Reanimated,
+Gesture Handler and the keyboard controller are native modules Expo Go cannot load.
+</Callout>
+
+CI runs the offline pass on every push and the full pass in its own job. If you maintain a fork or
+your own registry, point it at yours with `--registry`.

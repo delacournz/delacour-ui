@@ -1,0 +1,38 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "provider",
+	"type": "registry:ui",
+	"title": "Provider",
+	"description": "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
+	"categories": [
+		"primitives"
+	],
+	"registryDependencies": [
+		"use-keyboard-state-sync"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"@gorhom/bottom-sheet",
+		"react-native-gesture-handler",
+		"react-native-keyboard-controller",
+		"react-native-safe-area-context"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/provider/AGENTS.md",
+			"target": "provider/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/provider/index.ts",
+			"target": "provider/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/provider/provider.tsx",
+			"target": "provider/provider.tsx",
+			"namespace": "ui"
+		}
+	]
+}

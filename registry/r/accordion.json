@@ -1,0 +1,88 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "accordion",
+	"type": "registry:ui",
+	"title": "Accordion",
+	"description": "Collapsible sections whose panels animate to their measured height.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"separator",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/accordion/accordion-content.tsx",
+			"target": "accordion/accordion-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion-description.tsx",
+			"target": "accordion/accordion-description.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion-indicator.tsx",
+			"target": "accordion/accordion-indicator.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion-item.tsx",
+			"target": "accordion/accordion-item.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion-title.tsx",
+			"target": "accordion/accordion-title.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion-trigger.tsx",
+			"target": "accordion/accordion-trigger.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion.context.tsx",
+			"target": "accordion/accordion.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion.tsx",
+			"target": "accordion/accordion.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion.types.ts",
+			"target": "accordion/accordion.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/accordion.variants.ts",
+			"target": "accordion/accordion.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/AGENTS.md",
+			"target": "accordion/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/accordion/index.ts",
+			"target": "accordion/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

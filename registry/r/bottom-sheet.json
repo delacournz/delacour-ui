@@ -1,0 +1,124 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "bottom-sheet",
+	"type": "registry:ui",
+	"title": "Bottom Sheet",
+	"description": "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"slot",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-keyboard-state-sync"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"@gorhom/bottom-sheet",
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/bottom-sheet/AGENTS.md",
+			"target": "bottom-sheet/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-background.tsx",
+			"target": "bottom-sheet/bottom-sheet-background.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-close.tsx",
+			"target": "bottom-sheet/bottom-sheet-close.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-container.tsx",
+			"target": "bottom-sheet/bottom-sheet-container.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-content.tsx",
+			"target": "bottom-sheet/bottom-sheet-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-description.tsx",
+			"target": "bottom-sheet/bottom-sheet-description.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-footer.tsx",
+			"target": "bottom-sheet/bottom-sheet-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-handle.tsx",
+			"target": "bottom-sheet/bottom-sheet-handle.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-overlay.tsx",
+			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-portal.tsx",
+			"target": "bottom-sheet/bottom-sheet-portal.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-scroll-view.tsx",
+			"target": "bottom-sheet/bottom-sheet-scroll-view.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-title.tsx",
+			"target": "bottom-sheet/bottom-sheet-title.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet-trigger.tsx",
+			"target": "bottom-sheet/bottom-sheet-trigger.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet.context.tsx",
+			"target": "bottom-sheet/bottom-sheet.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet.tsx",
+			"target": "bottom-sheet/bottom-sheet.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/bottom-sheet.variants.ts",
+			"target": "bottom-sheet/bottom-sheet.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/index.ts",
+			"target": "bottom-sheet/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/bottom-sheet/use-bottom-sheet-input.ts",
+			"target": "bottom-sheet/use-bottom-sheet-input.ts",
+			"namespace": "ui"
+		}
+	]
+}

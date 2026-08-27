@@ -1,0 +1,44 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "pressable",
+	"type": "registry:ui",
+	"title": "Pressable",
+	"description": "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",
+	"categories": [
+		"primitives"
+	],
+	"registryDependencies": [
+		"compose-refs",
+		"merge-props"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-pulsar",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/pressable/AGENTS.md",
+			"target": "pressable/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/pressable/index.ts",
+			"target": "pressable/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/pressable/pressable.tsx",
+			"target": "pressable/pressable.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/pressable/pressable.variants.ts",
+			"target": "pressable/pressable.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

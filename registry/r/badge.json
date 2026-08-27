@@ -1,0 +1,74 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "badge",
+	"type": "registry:ui",
+	"title": "Badge",
+	"description": "A compact label for status or a count, composed from parts like the button.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/badge/AGENTS.md",
+			"target": "badge/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge-close-button.tsx",
+			"target": "badge/badge-close-button.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge-end-content.tsx",
+			"target": "badge/badge-end-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge-label.tsx",
+			"target": "badge/badge-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge-start-content.tsx",
+			"target": "badge/badge-start-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge.context.tsx",
+			"target": "badge/badge.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge.tsx",
+			"target": "badge/badge.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge.types.ts",
+			"target": "badge/badge.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/badge.variants.ts",
+			"target": "badge/badge.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/badge/index.ts",
+			"target": "badge/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

@@ -1,0 +1,103 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"type": "object",
+	"properties": {
+		"$schema": {
+			"type": "string"
+		},
+		"name": {
+			"type": "string",
+			"minLength": 1
+		},
+		"type": {
+			"type": "string",
+			"enum": [
+				"registry:ui",
+				"registry:lib",
+				"registry:hook",
+				"registry:style"
+			]
+		},
+		"title": {
+			"type": "string"
+		},
+		"description": {
+			"type": "string"
+		},
+		"categories": {
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"registryDependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"dependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"expoDependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"devDependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"files": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"path": {
+						"type": "string",
+						"minLength": 1
+					},
+					"target": {
+						"type": "string",
+						"minLength": 1
+					},
+					"namespace": {
+						"type": "string",
+						"enum": [
+							"ui",
+							"lib",
+							"hooks",
+							"styles",
+							"icons"
+						]
+					},
+					"content": {
+						"not": {}
+					}
+				},
+				"required": [
+					"path",
+					"target",
+					"namespace"
+				]
+			}
+		}
+	},
+	"required": [
+		"name",
+		"type",
+		"title",
+		"description",
+		"files"
+	]
+}

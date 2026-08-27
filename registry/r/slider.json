@@ -1,0 +1,78 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "slider",
+	"type": "registry:ui",
+	"title": "Slider",
+	"description": "A value along a track, dragged by a handle that follows the gesture.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"field",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/slider/AGENTS.md",
+			"target": "slider/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/index.ts",
+			"target": "slider/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider-fill.tsx",
+			"target": "slider/slider-fill.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider-output.tsx",
+			"target": "slider/slider-output.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider-thumb.tsx",
+			"target": "slider/slider-thumb.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider-track.tsx",
+			"target": "slider/slider-track.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider.context.tsx",
+			"target": "slider/slider.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider.tsx",
+			"target": "slider/slider.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider.types.ts",
+			"target": "slider/slider.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/slider/slider.variants.ts",
+			"target": "slider/slider.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

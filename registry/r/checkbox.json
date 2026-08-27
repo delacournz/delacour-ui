@@ -1,0 +1,74 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "checkbox",
+	"type": "registry:ui",
+	"title": "Checkbox",
+	"description": "A checkbox with an indeterminate state, and a group that owns the selection.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"field",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/checkbox/AGENTS.md",
+			"target": "checkbox/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox-box.tsx",
+			"target": "checkbox/checkbox-box.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox-group.tsx",
+			"target": "checkbox/checkbox-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox-label.tsx",
+			"target": "checkbox/checkbox-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox.context.tsx",
+			"target": "checkbox/checkbox.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox.tsx",
+			"target": "checkbox/checkbox.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox.types.ts",
+			"target": "checkbox/checkbox.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/checkbox.variants.ts",
+			"target": "checkbox/checkbox.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/checkbox/index.ts",
+			"target": "checkbox/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

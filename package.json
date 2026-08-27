@@ -14,6 +14,7 @@
 		"lint": "turbo lint",
 		"fmt": "turbo fmt",
 		"test": "turbo test",
+		"verify:expo": "cd packages/cli && bun scripts/verify-expo.ts",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground"
 	},

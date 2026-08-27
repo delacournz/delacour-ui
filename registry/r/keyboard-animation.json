@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "keyboard-animation",
+	"type": "registry:lib",
+	"title": "keyboardAnimation",
+	"description": "The timing the keyboard opens with, so content moving with it stays in step.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/keyboard-animation.ts",
+			"target": "keyboard-animation.ts",
+			"namespace": "lib"
+		}
+	]
+}

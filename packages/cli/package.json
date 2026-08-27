@@ -1,0 +1,54 @@
+{
+	"name": "delacour",
+	"version": "0.1.0",
+	"description": "Add React Native components to your Expo app. You own the code.",
+	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/delacournz/delacour-ui.git",
+		"directory": "packages/cli"
+	},
+	"keywords": [
+		"expo",
+		"react-native",
+		"cli",
+		"components",
+		"uniwind",
+		"tailwind"
+	],
+	"bin": {
+		"delacour": "./dist/index.js"
+	},
+	"files": [
+		"dist"
+	],
+	"engines": {
+		"node": ">=20.19"
+	},
+	"scripts": {
+		"build": "tsdown",
+		"build:check": "bun scripts/check-bundle.ts",
+		"dev": "tsdown --watch",
+		"registry:build": "bun src/registry/cli.ts",
+		"verify:expo": "bun scripts/verify-expo.ts",
+		"check": "biome check ./src",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"prepublishOnly": "bun run build && bun run build:check"
+	},
+	"devDependencies": {
+		"@clack/prompts": "^1.7.0",
+		"@delacour/biome-config": "workspace:*",
+		"@delacour/tsconfig": "workspace:*",
+		"@modelcontextprotocol/sdk": "^1.30.0",
+		"@types/bun": "^1.3.8",
+		"@types/node": "^22.15.0",
+		"commander": "^15.0.0",
+		"picocolors": "^1.1.1",
+		"tinyexec": "^1.3.0",
+		"tsdown": "^0.22.14",
+		"typescript": "^5.9.3",
+		"zod": "^4.4.3"
+	}
+}

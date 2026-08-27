@@ -1,0 +1,22 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tv",
+	"type": "registry:lib",
+	"title": "tv",
+	"description": "tailwind-variants, taught the library's semantic size tokens.",
+	"registryDependencies": [
+		"styles"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/tv.ts",
+			"target": "tv.ts",
+			"namespace": "lib"
+		}
+	]
+}

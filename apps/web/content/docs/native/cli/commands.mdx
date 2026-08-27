@@ -1,0 +1,151 @@
+---
+title: Commands
+description: Every command, and the flags they share.
+icon: SquareTerminal
+---
+
+```bash
+delacour <command> [components...] [options]
+```
+
+Every command that reads the registry also takes `--registry`, `--ref`, `--offline` and `--cwd` —
+see [Shared options](#shared-options).
+
+## `init`
+
+Sets the project up and writes `native-components.json`. Covered in full at
+[Setting up a project](/docs/native/cli/init).
+
+```bash
+delacour init [components...]
+```
+
+<TypeTable
+  type={{
+    "-y, --yes": { type: "boolean", description: "Accept every default without asking." },
+    "-d, --defaults": { type: "boolean", description: "Use the default layout without prompting." },
+    "-f, --force": { type: "boolean", description: "Rewrite an existing native-components.json." },
+    "-s, --src": { type: "string", description: "Base directory for source files.", default: "src" },
+    "--no-install": { type: "boolean", description: "Write the files but install nothing." },
+    "--silent": { type: "boolean", description: "Print nothing but errors." },
+  }}
+/>
+
+## `add`
+
+Copies components in, with everything they need.
+
+```bash
+delacour add button input field
+delacour add --all
+```
+
+The order is deliberate: resolve the dependency graph, plan every file, ask **once** about
+conflicts, write, then install. Installing first would leave a project holding new native
+dependencies and no components if you answered "no" to the overwrite prompt.
+
+<TypeTable
+  type={{
+    "-a, --all": { type: "boolean", description: "Add every component in the registry." },
+    "-o, --overwrite": { type: "boolean", description: "Replace files that differ, without asking." },
+    "-y, --yes": { type: "boolean", description: "Accept every default without asking." },
+    "--no-install": { type: "boolean", description: "Write the files but install nothing." },
+    "--silent": { type: "boolean", description: "Print nothing but errors." },
+  }}
+/>
+
+A file already on disk with byte-identical content is not a conflict — that is the normal state of
+a utility two components share, and `add` says so rather than asking. Only a genuine difference is
+worth a prompt, because you may well have edited it.
+
+<Callout title="Dependencies are split three ways">
+`expo install` for native modules and anything pinned to the SDK, your package manager for plain
+JavaScript, and `registryDependencies` — which are other components to copy, not packages to
+install.
+</Callout>
+
+Non-interactively (`--yes`, or a pipe), a conflict is an error naming the files rather than a
+silent overwrite. Pass `--overwrite` when you mean it.
+
+## `list`, `search`, `view`
+
+Browsing works before `native-components.json` exists — which is exactly when you are deciding whether to
+run `init`.
+
+```bash
+delacour list
+delacour search sheet
+delacour view button
+```
+
+`view` prints the item's files, the components it copies in, and the packages it installs. All
+three take `--json`.
+
+## `diff`
+
+Shows what has moved upstream since you copied a component.
+
+```bash
+delacour diff            # every component you have
+delacour diff button
+```
+
+Read-only, and deliberately so. Once a component is in your repository it is yours, and the
+changes on each side are both legitimate — a fix upstream, a tweak locally. Printing both and
+stopping is the only behaviour that does not quietly pick a winner. `add <name> --overwrite` takes
+the registry's copy when that is what you want.
+
+Which components you hold is judged from the files on disk, not from anything recorded at `add`
+time — a manifest of "what was installed" would be one more thing to drift from reality.
+
+## `doctor`
+
+Checks that the app is wired up for these components. Every check is a failure mode that produces
+no error on its own — see [Troubleshooting](/docs/native/cli/troubleshooting).
+
+```bash
+delacour doctor
+delacour doctor --fast    # skip the checks that shell out to the Expo CLI
+delacour doctor --json
+```
+
+Exits non-zero when a check fails, so it works in CI.
+
+## `info`
+
+The resolved config and what was detected: package manager, Expo and React Native versions,
+whether Uniwind and Tailwind are installed, the workspace and app roots, and the path aliases
+found in `tsconfig.json`.
+
+```bash
+delacour info
+```
+
+Start here when the CLI is writing files somewhere you did not expect.
+
+## `mcp`
+
+Runs as an MCP server over stdio so a coding agent can browse and add components. See
+[Agents](/docs/native/cli/mcp).
+
+## Shared options
+
+<TypeTable
+  type={{
+    "--registry": {
+      type: "string",
+      description: "Where to read the registry from: a URL, github:owner/repo, or a local path.",
+    },
+    "--ref": {
+      type: "string",
+      description: "Git ref to read the registry at. Defaults to the tag the CLI was published from.",
+    },
+    "--offline": { type: "boolean", description: "Use only what is already cached." },
+    "-c, --cwd": { type: "string", description: "Directory to work in.", default: "process.cwd()" },
+  }}
+/>
+
+`--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk stops at
+the repository root — past it lie your other projects.
+
+See [The registry](/docs/native/cli/registry) for pinning a ref and pointing at a fork.

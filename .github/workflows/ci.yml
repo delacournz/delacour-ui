@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run typecheck
+      - run: bun run check
+      - run: bun test
+
+      # The registry is committed, so a component change that does not rebuild
+      # it would publish a registry describing the previous version.
+      - name: Check the registry is current
+        working-directory: packages/cli
+        run: bun run registry:build
+
+      - run: git diff --exit-code registry/
+
+      # Offline and fast: scaffolds an app, runs the CLI, and checks the shape
+      # of what came out. The full run installs from npm and lives in its own job.
+      # Both layouts: components in the app, and components in a shared package
+      # several apps could use. The second has wiring the first does not — a
+      # workspace link, an exports map, Metro's resolver — and none of it is
+      # exercised by the first.
+      - name: Verify both layouts (structure only)
+        working-directory: packages/cli
+        run: |
+          bun run verify:expo --no-install
+          bun run verify:expo --no-install --layout monorepo
+
+  verify-expo:
+    name: CLI against a real Expo app (${{ matrix.layout }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        layout: [standalone, monorepo]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - run: bun install --frozen-lockfile
+
+      # Scaffolds an Expo app, installs Uniwind and Tailwind, runs init and adds
+      # every item, then typechecks the result. A clean tsc is the proof that
+      # every copied component resolves every import it makes — which no fixture
+      # test can establish, because a fixture has no dependency tree.
+      # --bundle also runs the components through Metro, which is the only stage
+      # that exercises Uniwind's transform. A class the scanner never saw is
+      # dropped from the build silently, and tsc cannot see that at all.
+      - name: Scaffold, install, typecheck and bundle
+        working-directory: packages/cli
+        run: bun run verify:expo --bundle --layout ${{ matrix.layout }}

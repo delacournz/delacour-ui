@@ -1,0 +1,23 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "cn",
+	"type": "registry:lib",
+	"title": "cn",
+	"description": "Class merging that understands the library's semantic size tokens.",
+	"registryDependencies": [
+		"styles"
+	],
+	"dependencies": [
+		"clsx",
+		"tailwind-merge"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/cn.ts",
+			"target": "cn.ts",
+			"namespace": "lib"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "slot",
+	"type": "registry:lib",
+	"title": "Slot",
+	"description": "Renders into a child element instead of a wrapper.",
+	"registryDependencies": [
+		"compose-refs",
+		"merge-props"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/lib/slot.tsx",
+			"target": "slot.tsx",
+			"namespace": "lib"
+		}
+	]
+}

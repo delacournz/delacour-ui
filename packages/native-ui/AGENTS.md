@@ -586,3 +586,38 @@ import { IconArrowRight } from "@delacour/native-ui/icons/central";
 The package ships raw `.tsx`; there is no build step. Uniwind's transform runs
 in the consuming app's Metro pipeline, so a precompiled build would arrive after
 that transform with its classNames already dead.
+
+## The registry
+
+`packages/cli` derives a registry from this package's source — one item per
+component folder — so the `delacour` CLI can copy components into someone
+else's repository instead of them installing this package. Nothing about that
+is maintained by hand: the files come from the folder, the dependency graph
+comes from the imports, and the CLI's `classifySource` restates the same
+conventions `scripts/gen-exports.ts` reads.
+
+Two things follow for anyone adding to this package:
+
+1. **A new component needs an entry in `packages/cli/src/registry/config.ts`.**
+   `ITEM_META` holds its title and description. The builder throws without one
+   rather than shipping an unnamed item.
+2. **A new npm import needs classifying in the same file.** `PACKAGE_INSTALL`
+   decides whether the CLI installs it with `expo install` (native modules and
+   anything bound to the SDK) or with the project's package manager. An
+   unclassified import fails the build — deliberately, because the default
+   would be the one that installs a native module at a version the SDK cannot
+   build.
+
+Then run `bun --filter delacour run registry:build` and commit `registry/`. CI
+fails if it is stale, since the registry is served straight out of the
+repository.
+
+`bun --filter delacour run verify:expo` is the check worth running before you
+believe it: it scaffolds a real Expo app, adds every item, and typechecks the
+result. A component whose imports only resolve inside this monorepo passes
+`bun test` and fails there.
+
+A component folder that follows the rules above needs nothing else. Relative
+imports crossing a folder — `../icon`, `../../lib/cn` — are rewritten to
+placeholders at build time and resolved to the consumer's own aliases at `add`
+time, so write them exactly as you would anyway.

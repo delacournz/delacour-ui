@@ -1,0 +1,167 @@
+---
+title: Setting up a project
+description: What init changes, what it leaves alone, and the three things it hands back to you.
+icon: Wrench
+---
+
+```bash
+bunx delacour@latest init
+```
+
+Two questions, both skippable with `--defaults`: where the components should live, and what your
+source directory is called. Everything else is read off the project — the package manager from the
+lockfile, the Expo SDK from `package.json`, the path aliases from `tsconfig.json`.
+
+You can add components in the same run:
+
+```bash
+bunx delacour@latest init button input field
+```
+
+## What it changes
+
+<Steps>
+<Step>
+### `native-components.json`
+
+Written next to your components. In a monorepo that is the package you ran it from — see
+[Monorepos](/docs/native/cli/monorepo).
+</Step>
+
+<Step>
+### `metro.config.js`
+
+Wrapped with Uniwind's config, **outermost**:
+
+```js title="metro.config.js"
+const { withUniwindConfig } = require("uniwind/metro");
+const { getDefaultConfig } = require("expo/metro-config");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: "./src/styles/global.css",
+  dtsFile: "./src/uniwind-types.d.ts",
+});
+```
+
+If there is no Metro config, one is written. If the export is not a shape the CLI can rewrite
+safely, it prints the snippet and asks you to add it rather than guessing at an unfamiliar file.
+
+<Callout type="warn" title="Outermost is load-bearing">
+`withUniwindConfig` installs the transformer that compiles `className` into styles. A wrapper
+applied **after** it can replace `config.transformer`, and every component then renders unstyled
+with nothing logged. `delacour doctor` checks the ordering, not just the presence.
+</Callout>
+</Step>
+
+<Step>
+### Your Tailwind entry
+
+An `@import` for the theme and one `@source` per directory holding copied code, inside a marked
+block:
+
+```css title="src/styles/global.css"
+@import "tailwindcss";
+@import "uniwind";
+
+@source "../**/*.{ts,tsx}";
+
+/* delacour:start — managed by `delacour init`, edit outside this block */
+@import "./index.css";
+
+@source "../components/ui";
+@source "../hooks";
+@source "../lib";
+/* delacour:end */
+```
+
+Anything you write outside the markers is left alone, and re-running `init` replaces the block
+rather than appending a second one.
+</Step>
+
+<Step>
+### The theme
+
+`init` adds the `styles` item — `tokens.css`, `theme.css`, `base.css` and the `uniwind-env.d.ts`
+type shim — and installs `tailwindcss` and `uniwind`.
+</Step>
+</Steps>
+
+## What it does not change
+
+`tsconfig.json` and `app.config.ts` are **read, never written**.
+
+For `tsconfig.json` that is a deliberate trade. The CLI looks for a wildcard alias like
+`"@/*": ["./src/*"]` and, if it finds one, records the matching alias per directory. If it finds
+none, imports are written as relative paths instead — which Metro resolves whether or not
+`experiments.tsconfigPaths` is on. Creating an alias you did not ask for is a larger change than
+the imports it saves, and in a monorepo the same alias often already means something else.
+
+## The three things left for you
+
+`init` prints these, and `delacour doctor` checks all of them afterwards.
+
+### Import the CSS entry
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+```
+
+First statement of the root layout. `withUniwindConfig`'s `cssEntryFile` names the file for the
+transformer; it does not put it in the bundle. Skip this and the app builds, boots and renders
+every component **completely unstyled**, with nothing logged.
+
+### Mount the provider
+
+Every pressable in the library is a Gesture Handler detector, and a detector outside a
+`GestureHandlerRootView` never receives a touch. Nothing throws — the button just does not respond.
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+import { DelacourProvider } from "@/components/ui/provider";
+
+export default function RootLayout() {
+  return <DelacourProvider>{children}</DelacourProvider>;
+}
+```
+
+`delacour add provider` gets you that component; see
+[Provider](/docs/native/getting-started/provider) for what each of its layers is doing.
+
+### Turn on `tsconfigPaths` — only if you use aliases
+
+```ts title="app.config.ts"
+experiments: {
+  tsconfigPaths: true,
+}
+```
+
+Metro does not read `tsconfig` path mappings without it, so `@/components/ui/button` fails to
+resolve. If `native-components.json` has an empty `aliases` object, your imports are relative and this does
+not apply.
+
+### Rebuild after a native module lands
+
+`add` tells you when it installed one. A JavaScript reload will not pick it up — the module is not
+in the binary yet.
+
+```bash
+npx expo run:ios     # or run:android
+```
+
+## Verify
+
+```bash
+bunx delacour add button
+bunx delacour doctor
+```
+
+```tsx
+import { Button } from "@/components/ui/button";
+
+<Button onPress={() => console.log("pressed")}>Press me</Button>;
+```
+
+A string child is wrapped in a `Button.Label` for you. If the button renders but does not respond,
+the provider is missing above it.

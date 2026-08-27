@@ -4,8 +4,9 @@ A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/doc
 library namespaced at `/docs/native/*` so a second library can be added later without a URL
 migration.
 
-Documents `@delacour/native-ui`. It does **not** import or render its components — see
-**Why there are no live previews**.
+Documents `@delacour/native-ui` and the `delacour` CLI that copies its components into a
+consumer's repository. It does **not** import or render those components — see **Why there are no
+live previews**.
 
 ## Stack
 
@@ -31,6 +32,7 @@ content/docs/native/
 ├── meta.json              the /docs/native namespace
 ├── getting-started/       root folder → navbar tab
 ├── components/            root folder → navbar tab
+├── cli/                   root folder → navbar tab
 └── releases/              root folder → navbar tab
 
 src/
@@ -68,6 +70,16 @@ The page slots must come from the **matching** package: `fumadocs-ui/layouts/not
 3. Sidebar section headings are separators — `"---Section Name---"` entries in `pages`.
 4. Frontmatter takes `title`, `description` and `icon` (any Lucide name — resolved by
    `lucideIconsPlugin()` in `src/lib/source.ts`).
+
+### A CLI page
+
+`content/docs/native/cli/` documents `packages/cli`, not the library. It is a root folder of the
+**native** namespace rather than a `/docs/cli` namespace of its own, because the CLI is how this
+library is delivered rather than a second library — and `src/lib/layout.shared.tsx` only links
+into `native`, so a top-level namespace would render but be unreachable from the nav.
+
+Command flags are transcribed from `delacour <command> --help`. When one changes, that output is
+the source of truth; nothing checks the pages against it.
 
 ### A component page
 
@@ -131,6 +143,22 @@ Turn it back on only alongside a static host, and expect to debug the crawler.
 the same way `apps/playground` does for `src/app/**`. `src/routeTree.gen.ts` is generated,
 gitignored, and excluded from Biome.
 
+### `typecheck` depends on `codegen`, and must keep doing so
+
+`tsc` cannot check this app until `src/routeTree.gen.ts` exists, and that file is written by the
+TanStack Start Vite plugin during `buildStart` — so on a clean checkout it is absent and **every
+route fails to typecheck**. `turbo.jsonc` therefore gives `@delacour/web#typecheck` an edge to
+`@delacour/web#codegen`, which is `vite build`.
+
+Do not remove that edge as redundant because the file happens to be on your disk: it is there
+because you ran `dev` or `build` at some point, and CI never has. It costs about two seconds of
+wall clock, since turbo runs it alongside the other packages' typechecks.
+
+`@tanstack/router-generator`'s `Generator` is **not** a lighter substitute. It writes the route
+tree but omits the `declare module "@tanstack/react-start"` block carrying `Register`, which is
+what gives the routes their types — without it every `createFileRoute("/docs/$")` fails with
+*Argument of type '"/docs/$"' is not assignable to parameter of type 'undefined'*.
+
 ### `react` and `react-dom` come from the catalog
 
 Both are `"catalog:"` (19.2.3), pinned alongside React Native's copy. `bunfig.toml` sets
@@ -143,11 +171,13 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   Screen, BottomSheet and DelacourProvider — have no captured demos yet, so their cards on the
   components index show a placeholder. `apps/playground/src/demos/demos.test.ts` fails by name for
   a library component with no demo, so that list stays honest on its own.
-- Seven pages carry a **"prop tables in progress"** callout: they have previews and a summary, and
-  still want a hand-written `<TypeTable>`. Five carry the older **"reference docs in progress"**
-  callout, meaning they have neither previews nor examples yet. Both shrink as coverage lands —
-  and the wording is worth keeping accurate, because a callout that over-reports what is missing
-  is worse than no callout.
+- **Every component page now carries a hand-written `<TypeTable>`.** The "prop tables in progress"
+  and "reference docs in progress" callouts are gone; do not reintroduce one without the gap it
+  names being real, because a callout that over-reports what is missing is worse than none.
+  Source props from the component's own file — `ButtonProps` is in `button.tsx`, not in
+  `*.types.ts`, which holds only shapes shared by two or more modules. Where a shape *is* shared
+  (`ScreenInsetProps`, `ScreenPlacementProps`, `ScreenScrollableProps`), document it once and let
+  the part tables stay short.
 - Component prose lives per component at `packages/native-ui/src/components/<name>/AGENTS.md`,
   indexed from the package's own `AGENTS.md`. `src/docs.test.ts` fails the build on a component
   missing either, so that index is a reliable place to start when writing a page here.

@@ -1,0 +1,59 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "spinner",
+	"type": "registry:ui",
+	"title": "Spinner",
+	"description": "An animated loading indicator drawn on the icon scale.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "files/ui/spinner/AGENTS.md",
+			"target": "spinner/AGENTS.md",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/index.ts",
+			"target": "spinner/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/spinner-arc.tsx",
+			"target": "spinner/spinner-arc.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/spinner-content.tsx",
+			"target": "spinner/spinner-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/spinner.context.tsx",
+			"target": "spinner/spinner.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/spinner.tsx",
+			"target": "spinner/spinner.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "files/ui/spinner/spinner.variants.ts",
+			"target": "spinner/spinner.variants.ts",
+			"namespace": "ui"
+		}
+	]
+}

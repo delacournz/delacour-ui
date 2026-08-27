@@ -135,10 +135,11 @@ with Xcode. Its outputs are committed so the site builds on a simulator-less run
 | pre-commit | `scripts/pre-commit-biome.ts` — Biome `check --write` on staged files, re-staging anything it fixed |
 | pre-push | `bun run typecheck` across every workspace |
 
-`typecheck` depends on `build` in `turbo.jsonc`, which is what makes the pre-push hook usable at
-all: TanStack Router generates the gitignored `apps/web/src/routeTree.gen.ts` during `vite build`,
-so on a fresh clone `tsc` used to fail with a wall of `Property '_splat' does not exist on type
-'never'` before anything had been built.
+`@delacour/web#typecheck` depends on `@delacour/web#codegen` in `turbo.jsonc`, which is what
+makes the pre-push hook usable at all: TanStack Router generates the gitignored
+`apps/web/src/routeTree.gen.ts` during `vite build`, so on a fresh clone `tsc` used to fail with a
+wall of `Property '_splat' does not exist on type 'never'` before anything had been built. The edge
+is scoped to `apps/web` on purpose — no other workspace needs a build to typecheck.
 
 A commit can therefore rewrite its own staged files. If a commit fails, the fix
 is usually already applied and staged — re-read the diff before changing

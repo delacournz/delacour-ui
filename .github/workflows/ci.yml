@@ -46,8 +46,9 @@ jobs:
           # Matches `packageManager` in package.json — Railpack reads the same field to pick Bun.
           bun-version: 1.3.9
       - run: bun install --frozen-lockfile
-      # `turbo typecheck` depends on `build` (see turbo.jsonc): TanStack Router generates the
-      # gitignored `apps/web/src/routeTree.gen.ts` during the build, and tsc cannot run without it.
+      # `@delacour/web#typecheck` depends on `@delacour/web#codegen` (see turbo.jsonc): TanStack
+      # Router generates the gitignored `apps/web/src/routeTree.gen.ts` during that build, and tsc
+      # cannot run without it.
       - run: bun run typecheck
 
   check:

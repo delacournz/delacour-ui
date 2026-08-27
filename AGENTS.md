@@ -42,6 +42,45 @@ machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENT
 Turbo caching is **off** for every task but `build` (`cache: false` in
 `turbo.jsonc`), so a run always reflects the tree as it is now.
 
+## Branches
+
+Nothing lands on `main` by pushing to it. The repository ruleset in `.github/rulesets/main.json`
+blocks force-pushes and deletion, requires linear history, and requires a pull request whose four
+CI checks are green, whose review threads are resolved, and whose branch is up to date with `main`.
+Squash is the only merge method.
+
+Approvals are **not** required — a sole maintainer cannot approve their own pull request — so the
+gate is CI plus resolved conversations. A worktree is therefore a feature branch: opening a pull
+request is the only way in. Repository admins can bypass in an emergency, and the audit log records
+it when they do.
+
+Because the branch must be up to date, `gh pr merge --auto` waits on a stale branch rather than
+rebasing it. Press **Update branch**, or rebase, to clear it.
+
+GitHub does not apply the ruleset from that file; the file is the reproducible copy of what was
+applied. To change protection, edit the JSON, apply it, and commit both in the same change:
+
+```bash
+REPO=delacournz/delacour-ui
+ID=$(gh api "repos/$REPO/rulesets" --jq '.[] | select(.name=="main-protected") | .id')
+gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.json
+```
+
+## CI
+
+`.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
+`main` and `develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+
+All four are required status checks on `main`, which makes the job `name:` values an API contract:
+they appear verbatim in `.github/rulesets/main.json` and GitHub matches them by string. Rename a job
+without updating that file and every pull request blocks forever on a check that never reports.
+
+For the same reason the workflow carries no `paths:` filter and no draft skip. A check that is
+skipped is not a check that passed — it is a pull request that can never be merged.
+
+Socket Security posts two further checks. They stay advisory on purpose: requiring a third-party app
+would couple the merge gate to a vendor's uptime.
+
 ## Dependency versions
 
 Shared native and React versions are pinned once, in the root `package.json`
@@ -138,8 +177,7 @@ explanation goes in the component's doc comment or above the `return`.
 
 `✨ feat` · `🐛 fix` · `🔧 chore` · `📝 docs` · `🎨 style` · `♻️ refactor` ·
 `✅ test` · `🚧 wip` · `👽️ types`. Commit messages end at their last real line —
-no trailers. Work lands on `main` directly; a worktree is for when another
-session shares the tree, not a feature branch.
+no trailers. Nothing lands on `main` by pushing to it — see [Branches](#branches).
 
 **Documentation is part of the change.** `native-ui`'s docs are updated in the
 same commit as the code, and `bun test` fails by name for a component folder with

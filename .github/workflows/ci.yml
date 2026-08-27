@@ -5,6 +5,11 @@ name: CI
 # workflow is green.
 # A workflow that never runs on a branch means deploys from that branch wait forever; a workflow
 # that passes vacuously means a broken docs site ships. Keep both branches listed below.
+#
+# The four job `name:` values are also an API contract, not labels. They are listed verbatim as
+# required status checks in `.github/rulesets/main.json`, and GitHub matches them by string.
+# Rename a job without updating that file and every pull request into `main` blocks forever on a
+# check that will never report.
 
 on:
   push:
@@ -12,14 +17,28 @@ on:
   pull_request:
   workflow_dispatch:
 
+# No `paths:` filter, deliberately. A required check that is skipped is not a check that passed —
+# it is a pull request that can never be merged.
+
+permissions:
+  contents: read
+
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Pull requests only. Cancelling a push to main or develop reports `cancelled`, which is not
+  # success, and Railway would hold that deploy indefinitely.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  TURBO_TELEMETRY_DISABLED: 1
 
 jobs:
   typecheck:
     name: typecheck
     runs-on: ubuntu-latest
+    # No job here has ever taken more than a minute. The default is 360, which on a private repo
+    # bills six hours against the plan's minutes if a runner ever wedges.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -34,6 +53,7 @@ jobs:
   check:
     name: check (lint + format)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -45,6 +65,7 @@ jobs:
   test:
     name: test
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -56,6 +77,7 @@ jobs:
   build:
     name: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
@@ -64,6 +86,10 @@ jobs:
       - run: bun install --frozen-lockfile
       # Scoped to the docs site on purpose. This is the only thing Railway deploys, and an
       # unfiltered `turbo build` would drag in the Expo playground for no benefit.
+      #
+      # This repeats the vite build the typecheck job already triggers. That is fifteen seconds,
+      # and it buys an independent proof that the docs site builds on its own — which is the exact
+      # command Railway runs.
       #
       # Never add `bun run previews` here. It drives an iOS simulator and needs a Mac with Xcode;
       # its outputs (apps/web/public/previews/**, apps/web/src/previews/manifest.ts) are committed

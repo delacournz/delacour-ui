@@ -29,14 +29,20 @@ function screen(config: ResolvedConfig): string {
 	const pkg = config.package?.name;
 	const ui = pkg ?? aliases.ui ?? "./components/ui";
 	const lib = pkg ? `${pkg}/lib` : (aliases.lib ?? "./lib");
-	const styles = pkg ? `${pkg}/styles` : (aliases.styles ?? "./styles");
+
+	// The CSS entry is the **app's**, in both layouts. `init` writes it into the
+	// app, and it is that file which carries the `@import` of the package's theme
+	// and the `@source` globs Tailwind scans. Importing the package's stylesheet
+	// instead leaves the app's own entry unimported — every class dropped, and
+	// nothing logged anywhere.
+	const styles = aliases.styles ?? "./styles";
 
 	// First statement, and load-bearing. `withUniwindConfig`'s `cssEntryFile`
 	// tells the transformer what to compile; it does not put the CSS in the
 	// bundle. Without this import the app boots and renders every component
 	// completely unstyled, with nothing logged — which is what the first
 	// simulator run of this script actually did, and why `doctor` now checks it.
-	return `import "${pkg ? styles : `${styles}/global.css`}";
+	return `import "${styles}/global.css";
 
 import { ScrollView, View } from "react-native";
 

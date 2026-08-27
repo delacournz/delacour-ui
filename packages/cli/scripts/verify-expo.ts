@@ -217,6 +217,7 @@ try {
 		const result = await check.run({
 			appDir: workspace.appRoot,
 			configDir: workspace.configRoot,
+			workspaceRoot: workspace.installRoot,
 			registryDir: options.registry,
 			only: options.only,
 			reporter,

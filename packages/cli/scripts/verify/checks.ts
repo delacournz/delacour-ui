@@ -22,6 +22,8 @@ export type CheckContext = {
 	appDir: string;
 	/** Where the config and the components are — the same as `appDir` unless they are in a package. */
 	configDir: string;
+	/** The project's outermost directory. Bounds the module walk. */
+	workspaceRoot: string;
 	registryDir: string;
 	/** The items requested, or `null` for `--all`. */
 	only: string[] | null;
@@ -158,7 +160,6 @@ export const CHECKS: Check[] = [
 		needsInstall: true,
 		async run(context) {
 			const config = await readConfig(join(context.configDir, CONFIG_FILENAME));
-			const modules = join(context.appDir, "node_modules");
 			const problems = new Set<string>();
 
 			// An aliased import looks exactly like a scoped package: `@/lib/cn`
@@ -175,7 +176,7 @@ export const CHECKS: Check[] = [
 					if (aliases.some((alias) => specifier === alias || specifier.startsWith(`${alias}/`))) continue;
 
 					const name = packageName(specifier);
-					if (!existsSync(join(modules, name))) problems.add(`${name} — imported by ${display}`);
+					if (!isInstalled(name, context)) problems.add(`${name} — imported by ${display}`);
 				}
 			}
 
@@ -269,6 +270,30 @@ export async function standaloneItems(registryDir: string, _appDir: string): Pro
 	}
 
 	return index.items.filter((item) => !reached.has(item.name)).map((item) => item.name);
+}
+
+/**
+ * Whether a package is resolvable from the app, the way Node resolves it.
+ *
+ * Walks up through each `node_modules`, because a hoisted workspace installs to
+ * the root rather than to the app — checking only the app's own directory
+ * reports every shared dependency missing.
+ *
+ * **Bounded at the project root**, and that bound is load-bearing: the scaffold
+ * lives inside this repository, so an unbounded walk would find this repo's own
+ * `node_modules` and pass for a package the project never installed.
+ */
+function isInstalled(name: string, context: CheckContext): boolean {
+	let directory = context.appDir;
+
+	while (true) {
+		if (existsSync(join(directory, "node_modules", name))) return true;
+		if (directory === context.workspaceRoot) return false;
+
+		const parent = dirname(directory);
+		if (parent === directory) return false;
+		directory = parent;
+	}
 }
 
 type CopiedFile = { path: string; display: string; content: string };

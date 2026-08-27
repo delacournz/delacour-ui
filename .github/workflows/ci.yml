@@ -32,14 +32,25 @@ jobs:
 
       # Offline and fast: scaffolds an app, runs the CLI, and checks the shape
       # of what came out. The full run installs from npm and lives in its own job.
-      - name: Verify the CLI produces a valid app (structure only)
+      # Both layouts: components in the app, and components in a shared package
+      # several apps could use. The second has wiring the first does not — a
+      # workspace link, an exports map, Metro's resolver — and none of it is
+      # exercised by the first.
+      - name: Verify both layouts (structure only)
         working-directory: packages/cli
-        run: bun run verify:expo --no-install
+        run: |
+          bun run verify:expo --no-install
+          bun run verify:expo --no-install --layout monorepo
 
   verify-expo:
-    name: CLI against a real Expo app
+    name: CLI against a real Expo app (${{ matrix.layout }})
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        layout: [standalone, monorepo]
 
     steps:
       - uses: actions/checkout@v4
@@ -59,4 +70,4 @@ jobs:
       # dropped from the build silently, and tsc cannot see that at all.
       - name: Scaffold, install, typecheck and bundle
         working-directory: packages/cli
-        run: bun run verify:expo --bundle
+        run: bun run verify:expo --bundle --layout ${{ matrix.layout }}

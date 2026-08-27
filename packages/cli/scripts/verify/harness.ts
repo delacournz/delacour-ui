@@ -61,25 +61,6 @@ const APP_JSON = {
 	},
 };
 
-/**
- * Pins for a workspace app, mirroring `apps/playground/tsconfig.json`.
- *
- * Bun materialises a second copy of these under the app while the workspace root
- * holds another, and TypeScript treats the two paths as different modules — so
- * Uniwind's `className` augmentation, applied to the root copy, never reaches
- * components resolved from the nested one. The symptom is a wall of Reanimated
- * "not assignable to IntrinsicAttributes" errors that names neither cause.
- *
- * Metro needs the same thing through `extraNodeModules`, which `init` writes;
- * `tsc` does not read Metro's config, so it needs this separately.
- */
-const WORKSPACE_TYPE_PINS = {
-	react: ["../../node_modules/react"],
-	"react-native": ["../../node_modules/react-native"],
-	"react-native/*": ["../../node_modules/react-native/*"],
-	"react-native-reanimated": ["../../node_modules/react-native-reanimated"],
-};
-
 const TSCONFIG = {
 	extends: "expo/tsconfig.base",
 	compilerOptions: {
@@ -203,6 +184,23 @@ export async function resetVerifyDir(dir: string, options: { fresh?: boolean }):
 	}
 }
 
+/**
+ * A Bun workspace has to install flat for React Native tooling to work.
+ *
+ * Bun's default isolated layout hides packages under `node_modules/.bun/…` and
+ * links to them. Metro walks `node_modules` directories and cannot see through
+ * that, and TypeScript resolves the linked copy to a different realpath than the
+ * app's — so `ComponentRef<typeof Animated.View>` collapses to `never` and every
+ * `ref` in the library fails to typecheck.
+ *
+ * The repository root carries this same file, for the same reason.
+ */
+const BUNFIG = `[install]
+# React Native tooling expects a flat node_modules; Bun's default isolated
+# layout hides packages under node_modules/.bun where Metro cannot follow.
+linker = "hoisted"
+`;
+
 /** The workspace root of a monorepo scaffold — everything else hangs off it. */
 const ROOT_PACKAGE_JSON = {
 	name: "delacour-verify-workspace",
@@ -224,9 +222,10 @@ export async function scaffoldWorkspace(
 
 	await mkdir(dir, { recursive: true });
 	await writeFile(join(dir, "package.json"), `${JSON.stringify(ROOT_PACKAGE_JSON, null, "\t")}\n`, "utf-8");
+	await writeFile(join(dir, "bunfig.toml"), BUNFIG, "utf-8");
 
 	// The app is scaffolded whole; `packages/ui` is left absent on purpose.
-	await scaffoldExpoApp(appRoot, { ...options, install: false, typePins: WORKSPACE_TYPE_PINS });
+	await scaffoldExpoApp(appRoot, { ...options, install: false });
 
 	if (options.install) {
 		await run("bun", ["install"], { cwd: dir, reporter: options.reporter, label: "bun install" });

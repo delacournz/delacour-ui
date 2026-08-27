@@ -114,7 +114,7 @@ describe("a shared package in a monorepo", () => {
 	beforeAll(async () => {
 		root = await scaffold("expo-monorepo");
 		packageRoot = join(root, "packages/ui");
-		await init(["separator"], { ...SHARED, cwd: packageRoot });
+		await init(["separator"], { ...SHARED, cwd: root, packageName: "@fixture/ui", packagePath: "packages/ui" });
 	});
 
 	test("writes the config beside the components, pointing back at the app", async () => {
@@ -146,6 +146,59 @@ describe("a shared package in a monorepo", () => {
 
 		expect(css).toContain("../../../../packages/ui/src/components/ui");
 		expect(css).not.toContain("node_modules");
+	});
+
+	test("creates a package the app can actually import from", async () => {
+		const pkg = JSON.parse(await read(packageRoot, "package.json")) as {
+			name: string;
+			exports: Record<string, string>;
+			dependencies?: Record<string, string>;
+			peerDependencies?: Record<string, string>;
+		};
+
+		expect(pkg.name).toBe("@fixture/ui");
+		expect(pkg.exports["./separator"]).toBe("./src/components/ui/separator/index.ts");
+		// A root barrel would make every app resolve every optional peer.
+		expect(pkg.exports["."]).toBeUndefined();
+		// Native modules are peers, never dependencies: two copies register twice.
+		expect(pkg.dependencies).toBeUndefined();
+		expect(Object.keys(pkg.peerDependencies ?? {})).toContain("tailwind-variants");
+	});
+
+	test("adds itself to the app's dependencies", async () => {
+		const app = JSON.parse(await read(root, "apps/mobile/package.json")) as {
+			dependencies?: Record<string, string>;
+		};
+
+		expect(app.dependencies?.["@fixture/ui"]).toBe("workspace:*");
+	});
+
+	test("wires Metro to resolve across the workspace", async () => {
+		const metro = await read(root, "apps/mobile/metro.config.js");
+
+		expect(metro).toContain("config.watchFolders = [workspaceRoot];");
+		expect(metro).toContain("config.resolver.disableHierarchicalLookup = true;");
+		// The Uniwind wrapper has to stay outermost, after the resolver block.
+		expect(metro.indexOf("extraNodeModules")).toBeLessThan(metro.indexOf("withUniwindConfig(config"));
+	});
+
+	/**
+	 * The augmentation is one triple-slash reference, so it is loadable only from
+	 * inside the app's own `tsconfig` include — a copy in the package never joins
+	 * the app's program, and every `className` becomes a type error.
+	 */
+	test("gives the app the Uniwind type augmentation, not just the package", async () => {
+		await expect(exists(root, "apps/mobile/uniwind-env.d.ts")).resolves.toBe(true);
+		expect(await read(root, "apps/mobile/uniwind-env.d.ts")).toContain('reference types="uniwind/types"');
+	});
+
+	test("extends the exports map on a second add rather than replacing it", async () => {
+		await add(["badge"], { ...SHARED, cwd: packageRoot });
+
+		const pkg = JSON.parse(await read(packageRoot, "package.json")) as { exports: Record<string, string> };
+
+		expect(pkg.exports["./separator"]).toBeDefined();
+		expect(pkg.exports["./badge"]).toBe("./src/components/ui/badge/index.ts");
 	});
 
 	test("falls back to relative imports when the package has no path aliases", async () => {

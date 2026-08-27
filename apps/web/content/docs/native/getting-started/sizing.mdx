@@ -36,12 +36,10 @@ becoming a transcript of it.
 
 ## An icon's size is a class that drives a prop
 
-`CentralIconBase` spreads its props onto `<Svg>` *before* setting its own `width`/`height` from
-`size`, and `react-native-svg` then merges `{...style, ...props}` with props winning. A `size-4`
-that resolved to `style.width` is overridden every single time.
-
-So `Icon` runs the class through `withUniwind` in manual mode to recover the width, and hands that
-number to the glyph. The indirection is forced, not stylistic.
+`react-native-svg` lets a glyph's own `width`/`height` win over any style, so a `size-*` that
+resolved to `style.width` would be overridden every time. `Icon` recovers the width from the class
+and hands it to the glyph as a number instead — which is why both spellings work, and why they
+resolve in the order below.
 
 ### Precedence, weakest first
 
@@ -56,8 +54,3 @@ entirely, which is what makes "inherited class plus caller-supplied number" reso
 | the caller's `className` | last in the chain |
 | a numeric `size={18}` | **bypasses the chain** — the manual mapping is skipped when the target prop is already defined |
 
-## Adding a token means editing two files
-
-Put the value in `tokens.css` and the name in `src/styles/tokens.ts`. Miss the second and
-tailwind-merge stops recognising the utility, so a caller's override quietly stops working.
-`tokens.test.ts` asserts the two lists match and reads the CSS to check the scale still ascends.

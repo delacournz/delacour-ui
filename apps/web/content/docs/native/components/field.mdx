@@ -4,11 +4,17 @@ description: A form field's layout, and the one place its state is written down.
 icon: SquarePen
 ---
 
+<Preview id="field/anatomy/all-four" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="field" />
+
+## Usage
+
 ```tsx
 import { Field } from "@delacour/native-ui/field";
 ```
-
-<Preview id="field/anatomy/all-four" />
 
 ```tsx
 <Field>
@@ -18,11 +24,11 @@ import { Field } from "@delacour/native-ui/field";
 </Field>
 ```
 
-## The state cascade
-
-<Preview id="field/states/one-flag-three-things" />
+## States
 
 `isInvalid` and `isDisabled` live on the `Field` and reach the control inside it.
+
+<Preview id="field/states/one-flag-three-things" />
 
 ```tsx
 <Field isInvalid>
@@ -35,22 +41,12 @@ import { Field } from "@delacour/native-ui/field";
 The label turns danger, and so does the `Input` — with nothing said on the input itself. A control
 opts out explicitly: `<Input isInvalid={false} />`.
 
-<Callout title="Why this is a context and not a selector">
-On the web, shadcn does this with `group-data-[invalid=true]/field:` — a parent-scoped selector.
-Uniwind has no equivalent: its compiler reads `data-*` off a **single flat selector**, and its
-runtime matches them against props on the component **carrying the class**. So no class on a
-`Field` can reach the `Input` inside it. There is no `group-*`, no `peer-*`, no `:has()`.
-</Callout>
+## Orientation
 
-A data-attribute class would also leave `bun test` behind. Even for a part styling itself,
-`data-invalid:text-danger` moves the decision into Uniwind's runtime matcher where no unit test
-can see it. The parts style themselves from `tv()` booleans; the context is only for crossing a
-component boundary.
+Use `orientation` to stack the label over the control or put them side by side, with
+`Field.Content` grouping a label and its description as one block.
 
-## The whole row drives the control
-
-Once a control inside offers a press, the field becomes a `Pressable` with `feedback="none"` and
-the whole row calls it.
+<Preview id="field/orientation/horizontal-with-a-description" />
 
 ```tsx
 <Field orientation="horizontal">
@@ -58,31 +54,16 @@ the whole row calls it.
     <Field.Label>Accept the terms</Field.Label>
     <Field.Description>You can withdraw consent at any time.</Field.Description>
   </Field.Content>
-  <Checkbox checked={accepted} onCheckedChange={setAccepted} />
+  <Checkbox isChecked={accepted} onCheckedChange={setAccepted} />
 </Field>
 ```
 
-Tapping the label — or the description under it — ticks the checkbox. A checkbox in a form is a
-small square next to a sentence, and the sentence is what people aim at.
-
-A field of static text registers nothing and stays a `View`. Mounting a gesture detector regardless
-would put one under every label in a form. The row is `accessible={false}` so the control stays
-the element a screen reader sees, and the inner detector claims a tap on the box itself rather
-than firing both.
-
-## Orientation
-
-<Preview id="field/orientation/horizontal-with-a-description" />
-
-```tsx
-<Field orientation="vertical">…</Field>
-<Field orientation="horizontal">…</Field>
-```
-
-`vertical` stacks the label over the control. `horizontal` puts them side by side — use
-`Field.Content` to group the label with its description as one block.
+Once a control inside offers a press, the field becomes a `Pressable` and the whole row drives it —
+tapping the label, or the description under it, ticks the checkbox.
 
 ## Sets and groups
+
+Use `Field.Set` for a named section of a form and `Field.Group` for the fields under it.
 
 <Preview id="field/grouping/set-and-legend" />
 
@@ -94,11 +75,11 @@ than firing both.
   <Field.Group>
     <Field orientation="horizontal">
       <Field.Label>Email</Field.Label>
-      <Checkbox checked={email} onCheckedChange={setEmail} />
+      <Checkbox isChecked={email} onCheckedChange={setEmail} />
     </Field>
     <Field orientation="horizontal">
       <Field.Label>Push</Field.Label>
-      <Checkbox checked={push} onCheckedChange={setPush} />
+      <Checkbox isChecked={push} onCheckedChange={setPush} />
     </Field>
   </Field.Group>
 </Field.Set>
@@ -107,19 +88,9 @@ than firing both.
 `Field.Legend` takes `variant="label"` for a nested set, so it matches the fields under it rather
 than titling them.
 
-<Callout title="The gap ladder is the component">
-`content` 0.5 → `root` 1.5 → `set` 4 → `group` 5. A label attaches to the control beneath it
-rather than the one above purely because the gap inside a field is tighter than the gap between
-two, and nothing else is doing that work. The test pins the **ordering**, not the numbers.
-</Callout>
-
-`Field.Group` inserts no dividers, unlike `ListGroup`. A list of rows without lines is a wall of
-text; fields are already held apart by whitespace, and a rule between every one is noise.
-
-**A set holds no state.** `isInvalid` and `isDisabled` live on each `Field`, because a whole
-section turning danger says less than the one field that is actually wrong.
-
 ## Separators
+
+A labelled separator draws two rules with the label between them.
 
 <Preview id="field/grouping/separator" />
 
@@ -128,30 +99,18 @@ section turning danger says less than the one field that is actually wrong.
 <Field.Separator>or</Field.Separator>
 ```
 
-A labelled separator draws **two** rules with the label between them, not one rule with the label
-on top. The web version absolutely-positions a single rule and punches a hole in it with an opaque
-`bg-background` label — invisible only while the separator sits on exactly that colour. On a card
-or a sheet the hole shows as a block of the wrong shade. Two rules assume nothing about what is
-behind them.
-
 ## Errors
+
+`Field.Error` renders nothing when it has no children, so the line removes itself once the value is
+fixed.
 
 ```tsx
 <Field.Error>{error}</Field.Error>
 ```
 
-`Field.Error` renders nothing when it has no children, so the line removes itself once the value is
-fixed.
-
-It is deliberately **not** gated on `isInvalid`: a part that swallowed children you actually
-wrote, because of a prop on a sibling, would be a part whose absence is unexplainable from the call
-site.
-
-Only the label fades when disabled. The control dims itself, and a dimmed description stacked on a
-dimmed control reads as two problems rather than one state. The description stays muted when
-invalid too, so an appearing `Field.Error` is the one line that changed.
-
 ## Reading the field's state
+
+Use `useField()` to read the field from a control inside it, without prop drilling.
 
 ```tsx
 import { useField, useFieldContext } from "@delacour/native-ui/field";
@@ -162,7 +121,9 @@ const { isInvalid, isDisabled, orientation } = useField();
 `useField()` throws outside a `<Field>`. Use `useFieldContext()` where the field is optional — as
 every control does.
 
-## Anatomy
+## API Reference
+
+### Anatomy
 
 <TypeTable
   type={{
@@ -205,9 +166,7 @@ every control does.
   }}
 />
 
-## API
-
-### `FieldProps`
+### FieldProps
 
 React Native's `ViewProps`, plus:
 
@@ -232,12 +191,12 @@ React Native's `ViewProps`, plus:
   }}
 />
 
-### `FieldTextProps`
+### FieldTextProps
 
 `TextProps` with `variant` omitted — each part already is one, and naming a second would let a
 caller turn a description into a heading and lose the type scale the component exists to keep.
 
-### `FieldLegendProps`
+### FieldLegendProps
 
 `FieldTextProps`, plus:
 
@@ -251,7 +210,7 @@ caller turn a description into a heading and lose the type scale the component e
   }}
 />
 
-### `useField()`
+### useField()
 
 <TypeTable
   type={{
@@ -266,21 +225,7 @@ caller turn a description into a heading and lose the type scale the component e
   }}
 />
 
-## What it deliberately does not have
-
-**No `Field.Title`.** On the web it exists because a `<div>` is not a `<label>` — label-styled text
-with nothing to point `htmlFor` at. React Native has neither element nor association, so it and
-`Field.Label` would render the same `Text`.
-
-**No `errors` array prop.** shadcn's exists to accept react-hook-form and Standard Schema shapes,
-and this package takes no form dependency.
-
-**No type scale in the slots.** The text parts render the `Text` presets and pass a *colour*, never
-a scale. A `text-sm font-medium` written into a slot here would be a second definition of
-`Text.Label` that could drift from it — the same reason `Input` ships no label part at all. A test
-asserts the text slots carry no size, weight or colour.
-
-## Exported constants
+### Exports
 
 ```tsx
 import {

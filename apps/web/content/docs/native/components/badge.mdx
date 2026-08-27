@@ -4,39 +4,95 @@ description: A compact label for status, category or count.
 icon: Tag
 ---
 
+<Preview id="badge/variants-and-colours" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="badge" />
+
+## Usage
+
 ```tsx
 import { Badge } from "@delacour/native-ui/badge";
 ```
-
-<Preview id="badge/variants-and-colours" />
 
 ```tsx
 <Badge color="success">Active</Badge>
 ```
 
-## Two axes, not one
+## Variants and colours
 
-`variant` says how the surface is painted — `solid`, `soft`, `outline`, `ghost`. `color` says what
-it means — `default`, `primary`, `success`, `warning`, `danger`, `info`. **Sizes:** `sm`, `md`, `lg`.
+`variant` says how the surface is painted; `color` says what it means.
 
-`Button` collapses the two into a single enum and a badge deliberately does not: six semantic
-colours are the point of this component rather than an afterthought, and one axis would need
-thirteen names to say what two say with ten.
+<Preview id="badge/variants-and-colours" />
 
-Neither axis paints a surface alone, so all twenty-four pairings live in `compoundVariants`. A test
-asserts every cell is distinct — two cells collapsing means a caller can set an axis and see
-nothing change.
+```tsx
+<Badge variant="solid">Default</Badge>
+<Badge variant="soft" color="success">Active</Badge>
+<Badge variant="outline" color="warning">Pending</Badge>
+<Badge variant="ghost" color="danger">Failed</Badge>
+```
 
-## Content until given something to do
+## Sizes
+
+A size sets padding and the label's type scale, never a height, so the badge grows with OS font
+scaling instead of clipping.
+
+<Preview id="badge/sizes" />
+
+```tsx
+<Badge size="sm">Small</Badge>
+<Badge size="md">Medium</Badge>
+<Badge size="lg">Large</Badge>
+```
+
+## Icons
+
+Icons are composed, not passed as props — put an `Icon` in the children, before or after the label.
+
+<Preview id="badge/composed-icon" />
+
+```tsx
+import { Icon } from "@delacour/native-ui/icon";
+import { IconStar } from "@delacour/native-ui/icons/central";
+
+<Badge variant="soft" color="warning">
+  <Icon icon={IconStar} />
+  <Badge.Label>Premium</Badge.Label>
+</Badge>;
+```
+
+The badge publishes its icon size and its variant's foreground token to the subtree, so a bare
+`<Icon>` or `<Text>` comes out right with nothing said at the call site.
+
+## Trailing icons
+
+<Preview id="badge/trailing-icon-every-variant" />
+
+## Start and end content
+
+Use `Badge.StartContent` or `Badge.EndContent` for leading and trailing content that is not an
+`Icon`.
 
 <Preview id="badge/status-dot" />
 
-With no `onPress` and no `onLongPress` the root is a plain `View`. Mounting a `GestureDetector`
-regardless would put one under every tag in a list of fifty and announce each of them to assistive
-technology as a button with no action.
+```tsx
+<Badge variant="soft" color="success">
+  <Badge.StartContent>
+    <View className="size-1.5 rounded-full bg-success" />
+  </Badge.StartContent>
+  <Badge.Label>Online</Badge.Label>
+</Badge>
+```
 
-Supply either handler and the root becomes a `Pressable`, inheriting `feedback`, `haptic` and the
-rest; only the default differs — `scale`.
+## Pressable badges
+
+With no `onPress` and no `onLongPress` the root is a plain `View`; supply either and it becomes a
+`Pressable`.
+
+```tsx
+<Badge onPress={filterByTag}>Design</Badge>
+```
 
 ## Dismissing
 
@@ -44,37 +100,13 @@ rest; only the default differs — `scale`.
 <Badge onClose={remove}>Design</Badge>
 ```
 
-`onClose` is its own pressable — a `Badge.CloseButton` composed in at the end — so its tap is
-claimed by the inner detector and never also fires the badge's `onPress`. It presses with `fade`
-rather than the root's `scale`: a spring on a glyph that small reads as a jitter.
+`onClose` composes a `Badge.CloseButton` in at the end. Its tap is claimed by the inner detector, so
+it never also fires the badge's `onPress`. Reach for the part by hand only to place it somewhere
+other than last.
 
-Reach for the part by hand only to place it somewhere other than last.
+## API Reference
 
-## A size is padding, never a height
-
-<Preview id="badge/sizes" />
-
-`Text` respects OS font scaling, so a fixed height clips the label at a large accessibility step
-instead of growing with it. A test asserts the root carries no `h-*` at any size.
-
-<Callout type="warn">
-`self-start` is load-bearing. A badge is sized by its content, and inside a gap column every child
-is stretch-aligned by default — without it a one-word badge spans the whole screen.
-</Callout>
-
-The border is reserved on every variant, transparent until `outline` colours it — declaring it only
-where it shows would make the badge two points wider the moment a caller switched variant.
-
-## Icons and text inherit
-
-<Preview id="badge/composed-icon" />
-<Preview id="badge/trailing-icon-every-variant" />
-
-The root wraps its subtree in an `IconDefaultsProvider` and a `TextClassProvider`, so a bare
-`<Icon>` or `<Text>` inside a badge comes out at the right size and colour with nothing said at the
-call site. String children are wrapped in a `Badge.Label` automatically.
-
-## API
+### BadgeProps
 
 A badge is a `Pressable`, so `feedback`, `haptic`, `onPress` and the rest are inherited rather than
 restated — see [Pressable](/docs/native/components/pressable). `asChild`, `busy` and `disabled` are
@@ -103,18 +135,17 @@ withheld: use `isDisabled`, which the parts read through context.
   }}
 />
 
-### `Badge.Label`
+### Badge.Label
 
 The badge's text. Picks its colour and type scale from the badge's variant, colour and size.
 Extends React Native's `TextProps`.
 
 <TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
 
-### `Badge.CloseButton`
+### Badge.CloseButton
 
 The dismiss pressable. Defaults its `accessibilityLabel` to `"Remove"` and its `feedback` to
-`fade` — a badge that scaled on the close button's press would flex the whole chip. Extends
-`PressableProps`.
+`fade`. Extends `PressableProps`.
 
 <TypeTable
   type={{
@@ -124,7 +155,7 @@ The dismiss pressable. Defaults its `accessibilityLabel` to `"Remove"` and its `
   }}
 />
 
-### `Badge.StartContent` / `Badge.EndContent`
+### Badge.StartContent / Badge.EndContent
 
 Centred wrappers for leading and trailing content that is not an `Icon`. An `Icon` needs neither —
 it inherits the badge's icon size and its colour from the subtree.

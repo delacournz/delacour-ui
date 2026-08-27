@@ -49,15 +49,6 @@ merely hoped for.
 
 See [Sizing](/docs/native/getting-started/sizing).
 
-## Pure decisions live where tests can reach them
-
-`bun test` cannot render components — React Native ships Flow-typed source that Bun's transpiler
-cannot parse. So every pure decision moves into a `*.variants.ts` file free of React Native
-imports, where the whole matrix is reachable.
-
-`resolveButtonLayout`, `resolveIconSizeClass`, `resolveCheckboxFilled`, `toggleCheckedValue`,
-`footerOccupancy` — all of them are ordinary functions with ordinary tests.
-
 ## No package-wide barrel
 
 Import from the subpath. This is what lets an app skip resolving optional peers it never uses, and

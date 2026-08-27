@@ -4,6 +4,14 @@ description: The type scale, and the one component that reproduces React Native'
 icon: Type
 ---
 
+<Preview id="text/type-scale" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="text" />
+
+## Usage
+
 ```tsx
 import { Text } from "@delacour/native-ui/text";
 ```
@@ -15,36 +23,24 @@ import { Text } from "@delacour/native-ui/text";
 
 ## Presets
 
+Eight block presets, largest first, and four inline ones that emit only a delta.
+
 <Preview id="text/type-scale" />
+
 <Preview id="text/inline-presets" />
 
-Eight block presets, largest first.
-
-| Preset | Treatment | Use for |
-| --- | --- | --- |
-| `Text.Display` | 30pt bold, announced as a heading | A screen's one hero line |
-| `Text.Title` | 24pt bold, announced as a heading | A screen or card title |
-| `Text.Header` | 20pt semibold, announced as a heading | A section heading |
-| `Text.Subheader` | 18pt muted | The secondary line under a title — not a fourth heading level |
-| `Text.Paragraph` | 16pt | A block of prose. The same treatment a bare `<Text>` renders |
-| `Text.Label` | 14pt medium | A control label or compact UI string |
-| `Text.Caption` | 14pt on the muted token | Supporting copy |
-| `Text.Overline` | 12pt semibold, uppercase, muted | An eyebrow above a section |
-
-Four inline presets, which emit only a delta and inherit everything else.
-
-| Preset | Treatment |
-| --- | --- |
-| `Text.Strong` | Emphasis by weight |
-| `Text.Emphasis` | Emphasis by slant |
-| `Text.Link` | A tappable run on the `info` token. Takes `onPress` |
-| `Text.Code` | Monospaced. Padded only when it stands alone |
+<Callout type="warn" title="A nested Text.Code cannot be padded">
+A nested `<Text>` is laid out by the platform's text engine — an `NSAttributedString` run on iOS, a
+`Span` on Android — and both ignore padding, margin and border radius on an inner `<Text>`. Only the
+background survives. The pill treatment applies to the standalone case only; a code *block* is a
+`View` you wrap around it.
+</Callout>
 
 ## Inheritance
 
-<Preview id="text/nesting" />
-
 Every `Text` publishes its resolved class to its subtree, and merges the one it inherited.
+
+<Preview id="text/nesting" />
 
 ```tsx
 <Text.Paragraph>
@@ -52,37 +48,9 @@ Every `Text` publishes its resolved class to its subtree, and merges the one it 
 </Text.Paragraph>
 ```
 
-`Text.Strong` comes out at the paragraph's size and colour with only the weight changed — it emits
-a weight and nothing else.
-
-Natively a nested `<Text>` inherits the parent's *style object* and overrides only the keys it
-sets. Uniwind compiles each `className` independently, so the parent's resolved class has to be
-threaded through a context and beaten per-axis instead. The merge order, weakest first:
-
-1. `TEXT_BASE_CLASS`
-2. the inherited class
-3. this text's named axes
-4. the caller's `className`
-
-<Callout title="The correctness property">
-For every class this resolver can produce, a nested `Text` with no props of its own resolves to
-*exactly* its parent's string — at any depth. The tests assert it across the whole matrix.
-</Callout>
-
-### Anything can publish into the cascade
-
-A `Button` wraps its children in a `TextClassProvider` carrying the label's treatment, so a bare
-`<Text>` composed into one needs nothing at the call site.
-
-```tsx
-import { useTextClass } from "@delacour/native-ui/text";
-
-const inherited = useTextClass();
-```
-
-Publish a treatment only where **one** covers the whole subtree. A `ListGroup` row (title +
-description), a navbar (title + subtitle) and `Screen.Error` (title + message) each carry two, and
-one provider cannot serve both — so their parts keep per-part classes.
+`Text.Strong` comes out at the paragraph's size and colour with only the weight changed. A `Button`
+publishes its label's treatment the same way, so a bare `<Text>` composed into one needs nothing at
+the call site.
 
 ## Axes
 
@@ -92,75 +60,68 @@ one provider cannot serve both — so their parts keep per-part classes.
 </Text>
 ```
 
-Each axis beats the variant's own value and anything inherited. Omit an axis and it falls through
-to the enclosing text.
+Each axis beats the variant's own value and anything inherited; omit an axis and it falls through to
+the enclosing text.
 
-<Callout type="warn">
-`textVariants` has **no** `defaultVariants`, and must not gain any. An axis the caller did not name
-has to emit nothing so it falls through — that fall-through is the whole feature. A default would
-emit from inside the same call, ahead of the inherited class in the merge, and every nested `Text`
-would snap back to it. The fallback lives in `TEXT_BASE_CLASS` instead.
+<Callout type="warn" title="An arbitrary font size must be a length">
+Write `text-[17px]` or `text-(length:--x)`. A bare `text-[var(--x)]` is ambiguous to tailwind-merge,
+which files it under colour — so it will not override the inherited size.
 </Callout>
 
 ## Colour
 
-<Preview id="text/colour" />
+`color` is page-level only. Text on a coloured surface writes the utility in a `className`, because
+that mapping belongs to the surface.
 
-`color` is **page-level only** — there is no `-foreground` family here.
+<Preview id="text/colour" />
 
 ```tsx
 <Text color="danger">Could not save</Text>
 ```
 
-`X-foreground` means "content drawn on an `X` surface", and mapping a surface variant to its
-foreground is each surface component's job (`BUTTON_FOREGROUND_TOKEN`,
-`LIST_GROUP_FOREGROUND_TOKEN`). A second copy of that map here could drift from it. Text on a
-coloured surface writes the utility in a `className`.
-
-## Font scaling
-
-`allowFontScaling` is left at React Native's default. `maxFontSizeMultiplier` defaults to
-`TEXT_MAX_FONT_SIZE_MULTIPLIER` — the cap exists for the fixed-height chrome, where `h-button-*`
-and `h-navbar-row` cannot grow and an uncapped multiplier would clip a label rather than enlarge
-it. Both stay overridable per call site.
-
-## Gotchas
+## Truncation
 
 <Preview id="text/truncation" />
 
-<Callout type="warn" title="A nested Text.Code cannot be padded">
-A nested `<Text>` is laid out by the platform's text engine — an `NSAttributedString` run on iOS,
-a `Span` on Android — and both ignore padding, margin and border radius on an inner `<Text>`. Only
-the background survives. The pill treatment applies to the standalone case only; a code *block* is
-a `View` you wrap around it.
-</Callout>
+```tsx
+<Text.Paragraph numberOfLines={2}>{body}</Text.Paragraph>
+```
 
-<Callout type="warn" title="align is left / center / right">
-Never `start` / `end`. React Native's `textAlign` accepts `auto | left | right | center | justify`
-and nothing else, so Tailwind's logical-property utilities resolve to a value RN rejects.
-</Callout>
+## Font scaling
 
-<Callout type="warn" title="An arbitrary font size must be a length">
-Write `text-[17px]` or `text-(length:--x)`. A bare `text-[var(--x)]` is ambiguous to
-tailwind-merge, which files it under colour — so it will not override the inherited size.
-</Callout>
+`allowFontScaling` is left at React Native's default, and `maxFontSizeMultiplier` defaults to
+`TEXT_MAX_FONT_SIZE_MULTIPLIER` so a label cannot outgrow the fixed-height chrome around it.
 
-<Callout title="No asChild">
-`Slot` throws on a non-element child and a `Text`'s child is usually a string, so it would be
-unusable in the shape people would reach for. There is also nothing to donate — `useTextClass()`
-hands the class over directly.
-</Callout>
+```tsx
+<Text allowFontScaling={false}>Fixed</Text>
+<Text maxFontSizeMultiplier={2}>Room to grow</Text>
+```
 
-## Performance
+## API Reference
 
-`Text` renders `Animated.Text`, so animated text styles work anywhere with no opt-in — at the cost
-of a Reanimated wrapper per text node. If a long list ever profiles badly, the escape hatch is
-`<Animated.Text className={useTextClass()} style={…} />` in app code; the cascade is on context, so
-it inherits correctly. Measure first.
+### Presets
 
-## API
+<TypeTable
+  type={{
+    "Text.Display": { type: "TextPresetProps", description: "30pt bold, announced as a heading. A screen's one hero line." },
+    "Text.Title": { type: "TextPresetProps", description: "24pt bold, announced as a heading. A screen or card title." },
+    "Text.Header": { type: "TextPresetProps", description: "20pt semibold, announced as a heading. A section heading." },
+    "Text.Subheader": {
+      type: "TextPresetProps",
+      description: "18pt muted. The secondary line under a title — not a fourth heading level.",
+    },
+    "Text.Paragraph": { type: "TextPresetProps", description: "16pt. The same treatment a bare `<Text>` renders." },
+    "Text.Label": { type: "TextPresetProps", description: "14pt medium. A control label or compact UI string." },
+    "Text.Caption": { type: "TextPresetProps", description: "14pt on the muted token. Supporting copy." },
+    "Text.Overline": { type: "TextPresetProps", description: "12pt semibold, uppercase, muted. An eyebrow above a section." },
+    "Text.Strong": { type: "TextPresetProps", description: "Inline. Emphasis by weight." },
+    "Text.Emphasis": { type: "TextPresetProps", description: "Inline. Emphasis by slant." },
+    "Text.Link": { type: "TextPresetProps", description: "Inline. A tappable run on the `info` token. Takes `onPress`." },
+    "Text.Code": { type: "TextPresetProps", description: "Inline. Monospaced, padded only when it stands alone." },
+  }}
+/>
 
-### `TextProps`
+### TextProps
 
 `Animated.Text`'s props, minus `className`, plus:
 
@@ -196,7 +157,7 @@ it inherits correctly. Measure first.
   }}
 />
 
-### `useTextClass()`
+### useTextClass()
 
 Returns the resolved class of the nearest enclosing `Text` or `TextClassProvider`.
 
@@ -206,7 +167,7 @@ Returns the resolved class of the nearest enclosing `Text` or `TextClassProvider
   }}
 />
 
-## Exported constants
+### Exports
 
 ```tsx
 import {
@@ -219,10 +180,11 @@ import {
   TEXT_TRANSFORMS,
   TEXT_BASE_CLASS,
   TEXT_MAX_FONT_SIZE_MULTIPLIER,
+  TextClassProvider,
+  useTextClass,
   textVariants,
   resolveTextClass,
+  canNestText,
+  isInlineTextVariant,
 } from "@delacour/native-ui/text";
 ```
-
-`TEXT_VARIANTS` is ordered — block presets first, largest first — and the tests read that order to
-assert the type scale descends. A new block role goes in at its step, not on the end.

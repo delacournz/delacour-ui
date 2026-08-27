@@ -54,3 +54,11 @@ and only `onPress` and `onLongPress` cross back to JS.
   `scheduleOnUI`, which `use-keyboard-state-sync` already uses. A Biome
   `noRestrictedImports` rule in `@delacour/biome-config` fails the build on the
   deprecated names, so this cannot regress quietly.
+- **A worklet's body must be self-contained.** The press feedback runs on the UI
+  thread and cannot rely on a module-scope helper: factoring its
+  `Math.min(1, Math.max(0, …))` clamp into a `clampUnit` helper — itself marked
+  `"worklet"` — crashes the UI thread with `undefined is not a function`, because
+  the helper is not captured into the worklet's closure. No unit test sees it,
+  since on the JS thread the helper resolves perfectly.
+  [`Screen`](../screen/AGENTS.md)'s border ramps write the same clamp out twice
+  for this reason.

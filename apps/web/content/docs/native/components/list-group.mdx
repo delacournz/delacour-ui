@@ -4,75 +4,86 @@ description: A surface grouping related rows, with dividers inserted for you.
 icon: List
 ---
 
+<Preview id="list-group/custom-suffix" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="list-group" />
+
+## Usage
+
 ```tsx
 import { ListGroup } from "@delacour/native-ui/list-group";
 ```
 
-<Preview id="list-group/custom-suffix" />
-
 ```tsx
 <ListGroup>
-  <ListGroup.Item onPress={openProfile}>
-    <ListGroup.ItemPrefix><Icon icon={IconUser} /></ListGroup.ItemPrefix>
-    <ListGroup.ItemContent>
-      <ListGroup.ItemTitle>Profile</ListGroup.ItemTitle>
-      <ListGroup.ItemDescription>Name, photo and handle</ListGroup.ItemDescription>
-    </ListGroup.ItemContent>
-    <ListGroup.ItemSuffix />
-  </ListGroup.Item>
+  <ListGroup.Item onPress={openProfile}>Profile</ListGroup.Item>
+  <ListGroup.Item onPress={openNotifications}>Notifications</ListGroup.Item>
 </ListGroup>
 ```
 
-**Variants:** `default`, `secondary`, `tertiary`, `transparent`. **Sizes:** `sm`, `md`, `lg`.
+## Variants
 
-Size is not decoration — it drives the row metrics, the title and description type scale, both
-icon sizes *and* the divider inset. Those five numbers live in one axis rather than five magic
-values.
+<Preview id="list-group/variants" />
 
-## Dividers are inserted, not written out
+```tsx
+<ListGroup variant="secondary">…</ListGroup>
+<ListGroup variant="tertiary">…</ListGroup>
+<ListGroup variant="transparent">…</ListGroup>
+```
+
+## Sizes
+
+One axis drives the row metrics, both type scales, both icon sizes and the divider inset.
+
+<Preview id="list-group/sizes" />
+
+```tsx
+<ListGroup size="sm">…</ListGroup>
+<ListGroup size="md">…</ListGroup>
+<ListGroup size="lg">…</ListGroup>
+```
+
+## Dividers
+
+The root puts a `Separator` between adjacent children, inset to line up with the rows' padding.
 
 <Preview id="list-group/dividers" />
 
-The root walks its children and puts a `Separator` between adjacent ones, inset to line up with the
-rows' padding.
+```tsx
+<ListGroup isDivided={false}>…</ListGroup>
+```
 
-A `Separator` placed by hand suppresses the automatic one on either side of it, so you can make one
-gap full-bleed without turning the feature off. `isDivided={false}` turns it off entirely.
+A `Separator` placed by hand suppresses the automatic one on either side of it, so one gap can be
+full-bleed without turning the feature off.
 
-`Children.toArray` drops the nulls a conditional child leaves behind, so a row rendered only some
-of the time does not strand a divider.
+## Row slots
 
-<Callout type="warn">
-The root clips. `overflow-hidden` is load-bearing: a pressed row fades to the edge of its own box,
-and the first and last rows would square off the group's corners without it.
-</Callout>
+<Preview id="list-group/custom-suffix" />
 
-## A row is a Pressable
+```tsx
+import { Icon } from "@delacour/native-ui/icon";
+import { IconUser } from "@delacour/native-ui/icons/central";
 
-`ListGroupItemProps` extends `PressableProps`, so `feedback`, `haptic`, `pressedScale` and the rest
-are inherited rather than restated. Only the default differs: `fade`, because a full-bleed row that
-scales reads as the whole card flexing rather than as one row responding.
+<ListGroup.Item onPress={openProfile}>
+  <ListGroup.ItemPrefix>
+    <Icon icon={IconUser} />
+  </ListGroup.ItemPrefix>
+  <ListGroup.ItemContent>
+    <ListGroup.ItemTitle>Profile</ListGroup.ItemTitle>
+    <ListGroup.ItemDescription>Name, photo and handle</ListGroup.ItemDescription>
+  </ListGroup.ItemContent>
+  <ListGroup.ItemSuffix />
+</ListGroup.Item>;
+```
 
-## Slots are flat
+`ItemPrefix` wraps its subtree in icon defaults, so a bare `<Icon>` needs nothing said at the call
+site. `ItemSuffix` draws a chevron when it has no children of its own.
 
-<Preview id="list-group/variants" />
-<Preview id="list-group/sizes" />
+## API Reference
 
-`ListGroup.ItemPrefix`, never `ListGroup.Item.Prefix` — the keys are deliberately flat, and the
-`displayName`s match (`DelacourUI.ListGroup.ItemPrefix`).
-
-`ItemPrefix` wraps its subtree in an `IconDefaultsProvider`, so a bare `<Icon>` needs nothing said.
-`ItemSuffix` draws a chevron when it has no children of its own; `iconProps` tunes that glyph and is
-ignored once it does.
-
-String children are wrapped in an `ItemContent` around an `ItemTitle` automatically.
-
-<Callout type="warn">
-Title colour goes on the title. The `item` slot carries no `text-*` — a row is a `View` and cannot
-cascade colour to a `Text`. The tests assert this.
-</Callout>
-
-## API
+### ListGroup
 
 <TypeTable
   type={{
@@ -88,7 +99,7 @@ cascade colour to a `Text`. The tests assert this.
   }}
 />
 
-### `ListGroup.Item`
+### ListGroup.Item
 
 A row. A `Pressable`, so `feedback`, `haptic` and the rest are inherited — only the default
 differs: `fade`, because a full-bleed row that scales reads as the whole card flexing.
@@ -105,7 +116,7 @@ differs: `fade`, because a full-bleed row that scales reads as the whole card fl
   }}
 />
 
-### `ListGroup.ItemPrefix` / `ItemContent` / `ItemSuffix`
+### ListGroup.ItemPrefix / ItemContent / ItemSuffix
 
 The row's three regions. `ItemPrefix` wraps its subtree in icon defaults, so a bare `Icon` needs
 nothing said at the call site. `ItemSuffix` draws a chevron when it has no children of its own.
@@ -121,14 +132,14 @@ nothing said at the call site. `ItemSuffix` draws a chevron when it has no child
   }}
 />
 
-### `ListGroup.ItemTitle` / `ItemDescription`
+### ListGroup.ItemTitle / ItemDescription
 
 The row's two lines of text. Extend React Native's `TextProps`.
 
 <TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
 
-<Callout>
+<Callout type="warn">
 Title colour goes on the title, never on the row. A row is a `View`, and a React Native `View` does
-not cascade colour to a `Text` descendant the way a DOM element would — so the `item` slot carries
-no `text-*` at all. The variants tests assert it.
+not cascade colour to a `Text` descendant — the `item` slot carries no `text-*` at all, so a
+`text-danger` written there does nothing.
 </Callout>

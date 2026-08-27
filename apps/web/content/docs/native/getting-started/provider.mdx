@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The four layers
+## The five layers
 
 Outermost first. The order is not stylistic.
 
@@ -21,7 +21,8 @@ Outermost first. The order is not stylistic.
 | `GestureHandlerRootView` | Must be an ancestor **native view** of every handler a `Pressable` creates. Its absence is silent — no error, presses simply stop landing. |
 | `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
-| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. |
+| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the sheet host, not a parent of it. |
+| `BottomSheetModalProvider` | The host every `BottomSheet` portals into, innermost around the children. |
 
 ## Why the safe-area seed matters
 
@@ -56,16 +57,10 @@ and that `flex: 1` is gone — include it yourself.
 
 ## What it deliberately does not do
 
-**No per-layer escape hatches.** No `gestureHandler={false}`, no `safeAreaProps`, no
-`keyboardProps`. A boolean that turns off the gesture root has "nothing responds to a press" as
-its failure mode, which is the least debuggable outcome in the package. And a prop surface that
-names the layers changes shape every time a layer is added.
+There are no per-layer escape hatches — no `gestureHandler={false}`, no `safeAreaProps`, no
+`keyboardProps` — and it does not detect an enclosing copy of itself. Nesting `KeyboardProvider`
+genuinely breaks: two pairs of shared values, two sets of native observers.
 
-**Not idempotent.** It does not detect an enclosing copy of itself. Nesting
-`GestureHandlerRootView` costs a `View`; nesting `SafeAreaProvider` costs a native view; nesting
-`KeyboardProvider` actually breaks — two pairs of shared values, two sets of native observers.
-That is also the one layer that cannot be detected, so a guard covering the two harmless layers
-and missing the harmful one would be worse than none.
-
-If you genuinely need a different stack, compose the providers by hand. They are all public from
-their own packages — see [Installation](/docs/native/getting-started/installation#composing-the-layers-by-hand).
+If you need a different stack, compose the providers by hand. They are all public from their own
+packages — see
+[Installation](/docs/native/getting-started/installation#composing-the-layers-by-hand).

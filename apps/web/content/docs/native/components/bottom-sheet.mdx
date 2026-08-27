@@ -4,6 +4,12 @@ description: A sheet that rises from the bottom edge, built on @gorhom/bottom-sh
 icon: PanelBottom
 ---
 
+## Installation
+
+<ComponentInstall name="bottom-sheet" />
+
+## Usage
+
 ```tsx
 import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
 ```
@@ -27,9 +33,70 @@ import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
 </BottomSheet>
 ```
 
-There is no size axis and no colour axis: a sheet has one shape and one surface.
+## Controlled
 
-## Anatomy
+`onOpenChange` fires whenever the sheet opens or closes — a trigger, a swipe down, a press on the
+backdrop, `BottomSheet.Close`, or a controlled `isOpen`.
+
+```tsx
+<BottomSheet isOpen={isOpen} onOpenChange={setIsOpen}>…</BottomSheet>
+```
+
+## Scrolling
+
+`BottomSheet.ScrollView` needs `enableDynamicSizing={false}` and explicit `snapPoints` on the
+container, or the sheet grows to its content and there is nothing to scroll within.
+
+```tsx
+<BottomSheet.Container enableDynamicSizing={false} snapPoints={["50%", "90%"]}>
+  <BottomSheet.ScrollView>{rows}</BottomSheet.ScrollView>
+</BottomSheet.Container>
+```
+
+## Footer
+
+A footer is in the flow by default; `sticky` pins it to the sheet's bottom edge and above the
+keyboard.
+
+```tsx
+<BottomSheet.Footer sticky>
+  <Button onPress={apply}>Apply</Button>
+</BottomSheet.Footer>
+```
+
+<Callout type="warn">
+Do not put a `KeyboardStickyView` inside a sheet. It is a third mechanism moving the same view, and
+it fights the other two every frame.
+</Callout>
+
+## Text input
+
+Use `useBottomSheetInput()` and spread what it returns onto the field.
+
+```tsx
+import { useBottomSheetInput } from "@delacour/native-ui/bottom-sheet";
+
+const input = useBottomSheetInput();
+
+<Input {...input} value={query} onChangeText={setQuery} />;
+```
+
+<Callout type="warn">
+The `ref` it returns is not optional polish: without it, moving focus between two fields in one
+sheet reads as the keyboard closing and reopening, and the sheet resizes twice on the way. A *drag*
+across a field can still be claimed by the sheet's content pan — pass
+`enableContentPanningGesture={false}` on the container when that bites.
+</Callout>
+
+## API Reference
+
+### Requirements
+
+`@gorhom/bottom-sheet` is a **required** peer, and the app must mount
+[`DelacourProvider`](/docs/native/components/provider) — it supplies the modal provider the sheet
+presents into.
+
+### Anatomy
 
 | Part | What it is |
 | --- | --- |
@@ -45,74 +112,10 @@ There is no size axis and no colour axis: a sheet has one shape and one surface.
 | `BottomSheet.Description` | Supporting copy under the title |
 | `BottomSheet.Footer` | Controls at the bottom. `sticky` pins them above the keyboard |
 
-<Callout title="Two parts are not drawn where they are written">
-That is the component. `Portal` hoists `Overlay` into gorhom's `backdropComponent`, and
-`Container` hoists a sticky `Footer` into its `footerComponent`. Writing them in the tree is what
-keeps the anatomy readable; hoisting them is what makes gorhom render them correctly.
-</Callout>
+`Portal` draws its `Overlay` as the container's backdrop and `Container` draws a `sticky` `Footer`
+as the sheet's footer, so those two parts render somewhere other than where they are written.
 
-## One callback for every path
-
-`onOpenChange` fires whenever the sheet opens or closes — a trigger, a swipe down, a press on the
-backdrop, `BottomSheet.Close`, or a controlled `isOpen`.
-
-Deliberately one callback: gorhom's own `onClose` fires for the gesture alone, which is the shape
-that makes a caller wire three handlers and still miss one.
-
-## Text input inside a sheet
-
-Use `useBottomSheetInput()` and spread what it returns onto the field. The `ref` is not optional
-polish.
-
-```tsx
-import { useBottomSheetInput } from "@delacour/native-ui/bottom-sheet";
-
-const input = useBottomSheetInput();
-
-<Input {...input} value={query} onChangeText={setQuery} />;
-```
-
-The scrim is also rebuilt for this reason: gorhom's full-screen backdrop mounts a `Gesture.Tap()`
-that steals a `TextInput`'s tap. `BottomSheet.Overlay` passes `pressBehavior="none"` and lays a
-`Pressable` only over the band **above** the sheet, sized from its animated position.
-
-That covers the keyboard half. A *drag* across a field can still be claimed by the sheet's content
-pan — pass `enableContentPanningGesture={false}` on the container when that bites.
-
-<Callout type="warn">
-Do not put a `KeyboardStickyView` inside a sheet. It is a third mechanism moving the same view,
-and it fights the other two every frame.
-</Callout>
-
-## Accessibility
-
-`BottomSheet.Content` sets `accessible={false}` by default, and it is the least obvious line in the
-component. gorhom marks its content container `accessible`; on iOS an `accessible` container
-collapses its whole subtree into **one** element, so every field, button and line of copy inside
-becomes unreachable to VoiceOver.
-
-## Gotchas
-
-<Callout type="warn" title="BottomSheet.Container takes no className">
-Use `backgroundClassName`. The container's own `style` is forwarded to gorhom, which passes
-`[StyleSheet.absoluteFill, backgroundStyle]` — dropping it renders the sheet transparent over the
-app.
-</Callout>
-
-<Callout type="warn" title="Scrolling needs snap points">
-`BottomSheet.ScrollView` requires `enableDynamicSizing={false}` and explicit `snapPoints` on the
-container. It also puts its classes on an inner `View` rather than gorhom's content container:
-Uniwind compiles `contentContainerClassName` into an array, gorhom reads `paddingBottom` off a
-flattened style, and the last row would hide behind a pinned footer.
-</Callout>
-
-## Requirements
-
-`@gorhom/bottom-sheet` is a **required** peer, and the app must mount
-[`DelacourProvider`](/docs/native/components/provider) — it supplies the modal provider the sheet
-presents into.
-
-## API
+### BottomSheet
 
 <TypeTable
   type={{
@@ -148,7 +151,7 @@ own element instead of emitting a `View`.
 The modal itself. Extends `@gorhom/bottom-sheet`'s `BottomSheetModalProps` — `snapPoints`,
 `enableDynamicSizing`, `index` and the rest pass straight through. The component slots
 (`backdropComponent`, `backgroundComponent`, `footerComponent`, `handleComponent`) and `onDismiss`
-are withheld: the compound parts fill them.
+are withheld: the compound parts fill them. It takes no `className` — reach for the three below.
 
 <TypeTable
   type={{

@@ -4,11 +4,17 @@ description: A screen's frame — pinned chrome, a content region, and whatever 
 icon: LayoutTemplate
 ---
 
+<Preview id="screen/anatomy" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="screen" />
+
+## Usage
+
 ```tsx
 import { Screen } from "@delacour/native-ui/screen";
 ```
-
-<Preview id="screen/anatomy" />
 
 ```tsx
 <Screen>
@@ -25,25 +31,78 @@ import { Screen } from "@delacour/native-ui/screen";
 </Screen>
 ```
 
-## The point of the component
+The navbar and footer measure themselves into a Reanimated context and every scrollable reserves
+exactly that, so no screen carries a hand-tuned padding number.
 
-**The navbar and footer measure themselves into a Reanimated context, and every scrollable reserves
-exactly that.** No screen carries a hand-tuned padding number that is right on one device and wrong
-on the next.
+## Placement
 
-The reserves are spacer *views* whose height is an animated style, not content-container padding —
-padding cannot animate on the UI thread, and the heights are only known after layout.
+`overlay` floats the chrome over the content, which insets itself to match; `static` puts it in the
+flow and paints an opaque surface.
 
-## Placement, not variant
+```tsx
+<Screen.Navbar placement="static">…</Screen.Navbar>
+<Screen.Footer placement="overlay">…</Screen.Footer>
+```
 
-`overlay` (the default) floats the chrome over the content, which insets itself to match. `static`
-puts it in the flow. In this package `variant` always means a visual variant, so the axis that
-decides where a part *sits* gets its own name.
+## Borders
 
-A `static` footer is opaque; an `overlay` footer is not — content is meant to scroll under it, and
-whatever you put inside brings its own surface.
+Both hairlines are drawn at rest; `fadeBorderOnScroll` opts into a scroll-linked ramp instead — the
+navbar's brightens as you leave the top, the footer's fades out as the content runs out.
 
-## Parts
+```tsx
+<Screen.Navbar fadeBorderOnScroll>…</Screen.Navbar>
+<Screen.Footer fadeBorderOnScroll>…</Screen.Footer>
+```
+
+## Chat lists
+
+`Screen.ChatList` is a discriminated union on `variant`: `legend` takes chronological oldest-first
+data and LegendList's own `renderItem`, `flat` is an inverted `FlatList` with newest-first data and
+React Native's.
+
+```tsx
+<Screen.ChatList
+  composerBaseHeight={56}
+  data={messages}
+  renderItem={renderMessage}
+  variant="legend"
+/>
+```
+
+<Callout type="warn" title="Seed a chat list with composerBaseHeight">
+The footer publishes its real height a commit or two after the list's first layout, and the list has
+already scrolled to the end by then. Without the seed the newest message hides under the
+composer — intermittently, which is the worst kind of wrong.
+</Callout>
+
+## Loading and error
+
+Whole-screen states, each with its own navbar so a back gesture still works.
+
+<Preview id="screen/loading-and-error" />
+
+```tsx
+<Screen.Loading title="Loading" />
+
+<Screen.Error message="That project no longer exists." onBack={router.back} title="Not found">
+  <Button onPress={retry}>Try again</Button>
+</Screen.Error>
+```
+
+## API Reference
+
+### Requirements
+
+<Callout type="warn">
+The app must mount [`DelacourProvider`](/docs/native/components/provider) at its root. `Screen`
+reads the safe-area and keyboard providers, and `<KeyboardStateSync />` is what keeps the keyboard's
+shared values honest between screens — without it a screen renders "keyboard open" over a keyboard
+that is not there.
+</Callout>
+
+`@legendapp/list` is an optional peer, so an app that never imports `Screen` never resolves it.
+
+### Parts
 
 <Preview id="screen/a-pushed-screen" />
 
@@ -59,70 +118,9 @@ whatever you put inside brings its own surface.
 | `Screen.ChatList` | An inverted or oldest-first chat list |
 | `Screen.Loading` / `Screen.Error` | Whole-screen states |
 
-## Chat lists
+### Screen
 
-`Screen.ChatList` is a discriminated union on `variant`. `legend` (the default) takes chronological
-oldest-first data and LegendList's own `renderItem`; `flat` is an inverted `FlatList` with
-newest-first data and React Native's.
-
-The two `renderItem` contracts genuinely differ, so each variant exposes its engine's own rather
-than adapting one into the other — an adapter would have to fabricate the `separators` object RN's
-signature promises, and nothing would honour it.
-
-<Callout type="warn" title="Seed a chat list with composerBaseHeight">
-The footer publishes its real height a commit or two after the list's first layout, and the list
-has already scrolled to the end by then. Without the seed the newest message hides under the
-composer — intermittently, which is the worst kind of wrong.
-</Callout>
-
-## Borders
-
-Both hairlines are drawn at rest. `fadeBorderOnScroll` — the same prop name on `Screen.Navbar` and
-`Screen.Footer` — opts into a scroll-linked ramp instead.
-
-The two read **opposite ends of the scroll**: the navbar's answers "is there content above?" and
-brightens as you leave the top, while the footer's answers "is there content below?" and fades out
-as the content runs out. One `SCREEN_BORDER_FADE_DISTANCE` drives both.
-
-## Debugging
-
-`<Screen debug>` paints every layer. Opt-in per screen and deliberately **not** gated behind
-`__DEV__`, so a reserve can still be inspected on a release build.
-
-The green occupancy band's edge must land on the footer's red one; a red sliver past it means the
-reserve is short. `SCREEN_DEBUG_COLORS` is exported so a composer can paint matching bands.
-
-## Requirements
-
-<Preview id="screen/loading-and-error" />
-
-<Callout type="warn">
-The app must mount [`DelacourProvider`](/docs/native/components/provider) at its root. `Screen`
-reads the safe-area and keyboard providers, and `<KeyboardStateSync />` is what keeps the keyboard's
-shared values honest between screens.
-</Callout>
-
-Safe-area insets come from `useSafeAreaInsets()`, never from Uniwind's `*-safe` utilities — those
-compile to `env(safe-area-inset-top)`, which resolves to **zero** on React Native. The class
-applies, nothing moves, and a navbar draws over the status bar with no error anywhere.
-
-## No navigation dependency
-
-`Screen.Navbar.BackButton` takes an `onPress`; wire `router.back()` yourself. `Screen.Footer`'s
-`isFocused` is the same trade: an app with a router passes `useIsFocused()`, and without one the
-footer behaves as focused.
-
-There is no `Navbar.Action` — `Button` already owns that vocabulary, so a navbar action is
-`<Button isIconOnly size="sm" variant="secondary">`.
-
-## Optional peer
-
-`@legendapp/list` is `peerDependenciesMeta.optional`, so an app that never imports `Screen` never
-resolves it.
-
-## API
-
-`Screen` is the root. It renders a `View` and passes `ViewProps` through.
+The root. It renders a `View` and passes `ViewProps` through.
 
 <TypeTable
   type={{
@@ -238,8 +236,9 @@ Whole-screen states, each with its own navbar so a back gesture still works.
 
 ### `Screen.NavbarBackButton`
 
-A `Pressable`, so the vocabulary is inherited. `onPress` is **required**: a back button that does
-nothing is worse than none.
+A `Pressable`, so the vocabulary is inherited. `onPress` is **required** — this library takes no
+navigation dependency, so the app wires `router.back()` itself. There is no `Navbar.Action` either:
+a navbar action is `<Button isIconOnly size="sm" variant="secondary">`.
 
 <TypeTable
   type={{

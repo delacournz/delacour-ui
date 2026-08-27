@@ -76,15 +76,3 @@ A Tailwind palette name like `emerald-500` only resolves if some utility class a
 variable into the build. Prefer the semantic tokens.
 </Callout>
 
-## Why there is exactly one `withUniwind` wrapper
-
-`View`, `Text`, `Pressable` and `Animated.View` already accept `className`. `withUniwind` is only
-for third-party components, and a given component may only be wrapped once, in one file.
-
-Central Icons is the one carve-out and it is already spent: `icon.tsx` wraps a local `IconGlyph`
-proxy that takes the glyph as **data**, so a single wrapper covers the whole two-thousand-icon set
-instead of one per glyph. Do not wrap a Central Icon directly, do not wrap the proxy anywhere
-else, and do not add a second wrapper for `Svg`.
-
-The wrapper is also called at **module scope**. In render it would mint a new component type every
-frame and remount the icon.

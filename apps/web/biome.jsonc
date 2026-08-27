@@ -3,10 +3,11 @@
 	"extends": "//",
 	"root": false,
 	"files": {
-		// `previews/manifest.ts` is written by the capture run in apps/playground.
-		// Without the exclusion the pre-commit hook reformats it every time, and
-		// the next capture writes it straight back.
-		"includes": ["src/**/*", "!src/routeTree.gen.ts", "!src/previews/manifest.ts"]
+		// `previews/manifest.ts` is written by the capture run in apps/playground,
+		// and `registry/install.ts` by `bun run gen-install`. Without the exclusions
+		// the pre-commit hook reformats them every time, and the next run writes
+		// them straight back.
+		"includes": ["src/**/*", "!src/routeTree.gen.ts", "!src/previews/manifest.ts", "!src/registry/install.ts"]
 	},
 	"css": {
 		"parser": { "tailwindDirectives": true }

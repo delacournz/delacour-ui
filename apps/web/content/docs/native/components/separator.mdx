@@ -4,9 +4,23 @@ description: A one-pixel rule, hidden from assistive technology.
 icon: Minus
 ---
 
+<Preview id="separator/orientations" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="separator" />
+
+## Usage
+
 ```tsx
 import { Separator } from "@delacour/native-ui/separator";
 ```
+
+```tsx
+<Separator />
+```
+
+## Orientations
 
 <Preview id="separator/orientations" />
 
@@ -15,10 +29,36 @@ import { Separator } from "@delacour/native-ui/separator";
 <Separator orientation="vertical" />
 ```
 
-It is hidden from assistive technology: a line between every row carries nothing a screen reader
-can use, and announcing them buries the rows.
+## Weight and colour
 
-## API
+A filled box rather than a border, so thickness, colour and radius are ordinary utilities.
+
+<Preview id="separator/weight-and-colour" />
+
+```tsx
+<Separator className="h-0.5" />
+<Separator className="h-1 rounded-full bg-danger" />
+```
+
+## Stretching to a parent
+
+The long axis is `self-stretch`, so a vertical rule takes its parent row's height with no height of
+its own.
+
+<Preview id="separator/stretching-to-a-parent" />
+
+## Inside a ListGroup
+
+<Preview id="separator/inside-a-list-group" />
+
+A hand-placed separator suppresses the automatic divider at that gap, which is how a full-bleed rule
+gets in among inset ones.
+
+## API Reference
+
+### SeparatorProps
+
+Extends React Native's `ViewProps`.
 
 <TypeTable
   type={{
@@ -29,24 +69,3 @@ can use, and announcing them buries the rows.
     className: { type: "string" },
   }}
 />
-
-## Two rules it follows
-
-<Preview id="separator/weight-and-colour" />
-<Preview id="separator/stretching-to-a-parent" />
-<Preview id="separator/inside-a-list-group" />
-
-**The long axis is `self-stretch`, never `w-full` / `h-full`.** Yoga resolves a percentage length
-against the parent's content box and *then* adds the margins on top, so an inset `w-full` line
-starts 16pt in and runs 16pt past the far edge — a gap down one side and none down the other.
-Stretching subtracts the margins instead, which is what an inset divider needs.
-
-**A filled box, not a border**, so a caller insets it with a plain `mx-*` without fighting a
-border's own box model. This is how `ListGroup` positions the dividers it inserts.
-
-<Callout>
-`separatorVariants` lives in `separator.tsx` rather than a `.variants.ts` sibling — the pattern C
-carve-out for a single styled element with no pure resolvers. That file imports React Native, so
-the `tv()` is not reachable from `bun test`; the two rules above are stated in its doc comment and
-verified on a simulator.
-</Callout>

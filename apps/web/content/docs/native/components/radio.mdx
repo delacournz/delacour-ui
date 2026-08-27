@@ -4,23 +4,78 @@ description: One choice from a set, with a trailing indicator row.
 icon: CircleDot
 ---
 
+<Preview id="radio/variants-and-states" code={false} title={null} />
+
+## Installation
+
+<ComponentInstall name="radio" />
+
+## Usage
+
 ```tsx
 import { Radio } from "@delacour/native-ui/radio";
 ```
 
-<Preview id="radio/variants-and-states" />
-
 ```tsx
-<Radio.Group value={plan} onValueChange={setPlan}>
+<Radio.Group accessibilityLabel="Plan" selected={plan} onSelected={setPlan}>
   <Radio value="monthly"><Radio.Label>Monthly</Radio.Label></Radio>
   <Radio value="annual"><Radio.Label>Annual</Radio.Label></Radio>
 </Radio.Group>
 ```
 
-**Variants:** `primary`, `secondary`. **Sizes:** `sm`, `md`, `lg`. **Orientations:** `vertical`,
-`horizontal`.
+## Variants
 
-## Anatomy
+`secondary` fills the ring; `primary` leaves it hollow.
+
+<Preview id="radio/variants-and-states" />
+
+```tsx
+<Radio variant="primary" value="monthly">Monthly</Radio>
+<Radio variant="secondary" value="annual">Annual</Radio>
+```
+
+## Sizes
+
+<Preview id="radio/sizes" />
+
+```tsx
+<Radio size="sm" value="sm">Small</Radio>
+<Radio size="md" value="md">Medium</Radio>
+<Radio size="lg" value="lg">Large</Radio>
+```
+
+## Descriptions
+
+There is no `Radio.Description` — compose a `Text.Caption` inside the row and it stays within the
+one tap target and inside the accessible name.
+
+<Preview id="radio/per-option-description" />
+
+## Trailing indicator
+
+Write a `Radio.Indicator` last and the row spreads to push the ring to the far edge.
+
+<Preview id="radio/trailing-indicator-as-a-settings-row" />
+
+## Inside a field
+
+The group names no state of its own — `isInvalid` and `isDisabled` reach every ring from the
+enclosing `Field`.
+
+<Preview id="radio/inside-a-field" />
+
+## Reading the radio's state
+
+Use `useRadio()` to read the settled state from a custom child, and `useRadioGroup()` for the
+group's own.
+
+```tsx
+import { useRadio, useRadioGroup } from "@delacour/native-ui/radio";
+```
+
+## API Reference
+
+### Anatomy
 
 | Part | What it is |
 | --- | --- |
@@ -29,50 +84,11 @@ import { Radio } from "@delacour/native-ui/radio";
 | `Radio.Indicator` | The dot. Accepts custom children to replace the default glyph |
 | `Radio.Group` | Owns the selected value and the shared axes |
 
-The row puts the indicator **last** — the label leads, the state trails. That is the opposite of
-`Checkbox`, and it is deliberate: a radio group is read as a list of choices, and a column of
-leading dots turns the labels into a second column.
-
-## The dot
-
-<Preview id="radio/sizes" />
-
-A spring, not a timing — `RADIO_DOT_SPRING`. A dot that eases in reads as a fade; a dot that
-springs reads as a selection landing.
-
-## Groups
-
-<Preview id="radio/per-option-description" />
-<Preview id="radio/inside-a-field" />
-<Preview id="radio/trailing-indicator-as-a-settings-row" />
-
-The group owns the selected value; a `Radio` inside one takes no `checked` prop. Precedence follows
-`Checkbox.Group`'s ladder — `own ?? group ?? field ?? default` — for the shared axes.
-
-```tsx
-import { useRadio, useRadioGroup } from "@delacour/native-ui/radio";
-```
-
-## Exports
-
-```tsx
-import {
-  Radio,
-  type RadioProps,
-  RADIO_VARIANTS,
-  RADIO_SIZES,
-  RADIO_ORIENTATIONS,
-  RADIO_DOT_SPRING,
-  RADIO_DEFAULT_SIZE,
-  RADIO_DEFAULT_VARIANT,
-  RADIO_LABEL_TEXT_SIZE,
-} from "@delacour/native-ui/radio";
-```
-
-## API
+### Radio
 
 A radio is a `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
-[Pressable](/docs/native/components/pressable).
+[Pressable](/docs/native/components/pressable). The shared axes resolve
+`group ?? own ?? field ?? default`.
 
 <TypeTable
   type={{
@@ -95,7 +111,7 @@ A radio is a `Pressable`, so `feedback`, `haptic` and the rest are inherited —
   }}
 />
 
-### `Radio.Group`
+### Radio.Group
 
 Owns which radio is selected. Extends `ViewProps`.
 
@@ -113,7 +129,12 @@ Owns which radio is selected. Extends `ViewProps`.
   }}
 />
 
-### `Radio.Indicator`
+<Callout type="warn">
+A group renders no legend, and React Native has no `aria-labelledby` to tie it to a `Field.Label`
+above it — so pass `accessibilityLabel` or the group is announced without a name.
+</Callout>
+
+### Radio.Indicator
 
 The dot. Composed in when a radio holds none of its own; write it out to restyle it or to replace
 the glyph entirely.
@@ -129,8 +150,24 @@ the glyph entirely.
   }}
 />
 
-### `Radio.Label`
+### Radio.Label
 
 The radio's text, wired as its accessible name. Extends React Native's `TextProps`.
 
 <TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Exports
+
+```tsx
+import {
+  Radio,
+  type RadioProps,
+  RADIO_VARIANTS,
+  RADIO_SIZES,
+  RADIO_ORIENTATIONS,
+  RADIO_DOT_SPRING,
+  RADIO_DEFAULT_SIZE,
+  RADIO_DEFAULT_VARIANT,
+  RADIO_LABEL_TEXT_SIZE,
+} from "@delacour/native-ui/radio";
+```

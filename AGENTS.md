@@ -9,7 +9,9 @@ the product.
 | Path | Package | What it is |
 | --- | --- | --- |
 | `packages/native-ui` | `@delacour/native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
+| `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
+| `apps/web` | `@delacour/web` | The documentation site — TanStack Start + Fumadocs, deployed on Railway |
 | `packages/biome-config` | `@delacour/biome-config` | Lint and format rules, for everything |
 | `packages/brand` | `@delacour/brand` | The Delacour mark — master art plus the geometry every rendering reads |
 | `packages/tsconfig` | `@delacour/tsconfig` | Shared TypeScript configs |

@@ -151,6 +151,10 @@ section to read first — what follows is only where a switch differs.
   track therefore colours *with the finger* through a drag rather than snapping
   when it is let go, and there is no second clock for the position to drift
   from — the reason all four animated properties read one shared value.
+- **The colour and the press scale are two entries in one `useAnimatedStyle`,
+  never two calls.** Two animated styles on one view fight for the same props and
+  the later one silently wins, so the press would land on a track that never
+  scaled — `Radio.Indicator`'s rule, arrived at from the other side.
 - **The haptic fires at the commit, never at the grab.** A slider ticks on grab
   because the grab already moves the value; a switch dragged half way and released
   back has changed nothing, and one that buzzed for it would be reporting a state
@@ -173,6 +177,10 @@ section to read first — what follows is only where a switch differs.
   actually flip it, on iOS and Android respectively. Without them the switch would
   announce its state and offer no way to change it — the same gap
   `Slider.Thumb`'s `adjustable` actions close.
+- **The root is marked `accessible`, and that one word is load-bearing.** Without
+  it the view is not an accessibility element on iOS at all, so the role and the
+  checked state written beside it never reach VoiceOver. It also merges the track
+  and its layers into the single element a control should be.
 - **There is no `Switch.Label` and no `Switch.Group`.** The track is a fixed pill
   and a label cannot sit inside it, so the name is a `Field.Label` or a
   `ListGroup.ItemTitle` a row away — and unlike `Slider`, the switch **does**

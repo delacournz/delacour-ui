@@ -68,6 +68,10 @@ token names can all change between versions. Pin an exact version.
 - `Button` and `ListGroup.Item` inherit `feedback` from `Pressable` instead of restating it.
 - `Separator`'s `tv()` moved into `separator.tsx` — the pattern C carve-out for a single styled
   element with no pure resolvers.
+- Every component page now opens with an **Installation** block — the CLI command, the npm package,
+  and the manual file list — generated from the registry rather than written by hand. Reasoning
+  prose moved into each component's own `AGENTS.md`, which travels with the source when the CLI
+  copies it.
 
 ### Fixed
 

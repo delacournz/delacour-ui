@@ -32,19 +32,6 @@ import { tv } from "@delacour/native-ui/lib/tv";
 
 `src/styles/tokens.ts` holds the one config both mergers are built from.
 
-## Where a `tv()` lives
-
-A component with **more than one styled part** puts one slotted `tv()` in a `*.variants.ts`
-sibling. That sibling is what makes it possible: the slot set is read by files that cannot import
-each other's roots without closing a cycle, so it needs a leaf of its own. It is also where that
-component's pure resolvers live, which is what makes them reachable from `bun test`.
-
-A component that is a **single styled element with no pure resolvers** declares its `tv()` above
-the component in its own file. `Separator` is the one that qualifies today.
-
-`Pressable` holds no `tv()` at all — its values are opacity and scale *interpolation targets* read
-by a worklet on the UI thread, not styles, and a worklet cannot compile a className.
-
 ## Overriding sizes
 
 Use `size-*`, not `w-*` with `h-*`. tailwind-merge conflicts `size` into `w`/`h` but not the

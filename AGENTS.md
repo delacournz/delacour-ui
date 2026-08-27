@@ -72,6 +72,20 @@ hoisted, Bun materialises a second copy of some native modules under the app,
 which is why `apps/playground`'s `metro.config.js` pins eight of them to the
 workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
 
+## Deployment
+
+`apps/web` is deployed on Railway. The configuration lives in Railway, not in this repo — there
+is no `railway.json`, `railpack.json` or Dockerfile here, and adding one would override the
+service settings.
+
+| Branch | Environment | Host |
+| --- | --- | --- |
+| `develop` | staging | `ui.staging.delacour.co.nz` |
+| `main` | production | `ui.delacour.co.nz` |
+
+`bun run previews` must never run in CI or in a deploy — it drives an iOS simulator and needs a Mac
+with Xcode. Its outputs are committed so the site builds on a simulator-less runner.
+
 ## Hooks
 
 `prek` installs on `postinstall`. Two stages, configured in
@@ -81,6 +95,11 @@ workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
 | --- | --- |
 | pre-commit | `scripts/pre-commit-biome.ts` — Biome `check --write` on staged files, re-staging anything it fixed |
 | pre-push | `bun run typecheck` across every workspace |
+
+`typecheck` depends on `build` in `turbo.jsonc`, which is what makes the pre-push hook usable at
+all: TanStack Router generates the gitignored `apps/web/src/routeTree.gen.ts` during `vite build`,
+so on a fresh clone `tsc` used to fail with a wall of `Property '_splat' does not exist on type
+'never'` before anything had been built.
 
 A commit can therefore rewrite its own staged files. If a commit fails, the fix
 is usually already applied and staged — re-read the diff before changing

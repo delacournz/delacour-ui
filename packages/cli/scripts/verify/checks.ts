@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
-import { dirname, join, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import { readConfig } from "../../src/config/resolve";
 import { CONFIG_FILENAME } from "../../src/config/schema";
 import { NAMESPACES } from "../../src/registry/namespaces";
@@ -94,6 +94,45 @@ export const CHECKS: Check[] = [
 							...missing.map((name) => `listed but no file: ${name}`),
 							...orphaned.map((name) => `file but not listed: ${name}`),
 						],
+					};
+		},
+	},
+
+	{
+		name: "Every item's files exist as documents, and no document is orphaned",
+		async run({ registryDir }) {
+			const index = registryIndexSchema.parse(JSON.parse(await readFile(join(registryDir, "registry.json"), "utf-8")));
+			const referenced = new Set<string>();
+
+			for (const entry of index.items) {
+				const item = registryItemSchema.parse(
+					JSON.parse(await readFile(join(registryDir, "r", `${entry.name}.json`), "utf-8"))
+				);
+				for (const file of item.files) referenced.add(file.path);
+			}
+
+			const filesDir = join(registryDir, "files");
+			const onDisk = new Set(
+				(await readdir(filesDir, { recursive: true, withFileTypes: true }))
+					.filter((entry) => entry.isFile())
+					.map((entry) => `files/${relative(filesDir, join(entry.parentPath, entry.name)).split(sep).join("/")}`)
+			);
+
+			// An item naming a file that is not there is a 404 mid-copy. A file no
+			// item names is dead weight the sweep should have taken — most likely a
+			// renamed component whose old folder was left behind.
+			const missing = [...referenced].filter((path) => !onDisk.has(path)).sort();
+			const orphaned = [...onDisk].filter((path) => !referenced.has(path)).sort();
+
+			return missing.length === 0 && orphaned.length === 0
+				? { ok: true, summary: `${referenced.size} documents, all referenced` }
+				: {
+						ok: false,
+						summary: "items and documents disagree",
+						details: [
+							...missing.map((path) => `referenced but not written: ${path}`),
+							...orphaned.map((path) => `written but not referenced: ${path}`),
+						].slice(0, 20),
 					};
 		},
 	},

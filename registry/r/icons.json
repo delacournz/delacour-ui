@@ -12,10 +12,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "icons/central.ts",
+			"path": "files/icons/central.ts",
 			"target": "central.ts",
-			"namespace": "icons",
-			"content": "export * from \"@central-icons-react-native/round-outlined-radius-1-stroke-1.5\";\n"
+			"namespace": "icons"
 		}
 	]
 }

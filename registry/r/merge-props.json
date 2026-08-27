@@ -12,10 +12,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "lib/merge-props.ts",
+			"path": "files/lib/merge-props.ts",
 			"target": "merge-props.ts",
-			"namespace": "lib",
-			"content": "import { cn } from \"./cn\";\n\ntype UnknownProps = Record<string, unknown>;\n\nfunction isEventHandlerKey(key: string): boolean {\n\treturn key.startsWith(\"on\") && key.length > 2 && key[2] === key[2]?.toUpperCase();\n}\n\n/**\n * Merges a slot's own props with those of the element it renders into.\n *\n * Child props win, with three exceptions: event handlers are chained\n * slot-first-then-child so neither side is silently dropped, `className` is\n * merged through {@link cn} so the child's utilities beat conflicting slot\n * ones, and `style` is flattened into an array with the child last (React\n * Native resolves style arrays left to right).\n */\nexport function mergeProps<T extends UnknownProps>(slotProps: UnknownProps, childProps: UnknownProps): T {\n\tconst merged: UnknownProps = { ...slotProps };\n\n\tfor (const key of Object.keys(childProps)) {\n\t\tconst slotValue = slotProps[key];\n\t\tconst childValue = childProps[key];\n\n\t\tif (isEventHandlerKey(key) && typeof slotValue === \"function\" && typeof childValue === \"function\") {\n\t\t\tmerged[key] = (...args: unknown[]) => {\n\t\t\t\t(slotValue as (...a: unknown[]) => unknown)(...args);\n\t\t\t\treturn (childValue as (...a: unknown[]) => unknown)(...args);\n\t\t\t};\n\t\t\tcontinue;\n\t\t}\n\n\t\tif (key === \"className\") {\n\t\t\tmerged[key] = cn(slotValue as string, childValue as string);\n\t\t\tcontinue;\n\t\t}\n\n\t\tif (key === \"style\" && slotValue != null && childValue != null) {\n\t\t\tmerged[key] = [slotValue, childValue].flat();\n\t\t\tcontinue;\n\t\t}\n\n\t\tmerged[key] = childValue;\n\t}\n\n\treturn merged as T;\n}\n"
+			"namespace": "lib"
 		}
 	]
 }

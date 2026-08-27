@@ -1,8 +1,9 @@
-import { isAbsolute, resolve } from "node:path";
+import { isAbsolute, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import type { Namespace } from "./namespaces";
 
 /**
- * Where to read a registry from.
+ * Where to read a registry from, and how one is laid out.
  *
  * The registry is committed to the repository and served straight off
  * `raw.githubusercontent.com`, so there is nothing to host and nothing to keep
@@ -10,6 +11,10 @@ import { fileURLToPath } from "node:url";
  * the tag it was built from baked in, so a given version always reads the
  * registry it shipped against, and `--ref main` opts into whatever has landed
  * since.
+ *
+ * That a ref pins the whole registry is also what makes it safe to split an
+ * item across several documents: `r/button.json` and the files it names are
+ * read from one immutable tree, so there is no window in which they disagree.
  */
 
 export const DEFAULT_REGISTRY_URL = "https://raw.githubusercontent.com/delacournz/delacour-ui";
@@ -63,11 +68,28 @@ export function resolveRegistrySource(options: ResolveSourceOptions): RegistrySo
 	return { kind: "local", base: isAbsolute(url) ? url.replace(/\/+$/, "") : resolve(options.cwd, url) };
 }
 
-/** `registry.json` and `r/<name>.json`, the same layout on disk and over HTTP. */
+/** `registry.json`, `r/<name>.json` and `files/…`, the same layout on disk and over HTTP. */
 export function indexPath(source: RegistrySource): string {
 	return `${source.base}/registry.json`;
 }
 
 export function itemPath(source: RegistrySource, name: string): string {
 	return `${source.base}/r/${name}.json`;
+}
+
+/**
+ * A document named by `files[].path`.
+ *
+ * Joined with the platform separator for a local source so a Windows checkout
+ * reads its own registry, and with `/` for a remote one because that is a URL.
+ * `path` has already been through the schema's traversal guard, which is what
+ * stops a hostile registry pointing this at `../../../.ssh/id_rsa`.
+ */
+export function filePath(source: RegistrySource, path: string): string {
+	return source.kind === "local" ? join(source.base, path) : `${source.base}/${path}`;
+}
+
+/** Where a file lives in the registry, mirroring where it lands in a project. */
+export function registryFilePath(namespace: Namespace, target: string): string {
+	return `files/${namespace}/${target}`;
 }

@@ -17,22 +17,19 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "components/separator/AGENTS.md",
+			"path": "files/ui/separator/AGENTS.md",
 			"target": "separator/AGENTS.md",
-			"namespace": "ui",
-			"content": "# Separator\n\nA one-pixel rule, hidden from assistive technology — a line between every row\ncarries nothing a screen reader can use, and announcing them buries the rows.\n\n`import { Separator } from \"@registry/ui/separator\";`\n\n## Files\n\n| File | What it holds |\n| --- | --- |\n| `index.ts` | → `@registry/ui/separator` |\n| `separator.tsx` | The `tv()` and the component, in one file |\n\n## Design\n\n- **`separatorVariants` lives in `separator.tsx`**, above the component, not in a\n  `*.variants.ts` sibling — the pattern C carve-out. That file imports React\n  Native, so the `tv()` is not reachable from `bun test`; the exclusive-axis and\n  `self-stretch` rules below are stated in its doc comment instead of asserted.\n- **Orientations**: `horizontal` (default), `vertical`.\n- **The long axis is `self-stretch`, never `w-full` / `h-full`.** Yoga resolves\n  a percentage length against the parent's content box and then adds the\n  margins on top, so an inset `w-full` line starts 16pt in and runs 16pt past\n  the far edge — a gap down one side and none down the other. Stretching\n  subtracts the margins instead, which is what an inset divider needs. Do not\n  \"fix\" this back to a percentage width.\n- **A filled box, not a border**, so a caller insets it with a plain `mx-*`\n  without fighting a border's own box model. This is how\n  [`ListGroup`](../list-group/AGENTS.md) positions the dividers it inserts.\n"
+			"namespace": "ui"
 		},
 		{
-			"path": "components/separator/index.ts",
+			"path": "files/ui/separator/index.ts",
 			"target": "separator/index.ts",
-			"namespace": "ui",
-			"content": "export {\n\tSEPARATOR_ORIENTATIONS,\n\tSeparator,\n\ttype SeparatorOrientation,\n\ttype SeparatorProps,\n\ttype SeparatorVariantProps,\n\tseparatorVariants,\n} from \"./separator\";\n"
+			"namespace": "ui"
 		},
 		{
-			"path": "components/separator/separator.tsx",
+			"path": "files/ui/separator/separator.tsx",
 			"target": "separator/separator.tsx",
-			"namespace": "ui",
-			"content": "import type { ReactElement } from \"react\";\nimport { View, type ViewProps } from \"react-native\";\nimport type { VariantProps } from \"tailwind-variants\";\nimport { tv } from \"@registry/lib/tv\";\n\nexport const SEPARATOR_ORIENTATIONS = [\"horizontal\", \"vertical\"] as const;\n\nexport type SeparatorOrientation = (typeof SEPARATOR_ORIENTATIONS)[number];\n\n/**\n * Styling for a separator.\n *\n * The line is a filled box rather than a border, so a caller can inset it with\n * a plain `mx-*` / `my-*` without fighting a border's own box model — which is\n * how `ListGroup` positions the dividers it inserts between its rows.\n *\n * The long axis is `self-stretch`, never `w-full` / `h-full`. Yoga resolves a\n * percentage length against the parent's content box and then adds the margins\n * on top, so an inset `w-full` line starts 16pt in and runs 16pt past the far\n * edge — a gap down one side and none down the other. Stretching subtracts the\n * margins instead, which is what an inset divider actually needs.\n *\n * The two orientations are exclusive: `horizontal` draws `h-px` and no `w-px`,\n * `vertical` the reverse, so the hairline is only ever on one axis.\n *\n * Declared here rather than in a `*.variants.ts` sibling because a separator is\n * a single styled element with no compound parts and no pure resolvers — there\n * is no slot set for another file to share. The cost is that `bun test` cannot\n * reach it: this module imports React Native, whose Flow-typed source Bun's\n * transpiler cannot parse. See AGENTS.md.\n */\nexport const separatorVariants = tv({\n\tbase: \"self-stretch bg-border\",\n\tvariants: {\n\t\torientation: {\n\t\t\thorizontal: \"h-px\",\n\t\t\tvertical: \"w-px\",\n\t\t},\n\t},\n\tdefaultVariants: {\n\t\torientation: \"horizontal\",\n\t},\n});\n\nexport type SeparatorVariantProps = VariantProps<typeof separatorVariants>;\n\nexport type SeparatorProps = ViewProps & {\n\t/** Axis the line runs along. A vertical separator needs a parent with a height. */\n\torientation?: SeparatorOrientation;\n\tclassName?: string;\n};\n\n/**\n * A one-pixel rule dividing content.\n *\n * Hidden from assistive technology: the line carries no information a screen\n * reader can use, and announcing one between every row of a list would bury the\n * rows themselves.\n *\n * `ListGroup` inserts these between its rows automatically, so this is written\n * out by hand only for a divider elsewhere — or to place one inside a\n * `ListGroup` deliberately, which suppresses the automatic one at that point.\n *\n * @example\n * <Separator className=\"my-4\" />\n *\n * @example\n * <View className=\"flex-row items-center gap-3\">\n *   <Text>Left</Text>\n *   <Separator className=\"h-4\" orientation=\"vertical\" />\n *   <Text>Right</Text>\n * </View>\n */\nexport function Separator({ orientation = \"horizontal\", className, ...props }: SeparatorProps): ReactElement {\n\treturn (\n\t\t<View\n\t\t\taccessibilityElementsHidden\n\t\t\taccessible={false}\n\t\t\tclassName={separatorVariants({ className, orientation })}\n\t\t\timportantForAccessibility=\"no-hide-descendants\"\n\t\t\t{...props}\n\t\t/>\n\t);\n}\nSeparator.displayName = \"DelacourUI.Separator\";\n"
+			"namespace": "ui"
 		}
 	]
 }

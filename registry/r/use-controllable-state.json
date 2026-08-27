@@ -10,10 +10,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "hooks/use-controllable-state.ts",
+			"path": "files/hooks/use-controllable-state.ts",
 			"target": "use-controllable-state.ts",
-			"namespace": "hooks",
-			"content": "import { useCallback, useRef, useState } from \"react\";\n\ntype UseControllableStateOptions<T> = {\n\t/** Controlled value. When not `undefined` the hook defers to the caller. */\n\tvalue?: T;\n\t/** Initial value used while uncontrolled. */\n\tdefaultValue: T;\n\tonChange?: (value: T) => void;\n};\n\n/**\n * Supports both controlled and uncontrolled usage from one hook.\n *\n * While `value` is undefined the state is held internally; once a value is\n * passed the caller owns it and the setter only reports upward. Which mode is\n * in play is locked in on first render — switching later is a caller bug and\n * warns in development rather than silently changing behaviour.\n */\nexport function useControllableState<T>({\n\tvalue,\n\tdefaultValue,\n\tonChange,\n}: UseControllableStateOptions<T>): [T, (next: T) => void] {\n\tconst isControlled = value !== undefined;\n\tconst wasControlled = useRef(isControlled);\n\tconst [uncontrolled, setUncontrolled] = useState<T>(defaultValue);\n\n\tif (process.env.NODE_ENV !== \"production\" && wasControlled.current !== isControlled) {\n\t\tconsole.warn(\n\t\t\t`useControllableState: switched from ${wasControlled.current ? \"controlled\" : \"uncontrolled\"} to ` +\n\t\t\t\t`${isControlled ? \"controlled\" : \"uncontrolled\"}. Pick one for the lifetime of the component.`\n\t\t);\n\t\twasControlled.current = isControlled;\n\t}\n\n\tconst setValue = useCallback(\n\t\t(next: T) => {\n\t\t\tif (!isControlled) setUncontrolled(next);\n\t\t\tonChange?.(next);\n\t\t},\n\t\t[isControlled, onChange]\n\t);\n\n\treturn [isControlled ? value : uncontrolled, setValue];\n}\n"
+			"namespace": "hooks"
 		}
 	]
 }

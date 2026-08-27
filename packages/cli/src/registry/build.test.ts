@@ -93,7 +93,29 @@ describe("buildRegistry", () => {
 	});
 
 	test("leaves no reference to the source package in the copied files", () => {
-		for (const { file } of everyFile()) expect(file.content).not.toContain("@delacour/native-ui");
+		for (const { content } of everyFile()) expect(content).not.toContain("@delacour/native-ui");
+	});
+
+	test("an item references its files rather than carrying them", () => {
+		expect(byName.get("button")?.files).toContainEqual({
+			path: "files/ui/button/button.tsx",
+			target: "button/button.tsx",
+			namespace: "ui",
+		});
+
+		// The whole point of the split: no component source anywhere in the JSON.
+		expect(JSON.stringify(registry.items)).not.toContain("ButtonProvider");
+	});
+
+	test("every file has exactly one document, and every document a file", () => {
+		const referenced = everyFile().map(({ file }) => file.path);
+
+		expect(new Set(referenced).size).toBe(referenced.length);
+		expect([...registry.contents.keys()].sort()).toEqual([...referenced].sort());
+	});
+
+	test("a file's registry path mirrors where it lands in a project", () => {
+		for (const { file } of everyFile()) expect(file.path).toBe(`files/${file.namespace}/${file.target}`);
 	});
 
 	test("the index carries every item without their contents", () => {
@@ -104,20 +126,31 @@ describe("buildRegistry", () => {
 
 	test("is deterministic — two builds of the same source are byte-identical", async () => {
 		const second = await buildRegistry({ packageRoot: PACKAGE_ROOT });
-		expect(JSON.stringify(second)).toBe(JSON.stringify(registry));
+
+		expect(JSON.stringify({ items: second.items, index: second.index })).toBe(
+			JSON.stringify({ items: registry.items, index: registry.index })
+		);
+		// A Map stringifies to `{}`, so the contents have to be compared as entries
+		// or this asserts nothing about the half of the build that holds the source.
+		expect([...second.contents]).toEqual([...registry.contents]);
 	});
 });
 
-function everyFile(): { item: RegistryItem; file: RegistryFile; where: string }[] {
+function everyFile(): { item: RegistryItem; file: RegistryFile; content: string; where: string }[] {
 	return registry.items.flatMap((item) =>
-		item.files.map((file) => ({ item, file, where: `${item.name}/${file.target}` }))
+		item.files.map((file) => ({
+			item,
+			file,
+			content: registry.contents.get(file.path) as string,
+			where: `${item.name}/${file.target}`,
+		}))
 	);
 }
 
 function everyImport(): { where: string; specifier: string }[] {
 	return everyFile()
 		.filter(({ file }) => /\.tsx?$/.test(file.path) && !file.path.endsWith(".d.ts"))
-		.flatMap(({ file, where }) => scanImports(file.content).map(({ specifier }) => ({ where, specifier })));
+		.flatMap(({ content, where }) => scanImports(content).map(({ specifier }) => ({ where, specifier })));
 }
 
 /** `("ui", "icon/icon.variants")` → `icon`; `("lib", "cn")` → `cn`. */

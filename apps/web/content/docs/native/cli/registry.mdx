@@ -4,21 +4,27 @@ description: Where components come from, how a version is pinned, and how to ser
 icon: Package
 ---
 
-The registry is JSON committed to the repository and read straight off
-`raw.githubusercontent.com`. There is no service to host and nothing to keep running — and nothing
-to be down when you run `add`.
+The registry is committed to the repository and read straight off `raw.githubusercontent.com`.
+There is no service to host and nothing to keep running — and nothing to be down when you run
+`add`.
 
 ```txt
 registry/
-├── registry.json      the index: names, descriptions, dependencies — no file contents
-├── r/button.json      one item, contents inlined
-└── config.schema.json the JSON Schema behind native-components.json's $schema
+├── registry.json                  the index: names, descriptions, dependencies
+├── r/button.json                  one item: what it is, what it needs, which files
+├── files/ui/button/button.tsx     the files themselves
+└── config.schema.json             the JSON Schema behind native-components.json's $schema
 ```
 
-`add button` costs two small requests: the index, to resolve what button pulls in, and the items
-it actually needs. Everything fetched is cached under your cache directory and revalidated with an
-ETag, so a repeated `add` costs a 304 and an `add` on a flaky connection still works from what is
-already there.
+An item **references** its files rather than carrying them. shadcn inlines each file as a string
+inside the item JSON; the cost of that is a megabyte of escaped source that no reviewer can read
+and `git` cannot diff. Written out, `files/ui/button/button.tsx` is the TypeScript it looks like —
+you can open it on GitHub and see exactly what `add` is about to copy.
+
+`add button` resolves the graph from the index, fetches the handful of items it needs, then their
+files. Everything fetched is cached under your cache directory and revalidated with an ETag, so a
+repeated `add` costs a 304 and an `add` on a flaky connection still works from what is already
+there. The ref pins the whole tree at once, so an item and its files can never disagree.
 
 ## An item
 
@@ -32,9 +38,13 @@ already there.
   "dependencies": ["tailwind-variants"],
   "expoDependencies": [],
   "devDependencies": [],
-  "files": [{ "path": "components/button/button.tsx", "target": "button/button.tsx", "namespace": "ui", "content": "…" }]
+  "files": [{ "path": "files/ui/button/button.tsx", "target": "button/button.tsx", "namespace": "ui" }]
 }
 ```
+
+`path` is where the file lives in the registry; `namespace` and `target` are where it lands in your
+project. A file that inlines `content` is rejected rather than ignored, so a shadcn-shaped item
+fails with a message rather than a 404 halfway through a copy.
 
 The dependency list is split three ways on purpose, and it is the split that decides whether an
 Expo build compiles:
@@ -60,7 +70,7 @@ package's — so an agent working in your repository gets the design rules next 
 ## Pinning a version
 
 The CLI is published with the git ref it was built from baked in, so a given version always reads
-the registry it shipped against. Override it three ways, in this order:
+the registry it shipped against. Override it two ways, in this order:
 
 ```bash
 bunx delacour add tabs --ref main          # 1. the flag
@@ -68,10 +78,6 @@ bunx delacour add tabs --ref main          # 1. the flag
 
 ```json title="native-components.json"
 { "registry": { "ref": "v0.2.0" } }        // 2. the config
-```
-
-```bash
-DELACOUR_REGISTRY_REF=main bunx delacour add tabs   # 3. the environment
 ```
 
 `--ref main` is how you take a component that has landed since your CLI was published. `bunx
@@ -98,8 +104,8 @@ Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shor
 bunx delacour add card --registry https://ui.acme.com/r
 ```
 
-Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
-`r/<name>.json` at that base.
+Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json`,
+`r/<name>.json` and every `path` those items name, at that base.
 
 </Tab>
 <Tab value="A local path">
@@ -171,6 +177,7 @@ It also asserts what a build alone cannot:
   type={{
     "schema": { type: "check", description: "Every item validates against the published item schema." },
     "index": { type: "check", description: "registry.json and the files under r/ name the same items." },
+    "documents": { type: "check", description: "Every path an item names exists under files/, and none is orphaned." },
     "files": { type: "check", description: "Every file each item declares actually landed on disk." },
     "placeholders": { type: "check", description: "No @registry/ placeholder and no source-package reference survived." },
     "relative imports": { type: "check", description: "Every relative import resolves to a file that exists." },

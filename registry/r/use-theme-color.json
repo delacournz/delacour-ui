@@ -14,10 +14,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "hooks/use-theme-color.ts",
+			"path": "files/hooks/use-theme-color.ts",
 			"target": "use-theme-color.ts",
-			"namespace": "hooks",
-			"content": "import { useCSSVariable } from \"uniwind\";\nimport { isLiteralColor } from \"@registry/lib/color\";\n\n/** Defined by every theme, so looking it up never misses and never warns. */\nconst PROBE_VARIABLE = \"--color-foreground\";\n\n/**\n * Reads a theme colour as a plain string for props that take a colour value\n * rather than a style — icon `color`, gradient stops, chart series, and any\n * third-party component that will not accept a className.\n *\n * Resolves against the nearest `ScopedTheme`, so it follows light/dark and any\n * custom theme automatically. Prefer a `bg-*`/`text-*` className wherever the\n * target actually accepts one.\n *\n * A literal colour — `#EC4899`, `rgb(...)` — passes straight through without\n * being looked up, so a caller can hand one to any prop typed as a token\n * without special-casing it.\n * A token resolves only if the active theme actually emits its CSS variable.\n * That is the semantic palette in `styles/theme.css` — Tailwind's own palette\n * names (`emerald-500`) are not emitted unless some utility class references\n * them. An unresolved token yields `undefined` rather than a bogus value.\n */\nexport function useThemeColor(token: string): string | undefined {\n\tconst isLiteral = isLiteralColor(token);\n\tconst name = token.startsWith(\"--\") ? token : `--color-${token}`;\n\n\t// A literal still has to go through the hook — hook order cannot be\n\t// conditional — but it must not be the thing looked up. Uniwind logs a\n\t// warning on every miss, and `--color-#EC4899` misses on every single\n\t// render. Probe a variable that is always defined instead, and discard it.\n\tconst resolved = useCSSVariable(isLiteral ? PROBE_VARIABLE : name) as string | undefined;\n\n\treturn isLiteral ? token : resolved;\n}\n"
+			"namespace": "hooks"
 		}
 	]
 }

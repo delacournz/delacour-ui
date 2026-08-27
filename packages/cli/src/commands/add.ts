@@ -66,9 +66,12 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 
 	const byName = new Map(index.items.map((item) => [item.name, item]));
 	const order = resolveItemGraph(requested, (name) => byName.get(name));
-	const items = await output.task(`Fetching ${order.length} item${order.length === 1 ? "" : "s"}`, () =>
-		Promise.all(order.map((name) => client.getItem(name)))
-	);
+	// Metadata first, then the files it names. The client caps how many of those
+	// are in flight, so asking for the whole closure at once is safe.
+	const items = await output.task(`Fetching ${order.length} item${order.length === 1 ? "" : "s"}`, async () => {
+		const fetched = await Promise.all(order.map((name) => client.getItem(name)));
+		return Promise.all(fetched.map((item) => client.loadItem(item)));
+	});
 
 	const planned = await planFiles(items, config);
 	const toWrite = await resolveConflicts(planned, options, output);

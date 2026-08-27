@@ -194,3 +194,8 @@ The registry is **derived** from `packages/native-ui/src` — one item per
 component folder, dependencies read off the imports. There is no `registry.json`
 to maintain, and the builder throws rather than guessing: an unclassified npm
 import or a component folder without an `index.ts` fails the build.
+
+It writes three things: `registry.json` (the index), `r/<name>.json` (one item,
+naming its files) and `files/<namespace>/<target>` (the files themselves). An
+item references its files rather than inlining them, so a component's diff is
+the TypeScript that changed rather than a JSON string nobody can read.

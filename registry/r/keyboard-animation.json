@@ -10,10 +10,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "lib/keyboard-animation.ts",
+			"path": "files/lib/keyboard-animation.ts",
 			"target": "keyboard-animation.ts",
-			"namespace": "lib",
-			"content": "/**\n * Whether `KeyboardProvider`'s shared animation values are provably stale.\n *\n * Lives here, free of React Native imports, so the decision is reachable from\n * `bun test` — `hooks/use-keyboard-state-sync` cannot be, since Bun's\n * transpiler cannot parse React Native's Flow-typed source. See AGENTS.md.\n *\n * `hasFocusedInput` MUST come from React Native's own focus registry\n * (`TextInput.State.currentlyFocusedInput()`), never from\n * `KeyboardController.isVisible()`. The latter is fed by the very\n * `keyboardWillShow` / `keyboardDidHide` notifications that go missing in the\n * failure this guard exists for, so in the broken case it reads a stale `true`\n * and would veto the repair. RN's registry is driven by the input's own native\n * focus and blur — a genuinely independent signal.\n */\nexport function shouldResetKeyboardAnimation(state: {\n\t/** `KeyboardProvider`'s shared progress, 0 closed through 1 open. */\n\tprogress: number;\n\t/** `KeyboardProvider`'s shared height, negative while open. */\n\theight: number;\n\t/** Whether React Native's focus registry holds a focused `TextInput`. */\n\thasFocusedInput: boolean;\n}): boolean {\n\t\"worklet\";\n\t// Never fight a real, focused keyboard.\n\tif (state.hasFocusedInput) return false;\n\treturn state.progress !== 0 || state.height !== 0;\n}\n"
+			"namespace": "lib"
 		}
 	]
 }

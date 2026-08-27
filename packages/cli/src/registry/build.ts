@@ -5,6 +5,7 @@ import { classifySource, type SourceClassification } from "./classify";
 import { ITEM_META, PACKAGE_INSTALL } from "./config";
 import type { RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { toIndexEntry } from "./schema";
+import { registryFilePath } from "./source";
 
 /**
  * Builds the registry from `packages/native-ui/src`.
@@ -25,6 +26,14 @@ export type BuildOptions = {
 export type BuildResult = {
 	items: RegistryItem[];
 	index: RegistryIndex;
+	/**
+	 * Every file's canonicalised text, keyed by its registry path.
+	 *
+	 * Kept beside the items rather than inside them: an item is metadata a
+	 * client parses, and the text is a document it fetches. Merging them is what
+	 * turns a component's diff into an unreadable JSON string.
+	 */
+	contents: Map<string, string>;
 };
 
 const DEFAULT_HOMEPAGE = "https://github.com/delacournz/delacour-ui";
@@ -52,8 +61,13 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 	}
 
 	const items: RegistryItem[] = [];
+	const contents = new Map<string, string>();
+
 	for (const [name, sources] of [...grouped].sort(([a], [b]) => a.localeCompare(b))) {
-		items.push(await buildItem({ name, sources, sourceRoot, sourcePaths, packageSubpaths }));
+		const built = await buildItem({ name, sources, sourceRoot, sourcePaths, packageSubpaths });
+
+		items.push(built.item);
+		for (const [path, content] of built.contents) contents.set(path, content);
 	}
 
 	assertDependenciesResolve(items);
@@ -65,6 +79,7 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 			homepage: options.homepage ?? DEFAULT_HOMEPAGE,
 			items: items.map(toIndexEntry),
 		},
+		contents,
 	};
 }
 
@@ -76,7 +91,12 @@ type BuildItemContext = {
 	packageSubpaths: ReadonlyMap<string, string>;
 };
 
-async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
+type BuiltItem = {
+	item: RegistryItem;
+	contents: Map<string, string>;
+};
+
+async function buildItem(context: BuildItemContext): Promise<BuiltItem> {
 	const meta = ITEM_META[context.name];
 	if (!meta) throw new Error(`No metadata for registry item "${context.name}" — add it to src/registry/config.ts`);
 
@@ -84,6 +104,7 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 	if (!first) throw new Error(`Registry item "${context.name}" has no files`);
 
 	const files: RegistryFile[] = [];
+	const contents = new Map<string, string>();
 	const registryDependencies = new Set<string>();
 	const bareImports = new Set<string>(meta.dependencies ?? []);
 
@@ -109,27 +130,28 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 		for (const dependency of canonical.registryDependencies) registryDependencies.add(dependency);
 		for (const bare of canonical.bareImports) bareImports.add(bare);
 
-		files.push({
-			path,
-			target: classification.target,
-			namespace: classification.namespace,
-			content: canonical.content,
-		});
+		const registryPath = registryFilePath(classification.namespace, classification.target);
+
+		files.push({ path: registryPath, target: classification.target, namespace: classification.namespace });
+		contents.set(registryPath, canonical.content);
 	}
 
 	const { dependencies, expoDependencies, devDependencies } = classifyPackages(context.name, bareImports);
 
 	return {
-		name: context.name,
-		type: first.classification.type,
-		title: meta.title,
-		description: meta.description,
-		...(meta.categories ? { categories: meta.categories } : {}),
-		registryDependencies: [...registryDependencies].sort(),
-		dependencies,
-		expoDependencies,
-		devDependencies,
-		files: files.sort((a, b) => a.target.localeCompare(b.target)),
+		item: {
+			name: context.name,
+			type: first.classification.type,
+			title: meta.title,
+			description: meta.description,
+			...(meta.categories ? { categories: meta.categories } : {}),
+			registryDependencies: [...registryDependencies].sort(),
+			dependencies,
+			expoDependencies,
+			devDependencies,
+			files: files.sort((a, b) => a.target.localeCompare(b.target)),
+		},
+		contents,
 	};
 }
 

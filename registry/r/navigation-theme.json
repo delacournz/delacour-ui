@@ -10,10 +10,9 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "lib/navigation-theme.ts",
+			"path": "files/lib/navigation-theme.ts",
 			"target": "navigation-theme.ts",
-			"namespace": "lib",
-			"content": "/**\n * React Navigation's colour slots, mapped to this library's semantic tokens.\n *\n * Lives here, free of React Native imports, so the mapping is reachable from\n * `bun test` — `hooks/use-navigation-theme` cannot be, since Bun's transpiler\n * cannot parse React Native's Flow-typed source. See AGENTS.md.\n *\n * A slot pointing at a token no theme emits would resolve to `undefined`, be\n * dropped, and silently leave React Navigation's own light default in place —\n * which is the exact failure the hook exists to fix. The test asserts every\n * token here is declared in both variants of `styles/theme.css`.\n */\nexport const NAVIGATION_THEME_TOKENS = {\n\tbackground: \"background\",\n\tcard: \"card\",\n\ttext: \"foreground\",\n\tborder: \"border\",\n\tprimary: \"primary\",\n\tnotification: \"danger\",\n} as const;\n\nexport type NavigationThemeSlot = keyof typeof NAVIGATION_THEME_TOKENS;\n\n/** The resolved colours, and whether the active theme is a dark one. */\nexport type NavigationTheme = {\n\tdark: boolean;\n\t/**\n\t * Resolved colours by slot. A slot the active theme does not emit is\n\t * ABSENT rather than `undefined`, so spreading this over a base theme\n\t * leaves that slot's default in place instead of punching a hole in it.\n\t */\n\tcolors: Partial<Record<NavigationThemeSlot, string>>;\n};\n\n/**\n * Drops the slots that resolved to nothing.\n *\n * The result is spread over a base theme, and `{ ...base, background: undefined }`\n * overwrites the default with `undefined` rather than leaving it — a navigator\n * with no background at all, which reads as a transparent hole rather than as\n * a missing token.\n */\nexport function omitUnresolvedColors(\n\tcolors: Record<NavigationThemeSlot, string | undefined>\n): Partial<Record<NavigationThemeSlot, string>> {\n\tconst resolved: Partial<Record<NavigationThemeSlot, string>> = {};\n\n\tfor (const [slot, value] of Object.entries(colors) as [NavigationThemeSlot, string | undefined][]) {\n\t\tif (value !== undefined) resolved[slot] = value;\n\t}\n\n\treturn resolved;\n}\n"
+			"namespace": "lib"
 		}
 	]
 }

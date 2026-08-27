@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 import type { ResolvedConfig } from "../config/resolve";
 import type { Namespace } from "../registry/namespaces";
-import type { RegistryItem } from "../registry/schema";
+import type { LoadedFile, LoadedItem } from "../registry/schema";
 import { transformContent } from "../registry/transform";
 
 /**
@@ -23,20 +23,18 @@ export type PlannedFile = {
 	/** Path relative to the config, for printing. */
 	displayPath: string;
 	content: string;
+	/** What is on disk now, or `null` if nothing is. Kept so `diff` need not read it again. */
+	current: string | null;
 	exists: boolean;
 	/** Already on disk with exactly this content. */
 	unchanged: boolean;
 };
 
-export function planFiles(items: readonly RegistryItem[], config: ResolvedConfig): Promise<PlannedFile[]> {
+export function planFiles(items: readonly LoadedItem[], config: ResolvedConfig): Promise<PlannedFile[]> {
 	return Promise.all(items.flatMap((item) => item.files.map((file) => planFile(item, file, config))));
 }
 
-async function planFile(
-	item: RegistryItem,
-	file: RegistryItem["files"][number],
-	config: ResolvedConfig
-): Promise<PlannedFile> {
+async function planFile(item: LoadedItem, file: LoadedFile, config: ResolvedConfig): Promise<PlannedFile> {
 	const path = join(config.directories[file.namespace], file.target);
 	const content = transformContent(file.content, {
 		fileDirectory: dirname(path),
@@ -52,6 +50,7 @@ async function planFile(
 		path,
 		displayPath: toPosix(relative(config.root, path)),
 		content,
+		current,
 		exists: current !== null,
 		unchanged: current === content,
 	};

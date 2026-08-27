@@ -71,7 +71,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 		},
 		async ({ name }) => {
 			const client = await openRegistry();
-			const item = await client.getItem(name);
+			const item = await client.loadItem(await client.getItem(name));
 			const index = await client.getIndex();
 			const byName = new Map(index.items.map((entry) => [entry.name, entry]));
 			const closure = resolveItemGraph([name], (candidate) => byName.get(candidate)).filter((c) => c !== name);

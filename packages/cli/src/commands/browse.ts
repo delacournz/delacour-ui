@@ -75,8 +75,10 @@ export async function view(name: string, options: BrowseOptions): Promise<void> 
 	const client = await openRegistry(options);
 	const item = await client.getItem(name);
 
+	// `--json` is the machine-readable form of the whole item, so it carries the
+	// files themselves. The human view lists their names and needs none of them.
 	if (options.json) {
-		process.stdout.write(`${JSON.stringify(item, null, 2)}\n`);
+		process.stdout.write(`${JSON.stringify(await client.loadItem(item), null, 2)}\n`);
 		return;
 	}
 

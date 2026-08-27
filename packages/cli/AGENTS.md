@@ -41,6 +41,7 @@ src/
 │   ├── build.ts, write.ts, cli.ts, config.ts                   (build time)
 │   ├── transform.ts      @registry/* → the consumer's aliases  (add time)
 │   ├── client.ts         fetch + ETag cache + zod validation   (add time)
+│   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
 │   ├── source.ts, namespaces.ts, schema.ts
 └── ui/                   output.ts (all printing), diff.ts (the line diff)
@@ -51,7 +52,7 @@ scripts/
 └── check-bundle.ts       prepublish guard
 ```
 
-## The five rules
+## The six rules
 
 1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript` —
    about ten megabytes — to read type-only imports out of the library's source. That runs at
@@ -71,15 +72,24 @@ scripts/
    `tsconfig.json` and never written to it.**
 
 4. **`registry/` is build output and is excluded from Biome.** The pre-commit hook runs
-   `biome check --write` on staged JSON and re-stages it, which would reformat the registry the
+   `biome check --write` on staged files and re-stages them, which would reformat the registry the
    builder had just written — permanent drift, and a CI check that could never pass. The exclusion
-   is in the root `biome.jsonc`.
+   is in the root `biome.jsonc`, and it matters more now that `registry/files/**` holds real
+   `.tsx`: those are canonicalised copies, and the only thing that should ever change them is the
+   source they were derived from.
 
 5. **The builder throws rather than guesses.** A component with no `ITEM_META`, an npm import with
    no `PACKAGE_INSTALL` entry, a relative import resolving to nothing — each fails the build. The
    alternative for the second one is defaulting to the package manager, which is how a native
    module gets installed at a version the SDK cannot build. That failure surfaces at someone
    else's linker rather than here.
+
+6. **An item references its files; it does not carry them.** `r/button.json` names
+   `files/ui/button/button.tsx`, and the client fetches it. shadcn inlines `content` instead, which
+   is why their registry diffs are unreadable. `registryFileSchema` *rejects* an inlined `content`
+   rather than ignoring it, so a shadcn-shaped item fails with a message instead of 404ing halfway
+   through a copy. `LoadedItem` is the hydrated shape — `client.loadItem()` produces it, and
+   `planFiles` takes nothing else.
 
 ## Adding a component to the registry
 

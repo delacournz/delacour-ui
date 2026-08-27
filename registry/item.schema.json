@@ -64,7 +64,8 @@
 				"type": "object",
 				"properties": {
 					"path": {
-						"type": "string"
+						"type": "string",
+						"minLength": 1
 					},
 					"target": {
 						"type": "string",
@@ -81,14 +82,13 @@
 						]
 					},
 					"content": {
-						"type": "string"
+						"not": {}
 					}
 				},
 				"required": [
 					"path",
 					"target",
-					"namespace",
-					"content"
+					"namespace"
 				]
 			}
 		}

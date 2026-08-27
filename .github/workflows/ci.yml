@@ -1,26 +1,84 @@
 name: CI
 
+# These four statuses are not decoration: the Railway service is configured to wait on check
+# suites, so it holds every deploy of ui.delacour.co.nz / ui.staging.delacour.co.nz until this
+# workflow is green.
+# A workflow that never runs on a branch means deploys from that branch wait forever; a workflow
+# that passes vacuously means a broken docs site ships. Keep both branches listed below.
+
 on:
   push:
-    branches: [main]
+    branches: [main, develop]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  check:
+  typecheck:
+    name: typecheck
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          # Matches `packageManager` in package.json — Railpack reads the same field to pick Bun.
+          bun-version: 1.3.9
+      - run: bun install --frozen-lockfile
+      # `turbo typecheck` depends on `build` (see turbo.jsonc): TanStack Router generates the
+      # gitignored `apps/web/src/routeTree.gen.ts` during the build, and tsc cannot run without it.
+      - run: bun run typecheck
 
+  check:
+    name: check (lint + format)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.9
-
       - run: bun install --frozen-lockfile
-
-      - run: bun run typecheck
       - run: bun run check
-      - run: bun test
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - run: bun install --frozen-lockfile
+      # Scoped to the docs site on purpose. This is the only thing Railway deploys, and an
+      # unfiltered `turbo build` would drag in the Expo playground for no benefit.
+      #
+      # Never add `bun run previews` here. It drives an iOS simulator and needs a Mac with Xcode;
+      # its outputs (apps/web/public/previews/**, apps/web/src/previews/manifest.ts) are committed
+      # precisely so this builds on a simulator-less runner. See apps/web/AGENTS.md.
+      - run: bun run build --filter=@delacour/web
+
+  registry:
+    name: registry
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+      - run: bun install --frozen-lockfile
 
       # The registry is committed, so a component change that does not rebuild
       # it would publish a registry describing the previous version.
@@ -53,12 +111,10 @@ jobs:
         layout: [standalone, monorepo]
 
     steps:
-      - uses: actions/checkout@v4
-
+      - uses: actions/checkout@v5
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.9
-
       - run: bun install --frozen-lockfile
 
       # Scaffolds an Expo app, installs Uniwind and Tailwind, runs init and adds

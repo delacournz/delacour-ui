@@ -143,6 +143,22 @@ Turn it back on only alongside a static host, and expect to debug the crawler.
 the same way `apps/playground` does for `src/app/**`. `src/routeTree.gen.ts` is generated,
 gitignored, and excluded from Biome.
 
+### `typecheck` depends on `codegen`, and must keep doing so
+
+`tsc` cannot check this app until `src/routeTree.gen.ts` exists, and that file is written by the
+TanStack Start Vite plugin during `buildStart` — so on a clean checkout it is absent and **every
+route fails to typecheck**. `turbo.jsonc` therefore gives `@delacour/web#typecheck` an edge to
+`@delacour/web#codegen`, which is `vite build`.
+
+Do not remove that edge as redundant because the file happens to be on your disk: it is there
+because you ran `dev` or `build` at some point, and CI never has. It costs about two seconds of
+wall clock, since turbo runs it alongside the other packages' typechecks.
+
+`@tanstack/router-generator`'s `Generator` is **not** a lighter substitute. It writes the route
+tree but omits the `declare module "@tanstack/react-start"` block carrying `Register`, which is
+what gives the routes their types — without it every `createFileRoute("/docs/$")` fails with
+*Argument of type '"/docs/$"' is not assignable to parameter of type 'undefined'*.
+
 ### `react` and `react-dom` come from the catalog
 
 Both are `"catalog:"` (19.2.3), pinned alongside React Native's copy. `bunfig.toml` sets

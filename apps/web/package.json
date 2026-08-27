@@ -6,6 +6,7 @@
 	"sideEffects": false,
 	"scripts": {
 		"dev": "vite dev",
+		"codegen": "vite build --logLevel error",
 		"build": "vite build",
 		"start": "bun .output/server/index.mjs",
 		"check": "biome check ./src",

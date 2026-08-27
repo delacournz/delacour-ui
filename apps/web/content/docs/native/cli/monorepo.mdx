@@ -15,6 +15,42 @@ cd packages/ui && bunx delacour init     # into a shared package
 Running inside a package that is not the app **is** the answer — there is no prompt and no flag.
 From the repository root, `init` asks.
 
+## What `init` creates
+
+In the shared-package layout it writes a real, importable workspace package — not just a directory
+with components in it:
+
+```jsonc title="packages/ui/package.json"
+{
+  "name": "@acme/ui",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./button": "./src/components/ui/button/index.ts",
+    "./lib/cn": "./src/lib/cn.ts",
+    "./styles": "./src/styles/index.css"
+  },
+  "peerDependencies": { "react-native-reanimated": "*", "tailwind-variants": "*" }
+}
+```
+
+Then the app imports it by name, and `init` adds `"@acme/ui": "workspace:*"` to the app so the
+package manager links it:
+
+```tsx
+import { Button } from "@acme/ui/button";
+```
+
+<Callout title="One export per component, and no root barrel">
+`@acme/ui` on its own does not resolve, deliberately. A barrel would make every app pull in every
+component — and every optional native peer with it. `add` regenerates the map from what is on disk,
+so it cannot drift from the components you actually have.
+</Callout>
+
+Native modules are recorded as **peer** dependencies of the package and installed into the **app**.
+The app owns the versions, because `expo install` pins them against the SDK, and one copy of each
+native module is the difference between working and a crash on the first press.
+
 ## What changes between the two
 
 `native-components.json` lives wherever the components live. What moves is `app.root`, and with it every
@@ -46,9 +82,13 @@ apps/mobile/
 ```json title="packages/ui/native-components.json"
 {
   "paths": { "ui": "src/components/ui", "lib": "src/lib" },
+  "package": { "name": "@acme/ui" },
   "app": { "root": "../../apps/mobile", "css": "src/styles/global.css" }
 }
 ```
+
+The `package` block is the whole signal for this layout: its presence is what makes `add` maintain
+the exports map and record peers rather than dependencies.
 
 ```txt
 packages/ui/
@@ -97,7 +137,8 @@ A monorepo invites a second copy: the package manager can materialise `react-nat
 under the app while the workspace root holds another. Two registrations of a native module break
 at runtime.
 
-`delacour doctor` warns when it finds duplicates. The fix is Metro's resolver:
+`init` writes this into the app's `metro.config.js` for you in the shared-package layout, and
+`delacour doctor` checks it:
 
 ```js title="apps/mobile/metro.config.js"
 config.resolver.extraNodeModules = {
@@ -107,7 +148,20 @@ config.resolver.extraNodeModules = {
 };
 ```
 
-Keep `withUniwindConfig` the outermost wrapper around whatever else you add.
+Keep `withUniwindConfig` the outermost wrapper around whatever else you add — `init` places the
+resolver block before it, and `doctor` checks the ordering.
+
+<Callout type="warn" title="Bun needs a flat install">
+Add a `bunfig.toml` at the workspace root with `linker = "hoisted"`. Bun's default isolated layout
+hides packages under `node_modules/.bun/…`, which Metro cannot follow and which makes TypeScript
+resolve the package's copy of React Native to a different realpath than the app's — every `ref` in
+the library then fails to typecheck, naming neither cause.
+
+```toml title="bunfig.toml"
+[install]
+linker = "hoisted"
+```
+</Callout>
 
 ## Several apps, one package
 

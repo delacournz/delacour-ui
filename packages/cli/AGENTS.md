@@ -105,6 +105,23 @@ the stock Metro config so the *patch* path is exercised, adds every item, and ty
 | `--bundle` | Metro resolves every module and **Uniwind compiles every class**. |
 | `--simulator` | The components render on a device. Needs a Mac with Xcode. |
 
+`--layout monorepo` runs the whole thing again with the components in a shared package the app
+imports by name. That layout has wiring the standalone one does not — a workspace link, an
+`exports` map, Metro's resolver — and none of it is exercised by the first, which is how the
+shared-package path shipped broken.
+
+<!-- Two traps the monorepo layout exists to catch. -->
+Both were found by building it, and both are silent:
+
+- **`uniwind-env.d.ts` must be loadable by the app.** It is one triple-slash reference, so it only
+  works from inside the app's own `tsconfig` include — a copy beside the components in a package
+  never joins the app's program, and every `className` becomes a type error naming neither cause.
+  `init` writes a second copy into the app; `doctor` fails without it.
+- **A Bun workspace needs `linker = "hoisted"`.** The default isolated layout puts packages under
+  `node_modules/.bun/…`, so the package and the app resolve React Native at different realpaths and
+  `ComponentRef<typeof Animated.View>` collapses to `never`. The harness writes a `bunfig.toml`;
+  the repository root carries the same file for the same reason.
+
 The app is built at `.verify/app` — gitignored and outside the workspace globs. The default run
 removes it afterwards, `node_modules` and all; `--keep` retains it and makes the next run take
 seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left.

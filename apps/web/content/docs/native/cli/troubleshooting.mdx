@@ -128,6 +128,42 @@ bunx delacour@latest add tabs --ref main
 
 See [The registry](/docs/native/cli/registry).
 
+### Every `className` is a type error in a monorepo
+
+```
+Type '{ children: Element; className: string; … }' is not assignable to type
+  'IntrinsicAttributes & Omit<AnimatedProps<Readonly<ViewProps>>, "ref">'
+```
+
+`uniwind-env.d.ts` is one line — `/// <reference types="uniwind/types" />` — and it is what gives a
+React Native component a `className` prop in TypeScript at all. In a shared package it lands beside
+the components, **outside the app's `tsconfig` include**, and nothing imports it: a declaration file
+holding only a triple-slash reference cannot be reached by an import. So the augmentation never
+loads for the app.
+
+`init` writes a copy into the app for you, and `doctor` fails when it is missing. If you are
+adopting a package by hand, add it yourself:
+
+```ts title="apps/mobile/uniwind-env.d.ts"
+/// <reference types="uniwind/types" />
+```
+
+### `Ref<never>`, or two copies of React Native's types
+
+```
+Type 'Ref<never> | undefined' is not assignable to type 'AnimatedComponentRef<typeof View>'
+```
+
+A Bun workspace installing with the default isolated layout. Packages sit under
+`node_modules/.bun/…` and are linked from each package, so the shared package resolves React Native
+at a different realpath than the app — TypeScript treats them as different modules and generics
+collapse to `never`. Metro cannot follow that layout either.
+
+```toml title="bunfig.toml"
+[install]
+linker = "hoisted"
+```
+
 ### A copied component does not typecheck
 
 That is a registry defect rather than something wrong with your project — an import the registry
@@ -154,7 +190,11 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
     },
     "Tailwind sources": { type: "check", description: "The @source globs cover every directory holding copied code, resolving symlinks." },
     "Path aliases": { type: "check", description: "experiments.tsconfigPaths is on when native-components.json uses aliases." },
-    "Uniwind types": { type: "check", description: "uniwind-env.d.ts is present — without it, className is a type error." },
+    "Uniwind types": {
+      type: "check",
+      description:
+        "uniwind-env.d.ts is present, and loadable by the app — in a shared package a copy beside the components is outside the app's tsconfig include and never loads.",
+    },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },
   }}

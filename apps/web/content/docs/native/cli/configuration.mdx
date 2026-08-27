@@ -79,6 +79,25 @@ import { Icon } from "../icon";
   }}
 />
 
+## `package`
+
+```jsonc
+{ "package": { "name": "@acme/ui" } }
+```
+
+Present only when the components live in a shared package, and written by `init` when you name one.
+Its presence is what makes `add` maintain the package's `exports` map and record native modules as
+peers — see [Monorepos](/docs/native/cli/monorepo).
+
+<TypeTable
+  type={{
+    "package.name": {
+      type: "string",
+      description: "The package's npm name, and therefore what the apps import components as.",
+    },
+  }}
+/>
+
 ## `app`
 
 Which Expo app to wire up. Every path here is relative to `app.root`, and `app.root` itself is

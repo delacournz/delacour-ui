@@ -48,6 +48,20 @@ Every registry-reading command takes `--registry <url>` (a URL,
 
 ## Where components go
 
+In a workspace `init` asks whether the components belong to one app or to a package several apps
+share. Choose the package and it writes a real one — `package.json` with an `exports` map, the
+app's dependency on it, and Metro's resolver wiring:
+
+```tsx
+import { Button } from "@acme/ui/button";
+```
+
+```bash
+bunx delacour init --package-name @acme/ui --package-path packages/ui   # no prompts
+```
+
+
+
 `native-components.json` lives wherever the components live, and the nearest one wins
 walking up from `--cwd`. In a monorepo that means:
 

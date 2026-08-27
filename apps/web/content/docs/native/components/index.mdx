@@ -7,11 +7,15 @@ icon: Blocks
 Nineteen components, each on its own import subpath. There is no package-wide barrel — that is
 what lets an app skip resolving optional peers it never uses.
 
-<Callout title="Or own the source instead">
-Every component here can be copied into your own repository with the
-[`delacour` CLI](/docs/native/cli) — `bunx delacour@latest add button`. The name after `add` is the
-same one as the import subpath. Same components, different delivery: you edit the file rather than
-upgrade a package.
-</Callout>
+Every page carries the same three ways in, and the name is the same in all of them:
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button"] }]} />
+
+<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui"] }]} />
+
+The CLI copies the source into your repository, so you edit `button.tsx` rather than upgrade a
+package. The package installs the same components and you import them from
+`@delacour/native-ui/button`. The **Manual** tab on each page lists the exact files, if you would
+rather copy them yourself. See [Installation](/docs/native/getting-started/installation).
 
 <PreviewGrid />

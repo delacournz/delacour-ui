@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import { DelacourIcon } from "@/components/delacour-icon";
+import { InstallTabs } from "@/components/install";
 import { COMPONENTS } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
 import { appDescription, appName, gitConfig } from "@/lib/shared";
@@ -94,8 +95,11 @@ function Hero() {
 					</a>
 				</div>
 
-				<div className="mt-10 max-w-md">
-					<DynamicCodeBlock lang="bash" code="bun add @delacour/native-ui" />
+				<div className="mt-10 max-w-lg">
+					<p className="mb-2 font-medium text-fd-muted-foreground text-sm">Copy the source in with the CLI…</p>
+					<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button"] }]} />
+					<p className="mt-4 mb-2 font-medium text-fd-muted-foreground text-sm">…or install the package.</p>
+					<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui"] }]} />
 				</div>
 			</div>
 		</section>

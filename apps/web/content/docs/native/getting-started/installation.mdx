@@ -1,44 +1,108 @@
 ---
 title: Installation
-description: Install the package, wire up Tailwind, and mount the root provider.
+description: Three ways to get the components, and the wiring all three need.
 icon: Download
 ---
 
-<Callout title="Or copy the source in instead">
-[`delacour`](/docs/native/cli) writes the components into your own repository, so you own and edit
-`button.tsx` rather than upgrading a package. Same components, different delivery — `bunx
-delacour@latest init`. This page covers the package.
-</Callout>
+The CLI and the package hold the same components. The choice is who owns the code.
 
-## Install
+<Cards>
+  <Card title="Use the CLI" href="#use-the-cli">
+    `delacour` writes the source into your repository. You edit `button.tsx` rather than upgrade a
+    package.
+  </Card>
+  <Card title="Install the package" href="#install-the-package">
+    `@delacour/native-ui` on npm, imported from a subpath. Upgrades arrive with `bun update`.
+  </Card>
+  <Card title="Manual setup" href="#manual-setup">
+    Copy the files in yourself. Every component page lists exactly which ones.
+  </Card>
+</Cards>
 
-The library ships raw `.tsx` — Uniwind's transform must run in **your** app's Metro pipeline, so a
-precompiled build would arrive with its classNames already dead. That means its native
-dependencies are peers, not dependencies: two copies of a native module register twice and break
-at runtime.
+## Use the CLI
 
-```package-install
-@delacour/native-ui
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest init"] }]} />
+
+`init` writes `native-components.json`, wraps your Metro config with Uniwind's transform, adds the
+`@source` globs to your Tailwind entry, and copies the theme in. Then add components by name:
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button input field"] }]} />
+
+See [the CLI docs](/docs/native/cli) for what `init` will and will not touch.
+
+## Install the package
+
+<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui"] }]} />
+
+The library ships raw `.tsx`. Uniwind's transform has to run in **your** app's Metro pipeline, so a
+precompiled build would arrive with its classNames already dead — which is also why its native
+dependencies are peers rather than dependencies. Two copies of a native module register twice and
+break at runtime.
 
 ### Peer dependencies
 
-Required:
+Native modules and anything bound to the SDK go through `expo install`, which resolves a version
+your SDK can build:
 
-```bash
-bun add react-native-reanimated react-native-worklets react-native-gesture-handler \
-  react-native-safe-area-context react-native-keyboard-controller react-native-svg \
-  react-native-pulsar uniwind tailwindcss @gorhom/bottom-sheet \
-  @central-icons-react-native/round-outlined-radius-1-stroke-1.5
-```
+<InstallTabs
+  commands={[
+    {
+      verb: "expo",
+      packages: [
+        "@gorhom/bottom-sheet",
+        "react-native-gesture-handler",
+        "react-native-keyboard-controller",
+        "react-native-pulsar",
+        "react-native-reanimated",
+        "react-native-safe-area-context",
+        "react-native-svg",
+        "react-native-worklets",
+        "uniwind",
+      ],
+    },
+    {
+      verb: "add",
+      packages: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
+    },
+  ]}
+/>
 
-Optional — resolved only if you import the subpath that needs them:
+<Callout type="warn" title="Do not install native modules with your package manager">
+`bun add react-native-reanimated` fetches the newest release, which on any older SDK is a package
+that fails at the linker rather than at install time. `expo install` asks the SDK what it supports.
+</Callout>
+
+Three peers are optional, resolved only if you import the subpath that needs them:
 
 | Package | Needed by |
 | --- | --- |
 | `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` (the default `legend` variant) |
 | `expo-router` | `@delacour/native-ui/expo/navigation-theme` |
 | `react-native-screens` | native stack navigation |
+
+### Import from subpaths
+
+There is no package-wide barrel, and that is deliberate: it is what lets an app skip resolving
+optional peers it never uses.
+
+```tsx
+import { Button } from "@delacour/native-ui/button";
+import { Icon } from "@delacour/native-ui/icon";
+import { IconHeart } from "@delacour/native-ui/icons/central";
+```
+
+```tsx
+// This does not exist, and will not be added.
+import { Button } from "@delacour/native-ui";
+```
+
+## Manual setup
+
+Every component page carries a **Manual** tab listing the exact packages and files that component
+needs — [Button](/docs/native/components/button) is the one to look at first. The steps are always
+the same three: install the dependencies, copy the files, repoint the imports.
+
+Do the CSS and provider wiring below either way.
 
 ## Wire up the CSS
 
@@ -51,14 +115,14 @@ package source.
 ```
 
 <Callout type="warn" title="Use the real workspace path">
-Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. A
-`@source` pointing at `node_modules/@delacour/native-ui` resolves to nothing, and every class the
-library uses is silently dropped from your production build. Point it at the actual directory.
+Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. A `@source`
+pointing at `node_modules/@delacour/native-ui` resolves to nothing, and every class the library uses
+is silently dropped from your production build. Point it at the actual directory.
 </Callout>
 
 The `@delacour/native-ui/styles` barrel is three files: `base.css` (`tailwindcss` + `uniwind`),
-`tokens.css` (the `@theme` scale) and `theme.css` (the light/dark palette). Import them
-individually if you need to reorder them.
+`tokens.css` (the `@theme` scale) and `theme.css` (the light/dark palette). Import them individually
+if you need to reorder them.
 
 ## Mount the provider
 
@@ -72,9 +136,9 @@ export default function RootLayout() {
 }
 ```
 
-`DelacourProvider` is four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider`
-→ `KeyboardProvider` → `<KeyboardStateSync />` beside the children. The order is load-bearing —
-see [Provider](/docs/native/getting-started/provider) for what breaks at each layer.
+`DelacourProvider` is four layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
+`KeyboardProvider` → `<KeyboardStateSync />` beside the children. The order is load-bearing — see
+[Provider](/docs/native/getting-started/provider) for what breaks at each layer.
 
 <Callout type="warn">
 Without the gesture root, presses stop landing. Silently — no error, no warning.
@@ -101,22 +165,6 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 </GestureHandlerRootView>;
 ```
 
-## Import from subpaths
-
-There is no package-wide barrel, and that is deliberate: it is what lets an app skip resolving
-optional peers it never uses.
-
-```tsx
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart } from "@delacour/native-ui/icons/central";
-```
-
-```tsx
-// This does not exist, and will not be added.
-import { Button } from "@delacour/native-ui";
-```
-
 ## Verify
 
 ```tsx
@@ -127,3 +175,5 @@ import { Button } from "@delacour/native-ui/button";
 
 A string child is wrapped in a `Button.Label` for you. If the button renders but does not respond,
 the gesture root is missing above it.
+
+On the CLI path, `delacour doctor` checks all of this and nine other things that fail silently.

@@ -8,35 +8,51 @@ icon: SquareTerminal
 delacour <command> [components...] [options]
 ```
 
-Every command that reads the registry also takes `--registry`, `--ref`, `--offline` and `--cwd` —
-see [Shared options](#shared-options).
+Every command that reads the registry also takes `--registry`, `--ref`, `--offline` and `--cwd`.
+The blocks below are that command's own `--help`.
 
-## `init`
+## init
 
 Sets the project up and writes `native-components.json`. Covered in full at
 [Setting up a project](/docs/native/cli/init).
 
-```bash
-delacour init [components...]
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest init"] }]} />
+
+**Options**
+
+```txt
+Usage: delacour init [options] [components...]
+
+set this project up and write native-components.json
+
+Arguments:
+  components             components to add straight away
+
+Options:
+  -y, --yes              accept every default without asking
+  -d, --defaults         use the default layout without asking
+  -f, --force            rewrite an existing native-components.json
+  -s, --src <dir>        base directory for source files
+  --package-name <name>  put the components in a shared package with this name
+  --package-path <dir>   where that package goes, relative to the workspace root
+                         (default: "packages/ui")
+  --no-install           write the files but install nothing
+  --silent               print nothing but errors
+  --registry <url>       registry to read from: a URL, github:owner/repo, or a
+                         local path
+  --ref <ref>            git ref to read the registry at (default: "main")
+  --offline              use only what is already cached
+  -c, --cwd <path>       directory to work in (default: the current directory)
+  -h, --help             display help for command
 ```
 
-<TypeTable
-  type={{
-    "-y, --yes": { type: "boolean", description: "Accept every default without asking." },
-    "-d, --defaults": { type: "boolean", description: "Use the default layout without prompting." },
-    "-f, --force": { type: "boolean", description: "Rewrite an existing native-components.json." },
-    "-s, --src": { type: "string", description: "Base directory for source files.", default: "src" },
-    "--no-install": { type: "boolean", description: "Write the files but install nothing." },
-    "--silent": { type: "boolean", description: "Print nothing but errors." },
-  }}
-/>
-
-## `add`
+## add
 
 Copies components in, with everything they need.
 
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button input field"] }]} />
+
 ```bash
-delacour add button input field
 delacour add --all
 ```
 
@@ -44,19 +60,9 @@ The order is deliberate: resolve the dependency graph, plan every file, ask **on
 conflicts, write, then install. Installing first would leave a project holding new native
 dependencies and no components if you answered "no" to the overwrite prompt.
 
-<TypeTable
-  type={{
-    "-a, --all": { type: "boolean", description: "Add every component in the registry." },
-    "-o, --overwrite": { type: "boolean", description: "Replace files that differ, without asking." },
-    "-y, --yes": { type: "boolean", description: "Accept every default without asking." },
-    "--no-install": { type: "boolean", description: "Write the files but install nothing." },
-    "--silent": { type: "boolean", description: "Print nothing but errors." },
-  }}
-/>
-
 A file already on disk with byte-identical content is not a conflict — that is the normal state of
-a utility two components share, and `add` says so rather than asking. Only a genuine difference is
-worth a prompt, because you may well have edited it.
+a utility two components share. Non-interactively, a genuine difference is an error naming the
+files rather than a silent overwrite; pass `--overwrite` when you mean it.
 
 <Callout title="Dependencies are split three ways">
 `expo install` for native modules and anything pinned to the SDK, your package manager for plain
@@ -64,88 +70,212 @@ JavaScript, and `registryDependencies` — which are other components to copy, n
 install.
 </Callout>
 
-Non-interactively (`--yes`, or a pipe), a conflict is an error naming the files rather than a
-silent overwrite. Pass `--overwrite` when you mean it.
+**Options**
 
-## `list`, `search`, `view`
+```txt
+Usage: delacour add [options] [components...]
 
-Browsing works before `native-components.json` exists — which is exactly when you are deciding whether to
-run `init`.
+copy components into this project
+
+Arguments:
+  components        components to add
+
+Options:
+  -a, --all         add every component
+  -o, --overwrite   replace files that differ
+  -y, --yes         accept every default without asking
+  --no-install      write the files but install nothing
+  --silent          print nothing but errors
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
+## list
+
+Everything the registry holds. Works before `native-components.json` exists — which is exactly when
+you are deciding whether to run `init`.
 
 ```bash
 delacour list
+```
+
+**Options**
+
+```txt
+Usage: delacour list|ls [options]
+
+list what the registry holds
+
+Options:
+  --json            print JSON
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
+## search
+
+```bash
 delacour search sheet
+```
+
+**Options**
+
+```txt
+Usage: delacour search [options] <query>
+
+search the registry
+
+Options:
+  --json            print JSON
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
+## view
+
+Prints an item's files, the components it copies in, and the packages it installs.
+
+```bash
 delacour view button
 ```
 
-`view` prints the item's files, the components it copies in, and the packages it installs. All
-three take `--json`.
+**Options**
 
-## `diff`
+```txt
+Usage: delacour view [options] <name>
 
-Shows what has moved upstream since you copied a component.
+show one item and what it pulls in
 
-```bash
-delacour diff            # every component you have
-delacour diff button
+Options:
+  --json            print JSON
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
 ```
 
-Read-only, and deliberately so. Once a component is in your repository it is yours, and the
-changes on each side are both legitimate — a fix upstream, a tweak locally. Printing both and
-stopping is the only behaviour that does not quietly pick a winner. `add <name> --overwrite` takes
-the registry's copy when that is what you want.
+## info
 
-Which components you hold is judged from the files on disk, not from anything recorded at `add`
-time — a manifest of "what was installed" would be one more thing to drift from reality.
-
-## `doctor`
-
-Checks that the app is wired up for these components. Every check is a failure mode that produces
-no error on its own — see [Troubleshooting](/docs/native/cli/troubleshooting).
-
-```bash
-delacour doctor
-delacour doctor --fast    # skip the checks that shell out to the Expo CLI
-delacour doctor --json
-```
-
-Exits non-zero when a check fails, so it works in CI.
-
-## `info`
-
-The resolved config and what was detected: package manager, Expo and React Native versions,
-whether Uniwind and Tailwind are installed, the workspace and app roots, and the path aliases
-found in `tsconfig.json`.
+The resolved config and what was detected: package manager, Expo and React Native versions, whether
+Uniwind and Tailwind are installed, the workspace and app roots, and the path aliases found in
+`tsconfig.json`. Start here when the CLI is writing files somewhere you did not expect.
 
 ```bash
 delacour info
 ```
 
-Start here when the CLI is writing files somewhere you did not expect.
+**Options**
 
-## `mcp`
+```txt
+Usage: delacour info [options]
+
+show the resolved config and what was detected
+
+Options:
+  --json            print JSON
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
+## diff
+
+Shows what has moved upstream since you copied a component.
+
+```bash
+delacour diff
+delacour diff button
+```
+
+Read-only, and deliberately so. Once a component is in your repository it is yours, and the changes
+on each side are both legitimate — a fix upstream, a tweak locally. Printing both and stopping is
+the only behaviour that does not quietly pick a winner. `add <name> --overwrite` takes the
+registry's copy when that is what you want.
+
+**Options**
+
+```txt
+Usage: delacour diff [options] [name]
+
+show what has changed upstream since these files were copied
+
+Arguments:
+  name              one component, or every installed one
+
+Options:
+  --silent          print nothing but errors
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
+## doctor
+
+Checks that the app is wired up for these components. Every check is a failure mode that produces no
+error on its own — see [Troubleshooting](/docs/native/cli/troubleshooting). Exits non-zero when a
+check fails, so it works in CI.
+
+```bash
+delacour doctor
+```
+
+**Options**
+
+```txt
+Usage: delacour doctor [options]
+
+check that this Expo app is wired up for these components
+
+Options:
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  --json            print JSON
+  --fast            skip the checks that shell out to the Expo CLI
+  --silent          print nothing but errors
+  -h, --help        display help for command
+```
+
+## mcp
 
 Runs as an MCP server over stdio so a coding agent can browse and add components. See
 [Agents](/docs/native/cli/mcp).
 
+**Options**
+
+```txt
+Usage: delacour mcp [options]
+
+run as an MCP server, so an agent can browse and add components
+
+Options:
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  --registry <url>  registry to read from
+  --ref <ref>       git ref to read the registry at
+  -h, --help        display help for command
+```
+
 ## Shared options
 
-<TypeTable
-  type={{
-    "--registry": {
-      type: "string",
-      description: "Where to read the registry from: a URL, github:owner/repo, or a local path.",
-    },
-    "--ref": {
-      type: "string",
-      description: "Git ref to read the registry at. Defaults to the tag the CLI was published from.",
-    },
-    "--offline": { type: "boolean", description: "Use only what is already cached." },
-    "-c, --cwd": { type: "string", description: "Directory to work in.", default: "process.cwd()" },
-  }}
-/>
-
-`--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk stops at
-the repository root — past it lie your other projects.
+`--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk
+stops at the repository root — past it lie your other projects.
 
 See [The registry](/docs/native/cli/registry) for pinning a ref and pointing at a fork.

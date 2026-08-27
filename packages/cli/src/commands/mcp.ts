@@ -2,6 +2,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import { findConfig, readConfig } from "../config/resolve";
+import { CONFIG_FILENAME } from "../config/schema";
 import { detectProject } from "../project/detect";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
@@ -129,7 +130,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 		},
 		async () => {
 			const configPath = findConfig(options.cwd);
-			if (!configPath) return text("No delacour.json found. Run `delacour init` first.");
+			if (!configPath) return text(`No ${CONFIG_FILENAME} found. Run \`delacour init\` first.`);
 
 			const project = await detectProject((await readConfig(configPath)).app.resolved.root);
 			const checks = await runChecks({ cwd: options.cwd, silent: true });

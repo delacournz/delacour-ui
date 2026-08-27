@@ -1,12 +1,12 @@
 ---
-title: delacour.json
+title: native-components.json
 description: Where components go, how they import each other, and which app to wire up.
 icon: Settings
 ---
 
 Written by `init`, next to your components. The nearest one wins, walking up from `--cwd`.
 
-```json title="delacour.json"
+```json title="native-components.json"
 {
   "$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/config.schema.json",
   "framework": "expo",
@@ -43,7 +43,7 @@ completions cannot describe a shape the CLI would then reject.
 
 This is the one part of the file worth understanding. They answer two different questions:
 
-- **`paths`** — where a file lands on disk, relative to `delacour.json`.
+- **`paths`** — where a file lands on disk, relative to `native-components.json`.
 - **`aliases`** — what other files import it as.
 
 They coincide only when the project has path aliases configured. Many Expo apps do not, and Metro
@@ -82,7 +82,7 @@ import { Icon } from "../icon";
 ## `app`
 
 Which Expo app to wire up. Every path here is relative to `app.root`, and `app.root` itself is
-relative to `delacour.json`.
+relative to `native-components.json`.
 
 <TypeTable
   type={{

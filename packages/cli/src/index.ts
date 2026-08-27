@@ -8,6 +8,7 @@ import { doctor } from "./commands/doctor";
 import { init } from "./commands/init";
 import { mcp } from "./commands/mcp";
 import { MissingConfigError } from "./config/resolve";
+import { CONFIG_FILENAME } from "./config/schema";
 import { RegistryFetchError } from "./registry/client";
 import { UnknownItemError } from "./registry/resolve";
 import { DEFAULT_REGISTRY_REF } from "./registry/source";
@@ -38,11 +39,11 @@ function withRegistryOptions(command: Command): Command {
 withRegistryOptions(
 	program
 		.command("init", { isDefault: false })
-		.description("set this project up and write delacour.json")
+		.description(`set this project up and write ${CONFIG_FILENAME}`)
 		.argument("[components...]", "components to add straight away")
 		.option("-y, --yes", "accept every default without asking")
 		.option("-d, --defaults", "use the default layout without asking")
-		.option("-f, --force", "rewrite an existing delacour.json")
+		.option("-f, --force", `rewrite an existing ${CONFIG_FILENAME}`)
 		.option("-s, --src <dir>", "base directory for source files")
 		.option("--no-install", "write the files but install nothing")
 		.option("--silent", "print nothing but errors")

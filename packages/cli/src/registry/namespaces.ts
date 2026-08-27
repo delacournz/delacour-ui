@@ -13,7 +13,7 @@
  * rewrite: the parsing happens once, in our build, against source we control.
  */
 
-/** Where a file goes. Each maps to one alias in the consumer's `delacour.json`. */
+/** Where a file goes. Each maps to one alias in the consumer's `native-components.json`. */
 export const NAMESPACES = ["ui", "lib", "hooks", "styles", "icons"] as const;
 
 export type Namespace = (typeof NAMESPACES)[number];

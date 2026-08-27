@@ -4,6 +4,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 import * as clack from "@clack/prompts";
 import { x } from "tinyexec";
 import { loadConfig, type ResolvedConfig } from "../config/resolve";
+import { CONFIG_FILENAME } from "../config/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
 import { NAMESPACES } from "../registry/namespaces";
@@ -190,7 +191,7 @@ async function checkMetro(config: ResolvedConfig): Promise<Check> {
 			name: "Metro",
 			status: "warn",
 			detail: "cssEntryFile does not point at the configured entry",
-			fix: `delacour.json says app.css is ${expected}.`,
+			fix: `${CONFIG_FILENAME} says app.css is ${expected}.`,
 		};
 	}
 

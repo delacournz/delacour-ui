@@ -72,7 +72,7 @@ export async function init(components: string[], options: InitOptions): Promise<
 }
 
 /**
- * Where `delacour.json` goes, and with it the components.
+ * Where `native-components.json` goes, and with it the components.
  *
  * In a plain Expo app this is the app. In a monorepo the choice is real: a
  * shared package lets several apps use one copy, and putting them in the app is

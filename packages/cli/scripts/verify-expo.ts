@@ -172,7 +172,7 @@ try {
 	// own documented follow-up — importing the CSS entry — so skipping it left
 	// the default level checking an app that was knowingly misconfigured.
 	reporter.step("Writing a screen that mounts every component");
-	await writeVerifyScreen({ appDir, config: await readConfig(join(appDir, "delacour.json")), reporter });
+	await writeVerifyScreen({ appDir, config: await readConfig(join(appDir, "native-components.json")), reporter });
 
 	if (options.bundle) {
 		reporter.step("Bundling with Metro (expo export)");

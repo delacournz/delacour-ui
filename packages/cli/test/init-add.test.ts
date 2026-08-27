@@ -47,7 +47,7 @@ describe("init and add, in a plain Expo app", () => {
 	});
 
 	test("writes a config that records both the paths and the aliases it found", async () => {
-		const config = await readConfig(join(root, "delacour.json"));
+		const config = await readConfig(join(root, "native-components.json"));
 
 		expect(config.paths.ui).toBe("src/components/ui");
 		expect(config.aliases.ui).toBe("@/components/ui");
@@ -118,7 +118,7 @@ describe("a shared package in a monorepo", () => {
 	});
 
 	test("writes the config beside the components, pointing back at the app", async () => {
-		const config = await readConfig(join(packageRoot, "delacour.json"));
+		const config = await readConfig(join(packageRoot, "native-components.json"));
 
 		expect(config.app.root).toBe("../../apps/mobile");
 		expect(config.directories.ui).toBe(join(packageRoot, "src/components/ui"));
@@ -149,7 +149,7 @@ describe("a shared package in a monorepo", () => {
 	});
 
 	test("falls back to relative imports when the package has no path aliases", async () => {
-		const config = await readConfig(join(packageRoot, "delacour.json"));
+		const config = await readConfig(join(packageRoot, "native-components.json"));
 		expect(config.aliases).toEqual({});
 
 		const separator = await read(packageRoot, "src/components/ui/separator/separator.tsx");

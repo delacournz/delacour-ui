@@ -86,7 +86,7 @@ Metro does not read `tsconfig` path mappings unless you ask it to:
 experiments: { tsconfigPaths: true }
 ```
 
-`doctor` only raises this when `delacour.json` actually has aliases. If it does not, your imports
+`doctor` only raises this when `native-components.json` actually has aliases. If it does not, your imports
 are relative and this is not your problem.
 
 ### A red box naming a module I just installed
@@ -153,7 +153,7 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
       description: "Something actually imports the Tailwind entry. Naming it in metro.config.js does not put it in the bundle.",
     },
     "Tailwind sources": { type: "check", description: "The @source globs cover every directory holding copied code, resolving symlinks." },
-    "Path aliases": { type: "check", description: "experiments.tsconfigPaths is on when delacour.json uses aliases." },
+    "Path aliases": { type: "check", description: "experiments.tsconfigPaths is on when native-components.json uses aliases." },
     "Uniwind types": { type: "check", description: "uniwind-env.d.ts is present — without it, className is a type error." },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },

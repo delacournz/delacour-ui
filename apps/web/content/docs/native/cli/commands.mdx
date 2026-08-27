@@ -13,7 +13,7 @@ see [Shared options](#shared-options).
 
 ## `init`
 
-Sets the project up and writes `delacour.json`. Covered in full at
+Sets the project up and writes `native-components.json`. Covered in full at
 [Setting up a project](/docs/native/cli/init).
 
 ```bash
@@ -24,7 +24,7 @@ delacour init [components...]
   type={{
     "-y, --yes": { type: "boolean", description: "Accept every default without asking." },
     "-d, --defaults": { type: "boolean", description: "Use the default layout without prompting." },
-    "-f, --force": { type: "boolean", description: "Rewrite an existing delacour.json." },
+    "-f, --force": { type: "boolean", description: "Rewrite an existing native-components.json." },
     "-s, --src": { type: "string", description: "Base directory for source files.", default: "src" },
     "--no-install": { type: "boolean", description: "Write the files but install nothing." },
     "--silent": { type: "boolean", description: "Print nothing but errors." },
@@ -69,7 +69,7 @@ silent overwrite. Pass `--overwrite` when you mean it.
 
 ## `list`, `search`, `view`
 
-Browsing works before `delacour.json` exists — which is exactly when you are deciding whether to
+Browsing works before `native-components.json` exists — which is exactly when you are deciding whether to
 run `init`.
 
 ```bash
@@ -145,7 +145,7 @@ Runs as an MCP server over stdio so a coding agent can browse and add components
   }}
 />
 
-`--cwd` decides which `delacour.json` applies: the nearest one, walking upwards. The walk stops at
+`--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk stops at
 the repository root — past it lie your other projects.
 
 See [The registry](/docs/native/cli/registry) for pinning a ref and pointing at a fork.

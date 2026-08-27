@@ -17,13 +17,13 @@ From the repository root, `init` asks.
 
 ## What changes between the two
 
-`delacour.json` lives wherever the components live. What moves is `app.root`, and with it every
+`native-components.json` lives wherever the components live. What moves is `app.root`, and with it every
 file the CLI has to touch but does not own.
 
 <Tabs items={["In the app", "In a shared package"]}>
 <Tab value="In the app">
 
-```json title="apps/mobile/delacour.json"
+```json title="apps/mobile/native-components.json"
 {
   "paths": { "ui": "src/components/ui", "lib": "src/lib" },
   "app": { "root": ".", "css": "src/styles/global.css" }
@@ -32,7 +32,7 @@ file the CLI has to touch but does not own.
 
 ```txt
 apps/mobile/
-├── delacour.json
+├── native-components.json
 ├── metro.config.js
 └── src/
     ├── components/ui/button/
@@ -43,7 +43,7 @@ apps/mobile/
 </Tab>
 <Tab value="In a shared package">
 
-```json title="packages/ui/delacour.json"
+```json title="packages/ui/native-components.json"
 {
   "paths": { "ui": "src/components/ui", "lib": "src/lib" },
   "app": { "root": "../../apps/mobile", "css": "src/styles/global.css" }
@@ -52,7 +52,7 @@ apps/mobile/
 
 ```txt
 packages/ui/
-├── delacour.json
+├── native-components.json
 └── src/components/ui/button/
 
 apps/mobile/
@@ -111,7 +111,7 @@ Keep `withUniwindConfig` the outermost wrapper around whatever else you add.
 
 ## Several apps, one package
 
-Point each app's Tailwind entry at the package and give each its own Metro wrapper. `delacour.json`
+Point each app's Tailwind entry at the package and give each its own Metro wrapper. `native-components.json`
 names one app in `app.root` — the one `init` and `doctor` work against — so run `doctor` from each
 app's directory to check the others:
 
@@ -121,9 +121,9 @@ bunx delacour doctor --cwd apps/tablet
 ```
 
 <Callout type="warn">
-`--cwd apps/tablet` finds the nearest `delacour.json` walking upwards. If your second app has no
+`--cwd apps/tablet` finds the nearest `native-components.json` walking upwards. If your second app has no
 config of its own, it resolves the shared package's — which names the *first* app in `app.root`.
-Give each app a `delacour.json` when they diverge.
+Give each app a `native-components.json` when they diverge.
 </Callout>
 
 ## Sharing without a package
@@ -131,7 +131,7 @@ Give each app a `delacour.json` when they diverge.
 You do not need a workspace package at all. Point two apps at the same directory with `paths`
 containing `../`, and both get the same files with no publishing step:
 
-```json title="apps/mobile/delacour.json"
+```json title="apps/mobile/native-components.json"
 {
   "paths": { "ui": "../../shared/components/ui", "lib": "../../shared/lib" },
   "app": { "root": "." }

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { NAMESPACES } from "../registry/namespaces";
 
 /**
- * `delacour.json` — the file that says where components go and how the app
+ * `native-components.json` — the file that says where components go and how the app
  * around them is wired.
  *
  * Two things are kept apart that shadcn's `aliases` conflate: **where a file
@@ -62,7 +62,7 @@ export type Config = z.infer<typeof configSchema>;
 export type ConfigPaths = z.infer<typeof pathsSchema>;
 export type ConfigAliases = z.infer<typeof aliasesSchema>;
 
-export const CONFIG_FILENAME = "delacour.json";
+export const CONFIG_FILENAME = "native-components.json";
 
 export const CONFIG_SCHEMA_URL =
 	"https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/config.schema.json";

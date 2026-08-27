@@ -25,7 +25,7 @@ bun test                 # unit + end-to-end against the local registry
 src/
 ├── index.ts              commander wiring, and the one place a failure becomes a message
 ├── commands/             init, add, browse (list/search/view/info), diff, doctor, mcp
-├── config/               delacour.json — schema.ts (zod), resolve.ts (nearest-wins walk)
+├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
 │   ├── aliases.ts        tsconfig paths → an import prefix per namespace

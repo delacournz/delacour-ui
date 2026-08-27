@@ -12,7 +12,7 @@ to be down when you run `add`.
 registry/
 ├── registry.json      the index: names, descriptions, dependencies — no file contents
 ├── r/button.json      one item, contents inlined
-└── config.schema.json the JSON Schema behind delacour.json's $schema
+└── config.schema.json the JSON Schema behind native-components.json's $schema
 ```
 
 `add button` costs two small requests: the index, to resolve what button pulls in, and the items
@@ -66,7 +66,7 @@ the registry it shipped against. Override it three ways, in this order:
 bunx delacour add tabs --ref main          # 1. the flag
 ```
 
-```json title="delacour.json"
+```json title="native-components.json"
 { "registry": { "ref": "v0.2.0" } }        // 2. the config
 ```
 

@@ -34,7 +34,7 @@ Unlike shadcn, the target is Expo, which changes real things:
 
 | | |
 |---|---|
-| `init [components...]` | Write `delacour.json`, wire up Metro and the CSS entry, add the theme |
+| `init [components...]` | Write `native-components.json`, wire up Metro and the CSS entry, add the theme |
 | `add <components...>` | Copy components and everything they need |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
@@ -48,7 +48,7 @@ Every registry-reading command takes `--registry <url>` (a URL,
 
 ## Where components go
 
-`delacour.json` lives wherever the components live, and the nearest one wins
+`native-components.json` lives wherever the components live, and the nearest one wins
 walking up from `--cwd`. In a monorepo that means:
 
 ```bash

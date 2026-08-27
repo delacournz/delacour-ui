@@ -22,7 +22,7 @@ bunx delacour@latest init button input field
 
 <Steps>
 <Step>
-### `delacour.json`
+### `native-components.json`
 
 Written next to your components. In a monorepo that is the package you ran it from — see
 [Monorepos](/docs/native/cli/monorepo).
@@ -138,7 +138,7 @@ experiments: {
 ```
 
 Metro does not read `tsconfig` path mappings without it, so `@/components/ui/button` fails to
-resolve. If `delacour.json` has an empty `aliases` object, your imports are relative and this does
+resolve. If `native-components.json` has an empty `aliases` object, your imports are relative and this does
 not apply.
 
 ### Rebuild after a native module lands

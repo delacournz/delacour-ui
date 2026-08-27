@@ -153,7 +153,7 @@ export const CHECKS: Check[] = [
 		name: "Every package imported is actually installed",
 		needsInstall: true,
 		async run(context) {
-			const config = await readConfig(join(context.appDir, "delacour.json"));
+			const config = await readConfig(join(context.appDir, "native-components.json"));
 			const modules = join(context.appDir, "node_modules");
 			const problems = new Set<string>();
 
@@ -268,7 +268,7 @@ type CopiedFile = { path: string; display: string; content: string };
 
 /** Every file the CLI wrote, across all five namespaces. */
 async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
-	const config = await readConfig(join(context.appDir, "delacour.json"));
+	const config = await readConfig(join(context.appDir, "native-components.json"));
 	const files: CopiedFile[] = [];
 
 	for (const namespace of NAMESPACES) {
@@ -292,7 +292,7 @@ async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
 async function loadTarget(
 	context: CheckContext
 ): Promise<{ config: Awaited<ReturnType<typeof readConfig>>; items: RegistryItem[] }> {
-	const config = await readConfig(join(context.appDir, "delacour.json"));
+	const config = await readConfig(join(context.appDir, "native-components.json"));
 	const names = (await readdir(join(context.registryDir, "r")))
 		.filter((name) => name.endsWith(".json"))
 		.map((name) => name.replace(/\.json$/, ""));

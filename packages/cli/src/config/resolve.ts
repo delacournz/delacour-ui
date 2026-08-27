@@ -5,7 +5,7 @@ import type { Namespace } from "../registry/namespaces";
 import { CONFIG_FILENAME, type Config, configSchema } from "./schema";
 
 /**
- * Finds and loads the `delacour.json` that governs a directory.
+ * Finds and loads the `native-components.json` that governs a directory.
  *
  * The nearest one wins, walking upwards. That is the whole of the monorepo
  * story: a shared UI package holds its own config, an app that keeps components
@@ -18,7 +18,7 @@ import { CONFIG_FILENAME, type Config, configSchema } from "./schema";
  */
 
 export type ResolvedConfig = Config & {
-	/** Absolute path to the directory holding `delacour.json`. */
+	/** Absolute path to the directory holding `native-components.json`. */
 	root: string;
 	configPath: string;
 	/** Absolute destination directory per namespace. */

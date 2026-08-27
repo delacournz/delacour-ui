@@ -9,7 +9,7 @@ import { createOutput, type Output, style } from "../ui/output";
 /**
  * The read-only commands: `list`, `search`, `view` and `info`.
  *
- * None of them need a `delacour.json` — browsing the registry should work
+ * None of them need a `native-components.json` — browsing the registry should work
  * before a project is initialised, which is exactly when someone is deciding
  * whether to. `info` reads the config if there is one and reports what was
  * detected either way.

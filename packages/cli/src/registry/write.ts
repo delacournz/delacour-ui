@@ -45,7 +45,7 @@ export async function writeRegistry(outDir: string, result: BuildResult): Promis
 	written.push("registry.json");
 
 	// The `$schema` URLs above have to resolve to something, or an editor opening
-	// a `delacour.json` gets a 404 instead of completions.
+	// a `native-components.json` gets a 404 instead of completions.
 	for (const [name, schema] of schemas()) {
 		await writeFile(join(outDir, name), stringify(schema), "utf-8");
 		written.push(name);

@@ -5,6 +5,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
+import { ComponentInstall, InstallTabs } from "@/components/install";
 import { Preview } from "@/components/preview";
 import { PreviewGrid } from "@/components/preview-grid";
 
@@ -18,9 +19,11 @@ export function getMDXComponents(components?: MDXComponents) {
 		...defaultMdxComponents,
 		Accordion,
 		Accordions,
+		ComponentInstall,
 		File,
 		Files,
 		Folder,
+		InstallTabs,
 		Preview,
 		PreviewGrid,
 		Step,

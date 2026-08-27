@@ -115,6 +115,15 @@ jobs:
 
       - run: git diff --exit-code registry/
 
+      # The docs site derives its per-component install block from the registry,
+      # into a committed module. A stale one puts wrong dependencies and dead
+      # file links on nineteen component pages, silently.
+      - name: Check the docs install manifest is current
+        working-directory: apps/web
+        run: bun run gen-install
+
+      - run: git diff --exit-code apps/web/src/registry/install.ts
+
       # Offline and fast: scaffolds an app, runs the CLI, and checks the shape
       # of what came out. The full run installs from npm and lives in its own job.
       # Both layouts: components in the app, and components in a shared package

@@ -122,7 +122,6 @@
         "uniwind": "^1.11.0",
       },
       "optionalPeers": [
-        "@gorhom/bottom-sheet",
         "@legendapp/list",
         "expo-router",
         "react-native-screens",

@@ -8,7 +8,11 @@
 			"outputs": ["dist/**", ".output/**"]
 		},
 		"dev": { "persistent": true },
-		"typecheck": { "cache": false, "outputs": [] },
+		// Depends on its OWN build, not `^build`: TanStack Router generates `src/routeTree.gen.ts`
+		// during `vite build`, and that file is gitignored. Without this, `typecheck` fails on any
+		// fresh clone with a wall of `Property '_splat' does not exist on type 'never'` — which is
+		// also what the pre-push hook in `.pre-commit-config.yaml` was hitting.
+		"typecheck": { "dependsOn": ["build"], "cache": false, "outputs": [] },
 		"lint": { "cache": false, "outputs": [] },
 		"fmt": { "cache": false, "outputs": [] },
 		"check": { "cache": false, "outputs": [] },

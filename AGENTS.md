@@ -11,6 +11,7 @@ the product.
 | `packages/native-ui` | `@delacour/native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
 | `packages/biome-config` | `@delacour/biome-config` | Lint and format rules, for everything |
+| `packages/brand` | `@delacour/brand` | The Delacour mark — master art plus the geometry every rendering reads |
 | `packages/tsconfig` | `@delacour/tsconfig` | Shared TypeScript configs |
 | `packages/types` | `@delacour/types` | Shared utility types — `Result` and its constructors |
 
@@ -32,6 +33,14 @@ bun run fmt                # format only
 bun test                   # unit tests
 bun run previews           # recapture component preview media from a simulator
 bun run nuke               # delete every node_modules and reinstall from scratch
+```
+
+Two generators live in the apps rather than at the root, because each writes into its own
+workspace. Both read `packages/brand` and both commit their output:
+
+```bash
+cd apps/playground && bun run icons   # launcher, adaptive and tinted app-icon PNGs
+cd apps/web        && bun run icons   # favicons, PWA icons, apple-touch-icon
 ```
 
 `previews` is the odd one out: it drives an iOS simulator, so it needs a Mac with Xcode and it is
@@ -189,6 +198,7 @@ caught it for fifteen commits.
 
 `apps/*/ios`, `apps/*/android` (`expo prebuild`), `.expo`, `.turbo`,
 `apps/playground/src/uniwind-types.d.ts` (Uniwind's Metro plugin),
-`apps/playground/assets/icon*.png` (`bun run icons`),
+`apps/playground/assets/icon*.png` and `apps/web/public/{favicon*,icon-*,apple-touch-icon}.*`
+(`bun run icons`, in each app — the source is `packages/brand`),
 `apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `native-ui`'s
 `package.json` `exports` map (`bun run gen-exports`).

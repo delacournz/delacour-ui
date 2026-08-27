@@ -1,15 +1,16 @@
 /**
  * The Delacour mark's geometry, and an SVG emitter built from it.
  *
- * This module is the single source of truth the launcher art and the in-app
- * art share: `scripts/generate-icons.ts` rasterises `delacourIconSvg()` into
- * every PNG `app.config.ts` points at, and `delacour-mark.tsx` draws the same
- * numbers with react-native-svg. Drawing the mark twice from two sets of
- * constants is how an app icon drifts from the app.
+ * This module is the single source of truth every rendering of the mark reads:
+ * the playground's launcher PNGs, its react-native-svg components, the docs
+ * site's favicon set and the docs site's inline glyph all resolve to the
+ * numbers below. Drawing the mark twice from two sets of constants is how an
+ * app icon drifts from the app it belongs to.
  *
- * It imports nothing — not React, not React Native — so `bun test` can reach
- * the whole of it. Keep it that way; the components are the place for anything
- * that needs a renderer.
+ * It imports nothing — not React, not React Native, not `node:fs` — so both a
+ * browser bundle and `bun test` can reach the whole of it. Keep it that way:
+ * the file reader lives next door in `source.ts`, and anything that needs a
+ * renderer belongs in the consuming app.
  */
 
 /** The master art's canvas. Every number below is in this space. */
@@ -35,6 +36,23 @@ export const DELACOUR_CARD_COLOUR = "#18181B";
 
 /** The stroke. */
 export const DELACOUR_STROKE_COLOUR = "#FBBF24";
+
+/**
+ * Apple's continuous-corner ratio, for the treatments that must round the card
+ * themselves — a favicon, a manifest icon, a logo in a nav bar.
+ *
+ * The launcher art stays square-cornered: iOS and Android apply their own mask,
+ * and pre-rounding it ships an icon rounded twice with pale corners. Only a
+ * surface that nothing else masks reaches for this.
+ *
+ * It is expressed as a plain `rx` rather than a true superellipse. At the 16px a
+ * favicon is seen at the difference is well under a pixel, and a circular arc is
+ * something an SVG a browser renders directly can express.
+ */
+export const DELACOUR_CORNER_RATIO = 0.2237;
+
+/** {@link DELACOUR_CORNER_RATIO} in canvas units, rounded to a whole pixel. */
+export const DELACOUR_CORNER_RADIUS = Math.round(DELACOUR_CANVAS * DELACOUR_CORNER_RATIO);
 
 /**
  * Android shows only the central 72 of an adaptive icon's 108dp foreground.
@@ -80,6 +98,12 @@ export const DELACOUR_GLYPH_VIEW_BOX = [
 	GLYPH_HALF_HEIGHT * 2,
 ].join(" ");
 
+/**
+ * The clip path's id. Fixed rather than generated: two of these SVGs never share
+ * a document — each is rasterised or served as a whole file of its own.
+ */
+const CLIP_ID = "delacour-card";
+
 export type DelacourIconSvgOptions = {
 	/** Card fill, or `null` for a transparent canvas. Defaults to the card colour. */
 	background?: string | null;
@@ -87,6 +111,12 @@ export type DelacourIconSvgOptions = {
 	stroke?: string;
 	/** Fraction of the canvas the full-bleed art is scaled into. 1 = full bleed. */
 	inset?: number;
+	/**
+	 * Corner radius in canvas units, clipping the whole card. Defaults to 0 —
+	 * square, the way every masked surface needs it. Pass
+	 * {@link DELACOUR_CORNER_RADIUS} for a surface that nothing else rounds.
+	 */
+	corner?: number;
 };
 
 /**
@@ -100,9 +130,10 @@ export type DelacourIconSvgOptions = {
  * delacourIconSvg({ background: null });                      // iOS dark
  * delacourIconSvg({ background: null, stroke: "#FFFFFF" });    // iOS tinted
  * delacourIconSvg({ background: null, inset: DELACOUR_ADAPTIVE_INSET });
+ * delacourIconSvg({ corner: DELACOUR_CORNER_RADIUS });         // a favicon
  */
 export function delacourIconSvg(options: DelacourIconSvgOptions = {}): string {
-	const { background = DELACOUR_CARD_COLOUR, stroke = DELACOUR_STROKE_COLOUR, inset = 1 } = options;
+	const { background = DELACOUR_CARD_COLOUR, stroke = DELACOUR_STROKE_COLOUR, inset = 1, corner = 0 } = options;
 
 	const card =
 		background === null
@@ -122,8 +153,27 @@ export function delacourIconSvg(options: DelacourIconSvgOptions = {}): string {
 	// Half the space the scale frees up, so the glyph stays centred rather than
 	// collapsing towards the origin.
 	const offset = (DELACOUR_CANVAS * (1 - inset)) / 2;
-	const body =
+	const scaled =
 		inset === 1 ? glyph : `\t<g transform="translate(${offset} ${offset}) scale(${inset})">\n${glyph}\n\t</g>`;
 
-	return `<svg width="${DELACOUR_CANVAS}" height="${DELACOUR_CANVAS}" viewBox="0 0 ${DELACOUR_CANVAS} ${DELACOUR_CANVAS}" xmlns="http://www.w3.org/2000/svg">${card}\n${body}\n</svg>\n`;
+	// The clip wraps the card as well as the glyph — rounding only the artwork
+	// would leave the card's own square corners behind it.
+	const body =
+		corner === 0
+			? `${card}\n${scaled}`
+			: [
+					"\n\t<defs>",
+					`\t\t<clipPath id="${CLIP_ID}">`,
+					`\t\t\t<rect width="${DELACOUR_CANVAS}" height="${DELACOUR_CANVAS}" rx="${corner}"/>`,
+					"\t\t</clipPath>",
+					"\t</defs>",
+					`\t<g clip-path="url(#${CLIP_ID})">`,
+					card === "" ? "" : card.replace(/^\n/, "").replace(/^/gm, "\t"),
+					scaled.replace(/^/gm, "\t"),
+					"\t</g>",
+				]
+					.filter((line) => line !== "")
+					.join("\n");
+
+	return `<svg width="${DELACOUR_CANVAS}" height="${DELACOUR_CANVAS}" viewBox="0 0 ${DELACOUR_CANVAS} ${DELACOUR_CANVAS}" xmlns="http://www.w3.org/2000/svg">${body}\n</svg>\n`;
 }

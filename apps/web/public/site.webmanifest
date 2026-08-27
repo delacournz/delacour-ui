@@ -1,0 +1,16 @@
+{
+	"name": "Delacour UI",
+	"short_name": "Delacour UI",
+	"description": "A React Native component library built on Uniwind, Reanimated and the Gesture API.",
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"theme_color": "#18181B",
+	"background_color": "#18181B",
+	"icons": [
+		{ "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+		{ "src": "/icon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
+		{ "src": "/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any" },
+		{ "src": "/icon-maskable-512.png", "type": "image/png", "sizes": "512x512", "purpose": "maskable" }
+	]
+}

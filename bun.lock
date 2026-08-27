@@ -19,6 +19,7 @@
       "version": "0.1.0",
       "dependencies": {
         "@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+        "@delacour/brand": "workspace:*",
         "@delacour/native-ui": "workspace:*",
         "@gorhom/bottom-sheet": "^5.2.8",
         "@legendapp/list": "catalog:",
@@ -54,6 +55,7 @@
       "name": "@delacour/web",
       "version": "0.1.0",
       "dependencies": {
+        "@delacour/brand": "workspace:*",
         "@delacour/native-ui": "workspace:*",
         "@tanstack/react-router": "1.170.27",
         "@tanstack/react-router-devtools": "1.167.1",
@@ -68,6 +70,7 @@
       },
       "devDependencies": {
         "@delacour/biome-config": "workspace:*",
+        "@resvg/resvg-js": "^2.6.2",
         "@tailwindcss/vite": "^4.3.3",
         "@types/mdx": "^2.0.14",
         "@types/node": "^26.2.0",
@@ -85,6 +88,15 @@
       "version": "1.0.0",
       "peerDependencies": {
         "@biomejs/biome": "^2.0.0",
+      },
+    },
+    "packages/brand": {
+      "name": "@delacour/brand",
+      "version": "1.0.0",
+      "devDependencies": {
+        "@delacour/tsconfig": "workspace:*",
+        "@types/bun": "^1.3.8",
+        "typescript": "^5.9.3",
       },
     },
     "packages/cli": {
@@ -354,6 +366,8 @@
     "@clack/prompts": ["@clack/prompts@1.7.0", "", { "dependencies": { "@clack/core": "1.4.3", "fast-string-width": "^3.0.2", "fast-wrap-ansi": "^0.2.0", "sisteransi": "^1.0.5" } }, "sha512-y7/yvZ2TPAnR9+jnc00klvNNLkJiXFFrQA/hlLCcxA9a2A4zQIOimyFQ9XfwYKiGD1fb5GY8vbKIIgO8d5Tb2A=="],
 
     "@delacour/biome-config": ["@delacour/biome-config@workspace:packages/biome-config"],
+
+    "@delacour/brand": ["@delacour/brand@workspace:packages/brand"],
 
     "@delacour/native-ui": ["@delacour/native-ui@workspace:packages/native-ui"],
 

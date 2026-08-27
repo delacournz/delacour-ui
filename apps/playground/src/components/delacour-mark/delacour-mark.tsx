@@ -1,5 +1,3 @@
-import type { ReactElement } from "react";
-import Svg, { G, Rect, type SvgProps } from "react-native-svg";
 import {
 	DELACOUR_BOTTOM_CENTRE_Y,
 	DELACOUR_CANVAS,
@@ -12,7 +10,9 @@ import {
 	DELACOUR_STROKE_COLOUR,
 	DELACOUR_TOP_CENTRE_Y,
 	delacourRectY,
-} from "./delacour-mark.geometry";
+} from "@delacour/brand";
+import type { ReactElement } from "react";
+import Svg, { G, Rect, type SvgProps } from "react-native-svg";
 
 type DelacourArtProps = Omit<SvgProps, "width" | "height" | "viewBox" | "fill"> & {
 	/** Edge length in points. Both art variants are square. */
@@ -33,7 +33,7 @@ export type DelacourMarkProps = DelacourArtProps & {
  * `originX` / `originY` props: those are deprecated in react-native-svg 15, and
  * on a `Rect` the sibling `x` / `y` transform props collide with the rect's own
  * geometry attributes. The string is parsed by the same SVG grammar the browser
- * uses, so this line is byte-identical to `assets/icon-source.svg`.
+ * uses, so this line is byte-identical to `@delacour/brand`'s master art.
  */
 function DelacourGlyph({ stroke }: { stroke: string }): ReactElement {
 	return (

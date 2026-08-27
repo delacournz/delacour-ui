@@ -1,4 +1,3 @@
-export { DelacourIcon, type DelacourIconProps, DelacourMark, type DelacourMarkProps } from "./delacour-mark";
 export {
 	DELACOUR_ADAPTIVE_INSET,
 	DELACOUR_BOTTOM_CENTRE_Y,
@@ -15,4 +14,5 @@ export {
 	type DelacourIconSvgOptions,
 	delacourIconSvg,
 	delacourRectY,
-} from "./delacour-mark.geometry";
+} from "@delacour/brand";
+export { DelacourIcon, type DelacourIconProps, DelacourMark, type DelacourMarkProps } from "./delacour-mark";

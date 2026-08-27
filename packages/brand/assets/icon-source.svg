@@ -5,16 +5,16 @@
 
 		Full-bleed square by design — iOS applies its own mask and Android takes
 		the glyph into its adaptive safe zone, so nothing here is pre-rounded and
-		nothing carries a drop shadow.
+		nothing carries a drop shadow. The docs site rounds its own copies.
 
 		Two 262.4px squares rotated 45° about cy 428.5 / 595.5, stroke 66.4,
 		miter joins. They overlap opaquely.
 
-		This file is the authored source. `scripts/generate-icons.ts` rasterises
-		it into the PNGs `app.config.ts` points at, and
-		`src/components/delacour-mark/` redraws it with react-native-svg. Both
-		read one set of constants, and `delacour-mark.geometry.test.ts` pins those
-		constants to the numbers below — edit them together or the test fails.
+		This file is the authored source. `src/geometry.ts` restates every number
+		below as a constant, `src/geometry.test.ts` pins the two together, and
+		every consumer draws from the constants: apps/playground's launcher PNGs
+		and react-native-svg components, apps/web's favicon set and inline mark.
+		Edit this file and the constants together, or the test fails.
 	-->
 	<rect width="1024" height="1024" fill="#18181B"/>
 	<g fill="none" stroke="#FBBF24" stroke-width="66.4" stroke-linejoin="miter" stroke-miterlimit="10">

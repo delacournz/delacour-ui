@@ -23,6 +23,7 @@ bun run build        # → .output/server/index.mjs
 bun run start        # bun .output/server/index.mjs
 bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
+bun run icons        # regenerate the browser icon set from @delacour/brand
 ```
 
 ## Directory structure
@@ -37,6 +38,7 @@ content/docs/native/
 
 src/
 ├── components/mdx.tsx     the MDX component registry
+├── components/delacour-icon.tsx  the brand mark, inline
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
@@ -50,7 +52,58 @@ src/
 │   └── llms[.]txt.ts, llms-full[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the native-ui palette
+
+scripts/generate-icons.ts  the browser icon set — see "Branding"
+public/favicon.*           generated
+public/icon-*.png          generated
+public/apple-touch-icon.png generated
+public/site.webmanifest    hand-written
 ```
+
+## Branding
+
+The mark comes from [`@delacour/brand`](../../packages/brand/AGENTS.md) — the same master art
+`apps/playground` rasterises into launcher icons. Nothing here re-draws it from its own numbers.
+
+| Surface | File | Treatment |
+| --- | --- | --- |
+| Tab icon | `public/favicon.svg`, `public/favicon.ico` | rounded |
+| Install prompt | `public/icon-192.png`, `public/icon-512.png` | rounded, `purpose: "any"` |
+| Android launcher | `public/icon-maskable-512.png` | full-bleed card, glyph inset to the safe zone |
+| iOS home screen | `public/apple-touch-icon.png` | **full bleed, square corners** |
+| Nav bar, hero | `src/components/delacour-icon.tsx` | rounded, inline SVG |
+
+Regenerate the files with `bun run icons` and commit them. It uses `@resvg/resvg-js`, so unlike
+`bun run previews` it needs no simulator and no system libraries — but `build` still does not run
+it, so a change to the art that is not regenerated ships the old icons.
+
+**Who rounds the corners is the whole design.** iOS and Android mask an icon themselves; rounding
+`apple-touch-icon.png` or the maskable icon first ships one rounded twice, with pale corners
+inside the system's own mask. A favicon is masked by nobody, so its radius has to be in the art.
+`DELACOUR_CORNER_RATIO` in `packages/brand` is that radius, and `delacourIconSvg({ corner })` is
+how both the generator and `delacour-icon.tsx` apply it.
+
+`delacour-icon.tsx` draws the mark inline rather than pointing an `<img>` at `/favicon.svg`, so
+the logo in the nav bar cannot disagree with the favicon: both resolve to the same constants, and
+`packages/brand`'s test is what pins those to the art.
+
+### Head tags
+
+`src/routes/__root.tsx` carries the icon links, the manifest link, the `theme-color` pair and the
+Open Graph / Twitter tags. Two things there are deliberate:
+
+- **`theme-color` is the page's background, not the icon's card** — `#ffffff` and `#0a0a0a`, the
+  two `--color-fd-background` values, behind a `prefers-color-scheme` media attribute. The
+  manifest's own `theme_color` *is* the card, because an installed app's splash sits behind the
+  icon rather than behind the page.
+- **The social card is `summary`, not `summary_large_image`.** `og:image` is the 512px icon; there
+  is no 1200×630 card to point at. Claiming the large format without one gets the icon stretched
+  and cropped. A real card would want `satori` and a pinned font — `docsImageRoute` in
+  `src/lib/shared.ts` is the placeholder that route would take.
+
+`siteUrl` in `src/lib/shared.ts` makes the `og:` URLs absolute, which every scraper requires.
+Staging serves production's origin in those tags; threading a per-environment origin through SSR
+buys nothing for a docs site.
 
 ## The layout is `notebook`, not `docs`
 

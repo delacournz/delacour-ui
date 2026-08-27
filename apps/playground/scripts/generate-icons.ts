@@ -1,6 +1,16 @@
 #!/usr/bin/env bun
+import { unlinkSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import {
+	DELACOUR_ADAPTIVE_INSET,
+	DELACOUR_CANVAS,
+	DELACOUR_CARD_COLOUR,
+	type DelacourIconSvgOptions,
+	delacourIconSvg,
+} from "@delacour/brand";
+import { readIconSource } from "@delacour/brand/source";
 /**
- * Rasterises the Delacour app icon from `assets/icon-source.svg`.
+ * Rasterises the Delacour app icon from `@delacour/brand`'s master art.
  *
  * The shipped `icon.png` is the authored SVG itself, rendered — not a
  * re-emission of it — so what lands on a home screen is the file a designer
@@ -11,23 +21,13 @@
  * The two are held together by an equivalence check: the source SVG and
  * `delacourIconSvg()` at its defaults must rasterise to identical bytes. Edit
  * one without the other and this fails before anything is written. That is the
- * same gate `delacour-mark.geometry.test.ts` applies from the other side.
+ * same gate `packages/brand/src/geometry.test.ts` applies from the other side.
  *
  * Run from `apps/playground`: `bun run icons`.
  */
 import { Resvg } from "@resvg/resvg-js";
-import { readFileSync, unlinkSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
-import {
-	DELACOUR_ADAPTIVE_INSET,
-	DELACOUR_CANVAS,
-	DELACOUR_CARD_COLOUR,
-	type DelacourIconSvgOptions,
-	delacourIconSvg,
-} from "../src/components/delacour-mark/delacour-mark.geometry";
 
 const ASSETS = join(import.meta.dirname, "..", "assets");
-const SOURCE = join(ASSETS, "icon-source.svg");
 
 /** The light value iOS maps to the user's tint; the system supplies the hue. */
 const TINT = "#FFFFFF";
@@ -66,22 +66,23 @@ function render(svg: string): Buffer {
 
 function write(file: string, png: Buffer, note: string): void {
 	writeFileSync(join(ASSETS, file), png);
-	console.log(`  ${file.padEnd(30)} ${DELACOUR_CANVAS}×${DELACOUR_CANVAS}  ${(png.length / 1024).toFixed(1)}K  ${note}`);
+	console.log(
+		`  ${file.padEnd(30)} ${DELACOUR_CANVAS}×${DELACOUR_CANVAS}  ${(png.length / 1024).toFixed(1)}K  ${note}`
+	);
 }
 
-const source = readFileSync(SOURCE, "utf-8");
-const master = render(source);
+const master = render(readIconSource());
 
 if (!master.equals(render(delacourIconSvg()))) {
 	console.error(
-		"[icons] assets/icon-source.svg and delacourIconSvg() no longer draw the same art.\n" +
+		"[icons] packages/brand's icon-source.svg and delacourIconSvg() no longer draw the same art.\n" +
 			"        Reconcile the SVG with the constants in\n" +
-			"        src/components/delacour-mark/delacour-mark.geometry.ts before regenerating.",
+			"        packages/brand/src/geometry.ts before regenerating."
 	);
 	process.exit(1);
 }
 
-console.log("[icons] from assets/icon-source.svg");
+console.log("[icons] from @delacour/brand");
 write("icon.png", master, "icon + ios.icon.light — full bleed, iOS masks it");
 for (const { file, options, note } of VARIANTS) write(file, render(delacourIconSvg(options)), note);
 

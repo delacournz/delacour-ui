@@ -7,6 +7,7 @@ import { loadConfig, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import { createOutput, type Output, style } from "../ui/output";
 
@@ -254,19 +255,49 @@ function checkTsconfigPaths(config: ResolvedConfig, expoConfig: ExpoConfig | nul
 	};
 }
 
+/**
+ * The augmentation has to be loadable **by the app**, not merely present.
+ *
+ * Checking only the styles directory passes in a shared package while the app
+ * remains unaugmented: the file sits outside the app's `tsconfig` `include` and
+ * nothing imports it, so it never joins the program. The symptom is a type error
+ * on every `className` that names neither the file nor the cause — which is
+ * exactly what this check existed to prevent, in the one layout it was blind to.
+ */
 function checkUniwindTypes(config: ResolvedConfig): Check {
-	const path = join(config.directories.styles, "uniwind-env.d.ts");
+	const beside = join(config.directories.styles, UNIWIND_ENV_FILENAME);
 
-	if (!existsSync(path)) {
+	if (!existsSync(beside)) {
 		return {
 			name: "Uniwind types",
 			status: "warn",
-			detail: "uniwind-env.d.ts not found",
+			detail: `${UNIWIND_ENV_FILENAME} not found`,
 			fix: "Run `delacour add styles` — without it, className is a type error on React Native components.",
 		};
 	}
 
-	return { name: "Uniwind types", status: "pass", detail: "uniwind-env.d.ts present" };
+	// Only a concern when the components live somewhere the app does not compile.
+	if (config.package && !appLoadsUniwindEnv(config)) {
+		return {
+			name: "Uniwind types",
+			status: "fail",
+			detail: `the app cannot load ${UNIWIND_ENV_FILENAME} from the package`,
+			fix: `Add a ${UNIWIND_ENV_FILENAME} containing \`${UNIWIND_ENV_REFERENCE}\` to the app — the copy in the package is outside its tsconfig include, so className stays a type error.`,
+		};
+	}
+
+	return { name: "Uniwind types", status: "pass", detail: `${UNIWIND_ENV_FILENAME} present` };
+}
+
+/** Anywhere inside the app's own tree will do; `tsconfig` includes it from there. */
+function appLoadsUniwindEnv(config: ResolvedConfig): boolean {
+	const root = config.app.resolved.root;
+
+	return [
+		join(root, UNIWIND_ENV_FILENAME),
+		join(root, "src", UNIWIND_ENV_FILENAME),
+		join(root, "types", UNIWIND_ENV_FILENAME),
+	].some((candidate) => existsSync(candidate));
 }
 
 /**

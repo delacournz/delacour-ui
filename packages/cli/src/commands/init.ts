@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
@@ -7,6 +8,7 @@ import { aliasesForDirectories } from "../project/aliases";
 import { buildStylesBlock, patchGlobalCss } from "../project/css";
 import { detectProject, type ProjectInfo } from "../project/detect";
 import { patchMetroConfig } from "../project/metro";
+import { UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import { CancelledError, createOutput, type Output, style } from "../ui/output";
 import { add } from "./add";
@@ -262,6 +264,8 @@ async function wireUpApp(config: ResolvedConfig, workspaceRoot: string | null, o
 		);
 	}
 
+	await ensureUniwindEnv(config, output);
+
 	const block = buildStylesBlock({ cssPath: config.app.resolved.css, directories: config.directories });
 	const css = patchGlobalCss(await read(config.app.resolved.css), block);
 
@@ -269,6 +273,29 @@ async function wireUpApp(config: ResolvedConfig, workspaceRoot: string | null, o
 		await write(config.app.resolved.css, css.content);
 		output.success(`Updated ${style.path(config.app.css)}`);
 	}
+}
+
+/**
+ * Gives the app the Uniwind type augmentation when the components do not live in it.
+ *
+ * `uniwind-env.d.ts` is one line — `/// <reference types="uniwind/types" />` —
+ * and it is the whole reason a React Native component accepts `className` in
+ * TypeScript at all. The `styles` item writes it beside the components, which is
+ * enough when they are in the app: the app's `tsconfig` `include` picks it up.
+ *
+ * In a shared package it lands outside the app's `include`, and nothing imports
+ * it — a `.d.ts` carrying only a triple-slash reference cannot be reached by an
+ * import. So the augmentation never loads and every `className` on an Animated
+ * component becomes a type error naming neither the file nor the cause.
+ */
+async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise<void> {
+	if (!config.package) return;
+
+	const path = join(config.app.resolved.root, "uniwind-env.d.ts");
+	if (existsSync(path)) return;
+
+	await write(path, `${UNIWIND_ENV_REFERENCE}\n`);
+	output.success(`Wrote ${style.path("uniwind-env.d.ts")} — the app needs it too, not just the package`);
 }
 
 /**

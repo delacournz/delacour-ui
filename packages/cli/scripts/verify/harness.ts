@@ -61,6 +61,25 @@ const APP_JSON = {
 	},
 };
 
+/**
+ * Pins for a workspace app, mirroring `apps/playground/tsconfig.json`.
+ *
+ * Bun materialises a second copy of these under the app while the workspace root
+ * holds another, and TypeScript treats the two paths as different modules — so
+ * Uniwind's `className` augmentation, applied to the root copy, never reaches
+ * components resolved from the nested one. The symptom is a wall of Reanimated
+ * "not assignable to IntrinsicAttributes" errors that names neither cause.
+ *
+ * Metro needs the same thing through `extraNodeModules`, which `init` writes;
+ * `tsc` does not read Metro's config, so it needs this separately.
+ */
+const WORKSPACE_TYPE_PINS = {
+	react: ["../../node_modules/react"],
+	"react-native": ["../../node_modules/react-native"],
+	"react-native/*": ["../../node_modules/react-native/*"],
+	"react-native-reanimated": ["../../node_modules/react-native-reanimated"],
+};
+
 const TSCONFIG = {
 	extends: "expo/tsconfig.base",
 	compilerOptions: {
@@ -124,9 +143,38 @@ export function App() {
  */
 export const VERIFY_DIR = join(import.meta.dirname, "../../.verify/app");
 
+/**
+ * The two shapes a consumer's project can take.
+ *
+ * `standalone` is an Expo app that owns its components. `monorepo` puts them in
+ * a package several apps could share — the layout whose wiring (a workspace
+ * link, an `exports` map, Metro's resolver) has no equivalent in the first, and
+ * which nothing verified until now.
+ */
+export type Layout = "standalone" | "monorepo";
+
+export type Workspace = {
+	layout: Layout;
+	/** Where `bun install` runs, and where `init` is invoked from. */
+	installRoot: string;
+	/** `init`'s `--package-path`, relative to `installRoot`. */
+	packagePath?: string;
+	/** Where `init` and `add` run, and where the config lands. */
+	configRoot: string;
+	/** The Expo app: Metro, the CSS entry, the verify screen, `tsc`. */
+	appRoot: string;
+	/** Set for the monorepo layout — what the app imports components as. */
+	packageName?: string;
+};
+
+/** Deliberately not pre-created: whether `init` can produce a usable package is the test. */
+export const SHARED_PACKAGE_NAME = "@verify/ui";
+
 export type ScaffoldOptions = {
 	install: boolean;
 	reporter: Reporter;
+	/** Extra `tsconfig` path mappings — the workspace pins, in a monorepo. */
+	typePins?: Record<string, string[]>;
 	/** Delete `node_modules` too, rather than reusing it. */
 	fresh?: boolean;
 };
@@ -155,11 +203,64 @@ export async function resetVerifyDir(dir: string, options: { fresh?: boolean }):
 	}
 }
 
+/** The workspace root of a monorepo scaffold — everything else hangs off it. */
+const ROOT_PACKAGE_JSON = {
+	name: "delacour-verify-workspace",
+	version: "1.0.0",
+	private: true,
+	workspaces: ["apps/*", "packages/*"],
+};
+
+export async function scaffoldWorkspace(
+	dir: string,
+	options: ScaffoldOptions & { layout: Layout }
+): Promise<Workspace> {
+	if (options.layout === "standalone") {
+		await scaffoldExpoApp(dir, options);
+		return { layout: "standalone", installRoot: dir, configRoot: dir, appRoot: dir };
+	}
+
+	const appRoot = join(dir, "apps/mobile");
+
+	await mkdir(dir, { recursive: true });
+	await writeFile(join(dir, "package.json"), `${JSON.stringify(ROOT_PACKAGE_JSON, null, "\t")}\n`, "utf-8");
+
+	// The app is scaffolded whole; `packages/ui` is left absent on purpose.
+	await scaffoldExpoApp(appRoot, { ...options, install: false, typePins: WORKSPACE_TYPE_PINS });
+
+	if (options.install) {
+		await run("bun", ["install"], { cwd: dir, reporter: options.reporter, label: "bun install" });
+		options.reporter.pass("installed the workspace");
+	}
+
+	return {
+		layout: "monorepo",
+		installRoot: dir,
+		configRoot: join(dir, "packages/ui"),
+		packagePath: "packages/ui",
+		appRoot,
+		packageName: SHARED_PACKAGE_NAME,
+	};
+}
+
 export async function scaffoldExpoApp(dir: string, options: ScaffoldOptions): Promise<void> {
 	const files: [string, string][] = [
 		["package.json", `${JSON.stringify(PACKAGE_JSON, null, "\t")}\n`],
 		["app.json", `${JSON.stringify(APP_JSON, null, "\t")}\n`],
-		["tsconfig.json", `${JSON.stringify(TSCONFIG, null, "\t")}\n`],
+		[
+			"tsconfig.json",
+			`${JSON.stringify(
+				{
+					...TSCONFIG,
+					compilerOptions: {
+						...TSCONFIG.compilerOptions,
+						paths: { ...TSCONFIG.compilerOptions.paths, ...options.typePins },
+					},
+				},
+				null,
+				"\t"
+			)}\n`,
+		],
 		["metro.config.js", METRO_CONFIG],
 		["babel.config.js", BABEL_CONFIG],
 		["index.ts", ENTRY],

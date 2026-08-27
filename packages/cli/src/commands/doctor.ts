@@ -410,7 +410,11 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 		name: "Native modules",
 		status: "warn",
 		detail: `two copies of ${duplicated.join(", ")}`,
-		fix: "Pin them in metro.config resolver.extraNodeModules — two registrations of a native module break at runtime.",
+		fix: [
+			"Pin them in metro.config resolver.extraNodeModules — two registrations of a native module break at runtime.",
+			"tsc does not read that, so pin them in tsconfig `paths` too, or Uniwind's className augmentation misses the",
+			"nested copy and every Animated component reports a type error naming neither cause.",
+		].join(" "),
 	};
 }
 

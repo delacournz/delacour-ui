@@ -1,7 +1,9 @@
 import * as clack from "@clack/prompts";
-import { loadConfig } from "../config/resolve";
+import { findConfig, loadConfig, MissingConfigError, type ResolvedConfig } from "../config/resolve";
+import { CONFIG_FILENAME } from "../config/schema";
 import { detectProject, type ProjectInfo } from "../project/detect";
 import { installCommands, missingPackages, runInstall } from "../project/package-manager";
+import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
@@ -31,6 +33,19 @@ export type AddOptions = {
 
 export async function add(names: string[], options: AddOptions): Promise<void> {
 	const output = createOutput(options);
+
+	// Interactively, an unconfigured project is a question rather than an error.
+	// Non-interactively it stays an error: a script must not be silently
+	// reconfigured because a file happened to be missing.
+	if (!findConfig(options.cwd) && output.interactive) {
+		const { init } = await import("./init");
+		const setUp = await output.confirm(`No ${CONFIG_FILENAME} here. Set this project up first?`, true);
+		if (!setUp) throw new MissingConfigError(options.cwd);
+
+		await init(names, options);
+		return;
+	}
+
 	const config = await loadConfig(options.cwd);
 	const project = await detectProject(config.app.resolved.root);
 
@@ -61,6 +76,10 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 
 	await writeFiles(toWrite);
 	report(toWrite, planned, requested, output);
+
+	// After the write, so the map is derived from what is on disk rather than
+	// from what this run believed it wrote.
+	await syncPackage(config, items, output);
 
 	if (options.install === false) {
 		printSkippedInstall(items, output);
@@ -158,6 +177,29 @@ async function install(items: readonly RegistryItem[], project: ProjectInfo, out
 		await output.task(`${group.label}: ${group.packages.join(", ")}`, () =>
 			runInstall(group, { cwd, silent: output.silent })
 		);
+	}
+}
+
+/**
+ * Keeps the shared package's `exports` map and peers in step with its contents.
+ *
+ * A no-op when the components live in the app: there is no package boundary to
+ * cross, so nothing needs exporting.
+ *
+ * The peers are the same packages `install` puts in the **app** — the app owns
+ * the versions, because `expo install` pins them against the SDK. Recording them
+ * as peers here rather than dependencies is the rule that keeps one copy of each
+ * native module in the tree.
+ */
+async function syncPackage(config: ResolvedConfig, items: readonly RegistryItem[], output: Output): Promise<void> {
+	const peers = [...collect(items, "expoDependencies"), ...collect(items, "dependencies")];
+	const result = await syncSharedPackage(config, peers);
+	if (!result) return;
+
+	output.success(`${result.created ? "Wrote" : "Updated"} package.json — ${result.exportCount} exports`);
+
+	if (await linkPackageToApp(config)) {
+		output.info(`Added ${style.code(`"${config.package?.name}": "workspace:*"`)} to the app. Re-run your install.`);
 	}
 }
 

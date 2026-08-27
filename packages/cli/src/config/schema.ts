@@ -46,6 +46,19 @@ const registrySchema = z.object({
 	ref: z.string().optional(),
 });
 
+/**
+ * The shared package the components live in, when they do not live in the app.
+ *
+ * Its presence is the whole signal for the monorepo layout: it means `add`
+ * maintains an `exports` map, records native peers on the package rather than
+ * as dependencies, and the app imports `@acme/ui/button` instead of reaching
+ * across the workspace by relative path.
+ */
+const packageSchema = z.object({
+	/** The package's npm name, and therefore the app's import prefix. */
+	name: z.string().min(1),
+});
+
 export const configSchema = z.object({
 	$schema: z.string().optional(),
 	framework: z.enum(["expo", "react-native"]).default("expo"),
@@ -55,10 +68,13 @@ export const configSchema = z.object({
 	registries: z.record(z.string(), z.string()).default({}),
 	paths: pathsSchema,
 	aliases: aliasesSchema.default({}),
+	/** Absent when the components live in the app itself. */
+	package: packageSchema.optional(),
 	app: appSchema.prefault({}),
 });
 
 export type Config = z.infer<typeof configSchema>;
+export type ConfigPackage = z.infer<typeof packageSchema>;
 export type ConfigPaths = z.infer<typeof pathsSchema>;
 export type ConfigAliases = z.infer<typeof aliasesSchema>;
 

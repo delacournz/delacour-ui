@@ -45,6 +45,8 @@ withRegistryOptions(
 		.option("-d, --defaults", "use the default layout without asking")
 		.option("-f, --force", `rewrite an existing ${CONFIG_FILENAME}`)
 		.option("-s, --src <dir>", "base directory for source files")
+		.option("--package-name <name>", "put the components in a shared package with this name")
+		.option("--package-path <dir>", "where that package goes, relative to the workspace root", "packages/ui")
 		.option("--no-install", "write the files but install nothing")
 		.option("--silent", "print nothing but errors")
 ).action((components: string[], options) => run(() => init(components, { ...options, cwd: resolve(options.cwd) })));

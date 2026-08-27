@@ -19,17 +19,24 @@ import { type Reporter, run } from "./harness";
  */
 
 /** Imports every component so Metro must resolve all of them, and renders what is safe to render bare. */
-function screen(aliases: Partial<Record<string, string>>): string {
-	const ui = aliases.ui ?? "./components/ui";
-	const lib = aliases.lib ?? "./lib";
-	const styles = aliases.styles ?? "./styles";
+function screen(config: ResolvedConfig): string {
+	const { aliases } = config;
+
+	// In the shared-package layout the app is a different package, so neither an
+	// alias nor a relative path reaches the components — only the package name
+	// does. That makes this the assertion that matters: if the exports map, the
+	// workspace link or Metro's resolver is wrong, these imports fail.
+	const pkg = config.package?.name;
+	const ui = pkg ?? aliases.ui ?? "./components/ui";
+	const lib = pkg ? `${pkg}/lib` : (aliases.lib ?? "./lib");
+	const styles = pkg ? `${pkg}/styles` : (aliases.styles ?? "./styles");
 
 	// First statement, and load-bearing. `withUniwindConfig`'s `cssEntryFile`
 	// tells the transformer what to compile; it does not put the CSS in the
 	// bundle. Without this import the app boots and renders every component
 	// completely unstyled, with nothing logged — which is what the first
 	// simulator run of this script actually did, and why `doctor` now checks it.
-	return `import "${styles}/global.css";
+	return `import "${pkg ? styles : `${styles}/global.css`}";
 
 import { ScrollView, View } from "react-native";
 
@@ -158,7 +165,7 @@ export async function writeVerifyScreen(options: RenderOptions): Promise<void> {
 	const path = join(options.appDir, "src/app.tsx");
 	await mkdir(dirname(path), { recursive: true });
 
-	await writeFile(path, `${screen(options.config.aliases)}\nexport { VerifyScreen as App };\n`, "utf-8");
+	await writeFile(path, `${screen(options.config)}\nexport { VerifyScreen as App };\n`, "utf-8");
 	options.reporter.pass("wrote a screen that mounts every component");
 }
 

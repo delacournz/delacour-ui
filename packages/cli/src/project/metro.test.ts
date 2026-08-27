@@ -81,3 +81,56 @@ export default config;
 		expect(result).toHaveProperty("content", expect.stringContaining('dtsFile: "./types/uniwind.d.ts"'));
 	});
 });
+
+describe("monorepo resolver wiring", () => {
+	const MONOREPO = { ...OPTIONS, metroConfigPath: "/repo/apps/mobile/metro.config.js", workspaceRoot: "/repo" };
+
+	test("is absent when the components live in the app", () => {
+		const result = patchMetroConfig(null, OPTIONS);
+
+		expect(result).toHaveProperty("content", expect.not.stringContaining("watchFolders"));
+	});
+
+	test("watches and resolves the workspace when they do not", () => {
+		const result = patchMetroConfig(null, MONOREPO);
+		if (result.status !== "created") throw new Error("expected created");
+
+		expect(result.content).toContain('const workspaceRoot = path.resolve(__dirname, "../..");');
+		expect(result.content).toContain("config.watchFolders = [workspaceRoot];");
+		expect(result.content).toContain("config.resolver.nodeModulesPaths");
+		expect(result.content).toContain("config.resolver.disableHierarchicalLookup = true;");
+	});
+
+	/** Two registrations of one native module break at runtime. */
+	test("pins one copy of each native module", () => {
+		const result = patchMetroConfig(null, MONOREPO);
+		if (result.status !== "created") throw new Error("expected created");
+
+		expect(result.content).toContain('"react-native": path.resolve(workspaceRoot, "node_modules/react-native")');
+		expect(result.content).toContain("react-native-reanimated");
+	});
+
+	test("keeps withUniwindConfig outermost, after the resolver block", () => {
+		const result = patchMetroConfig(null, MONOREPO);
+		if (result.status !== "created") throw new Error("expected created");
+
+		expect(result.content.indexOf("extraNodeModules")).toBeLessThan(
+			result.content.indexOf("module.exports = withUniwindConfig")
+		);
+	});
+
+	test("adds the block to an app that already has a Metro config", () => {
+		const existing = `const { getDefaultConfig } = require("expo/metro-config");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = config;
+`;
+		const result = patchMetroConfig(existing, MONOREPO);
+		if (result.status !== "patched") throw new Error("expected patched");
+
+		expect(result.content).toContain("config.watchFolders = [workspaceRoot];");
+		expect(result.content).toContain("module.exports = withUniwindConfig(config, {");
+		expect(result.content.indexOf("watchFolders")).toBeLessThan(result.content.indexOf("withUniwindConfig(config"));
+	});
+});

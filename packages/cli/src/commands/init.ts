@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
@@ -40,6 +39,10 @@ export type InitOptions = {
 	registry?: string;
 	/** Base directory for source files, e.g. `src`. Skips the prompt. */
 	src?: string;
+	/** Names the shared package, and selects that layout without prompting. */
+	packageName?: string;
+	/** Where that package goes, relative to the workspace root. Defaults to `packages/ui`. */
+	packagePath?: string;
 };
 
 export async function init(components: string[], options: InitOptions): Promise<void> {
@@ -56,16 +59,16 @@ export async function init(components: string[], options: InitOptions): Promise<
 	const project = await detectProject(options.cwd);
 	warnAboutStack(project, output);
 
-	const root = await chooseRoot(project, options, output);
-	const source = await chooseSourceDirectory(root, options, output);
-	const config = buildConfig({ project, root, source });
-	const resolved = await writeConfigFile(config, root, output);
+	const placement = await choosePlacement(project, options, output);
+	const source = await chooseSourceDirectory(options, output);
+	const config = buildConfig({ project, root: placement.root, source, packageName: placement.packageName });
+	const resolved = await writeConfigFile(config, placement.root, output);
 
-	await wireUpApp(resolved, output);
+	await wireUpApp(resolved, resolved.package ? project.workspaceRoot : null, output);
 
 	// The tokens every component's classes resolve against. Adding it here means
 	// a fresh project is renderable before a single component is chosen.
-	await add(["styles", ...components], { ...options, cwd: root, overwrite: true });
+	await add(["styles", ...components], { ...options, cwd: placement.root, overwrite: true });
 
 	printFollowUps(resolved, output);
 	output.outro(`Ready. ${style.code("delacour add button")} to get started.`);
@@ -78,48 +81,102 @@ export async function init(components: string[], options: InitOptions): Promise<
  * shared package lets several apps use one copy, and putting them in the app is
  * simpler while there is only one.
  */
-async function chooseRoot(project: ProjectInfo, options: InitOptions, output: Output): Promise<string> {
-	const app = project.appRoot;
-	const here = project.packageRoot;
-	const fallback = app ?? here ?? options.cwd;
+export type Placement = {
+	/** Where the config and the components go. */
+	root: string;
+	/** Set only for the shared-package layout — the app's import prefix. */
+	packageName?: string;
+};
 
-	// Running inside a package that is not the app is already the answer:
-	// `cd packages/ui && delacour init` means the components go there.
-	if (here && here !== app && here !== project.workspaceRoot) return here;
+/**
+ * The default answer, decided without asking.
+ *
+ * Pure and exported so the decision table is testable: the prompt branches were
+ * previously unreachable from any test, which is how "running inside a package
+ * never asks" went unnoticed.
+ */
+export function defaultPlacement(project: ProjectInfo, cwd: string): Placement {
+	const { appRoot, packageRoot, workspaceRoot } = project;
+
+	// Already inside a package that is not the app — `cd packages/ui && init`
+	// means the components go there. Now the *default*, not a reason to skip
+	// the question.
+	if (packageRoot && packageRoot !== appRoot && packageRoot !== workspaceRoot) {
+		return { root: packageRoot, packageName: undefined };
+	}
+
+	return { root: appRoot ?? packageRoot ?? cwd };
+}
+
+/** `fixture-monorepo` → `@fixture-monorepo/ui`; an unnamed root → `@repo/ui`. */
+function suggestPackageName(project: ProjectInfo): string {
+	const root = project.workspaceRoot ? project.packageJson?.name : null;
+	const scope = (root ?? "repo").replace(/^@/, "").split("/")[0];
+	return `@${scope}/ui`;
+}
+
+/**
+ * Where `native-components.json` goes, and with it the components.
+ *
+ * In a plain Expo app there is exactly one sensible answer, so asking would be
+ * noise. In a workspace there are two — a shared package lets several apps use
+ * one copy — so it always asks, including from inside a package, which it never
+ * used to do.
+ */
+async function choosePlacement(project: ProjectInfo, options: InitOptions, output: Output): Promise<Placement> {
+	const fallback = defaultPlacement(project, options.cwd);
+
+	// The non-interactive equivalent of the two prompts below. The path defaults
+	// rather than falling back to the app, since naming a package and then
+	// writing into the app would be the opposite of what was asked for.
+	if (options.packageName) {
+		const base = project.workspaceRoot ?? options.cwd;
+		const path = options.packagePath ?? (fallback.root !== project.appRoot ? fallback.root : "packages/ui");
+		return { root: resolve(base, path), packageName: options.packageName };
+	}
 
 	if (!project.workspaceRoot || !output.interactive || options.defaults) return fallback;
 
+	const app = project.appRoot;
+	const inPackage = fallback.root !== app;
+
 	const choice = await clack.select({
 		message: "Where should the components live?",
+		initialValue: inPackage ? "__package__" : (app ?? "__package__"),
 		options: [
-			...(app ? [{ value: app, label: `In the app  ${style.dim(short(project.workspaceRoot, app))}` }] : []),
+			...(app ? [{ value: app, label: `In this app  ${style.dim(short(project.workspaceRoot, app))}` }] : []),
 			{ value: "__package__", label: "In a shared package, so several apps can use them" },
 		],
 	});
 
 	if (clack.isCancel(choice)) throw new CancelledError();
-	if (choice !== "__package__") return choice as string;
+	if (choice !== "__package__") return { root: choice as string };
 
 	const path = await clack.text({
 		message: "Path to the shared package",
-		initialValue: "packages/ui",
+		initialValue: toPosix(relative(project.workspaceRoot, fallback.root)) || "packages/ui",
 		placeholder: "packages/ui",
 	});
-
 	if (clack.isCancel(path)) throw new CancelledError();
-	return resolve(project.workspaceRoot, path);
+
+	const name = await clack.text({
+		message: "Package name — what the apps will import",
+		initialValue: suggestPackageName(project),
+		placeholder: "@acme/ui",
+	});
+	if (clack.isCancel(name)) throw new CancelledError();
+
+	return { root: resolve(project.workspaceRoot, path), packageName: name };
 }
 
-async function chooseSourceDirectory(root: string, options: InitOptions, output: Output): Promise<string> {
+async function chooseSourceDirectory(options: InitOptions, output: Output): Promise<string> {
 	if (options.src) return options.src;
-
-	const fallback = existsSync(join(root, "src")) ? "src" : "src";
-	if (!output.interactive || options.defaults) return fallback;
+	if (!output.interactive || options.defaults) return "src";
 
 	const answer = await clack.text({
 		message: "Base directory for source files",
-		initialValue: fallback,
-		placeholder: fallback,
+		initialValue: "src",
+		placeholder: "src",
 	});
 
 	if (clack.isCancel(answer)) throw new CancelledError();
@@ -130,6 +187,8 @@ type BuildConfigContext = {
 	project: ProjectInfo;
 	root: string;
 	source: string;
+	/** Set for the shared-package layout only. */
+	packageName?: string;
 };
 
 function buildConfig(context: BuildConfigContext): Config {
@@ -158,6 +217,7 @@ function buildConfig(context: BuildConfigContext): Config {
 		paths,
 		// Read from tsconfig, never written to it. Absent means relative imports.
 		aliases: aliasesForDirectories(directories, context.project.pathMappings),
+		...(context.packageName ? { package: { name: context.packageName } } : {}),
 		app: {
 			root: toPosix(relative(context.root, appRoot)) || ".",
 			css: under("styles/global.css"),
@@ -183,11 +243,14 @@ async function writeConfigFile(config: Config, root: string, output: Output): Pr
 }
 
 /** Metro and the Tailwind entry, the two files the app needs to have changed. */
-async function wireUpApp(config: ResolvedConfig, output: Output): Promise<void> {
+async function wireUpApp(config: ResolvedConfig, workspaceRoot: string | null, output: Output): Promise<void> {
 	const metro = patchMetroConfig(await read(config.app.resolved.metroConfig), {
 		metroConfigPath: config.app.resolved.metroConfig,
 		cssPath: config.app.resolved.css,
 		typesPath: config.app.resolved.uniwindTypes,
+		// Only when the components sit outside the app — otherwise Metro's
+		// default resolution already reaches them.
+		workspaceRoot: workspaceRoot ?? undefined,
 	});
 
 	if (metro.status === "created" || metro.status === "patched") {

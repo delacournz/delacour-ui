@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { readConfig } from "../../src/config/resolve";
+import { CONFIG_FILENAME } from "../../src/config/schema";
 import { NAMESPACES } from "../../src/registry/namespaces";
 import { scanImports } from "../../src/registry/scan-imports";
 import { type RegistryItem, registryIndexSchema, registryItemSchema } from "../../src/registry/schema";
@@ -17,7 +18,10 @@ import { type Reporter, run } from "./harness";
  */
 
 export type CheckContext = {
+	/** The Expo app: Metro, the CSS entry, `tsc`, `doctor`. */
 	appDir: string;
+	/** Where the config and the components are — the same as `appDir` unless they are in a package. */
+	configDir: string;
 	registryDir: string;
 	/** The items requested, or `null` for `--all`. */
 	only: string[] | null;
@@ -153,7 +157,7 @@ export const CHECKS: Check[] = [
 		name: "Every package imported is actually installed",
 		needsInstall: true,
 		async run(context) {
-			const config = await readConfig(join(context.appDir, "native-components.json"));
+			const config = await readConfig(join(context.configDir, CONFIG_FILENAME));
 			const modules = join(context.appDir, "node_modules");
 			const problems = new Set<string>();
 
@@ -188,10 +192,13 @@ export const CHECKS: Check[] = [
 	{
 		name: "The app is wired up (delacour doctor)",
 		needsInstall: true,
-		async run({ appDir, reporter }) {
+		async run({ configDir, reporter }) {
 			const bundle = join(import.meta.dirname, "../../dist/index.js");
+			// From the config, not the app: `findConfig` walks *up*, and in the
+			// shared-package layout the config is a sibling of the app rather than
+			// an ancestor. `doctor` finds the app through `app.root` regardless.
 			const output = await run("node", [bundle, "doctor", "--json", "--fast"], {
-				cwd: appDir,
+				cwd: configDir,
 				reporter,
 				label: "delacour doctor",
 				// doctor exits 1 exactly when it has findings, which is the case
@@ -268,7 +275,7 @@ type CopiedFile = { path: string; display: string; content: string };
 
 /** Every file the CLI wrote, across all five namespaces. */
 async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
-	const config = await readConfig(join(context.appDir, "native-components.json"));
+	const config = await readConfig(join(context.configDir, CONFIG_FILENAME));
 	const files: CopiedFile[] = [];
 
 	for (const namespace of NAMESPACES) {
@@ -292,7 +299,7 @@ async function copiedFiles(context: CheckContext): Promise<CopiedFile[]> {
 async function loadTarget(
 	context: CheckContext
 ): Promise<{ config: Awaited<ReturnType<typeof readConfig>>; items: RegistryItem[] }> {
-	const config = await readConfig(join(context.appDir, "native-components.json"));
+	const config = await readConfig(join(context.configDir, CONFIG_FILENAME));
 	const names = (await readdir(join(context.registryDir, "r")))
 		.filter((name) => name.endsWith(".json"))
 		.map((name) => name.replace(/\.json$/, ""));

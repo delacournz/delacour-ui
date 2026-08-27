@@ -1,14 +1,16 @@
 #!/usr/bin/env bun
 import { join, relative } from "node:path";
 import { readConfig } from "../src/config/resolve";
+import { CONFIG_FILENAME } from "../src/config/schema";
 import { CHECKS, standaloneItems } from "./verify/checks";
 import {
 	buildCli,
+	type Layout,
 	type Reporter,
 	removeVerifyDir,
 	resetVerifyDir,
 	runCli,
-	scaffoldExpoApp,
+	scaffoldWorkspace,
 	VERIFY_DIR,
 } from "./verify/harness";
 import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
@@ -48,6 +50,7 @@ type Options = {
 	verbose: boolean;
 	/** Discard `node_modules` as well, rather than reusing the previous install. */
 	fresh: boolean;
+	layout: Layout;
 	/** Run the components through Metro, which is the only stage that exercises the Uniwind transform. */
 	bundle: boolean;
 	/** Build a dev client and launch it. Implies `bundle`. Needs a Mac with Xcode. */
@@ -69,6 +72,7 @@ function parseOptions(argv: string[]): Options {
 		keep: argv.includes("--keep") || simulator,
 		verbose: argv.includes("--verbose"),
 		fresh: argv.includes("--fresh"),
+		layout: value("--layout") === "monorepo" || argv.includes("--monorepo") ? "monorepo" : "standalone",
 		bundle: argv.includes("--bundle") || simulator,
 		simulator,
 		registry: value("--registry") ?? join(import.meta.dirname, "../../../registry"),
@@ -95,6 +99,8 @@ Options
   --keep           do not clean up afterwards — keeps node_modules, so the next
                    run skips the install entirely (implied by --simulator)
   --fresh          discard anything a previous --keep left, node_modules included
+  --layout <name>  standalone (default) or monorepo — components in a shared
+                   package the app imports by name
   --registry <p>   a registry directory or URL (default: this repo's)
   --verbose        stream every subprocess
   --help           this
@@ -128,20 +134,37 @@ try {
 	reporter.step("Building the CLI");
 	const cli = await buildCli(reporter);
 
-	reporter.step(`Scaffolding an Expo app in ${relative(process.cwd(), appDir)}`);
-	await scaffoldExpoApp(appDir, { install: options.install, reporter });
+	reporter.step(`Scaffolding a ${options.layout} project in ${relative(process.cwd(), appDir)}`);
+	const workspace = await scaffoldWorkspace(appDir, {
+		install: options.install,
+		reporter,
+		layout: options.layout,
+	});
 
 	reporter.step("delacour init");
-	await runCli(cli, ["init", "--defaults", "--yes", "--registry", options.registry], {
-		cwd: appDir,
-		reporter,
-		install: options.install,
-	});
+	await runCli(
+		cli,
+		[
+			"init",
+			"--defaults",
+			"--yes",
+			"--registry",
+			options.registry,
+			// Selects the shared-package layout without a prompt, and names it.
+			...(workspace.packageName ? ["--package-name", workspace.packageName] : []),
+			...(workspace.packagePath ? ["--package-path", workspace.packagePath] : []),
+		],
+		// From the workspace root, not the package: the package does not exist
+		// yet, and a process cannot have a cwd that is not there. This is also
+		// the real invocation — `init` decides the location, rather than being
+		// told by having been run inside it.
+		{ cwd: workspace.installRoot, reporter, install: options.install }
+	);
 
 	if (options.only) {
 		reporter.step(`delacour add ${options.only.join(" ")}`);
 		await runCli(cli, ["add", ...options.only, "--overwrite", "--yes", "--registry", options.registry], {
-			cwd: appDir,
+			cwd: workspace.configRoot,
 			reporter,
 			install: options.install,
 		});
@@ -152,16 +175,16 @@ try {
 		// this run has to cover every item, not most of them.
 		reporter.step("delacour add --all");
 		await runCli(cli, ["add", "--all", "--overwrite", "--yes", "--registry", options.registry], {
-			cwd: appDir,
+			cwd: workspace.configRoot,
 			reporter,
 			install: options.install,
 		});
 
-		const rest = await standaloneItems(options.registry, appDir);
+		const rest = await standaloneItems(options.registry, workspace.configRoot);
 		if (rest.length > 0) {
 			reporter.step(`delacour add ${rest.join(" ")}`);
 			await runCli(cli, ["add", ...rest, "--overwrite", "--yes", "--registry", options.registry], {
-				cwd: appDir,
+				cwd: workspace.configRoot,
 				reporter,
 				install: options.install,
 			});
@@ -172,11 +195,15 @@ try {
 	// own documented follow-up — importing the CSS entry — so skipping it left
 	// the default level checking an app that was knowingly misconfigured.
 	reporter.step("Writing a screen that mounts every component");
-	await writeVerifyScreen({ appDir, config: await readConfig(join(appDir, "native-components.json")), reporter });
+	await writeVerifyScreen({
+		appDir: workspace.appRoot,
+		config: await readConfig(join(workspace.configRoot, CONFIG_FILENAME)),
+		reporter,
+	});
 
 	if (options.bundle) {
 		reporter.step("Bundling with Metro (expo export)");
-		await bundleWithMetro(appDir, reporter);
+		await bundleWithMetro(workspace.appRoot, reporter);
 		reporter.pass("Metro resolved every module and Uniwind compiled every class");
 	}
 
@@ -187,7 +214,13 @@ try {
 		}
 
 		reporter.step(check.name);
-		const result = await check.run({ appDir, registryDir: options.registry, only: options.only, reporter });
+		const result = await check.run({
+			appDir: workspace.appRoot,
+			configDir: workspace.configRoot,
+			registryDir: options.registry,
+			only: options.only,
+			reporter,
+		});
 
 		if (result.ok) reporter.pass(result.summary);
 		else {
@@ -198,7 +231,7 @@ try {
 	}
 	if (options.simulator && failures === 0) {
 		reporter.step("Building a dev client and launching it (this takes a while)");
-		await bootOnSimulator(appDir, reporter);
+		await bootOnSimulator(workspace.appRoot, reporter);
 		reporter.pass("the app is running on a simulator");
 		reporter.detail("Verify what it renders with argent; the app is left in place below.");
 	}

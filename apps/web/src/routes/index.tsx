@@ -1,21 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
+import { DelacourIcon } from "@/components/delacour-icon";
 import { COMPONENTS } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
-import { appName, gitConfig } from "@/lib/shared";
+import { appDescription, appName, gitConfig } from "@/lib/shared";
 
 export const Route = createFileRoute("/")({
 	component: Home,
 	head: () => ({
-		meta: [
-			{ title: `${appName} — React Native components` },
-			{
-				name: "description",
-				content:
-					"A React Native component library built on Uniwind, Reanimated and the Gesture API. Compose, don't configure.",
-			},
-		],
+		meta: [{ title: `${appName} — React Native components` }, { name: "description", content: appDescription }],
 	}),
 });
 
@@ -63,7 +57,10 @@ function Hero() {
 				className="pointer-events-none absolute inset-0 [background:radial-gradient(60%_60%_at_50%_0%,var(--color-fd-accent),transparent_70%)] opacity-60"
 			/>
 			<div className="relative mx-auto max-w-5xl px-6 py-20 sm:py-28">
-				<p className="text-sm font-medium text-fd-muted-foreground">Delacour UI · Native</p>
+				<p className="flex items-center gap-2 text-sm font-medium text-fd-muted-foreground">
+					<DelacourIcon size={18} />
+					{appName} · Native
+				</p>
 				<h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
 					React Native components that compose.
 				</h1>

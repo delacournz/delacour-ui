@@ -1,4 +1,5 @@
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+import { DelacourIcon } from "@/components/delacour-icon";
 import { appName, gitConfig } from "./shared";
 
 export function baseOptions(): BaseLayoutProps {
@@ -6,12 +7,7 @@ export function baseOptions(): BaseLayoutProps {
 		nav: {
 			title: (
 				<span className="inline-flex items-center gap-2 font-semibold">
-					<span
-						aria-hidden
-						className="size-5 rounded-md bg-fd-primary text-fd-primary-foreground grid place-items-center text-[10px] font-bold"
-					>
-						D
-					</span>
+					<DelacourIcon size={20} />
 					{appName}
 				</span>
 			),

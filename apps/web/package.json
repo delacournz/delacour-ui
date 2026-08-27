@@ -11,9 +11,11 @@
 		"start": "bun .output/server/index.mjs",
 		"check": "biome check ./src",
 		"typecheck": "tsc --noEmit",
-		"test": "bun test"
+		"test": "bun test",
+		"icons": "bun scripts/generate-icons.ts"
 	},
 	"dependencies": {
+		"@delacour/brand": "workspace:*",
 		"@delacour/native-ui": "workspace:*",
 		"@tanstack/react-router": "1.170.27",
 		"@tanstack/react-router-devtools": "1.167.1",
@@ -28,6 +30,7 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
+		"@resvg/resvg-js": "^2.6.2",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^26.2.0",

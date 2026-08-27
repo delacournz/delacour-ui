@@ -1,4 +1,16 @@
 export const appName = "Delacour UI";
+
+/** One sentence, served as the meta description and as both social cards' body. */
+export const appDescription =
+	"A React Native component library built on Uniwind, Reanimated and the Gesture API. Compose, don't configure.";
+
+/**
+ * The production origin, for the absolute URLs Open Graph and Twitter cards
+ * require — a relative `og:image` is dropped by every scraper that reads it.
+ * Staging serves the same tags; a preview crawl resolving to production art is
+ * the right trade against threading a per-environment origin through SSR.
+ */
+export const siteUrl = "https://ui.delacour.co.nz";
 export const docsRoute = "/docs";
 export const docsImageRoute = "/og/docs";
 

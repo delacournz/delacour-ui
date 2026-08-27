@@ -19,6 +19,7 @@
 	},
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+		"@delacour/brand": "workspace:*",
 		"@delacour/native-ui": "workspace:*",
 		"@gorhom/bottom-sheet": "^5.2.8",
 		"@legendapp/list": "catalog:",

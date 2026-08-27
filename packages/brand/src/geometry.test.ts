@@ -1,12 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
 import {
 	DELACOUR_ADAPTIVE_INSET,
 	DELACOUR_BOTTOM_CENTRE_Y,
 	DELACOUR_CANVAS,
 	DELACOUR_CARD_COLOUR,
 	DELACOUR_CENTRE_X,
+	DELACOUR_CORNER_RADIUS,
+	DELACOUR_CORNER_RATIO,
 	DELACOUR_GLYPH_HALF_EXTENT,
 	DELACOUR_GLYPH_VIEW_BOX,
 	DELACOUR_RECT_X,
@@ -16,9 +16,10 @@ import {
 	DELACOUR_TOP_CENTRE_Y,
 	delacourIconSvg,
 	delacourRectY,
-} from "./delacour-mark.geometry";
+} from "./geometry";
+import { readIconSource } from "./source";
 
-const SOURCE = readFileSync(join(import.meta.dirname, "../../../assets/icon-source.svg"), "utf-8");
+const SOURCE = readIconSource();
 
 describe("the committed master art", () => {
 	// The PNGs are rasterised from `icon-source.svg` while the React Native
@@ -125,5 +126,39 @@ describe("delacourIconSvg", () => {
 		for (const inset of [1, DELACOUR_ADAPTIVE_INSET, 0.5]) {
 			expect(delacourIconSvg({ inset })).toContain(`viewBox="0 0 ${DELACOUR_CANVAS} ${DELACOUR_CANVAS}"`);
 		}
+	});
+
+	// The launcher art is masked by iOS and Android themselves. A default that
+	// rounded would ship an icon rounded twice, with pale corners inside the
+	// system's own mask.
+	test("leaves the corners square unless asked", () => {
+		expect(delacourIconSvg()).not.toContain("clipPath");
+		expect(delacourIconSvg({ corner: 0 })).not.toContain("clipPath");
+	});
+
+	test("clips the whole card, not just the glyph", () => {
+		const svg = delacourIconSvg({ corner: DELACOUR_CORNER_RADIUS });
+		const clipped = svg.indexOf("clip-path=");
+		expect(clipped).toBeGreaterThan(-1);
+		expect(svg).toContain(`rx="${DELACOUR_CORNER_RADIUS}"`);
+		expect(svg.indexOf(`fill="${DELACOUR_CARD_COLOUR}"`)).toBeGreaterThan(clipped);
+	});
+
+	test("rounds a transparent canvas without leaving the card behind", () => {
+		const svg = delacourIconSvg({ background: null, corner: DELACOUR_CORNER_RADIUS });
+		expect(svg).toContain("clip-path=");
+		expect(svg).not.toContain(DELACOUR_CARD_COLOUR);
+	});
+});
+
+describe("the rounded treatment", () => {
+	test("takes Apple's continuous-corner ratio", () => {
+		expect(DELACOUR_CORNER_RATIO).toBeCloseTo(0.2237, 4);
+		expect(DELACOUR_CORNER_RADIUS).toBe(229);
+	});
+
+	// A radius at or past half the canvas is a circle, not a rounded square.
+	test("stays a squircle, not a circle", () => {
+		expect(DELACOUR_CORNER_RADIUS).toBeLessThan(DELACOUR_CANVAS / 2);
 	});
 });

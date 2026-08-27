@@ -1,0 +1,14 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+	<defs>
+		<clipPath id="delacour-card">
+			<rect width="1024" height="1024" rx="229"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#delacour-card)">
+		<rect width="1024" height="1024" fill="#18181B"/>
+		<g fill="none" stroke="#FBBF24" stroke-width="66.4" stroke-linejoin="miter" stroke-miterlimit="10">
+			<rect x="380.8" y="297.3" width="262.4" height="262.4" transform="rotate(45 512 428.5)"/>
+			<rect x="380.8" y="464.3" width="262.4" height="262.4" transform="rotate(45 512 595.5)"/>
+		</g>
+	</g>
+</svg>

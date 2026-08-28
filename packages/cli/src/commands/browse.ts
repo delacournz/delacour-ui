@@ -1,6 +1,7 @@
 import * as clack from "@clack/prompts";
 import { findConfig, readConfig } from "../config/resolve";
 import { detectProject } from "../project/detect";
+import { commandLine, installCommands } from "../project/package-manager";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
 import type { RegistryIndexEntry } from "../registry/schema";
@@ -70,6 +71,17 @@ export async function search(query: string, options: BrowseOptions): Promise<voi
 	printGroups(matches, output);
 }
 
+/**
+ * One item: its files, what it copies in, and what it installs.
+ *
+ * The install lines are the whole closure, not this item's own `dependencies`.
+ * `bottom-sheet` lists five native modules and renders `icon`, which needs
+ * `react-native-svg` — so the item's own list under-reports what `add` would
+ * install by exactly the packages a reader is deciding about. They are rendered
+ * as real commands, against the package manager this project is on, because
+ * `expo install` versus `bun add` is the distinction that decides whether the
+ * build compiles.
+ */
 export async function view(name: string, options: BrowseOptions): Promise<void> {
 	const output = createOutput(options);
 	const client = await openRegistry(options);
@@ -84,9 +96,22 @@ export async function view(name: string, options: BrowseOptions): Promise<void> 
 
 	const index = await client.getIndex();
 	const byName = new Map(index.items.map((entry) => [entry.name, entry]));
-	const closure = resolveItemGraph([name], (candidate) => byName.get(candidate)).filter(
-		(candidate) => candidate !== name
-	);
+	const order = resolveItemGraph([name], (candidate) => byName.get(candidate));
+	const closure = order.filter((candidate) => candidate !== name);
+	const resolved = order.flatMap((candidate) => byName.get(candidate) ?? []);
+
+	const configPath = findConfig(options.cwd);
+	const config = configPath ? await readConfig(configPath) : null;
+	const project = await detectProject(config?.app.resolved.root ?? options.cwd);
+	const union = (key: "expoDependencies" | "dependencies" | "devDependencies") =>
+		[...new Set(resolved.flatMap((entry) => entry[key]))].sort();
+
+	const commands = installCommands({
+		packageManager: project.packageManager,
+		expoDependencies: union("expoDependencies"),
+		dependencies: union("dependencies"),
+		devDependencies: union("devDependencies"),
+	});
 
 	const lines = [
 		`${style.bold(item.title)}  ${style.dim(item.name)}`,
@@ -96,10 +121,15 @@ export async function view(name: string, options: BrowseOptions): Promise<void> 
 	];
 
 	if (closure.length > 0) lines.push(`${style.dim("copies in")}  ${closure.join(", ")}`);
-	if (item.expoDependencies.length > 0) {
-		lines.push(`${style.dim("expo")}       ${item.expoDependencies.join(", ")}`);
+
+	if (commands.length > 0) {
+		lines.push(
+			"",
+			style.dim("needs installing"),
+			...commands.map((group) => `  ${style.code(commandLine(group))}`),
+			style.dim("  Run these in the app, never in a shared package.")
+		);
 	}
-	if (item.dependencies.length > 0) lines.push(`${style.dim("npm")}        ${item.dependencies.join(", ")}`);
 
 	output.log(lines.join("\n"));
 }

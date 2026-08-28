@@ -4,6 +4,7 @@ import { z } from "zod";
 import { findConfig, readConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
 import { detectProject } from "../project/detect";
+import { commandLine } from "../project/package-manager";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
 import { add } from "./add";
@@ -102,21 +103,50 @@ export async function mcp(options: McpOptions): Promise<void> {
 			inputSchema: {
 				names: z.array(z.string()).describe("Component names to add"),
 				overwrite: z.boolean().optional().describe("Replace files that differ from the registry"),
-				install: z.boolean().optional().describe("Install dependencies. Defaults to true."),
+				install: z
+					.boolean()
+					.optional()
+					.describe(
+						"Run the project's package manager to install what the components need. Defaults to false — the reply lists the commands instead, so you can decide."
+					),
 			},
 		},
 		async ({ names, overwrite, install }) => {
-			await add(names, {
+			const result = await add(names, {
 				cwd: options.cwd,
 				ref: options.ref,
 				registry: options.registry,
 				overwrite,
-				install: install ?? true,
+				install: install ?? false,
 				yes: true,
 				silent: true,
 			});
 
-			return text(`Added: ${names.join(", ")}. Rebuild the dev client if any native module was installed.`);
+			if (!result) return text(`Nothing was added for: ${names.join(", ")}.`);
+
+			// Everything `add` would have printed, which under `silent` it did not.
+			// Left out, an agent copies a component and never learns that it needs a
+			// package the project has not got.
+			const { dependencies } = result;
+			const lines = [`Added ${result.items.join(", ")} — ${result.written} files.`];
+
+			if (dependencies.missing.length === 0) {
+				if (dependencies.wanted.length > 0) lines.push("Every package they need is already installed.");
+			} else if (result.installed) {
+				lines.push(`Installed: ${dependencies.missing.join(", ")}.`);
+			} else {
+				lines.push(
+					"Not installed. These have to be run from the app before it will build:",
+					...dependencies.groups.map((group) => `  ${commandLine(group)}`),
+					"Re-run this tool with install: true to have them run for you."
+				);
+			}
+
+			if (dependencies.groups.some((group) => group.label === "expo install")) {
+				lines.push("A native module changed — rebuild the dev client; a JS reload will not pick it up.");
+			}
+
+			return text(lines.join("\n"));
 		}
 	);
 

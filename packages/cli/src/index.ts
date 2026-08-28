@@ -20,6 +20,12 @@ import { CancelledError, style } from "./ui/output";
  * Every command takes the same four registry options, so a project pinned to a
  * fork or a ref does not have to say so twice. `--cwd` is resolved once, here,
  * and every command works from the config nearest to it.
+ *
+ * `add` and `init` take `--install` and `--no-install` both, which is not
+ * redundant: commander only applies a default to a `--no-` option declared
+ * alone, so declaring the pair leaves the value **undefined** when neither is
+ * passed. Three states, and the third is the one that matters — unset means ask
+ * when there is someone to ask, and install nothing when there is not.
  */
 
 const program = new Command()
@@ -47,7 +53,10 @@ withRegistryOptions(
 		.option("-s, --src <dir>", "base directory for source files")
 		.option("--package-name <name>", "put the components in a shared package with this name")
 		.option("--package-path <dir>", "where that package goes, relative to the workspace root", "packages/ui")
-		.option("--no-install", "write the files but install nothing")
+		// `--install` first, so commander leaves the value undefined when neither
+		// is passed. That third state is the prompt: unset means ask.
+		.option("--install", "install the packages the components need, without asking")
+		.option("--no-install", "write the files and install nothing")
 		.option("--silent", "print nothing but errors")
 ).action((components: string[], options) => run(() => init(components, { ...options, cwd: resolve(options.cwd) })));
 
@@ -59,7 +68,8 @@ withRegistryOptions(
 		.option("-a, --all", "add every component")
 		.option("-o, --overwrite", "replace files that differ")
 		.option("-y, --yes", "accept every default without asking")
-		.option("--no-install", "write the files but install nothing")
+		.option("--install", "install the packages the components need, without asking")
+		.option("--no-install", "write the files and install nothing")
 		.option("--silent", "print nothing but errors")
 ).action((components: string[], options) => run(() => add(components, { ...options, cwd: resolve(options.cwd) })));
 

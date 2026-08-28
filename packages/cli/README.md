@@ -35,7 +35,7 @@ Unlike shadcn, the target is Expo, which changes real things:
 | | |
 |---|---|
 | `init [components...]` | Write `native-components.json`, wire up Metro and the CSS entry, add the theme |
-| `add <components...>` | Copy components and everything they need |
+| `add <components...>` | Copy components and everything they need, and say what to install |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
 | `diff [name]` | What has changed upstream since you copied it |
@@ -45,6 +45,30 @@ Unlike shadcn, the target is Expo, which changes real things:
 Every registry-reading command takes `--registry <url>` (a URL,
 `github:owner/repo`, or a local path), `--ref <git-ref>`, `--offline`, and
 `--cwd <path>`.
+
+## What a component needs installed
+
+`add` copies files. It ends by naming the external packages the components need — every time,
+whether or not any are missing:
+
+```txt
+●  Needs 14 external packages, 2 not here yet:
+│    bunx expo install @gorhom/bottom-sheet react-native-keyboard-controller
+│    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
+```
+
+Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
+nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
+
+```bash
+bunx delacour@latest add bottom-sheet --install
+```
+
+The missing packages are shown as commands, not names, because the command is the part that is not
+obvious: a native module goes through `expo install` so the SDK picks a version it can build, a
+plain one through whatever package manager the project is on, and both from the **app** — a native
+module resolved from two places registers twice and breaks at runtime. `delacour view <name>`
+prints the same lines before you copy anything.
 
 ## Where components go
 
@@ -115,7 +139,7 @@ experiments: { tsconfigPaths: true }
 ```
 
 And after any `add` that installed a native module, rebuild the dev client —
-a JS reload alone will red-box.
+a JS reload alone will red-box. `add` says so at the point it becomes true.
 
 `delacour doctor` checks every one of these.
 

@@ -71,7 +71,7 @@ version.
     },
     add_components: {
       type: "(names, overwrite?, install?) => string",
-      description: "Copies components in, with rewritten imports and the right install route.",
+      description: "Copies components in, with rewritten imports, and reports the packages they need. install defaults to false — the reply carries the exact commands, so the agent decides.",
     },
     check_project: {
       type: "() => string",
@@ -79,6 +79,22 @@ version.
     },
   }}
 />
+
+`add_components` installs nothing unless asked. Its reply names what it copied and, when something
+is missing, the commands that would install it:
+
+```txt
+Added button, icon, pressable, spinner, text, … — 43 files.
+Not installed. These have to be run from the app before it will build:
+  bunx expo install react-native-gesture-handler react-native-reanimated react-native-svg uniwind
+  bun add clsx tailwind-merge tailwind-variants tailwindcss
+Re-run this tool with install: true to have them run for you.
+A native module changed — rebuild the dev client; a JS reload will not pick it up.
+```
+
+Running someone's package manager unprompted is not the sort of thing to do on an agent's behalf by
+default, and the agent cannot see the CLI's own output — the server's stdout is a JSON-RPC stream,
+so `add` runs silent and this reply is the only place the information exists.
 
 `check_project` is the one worth pointing an agent at explicitly. When a component renders
 unstyled or a press does nothing, there is no error message to read — the agent will otherwise

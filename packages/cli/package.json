@@ -17,6 +17,9 @@
 		"uniwind",
 		"tailwind"
 	],
+	"publishConfig": {
+		"access": "public"
+	},
 	"bin": {
 		"delacour": "./dist/index.js"
 	},

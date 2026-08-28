@@ -122,6 +122,47 @@ hoisted, Bun materialises a second copy of some native modules under the app,
 which is why `apps/playground`'s `metro.config.js` pins eight of them to the
 workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
 
+## Releases
+
+Two packages reach npm — `delacour` (the CLI) and `@delacour/native-ui`. Everything else in the
+workspace is `private: true`, which is the only thing stopping `changeset publish` from putting
+`@delacour/tsconfig` and friends on the registry the first time it runs.
+
+Releases are driven by [Changesets](https://github.com/changesets/changesets). A change that
+should ship adds one:
+
+```bash
+bun run changeset          # pick packages, pick a bump, describe it
+```
+
+Commit that markdown file alongside the change. On merge to `main`,
+`.github/workflows/release.yml` reads `.changeset/` and does one of two things:
+
+| `.changeset/` holds | What happens |
+| --- | --- |
+| pending changesets | Opens or refreshes the **🔖 chore(release): version packages** PR — bumps versions, writes `CHANGELOG.md`, regenerates `bun.lock` |
+| nothing | The version PR has just merged, so publish to npm and cut a GitHub Release per package |
+
+So a release is two merges, and the versions are reviewable in between.
+
+**npm auth is OIDC — there is no npm token.** Both packages are configured on npmjs.com with this
+repository and `release.yml` as a trusted publisher, which is why the job requests
+`id-token: write` and installs a current npm before publishing. `bun publish` cannot do this:
+it has no OIDC or provenance support, so the publish call is npm's even though install and build
+are Bun's. Changesets picks npm on its own — it only special-cases pnpm and yarn, and `bun` falls
+through to the npm path.
+
+**`RELEASE_TOKEN` is a GitHub PAT, not an npm one.** Events raised by `GITHUB_TOKEN` do not start
+workflow runs, so a version PR opened with it would never run the four checks `main-protected`
+requires and could never be merged. The PAT exists for that reason alone.
+
+The first publish of each package had to be manual: npm can only bind a trusted publisher to a
+package that already exists.
+
+The registry the published CLI reads is pinned to the **commit** being released, not the tag —
+`changesets/action` builds before it tags, so a tag-derived ref would name something that does not
+exist yet. See `packages/cli/AGENTS.md`.
+
 ## Deployment
 
 `apps/web` is deployed on Railway. The configuration lives in Railway, not in this repo — there

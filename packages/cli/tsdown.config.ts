@@ -1,4 +1,5 @@
 import { defineConfig } from "tsdown";
+import pkg from "./package.json" with { type: "json" };
 
 /**
  * One bundled file, no runtime dependencies.
@@ -28,8 +29,12 @@ export default defineConfig({
 	// `bin` points at dist/index.js, and "type": "module" makes that ESM.
 	outExtensions: () => ({ js: ".js" }),
 	define: {
-		// The git ref this build reads the registry at. CI passes the tag it is
+		// The git ref this build reads the registry at. CI passes the commit it is
 		// publishing, so a given release always sees the registry it shipped with.
 		__REGISTRY_REF__: JSON.stringify(process.env.DELACOUR_REGISTRY_REF ?? "main"),
+		// `npm_package_version` is only set by a package manager running a script,
+		// so a CLI fetched with `bunx` would report whatever fallback was hardcoded.
+		// Bake the real version in instead.
+		__CLI_VERSION__: JSON.stringify(pkg.version),
 	},
 });

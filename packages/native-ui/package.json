@@ -3,6 +3,31 @@
 	"version": "0.1.0",
 	"description": "React Native UI components — Uniwind, Reanimated, Gesture Handler",
 	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/delacournz/delacour-ui.git",
+		"directory": "packages/native-ui"
+	},
+	"keywords": [
+		"react-native",
+		"expo",
+		"ui",
+		"components",
+		"uniwind",
+		"tailwind",
+		"reanimated"
+	],
+	"publishConfig": {
+		"access": "public"
+	},
+	"files": [
+		"src",
+		"README.md"
+	],
+	"sideEffects": [
+		"**/*.css"
+	],
 	"exports": {
 		"./styles": "./src/styles/index.css",
 		"./styles/base": "./src/styles/base.css",

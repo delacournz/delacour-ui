@@ -2,6 +2,7 @@
 	"name": "@delacour/brand",
 	"version": "1.0.0",
 	"description": "The Delacour mark — its master art and the geometry every rendering of it reads",
+	"private": true,
 	"type": "module",
 	"main": "./src/index.ts",
 	"exports": {

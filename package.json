@@ -14,6 +14,9 @@
 		"lint": "turbo lint",
 		"fmt": "turbo fmt",
 		"test": "turbo test",
+		"changeset": "changeset",
+		"version-packages": "bun .github/changeset-version.ts",
+		"release": "changeset publish",
 		"verify:expo": "cd packages/cli && bun scripts/verify-expo.ts",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground"
@@ -39,6 +42,8 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.6",
+		"@changesets/changelog-github": "^1.0.0",
+		"@changesets/cli": "^3.0.1",
 		"@delacour/tsconfig": "workspace:*",
 		"@j178/prek": "^0.3.5",
 		"@types/bun": "^1.3.8",

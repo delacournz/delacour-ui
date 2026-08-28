@@ -155,6 +155,25 @@ why `verify:expo` names them explicitly rather than trusting `--all` to cover th
 
 ## Gotchas
 
+### `--install` and `--no-install` are both declared, on purpose
+
+Commander only applies a default to a `--no-` option declared **alone**. Declaring the pair leaves
+the value `undefined` when neither is passed, and that third state is the whole design: unset means
+ask when there is a TTY, and install nothing when there is not. Delete `--install` and the default
+silently becomes `true` again — every script, CI job and MCP call starts running the user's package
+manager unprompted. `src/index.ts` declares `--install` first for the same reason.
+
+`add` therefore always prints what the components need and only sometimes installs it. The report
+is `reportDependencies`, built from `planDependencies` in `project/package-manager.ts`, which is
+pure and tested; the decision is `shouldInstall`, which is three lines and no cleverness.
+
+### `add` returns its result because `mcp` prints nothing
+
+The MCP server runs `add` under `--silent` — its stdout is a JSON-RPC stream, so a log line would
+corrupt the protocol. Without a return value the agent copies a component and never learns it needs
+a package the project has not got. `AddResult` carries the plan, and `mcp` renders it into the tool
+reply. `null` is a run that copied nothing.
+
 ### Errors go to stderr, always
 
 `--json` writes to stdout, and so does the MCP server's JSON-RPC stream. A log line on stdout

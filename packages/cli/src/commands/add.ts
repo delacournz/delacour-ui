@@ -1,8 +1,15 @@
+import { relative } from "node:path";
 import * as clack from "@clack/prompts";
 import { findConfig, loadConfig, MissingConfigError, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
 import { detectProject, type ProjectInfo } from "../project/detect";
-import { installCommands, missingPackages, runInstall } from "../project/package-manager";
+import {
+	commandLine,
+	type DependencyPlan,
+	missingPackages,
+	planDependencies,
+	runInstall,
+} from "../project/package-manager";
 import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
@@ -14,9 +21,16 @@ import { createOutput, type Output, style } from "../ui/output";
  * Copies components into the project, with everything they need.
  *
  * The order matters and is not arbitrary: resolve the graph, plan every file,
- * ask once about conflicts, write, then install. Installing first would leave a
- * project with new native dependencies and no components if the user answered
- * "no" to the overwrite prompt.
+ * ask once about conflicts, write, then report what the components need from
+ * npm and offer to install it. Installing first would leave a project with new
+ * native dependencies and no components if the user answered "no" to the
+ * overwrite prompt.
+ *
+ * The report is unconditional and the install is not. Copying source is local
+ * and reversible; running someone's package manager is neither, and a component
+ * whose native modules arrive at a version the SDK cannot build fails at the
+ * linker rather than here. So `add` always says what is needed, and installs
+ * when told to — `--install`, or a yes at the prompt.
  */
 
 export type AddOptions = {
@@ -25,13 +39,30 @@ export type AddOptions = {
 	overwrite?: boolean;
 	yes?: boolean;
 	silent?: boolean;
+	/** `true` installs, `false` never does, unset asks when there is someone to ask. */
 	install?: boolean;
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
 };
 
-export async function add(names: string[], options: AddOptions): Promise<void> {
+/**
+ * What a run did, for a caller that printed none of it.
+ *
+ * `mcp` runs `add` silently — its stdout is a JSON-RPC stream — so the block a
+ * human reads has to reach an agent some other way. `null` is a run that copied
+ * nothing: an unconfigured project handed to `init`, or a conflict declined.
+ */
+export type AddResult = {
+	/** Every item copied, the dependency closure included. */
+	items: string[];
+	written: number;
+	dependencies: DependencyPlan;
+	/** Whether the package manager was actually run. */
+	installed: boolean;
+};
+
+export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
 	const output = createOutput(options);
 
 	// Interactively, an unconfigured project is a question rather than an error.
@@ -43,7 +74,7 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 		if (!setUp) throw new MissingConfigError(options.cwd);
 
 		await init(names, options);
-		return;
+		return null;
 	}
 
 	const config = await loadConfig(options.cwd);
@@ -61,7 +92,7 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 
 	if (requested.length === 0) {
 		output.warn("Nothing to add. Name a component, or pass --all.");
-		return;
+		return null;
 	}
 
 	const byName = new Map(index.items.map((item) => [item.name, item]));
@@ -75,7 +106,7 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 
 	const planned = await planFiles(items, config);
 	const toWrite = await resolveConflicts(planned, options, output);
-	if (toWrite === null) return;
+	if (toWrite === null) return null;
 
 	await writeFiles(toWrite);
 	report(toWrite, planned, requested, output);
@@ -84,13 +115,35 @@ export async function add(names: string[], options: AddOptions): Promise<void> {
 	// from what this run believed it wrote.
 	await syncPackage(config, items, output);
 
-	if (options.install === false) {
-		printSkippedInstall(items, output);
-		return;
+	// Into the app, never into a shared package: two copies of a native module
+	// register twice and break at runtime.
+	const appRoot = project.appRoot ?? project.packageRoot ?? project.cwd;
+	const plan = planDependencies(
+		{
+			packageManager: project.packageManager,
+			expoDependencies: collect(items, "expoDependencies"),
+			dependencies: collect(items, "dependencies"),
+			devDependencies: collect(items, "devDependencies"),
+		},
+		project.packageJson
+	);
+
+	reportDependencies(plan, output);
+	const result = { items: items.map((item) => item.name), written: toWrite.length, dependencies: plan };
+
+	if (!(await shouldInstall(plan, options, output))) {
+		printSkippedInstall(plan, relative(options.cwd, appRoot), output);
+		return { ...result, installed: false };
 	}
 
-	await install(items, project, output);
+	for (const group of plan.groups) {
+		await output.task(`${group.label}: ${group.packages.join(", ")}`, () =>
+			runInstall(group, { cwd: appRoot, silent: output.silent })
+		);
+	}
+
 	warnAboutNativeRebuild(items, project, output);
+	return { ...result, installed: true };
 }
 
 /**
@@ -162,25 +215,51 @@ function report(
 	if (pulled.length > 0) output.info(`Pulled in as dependencies: ${pulled.join(", ")}`);
 }
 
-async function install(items: readonly RegistryItem[], project: ProjectInfo, output: Output): Promise<void> {
-	const groups = installCommands({
-		packageManager: project.packageManager,
-		expoDependencies: missingPackages(project.packageJson, collect(items, "expoDependencies")),
-		dependencies: missingPackages(project.packageJson, collect(items, "dependencies")),
-		devDependencies: missingPackages(project.packageJson, collect(items, "devDependencies")),
-	});
+/**
+ * What these components need from npm, printed every time.
+ *
+ * Every time, including the run where nothing is missing. A component that
+ * needs `@gorhom/bottom-sheet` and got it three components ago is not the same
+ * thing as a component that needs nothing, and a reader who sees no block at
+ * all cannot tell which they are looking at.
+ *
+ * The missing packages are shown as the commands that would install them rather
+ * than as a list of names, because the commands are the part that is not
+ * obvious: a native module goes through `expo install` so the SDK picks a
+ * version it can build, and a plain one through whichever package manager this
+ * project is on.
+ */
+function reportDependencies(plan: DependencyPlan, output: Output): void {
+	if (plan.wanted.length === 0) return;
 
-	if (groups.length === 0) return;
-
-	// Into the app, never into a shared package: two copies of a native module
-	// register twice and break at runtime.
-	const cwd = project.appRoot ?? project.packageRoot ?? project.cwd;
-
-	for (const group of groups) {
-		await output.task(`${group.label}: ${group.packages.join(", ")}`, () =>
-			runInstall(group, { cwd, silent: output.silent })
-		);
+	const lines = plan.groups.map((group) => `  ${style.code(commandLine(group))}`);
+	if (plan.satisfied.length > 0) {
+		lines.push(`  ${style.dim(`already installed — ${plan.satisfied.join(", ")}`)}`);
 	}
+
+	output.info(
+		[
+			plan.missing.length === 0
+				? `Needs ${count(plan.wanted, "external package")}, all already here.`
+				: `Needs ${count(plan.wanted, "external package")}, ${plan.missing.length} not here yet:`,
+			...lines,
+		].join("\n")
+	);
+}
+
+/**
+ * Whether to actually run the package manager.
+ *
+ * Unset means ask, and a run with no one to ask installs nothing — a script, a
+ * CI job or an agent gets the report and decides for itself. `--install` is how
+ * any of them says yes.
+ */
+async function shouldInstall(plan: DependencyPlan, options: AddOptions, output: Output): Promise<boolean> {
+	if (plan.groups.length === 0) return false;
+	if (options.install !== undefined) return options.install;
+	if (!output.interactive) return false;
+
+	return output.confirm(`Install ${count(plan.missing, "package")} now?`, true);
 }
 
 /**
@@ -206,19 +285,20 @@ async function syncPackage(config: ResolvedConfig, items: readonly RegistryItem[
 	}
 }
 
-function printSkippedInstall(items: readonly RegistryItem[], output: Output): void {
-	const expo = collect(items, "expoDependencies");
-	const plain = [...collect(items, "dependencies"), ...collect(items, "devDependencies")];
-	if (expo.length === 0 && plain.length === 0) return;
+/**
+ * Says the components will not build yet, and where to fix that.
+ *
+ * `appPath` matters more than it looks. The components may live in a shared
+ * package, and running the install from there is the one thing that reliably
+ * breaks the app — a native module resolved from two realpaths registers twice.
+ */
+function printSkippedInstall(plan: DependencyPlan, appPath: string, output: Output): void {
+	if (plan.groups.length === 0) return;
 
 	output.warn(
-		[
-			"Skipped installing dependencies. These components need:",
-			expo.length > 0 ? `  expo install ${expo.join(" ")}` : "",
-			plain.length > 0 ? `  ${plain.join(" ")}` : "",
-		]
-			.filter(Boolean)
-			.join("\n")
+		`Nothing installed — these components will not build until you run the ${
+			plan.groups.length === 1 ? "command" : "commands"
+		} above${appPath === "" || appPath === "." ? "" : ` in ${style.path(appPath)}`}, or re-run with ${style.code("--install")}.`
 	);
 }
 
@@ -241,6 +321,10 @@ function warnAboutNativeRebuild(items: readonly RegistryItem[], project: Project
 			`  ${style.code("npx expo run:ios")}   ${style.dim("(or run:android)")}`,
 		].join("\n")
 	);
+}
+
+function count(items: readonly unknown[], noun: string): string {
+	return `${items.length} ${noun}${items.length === 1 ? "" : "s"}`;
 }
 
 function collect(

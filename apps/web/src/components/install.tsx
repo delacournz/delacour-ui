@@ -81,11 +81,12 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 	return (
 		<Tabs items={["Command", "Package", "Manual"]}>
 			<Tab value="Command">
-				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@latest add ${entry.name}`] }]} />
+				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@latest add ${entry.name} --install`] }]} />
 				<p className="text-fd-muted-foreground text-sm">
 					Copies the source into your project, with everything it depends on. Run <code>delacour init</code> first if
 					you have not already.
 				</p>
+				<Requires entry={entry} />
 			</Tab>
 
 			<Tab value="Package">
@@ -131,6 +132,39 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 				</Callout>
 			</Tab>
 		</Tabs>
+	);
+}
+
+/**
+ * The external packages this component needs, on the tab that installs them.
+ *
+ * `add` prints exactly this list and then asks before running anything, so the
+ * page and the command agree about what is about to happen. Dropping
+ * `--install` from the command above is how you get asked instead.
+ *
+ * The counts are the closure's, not the component's own: `button` declares one
+ * package and needs eight, because it renders an icon and a pressable.
+ */
+function Requires({ entry }: { entry: InstallEntry }): ReactElement | null {
+	const total = entry.expo.length + entry.npm.length + entry.dev.length;
+	if (total === 0) return null;
+
+	return (
+		<Accordions>
+			<Accordion title={`Installs ${total} external package${total === 1 ? "" : "s"}`}>
+				<p className="mt-0 text-fd-muted-foreground text-sm">
+					Dependencies of the component and of everything it renders. <code>--install</code> runs these for you; without
+					it <code>add</code> prints them and asks.
+				</p>
+				<InstallTabs
+					commands={[
+						{ verb: "expo", packages: entry.expo },
+						{ verb: "add", packages: entry.npm },
+						{ verb: "dev", packages: entry.dev },
+					]}
+				/>
+			</Accordion>
+		</Accordions>
 	);
 }
 

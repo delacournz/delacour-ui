@@ -88,6 +88,53 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 	return groups;
 }
 
+/**
+ * What a set of components needs from npm, and what is left to do about it.
+ *
+ * Separated from `installCommands` because the report is now the default and
+ * the install is the opt-in: `add` prints this whether or not it goes on to run
+ * anything, so the same numbers describe a run that installed, a run that was
+ * declined, and a run where the project already had everything.
+ *
+ * `satisfied` is not noise. A component listing five native modules and needing
+ * none of them installed is the common case, and saying so is the difference
+ * between "this needs nothing" and "this printed nothing".
+ */
+export type DependencyPlan = {
+	/** Every package the components need, satisfied or not. */
+	wanted: string[];
+	/** Already in the project's `package.json`. */
+	satisfied: string[];
+	/** Not there yet — the union of every group's packages. */
+	missing: string[];
+	/** One command per install route, covering `missing` only. */
+	groups: InstallGroup[];
+};
+
+export function planDependencies(request: InstallRequest, packageJson: PackageJson | null): DependencyPlan {
+	const groups = installCommands({
+		packageManager: request.packageManager,
+		expoDependencies: missingPackages(packageJson, request.expoDependencies),
+		dependencies: missingPackages(packageJson, request.dependencies),
+		devDependencies: missingPackages(packageJson, request.devDependencies),
+	});
+
+	const wanted = unique([...request.expoDependencies, ...request.dependencies, ...request.devDependencies]);
+	const missing = unique(groups.flatMap((group) => group.packages));
+	const missingSet = new Set(missing);
+
+	return { wanted, satisfied: wanted.filter((name) => !missingSet.has(name)), missing, groups };
+}
+
+/** A group as the line someone could paste into a terminal. */
+export function commandLine(group: InstallGroup): string {
+	return `${group.command} ${group.args.join(" ")}`;
+}
+
+function unique(names: readonly string[]): string[] {
+	return [...new Set(names)].sort();
+}
+
 /** The packages in `wanted` that the project does not already have. */
 export function missingPackages(packageJson: PackageJson | null, wanted: readonly string[]): string[] {
 	const installed = new Set([

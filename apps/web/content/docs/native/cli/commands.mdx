@@ -36,7 +36,8 @@ Options:
   --package-name <name>  put the components in a shared package with this name
   --package-path <dir>   where that package goes, relative to the workspace root
                          (default: "packages/ui")
-  --no-install           write the files but install nothing
+  --install              install the packages the components need, without asking
+  --no-install           write the files and install nothing
   --silent               print nothing but errors
   --registry <url>       registry to read from: a URL, github:owner/repo, or a
                          local path
@@ -57,17 +58,43 @@ delacour add --all
 ```
 
 The order is deliberate: resolve the dependency graph, plan every file, ask **once** about
-conflicts, write, then install. Installing first would leave a project holding new native
-dependencies and no components if you answered "no" to the overwrite prompt.
+conflicts, write, then report what the components need from npm. Installing first would leave a
+project holding new native dependencies and no components if you answered "no" to the overwrite
+prompt.
 
 A file already on disk with byte-identical content is not a conflict — that is the normal state of
 a utility two components share. Non-interactively, a genuine difference is an error naming the
 files rather than a silent overwrite; pass `--overwrite` when you mean it.
 
+### What it needs installed
+
+Every `add` ends with the packages the components need, whether or not anything is missing:
+
+```txt
+●  Needs 14 external packages, 2 not here yet:
+│    bunx expo install @gorhom/bottom-sheet react-native-keyboard-controller
+│    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
+```
+
+The missing ones are shown as commands rather than as a list of names, because the command is the
+part that is not obvious — and they are spelled for the package manager this project is actually
+on.
+
+Then it asks. `--install` answers yes without asking, `--no-install` answers no, and a run with
+nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead. Copying
+source into your repository is local and reversible; running your package manager is neither.
+
 <Callout title="Dependencies are split three ways">
 `expo install` for native modules and anything pinned to the SDK, your package manager for plain
 JavaScript, and `registryDependencies` — which are other components to copy, not packages to
 install.
+</Callout>
+
+<Callout type="warn" title="Install into the app, not the shared package">
+If your components live in a package several apps share, the packages still belong to the **app**.
+A native module resolved from two places registers twice and breaks at runtime — which is why `add`
+runs the install from the app root, and records the same packages as `peerDependencies` on the
+shared package rather than as dependencies.
 </Callout>
 
 **Options**
@@ -84,7 +111,8 @@ Options:
   -a, --all         add every component
   -o, --overwrite   replace files that differ
   -y, --yes         accept every default without asking
-  --no-install      write the files but install nothing
+  --install         install the packages the components need, without asking
+  --no-install      write the files and install nothing
   --silent          print nothing but errors
   --registry <url>  registry to read from: a URL, github:owner/repo, or a local
                     path
@@ -150,6 +178,25 @@ Prints an item's files, the components it copies in, and the packages it install
 ```bash
 delacour view button
 ```
+
+```txt
+Button  button
+A pressable action composed from parts, with variants, sizes and a loading state.
+
+files      ui/button/button.tsx
+           ui/button/index.ts
+           …
+copies in  styles, cn, tv, color, use-theme-color, icon, compose-refs, merge-props, pressable, spinner, text
+
+needs installing
+  bunx expo install react-native-gesture-handler react-native-pulsar react-native-reanimated react-native-svg react-native-worklets uniwind
+  bun add clsx tailwind-merge tailwind-variants tailwindcss
+```
+
+The install lines cover the **whole closure**, not the item's own dependencies. `button` declares
+only `tailwind-variants`; it renders `icon`, which needs `react-native-svg`, and `pressable`, which
+needs Gesture Handler. Listing an item's own packages would under-report what `add` installs by
+exactly the ones you are deciding about.
 
 **Options**
 

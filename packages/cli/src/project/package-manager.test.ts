@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { installCommands, missingPackages } from "./package-manager";
+import { commandLine, type InstallGroup, installCommands, missingPackages, planDependencies } from "./package-manager";
 
 const NONE = { dependencies: [], devDependencies: [], expoDependencies: [] };
 
@@ -66,5 +66,56 @@ describe("missingPackages", () => {
 
 	test("treats a project with no package.json as having nothing", () => {
 		expect(missingPackages(null, ["clsx"])).toEqual(["clsx"]);
+	});
+});
+
+describe("planDependencies", () => {
+	const packageJson = {
+		dependencies: { "react-native-reanimated": "~4.5.1" },
+		devDependencies: { typescript: "^5.0.0" },
+	};
+
+	test("commands cover only what is missing, and the rest is reported as satisfied", () => {
+		const plan = planDependencies(
+			{
+				packageManager: "bun",
+				expoDependencies: ["react-native-reanimated", "@gorhom/bottom-sheet"],
+				dependencies: ["tailwind-variants"],
+				devDependencies: ["typescript"],
+			},
+			packageJson
+		);
+
+		expect(plan.groups.map((group) => group.packages)).toEqual([["@gorhom/bottom-sheet"], ["tailwind-variants"]]);
+		expect(plan.satisfied).toEqual(["react-native-reanimated", "typescript"]);
+		expect(plan.missing).toEqual(["@gorhom/bottom-sheet", "tailwind-variants"]);
+	});
+
+	test("a package wanted by two routes is reported once", () => {
+		const plan = planDependencies(
+			{ packageManager: "bun", expoDependencies: ["uniwind"], dependencies: ["uniwind"], devDependencies: [] },
+			null
+		);
+
+		expect(plan.wanted).toEqual(["uniwind"]);
+	});
+
+	test("nothing missing means no commands and nothing to run", () => {
+		const plan = planDependencies(
+			{ packageManager: "bun", expoDependencies: ["react-native-reanimated"], dependencies: [], devDependencies: [] },
+			packageJson
+		);
+
+		expect(plan.groups).toEqual([]);
+		expect(plan.missing).toEqual([]);
+		expect(plan.satisfied).toEqual(["react-native-reanimated"]);
+	});
+});
+
+describe("commandLine", () => {
+	test("renders a group as the line a user could paste", () => {
+		const [group] = installCommands({ ...NONE, packageManager: "pnpm", expoDependencies: ["react-native-svg"] });
+
+		expect(commandLine(group as InstallGroup)).toBe("pnpm expo install react-native-svg");
 	});
 });

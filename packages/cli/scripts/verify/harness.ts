@@ -302,7 +302,9 @@ export type RunCliOptions = {
 };
 
 export async function runCli(bundle: string, args: string[], options: RunCliOptions): Promise<void> {
-	const full = options.install ? args : [...args, "--no-install"];
+	// Both spellings, always. `add` and `init` install only when told to, and a
+	// script that leaves it unset would sit on a prompt it cannot answer.
+	const full = [...args, options.install ? "--install" : "--no-install"];
 	await run("node", [bundle, ...full], { cwd: options.cwd, reporter: options.reporter, label: `delacour ${args[0]}` });
 	options.reporter.pass(`delacour ${args[0]} succeeded`);
 }

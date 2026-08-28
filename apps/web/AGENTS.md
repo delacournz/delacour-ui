@@ -220,6 +220,9 @@ Three things are load-bearing:
 by hand in `src/components/mdx.tsx`. An MDX file naming an unregistered component fails the render
 with *"Expected component X to be defined"* rather than degrading.
 
+That file also overrides `a`, for an unrelated reason — see [A link to `/llms.txt` has to be a
+plain anchor](#a-link-to-llmstxt-has-to-be-a-plain-anchor).
+
 <!-- Do not reach for AutoTypeTable. -->
 `fumadocs-typescript`'s `AutoTypeTable` is **React Server Components only** and cannot run on
 TanStack Start. Prop tables are hand-written `<TypeTable>` blocks. Source them from the component's
@@ -255,6 +258,20 @@ segment contains a dot before Start's router sees it — this affects every dott
 Do not "fix" this. It is not a code bug, and the same is true of the `Accept: text/markdown`
 negotiation in `src/start.ts`, which redirects to a `.md` URL. Verify both against a production
 build.
+
+### A link to `/llms.txt` has to be a plain anchor
+
+`/llms.txt`, `/llms-full.txt` and the `.md` twins are route handlers with no component, and the
+generator still writes their paths into `routeTree.gen.ts`. Fumadocs' MDX `a` hands every internal
+href to the client router, which matches one of those paths, finds nothing to render and falls
+through to `defaultNotFoundComponent` — the link shows the 404 page while the same URL typed into
+the address bar serves correctly.
+
+`src/components/mdx.tsx` therefore overrides `a` with an `Anchor` that emits a plain `<a>` whenever
+`isFileHref` (`src/lib/shared.ts`) matches: an internal href whose last segment carries an
+extension, which no docs URL does. Everything else keeps fumadocs' `Link` and its SPA navigation.
+A new file route served only by a handler needs no further work; a link to one that *has* no
+extension would.
 
 ### Prerendering is off
 

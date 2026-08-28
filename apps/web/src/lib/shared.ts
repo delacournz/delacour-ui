@@ -40,3 +40,23 @@ export function decodeMarkdownUrl(segments: string[]) {
 	if (out.length === 1 && out[0] === "index") out.pop();
 	return out;
 }
+
+/**
+ * Does this href point at a file the server hands back whole, rather than at a
+ * page the router renders?
+ *
+ * `/llms.txt`, `/llms-full.txt` and every docs page's `.md` twin are route
+ * handlers with no component. The client router still matches their paths, so a
+ * `<Link>` to one navigates, finds nothing to render and shows the 404 page —
+ * while the same URL typed into the address bar serves correctly. Such an href
+ * has to reach the browser as a plain anchor, which is a document request.
+ *
+ * The rule is the file extension on the last segment: no docs URL carries one.
+ * External hrefs are excluded because fumadocs' own `Link` already gives those
+ * a plain anchor.
+ */
+export function isFileHref(href: string) {
+	if (!href.startsWith("/") || href.startsWith("//")) return false;
+	const path = href.split(/[?#]/)[0];
+	return path.slice(path.lastIndexOf("/") + 1).includes(".");
+}

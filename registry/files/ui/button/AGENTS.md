@@ -57,14 +57,18 @@ The reference implementation for the patterns in the package
   add ripple, ink, glow or highlight overlays** — no wash layers on pressables
   in this library. That rule is about wash layers, not the opacity axis, which
   `fade` and `scale-fade` are welcome to use.
-- **`isLoading` replaces the icon, it does not join it.** The spinner takes the
-  place of the composed `Icon` on the side `spinnerPlacement` names — the first
-  at `start`, the last at `end` — so the label does not shift when work begins
-  and shift back when it ends. The swap costs no layout because both glyphs are
-  drawn at the button's own `size-icon-*` token: the root publishes one class
-  and the icon and the spinner both read it. With no icon to take, the spinner
-  is inserted as before. Only a bare `Icon` is swapped; a `Button.StartContent`
-  wraps content of unknown height, and replacing one could resize the button.
+- **`isLoading` replaces the icon on its own side, it does not join it.** The
+  spinner takes the place of the composed `Icon` at the edge `spinnerPlacement`
+  names — the first child at `start`, the last at `end` — so the label does not
+  shift when work begins and shift back when it ends. The swap costs no layout
+  because both glyphs are drawn at the button's own `size-icon-*` token: the
+  root publishes one class and the icon and the spinner both read it. **An icon
+  on the other side is not taken.** A button with one leading icon and
+  `spinnerPlacement="end"` keeps the icon and gains a spinner at the end; taking
+  the only icon whichever side it sat on used to draw the spinner opposite the
+  side that was asked for. With no icon at that edge the spinner is inserted, as
+  it always was. Only a bare `Icon` is swapped; a `Button.StartContent` wraps
+  content of unknown height, and replacing one could resize the button.
   `resolveSpinnerSwapIndex` is the pure decision and is unit-tested.
 - **`isLoading`** composes a `Spinner` in and blocks presses. Placement is
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the

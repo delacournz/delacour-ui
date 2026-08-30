@@ -161,16 +161,17 @@ export function resolveButtonLayout({
  * back when it finished — and with the spinner and the icon drawn at the same
  * `size-icon-*` token, replacing costs no layout at all.
  *
- * `start` takes the first icon and `end` the last, so the spinner lands on the
- * side the caller asked for even when the button holds an icon at both ends.
- * With no icon to take there is nothing to swap and the caller gets the
- * inserted spinner the button has always shown.
+ * Only the child at the named edge is a candidate — the first at `start`, the
+ * last at `end`. An icon on the other side is left alone and the spinner is
+ * inserted at the edge instead: `spinnerPlacement` says where the caller wants
+ * the spinner, so taking the one icon a button holds regardless of which side
+ * it sits on would draw the spinner opposite the side that was asked for.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
 export function resolveSpinnerSwapIndex(isIcon: readonly boolean[], side: "start" | "end"): number | null {
-	const index = side === "start" ? isIcon.indexOf(true) : isIcon.lastIndexOf(true);
-	return index === -1 ? null : index;
+	const index = side === "start" ? 0 : isIcon.length - 1;
+	return isIcon[index] === true ? index : null;
 }
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>;

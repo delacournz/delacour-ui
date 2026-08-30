@@ -105,10 +105,11 @@ function ButtonRoot({
  * spinner and the icon are drawn at the same `size-icon-*` token — the button
  * publishes one class and both read it.
  *
- * `start` takes the first icon and `end` the last, so the spinner lands on the
- * side the caller asked for even when the button holds an icon at both ends.
- * With no icon to take, the spinner is inserted instead and the root's own
- * `gap` spaces it off the label.
+ * Only the icon at the named edge is swapped — the first child at `start`, the
+ * last at `end`. An icon on the other side stays where it is and the spinner is
+ * inserted at the edge instead, spaced off the label by the root's own `gap`:
+ * `spinnerPlacement` is where the caller wants the spinner, and a button
+ * holding one leading icon must not answer `end` by spinning at the start.
  *
  * `only` drops the children: the button has already collapsed to a square, so a
  * label would have nowhere to sit.

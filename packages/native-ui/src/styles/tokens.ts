@@ -35,6 +35,15 @@ export const SCREEN_SIZE_TOKENS = ["navbar-row", "screen-gutter"] as const;
  */
 export const INPUT_SIZE_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
 
+/**
+ * Suffixes in the `--radius-*` namespace: `rounded-button-md`.
+ *
+ * Stepped with the button's heights rather than borrowing the generic
+ * `--radius-*` scale, so the corner is retuned with the control it belongs to
+ * and a caller's `rounded-lg` still overrides it.
+ */
+export const BUTTON_RADIUS_TOKENS = ["button-sm", "button-md", "button-lg"] as const;
+
 /** Suffixes in the `--text-*` namespace: `text-button-md`. */
 export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as const;
 
@@ -54,6 +63,7 @@ export const INPUT_TEXT_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
 export const TW_MERGE_CONFIG = {
 	extend: {
 		theme: {
+			radius: [...BUTTON_RADIUS_TOKENS],
 			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...INPUT_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS],
 			text: [...BUTTON_TEXT_TOKENS, ...INPUT_TEXT_TOKENS],
 		},

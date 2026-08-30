@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+	BUTTON_RADIUS_TOKENS,
 	BUTTON_SIZE_TOKENS,
 	BUTTON_TEXT_TOKENS,
 	ICON_SIZE_TOKENS,
@@ -56,6 +57,12 @@ describe("cn with the semantic size tokens", () => {
 		for (const token of BUTTON_TEXT_TOKENS) {
 			expect(cn(`text-${token}`, "text-lg")).toBe("text-lg");
 		}
+		// The button's corner is a token like its height, so a caller who wants
+		// a squarer button writes `rounded-lg` and gets it.
+		for (const token of BUTTON_RADIUS_TOKENS) {
+			expect(cn(`rounded-${token}`, "rounded-lg")).toBe("rounded-lg");
+			expect(cn(`rounded-${token}`, "rounded-full")).toBe("rounded-full");
+		}
 		// A field's height is read on two axes — fixed for a single line,
 		// a floor for a multiline one — so `min-h` has to be recognised too.
 		for (const token of INPUT_SIZE_TOKENS) {
@@ -80,6 +87,7 @@ describe("cn with the semantic size tokens", () => {
 		expect(cn("text-lg", "text-button-sm")).toBe("text-button-sm");
 		expect(cn("px-8", "px-screen-gutter")).toBe("px-screen-gutter");
 		expect(cn("min-h-12", "min-h-input-lg")).toBe("min-h-input-lg");
+		expect(cn("rounded-lg", "rounded-button-md")).toBe("rounded-button-md");
 	});
 
 	test("one token replaces another on the same axis", () => {
@@ -87,10 +95,12 @@ describe("cn with the semantic size tokens", () => {
 		expect(cn("h-button-sm", "h-button-lg")).toBe("h-button-lg");
 		expect(cn("h-input-sm", "h-input-lg")).toBe("h-input-lg");
 		expect(cn("text-input-sm", "text-input-lg")).toBe("text-input-lg");
+		expect(cn("rounded-button-sm", "rounded-button-lg")).toBe("rounded-button-lg");
 	});
 
 	test("tokens on different axes both survive", () => {
 		expect(cn("h-button-md", "w-button-md")).toBe("h-button-md w-button-md");
+		expect(cn("h-button-md", "rounded-button-md")).toBe("h-button-md rounded-button-md");
 		expect(cn("size-icon-md", "text-button-md")).toBe("size-icon-md text-button-md");
 		// `--color-input` and `--text-input-md` are different namespaces that
 		// happen to share a word. A field sets both at once, so a merger that

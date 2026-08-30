@@ -257,6 +257,7 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
 | `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
 | `--text-button-*` | `text-button-md` | a button's label, paired with its height |
+| `--radius-button-*` | `rounded-button-md` | a button's corner, half its height — a capsule, and a circle when icon-only |
 | `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |

@@ -12,10 +12,16 @@ namespaces, so they compile to ordinary utilities.
 | `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
 | `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
 | `--text-button-*` | `text-button-md` | a button's label, paired with its height |
+| `--radius-button-*` | `rounded-button-md` | a button's corner, half its height — a capsule, and a circle when icon-only |
 | `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
+
+A shape is a token too. `--radius-button-*` is half each button height, so a button is a capsule
+and an icon-only one a circle — the default, not a law: change those three numbers for a squarer
+kit, or pass `className="rounded-lg"` to square off one button. A radius above half the height is
+clamped by the renderer, and a test keeps the tokens under it.
 
 A token is named for what it sizes, not for an abstract category. A control that shares another's
 heights gets its own namespace rather than borrowing one — `--spacing-input-*` names the same

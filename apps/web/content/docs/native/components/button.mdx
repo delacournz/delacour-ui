@@ -66,7 +66,10 @@ Use the `variant` prop to change how the surface is painted.
 
 ## Sizes
 
-One axis drives four values: the height, the label's type scale, the icon step and the horizontal padding.
+One axis drives five values: the height, the label's type scale, the icon step, the horizontal
+padding and the corner. `--radius-button-*` is half each height, so a button is a capsule by
+default and an icon-only one a circle. Square one off with `className="rounded-lg"`, or retune the
+three tokens to change every button at once.
 
 <Preview id="button/sizes" />
 

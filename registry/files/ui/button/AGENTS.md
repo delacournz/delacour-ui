@@ -32,6 +32,15 @@ The reference implementation for the patterns in the package
   comes out the right size and colour with nothing said at the call site. An
   explicit `size` or `color` on the icon still wins. `Button.StartContent` /
   `Button.EndContent` remain for wrapping non-icon content.
+- **The corner is a token on the size axis, and nothing else sets one.** Each
+  size names `rounded-button-{size}` — half its own height, so a button is a
+  capsule and an icon-only one a circle. Keeping it out of the base and off
+  every variant means exactly one `rounded-*` reaches the root, so a caller's
+  `className="rounded-lg"` has a single class to beat and tailwind-merge is
+  never picking between two. The shape is a default rather than a law: three
+  numbers in `tokens.css` square the whole kit off without touching a
+  component. Values above half the height are clamped by the renderer, which is
+  why `tokens.test.ts` holds them under it.
 - **`isIconOnly`** gives a square footprint. Always pair it with an
   `accessibilityLabel`; there is no text for a screen reader to fall back on.
 - **String children** are wrapped in a `Button.Label` automatically. React

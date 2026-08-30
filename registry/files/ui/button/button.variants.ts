@@ -37,22 +37,31 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
  * declared once.
  *
  * A size names tokens rather than raw utilities: `h-button-md` for the height,
- * `text-button-md` for the label, `size-icon-md` for a composed glyph. The
- * values live in `tokens.css`, so a button's icon and the spinner that replaces
- * it resolve to the same edge length by construction rather than by two numbers
- * happening to agree. `cn` has to know these token names — see `lib/cn.ts`. The root holds no `text-*` utility: a React Native `View` does
- * not cascade colour to a `Text` descendant, so label colour lives on the
- * `label` slot and icon colour is resolved from {@link BUTTON_FOREGROUND_TOKEN}.
+ * `text-button-md` for the label, `rounded-button-md` for the corner,
+ * `size-icon-md` for a composed glyph. The values live in `tokens.css`, so a
+ * button's icon and the spinner that replaces it resolve to the same edge
+ * length by construction rather than by two numbers happening to agree. `cn`
+ * has to know these token names — see `lib/cn.ts`. The root holds no `text-*`
+ * utility: a React Native `View` does not cascade colour to a `Text`
+ * descendant, so label colour lives on the `label` slot and icon colour is
+ * resolved from {@link BUTTON_FOREGROUND_TOKEN}.
+ *
+ * The corner belongs to the size axis and appears nowhere else — not on the
+ * base, not on a variant — so exactly one `rounded-*` ever reaches the root and
+ * a caller's `rounded-lg` has a single class to beat. Each step is half its own
+ * height, which draws a capsule, and a circle when `isIconOnly` squares the
+ * footprint.
  *
  * `overflow-hidden` on the root is load-bearing rather than tidiness — a pressed
- * button fades to the edge of its own box.
+ * button fades to the edge of its own box, and the fade is clipped to the same
+ * corner the button draws.
  *
  * Free of React Native imports so it stays unit-testable — `bun test` cannot
  * parse React Native's Flow-typed source. See AGENTS.md.
  */
 export const buttonVariants = tv({
 	slots: {
-		root: "flex-row items-center justify-center gap-2 overflow-hidden rounded-lg border border-transparent",
+		root: "flex-row items-center justify-center gap-2 overflow-hidden border border-transparent",
 		label: "text-center font-semibold",
 		startContent: "items-center justify-center",
 		endContent: "items-center justify-center",
@@ -70,9 +79,9 @@ export const buttonVariants = tv({
 			"danger-soft": { root: "bg-danger-soft", label: "text-danger-soft-foreground" },
 		},
 		size: {
-			sm: { root: "h-button-sm gap-1.5 rounded-md", label: "text-button-sm", icon: "size-icon-sm" },
-			md: { root: "h-button-md", label: "text-button-md", icon: "size-icon-md" },
-			lg: { root: "h-button-lg", label: "text-button-lg", icon: "size-icon-lg" },
+			sm: { root: "h-button-sm gap-1.5 rounded-button-sm", label: "text-button-sm", icon: "size-icon-sm" },
+			md: { root: "h-button-md rounded-button-md", label: "text-button-md", icon: "size-icon-md" },
+			lg: { root: "h-button-lg rounded-button-lg", label: "text-button-lg", icon: "size-icon-lg" },
 		},
 		// The empty `false` branches are load-bearing typing, not placeholders.
 		// `tv` derives the prop type from the declared keys, so a map with only

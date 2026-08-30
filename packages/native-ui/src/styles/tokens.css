@@ -15,15 +15,29 @@
 	--text-2xl: 24px;
 	--text-3xl: 30px;
 
-	/* Button heights, and the square footprint of an icon-only one. */
+	/*
+	 * The button's three scales, stepped together: the height — which is also
+	 * the square footprint of an icon-only one — the label's type, and the
+	 * corner.
+	 *
+	 * The corner is half the height at every step, so a button is a capsule and
+	 * an icon-only one a circle. A token rather than `rounded-full` because the
+	 * shape is a default, not a law: a kit that wants squarer buttons changes
+	 * three numbers here and touches no component. `tokens.test.ts` keeps each
+	 * under half its height — past that the renderer clamps and the number
+	 * stops meaning what it says.
+	 */
 	--spacing-button-sm: 36px;
 	--spacing-button-md: 44px;
 	--spacing-button-lg: 52px;
 
-	/* Label type scale, one step paired with each button height above. */
 	--text-button-sm: 14px;
 	--text-button-md: 16px;
 	--text-button-lg: 18px;
+
+	--radius-button-sm: 18px;
+	--radius-button-md: 22px;
+	--radius-button-lg: 26px;
 
 	/*
 	 * Field heights, and the type scale paired step-for-step with them.

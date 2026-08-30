@@ -97,6 +97,8 @@ export type ScreenChatListFlatProps<ItemT> = ChatListSharedProps &
 		/** An inverted `FlatList`. Data must be newest-first. */
 		variant: "flat";
 		inverted?: boolean;
+		/** The inverted list itself, for `scrollToIndex`, `scrollToOffset` and the rest. */
+		ref?: Ref<FlatList<ItemT>>;
 		/**
 		 * Override the scroll range a growing input adds.
 		 * @default the composer's growth above its own baseline, from the screen context

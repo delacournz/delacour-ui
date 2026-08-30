@@ -1,4 +1,4 @@
-import { type ReactElement, useMemo } from "react";
+import { type ReactElement, type Ref, useMemo } from "react";
 import { FlatList, type FlatListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { cn } from "../../lib/cn";
@@ -11,7 +11,17 @@ import { useScreenScrollInsets } from "./use-screen-scroll-insets";
 // puts them back so `data` and `renderItem` still check against each other.
 const AnimatedFlatList = Animated.createAnimatedComponent(FlatList) as unknown as typeof FlatList;
 
-export type ScreenFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> & ScreenScrollableProps;
+export type ScreenFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> &
+	ScreenScrollableProps & {
+		/**
+		 * The list itself, for `scrollToIndex`, `scrollToOffset` and the rest.
+		 *
+		 * Declared rather than inherited, the same way `Screen.LegendList` declares
+		 * its own: this component takes its props by name, so a `ref` passed
+		 * through as one is invisible to a caller until the type says so.
+		 */
+		ref?: Ref<FlatList<ItemT>>;
+	};
 
 /**
  * A virtualised list that keeps its content clear of the screen's chrome.

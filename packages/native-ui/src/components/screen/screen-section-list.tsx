@@ -1,4 +1,4 @@
-import { type ReactElement, useMemo } from "react";
+import { type ReactElement, type Ref, useMemo } from "react";
 import { type DefaultSectionT, SectionList, type SectionListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { cn } from "../../lib/cn";
@@ -15,7 +15,16 @@ export type ScreenSectionListProps<ItemT, SectionT = DefaultSectionT> = Omit<
 	SectionListProps<ItemT, SectionT>,
 	"children"
 > &
-	ScreenScrollableProps;
+	ScreenScrollableProps & {
+		/**
+		 * The list itself, for `scrollToLocation` and the rest.
+		 *
+		 * Declared rather than inherited, the same way `Screen.LegendList` declares
+		 * its own: this component takes its props by name, so a `ref` passed
+		 * through as one is invisible to a caller until the type says so.
+		 */
+		ref?: Ref<SectionList<ItemT, SectionT>>;
+	};
 
 /**
  * A sectioned virtualised list that keeps its content clear of the screen's

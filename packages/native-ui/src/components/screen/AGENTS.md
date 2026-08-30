@@ -51,6 +51,28 @@ whole-screen states.
   the content, which insets itself to match; `static` puts it in the flow. In
   this package `variant` always means a visual variant, so the axis that decides
   where a part *sits* gets its own name.
+- **Every scrollable declares its own `ref`.** React 19 passes `ref` through as
+  an ordinary prop, but these components take their props *by name*, so a ref
+  that flows to the underlying list at runtime is invisible to a caller until
+  the props type says so — the failure being `Property 'ref' does not exist`
+  against a component that would in fact have forwarded it. `ScrollArea` hands
+  back `ScreenScrollViewRef`, `FlatList` a `FlatList<ItemT>`, `SectionList` a
+  `SectionList<ItemT, SectionT>`, `LegendList` and the chat list's `legend`
+  variant a `LegendListRef`, and the chat list's `flat` variant a `FlatList`.
+- **`ScrollArea` branches on `keyboardAware` rather than picking a component
+  into a variable.** A `cond ? A : B` component types its `ref` as the two
+  refs' intersection, which is neither engine's, so the prop could not be
+  declared at all. The one cast in that branch is variance and not a guess:
+  `RefObject.current` is mutable and so invariant, while
+  `KeyboardAwareScrollViewRef` is genuinely `ScreenScrollViewRef` plus
+  `assureFocusedInputVisible`.
+- **`ScreenScrollViewRef` is React Native's `ScrollView`, not
+  `ComponentRef<typeof Animated.ScrollView>`.** Reanimated's animated component
+  types carry no `RefAttributes`, so that expression collapses to `never` — and
+  `Ref<never>` still compiles at every call site, silently accepts any ref, and
+  hands the caller a `.current` with nothing on it. Both engines forward to the
+  same RN instance, so naming it directly is both truthful and usable from a
+  JS-thread `useRef` and a UI-thread `useAnimatedRef` alike.
 
 ## Reserves and occupancy
 

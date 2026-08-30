@@ -9,7 +9,12 @@ export {
 	useScreenContext,
 	useScreenDebug,
 } from "./screen.context";
-export type { ScreenInsetProps, ScreenPlacementProps, ScreenScrollableProps } from "./screen.types";
+export type {
+	ScreenInsetProps,
+	ScreenPlacementProps,
+	ScreenScrollableProps,
+	ScreenScrollViewRef,
+} from "./screen.types";
 export {
 	CHAT_COMPOSER_GAP,
 	footerAboveKeyboard,

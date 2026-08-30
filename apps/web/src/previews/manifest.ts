@@ -219,7 +219,7 @@ export const previews = {
 		light: { poster: "/previews/button/loading/light.png?v=aa9bf87002e0" },
 		dark: { poster: "/previews/button/loading/dark.png?v=aa9bf87002e0" },
 		sourceHash: "aa9bf87002e0",
-		capturedAt: "2026-08-30T19:49:27.893Z",
+		capturedAt: "2026-08-30T20:31:05.530Z",
 		device: "iPhone 17 Pro · iOS 26.5",
 	},
 	"button/sizes": {

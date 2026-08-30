@@ -11,6 +11,13 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof ACCORDION_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
@@ -18,7 +25,7 @@ export function Demo(): ReactElement {
 				<Accordion defaultValue="one" key={size} size={size}>
 					<Accordion.Item value="one">
 						<Accordion.Trigger testID={`size-${size}`}>
-							<Accordion.Title>size {size}</Accordion.Title>
+							<Accordion.Title>{LABELS[size]}</Accordion.Title>
 							<Accordion.Description>Title, description and chevron all step with it</Accordion.Description>
 						</Accordion.Trigger>
 						<Accordion.Content>

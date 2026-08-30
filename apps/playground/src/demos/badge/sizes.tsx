@@ -9,12 +9,19 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof BADGE_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="flex-row flex-wrap items-center gap-2">
 			{BADGE_SIZES.map((size) => (
 				<Badge color="primary" key={size} size={size}>
-					size {size}
+					{LABELS[size]}
 				</Badge>
 			))}
 		</View>

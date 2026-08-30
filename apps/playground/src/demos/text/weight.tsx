@@ -7,12 +7,20 @@ export const meta: DemoMeta = {
 	title: "Weight",
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof TEXT_WEIGHTS)[number], string> = {
+	normal: "Normal",
+	medium: "Medium",
+	semibold: "Semibold",
+	bold: "Bold",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-2">
 			{TEXT_WEIGHTS.map((weight) => (
 				<Text key={weight} weight={weight}>
-					weight {weight}
+					{LABELS[weight]}
 				</Text>
 			))}
 		</View>

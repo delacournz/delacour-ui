@@ -11,6 +11,16 @@ export const meta: DemoMeta = {
 	capture: { hero: true },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof CHECKBOX_COLORS)[number], string> = {
+	default: "Default",
+	primary: "Primary",
+	success: "Success",
+	warning: "Warning",
+	danger: "Danger",
+	info: "Info",
+};
+
 /**
  * One colour, ticked and not, side by side.
  *
@@ -23,7 +33,7 @@ function ColorRow({ color }: { color: (typeof CHECKBOX_COLORS)[number] }): React
 	return (
 		<View className="flex-row items-center gap-4">
 			<Checkbox color={color} isChecked={isChecked} onCheckedChange={setChecked} testID={`checkbox-${color}`}>
-				<Checkbox.Label>{color}</Checkbox.Label>
+				<Checkbox.Label>{LABELS[color]}</Checkbox.Label>
 			</Checkbox>
 			<Checkbox color={color} defaultChecked={false} />
 		</View>

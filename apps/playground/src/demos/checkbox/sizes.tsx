@@ -10,13 +10,20 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof CHECKBOX_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
 			{CHECKBOX_SIZES.map((size) => (
 				<View className="flex-row items-center gap-4" key={size}>
 					<Checkbox color="primary" defaultChecked size={size} testID={`checkbox-${size}`}>
-						<Checkbox.Label>size {size}</Checkbox.Label>
+						<Checkbox.Label>{LABELS[size]}</Checkbox.Label>
 					</Checkbox>
 					<Checkbox color="primary" size={size} />
 				</View>

@@ -11,13 +11,21 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof SPINNER_COLORS)[number], string> = {
+	default: "Default",
+	success: "Success",
+	warning: "Warning",
+	danger: "Danger",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="flex-row flex-wrap items-center gap-6">
 			{SPINNER_COLORS.map((color) => (
 				<View className="items-center gap-2" key={color}>
 					<Spinner color={color} size="lg" />
-					<Text.Caption size="xs">{color}</Text.Caption>
+					<Text.Caption size="xs">{LABELS[color]}</Text.Caption>
 				</View>
 			))}
 			<View className="items-center gap-2">

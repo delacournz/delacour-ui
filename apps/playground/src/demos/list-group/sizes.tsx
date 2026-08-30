@@ -11,6 +11,13 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof LIST_GROUP_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
@@ -21,7 +28,7 @@ export function Demo(): ReactElement {
 							<Icon icon={IconUser} />
 						</ListGroup.ItemPrefix>
 						<ListGroup.ItemContent>
-							<ListGroup.ItemTitle>size {size}</ListGroup.ItemTitle>
+							<ListGroup.ItemTitle>{LABELS[size]}</ListGroup.ItemTitle>
 							<ListGroup.ItemDescription>Name, email, phone number</ListGroup.ItemDescription>
 						</ListGroup.ItemContent>
 						<ListGroup.ItemSuffix />

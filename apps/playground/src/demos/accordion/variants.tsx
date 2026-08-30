@@ -11,6 +11,14 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof ACCORDION_VARIANTS)[number], string> = {
+	default: "Default",
+	secondary: "Secondary",
+	tertiary: "Tertiary",
+	transparent: "Transparent",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
@@ -18,7 +26,7 @@ export function Demo(): ReactElement {
 				<Accordion key={variant} variant={variant}>
 					<Accordion.Item value="one">
 						<Accordion.Trigger testID={`variant-${variant}`}>
-							<Accordion.Title>{variant}</Accordion.Title>
+							<Accordion.Title>{LABELS[variant]}</Accordion.Title>
 						</Accordion.Trigger>
 						<Accordion.Content>
 							<Text.Paragraph>The surface is the root's. Everything inside it is unchanged.</Text.Paragraph>

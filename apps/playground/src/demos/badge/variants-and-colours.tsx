@@ -9,6 +9,14 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch", hero: true },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof BADGE_VARIANTS)[number], string> = {
+	solid: "Solid",
+	soft: "Soft",
+	outline: "Outline",
+	ghost: "Ghost",
+};
+
 /**
  * Every colour of one variant, on a row that wraps.
  *
@@ -18,7 +26,7 @@ export const meta: DemoMeta = {
 function VariantRow({ variant }: { variant: (typeof BADGE_VARIANTS)[number] }): ReactElement {
 	return (
 		<View className="gap-2">
-			<Text.Caption color="muted">{variant}</Text.Caption>
+			<Text.Caption color="muted">{LABELS[variant]}</Text.Caption>
 			<View className="flex-row flex-wrap gap-2">
 				{BADGE_COLORS.map((color) => (
 					<Badge color={color} key={color} variant={variant}>

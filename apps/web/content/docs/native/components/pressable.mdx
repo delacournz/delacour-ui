@@ -40,8 +40,6 @@ resolves through it rather than keeping a private map.
 
 `pressedScale` and `pressedOpacity` win on the axis they name and leave the other to `feedback`.
 
-<Preview id="pressable/explicit-values" />
-
 ```tsx
 <Pressable pressedScale={0.92}>…</Pressable>
 <Pressable feedback="scale" pressedOpacity={0.5}>…</Pressable>
@@ -60,8 +58,6 @@ temporary state the component clears itself.
 ## Haptics
 
 `haptic` plays inside the gesture worklet, so the tap and the haptic land in the same frame.
-
-<Preview id="pressable/haptics" />
 
 ```tsx
 <Pressable haptic="selection">…</Pressable>

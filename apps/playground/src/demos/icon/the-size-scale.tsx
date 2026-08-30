@@ -14,13 +14,23 @@ export const meta: DemoMeta = {
 	capture: { hero: true },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof ICON_SIZES)[number], string> = {
+	xs: "XS",
+	sm: "SM",
+	md: "MD",
+	lg: "LG",
+	xl: "XL",
+	"2xl": "2XL",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="flex-row flex-wrap items-end gap-5">
 			{ICON_SIZES.map((size) => (
 				<View className="items-center gap-2" key={size}>
 					<Icon icon={IconStar} size={size} />
-					<Text.Caption size="xs">{size}</Text.Caption>
+					<Text.Caption size="xs">{LABELS[size]}</Text.Caption>
 				</View>
 			))}
 		</View>

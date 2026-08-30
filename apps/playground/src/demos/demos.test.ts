@@ -179,6 +179,16 @@ describe("captured previews", () => {
 		const known = new Set(manifestIds());
 		expect(mediaDirectories().filter((id) => !known.has(id))).toEqual([]);
 	});
+
+	// The mirror of the two above, and the gap they left between them: both
+	// compare media against the MANIFEST, so a manifest that still names a
+	// deleted demo agrees with its own leftover media and nothing complains —
+	// while the documentation site publishes a card for a demo nobody can open.
+	// Only the demo tree can settle it.
+	test("no manifest entry outlives its demo", () => {
+		const live = new Set(demoFiles());
+		expect(manifestIds().filter((id) => !live.has(id))).toEqual([]);
+	});
 });
 
 describe("coverage", () => {

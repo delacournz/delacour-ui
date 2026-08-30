@@ -34,8 +34,8 @@ export function Demo(): ReactElement {
 					<ListGroup.ItemTitle>Notifications</ListGroup.ItemTitle>
 				</ListGroup.ItemContent>
 				<ListGroup.ItemSuffix>
-					<View className="h-6 w-6 items-center justify-center rounded-full bg-danger">
-						<Text className="font-bold text-danger-foreground text-xs">7</Text>
+					<View className="h-6 w-6 items-center justify-center rounded-full bg-destructive">
+						<Text className="font-bold text-destructive-foreground text-xs">7</Text>
 					</View>
 				</ListGroup.ItemSuffix>
 			</ListGroup.Item>
@@ -52,7 +52,7 @@ export function Demo(): ReactElement {
 					<ListGroup.ItemTitle>Custom chevron</ListGroup.ItemTitle>
 					<ListGroup.ItemDescription>iconProps tunes the default glyph</ListGroup.ItemDescription>
 				</ListGroup.ItemContent>
-				<ListGroup.ItemSuffix iconProps={{ color: "danger", size: 22 }} />
+				<ListGroup.ItemSuffix iconProps={{ color: "destructive", size: 22 }} />
 			</ListGroup.Item>
 		</ListGroup>
 	);

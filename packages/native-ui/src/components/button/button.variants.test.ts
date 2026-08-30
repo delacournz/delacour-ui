@@ -57,8 +57,8 @@ describe("buttonVariants root slot", () => {
 		expect(buttonVariants({ variant: "primary" }).root()).toContain("bg-primary");
 		expect(buttonVariants({ variant: "secondary" }).root()).toContain("bg-secondary");
 		expect(buttonVariants({ variant: "tertiary" }).root()).toContain("bg-tertiary");
-		expect(buttonVariants({ variant: "danger" }).root()).toContain("bg-danger");
-		expect(buttonVariants({ variant: "danger-soft" }).root()).toContain("bg-danger-soft");
+		expect(buttonVariants({ variant: "destructive" }).root()).toContain("bg-destructive");
+		expect(buttonVariants({ variant: "destructive-soft" }).root()).toContain("bg-destructive-soft");
 	});
 
 	test("outline draws a border, ghost does not", () => {
@@ -230,8 +230,8 @@ describe("buttonVariants label slot", () => {
 		expect(buttonVariants({ variant: "primary" }).label()).toContain("text-primary-foreground");
 		expect(buttonVariants({ variant: "secondary" }).label()).toContain("text-secondary-foreground");
 		expect(buttonVariants({ variant: "tertiary" }).label()).toContain("text-tertiary-foreground");
-		expect(buttonVariants({ variant: "danger" }).label()).toContain("text-danger-foreground");
-		expect(buttonVariants({ variant: "danger-soft" }).label()).toContain("text-danger-soft-foreground");
+		expect(buttonVariants({ variant: "destructive" }).label()).toContain("text-destructive-foreground");
+		expect(buttonVariants({ variant: "destructive-soft" }).label()).toContain("text-destructive-soft-foreground");
 		expect(buttonVariants({ variant: "outline" }).label()).toContain("text-foreground");
 		expect(buttonVariants({ variant: "ghost" }).label()).toContain("text-foreground");
 	});

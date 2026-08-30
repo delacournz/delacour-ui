@@ -11,7 +11,7 @@ export type InputSize = (typeof INPUT_SIZES)[number];
 
 /** Theme token an icon in a decorator inherits, and the one it takes when invalid. */
 export const INPUT_DECORATOR_ICON_TOKEN = "muted-foreground";
-export const INPUT_INVALID_DECORATOR_ICON_TOKEN = "danger";
+export const INPUT_INVALID_DECORATOR_ICON_TOKEN = "destructive";
 
 /**
  * Default colours for the three `TextInput` props that take a colour rather
@@ -25,7 +25,7 @@ export const INPUT_INVALID_DECORATOR_ICON_TOKEN = "danger";
  */
 export const INPUT_PLACEHOLDER_ACCENT_CLASS = "accent-muted-foreground";
 export const INPUT_SELECTION_ACCENT_CLASS = "accent-primary";
-export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-danger";
+export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
 
 /**
  * Styling for every part of a text field.
@@ -101,7 +101,7 @@ export const inputVariants = tv({
 		// `true` types the prop as `true` rather than `boolean` and rejects
 		// `inputVariants({ isFocused })`. See button.variants.ts for the same note.
 		isFocused: { true: { root: "border-ring" }, false: {} },
-		isInvalid: { true: { root: "border-danger", decoratorText: "text-danger" }, false: {} },
+		isInvalid: { true: { root: "border-destructive", decoratorText: "text-destructive" }, false: {} },
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 		isMultiline: { true: {}, false: {} },
 		// A grouped field shares its row, so it stretches — and it clears React
@@ -129,7 +129,7 @@ export const inputVariants = tv({
 		// Focus is transient and invalid is reported, so invalid outranks it. A
 		// field that went grey the moment it was tapped would drop the only
 		// signal it has that its value is wrong, exactly while it is being fixed.
-		{ isFocused: true, isInvalid: true, class: { root: "border-danger" } },
+		{ isFocused: true, isInvalid: true, class: { root: "border-destructive" } },
 	],
 	defaultVariants: {
 		variant: "primary",
@@ -198,7 +198,7 @@ export function resolvePlaceholderAccentClass(className?: string): string {
 /**
  * The `accent-*` class uniwind resolves the caret and selection colour from.
  *
- * An invalid field tints them danger along with its border, so the state is
+ * An invalid field tints them destructive along with its border, so the state is
  * still legible while the value is being corrected — the moment the border is
  * the only thing carrying it. A caller's class still wins.
  *

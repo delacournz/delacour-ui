@@ -38,7 +38,7 @@ velocity if you let go fast.
 <Switch color="primary" />
 <Switch color="success" />
 <Switch color="warning" />
-<Switch color="danger" />
+<Switch color="destructive" />
 <Switch color="info" />
 ```
 
@@ -125,7 +125,7 @@ The row's own press toggles the switch, in a `ListGroup.Item` or in an enclosing
     defaultSelected: { type: "boolean", description: "Starting state while uncontrolled." },
     onSelectedChange: { type: "(isSelected: boolean) => void" },
     color: {
-      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
       default: '"default"',
       description: "What a switch that is on means.",
     },

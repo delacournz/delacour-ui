@@ -7,8 +7,8 @@ export const BUTTON_VARIANTS = [
 	"tertiary",
 	"outline",
 	"ghost",
-	"danger",
-	"danger-soft",
+	"destructive",
+	"destructive-soft",
 ] as const;
 
 export const BUTTON_SIZES = ["sm", "md", "lg"] as const;
@@ -26,8 +26,8 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
 	tertiary: "tertiary-foreground",
 	outline: "foreground",
 	ghost: "foreground",
-	danger: "danger-foreground",
-	"danger-soft": "danger-soft-foreground",
+	destructive: "destructive-foreground",
+	"destructive-soft": "destructive-soft-foreground",
 };
 
 /**
@@ -75,8 +75,8 @@ export const buttonVariants = tv({
 			tertiary: { root: "bg-tertiary", label: "text-tertiary-foreground" },
 			outline: { root: "border-border bg-transparent", label: "text-foreground" },
 			ghost: { root: "border-transparent bg-transparent", label: "text-foreground" },
-			danger: { root: "bg-danger", label: "text-danger-foreground" },
-			"danger-soft": { root: "bg-danger-soft", label: "text-danger-soft-foreground" },
+			destructive: { root: "bg-destructive", label: "text-destructive-foreground" },
+			"destructive-soft": { root: "bg-destructive-soft", label: "text-destructive-soft-foreground" },
 		},
 		size: {
 			sm: { root: "h-button-sm gap-1.5 rounded-button-sm", label: "text-button-sm", icon: "size-icon-sm" },

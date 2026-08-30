@@ -3,7 +3,7 @@ import { tv } from "../../lib/tv";
 import type { TextColor, TextSize } from "../text/text.variants";
 
 /** What a ticked box means. The same six `Badge` paints, and for the same reason. */
-export const CHECKBOX_COLORS = ["default", "primary", "success", "warning", "danger", "info"] as const;
+export const CHECKBOX_COLORS = ["default", "primary", "success", "warning", "destructive", "info"] as const;
 
 export const CHECKBOX_SIZES = ["sm", "md", "lg"] as const;
 
@@ -28,12 +28,12 @@ export const CHECKBOX_GLYPH_TOKEN: Record<CheckboxColor, string> = {
 	primary: "primary-foreground",
 	success: "success-foreground",
 	warning: "warning-foreground",
-	danger: "danger-foreground",
+	destructive: "destructive-foreground",
 	info: "info-foreground",
 };
 
 /** The tick's colour once the box is reporting an invalid value. */
-export const CHECKBOX_INVALID_GLYPH_TOKEN = "danger-foreground";
+export const CHECKBOX_INVALID_GLYPH_TOKEN = "destructive-foreground";
 
 /**
  * Theme token each colour paints its filled surface with.
@@ -50,7 +50,7 @@ export const CHECKBOX_SURFACE_TOKEN: Record<CheckboxColor, string> = {
 	primary: "primary",
 	success: "success",
 	warning: "warning",
-	danger: "danger",
+	destructive: "destructive",
 	info: "info",
 };
 
@@ -58,13 +58,26 @@ export const CHECKBOX_SURFACE_TOKEN: Record<CheckboxColor, string> = {
  * The `rounded-*` step the box wears at each size.
  *
  * Named here as well as written into the `box` slot so the fill can be kept
- * concentric with it — see {@link CHECKBOX_FILL_RADIUS}. A test asserts the two
- * still agree.
+ * concentric with it — see {@link resolveCheckboxFillRadius}. A test asserts the
+ * two still agree.
  */
 export const CHECKBOX_RADIUS_STEP: Record<CheckboxSize, "xs" | "sm"> = { sm: "xs", md: "xs", lg: "sm" };
 
 /** Width of the box's border in points — Tailwind's bare `border` utility. */
 export const CHECKBOX_BORDER_WIDTH = 1;
+
+/**
+ * What each of those steps multiplies `--radius` by, restating `tokens.css`.
+ *
+ * It has to be restated: the corner scale is declared `@theme inline`, so
+ * Tailwind substitutes each step into the utilities that use it and emits no
+ * `--radius-xs` variable at all. `--radius` is the only one that survives to
+ * runtime, so anything computing a corner in JavaScript has to do the
+ * multiplication itself. `checkbox.variants.test.ts` pins both numbers against
+ * `tokens.css`, so retuning the scale fails the build rather than quietly
+ * leaving the fill behind.
+ */
+export const CHECKBOX_RADIUS_MULTIPLIER: Record<"sm" | "xs", number> = { xs: 0.4, sm: 0.6 };
 
 /**
  * Corner radius of the animated fill, in points.
@@ -78,19 +91,25 @@ export const CHECKBOX_BORDER_WIDTH = 1;
  * a sharp-cornered square inside a rounded box for the whole of the animation
  * that matters.
  *
- * A number rather than a `rounded-*` class because no token is 5pt or 7pt, and
- * there should not be one: these are not a scale, they are `--radius-xs` and
- * `--radius-sm` with a border subtracted. `checkbox.variants.test.ts` reads
- * `tokens.css` and asserts exactly that, so retuning a radius fails the build
- * rather than quietly reopening the gap.
+ * A function of the live `--radius` rather than a table of points, because
+ * `--radius` is a consumer's to set — a pasted theme retunes every corner in
+ * the package, and a fill left at a number tuned for the default would come
+ * away from the border the moment anyone did. Clamped at zero so a
+ * square-cornered theme draws a square fill rather than a negative radius.
+ *
+ * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
-export const CHECKBOX_FILL_RADIUS: Record<CheckboxSize, number> = { sm: 5, md: 5, lg: 7 };
+export function resolveCheckboxFillRadius(size: CheckboxSize, radius: number): number {
+	const step = CHECKBOX_RADIUS_MULTIPLIER[CHECKBOX_RADIUS_STEP[size]];
+
+	return Math.max(0, radius * step - CHECKBOX_BORDER_WIDTH);
+}
 
 /** The border of a box that is not filled — the same chrome a field wears. */
 export const CHECKBOX_REST_BORDER_TOKEN = "input";
 
 /** The border, filled or not, once the box is reporting an invalid value. */
-export const CHECKBOX_INVALID_BORDER_TOKEN = "danger";
+export const CHECKBOX_INVALID_BORDER_TOKEN = "destructive";
 
 /**
  * Styling for every part of a checkbox.
@@ -182,7 +201,7 @@ export const checkboxVariants = tv({
 			primary: { indicator: "bg-primary" },
 			success: { indicator: "bg-success" },
 			warning: { indicator: "bg-warning" },
-			danger: { indicator: "bg-danger" },
+			destructive: { indicator: "bg-destructive" },
 			info: { indicator: "bg-info" },
 		},
 		size: {
@@ -224,7 +243,7 @@ export const checkboxVariants = tv({
 		// The *border* is not here. It interpolates between two token values as
 		// the fill approaches the edge, so it is a style rather than a class —
 		// see `resolveCheckboxBorderTokens`.
-		{ isInvalid: true, class: { indicator: "bg-danger" } },
+		{ isInvalid: true, class: { indicator: "bg-destructive" } },
 	],
 	defaultVariants: {
 		color: "default",
@@ -323,7 +342,7 @@ export type CheckboxFieldAxes = { isInvalid?: boolean; isDisabled?: boolean };
  * second answer to a question already settled. `Checkbox.Group` owns no box. It
  * is a state controller that also carries shared defaults, which makes it the
  * same kind of thing as `Field`: a wrapper a control can override. So "make the
- * group `lg`" and "make this one danger" are different questions, and both get
+ * group `lg`" and "make this one destructive" are different questions, and both get
  * an answer.
  *
  * `??` throughout and never `||`, so an explicit `false` opts a control out of
@@ -393,7 +412,7 @@ export function resolveCheckboxLabelSize(size: CheckboxSize): TextSize {
  * Pure, so it is reachable from `bun test`. See AGENTS.md.
  */
 export function resolveCheckboxLabelColor(isInvalid: boolean): TextColor | undefined {
-	return isInvalid ? "danger" : undefined;
+	return isInvalid ? "destructive" : undefined;
 }
 
 /**
@@ -423,7 +442,7 @@ export function resolveCheckboxHitSlop({
  * on — the fill's own colour, so the border reads as the surface having reached
  * the edge rather than as an outline that changed on its own.
  *
- * An invalid box returns danger for **both**, so there is nothing to fade: the
+ * An invalid box returns destructive for **both**, so there is nothing to fade: the
  * border is the signal that the value is wrong, and it has to be there before
  * the box is ticked as much as after. That is the same precedence `Input` sets
  * between invalid and focus, expressed as a pair of endpoints instead of a

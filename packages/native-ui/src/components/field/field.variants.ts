@@ -99,7 +99,7 @@ export const fieldVariants = tv({
  *
  * The label turns with the control it names, so the pair reads as one state. The
  * description stays muted in both, so the error is the one line that appeared.
- * The error is danger even outside an invalid field, because an error message is
+ * The error is destructive even outside an invalid field, because an error message is
  * never the calm case.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
@@ -107,9 +107,9 @@ export const fieldVariants = tv({
 export function resolveFieldTextColor(part: FieldTextPart, isInvalid: boolean): TextColor | undefined {
 	switch (part) {
 		case "label":
-			return isInvalid ? "danger" : undefined;
+			return isInvalid ? "destructive" : undefined;
 		case "error":
-			return "danger";
+			return "destructive";
 		default:
 			return undefined;
 	}

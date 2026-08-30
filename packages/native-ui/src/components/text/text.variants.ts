@@ -36,7 +36,7 @@ export const TEXT_INLINE_VARIANTS = ["strong", "emphasis", "link", "code"] as co
 
 export const TEXT_SIZES = ["xs", "sm", "md", "lg", "xl", "2xl", "3xl"] as const;
 export const TEXT_WEIGHTS = ["normal", "medium", "semibold", "bold"] as const;
-export const TEXT_COLORS = ["default", "muted", "danger", "success", "warning", "info"] as const;
+export const TEXT_COLORS = ["default", "muted", "destructive", "success", "warning", "info"] as const;
 export const TEXT_ALIGNS = ["left", "center", "right"] as const;
 export const TEXT_TRANSFORMS = ["none", "uppercase", "lowercase", "capitalize"] as const;
 
@@ -128,7 +128,7 @@ export const textVariants = tv({
 			// The four below emit a delta and nothing else. See TEXT_INLINE_VARIANTS.
 			strong: "font-semibold",
 			emphasis: "italic",
-			// `text-info`, never `text-primary`. `--color-primary` is the primary
+			// `text-info`, never `text-primary`. `--primary` is the primary
 			// SURFACE — #262626 light, #f5f5f5 dark — so a link painted with it
 			// would be indistinguishable from the foreground it sits in.
 			link: "text-info underline",
@@ -164,7 +164,7 @@ export const textVariants = tv({
 		color: {
 			default: "text-foreground",
 			muted: "text-muted-foreground",
-			danger: "text-danger",
+			destructive: "text-destructive",
 			success: "text-success",
 			warning: "text-warning",
 			info: "text-info",

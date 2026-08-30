@@ -16,7 +16,7 @@ export const NAVIGATION_THEME_TOKENS = {
 	text: "foreground",
 	border: "border",
 	primary: "primary",
-	notification: "danger",
+	notification: "destructive",
 } as const;
 
 export type NavigationThemeSlot = keyof typeof NAVIGATION_THEME_TOKENS;

@@ -18,7 +18,7 @@ const LABELS: Record<(typeof SWITCH_COLORS)[number], string> = {
 	primary: "Primary",
 	success: "Success",
 	warning: "Warning",
-	danger: "Danger",
+	destructive: "Destructive",
 	info: "Info",
 };
 

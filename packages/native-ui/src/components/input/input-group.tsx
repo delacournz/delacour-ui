@@ -14,7 +14,7 @@ export type InputGroupProps = {
 	size?: InputSize;
 	/**
 	 * Reports an invalid value: the border, the caret and the decorators all turn
-	 * danger. Inherited from an enclosing `Field` when it is not given.
+	 * destructive. Inherited from an enclosing `Field` when it is not given.
 	 */
 	isInvalid?: boolean;
 	/**
@@ -39,7 +39,7 @@ function InputGroupRoot({
 	const [isFocused, setFocused] = useState(false);
 
 	// An enclosing `Field` is the outermost source, so it is the last fallback:
-	// a group inside an invalid field turns danger with it, and a group that
+	// a group inside an invalid field turns destructive with it, and a group that
 	// names its own state overrides that. These are deliberately not defaulted
 	// in the destructure — `false` there would swallow the field before it was
 	// ever consulted.

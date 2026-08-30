@@ -23,7 +23,7 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
 
 ## Design
 
-- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+- **Colours**: `default`, `primary`, `success`, `warning`, `destructive`, `info` —
   Badge's and Checkbox's set. **Sizes**: `sm`, `md`, `lg`, driving the groove's
   thickness, the thumb's diameter and the readout's type step.
   **Orientations**: `horizontal`, `vertical`.

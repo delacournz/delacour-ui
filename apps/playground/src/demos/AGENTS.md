@@ -86,7 +86,7 @@ is why a colour added to the library shows up here with no edit — in the galle
 *and* in the published media. Writing the six out by hand breaks that quietly.
 
 **Label from a `Record` keyed on the value's own type, never from the value.**
-Rendering the mapped value put `danger-soft` in front of a reader, in the
+Rendering the mapped value put `destructive-soft` in front of a reader, in the
 gallery and in the published card. A `Record<ButtonVariant, string>` beside the
 demo is exhaustive, so a variant added to the library fails this file's
 typecheck until someone writes its label — which is a better version of the rule
@@ -96,7 +96,7 @@ and now it cannot arrive unreadable either.
 ```ts
 const LABELS: Record<ButtonVariant, string> = {
 	primary: "Primary",
-	"danger-soft": "Danger Soft",
+	"destructive-soft": "Destructive Soft",
 	// …
 };
 ```

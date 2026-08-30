@@ -16,7 +16,7 @@ const LABELS: Record<(typeof SPINNER_COLORS)[number], string> = {
 	default: "Default",
 	success: "Success",
 	warning: "Warning",
-	danger: "Danger",
+	destructive: "Destructive",
 };
 
 export function Demo(): ReactElement {

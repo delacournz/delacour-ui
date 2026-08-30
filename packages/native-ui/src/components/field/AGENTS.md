@@ -53,7 +53,7 @@ A form field's layout, and the one place its state is written down. Root plus
   and the inner detector claims a tap on the box itself rather than firing both.
   A field holds one control, so a second registration replaces the first.
 - **A data-attribute class would also leave `bun test`.** Even for a part styling
-  itself, `data-invalid:text-danger` moves the decision from `field.variants.ts`
+  itself, `data-invalid:text-destructive` moves the decision from `field.variants.ts`
   into uniwind's runtime matcher, where no unit test can see it. The parts style
   themselves from `tv()` booleans; the context is only for crossing a component
   boundary.
@@ -96,5 +96,5 @@ A form field's layout, and the one place its state is written down. Root plus
   has neither element nor association, so it and `Field.Label` would render the
   same `Text`.
 - **A set holds no state.** `isInvalid` and `isDisabled` live on each `Field`,
-  because a whole section turning danger says less than the one field that is
+  because a whole section turning destructive says less than the one field that is
   actually wrong.

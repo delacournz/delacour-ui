@@ -16,7 +16,7 @@ import { checkboxVariants, resolveCheckboxLabelColor, resolveCheckboxLabelSize }
  * Renders `Text.Label` and passes it a step and a colour, never a class for
  * either — the type scale belongs to the preset, and restating it here would be
  * a second definition of `Text.Label` that could drift from it. The `className`
- * carries layout alone. It turns danger with the box it names, so the pair reads
+ * carries layout alone. It turns destructive with the box it names, so the pair reads
  * as one state.
  */
 export function CheckboxLabel({ className, color, size, ...props }: CheckboxLabelProps): ReactElement {

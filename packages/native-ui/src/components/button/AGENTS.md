@@ -24,7 +24,7 @@ The reference implementation for the patterns in the package
 ## Design
 
 - **Variants**: `primary`, `secondary`, `tertiary`, `outline`, `ghost`,
-  `danger`, `danger-soft`. **Sizes**: `sm`, `md`, `lg`.
+  `destructive`, `destructive-soft`. **Sizes**: `sm`, `md`, `lg`.
 - **Icons are composed, never passed as props.** Put an `Icon` in the children,
   before or after the label. The button wraps its subtree in an
   `IconDefaultsProvider` carrying `buttonVariants({ size }).icon()` and

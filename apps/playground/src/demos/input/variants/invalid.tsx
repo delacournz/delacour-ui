@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Invalid",
 	caption:
-		"The border, the caret and the selection highlight all turn danger. Tap one — invalid outranks focus, so it stays danger while the value is being fixed.",
+		"The border, the caret and the selection highlight all turn destructive. Tap one — invalid outranks focus, so it stays destructive while the value is being fixed.",
 	capture: { align: "stretch" },
 	keyboardAware: true,
 };

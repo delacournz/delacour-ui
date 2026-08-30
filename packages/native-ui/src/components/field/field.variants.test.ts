@@ -179,7 +179,7 @@ describe("resolveFieldTextColor", () => {
 	// The label turns with the control it names; the description stays muted so
 	// the error is the one line that changed.
 	test("reddens the label only while the field is invalid", () => {
-		expect(resolveFieldTextColor("label", true)).toBe("danger");
+		expect(resolveFieldTextColor("label", true)).toBe("destructive");
 		expect(resolveFieldTextColor("label", false)).toBeUndefined();
 	});
 
@@ -189,9 +189,9 @@ describe("resolveFieldTextColor", () => {
 		}
 	});
 
-	test("keeps the error danger even outside an invalid field", () => {
+	test("keeps the error destructive even outside an invalid field", () => {
 		for (const isInvalid of [false, true]) {
-			expect(resolveFieldTextColor("error", isInvalid)).toBe("danger");
+			expect(resolveFieldTextColor("error", isInvalid)).toBe("destructive");
 		}
 	});
 

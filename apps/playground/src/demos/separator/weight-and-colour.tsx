@@ -15,7 +15,7 @@ export function Demo(): ReactElement {
 			<Separator />
 			<Separator className="h-0.5" />
 			<Separator className="h-1 bg-primary" />
-			<Separator className="h-1 rounded-full bg-danger" />
+			<Separator className="h-1 rounded-full bg-destructive" />
 		</View>
 	);
 }

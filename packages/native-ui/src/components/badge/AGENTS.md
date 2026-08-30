@@ -24,7 +24,7 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
 
 - **Two axes, not one.** `variant` says how the surface is painted — `solid`,
   `soft`, `outline`, `ghost` — and `color` says what it means — `default`,
-  `primary`, `success`, `warning`, `danger`, `info`. **Sizes**: `sm`, `md`, `lg`.
+  `primary`, `success`, `warning`, `destructive`, `info`. **Sizes**: `sm`, `md`, `lg`.
   [`Button`](../button/AGENTS.md) collapses the two into a single enum, and a
   badge deliberately does not: six semantic colours are the point of this
   component rather than an afterthought, and one axis would need thirteen names
@@ -61,11 +61,11 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   tidiness: a pressed badge fades to the edge of its own capsule.
 - **The neutral end of the matrix reuses tokens the theme already has.** This
   theme's `primary` is a near-black whose tint *is* the neutral fill, so a
-  `--color-primary-soft` would duplicate `secondary` exactly. `soft` takes
+  `--primary-soft` would duplicate `secondary` exactly. `soft` takes
   `tertiary` for `primary` and `muted` for `default` instead — two fills the
   theme already tunes per mode. The four semantic colours did get real tokens:
   `success-soft`, `warning-soft` and `info-soft` joined the existing
-  `danger-soft` in `theme.css`, foregrounds included.
+  `destructive-soft` in `theme.css`, foregrounds included.
 - **`BADGE_FOREGROUND_TOKEN` is nested, `Record<variant, Record<color, string>>`,**
   so adding a colour is a compile error in four places rather than a silent gap
   in one. A test pins each entry to the token its own `label` slot resolves to —

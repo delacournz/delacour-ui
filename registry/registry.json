@@ -180,7 +180,8 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"react-native-reanimated"
+				"react-native-reanimated",
+				"uniwind"
 			],
 			"devDependencies": [],
 			"files": [

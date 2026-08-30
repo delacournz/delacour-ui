@@ -33,7 +33,7 @@ import { Checkbox } from "@delacour/native-ui/checkbox";
 <Checkbox color="primary" />
 <Checkbox color="success" />
 <Checkbox color="warning" />
-<Checkbox color="danger" />
+<Checkbox color="destructive" />
 <Checkbox color="info" />
 ```
 
@@ -119,7 +119,7 @@ A checkbox is a `Pressable`, so `feedback`, `haptic` and the rest are inherited 
       description: "Identifies this box to an enclosing `Checkbox.Group`. Required inside one, ignored outside.",
     },
     color: {
-      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
       default: '"default"',
     },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
@@ -145,7 +145,7 @@ restate them. Extends `ViewProps`.
     checked: { type: "string[]", description: "Controlled. The `value` of each checked box." },
     defaultChecked: { type: "string[]" },
     onChecked: { type: "(checked: string[]) => void" },
-    color: { type: '"default" | "primary" | "success" | "warning" | "danger" | "info"' },
+    color: { type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"' },
     size: { type: '"sm" | "md" | "lg"' },
     alignment: { type: '"start" | "end"' },
     isInvalid: { type: "boolean" },

@@ -99,7 +99,7 @@ const EMPTY: string[] = [];
  * @example
  * <Checkbox.Group color="success" defaultChecked={["daily"]} size="lg">
  *   <Checkbox value="daily">Daily digest</Checkbox>
- *   <Checkbox color="danger" value="alerts">Incident alerts</Checkbox>
+ *   <Checkbox color="destructive" value="alerts">Incident alerts</Checkbox>
  * </Checkbox.Group>
  */
 export const CheckboxGroup = Object.assign(CheckboxGroupRoot, {

@@ -142,7 +142,7 @@ export const radioVariants = tv({
 		// variant purely for emission order: `tv` emits the variants first and the
 		// compounds after, so a plain `isInvalid` branch would lose to the four
 		// cells above. `Input` leans on the same mechanism for focused-and-invalid.
-		{ isInvalid: true, class: { indicator: "border-danger", dot: "bg-danger" } },
+		{ isInvalid: true, class: { indicator: "border-destructive", dot: "bg-destructive" } },
 	],
 	defaultVariants: {
 		orientation: "vertical",
@@ -217,7 +217,7 @@ export type RadioState = {
  *
  * **Nearest wins**, the ladder `Input` already runs: a `Radio.Group` first, the
  * radio's own props next, an enclosing `Field` last. A field with no props of its
- * own turns danger with the `Field` around it, while `<Radio isInvalid={false} />`
+ * own turns destructive with the `Field` around it, while `<Radio isInvalid={false} />`
  * still opts out of one.
  *
  * The two axes a group owns outright — `size` and `variant` — are published

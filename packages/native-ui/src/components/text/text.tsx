@@ -164,7 +164,7 @@ TextEmphasis.displayName = "DelacourUI.Text.Emphasis";
  * A tappable run of text. `onPress` rides through from React Native's own
  * `TextProps` and works on a nested `<Text>` on both platforms.
  *
- * Painted with `info`, not `primary`: `--color-primary` is the primary surface
+ * Painted with `info`, not `primary`: `--primary` is the primary surface
  * colour and sits within a shade of `foreground` in both themes.
  */
 function TextLink(props: TextPresetProps): ReactElement {

@@ -26,7 +26,7 @@ that rotates.
   react-native-svg resolves both to `'100%'` when neither is set. That
   `size-full` is load-bearing: content-size the middle layer and the percentage
   resolves against an indefinite parent, collapsing the glyph to zero.
-  **Colours**: `default`, `success`, `warning`, `danger`, plus any token the
+  **Colours**: `default`, `success`, `warning`, `destructive`, plus any token the
   theme emits (`primary-foreground`, `muted-foreground`) or a literal
   (`#EC4899`). A Tailwind palette name like `emerald-500` only resolves if some
   utility class already pulled that variable into the build — otherwise the

@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 const LABELS: Record<(typeof TEXT_COLORS)[number], string> = {
 	default: "Default",
 	muted: "Muted",
-	danger: "Danger",
+	destructive: "Destructive",
 	success: "Success",
 	warning: "Warning",
 	info: "Info",
@@ -28,8 +28,8 @@ export function Demo(): ReactElement {
 					{LABELS[color]}
 				</Text>
 			))}
-			<View className="self-start rounded-full bg-danger px-3 py-1">
-				<Text className="font-semibold text-danger-foreground text-xs">on a danger surface</Text>
+			<View className="self-start rounded-full bg-destructive px-3 py-1">
+				<Text className="font-semibold text-destructive-foreground text-xs">on a destructive surface</Text>
 			</View>
 		</View>
 	);

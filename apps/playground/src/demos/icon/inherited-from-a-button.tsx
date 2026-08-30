@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
-const VARIANTS = ["primary", "secondary", "outline", "danger"] as const;
+const VARIANTS = ["primary", "secondary", "outline", "destructive"] as const;
 
 export function Demo(): ReactElement {
 	return (

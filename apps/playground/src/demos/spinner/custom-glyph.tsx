@@ -16,7 +16,7 @@ export function Demo(): ReactElement {
 	return (
 		<View className="flex-row items-center gap-6">
 			<View className="items-center gap-2">
-				<Spinner color="danger" size="lg">
+				<Spinner color="destructive" size="lg">
 					<Icon icon={IconArrowsRepeatCircle} />
 				</Spinner>
 				<Text.Caption size="xs">bare child</Text.Caption>

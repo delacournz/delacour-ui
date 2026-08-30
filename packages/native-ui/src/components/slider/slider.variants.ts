@@ -3,7 +3,7 @@ import { tv } from "../../lib/tv";
 import type { TextSize } from "../text/text.variants";
 
 /** What a filled track means. Badge's and Checkbox's set, reusing tokens the theme already has. */
-export const SLIDER_COLORS = ["default", "primary", "success", "warning", "danger", "info"] as const;
+export const SLIDER_COLORS = ["default", "primary", "success", "warning", "destructive", "info"] as const;
 
 export const SLIDER_SIZES = ["sm", "md", "lg"] as const;
 
@@ -217,7 +217,7 @@ export const sliderVariants = tv({
 		// The empty branches are load-bearing typing, not placeholders. `tv` derives
 		// the prop type from the declared keys, so a map with only `true` types the
 		// prop as `true` rather than `boolean`.
-		color: { default: {}, primary: {}, success: {}, warning: {}, danger: {}, info: {} },
+		color: { default: {}, primary: {}, success: {}, warning: {}, destructive: {}, info: {} },
 		isInvalid: { true: {}, false: {} },
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 	},
@@ -249,12 +249,15 @@ export const sliderVariants = tv({
 		{ color: "primary", class: { fill: "bg-primary", thumb: "bg-primary", knob: "bg-primary-foreground" } },
 		{ color: "success", class: { fill: "bg-success", thumb: "bg-success", knob: "bg-success-foreground" } },
 		{ color: "warning", class: { fill: "bg-warning", thumb: "bg-warning", knob: "bg-warning-foreground" } },
-		{ color: "danger", class: { fill: "bg-danger", thumb: "bg-danger", knob: "bg-danger-foreground" } },
+		{
+			color: "destructive",
+			class: { fill: "bg-destructive", thumb: "bg-destructive", knob: "bg-destructive-foreground" },
+		},
 		{ color: "info", class: { fill: "bg-info", thumb: "bg-info", knob: "bg-info-foreground" } },
 		// Invalid outranks the colour, the way it does on a checkbox's border. A
 		// slider that stayed green while its value was rejected would drop its only
 		// signal exactly while the value is being corrected.
-		{ isInvalid: true, class: { fill: "bg-danger", thumb: "bg-danger", knob: "bg-danger-foreground" } },
+		{ isInvalid: true, class: { fill: "bg-destructive", thumb: "bg-destructive", knob: "bg-destructive-foreground" } },
 	],
 	defaultVariants: {
 		color: SLIDER_DEFAULT_COLOR,

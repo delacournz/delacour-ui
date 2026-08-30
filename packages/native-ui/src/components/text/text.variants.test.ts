@@ -188,7 +188,7 @@ describe("TEXT_BASE_CLASS", () => {
 	});
 
 	test("loses every axis it names to a class that names the same one", () => {
-		const resolved = resolveTextClass({ inherited: "font-bold text-2xl text-danger" });
+		const resolved = resolveTextClass({ inherited: "font-bold text-2xl text-destructive" });
 		for (const name of TEXT_BASE_CLASS.split(" ")) {
 			expect(resolved).not.toContain(name);
 		}
@@ -228,20 +228,20 @@ describe("resolveTextClass", () => {
 	});
 
 	test("a named colour beats an inherited colour", () => {
-		const parent = resolveTextClass({ color: "danger" });
+		const parent = resolveTextClass({ color: "destructive" });
 		expect(colorOf(resolveTextClass({ color: "muted", inherited: parent }))).toBe("text-muted-foreground");
 	});
 
 	test("a className beats a named variant, a named colour and an inherited class", () => {
 		expect(fontSize(resolveTextClass({ className: "text-xs", variant: "display" }))).toBe("text-xs");
-		expect(colorOf(resolveTextClass({ className: "text-success", color: "danger" }))).toBe("text-success");
+		expect(colorOf(resolveTextClass({ className: "text-success", color: "destructive" }))).toBe("text-success");
 		expect(fontSize(resolveTextClass({ className: "text-xs", inherited: "text-3xl" }))).toBe("text-xs");
 	});
 
 	// The headline behaviour: React Native cascades a parent Text's style to a
 	// nested one natively, and this is what reproduces that through classNames.
 	test("an axis the child does not name is inherited", () => {
-		const parent = resolveTextClass({ color: "danger", variant: "title" });
+		const parent = resolveTextClass({ color: "destructive", variant: "title" });
 		const child = resolveTextClass({ color: "muted", inherited: parent });
 
 		expect(fontSize(child)).toBe(fontSize(parent));
@@ -268,7 +268,7 @@ describe("resolveTextClass", () => {
 	test("resolves to exactly one font size, one weight and one colour", () => {
 		const cls = resolveTextClass({
 			className: "text-success",
-			color: "danger",
+			color: "destructive",
 			inherited: "font-bold text-3xl text-muted-foreground",
 			size: "lg",
 			variant: "caption",
@@ -334,7 +334,7 @@ describe("the nesting fixpoint", () => {
 	});
 
 	test("the published class does not grow with depth", () => {
-		const root = resolveTextClass({ color: "danger", variant: "display" });
+		const root = resolveTextClass({ color: "destructive", variant: "display" });
 		let current = root;
 		for (let depth = 0; depth < 10; depth += 1) {
 			current = resolveTextClass({ inherited: current, isNested: true });

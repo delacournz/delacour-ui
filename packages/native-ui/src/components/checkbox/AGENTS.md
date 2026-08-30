@@ -21,7 +21,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
 
 ## Design
 
-- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+- **Colours**: `default`, `primary`, `success`, `warning`, `destructive`, `info` —
   [Badge](../badge/AGENTS.md)'s set, reusing tokens the theme already has. **Sizes**: `sm`, `md`, `lg`.
   **Alignment**: `start`, `end`. There is no `variant` axis: a checkbox has one
   shape, and a second way to paint it would be a second thing to keep in step
@@ -61,7 +61,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   expressing. `Checkbox.Group` owns no box. It is a state controller that also
   carries shared defaults, which makes it the same kind of thing as [`Field`](../field/AGENTS.md) — a
   wrapper a control overrides — so "make the group `lg`" and "make this one
-  danger" are different questions and both get an answer. `??` throughout and
+  destructive" are different questions and both get an answer. `??` throughout and
   never `||`, so `isDisabled={false}` opts a child out of a disabled group.
 - **`Checkbox.Group`'s state is one array of the children's `value`s.**
   `toggleCheckedValue` is the whole transition and it is pure, so `bun test`
@@ -129,7 +129,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   test. The base keeps `border-input` as the resting appearance the animated
   style starts from, and nothing else in the slot set mentions a border colour;
   two sources for one border is how a class and a style end up disagreeing for a
-  frame on every toggle. An **invalid** box returns danger at *both* ends, so
+  frame on every toggle. An **invalid** box returns destructive at *both* ends, so
   there is nothing to fade — the border is the signal the value is wrong, and it
   has to be there before the box is ticked as much as after.
 - **The clip is measured, not tabulated.** It needs the box's width in points and

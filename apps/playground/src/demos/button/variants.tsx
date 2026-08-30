@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
  *
  * A `Record` keyed on the variant type is exhaustive, so adding a variant to
  * the library fails this file's typecheck until it is given a label — where
- * mapping the raw value would have quietly rendered `danger-soft` at a user.
+ * mapping the raw value would have quietly rendered `destructive-soft` at a user.
  */
 const LABELS: Record<ButtonVariant, string> = {
 	primary: "Primary",
@@ -22,8 +22,8 @@ const LABELS: Record<ButtonVariant, string> = {
 	tertiary: "Tertiary",
 	outline: "Outline",
 	ghost: "Ghost",
-	danger: "Danger",
-	"danger-soft": "Danger Soft",
+	destructive: "Destructive",
+	"destructive-soft": "Destructive Soft",
 };
 
 export function Demo(): ReactElement {

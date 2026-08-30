@@ -4,37 +4,94 @@ description: Tokens, the light and dark palettes, and theming a navigator from t
 icon: Palette
 ---
 
-Tokens are CSS variables declared under `@variant light` / `@variant dark` in the library's
-`theme.css`. Components reference semantic names and never a raw palette colour or a `dark:`
-prefix — the variable swap handles the theme.
+The palette is **shadcn's**, in shadcn's shape. A theme built for a web app — by hand, by
+`shadcn init`, or in a generator like tweakcn — is the same set of variable names this library
+paints from, so moving one across is a copy, not a translation.
+
+Two layers, in `theme.css`. The raw semantic names are declared once per theme under
+`@variant light` / `@variant dark`, and an `@theme inline` block maps each onto the `--color-*`
+Tailwind mints utilities from:
+
+```css
+@layer theme {
+  :root {
+    @variant light { --primary: oklch(0.205 0 0); }
+    @variant dark  { --primary: oklch(0.922 0 0); }
+  }
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+}
+```
+
+Components reference the semantic name — `bg-primary`, `text-muted-foreground` — and never a raw
+palette colour or a `dark:` prefix. The variable swap handles the theme.
+
+## Bring your web theme
+
+```bash
+npx delacour theme ./src/app/globals.css
+npx delacour theme https://tweakcn.com/r/themes/<id>
+```
+
+The one thing that cannot survive a straight paste is the wrapper. Uniwind reads a theme only from
+`@variant light` / `@variant dark`; a literal `.dark { … }` is registered as a *utility class named
+`dark`* and contributes nothing — no error, no warning, just a dark theme that never arrives. The
+command rewrites those two lines, fills in the tokens shadcn has no name for, and reports anything
+React Native cannot use.
+
+<Callout type="warn">
+Font stacks are the one value that does not carry. React Native's `fontFamily` takes a **single**
+family name with no fallback list, so `"Inter, ui-sans-serif, system-ui"` resolves to nothing and
+falls back to the system sans. `delacour theme` keeps the first family and tells you what it
+dropped.
+</Callout>
 
 ## The palette
+
+Everything shadcn defines, under the name shadcn gives it.
 
 | Token | Meaning |
 | --- | --- |
 | `background` / `foreground` | The page and the text on it |
 | `card` / `card-foreground` | A raised surface |
-| `elevated` / `elevated-foreground` | A surface that must sit **above** `muted` in both themes — what `Tabs`' capsule is painted on |
 | `popover` / `popover-foreground` | A floating surface |
 | `primary` / `primary-foreground` | The strongest action |
 | `secondary` / `secondary-foreground` | The second-strongest |
-| `tertiary` / `tertiary-foreground` | A quiet fill |
 | `muted` / `muted-foreground` | De-emphasised text and fills |
 | `accent` / `accent-foreground` | Hover and selection |
-| `danger`, `success`, `warning`, `info` | Semantic states, each with a `-foreground` |
-| `danger-soft`, `success-soft`, `warning-soft`, `info-soft` | Their tinted variants, each with a `-foreground` |
+| `destructive` / `destructive-foreground` | The irreversible action |
 | `border`, `input`, `ring` | Chrome — a divider, a field's edge, a focus ring |
-| `overlay` | The scrim behind a sheet or a dialog |
+| `chart-1` … `chart-5` | Data series |
+| `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-accent`, `sidebar-border`, `sidebar-ring` | A sidebar's own chrome |
+| `--radius` | The one number every generic corner is derived from |
+| `--shadow-2xs` … `--shadow-2xl` | Carried for your own use; no component here draws a shadow |
+
+### What this library adds
+
+shadcn has no name for these, so a pasted theme will not define them. Each is **derived** from a
+token that theme *does* define, so it follows the palette rather than staying behind on the
+library's defaults.
+
+| Token | Meaning | Derived from |
+| --- | --- | --- |
+| `elevated` / `elevated-foreground` | A surface that must sit **above** `muted` in both themes — what `Tabs`' capsule is painted on | `background` in light, `muted` lifted toward `foreground` in dark |
+| `tertiary` / `tertiary-foreground` | A fill quieter than `secondary` | `secondary`, half a step further from the page |
+| `success`, `warning`, `info` | The states shadcn does not name, each with a `-foreground` | Literal — there is no shadcn source |
+| `destructive-soft`, `success-soft`, `warning-soft`, `info-soft` | Their tinted variants, each with a `-foreground` | The state colour over `background` |
+| `overlay` | The scrim behind a sheet or a dialog | Literal black; a scrim is black in both themes |
 
 <Callout>
-This package uses `danger` / `danger-soft`, matching the button variant names, and adds
-`tertiary`. `X-foreground` always means "content drawn on an `X` surface" — keep that meaning when
-adding a token.
+`card` cannot do `elevated`'s job. It is the same white as `background` in light and *darker* than
+`muted` in dark, so a control painted on it inside a muted track reads as raised in one theme and
+sunken in the other. `X-foreground` always means "content drawn on an `X` surface" — keep that
+meaning when adding a token.
 </Callout>
 
 ## Overriding a token
 
-Redeclare it in your own CSS, after the library's import.
+Redeclare it in your own CSS, after the library's import. Raw names, not `--color-*`.
 
 ```css title="global.css"
 @import "@delacour/native-ui/styles";
@@ -42,16 +99,34 @@ Redeclare it in your own CSS, after the library's import.
 @layer theme {
   :root {
     @variant light {
-      --color-primary: #1d4ed8;
-      --color-primary-foreground: #ffffff;
+      --primary: oklch(0.488 0.243 264.376);
+      --primary-foreground: oklch(0.985 0 0);
     }
     @variant dark {
-      --color-primary: #60a5fa;
-      --color-primary-foreground: #0a0a0a;
+      --primary: oklch(0.707 0.165 254.624);
+      --primary-foreground: oklch(0.205 0 0);
     }
   }
 }
 ```
+
+<Callout type="warn">
+Declare a token in **both** variants. Uniwind refuses to build a theme that declares a variable the
+other one does not — "All themes must have the same variables".
+</Callout>
+
+## Corners
+
+Every generic `rounded-*` step is derived from a single `--radius`, so setting it retunes the whole
+library at once.
+
+```css
+@theme { --radius: 0.25rem; }
+```
+
+`rounded-lg` is `--radius` exactly; the steps either side are multiples of it, which is what keeps
+a square-cornered theme square at every step. A button is the exception — its corner is half its own
+height, so it stays a capsule however `--radius` is set. See [Sizing](/docs/native/getting-started/sizing).
 
 ## Reading a colour from JavaScript
 
@@ -61,7 +136,7 @@ A class cannot express a literal (`#EC4899`) and cannot reach an SVG paint prop 
 ```tsx
 import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
 
-const danger = useThemeColor("danger");
+const destructive = useThemeColor("destructive");
 ```
 
 <Callout title="Size is a class, colour is a token">

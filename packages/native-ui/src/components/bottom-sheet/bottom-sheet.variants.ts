@@ -13,7 +13,7 @@ export const BOTTOM_SHEET_OVERLAY_TOKEN = "overlay";
 /**
  * The backdrop's opacity at full appearance.
  *
- * **1, not gorhom's 0.5.** The alpha lives in `--color-overlay`, so leaving the
+ * **1, not gorhom's 0.5.** The alpha lives in `--overlay`, so leaving the
  * library default in place would multiply the two and land the scrim at roughly
  * a fifth of what the theme asked for. One source for the alpha, and it is the
  * token — which is also what lets the two theme variants differ.

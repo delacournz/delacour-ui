@@ -24,7 +24,7 @@ export type FieldErrorProps = Omit<FieldTextProps, "children"> & { children?: Re
  * a part whose absence is unexplainable from the call site — and pairing the two
  * is the caller's own `isInvalid={!!error}`, which is one expression, in view.
  *
- * Always danger, in a valid field as much as an invalid one: an error message is
+ * Always destructive, in a valid field as much as an invalid one: an error message is
  * never the calm case.
  */
 export function FieldError({ className, color, children, ...props }: FieldErrorProps): ReactElement | null {
@@ -49,7 +49,7 @@ export function FieldError({ className, color, children, ...props }: FieldErrorP
 FieldError.displayName = "DelacourUI.Field.Error";
 
 /**
- * Whether there is anything worth drawing a line of danger text for.
+ * Whether there is anything worth drawing a line of destructive text for.
  *
  * `Children.toArray` drops the `null`, `undefined` and booleans a conditional
  * child leaves behind, so `{error && <Text>{error}</Text>}` counts as empty

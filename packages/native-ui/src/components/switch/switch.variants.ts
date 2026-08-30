@@ -3,7 +3,7 @@ import { tv } from "../../lib/tv";
 import type { IconSize } from "../icon/icon.variants";
 
 /** What a switch that is on means. Badge's, Checkbox's and Slider's set. */
-export const SWITCH_COLORS = ["default", "primary", "success", "warning", "danger", "info"] as const;
+export const SWITCH_COLORS = ["default", "primary", "success", "warning", "destructive", "info"] as const;
 
 export const SWITCH_SIZES = ["sm", "md", "lg"] as const;
 
@@ -121,7 +121,7 @@ export const SWITCH_TRACK_TOKEN: Record<SwitchColor, string> = {
 	primary: "primary",
 	success: "success",
 	warning: "warning",
-	danger: "danger",
+	destructive: "destructive",
 	info: "info",
 };
 
@@ -137,7 +137,7 @@ export const SWITCH_TRACK_TOKEN: Record<SwitchColor, string> = {
 export const SWITCH_TRACK_REST_TOKEN = "input";
 
 /** The track, on or off, once the switch is reporting an invalid value. */
-export const SWITCH_INVALID_TRACK_TOKEN = "danger";
+export const SWITCH_INVALID_TRACK_TOKEN = "destructive";
 
 /**
  * Theme token the thumb fades **to** at each colour.
@@ -146,7 +146,7 @@ export const SWITCH_INVALID_TRACK_TOKEN = "danger";
  * which is rule 11 doing its job: a single pale knob would be unreadable on
  * `warning`, whose foreground is near-black, so the knob follows the surface it
  * sits on. `default` is the exception the theme forces — there is no
- * `--color-foreground-foreground`, and `background` is what content drawn on the
+ * `--foreground-foreground`, and `background` is what content drawn on the
  * page's ink actually is. A test pins the whole map against the track's rather
  * than trusting two tables to stay in step.
  */
@@ -155,7 +155,7 @@ export const SWITCH_THUMB_TOKEN: Record<SwitchColor, string> = {
 	primary: "primary-foreground",
 	success: "success-foreground",
 	warning: "warning-foreground",
-	danger: "danger-foreground",
+	destructive: "destructive-foreground",
 	info: "info-foreground",
 };
 
@@ -163,7 +163,7 @@ export const SWITCH_THUMB_TOKEN: Record<SwitchColor, string> = {
 export const SWITCH_THUMB_REST_TOKEN = "background";
 
 /** The thumb, on or off, once the switch is reporting an invalid value. */
-export const SWITCH_INVALID_THUMB_TOKEN = "danger-foreground";
+export const SWITCH_INVALID_THUMB_TOKEN = "destructive-foreground";
 
 /** The colour a glyph inside `Switch.EndContent` takes — it sits on the *off* track. */
 export const SWITCH_CONTENT_REST_TOKEN = "secondary-foreground";
@@ -184,7 +184,7 @@ export const SWITCH_CONTENT_TEXT_CLASS: Record<SwitchColor, string> = {
 	primary: "text-primary-foreground",
 	success: "text-success-foreground",
 	warning: "text-warning-foreground",
-	danger: "text-danger-foreground",
+	destructive: "text-destructive-foreground",
 	info: "text-info-foreground",
 };
 
@@ -192,7 +192,7 @@ export const SWITCH_CONTENT_TEXT_CLASS: Record<SwitchColor, string> = {
 export const SWITCH_CONTENT_REST_TEXT_CLASS = "text-secondary-foreground";
 
 /** What either content layer takes once the switch is reporting an invalid value. */
-export const SWITCH_INVALID_CONTENT_TEXT_CLASS = "text-danger-foreground";
+export const SWITCH_INVALID_CONTENT_TEXT_CLASS = "text-destructive-foreground";
 
 /**
  * Styling for every part of a switch.
@@ -384,7 +384,7 @@ export function resolveSwitchTrackTokens({ color, isInvalid }: { color: SwitchCo
 /**
  * The two ends the thumb's colour interpolates between.
  *
- * An **invalid** switch returns danger at both ends, on the track and on the
+ * An **invalid** switch returns destructive at both ends, on the track and on the
  * knob, so there is nothing to fade — the colour is the signal the value is
  * wrong, and it has to be there before the switch is turned on as much as after.
  * The precedence `Checkbox` sets on its border.

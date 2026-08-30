@@ -8,7 +8,7 @@ Most components in the library are a root plus dot-notation parts. The root shar
 `variant`, `size`, `isDisabled` — through a context, so a part never takes them as props.
 
 ```tsx
-<Button variant="danger" size="lg">
+<Button variant="destructive" size="lg">
   <Icon icon={IconTrash} />
   <Button.Label>Delete</Button.Label>
 </Button>
@@ -26,10 +26,10 @@ import { Button, useButton } from "@delacour/native-ui/button";
 
 function ButtonBadge({ count }: { count: number }) {
   const { variant, size, isDisabled } = useButton();
-  return <Badge color={variant === "danger" ? "danger" : "default"}>{count}</Badge>;
+  return <Badge color={variant === "destructive" ? "destructive" : "default"}>{count}</Badge>;
 }
 
-<Button variant="danger">
+<Button variant="destructive">
   <Button.Label>Delete</Button.Label>
   <ButtonBadge count={3} />
 </Button>;
@@ -79,7 +79,7 @@ field renders into, and two answers to one question is not a state worth express
 
 **`Checkbox.Group` puts the child first**: `own → group → field → default`. It owns no box. It is
 a state controller that also carries shared defaults, which makes it the same kind of thing as
-`Field` — a wrapper a control overrides. "Make the group `lg`" and "make this one danger" are
+`Field` — a wrapper a control overrides. "Make the group `lg`" and "make this one destructive" are
 different questions and both get an answer.
 
 Both are `??` chains and never `||`, so an explicit `isDisabled={false}` opts a child out of a

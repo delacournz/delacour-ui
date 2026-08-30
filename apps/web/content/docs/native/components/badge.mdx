@@ -30,7 +30,7 @@ import { Badge } from "@delacour/native-ui/badge";
 <Badge variant="solid">Default</Badge>
 <Badge variant="soft" color="success">Active</Badge>
 <Badge variant="outline" color="warning">Pending</Badge>
-<Badge variant="ghost" color="danger">Failed</Badge>
+<Badge variant="ghost" color="destructive">Failed</Badge>
 ```
 
 ## Sizes
@@ -121,7 +121,7 @@ withheld: use `isDisabled`, which the parts read through context.
   type={{
     variant: { type: '"solid" | "soft" | "outline" | "ghost"', default: '"solid"' },
     color: {
-      type: '"default" | "primary" | "success" | "warning" | "danger" | "info"',
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
       default: '"default"',
     },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },

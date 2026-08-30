@@ -91,6 +91,7 @@ import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
+import * as demo_pressable_haptics from "./pressable/haptics";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
@@ -227,6 +228,7 @@ export const DEMOS = {
 	"list-group/variants": demo_list_group_variants,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
+	"pressable/haptics": demo_pressable_haptics,
 	"pressable/named-feedback": demo_pressable_named_feedback,
 	"radio/custom-indicator": demo_radio_custom_indicator,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,

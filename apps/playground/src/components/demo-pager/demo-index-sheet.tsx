@@ -24,9 +24,10 @@ export type DemoIndexSheetProps = {
 /**
  * Every demo in the group, for jumping to a named one.
  *
- * The rail answers "where am I" and scrubs; this answers "what else is there".
- * Splitting them is what lets the rail stay a two-point rule in the header
- * instead of growing into a menu.
+ * The rail answers "where am I"; this answers "what else is there", and it is
+ * the only thing that answers it. Splitting the two is what lets the rail stay
+ * a two-point rule in the header instead of growing into a menu — and what
+ * keeps every jump on one control rather than two that overlap.
  *
  * **Sized to its own content, capped.** A fixed percentage is wrong at both
  * ends of this library: Spinner has three demos and would open onto half a

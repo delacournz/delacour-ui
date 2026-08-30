@@ -118,12 +118,13 @@ about following the OS belongs. `GalleryScreen` carries the same action, so the
 one hand-written gallery does not behave differently from the thirty-four paged
 ones.
 
-**The rail is horizontal because that is what makes it selectable.** Stacked
-vertically it put three points between eighteen ticks and nothing could be hit on
-purpose, which is why an earlier pass needed a floating button to do the jumping.
-Laid across the width the same eighteen are about twenty points each, so the rail
-owns tapping and scrubbing, tapping the name opens the index sheet, and there is
-no floating button left to explain.
+**The rail reports position and takes no gesture.** Horizontal is what makes it
+legible — stacked vertically it put three points between eighteen ticks and
+closed up into a solid bar, where across the width the same eighteen are about
+twenty points each and read as separate marks. It is still a two-point rule, and
+a poor target however wide its segments are, so moving between demos is the
+pager's swipe and picking one out by name is the index sheet's, opened by tapping
+the demo's name. One control per job, and no floating button left to explain.
 
 **`meta.caption` and `meta.note` are not drawn here.** They are still authored
 and still published — `scripts/previews/demo-source.ts` cuts them out of the

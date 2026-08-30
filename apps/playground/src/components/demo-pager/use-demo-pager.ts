@@ -34,9 +34,10 @@ export type DemoPagerGeometry = {
  * screen. The handler already publishes the offset into the context, so reading
  * it there costs nothing and cannot clash.
  *
- * An animated ref rather than a plain one, even though the jump below runs on
- * the JS thread: it is the same ref a UI-thread `scrollTo` needs, and a scrub
- * gesture cannot afford a round trip per frame.
+ * The ref exists for one caller: the index sheet, which jumps to a demo by
+ * name. Nothing drives the scroll view from the UI thread any more — the rail
+ * reports position and takes no gesture — so this is an ordinary JS-thread
+ * `scrollTo` on the instance `Screen.ScrollArea` hands back.
  *
  * **The page height is the scroll viewport, measured rather than derived.**
  * With a `static` navbar and a `static` footer both insets resolve to zero
@@ -52,8 +53,8 @@ export type DemoPagerGeometry = {
  * Reanimated's strict mode rejects.
  *
  * That same reaction is where the settle haptic lives, so it fires once per
- * page however the page was reached — a swipe, a rail scrub, or a row in the
- * index sheet — rather than being wired separately at each of the three.
+ * page however the page was reached — a swipe, or a row in the index sheet —
+ * rather than being wired separately at both.
  *
  * `playHaptic` is called rather than scheduled: it carries its own `"worklet"`
  * directive and belongs on the UI thread, so handing it to `scheduleOnRN` throws

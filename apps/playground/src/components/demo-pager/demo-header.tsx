@@ -1,11 +1,10 @@
 import { Icon } from "@delacour/native-ui/icon";
 import { IconChevronDownSmall } from "@delacour/native-ui/icons/central";
 import { Pressable } from "@delacour/native-ui/pressable";
-import type { ScreenScrollViewRef } from "@delacour/native-ui/screen";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import type { AnimatedRef, DerivedValue } from "react-native-reanimated";
+import type { DerivedValue } from "react-native-reanimated";
 import { DemoPageLabel } from "@/components/demo-pager/demo-page-label";
 import { DemoRail } from "@/components/demo-pager/demo-rail";
 
@@ -14,8 +13,6 @@ export type DemoHeaderProps = {
 	activeIndex: number;
 	ids: readonly string[];
 	progress: DerivedValue<number>;
-	scrollRef: AnimatedRef<ScreenScrollViewRef>;
-	pageHeight: number;
 	onOpenIndex: () => void;
 };
 
@@ -33,10 +30,12 @@ export type DemoHeaderProps = {
  * the row from being a name against a void, which is how it read when the rail
  * carried the position alone.
  *
- * **The name is the control.** It opens the index, which is why the chevron is
- * beside it and why there is no floating button in the corner any more: a
+ * **The name is the only control here.** It opens the index, which is why the
+ * chevron is beside it and why there is no floating button in the corner: a
  * gallery with a name already on screen does not need a second, wordless way to
- * ask what else there is.
+ * ask what else there is. The rail below reports position and takes no gesture
+ * — one control, one job, and no ambiguity about which of the two a tap near
+ * the boundary meant.
  *
  * The rail draws the header's bottom edge rather than sitting above a separate
  * hairline. A sticky header needs a rule to hold it off the content and a
@@ -49,15 +48,7 @@ export type DemoHeaderProps = {
  * inside its background, so no prop can turn it off — and here it divides
  * nothing, because the header is opaque and no content ever passes under it.
  */
-export function DemoHeader({
-	title,
-	activeIndex,
-	ids,
-	progress,
-	scrollRef,
-	pageHeight,
-	onOpenIndex,
-}: DemoHeaderProps): ReactElement {
+export function DemoHeader({ title, activeIndex, ids, progress, onOpenIndex }: DemoHeaderProps): ReactElement {
 	const pad = (value: number): string => String(value).padStart(2, "0");
 
 	return (
@@ -66,7 +57,7 @@ export function DemoHeader({
 				accessibilityHint="Opens the list of demos"
 				accessibilityLabel={title}
 				accessibilityRole="button"
-				className="flex-row items-center gap-2 px-screen-gutter py-2"
+				className="flex-row items-center gap-2 px-screen-gutter py-4"
 				feedback="fade"
 				haptic="selection"
 				onPress={onOpenIndex}
@@ -77,7 +68,7 @@ export function DemoHeader({
 				<View className="flex-1" />
 				<Text.Caption color="muted">{`${pad(activeIndex + 1)} / ${pad(ids.length)}`}</Text.Caption>
 			</Pressable>
-			<DemoRail ids={ids} pageHeight={pageHeight} progress={progress} scrollRef={scrollRef} />
+			<DemoRail ids={ids} progress={progress} />
 		</View>
 	);
 }

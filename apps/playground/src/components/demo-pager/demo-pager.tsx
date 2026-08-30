@@ -118,9 +118,7 @@ function DemoPagerBody({ demos, title }: { demos: readonly DemoEntry[]; title: s
 				activeIndex={activeIndex}
 				ids={ids}
 				onOpenIndex={() => setIndexOpen(true)}
-				pageHeight={pageHeight}
 				progress={progress}
-				scrollRef={scrollRef}
 				title={active?.title ?? ""}
 			/>
 			<Screen.ScrollArea

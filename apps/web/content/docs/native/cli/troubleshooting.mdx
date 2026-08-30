@@ -1,6 +1,6 @@
 ---
 title: Troubleshooting
-description: The ten doctor checks, and the silent failure each one exists to catch.
+description: The eleven doctor checks, and the silent failure each one exists to catch.
 icon: Stethoscope
 ---
 
@@ -194,6 +194,11 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
       type: "check",
       description:
         "uniwind-env.d.ts is present, and loadable by the app — in a shared package a copy beside the components is outside the app's tsconfig include and never loads.",
+    },
+    "Theme tokens": {
+      type: "check",
+      description:
+        "Every token theme.css declares is aliased in its @theme inline block, and declared in both themes. A token missing from the alias block has no bg-* at all; one missing from a theme stops Uniwind building.",
     },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },

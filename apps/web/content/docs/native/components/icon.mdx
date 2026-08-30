@@ -4,7 +4,7 @@ description: Central Icons, sized and coloured by inheritance.
 icon: Shapes
 ---
 
-<Preview id="icon/the-size-scale" code={false} title={null} />
+<Preview id="icon/the-size-scale" title={null} />
 
 ## Installation
 
@@ -55,7 +55,7 @@ A bare `<Icon>` takes its size and colour from the nearest provider.
 ```tsx
 import { IconDefaultsProvider } from "@delacour/native-ui/icon";
 
-<IconDefaultsProvider className="size-icon-lg" color="muted-foreground">
+<IconDefaultsProvider value={{ className: "size-icon-lg", color: "muted-foreground" }}>
   {children}
 </IconDefaultsProvider>;
 ```
@@ -63,6 +63,13 @@ import { IconDefaultsProvider } from "@delacour/native-ui/icon";
 ## A subtree of defaults
 
 <Preview id="icon/a-subtree-of-defaults" />
+
+```tsx
+<IconDefaultsProvider value={{ className: "size-icon-2xl", color: "primary" }}>
+  <Icon icon={IconHeart} />
+  <Icon color="danger" icon={IconBell} />
+</IconDefaultsProvider>
+```
 
 `Button`, `Badge` and `ListGroup.ItemPrefix` all publish into this, so a bare `<Icon>` inside one
 needs nothing at the call site. An explicit `size` or `color` still wins.

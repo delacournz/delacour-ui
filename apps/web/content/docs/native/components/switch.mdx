@@ -4,7 +4,7 @@ description: An on/off control with a thumb you can drag as well as tap.
 icon: ToggleLeft
 ---
 
-<Preview id="switch/tap-or-drag" code={false} title={null} />
+<Preview id="switch/tap-or-drag" title={null} />
 
 ## Installation
 
@@ -91,6 +91,20 @@ The row's own press toggles the switch, in a `ListGroup.Item` or in an enclosing
 `Field.Label` naming it.
 
 <Preview id="switch/in-a-settings-list" />
+
+```tsx
+<ListGroup.Item onPress={toggle}>
+  <ListGroup.ItemPrefix>
+    <Icon icon={IconBell} />
+  </ListGroup.ItemPrefix>
+  <ListGroup.ItemContent>
+    <ListGroup.ItemTitle>Notifications</ListGroup.ItemTitle>
+  </ListGroup.ItemContent>
+  <ListGroup.ItemSuffix>
+    <Switch accessibilityLabel="Notifications" color="success" isSelected={on} onSelectedChange={setOn} size="sm" />
+  </ListGroup.ItemSuffix>
+</ListGroup.Item>
+```
 
 ## API Reference
 

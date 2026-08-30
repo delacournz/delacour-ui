@@ -4,7 +4,7 @@ description: A one-pixel rule, hidden from assistive technology.
 icon: Minus
 ---
 
-<Preview id="separator/orientations" code={false} title={null} />
+<Preview id="separator/orientations" title={null} />
 
 ## Installation
 
@@ -47,9 +47,30 @@ its own.
 
 <Preview id="separator/stretching-to-a-parent" />
 
+```tsx
+<View className="flex-row items-stretch">
+  <View className="flex-1 p-4">
+    <Text.Caption>Components</Text.Caption>
+  </View>
+  <Separator orientation="vertical" />
+  <View className="flex-1 p-4">
+    <Text.Caption>Packages</Text.Caption>
+  </View>
+</View>
+```
+
 ## Inside a ListGroup
 
 <Preview id="separator/inside-a-list-group" />
+
+```tsx
+<ListGroup>
+  <ListGroup.Item>Automatic inset divider below</ListGroup.Item>
+  <ListGroup.Item>Hand-placed full-bleed rule below</ListGroup.Item>
+  <Separator />
+  <ListGroup.Item>Last row</ListGroup.Item>
+</ListGroup>
+```
 
 A hand-placed separator suppresses the automatic divider at that gap, which is how a full-bleed rule
 gets in among inset ones.

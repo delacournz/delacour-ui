@@ -4,7 +4,7 @@ description: Sections that expand and collapse, animated from a measured height.
 icon: ChevronsUpDown
 ---
 
-<Preview id="accordion/one-at-a-time" code={false} title={null} />
+<Preview id="accordion/one-at-a-time" title={null} />
 
 ## Installation
 
@@ -68,6 +68,14 @@ The root is a discriminated union on `selectionMode`: `single` carries `string |
 ## Indicators
 
 <Preview id="accordion/a-glyph-beside-the-title" />
+
+```tsx
+<Accordion.Trigger>
+  <Icon icon={IconTruck} />
+  <Accordion.Title>Delivery</Accordion.Title>
+  <Accordion.Indicator />
+</Accordion.Trigger>
+```
 
 An indicator has to be a **direct** `Accordion.Indicator` child of the trigger — the trigger finds
 it by element type, so a wrapped one is invisible and a second default gets composed in beside it.

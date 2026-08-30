@@ -1,31 +1,25 @@
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { type ReactElement, useEffect, useRef, useState } from "react";
 import { type PreviewEntry, type PreviewId, type PreviewMedia, previews } from "@/previews/manifest";
 
 export type PreviewProps = {
 	id: PreviewId;
-	/** Show the generated snippet beside the media. Default true. */
-	code?: boolean;
-	/** `split` puts the code beside the media on large screens; `stacked` puts it below. */
-	layout?: "split" | "stacked";
 	/** Override the manifest's title, or pass `null` for no caption. */
 	title?: string | null;
 };
 
 /**
- * A component preview: media captured from a simulator, and the code that
- * produced it.
+ * A component preview: the real component, photographed on a simulator.
  *
  * The library ships raw `.tsx` compiled by Uniwind's **Metro** transform, so
  * these components cannot render on the web at all — see this app's AGENTS.md.
- * The media here is the real component photographed on a real device, which is
- * a more honest illustration than a react-native-web reproduction would be
- * anyway.
+ * The media here is the real component on a real device, which is a more honest
+ * illustration than a react-native-web reproduction would be anyway.
  *
- * Both the picture and the snippet come from one demo file in the playground,
- * so neither can drift from the other or from the component they show.
+ * The picture is the whole of it. Code beside an example is hand-written in the
+ * MDX, at the call site a reader would actually write — a demo file's own source
+ * is a harness, and printing it taught the reader to copy the harness.
  */
-export function Preview({ id, code = true, layout = "split", title }: PreviewProps): ReactElement {
+export function Preview({ id, title }: PreviewProps): ReactElement {
 	const entry: PreviewEntry | undefined = previews[id];
 
 	if (!entry) {
@@ -36,24 +30,40 @@ export function Preview({ id, code = true, layout = "split", title }: PreviewPro
 	}
 
 	const caption = title === undefined ? entry.title : title;
-	const split = code && layout === "split";
 
 	return (
-		<figure
-			className={
-				split
-					? "not-prose my-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-start"
-					: "not-prose my-6 flex flex-col gap-4"
-			}
-		>
-			<div className="flex flex-col gap-2">
-				<PreviewFrame entry={entry} />
-				{caption === null ? null : <figcaption className="text-sm text-fd-muted-foreground">{caption}</figcaption>}
-			</div>
-			{code ? <DynamicCodeBlock code={entry.code} lang="tsx" /> : null}
+		<figure className="not-prose my-6 flex flex-col gap-2">
+			<PreviewFrame entry={entry} />
+			{caption === null ? null : <figcaption className="text-sm text-fd-muted-foreground">{caption}</figcaption>}
 		</figure>
 	);
 }
+
+/**
+ * How big a preview is allowed to draw.
+ *
+ * Two caps, and both matter. The height keeps a hero from filling the viewport
+ * and pushing `## Installation` below the fold. `w-auto` with no upscale keeps
+ * the media at or below its intrinsic pixels: captures are 720px on their long
+ * edge (`MAX_EDGE`, in the capture script), and the 900px content column was
+ * stretching every one of them.
+ *
+ * The box is not a fixed-height stage, so a short, wide preview — a slider at
+ * 720×222 — stays short instead of floating in letterbox bands.
+ */
+const MEDIA = "block h-auto w-auto max-w-full object-contain";
+
+/** A component alone on the app's background. 676×720 at its tallest, so this draws it at 394×420. */
+const STAGE_MEDIA = `${MEDIA} max-h-[420px]`;
+
+/**
+ * A whole phone screen, and it needs the extra height.
+ *
+ * A device capture is 332×720 — navbar, a list and a footer, not one control —
+ * and the stage cap draws that 194px wide, at which point every row is an
+ * unreadable smudge. 520px is still well under the old uncapped 607px.
+ */
+const DEVICE_MEDIA = `${MEDIA} max-h-[520px]`;
 
 /**
  * The surface the media sits on.
@@ -73,7 +83,7 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 			<div className="flex justify-center">
 				<div className="group/preview rounded-[2.5rem] border border-fd-border bg-fd-card p-[6px] shadow-lg">
 					<div className="overflow-hidden rounded-[2.1rem]">
-						<ThemedPreview entry={entry} className="block h-auto w-full max-w-[280px]" />
+						<ThemedPreview entry={entry} className={DEVICE_MEDIA} />
 					</div>
 				</div>
 			</div>
@@ -81,8 +91,8 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	}
 
 	return (
-		<div className="group/preview overflow-hidden rounded-xl border border-fd-border bg-fd-background">
-			<ThemedPreview entry={entry} className="block h-auto w-full" />
+		<div className="group/preview flex justify-center overflow-hidden rounded-xl border border-fd-border bg-fd-background">
+			<ThemedPreview entry={entry} className={STAGE_MEDIA} />
 		</div>
 	);
 }

@@ -2,6 +2,7 @@ import { Screen } from "@delacour/native-ui/screen";
 import { useRouter } from "expo-router";
 import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export type GalleryScreenProps = {
 	title: string;
@@ -44,13 +45,18 @@ export type GalleryScreenProps = {
  *
  * The back control is wired to expo-router here — the library takes no
  * navigation dependency, so the router stays in the app.
+ *
+ * Carries `ThemeToggle` in the navbar's action slot, the same as `DemoPager`.
+ * A hand-written page is still a page someone is looking at a component on, and
+ * a gallery whose chrome flipped the theme beside one that did not would read
+ * as a bug in whichever you reached second.
  */
 export function GalleryScreen({ title, subtitle, keyboardAware, children }: GalleryScreenProps): ReactElement {
 	const router = useRouter();
 
 	return (
 		<Screen>
-			<Screen.Navbar>
+			<Screen.Navbar actions={<ThemeToggle />}>
 				<Screen.Navbar.BackButton onPress={() => router.back()}>
 					<View className="min-w-0 flex-1">
 						<Screen.Navbar.Title>{title}</Screen.Navbar.Title>

@@ -38,23 +38,12 @@ import * as demo_bottom_sheet_sizing_dynamic_but_capped from "./bottom-sheet/siz
 import * as demo_bottom_sheet_sizing_explicit_snap_points from "./bottom-sheet/sizing/explicit-snap-points";
 import * as demo_bottom_sheet_sizing_sized_to_its_content from "./bottom-sheet/sizing/sized-to-its-content";
 import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-sheet/sizing/the-same-sheet-more-content";
-import * as demo_button_both_icons_every_variant from "./button/both-icons-every-variant";
 import * as demo_button_compound_parts from "./button/compound-parts";
 import * as demo_button_disabled from "./button/disabled";
-import * as demo_button_end_icon from "./button/end-icon";
-import * as demo_button_feedback from "./button/feedback";
-import * as demo_button_haptics from "./button/haptics";
 import * as demo_button_icon_only from "./button/icon-only";
-import * as demo_button_loading_and_dimming from "./button/loading-and-dimming";
-import * as demo_button_loading_every_size from "./button/loading-every-size";
-import * as demo_button_loading_every_variant from "./button/loading-every-variant";
-import * as demo_button_loading_in_a_row from "./button/loading-in-a-row";
-import * as demo_button_loading_replaces_the_icon from "./button/loading-replaces-the-icon";
-import * as demo_button_scroll_check from "./button/scroll-check";
+import * as demo_button_icons from "./button/icons";
+import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
-import * as demo_button_spinner_overrides_the_button from "./button/spinner-overrides-the-button";
-import * as demo_button_spinner_placement from "./button/spinner-placement";
-import * as demo_button_start_icon from "./button/start-icon";
 import * as demo_button_variants from "./button/variants";
 import * as demo_checkbox_alignment from "./checkbox/alignment";
 import * as demo_checkbox_bare_boxes_and_their_targets from "./checkbox/bare-boxes-and-their-targets";
@@ -236,23 +225,12 @@ export const DEMOS = {
 	"bottom-sheet/sizing/explicit-snap-points": demo_bottom_sheet_sizing_explicit_snap_points,
 	"bottom-sheet/sizing/sized-to-its-content": demo_bottom_sheet_sizing_sized_to_its_content,
 	"bottom-sheet/sizing/the-same-sheet-more-content": demo_bottom_sheet_sizing_the_same_sheet_more_content,
-	"button/both-icons-every-variant": demo_button_both_icons_every_variant,
 	"button/compound-parts": demo_button_compound_parts,
 	"button/disabled": demo_button_disabled,
-	"button/end-icon": demo_button_end_icon,
-	"button/feedback": demo_button_feedback,
-	"button/haptics": demo_button_haptics,
 	"button/icon-only": demo_button_icon_only,
-	"button/loading-and-dimming": demo_button_loading_and_dimming,
-	"button/loading-every-size": demo_button_loading_every_size,
-	"button/loading-every-variant": demo_button_loading_every_variant,
-	"button/loading-in-a-row": demo_button_loading_in_a_row,
-	"button/loading-replaces-the-icon": demo_button_loading_replaces_the_icon,
-	"button/scroll-check": demo_button_scroll_check,
+	"button/icons": demo_button_icons,
+	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
-	"button/spinner-overrides-the-button": demo_button_spinner_overrides_the_button,
-	"button/spinner-placement": demo_button_spinner_placement,
-	"button/start-icon": demo_button_start_icon,
 	"button/variants": demo_button_variants,
 	"checkbox/alignment": demo_checkbox_alignment,
 	"checkbox/bare-boxes-and-their-targets": demo_checkbox_bare_boxes_and_their_targets,

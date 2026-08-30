@@ -6,6 +6,7 @@ import { DemoHeader } from "@/components/demo-pager/demo-header";
 import { DemoIndexSheet } from "@/components/demo-pager/demo-index-sheet";
 import { DemoPage } from "@/components/demo-pager/demo-page";
 import { useDemoPager } from "@/components/demo-pager/use-demo-pager";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { DemoEntry } from "@/demos/types";
 
 const NO_INNER_SCROLL: ReadonlySet<string> = new Set();
@@ -41,13 +42,18 @@ export type DemoPagerProps = {
  * The title and subtitle ride the back button, the way they did before the
  * gallery was paged: they stay put while the pages move, and the whole block
  * shares the control's tap target.
+ *
+ * The navbar's one action is `ThemeToggle`. A component is worth as much in the
+ * other palette as in this one, and walking back to the index to flip it meant
+ * losing the demo you were looking at — so the switch lives where the looking
+ * happens, and the index keeps the three-way choice that includes `system`.
  */
 export function DemoPager({ title, subtitle, demos }: DemoPagerProps): ReactElement {
 	const router = useRouter();
 
 	return (
 		<Screen>
-			<Screen.Navbar placement="static">
+			<Screen.Navbar actions={<ThemeToggle />} placement="static">
 				<Screen.Navbar.BackButton onPress={() => router.back()}>
 					<View className="min-w-0 flex-1">
 						<Screen.Navbar.Title>{title}</Screen.Navbar.Title>

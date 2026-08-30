@@ -51,6 +51,7 @@ src/
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
 │   ├── section.tsx               Section — a labelled block within one
+│   ├── theme-toggle.tsx          ThemeToggle — the navbar's light/dark action
 │   └── delacour-mark/            the brand mark in react-native-svg, from @delacour/brand
 ├── hooks/use-transient-loading.ts
 ├── styles/global.css             the Tailwind + Uniwind + library entry
@@ -108,6 +109,14 @@ moves. One row carries the demo's name on the left and its position on the right
 and the rail draws that row's bottom edge — a sticky header needs a rule to hold
 it off the content and a gallery needs a position indicator, so one mark does
 both.
+
+**The navbar carries one action: `ThemeToggle`.** A single tap flips the whole
+app between light and dark, so a component can be checked in both palettes
+without leaving the demo. It is a two-state toggle on purpose — the index screen
+keeps the three-way choice that includes `system`, and that is where a decision
+about following the OS belongs. `GalleryScreen` carries the same action, so the
+one hand-written gallery does not behave differently from the thirty-four paged
+ones.
 
 **The rail is horizontal because that is what makes it selectable.** Stacked
 vertically it put three points between eighteen ticks and nothing could be hit on

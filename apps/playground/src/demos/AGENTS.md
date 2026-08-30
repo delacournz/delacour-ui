@@ -85,6 +85,28 @@ motionless screen rather than an error. See
 is why a colour added to the library shows up here with no edit — in the gallery
 *and* in the published media. Writing the six out by hand breaks that quietly.
 
+**Label from a `Record` keyed on the value's own type, never from the value.**
+Rendering the mapped value put `danger-soft` in front of a reader, in the
+gallery and in the published card. A `Record<ButtonVariant, string>` beside the
+demo is exhaustive, so a variant added to the library fails this file's
+typecheck until someone writes its label — which is a better version of the rule
+above rather than an exception to it: the new variant still cannot be forgotten,
+and now it cannot arrive unreadable either.
+
+```ts
+const LABELS: Record<ButtonVariant, string> = {
+	primary: "Primary",
+	"danger-soft": "Danger Soft",
+	// …
+};
+```
+
+**Demos show the props, not the plumbing.** A demo earns its place by making one
+visual axis legible — a variant, a colour, a size, a state, or a composition
+someone would actually write. Interaction harnesses, scroll probes and
+seven-way permutations of one prop belong in a test or in the component's
+`AGENTS.md`, not in a gallery someone is paging through.
+
 **Prose goes in `meta`, never on screen.** `caption` reads before the demo and
 `note` after it.
 

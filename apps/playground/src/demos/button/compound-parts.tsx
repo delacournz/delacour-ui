@@ -6,6 +6,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Compound parts",
+	caption:
+		"Reach for `Button.StartContent`, `Button.Label` and `Button.EndContent` by hand when a slot needs its own colour or spacing.",
 	capture: { align: "stretch" },
 };
 

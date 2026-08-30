@@ -1,11 +1,18 @@
-import { BUTTON_SIZES, Button } from "@delacour/native-ui/button";
+import { BUTTON_SIZES, Button, type ButtonSize } from "@delacour/native-ui/button";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sizes",
+	caption: "Three heights, each paired with its own label step.",
 	capture: { align: "stretch" },
+};
+
+const LABELS: Record<ButtonSize, string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
 };
 
 export function Demo(): ReactElement {
@@ -13,7 +20,7 @@ export function Demo(): ReactElement {
 		<View className="gap-3">
 			{BUTTON_SIZES.map((size) => (
 				<Button key={size} size={size} testID={`size-${size}`}>
-					size {size}
+					{LABELS[size]}
 				</Button>
 			))}
 		</View>

@@ -8,7 +8,6 @@ import { Uniwind, useUniwind } from "uniwind";
 
 const FADE_OUT_MS = 90;
 const FADE_IN_MS = 140;
-const HALF_TURN_DEG = 180;
 
 /**
  * Flips the whole app between light and dark, from wherever you are.
@@ -21,26 +20,28 @@ const HALF_TURN_DEG = 180;
  * own light and dark buttons do; the index is where you hand the app back to the
  * system.
  *
- * **The glyph is the destination, not the state.** A sun means "go light", so
- * it shows while the app is dark. A control whose icon named the current theme
+ * **The glyph is the destination, not the state.** A sun means "go light", so it
+ * shows while the app is dark. A control whose icon named the current theme
  * would be a label wearing a button's clothes.
  *
  * `Uniwind.setTheme` is global, so there is no state to lift and nothing to
  * thread through a provider — every screen mounting this reads and writes the
  * same theme, and `useUniwind` re-renders each of them when it changes.
  *
- * The swap is a half turn with a fade through the trough, and the glyph is
- * exchanged at the bottom of it — the same shape as `DemoPageLabel`'s crossfade
- * and for the same reason: rendering the new glyph immediately would spin the
- * icon you are already looking at. `scheduleOnRN` is how the UI-thread callback
- * reaches React. The rotation accumulates rather than resetting, so a second
- * tap keeps turning the same way instead of unwinding the first.
+ * The glyphs crossfade rather than swapping, and the exchange happens at the
+ * trough — the same shape as `DemoPageLabel`, for the same reason: rendering
+ * the new glyph immediately would fade out the icon that has already changed.
+ * `scheduleOnRN` is how the UI-thread callback reaches React.
+ *
+ * **Deliberately no spin.** A half turn per tap is the obvious motion for this
+ * control and it is wrong here: it rests the crescent upside-down, and a full
+ * turn to avoid that competes with the thing actually being animated, which is
+ * every colour on the screen changing at once.
  */
 export function ThemeToggle(): ReactElement {
 	const { theme } = useUniwind();
 	const [displayed, setDisplayed] = useState(theme);
 	const opacity = useSharedValue(1);
-	const rotation = useSharedValue(0);
 
 	useEffect(() => {
 		if (displayed === theme) return;
@@ -50,13 +51,9 @@ export function ThemeToggle(): ReactElement {
 			}),
 			withTiming(1, { duration: FADE_IN_MS })
 		);
-		rotation.value = withTiming(rotation.value + HALF_TURN_DEG, { duration: FADE_OUT_MS + FADE_IN_MS });
-	}, [displayed, theme, opacity, rotation]);
+	}, [displayed, theme, opacity]);
 
-	const style = useAnimatedStyle(() => ({
-		opacity: opacity.value,
-		transform: [{ rotate: `${rotation.value}deg` }],
-	}));
+	const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
 	const isDark = theme === "dark";
 

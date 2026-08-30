@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sizes",
+	align: "center",
 	caption: "The box, its glyph and the label step together. A bare box sits below each row.",
 	capture: {},
 };

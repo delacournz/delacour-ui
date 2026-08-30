@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Haptics",
+	align: "center",
 	caption: "The haptic fires inside the gesture worklet, so it lands in the same frame as the press.",
 	capture: {},
 };

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colour is a token",
+	align: "center",
 	caption:
 		"An icon's size is a class; an icon's colour is a token. A class cannot express a literal like `#EC4899` or reach an SVG paint prop, so `color` is resolved through the active theme instead — a token name, a CSS variable name, or a literal. All seven should survive a theme switch.",
 	capture: {},

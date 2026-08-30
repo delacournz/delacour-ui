@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Loading in a row",
+	align: "center",
 	caption: "Not full width, so the width snaps when the spinner appears. Deliberately un-animated.",
 };
 

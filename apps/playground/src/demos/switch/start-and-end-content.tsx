@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Start and end content",
+	align: "center",
 	caption:
 		"Both are written once with no conditionals. `StartContent` is revealed as the switch turns on and `EndContent` as it turns off, each fading with the thumb's travel — so the knob reads as uncovering the other end. The glyphs take their step and colour from the switch.",
 	capture: {},

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Trailing icon, every variant",
+	align: "center",
 	capture: {},
 };
 

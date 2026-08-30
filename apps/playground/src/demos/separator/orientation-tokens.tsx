@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Orientation tokens",
+	align: "center",
 };
 
 export function Demo(): ReactElement {

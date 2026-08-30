@@ -7,7 +7,7 @@ export type SectionProps = {
 	children: ReactNode;
 };
 
-/** A labelled block of a gallery screen. */
+/** A labelled block of a hand-written `GalleryScreen` page. */
 export function Section({ title, children }: SectionProps): ReactElement {
 	return (
 		<View className="gap-3">

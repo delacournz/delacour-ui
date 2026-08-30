@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Tap or drag",
+	align: "center",
 	caption:
 		"One `Gesture.Pan()` drives both. A tap toggles; a drag takes the thumb with your finger and a release settles by position, or by a flick's velocity if you let go fast. Drag one half way and back — it commits nothing.",
 	capture: { flow: "switch/tap-or-drag", hero: true },

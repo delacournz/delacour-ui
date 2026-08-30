@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Text at the ends",
+	align: "center",
 	caption:
 		"A bare string is wrapped in a `Text` that inherits the layer's own treatment, so `ON` and `OFF` need nothing said at the call site.",
 };

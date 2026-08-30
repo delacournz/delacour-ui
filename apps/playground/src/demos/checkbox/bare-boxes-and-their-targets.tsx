@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Bare boxes and their targets",
+	align: "center",
 	caption:
 		"A checkbox with no label takes hit slop out toward the 44pt minimum. One with a label does not — the row is already the target, and slop on top of it would overlap the row below.",
 };

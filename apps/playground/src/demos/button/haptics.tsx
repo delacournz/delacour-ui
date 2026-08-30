@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Haptics",
+	align: "center",
 };
 
 const HAPTICS = ["selection", "light", "medium", "heavy", "success", "warning", "error"] as const;

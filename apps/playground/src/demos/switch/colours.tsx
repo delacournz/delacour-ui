@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colours",
+	align: "center",
 	caption:
 		"On and off at every colour. An off switch is the same chrome at all six — the colour only says what being on means. Both the track and the knob fade between two token values off the thumb's own travel.",
 	capture: {},

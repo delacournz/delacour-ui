@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Composed icon",
+	align: "center",
 	note: "The glyph is bare. It inherits the badge's icon size and its surface's colour from the root.",
 	capture: {},
 };

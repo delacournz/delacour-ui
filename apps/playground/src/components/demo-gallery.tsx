@@ -1,7 +1,5 @@
-import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
-import { GalleryScreen } from "@/components/gallery-screen";
-import { Section } from "@/components/section";
+import { DemoPager } from "@/components/demo-pager";
 import type { DemoEntry } from "@/demos/types";
 
 export type DemoGalleryProps = {
@@ -14,33 +12,21 @@ export type DemoGalleryProps = {
 /**
  * A gallery, rendered from a demo group.
  *
- * `GalleryScreen` and `Section` are untouched — this only composes them, so a
- * screen that genuinely needs to be hand-written still can, and the five folder
- * index routes still are.
+ * Every `(components)` route is a six-line shell around this, so the shape of
+ * every gallery in the app is decided here and nowhere else. That is why it
+ * kept its props exactly when the galleries were paged: thirty-four routes
+ * changed surface without one of them being edited.
  *
- * `caption` runs above the demo and `note` below it, because the galleries
- * disagree about which reads better and both are right: `switch` explains
- * before it shows, `tabs/swipe` shows and then explains. Collapsing them to one
- * slot would reorder somebody's prose.
+ * `meta.caption` and `meta.note` are no longer drawn. They are still authored,
+ * and still published — `scripts/previews/demo-source.ts` cuts them out of the
+ * source for the documentation site — but a component alone on a page says more
+ * about itself than a paragraph above it does, and the prose was outweighing
+ * the components it described.
  *
- * `keyboardAware` is ORed across the group rather than passed per gallery. The
- * demo holding the text field is the thing that knows, so a gallery that gains
- * one needs no second edit here.
+ * `keyboardAware` is ORed across the group inside the pager rather than passed
+ * per gallery. The demo holding the text field is the thing that knows, so a
+ * gallery that gains one needs no edit here.
  */
 export function DemoGallery({ title, subtitle, demos }: DemoGalleryProps): ReactElement {
-	return (
-		<GalleryScreen
-			keyboardAware={demos.some((demo) => demo.keyboardAware)}
-			subtitle={subtitle ?? `${demos.length} demos`}
-			title={title}
-		>
-			{demos.map(({ Demo, caption, id, note, title: sectionTitle }) => (
-				<Section key={id} title={sectionTitle}>
-					{caption ? <Text.Caption>{caption}</Text.Caption> : null}
-					<Demo />
-					{note ? <Text.Caption>{note}</Text.Caption> : null}
-				</Section>
-			))}
-		</GalleryScreen>
-	);
+	return <DemoPager demos={demos} subtitle={subtitle ?? `${demos.length} demos`} title={title} />;
 }

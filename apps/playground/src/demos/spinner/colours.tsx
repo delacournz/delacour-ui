@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colours",
+	align: "center",
 	caption: "Named colours, a theme token and a literal hex. All four should survive a theme switch.",
 	capture: {},
 };

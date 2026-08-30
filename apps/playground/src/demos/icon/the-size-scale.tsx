@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "The size scale",
+	align: "center",
 	caption:
 		"`xs`, `sm`, `md`, `lg`, `xl`, `2xl` — 14, 16, 18, 20, 24 and 32pt, held as `size-icon-*` token classes rather than as numbers. `Spinner` names the same steps off the same scale, so a named step is the same edge length in both and one can stand in for the other with nothing moving.",
 	note: "With no `size`, no `className` and nothing to inherit, the fallback is `size-icon-lg` — 20pt, on the `foreground` token.",

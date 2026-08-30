@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Status dot",
+	align: "center",
 	capture: {},
 };
 

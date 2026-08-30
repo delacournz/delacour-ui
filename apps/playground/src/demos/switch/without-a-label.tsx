@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Without a label",
+	align: "center",
 	caption: "A switch with no text near it needs an `accessibilityLabel`, the same rule an icon-only `Button` follows.",
 };
 

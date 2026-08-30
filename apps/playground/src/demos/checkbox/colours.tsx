@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colours",
+	align: "center",
 	caption:
 		"Ticked and unticked at every colour. An unticked box is chrome at all six — the colour only says what a tick means.",
 	capture: { hero: true },

@@ -48,8 +48,9 @@ src/
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
-│   ├── gallery-screen.tsx        GalleryScreen — the frame every gallery sits in
-│   ├── section.tsx               Section — a labelled block within a gallery
+│   ├── demo-pager/               the paged gallery — one demo per screen
+│   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
+│   ├── section.tsx               Section — a labelled block within one
 │   └── delacour-mark/            the brand mark in react-native-svg, from @delacour/brand
 ├── hooks/use-transient-loading.ts
 ├── styles/global.css             the Tailwind + Uniwind + library entry
@@ -87,14 +88,39 @@ export default function SwitchGallery(): ReactElement {
 }
 ```
 
-That indirection buys three things from one file: the gallery section, a
+That indirection buys three things from one file: the gallery page, a
 chrome-free frame the capture pipeline photographs for the documentation site,
 and — because the file's own source is the published snippet — a code sample
 that cannot drift from the component it shows.
 
-`DemoGallery` composes `GalleryScreen` and `Section` rather than replacing them,
-so a screen that genuinely needs hand-writing still can. The five folder index
-routes still are: they are `ListGroup` navigation, not demos.
+### The gallery is a pager
+
+**One demo per screen, centred, and nothing else on it.** `DemoGallery` renders
+`DemoPager`, which gives every gallery a static navbar, a full-viewport page per
+demo under `pagingEnabled`, and a footer carrying the position rail, the current
+demo's name and the index sheet. Thirty-four routes share it and not one of them
+names it — they all still render the same six-line `DemoGallery` shell, which is
+why the whole surface could change without a route being edited.
+
+**`meta.caption` and `meta.note` are not drawn here.** They are still authored
+and still published — `scripts/previews/demo-source.ts` cuts them out of the
+source for the documentation site — but a paragraph of prose above a control was
+outweighing the control, and a component alone on a page says more about itself
+than the paragraph did.
+
+`meta.align` decides whether a page shrink-wraps its demo (`center`) or gives it
+the full content width (`stretch`, the default, and what every demo is authored
+against). Set `center` on a demo that is one small cluster of controls: alone on
+a page, a lone switch pinned to the left gutter reads as a mistake. Leave a
+container — `Accordion`, `ListGroup`, `Field.Group`, `Tabs`, anything whose point
+is that it fills its parent — on `stretch`, because shrink-wrapping collapses it
+to its narrowest row.
+
+`GalleryScreen` and `Section` are still here, and still a scrolling frame, for a
+page that genuinely needs hand-writing — `delacour-mark.tsx` is the one that
+does. The five folder index routes are hand-written too: they are `ListGroup`
+navigation, not demos. So are the eight `screen/*` routes and `input/form`,
+whose demos **are** screens and must not be nested inside another one.
 
 ### Adding a demo
 
@@ -116,12 +142,25 @@ a row to `COMPONENTS` in `src/app/index.tsx`** — `href`, `icon`, `title`,
 `@delacour/native-ui/icons/central`. A gallery with no row is a page only a URL
 reaches, and nobody types URLs on a phone.
 
-`GalleryScreen` carries the title on the back button, not above the content, so
-the first row starts at the top of the viewport. It is deliberately a
-`Screen.ScrollArea`: that exercises the tap-versus-scroll gesture conflict,
-which is what most often breaks in a component built on the Gesture API.
-`keyboardAware` is ORed across the group, so the demo holding the text field is
-the one that declares it.
+The pager carries the title on the back button rather than above the content, so
+a page begins at the top of the viewport. Both pieces of its chrome are
+`placement="static"`, and that is load-bearing rather than stylistic: an overlay
+navbar is reserved by a spacer *inside* the scroll content, which would land
+every page after the first behind it. Static chrome takes its space in the flow,
+so the scroll area's own frame is the clear band and a page is exactly one
+viewport.
+
+It is still a `Screen.ScrollArea`, which still exercises the tap-versus-scroll
+gesture conflict — the thing most likely to break in a component built on the
+Gesture API, and now under a *snapping* parent rather than a plain one. Verified
+on device: `Slider`'s vertical drag and `Tabs`' horizontal swipe both win against
+the pager, and neither pages the screen.
+
+`keyboardAware` is deliberately **not** passed. That mode scrolls the focused
+field clear of the keyboard, which a paging scroll view then snaps straight back
+to the nearest page boundary; `DemoPage` translates the stage by half the
+keyboard's height instead, which re-centres it in the band that is left and
+moves nothing the pager measures.
 
 ### `src/app/preview.tsx`
 

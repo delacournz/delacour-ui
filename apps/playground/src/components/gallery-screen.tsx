@@ -18,13 +18,18 @@ export type GalleryScreenProps = {
 };
 
 /**
- * The frame every component gallery sits in.
+ * A scrolling frame for a hand-written page.
+ *
+ * **No longer what a component gallery uses.** Galleries are paged now — one
+ * demo per screen, through `DemoPager` — and this is what remains for a page
+ * that genuinely has to be written by hand and still wants the gallery's
+ * chrome. `delacour-mark.tsx` is the one that does.
  *
  * The title and subtitle ride on the back button rather than heading the
  * content. They stay put while the body scrolls, they share the control's tap
  * target — the whole "‹ Button / Pressed 3 times" block goes back — and the
- * gallery's first row starts at the top of the viewport instead of below a
- * heading that repeats what the row the user just tapped already said.
+ * content starts at the top of the viewport instead of below a heading that
+ * repeats what the row the user just tapped already said.
  *
  * Deliberately a `Screen.ScrollArea` rather than a static body: it exercises
  * the tap-versus-scroll gesture conflict, which is the thing most likely to

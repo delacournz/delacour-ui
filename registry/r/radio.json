@@ -23,44 +23,94 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/radio/AGENTS.md",
+			"path": "packages/native-ui/src/components/radio/AGENTS.md",
 			"target": "radio/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/radio",
+					"to": "@registry/ui/radio"
+				}
+			]
 		},
 		{
-			"path": "files/ui/radio/index.ts",
+			"path": "packages/native-ui/src/components/radio/index.ts",
 			"target": "radio/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/radio/radio-group.tsx",
+			"path": "packages/native-ui/src/components/radio/radio-group.tsx",
 			"target": "radio/radio-group.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/radio/radio-indicator.tsx",
+			"path": "packages/native-ui/src/components/radio/radio-indicator.tsx",
 			"target": "radio/radio-indicator.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/radio/radio-label.tsx",
+			"path": "packages/native-ui/src/components/radio/radio-label.tsx",
 			"target": "radio/radio-label.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/radio/radio.context.tsx",
+			"path": "packages/native-ui/src/components/radio/radio.context.tsx",
 			"target": "radio/radio.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/radio/radio.tsx",
+			"path": "packages/native-ui/src/components/radio/radio.tsx",
 			"target": "radio/radio.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		},
 		{
-			"path": "files/ui/radio/radio.variants.ts",
+			"path": "packages/native-ui/src/components/radio/radio.variants.ts",
 			"target": "radio/radio.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		}
 	]
 }

@@ -21,22 +21,38 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/pressable/AGENTS.md",
+			"path": "packages/native-ui/src/components/pressable/AGENTS.md",
 			"target": "pressable/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/pressable/index.ts",
+			"path": "packages/native-ui/src/components/pressable/index.ts",
 			"target": "pressable/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/pressable/pressable.tsx",
+			"path": "packages/native-ui/src/components/pressable/pressable.tsx",
 			"target": "pressable/pressable.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../../lib/merge-props",
+					"to": "@registry/lib/merge-props"
+				}
+			]
 		},
 		{
-			"path": "files/ui/pressable/pressable.variants.ts",
+			"path": "packages/native-ui/src/components/pressable/pressable.variants.ts",
 			"target": "pressable/pressable.variants.ts",
 			"namespace": "ui"
 		}

@@ -3,11 +3,10 @@
 	"extends": ["./packages/biome-config/root.jsonc"],
 	"root": true,
 	"files": {
-		// `registry/` is build output, written by `bun --filter delacour run
-		// registry:build` and served verbatim to consumers. Formatting it would
-		// put it permanently out of step with the builder — the pre-commit hook
-		// rewrites the JSON, the next build writes it back, and the CI drift
-		// check can never pass.
+		// `registry/` is build output — JSON written by `bun --filter delacour run
+		// registry:build`. Formatting it would put it permanently out of step with
+		// the builder: the pre-commit hook rewrites the JSON, the next build writes
+		// it back, and the CI drift check can never pass.
 		"includes": ["**", "!registry"]
 	}
 }

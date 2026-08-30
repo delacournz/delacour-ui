@@ -10,7 +10,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/keyboard-animation.ts",
+			"path": "packages/native-ui/src/lib/keyboard-animation.ts",
 			"target": "keyboard-animation.ts",
 			"namespace": "lib"
 		}

@@ -20,72 +20,138 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/field/AGENTS.md",
+			"path": "packages/native-ui/src/components/field/AGENTS.md",
 			"target": "field/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/field",
+					"to": "@registry/ui/field"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-content.tsx",
+			"path": "packages/native-ui/src/components/field/field-content.tsx",
 			"target": "field/field-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/field/field-description.tsx",
+			"path": "packages/native-ui/src/components/field/field-description.tsx",
 			"target": "field/field-description.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-error.tsx",
+			"path": "packages/native-ui/src/components/field/field-error.tsx",
 			"target": "field/field-error.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-group.tsx",
+			"path": "packages/native-ui/src/components/field/field-group.tsx",
 			"target": "field/field-group.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/field/field-label.tsx",
+			"path": "packages/native-ui/src/components/field/field-label.tsx",
 			"target": "field/field-label.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-legend.tsx",
+			"path": "packages/native-ui/src/components/field/field-legend.tsx",
 			"target": "field/field-legend.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-separator.tsx",
+			"path": "packages/native-ui/src/components/field/field-separator.tsx",
 			"target": "field/field-separator.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field-set.tsx",
+			"path": "packages/native-ui/src/components/field/field-set.tsx",
 			"target": "field/field-set.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/field/field.context.tsx",
+			"path": "packages/native-ui/src/components/field/field.context.tsx",
 			"target": "field/field.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/field/field.tsx",
+			"path": "packages/native-ui/src/components/field/field.tsx",
 			"target": "field/field.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field.types.ts",
+			"path": "packages/native-ui/src/components/field/field.types.ts",
 			"target": "field/field.types.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/field.variants.ts",
+			"path": "packages/native-ui/src/components/field/field.variants.ts",
 			"target": "field/field.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		},
 		{
-			"path": "files/ui/field/index.ts",
+			"path": "packages/native-ui/src/components/field/index.ts",
 			"target": "field/index.ts",
 			"namespace": "ui"
 		}

@@ -1,8 +1,9 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { type BuildResult, buildRegistry } from "./build";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
+import { applyRewrites } from "./rewrite";
 import { scanImports } from "./scan-imports";
 import type { RegistryFile, RegistryItem } from "./schema";
 
@@ -14,13 +15,31 @@ import type { RegistryFile, RegistryItem } from "./schema";
  * deriving the registry is that the two cannot diverge.
  */
 const PACKAGE_ROOT = join(import.meta.dirname, "../../../native-ui");
+const PACKAGE_DIR = "packages/native-ui";
+/** What `files[].path` resolves against, the way a ref does over HTTP. */
+const REPO_ROOT = join(PACKAGE_ROOT, "../..");
 
 let registry: BuildResult;
 let byName: Map<string, RegistryItem>;
+/**
+ * What a consumer receives, keyed by path: the library file with the item's
+ * rewrites applied. The builder no longer produces this — that is the point —
+ * so the tests below reconstruct it exactly as `client.loadItem` does, which
+ * makes them assertions about the shipped artifact rather than about a copy.
+ */
+let delivered: Map<string, string>;
 
 beforeAll(async () => {
-	registry = await buildRegistry({ packageRoot: PACKAGE_ROOT });
+	registry = await buildRegistry({ packageRoot: PACKAGE_ROOT, packageDir: PACKAGE_DIR });
 	byName = new Map(registry.items.map((item) => [item.name, item]));
+
+	delivered = new Map();
+	for (const item of registry.items) {
+		for (const file of item.files) {
+			const source = await readFile(join(REPO_ROOT, file.path), "utf-8");
+			delivered.set(file.path, applyRewrites(source, file.rewrites));
+		}
+	}
 });
 
 describe("buildRegistry", () => {
@@ -92,30 +111,45 @@ describe("buildRegistry", () => {
 		}
 	});
 
-	test("leaves no reference to the source package in the copied files", () => {
+	test("leaves no reference to the source package in what a consumer receives", () => {
 		for (const { content } of everyFile()) expect(content).not.toContain("@delacour/native-ui");
 	});
 
-	test("an item references its files rather than carrying them", () => {
+	test("an item names the library source rather than a copy of it", () => {
 		expect(byName.get("button")?.files).toContainEqual({
-			path: "files/ui/button/button.tsx",
+			path: "packages/native-ui/src/components/button/button.tsx",
 			target: "button/button.tsx",
 			namespace: "ui",
+			rewrites: [
+				{ from: "../icon", to: "@registry/ui/icon" },
+				{ from: "../pressable", to: "@registry/ui/pressable" },
+				{ from: "../spinner", to: "@registry/ui/spinner" },
+				{ from: "../text/text.context", to: "@registry/ui/text/text.context" },
+			],
 		});
 
 		// The whole point of the split: no component source anywhere in the JSON.
 		expect(JSON.stringify(registry.items)).not.toContain("ButtonProvider");
 	});
 
-	test("every file has exactly one document, and every document a file", () => {
+	test("every file is named once, and every name is a file in the library", () => {
 		const referenced = everyFile().map(({ file }) => file.path);
 
 		expect(new Set(referenced).size).toBe(referenced.length);
-		expect([...registry.contents.keys()].sort()).toEqual([...referenced].sort());
+		for (const path of new Set(referenced)) expect(delivered.has(path)).toBe(true);
 	});
 
-	test("a file's registry path mirrors where it lands in a project", () => {
-		for (const { file } of everyFile()) expect(file.path).toBe(`files/${file.namespace}/${file.target}`);
+	test("a file's path is the library source it is", () => {
+		for (const { file } of everyFile()) {
+			expect(file.path.startsWith(`${PACKAGE_DIR}/src/`)).toBe(true);
+			expect(file.path.endsWith(basename(file.target))).toBe(true);
+		}
+	});
+
+	test("the rewrites resolve every placeholder they introduce", () => {
+		for (const { file } of everyFile()) {
+			for (const { to } of file.rewrites) expect(parsePlaceholder(to)).not.toBeNull();
+		}
 	});
 
 	test("the index carries every item without their contents", () => {
@@ -125,14 +159,9 @@ describe("buildRegistry", () => {
 	});
 
 	test("is deterministic — two builds of the same source are byte-identical", async () => {
-		const second = await buildRegistry({ packageRoot: PACKAGE_ROOT });
+		const second = await buildRegistry({ packageRoot: PACKAGE_ROOT, packageDir: PACKAGE_DIR });
 
-		expect(JSON.stringify({ items: second.items, index: second.index })).toBe(
-			JSON.stringify({ items: registry.items, index: registry.index })
-		);
-		// A Map stringifies to `{}`, so the contents have to be compared as entries
-		// or this asserts nothing about the half of the build that holds the source.
-		expect([...second.contents]).toEqual([...registry.contents]);
+		expect(JSON.stringify(second)).toBe(JSON.stringify(registry));
 	});
 });
 
@@ -141,10 +170,14 @@ function everyFile(): { item: RegistryItem; file: RegistryFile; content: string;
 		item.files.map((file) => ({
 			item,
 			file,
-			content: registry.contents.get(file.path) as string,
+			content: delivered.get(file.path) as string,
 			where: `${item.name}/${file.target}`,
 		}))
 	);
+}
+
+function basename(path: string): string {
+	return path.slice(path.lastIndexOf("/") + 1);
 }
 
 function everyImport(): { where: string; specifier: string }[] {

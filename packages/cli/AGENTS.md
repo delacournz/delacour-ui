@@ -2,7 +2,8 @@
 
 Copies `@delacour/native-ui`'s source into a consumer's Expo project, the way shadcn/ui does for
 the web. Published to npm as **`delacour`**; the registry it reads is committed at the repository
-root and served from `raw.githubusercontent.com`.
+root and served from `raw.githubusercontent.com`, and what it serves is the library's own source
+rather than a copy of it.
 
 Human-facing docs are `README.md` here and `/docs/native/cli` on the site. This file is the part
 an agent needs: what the pieces are, and which decisions are load-bearing.
@@ -39,6 +40,7 @@ src/
 │   ├── canonicalise.ts   imports → @registry/* placeholders   (build time)
 │   ├── scan-imports.ts   TypeScript's preProcessFile           (build time)
 │   ├── build.ts, write.ts, cli.ts, config.ts                   (build time)
+│   ├── rewrite.ts        the specifier list an item ships, and applying it
 │   ├── transform.ts      @registry/* → the consumer's aliases  (add time)
 │   ├── client.ts         fetch + ETag cache + zod validation   (add time)
 │   │                     also holds the file-fetch concurrency cap
@@ -52,7 +54,7 @@ scripts/
 └── check-bundle.ts       prepublish guard
 ```
 
-## The six rules
+## The seven rules
 
 1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript` —
    about ten megabytes — to read type-only imports out of the library's source. That runs at
@@ -74,9 +76,8 @@ scripts/
 4. **`registry/` is build output and is excluded from Biome.** The pre-commit hook runs
    `biome check --write` on staged files and re-stages them, which would reformat the registry the
    builder had just written — permanent drift, and a CI check that could never pass. The exclusion
-   is in the root `biome.jsonc`, and it matters more now that `registry/files/**` holds real
-   `.tsx`: those are canonicalised copies, and the only thing that should ever change them is the
-   source they were derived from.
+   is in the root `biome.jsonc`. It is JSON and nothing else: no `.tsx` lives under `registry/`, so
+   the library's source is linted and formatted exactly once, where it is written.
 
 5. **The builder throws rather than guesses.** A component with no `ITEM_META`, an npm import with
    no `PACKAGE_INSTALL` entry, a relative import resolving to nothing — each fails the build. The
@@ -84,18 +85,30 @@ scripts/
    module gets installed at a version the SDK cannot build. That failure surfaces at someone
    else's linker rather than here.
 
-6. **An item references its files; it does not carry them.** `r/button.json` names
-   `files/ui/button/button.tsx`, and the client fetches it. shadcn inlines `content` instead, which
-   is why their registry diffs are unreadable. `registryFileSchema` *rejects* an inlined `content`
-   rather than ignoring it, so a shadcn-shaped item fails with a message instead of 404ing halfway
-   through a copy. `LoadedItem` is the hydrated shape — `client.loadItem()` produces it, and
-   `planFiles` takes nothing else.
+6. **An item references the library's own source; it does not carry a copy.** `r/button.json`
+   names `packages/native-ui/src/components/button/button.tsx`, and the client fetches it — from
+   the same ref the item came from, so the two can never disagree. shadcn inlines `content`
+   instead, which is why their registry diffs are unreadable; copying the source into
+   `registry/files/**`, which this used to do, was readable but duplicated the library two hundred
+   files at a time. `registryFileSchema` *rejects* an inlined `content` rather than ignoring it, so
+   a shadcn-shaped item fails with a message instead of 404ing halfway through a copy. `LoadedItem`
+   is the hydrated shape — `client.loadItem()` produces it, and `planFiles` takes nothing else.
+
+7. **What a copy used to carry, `rewrites` carries.** The library imports its neighbours by
+   relative path and the consumer picks their own layout, so each file entry lists the specifiers
+   to swap — `{ "from": "../icon", "to": "@registry/ui/icon" }` — and `client.loadItem()` applies
+   them before `transform.ts` resolves the placeholder to the consumer's alias. The builder
+   computes the list *and asserts that applying it reproduces, byte for byte, the file it
+   canonicalised*; a specifier quoted somewhere other than an import fails the build rather than
+   reaching a stranger's repository. `rewrites[].to` must parse as a placeholder, so the one field
+   that edits a fetched file cannot be used to splice arbitrary source into someone's project.
 
 ## Adding a component to the registry
 
 Nothing to write by hand except metadata. See the **The registry** section of
 `packages/native-ui/AGENTS.md`: add an `ITEM_META` entry, classify any new npm import in
-`PACKAGE_INSTALL`, then `bun run registry:build` and commit `registry/`.
+`PACKAGE_INSTALL`, then `bun run registry:build` and commit `registry/`. The rebuild touches item
+JSON only — the component's `.tsx` appears in the diff once, where you wrote it.
 
 ## Testing
 
@@ -197,3 +210,7 @@ Each component folder's `AGENTS.md` travels with its source, so an agent in the 
 repository gets the design rules next to the code. It cannot go through `canonicaliseFile`, which
 parses its input as TypeScript — `canonicaliseMarkdown` does the prose rewrite alone, so the copied
 doc cites the consumer's paths rather than a package they never installed.
+
+Its rewrites are the reason `applyRewrites` has two modes. A package subpath is cited in prose as
+often as it is imported, so it is replaced everywhere; a relative specifier is anchored on its
+surrounding quote, because `../icon` is a prefix of `../icon-set`.

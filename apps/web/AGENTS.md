@@ -202,11 +202,11 @@ Three things are load-bearing:
 - **It is a generated module, not a JSON import.** `registry/` lives outside this app's Vite root,
   so importing it would need a `server.fs.allow` entry; and a literal type makes
   `<ComponentInstall name="buton" />` a compile error rather than a runtime 500 a reader finds.
-- **The registry→source path map is derived, and the generator throws on a path it cannot place.**
-  Five rules cover 209 of the 210 registry files; `styles/uniwind-env.d.ts` is the exception,
-  because it is a triple-slash reference that has to sit inside the app's own `tsconfig` include
-  and so lives beside `src/`, not under `src/styles/`. `src/registry/install.test.ts` asserts every
-  emitted path still exists.
+- **The Manual tab's source path is the registry's own, unmapped.** An item names the library file
+  it is — `packages/native-ui/src/components/button/button.tsx` — so linking at the real thing is a
+  copy, not a translation. This used to reverse a flattened `files/ui/button/button.tsx` through
+  five rules with one exception; there is nothing to reverse now. The generator still throws on a
+  path that is not on disk, and `src/registry/install.test.ts` asserts every emitted path exists.
 - **`InstallTabs` keeps `expo install` separate from `add`.** That is not a spelling variant:
   `bun add react-native-reanimated` fetches the newest release, which on an older SDK fails at the
   linker. Do not replace this with `fumadocs-docgen`'s ```package-install fence — it cannot express

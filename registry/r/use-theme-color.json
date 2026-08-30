@@ -14,9 +14,15 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/hooks/use-theme-color.ts",
+			"path": "packages/native-ui/src/hooks/use-theme-color.ts",
 			"target": "use-theme-color.ts",
-			"namespace": "hooks"
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/color",
+					"to": "@registry/lib/color"
+				}
+			]
 		}
 	]
 }

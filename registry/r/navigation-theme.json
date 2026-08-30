@@ -10,7 +10,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/navigation-theme.ts",
+			"path": "packages/native-ui/src/lib/navigation-theme.ts",
 			"target": "navigation-theme.ts",
 			"namespace": "lib"
 		}

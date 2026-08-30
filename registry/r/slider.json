@@ -25,54 +25,102 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/slider/AGENTS.md",
+			"path": "packages/native-ui/src/components/slider/AGENTS.md",
 			"target": "slider/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/slider",
+					"to": "@registry/ui/slider"
+				}
+			]
 		},
 		{
-			"path": "files/ui/slider/index.ts",
+			"path": "packages/native-ui/src/components/slider/index.ts",
 			"target": "slider/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/slider/slider-fill.tsx",
+			"path": "packages/native-ui/src/components/slider/slider-fill.tsx",
 			"target": "slider/slider-fill.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/slider/slider-output.tsx",
+			"path": "packages/native-ui/src/components/slider/slider-output.tsx",
 			"target": "slider/slider-output.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/slider/slider-thumb.tsx",
+			"path": "packages/native-ui/src/components/slider/slider-thumb.tsx",
 			"target": "slider/slider-thumb.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/slider/slider-track.tsx",
+			"path": "packages/native-ui/src/components/slider/slider-track.tsx",
 			"target": "slider/slider-track.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/slider/slider.context.tsx",
+			"path": "packages/native-ui/src/components/slider/slider.context.tsx",
 			"target": "slider/slider.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/slider/slider.tsx",
+			"path": "packages/native-ui/src/components/slider/slider.tsx",
 			"target": "slider/slider.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/slider/slider.types.ts",
+			"path": "packages/native-ui/src/components/slider/slider.types.ts",
 			"target": "slider/slider.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/slider/slider.variants.ts",
+			"path": "packages/native-ui/src/components/slider/slider.variants.ts",
 			"target": "slider/slider.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		}
 	]
 }

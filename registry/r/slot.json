@@ -13,7 +13,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/slot.tsx",
+			"path": "packages/native-ui/src/lib/slot.tsx",
 			"target": "slot.tsx",
 			"namespace": "lib"
 		}

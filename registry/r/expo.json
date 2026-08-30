@@ -14,9 +14,23 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/expo/navigation-theme.tsx",
+			"path": "packages/native-ui/src/expo/navigation-theme.tsx",
 			"target": "expo/navigation-theme.tsx",
-			"namespace": "lib"
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../hooks/use-navigation-theme",
+					"to": "@registry/hooks/use-navigation-theme"
+				},
+				{
+					"from": "@delacour/native-ui/expo/navigation-theme",
+					"to": "@registry/lib/expo/navigation-theme"
+				},
+				{
+					"from": "@delacour/native-ui/provider",
+					"to": "@registry/ui/provider"
+				}
+			]
 		}
 	]
 }

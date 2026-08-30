@@ -20,27 +20,57 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/icon/AGENTS.md",
+			"path": "packages/native-ui/src/components/icon/AGENTS.md",
 			"target": "icon/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "@delacour/native-ui/icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
 		},
 		{
-			"path": "files/ui/icon/icon.context.tsx",
+			"path": "packages/native-ui/src/components/icon/icon.context.tsx",
 			"target": "icon/icon.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/icon/icon.tsx",
+			"path": "packages/native-ui/src/components/icon/icon.tsx",
 			"target": "icon/icon.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "@delacour/native-ui/icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
 		},
 		{
-			"path": "files/ui/icon/icon.variants.ts",
+			"path": "packages/native-ui/src/components/icon/icon.variants.ts",
 			"target": "icon/icon.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		},
 		{
-			"path": "files/ui/icon/index.ts",
+			"path": "packages/native-ui/src/components/icon/index.ts",
 			"target": "icon/index.ts",
 			"namespace": "ui"
 		}

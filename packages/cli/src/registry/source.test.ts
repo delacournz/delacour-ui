@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
-import { DEFAULT_REGISTRY_URL, filePath, indexPath, itemPath, registryFilePath, resolveRegistrySource } from "./source";
+import { DEFAULT_REGISTRY_URL, filePath, indexPath, itemPath, resolveRegistrySource, sourceFilePath } from "./source";
 
 const CWD = "/work/app";
 
@@ -9,6 +9,7 @@ describe("resolveRegistrySource", () => {
 		expect(resolveRegistrySource({ cwd: CWD, ref: "v0.1.0" })).toEqual({
 			kind: "remote",
 			base: `${DEFAULT_REGISTRY_URL}/v0.1.0/registry`,
+			root: `${DEFAULT_REGISTRY_URL}/v0.1.0`,
 		});
 	});
 
@@ -20,6 +21,7 @@ describe("resolveRegistrySource", () => {
 		expect(resolveRegistrySource({ cwd: CWD, url: "github:acme/ui", ref: "v2" })).toEqual({
 			kind: "remote",
 			base: "https://raw.githubusercontent.com/acme/ui/v2/registry",
+			root: "https://raw.githubusercontent.com/acme/ui/v2",
 		});
 	});
 
@@ -37,6 +39,7 @@ describe("resolveRegistrySource", () => {
 		expect(resolveRegistrySource({ cwd: CWD, url: "https://ui.acme.com/r", ref: "main" })).toEqual({
 			kind: "remote",
 			base: "https://ui.acme.com/r",
+			root: "https://ui.acme.com",
 		});
 	});
 
@@ -48,14 +51,20 @@ describe("resolveRegistrySource", () => {
 		expect(resolveRegistrySource({ cwd: CWD, url: "./registry" })).toEqual({
 			kind: "local",
 			base: "/work/app/registry",
+			root: "/work/app",
 		});
-		expect(resolveRegistrySource({ cwd: CWD, url: "/abs/registry" })).toEqual({ kind: "local", base: "/abs/registry" });
+		expect(resolveRegistrySource({ cwd: CWD, url: "/abs/registry" })).toEqual({
+			kind: "local",
+			base: "/abs/registry",
+			root: "/abs",
+		});
 	});
 
 	test("accepts a file: URL", () => {
 		expect(resolveRegistrySource({ cwd: CWD, url: "file:///abs/registry" })).toEqual({
 			kind: "local",
 			base: "/abs/registry",
+			root: "/abs",
 		});
 	});
 });
@@ -64,29 +73,38 @@ describe("the registry layout", () => {
 	const remote = resolveRegistrySource({ cwd: CWD, ref: "v0.1.0" });
 	const local = resolveRegistrySource({ cwd: CWD, url: "./registry" });
 
-	test("puts a file where it will land in a project", () => {
-		expect(registryFilePath("ui", "button/button.tsx")).toBe("files/ui/button/button.tsx");
-		expect(registryFilePath("lib", "cn.ts")).toBe("files/lib/cn.ts");
+	test("names a file where the library actually keeps it", () => {
+		expect(sourceFilePath("packages/native-ui", "components/button/button.tsx")).toBe(
+			"packages/native-ui/src/components/button/button.tsx"
+		);
+		expect(sourceFilePath("packages/native-ui", "lib/cn.ts")).toBe("packages/native-ui/src/lib/cn.ts");
 	});
 
-	test("resolves every document against a remote base", () => {
+	// The index and the items live in `registry/`; a file lives wherever the
+	// library keeps it, so it resolves against the ref rather than the registry.
+	test("resolves every document against a remote source", () => {
 		const base = `${DEFAULT_REGISTRY_URL}/v0.1.0/registry`;
 
 		expect(indexPath(remote)).toBe(`${base}/registry.json`);
 		expect(itemPath(remote, "button")).toBe(`${base}/r/button.json`);
-		expect(filePath(remote, "files/ui/button/button.tsx")).toBe(`${base}/files/ui/button/button.tsx`);
+		expect(filePath(remote, "packages/native-ui/src/components/button/button.tsx")).toBe(
+			`${DEFAULT_REGISTRY_URL}/v0.1.0/packages/native-ui/src/components/button/button.tsx`
+		);
 	});
 
 	// The same layout on disk is what lets the end-to-end tests point `--registry`
 	// at the committed directory and exercise the real read path offline.
-	test("resolves the same documents against a local base", () => {
+	test("resolves the same documents against a local source", () => {
 		expect(itemPath(local, "button")).toBe("/work/app/registry/r/button.json");
-		expect(filePath(local, "files/ui/button/button.tsx")).toBe(join("/work/app/registry/files/ui/button/button.tsx"));
+		expect(filePath(local, "packages/native-ui/src/lib/cn.ts")).toBe(
+			join("/work/app/packages/native-ui/src/lib/cn.ts")
+		);
 	});
 
-	test("a hosted registry keeps its own base", () => {
+	test("a hosted registry keeps its own base, and reads files from the directory above it", () => {
 		const hosted = resolveRegistrySource({ cwd: CWD, url: "https://ui.acme.com/r" });
 
-		expect(filePath(hosted, "files/ui/card/card.tsx")).toBe("https://ui.acme.com/r/files/ui/card/card.tsx");
+		expect(indexPath(hosted)).toBe("https://ui.acme.com/r/registry.json");
+		expect(filePath(hosted, "src/card/card.tsx")).toBe("https://ui.acme.com/src/card/card.tsx");
 	});
 });

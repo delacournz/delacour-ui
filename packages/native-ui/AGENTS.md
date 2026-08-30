@@ -601,6 +601,12 @@ is maintained by hand: the files come from the folder, the dependency graph
 comes from the imports, and the CLI's `classifySource` restates the same
 conventions `scripts/gen-exports.ts` reads.
 
+The registry is metadata only. An item names the file **here** —
+`packages/native-ui/src/components/button/button.tsx` — at the ref it was read
+from, so there is no copy of this package anywhere in `registry/`. The import
+rewrite a copy used to carry travels beside the file instead, as a list of
+specifiers, and `add` applies it.
+
 Two things follow for anyone adding to this package:
 
 1. **A new component needs an entry in `packages/cli/src/registry/config.ts`.**
@@ -615,7 +621,8 @@ Two things follow for anyone adding to this package:
 
 Then run `bun --filter delacour run registry:build` and commit `registry/`. CI
 fails if it is stale, since the registry is served straight out of the
-repository.
+repository. What changes is the item JSON — a component's `.tsx` appears in a
+diff once, here.
 
 `bun --filter delacour run verify:expo` is the check worth running before you
 believe it: it scaffolds a real Expo app, adds every item, and typechecks the
@@ -623,6 +630,6 @@ result. A component whose imports only resolve inside this monorepo passes
 `bun test` and fails there.
 
 A component folder that follows the rules above needs nothing else. Relative
-imports crossing a folder — `../icon`, `../../lib/cn` — are rewritten to
+imports crossing a folder — `../icon`, `../../lib/cn` — are recorded as
 placeholders at build time and resolved to the consumer's own aliases at `add`
 time, so write them exactly as you would anyway.

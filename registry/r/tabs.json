@@ -28,74 +28,142 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/tabs/AGENTS.md",
+			"path": "packages/native-ui/src/components/tabs/AGENTS.md",
 			"target": "tabs/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/tabs",
+					"to": "@registry/ui/tabs"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/index.ts",
+			"path": "packages/native-ui/src/components/tabs/index.ts",
 			"target": "tabs/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs-content.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-content.tsx",
 			"target": "tabs/tabs-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs-indicator.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-indicator.tsx",
 			"target": "tabs/tabs-indicator.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs-label.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-label.tsx",
 			"target": "tabs/tabs-label.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs-list.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-list.tsx",
 			"target": "tabs/tabs-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs-pager.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-pager.tsx",
 			"target": "tabs/tabs-pager.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs-scroll-view.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-scroll-view.tsx",
 			"target": "tabs/tabs-scroll-view.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs-separator.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-separator.tsx",
 			"target": "tabs/tabs-separator.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs-trigger.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs-trigger.tsx",
 			"target": "tabs/tabs-trigger.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs.context.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs.context.tsx",
 			"target": "tabs/tabs.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/tabs/tabs.tsx",
+			"path": "packages/native-ui/src/components/tabs/tabs.tsx",
 			"target": "tabs/tabs.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs.types.ts",
+			"path": "packages/native-ui/src/components/tabs/tabs.types.ts",
 			"target": "tabs/tabs.types.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/tabs/tabs.variants.ts",
+			"path": "packages/native-ui/src/components/tabs/tabs.variants.ts",
 			"target": "tabs/tabs.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
 		}
 	]
 }

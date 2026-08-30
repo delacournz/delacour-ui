@@ -15,9 +15,15 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/cn.ts",
+			"path": "packages/native-ui/src/lib/cn.ts",
 			"target": "cn.ts",
-			"namespace": "lib"
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../styles/tokens",
+					"to": "@registry/styles/tokens"
+				}
+			]
 		}
 	]
 }

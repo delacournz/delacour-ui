@@ -21,47 +21,83 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/button/AGENTS.md",
+			"path": "packages/native-ui/src/components/button/AGENTS.md",
 			"target": "button/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/button",
+					"to": "@registry/ui/button"
+				}
+			]
 		},
 		{
-			"path": "files/ui/button/button-end-content.tsx",
+			"path": "packages/native-ui/src/components/button/button-end-content.tsx",
 			"target": "button/button-end-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/button/button-label.tsx",
+			"path": "packages/native-ui/src/components/button/button-label.tsx",
 			"target": "button/button-label.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/button/button-start-content.tsx",
+			"path": "packages/native-ui/src/components/button/button-start-content.tsx",
 			"target": "button/button-start-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/button/button.context.tsx",
+			"path": "packages/native-ui/src/components/button/button.context.tsx",
 			"target": "button/button.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/button/button.tsx",
+			"path": "packages/native-ui/src/components/button/button.tsx",
 			"target": "button/button.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/button/button.types.ts",
+			"path": "packages/native-ui/src/components/button/button.types.ts",
 			"target": "button/button.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/button/button.variants.ts",
+			"path": "packages/native-ui/src/components/button/button.variants.ts",
 			"target": "button/button.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		},
 		{
-			"path": "files/ui/button/index.ts",
+			"path": "packages/native-ui/src/components/button/index.ts",
 			"target": "button/index.ts",
 			"namespace": "ui"
 		}

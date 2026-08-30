@@ -3,6 +3,7 @@ import { readdir, readFile } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { readConfig } from "../../src/config/resolve";
 import { CONFIG_FILENAME } from "../../src/config/schema";
+import { classifySource } from "../../src/registry/classify";
 import { NAMESPACES } from "../../src/registry/namespaces";
 import { scanImports } from "../../src/registry/scan-imports";
 import { type RegistryItem, registryIndexSchema, registryItemSchema } from "../../src/registry/schema";
@@ -99,7 +100,7 @@ export const CHECKS: Check[] = [
 	},
 
 	{
-		name: "Every item's files exist as documents, and no document is orphaned",
+		name: "Every item's files exist in the library, and no library file is dropped",
 		async run({ registryDir }) {
 			const index = registryIndexSchema.parse(JSON.parse(await readFile(join(registryDir, "registry.json"), "utf-8")));
 			const referenced = new Set<string>();
@@ -111,27 +112,34 @@ export const CHECKS: Check[] = [
 				for (const file of item.files) referenced.add(file.path);
 			}
 
-			const filesDir = join(registryDir, "files");
-			const onDisk = new Set(
-				(await readdir(filesDir, { recursive: true, withFileTypes: true }))
+			// The registry serves the library itself, so `files[].path` resolves
+			// against the ref — the directory holding `registry/`, which on disk is
+			// the repository root.
+			const repoRoot = dirname(registryDir);
+			const libraryRoot = join(repoRoot, "packages", "native-ui", "src");
+
+			const library = new Set(
+				(await readdir(libraryRoot, { recursive: true, withFileTypes: true }))
 					.filter((entry) => entry.isFile())
-					.map((entry) => `files/${relative(filesDir, join(entry.parentPath, entry.name)).split(sep).join("/")}`)
+					.map((entry) => relative(libraryRoot, join(entry.parentPath, entry.name)).split(sep).join("/"))
+					.filter((path) => classifySource(path) !== null)
+					.map((path) => `packages/native-ui/src/${path}`)
 			);
 
-			// An item naming a file that is not there is a 404 mid-copy. A file no
-			// item names is dead weight the sweep should have taken — most likely a
-			// renamed component whose old folder was left behind.
-			const missing = [...referenced].filter((path) => !onDisk.has(path)).sort();
-			const orphaned = [...onDisk].filter((path) => !referenced.has(path)).sort();
+			// An item naming a file that is not there is a 404 mid-copy. A library
+			// file no item names is a component the registry silently drops —
+			// which is what a renamed folder looks like before anyone notices.
+			const missing = [...referenced].filter((path) => !existsSync(join(repoRoot, path))).sort();
+			const dropped = [...library].filter((path) => !referenced.has(path)).sort();
 
-			return missing.length === 0 && orphaned.length === 0
-				? { ok: true, summary: `${referenced.size} documents, all referenced` }
+			return missing.length === 0 && dropped.length === 0
+				? { ok: true, summary: `${referenced.size} library files, all referenced` }
 				: {
 						ok: false,
-						summary: "items and documents disagree",
+						summary: "items and the library disagree",
 						details: [
-							...missing.map((path) => `referenced but not written: ${path}`),
-							...orphaned.map((path) => `written but not referenced: ${path}`),
+							...missing.map((path) => `referenced but not in the library: ${path}`),
+							...dropped.map((path) => `in the library but no item names it: ${path}`),
 						].slice(0, 20),
 					};
 		},

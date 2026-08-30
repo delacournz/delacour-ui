@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import type { z } from "zod";
+import { applyRewrites } from "./rewrite";
 import type { LoadedItem, RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { registryIndexSchema, registryItemSchema } from "./schema";
 import { filePath, indexPath, itemPath, type RegistrySource, resolveRegistrySource } from "./source";
@@ -110,8 +111,9 @@ export function createRegistryClient(options: ClientOptions): RegistryClient {
 		},
 
 		getFile(file) {
-			// Keyed by registry path, not by item: two items naming the same file
-			// are naming the same document.
+			// Keyed by path, not by item: two items naming the same file are naming
+			// the same document. The text is returned as the library wrote it —
+			// `loadItem` is what applies the item's rewrites.
 			let pending = files.get(file.path);
 
 			if (!pending) {
@@ -123,8 +125,14 @@ export function createRegistryClient(options: ClientOptions): RegistryClient {
 		},
 
 		async loadItem(item) {
+			// The fetch is shared by registry path, the rewrite is per file entry.
+			// Two items naming one library file are naming one document, but each
+			// says for itself how that document's specifiers are to be read.
 			const loaded = await Promise.all(
-				item.files.map(async (file) => ({ ...file, content: await client.getFile(file) }))
+				item.files.map(async (file) => ({
+					...file,
+					content: applyRewrites(await client.getFile(file), file.rewrites),
+				}))
 			);
 
 			return { ...item, files: loaded };

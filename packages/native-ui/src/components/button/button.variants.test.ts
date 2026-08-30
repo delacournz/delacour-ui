@@ -262,15 +262,25 @@ describe("buttonVariants content slots", () => {
 });
 
 describe("resolveSpinnerSwapIndex", () => {
-	test("takes the first icon at the start and the last at the end", () => {
+	test("takes the leading icon at the start and the trailing one at the end", () => {
 		const icons = [true, false, true];
 		expect(resolveSpinnerSwapIndex(icons, "start")).toBe(0);
 		expect(resolveSpinnerSwapIndex(icons, "end")).toBe(2);
 	});
 
-	test("finds an icon wherever it sits among the children", () => {
-		expect(resolveSpinnerSwapIndex([false, false, true], "start")).toBe(2);
-		expect(resolveSpinnerSwapIndex([true, false, false], "end")).toBe(0);
+	// The bug this guards: a button with one leading icon and spinnerPlacement
+	// "end" used to swap that icon, drawing the spinner at the start — the
+	// opposite of what the caller asked for.
+	test("leaves an icon on the other side alone", () => {
+		expect(resolveSpinnerSwapIndex([true, false], "end")).toBeNull();
+		expect(resolveSpinnerSwapIndex([false, true], "start")).toBeNull();
+	});
+
+	// An icon that is not at either edge is not the side's icon either, so the
+	// spinner is inserted rather than taking a glyph out of the middle.
+	test("ignores an icon boxed in by other children", () => {
+		expect(resolveSpinnerSwapIndex([false, true, false], "start")).toBeNull();
+		expect(resolveSpinnerSwapIndex([false, true, false], "end")).toBeNull();
 	});
 
 	// With nothing to replace the spinner is inserted instead, which is what the
@@ -280,9 +290,9 @@ describe("resolveSpinnerSwapIndex", () => {
 		expect(resolveSpinnerSwapIndex([], "end")).toBeNull();
 	});
 
-	test("takes the only icon from either side", () => {
-		expect(resolveSpinnerSwapIndex([false, true], "start")).toBe(1);
-		expect(resolveSpinnerSwapIndex([false, true], "end")).toBe(1);
+	test("takes a lone icon for either side when it is the only child", () => {
+		expect(resolveSpinnerSwapIndex([true], "start")).toBe(0);
+		expect(resolveSpinnerSwapIndex([true], "end")).toBe(0);
 	});
 });
 

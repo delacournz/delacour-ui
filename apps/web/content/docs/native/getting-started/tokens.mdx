@@ -1,0 +1,180 @@
+---
+title: Tokens
+description: The colour palette — every shadcn token, name for name, and the six this library adds on top.
+icon: SwatchBook
+---
+
+Every token shadcn/ui defines is here, spelled the way shadcn spells it. A theme built for a web
+app — by hand, by `shadcn init`, or in a generator like tweakcn — names the same variables these
+components paint from, so moving one across is a copy rather than a translation.
+
+```bash
+npx delacour theme ./src/app/globals.css
+```
+
+[Theming](/docs/native/getting-started/theming) covers that command and how to override a token.
+This page is the reference: what each token means, and what it resolves to.
+
+## How a token becomes a class
+
+Two layers, both in `theme.css`. The **raw** name is what a theme declares, once per theme. The
+`@theme inline` block maps it onto the `--color-*` namespace Tailwind mints utilities from:
+
+```css
+@layer theme {
+  :root {
+    @variant light { --primary: oklch(0.205 0 0); }
+    @variant dark  { --primary: oklch(0.922 0 0); }
+  }
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+}
+```
+
+`--color-primary` is what gives you `bg-primary`, `text-primary` and `border-primary`. The raw
+`--primary` is what a theme sets, what `useThemeColor("primary")` reads, and — because `inline`
+substitutes the value into each utility rather than emitting a variable — the only one of the two
+that exists at runtime.
+
+<Callout type="warn">
+Declare a token in **both** variants. Uniwind refuses to build a theme that declares a variable the
+other one does not: *"All themes must have the same variables"*.
+</Callout>
+
+## The shadcn set
+
+Identical names, identical meanings. The values below are this library's defaults, resolved from
+the `oklch()` in `theme.css` — a theme of your own replaces them wholesale.
+
+| Token | Light | Dark | What it is |
+| --- | --- | --- | --- |
+| `background` | `#ffffff` | `#0a0a0a` | The page itself |
+| `foreground` | `#0a0a0a` | `#fafafa` | Text and icons on the page |
+| `card` | `#ffffff` | `#171717` | A raised surface — a panel, a grouped row |
+| `card-foreground` | `#0a0a0a` | `#fafafa` | Content drawn on `card` |
+| `popover` | `#ffffff` | `#171717` | A floating surface — a sheet, a menu |
+| `popover-foreground` | `#0a0a0a` | `#fafafa` | Content drawn on `popover` |
+| `primary` | `#171717` | `#e5e5e5` | The strongest action |
+| `primary-foreground` | `#fafafa` | `#171717` | Content drawn on `primary` |
+| `secondary` | `#f5f5f5` | `#262626` | The second-strongest action |
+| `secondary-foreground` | `#171717` | `#fafafa` | Content drawn on `secondary` |
+| `muted` | `#f5f5f5` | `#262626` | A de-emphasised fill — a track, a code block |
+| `muted-foreground` | `#737373` | `#a1a1a1` | De-emphasised text; a placeholder, a description |
+| `accent` | `#f5f5f5` | `#262626` | Hover and selection |
+| `accent-foreground` | `#171717` | `#fafafa` | Content drawn on `accent` |
+| `destructive` | `#e7000b` | `#ff6467` | The irreversible action, and the invalid state |
+| `destructive-foreground` | `#fafafa` | `#fafafa` | Content drawn on `destructive` |
+| `border` | `#e5e5e5` | `#ffffff1a` | A divider, and a control's edge |
+| `input` | `#e5e5e5` | `#ffffff26` | A field's edge, and a switch's unchecked track |
+| `ring` | `#a1a1a1` | `#737373` | A focused control's edge |
+| `chart-1` | `#f54900` | `#1447e6` | Data series |
+| `chart-2` | `#009689` | `#00bc7d` | Data series |
+| `chart-3` | `#104e64` | `#fe9a00` | Data series |
+| `chart-4` | `#ffb900` | `#ad46ff` | Data series |
+| `chart-5` | `#fe9a00` | `#ff2056` | Data series |
+| `sidebar` | `#fafafa` | `#171717` | A sidebar's own surface |
+| `sidebar-foreground` | `#0a0a0a` | `#fafafa` | Content drawn on `sidebar` |
+| `sidebar-primary` | `#171717` | `#1447e6` | The strongest action inside a sidebar |
+| `sidebar-primary-foreground` | `#fafafa` | `#fafafa` | Content drawn on `sidebar-primary` |
+| `sidebar-accent` | `#f5f5f5` | `#262626` | Hover and selection inside a sidebar |
+| `sidebar-accent-foreground` | `#171717` | `#fafafa` | Content drawn on `sidebar-accent` |
+| `sidebar-border` | `#e5e5e5` | `#ffffff1a` | A divider inside a sidebar |
+| `sidebar-ring` | `#a1a1a1` | `#737373` | A focused control inside a sidebar |
+
+`X` and `X-foreground` always pair: the base is a **surface**, and `X-foreground` is what is drawn
+*on* that surface. Keep that meaning when adding one.
+
+<Callout>
+`border` and `input` are alpha-on-white in dark (`#ffffff1a`, `#ffffff26`) rather than a flat grey.
+That is shadcn's own choice, and it is why a divider reads correctly on `background` and on `card`
+without either being restated.
+</Callout>
+
+## What this library adds
+
+shadcn has no name for these, and every component here paints with them. A theme you bring across
+will not define them, so each is **derived** from a token that theme *does* define — it follows
+your palette instead of staying on the defaults below.
+
+| Token | Light | Dark | What it is | Derived from |
+| --- | --- | --- | --- | --- |
+| `elevated` | `#ffffff` | `#3f3f3f` | A surface that must sit **above** `muted` in both themes | `background` in light; `muted` lifted toward `foreground` in dark |
+| `elevated-foreground` | `#0a0a0a` | `#fafafa` | Content drawn on `elevated` | `foreground` |
+| `tertiary` | `#fafafa` | `#181818` | A fill quieter than `secondary` | `secondary`, half a step further from the page |
+| `tertiary-foreground` | `#3f3f3f` | `#cecece` | Content drawn on `tertiary` | `foreground`, half-way to `muted-foreground` |
+| `success` | `#00bc7d` | `#00bc7d` | A completed or valid state | Literal — shadcn names no counterpart |
+| `success-foreground` | `#fafafa` | `#171717` | Content drawn on `success` | Literal |
+| `warning` | `#fe9a00` | `#fe9a00` | A state that needs attention but is not an error | Literal |
+| `warning-foreground` | `#1c1917` | `#1c1917` | Content drawn on `warning` | Literal |
+| `info` | `#3b82f6` | `#3b82f6` | A neutral, informational state | Literal |
+| `info-foreground` | `#fafafa` | `#fafafa` | Content drawn on `info` | Literal |
+| `destructive-soft` | `#fdebeb` | `#2c1717` | `destructive` as a tint rather than a fill | `destructive` over `background` |
+| `destructive-soft-foreground` | `#a5030b` | `#ff6467` | Content drawn on `destructive-soft` | `destructive`, darkened toward `foreground` in light |
+| `success-soft` | `#ebfaf5` | `#09231a` | `success` as a tint | `success` over `background` |
+| `success-soft-foreground` | `#03875a` | `#00bc7d` | Content drawn on `success-soft` | `success`, darkened toward `foreground` in light |
+| `warning-soft` | `#fff7eb` | `#2c1e09` | `warning` as a tint | `warning` over `background` |
+| `warning-soft-foreground` | `#b56f03` | `#fe9a00` | Content drawn on `warning-soft` | `warning`, darkened toward `foreground` in light |
+| `info-soft` | `#eff5fe` | `#111b2b` | `info` as a tint | `info` over `background` |
+| `info-soft-foreground` | `#2c5eaf` | `#3b82f6` | Content drawn on `info-soft` | `info`, darkened toward `foreground` in light |
+| `overlay` | `#00000073` | `#000000a6` | The scrim behind a sheet or a dialog | Literal black — a scrim is black in both themes |
+
+Three notes on the derivations, because each exists to fix something specific:
+
+- **`elevated` cannot be `card` or `popover`.** In shadcn's palette `card` is the same white as
+  `background` in light and *darker* than `muted` in dark. A control painted on it inside a muted
+  track would read as raised in one theme and sunken in the other. `Tabs`' selected capsule is what
+  this token exists for, so it lifts toward the page in light and toward the text in dark.
+- **A `-soft` foreground inverts in dark.** In light it is the state colour darkened toward the
+  text. Over a dark tint the state colour already reads, and mixing it toward a near-white
+  `foreground` would only wash it out — so in dark it is the state colour itself.
+- **`overlay` is literal black.** A scrim is black in both themes; deriving it from `foreground`
+  would paint a white one over a dark app. Only the alpha differs, because a pure-black scrim over
+  a near-black theme is nearly invisible.
+
+## Everything that is not a colour
+
+| Token | What it does | Where |
+| --- | --- | --- |
+| `--radius` | The one number every generic `rounded-*` step is a multiple of | [Sizing](/docs/native/getting-started/sizing) |
+| `--shadow-2xs` … `--shadow-2xl` | Carried for your own use — no component here draws a shadow | `theme.css` |
+| `--font-sans`, `--font-serif`, `--font-mono` | Split by **platform**, not by theme | `theme.css` |
+| `--spacing-*`, `--text-*` | The semantic size scales | [Sizing](/docs/native/getting-started/sizing) |
+
+<Callout type="warn">
+The fonts are the one thing a web theme cannot hand over intact. React Native's `fontFamily` takes a
+**single** family name with no fallback list, so `"Inter, ui-sans-serif, system-ui"` resolves to
+nothing and falls back to the system sans. They are declared under `@variant ios` / `@variant
+android` rather than `light` / `dark`, because no one name works on both — iOS has Menlo and
+Georgia and not `monospace`, Android the reverse.
+</Callout>
+
+## Reading a token from JavaScript
+
+A class cannot express a literal (`#EC4899`) and cannot reach an SVG paint prop like a gradient's
+`stopColor`. For a prop that needs a colour *value*, use `useThemeColor` — it takes the **raw**
+name, and resolves against the active theme.
+
+```tsx
+import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
+
+const destructive = useThemeColor("destructive");
+const series = useThemeColor("chart-1");
+```
+
+A literal passes straight through, so a caller can hand one to any prop typed as a token without
+special-casing it. A token no theme declares resolves to `undefined` rather than to a bogus value.
+
+## Adding a token
+
+Two edits, and both are required:
+
+1. Declare it under **`@variant light` and `@variant dark`** in `theme.css`.
+2. Alias it in the **`@theme inline`** block — `--color-<name>: var(--<name>);`
+
+Miss the second and the token is declared but unreachable: no `bg-*` exists for it, and nothing
+reports that. `bun test` fails on the gap, and so does `delacour doctor`.
+
+Add one only when nothing in shadcn's set already carries the meaning, and derive it from a token
+that set defines — otherwise a theme brought across from the web leaves it behind.

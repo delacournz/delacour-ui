@@ -50,44 +50,13 @@ dropped.
 
 ## The palette
 
-Everything shadcn defines, under the name shadcn gives it.
+Every token shadcn defines, under the name shadcn gives it — plus `elevated`, `tertiary`,
+`success`, `warning`, `info` and `overlay`, which it has no name for and which every component here
+paints with. Those six are **derived** from tokens a shadcn theme does define, so a palette you
+bring across drags them along instead of leaving them on this package's defaults.
 
-| Token | Meaning |
-| --- | --- |
-| `background` / `foreground` | The page and the text on it |
-| `card` / `card-foreground` | A raised surface |
-| `popover` / `popover-foreground` | A floating surface |
-| `primary` / `primary-foreground` | The strongest action |
-| `secondary` / `secondary-foreground` | The second-strongest |
-| `muted` / `muted-foreground` | De-emphasised text and fills |
-| `accent` / `accent-foreground` | Hover and selection |
-| `destructive` / `destructive-foreground` | The irreversible action |
-| `border`, `input`, `ring` | Chrome — a divider, a field's edge, a focus ring |
-| `chart-1` … `chart-5` | Data series |
-| `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-accent`, `sidebar-border`, `sidebar-ring` | A sidebar's own chrome |
-| `--radius` | The one number every generic corner is derived from |
-| `--shadow-2xs` … `--shadow-2xl` | Carried for your own use; no component here draws a shadow |
-
-### What this library adds
-
-shadcn has no name for these, so a pasted theme will not define them. Each is **derived** from a
-token that theme *does* define, so it follows the palette rather than staying behind on the
-library's defaults.
-
-| Token | Meaning | Derived from |
-| --- | --- | --- |
-| `elevated` / `elevated-foreground` | A surface that must sit **above** `muted` in both themes — what `Tabs`' capsule is painted on | `background` in light, `muted` lifted toward `foreground` in dark |
-| `tertiary` / `tertiary-foreground` | A fill quieter than `secondary` | `secondary`, half a step further from the page |
-| `success`, `warning`, `info` | The states shadcn does not name, each with a `-foreground` | Literal — there is no shadcn source |
-| `destructive-soft`, `success-soft`, `warning-soft`, `info-soft` | Their tinted variants, each with a `-foreground` | The state colour over `background` |
-| `overlay` | The scrim behind a sheet or a dialog | Literal black; a scrim is black in both themes |
-
-<Callout>
-`card` cannot do `elevated`'s job. It is the same white as `background` in light and *darker* than
-`muted` in dark, so a control painted on it inside a muted track reads as raised in one theme and
-sunken in the other. `X-foreground` always means "content drawn on an `X` surface" — keep that
-meaning when adding a token.
-</Callout>
+[**Tokens**](/docs/native/getting-started/tokens) is the full reference: what each one means, what
+it resolves to in both themes, and how each derivation is built.
 
 ## Overriding a token
 

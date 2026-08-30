@@ -38,7 +38,12 @@ export {
 	type ScreenVariantProps,
 	screenVariants,
 } from "./screen.variants";
-export type { ScreenChatListFlatProps, ScreenChatListLegendProps, ScreenChatListProps } from "./screen-chat-list";
+export type {
+	LegendListRef,
+	ScreenChatListFlatProps,
+	ScreenChatListLegendProps,
+	ScreenChatListProps,
+} from "./screen-chat-list";
 export { SCREEN_CHAT_INPUT_NATIVE_ID, type ScreenContentProps } from "./screen-content";
 export { SCREEN_DEBUG_COLORS, type ScreenDebugLayer } from "./screen-debug";
 export type { ScreenErrorProps } from "./screen-error";

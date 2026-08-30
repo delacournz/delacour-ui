@@ -1,4 +1,4 @@
-import { type ReactElement, type Ref, useMemo } from "react";
+import { type ForwardedRef, forwardRef, type ReactElement, type RefAttributes, useMemo } from "react";
 import { type DefaultSectionT, SectionList, type SectionListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { cn } from "../../lib/cn";
@@ -15,28 +15,34 @@ export type ScreenSectionListProps<ItemT, SectionT = DefaultSectionT> = Omit<
 	SectionListProps<ItemT, SectionT>,
 	"children"
 > &
-	ScreenScrollableProps & {
-		/**
-		 * The list itself, for `scrollToLocation` and the rest.
-		 *
-		 * Declared rather than inherited, the same way `Screen.LegendList` declares
-		 * its own: this component takes its props by name, so a `ref` passed
-		 * through as one is invisible to a caller until the type says so.
-		 */
-		ref?: Ref<SectionList<ItemT, SectionT>>;
-	};
+	ScreenScrollableProps;
+
+/**
+ * The component's own type, restated so the generics survive `forwardRef`.
+ *
+ * Same reasoning as `ScreenFlatListComponent`: `forwardRef` erases type
+ * parameters, so `sections` and `renderItem` would check against `unknown`.
+ */
+type ScreenSectionListComponent = (<ItemT, SectionT = DefaultSectionT>(
+	props: ScreenSectionListProps<ItemT, SectionT> & RefAttributes<SectionList<ItemT, SectionT>>
+) => ReactElement) & { displayName?: string };
 
 /**
  * A sectioned virtualised list that keeps its content clear of the screen's
  * chrome. `Screen.FlatList`'s behaviour, with sticky section headers.
+ *
+ * The ref is the list itself, for `scrollToLocation` and the rest.
  */
-export function ScreenSectionList<ItemT, SectionT = DefaultSectionT>({
-	header,
-	contentContainerClassName,
-	ListHeaderComponent: ListHeaderComponentProp,
-	ListFooterComponent: ListFooterComponentProp,
-	...props
-}: ScreenSectionListProps<ItemT, SectionT>): ReactElement {
+export const ScreenSectionList = forwardRef(function ScreenSectionListRender<ItemT, SectionT = DefaultSectionT>(
+	{
+		header,
+		contentContainerClassName,
+		ListHeaderComponent: ListHeaderComponentProp,
+		ListFooterComponent: ListFooterComponentProp,
+		...props
+	}: ScreenSectionListProps<ItemT, SectionT>,
+	ref: ForwardedRef<SectionList<ItemT, SectionT>>
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets("standard");
 
 	const ListHeaderComponent = useMemo<ReactElement>(
@@ -68,7 +74,8 @@ export function ScreenSectionList<ItemT, SectionT = DefaultSectionT>({
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}
+			ref={ref}
 		/>
 	);
-}
+}) as unknown as ScreenSectionListComponent;
 ScreenSectionList.displayName = "DelacourUI.Screen.SectionList";

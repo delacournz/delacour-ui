@@ -1,4 +1,4 @@
-import type { ReactElement, Ref } from "react";
+import { forwardRef, type ReactElement, type Ref } from "react";
 import type { ScrollViewProps } from "react-native";
 import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
@@ -21,21 +21,6 @@ export type ScreenScrollAreaProps = ScrollViewProps &
 		 * it costs a second scroll driver that a read-only screen never needs.
 		 */
 		keyboardAware?: boolean;
-		/**
-		 * The scroll view itself, for a caller that has to move it — jumping to an
-		 * offset, or driving it from a gesture on the UI thread.
-		 *
-		 * Declared rather than inherited. This component takes its props by name,
-		 * so React 19 passing `ref` through as one of them is invisible to a caller
-		 * until the type says so; `Screen.LegendList` declares its own for exactly
-		 * the same reason.
-		 *
-		 * One type covers both engines. `keyboardAware` swaps in
-		 * `KeyboardAwareScrollView`, whose ref is a SUPERSET of this one — it adds
-		 * `assureFocusedInputVisible` to the same scroll view instance — so what a
-		 * caller receives always satisfies what it declared.
-		 */
-		ref?: Ref<ScreenScrollViewRef>;
 	};
 
 /**
@@ -44,6 +29,13 @@ export type ScreenScrollAreaProps = ScrollViewProps &
  * The navbar and footer reserves are spacer views at either end of the content
  * rather than padding on the content container, so both can animate on the UI
  * thread as the chrome measures itself and the keyboard moves.
+ *
+ * The ref is a `ScreenScrollViewRef`, for a caller that has to move the scroll
+ * view — jumping to an offset, or driving it from a gesture on the UI thread.
+ * One type covers both engines: `keyboardAware` swaps in
+ * `KeyboardAwareScrollView`, whose ref is a SUPERSET of this one — it adds
+ * `assureFocusedInputVisible` to the same scroll view instance — so what a
+ * caller receives always satisfies what it declared.
  *
  * @example
  * <Screen.ScrollArea contentContainerClassName="gap-4 px-5">
@@ -55,15 +47,10 @@ export type ScreenScrollAreaProps = ScrollViewProps &
  *   <Form />
  * </Screen.ScrollArea>
  */
-export function ScreenScrollArea({
-	header,
-	className,
-	contentContainerClassName,
-	keyboardAware = false,
-	ref,
-	children,
-	...props
-}: ScreenScrollAreaProps): ReactElement {
+export const ScreenScrollArea = forwardRef<ScreenScrollViewRef, ScreenScrollAreaProps>(function ScreenScrollAreaRender(
+	{ header, className, contentContainerClassName, keyboardAware = false, children, ...props },
+	ref
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets(
 		keyboardAware ? "keyboard-aware" : "standard"
 	);
@@ -85,9 +72,9 @@ export function ScreenScrollArea({
 
 	// Two branches rather than one `keyboardAware ? A : B` component variable.
 	// A variable holding either component types its `ref` as the two refs'
-	// intersection, which is neither of them, so declaring the prop above would
-	// not compile at all — and the branch is what lets each engine receive the
-	// ref that is actually its own.
+	// intersection, which is neither of them, so `forwardRef` could not name a
+	// single instance type at all — and the branch is what lets each engine
+	// receive the ref that is actually its own.
 	//
 	// The cast in that branch is variance, not a guess: `RefObject.current` is
 	// mutable and therefore invariant, so TypeScript rejects the narrower ref
@@ -125,5 +112,5 @@ export function ScreenScrollArea({
 			{content}
 		</Animated.ScrollView>
 	);
-}
+});
 ScreenScrollArea.displayName = "DelacourUI.Screen.ScrollArea";

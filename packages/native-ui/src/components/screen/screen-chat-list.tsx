@@ -1,13 +1,25 @@
 import { KeyboardAwareLegendList } from "@legendapp/list/keyboard";
 import type { LegendListProps, LegendListRef, LegendListRenderItemProps } from "@legendapp/list/react-native";
 import type { AnimatedLegendListProps } from "@legendapp/list/reanimated";
-import { type ReactElement, type ReactNode, type Ref, useCallback, useEffect, useMemo, useRef } from "react";
+import {
+	type ForwardedRef,
+	forwardRef,
+	type ReactElement,
+	type ReactNode,
+	type Ref,
+	type RefAttributes,
+	useCallback,
+	useEffect,
+	useMemo,
+	useRef,
+} from "react";
 import { FlatList, type FlatListProps, type ScrollViewProps, View } from "react-native";
 import { KeyboardChatScrollView, type KeyboardChatScrollViewProps } from "react-native-keyboard-controller";
 import Animated, { type SharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { withUniwind } from "uniwind";
 import { cn } from "../../lib/cn";
+import { composeRefs } from "../../lib/compose-refs";
 import { useScreenDebug } from "./screen.context";
 import type { ScreenScrollableProps } from "./screen.types";
 import { SCREEN_DEBUG_COLORS } from "./screen-debug";
@@ -97,8 +109,6 @@ export type ScreenChatListFlatProps<ItemT> = ChatListSharedProps &
 		/** An inverted `FlatList`. Data must be newest-first. */
 		variant: "flat";
 		inverted?: boolean;
-		/** The inverted list itself, for `scrollToIndex`, `scrollToOffset` and the rest. */
-		ref?: Ref<FlatList<ItemT>>;
 		/**
 		 * Override the scroll range a growing input adds.
 		 * @default the composer's growth above its own baseline, from the screen context
@@ -114,7 +124,6 @@ export type ScreenChatListLegendProps<ItemT> = ChatListSharedProps &
 	> & {
 		/** LegendList in chat layout, with chronological oldest-first data. The default. */
 		variant?: "legend";
-		ref?: Ref<LegendListRef>;
 		/**
 		 * Override the padding that overlay growth adds above the collapsed
 		 * baseline.
@@ -126,6 +135,21 @@ export type ScreenChatListLegendProps<ItemT> = ChatListSharedProps &
 export type ScreenChatListProps<ItemT> = ScreenChatListFlatProps<ItemT> | ScreenChatListLegendProps<ItemT>;
 
 /**
+ * One name, two ref types, correlated with `variant`.
+ *
+ * `forwardRef<T, P>` has a single `T`, so the correlation cannot be expressed by
+ * the render function — it is stated here and re-established by a cast per
+ * branch inside it. Those casts are the price of `forwardRef` on a discriminated
+ * union: nothing checks them, so these two arms and those two branches are
+ * edited together or not at all.
+ */
+type ScreenChatListComponent = (<ItemT>(
+	props:
+		| (ScreenChatListFlatProps<ItemT> & RefAttributes<FlatList<ItemT>>)
+		| (ScreenChatListLegendProps<ItemT> & RefAttributes<LegendListRef>)
+) => ReactElement) & { displayName?: string };
+
+/**
  * A conversation list: composer clearance, keyboard lift and end anchoring.
  *
  * Two engines behind one name, chosen by `variant`, because the two ways to
@@ -134,9 +158,11 @@ export type ScreenChatListProps<ItemT> = ScreenChatListFlatProps<ItemT> | Screen
  *
  * - `legend` (default) — LegendList in chat layout, chronological oldest-first
  *   data, anchored at the end. `renderItem` takes LegendList's own info object.
+ *   Its ref is a `LegendListRef`.
  * - `flat` — an inverted `FlatList`, newest-first data, header and footer
  *   spacers swapped so the composer clearance stays adjacent to the composer.
- *   `renderItem` takes React Native's `ListRenderItemInfo`.
+ *   `renderItem` takes React Native's `ListRenderItemInfo`. Its ref is the
+ *   inverted `FlatList` itself.
  *
  * The two `renderItem` contracts are genuinely different, so the union exposes
  * each engine's own rather than adapting one into the other — an adapter would
@@ -148,10 +174,15 @@ export type ScreenChatListProps<ItemT> = ScreenChatListFlatProps<ItemT> | Screen
  * arrives too late to be part of that. Live growth and keyboard motion stay on
  * the UI thread through `extraContentPadding` / `contentInsetEndAdjustment`.
  */
-export function ScreenChatList<ItemT>(props: ScreenChatListProps<ItemT>): ReactElement {
-	if (props.variant === "flat") return <ScreenChatListFlat {...props} />;
-	return <ScreenChatListLegend {...props} />;
-}
+export const ScreenChatList = forwardRef(function ScreenChatListRender<ItemT>(
+	props: ScreenChatListProps<ItemT>,
+	ref: ForwardedRef<FlatList<ItemT> | LegendListRef>
+): ReactElement {
+	if (props.variant === "flat") {
+		return <ScreenChatListFlat {...props} ref={ref as unknown as ForwardedRef<FlatList<ItemT>>} />;
+	}
+	return <ScreenChatListLegend {...props} ref={ref as unknown as ForwardedRef<LegendListRef>} />;
+}) as unknown as ScreenChatListComponent;
 ScreenChatList.displayName = "DelacourUI.Screen.ChatList";
 
 /**
@@ -183,23 +214,31 @@ function useComposerSpacerNode(spacer: ChatComposerSpacer, isInverted: boolean, 
 	}, [spacer.gap, spacer.occupancy, isInverted, debug]);
 }
 
-function ScreenChatListFlat<ItemT>({
-	header,
-	className,
-	contentContainerClassName,
-	composerBaseHeight,
-	inverted = true,
-	offset: offsetProp,
-	keyboardLiftBehavior,
-	freeze,
-	applyWorkaroundForContentInsetHitTestBug,
-	extraContentPadding: extraContentPaddingProp,
-	blankSpace,
-	ListHeaderComponent: ListHeaderComponentProp,
-	ListFooterComponent: ListFooterComponentProp,
-	contentContainerStyle,
-	...props
-}: ScreenChatListFlatProps<ItemT>): ReactElement {
+/** The flat variant's own type, restated so `<ItemT>` survives `forwardRef`. */
+type ScreenChatListFlatComponent = (<ItemT>(
+	props: ScreenChatListFlatProps<ItemT> & RefAttributes<FlatList<ItemT>>
+) => ReactElement) & { displayName?: string };
+
+const ScreenChatListFlat = forwardRef(function ScreenChatListFlatRender<ItemT>(
+	{
+		header,
+		className,
+		contentContainerClassName,
+		composerBaseHeight,
+		inverted = true,
+		offset: offsetProp,
+		keyboardLiftBehavior,
+		freeze,
+		applyWorkaroundForContentInsetHitTestBug,
+		extraContentPadding: extraContentPaddingProp,
+		blankSpace,
+		ListHeaderComponent: ListHeaderComponentProp,
+		ListFooterComponent: ListFooterComponentProp,
+		contentContainerStyle,
+		...props
+	}: ScreenChatListFlatProps<ItemT>,
+	ref: ForwardedRef<FlatList<ItemT>>
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle } = useScreenScrollInsets("chat");
 	const composerSpacer = useChatComposerBaseSpacerHeight(composerBaseHeight);
 	const composerGrowthPadding = useChatComposerGrowthPadding();
@@ -300,37 +339,45 @@ function ScreenChatListFlat<ItemT>({
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}
+			ref={ref}
 			renderScrollComponent={renderScrollComponent}
 		/>
 	);
-}
+}) as unknown as ScreenChatListFlatComponent;
 ScreenChatListFlat.displayName = "DelacourUI.Screen.ChatList.Flat";
 
-function ScreenChatListLegend<ItemT>({
-	header,
-	className,
-	contentContainerClassName,
-	composerBaseHeight,
-	offset: offsetProp,
-	keyboardLiftBehavior,
-	freeze,
-	applyWorkaroundForContentInsetHitTestBug,
-	contentInsetEndAdjustment: contentInsetEndAdjustmentProp,
-	ListHeaderComponent: ListHeaderComponentProp,
-	ListFooterComponent: ListFooterComponentProp,
-	contentContainerStyle,
-	ref,
-	// A homogeneous list's rows all average out to one number. A list whose rows
-	// run 40pt to 350pt must override this AND pass `getItemType`, or every
-	// unmeasured row resolves to a single average spanning the whole range —
-	// which is what makes a mixed list jump when a page of it prepends.
-	estimatedItemSize = 72,
-	alignItemsAtEnd = true,
-	initialScrollAtEnd = true,
-	maintainScrollAtEnd = true,
-	maintainVisibleContentPosition,
-	...props
-}: ScreenChatListLegendProps<ItemT>): ReactElement {
+/** The legend variant's own type, restated so `<ItemT>` survives `forwardRef`. */
+type ScreenChatListLegendComponent = (<ItemT>(
+	props: ScreenChatListLegendProps<ItemT> & RefAttributes<LegendListRef>
+) => ReactElement) & { displayName?: string };
+
+const ScreenChatListLegend = forwardRef(function ScreenChatListLegendRender<ItemT>(
+	{
+		header,
+		className,
+		contentContainerClassName,
+		composerBaseHeight,
+		offset: offsetProp,
+		keyboardLiftBehavior,
+		freeze,
+		applyWorkaroundForContentInsetHitTestBug,
+		contentInsetEndAdjustment: contentInsetEndAdjustmentProp,
+		ListHeaderComponent: ListHeaderComponentProp,
+		ListFooterComponent: ListFooterComponentProp,
+		contentContainerStyle,
+		// A homogeneous list's rows all average out to one number. A list whose rows
+		// run 40pt to 350pt must override this AND pass `getItemType`, or every
+		// unmeasured row resolves to a single average spanning the whole range —
+		// which is what makes a mixed list jump when a page of it prepends.
+		estimatedItemSize = 72,
+		alignItemsAtEnd = true,
+		initialScrollAtEnd = true,
+		maintainScrollAtEnd = true,
+		maintainVisibleContentPosition,
+		...props
+	}: ScreenChatListLegendProps<ItemT>,
+	ref: ForwardedRef<LegendListRef>
+): ReactElement {
 	const { insetTopAnimatedStyle, scrollHandler } = useScreenScrollInsets("chat");
 	const composerSpacer = useChatComposerBaseSpacerHeight(composerBaseHeight);
 	const composerGrowthPadding = useChatComposerGrowthPadding();
@@ -391,14 +438,11 @@ function ScreenChatListLegend<ItemT>({
 		return () => cancelAnimationFrame(frame);
 	}, [composerSpacer.total]);
 
-	const setRef = useCallback(
-		(instance: LegendListRef | null) => {
-			innerRef.current = instance;
-			if (typeof ref === "function") ref(instance);
-			else if (ref) ref.current = instance;
-		},
-		[ref]
-	);
+	// Memoised, not called inline: `composeRefs` mints a new callback per call,
+	// and React detaches and reattaches a ref whose identity changed. On a chat
+	// list that would null `innerRef` and re-resolve the native handle on every
+	// render, so the `scrollToEnd` above could fire against a ref mid-swap.
+	const setRef = useMemo(() => composeRefs(innerRef, ref), [ref]);
 
 	return (
 		<StyledKeyboardAwareLegendList
@@ -434,7 +478,7 @@ function ScreenChatListLegend<ItemT>({
 			ref={setRef}
 		/>
 	);
-}
+}) as unknown as ScreenChatListLegendComponent;
 ScreenChatListLegend.displayName = "DelacourUI.Screen.ChatList.Legend";
 
 /** Re-exported so a caller can type its own `renderItem` for the legend variant. */

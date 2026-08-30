@@ -482,8 +482,12 @@ Five things about that block are load-bearing:
    There are two legal forms and no third. A root's goes **inside the
    `Object.assign`**; everything else takes a trailing statement on the line
    after its closing brace, as `button-label.tsx` does above and as the two
-   `memo` consts in `screen/` do after their `});`. `Button.displayName = …`
-   *after* the assign is a type error.
+   `memo` consts and the `forwardRef` scrollables in `screen/` do after their
+   `});`. `Button.displayName = …` *after* the assign is a type error.
+
+   A `forwardRef` scrollable is cast to a hand-written component type to keep its
+   generic, and that type declares `displayName?: string` for exactly this — see
+   [Screen](src/components/screen/AGENTS.md).
 
    Three names do not fall out of the rule mechanically. `DelacourProvider` is
    `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this

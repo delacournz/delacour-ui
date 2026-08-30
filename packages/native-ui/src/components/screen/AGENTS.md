@@ -5,13 +5,13 @@ them. Compound root plus `Screen.Navbar` (itself compound), `Screen.Content`,
 `Screen.View`, `Screen.Header`, `Screen.Footer`, four scrollables, and the two
 whole-screen states.
 
-`import { Screen } from "@delacour/native-ui/screen";`
+`import { Screen } from "@registry/ui/screen";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/screen` |
+| `index.ts` | → `@registry/ui/screen` |
 | `screen.tsx` | The `Object.assign` compound surface |
 | `screen-root.tsx` | The root box and its provider — see below for why it is split out |
 | `screen-navbar.tsx` | `Screen.Navbar`, plus its own nested surface |
@@ -51,19 +51,47 @@ whole-screen states.
   the content, which insets itself to match; `static` puts it in the flow. In
   this package `variant` always means a visual variant, so the axis that decides
   where a part *sits* gets its own name.
-- **Every scrollable declares its own `ref`.** React 19 passes `ref` through as
-  an ordinary prop, but these components take their props *by name*, so a ref
-  that flows to the underlying list at runtime is invisible to a caller until
-  the props type says so — the failure being `Property 'ref' does not exist`
-  against a component that would in fact have forwarded it. `ScrollArea` hands
-  back `ScreenScrollViewRef`, `FlatList` a `FlatList<ItemT>`, `SectionList` a
-  `SectionList<ItemT, SectionT>`, `LegendList` and the chat list's `legend`
-  variant a `LegendListRef`, and the chat list's `flat` variant a `FlatList`.
+- **Every scrollable forwards its ref through `React.forwardRef`.** `ScrollArea`
+  hands back `ScreenScrollViewRef`, `FlatList` a `FlatList<ItemT>`, `SectionList`
+  a `SectionList<ItemT, SectionT>`, `LegendList` and the chat list's `legend`
+  variant a `LegendListRef`, and the chat list's `flat` variant a `FlatList`. The
+  `*Props` types carry no `ref` member — `RefAttributes<T>` on the component type
+  carries it now — so do not add one back.
+
+  These — and the chat list's two private variants — are the **only** `forwardRef`
+  components in the package; everything else (`Input`, `Pressable`,
+  `Tabs.ScrollView`, `lib/slot`) is on React 19's ref-as-prop. The split is deliberate rather than half-finished. What it bought
+  here is that the ref is *named*: `FlatList`, `SectionList`, `LegendList` and
+  `ChatList`'s flat variant used to declare `ref?:` and never destructure it, so
+  it rode `{...props}` into the JSX — and in `LegendList` that spread is cast to
+  `AnimatedLegendListProps<ItemT>`, a type with no `ref` member, so nothing
+  checked that the ref arrived at all.
+- **`forwardRef` erases type parameters, so every generic scrollable is cast to a
+  hand-written component type.** `forwardRef`'s result is a
+  `ForwardRefExoticComponent` over one concrete instantiation, so `data` and
+  `renderItem` would check against `unknown` and stop constraining each other.
+  `ScreenFlatListComponent` and its siblings restate the signature — the same
+  move `StyledAnimatedLegendListComponent` already makes for `withUniwind`. Each
+  carries a `displayName?: string` member, which is what keeps the trailing
+  assignment legal after the cast.
+- **`ChatList`'s two ref types are correlated with `variant` by hand.**
+  `forwardRef<T, P>` has a single `T`, so the union arms in
+  `ScreenChatListComponent` and the two casts in the dispatcher are the only
+  thing holding `variant: "flat"` to a `FlatList<ItemT>` and `legend` to a
+  `LegendListRef`. Nothing checks them. Edit the arms and the branches together
+  or not at all.
+- **`ChatList`'s legend variant composes its ref through `composeRefs`, memoised
+  on the caller's ref.** It needs an inner handle of its own for the
+  `scrollToEnd` fallback, so the caller's ref is fanned rather than passed
+  through. `composeRefs` mints a new callback per call and React detaches and
+  reattaches a ref whose identity changed, so calling it inline would null the
+  inner handle and re-resolve the native one on every render — with the
+  `scrollToEnd` effect firing against a ref mid-swap.
 - **`ScrollArea` branches on `keyboardAware` rather than picking a component
   into a variable.** A `cond ? A : B` component types its `ref` as the two
-  refs' intersection, which is neither engine's, so the prop could not be
-  declared at all. The one cast in that branch is variance and not a guess:
-  `RefObject.current` is mutable and so invariant, while
+  refs' intersection, which is neither engine's, so `forwardRef` could not name
+  a single instance type at all. The one cast in that branch is variance and not
+  a guess: `RefObject.current` is mutable and so invariant, while
   `KeyboardAwareScrollViewRef` is genuinely `ScreenScrollViewRef` plus
   `assureFocusedInputVisible`.
 - **`ScreenScrollViewRef` is React Native's `ScrollView`, not

@@ -8,6 +8,14 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof LIST_GROUP_VARIANTS)[number], string> = {
+	default: "Default",
+	secondary: "Secondary",
+	tertiary: "Tertiary",
+	transparent: "Transparent",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
@@ -15,7 +23,7 @@ export function Demo(): ReactElement {
 				<ListGroup key={variant} variant={variant}>
 					<ListGroup.Item testID={`row-${variant}`}>
 						<ListGroup.ItemContent>
-							<ListGroup.ItemTitle>{variant}</ListGroup.ItemTitle>
+							<ListGroup.ItemTitle>{LABELS[variant]}</ListGroup.ItemTitle>
 							<ListGroup.ItemDescription>Surface for the {variant} variant</ListGroup.ItemDescription>
 						</ListGroup.ItemContent>
 						<ListGroup.ItemSuffix />

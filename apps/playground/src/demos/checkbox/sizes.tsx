@@ -5,8 +5,16 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sizes",
+	align: "center",
 	caption: "The box, its glyph and the label step together. A bare box sits below each row.",
 	capture: {},
+};
+
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof CHECKBOX_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
 };
 
 export function Demo(): ReactElement {
@@ -15,7 +23,7 @@ export function Demo(): ReactElement {
 			{CHECKBOX_SIZES.map((size) => (
 				<View className="flex-row items-center gap-4" key={size}>
 					<Checkbox color="primary" defaultChecked size={size} testID={`checkbox-${size}`}>
-						<Checkbox.Label>size {size}</Checkbox.Label>
+						<Checkbox.Label>{LABELS[size]}</Checkbox.Label>
 					</Checkbox>
 					<Checkbox color="primary" size={size} />
 				</View>

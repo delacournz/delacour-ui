@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Custom glyph",
+	align: "center",
 	caption: "A bare child is wrapped automatically so it still rotates. `speed` sets the rate.",
 };
 

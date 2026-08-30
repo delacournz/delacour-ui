@@ -1,6 +1,25 @@
 import type { ReactNode } from "react";
-import type { ViewProps } from "react-native";
+import type { ScrollView, ViewProps } from "react-native";
 import type { ScreenEdge, ScreenPlacement } from "./screen.variants";
+
+/**
+ * The instance `Screen.ScrollArea` hands back through its `ref`.
+ *
+ * Named rather than left inline because a caller needs to say it to declare the
+ * ref in the first place — `useAnimatedRef<ScreenScrollViewRef>()` for a scroll
+ * driven from the UI thread, `useRef<ScreenScrollViewRef>(null)` for one driven
+ * from JS. Both reach the same `scrollTo`.
+ *
+ * React Native's own `ScrollView` instance, which is what both engines actually
+ * hand back — `Animated.ScrollView` forwards to it, and
+ * `KeyboardAwareScrollViewRef` is defined as that same instance plus one method.
+ *
+ * Not `ComponentRef<typeof Animated.ScrollView>`: Reanimated's animated
+ * component types carry no `RefAttributes`, so that expression collapses to
+ * `never` — which still compiles everywhere, silently accepts any ref, and
+ * gives a caller a `.current` it can do nothing with.
+ */
+export type ScreenScrollViewRef = ScrollView;
 
 /**
  * The shape of a container that can inset itself against the safe area.

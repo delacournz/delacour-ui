@@ -15,6 +15,19 @@ import type { ComponentType } from "react";
 export type DemoFrame = "stage" | "device";
 
 /**
+ * How a demo is sized horizontally on the surface that shows it.
+ *
+ * `stretch` gives it the full content width — the width every demo is authored
+ * against. A demo that is a container needs it: a shrink-wrapped `ListGroup`,
+ * `Field.Group`, `Accordion` or `Tabs` collapses to its narrowest content and
+ * drops the text out of its rows.
+ *
+ * `center` shrink-wraps it, which is what makes a row of switches or a colour
+ * matrix sit as a composed object rather than hugging the left gutter.
+ */
+export type DemoAlign = "center" | "stretch";
+
+/**
  * Present on a demo whose media is published. Absent on one that only appears
  * in the playground gallery.
  *
@@ -27,18 +40,14 @@ export type DemoCapture = {
 	/** Default `stage`. */
 	frame?: DemoFrame;
 	/**
-	 * How the stage sizes the demo horizontally. Default `center`.
+	 * How the capture stage sizes the demo horizontally. Default `center`.
 	 *
-	 * `center` shrink-wraps it, which is what makes a row of switches or a
-	 * colour matrix sit as a composed card rather than hugging the left edge.
-	 *
-	 * `stretch` gives it the full content width — the same width the gallery's
-	 * scroll area gives it, which is what every demo is authored against. A
-	 * demo that is a container needs this: a shrink-wrapped `ListGroup`,
-	 * `Field.Group`, `Accordion` or `Tabs` collapses to its narrowest content
-	 * and drops the text out of its rows.
+	 * The published card is a composition in a way the gallery page is not, so
+	 * this defaults the other way round from {@link DemoMeta.align} — and it
+	 * doubles as that field's fallback, so a captured demo already carrying the
+	 * answer never restates it.
 	 */
-	align?: "center" | "stretch";
+	align?: DemoAlign;
 	/**
 	 * Path under `.argent/flows/previews/`, without the `.yaml`.
 	 *
@@ -90,6 +99,17 @@ export type DemoMeta = {
 	 * fit one slot would lose the reading order its author chose.
 	 */
 	note?: string;
+	/**
+	 * How the gallery page sizes this demo. Default `stretch`.
+	 *
+	 * Falls back to {@link DemoCapture.align} before the default, so the curated
+	 * demos that already declared a capture alignment inherit it here.
+	 *
+	 * Worth setting to `center` on a demo that is one small control: alone on a
+	 * page of its own, a lone switch pinned to the left gutter reads as a
+	 * mistake rather than as a specimen.
+	 */
+	align?: DemoAlign;
 	/** Absent ⇒ the demo renders in the gallery and no media is captured. */
 	capture?: DemoCapture;
 	/**
@@ -122,6 +142,8 @@ export type DemoEntry = {
 	group: string;
 	slug: string;
 	title: string;
+	/** Resolved: `meta.align`, else `meta.capture.align`, else `stretch`. */
+	align: DemoAlign;
 	caption?: string;
 	note?: string;
 	capture?: DemoCapture;

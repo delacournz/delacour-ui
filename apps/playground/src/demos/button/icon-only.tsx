@@ -7,6 +7,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Icon only",
+	caption: "`isIconOnly` squares the footprint at every size. The glyph needs an `accessibilityLabel`.",
+	align: "center",
 	capture: {},
 };
 

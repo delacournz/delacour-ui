@@ -7,7 +7,7 @@ surfaces:
 
 | Surface | What it uses |
 | --- | --- |
-| The playground gallery | `Demo` inside a `Section`, with `meta.title` and `meta.caption` |
+| The playground gallery | `Demo` alone on its own page, with `meta.title` and `meta.align` |
 | The capture route (`src/app/preview.tsx`) | `Demo` alone, centred, chrome-free |
 | The published media | A screenshot or an MP4 of that route |
 | The documentation snippet | The file's own source, minus `meta` |
@@ -85,9 +85,49 @@ motionless screen rather than an error. See
 is why a colour added to the library shows up here with no edit — in the gallery
 *and* in the published media. Writing the six out by hand breaks that quietly.
 
-**Prose goes in `meta`, never on screen.** `caption` runs above the demo and
-`note` below it, so a gallery can explain before it shows or after. Neither
-appears in the captured media, which is the component alone.
+**Label from a `Record` keyed on the value's own type, never from the value.**
+Rendering the mapped value put `danger-soft` in front of a reader, in the
+gallery and in the published card. A `Record<ButtonVariant, string>` beside the
+demo is exhaustive, so a variant added to the library fails this file's
+typecheck until someone writes its label — which is a better version of the rule
+above rather than an exception to it: the new variant still cannot be forgotten,
+and now it cannot arrive unreadable either.
+
+```ts
+const LABELS: Record<ButtonVariant, string> = {
+	primary: "Primary",
+	"danger-soft": "Danger Soft",
+	// …
+};
+```
+
+**Demos show the props, not the plumbing.** A demo earns its place by making one
+visual axis legible — a variant, a colour, a size, a state, or a composition
+someone would actually write. Interaction harnesses, scroll probes and
+seven-way permutations of one prop belong in a test or in the component's
+`AGENTS.md`, not in a gallery someone is paging through.
+
+**Prose goes in `meta`, never on screen.** `caption` reads before the demo and
+`note` after it.
+
+**Neither is drawn in the playground any more.** The gallery is a pager — one
+demo per screen, centred, nothing else on it — and a paragraph above a control
+was outweighing the control. Keep writing them: they are what the documentation
+site publishes beside the captured media, and they are the only place a demo
+explains what it is asking you to look at. They simply have no reader on a
+phone, so a demo that can only be understood through its caption is a demo that
+needs rewriting rather than a caption that needs rendering.
+
+**`meta.align` is how a demo sits on its page.** `stretch` is the default and
+gives the demo the full content width — what every demo is authored against, and
+what a container needs. Set `center` on a demo that is one small cluster of
+controls: alone on a page of its own, a lone switch pinned to the left gutter
+reads as a mistake rather than as a specimen. A container — `Accordion`,
+`ListGroup`, `Field.Group`, `Tabs` — must stay `stretch`, because shrink-wrapping
+collapses it to its narrowest row and drops the text out.
+
+It falls back to `capture.align` before the default, so a curated demo that
+already declared one for its published card does not restate it here.
 
 ## `meta.capture` is opt-in
 
@@ -103,9 +143,10 @@ a fixed margin. So every card is framed alike whatever its height, and a demo
 that grows a row keeps working — where a hand-tuned aspect would quietly start
 clipping the top and bottom off the component instead of failing.
 
-`align` is the one layout choice. It defaults to `center`, which shrink-wraps
-the demo — right for a row of switches or a colour matrix. Set
-`align: "stretch"` when the demo is a **container**: a shrink-wrapped
+`capture.align` is the one layout choice, and it is the published card's, not
+the gallery page's — see `meta.align` above for that one. It defaults the other
+way round, to `center`, because a card is a composition in a way a page is not.
+Set `capture.align: "stretch"` when the demo is a **container**: a shrink-wrapped
 `ListGroup`, `Field.Group`, `Accordion` or `Tabs` collapses to its narrowest
 content and drops the text out of its own rows. If a captured demo comes back
 looking squashed, this is why.

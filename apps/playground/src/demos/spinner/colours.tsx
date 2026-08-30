@@ -6,8 +6,17 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colours",
+	align: "center",
 	caption: "Named colours, a theme token and a literal hex. All four should survive a theme switch.",
 	capture: {},
+};
+
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof SPINNER_COLORS)[number], string> = {
+	default: "Default",
+	success: "Success",
+	warning: "Warning",
+	danger: "Danger",
 };
 
 export function Demo(): ReactElement {
@@ -16,7 +25,7 @@ export function Demo(): ReactElement {
 			{SPINNER_COLORS.map((color) => (
 				<View className="items-center gap-2" key={color}>
 					<Spinner color={color} size="lg" />
-					<Text.Caption size="xs">{color}</Text.Caption>
+					<Text.Caption size="xs">{LABELS[color]}</Text.Caption>
 				</View>
 			))}
 			<View className="items-center gap-2">

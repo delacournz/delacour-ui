@@ -5,9 +5,20 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Colours",
+	align: "center",
 	caption:
 		"Ticked and unticked at every colour. An unticked box is chrome at all six — the colour only says what a tick means.",
 	capture: { hero: true },
+};
+
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof CHECKBOX_COLORS)[number], string> = {
+	default: "Default",
+	primary: "Primary",
+	success: "Success",
+	warning: "Warning",
+	danger: "Danger",
+	info: "Info",
 };
 
 /**
@@ -22,7 +33,7 @@ function ColorRow({ color }: { color: (typeof CHECKBOX_COLORS)[number] }): React
 	return (
 		<View className="flex-row items-center gap-4">
 			<Checkbox color={color} isChecked={isChecked} onCheckedChange={setChecked} testID={`checkbox-${color}`}>
-				<Checkbox.Label>{color}</Checkbox.Label>
+				<Checkbox.Label>{LABELS[color]}</Checkbox.Label>
 			</Checkbox>
 			<Checkbox color={color} defaultChecked={false} />
 		</View>

@@ -10,12 +10,19 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof SLIDER_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-5">
 			{SLIDER_SIZES.map((size) => (
 				<View className="gap-2" key={size}>
-					<Text.Caption color="muted">{size}</Text.Caption>
+					<Text.Caption color="muted">{LABELS[size]}</Text.Caption>
 					<Slider defaultValue={50} size={size}>
 						<Slider.Output />
 						<Slider.Track>

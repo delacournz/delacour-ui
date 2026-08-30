@@ -23,6 +23,7 @@ import type { DemoEntry, DemoModule } from "./types";
 export function defineDemoGroup(group: string, modules: Record<string, DemoModule>): readonly DemoEntry[] {
 	return Object.entries(modules).map(([slug, { meta, Demo }]) => ({
 		Demo,
+		align: meta.align ?? meta.capture?.align ?? "stretch",
 		capture: meta.capture,
 		caption: meta.caption,
 		group,

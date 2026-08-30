@@ -1,6 +1,6 @@
 import type { LegendListRef } from "@legendapp/list/react-native";
 import { AnimatedLegendList, type AnimatedLegendListProps } from "@legendapp/list/reanimated";
-import { type ReactElement, type Ref, useMemo } from "react";
+import { type ForwardedRef, forwardRef, type ReactElement, type Ref, type RefAttributes, useMemo } from "react";
 import { View } from "react-native";
 import Animated from "react-native-reanimated";
 import { withUniwind } from "uniwind";
@@ -31,9 +31,18 @@ type StyledAnimatedLegendListComponent = <ItemT>(
 const StyledAnimatedLegendList = withUniwind(AnimatedLegendList) as unknown as StyledAnimatedLegendListComponent;
 
 export type ScreenLegendListProps<ItemT> = Omit<AnimatedLegendListProps<ItemT>, "renderScrollComponent"> &
-	ScreenScrollableProps & {
-		ref?: Ref<LegendListRef>;
-	};
+	ScreenScrollableProps;
+
+/**
+ * The component's own type, restated so `<ItemT>` survives `forwardRef`.
+ *
+ * Same reasoning as `StyledAnimatedLegendListComponent` above, one layer out:
+ * `forwardRef` erases type parameters, so `data` and `renderItem` would check
+ * against `unknown`.
+ */
+type ScreenLegendListComponent = (<ItemT>(
+	props: ScreenLegendListProps<ItemT> & RefAttributes<LegendListRef>
+) => ReactElement) & { displayName?: string };
 
 /**
  * A recycling list that keeps its content clear of the screen's chrome.
@@ -45,14 +54,19 @@ export type ScreenLegendListProps<ItemT> = Omit<AnimatedLegendListProps<ItemT>, 
  * For a chat, reach for `Screen.ChatList` instead: it adds the composer
  * clearance and the keyboard lift that a conversation needs and this one has no
  * opinion about.
+ *
+ * The ref is a `LegendListRef`.
  */
-export function ScreenLegendList<ItemT>({
-	header,
-	contentContainerClassName,
-	ListHeaderComponent: ListHeaderComponentProp,
-	ListFooterComponent: ListFooterComponentProp,
-	...props
-}: ScreenLegendListProps<ItemT>): ReactElement {
+export const ScreenLegendList = forwardRef(function ScreenLegendListRender<ItemT>(
+	{
+		header,
+		contentContainerClassName,
+		ListHeaderComponent: ListHeaderComponentProp,
+		ListFooterComponent: ListFooterComponentProp,
+		...props
+	}: ScreenLegendListProps<ItemT>,
+	ref: ForwardedRef<LegendListRef>
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets("standard");
 
 	const ListHeaderComponent = useMemo<ReactElement>(
@@ -84,7 +98,8 @@ export function ScreenLegendList<ItemT>({
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}
+			ref={ref}
 		/>
 	);
-}
+}) as unknown as ScreenLegendListComponent;
 ScreenLegendList.displayName = "DelacourUI.Screen.LegendList";

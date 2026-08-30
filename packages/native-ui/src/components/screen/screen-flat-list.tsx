@@ -1,4 +1,4 @@
-import { type ReactElement, useMemo } from "react";
+import { type ForwardedRef, forwardRef, type ReactElement, type RefAttributes, useMemo } from "react";
 import { FlatList, type FlatListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { cn } from "../../lib/cn";
@@ -14,6 +14,20 @@ const AnimatedFlatList = Animated.createAnimatedComponent(FlatList) as unknown a
 export type ScreenFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> & ScreenScrollableProps;
 
 /**
+ * The component's own type, restated so `<ItemT>` survives `forwardRef`.
+ *
+ * `forwardRef` erases type parameters — its result is a
+ * `ForwardRefExoticComponent` over one concrete instantiation — so `data` and
+ * `renderItem` would check against `unknown` and stop constraining each other.
+ * Writing the signature out is the same move `StyledAnimatedLegendListComponent`
+ * makes for `withUniwind` in `screen-legend-list`, and the `displayName` member
+ * is what keeps the trailing assignment legal after the cast.
+ */
+type ScreenFlatListComponent = (<ItemT>(
+	props: ScreenFlatListProps<ItemT> & RefAttributes<FlatList<ItemT>>
+) => ReactElement) & { displayName?: string };
+
+/**
  * A virtualised list that keeps its content clear of the screen's chrome.
  *
  * The reserves ride on `ListHeaderComponent` / `ListFooterComponent` rather
@@ -23,14 +37,19 @@ export type ScreenFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> 
  *
  * A caller's own header and footer components still render — they are composed
  * inside the screen's, not replaced by them.
+ *
+ * The ref is the list itself, for `scrollToIndex`, `scrollToOffset` and the rest.
  */
-export function ScreenFlatList<ItemT>({
-	header,
-	contentContainerClassName,
-	ListHeaderComponent: ListHeaderComponentProp,
-	ListFooterComponent: ListFooterComponentProp,
-	...props
-}: ScreenFlatListProps<ItemT>): ReactElement {
+export const ScreenFlatList = forwardRef(function ScreenFlatListRender<ItemT>(
+	{
+		header,
+		contentContainerClassName,
+		ListHeaderComponent: ListHeaderComponentProp,
+		ListFooterComponent: ListFooterComponentProp,
+		...props
+	}: ScreenFlatListProps<ItemT>,
+	ref: ForwardedRef<FlatList<ItemT>>
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets("standard");
 
 	const ListHeaderComponent = useMemo<ReactElement>(
@@ -62,7 +81,8 @@ export function ScreenFlatList<ItemT>({
 			ListFooterComponent={ListFooterComponent}
 			ListHeaderComponent={ListHeaderComponent}
 			onScroll={scrollHandler}
+			ref={ref}
 		/>
 	);
-}
+}) as unknown as ScreenFlatListComponent;
 ScreenFlatList.displayName = "DelacourUI.Screen.FlatList";

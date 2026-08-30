@@ -1,24 +1,32 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconPlusMedium } from "@delacour/native-ui/icons/central";
+import { BUTTON_VARIANTS, Button, type ButtonVariant } from "@delacour/native-ui/button";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Disabled",
+	caption: "`isDisabled` fades the button and blocks the press, on every variant.",
+	capture: { align: "stretch" },
+};
+
+const LABELS: Record<ButtonVariant, string> = {
+	primary: "Primary",
+	secondary: "Secondary",
+	tertiary: "Tertiary",
+	outline: "Outline",
+	ghost: "Ghost",
+	danger: "Danger",
+	"danger-soft": "Danger Soft",
 };
 
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
-			<Button isDisabled testID="disabled-primary">
-				<Icon icon={IconPlusMedium} />
-				<Button.Label>Cannot press this</Button.Label>
-			</Button>
-			<Button isDisabled testID="disabled-outline" variant="outline">
-				Disabled outline
-			</Button>
+			{BUTTON_VARIANTS.map((variant) => (
+				<Button isDisabled key={variant} testID={`disabled-${variant}`} variant={variant}>
+					{LABELS[variant]}
+				</Button>
+			))}
 		</View>
 	);
 }

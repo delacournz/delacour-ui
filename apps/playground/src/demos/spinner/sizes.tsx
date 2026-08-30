@@ -6,7 +6,18 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sizes",
+	align: "center",
 	capture: { hero: true },
+};
+
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof SPINNER_SIZES)[number], string> = {
+	xs: "XS",
+	sm: "SM",
+	md: "MD",
+	lg: "LG",
+	xl: "XL",
+	"2xl": "2XL",
 };
 
 export function Demo(): ReactElement {
@@ -15,7 +26,7 @@ export function Demo(): ReactElement {
 			{SPINNER_SIZES.map((size) => (
 				<View className="items-center gap-2" key={size}>
 					<Spinner size={size} />
-					<Text.Caption size="xs">{size}</Text.Caption>
+					<Text.Caption size="xs">{LABELS[size]}</Text.Caption>
 				</View>
 			))}
 			<View className="items-center gap-2">

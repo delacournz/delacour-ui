@@ -1,10 +1,10 @@
-import type { ReactElement } from "react";
+import { forwardRef, type ReactElement, type Ref } from "react";
 import type { ScrollViewProps } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { KeyboardAwareScrollView, type KeyboardAwareScrollViewRef } from "react-native-keyboard-controller";
 import Animated from "react-native-reanimated";
 import { withUniwind } from "uniwind";
 import { cn } from "@registry/lib/cn";
-import type { ScreenScrollableProps } from "./screen.types";
+import type { ScreenScrollableProps, ScreenScrollViewRef } from "./screen.types";
 import { screenVariants } from "./screen.variants";
 import { useScreenFooterKeyboardClearance, useScreenScrollInsets } from "./use-screen-scroll-insets";
 
@@ -30,6 +30,13 @@ export type ScreenScrollAreaProps = ScrollViewProps &
  * rather than padding on the content container, so both can animate on the UI
  * thread as the chrome measures itself and the keyboard moves.
  *
+ * The ref is a `ScreenScrollViewRef`, for a caller that has to move the scroll
+ * view — jumping to an offset, or driving it from a gesture on the UI thread.
+ * One type covers both engines: `keyboardAware` swaps in
+ * `KeyboardAwareScrollView`, whose ref is a SUPERSET of this one — it adds
+ * `assureFocusedInputVisible` to the same scroll view instance — so what a
+ * caller receives always satisfies what it declared.
+ *
  * @example
  * <Screen.ScrollArea contentContainerClassName="gap-4 px-5">
  *   {rows}
@@ -40,14 +47,10 @@ export type ScreenScrollAreaProps = ScrollViewProps &
  *   <Form />
  * </Screen.ScrollArea>
  */
-export function ScreenScrollArea({
-	header,
-	className,
-	contentContainerClassName,
-	keyboardAware = false,
-	children,
-	...props
-}: ScreenScrollAreaProps): ReactElement {
+export const ScreenScrollArea = forwardRef<ScreenScrollViewRef, ScreenScrollAreaProps>(function ScreenScrollAreaRender(
+	{ header, className, contentContainerClassName, keyboardAware = false, children, ...props },
+	ref
+): ReactElement {
 	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets(
 		keyboardAware ? "keyboard-aware" : "standard"
 	);
@@ -57,24 +60,57 @@ export function ScreenScrollArea({
 	// sticky shift, so counting it here would overshoot.
 	const footerClearance = useScreenFooterKeyboardClearance();
 
-	const Scroll = keyboardAware ? StyledKeyboardAwareScrollView : Animated.ScrollView;
+	const content = (
+		<>
+			<Animated.View style={insetTopAnimatedStyle} />
+			{header}
+			{children}
+			<Animated.View style={insetBottomAnimatedStyle} />
+		</>
+	);
+	const contentContainer = cn(screenVariants().scrollContent({ className: "py-0" }), contentContainerClassName);
+
+	// Two branches rather than one `keyboardAware ? A : B` component variable.
+	// A variable holding either component types its `ref` as the two refs'
+	// intersection, which is neither of them, so `forwardRef` could not name a
+	// single instance type at all — and the branch is what lets each engine
+	// receive the ref that is actually its own.
+	//
+	// The cast in that branch is variance, not a guess: `RefObject.current` is
+	// mutable and therefore invariant, so TypeScript rejects the narrower ref
+	// even though the value flowing back into it is a `KeyboardAwareScrollViewRef`
+	// — which IS a `ScreenScrollViewRef` plus one method.
+	if (keyboardAware) {
+		return (
+			<StyledKeyboardAwareScrollView
+				className={className}
+				keyboardShouldPersistTaps="handled"
+				onScroll={scrollHandler}
+				showsHorizontalScrollIndicator={false}
+				showsVerticalScrollIndicator={false}
+				bottomOffset={footerClearance}
+				{...props}
+				ref={ref as Ref<KeyboardAwareScrollViewRef>}
+				contentContainerClassName={contentContainer}
+			>
+				{content}
+			</StyledKeyboardAwareScrollView>
+		);
+	}
 
 	return (
-		<Scroll
+		<Animated.ScrollView
 			className={className}
 			keyboardShouldPersistTaps="handled"
 			onScroll={scrollHandler}
 			showsHorizontalScrollIndicator={false}
 			showsVerticalScrollIndicator={false}
-			{...(keyboardAware ? { bottomOffset: footerClearance } : null)}
 			{...props}
-			contentContainerClassName={cn(screenVariants().scrollContent({ className: "py-0" }), contentContainerClassName)}
+			ref={ref}
+			contentContainerClassName={contentContainer}
 		>
-			<Animated.View style={insetTopAnimatedStyle} />
-			{header}
-			{children}
-			<Animated.View style={insetBottomAnimatedStyle} />
-		</Scroll>
+			{content}
+		</Animated.ScrollView>
 	);
-}
+});
 ScreenScrollArea.displayName = "DelacourUI.Screen.ScrollArea";

@@ -10,12 +10,19 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof RADIO_SIZES)[number], string> = {
+	sm: "Small",
+	md: "Medium",
+	lg: "Large",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
 			{RADIO_SIZES.map((size) => (
 				<View className="gap-2" key={size}>
-					<Text.Caption color="muted">{size}</Text.Caption>
+					<Text.Caption color="muted">{LABELS[size]}</Text.Caption>
 					<Radio.Group accessibilityLabel={`Size ${size}`} defaultSelected="a" orientation="horizontal" size={size}>
 						<Radio testID={`radio-${size}-a`} value="a">
 							First

@@ -10,12 +10,18 @@ export const meta: DemoMeta = {
 	capture: { hero: true },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof RADIO_VARIANTS)[number], string> = {
+	primary: "Primary",
+	secondary: "Secondary",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
 			{RADIO_VARIANTS.map((variant) => (
 				<View className="gap-2" key={variant}>
-					<Text.Caption color="muted">{variant}</Text.Caption>
+					<Text.Caption color="muted">{LABELS[variant]}</Text.Caption>
 					<Radio.Group
 						accessibilityLabel={`${variant} example`}
 						defaultSelected="on"

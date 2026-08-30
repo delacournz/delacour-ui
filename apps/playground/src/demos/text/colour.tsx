@@ -10,12 +10,22 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof TEXT_COLORS)[number], string> = {
+	default: "Default",
+	muted: "Muted",
+	danger: "Danger",
+	success: "Success",
+	warning: "Warning",
+	info: "Info",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-2">
 			{TEXT_COLORS.map((color) => (
 				<Text color={color} key={color}>
-					color {color}
+					{LABELS[color]}
 				</Text>
 			))}
 			<View className="self-start rounded-full bg-danger px-3 py-1">

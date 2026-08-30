@@ -36,17 +36,22 @@ function sources(): Map<string, string> {
 const SOURCES = sources();
 
 /**
- * A PascalCase `function` declaration, or a `memo(function …)` const.
+ * A PascalCase `function` declaration, or a `memo(…)` / `forwardRef(…)` const.
  *
- * Those are the only two shapes a component takes here: the package has no
+ * Those are the only three shapes a component takes here: the package has no
  * arrow-function components, and every PascalCase function declaration in it
  * returns `ReactElement`, `ReactElement | null` or `null`. A PascalCase helper
  * would be a false positive — write helpers in camelCase, as the package already
  * does (`wrapTextChildren`, `withDividers`, `resolveListComponent`).
+ *
+ * A `forwardRef` component's own render function is a function EXPRESSION on the
+ * same line as the call, so it never starts a line and is not counted twice —
+ * which is why the screen scrollables name themselves once, on the const.
  */
 const DECLARATIONS = [
 	/^(?:export )?function ([A-Z][A-Za-z0-9]*)\s*[<(]/gm,
 	/^(?:export )?const ([A-Z][A-Za-z0-9]*) = memo\(/gm,
+	/^(?:export )?const ([A-Z][A-Za-z0-9]*) = forwardRef[<(]/gm,
 ];
 
 /** The trailing form on a part, and the `Object.assign` form on a root. */

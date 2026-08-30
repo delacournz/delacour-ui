@@ -10,12 +10,22 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
+/** Written out rather than mapped from the value, so no reader is shown a raw prop. */
+const LABELS: Record<(typeof SLIDER_COLORS)[number], string> = {
+	default: "Default",
+	primary: "Primary",
+	success: "Success",
+	warning: "Warning",
+	danger: "Danger",
+	info: "Info",
+};
+
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-5">
 			{SLIDER_COLORS.map((color) => (
 				<View className="gap-2" key={color}>
-					<Text.Caption color="muted">{color}</Text.Caption>
+					<Text.Caption color="muted">{LABELS[color]}</Text.Caption>
 					<Slider color={color} defaultValue={65}>
 						<Slider.Track>
 							<Slider.Fill />

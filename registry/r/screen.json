@@ -9,6 +9,7 @@
 	],
 	"registryDependencies": [
 		"cn",
+		"compose-refs",
 		"icon",
 		"icons",
 		"pressable",

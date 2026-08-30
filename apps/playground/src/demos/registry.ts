@@ -3,27 +3,16 @@
 // Regenerate with `bun run gen-demos`, which `bun dev` also runs so a demo
 // added on a branch cannot reach a device missing from this map.
 
-import * as demo_accordion_a_custom_indicator from "./accordion/a-custom-indicator";
 import * as demo_accordion_a_glyph_beside_the_title from "./accordion/a-glyph-beside-the-title";
-import * as demo_accordion_a_panel_keeps_what_is_inside_it from "./accordion/a-panel-keeps-what-is-inside-it";
-import * as demo_accordion_always_one_open from "./accordion/always-one-open";
 import * as demo_accordion_any_number_at_once from "./accordion/any-number-at-once";
-import * as demo_accordion_controlled_and_rejected from "./accordion/controlled-and-rejected";
 import * as demo_accordion_disabled from "./accordion/disabled";
-import * as demo_accordion_nothing_has_to_opt_in from "./accordion/nothing-has-to-opt-in";
 import * as demo_accordion_one_at_a_time from "./accordion/one-at-a-time";
 import * as demo_accordion_sizes from "./accordion/sizes";
 import * as demo_accordion_variants from "./accordion/variants";
-import * as demo_accordion_without_dividers from "./accordion/without-dividers";
 import * as demo_badge_composed_icon from "./badge/composed-icon";
-import * as demo_badge_disabled from "./badge/disabled";
 import * as demo_badge_dismissible from "./badge/dismissible";
-import * as demo_badge_long_label_in_a_narrow_column from "./badge/long-label-in-a-narrow-column";
-import * as demo_badge_pressable_and_pressable_with_dismiss from "./badge/pressable-and-pressable-with-dismiss";
-import * as demo_badge_scroll_check from "./badge/scroll-check";
 import * as demo_badge_sizes from "./badge/sizes";
 import * as demo_badge_status_dot from "./badge/status-dot";
-import * as demo_badge_trailing_icon_every_variant from "./badge/trailing-icon-every-variant";
 import * as demo_badge_variants_and_colours from "./badge/variants-and-colours";
 import * as demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss from "./bottom-sheet/anatomy/a-scrim-that-does-not-dismiss";
 import * as demo_bottom_sheet_anatomy_the_whole_composition from "./bottom-sheet/anatomy/the-whole-composition";
@@ -38,34 +27,17 @@ import * as demo_bottom_sheet_sizing_dynamic_but_capped from "./bottom-sheet/siz
 import * as demo_bottom_sheet_sizing_explicit_snap_points from "./bottom-sheet/sizing/explicit-snap-points";
 import * as demo_bottom_sheet_sizing_sized_to_its_content from "./bottom-sheet/sizing/sized-to-its-content";
 import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-sheet/sizing/the-same-sheet-more-content";
-import * as demo_button_both_icons_every_variant from "./button/both-icons-every-variant";
-import * as demo_button_compound_parts from "./button/compound-parts";
 import * as demo_button_disabled from "./button/disabled";
-import * as demo_button_end_icon from "./button/end-icon";
-import * as demo_button_feedback from "./button/feedback";
-import * as demo_button_haptics from "./button/haptics";
 import * as demo_button_icon_only from "./button/icon-only";
-import * as demo_button_loading_and_dimming from "./button/loading-and-dimming";
-import * as demo_button_loading_every_size from "./button/loading-every-size";
-import * as demo_button_loading_every_variant from "./button/loading-every-variant";
-import * as demo_button_loading_in_a_row from "./button/loading-in-a-row";
-import * as demo_button_loading_replaces_the_icon from "./button/loading-replaces-the-icon";
-import * as demo_button_scroll_check from "./button/scroll-check";
+import * as demo_button_icons from "./button/icons";
+import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
-import * as demo_button_spinner_overrides_the_button from "./button/spinner-overrides-the-button";
-import * as demo_button_spinner_placement from "./button/spinner-placement";
-import * as demo_button_start_icon from "./button/start-icon";
 import * as demo_button_variants from "./button/variants";
 import * as demo_checkbox_alignment from "./checkbox/alignment";
-import * as demo_checkbox_bare_boxes_and_their_targets from "./checkbox/bare-boxes-and-their-targets";
 import * as demo_checkbox_checkbox_group from "./checkbox/checkbox-group";
 import * as demo_checkbox_colours from "./checkbox/colours";
-import * as demo_checkbox_group_axes_are_defaults from "./checkbox/group-axes-are-defaults";
 import * as demo_checkbox_indeterminate from "./checkbox/indeterminate";
-import * as demo_checkbox_inside_a_field from "./checkbox/inside-a-field";
 import * as demo_checkbox_invalid_and_disabled from "./checkbox/invalid-and-disabled";
-import * as demo_checkbox_long_label_in_a_narrow_column from "./checkbox/long-label-in-a-narrow-column";
-import * as demo_checkbox_press_feedback from "./checkbox/press-feedback";
 import * as demo_checkbox_sizes from "./checkbox/sizes";
 import * as demo_field_anatomy_all_four from "./field/anatomy/all-four";
 import * as demo_field_anatomy_label_and_control from "./field/anatomy/label-and-control";
@@ -88,8 +60,6 @@ import * as demo_field_states_disabled from "./field/states/disabled";
 import * as demo_field_states_live from "./field/states/live";
 import * as demo_field_states_one_flag_three_things from "./field/states/one-flag-three-things";
 import * as demo_field_states_through_an_input_group from "./field/states/through-an-input-group";
-import * as demo_icon_a_numeric_size from "./icon/a-numeric-size";
-import * as demo_icon_a_subtree_of_defaults from "./icon/a-subtree-of-defaults";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -116,64 +86,38 @@ import * as demo_input_variants_disabled from "./input/variants/disabled";
 import * as demo_input_variants_focused from "./input/variants/focused";
 import * as demo_input_variants_invalid from "./input/variants/invalid";
 import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
-import * as demo_list_group_disabled_row from "./list-group/disabled-row";
 import * as demo_list_group_dividers from "./list-group/dividers";
-import * as demo_list_group_press_feedback from "./list-group/press-feedback";
 import * as demo_list_group_sizes from "./list-group/sizes";
-import * as demo_list_group_title_only from "./list-group/title-only";
 import * as demo_list_group_variants from "./list-group/variants";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
-import * as demo_pressable_explicit_values from "./pressable/explicit-values";
 import * as demo_pressable_haptics from "./pressable/haptics";
-import * as demo_pressable_long_press from "./pressable/long-press";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
-import * as demo_pressable_scroll_check from "./pressable/scroll-check";
-import * as demo_radio_controlled from "./radio/controlled";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
-import * as demo_radio_disabled_and_the_state_ladder from "./radio/disabled-and-the-state-ladder";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
-import * as demo_radio_inside_a_field from "./radio/inside-a-field";
-import * as demo_radio_long_label_in_a_narrow_column from "./radio/long-label-in-a-narrow-column";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
 import * as demo_radio_sizes from "./radio/sizes";
-import * as demo_radio_trailing_indicator_as_a_settings_row from "./radio/trailing-indicator-as-a-settings-row";
-import * as demo_radio_uncontrolled from "./radio/uncontrolled";
 import * as demo_radio_variants_and_states from "./radio/variants-and-states";
 import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_anatomy from "./screen/anatomy";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
-import * as demo_separator_insets from "./separator/insets";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
-import * as demo_separator_orientation_tokens from "./separator/orientation-tokens";
 import * as demo_separator_orientations from "./separator/orientations";
-import * as demo_separator_stretching_to_a_parent from "./separator/stretching-to-a-parent";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
-import * as demo_slider_a_custom_readout from "./slider/a-custom-readout";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_anatomy from "./slider/anatomy";
 import * as demo_slider_colours from "./slider/colours";
-import * as demo_slider_controlled_and_on_change_end from "./slider/controlled-and-on-change-end";
 import * as demo_slider_disabled_and_invalid from "./slider/disabled-and-invalid";
-import * as demo_slider_inside_a_field from "./slider/inside-a-field";
-import * as demo_slider_pan_versus_scroll from "./slider/pan-versus-scroll";
 import * as demo_slider_sizes from "./slider/sizes";
-import * as demo_slider_steps_and_haptics from "./slider/steps-and-haptics";
 import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
-import * as demo_switch_a_glyph_in_the_knob from "./switch/a-glyph-in-the-knob";
 import * as demo_switch_colours from "./switch/colours";
-import * as demo_switch_controlled_and_rejected from "./switch/controlled-and-rejected";
 import * as demo_switch_disabled_and_invalid from "./switch/disabled-and-invalid";
-import * as demo_switch_in_a_settings_list from "./switch/in-a-settings-list";
-import * as demo_switch_inside_a_field from "./switch/inside-a-field";
 import * as demo_switch_sizes from "./switch/sizes";
 import * as demo_switch_start_and_end_content from "./switch/start-and-end-content";
 import * as demo_switch_tap_or_drag from "./switch/tap-or-drag";
-import * as demo_switch_text_at_the_ends from "./switch/text-at-the-ends";
-import * as demo_switch_without_a_label from "./switch/without-a-label";
 import * as demo_tabs_composition_a_restyled_indicator_and_a_disabled_tab from "./tabs/composition/a-restyled-indicator-and-a-disabled-tab";
 import * as demo_tabs_composition_a_scroller_inside_a_panel from "./tabs/composition/a-scroller-inside-a-panel";
 import * as demo_tabs_composition_composed_icons_and_a_render_prop from "./tabs/composition/composed-icons-and-a-render-prop";
@@ -187,41 +131,25 @@ import * as demo_tabs_swipe_is_swipeable_false from "./tabs/swipe/is-swipeable-f
 import * as demo_tabs_swipe_swipeable_the_default from "./tabs/swipe/swipeable-the-default";
 import * as demo_tabs_variants_every_variant from "./tabs/variants/every-variant";
 import * as demo_text_alignment from "./text/alignment";
-import * as demo_text_code from "./text/code";
 import * as demo_text_colour from "./text/colour";
 import * as demo_text_inline_presets from "./text/inline-presets";
-import * as demo_text_inside_other_components from "./text/inside-other-components";
-import * as demo_text_nesting from "./text/nesting";
 import * as demo_text_size from "./text/size";
-import * as demo_text_transform from "./text/transform";
-import * as demo_text_truncation from "./text/truncation";
 import * as demo_text_type_scale from "./text/type-scale";
 import * as demo_text_weight from "./text/weight";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
 export const DEMOS = {
-	"accordion/a-custom-indicator": demo_accordion_a_custom_indicator,
 	"accordion/a-glyph-beside-the-title": demo_accordion_a_glyph_beside_the_title,
-	"accordion/a-panel-keeps-what-is-inside-it": demo_accordion_a_panel_keeps_what_is_inside_it,
-	"accordion/always-one-open": demo_accordion_always_one_open,
 	"accordion/any-number-at-once": demo_accordion_any_number_at_once,
-	"accordion/controlled-and-rejected": demo_accordion_controlled_and_rejected,
 	"accordion/disabled": demo_accordion_disabled,
-	"accordion/nothing-has-to-opt-in": demo_accordion_nothing_has_to_opt_in,
 	"accordion/one-at-a-time": demo_accordion_one_at_a_time,
 	"accordion/sizes": demo_accordion_sizes,
 	"accordion/variants": demo_accordion_variants,
-	"accordion/without-dividers": demo_accordion_without_dividers,
 	"badge/composed-icon": demo_badge_composed_icon,
-	"badge/disabled": demo_badge_disabled,
 	"badge/dismissible": demo_badge_dismissible,
-	"badge/long-label-in-a-narrow-column": demo_badge_long_label_in_a_narrow_column,
-	"badge/pressable-and-pressable-with-dismiss": demo_badge_pressable_and_pressable_with_dismiss,
-	"badge/scroll-check": demo_badge_scroll_check,
 	"badge/sizes": demo_badge_sizes,
 	"badge/status-dot": demo_badge_status_dot,
-	"badge/trailing-icon-every-variant": demo_badge_trailing_icon_every_variant,
 	"badge/variants-and-colours": demo_badge_variants_and_colours,
 	"bottom-sheet/anatomy/a-scrim-that-does-not-dismiss": demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss,
 	"bottom-sheet/anatomy/the-whole-composition": demo_bottom_sheet_anatomy_the_whole_composition,
@@ -236,34 +164,17 @@ export const DEMOS = {
 	"bottom-sheet/sizing/explicit-snap-points": demo_bottom_sheet_sizing_explicit_snap_points,
 	"bottom-sheet/sizing/sized-to-its-content": demo_bottom_sheet_sizing_sized_to_its_content,
 	"bottom-sheet/sizing/the-same-sheet-more-content": demo_bottom_sheet_sizing_the_same_sheet_more_content,
-	"button/both-icons-every-variant": demo_button_both_icons_every_variant,
-	"button/compound-parts": demo_button_compound_parts,
 	"button/disabled": demo_button_disabled,
-	"button/end-icon": demo_button_end_icon,
-	"button/feedback": demo_button_feedback,
-	"button/haptics": demo_button_haptics,
 	"button/icon-only": demo_button_icon_only,
-	"button/loading-and-dimming": demo_button_loading_and_dimming,
-	"button/loading-every-size": demo_button_loading_every_size,
-	"button/loading-every-variant": demo_button_loading_every_variant,
-	"button/loading-in-a-row": demo_button_loading_in_a_row,
-	"button/loading-replaces-the-icon": demo_button_loading_replaces_the_icon,
-	"button/scroll-check": demo_button_scroll_check,
+	"button/icons": demo_button_icons,
+	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
-	"button/spinner-overrides-the-button": demo_button_spinner_overrides_the_button,
-	"button/spinner-placement": demo_button_spinner_placement,
-	"button/start-icon": demo_button_start_icon,
 	"button/variants": demo_button_variants,
 	"checkbox/alignment": demo_checkbox_alignment,
-	"checkbox/bare-boxes-and-their-targets": demo_checkbox_bare_boxes_and_their_targets,
 	"checkbox/checkbox-group": demo_checkbox_checkbox_group,
 	"checkbox/colours": demo_checkbox_colours,
-	"checkbox/group-axes-are-defaults": demo_checkbox_group_axes_are_defaults,
 	"checkbox/indeterminate": demo_checkbox_indeterminate,
-	"checkbox/inside-a-field": demo_checkbox_inside_a_field,
 	"checkbox/invalid-and-disabled": demo_checkbox_invalid_and_disabled,
-	"checkbox/long-label-in-a-narrow-column": demo_checkbox_long_label_in_a_narrow_column,
-	"checkbox/press-feedback": demo_checkbox_press_feedback,
 	"checkbox/sizes": demo_checkbox_sizes,
 	"field/anatomy/all-four": demo_field_anatomy_all_four,
 	"field/anatomy/label-and-control": demo_field_anatomy_label_and_control,
@@ -286,8 +197,6 @@ export const DEMOS = {
 	"field/states/live": demo_field_states_live,
 	"field/states/one-flag-three-things": demo_field_states_one_flag_three_things,
 	"field/states/through-an-input-group": demo_field_states_through_an_input_group,
-	"icon/a-numeric-size": demo_icon_a_numeric_size,
-	"icon/a-subtree-of-defaults": demo_icon_a_subtree_of_defaults,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,
@@ -314,64 +223,38 @@ export const DEMOS = {
 	"input/variants/focused": demo_input_variants_focused,
 	"input/variants/invalid": demo_input_variants_invalid,
 	"list-group/custom-suffix": demo_list_group_custom_suffix,
-	"list-group/disabled-row": demo_list_group_disabled_row,
 	"list-group/dividers": demo_list_group_dividers,
-	"list-group/press-feedback": demo_list_group_press_feedback,
 	"list-group/sizes": demo_list_group_sizes,
-	"list-group/title-only": demo_list_group_title_only,
 	"list-group/variants": demo_list_group_variants,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
-	"pressable/explicit-values": demo_pressable_explicit_values,
 	"pressable/haptics": demo_pressable_haptics,
-	"pressable/long-press": demo_pressable_long_press,
 	"pressable/named-feedback": demo_pressable_named_feedback,
-	"pressable/scroll-check": demo_pressable_scroll_check,
-	"radio/controlled": demo_radio_controlled,
 	"radio/custom-indicator": demo_radio_custom_indicator,
-	"radio/disabled-and-the-state-ladder": demo_radio_disabled_and_the_state_ladder,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,
-	"radio/inside-a-field": demo_radio_inside_a_field,
-	"radio/long-label-in-a-narrow-column": demo_radio_long_label_in_a_narrow_column,
 	"radio/per-option-description": demo_radio_per_option_description,
 	"radio/sizes": demo_radio_sizes,
-	"radio/trailing-indicator-as-a-settings-row": demo_radio_trailing_indicator_as_a_settings_row,
-	"radio/uncontrolled": demo_radio_uncontrolled,
 	"radio/variants-and-states": demo_radio_variants_and_states,
 	"screen/a-pushed-screen": demo_screen_a_pushed_screen,
 	"screen/anatomy": demo_screen_anatomy,
 	"screen/loading-and-error": demo_screen_loading_and_error,
-	"separator/insets": demo_separator_insets,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
-	"separator/orientation-tokens": demo_separator_orientation_tokens,
 	"separator/orientations": demo_separator_orientations,
-	"separator/stretching-to-a-parent": demo_separator_stretching_to_a_parent,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
-	"slider/a-custom-readout": demo_slider_a_custom_readout,
 	"slider/a-range": demo_slider_a_range,
 	"slider/anatomy": demo_slider_anatomy,
 	"slider/colours": demo_slider_colours,
-	"slider/controlled-and-on-change-end": demo_slider_controlled_and_on_change_end,
 	"slider/disabled-and-invalid": demo_slider_disabled_and_invalid,
-	"slider/inside-a-field": demo_slider_inside_a_field,
-	"slider/pan-versus-scroll": demo_slider_pan_versus_scroll,
 	"slider/sizes": demo_slider_sizes,
-	"slider/steps-and-haptics": demo_slider_steps_and_haptics,
 	"slider/vertical": demo_slider_vertical,
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
-	"switch/a-glyph-in-the-knob": demo_switch_a_glyph_in_the_knob,
 	"switch/colours": demo_switch_colours,
-	"switch/controlled-and-rejected": demo_switch_controlled_and_rejected,
 	"switch/disabled-and-invalid": demo_switch_disabled_and_invalid,
-	"switch/in-a-settings-list": demo_switch_in_a_settings_list,
-	"switch/inside-a-field": demo_switch_inside_a_field,
 	"switch/sizes": demo_switch_sizes,
 	"switch/start-and-end-content": demo_switch_start_and_end_content,
 	"switch/tap-or-drag": demo_switch_tap_or_drag,
-	"switch/text-at-the-ends": demo_switch_text_at_the_ends,
-	"switch/without-a-label": demo_switch_without_a_label,
 	"tabs/composition/a-restyled-indicator-and-a-disabled-tab": demo_tabs_composition_a_restyled_indicator_and_a_disabled_tab,
 	"tabs/composition/a-scroller-inside-a-panel": demo_tabs_composition_a_scroller_inside_a_panel,
 	"tabs/composition/composed-icons-and-a-render-prop": demo_tabs_composition_composed_icons_and_a_render_prop,
@@ -385,14 +268,9 @@ export const DEMOS = {
 	"tabs/swipe/swipeable-the-default": demo_tabs_swipe_swipeable_the_default,
 	"tabs/variants/every-variant": demo_tabs_variants_every_variant,
 	"text/alignment": demo_text_alignment,
-	"text/code": demo_text_code,
 	"text/colour": demo_text_colour,
 	"text/inline-presets": demo_text_inline_presets,
-	"text/inside-other-components": demo_text_inside_other_components,
-	"text/nesting": demo_text_nesting,
 	"text/size": demo_text_size,
-	"text/transform": demo_text_transform,
-	"text/truncation": demo_text_truncation,
 	"text/type-scale": demo_text_type_scale,
 	"text/weight": demo_text_weight,
 } as const satisfies Record<string, DemoModule>;

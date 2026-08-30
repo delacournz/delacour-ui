@@ -240,7 +240,7 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   private scale.
 - **The track and the capsule are both `rounded-full`, and there is no radius
   arithmetic at all.** A pill inside a pill is concentric at *any* padding, which
-  is the property `CHECKBOX_FILL_RADIUS` has to subtract a border width to get
+  is the property `resolveCheckboxFillRadius` has to subtract a border width to get
   for a rounded rectangle. The first shape of this component did subtract a
   padding from a named `rounded-*` step per size — three maps to keep in step,
   and a rectangle that still read as boxy against its own track. Do not

@@ -113,15 +113,20 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   animation. Animating it only makes it correct at one end. `scale` shrinks the
   rendered corner along with the square, which is what keeps a half-grown fill
   looking like a smaller version of the finished one.
-- **It is a number, and there is no token for it.** 5pt and 7pt are not a scale;
-  they are `--radius-xs` and `--radius-sm` with a border subtracted, so minting
-  tokens would only give the pair a second place to disagree.
-  `checkbox.variants.test.ts` reads `tokens.css` and asserts
-  `CHECKBOX_FILL_RADIUS` *is* that subtraction, that `CHECKBOX_RADIUS_STEP`
-  names the `rounded-*` the `box` slot actually wears, and that the box's border
-  really is the bare 1pt `border` the arithmetic assumes. Retuning a radius, or
-  reaching for `border-2`, fails the build rather than quietly reopening the
-  gap.
+- **It is computed from `--radius`, not written down.** The result is not a
+  scale — it is the box's own step with a border subtracted — so minting a token
+  for it would only give the pair a second place to disagree. It cannot be read
+  back either: the corner scale is `@theme inline`, so Tailwind substitutes each
+  step into its utilities and no `--radius-xs` variable reaches the runtime.
+  `resolveCheckboxFillRadius` takes the live `--radius` and applies
+  `CHECKBOX_RADIUS_MULTIPLIER`, which is why a consumer pasting a theme with a
+  different `--radius` moves the fill with the border instead of leaving it
+  behind. `checkbox.variants.test.ts` reads `tokens.css` and asserts the
+  multipliers match it, that the result *is* that subtraction at any `--radius`,
+  that `CHECKBOX_RADIUS_STEP` names the `rounded-*` the `box` slot actually
+  wears, and that the box's border really is the bare 1pt `border` the
+  arithmetic assumes. Retuning the scale, or reaching for `border-2`, fails the
+  build rather than quietly reopening the gap.
 - **The border is the one part of the box no `tv()` describes.** A colour that
   fades cannot be a class, so it interpolates between two token *values* —
   `resolveCheckboxBorderTokens` names them, and `CHECKBOX_SURFACE_TOKEN` is the

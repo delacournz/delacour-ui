@@ -46,13 +46,19 @@ drawn at the same token.
 
 [Sizing](/docs/native/getting-started/sizing) has the whole ladder.
 
-## Themed by CSS variables
+## Themed by CSS variables — shadcn's
 
-Tokens live under `@variant light` / `dark` in `theme.css`. Components reference semantic names and
-never a `dark:` prefix, so swapping the variables swaps the theme — including the slab a native
-stack paints behind a push, which no `contentStyle` can reach.
+The palette is shadcn's, name for name, in shadcn's two-layer shape. Bring the theme out of your web
+app and these components wear it:
 
-[Theming](/docs/native/getting-started/theming) covers the navigator case.
+```bash
+npx delacour theme ./src/app/globals.css
+```
+
+Components reference semantic names and never a `dark:` prefix, so swapping the variables swaps the
+theme — including the slab a native stack paints behind a push, which no `contentStyle` can reach.
+
+[Theming](/docs/native/getting-started/theming) covers both, and the navigator case.
 
 ## Ships as source
 

@@ -59,18 +59,18 @@ map.
 **Imports are restricted, and this is the load-bearing one.** A demo may import
 only from `@delacour/native-ui/*`, `react`, `react-native`, the native peers, and
 `@/demos/types`. Nothing else — not `@/components/section`, not `expo-router`,
-not a helper two folders up. The snippet extractor **throws** on a violation
-rather than publishing it, because the published snippet has to compile when
-somebody pastes it into their own app, and an import of `@/components/anything`
-does not.
+not a helper two folders up. The source extractor **throws** on a violation,
+because a demo that only resolves inside this repository has stopped
+illustrating the library — a reader has to be able to write what they see.
 
 **The file has a pinned shape**, in this order: imports, `export const meta`,
 module-scope constants, module-scope helper components, and
 `export function Demo(): ReactElement` **last**. The extractor cuts `meta` and
-the types import out by byte range and publishes the rest verbatim — no
-re-printing, so the snippet keeps the exact formatting Biome gave the file.
-A helper component and a `useState` are welcome; they are why the unit is the
-whole file rather than a bare JSX fragment.
+the types import out by byte range and keeps the rest verbatim — no re-printing,
+because `sourceHash` is computed over it and a reformat would re-shoot every
+demo. That source is **not** published: the documentation writes its own snippets
+at the call site. A helper component and a `useState` are welcome; they are why
+the unit is the whole file rather than a bare JSX fragment.
 
 **No `GalleryScreen`, no `Section`, no scroll view.** A demo is the component
 and nothing else. The gallery supplies the frame.

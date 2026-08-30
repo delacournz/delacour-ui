@@ -29,8 +29,8 @@ import { dirname, join, relative } from "node:path";
 import {
 	awaitElement,
 	awaitIdle,
-	type Device,
 	bootDevice,
+	type Device,
 	describe,
 	devtoolsConnected,
 	listDevices,
@@ -52,13 +52,14 @@ import {
 	PAD_POINTS,
 	RECORDING_CAP_SECONDS,
 	SCHEME,
-	type Theme,
 	THEMES,
+	type Theme,
 } from "./previews/config";
+import { type PreviewEntryJson, renderManifest } from "./previews/manifest";
 import {
 	boundsCrop,
-	cropImage,
 	type CropRect,
+	cropImage,
 	type DemoBounds,
 	deviceCrop,
 	encodeVideo,
@@ -67,7 +68,6 @@ import {
 	probeDurationMs,
 	targetSize,
 } from "./previews/media";
-import { type PreviewEntryJson, renderManifest } from "./previews/manifest";
 import { type PlannedDemo, planDemos } from "./previews/plan";
 
 type Options = {
@@ -245,9 +245,7 @@ function parseBounds(description: string, sentinel: string): DemoBounds | null {
 		const index = line.indexOf(sentinel);
 		if (index === -1) continue;
 
-		const match = line
-			.slice(index + sentinel.length)
-			.match(/^(-?\d+),(-?\d+),(\d+),(\d+):(\d+)x(\d+)/);
+		const match = line.slice(index + sentinel.length).match(/^(-?\d+),(-?\d+),(\d+),(\d+):(\d+)x(\d+)/);
 		if (!match) continue;
 
 		const [, x, y, width, height, windowWidth, windowHeight] = match.map(Number);
@@ -333,6 +331,7 @@ async function captureMotion(
 	await startRecording(udid, RECORDING_CAP_SECONDS);
 
 	let raw: string;
+	let warning: string | undefined;
 	try {
 		await Bun.sleep(lead);
 		const flow = await runFlow(demo.flowPath as string, udid);
@@ -343,8 +342,13 @@ async function captureMotion(
 		// and every later demo fails on "a recording is already running".
 		const recording = await stopRecording(udid);
 		raw = recording.video;
-		if (recording.warning) throw new Error(`the recording is not trustworthy: ${recording.warning}`);
+		warning = recording.warning;
 	}
+
+	// Outside the `finally` on purpose. A throw in there replaces whatever the
+	// try block was throwing, so a failed flow got reported as an untrustworthy
+	// recording and the operator never saw the message that would have helped.
+	if (warning) throw new Error(`the recording is not trustworthy: ${warning}`);
 
 	await encodeVideo(raw, target.video, target.crop, target.size);
 	await extractPoster(target.video, target.poster);
@@ -359,7 +363,8 @@ async function readGeometry(udid: string): Promise<{ width: number; height: numb
 	await mkdir(dirname(probe), { recursive: true });
 	await screenshot(udid, probe);
 
-	const result = await Bun.$`ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 ${probe}`.quiet();
+	const result =
+		await Bun.$`ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 ${probe}`.quiet();
 	await rm(probe, { force: true });
 
 	const [width, height] = result.stdout.toString().trim().split(",").map(Number);
@@ -431,7 +436,9 @@ function mb(bytes: number): string {
 async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const all = await planDemos();
-	const demos = options.only ? all.filter((demo) => demo.id === options.only || demo.id.startsWith(`${options.only}/`)) : all;
+	const demos = options.only
+		? all.filter((demo) => demo.id === options.only || demo.id.startsWith(`${options.only}/`))
+		: all;
 
 	if (demos.length === 0) {
 		fail(options.only ? `No captured demos match "${options.only}".` : "No demos opt into capture yet.");
@@ -499,7 +506,6 @@ async function main(): Promise<void> {
 			entries.push({
 				animated,
 				capturedAt,
-				code: demo.source.code,
 				component: demo.component,
 				dark: media("dark"),
 				demo: demo.demo,

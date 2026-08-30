@@ -1,6 +1,11 @@
 /**
- * Reads a demo file as text: its `meta`, and the snippet published beside its
- * media.
+ * Reads a demo file as text: its `meta`, and its source with that `meta` spliced
+ * out.
+ *
+ * The source is no longer published — the documentation writes its own snippets
+ * at the call site a reader would type, rather than printing a demo's harness.
+ * It is still what `sourceHash` is computed over, so it is what decides whether
+ * a capture is skipped and what the media's `?v=` cache-buster is.
  *
  * Nothing here imports a demo. It cannot — a demo imports `react-native`, whose
  * Flow-typed source Bun's transpiler will not parse, which is the same reason
@@ -11,7 +16,7 @@
 
 import ts from "typescript";
 
-/** What a demo may reach for. Anything else and the published snippet would not compile. */
+/** What a demo may reach for. Anything else and it has stopped being consumer-shaped. */
 const ALLOWED_IMPORT_PREFIXES = [
 	"@delacour/native-ui",
 	"react",
@@ -21,7 +26,7 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"react-native-gesture-handler",
 ];
 
-/** The one project-local import a demo may make, and the one the snippet drops. */
+/** The one project-local import a demo may make, and the one the spliced source drops. */
 const TYPES_IMPORT = "@/demos/types";
 
 export type DemoCaptureMeta = {
@@ -109,12 +114,12 @@ function findMeta(source: ts.SourceFile, path: string): ts.VariableStatement {
 }
 
 /**
- * Fails on an import the published snippet could not resolve.
+ * Fails on an import a reader's app could not resolve.
  *
- * This is the rule that makes a snippet worth publishing. A demo reaching for
- * `@/components/section` still renders perfectly in the playground, so nothing
- * else would ever catch it — and the snippet would land in the documentation
- * as code that cannot compile in the reader's app.
+ * This is what keeps a demo shaped like code somebody could actually write. A
+ * demo reaching for `@/components/section` still renders perfectly in the
+ * playground, so nothing else would ever catch it — and a demo that only works
+ * inside this repository has stopped illustrating the library.
  */
 function checkImports(source: ts.SourceFile, path: string): void {
 	for (const statement of source.statements) {
@@ -128,7 +133,7 @@ function checkImports(source: ts.SourceFile, path: string): void {
 		}
 
 		throw new Error(
-			`${path}: imports "${specifier}", which the published snippet could not resolve. ` +
+			`${path}: imports "${specifier}", which a reader's app could not resolve. ` +
 				`A demo may import only ${ALLOWED_IMPORT_PREFIXES.join(", ")} and ${TYPES_IMPORT}.`
 		);
 	}
@@ -158,9 +163,9 @@ export async function readDemoSource(path: string): Promise<DemoSource> {
 
 	// Splice, never re-print. `ts.createPrinter` would reformat the whole file —
 	// different indentation, different wrapping, different JSX line breaks — so
-	// the published snippet would not match the file on disk that a reader is
-	// told is its source. `getFullStart` takes the leading trivia with it, so a
-	// doc comment on `meta` goes when `meta` does.
+	// `sourceHash` would change on every run of the capture script and re-shoot
+	// all 77 demos. `getFullStart` takes the leading trivia with it, so a doc
+	// comment on `meta` goes when `meta` does.
 	const cuts: [number, number][] = [[metaStatement.getFullStart(), metaStatement.getEnd()]];
 
 	for (const statement of source.statements) {
@@ -170,7 +175,9 @@ export async function readDemoSource(path: string): Promise<DemoSource> {
 		cuts.push([statement.getFullStart(), statement.getEnd()]);
 	}
 
-	const code = `${excise(text, cuts).replace(/\n{3,}/g, "\n\n").trim()}\n`;
+	const code = `${excise(text, cuts)
+		.replace(/\n{3,}/g, "\n\n")
+		.trim()}\n`;
 
 	return { code, meta };
 }
@@ -189,11 +196,7 @@ export async function readGroupOrder(barrelPath: string): Promise<string[]> {
 	const slugs: string[] = [];
 
 	const visit = (node: ts.Node): void => {
-		if (
-			ts.isCallExpression(node) &&
-			ts.isIdentifier(node.expression) &&
-			node.expression.text === "defineDemoGroup"
-		) {
+		if (ts.isCallExpression(node) && ts.isIdentifier(node.expression) && node.expression.text === "defineDemoGroup") {
 			const [, modules] = node.arguments;
 			if (modules && ts.isObjectLiteralExpression(modules)) {
 				for (const property of modules.properties) {

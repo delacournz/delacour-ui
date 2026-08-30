@@ -4,7 +4,7 @@ description: A compact label for status, category or count.
 icon: Tag
 ---
 
-<Preview id="badge/variants-and-colours" code={false} title={null} />
+<Preview id="badge/variants-and-colours" title={null} />
 
 ## Installation
 
@@ -68,6 +68,13 @@ The badge publishes its icon size and its variant's foreground token to the subt
 ## Trailing icons
 
 <Preview id="badge/trailing-icon-every-variant" />
+
+```tsx
+<Badge color="success">
+  <Badge.Label>Verified</Badge.Label>
+  <Icon icon={IconCheckmark1Small} />
+</Badge>
+```
 
 ## Start and end content
 

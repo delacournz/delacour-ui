@@ -4,7 +4,7 @@ description: One choice from a set, with a trailing indicator row.
 icon: CircleDot
 ---
 
-<Preview id="radio/variants-and-states" code={false} title={null} />
+<Preview id="radio/variants-and-states" title={null} />
 
 ## Installation
 
@@ -51,11 +51,30 @@ one tap target and inside the accessible name.
 
 <Preview id="radio/per-option-description" />
 
+```tsx
+<Radio value="standard">
+  <View className="min-w-0 shrink gap-0.5">
+    <Radio.Label>Standard</Radio.Label>
+    <Text.Caption>Arrives in three to five days.</Text.Caption>
+  </View>
+</Radio>
+```
+
 ## Trailing indicator
 
 Write a `Radio.Indicator` last and the row spreads to push the ring to the far edge.
 
 <Preview id="radio/trailing-indicator-as-a-settings-row" />
+
+```tsx
+<Radio value="standard">
+  <View className="min-w-0 shrink gap-0.5">
+    <Radio.Label>Standard delivery</Radio.Label>
+    <Text.Caption>Arrives in three to five days.</Text.Caption>
+  </View>
+  <Radio.Indicator />
+</Radio>
+```
 
 ## Inside a field
 
@@ -63,6 +82,17 @@ The group names no state of its own — `isInvalid` and `isDisabled` reach every
 enclosing `Field`.
 
 <Preview id="radio/inside-a-field" />
+
+```tsx
+<Field isInvalid={plan === undefined}>
+  <Field.Label>Plan</Field.Label>
+  <Radio.Group accessibilityLabel="Plan" onSelected={setPlan} selected={plan ?? null}>
+    <Radio value="free">Free</Radio>
+    <Radio value="pro">Pro</Radio>
+  </Radio.Group>
+  <Field.Error>Pick a plan to continue.</Field.Error>
+</Field>
+```
 
 ## Reading the radio's state
 

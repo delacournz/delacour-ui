@@ -4,7 +4,7 @@ description: The type scale, and the one component that reproduces React Native'
 icon: Type
 ---
 
-<Preview id="text/type-scale" code={false} title={null} />
+<Preview id="text/type-scale" title={null} />
 
 ## Installation
 
@@ -28,6 +28,22 @@ Eight block presets, largest first, and four inline ones that emit only a delta.
 <Preview id="text/type-scale" />
 
 <Preview id="text/inline-presets" />
+
+```tsx
+<Text.Display>Display</Text.Display>
+<Text.Title>Title</Text.Title>
+<Text.Header>Header</Text.Header>
+<Text.Subheader>Subheader</Text.Subheader>
+<Text.Paragraph>Paragraph</Text.Paragraph>
+<Text.Label>Label</Text.Label>
+<Text.Caption>Caption</Text.Caption>
+<Text.Overline>Overline</Text.Overline>
+
+<Text.Paragraph>
+  Inline: <Text.Strong>strong</Text.Strong>, <Text.Emphasis>emphasis</Text.Emphasis>,{" "}
+  <Text.Link>link</Text.Link>, <Text.Code>code</Text.Code>.
+</Text.Paragraph>
+```
 
 <Callout type="warn" title="A nested Text.Code cannot be padded">
 A nested `<Text>` is laid out by the platform's text engine — an `NSAttributedString` run on iOS, a

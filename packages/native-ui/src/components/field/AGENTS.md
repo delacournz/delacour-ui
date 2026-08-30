@@ -96,5 +96,5 @@ A form field's layout, and the one place its state is written down. Root plus
   has neither element nor association, so it and `Field.Label` would render the
   same `Text`.
 - **A set holds no state.** `isInvalid` and `isDisabled` live on each `Field`,
-  because a whole section turning destructive says less than the one field that is
+  because a whole section going `destructive` says less than the one field that is
   actually wrong.

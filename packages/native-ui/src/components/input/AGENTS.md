@@ -40,7 +40,7 @@ A text field, and the box that can hold content beside it. Root plus
   one set of axes; two would be two answers to the same question.
 - **The two state axes have three sources, and the nearest wins:**
   `Input.Group` → the `Input`'s own prop → the enclosing [`Field`](../field/AGENTS.md). An `Input`
-  inside `<Field isInvalid>` turns destructive with nothing said at the call site, and
+  inside `<Field isInvalid>` goes `destructive` with nothing said at the call site, and
   `<Input isInvalid={false} />` opts that one control out. `Input.Group` reads
   the `Field` too, or a decorated field inside an invalid one would stay calm
   while its label went red. Both are `??` chains, so an explicit `false` is a
@@ -70,7 +70,7 @@ A text field, and the box that can hold content beside it. Root plus
 - **Invalid outranks focus.** A field that went grey the moment it was tapped
   would drop the only signal it has that its value is wrong, exactly while the
   value is being corrected. The border, the caret and the decorators all stay
-  destructive.
+  `destructive`.
 - **A multiline field turns its height into a floor**, and the row aligns to the
   top with it — centred decorators would drift down the side of a paragraph
   instead of sitting on its first line. `py-0` on the single-line branch is

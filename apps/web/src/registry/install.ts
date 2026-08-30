@@ -2245,6 +2245,14 @@ export const install = {
 				],
 			},
 			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
 				name: "tv",
 				title: "tv",
 				kind: "shared",
@@ -2274,14 +2282,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{

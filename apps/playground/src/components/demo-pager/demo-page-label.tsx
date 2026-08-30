@@ -21,6 +21,10 @@ const FADE_IN_MS = 140;
  * One `withSequence` rather than two effects: the fade back in belongs to the
  * same animation as the fade out, and an effect keyed on the swapped state
  * would list a dependency it never reads.
+ *
+ * Shrink-wrapped rather than `flex-1`: the chevron beside it belongs to the
+ * name, and a label that claims the whole row strands the chevron at the far
+ * edge where it reads as a second, unrelated control.
  */
 export function DemoPageLabel({ title }: { title: string }): ReactElement {
 	const [displayed, setDisplayed] = useState(title);
@@ -39,8 +43,8 @@ export function DemoPageLabel({ title }: { title: string }): ReactElement {
 	const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
 	return (
-		<Animated.View className="min-w-0 flex-1" style={style}>
-			<Text.Overline numberOfLines={1} size="sm">
+		<Animated.View className="min-w-0 shrink" style={style}>
+			<Text.Overline color="default" numberOfLines={1} size="sm">
 				{displayed}
 			</Text.Overline>
 		</Animated.View>

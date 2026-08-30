@@ -96,11 +96,25 @@ that cannot drift from the component it shows.
 ### The gallery is a pager
 
 **One demo per screen, centred, and nothing else on it.** `DemoGallery` renders
-`DemoPager`, which gives every gallery a static navbar, a full-viewport page per
-demo under `pagingEnabled`, and a footer carrying the position rail, the current
-demo's name and the index sheet. Thirty-four routes share it and not one of them
-names it — they all still render the same six-line `DemoGallery` shell, which is
-why the whole surface could change without a route being edited.
+`DemoPager`, which gives every gallery a static navbar, a sticky header, and a
+full-viewport page per demo under `pagingEnabled`. Thirty-four routes share it
+and not one of them names it — they all still render the same six-line
+`DemoGallery` shell, which is why the whole surface could change without a route
+being edited.
+
+All of the chrome sits **above** the pages and **outside** the scroll area: the
+header is the pager's sibling, so it takes its own space in the flow and never
+moves. One row carries the demo's name on the left and its position on the right,
+and the rail draws that row's bottom edge — a sticky header needs a rule to hold
+it off the content and a gallery needs a position indicator, so one mark does
+both.
+
+**The rail is horizontal because that is what makes it selectable.** Stacked
+vertically it put three points between eighteen ticks and nothing could be hit on
+purpose, which is why an earlier pass needed a floating button to do the jumping.
+Laid across the width the same eighteen are about twenty points each, so the rail
+owns tapping and scrubbing, tapping the name opens the index sheet, and there is
+no floating button left to explain.
 
 **`meta.caption` and `meta.note` are not drawn here.** They are still authored
 and still published — `scripts/previews/demo-source.ts` cuts them out of the

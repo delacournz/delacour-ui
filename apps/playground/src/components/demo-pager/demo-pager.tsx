@@ -2,10 +2,9 @@ import { Screen } from "@delacour/native-ui/screen";
 import { useRouter } from "expo-router";
 import { type ReactElement, useCallback, useMemo, useState } from "react";
 import { View } from "react-native";
+import { DemoHeader } from "@/components/demo-pager/demo-header";
 import { DemoIndexSheet } from "@/components/demo-pager/demo-index-sheet";
 import { DemoPage } from "@/components/demo-pager/demo-page";
-import { DemoPageLabel } from "@/components/demo-pager/demo-page-label";
-import { DemoRail } from "@/components/demo-pager/demo-rail";
 import { useDemoPager } from "@/components/demo-pager/use-demo-pager";
 import type { DemoEntry } from "@/demos/types";
 
@@ -32,11 +31,12 @@ export type DemoPagerProps = {
  * pipeline's source extractor — but a paragraph of prose above a control is the
  * thing this screen exists to remove.
  *
- * **Both pieces of chrome are `static`, and that is load-bearing.** An overlay
- * navbar or footer is reserved by spacer views inside the scroll content, which
- * would put every page after the first behind the navbar when it snapped.
- * Static chrome takes its space in the flow instead, so the scroll view's own
- * frame is the clear band and `pagingEnabled` lands each demo exactly centred.
+ * **Every piece of chrome is outside the scroll area, and that is
+ * load-bearing.** An overlay navbar is reserved by a spacer view *inside* the
+ * scroll content, which would put every page after the first behind it when it
+ * snapped. A static navbar and a header that is simply the pager's sibling both
+ * take their space in the flow instead, so the scroll view's own frame is the
+ * clear band and `pagingEnabled` lands each demo exactly centred.
  *
  * The title and subtitle ride the back button, the way they did before the
  * gallery was paged: they stay put while the pages move, and the whole block
@@ -55,7 +55,7 @@ export function DemoPager({ title, subtitle, demos }: DemoPagerProps): ReactElem
 					</View>
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
-			<DemoPagerBody demos={demos} />
+			<DemoPagerBody demos={demos} title={title} />
 		</Screen>
 	);
 }
@@ -77,15 +77,21 @@ export function DemoPager({ title, subtitle, demos }: DemoPagerProps): ReactElem
  * demo that has been scrolled into would otherwise hand its next drag to the
  * pager and jump to the following demo mid-read.
  *
+ * The index sheet is controlled from here rather than opened by a trigger of
+ * its own, so the header row can be the control. That is the whole reason the
+ * floating button is gone: the demo's name was already on screen, and a second
+ * wordless way to ask the same question was one control too many.
+ *
  * Nothing renders until the frame has been measured. A page sizes itself from
  * that measurement, so rendering first would paint one frame of every demo in
  * the gallery stacked at its natural height — the old layout, for a sixtieth of
  * a second, on the way into the new one. An empty background for that frame is
  * both cheaper and quieter.
  */
-function DemoPagerBody({ demos }: { demos: readonly DemoEntry[] }): ReactElement {
+function DemoPagerBody({ demos, title }: { demos: readonly DemoEntry[]; title: string }): ReactElement {
 	const { activeIndex, onFrameLayout, pageHeight, progress, scrollRef, scrollToIndex } = useDemoPager(demos.length);
 	const [innerScrolled, setInnerScrolled] = useState(NO_INNER_SCROLL);
+	const [isIndexOpen, setIndexOpen] = useState(false);
 
 	const onInnerScrollChange = useCallback((id: string, isScrolled: boolean) => {
 		setInnerScrolled((current) => {
@@ -102,6 +108,15 @@ function DemoPagerBody({ demos }: { demos: readonly DemoEntry[] }): ReactElement
 
 	return (
 		<>
+			<DemoHeader
+				activeIndex={activeIndex}
+				ids={ids}
+				onOpenIndex={() => setIndexOpen(true)}
+				pageHeight={pageHeight}
+				progress={progress}
+				scrollRef={scrollRef}
+				title={active?.title ?? ""}
+			/>
 			<Screen.ScrollArea
 				className="flex-1"
 				onLayout={onFrameLayout}
@@ -122,15 +137,14 @@ function DemoPagerBody({ demos }: { demos: readonly DemoEntry[] }): ReactElement
 						))
 					: null}
 			</Screen.ScrollArea>
-			<Screen.Footer placement="static">
-				<View className="flex-row items-center gap-2">
-					<View className="min-w-0 flex-1 flex-row items-center gap-1">
-						<DemoRail ids={ids} pageHeight={pageHeight} progress={progress} scrollRef={scrollRef} />
-						<DemoPageLabel title={active?.title ?? ""} />
-					</View>
-					<DemoIndexSheet activeIndex={activeIndex} demos={demos} onSelect={scrollToIndex} />
-				</View>
-			</Screen.Footer>
+			<DemoIndexSheet
+				activeIndex={activeIndex}
+				demos={demos}
+				isOpen={isIndexOpen}
+				onOpenChange={setIndexOpen}
+				onSelect={scrollToIndex}
+				title={title}
+			/>
 		</>
 	);
 }

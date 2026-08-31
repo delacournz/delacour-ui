@@ -5,7 +5,7 @@ import { View } from "react-native";
 import { AXIS_SELECTED_ROW_CLASS, AxisSheet, type AxisSheetControlProps } from "@/components/theme/axis-sheet";
 
 /** The one row, the caption under it, and the room the caption needs. */
-const ICON_LIBRARY_ROW_COUNT = 3;
+const ICON_LIBRARY_ROW_COUNT = 4;
 
 /**
  * The one axis shadcn offers that this library cannot.

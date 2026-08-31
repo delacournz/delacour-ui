@@ -2,6 +2,7 @@ import { ListGroup } from "@delacour/native-ui/list-group";
 import type { ReactElement } from "react";
 import {
 	AXIS_SELECTED_ROW_CLASS,
+	AXIS_TWO_LINE_ROW_HEIGHT,
 	AxisSheet,
 	type AxisSheetControlProps,
 	useAxisChoice,
@@ -21,12 +22,16 @@ import { styleByName } from "@/design-system/styles";
  * current style's own corner to draw anything truthful.
  */
 export function RadiusBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps): ReactElement {
+	// Only `default` carries a description, so the list is one tall row and four
+	// short ones — averaged rather than summed, because the shell takes a single
+	// row height and rounding it up is the cheap side to be wrong on.
+	const rowHeight = Math.ceil((AXIS_TWO_LINE_ROW_HEIGHT + (RADII.length - 1) * 56) / RADII.length);
 	const config = useDesignSystem();
 	const choose = useAxisChoice("radius", onOpenChange);
 	const styleRadius = styleByName(config.style)?.geometry.radius ?? 0;
 
 	return (
-		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={RADII.length} title="Radius">
+		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={RADII.length} rowHeight={rowHeight} title="Radius">
 			<ListGroup isDivided={false} variant="transparent">
 				{RADII.map((candidate) => (
 					<ListGroup.Item

@@ -2,6 +2,7 @@ import { ListGroup } from "@delacour/native-ui/list-group";
 import type { ReactElement } from "react";
 import {
 	AXIS_SELECTED_ROW_CLASS,
+	AXIS_TWO_LINE_ROW_HEIGHT,
 	AxisSheet,
 	type AxisSheetControlProps,
 	useAxisChoice,
@@ -22,7 +23,13 @@ export function StyleBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps
 	const choose = useAxisChoice("style", onOpenChange);
 
 	return (
-		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={STYLES.length} rowHeight={76} title="Style">
+		<AxisSheet
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
+			rowCount={STYLES.length}
+			rowHeight={AXIS_TWO_LINE_ROW_HEIGHT}
+			title="Style"
+		>
 			<ListGroup isDivided={false} variant="transparent">
 				{STYLES.map((candidate) => (
 					<ListGroup.Item

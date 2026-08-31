@@ -1,13 +1,23 @@
 import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
-import { Dimensions, View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { DesignSystemConfig } from "@/design-system/config";
 import { setAxis } from "@/design-system/store";
 
-/** Roughly what one single-line row occupies, for sizing a sheet to its content. */
-const AXIS_ROW_HEIGHT = 52;
-/** The title block above the rows, plus the sheet's own padding. */
-const AXIS_CHROME_HEIGHT = 96;
+/** What one single-line `ListGroup.Item` occupies, measured on device. */
+const AXIS_ROW_HEIGHT = 56;
+/** What a row carrying a description occupies — Style's eight, and Radius's `default`. */
+export const AXIS_TWO_LINE_ROW_HEIGHT = 68;
+/**
+ * The grabber, the title block, and the scroll content's own top padding.
+ *
+ * Measured from the sheet's own top edge, which is NOT where the accessibility
+ * tree puts it — that frame starts below the grabber, and taking the number
+ * from there loses the ~24pt the grabber occupies and shortens every sheet by
+ * enough to put its last row back under the home indicator.
+ */
+const AXIS_CHROME_HEIGHT = 76;
 const MIN_FRACTION = 0.32;
 const MAX_FRACTION = 0.85;
 
@@ -72,14 +82,25 @@ export function AxisSheet({
 	onOpenChange,
 	children,
 }: AxisSheetProps): ReactElement {
+	const insets = useSafeAreaInsets();
+	const { height } = useWindowDimensions();
+
 	// Memoised, unlike DemoIndexSheet's: an axis sheet re-renders on every
 	// config change, and a fresh array identity makes gorhom re-derive its snap
 	// points underneath a sheet that is open at the time.
+	//
+	// `insets.bottom` is a term, not a rounding allowance. The scroll view pays
+	// the home-indicator inset as padding INSIDE its content, so a snap point
+	// that budgets only for the rows leaves that padding below the fold: the
+	// list scrolls where it should have fitted, and at rest the last row sits
+	// under the indicator. Rounding up rather than to nearest for the same
+	// reason — a sheet a point taller than its content shows a sliver of empty
+	// space, a sheet a point shorter clips a row.
 	const snapPoints = useMemo(() => {
-		const wanted = (AXIS_CHROME_HEIGHT + rowCount * (rowHeight ?? AXIS_ROW_HEIGHT)) / Dimensions.get("window").height;
-		const fraction = Math.min(Math.max(wanted, MIN_FRACTION), MAX_FRACTION);
-		return [`${Math.round(fraction * 100)}%`];
-	}, [rowCount, rowHeight]);
+		const content = AXIS_CHROME_HEIGHT + rowCount * (rowHeight ?? AXIS_ROW_HEIGHT) + insets.bottom;
+		const fraction = Math.min(Math.max(content / height, MIN_FRACTION), MAX_FRACTION);
+		return [`${Math.ceil(fraction * 100)}%`];
+	}, [rowCount, rowHeight, insets.bottom, height]);
 
 	return (
 		<BottomSheet isOpen={isOpen} onOpenChange={onOpenChange}>

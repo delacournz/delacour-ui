@@ -1,4 +1,49 @@
 import type { ExpoConfig } from "expo/config";
+import { FONTS } from "./src/design-system/fonts.ts";
+
+/**
+ * The typefaces the customizer offers, embedded natively.
+ *
+ * Runtime loading is not an option, and the reason is Android: `expo-font`'s
+ * module calls `ReactFontManager.setTypeface(family, Typeface.NORMAL, face)`
+ * with the style hardcoded, which writes the four-slot asset cache rather than
+ * the numeric-weight one. A family registered that way renders 500 and 600 as
+ * Regular and 700 as a synthetic system bold. The config plugin instead
+ * generates a `res/font` XML carrying `app:fontWeight` per face — the only path
+ * on which `fontWeight` resolves at all.
+ *
+ * The catalogue lives in `src/design-system/fonts.ts` so the picker and this
+ * plugin cannot disagree about which families exist; a family shown in the
+ * picker but missing here falls back to the system font with no error.
+ */
+const WEIGHT_DIRECTORIES: Record<number, string> = {
+	400: "400Regular",
+	500: "500Medium",
+	600: "600SemiBold",
+	700: "700Bold",
+};
+
+/**
+ * Bun hoists workspace dependencies to the repository root, so the font files
+ * are two levels up rather than under this app.
+ */
+function fontPath(pkg: string, file: string, weight: number): string {
+	const directory = WEIGHT_DIRECTORIES[weight] as string;
+
+	return `../../node_modules/@expo-google-fonts/${pkg}/${directory}/${file}_${directory}.ttf`;
+}
+
+/**
+ * iOS takes a flat list and reads the family out of each file; Android needs
+ * the faces grouped under an explicit family with a numeric weight each, which
+ * is what becomes the `res/font` XML.
+ */
+const iosFonts = FONTS.flatMap((font) => font.weights.map((weight) => fontPath(font.name, font.file, weight)));
+
+const androidFonts = FONTS.map((font) => ({
+	fontFamily: font.family,
+	fontDefinitions: font.weights.map((weight) => ({ path: fontPath(font.name, font.file, weight), weight })),
+}));
 
 /**
  * The version EAS stamps into a production binary. `build:native:prod.yml` and
@@ -66,6 +111,13 @@ const expoConfig: ExpoConfig = {
 			{
 				backgroundColor: "#ffffff",
 				dark: { backgroundColor: "#0a0a0a" },
+			},
+		],
+		[
+			"expo-font",
+			{
+				ios: { fonts: iosFonts },
+				android: { fonts: androidFonts },
 			},
 		],
 		// Required for the root view background to be settable at all on iOS,

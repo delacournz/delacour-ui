@@ -4,7 +4,8 @@ import { IconMoon, IconSun } from "@delacour/native-ui/icons/central";
 import { type ReactElement, useEffect, useState } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import { Uniwind, useUniwind } from "uniwind";
+import { useUniwind } from "uniwind";
+import { setThemeMode } from "@/design-system/store";
 
 const FADE_OUT_MS = 90;
 const FADE_IN_MS = 140;
@@ -24,9 +25,13 @@ const FADE_IN_MS = 140;
  * shows while the app is dark. A control whose icon named the current theme
  * would be a label wearing a button's clothes.
  *
- * `Uniwind.setTheme` is global, so there is no state to lift and nothing to
+ * It writes through `setThemeMode` rather than calling `Uniwind.setTheme`
+ * itself, so a flip made here is stored and survives a restart exactly as one
+ * made in the customizer does. Two controls over one setting that disagreed
+ * about whether it was remembered would be worse than either alone. The theme
+ * underneath is still global, so there is no state to lift and nothing to
  * thread through a provider — every screen mounting this reads and writes the
- * same theme, and `useUniwind` re-renders each of them when it changes.
+ * same theme, and `useUniwind` re-renders each of them.
  *
  * The glyphs crossfade rather than swapping, and the exchange happens at the
  * trough — the same shape as `DemoPageLabel`, for the same reason: rendering
@@ -62,7 +67,7 @@ export function ThemeToggle(): ReactElement {
 			accessibilityHint="Switches the whole app between light and dark"
 			accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
 			haptic="selection"
-			onPress={() => Uniwind.setTheme(isDark ? "light" : "dark")}
+			onPress={() => setThemeMode(isDark ? "light" : "dark")}
 			size="icon-sm"
 			testID="theme-toggle"
 			variant="ghost"

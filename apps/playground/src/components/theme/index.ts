@@ -10,7 +10,6 @@ export { IconLibraryBottomSheet } from "./icon-library.bottom-sheet";
 export { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS } from "./previews";
 export { RadiusStrip } from "./radius-strip";
 export { StyleStrip } from "./style-strip";
-export { ThemePreview } from "./theme-preview";
 export { ThemeStrip } from "./theme-strip";
 export { ThemeTrigger } from "./theme-trigger";
 export { useAxisPreview } from "./use-axis-preview";

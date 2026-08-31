@@ -27,6 +27,7 @@ config.resolver.extraNodeModules = {
 	culori: path.resolve(workspaceRoot, "node_modules/culori"),
 	"react-native-mmkv": path.resolve(workspaceRoot, "node_modules/react-native-mmkv"),
 	"react-native-nitro-modules": path.resolve(workspaceRoot, "node_modules/react-native-nitro-modules"),
+	"react-native-pager-view": path.resolve(workspaceRoot, "node_modules/react-native-pager-view"),
 	"react-native-reanimated": path.resolve(workspaceRoot, "node_modules/react-native-reanimated"),
 	"react-native-safe-area-context": path.resolve(workspaceRoot, "node_modules/react-native-safe-area-context"),
 	"react-native-svg": path.resolve(workspaceRoot, "node_modules/react-native-svg"),

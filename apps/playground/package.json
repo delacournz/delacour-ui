@@ -72,6 +72,7 @@
 		"react-native-keyboard-controller": "catalog:",
 		"react-native-mmkv": "^4.3.2",
 		"react-native-nitro-modules": "^0.37.1",
+		"react-native-pager-view": "8.0.2",
 		"react-native-pulsar": "^1.7.0",
 		"react-native-reanimated": "catalog:",
 		"react-native-safe-area-context": "catalog:",

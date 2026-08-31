@@ -55,7 +55,7 @@ src/
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
 │   ├── index.tsx                 the component index — a ListGroup of every gallery
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
-│   ├── theme.tsx                 the design-system customizer — see Customizer
+│   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
 │   └── (components)/             one route per component, grouped without a path segment
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── components/
@@ -63,7 +63,7 @@ src/
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
 │   ├── section.tsx               Section — a labelled block within one
-│   ├── theme/                    the floating trigger and one sheet per axis — see Customizer
+│   ├── theme/                    the trigger, the strips and the three remaining sheets
 │   ├── theme-toggle.tsx          ThemeToggle — the navbar's light/dark action
 │   └── delacour-mark/            the brand mark in react-native-svg, from @delacour/brand
 ├── design-system/                the customizer's axes, as data — see Customizer
@@ -494,10 +494,10 @@ is what lets you watch the summary row you just changed repaint.
 
 ### The preview is the answer, the axes are only the question
 
-Under the axis rows and the appearance toggle, `/theme` mounts a live sample of
-the library — buttons in every variant, two card surfaces, a `ListGroup` of
-switch rows, a checkbox group, a radio group, and a short form carrying one
-field in its invalid state. `theme-preview.tsx`.
+`/theme` is two tabs, and the second one is the whole point: buttons in every
+variant, two card surfaces, a `ListGroup` of switch rows, a checkbox group, a
+radio group, and a short form carrying one field in its invalid state.
+`app/theme/preview.tsx`.
 
 It is there because seven summary rows and a swatch cannot answer the question
 this screen exists to ask. A palette is a list of names until something is drawn
@@ -510,6 +510,38 @@ One thing in it is set rather than defaulted: `color="primary"` on the switches
 and the checkbox group. Both default to a neutral, which is right for a real
 settings screen and useless here — a preview whose selection controls never take
 the accent is a preview of the base ramp. `Radio` already defaults to `primary`.
+
+### Two tabs, on `expo-router/js-top-tabs`
+
+`app/theme/_layout.tsx` is a top-tab navigator: the axes are `index`, the
+preview is `preview`, and a swipe crosses between them. The axes alone fill a
+viewport and a half, so the preview used to sit below the fold — never beside
+the control that changed it, and reachable only by scrolling past every decision
+to get to the consequence.
+
+**`expo-router/js-top-tabs`, not `@react-navigation/material-top-tabs`.** SDK 56
+vendored the navigator into expo-router and pre-wrapped it in
+`withLayoutContext`, so the files beside the layout become the tabs and each
+keeps a real URL. Installing the React Navigation package instead is not merely
+redundant, it **breaks the bundler**: expo-router refuses to build when
+`@react-navigation/*` resolves, and `bun remove` leaves the directories on disk
+for Metro to keep finding — they have to be deleted.
+
+It is not, however, dependency-free. The vendored navigator still reaches
+`react-native-tab-view`, which on iOS and Android reaches
+`react-native-pager-view` — a **native module**, so it is pinned in
+`metro.config.js` with the others and adding it cost a `prebuild` and a native
+rebuild. Only the navigator is vendored; the pager is not.
+
+The bar is the library's own `Tabs`, passed as `tabBar`, so what is on screen is
+the component this app exists to show off while the navigator keeps the pager,
+the routes and the URL. It takes `isSwipeable={false}` because the pager already
+owns the horizontal gesture — left on, two things claim the same drag.
+
+The navigator's own `MaterialTopTabBarProps` is declared `any & { … }`, and an
+intersection with `any` collapses to `any`, so the layout restates the three
+fields it reads. That local type is narrower than the exported one and the only
+version of it that checks.
 
 ### The trigger hides on `/preview` and `/theme`
 

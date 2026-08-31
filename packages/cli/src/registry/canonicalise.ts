@@ -1,5 +1,6 @@
 import { classifySource, resolveModuleId, type SourceClassification } from "./classify";
 import { toPlaceholder } from "./namespaces";
+import type { Rewrite } from "./rewrite";
 import { scanImports } from "./scan-imports";
 
 /**
@@ -15,6 +16,10 @@ import { scanImports } from "./scan-imports";
  *
  * Replacements are applied back-to-front by offset, so an earlier specifier's
  * span stays valid after a later one has changed length.
+ *
+ * The rewritten text is not what the registry ships — the registry serves the
+ * library's own source and ships `rewrites` beside it. The text is produced here
+ * anyway, because it is what the builder checks those rewrites against.
  */
 
 export type CanonicaliseInput = {
@@ -29,6 +34,8 @@ export type CanonicaliseInput = {
 
 export type CanonicaliseOutput = {
 	content: string;
+	/** Every specifier this file rewrites, sorted by `from`. What the registry ships. */
+	rewrites: Rewrite[];
 	/** Other registry items this file needs, sorted, excluding its own. */
 	registryDependencies: string[];
 	/** Bare specifiers, sorted — classified into npm dependencies by the builder. */
@@ -41,6 +48,7 @@ export function canonicaliseFile(input: CanonicaliseInput): CanonicaliseOutput {
 
 	const registryDependencies = new Set<string>();
 	const bareImports = new Set<string>();
+	const rewrites = new Map<string, string>();
 	let content = input.content;
 
 	for (const scanned of scanImports(input.content).reverse()) {
@@ -56,14 +64,24 @@ export function canonicaliseFile(input: CanonicaliseInput): CanonicaliseOutput {
 		const replacement = specifierFor(scanned.specifier, self, resolved);
 		if (replacement === scanned.specifier) continue;
 
+		rewrites.set(scanned.specifier, replacement);
 		content = content.slice(0, scanned.start) + replacement + content.slice(scanned.end);
 	}
 
+	const prose = rewritePackageReferences(content, input.packageSubpaths);
+	for (const [from, to] of prose.rewrites) rewrites.set(from, to);
+
 	return {
-		content: rewritePackageReferences(content, input.packageSubpaths),
+		content: prose.content,
+		rewrites: toRewrites(rewrites),
 		registryDependencies: [...registryDependencies].sort(),
 		bareImports: [...bareImports].sort(),
 	};
+}
+
+/** Sorted by `from`, so an item's JSON diffs only when a specifier actually changes. */
+function toRewrites(rewrites: ReadonlyMap<string, string>): Rewrite[] {
+	return [...rewrites].map(([from, to]) => ({ from, to })).sort((a, b) => a.from.localeCompare(b.from));
 }
 
 /**
@@ -122,8 +140,12 @@ function specifierFor(original: string, self: SourceClassification, resolved: So
  * TypeScript. Only the package subpaths need rewriting, so that the copied doc
  * cites the copy rather than a package its new owner never installed.
  */
-export function canonicaliseMarkdown(content: string, packageSubpaths: ReadonlyMap<string, string>): string {
-	return rewritePackageReferences(content, packageSubpaths);
+export function canonicaliseMarkdown(
+	content: string,
+	packageSubpaths: ReadonlyMap<string, string>
+): Pick<CanonicaliseOutput, "content" | "rewrites"> {
+	const { content: rewritten, rewrites } = rewritePackageReferences(content, packageSubpaths);
+	return { content: rewritten, rewrites: toRewrites(rewrites) };
 }
 
 /**
@@ -134,8 +156,12 @@ export function canonicaliseMarkdown(content: string, packageSubpaths: ReadonlyM
  * never installed. Longest subpath first, so `…/icons/central` is not
  * half-matched by `…/icons`.
  */
-function rewritePackageReferences(content: string, packageSubpaths: ReadonlyMap<string, string>): string {
+function rewritePackageReferences(
+	content: string,
+	packageSubpaths: ReadonlyMap<string, string>
+): { content: string; rewrites: Map<string, string> } {
 	const subpaths = [...packageSubpaths.keys()].sort((a, b) => b.length - a.length);
+	const rewrites = new Map<string, string>();
 	let output = content;
 
 	for (const subpath of subpaths) {
@@ -144,10 +170,12 @@ function rewritePackageReferences(content: string, packageSubpaths: ReadonlyMap<
 		const classification = classifySource(packageSubpaths.get(subpath) as string);
 		if (!classification?.moduleId) continue;
 
-		output = output.replaceAll(subpath, toPlaceholder(classification.namespace, classification.moduleId));
+		const placeholder = toPlaceholder(classification.namespace, classification.moduleId);
+		rewrites.set(subpath, placeholder);
+		output = output.replaceAll(subpath, placeholder);
 	}
 
-	return output;
+	return { content: output, rewrites };
 }
 
 function directoryOf(target: string): string {

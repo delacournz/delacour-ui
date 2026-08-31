@@ -23,54 +23,104 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/input/AGENTS.md",
+			"path": "packages/native-ui/src/components/input/AGENTS.md",
 			"target": "input/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/input",
+					"to": "@registry/ui/input"
+				}
+			]
 		},
 		{
-			"path": "files/ui/input/index.ts",
+			"path": "packages/native-ui/src/components/input/index.ts",
 			"target": "input/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/input/input-group-decorator.tsx",
+			"path": "packages/native-ui/src/components/input/input-group-decorator.tsx",
 			"target": "input/input-group-decorator.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/input/input-group-prefix.tsx",
+			"path": "packages/native-ui/src/components/input/input-group-prefix.tsx",
 			"target": "input/input-group-prefix.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/input/input-group-suffix.tsx",
+			"path": "packages/native-ui/src/components/input/input-group-suffix.tsx",
 			"target": "input/input-group-suffix.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/input/input-group.tsx",
+			"path": "packages/native-ui/src/components/input/input-group.tsx",
 			"target": "input/input-group.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/input/input.context.tsx",
+			"path": "packages/native-ui/src/components/input/input.context.tsx",
 			"target": "input/input.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/input/input.tsx",
+			"path": "packages/native-ui/src/components/input/input.tsx",
 			"target": "input/input.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/input/input.types.ts",
+			"path": "packages/native-ui/src/components/input/input.types.ts",
 			"target": "input/input.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/input/input.variants.ts",
+			"path": "packages/native-ui/src/components/input/input.variants.ts",
 			"target": "input/input.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		}
 	]
 }

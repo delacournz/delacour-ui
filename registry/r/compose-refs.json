@@ -10,7 +10,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/compose-refs.ts",
+			"path": "packages/native-ui/src/lib/compose-refs.ts",
 			"target": "compose-refs.ts",
 			"namespace": "lib"
 		}

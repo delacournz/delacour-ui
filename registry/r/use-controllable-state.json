@@ -10,7 +10,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/hooks/use-controllable-state.ts",
+			"path": "packages/native-ui/src/hooks/use-controllable-state.ts",
 			"target": "use-controllable-state.ts",
 			"namespace": "hooks"
 		}

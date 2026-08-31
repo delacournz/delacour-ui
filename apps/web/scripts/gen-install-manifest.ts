@@ -8,6 +8,9 @@
  * registry builder. Reading them here rather than restating them by hand is what
  * stops the install instructions drifting from the component.
  *
+ * A registry item names the library file itself — `files[].path` is already
+ * repo-relative — so the Manual tab's GitHub link is that path, unmapped.
+ *
  * The output is a committed `.ts` module rather than a JSON import, for the same
  * two reasons `previews/manifest.ts` is:
  *
@@ -27,7 +30,6 @@ import { COMPONENTS } from "../src/lib/components";
 const WEB = join(import.meta.dirname, "..");
 const ROOT = join(WEB, "..", "..");
 const REGISTRY = join(ROOT, "registry");
-const LIBRARY = join(ROOT, "packages", "native-ui");
 const OUT = join(WEB, "src", "registry", "install.ts");
 
 /** Where `delacour init` proposes each namespace lands — `DEFAULT_PATHS` in the CLI. */
@@ -68,39 +70,6 @@ function readItems(): Map<string, RegistryItem> {
 	}
 
 	return items;
-}
-
-/**
- * Maps a registry path back to the library source it was derived from.
- *
- * The registry is a flattened copy — `files/ui/button/button.tsx` — and the
- * Manual tab links at the real thing, so the flattening has to be undone. Five
- * rules cover 209 of the 210 files; `uniwind-env.d.ts` is the exception, because
- * it is a triple-slash reference that has to sit at the root of the app's own
- * `tsconfig` include and so lives beside `src/`, not under `src/styles/`.
- *
- * This throws rather than falling through, the way the registry builder does. A
- * guess here would ship a dead link on nineteen pages.
- */
-function toSourcePath(path: string): string {
-	if (!path.startsWith("files/")) throw new Error(`Registry path outside files/: ${path}`);
-
-	const rest = path.slice("files/".length);
-	const slash = rest.indexOf("/");
-	if (slash === -1) throw new Error(`Registry path has no namespace: ${path}`);
-
-	const namespace = rest.slice(0, slash);
-	const tail = rest.slice(slash + 1);
-
-	if (namespace === "ui") return `src/components/${tail}`;
-	if (namespace === "hooks") return `src/hooks/${tail}`;
-	if (namespace === "icons") return `src/icons/${tail}`;
-	if (namespace === "lib") return tail.startsWith("expo/") ? `src/${tail}` : `src/lib/${tail}`;
-	if (namespace === "styles") {
-		return tail === "uniwind-env.d.ts" ? "src/uniwind-env.d.ts" : `src/styles/${tail}`;
-	}
-
-	throw new Error(`Unknown registry namespace "${namespace}" in ${path}`);
 }
 
 /**
@@ -165,11 +134,12 @@ function build(): string {
 				title: dependency.title,
 				kind: kindOf(dependency, component.slug),
 				files: dependency.files.map((file) => {
-					const source = toSourcePath(file.path);
-					if (!existsSync(join(LIBRARY, source))) {
-						throw new Error(`${component.slug}: ${file.path} maps to ${source}, which does not exist`);
+					// Throws rather than falling through, the way the registry builder
+					// does. A dead link here would ship on nineteen component pages.
+					if (!existsSync(join(ROOT, file.path))) {
+						throw new Error(`${component.slug}: ${file.path} does not exist`);
 					}
-					return { source: `packages/native-ui/${source}`, target: `${DEFAULT_PATHS[file.namespace]}/${file.target}` };
+					return { source: file.path, target: `${DEFAULT_PATHS[file.namespace]}/${file.target}` };
 				}),
 			}))
 			// The component first, then what it renders, then the shared utilities —

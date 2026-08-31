@@ -14,32 +14,32 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/styles/base.css",
+			"path": "packages/native-ui/src/styles/base.css",
 			"target": "base.css",
 			"namespace": "styles"
 		},
 		{
-			"path": "files/styles/index.css",
+			"path": "packages/native-ui/src/styles/index.css",
 			"target": "index.css",
 			"namespace": "styles"
 		},
 		{
-			"path": "files/styles/theme.css",
+			"path": "packages/native-ui/src/styles/theme.css",
 			"target": "theme.css",
 			"namespace": "styles"
 		},
 		{
-			"path": "files/styles/tokens.css",
+			"path": "packages/native-ui/src/styles/tokens.css",
 			"target": "tokens.css",
 			"namespace": "styles"
 		},
 		{
-			"path": "files/styles/tokens.ts",
+			"path": "packages/native-ui/src/styles/tokens.ts",
 			"target": "tokens.ts",
 			"namespace": "styles"
 		},
 		{
-			"path": "files/styles/uniwind-env.d.ts",
+			"path": "packages/native-ui/src/uniwind-env.d.ts",
 			"target": "uniwind-env.d.ts",
 			"namespace": "styles"
 		}

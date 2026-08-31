@@ -20,19 +20,35 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/provider/AGENTS.md",
+			"path": "packages/native-ui/src/components/provider/AGENTS.md",
 			"target": "provider/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/provider",
+					"to": "@registry/ui/provider"
+				}
+			]
 		},
 		{
-			"path": "files/ui/provider/index.ts",
+			"path": "packages/native-ui/src/components/provider/index.ts",
 			"target": "provider/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/provider/provider.tsx",
+			"path": "packages/native-ui/src/components/provider/provider.tsx",
 			"target": "provider/provider.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-keyboard-state-sync",
+					"to": "@registry/hooks/use-keyboard-state-sync"
+				},
+				{
+					"from": "@delacour/native-ui/provider",
+					"to": "@registry/ui/provider"
+				}
+			]
 		}
 	]
 }

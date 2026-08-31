@@ -21,52 +21,98 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/badge/AGENTS.md",
+			"path": "packages/native-ui/src/components/badge/AGENTS.md",
 			"target": "badge/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/badge",
+					"to": "@registry/ui/badge"
+				}
+			]
 		},
 		{
-			"path": "files/ui/badge/badge-close-button.tsx",
+			"path": "packages/native-ui/src/components/badge/badge-close-button.tsx",
 			"target": "badge/badge-close-button.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/badge/badge-end-content.tsx",
+			"path": "packages/native-ui/src/components/badge/badge-end-content.tsx",
 			"target": "badge/badge-end-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/badge/badge-label.tsx",
+			"path": "packages/native-ui/src/components/badge/badge-label.tsx",
 			"target": "badge/badge-label.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/badge/badge-start-content.tsx",
+			"path": "packages/native-ui/src/components/badge/badge-start-content.tsx",
 			"target": "badge/badge-start-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/badge/badge.context.tsx",
+			"path": "packages/native-ui/src/components/badge/badge.context.tsx",
 			"target": "badge/badge.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/badge/badge.tsx",
+			"path": "packages/native-ui/src/components/badge/badge.tsx",
 			"target": "badge/badge.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
 		},
 		{
-			"path": "files/ui/badge/badge.types.ts",
+			"path": "packages/native-ui/src/components/badge/badge.types.ts",
 			"target": "badge/badge.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/badge/badge.variants.ts",
+			"path": "packages/native-ui/src/components/badge/badge.variants.ts",
 			"target": "badge/badge.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		},
 		{
-			"path": "files/ui/badge/index.ts",
+			"path": "packages/native-ui/src/components/badge/index.ts",
 			"target": "badge/index.ts",
 			"namespace": "ui"
 		}

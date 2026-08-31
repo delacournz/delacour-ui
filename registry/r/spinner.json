@@ -21,39 +21,69 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/spinner/AGENTS.md",
+			"path": "packages/native-ui/src/components/spinner/AGENTS.md",
 			"target": "spinner/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
 		},
 		{
-			"path": "files/ui/spinner/index.ts",
+			"path": "packages/native-ui/src/components/spinner/index.ts",
 			"target": "spinner/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/spinner/spinner-arc.tsx",
+			"path": "packages/native-ui/src/components/spinner/spinner-arc.tsx",
 			"target": "spinner/spinner-arc.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/spinner/spinner-content.tsx",
+			"path": "packages/native-ui/src/components/spinner/spinner-content.tsx",
 			"target": "spinner/spinner-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/spinner/spinner.context.tsx",
+			"path": "packages/native-ui/src/components/spinner/spinner.context.tsx",
 			"target": "spinner/spinner.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/spinner/spinner.tsx",
+			"path": "packages/native-ui/src/components/spinner/spinner.tsx",
 			"target": "spinner/spinner.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
 		},
 		{
-			"path": "files/ui/spinner/spinner.variants.ts",
+			"path": "packages/native-ui/src/components/spinner/spinner.variants.ts",
 			"target": "spinner/spinner.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				}
+			]
 		}
 	]
 }

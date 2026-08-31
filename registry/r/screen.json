@@ -32,137 +32,221 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/screen/AGENTS.md",
+			"path": "packages/native-ui/src/components/screen/AGENTS.md",
 			"target": "screen/AGENTS.md",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/index.ts",
+			"path": "packages/native-ui/src/components/screen/index.ts",
 			"target": "screen/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-chat-list.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-chat-list.tsx",
 			"target": "screen/screen-chat-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-content.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-content.tsx",
 			"target": "screen/screen-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-debug.ts",
+			"path": "packages/native-ui/src/components/screen/screen-debug.ts",
 			"target": "screen/screen-debug.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-error.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-error.tsx",
 			"target": "screen/screen-error.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-flat-list.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-flat-list.tsx",
 			"target": "screen/screen-flat-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-footer-background.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-footer-background.tsx",
 			"target": "screen/screen-footer-background.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-footer.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-footer.tsx",
 			"target": "screen/screen-footer.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-keyboard-state-sync",
+					"to": "@registry/hooks/use-keyboard-state-sync"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-header.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-header.tsx",
 			"target": "screen/screen-header.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-legend-list.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-legend-list.tsx",
 			"target": "screen/screen-legend-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-list-component.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-list-component.tsx",
 			"target": "screen/screen-list-component.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-loading.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-loading.tsx",
 			"target": "screen/screen-loading.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-navbar-back-button.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-navbar-back-button.tsx",
 			"target": "screen/screen-navbar-back-button.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-navbar-background.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-navbar-background.tsx",
 			"target": "screen/screen-navbar-background.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-navbar-subtitle.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-navbar-subtitle.tsx",
 			"target": "screen/screen-navbar-subtitle.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-navbar-title.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-navbar-title.tsx",
 			"target": "screen/screen-navbar-title.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-navbar.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-navbar.tsx",
 			"target": "screen/screen-navbar.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-root.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-root.tsx",
 			"target": "screen/screen-root.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen-scroll-area.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-scroll-area.tsx",
 			"target": "screen/screen-scroll-area.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-section-list.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-section-list.tsx",
 			"target": "screen/screen-section-list.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/screen-view.tsx",
+			"path": "packages/native-ui/src/components/screen/screen-view.tsx",
 			"target": "screen/screen-view.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen.context.tsx",
+			"path": "packages/native-ui/src/components/screen/screen.context.tsx",
 			"target": "screen/screen.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen.tsx",
+			"path": "packages/native-ui/src/components/screen/screen.tsx",
 			"target": "screen/screen.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen.types.ts",
+			"path": "packages/native-ui/src/components/screen/screen.types.ts",
 			"target": "screen/screen.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/screen/screen.variants.ts",
+			"path": "packages/native-ui/src/components/screen/screen.variants.ts",
 			"target": "screen/screen.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		},
 		{
-			"path": "files/ui/screen/use-screen-scroll-insets.ts",
+			"path": "packages/native-ui/src/components/screen/use-screen-scroll-insets.ts",
 			"target": "screen/use-screen-scroll-insets.ts",
 			"namespace": "ui"
 		}

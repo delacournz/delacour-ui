@@ -15,9 +15,15 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/hooks/use-navigation-theme.ts",
+			"path": "packages/native-ui/src/hooks/use-navigation-theme.ts",
 			"target": "use-navigation-theme.ts",
-			"namespace": "hooks"
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/navigation-theme",
+					"to": "@registry/lib/navigation-theme"
+				}
+			]
 		}
 	]
 }

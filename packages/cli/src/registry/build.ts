@@ -3,9 +3,10 @@ import { join, relative, sep } from "node:path";
 import { canonicaliseFile, canonicaliseMarkdown } from "./canonicalise";
 import { classifySource, type SourceClassification } from "./classify";
 import { ITEM_META, PACKAGE_INSTALL } from "./config";
+import { applyRewrites, type Rewrite } from "./rewrite";
 import type { RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { toIndexEntry } from "./schema";
-import { registryFilePath } from "./source";
+import { sourceFilePath } from "./source";
 
 /**
  * Builds the registry from `packages/native-ui/src`.
@@ -15,25 +16,24 @@ import { registryFilePath } from "./source";
  * it needs (its own `package.json`), so restating that by hand would only give
  * it somewhere to drift. Everything here is read off the source; the builder
  * throws rather than guessing wherever the source is ambiguous.
+ *
+ * Nor is there a copy of the source. An item names the library file itself, at
+ * the ref the item was read from, and carries the specifier rewrites a consumer
+ * has to apply to it. The canonicalised text is still produced here — as the
+ * thing those rewrites are checked against, not as anything that ships.
  */
 
 export type BuildOptions = {
 	/** Absolute path to `packages/native-ui`. */
 	packageRoot: string;
+	/** The same directory, relative to the repository root — what `files[].path` is built from. */
+	packageDir: string;
 	homepage?: string;
 };
 
 export type BuildResult = {
 	items: RegistryItem[];
 	index: RegistryIndex;
-	/**
-	 * Every file's canonicalised text, keyed by its registry path.
-	 *
-	 * Kept beside the items rather than inside them: an item is metadata a
-	 * client parses, and the text is a document it fetches. Merging them is what
-	 * turns a component's diff into an unreadable JSON string.
-	 */
-	contents: Map<string, string>;
 };
 
 const DEFAULT_HOMEPAGE = "https://github.com/delacournz/delacour-ui";
@@ -61,13 +61,18 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 	}
 
 	const items: RegistryItem[] = [];
-	const contents = new Map<string, string>();
 
 	for (const [name, sources] of [...grouped].sort(([a], [b]) => a.localeCompare(b))) {
-		const built = await buildItem({ name, sources, sourceRoot, sourcePaths, packageSubpaths });
-
-		items.push(built.item);
-		for (const [path, content] of built.contents) contents.set(path, content);
+		items.push(
+			await buildItem({
+				name,
+				sources,
+				sourceRoot,
+				sourcePaths,
+				packageSubpaths,
+				packageDir: options.packageDir,
+			})
+		);
 	}
 
 	assertDependenciesResolve(items);
@@ -79,7 +84,6 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 			homepage: options.homepage ?? DEFAULT_HOMEPAGE,
 			items: items.map(toIndexEntry),
 		},
-		contents,
 	};
 }
 
@@ -89,14 +93,10 @@ type BuildItemContext = {
 	sourceRoot: string;
 	sourcePaths: readonly string[];
 	packageSubpaths: ReadonlyMap<string, string>;
+	packageDir: string;
 };
 
-type BuiltItem = {
-	item: RegistryItem;
-	contents: Map<string, string>;
-};
-
-async function buildItem(context: BuildItemContext): Promise<BuiltItem> {
+async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 	const meta = ITEM_META[context.name];
 	if (!meta) throw new Error(`No metadata for registry item "${context.name}" — add it to src/registry/config.ts`);
 
@@ -104,7 +104,6 @@ async function buildItem(context: BuildItemContext): Promise<BuiltItem> {
 	if (!first) throw new Error(`Registry item "${context.name}" has no files`);
 
 	const files: RegistryFile[] = [];
-	const contents = new Map<string, string>();
 	const registryDependencies = new Set<string>();
 	const bareImports = new Set<string>(meta.dependencies ?? []);
 
@@ -121,38 +120,57 @@ async function buildItem(context: BuildItemContext): Promise<BuiltItem> {
 					sourcePaths: context.sourcePaths,
 					packageSubpaths: context.packageSubpaths,
 				})
-			: {
-					content: path.endsWith(".md") ? canonicaliseMarkdown(raw, context.packageSubpaths) : raw,
-					registryDependencies: [],
-					bareImports: [],
-				};
+			: path.endsWith(".md")
+				? { ...canonicaliseMarkdown(raw, context.packageSubpaths), registryDependencies: [], bareImports: [] }
+				: { content: raw, rewrites: [], registryDependencies: [], bareImports: [] };
 
 		for (const dependency of canonical.registryDependencies) registryDependencies.add(dependency);
 		for (const bare of canonical.bareImports) bareImports.add(bare);
 
-		const registryPath = registryFilePath(classification.namespace, classification.target);
+		assertRewritesReproduce(path, raw, canonical);
 
-		files.push({ path: registryPath, target: classification.target, namespace: classification.namespace });
-		contents.set(registryPath, canonical.content);
+		files.push({
+			path: sourceFilePath(context.packageDir, path),
+			target: classification.target,
+			namespace: classification.namespace,
+			rewrites: canonical.rewrites,
+		});
 	}
 
 	const { dependencies, expoDependencies, devDependencies } = classifyPackages(context.name, bareImports);
 
 	return {
-		item: {
-			name: context.name,
-			type: first.classification.type,
-			title: meta.title,
-			description: meta.description,
-			...(meta.categories ? { categories: meta.categories } : {}),
-			registryDependencies: [...registryDependencies].sort(),
-			dependencies,
-			expoDependencies,
-			devDependencies,
-			files: files.sort((a, b) => a.target.localeCompare(b.target)),
-		},
-		contents,
+		name: context.name,
+		type: first.classification.type,
+		title: meta.title,
+		description: meta.description,
+		...(meta.categories ? { categories: meta.categories } : {}),
+		registryDependencies: [...registryDependencies].sort(),
+		dependencies,
+		expoDependencies,
+		devDependencies,
+		files: files.sort((a, b) => a.target.localeCompare(b.target)),
 	};
+}
+
+/**
+ * The registry ships `rewrites` instead of a rewritten copy, so the two have to
+ * agree — and only here can that be checked, where both the source and the
+ * canonicalised text exist.
+ *
+ * The rewrite the builder applies is precise: it replaces a specifier at the
+ * offset TypeScript reported it at. `applyRewrites` is a string substitution,
+ * which is what keeps the compiler out of the published bundle. Where the two
+ * could disagree — a quoted specifier somewhere other than an import — this
+ * fails the build rather than shipping a file the consumer would receive
+ * differently from the one we reviewed.
+ */
+function assertRewritesReproduce(path: string, raw: string, canonical: { content: string; rewrites: Rewrite[] }): void {
+	if (applyRewrites(raw, canonical.rewrites) === canonical.content) return;
+
+	throw new Error(
+		`${path}: the rewrites do not reproduce the canonicalised file. A specifier is probably quoted somewhere other than an import.`
+	);
 }
 
 /**

@@ -14,7 +14,10 @@ import { writeRegistry } from "./write";
 const PACKAGE_ROOT = join(import.meta.dirname, "../../../native-ui");
 const OUT_DIR = join(import.meta.dirname, "../../../../registry");
 
-const result = await buildRegistry({ packageRoot: PACKAGE_ROOT });
+/** Repo-relative, because that is what an item's `files[].path` resolves against. */
+const PACKAGE_DIR = "packages/native-ui";
+
+const result = await buildRegistry({ packageRoot: PACKAGE_ROOT, packageDir: PACKAGE_DIR });
 const { written, removed } = await writeRegistry(OUT_DIR, result);
 
 for (const item of result.items) {

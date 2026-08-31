@@ -23,64 +23,120 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/list-group/AGENTS.md",
+			"path": "packages/native-ui/src/components/list-group/AGENTS.md",
 			"target": "list-group/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/list-group",
+					"to": "@registry/ui/list-group"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/index.ts",
+			"path": "packages/native-ui/src/components/list-group/index.ts",
 			"target": "list-group/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/list-group/list-group-item-content.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item-content.tsx",
 			"target": "list-group/list-group-item-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/list-group/list-group-item-description.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item-description.tsx",
 			"target": "list-group/list-group-item-description.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group-item-prefix.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item-prefix.tsx",
 			"target": "list-group/list-group-item-prefix.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group-item-suffix.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item-suffix.tsx",
 			"target": "list-group/list-group-item-suffix.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group-item-title.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item-title.tsx",
 			"target": "list-group/list-group-item-title.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group-item.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group-item.tsx",
 			"target": "list-group/list-group-item.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group.context.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group.context.tsx",
 			"target": "list-group/list-group.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/list-group/list-group.tsx",
+			"path": "packages/native-ui/src/components/list-group/list-group.tsx",
 			"target": "list-group/list-group.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
 		},
 		{
-			"path": "files/ui/list-group/list-group.types.ts",
+			"path": "packages/native-ui/src/components/list-group/list-group.types.ts",
 			"target": "list-group/list-group.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/list-group/list-group.variants.ts",
+			"path": "packages/native-ui/src/components/list-group/list-group.variants.ts",
 			"target": "list-group/list-group.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		}
 	]
 }

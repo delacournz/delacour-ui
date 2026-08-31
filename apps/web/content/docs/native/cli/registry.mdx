@@ -10,16 +10,23 @@ There is no service to host and nothing to keep running — and nothing to be do
 
 ```txt
 registry/
-├── registry.json                  the index: names, descriptions, dependencies
-├── r/button.json                  one item: what it is, what it needs, which files
-├── files/ui/button/button.tsx     the files themselves
-└── config.schema.json             the JSON Schema behind native-components.json's $schema
+├── registry.json          the index: names, descriptions, dependencies
+├── r/button.json          one item: what it is, what it needs, which files
+└── config.schema.json     the JSON Schema behind native-components.json's $schema
 ```
 
-An item **references** its files rather than carrying them. shadcn inlines each file as a string
-inside the item JSON; the cost of that is a megabyte of escaped source that no reviewer can read
-and `git` cannot diff. Written out, `files/ui/button/button.tsx` is the TypeScript it looks like —
-you can open it on GitHub and see exactly what `add` is about to copy.
+That is the whole registry. It holds no source, because it does not need to: an item **references**
+the library's own files, at the same ref, and the client fetches them from there.
+
+```txt
+packages/native-ui/src/components/button/button.tsx     what r/button.json names
+```
+
+shadcn inlines each file as a string inside the item JSON; the cost of that is a megabyte of
+escaped source that no reviewer can read and `git` cannot diff. Copying the source into the
+registry instead diffs readably but duplicates the library — two hundred files that exist only to
+be kept in step. Naming the library file is both: you can open it on GitHub and see exactly what
+`add` is about to copy, and there is only ever one of it.
 
 `add button` resolves the graph from the index, fetches the handful of items it needs, then their
 files. Everything fetched is cached under your cache directory and revalidated with an ETag, so a
@@ -38,13 +45,22 @@ there. The ref pins the whole tree at once, so an item and its files can never d
   "dependencies": ["tailwind-variants"],
   "expoDependencies": [],
   "devDependencies": [],
-  "files": [{ "path": "files/ui/button/button.tsx", "target": "button/button.tsx", "namespace": "ui" }]
+  "files": [
+    {
+      "path": "packages/native-ui/src/components/button/button.tsx",
+      "target": "button/button.tsx",
+      "namespace": "ui",
+      "rewrites": [{ "from": "../icon", "to": "@registry/ui/icon" }]
+    }
+  ]
 }
 ```
 
-`path` is where the file lives in the registry; `namespace` and `target` are where it lands in your
-project. A file that inlines `content` is rejected rather than ignored, so a shadcn-shaped item
-fails with a message rather than a 404 halfway through a copy.
+`path` is the file itself, in the repository the item was read from; `namespace` and `target` are
+where it lands in your project. `rewrites` is how the library's own relative imports become
+portable — see [Building your own](#building-your-own) — and is absent for a file that imports
+nothing across a directory. A file that inlines `content` is rejected rather than ignored, so a
+shadcn-shaped item fails with a message rather than a 404 halfway through a copy.
 
 The dependency list is split three ways on purpose, and it is the split that decides whether an
 Expo build compiles:
@@ -110,8 +126,9 @@ Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shor
 bunx delacour add card --registry https://ui.acme.com/r
 ```
 
-Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json`,
-`r/<name>.json` and every `path` those items name, at that base.
+Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
+`r/<name>.json` at that base, and every `path` those items name **one level above it**, the same
+relationship `<ref>/registry` has to `<ref>`.
 
 </Tab>
 <Tab value="A local path">
@@ -135,8 +152,9 @@ trusting the registry you point at.
 ## Building your own
 
 The registry is **derived** from the library's source rather than maintained beside it: one item
-per component folder, dependencies read off the imports, and imports rewritten into portable
-placeholders. There is no hand-written index to drift.
+per component folder, dependencies read off the imports, and cross-directory imports recorded as
+portable placeholders. There is no hand-written index to drift, and no copy of the source to keep
+in step.
 
 ```bash
 bun --filter delacour run registry:build
@@ -146,16 +164,20 @@ The build refuses to guess. A component folder with no metadata fails it, and so
 nobody has classified as `expo install` or plain — because the default would be the one that
 installs a native module at a version the SDK cannot build.
 
-Imports are canonicalised at build time and substituted at `add` time:
+Imports are resolved at build time and substituted at `add` time. The build does the parsing and
+writes down the answer; `add` reads it:
+
+```json title="the item says what to swap"
+"rewrites": [
+  { "from": "../icon", "to": "@registry/ui/icon" },
+  { "from": "../../lib/cn", "to": "@registry/lib/cn" }
+]
+```
 
 ```tsx
-// in the library
+// in the library, and in the registry — the same file
 import { Icon } from "../icon";
 import { cn } from "../../lib/cn";
-
-// in the registry
-import { Icon } from "@registry/ui/icon";
-import { cn } from "@registry/lib/cn";
 
 // in your project
 import { Icon } from "@/components/ui/icon";
@@ -163,8 +185,9 @@ import { cn } from "@/lib/cn";
 ```
 
 That is why `add` needs no TypeScript parser: the parsing happened once, in the registry build,
-against source we control. An import that lands in the same directory is left alone, so a copied
-file reads the way the original does.
+against source we control. The builder then checks its own answer — applying the rewrites has to
+reproduce the canonicalised file byte for byte, or the build fails. An import that lands in the
+same directory is left alone, so a copied file reads the way the original does.
 
 ## Verifying a registry
 
@@ -183,7 +206,7 @@ It also asserts what a build alone cannot:
   type={{
     "schema": { type: "check", description: "Every item validates against the published item schema." },
     "index": { type: "check", description: "registry.json and the files under r/ name the same items." },
-    "documents": { type: "check", description: "Every path an item names exists under files/, and none is orphaned." },
+    "documents": { type: "check", description: "Every path an item names exists in the library, and no library file is dropped." },
     "files": { type: "check", description: "Every file each item declares actually landed on disk." },
     "placeholders": { type: "check", description: "No @registry/ placeholder and no source-package reference survived." },
     "relative imports": { type: "check", description: "Every relative import resolves to a file that exists." },

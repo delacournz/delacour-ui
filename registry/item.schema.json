@@ -81,6 +81,26 @@
 							"icons"
 						]
 					},
+					"rewrites": {
+						"default": [],
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"from",
+								"to"
+							]
+						}
+					},
 					"content": {
 						"not": {}
 					}

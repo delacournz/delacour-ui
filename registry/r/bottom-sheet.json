@@ -31,92 +31,168 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/bottom-sheet/AGENTS.md",
+			"path": "packages/native-ui/src/components/bottom-sheet/AGENTS.md",
 			"target": "bottom-sheet/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-background.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-background.tsx",
 			"target": "bottom-sheet/bottom-sheet-background.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-close.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-close.tsx",
 			"target": "bottom-sheet/bottom-sheet-close.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-container.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-container.tsx",
 			"target": "bottom-sheet/bottom-sheet-container.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-keyboard-state-sync",
+					"to": "@registry/hooks/use-keyboard-state-sync"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-content.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-content.tsx",
 			"target": "bottom-sheet/bottom-sheet-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-description.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-description.tsx",
 			"target": "bottom-sheet/bottom-sheet-description.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-footer.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx",
 			"target": "bottom-sheet/bottom-sheet-footer.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-handle.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx",
 			"target": "bottom-sheet/bottom-sheet-handle.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-overlay.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx",
 			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-portal.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx",
 			"target": "bottom-sheet/bottom-sheet-portal.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-scroll-view.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx",
 			"target": "bottom-sheet/bottom-sheet-scroll-view.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-title.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-title.tsx",
 			"target": "bottom-sheet/bottom-sheet-title.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet-trigger.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet-trigger.tsx",
 			"target": "bottom-sheet/bottom-sheet-trigger.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet.context.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet.context.tsx",
 			"target": "bottom-sheet/bottom-sheet.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet.tsx",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet.tsx",
 			"target": "bottom-sheet/bottom-sheet.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/bottom-sheet.variants.ts",
+			"path": "packages/native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts",
 			"target": "bottom-sheet/bottom-sheet.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		},
 		{
-			"path": "files/ui/bottom-sheet/index.ts",
+			"path": "packages/native-ui/src/components/bottom-sheet/index.ts",
 			"target": "bottom-sheet/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/bottom-sheet/use-bottom-sheet-input.ts",
+			"path": "packages/native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts",
 			"target": "bottom-sheet/use-bottom-sheet-input.ts",
 			"namespace": "ui"
 		}

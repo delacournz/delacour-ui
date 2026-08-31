@@ -20,29 +20,45 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/text/AGENTS.md",
+			"path": "packages/native-ui/src/components/text/AGENTS.md",
 			"target": "text/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/text",
+					"to": "@registry/ui/text"
+				}
+			]
 		},
 		{
-			"path": "files/ui/text/index.ts",
+			"path": "packages/native-ui/src/components/text/index.ts",
 			"target": "text/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/text/text.context.tsx",
+			"path": "packages/native-ui/src/components/text/text.context.tsx",
 			"target": "text/text.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/text/text.tsx",
+			"path": "packages/native-ui/src/components/text/text.tsx",
 			"target": "text/text.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/text/text.variants.ts",
+			"path": "packages/native-ui/src/components/text/text.variants.ts",
 			"target": "text/text.variants.ts",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		}
 	]
 }

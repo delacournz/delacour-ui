@@ -16,9 +16,15 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/hooks/use-keyboard-state-sync.tsx",
+			"path": "packages/native-ui/src/hooks/use-keyboard-state-sync.tsx",
 			"target": "use-keyboard-state-sync.tsx",
-			"namespace": "hooks"
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/keyboard-animation",
+					"to": "@registry/lib/keyboard-animation"
+				}
+			]
 		}
 	]
 }

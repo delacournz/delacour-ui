@@ -10,7 +10,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/color.ts",
+			"path": "packages/native-ui/src/lib/color.ts",
 			"target": "color.ts",
 			"namespace": "lib"
 		}

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { REGISTRY_TYPES } from "./classify";
-import { NAMESPACES } from "./namespaces";
+import { NAMESPACES, parsePlaceholder } from "./namespaces";
 
 /**
  * The shape of the JSON the builder emits and the `add` command consumes.
@@ -11,12 +11,17 @@ import { NAMESPACES } from "./namespaces";
  * anything to install at all — the distinction shadcn's single `dependencies`
  * field cannot make, and the one that decides whether an Expo build compiles.
  *
- * An item carries no file contents. `files[].path` names a sibling document in
- * the registry and the client fetches it, so a component's source lives in the
- * registry as the `.tsx` it actually is rather than as a four-thousand character
- * string inside a JSON blob nobody can review. shadcn inlines `content` here;
- * the cost of that is a megabyte of unreadable diff every time a component
- * changes, and the benefit — one request per item — is worth less than the diff.
+ * An item carries no file contents. `files[].path` names the library source the
+ * file is — `packages/native-ui/src/components/button/button.tsx` — at the same
+ * ref the item was read from, and the client fetches that. shadcn inlines
+ * `content` here; the cost of that is a megabyte of unreadable diff every time a
+ * component changes, and the benefit — one request per item — is worth less than
+ * the diff. Copying the source into the registry instead, which is what this did
+ * before, costs the same diff plus a second tree to keep in step.
+ *
+ * What a copy used to carry is `rewrites`: the library imports its neighbours by
+ * relative path, and the consumer chooses their own layout, so each file names
+ * the specifiers to swap for placeholders. See `rewrite.ts`.
  *
  * Written as schemas rather than types because the same documents arrive from
  * two directions: constructed by our builder, where they are already correct,
@@ -48,16 +53,37 @@ function relativePathSchema(message: string) {
 		);
 }
 
-const pathSchema = relativePathSchema("must be a relative path that stays inside the registry");
+const pathSchema = relativePathSchema("must be a relative path that stays inside the registry's ref");
 const targetSchema = relativePathSchema("must be a relative path that stays inside its namespace");
+
+/**
+ * A `@registry/<namespace>/<moduleId>` placeholder and nothing else.
+ *
+ * `rewrites` is the one field that changes a file's text after it is fetched, so
+ * it is also the one a hostile registry would reach for. Constraining `to` to a
+ * placeholder means the worst it can do is point an import somewhere else in the
+ * same copy — `transformContent` resolves it to a local path either way — rather
+ * than splice arbitrary source into a file.
+ */
+const placeholderSchema = z.string().refine((value) => parsePlaceholder(value) !== null, {
+	message: "must be an @registry/<namespace>/<module> placeholder",
+});
+
+export const registryRewriteSchema = z.object({
+	/** The specifier as the library wrote it, e.g. `../icon`. */
+	from: z.string().min(1),
+	to: placeholderSchema,
+});
 
 export const registryFileSchema = z
 	.object({
-		/** The file's location in the registry, e.g. `files/ui/button/button.tsx`. */
+		/** The file's path in the repository, e.g. `packages/native-ui/src/components/button/button.tsx`. */
 		path: pathSchema,
 		/** Namespace-relative destination, e.g. `button/button.tsx`. */
 		target: targetSchema,
 		namespace: z.enum(NAMESPACES),
+		/** Specifiers to replace once the file is fetched. Absent for a file that imports nothing local. */
+		rewrites: z.array(registryRewriteSchema).optional().default([]),
 		/**
 		 * Rejected, not ignored.
 		 *
@@ -105,6 +131,7 @@ export const registryIndexSchema = z.object({
 	items: z.array(registryIndexEntrySchema),
 });
 
+export type RegistryRewrite = z.infer<typeof registryRewriteSchema>;
 export type RegistryFile = z.infer<typeof registryFileSchema>;
 export type RegistryItem = z.infer<typeof registryItemSchema>;
 export type RegistryIndexEntry = z.infer<typeof registryIndexEntrySchema>;

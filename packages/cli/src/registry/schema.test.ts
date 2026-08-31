@@ -1,11 +1,38 @@
 import { describe, expect, test } from "bun:test";
 import { registryFileSchema, registryItemSchema } from "./schema";
 
-const FILE = { path: "files/ui/button/button.tsx", target: "button/button.tsx", namespace: "ui" } as const;
+const FILE = {
+	path: "packages/native-ui/src/components/button/button.tsx",
+	target: "button/button.tsx",
+	namespace: "ui",
+} as const;
 
 describe("registryFileSchema", () => {
-	test("accepts a file that references its document", () => {
-		expect(registryFileSchema.parse(FILE)).toEqual({ path: FILE.path, target: FILE.target, namespace: "ui" });
+	test("accepts a file that references its source, and defaults its rewrites", () => {
+		expect(registryFileSchema.parse(FILE)).toEqual({
+			path: FILE.path,
+			target: FILE.target,
+			namespace: "ui",
+			rewrites: [],
+		});
+	});
+
+	test("carries the specifier rewrites the file needs", () => {
+		const rewrites = [{ from: "../icon", to: "@registry/ui/icon" }];
+
+		expect(registryFileSchema.parse({ ...FILE, rewrites }).rewrites).toEqual(rewrites);
+	});
+
+	// The one field that changes a fetched file's text, so the one a hostile
+	// registry would reach for. A placeholder resolves to a path inside the copy;
+	// anything else would be arbitrary source spliced into someone's project.
+	test("rejects a rewrite that does not target a placeholder", () => {
+		const result = registryFileSchema.safeParse({
+			...FILE,
+			rewrites: [{ from: "../icon", to: "https://evil.example/x" }],
+		});
+
+		expect(result.success).toBe(false);
 	});
 
 	test("rejects inline content, and says why", () => {

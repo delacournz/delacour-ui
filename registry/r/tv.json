@@ -14,9 +14,15 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/lib/tv.ts",
+			"path": "packages/native-ui/src/lib/tv.ts",
 			"target": "tv.ts",
-			"namespace": "lib"
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../styles/tokens",
+					"to": "@registry/styles/tokens"
+				}
+			]
 		}
 	]
 }

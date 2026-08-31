@@ -17,19 +17,31 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "files/ui/separator/AGENTS.md",
+			"path": "packages/native-ui/src/components/separator/AGENTS.md",
 			"target": "separator/AGENTS.md",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/separator",
+					"to": "@registry/ui/separator"
+				}
+			]
 		},
 		{
-			"path": "files/ui/separator/index.ts",
+			"path": "packages/native-ui/src/components/separator/index.ts",
 			"target": "separator/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "files/ui/separator/separator.tsx",
+			"path": "packages/native-ui/src/components/separator/separator.tsx",
 			"target": "separator/separator.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
 		}
 	]
 }

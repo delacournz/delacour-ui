@@ -164,18 +164,22 @@ describe("canonicaliseMarkdown", () => {
 
 		const result = canonicaliseMarkdown(doc, PACKAGE_SUBPATHS);
 
-		expect(result).toContain('`import { Button } from "@registry/ui/button";`');
-		expect(result).toContain("→ `@registry/ui/button`");
-		expect(result).not.toContain("@delacour/native-ui");
+		expect(result.content).toContain('`import { Button } from "@registry/ui/button";`');
+		expect(result.content).toContain("→ `@registry/ui/button`");
+		expect(result.content).not.toContain("@delacour/native-ui");
+		expect(result.rewrites).toEqual([{ from: "@delacour/native-ui/button", to: "@registry/ui/button" }]);
 	});
 
 	test("leaves prose that names no subpath alone", () => {
 		const doc = "# Button\n\nA pressable action. Run `bun test` to check the variants.";
-		expect(canonicaliseMarkdown(doc, PACKAGE_SUBPATHS)).toBe(doc);
+		const result = canonicaliseMarkdown(doc, PACKAGE_SUBPATHS);
+
+		expect(result.content).toBe(doc);
+		expect(result.rewrites).toEqual([]);
 	});
 
 	test("prefers the longest subpath, so a nested one is not half-matched", () => {
 		const doc = "See `@delacour/native-ui/icons/central`.";
-		expect(canonicaliseMarkdown(doc, PACKAGE_SUBPATHS)).toBe("See `@registry/icons/central`.");
+		expect(canonicaliseMarkdown(doc, PACKAGE_SUBPATHS).content).toBe("See `@registry/icons/central`.");
 	});
 });

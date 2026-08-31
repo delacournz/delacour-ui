@@ -214,6 +214,13 @@ where the fade finally starts: a floating pill is mostly transparent row, so row
 slid behind it at full contrast and were chopped underneath. `coverBottom` is the
 same for chrome at the end.
 
+**`anchor` decides what it measures from, and chrome drawing this behind itself
+needs `parent`.** Paint order is source order: a fade mounted as a sibling of the
+body lands on top of anything mounted after it, so chrome that floats over the
+content — a tab bar inside a navigator, where nothing outside can slot between
+the pages and the bar — has to render the fade as its own first child and anchor
+it to that container rather than to the screen.
+
 **Each end fades only when there is something past it.** The top is out at rest
 and arrives over the first `size` points; the bottom is there from the start and
 leaves over the last. Content shorter than its viewport never scrolls, so

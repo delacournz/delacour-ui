@@ -8,23 +8,28 @@ import { View } from "react-native";
 import { useUniwind } from "uniwind";
 import type { AxisSheetControlProps } from "@/components/theme/axis-sheet";
 import { BaseColorStrip } from "@/components/theme/base-color-strip";
-import { ChartColorBottomSheet } from "@/components/theme/chart-color.bottom-sheet";
+import { ChartColorStrip } from "@/components/theme/chart-color-strip";
 import { FontBottomSheet } from "@/components/theme/font.bottom-sheet";
 import { HeadingBottomSheet } from "@/components/theme/heading.bottom-sheet";
 import { IconLibraryBottomSheet } from "@/components/theme/icon-library.bottom-sheet";
-import { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview } from "@/components/theme/previews";
-import { RadiusBottomSheet } from "@/components/theme/radius.bottom-sheet";
+import { FontPreview } from "@/components/theme/previews";
+import { RadiusStrip } from "@/components/theme/radius-strip";
 import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemePreview } from "@/components/theme/theme-preview";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { type DesignSystemConfig, type PaletteName, palettesForBaseColor } from "@/design-system/config";
 import { fontByName } from "@/design-system/fonts";
-import { radiusByName } from "@/design-system/radii";
 import { resetConfig, setThemeMode, THEME_MODES, type ThemeMode } from "@/design-system/store";
 
-/** Every axis with a sheet. `iconLibrary` has one and writes nothing. */
-type AxisKey = keyof DesignSystemConfig | "iconLibrary";
+/**
+ * The axes that still open a sheet.
+ *
+ * The other five are strips above — they are the axes whose options are
+ * compared against each other, where a sheet hides the thing being restyled
+ * behind its own scrim. These three are read by name, so a list is right.
+ * `iconLibrary` has a sheet and writes nothing.
+ */
+type AxisKey = "font" | "fontHeading" | "iconLibrary";
 
 /**
  * The design-system customizer, as a screen.
@@ -84,8 +89,10 @@ export default function ThemeRoute(): ReactElement {
 				</Text.Paragraph>
 
 				<StyleStrip />
+				<RadiusStrip />
 				<BaseColorStrip />
 				<ThemeStrip />
+				<ChartColorStrip />
 				<AxisRows onOpen={setOpen} />
 				<AppearanceControls />
 
@@ -96,11 +103,9 @@ export default function ThemeRoute(): ReactElement {
 				</Button>
 			</Screen.ScrollArea>
 
-			<ChartColorBottomSheet {...sheet("chartColor")} />
 			<HeadingBottomSheet {...sheet("fontHeading")} />
 			<FontBottomSheet {...sheet("font")} />
 			<IconLibraryBottomSheet {...sheet("iconLibrary")} />
-			<RadiusBottomSheet {...sheet("radius")} />
 		</Screen>
 	);
 }
@@ -142,26 +147,13 @@ AxisRow.displayName = "Playground.Theme.AxisRow";
  * the old single-component customizer scored 34 against a limit of 15.
  */
 function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement {
-	const { config, resolved } = useAxisPreview();
+	const { config } = useAxisPreview();
 
-	const radius = radiusByName(config.radius);
 	const bodyFont = fontByName(config.font);
 	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
-	const palettes = palettesForBaseColor(config.baseColor);
-	const titleOf = (name: PaletteName) => palettes.find((palette) => palette.name === name)?.title ?? name;
 
 	return (
 		<>
-			<ListGroup>
-				<AxisRow
-					axis="chartColor"
-					label="Chart Color"
-					onOpen={onOpen}
-					preview={<ColorPreview tokens={CHART_TOKENS} values={resolved} />}
-					value={titleOf(config.chartColor)}
-				/>
-			</ListGroup>
-
 			<ListGroup>
 				<AxisRow
 					axis="fontHeading"
@@ -181,13 +173,6 @@ function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement
 
 			<ListGroup>
 				<AxisRow axis="iconLibrary" label="Icon Library" onOpen={onOpen} value="Central" />
-				<AxisRow
-					axis="radius"
-					label="Radius"
-					onOpen={onOpen}
-					preview={<RadiusPreview radius={Number(resolved.radius ?? 0)} />}
-					value={radius?.title ?? config.radius}
-				/>
 			</ListGroup>
 		</>
 	);

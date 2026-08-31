@@ -7,18 +7,17 @@ import { type ReactElement, type ReactNode, useState } from "react";
 import { View } from "react-native";
 import { useUniwind } from "uniwind";
 import type { AxisSheetControlProps } from "@/components/theme/axis-sheet";
-import { BaseColorBottomSheet } from "@/components/theme/base-color.bottom-sheet";
+import { BaseColorStrip } from "@/components/theme/base-color-strip";
 import { ChartColorBottomSheet } from "@/components/theme/chart-color.bottom-sheet";
 import { FontBottomSheet } from "@/components/theme/font.bottom-sheet";
 import { HeadingBottomSheet } from "@/components/theme/heading.bottom-sheet";
 import { IconLibraryBottomSheet } from "@/components/theme/icon-library.bottom-sheet";
-import { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS } from "@/components/theme/previews";
+import { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview } from "@/components/theme/previews";
 import { RadiusBottomSheet } from "@/components/theme/radius.bottom-sheet";
 import { StyleStrip } from "@/components/theme/style-strip";
-import { ThemeBottomSheet } from "@/components/theme/theme.bottom-sheet";
 import { ThemePreview } from "@/components/theme/theme-preview";
+import { ThemeStrip } from "@/components/theme/theme-strip";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { BASE_COLORS } from "@/design-system/base-colors";
 import { type DesignSystemConfig, type PaletteName, palettesForBaseColor } from "@/design-system/config";
 import { fontByName } from "@/design-system/fonts";
 import { radiusByName } from "@/design-system/radii";
@@ -26,9 +25,6 @@ import { resetConfig, setThemeMode, THEME_MODES, type ThemeMode } from "@/design
 
 /** Every axis with a sheet. `iconLibrary` has one and writes nothing. */
 type AxisKey = keyof DesignSystemConfig | "iconLibrary";
-
-/** The accent, drawn as the one token it is judged on. */
-const THEME_TOKENS = ["primary"] as const;
 
 /**
  * The design-system customizer, as a screen.
@@ -88,6 +84,8 @@ export default function ThemeRoute(): ReactElement {
 				</Text.Paragraph>
 
 				<StyleStrip />
+				<BaseColorStrip />
+				<ThemeStrip />
 				<AxisRows onOpen={setOpen} />
 				<AppearanceControls />
 
@@ -98,8 +96,6 @@ export default function ThemeRoute(): ReactElement {
 				</Button>
 			</Screen.ScrollArea>
 
-			<BaseColorBottomSheet {...sheet("baseColor")} />
-			<ThemeBottomSheet {...sheet("theme")} />
 			<ChartColorBottomSheet {...sheet("chartColor")} />
 			<HeadingBottomSheet {...sheet("fontHeading")} />
 			<FontBottomSheet {...sheet("font")} />
@@ -151,27 +147,12 @@ function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement
 	const radius = radiusByName(config.radius);
 	const bodyFont = fontByName(config.font);
 	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
-	const baseColor = BASE_COLORS.find((base) => base.name === config.baseColor);
 	const palettes = palettesForBaseColor(config.baseColor);
 	const titleOf = (name: PaletteName) => palettes.find((palette) => palette.name === name)?.title ?? name;
 
 	return (
 		<>
 			<ListGroup>
-				<AxisRow
-					axis="baseColor"
-					label="Base Color"
-					onOpen={onOpen}
-					preview={<ColorPreview tokens={SWATCH_TOKENS} values={resolved} />}
-					value={baseColor?.title ?? config.baseColor}
-				/>
-				<AxisRow
-					axis="theme"
-					label="Theme"
-					onOpen={onOpen}
-					preview={<ColorPreview tokens={THEME_TOKENS} values={resolved} />}
-					value={titleOf(config.theme)}
-				/>
 				<AxisRow
 					axis="chartColor"
 					label="Chart Color"

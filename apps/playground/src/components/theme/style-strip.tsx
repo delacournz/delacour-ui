@@ -1,7 +1,8 @@
 import { Pressable } from "@delacour/native-ui/pressable";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
-import { ScrollView, View } from "react-native";
+import { View } from "react-native";
+import { AxisStrip } from "@/components/theme/axis-strip";
 import { setAxis, useDesignSystem } from "@/design-system/store";
 import { STYLES, type Style } from "@/design-system/styles";
 
@@ -69,30 +70,18 @@ StyleTile.displayName = "Playground.Theme.StyleTile";
  * The description belongs to the selected tile rather than to every tile. Eight
  * captions in a horizontal strip is a wall of type at the size a strip can
  * afford; one below it is legible, and it is the only one that is being read.
- *
- * The scroller bleeds into the screen's gutter so a tile is cut by the edge
- * rather than stopping short of it — the cheapest honest signal that the row
- * continues.
+
  */
 export function StyleStrip(): ReactElement {
 	const config = useDesignSystem();
 	const selected = STYLES.find((style) => style.name === config.style);
 
 	return (
-		<View className="gap-2">
-			<Text.Label>Style</Text.Label>
-			<ScrollView
-				className="-mx-screen-gutter"
-				contentContainerClassName="gap-3 px-screen-gutter"
-				horizontal
-				showsHorizontalScrollIndicator={false}
-			>
-				{STYLES.map((style) => (
-					<StyleTile isSelected={style.name === config.style} key={style.name} style={style} />
-				))}
-			</ScrollView>
-			<Text.Caption color="muted">{selected?.description ?? ""}</Text.Caption>
-		</View>
+		<AxisStrip caption={selected?.description ?? ""} label="Style">
+			{STYLES.map((style) => (
+				<StyleTile isSelected={style.name === config.style} key={style.name} style={style} />
+			))}
+		</AxisStrip>
 	);
 }
 StyleStrip.displayName = "Playground.StyleStrip";

@@ -19,6 +19,10 @@ export const CHART_TOKENS = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-
 /**
  * An `oklch()` string, as something React Native can actually paint.
  *
+ * Exported because the axis strips paint their tiles from resolved token values
+ * directly rather than through `ColorPreview`, and every one of those values is
+ * an `oklch()` string React Native would silently decline to draw.
+ *
  * The palette is stored in shadcn's own notation so a web theme can be pasted
  * in unchanged, and React Native understands none of it — an `oklch(...)` given
  * to `backgroundColor` renders as nothing at all, with no error. Uniwind solves
@@ -27,7 +31,7 @@ export const CHART_TOKENS = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-
  * path, so it has to do the same conversion itself. Same library, deliberately,
  * so a colour cannot look different here than it does on the component.
  */
-function paintable(value: string | number | undefined): string | undefined {
+export function paintable(value: string | number | undefined): string | undefined {
 	// The resolved map carries geometry alongside colour, and a number is never
 	// a colour — reaching for `--radius` here is a bug in the caller, not a
 	// value to coerce.

@@ -7,6 +7,7 @@ import { IconGlobe, IconRocket } from "@delacour/native-ui/icons/central";
 import { Input } from "@delacour/native-ui/input";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Radio } from "@delacour/native-ui/radio";
+import { Screen } from "@delacour/native-ui/screen";
 import { Separator } from "@delacour/native-ui/separator";
 import { Switch } from "@delacour/native-ui/switch";
 import { Text } from "@delacour/native-ui/text";
@@ -43,10 +44,15 @@ function PreviewSection({ label, children }: { label: string; children: ReactNod
 PreviewSection.displayName = "Playground.Theme.PreviewSection";
 
 /**
- * The library under whatever the axes above are set to.
+ * The second tab: the library under whatever the first tab is set to.
  *
- * The axis rows report a configuration in words; this is the only thing on the
- * screen that reports it as an interface. A palette is a list of names until
+ * A route rather than a block at the bottom of the axes. The axes alone fill a
+ * viewport and a half, so this was always below the fold — never beside the
+ * control that changed it, and never reachable except by scrolling past every
+ * decision to get to the consequence. A swipe is the whole distance now.
+ *
+ * The axis rows report a configuration in words; this is the only thing in the
+ * app that reports it as an interface. A palette is a list of names until
  * something is drawn with it, and the question the customizer exists to answer
  * — does this library hold up under someone else's brand — cannot be answered
  * by seven summary rows and a swatch.
@@ -62,26 +68,17 @@ PreviewSection.displayName = "Playground.Theme.PreviewSection";
  * never take the accent is a preview of the base ramp. `Radio` already defaults
  * to `primary`, so it is left alone.
  */
-export function ThemePreview(): ReactElement {
+export default function ThemePreviewTab(): ReactElement {
 	return (
-		<View className="gap-6">
-			<Separator />
-			<View className="gap-1">
-				<Text.Subheader>Preview</Text.Subheader>
-				<Text.Caption color="muted">
-					The same components a consuming app would mount, on the tokens chosen above.
-				</Text.Caption>
-			</View>
-
+		<Screen.ScrollArea contentContainerClassName="gap-6">
 			<ButtonsPreview />
 			<SurfacesPreview />
 			<TogglesPreview />
 			<ChoicesPreview />
 			<FormPreview />
-		</View>
+		</Screen.ScrollArea>
 	);
 }
-ThemePreview.displayName = "Playground.ThemePreview";
 
 /** Every variant at once — the fastest read on whether an accent has enough contrast. */
 function ButtonsPreview(): ReactElement {

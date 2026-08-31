@@ -17,7 +17,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
  * The gate is a pathname check rather than a prop because this mounts once in
  * `_layout.tsx`, above the `Stack` that owns the route.
  */
-const HIDDEN_ROUTES: readonly string[] = ["/preview", "/theme"];
+const CAPTURE_ROUTE = "/preview";
+const CUSTOMIZER_ROUTE = "/theme";
 
 /**
  * The way to the design-system customizer, from anywhere.
@@ -39,7 +40,7 @@ export function ThemeTrigger(): ReactElement | null {
 	const insets = useSafeAreaInsets();
 	const router = useRouter();
 
-	if (HIDDEN_ROUTES.includes(pathname)) return null;
+	if (pathname === CAPTURE_ROUTE || pathname.startsWith(CUSTOMIZER_ROUTE)) return null;
 
 	return (
 		<View className="absolute right-5 bottom-0 z-50" style={{ marginBottom: insets.bottom + 20 }}>

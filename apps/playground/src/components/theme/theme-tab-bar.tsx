@@ -23,6 +23,16 @@ export type ThemeTabBarProps = {
 	position: Animated.AnimatedInterpolation<number>;
 };
 
+/**
+ * The `gap-6` every tab's scroll content carries between its children.
+ *
+ * The spacer is one of those children, so the container puts this much between
+ * it and the first real row — and the spacer has to give it back, or the bar's
+ * own bottom padding is paid twice and the content floats well clear of the
+ * pill instead of sitting under it.
+ */
+const CONTENT_GAP = 24;
+
 type ThemeTabBarInset = { inset: number; setInset: (height: number) => void };
 
 const ThemeTabBarInsetContext = createContext<ThemeTabBarInset | null>(null);
@@ -51,11 +61,14 @@ ThemeTabBarProvider.displayName = "Playground.ThemeTabBarProvider";
  * container: `Screen.ScrollArea` already reserves the navbar the same way, and
  * its content container's padding is a class, so a `contentContainerStyle`
  * passed alongside would be a second writer on the one property.
+ *
+ * It is the bar's height less {@link CONTENT_GAP}, so the first row lands at
+ * the bar's own bottom edge rather than a further gap below it.
  */
 export function ThemeTabBarSpacer(): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
 
-	return <View style={{ height: context?.inset ?? 0 }} />;
+	return <View style={{ height: Math.max((context?.inset ?? 0) - CONTENT_GAP, 0) }} />;
 }
 ThemeTabBarSpacer.displayName = "Playground.ThemeTabBarSpacer";
 

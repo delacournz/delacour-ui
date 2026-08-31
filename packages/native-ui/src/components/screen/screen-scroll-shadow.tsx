@@ -1,12 +1,21 @@
-import { type ReactElement, useId } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import type { ReactElement } from "react";
 import { StyleSheet, View, type ViewProps } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
-import Svg, { Defs, LinearGradient, Rect, Stop } from "react-native-svg";
 import { useThemeColor } from "../../hooks/use-theme-color";
+import { transparentOf } from "../../lib/color";
 import { useScreenPart } from "./screen.context";
 
 /** How tall the fade is, in points, when a caller names no size. */
 const SCROLL_SHADOW_SIZE = 28;
+/**
+ * How far the scrollable travels before a fade is fully in, as a share of `size`.
+ *
+ * A quarter, so the fade arrives while the first row is still leaving rather
+ * than trailing it: matching the ramp to the fade's own height reads as the
+ * shadow lagging the finger.
+ */
+const SCROLL_SHADOW_RAMP = 0.25;
 
 /** Which ends of the scrollable fade. */
 export const SCROLL_SHADOW_EDGES = ["top", "bottom", "both"] as const;
@@ -96,12 +105,11 @@ export type ScreenScrollShadowProps = Omit<ViewProps, "children" | "pointerEvent
  * viewport never scrolls, so `maxScroll` is zero and both stay out — a fade over
  * a short page would be an edge that promises content that does not exist.
  *
- * **The gradient is `react-native-svg`, not a native gradient view.** The
- * package is already a peer for `Icon` and `Spinner`, so this costs nothing new,
- * and the alternative would add a native module to every consuming app for two
- * rectangles. Both stops name the same colour and vary only in opacity: fading
- * to `transparent` interpolates through black in a premultiplied space, which
- * shows as a dark bloom against a light background.
+ * **The far stop is the near colour at zero alpha, never `transparent`.** The
+ * keyword is transparent BLACK, so interpolating toward it drags every stop
+ * between through grey — a dark bloom over a light ground and a milky one over
+ * a dark. `transparentOf` takes the alpha off the colour instead, and this
+ * declines to draw at all rather than fall back to the keyword.
  *
  * @example
  * <Screen>
@@ -126,17 +134,16 @@ export function ScreenScrollShadow({
 }: ScreenScrollShadowProps): ReactElement {
 	const { scrollY, contentHeight, layoutHeight, navbar, footer } = useScreenPart("Screen.ScrollShadow");
 	const background = useThemeColor("background");
-	const paint = color ?? background ?? "transparent";
-	// Two gradients cannot share one id, and a screen may hold more than one of
-	// these — a fade over a card inside a faded page.
-	const id = useId();
+	const paint = color ?? background;
+	const faded = transparentOf(paint);
+	const ramp = size * SCROLL_SHADOW_RAMP;
 
 	// The chrome's height is part of the position, not something a caller adds.
 	// This fills the whole screen, so a fade placed at zero would sit behind the
 	// navbar under a static one and under an overlay one alike — visible in
 	// neither, which is a component that silently does nothing.
 	const topStyle = useAnimatedStyle(() => ({
-		opacity: interpolate(scrollY.value, [0, size], [0, 1], "clamp"),
+		opacity: interpolate(scrollY.value, [0, ramp], [0, 1], "clamp"),
 		top: anchor === "parent" ? 0 : navbar.height.value,
 	}));
 
@@ -145,38 +152,32 @@ export function ScreenScrollShadow({
 		const bottom = anchor === "parent" ? 0 : footer.height.value + footer.overlayHeight.value;
 		if (maxScroll <= 0) return { bottom, opacity: 0 };
 
-		return { bottom, opacity: interpolate(scrollY.value, [maxScroll - size, maxScroll], [1, 0], "clamp") };
+		return { bottom, opacity: interpolate(scrollY.value, [maxScroll - ramp, maxScroll], [1, 0], "clamp") };
 	});
+
+	// Without a colour to fade from there is no honest gradient to draw, and the
+	// keyword `transparent` is not a substitute — see `transparentOf`.
+	if (!(paint && faded)) return <View />;
 
 	return (
 		<View className={className} pointerEvents="none" style={[StyleSheet.absoluteFill, style]} {...props}>
 			{edges === "bottom" ? null : (
 				<Animated.View style={[{ height: coverTop + size, left: 0, position: "absolute", right: 0 }, topStyle]}>
-					<Svg height="100%" width="100%">
-						<Defs>
-							<LinearGradient id={`${id}-top`} x1="0" x2="0" y1="0" y2="1">
-								<Stop offset="0" stopColor={paint} stopOpacity="1" />
-								<Stop offset={coverTop / (coverTop + size)} stopColor={paint} stopOpacity="1" />
-								<Stop offset="1" stopColor={paint} stopOpacity="0" />
-							</LinearGradient>
-						</Defs>
-						<Rect fill={`url(#${id}-top)`} height="100%" width="100%" />
-					</Svg>
+					<LinearGradient
+						colors={[paint, paint, faded]}
+						locations={[0, coverTop / (coverTop + size), 1]}
+						style={StyleSheet.absoluteFill}
+					/>
 				</Animated.View>
 			)}
 
 			{edges === "top" ? null : (
 				<Animated.View style={[{ height: coverBottom + size, left: 0, position: "absolute", right: 0 }, bottomStyle]}>
-					<Svg height="100%" width="100%">
-						<Defs>
-							<LinearGradient id={`${id}-bottom`} x1="0" x2="0" y1="0" y2="1">
-								<Stop offset="0" stopColor={paint} stopOpacity="0" />
-								<Stop offset={size / (coverBottom + size)} stopColor={paint} stopOpacity="1" />
-								<Stop offset="1" stopColor={paint} stopOpacity="1" />
-							</LinearGradient>
-						</Defs>
-						<Rect fill={`url(#${id}-bottom)`} height="100%" width="100%" />
-					</Svg>
+					<LinearGradient
+						colors={[faded, paint, paint]}
+						locations={[0, size / (coverBottom + size), 1]}
+						style={StyleSheet.absoluteFill}
+					/>
 				</Animated.View>
 			)}
 		</View>

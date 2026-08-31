@@ -1,4 +1,5 @@
 import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
+import { Screen } from "@delacour/native-ui/screen";
 import { Tabs } from "@delacour/native-ui/tabs";
 import { createContext, type ReactElement, type ReactNode, useContext, useMemo, useState } from "react";
 import { Animated, type LayoutChangeEvent, View } from "react-native";
@@ -135,6 +136,12 @@ TabIndicator.displayName = "Playground.ThemeTabBar.Indicator";
 /**
  * The bar, drawn with the library's own `Tabs` and floated over the pager.
  *
+ * **It draws the scroll fade behind itself.** Paint order is source order, and
+ * nothing outside the navigator can slot between the pages it renders and this
+ * bar it renders over them — a fade mounted as a sibling of the navigator lands
+ * on top of the bar rather than under it. So the fade lives here, as the first
+ * child, anchored to this container instead of to the screen.
+ *
  * **Absolutely positioned, so the tabs scroll under it.** Left in the flow it
  * would take a band off the top of every page and the pill would read as a
  * second toolbar bolted under the first. Over the content it reads as what it
@@ -154,6 +161,7 @@ TabIndicator.displayName = "Playground.ThemeTabBar.Indicator";
  */
 function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarProps): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
+	const inset = context?.inset ?? 0;
 	const current = state.routes[state.index]?.name ?? null;
 	const [frames, setFrames] = useState<readonly TabFrame[]>([]);
 
@@ -184,22 +192,25 @@ function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarPr
 	};
 
 	return (
-		<View className="absolute inset-x-0 top-0 z-10 px-screen-gutter pt-2 pb-4" onLayout={measureBar}>
-			<Tabs isSwipeable={false} onValueChange={select} value={current}>
-				<Tabs.List>
-					<TabIndicator offset={first?.x ?? 0} position={position} stride={stride} width={first?.width ?? 0} />
-					{state.routes.map((route, index) => (
-						<Tabs.Trigger
-							key={route.key}
-							onLayout={measureTab(index)}
-							testID={`theme-tab-${route.name}`}
-							value={route.name}
-						>
-							<Tabs.Label>{descriptors[route.key]?.options.title ?? route.name}</Tabs.Label>
-						</Tabs.Trigger>
-					))}
-				</Tabs.List>
-			</Tabs>
+		<View className="absolute inset-x-0 top-0 z-10" pointerEvents="box-none">
+			<Screen.ScrollShadow anchor="parent" coverTop={inset} edges="top" />
+			<View className="px-screen-gutter pt-2 pb-4" onLayout={measureBar}>
+				<Tabs isSwipeable={false} onValueChange={select} value={current}>
+					<Tabs.List>
+						<TabIndicator offset={first?.x ?? 0} position={position} stride={stride} width={first?.width ?? 0} />
+						{state.routes.map((route, index) => (
+							<Tabs.Trigger
+								key={route.key}
+								onLayout={measureTab(index)}
+								testID={`theme-tab-${route.name}`}
+								value={route.name}
+							>
+								<Tabs.Label>{descriptors[route.key]?.options.title ?? route.name}</Tabs.Label>
+							</Tabs.Trigger>
+						))}
+					</Tabs.List>
+				</Tabs>
+			</View>
 		</View>
 	);
 }

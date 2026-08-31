@@ -12,11 +12,27 @@ const SCROLL_SHADOW_SIZE = 28;
 export const SCROLL_SHADOW_EDGES = ["top", "bottom", "both"] as const;
 export type ScreenScrollShadowEdge = (typeof SCROLL_SHADOW_EDGES)[number];
 
+/** What the fade measures its position from. */
+export const SCROLL_SHADOW_ANCHORS = ["screen", "parent"] as const;
+export type ScreenScrollShadowAnchor = (typeof SCROLL_SHADOW_ANCHORS)[number];
+
 export type ScreenScrollShadowProps = Omit<ViewProps, "children" | "pointerEvents"> & {
 	/** How tall the fade is, in points. @default SCROLL_SHADOW_SIZE */
 	size?: number;
 	/** Which ends fade. @default "both" */
 	edges?: ScreenScrollShadowEdge;
+	/**
+	 * What the fade positions itself against.
+	 *
+	 * `screen` measures from the navbar and footer, which is right whenever this
+	 * is a sibling of the body. `parent` pins it to its container instead, for a
+	 * caller that has already placed it — chrome drawing this behind itself,
+	 * because paint order is source order and nothing outside a navigator can
+	 * slot between the pages it renders and the bar it renders over them.
+	 *
+	 * @default "screen"
+	 */
+	anchor?: ScreenScrollShadowAnchor;
 	/**
 	 * The colour the content fades into.
 	 *
@@ -100,6 +116,7 @@ export type ScreenScrollShadowProps = Omit<ViewProps, "children" | "pointerEvent
 export function ScreenScrollShadow({
 	size = SCROLL_SHADOW_SIZE,
 	edges = "both",
+	anchor = "screen",
 	color,
 	coverTop = 0,
 	coverBottom = 0,
@@ -120,12 +137,12 @@ export function ScreenScrollShadow({
 	// neither, which is a component that silently does nothing.
 	const topStyle = useAnimatedStyle(() => ({
 		opacity: interpolate(scrollY.value, [0, size], [0, 1], "clamp"),
-		top: navbar.height.value,
+		top: anchor === "parent" ? 0 : navbar.height.value,
 	}));
 
 	const bottomStyle = useAnimatedStyle(() => {
 		const maxScroll = contentHeight.value - layoutHeight.value;
-		const bottom = footer.height.value + footer.overlayHeight.value;
+		const bottom = anchor === "parent" ? 0 : footer.height.value + footer.overlayHeight.value;
 		if (maxScroll <= 0) return { bottom, opacity: 0 };
 
 		return { bottom, opacity: interpolate(scrollY.value, [maxScroll - size, maxScroll], [1, 0], "clamp") };

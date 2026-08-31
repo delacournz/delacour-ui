@@ -572,13 +572,17 @@ the container, which is how `Screen.ScrollArea` already reserves the navbar —
 and necessary, because that container's padding is a class, so a
 `contentContainerStyle` passed alongside would be a second writer on one property.
 
-Both tabs sit under one `Screen.ScrollShadow`, a sibling of the navigator rather
-than something inside each tab — the two are one scrolling surface as far as the
-reader is concerned, and a fade that changed with the page would draw attention
-to the seam. The bar's measured height is its `coverTop`, so the band is
-solid across the bar and only begins dissolving below it — the bar is a pill on
-an otherwise transparent row, so a fade that started beneath it left rows crisp
-as they slid past either side and then cut them.
+Both tabs fade at either end, and the two ends are drawn in different places.
+The bottom is a `Screen.ScrollShadow` sibling of the navigator. The top is one
+the **bar itself renders**, as its first child, anchored to the bar rather than
+the screen: paint order is source order, and nothing outside the navigator can
+slot between the pages it renders and the bar it renders over them, so a sibling
+fade washed over the pill instead of sliding under it.
+
+Its `coverTop` is the bar's measured height, so the band is solid across the bar
+and only begins dissolving below it — the bar is a pill on an otherwise
+transparent row, so a fade that started beneath it left rows crisp as they slid
+past either side and then cut them.
 
 **The bar is mounted as an element, never passed as the callback.** The
 navigator *calls* `tabBar(props)` rather than rendering `<TabBar />`, so a

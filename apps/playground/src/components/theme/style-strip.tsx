@@ -77,7 +77,11 @@ export function StyleStrip(): ReactElement {
 	const selected = STYLES.find((style) => style.name === config.style);
 
 	return (
-		<AxisStrip caption={selected?.description ?? ""} label="Style">
+		<AxisStrip
+			caption={selected?.description ?? ""}
+			label="Style"
+			selectedIndex={STYLES.findIndex((style) => style.name === config.style)}
+		>
 			{STYLES.map((style) => (
 				<StyleTile isSelected={style.name === config.style} key={style.name} style={style} />
 			))}

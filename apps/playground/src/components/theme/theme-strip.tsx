@@ -56,7 +56,7 @@ export function ThemeStrip(): ReactElement {
 	const options = usePaletteOptions("theme");
 
 	return (
-		<AxisStrip label="Theme">
+		<AxisStrip itemWidth={64} label="Theme" selectedIndex={options.findIndex((option) => option.name === config.theme)}>
 			{options.map((option) => (
 				<ThemeTile
 					color={paintable(option.values.primary)}

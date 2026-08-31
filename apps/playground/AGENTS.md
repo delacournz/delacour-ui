@@ -316,10 +316,10 @@ second palette in this app nothing here proved the tokens were doing the work.
 | Style — Vega … Rhea (a strip) | the geometry: `--radius` and the button/input/icon/chrome scales |
 | Base Color — 7 neutrals (a strip) | the full ramp, light and dark |
 | Theme — the base colour + 17 accents (a strip) | `--primary`, `--chart-1..5`, `--sidebar-primary`, and their foregrounds |
-| Chart Color — the same list | `--chart-1..5` only |
+| Chart Color — the same list (a strip) | `--chart-1..5` only |
 | Heading, Font — 26 families | `--font-heading`, `--font-sans` |
 | Icon Library | nothing — see below |
-| Radius | `--radius` |
+| Radius (a strip) | `--radius` |
 
 Composition is shadcn's, and the order IS the precedence: a base colour's ramp,
 an accent spread over it, the chart hues overwritten, then the style's geometry,
@@ -402,47 +402,62 @@ light/dark mode is stored beside it because Uniwind does not persist its own,
 and `ThemeToggle` writes through the same store so the navbar flip is remembered
 exactly as the sheet's is.
 
-### Three axes are strips, not sheets
+### Five axes are strips, not sheets
 
-Style, Base Color and Theme sit inline above the rest as horizontal scrollers
-(`axis-strip.tsx` is the shared shell). The split is not arbitrary: these three
-are the axes whose options are judged **against each other**, and a sheet is the
-wrong instrument for a comparison — it shows one screenful at a time with the
-app it is restyling hidden behind its own scrim, so every comparison costs an
-open and a close. Inline, a tap repaints everything under the strip, including
-the preview, and the axis can be walked end to end with nothing opening.
+Style, Radius, Base Color, Theme and Chart Color sit inline as horizontal
+scrollers (`axis-strip.tsx` is the shared shell). The split is not arbitrary:
+these five are the axes whose options are judged **against each other**, and a
+sheet is the wrong instrument for a comparison — it shows one screenful at a
+time with the app it is restyling hidden behind its own scrim, so every
+comparison costs an open and a close. Inline, a tap repaints everything under
+the strip, including the preview, and the axis can be walked end to end with
+nothing opening.
 
-**Each strip's tile draws what its axis actually varies**, which is why the
-three do not share a specimen:
+**Radius sits directly under Style** because its `default` has no number of its
+own and resolves to whatever Style chose. The first tile of that strip only
+means anything against the row above it.
+
+**Each strip's tile draws what its axis actually varies**, which is why no two
+share a specimen:
 
 | Axis | Tile | Why not the others' |
 | --- | --- | --- |
 | Style | the surface corner at its `radius`, and a control at its `spacing-button-sm` / `radius-button-sm`, **at life size** | these eight differ in geometry alone, so a swatch would say nothing |
+| Radius | an outlined box at the candidate corner, and nothing inside it | the axis is one number and writes one token; anything else in the tile would describe another axis's work |
 | Base Color | a `card` surface edged in `border`, carrying a `foreground` bar and a `muted-foreground` one | seven neutrals are seven near-blacks in dark; seven discs would be one disc repeated. Tint needs area, and two foreground weights to be comparable |
 | Theme | one disc of `primary` | an accent writes one hue; drawing a surface for it would be drawing the base ramp underneath, which this axis does not touch |
+| Chart Color | five bars at `chart-1`…`chart-5`, on a fixed silhouette | it offers Theme's identical list but writes only the five chart slots. A disc would show a colour it does not set, hide the four it does, and make the two strips indistinguishable stacked |
 
-Style is the only one with a caption, because it is the only one whose options
-carry a description. Eight captions at the size a strip affords is a wall of
-type, and only one is ever being read — so it follows the selection and sits
-under the strip.
+Chart Color's bar heights are **fixed across palettes**. Varying them would read
+as data and invite a comparison between two things that carry none.
+
+**A strip opens scrolled to the applied option**, aligned once on
+`onContentSizeChange` — the offset is meaningless before the content is measured
+— and never again, since re-aligning on every tap would yank the row out from
+under the finger that just chose something. A sheet always showed you the
+current row; a strip starting at zero hides it behind eighteen accents, which is
+strictly worse than the control it replaced.
+
+Style is the only strip with a caption, because it is the only axis whose
+options carry a description. Eight captions at the size a strip affords is a
+wall of type, and only one is ever being read.
 
 **A selected tile's border is painted inline wherever the tile's other edges
 are.** A `border-primary` class beside an inline `borderColor` loses: the inline
 value wins even when it is `undefined`, and the ring silently never appears.
-Style's tile has no inline border and uses the class; Base Color's paints both
-states inline. One writer per property.
+Style and Radius have no inline border and use the class; Base Color and Chart
+Color paint both states inline. One writer per property.
 
-Chart Color, Heading, Font, Icon Library and Radius keep their sheets. They are
-lists, not comparisons — five radii that are one number each, or twenty-six
-families read by name — and Chart Color is deliberately a row even though it
-offers Theme's list, because it is the secondary of the two and a third palette
-strip would push every other axis off the first screen.
+Heading, Font and Icon Library keep their sheets. They are lists rather than
+comparisons — twenty-six families read by name, and one library that exists to
+state an omission.
 
 ### One sheet per axis
 
-The axis list is a screen, and five of the eight axes open a `BottomSheet` of
-their own — `chart-color.bottom-sheet.tsx` and four siblings, all built on
-`AxisSheet`. The three strips above are the exception. That
+The axis list is a screen, and three of the eight axes open a `BottomSheet` of
+their own — `heading.bottom-sheet.tsx`, `font.bottom-sheet.tsx` and
+`icon-library.bottom-sheet.tsx`, all built on `AxisSheet`. The five strips above
+are the rest. That
 shape is what the route buys. While the list lived *in* a sheet the options had
 to be a second pane of the same sheet, because nesting a second `BottomSheet`
 inside the first stacks two scrims and two gesture handlers over the same

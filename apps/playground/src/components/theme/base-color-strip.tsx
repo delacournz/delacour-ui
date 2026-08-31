@@ -99,7 +99,7 @@ export function BaseColorStrip(): ReactElement {
 	);
 
 	return (
-		<AxisStrip label="Base Color">
+		<AxisStrip label="Base Color" selectedIndex={specimens.findIndex((specimen) => specimen.name === config.baseColor)}>
 			{specimens.map((specimen) => (
 				<BaseColorTile
 					isSelected={specimen.name === config.baseColor}

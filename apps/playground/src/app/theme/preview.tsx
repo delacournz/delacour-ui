@@ -115,6 +115,12 @@ ButtonsPreview.displayName = "Playground.Theme.ButtonsPreview";
 /**
  * Two raised cards, on the two surface tokens that are easiest to get wrong.
  *
+ * The name is a `Header`, not a `Subheader`. A subheader is deliberately muted —
+ * it is a step down from the heading it sits under, not a heading itself — so as
+ * a card title it read at the same weight as the count beneath it and the card
+ * had no head. It also means the pair carries `--font-heading`, which is the
+ * only place on this tab that axis shows.
+ *
  * `bg-card` against `bg-secondary` is where a base colour with too little
  * separation between its steps stops reading as two surfaces at all.
  */
@@ -126,7 +132,7 @@ function SurfacesPreview(): ReactElement {
 					<View className="flex-1 gap-2 rounded-lg border border-border bg-card p-4" key={project.name}>
 						<Icon icon={IconRocket} />
 						<View className="gap-0.5">
-							<Text.Subheader>{project.name}</Text.Subheader>
+							<Text.Header>{project.name}</Text.Header>
 							<Text.Caption color="muted">{project.members}</Text.Caption>
 						</View>
 						<View className="flex-row">

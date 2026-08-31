@@ -24,7 +24,6 @@ import {
 	useDesignSystem,
 } from "@/design-system/store";
 import { STYLES, styleByName } from "@/design-system/styles";
-import { ACCENT_THEMES } from "@/design-system/themes";
 
 /**
  * The route the capture pipeline photographs.
@@ -52,6 +51,35 @@ const SNAP_POINTS = ["86%"];
 
 type Pane = "root" | keyof DesignSystemConfig | "appearance";
 
+const PANE_TITLES: Record<Pane, string> = {
+	root: "Customize",
+	style: "Style",
+	baseColor: "Base Color",
+	theme: "Theme",
+	chartColor: "Chart Color",
+	font: "Font",
+	fontHeading: "Heading",
+	radius: "Radius",
+	appearance: "Appearance",
+};
+
+function chooseAxis<Key extends keyof DesignSystemConfig>(
+	key: Key,
+	value: DesignSystemConfig[Key],
+	onBack: () => void
+): void {
+	setAxis(key, value);
+	onBack();
+}
+
+function previewTokens(
+	config: DesignSystemConfig,
+	mode: "light" | "dark",
+	candidate: Partial<DesignSystemConfig>
+): Record<string, string> {
+	return resolveTokens({ ...config, ...candidate })[mode] as Record<string, string>;
+}
+
 /**
  * The design-system customizer: a floating trigger, and one sheet behind it.
  *
@@ -75,13 +103,8 @@ type Pane = "root" | keyof DesignSystemConfig | "appearance";
 export function Customizer(): ReactElement | null {
 	const pathname = usePathname();
 	const insets = useSafeAreaInsets();
-	const config = useDesignSystem();
-	const { theme, hasAdaptiveThemes } = useUniwind();
 	const [isOpen, setOpen] = useState(false);
 	const [pane, setPane] = useState<Pane>("root");
-
-	const mode = theme === "dark" ? "dark" : "light";
-	const activeMode: ThemeMode = hasAdaptiveThemes ? "system" : mode;
 
 	if (pathname === CAPTURE_ROUTE) return null;
 
@@ -89,20 +112,6 @@ export function Customizer(): ReactElement | null {
 		setOpen(next);
 		if (!next) setPane("root");
 	};
-
-	const choose = <Key extends keyof DesignSystemConfig>(key: Key, value: DesignSystemConfig[Key]) => {
-		setAxis(key, value);
-		setPane("root");
-	};
-
-	const preview = (candidate: Partial<DesignSystemConfig>) => resolveTokens({ ...config, ...candidate })[mode];
-
-	const bodyFont = fontByName(config.font);
-	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
-	const style = styleByName(config.style);
-	const radius = radiusByName(config.radius);
-	const palettes = palettesForBaseColor(config.baseColor);
-	const resolved = resolveTokens(config)[mode];
 
 	return (
 		<View className="absolute right-5 bottom-0 z-50" style={{ marginBottom: insets.bottom + 20 }}>
@@ -117,273 +126,9 @@ export function Customizer(): ReactElement | null {
 					<BottomSheet.Container enableDynamicSizing={false} snapPoints={SNAP_POINTS}>
 						<BottomSheet.ScrollView contentContainerClassName="pb-6">
 							{pane === "root" ? (
-								<View className="gap-4">
-									<View className="gap-1">
-										<BottomSheet.Title>Customize</BottomSheet.Title>
-										<BottomSheet.Description>
-											Every axis repaints the same tokens, so nothing below is restyled by hand.
-										</BottomSheet.Description>
-									</View>
-
-									<ListGroup>
-										<ListGroup.Item haptic="selection" onPress={() => setPane("style")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Style</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>{style?.title ?? config.style}</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<RadiusPreview radius={style?.geometry.radius ?? 0} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-
-										<ListGroup.Item haptic="selection" onPress={() => setPane("baseColor")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Base Color</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>
-													{BASE_COLORS.find((base) => base.name === config.baseColor)?.title ?? config.baseColor}
-												</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<ColorPreview tokens={SWATCH_TOKENS} values={resolved as Record<string, string>} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-
-										<ListGroup.Item haptic="selection" onPress={() => setPane("theme")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Theme</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>
-													{palettes.find((palette) => palette.name === config.theme)?.title ?? config.theme}
-												</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<ColorPreview tokens={["primary"]} values={resolved as Record<string, string>} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-
-										<ListGroup.Item haptic="selection" onPress={() => setPane("chartColor")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Chart Color</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>
-													{palettes.find((palette) => palette.name === config.chartColor)?.title ?? config.chartColor}
-												</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<ColorPreview tokens={CHART_TOKENS} values={resolved as Record<string, string>} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-									</ListGroup>
-
-									<ListGroup>
-										<ListGroup.Item haptic="selection" onPress={() => setPane("fontHeading")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Heading</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>
-													{config.fontHeading === "inherit"
-														? `${bodyFont?.title ?? "Inherit"}`
-														: (headingFont?.title ?? "")}
-												</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<FontPreview family={headingFont?.family ?? ""} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-
-										<ListGroup.Item haptic="selection" onPress={() => setPane("font")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Font</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>{bodyFont?.title ?? config.font}</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<FontPreview family={bodyFont?.family ?? ""} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-									</ListGroup>
-
-									<ListGroup>
-										<IconLibraryRow />
-
-										<ListGroup.Item haptic="selection" onPress={() => setPane("radius")}>
-											<ListGroup.ItemContent>
-												<ListGroup.ItemDescription>Radius</ListGroup.ItemDescription>
-												<ListGroup.ItemTitle>{radius?.title ?? config.radius}</ListGroup.ItemTitle>
-											</ListGroup.ItemContent>
-											<ListGroup.ItemSuffix>
-												<RadiusPreview radius={Number(resolved.radius ?? 0)} />
-											</ListGroup.ItemSuffix>
-										</ListGroup.Item>
-									</ListGroup>
-
-									<View className="gap-2">
-										<Text.Label>Appearance</Text.Label>
-										<View className="flex-row gap-2">
-											{THEME_MODES.map((name) => (
-												<Button
-													key={name}
-													onPress={() => setThemeMode(name)}
-													size="sm"
-													variant={activeMode === name ? "primary" : "outline"}
-												>
-													{name}
-												</Button>
-											))}
-										</View>
-									</View>
-
-									<Button onPress={resetConfig} size="sm" variant="ghost">
-										Reset to Vega / Neutral
-									</Button>
-								</View>
+								<RootPane onSelect={setPane} />
 							) : (
-								<View className="gap-3">
-									<View className="flex-row items-center gap-2">
-										<Button
-											accessibilityLabel="Back"
-											haptic="selection"
-											isIconOnly
-											onPress={() => setPane("root")}
-											size="sm"
-											variant="ghost"
-										>
-											<Icon icon={IconArrowLeft} />
-										</Button>
-										<BottomSheet.Title>{PANE_TITLES[pane]}</BottomSheet.Title>
-									</View>
-
-									<View className="gap-3">
-										{pane === "style" ? (
-											<ListGroup>
-												{STYLES.map((candidate) => (
-													<ListGroup.Item
-														haptic="selection"
-														key={candidate.name}
-														onPress={() => choose("style", candidate.name)}
-													>
-														<ListGroup.ItemContent>
-															<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
-															<ListGroup.ItemDescription>{candidate.description}</ListGroup.ItemDescription>
-														</ListGroup.ItemContent>
-														<ListGroup.ItemSuffix>
-															<RadiusPreview radius={candidate.geometry.radius} />
-														</ListGroup.ItemSuffix>
-													</ListGroup.Item>
-												))}
-											</ListGroup>
-										) : null}
-
-										{pane === "baseColor" ? (
-											<ListGroup>
-												{BASE_COLORS.map((candidate) => (
-													<ListGroup.Item
-														haptic="selection"
-														key={candidate.name}
-														onPress={() => choose("baseColor", candidate.name)}
-													>
-														<ListGroup.ItemContent>
-															<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
-														</ListGroup.ItemContent>
-														<ListGroup.ItemSuffix>
-															<ColorPreview
-																tokens={SWATCH_TOKENS}
-																values={preview({ baseColor: candidate.name }) as Record<string, string>}
-															/>
-														</ListGroup.ItemSuffix>
-													</ListGroup.Item>
-												))}
-											</ListGroup>
-										) : null}
-
-										{pane === "theme" || pane === "chartColor" ? (
-											<ListGroup>
-												{palettes.map((candidate) => (
-													<ListGroup.Item
-														haptic="selection"
-														key={candidate.name}
-														onPress={() =>
-															pane === "theme" ? choose("theme", candidate.name) : choose("chartColor", candidate.name)
-														}
-													>
-														<ListGroup.ItemContent>
-															<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
-														</ListGroup.ItemContent>
-														<ListGroup.ItemSuffix>
-															<ColorPreview
-																tokens={pane === "theme" ? ["primary"] : CHART_TOKENS}
-																values={
-																	preview(
-																		pane === "theme" ? { theme: candidate.name } : { chartColor: candidate.name }
-																	) as Record<string, string>
-																}
-															/>
-														</ListGroup.ItemSuffix>
-													</ListGroup.Item>
-												))}
-											</ListGroup>
-										) : null}
-
-										{pane === "font" || pane === "fontHeading" ? (
-											<>
-												{pane === "fontHeading" ? (
-													<ListGroup>
-														<ListGroup.Item haptic="selection" onPress={() => choose("fontHeading", "inherit")}>
-															<ListGroup.ItemContent>
-																<ListGroup.ItemTitle>Inherit</ListGroup.ItemTitle>
-																<ListGroup.ItemDescription>Follows the body font</ListGroup.ItemDescription>
-															</ListGroup.ItemContent>
-														</ListGroup.Item>
-													</ListGroup>
-												) : null}
-
-												{FONT_GROUPS.map((group) => (
-													<View className="gap-2" key={group.type}>
-														<Text.Overline>{group.label}</Text.Overline>
-														<ListGroup>
-															{group.fonts.map((candidate) => (
-																<ListGroup.Item
-																	haptic="selection"
-																	key={candidate.name}
-																	onPress={() =>
-																		pane === "font"
-																			? choose("font", candidate.name)
-																			: choose("fontHeading", candidate.name)
-																	}
-																>
-																	<ListGroup.ItemContent>
-																		<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
-																	</ListGroup.ItemContent>
-																	<ListGroup.ItemSuffix>
-																		<FontPreview family={candidate.family} />
-																	</ListGroup.ItemSuffix>
-																</ListGroup.Item>
-															))}
-														</ListGroup>
-													</View>
-												))}
-											</>
-										) : null}
-
-										{pane === "radius" ? (
-											<ListGroup>
-												{RADII.map((candidate) => (
-													<ListGroup.Item
-														haptic="selection"
-														key={candidate.name}
-														onPress={() => choose("radius", candidate.name)}
-													>
-														<ListGroup.ItemContent>
-															<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
-															{candidate.value === null ? (
-																<ListGroup.ItemDescription>Whatever the style chose</ListGroup.ItemDescription>
-															) : null}
-														</ListGroup.ItemContent>
-														<ListGroup.ItemSuffix>
-															<RadiusPreview radius={candidate.value ?? style?.geometry.radius ?? 0} />
-														</ListGroup.ItemSuffix>
-													</ListGroup.Item>
-												))}
-											</ListGroup>
-										) : null}
-									</View>
-								</View>
+								<AxisPane onBack={() => setPane("root")} pane={pane} />
 							)}
 						</BottomSheet.ScrollView>
 					</BottomSheet.Container>
@@ -394,17 +139,331 @@ export function Customizer(): ReactElement | null {
 }
 Customizer.displayName = "Playground.Customizer";
 
-const PANE_TITLES: Record<Pane, string> = {
-	root: "Customize",
-	style: "Style",
-	baseColor: "Base Color",
-	theme: "Theme",
-	chartColor: "Chart Color",
-	font: "Font",
-	fontHeading: "Heading",
-	radius: "Radius",
-	appearance: "Appearance",
-};
+/** The axis list, appearance toggle, and reset — the sheet's home pane. */
+function RootPane({ onSelect }: { onSelect: (pane: Pane) => void }): ReactElement {
+	const config = useDesignSystem();
+	const { theme } = useUniwind();
+	const mode = theme === "dark" ? "dark" : "light";
+
+	const bodyFont = fontByName(config.font);
+	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
+	const style = styleByName(config.style);
+	const radius = radiusByName(config.radius);
+	const palettes = palettesForBaseColor(config.baseColor);
+	const resolved = resolveTokens(config)[mode] as Record<string, string>;
+
+	return (
+		<View className="gap-4">
+			<View className="gap-1">
+				<BottomSheet.Title>Customize</BottomSheet.Title>
+				<BottomSheet.Description>
+					Every axis repaints the same tokens, so nothing below is restyled by hand.
+				</BottomSheet.Description>
+			</View>
+
+			<ListGroup>
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("style")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Style</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>{style?.title ?? config.style}</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<RadiusPreview radius={style?.geometry.radius ?? 0} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("baseColor")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Base Color</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>
+							{BASE_COLORS.find((base) => base.name === config.baseColor)?.title ?? config.baseColor}
+						</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<ColorPreview tokens={SWATCH_TOKENS} values={resolved} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("theme")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Theme</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>
+							{palettes.find((palette) => palette.name === config.theme)?.title ?? config.theme}
+						</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<ColorPreview tokens={["primary"]} values={resolved} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("chartColor")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Chart Color</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>
+							{palettes.find((palette) => palette.name === config.chartColor)?.title ?? config.chartColor}
+						</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<ColorPreview tokens={CHART_TOKENS} values={resolved} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			</ListGroup>
+
+			<ListGroup>
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("fontHeading")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Heading</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>
+							{config.fontHeading === "inherit" ? `${bodyFont?.title ?? "Inherit"}` : (headingFont?.title ?? "")}
+						</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<FontPreview family={headingFont?.family ?? ""} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("font")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Font</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>{bodyFont?.title ?? config.font}</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<FontPreview family={bodyFont?.family ?? ""} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			</ListGroup>
+
+			<ListGroup>
+				<IconLibraryRow />
+
+				<ListGroup.Item haptic="selection" onPress={() => onSelect("radius")}>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemDescription>Radius</ListGroup.ItemDescription>
+						<ListGroup.ItemTitle>{radius?.title ?? config.radius}</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<RadiusPreview radius={Number(resolved.radius ?? 0)} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			</ListGroup>
+
+			<AppearanceControls />
+
+			<Button onPress={resetConfig} size="sm" variant="ghost">
+				Reset to Vega / Neutral
+			</Button>
+		</View>
+	);
+}
+RootPane.displayName = "Playground.Customizer.RootPane";
+
+/** Light / dark / system — lives outside RootPane so that pane stays under the complexity cap. */
+function AppearanceControls(): ReactElement {
+	const { theme, hasAdaptiveThemes } = useUniwind();
+	const mode = theme === "dark" ? "dark" : "light";
+	const activeMode: ThemeMode = hasAdaptiveThemes ? "system" : mode;
+
+	return (
+		<View className="gap-2">
+			<Text.Label>Appearance</Text.Label>
+			<View className="flex-row gap-2">
+				{THEME_MODES.map((name) => (
+					<Button
+						key={name}
+						onPress={() => setThemeMode(name)}
+						size="sm"
+						variant={activeMode === name ? "primary" : "outline"}
+					>
+						{name}
+					</Button>
+				))}
+			</View>
+		</View>
+	);
+}
+AppearanceControls.displayName = "Playground.Customizer.AppearanceControls";
+
+/** Back chrome plus the options for one design-system axis. */
+function AxisPane({ pane, onBack }: { pane: Exclude<Pane, "root">; onBack: () => void }): ReactElement {
+	return (
+		<View className="gap-3">
+			<View className="flex-row items-center gap-2">
+				<Button accessibilityLabel="Back" haptic="selection" isIconOnly onPress={onBack} size="sm" variant="ghost">
+					<Icon icon={IconArrowLeft} />
+				</Button>
+				<BottomSheet.Title>{PANE_TITLES[pane]}</BottomSheet.Title>
+			</View>
+			<AxisOptions onBack={onBack} pane={pane} />
+		</View>
+	);
+}
+AxisPane.displayName = "Playground.Customizer.AxisPane";
+
+/** Dispatches an axis pane to the matching option list. */
+function AxisOptions({ pane, onBack }: { pane: Exclude<Pane, "root">; onBack: () => void }): ReactElement | null {
+	switch (pane) {
+		case "style":
+			return <StyleOptions onBack={onBack} />;
+		case "baseColor":
+			return <BaseColorOptions onBack={onBack} />;
+		case "theme":
+		case "chartColor":
+			return <PaletteOptions axis={pane} onBack={onBack} />;
+		case "font":
+		case "fontHeading":
+			return <FontOptions axis={pane} onBack={onBack} />;
+		case "radius":
+			return <RadiusOptions onBack={onBack} />;
+		case "appearance":
+			return null;
+	}
+}
+AxisOptions.displayName = "Playground.Customizer.AxisOptions";
+
+function StyleOptions({ onBack }: { onBack: () => void }): ReactElement {
+	return (
+		<ListGroup>
+			{STYLES.map((candidate) => (
+				<ListGroup.Item
+					haptic="selection"
+					key={candidate.name}
+					onPress={() => chooseAxis("style", candidate.name, onBack)}
+				>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
+						<ListGroup.ItemDescription>{candidate.description}</ListGroup.ItemDescription>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<RadiusPreview radius={candidate.geometry.radius} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			))}
+		</ListGroup>
+	);
+}
+StyleOptions.displayName = "Playground.Customizer.StyleOptions";
+
+function BaseColorOptions({ onBack }: { onBack: () => void }): ReactElement {
+	const config = useDesignSystem();
+	const { theme } = useUniwind();
+	const mode = theme === "dark" ? "dark" : "light";
+
+	return (
+		<ListGroup>
+			{BASE_COLORS.map((candidate) => (
+				<ListGroup.Item
+					haptic="selection"
+					key={candidate.name}
+					onPress={() => chooseAxis("baseColor", candidate.name, onBack)}
+				>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<ColorPreview tokens={SWATCH_TOKENS} values={previewTokens(config, mode, { baseColor: candidate.name })} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			))}
+		</ListGroup>
+	);
+}
+BaseColorOptions.displayName = "Playground.Customizer.BaseColorOptions";
+
+function PaletteOptions({ axis, onBack }: { axis: "theme" | "chartColor"; onBack: () => void }): ReactElement {
+	const config = useDesignSystem();
+	const { theme } = useUniwind();
+	const mode = theme === "dark" ? "dark" : "light";
+	const palettes = palettesForBaseColor(config.baseColor);
+	const tokens = axis === "theme" ? (["primary"] as const) : CHART_TOKENS;
+
+	return (
+		<ListGroup>
+			{palettes.map((candidate) => (
+				<ListGroup.Item
+					haptic="selection"
+					key={candidate.name}
+					onPress={() => chooseAxis(axis, candidate.name, onBack)}
+				>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<ColorPreview tokens={tokens} values={previewTokens(config, mode, { [axis]: candidate.name })} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			))}
+		</ListGroup>
+	);
+}
+PaletteOptions.displayName = "Playground.Customizer.PaletteOptions";
+
+function FontOptions({ axis, onBack }: { axis: "font" | "fontHeading"; onBack: () => void }): ReactElement {
+	return (
+		<View className="gap-3">
+			{axis === "fontHeading" ? (
+				<ListGroup>
+					<ListGroup.Item haptic="selection" onPress={() => chooseAxis("fontHeading", "inherit", onBack)}>
+						<ListGroup.ItemContent>
+							<ListGroup.ItemTitle>Inherit</ListGroup.ItemTitle>
+							<ListGroup.ItemDescription>Follows the body font</ListGroup.ItemDescription>
+						</ListGroup.ItemContent>
+					</ListGroup.Item>
+				</ListGroup>
+			) : null}
+
+			{FONT_GROUPS.map((group) => (
+				<View className="gap-2" key={group.type}>
+					<Text.Overline>{group.label}</Text.Overline>
+					<ListGroup>
+						{group.fonts.map((candidate) => (
+							<ListGroup.Item
+								haptic="selection"
+								key={candidate.name}
+								onPress={() => chooseAxis(axis, candidate.name, onBack)}
+							>
+								<ListGroup.ItemContent>
+									<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
+								</ListGroup.ItemContent>
+								<ListGroup.ItemSuffix>
+									<FontPreview family={candidate.family} />
+								</ListGroup.ItemSuffix>
+							</ListGroup.Item>
+						))}
+					</ListGroup>
+				</View>
+			))}
+		</View>
+	);
+}
+FontOptions.displayName = "Playground.Customizer.FontOptions";
+
+function RadiusOptions({ onBack }: { onBack: () => void }): ReactElement {
+	const config = useDesignSystem();
+	const style = styleByName(config.style);
+
+	return (
+		<ListGroup>
+			{RADII.map((candidate) => (
+				<ListGroup.Item
+					haptic="selection"
+					key={candidate.name}
+					onPress={() => chooseAxis("radius", candidate.name, onBack)}
+				>
+					<ListGroup.ItemContent>
+						<ListGroup.ItemTitle>{candidate.title}</ListGroup.ItemTitle>
+						{candidate.value === null ? (
+							<ListGroup.ItemDescription>Whatever the style chose</ListGroup.ItemDescription>
+						) : null}
+					</ListGroup.ItemContent>
+					<ListGroup.ItemSuffix>
+						<RadiusPreview radius={candidate.value ?? style?.geometry.radius ?? 0} />
+					</ListGroup.ItemSuffix>
+				</ListGroup.Item>
+			))}
+		</ListGroup>
+	);
+}
+RadiusOptions.displayName = "Playground.Customizer.RadiusOptions";
 
 /**
  * The one axis shadcn offers that this library cannot.

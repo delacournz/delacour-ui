@@ -2,7 +2,7 @@ import { Text } from "@delacour/native-ui/text";
 import { formatHex, formatHex8, parse } from "culori";
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import type { TokenValues } from "@/design-system/base-colors";
+import type { ResolvedMode } from "@/design-system/resolve";
 
 /**
  * An `oklch()` string, as something React Native can actually paint.
@@ -15,8 +15,11 @@ import type { TokenValues } from "@/design-system/base-colors";
  * path, so it has to do the same conversion itself. Same library, deliberately,
  * so a colour cannot look different here than it does on the component.
  */
-function paintable(value: string | undefined): string | undefined {
-	if (!value) return undefined;
+function paintable(value: string | number | undefined): string | undefined {
+	// The resolved map carries geometry alongside colour, and a number is never
+	// a colour — reaching for `--radius` here is a bug in the caller, not a
+	// value to coerce.
+	if (typeof value !== "string" || !value) return undefined;
 
 	const parsed = parse(value);
 	if (!parsed) return value;
@@ -32,7 +35,7 @@ function paintable(value: string | undefined): string | undefined {
  * would show the active palette and the picker would be useless. This is the
  * one place in the app that legitimately paints from literals.
  */
-export function ColorPreview({ values, tokens }: { values: TokenValues; tokens: readonly string[] }): ReactElement {
+export function ColorPreview({ values, tokens }: { values: ResolvedMode; tokens: readonly string[] }): ReactElement {
 	return (
 		<View className="flex-row items-center">
 			{tokens.map((token, index) => (

@@ -94,6 +94,31 @@ describe("the accents", () => {
 		}
 	});
 
+	/**
+	 * Every accent carries the same keys, and `rose` is why this is a test.
+	 *
+	 * It is the one accent upstream that also declares a tinted `sidebar` in its
+	 * dark variant; the other sixteen declare none. Carrying it would give one
+	 * option a token the rest lack — an axis that repaints one extra surface on
+	 * exactly one of its seventeen values, which reads as a bug in whatever is
+	 * drawn there rather than as a feature. Dropped on transcription, and this
+	 * is what stops a re-transcription quietly reinstating it.
+	 */
+	test("declare an identical key set, in both modes", () => {
+		const first = ACCENT_THEMES[0];
+		if (!first) throw new Error("no accents registered");
+
+		for (const mode of MODES) {
+			const expected = Object.keys(first[mode]).sort();
+
+			for (const theme of ACCENT_THEMES) {
+				expect(Object.keys(theme[mode]).sort(), `${theme.name} disagrees with ${first.name} in ${mode}`).toEqual(
+					expected
+				);
+			}
+		}
+	});
+
 	test.each(ACCENT_THEMES.map((theme) => [theme.name, theme] as const))("%s carries a primary pair", (_name, theme) => {
 		for (const mode of MODES) {
 			expect(theme[mode].primary).toBeDefined();

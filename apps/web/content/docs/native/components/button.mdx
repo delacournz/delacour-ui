@@ -26,7 +26,7 @@ Use the `variant` prop to change how the surface is painted.
 
 <Preview id="button/variants" />
 
-<Tabs items={["primary", "secondary", "tertiary", "outline", "ghost", "danger", "danger-soft"]}>
+<Tabs items={["primary", "secondary", "tertiary", "outline", "ghost", "destructive", "destructive-soft"]}>
   <Tab value="primary">
     ```tsx
     <Button variant="primary">Continue</Button>
@@ -52,14 +52,14 @@ Use the `variant` prop to change how the surface is painted.
     <Button variant="ghost">Continue</Button>
     ```
   </Tab>
-  <Tab value="danger">
+  <Tab value="destructive">
     ```tsx
-    <Button variant="danger">Delete</Button>
+    <Button variant="destructive">Delete</Button>
     ```
   </Tab>
-  <Tab value="danger-soft">
+  <Tab value="destructive-soft">
     ```tsx
-    <Button variant="danger-soft">Delete</Button>
+    <Button variant="destructive-soft">Delete</Button>
     ```
   </Tab>
 </Tabs>
@@ -94,7 +94,7 @@ import { IconArrowRight, IconTrash } from "@delacour/native-ui/icons/central";
   <Icon icon={IconArrowRight} />
 </Button>
 
-<Button variant="danger" onPress={remove}>
+<Button variant="destructive" onPress={remove}>
   <Icon icon={IconTrash} />
   <Button.Label>Delete</Button.Label>
 </Button>
@@ -203,7 +203,7 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
 <TypeTable
   type={{
     variant: {
-      type: '"primary" | "secondary" | "tertiary" | "outline" | "ghost" | "danger" | "danger-soft"',
+      type: '"primary" | "secondary" | "tertiary" | "outline" | "ghost" | "destructive" | "destructive-soft"',
       default: '"primary"',
       description: "How the surface is painted.",
     },

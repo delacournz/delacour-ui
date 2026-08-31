@@ -28,7 +28,7 @@ export type BottomSheetOverlayProps = Partial<BottomSheetBackdropProps> & {
 	/**
 	 * Opacity at full appearance.
 	 *
-	 * Defaults to 1 rather than gorhom's 0.5, because `--color-overlay` carries
+	 * Defaults to 1 rather than gorhom's 0.5, because `--overlay` carries
 	 * its own alpha — the two would otherwise multiply and land the scrim at a
 	 * fifth of what the theme asked for.
 	 */

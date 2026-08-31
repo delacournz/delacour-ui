@@ -191,7 +191,7 @@ library's first overlay. Compound root plus `BottomSheet.Trigger`,
   footer off-screen, where `resize` is already what Expo configures and what
   `KeyboardProvider` requires. All are ordinary props; `BOTTOM_SHEET_KEYBOARD_DEFAULTS`
   is a const so a test pins the trio rather than three inline literals.
-- **`--color-overlay` is a token, not a `bg-black/50`.** A pure-black scrim over
+- **`--overlay` is a token, not a `bg-black/50`.** A pure-black scrim over
   a near-black dark theme is nearly invisible, so the two variants carry
   different alphas — and because the alpha lives in the token, the backdrop's
   `opacity` defaults to **1** rather than gorhom's 0.5, which would multiply the

@@ -16,7 +16,7 @@ export function Demo(): ReactElement {
 		<View className="gap-4">
 			<Field isInvalid>
 				<Field.Label>Inherits</Field.Label>
-				<Input defaultValue="Turns danger" />
+				<Input defaultValue="Turns destructive" />
 			</Field>
 			<Field isInvalid>
 				<Field.Label>Opts out</Field.Label>

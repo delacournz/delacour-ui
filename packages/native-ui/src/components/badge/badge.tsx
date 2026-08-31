@@ -144,7 +144,7 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  *
  * Two axes describe the surface: `variant` says how it is painted (`solid`,
  * `soft`, `outline`, `ghost`) and `color` says what it means (`default`,
- * `primary`, `success`, `warning`, `danger`, `info`). They are orthogonal, so
+ * `primary`, `success`, `warning`, `destructive`, `info`). They are orthogonal, so
  * every one of the twenty-four pairings is reachable without the library naming
  * each combination.
  *

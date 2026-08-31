@@ -114,7 +114,7 @@ describe("the root slot", () => {
 		for (const variant of INPUT_VARIANTS) {
 			const both = inputVariants({ isFocused: true, isInvalid: true, variant }).root();
 			const invalid = inputVariants({ isInvalid: true, variant }).root();
-			expect(both).toContain("border-danger");
+			expect(both).toContain("border-destructive");
 			expect(both).not.toContain("border-ring");
 			expect(new Set(both.split(" "))).toEqual(new Set(invalid.split(" ")));
 		}
@@ -182,8 +182,8 @@ describe("the field slot", () => {
 	});
 
 	test("merges an incoming className last", () => {
-		expect(inputVariants().field({ className: "text-danger" })).toContain("text-danger");
-		expect(inputVariants().field({ className: "text-danger" })).not.toContain("text-foreground");
+		expect(inputVariants().field({ className: "text-destructive" })).toContain("text-destructive");
+		expect(inputVariants().field({ className: "text-destructive" })).not.toContain("text-foreground");
 	});
 });
 
@@ -215,8 +215,8 @@ describe("a decorator", () => {
 		}
 	});
 
-	test("turns its affix text danger when the field is invalid", () => {
-		expect(inputVariants({ isInvalid: true }).decoratorText()).toContain("text-danger");
+	test("turns its affix text destructive when the field is invalid", () => {
+		expect(inputVariants({ isInvalid: true }).decoratorText()).toContain("text-destructive");
 		expect(inputVariants({ isInvalid: true }).decoratorText()).not.toContain("text-muted-foreground");
 	});
 });
@@ -292,10 +292,10 @@ describe("the accent resolvers", () => {
 	});
 
 	test("let a caller replace the placeholder colour", () => {
-		expect(resolvePlaceholderAccentClass("accent-danger")).toBe("accent-danger");
+		expect(resolvePlaceholderAccentClass("accent-destructive")).toBe("accent-destructive");
 	});
 
-	test("turn the caret and selection danger while the field is invalid", () => {
+	test("turn the caret and selection destructive while the field is invalid", () => {
 		expect(resolveSelectionAccentClass({ isInvalid: false })).toBe(INPUT_SELECTION_ACCENT_CLASS);
 		expect(resolveSelectionAccentClass({ isInvalid: true })).toBe(INPUT_INVALID_SELECTION_ACCENT_CLASS);
 	});

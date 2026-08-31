@@ -7,7 +7,7 @@ import { InputGroupDecorator } from "./input-group-decorator";
  *
  * An `Icon` needs nothing said at the call site: it inherits the field's icon
  * step and a muted colour from the decorator's `IconDefaultsProvider`, and turns
- * danger with the group when the value is invalid. A bare string is wrapped in a
+ * destructive with the group when the value is invalid. A bare string is wrapped in a
  * `Text` that inherits the same affix treatment.
  */
 export function InputGroupPrefix(props: InputSlotProps): ReactElement {

@@ -15,8 +15,8 @@ const LABELS: Record<ButtonVariant, string> = {
 	tertiary: "Tertiary",
 	outline: "Outline",
 	ghost: "Ghost",
-	danger: "Danger",
-	"danger-soft": "Danger Soft",
+	destructive: "Destructive",
+	"destructive-soft": "Destructive Soft",
 };
 
 export function Demo(): ReactElement {

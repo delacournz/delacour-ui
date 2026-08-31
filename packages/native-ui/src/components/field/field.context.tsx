@@ -31,7 +31,7 @@ const FieldContext = createContext<FieldContextValue | null>(null);
  * runtime matches them against the props of **the same component**, so a class
  * on a `Field` cannot reach the `Input` inside it. A context can.
  *
- * So `<Field isInvalid>` turns the control inside it danger with nothing said at
+ * So `<Field isInvalid>` turns the control inside it destructive with nothing said at
  * the control, and the same channel will serve `Checkbox` and `Radio` when they
  * land. An explicit prop on the control still wins — see `Input`'s ladder.
  *

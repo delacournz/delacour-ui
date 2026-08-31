@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isLiteralColor } from "./color";
+import { isLiteralColor, themeVariableName } from "./color";
 
 describe("isLiteralColor", () => {
 	test("treats hex as a literal", () => {
@@ -19,7 +19,7 @@ describe("isLiteralColor", () => {
 	test("treats a theme token name as a token", () => {
 		expect(isLiteralColor("foreground")).toBe(false);
 		expect(isLiteralColor("primary-foreground")).toBe(false);
-		expect(isLiteralColor("danger-soft-foreground")).toBe(false);
+		expect(isLiteralColor("destructive-soft-foreground")).toBe(false);
 		expect(isLiteralColor("emerald-500")).toBe(false);
 	});
 
@@ -29,5 +29,25 @@ describe("isLiteralColor", () => {
 
 	test("does not mistake an empty string for a literal", () => {
 		expect(isLiteralColor("")).toBe(false);
+	});
+});
+
+describe("themeVariableName", () => {
+	test("prefixes a bare token name", () => {
+		expect(themeVariableName("foreground")).toBe("--foreground");
+		expect(themeVariableName("destructive-soft-foreground")).toBe("--destructive-soft-foreground");
+		expect(themeVariableName("chart-1")).toBe("--chart-1");
+	});
+
+	test("passes a raw variable name through", () => {
+		expect(themeVariableName("--foreground")).toBe("--foreground");
+	});
+
+	// `theme.css` maps the raw names onto `--color-*` through `@theme inline`,
+	// and `inline` emits no `--color-*` variable at all — so the prefixed form
+	// a caller may have written before would miss on every render.
+	test("rewrites the pre-shadcn --color- form onto the raw name", () => {
+		expect(themeVariableName("--color-foreground")).toBe("--foreground");
+		expect(themeVariableName("--color-destructive-soft")).toBe("--destructive-soft");
 	});
 });

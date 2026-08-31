@@ -239,12 +239,20 @@ not in `*.types.ts`, which holds only shapes shared by two or more modules in th
 | `theme.css` | **No.** Its palette lives under `@variant light` / `dark` / `ios` / `android`; `light`, `ios` and `android` are Uniwind variants that do not exist outside React Native. |
 | `base.css` / the `./styles` barrel | **No.** Pulls in `@import "uniwind"`. |
 
-So `src/styles/app.css` imports `tokens.css` and then transcribes `theme.css`'s hex values onto
-Fumadocs' `--color-fd-*` names by hand. **When the library's palette changes, update that block.**
-Nothing checks it.
+So `src/styles/app.css` imports `tokens.css` and then transcribes `theme.css`'s palette onto
+Fumadocs' `--color-fd-*` names by hand. **When the library's palette changes, update that block** —
+`src/styles/app.css.test.ts` fails when the two disagree, comparing them token for token.
 
-One deliberate divergence: the library's `card` and `background` are both `#ffffff` in light, so
-`--color-fd-card` takes `tertiary` (`#f8f8f8`) instead — a docs card has to read as a surface.
+The transcription is verbatim `oklch()`, the notation the library authors. A browser reads it
+natively, so there is nothing to convert and the comparison is string equality rather than a
+colour-space round trip that could disagree about rounding. `--color-fd-background` matching
+`--background` is the one that shows: `preview.tsx` composites a captured shot onto it, and the
+simulator painted that shot with `--background`.
+
+One deliberate divergence, and it is the reason the test's map omits `fd-card`: the library's `card`
+and `background` are both white in light, so `--color-fd-card` takes `tertiary` instead — a docs
+card has to read as a surface. `tertiary` is a `color-mix` of two variables `app.css` does not
+import, so its value is resolved there rather than copied.
 
 ## Gotchas
 

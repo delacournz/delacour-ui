@@ -42,7 +42,7 @@ export function Demo(): ReactElement {
 								</Tabs.List>
 							</Tabs>
 						</View>
-						{size === "md" ? <View className="h-11 w-1 rounded-full bg-danger" /> : null}
+						{size === "md" ? <View className="h-11 w-1 rounded-full bg-destructive" /> : null}
 					</View>
 				</View>
 			))}

@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Live validation",
 	caption:
-		"Type an `@`. The border, the caret and the selection highlight leave danger together — one state, not three places that have to be kept in step.",
+		"Type an `@`. The border, the caret and the selection highlight leave destructive together — one state, not three places that have to be kept in step.",
 	keyboardAware: true,
 };
 

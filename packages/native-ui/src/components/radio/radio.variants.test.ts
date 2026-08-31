@@ -249,10 +249,10 @@ describe("the indicator slot", () => {
 
 	// Invalid is reported and selection is routine, so invalid outranks it — the
 	// precedence `Input` gives invalid over focus, and for the same reason.
-	test("stays danger while invalid, whatever else is set", () => {
+	test("stays destructive while invalid, whatever else is set", () => {
 		for (const cell of CELLS.filter((one) => one.isInvalid)) {
 			const indicator = radioVariants(cell).indicator();
-			expect(indicator).toContain("border-danger");
+			expect(indicator).toContain("border-destructive");
 			expect(indicator).not.toContain("border-primary");
 			expect(indicator).not.toContain("border-input");
 			expect(indicator).not.toContain("border-border");
@@ -276,9 +276,9 @@ describe("the dot slot", () => {
 		}
 	});
 
-	test("turns danger while invalid", () => {
-		expect(radioVariants({ isInvalid: true }).dot()).toContain("bg-danger");
-		expect(radioVariants({ isInvalid: false }).dot()).not.toContain("bg-danger");
+	test("turns destructive while invalid", () => {
+		expect(radioVariants({ isInvalid: true }).dot()).toContain("bg-destructive");
+		expect(radioVariants({ isInvalid: false }).dot()).not.toContain("bg-destructive");
 	});
 
 	// This is the assertion that stands in for a `--spacing-radio-*` token scale:

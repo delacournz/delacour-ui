@@ -43,7 +43,7 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
-		// Mirrors --color-background in packages/native-ui/src/styles/theme.css.
+		// Mirrors --background in packages/native-ui/src/styles/theme.css.
 		// Restated rather than imported because prebuild runs in Node and cannot
 		// read the CSS; every other consumer of the colour reads the token.
 		//

@@ -1,24 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declaredTokens } from "../styles/theme-tokens.test";
 import { NAVIGATION_THEME_TOKENS } from "./navigation-theme";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../styles/theme.css"), "utf-8");
-
-/** Every `--color-*` name declared under one `@variant` block. */
-function declaredColors(variant: "light" | "dark"): Set<string> {
-	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
-	const names = new Set<string>();
-
-	for (const [, name] of block.matchAll(/--color-([\w-]+):/g)) {
-		names.add(name);
-	}
-
-	return names;
-}
-
-const LIGHT = declaredColors("light");
-const DARK = declaredColors("dark");
+const LIGHT = declaredTokens("light");
+const DARK = declaredTokens("dark");
 
 /** The slots React Navigation's theme actually has. Missing one falls back to its light default. */
 const REACT_NAVIGATION_SLOTS = ["background", "card", "text", "border", "primary", "notification"] as const;

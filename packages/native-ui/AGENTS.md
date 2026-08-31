@@ -187,11 +187,16 @@ its slot set, so a sibling would buy nothing but a second file to open.
    silently strips the label's colour. `src/styles/tokens.ts` holds the one
    config both are built from.
 10. **No `any`.** Discriminated unions over loose types.
-11. **Token names diverge from the web package where the mobile kit needs
-    them to.** This package uses `danger` / `danger-soft` (matching the button
-    variant names) and adds `tertiary`, where the web package uses
-    `destructive`. `X-foreground` always means "content drawn on an `X`
-    surface" — keep that meaning when adding a token.
+11. **The token vocabulary is shadcn's, and a new token has to justify not
+    being.** Every name shadcn defines is here, spelled the way shadcn spells it
+    — `destructive`, not `danger` — so a theme written for a web app moves
+    across as a copy rather than a translation. The package adds `elevated`,
+    `tertiary`, `success` / `warning` / `info`, the `-soft` pairs and `overlay`,
+    which shadcn has no name for; each is **derived** from a token shadcn does
+    define, so a pasted palette drags it along instead of leaving it on this
+    package's defaults. Add a token only when nothing in shadcn's set carries
+    the meaning, and derive it. `X-foreground` always means "content drawn on an
+    `X` surface" — keep that meaning.
 12. **Every component carries a `DelacourUI.`-prefixed `displayName`.** Not just
     compound roots — every part, every context provider, every internal leaf that
     renders. React DevTools reads `displayName || name`, so an unnamed component
@@ -263,6 +268,20 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
 
+**The generic corner scale is derived, not enumerated.** `rounded-xs` through
+`rounded-4xl` are multiples of one `--radius` — shadcn's own scale — declared
+`@theme inline` in `tokens.css`, so a `--radius` copied out of a web app retunes
+every rounded edge in the package at once. `--radius-button-*` is deliberately
+outside it: a button's corner is half its own height, a shape rather than a step,
+and it must not move when a consumer retunes `--radius`.
+
+Only `--radius` survives to runtime — `inline` means each step is substituted
+into its utilities and no `--radius-md` variable is emitted. A component that has
+to compute a corner in JavaScript reads `--radius` and applies its own
+multiplier, restated in TypeScript and pinned against `tokens.css` by a test.
+`resolveCheckboxFillRadius` is the one case: the fill has to stay concentric with
+a border whose radius a consumer is allowed to change.
+
 **`Icon` and `Spinner` share one scale.** `SPINNER_SIZES` *is* `ICON_SIZES`, so
 `size="md"` is the same edge length in both and one can stand in for the other
 with nothing moving. A component indexes that scale at its own step name rather
@@ -291,11 +310,43 @@ scale still ascends.
 
 ## Theming
 
-Tokens are CSS variables under `@variant light` / `@variant dark` in
-`src/styles/theme.css`. Components reference semantic names — `bg-background`,
-`text-muted-foreground` — and never a raw palette colour or a `dark:` prefix;
-the variable swap handles the theme. For a prop that needs a colour *value*
-rather than a class (an icon's `color`, a gradient stop), use `useThemeColor`.
+`src/styles/theme.css` holds the palette in **two layers**, which is shadcn's
+shape rather than an invention:
+
+```css
+@layer theme {
+	:root {
+		@variant light { --primary: oklch(0.205 0 0); }
+		@variant dark  { --primary: oklch(0.922 0 0); }
+	}
+}
+
+@theme inline {
+	--color-primary: var(--primary);
+}
+```
+
+The raw name is what a theme declares; the `@theme inline` alias is what mints
+`bg-primary`. Adding a token means editing **both** — a name declared in the
+variants and forgotten in the alias block is unreachable, and no `bg-*` exists
+for it. `styles/theme-tokens.test.ts` fails on the gap, and is also the reader
+every suite that checks a token against `theme.css` shares.
+
+Two rules the tooling enforces rather than suggests:
+
+- **Both variants declare the same names.** Uniwind refuses to build otherwise
+  ("All themes must have the same variables").
+- **`@theme inline` emits no `--color-*` variable at all.** It substitutes the
+  raw value into each utility, so `--color-primary` does not exist at runtime.
+  Anything reading a colour from JavaScript reads the **raw** name —
+  `useThemeColor("destructive")` looks up `--destructive`. The same is true of
+  the corner scale: only `--radius` survives, and a component computing a corner
+  applies the multiplier itself (see `resolveCheckboxFillRadius`).
+
+Components reference semantic names — `bg-background`, `text-muted-foreground` —
+and never a raw palette colour or a `dark:` prefix; the variable swap handles the
+theme. For a prop that needs a colour *value* rather than a class (an icon's
+`color`, a gradient stop), use `useThemeColor`.
 
 **An icon's size is a class; an icon's colour is a token.** The asymmetry is
 deliberate. Tailwind's spacing scale genuinely owns 14/16/18/20/22/24/32, so a

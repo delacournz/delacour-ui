@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BADGE_COLORS,
@@ -11,29 +10,8 @@ import {
 	resolveBadgeInteractive,
 } from "./badge.variants";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
-
-/**
- * Every `--color-*` name declared under one `@variant` block.
- *
- * The same reader `navigation-theme.test.ts` uses. A token named by
- * {@link BADGE_FOREGROUND_TOKEN} but absent from a variant resolves to nothing,
- * and the icon is drawn in whatever colour the fallback happens to be — silent,
- * and only visible in one theme.
- */
-function declaredColors(variant: "light" | "dark"): Set<string> {
-	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
-	const names = new Set<string>();
-
-	for (const [, name] of block.matchAll(/--color-([\w-]+):/g)) {
-		names.add(name);
-	}
-
-	return names;
-}
-
-const LIGHT = declaredColors("light");
-const DARK = declaredColors("dark");
+const LIGHT = declaredTokens("light");
+const DARK = declaredTokens("dark");
 
 /** Tailwind's spacing step a class string sets its horizontal padding from. */
 function paddingX(cls: string): number {
@@ -201,13 +179,13 @@ describe("badgeVariants label slot", () => {
 	});
 
 	test("pairs every solid surface with its own foreground", () => {
-		for (const color of ["success", "warning", "danger", "info"] as const) {
+		for (const color of ["success", "warning", "destructive", "info"] as const) {
 			expect(badgeVariants({ variant: "solid", color }).label()).toContain(`text-${color}-foreground`);
 		}
 	});
 
 	test("pairs every soft surface with its own soft foreground", () => {
-		for (const color of ["success", "warning", "danger", "info"] as const) {
+		for (const color of ["success", "warning", "destructive", "info"] as const) {
 			const slots = badgeVariants({ variant: "soft", color });
 			expect(slots.root()).toContain(`bg-${color}-soft`);
 			expect(slots.label()).toContain(`text-${color}-soft-foreground`);

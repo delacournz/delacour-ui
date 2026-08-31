@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Through an Input.Group",
 	caption:
-		"The group reads the field too, so a decorated field turns danger the same way — border, prefix icon, caret and affix together.",
+		"The group reads the field too, so a decorated field turns destructive the same way — border, prefix icon, caret and affix together.",
 	keyboardAware: true,
 };
 

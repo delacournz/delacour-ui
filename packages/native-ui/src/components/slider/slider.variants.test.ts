@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declarationCount } from "../../styles/theme-tokens.test";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
 	clampThumb,
@@ -31,13 +30,6 @@ import {
 	toValueArray,
 	valueFromOffset,
 } from "./slider.variants";
-
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
-
-/** How many times theme.css declares a `--color-*` token — once per variant, so two. */
-function themeDeclarations(token: string): number {
-	return THEME_CSS.match(new RegExp(`--color-${token}:`, "g"))?.length ?? 0;
-}
 
 /** The bare colour a `bg-*` class names — `bg-success` yields `success`. */
 function backgroundToken(value: string): string | undefined {
@@ -102,13 +94,13 @@ describe("the theme reader", () => {
 	// Guard: every assertion below that reads tokens.css is worthless if the
 	// parse silently found nothing. The suite must not be able to go green empty.
 	test("finds both variants of the theme", () => {
-		expect(themeDeclarations("primary")).toBe(2);
+		expect(declarationCount("primary")).toBe(2);
 	});
 });
 
 describe("the axes", () => {
 	test("name the six semantic colours Badge and Checkbox share", () => {
-		expect([...SLIDER_COLORS]).toEqual(["default", "primary", "success", "warning", "danger", "info"]);
+		expect([...SLIDER_COLORS]).toEqual(["default", "primary", "success", "warning", "destructive", "info"]);
 	});
 
 	test("name three sizes and two orientations", () => {
@@ -156,21 +148,21 @@ describe("sliderVariants", () => {
 	// the capsule, so its colour is that capsule's foreground and nothing else —
 	// two maps that can drift is how a handle ends up invisible on one colour.
 	test("gives the knob the capsule's own foreground, at every colour", () => {
-		for (const color of [...SLIDER_COLORS, "danger"] as const) {
+		for (const color of [...SLIDER_COLORS, "destructive"] as const) {
 			for (const isInvalid of [false, true]) {
 				const slots = sliderVariants({ color, isInvalid });
 				const capsule = backgroundToken(cls(slots.thumb()));
 				const knob = backgroundToken(cls(slots.knob()));
 				// `foreground` is the page's ink, and what is drawn on ink is the page.
 				expect(knob).toBe(capsule === "foreground" ? "background" : `${capsule}-foreground`);
-				expect(themeDeclarations(knob as string)).toBe(2);
+				expect(declarationCount(knob as string)).toBe(2);
 			}
 		}
 	});
 
 	test("reddens the fill when invalid, whatever the colour", () => {
 		for (const color of SLIDER_COLORS) {
-			expect(cls(sliderVariants({ color, isInvalid: true }).fill())).toMatch(/\bbg-danger\b/);
+			expect(cls(sliderVariants({ color, isInvalid: true }).fill())).toMatch(/\bbg-destructive\b/);
 		}
 	});
 
@@ -708,9 +700,9 @@ describe("the fill's colours", () => {
 		for (const color of SLIDER_COLORS) {
 			const token = backgroundToken(cls(sliderVariants({ color }).fill()));
 			expect(token).toBeDefined();
-			expect(themeDeclarations(token as string)).toBe(2);
+			expect(declarationCount(token as string)).toBe(2);
 		}
-		expect(themeDeclarations(backgroundToken(cls(sliderVariants({ isInvalid: true }).fill())) as string)).toBe(2);
+		expect(declarationCount(backgroundToken(cls(sliderVariants({ isInvalid: true }).fill())) as string)).toBe(2);
 	});
 
 	// `default` and `primary` name different tokens this theme happens to tune to
@@ -718,7 +710,7 @@ describe("the fill's colours", () => {
 	// action colour, and an app that re-themes one wants the other left alone. The
 	// four semantic colours have no such excuse and must stay mutually distinct.
 	test("keep the four semantic colours distinct from each other and from the neutrals", () => {
-		const semantic = ["success", "warning", "danger", "info"] as const;
+		const semantic = ["success", "warning", "destructive", "info"] as const;
 		const tokens = semantic.map((color) => backgroundToken(cls(sliderVariants({ color }).fill())));
 		expect(new Set(tokens).size).toBe(semantic.length);
 		expect(tokens).not.toContain(backgroundToken(cls(sliderVariants({ color: "default" }).fill())));

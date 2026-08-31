@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declaredTokens, tokenValue } from "../../styles/theme-tokens.test";
 import {
 	BOTTOM_SHEET_BACKDROP_INDICES,
 	BOTTOM_SHEET_CLOSE_HIT_SLOP,
@@ -14,33 +13,8 @@ import {
 	resolveSheetBottomInset,
 } from "./bottom-sheet.variants";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
-
-/** The body of one `@variant` block, so a token can be read per theme. */
-function themeBlock(variant: "light" | "dark"): string {
-	return THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
-}
-
-/**
- * Every `--color-*` name declared under one `@variant` block.
- *
- * The reader `badge.variants.test.ts` and `checkbox.variants.test.ts` already
- * use. A token a slot names but a variant does not declare resolves to nothing,
- * so the sheet is drawn in whatever the fallback happens to be — silent, and
- * visible in one theme only.
- */
-function declaredColors(variant: "light" | "dark"): Set<string> {
-	const names = new Set<string>();
-
-	for (const [, name] of themeBlock(variant).matchAll(/--color-([\w-]+):/g)) {
-		names.add(name);
-	}
-
-	return names;
-}
-
-const LIGHT = declaredColors("light");
-const DARK = declaredColors("dark");
+const LIGHT = declaredTokens("light");
+const DARK = declaredTokens("dark");
 
 /** `border-t` and friends set a width, not a colour, and name no token. */
 const STRUCTURAL_BORDER_SUFFIXES = new Set(["t", "b", "l", "r", "x", "y", "s", "e"]);
@@ -99,10 +73,10 @@ describe("the overlay token", () => {
 
 	test("carries its own alpha in both variants, which is what makes the opacity 1", () => {
 		for (const variant of ["light", "dark"] as const) {
-			const value = themeBlock(variant).match(/--color-overlay:\s*([^;]+);/)?.[1];
-			if (value === undefined) throw new Error(`theme.css declares no --color-overlay under ${variant}`);
+			const value = tokenValue(variant, BOTTOM_SHEET_OVERLAY_TOKEN);
+			if (value === undefined) throw new Error(`theme.css declares no --overlay under ${variant}`);
 
-			const alpha = Number(value.match(/rgba\([^)]*,\s*([\d.]+)\s*\)/)?.[1]);
+			const alpha = Number(value.match(/\/\s*([\d.]+)%\s*\)/)?.[1]) / 100;
 			expect(alpha).toBeGreaterThan(0);
 			expect(alpha).toBeLessThan(1);
 		}
@@ -113,8 +87,8 @@ describe("the overlay token", () => {
 	});
 
 	test("the two variants differ — a black scrim over a near-black theme is invisible", () => {
-		const light = themeBlock("light").match(/--color-overlay:\s*([^;]+);/)?.[1];
-		const dark = themeBlock("dark").match(/--color-overlay:\s*([^;]+);/)?.[1];
+		const light = tokenValue("light", BOTTOM_SHEET_OVERLAY_TOKEN);
+		const dark = tokenValue("dark", BOTTOM_SHEET_OVERLAY_TOKEN);
 		expect(light).not.toBe(dark);
 	});
 });

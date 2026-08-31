@@ -21,7 +21,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
 
 ## Design
 
-- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+- **Colours**: `default`, `primary`, `success`, `warning`, `destructive`, `info` —
   [Badge](../badge/AGENTS.md)'s set, reusing tokens the theme already has. **Sizes**: `sm`, `md`, `lg`.
   **Alignment**: `start`, `end`. There is no `variant` axis: a checkbox has one
   shape, and a second way to paint it would be a second thing to keep in step
@@ -61,7 +61,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   expressing. `Checkbox.Group` owns no box. It is a state controller that also
   carries shared defaults, which makes it the same kind of thing as [`Field`](../field/AGENTS.md) — a
   wrapper a control overrides — so "make the group `lg`" and "make this one
-  danger" are different questions and both get an answer. `??` throughout and
+  `destructive`" are different questions and both get an answer. `??` throughout and
   never `||`, so `isDisabled={false}` opts a child out of a disabled group.
 - **`Checkbox.Group`'s state is one array of the children's `value`s.**
   `toggleCheckedValue` is the whole transition and it is pure, so `bun test`
@@ -113,15 +113,20 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   animation. Animating it only makes it correct at one end. `scale` shrinks the
   rendered corner along with the square, which is what keeps a half-grown fill
   looking like a smaller version of the finished one.
-- **It is a number, and there is no token for it.** 5pt and 7pt are not a scale;
-  they are `--radius-xs` and `--radius-sm` with a border subtracted, so minting
-  tokens would only give the pair a second place to disagree.
-  `checkbox.variants.test.ts` reads `tokens.css` and asserts
-  `CHECKBOX_FILL_RADIUS` *is* that subtraction, that `CHECKBOX_RADIUS_STEP`
-  names the `rounded-*` the `box` slot actually wears, and that the box's border
-  really is the bare 1pt `border` the arithmetic assumes. Retuning a radius, or
-  reaching for `border-2`, fails the build rather than quietly reopening the
-  gap.
+- **It is computed from `--radius`, not written down.** The result is not a
+  scale — it is the box's own step with a border subtracted — so minting a token
+  for it would only give the pair a second place to disagree. It cannot be read
+  back either: the corner scale is `@theme inline`, so Tailwind substitutes each
+  step into its utilities and no `--radius-xs` variable reaches the runtime.
+  `resolveCheckboxFillRadius` takes the live `--radius` and applies
+  `CHECKBOX_RADIUS_MULTIPLIER`, which is why a consumer pasting a theme with a
+  different `--radius` moves the fill with the border instead of leaving it
+  behind. `checkbox.variants.test.ts` reads `tokens.css` and asserts the
+  multipliers match it, that the result *is* that subtraction at any `--radius`,
+  that `CHECKBOX_RADIUS_STEP` names the `rounded-*` the `box` slot actually
+  wears, and that the box's border really is the bare 1pt `border` the
+  arithmetic assumes. Retuning the scale, or reaching for `border-2`, fails the
+  build rather than quietly reopening the gap.
 - **The border is the one part of the box no `tv()` describes.** A colour that
   fades cannot be a class, so it interpolates between two token *values* —
   `resolveCheckboxBorderTokens` names them, and `CHECKBOX_SURFACE_TOKEN` is the
@@ -129,7 +134,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   test. The base keeps `border-input` as the resting appearance the animated
   style starts from, and nothing else in the slot set mentions a border colour;
   two sources for one border is how a class and a style end up disagreeing for a
-  frame on every toggle. An **invalid** box returns danger at *both* ends, so
+  frame on every toggle. An **invalid** box returns `destructive` at *both* ends, so
   there is nothing to fade — the border is the signal the value is wrong, and it
   has to be there before the box is ticked as much as after.
 - **The clip is measured, not tabulated.** It needs the box's width in points and

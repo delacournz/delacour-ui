@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { declarationCount } from "../../styles/theme-tokens.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	hasThumbChild,
@@ -34,18 +35,12 @@ import {
 } from "./switch.variants";
 
 const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** The minimum a touch target may be, in points. Apple's number, and Android's. */
 const MINIMUM_TARGET = 44;
 
 /** Tailwind's spacing step, in points — `h-6` is six of them. */
 const SPACING_STEP = 4;
-
-/** How many times theme.css declares a `--color-*` token — once per variant, so two. */
-function themeDeclarations(token: string): number {
-	return THEME_CSS.match(new RegExp(`--color-${token}:`, "g"))?.length ?? 0;
-}
 
 /** A `--spacing-*` token's value in points, read from `tokens.css`. */
 function spacingPx(token: string): number {
@@ -241,8 +236,8 @@ describe("switchVariants slots", () => {
 			const slots = slotsFor(size);
 			expect(cls(slots.track())).toMatch(/\bbg-input\b/);
 			expect(cls(slots.thumb())).toMatch(/\bbg-background\b/);
-			expect(cls(slots.track())).not.toMatch(/\bbg-(primary|success|warning|danger|info)\b/);
-			expect(cls(slots.thumb())).not.toMatch(/\bbg-(primary|success|warning|danger|info)\b/);
+			expect(cls(slots.track())).not.toMatch(/\bbg-(primary|success|warning|destructive|info)\b/);
+			expect(cls(slots.thumb())).not.toMatch(/\bbg-(primary|success|warning|destructive|info)\b/);
 		}
 	});
 
@@ -320,7 +315,7 @@ describe("switch colour tokens", () => {
 	test("every thumb token is the foreground of its own track token", () => {
 		// Two maps that can drift is how a switch ends up with a pale knob on a
 		// near-white track. `default` is the exception the theme forces: there is
-		// no `--color-foreground-foreground`.
+		// no `--foreground-foreground`.
 		for (const color of SWITCH_COLORS) {
 			if (color === "default") {
 				expect(SWITCH_TRACK_TOKEN[color]).toBe("foreground");
@@ -343,7 +338,7 @@ describe("switch colour tokens", () => {
 			SWITCH_INVALID_THUMB_TOKEN,
 			SWITCH_CONTENT_REST_TOKEN,
 		];
-		for (const token of tokens) expect(themeDeclarations(token)).toBe(2);
+		for (const token of tokens) expect(declarationCount(token)).toBe(2);
 	});
 
 	test("the four semantic colours stay distinct from each other and from the neutrals", () => {

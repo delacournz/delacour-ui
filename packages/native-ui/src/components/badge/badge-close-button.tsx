@@ -18,7 +18,7 @@ export type BadgeCloseButtonProps = Omit<PressableProps, "asChild" | "busy" | "c
  * only to place it somewhere other than last — before an `EndContent`, say.
  *
  * The glyph is left bare: it inherits the badge's icon size and its surface's
- * colour from the root's `IconDefaultsProvider`, so a dismiss on a `danger`
+ * colour from the root's `IconDefaultsProvider`, so a dismiss on a `destructive`
  * badge is tinted without being told.
  *
  * `fade` rather than the root's `scale` — a spring on a glyph this small reads

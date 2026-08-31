@@ -24,7 +24,7 @@ section to read first — what follows is only where a switch differs.
 
 ## Design
 
-- **Colours**: `default`, `primary`, `success`, `warning`, `danger`, `info` —
+- **Colours**: `default`, `primary`, `success`, `warning`, `destructive`, `info` —
   Badge's, Checkbox's and Slider's set. **Sizes**: `sm`, `md`, `lg`. There is no
   `variant` axis: a switch has one shape, and a second way to paint it would be
   a second thing to keep in step with the checkbox beside it.
@@ -110,7 +110,7 @@ section to read first — what follows is only where a switch differs.
   up disagreeing for a frame on every toggle.
 - **The thumb takes the `-foreground` of the track it is travelling on**, so a
   pale knob is never left unreadable on `warning`. `default` is the exception the
-  theme forces: there is no `--color-foreground-foreground`, and `background` is
+  theme forces: there is no `--foreground-foreground`, and `background` is
   what content drawn on the page's ink actually is. A test pins the whole map
   against the track's.
 - **`Switch.StartContent` and `.EndContent` crossfade themselves.** Start sits at

@@ -25,7 +25,7 @@ bun test                 # unit + end-to-end against the local registry
 ```
 src/
 ├── index.ts              commander wiring, and the one place a failure becomes a message
-├── commands/             init, add, browse (list/search/view/info), diff, doctor, mcp
+├── commands/             init, add, browse (list/search/view/info), diff, doctor, theme, mcp
 ├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
@@ -46,6 +46,7 @@ src/
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
 │   ├── source.ts, namespaces.ts, schema.ts
+├── theme/                convert.ts — a web app's theme in, a `theme.css` out
 └── ui/                   output.ts (all printing), diff.ts (the line diff)
 
 scripts/
@@ -197,6 +198,20 @@ corrupts both. `ui/output.ts` routes every error to stderr and drops everything 
 
 `runChecks()` returns the results and prints nothing; `doctor()` prints them. The MCP server calls
 the first — writing a report to stdout would corrupt the protocol.
+
+### `theme` exists because Uniwind cannot read a `.dark {}` block
+
+The palette `native-ui` paints from is shadcn's, name for name, so almost everything in a web app's
+`globals.css` carries across untouched. The wrapper does not: Uniwind reads a theme only from
+`@variant light` / `@variant dark`, and a literal `.dark { … }` is registered as a **utility class
+named `dark`** that contributes nothing — no error, no warning, and a dark theme that never arrives.
+That single fact is the whole reason the command exists.
+
+`theme/convert.ts` is pure — CSS text in, CSS text out — and `commands/theme.ts` is only the I/O
+around it, the same split `registry/canonicalise.ts` has from its command. The conversions worth
+knowing about are in that file's own doc comment; two of them are load-bearing and easy to undo:
+a font stack is cut to its first family (React Native takes one name, never a list), and a source's
+derived `--radius-*` steps are dropped, because every corner here is a multiple of one `--radius`.
 
 ### The registry ref is baked in at build time
 

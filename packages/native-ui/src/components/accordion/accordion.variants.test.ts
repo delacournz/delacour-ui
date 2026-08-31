@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { declarationCount } from "../../styles/theme-tokens.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	ACCORDION_CONTENT_FADE,
@@ -23,18 +24,12 @@ import {
 } from "./accordion.variants";
 
 const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
 
 /** The minimum a touch target may be, in points. Apple's number, and Android's. */
 const MINIMUM_TARGET = 44;
 
 /** Tailwind's spacing step, in points — `min-h-12` is twelve of them. */
 const SPACING_STEP = 4;
-
-/** How many times theme.css declares a `--color-*` token — once per variant, so two. */
-function themeDeclarations(token: string): number {
-	return THEME_CSS.match(new RegExp(`--color-${token}:`, "g"))?.length ?? 0;
-}
 
 /** A `--spacing-*` token's value in points, read from `tokens.css`. */
 function spacingPx(token: string): number {
@@ -394,7 +389,7 @@ describe("accordion colour tokens", () => {
 		// A token no theme emits resolves to undefined and is dropped silently,
 		// leaving the platform default in place with no error anywhere.
 		for (const token of [ACCORDION_FOREGROUND_TOKEN, ACCORDION_INDICATOR_TOKEN]) {
-			expect(themeDeclarations(token)).toBe(2);
+			expect(declarationCount(token)).toBe(2);
 		}
 	});
 

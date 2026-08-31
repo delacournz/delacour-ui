@@ -42,7 +42,7 @@ set is [Icons](/docs/native/getting-started/icons).
 <Preview id="icon/colour-is-a-token" />
 
 ```tsx
-<Icon icon={IconHeart} color="danger" />
+<Icon icon={IconHeart} color="destructive" />
 <Icon icon={IconHeart} color="#EC4899" />
 ```
 
@@ -65,7 +65,7 @@ import { IconDefaultsProvider } from "@delacour/native-ui/icon";
 ```tsx
 <IconDefaultsProvider value={{ className: "size-icon-2xl", color: "primary" }}>
   <Icon icon={IconHeart} />
-  <Icon color="danger" icon={IconBell} />
+  <Icon color="destructive" icon={IconBell} />
 </IconDefaultsProvider>
 ```
 
@@ -91,7 +91,7 @@ Extends `SvgProps`, minus `color`, `width` and `height`.
     },
     color: {
       type: "string",
-      description: "A theme token name (danger, muted-foreground) or a literal (#EC4899).",
+      description: "A theme token name (destructive, muted-foreground) or a literal (#EC4899).",
     },
     className: {
       type: "string",

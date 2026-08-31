@@ -67,6 +67,7 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkTailwindSources(config),
 		checkTsconfigPaths(config, expoConfig),
 		checkUniwindTypes(config),
+		await checkThemeTokens(config),
 		await checkCssEntryImported(config),
 		await checkGestureHandlerRoot(config),
 		await checkDuplicateNativeModules(project),
@@ -287,6 +288,80 @@ function checkUniwindTypes(config: ResolvedConfig): Check {
 	}
 
 	return { name: "Uniwind types", status: "pass", detail: `${UNIWIND_ENV_FILENAME} present` };
+}
+
+/**
+ * Every token `theme.css` declares is reachable as a utility.
+ *
+ * The palette is two layers — raw names under `@variant light` / `@variant
+ * dark`, and an `@theme inline` block mapping each onto `--color-*`. A name
+ * added to the first and forgotten in the second is declared but unreachable:
+ * no `bg-*` exists for it, Tailwind says nothing, and the class silently draws
+ * nothing. The reverse is worse — a variant that declares a name the other does
+ * not makes Uniwind refuse to build at all.
+ */
+async function checkThemeTokens(config: ResolvedConfig): Promise<Check> {
+	const path = join(config.directories.styles, "theme.css");
+	if (!existsSync(path)) {
+		return {
+			name: "Theme tokens",
+			status: "warn",
+			detail: "theme.css not found",
+			fix: "Run `delacour add styles`, or `delacour theme <source>` to bring one across from a web app.",
+		};
+	}
+
+	const css = await readFile(path, "utf-8");
+	const light = variantTokens(css, "light");
+	const dark = variantTokens(css, "dark");
+
+	const lopsided = [...light, ...dark].filter((token) => !light.has(token) || !dark.has(token));
+	if (lopsided.length > 0) {
+		return {
+			name: "Theme tokens",
+			status: "fail",
+			detail: `${[...new Set(lopsided)].join(", ")} declared in one theme only`,
+			fix: "Declare it in both — Uniwind refuses to build a theme missing a variable the other one has.",
+		};
+	}
+
+	// Scoped to the alias block on purpose. A derived token like
+	// `--elevated: var(--background)` inside a variant looks identical to an
+	// alias, and counting it would pass a token that has no utility at all.
+	const aliasBlock = css.slice(css.indexOf("@theme inline {"));
+	const aliased = new Set([...aliasBlock.matchAll(/^\s*--(?:color-)?([\w-]+):\s*var\(/gm)].map(([, name]) => name));
+	const unreachable = [...light].filter((token) => !aliased.has(token) && token !== "shadow");
+
+	if (unreachable.length > 0) {
+		return {
+			name: "Theme tokens",
+			status: "warn",
+			detail: `${unreachable.join(", ")} declared but not aliased`,
+			fix: "Add `--color-<name>: var(--<name>);` to the `@theme inline` block — without it no `bg-*` exists for the token.",
+		};
+	}
+
+	return { name: "Theme tokens", status: "pass", detail: `${light.size} tokens, aliased in both themes` };
+}
+
+/** Token names declared inside one `@variant` block, brace-matched. */
+function variantTokens(css: string, variant: "dark" | "light"): Set<string> {
+	const marker = `@variant ${variant} {`;
+	const start = css.indexOf(marker);
+	if (start === -1) return new Set();
+
+	let depth = 1;
+	let index = start + marker.length;
+
+	while (index < css.length && depth > 0) {
+		if (css[index] === "{") depth += 1;
+		if (css[index] === "}") depth -= 1;
+		index += 1;
+	}
+
+	const block = css.slice(start + marker.length, index - 1);
+
+	return new Set([...block.matchAll(/^\s*--([\w-]+):/gm)].map(([, name]) => name));
 }
 
 /** Anywhere inside the app's own tree will do; `tsconfig` includes it from there. */

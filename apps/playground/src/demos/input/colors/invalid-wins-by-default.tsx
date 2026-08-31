@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Invalid wins by default, and loses to a caller",
 	caption:
-		"An invalid field turns its caret danger without being told. Passing a class still overrides it — the default is a default, not a rule.",
+		"An invalid field turns its caret destructive without being told. Passing a class still overrides it — the default is a default, not a rule.",
 	keyboardAware: true,
 };
 

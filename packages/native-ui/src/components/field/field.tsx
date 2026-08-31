@@ -15,7 +15,7 @@ import { FieldSet } from "./field-set";
 export type FieldProps = ViewProps & {
 	/** `vertical` stacks label over control; `horizontal` puts them side by side. */
 	orientation?: FieldOrientation;
-	/** Reports an invalid value. The label and the control inside both turn danger. */
+	/** Reports an invalid value. The label and the control inside both turn destructive. */
 	isInvalid?: boolean;
 	/** The control inside is unavailable. Fades the label and disables the control. */
 	isDisabled?: boolean;
@@ -74,7 +74,7 @@ function FieldRoot({
  * One control, with its label, its description and its error.
  *
  * The layout every form in this library repeats, done once — and the one place a
- * field's state is written down. `<Field isInvalid>` turns the label danger
+ * field's state is written down. `<Field isInvalid>` turns the label destructive
  * **and the control inside it too**, with nothing said at the control: `Input`
  * and `Checkbox` both read this field's context, and `Radio` will read the same one.
  *
@@ -130,7 +130,7 @@ export const Field = Object.assign(FieldRoot, {
 	Legend: FieldLegend,
 	/** A stack of fields, spaced so two never read as one. Inserts no dividers. */
 	Group: FieldGroup,
-	/** The control's name. Turns danger with the control when the field is invalid. */
+	/** The control's name. Turns destructive with the control when the field is invalid. */
 	Label: FieldLabel,
 	/** Supporting copy. Stays muted in every state, so an error is the line that changed. */
 	Description: FieldDescription,

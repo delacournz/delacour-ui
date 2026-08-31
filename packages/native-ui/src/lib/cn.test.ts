@@ -102,7 +102,7 @@ describe("cn with the semantic size tokens", () => {
 		expect(cn("h-button-md", "w-button-md")).toBe("h-button-md w-button-md");
 		expect(cn("h-button-md", "rounded-button-md")).toBe("h-button-md rounded-button-md");
 		expect(cn("size-icon-md", "text-button-md")).toBe("size-icon-md text-button-md");
-		// `--color-input` and `--text-input-md` are different namespaces that
+		// `--input` and `--text-input-md` are different namespaces that
 		// happen to share a word. A field sets both at once, so a merger that
 		// judged them to conflict would silently strip one.
 		expect(cn("border-input", "text-input-md")).toBe("border-input text-input-md");

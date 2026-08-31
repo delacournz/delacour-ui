@@ -19,7 +19,7 @@ export type FieldLegendProps = FieldTextProps & {
  *
  * Reads no context: a legend titles a set, and a set holds no state of its own —
  * invalid and disabled belong to each `Field` inside it. That is also why it
- * takes no `isInvalid`; a whole section turning danger says less than the one
+ * takes no `isInvalid`; a whole section turning destructive says less than the one
  * field that is wrong.
  */
 export function FieldLegend({ className, variant = "legend", ...props }: FieldLegendProps): ReactElement {

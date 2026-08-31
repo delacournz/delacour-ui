@@ -49,7 +49,7 @@ export function Demo(): ReactElement {
 						/>
 					</Input.Group>
 					{isEmailInvalid ? (
-						<Text.Caption color="danger">That does not look like an email address.</Text.Caption>
+						<Text.Caption color="destructive">That does not look like an email address.</Text.Caption>
 					) : null}
 				</Field>
 

@@ -13,7 +13,7 @@ export type FieldSetProps = ViewProps & { className?: string };
  * when they are simply a list.
  *
  * Holds no state. Invalid and disabled belong to each `Field`, because a section
- * that turned danger as a whole would say less than the one field that is
+ * that turned destructive as a whole would say less than the one field that is
  * actually wrong.
  */
 export function FieldSet({ className, ...props }: FieldSetProps): ReactElement {

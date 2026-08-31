@@ -9,18 +9,19 @@ import Animated, {
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
+import { useCSSVariable } from "uniwind";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { IconCheckmark1Small, IconMinusSmall } from "../../icons/central";
 import { Icon } from "../icon";
 import { useCheckboxPart } from "./checkbox.context";
 import {
-	CHECKBOX_FILL_RADIUS,
 	CHECKBOX_GLYPH_TOKEN,
 	CHECKBOX_INDICATOR_ANIMATION,
 	CHECKBOX_INVALID_GLYPH_TOKEN,
 	checkboxVariants,
 	resolveCheckboxBorderTokens,
 	resolveCheckboxFilled,
+	resolveCheckboxFillRadius,
 } from "./checkbox.variants";
 
 /**
@@ -35,7 +36,7 @@ import {
  *
  * - the **fill** fades and scales from the centre. A box is filled, not slid
  *   into, so it arrives from no edge. Its corner radius is fixed rather than
- *   animated — {@link CHECKBOX_FILL_RADIUS} keeps it concentric with the border
+ *   animated — {@link resolveCheckboxFillRadius} keeps it concentric with the border
  *   at every scale, and the transform shrinks the rendered corner with it.
  * - the **tick** is clipped by a container whose width opens from the left, so
  *   the stroke is drawn on when ticking and taken back when unticking rather
@@ -77,6 +78,12 @@ export function CheckboxBox(): ReactElement {
 		[boxWidth]
 	);
 
+	// `--radius` is the only step of the corner scale that survives to runtime —
+	// the rest are `@theme inline` and get substituted into their utilities — so
+	// the fill's own corner is computed from the base rather than read back.
+	const radius = (useCSSVariable("--radius") as number | undefined) ?? 0;
+	const fillRadius = resolveCheckboxFillRadius(size, radius);
+
 	const border = resolveCheckboxBorderTokens({ color, isInvalid });
 	const restBorderColor = useThemeColor(border.rest) ?? "transparent";
 	const activeBorderColor = useThemeColor(border.active) ?? "transparent";
@@ -117,10 +124,12 @@ export function CheckboxBox(): ReactElement {
 				onLayout={handleLayout}
 				// A fixed radius rather than an animated one: the fill has to stay
 				// concentric with the border at every scale, and the value that
-				// achieves that never changes. `scale` shrinks the rendered corner
-				// along with the square, which is what keeps a half-grown fill
-				// looking like a smaller version of the finished one.
-				style={[{ borderRadius: CHECKBOX_FILL_RADIUS[size] }, fillStyle]}
+				// achieves that does not change while the box is growing. `scale`
+				// shrinks the rendered corner along with the square, which is what
+				// keeps a half-grown fill looking like a smaller version of the
+				// finished one. It is read from `--radius` rather than written down
+				// because a consumer's theme is allowed to retune that.
+				style={[{ borderRadius: fillRadius }, fillStyle]}
 			/>
 			<Animated.View className={slots.tick()} style={tickStyle}>
 				<Animated.View className={slots.tickInner()} style={tickInnerStyle}>

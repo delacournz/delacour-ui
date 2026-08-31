@@ -1,18 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declaredTokens, RADIUS_BASE_PX, radiusMultiplier, radiusPx } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
 	CHECKBOX_ALIGNMENTS,
 	CHECKBOX_BORDER_WIDTH,
 	CHECKBOX_COLORS,
-	CHECKBOX_FILL_RADIUS,
 	CHECKBOX_GLYPH_TOKEN,
 	CHECKBOX_HIT_SLOP,
 	CHECKBOX_INDICATOR_ANIMATION,
 	CHECKBOX_INVALID_BORDER_TOKEN,
 	CHECKBOX_INVALID_GLYPH_TOKEN,
+	CHECKBOX_RADIUS_MULTIPLIER,
 	CHECKBOX_RADIUS_STEP,
 	CHECKBOX_REST_BORDER_TOKEN,
 	CHECKBOX_SIZES,
@@ -21,44 +20,15 @@ import {
 	resolveCheckboxAxes,
 	resolveCheckboxBorderTokens,
 	resolveCheckboxFilled,
+	resolveCheckboxFillRadius,
 	resolveCheckboxHitSlop,
 	resolveCheckboxLabelColor,
 	resolveCheckboxLabelSize,
 	toggleCheckedValue,
 } from "./checkbox.variants";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
-
-/**
- * Every `--color-*` name declared under one `@variant` block.
- *
- * The same reader `badge.variants.test.ts` uses. A token named by
- * {@link CHECKBOX_GLYPH_TOKEN} but absent from a variant resolves to nothing and
- * the tick is drawn in whatever the fallback happens to be — silent, and visible
- * in one theme only.
- */
-function declaredColors(variant: "light" | "dark"): Set<string> {
-	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
-	const names = new Set<string>();
-
-	for (const [, name] of block.matchAll(/--color-([\w-]+):/g)) {
-		names.add(name);
-	}
-
-	return names;
-}
-
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../styles/tokens.css"), "utf-8");
-
-/** Points behind a `--radius-*` token, failing loudly rather than yielding NaN. */
-function radiusPx(step: string): number {
-	const value = TOKENS_CSS.match(new RegExp(`--radius-${step}:\\s*([\\d.]+)px;`))?.[1];
-	if (value === undefined) throw new Error(`tokens.css defines no --radius-${step}`);
-	return Number(value);
-}
-
-const LIGHT = declaredColors("light");
-const DARK = declaredColors("dark");
+const LIGHT = declaredTokens("light");
+const DARK = declaredTokens("dark");
 
 /** Position of a class string's `size-icon-*` token on the shared icon scale. */
 function sizeStep(cls: string): number {
@@ -212,22 +182,45 @@ describe("checkboxVariants indicator slot", () => {
 		expect(fills.every((fill) => fill !== undefined)).toBe(true);
 	});
 
-	test("turns danger when invalid, at every colour", () => {
+	test("turns destructive when invalid, at every colour", () => {
 		for (const color of CHECKBOX_COLORS) {
-			expect(fillToken(checkboxVariants({ color, isInvalid: true }).indicator())).toBe("danger");
+			expect(fillToken(checkboxVariants({ color, isInvalid: true }).indicator())).toBe("destructive");
 		}
 	});
 });
 
-describe("CHECKBOX_FILL_RADIUS", () => {
+describe("resolveCheckboxFillRadius", () => {
 	test("is the box's own radius minus its border, at every size", () => {
 		for (const size of CHECKBOX_SIZES) {
 			// The rule for two rounded rectangles to sit concentric. Rounder and
 			// `overflow-hidden` cuts the fill's corners back past the border's,
 			// leaving a sliver of the box's background at each one; squarer and the
 			// fill reads as a sharp square inside a rounded box.
-			expect(CHECKBOX_FILL_RADIUS[size]).toBe(radiusPx(CHECKBOX_RADIUS_STEP[size]) - CHECKBOX_BORDER_WIDTH);
+			expect(resolveCheckboxFillRadius(size, RADIUS_BASE_PX)).toBe(
+				radiusPx(CHECKBOX_RADIUS_STEP[size]) - CHECKBOX_BORDER_WIDTH
+			);
 		}
+	});
+
+	// The multipliers are restated in TypeScript because the corner scale is
+	// `@theme inline` and no `--radius-*` variable reaches the runtime. Retuning
+	// the scale in `tokens.css` has to fail here rather than quietly leave the
+	// fill on the old curve.
+	test("multiplies --radius by what tokens.css says that step multiplies it by", () => {
+		for (const [step, multiplier] of Object.entries(CHECKBOX_RADIUS_MULTIPLIER)) {
+			expect(multiplier).toBe(radiusMultiplier(step));
+		}
+	});
+
+	test("follows --radius, so a pasted theme moves the fill with the border", () => {
+		for (const size of CHECKBOX_SIZES) {
+			const doubled = resolveCheckboxFillRadius(size, RADIUS_BASE_PX * 2);
+			expect(doubled).toBe(radiusPx(CHECKBOX_RADIUS_STEP[size]) * 2 - CHECKBOX_BORDER_WIDTH);
+		}
+	});
+
+	test("never goes negative, so a square-cornered theme draws a square fill", () => {
+		for (const size of CHECKBOX_SIZES) expect(resolveCheckboxFillRadius(size, 0)).toBe(0);
 	});
 
 	test("names the radius step the box actually wears", () => {
@@ -416,7 +409,7 @@ describe("resolveCheckboxBorderTokens", () => {
 		}
 	});
 
-	test("holds danger at both ends when invalid, so there is nothing to fade", () => {
+	test("holds destructive at both ends when invalid, so there is nothing to fade", () => {
 		for (const color of CHECKBOX_COLORS) {
 			// The border is the signal that the value is wrong, and it has to be
 			// there before the box is ticked as much as after — so an invalid box
@@ -469,8 +462,8 @@ describe("resolveCheckboxAxes", () => {
 		// Unlike Input.Group, which owns one box and therefore owns the axes that
 		// draw it. Checkbox.Group owns no box — it is a wrapper supplying
 		// defaults, the same kind of thing as Field, so a control overrides it.
-		const axes = resolveCheckboxAxes({ group: GROUP, own: { color: "danger", size: "sm" } });
-		expect(axes.color).toBe("danger");
+		const axes = resolveCheckboxAxes({ group: GROUP, own: { color: "destructive", size: "sm" } });
+		expect(axes.color).toBe("destructive");
 		expect(axes.size).toBe("sm");
 		expect(axes.alignment).toBe("end");
 	});
@@ -532,8 +525,8 @@ describe("resolveCheckboxLabelSize", () => {
 });
 
 describe("resolveCheckboxLabelColor", () => {
-	test("turns the label danger with the box it names", () => {
-		expect(resolveCheckboxLabelColor(true)).toBe("danger");
+	test("turns the label destructive with the box it names", () => {
+		expect(resolveCheckboxLabelColor(true)).toBe("destructive");
 	});
 
 	test("leaves the preset's own colour alone otherwise", () => {
@@ -579,7 +572,7 @@ describe("CHECKBOX_INDICATOR_ANIMATION", () => {
 	test("names no corner radius, because the fill's never changes", () => {
 		// The radius that keeps the fill concentric with the border is a fixed
 		// geometric fact, not a track. Animating it means it is only correct at
-		// one end — see CHECKBOX_FILL_RADIUS.
+		// one end — see resolveCheckboxFillRadius.
 		expect(CHECKBOX_INDICATOR_ANIMATION).not.toHaveProperty("borderRadius");
 	});
 

@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Live",
-	caption: "Type an `@`. Everything leaves danger together, and the error removes itself.",
+	caption: "Type an `@`. Everything leaves destructive together, and the error removes itself.",
 	keyboardAware: true,
 };
 

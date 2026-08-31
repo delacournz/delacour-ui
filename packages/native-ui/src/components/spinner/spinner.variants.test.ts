@@ -121,7 +121,7 @@ describe("resolveSpinnerColor", () => {
 	});
 
 	test("maps an inherited value that happens to be a named colour", () => {
-		expect(resolveSpinnerColor(undefined, "danger")).toBe(SPINNER_COLOR_TOKEN.danger);
+		expect(resolveSpinnerColor(undefined, "destructive")).toBe(SPINNER_COLOR_TOKEN.destructive);
 	});
 
 	test("falls back only when there is nothing to inherit", () => {
@@ -130,7 +130,7 @@ describe("resolveSpinnerColor", () => {
 
 	test("an explicit colour beats the inherited one", () => {
 		expect(resolveSpinnerColor("#EC4899", "primary-foreground")).toBe("#EC4899");
-		expect(resolveSpinnerColor("danger", "primary-foreground")).toBe(SPINNER_COLOR_TOKEN.danger);
+		expect(resolveSpinnerColor("destructive", "primary-foreground")).toBe(SPINNER_COLOR_TOKEN.destructive);
 	});
 });
 

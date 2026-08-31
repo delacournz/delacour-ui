@@ -5,7 +5,7 @@ import { tv } from "../../lib/tv";
 export const BADGE_VARIANTS = ["solid", "soft", "outline", "ghost"] as const;
 
 /** What the surface means. Orthogonal to {@link BADGE_VARIANTS}. */
-export const BADGE_COLORS = ["default", "primary", "success", "warning", "danger", "info"] as const;
+export const BADGE_COLORS = ["default", "primary", "success", "warning", "destructive", "info"] as const;
 
 export const BADGE_SIZES = ["sm", "md", "lg"] as const;
 
@@ -30,7 +30,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
 		primary: "primary-foreground",
 		success: "success-foreground",
 		warning: "warning-foreground",
-		danger: "danger-foreground",
+		destructive: "destructive-foreground",
 		info: "info-foreground",
 	},
 	soft: {
@@ -38,7 +38,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
 		primary: "tertiary-foreground",
 		success: "success-soft-foreground",
 		warning: "warning-soft-foreground",
-		danger: "danger-soft-foreground",
+		destructive: "destructive-soft-foreground",
 		info: "info-soft-foreground",
 	},
 	outline: {
@@ -46,7 +46,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
 		primary: "foreground",
 		success: "success-soft-foreground",
 		warning: "warning-soft-foreground",
-		danger: "danger-soft-foreground",
+		destructive: "destructive-soft-foreground",
 		info: "info-soft-foreground",
 	},
 	ghost: {
@@ -54,7 +54,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
 		primary: "foreground",
 		success: "success-soft-foreground",
 		warning: "warning-soft-foreground",
-		danger: "danger-soft-foreground",
+		destructive: "destructive-soft-foreground",
 		info: "info-soft-foreground",
 	},
 };
@@ -89,7 +89,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
  * a glyph in a badge matches every other glyph in the library.
  *
  * The neutral end of the matrix reuses tokens the theme already has instead of
- * minting `--color-primary-soft`: this theme's `primary` is a near-black, whose
+ * minting `--primary-soft`: this theme's `primary` is a near-black, whose
  * tint *is* the neutral fill, so a new token would duplicate `secondary` exactly.
  * `soft` takes `tertiary` for `primary` and `muted` for `default` — two fills the
  * theme already tunes per mode — which keeps all twenty-four cells distinct.
@@ -125,7 +125,7 @@ export const badgeVariants = tv({
 			primary: {},
 			success: {},
 			warning: {},
-			danger: {},
+			destructive: {},
 			info: {},
 		},
 		size: {
@@ -157,7 +157,7 @@ export const badgeVariants = tv({
 		{ variant: "solid", color: "primary", class: { root: "bg-primary", label: "text-primary-foreground" } },
 		{ variant: "solid", color: "success", class: { root: "bg-success", label: "text-success-foreground" } },
 		{ variant: "solid", color: "warning", class: { root: "bg-warning", label: "text-warning-foreground" } },
-		{ variant: "solid", color: "danger", class: { root: "bg-danger", label: "text-danger-foreground" } },
+		{ variant: "solid", color: "destructive", class: { root: "bg-destructive", label: "text-destructive-foreground" } },
 		{ variant: "solid", color: "info", class: { root: "bg-info", label: "text-info-foreground" } },
 
 		{ variant: "soft", color: "default", class: { root: "bg-muted", label: "text-muted-foreground" } },
@@ -172,7 +172,11 @@ export const badgeVariants = tv({
 			color: "warning",
 			class: { root: "bg-warning-soft", label: "text-warning-soft-foreground" },
 		},
-		{ variant: "soft", color: "danger", class: { root: "bg-danger-soft", label: "text-danger-soft-foreground" } },
+		{
+			variant: "soft",
+			color: "destructive",
+			class: { root: "bg-destructive-soft", label: "text-destructive-soft-foreground" },
+		},
 		{ variant: "soft", color: "info", class: { root: "bg-info-soft", label: "text-info-soft-foreground" } },
 
 		{ variant: "outline", color: "default", class: { root: "border-border", label: "text-muted-foreground" } },
@@ -189,8 +193,8 @@ export const badgeVariants = tv({
 		},
 		{
 			variant: "outline",
-			color: "danger",
-			class: { root: "border-danger", label: "text-danger-soft-foreground" },
+			color: "destructive",
+			class: { root: "border-destructive", label: "text-destructive-soft-foreground" },
 		},
 		{ variant: "outline", color: "info", class: { root: "border-info", label: "text-info-soft-foreground" } },
 
@@ -198,7 +202,7 @@ export const badgeVariants = tv({
 		{ variant: "ghost", color: "primary", class: { label: "text-foreground" } },
 		{ variant: "ghost", color: "success", class: { label: "text-success-soft-foreground" } },
 		{ variant: "ghost", color: "warning", class: { label: "text-warning-soft-foreground" } },
-		{ variant: "ghost", color: "danger", class: { label: "text-danger-soft-foreground" } },
+		{ variant: "ghost", color: "destructive", class: { label: "text-destructive-soft-foreground" } },
 		{ variant: "ghost", color: "info", class: { label: "text-info-soft-foreground" } },
 	],
 	defaultVariants: {

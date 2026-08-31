@@ -23,7 +23,7 @@ export function Demo(): ReactElement {
 						<>
 							<Icon icon={IconBell} />
 							<Tabs.Label>Alerts</Tabs.Label>
-							<Badge color="danger" size="sm" variant={isSelected ? "solid" : "soft"}>
+							<Badge color="destructive" size="sm" variant={isSelected ? "solid" : "soft"}>
 								3
 							</Badge>
 						</>

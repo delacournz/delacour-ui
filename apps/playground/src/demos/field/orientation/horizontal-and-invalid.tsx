@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Horizontal and invalid",
 	caption:
-		"The cascade works on either axis, and it reaches the control. The checkbox below names no state of its own — both it and the label turn danger from the `Field`.",
+		"The cascade works on either axis, and it reaches the control. The checkbox below names no state of its own — both it and the label turn destructive from the `Field`.",
 };
 
 export function Demo(): ReactElement {

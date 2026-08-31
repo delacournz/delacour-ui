@@ -9,7 +9,7 @@ import { fieldVariants, resolveFieldTextColor } from "./field.variants";
  *
  * Renders `Text.Label` and passes it a colour, never a size or a weight — the
  * type scale belongs to the preset, and restating it here would be a second
- * definition of `Text.Label` that could drift from it. It turns danger with the
+ * definition of `Text.Label` that could drift from it. It turns destructive with the
  * control when the field is invalid, so the pair reads as one state.
  *
  * There is no `htmlFor`. React Native has no `<label>` element and no

@@ -7,6 +7,7 @@ import { diff } from "./commands/diff";
 import { doctor } from "./commands/doctor";
 import { init } from "./commands/init";
 import { mcp } from "./commands/mcp";
+import { theme } from "./commands/theme";
 import { MissingConfigError } from "./config/resolve";
 import { CONFIG_FILENAME } from "./config/schema";
 import { RegistryFetchError } from "./registry/client";
@@ -108,6 +109,16 @@ program
 	.option("--registry <url>", "registry to read from")
 	.option("--ref <ref>", "git ref to read the registry at")
 	.action((options) => run(() => mcp({ ...options, cwd: resolve(options.cwd) })));
+
+program
+	.command("theme")
+	.description("bring a shadcn or tweakcn theme across from a web app")
+	.argument("[source]", "a CSS file, a URL, or `-` to read stdin")
+	.option("-c, --cwd <path>", "directory to work in", process.cwd())
+	.option("--dry-run", "print the CSS instead of writing it")
+	.option("-y, --yes", "replace theme.css without asking")
+	.option("--silent", "print nothing but errors")
+	.action((source: string | undefined, options) => run(() => theme(source, { ...options, cwd: resolve(options.cwd) })));
 
 program
 	.command("doctor")

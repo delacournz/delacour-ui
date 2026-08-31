@@ -20,7 +20,7 @@ export function Demo(): ReactElement {
 					<Icon icon={IconHeart} />
 				</Button>
 			))}
-			<Button accessibilityLabel="Delete" isIconOnly testID="delete" variant="danger-soft">
+			<Button accessibilityLabel="Delete" isIconOnly testID="delete" variant="destructive-soft">
 				<Icon icon={IconTrashCan} />
 			</Button>
 			<Button accessibilityLabel="Add" isIconOnly testID="add" variant="outline">

@@ -25,7 +25,7 @@ A bare `<Icon>` inside a `Button`, `Badge` or `ListGroup.ItemPrefix` needs no `s
 `color` — the parent publishes both through an `IconDefaultsProvider` wrapping its subtree.
 
 ```tsx
-<Button variant="danger" size="lg">
+<Button variant="destructive" size="lg">
   <Icon icon={IconTrash} />
   <Button.Label>Delete</Button.Label>
 </Button>
@@ -66,7 +66,7 @@ Uniwind's store to look up and silently draws nothing. Use the numeric prop.
 `color` takes a theme token name or a literal.
 
 ```tsx
-<Icon icon={IconHeart} color="danger" />
+<Icon icon={IconHeart} color="destructive" />
 <Icon icon={IconHeart} color="muted-foreground" />
 <Icon icon={IconHeart} color="#EC4899" />
 ```

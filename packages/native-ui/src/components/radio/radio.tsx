@@ -183,7 +183,7 @@ function withIndicator(children: ReactNode): { content: ReactNode; placement: "s
  * Outside one it is driven by its own `isSelected` and `onSelected`.
  *
  * Nearest wins for state: a group first, this radio's own props next, an
- * enclosing `Field` last — so a radio inside an invalid `Field` turns danger with
+ * enclosing `Field` last — so a radio inside an invalid `Field` turns destructive with
  * nothing said at the call site, while `isInvalid={false}` still opts out.
  *
  * A radio whose row holds no text needs an `accessibilityLabel`, the same rule an

@@ -44,7 +44,7 @@ export type InputProps = Omit<TextInputProps, "placeholderTextColorClassName"> &
 	placeholderColorClassName?: string;
 	/**
 	 * Caret and selection colour, as an `accent-*` utility. Defaults to the
-	 * primary token, or the danger one while the field is invalid.
+	 * primary token, or the destructive one while the field is invalid.
 	 */
 	selectionColorClassName?: string;
 	ref?: Ref<TextInput>;
@@ -74,7 +74,7 @@ function InputRoot({
 	// Inside a group the box belongs to the group, so the axes that draw one do
 	// too — the same way a `ListGroup.Item` takes no `variant`. An enclosing
 	// `Field` is the outermost of the three and therefore the last fallback, so
-	// a field with no props of its own turns danger with the `Field` around it
+	// a field with no props of its own turns destructive with the `Field` around it
 	// while `<Input isInvalid={false} />` still opts out of one.
 	const resolved = {
 		isDisabled: group?.isDisabled ?? isDisabled ?? field?.isDisabled ?? false,

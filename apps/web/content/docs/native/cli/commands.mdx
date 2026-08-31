@@ -276,6 +276,62 @@ Options:
   -h, --help        display help for command
 ```
 
+## theme
+
+Brings a theme across from a web app.
+
+```bash
+delacour theme ./src/app/globals.css
+delacour theme https://tweakcn.com/r/themes/<id>
+pbpaste | delacour theme -
+```
+
+The palette these components paint from is shadcn's, name for name, so a `globals.css` or a tweakcn
+export is already almost the right file. What it is not is *readable*. Uniwind takes a theme only
+from `@variant light` / `@variant dark`; a literal `.dark { … }` is registered as a **utility class
+named `dark`** and contributes nothing — no error, no warning, and a dark theme that never arrives.
+
+So the command rewrites the wrapper, and three other things besides:
+
+- **Fills the gaps.** shadcn has no `elevated`, `tertiary`, `success` / `warning` / `info`, the
+  `-soft` pairs or `overlay`, and components here paint with all of them. Each is written as an
+  expression over a token your theme *does* define, so it follows your palette instead of falling
+  back to the library's.
+- **Balances the two themes.** A shadcn theme routinely sets something in `:root` and omits it from
+  `.dark`. Uniwind refuses to build that — "All themes must have the same variables" — so anything
+  declared once is copied across.
+- **Keeps one family name per font.** React Native's `fontFamily` takes a single name with no
+  fallback list, so `"Inter, ui-sans-serif, system-ui"` resolves to nothing and quietly falls back
+  to the system sans. The first real family is kept and the rest reported.
+
+It writes `theme.css` in your configured styles directory, asking first. `--dry-run` prints the CSS
+instead and needs no project at all, so you can see what a theme becomes before adopting it.
+
+<Callout>
+A derived corner step in the source — `--radius-sm`, `--radius-lg` — is dropped and reported. Here
+every corner is a multiple of one `--radius`, so carrying your own steps would pin them at one size
+and fight the scale. Setting `--radius` alone retunes them all. See
+[Theming](/docs/native/getting-started/theming).
+</Callout>
+
+**Options**
+
+```txt
+Usage: delacour theme [options] [source]
+
+bring a shadcn or tweakcn theme across from a web app
+
+Arguments:
+  source            a CSS file, a URL, or `-` to read stdin
+
+Options:
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  --dry-run         print the CSS instead of writing it
+  -y, --yes         replace theme.css without asking
+  --silent          print nothing but errors
+  -h, --help        display help for command
+```
+
 ## doctor
 
 Checks that the app is wired up for these components. Every check is a failure mode that produces no

@@ -11,7 +11,7 @@ import { ICON_SIZES, type IconSize } from "../icon/icon.variants";
  * step. A leaf import, so no cycle: see AGENTS.md rule 3.
  */
 export const SPINNER_SIZES = ICON_SIZES;
-export const SPINNER_COLORS = ["default", "success", "warning", "danger"] as const;
+export const SPINNER_COLORS = ["default", "success", "warning", "destructive"] as const;
 
 export type SpinnerSize = IconSize;
 export type SpinnerColor = (typeof SPINNER_COLORS)[number];
@@ -21,7 +21,7 @@ export const SPINNER_COLOR_TOKEN: Record<SpinnerColor, string> = {
 	default: "foreground",
 	success: "success",
 	warning: "warning",
-	danger: "danger",
+	destructive: "destructive",
 };
 
 /** One full turn, in milliseconds, at speed 1. */

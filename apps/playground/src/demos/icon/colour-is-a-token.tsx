@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 	capture: {},
 };
 
-const COLORS = ["foreground", "muted-foreground", "primary", "success", "warning", "danger", "#EC4899"] as const;
+const COLORS = ["foreground", "muted-foreground", "primary", "success", "warning", "destructive", "#EC4899"] as const;
 
 export function Demo(): ReactElement {
 	return (

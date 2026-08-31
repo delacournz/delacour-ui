@@ -1,11 +1,17 @@
 @theme {
-	--radius-xs: 6px;
-	--radius-sm: 8px;
-	--radius-md: 10px;
-	--radius-lg: 12px;
-	--radius-xl: 16px;
-	--radius-2xl: 20px;
-	--radius-full: 9999px;
+	/*
+	 * The one number every generic corner is derived from, in the `@theme
+	 * inline` block at the bottom of this file. shadcn's own scale, so a
+	 * `--radius` copied out of a web app retunes every rounded edge here at
+	 * once — and unlike the older `calc(var(--radius) - 4px)` form some theme
+	 * generators still emit, a multiplier scales rather than shifts, so a
+	 * square-cornered theme stays square at every step.
+	 *
+	 * It lives in `tokens.css` rather than beside the palette because
+	 * `apps/web` imports only this file; a `--radius` in `theme.css` would
+	 * leave every derived radius undefined on the docs site.
+	 */
+	--radius: 0.625rem;
 
 	--text-xs: 12px;
 	--text-sm: 14px;
@@ -86,4 +92,27 @@
 	 */
 	--spacing-navbar-row: 56px;
 	--spacing-screen-gutter: 20px;
+}
+
+/*
+ * The generic corner scale, derived from `--radius`.
+ *
+ * `inline` for the same reason the palette uses it: a utility has to read
+ * `var(--radius)` itself, so a theme that redeclares `--radius` reaches
+ * `rounded-lg` rather than a copy taken when the scale was compiled.
+ *
+ * `--radius-button-*` above is deliberately NOT part of this. A button's corner
+ * is half its own height — a shape, not a step on a scale — and it must not
+ * move when a consumer retunes `--radius`.
+ */
+@theme inline {
+	--radius-xs: calc(var(--radius) * 0.4);
+	--radius-sm: calc(var(--radius) * 0.6);
+	--radius-md: calc(var(--radius) * 0.8);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.4);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+	--radius-full: 9999px;
 }

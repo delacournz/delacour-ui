@@ -1,6 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { declaredTokens } from "../../styles/theme-tokens.test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { TEXT_SIZES } from "../text/text.variants";
 import {
@@ -38,20 +37,8 @@ import {
 	tabsVariants,
 } from "./tabs.variants";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../styles/theme.css"), "utf-8");
-
-/** Every `--color-*` name declared under one `@variant` block. The reader `badge.variants.test.ts` uses. */
-function declaredColors(variant: "dark" | "light"): Set<string> {
-	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
-	const names = new Set<string>();
-	for (const [, name] of block.matchAll(/--color-([\w-]+):/g)) {
-		names.add(name);
-	}
-	return names;
-}
-
-const LIGHT = declaredColors("light");
-const DARK = declaredColors("dark");
+const LIGHT = declaredTokens("light");
+const DARK = declaredTokens("dark");
 
 /** Tailwind's own spacing scale, in points. `p-1` is four. */
 const SPACING_STEP_PX = 4;

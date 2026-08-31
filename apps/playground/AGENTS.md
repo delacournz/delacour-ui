@@ -434,6 +434,25 @@ existed because the list was the sheet's other pane; it is a screen now, sitting
 permanently behind, so the next axis is one tap away either way — and dismissing
 is what lets you watch the summary row you just changed repaint.
 
+### The preview is the answer, the axes are only the question
+
+Under the axis rows and the appearance toggle, `/theme` mounts a live sample of
+the library — buttons in every variant, two card surfaces, a `ListGroup` of
+switch rows, a checkbox group, a radio group, and a short form carrying one
+field in its invalid state. `theme-preview.tsx`.
+
+It is there because seven summary rows and a swatch cannot answer the question
+this screen exists to ask. A palette is a list of names until something is drawn
+with it, and the states a palette actually falls over on — a pressed button, a
+focused field, `destructive` on type rather than on a filled button — are states
+no summary row ever enters. Every control in it is live for that reason rather
+than a static mock.
+
+One thing in it is set rather than defaulted: `color="primary"` on the switches
+and the checkbox group. Both default to a neutral, which is right for a real
+settings screen and useless here — a preview whose selection controls never take
+the accent is a preview of the base ramp. `Radio` already defaults to `primary`.
+
 ### The trigger hides on `/preview` and `/theme`
 
 `bun run previews` deep-links to `/preview` for every demo in both themes, so a

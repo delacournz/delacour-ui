@@ -16,6 +16,7 @@ import { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS }
 import { RadiusBottomSheet } from "@/components/theme/radius.bottom-sheet";
 import { StyleBottomSheet } from "@/components/theme/style.bottom-sheet";
 import { ThemeBottomSheet } from "@/components/theme/theme.bottom-sheet";
+import { ThemePreview } from "@/components/theme/theme-preview";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
 import { BASE_COLORS } from "@/design-system/base-colors";
 import { type DesignSystemConfig, type PaletteName, palettesForBaseColor } from "@/design-system/config";
@@ -89,6 +90,8 @@ export default function ThemeRoute(): ReactElement {
 
 				<AxisRows onOpen={setOpen} />
 				<AppearanceControls />
+
+				<ThemePreview />
 
 				<Button onPress={resetConfig} size="sm" testID="theme-reset" variant="ghost">
 					Reset to Vega / Neutral

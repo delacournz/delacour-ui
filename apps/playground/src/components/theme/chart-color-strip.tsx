@@ -22,6 +22,11 @@ const BAR_SCALE = [0.5, 0.85, 0.35, 1, 0.65] as const;
 /**
  * One chart palette, drawn as the five hues it actually writes.
  *
+ * The box is chrome rather than a specimen — it is the live theme's `muted`,
+ * and only the bars belong to the candidate — so its edge is a pair of classes
+ * like Style's and Radius's. Base Color has to paint its border inline instead,
+ * because there the box itself is the candidate's surface.
+ *
  * Deliberately not Theme's single disc, even though the two strips offer the
  * identical list. This axis writes `--chart-1` through `--chart-5` and nothing
  * else, so a disc would show a colour it does not set and hide the four it
@@ -33,13 +38,11 @@ function ChartColorTile({
 	title,
 	values,
 	isSelected,
-	selectedBorderColor,
 }: {
 	name: PaletteName;
 	title: string;
 	values: ResolvedMode;
 	isSelected: boolean;
-	selectedBorderColor: string | undefined;
 }): ReactElement {
 	return (
 		<Pressable
@@ -50,8 +53,8 @@ function ChartColorTile({
 			testID={`theme-chart-color-${name}`}
 		>
 			<View
-				className="flex-row items-end justify-center gap-1 rounded-lg border bg-muted px-2 pb-2"
-				style={{ borderColor: isSelected ? selectedBorderColor : undefined, height: SPECIMEN_HEIGHT }}
+				className={`flex-row items-end justify-center gap-1 rounded-lg border bg-muted px-2 pb-2 ${isSelected ? "border-primary" : "border-border"}`}
+				style={{ height: SPECIMEN_HEIGHT }}
 			>
 				{CHART_TOKENS.map((token, index) => (
 					<View
@@ -74,7 +77,6 @@ ChartColorTile.displayName = "Playground.Theme.ChartColorTile";
 export function ChartColorStrip(): ReactElement {
 	const config = useDesignSystem();
 	const options = usePaletteOptions("chartColor");
-	const selectedBorderColor = paintable(options.find((option) => option.name === config.chartColor)?.values.primary);
 
 	return (
 		<AxisStrip label="Chart Color" selectedIndex={options.findIndex((option) => option.name === config.chartColor)}>
@@ -83,7 +85,6 @@ export function ChartColorStrip(): ReactElement {
 					isSelected={option.name === config.chartColor}
 					key={option.name}
 					name={option.name}
-					selectedBorderColor={selectedBorderColor}
 					title={option.title}
 					values={option.values}
 				/>

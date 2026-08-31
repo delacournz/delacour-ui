@@ -24,6 +24,7 @@ whole-screen states.
 | `screen-header.tsx` | `Screen.Header` |
 | `screen-footer.tsx` | `Screen.Footer` |
 | `screen-footer-background.tsx` | The footer's backing and its top hairline — internal |
+| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and `SCROLL_SHADOW_EDGES` |
 | `screen-scroll-area.tsx` | `Screen.ScrollArea` |
 | `screen-flat-list.tsx` | `Screen.FlatList` |
 | `screen-section-list.tsx` | `Screen.SectionList` |
@@ -180,6 +181,44 @@ whole-screen states.
   was wrong. Both ramps are written out rather than calling Reanimated's
   `interpolate`, so they stay reachable from `bun test`, and both clamp at each
   end because a rubber-banded overscroll reports a negative offset.
+
+## ScrollShadow
+
+A scrollable with a hard edge looks finished. A row cut exactly in half by the
+bottom of the viewport reads as a layout bug; the same row fading out reads as
+more to come. `Screen.ScrollShadow` draws that fade, and it matters most under
+chrome that floats over the content, where the cut lands mid-component and there
+is no bar edge to explain it.
+
+**It is a sibling of the body, never a wrapper around it.** The screen context
+already publishes `scrollY`, `contentHeight` and `layoutHeight` from whichever
+scrollable is mounted, so this reads the numbers instead of intercepting them.
+Wrapping would mean cloning the child to attach an `onScroll`, and every
+scrollable here already has one — `use-screen-scroll-insets` drives the reserve
+animations from it — so a second writer would take a handler already spoken for.
+The dividend is that one component works over `ScrollArea`, `FlatList`,
+`SectionList`, `LegendList` and `ChatList` alike, because they all publish to the
+same context.
+
+**It places itself against the chrome.** The top fade starts at the navbar's
+measured height and the bottom above the footer's, so it is correct under either
+placement with the caller measuring nothing. `insetTop` and `insetBottom` are
+only for chrome this package cannot see — a bar floating between the navbar and
+the body. A fade at zero would sit behind the navbar and be visible nowhere,
+which is a component that silently does nothing.
+
+**Each end fades only when there is something past it.** The top is out at rest
+and arrives over the first `size` points; the bottom is there from the start and
+leaves over the last. Content shorter than its viewport never scrolls, so
+`maxScroll` is zero and both stay out — a fade over a short page promises content
+that does not exist.
+
+**The gradient is `react-native-svg`, not a native gradient view.** The package
+is already a peer for `Icon` and `Spinner`, so it costs nothing new, where a
+gradient library would add a native module to every consuming app for two
+rectangles. Both stops name the same colour and vary only in opacity: fading to
+`transparent` interpolates through black in a premultiplied space, which shows as
+a dark bloom against a light background.
 
 ## API
 

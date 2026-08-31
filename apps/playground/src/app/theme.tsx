@@ -5,7 +5,6 @@ import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { View } from "react-native";
-import { useUniwind } from "uniwind";
 import type { AxisSheetControlProps } from "@/components/theme/axis-sheet";
 import { BaseColorStrip } from "@/components/theme/base-color-strip";
 import { ChartColorStrip } from "@/components/theme/chart-color-strip";
@@ -18,8 +17,9 @@ import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemePreview } from "@/components/theme/theme-preview";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { fontByName } from "@/design-system/fonts";
-import { resetConfig, setThemeMode, THEME_MODES, type ThemeMode } from "@/design-system/store";
+import { resetConfig } from "@/design-system/store";
 
 /**
  * The axes that still open a sheet.
@@ -58,10 +58,13 @@ type AxisKey = "font" | "fontHeading" | "iconLibrary";
  * because gorhom renders nothing until presented and because the swatch
  * resolution is memoised on `[config, mode]` — see `useAxisPreview`.
  *
- * **No `ThemeToggle` in this navbar**, alone among the app's screens. The
- * Appearance row below is the same setting with three states instead of two,
- * and a two-state toggle above it would be two controls disagreeing about how
- * many states exist.
+ * **`ThemeToggle` in the navbar, the same as every other screen.** This screen
+ * used to carry a three-state Appearance row instead, and the two could not
+ * coexist — a two-state toggle above a three-state control over one setting is
+ * two controls disagreeing about how many states there are. The row is gone, so
+ * the toggle is simply what it is everywhere else. The cost is that `system` no
+ * longer has a control anywhere in the app; the store still holds it, and it is
+ * still what a fresh install starts on.
  */
 export default function ThemeRoute(): ReactElement {
 	const router = useRouter();
@@ -74,7 +77,7 @@ export default function ThemeRoute(): ReactElement {
 
 	return (
 		<Screen>
-			<Screen.Navbar>
+			<Screen.Navbar actions={<ThemeToggle />}>
 				<Screen.Navbar.BackButton onPress={() => router.back()}>
 					<View className="min-w-0 flex-1">
 						<Screen.Navbar.Title>Theme</Screen.Navbar.Title>
@@ -94,7 +97,6 @@ export default function ThemeRoute(): ReactElement {
 				<ThemeStrip />
 				<ChartColorStrip />
 				<AxisRows onOpen={setOpen} />
-				<AppearanceControls />
 
 				<ThemePreview />
 
@@ -178,38 +180,3 @@ function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement
 	);
 }
 AxisRows.displayName = "Playground.Theme.AxisRows";
-
-/**
- * Light, dark, or whatever the OS is doing.
- *
- * Inline rather than a ninth sheet: three states already fully visible, where
- * every other axis has between five and twenty-nine and has to be opened to be
- * read. It is also the one control here that does not write
- * `DesignSystemConfig` — Uniwind owns the theme, and the store persists the
- * choice beside the configuration because Uniwind does not persist its own.
- */
-function AppearanceControls(): ReactElement {
-	const { theme, hasAdaptiveThemes } = useUniwind();
-	const mode = theme === "dark" ? "dark" : "light";
-	const activeMode: ThemeMode = hasAdaptiveThemes ? "system" : mode;
-
-	return (
-		<View className="gap-2">
-			<Text.Label>Appearance</Text.Label>
-			<View className="flex-row gap-2">
-				{THEME_MODES.map((name) => (
-					<Button
-						key={name}
-						onPress={() => setThemeMode(name)}
-						size="sm"
-						testID={`theme-mode-${name}`}
-						variant={activeMode === name ? "primary" : "outline"}
-					>
-						{name}
-					</Button>
-				))}
-			</View>
-		</View>
-	);
-}
-AppearanceControls.displayName = "Playground.Theme.AppearanceControls";

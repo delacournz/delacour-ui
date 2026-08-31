@@ -48,7 +48,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "neutral",
 		title: "Neutral",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.985 0 0)",
 			foreground: "oklch(0.145 0 0)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.145 0 0)",
@@ -118,7 +118,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "stone",
 		title: "Stone",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.985 0.001 106.423)",
 			foreground: "oklch(0.147 0.004 49.25)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.147 0.004 49.25)",
@@ -188,7 +188,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "zinc",
 		title: "Zinc",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.985 0 0)",
 			foreground: "oklch(0.141 0.005 285.823)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.141 0.005 285.823)",
@@ -258,7 +258,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "mauve",
 		title: "Mauve",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.985 0 0)",
 			foreground: "oklch(0.145 0.008 326)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.145 0.008 326)",
@@ -328,7 +328,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "olive",
 		title: "Olive",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.988 0.003 106.5)",
 			foreground: "oklch(0.153 0.006 107.1)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.153 0.006 107.1)",
@@ -398,7 +398,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "mist",
 		title: "Mist",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.987 0.002 197.1)",
 			foreground: "oklch(0.148 0.004 228.8)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.148 0.004 228.8)",
@@ -468,7 +468,7 @@ export const BASE_COLORS: readonly BaseColor[] = [
 		name: "taupe",
 		title: "Taupe",
 		light: {
-			background: "oklch(1 0 0)",
+			background: "oklch(0.986 0.002 67.8)",
 			foreground: "oklch(0.147 0.004 49.3)",
 			card: "oklch(1 0 0)",
 			"card-foreground": "oklch(0.147 0.004 49.3)",

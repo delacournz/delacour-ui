@@ -413,6 +413,33 @@ and a test asserts every token it names is declared in **both** variants of
 `undefined`, be dropped, and silently leave the light default in place — the
 exact failure the hook exists to fix.
 
+### The page sits below the card, in both themes
+
+shadcn ships `--background` and `--card` as the same white in light, and steps
+them apart only in dark. That works on the web because a card is separated by a
+shadow. Nothing here casts one, so a `ListGroup` on a `Screen` was white on
+white — a hairline border around nothing — while the same component in dark read
+as a raised surface. One component, two different ideas of what a card is.
+
+Light's `--background` is therefore the near-white step the ramp already carries
+for `--sidebar` (`oklch(0.985 0 0)`), leaving `--card` the white above it. It
+invents no colour and collides with nothing: `secondary` and `muted` sit lower
+at `0.97`. **Light elevation is deliberately a fraction of dark's** — on a light
+ground a surface lifts by a percent or two, where in dark it lifts by seven.
+
+Two consequences worth knowing:
+
+- `--elevated` follows `--card` in light, not `--background`. It is the surface
+  that must sit ABOVE `muted` — `Tabs`' selected capsule — and following the
+  page would now sink it to a hair above the track it has to rise out of.
+- `apps/web`'s `--color-fd-background` mirrors this value, and
+  `apps/web/src/styles/app.css.test.ts` fails if the two drift. The docs site
+  composites captured simulator media onto that colour, so a mismatch shows up
+  as a seam around every preview.
+
+A pasted palette that sets `background` and `card` to the same value gets
+shadcn's flat light mode back, which is a choice a consumer is free to make.
+
 ## Testing
 
 `bun test` covers **pure logic only**: `cn`, `mergeProps`, `composeRefs`, and

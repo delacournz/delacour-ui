@@ -20,7 +20,24 @@
 @layer theme {
 	:root {
 		@variant light {
-			--background: oklch(1 0 0);
+			/*
+			 * The page sits BELOW the card, in both themes.
+			 *
+			 * shadcn ships `background` and `card` as the same white, because on
+			 * the web a card is separated by a shadow. Nothing here casts one, so
+			 * a `ListGroup` on a page was white on white and read as a hairline
+			 * border around nothing — while the same component in dark, where the
+			 * ramp does step, read as a raised surface. One component, two
+			 * different ideas of what a card is.
+			 *
+			 * This is the near-white step the ramp already carries for `sidebar`,
+			 * so it invents no colour and collides with nothing: `secondary` and
+			 * `muted` sit lower at 0.97, and `card` keeps the white above it.
+			 * Light elevation is deliberately a fraction of dark's — on a light
+			 * ground a surface lifts by a percent or two, where in dark it lifts
+			 * by seven.
+			 */
+			--background: oklch(0.985 0 0);
 			--foreground: oklch(0.145 0 0);
 			--card: oklch(1 0 0);
 			--card-foreground: oklch(0.145 0 0);
@@ -61,17 +78,18 @@
 			/*
 			 * A surface that sits ABOVE `muted`, in both themes.
 			 *
-			 * `card` cannot do this job: it is the same white as `background` in
-			 * light and *darker* than `muted` in dark, so a control painted on it
-			 * inside a muted track reads as raised in one theme and sunken in the
-			 * other. Nothing else in the neutral ramp is lighter than `muted` in
-			 * dark either. `Tabs`' selected capsule is what this exists for.
+			 * In light that is now exactly what `card` is, so this follows it —
+			 * it used to follow `background`, which was the same white, and would
+			 * now sink below the card and land a hair above `muted`. `Tabs`'
+			 * selected capsule is what this exists for, and it has to read as
+			 * raised out of a muted track.
 			 *
-			 * Derived rather than literal so a pasted palette drags it along —
-			 * which is also why the two variants derive it differently. Light
-			 * lifts toward the page; dark has to lift toward the text instead.
+			 * `card` still cannot do the job in dark, where it is *darker* than
+			 * `muted` and nothing else in the ramp is lighter — hence the mix
+			 * there. Derived rather than literal in both, so a pasted palette
+			 * drags it along.
 			 */
-			--elevated: var(--background);
+			--elevated: var(--card);
 			--elevated-foreground: var(--foreground);
 
 			/*

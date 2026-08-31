@@ -5,6 +5,18 @@ import { View } from "react-native";
 import type { ResolvedMode } from "@/design-system/resolve";
 
 /**
+ * The four tokens that tell two palettes apart at a glance, and the five a
+ * chart palette is.
+ *
+ * They live beside `ColorPreview` because they are the argument it is almost
+ * always given — the screen's summary rows and the two palette sheets all reach
+ * for the same pair, and three copies of the same five strings is how one of
+ * them ends up a token behind.
+ */
+export const SWATCH_TOKENS = ["background", "primary", "accent", "destructive"] as const;
+export const CHART_TOKENS = ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] as const;
+
+/**
  * An `oklch()` string, as something React Native can actually paint.
  *
  * The palette is stored in shadcn's own notation so a web theme can be pasted

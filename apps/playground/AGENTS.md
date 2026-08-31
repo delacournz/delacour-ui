@@ -55,6 +55,7 @@ src/
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
 │   ├── index.tsx                 the component index — a ListGroup of every gallery
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
+│   ├── theme.tsx                 the design-system customizer — see Customizer
 │   └── (components)/             one route per component, grouped without a path segment
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── components/
@@ -62,7 +63,7 @@ src/
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
 │   ├── section.tsx               Section — a labelled block within one
-│   ├── customizer/               the floating trigger and its sheet — see Customizer
+│   ├── theme/                    the floating trigger and one sheet per axis — see Customizer
 │   ├── theme-toggle.tsx          ThemeToggle — the navbar's light/dark action
 │   └── delacour-mark/            the brand mark in react-native-svg, from @delacour/brand
 ├── design-system/                the customizer's axes, as data — see Customizer
@@ -75,6 +76,11 @@ src/
 
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
+
+`/theme` and `/preview` are the only two top-level routes that are not a
+component's gallery. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
+bare `<Stack>`, so expo-router registers both from their filenames and `/theme`
+pushes as an ordinary card.
 
 A component's gallery takes one of two shapes, and which one depends on whether
 it fits on a page:
@@ -125,7 +131,7 @@ both.
 
 **The navbar carries one action: `ThemeToggle`.** A single tap flips the whole
 app between light and dark, so a component can be checked in both palettes
-without leaving the demo. It is a two-state toggle on purpose — the index screen
+without leaving the demo. It is a two-state toggle on purpose — `/theme`
 keeps the three-way choice that includes `system`, and that is where a decision
 about following the OS belongs. `GalleryScreen` carries the same action, so the
 one hand-written gallery does not behave differently from the thirty-four paged
@@ -300,8 +306,8 @@ Which routes prove which layer: `/pressable` for the gesture root,
 ## Customizer
 
 A design-system customizer modelled on <https://ui.shadcn.com/create>: eight
-orthogonal axes the user combines themselves, in a sheet reachable from any
-screen and persisted across restarts. It exists because a component library is
+orthogonal axes the user combines themselves, on the `/theme` screen, reached by
+a floating trigger on every other screen and persisted across restarts. It exists because a component library is
 judged on whether it holds up under someone else's brand, and until there was a
 second palette in this app nothing here proved the tokens were doing the work.
 
@@ -341,10 +347,13 @@ registered theme must declare every variable at build time.
   secondary. Invisible on a web card; obvious on `Button variant="secondary"`
   and on a `ListGroup`. Dropping it lets the base colour's own secondary stand,
   and `design-system.test.ts` fails if a re-transcription brings it back.
-- **Icon Library is an inert row.** `native-ui` rule 5 is "Central Icons only",
-  and rule 7's single `withUniwind` wrapper is already spent on the Central
-  Icons proxy. The row is shown and not pressable, so the omission is stated
-  rather than silently missing.
+- **Icon Library offers one library.** `native-ui` rule 5 is "Central Icons
+  only", and rule 7's single `withUniwind` wrapper is already spent on the
+  Central Icons proxy. The row is kept and opens a sheet holding that one
+  option and the reason there is only one, so the omission is stated on the
+  device rather than silently missing. It was an inert row until the axes
+  became sheets; an unpressable row among seven pressable ones read as a bug,
+  and its explanation only existed in a comment.
 
 ### The data is data, and the tests are the point
 
@@ -393,10 +402,45 @@ light/dark mode is stored beside it because Uniwind does not persist its own,
 and `ThemeToggle` writes through the same store so the navbar flip is remembered
 exactly as the sheet's is.
 
-### It hides on `/preview`
+### One sheet per axis
 
-`bun run previews` deep-links there for every demo in both themes, so a floating
-trigger would land in every published media file. `Customizer` returns `null`.
+The axis list is a screen, and each axis opens a `BottomSheet` of its own —
+`style.bottom-sheet.tsx` and seven siblings, all built on `AxisSheet`. That
+shape is what the route buys. While the list lived *in* a sheet the options had
+to be a second pane of the same sheet, because nesting a second `BottomSheet`
+inside the first stacks two scrims and two gesture handlers over the same
+content and the inner one's dismissal races the outer's. With the list behind
+them, eight sheets are plain siblings.
+
+Two seams are shared and neither is an axis-shaped `if`, which is what the
+single `theme || chartColor` pane had to be:
+
+| Shared | By | What it shares |
+| --- | --- | --- |
+| `usePaletteOptions` | Theme, Chart Color | the computation — eighteen palettes, each fully resolved |
+| `FontOptionList` | Font, Heading | the layout — grouped families, `Inherit` behind a flag |
+
+**Which sheet is open is one nullable key on `/theme`, not eight booleans**, so
+"only one at a time" is structural rather than something eight handlers have to
+agree about. **All eight stay mounted**, with `isOpen` deciding which presents:
+rendering only the open one unmounts gorhom's modal the instant the key goes
+`null`, and the sheet vanishes instead of sliding down. It is affordable because
+gorhom renders nothing until presented, because the two font lists resolve no
+tokens at all, and because `useAxisPreview` memoises on `[config, mode]` — an
+identity that only changes when `setAxis` or `resetConfig` replaces it.
+
+**Choosing dismisses**, where the old sheet returned to its axis list. That rule
+existed because the list was the sheet's other pane; it is a screen now, sitting
+permanently behind, so the next axis is one tap away either way — and dismissing
+is what lets you watch the summary row you just changed repaint.
+
+### The trigger hides on `/preview` and `/theme`
+
+`bun run previews` deep-links to `/preview` for every demo in both themes, so a
+floating trigger would land in every published media file. It hides on `/theme`
+for a different reason: a button that pushes the screen you are already on
+stacks duplicate cards behind you. `ThemeTrigger` returns `null` for both.
+
 `preview.tsx` also forces `DEFAULT_CONFIG` in the same layout effect that sets
 the theme — a configuration survives a restart, so without that a capture run
 would publish whichever look was last selected. It calls `applyConfig`, not

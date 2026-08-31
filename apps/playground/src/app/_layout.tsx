@@ -5,7 +5,7 @@ import { DelacourProvider } from "@delacour/native-ui/provider";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
-import { Customizer } from "@/components/customizer";
+import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { restoreDesignSystem } from "@/design-system/store";
 
 /**
@@ -65,7 +65,7 @@ export default function RootLayout() {
 			<SystemBackground />
 			<NavigationTheme>
 				<Stack screenOptions={{ headerShown: false }} />
-				<Customizer />
+				<ThemeTrigger />
 			</NavigationTheme>
 		</DelacourProvider>
 	);

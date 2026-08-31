@@ -55,6 +55,7 @@ export function ThemeTabBarProvider({ children }: { children: ReactNode }): Reac
 }
 ThemeTabBarProvider.displayName = "Playground.ThemeTabBarProvider";
 
+/** The bar's measured height, for anything that has to clear it. */
 /**
  * The room a tab's content leaves for the bar floating over it.
  *
@@ -66,6 +67,10 @@ ThemeTabBarProvider.displayName = "Playground.ThemeTabBarProvider";
  * It is the bar's height less {@link CONTENT_GAP}, so the first row lands at
  * the bar's own bottom edge rather than a further gap below it.
  */
+export function useThemeTabBarInset(): number {
+	return useContext(ThemeTabBarInsetContext)?.inset ?? 0;
+}
+
 export function ThemeTabBarSpacer(): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
 

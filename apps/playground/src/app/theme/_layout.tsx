@@ -4,6 +4,7 @@ import { TopTabs } from "expo-router/js-top-tabs";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { renderThemeTabBar, ThemeTabBarProvider } from "@/components/theme/theme-tab-bar";
+import { ThemeTabsShadow } from "@/components/theme/theme-tabs-shadow";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 /**
@@ -20,6 +21,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
  * fit on one screen — the axes alone fill a viewport and a half, so the preview
  * was always below the fold and never beside the control that changed it. Two
  * tabs put them a swipe apart instead of a scroll.
+ *
+ * A `Screen.ScrollShadow` sits over both tabs, its top fade starting below the
+ * floating bar so content dissolves into the gap rather than being cut by it.
  *
  * The navbar is the only chrome that takes space here. The tab bar floats over
  * the pager and measures itself, and each tab opens with a `ThemeTabBarSpacer`
@@ -46,6 +50,7 @@ export default function ThemeLayout(): ReactElement {
 					<TopTabs.Screen name="index" options={{ title: "Design" }} />
 					<TopTabs.Screen name="preview" options={{ title: "Preview" }} />
 				</TopTabs>
+				<ThemeTabsShadow />
 			</ThemeTabBarProvider>
 		</Screen>
 	);

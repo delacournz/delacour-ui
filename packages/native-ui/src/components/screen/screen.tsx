@@ -9,6 +9,7 @@ import { ScreenLoading } from "./screen-loading";
 import { ScreenNavbar } from "./screen-navbar";
 import { ScreenRoot } from "./screen-root";
 import { ScreenScrollArea } from "./screen-scroll-area";
+import { ScreenScrollShadow } from "./screen-scroll-shadow";
 import { ScreenSectionList } from "./screen-section-list";
 import { ScreenView } from "./screen-view";
 
@@ -95,6 +96,8 @@ export const Screen = Object.assign(ScreenRoot, {
 	Footer: ScreenFooter,
 	/** A scrolling body that clears the chrome at both ends. */
 	ScrollArea: ScreenScrollArea,
+	/** A fade at each end of whichever body is mounted, for content that runs past it. */
+	ScrollShadow: ScreenScrollShadow,
 	/** A virtualised list that clears the chrome at both ends. */
 	FlatList: ScreenFlatList,
 	/** A sectioned virtualised list, with sticky section headers. */

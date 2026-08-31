@@ -227,12 +227,22 @@ leaves over the last. Content shorter than its viewport never scrolls, so
 `maxScroll` is zero and both stay out — a fade over a short page promises content
 that does not exist.
 
-**The gradient is `react-native-svg`, not a native gradient view.** The package
-is already a peer for `Icon` and `Spinner`, so it costs nothing new, where a
-gradient library would add a native module to every consuming app for two
-rectangles. Both stops name the same colour and vary only in opacity: fading to
-`transparent` interpolates through black in a premultiplied space, which shows as
-a dark bloom against a light background.
+**The gradient is `expo-linear-gradient`, and it is the one hard peer this
+component adds.** `screen.tsx` imports it through the compound, so every app that
+touches `Screen` resolves it whether or not it draws a fade — that is the price
+of a native gradient view over drawing one in SVG, and it is paid by consumers
+rather than by this package.
+
+**The far stop is the near colour at zero alpha, never `transparent`.** The
+keyword is transparent *black*, so interpolating toward it drags every stop
+between through grey — a dark bloom over a light ground, a milky one over a
+dark. `transparentOf` in `lib/color.ts` takes the alpha off instead, and returns
+`undefined` for a notation it cannot take apart; the component then declines to
+draw rather than reaching for the keyword after all.
+
+**Opacity ramps over a quarter of `size`, not all of it.** A fade that takes its
+own height to arrive reads as lagging the finger; a quarter puts it there while
+the first row is still leaving.
 
 ## API
 
@@ -258,8 +268,11 @@ a dark bloom against a light background.
 
 ## Dependencies
 
-- **One optional peer.** `@legendapp/list` is `peerDependenciesMeta.optional`,
-  so an app that never imports `Screen` never resolves it.
+- **One optional peer, and one hard one.** `@legendapp/list` is
+  `peerDependenciesMeta.optional`, so an app that never imports `Screen` never
+  resolves it. `expo-linear-gradient` is not optional: `Screen.ScrollShadow`
+  imports it at module scope and the compound imports that, so every consumer of
+  `Screen` needs it installed.
   `react-native-keyboard-controller` used to be the second — see
   [DelacourProvider](../provider/AGENTS.md) for why it stopped.
 - **The app must mount `DelacourProvider` at its root.** It supplies the gesture

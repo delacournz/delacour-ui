@@ -44,6 +44,8 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	uniwind: "expo",
 	// Framework packages, resolved against the installed SDK like any other.
 	"expo-router": "expo",
+	// Ships a native gradient view, so it is version-matched and needs a rebuild.
+	"expo-linear-gradient": "expo",
 	// Ships a Fabric view, so it is version-matched and needs a rebuild too.
 	"@legendapp/list": "expo",
 	// Built on Reanimated and Gesture Handler, and pinned against both.

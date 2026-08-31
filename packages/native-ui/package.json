@@ -1,7 +1,7 @@
 {
 	"name": "@delacour/native-ui",
 	"version": "0.1.0",
-	"description": "React Native UI components — Uniwind, Reanimated, Gesture Handler",
+	"description": "React Native UI components \u2014 Uniwind, Reanimated, Gesture Handler",
 	"type": "module",
 	"exports": {
 		"./styles": "./src/styles/index.css",
@@ -57,6 +57,7 @@
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@gorhom/bottom-sheet": "^5.2.8",
 		"@legendapp/list": ">=3.3",
+		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
 		"react-native": ">=0.81",

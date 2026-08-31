@@ -36,3 +36,44 @@ export function themeVariableName(token: string): string {
 
 	return `--${token}`;
 }
+
+const HEX = /^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+const RGB = /^rgba?\(\s*([^,]+),\s*([^,]+),\s*([^,)]+)/i;
+
+/**
+ * The same colour at zero alpha, for the far end of a fade.
+ *
+ * A gradient must never fade to the keyword `transparent`: that is transparent
+ * BLACK, and interpolating toward it drags every stop between through grey — a
+ * dark bloom over a light ground, a milky one over a dark. The far stop has to
+ * be the near colour with its alpha taken off, which is what this returns.
+ *
+ * `undefined` for anything it cannot take apart, which a caller should read as
+ * "do not draw" rather than reaching for the keyword after all. A colour that
+ * arrives here in a notation this does not know is a colour whose channels are
+ * not knowable without a parser, and a fade is not worth one.
+ */
+export function transparentOf(color: string | undefined): string | undefined {
+	if (!color) return undefined;
+
+	if (HEX.test(color)) {
+		const digits = color.slice(1);
+		// A short hex cannot take a suffix: `#abc` + `00` is a four-digit hex,
+		// which is `#aabbccdd` shorthand and not the colour at all.
+		const rgb =
+			digits.length <= 4
+				? digits
+						.slice(0, 3)
+						.split("")
+						.map((digit) => digit + digit)
+						.join("")
+				: digits.slice(0, 6);
+
+		return `#${rgb}00`;
+	}
+
+	const channels = RGB.exec(color);
+	if (channels) return `rgba(${channels[1]?.trim()}, ${channels[2]?.trim()}, ${channels[3]?.trim()}, 0)`;
+
+	return undefined;
+}

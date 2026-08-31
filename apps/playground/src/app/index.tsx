@@ -1,4 +1,3 @@
-import { Button } from "@delacour/native-ui/button";
 import { Icon } from "@delacour/native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
@@ -27,9 +26,6 @@ import { Text } from "@delacour/native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import { Uniwind, useUniwind } from "uniwind";
-
-const THEMES = ["light", "dark", "system"] as const;
 
 const COMPONENTS = [
 	{
@@ -170,9 +166,6 @@ const VISIBLE_COMPONENTS: readonly ComponentRow[] = __DEV__ ? [...COMPONENTS, ..
  */
 export default function Index(): ReactElement {
 	const router = useRouter();
-	const { theme, hasAdaptiveThemes } = useUniwind();
-
-	const activeTheme = hasAdaptiveThemes ? "system" : theme;
 
 	return (
 		<Screen>
@@ -180,19 +173,6 @@ export default function Index(): ReactElement {
 				<View className="gap-1">
 					<Text.Display>native-ui</Text.Display>
 					<Text.Paragraph color="muted">{COMPONENTS.length} components</Text.Paragraph>
-				</View>
-
-				<View className="flex-row gap-2">
-					{THEMES.map((name) => (
-						<Button
-							key={name}
-							onPress={() => Uniwind.setTheme(name)}
-							size="sm"
-							variant={activeTheme === name ? "primary" : "outline"}
-						>
-							{name}
-						</Button>
-					))}
 				</View>
 
 				<ListGroup>

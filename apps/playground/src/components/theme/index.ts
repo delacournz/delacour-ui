@@ -10,6 +10,7 @@ export { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS }
 export { RadiusBottomSheet } from "./radius.bottom-sheet";
 export { StyleBottomSheet } from "./style.bottom-sheet";
 export { ThemeBottomSheet } from "./theme.bottom-sheet";
+export { ThemePreview } from "./theme-preview";
 export { ThemeTrigger } from "./theme-trigger";
 export { useAxisPreview } from "./use-axis-preview";
 export { usePaletteOptions } from "./use-palette-options";

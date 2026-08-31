@@ -538,6 +538,32 @@ the component this app exists to show off while the navigator keeps the pager,
 the routes and the URL. It takes `isSwipeable={false}` because the pager already
 owns the horizontal gesture — left on, two things claim the same drag.
 
+**The capsule is the one part that is not the library's, and it cannot be.**
+`Tabs.Indicator` moves off a Reanimated shared value; the only thing that knows
+where this pager is *mid-drag* is the navigator's `position`, a React Native
+`AnimatedAddition` driven by the native driver. `addListener` on a derived
+native node never fires on Fabric — verified on device, from both the tab bar's
+`position` and `useTabAnimation()`'s, with an attach log firing and not one value
+callback through a full swipe — so no hook can bridge it into Reanimated. There
+is no callback to wrap.
+
+What the value *can* still do is drive a style natively, so the capsule is a
+React Native `Animated.View` interpolated from it, painting the same
+`absolute inset-y-0 rounded-full bg-elevated` the `primary` variant does. Its
+width is measured from the first trigger rather than divided out of the row, so
+it stays correct if the tabs are ever not equal.
+
+The trigger labels still crossfade on the settle rather than through the drag:
+that colour is animated off `Tabs`' own internal position, which only a
+Reanimated value could track.
+
+**The bar is mounted as an element, never passed as the callback.** The
+navigator *calls* `tabBar(props)` rather than rendering `<TabBar />`, so a
+function handed straight to it runs its hooks inside the caller's render — they
+join that component's hook list, and the first render where the caller's count
+differs throws "rendered more hooks than during the previous render" from
+somewhere in the pager, with a stack that never mentions the file.
+
 The navigator's own `MaterialTopTabBarProps` is declared `any & { … }`, and an
 intersection with `any` collapses to `any`, so the layout restates the three
 fields it reads. That local type is narrower than the exported one and the only

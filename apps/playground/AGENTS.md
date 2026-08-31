@@ -313,7 +313,7 @@ second palette in this app nothing here proved the tokens were doing the work.
 
 | Axis | Writes |
 | --- | --- |
-| Style — Vega … Rhea | the geometry: `--radius` and the button/input/icon/chrome scales |
+| Style — Vega … Rhea (a strip, not a sheet) | the geometry: `--radius` and the button/input/icon/chrome scales |
 | Base Color — 7 neutrals | the full ramp, light and dark |
 | Theme — the base colour + 17 accents | `--primary`, `--chart-1..5`, `--sidebar-primary`, and their foregrounds |
 | Chart Color — the same list | `--chart-1..5` only |
@@ -402,10 +402,36 @@ light/dark mode is stored beside it because Uniwind does not persist its own,
 and `ThemeToggle` writes through the same store so the navbar flip is remembered
 exactly as the sheet's is.
 
+### Style is a strip, not a sheet
+
+Seven axes are a row that opens a `BottomSheet`. Style is a horizontal scroller
+sitting inline above them, and the asymmetry is the point rather than an
+oversight: choosing a style is *comparing eight shapes against each other*, and
+a sheet shows them one screen at a time with the app it is restyling hidden
+behind its own scrim. Inline, a tap repaints everything under it — the axis
+rows, the preview, the gutter the strip itself sits in — so the axis can be
+walked end to end with nothing opening or closing.
+
+Each tile draws the style's own numbers instead of naming them: the surface
+corner at its `radius`, and a control inside at its `spacing-button-sm` and
+`radius-button-sm`. **At life size, not scaled** — a 32pt control beside a 40pt
+one is the difference the axis makes, and halving both would halve the only
+signal the tile carries. A colour swatch would say nothing here; these eight
+differ in geometry alone.
+
+The description belongs to the selected tile and sits under the strip. Eight
+captions at the size a strip can afford is a wall of type, and only one of them
+is ever being read. The scroller bleeds into the screen gutter so a tile is cut
+by the edge rather than stopping short of it.
+
+Radius keeps its sheet: five options that are one number each are a list, not a
+comparison.
+
 ### One sheet per axis
 
-The axis list is a screen, and each axis opens a `BottomSheet` of its own —
-`style.bottom-sheet.tsx` and seven siblings, all built on `AxisSheet`. That
+The axis list is a screen, and seven of the eight axes open a `BottomSheet` of
+their own — `base-color.bottom-sheet.tsx` and six siblings, all built on
+`AxisSheet`. Style is the exception above. That
 shape is what the route buys. While the list lived *in* a sheet the options had
 to be a second pane of the same sheet, because nesting a second `BottomSheet`
 inside the first stacks two scrims and two gesture handlers over the same

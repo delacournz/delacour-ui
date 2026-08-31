@@ -27,15 +27,18 @@ export type ScreenScrollShadowProps = Omit<ViewProps, "children" | "pointerEvent
 	 */
 	color?: string;
 	/**
-	 * Extra points to push the top fade down, ON TOP OF the navbar's own height.
+	 * Points of SOLID colour above the gradient, for chrome floating over the body.
 	 *
-	 * For chrome this package does not know about — a bar floating over the
-	 * content between the navbar and the body. The navbar and footer are already
-	 * accounted for; this is only what a caller adds beyond them.
+	 * Not an offset — the fade still begins at the navbar. This is the band the
+	 * floating chrome occupies, painted opaque so content is already gone by the
+	 * time it reaches the chrome, with the gradient below it doing the dissolving.
+	 * Offsetting the fade past the chrome instead leaves content crisp behind
+	 * whatever parts of it are transparent, and then cuts abruptly where the fade
+	 * finally starts — which is the whole artefact this is here to avoid.
 	 */
-	insetTop?: number;
-	/** Extra points to lift the bottom fade, on top of the footer's own height. */
-	insetBottom?: number;
+	coverTop?: number;
+	/** Points of solid colour below the gradient, for chrome floating at the end. */
+	coverBottom?: number;
 	className?: string;
 };
 
@@ -62,8 +65,14 @@ export type ScreenScrollShadowProps = Omit<ViewProps, "children" | "pointerEvent
  * **It places itself against the screen's own chrome.** The top fade starts at
  * the navbar's measured height and the bottom above the footer's, both read from
  * the same context, so it is correct under either placement without a caller
- * measuring anything. `insetTop` and `insetBottom` are for chrome this package
- * cannot see — a bar floating between the navbar and the body.
+ * measuring anything.
+ *
+ * **`coverTop` extends the band, it does not move it.** Chrome floating between
+ * the navbar and the body — a tab bar, say — wants the content already gone
+ * where it passes behind, so the band is solid for those points and only then
+ * begins to fade. Pushing the whole fade below the chrome instead leaves content
+ * crisp behind whatever parts of it are transparent, and cuts abruptly where the
+ * fade finally starts.
  *
  * **Each end fades only when there is something past it.** The top is out at
  * rest and arrives over the first `size` points of travel; the bottom is there
@@ -92,8 +101,8 @@ export function ScreenScrollShadow({
 	size = SCROLL_SHADOW_SIZE,
 	edges = "both",
 	color,
-	insetTop = 0,
-	insetBottom = 0,
+	coverTop = 0,
+	coverBottom = 0,
 	className,
 	style,
 	...props
@@ -111,12 +120,12 @@ export function ScreenScrollShadow({
 	// neither, which is a component that silently does nothing.
 	const topStyle = useAnimatedStyle(() => ({
 		opacity: interpolate(scrollY.value, [0, size], [0, 1], "clamp"),
-		top: navbar.height.value + insetTop,
+		top: navbar.height.value,
 	}));
 
 	const bottomStyle = useAnimatedStyle(() => {
 		const maxScroll = contentHeight.value - layoutHeight.value;
-		const bottom = footer.height.value + footer.overlayHeight.value + insetBottom;
+		const bottom = footer.height.value + footer.overlayHeight.value;
 		if (maxScroll <= 0) return { bottom, opacity: 0 };
 
 		return { bottom, opacity: interpolate(scrollY.value, [maxScroll - size, maxScroll], [1, 0], "clamp") };
@@ -125,11 +134,12 @@ export function ScreenScrollShadow({
 	return (
 		<View className={className} pointerEvents="none" style={[StyleSheet.absoluteFill, style]} {...props}>
 			{edges === "bottom" ? null : (
-				<Animated.View style={[{ height: size, left: 0, position: "absolute", right: 0 }, topStyle]}>
+				<Animated.View style={[{ height: coverTop + size, left: 0, position: "absolute", right: 0 }, topStyle]}>
 					<Svg height="100%" width="100%">
 						<Defs>
 							<LinearGradient id={`${id}-top`} x1="0" x2="0" y1="0" y2="1">
 								<Stop offset="0" stopColor={paint} stopOpacity="1" />
+								<Stop offset={coverTop / (coverTop + size)} stopColor={paint} stopOpacity="1" />
 								<Stop offset="1" stopColor={paint} stopOpacity="0" />
 							</LinearGradient>
 						</Defs>
@@ -139,11 +149,12 @@ export function ScreenScrollShadow({
 			)}
 
 			{edges === "top" ? null : (
-				<Animated.View style={[{ height: size, left: 0, position: "absolute", right: 0 }, bottomStyle]}>
+				<Animated.View style={[{ height: coverBottom + size, left: 0, position: "absolute", right: 0 }, bottomStyle]}>
 					<Svg height="100%" width="100%">
 						<Defs>
 							<LinearGradient id={`${id}-bottom`} x1="0" x2="0" y1="0" y2="1">
 								<Stop offset="0" stopColor={paint} stopOpacity="0" />
+								<Stop offset={size / (coverBottom + size)} stopColor={paint} stopOpacity="1" />
 								<Stop offset="1" stopColor={paint} stopOpacity="1" />
 							</LinearGradient>
 						</Defs>

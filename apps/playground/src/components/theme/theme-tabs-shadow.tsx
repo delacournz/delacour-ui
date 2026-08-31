@@ -9,12 +9,13 @@ import { useThemeTabBarInset } from "@/components/theme/theme-tab-bar";
  * two tabs are one scrolling surface as far as the reader is concerned and a
  * fade that changed with the page would draw attention to the seam.
  *
- * Its top starts at the bar's own bottom edge. Above that the bar is already
- * opaque, so a fade there would be painting behind something solid; below it is
- * exactly where a row gets cut in half with no chrome to explain the cut, which
- * is what the fade is for.
+ * The bar's height is `coverTop` rather than an offset, so the band is solid
+ * across the bar and only begins dissolving below it. The bar is a pill on a
+ * transparent row — content is plainly visible either side of it — so a fade
+ * that started under the bar left rows crisp as they slid behind it, then cut
+ * them where the fade began.
  */
 export function ThemeTabsShadow(): ReactElement {
-	return <Screen.ScrollShadow insetTop={useThemeTabBarInset()} />;
+	return <Screen.ScrollShadow coverTop={useThemeTabBarInset()} />;
 }
 ThemeTabsShadow.displayName = "Playground.ThemeTabsShadow";

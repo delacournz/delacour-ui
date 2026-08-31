@@ -575,9 +575,10 @@ and necessary, because that container's padding is a class, so a
 Both tabs sit under one `Screen.ScrollShadow`, a sibling of the navigator rather
 than something inside each tab — the two are one scrolling surface as far as the
 reader is concerned, and a fade that changed with the page would draw attention
-to the seam. Its `insetTop` is the bar's measured height, so the fade begins at
-the bar's own bottom edge: above that the bar is already opaque, and below it is
-exactly where a row gets cut with no chrome to explain the cut.
+to the seam. The bar's measured height is its `coverTop`, so the band is
+solid across the bar and only begins dissolving below it — the bar is a pill on
+an otherwise transparent row, so a fade that started beneath it left rows crisp
+as they slid past either side and then cut them.
 
 **The bar is mounted as an element, never passed as the callback.** The
 navigator *calls* `tabBar(props)` rather than rendering `<TabBar />`, so a

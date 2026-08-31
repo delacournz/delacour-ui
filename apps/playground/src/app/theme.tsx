@@ -14,7 +14,7 @@ import { HeadingBottomSheet } from "@/components/theme/heading.bottom-sheet";
 import { IconLibraryBottomSheet } from "@/components/theme/icon-library.bottom-sheet";
 import { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS } from "@/components/theme/previews";
 import { RadiusBottomSheet } from "@/components/theme/radius.bottom-sheet";
-import { StyleBottomSheet } from "@/components/theme/style.bottom-sheet";
+import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemeBottomSheet } from "@/components/theme/theme.bottom-sheet";
 import { ThemePreview } from "@/components/theme/theme-preview";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
@@ -23,7 +23,6 @@ import { type DesignSystemConfig, type PaletteName, palettesForBaseColor } from 
 import { fontByName } from "@/design-system/fonts";
 import { radiusByName } from "@/design-system/radii";
 import { resetConfig, setThemeMode, THEME_MODES, type ThemeMode } from "@/design-system/store";
-import { styleByName } from "@/design-system/styles";
 
 /** Every axis with a sheet. `iconLibrary` has one and writes nothing. */
 type AxisKey = keyof DesignSystemConfig | "iconLibrary";
@@ -88,6 +87,7 @@ export default function ThemeRoute(): ReactElement {
 					Every axis repaints the same tokens, so nothing below is restyled by hand.
 				</Text.Paragraph>
 
+				<StyleStrip />
 				<AxisRows onOpen={setOpen} />
 				<AppearanceControls />
 
@@ -98,7 +98,6 @@ export default function ThemeRoute(): ReactElement {
 				</Button>
 			</Screen.ScrollArea>
 
-			<StyleBottomSheet {...sheet("style")} />
 			<BaseColorBottomSheet {...sheet("baseColor")} />
 			<ThemeBottomSheet {...sheet("theme")} />
 			<ChartColorBottomSheet {...sheet("chartColor")} />
@@ -149,7 +148,6 @@ AxisRow.displayName = "Playground.Theme.AxisRow";
 function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement {
 	const { config, resolved } = useAxisPreview();
 
-	const style = styleByName(config.style);
 	const radius = radiusByName(config.radius);
 	const bodyFont = fontByName(config.font);
 	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
@@ -160,13 +158,6 @@ function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement
 	return (
 		<>
 			<ListGroup>
-				<AxisRow
-					axis="style"
-					label="Style"
-					onOpen={onOpen}
-					preview={<RadiusPreview radius={style?.geometry.radius ?? 0} />}
-					value={style?.title ?? config.style}
-				/>
 				<AxisRow
 					axis="baseColor"
 					label="Base Color"

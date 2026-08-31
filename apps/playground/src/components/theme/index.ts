@@ -8,7 +8,7 @@ export { HeadingBottomSheet } from "./heading.bottom-sheet";
 export { IconLibraryBottomSheet } from "./icon-library.bottom-sheet";
 export { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS } from "./previews";
 export { RadiusBottomSheet } from "./radius.bottom-sheet";
-export { StyleBottomSheet } from "./style.bottom-sheet";
+export { StyleStrip } from "./style-strip";
 export { ThemeBottomSheet } from "./theme.bottom-sheet";
 export { ThemePreview } from "./theme-preview";
 export { ThemeTrigger } from "./theme-trigger";

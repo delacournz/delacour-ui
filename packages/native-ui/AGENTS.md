@@ -302,6 +302,19 @@ and the button beside it can be retuned independently. They are meant to stay
 level, so `tokens.test.ts` asserts that outright — which is the difference
 between a coupling that is checked and one that is merely hoped for.
 
+**A geometry token is declared twice, and that is not an accident.**
+`tokens.css` holds the value `apps/web` reads — the docs site imports only that
+file. `theme.css`'s `@variant native` block holds the copy React Native reads.
+The reason is how Uniwind compiles a variable: one declared in a plain `@theme`
+block is resolved and INLINED at build time, so `h-button-md` would carry a
+literal 44 and no runtime override could reach it; one declared inside a
+`@variant` compiles to a getter against the live store. That is the whole
+difference between a kit whose density an app can retune and one whose density
+is a build artefact. `native` rather than `light`/`dark` because it is a
+registered platform variant merged into the base variables every theme
+inherits, so one block covers both — and none of these numbers change at dusk.
+`styles/geometry.test.ts` asserts the two copies agree.
+
 **Adding a token means editing two files.** Put the value in `tokens.css` and
 the name in `src/styles/tokens.ts`. Miss the second and tailwind-merge stops
 recognising the utility, so a caller's override quietly stops working;
@@ -327,6 +340,18 @@ shape rather than an invention:
 ```
 
 The raw name is what a theme declares; the `@theme inline` alias is what mints
+**The typeface is four tokens, not three.** `theme.css` names `--font-sans`,
+`--font-serif`, `--font-mono` and `--font-heading` per platform, because React
+Native's `fontFamily` takes a single family name with no fallback list.
+`TEXT_BASE_CLASS` emits `font-sans`, which is what puts every piece of text on
+that variable; `Text.Code`'s `font-mono` and `Text.Display`/`.Title`/`.Header`'s
+`font-heading` are emitted later in the same tailwind-merge group and still win.
+`Input`'s `field` slot restates `font-sans` because it styles a raw `TextInput`
+— the one text surface here that is not a `Text` and inherits nothing.
+`--font-heading` defaults to the same family as `--font-sans`, so pairing a
+display face with body text is something an app opts into rather than something
+this package decides.
+
 `bg-primary`. Adding a token means editing **both** — a name declared in the
 variants and forgotten in the alias block is unreachable, and no `bg-*` exists
 for it. `styles/theme-tokens.test.ts` fails on the gap, and is also the reader

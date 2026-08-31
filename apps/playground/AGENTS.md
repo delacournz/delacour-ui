@@ -131,9 +131,10 @@ both.
 
 **The navbar carries one action: `ThemeToggle`.** A single tap flips the whole
 app between light and dark, so a component can be checked in both palettes
-without leaving the demo. It is a two-state toggle on purpose — `/theme`
-keeps the three-way choice that includes `system`, and that is where a decision
-about following the OS belongs. `GalleryScreen` carries the same action, so the
+without leaving the demo. It is a two-state toggle on purpose, and now the
+only theme control in the app: `/theme` carries the same action in its own
+navbar rather than a separate three-state row, so `system` has no control
+anywhere. The store still persists it and a fresh install still starts on it. `GalleryScreen` carries the same action, so the
 one hand-written gallery does not behave differently from the thirty-four paged
 ones.
 
@@ -320,6 +321,11 @@ second palette in this app nothing here proved the tokens were doing the work.
 | Heading, Font — 26 families | `--font-heading`, `--font-sans` |
 | Icon Library | nothing — see below |
 | Radius (a strip) | `--radius` |
+
+Light, dark and `system` are **not** one of the eight. Uniwind owns the theme and
+the store persists the choice beside the configuration, because Uniwind does not
+persist its own. `/theme` reaches it through the same `ThemeToggle` every other
+screen carries.
 
 Composition is shadcn's, and the order IS the precedence: a base colour's ramp,
 an accent spread over it, the chart hues overwritten, then the style's geometry,

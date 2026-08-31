@@ -13,13 +13,17 @@ const FADE_IN_MS = 140;
 /**
  * Flips the whole app between light and dark, from wherever you are.
  *
- * A navbar action rather than a row of buttons: the `/theme` screen already
- * offers the full three-way choice — light, dark, **system** — and that is the
- * place to make a decision. This is the one you reach for while looking at a
- * component, so it is a single tap with no target to aim at and no third state
- * to read. Choosing either theme here leaves adaptive mode behind, exactly as
- * `/theme`'s own light and dark buttons do; `/theme` is where you hand the app
- * back to the system.
+ * A navbar action rather than a row of buttons, and now the app's only control
+ * over the theme: `/theme` carried a three-state Appearance row until this
+ * became its navbar action too, and the two could not coexist — a two-state
+ * toggle above a three-state control over one setting is two controls
+ * disagreeing about how many states there are.
+ *
+ * **`system` therefore has no control anywhere.** The store still persists it
+ * and a fresh install still starts on it, so the mode is reachable by clearing
+ * app data and not otherwise. That is a real loss and a deliberate one: the
+ * thing this is reached for is flipping a component between palettes while
+ * looking at it, which wants one tap and no third state to read past.
  *
  * **The glyph is the destination, not the state.** A sun means "go light", so it
  * shows while the app is dark. A control whose icon named the current theme

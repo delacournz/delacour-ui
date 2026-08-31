@@ -1,5 +1,4 @@
 import { useSyncExternalStore } from "react";
-import { Platform } from "react-native";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
 import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@/design-system/config";

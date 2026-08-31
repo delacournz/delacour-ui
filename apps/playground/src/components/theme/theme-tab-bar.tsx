@@ -33,6 +33,7 @@ export type ThemeTabBarProps = {
  */
 const CONTENT_GAP = 24;
 
+type TabFrame = { x: number; width: number };
 type ThemeTabBarInset = { inset: number; setInset: (height: number) => void };
 
 const ThemeTabBarInsetContext = createContext<ThemeTabBarInset | null>(null);
@@ -82,19 +83,31 @@ ThemeTabBarSpacer.displayName = "Playground.ThemeTabBarSpacer";
  * bg-elevated` the library's `primary` variant paints, written as a style
  * because an `Animated.View` takes no `className`.
  *
- * The width comes from measuring a trigger rather than dividing the row, so it
- * stays right if the two tabs are ever not equal.
+ * **The stride is measured, not assumed to be the tab's width.** `Tabs.List`
+ * puts a gap between triggers, so a tab's width is short of the distance from
+ * one to the next by exactly that gap — multiplying by the width alone left the
+ * capsule a gap's-worth clear of the right edge on the last tab, and nowhere
+ * else, which is why it only showed against the track's rounded end.
+ *
+ * The width is static rather than interpolated because it cannot be otherwise:
+ * `position` is driven by the native driver, which animates transforms and
+ * opacity and nothing else. Tabs of unequal width would need the value on the
+ * JS thread, and it is not available there at all.
  */
 function TabIndicator({
 	position,
-	tabWidth,
+	offset,
+	stride,
+	width,
 }: {
 	position: Animated.AnimatedInterpolation<number>;
-	tabWidth: number;
+	offset: number;
+	stride: number;
+	width: number;
 }): ReactElement | null {
 	const elevated = useThemeColor("elevated");
 
-	if (tabWidth === 0) return null;
+	if (width === 0) return null;
 
 	return (
 		<Animated.View
@@ -103,10 +116,11 @@ function TabIndicator({
 				backgroundColor: elevated,
 				borderRadius: 9999,
 				bottom: 0,
+				left: offset,
 				position: "absolute",
 				top: 0,
-				transform: [{ translateX: Animated.multiply(position, tabWidth) }],
-				width: tabWidth,
+				transform: [{ translateX: Animated.multiply(position, stride) }],
+				width,
 			}}
 		/>
 	);
@@ -136,10 +150,23 @@ TabIndicator.displayName = "Playground.ThemeTabBar.Indicator";
 function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarProps): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
 	const current = state.routes[state.index]?.name ?? null;
-	const [tabWidth, setTabWidth] = useState(0);
+	const [frames, setFrames] = useState<readonly TabFrame[]>([]);
 
-	const measureTab = (event: LayoutChangeEvent) => setTabWidth(event.nativeEvent.layout.width);
+	const measureTab = (index: number) => (event: LayoutChangeEvent) => {
+		const { x, width } = event.nativeEvent.layout;
+		setFrames((previous) => {
+			if (previous[index]?.x === x && previous[index]?.width === width) return previous;
+			const next = [...previous];
+			next[index] = { width, x };
+			return next;
+		});
+	};
 	const measureBar = (event: LayoutChangeEvent) => context?.setInset(event.nativeEvent.layout.height);
+
+	const first = frames[0];
+	// The distance from one tab to the next, gap included. Two tabs is all this
+	// bar has; a third would want an interpolation across every frame instead.
+	const stride = frames.length > 1 && first ? (frames[1]?.x ?? 0) - first.x : 0;
 
 	const select = (name: string) => {
 		const route = state.routes.find((candidate) => candidate.name === name);
@@ -155,11 +182,11 @@ function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarPr
 		<View className="absolute inset-x-0 top-0 z-10 px-screen-gutter pt-2 pb-4" onLayout={measureBar}>
 			<Tabs isSwipeable={false} onValueChange={select} value={current}>
 				<Tabs.List>
-					<TabIndicator position={position} tabWidth={tabWidth} />
+					<TabIndicator offset={first?.x ?? 0} position={position} stride={stride} width={first?.width ?? 0} />
 					{state.routes.map((route, index) => (
 						<Tabs.Trigger
 							key={route.key}
-							onLayout={index === 0 ? measureTab : undefined}
+							onLayout={measureTab(index)}
 							testID={`theme-tab-${route.name}`}
 							value={route.name}
 						>

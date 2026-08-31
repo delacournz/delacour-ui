@@ -2,6 +2,13 @@
 	"extends": "expo/tsconfig.base",
 	"compilerOptions": {
 		"strict": true,
+		// `app.config.ts` imports the font catalogue so the picker and the
+		// expo-font plugin cannot disagree about which families exist. Expo
+		// loads that file through Node's CJS resolver, which cannot resolve an
+		// extensionless TypeScript path, so the import carries `.ts` — and this
+		// is the flag that lets `tsc` accept it. Safe here because this project
+		// only ever type-checks with `--noEmit`.
+		"allowImportingTsExtensions": true,
 		"baseUrl": ".",
 		"paths": {
 			"@/*": ["./src/*"],

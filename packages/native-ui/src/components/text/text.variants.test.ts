@@ -181,14 +181,31 @@ describe("textVariants", () => {
 });
 
 describe("TEXT_BASE_CLASS", () => {
-	test("names a size, a weight and a colour — a Text is never unstyled", () => {
+	// `font-sans` is what makes the typeface themeable, and two presets have to
+	// beat it — `Text.Code` and the three headings. All three land in
+	// tailwind-merge's font-family group, so this only holds while the base
+	// stays ahead of the variants in resolveTextClass's chain.
+	test("gives up its family to Text.Code and to a heading", () => {
+		const code = resolveTextClass({ variant: "code" });
+		expect(code).toContain("font-mono");
+		expect(code).not.toContain("font-sans");
+
+		for (const variant of ["display", "title", "header"] as const) {
+			const resolved = resolveTextClass({ variant });
+			expect(resolved).toContain("font-heading");
+			expect(resolved).not.toContain("font-sans");
+		}
+	});
+
+	test("names a family, a size, a weight and a colour — a Text is never unstyled", () => {
+		expect(TEXT_BASE_CLASS).toContain("font-sans");
 		expect(fontSize(TEXT_BASE_CLASS)).toBeDefined();
 		expect(weightOf(TEXT_BASE_CLASS)).toBeDefined();
 		expect(colorOf(TEXT_BASE_CLASS)).toBe("text-foreground");
 	});
 
 	test("loses every axis it names to a class that names the same one", () => {
-		const resolved = resolveTextClass({ inherited: "font-bold text-2xl text-destructive" });
+		const resolved = resolveTextClass({ inherited: "font-mono font-bold text-2xl text-destructive" });
 		for (const name of TEXT_BASE_CLASS.split(" ")) {
 			expect(resolved).not.toContain(name);
 		}

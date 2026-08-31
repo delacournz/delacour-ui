@@ -13,6 +13,7 @@ import { FontPreview } from "@/components/theme/previews";
 import { RadiusStrip } from "@/components/theme/radius-strip";
 import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemeStrip } from "@/components/theme/theme-strip";
+import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
 import { fontByName } from "@/design-system/fonts";
 import { resetConfig } from "@/design-system/store";
@@ -69,6 +70,7 @@ export default function ThemeDesignTab(): ReactElement {
 	return (
 		<>
 			<Screen.ScrollArea contentContainerClassName="gap-6">
+				<ThemeTabBarSpacer />
 				<Text.Paragraph color="muted">
 					Every axis repaints the same tokens, so nothing below is restyled by hand.
 				</Text.Paragraph>

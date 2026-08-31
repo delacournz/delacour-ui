@@ -1,0 +1,176 @@
+import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
+import { Tabs } from "@delacour/native-ui/tabs";
+import { createContext, type ReactElement, type ReactNode, useContext, useMemo, useState } from "react";
+import { Animated, type LayoutChangeEvent, View } from "react-native";
+
+/** What the navigator hands a `tabBar`, restated — see the note in `ThemeTabBar`. */
+export type ThemeTabBarProps = {
+	state: { index: number; routes: readonly { key: string; name: string }[] };
+	descriptors: Record<string, { options: { title?: string } } | undefined>;
+	navigation: {
+		emit: (event: { canPreventDefault: true; target: string; type: "tabPress" }) => { defaultPrevented: boolean };
+		navigate: (name: string) => void;
+	};
+	/**
+	 * The pager's live offset, in page units, as a React Native `Animated` node.
+	 *
+	 * Read as an animation *input* and never as a value. It is an
+	 * `AnimatedAddition` driven by the native driver, and `addListener` on a
+	 * derived native node never fires on Fabric — so nothing here can learn its
+	 * number, but a style interpolated from it still moves natively, every frame,
+	 * without JS.
+	 */
+	position: Animated.AnimatedInterpolation<number>;
+};
+
+type ThemeTabBarInset = { inset: number; setInset: (height: number) => void };
+
+const ThemeTabBarInsetContext = createContext<ThemeTabBarInset | null>(null);
+
+/**
+ * Carries the floating bar's measured height from the bar to the tabs.
+ *
+ * The bar and the screens are siblings inside the navigator — the bar cannot
+ * wrap them — so the height has to travel up to a provider above the navigator
+ * and back down. Measured rather than declared, because the bar's height is the
+ * sum of a token-driven control and its own padding, and every one of those
+ * moves with the Style axis.
+ */
+export function ThemeTabBarProvider({ children }: { children: ReactNode }): ReactElement {
+	const [inset, setInset] = useState(0);
+	const value = useMemo<ThemeTabBarInset>(() => ({ inset, setInset }), [inset]);
+
+	return <ThemeTabBarInsetContext value={value}>{children}</ThemeTabBarInsetContext>;
+}
+ThemeTabBarProvider.displayName = "Playground.ThemeTabBarProvider";
+
+/**
+ * The room a tab's content leaves for the bar floating over it.
+ *
+ * A spacer at the head of the scroll content rather than padding on the
+ * container: `Screen.ScrollArea` already reserves the navbar the same way, and
+ * its content container's padding is a class, so a `contentContainerStyle`
+ * passed alongside would be a second writer on the one property.
+ */
+export function ThemeTabBarSpacer(): ReactElement {
+	const context = useContext(ThemeTabBarInsetContext);
+
+	return <View style={{ height: context?.inset ?? 0 }} />;
+}
+ThemeTabBarSpacer.displayName = "Playground.ThemeTabBarSpacer";
+
+/**
+ * The capsule, tracking the pager rather than the selection.
+ *
+ * `Tabs.Indicator` is the library's own and it cannot be used here: it moves off
+ * a Reanimated shared value, and the only thing that knows where this pager is
+ * mid-drag is a React Native `Animated` node whose value no JS can read. So this
+ * is that node, interpolated — the same `absolute inset-y-0 rounded-full
+ * bg-elevated` the library's `primary` variant paints, written as a style
+ * because an `Animated.View` takes no `className`.
+ *
+ * The width comes from measuring a trigger rather than dividing the row, so it
+ * stays right if the two tabs are ever not equal.
+ */
+function TabIndicator({
+	position,
+	tabWidth,
+}: {
+	position: Animated.AnimatedInterpolation<number>;
+	tabWidth: number;
+}): ReactElement | null {
+	const elevated = useThemeColor("elevated");
+
+	if (tabWidth === 0) return null;
+
+	return (
+		<Animated.View
+			pointerEvents="none"
+			style={{
+				backgroundColor: elevated,
+				borderRadius: 9999,
+				bottom: 0,
+				position: "absolute",
+				top: 0,
+				transform: [{ translateX: Animated.multiply(position, tabWidth) }],
+				width: tabWidth,
+			}}
+		/>
+	);
+}
+TabIndicator.displayName = "Playground.ThemeTabBar.Indicator";
+
+/**
+ * The bar, drawn with the library's own `Tabs` and floated over the pager.
+ *
+ * **Absolutely positioned, so the tabs scroll under it.** Left in the flow it
+ * would take a band off the top of every page and the pill would read as a
+ * second toolbar bolted under the first. Over the content it reads as what it
+ * is — a control belonging to the screen rather than to the chrome — and the
+ * only opaque part is the track itself, so the page passes visibly behind it.
+ * What that costs is the room it occupies, which is why it measures itself and
+ * `ThemeTabBarSpacer` gives it back at the head of each tab.
+ *
+ * `tabBar` replaces the material bar wholesale, so what is on screen is the
+ * component this app exists to show off, while the navigator keeps the parts it
+ * is better at: the pager, the routes, and the URL. `isSwipeable={false}`
+ * because the pager already owns the horizontal gesture.
+ *
+ * `tabPress` is emitted before navigating because that is the navigator's
+ * contract — a screen can cancel it — and it is what keeps a re-press of the
+ * focused tab from re-entering it.
+ */
+function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarProps): ReactElement {
+	const context = useContext(ThemeTabBarInsetContext);
+	const current = state.routes[state.index]?.name ?? null;
+	const [tabWidth, setTabWidth] = useState(0);
+
+	const measureTab = (event: LayoutChangeEvent) => setTabWidth(event.nativeEvent.layout.width);
+	const measureBar = (event: LayoutChangeEvent) => context?.setInset(event.nativeEvent.layout.height);
+
+	const select = (name: string) => {
+		const route = state.routes.find((candidate) => candidate.name === name);
+		if (!route || route.name === current) return;
+
+		const event = navigation.emit({ canPreventDefault: true, target: route.key, type: "tabPress" });
+		if (event.defaultPrevented) return;
+
+		navigation.navigate(route.name);
+	};
+
+	return (
+		<View className="absolute inset-x-0 top-0 z-10 px-screen-gutter pt-2 pb-4" onLayout={measureBar}>
+			<Tabs isSwipeable={false} onValueChange={select} value={current}>
+				<Tabs.List>
+					<TabIndicator position={position} tabWidth={tabWidth} />
+					{state.routes.map((route, index) => (
+						<Tabs.Trigger
+							key={route.key}
+							onLayout={index === 0 ? measureTab : undefined}
+							testID={`theme-tab-${route.name}`}
+							value={route.name}
+						>
+							<Tabs.Label>{descriptors[route.key]?.options.title ?? route.name}</Tabs.Label>
+						</Tabs.Trigger>
+					))}
+				</Tabs.List>
+			</Tabs>
+		</View>
+	);
+}
+ThemeTabBar.displayName = "Playground.ThemeTabBar";
+
+/**
+ * Mounted as an element, never handed over as the callback itself.
+ *
+ * The navigator *calls* `tabBar(props)` rather than rendering `<TabBar />`, so a
+ * function passed straight in runs its hooks inside the caller's own render —
+ * they join that component's hook list, and the first render where the caller's
+ * count differs throws "rendered more hooks than during the previous render"
+ * from somewhere inside the pager, with a stack that never mentions this file.
+ * Wrapping it in an element gives the bar a hook list of its own.
+ *
+ * At module scope so the type is stable and the navigator does not remount the
+ * bar on every render.
+ */
+export const renderThemeTabBar = (props: ThemeTabBarProps): ReactElement => <ThemeTabBar {...props} />;

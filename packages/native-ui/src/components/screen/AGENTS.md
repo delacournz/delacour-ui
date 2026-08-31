@@ -202,10 +202,17 @@ same context.
 
 **It places itself against the chrome.** The top fade starts at the navbar's
 measured height and the bottom above the footer's, so it is correct under either
-placement with the caller measuring nothing. `insetTop` and `insetBottom` are
-only for chrome this package cannot see — a bar floating between the navbar and
-the body. A fade at zero would sit behind the navbar and be visible nowhere,
-which is a component that silently does nothing.
+placement with the caller measuring nothing. A fade at zero would sit behind the
+navbar and be visible nowhere, which is a component that silently does nothing.
+
+**`coverTop` extends the band, it does not move it.** For chrome this package
+cannot see — a bar floating between the navbar and the body — the content should
+already be gone where it passes behind, so those points are painted solid and the
+gradient begins below them. Offsetting the fade past the chrome instead leaves
+content crisp behind whatever parts of it are transparent, then cuts abruptly
+where the fade finally starts: a floating pill is mostly transparent row, so rows
+slid behind it at full contrast and were chopped underneath. `coverBottom` is the
+same for chrome at the end.
 
 **Each end fades only when there is something past it.** The top is out at rest
 and arrives over the first `size` points; the bottom is there from the start and

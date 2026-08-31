@@ -557,6 +557,21 @@ The trigger labels still crossfade on the settle rather than through the drag:
 that colour is animated off `Tabs`' own internal position, which only a
 Reanimated value could track.
 
+**The bar floats over the pager rather than sitting above it.** It is
+absolutely positioned, so a page scrolls *under* it and the only opaque part is
+the pill's own track. In the flow it took a band off the top of every page and
+read as a second toolbar bolted under the first; over the content it reads as a
+control belonging to the screen. What that costs is the room it occupies, so it
+measures its own height — a token-driven control plus its padding, all of which
+moves with the Style axis — and each tab opens with a `ThemeTabBarSpacer` that
+gives the room back. `ThemeTabBarProvider` carries that height between two
+things the navigator renders as siblings, since the bar cannot wrap the screens.
+
+The spacer is a view at the head of the scroll content rather than padding on
+the container, which is how `Screen.ScrollArea` already reserves the navbar —
+and necessary, because that container's padding is a class, so a
+`contentContainerStyle` passed alongside would be a second writer on one property.
+
 **The bar is mounted as an element, never passed as the callback.** The
 navigator *calls* `tabBar(props)` rather than rendering `<TabBar />`, so a
 function handed straight to it runs its hooks inside the caller's render — they

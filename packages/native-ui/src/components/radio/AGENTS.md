@@ -227,7 +227,7 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   props at compile time, so it cannot be a type error either. The warning lives
   in `radio.tsx`, where the component name is available to name in the message.
 - **A radio whose row holds no text needs an `accessibilityLabel`**, the same
-  rule an icon-only `Button` follows.
+  rule an icon-sized `Button` follows.
 - **There is no `Radio.Description`.** A `Text.Caption` composed inside the row
   stays within the one tap target and inside the accessible name, which is what a
   description part would have to do anyway. The root publishes the label's

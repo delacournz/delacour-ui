@@ -211,7 +211,7 @@ export function Pressable({
 			accessibilityState={state}
 			// Without this the view is not an accessibility element on iOS, and the
 			// role, state and label above never reach VoiceOver — a composed label
-			// on an icon-only button included. It also merges the children into one
+			// on an icon-sized button included. It also merges the children into one
 			// element, which is what a control should be.
 			accessible
 			className={className}

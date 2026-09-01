@@ -24,7 +24,8 @@ The reference implementation for the patterns in the package
 ## Design
 
 - **Variants**: `primary`, `secondary`, `tertiary`, `outline`, `ghost`,
-  `destructive`, `destructive-soft`. **Sizes**: `sm`, `md`, `lg`.
+  `destructive`, `destructive-soft`. **Sizes**: `sm`, `md`, `lg`, and the square
+  `icon-sm`, `icon-md`, `icon-lg`.
 - **Icons are composed, never passed as props.** Put an `Icon` in the children,
   before or after the label. The button wraps its subtree in an
   `IconDefaultsProvider` carrying `buttonVariants({ size }).icon()` and
@@ -33,16 +34,22 @@ The reference implementation for the patterns in the package
   explicit `size` or `color` on the icon still wins. `Button.StartContent` /
   `Button.EndContent` remain for wrapping non-icon content.
 - **The corner is a token on the size axis, and nothing else sets one.** Each
-  size names `rounded-button-{size}` — half its own height, so a button is a
-  capsule and an icon-only one a circle. Keeping it out of the base and off
+  size names `rounded-button-{step}` — half its own height, so a button is a
+  capsule and a square one a circle. Keeping it out of the base and off
   every variant means exactly one `rounded-*` reaches the root, so a caller's
   `className="rounded-lg"` has a single class to beat and tailwind-merge is
   never picking between two. The shape is a default rather than a law: three
   numbers in `tokens.css` square the whole kit off without touching a
   component. Values above half the height are clamped by the renderer, which is
   why `tokens.test.ts` holds them under it.
-- **`isIconOnly`** gives a square footprint. Always pair it with an
-  `accessibilityLabel`; there is no text for a screen reader to fall back on.
+- **A square footprint is a size, not a flag.** `icon-sm` / `icon-md` /
+  `icon-lg` are `sm` / `md` / `lg` with the horizontal padding traded for a width
+  off the same token. Padding and width are then mutually exclusive by
+  construction rather than by rule, which is what let an `isIconOnly` axis and
+  six compound variants reconciling it against `size` be deleted outright. It is
+  also shadcn's spelling (rule 11), so `size="icon-md"` pastes across. Always
+  pair one with an `accessibilityLabel`; there is no text for a screen reader to
+  fall back on.
 - **String children** are wrapped in a `Button.Label` automatically. React
   Native crashes on bare text outside a `<Text>`, so never render a raw string
   in a component that accepts free-form children without doing the same. Note
@@ -74,8 +81,8 @@ The reference implementation for the patterns in the package
   `spinnerPlacement`: `start` (default), `end`, or `only` — which drops the
   children and centres the spinner in the footprint the button already has,
   carrying the label onto `accessibilityLabel` so a screen reader still has a
-  name to read. `only` never squares the button on its own; pair it with
-  `isIconOnly` when a square is what you want.
+  name to read. `only` never changes the footprint — a square is a `size`, and
+  loading cannot reach one; use `size="icon-md"` when a square is what you want.
 - **Loading is not disabled.** `isLoading` blocks the press and announces the
   button as *busy*, but keeps full contrast: the spinner already says the press
   landed, and dimming reads as "this control is unavailable". `isDimmedWhileLoading`

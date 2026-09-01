@@ -60,7 +60,7 @@ export function Demo(): ReactElement {
 		<Screen>
 			<Screen.Navbar
 				actions={
-					<Button accessibilityLabel="Edit" isIconOnly size="sm" variant="secondary">
+					<Button accessibilityLabel="Edit" size="icon-sm" variant="secondary">
 						<Icon icon={IconEditSmall1} />
 					</Button>
 				}

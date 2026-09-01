@@ -61,9 +61,8 @@ export default function ScreenChatDemo(): ReactElement {
 				actions={
 					<Button
 						accessibilityLabel="Toggle layout debugging"
-						isIconOnly
 						onPress={() => setDebug((current) => !current)}
-						size="sm"
+						size="icon-sm"
 						variant={debug ? "primary" : "secondary"}
 					>
 						<Icon icon={IconBug} />
@@ -98,7 +97,7 @@ export default function ScreenChatDemo(): ReactElement {
 						placeholderTextColor="#9CA3AF"
 						value={draft}
 					/>
-					<Button accessibilityLabel="Send" haptic="medium" isIconOnly onPress={send} size="md">
+					<Button accessibilityLabel="Send" haptic="medium" onPress={send} size="icon-md">
 						<Icon icon={IconArrowUp} />
 					</Button>
 				</View>

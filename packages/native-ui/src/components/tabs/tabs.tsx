@@ -385,7 +385,7 @@ function withPager(children: ReactNode): { content: ReactNode; values: string[] 
  * **State works either way from one hook**: pass `value` to control it, or nothing
  * and let the bar hold its own, starting on the first tab.
  *
- * A trigger with no text needs an `accessibilityLabel`, the same rule an icon-only
+ * A trigger with no text needs an `accessibilityLabel`, the same rule an icon-sized
  * `Button` follows.
  *
  * @example

@@ -1,6 +1,6 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as disabled from "./disabled";
-import * as iconOnly from "./icon-only";
+import * as iconButton from "./icon-button";
 import * as icons from "./icons";
 import * as loading from "./loading";
 import * as sizes from "./sizes";
@@ -13,5 +13,5 @@ export const buttonDemos = defineDemoGroup("button", {
 	disabled,
 	loading,
 	icons,
-	"icon-only": iconOnly,
+	"icon-button": iconButton,
 });

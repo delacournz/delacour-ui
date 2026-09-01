@@ -20,9 +20,8 @@ import { ButtonStartContent } from "./button-start-content";
 
 export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" | "pressedOpacity" | "pressedScale"> & {
 	variant?: ButtonVariant;
+	/** Height, label step, icon step, corner and padding on one axis. `icon-*` is a square. */
 	size?: ButtonSize;
-	/** Square footprint for a button whose only content is an icon. */
-	isIconOnly?: boolean;
 	isDisabled?: boolean;
 	/** Work is in flight: a spinner is composed in and presses are blocked. */
 	isLoading?: boolean;
@@ -36,7 +35,6 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 function ButtonRoot({
 	variant = "primary",
 	size = "md",
-	isIconOnly = false,
 	isDisabled = false,
 	isLoading = false,
 	isDimmedWhileLoading = false,
@@ -52,21 +50,11 @@ function ButtonRoot({
 		[variant, size, isDisabled, isLoading]
 	);
 
-	const layout = useMemo(
-		() => resolveButtonLayout({ isIconOnly, isLoading, spinnerPlacement }),
-		[isIconOnly, isLoading, spinnerPlacement]
-	);
+	const layout = useMemo(() => resolveButtonLayout({ isLoading, spinnerPlacement }), [isLoading, spinnerPlacement]);
 
 	const content = useMemo(() => composeContent(children, layout), [children, layout]);
 
-	const slots = buttonVariants({
-		isDimmedWhileLoading,
-		isDisabled,
-		isIconOnly: layout.isIconOnly,
-		isLoading,
-		size,
-		variant,
-	});
+	const slots = buttonVariants({ isDimmedWhileLoading, isDisabled, isLoading, size, variant });
 
 	// Icons and spinners composed into the button adopt these unless told otherwise.
 	const iconClassName = slots.icon();
@@ -111,8 +99,8 @@ function ButtonRoot({
  * `spinnerPlacement` is where the caller wants the spinner, and a button
  * holding one leading icon must not answer `end` by spinning at the start.
  *
- * `only` drops the children: the button has already collapsed to a square, so a
- * label would have nowhere to sit.
+ * `only` drops the children: the spinner stands in for the whole content, and
+ * the button keeps whatever footprint its `size` gave it.
  *
  * The spinner is emitted bare — it reads its size and colour from the button's
  * context, so nothing is passed here.
@@ -245,7 +233,7 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * <Button isLoading={isSaving} onPress={save}>Save</Button>
  *
  * @example
- * <Button accessibilityLabel="Favourite" isIconOnly variant="ghost">
+ * <Button accessibilityLabel="Favourite" size="icon-md" variant="ghost">
  *   <Icon icon={IconHeart} />
  * </Button>
  */

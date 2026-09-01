@@ -185,7 +185,7 @@ whole-screen states.
 
 - **There is no `Navbar.Action`.** [`Button`](../button/AGENTS.md) already owns that vocabulary —
   loading swap, icon inheritance, haptics, accessibility — so a navbar action is
-  written as `<Button isIconOnly size="sm" variant="secondary">`. A second
+  written as `<Button size="icon-sm" variant="secondary">`. A second
   definition of props a component does not change is one that can drift.
 - **`Screen.Navbar.BackButton` takes an `onPress`.** This library has no
   navigation dependency and must not gain one for a chevron. The app wires

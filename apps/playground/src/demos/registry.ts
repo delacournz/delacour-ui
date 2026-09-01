@@ -28,7 +28,7 @@ import * as demo_bottom_sheet_sizing_explicit_snap_points from "./bottom-sheet/s
 import * as demo_bottom_sheet_sizing_sized_to_its_content from "./bottom-sheet/sizing/sized-to-its-content";
 import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-sheet/sizing/the-same-sheet-more-content";
 import * as demo_button_disabled from "./button/disabled";
-import * as demo_button_icon_only from "./button/icon-only";
+import * as demo_button_icon_button from "./button/icon-button";
 import * as demo_button_icons from "./button/icons";
 import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
@@ -165,7 +165,7 @@ export const DEMOS = {
 	"bottom-sheet/sizing/sized-to-its-content": demo_bottom_sheet_sizing_sized_to_its_content,
 	"bottom-sheet/sizing/the-same-sheet-more-content": demo_bottom_sheet_sizing_the_same_sheet_more_content,
 	"button/disabled": demo_button_disabled,
-	"button/icon-only": demo_button_icon_only,
+	"button/icon-button": demo_button_icon_button,
 	"button/icons": demo_button_icons,
 	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,

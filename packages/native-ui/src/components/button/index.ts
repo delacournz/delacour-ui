@@ -3,9 +3,13 @@ export { type ButtonContextValue, ButtonProvider, useButton, useButtonContext } 
 export type { ButtonSlotProps } from "./button.types";
 export {
 	BUTTON_FOREGROUND_TOKEN,
+	BUTTON_ICON_SIZES,
+	BUTTON_LABEL_SIZES,
 	BUTTON_SIZES,
 	BUTTON_SPINNER_PLACEMENTS,
 	BUTTON_VARIANTS,
+	type ButtonIconSize,
+	type ButtonLabelSize,
 	type ButtonLayout,
 	type ButtonSize,
 	type ButtonSpinnerPlacement,

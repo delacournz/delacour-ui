@@ -31,9 +31,8 @@ export default function ScreenScrollDemo(): ReactElement {
 					<Button
 						accessibilityLabel="Toggle layout debugging"
 						haptic="selection"
-						isIconOnly
 						onPress={() => setDebug((current) => !current)}
-						size="sm"
+						size="icon-sm"
 						variant={debug ? "primary" : "secondary"}
 					>
 						<Icon icon={IconBug} />

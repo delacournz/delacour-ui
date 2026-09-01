@@ -48,10 +48,10 @@ export function Demo(): ReactElement {
 			<Screen.Navbar
 				actions={
 					<>
-						<Button accessibilityLabel="Search" isIconOnly size="sm" variant="secondary">
+						<Button accessibilityLabel="Search" size="icon-sm" variant="secondary">
 							<Icon icon={IconMagnifyingGlass} />
 						</Button>
-						<Button accessibilityLabel="Settings" isIconOnly size="sm" variant="secondary">
+						<Button accessibilityLabel="Settings" size="icon-sm" variant="secondary">
 							<Icon icon={IconSettingsGear1} />
 						</Button>
 					</>

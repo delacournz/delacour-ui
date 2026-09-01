@@ -275,6 +275,21 @@ every rounded edge in the package at once. `--radius-button-*` is deliberately
 outside it: a button's corner is half its own height, a shape rather than a step,
 and it must not move when a consumer retunes `--radius`.
 
+**`--radius` is the card corner, so a card-shaped surface is `rounded-lg`.**
+The step is 1.0 on the ramp, which is what makes the number a consumer copies out
+of a web theme land on the thing they were looking at when they picked it.
+`ListGroup` and `Accordion` are the two surfaces this governs — they are cards
+that happen to hold rows — and a hand-rolled `border border-border bg-card` block
+takes the same step, so a group and a card sitting in one screen read as one kind
+of thing. Both components step their `sm` down to `rounded-md`, which is the only
+place size moves a corner at all.
+
+The pair used to sit two steps up the ramp, at `rounded-2xl`, which is roughly
+twice the corner shadcn gives a card in the styles this library ports: measured
+off shadcn's own Mira and Rhea, a card is ~7px and ~17px, against the 8 and 16
+those styles set `--radius` to. A group was visibly rounder than the card beside
+it in every one of the eight.
+
 Only `--radius` survives to runtime — `inline` means each step is substituted
 into its utilities and no `--radius-md` variable is emitted. A component that has
 to compute a corner in JavaScript reads `--radius` and applies its own

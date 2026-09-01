@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 export function Demo(): ReactElement {
 	return (
 		<Pressable asChild haptic="medium" testID="composed-card">
-			<View className="gap-1 rounded-xl border border-border bg-card p-4">
+			<View className="gap-1 rounded-lg border border-border bg-card p-4">
 				<Text className="font-semibold text-card-foreground text-lg">Composed card</Text>
 				<Text.Caption>Pressable renders into this View — no extra wrapper in the tree.</Text.Caption>
 			</View>

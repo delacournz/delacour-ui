@@ -30,6 +30,11 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
   metrics, the title and description type scale, both icon sizes *and* the
   divider inset, which is why those five numbers live in one axis rather than
   five magic values.
+- **The corner is the card's, not a size decoration.** The root sits at
+  `rounded-lg` — the 1.0 step, which is `--radius` itself — so a group and a
+  plain `bg-card` block in the same screen read as one kind of surface. `sm` is
+  the one size that moves it, down to `rounded-md`. See the corner-scale note in
+  [the package AGENTS.md](../../../AGENTS.md).
 - **Dividers are inserted, not written out.** The root walks its children and
   puts a [`Separator`](../separator/AGENTS.md) between adjacent ones, inset to
   line up with the rows' padding. A `Separator` placed by hand suppresses the

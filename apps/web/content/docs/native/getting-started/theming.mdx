@@ -153,3 +153,16 @@ shape that would drift if restated here.
 the user force light or dark against the system setting would otherwise theme its navigator the
 wrong way round.
 </Callout>
+
+## Generating one
+
+If you would rather build a palette than paste one, the playground's **Theme** screen composes
+eight orthogonal axes — style, base colour, accent, chart hues, radius and two typefaces — and
+repaints the whole app as you go. Its footer opens [your theme as a `globals.css`](/theme), with a
+preset code in the URL so the link is shareable.
+
+That page emits shadcn's shape. Run it back through the CLI to get the file this library reads:
+
+```bash
+bunx delacour theme ./globals.css
+```

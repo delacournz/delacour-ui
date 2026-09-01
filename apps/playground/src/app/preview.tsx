@@ -1,3 +1,4 @@
+import { DEFAULT_CONFIG } from "@delacour/design-system/config";
 import { Text } from "@delacour/native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -5,7 +6,6 @@ import { type ReactElement, useCallback, useLayoutEffect, useRef, useState } fro
 import { Dimensions, View } from "react-native";
 import { Uniwind } from "uniwind";
 import { DEMOS, type DemoId } from "@/demos/registry";
-import { DEFAULT_CONFIG } from "@/design-system/config";
 import { applyConfig } from "@/design-system/store";
 
 type PreviewTheme = "light" | "dark";

@@ -1,7 +1,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
+import { convertTheme, parseTheme } from "@delacour/design-system/convert";
 import { loadConfig } from "../config/resolve";
-import { convertTheme, parseTheme } from "../theme/convert";
 import { createOutput, style } from "../ui/output";
 
 /**
@@ -15,7 +15,7 @@ import { createOutput, style } from "../ui/output";
  * arrives. This rewrites the wrapper, fills in the tokens shadcn has no name
  * for, and says what could not come across.
  *
- * All of the thinking is in `theme/convert.ts`, which is pure. This is the I/O
+ * All of the thinking is in `@delacour/design-system`, which is pure. This is the I/O
  * around it: find the source, find `theme.css`, ask before replacing it.
  */
 

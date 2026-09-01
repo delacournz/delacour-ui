@@ -1,9 +1,9 @@
+import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@delacour/design-system/config";
+import { fontByName } from "@delacour/design-system/fonts";
+import { resolveTokens } from "@delacour/design-system/resolve";
 import { useSyncExternalStore } from "react";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
-import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@/design-system/config";
-import { fontByName } from "@/design-system/fonts";
-import { resolveTokens } from "@/design-system/resolve";
 
 /** Light and dark are Uniwind's own themes; `system` is a magic string it intercepts. */
 export const THEME_MODES = ["system", "light", "dark"] as const;

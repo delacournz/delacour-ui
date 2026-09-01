@@ -17,10 +17,7 @@ import { ACCENT_THEMES } from "./themes";
  * no renderer is involved, and reading the file is the only way to assert a
  * customizer still writes names the library actually declares.
  */
-const THEME_CSS = readFileSync(
-	join(import.meta.dirname, "../../../../packages/native-ui/src/styles/theme.css"),
-	"utf-8"
-);
+const THEME_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/theme.css"), "utf-8");
 
 function declaredIn(variant: string): Set<string> {
 	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";

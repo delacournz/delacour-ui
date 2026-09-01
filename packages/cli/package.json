@@ -44,6 +44,7 @@
 	"devDependencies": {
 		"@clack/prompts": "^1.7.0",
 		"@delacour/biome-config": "workspace:*",
+		"@delacour/design-system": "workspace:*",
 		"@delacour/tsconfig": "workspace:*",
 		"@modelcontextprotocol/sdk": "^1.30.0",
 		"@types/bun": "^1.3.8",

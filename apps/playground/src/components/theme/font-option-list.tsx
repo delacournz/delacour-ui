@@ -1,10 +1,10 @@
+import { FONT_GROUPS } from "@delacour/design-system/fonts";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { AXIS_SELECTED_ROW_CLASS } from "@/components/theme/axis-sheet";
 import { FontPreview } from "@/components/theme/previews";
-import { FONT_GROUPS } from "@/design-system/fonts";
 
 export type FontOptionListProps = {
 	/** The axis's current value — `"inherit"` counts as selected on the heading list. */

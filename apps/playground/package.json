@@ -26,6 +26,7 @@
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/brand": "workspace:*",
+		"@delacour/design-system": "workspace:*",
 		"@delacour/native-ui": "workspace:*",
 		"@expo-google-fonts/dm-sans": "^0.4.2",
 		"@expo-google-fonts/eb-garamond": "^0.4.3",

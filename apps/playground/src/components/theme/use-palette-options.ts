@@ -1,7 +1,7 @@
+import { type PaletteName, palettesForBaseColor } from "@delacour/design-system/config";
+import type { ResolvedMode } from "@delacour/design-system/resolve";
 import { useMemo } from "react";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { type PaletteName, palettesForBaseColor } from "@/design-system/config";
-import type { ResolvedMode } from "@/design-system/resolve";
 
 export type PaletteOption = {
 	name: PaletteName;

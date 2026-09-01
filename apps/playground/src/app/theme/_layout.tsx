@@ -25,6 +25,14 @@ import { ThemeToggle } from "@/components/theme-toggle";
  * A `Screen.ScrollShadow` sits over both tabs, its top fade starting below the
  * floating bar so content dissolves into the gap rather than being cut by it.
  *
+ * `backBehavior="none"` is what makes the back button leave. `router.back()`
+ * dispatches `GO_BACK` from the *focused* navigator, which is this one, and a
+ * `TabRouter` defaults to `firstRoute` — so from the Preview tab it consumed the
+ * action and returned to Design, and the screen could only be left from one of
+ * its two tabs. `none` leaves the tab history a single entry, the router returns
+ * null, and the action bubbles to the stack that pushed `/theme`. Android's
+ * hardware back travels the same path, so it is fixed by the same prop.
+ *
  * The navbar is the only chrome that takes space here. The tab bar floats over
  * the pager and measures itself, and each tab opens with a `ThemeTabBarSpacer`
  * that gives the room back — so a page scrolls under the bar rather than
@@ -46,7 +54,7 @@ export default function ThemeLayout(): ReactElement {
 			</Screen.Navbar>
 
 			<ThemeTabBarProvider>
-				<TopTabs tabBar={renderThemeTabBar}>
+				<TopTabs backBehavior="none" tabBar={renderThemeTabBar}>
 					<TopTabs.Screen name="index" options={{ title: "Design" }} />
 					<TopTabs.Screen name="preview" options={{ title: "Preview" }} />
 				</TopTabs>

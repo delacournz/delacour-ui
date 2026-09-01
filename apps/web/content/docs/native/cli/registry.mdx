@@ -113,7 +113,7 @@ delacour@alpha` gets you both the newest CLI and its matching registry.
 <Tab value="A fork">
 
 ```bash
-bunx delacour add button --registry github:acme/ui --ref main
+bunx delacour@alpha add button --registry github:acme/ui --ref main
 ```
 
 Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shorthand
@@ -123,7 +123,7 @@ Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shor
 <Tab value="A hosted registry">
 
 ```bash
-bunx delacour add card --registry https://ui.acme.com/r
+bunx delacour@alpha add card --registry https://ui.acme.com/r
 ```
 
 Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
@@ -134,7 +134,7 @@ relationship `<ref>/registry` has to `<ref>`.
 <Tab value="A local path">
 
 ```bash
-bunx delacour add button --registry ./registry
+bunx delacour@alpha add button --registry ./registry
 ```
 
 Reads from disk, skipping the network and the cache entirely. This is how the CLI's own tests run,

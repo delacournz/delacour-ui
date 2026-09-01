@@ -8,8 +8,8 @@ Components can live in the app that uses them, or in a package several apps shar
 from where you run it.
 
 ```bash
-cd apps/mobile && bunx delacour init     # into the app
-cd packages/ui && bunx delacour init     # into a shared package
+cd apps/mobile && bunx delacour@alpha init     # into the app
+cd packages/ui && bunx delacour@alpha init     # into a shared package
 ```
 
 Running inside a package that is not the app **is** the answer — there is no prompt and no flag.
@@ -170,8 +170,8 @@ names one app in `app.root` — the one `init` and `doctor` work against — so 
 app's directory to check the others:
 
 ```bash
-bunx delacour doctor --cwd apps/mobile
-bunx delacour doctor --cwd apps/tablet
+bunx delacour@alpha doctor --cwd apps/mobile
+bunx delacour@alpha doctor --cwd apps/tablet
 ```
 
 <Callout type="warn">

@@ -187,7 +187,7 @@ function withIndicator(children: ReactNode): { content: ReactNode; placement: "s
  * nothing said at the call site, while `isInvalid={false}` still opts out.
  *
  * A radio whose row holds no text needs an `accessibilityLabel`, the same rule an
- * icon-only `Button` follows.
+ * icon-sized `Button` follows.
  *
  * @example
  * <Radio.Group onSelected={setPlan} selected={plan ?? null} accessibilityLabel="Plan">

@@ -1,4 +1,4 @@
-import { BUTTON_SIZES, Button, type ButtonSize } from "@delacour/native-ui/button";
+import { BUTTON_LABEL_SIZES, Button, type ButtonLabelSize } from "@delacour/native-ui/button";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	capture: { align: "stretch" },
 };
 
-const LABELS: Record<ButtonSize, string> = {
+const LABELS: Record<ButtonLabelSize, string> = {
 	sm: "Small",
 	md: "Medium",
 	lg: "Large",
@@ -18,7 +18,7 @@ const LABELS: Record<ButtonSize, string> = {
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
-			{BUTTON_SIZES.map((size) => (
+			{BUTTON_LABEL_SIZES.map((size) => (
 				<Button key={size} size={size} testID={`size-${size}`}>
 					{LABELS[size]}
 				</Button>

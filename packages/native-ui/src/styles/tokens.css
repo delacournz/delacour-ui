@@ -23,11 +23,11 @@
 
 	/*
 	 * The button's three scales, stepped together: the height — which is also
-	 * the square footprint of an icon-only one — the label's type, and the
+	 * the square footprint at an `icon-*` size — the label's type, and the
 	 * corner.
 	 *
 	 * The corner is half the height at every step, so a button is a capsule and
-	 * an icon-only one a circle. A token rather than `rounded-full` because the
+	 * a square one a circle. A token rather than `rounded-full` because the
 	 * shape is a default, not a law: a kit that wants squarer buttons changes
 	 * three numbers here and touches no component. `tokens.test.ts` keeps each
 	 * under half its height — past that the renderer clamps and the number

@@ -11,11 +11,26 @@ export const BUTTON_VARIANTS = [
 	"destructive-soft",
 ] as const;
 
-export const BUTTON_SIZES = ["sm", "md", "lg"] as const;
+/** Sizes that hold a label. Horizontal padding; the width comes from the content. */
+export const BUTTON_LABEL_SIZES = ["sm", "md", "lg"] as const;
+
+/** Sizes with a square footprint, for a button whose only content is an icon. */
+export const BUTTON_ICON_SIZES = ["icon-sm", "icon-md", "icon-lg"] as const;
+
+/**
+ * Every value `size` accepts.
+ *
+ * Derived rather than written out — a tuple key is not a class, so composing one
+ * costs nothing. The class strings below are a different matter and are spelled
+ * in full; see the note on the `size` axis.
+ */
+export const BUTTON_SIZES = [...BUTTON_LABEL_SIZES, ...BUTTON_ICON_SIZES] as const;
 
 export const BUTTON_SPINNER_PLACEMENTS = ["start", "end", "only"] as const;
 
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
+export type ButtonLabelSize = (typeof BUTTON_LABEL_SIZES)[number];
+export type ButtonIconSize = (typeof BUTTON_ICON_SIZES)[number];
 export type ButtonSize = (typeof BUTTON_SIZES)[number];
 export type ButtonSpinnerPlacement = (typeof BUTTON_SPINNER_PLACEMENTS)[number];
 
@@ -49,8 +64,7 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
  * The corner belongs to the size axis and appears nowhere else — not on the
  * base, not on a variant — so exactly one `rounded-*` ever reaches the root and
  * a caller's `rounded-lg` has a single class to beat. Each step is half its own
- * height, which draws a capsule, and a circle when `isIconOnly` squares the
- * footprint.
+ * height, which draws a capsule, and a circle on the square steps.
  *
  * `overflow-hidden` on the root is load-bearing rather than tidiness — a pressed
  * button fades to the edge of its own box, and the fade is clipped to the same
@@ -78,31 +92,45 @@ export const buttonVariants = tv({
 			destructive: { root: "bg-destructive", label: "text-destructive-foreground" },
 			"destructive-soft": { root: "bg-destructive-soft", label: "text-destructive-soft-foreground" },
 		},
+		// Six steps in two families, and a square is a step rather than a flag on
+		// one. `icon-md` is `md` with its horizontal padding traded for a width
+		// off the same token, so the two can never fight each other in the merge
+		// the way a boolean crossed with a size had to.
+		//
+		// Written out rather than built. Tailwind scans source text, so a class
+		// assembled at runtime — `h-button-${step}` — is never compiled and
+		// silently draws nothing; see `styles/tokens.ts`. The tuples above are
+		// keys, not classes, which is why those may be composed and these may not.
+		//
+		// A square carries no `gap`: it holds one child. That is also what keeps
+		// each row on one line, which is the whole readability of the table.
+		//
+		// The square steps are reachable only through `size`, never through
+		// loading. A definite width defeats the parent's `alignItems: stretch` —
+		// a stretch-aligned child with a definite cross size resolves to
+		// cross-*start* — so a full-width button that squared itself the moment
+		// work began would snap to a small box flush against the left edge. That
+		// is why `spinnerPlacement="only"` swaps the content and leaves the
+		// footprint exactly as the caller sized it.
 		size: {
-			sm: { root: "h-button-sm gap-1.5 rounded-button-sm", label: "text-button-sm", icon: "size-icon-sm" },
-			md: { root: "h-button-md rounded-button-md", label: "text-button-md", icon: "size-icon-md" },
-			lg: { root: "h-button-lg rounded-button-lg", label: "text-button-lg", icon: "size-icon-lg" },
+			sm: { root: "h-button-sm gap-1.5 rounded-button-sm px-3", label: "text-button-sm", icon: "size-icon-sm" },
+			md: { root: "h-button-md rounded-button-md px-4", label: "text-button-md", icon: "size-icon-md" },
+			lg: { root: "h-button-lg rounded-button-lg px-5", label: "text-button-lg", icon: "size-icon-lg" },
+			"icon-sm": { root: "h-button-sm w-button-sm rounded-button-sm", label: "text-button-sm", icon: "size-icon-sm" },
+			"icon-md": { root: "h-button-md w-button-md rounded-button-md", label: "text-button-md", icon: "size-icon-md" },
+			"icon-lg": { root: "h-button-lg w-button-lg rounded-button-lg", label: "text-button-lg", icon: "size-icon-lg" },
 		},
 		// The empty `false` branches are load-bearing typing, not placeholders.
 		// `tv` derives the prop type from the declared keys, so a map with only
 		// `true` types the prop as `true` rather than `boolean` and rejects
-		// `buttonVariants({ isIconOnly: layout.isIconOnly })`. The compound
-		// variants below would match without them — `tv` compares against
-		// `defaultVariants` plus props and never reads this map.
-		isIconOnly: { true: {}, false: {} },
+		// `buttonVariants({ isLoading })`. The compound variant below would match
+		// without them — `tv` compares against `defaultVariants` plus props and
+		// never reads this map.
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 		isLoading: { true: {}, false: {} },
 		isDimmedWhileLoading: { true: {}, false: {} },
 	},
 	compoundVariants: [
-		// A square footprint replaces horizontal padding entirely, so the two
-		// are declared together rather than fighting each other in the merge.
-		{ isIconOnly: true, size: "sm", class: { root: "w-button-sm" } },
-		{ isIconOnly: true, size: "md", class: { root: "w-button-md" } },
-		{ isIconOnly: true, size: "lg", class: { root: "w-button-lg" } },
-		{ isIconOnly: false, size: "sm", class: { root: "px-3" } },
-		{ isIconOnly: false, size: "md", class: { root: "px-4" } },
-		{ isIconOnly: false, size: "lg", class: { root: "px-5" } },
 		// Loading is not a disabled state. The button keeps full contrast — the
 		// spinner already says the press landed — unless the caller opts in.
 		{ isLoading: true, isDimmedWhileLoading: true, class: { root: "opacity-50" } },
@@ -110,17 +138,14 @@ export const buttonVariants = tv({
 	defaultVariants: {
 		variant: "primary",
 		size: "md",
-		isIconOnly: false,
 		isDisabled: false,
 		isLoading: false,
 		isDimmedWhileLoading: false,
 	},
 });
 
-/** Layout facts for a button, once loading state and spinner placement are folded together. */
+/** What the spinner does to a button's children, once loading and placement are folded together. */
 export type ButtonLayout = {
-	/** Square footprint. Loading never turns this on by itself. */
-	isIconOnly: boolean;
 	/** The spinner has replaced the children entirely. */
 	isSpinnerOnly: boolean;
 	/** Side the spinner is composed onto, or null when no spinner is shown. */
@@ -128,29 +153,25 @@ export type ButtonLayout = {
 };
 
 /**
- * Folds `isLoading` and `spinnerPlacement` into the facts the root needs.
+ * Folds `isLoading` and `spinnerPlacement` into the facts the content needs.
  *
- * `only` swaps the content out but leaves the footprint alone — it never squares
- * a button the caller did not already mark `isIconOnly`. Taking a fixed width
- * here would defeat the parent's `alignItems: stretch`, and a stretch-aligned
- * child with a definite cross size resolves to cross-*start*: a full-width
- * button would snap to a small box flush against the left edge the moment it
- * started loading. Pair `only` with `isIconOnly` when a square is wanted.
+ * It says nothing about the footprint, and that is the point: `only` swaps the
+ * content out and leaves the button exactly the size the caller asked for. A
+ * square is a `size`, so `only` cannot reach it — see the note on the `size`
+ * axis for the `alignItems: stretch` failure that rules out earning one here.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
 export function resolveButtonLayout({
-	isIconOnly = false,
 	isLoading = false,
 	spinnerPlacement = "start",
 }: {
-	isIconOnly?: boolean;
 	isLoading?: boolean;
 	spinnerPlacement?: ButtonSpinnerPlacement;
 }): ButtonLayout {
-	if (!isLoading) return { isIconOnly, isSpinnerOnly: false, spinnerSide: null };
-	if (spinnerPlacement === "only") return { isIconOnly, isSpinnerOnly: true, spinnerSide: null };
-	return { isIconOnly, isSpinnerOnly: false, spinnerSide: spinnerPlacement };
+	if (!isLoading) return { isSpinnerOnly: false, spinnerSide: null };
+	if (spinnerPlacement === "only") return { isSpinnerOnly: true, spinnerSide: null };
+	return { isSpinnerOnly: false, spinnerSide: spinnerPlacement };
 }
 
 /**

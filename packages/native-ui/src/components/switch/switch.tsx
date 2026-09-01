@@ -384,7 +384,7 @@ function isSwitchThumbElement(child: ReactNode): boolean {
  * There is no `Switch.Label`: the track is a fixed pill and a label cannot sit
  * inside it, so the name is a `Field.Label` or a `ListGroup.ItemTitle` a row away.
  * A switch with no label anywhere near it needs an `accessibilityLabel`, the same
- * rule an icon-only `Button` follows.
+ * rule an icon-sized `Button` follows.
  *
  * A haptic fires when a gesture actually flips it — never on the grab, since a
  * drag taken half way and released back has changed nothing. `haptic={false}`

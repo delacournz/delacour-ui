@@ -62,9 +62,8 @@ export function ThemeToggle(): ReactElement {
 			accessibilityHint="Switches the whole app between light and dark"
 			accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
 			haptic="selection"
-			isIconOnly
 			onPress={() => Uniwind.setTheme(isDark ? "light" : "dark")}
-			size="sm"
+			size="icon-sm"
 			testID="theme-toggle"
 			variant="ghost"
 		>

@@ -71,7 +71,7 @@ export type ScreenNavbarProps = ScreenPlacementProps & {
  * @example
  * <Screen.Navbar
  *   actions={
- *     <Button accessibilityLabel="Search" isIconOnly size="sm" variant="secondary" onPress={search}>
+ *     <Button accessibilityLabel="Search" size="icon-sm" variant="secondary" onPress={search}>
  *       <Icon icon={IconSearch} />
  *     </Button>
  *   }

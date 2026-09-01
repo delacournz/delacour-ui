@@ -32,14 +32,7 @@ function SearchField(): ReactElement {
 			<Input onChangeText={setValue} placeholder="Search" testID="search" value={value} />
 			{value.length > 0 ? (
 				<Input.Group.Suffix>
-					<Button
-						accessibilityLabel="Clear"
-						isIconOnly
-						onPress={() => setValue("")}
-						size="sm"
-						testID="clear"
-						variant="ghost"
-					>
+					<Button accessibilityLabel="Clear" onPress={() => setValue("")} size="icon-sm" testID="clear" variant="ghost">
 						<Icon icon={IconCrossSmall} />
 					</Button>
 				</Input.Group.Suffix>
@@ -61,9 +54,8 @@ function PasswordField(): ReactElement {
 			<Input.Group.Suffix>
 				<Button
 					accessibilityLabel={isRevealed ? "Hide password" : "Show password"}
-					isIconOnly
 					onPress={() => setRevealed((current) => !current)}
-					size="sm"
+					size="icon-sm"
 					testID="reveal"
 					variant="ghost"
 				>

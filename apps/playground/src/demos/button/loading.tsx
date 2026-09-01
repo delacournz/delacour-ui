@@ -1,4 +1,4 @@
-import { BUTTON_SIZES, BUTTON_SPINNER_PLACEMENTS, Button } from "@delacour/native-ui/button";
+import { BUTTON_LABEL_SIZES, BUTTON_SPINNER_PLACEMENTS, Button } from "@delacour/native-ui/button";
 import { Icon } from "@delacour/native-ui/icon";
 import { IconPlusMedium } from "@delacour/native-ui/icons/central";
 import type { ReactElement } from "react";
@@ -27,7 +27,7 @@ export function Demo(): ReactElement {
 					<Button.Label>{PLACEMENT_LABELS[placement]}</Button.Label>
 				</Button>
 			))}
-			{BUTTON_SIZES.map((size) => (
+			{BUTTON_LABEL_SIZES.map((size) => (
 				<Button isLoading key={size} size={size} testID={`loading-size-${size}`} variant="secondary">
 					Loading
 				</Button>

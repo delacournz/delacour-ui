@@ -2,13 +2,29 @@ import { describe, expect, test } from "bun:test";
 import { BUTTON_RADIUS_TOKENS, ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BUTTON_FOREGROUND_TOKEN,
+	BUTTON_ICON_SIZES,
+	BUTTON_LABEL_SIZES,
 	BUTTON_SIZES,
 	BUTTON_SPINNER_PLACEMENTS,
 	BUTTON_VARIANTS,
+	type ButtonIconSize,
+	type ButtonLabelSize,
 	buttonVariants,
 	resolveButtonLayout,
 	resolveSpinnerSwapIndex,
 } from "./button.variants";
+
+/**
+ * Each square size beside the labelled step it is built from.
+ *
+ * Written out rather than derived by stripping the prefix, so the test asserts
+ * the pairing instead of restating the naming scheme it is meant to check.
+ */
+const SQUARE_PAIRS = [
+	["icon-sm", "sm"],
+	["icon-md", "md"],
+	["icon-lg", "lg"],
+] as const satisfies readonly (readonly [ButtonIconSize, ButtonLabelSize])[];
 
 /** The `--spacing-button-*` token a root class string sets its height from. */
 function heightToken(cls: string): string | undefined {
@@ -68,32 +84,36 @@ describe("buttonVariants root slot", () => {
 		expect(buttonVariants({ variant: "ghost" }).root()).toContain("border-transparent");
 	});
 
-	test("gives every size a distinct height", () => {
-		const seen = new Set(BUTTON_SIZES.map((size) => buttonVariants({ size }).root()));
-		expect(seen.size).toBe(BUTTON_SIZES.length);
+	test("gives every labelled size a distinct height", () => {
+		const seen = new Set(BUTTON_LABEL_SIZES.map((size) => heightToken(buttonVariants({ size }).root())));
+		expect(seen.size).toBe(BUTTON_LABEL_SIZES.length);
 		expect(buttonVariants({ size: "sm" }).root()).toContain("h-button-sm");
 		expect(buttonVariants({ size: "md" }).root()).toContain("h-button-md");
 		expect(buttonVariants({ size: "lg" }).root()).toContain("h-button-lg");
 	});
 
-	test("icon-only swaps horizontal padding for a square width", () => {
-		for (const size of BUTTON_SIZES) {
-			const iconOnly = buttonVariants({ isIconOnly: true, size }).root();
-			expect(iconOnly).toMatch(/\bw-button-(sm|md|lg)\b/);
-			expect(iconOnly).not.toMatch(/\bpx-\d/);
+	test("an icon size swaps horizontal padding for a square width", () => {
+		for (const size of BUTTON_ICON_SIZES) {
+			const square = buttonVariants({ size }).root();
+			expect(square).toMatch(/\bw-button-(sm|md|lg)\b/);
+			expect(square).not.toMatch(/\bpx-\d/);
 		}
-		expect(buttonVariants({ isIconOnly: false, size: "md" }).root()).toMatch(/\bpx-\d/);
+		for (const size of BUTTON_LABEL_SIZES) {
+			const labelled = buttonVariants({ size }).root();
+			expect(labelled).toMatch(/\bpx-\d/);
+			expect(labelled).not.toMatch(/\bw-button-/);
+		}
 	});
 
 	test("rounds by default, at the corner token paired with its size", () => {
 		expect(radiusToken(buttonVariants().root())).toBe("button-md");
-		for (const size of BUTTON_SIZES) {
+		for (const size of BUTTON_LABEL_SIZES) {
 			expect(radiusToken(buttonVariants({ size }).root())).toBe(`button-${size}`);
 		}
 	});
 
 	test("names a corner token the CSS actually declares", () => {
-		for (const size of BUTTON_SIZES) {
+		for (const size of BUTTON_LABEL_SIZES) {
 			expect(BUTTON_RADIUS_TOKENS).toContain(`button-${size}`);
 		}
 	});
@@ -104,7 +124,7 @@ describe("buttonVariants root slot", () => {
 	test("carries exactly one corner, whatever else is set", () => {
 		for (const variant of BUTTON_VARIANTS) {
 			for (const size of BUTTON_SIZES) {
-				const cls = buttonVariants({ isDisabled: true, isIconOnly: true, isLoading: true, size, variant }).root();
+				const cls = buttonVariants({ isDisabled: true, isLoading: true, size, variant }).root();
 				expect(cls.match(/\brounded-[\w-]+\b/g)).toHaveLength(1);
 			}
 		}
@@ -145,11 +165,7 @@ describe("buttonVariants root slot", () => {
 describe("resolveButtonLayout", () => {
 	test("shows no spinner when not loading, whatever the placement", () => {
 		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
-			expect(resolveButtonLayout({ spinnerPlacement })).toEqual({
-				isIconOnly: false,
-				isSpinnerOnly: false,
-				spinnerSide: null,
-			});
+			expect(resolveButtonLayout({ spinnerPlacement })).toEqual({ isSpinnerOnly: false, spinnerSide: null });
 		}
 	});
 
@@ -162,25 +178,11 @@ describe("resolveButtonLayout", () => {
 		expect(resolveButtonLayout({ isLoading: true }).spinnerSide).toBe("start");
 	});
 
-	test("only replaces the content and leaves the footprint alone", () => {
+	test("only replaces the content and says nothing about the footprint", () => {
 		expect(resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" })).toEqual({
-			isIconOnly: false,
 			isSpinnerOnly: true,
 			spinnerSide: null,
 		});
-	});
-
-	test("only leaves a stretched button unsquared", () => {
-		// Squaring it would defeat the parent's `alignItems: stretch` and pin the
-		// button to the left edge the moment it started loading.
-		const layout = resolveButtonLayout({ isIconOnly: false, isLoading: true, spinnerPlacement: "only" });
-		expect(layout.isIconOnly).toBe(false);
-	});
-
-	test("keeps an icon-only button square through every placement", () => {
-		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
-			expect(resolveButtonLayout({ isIconOnly: true, isLoading: true, spinnerPlacement }).isIconOnly).toBe(true);
-		}
 	});
 
 	test("never shows both a side spinner and replaced content", () => {
@@ -191,30 +193,40 @@ describe("resolveButtonLayout", () => {
 	});
 });
 
-describe("resolveButtonLayout feeding buttonVariants", () => {
-	test("a loading-only button keeps its padding and takes no fixed width", () => {
+describe("loading leaves the footprint alone", () => {
+	// The bug this guards: a loading button that squared itself would defeat the
+	// parent's `alignItems: stretch` and snap a full-width button to a small box
+	// flush against the left edge the moment work began.
+	test("draws every size exactly as it does when idle", () => {
 		for (const size of BUTTON_SIZES) {
-			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "only" });
-			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size }).root();
+			expect(buttonVariants({ isLoading: true, size }).root()).toBe(buttonVariants({ size }).root());
+		}
+	});
+
+	test("a labelled button keeps its padding and takes no fixed width", () => {
+		for (const size of BUTTON_LABEL_SIZES) {
+			const cls = buttonVariants({ isLoading: true, size }).root();
 			expect(cls).toMatch(/\bpx-\d/);
 			expect(cls).not.toMatch(/\bw-button-/);
 		}
 	});
 
-	test("an icon-only button still gets its square width while loading", () => {
-		for (const size of BUTTON_SIZES) {
-			const layout = resolveButtonLayout({ isIconOnly: true, isLoading: true, spinnerPlacement: "only" });
-			const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size }).root();
+	test("an icon-sized button keeps its square width", () => {
+		for (const size of BUTTON_ICON_SIZES) {
+			const cls = buttonVariants({ isLoading: true, size }).root();
 			expect(cls).toMatch(/\bw-button-(sm|md|lg)\b/);
 			expect(cls).not.toMatch(/\bpx-\d/);
 		}
 	});
 
-	test("a start-placed spinner keeps the button's normal padding", () => {
-		const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement: "start" });
-		const cls = buttonVariants({ isIconOnly: layout.isIconOnly, isLoading: true, size: "md" }).root();
-		expect(cls).toMatch(/\bpx-4\b/);
-		expect(cls).not.toMatch(/\bw-button-/);
+	// `spinnerPlacement` reaches the content and nothing else — there is no path
+	// from it to the root's class string, which is what makes the above hold for
+	// `only` as well as for a side-placed spinner.
+	test("no placement is visible to the root", () => {
+		for (const spinnerPlacement of BUTTON_SPINNER_PLACEMENTS) {
+			const layout = resolveButtonLayout({ isLoading: true, spinnerPlacement });
+			expect(Object.keys(layout).sort()).toEqual(["isSpinnerOnly", "spinnerSide"]);
+		}
 	});
 });
 
@@ -240,6 +252,15 @@ describe("buttonVariants label slot", () => {
 		expect(buttonVariants({ size: "sm" }).label()).toContain("text-button-sm");
 		expect(buttonVariants({ size: "md" }).label()).toContain("text-button-md");
 		expect(buttonVariants({ size: "lg" }).label()).toContain("text-button-lg");
+	});
+
+	// A square holds an icon, but `Button.Label` is still styled outside one —
+	// and a caller composing text into an icon button gets the paired step
+	// rather than the default.
+	test("an icon size carries its step's label treatment", () => {
+		for (const [square, step] of SQUARE_PAIRS) {
+			expect(buttonVariants({ size: square }).label()).toBe(buttonVariants({ size: step }).label());
+		}
 	});
 });
 
@@ -297,17 +318,17 @@ describe("resolveSpinnerSwapIndex", () => {
 });
 
 describe("buttonVariants icon slot", () => {
-	test("gives every size a distinct icon token, increasing with it", () => {
-		const steps = BUTTON_SIZES.map((size) => iconStep(buttonVariants({ size }).icon()));
+	test("gives every labelled size a distinct icon token, increasing with it", () => {
+		const steps = BUTTON_LABEL_SIZES.map((size) => iconStep(buttonVariants({ size }).icon()));
 		expect(steps).not.toContain(-1);
-		expect(new Set(steps).size).toBe(BUTTON_SIZES.length);
+		expect(new Set(steps).size).toBe(BUTTON_LABEL_SIZES.length);
 		expect([...steps]).toEqual([...steps].sort((a, b) => a - b));
 	});
 
 	// The button indexes the shared icon scale at its own step name, which is
 	// what makes a composed Icon and the Spinner that replaces it the same box.
 	test("names the icon token matching the button's own size", () => {
-		for (const size of BUTTON_SIZES) {
+		for (const size of BUTTON_LABEL_SIZES) {
 			expect(buttonVariants({ size }).icon()).toBe(`size-icon-${size}`);
 		}
 	});
@@ -331,14 +352,33 @@ describe("BUTTON_FOREGROUND_TOKEN", () => {
 	});
 });
 
-describe("an icon-only button's footprint", () => {
+describe("a square size and the step it is built from", () => {
 	test("is as wide as it is tall at every size", () => {
 		// Both axes name the same button token, so the square cannot drift the
 		// way two hand-picked numbers could.
-		for (const size of BUTTON_SIZES) {
-			const token = heightToken(buttonVariants({ size }).root());
+		for (const [square] of SQUARE_PAIRS) {
+			const cls = buttonVariants({ size: square }).root();
+			const token = heightToken(cls);
 			expect(token).toBeDefined();
-			expect(widthToken(buttonVariants({ isIconOnly: true, size }).root())).toBe(token);
+			expect(widthToken(cls)).toBe(token);
 		}
+	});
+
+	// The pairing, not the points: a square names its step's height, corner and
+	// icon token, so retuning a token in `tokens.css` moves both together and a
+	// composed Icon stays the same box as the Spinner that replaces it.
+	test("names its step's height, corner and icon token", () => {
+		for (const [square, step] of SQUARE_PAIRS) {
+			const squareRoot = buttonVariants({ size: square }).root();
+			const stepRoot = buttonVariants({ size: step }).root();
+			expect(heightToken(squareRoot)).toBe(heightToken(stepRoot));
+			expect(radiusToken(squareRoot)).toBe(radiusToken(stepRoot));
+			expect(buttonVariants({ size: square }).icon()).toBe(buttonVariants({ size: step }).icon());
+		}
+	});
+
+	test("covers every icon size, and the two families do not overlap", () => {
+		expect(SQUARE_PAIRS.map(([square]) => square)).toEqual([...BUTTON_ICON_SIZES]);
+		expect(new Set<string>(BUTTON_SIZES).size).toBe(BUTTON_SIZES.length);
 	});
 });

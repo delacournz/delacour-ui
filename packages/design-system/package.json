@@ -1,0 +1,35 @@
+{
+	"name": "@delacour/design-system",
+	"version": "0.1.0",
+	"description": "The customizer's axes, the resolver, the preset codec and the CSS emitters",
+	"type": "module",
+	"private": true,
+	"sideEffects": false,
+	"exports": {
+		"./base-colors": "./src/base-colors.ts",
+		"./themes": "./src/themes.ts",
+		"./styles": "./src/styles.ts",
+		"./radii": "./src/radii.ts",
+		"./fonts": "./src/fonts.ts",
+		"./config": "./src/config.ts",
+		"./resolve": "./src/resolve.ts",
+		"./preset": "./src/preset.ts",
+		"./emit": "./src/emit.ts",
+		"./convert": "./src/convert.ts"
+	},
+	"files": [
+		"src"
+	],
+	"scripts": {
+		"fmt": "biome format --write ./src",
+		"lint": "biome lint --write ./src",
+		"check": "biome check ./src",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test"
+	},
+	"devDependencies": {
+		"@delacour/tsconfig": "workspace:*",
+		"@types/bun": "^1.3.8",
+		"typescript": "^5.9.3"
+	}
+}

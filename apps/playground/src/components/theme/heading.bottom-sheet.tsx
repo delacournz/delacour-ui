@@ -1,7 +1,7 @@
+import { FONTS } from "@delacour/design-system/fonts";
 import type { ReactElement } from "react";
 import { AxisSheet, type AxisSheetControlProps, useAxisChoice } from "@/components/theme/axis-sheet";
 import { FontOptionList } from "@/components/theme/font-option-list";
-import { FONTS } from "@/design-system/fonts";
 import { useDesignSystem } from "@/design-system/store";
 
 /** Every family, the three group labels, and the Inherit row above them. */

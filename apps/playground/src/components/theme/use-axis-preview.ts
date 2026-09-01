@@ -1,7 +1,7 @@
+import type { DesignSystemConfig } from "@delacour/design-system/config";
+import { type ResolvedMode, resolveTokens } from "@delacour/design-system/resolve";
 import { useCallback, useMemo } from "react";
 import { useUniwind } from "uniwind";
-import type { DesignSystemConfig } from "@/design-system/config";
-import { type ResolvedMode, resolveTokens } from "@/design-system/resolve";
 import { useDesignSystem } from "@/design-system/store";
 
 export type AxisPreview = {

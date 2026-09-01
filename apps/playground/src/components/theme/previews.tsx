@@ -1,8 +1,8 @@
+import type { ResolvedMode } from "@delacour/design-system/resolve";
 import { Text } from "@delacour/native-ui/text";
 import { formatHex, formatHex8, parse } from "culori";
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import type { ResolvedMode } from "@/design-system/resolve";
 
 /**
  * The four tokens that tell two palettes apart at a glance, and the five a

@@ -1,3 +1,5 @@
+import type { PaletteName } from "@delacour/design-system/config";
+import type { ResolvedMode } from "@delacour/design-system/resolve";
 import { Pressable } from "@delacour/native-ui/pressable";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
@@ -5,8 +7,6 @@ import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { CHART_TOKENS, paintable } from "@/components/theme/previews";
 import { usePaletteOptions } from "@/components/theme/use-palette-options";
-import type { PaletteName } from "@/design-system/config";
-import type { ResolvedMode } from "@/design-system/resolve";
 import { setAxis, useDesignSystem } from "@/design-system/store";
 
 /** The box the bars stand in, matching the Base Color tile so the rows share a rhythm. */

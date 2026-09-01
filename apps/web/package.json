@@ -17,6 +17,7 @@
 	},
 	"dependencies": {
 		"@delacour/brand": "workspace:*",
+		"@delacour/design-system": "workspace:*",
 		"@delacour/native-ui": "workspace:*",
 		"@tanstack/react-router": "1.170.27",
 		"@tanstack/react-router-devtools": "1.167.1",

@@ -1,5 +1,5 @@
+import { FONTS } from "@delacour/design-system/fonts";
 import type { ExpoConfig } from "expo/config";
-import { FONTS } from "./src/design-system/fonts.ts";
 
 /**
  * The typefaces the customizer offers, embedded natively.
@@ -12,7 +12,7 @@ import { FONTS } from "./src/design-system/fonts.ts";
  * generates a `res/font` XML carrying `app:fontWeight` per face — the only path
  * on which `fontWeight` resolves at all.
  *
- * The catalogue lives in `src/design-system/fonts.ts` so the picker and this
+ * The catalogue lives in `@delacour/design-system` so the picker and this
  * plugin cannot disagree about which families exist; a family shown in the
  * picker but missing here falls back to the system font with no error.
  */

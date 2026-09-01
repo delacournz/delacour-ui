@@ -1,3 +1,4 @@
+import { BASE_COLORS, type BaseColorName } from "@delacour/design-system/base-colors";
 import { Pressable } from "@delacour/native-ui/pressable";
 import { Text } from "@delacour/native-ui/text";
 import { type ReactElement, useMemo } from "react";
@@ -5,7 +6,6 @@ import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { paintable } from "@/components/theme/previews";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { BASE_COLORS, type BaseColorName } from "@/design-system/base-colors";
 import { setAxis } from "@/design-system/store";
 
 /** The specimen box, matching the Style strip's so the two rows share a rhythm. */

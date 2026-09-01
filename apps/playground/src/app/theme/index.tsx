@@ -1,3 +1,4 @@
+import { fontByName } from "@delacour/design-system/fonts";
 import { Button } from "@delacour/native-ui/button";
 import { ListGroup } from "@delacour/native-ui/list-group";
 import { Screen } from "@delacour/native-ui/screen";
@@ -15,7 +16,6 @@ import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { fontByName } from "@/design-system/fonts";
 import { resetConfig } from "@/design-system/store";
 
 /**

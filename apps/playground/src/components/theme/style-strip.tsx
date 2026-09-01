@@ -1,10 +1,10 @@
+import { STYLES, type Style } from "@delacour/design-system/styles";
 import { Pressable } from "@delacour/native-ui/pressable";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { setAxis, useDesignSystem } from "@/design-system/store";
-import { STYLES, type Style } from "@/design-system/styles";
 
 /** The miniature's own height. The specimen inside it is drawn at life size. */
 const SPECIMEN_BOX_HEIGHT = 56;

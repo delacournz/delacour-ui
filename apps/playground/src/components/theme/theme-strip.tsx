@@ -1,3 +1,4 @@
+import type { PaletteName } from "@delacour/design-system/config";
 import { Pressable } from "@delacour/native-ui/pressable";
 import { Text } from "@delacour/native-ui/text";
 import type { ReactElement } from "react";
@@ -5,7 +6,6 @@ import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { paintable } from "@/components/theme/previews";
 import { usePaletteOptions } from "@/components/theme/use-palette-options";
-import type { PaletteName } from "@/design-system/config";
 import { setAxis, useDesignSystem } from "@/design-system/store";
 
 /**

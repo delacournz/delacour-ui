@@ -48,6 +48,7 @@ export function ThemeTrigger(): ReactElement | null {
 				accessibilityLabel="Customize"
 				haptic="selection"
 				isIconOnly
+				size="lg"
 				onPress={() => router.push("/theme")}
 				testID="theme-trigger"
 				variant="secondary"

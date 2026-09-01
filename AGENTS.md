@@ -201,6 +201,11 @@ service settings.
 `bun run previews` must never run in CI or in a deploy — it drives an iOS simulator and needs a Mac
 with Xcode. Its outputs are committed so the site builds on a simulator-less runner.
 
+`apps/web` also serves the deep-link association files — `/.well-known/apple-app-site-association`
+and `/.well-known/assetlinks.json` — for both hosts. iOS reads its copy when the app is installed
+and caches it, so **the docs deploy has to land before a playground build is installed**, or that
+binary intercepts nothing until it is reinstalled.
+
 `apps/playground` ships through EAS instead, from `apps/playground/.eas/workflows` — dev clients on
 demand, production natives on a push to `release/app/x.y.z`. It is a separate pipeline from the
 docs site and shares nothing with it; the details, including why none of those workflows set a

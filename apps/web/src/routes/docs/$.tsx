@@ -12,6 +12,8 @@ import {
 } from "fumadocs-ui/layouts/notebook/page";
 import { Suspense, use } from "react";
 import { useMDXComponents } from "@/components/mdx";
+import { ScanToPreview } from "@/components/playground/scan-to-preview";
+import { playgroundSlugForDocsPath } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
 import { encodeMarkdownUrl, gitConfig } from "@/lib/shared";
 import { docs, source } from "@/lib/source";
@@ -47,6 +49,7 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 
 	const { toc } = use(page.load());
 	const MDX = page.body;
+	const playgroundSlug = playgroundSlugForDocsPath(path);
 
 	return (
 		<DocsPage toc={toc}>
@@ -58,6 +61,7 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 					markdownUrl={markdownUrl}
 					githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/apps/web/content/docs/${path}`}
 				/>
+				{playgroundSlug && <ScanToPreview className="ml-auto" slug={playgroundSlug} />}
 			</div>
 			<DocsBody>
 				<MDX components={useMDXComponents()} />

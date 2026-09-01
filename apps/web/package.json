@@ -28,7 +28,8 @@
 		"fumadocs-ui": "npm:@fumadocs/base-ui@16.15.1",
 		"lucide-react": "^1.31.0",
 		"react": "catalog:",
-		"react-dom": "catalog:"
+		"react-dom": "catalog:",
+		"react-qr-code": "^2.2.0"
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",

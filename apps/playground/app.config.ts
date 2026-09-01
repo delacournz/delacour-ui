@@ -77,6 +77,12 @@ const expoConfig: ExpoConfig = {
 			ITSAppUsesNonExemptEncryption: false,
 		},
 		bundleIdentifier: "nz.co.delacour.ui.playground",
+		// The docs site's playground links open here rather than in Safari. Apple
+		// fetches `/.well-known/apple-app-site-association` from each domain
+		// listed, through its own CDN, when the app is installed — so the file
+		// has to be live before a build is installed, or the binary intercepts
+		// nothing until it is reinstalled. `apps/web` serves it.
+		associatedDomains: ["applinks:ui.delacour.co.nz", "applinks:ui.staging.delacour.co.nz"],
 		// The dark and tinted variants drop the card and let iOS supply the
 		// backdrop and the hue. Without them iOS derives both by desaturating
 		// the light icon, which reads as a grey square.
@@ -88,6 +94,24 @@ const expoConfig: ExpoConfig = {
 	},
 	android: {
 		package: "nz.co.delacour.ui.playground",
+		// One filter per host rather than one filter naming both: Android
+		// verifies a filter as a unit, so a staging domain that failed to serve
+		// `/.well-known/assetlinks.json` would take production's verification
+		// down with it.
+		intentFilters: [
+			{
+				action: "VIEW",
+				autoVerify: true,
+				category: ["BROWSABLE", "DEFAULT"],
+				data: [{ scheme: "https", host: "ui.delacour.co.nz", pathPrefix: "/playground/components" }],
+			},
+			{
+				action: "VIEW",
+				autoVerify: true,
+				category: ["BROWSABLE", "DEFAULT"],
+				data: [{ scheme: "https", host: "ui.staging.delacour.co.nz", pathPrefix: "/playground/components" }],
+			},
+		],
 		// The foreground is already inset into Android's 72/108 safe zone by the
 		// generator, so the launcher mask cannot crop the mark.
 		adaptiveIcon: {

@@ -1,6 +1,16 @@
 import type { ExpoConfig } from "expo/config";
 
 /**
+ * The version EAS stamps into a production binary. `build:native:prod.yml` and
+ * `release:prod.yml` parse it out of the `release/app/x.y.z` branch name and
+ * export it as `APP_VERSION`; every other build — dev client, simulator,
+ * a local `expo run:*` — has no such env var and falls back to `0.0.0`.
+ * `appVersionSource: "remote"` in `eas.json` means the build *number* is
+ * tracked on EAS, so this literal only ever supplies the marketing version.
+ */
+const APP_VERSION = (process.env as Record<string, string | undefined>).APP_VERSION ?? "0.0.0";
+
+/**
  * Icon art comes from `assets/icon-source.svg` via `bun run icons`. The PNGs
  * below are generated — edit the SVG, not them. `ios/` and `android/` are
  * gitignored, so a change here only reaches a device through `expo prebuild`
@@ -10,7 +20,8 @@ const expoConfig: ExpoConfig = {
 	name: "Delacour UI",
 	slug: "delacour-ui-playground",
 	scheme: "dlc-ui-playground",
-	version: "0.0.0",
+	owner: "delacour",
+	version: APP_VERSION,
 	orientation: "portrait",
 	userInterfaceStyle: "automatic",
 	platforms: ["ios", "android"],
@@ -71,6 +82,26 @@ const expoConfig: ExpoConfig = {
 		typedRoutes: true,
 		tsconfigPaths: true,
 		reactCompiler: true,
+	},
+	// The fingerprint policy is what makes `.eas/workflows` cheap: a runtime
+	// version derived from the native dependency graph is the same hash the
+	// `get-build` jobs match on, so a commit that changes no native code reuses
+	// its existing binary and ships as an OTA update instead of rebuilding.
+	// A hand-written version string would decouple the two and silently serve
+	// updates to binaries that cannot run them.
+	runtimeVersion: {
+		policy: "fingerprint",
+	},
+	updates: {
+		url: "https://u.expo.dev/790dfdc0-c0ea-47e4-9f28-b86a6f7ed535",
+	},
+	// Written by hand because `eas init` cannot edit a dynamic config. It is the
+	// only link between this app and the EAS project the workflows build on, so
+	// losing it makes every `eas` command prompt to create a second project.
+	extra: {
+		eas: {
+			projectId: "790dfdc0-c0ea-47e4-9f28-b86a6f7ed535",
+		},
 	},
 };
 

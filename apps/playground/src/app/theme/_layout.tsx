@@ -3,6 +3,7 @@ import { useRouter } from "expo-router";
 import { TopTabs } from "expo-router/js-top-tabs";
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import { ThemeFooter } from "@/components/theme/theme-footer";
 import { renderThemeTabBar, ThemeTabBarProvider } from "@/components/theme/theme-tab-bar";
 import { ThemeTabsShadow } from "@/components/theme/theme-tabs-shadow";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -33,6 +34,17 @@ import { ThemeToggle } from "@/components/theme-toggle";
  * null, and the action bubbles to the stack that pushed `/theme`. Android's
  * hardware back travels the same path, so it is fixed by the same prop.
  *
+ * `ThemeFooter` is a later sibling than the fade on purpose. Paint order is
+ * source order, and an `overlay` footer draws no background of its own — so the
+ * scroll shadow IS the footer's backing, content dissolving into `background`
+ * with the button sitting on the dissolve. Put the footer first and rows would
+ * run crisp behind it.
+ *
+ * One footer here rather than one per tab, because `Screen.Footer` measures its
+ * height into the screen context and both tabs' scroll areas read it: the room
+ * is reserved in both from a single measurement, where two footers would be two
+ * writers on one value racing across a swipe.
+ *
  * The navbar is the only chrome that takes space here. The tab bar floats over
  * the pager and measures itself, and each tab opens with a `ThemeTabBarSpacer`
  * that gives the room back — so a page scrolls under the bar rather than
@@ -60,6 +72,8 @@ export default function ThemeLayout(): ReactElement {
 				</TopTabs>
 				<ThemeTabsShadow />
 			</ThemeTabBarProvider>
+
+			<ThemeFooter />
 		</Screen>
 	);
 }

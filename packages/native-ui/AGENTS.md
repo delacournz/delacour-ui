@@ -404,6 +404,12 @@ during a push and at their rounded corners. That layer is set from the theme
 with no escape hatch, so a `contentStyle` in `screenOptions` cannot reach it;
 only a theme fixes it.
 
+A theme also goes the other way now. `apps/playground`'s `/theme` screen composes one and its
+footer opens `ui.delacour.co.nz/theme?preset=<code>`, which renders it as a `globals.css`;
+`bunx delacour theme ./globals.css` brings that file back to the shape above. Both halves are
+`@delacour/design-system`, which owns the axes, the resolver and — since it is the only consumer
+that is not the CLI — `convert.ts` itself.
+
 `useNavigationTheme()` returns the six colours React Navigation's theme has,
 resolved from these tokens, plus whether the active theme is dark. It returns
 **plain values, not a `Theme`**, and imports nothing from a navigation library —

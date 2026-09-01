@@ -15,7 +15,13 @@
 		"test": "bun test",
 		"typecheck": "tsc --noEmit",
 		"gen-demos": "bun scripts/gen-demo-registry.ts",
-		"previews": "bun scripts/capture-previews.ts"
+		"previews": "bun scripts/capture-previews.ts",
+		"eas": "dotenv -e .env eas",
+		"eas:sync-build-numbers": "bun ./scripts/eas-sync-build-numbers.ts",
+		"eas:build:native:dev": "bun run eas workflow:run build:native:dev.yml",
+		"eas:build:native:prod": "bun run eas workflow:run \"build:native:prod.yml\"",
+		"eas:release:prod": "bun run eas workflow:run release:prod.yml",
+		"eas:submit:prod": "bun run eas workflow:run submit:native:prod.yml"
 	},
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
@@ -31,6 +37,7 @@
 		"expo-splash-screen": "~57.0.7",
 		"expo-status-bar": "~57.0.1",
 		"expo-system-ui": "~57.0.2",
+		"expo-updates": "~57.0.19",
 		"react": "catalog:",
 		"react-native": "catalog:",
 		"react-native-gesture-handler": "catalog:",
@@ -48,6 +55,7 @@
 		"@delacour/biome-config": "workspace:*",
 		"@resvg/resvg-js": "^2.6.2",
 		"@types/react": "~19.2.2",
+		"dotenv-cli": "^11.0.0",
 		"typescript": "^5.9.3"
 	}
 }

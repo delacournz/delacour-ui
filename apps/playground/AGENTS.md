@@ -27,6 +27,17 @@ bun run typecheck          # tsc --noEmit
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
 
+EAS, all wrapped in `dotenv -e .env` so `EXPO_TOKEN` is picked up:
+
+```bash
+bun run eas:build:native:dev              # dev clients + iOS simulator, reusing by fingerprint
+bun run eas:build:native:prod -F version=1.2.3   # production natives, then submit
+bun run eas:release:prod -F version=1.2.3        # OTA if the fingerprint already has a binary, else build + submit
+bun run eas:submit:prod                   # submit natives already built out of band
+bun run eas:sync-build-numbers            # level iOS and Android to max+1
+bun run eas -- <anything>                 # raw eas CLI with .env loaded
+```
+
 **Never launch against Expo Go.** The app depends on native modules Expo Go does
 not carry — Reanimated worklets, Gesture Handler, keyboard-controller, Pulsar
 haptics. `scripts/ensure-prebuild.ts` guards `dev`, `ios` and `android`: if
@@ -315,6 +326,85 @@ failure attached:
 
 `tsconfig.json` pins `react-native` to the root copy for the same reason, in
 TypeScript's terms — see [packages/tsconfig](../../packages/tsconfig/AGENTS.md).
+
+## EAS
+
+The EAS project is `@delacour/delacour-ui`, and `owner`, `slug` and
+`extra.eas.projectId` in `app.config.ts` are what bind this app to it. The
+project id is written by hand because `eas init` refuses to edit a dynamic
+config, so losing it makes the next `eas` command offer to create a second
+project — which is exactly how this app briefly ended up pointing at a stray
+`delacour-ui-playground`. `slug` must keep matching the project on expo.dev.
+
+Four workflows live in `.eas/workflows`, and `eas.json` carries the build
+profiles they name. Do not rename a profile: the YAML matches them by string.
+
+| Workflow | Trigger | Does |
+| --- | --- | --- |
+| `build:native:dev` | manual | Fingerprints, then builds only what has no matching binary — Android dev client, iOS dev client, iOS simulator (`cicd`) |
+| `build:native:prod` | push to `release/app/*`, or manual | Parses the version, builds both platforms, submits both |
+| `release:prod` | manual | Same parse, but reuses a matching binary and ships an OTA update; only builds and submits when the fingerprint is new |
+| `submit:native:prod` | manual | Submits store binaries that already exist, builds nothing |
+
+### `working_directory` is deliberately absent
+
+The skill this was scaffolded from tells monorepos to set
+`defaults.run.working_directory` to the app's path. **That is wrong here**, and
+the failure is not subtle:
+
+```
+Working directory "/home/expo/workingdir/build/apps/playground/apps/playground"
+does not exist
+```
+
+`eas workflow:run` computes the app's path relative to the VCS root and uploads
+it as the run's base directory, and the builder has already `cd`-ed there by the
+time a step runs. A relative `working_directory` resolves *from* that base, so
+naming the app path again nests it twice. Every job in every file therefore runs
+from `apps/playground` with no `working_directory` at all — which is also why the
+per-step `working_directory: .` overrides the skill ships were removed rather
+than kept.
+
+### Version comes from the branch, or from an input
+
+`build:native:prod` and `release:prod` read the version out of a
+`release/app/x.y.z` branch name and export it as `APP_VERSION`, which
+`app.config.ts` reads into `expo.version`. A manual `eas workflow:run` has no
+`github.ref_name`, so both also accept a `version` input and prefer it:
+
+```bash
+bun run eas:release:prod -F version=1.2.3
+```
+
+Neither path sets the build *number*. `appVersionSource: "remote"` keeps that on
+EAS, so run `bun run eas:sync-build-numbers` once before the first production
+build — otherwise `autoIncrement` starts from nothing and the two platforms
+drift. That script drives the interactive CLI through `expect`; macOS ships it,
+a Linux runner needs `apt-get install -y expect`.
+
+### Fingerprints are the whole economy
+
+`runtimeVersion.policy` is `fingerprint`, which is the same hash the `get-build`
+jobs match on. A commit that touches no native dependency reuses its existing
+binary and ships as an OTA update instead of rebuilding; a commit that adds a
+native module gets a new hash and a real build. Pinning a literal
+`runtimeVersion` would decouple the two and serve updates to binaries that
+cannot run them.
+
+### What is not wired
+
+- **`EXPO_TOKEN`.** `.env.example` is committed, `.env` is gitignored, and the
+  `eas` script loads it. Generate a token per account under Expo → access
+  tokens; without one the CLI falls back to whatever `eas login` session is on
+  the machine.
+- **The GitHub trigger.** `build:native:prod`'s `on.push` only fires once the EAS
+  GitHub app is installed against `delacournz/delacour-ui`. Set that project's
+  base directory to `apps/playground` so a triggered run resolves the same way
+  `eas workflow:run` does. Until then everything runs through the `eas:*`
+  scripts.
+- **Android submission.** `submit.base.android` targets the `internal` track as
+  a `draft`, and needs a Google Service Account key on the EAS project before it
+  can push anything. iOS is ready: `ascAppId` and `appleTeamId` are set.
 
 ## Conventions
 

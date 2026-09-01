@@ -52,7 +52,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 42,
+		fileCount: 48,
 		groups: [
 			{
 				name: "button",
@@ -61,6 +61,9 @@ export const install = {
 				files: [
 					{ source: "packages/native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
 					{ source: "packages/native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
 					{ source: "packages/native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
 					{ source: "packages/native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
 					{ source: "packages/native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
@@ -91,6 +94,16 @@ export const install = {
 					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
 					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
 					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "separator",
+				title: "Separator",
+				kind: "component",
+				files: [
+					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -364,7 +377,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 53,
+		fileCount: 72,
 		groups: [
 			{
 				name: "input",
@@ -381,6 +394,18 @@ export const install = {
 					{ source: "packages/native-ui/src/components/input/input.tsx", target: "src/components/ui/input/input.tsx" },
 					{ source: "packages/native-ui/src/components/input/input.types.ts", target: "src/components/ui/input/input.types.ts" },
 					{ source: "packages/native-ui/src/components/input/input.variants.ts", target: "src/components/ui/input/input.variants.ts" },
+				],
+			},
+			{
+				name: "icon",
+				title: "Icon",
+				kind: "component",
+				files: [
+					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -405,6 +430,20 @@ export const install = {
 				],
 			},
 			{
+				name: "spinner",
+				title: "Spinner",
+				kind: "component",
+				files: [
+					{ source: "packages/native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+				],
+			},
+			{
 				name: "text",
 				title: "Text",
 				kind: "component",
@@ -414,6 +453,25 @@ export const install = {
 					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
 					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
 					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "button",
+				title: "Button",
+				kind: "component",
+				files: [
+					{ source: "packages/native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
+					{ source: "packages/native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
+					{ source: "packages/native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
+					{ source: "packages/native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
+					{ source: "packages/native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
+					{ source: "packages/native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
+					{ source: "packages/native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
+					{ source: "packages/native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
 				],
 			},
 			{
@@ -438,18 +496,6 @@ export const install = {
 				],
 			},
 			{
-				name: "icon",
-				title: "Icon",
-				kind: "component",
-				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
-				],
-			},
-			{
 				name: "styles",
 				title: "Styles",
 				kind: "shared",
@@ -468,22 +514,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -508,6 +538,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],

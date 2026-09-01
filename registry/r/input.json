@@ -8,6 +8,7 @@
 		"forms"
 	],
 	"registryDependencies": [
+		"button",
 		"cn",
 		"compose-refs",
 		"field",
@@ -73,6 +74,14 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../button/button.context",
+					"to": "@registry/ui/button/button.context"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				},
@@ -97,6 +106,14 @@
 					"to": "@registry/lib/compose-refs"
 				},
 				{
+					"from": "../button/button.context",
+					"to": "@registry/ui/button/button.context"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
 					"from": "../field/field.context",
 					"to": "@registry/ui/field/field.context"
 				}
@@ -119,6 +136,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
 				}
 			]
 		}

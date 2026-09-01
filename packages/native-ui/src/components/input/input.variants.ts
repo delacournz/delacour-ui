@@ -1,6 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { cn } from "../../lib/cn";
 import { tv } from "../../lib/tv";
+import type { ButtonGroupOrientation, ButtonGroupSlotPosition } from "../button/button.variants";
 
 export const INPUT_VARIANTS = ["primary", "secondary"] as const;
 
@@ -58,7 +59,7 @@ export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
  */
 export const inputVariants = tv({
 	slots: {
-		root: "overflow-hidden rounded-lg border",
+		root: "overflow-hidden border",
 		/** Layout for the group's row. Never applied to a lone field, which is not a row. */
 		row: "flex-row items-center",
 		field: "text-foreground",
@@ -75,7 +76,7 @@ export const inputVariants = tv({
 		},
 		size: {
 			sm: {
-				root: "rounded-md px-2.5",
+				root: "px-2.5",
 				row: "gap-1.5",
 				field: "text-input-sm leading-tight",
 				decoratorIcon: "size-icon-sm",
@@ -108,6 +109,14 @@ export const inputVariants = tv({
 		// Native's own padding, which on Android would otherwise inset the value
 		// from a gutter the row has already applied.
 		isGrouped: { true: { field: "flex-1 p-0" }, false: {} },
+		/** Which way an enclosing `Button.Group` runs, when there is one. */
+		orientation: { horizontal: {}, vertical: {} },
+		// A field standing on its own is `none` and keeps the corner off the
+		// generic ramp. Every other value means it is joined, and a joined
+		// control takes the group's corner rather than its own — see the note on
+		// the corner compounds below.
+		groupPosition: { none: {}, first: {}, middle: { root: "rounded-none" }, last: {}, only: {} },
+		isSeamed: { true: {}, false: {} },
 	},
 	compoundVariants: [
 		// The height and the vertical rhythm are declared together rather than
@@ -130,6 +139,94 @@ export const inputVariants = tv({
 		// field that went grey the moment it was tapped would drop the only
 		// signal it has that its value is wrong, exactly while it is being fixed.
 		{ isFocused: true, isInvalid: true, class: { root: "border-destructive" } },
+		// The corner a lone field draws: the generic ramp, deliberately not the
+		// button's, because a field and the button beside it are meant to be
+		// retunable apart. `sm` steps down a notch; the other two share `lg`.
+		{ groupPosition: "none", size: "sm", class: { root: "rounded-md" } },
+		{ groupPosition: "none", size: "md", class: { root: "rounded-lg" } },
+		{ groupPosition: "none", size: "lg", class: { root: "rounded-lg" } },
+		// Joined, it takes the *group's* corner instead. A group owns the shape
+		// of its run, so a field capping one end of it has to draw the same arc
+		// the button capping the other end does — two ramps meeting in one row
+		// is the mismatch this replaces. `button.variants.test.ts` asserts these
+		// strings match the button's cell for cell.
+		{ groupPosition: "only", size: "sm", class: { root: "rounded-button-sm" } },
+		{ groupPosition: "only", size: "md", class: { root: "rounded-button-md" } },
+		{ groupPosition: "only", size: "lg", class: { root: "rounded-button-lg" } },
+		{
+			groupPosition: "first",
+			orientation: "horizontal",
+			size: "sm",
+			class: { root: "rounded-s-button-sm rounded-e-none" },
+		},
+		{
+			groupPosition: "first",
+			orientation: "horizontal",
+			size: "md",
+			class: { root: "rounded-s-button-md rounded-e-none" },
+		},
+		{
+			groupPosition: "first",
+			orientation: "horizontal",
+			size: "lg",
+			class: { root: "rounded-s-button-lg rounded-e-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "horizontal",
+			size: "sm",
+			class: { root: "rounded-e-button-sm rounded-s-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "horizontal",
+			size: "md",
+			class: { root: "rounded-e-button-md rounded-s-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "horizontal",
+			size: "lg",
+			class: { root: "rounded-e-button-lg rounded-s-none" },
+		},
+		{
+			groupPosition: "first",
+			orientation: "vertical",
+			size: "sm",
+			class: { root: "rounded-t-button-sm rounded-b-none" },
+		},
+		{
+			groupPosition: "first",
+			orientation: "vertical",
+			size: "md",
+			class: { root: "rounded-t-button-md rounded-b-none" },
+		},
+		{
+			groupPosition: "first",
+			orientation: "vertical",
+			size: "lg",
+			class: { root: "rounded-t-button-lg rounded-b-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "vertical",
+			size: "sm",
+			class: { root: "rounded-b-button-sm rounded-t-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "vertical",
+			size: "md",
+			class: { root: "rounded-b-button-md rounded-t-none" },
+		},
+		{
+			groupPosition: "last",
+			orientation: "vertical",
+			size: "lg",
+			class: { root: "rounded-b-button-lg rounded-t-none" },
+		},
+		{ isSeamed: true, orientation: "horizontal", class: { root: "-ms-px" } },
+		{ isSeamed: true, orientation: "vertical", class: { root: "-mt-px" } },
 	],
 	defaultVariants: {
 		variant: "primary",
@@ -139,6 +236,9 @@ export const inputVariants = tv({
 		isDisabled: false,
 		isMultiline: false,
 		isGrouped: false,
+		orientation: "horizontal",
+		groupPosition: "none",
+		isSeamed: false,
 	},
 });
 
@@ -150,6 +250,12 @@ export type InputBoxState = {
 	isFocused?: boolean;
 	isInvalid?: boolean;
 	isMultiline?: boolean;
+	/** Where the field sits in an enclosing `Button.Group`, if it is in one. */
+	groupPosition?: ButtonGroupSlotPosition;
+	/** Which way that group runs. Read only when `groupPosition` is not `none`. */
+	orientation?: ButtonGroupOrientation;
+	/** Overlap the member before it, so the shared edge is drawn once. */
+	isSeamed?: boolean;
 };
 
 /**

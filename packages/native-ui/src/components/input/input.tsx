@@ -1,6 +1,8 @@
 import { type ReactElement, type Ref, useCallback, useState } from "react";
 import { TextInput, type TextInputProps } from "react-native";
 import { composeRefs } from "../../lib/compose-refs";
+import { useButtonGroupItemContext } from "../button/button.context";
+import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
 import { useInputGroupContext } from "./input.context";
 import {
@@ -67,6 +69,12 @@ function InputRoot({
 }: InputProps): ReactElement {
 	const group = useInputGroupContext();
 	const field = useFieldContext();
+	// A field sitting directly in a `Button.Group` *is* the box, so it draws the
+	// run's corner itself. One nested in an `Input.Group` is not: that row owns
+	// the box and reads the same context, so the member axes below are simply
+	// never consulted — `resolveInputFieldClass` drops the `root` slot entirely
+	// when the field is grouped.
+	const member = useButtonGroupItemContext();
 	const [ownFocused, setOwnFocused] = useState(false);
 
 	// Nearest wins, and there are three sources for the two state axes.
@@ -77,9 +85,9 @@ function InputRoot({
 	// a field with no props of its own turns destructive with the `Field` around it
 	// while `<Input isInvalid={false} />` still opts out of one.
 	const resolved = {
-		isDisabled: group?.isDisabled ?? isDisabled ?? field?.isDisabled ?? false,
+		isDisabled: group?.isDisabled ?? isDisabled ?? field?.isDisabled ?? member?.isDisabled ?? false,
 		isInvalid: group?.isInvalid ?? isInvalid ?? field?.isInvalid ?? false,
-		size: group?.size ?? size ?? "md",
+		size: group?.size ?? (member ? resolveButtonSizeStep(member.size) : size) ?? "md",
 		variant: group?.variant ?? variant ?? "primary",
 	};
 
@@ -116,9 +124,12 @@ function InputRoot({
 			className={resolveInputFieldClass({
 				...resolved,
 				className,
+				groupPosition: member?.position ?? "none",
 				isFocused,
 				isGrouped: group !== null,
 				isMultiline: multiline === true,
+				isSeamed: member?.isSeamed ?? false,
+				orientation: member?.orientation ?? "horizontal",
 			})}
 			cursorColorClassName={selectionAccent}
 			multiline={multiline}

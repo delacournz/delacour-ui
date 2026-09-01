@@ -320,7 +320,7 @@ second palette in this app nothing here proved the tokens were doing the work.
 | Chart Color — the same list (a strip) | `--chart-1..5` only |
 | Heading, Font — 26 families | `--font-heading`, `--font-sans` |
 | Icon Library | nothing — see below |
-| Radius (a strip) | `--radius` |
+| Radius (a strip) | `--radius`, and `--radius-button-*` once it names a value |
 
 Light, dark and `system` are **not** one of the eight. Uniwind owns the theme and
 the store persists the choice beside the configuration, because Uniwind does not
@@ -423,13 +423,23 @@ nothing opening.
 own and resolves to whatever Style chose. The first tile of that strip only
 means anything against the row above it.
 
+**A named radius reaches the buttons too.** `--radius-button-*` is outside the
+generic ramp — a button's corner is half its height, a shape rather than a step —
+so a style writes those three numbers directly and `--radius` never touches them.
+That is right for Style and wrong for this axis: Sera sets a flat 0 corner, so
+picking Small used to round every surface and leave the buttons square, which
+made the axis look broken. `resolve.ts` now writes the button's corner from an
+explicit value as well, capped at half the height the way `styles.ts` caps it.
+`default` still defers to the style, because a style's capsule is what it
+chose.
+
 **Each strip's tile draws what its axis actually varies**, which is why no two
 share a specimen:
 
 | Axis | Tile | Why not the others' |
 | --- | --- | --- |
 | Style | the surface corner at its `radius`, and a control at its `spacing-button-sm` / `radius-button-sm`, **at life size** | these eight differ in geometry alone, so a swatch would say nothing |
-| Radius | an outlined box at the candidate corner, and nothing inside it | the axis is one number and writes one token; anything else in the tile would describe another axis's work |
+| Radius | an outlined box at the candidate corner, and nothing inside it | the axis is one number and the corner is all it varies; anything else in the tile would describe another axis's work |
 | Base Color | a `card` surface edged in `border`, carrying a `foreground` bar and a `muted-foreground` one | seven neutrals are seven near-blacks in dark; seven discs would be one disc repeated. Tint needs area, and two foreground weights to be comparable |
 | Theme | one disc of `primary` | an accent writes one hue; drawing a surface for it would be drawing the base ramp underneath, which this axis does not touch |
 | Chart Color | five bars at `chart-1`…`chart-5`, on a fixed silhouette | it offers Theme's identical list but writes only the five chart slots. A disc would show a colour it does not set, hide the four it does, and make the two strips indistinguishable stacked |

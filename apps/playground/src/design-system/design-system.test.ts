@@ -6,7 +6,7 @@ import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, palettesForBa
 import { FONT_GROUPS, FONTS, fontByName } from "./fonts";
 import { RADII } from "./radii";
 import { resolveTokens } from "./resolve";
-import { STYLES } from "./styles";
+import { STYLES, styleByName } from "./styles";
 import { ACCENT_THEMES } from "./themes";
 
 /**
@@ -316,5 +316,40 @@ describe("the resolver", () => {
 		expect(squared.light.radius).toBe(0);
 		// …without replacing the rest of the style's geometry.
 		expect(squared.light["spacing-button-md"]).toBe(styled.light["spacing-button-md"] as number);
+	});
+
+	test("carries an explicit radius into the button's own corner", () => {
+		// Sera is the case this was written for: its style sets a flat 0 corner,
+		// so before the axis reached `--radius-button-*` every surface rounded
+		// to 7.2 and the buttons stayed square.
+		const styled = resolveTokens({ ...DEFAULT_CONFIG, style: "sera", radius: "default" });
+		const small = resolveTokens({ ...DEFAULT_CONFIG, style: "sera", radius: "small" });
+
+		for (const mode of MODES) {
+			expect(styled[mode]["radius-button-md"]).toBe(0);
+			expect(small[mode]["radius-button-md"]).toBe(7.2);
+		}
+	});
+
+	test("never lets an explicit radius push a button past a capsule", () => {
+		// `large` is 14 and Lyra's `sm` button is 32 tall, so the cap binds on the
+		// small step and not on the two above it.
+		const large = resolveTokens({ ...DEFAULT_CONFIG, style: "lyra", radius: "large" });
+
+		for (const step of ["sm", "md", "lg"] as const) {
+			const height = large.light[`spacing-button-${step}`] as number;
+			expect(large.light[`radius-button-${step}`]).toBeLessThanOrEqual(height / 2);
+		}
+
+		expect(large.light["radius-button-sm"]).toBe(14);
+	});
+
+	test("leaves the button's corner to the style when the radius is default", () => {
+		const resolved = resolveTokens({ ...DEFAULT_CONFIG, style: "rhea", radius: "default" });
+		const style = styleByName("rhea");
+
+		for (const step of ["sm", "md", "lg"] as const) {
+			expect(resolved.light[`radius-button-${step}`]).toBe(style?.geometry[`radius-button-${step}`] as number);
+		}
 	});
 });

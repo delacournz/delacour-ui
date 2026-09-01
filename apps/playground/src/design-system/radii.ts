@@ -9,6 +9,11 @@
  * `default` carries no value on purpose: it means "whatever the style chose",
  * so the axis can be left alone without pinning the style's own corner. Every
  * other option overrides it.
+ *
+ * An explicit value also overrides `--radius-button-*`, which is otherwise
+ * outside the ramp — see `applyButtonRadius` in `./resolve`. Without that, this
+ * axis silently did not apply to buttons: Sera sets a flat 0 corner, so picking
+ * Small rounded every surface and left the buttons square.
  */
 
 export type RadiusName = "default" | "none" | "small" | "medium" | "large";

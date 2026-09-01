@@ -33,11 +33,11 @@ a list of rows.
   type scale, the indicator's glyph step, the panel's padding *and* the divider
   inset. Six numbers on one axis rather than in six places that can drift, and
   the tests pin the inset against the trigger's own padding as a **pair**.
-- **The corner is the card's, not a size decoration.** The root sits at
-  `rounded-lg` — the 1.0 step, which is `--radius` itself — so an accordion, a
-  [`ListGroup`](../list-group/AGENTS.md) and a plain `bg-card` block in one
-  screen read as one kind of surface. `sm` is the one size that moves it, down to
-  `rounded-md`. See the corner-scale note in
+- **The corner is `rounded-md`, the 0.8 step of the shared ramp.** shadcn puts a
+  grouped surface a step or two below a card, so a group reads as a control
+  surface rather than as one. Size does not move it, and neither does a button's
+  own corner — `--radius-button-*` is a capsule at half its height and outside
+  this ramp. See the corner-scale note in
   [the package AGENTS.md](../../../AGENTS.md).
 - **The variant paints the root and nothing else.** Only the root has a surface;
   a trigger or a panel that also changed with it would be a second source for one

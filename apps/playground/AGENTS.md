@@ -320,7 +320,7 @@ second palette in this app nothing here proved the tokens were doing the work.
 | Chart Color — the same list (a strip) | `--chart-1..5` only |
 | Heading, Font — 26 families | `--font-heading`, `--font-sans` |
 | Icon Library | nothing — see below |
-| Radius (a strip) | `--radius`, and `--radius-button-*` once it names a value |
+| Radius (a strip) | `--radius` — which is every corner, a button's included |
 
 Light, dark and `system` are **not** one of the eight. Uniwind owns the theme and
 the store persists the choice beside the configuration, because Uniwind does not
@@ -423,15 +423,12 @@ nothing opening.
 own and resolves to whatever Style chose. The first tile of that strip only
 means anything against the row above it.
 
-**A named radius reaches the buttons too.** `--radius-button-*` is outside the
-generic ramp — a button's corner is half its height, a shape rather than a step —
-so a style writes those three numbers directly and `--radius` never touches them.
-That is right for Style and wrong for this axis: Sera sets a flat 0 corner, so
-picking Small used to round every surface and leave the buttons square, which
-made the axis look broken. `resolve.ts` now writes the button's corner from an
-explicit value as well, capped at half the height the way `styles.ts` caps it.
-`default` still defers to the style, because a style's capsule is what it
-chose.
+**A named radius reaches the buttons too**, and it takes no special case to. A
+button used to read `--radius-button-*`, a token pinned at half its height and
+outside the generic ramp, so it was the one control this axis could not move:
+Sera sets a flat 0, and picking Small rounded every surface and left the buttons
+square. `Button` is `rounded-lg` now — the ramp's 1.0 step, the way shadcn's is —
+so `--radius` alone drives it, and a style names no button corner at all.
 
 **Each strip's tile draws what its axis actually varies**, which is why no two
 share a specimen:

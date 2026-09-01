@@ -24,7 +24,7 @@ export function Demo(): ReactElement {
 		<View className="gap-3">
 			{PRESSABLE_FEEDBACKS.map((feedback) => (
 				<Pressable
-					className="rounded-lg border border-border bg-card p-4"
+					className="rounded-xl border border-border bg-card p-4"
 					feedback={feedback}
 					key={feedback}
 					testID={`feedback-${feedback}`}

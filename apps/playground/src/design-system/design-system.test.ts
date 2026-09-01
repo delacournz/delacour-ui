@@ -6,7 +6,7 @@ import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, palettesForBa
 import { FONT_GROUPS, FONTS, fontByName } from "./fonts";
 import { RADII } from "./radii";
 import { resolveTokens } from "./resolve";
-import { STYLES, styleByName } from "./styles";
+import { STYLES } from "./styles";
 import { ACCENT_THEMES } from "./themes";
 
 /**
@@ -144,18 +144,6 @@ describe("the styles", () => {
 			expect(value).toBeGreaterThanOrEqual(0);
 		}
 	});
-
-	// Past half its height a corner is clamped by the renderer, so the number
-	// would stop meaning what it says — and the step would stop being retunable.
-	test.each(STYLES.map((style) => [style.name, style] as const))(
-		"%s keeps a button corner drawable",
-		(_name, style) => {
-			for (const step of ["sm", "md", "lg"] as const) {
-				const height = style.geometry[`spacing-button-${step}`];
-				expect(style.geometry[`radius-button-${step}`]).toBeLessThanOrEqual(height / 2);
-			}
-		}
-	);
 
 	test.each(STYLES.map((style) => [style.name, style] as const))("%s steps its heights upward", (_name, style) => {
 		const heights = [
@@ -318,38 +306,25 @@ describe("the resolver", () => {
 		expect(squared.light["spacing-button-md"]).toBe(styled.light["spacing-button-md"] as number);
 	});
 
-	test("carries an explicit radius into the button's own corner", () => {
-		// Sera is the case this was written for: its style sets a flat 0 corner,
-		// so before the axis reached `--radius-button-*` every surface rounded
-		// to 7.2 and the buttons stayed square.
+	// A button is `rounded-lg` now, the ramp's 1.0 step, so the axis reaches it
+	// through `--radius` alone. Sera is the case that proved it: its style sets a
+	// flat 0, and picking Small used to round every surface and leave the buttons
+	// square, because they read a `--radius-button-*` this axis never wrote.
+	test("carries an explicit radius to every corner, buttons included", () => {
 		const styled = resolveTokens({ ...DEFAULT_CONFIG, style: "sera", radius: "default" });
 		const small = resolveTokens({ ...DEFAULT_CONFIG, style: "sera", radius: "small" });
 
 		for (const mode of MODES) {
-			expect(styled[mode]["radius-button-md"]).toBe(0);
-			expect(small[mode]["radius-button-md"]).toBe(7.2);
+			expect(styled[mode].radius).toBe(0);
+			expect(small[mode].radius).toBe(7.2);
 		}
 	});
 
-	test("never lets an explicit radius push a button past a capsule", () => {
-		// `large` is 14 and Lyra's `sm` button is 32 tall, so the cap binds on the
-		// small step and not on the two above it.
-		const large = resolveTokens({ ...DEFAULT_CONFIG, style: "lyra", radius: "large" });
-
-		for (const step of ["sm", "md", "lg"] as const) {
-			const height = large.light[`spacing-button-${step}`] as number;
-			expect(large.light[`radius-button-${step}`]).toBeLessThanOrEqual(height / 2);
-		}
-
-		expect(large.light["radius-button-sm"]).toBe(14);
-	});
-
-	test("leaves the button's corner to the style when the radius is default", () => {
-		const resolved = resolveTokens({ ...DEFAULT_CONFIG, style: "rhea", radius: "default" });
-		const style = styleByName("rhea");
-
-		for (const step of ["sm", "md", "lg"] as const) {
-			expect(resolved.light[`radius-button-${step}`]).toBe(style?.geometry[`radius-button-${step}`] as number);
+	test("mints no button-specific corner for any style", () => {
+		for (const style of STYLES) {
+			for (const step of ["sm", "md", "lg"] as const) {
+				expect(style.geometry).not.toHaveProperty(`radius-button-${step}`);
+			}
 		}
 	});
 });

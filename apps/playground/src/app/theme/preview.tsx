@@ -129,7 +129,7 @@ function SurfacesPreview(): ReactElement {
 		<PreviewSection label="Surfaces">
 			<View className="flex-row gap-3">
 				{PROJECTS.map((project) => (
-					<View className="flex-1 gap-2 rounded-lg border border-border bg-card p-4" key={project.name}>
+					<View className="flex-1 gap-2 rounded-xl border border-border bg-card p-4" key={project.name}>
 						<Icon icon={IconRocket} />
 						<View className="gap-0.5">
 							<Text.Header>{project.name}</Text.Header>
@@ -192,7 +192,7 @@ function ChoicesPreview(): ReactElement {
 
 	return (
 		<PreviewSection label="Checkbox and radio">
-			<View className="gap-4 rounded-lg border border-border bg-card p-4">
+			<View className="gap-4 rounded-xl border border-border bg-card p-4">
 				<Checkbox.Group checked={artefacts} color="primary" onChecked={setArtefacts}>
 					{ARTEFACTS.map((artefact) => (
 						<Checkbox key={artefact.value} value={artefact.value}>

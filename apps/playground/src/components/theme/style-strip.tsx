@@ -45,7 +45,7 @@ function StyleTile({ style, isSelected }: { style: Style; isSelected: boolean })
 				<View
 					className={isSelected ? "bg-primary" : "bg-muted-foreground/55"}
 					style={{
-						borderRadius: style.geometry["radius-button-sm"],
+						borderRadius: style.geometry.radius,
 						height: style.geometry["spacing-button-sm"],
 						width: SPECIMEN_WIDTH,
 					}}

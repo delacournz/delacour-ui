@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-	BUTTON_RADIUS_TOKENS,
 	BUTTON_SIZE_TOKENS,
 	BUTTON_TEXT_TOKENS,
 	ICON_SIZE_TOKENS,
@@ -52,14 +51,6 @@ describe("tokens.ts and tokens.css", () => {
 		expect(declared).toEqual([...BUTTON_TEXT_TOKENS].sort());
 	});
 
-	test("declare exactly the same button radius tokens", () => {
-		const declared = [...TOKENS.keys()]
-			.filter((name) => name.startsWith("radius-button-"))
-			.map((name) => name.replace("radius-", ""))
-			.sort();
-		expect(declared).toEqual([...BUTTON_RADIUS_TOKENS].sort());
-	});
-
 	test("declare exactly the same input text tokens", () => {
 		const declared = [...TOKENS.keys()]
 			.filter((name) => name.startsWith("text-input-"))
@@ -105,24 +96,18 @@ describe("the button scale", () => {
 	// renderer, so a number above it would stop meaning what it says — and the
 	// step it sits at would stop being retunable. Equal to half, which is what
 	// every step is today, draws the capsule the button ships as.
-	test("gives each height a corner it can actually draw", () => {
-		for (const [index, token] of BUTTON_SIZE_TOKENS.entries()) {
-			const height = px(`spacing-${token}`);
-			expect(px(`radius-${BUTTON_RADIUS_TOKENS[index]}`)).toBeLessThanOrEqual(height / 2);
-		}
+	// A button declares no corner of its own — it is `rounded-lg`, the generic
+	// scale's 1.0 step, the way shadcn's is. This is the guard on that: a
+	// `--radius-button-*` reappearing would put the button back outside the one
+	// scale the Radius axis and a pasted theme both drive.
+	test("declares no corner of its own", () => {
+		expect([...TOKENS.keys()].filter((name) => name.startsWith("radius-button-"))).toEqual([]);
 	});
 
-	test("scales the corner with the height", () => {
-		const radii = BUTTON_RADIUS_TOKENS.map((token) => px(`radius-${token}`));
-		expect(radii).toEqual([...radii].sort((a, b) => a - b));
-		expect(new Set(radii).size).toBe(BUTTON_RADIUS_TOKENS.length);
-	});
-
-	// The three scales are indexed by the same step name — `button-md` names a
-	// height, a label size and a corner — so a step added to one and not the
-	// others would compile to a class with nothing behind it.
-	test("names its steps the same way across all three scales", () => {
-		expect([...BUTTON_RADIUS_TOKENS]).toEqual([...BUTTON_SIZE_TOKENS]);
+	// Both scales are indexed by the same step name — `button-md` names a height
+	// and a label size — so a step added to one and not the other would compile
+	// to a class with nothing behind it.
+	test("names its steps the same way across both scales", () => {
 		expect([...BUTTON_TEXT_TOKENS]).toEqual([...BUTTON_SIZE_TOKENS]);
 	});
 });

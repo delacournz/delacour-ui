@@ -242,9 +242,10 @@ describe("the corner scale", () => {
 		expect(radiusMultiplier("lg")).toBe(1);
 	});
 
-	// `--radius-button-*` is a shape, not a step: half the button's own height,
-	// so the button stays a capsule however a consumer retunes `--radius`.
-	test("leaves the button's corner out of it", () => {
+	// The button's corner is `rounded-lg` and nothing else, so there is no
+	// `--radius-button-*` step for the scale to carry. This is what keeps one
+	// from being reintroduced beside the generic ramp.
+	test("carries no button-specific step", () => {
 		for (const step of ["button-sm", "button-md", "button-lg"]) {
 			expect(() => radiusMultiplier(step)).toThrow();
 		}

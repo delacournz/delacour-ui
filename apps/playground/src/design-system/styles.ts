@@ -7,6 +7,10 @@
  * same decisions as `--spacing-button-*`, `--text-button-*` and `--radius`, so
  * a style here is a bundle of those numbers rather than a stylesheet.
  *
+ * A style names no button corner. `Button` is `rounded-lg` — the corner scale's
+ * 1.0 step, which is `--radius` itself — the way shadcn's is, so `radius` below
+ * is the only number that rounds or squares a button.
+ *
  * What that buys is real — height, corner and type scale are most of what
  * separates Vega from Rhea from Lyra. What it cannot buy is Sera, whose
  * character is `uppercase` and `tracking-widest` on ~44 rules: both are classes
@@ -30,9 +34,6 @@ export type GeometryValues = {
 	"text-button-sm": number;
 	"text-button-md": number;
 	"text-button-lg": number;
-	"radius-button-sm": number;
-	"radius-button-md": number;
-	"radius-button-lg": number;
 	"spacing-input-sm": number;
 	"spacing-input-md": number;
 	"spacing-input-lg": number;
@@ -72,7 +73,6 @@ function geometry({
 	icons,
 	navbar,
 	gutter,
-	buttonRadius,
 }: {
 	radius: number;
 	heights: readonly [number, number, number];
@@ -80,11 +80,6 @@ function geometry({
 	icons: readonly [number, number, number, number, number, number];
 	navbar: number;
 	gutter: number;
-	/**
-	 * The button's own corner. Capped at half its height by the caller, because
-	 * past that the renderer clamps and the number stops meaning what it says.
-	 */
-	buttonRadius: readonly [number, number, number];
 }): GeometryValues {
 	return {
 		radius,
@@ -94,9 +89,6 @@ function geometry({
 		"text-button-sm": text[0],
 		"text-button-md": text[1],
 		"text-button-lg": text[2],
-		"radius-button-sm": Math.min(buttonRadius[0], heights[0] / 2),
-		"radius-button-md": Math.min(buttonRadius[1], heights[1] / 2),
-		"radius-button-lg": Math.min(buttonRadius[2], heights[2] / 2),
 		"spacing-input-sm": heights[0],
 		"spacing-input-md": heights[1],
 		"spacing-input-lg": heights[2],
@@ -117,7 +109,6 @@ function geometry({
 const LIBRARY_HEIGHTS = [36, 44, 52] as const;
 const LIBRARY_TEXT = [14, 16, 18] as const;
 const LIBRARY_ICONS = [14, 16, 18, 20, 24, 32] as const;
-const CAPSULE = [18, 22, 26] as const;
 
 /**
  * Eight styles, in shadcn's own order, with its own one-line descriptions.
@@ -138,7 +129,6 @@ export const STYLES: readonly Style[] = [
 			icons: LIBRARY_ICONS,
 			navbar: 56,
 			gutter: 20,
-			buttonRadius: CAPSULE,
 		}),
 	},
 	{
@@ -152,7 +142,6 @@ export const STYLES: readonly Style[] = [
 			icons: LIBRARY_ICONS,
 			navbar: 54,
 			gutter: 16,
-			buttonRadius: [12, 14, 16],
 		}),
 	},
 	{
@@ -166,7 +155,6 @@ export const STYLES: readonly Style[] = [
 			icons: [16, 18, 20, 22, 26, 34],
 			navbar: 60,
 			gutter: 24,
-			buttonRadius: CAPSULE,
 		}),
 	},
 	{
@@ -180,7 +168,6 @@ export const STYLES: readonly Style[] = [
 			icons: [13, 15, 16, 18, 22, 30],
 			navbar: 52,
 			gutter: 16,
-			buttonRadius: [0, 0, 0],
 		}),
 	},
 	{
@@ -194,7 +181,6 @@ export const STYLES: readonly Style[] = [
 			icons: [13, 15, 16, 18, 22, 30],
 			navbar: 50,
 			gutter: 14,
-			buttonRadius: [8, 9, 10],
 		}),
 	},
 	{
@@ -208,7 +194,6 @@ export const STYLES: readonly Style[] = [
 			icons: LIBRARY_ICONS,
 			navbar: 58,
 			gutter: 22,
-			buttonRadius: CAPSULE,
 		}),
 	},
 	{
@@ -225,7 +210,6 @@ export const STYLES: readonly Style[] = [
 			icons: [14, 15, 17, 19, 23, 31],
 			navbar: 56,
 			gutter: 24,
-			buttonRadius: [0, 0, 0],
 		}),
 	},
 	{
@@ -239,7 +223,6 @@ export const STYLES: readonly Style[] = [
 			icons: [13, 15, 16, 18, 22, 30],
 			navbar: 52,
 			gutter: 18,
-			buttonRadius: CAPSULE,
 		}),
 	},
 ];

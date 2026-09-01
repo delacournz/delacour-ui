@@ -75,7 +75,6 @@ describe("the geometry block", () => {
 			...(["sm", "md", "lg"] as const).flatMap((step) => [
 				`--spacing-button-${step}`,
 				`--text-button-${step}`,
-				`--radius-button-${step}`,
 				`--spacing-input-${step}`,
 				`--text-input-${step}`,
 			]),

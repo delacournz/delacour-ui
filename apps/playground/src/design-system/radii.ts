@@ -10,10 +10,11 @@
  * so the axis can be left alone without pinning the style's own corner. Every
  * other option overrides it.
  *
- * An explicit value also overrides `--radius-button-*`, which is otherwise
- * outside the ramp — see `applyButtonRadius` in `./resolve`. Without that, this
- * axis silently did not apply to buttons: Sera sets a flat 0 corner, so picking
- * Small rounded every surface and left the buttons square.
+ * Buttons included, and that is new. A button used to read `--radius-button-*`,
+ * a token pinned at half its height, so it was the one control this axis could
+ * not move: picking Small rounded every surface and left Sera's buttons square.
+ * `Button` is `rounded-lg` now — the ramp's 1.0 step, the way shadcn's is — so
+ * the single number below reaches it like everything else.
  */
 
 export type RadiusName = "default" | "none" | "small" | "medium" | "large";
@@ -25,6 +26,7 @@ export type Radius = {
 	value: number | null;
 };
 
+/** shadcn's own four, in px: `0`, `0.45rem`, `0.625rem` — its default — and `0.875rem`. */
 export const RADII: readonly Radius[] = [
 	{ name: "default", title: "Default", value: null },
 	{ name: "none", title: "None", value: 0 },

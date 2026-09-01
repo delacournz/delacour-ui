@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { BUTTON_RADIUS_TOKENS, ICON_SIZE_TOKENS } from "../../styles/tokens";
+import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BUTTON_FOREGROUND_TOKEN,
 	BUTTON_SIZES,
@@ -85,21 +85,18 @@ describe("buttonVariants root slot", () => {
 		expect(buttonVariants({ isIconOnly: false, size: "md" }).root()).toMatch(/\bpx-\d/);
 	});
 
-	test("rounds by default, at the corner token paired with its size", () => {
-		expect(radiusToken(buttonVariants().root())).toBe("button-md");
+	// `rounded-md` is the 0.8 step, which is where shadcn's own styles put
+	// `.cn-button` — the same step as an input and an accordion — and being a
+	// multiple of `--radius` is what makes a pasted theme reach it.
+	test("rounds at the generic scale's md step, whatever the size", () => {
+		expect(radiusToken(buttonVariants().root())).toBe("md");
 		for (const size of BUTTON_SIZES) {
-			expect(radiusToken(buttonVariants({ size }).root())).toBe(`button-${size}`);
+			expect(radiusToken(buttonVariants({ size }).root())).toBe("md");
 		}
 	});
 
-	test("names a corner token the CSS actually declares", () => {
-		for (const size of BUTTON_SIZES) {
-			expect(BUTTON_RADIUS_TOKENS).toContain(`button-${size}`);
-		}
-	});
-
-	// The corner belongs to the size axis and nothing else, so no variant, and
-	// no state, can leave a second `rounded-*` behind for tailwind-merge to
+	// The corner sits on the base and nothing else, so no size, no variant and
+	// no state can leave a second `rounded-*` behind for tailwind-merge to
 	// pick between.
 	test("carries exactly one corner, whatever else is set", () => {
 		for (const variant of BUTTON_VARIANTS) {
@@ -110,9 +107,9 @@ describe("buttonVariants root slot", () => {
 		}
 	});
 
-	test("lets a caller square it off through className", () => {
-		expect(radiusToken(buttonVariants().root({ className: "rounded-lg" }))).toBe("lg");
-		expect(radiusToken(buttonVariants({ size: "lg" }).root({ className: "rounded-none" }))).toBe("none");
+	test("lets a caller square it off, or round it up, through className", () => {
+		expect(radiusToken(buttonVariants().root({ className: "rounded-none" }))).toBe("none");
+		expect(radiusToken(buttonVariants({ size: "lg" }).root({ className: "rounded-full" }))).toBe("full");
 	});
 
 	test("adds the disabled treatment only when disabled", () => {

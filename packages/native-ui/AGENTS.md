@@ -262,7 +262,6 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
 | `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
 | `--text-button-*` | `text-button-md` | a button's label, paired with its height |
-| `--radius-button-*` | `rounded-button-md` | a button's corner, half its height — a capsule, and a circle when icon-only |
 | `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
@@ -272,23 +271,26 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 `rounded-4xl` are multiples of one `--radius` — shadcn's own scale — declared
 `@theme inline` in `tokens.css`, so a `--radius` copied out of a web app retunes
 every rounded edge in the package at once. `--radius-button-*` is deliberately
-outside it: a button's corner is half its own height, a shape rather than a step,
-and it must not move when a consumer retunes `--radius`.
+the one scale every corner reads, a button's included — `Button` is `rounded-lg`,
+the way shadcn's is, so a `--radius` pasted out of a web theme reaches it.
 
-**`--radius` is the card corner, so a card-shaped surface is `rounded-lg`.**
-The step is 1.0 on the ramp, which is what makes the number a consumer copies out
-of a web theme land on the thing they were looking at when they picked it.
-`ListGroup` and `Accordion` are the two surfaces this governs — they are cards
-that happen to hold rows — and a hand-rolled `border border-border bg-card` block
-takes the same step, so a group and a card sitting in one screen read as one kind
-of thing. Both components step their `sm` down to `rounded-md`, which is the only
-place size moves a corner at all.
+**One step for controls, a rounder one for cards.** shadcn's style sheets put
+`.cn-button`, `.cn-input` and `.cn-accordion` on the *same* step and the card
+one to two steps above it — `rounded-md` and `rounded-xl` under Vega,
+`rounded-md` and `rounded-lg` under Mira, `rounded-2xl` and
+`rounded-[min(var(--radius-4xl),24px)]` under Rhea. This package cannot restate a
+class per style, so it takes Vega's, the identity style:
 
-The pair used to sit two steps up the ramp, at `rounded-2xl`, which is roughly
-twice the corner shadcn gives a card in the styles this library ports: measured
-off shadcn's own Mira and Rhea, a card is ~7px and ~17px, against the 8 and 16
-those styles set `--radius` to. A group was visibly rounder than the card beside
-it in every one of the eight.
+| Shape | Step | Multiple of `--radius` |
+| --- | --- | --- |
+| `Button`, `Input`, `ListGroup`, `Accordion` | `rounded-md` | 0.8 |
+| a card — `border border-border bg-card` | `rounded-xl` | 1.4 |
+
+Every one of them is a multiple of `--radius`, which is the point: one number
+retunes the lot, and a `Button` is no longer the exception it was as
+`rounded-button-*`, a token pinned at half its height that the Radius axis could
+not reach. shadcn caps a step it lets run far up the ramp —
+`min(var(--radius-4xl),24px)` — but only where the multiple is large.
 
 Only `--radius` survives to runtime — `inline` means each step is substituted
 into its utilities and no `--radius-md` variable is emitted. A component that has

@@ -58,7 +58,7 @@ export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
  */
 export const inputVariants = tv({
 	slots: {
-		root: "overflow-hidden rounded-lg border",
+		root: "overflow-hidden rounded-md border",
 		/** Layout for the group's row. Never applied to a lone field, which is not a row. */
 		row: "flex-row items-center",
 		/*
@@ -81,7 +81,7 @@ export const inputVariants = tv({
 		},
 		size: {
 			sm: {
-				root: "rounded-md px-2.5",
+				root: "px-2.5",
 				row: "gap-1.5",
 				field: "text-input-sm leading-tight",
 				decoratorIcon: "size-icon-sm",

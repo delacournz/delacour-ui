@@ -40,29 +40,6 @@ function chartKeys(values: TokenValues): TokenValues {
 }
 
 /**
- * The button's own corner, when the Radius axis names one.
- *
- * `--radius-button-*` sits outside the generic ramp on purpose — a button's
- * corner is half its height, a shape rather than a step — which is why a style
- * writes the three numbers directly and `--radius` never reaches them. That
- * holds for the Style axis and breaks for this one: picking Small squared every
- * surface down to 7.2 and left Sera's buttons at the flat 0 its style set, so
- * the axis named "Radius" visibly did not apply to the roundest control on the
- * screen.
- *
- * So an explicit radius writes the button's corner as well, still capped at half
- * the height the way `styles.ts` caps it — past that the renderer clamps and the
- * number stops meaning what it says. `default` is untouched by design: it means
- * "whatever the style chose", and a style's capsule is exactly what it chose.
- */
-function applyButtonRadius(mode: ResolvedMode, value: number): void {
-	for (const step of ["sm", "md", "lg"] as const) {
-		const height = Number(mode[`spacing-button-${step}`]);
-		mode[`radius-button-${step}`] = Number.isFinite(height) ? Math.min(value, height / 2) : value;
-	}
-}
-
-/**
  * Every axis, composed into the two sets of variables the store injects.
  *
  * The colour half is shadcn's algorithm and nothing more: a base colour's full
@@ -79,6 +56,8 @@ function applyButtonRadius(mode: ResolvedMode, value: number): void {
  *   variables at all; here a style is a bundle of numbers, so it composes with
  *   the palette in the same pass. Radius is applied last so the Radius axis can
  *   override the style's own corner without replacing the rest of its geometry.
+ *   One number is all that takes: every corner in the library, a button's
+ *   included, is a step on the ramp derived from `--radius`.
  *
  * Pure, and free of React Native imports, so the whole matrix is reachable from
  * `bun test`.
@@ -108,8 +87,6 @@ export function resolveTokens(config: DesignSystemConfig): ResolvedTokens {
 	if (radius && radius.value !== null) {
 		light.radius = radius.value;
 		dark.radius = radius.value;
-		applyButtonRadius(light, radius.value);
-		applyButtonRadius(dark, radius.value);
 	}
 
 	return { light, dark };

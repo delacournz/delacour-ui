@@ -75,7 +75,7 @@ export const listGroupVariants = tv({
 				description: "text-xs",
 			},
 			md: {
-				root: "rounded-lg",
+				root: "rounded-md",
 				item: "min-h-14 gap-3 px-4 py-3",
 				divider: "mx-4",
 				prefixIcon: "size-icon-lg",
@@ -84,7 +84,7 @@ export const listGroupVariants = tv({
 				description: "text-sm",
 			},
 			lg: {
-				root: "rounded-lg",
+				root: "rounded-md",
 				item: "min-h-16 gap-3.5 px-5 py-4",
 				divider: "mx-5",
 				prefixIcon: "size-icon-xl",

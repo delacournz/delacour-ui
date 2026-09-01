@@ -32,15 +32,21 @@ The reference implementation for the patterns in the package
   comes out the right size and colour with nothing said at the call site. An
   explicit `size` or `color` on the icon still wins. `Button.StartContent` /
   `Button.EndContent` remain for wrapping non-icon content.
-- **The corner is a token on the size axis, and nothing else sets one.** Each
-  size names `rounded-button-{size}` — half its own height, so a button is a
-  capsule and an icon-only one a circle. Keeping it out of the base and off
-  every variant means exactly one `rounded-*` reaches the root, so a caller's
-  `className="rounded-lg"` has a single class to beat and tailwind-merge is
-  never picking between two. The shape is a default rather than a law: three
-  numbers in `tokens.css` square the whole kit off without touching a
-  component. Values above half the height are clamped by the renderer, which is
-  why `tokens.test.ts` holds them under it.
+- **The corner is `rounded-md` on the base, and nothing else sets one.** That is
+  the step shadcn puts a button on — `.cn-button` is `rounded-md` under Vega and
+  Mira — and it is the same step an `Input` and an `Accordion` take, so the three
+  line up. Being a multiple of `--radius`, it rounds and squares with every other
+  edge in the app. Keeping it off the size axis and off every variant means
+  exactly one `rounded-*` reaches the root, so a caller's
+  `className="rounded-full"` has a single class to beat and tailwind-merge is
+  never picking between two.
+
+  It used to be `rounded-button-{size}`, a token pinned at half the height,
+  which drew a capsule — and made the button the one control a retuned
+  `--radius` could not reach, so the playground's Radius axis rounded every
+  surface and left buttons untouched. shadcn caps a corner only where the multiple runs high
+  (`rounded-[min(var(--radius-4xl),24px)]` on Rhea's card); a button's step is
+  low enough to need none, at any size.
 - **`isIconOnly`** gives a square footprint. Always pair it with an
   `accessibilityLabel`; there is no text for a screen reader to fall back on.
 - **String children** are wrapped in a `Button.Label` automatically. React

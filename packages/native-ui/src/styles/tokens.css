@@ -22,16 +22,15 @@
 	--text-3xl: 30px;
 
 	/*
-	 * The button's three scales, stepped together: the height — which is also
-	 * the square footprint of an icon-only one — the label's type, and the
-	 * corner.
+	 * The button's two scales, stepped together: the height — which is also the
+	 * square footprint of an icon-only one — and the label's type.
 	 *
-	 * The corner is half the height at every step, so a button is a capsule and
-	 * an icon-only one a circle. A token rather than `rounded-full` because the
-	 * shape is a default, not a law: a kit that wants squarer buttons changes
-	 * three numbers here and touches no component. `tokens.test.ts` keeps each
-	 * under half its height — past that the renderer clamps and the number
-	 * stops meaning what it says.
+	 * The corner is deliberately not here. shadcn derives a button's corner from
+	 * the radius scale — its base is `rounded-lg`, which is `--radius` itself —
+	 * so the one number a consumer pastes out of a web theme moves the button
+	 * along with every other edge. A `--radius-button-*` of its own did the
+	 * opposite: it pinned the button to half its height and left it the one
+	 * control a retuned `--radius` could not reach.
 	 */
 	--spacing-button-sm: 36px;
 	--spacing-button-md: 44px;
@@ -40,10 +39,6 @@
 	--text-button-sm: 14px;
 	--text-button-md: 16px;
 	--text-button-lg: 18px;
-
-	--radius-button-sm: 18px;
-	--radius-button-md: 22px;
-	--radius-button-lg: 26px;
 
 	/*
 	 * Field heights, and the type scale paired step-for-step with them.
@@ -101,9 +96,9 @@
  * `var(--radius)` itself, so a theme that redeclares `--radius` reaches
  * `rounded-lg` rather than a copy taken when the scale was compiled.
  *
- * `--radius-button-*` above is deliberately NOT part of this. A button's corner
- * is half its own height — a shape, not a step on a scale — and it must not
- * move when a consumer retunes `--radius`.
+ * Everything with a corner reads this scale, buttons included: `Button`'s base
+ * is `rounded-lg`, the 1.0 step, which is shadcn's own arrangement and the
+ * reason a `--radius` lifted out of a web theme lands on the same shape here.
  */
 @theme inline {
 	--radius-xs: calc(var(--radius) * 0.4);

@@ -81,7 +81,7 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 	return (
 		<Tabs items={["Command", "Package", "Manual"]}>
 			<Tab value="Command">
-				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@latest add ${entry.name} --install`] }]} />
+				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha add ${entry.name} --install`] }]} />
 				<p className="text-fd-muted-foreground text-sm">
 					Copies the source into your project, with everything it depends on. Run <code>delacour init</code> first if
 					you have not already.
@@ -92,7 +92,7 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 			<Tab value="Package">
 				<InstallTabs
 					commands={[
-						{ verb: "add", packages: ["@delacour/native-ui"] },
+						{ verb: "add", packages: ["@delacour/native-ui@alpha"] },
 						{ verb: "expo", packages: entry.expo },
 					]}
 				/>

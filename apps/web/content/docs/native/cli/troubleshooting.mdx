@@ -5,7 +5,7 @@ icon: Stethoscope
 ---
 
 ```bash
-bunx delacour doctor
+bunx delacour@alpha doctor
 ```
 
 ```txt
@@ -57,8 +57,8 @@ In a monorepo, the usual cause is a `@source` pointing through `node_modules` �
 not follow symlinks, so it scans nothing. See [Monorepos](/docs/native/cli/monorepo).
 
 ```bash
-bunx delacour doctor    # "Tailwind sources — not scanned: …"
-bunx delacour init -f   # rewrites the managed @source block
+bunx delacour@alpha doctor    # "Tailwind sources — not scanned: …"
+bunx delacour@alpha init -f   # rewrites the managed @source block
 ```
 
 **Metro's wrapper ordering.** If `withUniwindConfig` is present but not the **outermost** wrapper,
@@ -115,7 +115,7 @@ It asks first — unless you passed `--overwrite`, or ran non-interactively with
 case it refuses and names the files. To see what you had changed before deciding:
 
 ```bash
-bunx delacour diff button
+bunx delacour@alpha diff button
 ```
 
 ### The registry does not have a component I can see on this site
@@ -123,7 +123,7 @@ bunx delacour diff button
 Your CLI is pinned to the ref it was published from. Take the newest:
 
 ```bash
-bunx delacour@latest add tabs --ref main
+bunx delacour@alpha add tabs --ref main
 ```
 
 See [The registry](/docs/native/cli/registry).
@@ -208,7 +208,7 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
 ## When doctor is not enough
 
 ```bash
-bunx delacour info
+bunx delacour@alpha info
 ```
 
 Prints the resolved config and everything that was detected — package manager, workspace root, app

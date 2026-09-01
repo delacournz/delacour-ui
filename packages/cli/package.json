@@ -1,6 +1,6 @@
 {
 	"name": "delacour",
-	"version": "0.1.0",
+	"version": "0.0.1-alpha.0",
 	"description": "Add React Native components to your Expo app. You own the code.",
 	"type": "module",
 	"license": "MIT",
@@ -17,6 +17,10 @@
 		"uniwind",
 		"tailwind"
 	],
+	"publishConfig": {
+		"access": "public",
+		"tag": "alpha"
+	},
 	"bin": {
 		"delacour": "./dist/index.js"
 	},

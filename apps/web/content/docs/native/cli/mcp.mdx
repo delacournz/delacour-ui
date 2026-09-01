@@ -21,7 +21,7 @@ With it, the agent reads the real component and copies it.
 <Tab value="Claude Code">
 
 ```bash
-claude mcp add delacour -- bunx delacour@latest mcp
+claude mcp add delacour -- bunx delacour@alpha mcp
 ```
 
 </Tab>
@@ -32,7 +32,7 @@ claude mcp add delacour -- bunx delacour@latest mcp
   "mcpServers": {
     "delacour": {
       "command": "bunx",
-      "args": ["delacour@latest", "mcp"]
+      "args": ["delacour@alpha", "mcp"]
     }
   }
 }
@@ -44,7 +44,7 @@ claude mcp add delacour -- bunx delacour@latest mcp
 ```json
 {
   "command": "bunx",
-  "args": ["delacour@latest", "mcp", "--cwd", "/path/to/your/app"]
+  "args": ["delacour@alpha", "mcp", "--cwd", "/path/to/your/app"]
 }
 ```
 

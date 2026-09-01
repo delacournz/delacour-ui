@@ -11,7 +11,7 @@ arrive with its classNames already dead.
 ## Install
 
 ```bash
-bun add @delacour/native-ui
+bun add @delacour/native-ui@alpha
 ```
 
 Native modules are **peer dependencies**, because two copies of a native module

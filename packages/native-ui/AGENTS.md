@@ -647,7 +647,8 @@ that transform with its classNames already dead.
 
 `packages/cli` derives a registry from this package's source — one item per
 component folder — so the `delacour` CLI can copy components into someone
-else's repository instead of them installing this package. Nothing about that
+else's repository rather than them taking a dependency on this package.
+Both are supported; see [Publishing](#publishing). Nothing about that
 is maintained by hand: the files come from the folder, the dependency graph
 comes from the imports, and the CLI's `classifySource` restates the same
 conventions `scripts/gen-exports.ts` reads.
@@ -684,3 +685,27 @@ A component folder that follows the rules above needs nothing else. Relative
 imports crossing a folder — `../icon`, `../../lib/cn` — are recorded as
 placeholders at build time and resolved to the consumer's own aliases at `add`
 time, so write them exactly as you would anyway.
+
+## Publishing
+
+This package ships **two ways**, and both come off the same source:
+
+| Channel | What the consumer gets |
+| --- | --- |
+| `delacour add button` | The component's source copied into their repo, imports rewritten to their aliases. They own it. |
+| `bun add @delacour/native-ui` | The package from npm, imported by subpath — `@delacour/native-ui/button`. |
+
+The registry is the primary channel and the reason this package exists in the shape it does; npm
+is there for anyone who would rather take an upgradeable dependency than own the code.
+
+**There is still no build step, and adding one would break both channels.** Uniwind's transform has
+to run inside the consuming app's Metro pipeline, so a precompiled build would arrive with its
+classNames already dead. `files` is `["src", "README.md"]` — the raw `.tsx` *is* the artefact, and
+the per-component `AGENTS.md` files travel with it on purpose.
+
+An npm consumer's Metro must therefore transpile this package out of `node_modules`, which the
+registry path never has to do. `verify:expo` covers the copy path only; the npm path is verified by
+installing a `npm pack` tarball into a scratch Expo app.
+
+Releases are Changesets-driven — see the [root AGENTS.md](../../AGENTS.md#releases). A change here
+that should reach npm needs `bun run changeset` committed with it.

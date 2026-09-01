@@ -216,8 +216,23 @@ derived `--radius-*` steps are dropped, because every corner here is a multiple 
 ### The registry ref is baked in at build time
 
 `tsdown.config.ts` defines `__REGISTRY_REF__` from `DELACOUR_REGISTRY_REF`, and release CI passes
-the tag it is publishing. A published version therefore always reads the registry it shipped
-against; `--ref main` opts into what has landed since.
+**the commit it is publishing** — `github.sha`, not the tag. A published version therefore always
+reads the registry it shipped against; `--ref main` opts into what has landed since.
+
+A commit rather than a tag because `changesets/action` builds before it tags: a tag-derived ref
+would name something that does not exist yet, and a publish that succeeded before a failed tag
+push would ship a CLI pointing at a ref that never appears. `raw.githubusercontent.com` serves a
+full SHA just as happily.
+
+`DELACOUR_REGISTRY_REF` is set at **job** level in `release.yml`, not on the build step. `npm
+publish` re-runs `prepublishOnly`, which rebuilds the bundle — if the ref were unset for that
+rebuild it would silently bake `main` over the correct value.
+
+### The CLI version is baked in too
+
+`__CLI_VERSION__` comes from `package.json` through the same `define` block. It used to read
+`process.env.npm_package_version`, which only exists under a package manager running a script —
+`bunx delacour` is not that, so every published build reported the hardcoded fallback.
 
 ### Markdown is canonicalised too, but differently
 

@@ -97,9 +97,9 @@ function Hero() {
 
 				<div className="mt-10 max-w-lg">
 					<p className="mb-2 font-medium text-fd-muted-foreground text-sm">Copy the source in with the CLI…</p>
-					<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button"] }]} />
+					<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button"] }]} />
 					<p className="mt-4 mb-2 font-medium text-fd-muted-foreground text-sm">…or install the package.</p>
-					<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui"] }]} />
+					<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui@alpha"] }]} />
 				</div>
 			</div>
 		</section>

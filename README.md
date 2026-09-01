@@ -54,4 +54,7 @@ design decisions, the constraints, and the reasoning behind them.
 
 ## Licence
 
-Unpublished.
+MIT. Two packages are published — [`delacour`](https://www.npmjs.com/package/delacour), the CLI,
+and [`@delacour/native-ui`](https://www.npmjs.com/package/@delacour/native-ui), the components.
+Everything else in the workspace is private. See
+[Releases](AGENTS.md#releases) for how a change gets to npm.

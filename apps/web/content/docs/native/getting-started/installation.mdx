@@ -21,18 +21,18 @@ The CLI and the package hold the same components. The choice is who owns the cod
 
 ## Use the CLI
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest init"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init"] }]} />
 
 `init` writes `native-components.json`, wraps your Metro config with Uniwind's transform, adds the
 `@source` globs to your Tailwind entry, and copies the theme in. Then add components by name:
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button input field"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button input field"] }]} />
 
 See [the CLI docs](/docs/native/cli) for what `init` will and will not touch.
 
 ## Install the package
 
-<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui"] }]} />
+<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui@alpha"] }]} />
 
 The library ships raw `.tsx`. Uniwind's transform has to run in **your** app's Metro pipeline, so a
 precompiled build would arrive with its classNames already dead — which is also why its native

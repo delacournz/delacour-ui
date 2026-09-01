@@ -29,10 +29,19 @@ import { CancelledError, style } from "./ui/output";
  * when there is someone to ask, and install nothing when there is not.
  */
 
+declare const __CLI_VERSION__: string | undefined;
+
+/**
+ * Replaced at build time from `package.json` (see `tsdown.config.ts`).
+ * `npm_package_version` only exists under a package manager running a script,
+ * and `bunx delacour` is neither — it would have reported the fallback forever.
+ */
+const CLI_VERSION: string = typeof __CLI_VERSION__ === "string" ? __CLI_VERSION__ : "0.0.0-dev";
+
 const program = new Command()
 	.name("delacour")
 	.description("Add React Native components to your Expo app. You own the code.")
-	.version(process.env.npm_package_version ?? "0.1.0");
+	.version(CLI_VERSION);
 
 /** Shared by every command that reads the registry. */
 function withRegistryOptions(command: Command): Command {

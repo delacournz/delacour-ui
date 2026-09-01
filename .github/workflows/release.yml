@@ -1,0 +1,97 @@
+name: Release
+
+# Two behaviours, one workflow, chosen by `changesets/action` from what is in
+# `.changeset/`: pending changesets open (or refresh) the Version Packages PR;
+# no pending changesets means that PR has just merged, so publish.
+#
+# Publishing goes through the npm CLI, not `bun publish`, because npm is the only
+# one of the two that speaks OIDC — the trusted publisher configured on npmjs.com
+# is what authenticates this workflow, and there is no npm token anywhere.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Never let two releases interleave; a cancelled publish is worse than a slow one.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Create Version PR or Publish
+    if: github.repository_owner == 'delacournz'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+      id-token: write
+
+    env:
+      TURBO_TELEMETRY_DISABLED: 1
+      # Job level, not step level. `npm publish` re-runs the CLI's
+      # `prepublishOnly`, which rebuilds the bundle — if the ref were unset for
+      # that rebuild it would silently bake "main" over the correct value.
+      #
+      # The commit, not the tag: `changesets/action` builds before it tags, so a
+      # tag-derived ref would name something that does not exist yet, and a
+      # publish that succeeded before a failed tag push would ship a CLI
+      # pointing at a ref that never appears. A SHA is immutable and already
+      # resolvable, and raw.githubusercontent.com serves it.
+      DELACOUR_REGISTRY_REF: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      # Trusted publishing needs npm >= 11.5.1; the runner's bundled npm is older.
+      - name: Update npm for OIDC support
+        run: npm install -g npm@latest
+
+      - run: bun install --frozen-lockfile
+
+      # The CLI serves components straight out of `registry/` at the commit it
+      # was built from, so a stale registry ships an `add` that hands over
+      # components which no longer match their source. CI checks this on every
+      # pull request; check it again here, because this is the copy that ships.
+      - name: Rebuild the registry
+        working-directory: packages/cli
+        run: bun run registry:build
+
+      - name: Fail if the committed registry is stale
+        run: |
+          if [ -n "$(git status --porcelain registry/)" ]; then
+            echo "registry/ does not match packages/native-ui. Run 'bun --filter delacour run registry:build' and commit the result."
+            git --no-pager diff --stat registry/
+            exit 1
+          fi
+
+      # Build before the action so a broken bundle fails the run outright, rather
+      # than surfacing halfway through `prepublishOnly` with a package already up.
+      - name: Build the CLI
+        working-directory: packages/cli
+        run: bun run build && bun run build:check
+
+      - name: Create Version PR or publish to npm
+        uses: changesets/action@v1
+        with:
+          commit: "🔖 chore(release): version packages"
+          title: "🔖 chore(release): version packages"
+          version: bun .github/changeset-version.ts
+          publish: bunx changeset publish
+        env:
+          # A PAT, not GITHUB_TOKEN: events raised by GITHUB_TOKEN do not start
+          # workflow runs, so the Version Packages PR would never run the four
+          # checks `main-protected` requires and could never be merged.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}

@@ -74,8 +74,7 @@ export function useThemeTabBarInset(): number {
 
 export function ThemeTabBarSpacer(): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
-
-	return <View style={{ height: Math.max((context?.inset ?? 0) - CONTENT_GAP, 0) }} />;
+	return <View style={{ height: CONTENT_GAP }} />;
 }
 ThemeTabBarSpacer.displayName = "Playground.ThemeTabBarSpacer";
 
@@ -194,7 +193,7 @@ function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarPr
 	return (
 		<View className="absolute inset-x-0 top-0 z-10" pointerEvents="box-none">
 			<Screen.ScrollShadow anchor="parent" coverTop={inset} edges="top" />
-			<View className="px-screen-gutter pt-2 pb-4" onLayout={measureBar}>
+			<View className="px-screen-gutter pt-2 pb-2" onLayout={measureBar}>
 				<Tabs isSwipeable={false} onValueChange={select} value={current}>
 					<Tabs.List>
 						<TabIndicator offset={first?.x ?? 0} position={position} stride={stride} width={first?.width ?? 0} />

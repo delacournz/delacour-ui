@@ -411,10 +411,31 @@ Preview tab, where it would act on eight decisions you cannot see.
 
 `Linking.openURL` from `react-native`, not `expo-web-browser`: the destination is a page you want
 left open on a desktop, not a modal that dies on dismiss, and the alternative costs a `prebuild` and
-a native rebuild for every clone. The origin is restated in `design-system/preset-url.ts` because
-this app cannot import from `apps/web`; `preset-url.test.ts` reads that file as text and fails if
-the two drift. `EXPO_PUBLIC_THEME_SITE_URL` overrides it — deliberately not `__DEV__` and localhost,
-since `bun ios` runs against a real device that cannot reach the host's `localhost:3000`.
+a native rebuild for every clone.
+
+**A dev build opens the local documentation site**, so working on that page means the button reaches
+the page you are working on rather than the deployed one. `design-system/docs-origin.ts` picks
+between three sources, in falling precedence: `EXPO_PUBLIC_THEME_SITE_URL` if it is set, then the
+local dev server in a dev build, then production.
+
+**The local origin is derived from Metro, never assumed to be `localhost`.** `bun ios` runs
+`expo run:ios --device`, and a phone cannot reach the laptop's loopback — nor can an Android
+emulator, whose `localhost` is the emulator itself. What all of them can reach is the host Metro
+already reached *them* on, which Expo publishes as `Constants.expoConfig.hostUri`:
+`localhost:8088` on a simulator, `192.168.x.x:8088` on a device, `10.0.2.2:8088` on an Android
+emulator. `devOriginFrom` keeps the host and swaps the port, so the link works from all three with
+nothing configured. It parses its own result before returning it — whatever the runtime publishes
+ends up in a URL a browser has to open.
+
+That derivation lives in `preset-url.ts` rather than beside the `expo-constants` import, so
+`bun test` can reach the whole matrix; `docs-origin.ts` is the only file in the folder that touches
+the Expo runtime and it holds nothing but the wiring. `WEB_DEV_PORT` is 3000, and the test reads
+`apps/web/vite.config.ts` to check it still is — the same text-reading move that pins the production
+origin against `apps/web/src/lib/shared.ts`.
+
+A dev build whose web server is not running gets a browser error rather than the deployed site.
+That is the right failure: silently opening production while you edit the page is how you convince
+yourself a change did not work.
 
 ### Fonts are embedded, not loaded at runtime
 

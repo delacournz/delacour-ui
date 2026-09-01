@@ -4,6 +4,7 @@ import { IconArrowUpRight } from "@delacour/native-ui/icons/central";
 import { Screen } from "@delacour/native-ui/screen";
 import type { ReactElement } from "react";
 import { Alert, Linking } from "react-native";
+import { docsOrigin } from "@/design-system/docs-origin";
 import { presetUrl } from "@/design-system/preset-url";
 import { useDesignSystem } from "@/design-system/store";
 
@@ -33,6 +34,11 @@ import { useDesignSystem } from "@/design-system/store";
  * not sit permanently under the thumb beside the one people came for — least of
  * all on the Preview tab, where it would act on eight decisions you cannot see.
  *
+ * **In a dev build it opens the local documentation site**, not the deployed
+ * one, so working on that page means pressing this reaches the page you are
+ * working on. The host is Metro's own rather than `localhost`, which is what
+ * makes it right on a tethered device too — see `docs-origin.ts`.
+ *
  * `placement` stays `overlay` so pages scroll under it, mirroring the tab bar
  * floating at the top. `sticky` stays off: the Preview tab has real `Input`s, so
  * a keyboard can open here, and a "Generate CSS" button riding a keyboard opened
@@ -48,7 +54,7 @@ export function ThemeFooter(): ReactElement {
 	// read off the screen; a silent no-op on a button whose whole job is to leave
 	// the app is indistinguishable from a broken encoder.
 	const open = () => {
-		const url = presetUrl(config);
+		const url = presetUrl(config, docsOrigin());
 
 		Linking.openURL(url).catch(() => {
 			Alert.alert("Could not open a browser", url);

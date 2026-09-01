@@ -45,6 +45,32 @@ describe("cn", () => {
 // utility and keeps it alongside a caller's `h-12`. Both would apply and the
 // winner would be whichever uniwind resolved last — the exact failure `cn`
 // exists to prevent, and an invisible one, since nothing errors.
+// A side corner survives an all-corner class emitted BEFORE it, and is
+// annihilated by one emitted after. `Button.Group` rests on that asymmetry: it
+// is why a joined member replaces its corner with a per-side pair rather than
+// layering a squaring class over the `rounded-button-*` the size axis would
+// otherwise leave behind. That class would delete the pair silently, with
+// nothing to see in a diff.
+describe("cn with a side corner", () => {
+	test("keeps a side class set after an all-corner one", () => {
+		for (const token of BUTTON_RADIUS_TOKENS) {
+			expect(cn(`rounded-${token}`, "rounded-e-none")).toBe(`rounded-${token} rounded-e-none`);
+		}
+	});
+
+	test("drops a side class set before an all-corner one", () => {
+		for (const token of BUTTON_RADIUS_TOKENS) {
+			expect(cn("rounded-e-none", `rounded-${token}`)).toBe(`rounded-${token}`);
+		}
+	});
+
+	test("lets a caller's all-corner class beat a whole per-side pair", () => {
+		for (const token of BUTTON_RADIUS_TOKENS) {
+			expect(cn(`rounded-s-${token} rounded-e-none`, "rounded-lg")).toBe("rounded-lg");
+		}
+	});
+});
+
 describe("cn with the semantic size tokens", () => {
 	test("a caller's plain utility replaces a token one", () => {
 		for (const token of BUTTON_SIZE_TOKENS) {

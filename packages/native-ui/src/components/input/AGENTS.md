@@ -97,3 +97,30 @@ A text field, and the box that can hold content beside it. Root plus
   value and not in name — this is the case [Sizing](../../../AGENTS.md#sizing)
   anticipated. A token test asserts the two stay level, so either can be retuned
   without silently dragging the other along.
+
+## Joining a Button.Group
+
+A field can sit inside a [`Button.Group`](../button/AGENTS.md#buttongroup) and
+join the run, so `<Button.Group><Input /><Button>Go</Button></Button.Group>`
+reads as one control rather than two boxes touching.
+
+- **A joined field draws the *group's* corner, not its own.** Alone it takes the
+  generic ramp — `rounded-lg`, stepping down to `rounded-md` at `sm` — because a
+  field and the button beside it are meant to be retunable apart, which is the
+  same reason `--spacing-input-*` exists rather than the field reading
+  `h-button-md`. In a group that independence is exactly wrong: a run capped by
+  a field at one end and a button at the other would draw two different arcs.
+  The group owns the shape of its run, so a joined field switches to
+  `--radius-button-*`. `input.variants.test.ts` asserts the two emit identical
+  corner classes cell for cell, so the copies cannot drift.
+- **A field nested in an `Input.Group` never consults the member axes.** That
+  row owns the box, and `resolveInputFieldClass` already drops the `root` slot
+  entirely when the field is grouped — so the corner and the seam land on the
+  row, once, exactly as they land on a lone field. The two are threaded through
+  the same `InputBoxState` for that reason: one struct, one box, wherever it
+  ends up.
+- **`size` comes from the enclosing group outright; `isDisabled` stays a
+  fallback.** Controls of different heights do not join, so the group's size
+  wins. Disabled is the outermost rung of an already-three-deep ladder
+  (`Input.Group` → own prop → `Field` → `Button.Group`), so a single field in a
+  run can still be the only one disabled.

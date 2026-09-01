@@ -1,6 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { ICON_SIZE_TOKENS, INPUT_SIZE_TOKENS, INPUT_TEXT_TOKENS } from "../../styles/tokens";
 import {
+	BUTTON_GROUP_ORIENTATIONS,
+	BUTTON_GROUP_POSITIONS,
+	BUTTON_SIZES,
+	buttonVariants,
+	resolveButtonSizeStep,
+} from "../button/button.variants";
+import {
 	INPUT_INVALID_SELECTION_ACCENT_CLASS,
 	INPUT_PLACEHOLDER_ACCENT_CLASS,
 	INPUT_SELECTION_ACCENT_CLASS,
@@ -61,6 +68,11 @@ function everyBoxState(): InputBoxState[] {
 	}
 
 	return states;
+}
+
+/** Every `rounded-*` class a root string carries, in emission order. */
+function radiusClasses(cls: string): string[] {
+	return cls.match(/\brounded-[\w-]+\b/g) ?? [];
 }
 
 describe("the root slot", () => {
@@ -302,5 +314,56 @@ describe("the accent resolvers", () => {
 
 	test("let a caller override even the invalid selection colour", () => {
 		expect(resolveSelectionAccentClass({ className: "accent-info", isInvalid: true })).toBe("accent-info");
+	});
+});
+
+describe("a joined field's corner", () => {
+	test("draws the generic ramp when it stands on its own", () => {
+		// A field and the button beside it are meant to be retunable apart, so a
+		// lone field takes `--radius`, never the button's shape token.
+		expect(radiusClasses(inputVariants({ size: "sm" }).root())).toEqual(["rounded-md"]);
+		expect(radiusClasses(inputVariants({ size: "md" }).root())).toEqual(["rounded-lg"]);
+		expect(radiusClasses(inputVariants({ size: "lg" }).root())).toEqual(["rounded-lg"]);
+	});
+
+	test("draws the group's corner, cell for cell, when it is joined", () => {
+		// The whole point of teaching a field to join: a run capped by a field at
+		// one end and a button at the other has to draw one arc, not two ramps
+		// meeting in the middle. Asserted against the button's own variants
+		// rather than against a copied string, so the two cannot drift apart.
+		// Swept over the button's own six sizes, reading each one's step: a field
+		// has no square form, so it joins a run at the step the group is built on.
+		for (const buttonSize of BUTTON_SIZES) {
+			const size = resolveButtonSizeStep(buttonSize);
+			for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
+				for (const groupPosition of BUTTON_GROUP_POSITIONS) {
+					expect(radiusClasses(inputVariants({ groupPosition, orientation, size }).root())).toEqual(
+						radiusClasses(buttonVariants({ groupPosition, orientation, size: buttonSize }).root())
+					);
+				}
+			}
+		}
+	});
+
+	test("overlaps its neighbour exactly as a button does", () => {
+		for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
+			const field = inputVariants({ isSeamed: true, orientation }).root();
+			const button = buttonVariants({ isSeamed: true, orientation }).root();
+			const seam = /\B-(?:ms|mt)-px\b/;
+
+			expect(field.match(seam)?.[0]).toBe(button.match(seam)?.[0]);
+			expect(inputVariants({ isSeamed: false, orientation }).root()).not.toMatch(seam);
+		}
+	});
+
+	test("never mixes a physical corner with a logical one", () => {
+		for (const size of INPUT_SIZES) {
+			for (const groupPosition of BUTTON_GROUP_POSITIONS) {
+				expect(inputVariants({ groupPosition, orientation: "horizontal", size }).root()).not.toMatch(
+					/\brounded-[trbl]-/
+				);
+				expect(inputVariants({ groupPosition, orientation: "vertical", size }).root()).not.toMatch(/\brounded-[se]-/);
+			}
+		}
 	});
 });

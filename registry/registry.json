@@ -137,6 +137,7 @@
 			"registryDependencies": [
 				"icon",
 				"pressable",
+				"separator",
 				"spinner",
 				"text",
 				"tv"
@@ -149,6 +150,9 @@
 			"files": [
 				"ui/button/AGENTS.md",
 				"ui/button/button-end-content.tsx",
+				"ui/button/button-group-separator.tsx",
+				"ui/button/button-group-text.tsx",
+				"ui/button/button-group.tsx",
 				"ui/button/button-label.tsx",
 				"ui/button/button-start-content.tsx",
 				"ui/button/button.context.tsx",
@@ -344,6 +348,7 @@
 				"forms"
 			],
 			"registryDependencies": [
+				"button",
 				"cn",
 				"compose-refs",
 				"field",

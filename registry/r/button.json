@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"icon",
 		"pressable",
+		"separator",
 		"spinner",
 		"text",
 		"tv"
@@ -37,6 +38,51 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/native-ui/src/components/button/button-group-separator.tsx",
+			"target": "button/button-group-separator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/button/button-group-text.tsx",
+			"target": "button/button-group-text.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/button/button-group.tsx",
+			"target": "button/button-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				},
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
 			"path": "packages/native-ui/src/components/button/button-label.tsx",
 			"target": "button/button-label.tsx",
 			"namespace": "ui",
@@ -55,7 +101,13 @@
 		{
 			"path": "packages/native-ui/src/components/button/button.context.tsx",
 			"target": "button/button.context.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
 		},
 		{
 			"path": "packages/native-ui/src/components/button/button.tsx",
@@ -93,6 +145,10 @@
 				{
 					"from": "../../lib/tv",
 					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
 				}
 			]
 		},

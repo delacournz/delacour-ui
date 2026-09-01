@@ -1,5 +1,7 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
 import type { TextInput } from "react-native";
+import { useButtonGroupItemContext } from "../button/button.context";
+import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
 import { Pressable } from "../pressable";
 import { type InputGroupContextValue, InputGroupProvider } from "./input.context";
@@ -44,19 +46,27 @@ function InputGroupRoot({
 	// in the destructure — `false` there would swallow the field before it was
 	// ever consulted.
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
-	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
+
+	// An enclosing `Button.Group` owns the run's shape, so a grouped field draws
+	// the group's corner and overlaps its neighbour instead of drawing its own.
+	// `size` comes from the group outright — controls of different heights do
+	// not join — while `isDisabled` stays a fallback, so one member of a group
+	// can still be the only one disabled.
+	const member = useButtonGroupItemContext();
+	const resolvedSize = member ? resolveButtonSizeStep(member.size) : size;
+	const resolvedIsMemberDisabled = isDisabled ?? field?.isDisabled ?? member?.isDisabled ?? false;
 
 	const context = useMemo<InputGroupContextValue>(
 		() => ({
 			fieldRef,
-			isDisabled: resolvedIsDisabled,
+			isDisabled: resolvedIsMemberDisabled,
 			isFocused,
 			isInvalid: resolvedIsInvalid,
 			setFocused,
-			size,
+			size: resolvedSize,
 			variant,
 		}),
-		[resolvedIsDisabled, isFocused, resolvedIsInvalid, size, variant]
+		[resolvedIsMemberDisabled, isFocused, resolvedIsInvalid, resolvedSize, variant]
 	);
 
 	// A lone field is its own tap target edge to edge. Inside a group the field
@@ -70,13 +80,16 @@ function InputGroupRoot({
 				accessible={false}
 				className={resolveInputGroupClass({
 					className,
-					isDisabled: resolvedIsDisabled,
+					groupPosition: member?.position ?? "none",
+					isDisabled: resolvedIsMemberDisabled,
 					isFocused,
 					isInvalid: resolvedIsInvalid,
-					size,
+					isSeamed: member?.isSeamed ?? false,
+					orientation: member?.orientation ?? "horizontal",
+					size: resolvedSize,
 					variant,
 				})}
-				disabled={resolvedIsDisabled}
+				disabled={resolvedIsMemberDisabled}
 				feedback="none"
 				onPress={focusField}
 			>

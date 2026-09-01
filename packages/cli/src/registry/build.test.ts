@@ -56,7 +56,18 @@ describe("buildRegistry", () => {
 	test("derives the component graph from the imports, direct edges only", () => {
 		// `styles` reaches button through `tv`, not directly — the closure is
 		// `add`'s job, and recording it here would hide a real edge going missing.
-		expect(byName.get("button")?.registryDependencies).toEqual(["icon", "pressable", "spinner", "text", "tv"]);
+		//
+		// `separator` is here because `Button.Group.Separator` draws its rule with
+		// one. The edge runs that way only: a separator knows nothing about a
+		// group, which is what the last assertion in this test holds.
+		expect(byName.get("button")?.registryDependencies).toEqual([
+			"icon",
+			"pressable",
+			"separator",
+			"spinner",
+			"text",
+			"tv",
+		]);
 		expect(byName.get("tv")?.registryDependencies).toEqual(["styles"]);
 		expect(byName.get("list-group")?.registryDependencies).toContain("icons");
 		expect(byName.get("separator")?.registryDependencies).not.toContain("button");

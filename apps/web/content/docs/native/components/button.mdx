@@ -165,6 +165,132 @@ default differs — `scale`.
 <Button pressedScale={0.92}>Deeper press</Button>
 ```
 
+## Group
+
+`Button.Group` joins several controls into one run. Each member squares the pair of corners
+crossing a seam and overlaps its neighbour by a point, so two adjacent borders draw as one
+hairline rather than two.
+
+React Native has no sibling selector, so a member's place is worked out in JavaScript and
+published through context rather than matched with CSS. A group of one is indistinguishable
+from the control on its own.
+
+<Preview id="button/group" />
+
+```tsx
+<Button.Group variant="outline">
+  <Button onPress={archive}>Archive</Button>
+  <Button onPress={report}>Report</Button>
+  <Button onPress={snooze}>Snooze</Button>
+</Button.Group>
+```
+
+The group owns the axes because it owns the shape. It sets every member's *step* — controls of
+different heights do not join — while `variant`, `isDisabled` and `feedback` are defaults a member
+may still override, so one member can disable itself inside a group that did not.
+
+A member keeps its own *shape*, though, so a square button still works inside a run: an
+`icon-md` member of an `sm` group comes out `icon-sm` — square, and the same height as everything
+beside it.
+
+```tsx
+<Button.Group isDisabled size="sm" variant="outline">
+  <Button>Save</Button>
+  <Button variant="destructive">Discard</Button>
+</Button.Group>
+```
+
+## Group orientation
+
+A vertical run squares top and bottom instead of the ends. A horizontal one squares the inline
+axis, so it flips under right-to-left layout without being told to.
+
+<Preview id="button/group-orientation" />
+
+```tsx
+<Button.Group orientation="vertical" variant="outline">
+  <Button accessibilityLabel="More" size="icon-md" onPress={increment}>
+    <Icon icon={IconPlusMedium} />
+  </Button>
+  <Button accessibilityLabel="Fewer" size="icon-md" onPress={decrement}>
+    <Icon icon={IconMinusMedium} />
+  </Button>
+</Button.Group>
+```
+
+Horizontal groups are content-width, because that is what a segmented control is. For a run that
+fills its parent, put `w-full` on the group and `flex-1` on each member.
+
+```tsx
+<Button.Group className="w-full">
+  <Button className="flex-1">Decline</Button>
+  <Button className="flex-1">Accept</Button>
+</Button.Group>
+```
+
+<Callout type="warn">
+The parent has to have a definite width. Yoga resolves a percentage against the parent's content
+box, so `w-full` inside a container that is itself content-sized falls back to the content width —
+the group collapses onto its buttons and a `flex-1` member between them is squeezed to a few
+points. It reads as though `w-full` were ignored; there was simply no width to take a percentage
+of.
+</Callout>
+
+## Group separator
+
+`Button.Group.Separator` draws a rule between two members — a split button. It takes no position
+of its own, so the buttons either side of it are still the run's first and last and keep their
+rounded outer corners. The member after it does not overlap either: a one-point rule under a
+one-point overlap would be invisible.
+
+<Preview id="button/group-separator" />
+
+```tsx
+<Button.Group>
+  <Button onPress={save}>Save</Button>
+  <Button.Group.Separator />
+  <Button accessibilityLabel="More save options" size="icon-md" onPress={openMenu}>
+    <Icon icon={IconChevronDownSmall} />
+  </Button>
+</Button.Group>
+```
+
+## Group text
+
+`Button.Group.Text` is a member that says something rather than doing something. It draws the
+button's own chrome, so its height, padding and corner match the buttons beside it exactly. It
+falls back to `secondary` rather than `primary` when nothing names a variant — a chunk that
+cannot be pressed should not wear the group's action paint.
+
+<Preview id="button/group-text" />
+
+```tsx
+<Button.Group variant="outline">
+  <Button accessibilityLabel="Fewer" size="icon-md" onPress={decrement}>
+    <Icon icon={IconMinusMedium} />
+  </Button>
+  <Button.Group.Text>12 items</Button.Group.Text>
+  <Button accessibilityLabel="More" size="icon-md" onPress={increment}>
+    <Icon icon={IconPlusMedium} />
+  </Button>
+</Button.Group>
+```
+
+## Group with an input
+
+An [Input](/docs/native/components/input) joins a run like any other member. Alone it draws the
+generic corner ramp; joined, it takes the group's corner instead, so both ends of the row draw
+the same arc.
+
+<Preview id="button/group-input" />
+
+```tsx
+<Button.Group className="w-full">
+  <Input className="flex-1" placeholder="Search components" variant="secondary" />
+  <Button onPress={search}>Search</Button>
+</Button.Group>
+```
+
 ## Reading the button's state
 
 Use `useButton()` to match the parent from a custom child, without prop drilling.
@@ -199,6 +325,18 @@ function ButtonCount({ count }: { count: number }) {
     "Button.EndContent": {
       type: "ButtonSlotProps",
       description: "A centred wrapper for trailing content that is not an Icon.",
+    },
+    "Button.Group": {
+      type: "ButtonGroupProps",
+      description: "Joins several controls into one run. Publishes each member's place in it through context, since React Native has no sibling selector.",
+    },
+    "Button.Group.Separator": {
+      type: "ButtonGroupSeparatorProps",
+      description: "A rule between two members. Takes no position, so the members either side of it stay the run's first and last.",
+    },
+    "Button.Group.Text": {
+      type: "ButtonGroupTextProps",
+      description: "A member that says something rather than doing something. Draws the button's own chrome, so it lines up exactly.",
     },
   }}
 />
@@ -244,8 +382,8 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
     onLongPress: { type: "() => void" },
     feedback: {
       type: '"scale" | "fade" | "scale-fade" | "none"',
-      default: '"scale"',
-      description: "How the press moves the element. pressedScale / pressedOpacity still win on the axis they name.",
+      default: '"scale", or "fade" inside a Button.Group',
+      description: "How the press moves the element. A joined member fades rather than scaling, because a scaling member tears the seam open for the length of the press. pressedScale / pressedOpacity still win on the axis they name.",
     },
     haptic: {
       type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
@@ -260,6 +398,87 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
 ### ButtonLabelProps
 
 React Native's `TextProps`, plus `className`.
+
+### ButtonGroupProps
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description: "Which way the run goes. Members square the pair of corners crossing it. Horizontal squares the inline axis, so it flips under RTL.",
+    },
+    size: {
+      type: "ButtonSize",
+      default: '"md"',
+      description: "Sets every member's step — controls of different heights do not join. A member naming a square size keeps its square: an icon-md member of an sm group comes out icon-sm.",
+    },
+    variant: {
+      type: "ButtonVariant",
+      description: "A default every member takes unless it names its own. Unset, each member keeps its own.",
+    },
+    isDisabled: {
+      type: "boolean",
+      description: "Disables every member that does not say otherwise. Left unset, a single member can still disable itself.",
+    },
+    feedback: {
+      type: '"scale" | "fade" | "scale-fade" | "none"',
+      default: '"fade"',
+      description: "Press treatment for every member. A member's own prop still wins.",
+    },
+    children: { type: "ReactNode" },
+    className: { type: "string" },
+  }}
+/>
+
+### ButtonGroupSeparatorProps
+
+<TypeTable type={{ className: { type: "string" } }} />
+
+The orientation is read from the group and inverted — a rule crosses the run — so it is not a
+prop. Must be rendered inside a `Button.Group`.
+
+### ButtonGroupTextProps
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    variant: {
+      type: "ButtonVariant",
+      default: '"secondary", or the group\'s',
+      description: "Paint for the chunk. Falls back to the group's variant, then to secondary — a chunk that cannot be pressed should not wear the group's action paint.",
+    },
+    children: { type: "ReactNode" },
+    className: { type: "string" },
+  }}
+/>
+
+### useButtonGroup() · useButtonGroupItem()
+
+`useButtonGroup()` reads the enclosing group's axes. `useButtonGroupItem()` reads this member's
+place in the run — which is how a control this package has never heard of can join one and
+square its own corners.
+
+<TypeTable
+  type={{
+    orientation: { type: '"horizontal" | "vertical"', required: true },
+    size: { type: "ButtonSize", required: true },
+    variant: { type: "ButtonVariant" },
+    isDisabled: { type: "boolean" },
+    feedback: { type: "PressableFeedback" },
+    position: {
+      type: '"first" | "middle" | "last" | "only"',
+      description: "Item context only. Separators take no position, so the members either side of one are still first and last.",
+    },
+    isSeamed: {
+      type: "boolean",
+      description: "Item context only. Overlap the member before this one, so a shared border draws once.",
+    },
+  }}
+/>
 
 ### useButton()
 
@@ -286,8 +505,12 @@ import {
   BUTTON_LABEL_SIZES,
   BUTTON_ICON_SIZES,
   BUTTON_SPINNER_PLACEMENTS,
+  BUTTON_GROUP_ORIENTATIONS,
+  BUTTON_GROUP_POSITIONS,
   BUTTON_FOREGROUND_TOKEN,
   buttonVariants,
+  resolveGroupPositions,
+  resolveGroupSeams,
 } from "@delacour/native-ui/button";
 ```
 
@@ -298,3 +521,8 @@ square ones.
 `BUTTON_FOREGROUND_TOKEN` maps each variant to the theme token its icons and text are drawn in.
 `buttonVariants` is the `tv()` slot set — useful when building a component that has to match a
 button exactly.
+
+`resolveGroupPositions` and `resolveGroupSeams` are the pure walks behind a group: given which
+children are members, they return each one's place in the run and which ones overlap their
+neighbour. They take arrays of booleans rather than children, so they stay free of React and the
+whole matrix is unit-tested.

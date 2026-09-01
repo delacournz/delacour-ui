@@ -3,7 +3,7 @@ import { Icon, IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { Spinner } from "../spinner";
 import { TextClassProvider } from "../text/text.context";
-import { type ButtonContextValue, ButtonProvider } from "./button.context";
+import { type ButtonContextValue, ButtonProvider, useButtonGroupItemContext } from "./button.context";
 import {
 	BUTTON_FOREGROUND_TOKEN,
 	type ButtonLayout,
@@ -11,10 +11,13 @@ import {
 	type ButtonSpinnerPlacement,
 	type ButtonVariant,
 	buttonVariants,
+	resolveButtonFeedback,
 	resolveButtonLayout,
+	resolveGroupedButtonSize,
 	resolveSpinnerSwapIndex,
 } from "./button.variants";
 import { ButtonEndContent } from "./button-end-content";
+import { ButtonGroup } from "./button-group";
 import { ButtonLabel } from "./button-label";
 import { ButtonStartContent } from "./button-start-content";
 
@@ -33,34 +36,54 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 };
 
 function ButtonRoot({
-	variant = "primary",
-	size = "md",
-	isDisabled = false,
+	variant,
+	size,
+	isDisabled,
 	isLoading = false,
 	isDimmedWhileLoading = false,
 	spinnerPlacement = "start",
-	feedback = "scale",
+	feedback,
 	accessibilityLabel,
 	className,
 	children,
 	...props
 }: ButtonProps): ReactElement {
+	// Deliberately not defaulted in the destructure above: a default there would
+	// swallow the group before it was ever consulted. The group owns a member's
+	// *step* — controls of different heights do not join — but not its shape, so
+	// a square member keeps its width inside a run. `variant` and `isDisabled`
+	// are defaults it may override, so one member can disable itself inside a
+	// group that did not.
+	const item = useButtonGroupItemContext();
+	const resolvedSize = resolveGroupedButtonSize(size, item?.size);
+	const resolvedVariant = variant ?? item?.variant ?? "primary";
+	const resolvedIsDisabled = isDisabled ?? item?.isDisabled ?? false;
+
 	const context = useMemo<ButtonContextValue>(
-		() => ({ variant, size, isDisabled, isLoading }),
-		[variant, size, isDisabled, isLoading]
+		() => ({ variant: resolvedVariant, size: resolvedSize, isDisabled: resolvedIsDisabled, isLoading }),
+		[resolvedVariant, resolvedSize, resolvedIsDisabled, isLoading]
 	);
 
 	const layout = useMemo(() => resolveButtonLayout({ isLoading, spinnerPlacement }), [isLoading, spinnerPlacement]);
 
 	const content = useMemo(() => composeContent(children, layout), [children, layout]);
 
-	const slots = buttonVariants({ isDimmedWhileLoading, isDisabled, isLoading, size, variant });
+	const slots = buttonVariants({
+		groupPosition: item?.position ?? "none",
+		isDimmedWhileLoading,
+		isDisabled: resolvedIsDisabled,
+		isLoading,
+		isSeamed: item?.isSeamed ?? false,
+		orientation: item?.orientation ?? "horizontal",
+		size: resolvedSize,
+		variant: resolvedVariant,
+	});
 
 	// Icons and spinners composed into the button adopt these unless told otherwise.
 	const iconClassName = slots.icon();
 	const iconDefaults = useMemo(
-		() => ({ className: iconClassName, color: BUTTON_FOREGROUND_TOKEN[variant] }),
-		[iconClassName, variant]
+		() => ({ className: iconClassName, color: BUTTON_FOREGROUND_TOKEN[resolvedVariant] }),
+		[iconClassName, resolvedVariant]
 	);
 
 	const label = accessibilityLabel ?? (layout.isSpinnerOnly ? textOf(children) : undefined);
@@ -72,8 +95,8 @@ function ButtonRoot({
 				accessibilityRole="button"
 				busy={isLoading}
 				className={slots.root({ className })}
-				disabled={isDisabled}
-				feedback={feedback}
+				disabled={resolvedIsDisabled}
+				feedback={resolveButtonFeedback(feedback, item?.feedback, item !== null)}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>
@@ -244,5 +267,7 @@ export const Button = Object.assign(ButtonRoot, {
 	StartContent: ButtonStartContent,
 	/** A centred wrapper for trailing content that is not an `Icon`. */
 	EndContent: ButtonEndContent,
+	/** Several controls joined into one run, sharing a corner and a seam. */
+	Group: ButtonGroup,
 	displayName: "DelacourUI.Button",
 });

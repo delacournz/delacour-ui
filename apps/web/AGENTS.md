@@ -281,6 +281,12 @@ The route is not in `baseOptions().links`: `/theme` with no preset is the librar
 which every visitor already has. It is linked from `getting-started/theming.mdx` instead, which is
 the page about bringing a theme across.
 
+**The dev server binds to all interfaces.** `server.host: true` in `vite.config.ts`, because the
+playground's Generate CSS button opens this site at whatever host Metro reached the app on — a LAN
+address on a device, and on a simulator too whenever Metro was started on the LAN. Vite's default is
+`::1`, so every one of those links died at *"Safari can't open the page"* while `localhost:3000`
+worked fine from the same machine. Metro is already on the LAN on 8088 for the same reason.
+
 Nothing needed adding to `vite.config.ts` for the workspace dependency — `apps/web` already imports
 raw `.ts` from `@delacour/brand` in an SSR'd component, and Vite transpiles a linked workspace
 package rather than externalising it. Verified against `bun run build && bun run start`, not `dev`.

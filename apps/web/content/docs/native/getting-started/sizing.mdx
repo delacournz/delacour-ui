@@ -9,10 +9,10 @@ namespaces, so they compile to ordinary utilities.
 
 | Token | Utility | What it sizes |
 | --- | --- | --- |
-| `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint when icon-only |
+| `--spacing-button-*` | `h-button-md`, `w-button-md` | a button's height, and its square footprint at an `icon-*` size |
 | `--spacing-icon-*` | `size-icon-md` | any glyph — `Icon`, `Spinner`, a row's chevron |
 | `--text-button-*` | `text-button-md` | a button's label, paired with its height |
-| `--radius-button-*` | `rounded-button-md` | a button's corner, half its height — a capsule, and a circle when icon-only |
+| `--radius-button-*` | `rounded-button-md` | a button's corner, half its height — a capsule, and a circle at an `icon-*` size |
 | `--spacing-input-*` | `h-input-md`, `min-h-input-md` | a field's height — fixed on one line, a floor when multiline |
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
@@ -39,7 +39,7 @@ multiplier scales, so a square-cornered theme stays square at every step instead
 at the bottom and staying rounded at the top.
 
 A shape is a token too, and `--radius-button-*` is deliberately **not** part of that scale. It is
-half each button height, so a button is a capsule and an icon-only one a circle whatever `--radius`
+half each button height, so a button is a capsule and a square one a circle whatever `--radius`
 a consumer sets — the default, not a law: change those three numbers for a squarer kit, or pass
 `className="rounded-lg"` to square off one button. A radius above half the height is clamped by the
 renderer, and a test keeps the tokens under it.

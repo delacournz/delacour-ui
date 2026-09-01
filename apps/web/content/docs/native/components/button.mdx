@@ -68,7 +68,7 @@ Use the `variant` prop to change how the surface is painted.
 
 One axis drives five values: the height, the label's type scale, the icon step, the horizontal
 padding and the corner. `--radius-button-*` is half each height, so a button is a capsule by
-default and an icon-only one a circle. Square one off with `className="rounded-lg"`, or retune the
+default and a square one a circle. Square one off with `className="rounded-lg"`, or retune the
 three tokens to change every button at once.
 
 <Preview id="button/sizes" />
@@ -78,6 +78,8 @@ three tokens to change every button at once.
 <Button size="md">Medium</Button>
 <Button size="lg">Large</Button>
 ```
+
+The same axis carries the square sizes — see [Icon button](#icon-button).
 
 ## Icons
 
@@ -103,21 +105,27 @@ import { IconArrowRight, IconTrash } from "@delacour/native-ui/icons/central";
 The button publishes its size and its variant's foreground token to the subtree, so a bare `<Icon>`
 comes out right with nothing said at the call site. An explicit `size` or `color` still wins.
 
-## Icon only
+## Icon button
 
-Use `isIconOnly` for a square button whose only content is an icon.
+Use an `icon-*` size for a square button whose only content is an icon. Each one is its labelled
+step — the same height, corner and icon token — with the horizontal padding traded for a width off
+that step's own token, so the footprint is square by construction rather than by two numbers
+agreeing.
 
-<Preview id="button/icon-only" />
+<Preview id="button/icon-button" />
 
 ```tsx
-<Button isIconOnly accessibilityLabel="Favourite" variant="ghost">
+<Button accessibilityLabel="Favourite" size="icon-md" variant="ghost">
   <Icon icon={IconHeart} />
 </Button>
 ```
 
+`icon-sm`, `icon-md` and `icon-lg` are 36, 44 and 52 points square — the same three heights the
+labelled sizes stand at, so an icon button sits level with the text button beside it.
+
 <Callout type="warn">
-Always pair `isIconOnly` with an `accessibilityLabel`. There is no text for a screen reader to fall
-back on.
+Always pair an `icon-*` size with an `accessibilityLabel`. There is no text for a screen reader to
+fall back on.
 </Callout>
 
 ## Loading
@@ -208,14 +216,9 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
       description: "How the surface is painted.",
     },
     size: {
-      type: '"sm" | "md" | "lg"',
+      type: '"sm" | "md" | "lg" | "icon-sm" | "icon-md" | "icon-lg"',
       default: '"md"',
-      description: "Height, label type scale, icon step and padding, on one axis.",
-    },
-    isIconOnly: {
-      type: "boolean",
-      default: "false",
-      description: "Square footprint for a button whose only content is an icon. Requires an accessibilityLabel.",
+      description: "Height, label type scale, icon step, corner and padding, on one axis. An icon-* size is that step with a square footprint instead of horizontal padding, and requires an accessibilityLabel.",
     },
     isDisabled: {
       type: "boolean",
@@ -230,7 +233,7 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
     spinnerPlacement: {
       type: '"start" | "end" | "only"',
       default: '"start"',
-      description: "Where the spinner sits. `only` replaces the content, keeping the footprint, and carries the label onto accessibilityLabel.",
+      description: "Where the spinner sits. `only` replaces the content, keeping whatever footprint the size gave the button, and carries the label onto accessibilityLabel.",
     },
     isDimmedWhileLoading: {
       type: "boolean",
@@ -265,8 +268,14 @@ React Native's `TextProps`, plus `className`.
     variant: { type: "ButtonVariant", required: true },
     size: { type: "ButtonSize", required: true },
     isDisabled: { type: "boolean", required: true },
+    isLoading: { type: "boolean", required: true },
   }}
 />
+
+<Callout>
+`size` is the prop verbatim, so an icon button reports `icon-lg`, not `lg`. Compare against
+`BUTTON_ICON_SIZES` rather than a bare step when a child has to know it is inside a square one.
+</Callout>
 
 ### Exports
 
@@ -274,11 +283,17 @@ React Native's `TextProps`, plus `className`.
 import {
   BUTTON_VARIANTS,
   BUTTON_SIZES,
+  BUTTON_LABEL_SIZES,
+  BUTTON_ICON_SIZES,
   BUTTON_SPINNER_PLACEMENTS,
   BUTTON_FOREGROUND_TOKEN,
   buttonVariants,
 } from "@delacour/native-ui/button";
 ```
+
+`BUTTON_SIZES` is every value `size` accepts. `BUTTON_LABEL_SIZES` and `BUTTON_ICON_SIZES` are the
+two families it is composed from — map one when a list should hold only labelled buttons, or only
+square ones.
 
 `BUTTON_FOREGROUND_TOKEN` maps each variant to the theme token its icons and text are drawn in.
 `buttonVariants` is the `tv()` slot set — useful when building a component that has to match a

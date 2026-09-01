@@ -97,7 +97,13 @@ import { Text } from "@delacour/native-ui/text";
 
 export function ButtonHint({ className, ...props }: TextProps) {
   const { size } = useButton();
-  return <Text.Caption className={cn(size === "lg" && "text-base", className)} {...props} />;
+  return <Text.Caption className={cn(size.endsWith("lg") && "text-base", className)} {...props} />;
 }
 ButtonHint.displayName = "App.ButtonHint";
 ```
+
+<Callout>
+A context reports the prop verbatim, never a normalised version of it. `useButton()` on a
+`<Button size="icon-lg">` returns `"icon-lg"`, so match against the family — `BUTTON_ICON_SIZES`,
+or the step suffix — rather than assuming a bare `"lg"`.
+</Callout>

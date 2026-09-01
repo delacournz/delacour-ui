@@ -145,6 +145,29 @@ Commit that markdown file alongside the change. On merge to `main`,
 
 So a release is two merges, and the versions are reviewable in between.
 
+### Both packages are in alpha
+
+`.changeset/pre.json` puts the repository in Changesets **pre mode**, tagged `alpha`. Both packages
+sit at `0.0.1-alpha.0`, and while pre mode is on every `changeset version` produces the next
+`-alpha.N` rather than a stable version.
+
+Publishes go to npm's **`alpha` dist-tag**, from two directions: Changesets passes the pre tag, and
+`publishConfig.tag` in each package pins it so a hand-run `npm publish` cannot claim `latest`
+either. `latest` therefore points at nothing on purpose — an untested build should not be what
+`bun add @delacour/native-ui` resolves to. Every documented command names the tag
+(`bunx delacour@alpha`, `bun add @delacour/native-ui@alpha`).
+
+Going stable is four steps, and skipping any one of them ships an alpha as `latest`:
+
+```bash
+bunx changeset pre exit          # deletes .changeset/pre.json
+bun run changeset                # the changeset that names the stable version
+```
+
+then remove `"tag": "alpha"` from `publishConfig` in **both** `packages/cli/package.json` and
+`packages/native-ui/package.json`, and swap `@alpha` back to `@latest` across the READMEs and
+`apps/web` — `grep -rn "@alpha"` finds them.
+
 **npm auth is OIDC — there is no npm token.** Both packages are configured on npmjs.com with this
 repository and `release.yml` as a trusted publisher, which is why the job requests
 `id-token: write` and installs a current npm before publishing. `bun publish` cannot do this:

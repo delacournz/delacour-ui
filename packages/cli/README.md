@@ -5,8 +5,8 @@ repository — you own `button.tsx` and can edit it, rather than waiting for a
 release.
 
 ```bash
-bunx delacour@latest init
-bunx delacour@latest add button
+bunx delacour@alpha init
+bunx delacour@alpha add button
 ```
 
 ## Why not a component package
@@ -61,7 +61,7 @@ Then it asks. `--install` answers yes without asking, `--no-install` answers no,
 nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
 
 ```bash
-bunx delacour@latest add bottom-sheet --install
+bunx delacour@alpha add bottom-sheet --install
 ```
 
 The missing packages are shown as commands, not names, because the command is the part that is not

@@ -1,5 +1,6 @@
 import { BASE_COLORS, type BaseColorName, type TokenValues } from "./base-colors";
 import type { DesignSystemConfig } from "./config";
+import { fontByName } from "./fonts";
 import { radiusByName } from "./radii";
 import { styleByName } from "./styles";
 import { ACCENT_THEMES, type ThemeName } from "./themes";
@@ -113,4 +114,33 @@ export function resolveTokens(config: DesignSystemConfig): ResolvedTokens {
 	}
 
 	return { light, dark };
+}
+
+export type ResolvedFonts = { sans?: string; heading?: string };
+
+/**
+ * The family name each rail resolves to, per config.
+ *
+ * The value is the family embedded in the TTF, not the title: React Native's
+ * `fontFamily` takes one name and no fallback list, and the name has to be what
+ * iOS registers under and what Android's generated `res/font` XML groups its
+ * weights beneath. A mismatch falls back to the system font with no error at all.
+ *
+ * **Fonts stay out of `resolveTokens` on purpose.** `design-system.test.ts`
+ * asserts every key that function writes is declared inside `theme.css`'s
+ * `@variant light` and `@variant dark` blocks — and `--font-sans` and
+ * `--font-heading` are declared in the `@variant ios` / `@variant android`
+ * blocks instead, because no single family name works on both platforms. Folding
+ * them in would fail that suite on the first run.
+ *
+ * It lives here rather than in the playground's store because the store and the
+ * CSS emitter both need it, and two copies of "which family does this config
+ * mean" is exactly the drift that shows up as a screen rendering one typeface
+ * while the file you copied names another.
+ */
+export function resolveFonts(config: DesignSystemConfig): ResolvedFonts {
+	const sans = fontByName(config.font)?.family;
+	const heading = config.fontHeading === "inherit" ? sans : fontByName(config.fontHeading)?.family;
+
+	return { sans, heading };
 }

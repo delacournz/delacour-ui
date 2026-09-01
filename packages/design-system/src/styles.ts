@@ -244,6 +244,38 @@ export const STYLES: readonly Style[] = [
 	},
 ];
 
+/**
+ * Every geometry name a style writes, as a literal list.
+ *
+ * `emit.ts` splits a resolved theme against this to decide which values take
+ * `px` and which are colours, so it has to be readable without reaching into
+ * `STYLES[0]` — and a literal is the version a reader can check. `styles.test`
+ * asserts it against the real keys, which is what stops it drifting.
+ */
+export const GEOMETRY_TOKENS: readonly (keyof GeometryValues)[] = [
+	"radius",
+	"spacing-button-sm",
+	"spacing-button-md",
+	"spacing-button-lg",
+	"text-button-sm",
+	"text-button-md",
+	"text-button-lg",
+	"spacing-input-sm",
+	"spacing-input-md",
+	"spacing-input-lg",
+	"text-input-sm",
+	"text-input-md",
+	"text-input-lg",
+	"spacing-icon-xs",
+	"spacing-icon-sm",
+	"spacing-icon-md",
+	"spacing-icon-lg",
+	"spacing-icon-xl",
+	"spacing-icon-2xl",
+	"spacing-navbar-row",
+	"spacing-screen-gutter",
+];
+
 export function styleByName(name: string): Style | undefined {
 	return STYLES.find((style) => style.name === name);
 }

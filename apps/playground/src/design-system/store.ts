@@ -1,6 +1,5 @@
 import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@delacour/design-system/config";
-import { fontByName } from "@delacour/design-system/fonts";
-import { resolveTokens } from "@delacour/design-system/resolve";
+import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { useSyncExternalStore } from "react";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
@@ -35,19 +34,6 @@ function readConfig(): DesignSystemConfig {
 }
 
 /**
- * The family name to put in `--font-sans`, per platform.
- *
- * React Native's `fontFamily` takes one name and no fallback list, and the name
- * has to be the one embedded in the TTF — that is what iOS registers under and
- * what Android's generated `res/font` XML groups its weights beneath. A
- * mismatch falls back to the system font with no error at all, which is why
- * `fonts.ts` carries the embedded name rather than deriving it from the title.
- */
-function familyOf(name: string): string | undefined {
-	return fontByName(name)?.family;
-}
-
-/**
  * Push a config into Uniwind's variable store, for both modes.
  *
  * `updateCSSVariables` writes `UniwindStore.vars[theme]` — the same map style
@@ -59,18 +45,17 @@ function familyOf(name: string): string | undefined {
  * and applying the inactive mode afterwards has been observed to win on the
  * first render.
  *
- * Fonts are resolved here rather than in the data because the data files must
- * stay free of React Native imports — `bun test` cannot parse React Native's
- * Flow-typed source, and the resolver's whole matrix is asserted there.
+ * Fonts come from `resolveFonts` rather than being worked out here, so the
+ * running app and the CSS the documentation site emits cannot disagree about
+ * which family a config means.
  */
 export function applyConfig(config: DesignSystemConfig): void {
 	const tokens = resolveTokens(config);
 
-	const body = familyOf(config.font);
-	const heading = config.fontHeading === "inherit" ? body : familyOf(config.fontHeading);
+	const { sans, heading } = resolveFonts(config);
 
 	const fonts: Record<string, string> = {};
-	if (body) fonts["--font-sans"] = body;
+	if (sans) fonts["--font-sans"] = sans;
 	if (heading) fonts["--font-heading"] = heading;
 
 	const active = Uniwind.currentTheme === "dark" ? "dark" : "light";

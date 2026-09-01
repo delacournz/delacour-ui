@@ -46,8 +46,8 @@
 				"releaseStatus": "draft"
 			},
 			"ios": {
-				"ascAppId": "<ios_app_store_id>",
-				"appleTeamId": "<ios_apple_team_id>"
+				"ascAppId": "6807196281",
+				"appleTeamId": "LN69P7N673"
 			}
 		},
 		"production": {

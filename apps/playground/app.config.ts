@@ -18,7 +18,7 @@ const APP_VERSION = (process.env as Record<string, string | undefined>).APP_VERS
  */
 const expoConfig: ExpoConfig = {
 	name: "Delacour UI",
-	slug: "delacour-ui-playground",
+	slug: "delacour-ui",
 	scheme: "dlc-ui-playground",
 	owner: "delacour",
 	version: APP_VERSION,
@@ -93,14 +93,14 @@ const expoConfig: ExpoConfig = {
 		policy: "fingerprint",
 	},
 	updates: {
-		url: "https://u.expo.dev/790dfdc0-c0ea-47e4-9f28-b86a6f7ed535",
+		url: "https://u.expo.dev/ff1b084f-0d41-43bb-9ce3-0b8cfb7e6f7e",
 	},
 	// Written by hand because `eas init` cannot edit a dynamic config. It is the
 	// only link between this app and the EAS project the workflows build on, so
 	// losing it makes every `eas` command prompt to create a second project.
 	extra: {
 		eas: {
-			projectId: "790dfdc0-c0ea-47e4-9f28-b86a6f7ed535",
+			projectId: "ff1b084f-0d41-43bb-9ce3-0b8cfb7e6f7e",
 		},
 	},
 };

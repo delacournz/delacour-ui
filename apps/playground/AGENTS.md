@@ -329,10 +329,12 @@ TypeScript's terms — see [packages/tsconfig](../../packages/tsconfig/AGENTS.md
 
 ## EAS
 
-The EAS project is `@delacour/delacour-ui-playground`; `owner` and
-`extra.eas.projectId` in `app.config.ts` are what bind this app to it. Both are
-written by hand — `eas init` refuses to edit a dynamic config — so losing either
-makes the next `eas` command offer to create a second project.
+The EAS project is `@delacour/delacour-ui`, and `owner`, `slug` and
+`extra.eas.projectId` in `app.config.ts` are what bind this app to it. The
+project id is written by hand because `eas init` refuses to edit a dynamic
+config, so losing it makes the next `eas` command offer to create a second
+project — which is exactly how this app briefly ended up pointing at a stray
+`delacour-ui-playground`. `slug` must keep matching the project on expo.dev.
 
 Four workflows live in `.eas/workflows`, and `eas.json` carries the build
 profiles they name. Do not rename a profile: the YAML matches them by string.
@@ -400,9 +402,9 @@ cannot run them.
   base directory to `apps/playground` so a triggered run resolves the same way
   `eas workflow:run` does. Until then everything runs through the `eas:*`
   scripts.
-- **Store submission.** `eas.json`'s `submit.base.ios` needs a real `ascAppId`
-  and `appleTeamId`, and Android submits to the `internal` track as a `draft`.
-  The submit jobs fail until those are filled in.
+- **Android submission.** `submit.base.android` targets the `internal` track as
+  a `draft`, and needs a Google Service Account key on the EAS project before it
+  can push anything. iOS is ready: `ascAppId` and `appleTeamId` are set.
 
 ## Conventions
 

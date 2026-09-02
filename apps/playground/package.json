@@ -82,6 +82,7 @@
 		"react-native-safe-area-context": "catalog:",
 		"react-native-screens": "catalog:",
 		"react-native-svg": "catalog:",
+		"react-native-tab-view": "^4.3.2",
 		"react-native-worklets": "catalog:",
 		"tailwindcss": "^4.3.3",
 		"uniwind": "^1.11.0"

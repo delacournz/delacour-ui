@@ -40,9 +40,12 @@ src/
 ├── components/mdx.tsx     the MDX component registry
 ├── components/delacour-icon.tsx  the brand mark, inline
 ├── components/install.tsx <ComponentInstall> and <InstallTabs>
+├── components/playground/    the QR trigger and the install buttons
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
+├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
+├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── routes/
 │   ├── __root.tsx         RootProvider + <html>
@@ -51,6 +54,8 @@ src/
 │   ├── docs/$.tsx         the docs catch-all
 │   ├── docs/{$}[.]md.ts   <page>.md — see "The .md routes 404 in dev"
 │   ├── theme.tsx          /theme — a preset code, rendered as CSS
+│   ├── playground/components/{$}.tsx  the deep link's web fallback
+│   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
 │   └── llms[.]txt.ts, llms-full[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
@@ -371,6 +376,79 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   on a component missing either, so that index is a reliable place to start when writing a page
   here — and it is where prose trimmed from a page belongs.
 - `releases/index.mdx` is hand-maintained from `git log --oneline -- packages/native-ui`.
+
+## Scan to preview
+
+Every component page carries a **Scan to preview** button in its toolbar. The QR encodes
+`https://ui.delacour.co.nz/playground/components/{slug}`, which iOS and Android hand straight to the
+playground app — the component running, rather than the still photograph the page shows.
+
+The docs are captured media by design (below); this is the escape hatch for everything a photograph
+cannot carry — the press state, the gesture, the spring.
+
+| Piece | Where |
+| --- | --- |
+| The app's identity, and the URL builders | `src/lib/native-app.ts` |
+| The trigger, the QR, the install buttons | `src/components/playground/` |
+| The web fallback | `src/routes/playground/components/{$}.tsx` |
+| The association files | `src/routes/[.]well-known/` |
+| The app's half of the contract | `apps/playground/src/lib/deep-link.ts` |
+
+### The prefix is not under `/docs`
+
+`/playground/components/*` is what `apple-app-site-association` claims, and a claimed path is a path
+the operating system may take away from the browser. Under `/docs` the glob would sit next to real
+documentation URLs, and one careless widening would send readers into an app instead of a page.
+
+The trigger is rendered from `docs/$.tsx` for any page matching `native/components/{slug}.mdx` —
+not from MDX. Nothing in `content/` changes, so `src/content.test.ts`'s page-shape assertions stay
+exactly as they were, and a new component gets its QR by existing.
+
+### The association files are handlers, not `public/` files
+
+Both would 404 as static files, for two different reasons. Vite does not dependably copy a
+leading-dot directory out of `publicDir`, and Nitro types a static response from its extension —
+which `apple-app-site-association` does not have, while Apple requires `application/json`. Two
+route handlers settle both, and let the bodies be built from the same constants the QR is.
+
+`[.]` is the router generator's literal-dot escape, so neither directory is hidden on disk.
+
+Apple fetches its file through a CDN and caches it. Check what a device would actually read:
+
+```bash
+curl -s https://app-site-association.cdn-apple.com/a/v1/ui.delacour.co.nz
+```
+
+### The QR is built from `siteUrl`, not the live origin
+
+`siteUrl` is a fixed constant and staging deliberately serves it, so the code is identical under SSR
+and hydration — no `window.location.origin`, no client-only branch, no hydration mismatch. It also
+means a code scanned off a `localhost` page still points somewhere the phone can reach, which the
+alternative does not.
+
+Desktop and mobile are split in CSS rather than in JavaScript, because the two halves encode
+*different URLs*: the QR carries the HTTPS link, and the tap card carries `dlc-ui-playground://`.
+Safari treats a link to the domain it is already on as an in-page navigation and never hands it to
+the app, so a phone already reading these docs has to use the scheme.
+
+The QR itself stays dark-on-white in both themes. An inverted code is legible to most modern
+scanners and to some older ones not at all, and a code nobody can scan is the single failure this
+feature has to avoid.
+
+### Nothing here can drift quietly
+
+`src/lib/native-app.test.ts` reads `apps/playground/app.config.ts`, `eas.json` and the app's own
+`deep-link.ts` as **text** and fails when the scheme, bundle identifier, Apple team id, hosts or
+path prefix disagree with the constants here. It has to read rather than import: an Expo config
+pulls in React Native, whose Flow-typed source Bun's transpiler cannot parse.
+
+`src/lib/components.test.ts` pins `COMPONENTS` to the library's component folders and
+`PLAYGROUND_SLUGS` to the playground's routes. Before the playground, `COMPONENTS` was hand-maintained
+and checked against nothing.
+
+<!-- What a stale bundle id costs. -->
+A drifted value here does not throw. It produces an association file the operating system reads,
+accepts and quietly stops matching — a QR that opens Safari, on a page that looks entirely correct.
 
 ## Previews are captured media, not live components
 

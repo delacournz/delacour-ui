@@ -133,3 +133,38 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 export function componentsInGroup(group: ComponentGroup): readonly ComponentEntry[] {
 	return COMPONENTS.filter((component) => component.group === group);
 }
+
+/**
+ * Components with no screen in the playground.
+ *
+ * `DelacourProvider` has nothing to render on its own — every route in the
+ * playground already sits downstream of it — so it has no route to deep-link
+ * into, and no "Scan to preview" button. The same exception, for the same
+ * reason, as `COMPONENTS_WITHOUT_DEMOS` in `apps/playground/src/demos/demos.test.ts`.
+ */
+export const COMPONENTS_WITHOUT_SCREENS: ReadonlySet<string> = new Set(["provider"]);
+
+/** The slugs a playground link can name. Kept honest by `components.test.ts`. */
+export const PLAYGROUND_SLUGS: readonly string[] = COMPONENTS.map((component) => component.slug).filter(
+	(slug) => !COMPONENTS_WITHOUT_SCREENS.has(slug)
+);
+
+/** Does this slug have a screen to open? */
+export function hasPlaygroundScreen(slug: string): boolean {
+	return PLAYGROUND_SLUGS.includes(slug);
+}
+
+/** A component page's path under `content/docs`, as Fumadocs reports it. */
+const DOCS_COMPONENT_PATH = /^native\/components\/([a-z0-9-]+)\.mdx$/;
+
+/**
+ * The playground slug for a documentation page, or `null` if the page has none.
+ *
+ * `null` covers three cases the docs toolbar must not offer a QR for: a page
+ * outside `native/components`, that folder's `index.mdx`, and a component with
+ * no screen in the playground.
+ */
+export function playgroundSlugForDocsPath(path: string): string | null {
+	const slug = DOCS_COMPONENT_PATH.exec(path)?.[1];
+	return slug !== undefined && hasPlaygroundScreen(slug) ? slug : null;
+}

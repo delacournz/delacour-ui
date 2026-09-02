@@ -55,9 +55,11 @@ src/
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
 │   ├── index.tsx                 the component index — a ListGroup of every gallery
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
+│   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
 │   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
 │   └── (components)/             one route per component, grouped without a path segment
 ├── demos/                        one file per demo — see demos/AGENTS.md
+├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── demo-pager/               the paged gallery — one demo per screen
@@ -231,6 +233,48 @@ Three things in it are load-bearing, and each has a failure attached:
   component while rendering a different component" — which puts a LogBox banner
   along the bottom of every captured frame. In a plain effect it lands after the
   first paint, which is too late. A layout effect is between the two.
+
+## Deep links
+
+Two URL shapes reach this app, and they are handled in opposite ways.
+
+| Shape | Example | What happens |
+| --- | --- | --- |
+| Custom scheme | `dlc-ui-playground://preview?component=switch&demo=colours&theme=dark` | Passed through untouched; Expo Router resolves it |
+| Universal link | `https://ui.delacour.co.nz/playground/components/tabs/variants` | Rewritten to `/tabs/variants` |
+
+The second is what the **Scan to preview** QR on every documentation page encodes. `app.config.ts`
+declares the association — `ios.associatedDomains` and two `autoVerify` Android intent filters — and
+`apps/web` serves the two `.well-known` files the operating systems fetch to check the claim.
+
+`src/app/+native-intent.ts` does the rewrite, and does almost nothing itself: it hands the path to
+`src/lib/deep-link.ts` along with a predicate answering *does this app have this route?*. The
+split is what makes the rewrite testable. `+native-intent` reads the answer from the generated demo
+registry, which imports every demo, which imports React Native — Flow-typed source Bun's transpiler
+cannot parse, so a test could never import it. The pure half has no such problem, and
+`src/lib/deep-link.test.ts` covers every rule.
+
+**Only `https:` is rewritten.** That is the load-bearing line. The capture pipeline drives
+`dlc-ui-playground://preview?…` through this same function on every single capture, and rewriting it
+would break `bun run previews` in a way whose first symptom is a wall of identical screenshots.
+
+A slug with no screen — `provider`, a typo, a truncated scan — opens the home screen. An unmatched
+route in a release build is a blank screen and a console warning nobody sees.
+
+### One intent filter per host
+
+`ui.delacour.co.nz` and `ui.staging.delacour.co.nz` each get their own filter rather than sharing
+one with two `data` entries. Android verifies a filter as a unit: a staging domain that failed to
+serve `/.well-known/assetlinks.json` would take production's verification down with it.
+
+### Deploy the site before you install the build
+
+iOS fetches `apple-app-site-association` when the app is installed, through Apple's CDN, and caches
+the result. Install a build before the file is live and you have a binary that intercepts nothing
+until it is reinstalled — with no error anywhere to say why.
+
+Note too that adding these entitlements **changes the fingerprint**, so this is a real build on both
+platforms rather than an OTA. See [Fingerprints are the whole economy](#fingerprints-are-the-whole-economy).
 
 ## Capturing preview media
 

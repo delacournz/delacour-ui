@@ -1,5 +1,6 @@
 import { matchFont, type SkFont } from "@shopify/react-native-skia";
 import { useMemo } from "react";
+import type { LabelMetrics } from "../core/text/label-anchor";
 
 /** Re-exported so a consumer can hold a font without importing Skia itself. */
 export type ChartFont = SkFont;
@@ -53,7 +54,19 @@ export function measureLabelWidths(font: SkFont | null, labels: readonly string[
  * nominal point size.
  */
 export function fontLineHeight(font: SkFont | null): number {
-	if (font === null) return 0;
+	const { ascent, descent } = fontMetrics(font);
+	return ascent + descent;
+}
+
+/**
+ * A font's ascent and descent, both as positive distances from the baseline.
+ *
+ * Skia reports `ascent` negative (it is a y offset in a downward-positive
+ * space) and `descent` positive. Normalising both to magnitudes here is what
+ * lets `anchorY` read as geometry rather than as sign juggling.
+ */
+export function fontMetrics(font: SkFont | null): LabelMetrics {
+	if (font === null) return { ascent: 0, descent: 0 };
 	const metrics = font.getMetrics();
-	return Math.abs(metrics.ascent) + Math.abs(metrics.descent);
+	return { ascent: Math.abs(metrics.ascent), descent: Math.abs(metrics.descent) };
 }

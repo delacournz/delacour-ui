@@ -36,7 +36,14 @@ export {
 	formatDateTick,
 	formatNumberTick,
 } from "./text/format-tick";
-export { anchorX, anchorY, type LabelAlignment, type LabelPosition } from "./text/label-anchor";
+export {
+	anchorX,
+	anchorY,
+	type LabelAlignment,
+	type LabelMetrics,
+	type LabelPosition,
+	labelHeight,
+} from "./text/label-anchor";
 export { type BuildTicksOptions, buildTicks } from "./ticks/build-ticks";
 export { linearTicks, logTicks } from "./ticks/linear-ticks";
 export type { ChartTick } from "./ticks/tick.types";

@@ -347,7 +347,7 @@ export const previews = {
 		light: { poster: "/previews/chart/area/light.png?v=2b6e0e400f77" },
 		dark: { poster: "/previews/chart/area/dark.png?v=2b6e0e400f77" },
 		sourceHash: "2b6e0e400f77",
-		capturedAt: "2026-09-02T11:35:37.623Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"chart/grid-and-axes": {
@@ -363,7 +363,7 @@ export const previews = {
 		light: { poster: "/previews/chart/grid-and-axes/light.png?v=0b39ea17dc7b" },
 		dark: { poster: "/previews/chart/grid-and-axes/dark.png?v=0b39ea17dc7b" },
 		sourceHash: "0b39ea17dc7b",
-		capturedAt: "2026-09-02T12:19:09.923Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"chart/legend": {
@@ -379,7 +379,7 @@ export const previews = {
 		light: { poster: "/previews/chart/legend/light.png?v=2e70110d9b93" },
 		dark: { poster: "/previews/chart/legend/dark.png?v=2e70110d9b93" },
 		sourceHash: "2e70110d9b93",
-		capturedAt: "2026-09-02T11:35:37.623Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"chart/line": {
@@ -395,7 +395,7 @@ export const previews = {
 		light: { poster: "/previews/chart/line/light.png?v=50dfbd5cae6a" },
 		dark: { poster: "/previews/chart/line/dark.png?v=50dfbd5cae6a" },
 		sourceHash: "50dfbd5cae6a",
-		capturedAt: "2026-09-02T11:35:37.623Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"chart/multi-series": {
@@ -411,7 +411,7 @@ export const previews = {
 		light: { poster: "/previews/chart/multi-series/light.png?v=10cc480f23df" },
 		dark: { poster: "/previews/chart/multi-series/dark.png?v=10cc480f23df" },
 		sourceHash: "10cc480f23df",
-		capturedAt: "2026-09-02T11:35:37.623Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"chart/tooltip": {
@@ -424,11 +424,11 @@ export const previews = {
 		width: 720,
 		height: 480,
 		animated: true,
-		durationMs: 3400,
+		durationMs: 3367,
 		light: { poster: "/previews/chart/tooltip/light.png?v=7b4288e39c24", video: "/previews/chart/tooltip/light.mp4?v=7b4288e39c24" },
 		dark: { poster: "/previews/chart/tooltip/dark.png?v=7b4288e39c24", video: "/previews/chart/tooltip/dark.mp4?v=7b4288e39c24" },
 		sourceHash: "7b4288e39c24",
-		capturedAt: "2026-09-02T12:58:09.707Z",
+		capturedAt: "2026-09-02T13:23:08.555Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"checkbox/checkbox-group": {

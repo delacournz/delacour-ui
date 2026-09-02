@@ -14,7 +14,7 @@ import { categoricalTickFormat, defaultTickFormat } from "../../core/text/format
 import { DEFAULT_TICK_COUNT } from "../../core/ticks/tick-count";
 import type { SidedNumber } from "../../core/util/sided-number";
 import type { ChartScrubState } from "../../gesture/gesture.types";
-import { fontLineHeight, measureLabelWidths } from "../../skia/font";
+import { fontMetrics, measureLabelWidths } from "../../skia/font";
 import type { AxisLabelFormatter, AxisOptions, ChartContextValue } from "../cartesian-chart.types";
 
 export type UseChartModelOptions = {
@@ -119,7 +119,8 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 			}),
 		};
 
-		const lineHeight = fontLineHeight(font);
+		const metrics = fontMetrics(font);
+		const lineHeight = metrics.ascent + metrics.descent;
 		const frame = resolveChartFrame({
 			canvas,
 			padding,
@@ -152,6 +153,7 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 			yKeys: keys,
 			font,
 			lineHeight,
+			fontMetrics: metrics,
 			curve,
 			animation,
 			scrub: scrub ?? null,

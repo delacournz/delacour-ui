@@ -4,6 +4,7 @@ import type { ChartAnimation } from "../animation/animation.types";
 import type { ChartBounds, ChartPoint, ChartRow, ChartSize } from "../core/chart.types";
 import type { CurveType } from "../core/curve/curves";
 import type { ScaleDescriptor, ScaleType } from "../core/scale/scale.types";
+import type { LabelMetrics } from "../core/text/label-anchor";
 import type { ChartTick } from "../core/ticks/tick.types";
 import type { SidedNumber } from "../core/util/sided-number";
 import type { ChartScrubState, ScrubConfig } from "../gesture/gesture.types";
@@ -63,6 +64,8 @@ export type ChartContextValue = {
 	/** `null` until the font resolves; an axis then draws ticks and no labels. */
 	readonly font: SkFont | null;
 	readonly lineHeight: number;
+	/** The font's ascent and descent, for placing a label by its glyph box. */
+	readonly fontMetrics: LabelMetrics;
 	readonly curve: CurveType;
 	readonly animation: ChartAnimation;
 	readonly scrub: ChartScrubState | null;

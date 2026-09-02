@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { anchorX, anchorY } from "./label-anchor";
+import { anchorX, anchorY, labelHeight } from "./label-anchor";
 
 describe("anchorX", () => {
 	test("centres a label on the point it labels", () => {
@@ -13,17 +13,47 @@ describe("anchorX", () => {
 });
 
 describe("anchorY", () => {
-	test("drops a label below by a full line plus the gap", () => {
-		expect(anchorY(50, 12, "below", 4)).toBe(66);
+	// A 12pt line: 9 above the baseline, 3 below. The asymmetry is the point.
+	const metrics = { ascent: 9, descent: 3 };
+
+	test("puts the glyph box's top edge below the anchor, gap included", () => {
+		// The bug this replaced: a baseline a whole line-height down put the box's
+		// BOTTOM where its top belonged, and every descender — the tail of a `Q`,
+		// the hook of a `y` — hung past the reserved gutter and was sliced off by
+		// the canvas. `Jan` looked perfect; `Q1` was visibly cut.
+		const baseline = anchorY(100, metrics, "below", 6);
+		expect(baseline - metrics.ascent).toBe(106);
+		expect(baseline + metrics.descent).toBe(118);
 	});
 
-	test("lifts a label above by the gap alone, the baseline already being on the point", () => {
-		expect(anchorY(50, 12, "above", 4)).toBe(46);
+	test("keeps a below label inside the gutter reserved for it", () => {
+		const gap = 6;
+		const gutter = gap + labelHeight(metrics);
+		const bottom = anchorY(100, metrics, "below", gap) + metrics.descent;
+		expect(bottom).toBeLessThanOrEqual(100 + gutter);
 	});
 
-	test("centres the glyph box rather than the baseline", () => {
-		// Anchoring the baseline puts every y-axis label a third of a line too low.
-		expect(anchorY(50, 12, "middle")).toBeGreaterThan(50);
-		expect(anchorY(50, 12, "middle")).toBeLessThan(50 + 12 / 2);
+	test("puts the glyph box's bottom edge above the anchor", () => {
+		const baseline = anchorY(100, metrics, "above", 6);
+		expect(baseline + metrics.descent).toBe(94);
+	});
+
+	test("centres the glyph box on the anchor, not the baseline", () => {
+		// Anchoring the baseline puts every y-axis label below its own gridline.
+		const baseline = anchorY(100, metrics, "middle");
+		const top = baseline - metrics.ascent;
+		const bottom = baseline + metrics.descent;
+		expect((top + bottom) / 2).toBe(100);
+	});
+
+	test("a symmetric font still centres", () => {
+		const even = { ascent: 6, descent: 6 };
+		expect(anchorY(100, even, "middle")).toBe(100);
+	});
+});
+
+describe("labelHeight", () => {
+	test("is the whole glyph box, which is what a gutter reserves", () => {
+		expect(labelHeight({ ascent: 9, descent: 3 })).toBe(12);
 	});
 });

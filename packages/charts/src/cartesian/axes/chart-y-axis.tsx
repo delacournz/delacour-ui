@@ -24,7 +24,7 @@ export type ChartYAxisProps = {
  * a third of a line-height below its own gridline.
  */
 export function ChartYAxis({ color, tickPadding = 6, side = "left", opacity }: ChartYAxisProps): ReactElement | null {
-	const { yTicks, yLabels, bounds, font, lineHeight } = useChartContext();
+	const { yTicks, yLabels, bounds, font, fontMetrics } = useChartContext();
 	if (font === null || yLabels.length === 0) return null;
 
 	return (
@@ -45,7 +45,7 @@ export function ChartYAxis({ color, tickPadding = 6, side = "left", opacity }: C
 								? anchorX(bounds.left - tickPadding, width, "end")
 								: anchorX(bounds.right + tickPadding, width, "start")
 						}
-						y={anchorY(tick.position, lineHeight, "middle")}
+						y={anchorY(tick.position, fontMetrics, "middle")}
 					/>
 				);
 			})}

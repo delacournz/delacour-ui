@@ -122,7 +122,7 @@ function ChartRoot({
 		[series, data, xKey, formatXValue, size, slots, gridColor, axisColor, surfaceColor, scrub, frame]
 	);
 
-	const { canvas, overlay } = useMemo(() => partitionChildren(children), [children]);
+	const { canvas, overlay, axes } = useMemo(() => partitionChildren(children), [children]);
 
 	const onLayout = (event: LayoutChangeEvent): void => {
 		const { width, height } = event.nativeEvent.layout;
@@ -144,9 +144,9 @@ function ChartRoot({
 						niceDomain
 						scrub={scrub}
 						scrubConfig={scrubConfig}
-						xAxis={{ tickCount }}
+						xAxis={{ show: axes.x, tickCount }}
 						xKey={xKey}
-						yAxis={{ tickCount }}
+						yAxis={{ show: axes.y, tickCount }}
 						yKeys={keys}
 					>
 						<ChartProvider value={value}>{canvas}</ChartProvider>
@@ -166,6 +166,12 @@ function ChartRoot({
  * a legend sits under it. The caller writes all three as siblings because that
  * is how a chart reads, and the root puts each where it belongs.
  *
+ * It also reports which axes were placed, and that is not bookkeeping: an axis
+ * gutter is reserved from the *measured width of its labels*, so a chart with
+ * no `Chart.YAxis` would otherwise inset its plot by the width of labels it
+ * never draws. On a chart inside a card that reads as the plot failing to line
+ * up with the text above it, with nothing on screen to explain the gap.
+ *
  * Matching is by component identity, the same technique `Spinner` uses on its
  * own children. The limit that comes with it: a part has to be a **direct**
  * child of `<Chart>`. An array from `.map()` is fine — `Children.toArray`
@@ -175,19 +181,23 @@ function ChartRoot({
 function partitionChildren(children: ReactNode): {
 	canvas: ReactNode[];
 	overlay: { canvasOverlay: ReactNode[]; below: ReactNode[] };
+	axes: { x: boolean; y: boolean };
 } {
 	const canvas: ReactNode[] = [];
 	const canvasOverlay: ReactNode[] = [];
 	const below: ReactNode[] = [];
+	const axes = { x: false, y: false };
 
 	for (const child of Children.toArray(children)) {
 		if (!isValidElement(child)) continue;
+		if (child.type === ChartXAxis) axes.x = true;
+		if (child.type === ChartYAxis) axes.y = true;
 		if (CANVAS_PARTS.has(child.type)) canvas.push(child);
 		else if (child.type === ChartTooltip) canvasOverlay.push(child);
 		else below.push(child);
 	}
 
-	return { canvas, overlay: { canvasOverlay, below } };
+	return { canvas, overlay: { canvasOverlay, below }, axes };
 }
 
 /**

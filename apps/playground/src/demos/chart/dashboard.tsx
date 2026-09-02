@@ -24,12 +24,12 @@ const CONFIG = { spend: { label: "Spend" } };
 
 export function Demo(): ReactElement {
 	return (
-		<ListGroup>
+		<ListGroup className="w-full">
 			<View className="gap-1 px-4 pt-4 w-full">
 				<Text className="text-xs text-muted-foreground">Total spend</Text>
 				<Text className="text-2xl font-semibold text-foreground">$10,940</Text>
 			</View>
-			<View className="px-2 pb-2 w-full">
+			<View className="px-4 pb-4 w-full">
 				<Chart config={CONFIG} data={DATA} includeZero size="sm" xKey="month">
 					<Chart.Area yKey="spend" />
 					<Chart.Line yKey="spend" />

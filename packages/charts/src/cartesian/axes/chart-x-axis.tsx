@@ -25,7 +25,7 @@ export type ChartXAxisProps = {
  * than come up a frame late.
  */
 export function ChartXAxis({ color, tickPadding = 6, opacity }: ChartXAxisProps): ReactElement | null {
-	const { xTicks, xLabels, bounds, font, lineHeight } = useChartContext();
+	const { xTicks, xLabels, bounds, font, fontMetrics } = useChartContext();
 	if (font === null || xLabels.length === 0) return null;
 
 	return (
@@ -41,7 +41,7 @@ export function ChartXAxis({ color, tickPadding = 6, opacity }: ChartXAxisProps)
 						opacity={opacity}
 						text={label}
 						x={anchorX(tick.position, measureLabelWidth(font, label), "middle")}
-						y={anchorY(bounds.bottom, lineHeight, "below", tickPadding)}
+						y={anchorY(bounds.bottom, fontMetrics, "below", tickPadding)}
 					/>
 				);
 			})}

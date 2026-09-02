@@ -20,7 +20,24 @@
 @layer theme {
 	:root {
 		@variant light {
-			--background: oklch(1 0 0);
+			/*
+			 * The page sits BELOW the card, in both themes.
+			 *
+			 * shadcn ships `background` and `card` as the same white, because on
+			 * the web a card is separated by a shadow. Nothing here casts one, so
+			 * a `ListGroup` on a page was white on white and read as a hairline
+			 * border around nothing — while the same component in dark, where the
+			 * ramp does step, read as a raised surface. One component, two
+			 * different ideas of what a card is.
+			 *
+			 * This is the near-white step the ramp already carries for `sidebar`,
+			 * so it invents no colour and collides with nothing: `secondary` and
+			 * `muted` sit lower at 0.97, and `card` keeps the white above it.
+			 * Light elevation is deliberately a fraction of dark's — on a light
+			 * ground a surface lifts by a percent or two, where in dark it lifts
+			 * by seven.
+			 */
+			--background: oklch(0.985 0 0);
 			--foreground: oklch(0.145 0 0);
 			--card: oklch(1 0 0);
 			--card-foreground: oklch(0.145 0 0);
@@ -61,17 +78,18 @@
 			/*
 			 * A surface that sits ABOVE `muted`, in both themes.
 			 *
-			 * `card` cannot do this job: it is the same white as `background` in
-			 * light and *darker* than `muted` in dark, so a control painted on it
-			 * inside a muted track reads as raised in one theme and sunken in the
-			 * other. Nothing else in the neutral ramp is lighter than `muted` in
-			 * dark either. `Tabs`' selected capsule is what this exists for.
+			 * In light that is now exactly what `card` is, so this follows it —
+			 * it used to follow `background`, which was the same white, and would
+			 * now sink below the card and land a hair above `muted`. `Tabs`'
+			 * selected capsule is what this exists for, and it has to read as
+			 * raised out of a muted track.
 			 *
-			 * Derived rather than literal so a pasted palette drags it along —
-			 * which is also why the two variants derive it differently. Light
-			 * lifts toward the page; dark has to lift toward the text instead.
+			 * `card` still cannot do the job in dark, where it is *darker* than
+			 * `muted` and nothing else in the ramp is lighter — hence the mix
+			 * there. Derived rather than literal in both, so a pasted palette
+			 * drags it along.
 			 */
-			--elevated: var(--background);
+			--elevated: var(--card);
 			--elevated-foreground: var(--foreground);
 
 			/*
@@ -240,12 +258,75 @@
 			--font-sans: "System";
 			--font-serif: "Georgia";
 			--font-mono: "Menlo";
+			--font-heading: "System";
 		}
 
 		@variant android {
 			--font-sans: "sans-serif";
 			--font-serif: "serif";
 			--font-mono: "monospace";
+			--font-heading: "sans-serif";
+		}
+	}
+}
+
+@layer theme {
+	:root {
+		/*
+		 * The geometry, restated so it can be retuned at runtime.
+		 *
+		 * Every number here is already declared in `tokens.css`, and that copy
+		 * is the one `apps/web` reads — the docs site imports only that file.
+		 * This one exists because of how Uniwind compiles a variable: one
+		 * declared in a plain `@theme` block is resolved and INLINED at build
+		 * time, so `h-button-md` would carry a literal 44 and no runtime
+		 * override could ever reach it. A variable declared inside a `@variant`
+		 * compiles to a getter against the live store instead. That is the
+		 * whole difference between a kit whose density can be changed by an app
+		 * and one whose density is a build artefact.
+		 *
+		 * `native` rather than `light`/`dark` on purpose: it is one of Uniwind's
+		 * registered platform variants, and the store merges it into the base
+		 * variables every theme inherits — so one block covers both themes,
+		 * where a theme variant would have to be written out twice and kept in
+		 * step. None of these are light/dark dependent; a corner does not change
+		 * shape at dusk.
+		 *
+		 * `styles/geometry.test.ts` asserts this block and `tokens.css` agree,
+		 * because two hand-maintained copies of one number always drift.
+		 */
+		@variant native {
+			--radius: 0.625rem;
+
+			--spacing-button-sm: 36px;
+			--spacing-button-md: 44px;
+			--spacing-button-lg: 52px;
+
+			--text-button-sm: 14px;
+			--text-button-md: 16px;
+			--text-button-lg: 18px;
+
+			--radius-button-sm: 18px;
+			--radius-button-md: 22px;
+			--radius-button-lg: 26px;
+
+			--spacing-input-sm: 36px;
+			--spacing-input-md: 44px;
+			--spacing-input-lg: 52px;
+
+			--text-input-sm: 14px;
+			--text-input-md: 16px;
+			--text-input-lg: 18px;
+
+			--spacing-icon-xs: 14px;
+			--spacing-icon-sm: 16px;
+			--spacing-icon-md: 18px;
+			--spacing-icon-lg: 20px;
+			--spacing-icon-xl: 24px;
+			--spacing-icon-2xl: 32px;
+
+			--spacing-navbar-row: 56px;
+			--spacing-screen-gutter: 20px;
 		}
 	}
 }

@@ -24,6 +24,7 @@ whole-screen states.
 | `screen-header.tsx` | `Screen.Header` |
 | `screen-footer.tsx` | `Screen.Footer` |
 | `screen-footer-background.tsx` | The footer's backing and its top hairline — internal |
+| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and `SCROLL_SHADOW_EDGES` |
 | `screen-scroll-area.tsx` | `Screen.ScrollArea` |
 | `screen-flat-list.tsx` | `Screen.FlatList` |
 | `screen-section-list.tsx` | `Screen.SectionList` |
@@ -181,6 +182,68 @@ whole-screen states.
   `interpolate`, so they stay reachable from `bun test`, and both clamp at each
   end because a rubber-banded overscroll reports a negative offset.
 
+## ScrollShadow
+
+A scrollable with a hard edge looks finished. A row cut exactly in half by the
+bottom of the viewport reads as a layout bug; the same row fading out reads as
+more to come. `Screen.ScrollShadow` draws that fade, and it matters most under
+chrome that floats over the content, where the cut lands mid-component and there
+is no bar edge to explain it.
+
+**It is a sibling of the body, never a wrapper around it.** The screen context
+already publishes `scrollY`, `contentHeight` and `layoutHeight` from whichever
+scrollable is mounted, so this reads the numbers instead of intercepting them.
+Wrapping would mean cloning the child to attach an `onScroll`, and every
+scrollable here already has one — `use-screen-scroll-insets` drives the reserve
+animations from it — so a second writer would take a handler already spoken for.
+The dividend is that one component works over `ScrollArea`, `FlatList`,
+`SectionList`, `LegendList` and `ChatList` alike, because they all publish to the
+same context.
+
+**It places itself against the chrome.** The top fade starts at the navbar's
+measured height and the bottom above the footer's, so it is correct under either
+placement with the caller measuring nothing. A fade at zero would sit behind the
+navbar and be visible nowhere, which is a component that silently does nothing.
+
+**`coverTop` extends the band, it does not move it.** For chrome this package
+cannot see — a bar floating between the navbar and the body — the content should
+already be gone where it passes behind, so those points are painted solid and the
+gradient begins below them. Offsetting the fade past the chrome instead leaves
+content crisp behind whatever parts of it are transparent, then cuts abruptly
+where the fade finally starts: a floating pill is mostly transparent row, so rows
+slid behind it at full contrast and were chopped underneath. `coverBottom` is the
+same for chrome at the end.
+
+**`anchor` decides what it measures from, and chrome drawing this behind itself
+needs `parent`.** Paint order is source order: a fade mounted as a sibling of the
+body lands on top of anything mounted after it, so chrome that floats over the
+content — a tab bar inside a navigator, where nothing outside can slot between
+the pages and the bar — has to render the fade as its own first child and anchor
+it to that container rather than to the screen.
+
+**Each end fades only when there is something past it.** The top is out at rest
+and arrives over the first `size` points; the bottom is there from the start and
+leaves over the last. Content shorter than its viewport never scrolls, so
+`maxScroll` is zero and both stay out — a fade over a short page promises content
+that does not exist.
+
+**The gradient is `expo-linear-gradient`, and it is the one hard peer this
+component adds.** `screen.tsx` imports it through the compound, so every app that
+touches `Screen` resolves it whether or not it draws a fade — that is the price
+of a native gradient view over drawing one in SVG, and it is paid by consumers
+rather than by this package.
+
+**The far stop is the near colour at zero alpha, never `transparent`.** The
+keyword is transparent *black*, so interpolating toward it drags every stop
+between through grey — a dark bloom over a light ground, a milky one over a
+dark. `transparentOf` in `lib/color.ts` takes the alpha off instead, and returns
+`undefined` for a notation it cannot take apart; the component then declines to
+draw rather than reaching for the keyword after all.
+
+**Opacity ramps over a quarter of `size`, not all of it.** A fade that takes its
+own height to arrive reads as lagging the finger; a quarter puts it there while
+the first row is still leaving.
+
 ## API
 
 - **There is no `Navbar.Action`.** [`Button`](../button/AGENTS.md) already owns that vocabulary —
@@ -205,8 +268,11 @@ whole-screen states.
 
 ## Dependencies
 
-- **One optional peer.** `@legendapp/list` is `peerDependenciesMeta.optional`,
-  so an app that never imports `Screen` never resolves it.
+- **One optional peer, and one hard one.** `@legendapp/list` is
+  `peerDependenciesMeta.optional`, so an app that never imports `Screen` never
+  resolves it. `expo-linear-gradient` is not optional: `Screen.ScrollShadow`
+  imports it at module scope and the compound imports that, so every consumer of
+  `Screen` needs it installed.
   `react-native-keyboard-controller` used to be the second — see
   [DelacourProvider](../provider/AGENTS.md) for why it stopped.
 - **The app must mount `DelacourProvider` at its root.** It supplies the gesture

@@ -173,10 +173,9 @@ export async function describe(udid: string): Promise<string> {
 }
 
 export async function screenshot(udid: string, out: string): Promise<void> {
-	const result =
-		await $`argent run screenshot --udid ${udid} --scale 1 --includeImageInContext false --out ${out}`
-			.cwd(AT_REPO.cwd)
-			.quiet();
+	const result = await $`argent run screenshot --udid ${udid} --scale 1 --includeImageInContext false --out ${out}`
+		.cwd(AT_REPO.cwd)
+		.quiet();
 	if (result.exitCode !== 0) {
 		throw new Error(`screenshot failed:\n${result.stderr.toString() || result.stdout.toString()}`);
 	}

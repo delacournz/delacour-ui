@@ -1,3 +1,4 @@
+import { DEFAULT_CONFIG } from "@delacour/design-system/config";
 import { Text } from "@delacour/native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -5,6 +6,7 @@ import { type ReactElement, useCallback, useLayoutEffect, useRef, useState } fro
 import { Dimensions, View } from "react-native";
 import { Uniwind } from "uniwind";
 import { DEMOS, type DemoId } from "@/demos/registry";
+import { applyConfig } from "@/design-system/store";
 
 type PreviewTheme = "light" | "dark";
 
@@ -85,6 +87,14 @@ export default function Preview(): ReactElement {
 /**
  * Drives Uniwind's global theme from the route, and reports what actually took.
  *
+ * **The default design system is forced here too.** A customized look survives
+ * a restart, so without this a capture run would publish whichever palette,
+ * geometry and typeface the last person happened to leave selected — the
+ * documentation site quietly turning fuchsia and square because someone was
+ * playing with the customizer on a simulator a week ago. `applyConfig` is
+ * deliberately not `setAxis`: this repaints without touching what is stored, so
+ * the app is still on the user's own configuration the next time it launches.
+ *
  * A layout effect rather than a render-phase call: `Uniwind.setTheme` writes to
  * a store the whole tree subscribes to, so calling it while this component
  * renders updates other components mid-render — which React reports as
@@ -103,6 +113,7 @@ function useAppliedTheme(requested: PreviewTheme): PreviewTheme | null {
 	const [applied, setApplied] = useState<PreviewTheme | null>(null);
 
 	useLayoutEffect(() => {
+		applyConfig(DEFAULT_CONFIG);
 		Uniwind.setTheme(requested);
 		setApplied(requested);
 	}, [requested]);

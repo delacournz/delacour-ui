@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="rounded-2xl border border-border bg-card p-4">
+		<View className="rounded-xl border border-border bg-card p-4">
 			<Field.Group>
 				<Field>
 					<Field.Label>Card number</Field.Label>

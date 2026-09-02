@@ -62,7 +62,13 @@ export const inputVariants = tv({
 		root: "overflow-hidden border",
 		/** Layout for the group's row. Never applied to a lone field, which is not a row. */
 		row: "flex-row items-center",
-		field: "text-foreground",
+		/*
+		 * The one text surface in this package that is not a `Text`: a raw React
+		 * Native `TextInput`, which inherits nothing. `font-sans` is restated for
+		 * the same reason `TEXT_BASE_CLASS` carries it — without it a themed
+		 * typeface would stop at the field's edge.
+		 */
+		field: "font-sans text-foreground",
 		decorator: "items-center justify-center",
 		/** Edge length an `Icon` in a decorator inherits. */
 		decoratorIcon: "",

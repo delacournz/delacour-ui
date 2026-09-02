@@ -21,6 +21,11 @@
  * `bun test` and the command around it is only I/O.
  */
 
+import { GEOMETRY_TOKENS } from "./styles";
+
+/** Geometry is neither light nor dark; it belongs in `@variant native`. */
+const GEOMETRY_NAMES = new Set(GEOMETRY_TOKENS.map((token) => `--${token}`));
+
 /** A palette, as declared by whatever the source happened to be. */
 export type ThemeSource = {
 	light: Record<string, string>;
@@ -31,6 +36,16 @@ export type ThemeSource = {
 	 * nothing at all and quietly reset both platforms to their defaults.
 	 */
 	platformFonts?: { android: Record<string, string>; ios: Record<string, string> };
+	/**
+	 * The geometry, which is neither light nor dark.
+	 *
+	 * `theme.css` declares these inside `@variant native` so Uniwind compiles
+	 * them to a live getter rather than inlining them at build time — that is the
+	 * whole difference between a kit whose density an app can retune at runtime
+	 * and one whose density is a build artefact. `native` rather than a theme
+	 * name because none of these numbers change at dusk.
+	 */
+	native?: Record<string, string>;
 };
 
 export type ConversionResult = {
@@ -44,9 +59,9 @@ export type ConversionResult = {
 };
 
 /** Steps of the corner scale `tokens.css` derives from `--radius` on its own. */
-const DERIVED_RADIUS = /^--radius-(xs|sm|md|lg|xl|2xl|3xl|4xl)$/;
+const DERIVED_RADIUS = /^--radius-(xs|sm|md|lg|xl|2xl|3xl|4xl|full)$/;
 
-const FONTS = ["--font-sans", "--font-serif", "--font-mono"] as const;
+const FONTS = ["--font-sans", "--font-serif", "--font-mono", "--font-heading"] as const;
 type Font = (typeof FONTS)[number];
 
 /**
@@ -60,6 +75,9 @@ const PLATFORM_FONTS: Record<Font, { android: string; ios: string }> = {
 	"--font-sans": { ios: "System", android: "sans-serif" },
 	"--font-serif": { ios: "Georgia", android: "serif" },
 	"--font-mono": { ios: "Menlo", android: "monospace" },
+	// Follows `--font-sans`, so pairing a display face with body text is
+	// something an app opts into rather than something a converted theme decides.
+	"--font-heading": { ios: "System", android: "sans-serif" },
 };
 
 /** CSS generic families — a name, but never one a font file is loaded for. */
@@ -135,7 +153,7 @@ function softExtensions(): Record<string, { dark: string; light: string }> {
 const ALL_EXTENSIONS = { ...EXTENSIONS, ...softExtensions() };
 
 /** Everything shadcn's own `-foreground` pairing needs, in the order it reads best. */
-const PREFERRED_ORDER = [
+export const PREFERRED_ORDER = [
 	"--background",
 	"--foreground",
 	"--card",
@@ -172,8 +190,26 @@ export function parseTheme(source: string): ThemeSource {
 	const light = clean({ ...base, ...blockDeclarations(css, ":root"), ...blockDeclarations(css, "@variant light") });
 	const dark = clean({ ...base, ...blockDeclarations(css, ".dark"), ...blockDeclarations(css, "@variant dark") });
 
+	// Geometry declared in `@theme` or `:root` — which is where a web theme puts
+	// it, and where this package's own emitter writes it — is neither light nor
+	// dark. Left in the palette it would be rendered into both `@variant` blocks,
+	// where Uniwind inlines it at build time and no runtime override could reach
+	// `h-button-md` again.
+	const fromPalette: Record<string, string> = {};
+	for (const name of GEOMETRY_NAMES) {
+		const value = light[name] ?? dark[name];
+		if (value === undefined) continue;
+
+		fromPalette[name] = value;
+		delete light[name];
+		delete dark[name];
+	}
+
 	const ios = blockDeclarations(css, "@variant ios");
 	const android = blockDeclarations(css, "@variant android");
+	// Without this, pasting this package's own `theme.css` back in silently drops
+	// every geometry token — the block is simply not read, and no warning says so.
+	const native = blockDeclarations(css, "@variant native");
 
 	if (Object.keys(light).length === 0 && Object.keys(dark).length === 0) {
 		throw new Error(
@@ -183,7 +219,9 @@ export function parseTheme(source: string): ThemeSource {
 
 	const platformFonts = Object.keys(ios).length > 0 || Object.keys(android).length > 0 ? { ios, android } : undefined;
 
-	return { light, dark, platformFonts };
+	const geometry = { ...fromPalette, ...native };
+
+	return { light, dark, platformFonts, native: Object.keys(geometry).length > 0 ? geometry : undefined };
 }
 
 /**
@@ -261,7 +299,7 @@ export function convertTheme(source: ThemeSource): ConversionResult {
 	}
 
 	return {
-		css: render({ light, dark, fonts }),
+		css: render({ light, dark, fonts, native: source.native }),
 		carried: carried.sort(),
 		derived: derived.sort(),
 		warnings,
@@ -339,6 +377,7 @@ function render(theme: {
 	dark: Record<string, string>;
 	fonts: Record<Font, { android: string; ios: string }>;
 	light: Record<string, string>;
+	native?: Record<string, string>;
 }): string {
 	const names = orderNames(Object.keys(theme.light));
 	const declarations = (values: Record<string, string>, indent: string) =>
@@ -355,6 +394,17 @@ function render(theme: {
 			return `\t--color-${name.slice(2)}: var(${name});`;
 		})
 		.filter((line): line is string => line !== null);
+
+	// Geometry is neither light nor dark, so it takes a block of its own — and it
+	// has to be a `@variant` rather than a plain `@theme`, or Uniwind inlines the
+	// values at build time and no runtime override can reach them.
+	const nativeNames = Object.keys(theme.native ?? {}).sort();
+	const nativeBlock =
+		nativeNames.length === 0
+			? ""
+			: `\n\t\t@variant native {\n${nativeNames
+					.map((name) => `\t\t\t${name}: ${(theme.native as Record<string, string>)[name]};`)
+					.join("\n")}\n\t\t}\n`;
 
 	const fontBlock = (platform: "android" | "ios") =>
 		FONTS.map((name) => `\t\t\t${name}: "${theme.fonts[name][platform]}";`).join("\n");
@@ -379,7 +429,7 @@ ${declarations(theme.light, "\t\t\t")}
 		@variant dark {
 ${declarations(theme.dark, "\t\t\t")}
 		}
-	}
+${nativeBlock}	}
 }
 
 @layer theme {

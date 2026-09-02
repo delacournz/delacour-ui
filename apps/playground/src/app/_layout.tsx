@@ -5,6 +5,19 @@ import { DelacourProvider } from "@delacour/native-ui/provider";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
+import { ThemeTrigger } from "@/components/theme/theme-trigger";
+import { restoreDesignSystem } from "@/design-system/store";
+
+/**
+ * The stored design system, applied before anything renders.
+ *
+ * At module scope, not in an effect: MMKV reads synchronously, so the restored
+ * palette, geometry and typeface are already in Uniwind's variable store for
+ * the first paint. In an effect this would render one frame of the library's
+ * own look and then repaint, on every cold start. It runs after the global.css
+ * import above, which is what registers the themes it writes into.
+ */
+restoreDesignSystem();
 
 /**
  * Paints the native root view — the layer beneath the whole React tree.
@@ -52,6 +65,7 @@ export default function RootLayout() {
 			<SystemBackground />
 			<NavigationTheme>
 				<Stack screenOptions={{ headerShown: false }} />
+				<ThemeTrigger />
 			</NavigationTheme>
 		</DelacourProvider>
 	);

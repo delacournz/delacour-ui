@@ -62,10 +62,17 @@ export type TextTransform = (typeof TEXT_TRANSFORMS)[number];
  * I nested" would leave that `Text` with a colour and no size at all, silently
  * collapsing to React Native's own 14pt default.
  *
- * It names exactly the three axes React Native inherits natively and cannot
- * default sensibly on its own: weight, size, colour.
+ * It names the three axes React Native inherits natively and cannot default
+ * sensibly on its own — weight, size, colour — plus the family.
+ *
+ * `font-sans` is what makes the typeface themeable at all: it resolves
+ * `--font-sans`, which `theme.css` declares per platform and an app may retune
+ * at runtime. Without it a `Text` carries no `fontFamily` and the platform
+ * default stands however the variable is set. It is FIRST in the chain, so
+ * `Text.Code`'s `font-mono` and the headings' `font-heading` — emitted later by
+ * `textVariants`, in the same tailwind-merge group — both still win.
  */
-export const TEXT_BASE_CLASS = "font-normal text-base text-foreground";
+export const TEXT_BASE_CLASS = "font-sans font-normal text-base text-foreground";
 
 /**
  * Cap on OS font scaling.
@@ -115,9 +122,13 @@ export const TEXT_MAX_FONT_SIZE_MULTIPLIER = 1.4;
 export const textVariants = tv({
 	variants: {
 		variant: {
-			display: "font-bold text-3xl text-foreground",
-			title: "font-bold text-2xl text-foreground",
-			header: "font-semibold text-xl text-foreground",
+			// The three block headings, and the only presets that read
+			// `--font-heading`. It defaults to the same family as `--font-sans`,
+			// so pairing a display face with body text is opt-in for an app
+			// rather than something this package decides.
+			display: "font-heading font-bold text-3xl text-foreground",
+			title: "font-heading font-bold text-2xl text-foreground",
+			header: "font-heading font-semibold text-xl text-foreground",
 			// A step down from the title it sits under, not a fourth heading
 			// level — which is why it is muted and carries no weight of its own.
 			subheader: "text-lg text-muted-foreground",

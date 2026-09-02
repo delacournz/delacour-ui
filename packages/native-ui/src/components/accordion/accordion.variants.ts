@@ -187,7 +187,7 @@ export const accordionVariants = tv({
 		},
 		size: {
 			sm: {
-				root: "rounded-xl",
+				root: "rounded-md",
 				trigger: "min-h-12 gap-2.5 px-3 py-3",
 				divider: "mx-3",
 				contentInner: "px-3 pb-3",
@@ -196,7 +196,7 @@ export const accordionVariants = tv({
 				description: "text-xs",
 			},
 			md: {
-				root: "rounded-2xl",
+				root: "rounded-md",
 				trigger: "min-h-14 gap-3 px-4 py-3.5",
 				divider: "mx-4",
 				contentInner: "px-4 pb-4",
@@ -205,7 +205,7 @@ export const accordionVariants = tv({
 				description: "text-sm",
 			},
 			lg: {
-				root: "rounded-2xl",
+				root: "rounded-md",
 				trigger: "min-h-16 gap-3.5 px-5 py-4",
 				divider: "mx-5",
 				contentInner: "px-5 pb-5",

@@ -64,6 +64,12 @@ export type { ScreenNavbarSubtitleProps } from "./screen-navbar-subtitle";
 export type { ScreenNavbarTitleProps } from "./screen-navbar-title";
 export type { ScreenRootProps } from "./screen-root";
 export type { ScreenScrollAreaProps } from "./screen-scroll-area";
+export {
+	SCROLL_SHADOW_EDGES,
+	ScreenScrollShadow,
+	type ScreenScrollShadowEdge,
+	type ScreenScrollShadowProps,
+} from "./screen-scroll-shadow";
 export type { ScreenSectionListProps } from "./screen-section-list";
 export type { ScreenViewProps } from "./screen-view";
 export {

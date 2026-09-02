@@ -111,7 +111,8 @@ export async function encodeVideo(
 	crop: CropRect,
 	size: { width: number; height: number }
 ): Promise<void> {
-	const result = await $`ffmpeg -y -hide_banner -loglevel error -i ${input} -vf ${filter(crop, size)} -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 26 -preset slow -g 60 -keyint_min 60 -sc_threshold 0 -movflags +faststart -an -fps_mode cfr -r 30 ${output}`.quiet();
+	const result =
+		await $`ffmpeg -y -hide_banner -loglevel error -i ${input} -vf ${filter(crop, size)} -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 26 -preset slow -g 60 -keyint_min 60 -sc_threshold 0 -movflags +faststart -an -fps_mode cfr -r 30 ${output}`.quiet();
 	if (result.exitCode !== 0) {
 		throw new Error(`ffmpeg failed encoding ${input}:\n${result.stderr.toString()}`);
 	}

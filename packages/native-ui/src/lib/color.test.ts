@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isLiteralColor, themeVariableName } from "./color";
+import { isLiteralColor, themeVariableName, transparentOf } from "./color";
 
 describe("isLiteralColor", () => {
 	test("treats hex as a literal", () => {
@@ -49,5 +49,32 @@ describe("themeVariableName", () => {
 	test("rewrites the pre-shadcn --color- form onto the raw name", () => {
 		expect(themeVariableName("--color-foreground")).toBe("--foreground");
 		expect(themeVariableName("--color-destructive-soft")).toBe("--destructive-soft");
+	});
+});
+
+describe("transparentOf", () => {
+	test("keeps the hue and drops the alpha, so a fade never runs through black", () => {
+		expect(transparentOf("#0a0a0a")).toBe("#0a0a0a00");
+		expect(transparentOf("#FFFFFF")).toBe("#FFFFFF00");
+	});
+
+	test("expands a short hex, which cannot simply take a suffix", () => {
+		expect(transparentOf("#abc")).toBe("#aabbcc00");
+	});
+
+	test("replaces an alpha the colour already carries rather than appending a second", () => {
+		expect(transparentOf("#0a0a0aff")).toBe("#0a0a0a00");
+		expect(transparentOf("#abcd")).toBe("#aabbcc00");
+	});
+
+	test("rewrites functional notation in place", () => {
+		expect(transparentOf("rgb(10, 20, 30)")).toBe("rgba(10, 20, 30, 0)");
+		expect(transparentOf("rgba(10, 20, 30, 0.5)")).toBe("rgba(10, 20, 30, 0)");
+	});
+
+	test("gives up rather than guessing, so a caller can decline to draw", () => {
+		expect(transparentOf(undefined)).toBeUndefined();
+		expect(transparentOf("rebeccapurple")).toBeUndefined();
+		expect(transparentOf("oklch(0.5 0.1 200)")).toBeUndefined();
 	});
 });

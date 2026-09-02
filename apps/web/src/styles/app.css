@@ -20,7 +20,7 @@
 @import "@delacour/native-ui/styles/tokens";
 
 @theme {
-	--color-fd-background: oklch(1 0 0);
+	--color-fd-background: oklch(0.985 0 0);
 	--color-fd-foreground: oklch(0.145 0 0);
 	--color-fd-muted: oklch(0.97 0 0);
 	--color-fd-muted-foreground: oklch(0.556 0 0);

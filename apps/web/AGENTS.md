@@ -50,6 +50,7 @@ src/
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
 │   ├── docs/{$}[.]md.ts   <page>.md — see "The .md routes 404 in dev"
+│   ├── theme.tsx          /theme — a preset code, rendered as CSS
 │   ├── api/search.ts
 │   └── llms[.]txt.ts, llms-full[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
@@ -253,6 +254,42 @@ One deliberate divergence, and it is the reason the test's map omits `fd-card`: 
 and `background` are both white in light, so `--color-fd-card` takes `tertiary` instead — a docs
 card has to read as a surface. `tertiary` is a `color-mix` of two variables `app.css` does not
 import, so its value is resolved there rather than copied.
+
+## `/theme` renders a preset
+
+`src/routes/theme.tsx` takes a `?preset=` code from `apps/playground`'s Theme screen, decodes it
+with `@delacour/design-system`, and renders the resulting `globals.css` in a `DynamicCodeBlock`
+with a copy button. Three things about it are load-bearing:
+
+- **It is the only route here that reads a search param**, and its `validateSearch` **never
+  throws**. A throw becomes a `SearchParamError` and the router renders an error boundary — so a
+  code that lost its last character to a chat client's link detection would show a stack trace
+  instead of a theme. The validator only asks "is there a non-empty string called `preset`";
+  whether it decodes is `src/lib/theme-preset.ts`'s business, and `resolvePreset` answers with a
+  usable config in every branch, including the invalid one.
+- **It renders on the server.** Decode, resolve and emit are pure and synchronous, so there is no
+  loader and no server function, and the CSS is in the first paint — which is what makes the link
+  worth pasting into a chat and what keeps the page useful with JavaScript off. If anyone ever
+  moves that work into a `useEffect` the page will still *look* right; `curl … | grep oklch` is
+  what catches it.
+- **One file carries both modes**, `:root` and `.dark`, because that is shadcn's `globals.css`
+  shape. So there is deliberately no light/dark tab over the code block — it would be a lie about
+  what the file is. The specimens in the axis summary *do* follow the page's theme, and they do it
+  with `dark:hidden` / `hidden dark:inline` for the same reason `preview.tsx` does.
+
+The route is not in `baseOptions().links`: `/theme` with no preset is the library's own defaults,
+which every visitor already has. It is linked from `getting-started/theming.mdx` instead, which is
+the page about bringing a theme across.
+
+**The dev server binds to all interfaces.** `server.host: true` in `vite.config.ts`, because the
+playground's Generate CSS button opens this site at whatever host Metro reached the app on — a LAN
+address on a device, and on a simulator too whenever Metro was started on the LAN. Vite's default is
+`::1`, so every one of those links died at *"Safari can't open the page"* while `localhost:3000`
+worked fine from the same machine. Metro is already on the LAN on 8088 for the same reason.
+
+Nothing needed adding to `vite.config.ts` for the workspace dependency — `apps/web` already imports
+raw `.ts` from `@delacour/brand` in an SSR'd component, and Vite transpiles a linked workspace
+package rather than externalising it. Verified against `bun run build && bun run start`, not `dev`.
 
 ## Gotchas
 

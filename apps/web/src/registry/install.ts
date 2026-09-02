@@ -2181,10 +2181,10 @@ export const install = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		importPath: "@delacour/native-ui/screen",
 		exportName: "Screen",
-		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 63,
+		fileCount: 64,
 		groups: [
 			{
 				name: "screen",
@@ -2211,6 +2211,7 @@ export const install = {
 					{ source: "packages/native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
 					{ source: "packages/native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
 					{ source: "packages/native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
+					{ source: "packages/native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
 					{ source: "packages/native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
 					{ source: "packages/native-ui/src/components/screen/screen-view.tsx", target: "src/components/ui/screen/screen-view.tsx" },
 					{ source: "packages/native-ui/src/components/screen/screen.context.tsx", target: "src/components/ui/screen/screen.context.tsx" },
@@ -2291,6 +2292,14 @@ export const install = {
 				],
 			},
 			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
 				name: "compose-refs",
 				title: "composeRefs",
 				kind: "shared",
@@ -2304,14 +2313,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
-				],
-			},
-			{
-				name: "color",
-				title: "isLiteralColor",
-				kind: "shared",
-				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{

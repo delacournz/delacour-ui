@@ -1,5 +1,12 @@
 import { describe, expect, test } from "bun:test";
-import { commandLine, type InstallGroup, installCommands, missingPackages, planDependencies } from "./package-manager";
+import {
+	commandLine,
+	type InstallGroup,
+	installCommands,
+	missingPackages,
+	peerRange,
+	planDependencies,
+} from "./package-manager";
 
 const NONE = { dependencies: [], devDependencies: [], expoDependencies: [] };
 
@@ -121,6 +128,11 @@ describe("commandLine", () => {
 });
 
 describe("pre-mode dist tags", () => {
+	test("peers a pre-mode package with a range its alpha satisfies", () => {
+		expect(peerRange("@delacour/charts")).toBe(">=0.0.0-0");
+		expect(peerRange("clsx")).toBe("*");
+	});
+
 	test("installs @delacour/charts from the alpha tag", () => {
 		// `latest` deliberately points at nothing while this repository is in
 		// Changesets pre mode, so an untagged add fails outright.

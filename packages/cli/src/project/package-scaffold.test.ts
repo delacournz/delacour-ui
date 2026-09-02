@@ -58,6 +58,33 @@ describe("mergePackageJson", () => {
 		expect(result.exports).toEqual(EXPORTS);
 	});
 
+	test("gives a pre-mode package a peer range its alpha can satisfy", () => {
+		const result = mergePackageJson(null, {
+			name: "@acme/ui",
+			exports: EXPORTS,
+			peers: ["@delacour/charts", "clsx"],
+		});
+		// `*` admits no prerelease, so bun would look past the installed alpha
+		// and ask npm for a version that does not exist.
+		expect(result.peerDependencies?.["@delacour/charts"]).toBe(">=0.0.0-0");
+		expect(result.peerDependencies?.clsx).toBe("*");
+	});
+
+	test("does not peer a package the manifest already depends on", () => {
+		const existing = { name: "@acme/ui", dependencies: { "@delacour/charts": "./charts.tgz" } };
+		const result = mergePackageJson(existing, {
+			name: "@acme/ui",
+			exports: EXPORTS,
+			peers: ["@delacour/charts", "clsx"],
+		});
+		// bun resolves a peer against the registry even when a dependency on the
+		// same name satisfies it, so the pair breaks every install of an
+		// unpublished or tarball-installed package.
+		expect(result.peerDependencies?.["@delacour/charts"]).toBeUndefined();
+		expect(result.peerDependencies?.clsx).toBe("*");
+		expect(result.dependencies?.["@delacour/charts"]).toBe("./charts.tgz");
+	});
+
 	test("keeps a peer the user pinned, rather than loosening it to *", () => {
 		const existing = { name: "@acme/ui", peerDependencies: { "react-native-reanimated": "~4.5.0" } };
 		const result = mergePackageJson(existing, {

@@ -416,20 +416,28 @@ export async function installWorkspacePackages(workspace: Workspace, reporter: R
 
 	for (const [name, relativePath] of Object.entries(WORKSPACE_PACKAGES)) {
 		const packageDir = join(import.meta.dirname, relativePath);
-		const before = new Set(await readdir(destination));
+		// Named the way `bun pm pack` names it — scope stripped, slash to a dash —
+		// and removed first, so a stale tarball from an earlier `--keep` run can
+		// neither be mistaken for this one nor stop the pack from writing.
+		const { version } = (await Bun.file(join(packageDir, "package.json")).json()) as { version: string };
+		const tarball = `${name.replace(/^@/, "").replace("/", "-")}-${version}.tgz`;
+		await rm(join(destination, tarball), { force: true });
 		await run("bun", ["pm", "pack", "--destination", destination], {
 			cwd: packageDir,
 			reporter,
 			label: `bun pm pack ${name}`,
 		});
-		const tarball = (await readdir(destination)).find((file) => file.endsWith(".tgz") && !before.has(file));
-		if (tarball === undefined) throw new Error(`bun pm pack wrote no tarball for ${name} in ${destination}`);
+		if (!(await Bun.file(join(destination, tarball)).exists())) {
+			throw new Error(`bun pm pack wrote no ${tarball} for ${name} in ${destination}`);
+		}
 
-		await run("bun", ["add", join(destination, tarball)], {
-			cwd: workspace.configRoot,
-			reporter,
-			label: `bun add ${name}`,
-		});
+		// Both places `add` reads: the shared package, whose source imports it
+		// and whose peer on it has to be satisfiable, and the app, which is where
+		// `add` installs every external package and checks what is already there.
+		const targets = [...new Set([workspace.configRoot, workspace.appRoot])];
+		for (const cwd of targets) {
+			await run("bun", ["add", join(destination, tarball)], { cwd, reporter, label: `bun add ${name}` });
+		}
 		reporter.pass(`${name} from the workspace, as ${tarball}`);
 	}
 }

@@ -130,6 +130,13 @@ pack is what a consumer receives — `files`, `exports`, no dev dependencies —
 missing from `dependencies` fails this run instead of a reader's `tsc`. Add a package to
 `WORKSPACE_PACKAGES` there when a new item takes a dependency on one.
 
+The monorepo layout adds one rule to `mergePackageJson`: a package the shared manifest already
+depends on is not recorded as a peer as well. bun resolves a peer against the registry even when
+a dependency on the same name satisfies it, so a peer on an unpublished or tarball-installed
+package fails every later install in the workspace — inside `expo install`, which never named it.
+A peer on a package still in pre mode is written as `>=0.0.0-0` rather than `*`, since `*` admits
+no prerelease; `peerRange` derives that from `DIST_TAG` and goes away with it.
+
 | Level | Proves |
 | --- | --- |
 | `--no-install` | The right files land, with the right imports. Offline, seconds. |

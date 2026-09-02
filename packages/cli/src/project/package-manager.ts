@@ -77,6 +77,21 @@ function toSpec(name: string): string {
 	return tag === undefined ? name : `${name}@${tag}`;
 }
 
+/**
+ * The range a shared package declares for a peer it does not pin.
+ *
+ * `*` is the usual answer, and it is wrong for a package still in pre mode:
+ * semver's `*` admits no prerelease, so a peer on `@delacour/charts` written as
+ * `*` matches nothing `0.0.1-alpha.N` can ever satisfy. Bun then treats the
+ * peer as unmet and goes to the registry for a version that does not exist —
+ * which is how `add` failed inside `expo install`, a step that never named
+ * the package. `>=0.0.0-0` is the range that admits every prerelease, and it
+ * goes away with `DIST_TAG` when `changeset pre exit` runs.
+ */
+export function peerRange(name: string): string {
+	return DIST_TAG[name] === undefined ? "*" : ">=0.0.0-0";
+}
+
 export function installCommands(request: InstallRequest): InstallGroup[] {
 	const groups: InstallGroup[] = [];
 	const [addCommand, addArgs] = ADD[request.packageManager];

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "A series that never moves",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"Every value the same. The line draws flat through the middle rather than being stretched to fill the height.",
 	note: "The domain is genuinely zero-width, and `scaleValue` maps that to the range midpoint. Expanding it would invent a spread the data does not have — and a chart that dramatises noise is worse than one that reports none.",

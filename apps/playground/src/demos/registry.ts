@@ -38,19 +38,33 @@ import * as demo_button_icons from "./button/icons";
 import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
 import * as demo_button_variants from "./button/variants";
-import * as demo_chart_area from "./chart/area";
-import * as demo_chart_colours from "./chart/colours";
-import * as demo_chart_curves from "./chart/curves";
-import * as demo_chart_dashboard from "./chart/dashboard";
-import * as demo_chart_empty from "./chart/empty";
-import * as demo_chart_flat from "./chart/flat";
-import * as demo_chart_grid_and_axes from "./chart/grid-and-axes";
-import * as demo_chart_legend from "./chart/legend";
-import * as demo_chart_line from "./chart/line";
-import * as demo_chart_multi_series from "./chart/multi-series";
-import * as demo_chart_sizes from "./chart/sizes";
-import * as demo_chart_time_series from "./chart/time-series";
-import * as demo_chart_tooltip from "./chart/tooltip";
+import * as demo_chart_area_area from "./chart/area/area";
+import * as demo_chart_area_area_stacked from "./chart/area/area-stacked";
+import * as demo_chart_bar_bar from "./chart/bar/bar";
+import * as demo_chart_bar_bar_grouped from "./chart/bar/bar-grouped";
+import * as demo_chart_bar_bar_horizontal from "./chart/bar/bar-horizontal";
+import * as demo_chart_bar_bar_labels from "./chart/bar/bar-labels";
+import * as demo_chart_bar_bar_negative from "./chart/bar/bar-negative";
+import * as demo_chart_bar_bar_stacked from "./chart/bar/bar-stacked";
+import * as demo_chart_bar_bar_tooltip from "./chart/bar/bar-tooltip";
+import * as demo_chart_candlestick_candlestick from "./chart/candlestick/candlestick";
+import * as demo_chart_line_curves from "./chart/line/curves";
+import * as demo_chart_line_line from "./chart/line/line";
+import * as demo_chart_line_multi_series from "./chart/line/multi-series";
+import * as demo_chart_line_time_series from "./chart/line/time-series";
+import * as demo_chart_parts_colours from "./chart/parts/colours";
+import * as demo_chart_parts_dashboard from "./chart/parts/dashboard";
+import * as demo_chart_parts_empty from "./chart/parts/empty";
+import * as demo_chart_parts_flat from "./chart/parts/flat";
+import * as demo_chart_parts_grid_and_axes from "./chart/parts/grid-and-axes";
+import * as demo_chart_parts_legend from "./chart/parts/legend";
+import * as demo_chart_parts_sizes from "./chart/parts/sizes";
+import * as demo_chart_parts_tooltip from "./chart/parts/tooltip";
+import * as demo_chart_pie_donut from "./chart/pie/donut";
+import * as demo_chart_pie_pie from "./chart/pie/pie";
+import * as demo_chart_pie_pie_labels from "./chart/pie/pie-labels";
+import * as demo_chart_pie_pie_tap from "./chart/pie/pie-tap";
+import * as demo_chart_scatter_scatter from "./chart/scatter/scatter";
 import * as demo_checkbox_alignment from "./checkbox/alignment";
 import * as demo_checkbox_checkbox_group from "./checkbox/checkbox-group";
 import * as demo_checkbox_colours from "./checkbox/colours";
@@ -193,19 +207,33 @@ export const DEMOS = {
 	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
 	"button/variants": demo_button_variants,
-	"chart/area": demo_chart_area,
-	"chart/colours": demo_chart_colours,
-	"chart/curves": demo_chart_curves,
-	"chart/dashboard": demo_chart_dashboard,
-	"chart/empty": demo_chart_empty,
-	"chart/flat": demo_chart_flat,
-	"chart/grid-and-axes": demo_chart_grid_and_axes,
-	"chart/legend": demo_chart_legend,
-	"chart/line": demo_chart_line,
-	"chart/multi-series": demo_chart_multi_series,
-	"chart/sizes": demo_chart_sizes,
-	"chart/time-series": demo_chart_time_series,
-	"chart/tooltip": demo_chart_tooltip,
+	"chart/area/area": demo_chart_area_area,
+	"chart/area/area-stacked": demo_chart_area_area_stacked,
+	"chart/bar/bar": demo_chart_bar_bar,
+	"chart/bar/bar-grouped": demo_chart_bar_bar_grouped,
+	"chart/bar/bar-horizontal": demo_chart_bar_bar_horizontal,
+	"chart/bar/bar-labels": demo_chart_bar_bar_labels,
+	"chart/bar/bar-negative": demo_chart_bar_bar_negative,
+	"chart/bar/bar-stacked": demo_chart_bar_bar_stacked,
+	"chart/bar/bar-tooltip": demo_chart_bar_bar_tooltip,
+	"chart/candlestick/candlestick": demo_chart_candlestick_candlestick,
+	"chart/line/curves": demo_chart_line_curves,
+	"chart/line/line": demo_chart_line_line,
+	"chart/line/multi-series": demo_chart_line_multi_series,
+	"chart/line/time-series": demo_chart_line_time_series,
+	"chart/parts/colours": demo_chart_parts_colours,
+	"chart/parts/dashboard": demo_chart_parts_dashboard,
+	"chart/parts/empty": demo_chart_parts_empty,
+	"chart/parts/flat": demo_chart_parts_flat,
+	"chart/parts/grid-and-axes": demo_chart_parts_grid_and_axes,
+	"chart/parts/legend": demo_chart_parts_legend,
+	"chart/parts/sizes": demo_chart_parts_sizes,
+	"chart/parts/tooltip": demo_chart_parts_tooltip,
+	"chart/pie/donut": demo_chart_pie_donut,
+	"chart/pie/pie": demo_chart_pie_pie,
+	"chart/pie/pie-labels": demo_chart_pie_pie_labels,
+	"chart/pie/pie-tap": demo_chart_pie_pie_tap,
+	"chart/scatter/scatter": demo_chart_scatter_scatter,
 	"checkbox/alignment": demo_checkbox_alignment,
 	"checkbox/checkbox-group": demo_checkbox_checkbox_group,
 	"checkbox/colours": demo_checkbox_colours,

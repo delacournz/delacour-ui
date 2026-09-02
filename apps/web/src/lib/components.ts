@@ -69,7 +69,8 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		slug: "chart",
 		name: "Chart",
 		group: "Data display",
-		blurb: "Line and area marks drawn in Skia, coloured from the theme's five-slot series ramp.",
+		blurb:
+			"Line, area, bar, scatter, candlestick and pie marks drawn in Skia, coloured from the theme's five-slot series ramp.",
 	},
 	{
 		slug: "slider",

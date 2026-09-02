@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Dates on the x axis",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"A `Date` field switches the axis to a time scale on its own, and the ticks land on calendar boundaries rather than on even multiples of milliseconds.",
 	note: "That distinction is why the engine takes `d3-scale`: a spring-forward day is 23 hours, and a hand-rolled ladder would put every tick an hour off midnight for half the year.",

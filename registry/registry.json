@@ -166,7 +166,7 @@
 			"name": "chart",
 			"type": "registry:ui",
 			"title": "Chart",
-			"description": "Skia charts on the theme's series ramp: line, area, grid, axes, legend and tooltip.",
+			"description": "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 			"categories": [
 				"display"
 			],
@@ -175,6 +175,7 @@
 				"color",
 				"text",
 				"tv",
+				"use-controllable-state",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -190,9 +191,13 @@
 			"files": [
 				"ui/chart/AGENTS.md",
 				"ui/chart/chart-area.tsx",
+				"ui/chart/chart-bar.tsx",
+				"ui/chart/chart-bars.tsx",
+				"ui/chart/chart-candlestick.tsx",
 				"ui/chart/chart-grid.tsx",
 				"ui/chart/chart-legend.tsx",
 				"ui/chart/chart-line.tsx",
+				"ui/chart/chart-scatter.tsx",
 				"ui/chart/chart-tooltip-dot.tsx",
 				"ui/chart/chart-tooltip-x.tsx",
 				"ui/chart/chart-tooltip-y.tsx",
@@ -204,7 +209,14 @@
 				"ui/chart/chart.types.ts",
 				"ui/chart/chart.variants.ts",
 				"ui/chart/index.ts",
-				"ui/chart/use-chart-font.ts"
+				"ui/chart/pie-chart-center.tsx",
+				"ui/chart/pie-chart-label.tsx",
+				"ui/chart/pie-chart-slice.tsx",
+				"ui/chart/pie-chart-tooltip.tsx",
+				"ui/chart/pie-chart.context.tsx",
+				"ui/chart/pie-chart.tsx",
+				"ui/chart/use-chart-font.ts",
+				"ui/chart/use-chart-palette.ts"
 			]
 		},
 		{

@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on chart/pie/pie-tap and has settled —
+  four slices, nothing selected, the pie centred on the screen with a radius of
+  about 0.27 of its width. The capture script navigates there before running
+  this.
+steps:
+  - echo: Tapping the first slice, which starts at twelve o'clock and sweeps clockwise
+  # A coordinate rather than an id: a slice is a Skia path, not a view, so
+  # nothing under it carries a testID. The first slice is 38% of the pie, so
+  # its bisector sits 68° clockwise from twelve; this point is two-thirds of
+  # the way out along it, well inside the wedge whichever way the frame
+  # rounds.
+  - tool: gesture-tap
+    args: { x: 0.66, y: 0.47 }
+  - wait: 900
+  - echo: And outside, so the clip loops back to nothing selected
+  - tool: gesture-tap
+    args: { x: 0.12, y: 0.5 }
+  - wait: 400

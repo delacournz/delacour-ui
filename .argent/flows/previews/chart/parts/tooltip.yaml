@@ -1,5 +1,5 @@
 executionPrerequisite: >-
-  The chrome-free preview route is open on chart/tooltip and has settled — two
+  The chrome-free preview route is open on chart/parts/tooltip and has settled — two
   lines, no readout, the plot filling the stage between y 0.37 and y 0.63 of the
   screen. The capture script navigates there before running this.
 steps:

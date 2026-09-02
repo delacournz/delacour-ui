@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"A height token rather than an aspect ratio, so two charts at different widths still line up on a dashboard.",
 	note: "The ends of the scale, because the middle is the default every other demo already shows. The axis font and the tick count step with the height — a small chart asks for fewer labels because they would collide.",

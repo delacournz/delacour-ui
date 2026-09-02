@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Nothing to draw",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption: "An empty series, and a single point. Both are real states and neither is allowed to crash.",
 	note: "With no rows the domain falls back to `[0, 1]`, so the axis still has something to say rather than collapsing to a point.",
 };

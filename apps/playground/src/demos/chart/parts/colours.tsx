@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Colours",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"A series takes its ramp slot by position. Name a token to move it, or a literal to leave the ramp entirely.",
 	note: "The ramp stops at five and cycles, because five is what a pasted shadcn palette supplies.",

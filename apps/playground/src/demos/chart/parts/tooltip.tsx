@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Hold and drag. The readout follows the finger on the UI thread; its text updates only when the nearest point changes.",
 	note: "The rule, the dots and the readout all name the same datum. Holding first is deliberate — a chart inside a scrolling list must not steal the scroll.",
-	capture: { align: "stretch", flow: "chart/tooltip" },
+	capture: { align: "stretch", flow: "chart/parts/tooltip" },
 };
 
 const DATA = [

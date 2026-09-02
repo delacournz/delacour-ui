@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Curves",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption: "How the line gets from one point to the next. Every series here is the same data.",
 	note: "`monotone` is the default: it is the only interpolating curve here that cannot overshoot, so a line through non-negative data never dips below zero and invents a loss that never happened.",
 };

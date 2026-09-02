@@ -1033,13 +1033,13 @@ export const install = {
 	"chart": {
 		name: "chart",
 		title: "Chart",
-		description: "Skia charts on the theme's series ramp: line, area, grid, axes, legend and tooltip.",
+		description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		importPath: "@delacour/native-ui/chart",
 		exportName: "Chart",
 		expo: ["@shopify/react-native-skia", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 32,
+		fileCount: 44,
 		groups: [
 			{
 				name: "chart",
@@ -1048,9 +1048,13 @@ export const install = {
 				files: [
 					{ source: "packages/native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
 					{ source: "packages/native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-scatter.tsx", target: "src/components/ui/chart/chart-scatter.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx", target: "src/components/ui/chart/chart-tooltip-dot.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-tooltip-x.tsx", target: "src/components/ui/chart/chart-tooltip-x.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-tooltip-y.tsx", target: "src/components/ui/chart/chart-tooltip-y.tsx" },
@@ -1062,7 +1066,14 @@ export const install = {
 					{ source: "packages/native-ui/src/components/chart/chart.types.ts", target: "src/components/ui/chart/chart.types.ts" },
 					{ source: "packages/native-ui/src/components/chart/chart.variants.ts", target: "src/components/ui/chart/chart.variants.ts" },
 					{ source: "packages/native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
+					{ source: "packages/native-ui/src/components/chart/pie-chart.tsx", target: "src/components/ui/chart/pie-chart.tsx" },
 					{ source: "packages/native-ui/src/components/chart/use-chart-font.ts", target: "src/components/ui/chart/use-chart-font.ts" },
+					{ source: "packages/native-ui/src/components/chart/use-chart-palette.ts", target: "src/components/ui/chart/use-chart-palette.ts" },
 				],
 			},
 			{
@@ -1112,6 +1123,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 			{

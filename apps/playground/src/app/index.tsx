@@ -63,7 +63,7 @@ const COMPONENTS = [
 		href: "/chart",
 		icon: IconChart1,
 		title: "Chart",
-		description: "Series, marks, axes, legend, tooltip",
+		description: "Line, area, bar, scatter, candlestick, pie",
 	},
 	{
 		href: "/field",

@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inside a card",
 	align: "stretch",
+	capture: { align: "stretch" },
 	caption: "The composition someone actually writes: a chart in a `ListGroup`, above the rows it summarises.",
 };
 

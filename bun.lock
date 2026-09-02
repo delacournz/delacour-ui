@@ -146,6 +146,8 @@
       "name": "@delacour/charts",
       "version": "0.0.1-alpha.0",
       "dependencies": {
+        "@types/d3-scale": "^4.0.9",
+        "@types/d3-shape": "^3.1.7",
         "d3-scale": "^4.0.2",
         "d3-shape": "^3.2.0",
       },
@@ -154,8 +156,6 @@
         "@delacour/tsconfig": "workspace:*",
         "@shopify/react-native-skia": "catalog:",
         "@types/bun": "^1.3.8",
-        "@types/d3-scale": "^4.0.9",
-        "@types/d3-shape": "^3.1.7",
         "@types/react": "^19.2.0",
         "typescript": "^5.9.3",
       },

@@ -384,3 +384,52 @@ function formatSize(bytes: number): string {
 	if (bytes > 1_000_000) return `${Math.round(bytes / 1_000_000)}MB`;
 	return `${Math.round(bytes / 1000)}KB`;
 }
+
+/**
+ * Workspace packages a registry item installs from npm, by their directory.
+ *
+ * `chart` depends on `@delacour/charts`, and a scaffolded app installs that
+ * from the registry like any other package. Until the first manual publish
+ * there is nothing there to install, and after it there is a lag between a
+ * change here and the version npm serves — so a verify run that read npm would
+ * be checking last release's engine against this branch's skin.
+ */
+const WORKSPACE_PACKAGES: Record<string, string> = {
+	"@delacour/charts": "../../../charts",
+};
+
+/**
+ * Packs each workspace package the registry depends on and adds the tarball
+ * to the project, so `add` finds the dependency already declared and installs
+ * nothing from npm for it.
+ *
+ * Runs after `init`, because the monorepo layout's shared package does not
+ * exist before then, and `add` reads the `package.json` beside its config.
+ * A tarball rather than a `file:` link to the source directory: the pack is
+ * what a consumer gets — the `files` list, the `exports` map, no dev
+ * dependencies — so a type dependency missing from the manifest fails here
+ * rather than in someone's app.
+ */
+export async function installWorkspacePackages(workspace: Workspace, reporter: Reporter): Promise<void> {
+	const destination = join(VERIFY_DIR, "..", "packages");
+	await mkdir(destination, { recursive: true });
+
+	for (const [name, relativePath] of Object.entries(WORKSPACE_PACKAGES)) {
+		const packageDir = join(import.meta.dirname, relativePath);
+		const before = new Set(await readdir(destination));
+		await run("bun", ["pm", "pack", "--destination", destination], {
+			cwd: packageDir,
+			reporter,
+			label: `bun pm pack ${name}`,
+		});
+		const tarball = (await readdir(destination)).find((file) => file.endsWith(".tgz") && !before.has(file));
+		if (tarball === undefined) throw new Error(`bun pm pack wrote no tarball for ${name} in ${destination}`);
+
+		await run("bun", ["add", join(destination, tarball)], {
+			cwd: workspace.configRoot,
+			reporter,
+			label: `bun add ${name}`,
+		});
+		reporter.pass(`${name} from the workspace, as ${tarball}`);
+	}
+}

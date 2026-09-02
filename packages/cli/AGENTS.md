@@ -122,6 +122,14 @@ deriving the registry is that the two cannot diverge.
 installed package. It scaffolds a real Expo app, installs Uniwind and Tailwind, runs `init` against
 the stock Metro config so the *patch* path is exercised, adds every item, and typechecks.
 
+One thing it does not take from npm: a workspace package a registry item depends on.
+`chart` installs `@delacour/charts`, and `scripts/verify/harness.ts` packs that package with
+`bun pm pack` and adds the tarball to the project between `init` and `add`, so `add` sees the
+dependency declared and installs nothing for it. A tarball rather than a link, deliberately: the
+pack is what a consumer receives — `files`, `exports`, no dev dependencies — so a type package
+missing from `dependencies` fails this run instead of a reader's `tsc`. Add a package to
+`WORKSPACE_PACKAGES` there when a new item takes a dependency on one.
+
 | Level | Proves |
 | --- | --- |
 | `--no-install` | The right files land, with the right imports. Offline, seconds. |

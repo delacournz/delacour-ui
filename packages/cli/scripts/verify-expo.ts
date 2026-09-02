@@ -5,6 +5,7 @@ import { CONFIG_FILENAME } from "../src/config/schema";
 import { CHECKS, standaloneItems } from "./verify/checks";
 import {
 	buildCli,
+	installWorkspacePackages,
 	type Layout,
 	type Reporter,
 	removeVerifyDir,
@@ -160,6 +161,13 @@ try {
 		// told by having been run inside it.
 		{ cwd: workspace.installRoot, reporter, install: options.install }
 	);
+
+	// Before `add`, which would otherwise try npm for a package that lives in
+	// this repo — and, until its first publish, is not on npm at all.
+	if (options.install) {
+		reporter.step("Installing the workspace packages the registry depends on");
+		await installWorkspacePackages(workspace, reporter);
+	}
 
 	if (options.only) {
 		reporter.step(`delacour add ${options.only.join(" ")}`);

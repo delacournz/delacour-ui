@@ -205,9 +205,10 @@ requires and could never be merged. The PAT exists for that reason alone.
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
-bind the publisher, and CI takes over. Until that has happened,
-`bun --filter delacour run verify:expo` cannot pass for anything that depends on it, because it
-scaffolds a real Expo app and installs from npm.
+bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
+workspace package a registry item depends on (`@delacour/charts`, for `chart`) and adds the
+tarball to the scaffolded app before `add`, so the check covers this branch's engine rather than
+whatever npm last served — and passes before the package exists there at all.
 
 The registry the published CLI reads is pinned to the **commit** being released, not the tag —
 `changesets/action` builds before it tags, so a tag-derived ref would name something that does not

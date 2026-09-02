@@ -43,6 +43,7 @@ import * as demo_chart_colours from "./chart/colours";
 import * as demo_chart_curves from "./chart/curves";
 import * as demo_chart_dashboard from "./chart/dashboard";
 import * as demo_chart_empty from "./chart/empty";
+import * as demo_chart_flat from "./chart/flat";
 import * as demo_chart_grid_and_axes from "./chart/grid-and-axes";
 import * as demo_chart_legend from "./chart/legend";
 import * as demo_chart_line from "./chart/line";
@@ -197,6 +198,7 @@ export const DEMOS = {
 	"chart/curves": demo_chart_curves,
 	"chart/dashboard": demo_chart_dashboard,
 	"chart/empty": demo_chart_empty,
+	"chart/flat": demo_chart_flat,
 	"chart/grid-and-axes": demo_chart_grid_and_axes,
 	"chart/legend": demo_chart_legend,
 	"chart/line": demo_chart_line,

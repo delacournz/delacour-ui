@@ -4,6 +4,7 @@ import * as colours from "./colours";
 import * as curves from "./curves";
 import * as dashboard from "./dashboard";
 import * as empty from "./empty";
+import * as flat from "./flat";
 import * as gridAndAxes from "./grid-and-axes";
 import * as legend from "./legend";
 import * as line from "./line";
@@ -25,5 +26,6 @@ export const chartDemos = defineDemoGroup("chart", {
 	curves,
 	sizes,
 	empty,
+	flat,
 	dashboard,
 });

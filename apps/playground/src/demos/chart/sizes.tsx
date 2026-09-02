@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"A height token rather than an aspect ratio, so two charts at different widths still line up on a dashboard.",
-	note: "The axis font and the tick count step with the height — a small chart asks for fewer labels because they would collide.",
+	note: "The ends of the scale, because the middle is the default every other demo already shows. The axis font and the tick count step with the height — a small chart asks for fewer labels because they would collide.",
 };
 
 const DATA = [
@@ -21,6 +21,15 @@ const DATA = [
 ];
 
 const CONFIG = { y: { label: "Value" } };
+
+/**
+ * The first and last steps, derived rather than named.
+ *
+ * All three would overflow the pager's page, and a page that scrolls inside
+ * itself cannot be paged away from until it is scrolled back to the top — see
+ * `demos.test.ts`. The extremes carry the comparison on their own.
+ */
+const SHOWN = [CHART_SIZES[0], CHART_SIZES[CHART_SIZES.length - 1]] as const;
 
 function SizeRow({ size }: { size: (typeof CHART_SIZES)[number] }): ReactElement {
 	return (
@@ -39,7 +48,7 @@ function SizeRow({ size }: { size: (typeof CHART_SIZES)[number] }): ReactElement
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-6">
-			{CHART_SIZES.map((size) => (
+			{SHOWN.map((size) => (
 				<SizeRow key={size} size={size} />
 			))}
 		</View>

@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Candlestick",
 	caption:
-		"Open, high, low and close per day. A candle that closed up is `success`, one that closed down is `destructive` — the tokens those meanings already have.",
+		"Open, high, low and close per day. A candle that closed up is `chart-1`, one that closed down is `chart-2` — the top of the same ramp every other chart wears.",
 	note: "The `config` names the close field alone, so the legend and the readout name one price rather than four; the part reads the other three off its own props.",
 	capture: { align: "stretch" },
 };

@@ -217,8 +217,9 @@ without the series snapping.
 ```
 
 Open, high, low and close per row, read from fields of those names unless the props say otherwise.
-A candle that closed up is `success`, one that closed down is `destructive`, and a flat one is
-`muted-foreground` — the tokens those meanings already have, so a pasted palette recolours them.
+A candle that closed up is `chart-1`, one that closed down is `chart-2`, and a flat one is
+`muted-foreground` — the top of the same ramp every other chart wears, so a pasted palette
+recolours them with it.
 
 The `config` names the close field alone, so the legend and the readout name one price rather than
 four; the tooltip prints all four, swatched by sentiment.
@@ -509,7 +510,7 @@ a mark wrapped in your own component is not.
     close: { type: "string", default: '"close"' },
     colors: {
       type: "{ positive?: string; negative?: string; neutral?: string }",
-      description: "Overrides the sentiment colours. Literals only; the defaults are success, destructive and muted-foreground.",
+      description: "Overrides the sentiment colours. Literals only; the defaults are chart-1, chart-2 and muted-foreground.",
     },
     bodyWidth: { type: "number", default: "0.6", description: "The fraction of each step a body fills." },
     wickWidth: { type: "number", default: "1", description: "The wick's stroke width, in points." },

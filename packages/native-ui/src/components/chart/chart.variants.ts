@@ -658,18 +658,20 @@ export function resolveBarRadius(size: ChartSize, radius: number, rounded?: bool
 }
 
 /**
- * The tokens a candle borrows for its sentiment.
+ * The tokens a candle takes for its sentiment.
  *
- * Rule 11: a colour that carries meaning is a shadcn token, so a pasted theme
- * moves it. `success` and `destructive` are what a rising and a falling value
- * already mean everywhere else in the package, and a flat candle is
- * `muted-foreground` — it says nothing, in the colour of things that say
- * nothing. Only literal overrides are accepted on the part, so the root can
- * resolve these three with three fixed hook calls.
+ * The first two slots of the series ramp, so a candlestick is painted from the
+ * same five colours as every other chart and a pasted palette recolours it with
+ * them. `success` and `destructive` were the first choice — they already mean
+ * up and down elsewhere — but they made the one chart on a dashboard that
+ * ignored the ramp, in red and green a theme never picked for its charts.
+ * A flat candle is `muted-foreground`: it says nothing, in the colour of things
+ * that say nothing. Only literal overrides are accepted on the part, so the
+ * root can resolve these three with three fixed hook calls.
  */
 export const CANDLE_SENTIMENT_TOKENS: ChartCandleColors = {
-	positive: "success",
-	negative: "destructive",
+	positive: "chart-1",
+	negative: "chart-2",
 	neutral: "muted-foreground",
 };
 

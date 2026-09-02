@@ -434,7 +434,7 @@ export const Chart = Object.assign(ChartRoot, {
 	Bar: ChartBar,
 	/** One dot per datum, in the series' colour. */
 	Scatter: ChartScatter,
-	/** Open-high-low-close candles in `success`, `destructive` and `muted-foreground`. */
+	/** Open-high-low-close candles in `chart-1`, `chart-2` and `muted-foreground`. */
 	Candlestick: ChartCandlestick,
 	/** Tick labels below the plot, in `muted-foreground`. */
 	XAxis: ChartXAxis,

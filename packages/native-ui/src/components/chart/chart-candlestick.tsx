@@ -12,7 +12,7 @@ export type ChartCandlestickProps = {
 	/**
 	 * Overrides the sentiment colours. Literals only.
 	 *
-	 * The defaults are `success`, `destructive` and `muted-foreground`,
+	 * The defaults are `chart-1`, `chart-2` and `muted-foreground`,
 	 * resolved in the root; a token here would reach the canvas unresolved.
 	 */
 	colors?: Partial<ChartCandleColors>;
@@ -29,8 +29,8 @@ export type ChartCandlestickProps = {
  * The chart's `config` names the close field alone, so the legend and the
  * tooltip name one price rather than four; the root reads the other three
  * fields off this part and plots them for the engine. A rising candle is
- * `success` and a falling one `destructive` — the tokens those meanings
- * already have everywhere else — and a flat candle is `muted-foreground`.
+ * `chart-1` and a falling one `chart-2` — the top of the same ramp every
+ * other chart wears — and a flat candle is `muted-foreground`.
  */
 export function ChartCandlestick(props: ChartCandlestickProps): ReactElement {
 	const { candleColors } = useChart();

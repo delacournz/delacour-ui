@@ -142,9 +142,11 @@ knows nothing about tokens.
   `tokens.css`. A stack rounds only its outermost segment, so a column reads
   as one bar rather than a pile of pills. `rounded={false}` is square.
 
-- **Candle sentiment borrows `success` and `destructive`.** Rule 11: a
-  colour with a meaning is a shadcn token, and those two already mean "up" and
-  "down" everywhere else here; a flat candle is `muted-foreground`. The root
+- **Candle sentiment is the top of the ramp.** A rising candle is `chart-1`
+  and a falling one `chart-2`, so a candlestick is painted from the same five
+  colours as every other chart and a pasted palette recolours it with them.
+  `success` and `destructive` were tried first and made the one chart on a
+  dashboard that ignored the ramp; a flat candle is `muted-foreground`. The root
   resolves the three with three fixed hook calls, which is why the part takes
   only literal overrides — a token given to a mark inside the canvas has
   nothing to resolve it. The config names the close field alone, so the

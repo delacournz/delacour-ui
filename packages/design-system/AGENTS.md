@@ -58,6 +58,35 @@ So the numbers are the canonical form and `emit.ts` adds the units on the way
 out: `--radius` in `rem` (÷ 16, so Vega's `10` is the `0.625rem` `tokens.css`
 already ships), every other geometry token in `px`.
 
+## The copied file carries the scales, not just the palette
+
+`emitShadcnCss` writes four blocks: `:root`, `.dark`, then `@theme` and
+`@theme inline`. The palette comes first because it is what a reader scans for
+and the only part that differs between two of these files; the scales come after.
+
+**The baseline is not decoration.** The Style axis writes button heights, field
+heights, the icon scale and the screen gutter, so a copied palette on its own
+arrives with none of the geometry that made the theme look the way it did — every
+`h-button-md` and `size-icon-md` resolves to nothing. The `@theme` block is the
+*resolved* geometry, so Rhea's file carries Rhea's numbers.
+
+`--radius` is declared once, in `@theme`, where `tokens.css` declares it. Two
+copies in one file would be a later-wins race between blocks, and the loser would
+be whichever one the reader edited.
+
+`--text-xs` … `--text-3xl` and the `@theme inline` corner ramp are **restated**
+in `emit.ts` rather than resolved, because no axis varies them. `emit.test.ts`
+reads `tokens.css` and fails if the copies drift — and asserts outright that
+Vega's whole `@theme` block equals the shipped one, since Vega is the identity
+style.
+
+**`parseTheme` routes geometry into `native`, wherever it was declared.** The
+page tells the reader to run this exact file through `delacour theme`, so
+geometry arriving in `@theme` or `:root` has to come back out in
+`@variant native`. Left in the palette, Uniwind inlines it at build time and
+`h-button-md` stops being something a consuming app can retune at runtime — which
+is the whole reason that block exists.
+
 ## A preset code is a promise
 
 `encodePreset` produces a short opaque string that ends up in a URL someone

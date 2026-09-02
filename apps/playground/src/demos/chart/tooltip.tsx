@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Press to read a value",
 	caption:
 		"Hold and drag. The readout follows the finger on the UI thread; its text updates only when the nearest point changes.",
-	note: "Holding first is deliberate — a chart inside a scrolling list must not steal the scroll.",
+	note: "The rule, the dots and the readout all name the same datum. Holding first is deliberate — a chart inside a scrolling list must not steal the scroll.",
 	capture: { align: "stretch", flow: "chart/tooltip" },
 };
 
@@ -32,6 +32,8 @@ export function Demo(): ReactElement {
 			<Chart.XAxis />
 			<Chart.Line yKey="desktop" />
 			<Chart.Line yKey="mobile" />
+			<Chart.Tooltip.X />
+			<Chart.Tooltip.Dot />
 			<Chart.Tooltip />
 		</Chart>
 	);

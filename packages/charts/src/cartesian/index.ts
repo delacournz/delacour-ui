@@ -14,5 +14,11 @@ export type {
 export { type CanvasSize, useCanvasSize } from "./hooks/use-canvas-size";
 export { type UseChartModelOptions, useChartModel } from "./hooks/use-chart-model";
 export { ChartArea, type ChartAreaProps } from "./marks/chart-area";
+export {
+	ChartCursorDot,
+	type ChartCursorDotProps,
+	ChartCursorLine,
+	type ChartCursorLineProps,
+} from "./marks/chart-cursor";
 export { ChartGrid, type ChartGridProps } from "./marks/chart-grid";
 export { ChartLine, type ChartLineProps } from "./marks/chart-line";

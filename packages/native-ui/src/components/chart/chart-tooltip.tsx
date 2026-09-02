@@ -6,6 +6,9 @@ import { cn } from "../../lib/cn";
 import { Text } from "../text";
 import { useChart } from "./chart.context";
 import { chartTooltipOffset } from "./chart.variants";
+import { ChartTooltipDot } from "./chart-tooltip-dot";
+import { ChartTooltipX } from "./chart-tooltip-x";
+import { ChartTooltipY } from "./chart-tooltip-y";
 
 export type ChartTooltipProps = {
 	className?: string;
@@ -45,7 +48,7 @@ const DEFAULT_SIZE = { width: 120, height: 56 };
  * when the selected row does — and text on a shared value would mean an
  * `AnimatedTextInput` and a `value` prop pretending to be a label.
  */
-export function ChartTooltip({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
+function ChartTooltipRoot({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
 	const { scrub, slots, series, data, formatXValue, frame } = useChart();
 	const [index, setIndex] = useState(-1);
 	const measured = size ?? DEFAULT_SIZE;
@@ -93,4 +96,30 @@ export function ChartTooltip({ className, formatHeading, formatValue, size }: Ch
 	);
 }
 
-ChartTooltip.displayName = "DelacourUI.Chart.Tooltip";
+/**
+ * A floating readout that follows the scrub, and the marks that point at it.
+ *
+ * The readout is a React Native view over the canvas; `Dot`, `X` and `Y` are
+ * Skia marks drawn inside it. They are named here because they are one
+ * feature, but they are **placed as siblings** — a view cannot contain a
+ * canvas node, so `<Chart.Tooltip><Chart.Tooltip.Dot /></Chart.Tooltip>` would
+ * put the dot in the wrong tree and draw nothing.
+ *
+ * @example
+ * <Chart config={config} data={rows} xKey="at">
+ *   <Chart.Line yKey="price" />
+ *   <Chart.Tooltip.X />
+ *   <Chart.Tooltip.Y />
+ *   <Chart.Tooltip.Dot />
+ *   <Chart.Tooltip />
+ * </Chart>
+ */
+export const ChartTooltip = Object.assign(ChartTooltipRoot, {
+	/** A dot on each series at the scrubbed point, ringed in the chart's background. */
+	Dot: ChartTooltipDot,
+	/** A vertical rule through the scrubbed position — where along x you are. */
+	X: ChartTooltipX,
+	/** A horizontal rule at one series' value, carrying it across to the y axis. */
+	Y: ChartTooltipY,
+	displayName: "DelacourUI.Chart.Tooltip",
+});

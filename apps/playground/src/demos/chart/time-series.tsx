@@ -28,6 +28,9 @@ export function Demo(): ReactElement {
 			<Chart.XAxis />
 			<Chart.Area yKey="price" />
 			<Chart.Line yKey="price" />
+			<Chart.Tooltip.X />
+			<Chart.Tooltip.Y />
+			<Chart.Tooltip.Dot />
 			<Chart.Tooltip />
 		</Chart>
 	);

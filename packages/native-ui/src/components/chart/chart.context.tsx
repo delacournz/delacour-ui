@@ -18,6 +18,13 @@ export type ChartContextValue = {
 	readonly gridColor: string | undefined;
 	/** Resolved axis-label colour. */
 	readonly axisColor: string | undefined;
+	/**
+	 * The surface the chart is drawn on.
+	 *
+	 * A cursor dot rings itself in this so it reads as a knob sitting on the
+	 * line rather than as a slight thickening of it.
+	 */
+	readonly surfaceColor: string | undefined;
 	readonly scrub: ChartScrubState;
 	/** The frame's measured size, for placing an overlay inside it. */
 	readonly frame: { readonly width: number; readonly height: number };

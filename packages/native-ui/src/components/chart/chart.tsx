@@ -22,6 +22,9 @@ import { ChartGrid } from "./chart-grid";
 import { ChartLegend } from "./chart-legend";
 import { ChartLine } from "./chart-line";
 import { ChartTooltip } from "./chart-tooltip";
+import { ChartTooltipDot } from "./chart-tooltip-dot";
+import { ChartTooltipX } from "./chart-tooltip-x";
+import { ChartTooltipY } from "./chart-tooltip-y";
 import { ChartXAxis } from "./chart-x-axis";
 import { ChartYAxis } from "./chart-y-axis";
 import { useChartFont } from "./use-chart-font";
@@ -50,7 +53,18 @@ export type ChartProps = {
 };
 
 /** Parts that draw into the canvas. Everything else is layered around it. */
-const CANVAS_PARTS = new Set<unknown>([ChartGrid, ChartLine, ChartArea, ChartXAxis, ChartYAxis]);
+const CANVAS_PARTS = new Set<unknown>([
+	ChartGrid,
+	ChartLine,
+	ChartArea,
+	ChartXAxis,
+	ChartYAxis,
+	// The cursor marks are named under `Chart.Tooltip` but drawn in the canvas,
+	// not inside the view the tooltip renders.
+	ChartTooltipDot,
+	ChartTooltipX,
+	ChartTooltipY,
+]);
 
 function ChartRoot({
 	config,
@@ -90,6 +104,7 @@ function ChartRoot({
 	const color7 = useThemeColor(partition.tokens[7] as string);
 	const gridColor = useThemeColor("border");
 	const axisColor = useThemeColor("muted-foreground");
+	const surfaceColor = useThemeColor("background");
 
 	const series = useMemo(
 		() => applyChartColors(declared, partition, [color0, color1, color2, color3, color4, color5, color6, color7]),
@@ -103,8 +118,8 @@ function ChartRoot({
 	const formatXValue = useMemo(() => resolveXValueFormat(data, xKey), [data, xKey]);
 
 	const value = useMemo<ChartContextValue>(
-		() => ({ series, data, xKey, formatXValue, size, slots, gridColor, axisColor, scrub, frame }),
-		[series, data, xKey, formatXValue, size, slots, gridColor, axisColor, scrub, frame]
+		() => ({ series, data, xKey, formatXValue, size, slots, gridColor, axisColor, surfaceColor, scrub, frame }),
+		[series, data, xKey, formatXValue, size, slots, gridColor, axisColor, surfaceColor, scrub, frame]
 	);
 
 	const { canvas, overlay } = useMemo(() => partitionChildren(children), [children]);

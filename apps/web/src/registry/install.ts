@@ -1039,7 +1039,7 @@ export const install = {
 		expo: ["@shopify/react-native-skia", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 29,
+		fileCount: 32,
 		groups: [
 			{
 				name: "chart",
@@ -1051,6 +1051,9 @@ export const install = {
 					{ source: "packages/native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx", target: "src/components/ui/chart/chart-tooltip-dot.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-tooltip-x.tsx", target: "src/components/ui/chart/chart-tooltip-x.tsx" },
+					{ source: "packages/native-ui/src/components/chart/chart-tooltip-y.tsx", target: "src/components/ui/chart/chart-tooltip-y.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-tooltip.tsx", target: "src/components/ui/chart/chart-tooltip.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-x-axis.tsx", target: "src/components/ui/chart/chart-x-axis.tsx" },
 					{ source: "packages/native-ui/src/components/chart/chart-y-axis.tsx", target: "src/components/ui/chart/chart-y-axis.tsx" },

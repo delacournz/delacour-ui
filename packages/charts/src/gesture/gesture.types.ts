@@ -29,6 +29,14 @@ export type ChartScrubState = {
 	readonly isActive: SharedValue<boolean>;
 	/** Touch x in canvas points, clamped to the plot rect. */
 	readonly x: SharedValue<number>;
+	/**
+	 * Canvas x of the nearest datum.
+	 *
+	 * What a crosshair should sit at whenever the readout beside it names a
+	 * datum: a vertical line tracking the raw touch while the label snaps says
+	 * two different things about one gesture.
+	 */
+	readonly snappedX: SharedValue<number>;
 	/** The domain value under the touch. */
 	readonly xValue: SharedValue<number>;
 	/** Nearest datum index. `-1` before the first touch. */

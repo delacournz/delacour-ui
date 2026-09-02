@@ -67,6 +67,7 @@ export function useScrubGesture(options: UseScrubGestureOptions): GestureType | 
 
 			const index = closestIndex(current.xPositions, x);
 			state.index.value = index;
+			state.snappedX.value = index >= 0 ? (current.xPositions[index] ?? Number.NaN) : Number.NaN;
 
 			for (let position = 0; position < current.series.length; position += 1) {
 				const series = current.series[position];

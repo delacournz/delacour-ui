@@ -20,6 +20,7 @@ knows nothing about tokens.
 | `chart-grid.tsx`, `chart-line.tsx`, `chart-area.tsx` | Skia marks |
 | `chart-x-axis.tsx`, `chart-y-axis.tsx` | Skia axis labels |
 | `chart-legend.tsx`, `chart-tooltip.tsx` | React Native, around and over the canvas |
+| `chart-tooltip-dot.tsx`, `chart-tooltip-x.tsx`, `chart-tooltip-y.tsx` | Skia cursor marks, named under the tooltip |
 
 ## Design
 
@@ -89,6 +90,25 @@ knows nothing about tokens.
   which is a few times per drag, not once per frame. Text on a shared value
   would mean an animated `TextInput` with a `value` prop pretending to be a
   label.
+
+- **The cursor marks are named under `Chart.Tooltip` but placed beside it.**
+  `Chart.Tooltip.Dot`, `.X` and `.Y` are one feature with the readout, so they
+  share its namespace — but the readout is a React Native view over the canvas
+  and the marks are drawn inside it. Nesting them
+  (`<Chart.Tooltip><Chart.Tooltip.Dot /></Chart.Tooltip>`) would put a canvas
+  node in a view's tree and draw nothing, with no error. They are siblings, and
+  `partitionChildren` routes them to opposite sides of the boundary.
+
+- **The marks snap to the datum, because the readout names one.** A rule
+  tracking the raw touch while the label beside it snaps says two different
+  things about one gesture. `snappedX` exists on the scrub for exactly this —
+  the crosshair, the dot and the number all read the same row. `glide` opts
+  into the continuous curve position, and the doc says what it costs.
+
+- **A dot rings itself in the chart's background.** A dot in the series colour
+  sitting on a line of that same colour is a slight thickening and nothing
+  more; the ring is what makes it a knob. That is why `surfaceColor` is
+  resolved in the root and carried on the context.
 
 - **Parts must be direct children of `<Chart>`.** The root partitions them by
   component identity to decide what goes inside the canvas, what floats over

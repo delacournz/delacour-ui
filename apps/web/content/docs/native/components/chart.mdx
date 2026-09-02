@@ -90,9 +90,20 @@ nearest point changes.
 ```tsx
 <Chart config={config} data={rows} xKey="month">
   <Chart.Line yKey="desktop" />
+  <Chart.Tooltip.X />
+  <Chart.Tooltip.Dot />
   <Chart.Tooltip />
 </Chart>
 ```
+
+`Chart.Tooltip.X`, `.Y` and `.Dot` mark the position on the plot itself — a
+vertical rule, a horizontal one, and a dot on each series. They are **siblings**
+of `Chart.Tooltip`, not children: the readout is a React Native view over the
+canvas and these are drawn inside it, so one cannot contain the other.
+
+All three sit on the nearest datum by default, which is what the readout names.
+Pass `glide` to follow the finger continuously instead, and expect the marks to
+describe a different position from the number beside them.
 
 Holding first is deliberate — a chart inside a scrolling list must not steal the scroll. Pass
 `scrubConfig={{ behaviour: "claim" }}` on a chart that owns its width, and a horizontal drag
@@ -128,6 +139,9 @@ dashboard. The axis font and the tick count step with it.
 | `Chart.XAxis` | Tick labels below the plot |
 | `Chart.YAxis` | Tick labels beside the plot |
 | `Chart.Tooltip` | A floating readout that follows the scrub |
+| `Chart.Tooltip.Dot` | A dot on each series at the scrubbed point |
+| `Chart.Tooltip.X` | A vertical rule through the scrubbed position |
+| `Chart.Tooltip.Y` | A horizontal rule at one series' value |
 | `Chart.Legend` | A swatch and a label per series |
 
 A part must be a **direct** child of `<Chart>`: the root sorts them by identity to decide what is
@@ -236,6 +250,44 @@ a mark wrapped in your own component is not.
     formatValue: { type: "(value: unknown, key: string) => string" },
     size: { type: "{ width: number; height: number }", description: "Overrides the size used to keep it inside the frame." },
     className: { type: "string" },
+  }}
+/>
+
+### Chart.Tooltip.Dot
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series to mark. Omit to mark every one." },
+    color: { type: "string", description: "Overrides the series' colour." },
+    radius: { type: "number", default: "4" },
+    borderWidth: { type: "number", default: "2", description: "The background ring's width. Zero draws no ring." },
+    glide: { type: "boolean", description: "Ride the curve continuously instead of sitting on the nearest datum." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Tooltip.X
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "Overrides the `muted-foreground` token." },
+    width: { type: "number", default: "1" },
+    dash: { type: "[number, number] | null", default: "[4, 4]", description: "Pass null for a solid rule." },
+    glide: { type: "boolean" },
+    opacity: { type: "number", default: "0.6" },
+  }}
+/>
+
+### Chart.Tooltip.Y
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series' value the rule sits at. Defaults to the first." },
+    color: { type: "string", description: "Overrides the series' colour." },
+    width: { type: "number", default: "1" },
+    dash: { type: "[number, number] | null", default: "[4, 4]" },
+    glide: { type: "boolean" },
+    opacity: { type: "number", default: "0.6" },
   }}
 />
 

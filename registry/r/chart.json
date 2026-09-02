@@ -71,6 +71,21 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx",
+			"target": "chart/chart-tooltip-dot.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-x.tsx",
+			"target": "chart/chart-tooltip-x.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-y.tsx",
+			"target": "chart/chart-tooltip-y.tsx",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/native-ui/src/components/chart/chart-tooltip.tsx",
 			"target": "chart/chart-tooltip.tsx",
 			"namespace": "ui",

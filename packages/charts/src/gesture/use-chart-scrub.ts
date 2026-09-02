@@ -31,6 +31,7 @@ export function useChartScrub(keys: readonly string[]): ChartScrubState {
 		return {
 			isActive: makeMutable(false),
 			x: makeMutable(0),
+			snappedX: makeMutable(Number.NaN),
 			xValue: makeMutable(Number.NaN),
 			index: makeMutable(-1),
 			series,

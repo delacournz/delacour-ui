@@ -1,0 +1,27 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on chart/tooltip and has settled — two
+  lines, no readout, the plot filling the stage between y 0.37 and y 0.63 of the
+  screen. The capture script navigates there before running this.
+steps:
+  - echo: Holding to arm the scrub, which does not activate on a plain drag
+  # A raw gesture-custom rather than a directive: the scrub is a partial drag
+  # behind a long press, which no `tap`/`swipe` directive can express. The y is
+  # the plot's vertical centre and the x values walk across it, so the anchor is
+  # the stage rect the preview route reports in its readiness sentinel.
+  - tool: gesture-custom
+    args:
+      interpolate: 6
+      events:
+        - { type: Down, x: 0.22, y: 0.5 }
+        - { type: Move, x: 0.23, y: 0.5, delayMs: 500 }
+        - { type: Move, x: 0.45, y: 0.5, delayMs: 220 }
+        - { type: Move, x: 0.68, y: 0.5, delayMs: 220 }
+        - { type: Move, x: 0.88, y: 0.5, delayMs: 220 }
+  - echo: And back, so the clip loops without the readout jumping across
+  - tool: gesture-custom
+    args:
+      interpolate: 6
+      events:
+        - { type: Move, x: 0.55, y: 0.5, delayMs: 220 }
+        - { type: Move, x: 0.23, y: 0.5, delayMs: 220 }
+        - { type: Up, x: 0.22, y: 0.5, delayMs: 160 }

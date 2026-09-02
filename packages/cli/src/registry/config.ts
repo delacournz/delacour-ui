@@ -50,8 +50,14 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"@legendapp/list": "expo",
 	// Built on Reanimated and Gesture Handler, and pinned against both.
 	"@gorhom/bottom-sheet": "expo",
+	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
+	// would fetch the newest and fail at the linker rather than at install.
+	"@shopify/react-native-skia": "expo",
 
 	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "npm",
+	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
+	// what need the SDK, and `ITEM_META.chart.dependencies` names them.
+	"@delacour/charts": "npm",
 	clsx: "npm",
 	tailwindcss: "npm",
 	"tailwind-merge": "npm",
@@ -95,6 +101,15 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Checkbox",
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",
 		categories: ["forms"],
+	},
+	chart: {
+		title: "Chart",
+		description: "Skia charts on the theme's series ramp: line, area, grid, axes, legend and tooltip.",
+		categories: ["display"],
+		// `@delacour/charts` peer-depends on Skia, and no file here imports it —
+		// so no scan can see it. Installing it with the package manager rather
+		// than `expo install` is a build that fails at the linker.
+		dependencies: ["@shopify/react-native-skia"],
 	},
 	field: {
 		title: "Field",

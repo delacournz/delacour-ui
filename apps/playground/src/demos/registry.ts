@@ -38,6 +38,18 @@ import * as demo_button_icons from "./button/icons";
 import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
 import * as demo_button_variants from "./button/variants";
+import * as demo_chart_area from "./chart/area";
+import * as demo_chart_colours from "./chart/colours";
+import * as demo_chart_curves from "./chart/curves";
+import * as demo_chart_dashboard from "./chart/dashboard";
+import * as demo_chart_empty from "./chart/empty";
+import * as demo_chart_grid_and_axes from "./chart/grid-and-axes";
+import * as demo_chart_legend from "./chart/legend";
+import * as demo_chart_line from "./chart/line";
+import * as demo_chart_multi_series from "./chart/multi-series";
+import * as demo_chart_sizes from "./chart/sizes";
+import * as demo_chart_time_series from "./chart/time-series";
+import * as demo_chart_tooltip from "./chart/tooltip";
 import * as demo_checkbox_alignment from "./checkbox/alignment";
 import * as demo_checkbox_checkbox_group from "./checkbox/checkbox-group";
 import * as demo_checkbox_colours from "./checkbox/colours";
@@ -180,6 +192,18 @@ export const DEMOS = {
 	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
 	"button/variants": demo_button_variants,
+	"chart/area": demo_chart_area,
+	"chart/colours": demo_chart_colours,
+	"chart/curves": demo_chart_curves,
+	"chart/dashboard": demo_chart_dashboard,
+	"chart/empty": demo_chart_empty,
+	"chart/grid-and-axes": demo_chart_grid_and_axes,
+	"chart/legend": demo_chart_legend,
+	"chart/line": demo_chart_line,
+	"chart/multi-series": demo_chart_multi_series,
+	"chart/sizes": demo_chart_sizes,
+	"chart/time-series": demo_chart_time_series,
+	"chart/tooltip": demo_chart_tooltip,
 	"checkbox/alignment": demo_checkbox_alignment,
 	"checkbox/checkbox-group": demo_checkbox_checkbox_group,
 	"checkbox/colours": demo_checkbox_colours,

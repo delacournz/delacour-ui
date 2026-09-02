@@ -5,6 +5,7 @@ import {
 	BUTTON_RADIUS_TOKENS,
 	BUTTON_SIZE_TOKENS,
 	BUTTON_TEXT_TOKENS,
+	CHART_SIZE_TOKENS,
 	ICON_SIZE_TOKENS,
 	INPUT_SIZE_TOKENS,
 	INPUT_TEXT_TOKENS,
@@ -40,7 +41,13 @@ describe("tokens.ts and tokens.css", () => {
 			.filter((name) => name.startsWith("spacing-"))
 			.map((name) => name.replace("spacing-", ""))
 			.sort();
-		const registered = [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...INPUT_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS].sort();
+		const registered = [
+			...BUTTON_SIZE_TOKENS,
+			...CHART_SIZE_TOKENS,
+			...ICON_SIZE_TOKENS,
+			...INPUT_SIZE_TOKENS,
+			...SCREEN_SIZE_TOKENS,
+		].sort();
 		expect(declared).toEqual(registered);
 	});
 
@@ -66,6 +73,20 @@ describe("tokens.ts and tokens.css", () => {
 			.map((name) => name.replace("text-", ""))
 			.sort();
 		expect(declared).toEqual([...INPUT_TEXT_TOKENS].sort());
+	});
+});
+
+describe("the chart scale", () => {
+	test("ascends in the order the registry lists it", () => {
+		const values = CHART_SIZE_TOKENS.map((token) => px(`spacing-${token}`));
+		expect(values).toEqual([...values].sort((a, b) => a - b));
+		expect(new Set(values).size).toBe(CHART_SIZE_TOKENS.length);
+	});
+
+	test("stays taller than a control, since a chart is a region and not a row", () => {
+		// A chart shorter than an input would have no room for an axis under its
+		// own plot, and the labels would collide with the marks.
+		expect(px("spacing-chart-sm")).toBeGreaterThan(px("spacing-input-lg"));
 	});
 });
 

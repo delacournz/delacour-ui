@@ -28,6 +28,7 @@
 		],
 		"catalog": {
 			"@legendapp/list": "^3.3.8",
+			"@shopify/react-native-skia": "2.6.2",
 			"react": "19.2.3",
 			"react-dom": "19.2.3",
 			"react-native": "0.86.2",
@@ -54,6 +55,9 @@
 	"overrides": {
 		"@babel/core": "^7.28.4"
 	},
+	"trustedDependencies": [
+		"@shopify/react-native-skia"
+	],
 	"patchedDependencies": {
 		"expo-modules-jsi@57.0.5": "patches/expo-modules-jsi@57.0.5.patch"
 	}

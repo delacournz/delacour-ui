@@ -1,0 +1,261 @@
+---
+title: Chart
+description: Skia charts, skinned with the theme's five-colour series ramp.
+icon: LineChart
+---
+
+<Preview id="chart/line" title={null} />
+
+## Installation
+
+<ComponentInstall name="chart" />
+
+## Usage
+
+```tsx
+import { Chart } from "@delacour/native-ui/chart";
+```
+
+```tsx
+<Chart config={{ revenue: { label: "Revenue" } }} data={rows} xKey="month">
+  <Chart.Grid />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Line yKey="revenue" />
+</Chart>
+```
+
+## The config is the chart
+
+`config` names each series, sets the draw order, and hands out the theme's ramp by position — so a
+mark names the data and never the paint. The shape is shadcn's, which means a chart config written
+for a web dashboard moves across as a copy rather than a translation.
+
+<Preview id="chart/multi-series" />
+
+```tsx
+const config = {
+  desktop: { label: "Desktop" },                    // chart-1, by position
+  mobile:  { label: "Mobile",  color: "chart-4" },  // an explicit ramp slot
+  tablet:  { label: "Tablet",  color: "primary" },  // any token the theme emits
+  other:   { label: "Other",   color: "#EC4899" },  // a literal, straight through
+};
+```
+
+The ramp stops at five and cycles. That is not an arbitrary limit: `--chart-1` through `--chart-5`
+are what a shadcn palette declares, so a sixth token would leave every pasted theme drawing five
+themed series and one stranger. Past five, name the colours.
+
+At most eight token-valued series resolve in one render, and the component throws by name past
+that. Literal colours bypass the lookup entirely, so a chart of twenty literal-coloured series is
+fine.
+
+## Marks
+
+Parts are placed, not configured.
+
+<Preview id="chart/area" />
+
+```tsx
+<Chart config={config} data={rows} includeZero xKey="day">
+  <Chart.Area yKey="visits" />
+  <Chart.Line yKey="visits" />
+</Chart>
+```
+
+`Chart.Area` fades the series' own colour out towards the baseline rather than painting it flat — a
+flat fill at any readable opacity competes with the line above it.
+
+## Grid and axes
+
+<Preview id="chart/grid-and-axes" />
+
+```tsx
+<Chart.Grid />              {/* y ticks, painted with `border` */}
+<Chart.Grid axis="both" />
+<Chart.YAxis />
+<Chart.XAxis />
+```
+
+The grid paints with `border` and the labels with `muted-foreground`, so both follow a pasted
+palette without a chart-specific token existing at all.
+
+## Tooltip
+
+Hold and drag. The readout follows the finger on the UI thread; its text updates only when the
+nearest point changes.
+
+<Preview id="chart/tooltip" />
+
+```tsx
+<Chart config={config} data={rows} xKey="month">
+  <Chart.Line yKey="desktop" />
+  <Chart.Tooltip />
+</Chart>
+```
+
+Holding first is deliberate — a chart inside a scrolling list must not steal the scroll. Pass
+`scrubConfig={{ behaviour: "claim" }}` on a chart that owns its width, and a horizontal drag
+scrubs while a vertical one still scrolls.
+
+## Legend
+
+<Preview id="chart/legend" />
+
+```tsx
+<Chart.Legend />
+<Chart.Legend keys={["ios"]} />
+```
+
+## Sizes
+
+```tsx
+<Chart size="sm" />
+<Chart size="md" />
+<Chart size="lg" />
+```
+
+A height token rather than an aspect ratio, so two charts at different widths still line up on a
+dashboard. The axis font and the tick count step with it.
+
+## API Reference
+
+| Part | |
+| --- | --- |
+| `Chart.Grid` | A hairline rule at each tick. Draws first, under every mark |
+| `Chart.Line` | A stroked line through one series |
+| `Chart.Area` | The region under one series, fading towards the baseline |
+| `Chart.XAxis` | Tick labels below the plot |
+| `Chart.YAxis` | Tick labels beside the plot |
+| `Chart.Tooltip` | A floating readout that follows the scrub |
+| `Chart.Legend` | A swatch and a label per series |
+
+A part must be a **direct** child of `<Chart>`: the root sorts them by identity to decide what is
+drawn into the canvas, what floats over it and what sits under it. An array from `.map()` is fine;
+a mark wrapped in your own component is not.
+
+### Chart
+
+<TypeTable
+  type={{
+    config: {
+      type: "Record<string, { label: string; color?: string }>",
+      description: "The series, keyed by the data field each reads. Key order is draw order and ramp order.",
+    },
+    data: { type: "readonly Record<string, unknown>[]" },
+    xKey: { type: "string", description: "The field every series is plotted against." },
+    yKeys: { type: "readonly string[]", description: "Show only these series. Defaults to every key of config." },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    curve: {
+      type: '"monotone" | "linear" | "natural" | "step"',
+      default: '"monotone"',
+      description: "How the line gets between points. Monotone cannot overshoot.",
+    },
+    domain: {
+      type: "{ y?: [number | undefined, number | undefined] }",
+      description: "Explicit y bounds. Either end may be omitted to keep the data's own.",
+    },
+    includeZero: { type: "boolean", description: "Pull zero into the y domain." },
+    scrubConfig: {
+      type: '{ enabled?: boolean; behaviour?: "hold" | "claim" | "block"; holdDuration?: number }',
+      description: "How the scrub coexists with a scrolling parent.",
+    },
+    className: { type: "string" },
+    testID: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Chart.Line
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Names a key of the chart's config." },
+    color: { type: "string", description: "Overrides the series' colour. A token or a literal." },
+    strokeWidth: { type: "number", default: "2" },
+    curve: { type: "CurveType", description: "Overrides the chart's curve for this mark alone." },
+    connectMissingData: { type: "boolean", description: "Draw straight through a gap instead of breaking." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Area
+
+<TypeTable
+  type={{
+    yKey: { type: "string" },
+    color: { type: "string" },
+    gradient: { type: "boolean", default: "true", description: "Fade towards the baseline rather than filling flat." },
+    opacity: { type: "number", default: "0.25", description: "Opacity at the top of the fill." },
+    curve: { type: "CurveType" },
+    connectMissingData: { type: "boolean" },
+  }}
+/>
+
+### Chart.Grid
+
+<TypeTable
+  type={{
+    axis: { type: '"x" | "y" | "both"', default: '"y"', description: "Which ticks get a rule." },
+    color: { type: "string", description: "Overrides the `border` token this paints with." },
+    lineWidth: { type: "number", default: "1" },
+    dash: { type: "[number, number]", description: "Dash on/off lengths, in points." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.XAxis
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "Overrides the `muted-foreground` token." },
+    tickPadding: { type: "number", default: "6" },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.YAxis
+
+<TypeTable
+  type={{
+    color: { type: "string" },
+    tickPadding: { type: "number", default: "6" },
+    side: { type: '"left" | "right"', default: '"left"' },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Tooltip
+
+<TypeTable
+  type={{
+    formatHeading: {
+      type: "(row: Record<string, unknown>, index: number) => string",
+      description: "Prints the heading from the row under the cursor. Defaults to its x field.",
+    },
+    formatValue: { type: "(value: unknown, key: string) => string" },
+    size: { type: "{ width: number; height: number }", description: "Overrides the size used to keep it inside the frame." },
+    className: { type: "string" },
+  }}
+/>
+
+### Chart.Legend
+
+<TypeTable
+  type={{
+    keys: { type: "readonly string[]", description: "Show only these series, in this order." },
+    className: { type: "string" },
+  }}
+/>
+
+<Callout type="info">
+The drawing is [`@delacour/charts`](https://www.npmjs.com/package/@delacour/charts), a headless
+Skia engine with no tokens and no `className` of its own. It installs alongside this component and
+is where to go for a chart this one does not skin — a render prop, a custom mark, or the scale
+maths on its own.
+</Callout>
+
+<Callout type="warn">
+Bars, scatter, candlestick and pie are not here yet. Zooming is not either — the scrub is the only
+gesture a chart takes today.
+</Callout>

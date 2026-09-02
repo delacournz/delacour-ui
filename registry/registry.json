@@ -163,6 +163,48 @@
 			]
 		},
 		{
+			"name": "chart",
+			"type": "registry:ui",
+			"title": "Chart",
+			"description": "Skia charts on the theme's series ramp: line, area, grid, axes, legend and tooltip.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"color",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"@delacour/charts"
+			],
+			"expoDependencies": [
+				"@shopify/react-native-skia",
+				"react-native-reanimated",
+				"react-native-worklets",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/chart/AGENTS.md",
+				"ui/chart/chart-area.tsx",
+				"ui/chart/chart-grid.tsx",
+				"ui/chart/chart-legend.tsx",
+				"ui/chart/chart-line.tsx",
+				"ui/chart/chart-tooltip.tsx",
+				"ui/chart/chart-x-axis.tsx",
+				"ui/chart/chart-y-axis.tsx",
+				"ui/chart/chart.context.tsx",
+				"ui/chart/chart.tsx",
+				"ui/chart/chart.types.ts",
+				"ui/chart/chart.variants.ts",
+				"ui/chart/index.ts",
+				"ui/chart/use-chart-font.ts"
+			]
+		},
+		{
 			"name": "checkbox",
 			"type": "registry:ui",
 			"title": "Checkbox",

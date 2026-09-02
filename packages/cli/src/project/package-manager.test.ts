@@ -119,3 +119,32 @@ describe("commandLine", () => {
 		expect(commandLine(group as InstallGroup)).toBe("pnpm expo install react-native-svg");
 	});
 });
+
+describe("pre-mode dist tags", () => {
+	test("installs @delacour/charts from the alpha tag", () => {
+		// `latest` deliberately points at nothing while this repository is in
+		// Changesets pre mode, so an untagged add fails outright.
+		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["@delacour/charts"] });
+
+		expect(commandLine(group as InstallGroup)).toBe("bun add @delacour/charts@alpha");
+	});
+
+	test("leaves every other package untagged", () => {
+		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["clsx", "@delacour/charts"] });
+
+		expect(commandLine(group as InstallGroup)).toBe("bun add clsx @delacour/charts@alpha");
+	});
+
+	test("tags the args but not the packages, so the satisfied check still matches", () => {
+		// `missingPackages` compares bare names against the project's own
+		// package.json. A tagged spec there would never match and the CLI would
+		// offer to reinstall a package the project already has, on every run.
+		const plan = planDependencies(
+			{ packageManager: "bun", expoDependencies: [], dependencies: ["@delacour/charts"], devDependencies: [] },
+			{ dependencies: { "@delacour/charts": "^0.1.0" } }
+		);
+
+		expect(plan.satisfied).toEqual(["@delacour/charts"]);
+		expect(plan.missing).toEqual([]);
+	});
+});

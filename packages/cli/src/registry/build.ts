@@ -75,6 +75,7 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 		);
 	}
 
+	assertNoDuplicateItems(items);
 	assertDependenciesResolve(items);
 
 	return {
@@ -220,6 +221,30 @@ function toPackageName(specifier: string): string {
 }
 
 /** Every registry dependency must name an item that exists, or `add` would 404 mid-copy. */
+/**
+ * No two items share a name.
+ *
+ * Dead code against a single source root, and deliberately so. The grouping
+ * above keys a plain `Map` on the item name, so two roots producing one name do
+ * not collide loudly — they **merge**, and the result copies both packages'
+ * files into one folder with nothing logged. A second `buildRegistry` call is
+ * the obvious way to vend another package, and this is what makes that a
+ * failure rather than a silent corruption. The builder's own principle is that
+ * it throws rather than guesses; this is the one place it could have guessed.
+ */
+function assertNoDuplicateItems(items: readonly RegistryItem[]): void {
+	const seen = new Set<string>();
+	for (const item of items) {
+		if (seen.has(item.name)) {
+			throw new Error(
+				`Two registry items are both named "${item.name}". Item names are one flat namespace across every ` +
+					"source root, and two sources with one name would be merged into a single item."
+			);
+		}
+		seen.add(item.name);
+	}
+}
+
 function assertDependenciesResolve(items: readonly RegistryItem[]): void {
 	const names = new Set(items.map((item) => item.name));
 

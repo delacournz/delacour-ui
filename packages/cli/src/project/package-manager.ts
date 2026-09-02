@@ -53,6 +53,30 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
 	npm: ["npx", ["expo", "install"]],
 };
 
+/**
+ * Packages whose `latest` deliberately points at nothing.
+ *
+ * This repository is in Changesets pre mode, so `@delacour/charts` publishes to
+ * the `alpha` dist-tag and `latest` is empty — a bare `bun add @delacour/charts`
+ * fails outright. It has never bitten because no registry item had ever depended
+ * on a Delacour package until `chart`.
+ *
+ * Applied to the command's ARGS only, never to `packages`: `missingPackages`
+ * compares bare names against the project's own `package.json`, and a tagged
+ * spec there would never match anything and would reinstall on every run.
+ *
+ * Delete this map when `changeset pre exit` runs — see the root AGENTS.md.
+ */
+const DIST_TAG: Record<string, string> = {
+	"@delacour/charts": "alpha",
+};
+
+/** A package name with its pinned dist-tag, where it has one. */
+function toSpec(name: string): string {
+	const tag = DIST_TAG[name];
+	return tag === undefined ? name : `${name}@${tag}`;
+}
+
 export function installCommands(request: InstallRequest): InstallGroup[] {
 	const groups: InstallGroup[] = [];
 	const [addCommand, addArgs] = ADD[request.packageManager];
@@ -62,7 +86,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: "expo install",
 			command,
-			args: [...args, ...request.expoDependencies],
+			args: [...args, ...request.expoDependencies.map(toSpec)],
 			packages: [...request.expoDependencies],
 		});
 	}
@@ -71,7 +95,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add`,
 			command: addCommand,
-			args: [...addArgs, ...request.dependencies],
+			args: [...addArgs, ...request.dependencies.map(toSpec)],
 			packages: [...request.dependencies],
 		});
 	}
@@ -80,7 +104,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add --dev`,
 			command: addCommand,
-			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies],
+			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies.map(toSpec)],
 			packages: [...request.devDependencies],
 		});
 	}

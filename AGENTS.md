@@ -9,6 +9,7 @@ the product.
 | Path | Package | What it is |
 | --- | --- | --- |
 | `packages/native-ui` | `@delacour/native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
+| `packages/charts` | `@delacour/charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
@@ -99,10 +100,15 @@ Shared native and React versions are pinned once, in the root `package.json`
 `workspaces.catalog`, and referenced as `catalog:` from each package:
 
 ```
-@legendapp/list  react 19.2.3  react-native 0.86.2  react-native-gesture-handler ~2.32.0
-react-native-keyboard-controller  react-native-reanimated 4.5.1  react-native-safe-area-context ~5.7.0
-react-native-screens ~4.26.0  react-native-svg 15.15.4  react-native-worklets 0.10.1
+@legendapp/list  @shopify/react-native-skia 2.6.2  react 19.2.3  react-native 0.86.2
+react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-reanimated 4.5.1
+react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0  react-native-svg 15.15.4
+react-native-worklets 0.10.1
 ```
+
+Every version here is the one Expo SDK 57 bundles. That is the rule, not a coincidence: `expo
+install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
+fails at the linker rather than at install.
 
 **Bump a version in the catalog, never in a package.** Two versions of a native
 module register twice and break at runtime — which is also why `native-ui`
@@ -120,14 +126,28 @@ declares every native module as a **peer** dependency rather than a dependency.
 
 Do not remove it, and do not switch a package to an isolated install. Even
 hoisted, Bun materialises a second copy of some native modules under the app,
-which is why `apps/playground`'s `metro.config.js` pins eight of them to the
+which is why `apps/playground`'s `metro.config.js` pins nine of them to the
 workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
+
+## `trustedDependencies`
+
+`@shopify/react-native-skia` is the one package whose lifecycle scripts Bun is allowed to run. Its
+`postinstall` copies the prebuilt `.xcframework`s out of `react-native-skia-apple-ios` into its own
+`libs/`; blocked, the iOS build fails at link time with no framework to find. Bun blocks postinstall
+scripts by default, so the package is named in `trustedDependencies` in the root `package.json`.
 
 ## Releases
 
-Two packages reach npm — `delacour` (the CLI) and `@delacour/native-ui`. Everything else in the
-workspace is `private: true`, which is the only thing stopping `changeset publish` from putting
-`@delacour/tsconfig` and friends on the registry the first time it runs.
+Three packages reach npm — `delacour` (the CLI), `@delacour/native-ui` and `@delacour/charts`.
+Everything else in the workspace is `private: true`, which is the only thing stopping
+`changeset publish` from putting `@delacour/tsconfig` and friends on the registry the first time
+it runs.
+
+`@delacour/charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
+`import … from "@delacour/charts"` in `chart.tsx` is in the published tarball and gets resolved by
+a stranger's Metro. It is an **optional peer** of `native-ui` rather than a dependency — a
+dependency may be nested, two copies mean two chart contexts, and a correctly-nested
+`<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
 
 Releases are driven by [Changesets](https://github.com/changesets/changesets). A change that
 should ship adds one:
@@ -165,12 +185,15 @@ bunx changeset pre exit          # deletes .changeset/pre.json
 bun run changeset                # the changeset that names the stable version
 ```
 
-then remove `"tag": "alpha"` from `publishConfig` in **both** `packages/cli/package.json` and
-`packages/native-ui/package.json`, and swap `@alpha` back to `@latest` across the READMEs and
-`apps/web` — `grep -rn "@alpha"` finds them.
+then remove `"tag": "alpha"` from `publishConfig` in **all three** of
+`packages/cli/package.json`, `packages/native-ui/package.json` and
+`packages/charts/package.json`; delete the `DIST_TAG` map in
+`packages/cli/src/project/package-manager.ts`, which exists only because `latest` points at
+nothing during pre mode; and swap `@alpha` back to `@latest` across the READMEs and `apps/web`
+— `grep -rn "@alpha"` finds them.
 
-**npm auth is OIDC — there is no npm token.** Both packages are configured on npmjs.com with this
-repository and `release.yml` as a trusted publisher, which is why the job requests
+**npm auth is OIDC — there is no npm token.** All three packages are configured on npmjs.com with
+this repository and `release.yml` as a trusted publisher, which is why the job requests
 `id-token: write` and installs a current npm before publishing. `bun publish` cannot do this:
 it has no OIDC or provenance support, so the publish call is npm's even though install and build
 are Bun's. Changesets picks npm on its own — it only special-cases pnpm and yarn, and `bun` falls
@@ -181,7 +204,10 @@ workflow runs, so a version PR opened with it would never run the four checks `m
 requires and could never be merged. The PAT exists for that reason alone.
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
-package that already exists.
+package that already exists. That applies to any package added later — publish it by hand once,
+bind the publisher, and CI takes over. Until that has happened,
+`bun --filter delacour run verify:expo` cannot pass for anything that depends on it, because it
+scaffolds a real Expo app and installs from npm.
 
 The registry the published CLI reads is pinned to the **commit** being released, not the tag —
 `changesets/action` builds before it tags, so a tag-derived ref would name something that does not

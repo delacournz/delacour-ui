@@ -16,6 +16,7 @@ import { dirname, relative, sep } from "node:path";
 
 /** Modules that must resolve to exactly one copy across a workspace. */
 export const PINNED_MODULES = [
+	"@shopify/react-native-skia",
 	"react",
 	"react-native",
 	"react-native-gesture-handler",

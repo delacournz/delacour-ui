@@ -13,7 +13,6 @@ import { spawnSync } from "node:child_process";
  * `Cannot find native module` instead — run `bun expo prebuild --clean` by hand
  * after any change to the native dependency set.
  */
-import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

@@ -5,17 +5,20 @@ defaults:
     bun: 1.3.9
 
 on:
+  push:
+    branches:
+      - release/playground
   workflow_dispatch:
     inputs:
       version:
         type: string
         required: false
-        description: "Version to build, x.y.z. Defaults to the release/app/* branch name."
+        description: "Marketing version to stamp, x.y.z. Omit to use app.config.ts's default."
 
 jobs:
-  # Version comes from the `release/app/x.y.z` branch on a push-triggered run.
-  # A manual `eas workflow:run` has no ref_name, so the `version` input is the
-  # way in: `bun eas:release:prod -F version=1.0.0`.
+  # A push to `release/playground` carries no version, so this passes an empty
+  # string through and `app.config.ts` supplies its own default. A manual run
+  # overrides it: `bun eas:release:prod -F version=1.2.3`.
   extract_version:
     name: Extract Version
     outputs:
@@ -25,16 +28,11 @@ jobs:
         name: Parse version
         run: |
           VERSION="${{ inputs.version }}"
-          if [ -z "$VERSION" ]; then
-            REF_NAME="${{ github.ref_name }}"
-            VERSION="${REF_NAME##release/app/}"
-          fi
-          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          if [ -n "$VERSION" ] && ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "ERROR: Invalid version format: '$VERSION' (expected x.y.z)"
-            echo "Pass one explicitly with -F version=x.y.z, or push to release/app/x.y.z."
             exit 1
           fi
-          echo "Version: $VERSION"
+          echo "Version: ${VERSION:-<app.config.ts default>}"
           set-output version "$VERSION"
 
   # Fingerprint the build
@@ -49,6 +47,7 @@ jobs:
     needs: [fingerprint]
     type: get-build
     params:
+      platform: android
       fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
       profile: production
 
@@ -58,6 +57,7 @@ jobs:
     needs: [fingerprint]
     type: get-build
     params:
+      platform: ios
       fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
       profile: production
 

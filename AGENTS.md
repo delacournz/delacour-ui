@@ -234,9 +234,11 @@ and caches it, so **the docs deploy has to land before a playground build is ins
 binary intercepts nothing until it is reinstalled.
 
 `apps/playground` ships through EAS instead, from `apps/playground/.eas/workflows` — dev clients on
-demand, production natives on a push to `release/app/x.y.z`. It is a separate pipeline from the
-docs site and shares nothing with it; the details, including why none of those workflows set a
-`working_directory`, are in [apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas).
+demand, and a push to `release/playground` running `release:prod`, which ships an OTA update when
+the fingerprint already has a binary and only builds and submits when it does not. It is a separate
+pipeline from the docs site and shares nothing with it; the details, including why none of those
+workflows set a `working_directory`, are in
+[apps/playground/AGENTS.md](apps/playground/AGENTS.md#eas).
 
 ## Hooks
 

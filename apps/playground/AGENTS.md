@@ -764,9 +764,22 @@ profiles they name. Do not rename a profile: the YAML matches them by string.
 | Workflow | Trigger | Does |
 | --- | --- | --- |
 | `build:native:dev` | manual | Fingerprints, then builds only what has no matching binary — Android dev client, iOS dev client, iOS simulator (`cicd`) |
-| `build:native:prod` | push to `release/app/*`, or manual | Parses the version, builds both platforms, submits both |
-| `release:prod` | manual | Same parse, but reuses a matching binary and ships an OTA update; only builds and submits when the fingerprint is new |
+| `build:native:prod` | manual | Builds both platforms unconditionally, submits both — the forced full rebuild |
+| `release:prod` | push to `release/playground`, or manual | Reuses a matching binary and ships an OTA update; only builds and submits when the fingerprint is new |
 | `submit:native:prod` | manual | Submits store binaries that already exist, builds nothing |
+
+**A push to `release/playground` is usually not a build.** `release:prod` fingerprints
+first: a push that changes no native dependency reuses the existing production
+binary and ships an OTA update to the `production` channel. Only a push that
+moves the fingerprint builds and submits. That is what makes the branch cheap to
+push to — and it is the same economy
+[Fingerprints are the whole economy](#fingerprints-are-the-whole-economy)
+describes.
+
+It is also the only push trigger in this repo. `build:native:prod` used to carry
+one on `release/app/*` and no longer does: two workflows triggering on one branch
+double-build, and the version that pattern existed to encode now lives in
+`app.config.ts`.
 
 ### `working_directory` is deliberately absent
 
@@ -787,16 +800,34 @@ from `apps/playground` with no `working_directory` at all — which is also why 
 per-step `working_directory: .` overrides the skill ships were removed rather
 than kept.
 
-### Version comes from the branch, or from an input
+### The version lives in `app.config.ts`, not in the branch
 
-`build:native:prod` and `release:prod` read the version out of a
-`release/app/x.y.z` branch name and export it as `APP_VERSION`, which
-`app.config.ts` reads into `expo.version`. A manual `eas workflow:run` has no
-`github.ref_name`, so both also accept a `version` input and prefer it:
+`APP_VERSION` is injected by `release:prod` and `build:native:prod` **only when a
+run supplies one**, and a push to `release/playground` supplies nothing. So the
+marketing version is `app.config.ts`'s own `1.0.0` default, and a push at that
+version is normal — `appVersionSource: "remote"` still hands every build a
+distinct, incrementing build number, which is what TestFlight actually
+distinguishes releases by.
+
+To stamp something else, pass it and both workflows prefer it:
 
 ```bash
 bun run eas:release:prod -F version=1.2.3
 ```
+
+`extract_version` validates the shape and fails the run before anything builds,
+so a typo'd `-F version=1.2` costs thirty seconds rather than two native builds
+and two store submissions. It only validates a version that was *given*; an empty
+one passes through untouched.
+
+**`app.config.ts` checks the shape rather than the presence**, and that is
+load-bearing. A run with no version passes `APP_VERSION=""`, and `??` treats an
+empty string as a value — the binary would ship with a blank `expo.version`. The
+regex there is the same one the workflow uses.
+
+It used to come out of a `release/app/x.y.z` branch name. That coupling is gone:
+the release branch is now a fixed name, so there is nowhere in it to put a
+version.
 
 Neither path sets the build *number*. `appVersionSource: "remote"` keeps that on
 EAS, so run `bun run eas:sync-build-numbers` once before the first production
@@ -819,14 +850,22 @@ cannot run them.
   `eas` script loads it. Generate a token per account under Expo → access
   tokens; without one the CLI falls back to whatever `eas login` session is on
   the machine.
-- **The GitHub trigger.** `build:native:prod`'s `on.push` only fires once the EAS
+- **The GitHub trigger.** `release:prod`'s `on.push` only fires once the EAS
   GitHub app is installed against `delacournz/delacour-ui`. Set that project's
   base directory to `apps/playground` so a triggered run resolves the same way
   `eas workflow:run` does. Until then everything runs through the `eas:*`
-  scripts.
+  scripts. `release/playground` also has to exist on origin — it is a local
+  branch today, and a branch that was never pushed triggers nothing.
 - **Android submission.** `submit.base.android` targets the `internal` track as
   a `draft`, and needs a Google Service Account key on the EAS project before it
-  can push anything. iOS is ready: `ascAppId` and `appleTeamId` are set.
+  can push anything. iOS is ready: `ascAppId` and `appleTeamId` are set. Until
+  the key exists, the first push that moves the fingerprint goes green on iOS and
+  red on `Submit Android Build` — the build itself still succeeds.
+- **CI on the release branch.** `.github/workflows/ci.yml` runs on
+  `[main, develop, release/playground]`, so a push to the release branch is
+  typechecked, linted, tested and built. Those checks are advisory here: GitHub
+  and EAS run independently, so a red check does not hold the release back. It
+  only tells you a push shipped something broken.
 
 ## Conventions
 

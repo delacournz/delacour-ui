@@ -4,7 +4,12 @@ name: CI
 # suites, so it holds every deploy of ui.delacour.co.nz / ui.staging.delacour.co.nz until this
 # workflow is green.
 # A workflow that never runs on a branch means deploys from that branch wait forever; a workflow
-# that passes vacuously means a broken docs site ships. Keep both branches listed below.
+# that passes vacuously means a broken docs site ships. Keep `main` and `develop` listed below.
+#
+# `release/playground` is listed for an unrelated reason: a push to it triggers the EAS
+# `release:prod` workflow, which ships the app to the stores. GitHub and EAS run independently, so
+# these checks cannot hold that release back — they only mean a push that shipped something broken
+# is visibly red rather than silently green. Railway does not deploy from this branch.
 #
 # The four job `name:` values are also an API contract, not labels. They are listed verbatim as
 # required status checks in `.github/rulesets/main.json`, and GitHub matches them by string.
@@ -13,7 +18,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, release/playground]
   pull_request:
   workflow_dispatch:
 

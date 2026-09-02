@@ -46,14 +46,21 @@ const androidFonts = FONTS.map((font) => ({
 }));
 
 /**
- * The version EAS stamps into a production binary. `build:native:prod.yml` and
- * `release:prod.yml` parse it out of the `release/app/x.y.z` branch name and
- * export it as `APP_VERSION`; every other build — dev client, simulator,
- * a local `expo run:*` — has no such env var and falls back to `0.0.0`.
- * `appVersionSource: "remote"` in `eas.json` means the build *number* is
- * tracked on EAS, so this literal only ever supplies the marketing version.
+ * The marketing version stamped into a build. `release:prod.yml` and
+ * `build:native:prod.yml` inject `APP_VERSION` only when a run supplies one
+ * (`-F version=x.y.z`); a push to `release/playground` supplies nothing and
+ * lands on this default. Every other build — dev client, simulator, a local
+ * `expo run:*` — has no such env var and lands here too.
+ *
+ * The check is on the *shape*, not on presence: a run with no version passes
+ * `APP_VERSION=""`, and `??` would let that empty string through as the version.
+ *
+ * `appVersionSource: "remote"` in `eas.json` means the build *number* is tracked
+ * on EAS, so this literal only ever supplies the marketing version — repeated
+ * pushes at 1.0.0 still get distinct, incrementing build numbers.
  */
-const APP_VERSION = (process.env as Record<string, string | undefined>).APP_VERSION ?? "0.0.0";
+const rawVersion = (process.env as Record<string, string | undefined>).APP_VERSION;
+const APP_VERSION = rawVersion && /^\d+\.\d+\.\d+$/.test(rawVersion) ? rawVersion : "1.0.0";
 
 /**
  * Icon art comes from `assets/icon-source.svg` via `bun run icons`. The PNGs

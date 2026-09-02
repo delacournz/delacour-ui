@@ -53,6 +53,45 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
 	npm: ["npx", ["expo", "install"]],
 };
 
+/**
+ * Packages whose `latest` deliberately points at nothing.
+ *
+ * This repository is in Changesets pre mode, so `@delacour/charts` publishes to
+ * the `alpha` dist-tag and `latest` is empty — a bare `bun add @delacour/charts`
+ * fails outright. It has never bitten because no registry item had ever depended
+ * on a Delacour package until `chart`.
+ *
+ * Applied to the command's ARGS only, never to `packages`: `missingPackages`
+ * compares bare names against the project's own `package.json`, and a tagged
+ * spec there would never match anything and would reinstall on every run.
+ *
+ * Delete this map when `changeset pre exit` runs — see the root AGENTS.md.
+ */
+const DIST_TAG: Record<string, string> = {
+	"@delacour/charts": "alpha",
+};
+
+/** A package name with its pinned dist-tag, where it has one. */
+function toSpec(name: string): string {
+	const tag = DIST_TAG[name];
+	return tag === undefined ? name : `${name}@${tag}`;
+}
+
+/**
+ * The range a shared package declares for a peer it does not pin.
+ *
+ * `*` is the usual answer, and it is wrong for a package still in pre mode:
+ * semver's `*` admits no prerelease, so a peer on `@delacour/charts` written as
+ * `*` matches nothing `0.0.1-alpha.N` can ever satisfy. Bun then treats the
+ * peer as unmet and goes to the registry for a version that does not exist —
+ * which is how `add` failed inside `expo install`, a step that never named
+ * the package. `>=0.0.0-0` is the range that admits every prerelease, and it
+ * goes away with `DIST_TAG` when `changeset pre exit` runs.
+ */
+export function peerRange(name: string): string {
+	return DIST_TAG[name] === undefined ? "*" : ">=0.0.0-0";
+}
+
 export function installCommands(request: InstallRequest): InstallGroup[] {
 	const groups: InstallGroup[] = [];
 	const [addCommand, addArgs] = ADD[request.packageManager];
@@ -62,7 +101,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: "expo install",
 			command,
-			args: [...args, ...request.expoDependencies],
+			args: [...args, ...request.expoDependencies.map(toSpec)],
 			packages: [...request.expoDependencies],
 		});
 	}
@@ -71,7 +110,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add`,
 			command: addCommand,
-			args: [...addArgs, ...request.dependencies],
+			args: [...addArgs, ...request.dependencies.map(toSpec)],
 			packages: [...request.dependencies],
 		});
 	}
@@ -80,7 +119,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add --dev`,
 			command: addCommand,
-			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies],
+			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies.map(toSpec)],
 			packages: [...request.devDependencies],
 		});
 	}

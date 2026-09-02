@@ -21,6 +21,7 @@ config.resolver.disableHierarchicalLookup = true;
 // break at runtime.
 config.resolver.extraNodeModules = {
 	react: path.resolve(workspaceRoot, "node_modules/react"),
+	"@shopify/react-native-skia": path.resolve(workspaceRoot, "node_modules/@shopify/react-native-skia"),
 	"react-native": path.resolve(workspaceRoot, "node_modules/react-native"),
 	"react-native-gesture-handler": path.resolve(workspaceRoot, "node_modules/react-native-gesture-handler"),
 	"react-native-keyboard-controller": path.resolve(workspaceRoot, "node_modules/react-native-keyboard-controller"),

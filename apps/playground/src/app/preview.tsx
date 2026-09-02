@@ -65,7 +65,12 @@ export default function Preview(): ReactElement {
 	}
 
 	const { Demo, meta } = entry;
-	const stretch = meta.capture?.align === "stretch";
+	// `capture.align` first, because for a captured demo it is the field that
+	// describes this very stage. Falling through to `meta.align` is what keeps a
+	// demo nobody captures usable when it is deep-linked by hand: without it a
+	// container — a chart, a list group — shrink-wraps to its narrowest content,
+	// and a chart collapses to about forty points wide.
+	const stretch = (meta.capture?.align ?? meta.align) === "stretch";
 
 	return (
 		<View className="flex-1 items-center justify-center bg-background">

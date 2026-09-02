@@ -66,6 +66,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "An on/off control with a thumb you can drag as well as tap.",
 	},
 	{
+		slug: "chart",
+		name: "Chart",
+		group: "Data display",
+		blurb:
+			"Line, area, bar, scatter, candlestick and pie marks drawn in Skia, coloured from the theme's five-slot series ramp.",
+	},
+	{
 		slug: "slider",
 		name: "Slider",
 		group: "Forms",

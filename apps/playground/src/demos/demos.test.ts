@@ -203,3 +203,46 @@ describe("coverage", () => {
 		expect(folders.filter((name) => !have.has(name))).toEqual([]);
 	});
 });
+
+/**
+ * A chart is 160–280 points tall, so a demo holding several of them overflows
+ * the pager's page — and an overflowing page cannot be paged away from until
+ * its inner scroll is back at the top, because `DemoPager` switches
+ * `scrollEnabled` off while any page reports `contentOffset.y > 0.5`. A reader
+ * scrolls down through the fourth chart and the gallery simply stops
+ * responding, with nothing on screen to say why.
+ *
+ * Two is what fits. This is the only demo-shape rule that is about a
+ * component's own size rather than about the pipeline, which is why it names
+ * charts specifically.
+ */
+describe("chart demos", () => {
+	const MAX_CHARTS_PER_DEMO = 2;
+
+	/** `<Chart ` and `<Chart\n` open a root, as do `<PieChart ` and `<PieChart>`; `<Chart.` opens a part. */
+	const countChartRoots = (source: string): number => source.match(/<(?:Pie)?Chart[\s>]/g)?.length ?? 0;
+
+	test("render at most two charts each", () => {
+		const offenders: string[] = [];
+
+		for (const id of FILES.filter((file) => file.startsWith("chart/"))) {
+			const source = readFileSync(join(DEMOS, `${id}.tsx`), "utf-8");
+			const roots = countChartRoots(source);
+			if (roots > MAX_CHARTS_PER_DEMO) offenders.push(`${id} renders ${roots}`);
+		}
+
+		expect(offenders).toEqual([]);
+	});
+
+	// `PieChart` is a second root, not a part of `Chart`, and it is as tall as
+	// one. A regex that only knew `<Chart ` would let a page of four pies through.
+	test("counts a PieChart as a root", () => {
+		expect(countChartRoots('<PieChart data={DATA} nameKey="a" valueKey="b">\n<PieChart.Slice />\n</PieChart>')).toBe(1);
+		expect(countChartRoots("<Chart config={CONFIG}>\n<Chart.Line />\n</Chart>\n<PieChart>\n</PieChart>")).toBe(2);
+		expect(countChartRoots("<Chart.Bar />\n<PieChart.Label />")).toBe(0);
+	});
+
+	test("finds the chart demos, so a broken filter cannot pass silently", () => {
+		expect(FILES.filter((file) => file.startsWith("chart/")).length).toBeGreaterThan(8);
+	});
+});

@@ -51,6 +51,15 @@ export const BUTTON_TEXT_TOKENS = ["button-sm", "button-md", "button-lg"] as con
 export const INPUT_TEXT_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
 
 /**
+ * Suffixes in the `--spacing-*` namespace: `h-chart-md`.
+ *
+ * A chart canvas has no intrinsic height, so one is named here rather than
+ * written as a `h-56` at each call site — a dashboard's rows only line up if
+ * every chart agrees, and they only stay agreed if there is one number.
+ */
+export const CHART_SIZE_TOKENS = ["chart-sm", "chart-md", "chart-lg"] as const;
+
+/**
  * The tailwind-merge extension both mergers in this package are built from.
  *
  * There are two, and they are easy to forget: `cn()` merges a caller's
@@ -64,7 +73,13 @@ export const TW_MERGE_CONFIG = {
 	extend: {
 		theme: {
 			radius: [...BUTTON_RADIUS_TOKENS],
-			spacing: [...BUTTON_SIZE_TOKENS, ...ICON_SIZE_TOKENS, ...INPUT_SIZE_TOKENS, ...SCREEN_SIZE_TOKENS],
+			spacing: [
+				...BUTTON_SIZE_TOKENS,
+				...CHART_SIZE_TOKENS,
+				...ICON_SIZE_TOKENS,
+				...INPUT_SIZE_TOKENS,
+				...SCREEN_SIZE_TOKENS,
+			],
 			text: [...BUTTON_TEXT_TOKENS, ...INPUT_TEXT_TOKENS],
 		},
 	},

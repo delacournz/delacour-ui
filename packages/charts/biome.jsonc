@@ -1,0 +1,24 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		"includes": ["src/**/*", "package.json"]
+	},
+	"overrides": [
+		{
+			// Two kinds of test here are branchy on purpose. The `getYForX`
+			// oracle is a faithful transcription of the analytic cubic solve —
+			// simplifying it would make it agree with the implementation for the
+			// wrong reason, which defeats a second implementation entirely. And
+			// the source-text tests are small parsers; a parser's shape is its
+			// grammar.
+			"includes": ["src/**/*.test.ts"],
+			"linter": {
+				"rules": {
+					"complexity": { "noExcessiveCognitiveComplexity": "off" }
+				}
+			}
+		}
+	]
+}

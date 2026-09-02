@@ -3,6 +3,7 @@ import {
 	IconArrowsRepeatCircle,
 	IconBrowserTabs,
 	IconBulletList,
+	IconChart1,
 	IconChevronGrabberVertical,
 	IconCircleRecord,
 	IconCursorClick,
@@ -57,6 +58,12 @@ const COMPONENTS = [
 		icon: IconSquareCheck,
 		title: "Checkbox",
 		description: "Colours, sizes, indeterminate, groups",
+	},
+	{
+		href: "/chart",
+		icon: IconChart1,
+		title: "Chart",
+		description: "Line, area, bar, scatter, candlestick, pie",
 	},
 	{
 		href: "/field",

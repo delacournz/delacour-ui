@@ -47,6 +47,9 @@ export type GeometryValues = {
 	"spacing-icon-2xl": number;
 	"spacing-navbar-row": number;
 	"spacing-screen-gutter": number;
+	"spacing-chart-sm": number;
+	"spacing-chart-md": number;
+	"spacing-chart-lg": number;
 };
 
 export type Style = {
@@ -111,6 +114,9 @@ function geometry({
 		"spacing-icon-2xl": icons[5],
 		"spacing-navbar-row": navbar,
 		"spacing-screen-gutter": gutter,
+		"spacing-chart-sm": chartHeight(LIBRARY_CHART[0], heights[1]),
+		"spacing-chart-md": chartHeight(LIBRARY_CHART[1], heights[1]),
+		"spacing-chart-lg": chartHeight(LIBRARY_CHART[2], heights[1]),
 	};
 }
 
@@ -118,6 +124,21 @@ const LIBRARY_HEIGHTS = [36, 44, 52] as const;
 const LIBRARY_TEXT = [14, 16, 18] as const;
 const LIBRARY_ICONS = [14, 16, 18, 20, 24, 32] as const;
 const CAPSULE = [18, 22, 26] as const;
+const LIBRARY_CHART = [160, 220, 280] as const;
+
+/**
+ * A chart's height, scaled to a style's control density.
+ *
+ * A plot is a region rather than a control, so none of the axes a style
+ * actually sets — a corner, an icon, a button's height — describes it directly.
+ * Tracking the medium control height is the closest honest relationship: a
+ * style that makes everything shorter should not leave one tall box in the
+ * middle of the screen. Vega passes the library's own 44 and comes back
+ * unchanged, which is what keeps it the identity element.
+ */
+function chartHeight(base: number, mediumControl: number): number {
+	return Math.round((base * mediumControl) / LIBRARY_HEIGHTS[1]);
+}
 
 /**
  * Eight styles, in shadcn's own order, with its own one-line descriptions.
@@ -277,6 +298,9 @@ export const GEOMETRY_TOKENS: readonly (keyof GeometryValues)[] = [
 	"spacing-icon-2xl",
 	"spacing-navbar-row",
 	"spacing-screen-gutter",
+	"spacing-chart-sm",
+	"spacing-chart-md",
+	"spacing-chart-lg",
 ];
 
 export function styleByName(name: string): Style | undefined {

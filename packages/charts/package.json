@@ -1,0 +1,62 @@
+{
+	"name": "@delacour/charts",
+	"version": "0.0.1-alpha.0",
+	"description": "Headless Skia charting primitives for React Native \u2014 no tokens, no className",
+	"type": "module",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/delacournz/delacour-ui.git",
+		"directory": "packages/charts"
+	},
+	"keywords": [
+		"react-native",
+		"skia",
+		"charts",
+		"reanimated",
+		"gesture-handler",
+		"expo"
+	],
+	"publishConfig": {
+		"access": "public",
+		"tag": "alpha"
+	},
+	"files": [
+		"src",
+		"README.md"
+	],
+	"sideEffects": false,
+	"exports": {
+		".": "./src/index.ts",
+		"./core": "./src/core/index.ts"
+	},
+	"scripts": {
+		"fmt": "biome format --write ./src",
+		"lint": "biome lint --write ./src",
+		"check": "biome check ./src",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test"
+	},
+	"dependencies": {
+		"@types/d3-scale": "^4.0.9",
+		"@types/d3-shape": "^3.1.7",
+		"d3-scale": "^4.0.2",
+		"d3-shape": "^3.2.0"
+	},
+	"peerDependencies": {
+		"@shopify/react-native-skia": ">=2.6",
+		"react": ">=19",
+		"react-native": ">=0.81",
+		"react-native-gesture-handler": ">=2.28",
+		"react-native-reanimated": ">=4",
+		"react-native-worklets": ">=0.5"
+	},
+	"devDependencies": {
+		"@delacour/biome-config": "workspace:*",
+		"@delacour/tsconfig": "workspace:*",
+		"@shopify/react-native-skia": "catalog:",
+		"@types/bun": "^1.3.8",
+		"@types/react": "^19.2.0",
+		"typescript": "^5.9.3"
+	}
+}

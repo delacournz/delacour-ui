@@ -1,0 +1,252 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "chart",
+	"type": "registry:ui",
+	"title": "Chart",
+	"description": "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"cn",
+		"color",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"@delacour/charts"
+	],
+	"expoDependencies": [
+		"@shopify/react-native-skia",
+		"react-native-reanimated",
+		"react-native-worklets",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/native-ui/src/components/chart/AGENTS.md",
+			"target": "chart/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/native-ui/button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "@delacour/native-ui/chart",
+					"to": "@registry/ui/chart"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-area.tsx",
+			"target": "chart/chart-area.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-bar.tsx",
+			"target": "chart/chart-bar.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-bars.tsx",
+			"target": "chart/chart-bars.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-candlestick.tsx",
+			"target": "chart/chart-candlestick.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-grid.tsx",
+			"target": "chart/chart-grid.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-legend.tsx",
+			"target": "chart/chart-legend.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-line.tsx",
+			"target": "chart/chart-line.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-scatter.tsx",
+			"target": "chart/chart-scatter.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx",
+			"target": "chart/chart-tooltip-dot.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-x.tsx",
+			"target": "chart/chart-tooltip-x.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip-y.tsx",
+			"target": "chart/chart-tooltip-y.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-tooltip.tsx",
+			"target": "chart/chart-tooltip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-x-axis.tsx",
+			"target": "chart/chart-x-axis.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart-y-axis.tsx",
+			"target": "chart/chart-y-axis.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart.context.tsx",
+			"target": "chart/chart.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart.tsx",
+			"target": "chart/chart.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart.types.ts",
+			"target": "chart/chart.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/chart.variants.ts",
+			"target": "chart/chart.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/index.ts",
+			"target": "chart/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart-center.tsx",
+			"target": "chart/pie-chart-center.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart-label.tsx",
+			"target": "chart/pie-chart-label.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart-slice.tsx",
+			"target": "chart/pie-chart-slice.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart-tooltip.tsx",
+			"target": "chart/pie-chart-tooltip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart.context.tsx",
+			"target": "chart/pie-chart.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/pie-chart.tsx",
+			"target": "chart/pie-chart.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/use-chart-font.ts",
+			"target": "chart/use-chart-font.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/native-ui/src/components/chart/use-chart-palette.ts",
+			"target": "chart/use-chart-palette.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		}
+	]
+}

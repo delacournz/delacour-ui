@@ -1,0 +1,133 @@
+import { type ReactElement, useState } from "react";
+import { View } from "react-native";
+import Animated, { useAnimatedReaction, useAnimatedStyle } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
+import { cn } from "../../lib/cn";
+import { Text } from "../text";
+import { useChart } from "./chart.context";
+import { chartTooltipOffset, resolveTooltipRows } from "./chart.variants";
+import { ChartTooltipDot } from "./chart-tooltip-dot";
+import { ChartTooltipX } from "./chart-tooltip-x";
+import { ChartTooltipY } from "./chart-tooltip-y";
+
+export type ChartTooltipProps = {
+	className?: string;
+	/**
+	 * Prints the heading from the row under the cursor.
+	 *
+	 * Defaults to the x field, formatted the way the axis formats it — a `Date`
+	 * comes out as `20 Jan`, not as `Tue Jan 20 2026 00:00:00 GMT+0000`.
+	 */
+	formatHeading?: (row: Record<string, unknown>, index: number) => string;
+	/** Prints one series' value. Defaults to the number as written. */
+	formatValue?: (value: unknown, key: string) => string;
+	/** Overrides the measured size used to keep the tooltip inside the frame. */
+	size?: { width: number; height: number };
+};
+
+/** Assumed size before layout, so the first frame is not placed off-screen. */
+const DEFAULT_SIZE = { width: 120, height: 56 };
+
+/**
+ * A floating readout that follows the scrub.
+ *
+ * **A React Native view, deliberately, even though it sits over the canvas.**
+ * It wants `popover`, `border`, the radius scale and the type scale — none of
+ * which exist in Skia — and it is the part a caller most wants to restyle,
+ * which a className cannot do to a Skia rounded rect. Drawing it in Skia would
+ * mean re-implementing text layout and line breaking for nothing.
+ *
+ * ## Two threads, on purpose
+ *
+ * Its **position** rides the scrub's shared values through `useAnimatedStyle`,
+ * so it tracks the finger on the UI thread with no bridge hop.
+ *
+ * Its **contents** are ordinary React state, updated through `scheduleOnRN`
+ * only when the nearest datum index actually changes. That is a handful of
+ * updates per drag rather than one per frame, because the text only changes
+ * when the selected row does — and text on a shared value would mean an
+ * `AnimatedTextInput` and a `value` prop pretending to be a label.
+ *
+ * With a candlestick present the rows are open, high, low and close, each
+ * swatched in the candle's own sentiment colour — see `resolveTooltipRows`.
+ */
+function ChartTooltipRoot({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
+	const { scrub, slots, series, data, formatXValue, frame, candlestick, candleColors } = useChart();
+	const [index, setIndex] = useState(-1);
+	const measured = size ?? DEFAULT_SIZE;
+
+	useAnimatedReaction(
+		() => scrub.index.value,
+		(next, previous) => {
+			if (next === previous) return;
+			scheduleOnRN(setIndex, next);
+		}
+	);
+
+	const style = useAnimatedStyle(() => {
+		const offset = chartTooltipOffset({
+			x: scrub.x.value,
+			y: scrub.series[series[0]?.key ?? ""]?.y.value ?? frame.height / 2,
+			width: measured.width,
+			height: measured.height,
+			frameWidth: frame.width,
+			frameHeight: frame.height,
+		});
+
+		return {
+			opacity: scrub.isActive.value ? 1 : 0,
+			transform: [{ translateX: offset.x }, { translateY: offset.y }],
+		};
+	});
+
+	const row = data[index];
+	const heading = row === undefined ? "" : (formatHeading?.(row, index) ?? formatXValue(row));
+	const rows = resolveTooltipRows(
+		series,
+		candlestick === null ? null : { keys: candlestick, colors: candleColors },
+		row
+	);
+
+	return (
+		<Animated.View className={cn(slots.tooltip(), className)} pointerEvents="none" style={style}>
+			{heading === "" ? null : <Text className={slots.tooltipHeading()}>{heading}</Text>}
+			{rows.map((entry) => (
+				<View className={slots.tooltipRow()} key={entry.key}>
+					<View className={slots.tooltipSwatch()} style={{ backgroundColor: entry.color }} />
+					<Text className={slots.tooltipName()}>{entry.label}</Text>
+					<Text className={slots.tooltipValue()}>
+						{row === undefined ? "" : (formatValue?.(entry.value, entry.key) ?? String(entry.value ?? ""))}
+					</Text>
+				</View>
+			))}
+		</Animated.View>
+	);
+}
+
+/**
+ * A floating readout that follows the scrub, and the marks that point at it.
+ *
+ * The readout is a React Native view over the canvas; `Dot`, `X` and `Y` are
+ * Skia marks drawn inside it. They are named here because they are one
+ * feature, but they are **placed as siblings** — a view cannot contain a
+ * canvas node, so `<Chart.Tooltip><Chart.Tooltip.Dot /></Chart.Tooltip>` would
+ * put the dot in the wrong tree and draw nothing.
+ *
+ * @example
+ * <Chart config={config} data={rows} xKey="at">
+ *   <Chart.Line yKey="price" />
+ *   <Chart.Tooltip.X />
+ *   <Chart.Tooltip.Y />
+ *   <Chart.Tooltip.Dot />
+ *   <Chart.Tooltip />
+ * </Chart>
+ */
+export const ChartTooltip = Object.assign(ChartTooltipRoot, {
+	/** A dot on each series at the scrubbed point, ringed in the chart's background. */
+	Dot: ChartTooltipDot,
+	/** A vertical rule through the scrubbed position — where along x you are. */
+	X: ChartTooltipX,
+	/** A horizontal rule at one series' value, carrying it across to the y axis. */
+	Y: ChartTooltipY,
+	displayName: "DelacourUI.Chart.Tooltip",
+});

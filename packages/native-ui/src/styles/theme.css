@@ -327,6 +327,10 @@
 
 			--spacing-navbar-row: 56px;
 			--spacing-screen-gutter: 20px;
+
+			--spacing-chart-sm: 160px;
+			--spacing-chart-md: 220px;
+			--spacing-chart-lg: 280px;
 		}
 	}
 }

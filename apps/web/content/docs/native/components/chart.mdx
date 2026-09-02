@@ -1,0 +1,721 @@
+---
+title: Chart
+description: Skia charts — line, area, bar, scatter, candlestick and pie — skinned with the theme's five-colour series ramp.
+icon: LineChart
+---
+
+<Preview id="chart/line/line" title={null} />
+
+## Installation
+
+<ComponentInstall name="chart" />
+
+## Usage
+
+```tsx
+import { Chart, PieChart } from "@delacour/native-ui/chart";
+```
+
+```tsx
+<Chart config={{ revenue: { label: "Revenue" } }} data={rows} xKey="month">
+  <Chart.Grid />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Line yKey="revenue" />
+</Chart>
+```
+
+Two roots. `Chart` is every cartesian plot — anything with an x and a y — and `PieChart` is the
+one that has neither. They share the palette, the legend and the font, and nothing else.
+
+## Line
+
+<Preview id="chart/line/multi-series" />
+
+`config` names each series, sets the draw order, and hands out the theme's ramp by position — so a
+mark names the data and never the paint. The shape is shadcn's, which means a chart config written
+for a web dashboard moves across as a copy rather than a translation.
+
+```tsx
+const config = {
+  desktop: { label: "Desktop" },                    // chart-1, by position
+  mobile:  { label: "Mobile",  color: "chart-4" },  // an explicit ramp slot
+  tablet:  { label: "Tablet",  color: "primary" },  // any token the theme emits
+  other:   { label: "Other",   color: "#EC4899" },  // a literal, straight through
+};
+```
+
+The ramp stops at five and cycles. That is not an arbitrary limit: `--chart-1` through `--chart-5`
+are what a shadcn palette declares, so a sixth token would leave every pasted theme drawing five
+themed series and one stranger. Past five, name the colours.
+
+At most eight *distinct* token-valued colours resolve in one render, and the component throws by
+name past that. The ramp dedupes, so twenty series walking it cost five. Literal colours bypass the
+lookup entirely, so a chart of twenty literal-coloured series is fine.
+
+<Preview id="chart/line/time-series" />
+
+A `Date` in the x field makes a time axis. The ticks land on calendar boundaries and print as
+`20 Jan`, and the tooltip heading prints the same way.
+
+<Preview id="chart/line/curves" />
+
+```tsx
+<Chart curve="step" />
+<Chart.Line curve="linear" yKey="visits" />
+```
+
+`curve` is set on the chart and overridden per mark. `monotone`, the default, cannot overshoot a
+point, which is the one a line of real data wants.
+
+## Area
+
+<Preview id="chart/area/area" />
+
+```tsx
+<Chart config={config} data={rows} includeZero xKey="day">
+  <Chart.Area yKey="visits" />
+  <Chart.Line yKey="visits" />
+</Chart>
+```
+
+`Chart.Area` fades the series' own colour out towards the baseline rather than painting it flat — a
+flat fill at any readable opacity competes with the line above it.
+
+<Preview id="chart/area/area-stacked" />
+
+```tsx
+<Chart.Area stackId="devices" yKey="desktop" />
+<Chart.Area stackId="devices" yKey="mobile" />
+<Chart.Area stackId="devices" yKey="tablet" />
+```
+
+Areas naming the same `stackId` stand on one another: each is the band from the top of the series
+below to its own running total, so the topmost edge reads as the sum. The stack is built in data
+space, which is what lets the y domain cover the totals rather than the tallest single series.
+
+## Bar
+
+<Preview id="chart/bar/bar" />
+
+```tsx
+<Chart config={{ orders: { label: "Orders" } }} data={rows} xKey="month">
+  <Chart.Grid />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Bar yKey="orders" />
+</Chart>
+```
+
+Placing a `Chart.Bar` pulls zero into the y domain on its own — a bar that does not start at zero
+is a lie about its length. The value end follows `--radius` at the chart's size, so a theme that
+squares its buttons squares its bars.
+
+<Preview id="chart/bar/bar-grouped" />
+
+```tsx
+<Chart.Bar yKey="desktop" />
+<Chart.Bar yKey="mobile" />
+```
+
+Two `Chart.Bar`s that are siblings share each step between them. Nothing names the group — being
+placed together is what groups them. That is also why a `Chart.Bar` wrapped in a component of your
+own never groups: the root collects its direct children, and a wrapper hides the bar from it.
+
+<Preview id="chart/bar/bar-stacked" />
+
+```tsx
+<Chart.Bar stackId="traffic" yKey="organic" />
+<Chart.Bar stackId="traffic" yKey="paid" />
+<Chart.Bar stackId="traffic" yKey="referral" />
+```
+
+Bars naming the same `stackId` stand on one another, first placed at the bottom, so the top of each
+column reads as the total. Only the outermost segment is rounded, so a column reads as one bar
+rather than a pile of pills.
+
+**One stack per chart.** A second `stackId`, a stack beside a loose bar, or an area stack beside a
+bar stack all throw by name. Throwing beats drawing something that looks stacked and is not.
+
+<Preview id="chart/bar/bar-horizontal" />
+
+```tsx
+<Chart config={config} data={rows} orientation="horizontal" xKey="browser">
+  <Chart.Grid axis="x" />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Bar yKey="visitors" />
+</Chart>
+```
+
+`orientation="horizontal"` swaps the axis roles: the categories run up the left and the bars grow
+rightward from them. `Chart.YAxis` and `Chart.XAxis` keep their names — each labels the axis it
+sits beside, whichever field that axis now carries.
+
+<Preview id="chart/bar/bar-negative" />
+
+A negative value hangs from the baseline instead of standing on it, and its rounded end is the one
+furthest from zero. The baseline sits where zero falls in the domain, so a chart of mixed signs
+draws it through the middle of the plot.
+
+<Preview id="chart/bar/bar-labels" />
+
+```tsx
+<Chart.Bar labels={(value) => `$${value}k`} yKey="revenue" />
+<Chart.Bar rounded={false} yKey="revenue" />
+```
+
+`labels` prints each value against its bar, in the axis colour and the axis font. A grouped or
+stacked chart draws no labels whatever is passed — there is no room between the bars for them to
+read. `rounded={false}` squares the value end; a number is an exact radius in points.
+
+<Preview id="chart/bar/bar-tooltip" />
+
+```tsx
+<Chart.Bar yKey="desktop" />
+<Chart.Bar yKey="mobile" />
+<Chart.Tooltip.X />
+<Chart.Tooltip />
+```
+
+Over bars, `Chart.Tooltip.X` is a translucent band one step wide rather than a rule, so it picks
+out the whole column the readout names. The band always snaps — one that glided between columns
+would highlight half of two bars. Pass `band={false}` to get the hairline back, or `band` on a
+line chart to get the wash.
+
+## Scatter
+
+<Preview id="chart/scatter/scatter" />
+
+```tsx
+<Chart config={config} data={rows} includeZero xKey="minutes">
+  <Chart.Grid axis="both" />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Scatter radius={5} yKey="free" />
+  <Chart.Scatter radius={5} yKey="pro" />
+</Chart>
+```
+
+One dot per row per series, on a numeric x. A whole series is one Skia path, so a hundred points is
+one node. A gap in the data is the same dot at radius zero, which is what lets a point come and go
+without the series snapping.
+
+## Candlestick
+
+<Preview id="chart/candlestick/candlestick" />
+
+```tsx
+<Chart config={{ close: { label: "Close" } }} data={rows} xKey="at">
+  <Chart.Grid />
+  <Chart.YAxis />
+  <Chart.XAxis />
+  <Chart.Candlestick />
+  <Chart.Tooltip.X />
+  <Chart.Tooltip />
+</Chart>
+```
+
+Open, high, low and close per row, read from fields of those names unless the props say otherwise.
+A candle that closed up is `chart-1`, one that closed down is `chart-2`, and a flat one is
+`muted-foreground` — the top of the same ramp every other chart wears, so a pasted palette
+recolours them with it.
+
+The `config` names the close field alone, so the legend and the readout name one price rather than
+four; the tooltip prints all four, swatched by sentiment.
+
+## Pie and donut
+
+<Preview id="chart/pie/pie" />
+
+```tsx
+<PieChart data={rows} nameKey="browser" valueKey="visitors">
+  <PieChart.Slice />
+  <PieChart.Legend />
+</PieChart>
+```
+
+A second root, not a part of `Chart`. Its categories are its **rows**: the first row is `chart-1`,
+the second `chart-2`, and no `config` is needed at all. Pass one to relabel or recolour a row by
+its name. A row with a negative, missing or unreadable value is dropped before anything is drawn.
+
+A hairline in the chart's background runs between neighbouring slices. Two ramp colours side by
+side with no gap read as one shape with a stripe.
+
+<Preview id="chart/pie/donut" />
+
+```tsx
+<PieChart data={rows} innerRadius={0.62} nameKey="plan" valueKey="seats">
+  <PieChart.Slice />
+  <PieChart.Center label="Seats" value="1,125" />
+  <PieChart.Legend />
+</PieChart>
+```
+
+`innerRadius` is the hole as a fraction of the radius. `PieChart.Center` puts a headline figure in
+it — a React Native view, so it carries the type scale and takes a `className`. It takes no
+touches, so a tap through it still lands on a slice.
+
+<Preview id="chart/pie/pie-labels" />
+
+```tsx
+<PieChart.Label />
+<PieChart.Label format="value" />
+<PieChart.Label format={(slice) => slice.label} />
+```
+
+`PieChart.Label` prints on every slice wide enough to hold one, in the chart's background colour so
+it reads on any slice of the ramp. The default is the share as a percentage. A slice under twelve
+degrees gets none — a label wider than its wedge lands on the neighbours.
+
+<Preview id="chart/pie/pie-tap" />
+
+```tsx
+<PieChart data={rows} nameKey="source" valueKey="sessions">
+  <PieChart.Slice />
+  <PieChart.Tooltip />
+</PieChart>
+```
+
+A pie has no x to scrub along, so `PieChart.Tooltip` answers a tap. The tapped slice keeps its
+colour and the rest dim; tapping outside clears it. The readout sits just past the slice's outer
+edge on its bisector, where a callout line would point.
+
+Placing a tooltip is what makes the chart take taps at all. Without one, an `onSelect` or a
+controlled `selectedIndex`, a pie takes no gesture and scrolls with its parent like a picture.
+
+## Grid, axes, tooltip and legend
+
+<Preview id="chart/parts/grid-and-axes" />
+
+```tsx
+<Chart.Grid />              {/* y ticks, painted with `border` */}
+<Chart.Grid axis="both" />
+<Chart.YAxis />
+<Chart.XAxis />
+```
+
+The grid paints with `border` and the labels with `muted-foreground`, so both follow a pasted
+palette without a chart-specific token existing at all.
+
+<Preview id="chart/parts/tooltip" />
+
+Hold and drag. The readout follows the finger on the UI thread; its text updates only when the
+nearest point changes.
+
+```tsx
+<Chart config={config} data={rows} xKey="month">
+  <Chart.Line yKey="desktop" />
+  <Chart.Tooltip.X />
+  <Chart.Tooltip.Dot />
+  <Chart.Tooltip />
+</Chart>
+```
+
+`Chart.Tooltip.X`, `.Y` and `.Dot` mark the position on the plot itself — a vertical rule, a
+horizontal one, and a dot on each series. They are **siblings** of `Chart.Tooltip`, not children:
+the readout is a React Native view over the canvas and these are drawn inside it, so one cannot
+contain the other.
+
+All three sit on the nearest datum by default, which is what the readout names. Pass `glide` to
+follow the finger continuously instead, and expect the marks to describe a different position from
+the number beside them. A dot skips a series that is only a bar — a bar has no curve to sit on,
+and the band already picks out its column.
+
+Holding first is deliberate — a chart inside a scrolling list must not steal the scroll. Pass
+`scrubConfig={{ behaviour: "claim" }}` on a chart that owns its width, and a horizontal drag
+scrubs while a vertical one still scrolls.
+
+<Preview id="chart/parts/legend" />
+
+```tsx
+<Chart.Legend />
+<Chart.Legend keys={["ios"]} />
+<PieChart.Legend />
+```
+
+The same legend serves both roots. Under a pie, one swatch per row.
+
+<Preview id="chart/parts/colours" />
+
+A colour on a config entry is a token or a literal. A colour on a mark is a literal: the canvas is a
+second reconciler with no theme provider above it, so a token given to a mark has nothing to
+resolve it. Name tokens in the `config`.
+
+<Preview id="chart/parts/empty" />
+
+<Preview id="chart/parts/flat" />
+
+An empty series and a single point are both real states, and neither is allowed to crash: with no
+rows the domain falls back to `[0, 1]`, so the axis still has something to say. A series whose
+every value is the same draws flat through the middle rather than being stretched to fill the
+height — expanding a zero-width domain would invent a spread the data does not have.
+
+<Preview id="chart/parts/dashboard" />
+
+## Sizes
+
+<Preview id="chart/parts/sizes" />
+
+```tsx
+<Chart size="sm" />
+<Chart size="md" />
+<Chart size="lg" />
+<PieChart size="sm" />
+```
+
+A height token rather than an aspect ratio, so two charts at different widths still line up on a
+dashboard. The axis font, the tick count and the bar radius step with it. A pie takes the same
+height, and its diameter is the shorter side of the frame.
+
+## API Reference
+
+| Part | |
+| --- | --- |
+| `Chart.Grid` | A hairline rule at each tick. Draws first, under every mark |
+| `Chart.Line` | A stroked line through one series |
+| `Chart.Area` | The region under one series, fading towards the baseline. `stackId` stacks it |
+| `Chart.Bar` | One bar per datum. Siblings group; a shared `stackId` stacks |
+| `Chart.Scatter` | One dot per datum |
+| `Chart.Candlestick` | Open-high-low-close candles, coloured by sentiment |
+| `Chart.XAxis` | Tick labels below the plot |
+| `Chart.YAxis` | Tick labels beside the plot |
+| `Chart.Tooltip` | A floating readout that follows the scrub |
+| `Chart.Tooltip.Dot` | A dot on each series at the scrubbed point |
+| `Chart.Tooltip.X` | A vertical rule through the scrubbed position — a band, over bars |
+| `Chart.Tooltip.Y` | A horizontal rule at one series' value |
+| `Chart.Legend` | A swatch and a label per series |
+| `PieChart.Slice` | Every slice, with a hairline between them |
+| `PieChart.Label` | A percentage, a value or a name on every slice wide enough |
+| `PieChart.Center` | A headline figure and a caption in the hole of a donut |
+| `PieChart.Tooltip` | A readout for the tapped slice |
+| `PieChart.Legend` | A swatch and a label per slice |
+
+A part must be a **direct** child of its root: the root sorts them by identity to decide what is
+drawn into the canvas, what floats over it and what sits under it. An array from `.map()` is fine;
+a mark wrapped in your own component is not.
+
+### Chart
+
+<TypeTable
+  type={{
+    config: {
+      type: "Record<string, { label: string; color?: string }>",
+      description: "The series, keyed by the data field each reads. Key order is draw order and ramp order.",
+    },
+    data: { type: "readonly Record<string, unknown>[]" },
+    xKey: { type: "string", description: "The field every series is plotted against." },
+    yKeys: { type: "readonly string[]", description: "Show only these series. Defaults to every key of config." },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    curve: {
+      type: '"monotone" | "linear" | "natural" | "step"',
+      default: '"monotone"',
+      description: "How the line gets between points. Monotone cannot overshoot.",
+    },
+    domain: {
+      type: "{ y?: [number | undefined, number | undefined] }",
+      description: "Explicit y bounds. Either end may be omitted to keep the data's own.",
+    },
+    includeZero: {
+      type: "boolean",
+      description: "Pull zero into the y domain. Defaults on when the chart holds bars.",
+    },
+    orientation: {
+      type: '"vertical" | "horizontal"',
+      default: '"vertical"',
+      description: "Categories along x, or along y. Horizontal swaps the axis roles.",
+    },
+    scrubConfig: {
+      type: '{ enabled?: boolean; behaviour?: "hold" | "claim" | "block"; holdDuration?: number }',
+      description: "How the scrub coexists with a scrolling parent.",
+    },
+    className: { type: "string" },
+    testID: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Chart.Line
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Names a key of the chart's config." },
+    color: { type: "string", description: "Overrides the series' colour. A literal." },
+    strokeWidth: { type: "number", default: "2" },
+    curve: { type: "CurveType", description: "Overrides the chart's curve for this mark alone." },
+    connectMissingData: { type: "boolean", description: "Draw straight through a gap instead of breaking." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Area
+
+<TypeTable
+  type={{
+    yKey: { type: "string" },
+    stackId: {
+      type: "string",
+      description: "Stack this area on every sibling area naming the same id. One stack per chart, shared with the bars.",
+    },
+    color: { type: "string" },
+    gradient: { type: "boolean", default: "true", description: "Fade towards the baseline rather than filling flat." },
+    opacity: { type: "number", default: "0.25", description: "Opacity at the top of the fill." },
+    curve: { type: "CurveType" },
+    connectMissingData: { type: "boolean" },
+  }}
+/>
+
+### Chart.Bar
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Names a key of the chart's config." },
+    stackId: {
+      type: "string",
+      description: "Stack this bar on every sibling naming the same id. Siblings without one sit side by side.",
+    },
+    color: { type: "string", description: "Overrides the series' colour. A literal." },
+    rounded: {
+      type: "boolean | number",
+      default: "true",
+      description: "Round the value end, following --radius at the chart's size. false is square; a number is an exact radius in points.",
+    },
+    labels: {
+      type: "boolean | ((value: number, row: Record<string, unknown>) => string)",
+      description: "Print each value against its bar. A function returns the text, or an empty string to skip that bar. Grouped and stacked charts draw none.",
+    },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Scatter
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Names a key of the chart's config." },
+    color: { type: "string", description: "Overrides the series' colour. A literal." },
+    radius: { type: "number", default: "4", description: "Every point's radius, in points." },
+    shape: { type: '"circle" | "square" | "star"', default: '"circle"' },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Candlestick
+
+<TypeTable
+  type={{
+    open: { type: "string", default: '"open"', description: "The row field holding the opening price." },
+    high: { type: "string", default: '"high"' },
+    low: { type: "string", default: '"low"' },
+    close: { type: "string", default: '"close"' },
+    colors: {
+      type: "{ positive?: string; negative?: string; neutral?: string }",
+      description: "Overrides the sentiment colours. Literals only; the defaults are chart-1, chart-2 and muted-foreground.",
+    },
+    bodyWidth: { type: "number", default: "0.6", description: "The fraction of each step a body fills." },
+    wickWidth: { type: "number", default: "1", description: "The wick's stroke width, in points." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Grid
+
+<TypeTable
+  type={{
+    axis: { type: '"x" | "y" | "both"', default: '"y"', description: "Which ticks get a rule." },
+    color: { type: "string", description: "Overrides the `border` token this paints with." },
+    lineWidth: { type: "number", default: "1" },
+    dash: { type: "[number, number]", description: "Dash on/off lengths, in points." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.XAxis
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "Overrides the `muted-foreground` token." },
+    tickPadding: { type: "number", default: "6" },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.YAxis
+
+<TypeTable
+  type={{
+    color: { type: "string" },
+    tickPadding: { type: "number", default: "6" },
+    side: { type: '"left" | "right"', default: '"left"' },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Tooltip
+
+<TypeTable
+  type={{
+    formatHeading: {
+      type: "(row: Record<string, unknown>, index: number) => string",
+      description: "Prints the heading from the row under the cursor. Defaults to its x field, formatted as the axis formats it.",
+    },
+    formatValue: { type: "(value: unknown, key: string) => string" },
+    size: { type: "{ width: number; height: number }", description: "Overrides the size used to keep it inside the frame." },
+    className: { type: "string" },
+  }}
+/>
+
+### Chart.Tooltip.Dot
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series to mark. Omit to mark every one." },
+    color: { type: "string", description: "Overrides the series' colour." },
+    radius: { type: "number", default: "4" },
+    borderWidth: { type: "number", default: "2", description: "The background ring's width. Zero draws no ring." },
+    glide: { type: "boolean", description: "Ride the curve continuously instead of sitting on the nearest datum." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### Chart.Tooltip.X
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "Overrides the `muted-foreground` token." },
+    width: { type: "number", default: "1" },
+    dash: { type: "[number, number] | null", default: "[4, 4]", description: "Pass null for a solid rule." },
+    glide: { type: "boolean" },
+    band: {
+      type: "boolean",
+      description: "A translucent band one step wide instead of a rule. Defaults on when the chart holds bars or candles.",
+    },
+    opacity: { type: "number", default: "0.6", description: "0.12 for the band." },
+  }}
+/>
+
+### Chart.Tooltip.Y
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series' value the rule sits at. Defaults to the first." },
+    color: { type: "string", description: "Overrides the series' colour." },
+    width: { type: "number", default: "1" },
+    dash: { type: "[number, number] | null", default: "[4, 4]" },
+    glide: { type: "boolean" },
+    opacity: { type: "number", default: "0.6" },
+  }}
+/>
+
+### Chart.Legend
+
+<TypeTable
+  type={{
+    keys: { type: "readonly string[]", description: "Show only these series, in this order." },
+    className: { type: "string" },
+  }}
+/>
+
+### PieChart
+
+<TypeTable
+  type={{
+    data: { type: "readonly Record<string, unknown>[]" },
+    nameKey: { type: "string", description: "The field that names a slice." },
+    valueKey: {
+      type: "string",
+      description: "The field that sizes a slice. Negative, missing and unreadable values are dropped.",
+    },
+    config: {
+      type: "Record<string, { label: string; color?: string }>",
+      description: "Labels and colours by row name, for the rows that want one. Optional: the ramp already colours the rows in order.",
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    innerRadius: {
+      type: "number",
+      default: "0",
+      description: "The hole, as a fraction of the radius. 0 is a pie; 0.6 is a donut.",
+    },
+    startAngle: { type: "number", default: "0", description: "Where the first slice begins. Degrees clockwise from 12 o'clock." },
+    selectedIndex: {
+      type: "number | null",
+      description: "The selected slice's index in the drawn order. Controlled when given.",
+    },
+    onSelect: {
+      type: "(index: number | null) => void",
+      description: "Called with a tapped slice's index, or null for a tap outside every slice.",
+    },
+    className: { type: "string" },
+    testID: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### PieChart.Slice
+
+<TypeTable
+  type={{
+    stroke: { type: "boolean", default: "true", description: "A hairline between neighbouring slices, in the chart's background." },
+    strokeWidth: { type: "number", default: "2" },
+    dimUnselected: {
+      type: "number",
+      default: "0.4",
+      description: "Opacity of every slice but the selected one, while one is selected. 1 turns the dim off.",
+    },
+    opacity: { type: "number" },
+  }}
+/>
+
+### PieChart.Label
+
+<TypeTable
+  type={{
+    format: {
+      type: '"percent" | "value" | "label" | ((slice: PieLabelSlice) => string)',
+      default: '"percent"',
+      description: "What each label prints.",
+    },
+    color: { type: "string", description: "Overrides the chart's background, which the labels are drawn in. A literal." },
+    radiusOffset: {
+      type: "number",
+      default: "0.5",
+      description: "Across the annulus: 0 the inner edge, 1 the outer, more than 1 outside.",
+    },
+    minSweep: { type: "number", default: "12", description: "Slices narrower than this, in degrees, get no label." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### PieChart.Center
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The headline figure, on the type scale in foreground." },
+    label: { type: "string", description: "A caption under the value, in muted-foreground." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Anything else to place in the hole, after the value and the label." },
+  }}
+/>
+
+### PieChart.Tooltip
+
+<TypeTable
+  type={{
+    formatValue: { type: "(value: number, name: string) => string", description: "Prints the selected slice's value." },
+    formatPercent: { type: "(percent: number) => string", description: "Prints the selected slice's share. Defaults to a whole-number percentage." },
+    size: { type: "{ width: number; height: number }", description: "Overrides the size used to keep it inside the frame." },
+    className: { type: "string" },
+  }}
+/>
+
+<Callout type="info">
+The drawing is [`@delacour/charts`](https://www.npmjs.com/package/@delacour/charts), a headless
+Skia engine with no tokens and no `className` of its own. It installs alongside this component and
+is where to go for a chart this one does not skin — a render prop, a custom mark, or the scale
+maths on its own.
+</Callout>
+
+<Callout type="warn">
+Zooming and brushing are not here yet. The scrub and the pie's tap are the only gestures a chart
+takes today.
+</Callout>

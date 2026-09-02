@@ -1,4 +1,5 @@
 import type { ExportsMap } from "./exports-map";
+import { peerRange } from "./package-manager";
 
 /**
  * The `package.json` and `tsconfig.json` for a shared components package.
@@ -50,7 +51,9 @@ export function mergePackageJson(existing: PackageJson | null, input: ScaffoldIn
 		// Replaced wholesale, not merged: a component the user deleted has to lose
 		// its entry, and the map is derived from the disk every time.
 		exports: input.exports,
-		...(input.peers.length > 0 ? { peerDependencies: mergePeers(base.peerDependencies, input.peers) } : {}),
+		...(input.peers.length > 0
+			? { peerDependencies: mergePeers(base.peerDependencies, input.peers, base.dependencies) }
+			: {}),
 	};
 }
 
@@ -60,12 +63,24 @@ export function mergePackageJson(existing: PackageJson | null, input: ScaffoldIn
  * The app owns the versions — `expo install` pins them against the SDK — so a
  * range here would be a second opinion able to contradict it. A range the user
  * pinned themselves is left exactly as they wrote it.
+ *
+ * A package the manifest already depends on is not recorded as a peer too. A
+ * dependency is the stronger claim, and the pair is not harmless: bun resolves
+ * a peer against the registry even when a dependency on the same name already
+ * satisfies it, so a peer on a package that is not published yet — or one
+ * installed from a tarball, as `verify:expo` does — turns every later install
+ * in the workspace into a 404 naming a command that never asked for it.
  */
-function mergePeers(existing: Record<string, string> | undefined, peers: readonly string[]): Record<string, string> {
+function mergePeers(
+	existing: Record<string, string> | undefined,
+	peers: readonly string[],
+	dependencies: Record<string, string> | undefined
+): Record<string, string> {
 	const merged: Record<string, string> = { ...existing };
 
 	for (const peer of peers) {
-		merged[peer] ??= "*";
+		if (dependencies?.[peer] !== undefined) continue;
+		merged[peer] ??= peerRange(peer);
 	}
 
 	return Object.fromEntries(Object.entries(merged).sort(([a], [b]) => a.localeCompare(b)));

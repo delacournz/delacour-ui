@@ -65,6 +65,7 @@ shares.
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/native-ui/button` | The reference implementation for the patterns below |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/native-ui/checkbox` | A box that is ticked or not, alone or in a group |
+| [Chart](src/components/chart/AGENTS.md) | `@delacour/native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [Field](src/components/field/AGENTS.md) | `@delacour/native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/native-ui/input` | A text field, and the box that holds content beside it |

@@ -7,6 +7,11 @@ import { spawnSync } from "node:child_process";
  * and requires the native `ios/` and `android/` projects to exist.
  *
  * If either directory is missing, run `bun expo prebuild` first.
+ *
+ * It detects a MISSING prebuild, not a STALE one. Adding a native module
+ * leaves both directories in place, so this passes and the app red-boxes with
+ * `Cannot find native module` instead — run `bun expo prebuild --clean` by hand
+ * after any change to the native dependency set.
  */
 import { existsSync } from "node:fs";
 import { join } from "node:path";

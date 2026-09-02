@@ -501,7 +501,13 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 		return { name: "Native modules", status: "pass", detail: "single package, nothing to duplicate" };
 	}
 
-	const watched = ["react-native", "react-native-reanimated", "react-native-gesture-handler", "react-native-svg"];
+	const watched = [
+		"@shopify/react-native-skia",
+		"react-native",
+		"react-native-reanimated",
+		"react-native-gesture-handler",
+		"react-native-svg",
+	];
 	const duplicated = watched.filter(
 		(name) =>
 			existsSync(join(project.appRoot as string, "node_modules", name)) &&

@@ -95,7 +95,8 @@ export function DemoPager({ title, subtitle, demos }: DemoPagerProps): ReactElem
  * both cheaper and quieter.
  */
 function DemoPagerBody({ demos, title }: { demos: readonly DemoEntry[]; title: string }): ReactElement {
-	const { activeIndex, onFrameLayout, pageHeight, progress, scrollRef, scrollToIndex } = useDemoPager(demos.length);
+	const { activeIndex, onFrameLayout, onMomentumScrollEnd, pageHeight, progress, scrollRef, scrollToIndex } =
+		useDemoPager(demos.length);
 	const [innerScrolled, setInnerScrolled] = useState(NO_INNER_SCROLL);
 	const [isIndexOpen, setIndexOpen] = useState(false);
 
@@ -124,6 +125,7 @@ function DemoPagerBody({ demos, title }: { demos: readonly DemoEntry[]; title: s
 			<Screen.ScrollArea
 				className="flex-1"
 				onLayout={onFrameLayout}
+				onMomentumScrollEnd={onMomentumScrollEnd}
 				pagingEnabled
 				ref={scrollRef}
 				scrollEnabled={innerScrolled.size === 0}

@@ -56,4 +56,50 @@ describe("collectYValues", () => {
 	test("skips gaps", () => {
 		expect(collectYValues(data, ["cost"])).toEqual([50, 25]);
 	});
+
+	describe("horizontal", () => {
+		// Categories run down y, values across x. The category scale is the one
+		// on y; the value scale is the one on x.
+		const categoryScale: ScaleDescriptor = { kind: "linear", domain: [0, 2], range: [0, 200] };
+		const valueScale: ScaleDescriptor = { kind: "linear", domain: [0, 100], range: [0, 100] };
+
+		test("puts the value on x and the category on y", () => {
+			const { points } = transformInputData({
+				data,
+				yKeys: ["sales"],
+				xValues: [0, 1, 2],
+				xScale: valueScale,
+				yScale: categoryScale,
+				orientation: "horizontal",
+			});
+			expect(points.sales?.[2]).toEqual({ x: 100, y: 200, xValue: 2, yValue: 100 });
+		});
+
+		test("a gap keeps its category position and has no x", () => {
+			const { points } = transformInputData({
+				data,
+				yKeys: ["cost"],
+				xValues: [0, 1, 2],
+				xScale: valueScale,
+				yScale: categoryScale,
+				orientation: "horizontal",
+			});
+			expect(points.cost?.[1]?.y).toBe(100);
+			expect(Number.isNaN(points.cost?.[1]?.x)).toBe(true);
+			expect(points.cost?.[1]?.yValue).toBeNull();
+		});
+
+		test("xPositions are the category positions, whichever axis they lie on", () => {
+			const result = transformInputData({
+				data,
+				yKeys: ["sales"],
+				xValues: [0, 1, 2],
+				xScale: valueScale,
+				yScale: categoryScale,
+				orientation: "horizontal",
+			});
+			expect(result.xPositions).toEqual([0, 100, 200]);
+			expect(result.points.sales?.map((point) => point.y)).toEqual([0, 100, 200]);
+		});
+	});
 });

@@ -25,6 +25,24 @@ Both come out of one binary search, so offering both costs nothing and the
 consumer picks. Victory-native only does the second; react-native-graph only
 does the first.
 
+For a stacked key the root builds `ys` and the curve from the stacked segment
+tops, so the dot sits on the segment that is visible, while `values` stay the
+raw series so the readout prints what was measured.
+
+## A point per series, either way round
+
+Each series also carries `snappedX` and `x`: with `snappedY` and `y` they are
+the nearest datum's canvas point on that series, and the gliding equivalent,
+**whichever way the chart is oriented**. A cursor dot reads the pair and
+never asks. On a horizontal chart the touch **y** is what matters — clamped,
+inverted against the category scale and matched to a row — and there is no
+curve to glide along, so the glide values equal the snapped ones.
+
+The root's fields say where the category is: `snappedX` on a vertical chart,
+`snappedY` on a horizontal one, `NaN` on the other. A band highlight is
+`xStep.px` wide centred on whichever is finite. `xValue` is the category value
+under the touch on either.
+
 ## Files
 
 | Path | What |

@@ -32,3 +32,9 @@ Path morphing, and the configuration that drives it.
   `{ type: "timing" }` prop is a new object every render; in the dependency
   list it would restart the animation on every render, which reads as a line
   that never settles.
+
+- **`enterFrom` is read on mount and never again.** It seeds the first morph
+  — a pie slice hands over itself at radius zero and grows out of the centre —
+  and is then forgotten, so an inline path built on every render cannot restart
+  the entrance. Omitted, the hook behaves exactly as it did before the option
+  existed: the range starts at the target and nothing is animated on mount.

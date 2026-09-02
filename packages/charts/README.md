@@ -49,6 +49,38 @@ Marks also read the chart context, so they can be placed rather than called:
 </CartesianChart>
 ```
 
+Bars stand on zero and need half a step of x padding so the outermost ones sit
+inside the plot. Sibling series stack when the root is told which keys to
+stack, because only the root can size the y axis for the totals:
+
+```tsx
+import { CartesianChart, ChartBar, ChartBarStack } from "@delacour/charts";
+
+<CartesianChart data={rows} domainPadding={{ x: 0.5 }} includeZero xKey="month" yKeys={["revenue"]}>
+  <ChartBar color="#0A84FF" roundedCorners={{ topLeft: 4, topRight: 4 }} yKey="revenue" />
+</CartesianChart>
+
+<CartesianChart data={rows} domainPadding={{ x: 0.5 }} stackKeys={["web", "ios", "android"]} xKey="month" yKeys={["web", "ios", "android"]}>
+  <ChartBarStack colors={["#0A84FF", "#30D158", "#FF9F0A"]} yKeys={["web", "ios", "android"]} />
+</CartesianChart>
+```
+
+Add `orientation="horizontal"` to the root and the categories run down the
+left with the bars growing rightward; nothing else changes.
+
+A pie is its own root. Slices, labels and the hairline between them are marks,
+and a tap reports the slice under the finger:
+
+```tsx
+import { PieInset, PieLabel, PieSlices, PolarChart } from "@delacour/charts";
+
+<PolarChart data={rows} innerRadius="60%" labelKey="browser" onSlicePress={setSelected} selectedIndex={selected} valueKey="share">
+  <PieSlices colors={["#0A84FF", "#30D158", "#FF9F0A", "#FF375F"]} />
+  <PieInset color="#FFFFFF" strokeWidth={2} />
+  <PieLabel color="#FFFFFF" font={font} formatLabel={(slice) => `${Math.round(slice.fraction * 100)}%`} minSweep={12} />
+</PolarChart>
+```
+
 ## The maths on its own
 
 `@delacour/charts/core` is every scale, tick, curve and solver in the package,

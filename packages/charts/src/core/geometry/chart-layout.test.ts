@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { formatNumberTick } from "../text/format-tick";
-import { type ChartPlan, planAxis, resolveChartFrame } from "./chart-layout";
+import { axisRanges, type ChartPlan, pickAxisRoles, placeAxisRoles, planAxis, resolveChartFrame } from "./chart-layout";
 
 const canvas = { width: 300, height: 200 };
 
@@ -118,5 +118,113 @@ describe("resolveChartFrame", () => {
 		const resolved = frame({ canvas: { width: 0, height: 0 } });
 		expect(Number.isFinite(resolved.bounds.right)).toBe(true);
 		expect(resolved.bounds.right).toBeGreaterThanOrEqual(resolved.bounds.left);
+	});
+
+	test("reserves the left gutter for category labels planned onto y", () => {
+		// A horizontal chart plans its categories into the y range. The frame
+		// does not know or care: it measures whatever labels sit on each side.
+		const categories = planAxis({
+			domain: [0, 2],
+			kind: "linear",
+			range: [0, 100],
+			tickCount: 3,
+			tickValues: [0, 1, 2],
+			format: (value) => ["January", "February", "March"][value] ?? "",
+			show: true,
+		});
+		const values = planAxis({
+			domain: [0, 100],
+			kind: "linear",
+			range: [0, 300],
+			tickCount: 4,
+			format: String,
+			show: true,
+		});
+		const frame = resolveChartFrame({
+			canvas: { width: 300, height: 100 },
+			plan: { x: values, y: categories },
+			xLabelWidths: [10, 10, 10, 10],
+			yLabelWidths: [60, 62, 40],
+			lineHeight: 12,
+			showXAxis: true,
+			showYAxis: true,
+		});
+		expect(frame.bounds.left).toBeGreaterThanOrEqual(62);
+		expect(frame.yTicks.map((tick) => tick.value)).toEqual([0, 1, 2]);
+	});
+
+	test("runs a horizontal chart's category axis top to bottom, so the first row is the top one", () => {
+		const categories = planAxis({
+			domain: [0, 2],
+			kind: "linear",
+			range: [0, 100],
+			tickCount: 3,
+			format: String,
+			show: false,
+		});
+		const values = planAxis({
+			domain: [0, 100],
+			kind: "linear",
+			range: [0, 300],
+			tickCount: 4,
+			format: String,
+			show: false,
+		});
+		const frame = resolveChartFrame({
+			canvas: { width: 300, height: 100 },
+			plan: { x: values, y: categories },
+			xLabelWidths: [],
+			yLabelWidths: [],
+			lineHeight: 12,
+			showXAxis: false,
+			showYAxis: false,
+			orientation: "horizontal",
+		});
+		expect(frame.yScale.range[0]).toBe(frame.bounds.top);
+		expect(frame.yScale.range[1]).toBe(frame.bounds.bottom);
+		// The first tick — the first category — sits highest on screen.
+		expect(frame.yTicks[0]?.position).toBeLessThan(frame.yTicks[2]?.position as number);
+		// Values still grow rightward.
+		expect(frame.xScale.range).toEqual([frame.bounds.left, frame.bounds.right]);
+	});
+
+	test("a vertical chart keeps its value axis bottom to top", () => {
+		const frame = resolveChartFrame({
+			canvas: { width: 300, height: 100 },
+			plan: {
+				x: planAxis({ domain: [0, 2], kind: "linear", range: [0, 300], tickCount: 3, format: String, show: false }),
+				y: planAxis({ domain: [0, 100], kind: "linear", range: [100, 0], tickCount: 4, format: String, show: false }),
+			},
+			xLabelWidths: [],
+			yLabelWidths: [],
+			lineHeight: 12,
+			showXAxis: false,
+			showYAxis: false,
+		});
+		expect(frame.yScale.range).toEqual([frame.bounds.bottom, frame.bounds.top]);
+	});
+});
+
+describe("axis roles", () => {
+	const outer = { left: 10, right: 110, top: 5, bottom: 65 };
+
+	test("vertical puts categories on x and values up y", () => {
+		expect(pickAxisRoles("x", "y", "vertical")).toEqual({ category: "x", value: "y" });
+		expect(placeAxisRoles("c", "v", "vertical")).toEqual({ x: "c", y: "v" });
+		expect(axisRanges(outer, "vertical")).toEqual({ category: [10, 110], value: [65, 5] });
+	});
+
+	test("horizontal puts categories down y, top first, and values along x", () => {
+		expect(pickAxisRoles("x", "y", "horizontal")).toEqual({ category: "y", value: "x" });
+		expect(placeAxisRoles("c", "v", "horizontal")).toEqual({ x: "v", y: "c" });
+		// Top to bottom, so the first row is the top one and positions ascend.
+		expect(axisRanges(outer, "horizontal")).toEqual({ category: [5, 65], value: [10, 110] });
+	});
+
+	test("pick and place are inverses", () => {
+		for (const orientation of ["vertical", "horizontal"] as const) {
+			const picked = pickAxisRoles(1, 2, orientation);
+			expect(placeAxisRoles(picked.category, picked.value, orientation)).toEqual({ x: 1, y: 2 });
+		}
 	});
 });

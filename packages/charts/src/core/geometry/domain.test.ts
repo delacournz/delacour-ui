@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { EMPTY_DOMAIN, resolveDomain } from "./domain";
+import { EMPTY_DOMAIN, resolveDomain, resolveDomainPadding } from "./domain";
 
 describe("resolveDomain", () => {
 	test("measures the extent of the data", () => {
@@ -42,5 +42,46 @@ describe("resolveDomain", () => {
 
 	test("ignores a non-finite explicit bound rather than poisoning the scale", () => {
 		expect(resolveDomain({ values: [3, 77], domain: [Number.NaN, undefined] })).toEqual([3, 77]);
+	});
+
+	test("pads by an absolute amount in domain units", () => {
+		// Half a step each side is what puts a bar's whole width inside the plot.
+		expect(resolveDomain({ values: [0, 4], absolutePadding: 0.5 })).toEqual([-0.5, 4.5]);
+	});
+
+	test("applies absolute padding after fractional padding", () => {
+		expect(resolveDomain({ values: [0, 100], padding: 0.1, absolutePadding: 5 })).toEqual([-15, 115]);
+	});
+
+	test("applies absolute padding to a zero-width domain", () => {
+		// One bar still needs a width to stand in.
+		expect(resolveDomain({ values: [2, 2], absolutePadding: 0.5 })).toEqual([1.5, 2.5]);
+	});
+
+	test("an explicit bound wins over absolute padding", () => {
+		expect(resolveDomain({ values: [0, 4], absolutePadding: 0.5, domain: [0, undefined] })).toEqual([0, 4.5]);
+	});
+
+	test("ignores a non-finite or negative absolute padding", () => {
+		expect(resolveDomain({ values: [0, 4], absolutePadding: Number.NaN })).toEqual([0, 4]);
+		expect(resolveDomain({ values: [0, 4], absolutePadding: -1 })).toEqual([0, 4]);
+	});
+});
+
+describe("resolveDomainPadding", () => {
+	test("a bare number pads y only, which is the existing contract", () => {
+		expect(resolveDomainPadding(0.1)).toEqual({ x: 0, y: 0.1 });
+	});
+
+	test("an object names each axis, defaulting the other to nothing", () => {
+		expect(resolveDomainPadding({ x: 0.5 })).toEqual({ x: 0.5, y: 0 });
+		expect(resolveDomainPadding({ y: 0.2 })).toEqual({ x: 0, y: 0.2 });
+		expect(resolveDomainPadding({ x: 0.5, y: 0.2 })).toEqual({ x: 0.5, y: 0.2 });
+	});
+
+	test("undefined and NaN both mean no padding", () => {
+		expect(resolveDomainPadding(undefined)).toEqual({ x: 0, y: 0 });
+		expect(resolveDomainPadding(Number.NaN)).toEqual({ x: 0, y: 0 });
+		expect(resolveDomainPadding({ x: Number.NaN, y: Number.POSITIVE_INFINITY })).toEqual({ x: 0, y: 0 });
 	});
 });

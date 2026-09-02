@@ -61,32 +61,44 @@ export function CartesianChart<
 		scrub,
 	});
 
-	const { bounds, points, xScale, curve } = model;
+	const { bounds, points, xPositions, stacked, xScale, yScale, curve, orientation } = model;
 
 	// Everything the scrub worklet reads, as plain data in one shared value.
 	// Rebuilt on the JavaScript thread whenever the chart changes; read on the
 	// UI thread every frame of a drag.
 	const scrubModel = useSharedValue<ScrubModel>(EMPTY_SCRUB_MODEL);
 
+	// A stacked key's `ys` are the tops of its segments, so the cursor dot sits
+	// on the segment that is visible; its `values` stay the raw series, which is
+	// what a readout should print. On a horizontal chart the value position is
+	// the point's x, and there is no curve to glide along.
 	const nextScrubModel = useMemo<ScrubModel>(() => {
+		const horizontal = orientation === "horizontal";
 		const series: ScrubSeries[] = model.yKeys.map((key) => {
-			const values = points[key] ?? [];
+			const raw = points[key] ?? [];
+			const drawn = stacked[key] ?? raw;
 			return {
 				key,
-				path: toCurvePath(buildLinePath(values, { curve })),
-				ys: values.map((point) => point.y),
-				values: values.map((point) => point.yValue),
+				path: horizontal ? [] : toCurvePath(buildLinePath(drawn, { curve })),
+				ys: drawn.map((point) => (horizontal ? (point.yValue === null ? null : point.x) : point.y)),
+				values: raw.map((point) => point.yValue),
 			};
 		});
 
+		const scale = horizontal ? yScale : xScale;
 		return {
+			axis: horizontal ? "y" : "x",
 			left: bounds.left,
 			right: bounds.right,
-			xPositions: (points[model.yKeys[0] ?? ""] ?? []).map((point) => point.x),
-			xScale,
+			top: bounds.top,
+			bottom: bounds.bottom,
+			positions: xPositions,
+			scale,
+			xPositions,
+			xScale: scale,
 			series,
 		};
-	}, [bounds.left, bounds.right, points, xScale, curve, model.yKeys]);
+	}, [bounds, points, stacked, xPositions, xScale, yScale, curve, model.yKeys, orientation]);
 
 	useEffect(() => {
 		scrubModel.value = nextScrubModel;

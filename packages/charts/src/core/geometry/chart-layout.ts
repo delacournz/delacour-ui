@@ -1,11 +1,45 @@
-import type { ChartBounds, ChartSize } from "../chart.types";
+import type { ChartBounds, ChartOrientation, ChartSize } from "../chart.types";
 import { makeScale } from "../scale/make-scale";
-import type { DomainTuple, ScaleDescriptor, ScaleType } from "../scale/scale.types";
+import type { DomainTuple, RangeTuple, ScaleDescriptor, ScaleType } from "../scale/scale.types";
 import { resolveAxisGutters } from "../text/axis-gutters";
 import { buildTicks } from "../ticks/build-ticks";
 import type { ChartTick } from "../ticks/tick.types";
 import type { SidedNumber } from "../util/sided-number";
 import { getChartBounds } from "./chart-bounds";
+
+/**
+ * Something per axis role, picked out of something per canvas axis.
+ *
+ * A chart has a category axis and a value axis; the canvas has x and y.
+ * Vertical maps category to x; horizontal maps it to y. Every place that
+ * would otherwise write `horizontal ? y : x` goes through here, so the swap
+ * is made in one spot and cannot be made in one direction only.
+ */
+export function pickAxisRoles<T>(x: T, y: T, orientation: ChartOrientation): { category: T; value: T } {
+	return orientation === "horizontal" ? { category: y, value: x } : { category: x, value: y };
+}
+
+/** The inverse of `pickAxisRoles`: per role back onto the canvas axes. */
+export function placeAxisRoles<T>(category: T, value: T, orientation: ChartOrientation): { x: T; y: T } {
+	return orientation === "horizontal" ? { x: value, y: category } : { x: category, y: value };
+}
+
+/**
+ * The canvas range each role maps into.
+ *
+ * Values always grow away from the origin corner: up the y axis, or right
+ * along x. Categories run left to right, or **top to bottom** when horizontal
+ * — so the first row is the top one, as in a table, and the category
+ * positions ascend, which the scrub's binary search requires.
+ */
+export function axisRanges(
+	outer: ChartBounds,
+	orientation: ChartOrientation
+): { category: RangeTuple; value: RangeTuple } {
+	return orientation === "horizontal"
+		? { category: [outer.top, outer.bottom], value: [outer.left, outer.right] }
+		: { category: [outer.left, outer.right], value: [outer.bottom, outer.top] };
+}
 
 /** What one axis decided before anything was measured. */
 export type AxisPlan = {
@@ -84,6 +118,12 @@ export type ResolveChartFrameOptions = {
 	readonly lineHeight: number;
 	readonly showXAxis: boolean;
 	readonly showYAxis: boolean;
+	/**
+	 * Which canvas axis holds the categories. The frame builds the scales, so
+	 * it has to know: a horizontal chart's y range runs top to bottom for the
+	 * categories, where a vertical chart's runs bottom to top for the values.
+	 */
+	readonly orientation?: ChartOrientation;
 };
 
 /**
@@ -106,8 +146,11 @@ export function resolveChartFrame(options: ResolveChartFrameOptions): ChartFrame
 
 	const bounds = getChartBounds(canvas, padding, gutters);
 
-	const xScale = makeScale({ kind: plan.x.kind, domain: plan.x.domain, range: [bounds.left, bounds.right] });
-	const yScale = makeScale({ kind: plan.y.kind, domain: plan.y.domain, range: [bounds.bottom, bounds.top] });
+	const orientation = options.orientation ?? "vertical";
+	const byRole = axisRanges(bounds, orientation);
+	const ranges = placeAxisRoles(byRole.category, byRole.value, orientation);
+	const xScale = makeScale({ kind: plan.x.kind, domain: plan.x.domain, range: ranges.x });
+	const yScale = makeScale({ kind: plan.y.kind, domain: plan.y.domain, range: ranges.y });
 
 	return {
 		bounds,

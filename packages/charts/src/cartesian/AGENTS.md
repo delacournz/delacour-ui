@@ -33,9 +33,14 @@ keeps the re-render boundary visible in a diff.
 | `cartesian-chart.context.tsx` | The context, its hook, and the optional variant |
 | `cartesian-chart.types.ts` | Props, render args, and the key-narrowing helpers |
 | `hooks/use-canvas-size.ts` | `onLayout` on the wrapping view |
-| `hooks/use-chart-model.ts` | The two passes, with the measuring between them |
+| `hooks/use-chart-model.ts` | The two passes, with the measuring between them; the axis roles, the x step, the stacks |
 | `marks/chart-line.tsx` | A stroked series |
 | `marks/chart-area.tsx` | The region between a series and a baseline |
+| `marks/chart-bar.tsx` | One bar per datum, on zero, with optional value labels |
+| `marks/chart-bar-group.tsx` | Several series side by side within each step, one path per series |
+| `marks/chart-bar-stack.tsx` | Several series stacked, read from the root's `stacked`, one path per series |
+| `marks/chart-scatter.tsx` | A circle, square or star per datum, all in one path |
+| `marks/chart-candlestick.tsx` | Open-high-low-close candles: six paths, wicks under bodies |
 | `marks/chart-grid.tsx` | One path holding every rule |
 | `axes/chart-x-axis.tsx` | Tick labels below the plot |
 | `axes/chart-y-axis.tsx` | Tick labels beside the plot |
@@ -63,6 +68,36 @@ keeps the re-render boundary visible in a diff.
 - **The grid is one path, not one node per rule.** Two axes at eight ticks each
   is sixteen Skia nodes for what is a single stroke, and node count is what a
   Skia tree costs.
+
+- **A bar's width comes from the chart, not from a band scale.** The root
+  measures `xStep` — the smallest gap between x values — and publishes the x
+  positions; `resolveBand` turns those into a step and a bandwidth on the
+  canvas. The root also has to pad the x domain by half a step
+  (`domainPadding={{ x: 0.5 }}`) or the outermost bars straddle the plot's
+  edge; `ChartBar` warns in development when it does not.
+
+- **The root stacks; the stack mark only draws.** `stackKeys` names the series
+  to stack, the model stacks them in data space so the y domain covers the
+  totals, and `ChartBarStack` reads `chart.stacked`. A mark that stacked for
+  itself would draw past the top of the plot. `points[key]` stays the raw
+  series, which is what a tooltip prints.
+
+- **A group and a stack are one path per series, not one per bar.** Node count
+  is what a Skia tree costs, and a series' bars morph together anyway. The
+  price is that per-datum colour and opacity are not offered — `barOptions` on
+  a stack gives per-segment corners, which a path can carry, and nothing else.
+
+- **`ChartBarGroup` takes `yKeys`, not child marks.** The group has to know how
+  many series there are before any of them can know its offset, and reading
+  that off children is the same information arriving later. A Skia tree gains
+  nothing from identity matching.
+
+- **`orientation` is resolved once, in the model.** The hook plans the
+  category axis and the value axis by role, and `placeAxisRoles` puts them on
+  the canvas — categories down y, top first, when horizontal. Every mark then
+  reads `chart.orientation` and hands it to its shape builder; none of them
+  swaps a coordinate itself. `xScale` and `yScale` on the context are always
+  the canvas axes, so a mark that wants the value scale asks by role.
 
 - **`useChartContext` throws outside a chart.** A mark that silently rendered
   nothing would leave a blank canvas with no error, and a Skia tree has no

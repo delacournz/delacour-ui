@@ -14,6 +14,15 @@ export type ResolveDomainOptions = {
 	/** Extra span added to each end, as a fraction of the measured extent. */
 	readonly padding?: number;
 	/**
+	 * Extra span added to each end in domain units, after `padding`.
+	 *
+	 * This is how a bar gets its whole width inside the plot: half a step each
+	 * side, where a fraction of the extent would be a different amount for
+	 * every dataset. Applied to a zero-width domain too — one bar still needs
+	 * somewhere to stand.
+	 */
+	readonly absolutePadding?: number;
+	/**
 	 * Pull zero into the domain.
 	 *
 	 * A bar's length is read against the axis, so a bar chart that starts at 40
@@ -49,10 +58,37 @@ export function resolveDomain(options: ResolveDomainOptions): DomainTuple {
 		hi += amount;
 	}
 
+	const absolute = options.absolutePadding;
+	if (absolute !== undefined && absolute > 0 && Number.isFinite(absolute)) {
+		lo -= absolute;
+		hi += absolute;
+	}
+
 	const explicitLo = options.domain?.[0];
 	const explicitHi = options.domain?.[1];
 	if (explicitLo !== undefined && Number.isFinite(explicitLo)) lo = explicitLo;
 	if (explicitHi !== undefined && Number.isFinite(explicitHi)) hi = explicitHi;
 
 	return [lo, hi];
+}
+
+/** Padding per axis. `x` is measured in steps, `y` as a fraction of the extent. */
+export type DomainPadding = number | { readonly x?: number; readonly y?: number };
+
+/**
+ * `domainPadding` decoded to one number per axis.
+ *
+ * A bare number pads y only — that was the prop's contract before x padding
+ * existed, and a line chart that asked for `0.1` should not grow a margin
+ * beside its first point. Anything non-finite becomes zero rather than
+ * reaching a scale as `NaN`.
+ */
+export function resolveDomainPadding(value: DomainPadding | undefined): { readonly x: number; readonly y: number } {
+	if (value === undefined) return { x: 0, y: 0 };
+	if (typeof value === "number") return { x: 0, y: finiteOrZero(value) };
+	return { x: finiteOrZero(value.x), y: finiteOrZero(value.y) };
+}
+
+function finiteOrZero(value: number | undefined): number {
+	return value !== undefined && Number.isFinite(value) ? value : 0;
 }

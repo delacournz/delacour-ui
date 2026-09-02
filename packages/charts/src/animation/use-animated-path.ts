@@ -3,6 +3,19 @@ import { useEffect, useRef, useState } from "react";
 import { type SharedValue, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { type ChartAnimation, DEFAULT_CHART_ANIMATION } from "./animation.types";
 
+export type AnimatedPathOptions = {
+	/**
+	 * The path the very first animation starts from. Read on mount only.
+	 *
+	 * Without it a mark appears fully drawn, because there is no earlier path
+	 * to morph from. A pie slice hands over the same slice at radius zero and
+	 * scales out of the centre; a bar could hand over itself at the baseline.
+	 * It must share the target's verb sequence, or the mount snaps like any
+	 * other non-interpolatable change.
+	 */
+	readonly enterFrom?: SkPath;
+};
+
 /**
  * A path that morphs to `path` whenever it changes.
  *
@@ -19,14 +32,20 @@ import { type ChartAnimation, DEFAULT_CHART_ANIMATION } from "./animation.types"
  */
 export function useAnimatedPath(
 	path: SkPath,
-	animation: ChartAnimation = DEFAULT_CHART_ANIMATION
+	animation: ChartAnimation = DEFAULT_CHART_ANIMATION,
+	options?: AnimatedPathOptions
 ): SharedValue<SkPath> {
-	const progress = useSharedValue(1);
-	const previous = useRef<SkPath>(path);
+	// `enterFrom` is consulted by the initialisers alone, so a later change to
+	// it does nothing: the entrance has already happened. Seeding the range and
+	// the progress with it, rather than only the ref, is what stops the first
+	// frame showing the finished path before the effect below starts the morph.
+	const entrance = options?.enterFrom ?? path;
+	const progress = useSharedValue(entrance === path ? 1 : 0);
+	const previous = useRef<SkPath>(entrance);
 	const config = useRef<ChartAnimation>(animation);
 	config.current = animation;
 
-	const [range, setRange] = useState<SkPath[]>(() => [path, path]);
+	const [range, setRange] = useState<SkPath[]>(() => [entrance, path]);
 
 	useEffect(() => {
 		const from = previous.current;

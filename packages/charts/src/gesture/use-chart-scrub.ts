@@ -22,7 +22,9 @@ export function useChartScrub(keys: readonly string[]): ChartScrubState {
 		const series: Record<string, ChartScrubSeriesState> = {};
 		for (const key of signature === "" ? [] : signature.split(" ")) {
 			series[key] = {
+				x: makeMutable(Number.NaN),
 				y: makeMutable(Number.NaN),
+				snappedX: makeMutable(Number.NaN),
 				snappedY: makeMutable(Number.NaN),
 				value: makeMutable(Number.NaN),
 			};
@@ -31,7 +33,9 @@ export function useChartScrub(keys: readonly string[]): ChartScrubState {
 		return {
 			isActive: makeMutable(false),
 			x: makeMutable(0),
+			y: makeMutable(0),
 			snappedX: makeMutable(Number.NaN),
+			snappedY: makeMutable(Number.NaN),
 			xValue: makeMutable(Number.NaN),
 			index: makeMutable(-1),
 			series,

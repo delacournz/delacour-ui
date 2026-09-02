@@ -5,17 +5,27 @@ import { DEFAULT_CHART_ANIMATION } from "../../animation/animation.types";
 import type { ChartRow, ChartSize } from "../../core/chart.types";
 import type { CurveType } from "../../core/curve/curves";
 import { getChartBounds, hasArea } from "../../core/geometry/chart-bounds";
-import { type ChartPlan, planAxis, resolveChartFrame } from "../../core/geometry/chart-layout";
-import { resolveDomain } from "../../core/geometry/domain";
+import {
+	type AxisPlan,
+	axisRanges,
+	pickAxisRoles,
+	placeAxisRoles,
+	planAxis,
+	resolveChartFrame,
+} from "../../core/geometry/chart-layout";
+import { type DomainPadding, resolveDomain, resolveDomainPadding } from "../../core/geometry/domain";
+import { collectStackedYValues, stackSeries } from "../../core/geometry/stack";
+import { resolveStep } from "../../core/geometry/step";
 import { collectYValues, transformInputData } from "../../core/geometry/transform-input-data";
 import { resolveXValues } from "../../core/geometry/x-values";
-import type { ScaleType } from "../../core/scale/scale.types";
+import { scaleValue } from "../../core/scale/scale";
+import type { DomainTuple, RangeTuple, ScaleType } from "../../core/scale/scale.types";
 import { categoricalTickFormat, defaultTickFormat } from "../../core/text/format-tick";
 import { DEFAULT_TICK_COUNT } from "../../core/ticks/tick-count";
 import type { SidedNumber } from "../../core/util/sided-number";
 import type { ChartScrubState } from "../../gesture/gesture.types";
 import { fontMetrics, measureLabelWidths } from "../../skia/font";
-import type { AxisLabelFormatter, AxisOptions, ChartContextValue } from "../cartesian-chart.types";
+import type { AxisLabelFormatter, AxisOptions, ChartContextValue, ChartOrientation } from "../cartesian-chart.types";
 
 export type UseChartModelOptions = {
 	readonly data: readonly ChartRow[];
@@ -27,7 +37,9 @@ export type UseChartModelOptions = {
 		readonly x?: readonly [number | undefined, number | undefined];
 		readonly y?: readonly [number | undefined, number | undefined];
 	};
-	readonly domainPadding?: number;
+	readonly domainPadding?: DomainPadding;
+	readonly stackKeys?: readonly string[];
+	readonly orientation?: ChartOrientation;
 	readonly includeZero?: boolean;
 	readonly niceDomain?: boolean;
 	readonly xScaleType?: ScaleType;
@@ -61,6 +73,8 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 		padding,
 		domain,
 		domainPadding,
+		stackKeys,
+		orientation = "vertical",
 		includeZero,
 		niceDomain,
 		xScaleType,
@@ -74,50 +88,60 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 	} = options;
 
 	const yKeySignature = yKeys.join(" ");
+	const stackSignature = (stackKeys ?? []).join(" ");
 
-	// `yKeys` enters the dependency list as its joined signature, so a fresh
-	// array of the same keys does not rebuild every scale and path on each render.
+	// `yKeys` and `stackKeys` enter the dependency list as joined signatures, so
+	// a fresh array of the same keys does not rebuild every scale and path on
+	// each render.
 	return useMemo<ChartContextValue>(() => {
-		const keys = yKeySignature === "" ? [] : yKeySignature.split(" ");
+		const keys = splitSignature(yKeySignature);
+		const stackedKeys = splitSignature(stackSignature);
+		const unstackedKeys = keys.filter((key) => !stackedKeys.includes(key));
 		const { values: xValues, isCategorical, raw } = resolveXValues(data, xKey);
+		const pad = resolveDomainPadding(domainPadding);
+		const xStepValue = resolveStep(xValues);
 
 		const xKind = resolveXKind(xScaleType, isCategorical, raw);
 		const yKind = yScaleType ?? "linear";
-		const showX = xAxis?.show ?? true;
-		const showY = yAxis?.show ?? true;
+		const shown = pickAxisRoles(xAxis?.show ?? true, yAxis?.show ?? true, orientation);
 
-		const xDomain = resolveDomain({ values: xValues, domain: domain?.x });
+		const xDomain = resolveDomain({ values: xValues, domain: domain?.x, absolutePadding: pad.x * xStepValue });
 		const yDomain = resolveDomain({
-			values: collectYValues(data, keys),
+			values: [...collectYValues(data, unstackedKeys), ...collectStackedYValues(data, stackedKeys)],
 			domain: domain?.y,
-			padding: domainPadding,
+			padding: pad.y,
 			includeZero,
 		});
 
+		// The category axis and the value axis are planned by role; the
+		// orientation decides which canvas axis each lands on, and from the
+		// frame onward `x` and `y` name canvas axes only.
 		const outer = getChartBounds(canvas, padding);
-		const plan: ChartPlan = {
-			x: planAxis({
+		const ranges = axisRanges(outer, orientation);
+		const axes = pickAxisRoles(xAxis, yAxis, orientation);
+		const plan = placeAxisRoles(
+			planCategoryAxis({
 				domain: xDomain,
 				kind: xKind,
-				range: [outer.left, outer.right],
-				tickCount: xAxis?.tickCount ?? DEFAULT_TICK_COUNT,
-				// A categorical axis ticks on its own data, not on round numbers:
-				// index 2.5 names no month.
-				tickValues: xAxis?.tickValues ?? (isCategorical ? xValues : undefined),
-				format: xAxis?.formatLabel ?? categoricalOrValueFormat(isCategorical, raw, xKind, xDomain),
-				show: showX,
+				range: ranges.category,
+				axis: axes.category,
+				show: shown.category,
+				isCategorical,
+				xValues,
+				raw,
 			}),
-			y: planAxis({
+			planAxis({
 				domain: yDomain,
 				kind: yKind,
-				range: [outer.bottom, outer.top],
-				tickCount: yAxis?.tickCount ?? DEFAULT_TICK_COUNT,
-				tickValues: yAxis?.tickValues,
-				format: yAxis?.formatLabel ?? defaultTickFormat(yKind, 0),
-				show: showY,
+				range: ranges.value,
+				tickCount: axes.value?.tickCount ?? DEFAULT_TICK_COUNT,
+				tickValues: axes.value?.tickValues,
+				format: axes.value?.formatLabel ?? defaultTickFormat(yKind, 0),
+				show: shown.value,
 				nice: niceDomain,
 			}),
-		};
+			orientation
+		);
 
 		const metrics = fontMetrics(font);
 		const lineHeight = metrics.ascent + metrics.descent;
@@ -128,20 +152,35 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 			xLabelWidths: measureLabelWidths(font, plan.x.labels),
 			yLabelWidths: measureLabelWidths(font, plan.y.labels),
 			lineHeight,
-			showXAxis: showX,
-			showYAxis: showY,
+			showXAxis: xAxis?.show ?? true,
+			showYAxis: yAxis?.show ?? true,
+			orientation,
 		});
 
-		const { points } = transformInputData({
+		const { points, xPositions } = transformInputData({
 			data,
 			yKeys: keys,
 			xValues,
 			xScale: frame.xScale,
 			yScale: frame.yScale,
+			orientation,
 		});
+
+		const { category: categoryScale, value: valueScale } = pickAxisRoles(frame.xScale, frame.yScale, orientation);
+		const x0 = categoryScale.domain[0];
+		const xStep = {
+			value: xStepValue,
+			px: Math.abs(scaleValue(categoryScale, x0 + xStepValue) - scaleValue(categoryScale, x0)),
+		};
+
+		const stacked = stackSeries({ data, keys: stackedKeys, xValues, xPositions, yScale: valueScale, orientation });
 
 		return {
 			points,
+			xPositions,
+			xStep,
+			stacked,
+			orientation,
 			bounds: frame.bounds,
 			canvas,
 			xScale: frame.xScale,
@@ -168,6 +207,8 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 		padding,
 		domain,
 		domainPadding,
+		stackSignature,
+		orientation,
 		includeZero,
 		niceDomain,
 		xScaleType,
@@ -179,6 +220,39 @@ export function useChartModel(options: UseChartModelOptions): ChartContextValue 
 		font,
 		scrub,
 	]);
+}
+
+type PlanCategoryAxisOptions = {
+	readonly domain: DomainTuple;
+	readonly kind: ScaleType;
+	readonly range: RangeTuple;
+	readonly axis: AxisOptions | undefined;
+	readonly show: boolean;
+	readonly isCategorical: boolean;
+	readonly xValues: readonly number[];
+	readonly raw: readonly unknown[];
+};
+
+/**
+ * The category axis' plan. A categorical axis ticks on its own data, not on
+ * round numbers — index 2.5 names no month — and prints the original label.
+ */
+function planCategoryAxis(options: PlanCategoryAxisOptions): AxisPlan {
+	const { domain, kind, range, axis, show, isCategorical, xValues, raw } = options;
+	return planAxis({
+		domain,
+		kind,
+		range,
+		tickCount: axis?.tickCount ?? DEFAULT_TICK_COUNT,
+		tickValues: axis?.tickValues ?? (isCategorical ? xValues : undefined),
+		format: axis?.formatLabel ?? categoricalOrValueFormat(isCategorical, raw, kind, domain),
+		show,
+	});
+}
+
+/** A joined key signature back into keys; the empty signature is no keys. */
+function splitSignature(signature: string): string[] {
+	return signature === "" ? [] : signature.split(" ");
 }
 
 /** A date-valued x field gets a time scale unless the caller says otherwise. */

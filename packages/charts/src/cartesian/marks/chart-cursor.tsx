@@ -40,6 +40,10 @@ export type ChartCursorDotProps = {
  * never runs them. Splitting it is what keeps the hook order fixed — a
  * component that called `useDerivedValue` after a conditional return would
  * break the moment a chart gained or lost its scrub.
+ *
+ * It reads the series' own `snappedX`/`snappedY`, which the scrub fills in
+ * for either orientation, so the dot lands on the bar's end on a horizontal
+ * chart without this component knowing there is such a thing.
  */
 export function ChartCursorDot(props: ChartCursorDotProps): ReactElement | null {
 	const { scrub } = useChartContext();
@@ -64,7 +68,7 @@ function CursorDot({
 	readonly series: ChartScrubSeriesState;
 }): ReactElement {
 	const cx = useDerivedValue(() => {
-		const value = snap ? scrub.snappedX.value : scrub.x.value;
+		const value = snap ? series.snappedX.value : series.x.value;
 		return Number.isFinite(value) ? value : OFFSCREEN;
 	});
 
@@ -89,12 +93,15 @@ CursorDot.displayName = "DelacourCharts.ChartCursorDot.Inner";
 
 export type ChartCursorLineProps = {
 	/**
-	 * `x` is the vertical rule under the touch; `y` is the horizontal rule at a
-	 * series' value. Named for the axis the line reads against, not for the
-	 * direction it is drawn in.
+	 * `x` is a vertical rule; `y` is a horizontal one. Named for the axis the
+	 * line reads against, not for the direction it is drawn in.
+	 *
+	 * Without a `yKey` the rule sits at the touched category — under the
+	 * finger on a vertical chart for `x`, beside it on a horizontal chart for
+	 * `y`. With one, it sits at that series' nearest datum on that axis.
 	 */
 	readonly axis: "x" | "y";
-	/** Which series the `y` rule sits at. Ignored by `x`. */
+	/** Which series the rule sits at. Without it the rule follows the category. */
 	readonly yKey?: string;
 	readonly color: string;
 	readonly width?: number;
@@ -107,9 +114,9 @@ export type ChartCursorLineProps = {
 /** A crosshair rule spanning the plot at the scrubbed position. */
 export function ChartCursorLine(props: ChartCursorLineProps): ReactElement | null {
 	const { scrub, bounds } = useChartContext();
-	const series = props.axis === "y" ? scrub?.series[props.yKey ?? ""] : undefined;
+	const series = props.yKey === undefined ? undefined : scrub?.series[props.yKey];
 	if (!scrub) return null;
-	if (props.axis === "y" && !series) return null;
+	if (props.yKey !== undefined && !series) return null;
 	return <CursorLine {...props} bounds={bounds} scrub={scrub} series={series} />;
 }
 
@@ -130,22 +137,23 @@ function CursorLine({
 	readonly scrub: ChartScrubState;
 	readonly series: ChartScrubSeriesState | undefined;
 }): ReactElement {
+	const at = (): number => {
+		"worklet";
+		const source = series ?? scrub;
+		if (axis === "x") return snap ? source.snappedX.value : source.x.value;
+		return snap ? source.snappedY.value : source.y.value;
+	};
+
 	const p1 = useDerivedValue(() => {
-		if (axis === "x") {
-			const value = snap ? scrub.snappedX.value : scrub.x.value;
-			return { x: Number.isFinite(value) ? value : OFFSCREEN, y: bounds.top };
-		}
-		const value = series === undefined ? Number.NaN : snap ? series.snappedY.value : series.y.value;
-		return { x: bounds.left, y: Number.isFinite(value) ? value : OFFSCREEN };
+		const value = at();
+		const position = Number.isFinite(value) ? value : OFFSCREEN;
+		return axis === "x" ? { x: position, y: bounds.top } : { x: bounds.left, y: position };
 	});
 
 	const p2 = useDerivedValue(() => {
-		if (axis === "x") {
-			const value = snap ? scrub.snappedX.value : scrub.x.value;
-			return { x: Number.isFinite(value) ? value : OFFSCREEN, y: bounds.bottom };
-		}
-		const value = series === undefined ? Number.NaN : snap ? series.snappedY.value : series.y.value;
-		return { x: bounds.right, y: Number.isFinite(value) ? value : OFFSCREEN };
+		const value = at();
+		const position = Number.isFinite(value) ? value : OFFSCREEN;
+		return axis === "x" ? { x: position, y: bounds.bottom } : { x: bounds.right, y: position };
 	});
 
 	const alpha = useDerivedValue(() => (scrub.isActive.value ? (opacity ?? 1) : 0));

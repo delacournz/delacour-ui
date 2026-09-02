@@ -36,4 +36,13 @@ describe("buildAreaPath", () => {
 		const path = buildAreaPath([at(0, 0), at(10, null), at(20, 5)], { baseline: 100 });
 		expect((path.match(/M/g) ?? []).length).toBeGreaterThan(1);
 	});
+
+	test("closes against a baseline x when horizontal", () => {
+		// Category on y, value on x: the lower edge is a vertical line at x = baseline.
+		const points = [
+			{ x: 30, y: 0, xValue: 0, yValue: 30 },
+			{ x: 50, y: 10, xValue: 1, yValue: 50 },
+		];
+		expect(buildAreaPath(points, { baseline: 0, orientation: "horizontal" })).toBe("M30,0L50,10L0,10L0,0Z");
+	});
 });

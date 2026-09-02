@@ -34,6 +34,45 @@ const WEB_FALLBACK = "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
 const GEOMETRY = new Set<string>(GEOMETRY_TOKENS);
 
 /**
+ * The type scale, which no axis varies.
+ *
+ * Restated from `packages/native-ui/src/styles/tokens.css` rather than resolved,
+ * because nothing in the customizer writes these — but a pasted theme still
+ * needs them or `text-sm` and its neighbours resolve to nothing.
+ * `emit.test.ts` reads that file and fails if the two drift.
+ */
+const TYPE_SCALE: readonly [string, string][] = [
+	["--text-xs", "12px"],
+	["--text-sm", "14px"],
+	["--text-base", "16px"],
+	["--text-lg", "18px"],
+	["--text-xl", "20px"],
+	["--text-2xl", "24px"],
+	["--text-3xl", "30px"],
+];
+
+/**
+ * The generic corner scale, as multipliers of `--radius`.
+ *
+ * `inline` is load-bearing: a utility has to read `var(--radius)` itself, so a
+ * theme that redeclares `--radius` reaches `rounded-lg` rather than a copy taken
+ * when the scale was compiled. A multiplier rather than the `calc(var(--radius)
+ * - 4px)` some generators still emit, so a square-cornered theme stays square at
+ * every step instead of going negative.
+ */
+const RADIUS_RAMP: readonly [string, string][] = [
+	["--radius-xs", "calc(var(--radius) * 0.4)"],
+	["--radius-sm", "calc(var(--radius) * 0.6)"],
+	["--radius-md", "calc(var(--radius) * 0.8)"],
+	["--radius-lg", "var(--radius)"],
+	["--radius-xl", "calc(var(--radius) * 1.4)"],
+	["--radius-2xl", "calc(var(--radius) * 1.8)"],
+	["--radius-3xl", "calc(var(--radius) * 2.2)"],
+	["--radius-4xl", "calc(var(--radius) * 2.6)"],
+	["--radius-full", "9999px"],
+];
+
+/**
  * A geometry number as CSS.
  *
  * `--radius` is `rem` because that is what `tokens.css` ships and what every
@@ -81,22 +120,29 @@ function block(selector: string, values: Record<string, string>, names: string[]
 }
 
 /**
- * shadcn's `globals.css`: `:root { … }` and `.dark { … }` in one file.
+ * shadcn's `globals.css`, whole: the palette, then the scales it sits on.
  *
  * What a web project pastes, and what `parseTheme` consumes — so it is also the
- * file to hand `delacour theme` to bring the same palette into a React Native
- * app.
+ * file to hand `delacour theme` to bring the same design system into a React
+ * Native app.
  *
- * It carries **`--radius` and no other geometry**. The rest are this package's
- * own tokens; a web app has no `h-button-md` to spend them on, and worse, a
- * round trip through `parseTheme` would read them back into the palette blocks.
- * `--radius` is the exception because it is shadcn's own token and the number
- * the whole corner ramp derives from.
+ * **The baseline blocks are part of the copy, not decoration.** The Style axis
+ * writes button heights, field heights, the icon scale and the screen gutter,
+ * so a palette on its own arrives with none of the geometry that made the theme
+ * look the way it did on the phone — `h-button-md` and its neighbours resolve to
+ * nothing. They are emitted at the end, after the palette, because the palette
+ * is what a reader scans for and what changes between two of these files.
  *
- * It also carries none of the tokens this package adds over shadcn —
- * `--elevated`, `--tertiary`, the `-soft` pairs, `--overlay`. Each is *derived*
- * from a token shadcn does define, and `convertTheme` derives them on the way
- * in, so writing them here would pin a value that is meant to follow the palette.
+ * `--radius` sits in `@theme` with the rest of the geometry rather than in
+ * `:root`, which is where `tokens.css` declares it and the only place it can be
+ * declared once. `@theme inline` carries the corner ramp derived from it — a
+ * utility has to read `var(--radius)` itself, or a theme that redeclares the
+ * number reaches a copy taken when the scale was compiled.
+ *
+ * It carries none of the tokens this package adds over shadcn — `--elevated`,
+ * `--tertiary`, the `-soft` pairs, `--overlay`. Each is *derived* from a token
+ * shadcn does define, and `convertTheme` derives them on the way in, so writing
+ * them here would pin a value that is meant to follow the palette.
  */
 export function emitShadcnCss(tokens: ResolvedTokens, options: EmitOptions = {}): string {
 	const light = split(tokens.light);
@@ -105,12 +151,6 @@ export function emitShadcnCss(tokens: ResolvedTokens, options: EmitOptions = {})
 	const values = { ...light.colors };
 	const darkValues = { ...dark.colors };
 
-	const radius = light.geometry["--radius"];
-	if (radius) {
-		values["--radius"] = radius;
-		darkValues["--radius"] = dark.geometry["--radius"] ?? radius;
-	}
-
 	if (options.fonts?.sans) {
 		values["--font-sans"] = `${options.fonts.sans}, ${WEB_FALLBACK}`;
 		darkValues["--font-sans"] = values["--font-sans"];
@@ -118,7 +158,34 @@ export function emitShadcnCss(tokens: ResolvedTokens, options: EmitOptions = {})
 
 	const names = ordered(Object.keys(values));
 
-	return `${block(":root", values, names)}\n\n${block(".dark", darkValues, names)}\n`;
+	return [
+		block(":root", values, names),
+		block(".dark", darkValues, names),
+		pairs("@theme", baseline(light.geometry)),
+		pairs("@theme inline", RADIUS_RAMP),
+	].join("\n\n");
+}
+
+/**
+ * The scales, in `tokens.css`'s own order.
+ *
+ * `--radius` first, then the type scale, then the rest of the geometry — which
+ * is `GEOMETRY_TOKENS` past its first entry, in the order it declares them. Two
+ * lists in one order rather than one list, because the type scale is static and
+ * the geometry is whatever the Style axis resolved to.
+ */
+function baseline(geometry: Record<string, string>): readonly [string, string][] {
+	const resolved = GEOMETRY_TOKENS.slice(1).map(
+		(token) => [`--${token}`, geometry[`--${token}`] ?? ""] as [string, string]
+	);
+
+	return [["--radius", geometry["--radius"] ?? ""], ...TYPE_SCALE, ...resolved.filter(([, value]) => value !== "")];
+}
+
+function pairs(selector: string, entries: readonly [string, string][]): string {
+	const lines = entries.map(([name, value]) => `\t${name}: ${value};`).join("\n");
+
+	return `${selector} {\n${lines}\n}\n`;
 }
 
 /**

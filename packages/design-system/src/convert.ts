@@ -21,6 +21,11 @@
  * `bun test` and the command around it is only I/O.
  */
 
+import { GEOMETRY_TOKENS } from "./styles";
+
+/** Geometry is neither light nor dark; it belongs in `@variant native`. */
+const GEOMETRY_NAMES = new Set(GEOMETRY_TOKENS.map((token) => `--${token}`));
+
 /** A palette, as declared by whatever the source happened to be. */
 export type ThemeSource = {
 	light: Record<string, string>;
@@ -54,7 +59,7 @@ export type ConversionResult = {
 };
 
 /** Steps of the corner scale `tokens.css` derives from `--radius` on its own. */
-const DERIVED_RADIUS = /^--radius-(xs|sm|md|lg|xl|2xl|3xl|4xl)$/;
+const DERIVED_RADIUS = /^--radius-(xs|sm|md|lg|xl|2xl|3xl|4xl|full)$/;
 
 const FONTS = ["--font-sans", "--font-serif", "--font-mono", "--font-heading"] as const;
 type Font = (typeof FONTS)[number];
@@ -185,6 +190,21 @@ export function parseTheme(source: string): ThemeSource {
 	const light = clean({ ...base, ...blockDeclarations(css, ":root"), ...blockDeclarations(css, "@variant light") });
 	const dark = clean({ ...base, ...blockDeclarations(css, ".dark"), ...blockDeclarations(css, "@variant dark") });
 
+	// Geometry declared in `@theme` or `:root` — which is where a web theme puts
+	// it, and where this package's own emitter writes it — is neither light nor
+	// dark. Left in the palette it would be rendered into both `@variant` blocks,
+	// where Uniwind inlines it at build time and no runtime override could reach
+	// `h-button-md` again.
+	const fromPalette: Record<string, string> = {};
+	for (const name of GEOMETRY_NAMES) {
+		const value = light[name] ?? dark[name];
+		if (value === undefined) continue;
+
+		fromPalette[name] = value;
+		delete light[name];
+		delete dark[name];
+	}
+
 	const ios = blockDeclarations(css, "@variant ios");
 	const android = blockDeclarations(css, "@variant android");
 	// Without this, pasting this package's own `theme.css` back in silently drops
@@ -199,7 +219,9 @@ export function parseTheme(source: string): ThemeSource {
 
 	const platformFonts = Object.keys(ios).length > 0 || Object.keys(android).length > 0 ? { ios, android } : undefined;
 
-	return { light, dark, platformFonts, native: Object.keys(native).length > 0 ? native : undefined };
+	const geometry = { ...fromPalette, ...native };
+
+	return { light, dark, platformFonts, native: Object.keys(geometry).length > 0 ? geometry : undefined };
 }
 
 /**

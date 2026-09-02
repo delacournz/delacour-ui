@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { BASE_COLORS } from "./base-colors";
 import { DEFAULT_CONFIG, type DesignSystemConfig } from "./config";
-import { parseTheme } from "./convert";
+import { convertTheme, parseTheme } from "./convert";
 import { emitNativeCss, emitShadcnCss } from "./emit";
 import { RADII } from "./radii";
 import { resolveFonts, resolveTokens } from "./resolve";
@@ -11,6 +11,7 @@ import { GEOMETRY_TOKENS, STYLES } from "./styles";
 import { ACCENT_THEMES } from "./themes";
 
 const THEME_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/theme.css"), "utf-8");
+const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/tokens.css"), "utf-8");
 
 const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => ({
 	...DEFAULT_CONFIG,
@@ -20,8 +21,16 @@ const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => (
 const shadcn = (from: DesignSystemConfig): string => emitShadcnCss(resolveTokens(from), { fonts: resolveFonts(from) });
 const native = (from: DesignSystemConfig) => emitNativeCss(resolveTokens(from), { fonts: resolveFonts(from) });
 
-/** `--name: value;` pairs out of a brace-matched block, keyed without the `--`. */
-function declarationsIn(css: string, selector: string): Record<string, string> {
+/**
+ * `--name: value;` pairs out of a brace-matched block, keyed without the `--`.
+ *
+ * Comments come out first, the way `parseTheme` does it. The rendered
+ * `theme.css` opens with a doc comment that names `@variant light` and
+ * `@variant dark` in prose, and matching that instead of the real block brace-
+ * matches from the wrong place and reads the whole file as one block.
+ */
+function declarationsIn(source: string, selector: string): Record<string, string> {
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, "");
 	const start = css.indexOf(selector);
 	if (start < 0) return {};
 
@@ -125,19 +134,69 @@ describe("the shadcn shape", () => {
 	});
 
 	/**
-	 * `--radius` is shadcn's own token and the one number the whole corner ramp
-	 * derives from. The other twenty are this package's, and a web app has no
-	 * `h-button-md` to spend them on — worse, `parseTheme` would read them back
-	 * into the palette blocks on a round trip.
+	 * The palette on its own is not the theme.
+	 *
+	 * The Style axis writes button heights, field heights, the icon scale and the
+	 * screen gutter, so a copied file carrying only colours arrives with none of
+	 * the geometry that made it look the way it did on the phone — every
+	 * `h-button-md` and `size-icon-md` resolves to nothing.
 	 */
-	test("carries --radius and no other geometry", () => {
+	test("carries the geometry in a @theme block, resolved from the config", () => {
+		const theme = declarationsIn(shadcn(config({ style: "rhea" })), "@theme {");
+		const geometry = resolveTokens(config({ style: "rhea" })).light;
+
+		for (const token of GEOMETRY_TOKENS) {
+			expect(theme[token]).toBeDefined();
+		}
+		expect(theme["spacing-button-md"]).toBe(`${geometry["spacing-button-md"] as number}px`);
+		expect(theme.radius).toBe(`${(geometry.radius as number) / 16}rem`);
+	});
+
+	test("carries the corner ramp as multipliers, inline", () => {
+		const ramp = declarationsIn(css, "@theme inline");
+
+		expect(ramp["radius-lg"]).toBe("var(--radius)");
+		expect(ramp["radius-md"]).toBe("calc(var(--radius) * 0.8)");
+		expect(ramp["radius-full"]).toBe("9999px");
+	});
+
+	/**
+	 * `--radius` is declared once, in `@theme`, where `tokens.css` declares it.
+	 * A second copy in `:root` would be a later-wins race between two blocks in
+	 * one file, and the loser would be whichever the reader edited.
+	 */
+	test("declares each geometry token exactly once", () => {
 		const light = declarationsIn(css, ":root");
 
-		expect(light.radius).toBe("0.625rem");
 		for (const token of GEOMETRY_TOKENS) {
-			if (token === "radius") continue;
 			expect(light[token]).toBeUndefined();
 		}
+	});
+
+	/**
+	 * The type scale and the ramp are restated in `emit.ts` because no axis
+	 * varies them. This is what stops the copies drifting.
+	 */
+	test("the static scales match what the library ships", () => {
+		const shipped = declarationsIn(TOKENS_CSS, "@theme {");
+		const shippedRamp = declarationsIn(TOKENS_CSS, "@theme inline");
+		const theme = declarationsIn(css, "@theme {");
+		const ramp = declarationsIn(css, "@theme inline");
+
+		for (const step of ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl"]) {
+			expect(theme[step]).toBe(shipped[step] as string);
+		}
+		for (const [name, value] of Object.entries(shippedRamp)) {
+			expect(ramp[name]).toBe(value);
+		}
+	});
+
+	/** Vega restates the library's own numbers, so its whole block should match. */
+	test("vega's @theme block matches tokens.css outright", () => {
+		const shipped = declarationsIn(TOKENS_CSS, "@theme {");
+		const emitted = declarationsIn(shadcn(DEFAULT_CONFIG), "@theme {");
+
+		expect(emitted).toEqual(shipped);
 	});
 
 	test("leaves this package's own additions to the native shape", () => {
@@ -171,6 +230,38 @@ describe("the round trip through the converter", () => {
 	test("the shadcn shape declares everything the derived tokens lean on", () => {
 		const result = native(DEFAULT_CONFIG);
 		expect(result.warnings.filter((warning) => warning.includes("referenced but not declared"))).toEqual([]);
+	});
+
+	/**
+	 * The page tells the reader to run this exact file through `delacour theme`,
+	 * so the geometry it now carries has to land in `@variant native` — not in
+	 * the palette, where Uniwind inlines it at build time and `h-button-md` stops
+	 * being something an app can retune.
+	 */
+	test("the emitted globals.css converts with its geometry in the right block", () => {
+		const from = config({ style: "rhea" });
+		const parsed = parseTheme(shadcn(from));
+
+		expect(parsed.native?.["--spacing-button-md"]).toBe("40px");
+		expect(parsed.native?.["--radius"]).toBe("1rem");
+		expect(parsed.light["--spacing-button-md"]).toBeUndefined();
+		expect(parsed.light["--radius"]).toBeUndefined();
+
+		const converted = convertTheme(parsed);
+		const native = declarationsIn(converted.css, "@variant native");
+		const light = declarationsIn(converted.css, "@variant light");
+
+		expect(native["spacing-button-md"]).toBe("40px");
+		expect(light["spacing-button-md"]).toBeUndefined();
+		expect(light.primary).toBeDefined();
+	});
+
+	/** The derived ramp is rebuilt from `--radius`; carrying a copy would pin it. */
+	test("the corner ramp does not survive the conversion", () => {
+		const converted = convertTheme(parseTheme(shadcn(DEFAULT_CONFIG)));
+
+		expect(converted.css).not.toContain("--radius-lg:");
+		expect(converted.css).not.toContain("--radius-full:");
 	});
 
 	test("the native shape is readable by parseTheme, geometry included", () => {

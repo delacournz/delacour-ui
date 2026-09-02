@@ -1,7 +1,14 @@
-import type { ChartScrubState } from "@delacour/charts";
+import type { ChartOrientation, ChartScrubState } from "@delacour/charts";
 import { createContext, type ReactNode, useContext } from "react";
-import type { ChartDatum, ChartResolvedSeries } from "./chart.types";
+import type {
+	ChartBarLayout,
+	ChartCandleColors,
+	ChartCandlestickKeys,
+	ChartDatum,
+	ChartResolvedSeries,
+} from "./chart.types";
 import type { ChartSize, chartVariants } from "./chart.variants";
+import { PieChartContext } from "./pie-chart.context";
 
 export type ChartSlots = ReturnType<typeof chartVariants>;
 
@@ -28,6 +35,22 @@ export type ChartContextValue = {
 	readonly scrub: ChartScrubState;
 	/** The frame's measured size, for placing an overlay inside it. */
 	readonly frame: { readonly width: number; readonly height: number };
+	/** Every `Chart.Bar`, resolved into one arrangement. `mode: "none"` without any. */
+	readonly bars: ChartBarLayout;
+	/** A bar's corner radius in points — `--radius` × the size's multiplier. */
+	readonly barRadius: number;
+	/** The candlestick's four fields, or `null` without one. */
+	readonly candlestick: ChartCandlestickKeys | null;
+	/** The three sentiment tokens, resolved. */
+	readonly candleColors: ChartCandleColors;
+	/**
+	 * Keys some mark draws a point for — a line, an area or a scatter.
+	 *
+	 * A cursor dot skips a series that is only a bar: a bar has no curve for a
+	 * dot to sit on, and the band under the tooltip already says which column.
+	 */
+	readonly pointKeys: readonly string[];
+	readonly orientation: ChartOrientation;
 };
 
 /**
@@ -83,4 +106,22 @@ export function useSeriesColor(key: string | undefined): string | undefined {
 	const { series } = useChart();
 	if (key === undefined) return undefined;
 	return series.find((entry) => entry.key === key)?.color;
+}
+
+/**
+ * The series and slots of whichever chart a part is under.
+ *
+ * For a part both roots share — the legend — which reads the same two fields
+ * off a `Chart` or a `PieChart` and does not care which. Throws outside both.
+ */
+export function useChartSeries(): { series: readonly ChartResolvedSeries[]; slots: ChartSlots } {
+	const cartesian = useContext(ChartContext);
+	const pie = useContext(PieChartContext);
+	const value = cartesian ?? pie;
+	if (value === null) {
+		throw new Error(
+			"[DelacourUI] a chart part was used outside a <Chart> or a <PieChart>. Every part reads the chart from context."
+		);
+	}
+	return { series: value.series, slots: value.slots };
 }

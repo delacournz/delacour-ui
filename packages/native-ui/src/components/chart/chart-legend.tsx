@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import { cn } from "../../lib/cn";
 import { Text } from "../text";
-import { useChart } from "./chart.context";
+import { useChartSeries } from "./chart.context";
 
 export type ChartLegendProps = {
 	className?: string;
@@ -13,6 +13,9 @@ export type ChartLegendProps = {
 /**
  * A swatch and a label per series, under the chart.
  *
+ * Shared by `Chart` and `PieChart`: it reads whichever context is above it,
+ * since a legend row is a colour and a name under either root.
+ *
  * A React Native view, not a Skia node, and the distinction is whether it
  * moves *with* the canvas. A legend sits beside the plot and is static
  * relative to it, so it can have the type scale, a colour token and a
@@ -20,7 +23,7 @@ export type ChartLegendProps = {
  * case: they move under a pan and belong in Skia.
  */
 export function ChartLegend({ className, keys }: ChartLegendProps): ReactElement {
-	const { series, slots } = useChart();
+	const { series, slots } = useChartSeries();
 	const shown = keys === undefined ? series : keys.flatMap((key) => series.filter((entry) => entry.key === key));
 
 	return (

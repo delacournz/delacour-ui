@@ -30,6 +30,11 @@ export type ChartTooltipDotProps = {
  *
  * The ring takes the chart's background, which is what makes a dot in the
  * series colour legible on a line of that same colour.
+ *
+ * A series drawn only as a bar gets no dot. A bar has no curve for a dot to
+ * sit on — it would float at the bar's top, over a column the tooltip's band
+ * already picks out — so the dot follows only the keys some line, area or
+ * scatter draws a point for.
  */
 export function ChartTooltipDot({
 	yKey,
@@ -39,8 +44,10 @@ export function ChartTooltipDot({
 	glide,
 	opacity,
 }: ChartTooltipDotProps): ReactElement {
-	const { series, surfaceColor } = useChart();
-	const shown = yKey === undefined ? series : series.filter((entry) => entry.key === yKey);
+	const { series, surfaceColor, bars, pointKeys } = useChart();
+	const shown = (yKey === undefined ? series : series.filter((entry) => entry.key === yKey)).filter(
+		(entry) => !bars.keys.includes(entry.key) || pointKeys.includes(entry.key)
+	);
 
 	return (
 		<>

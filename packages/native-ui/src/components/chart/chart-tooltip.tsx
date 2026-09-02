@@ -5,7 +5,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { cn } from "../../lib/cn";
 import { Text } from "../text";
 import { useChart } from "./chart.context";
-import { chartTooltipOffset } from "./chart.variants";
+import { chartTooltipOffset, resolveTooltipRows } from "./chart.variants";
 import { ChartTooltipDot } from "./chart-tooltip-dot";
 import { ChartTooltipX } from "./chart-tooltip-x";
 import { ChartTooltipY } from "./chart-tooltip-y";
@@ -47,9 +47,12 @@ const DEFAULT_SIZE = { width: 120, height: 56 };
  * updates per drag rather than one per frame, because the text only changes
  * when the selected row does — and text on a shared value would mean an
  * `AnimatedTextInput` and a `value` prop pretending to be a label.
+ *
+ * With a candlestick present the rows are open, high, low and close, each
+ * swatched in the candle's own sentiment colour — see `resolveTooltipRows`.
  */
 function ChartTooltipRoot({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
-	const { scrub, slots, series, data, formatXValue, frame } = useChart();
+	const { scrub, slots, series, data, formatXValue, frame, candlestick, candleColors } = useChart();
 	const [index, setIndex] = useState(-1);
 	const measured = size ?? DEFAULT_SIZE;
 
@@ -79,16 +82,21 @@ function ChartTooltipRoot({ className, formatHeading, formatValue, size }: Chart
 
 	const row = data[index];
 	const heading = row === undefined ? "" : (formatHeading?.(row, index) ?? formatXValue(row));
+	const rows = resolveTooltipRows(
+		series,
+		candlestick === null ? null : { keys: candlestick, colors: candleColors },
+		row
+	);
 
 	return (
 		<Animated.View className={cn(slots.tooltip(), className)} pointerEvents="none" style={style}>
 			{heading === "" ? null : <Text className={slots.tooltipHeading()}>{heading}</Text>}
-			{series.map((entry) => (
+			{rows.map((entry) => (
 				<View className={slots.tooltipRow()} key={entry.key}>
 					<View className={slots.tooltipSwatch()} style={{ backgroundColor: entry.color }} />
 					<Text className={slots.tooltipName()}>{entry.label}</Text>
 					<Text className={slots.tooltipValue()}>
-						{row === undefined ? "" : (formatValue?.(row[entry.key], entry.key) ?? String(row[entry.key] ?? ""))}
+						{row === undefined ? "" : (formatValue?.(entry.value, entry.key) ?? String(entry.value ?? ""))}
 					</Text>
 				</View>
 			))}

@@ -10,6 +10,8 @@ export type ChartContextValue = {
 	readonly series: readonly ChartResolvedSeries[];
 	readonly data: readonly ChartDatum[];
 	readonly xKey: string;
+	/** Prints a row's x field — a Date as a date, not as an RFC timestamp. */
+	readonly formatXValue: (row: ChartDatum) => string;
 	readonly size: ChartSize;
 	readonly slots: ChartSlots;
 	/** Resolved gridline colour, or `undefined` if the theme emits none. */

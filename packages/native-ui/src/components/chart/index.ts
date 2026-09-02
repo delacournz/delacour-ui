@@ -28,6 +28,7 @@ export {
 	chartVariants,
 	partitionChartColors,
 	resolveChartSeries,
+	resolveXValueFormat,
 } from "./chart.variants";
 export type { ChartAreaProps } from "./chart-area";
 export type { ChartGridProps } from "./chart-grid";

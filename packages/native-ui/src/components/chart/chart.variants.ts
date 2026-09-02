@@ -1,6 +1,7 @@
+import { formatDateTick, formatNumberTick } from "@delacour/charts/core";
 import { isLiteralColor } from "../../lib/color";
 import { tv } from "../../lib/tv";
-import type { ChartConfig, ChartResolvedSeries, ChartTooltipInput } from "./chart.types";
+import type { ChartConfig, ChartDatum, ChartResolvedSeries, ChartTooltipInput } from "./chart.types";
 
 /**
  * The series ramp, in the order a chart assigns it.
@@ -221,4 +222,58 @@ export function chartTickCount(size: ChartSize): number {
 		case "lg":
 			return 5;
 	}
+}
+
+/** A span with no width still reads as a date, not as a clock time. */
+const ONE_DAY_MS = 86_400_000;
+
+/**
+ * How a tooltip prints the x field of the row under the cursor.
+ *
+ * A `Date` is the case this exists for. `String(new Date())` is
+ * `"Tue Jan 20 2026 00:00:00 GMT+0000"`, which is what a tooltip showed
+ * before this: a full RFC timestamp beside a two-digit price, in a box sized
+ * for neither.
+ *
+ * It formats through the **same** `formatDateTick` the axis uses, at the same
+ * granularity, so the heading reads `20 Jan` directly above an axis reading
+ * `18 Jan` — rather than two different renderings of one instant. The
+ * granularity comes from the data's own span, so an intraday series gets a
+ * clock and a multi-year one gets a year.
+ *
+ * A number goes through `formatNumberTick`, for the same reason an axis does:
+ * `0.1 + 0.2` should not print as `0.30000000000000004`.
+ */
+export function resolveXValueFormat(data: readonly ChartDatum[], xKey: string): (row: ChartDatum) => string {
+	let lo = Number.POSITIVE_INFINITY;
+	let hi = Number.NEGATIVE_INFINITY;
+	let sawDate = false;
+
+	for (const row of data) {
+		const value = row[xKey];
+		if (!(value instanceof Date)) continue;
+		const time = value.getTime();
+		if (!Number.isFinite(time)) continue;
+		sawDate = true;
+		if (time < lo) lo = time;
+		if (time > hi) hi = time;
+	}
+
+	if (!sawDate) {
+		return (row) => {
+			const value = row[xKey];
+			if (typeof value === "number") return formatNumberTick(value);
+			return value === null || value === undefined ? "" : String(value);
+		};
+	}
+
+	// Only a *zero* span is substituted. Flooring every span at a day would
+	// swallow a genuine intraday one and print `1 Jan` where the axis prints
+	// `15:30`.
+	const measured = hi - lo;
+	const span = measured > 0 ? measured : ONE_DAY_MS;
+	return (row) => {
+		const value = row[xKey];
+		return value instanceof Date ? formatDateTick(value.getTime(), span) : "";
+	};
 }

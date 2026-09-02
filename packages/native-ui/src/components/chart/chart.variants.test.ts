@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { formatDateTick } from "@delacour/charts/core";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import type { ChartConfig, ChartResolvedSeries } from "./chart.types";
 import {
@@ -13,6 +14,7 @@ import {
 	chartVariants,
 	partitionChartColors,
 	resolveChartSeries,
+	resolveXValueFormat,
 } from "./chart.variants";
 
 /** Slots that may carry a text colour. Rule 1: colour goes on the Text. */
@@ -228,5 +230,55 @@ describe("size-derived numbers", () => {
 
 	test("a small chart asks for fewer ticks, because its labels would collide", () => {
 		expect(chartTickCount("sm")).toBeLessThan(chartTickCount("lg"));
+	});
+});
+
+describe("resolveXValueFormat", () => {
+	const dated = (days: number[]) => days.map((day) => ({ at: new Date(2026, 0, day), v: day }));
+
+	test("formats a Date as a date, not as an RFC timestamp", () => {
+		// `String(new Date())` is "Tue Jan 20 2026 00:00:00 GMT+0000" — a full
+		// timestamp beside a two-digit value, in a box sized for neither.
+		const format = resolveXValueFormat(dated([1, 15, 30]), "at");
+		expect(format({ at: new Date(2026, 0, 20) })).toBe("20 Jan");
+	});
+
+	test("matches the axis at the same granularity", () => {
+		// The heading has to read `20 Jan` directly above an axis reading
+		// `18 Jan`, not as a second rendering of the same instant.
+		const rows = dated([1, 15, 30]);
+		const span = (rows.at(-1)?.at.getTime() ?? 0) - (rows[0]?.at.getTime() ?? 0);
+		const format = resolveXValueFormat(rows, "at");
+		for (const row of rows) {
+			expect(format(row)).toBe(formatDateTick(row.at.getTime(), span));
+		}
+	});
+
+	test("uses a clock for an intraday span", () => {
+		const rows = [{ at: new Date(2026, 0, 1, 9, 0) }, { at: new Date(2026, 0, 1, 15, 30) }];
+		expect(resolveXValueFormat(rows, "at")(rows[1] as (typeof rows)[number])).toBe("15:30");
+	});
+
+	test("uses a year for a multi-year span", () => {
+		const rows = [{ at: new Date(2018, 0, 1) }, { at: new Date(2026, 0, 1) }];
+		expect(resolveXValueFormat(rows, "at")(rows[1] as (typeof rows)[number])).toBe("2026");
+	});
+
+	test("shows a date rather than a clock when a single row gives no span", () => {
+		const rows = [{ at: new Date(2026, 0, 20) }];
+		expect(resolveXValueFormat(rows, "at")(rows[0] as (typeof rows)[number])).toBe("20 Jan");
+	});
+
+	test("strips float noise from a numeric x", () => {
+		expect(resolveXValueFormat([{ t: 0 }], "t")({ t: 0.1 + 0.2 })).toBe("0.3");
+	});
+
+	test("passes a label through untouched", () => {
+		expect(resolveXValueFormat([{ m: "Jan" }], "m")({ m: "Jan" })).toBe("Jan");
+	});
+
+	test("returns an empty heading for a missing field rather than 'undefined'", () => {
+		expect(resolveXValueFormat([{ m: "Jan" }], "m")({})).toBe("");
+		expect(resolveXValueFormat(dated([1, 2]), "at")({})).toBe("");
 	});
 });

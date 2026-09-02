@@ -15,6 +15,7 @@ import {
 	chartVariants,
 	partitionChartColors,
 	resolveChartSeries,
+	resolveXValueFormat,
 } from "./chart.variants";
 import { ChartArea } from "./chart-area";
 import { ChartGrid } from "./chart-grid";
@@ -99,9 +100,11 @@ function ChartRoot({
 	const scrub = useChartScrub(keys);
 	const font = useChartFont(chartAxisFontSize(size));
 
+	const formatXValue = useMemo(() => resolveXValueFormat(data, xKey), [data, xKey]);
+
 	const value = useMemo<ChartContextValue>(
-		() => ({ series, data, xKey, size, slots, gridColor, axisColor, scrub, frame }),
-		[series, data, xKey, size, slots, gridColor, axisColor, scrub, frame]
+		() => ({ series, data, xKey, formatXValue, size, slots, gridColor, axisColor, scrub, frame }),
+		[series, data, xKey, formatXValue, size, slots, gridColor, axisColor, scrub, frame]
 	);
 
 	const { canvas, overlay } = useMemo(() => partitionChildren(children), [children]);

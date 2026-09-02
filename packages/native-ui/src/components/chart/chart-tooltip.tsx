@@ -9,7 +9,12 @@ import { chartTooltipOffset } from "./chart.variants";
 
 export type ChartTooltipProps = {
 	className?: string;
-	/** Prints the heading from the row under the cursor. Defaults to its x field. */
+	/**
+	 * Prints the heading from the row under the cursor.
+	 *
+	 * Defaults to the x field, formatted the way the axis formats it — a `Date`
+	 * comes out as `20 Jan`, not as `Tue Jan 20 2026 00:00:00 GMT+0000`.
+	 */
 	formatHeading?: (row: Record<string, unknown>, index: number) => string;
 	/** Prints one series' value. Defaults to the number as written. */
 	formatValue?: (value: unknown, key: string) => string;
@@ -41,7 +46,7 @@ const DEFAULT_SIZE = { width: 120, height: 56 };
  * `AnimatedTextInput` and a `value` prop pretending to be a label.
  */
 export function ChartTooltip({ className, formatHeading, formatValue, size }: ChartTooltipProps): ReactElement {
-	const { scrub, slots, series, data, xKey, frame } = useChart();
+	const { scrub, slots, series, data, formatXValue, frame } = useChart();
 	const [index, setIndex] = useState(-1);
 	const measured = size ?? DEFAULT_SIZE;
 
@@ -70,8 +75,7 @@ export function ChartTooltip({ className, formatHeading, formatValue, size }: Ch
 	});
 
 	const row = data[index];
-	const heading =
-		row === undefined ? "" : (formatHeading?.(row, index) ?? String((row as Record<string, unknown>)[xKey] ?? ""));
+	const heading = row === undefined ? "" : (formatHeading?.(row, index) ?? formatXValue(row));
 
 	return (
 		<Animated.View className={cn(slots.tooltip(), className)} pointerEvents="none" style={style}>

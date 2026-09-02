@@ -9,6 +9,7 @@
 	],
 	"registryDependencies": [
 		"cn",
+		"color",
 		"compose-refs",
 		"icon",
 		"icons",
@@ -16,13 +17,15 @@
 		"spinner",
 		"text",
 		"tv",
-		"use-keyboard-state-sync"
+		"use-keyboard-state-sync",
+		"use-theme-color"
 	],
 	"dependencies": [
 		"tailwind-variants"
 	],
 	"expoDependencies": [
 		"@legendapp/list",
+		"expo-linear-gradient",
 		"react-native-keyboard-controller",
 		"react-native-reanimated",
 		"react-native-safe-area-context",
@@ -200,6 +203,21 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/native-ui/src/components/screen/screen-scroll-shadow.tsx",
+			"target": "screen/screen-scroll-shadow.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
 				}
 			]
 		},

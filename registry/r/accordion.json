@@ -132,7 +132,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/accordion",
+					"from": "delacour-react-native-ui/accordion",
 					"to": "@registry/ui/accordion"
 				}
 			]

@@ -21,8 +21,8 @@ const SOURCE_PATHS = [
 ];
 
 const PACKAGE_SUBPATHS = new Map([
-	["@delacour/native-ui/button", "components/button/index.ts"],
-	["@delacour/native-ui/icons/central", "icons/central.ts"],
+	["delacour-react-native-ui/button", "components/button/index.ts"],
+	["delacour-react-native-ui/icons/central", "icons/central.ts"],
 ]);
 
 function run(path: string, content: string) {
@@ -118,7 +118,7 @@ describe("canonicaliseFile", () => {
 	});
 
 	test("rewrites a package subpath named in a doc comment, so copied source cites the copy", () => {
-		const result = run("components/icon/icon.tsx", "/** From `@delacour/native-ui/icons/central`. */");
+		const result = run("components/icon/icon.tsx", "/** From `delacour-react-native-ui/icons/central`. */");
 
 		expect(result.content).toBe("/** From `@registry/icons/central`. */");
 	});
@@ -157,17 +157,17 @@ describe("canonicaliseMarkdown", () => {
 		const doc = [
 			"# Button",
 			"",
-			'`import { Button } from "@delacour/native-ui/button";`',
+			'`import { Button } from "delacour-react-native-ui/button";`',
 			"",
-			"| `index.ts` | → `@delacour/native-ui/button` |",
+			"| `index.ts` | → `delacour-react-native-ui/button` |",
 		].join("\n");
 
 		const result = canonicaliseMarkdown(doc, PACKAGE_SUBPATHS);
 
 		expect(result.content).toContain('`import { Button } from "@registry/ui/button";`');
 		expect(result.content).toContain("→ `@registry/ui/button`");
-		expect(result.content).not.toContain("@delacour/native-ui");
-		expect(result.rewrites).toEqual([{ from: "@delacour/native-ui/button", to: "@registry/ui/button" }]);
+		expect(result.content).not.toContain("delacour-react-native-ui");
+		expect(result.rewrites).toEqual([{ from: "delacour-react-native-ui/button", to: "@registry/ui/button" }]);
 	});
 
 	test("leaves prose that names no subpath alone", () => {
@@ -179,7 +179,7 @@ describe("canonicaliseMarkdown", () => {
 	});
 
 	test("prefers the longest subpath, so a nested one is not half-matched", () => {
-		const doc = "See `@delacour/native-ui/icons/central`.";
+		const doc = "See `delacour-react-native-ui/icons/central`.";
 		expect(canonicaliseMarkdown(doc, PACKAGE_SUBPATHS).content).toBe("See `@registry/icons/central`.");
 	});
 });

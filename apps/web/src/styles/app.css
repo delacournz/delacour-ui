@@ -17,7 +17,7 @@
  * preview seamless against the page it sits on: `preview.tsx` composites onto
  * `--color-fd-background`, and the simulator painted onto `--background`.
  */
-@import "@delacour/native-ui/styles/tokens";
+@import "delacour-react-native-ui/styles/tokens";
 
 @theme {
 	--color-fd-background: oklch(0.985 0 0);

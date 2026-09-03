@@ -1,7 +1,7 @@
-import { Icon } from "@delacour/native-ui/icon";
-import { IconChevronDownSmall } from "@delacour/native-ui/icons/central";
-import { Pressable } from "@delacour/native-ui/pressable";
-import { Text } from "@delacour/native-ui/text";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconChevronDownSmall } from "delacour-react-native-ui/icons/central";
+import { Pressable } from "delacour-react-native-ui/pressable";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DerivedValue } from "react-native-reanimated";

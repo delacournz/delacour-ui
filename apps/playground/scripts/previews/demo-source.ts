@@ -18,7 +18,7 @@ import ts from "typescript";
 
 /** What a demo may reach for. Anything else and it has stopped being consumer-shaped. */
 const ALLOWED_IMPORT_PREFIXES = [
-	"@delacour/native-ui",
+	"delacour-react-native-ui",
 	"react",
 	"react-native",
 	"@gorhom/bottom-sheet",

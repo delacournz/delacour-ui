@@ -10,7 +10,7 @@ Uniwind does not deduplicate conflicting utilities on its own. A caller's `class
 through `cn()` or it will not beat the component's own classes.
 
 ```tsx
-import { cn } from "@delacour/native-ui/lib/cn";
+import { cn } from "delacour-react-native-ui/lib/cn";
 
 <View className={cn(variants.root(), className)} />;
 ```
@@ -27,7 +27,7 @@ into tailwind-merge's text **colour** group, and silently strips the label's col
 </Callout>
 
 ```tsx
-import { tv } from "@delacour/native-ui/lib/tv";
+import { tv } from "delacour-react-native-ui/lib/tv";
 ```
 
 `src/styles/tokens.ts` holds the one config both mergers are built from.

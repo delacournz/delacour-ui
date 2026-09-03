@@ -1,6 +1,6 @@
-import { Accordion } from "@delacour/native-ui/accordion";
-import { Button } from "@delacour/native-ui/button";
-import { Text } from "@delacour/native-ui/text";
+import { Accordion } from "delacour-react-native-ui/accordion";
+import { Button } from "delacour-react-native-ui/button";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

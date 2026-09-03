@@ -4,13 +4,13 @@ A form field's layout, and the one place its state is written down. Root plus
 `Field.Set`, `Field.Legend`, `Field.Group`, `Field.Content`, `Field.Label`,
 `Field.Description`, `Field.Error` and `Field.Separator`.
 
-`import { Field } from "@delacour/native-ui/field";`
+`import { Field } from "delacour-react-native-ui/field";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/field` |
+| `index.ts` | → `delacour-react-native-ui/field` |
 | `field.tsx` | Root + the `Object.assign` compound surface |
 | `field-set.tsx` | `Field.Set` |
 | `field-legend.tsx` | `Field.Legend` |

@@ -5,13 +5,13 @@ plus `Switch.Thumb`, `Switch.StartContent` and `Switch.EndContent`. It inherits
 almost every structural decision from [Slider](../slider/AGENTS.md), which is the
 section to read first — what follows is only where a switch differs.
 
-`import { Switch } from "@delacour/native-ui/switch";`
+`import { Switch } from "delacour-react-native-ui/switch";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/switch` |
+| `index.ts` | → `delacour-react-native-ui/switch` |
 | `switch.tsx` | Root — owns the pan, the state and the track |
 | `switch-thumb.tsx` | `Switch.Thumb`, the knob and its one animated style |
 | `switch-content.tsx` | The shared body behind both content layers — internal |

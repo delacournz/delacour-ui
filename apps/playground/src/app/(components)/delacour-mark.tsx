@@ -1,5 +1,5 @@
-import { Button } from "@delacour/native-ui/button";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { DELACOUR_ADAPTIVE_INSET, DELACOUR_CARD_COLOUR, DelacourIcon, DelacourMark } from "@/components/delacour-mark";

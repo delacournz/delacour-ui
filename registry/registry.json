@@ -179,7 +179,7 @@
 				"use-theme-color"
 			],
 			"dependencies": [
-				"@delacour/charts"
+				"delacour-react-native-charts"
 			],
 			"expoDependencies": [
 				"@shopify/react-native-skia",

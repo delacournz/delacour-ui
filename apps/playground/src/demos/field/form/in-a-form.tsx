@@ -1,9 +1,9 @@
-import { Button } from "@delacour/native-ui/button";
-import { Field } from "@delacour/native-ui/field";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconAt, IconCurrencyDollar } from "@delacour/native-ui/icons/central";
-import { Input } from "@delacour/native-ui/input";
-import { Screen } from "@delacour/native-ui/screen";
+import { Button } from "delacour-react-native-ui/button";
+import { Field } from "delacour-react-native-ui/field";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconAt, IconCurrencyDollar } from "delacour-react-native-ui/icons/central";
+import { Input } from "delacour-react-native-ui/input";
+import { Screen } from "delacour-react-native-ui/screen";
 import { type ReactElement, useState } from "react";
 import { Keyboard } from "react-native";
 import type { DemoMeta } from "@/demos/types";

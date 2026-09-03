@@ -1,5 +1,5 @@
-import { PolarChart } from "@delacour/charts";
-import { type PieSliceData, resolvePolarLayout, resolveSlices } from "@delacour/charts/core";
+import { PolarChart } from "delacour-react-native-charts";
+import { type PieSliceData, resolvePolarLayout, resolveSlices } from "delacour-react-native-charts/core";
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo, useState } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import { View } from "react-native";

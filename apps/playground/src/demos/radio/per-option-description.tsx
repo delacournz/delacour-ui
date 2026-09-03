@@ -1,5 +1,5 @@
-import { Radio } from "@delacour/native-ui/radio";
-import { Text } from "@delacour/native-ui/text";
+import { Radio } from "delacour-react-native-ui/radio";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

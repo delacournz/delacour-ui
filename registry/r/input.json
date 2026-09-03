@@ -29,7 +29,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/input",
+					"from": "delacour-react-native-ui/input",
 					"to": "@registry/ui/input"
 				}
 			]

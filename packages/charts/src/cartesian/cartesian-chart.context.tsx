@@ -30,7 +30,7 @@ export function useChartContext(): ChartContextValue {
 	const value = useContext(CartesianChartContext);
 	if (value === null) {
 		throw new Error(
-			"[@delacour/charts] a chart mark was rendered outside a <CartesianChart>. " +
+			"[delacour-react-native-charts] a chart mark was rendered outside a <CartesianChart>. " +
 				"Marks read the chart from context, so they have to be its children."
 		);
 	}

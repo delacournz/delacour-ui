@@ -1,4 +1,4 @@
-import { INPUT_SIZES, Input } from "@delacour/native-ui/input";
+import { INPUT_SIZES, Input } from "delacour-react-native-ui/input";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

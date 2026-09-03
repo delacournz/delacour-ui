@@ -1,4 +1,4 @@
-import { CHECKBOX_COLORS, Checkbox } from "@delacour/native-ui/checkbox";
+import { CHECKBOX_COLORS, Checkbox } from "delacour-react-native-ui/checkbox";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

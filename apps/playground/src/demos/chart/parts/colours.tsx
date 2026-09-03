@@ -1,5 +1,5 @@
-import { CHART_SERIES_TOKENS, Chart } from "@delacour/native-ui/chart";
-import { Text } from "@delacour/native-ui/text";
+import { CHART_SERIES_TOKENS, Chart } from "delacour-react-native-ui/chart";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

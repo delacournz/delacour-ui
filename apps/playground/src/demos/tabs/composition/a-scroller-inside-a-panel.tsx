@@ -1,5 +1,5 @@
-import { Tabs, useTabsMotion } from "@delacour/native-ui/tabs";
-import { Text } from "@delacour/native-ui/text";
+import { Tabs, useTabsMotion } from "delacour-react-native-ui/tabs";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useMemo } from "react";
 import { ScrollView, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";

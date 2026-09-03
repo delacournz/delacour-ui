@@ -1,16 +1,16 @@
-# @delacour/charts
+# delacour-react-native-charts
 
 A headless charting engine for React Native, drawn with Skia, animated with
 Reanimated, driven by Gesture Handler.
 
 **Token-free by construction.** Every colour, font and size arrives as a plain
 value. There is no `className` here, no Uniwind, no theme — that is
-`@delacour/native-ui/chart`'s job, and the split is what lets the same engine
+`delacour-react-native-ui/chart`'s job, and the split is what lets the same engine
 be skinned by something else entirely.
 
 ```ts
-import { CartesianChart, ChartLine } from "@delacour/charts";
-import { getYForX, makeScale } from "@delacour/charts/core";
+import { CartesianChart, ChartLine } from "delacour-react-native-charts";
+import { getYForX, makeScale } from "delacour-react-native-charts/core";
 ```
 
 ## Commands
@@ -48,7 +48,7 @@ Module scope is the whole rule. A module-scope worklet that calls another
 module-scope worklet binds at import time in source order, and the UI thread
 gets `undefined is not a function` — at the moment a finger touches the chart,
 on a device, with a stack naming neither function. Four components in
-`@delacour/native-ui` document having learned this;
+`delacour-react-native-ui` document having learned this;
 `src/flat-worklet.test.ts` means nobody learns it again.
 
 A worklet created **inside a hook** is captured by ordinary closure and may
@@ -76,7 +76,7 @@ runs once per data change on the JS thread, not once per frame on the UI one.
 }
 ```
 
-`@delacour/native-ui`'s no-barrel rule exists so an app can skip an optional
+`delacour-react-native-ui`'s no-barrel rule exists so an app can skip an optional
 peer. This package has no optional peers — everyone needs Skia. `./core` earns
 its place for a different reason: it is importable **with no Skia in the module
 graph at all**, which is what lets a legend or a tooltip do scale arithmetic
@@ -250,7 +250,7 @@ one — that is a README line, not a component.
   single-slice donut is a ring under nonzero winding, not a disc.
 
 - **The engine has no demo coverage assertion.** `apps/playground`'s
-  `demos.test.ts` enumerates `@delacour/native-ui`'s component folders, and a
+  `demos.test.ts` enumerates `delacour-react-native-ui`'s component folders, and a
   headless package has none. Rather than contort that test, the twelve demos
   under `src/demos/chart/` exercise this package transitively. A change here
   that nothing in native-ui reaches is a change nothing will catch — write the

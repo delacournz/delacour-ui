@@ -1,4 +1,4 @@
-import { SWITCH_SIZES, Switch } from "@delacour/native-ui/switch";
+import { SWITCH_SIZES, Switch } from "delacour-react-native-ui/switch";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

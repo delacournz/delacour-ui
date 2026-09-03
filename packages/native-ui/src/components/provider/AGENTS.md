@@ -3,13 +3,13 @@
 Every provider an app needs at its root, in one component. Mount it once, around
 everything — a root layout, an `App.tsx`.
 
-`import { DelacourProvider } from "@delacour/native-ui/provider";`
+`import { DelacourProvider } from "delacour-react-native-ui/provider";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/provider` |
+| `index.ts` | → `delacour-react-native-ui/provider` |
 | `provider.tsx` | `DelacourProvider` — the app's root layer stack; its `displayName` is `DelacourUI.Provider`, because prefix-plus-symbol would stutter and this matches its export subpath |
 
 ## Design

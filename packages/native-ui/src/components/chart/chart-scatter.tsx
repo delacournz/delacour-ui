@@ -1,5 +1,5 @@
-import { ChartScatter as EngineScatter } from "@delacour/charts";
-import type { ScatterShape } from "@delacour/charts/core";
+import { ChartScatter as EngineScatter } from "delacour-react-native-charts";
+import type { ScatterShape } from "delacour-react-native-charts/core";
 import type { ReactElement } from "react";
 import { useSeriesColor } from "./chart.context";
 

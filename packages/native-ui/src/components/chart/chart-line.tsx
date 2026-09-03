@@ -1,5 +1,5 @@
-import { ChartLine as EngineLine } from "@delacour/charts";
-import type { CurveType } from "@delacour/charts/core";
+import { ChartLine as EngineLine } from "delacour-react-native-charts";
+import type { CurveType } from "delacour-react-native-charts/core";
 import type { ReactElement } from "react";
 import { useSeriesColor } from "./chart.context";
 

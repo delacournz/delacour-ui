@@ -1,4 +1,4 @@
-import { Separator } from "@delacour/native-ui/separator";
+import { Separator } from "delacour-react-native-ui/separator";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

@@ -5,6 +5,7 @@ import { join } from "node:path";
 const SRC = import.meta.dirname;
 const COMPONENTS = join(SRC, "components");
 const PACKAGE_DOC = join(SRC, "..", "AGENTS.md");
+const PACKAGE_JSON = join(SRC, "..", "package.json");
 
 /**
  * Every component folder must carry an `AGENTS.md`, and the package doc must
@@ -41,10 +42,18 @@ function componentFolders(): string[] {
  * the same word: `provider` is `DelacourProvider` and `list-group` is
  * `ListGroup`. The subpath is the unambiguous key, and it is the string a
  * consumer actually types.
+ *
+ * The package name is read from `package.json` rather than written out here, so
+ * a rename cannot leave this matching a name nobody publishes any more. It did
+ * once: the literal was a regex, escaped slashes and all, so the rename that
+ * swept every other mention of the old name walked straight past it and every
+ * component read as undocumented.
  */
 function indexedFolders(): string[] {
 	const doc = readFileSync(PACKAGE_DOC, "utf-8");
-	const rows = doc.matchAll(/\[`?@delacour\/native-ui\/([a-z-]+)`?\]|`@delacour\/native-ui\/([a-z-]+)`/g);
+	const { name } = JSON.parse(readFileSync(PACKAGE_JSON, "utf-8")) as { name: string };
+	const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const rows = doc.matchAll(new RegExp(`\\[\`?${escaped}/([a-z-]+)\`?\\]|\`${escaped}/([a-z-]+)\``, "g"));
 	return [...new Set([...rows].map(([, a, b]) => a ?? b))].sort();
 }
 

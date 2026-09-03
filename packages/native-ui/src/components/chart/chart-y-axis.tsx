@@ -1,4 +1,4 @@
-import { ChartYAxis as EngineYAxis } from "@delacour/charts";
+import { ChartYAxis as EngineYAxis } from "delacour-react-native-charts";
 import type { ReactElement } from "react";
 import { useChart } from "./chart.context";
 

@@ -1,8 +1,8 @@
 import { fontByName } from "@delacour/design-system/fonts";
-import { Button } from "@delacour/native-ui/button";
-import { ListGroup } from "@delacour/native-ui/list-group";
-import { Screen } from "@delacour/native-ui/screen";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { ListGroup } from "delacour-react-native-ui/list-group";
+import { Screen } from "delacour-react-native-ui/screen";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, type ReactNode, useState } from "react";
 import type { AxisSheetControlProps } from "@/components/theme/axis-sheet";
 import { BaseColorStrip } from "@/components/theme/base-color-strip";

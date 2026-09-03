@@ -1,8 +1,8 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowUp, IconBug } from "@delacour/native-ui/icons/central";
-import { SCREEN_CHAT_INPUT_NATIVE_ID, Screen } from "@delacour/native-ui/screen";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowUp, IconBug } from "delacour-react-native-ui/icons/central";
+import { SCREEN_CHAT_INPUT_NATIVE_ID, Screen } from "delacour-react-native-ui/screen";
+import { Text } from "delacour-react-native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { TextInput, View } from "react-native";

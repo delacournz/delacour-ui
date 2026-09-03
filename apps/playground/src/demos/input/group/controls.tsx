@@ -1,14 +1,14 @@
-import { Button } from "@delacour/native-ui/button";
-import { Field } from "@delacour/native-ui/field";
-import { Icon } from "@delacour/native-ui/icon";
+import { Button } from "delacour-react-native-ui/button";
+import { Field } from "delacour-react-native-ui/field";
+import { Icon } from "delacour-react-native-ui/icon";
 import {
 	IconCrossSmall,
 	IconEyeOpen,
 	IconEyeSlash,
 	IconMagnifyingGlass,
 	IconShieldCheck,
-} from "@delacour/native-ui/icons/central";
-import { Input } from "@delacour/native-ui/input";
+} from "delacour-react-native-ui/icons/central";
+import { Input } from "delacour-react-native-ui/input";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

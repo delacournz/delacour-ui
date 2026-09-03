@@ -1,5 +1,5 @@
-import { ChartGrid as EngineGrid } from "@delacour/charts";
-import type { GridAxis } from "@delacour/charts/core";
+import { ChartGrid as EngineGrid } from "delacour-react-native-charts";
+import type { GridAxis } from "delacour-react-native-charts/core";
 import type { ReactElement } from "react";
 import { useChart } from "./chart.context";
 

@@ -1,6 +1,6 @@
-import { Button } from "@delacour/native-ui/button";
-import { Tabs } from "@delacour/native-ui/tabs";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { Tabs } from "delacour-react-native-ui/tabs";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useCallback, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

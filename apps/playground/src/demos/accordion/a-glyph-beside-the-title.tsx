@@ -1,7 +1,7 @@
-import { Accordion } from "@delacour/native-ui/accordion";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconTruck } from "@delacour/native-ui/icons/central";
-import { Text } from "@delacour/native-ui/text";
+import { Accordion } from "delacour-react-native-ui/accordion";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconTruck } from "delacour-react-native-ui/icons/central";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 

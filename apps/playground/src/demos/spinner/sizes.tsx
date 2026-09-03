@@ -1,5 +1,5 @@
-import { SPINNER_SIZES, Spinner } from "@delacour/native-ui/spinner";
-import { Text } from "@delacour/native-ui/text";
+import { SPINNER_SIZES, Spinner } from "delacour-react-native-ui/spinner";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

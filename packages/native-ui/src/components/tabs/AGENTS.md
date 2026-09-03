@@ -4,13 +4,13 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
 `Tabs.ScrollView`, `Tabs.Indicator`, `Tabs.Trigger`, `Tabs.Label`,
 `Tabs.Separator` and `Tabs.Content`.
 
-`import { Tabs } from "@delacour/native-ui/tabs";`
+`import { Tabs } from "delacour-react-native-ui/tabs";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/tabs` |
+| `index.ts` | → `delacour-react-native-ui/tabs` |
 | `tabs.tsx` | Root — owns the order walk, the value flow and the pan |
 | `tabs-list.tsx` | `Tabs.List` — the track, and the measurement registry |
 | `tabs-scroll-view.tsx` | `Tabs.ScrollView` — the scroller and its UI-thread auto-scroll |

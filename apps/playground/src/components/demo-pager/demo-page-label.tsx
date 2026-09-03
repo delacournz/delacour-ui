@@ -1,4 +1,4 @@
-import { Text } from "@delacour/native-ui/text";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useEffect, useState } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";

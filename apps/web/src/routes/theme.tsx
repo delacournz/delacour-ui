@@ -95,8 +95,8 @@ function ThemePage(): ReactElement {
 					<p className="mt-2 text-fd-muted-foreground text-sm">
 						Uniwind reads a theme only from <code className="font-mono text-xs">@variant light</code> and{" "}
 						<code className="font-mono text-xs">@variant dark</code>, so the file above needs its wrapper rewritten
-						before <code className="font-mono text-xs">@delacour/native-ui</code> can paint from it. The CLI does that,
-						and fills in the tokens shadcn has no name for:
+						before <code className="font-mono text-xs">delacour-react-native-ui</code> can paint from it. The CLI does
+						that, and fills in the tokens shadcn has no name for:
 					</p>
 					<div className="mt-3">
 						<DynamicCodeBlock code="bunx delacour theme ./globals.css" lang="bash" />

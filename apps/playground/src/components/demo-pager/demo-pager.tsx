@@ -1,4 +1,4 @@
-import { Screen } from "@delacour/native-ui/screen";
+import { Screen } from "delacour-react-native-ui/screen";
 import { useRouter } from "expo-router";
 import { type ReactElement, useCallback, useMemo, useState } from "react";
 import { View } from "react-native";

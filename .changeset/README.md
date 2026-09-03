@@ -11,7 +11,7 @@ bun run changeset
 Pick the packages, pick `patch` / `minor` / `major`, write the line that a consumer of the package
 should read. Commit the generated markdown file with the change it describes.
 
-Only two packages are releasable: `delacour` (the CLI) and `@delacour/native-ui`. Everything else
+Only two packages are releasable: `delacour` (the CLI) and `delacour-react-native-ui`. Everything else
 in the workspace is private.
 
 See [the root AGENTS.md](../AGENTS.md#releases) for what happens after the changeset is merged.

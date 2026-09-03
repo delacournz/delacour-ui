@@ -3,13 +3,13 @@
 A box that is ticked or not — alone, or as one of a group sharing a value list.
 Root plus `Checkbox.Label` and `Checkbox.Group`.
 
-`import { Checkbox } from "@delacour/native-ui/checkbox";`
+`import { Checkbox } from "delacour-react-native-ui/checkbox";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/checkbox` |
+| `index.ts` | → `delacour-react-native-ui/checkbox` |
 | `checkbox.tsx` | Root + the `Object.assign` compound surface |
 | `checkbox-label.tsx` | `Checkbox.Label`, the `Text.Label` inside the tap target |
 | `checkbox-group.tsx` | `Checkbox.Group`, which owns the checked list |

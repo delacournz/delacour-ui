@@ -1,4 +1,4 @@
-import { Screen } from "@delacour/native-ui/screen";
+import { Screen } from "delacour-react-native-ui/screen";
 import { useRouter } from "expo-router";
 import { TopTabs } from "expo-router/js-top-tabs";
 import type { ReactElement } from "react";

@@ -33,8 +33,8 @@ export type NavigationThemeProps = {
  *
  * @example
  * // app/_layout.tsx
- * import { DelacourProvider } from "@delacour/native-ui/provider";
- * import { NavigationTheme } from "@delacour/native-ui/expo/navigation-theme";
+ * import { DelacourProvider } from "delacour-react-native-ui/provider";
+ * import { NavigationTheme } from "delacour-react-native-ui/expo/navigation-theme";
  * import { Stack } from "expo-router";
  *
  * export default function RootLayout() {

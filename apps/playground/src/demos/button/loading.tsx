@@ -1,6 +1,6 @@
-import { BUTTON_LABEL_SIZES, BUTTON_SPINNER_PLACEMENTS, Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconPlusMedium } from "@delacour/native-ui/icons/central";
+import { BUTTON_LABEL_SIZES, BUTTON_SPINNER_PLACEMENTS, Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconPlusMedium } from "delacour-react-native-ui/icons/central";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

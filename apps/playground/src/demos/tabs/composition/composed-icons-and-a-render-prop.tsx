@@ -1,8 +1,8 @@
-import { Badge } from "@delacour/native-ui/badge";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconBell, IconUser } from "@delacour/native-ui/icons/central";
-import { Tabs } from "@delacour/native-ui/tabs";
-import { Text } from "@delacour/native-ui/text";
+import { Badge } from "delacour-react-native-ui/badge";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconBell, IconUser } from "delacour-react-native-ui/icons/central";
+import { Tabs } from "delacour-react-native-ui/tabs";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

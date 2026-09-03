@@ -1,4 +1,4 @@
-import { footerOccupancy, Screen } from "@delacour/native-ui/screen";
+import { footerOccupancy, Screen } from "delacour-react-native-ui/screen";
 import type { ReactElement } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

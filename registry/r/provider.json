@@ -25,7 +25,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/provider",
+					"from": "delacour-react-native-ui/provider",
 					"to": "@registry/ui/provider"
 				}
 			]
@@ -45,7 +45,7 @@
 					"to": "@registry/hooks/use-keyboard-state-sync"
 				},
 				{
-					"from": "@delacour/native-ui/provider",
+					"from": "delacour-react-native-ui/provider",
 					"to": "@registry/ui/provider"
 				}
 			]

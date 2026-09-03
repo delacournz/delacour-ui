@@ -1,16 +1,16 @@
 # Chart
 
 Skia charts wearing the theme's five-colour series ramp — the skin over
-[`@delacour/charts`](../../../../charts/AGENTS.md), which does the drawing and
+[`delacour-react-native-charts`](../../../../charts/AGENTS.md), which does the drawing and
 knows nothing about tokens.
 
-`import { Chart, PieChart } from "@delacour/native-ui/chart";`
+`import { Chart, PieChart } from "delacour-react-native-ui/chart";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/chart` |
+| `index.ts` | → `delacour-react-native-ui/chart` |
 | `chart.tsx` | The root, the child partition, and the single `Object.assign` |
 | `chart.context.tsx` | The context, mounted twice — see below |
 | `chart.types.ts` | `ChartConfig`, `ChartSeriesConfig`, `ChartResolvedSeries` |
@@ -202,9 +202,9 @@ knows nothing about tokens.
   show it — a `PieChart.Tooltip`, an `onSelect`, or a controlled
   `selectedIndex` — so a pie with none of those takes no gesture at all.
 
-- **`@delacour/charts` is an optional peer, not a dependency.** A dependency
+- **`delacour-react-native-charts` is an optional peer, not a dependency.** A dependency
   may be nested, and two copies of the engine mean two chart contexts — so a
   correctly-nested `<Chart.Line>` would throw "must be used inside a `<Chart>`"
   from inside a `<Chart>`. It also peer-depends on Skia, so a dependency would
   install a native module for someone who only ever imported
-  `@delacour/native-ui/button`.
+  `delacour-react-native-ui/button`.

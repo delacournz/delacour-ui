@@ -28,7 +28,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/radio",
+					"from": "delacour-react-native-ui/radio",
 					"to": "@registry/ui/radio"
 				}
 			]

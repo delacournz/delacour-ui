@@ -7,18 +7,24 @@ defaults:
 on:
   push:
     branches:
-      - release/playground
+      - release/playground/*
   workflow_dispatch:
     inputs:
       version:
         type: string
         required: false
-        description: "Marketing version to stamp, x.y.z. Omit to use app.config.ts's default."
+        description: "Version to build, x.y.z. Defaults to the release/playground/x.y.z branch name."
 
 jobs:
-  # A push to `release/playground` carries no version, so this passes an empty
-  # string through and `app.config.ts` supplies its own default. A manual run
-  # overrides it: `bun eas:release:prod -F version=1.2.3`.
+  # `${{ inputs.version }}` and `${{ github.ref_name }}` render as the literal
+  # string "undefined" when their context is absent — a push event carries no
+  # `inputs`, and `eas workflow:run` carries no ref. `[ -n "$VAR" ]` reads those
+  # four letters as a value, which is what failed the first real triggered run.
+  # Both are normalised with a `case` before anything tests them.
+  #
+  # `case` rather than `[ … ] && VERSION=""`: the step runs under
+  # `/bin/bash -eo pipefail`, where a bare test-and-assign whose test is false
+  # makes the list return non-zero.
   extract_version:
     name: Extract Version
     outputs:
@@ -28,11 +34,19 @@ jobs:
         name: Parse version
         run: |
           VERSION="${{ inputs.version }}"
-          if [ -n "$VERSION" ] && ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          case "$VERSION" in undefined|null) VERSION="" ;; esac
+          if [ -z "$VERSION" ]; then
+            REF_NAME="${{ github.ref_name }}"
+            case "$REF_NAME" in
+              release/playground/*) VERSION="${REF_NAME##release/playground/}" ;;
+            esac
+          fi
+          if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "ERROR: Invalid version format: '$VERSION' (expected x.y.z)"
+            echo "Pass one explicitly with -F version=x.y.z, or push to release/playground/x.y.z."
             exit 1
           fi
-          echo "Version: ${VERSION:-<app.config.ts default>}"
+          echo "Version: $VERSION"
           set-output version "$VERSION"
 
   # Fingerprint the build

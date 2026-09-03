@@ -2,7 +2,7 @@ export const appName = "Delacour UI";
 
 /** One sentence, served as the meta description and as both social cards' body. */
 export const appDescription =
-	"A React Native component library built on Uniwind, Reanimated and the Gesture API. Compose, don't configure.";
+	"Composable, accessible React Native components with thoughtful defaults. Code you can customize, extend and make your own — painted from the same design tokens as your shadcn web app.";
 
 /**
  * The production origin, for the absolute URLs Open Graph and Twitter cards

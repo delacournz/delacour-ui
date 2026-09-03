@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useRef, useState } from "react";
+import { type ReactElement, type ReactNode, useEffect, useRef, useState } from "react";
 import { type PreviewEntry, type PreviewId, type PreviewMedia, previews } from "@/previews/manifest";
 
 export type PreviewProps = {
@@ -81,11 +81,9 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	if (entry.frame === "device") {
 		return (
 			<div className="flex justify-center">
-				<div className="group/preview rounded-[2.5rem] border border-fd-border bg-fd-card p-[6px] shadow-lg">
-					<div className="overflow-hidden rounded-[2.1rem]">
-						<ThemedPreview entry={entry} className={DEVICE_MEDIA} />
-					</div>
-				</div>
+				<DeviceBezel>
+					<ThemedPreview entry={entry} className={DEVICE_MEDIA} />
+				</DeviceBezel>
 			</div>
 		);
 	}
@@ -93,6 +91,20 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	return (
 		<div className="group/preview flex justify-center overflow-hidden rounded-xl border border-fd-border bg-fd-background">
 			<ThemedPreview entry={entry} className={STAGE_MEDIA} />
+		</div>
+	);
+}
+
+/**
+ * The phone bezel a whole-screen capture sits in.
+ *
+ * Exported so the landing page draws its hero device with the same radii as
+ * a component page draws a `device` preview — one bezel, not two that drift.
+ */
+export function DeviceBezel({ children, className = "" }: { children: ReactNode; className?: string }): ReactElement {
+	return (
+		<div className={`group/preview rounded-[2.5rem] border border-fd-border bg-fd-card p-[6px] shadow-lg ${className}`}>
+			<div className="overflow-hidden rounded-[2.1rem]">{children}</div>
 		</div>
 	);
 }

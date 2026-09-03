@@ -115,6 +115,24 @@ Open Graph / Twitter tags. Two things there are deliberate:
 Staging serves production's origin in those tags; threading a per-environment origin through SSR
 buys nothing for a docs site.
 
+## The landing page
+
+`src/routes/index.tsx` is a marketing page in the shape of shadcn/ui's and HeroUI's: a hero with a
+`device` capture in the shared `DeviceBezel`, a showcase grid of captured demos, the design-token
+pitch, principles, install, and the grouped component index. Three things there are derived rather
+than written:
+
+- **The showcase tiles are `PreviewId`s** from `src/previews/manifest.ts`, drawn with `ThemedPreview`
+  so they follow the theme like every docs preview. A tile naming a demo that no longer exists is a
+  type error; one naming a slug missing from `COMPONENTS` throws at render.
+- **The component index reads `COMPONENTS`** and `COMPONENT_GROUPS`, so a new component appears
+  by existing.
+- **The TestFlight line reads `NATIVE_APP.IOS_TESTFLIGHT_URL`** through `isInstallable`, the same
+  gate the QR popover uses, and renders nothing while the link is a placeholder.
+
+The token section's code samples are hand-written illustrations of `delacour theme`'s input and
+output, not its real output — keep them to a handful of tokens.
+
 ## The layout is `notebook`, not `docs`
 
 `src/routes/docs/$.tsx` imports `DocsLayout` from **`fumadocs-ui/layouts/notebook`** and passes

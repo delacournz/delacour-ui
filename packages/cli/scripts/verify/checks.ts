@@ -172,7 +172,8 @@ export const CHECKS: Check[] = [
 
 			for (const { path, content, display } of await copiedFiles(context)) {
 				if (content.includes("@registry/")) problems.push(`${display}: unresolved @registry/ placeholder`);
-				if (content.includes("delacour-react-native-ui")) problems.push(`${display}: still cites delacour-react-native-ui`);
+				if (content.includes("delacour-react-native-ui"))
+					problems.push(`${display}: still cites delacour-react-native-ui`);
 				if (path.endsWith(".test.ts") || path.endsWith(".test.tsx")) problems.push(`${display}: a test was copied`);
 			}
 

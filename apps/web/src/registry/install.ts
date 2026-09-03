@@ -1037,7 +1037,7 @@ export const install = {
 		importPath: "delacour-react-native-ui/chart",
 		exportName: "Chart",
 		expo: ["@shopify/react-native-skia", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["delacour-react-native-charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["clsx", "delacour-react-native-charts", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 44,
 		groups: [

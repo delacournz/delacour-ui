@@ -142,7 +142,11 @@ describe("pre-mode dist tags", () => {
 	});
 
 	test("leaves every other package untagged", () => {
-		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["clsx", "delacour-react-native-charts"] });
+		const [group] = installCommands({
+			...NONE,
+			packageManager: "bun",
+			dependencies: ["clsx", "delacour-react-native-charts"],
+		});
 
 		expect(commandLine(group as InstallGroup)).toBe("bun add clsx delacour-react-native-charts@alpha");
 	});
@@ -152,7 +156,12 @@ describe("pre-mode dist tags", () => {
 		// package.json. A tagged spec there would never match and the CLI would
 		// offer to reinstall a package the project already has, on every run.
 		const plan = planDependencies(
-			{ packageManager: "bun", expoDependencies: [], dependencies: ["delacour-react-native-charts"], devDependencies: [] },
+			{
+				packageManager: "bun",
+				expoDependencies: [],
+				dependencies: ["delacour-react-native-charts"],
+				devDependencies: [],
+			},
 			{ dependencies: { "delacour-react-native-charts": "^0.1.0" } }
 		);
 

@@ -1,6 +1,6 @@
+import { Rect } from "@shopify/react-native-skia";
 import type { ChartBounds, ChartOrientation, ChartScrubState, ChartStep } from "delacour-react-native-charts";
 import { ChartCursorLine, useChartContext as useEngineChart } from "delacour-react-native-charts";
-import { Rect } from "@shopify/react-native-skia";
 import type { ReactElement } from "react";
 import { useDerivedValue } from "react-native-reanimated";
 import { useChart } from "./chart.context";

@@ -1,4 +1,4 @@
-import { LIST_GROUP_VARIANTS, ListGroup } from "@delacour/native-ui/list-group";
+import { LIST_GROUP_VARIANTS, ListGroup } from "delacour-react-native-ui/list-group";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

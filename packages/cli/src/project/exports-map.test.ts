@@ -49,7 +49,7 @@ describe("buildExportsMap", () => {
 
 	/**
 	 * A root entry would make every app resolve every optional peer, which is
-	 * exactly why `@delacour/native-ui` has none either.
+	 * exactly why `delacour-react-native-ui` has none either.
 	 */
 	test("emits no root barrel", () => {
 		expect(buildExportsMap(PATHS, WRITTEN)["."]).toBeUndefined();

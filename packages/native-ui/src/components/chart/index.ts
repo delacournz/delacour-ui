@@ -1,4 +1,4 @@
-export type { CurveType } from "@delacour/charts/core";
+export type { CurveType } from "delacour-react-native-charts/core";
 export { Chart, type ChartProps } from "./chart";
 export {
 	ChartContext,

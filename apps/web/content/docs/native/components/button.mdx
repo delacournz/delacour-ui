@@ -13,7 +13,7 @@ icon: MousePointerClick
 ## Usage
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
+import { Button } from "delacour-react-native-ui/button";
 ```
 
 ```tsx
@@ -88,8 +88,8 @@ Icons are composed, not passed as props — put an `Icon` in the children, befor
 <Preview id="button/icons" />
 
 ```tsx
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowRight, IconTrash } from "@delacour/native-ui/icons/central";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowRight, IconTrash } from "delacour-react-native-ui/icons/central";
 
 <Button onPress={next}>
   <Button.Label>Continue</Button.Label>
@@ -296,7 +296,7 @@ the same arc.
 Use `useButton()` to match the parent from a custom child, without prop drilling.
 
 ```tsx
-import { useButton } from "@delacour/native-ui/button";
+import { useButton } from "delacour-react-native-ui/button";
 
 function ButtonCount({ count }: { count: number }) {
   const { variant, size, isDisabled } = useButton();
@@ -511,7 +511,7 @@ import {
   buttonVariants,
   resolveGroupPositions,
   resolveGroupSeams,
-} from "@delacour/native-ui/button";
+} from "delacour-react-native-ui/button";
 ```
 
 `BUTTON_SIZES` is every value `size` accepts. `BUTTON_LABEL_SIZES` and `BUTTON_ICON_SIZES` are the

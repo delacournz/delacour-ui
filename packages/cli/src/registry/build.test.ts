@@ -123,7 +123,7 @@ describe("buildRegistry", () => {
 	});
 
 	test("leaves no reference to the source package in what a consumer receives", () => {
-		for (const { content } of everyFile()) expect(content).not.toContain("@delacour/native-ui");
+		for (const { content } of everyFile()) expect(content).not.toContain("delacour-react-native-ui");
 	});
 
 	test("an item names the library source rather than a copy of it", () => {

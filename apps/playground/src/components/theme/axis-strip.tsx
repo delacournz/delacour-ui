@@ -1,4 +1,4 @@
-import { Text } from "@delacour/native-ui/text";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, type ReactNode, useCallback, useRef } from "react";
 import { ScrollView, View } from "react-native";
 

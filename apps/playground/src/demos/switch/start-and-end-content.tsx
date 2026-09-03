@@ -1,6 +1,6 @@
-import { Icon } from "@delacour/native-ui/icon";
-import { IconCheckmark1Small, IconX } from "@delacour/native-ui/icons/central";
-import { SWITCH_SIZES, Switch } from "@delacour/native-ui/switch";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconCheckmark1Small, IconX } from "delacour-react-native-ui/icons/central";
+import { SWITCH_SIZES, Switch } from "delacour-react-native-ui/switch";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

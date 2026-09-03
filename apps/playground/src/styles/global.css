@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "uniwind";
 
-@import "@delacour/native-ui/styles";
+@import "delacour-react-native-ui/styles";
 
 @source "../**/*.{ts,tsx}";
 

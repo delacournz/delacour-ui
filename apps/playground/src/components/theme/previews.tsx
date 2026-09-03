@@ -1,6 +1,6 @@
 import type { ResolvedMode } from "@delacour/design-system/resolve";
-import { Text } from "@delacour/native-ui/text";
 import { formatHex, formatHex8, parse } from "culori";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 

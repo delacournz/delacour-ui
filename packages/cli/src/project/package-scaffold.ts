@@ -40,7 +40,7 @@ export function mergePackageJson(existing: PackageJson | null, input: ScaffoldIn
 		name: input.name,
 		version: "0.0.0",
 		private: true,
-		// Source-only, like `@delacour/native-ui`: no `main`, no `types`, no build.
+		// Source-only, like `delacour-react-native-ui`: no `main`, no `types`, no build.
 		// Uniwind compiles `className` in the consuming app's Metro pipeline, so a
 		// precompiled build would arrive with its classNames already dead.
 		type: "module",

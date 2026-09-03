@@ -41,9 +41,9 @@ const FEATURES = [
 	},
 ];
 
-const EXAMPLE = `import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowRight } from "@delacour/native-ui/icons/central";
+const EXAMPLE = `import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowRight } from "delacour-react-native-ui/icons/central";
 
 <Button haptic="selection" onPress={next}>
   <Button.Label>Continue</Button.Label>
@@ -99,7 +99,7 @@ function Hero() {
 					<p className="mb-2 font-medium text-fd-muted-foreground text-sm">Copy the source in with the CLI…</p>
 					<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button"] }]} />
 					<p className="mt-4 mb-2 font-medium text-fd-muted-foreground text-sm">…or install the package.</p>
-					<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui@alpha"] }]} />
+					<InstallTabs commands={[{ verb: "add", packages: ["delacour-react-native-ui@alpha"] }]} />
 				</div>
 			</div>
 		</section>

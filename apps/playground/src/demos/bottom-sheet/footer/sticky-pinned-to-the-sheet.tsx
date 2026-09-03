@@ -1,5 +1,5 @@
-import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
-import { Button } from "@delacour/native-ui/button";
+import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";
+import { Button } from "delacour-react-native-ui/button";
 import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 

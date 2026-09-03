@@ -1,5 +1,5 @@
-import { playHaptic } from "@delacour/native-ui/pressable";
-import { type ScreenScrollViewRef, useScreen } from "@delacour/native-ui/screen";
+import { playHaptic } from "delacour-react-native-ui/pressable";
+import { type ScreenScrollViewRef, useScreen } from "delacour-react-native-ui/screen";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { LayoutChangeEvent, NativeScrollEvent, NativeSyntheticEvent } from "react-native";
 import {

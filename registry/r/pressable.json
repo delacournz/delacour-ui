@@ -26,7 +26,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/pressable",
+					"from": "delacour-react-native-ui/pressable",
 					"to": "@registry/ui/pressable"
 				}
 			]

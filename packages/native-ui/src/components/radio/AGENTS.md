@@ -4,13 +4,13 @@ One option in a set where exactly one can be chosen — alone, or inside a group
 that owns the selection. Compound root plus `Radio.Label`, `Radio.Indicator` and
 `Radio.Group`.
 
-`import { Radio } from "@delacour/native-ui/radio";`
+`import { Radio } from "delacour-react-native-ui/radio";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/radio` |
+| `index.ts` | → `delacour-react-native-ui/radio` |
 | `radio.tsx` | Root + the `Object.assign` compound surface, and `withIndicator` |
 | `radio-group.tsx` | `Radio.Group`, which owns the selection |
 | `radio-indicator.tsx` | `Radio.Indicator`, the ring and its animated dot |

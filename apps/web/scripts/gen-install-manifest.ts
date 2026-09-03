@@ -151,7 +151,7 @@ function build(): string {
 				name: component.slug,
 				title: component.name,
 				description: item.description,
-				importPath: `@delacour/native-ui/${component.slug}`,
+				importPath: `delacour-react-native-ui/${component.slug}`,
 				exportName: component.name,
 				expo: union((i) => i.expoDependencies),
 				npm: union((i) => i.dependencies),

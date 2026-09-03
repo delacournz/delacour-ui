@@ -6,13 +6,13 @@ and `Button.Group` for joining several into one run.
 The reference implementation for the patterns in the package
 [AGENTS.md](../../../AGENTS.md).
 
-`import { Button } from "@delacour/native-ui/button";`
+`import { Button } from "delacour-react-native-ui/button";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/button` |
+| `index.ts` | → `delacour-react-native-ui/button` |
 | `button.tsx` | Root + the `Object.assign` compound surface |
 | `button-label.tsx` | `Button.Label` |
 | `button-start-content.tsx` | `Button.StartContent` |

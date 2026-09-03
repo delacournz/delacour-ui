@@ -1,4 +1,4 @@
-# @delacour/native-ui
+# delacour-react-native-ui
 
 A React Native component library. Styling is
 [Uniwind](https://github.com/kirillzyusko/uniwind) — Tailwind v4 for React
@@ -11,7 +11,7 @@ arrive with its classNames already dead.
 ## Install
 
 ```bash
-bun add @delacour/native-ui@alpha
+bun add delacour-react-native-ui@alpha
 ```
 
 Native modules are **peer dependencies**, because two copies of a native module
@@ -29,7 +29,7 @@ Two are **optional** — you only need them if you import what depends on them:
 
 | Peer | Needed for |
 | --- | --- |
-| `expo-router` | `@delacour/native-ui/expo/navigation-theme` |
+| `expo-router` | `delacour-react-native-ui/expo/navigation-theme` |
 | `@legendapp/list` | `Screen.LegendList` and `Screen.ChatList` |
 
 Granular exports are what make that safe: an app that never imports a subpath
@@ -40,7 +40,7 @@ never makes Metro resolve its peers.
 **1. Styles.** In your app's `global.css`:
 
 ```css
-@import '@delacour/native-ui/styles';
+@import 'delacour-react-native-ui/styles';
 @source '../../../../packages/native-ui/src';
 ```
 
@@ -51,7 +51,7 @@ silently dropped from production builds.
 **2. Provider.** Wrap the app's root:
 
 ```tsx
-import { DelacourProvider } from "@delacour/native-ui/provider";
+import { DelacourProvider } from "delacour-react-native-ui/provider";
 
 <DelacourProvider>{children}</DelacourProvider>;
 ```
@@ -65,9 +65,9 @@ keyboard state sync that keeps them honest.
 There is **no package-wide barrel.** Import from the subpath:
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowRight } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowRight } from "delacour-react-native-ui/icons/central";
 
 // The icon inherits the button's size and its variant's colour.
 <Button haptic="selection" onPress={next}>
@@ -80,25 +80,25 @@ import { IconArrowRight } from "@delacour/native-ui/icons/central";
 
 | Component | Import | |
 | --- | --- | --- |
-| Accordion | `@delacour/native-ui/accordion` | Selection modes, measured panels, indicators |
-| Badge | `@delacour/native-ui/badge` | Variants, colours, sizes, dismiss |
-| BottomSheet | `@delacour/native-ui/bottom-sheet` | Overlay, snap points, sticky footer, keyboard |
-| Button | `@delacour/native-ui/button` | Variants, sizes, icons, loading |
-| Checkbox | `@delacour/native-ui/checkbox` | Colours, sizes, indeterminate, groups |
-| Field | `@delacour/native-ui/field` | Form layout, grouping, state cascade |
-| Icon | `@delacour/native-ui/icon` | Central Icons, with inherited size and colour |
-| Input | `@delacour/native-ui/input` | Variants, sizes, prefix and suffix |
-| ListGroup | `@delacour/native-ui/list-group` | Grouped rows, dividers, slots |
-| Pressable | `@delacour/native-ui/pressable` | Gestures, haptics, `asChild` |
-| Radio | `@delacour/native-ui/radio` | Groups, selection, sizes, orientation |
-| Screen | `@delacour/native-ui/screen` | Navbar, footer, scrollables, keyboard |
-| Separator | `@delacour/native-ui/separator` | Orientations, insets, weight |
-| Slider | `@delacour/native-ui/slider` | Range, orientation, colours, steps |
-| Spinner | `@delacour/native-ui/spinner` | Sizes, colours, custom glyphs |
-| Switch | `@delacour/native-ui/switch` | Drag or tap, colours, sizes, end content |
-| Tabs | `@delacour/native-ui/tabs` | Variants, sizes, swipe, scrolling |
-| Text | `@delacour/native-ui/text` | Type scale, presets, inline nesting |
-| DelacourProvider | `@delacour/native-ui/provider` | The app's root layer stack |
+| Accordion | `delacour-react-native-ui/accordion` | Selection modes, measured panels, indicators |
+| Badge | `delacour-react-native-ui/badge` | Variants, colours, sizes, dismiss |
+| BottomSheet | `delacour-react-native-ui/bottom-sheet` | Overlay, snap points, sticky footer, keyboard |
+| Button | `delacour-react-native-ui/button` | Variants, sizes, icons, loading |
+| Checkbox | `delacour-react-native-ui/checkbox` | Colours, sizes, indeterminate, groups |
+| Field | `delacour-react-native-ui/field` | Form layout, grouping, state cascade |
+| Icon | `delacour-react-native-ui/icon` | Central Icons, with inherited size and colour |
+| Input | `delacour-react-native-ui/input` | Variants, sizes, prefix and suffix |
+| ListGroup | `delacour-react-native-ui/list-group` | Grouped rows, dividers, slots |
+| Pressable | `delacour-react-native-ui/pressable` | Gestures, haptics, `asChild` |
+| Radio | `delacour-react-native-ui/radio` | Groups, selection, sizes, orientation |
+| Screen | `delacour-react-native-ui/screen` | Navbar, footer, scrollables, keyboard |
+| Separator | `delacour-react-native-ui/separator` | Orientations, insets, weight |
+| Slider | `delacour-react-native-ui/slider` | Range, orientation, colours, steps |
+| Spinner | `delacour-react-native-ui/spinner` | Sizes, colours, custom glyphs |
+| Switch | `delacour-react-native-ui/switch` | Drag or tap, colours, sizes, end content |
+| Tabs | `delacour-react-native-ui/tabs` | Variants, sizes, swipe, scrolling |
+| Text | `delacour-react-native-ui/text` | Type scale, presets, inline nesting |
+| DelacourProvider | `delacour-react-native-ui/provider` | The app's root layer stack |
 
 Also exported: `hooks/*`, `lib/*`, `expo/navigation-theme`, `icons/central`, and
 the `styles/*` CSS entries.

@@ -33,7 +33,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/tabs",
+					"from": "delacour-react-native-ui/tabs",
 					"to": "@registry/ui/tabs"
 				}
 			]

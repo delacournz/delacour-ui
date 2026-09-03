@@ -1,4 +1,4 @@
-import { asNumber, candleSentiment, formatDateTick, formatNumberTick } from "@delacour/charts/core";
+import { asNumber, candleSentiment, formatDateTick, formatNumberTick } from "delacour-react-native-charts/core";
 import { isLiteralColor } from "../../lib/color";
 import { tv } from "../../lib/tv";
 import type {
@@ -35,7 +35,7 @@ export type ChartSize = (typeof CHART_SIZES)[number];
 /**
  * The curves worth offering on a themed chart.
  *
- * A curated subset of what `@delacour/charts` can draw. The engine also exposes
+ * A curated subset of what `delacour-react-native-charts` can draw. The engine also exposes
  * `basis`, `cardinal` and the bump curves; they are omitted here because
  * `basis` does not pass through its own data — a scrub dot on it sits off every
  * datum — and the rest are variations nobody asks for by name. A caller who

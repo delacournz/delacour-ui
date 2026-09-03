@@ -129,22 +129,26 @@ describe("commandLine", () => {
 
 describe("pre-mode dist tags", () => {
 	test("peers a pre-mode package with a range its alpha satisfies", () => {
-		expect(peerRange("@delacour/charts")).toBe(">=0.0.0-0");
+		expect(peerRange("delacour-react-native-charts")).toBe(">=0.0.0-0");
 		expect(peerRange("clsx")).toBe("*");
 	});
 
-	test("installs @delacour/charts from the alpha tag", () => {
+	test("installs delacour-react-native-charts from the alpha tag", () => {
 		// `latest` deliberately points at nothing while this repository is in
 		// Changesets pre mode, so an untagged add fails outright.
-		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["@delacour/charts"] });
+		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["delacour-react-native-charts"] });
 
-		expect(commandLine(group as InstallGroup)).toBe("bun add @delacour/charts@alpha");
+		expect(commandLine(group as InstallGroup)).toBe("bun add delacour-react-native-charts@alpha");
 	});
 
 	test("leaves every other package untagged", () => {
-		const [group] = installCommands({ ...NONE, packageManager: "bun", dependencies: ["clsx", "@delacour/charts"] });
+		const [group] = installCommands({
+			...NONE,
+			packageManager: "bun",
+			dependencies: ["clsx", "delacour-react-native-charts"],
+		});
 
-		expect(commandLine(group as InstallGroup)).toBe("bun add clsx @delacour/charts@alpha");
+		expect(commandLine(group as InstallGroup)).toBe("bun add clsx delacour-react-native-charts@alpha");
 	});
 
 	test("tags the args but not the packages, so the satisfied check still matches", () => {
@@ -152,11 +156,16 @@ describe("pre-mode dist tags", () => {
 		// package.json. A tagged spec there would never match and the CLI would
 		// offer to reinstall a package the project already has, on every run.
 		const plan = planDependencies(
-			{ packageManager: "bun", expoDependencies: [], dependencies: ["@delacour/charts"], devDependencies: [] },
-			{ dependencies: { "@delacour/charts": "^0.1.0" } }
+			{
+				packageManager: "bun",
+				expoDependencies: [],
+				dependencies: ["delacour-react-native-charts"],
+				devDependencies: [],
+			},
+			{ dependencies: { "delacour-react-native-charts": "^0.1.0" } }
 		);
 
-		expect(plan.satisfied).toEqual(["@delacour/charts"]);
+		expect(plan.satisfied).toEqual(["delacour-react-native-charts"]);
 		expect(plan.missing).toEqual([]);
 	});
 });

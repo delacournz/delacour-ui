@@ -1,6 +1,6 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconColorSwatch } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconColorSwatch } from "delacour-react-native-ui/icons/central";
 import { usePathname, useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";

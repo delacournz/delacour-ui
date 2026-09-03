@@ -1,4 +1,4 @@
-import { Slider } from "@delacour/native-ui/slider";
+import { Slider } from "delacour-react-native-ui/slider";
 import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 

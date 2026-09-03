@@ -6,13 +6,13 @@ a styled wrapper with no state and no compound surface, which also reads
 `IconDefaultsProvider` so a parent can set size and colour for its whole subtree
 instead of every call site repeating them.
 
-`import { Icon } from "@delacour/native-ui/icon";`
+`import { Icon } from "delacour-react-native-ui/icon";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/icon` |
+| `index.ts` | → `delacour-react-native-ui/icon` |
 | `icon.tsx` | `Icon`, the `IconGlyph` proxy and the one `withUniwind` wrapper (see rule 7) — internal below `Icon` |
 | `icon.context.tsx` | `IconDefaults`, `IconDefaultsProvider`, `useIconDefaults()` |
 | `icon.variants.ts` | Pure `tv()` + the size-class ladder, no RN imports |
@@ -88,7 +88,7 @@ instead of every call site repeating them.
   `size="md"` is the same edge length in both and one can stand in for the other
   with nothing moving — which is what makes a button's loading swap free. See
   [Spinner](../spinner/AGENTS.md).
-- **Central Icons only**, via `@delacour/native-ui/icons/central` — never Lucide,
+- **Central Icons only**, via `delacour-react-native-ui/icons/central` — never Lucide,
   Hugeicons, or anything else. That is rule 5.
 - **`icon.variants.ts` is free of React Native imports** so the whole ladder is
   reachable from `bun test` — `resolveIconSizeClass`, `isIconSize` and

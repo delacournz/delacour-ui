@@ -55,7 +55,7 @@ export function useAnimatedPath(
 		if (current.type === "none" || !from.isInterpolatable(path)) {
 			if (__DEV__ && current.type !== "none" && !from.isInterpolatable(path)) {
 				console.warn(
-					"[@delacour/charts] two paths were not interpolatable, so the change snapped. " +
+					"[delacour-react-native-charts] two paths were not interpolatable, so the change snapped. " +
 						"Point counts are supposed to be matched in data space before the paths are built — " +
 						"this means chooseMorphStrategy or matchPointCounts got it wrong."
 				);

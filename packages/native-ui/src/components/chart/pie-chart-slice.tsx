@@ -1,4 +1,4 @@
-import { PieInset, PieSlices } from "@delacour/charts";
+import { PieInset, PieSlices } from "delacour-react-native-charts";
 import { type ReactElement, useMemo } from "react";
 import { usePieChart } from "./pie-chart.context";
 

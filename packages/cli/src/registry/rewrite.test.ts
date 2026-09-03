@@ -46,20 +46,20 @@ describe("applyRewrites", () => {
 		const source = [
 			"# Button",
 			"",
-			"Import it from @delacour/native-ui/button.",
-			'export * from "@delacour/native-ui/button";',
+			"Import it from delacour-react-native-ui/button.",
+			'export * from "delacour-react-native-ui/button";',
 		].join("\n");
 
-		expect(applyRewrites(source, [{ from: "@delacour/native-ui/button", to: "@registry/ui/button" }])).toBe(
+		expect(applyRewrites(source, [{ from: "delacour-react-native-ui/button", to: "@registry/ui/button" }])).toBe(
 			["# Button", "", "Import it from @registry/ui/button.", 'export * from "@registry/ui/button";'].join("\n")
 		);
 	});
 
 	test("prefers the longest subpath, so a nested one is not half-matched", () => {
-		const source = "See @delacour/native-ui/icons/central and @delacour/native-ui/icons.";
+		const source = "See delacour-react-native-ui/icons/central and delacour-react-native-ui/icons.";
 		const rewrites = [
-			{ from: "@delacour/native-ui/icons", to: "@registry/icons/index" },
-			{ from: "@delacour/native-ui/icons/central", to: "@registry/icons/central" },
+			{ from: "delacour-react-native-ui/icons", to: "@registry/icons/index" },
+			{ from: "delacour-react-native-ui/icons/central", to: "@registry/icons/central" },
 		];
 
 		expect(applyRewrites(source, rewrites)).toBe("See @registry/icons/central and @registry/icons/index.");

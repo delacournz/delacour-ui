@@ -1,6 +1,6 @@
 # Delacour UI — Monorepo
 
-A Bun workspace holding `@delacour/native-ui`, a React Native component library,
+A Bun workspace holding `delacour-react-native-ui`, a React Native component library,
 and the Expo app that renders it. Nothing here ships to a user; the library is
 the product.
 
@@ -8,8 +8,8 @@ the product.
 
 | Path | Package | What it is |
 | --- | --- | --- |
-| `packages/native-ui` | `@delacour/native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
-| `packages/charts` | `@delacour/charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
+| `packages/native-ui` | `delacour-react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
+| `packages/charts` | `delacour-react-native-charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
@@ -138,13 +138,19 @@ scripts by default, so the package is named in `trustedDependencies` in the root
 
 ## Releases
 
-Three packages reach npm — `delacour` (the CLI), `@delacour/native-ui` and `@delacour/charts`.
+Three packages reach npm — `delacour` (the CLI), `delacour-react-native-ui` and `delacour-react-native-charts`.
 Everything else in the workspace is `private: true`, which is the only thing stopping
 `changeset publish` from putting `@delacour/tsconfig` and friends on the registry the first time
 it runs.
 
-`@delacour/charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
-`import … from "@delacour/charts"` in `chart.tsx` is in the published tarball and gets resolved by
+**Published names are unscoped; workspace-private names are not.** The `@delacour` scope on npm is
+not ours, so the three packages that publish carry a `delacour-` prefix instead. Everything that
+stays in the workspace keeps `@delacour/…` — a private package is never resolved from the registry,
+so the scope costs nothing there and reads better in an import. Move a package from private to
+published and it has to be renamed on the way out.
+
+`delacour-react-native-charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
+`import … from "delacour-react-native-charts"` in `chart.tsx` is in the published tarball and gets resolved by
 a stranger's Metro. It is an **optional peer** of `native-ui` rather than a dependency — a
 dependency may be nested, two copies mean two chart contexts, and a correctly-nested
 `<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
@@ -175,8 +181,8 @@ sit at `0.0.1-alpha.0`, and while pre mode is on every `changeset version` produ
 Publishes go to npm's **`alpha` dist-tag**, from two directions: Changesets passes the pre tag, and
 `publishConfig.tag` in each package pins it so a hand-run `npm publish` cannot claim `latest`
 either. `latest` therefore points at nothing on purpose — an untested build should not be what
-`bun add @delacour/native-ui` resolves to. Every documented command names the tag
-(`bunx delacour@alpha`, `bun add @delacour/native-ui@alpha`).
+`bun add delacour-react-native-ui` resolves to. Every documented command names the tag
+(`bunx delacour@alpha`, `bun add delacour-react-native-ui@alpha`).
 
 Going stable is four steps, and skipping any one of them ships an alpha as `latest`:
 
@@ -206,7 +212,7 @@ requires and could never be merged. The PAT exists for that reason alone.
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
 bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
-workspace package a registry item depends on (`@delacour/charts`, for `chart`) and adds the
+workspace package a registry item depends on (`delacour-react-native-charts`, for `chart`) and adds the
 tarball to the scaffolded app before `add`, so the check covers this branch's engine rather than
 whatever npm last served — and passes before the package exists there at all.
 

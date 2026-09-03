@@ -1,20 +1,20 @@
-# @delacour/charts
+# delacour-react-native-charts
 
 Headless charting primitives for React Native — Skia for drawing, Reanimated
 for animation, Gesture Handler for touch.
 
 No tokens, no `className`, no theme. Every colour, font and size is a value you
 pass in. If you want charts already wearing a design system, use
-[`@delacour/native-ui/chart`](https://ui.delacour.co.nz/docs/native/components/chart),
+[`delacour-react-native-ui/chart`](https://ui.delacour.co.nz/docs/native/components/chart),
 which is this engine with the tokens attached.
 
-> **Alpha.** Both this package and `@delacour/native-ui` publish to npm's
+> **Alpha.** Both this package and `delacour-react-native-ui` publish to npm's
 > `alpha` tag. `latest` deliberately points at nothing.
 
 ## Install
 
 ```bash
-bun add @delacour/charts@alpha
+bun add delacour-react-native-charts@alpha
 bunx expo install @shopify/react-native-skia
 ```
 
@@ -29,7 +29,7 @@ handles touch already has one.
 ## Use
 
 ```tsx
-import { CartesianChart, ChartArea, ChartLine } from "@delacour/charts";
+import { CartesianChart, ChartArea, ChartLine } from "delacour-react-native-charts";
 
 <CartesianChart data={rows} xKey="day" yKeys={["revenue"]}>
   {({ points, bounds }) => (
@@ -54,7 +54,7 @@ inside the plot. Sibling series stack when the root is told which keys to
 stack, because only the root can size the y axis for the totals:
 
 ```tsx
-import { CartesianChart, ChartBar, ChartBarStack } from "@delacour/charts";
+import { CartesianChart, ChartBar, ChartBarStack } from "delacour-react-native-charts";
 
 <CartesianChart data={rows} domainPadding={{ x: 0.5 }} includeZero xKey="month" yKeys={["revenue"]}>
   <ChartBar color="#0A84FF" roundedCorners={{ topLeft: 4, topRight: 4 }} yKey="revenue" />
@@ -72,7 +72,7 @@ A pie is its own root. Slices, labels and the hairline between them are marks,
 and a tap reports the slice under the finger:
 
 ```tsx
-import { PieInset, PieLabel, PieSlices, PolarChart } from "@delacour/charts";
+import { PieInset, PieLabel, PieSlices, PolarChart } from "delacour-react-native-charts";
 
 <PolarChart data={rows} innerRadius="60%" labelKey="browser" onSlicePress={setSelected} selectedIndex={selected} valueKey="share">
   <PieSlices colors={["#0A84FF", "#30D158", "#FF9F0A", "#FF375F"]} />
@@ -83,11 +83,11 @@ import { PieInset, PieLabel, PieSlices, PolarChart } from "@delacour/charts";
 
 ## The maths on its own
 
-`@delacour/charts/core` is every scale, tick, curve and solver in the package,
+`delacour-react-native-charts/core` is every scale, tick, curve and solver in the package,
 importable with no Skia in the module graph:
 
 ```ts
-import { closestIndex, invertValue, makeScale } from "@delacour/charts/core";
+import { closestIndex, invertValue, makeScale } from "delacour-react-native-charts/core";
 ```
 
 ## Licence

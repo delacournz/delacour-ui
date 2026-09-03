@@ -1,8 +1,8 @@
-import { Icon } from "@delacour/native-ui/icon";
-import { IconBell, IconGlobe } from "@delacour/native-ui/icons/central";
-import { ListGroup } from "@delacour/native-ui/list-group";
-import { Spinner } from "@delacour/native-ui/spinner";
-import { Text } from "@delacour/native-ui/text";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconBell, IconGlobe } from "delacour-react-native-ui/icons/central";
+import { ListGroup } from "delacour-react-native-ui/list-group";
+import { Spinner } from "delacour-react-native-ui/spinner";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

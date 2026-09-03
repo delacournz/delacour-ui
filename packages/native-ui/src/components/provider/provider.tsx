@@ -69,7 +69,7 @@ export type DelacourProviderProps = {
  * @example
  * // expo-router root layout. The css import must stay the first statement.
  * import "../styles/global.css";
- * import { DelacourProvider } from "@delacour/native-ui/provider";
+ * import { DelacourProvider } from "delacour-react-native-ui/provider";
  * import { Stack } from "expo-router";
  *
  * export default function RootLayout() {

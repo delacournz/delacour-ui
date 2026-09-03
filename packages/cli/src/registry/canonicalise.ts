@@ -28,7 +28,7 @@ export type CanonicaliseInput = {
 	content: string;
 	/** Every source path in the tree, for resolving relative specifiers. */
 	sourcePaths: readonly string[];
-	/** `@delacour/native-ui/button` → `components/button/index.ts`. */
+	/** `delacour-react-native-ui/button` → `components/button/index.ts`. */
 	packageSubpaths: ReadonlyMap<string, string>;
 };
 
@@ -149,7 +149,7 @@ export function canonicaliseMarkdown(
 }
 
 /**
- * Rewrites `@delacour/native-ui/…` where it appears in prose.
+ * Rewrites `delacour-react-native-ui/…` where it appears in prose.
  *
  * Doc comments cite sibling modules by their package subpath. Left alone, a
  * copied `icon.tsx` would tell its new owner to import from a package they

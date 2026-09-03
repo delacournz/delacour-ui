@@ -2,7 +2,7 @@
  * Regenerates the `exports` map in package.json from the files on disk.
  *
  * Exports are granular on purpose: an app that never imports
- * `@delacour/native-ui/bottom-sheet` never makes Metro resolve its optional
+ * `delacour-react-native-ui/bottom-sheet` never makes Metro resolve its optional
  * peer dependency. A package-wide barrel would force every consumer to resolve
  * everything.
  *

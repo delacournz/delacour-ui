@@ -8,7 +8,7 @@ import { ICON_FALLBACK_COLOR, type IconSize, isIconSize, resolveIconSizeClass } 
 export type IconComponent = ComponentType<SvgProps & { size?: number | string }>;
 
 export type IconProps = Omit<SvgProps, "color" | "width" | "height"> & {
-	/** An icon component from `@delacour/native-ui/icons/central`. */
+	/** An icon component from `delacour-react-native-ui/icons/central`. */
 	icon: IconComponent;
 	/** A named size, or an edge length in points. A number beats `className`. */
 	size?: IconSize | number;

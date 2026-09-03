@@ -8,8 +8,8 @@ The library uses [Central Icons](https://centralicons.com) exclusively, re-expor
 subpath.
 
 ```tsx
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart, IconPlus, IconTrash } from "@delacour/native-ui/icons/central";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconHeart, IconPlus, IconTrash } from "delacour-react-native-ui/icons/central";
 
 <Icon icon={IconHeart} />;
 ```
@@ -37,7 +37,7 @@ An explicit `size` or `color` on the icon still wins. See
 ## Publishing defaults yourself
 
 ```tsx
-import { IconDefaultsProvider } from "@delacour/native-ui/icon";
+import { IconDefaultsProvider } from "delacour-react-native-ui/icon";
 
 <IconDefaultsProvider className="size-icon-lg" color="muted-foreground">
   <Icon icon={IconPlus} />

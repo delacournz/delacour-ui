@@ -1,4 +1,4 @@
-import { ChartCursorDot } from "@delacour/charts";
+import { ChartCursorDot } from "delacour-react-native-charts";
 import type { ReactElement } from "react";
 import { useChart } from "./chart.context";
 

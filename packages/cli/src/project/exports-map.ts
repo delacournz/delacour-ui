@@ -4,7 +4,7 @@ import type { Namespace } from "../registry/namespaces";
 /**
  * Builds a shared package's `exports` map from the files the CLI wrote.
  *
- * The conventions are `@delacour/native-ui`'s, restated — see
+ * The conventions are `delacour-react-native-ui`'s, restated — see
  * `packages/native-ui/scripts/gen-exports.ts`, which produces the same shape for
  * the library itself. A component is exported once, at its folder's `index.ts`;
  * flat files under `lib`, `hooks` and `icons` are exported individually.

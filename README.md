@@ -10,7 +10,7 @@ The library takes no framework dependency and no third-party component kit.
 
 | Package | Description |
 | --- | --- |
-| [`@delacour/native-ui`](packages/native-ui) | The component library — 19 components, subpath exports, no build step |
+| [`delacour-react-native-ui`](packages/native-ui) | The component library — 19 components, subpath exports, no build step |
 | [`@delacour/playground`](apps/playground) | Expo app rendering every component on a device |
 | [`@delacour/biome-config`](packages/biome-config) | Lint and format rules |
 | [`@delacour/tsconfig`](packages/tsconfig) | Shared TypeScript configs |
@@ -54,7 +54,8 @@ design decisions, the constraints, and the reasoning behind them.
 
 ## Licence
 
-MIT. Two packages are published — [`delacour`](https://www.npmjs.com/package/delacour), the CLI,
-and [`@delacour/native-ui`](https://www.npmjs.com/package/@delacour/native-ui), the components.
-Everything else in the workspace is private. See
+MIT. Three packages are published — [`delacour`](https://www.npmjs.com/package/delacour), the CLI,
+[`delacour-react-native-ui`](https://www.npmjs.com/package/delacour-react-native-ui), the components,
+and [`delacour-react-native-charts`](https://www.npmjs.com/package/delacour-react-native-charts), the
+charting engine. Everything else in the workspace is private. See
 [Releases](AGENTS.md#releases) for how a change gets to npm.

@@ -16,7 +16,7 @@
 		"use-theme-color"
 	],
 	"dependencies": [
-		"@delacour/charts"
+		"delacour-react-native-charts"
 	],
 	"expoDependencies": [
 		"@shopify/react-native-skia",
@@ -32,11 +32,11 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/button",
+					"from": "delacour-react-native-ui/button",
 					"to": "@registry/ui/button"
 				},
 				{
-					"from": "@delacour/native-ui/chart",
+					"from": "delacour-react-native-ui/chart",
 					"to": "@registry/ui/chart"
 				}
 			]

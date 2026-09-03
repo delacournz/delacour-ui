@@ -1,4 +1,4 @@
-import { sliceLabelPosition } from "@delacour/charts/core";
+import { sliceLabelPosition } from "delacour-react-native-charts/core";
 import { type ReactElement, useState } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import { View } from "react-native";

@@ -1,4 +1,4 @@
-import type { PieSliceData } from "@delacour/charts/core";
+import type { PieSliceData } from "delacour-react-native-charts/core";
 import { createContext, type ReactNode, useContext } from "react";
 import type { ChartSlots } from "./chart.context";
 import type { ChartResolvedSeries } from "./chart.types";

@@ -63,7 +63,7 @@ export function ChartCandlestick({
 		for (const key of [keys.open, keys.high, keys.low, keys.close]) {
 			if (points[key] === undefined) {
 				console.warn(
-					`[@delacour/charts] <ChartCandlestick> was given the key "${key}" but the chart has no series ` +
+					`[delacour-react-native-charts] <ChartCandlestick> was given the key "${key}" but the chart has no series ` +
 						"by that name. Every candle key has to be one of the chart's yKeys."
 				);
 			}

@@ -1,4 +1,4 @@
-import { INPUT_SIZES } from "@delacour/native-ui/input";
+import { INPUT_SIZES } from "delacour-react-native-ui/input";
 import type { ReactElement } from "react";
 import { DemoGallery } from "@/components/demo-gallery";
 import { inputSizesDemos } from "@/demos/input/sizes";

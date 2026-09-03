@@ -1,7 +1,7 @@
-import { BottomSheet, useBottomSheetInput } from "@delacour/native-ui/bottom-sheet";
-import { Button } from "@delacour/native-ui/button";
-import { Field } from "@delacour/native-ui/field";
-import { Input } from "@delacour/native-ui/input";
+import { BottomSheet, useBottomSheetInput } from "delacour-react-native-ui/bottom-sheet";
+import { Button } from "delacour-react-native-ui/button";
+import { Field } from "delacour-react-native-ui/field";
+import { Input } from "delacour-react-native-ui/input";
 import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 

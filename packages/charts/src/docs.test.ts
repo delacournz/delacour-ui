@@ -6,7 +6,7 @@ import { PACKAGE_ROOT, SRC, sourceFiles } from "./source-tree.test";
 /**
  * Documentation is part of the change.
  *
- * `@delacour/native-ui` grew this test because `Radio` shipped undocumented
+ * `delacour-react-native-ui` grew this test because `Radio` shipped undocumented
  * and nothing caught it for fifteen commits. The same applies here, scoped to
  * the top-level folders rather than every nested one — a doc per directory of
  * four utility modules is noise, a doc per subsystem is not.

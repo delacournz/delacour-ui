@@ -92,7 +92,7 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 			<Tab value="Package">
 				<InstallTabs
 					commands={[
-						{ verb: "add", packages: ["@delacour/native-ui@alpha"] },
+						{ verb: "add", packages: ["delacour-react-native-ui@alpha"] },
 						{ verb: "expo", packages: entry.expo },
 					]}
 				/>

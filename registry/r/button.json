@@ -27,7 +27,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/button",
+					"from": "delacour-react-native-ui/button",
 					"to": "@registry/ui/button"
 				}
 			]

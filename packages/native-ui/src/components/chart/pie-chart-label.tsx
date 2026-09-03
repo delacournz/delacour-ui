@@ -1,5 +1,5 @@
-import { PieLabel } from "@delacour/charts";
-import type { PieSliceData } from "@delacour/charts/core";
+import { PieLabel } from "delacour-react-native-charts";
+import type { PieSliceData } from "delacour-react-native-charts/core";
 import { type ReactElement, useCallback } from "react";
 import { type PieLabelFormat, pieLabelText } from "./chart.variants";
 import { usePieChart } from "./pie-chart.context";

@@ -63,7 +63,7 @@ it resolves to in both themes, and how each derivation is built.
 Redeclare it in your own CSS, after the library's import. Raw names, not `--color-*`.
 
 ```css title="global.css"
-@import "@delacour/native-ui/styles";
+@import "delacour-react-native-ui/styles";
 
 @layer theme {
   :root {
@@ -103,7 +103,7 @@ A class cannot express a literal (`#EC4899`) and cannot reach an SVG paint prop 
 `stopColor`. For a prop that needs a colour *value*, use `useThemeColor`.
 
 ```tsx
-import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
+import { useThemeColor } from "delacour-react-native-ui/hooks/use-theme-color";
 
 const destructive = useThemeColor("destructive");
 ```
@@ -125,7 +125,7 @@ rounded corners. That layer has no escape hatch: a `contentStyle` in `screenOpti
 it. Only a theme fixes it.
 
 ```tsx title="app/_layout.tsx"
-import { NavigationTheme } from "@delacour/native-ui/expo/navigation-theme";
+import { NavigationTheme } from "delacour-react-native-ui/expo/navigation-theme";
 
 <DelacourProvider>
   <NavigationTheme>
@@ -138,7 +138,7 @@ On a different navigator, use the hook directly. It returns **plain values, not 
 library imports nothing from a navigation package.
 
 ```tsx
-import { useNavigationTheme } from "@delacour/native-ui/hooks/use-navigation-theme";
+import { useNavigationTheme } from "delacour-react-native-ui/hooks/use-navigation-theme";
 
 const { dark, ...colors } = useNavigationTheme();
 

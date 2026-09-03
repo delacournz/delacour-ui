@@ -1,5 +1,5 @@
-import { type ChartBarLabels, ChartBar as EngineBar } from "@delacour/charts";
-import type { ChartPoint, CornerRadii } from "@delacour/charts/core";
+import { type ChartBarLabels, ChartBar as EngineBar } from "delacour-react-native-charts";
+import type { ChartPoint, CornerRadii } from "delacour-react-native-charts/core";
 import type { ReactElement } from "react";
 import { useChart, useSeriesColor } from "./chart.context";
 import type { ChartDatum } from "./chart.types";

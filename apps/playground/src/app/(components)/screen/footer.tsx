@@ -1,6 +1,6 @@
-import { Button } from "@delacour/native-ui/button";
-import { Screen, type ScreenPlacement } from "@delacour/native-ui/screen";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { Screen, type ScreenPlacement } from "delacour-react-native-ui/screen";
+import { Text } from "delacour-react-native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { TextInput, View } from "react-native";

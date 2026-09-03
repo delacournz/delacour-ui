@@ -1,5 +1,5 @@
-import { Field } from "@delacour/native-ui/field";
-import { INPUT_VARIANTS, Input } from "@delacour/native-ui/input";
+import { Field } from "delacour-react-native-ui/field";
+import { INPUT_VARIANTS, Input } from "delacour-react-native-ui/input";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

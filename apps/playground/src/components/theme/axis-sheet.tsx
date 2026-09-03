@@ -1,5 +1,5 @@
 import type { DesignSystemConfig } from "@delacour/design-system/config";
-import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
+import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";
 import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { useWindowDimensions, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";

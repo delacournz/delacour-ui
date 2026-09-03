@@ -1,6 +1,6 @@
-import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
-import { Screen } from "@delacour/native-ui/screen";
-import { Tabs } from "@delacour/native-ui/tabs";
+import { useThemeColor } from "delacour-react-native-ui/hooks/use-theme-color";
+import { Screen } from "delacour-react-native-ui/screen";
+import { Tabs } from "delacour-react-native-ui/tabs";
 import { createContext, type ReactElement, type ReactNode, useContext, useMemo, useState } from "react";
 import { Animated, type LayoutChangeEvent, View } from "react-native";
 

@@ -64,7 +64,8 @@ const rawVersion = (process.env as Record<string, string | undefined>).APP_VERSI
 const APP_VERSION = rawVersion && /^\d+\.\d+\.\d+$/.test(rawVersion) ? rawVersion : "1.0.0";
 
 /**
- * Icon art comes from `assets/icon-source.svg` via `bun run icons`. The PNGs
+ * Icon art comes from `packages/brand`'s `assets/icon-source.svg` via
+ * `bun run icons`. The PNGs
  * below are generated — edit the SVG, not them. `ios/` and `android/` are
  * gitignored, so a change here only reaches a device through `expo prebuild`
  * and a native rebuild.
@@ -131,13 +132,24 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
-		// The colours mirror --background in packages/native-ui/src/styles/theme.css.
-		// Restated rather than imported because prebuild runs in Node and cannot
-		// read the CSS; every other consumer of the colour reads the token.
+		// The colours mirror --background in packages/native-ui/src/styles/theme.css:
+		// oklch(0.985 0 0) is #fafafa and oklch(0.145 0 0) is #0a0a0a. Restated as hex
+		// rather than imported because prebuild runs in Node and cannot read the CSS;
+		// every other consumer of the colour reads the token. app.config.test.ts
+		// converts the CSS and asserts both, which is what the import cannot do.
+		//
+		// Light was #ffffff until that test existed, against a token of #fafafa — the
+		// splash held pure white and the first frame repainted a shade darker. It is
+		// a near-white, not white; do not tidy it back.
 		//
 		// Without the dark variant the generated storyboard hardcodes white and
 		// declares appearance="light", so a dark-mode cold start flashes white
 		// before React mounts.
+		//
+		// The two images are separate files holding identical bytes. The glyph is an
+		// amber stroke on transparent and reads on both grounds, so the dark theme
+		// needs no other art — but one file behind both names couples them, and a
+		// later change to the light splash would move the dark one with it.
 		//
 		// `image` is not optional, however colour-only the splash is meant to look.
 		// The plugin writes windowSplashScreenAnimatedIcon → @drawable/splashscreen_logo
@@ -156,8 +168,8 @@ const expoConfig: ExpoConfig = {
 			{
 				image: "./assets/splash-icon.png",
 				imageWidth: 240,
-				backgroundColor: "#ffffff",
-				dark: { image: "./assets/splash-icon.png", backgroundColor: "#0a0a0a" },
+				backgroundColor: "#fafafa",
+				dark: { image: "./assets/splash-icon-dark.png", backgroundColor: "#0a0a0a" },
 			},
 		],
 		[

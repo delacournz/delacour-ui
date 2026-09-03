@@ -897,7 +897,27 @@ cannot run them.
   compiles the reference and every Android release build dies at
   `:app:processReleaseResources`. iOS gets the same dangling `SplashScreenLogo`
   in its storyboard and merely tolerates it, which is why this was red on one
-  platform only. `splash-icon.png` is the art, `app.config.test.ts` is the guard,
-  and that test also fails if `generate-icons.ts` puts the file back on its
-  `STALE` list — the deletion that would otherwise re-break the build with no
-  edit to blame.
+  platform only. `splash-icon.png` and `splash-icon-dark.png` are the art, and
+  `app.config.test.ts` is the guard: it asserts the image is declared, that the
+  two themes name **different files**, and that both background colours are the
+  sRGB of `--background` in `theme.css`. It also fails if `generate-icons.ts`
+  puts either file back on its `STALE` list — the deletion that would otherwise
+  re-break the build with no edit to blame.
+- **The two splash PNGs hold identical bytes, and are still two files.** The
+  glyph is an amber stroke on transparent and reads on both `#fafafa` and
+  `#0a0a0a`, so dark needs no other art — but `image` and `dark.image` pointing
+  at one file is a single decision wearing two names, and a later change to the
+  light splash would move the dark one with it. The same argument
+  `generate-icons.ts` already makes for `icon-dark.png`.
+- **The background colours are checked against the tokens, not trusted.** Light
+  was `#ffffff` against a `--background` of `#fafafa` for as long as nothing
+  compared them, so every light cold start stepped a shade darker at first
+  paint. The comment claimed a mirror; only the test makes it one.
+- **`react-native-bootsplash` was evaluated and rejected** — do not re-research
+  it. It gates dark-mode assets behind a paid licence key (~$40, Gumroad), which
+  this splash would have to give up. Its headline advantage over
+  `expo-splash-screen` is a cross-platform fade, and this app never calls the
+  splash JS API at all — Expo Router auto-hides, `setOptions({ fade: true })`
+  being iOS-only costs nothing here. It uses the same Android 12+ platform
+  SplashScreen API this does (`values-v31/styles.xml`), so there is no
+  double-splash argument either way.

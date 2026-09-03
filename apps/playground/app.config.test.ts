@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { formatHex } from "culori";
 import expoConfig from "./app.config";
 
 /**
@@ -47,6 +48,67 @@ type SplashConfig = {
 };
 
 const SPLASH_CANVAS = 288;
+
+/**
+ * `theme.css`, read as text.
+ *
+ * It cannot be imported: the palette is wired through Uniwind's `@variant`,
+ * which only exists inside Metro. `apps/web/src/styles/app.css.test.ts` and
+ * `packages/design-system/src/design-system.test.ts` both carry this same
+ * reader for the same reason.
+ */
+const THEME_CSS = readFileSync(
+	join(PLAYGROUND, "..", "..", "packages", "native-ui", "src", "styles", "theme.css"),
+	"utf-8"
+);
+
+/**
+ * The body of one `@variant` block, brace-matched.
+ *
+ * Counting braces rather than splitting on the first `}`: both blocks hold
+ * `color-mix()` calls, and a split truncates the palette to whatever precedes
+ * the first one. That reads as "the theme declares nothing", and every
+ * assertion built on it would pass vacuously.
+ */
+function themeBlock(variant: "dark" | "light"): string {
+	const marker = `@variant ${variant} {`;
+	const start = THEME_CSS.indexOf(marker);
+
+	if (start === -1) throw new Error(`theme.css declares no @variant ${variant}`);
+
+	let depth = 1;
+	let index = start + marker.length;
+
+	while (index < THEME_CSS.length && depth > 0) {
+		if (THEME_CSS[index] === "{") depth += 1;
+		if (THEME_CSS[index] === "}") depth -= 1;
+		index += 1;
+	}
+
+	if (depth !== 0) throw new Error(`theme.css never closes its @variant ${variant} block`);
+
+	return THEME_CSS.slice(start + marker.length, index - 1);
+}
+
+/**
+ * `--background` for one variant, as the sRGB hex a storyboard takes.
+ *
+ * The palette is authored in `oklch()` and the plugin wants a hex, so this is
+ * the one place in the repo that has to convert rather than compare strings.
+ */
+function backgroundHex(variant: "dark" | "light"): string {
+	const declared = themeBlock(variant)
+		.match(/--background:\s*([^;]+);/)?.[1]
+		?.trim();
+
+	if (declared === undefined) throw new Error(`theme.css declares no --background under ${variant}`);
+
+	const hex = formatHex(declared);
+
+	if (!hex) throw new Error(`culori cannot parse --background under ${variant}: ${declared}`);
+
+	return hex.toLowerCase();
+}
 
 function pluginEntry(name: string): unknown {
 	const entry = expoConfig.plugins?.find((plugin) => Array.isArray(plugin) && plugin[0] === name);
@@ -99,6 +161,14 @@ describe("app.config.ts assets", () => {
 	});
 });
 
+describe("the theme.css reader", () => {
+	// Every assertion below is worth nothing if the parse stopped early.
+	test("brace-matches, rather than stopping at the first color-mix", () => {
+		expect(themeBlock("light")).toContain("--overlay:");
+		expect(themeBlock("dark")).toContain("--overlay:");
+	});
+});
+
 describe("expo-splash-screen", () => {
 	test("declares an image, because the Android style item is unconditional", () => {
 		expect(splash.image).toBeString();
@@ -116,6 +186,21 @@ describe("expo-splash-screen", () => {
 	test("sizes the image inside the canvas the plugin composites onto", () => {
 		expect(splash.imageWidth).toBeNumber();
 		expect(splash.imageWidth).toBeLessThanOrEqual(SPLASH_CANVAS);
+	});
+
+	// One file behind both themes couples two consumers that answer to different
+	// systems: a change to how the light splash draws would silently move the dark
+	// one. The two rasterise to identical bytes today, which is not the point.
+	test("gives dark its own file, so the two cannot drift", () => {
+		expect(splash.dark?.image).not.toBe(splash.image);
+	});
+
+	// The comment above the plugin entry claims these mirror `--background`, and
+	// for light it was wrong for as long as nothing checked: `#ffffff` against a
+	// token of `#fafafa`, so a light cold start stepped colour at first paint.
+	test("mirrors --background, which is what the app paints behind React", () => {
+		expect(splash.backgroundColor?.toLowerCase()).toBe(backgroundHex("light"));
+		expect(splash.dark?.backgroundColor?.toLowerCase()).toBe(backgroundHex("dark"));
 	});
 });
 

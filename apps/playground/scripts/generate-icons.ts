@@ -55,23 +55,32 @@ const VARIANTS: Variant[] = [
 		options: { background: null, stroke: TINT, inset: DELACOUR_ADAPTIVE_INSET },
 		note: "adaptiveIcon.monochromeImage — Android 13+ themed icons",
 	},
-	// The same options as icon-dark.png, so the two rasterise to identical bytes
-	// today. They stay separate files because they answer to different consumers:
-	// a change to how iOS wants its dark icon should not silently move what the
-	// splash screen draws.
+	// All three rasterise to identical bytes today, and stay separate files
+	// because they answer to different consumers: a change to how iOS wants its
+	// dark icon should not silently move what the splash screen draws, and a
+	// change to either splash should not move the other.
+	//
+	// The dark splash needs no different art — the amber stroke on transparent
+	// reads on both #fafafa and #0a0a0a — but it does need its own file. Pointed
+	// at one, `dark.image` and `image` are one decision wearing two names.
 	{
 		file: "splash-icon.png",
 		options: { background: null },
-		note: "expo-splash-screen image — one glyph, both themes",
+		note: "expo-splash-screen image — the light theme's glyph",
+	},
+	{
+		file: "splash-icon-dark.png",
+		options: { background: null },
+		note: "expo-splash-screen dark.image — the same glyph, its own file",
 	},
 ];
 
 /**
  * Template defaults that nothing references now that the icon is configured.
  *
- * `splash-icon.png` is deliberately not among them any more — `app.config.ts`
- * names it, and a generated asset the config depends on cannot also be one this
- * script deletes. `app.config.test.ts` fails if the two lists ever overlap again.
+ * Neither splash icon is among them any more — `app.config.ts` names both, and a
+ * generated asset the config depends on cannot also be one this script deletes.
+ * `app.config.test.ts` fails if the two lists ever overlap again.
  */
 const STALE = ["favicon.png", "android-icon-background.png"];
 

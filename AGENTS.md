@@ -305,7 +305,7 @@ caught it for fifteen commits.
 
 `apps/*/ios`, `apps/*/android` (`expo prebuild`), `.expo`, `.turbo`,
 `apps/playground/src/uniwind-types.d.ts` (Uniwind's Metro plugin),
-`apps/playground/assets/icon*.png` and `apps/web/public/{favicon*,icon-*,apple-touch-icon}.*`
+`apps/playground/assets/{icon*,splash-icon}.png` and `apps/web/public/{favicon*,icon-*,apple-touch-icon}.*`
 (`bun run icons`, in each app — the source is `packages/brand`),
 `apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `native-ui`'s
 `package.json` `exports` map (`bun run gen-exports`).

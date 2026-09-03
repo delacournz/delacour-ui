@@ -55,10 +55,25 @@ const VARIANTS: Variant[] = [
 		options: { background: null, stroke: TINT, inset: DELACOUR_ADAPTIVE_INSET },
 		note: "adaptiveIcon.monochromeImage — Android 13+ themed icons",
 	},
+	// The same options as icon-dark.png, so the two rasterise to identical bytes
+	// today. They stay separate files because they answer to different consumers:
+	// a change to how iOS wants its dark icon should not silently move what the
+	// splash screen draws.
+	{
+		file: "splash-icon.png",
+		options: { background: null },
+		note: "expo-splash-screen image — one glyph, both themes",
+	},
 ];
 
-/** Template defaults that nothing references now that the icon is configured. */
-const STALE = ["favicon.png", "splash-icon.png", "android-icon-background.png"];
+/**
+ * Template defaults that nothing references now that the icon is configured.
+ *
+ * `splash-icon.png` is deliberately not among them any more — `app.config.ts`
+ * names it, and a generated asset the config depends on cannot also be one this
+ * script deletes. `app.config.test.ts` fails if the two lists ever overlap again.
+ */
+const STALE = ["favicon.png", "android-icon-background.png"];
 
 function render(svg: string): Buffer {
 	return Buffer.from(new Resvg(svg, { fitTo: { mode: "width", value: DELACOUR_CANVAS } }).render().asPng());

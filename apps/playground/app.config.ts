@@ -131,18 +131,33 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
-		// Mirrors --background in packages/native-ui/src/styles/theme.css.
+		// The colours mirror --background in packages/native-ui/src/styles/theme.css.
 		// Restated rather than imported because prebuild runs in Node and cannot
 		// read the CSS; every other consumer of the colour reads the token.
 		//
 		// Without the dark variant the generated storyboard hardcodes white and
 		// declares appearance="light", so a dark-mode cold start flashes white
 		// before React mounts.
+		//
+		// `image` is not optional, however colour-only the splash is meant to look.
+		// The plugin writes windowSplashScreenAnimatedIcon → @drawable/splashscreen_logo
+		// into Android's styles.xml unconditionally, and writes that drawable only
+		// when given an image — so a config with colours alone prebuilds to a theme
+		// referencing a resource that does not exist, and every Android release build
+		// dies at :app:processReleaseResources. iOS carries the same dangling
+		// SplashScreenLogo in its storyboard and merely tolerates it.
+		//
+		// imageWidth is bounded by the 288dp canvas the plugin composites onto. The
+		// PNG keeps the master art's 1024 canvas, in which the glyph spans 632 —
+		// so 240 draws the mark at ~148dp, inside the inner two thirds Android
+		// reserves for a splash icon with no background of its own.
 		[
 			"expo-splash-screen",
 			{
+				image: "./assets/splash-icon.png",
+				imageWidth: 240,
 				backgroundColor: "#ffffff",
-				dark: { backgroundColor: "#0a0a0a" },
+				dark: { image: "./assets/splash-icon.png", backgroundColor: "#0a0a0a" },
 			},
 		],
 		[

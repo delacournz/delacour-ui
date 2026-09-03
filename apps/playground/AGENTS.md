@@ -883,9 +883,21 @@ cannot run them.
   base carries the resolver settings its Metro pipeline expects.
 - **No comments inside JSX.** The explanation goes in the component's doc comment
   or above the `return`.
-- The app icon is generated — edit
+- The app icon **and the splash logo** are generated — edit
   [`packages/brand`](../../packages/brand/AGENTS.md)'s `assets/icon-source.svg`
   and its matching constants, then run `bun run icons`, never the PNGs. The docs
   site draws its favicons from the same source, so a change there is a change to
   both. `ios/` and `android/` are gitignored, so an `app.config.ts` change
   reaches a device only through `prebuild` and a rebuild.
+- **`expo-splash-screen` must always be given an `image`.** Its Android plugin
+  writes `windowSplashScreenAnimatedIcon → @drawable/splashscreen_logo` into
+  `styles.xml` unconditionally but writes that drawable only when it has art, so
+  a splash configured with colours alone prebuilds to a theme pointing at a
+  resource that does not exist. `MainActivity` carries the theme, so AAPT2
+  compiles the reference and every Android release build dies at
+  `:app:processReleaseResources`. iOS gets the same dangling `SplashScreenLogo`
+  in its storyboard and merely tolerates it, which is why this was red on one
+  platform only. `splash-icon.png` is the art, `app.config.test.ts` is the guard,
+  and that test also fails if `generate-icons.ts` puts the file back on its
+  `STALE` list — the deletion that would otherwise re-break the build with no
+  edit to blame.

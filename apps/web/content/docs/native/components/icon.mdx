@@ -13,8 +13,8 @@ icon: Shapes
 ## Usage
 
 ```tsx
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart } from "@delacour/native-ui/icons/central";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconHeart } from "delacour-react-native-ui/icons/central";
 ```
 
 ```tsx
@@ -53,7 +53,7 @@ A bare `<Icon>` takes its size and colour from the nearest provider.
 <Preview id="icon/inherited-from-a-button" />
 
 ```tsx
-import { IconDefaultsProvider } from "@delacour/native-ui/icon";
+import { IconDefaultsProvider } from "delacour-react-native-ui/icon";
 
 <IconDefaultsProvider value={{ className: "size-icon-lg", color: "muted-foreground" }}>
   {children}
@@ -83,7 +83,7 @@ Extends `SvgProps`, minus `color`, `width` and `height`.
     icon: {
       type: "IconComponent",
       required: true,
-      description: "A Central Icons glyph, imported from @delacour/native-ui/icons/central.",
+      description: "A Central Icons glyph, imported from delacour-react-native-ui/icons/central.",
     },
     size: {
       type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl" | number',
@@ -115,5 +115,5 @@ import {
   iconVariants,
   isIconSize,
   resolveIconSizeClass,
-} from "@delacour/native-ui/icon";
+} from "delacour-react-native-ui/icon";
 ```

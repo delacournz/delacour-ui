@@ -36,7 +36,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/bottom-sheet",
+					"from": "delacour-react-native-ui/bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
 				}
 			]

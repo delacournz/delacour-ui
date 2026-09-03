@@ -1,5 +1,5 @@
-import { CartesianChart, type ChartOrientation, type ScrubConfig, useChartScrub } from "@delacour/charts";
-import { type CurveType, resolveXValues } from "@delacour/charts/core";
+import { CartesianChart, type ChartOrientation, type ScrubConfig, useChartScrub } from "delacour-react-native-charts";
+import { type CurveType, resolveXValues } from "delacour-react-native-charts/core";
 import { Children, isValidElement, type ReactElement, type ReactNode, useMemo, useState } from "react";
 import type { LayoutChangeEvent } from "react-native";
 import { View } from "react-native";

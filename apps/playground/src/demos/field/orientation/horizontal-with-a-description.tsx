@@ -1,5 +1,5 @@
-import { Checkbox } from "@delacour/native-ui/checkbox";
-import { Field } from "@delacour/native-ui/field";
+import { Checkbox } from "delacour-react-native-ui/checkbox";
+import { Field } from "delacour-react-native-ui/field";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

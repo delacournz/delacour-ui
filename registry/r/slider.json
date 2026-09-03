@@ -30,7 +30,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/slider",
+					"from": "delacour-react-native-ui/slider",
 					"to": "@registry/ui/slider"
 				}
 			]

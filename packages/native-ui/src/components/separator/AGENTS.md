@@ -3,13 +3,13 @@
 A one-pixel rule, hidden from assistive technology — a line between every row
 carries nothing a screen reader can use, and announcing them buries the rows.
 
-`import { Separator } from "@delacour/native-ui/separator";`
+`import { Separator } from "delacour-react-native-ui/separator";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/separator` |
+| `index.ts` | → `delacour-react-native-ui/separator` |
 | `separator.tsx` | The `tv()` and the component, in one file |
 
 ## Design

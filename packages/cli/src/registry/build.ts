@@ -258,7 +258,7 @@ function assertDependenciesResolve(items: readonly RegistryItem[]): void {
 }
 
 /**
- * `@delacour/native-ui/button` → `components/button/index.ts`, read off the
+ * `delacour-react-native-ui/button` → `components/button/index.ts`, read off the
  * package's own `exports` map so the two cannot disagree.
  */
 function collectPackageSubpaths(packageJson: PackageJson): Map<string, string> {

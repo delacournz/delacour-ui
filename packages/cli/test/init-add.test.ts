@@ -15,7 +15,7 @@ import { readConfig } from "../src/config/resolve";
  * would take a minute and need a network.
  *
  * The assertion that matters most is the last one in each block: no
- * `@registry/` placeholder and no `@delacour/native-ui` import survives into a
+ * `@registry/` placeholder and no `delacour-react-native-ui` import survives into a
  * consumer's file. Either would be a component that does not resolve.
  */
 
@@ -78,7 +78,7 @@ describe("init and add, in a plain Expo app", () => {
 		for (const path of await written(root)) {
 			const content = await read(root, path);
 			expect(`${path}: ${content}`).not.toContain("@registry/");
-			expect(`${path}: ${content}`).not.toContain("@delacour/native-ui");
+			expect(`${path}: ${content}`).not.toContain("delacour-react-native-ui");
 		}
 	});
 

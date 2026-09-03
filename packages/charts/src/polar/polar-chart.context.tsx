@@ -24,7 +24,7 @@ export function usePolarContext(): PolarContextValue {
 	const value = useContext(PolarChartContext);
 	if (value === null) {
 		throw new Error(
-			"[@delacour/charts] a pie mark was rendered outside a <PolarChart>. " +
+			"[delacour-react-native-charts] a pie mark was rendered outside a <PolarChart>. " +
 				"Marks read the chart from context, so they have to be its children."
 		);
 	}

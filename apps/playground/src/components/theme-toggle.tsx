@@ -1,6 +1,6 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconMoon, IconSun } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconMoon, IconSun } from "delacour-react-native-ui/icons/central";
 import { type ReactElement, useEffect, useState } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";

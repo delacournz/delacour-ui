@@ -1,6 +1,6 @@
-import { Button } from "@delacour/native-ui/button";
-import { TABS_SCROLL_ALIGNS, Tabs, type TabsScrollAlign } from "@delacour/native-ui/tabs";
-import { Text } from "@delacour/native-ui/text";
+import { Button } from "delacour-react-native-ui/button";
+import { TABS_SCROLL_ALIGNS, Tabs, type TabsScrollAlign } from "delacour-react-native-ui/tabs";
+import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

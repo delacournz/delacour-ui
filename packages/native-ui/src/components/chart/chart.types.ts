@@ -1,4 +1,4 @@
-import type { ChartRow, Sentiment } from "@delacour/charts/core";
+import type { ChartRow, Sentiment } from "delacour-react-native-charts/core";
 
 /** One series' name and colour. */
 export type ChartSeriesConfig = {

@@ -13,7 +13,7 @@
  */
 
 export type Rewrite = {
-	/** The specifier as the library wrote it — `"../icon"`, `"@delacour/native-ui/provider"`. */
+	/** The specifier as the library wrote it — `"../icon"`, `"delacour-react-native-ui/provider"`. */
 	from: string;
 	/** The placeholder it becomes — `"@registry/ui/icon"`. */
 	to: string;

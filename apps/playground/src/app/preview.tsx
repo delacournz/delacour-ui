@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG } from "@delacour/design-system/config";
-import { Text } from "@delacour/native-ui/text";
+import { Text } from "delacour-react-native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { type ReactElement, useCallback, useLayoutEffect, useRef, useState } from "react";

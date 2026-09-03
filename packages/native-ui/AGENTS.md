@@ -60,26 +60,26 @@ shares.
 
 | Component | Import | |
 | --- | --- | --- |
-| [Accordion](src/components/accordion/AGENTS.md) | `@delacour/native-ui/accordion` | Rows that each disclose a panel |
-| [Badge](src/components/badge/AGENTS.md) | `@delacour/native-ui/badge` | A compact label for status, category or count |
-| [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
-| [Button](src/components/button/AGENTS.md) | `@delacour/native-ui/button` | The reference implementation for the patterns below |
-| [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/native-ui/checkbox` | A box that is ticked or not, alone or in a group |
-| [Chart](src/components/chart/AGENTS.md) | `@delacour/native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
-| [Field](src/components/field/AGENTS.md) | `@delacour/native-ui/field` | A form field's layout, and where its state is written down |
-| [Icon](src/components/icon/AGENTS.md) | `@delacour/native-ui/icon` | A Central Icon, with inherited size and colour |
-| [Input](src/components/input/AGENTS.md) | `@delacour/native-ui/input` | A text field, and the box that holds content beside it |
-| [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/native-ui/list-group` | A surface grouping related rows |
-| [Pressable](src/components/pressable/AGENTS.md) | `@delacour/native-ui/pressable` | The gesture primitive every other control is built on |
-| [Radio](src/components/radio/AGENTS.md) | `@delacour/native-ui/radio` | One choice from a group |
-| [Screen](src/components/screen/AGENTS.md) | `@delacour/native-ui/screen` | A screen's chrome, insets and scrollables |
-| [Separator](src/components/separator/AGENTS.md) | `@delacour/native-ui/separator` | A one-pixel rule, hidden from assistive technology |
-| [Slider](src/components/slider/AGENTS.md) | `@delacour/native-ui/slider` | A value, or a range, dragged along a track |
-| [Spinner](src/components/spinner/AGENTS.md) | `@delacour/native-ui/spinner` | A rotating glyph, sharing the icon scale |
-| [Switch](src/components/switch/AGENTS.md) | `@delacour/native-ui/switch` | A track and a knob, dragged or tapped |
-| [Tabs](src/components/tabs/AGENTS.md) | `@delacour/native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
-| [Text](src/components/text/AGENTS.md) | `@delacour/native-ui/text` | The type scale, as twelve presets |
-| [DelacourProvider](src/components/provider/AGENTS.md) | `@delacour/native-ui/provider` | The app's root layer stack |
+| [Accordion](src/components/accordion/AGENTS.md) | `delacour-react-native-ui/accordion` | Rows that each disclose a panel |
+| [Badge](src/components/badge/AGENTS.md) | `delacour-react-native-ui/badge` | A compact label for status, category or count |
+| [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `delacour-react-native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
+| [Button](src/components/button/AGENTS.md) | `delacour-react-native-ui/button` | The reference implementation for the patterns below |
+| [Checkbox](src/components/checkbox/AGENTS.md) | `delacour-react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
+| [Chart](src/components/chart/AGENTS.md) | `delacour-react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [Field](src/components/field/AGENTS.md) | `delacour-react-native-ui/field` | A form field's layout, and where its state is written down |
+| [Icon](src/components/icon/AGENTS.md) | `delacour-react-native-ui/icon` | A Central Icon, with inherited size and colour |
+| [Input](src/components/input/AGENTS.md) | `delacour-react-native-ui/input` | A text field, and the box that holds content beside it |
+| [ListGroup](src/components/list-group/AGENTS.md) | `delacour-react-native-ui/list-group` | A surface grouping related rows |
+| [Pressable](src/components/pressable/AGENTS.md) | `delacour-react-native-ui/pressable` | The gesture primitive every other control is built on |
+| [Radio](src/components/radio/AGENTS.md) | `delacour-react-native-ui/radio` | One choice from a group |
+| [Screen](src/components/screen/AGENTS.md) | `delacour-react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [Separator](src/components/separator/AGENTS.md) | `delacour-react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
+| [Slider](src/components/slider/AGENTS.md) | `delacour-react-native-ui/slider` | A value, or a range, dragged along a track |
+| [Spinner](src/components/spinner/AGENTS.md) | `delacour-react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [Switch](src/components/switch/AGENTS.md) | `delacour-react-native-ui/switch` | A track and a knob, dragged or tapped |
+| [Tabs](src/components/tabs/AGENTS.md) | `delacour-react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
+| [Text](src/components/text/AGENTS.md) | `delacour-react-native-ui/text` | The type scale, as twelve presets |
+| [DelacourProvider](src/components/provider/AGENTS.md) | `delacour-react-native-ui/provider` | The app's root layer stack |
 
 A component missing from this table, or from its own folder, fails `bun test` —
 see **Testing**.
@@ -121,7 +121,7 @@ its slot set, so a sibling would buy nothing but a second file to open.
    `buttonVariants`' `label` slot owns `text-*`; its `root` slot must not.
 2. **No `"use client"`.** That is an RSC directive; it means nothing here.
 3. **No package-wide barrel.** Import from the subpath:
-   `@delacour/native-ui/button`. This is what lets an app skip resolving
+   `delacour-react-native-ui/button`. This is what lets an app skip resolving
    optional peers it never uses. A component folder's own `index.ts` is its
    entry point, not a barrel — never add a top-level `src/index.ts`.
 
@@ -150,7 +150,7 @@ its slot set, so a sibling would buy nothing but a second file to open.
    from `./spinner` would close `spinner.tsx ⇄ spinner-content.tsx`.
 4. **Anything importing an Expo package lives in `src/expo/`.** That directory
    is the one place a framework dependency is allowed, and the import path says
-   so: `@delacour/native-ui/expo/navigation-theme`. Everything under it depends
+   so: `delacour-react-native-ui/expo/navigation-theme`. Everything under it depends
    on an **optional** peer, which is what the granular exports make safe — an
    app that never imports `./expo/*` never resolves them, and one on a
    different navigator keeps the rest of the library.
@@ -161,7 +161,7 @@ its slot set, so a sibling would buy nothing but a second file to open.
    are useful to any navigator, and `Screen.Navbar.BackButton` still takes an
    `onPress` rather than calling a router.
 
-5. **Central Icons only**, via `@delacour/native-ui/icons/central`.
+5. **Central Icons only**, via `delacour-react-native-ui/icons/central`.
 6. **Run `bun run gen-exports`** after adding or removing a component folder or
    a file under `src/expo`, `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
    `exports` map. A component folder without an `index.ts` fails the script.
@@ -658,7 +658,7 @@ types, its context and its variants. Nothing outside reaches past the index.
 /* app global.css — use the real workspace path, not a node_modules path:
    Bun symlinks workspace packages and Tailwind's scanner cannot follow
    symlinks, so classes would be silently dropped from production builds. */
-@import '@delacour/native-ui/styles';
+@import 'delacour-react-native-ui/styles';
 @source '../../../../packages/native-ui/src';
 ```
 
@@ -667,7 +667,7 @@ needs above it, the safe-area provider and the keyboard provider `Screen` reads,
 and the keyboard state sync that keeps them honest:
 
 ```tsx
-import { DelacourProvider } from "@delacour/native-ui/provider";
+import { DelacourProvider } from "delacour-react-native-ui/provider";
 
 <DelacourProvider>{children}</DelacourProvider>;
 ```
@@ -678,7 +678,7 @@ be a child of `KeyboardProvider`:
 
 ```tsx
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
+import { KeyboardStateSync } from "delacour-react-native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
@@ -698,9 +698,9 @@ sync, and [DelacourProvider](src/components/provider/AGENTS.md) for why the
 safe-area provider is seeded and why the gesture root takes no `style`.
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowRight } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowRight } from "delacour-react-native-ui/icons/central";
 
 // The icon inherits the button's size and its variant's colour.
 <Button haptic="selection" onPress={next}>
@@ -767,7 +767,7 @@ This package ships **two ways**, and both come off the same source:
 | Channel | What the consumer gets |
 | --- | --- |
 | `delacour add button` | The component's source copied into their repo, imports rewritten to their aliases. They own it. |
-| `bun add @delacour/native-ui` | The package from npm, imported by subpath — `@delacour/native-ui/button`. |
+| `bun add delacour-react-native-ui` | The package from npm, imported by subpath — `delacour-react-native-ui/button`. |
 
 The registry is the primary channel and the reason this package exists in the shape it does; npm
 is there for anyone who would rather take an upgradeable dependency than own the code.

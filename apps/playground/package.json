@@ -26,9 +26,7 @@
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/brand": "workspace:*",
-		"@delacour/charts": "workspace:*",
 		"@delacour/design-system": "workspace:*",
-		"@delacour/native-ui": "workspace:*",
 		"@expo-google-fonts/dm-sans": "^0.4.2",
 		"@expo-google-fonts/eb-garamond": "^0.4.3",
 		"@expo-google-fonts/figtree": "^0.4.1",
@@ -59,6 +57,8 @@
 		"@legendapp/list": "catalog:",
 		"@shopify/react-native-skia": "catalog:",
 		"culori": "^4.0.2",
+		"delacour-react-native-charts": "workspace:*",
+		"delacour-react-native-ui": "workspace:*",
 		"expo": "~57.0.15",
 		"expo-constants": "~57.0.13",
 		"expo-dev-client": "~57.0.14",

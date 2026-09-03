@@ -38,7 +38,7 @@ token and a customizer that writes a name no component reads.
 `design-system.test.ts` is what it buys: it reads
 `packages/native-ui/src/styles/theme.css` **as source text** and asserts every
 name any axis writes is one the library actually declares. It reads the CSS by
-relative path rather than depending on `@delacour/native-ui` — the move
+relative path rather than depending on `delacour-react-native-ui` — the move
 `apps/web`'s `tokens-page.test.ts` and `app.css.test.ts` already make, and what
 keeps the dependency arrow pointing one way.
 

@@ -1,7 +1,7 @@
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowUpRight } from "@delacour/native-ui/icons/central";
-import { Screen } from "@delacour/native-ui/screen";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowUpRight } from "delacour-react-native-ui/icons/central";
+import { Screen } from "delacour-react-native-ui/screen";
 import type { ReactElement } from "react";
 import { Alert, Linking } from "react-native";
 import { docsOrigin } from "@/design-system/docs-origin";

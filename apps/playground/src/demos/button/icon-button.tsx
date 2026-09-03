@@ -1,6 +1,6 @@
-import { BUTTON_ICON_SIZES, Button, type ButtonIconSize } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart, IconPlusMedium, IconTrashCan } from "@delacour/native-ui/icons/central";
+import { BUTTON_ICON_SIZES, Button, type ButtonIconSize } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconHeart, IconPlusMedium, IconTrashCan } from "delacour-react-native-ui/icons/central";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

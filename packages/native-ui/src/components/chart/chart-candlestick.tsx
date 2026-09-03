@@ -1,4 +1,4 @@
-import { ChartCandlestick as EngineCandlestick } from "@delacour/charts";
+import { ChartCandlestick as EngineCandlestick } from "delacour-react-native-charts";
 import type { ReactElement } from "react";
 import { useChart } from "./chart.context";
 import type { ChartCandleColors, ChartCandlestickKeys } from "./chart.types";

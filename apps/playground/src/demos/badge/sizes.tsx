@@ -1,4 +1,4 @@
-import { BADGE_SIZES, Badge } from "@delacour/native-ui/badge";
+import { BADGE_SIZES, Badge } from "delacour-react-native-ui/badge";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

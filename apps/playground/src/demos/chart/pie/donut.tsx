@@ -1,4 +1,4 @@
-import { PieChart } from "@delacour/native-ui/chart";
+import { PieChart } from "delacour-react-native-ui/chart";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

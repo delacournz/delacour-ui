@@ -1,4 +1,4 @@
-import type { ChartOrientation, ChartScrubState } from "@delacour/charts";
+import type { ChartOrientation, ChartScrubState } from "delacour-react-native-charts";
 import { createContext, type ReactNode, useContext } from "react";
 import type {
 	ChartBarLayout,

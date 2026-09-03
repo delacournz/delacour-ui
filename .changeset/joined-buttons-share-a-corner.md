@@ -1,5 +1,5 @@
 ---
-"@delacour/native-ui": minor
+"delacour-react-native-ui": minor
 ---
 
 Add `Button.Group`, which joins several controls into one segmented run — with

@@ -3,13 +3,13 @@
 A compact label for status, category or count. Compound root plus `Badge.Label`,
 `Badge.StartContent`, `Badge.EndContent` and `Badge.CloseButton`.
 
-`import { Badge } from "@delacour/native-ui/badge";`
+`import { Badge } from "delacour-react-native-ui/badge";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/badge` |
+| `index.ts` | → `delacour-react-native-ui/badge` |
 | `badge.tsx` | Root + the `Object.assign` compound surface |
 | `badge-label.tsx` | `Badge.Label` |
 | `badge-start-content.tsx` | `Badge.StartContent` |

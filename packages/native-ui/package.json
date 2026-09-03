@@ -1,5 +1,5 @@
 {
-	"name": "@delacour/native-ui",
+	"name": "delacour-react-native-ui",
 	"version": "0.0.1-alpha.0",
 	"description": "React Native UI components — Uniwind, Reanimated, Gesture Handler",
 	"type": "module",
@@ -82,9 +82,9 @@
 	},
 	"peerDependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
-		"@delacour/charts": ">=0.0.1-alpha.0",
 		"@gorhom/bottom-sheet": "^5.2.8",
 		"@legendapp/list": ">=3.3",
+		"delacour-react-native-charts": ">=0.0.1-alpha.0",
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
@@ -101,10 +101,10 @@
 		"uniwind": "^1.11.0"
 	},
 	"peerDependenciesMeta": {
-		"@delacour/charts": {
+		"@legendapp/list": {
 			"optional": true
 		},
-		"@legendapp/list": {
+		"delacour-react-native-charts": {
 			"optional": true
 		},
 		"expo-router": {
@@ -116,10 +116,10 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
-		"@delacour/charts": "workspace:*",
 		"@delacour/tsconfig": "workspace:*",
 		"@types/bun": "^1.3.8",
 		"@types/react": "^19.2.0",
+		"delacour-react-native-charts": "workspace:*",
 		"expo-router": "~57.0.15",
 		"typescript": "^5.9.3"
 	}

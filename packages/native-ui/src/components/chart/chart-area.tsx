@@ -1,5 +1,5 @@
-import { ChartArea as EngineArea, useChartContext as useEngineChart } from "@delacour/charts";
-import type { CurveType } from "@delacour/charts/core";
+import { ChartArea as EngineArea, useChartContext as useEngineChart } from "delacour-react-native-charts";
+import type { CurveType } from "delacour-react-native-charts/core";
 import type { ReactElement } from "react";
 import { useSeriesColor } from "./chart.context";
 import { resolveAreaFill } from "./chart.variants";

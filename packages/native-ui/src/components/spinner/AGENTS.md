@@ -3,13 +3,13 @@
 An animated loading indicator. Compound root plus `Spinner.Content`, the part
 that rotates.
 
-`import { Spinner } from "@delacour/native-ui/spinner";`
+`import { Spinner } from "delacour-react-native-ui/spinner";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/spinner` |
+| `index.ts` | → `delacour-react-native-ui/spinner` |
 | `spinner.tsx` | Root + the `Object.assign` compound surface |
 | `spinner-content.tsx` | `Spinner.Content`, the rotating layer |
 | `spinner-arc.tsx` | The default arc glyph |

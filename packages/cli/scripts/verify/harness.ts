@@ -388,14 +388,14 @@ function formatSize(bytes: number): string {
 /**
  * Workspace packages a registry item installs from npm, by their directory.
  *
- * `chart` depends on `@delacour/charts`, and a scaffolded app installs that
+ * `chart` depends on `delacour-react-native-charts`, and a scaffolded app installs that
  * from the registry like any other package. Until the first manual publish
  * there is nothing there to install, and after it there is a lag between a
  * change here and the version npm serves — so a verify run that read npm would
  * be checking last release's engine against this branch's skin.
  */
 const WORKSPACE_PACKAGES: Record<string, string> = {
-	"@delacour/charts": "../../../charts",
+	"delacour-react-native-charts": "../../../charts",
 };
 
 /**

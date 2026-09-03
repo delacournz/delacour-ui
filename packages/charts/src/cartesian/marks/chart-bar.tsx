@@ -136,7 +136,7 @@ function useBarDomainWarning(series: readonly ChartPoint[], chart: ChartContextV
 	useEffect(() => {
 		if (!__DEV__ || categoryDomainCovers(series, categoryScale, xStep.value)) return;
 		console.warn(
-			"[@delacour/charts] the x domain does not cover the first or last bar, so it is drawn half " +
+			"[delacour-react-native-charts] the x domain does not cover the first or last bar, so it is drawn half " +
 				"outside the plot. Pass domainPadding={{ x: 0.5 }} to the chart to pad the domain by half a step each side."
 		);
 	}, [series, categoryScale, xStep.value]);

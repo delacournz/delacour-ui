@@ -7,13 +7,13 @@ Rows that each disclose a panel. Compound root plus `Accordion.Item`,
 so read that section first — what follows is only where a disclosure differs from
 a list of rows.
 
-`import { Accordion } from "@delacour/native-ui/accordion";`
+`import { Accordion } from "delacour-react-native-ui/accordion";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/accordion` |
+| `index.ts` | → `delacour-react-native-ui/accordion` |
 | `accordion.tsx` | Root, the selection narrow, the divider insertion, the `Object.assign` |
 | `accordion-item.tsx` | `Accordion.Item` — owns `progress`, the measured height and the spring |
 | `accordion-trigger.tsx` | `Accordion.Trigger`, and the row it assembles from its children |

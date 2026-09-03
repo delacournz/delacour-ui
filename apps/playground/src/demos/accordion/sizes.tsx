@@ -1,5 +1,5 @@
-import { ACCORDION_SIZES, Accordion } from "@delacour/native-ui/accordion";
-import { Text } from "@delacour/native-ui/text";
+import { ACCORDION_SIZES, Accordion } from "delacour-react-native-ui/accordion";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

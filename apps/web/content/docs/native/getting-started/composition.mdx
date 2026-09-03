@@ -22,7 +22,7 @@ Every compound root exports a hook so a **custom** child can match the parent wi
 drilling.
 
 ```tsx
-import { Button, useButton } from "@delacour/native-ui/button";
+import { Button, useButton } from "delacour-react-native-ui/button";
 
 function ButtonBadge({ count }: { count: number }) {
   const { variant, size, isDisabled } = useButton();
@@ -91,9 +91,9 @@ Read the shared state from the component's context hook, and merge the caller's 
 through `cn()`.
 
 ```tsx
-import { cn } from "@delacour/native-ui/lib/cn";
-import { useButton } from "@delacour/native-ui/button";
-import { Text } from "@delacour/native-ui/text";
+import { cn } from "delacour-react-native-ui/lib/cn";
+import { useButton } from "delacour-react-native-ui/button";
+import { Text } from "delacour-react-native-ui/text";
 
 export function ButtonHint({ className, ...props }: TextProps) {
   const { size } = useButton();

@@ -1,6 +1,6 @@
-import { BottomSheet } from "@delacour/native-ui/bottom-sheet";
-import { ListGroup } from "@delacour/native-ui/list-group";
-import { Text } from "@delacour/native-ui/text";
+import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";
+import { ListGroup } from "delacour-react-native-ui/list-group";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { Dimensions, View } from "react-native";
 import type { DemoEntry } from "@/demos/types";

@@ -57,7 +57,7 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "npm",
 	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
 	// what need the SDK, and `ITEM_META.chart.dependencies` names them.
-	"@delacour/charts": "npm",
+	"delacour-react-native-charts": "npm",
 	clsx: "npm",
 	tailwindcss: "npm",
 	"tailwind-merge": "npm",
@@ -107,7 +107,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		categories: ["display"],
-		// `@delacour/charts` peer-depends on Skia, and no file here imports it —
+		// `delacour-react-native-charts` peer-depends on Skia, and no file here imports it —
 		// so no scan can see it. Installing it with the package manager rather
 		// than `expo install` is a build that fails at the linker.
 		dependencies: ["@shopify/react-native-skia"],

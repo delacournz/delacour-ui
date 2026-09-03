@@ -1,6 +1,6 @@
 # cli — The `delacour` CLI
 
-Copies `@delacour/native-ui`'s source into a consumer's Expo project, the way shadcn/ui does for
+Copies `delacour-react-native-ui`'s source into a consumer's Expo project, the way shadcn/ui does for
 the web. Published to npm as **`delacour`**; the registry it reads is committed at the repository
 root and served from `raw.githubusercontent.com`, and what it serves is the library's own source
 rather than a copy of it.
@@ -123,7 +123,7 @@ installed package. It scaffolds a real Expo app, installs Uniwind and Tailwind, 
 the stock Metro config so the *patch* path is exercised, adds every item, and typechecks.
 
 One thing it does not take from npm: a workspace package a registry item depends on.
-`chart` installs `@delacour/charts`, and `scripts/verify/harness.ts` packs that package with
+`chart` installs `delacour-react-native-charts`, and `scripts/verify/harness.ts` packs that package with
 `bun pm pack` and adds the tarball to the project between `init` and `add`, so `add` sees the
 dependency declared and installs nothing for it. A tarball rather than a link, deliberately: the
 pack is what a consumer receives — `files`, `exports`, no dev dependencies — so a type package

@@ -1,6 +1,6 @@
-import { Icon } from "@delacour/native-ui/icon";
-import { IconCheckmark1Small } from "@delacour/native-ui/icons/central";
-import { Radio } from "@delacour/native-ui/radio";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconCheckmark1Small } from "delacour-react-native-ui/icons/central";
+import { Radio } from "delacour-react-native-ui/radio";
 import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 

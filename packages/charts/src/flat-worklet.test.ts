@@ -12,7 +12,7 @@ import { read, relative, SRC, sourceFiles } from "./source-tree.test";
  * module-scope worklet binds at import time in source order, and the UI thread
  * gets `undefined is not a function` — at the moment a finger touches the
  * chart, on a device, with a stack that names neither function. Four
- * components in `@delacour/native-ui` document having learned this.
+ * components in `delacour-react-native-ui` document having learned this.
  *
  * A worklet created *inside* a hook is captured by ordinary closure and may
  * call whatever it likes, including the module-scope worklets here. That is

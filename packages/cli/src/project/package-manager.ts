@@ -56,8 +56,8 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
 /**
  * Packages whose `latest` deliberately points at nothing.
  *
- * This repository is in Changesets pre mode, so `@delacour/charts` publishes to
- * the `alpha` dist-tag and `latest` is empty — a bare `bun add @delacour/charts`
+ * This repository is in Changesets pre mode, so `delacour-react-native-charts` publishes to
+ * the `alpha` dist-tag and `latest` is empty — a bare `bun add delacour-react-native-charts`
  * fails outright. It has never bitten because no registry item had ever depended
  * on a Delacour package until `chart`.
  *
@@ -68,7 +68,7 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
  * Delete this map when `changeset pre exit` runs — see the root AGENTS.md.
  */
 const DIST_TAG: Record<string, string> = {
-	"@delacour/charts": "alpha",
+	"delacour-react-native-charts": "alpha",
 };
 
 /** A package name with its pinned dist-tag, where it has one. */
@@ -81,7 +81,7 @@ function toSpec(name: string): string {
  * The range a shared package declares for a peer it does not pin.
  *
  * `*` is the usual answer, and it is wrong for a package still in pre mode:
- * semver's `*` admits no prerelease, so a peer on `@delacour/charts` written as
+ * semver's `*` admits no prerelease, so a peer on `delacour-react-native-charts` written as
  * `*` matches nothing `0.0.1-alpha.N` can ever satisfy. Bun then treats the
  * peer as unmet and goes to the registry for a version that does not exist —
  * which is how `add` failed inside `expo install`, a step that never named

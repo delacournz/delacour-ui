@@ -1,4 +1,4 @@
-import { Checkbox } from "@delacour/native-ui/checkbox";
+import { Checkbox } from "delacour-react-native-ui/checkbox";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

@@ -12,7 +12,7 @@ The CLI and the package hold the same components. The choice is who owns the cod
     package.
   </Card>
   <Card title="Install the package" href="#install-the-package">
-    `@delacour/native-ui` on npm, imported from a subpath. Upgrades arrive with `bun update`.
+    `delacour-react-native-ui` on npm, imported from a subpath. Upgrades arrive with `bun update`.
   </Card>
   <Card title="Manual setup" href="#manual-setup">
     Copy the files in yourself. Every component page lists exactly which ones.
@@ -32,7 +32,7 @@ See [the CLI docs](/docs/native/cli) for what `init` will and will not touch.
 
 ## Install the package
 
-<InstallTabs commands={[{ verb: "add", packages: ["@delacour/native-ui@alpha"] }]} />
+<InstallTabs commands={[{ verb: "add", packages: ["delacour-react-native-ui@alpha"] }]} />
 
 The library ships raw `.tsx`. Uniwind's transform has to run in **your** app's Metro pipeline, so a
 precompiled build would arrive with its classNames already dead — which is also why its native
@@ -77,7 +77,7 @@ Three peers are optional, resolved only if you import the subpath that needs the
 | Package | Needed by |
 | --- | --- |
 | `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` (the default `legend` variant) |
-| `expo-router` | `@delacour/native-ui/expo/navigation-theme` |
+| `expo-router` | `delacour-react-native-ui/expo/navigation-theme` |
 | `react-native-screens` | native stack navigation |
 
 ### Import from subpaths
@@ -86,14 +86,14 @@ There is no package-wide barrel, and that is deliberate: it is what lets an app 
 optional peers it never uses.
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconHeart } from "delacour-react-native-ui/icons/central";
 ```
 
 ```tsx
 // This does not exist, and will not be added.
-import { Button } from "@delacour/native-ui";
+import { Button } from "delacour-react-native-ui";
 ```
 
 ## Manual setup
@@ -110,17 +110,17 @@ Import the library's styles into your app's Tailwind entry, then point Tailwind'
 package source.
 
 ```css title="global.css"
-@import "@delacour/native-ui/styles";
+@import "delacour-react-native-ui/styles";
 @source "../../../../packages/native-ui/src";
 ```
 
 <Callout type="warn" title="Use the real workspace path">
 Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. A `@source`
-pointing at `node_modules/@delacour/native-ui` resolves to nothing, and every class the library uses
+pointing at `node_modules/delacour-react-native-ui` resolves to nothing, and every class the library uses
 is silently dropped from your production build. Point it at the actual directory.
 </Callout>
 
-The `@delacour/native-ui/styles` barrel is three files: `base.css` (`tailwindcss` + `uniwind`),
+The `delacour-react-native-ui/styles` barrel is three files: `base.css` (`tailwindcss` + `uniwind`),
 `tokens.css` (the `@theme` scale) and `theme.css` (the light/dark palette). Import them individually
 if you need to reorder them.
 
@@ -129,7 +129,7 @@ if you need to reorder them.
 Wrap your app's root — once, around everything.
 
 ```tsx title="app/_layout.tsx"
-import { DelacourProvider } from "@delacour/native-ui/provider";
+import { DelacourProvider } from "delacour-react-native-ui/provider";
 
 export default function RootLayout() {
   return <DelacourProvider>{children}</DelacourProvider>;
@@ -152,7 +152,7 @@ optional polish, and must be a child of `KeyboardProvider`.
 
 ```tsx
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
+import { KeyboardStateSync } from "delacour-react-native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
@@ -170,7 +170,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 ## Verify
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
+import { Button } from "delacour-react-native-ui/button";
 
 <Button onPress={() => console.log("pressed")}>Press me</Button>;
 ```

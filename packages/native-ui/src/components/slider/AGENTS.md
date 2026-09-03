@@ -4,13 +4,13 @@ A value picked by dragging along a track — one value, or a range. Compound roo
 plus `Slider.Output`, `Slider.Track`, `Slider.Fill` and `Slider.Thumb`. The
 package's first drag-driven control, and its first `Gesture.Pan()`.
 
-`import { Slider } from "@delacour/native-ui/slider";`
+`import { Slider } from "delacour-react-native-ui/slider";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/slider` |
+| `index.ts` | → `delacour-react-native-ui/slider` |
 | `slider.tsx` | Root + the `Object.assign` compound surface |
 | `slider-output.tsx` | `Slider.Output`, the `Text.Label` readout |
 | `slider-track.tsx` | `Slider.Track` — owns the pan, the measurement, the haptic |

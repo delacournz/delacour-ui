@@ -1,4 +1,4 @@
-import { type ChartFont, useSystemFont } from "@delacour/charts";
+import { type ChartFont, useSystemFont } from "delacour-react-native-charts";
 import { useCSSVariable } from "uniwind";
 
 /**
@@ -14,7 +14,7 @@ import { useCSSVariable } from "uniwind";
  * own default, which is what `--font-sans` names on both platforms anyway; the
  * variable only matters once an app overrides it.
  *
- * No font file ships with this package or with `@delacour/charts`. That is the
+ * No font file ships with this package or with `delacour-react-native-charts`. That is the
  * same choice `theme.css` already made for the rest of the type: OS-bundled
  * families mean nothing has to be loaded through `expo-font` and a consuming
  * app needs no config plugin.

@@ -1,7 +1,7 @@
-import { Field } from "@delacour/native-ui/field";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconMagnifyingGlass } from "@delacour/native-ui/icons/central";
-import { Input } from "@delacour/native-ui/input";
+import { Field } from "delacour-react-native-ui/field";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconMagnifyingGlass } from "delacour-react-native-ui/icons/central";
+import { Input } from "delacour-react-native-ui/input";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

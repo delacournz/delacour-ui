@@ -3,13 +3,13 @@
 A text field, and the box that can hold content beside it. Root plus
 `Input.Group` and its two decorators, `Prefix` and `Suffix`.
 
-`import { Input } from "@delacour/native-ui/input";`
+`import { Input } from "delacour-react-native-ui/input";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/input` |
+| `index.ts` | → `delacour-react-native-ui/input` |
 | `input.tsx` | Root + the `Object.assign` compound surface |
 | `input-group.tsx` | `Input.Group`, plus its own nested surface |
 | `input-group-decorator.tsx` | The shared body behind both decorators |

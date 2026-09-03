@@ -4,13 +4,13 @@ A surface grouping related rows. Compound root plus `ListGroup.Item` and its
 five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 `ItemSuffix`.
 
-`import { ListGroup } from "@delacour/native-ui/list-group";`
+`import { ListGroup } from "delacour-react-native-ui/list-group";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/list-group` |
+| `index.ts` | → `delacour-react-native-ui/list-group` |
 | `list-group.tsx` | Root + the `Object.assign` compound surface |
 | `list-group-item.tsx` | `ListGroup.Item`, and the bare-text wrap it owns |
 | `list-group-item-prefix.tsx` | `ListGroup.ItemPrefix` |

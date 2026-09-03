@@ -6,13 +6,13 @@ library's first overlay. Compound root plus `BottomSheet.Trigger`,
 `BottomSheet.Content`, `BottomSheet.ScrollView`, `BottomSheet.Close`,
 `BottomSheet.Title`, `BottomSheet.Description` and `BottomSheet.Footer`.
 
-`import { BottomSheet } from "@delacour/native-ui/bottom-sheet";`
+`import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/bottom-sheet` |
+| `index.ts` | → `delacour-react-native-ui/bottom-sheet` |
 | `bottom-sheet.tsx` | Root + the `Object.assign` compound surface |
 | `bottom-sheet-trigger.tsx` | `BottomSheet.Trigger` |
 | `bottom-sheet-portal.tsx` | `BottomSheet.Portal`, and the overlay hoist |

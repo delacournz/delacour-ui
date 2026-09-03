@@ -29,13 +29,13 @@ Both are supported and they hold the same components. The choice is about who ow
 | --- | --- | --- |
 | Upgrades | `bun update` | `delacour diff`, then decide |
 | Editing a component | Fork or wrap it | Edit the file |
-| Import path | `@delacour/native-ui/button` | `@/components/ui/button` |
+| Import path | `delacour-react-native-ui/button` | `@/components/ui/button` |
 | New components | Arrive with the package | `delacour add` when you want one |
 | Bundle | Only the subpaths you import | Only the files you added |
 
 <Callout title="You can start with one and move to the other">
 The components are identical — the CLI copies the same source the package ships. Running
-`delacour add button` in a project that already installs `@delacour/native-ui` gives you a local
+`delacour add button` in a project that already installs `delacour-react-native-ui` gives you a local
 copy to edit; delete the package import and point at the new path.
 </Callout>
 

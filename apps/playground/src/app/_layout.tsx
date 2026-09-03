@@ -1,7 +1,7 @@
 import "../styles/global.css";
-import { NavigationTheme } from "@delacour/native-ui/expo/navigation-theme";
-import { useThemeColor } from "@delacour/native-ui/hooks/use-theme-color";
-import { DelacourProvider } from "@delacour/native-ui/provider";
+import { NavigationTheme } from "delacour-react-native-ui/expo/navigation-theme";
+import { useThemeColor } from "delacour-react-native-ui/hooks/use-theme-color";
+import { DelacourProvider } from "delacour-react-native-ui/provider";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
@@ -46,7 +46,7 @@ function SystemBackground(): null {
  * rather than in the registered root entry — importing it from index.ts breaks
  * Uniwind's hot reload and forces a full reload on every edit.
  *
- * DelacourProvider is @delacour/native-ui's whole root stack: the gesture root
+ * DelacourProvider is delacour-react-native-ui's whole root stack: the gesture root
  * every Pressable needs above it, the safe-area provider seeded with
  * initialWindowMetrics so the first frame is not blank, the keyboard provider
  * Screen reads to move its footer, and the KeyboardStateSync that repairs the

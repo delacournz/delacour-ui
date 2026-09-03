@@ -1,4 +1,4 @@
-import { CHART_CURVES, Chart } from "@delacour/native-ui/chart";
+import { CHART_CURVES, Chart } from "delacour-react-native-ui/chart";
 import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 

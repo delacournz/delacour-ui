@@ -4,7 +4,7 @@ A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/doc
 library namespaced at `/docs/native/*` so a second library can be added later without a URL
 migration.
 
-Documents `@delacour/native-ui` and the `delacour` CLI that copies its components into a
+Documents `delacour-react-native-ui` and the `delacour` CLI that copies its components into a
 consumer's repository. It does **not** import or render those components — see **Why there are no
 live previews**.
 
@@ -12,7 +12,7 @@ live previews**.
 
 - **TanStack Start** (Vite 8, Nitro) — SSR, file routes, server functions
 - **Fumadocs** — `fumadocs-core` + `fumadocs-ui` (aliased to `@fumadocs/base-ui`) + `fumadocs-mdx`
-- **Tailwind CSS v4**, painted from `@delacour/native-ui`'s own token scale
+- **Tailwind CSS v4**, painted from `delacour-react-native-ui`'s own token scale
 - **ZBSearch** (Fumadocs' default) for `/api/search`
 
 ## Commands
@@ -495,7 +495,7 @@ It is a cap, not a fixed-height stage, so a short wide preview (`slider/anatomy`
 short instead of floating in letterbox bands. `preview-grid.tsx` uses neither — an index card is a
 uniform tile and wants its own `h-40 … object-contain`.
 
-**Why not render the components for real.** `@delacour/native-ui` ships raw `.tsx` whose
+**Why not render the components for real.** `delacour-react-native-ui` ships raw `.tsx` whose
 `className`s are compiled by Uniwind's **Metro** transform. Rendering one here would need
 react-native-web plus `uniwind/vite` and `vite-plugin-rnw`, and Reanimated 4, Gesture Handler and
 `react-native-keyboard-controller` are all unproven in that path. A photograph of the real component

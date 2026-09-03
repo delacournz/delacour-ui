@@ -4,13 +4,13 @@ The interaction primitive every pressable component in this library builds on �
 a Gesture Handler tap drives the press feedback and the haptic on the UI thread,
 and only `onPress` and `onLongPress` cross back to JS.
 
-`import { Pressable } from "@delacour/native-ui/pressable";`
+`import { Pressable } from "delacour-react-native-ui/pressable";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/pressable` |
+| `index.ts` | → `delacour-react-native-ui/pressable` |
 | `pressable.tsx` | The Gesture API primitive |
 | `pressable.variants.ts` | Shared feedback vocabulary, no RN imports |
 | `pressable.variants.test.ts` | |

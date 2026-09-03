@@ -5,13 +5,13 @@ own text inheritance through classNames. Compound root plus twelve presets:
 `Display`, `Title`, `Header`, `Subheader`, `Paragraph`, `Label`, `Caption`,
 `Overline`, and the four inline ones — `Strong`, `Emphasis`, `Link`, `Code`.
 
-`import { Text } from "@delacour/native-ui/text";`
+`import { Text } from "delacour-react-native-ui/text";`
 
 ## Files
 
 | File | What it holds |
 | --- | --- |
-| `index.ts` | → `@delacour/native-ui/text` |
+| `index.ts` | → `delacour-react-native-ui/text` |
 | `text.tsx` | Root, all twelve presets, the `Object.assign` surface — the pure-preset carve-out to one file per part, see [Compound component layout](../../../AGENTS.md#compound-component-layout) |
 | `text.context.tsx` | `TextClassProvider`, `useTextClass()` |
 | `text.variants.ts` | Pure `tv()` + `resolveTextClass`, no RN imports |

@@ -25,11 +25,11 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/icon",
+					"from": "delacour-react-native-ui/icon",
 					"to": "@registry/ui/icon"
 				},
 				{
-					"from": "@delacour/native-ui/icons/central",
+					"from": "delacour-react-native-ui/icons/central",
 					"to": "@registry/icons/central"
 				}
 			]
@@ -49,7 +49,7 @@
 					"to": "@registry/hooks/use-theme-color"
 				},
 				{
-					"from": "@delacour/native-ui/icons/central",
+					"from": "delacour-react-native-ui/icons/central",
 					"to": "@registry/icons/central"
 				}
 			]

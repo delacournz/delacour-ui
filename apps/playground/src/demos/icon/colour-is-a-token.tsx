@@ -1,6 +1,6 @@
-import { Icon } from "@delacour/native-ui/icon";
-import { IconHeart } from "@delacour/native-ui/icons/central";
-import { Text } from "@delacour/native-ui/text";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconHeart } from "delacour-react-native-ui/icons/central";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

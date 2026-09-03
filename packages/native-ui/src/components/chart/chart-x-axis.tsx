@@ -1,4 +1,4 @@
-import { ChartXAxis as EngineXAxis } from "@delacour/charts";
+import { ChartXAxis as EngineXAxis } from "delacour-react-native-charts";
 import type { ReactElement } from "react";
 import { useChart } from "./chart.context";
 

@@ -1,5 +1,5 @@
-import { Pressable } from "@delacour/native-ui/pressable";
-import { Text } from "@delacour/native-ui/text";
+import { Pressable } from "delacour-react-native-ui/pressable";
+import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

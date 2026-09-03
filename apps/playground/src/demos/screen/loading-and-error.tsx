@@ -1,5 +1,5 @@
-import { Button } from "@delacour/native-ui/button";
-import { Screen } from "@delacour/native-ui/screen";
+import { Button } from "delacour-react-native-ui/button";
+import { Screen } from "delacour-react-native-ui/screen";
 import { type ReactElement, useEffect, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 

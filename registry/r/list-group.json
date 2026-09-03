@@ -28,7 +28,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "@delacour/native-ui/list-group",
+					"from": "delacour-react-native-ui/list-group",
 					"to": "@registry/ui/list-group"
 				}
 			]

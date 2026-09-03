@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { formatDateTick } from "@delacour/charts/core";
+import { formatDateTick } from "delacour-react-native-charts/core";
 import { declaredTokens, radiusMultiplier } from "../../styles/theme-tokens.test";
 import type { ChartBarSpec, ChartConfig, ChartResolvedSeries } from "./chart.types";
 import {

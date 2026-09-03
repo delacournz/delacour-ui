@@ -17,9 +17,9 @@ icon, not out of fifteen boolean props.
 - **Two deliveries, one library:** install the package, or copy the source in with the CLI.
 
 ```tsx
-import { Button } from "@delacour/native-ui/button";
-import { Icon } from "@delacour/native-ui/icon";
-import { IconArrowRight } from "@delacour/native-ui/icons/central";
+import { Button } from "delacour-react-native-ui/button";
+import { Icon } from "delacour-react-native-ui/icon";
+import { IconArrowRight } from "delacour-react-native-ui/icons/central";
 
 <Button haptic="selection" onPress={next}>
   <Button.Label>Continue</Button.Label>
@@ -66,7 +66,7 @@ There is no build step and no package-wide barrel. Uniwind compiles `className` 
 transform, so a precompiled build would arrive with its classNames already dead — and granular
 export subpaths are what let an app skip resolving optional peers it never uses.
 
-*Import `@delacour/native-ui/button` and nothing keyboard-related resolves.*
+*Import `delacour-react-native-ui/button` and nothing keyboard-related resolves.*
 
 ## Two deliveries, one library
 

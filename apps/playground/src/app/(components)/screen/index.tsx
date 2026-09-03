@@ -1,4 +1,4 @@
-import { Icon } from "@delacour/native-ui/icon";
+import { Icon } from "delacour-react-native-ui/icon";
 import {
 	IconBubble2,
 	IconBulletList,
@@ -8,10 +8,10 @@ import {
 	IconLayoutTop,
 	IconLayoutTopBottom,
 	IconWarningSign,
-} from "@delacour/native-ui/icons/central";
-import { ListGroup } from "@delacour/native-ui/list-group";
-import { Screen } from "@delacour/native-ui/screen";
-import { Text } from "@delacour/native-ui/text";
+} from "delacour-react-native-ui/icons/central";
+import { ListGroup } from "delacour-react-native-ui/list-group";
+import { Screen } from "delacour-react-native-ui/screen";
+import { Text } from "delacour-react-native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";

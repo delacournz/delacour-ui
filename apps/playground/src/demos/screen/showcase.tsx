@@ -55,7 +55,9 @@ const RANGES = [
  * `Screen.Footer` defaults to `overlay`, which draws no backing of its own — so
  * content that runs past the fold is sliced by the button rather than fading
  * under it. Adding a block here means taking the height back somewhere else, or
- * dropping the chart a size.
+ * dropping the chart a size. The `pt-4` is paid for by the tighter `gap-3`: it
+ * has to sit on this view rather than on the scroll area, because content
+ * container padding wraps the navbar spacer and would land *behind* the navbar.
  *
  * `Tabs` carries a `Tabs.List` and no `Tabs.Content` on purpose: the segmented
  * bar is the part worth photographing, and a panel below it would spend eighty
@@ -86,7 +88,7 @@ export function Demo(): ReactElement {
 			</Screen.Navbar>
 
 			<Screen.ScrollArea>
-				<View className="gap-4">
+				<View className="gap-3 pt-4">
 					<Tabs>
 						<Tabs.List>
 							<Tabs.Indicator />

@@ -23,8 +23,14 @@ const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
 /**
  * The hero device: a whole screen from the library, photographed on a
  * simulator — the honest version of the phone every component site draws.
+ *
+ * It is the one capture composed as a catalogue rather than as a screen with
+ * something to say: a tab bar, a chart, a field, the selection controls, a
+ * slider and a settings group, so the phone answers "what is in the box" in the
+ * first second. The demo is `screen/showcase`, and it is sized to fit one
+ * viewport exactly — see its own doc comment before adding to it.
  */
-const HERO_DEVICE: PreviewId = "screen/anatomy";
+const HERO_DEVICE: PreviewId = "screen/showcase";
 
 /**
  * The showcase. Each tile is a captured demo, chosen for how much of the

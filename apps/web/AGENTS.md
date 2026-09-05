@@ -47,13 +47,15 @@ src/
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
+├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
+├── lib/google-fonts.ts    the two Google Fonts requests the Font axis needs
 ├── routes/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
 │   ├── docs/{$}[.]md.ts   <page>.md — see "The .md routes 404 in dev"
-│   ├── theme.tsx          /theme — a preset code, rendered as CSS
+│   ├── theme.tsx          /theme — the customizer, and the CSS it produces
 │   ├── playground/components/{$}.tsx  the deep link's web fallback
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
@@ -260,11 +262,14 @@ and `background` are both white in light, so `--color-fd-card` takes `tertiary` 
 card has to read as a surface. `tertiary` is a `color-mix` of two variables `app.css` does not
 import, so its value is resolved there rather than copied.
 
-## `/theme` renders a preset
+## `/theme` builds a preset and renders it
 
-`src/routes/theme.tsx` takes a `?preset=` code from `apps/playground`'s Theme screen, decodes it
-with `@delacour/design-system`, and renders the resulting `globals.css` in a `DynamicCodeBlock`
-with a copy button. Three things about it are load-bearing:
+`src/routes/theme.tsx` takes a `?preset=` code — typed, pasted, arrived from `apps/playground`'s
+Theme screen, or produced by clicking a swatch on the page itself — decodes it with
+`@delacour/design-system`, and renders the resulting `globals.css` in a `DynamicCodeBlock` with a
+copy button. Above the file, `theme-builder.tsx` offers the same seven axes the playground does.
+
+Four things about it are load-bearing, and the fourth is what keeps the other three true:
 
 - **It is the only route here that reads a search param**, and its `validateSearch` **never
   throws**. A throw becomes a `SearchParamError` and the router renders an error boundary — so a
@@ -279,12 +284,55 @@ with a copy button. Three things about it are load-bearing:
   what catches it.
 - **One file carries both modes**, `:root` and `.dark`, because that is shadcn's `globals.css`
   shape. So there is deliberately no light/dark tab over the code block — it would be a lie about
-  what the file is. The specimens in the axis summary *do* follow the page's theme, and they do it
-  with `dark:hidden` / `hidden dark:inline` for the same reason `preview.tsx` does.
+  what the file is. The specimens and the preview panel *do* follow the page's theme, and they do
+  it with `dark:hidden` / `hidden dark:inline` for the same reason `preview.tsx` does.
+- **The builder holds no state.** Every option is a `<Link>` back to this route carrying the code
+  for the configuration it would produce — `axisOptions` in `src/lib/theme-preset.ts` builds them,
+  and `withAxis` in `@delacour/design-system/config` is what re-homes Theme and Chart Color when
+  Base Color moves. So the page has exactly one input whatever the reader did, which is precisely
+  why the emit stays on the server, the controls survive with scripting off, and every
+  intermediate state is a URL. A `useState` customizer here would quietly cost all three.
 
-The route is not in `baseOptions().links`: `/theme` with no preset is the library's own defaults,
-which every visitor already has. It is linked from `getting-started/theming.mdx` instead, which is
-the page about bringing a theme across.
+### The pieces
+
+| File | What it is |
+| --- | --- |
+| `src/lib/theme-preset.ts` | `resolvePreset`, `axisOptions`, `themeSummary` — the URL contract, testable with no renderer |
+| `src/lib/google-fonts.ts` | the two stylesheet requests the Font axis needs |
+| `src/components/theme-builder.tsx` | the seven axes, as grids of links |
+| `src/components/theme-specimens.tsx` | what an axis looks like, shared by the tiles and the summary |
+| `src/components/theme-preview.tsx` | the mock interface the tokens are painted onto |
+| `src/components/theme-css.tsx` | the summary, the code block and the copy button |
+
+The specimens are one file because the tiles and the summary draw the same things, and a swatch on
+a tile that disagreed with the swatch on the row it sets would be wrong in exactly the place
+someone is comparing the two. Every one of them resolves a whole `DesignSystemConfig` rather than
+an option's own values — a base colour's `primary` is not what `primary` becomes once an accent is
+spread over it.
+
+`theme-preview.tsx` is **not** a live component preview and does not cross the line drawn in
+[Previews are captured media](#previews-are-captured-media-not-live-components): nothing imports
+`delacour-react-native-ui`, and it is `div`s wearing resolved values. It exists because the Style
+axis writes heights, corners and type scale, none of which a colour swatch can show.
+
+### The Font axis loads webfonts, in two requests, in this order
+
+`src/lib/google-fonts.ts` asks `fonts.googleapis.com` for all twenty-six families subsetted to
+`text=Ag` — the two glyphs a tile draws, about 8 KB of CSS for the lot — and then for the one or
+two selected families at full coverage, for the preview panel. Both declare `@font-face` for the
+same family names and CSS resolves that **by document order**, so the full faces must come second
+or the panel renders its paragraph out of a font containing `A` and `g`. `google-fonts.test.ts`
+pins that order, the alphabetical family sort the CSS API requires, and the per-family weight list
+(Instrument Serif ships one face, and asking for a weight a family lacks 400s the whole request —
+which would silently cost all twenty-six tiles).
+
+This is the only third-party origin the site loads from. The `preconnect` pair is there because
+the font files come from `fonts.gstatic.com`, which the browser has no other reason to open.
+
+The route **is** in `baseOptions().links`. It was deliberately unlisted while `/theme` with no
+preset was the library's own defaults, which every visitor already has; with a builder on it, the
+page is worth arriving at with nothing in hand. It stays linked from
+`getting-started/theming.mdx` as well.
 
 **The dev server binds to all interfaces.** `server.host: true` in `vite.config.ts`, because the
 playground's Generate CSS button opens this site at whatever host Metro reached the app on — a LAN

@@ -156,10 +156,14 @@ wrong way round.
 
 ## Generating one
 
-If you would rather build a palette than paste one, the playground's **Theme** screen composes
-eight orthogonal axes — style, base colour, accent, chart hues, radius and two typefaces — and
-repaints the whole app as you go. Its footer opens [your theme as a `globals.css`](/theme), with a
-preset code in the URL so the link is shareable.
+If you would rather build a palette than paste one, [**Theme**](/theme) composes seven orthogonal
+axes — style, radius, base colour, accent, chart hues and two typefaces — and shows the
+`globals.css` they add up to. Each option is a link, so the whole theme is the code in the URL:
+share it, bookmark it, or open it on a phone.
+
+The playground app has the same axes on its own **Theme** screen, where they repaint a real app as
+you go rather than a specimen. Its footer opens that page with the configuration already in the
+URL, which is the way a theme built on a device becomes a file.
 
 That page emits shadcn's shape. Run it back through the CLI to get the file this library reads:
 

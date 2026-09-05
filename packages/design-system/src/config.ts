@@ -70,3 +70,26 @@ export function normalizeConfig(stored: Partial<DesignSystemConfig> | null): Des
 		chartColor: palettes.includes(config.chartColor) ? config.chartColor : config.baseColor,
 	};
 }
+
+/**
+ * One axis changed, with everything around it re-validated.
+ *
+ * A customizer moves one control at a time, and one of those controls invalidates
+ * another: `palettesForBaseColor` hides the other six base colours from the Theme
+ * and Chart Color lists, so moving Base Color from `stone` to `zinc` leaves
+ * `theme: "stone"` naming a palette that axis no longer offers. Unnormalised it
+ * survives in state, disappears from the strip, and re-enters the config through
+ * whatever the codec makes of it.
+ *
+ * It is a function rather than a spread at each call site because both apps make
+ * this move — `apps/playground`'s `setAxis` and `apps/web`'s option links — and
+ * the rule is exactly the kind that gets written once and forgotten in the second
+ * copy.
+ */
+export function withAxis<Key extends keyof DesignSystemConfig>(
+	config: DesignSystemConfig,
+	key: Key,
+	value: DesignSystemConfig[Key]
+): DesignSystemConfig {
+	return normalizeConfig({ ...config, [key]: value });
+}

@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@delacour/design-system/config";
+import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, withAxis } from "@delacour/design-system/config";
 import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { useSyncExternalStore } from "react";
 import { createMMKV } from "react-native-mmkv";
@@ -101,7 +101,7 @@ export function getConfig(): DesignSystemConfig {
 
 /** Change one axis, leaving every other exactly as it was. */
 export function setAxis<Key extends keyof DesignSystemConfig>(key: Key, value: DesignSystemConfig[Key]): void {
-	current = normalizeConfig({ ...current, [key]: value });
+	current = withAxis(current, key, value);
 	storage.set(CONFIG_KEY, JSON.stringify(current));
 	applyConfig(current);
 	emit();

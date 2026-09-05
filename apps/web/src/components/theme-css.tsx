@@ -1,9 +1,9 @@
 import type { DesignSystemConfig } from "@delacour/design-system/config";
-import type { ResolvedMode } from "@delacour/design-system/resolve";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import type { ReactElement } from "react";
-import { presetSwatches, type ThemeSummaryRow, themeSummary } from "@/lib/theme-preset";
+import { ChartsSpecimen, CornerSpecimen, PrimarySpecimen, SurfaceSpecimen } from "@/components/theme-specimens";
+import { type ThemeSummaryRow, themeSummary } from "@/lib/theme-preset";
 
 /**
  * The pieces of `/theme`: what the theme is, the file it produces, and one
@@ -13,87 +13,18 @@ import { presetSwatches, type ThemeSummaryRow, themeSummary } from "@/lib/theme-
  * preset is in the URL, so the CSS is in the first paint — which is what makes
  * the link worth pasting into a chat, and what keeps the page useful with no
  * JavaScript at all.
- */
-
-/** A colour value from the resolved palette, for a specimen that draws it directly. */
-function swatch(mode: ResolvedMode, token: string): string {
-	return String(mode[token] ?? "transparent");
-}
-
-/**
- * A specimen drawn in both themes at once, with CSS choosing.
  *
- * The page follows the reader's own light/dark, and a light-ramp swatch on a
- * dark page is worse than no swatch — but a hook that reads the active theme
- * costs a mounted guard and a hydration flash. Rendering both and hiding one is
- * what `apps/web` already does for captured media, for the same reason.
+ * The specimens live in `theme-specimens.tsx` because the builder above draws
+ * the same ones on its option tiles, and a swatch on a tile that disagreed with
+ * the swatch on the row it sets would be wrong in exactly the place someone is
+ * comparing the two.
  */
-function BothThemes({ light, dark }: { light: ReactElement; dark: ReactElement }): ReactElement {
-	return (
-		<>
-			<span className="dark:hidden">{light}</span>
-			<span className="hidden dark:inline">{dark}</span>
-		</>
-	);
-}
-
-function Disc({ color }: { color: string }): ReactElement {
-	return <span className="block size-5 rounded-full ring-1 ring-fd-border" style={{ background: color }} />;
-}
-
-function Charts({ mode }: { mode: ResolvedMode }): ReactElement {
-	const HEIGHTS = [10, 16, 12, 20, 14];
-
-	return (
-		<span className="flex h-5 items-end gap-0.5">
-			{HEIGHTS.map((height, index) => (
-				<span
-					className="w-1 rounded-sm"
-					key={`chart-${index + 1}`}
-					style={{ background: swatch(mode, `chart-${index + 1}`), height }}
-				/>
-			))}
-		</span>
-	);
-}
-
-function Surface({ mode }: { mode: ResolvedMode }): ReactElement {
-	return (
-		<span
-			className="flex h-5 w-9 flex-col justify-center gap-1 rounded border px-1"
-			style={{ background: swatch(mode, "card"), borderColor: swatch(mode, "border") }}
-		>
-			<span className="h-0.5 w-full rounded-full" style={{ background: swatch(mode, "foreground") }} />
-			<span className="h-0.5 w-2/3 rounded-full" style={{ background: swatch(mode, "muted-foreground") }} />
-		</span>
-	);
-}
-
-function Corner({ radius }: { radius: string }): ReactElement {
-	return <span className="block size-5 border border-fd-foreground/40" style={{ borderRadius: radius }} />;
-}
 
 function Specimen({ row, config }: { row: ThemeSummaryRow; config: DesignSystemConfig }): ReactElement | null {
-	const { light, dark } = presetSwatches(config);
-
-	if (row.specimen === "radius") {
-		const value = light.radius;
-		return <Corner radius={typeof value === "number" ? `${value}px` : "10px"} />;
-	}
-
-	if (row.specimen === "primary") {
-		return (
-			<BothThemes dark={<Disc color={swatch(dark, "primary")} />} light={<Disc color={swatch(light, "primary")} />} />
-		);
-	}
-
-	if (row.specimen === "charts") {
-		return <BothThemes dark={<Charts mode={dark} />} light={<Charts mode={light} />} />;
-	}
-
-	if (row.specimen === "surface") {
-		return <BothThemes dark={<Surface mode={dark} />} light={<Surface mode={light} />} />;
-	}
+	if (row.specimen === "radius") return <CornerSpecimen config={config} />;
+	if (row.specimen === "primary") return <PrimarySpecimen config={config} />;
+	if (row.specimen === "charts") return <ChartsSpecimen config={config} />;
+	if (row.specimen === "surface") return <SurfaceSpecimen config={config} />;
 
 	return null;
 }

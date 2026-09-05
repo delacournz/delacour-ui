@@ -4,8 +4,8 @@ The data behind `apps/playground`'s `/theme` customizer, plus everything that
 turns a choice into text: a resolver, a preset codec and the CSS emitters.
 
 It exists because two apps need the same answer. The playground composes a theme
-on a device; `apps/web` renders that theme's CSS at `/theme` from a code in the
-URL. While the axes lived under `apps/playground/src/`, only one of them could.
+on a device; `apps/web` composes the same axes at `/theme` and renders their CSS.
+While the axes lived under `apps/playground/src/`, only one of them could.
 
 ## What is in here
 
@@ -16,7 +16,7 @@ URL. While the axes lived under `apps/playground/src/`, only one of them could.
 | `styles.ts` | `…/styles` | `STYLES` — 8 geometry bundles, Vega … Rhea |
 | `radii.ts` | `…/radii` | `RADII` — five corners, `default` deferring to the style |
 | `fonts.ts` | `…/fonts` | `FONTS` — 26 families, each carrying its TTF-embedded name |
-| `config.ts` | `…/config` | `DesignSystemConfig`, `DEFAULT_CONFIG`, `normalizeConfig` |
+| `config.ts` | `…/config` | `DesignSystemConfig`, `DEFAULT_CONFIG`, `normalizeConfig`, `withAxis` |
 | `resolve.ts` | `…/resolve` | `resolveTokens` — the composition, and the whole algorithm |
 | `preset.ts` | `…/preset` | `encodePreset` / `decodePreset` — a config as a short shareable code |
 | `emit.ts` | `…/emit` | `resolveTokens`' output as CSS someone can paste |
@@ -119,6 +119,19 @@ colour and lets a stale `style`, `font` or `radius` through untouched.
 Base64url is hand-rolled against RFC 4648 §5 rather than reaching for
 `btoa`/`atob`: this module has to load under Bun's test runner, Metro, Vite's SSR
 and Node's CJS config loader, and it stays dependency-free so it can.
+
+## `withAxis` is the move both customizers make
+
+Changing one axis is not a spread, because one axis invalidates another:
+`palettesForBaseColor` hides the other six base colours from the Theme and Chart
+Color lists, so moving Base Color from `stone` to `zinc` leaves `theme: "stone"`
+naming a palette that axis no longer offers.
+
+`withAxis(config, key, value)` is that one change plus `normalizeConfig`, and it
+is here rather than in either app because both make the move — the playground's
+`setAxis` writes it to MMKV, and `apps/web`'s `axisOptions` encodes it into the
+`href` of every option link. Two copies of this rule is exactly the drift the
+package exists to prevent.
 
 ## Composition is shadcn's, and the order IS the precedence
 

@@ -25,6 +25,12 @@ export function baseOptions(): BaseLayoutProps {
 				url: "/docs/native/components",
 				active: "nested-url",
 			},
+			{
+				type: "main",
+				text: "Theme",
+				url: "/theme",
+				active: "nested-url",
+			},
 		],
 		githubUrl: `https://github.com/${gitConfig.user}/${gitConfig.repo}`,
 	};

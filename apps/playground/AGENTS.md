@@ -283,15 +283,31 @@ capture in both themes, and writes the media and manifest the documentation site
 
 ```bash
 bun run previews                      # everything, incremental
-bun run previews -- --only switch     # one component, or one demo
-bun run previews -- --force           # ignore the source hashes
-bun run previews -- --dev             # against a dev client already on Metro
+bun run previews -- -- --only switch  # one component, or one demo
+bun run previews -- -- --force        # ignore the source hashes
+bun run previews -- -- --dev          # against a dev client already on Metro
 ```
+
+**Two `--`, and the second is not a typo.** The root script is `turbo previews --filter=…`, so the
+first `--` gets the flags past `bun run` and the second gets them past turbo. With one, turbo reads
+`--only switch` as its own and fails with `Could not find task "switch"`. From inside this workspace
+`bun scripts/capture-previews.ts --only switch` takes them directly.
 
 **It writes into another workspace** — `apps/web/public/previews/**` and
 `apps/web/src/previews/manifest.ts`. Both are generated; neither is edited by hand. The script
 lives here because everything it reads lives here: the demos, the scheme, the bundle id, the
 prebuild guard and the native project.
+
+**A device frame is full-bleed, and no demo opts into that.** `src/app/preview.tsx` gives a
+`capture.frame: "device"` demo the whole window with no gutter, because the script crops the whole
+screen for one and a shrink-wrapped screen is never the intent. All three device demos had left
+`align` unset and published a screen collapsed to the width of its narrowest row; the stage decides
+from the frame now, so there is nothing left to forget.
+
+**There are two long edges.** `MAX_EDGE` is 720 for a stage capture — roughly 2x the width the docs
+draw it at — and `DEVICE_MAX_EDGE` is 1440 for a device one, because the landing hero draws a whole
+phone 300 CSS px wide and 720 on the long edge left only 332 across it. A demo's hash carries its
+own frame's edge, so moving one cap re-captures only the demos it governs.
 
 **A run is incremental.** Each demo's source, meta, flow and the encode settings hash together, and
 an unchanged demo whose files are present is skipped. That is what keeps committed media from
@@ -301,6 +317,10 @@ cache-buster, because Vite copies `public/` with no content hashing of its own.
 
 The script fails the run if the media directory passes its size budget, naming the largest files.
 Raise `BUDGET_BYTES` in `scripts/previews/config.ts` deliberately or not at all.
+
+The stage `src/app/preview.tsx` renders is **not** in a demo's hash — only its source, meta, flow
+and edge are. So a change to the harness alone re-captures nothing, and has to be published with
+`--force`.
 
 ### Static and animated
 
@@ -320,7 +340,7 @@ which is what the documentation should actually show.
 
 | Symptom | Cause |
 | --- | --- |
-| Rows collapsed, text missing | The demo is a container and needs `capture.align: "stretch"` |
+| Rows collapsed, text missing | The demo is a container and needs `capture.align: "stretch"` — unless it is a `device` frame, which is full-bleed already and cannot be fixed this way |
 | Empty box | The demo mounts into a portal; it needs `capture.frame: "device"` |
 | A control caught mid-animation | The idle gate settled early — the demo probably animates for longer than it looks |
 | The clip jump-cuts at the loop | Its flow does not return the UI to where it started |

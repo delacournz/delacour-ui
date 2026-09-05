@@ -556,13 +556,19 @@ reasons, and neither is decoration:
 - **`max-h`** keeps a hero out of the whole viewport. A `stage` capture can be portrait — `checkbox`
   is 616×720 — and unconstrained in the 900px content column that drew at ~1050px, with
   `## Installation` below the fold.
-- **`w-auto`, no upscale** is about sharpness. `MAX_EDGE` in the capture script is 720px on the long
-  edge, sized for roughly 2x its rendered width; the 900px column was stretching every stage capture
-  past its own pixels. Raise `MAX_EDGE` before you raise either cap, not after.
+- **`w-auto`, no upscale** is about sharpness. The capture script carries a long edge per frame —
+  `MAX_EDGE` at 720px for a stage capture, sized for roughly 2x its rendered width, and
+  `DEVICE_MAX_EDGE` at 1440px for a device one; the 900px column was stretching every stage capture
+  past its own pixels. Raise the matching edge before you raise either cap, not after.
 
 **The two caps differ because the two frames hold different things.** A stage capture is one control;
-a device capture is 332×720 of navbar, list and footer, and the stage cap draws that 194px wide, at
+a device capture is 662×1440 of navbar, list and footer, and the stage cap draws that 194px wide, at
 which point every row is an unreadable smudge.
+
+The device edge is 1440 rather than 720 because of the **landing page**, not this one. `DEVICE_MEDIA`
+draws a device capture 240px wide, which 720 covered twice over; the hero in `src/routes/index.tsx`
+draws the same file at `w-[300px]`, and a 332px-wide source was being upscaled on every retina
+display. The docs pages were never the constraint.
 
 It is a cap, not a fixed-height stage, so a short wide preview (`slider/anatomy`, 720×222) stays
 short instead of floating in letterbox bands. `preview-grid.tsx` uses neither — an index card is a

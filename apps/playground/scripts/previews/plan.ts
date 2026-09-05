@@ -8,8 +8,11 @@
 import { createHash } from "node:crypto";
 import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
-import { DEMOS_DIR, FLOWS_DIR, MAX_EDGE } from "./config";
+import { DEMOS_DIR, DEVICE_MAX_EDGE, FLOWS_DIR, MAX_EDGE } from "./config";
 import { type DemoSource, readDemoSource, readGroupOrder } from "./demo-source";
+
+/** Mirrors `DemoFrame` in `src/demos/types.ts`, which imports React and cannot be read here. */
+export type DemoFrame = "stage" | "device";
 
 export type PlannedDemo = {
 	id: string;
@@ -17,7 +20,7 @@ export type PlannedDemo = {
 	demo: string;
 	path: string;
 	source: DemoSource;
-	frame: "stage" | "device";
+	frame: DemoFrame;
 	flowPath?: string;
 	/** Still frames held before the flow, and after it. Defaults in `DemoCapture`. */
 	leadMs: number;
@@ -53,16 +56,22 @@ async function walk(dir: string): Promise<string[]> {
 /**
  * Everything a capture depends on, hashed.
  *
- * Includes the encode settings as well as the source: bumping `MAX_EDGE` has to
- * invalidate every entry, or half the media would silently stay at the old
- * size.
+ * Includes the encode settings as well as the source: bumping an edge has to
+ * invalidate every entry it governs, or half the media would silently stay at
+ * the old size.
+ *
+ * It is the frame's **own** edge rather than both, so the two caps move
+ * independently: raising `DEVICE_MAX_EDGE` re-captures the three device demos
+ * and leaves the hundred stage ones hashing exactly as they did. Committed
+ * media does not delta-compress, so a hash that mixed the two would rewrite the
+ * whole tree for a change that reaches six files.
  */
-function hashOf(source: DemoSource, flow: string | null): string {
+function hashOf(source: DemoSource, flow: string | null, frame: DemoFrame): string {
 	return createHash("sha256")
 		.update(source.code)
 		.update(JSON.stringify(source.meta))
 		.update(flow ?? "")
-		.update(`edge:${MAX_EDGE}`)
+		.update(`edge:${frame === "device" ? DEVICE_MAX_EDGE : MAX_EDGE}`)
 		.digest("hex")
 		.slice(0, 12);
 }
@@ -80,6 +89,7 @@ export async function planDemos(only?: string): Promise<PlannedDemo[]> {
 		if (!source.meta.capture) continue;
 
 		const capture = source.meta.capture;
+		const frame: DemoFrame = capture.frame ?? "stage";
 		const flowPath = capture.flow ? join(FLOWS_DIR, `${capture.flow}.yaml`) : undefined;
 		const flowText = flowPath && (await Bun.file(flowPath).exists()) ? await Bun.file(flowPath).text() : null;
 
@@ -87,14 +97,14 @@ export async function planDemos(only?: string): Promise<PlannedDemo[]> {
 			component: componentOf(id),
 			demo: id.slice(componentOf(id).length + 1),
 			flowPath,
-			frame: capture.frame ?? "stage",
+			frame,
 			leadMs: capture.leadMs ?? 400,
 			tailMs: capture.tailMs ?? 800,
 			hero: capture.hero === true,
 			id,
 			path,
 			source,
-			sourceHash: hashOf(source, flowText),
+			sourceHash: hashOf(source, flowText, frame),
 		});
 	}
 

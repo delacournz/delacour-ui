@@ -144,7 +144,7 @@
     },
     "packages/charts": {
       "name": "delacour-react-native-charts",
-      "version": "0.0.1-alpha.0",
+      "version": "0.1.0-alpha.1",
       "dependencies": {
         "@types/d3-scale": "^4.0.9",
         "@types/d3-shape": "^3.1.7",
@@ -170,7 +170,7 @@
     },
     "packages/cli": {
       "name": "delacour",
-      "version": "0.0.1-alpha.0",
+      "version": "0.0.1-alpha.1",
       "bin": {
         "delacour": "./dist/index.js",
       },
@@ -201,7 +201,7 @@
     },
     "packages/native-ui": {
       "name": "delacour-react-native-ui",
-      "version": "0.0.1-alpha.0",
+      "version": "0.1.0-alpha.1",
       "dependencies": {
         "clsx": "^2.1.1",
         "tailwind-merge": "^3.6.0",
@@ -220,7 +220,7 @@
         "@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
         "@gorhom/bottom-sheet": "^5.2.8",
         "@legendapp/list": ">=3.3",
-        "delacour-react-native-charts": ">=0.0.1-alpha.0",
+        "delacour-react-native-charts": ">=0.1.0-alpha.1",
         "expo-linear-gradient": ">=15",
         "expo-router": ">=57",
         "react": ">=19",

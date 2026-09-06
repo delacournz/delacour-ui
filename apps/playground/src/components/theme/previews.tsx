@@ -73,10 +73,14 @@ ColorPreview.displayName = "Playground.ColorPreview";
  * Tailwind's scanner is static — a `font-[Outfit]` built from a variable is
  * never compiled and would silently draw nothing. It is also the only honest
  * preview: a family name in the system font tells you nothing about the family.
+ *
+ * No `family` means the platform's own font — `system` as a body font, or a
+ * heading inheriting it — and then no `fontFamily` is set at all rather than an
+ * empty string, which iOS treats as a family it cannot find.
  */
-export function FontPreview({ family }: { family: string }): ReactElement {
+export function FontPreview({ family }: { family?: string }): ReactElement {
 	return (
-		<Text className="text-muted-foreground text-xl" style={{ fontFamily: family }}>
+		<Text className="text-muted-foreground text-xl" style={family ? { fontFamily: family } : undefined}>
 			Aa
 		</Text>
 	);

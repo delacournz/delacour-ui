@@ -61,9 +61,26 @@ describe("specimenStylesheetHref", () => {
 	});
 });
 
+/** The default body font is `system`, which no stylesheet can serve — so these name a face. */
+const GEIST = config({ font: "geist" });
+
 describe("selectedStylesheetHref", () => {
 	test("one family when the heading inherits", () => {
-		expect(families(selectedStylesheetHref(DEFAULT_CONFIG) ?? "")).toEqual(["Geist"]);
+		expect(families(selectedStylesheetHref(GEIST) ?? "")).toEqual(["Geist"]);
+	});
+
+	/**
+	 * `system` is not in `FONTS`: there is no file to load and nothing for the
+	 * CSS API to serve. A request with no `family=` clause is a 400, and a
+	 * request for a family it has never heard of is another — so the answer has
+	 * to be no request at all.
+	 */
+	test("nothing when the body is system and the heading inherits", () => {
+		expect(selectedStylesheetHref(DEFAULT_CONFIG)).toBeUndefined();
+	});
+
+	test("only the heading when the body is system", () => {
+		expect(families(selectedStylesheetHref(config({ fontHeading: "lora" })) ?? "")).toEqual(["Lora"]);
 	});
 
 	test("both when it does not", () => {
@@ -75,7 +92,7 @@ describe("selectedStylesheetHref", () => {
 	});
 
 	test("and it is not subsetted — the panel sets whole sentences", () => {
-		expect(new URL(selectedStylesheetHref(DEFAULT_CONFIG) ?? "").searchParams.get("text")).toBeNull();
+		expect(new URL(selectedStylesheetHref(GEIST) ?? "").searchParams.get("text")).toBeNull();
 	});
 });
 
@@ -85,12 +102,15 @@ describe("selectedStylesheetHref", () => {
  * paragraph out of a font containing `A` and `g`.
  */
 test("the full faces are requested after the two-glyph ones", () => {
+	const sheets = themeFontLinks(GEIST).filter((link) => link.rel === "stylesheet");
+
+	expect(sheets.map((link) => link.href)).toEqual([specimenStylesheetHref(), selectedStylesheetHref(GEIST) ?? ""]);
+});
+
+test("the system font adds no second sheet", () => {
 	const sheets = themeFontLinks(DEFAULT_CONFIG).filter((link) => link.rel === "stylesheet");
 
-	expect(sheets.map((link) => link.href)).toEqual([
-		specimenStylesheetHref(),
-		selectedStylesheetHref(DEFAULT_CONFIG) ?? "",
-	]);
+	expect(sheets.map((link) => link.href)).toEqual([specimenStylesheetHref()]);
 });
 
 test("preconnects to the origin the font files come from", () => {

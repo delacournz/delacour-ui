@@ -133,7 +133,10 @@ AxisRow.displayName = "Playground.Theme.AxisRow";
 function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement {
 	const { config } = useAxisPreview();
 
+	// `system` has no `FONTS` entry, so no title comes back for it and the row
+	// has to name it itself — the raw id would read as a bug.
 	const bodyFont = fontByName(config.font);
+	const bodyTitle = bodyFont?.title ?? "System";
 	const headingFont = config.fontHeading === "inherit" ? bodyFont : fontByName(config.fontHeading);
 
 	return (
@@ -143,15 +146,15 @@ function AxisRows({ onOpen }: { onOpen: (axis: AxisKey) => void }): ReactElement
 					axis="fontHeading"
 					label="Heading"
 					onOpen={onOpen}
-					preview={<FontPreview family={headingFont?.family ?? ""} />}
-					value={headingFont?.title ?? "Inherit"}
+					preview={<FontPreview family={headingFont?.family} />}
+					value={headingFont?.title ?? bodyTitle}
 				/>
 				<AxisRow
 					axis="font"
 					label="Font"
 					onOpen={onOpen}
-					preview={<FontPreview family={bodyFont?.family ?? ""} />}
-					value={bodyFont?.title ?? config.font}
+					preview={<FontPreview family={bodyFont?.family} />}
+					value={bodyTitle}
 				/>
 			</ListGroup>
 

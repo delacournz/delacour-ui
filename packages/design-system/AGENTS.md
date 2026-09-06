@@ -80,8 +80,22 @@ reads `tokens.css` and fails if the copies drift — and asserts outright that
 Vega's whole `@theme` block equals the shipped one, since Vega is the identity
 style.
 
-**`parseTheme` routes geometry into `native`, wherever it was declared.** The
-page tells the reader to run this exact file through `delacour theme`, so
+`emitNativeCss` is the other half, and since `/theme` shows it first it is the
+one most readers copy. `emit.test.ts` holds the default preset's native output
+equal to `packages/native-ui/src/styles/theme.css` — every `@variant` block and
+the alias names, declaration for declaration, comments aside. That is the
+one-file contract: what `init` ships and what the page emits with no preset are
+the same theme, so "reset" on the page and a fresh `init` cannot disagree. Two
+things had to move for it to hold. The shipped chart ramp is shadcn's neutral
+greys, which is what `shadcn init` writes today. And `DEFAULT_CONFIG.font` is
+`system` — `SYSTEM_FONT` in `config.ts`, a sentinel like `inherit` rather than a
+`FONTS` entry, resolving to no family so the converter fills in each platform's
+own sans. A default naming Geist read as Geist only in an app that had loaded
+it, and as the system font, silently, everywhere else. Its ordinal was
+appended; the golden codes minted under Geist still decode to Geist.
+
+**`parseTheme` routes geometry into `native`, wherever it was declared.** A
+reader may still run the web file through `delacour theme`, so
 geometry arriving in `@theme` or `:root` has to come back out in
 `@variant native`. Left in the palette, Uniwind inlines it at build time and
 `h-button-md` stops being something a consuming app can retune at runtime — which

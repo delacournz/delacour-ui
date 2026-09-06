@@ -3,9 +3,11 @@ import {
 	DEFAULT_CONFIG,
 	type DesignSystemConfig,
 	palettesForBaseColor,
+	SYSTEM_FONT,
 	withAxis,
 } from "@delacour/design-system/config";
-import { emitShadcnCss } from "@delacour/design-system/emit";
+import type { ConversionResult } from "@delacour/design-system/convert";
+import { emitNativeCss, emitShadcnCss } from "@delacour/design-system/emit";
 import { FONT_GROUPS, type FontType, fontByName } from "@delacour/design-system/fonts";
 import { decodePreset, encodePreset } from "@delacour/design-system/preset";
 import { RADII, radiusByName } from "@delacour/design-system/radii";
@@ -43,9 +45,30 @@ export function resolvePreset(preset: string | undefined): ThemePreset {
 	return { status: "resolved", config, code: preset };
 }
 
-/** The `globals.css` this configuration means. */
+/** The `globals.css` this configuration means — shadcn's `:root` / `.dark` shape, for a web app. */
 export function presetCss(config: DesignSystemConfig): string {
 	return emitShadcnCss(resolveTokens(config), { fonts: resolveFonts(config) });
+}
+
+/**
+ * The `theme.css` this configuration means, with the emitter's own account of it.
+ *
+ * This is the file `native-ui` reads and the one the page puts first: Uniwind
+ * takes a theme only from `@variant light` / `@variant dark`, so the web shape
+ * above cannot be pasted into a React Native app without its wrapper rewritten.
+ * Emitting the native shape here is what makes `/theme` a one-step flow —
+ * replace `src/styles/theme.css`, run nothing.
+ *
+ * The whole `ConversionResult` is exposed so a test can assert that no option
+ * the builder offers produces a warning; the route only ever wants `css`.
+ */
+export function presetNative(config: DesignSystemConfig): ConversionResult {
+	return emitNativeCss(resolveTokens(config), { fonts: resolveFonts(config) });
+}
+
+/** The `theme.css` this configuration means. */
+export function presetNativeCss(config: DesignSystemConfig): string {
+	return presetNative(config).css;
 }
 
 export type ThemeSummaryRow = {
@@ -61,6 +84,19 @@ function paletteTitle(config: DesignSystemConfig, name: string): string {
 	return palettesForBaseColor(config.baseColor).find((palette) => palette.name === name)?.title ?? name;
 }
 
+/** What the System row is called, everywhere it appears. */
+const SYSTEM_TITLE = "System";
+
+/**
+ * A body font's title. `system` is a sentinel with no `FONTS` entry, so
+ * `fontByName` has nothing to say about it and the name has to come from here.
+ */
+function bodyFontTitle(name: string): string {
+	if (name === SYSTEM_FONT) return SYSTEM_TITLE;
+
+	return fontByName(name)?.title ?? name;
+}
+
 /**
  * The axes, named back to the reader.
  *
@@ -71,8 +107,7 @@ function paletteTitle(config: DesignSystemConfig, name: string): string {
  * one place that matters is exactly here, where someone is comparing the two.
  */
 export function themeSummary(config: DesignSystemConfig): readonly ThemeSummaryRow[] {
-	const body = fontByName(config.font);
-	const heading = config.fontHeading === "inherit" ? body : fontByName(config.fontHeading);
+	const heading = fontByName(config.fontHeading);
 
 	return [
 		{ label: "Style", value: styleByName(config.style)?.title ?? config.style },
@@ -89,10 +124,10 @@ export function themeSummary(config: DesignSystemConfig): readonly ThemeSummaryR
 			// "Inherit" alone leaves the reader wondering what it inherited.
 			value:
 				config.fontHeading === "inherit"
-					? `Inherit (${heading?.title ?? config.font})`
+					? `Inherit (${bodyFontTitle(config.font)})`
 					: (heading?.title ?? config.fontHeading),
 		},
-		{ label: "Font", value: body?.title ?? config.font },
+		{ label: "Font", value: bodyFontTitle(config.font) },
 	];
 }
 
@@ -146,7 +181,12 @@ function axisValues(config: DesignSystemConfig, axis: AxisKey): readonly { value
 		title: font.title,
 	}));
 
-	return axis === "fontHeading" ? [{ value: "inherit", title: "Inherit" }, ...families] : families;
+	// Each font axis has one value that names no face: a heading may follow the
+	// body, and the body may be the platform's own sans. Neither is a family, so
+	// each sits above the three groups rather than inside one.
+	return axis === "fontHeading"
+		? [{ value: "inherit", title: "Inherit" }, ...families]
+		: [{ value: SYSTEM_FONT, title: SYSTEM_TITLE }, ...families];
 }
 
 /**
@@ -182,8 +222,8 @@ export type FontOptionGroup = { type: FontType; label: string; options: readonly
  * The same options, split into Sans / Mono / Serif.
  *
  * Twenty-six families in one undifferentiated grid is a wall; the group is the
- * first thing anyone picking a typeface decides. `inherit` belongs to neither
- * rail, so the Heading axis renders it above these rather than inside one.
+ * first thing anyone picking a typeface decides. `inherit` and `system` belong
+ * to no rail, so each axis renders its own above these rather than inside one.
  */
 export function fontOptionGroups(config: DesignSystemConfig, axis: "font" | "fontHeading"): readonly FontOptionGroup[] {
 	const byValue = new Map(axisOptions(config, axis).map((option) => [option.value, option]));
@@ -201,4 +241,17 @@ export function fontOptionGroups(config: DesignSystemConfig, axis: "font" | "fon
 /** The `inherit` row, which the Heading axis shows above the three groups. */
 export function inheritOption(config: DesignSystemConfig): AxisOption | undefined {
 	return axisOptions(config, "fontHeading").find((option) => option.value === "inherit");
+}
+
+/**
+ * The `system` row, which the Font axis shows above the three groups.
+ *
+ * It is the default, and the reason is the same one that makes it the
+ * library's default: a fresh `delacour init` loads no webfont, so a preset
+ * naming Geist reads as Geist only in an app that happens to have it and as
+ * the platform font everywhere else. Naming the platform font outright is the
+ * honest option.
+ */
+export function systemOption(config: DesignSystemConfig): AxisOption | undefined {
+	return axisOptions(config, "font").find((option) => option.value === SYSTEM_FONT);
 }

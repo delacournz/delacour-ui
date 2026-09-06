@@ -121,8 +121,11 @@ program
 
 program
 	.command("theme")
-	.description("bring a shadcn or tweakcn theme across from a web app")
-	.argument("[source]", "a CSS file, a URL, or `-` to read stdin")
+	.description("convert theme.css in place, or bring a shadcn or tweakcn theme across from a web app")
+	.argument(
+		"[source]",
+		"a CSS file, a URL, or `-` to read stdin — optional; with no source, theme.css is converted where it sits"
+	)
 	.option("-c, --cwd <path>", "directory to work in", process.cwd())
 	.option("--dry-run", "print the CSS instead of writing it")
 	.option("-y, --yes", "replace theme.css without asking")

@@ -1,6 +1,7 @@
 import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, withAxis } from "@delacour/design-system/config";
 import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { useSyncExternalStore } from "react";
+import { Platform } from "react-native";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
 
@@ -48,15 +49,26 @@ function readConfig(): DesignSystemConfig {
  * Fonts come from `resolveFonts` rather than being worked out here, so the
  * running app and the CSS the documentation site emits cannot disagree about
  * which family a config means.
+ *
+ * A rail that resolves to no family — `system`, or a heading inheriting it —
+ * is written as the platform's own font rather than skipped. `updateCSSVariables`
+ * merges, so a skipped key would keep whatever was there last: choose Lora,
+ * then choose System, and the app would stay in Lora with the picker saying
+ * otherwise. The two names are the ones `theme.css` ships in its `@variant ios`
+ * and `@variant android` blocks, so "reset" lands on exactly what a fresh
+ * install draws.
  */
+const PLATFORM_SANS = Platform.select({ ios: "System", default: "sans-serif" });
+
 export function applyConfig(config: DesignSystemConfig): void {
 	const tokens = resolveTokens(config);
 
 	const { sans, heading } = resolveFonts(config);
 
-	const fonts: Record<string, string> = {};
-	if (sans) fonts["--font-sans"] = sans;
-	if (heading) fonts["--font-heading"] = heading;
+	const fonts: Record<string, string> = {
+		"--font-sans": sans ?? PLATFORM_SANS,
+		"--font-heading": heading ?? PLATFORM_SANS,
+	};
 
 	const active = Uniwind.currentTheme === "dark" ? "dark" : "light";
 	const order = active === "dark" ? (["light", "dark"] as const) : (["dark", "light"] as const);

@@ -356,6 +356,11 @@ shape rather than an invention:
 ```
 
 The raw name is what a theme declares; the `@theme inline` alias is what mints
+`bg-primary`. Adding a token means editing **both** — a name declared in the
+variants and forgotten in the alias block is unreachable, and no `bg-*` exists
+for it. `styles/theme-tokens.test.ts` fails on the gap, and is also the reader
+every suite that checks a token against `theme.css` shares.
+
 **The typeface is four tokens, not three.** `theme.css` names `--font-sans`,
 `--font-serif`, `--font-mono` and `--font-heading` per platform, because React
 Native's `fontFamily` takes a single family name with no fallback list.
@@ -367,11 +372,6 @@ that variable; `Text.Code`'s `font-mono` and `Text.Display`/`.Title`/`.Header`'s
 `--font-heading` defaults to the same family as `--font-sans`, so pairing a
 display face with body text is something an app opts into rather than something
 this package decides.
-
-`bg-primary`. Adding a token means editing **both** — a name declared in the
-variants and forgotten in the alias block is unreachable, and no `bg-*` exists
-for it. `styles/theme-tokens.test.ts` fails on the gap, and is also the reader
-every suite that checks a token against `theme.css` shares.
 
 Two rules the tooling enforces rather than suggests:
 
@@ -406,8 +406,8 @@ with no escape hatch, so a `contentStyle` in `screenOptions` cannot reach it;
 only a theme fixes it.
 
 A theme also goes the other way now. `apps/playground`'s `/theme` screen composes one and its
-footer opens `ui.delacour.co.nz/theme?preset=<code>`, which renders it as a `globals.css`;
-`bunx delacour theme ./globals.css` brings that file back to the shape above. Both halves are
+footer opens `ui.delacour.co.nz/theme?preset=<code>`, which renders it as a `theme.css` in the
+shape above, ready to paste over the file — and as a `globals.css` for the web. Both halves are
 `@delacour/design-system`, which owns the axes, the resolver and — since it is the only consumer
 that is not the CLI — `convert.ts` itself.
 

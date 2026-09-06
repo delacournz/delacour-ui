@@ -278,13 +278,25 @@ Options:
 
 ## theme
 
-Brings a theme across from a web app.
+Brings a theme across from a web app. Paste a shadcn or tweakcn `globals.css` over `theme.css`
+and run it with nothing else:
+
+```bash
+delacour theme
+```
+
+Or name the source and it writes `theme.css` for you:
 
 ```bash
 delacour theme ./src/app/globals.css
 delacour theme https://tweakcn.com/r/themes/<id>
 pbpaste | delacour theme -
 ```
+
+With no source the command reads `theme.css` where it sits. A file already in the shape Uniwind
+reads is left alone, so running it twice is safe; a file in neither shape is named rather than
+guessed at. `delacour doctor` fails on a `theme.css` still in shadcn's shape, so a forgotten run is
+caught before a build.
 
 The palette these components paint from is shadcn's, name for name, so a `globals.css` or a tweakcn
 export is already almost the right file. What it is not is *readable*. Uniwind takes a theme only
@@ -296,7 +308,8 @@ So the command rewrites the wrapper, and three other things besides:
 - **Fills the gaps.** shadcn has no `elevated`, `tertiary`, `success` / `warning` / `info`, the
   `-soft` pairs or `overlay`, and components here paint with all of them. Each is written as an
   expression over a token your theme *does* define, so it follows your palette instead of falling
-  back to the library's.
+  back to the library's. shadcn v4 also stopped declaring `destructive-foreground`, which every
+  destructive control here paints its label with; that and the shadow scale are filled in too.
 - **Balances the two themes.** A shadcn theme routinely sets something in `:root` and omits it from
   `.dark`. Uniwind refuses to build that — "All themes must have the same variables" — so anything
   declared once is copied across.
@@ -319,10 +332,12 @@ and fight the scale. Setting `--radius` alone retunes them all. See
 ```txt
 Usage: delacour theme [options] [source]
 
-bring a shadcn or tweakcn theme across from a web app
+convert theme.css in place, or bring a shadcn or tweakcn theme across from a web
+app
 
 Arguments:
-  source            a CSS file, a URL, or `-` to read stdin
+  source            a CSS file, a URL, or `-` to read stdin — optional; with no
+                    source, theme.css is converted where it sits
 
 Options:
   -c, --cwd <path>  directory to work in (default: the current directory)

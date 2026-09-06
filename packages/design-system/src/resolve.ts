@@ -139,6 +139,8 @@ export type ResolvedFonts = { sans?: string; heading?: string };
  * while the file you copied names another.
  */
 export function resolveFonts(config: DesignSystemConfig): ResolvedFonts {
+	// `system` is not in `FONTS`, so it resolves to no family on purpose — the
+	// platform default is not something a stylesheet has to name.
 	const sans = fontByName(config.font)?.family;
 	const heading = config.fontHeading === "inherit" ? sans : fontByName(config.fontHeading)?.family;
 

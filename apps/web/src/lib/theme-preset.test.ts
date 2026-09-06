@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { DEFAULT_CONFIG, type DesignSystemConfig } from "@delacour/design-system/config";
+import { DEFAULT_CONFIG, type DesignSystemConfig, SYSTEM_FONT } from "@delacour/design-system/config";
 import { decodePreset, encodePreset, PRESET_CODE_LENGTH } from "@delacour/design-system/preset";
 import {
 	AXIS_KEYS,
@@ -8,7 +8,10 @@ import {
 	fontOptionGroups,
 	inheritOption,
 	presetCss,
+	presetNative,
+	presetNativeCss,
 	resolvePreset,
+	systemOption,
 	themeSummary,
 	themeTitle,
 } from "./theme-preset";
@@ -80,6 +83,7 @@ describe("resolvePreset", () => {
 		for (const input of hostile) {
 			expect(() => resolvePreset(input)).not.toThrow();
 			expect(() => presetCss(resolvePreset(input).config)).not.toThrow();
+			expect(() => presetNativeCss(resolvePreset(input).config)).not.toThrow();
 		}
 	});
 });
@@ -126,6 +130,19 @@ describe("themeSummary", () => {
 
 		expect(rows.find((row) => row.label === "Heading")?.value).toBe("Playfair Display");
 	});
+
+	/**
+	 * `system` is a sentinel, not a `FONTS` entry, so `fontByName` has no title
+	 * for it — and the raw id leaking into the summary is exactly the kind of
+	 * thing a reader comparing two screens would take for a bug.
+	 */
+	test("the system font is named, not shown as its id", () => {
+		const rows = themeSummary(DEFAULT_CONFIG);
+		const value = (label: string) => rows.find((row) => row.label === label)?.value;
+
+		expect(value("Font")).toBe("System");
+		expect(value("Heading")).toBe("Inherit (System)");
+	});
 });
 
 describe("themeTitle", () => {
@@ -153,6 +170,53 @@ describe("presetCss", () => {
 
 	test("a different config gives different CSS", () => {
 		expect(presetCss(config({ theme: "blue" }))).not.toBe(presetCss(DEFAULT_CONFIG));
+	});
+});
+
+/**
+ * The first tab on `/theme`, and the one the copy button takes. It has to be
+ * the shape `native-ui`'s `theme.css` is in — Uniwind reads a theme only from
+ * `@variant light` / `@variant dark`, and a `.dark {` block would be stored as
+ * a utility class with its dark palette never arriving.
+ */
+describe("presetNativeCss", () => {
+	test("is in the shape theme.css is in", () => {
+		const css = presetNativeCss(DEFAULT_CONFIG);
+
+		expect(css).toContain("@variant light");
+		expect(css).toContain("@variant dark");
+		expect(css).toContain("@theme inline");
+		expect(css).not.toContain(".dark {");
+	});
+
+	test("names the platform fonts when the body is system", () => {
+		const css = presetNativeCss(DEFAULT_CONFIG);
+
+		expect(css).toContain('--font-sans: "System";');
+		expect(css).toContain('--font-sans: "sans-serif";');
+	});
+
+	test("a different config gives different CSS", () => {
+		expect(presetNativeCss(config({ theme: "blue" }))).not.toBe(presetNativeCss(DEFAULT_CONFIG));
+	});
+
+	/**
+	 * A warning is the emitter saying "I could not use this as written". None
+	 * of the page's own options may produce one — every tile is a destination,
+	 * and a destination whose file carries a caveat is a tile that lies.
+	 */
+	test("no option the builder offers produces a warning", () => {
+		expect(presetNative(DEFAULT_CONFIG).warnings).toEqual([]);
+
+		for (const axis of AXIS_KEYS) {
+			for (const option of axisOptions(DEFAULT_CONFIG, axis)) {
+				expect({ axis, option: option.value, warnings: presetNative(option.config).warnings }).toEqual({
+					axis,
+					option: option.value,
+					warnings: [],
+				});
+			}
+		}
 	});
 });
 
@@ -274,13 +338,26 @@ describe("axisOptions", () => {
 		expect(values("fontHeading")).toContain("inherit");
 		expect(values("font")).not.toContain("inherit");
 	});
+
+	/**
+	 * The mirror image: a heading has `inherit` as its way of naming no face,
+	 * so a `system` heading would be a second spelling of the same thing.
+	 */
+	test("only the body offers system", () => {
+		const values = (axis: AxisKey) => axisOptions(DEFAULT_CONFIG, axis).map((option) => option.value);
+
+		expect(values("font")).toContain(SYSTEM_FONT);
+		expect(values("fontHeading")).not.toContain(SYSTEM_FONT);
+	});
 });
 
 describe("fontOptionGroups", () => {
-	test("the three rails together are the whole catalogue, minus inherit", () => {
+	test("the three rails together are the whole catalogue, minus the two sentinels", () => {
 		for (const axis of ["font", "fontHeading"] as const) {
 			const grouped = fontOptionGroups(DEFAULT_CONFIG, axis).flatMap((group) => group.options);
-			const flat = axisOptions(DEFAULT_CONFIG, axis).filter((option) => option.value !== "inherit");
+			const flat = axisOptions(DEFAULT_CONFIG, axis).filter(
+				(option) => option.value !== "inherit" && option.value !== SYSTEM_FONT
+			);
 
 			expect(grouped).toEqual(flat);
 		}
@@ -302,5 +379,20 @@ describe("inheritOption", () => {
 
 	test("clears an explicit heading", () => {
 		expect(inheritOption(config({ fontHeading: "lora" }))?.config.fontHeading).toBe("inherit");
+	});
+});
+
+describe("systemOption", () => {
+	test("is selected by default, and not once a face is chosen", () => {
+		expect(systemOption(DEFAULT_CONFIG)?.isSelected).toBe(true);
+		expect(systemOption(config({ font: "lora" }))?.isSelected).toBe(false);
+	});
+
+	test("clears a chosen face", () => {
+		expect(systemOption(config({ font: "lora" }))?.config.font).toBe(SYSTEM_FONT);
+	});
+
+	test("is titled, because the id is not a name", () => {
+		expect(systemOption(DEFAULT_CONFIG)?.title).toBe("System");
 	});
 });

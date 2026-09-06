@@ -10,8 +10,15 @@ import {
 	StyleSpecimen,
 	SurfaceSpecimen,
 } from "@/components/theme-specimens";
-import { fontSpecimen } from "@/lib/google-fonts";
-import { AXIS_LABELS, type AxisOption, axisOptions, fontOptionGroups, inheritOption } from "@/lib/theme-preset";
+import { FALLBACK_STACK, fontSpecimen } from "@/lib/google-fonts";
+import {
+	AXIS_LABELS,
+	type AxisOption,
+	axisOptions,
+	fontOptionGroups,
+	inheritOption,
+	systemOption,
+} from "@/lib/theme-preset";
 
 /**
  * The customizer, as seven rows of links.
@@ -177,12 +184,40 @@ function FontTile({ option }: { option: AxisOption }): ReactElement {
 }
 
 /**
+ * The row above the rails: the one value on each font axis that names no face.
+ *
+ * `Inherit` is the Heading axis's way of saying "no separate decision";
+ * `System` is the Font axis's way of naming the platform's own sans, and it is
+ * the default because a fresh app has loaded no other face. The System tile is
+ * set in the fallback stack alone — the only honest specimen for a font that
+ * is whatever the reader's platform uses.
+ */
+function SentinelTile({ axis, option }: { axis: "font" | "fontHeading"; option: AxisOption }): ReactElement {
+	if (axis === "fontHeading") {
+		return (
+			<OptionLink className={`${TILE} w-fit flex-row items-center px-3`} option={option}>
+				<span>Inherit — follows the body font</span>
+			</OptionLink>
+		);
+	}
+
+	return (
+		<OptionLink className={`${TILE} w-fit flex-row items-center gap-3 px-3`} option={option}>
+			<span className="text-lg leading-none" style={{ fontFamily: FALLBACK_STACK }}>
+				Ag
+			</span>
+			<span>System — the platform&apos;s own font</span>
+		</OptionLink>
+	);
+}
+
+/**
  * Twenty-six families, on their three rails.
  *
  * The group is the first thing anyone picking a typeface decides, so Sans, Mono
- * and Serif are headings rather than a flat wall — and `Inherit` sits above all
- * three, because it belongs to none of them and is the Heading axis's way of
- * saying "no separate decision".
+ * and Serif are headings rather than a flat wall — and the axis's sentinel
+ * (`Inherit` or `System`) sits above all three, because it belongs to none of
+ * them.
  *
  * Uncapped, unlike an obvious first instinct to put twenty-six tiles in a
  * scroller. A scroll area inside a scrolling page is a nested gesture, and it
@@ -190,15 +225,11 @@ function FontTile({ option }: { option: AxisOption }): ReactElement {
  * axis is a comparison rather than a search.
  */
 function FontAxis({ config, axis }: { config: DesignSystemConfig; axis: "font" | "fontHeading" }): ReactElement {
-	const inherit = axis === "fontHeading" ? inheritOption(config) : undefined;
+	const sentinel = axis === "fontHeading" ? inheritOption(config) : systemOption(config);
 
 	return (
 		<Axis label={AXIS_LABELS[axis]}>
-			{inherit ? (
-				<OptionLink className={`${TILE} w-fit flex-row items-center px-3`} option={inherit}>
-					<span>Inherit — follows the body font</span>
-				</OptionLink>
-			) : null}
+			{sentinel ? <SentinelTile axis={axis} option={sentinel} /> : null}
 			<div className="rounded-lg border border-fd-border p-3">
 				{fontOptionGroups(config, axis).map((group) => (
 					<div className="mb-3 flex flex-col gap-2 last:mb-0" key={group.type}>

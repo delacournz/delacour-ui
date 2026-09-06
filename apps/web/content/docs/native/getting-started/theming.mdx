@@ -4,6 +4,18 @@ description: Tokens, the light and dark palettes, and theming a navigator from t
 icon: Palette
 ---
 
+`theme.css` is the one file that is yours. Everything else `init` puts in `styles/` is plumbing —
+the engines, the size scale, the barrel — and none of it needs touching to retheme an app. Replace
+`theme.css` whole and every component repaints.
+
+Three ways to fill it:
+
+1. **Build one.** [Theme](/theme) composes seven axes and shows the file. Copy the `theme.css` tab
+   over yours. Nothing to run.
+2. **Bring a web app's theme.** Paste a shadcn or tweakcn `globals.css` over `theme.css` and run
+   `delacour theme`, which rewrites the file in place.
+3. **Edit it.** The palette is shadcn's, name for name, so the names are the ones you already know.
+
 The palette is **shadcn's**, in shadcn's shape. A theme built for a web app — by hand, by
 `shadcn init`, or in a generator like tweakcn — is the same set of variable names this library
 paints from, so moving one across is a copy, not a translation.
@@ -30,16 +42,26 @@ palette colour or a `dark:` prefix. The variable swap handles the theme.
 
 ## Bring your web theme
 
+Paste the file over `theme.css`, then:
+
+```bash
+npx delacour@alpha theme
+```
+
+Or point the command at the source and it writes `theme.css` for you:
+
 ```bash
 npx delacour@alpha theme ./src/app/globals.css
 npx delacour@alpha theme https://tweakcn.com/r/themes/<id>
+pbpaste | npx delacour@alpha theme -
 ```
 
 The one thing that cannot survive a straight paste is the wrapper. Uniwind reads a theme only from
 `@variant light` / `@variant dark`; a literal `.dark { … }` is registered as a *utility class named
 `dark`* and contributes nothing — no error, no warning, just a dark theme that never arrives. The
 command rewrites those two lines, fills in the tokens shadcn has no name for, and reports anything
-React Native cannot use.
+React Native cannot use. `delacour doctor` fails on a `theme.css` still in shadcn's shape, so a
+forgotten run is caught before a build.
 
 <Callout type="warn">
 Font stacks are the one value that does not carry. React Native's `fontFamily` takes a **single**
@@ -157,16 +179,11 @@ wrong way round.
 ## Generating one
 
 If you would rather build a palette than paste one, [**Theme**](/theme) composes seven orthogonal
-axes — style, radius, base colour, accent, chart hues and two typefaces — and shows the
-`globals.css` they add up to. Each option is a link, so the whole theme is the code in the URL:
-share it, bookmark it, or open it on a phone.
+axes — style, radius, base colour, accent, chart hues and two typefaces — and shows the `theme.css`
+they add up to, in exactly the shape `init` ships. Copy it over yours; there is nothing to run. A
+second tab holds shadcn's `globals.css` for a web app that shares the theme. Each option is a link,
+so the whole theme is the code in the URL: share it, bookmark it, or open it on a phone.
 
 The playground app has the same axes on its own **Theme** screen, where they repaint a real app as
 you go rather than a specimen. Its footer opens that page with the configuration already in the
 URL, which is the way a theme built on a device becomes a file.
-
-That page emits shadcn's shape. Run it back through the CLI to get the file this library reads:
-
-```bash
-bunx delacour theme ./globals.css
-```

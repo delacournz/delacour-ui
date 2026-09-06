@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import * as clack from "@clack/prompts";
+import { detectThemeShape } from "@delacour/design-system/convert";
 import { x } from "tinyexec";
 import { loadConfig, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
@@ -299,6 +300,12 @@ function checkUniwindTypes(config: ResolvedConfig): Check {
  * no `bg-*` exists for it, Tailwind says nothing, and the class silently draws
  * nothing. The reverse is worse — a variant that declares a name the other does
  * not makes Uniwind refuse to build at all.
+ *
+ * Before any of that, the shape. A shadcn `globals.css` pasted straight over
+ * `theme.css` has no `@variant` block at all, so both token sets come back
+ * empty and the lopsided check passes it — the exact file that loses its dark
+ * theme silently. `delacour theme` rewrites it in place, and this is where the
+ * user learns nobody ran it.
  */
 async function checkThemeTokens(config: ResolvedConfig): Promise<Check> {
 	const path = join(config.directories.styles, "theme.css");
@@ -312,6 +319,16 @@ async function checkThemeTokens(config: ResolvedConfig): Promise<Check> {
 	}
 
 	const css = await readFile(path, "utf-8");
+
+	if (detectThemeShape(css) === "shadcn") {
+		return {
+			name: "Theme tokens",
+			status: "fail",
+			detail: "theme.css is in shadcn's `:root` / `.dark` shape, which Uniwind reads as a utility class",
+			fix: "Run `delacour theme` to rewrite it in place.",
+		};
+	}
+
 	const light = variantTokens(css, "light");
 	const dark = variantTokens(css, "dark");
 

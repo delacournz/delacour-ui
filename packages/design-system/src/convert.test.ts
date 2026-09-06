@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { convertTheme, parseTheme } from "./convert";
+import { convertTheme, detectThemeShape, parseTheme } from "./convert";
 
 const SHADCN = `
 :root {
@@ -189,3 +189,121 @@ describe("a source missing something the palette needs", () => {
 		expect(complete.warnings.join(" ")).not.toContain("nothing declares");
 	});
 });
+
+/**
+ * shadcn's current `globals.css` — the shape `npx shadcn init` writes today.
+ * It declares no `--destructive-foreground` (the web component uses `text-white`)
+ * and no shadow scale, and five components here paint with the first.
+ */
+const SHADCN_V4 = `
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+}
+`;
+
+describe("a shadcn v4 file, which names less than this package paints with", () => {
+	const result = convertTheme(parseTheme(SHADCN_V4));
+	const light = variant(result.css, "light");
+	const dark = variant(result.css, "dark");
+
+	test("fills in --destructive-foreground, which shadcn v4 dropped", () => {
+		expect(light["--destructive-foreground"]).toBe("oklch(0.985 0 0)");
+		expect(dark["--destructive-foreground"]).toBe("oklch(0.985 0 0)");
+		expect(result.css).toContain("--color-destructive-foreground: var(--destructive-foreground);");
+		expect(result.derived).toContain("--destructive-foreground");
+	});
+
+	test("keeps a source's own --destructive-foreground", () => {
+		const own = convertTheme(parseTheme(`${SHADCN_V4}\n:root { --destructive-foreground: oklch(1 0 0); }`));
+		expect(variant(own.css, "light")["--destructive-foreground"]).toBe("oklch(1 0 0)");
+		expect(own.derived).not.toContain("--destructive-foreground");
+	});
+
+	test("fills in the shadow scale so a consumer's shadow-md resolves", () => {
+		for (const step of ["2xs", "xs", "sm", "md", "lg", "xl", "2xl"]) {
+			expect(light[`--shadow-${step}`]).toBeDefined();
+			expect(dark[`--shadow-${step}`]).toBe(light[`--shadow-${step}`]);
+			expect(result.css).toContain(`--shadow-${step}: var(--shadow-${step});`);
+		}
+		expect(light["--shadow"]).toBeDefined();
+		expect(result.css).not.toContain("--color-shadow");
+	});
+
+	test("lifts elevated to the card in light, the way theme.css does", () => {
+		expect(light["--elevated"]).toBe("var(--card)");
+	});
+
+	test("warns about nothing — every derivation lands on a declared token", () => {
+		expect(result.warnings).toEqual([]);
+	});
+});
+
+describe("detectThemeShape", () => {
+	test("recognises this package's own shape", () => {
+		expect(detectThemeShape(convertTheme(parseTheme(SHADCN)).css)).toBe("native");
+	});
+
+	test("recognises shadcn's :root / .dark shape", () => {
+		expect(detectThemeShape(SHADCN)).toBe("shadcn");
+		expect(detectThemeShape(SHADCN_V4)).toBe("shadcn");
+	});
+
+	test("recognises a shadcn registry item", () => {
+		expect(
+			detectThemeShape(JSON.stringify({ cssVars: { light: { primary: "red" }, dark: { primary: "blue" } } }))
+		).toBe("shadcn");
+	});
+
+	test("calls a file with no palette unknown", () => {
+		expect(detectThemeShape("/* nothing here */")).toBe("unknown");
+		expect(detectThemeShape("@theme { --radius: 1rem; }")).toBe("unknown");
+	});
+});
+
+/** `--name: value` pairs directly inside `@variant <name>`, keyed with the `--`. */
+function variant(css: string, name: string): Record<string, string> {
+	const start = css.indexOf(`@variant ${name} {`);
+	if (start < 0) return {};
+	let depth = 0;
+	let index = css.indexOf("{", start);
+	const from = index + 1;
+	for (; index < css.length; index += 1) {
+		if (css[index] === "{") depth += 1;
+		if (css[index] === "}") {
+			depth -= 1;
+			if (depth === 0) break;
+		}
+	}
+	const out: Record<string, string> = {};
+	for (const [, key, value] of css.slice(from, index).matchAll(/(--[\w-]+)\s*:\s*([^;]+);/g)) {
+		out[key as string] = (value as string).trim();
+	}
+	return out;
+}

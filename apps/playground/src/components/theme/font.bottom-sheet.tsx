@@ -4,14 +4,16 @@ import { AxisSheet, type AxisSheetControlProps, useAxisChoice } from "@/componen
 import { FontOptionList } from "@/components/theme/font-option-list";
 import { useDesignSystem } from "@/design-system/store";
 
-/** Every family, plus the three group labels standing between them. */
-const FONT_ROW_COUNT = FONTS.length + 3;
+/** Every family, the three group labels, and the System row above them. */
+const FONT_ROW_COUNT = FONTS.length + 4;
 
 /**
  * The family behind `--font-sans`, which every text surface in the app reads.
  *
  * No Inherit row: the body font is what a heading inherits FROM, so there is
- * nothing above it to follow.
+ * nothing above it to follow. Its way of naming no face is `system` — the
+ * platform's own sans, and the default, because a fresh install has loaded no
+ * other.
  */
 export function FontBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps): ReactElement {
 	const config = useDesignSystem();
@@ -19,7 +21,7 @@ export function FontBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps)
 
 	return (
 		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={FONT_ROW_COUNT} title="Font">
-			<FontOptionList onSelect={choose} selected={config.font} />
+			<FontOptionList onSelect={choose} selected={config.font} withSystem />
 		</AxisSheet>
 	);
 }

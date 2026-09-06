@@ -266,8 +266,12 @@ import, so its value is resolved there rather than copied.
 
 `src/routes/theme.tsx` takes a `?preset=` code — typed, pasted, arrived from `apps/playground`'s
 Theme screen, or produced by clicking a swatch on the page itself — decodes it with
-`@delacour/design-system`, and renders the resulting `globals.css` in a `DynamicCodeBlock` with a
-copy button. Above the file, `theme-builder.tsx` offers the same seven axes the playground does.
+`@delacour/design-system`, and renders the result twice: the native `theme.css` — the exact shape
+`delacour init` ships, so a reader pastes it over their file and runs nothing — in the first tab,
+and shadcn's `globals.css` for a sibling web app in the second. The copy button copies the first.
+`emit.test.ts` in `packages/design-system` pins the default preset's native output to the shipped
+`theme.css` declaration for declaration, which is what makes the first tab a promise rather than an
+approximation. Above the file, `theme-builder.tsx` offers the same seven axes the playground does.
 
 Four things about it are load-bearing, and the fourth is what keeps the other three true:
 
@@ -282,10 +286,11 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
   worth pasting into a chat and what keeps the page useful with JavaScript off. If anyone ever
   moves that work into a `useEffect` the page will still *look* right; `curl … | grep oklch` is
   what catches it.
-- **One file carries both modes**, `:root` and `.dark`, because that is shadcn's `globals.css`
-  shape. So there is deliberately no light/dark tab over the code block — it would be a lie about
-  what the file is. The specimens and the preview panel *do* follow the page's theme, and they do
-  it with `dark:hidden` / `hidden dark:inline` for the same reason `preview.tsx` does.
+- **One file carries both modes** in either tab — `@variant light` / `@variant dark` in
+  `theme.css`, `:root` / `.dark` in `globals.css`. So there is deliberately no light/dark tab over
+  the code block — it would be a lie about what the file is; the two tabs are two *files*, not two
+  modes. The specimens and the preview panel *do* follow the page's theme, and they do it with
+  `dark:hidden` / `hidden dark:inline` for the same reason `preview.tsx` does.
 - **The builder holds no state.** Every option is a `<Link>` back to this route carrying the code
   for the configuration it would produce — `axisOptions` in `src/lib/theme-preset.ts` builds them,
   and `withAxis` in `@delacour/design-system/config` is what re-homes Theme and Chart Color when
@@ -297,12 +302,12 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
 
 | File | What it is |
 | --- | --- |
-| `src/lib/theme-preset.ts` | `resolvePreset`, `axisOptions`, `themeSummary` — the URL contract, testable with no renderer |
+| `src/lib/theme-preset.ts` | `resolvePreset`, `axisOptions`, `themeSummary`, `presetNativeCss` / `presetCss` — the URL contract, testable with no renderer |
 | `src/lib/google-fonts.ts` | the two stylesheet requests the Font axis needs |
 | `src/components/theme-builder.tsx` | the seven axes, as grids of links |
 | `src/components/theme-specimens.tsx` | what an axis looks like, shared by the tiles and the summary |
 | `src/components/theme-preview.tsx` | the mock interface the tokens are painted onto |
-| `src/components/theme-css.tsx` | the summary, the code block and the copy button |
+| `src/components/theme-css.tsx` | the summary, the two code blocks in their tabs, and the copy button |
 
 The specimens are one file because the tiles and the summary draw the same things, and a swatch on
 a tile that disagreed with the swatch on the row it sets would be wrong in exactly the place
@@ -319,7 +324,9 @@ axis writes heights, corners and type scale, none of which a colour swatch can s
 
 `src/lib/google-fonts.ts` asks `fonts.googleapis.com` for all twenty-six families subsetted to
 `text=Ag` — the two glyphs a tile draws, about 8 KB of CSS for the lot — and then for the one or
-two selected families at full coverage, for the preview panel. Both declare `@font-face` for the
+two selected families at full coverage, for the preview panel. The default body font is `system`,
+which is not in `FONTS` and so asks for no second sheet at all; its tile is set in the fallback
+stack alone, which is the only honest specimen for "whatever the platform uses". Both declare `@font-face` for the
 same family names and CSS resolves that **by document order**, so the full faces must come second
 or the panel renders its paragraph out of a font containing `A` and `g`. `google-fonts.test.ts`
 pins that order, the alphabetical family sort the CSS API requires, and the per-family weight list

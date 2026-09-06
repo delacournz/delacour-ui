@@ -65,6 +65,22 @@ bunx delacour@alpha init -f   # rewrites the managed @source block
 something applied after it can replace `config.transformer`, and `className` stops compiling
 entirely. `doctor` checks the ordering, not just the presence.
 
+### Light works, dark never arrives
+
+`theme.css` is still in shadcn's shape. A pasted `globals.css` declares its dark palette in a
+`.dark { … }` block, and Uniwind reads that as a **utility class named `dark`** — no error, no
+warning, and every dark value silently never reaches a component. Uniwind takes a theme only from
+`@variant light` / `@variant dark`.
+
+```bash
+bunx delacour@alpha doctor    # "Theme tokens — theme.css is in shadcn's :root / .dark shape"
+bunx delacour@alpha theme     # rewrites theme.css in place
+```
+
+The command also fills in the tokens shadcn has no name for — `--destructive-foreground` among
+them, which shadcn v4 stopped declaring and which every destructive control here paints its label
+with. See [Theming](/docs/native/getting-started/theming).
+
 ### Presses do nothing
 
 No `GestureHandlerRootView` above the component. Every pressable in this library is a Gesture
@@ -198,7 +214,7 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
     "Theme tokens": {
       type: "check",
       description:
-        "Every token theme.css declares is aliased in its @theme inline block, and declared in both themes. A token missing from the alias block has no bg-* at all; one missing from a theme stops Uniwind building.",
+        "theme.css is in the shape Uniwind reads, not shadcn's :root / .dark; every token it declares is aliased in its @theme inline block, and declared in both themes. A shadcn-shaped file has no dark theme at all; a token missing from the alias block has no bg-*; one missing from a theme stops Uniwind building.",
     },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },

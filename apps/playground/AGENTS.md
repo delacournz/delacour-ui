@@ -431,8 +431,8 @@ app exactly as `native-ui` ships — asserted against `theme.css` rather than ag
 
 `/theme`'s footer is the way a theme leaves the phone. It encodes the seven axes as a
 twelve-character code and opens `https://ui.delacour.co.nz/theme?preset=<code>`, where the docs site
-resolves the same tokens and renders a `globals.css` with a copy button — the half of the job a
-phone cannot do. Until it existed the customizer answered "does the library survive this brand?"
+resolves the same tokens and renders a `theme.css` with a copy button, plus a `globals.css` tab
+for the web — the half of the job a phone cannot do. Until it existed the customizer answered "does the library survive this brand?"
 and then threw the theme away.
 
 **It is mounted in `app/theme/_layout.tsx`, so it sits under both tabs.** `Screen.Footer` measures
@@ -585,7 +585,7 @@ single `theme || chartColor` pane had to be:
 | Shared | By | What it shares |
 | --- | --- | --- |
 | `usePaletteOptions` | Theme, Chart Color | the computation — eighteen palettes, each fully resolved |
-| `FontOptionList` | Font, Heading | the layout — grouped families, `Inherit` behind a flag |
+| `FontOptionList` | Font, Heading | the layout — grouped families, `System` and `Inherit` each behind a flag |
 
 **Which sheet is open is one nullable key on `/theme`, not eight booleans**, so
 "only one at a time" is structural rather than something eight handlers have to

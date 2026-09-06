@@ -127,6 +127,8 @@ export const FONT_ORDINALS: Record<string, number> = {
 	"playfair-display": 24,
 	"eb-garamond": 25,
 	"instrument-serif": 26,
+	// Appended when the platform font became a choice; `inherit` was already 0.
+	system: 27,
 };
 
 export const RADIUS_ORDINALS: Record<string, number> = {

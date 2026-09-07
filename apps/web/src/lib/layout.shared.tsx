@@ -27,6 +27,12 @@ export function baseOptions(): BaseLayoutProps {
 			},
 			{
 				type: "main",
+				text: "Charts",
+				url: "/docs/charts",
+				active: "nested-url",
+			},
+			{
+				type: "main",
 				text: "Theme",
 				url: "/theme",
 				active: "nested-url",

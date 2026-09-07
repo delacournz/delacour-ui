@@ -246,3 +246,32 @@ describe("chart demos", () => {
 		expect(FILES.filter((file) => file.startsWith("chart/")).length).toBeGreaterThan(8);
 	});
 });
+
+/**
+ * `charts/` renders `delacour-react-native-charts` directly, with nothing from
+ * the themed library in front of it. The section exists to show that the engine
+ * stands on its own, so a demo there that reached for `delacour-react-native-ui`
+ * would be a picture of the wrong thing — and it would still render perfectly,
+ * which is why only a text check can catch it.
+ */
+describe("engine demos", () => {
+	const ENGINE = FILES.filter((file) => file.startsWith("charts/"));
+
+	test("finds the engine demos, so a broken filter cannot pass silently", () => {
+		expect(ENGINE.length).toBeGreaterThan(12);
+	});
+
+	test("every engine demo imports from delacour-react-native-charts", () => {
+		const missing = ENGINE.filter(
+			(id) => !/from "delacour-react-native-charts"/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
+		);
+		expect(missing).toEqual([]);
+	});
+
+	test("no engine demo imports the themed library", () => {
+		const offenders = ENGINE.filter((id) =>
+			/from "delacour-react-native-ui/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
+		);
+		expect(offenders).toEqual([]);
+	});
+});

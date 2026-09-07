@@ -168,6 +168,19 @@ does. The five folder index routes are hand-written too: they are `ListGroup`
 navigation, not demos. So are the eight `screen/*` routes and `input/form`,
 whose demos **are** screens and must not be nested inside another one.
 
+### The engine demos
+
+`src/demos/charts/` renders `delacour-react-native-charts` directly — `CartesianChart`,
+`PolarChart` and their marks, with hard-coded colours and a `useSystemFont` font — so the
+documentation can show the engine standing on its own. Nothing in that folder imports
+`delacour-react-native-ui`, and `demos.test.ts` fails by name when one does. The key is `charts`,
+not `chart`, on purpose: it is a section of its own with its own hero, and the chart-shape rules
+in that test (at most two roots per demo) are about the themed component and do not apply. Its
+route is `(components)/chart/engine.tsx` rather than a top-level file, because
+`apps/web/src/lib/components.test.ts` asserts that `(components)/` equals the library's component
+list. The import allowlist in `scripts/previews/demo-source.ts` admits the engine, Skia and
+Reanimated for the same reason: a reader of the engine's docs takes those directly.
+
 ### Adding a demo
 
 1. Write `src/demos/<component>/<name>.tsx` — the contract, the import

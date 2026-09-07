@@ -17,10 +17,16 @@ export type ChartFont = SkFont;
  * platforms. That is correct behaviour rather than a bug — but it does mean a
  * screenshot baseline has to be per-platform, and an app that needs identical
  * layout on both must load and pass its own font.
+ *
+ * An `undefined` family means the platform default. `matchFont` spreads the
+ * style it is given over its own defaults, so a `fontFamily: undefined` key
+ * would erase the default rather than fall through to it and throw "Value is
+ * undefined, expected a String" from inside Skia — which is why the key is
+ * omitted rather than passed.
  */
 export function useSystemFont(family: string | undefined, size: number): SkFont {
 	return useMemo(
-		() => matchFont({ fontFamily: family ?? (undefined as unknown as string), fontSize: size }),
+		() => matchFont(family === undefined ? { fontSize: size } : { fontFamily: family, fontSize: size }),
 		[family, size]
 	);
 }

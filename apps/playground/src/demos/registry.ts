@@ -65,6 +65,25 @@ import * as demo_chart_pie_pie from "./chart/pie/pie";
 import * as demo_chart_pie_pie_labels from "./chart/pie/pie-labels";
 import * as demo_chart_pie_pie_tap from "./chart/pie/pie-tap";
 import * as demo_chart_scatter_scatter from "./chart/scatter/scatter";
+import * as demo_charts_area_area from "./charts/area/area";
+import * as demo_charts_area_gradient from "./charts/area/gradient";
+import * as demo_charts_area_stacked from "./charts/area/stacked";
+import * as demo_charts_axes_axes_grid from "./charts/axes/axes-grid";
+import * as demo_charts_bar_bar from "./charts/bar/bar";
+import * as demo_charts_bar_grouped from "./charts/bar/grouped";
+import * as demo_charts_bar_horizontal from "./charts/bar/horizontal";
+import * as demo_charts_bar_stacked from "./charts/bar/stacked";
+import * as demo_charts_candlestick_candlestick from "./charts/candlestick/candlestick";
+import * as demo_charts_composition_declarative from "./charts/composition/declarative";
+import * as demo_charts_composition_mixed from "./charts/composition/mixed";
+import * as demo_charts_composition_render_prop from "./charts/composition/render-prop";
+import * as demo_charts_cursor_scrub from "./charts/cursor/scrub";
+import * as demo_charts_line_curves from "./charts/line/curves";
+import * as demo_charts_line_line from "./charts/line/line";
+import * as demo_charts_line_time_series from "./charts/line/time-series";
+import * as demo_charts_pie_donut from "./charts/pie/donut";
+import * as demo_charts_pie_pie from "./charts/pie/pie";
+import * as demo_charts_scatter_scatter from "./charts/scatter/scatter";
 import * as demo_checkbox_alignment from "./checkbox/alignment";
 import * as demo_checkbox_checkbox_group from "./checkbox/checkbox-group";
 import * as demo_checkbox_colours from "./checkbox/colours";
@@ -235,6 +254,25 @@ export const DEMOS = {
 	"chart/pie/pie-labels": demo_chart_pie_pie_labels,
 	"chart/pie/pie-tap": demo_chart_pie_pie_tap,
 	"chart/scatter/scatter": demo_chart_scatter_scatter,
+	"charts/area/area": demo_charts_area_area,
+	"charts/area/gradient": demo_charts_area_gradient,
+	"charts/area/stacked": demo_charts_area_stacked,
+	"charts/axes/axes-grid": demo_charts_axes_axes_grid,
+	"charts/bar/bar": demo_charts_bar_bar,
+	"charts/bar/grouped": demo_charts_bar_grouped,
+	"charts/bar/horizontal": demo_charts_bar_horizontal,
+	"charts/bar/stacked": demo_charts_bar_stacked,
+	"charts/candlestick/candlestick": demo_charts_candlestick_candlestick,
+	"charts/composition/declarative": demo_charts_composition_declarative,
+	"charts/composition/mixed": demo_charts_composition_mixed,
+	"charts/composition/render-prop": demo_charts_composition_render_prop,
+	"charts/cursor/scrub": demo_charts_cursor_scrub,
+	"charts/line/curves": demo_charts_line_curves,
+	"charts/line/line": demo_charts_line_line,
+	"charts/line/time-series": demo_charts_line_time_series,
+	"charts/pie/donut": demo_charts_pie_donut,
+	"charts/pie/pie": demo_charts_pie_pie,
+	"charts/scatter/scatter": demo_charts_scatter_scatter,
 	"checkbox/alignment": demo_checkbox_alignment,
 	"checkbox/checkbox-group": demo_checkbox_checkbox_group,
 	"checkbox/colours": demo_checkbox_colours,

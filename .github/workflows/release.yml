@@ -83,15 +83,23 @@ jobs:
         working-directory: packages/cli
         run: bun run build && bun run build:check
 
+      # v2, not v1: `@changesets/cli` 3 moves the changesets a pre-mode
+      # `changeset version` consumes into `.changeset/pre/` instead of listing
+      # them in `pre.json`, and v1 read that directory as a Changesets-v1
+      # changeset and died on `.changeset/pre/changes.md` — which is how the
+      # first Version Packages merge published nothing. v2 knows the layout.
+      #
+      # v2 also pushes through the GitHub API, so the version commit is signed
+      # and the token has to arrive through `github-token`; the `GITHUB_TOKEN`
+      # environment variable is ignored.
       - name: Create Version PR or publish to npm
-        uses: changesets/action@v1
+        uses: changesets/action@v2
         with:
-          commit: "🔖 chore(release): version packages"
-          title: "🔖 chore(release): version packages"
-          version: bun .github/changeset-version.ts
-          publish: bunx changeset publish
-        env:
           # A PAT, not GITHUB_TOKEN: events raised by GITHUB_TOKEN do not start
           # workflow runs, so the Version Packages PR would never run the four
           # checks `main-protected` requires and could never be merged.
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          github-token: ${{ secrets.RELEASE_TOKEN }}
+          commit-message: "🔖 chore(release): version packages"
+          pr-title: "🔖 chore(release): version packages"
+          version-script: bun .github/changeset-version.ts
+          publish-script: bunx changeset publish

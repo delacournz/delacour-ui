@@ -3,6 +3,7 @@ import {
 	IconAnalytics,
 	IconBubbleDots,
 	IconChart1,
+	IconLayersTwo,
 	IconPieChart1,
 	IconPuzzle,
 	IconTradingViewCandles,
@@ -57,6 +58,12 @@ const DEMOS = [
 		href: "/chart/parts",
 		icon: IconPuzzle,
 		title: "Parts",
+	},
+	{
+		description: "The engine on its own — no theme, every value passed in",
+		href: "/chart/engine",
+		icon: IconLayersTwo,
+		title: "Engine",
 	},
 ] as const;
 

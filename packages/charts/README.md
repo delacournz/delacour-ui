@@ -11,6 +11,8 @@ which is this engine with the tokens attached.
 > **Alpha.** Both this package and `delacour-react-native-ui` publish to npm's
 > `alpha` tag. `latest` deliberately points at nothing.
 
+Docs: [ui.delacour.co.nz/docs/charts](https://ui.delacour.co.nz/docs/charts).
+
 ## Install
 
 ```bash

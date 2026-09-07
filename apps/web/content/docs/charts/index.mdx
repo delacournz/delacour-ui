@@ -1,0 +1,74 @@
+---
+title: Overview
+description: A headless charting engine for React Native — Skia for drawing, Reanimated for animation, Gesture Handler for touch.
+icon: ChartLine
+---
+
+<Preview id="charts/line/line" title={null} />
+
+`delacour-react-native-charts` draws charts and nothing else. Every colour, font and size is a
+value you pass in: there is no `className`, no token and no theme. The skinned
+[Chart](/docs/native/components/chart) in `delacour-react-native-ui` is this engine with the
+theme attached, and it is the one to reach for when you want a chart that already matches the
+rest of the library.
+
+```tsx
+import { CartesianChart, ChartLine } from "delacour-react-native-charts";
+
+<CartesianChart data={rows} xKey="day" yKeys={["revenue"]}>
+  <ChartLine color="#0A84FF" curve="monotone" yKey="revenue" />
+</CartesianChart>;
+```
+
+A chart is a root and the marks you place inside it. The root turns rows into scales, ticks and
+plotted points and publishes them through a context; a mark reads that context and draws one
+thing. The same mark also takes its points directly, which is what a render prop hands it.
+[Composition](/docs/charts/composition) is where those two forms, and the rules for mixing them,
+are laid out.
+
+## The charts
+
+<Cards>
+  <Card title="Line" href="/docs/charts/line">
+    A stroked series. Eleven curves, a time axis, gaps kept as gaps.
+  </Card>
+  <Card title="Area" href="/docs/charts/area">
+    The region under a series — flat, a gradient, or stacked bands.
+  </Card>
+  <Card title="Bar" href="/docs/charts/bar">
+    One series, several side by side, or several stacked. Either way up.
+  </Card>
+  <Card title="Scatter" href="/docs/charts/scatter">
+    A circle, square or star per datum, all in one path.
+  </Card>
+  <Card title="Candlestick" href="/docs/charts/candlestick">
+    Open, high, low and close, coloured by sentiment.
+  </Card>
+  <Card title="Pie" href="/docs/charts/pie">
+    A second root. Slices, a donut hole, a gauge, and a tap.
+  </Card>
+</Cards>
+
+## The parts
+
+<Cards>
+  <Card title="Axes and grid" href="/docs/charts/axes-and-grid">
+    Skia text for the labels, one path for every gridline.
+  </Card>
+  <Card title="Cursor and scrub" href="/docs/charts/cursor-and-scrub">
+    A drag that solves the curve on the UI thread and reports plain numbers.
+  </Card>
+  <Card title="Animation" href="/docs/charts/animation">
+    Every change morphs. Timing, spring, or none.
+  </Card>
+  <Card title="Core" href="/docs/charts/core">
+    The scales, ticks, curves and solvers on their own, with no Skia in the graph.
+  </Card>
+</Cards>
+
+## What is not here
+
+A `className`. A colour token. A font that ships with the package. A legend, a tooltip view or
+anything else drawn outside the canvas. Each of those belongs to whatever skins the engine, and
+the reason it is drawn that way is in the package's own
+[`AGENTS.md`](https://github.com/delacournz/delacour-ui/blob/main/packages/charts/AGENTS.md).

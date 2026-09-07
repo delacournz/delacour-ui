@@ -1,0 +1,82 @@
+---
+title: Animation
+description: Every change of data morphs. Timing, spring, or none — on the chart or on one mark.
+icon: Sparkles
+---
+
+```tsx
+<CartesianChart animation={{ type: "spring", damping: 18, stiffness: 160 }} data={rows} xKey="day" yKeys={["revenue"]}>
+  <ChartLine color="#0A84FF" yKey="revenue" />
+  <ChartArea animation={{ type: "none" }} color="#0A84FF22" yKey="revenue" />
+</CartesianChart>
+```
+
+`animation` is set on the root and overridden per mark. Every mark that draws a path morphs from
+its previous path to its next one whenever the data changes, using Skia's own path interpolation —
+one native call per frame, with no path allocated on the JavaScript side.
+
+## `ChartAnimation`
+
+```ts
+type ChartAnimation =
+  | { type: "none" }
+  | ({ type: "timing" } & WithTimingConfig)
+  | ({ type: "spring" } & WithSpringConfig);
+
+const DEFAULT_CHART_ANIMATION: ChartAnimation = { type: "timing", duration: 300 };
+```
+
+A discriminated union over Reanimated's own configs, so `duration`, `easing`, `damping`,
+`stiffness` and the rest are exactly what `withTiming` and `withSpring` take.
+
+`none` is not a zero duration. It skips the interpolation entirely, which is what a chart
+re-rendering off a live feed needs: there is nothing to animate towards when the target moves
+every frame, and starting an animation you immediately abandon costs a frame each time.
+
+## Why it never snaps
+
+Skia interpolates two paths only when their verb sequences match. The engine makes that true by
+construction rather than by luck:
+
+- **Point counts are matched in data space**, before either path is built. Two arrays of equal
+  length through the same curve produce the same verbs. `chooseMorphStrategy` picks motion that
+  means what the data did — points appended to the end grow the tail out of where the line
+  stopped; points dropped from the front collapse the departing head into the first survivor;
+  anything else resamples both.
+- **Every corner of a bar is a cubic**, square or rounded, so a bar morphs between the two. A gap
+  is a zero-height bar at the baseline, a scatter gap is the same shape at radius zero, and a
+  candle gap is degenerate in all six candle paths — so a datum can come and go without changing
+  the verb count.
+- **A pie slice is always eleven verbs**, whatever its sweep and whether there is a hole. Its
+  mount animation is free: the entrance path is the same slice at radius zero.
+
+If two paths ever fail to interpolate, the change snaps and a development build warns. That
+warning means a bug in the matching, not a limit to work around.
+
+## Custom marks
+
+```tsx
+import { Path } from "@shopify/react-native-skia";
+import { useAnimatedPath, useChartContext } from "delacour-react-native-charts";
+
+function Ribbon({ path, color }: { path: SkPath; color: string }) {
+  const { animation } = useChartContext();
+  const animated = useAnimatedPath(path, animation);
+  return <Path color={color} path={animated} style="fill" />;
+}
+```
+
+`useAnimatedPath` is what every built-in mark uses. It takes the target path and a
+`ChartAnimation` and returns a shared value for a Skia `Path`. An `enterFrom` option seeds the
+first morph — read on mount only — for a mark that should grow in rather than appear.
+
+<TypeTable
+  type={{
+    path: { type: "SkPath", description: "The target. A change morphs the previous path to it." },
+    animation: { type: "ChartAnimation", default: '{ type: "timing", duration: 300 }' },
+    options: {
+      type: "{ enterFrom?: SkPath }",
+      description: "The path the very first animation starts from. Must share the target's verb sequence.",
+    },
+  }}
+/>

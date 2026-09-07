@@ -1,12 +1,13 @@
 # web — The documentation site
 
-A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/docs`, and the native
-library namespaced at `/docs/native/*` so a second library can be added later without a URL
-migration.
+A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/docs`, the native
+library namespaced at `/docs/native/*` and the chart engine at `/docs/charts/*` — one namespace
+per library, so a third can be added without a URL migration.
 
-Documents `delacour-react-native-ui` and the `delacour` CLI that copies its components into a
-consumer's repository. It does **not** import or render those components — see **Why there are no
-live previews**.
+Documents `delacour-react-native-ui`, the `delacour` CLI that copies its components into a
+consumer's repository, and `delacour-react-native-charts`, the headless engine the library's
+`Chart` skins. It does **not** import or render any of them — see **Why there are no live
+previews**.
 
 ## Stack
 
@@ -35,6 +36,7 @@ content/docs/native/
 ├── components/            root folder → navbar tab
 ├── cli/                   root folder → navbar tab
 └── releases/              root folder → navbar tab
+content/docs/charts/       the /docs/charts namespace — one root folder, one navbar tab
 
 src/
 ├── components/mdx.tsx     the MDX component registry
@@ -156,8 +158,10 @@ The page slots must come from the **matching** package: `fumadocs-ui/layouts/not
 
 `content/docs/native/cli/` documents `packages/cli`, not the library. It is a root folder of the
 **native** namespace rather than a `/docs/cli` namespace of its own, because the CLI is how this
-library is delivered rather than a second library — and `src/lib/layout.shared.tsx` only links
-into `native`, so a top-level namespace would render but be unreachable from the nav.
+library is delivered rather than a second library. A top-level namespace is what a second
+*library* gets — `charts` is one — and it costs a link in `src/lib/layout.shared.tsx`, because
+the navbar's layout tabs are derived from the root folders of whichever namespace the reader is
+in, and nothing else points across.
 
 `commands.mdx` carries each command's `--help` **verbatim**, in a ```txt block under a bold
 **Options** label, rather than a `<TypeTable>` restating it. The output is the source of truth and a
@@ -201,6 +205,30 @@ Reasoning prose belongs in `packages/native-ui/src/components/<name>/AGENTS.md`,
 section is a heading, at most one sentence, and the example. A `<Callout>` survives only if it warns
 a *reader* about a failure with no error message; a callout explaining a maintainer's reasoning does
 not.
+
+### A charts page
+
+`content/docs/charts/` documents `packages/charts` — `delacour-react-native-charts`, the headless
+engine — under its own `/docs/charts` namespace and its own "Charts" link in
+`src/lib/layout.shared.tsx`. Its `meta.json` is the one `root: true` folder there, so the layout
+tab strip shows a single tab; the sidebar sections are its `---Group---` separators.
+
+The pages are not component pages: there is no registry to install from, so no
+`<ComponentInstall>`, and the shape assertions in `src/content.test.ts` do not apply. What that
+test does hold them to is the sidebar contract — every page listed in `meta.json`, nothing listed
+that is not on disk — and, for the six pages that each document one chart type (`line`, `area`,
+`bar`, `scatter`, `candlestick`, `pie`), the same closing `## API Reference` the component pages
+end on.
+
+Previews come from `apps/playground/src/demos/charts/` — a demo group that renders the engine
+directly, importing from `delacour-react-native-charts` and never from `delacour-react-native-ui`.
+Its component key is `charts`, deliberately not `chart`, so its captures land under
+`public/previews/charts/**` beside the skinned component's and `previews.test.ts`'s no-reuse rule
+keeps the two sets apart. Code beside a preview is hand-written at the call site, with literal
+hex colours and `useSystemFont` for the font, because that is what a reader of this package types.
+
+Reasoning prose belongs in `packages/charts/AGENTS.md` and the per-folder `AGENTS.md` under
+`packages/charts/src/`; a page links there rather than repeating it.
 
 ## The install block is derived
 
@@ -433,10 +461,11 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 ## Known content gaps
 
-- **Previews cover seventeen of nineteen components.** Only `bottom-sheet` and `provider` have no
-  captured demos, so their cards on the components index show a placeholder and their pages open at
-  `## Installation`. `apps/playground/src/demos/demos.test.ts` fails by name for
-  a library component with no demo, so that list stays honest on its own.
+- **Two components have no preview.** `bottom-sheet` and `provider` have no captured demos, so
+  their cards on the components index show a placeholder and their pages open at
+  `## Installation`. Every other component page, and every charts page but `installation`,
+  `animation` and `core`, opens on one. `apps/playground/src/demos/demos.test.ts` fails by name
+  for a library component with no demo, so that list stays honest on its own.
 - **Every component page now carries a hand-written `<TypeTable>`.** The "prop tables in progress"
   and "reference docs in progress" callouts are gone; do not reintroduce one without the gap it
   names being real, because a callout that over-reports what is missing is worse than none.

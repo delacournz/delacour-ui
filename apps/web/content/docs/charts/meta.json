@@ -1,0 +1,26 @@
+{
+	"title": "Charts",
+	"icon": "ChartLine",
+	"root": true,
+	"description": "A headless Skia charting engine for React Native.",
+	"pages": [
+		"---Overview---",
+		"index",
+		"installation",
+		"composition",
+		"---Cartesian---",
+		"line",
+		"area",
+		"bar",
+		"scatter",
+		"candlestick",
+		"---Polar---",
+		"pie",
+		"---Parts---",
+		"axes-and-grid",
+		"cursor-and-scrub",
+		"---Reference---",
+		"animation",
+		"core"
+	]
+}

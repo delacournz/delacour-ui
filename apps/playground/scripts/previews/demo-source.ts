@@ -16,14 +16,24 @@
 
 import ts from "typescript";
 
-/** What a demo may reach for. Anything else and it has stopped being consumer-shaped. */
+/**
+ * What a demo may reach for. Anything else and it has stopped being
+ * consumer-shaped.
+ *
+ * The engine and its two drawing peers are here for the `charts/` demos, which
+ * render `delacour-react-native-charts` with nothing themed in front of it —
+ * so they, like a reader's app, take Skia and Reanimated directly.
+ */
 const ALLOWED_IMPORT_PREFIXES = [
 	"delacour-react-native-ui",
+	"delacour-react-native-charts",
 	"react",
 	"react-native",
 	"@gorhom/bottom-sheet",
 	"@legendapp/list",
+	"@shopify/react-native-skia",
 	"react-native-gesture-handler",
+	"react-native-reanimated",
 ];
 
 /** The one project-local import a demo may make, and the one the spliced source drops. */

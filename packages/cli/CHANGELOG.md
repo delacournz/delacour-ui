@@ -1,5 +1,17 @@
 # delacour
 
+## 0.1.0-alpha.2
+
+### Minor Changes
+
+- [#35](https://github.com/delacournz/delacour-ui/pull/35) [`ac1c4fe`](https://github.com/delacournz/delacour-ui/commit/ac1c4fe3768868236b740fc2202d334ce0704166) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `init` copies the root provider in and `doctor` accepts `DelacourProvider` as the gesture root
+
+  `delacour init` now adds the `provider` item alongside `styles`, so `DelacourProvider` is in the
+  `ui` directory before anything is mounted, and its follow-up list names that import rather than a
+  bare `GestureHandlerRootView`. `doctor`'s Gesture Handler check passes on either name, reads a
+  blank template's root `App.tsx` as well as `app/` and `src/`, and no longer counts the copied
+  `provider.tsx` itself as the app mounting it.
+
 ## 0.1.0-alpha.1
 
 ### Minor Changes

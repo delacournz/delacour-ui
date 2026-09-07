@@ -18,6 +18,8 @@
 		"fmt": { "cache": false, "outputs": [] },
 		"check": { "cache": false, "outputs": [] },
 		"test": { "cache": false, "outputs": [] },
+		// The release scripts under `.github/` belong to no workspace; this runs their tests.
+		"//#test:release": { "cache": false, "outputs": [] },
 		// Drives a simulator and writes into apps/web; never cached, never parallel.
 		"previews": { "cache": false, "outputs": [], "persistent": false }
 	}

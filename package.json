@@ -13,10 +13,11 @@
 		"check": "turbo check",
 		"lint": "turbo lint",
 		"fmt": "turbo fmt",
-		"test": "turbo test",
+		"test": "turbo test test:release",
+		"test:release": "bun test ./.github/*.test.ts",
 		"changeset": "changeset",
 		"version-packages": "bun .github/changeset-version.ts",
-		"release": "changeset publish",
+		"release": "bun .github/changeset-stage.ts",
 		"verify:expo": "cd packages/cli && bun scripts/verify-expo.ts",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground"

@@ -214,12 +214,33 @@ then remove `"tag": "alpha"` from `publishConfig` in **all three** of
 nothing during pre mode; and swap `@alpha` back to `@latest` across the READMEs and `apps/web`
 — `grep -rn "@alpha"` finds them.
 
-**npm auth is OIDC — there is no npm token.** All three packages are configured on npmjs.com with
-this repository and `release.yml` as a trusted publisher, which is why the job requests
-`id-token: write` and installs a current npm before publishing. `bun publish` cannot do this:
-it has no OIDC or provenance support, so the publish call is npm's even though install and build
-are Bun's. Changesets picks npm on its own — it only special-cases pnpm and yarn, and `bun` falls
-through to the npm path.
+**Publishing is staged, and npm auth is OIDC — there is no npm token.** All three packages are
+configured on npmjs.com with this repository and `release.yml` as a trusted publisher whose
+allowed action is `npm stage publish` only. The workflow therefore does not run
+`changeset publish` — that shells out to `npm publish`, and the registry answers
+`E403 OIDC permission denied for this action`. It runs `.github/changeset-stage.ts` instead, which
+asks Changesets for the publish plan, runs `npm stage publish` in each unpublished package, writes
+the stage ids to the job summary, and finishes with `changeset git-tag` so the action still pushes
+the tags and opens the GitHub Releases. Nothing is on a dist-tag at that point. A maintainer
+approves each staged version with 2FA, from the **Staged Packages** tab on npmjs.com or:
+
+```bash
+npm stage list                   # everything waiting, with ids
+npm stage view <stage-id>        # contents, tag, provenance
+npm stage approve <stage-id>     # 2FA prompt, then it is live
+npm stage reject <stage-id>      # discard; the version can be staged again
+```
+
+Approve `delacour-react-native-charts` before `delacour-react-native-ui`, which peers on it.
+`npm stage` needs npm 11.15 or newer, which is why the job installs a current npm and why a
+maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot do any of this: it
+has no OIDC, provenance or staging support, so the publish call is npm's even though install and
+build are Bun's.
+
+The stage script pins the dist-tag from `.changeset/pre.json` rather than trusting the plan.
+Changesets tags a package `latest` when every version it has ever published is a prerelease —
+true of all three today — and an alpha on `latest` is the one outcome pre mode exists to prevent.
+Once `pre.json` is gone the script uses the plan's tag, so going stable needs no change here.
 
 **`RELEASE_TOKEN` is a GitHub PAT, not an npm one.** Events raised by `GITHUB_TOKEN` do not start
 workflow runs, so a version PR opened with it would never run the four checks `main-protected`

@@ -96,9 +96,14 @@ jobs:
         uses: changesets/action@v2
         with:
           # A PAT, not GITHUB_TOKEN: events raised by GITHUB_TOKEN do not start
-          # workflow runs, so the Version Packages PR would never run the four
-          # checks `main-protected` requires and could never be merged.
-          github-token: ${{ secrets.RELEASE_TOKEN }}
+          # workflow runs, so a Version Packages PR opened with it would never
+          # run the four checks `main-protected` requires and could never be
+          # merged. The fallback is for the publish half only — tags and GitHub
+          # Releases need nothing more than GITHUB_TOKEN — so a missing PAT
+          # cannot stop a release that is already versioned. The input is
+          # required, and an unset secret is an empty string, which the action
+          # rejects before it reads `.changeset/` at all.
+          github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
           commit-message: "🔖 chore(release): version packages"
           pr-title: "🔖 chore(release): version packages"
           version-script: bun .github/changeset-version.ts

@@ -65,24 +65,33 @@ export default function Preview(): ReactElement {
 	}
 
 	const { Demo, meta } = entry;
-	// `capture.align` first, because for a captured demo it is the field that
-	// describes this very stage. Falling through to `meta.align` is what keeps a
-	// demo nobody captures usable when it is deep-linked by hand: without it a
-	// container — a chart, a list group — shrink-wraps to its narrowest content,
-	// and a chart collapses to about forty points wide.
+	// A device frame fills the window, and alignment does not enter into it. The
+	// script crops the whole screen for one of these, so the demo has to *be* the
+	// screen — with the stage's gutter dropped too, or the crop keeps twenty
+	// points of background down each side and every inset `Screen` measures is
+	// taken against the wrong box.
+	//
+	// Structural rather than a `capture.align: "stretch"` each device demo has to
+	// remember: a shrink-wrapped full-screen demo is never what anyone wanted, and
+	// all three of them forgot. What that published was an Inbox whose rows had
+	// collapsed to a column of chevrons and whose footer button read "Mar / k
+	// all" — on the landing page, from the first capture run, for months.
+	//
+	// For a stage frame, `capture.align` first, because for a captured demo it is
+	// the field that describes this very stage. Falling through to `meta.align` is
+	// what keeps a demo nobody captures usable when it is deep-linked by hand:
+	// without it a container — a chart, a list group — shrink-wraps to its
+	// narrowest content, and a chart collapses to about forty points wide.
+	const device = (meta.capture?.frame ?? "stage") === "device";
 	const stretch = (meta.capture?.align ?? meta.align) === "stretch";
+	const stageClass = device ? "w-full flex-1" : stretch ? "w-full px-screen-gutter" : "px-screen-gutter";
 
 	return (
 		<View className="flex-1 items-center justify-center bg-background">
 			<Stack.Screen options={{ animation: "none" }} />
 			<StatusBar hidden />
 			{bounds ? <Sentinel bounds={bounds} id={id} theme={applied} /> : null}
-			<View
-				className={stretch ? "w-full px-screen-gutter" : "px-screen-gutter"}
-				key={`${id}:${applied}`}
-				onLayout={measure}
-				ref={stage}
-			>
+			<View className={stageClass} key={`${id}:${applied}`} onLayout={measure} ref={stage}>
 				<Demo />
 			</View>
 		</View>

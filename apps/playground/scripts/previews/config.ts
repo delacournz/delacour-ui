@@ -32,8 +32,24 @@ export type Theme = (typeof THEMES)[number];
  */
 export const PAD_POINTS = 24;
 
-/** Long edge of the published media, in pixels. Roughly 2x its rendered width on the page. */
+/** Long edge of a `stage` capture, in pixels. Roughly 2x its rendered width on the page. */
 export const MAX_EDGE = 720;
+
+/**
+ * Long edge of a `device` capture, in pixels.
+ *
+ * The stage cap cannot cover both. A stage capture is one control drawn at
+ * roughly 2x its rendered width, which 720 is sized for; a device capture is a
+ * whole phone screen, and the landing hero draws that 300 CSS px wide — so 720
+ * on the long edge left 332 across, and every retina display was upscaling it
+ * two to three times. The docs page draws the same file at 240 wide, so this
+ * is entirely about the hero.
+ *
+ * 1440 gives 662x1440 from the pinned device, a little over 2x the hero's box
+ * on a 3x screen. Only three demos are device frames, so the whole cost is six
+ * files.
+ */
+export const DEVICE_MAX_EDGE = 1440;
 
 /**
  * Fails the run above this, naming the largest files.

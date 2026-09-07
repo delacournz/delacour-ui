@@ -14,6 +14,13 @@ export const meta: DemoMeta = {
 	capture: { frame: "device", hero: true },
 };
 
+/**
+ * Enough rows to fill the screen, and no more.
+ *
+ * Six left the bottom third empty, which is a poor advertisement for a component
+ * whose whole subject is how a screen is composed. Nine reach the footer without
+ * disappearing behind it — see the note on the overlay footer below.
+ */
 const MESSAGES = [
 	{ id: "ada", title: "Ada Lovelace", description: "The analytical engine has no pretensions" },
 	{ id: "grace", title: "Grace Hopper", description: "It is easier to ask forgiveness than permission" },
@@ -21,6 +28,9 @@ const MESSAGES = [
 	{ id: "katherine", title: "Katherine Johnson", description: "Numbers checked, ready when you are" },
 	{ id: "margaret", title: "Margaret Hamilton", description: "The rope core memory is loaded" },
 	{ id: "barbara", title: "Barbara Liskov", description: "A subtype should be substitutable" },
+	{ id: "radia", title: "Radia Perlman", description: "The spanning tree converged overnight" },
+	{ id: "edsger", title: "Edsger Dijkstra", description: "Shortest path found, notes attached" },
+	{ id: "frances", title: "Frances Allen", description: "The optimiser pass is ready to review" },
 ] as const;
 
 /**
@@ -33,6 +43,13 @@ const MESSAGES = [
  * The footer is the part worth watching: it measures its own content into the
  * screen context, and the scroll area reserves that height, so the last row
  * clears it with nothing said at either call site.
+ *
+ * The footer is an `overlay`, which is the default and draws no backing of its
+ * own — content scrolls under it. That is why the list is sized to end above the
+ * button rather than run past it: a still photograph of a row sliced in half by
+ * a floating capsule reads as a bug, where on a device it is just a list mid
+ * scroll. A screen that really does run long wants a `Screen.ScrollShadow` with
+ * `coverBottom`, which is what `apps/playground`'s own `/theme` footer uses.
  */
 export function Demo(): ReactElement {
 	const [readIds, setReadIds] = useState<string[]>([]);

@@ -115,6 +115,24 @@ Open Graph / Twitter tags. Two things there are deliberate:
 Staging serves production's origin in those tags; threading a per-environment origin through SSR
 buys nothing for a docs site.
 
+## The landing page
+
+`src/routes/index.tsx` is a marketing page in the shape of shadcn/ui's and HeroUI's: a hero with a
+`device` capture in the shared `DeviceBezel`, a showcase grid of captured demos, the design-token
+pitch, principles, install, and the grouped component index. Three things there are derived rather
+than written:
+
+- **The showcase tiles are `PreviewId`s** from `src/previews/manifest.ts`, drawn with `ThemedPreview`
+  so they follow the theme like every docs preview. A tile naming a demo that no longer exists is a
+  type error; one naming a slug missing from `COMPONENTS` throws at render.
+- **The component index reads `COMPONENTS`** and `COMPONENT_GROUPS`, so a new component appears
+  by existing.
+- **The TestFlight line reads `NATIVE_APP.IOS_TESTFLIGHT_URL`** through `isInstallable`, the same
+  gate the QR popover uses, and renders nothing while the link is a placeholder.
+
+The token section's code samples are hand-written illustrations of `delacour theme`'s input and
+output, not its real output — keep them to a handful of tokens.
+
 ## The layout is `notebook`, not `docs`
 
 `src/routes/docs/$.tsx` imports `DocsLayout` from **`fumadocs-ui/layouts/notebook`** and passes
@@ -538,13 +556,19 @@ reasons, and neither is decoration:
 - **`max-h`** keeps a hero out of the whole viewport. A `stage` capture can be portrait — `checkbox`
   is 616×720 — and unconstrained in the 900px content column that drew at ~1050px, with
   `## Installation` below the fold.
-- **`w-auto`, no upscale** is about sharpness. `MAX_EDGE` in the capture script is 720px on the long
-  edge, sized for roughly 2x its rendered width; the 900px column was stretching every stage capture
-  past its own pixels. Raise `MAX_EDGE` before you raise either cap, not after.
+- **`w-auto`, no upscale** is about sharpness. The capture script carries a long edge per frame —
+  `MAX_EDGE` at 720px for a stage capture, sized for roughly 2x its rendered width, and
+  `DEVICE_MAX_EDGE` at 1440px for a device one; the 900px column was stretching every stage capture
+  past its own pixels. Raise the matching edge before you raise either cap, not after.
 
 **The two caps differ because the two frames hold different things.** A stage capture is one control;
-a device capture is 332×720 of navbar, list and footer, and the stage cap draws that 194px wide, at
+a device capture is 662×1440 of navbar, list and footer, and the stage cap draws that 194px wide, at
 which point every row is an unreadable smudge.
+
+The device edge is 1440 rather than 720 because of the **landing page**, not this one. `DEVICE_MEDIA`
+draws a device capture 240px wide, which 720 covered twice over; the hero in `src/routes/index.tsx`
+draws the same file at `w-[300px]`, and a 332px-wide source was being upscaled on every retina
+display. The docs pages were never the constraint.
 
 It is a cap, not a fixed-height stage, so a short wide preview (`slider/anatomy`, 720×222) stays
 short instead of floating in letterbox bands. `preview-grid.tsx` uses neither — an index card is a

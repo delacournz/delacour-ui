@@ -27,12 +27,12 @@ export const NATIVE_APP = {
 	 */
 	PLAYGROUND_PATH_PREFIX: "/playground/components",
 	/**
-	 * TestFlight public join link. The `PLACEHOLDER` segment is a sentinel —
-	 * {@link isInstallable} reads it as "not set yet" and the button renders
-	 * disabled, because a live link to a 404 is worse than no link. Pasting the
-	 * real URL here is the whole activation step.
+	 * TestFlight public join link. A `PLACEHOLDER` segment is the sentinel
+	 * {@link isInstallable} reads as "not set yet", rendering the button
+	 * disabled — a live link to a 404 is worse than no link. Android still
+	 * carries it, in the form of `null`.
 	 */
-	IOS_TESTFLIGHT_URL: "https://testflight.apple.com/join/PLACEHOLDER",
+	IOS_TESTFLIGHT_URL: "https://testflight.apple.com/join/he8AUBQa",
 	/** No Android distribution yet. `null` renders "Coming soon". */
 	ANDROID_INSTALL_URL: null,
 	/**

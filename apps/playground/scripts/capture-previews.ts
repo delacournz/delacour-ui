@@ -45,6 +45,7 @@ import {
 import {
 	BUDGET_BYTES,
 	BUNDLE_ID,
+	DEVICE_MAX_EDGE,
 	DEVICE_NAME,
 	MANIFEST_PATH,
 	MAX_EDGE,
@@ -300,7 +301,7 @@ async function captureDemo(
 	await mkdir(dir, { recursive: true });
 
 	const crop = demo.frame === "device" ? deviceCrop(geometry) : boundsCrop(geometry, bounds, PAD_POINTS);
-	const size = targetSize(crop, MAX_EDGE);
+	const size = targetSize(crop, demo.frame === "device" ? DEVICE_MAX_EDGE : MAX_EDGE);
 
 	if (!demo.flowPath) {
 		const raw = join(dir, `.${theme}.raw.png`);
@@ -580,7 +581,9 @@ async function main(): Promise<void> {
 	if (bytes > BUDGET_BYTES) {
 		console.error(`\n  Media is ${mb(bytes)}, over the ${mb(BUDGET_BYTES)} budget. Largest files:`);
 		for (const file of largest) console.error(`    ${mb(file.bytes).padStart(9)}  ${file.path}`);
-		console.error("\n  Cut demos, lower MAX_EDGE, or raise BUDGET_BYTES deliberately in scripts/previews/config.ts.");
+		console.error(
+			"\n  Cut demos, lower MAX_EDGE or DEVICE_MAX_EDGE, or raise BUDGET_BYTES deliberately in scripts/previews/config.ts."
+		);
 		process.exit(1);
 	}
 }

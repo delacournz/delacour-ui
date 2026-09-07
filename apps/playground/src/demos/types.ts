@@ -10,7 +10,9 @@ import type { ComponentType } from "react";
  * `device` keeps the whole screen, for a demo that *is* a screen: `Screen`'s own
  * galleries, and anything that mounts into a portal. `BottomSheet` has no
  * choice — it renders outside the stage entirely, so a stage crop would frame
- * an empty box.
+ * an empty box. The capture stage draws one of these edge to edge, at the full
+ * window with no gutter, so the demo is laid out exactly as it would be in the
+ * app — see `src/app/preview.tsx`.
  */
 export type DemoFrame = "stage" | "device";
 
@@ -46,6 +48,10 @@ export type DemoCapture = {
 	 * this defaults the other way round from {@link DemoMeta.align} — and it
 	 * doubles as that field's fallback, so a captured demo already carrying the
 	 * answer never restates it.
+	 *
+	 * **Ignored when {@link frame} is `device`.** That capture is the whole
+	 * screen, so the stage gives the demo the full window and no gutter whatever
+	 * this says. Setting it there describes nothing.
 	 */
 	align?: DemoAlign;
 	/**

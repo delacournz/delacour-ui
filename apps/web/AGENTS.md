@@ -171,9 +171,14 @@ peers anywhere on the site.
 `content/docs/native/cli/` documents `packages/cli`, not the library. It is a root folder of the
 **native** namespace rather than a `/docs/cli` namespace of its own, because the CLI is how this
 library is delivered rather than a second library. A top-level namespace is what a second
-*library* gets — `charts` is one — and it costs a link in `src/lib/layout.shared.tsx`, because
-the navbar's layout tabs are derived from the root folders of whichever namespace the reader is
-in, and nothing else points across.
+*library* gets — `charts` is one — and it costs a link in `src/lib/layout.shared.tsx`.
+
+The layout tab strip is one list across both namespaces, and `content/docs/meta.json` plus
+`native/meta.json` decide its order. Without the root file the namespaces sort alphabetically and
+Charts lands first; with it, `native/meta.json` lists `"../charts"` between `components` and `cli`,
+which is where a reader who has just found the components expects the charts to be. A third
+namespace goes into the root `pages` list and, if it belongs among the native tabs, into
+`native/meta.json` by relative path the same way.
 
 `commands.mdx` carries each command's `--help` **verbatim**, in a ```txt block under a bold
 **Options** label, rather than a `<TypeTable>` restating it. The output is the source of truth and a

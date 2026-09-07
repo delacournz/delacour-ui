@@ -116,6 +116,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.9
+      # tsdown's bin runs under Node, and it picks its config loader from that Node: one with
+      # native TypeScript (>= 22.18) loads tsdown.config.ts itself, an older one falls back to
+      # the optional `unrun` package, which is not installed. The Namespace image ships an older
+      # Node than GitHub's did, so pin one rather than depend on the image.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - run: bun install --frozen-lockfile
 
       # The registry is committed, so a component change that does not rebuild
@@ -165,6 +172,13 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.3.9
+      # tsdown's bin runs under Node, and it picks its config loader from that Node: one with
+      # native TypeScript (>= 22.18) loads tsdown.config.ts itself, an older one falls back to
+      # the optional `unrun` package, which is not installed. The Namespace image ships an older
+      # Node than GitHub's did, so pin one rather than depend on the image.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
       - run: bun install --frozen-lockfile
 
       # Scaffolds an Expo app, installs Uniwind and Tailwind, runs init and adds

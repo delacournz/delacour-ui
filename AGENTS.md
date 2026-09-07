@@ -214,7 +214,16 @@ through to the npm path.
 
 **`RELEASE_TOKEN` is a GitHub PAT, not an npm one.** Events raised by `GITHUB_TOKEN` do not start
 workflow runs, so a version PR opened with it would never run the four checks `main-protected`
-requires and could never be merged. The PAT exists for that reason alone.
+requires and could never be merged. The PAT exists for that reason alone. The workflow falls back
+to `GITHUB_TOKEN` when the secret is unset, because the publish half needs nothing more — a
+missing PAT once failed a publish on `Input required and not supplied: github-token` before the
+action had looked at `.changeset/`. A version PR opened on the fallback has no checks; close and
+reopen it, or push an empty commit, to start them. Create the secret with a fine-grained PAT scoped
+to this repository with **Contents** and **Pull requests** read/write:
+
+```bash
+gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
+```
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,

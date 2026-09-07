@@ -7,12 +7,24 @@ import { ACCENT_THEMES, type ThemeName } from "./themes";
 /** The Theme and Chart Color axes both range over the accents plus the base colour. */
 export type PaletteName = ThemeName | BaseColorName;
 
+/**
+ * The body font that names no face at all: each platform's own sans.
+ *
+ * A sentinel rather than a `FONTS` entry because there is no file to load and
+ * nothing for Google Fonts to serve — `resolveFonts` returns no family for it,
+ * the web emitter writes no `--font-sans`, and the converter fills in `System`
+ * on iOS and `sans-serif` on Android. It is the default because it is what a
+ * fresh `delacour init` ships: a preset naming Geist reads as Geist only in an
+ * app that has loaded Geist, and silently as the system font everywhere else.
+ */
+export const SYSTEM_FONT = "system";
+
 export type DesignSystemConfig = {
 	style: StyleName;
 	baseColor: BaseColorName;
 	theme: PaletteName;
 	chartColor: PaletteName;
-	/** A font id from `fonts.ts`. */
+	/** A font id from `fonts.ts`, or `system` for the platform's own sans. */
 	font: string;
 	/** A font id, or `inherit` to follow the body font. */
 	fontHeading: string;
@@ -32,7 +44,7 @@ export const DEFAULT_CONFIG: DesignSystemConfig = {
 	baseColor: "neutral",
 	theme: "neutral",
 	chartColor: "neutral",
-	font: "geist",
+	font: SYSTEM_FONT,
 	fontHeading: "inherit",
 	radius: "default",
 };

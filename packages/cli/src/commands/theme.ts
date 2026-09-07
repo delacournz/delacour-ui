@@ -1,8 +1,8 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { isAbsolute, join, relative, resolve } from "node:path";
-import { convertTheme, parseTheme } from "@delacour/design-system/convert";
+import { convertTheme, detectThemeShape, parseTheme } from "@delacour/design-system/convert";
 import { loadConfig } from "../config/resolve";
-import { createOutput, style } from "../ui/output";
+import { createOutput, type Output, style } from "../ui/output";
 
 /**
  * Brings a web app's theme across.
@@ -15,6 +15,11 @@ import { createOutput, style } from "../ui/output";
  * arrives. This rewrites the wrapper, fills in the tokens shadcn has no name
  * for, and says what could not come across.
  *
+ * With no source it reads `theme.css` itself. That is the flow the docs lead
+ * with — paste a shadcn file over `theme.css`, run `delacour theme` — so the
+ * user never has to name a path, and a file already in the shape Uniwind
+ * reads is left alone rather than converted twice.
+ *
  * All of the thinking is in `@delacour/design-system`, which is pure. This is the I/O
  * around it: find the source, find `theme.css`, ask before replacing it.
  */
@@ -26,10 +31,17 @@ export type ThemeOptions = {
 	yes?: boolean;
 };
 
+type Conversion = ReturnType<typeof convertTheme>;
+
 export async function theme(source: string | undefined, options: ThemeOptions): Promise<void> {
 	const output = createOutput(options);
-	const css = await readSource(source, options.cwd);
-	const result = convertTheme(parseTheme(css));
+
+	if (source === undefined) {
+		await convertInPlace(options, output);
+		return;
+	}
+
+	const result = convertTheme(parseTheme(await readSource(source, options.cwd)));
 
 	// Deliberately before the config is loaded. A dry run writes nothing, so it
 	// works from anywhere — including a web repo, where the point is to see what
@@ -41,7 +53,59 @@ export async function theme(source: string | undefined, options: ThemeOptions): 
 	}
 
 	const config = await loadConfig(options.cwd);
-	const destination = join(config.directories.styles, "theme.css");
+	await write(join(config.directories.styles, "theme.css"), result, options, output);
+}
+
+/**
+ * `theme.css` in, `theme.css` out, at the same path.
+ *
+ * The config has to be loaded first here — even for a dry run — because the
+ * config is the only thing that knows where the file is.
+ */
+async function convertInPlace(options: ThemeOptions, output: Output): Promise<void> {
+	const config = await loadConfig(options.cwd);
+	const path = join(config.directories.styles, "theme.css");
+	const shown = relative(options.cwd, path) || path;
+
+	const css = await readThemeFile(path, shown);
+	const shape = detectThemeShape(css);
+
+	// Idempotent on purpose: a script that runs `delacour theme` after every
+	// paste must not fail, or rewrite, the second time round.
+	if (shape === "native") {
+		output.info(`${style.path(shown)} is already in the shape this library reads — nothing to do.`);
+		return;
+	}
+
+	if (shape === "unknown") {
+		throw new Error(
+			`${shown} is not a theme this command recognises. Expected shadcn's \`:root { … }\` and \`.dark { … }\` blocks, or a file already carrying \`@variant light\` / \`@variant dark\`.`
+		);
+	}
+
+	const result = convertTheme(parseTheme(css));
+
+	if (options.dryRun) {
+		process.stdout.write(result.css);
+		report(result, output);
+		return;
+	}
+
+	await write(path, result, options, output);
+}
+
+async function readThemeFile(path: string, shown: string): Promise<string> {
+	try {
+		return await readFile(path, "utf-8");
+	} catch {
+		throw new Error(
+			`${shown} not found. Run \`delacour add styles\` to write one, or name a source: \`delacour theme <file | url | ->\`.`
+		);
+	}
+}
+
+/** The one place a converted theme lands, so both entry points ask the same question. */
+async function write(destination: string, result: Conversion, options: ThemeOptions, output: Output): Promise<void> {
 	const shown = relative(options.cwd, destination) || destination;
 
 	const replace = await output.confirm(`Replace ${style.path(shown)}?`, true);
@@ -56,11 +120,7 @@ export async function theme(source: string | undefined, options: ThemeOptions): 
 }
 
 /** A path, `-` for stdin, or a URL. */
-async function readSource(source: string | undefined, cwd: string): Promise<string> {
-	if (source === undefined) {
-		throw new Error("Name a theme to read: a CSS file, a URL, or `-` for stdin.");
-	}
-
+async function readSource(source: string, cwd: string): Promise<string> {
 	if (source === "-") return readStdin();
 
 	if (/^https?:\/\//.test(source)) {
@@ -80,7 +140,7 @@ async function readStdin(): Promise<string> {
 	return Buffer.concat(chunks).toString("utf-8");
 }
 
-function report(result: ReturnType<typeof convertTheme>, output: ReturnType<typeof createOutput>): void {
+function report(result: Conversion, output: Output): void {
 	output.info(`${result.carried.length} tokens carried across.`);
 
 	if (result.derived.length > 0) {

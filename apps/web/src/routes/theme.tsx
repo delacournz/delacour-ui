@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
@@ -8,7 +7,7 @@ import { ThemePreview } from "@/components/theme-preview";
 import { themeFontLinks } from "@/lib/google-fonts";
 import { baseOptions } from "@/lib/layout.shared";
 import { appName } from "@/lib/shared";
-import { presetCss, resolvePreset, themeTitle } from "@/lib/theme-preset";
+import { presetCss, presetNativeCss, resolvePreset, themeTitle } from "@/lib/theme-preset";
 
 export type ThemeSearch = { preset?: string };
 
@@ -66,7 +65,8 @@ export const Route = createFileRoute("/theme")({
 function ThemePage(): ReactElement {
 	const { preset } = Route.useSearch();
 	const resolved = resolvePreset(preset);
-	const css = presetCss(resolved.config);
+	const native = presetNativeCss(resolved.config);
+	const web = presetCss(resolved.config);
 
 	return (
 		<HomeLayout {...baseOptions()}>
@@ -81,8 +81,8 @@ function ThemePage(): ReactElement {
 					<h1 className="font-semibold text-3xl tracking-tight">Your theme</h1>
 					<p className="mt-2 text-fd-muted-foreground">
 						{resolved.status === "resolved"
-							? "Change any axis below, or copy the CSS variables straight into your project's stylesheet."
-							: "Build a theme by picking an option on any axis. The file at the bottom is the result, ready to paste."}
+							? "Change any axis below, or copy theme.css straight into your project."
+							: "Build a theme by picking an option on any axis. The theme.css at the bottom is the result, ready to paste."}
 					</p>
 					{resolved.status === "resolved" ? (
 						<p className="mt-3 text-fd-muted-foreground text-sm">
@@ -110,22 +110,22 @@ function ThemePage(): ReactElement {
 
 				<section className="mb-4">
 					<h2 className="mb-3 font-medium text-sm">Theme tokens</h2>
-					<ThemeCssPanel css={css} />
+					<ThemeCssPanel native={native} web={web} />
 				</section>
 
-				<CopyThemeButton css={css} />
+				<CopyThemeButton css={native} />
 
 				<section className="mt-12 border-t pt-8">
-					<h2 className="font-medium text-sm">Using it in React Native</h2>
+					<h2 className="font-medium text-sm">Using it</h2>
 					<p className="mt-2 text-fd-muted-foreground text-sm">
-						Uniwind reads a theme only from <code className="font-mono text-xs">@variant light</code> and{" "}
-						<code className="font-mono text-xs">@variant dark</code>, so the file above needs its wrapper rewritten
-						before <code className="font-mono text-xs">delacour-react-native-ui</code> can paint from it. The CLI does
-						that, and fills in the tokens shadcn has no name for:
+						Replace the whole of <code className="font-mono text-xs">src/styles/theme.css</code> with the first tab.
+						There is nothing else to run — that file is the one a{" "}
+						<code className="font-mono text-xs">delacour init</code> project edits, and the library reads it as it is.
 					</p>
-					<div className="mt-3">
-						<DynamicCodeBlock code="bunx delacour theme ./globals.css" lang="bash" />
-					</div>
+					<p className="mt-2 text-fd-muted-foreground text-sm">
+						The second tab is shadcn&apos;s <code className="font-mono text-xs">globals.css</code>, for a web app that
+						shares the theme.
+					</p>
 					<p className="mt-3 text-fd-muted-foreground text-sm">
 						<Link
 							className="underline underline-offset-4"

@@ -1,17 +1,30 @@
 /*
- * The palette, in shadcn's two-layer shape.
+ * THE ONE FILE THAT IS YOURS.
  *
- * Layer one is a raw semantic name — `--primary`, `--destructive` — declared
- * once per theme. Layer two is the `@theme inline` block at the bottom, which
- * maps each raw name onto the `--color-*` Tailwind reads to mint `bg-primary`,
+ * Everything else in this folder is plumbing: `base.css` pulls in the engines,
+ * `tokens.css` names the sizes the utilities are minted from, `index.css`
+ * stitches them together. This file is the theme, and it is meant to be
+ * replaced whole:
+ *
+ *   - Build one at https://ui.delacour.co.nz/theme and paste the `theme.css`
+ *     tab over this file. Nothing else to run.
+ *   - Have a shadcn or tweakcn `globals.css`? Paste it over this file and run
+ *     `delacour theme`. It rewrites the file in place — see below for why a
+ *     paste alone is not enough.
+ *
+ * The palette is shadcn's, in shadcn's two-layer shape. Layer one is a raw
+ * semantic name — `--primary`, `--destructive` — declared once per theme.
+ * Layer two is the `@theme inline` block at the bottom, which maps each raw
+ * name onto the `--color-*` Tailwind reads to mint `bg-primary`,
  * `text-primary`, `border-primary`.
  *
  * Two layers rather than one so a web app's theme can be moved here almost
  * unchanged: shadcn, tweakcn and every theme generator built on them emit
- * exactly these raw names. `delacour theme` does the mechanical part — the one
- * thing that cannot survive a copy/paste is the wrapper, because Uniwind reads
- * a theme only from `@variant light` / `@variant dark` and treats a literal
- * `.dark { … }` as a utility class named `dark` that silently does nothing.
+ * exactly these raw names. The one thing that cannot survive a copy/paste is
+ * the wrapper: Uniwind reads a theme only from `@variant light` /
+ * `@variant dark`, and treats a literal `.dark { … }` as a utility class
+ * named `dark` that silently does nothing. `delacour theme` rewrites the
+ * wrapper and fills in the tokens shadcn has no name for.
  *
  * `@theme inline` emits NO `--color-*` variable of its own; it substitutes the
  * raw `var(--primary)` into each utility. That is why `useThemeColor` looks up
@@ -60,11 +73,17 @@
 			--input: oklch(0.922 0 0);
 			--ring: oklch(0.708 0 0);
 
-			--chart-1: oklch(0.646 0.222 41.116);
-			--chart-2: oklch(0.6 0.118 184.704);
-			--chart-3: oklch(0.398 0.07 227.392);
-			--chart-4: oklch(0.828 0.189 84.429);
-			--chart-5: oklch(0.769 0.188 70.08);
+			/*
+			 * The neutral ramp shadcn ships today, in both themes: five greys, not
+			 * five hues. It is what a fresh `shadcn init` writes and what the
+			 * default preset on /theme resolves to — `emit.test.ts` holds the
+			 * two equal. An accent recolours all five.
+			 */
+			--chart-1: oklch(0.87 0 0);
+			--chart-2: oklch(0.556 0 0);
+			--chart-3: oklch(0.439 0 0);
+			--chart-4: oklch(0.371 0 0);
+			--chart-5: oklch(0.269 0 0);
 
 			--sidebar: oklch(0.985 0 0);
 			--sidebar-foreground: oklch(0.145 0 0);
@@ -181,11 +200,11 @@
 			--input: oklch(1 0 0 / 15%);
 			--ring: oklch(0.556 0 0);
 
-			--chart-1: oklch(0.488 0.243 264.376);
-			--chart-2: oklch(0.696 0.17 162.48);
-			--chart-3: oklch(0.769 0.188 70.08);
-			--chart-4: oklch(0.627 0.265 303.9);
-			--chart-5: oklch(0.645 0.246 16.439);
+			--chart-1: oklch(0.87 0 0);
+			--chart-2: oklch(0.556 0 0);
+			--chart-3: oklch(0.439 0 0);
+			--chart-4: oklch(0.371 0 0);
+			--chart-5: oklch(0.269 0 0);
 
 			--sidebar: oklch(0.205 0 0);
 			--sidebar-foreground: oklch(0.985 0 0);

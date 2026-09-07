@@ -29,12 +29,18 @@ const CSS_API = "https://fonts.googleapis.com/css2";
 /** What a font tile draws. Two glyphs, so the specimen sheet stays small. */
 export const SPECIMEN_TEXT = "Ag";
 
-/** After the chosen family, somewhere to go while the webfont loads. */
-const FALLBACK = "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
+/**
+ * After the chosen family, somewhere to go while the webfont loads.
+ *
+ * Also the whole of what the System tile is set in: `system` names no face,
+ * so the honest specimen is the platform's own sans — which on the web is this
+ * stack with no family in front of it.
+ */
+export const FALLBACK_STACK = "ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif";
 
 /** A family name as a CSS `font-family` value — quoted, because most of them have spaces. */
 export function fontSpecimen(family: string): string {
-	return `"${family}", ${FALLBACK}`;
+	return `"${family}", ${FALLBACK_STACK}`;
 }
 
 /** The weight to ask for, of the ones the family actually ships. */
@@ -76,7 +82,14 @@ export function specimenStylesheetHref(): string {
 	return stylesheet(FONTS, [400], SPECIMEN_TEXT);
 }
 
-/** The one or two families the preview panel sets, at full coverage. */
+/**
+ * The one or two families the preview panel sets, at full coverage.
+ *
+ * `system` — the default body font — is not in `FONTS`, so `fontByName` drops
+ * it here and a theme with no real face asks for no second sheet at all. That
+ * is the right answer rather than a fallback: the CSS API answers an empty or
+ * unknown `family=` with a 400.
+ */
 export function selectedStylesheetHref(config: DesignSystemConfig): string | undefined {
 	const { sans, heading } = resolveFonts(config);
 	const names = [config.font, config.fontHeading === "inherit" ? config.font : config.fontHeading];

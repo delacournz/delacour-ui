@@ -58,5 +58,6 @@ sizes are classes; the numeric escape hatch stays a prop or an inline `style`.
 
 **A variant may not name a line height.** tailwind-merge lists `leading` among `font-size`'s
 conflicting groups, so a `text-lg` from a `size` axis silently deletes a `leading-6` written beside
-a `text-base`. Every step in `tokens.css` already carries a paired
-`--text-*--line-height`; prose needing its own gets a **pair**, registered in `tokens.ts`.
+a `text-base`. Tailwind's own `--text-*--line-height` companions survive `tokens.css`'s size-only
+overrides, so every step already carries a paired leading; prose needing its own gets a **pair**,
+registered in `tokens.ts`.

@@ -80,6 +80,41 @@ describe("vega is the identity element, in CSS", () => {
 	}
 });
 
+/**
+ * The whole file, not just the geometry.
+ *
+ * `/theme` with no preset shows the default configuration, and `delacour init`
+ * ships `theme.css`. If those two ever disagree, a reader who copies the page
+ * over the file gets a different app than the one they were looking at — and
+ * nothing else would tell them. Every block Uniwind reads is compared by
+ * declaration, so the shipped file keeps its comments and its order and still
+ * cannot drift by a value.
+ */
+describe("the default preset is what init ships", () => {
+	const emitted = native(DEFAULT_CONFIG);
+
+	for (const block of ["@variant light", "@variant dark", "@variant native", "@variant ios", "@variant android"]) {
+		test(`${block} declares the same names and values`, () => {
+			const shipped = declarationsIn(THEME_CSS, block);
+			const ours = declarationsIn(emitted.css, block);
+
+			expect(Object.keys(ours).length).toBeGreaterThan(0);
+			expect(ours).toEqual(shipped);
+		});
+	}
+
+	test("@theme inline aliases the same names", () => {
+		const shipped = Object.keys(declarationsIn(THEME_CSS, "@theme inline")).sort();
+		const ours = Object.keys(declarationsIn(emitted.css, "@theme inline")).sort();
+
+		expect(ours).toEqual(shipped);
+	});
+
+	test("with nothing to warn about", () => {
+		expect(emitted.warnings).toEqual([]);
+	});
+});
+
 describe("units", () => {
 	test("--radius is always rem and every other geometry token is px", () => {
 		for (const style of STYLES) {
@@ -304,6 +339,15 @@ describe("fonts", () => {
 });
 
 describe("the whole matrix emits", () => {
+	test("the native shape never has to warn — every derivation lands on a declared token", () => {
+		for (const base of BASE_COLORS) {
+			for (const theme of ACCENT_THEMES) {
+				const from = config({ baseColor: base.name, theme: theme.name, chartColor: theme.name });
+				expect(native(from).warnings).toEqual([]);
+			}
+		}
+	});
+
 	test("every base colour against every accent", () => {
 		for (const base of BASE_COLORS) {
 			for (const accent of ACCENT_THEMES) {

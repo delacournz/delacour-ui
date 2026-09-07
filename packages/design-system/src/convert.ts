@@ -104,7 +104,7 @@ const GENERIC_FAMILIES = new Set([
  */
 const EXTENSIONS: Record<string, { dark: string; light: string }> = {
 	"--elevated": {
-		light: "var(--background)",
+		light: "var(--card)",
 		dark: "color-mix(in oklch, var(--muted) 88%, var(--foreground))",
 	},
 	"--elevated-foreground": { light: "var(--foreground)", dark: "var(--foreground)" },
@@ -116,6 +116,10 @@ const EXTENSIONS: Record<string, { dark: string; light: string }> = {
 		light: "color-mix(in oklch, var(--foreground) 50%, var(--muted-foreground))",
 		dark: "color-mix(in oklch, var(--foreground) 50%, var(--muted-foreground))",
 	},
+	// shadcn v4 dropped this and paints its destructive button `text-white`;
+	// five components here still read it. A literal, not `var(--background)`,
+	// which is near-black in dark and would vanish on red.
+	"--destructive-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.985 0 0)" },
 	// No shadcn counterpart to derive from, so these stay literal.
 	"--success": { light: "oklch(0.696 0.17 162.48)", dark: "oklch(0.696 0.17 162.48)" },
 	"--success-foreground": { light: "oklch(0.985 0 0)", dark: "oklch(0.205 0 0)" },
@@ -126,7 +130,27 @@ const EXTENSIONS: Record<string, { dark: string; light: string }> = {
 	// A scrim is black in both themes; deriving it from `--foreground` would
 	// paint a white one over a dark app.
 	"--overlay": { light: "oklch(0 0 0 / 45%)", dark: "oklch(0 0 0 / 65%)" },
+	// tweakcn writes a shadow scale and `shadcn init` does not. No component
+	// here draws one, but a consumer's `shadow-md` reads `--shadow-md`, and a
+	// theme that arrived without the scale would leave it resolving to nothing.
+	...shadowExtensions(),
 };
+
+/** Tailwind's own shadow scale, the same in both themes — a shadow is not a theme colour. */
+function shadowExtensions(): Record<string, { dark: string; light: string }> {
+	const scale: Record<string, string> = {
+		"--shadow": "0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1)",
+		"--shadow-2xs": "0 1px 3px 0 hsl(0 0% 0% / 0.05)",
+		"--shadow-xs": "0 1px 3px 0 hsl(0 0% 0% / 0.05)",
+		"--shadow-sm": "0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1)",
+		"--shadow-md": "0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 2px 4px -1px hsl(0 0% 0% / 0.1)",
+		"--shadow-lg": "0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 4px 6px -1px hsl(0 0% 0% / 0.1)",
+		"--shadow-xl": "0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 8px 10px -1px hsl(0 0% 0% / 0.1)",
+		"--shadow-2xl": "0 1px 3px 0 hsl(0 0% 0% / 0.25)",
+	};
+
+	return Object.fromEntries(Object.entries(scale).map(([name, value]) => [name, { light: value, dark: value }]));
+}
 
 /** `destructive`, `success`, `warning`, `info` each carry a tinted pair. */
 const SOFT_BASES = ["destructive", "success", "warning", "info"] as const;
@@ -222,6 +246,29 @@ export function parseTheme(source: string): ThemeSource {
 	const geometry = { ...fromPalette, ...native };
 
 	return { light, dark, platformFonts, native: Object.keys(geometry).length > 0 ? geometry : undefined };
+}
+
+/**
+ * Which of the two shapes a file is in, before anything is done to it.
+ *
+ * `native` is what Uniwind reads and what this package writes; `shadcn` is a
+ * web app's `globals.css` or a registry item, which Uniwind reads as a utility
+ * class named `dark` and a theme that never arrives. `delacour theme` uses it
+ * to convert `theme.css` where it sits, and `doctor` to say when nobody did.
+ */
+export type ThemeShape = "native" | "shadcn" | "unknown";
+
+export function detectThemeShape(source: string): ThemeShape {
+	if (parseRegistryItem(source)) return "shadcn";
+
+	const css = stripComments(source);
+	const hasVariants = /@variant\s+light\s*\{/.test(css) && /@variant\s+dark\s*\{/.test(css);
+	if (hasVariants) return "native";
+
+	const palette = { ...blockDeclarations(css, ":root"), ...blockDeclarations(css, ".dark") };
+	const hasPalette = Object.keys(palette).some((name) => !GEOMETRY_NAMES.has(name) && !name.startsWith("--color-"));
+
+	return hasPalette ? "shadcn" : "unknown";
 }
 
 /**

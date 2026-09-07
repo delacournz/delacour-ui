@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { BASE_COLORS } from "./base-colors";
-import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, palettesForBaseColor } from "./config";
+import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, palettesForBaseColor, SYSTEM_FONT } from "./config";
 import { FONTS } from "./fonts";
 import {
 	BASE_COLOR_ORDINALS,
@@ -31,7 +31,7 @@ describe("the ordinal tables", () => {
 			PALETTE_ORDINALS,
 			[...BASE_COLORS.map((base) => base.name), ...ACCENT_THEMES.map((theme) => theme.name)],
 		],
-		["font", FONT_ORDINALS, ["inherit", ...FONTS.map((font) => font.name)]],
+		["font", FONT_ORDINALS, ["inherit", SYSTEM_FONT, ...FONTS.map((font) => font.name)]],
 		["radius", RADIUS_ORDINALS, RADII.map((radius) => radius.name)],
 	];
 
@@ -176,13 +176,19 @@ describe("the round trip", () => {
  * re-baseline of this one.
  */
 describe("the golden codes", () => {
+	// Every code below was minted while Geist was the default body font. The
+	// default moved to the platform font, but a link is a promise: these codes
+	// keep naming Geist, and the new default has a code of its own.
+	const geist = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => config({ font: "geist", ...overrides });
+
 	const GOLDEN: [DesignSystemConfig, string][] = [
-		[DEFAULT_CONFIG, "AQAAAAABAACP"],
-		[config({ style: "rhea" }), "AQcAAAABAAD-"],
-		[config({ baseColor: "stone", theme: "stone", chartColor: "stone" }), "AQABAQEBAABA"],
-		[config({ theme: "blue", chartColor: "blue" }), "AQAACAgBAADv"],
-		[config({ radius: "none" }), "AQAAAAABAAH8"],
-		[config({ radius: "large" }), "AQAAAAABAARD"],
+		[DEFAULT_CONFIG, "AQAAAAAbAAB9"],
+		[geist({}), "AQAAAAABAACP"],
+		[geist({ style: "rhea" }), "AQcAAAABAAD-"],
+		[geist({ baseColor: "stone", theme: "stone", chartColor: "stone" }), "AQABAQEBAABA"],
+		[geist({ theme: "blue", chartColor: "blue" }), "AQAACAgBAADv"],
+		[geist({ radius: "none" }), "AQAAAAABAAH8"],
+		[geist({ radius: "large" }), "AQAAAAABAARD"],
 		[config({ font: "inter", fontHeading: "playfair-display" }), "AQAAAAACGAAi"],
 		[
 			config({

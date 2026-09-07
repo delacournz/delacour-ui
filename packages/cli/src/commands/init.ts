@@ -322,6 +322,9 @@ function printFollowUps(config: ResolvedConfig, output: Output): void {
 	items.push(
 		`Wrap the app root in ${style.code("<GestureHandlerRootView style={{ flex: 1 }}>")} — presses do nothing without it.`
 	);
+	items.push(
+		`${style.code("theme.css")} is the file to edit — replace it with the theme.css tab from https://ui.delacour.co.nz/theme, or paste a shadcn or tweakcn globals.css over it and run ${style.code("delacour theme")}.`
+	);
 
 	output.info(
 		[

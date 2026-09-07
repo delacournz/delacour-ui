@@ -46,8 +46,12 @@ src/
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
 │   ├── source.ts, namespaces.ts, schema.ts
-├── theme/                convert.ts — a web app's theme in, a `theme.css` out
+├── project/              (continued) exports-map.ts, package-scaffold.ts, shared-package.ts —
+│                         the shared-package layout; uniwind-env.ts — the type-shim constants
 └── ui/                   output.ts (all printing), diff.ts (the line diff)
+
+The theme converter is NOT here. `@delacour/design-system/convert` owns it — see that package's
+`AGENTS.md` — and `tsdown` bundles it into `dist/`.
 
 scripts/
 ├── verify-expo.ts        the integration script
@@ -222,11 +226,21 @@ The palette `native-ui` paints from is shadcn's, name for name, so almost everyt
 named `dark`** that contributes nothing — no error, no warning, and a dark theme that never arrives.
 That single fact is the whole reason the command exists.
 
-`theme/convert.ts` is pure — CSS text in, CSS text out — and `commands/theme.ts` is only the I/O
-around it, the same split `registry/canonicalise.ts` has from its command. The conversions worth
-knowing about are in that file's own doc comment; two of them are load-bearing and easy to undo:
-a font stack is cut to its first family (React Native takes one name, never a list), and a source's
-derived `--radius-*` steps are dropped, because every corner here is a multiple of one `--radius`.
+`packages/design-system/src/convert.ts` is pure — CSS text in, CSS text out — and
+`commands/theme.ts` is only the I/O around it, the same split `registry/canonicalise.ts` has from
+its command. It moved out of this package because `emit.ts` needs it to render the native shape
+`/theme` shows, and `packages/cli` has no `exports` map for anyone to import from. The conversions
+worth knowing about are in that file's own doc comment; three of them are load-bearing and easy to
+undo: a font stack is cut to its first family (React Native takes one name, never a list), a
+source's derived `--radius-*` steps are dropped, because every corner here is a multiple of one
+`--radius`, and `--destructive-foreground` is filled in, because shadcn v4 stopped declaring it
+and five components here paint their label with it.
+
+**With no argument it converts `theme.css` where it sits.** The one-file contract is that a reader
+pastes a shadcn `globals.css` over `theme.css` and runs `delacour theme`; `detectThemeShape` says
+whether the file is already in Uniwind's shape (nothing to do), shadcn's (rewrite in place), or
+neither (say so). `doctor` runs the same detector and fails on a shadcn-shaped file, so a forgotten
+run is caught before a build renders its dark theme as a utility class.
 
 ### The registry ref is baked in at build time
 

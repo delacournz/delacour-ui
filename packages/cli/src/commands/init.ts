@@ -21,7 +21,8 @@ import { add } from "./add";
  * through Uniwind, and Tailwind can see the component source to compile its
  * classes from. `init` does all three and then adds the `styles` item, so the
  * project has the tokens the components resolve their colours and sizes
- * against.
+ * against, and the `provider` item, so the root the components need is one
+ * import away rather than a second command.
  *
  * What it deliberately does not do is edit `tsconfig.json` or `app.config.ts`.
  * Aliases are read, never written — a project without them gets relative
@@ -68,9 +69,10 @@ export async function init(components: string[], options: InitOptions): Promise<
 
 	await wireUpApp(resolved, resolved.package ? project.workspaceRoot : null, output);
 
-	// The tokens every component's classes resolve against. Adding it here means
-	// a fresh project is renderable before a single component is chosen.
-	await add(["styles", ...components], { ...options, cwd: placement.root, overwrite: true });
+	// The tokens every component's classes resolve against, and the root every
+	// pressable needs above it. Adding both here means a fresh project is
+	// renderable — and responds to touch — before a single component is chosen.
+	await add(["styles", "provider", ...components], { ...options, cwd: placement.root, overwrite: true });
 
 	printFollowUps(resolved, output);
 	output.outro(`Ready. ${style.code("delacour add button")} to get started.`);
@@ -306,6 +308,24 @@ async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise
  * the only chance to see it.
  */
 function printFollowUps(config: ResolvedConfig, output: Output): void {
+	output.info(
+		[
+			`A few things need you:`,
+			...followUps(config).map((line) => `  • ${line}`),
+			"",
+			`Run ${style.code("delacour doctor")} to check.`,
+		].join("\n")
+	);
+}
+
+/**
+ * The follow-up lines themselves, in the order they are printed.
+ *
+ * Exported so the order is testable: the CSS import goes first because it is
+ * the only one of these that produces no error at all, and the provider before
+ * the theme because a theme is a choice and a root that receives touches is not.
+ */
+export function followUps(config: ResolvedConfig): string[] {
 	const items: string[] = [];
 
 	if (Object.keys(config.aliases).length > 0) {
@@ -319,21 +339,17 @@ function printFollowUps(config: ResolvedConfig, output: Output): void {
 	items.push(
 		`Import ${style.code(`"${config.aliases.styles ?? "."}/${basename(config.app.resolved.css)}"`)} as the first statement of your root layout — without it every component renders unstyled.`
 	);
+	// The provider is already copied in; what is left is mounting it. Without an
+	// alias the path is where it landed, relative to the app root.
+	const providerImport = `${config.aliases.ui ?? `./${short(config.app.resolved.root, config.directories.ui)}`}/provider`;
 	items.push(
-		`Wrap the app root in ${style.code("<GestureHandlerRootView style={{ flex: 1 }}>")} — presses do nothing without it.`
+		`Wrap the app root in ${style.code("<DelacourProvider>")} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
 	);
 	items.push(
 		`${style.code("theme.css")} is the file to edit — replace it with the theme.css tab from https://ui.delacour.co.nz/theme, or paste a shadcn or tweakcn globals.css over it and run ${style.code("delacour theme")}.`
 	);
 
-	output.info(
-		[
-			`A few things need you:`,
-			...items.map((line) => `  • ${line}`),
-			"",
-			`Run ${style.code("delacour doctor")} to check.`,
-		].join("\n")
-	);
+	return items;
 }
 
 function warnAboutStack(project: ProjectInfo, output: Output): void {

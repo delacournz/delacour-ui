@@ -62,6 +62,11 @@ describe("init and add, in a plain Expo app", () => {
 		await expect(exists(root, "src/styles/tokens.css")).resolves.toBe(true);
 	});
 
+	test("copies the root provider in without being asked", async () => {
+		await expect(exists(root, "src/components/ui/provider/provider.tsx")).resolves.toBe(true);
+		await expect(exists(root, "src/hooks/use-keyboard-state-sync.tsx")).resolves.toBe(true);
+	});
+
 	test("does not copy the library's tests", async () => {
 		await expect(exists(root, "src/components/ui/button/button.variants.test.ts")).resolves.toBe(false);
 	});

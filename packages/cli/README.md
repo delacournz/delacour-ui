@@ -121,15 +121,22 @@ never written to it.
 
 ## After `init`
 
-Three things need a human, because each is a decision inside a file you own:
+Three things need a human, because each is a decision inside a file you own. `init` copies the
+`provider` item in alongside `styles`, so the root every pressable needs is one import away — but
+mounting it is an edit to your layout, and that stays yours:
 
 ```tsx
 // app/_layout.tsx
 import "@/styles/global.css";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { DelacourProvider } from "@/components/ui/provider";
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
-	return <GestureHandlerRootView style={{ flex: 1 }}>{/* … */}</GestureHandlerRootView>;
+	return (
+		<DelacourProvider>
+			<Stack />
+		</DelacourProvider>
+	);
 }
 ```
 

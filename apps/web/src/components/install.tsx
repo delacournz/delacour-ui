@@ -51,6 +51,14 @@ export type InstallTabsProps = {
 
 const ITEMS = MANAGERS.map((manager) => manager.id);
 
+/**
+ * Where `delacour init` puts a component, as the project imports it: the `ui`
+ * alias it reads off a `"@/*": ["./src/*"]` mapping over the default
+ * `src/components/ui`. A project with no alias gets relative imports instead,
+ * which the page says beside the line.
+ */
+const UI_ALIAS = "@/components/ui";
+
 function render(manager: Manager, commands: InstallTabsProps["commands"]): string {
 	return commands
 		.filter((command) => command.packages.length > 0)
@@ -119,10 +127,21 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 		<Tabs items={["Command", "Package", "Manual"]}>
 			<Tab value="Command">
 				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha add ${entry.name} --install`] }]} />
+				<DynamicCodeBlock code={`import { ${entry.exportName} } from "${UI_ALIAS}/${entry.name}";`} lang="tsx" />
 				<p className="text-fd-muted-foreground text-sm">
-					Copies the source into your project, with everything it depends on. Run <code>delacour init</code> first if
-					you have not already.
+					Copies the source into your project, with everything it depends on, and rewrites the imports onto your own
+					paths. Relative imports are written instead when the project has no <code>@/*</code> alias.
 				</p>
+				<Accordions>
+					<Accordion title="First time in this project?">
+						<p className="mt-0 text-fd-muted-foreground text-sm">
+							<code>init</code> wires Metro and the CSS, copies the theme and the root provider in, and can take the
+							component in the same run. The <a href="/docs/native/getting-started">Quick start</a> is the whole path,
+							from an empty app to a rendered screen.
+						</p>
+						<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha init --install ${entry.name}`] }]} />
+					</Accordion>
+				</Accordions>
 				<Requires entry={entry} />
 			</Tab>
 
@@ -137,6 +156,10 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 			</Tab>
 
 			<Tab value="Manual">
+				<p className="text-fd-muted-foreground text-sm">
+					The same list in your terminal — every file, and every package it needs:
+				</p>
+				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha view ${entry.name}`] }]} />
 				<Steps>
 					<Step>
 						<h4>Install the following dependencies</h4>

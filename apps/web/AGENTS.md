@@ -154,14 +154,31 @@ The page slots must come from the **matching** package: `fumadocs-ui/layouts/not
 4. Frontmatter takes `title`, `description` and `icon` (any Lucide name — resolved by
    `lucideIconsPlugin()` in `src/lib/source.ts`).
 
+`getting-started/index.mdx` is the **Quick start** — the page `/docs`, the navbar and the landing
+hero all land on. It is commands and one complete `App.tsx`, with the reasoning linked rather than
+inlined; `content.test.ts` asserts the `<Steps>`, at least four `<InstallTabs>`, and that the
+fence's first statement is the CSS import. Philosophy goes in `design-principles.mdx`. The same
+test holds `getting-started/meta.json` and the folder to the sidebar contract the charts pages
+already have.
+
+Peer lists are derived, not typed: `<LibraryInstall />` renders `peers` from
+`src/registry/install.ts`, the union of every component's closure, and `install.test.ts` pins it
+to `packages/native-ui/package.json`. Do not hand-write an `expo install` list of the library's
+peers anywhere on the site.
+
 ### A CLI page
 
 `content/docs/native/cli/` documents `packages/cli`, not the library. It is a root folder of the
 **native** namespace rather than a `/docs/cli` namespace of its own, because the CLI is how this
 library is delivered rather than a second library. A top-level namespace is what a second
-*library* gets — `charts` is one — and it costs a link in `src/lib/layout.shared.tsx`, because
-the navbar's layout tabs are derived from the root folders of whichever namespace the reader is
-in, and nothing else points across.
+*library* gets — `charts` is one — and it costs a link in `src/lib/layout.shared.tsx`.
+
+The layout tab strip is one list across both namespaces, and `content/docs/meta.json` plus
+`native/meta.json` decide its order. Without the root file the namespaces sort alphabetically and
+Charts lands first; with it, `native/meta.json` lists `"../charts"` between `components` and `cli`,
+which is where a reader who has just found the components expects the charts to be. A third
+namespace goes into the root `pages` list and, if it belongs among the native tabs, into
+`native/meta.json` by relative path the same way.
 
 `commands.mdx` carries each command's `--help` **verbatim**, in a ```txt block under a bold
 **Options** label, rather than a `<TypeTable>` restating it. The output is the source of truth and a
@@ -186,7 +203,7 @@ Every component page follows one shape, and `src/content.test.ts` fails the buil
 <ComponentInstall name="<slug>" />                  must name this page's own slug
 
 ## Usage                                            must be the second `##`
-the import fence, then the JSX fence, no prose between
+one ```tsx title="app/index.tsx" fence — a complete file
 
 ## <Example>                                        flat sections, one sentence each
 ...
@@ -197,6 +214,15 @@ the import fence, then the JSX fence, no prose between
 The order is shadcn/ui's, and the value of it is entirely in it being the *same* order every time.
 There is deliberately **no `## Examples` wrapper** — each example is a sibling `##`, which is what
 keeps the right rail one flat list.
+
+**Usage is one file a reader pastes.** Imports, any `useState` the example needs, fixture data as a
+module-level `const`, and `export default function` — nothing referenced that is not declared. It
+imports from the CLI's alias (`@/components/ui/<slug>`, `@/lib/icons/…`, `@/hooks/…`), never from
+the package, because the CLI is the path the Quick start takes and the Package tab already shows
+the package import. `content.test.ts` asserts all of that as text, and forbids `{…}` anywhere on a
+page — a JSX expression holding an ellipsis does not parse. A bare `…` child in a later fragment
+(`<Tabs variant="primary">…</Tabs>`) is fine; those fragments illustrate one prop beside a preview
+and are not meant to be pasted whole.
 
 A component with no captured preview (`bottom-sheet`, `provider`) opens at `## Installation` rather
 than carrying a placeholder.

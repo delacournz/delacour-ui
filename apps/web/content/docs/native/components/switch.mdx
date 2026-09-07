@@ -12,12 +12,20 @@ icon: ToggleLeft
 
 ## Usage
 
-```tsx
-import { Switch } from "delacour-react-native-ui/switch";
-```
+```tsx title="app/index.tsx"
+import { Switch } from "@/components/ui/switch";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Switch isSelected={notify} onSelectedChange={setNotify} />
+export default function Example() {
+  const [notify, setNotify] = useState(true);
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Switch isSelected={notify} onSelectedChange={setNotify} />
+    </View>
+  );
+}
 ```
 
 ## Tap or drag

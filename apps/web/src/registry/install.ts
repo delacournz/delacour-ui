@@ -2511,3 +2511,15 @@ export const install = {
 	},} as const satisfies Record<string, InstallEntry>;
 
 export type InstallName = keyof typeof install;
+
+/**
+ * Every package the whole library needs — the union of every component's
+ * closure, so the Installation page's peer list is derived rather than typed
+ * and cannot omit a package some component depends on. Filtered to the
+ * package's declared peers — see `peerNames` in the generator.
+ */
+export const peers = {
+	expo: ["@gorhom/bottom-sheet", "@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
+	npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
+	dev: [],
+} as const;

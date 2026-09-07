@@ -12,13 +12,18 @@ icon: Shapes
 
 ## Usage
 
-```tsx
-import { Icon } from "delacour-react-native-ui/icon";
-import { IconHeart } from "delacour-react-native-ui/icons/central";
-```
+```tsx title="app/index.tsx"
+import { Icon } from "@/components/ui/icon";
+import { IconHeart } from "@/lib/icons/central";
+import { View } from "react-native";
 
-```tsx
-<Icon icon={IconHeart} />
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Icon icon={IconHeart} />
+    </View>
+  );
+}
 ```
 
 ## Sizes

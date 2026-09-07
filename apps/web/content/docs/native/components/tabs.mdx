@@ -12,21 +12,38 @@ icon: LayoutGrid
 
 ## Usage
 
-```tsx
-import { Tabs } from "delacour-react-native-ui/tabs";
-```
+```tsx title="app/index.tsx"
+import { Tabs } from "@/components/ui/tabs";
+import { Text } from "@/components/ui/text";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Tabs value={tab} onValueChange={setTab}>
-  <Tabs.List>
-    <Tabs.Indicator />
-    <Tabs.Trigger value="all"><Tabs.Label>All</Tabs.Label></Tabs.Trigger>
-    <Tabs.Trigger value="unread"><Tabs.Label>Unread</Tabs.Label></Tabs.Trigger>
-  </Tabs.List>
+export default function Example() {
+  const [tab, setTab] = useState<string | null>("all");
 
-  <Tabs.Content value="all">{…}</Tabs.Content>
-  <Tabs.Content value="unread">{…}</Tabs.Content>
-</Tabs>
+  return (
+    <View className="flex-1 p-4">
+      <Tabs value={tab} onValueChange={setTab}>
+        <Tabs.List>
+          <Tabs.Indicator />
+          <Tabs.Trigger value="all">
+            <Tabs.Label>All</Tabs.Label>
+          </Tabs.Trigger>
+          <Tabs.Trigger value="unread">
+            <Tabs.Label>Unread</Tabs.Label>
+          </Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="all">
+          <Text.Paragraph>Every message in the inbox.</Text.Paragraph>
+        </Tabs.Content>
+        <Tabs.Content value="unread">
+          <Text.Paragraph>Only the ones you have not opened yet.</Text.Paragraph>
+        </Tabs.Content>
+      </Tabs>
+    </View>
+  );
+}
 ```
 
 ## Variants

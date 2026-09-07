@@ -489,20 +489,35 @@ function matchesEntry(imported: string, target: string): boolean {
  * Every pressable in the library is a Gesture Handler detector, and a detector
  * outside a `GestureHandlerRootView` never receives a touch. Nothing throws;
  * the button simply does not respond.
+ *
+ * `DelacourProvider` is that root, plus the other layers, so mounting it
+ * counts. The copied components are skipped on purpose: `provider.tsx` itself
+ * names both, and `init` copies it into every project, so a walk that read it
+ * would pass an app that never mounted anything. The app root is read one level
+ * deep as well as the usual `app/` and `src/` walks, because a blank Expo
+ * template mounts everything from `App.tsx` at the top.
+ *
+ * Exported for the tests; `runChecks` is the entry point.
  */
-async function checkGestureHandlerRoot(config: ResolvedConfig): Promise<Check> {
-	const roots = ["src/app", "app", "src"].map((path) => join(config.app.resolved.root, path));
-	const found = await Promise.all(roots.map((root) => containsText(root, "GestureHandlerRootView")));
+export async function checkGestureHandlerRoot(config: ResolvedConfig): Promise<Check> {
+	const appRoot = config.app.resolved.root;
+	const skip = Object.values(config.directories);
+	const roots = ["src/app", "app", "src"].map((path) => join(appRoot, path));
 
-	if (found.some(Boolean)) {
-		return { name: "Gesture Handler", status: "pass", detail: "GestureHandlerRootView found at the app root" };
+	for (const needle of ["DelacourProvider", "GestureHandlerRootView"]) {
+		const walked = await Promise.all(roots.map((root) => containsText(root, needle, { skip })));
+		const top = await containsText(appRoot, needle, { skip, recursive: false });
+
+		if (top || walked.some(Boolean)) {
+			return { name: "Gesture Handler", status: "pass", detail: `${needle} found at the app root` };
+		}
 	}
 
 	return {
 		name: "Gesture Handler",
 		status: "warn",
-		detail: "no GestureHandlerRootView found",
-		fix: "Wrap your root layout in <GestureHandlerRootView style={{ flex: 1 }}> — presses do nothing without it.",
+		detail: "no DelacourProvider or GestureHandlerRootView found",
+		fix: "Wrap your root layout in <DelacourProvider> from your ui directory — or, by hand, <GestureHandlerRootView style={{ flex: 1 }}>. Presses do nothing without one of them.",
 	};
 }
 
@@ -568,17 +583,27 @@ async function readExpoConfig(cwd: string): Promise<ExpoConfig | null> {
 	}
 }
 
-async function containsText(directory: string, needle: string): Promise<boolean> {
+type ContainsTextOptions = {
+	/** Directories whose files do not count, absolute. */
+	skip?: readonly string[];
+	/** `false` reads the directory's own files only. Defaults to a full walk. */
+	recursive?: boolean;
+};
+
+async function containsText(directory: string, needle: string, options: ContainsTextOptions = {}): Promise<boolean> {
 	let entries: string[];
 	try {
-		entries = await readdir(directory, { recursive: true });
+		entries = await readdir(directory, { recursive: options.recursive ?? true });
 	} catch {
 		return false;
 	}
 
 	for (const entry of entries) {
-		if (!/\.tsx?$/.test(entry)) continue;
-		const content = await read(join(directory, entry));
+		if (!/\.tsx?$/.test(entry) || entry.includes("node_modules")) continue;
+		const path = join(directory, entry);
+		if (options.skip?.some((skipped) => path === skipped || path.startsWith(`${skipped}/`))) continue;
+
+		const content = await read(path);
 		if (content?.includes(needle)) return true;
 	}
 

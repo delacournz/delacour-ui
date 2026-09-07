@@ -12,14 +12,24 @@ icon: Hand
 
 ## Usage
 
-```tsx
-import { Pressable } from "delacour-react-native-ui/pressable";
-```
+```tsx title="app/index.tsx"
+import { Pressable } from "@/components/ui/pressable";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
-```tsx
-<Pressable feedback="scale" haptic="selection" onPress={open}>
-  <Text>Open</Text>
-</Pressable>
+export default function Example() {
+  function open() {
+    console.log("opened");
+  }
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Pressable feedback="scale" haptic="selection" onPress={open}>
+        <Text>Open</Text>
+      </Pressable>
+    </View>
+  );
+}
 ```
 
 ## Feedback

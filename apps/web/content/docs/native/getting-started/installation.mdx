@@ -1,71 +1,36 @@
 ---
 title: Installation
-description: Three ways to get the components, and the wiring all three need.
+description: The CLI, the package, and the wiring both need.
 icon: Download
 ---
 
-The CLI and the package hold the same components. The choice is who owns the code.
-
-<Cards>
-  <Card title="Use the CLI" href="#use-the-cli">
-    `delacour` writes the source into your repository. You edit `button.tsx` rather than upgrade a
-    package.
-  </Card>
-  <Card title="Install the package" href="#install-the-package">
-    `delacour-react-native-ui` on npm, imported from a subpath. Upgrades arrive with `bun update`.
-  </Card>
-  <Card title="Manual setup" href="#manual-setup">
-    Copy the files in yourself. Every component page lists exactly which ones.
-  </Card>
-</Cards>
+The CLI and the package hold the same components. The CLI copies the source into your repository
+so you own `button.tsx`; the package is upgraded with `bun update`. Start with the CLI — it does
+the wiring below for you.
 
 ## Use the CLI
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --install"] }]} />
 
 `init` writes `native-components.json`, wraps your Metro config with Uniwind's transform, adds the
-`@source` globs to your Tailwind entry, and copies the theme in. Then add components by name:
+`@source` globs to your Tailwind entry, copies the theme and the root provider in, and installs
+what they need. Then add components by name:
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button input field"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button input field --install"] }]} />
 
-See [the CLI docs](/docs/native/cli) for what `init` will and will not touch.
+Two things remain yours: importing the CSS and mounting the provider — both shown in
+[Mount the provider](#mount-the-provider), and both done for you on the
+[Quick start](/docs/native/getting-started). See [the CLI docs](/docs/native/cli) for what `init`
+will and will not touch, and [Monorepos](/docs/native/cli/monorepo) for a shared package.
 
 ## Install the package
 
-<InstallTabs commands={[{ verb: "add", packages: ["delacour-react-native-ui@alpha"] }]} />
+<LibraryInstall />
 
 The library ships raw `.tsx`. Uniwind's transform has to run in **your** app's Metro pipeline, so a
 precompiled build would arrive with its classNames already dead — which is also why its native
 dependencies are peers rather than dependencies. Two copies of a native module register twice and
-break at runtime.
-
-### Peer dependencies
-
-Native modules and anything bound to the SDK go through `expo install`, which resolves a version
-your SDK can build:
-
-<InstallTabs
-  commands={[
-    {
-      verb: "expo",
-      packages: [
-        "@gorhom/bottom-sheet",
-        "react-native-gesture-handler",
-        "react-native-keyboard-controller",
-        "react-native-pulsar",
-        "react-native-reanimated",
-        "react-native-safe-area-context",
-        "react-native-svg",
-        "react-native-worklets",
-        "uniwind",
-      ],
-    },
-    {
-      verb: "add",
-      packages: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
-    },
-  ]}
-/>
+break at runtime. The list above is derived from the components' own imports, so it is complete.
 
 <Callout type="warn" title="Do not install native modules with your package manager">
 `bun add react-native-reanimated` fetches the newest release, which on any older SDK is a package
@@ -96,45 +61,67 @@ import { IconHeart } from "delacour-react-native-ui/icons/central";
 import { Button } from "delacour-react-native-ui";
 ```
 
+### Wire up the CSS
+
+On the package path, import the library's styles into your app's Tailwind entry and point
+Tailwind's scanner at the package source. The CLI writes this block itself.
+
+```css title="src/styles/global.css"
+@import "tailwindcss";
+@import "uniwind";
+@import "delacour-react-native-ui/styles";
+
+@source "../**/*.{ts,tsx}";
+@source "../../node_modules/delacour-react-native-ui/src";
+```
+
+<Callout type="warn" title="In a workspace, use the real path">
+Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. In a monorepo,
+point the second `@source` at the package's actual directory — `../../../../packages/native-ui/src`
+or wherever it lives — or every class the library uses is silently dropped from your production
+build.
+</Callout>
+
+Then wrap Metro, **outermost**, so `className` compiles:
+
+```js title="metro.config.js"
+const { getDefaultConfig } = require("expo/metro-config");
+const { withUniwindConfig } = require("uniwind/metro");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: "./src/styles/global.css",
+  dtsFile: "./src/uniwind-types.d.ts",
+});
+```
+
 ## Manual setup
 
 Every component page carries a **Manual** tab listing the exact packages and files that component
-needs — [Button](/docs/native/components/button) is the one to look at first. The steps are always
-the same three: install the dependencies, copy the files, repoint the imports.
-
-Do the CSS and provider wiring below either way.
-
-## Wire up the CSS
-
-Import the library's styles into your app's Tailwind entry, then point Tailwind's scanner at the
-package source.
-
-```css title="global.css"
-@import "delacour-react-native-ui/styles";
-@source "../../../../packages/native-ui/src";
-```
-
-<Callout type="warn" title="Use the real workspace path">
-Bun symlinks workspace packages, and Tailwind's scanner **cannot follow symlinks**. A `@source`
-pointing at `node_modules/delacour-react-native-ui` resolves to nothing, and every class the library uses
-is silently dropped from your production build. Point it at the actual directory.
-</Callout>
-
-The `delacour-react-native-ui/styles` barrel is three files: `base.css` (`tailwindcss` + `uniwind`),
-`tokens.css` (the `@theme` scale) and `theme.css` (the light/dark palette). Import them individually
-if you need to reorder them.
+needs, each linked to its source — [Button](/docs/native/components/button) is the one to look at
+first. `delacour view button` prints the same list in your terminal.
 
 ## Mount the provider
 
-Wrap your app's root — once, around everything.
+Whichever path you took, the root layout does two things: imports the CSS as its **first
+statement**, and wraps everything in the provider, once.
 
 ```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
 import { DelacourProvider } from "delacour-react-native-ui/provider";
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
-  return <DelacourProvider>{children}</DelacourProvider>;
+  return (
+    <DelacourProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </DelacourProvider>
+  );
 }
 ```
+
+On the CLI path the import is `@/components/ui/provider`, and `init` has already copied it in.
 
 `DelacourProvider` is five layers, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
 `KeyboardProvider` → `<KeyboardStateSync />` beside the children → `BottomSheetModalProvider` around
@@ -142,7 +129,8 @@ them. The order is load-bearing — see [Provider](/docs/native/getting-started/
 breaks at each layer.
 
 <Callout type="warn">
-Without the gesture root, presses stop landing. Silently — no error, no warning.
+Without the CSS import every component renders unstyled. Without the gesture root, presses stop
+landing. Both silently — no error, no warning. `delacour doctor` checks for each.
 </Callout>
 
 ### Composing the layers by hand
@@ -169,13 +157,26 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 
 ## Verify
 
-```tsx
+```tsx title="app/index.tsx"
 import { Button } from "delacour-react-native-ui/button";
+import { useState } from "react";
+import { View } from "react-native";
 
-<Button onPress={() => console.log("pressed")}>Press me</Button>;
+export default function Index() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View className="flex-1 items-center justify-center bg-background">
+      <Button onPress={() => setCount(count + 1)}>Pressed {count} times</Button>
+    </View>
+  );
+}
 ```
 
 A string child is wrapped in a `Button.Label` for you. If the button renders but does not respond,
-the gesture root is missing above it.
+the gesture root is missing above it. If it renders as plain text on white, the CSS import is
+missing or not first.
 
-On the CLI path, `delacour doctor` checks all of this and nine other things that fail silently.
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha doctor"] }]} />
+
+`doctor` checks all of this and nine other things that fail silently, on either path.

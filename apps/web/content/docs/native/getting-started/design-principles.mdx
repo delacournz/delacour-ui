@@ -66,3 +66,19 @@ The library takes no navigation dependency and no form dependency. `Screen.Navba
 takes an `onPress`; `Screen.Footer` takes an `isFocused`. Anything that must import an Expo
 package lives under `src/expo/` behind an optional peer, so an app on a different navigator keeps
 the rest of the library.
+
+## The three component patterns
+
+Knowing which shape you are looking at tells you where its styles live and how to extend it.
+
+<Cards>
+  <Card title="Styled wrapper" href="/docs/native/components/icon">
+    No state. Props map to classes. `Icon` is the reference.
+  </Card>
+  <Card title="Compound + context" href="/docs/native/components/button">
+    A root shares `variant`, `size` and `isDisabled` with dot-notation parts, plus a `useX()` hook.
+  </Card>
+  <Card title="`tv()` variants" href="/docs/native/getting-started/styling">
+    Size and variant axes declared in a `tv()` slot set, never inline at the call site.
+  </Card>
+</Cards>

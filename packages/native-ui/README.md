@@ -15,22 +15,18 @@ bun add delacour-react-native-ui@alpha
 ```
 
 Native modules are **peer dependencies**, because two copies of a native module
-register twice and break at runtime. Install the ones you need:
-
-```
-react  react-native  react-native-gesture-handler  react-native-reanimated
-react-native-worklets  react-native-safe-area-context  react-native-svg
-react-native-keyboard-controller  react-native-pulsar  @gorhom/bottom-sheet
-tailwindcss  uniwind
-@central-icons-react-native/round-outlined-radius-1-stroke-1.5
-```
-
-Two are **optional** — you only need them if you import what depends on them:
+register twice and break at runtime. The complete list — native modules through
+`expo install`, the rest through your package manager — is derived from the
+components' own imports and kept on the
+[Installation page](https://ui.delacour.co.nz/docs/native/getting-started/installation).
+Four peers are optional and resolve only if you import the subpath that needs them:
 
 | Peer | Needed for |
 | --- | --- |
 | `expo-router` | `delacour-react-native-ui/expo/navigation-theme` |
 | `@legendapp/list` | `Screen.LegendList` and `Screen.ChatList` |
+| `react-native-screens` | native stack navigation |
+| `delacour-react-native-charts` | `Chart` |
 
 Granular exports are what make that safe: an app that never imports a subpath
 never makes Metro resolve its peers.

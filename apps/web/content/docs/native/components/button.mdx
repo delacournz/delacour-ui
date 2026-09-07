@@ -12,12 +12,27 @@ icon: MousePointerClick
 
 ## Usage
 
-```tsx
-import { Button } from "delacour-react-native-ui/button";
-```
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Button onPress={save}>Save</Button>
+export default function Example() {
+  const [isSaving, setIsSaving] = useState(false);
+
+  function save() {
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 1500);
+  }
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Button isLoading={isSaving} onPress={save}>
+        Save
+      </Button>
+    </View>
+  );
+}
 ```
 
 ## Variants

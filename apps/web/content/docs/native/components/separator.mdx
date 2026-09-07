@@ -12,12 +12,20 @@ icon: Minus
 
 ## Usage
 
-```tsx
-import { Separator } from "delacour-react-native-ui/separator";
-```
+```tsx title="app/index.tsx"
+import { Separator } from "@/components/ui/separator";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
-```tsx
-<Separator />
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center gap-4 p-4">
+      <Text.Paragraph>Account</Text.Paragraph>
+      <Separator />
+      <Text.Paragraph>Privacy</Text.Paragraph>
+    </View>
+  );
+}
 ```
 
 ## Orientations

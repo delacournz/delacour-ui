@@ -12,13 +12,18 @@ icon: Type
 
 ## Usage
 
-```tsx
-import { Text } from "delacour-react-native-ui/text";
-```
+```tsx title="app/index.tsx"
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
-```tsx
-<Text.Title>Settings</Text.Title>
-<Text.Paragraph>Manage how the app behaves on this device.</Text.Paragraph>
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center gap-2 p-4">
+      <Text.Title>Settings</Text.Title>
+      <Text.Paragraph>Manage how the app behaves on this device.</Text.Paragraph>
+    </View>
+  );
+}
 ```
 
 ## Presets

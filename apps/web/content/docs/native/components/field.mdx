@@ -12,16 +12,25 @@ icon: SquarePen
 
 ## Usage
 
-```tsx
-import { Field } from "delacour-react-native-ui/field";
-```
+```tsx title="app/index.tsx"
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Field>
-  <Field.Label>Email</Field.Label>
-  <Input value={email} onChangeText={setEmail} />
-  <Field.Description>We only use this to send receipts.</Field.Description>
-</Field>
+export default function Example() {
+  const [email, setEmail] = useState("");
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Field>
+        <Field.Label>Email</Field.Label>
+        <Input value={email} onChangeText={setEmail} />
+        <Field.Description>We only use this to send receipts.</Field.Description>
+      </Field>
+    </View>
+  );
+}
 ```
 
 ## States

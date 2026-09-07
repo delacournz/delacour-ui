@@ -10,27 +10,35 @@ icon: PanelBottom
 
 ## Usage
 
-```tsx
-import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";
-```
+```tsx title="app/index.tsx"
+import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
-```tsx
-<BottomSheet>
-  <BottomSheet.Trigger asChild>
-    <Button>Open</Button>
-  </BottomSheet.Trigger>
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <BottomSheet>
+        <BottomSheet.Trigger asChild>
+          <Button>Open</Button>
+        </BottomSheet.Trigger>
 
-  <BottomSheet.Portal>
-    <BottomSheet.Overlay />
-    <BottomSheet.Container>
-      <BottomSheet.Content>
-        <BottomSheet.Title>Filters</BottomSheet.Title>
-        <BottomSheet.Description>Narrow the list down.</BottomSheet.Description>
-        <BottomSheet.Close />
-      </BottomSheet.Content>
-    </BottomSheet.Container>
-  </BottomSheet.Portal>
-</BottomSheet>
+        <BottomSheet.Portal>
+          <BottomSheet.Overlay />
+          <BottomSheet.Container>
+            <BottomSheet.Content>
+              <BottomSheet.Title>Filters</BottomSheet.Title>
+              <BottomSheet.Description>Narrow the list down.</BottomSheet.Description>
+              <Text.Paragraph>Nothing is filtered yet.</Text.Paragraph>
+              <BottomSheet.Close />
+            </BottomSheet.Content>
+          </BottomSheet.Container>
+        </BottomSheet.Portal>
+      </BottomSheet>
+    </View>
+  );
+}
 ```
 
 ## Controlled

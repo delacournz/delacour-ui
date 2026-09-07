@@ -12,12 +12,17 @@ icon: Tag
 
 ## Usage
 
-```tsx
-import { Badge } from "delacour-react-native-ui/badge";
-```
+```tsx title="app/index.tsx"
+import { Badge } from "@/components/ui/badge";
+import { View } from "react-native";
 
-```tsx
-<Badge color="success">Active</Badge>
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Badge color="success">Active</Badge>
+    </View>
+  );
+}
 ```
 
 ## Variants and colours

@@ -12,12 +12,20 @@ icon: TextCursorInput
 
 ## Usage
 
-```tsx
-import { Input } from "delacour-react-native-ui/input";
-```
+```tsx title="app/index.tsx"
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Input value={email} onChangeText={setEmail} placeholder="you@example.com" />
+export default function Example() {
+  const [email, setEmail] = useState("");
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Input value={email} onChangeText={setEmail} placeholder="you@example.com" />
+    </View>
+  );
+}
 ```
 
 ## Variants

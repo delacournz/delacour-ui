@@ -12,15 +12,20 @@ icon: List
 
 ## Usage
 
-```tsx
-import { ListGroup } from "delacour-react-native-ui/list-group";
-```
+```tsx title="app/index.tsx"
+import { ListGroup } from "@/components/ui/list-group";
+import { View } from "react-native";
 
-```tsx
-<ListGroup>
-  <ListGroup.Item onPress={openProfile}>Profile</ListGroup.Item>
-  <ListGroup.Item onPress={openNotifications}>Notifications</ListGroup.Item>
-</ListGroup>
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <ListGroup>
+        <ListGroup.Item onPress={() => console.log("profile")}>Profile</ListGroup.Item>
+        <ListGroup.Item onPress={() => console.log("notifications")}>Notifications</ListGroup.Item>
+      </ListGroup>
+    </View>
+  );
+}
 ```
 
 ## Variants

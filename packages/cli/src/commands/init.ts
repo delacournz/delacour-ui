@@ -21,7 +21,8 @@ import { add } from "./add";
  * through Uniwind, and Tailwind can see the component source to compile its
  * classes from. `init` does all three and then adds the `styles` item, so the
  * project has the tokens the components resolve their colours and sizes
- * against.
+ * against, and the `provider` item, so the root the components need is one
+ * import away rather than a second command.
  *
  * What it deliberately does not do is edit `tsconfig.json` or `app.config.ts`.
  * Aliases are read, never written — a project without them gets relative
@@ -68,9 +69,10 @@ export async function init(components: string[], options: InitOptions): Promise<
 
 	await wireUpApp(resolved, resolved.package ? project.workspaceRoot : null, output);
 
-	// The tokens every component's classes resolve against. Adding it here means
-	// a fresh project is renderable before a single component is chosen.
-	await add(["styles", ...components], { ...options, cwd: placement.root, overwrite: true });
+	// The tokens every component's classes resolve against, and the root every
+	// pressable needs above it. Adding both here means a fresh project is
+	// renderable — and responds to touch — before a single component is chosen.
+	await add(["styles", "provider", ...components], { ...options, cwd: placement.root, overwrite: true });
 
 	printFollowUps(resolved, output);
 	output.outro(`Ready. ${style.code("delacour add button")} to get started.`);
@@ -265,6 +267,7 @@ async function wireUpApp(config: ResolvedConfig, workspaceRoot: string | null, o
 	}
 
 	await ensureUniwindEnv(config, output);
+	await ensureExpoEnv(config, output);
 
 	const block = buildStylesBlock({ cssPath: config.app.resolved.css, directories: config.directories });
 	const css = patchGlobalCss(await read(config.app.resolved.css), block);
@@ -299,6 +302,29 @@ async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise
 }
 
 /**
+ * The file Expo's own CLI writes on first `start`, and nothing before that.
+ *
+ * `expo/types` is what declares `*.css` as a module. A template without a
+ * router — `blank-typescript` — ships no `expo-env.d.ts`, so the CSS import
+ * `init` just asked for fails `tsc` with "Cannot find module … './styles/global.css'"
+ * until the app has been started once. Metro is fine either way; only the
+ * typecheck a reader runs first is not.
+ */
+async function ensureExpoEnv(config: ResolvedConfig, output: Output): Promise<void> {
+	if (config.framework !== "expo") return;
+
+	const path = join(config.app.resolved.root, "expo-env.d.ts");
+	if (existsSync(path)) return;
+
+	await write(path, `${EXPO_ENV_REFERENCE}\n`);
+	output.success(`Wrote ${style.path("expo-env.d.ts")} — it declares *.css as a module`);
+}
+
+const EXPO_ENV_REFERENCE = `/// <reference types="expo/types" />
+
+// NOTE: This file should not be edited and should be in your git ignore`;
+
+/**
  * What is left, and why the CLI did not just do it.
  *
  * Each of these needs a decision or an AST edit inside a file the project owns.
@@ -306,6 +332,24 @@ async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise
  * the only chance to see it.
  */
 function printFollowUps(config: ResolvedConfig, output: Output): void {
+	output.info(
+		[
+			`A few things need you:`,
+			...followUps(config).map((line) => `  • ${line}`),
+			"",
+			`Run ${style.code("delacour doctor")} to check.`,
+		].join("\n")
+	);
+}
+
+/**
+ * The follow-up lines themselves, in the order they are printed.
+ *
+ * Exported so the order is testable: the CSS import goes first because it is
+ * the only one of these that produces no error at all, and the provider before
+ * the theme because a theme is a choice and a root that receives touches is not.
+ */
+export function followUps(config: ResolvedConfig): string[] {
 	const items: string[] = [];
 
 	if (Object.keys(config.aliases).length > 0) {
@@ -316,24 +360,25 @@ function printFollowUps(config: ResolvedConfig, output: Output): void {
 
 	// First, because it is the only one of the three that produces no error at
 	// all — the app boots and renders every component unstyled.
+	// Without an alias the path is where the file landed, relative to the app
+	// root — `./styles/global.css`, not `./global.css`.
+	const cssImport = config.aliases.styles
+		? `${config.aliases.styles}/${basename(config.app.resolved.css)}`
+		: `./${short(config.app.resolved.root, config.app.resolved.css)}`;
 	items.push(
-		`Import ${style.code(`"${config.aliases.styles ?? "."}/${basename(config.app.resolved.css)}"`)} as the first statement of your root layout — without it every component renders unstyled.`
+		`Import ${style.code(`"${cssImport}"`)} as the first statement of your root layout — without it every component renders unstyled.`
 	);
+	// The provider is already copied in; what is left is mounting it. Without an
+	// alias the path is where it landed, relative to the app root.
+	const providerImport = `${config.aliases.ui ?? `./${short(config.app.resolved.root, config.directories.ui)}`}/provider`;
 	items.push(
-		`Wrap the app root in ${style.code("<GestureHandlerRootView style={{ flex: 1 }}>")} — presses do nothing without it.`
+		`Wrap the app root in ${style.code("<DelacourProvider>")} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
 	);
 	items.push(
 		`${style.code("theme.css")} is the file to edit — replace it with the theme.css tab from https://ui.delacour.co.nz/theme, or paste a shadcn or tweakcn globals.css over it and run ${style.code("delacour theme")}.`
 	);
 
-	output.info(
-		[
-			`A few things need you:`,
-			...items.map((line) => `  • ${line}`),
-			"",
-			`Run ${style.code("delacour doctor")} to check.`,
-		].join("\n")
-	);
+	return items;
 }
 
 function warnAboutStack(project: ProjectInfo, output: Output): void {

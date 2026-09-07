@@ -81,10 +81,11 @@ rather than appending a second one.
 </Step>
 
 <Step>
-### The theme
+### The theme, and the provider
 
 `init` adds the `styles` item — `tokens.css`, `theme.css`, `base.css` and the `uniwind-env.d.ts`
-type shim — and installs `tailwindcss` and `uniwind`.
+type shim — and installs `tailwindcss` and `uniwind`. It adds the `provider` item too, so
+`DelacourProvider` is in your `ui` directory before you mount it.
 
 `theme.css` is the one of those that is yours. Replace it whole with the `theme.css` tab from
 [Theme](/theme), or paste a shadcn `globals.css` over it and run `delacour theme`. The rest is
@@ -116,22 +117,29 @@ First statement of the root layout. `withUniwindConfig`'s `cssEntryFile` names t
 transformer; it does not put it in the bundle. Skip this and the app builds, boots and renders
 every component **completely unstyled**, with nothing logged.
 
-### Mount the provider
+### Mount `DelacourProvider`
 
 Every pressable in the library is a Gesture Handler detector, and a detector outside a
 `GestureHandlerRootView` never receives a touch. Nothing throws — the button just does not respond.
+`DelacourProvider` is that root, plus the other layers the components read from, and `init` has
+already copied it in.
 
 ```tsx title="app/_layout.tsx"
 import "@/styles/global.css";
 import { DelacourProvider } from "@/components/ui/provider";
+import { Stack } from "expo-router";
 
 export default function RootLayout() {
-  return <DelacourProvider>{children}</DelacourProvider>;
+  return (
+    <DelacourProvider>
+      <Stack />
+    </DelacourProvider>
+  );
 }
 ```
 
-`delacour add provider` gets you that component; see
-[Provider](/docs/native/getting-started/provider) for what each of its layers is doing.
+See [Provider](/docs/native/getting-started/provider) for what each of its layers is doing.
+`delacour doctor` passes on either `DelacourProvider` or a hand-mounted `GestureHandlerRootView`.
 
 ### Turn on `tsconfigPaths` — only if you use aliases
 
@@ -168,4 +176,4 @@ import { Button } from "@/components/ui/button";
 ```
 
 A string child is wrapped in a `Button.Label` for you. If the button renders but does not respond,
-the provider is missing above it.
+`DelacourProvider` is missing above it.

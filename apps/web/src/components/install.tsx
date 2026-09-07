@@ -5,27 +5,44 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import type { ReactElement } from "react";
 import { gitConfig } from "@/lib/shared";
-import { type InstallEntry, type InstallGroup, type InstallName, install } from "@/registry/install";
+import { type InstallEntry, type InstallGroup, type InstallName, install, peers } from "@/registry/install";
 
 /**
  * The four package managers an Expo app is plausibly on, and how each spells
- * the three verbs this site needs.
+ * the five verbs this site needs.
  *
  * `expo` is not a stylistic variant of `add`. Expo pins every native module to a
  * version its SDK can build, and `bun add react-native-reanimated` fetches the
  * newest release instead — which on any older SDK is a package that fails at the
  * linker rather than at install time. That is why the registry splits
  * `dependencies` from `expoDependencies`, and why this table has a third column.
+ *
+ * `create` is the scaffolding verb — `<pm> create expo-app my-app` — which all
+ * four spell the same way apart from the manager's own name.
  */
 const MANAGERS = [
-	{ id: "bun", add: "bun add", dev: "bun add -d", dlx: "bunx", expo: "bunx expo install" },
-	{ id: "npm", add: "npm install", dev: "npm install -D", dlx: "npx", expo: "npx expo install" },
-	{ id: "pnpm", add: "pnpm add", dev: "pnpm add -D", dlx: "pnpm dlx", expo: "pnpm dlx expo install" },
-	{ id: "yarn", add: "yarn add", dev: "yarn add -D", dlx: "yarn dlx", expo: "yarn dlx expo install" },
+	{ id: "bun", add: "bun add", dev: "bun add -d", dlx: "bunx", expo: "bunx expo install", create: "bun create" },
+	{ id: "npm", add: "npm install", dev: "npm install -D", dlx: "npx", expo: "npx expo install", create: "npm create" },
+	{
+		id: "pnpm",
+		add: "pnpm add",
+		dev: "pnpm add -D",
+		dlx: "pnpm dlx",
+		expo: "pnpm dlx expo install",
+		create: "pnpm create",
+	},
+	{
+		id: "yarn",
+		add: "yarn add",
+		dev: "yarn add -D",
+		dlx: "yarn dlx",
+		expo: "yarn dlx expo install",
+		create: "yarn create",
+	},
 ] as const;
 
 type Manager = (typeof MANAGERS)[number];
-type Verb = "add" | "dev" | "dlx" | "expo";
+type Verb = "add" | "dev" | "dlx" | "expo" | "create";
 
 export type InstallTabsProps = {
 	/** One line per verb. A line whose package list is empty is dropped. */
@@ -33,6 +50,14 @@ export type InstallTabsProps = {
 };
 
 const ITEMS = MANAGERS.map((manager) => manager.id);
+
+/**
+ * Where `delacour init` puts a component, as the project imports it: the `ui`
+ * alias it reads off a `"@/*": ["./src/*"]` mapping over the default
+ * `src/components/ui`. A project with no alias gets relative imports instead,
+ * which the page says beside the line.
+ */
+const UI_ALIAS = "@/components/ui";
 
 function render(manager: Manager, commands: InstallTabsProps["commands"]): string {
 	return commands
@@ -61,6 +86,26 @@ export function InstallTabs({ commands }: InstallTabsProps): ReactElement {
 }
 
 /**
+ * The whole library as a package, on the Installation page.
+ *
+ * The peer list is `peers` from `@/registry/install` — the union of every
+ * component's closure, filtered to what `package.json` declares — rather than a
+ * list typed here. Three hand-written copies of it once disagreed, and the one a
+ * reader saw was missing `expo-linear-gradient`; a derived list cannot be.
+ */
+export function LibraryInstall(): ReactElement {
+	return (
+		<InstallTabs
+			commands={[
+				{ verb: "add", packages: ["delacour-react-native-ui@alpha"] },
+				{ verb: "expo", packages: peers.expo },
+				{ verb: "add", packages: peers.npm },
+			]}
+		/>
+	);
+}
+
+/**
  * The three ways to get a component, on the component's own page.
  *
  * Everything here is read from `@/registry/install`, which is derived from the
@@ -82,10 +127,21 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 		<Tabs items={["Command", "Package", "Manual"]}>
 			<Tab value="Command">
 				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha add ${entry.name} --install`] }]} />
+				<DynamicCodeBlock code={`import { ${entry.exportName} } from "${UI_ALIAS}/${entry.name}";`} lang="tsx" />
 				<p className="text-fd-muted-foreground text-sm">
-					Copies the source into your project, with everything it depends on. Run <code>delacour init</code> first if
-					you have not already.
+					Copies the source into your project, with everything it depends on, and rewrites the imports onto your own
+					paths. Relative imports are written instead when the project has no <code>@/*</code> alias.
 				</p>
+				<Accordions>
+					<Accordion title="First time in this project?">
+						<p className="mt-0 text-fd-muted-foreground text-sm">
+							<code>init</code> wires Metro and the CSS, copies the theme and the root provider in, and can take the
+							component in the same run. The <a href="/docs/native/getting-started">Quick start</a> is the whole path,
+							from an empty app to a rendered screen.
+						</p>
+						<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha init --install ${entry.name}`] }]} />
+					</Accordion>
+				</Accordions>
 				<Requires entry={entry} />
 			</Tab>
 
@@ -100,6 +156,10 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 			</Tab>
 
 			<Tab value="Manual">
+				<p className="text-fd-muted-foreground text-sm">
+					The same list in your terminal — every file, and every package it needs:
+				</p>
+				<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha view ${entry.name}`] }]} />
 				<Steps>
 					<Step>
 						<h4>Install the following dependencies</h4>

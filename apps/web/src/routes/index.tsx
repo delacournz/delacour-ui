@@ -168,7 +168,7 @@ function Hero(): ReactElement {
 							params={{ _splat: "native/getting-started" }}
 							className="rounded-lg bg-fd-primary px-5 py-2.5 font-medium text-fd-primary-foreground text-sm transition-opacity hover:opacity-90"
 						>
-							Get started
+							Quick start
 						</Link>
 						<Link
 							to="/docs/$"

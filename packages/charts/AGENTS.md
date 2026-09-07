@@ -251,7 +251,9 @@ one — that is a README line, not a component.
 
 - **The engine has no demo coverage assertion.** `apps/playground`'s
   `demos.test.ts` enumerates `delacour-react-native-ui`'s component folders, and a
-  headless package has none. Rather than contort that test, the twelve demos
-  under `src/demos/chart/` exercise this package transitively. A change here
-  that nothing in native-ui reaches is a change nothing will catch — write the
-  test in `core/`.
+  headless package has none. Rather than contort that test, the demos under
+  `src/demos/chart/` exercise this package transitively through native-ui, and
+  the ones under `src/demos/charts/` render `CartesianChart` and `PolarChart`
+  directly — they are the source of the previews on `/docs/charts`. A change
+  here that no demo reaches is a change nothing will catch — write the test in
+  `core/`.

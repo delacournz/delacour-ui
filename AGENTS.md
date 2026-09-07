@@ -91,7 +91,14 @@ Railway does not wait on check suites, so no deploy depends on one either.
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
 `namespace-profile-default-arm64` for Linux work, and `namespace-profile-mac-m4-6cpu-14gb` for any
 job that needs macOS (Xcode, a simulator). Nothing needs macOS today, so the mac profile is unused.
-The `ubuntu-latest` / `macos-*` labels are not to be reintroduced.
+The `ubuntu-latest` / `macos-*` labels are not to be reintroduced — with one exception, below.
+
+The exception is the `release` job in `release.yml`, which stays on `ubuntu-latest`. npm's trusted
+publishing generates a sigstore provenance attestation and verifies it against the runner, and
+sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm stage publish` fails
+with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Moving it back to
+Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
+neither is worth one short job per merge to `main`.
 
 All four are required status checks on `main`, which makes the job `name:` values an API contract:
 they appear verbatim in `.github/rulesets/main.json` and GitHub matches them by string. Rename a job

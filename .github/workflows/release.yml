@@ -24,7 +24,14 @@ jobs:
   release:
     name: Create Version PR or Publish
     if: github.repository_owner == 'delacournz'
-    runs-on: namespace-profile-default-arm64
+    # The one job that is not on a Namespace runner, and it cannot be: trusted
+    # publishing generates a sigstore provenance attestation, and npm verifies
+    # it against the runner environment. A self-hosted runner — which is what a
+    # Namespace profile is to GitHub — is refused with `E422 Unsupported GitHub
+    # Actions runner environment: "self-hosted"`. The alternative was
+    # `--provenance=false`, which keeps OIDC but throws away the attestation
+    # that is the point of having no npm token.
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: write

@@ -12,15 +12,27 @@ icon: CircleDot
 
 ## Usage
 
-```tsx
-import { Radio } from "delacour-react-native-ui/radio";
-```
+```tsx title="app/index.tsx"
+import { Radio } from "@/components/ui/radio";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Radio.Group accessibilityLabel="Plan" selected={plan} onSelected={setPlan}>
-  <Radio value="monthly"><Radio.Label>Monthly</Radio.Label></Radio>
-  <Radio value="annual"><Radio.Label>Annual</Radio.Label></Radio>
-</Radio.Group>
+export default function Example() {
+  const [plan, setPlan] = useState<string | null>("monthly");
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Radio.Group accessibilityLabel="Plan" selected={plan} onSelected={setPlan}>
+        <Radio value="monthly">
+          <Radio.Label>Monthly</Radio.Label>
+        </Radio>
+        <Radio value="annual">
+          <Radio.Label>Annual</Radio.Label>
+        </Radio>
+      </Radio.Group>
+    </View>
+  );
+}
 ```
 
 ## Variants

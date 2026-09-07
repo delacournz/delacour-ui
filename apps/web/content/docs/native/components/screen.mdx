@@ -12,23 +12,37 @@ icon: LayoutTemplate
 
 ## Usage
 
-```tsx
-import { Screen } from "delacour-react-native-ui/screen";
-```
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Screen } from "@/components/ui/screen";
+import { Text } from "@/components/ui/text";
+import { useRouter } from "expo-router";
 
-```tsx
-<Screen>
-  <Screen.Navbar>
-    <Screen.Navbar.BackButton onPress={router.back} />
-    <Screen.Navbar.Title>Settings</Screen.Navbar.Title>
-  </Screen.Navbar>
+export default function Example() {
+  const router = useRouter();
 
-  <Screen.ScrollArea>{children}</Screen.ScrollArea>
+  function save() {
+    console.log("saved");
+  }
 
-  <Screen.Footer>
-    <Button onPress={save}>Save</Button>
-  </Screen.Footer>
-</Screen>
+  return (
+    <Screen>
+      <Screen.Navbar>
+        <Screen.Navbar.BackButton onPress={router.back} />
+        <Screen.Navbar.Title>Settings</Screen.Navbar.Title>
+      </Screen.Navbar>
+
+      <Screen.ScrollArea contentContainerClassName="gap-4 p-4">
+        <Text.Header>Notifications</Text.Header>
+        <Text.Paragraph>Choose which alerts reach this device.</Text.Paragraph>
+      </Screen.ScrollArea>
+
+      <Screen.Footer>
+        <Button onPress={save}>Save</Button>
+      </Screen.Footer>
+    </Screen>
+  );
+}
 ```
 
 The navbar and footer measure themselves into a Reanimated context and every scrollable reserves

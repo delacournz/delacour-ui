@@ -12,18 +12,26 @@ icon: SlidersHorizontal
 
 ## Usage
 
-```tsx
-import { Slider } from "delacour-react-native-ui/slider";
-```
+```tsx title="app/index.tsx"
+import { Slider } from "@/components/ui/slider";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Slider value={volume} onChange={setVolume}>
-  <Slider.Output />
-  <Slider.Track>
-    <Slider.Fill />
-    <Slider.Thumb />
-  </Slider.Track>
-</Slider>
+export default function Example() {
+  const [volume, setVolume] = useState<number | number[]>(40);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Slider value={volume} onChange={setVolume}>
+        <Slider.Output />
+        <Slider.Track>
+          <Slider.Fill />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider>
+    </View>
+  );
+}
 ```
 
 ## Colours

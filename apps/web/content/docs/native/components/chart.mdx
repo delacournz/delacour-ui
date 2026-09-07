@@ -12,17 +12,30 @@ icon: ChartLine
 
 ## Usage
 
-```tsx
-import { Chart, PieChart } from "delacour-react-native-ui/chart";
-```
+```tsx title="app/index.tsx"
+import { Chart } from "@/components/ui/chart";
+import { View } from "react-native";
 
-```tsx
-<Chart config={{ revenue: { label: "Revenue" } }} data={rows} xKey="month">
-  <Chart.Grid />
-  <Chart.YAxis />
-  <Chart.XAxis />
-  <Chart.Line yKey="revenue" />
-</Chart>
+const rows = [
+  { month: "Jan", revenue: 186 },
+  { month: "Feb", revenue: 305 },
+  { month: "Mar", revenue: 237 },
+  { month: "Apr", revenue: 273 },
+  { month: "May", revenue: 209 },
+];
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Chart config={{ revenue: { label: "Revenue" } }} data={rows} xKey="month">
+        <Chart.Grid />
+        <Chart.YAxis />
+        <Chart.XAxis />
+        <Chart.Line yKey="revenue" />
+      </Chart>
+    </View>
+  );
+}
 ```
 
 Two roots. `Chart` is every cartesian plot — anything with an x and a y — and `PieChart` is the

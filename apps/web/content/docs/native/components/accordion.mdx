@@ -12,22 +12,37 @@ icon: ChevronsUpDown
 
 ## Usage
 
-```tsx
-import { Accordion } from "delacour-react-native-ui/accordion";
-```
+```tsx title="app/index.tsx"
+import { Accordion } from "@/components/ui/accordion";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
 
-```tsx
-<Accordion>
-  <Accordion.Item value="shipping">
-    <Accordion.Trigger>
-      <Accordion.Title>Shipping</Accordion.Title>
-      <Accordion.Description>Rates and delivery times</Accordion.Description>
-    </Accordion.Trigger>
-    <Accordion.Content>
-      <Text.Paragraph>Free over $50. Two to four working days.</Text.Paragraph>
-    </Accordion.Content>
-  </Accordion.Item>
-</Accordion>
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Accordion>
+        <Accordion.Item value="shipping">
+          <Accordion.Trigger>
+            <Accordion.Title>Shipping</Accordion.Title>
+            <Accordion.Description>Rates and delivery times</Accordion.Description>
+          </Accordion.Trigger>
+          <Accordion.Content>
+            <Text.Paragraph>Free over $50. Two to four working days.</Text.Paragraph>
+          </Accordion.Content>
+        </Accordion.Item>
+        <Accordion.Item value="returns">
+          <Accordion.Trigger>
+            <Accordion.Title>Returns</Accordion.Title>
+            <Accordion.Description>Thirty days, no questions</Accordion.Description>
+          </Accordion.Trigger>
+          <Accordion.Content>
+            <Text.Paragraph>Post it back in its original packaging for a full refund.</Text.Paragraph>
+          </Accordion.Content>
+        </Accordion.Item>
+      </Accordion>
+    </View>
+  );
+}
 ```
 
 ## Variants

@@ -12,14 +12,22 @@ icon: SquareCheck
 
 ## Usage
 
-```tsx
-import { Checkbox } from "delacour-react-native-ui/checkbox";
-```
+```tsx title="app/index.tsx"
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
+import { View } from "react-native";
 
-```tsx
-<Checkbox isChecked={accepted} onCheckedChange={setAccepted}>
-  <Checkbox.Label>Accept the terms</Checkbox.Label>
-</Checkbox>
+export default function Example() {
+  const [accepted, setAccepted] = useState(false);
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Checkbox isChecked={accepted} onCheckedChange={setAccepted}>
+        <Checkbox.Label>Accept the terms</Checkbox.Label>
+      </Checkbox>
+    </View>
+  );
+}
 ```
 
 ## Colours

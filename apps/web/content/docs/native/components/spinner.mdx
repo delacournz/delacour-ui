@@ -12,12 +12,17 @@ icon: LoaderCircle
 
 ## Usage
 
-```tsx
-import { Spinner } from "delacour-react-native-ui/spinner";
-```
+```tsx title="app/index.tsx"
+import { Spinner } from "@/components/ui/spinner";
+import { View } from "react-native";
 
-```tsx
-<Spinner />
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Spinner />
+    </View>
+  );
+}
 ```
 
 ## Sizes

@@ -10,12 +10,18 @@ icon: Layers
 
 ## Usage
 
-```tsx
-import { DelacourProvider } from "delacour-react-native-ui/provider";
-```
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+import { DelacourProvider } from "@/components/ui/provider";
+import { Stack } from "expo-router";
 
-```tsx
-<DelacourProvider>{children}</DelacourProvider>
+export default function RootLayout() {
+  return (
+    <DelacourProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </DelacourProvider>
+  );
+}
 ```
 
 Mount it once, around everything — a root layout, an `App.tsx`.

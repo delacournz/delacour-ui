@@ -22,14 +22,23 @@ Already have an Expo app? Skip to the next step and run it from your app's root.
 </Step>
 
 <Step>
-### Set up and add a Button
+### Set up the project
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --src . button --install"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --src . --install"] }]} />
 
 One command writes `native-components.json`, wraps `metro.config.js` with Uniwind's transform,
-creates `styles/global.css` with the theme, copies `button` and the root `provider` into
-`components/ui/`, and installs what they need with `expo install`. `--src .` puts everything at
-the project root, where this template keeps its files — drop it in an app that has a `src/`.
+creates `styles/global.css` with the theme, copies the root `provider` into `components/ui/`, and
+installs what it needs with `expo install`. `--src .` puts everything at the project root, where
+this template keeps its files — drop it in an app that has a `src/`.
+</Step>
+
+<Step>
+### Add a Button
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button --install"] }]} />
+
+Copies `button` and the parts it renders into `components/ui/`, with imports rewritten for this
+project. Every component page carries this command for its own component.
 </Step>
 
 <Step>

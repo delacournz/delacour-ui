@@ -84,6 +84,11 @@ gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.jso
 `.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
 `main` and `develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
 
+Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
+`namespace-profile-default-arm64` for Linux work, and `namespace-profile-mac-m4-6cpu-14gb` for any
+job that needs macOS (Xcode, a simulator). Nothing needs macOS today, so the mac profile is unused.
+The `ubuntu-latest` / `macos-*` labels are not to be reintroduced.
+
 All four are required status checks on `main`, which makes the job `name:` values an API contract:
 they appear verbatim in `.github/rulesets/main.json` and GitHub matches them by string. Rename a job
 without updating that file and every pull request blocks forever on a check that never reports.

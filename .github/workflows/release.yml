@@ -21,7 +21,7 @@ jobs:
   release:
     name: Create Version PR or Publish
     if: github.repository_owner == 'delacournz'
-    runs-on: ubuntu-latest
+    runs-on: namespace-profile-default-arm64
     timeout-minutes: 20
     permissions:
       contents: write

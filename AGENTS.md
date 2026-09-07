@@ -172,11 +172,18 @@ Commit that markdown file alongside the change. On merge to `main`,
 
 So a release is two merges, and the versions are reviewable in between.
 
+The action is `changesets/action@v2`, and that major matters: `@changesets/cli` 3 moves every
+changeset a pre-mode `changeset version` consumes into `.changeset/pre/`, and v1 of the action read
+that directory as a Changesets-v1 changeset and died on `.changeset/pre/changes.md`. The first
+version PR merged, the publish run failed, and nothing reached npm. v2 skips `pre/` when it counts
+pending changesets, so files there do not stop a publish — do not delete them by hand, they are the
+record `changeset pre exit` folds into the stable changelog.
+
 ### Both packages are in alpha
 
-`.changeset/pre.json` puts the repository in Changesets **pre mode**, tagged `alpha`. Both packages
-sit at `0.0.1-alpha.0`, and while pre mode is on every `changeset version` produces the next
-`-alpha.N` rather than a stable version.
+`.changeset/pre.json` puts the repository in Changesets **pre mode**, tagged `alpha`. While pre mode
+is on every `changeset version` produces the next `-alpha.N` rather than a stable version, and
+files the changesets it consumed under `.changeset/pre/` — they stay until the exit.
 
 Publishes go to npm's **`alpha` dist-tag**, from two directions: Changesets passes the pre tag, and
 `publishConfig.tag` in each package pins it so a hand-run `npm publish` cannot claim `latest`
@@ -187,7 +194,7 @@ either. `latest` therefore points at nothing on purpose — an untested build sh
 Going stable is four steps, and skipping any one of them ships an alpha as `latest`:
 
 ```bash
-bunx changeset pre exit          # deletes .changeset/pre.json
+bunx changeset pre exit          # flips pre.json to mode "exit"; the next version deletes it
 bun run changeset                # the changeset that names the stable version
 ```
 

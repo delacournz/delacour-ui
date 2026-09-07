@@ -1,107 +1,101 @@
 ---
-title: Introduction
-description: A React Native component library built on Uniwind, Reanimated and the Gesture API.
-icon: BookOpen
+title: Quick start
+description: A themed, pressable Button on a simulator, in five commands and one file.
+icon: Rocket
 ---
 
-**Components you compose, not components you configure.** You build a button out of a label and an
-icon, not out of fifteen boolean props.
+By the end of this page an Expo app is running on a simulator with a Button that counts its
+presses, styled from the same tokens as your web app. Nothing here is explained yet — every
+command is copyable, and each links to the page that does explain it.
 
-- **Composition over booleans:** icons are children. A parent publishes size and colour to its
-  subtree, so a bare `<Icon>` comes out matching the label beside it.
-- **One scale, shared:** `Icon` and `Spinner` resolve `md` to the same edge length. A `Checkbox`
-  reads that scale two steps up rather than minting its own.
-- **Themed by CSS variables:** components name `bg-background`, never a raw palette colour and never
-  a `dark:` prefix.
-- **Ships as source:** no build step. Uniwind's transform runs in your app's Metro pipeline.
-- **Two deliveries, one library:** install the package, or copy the source in with the CLI.
+<Steps>
+<Step>
+### Create an app
 
-```tsx
-import { Button } from "delacour-react-native-ui/button";
-import { Icon } from "delacour-react-native-ui/icon";
-import { IconArrowRight } from "delacour-react-native-ui/icons/central";
-
-<Button haptic="selection" onPress={next}>
-  <Button.Label>Continue</Button.Label>
-  <Icon icon={IconArrowRight} />
-</Button>;
-```
-
-The icon above names no size and no colour. The button publishes both to its subtree.
-
-## Composition over booleans
-
-Every component takes children where a lesser one would take a prop. Icons are composed in, loading
-swaps the icon it replaces rather than joining it, and a slot is a component rather than a
-`renderX` callback.
-
-*A boolean prop is a decision you made for every future caller. A child is one they make themselves.*
-
-## One scale, shared
-
-Sizes are semantic tokens — `size-icon-md`, `h-button-md`, `text-input-md` — declared once in
-`tokens.css`. A component indexes that scale at its own step name rather than restating a number,
-which is what makes a button's loading swap cost no layout: the spinner and the icon it replaces are
-drawn at the same token.
-
-[Sizing](/docs/native/getting-started/sizing) has the whole ladder.
-
-## Themed by CSS variables — shadcn's
-
-The palette is shadcn's, name for name, in shadcn's two-layer shape. `theme.css` is the one file
-that is yours: build one on [Theme](/theme) and paste it over, or bring the theme out of your web
-app and these components wear it:
+<InstallTabs commands={[{ verb: "create", packages: ["expo-app my-app --template blank-typescript"] }]} />
 
 ```bash
-npx delacour@alpha theme ./src/app/globals.css
+cd my-app
 ```
 
-Components reference semantic names and never a `dark:` prefix, so swapping the variables swaps the
-theme — including the slab a native stack paints behind a push, which no `contentStyle` can reach.
+Already have an Expo app? Skip to the next step and run it from your app's root.
+</Step>
 
-[Theming](/docs/native/getting-started/theming) covers both, and the navigator case.
+<Step>
+### Set up and add a Button
 
-## Ships as source
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --src . button --install"] }]} />
 
-There is no build step and no package-wide barrel. Uniwind compiles `className` in a Metro
-transform, so a precompiled build would arrive with its classNames already dead — and granular
-export subpaths are what let an app skip resolving optional peers it never uses.
+One command writes `native-components.json`, wraps `metro.config.js` with Uniwind's transform,
+creates `styles/global.css` with the theme, copies `button` and the root `provider` into
+`components/ui/`, and installs what they need with `expo install`. `--src .` puts everything at
+the project root, where this template keeps its files — drop it in an app that has a `src/`.
+</Step>
 
-*Import `delacour-react-native-ui/button` and nothing keyboard-related resolves.*
+<Step>
+### Replace `App.tsx`
 
-## Two deliveries, one library
+```tsx title="App.tsx"
+import "./styles/global.css";
+import { Button } from "./components/ui/button";
+import { DelacourProvider } from "./components/ui/provider";
+import { useState } from "react";
+import { View } from "react-native";
 
-Install the package and upgrade it, or run the CLI and own the files. The components are identical —
-the CLI copies the same source the package ships — and every component page carries both commands
-plus the manual file list.
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <DelacourProvider>
+      <View className="flex-1 items-center justify-center gap-4 bg-background">
+        <Button onPress={() => setCount(count + 1)}>Pressed {count} times</Button>
+        <Button variant="outline" onPress={() => setCount(0)}>
+          Reset
+        </Button>
+      </View>
+    </DelacourProvider>
+  );
+}
+```
+
+<Callout type="warn" title="The CSS import stays first">
+Without it every component renders unstyled, and nothing logs an error. `DelacourProvider` is the
+gesture root every press needs above it — leave it out and presses stop landing, just as silently.
+</Callout>
+</Step>
+
+<Step>
+### Run it
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["expo run:ios"] }]} />
+
+The components use native modules — Reanimated, Gesture Handler — so this is a native build, not
+Expo Go. The first one takes a few minutes; `expo run:android` is the same command for Android.
+</Step>
+
+<Step>
+### Check the wiring
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha doctor"] }]} />
+
+Every check is a failure that produces no error on its own. If the button rendered and counts,
+it passes; if something is off, `doctor` names the file and the fix.
+</Step>
+</Steps>
+
+## Next
 
 <Cards>
+  <Card title="Components" href="/docs/native/components">
+    Every component, with a complete file to paste under each one's Usage.
+  </Card>
   <Card title="Installation" href="/docs/native/getting-started/installation">
-    All three paths, and the CSS and provider wiring they share.
+    The npm package instead of the CLI, an Expo Router layout, and monorepos.
   </Card>
-  <Card title="All components" href="/docs/native/components">
-    Nineteen, grouped by what they do.
+  <Card title="Theme" href="/theme">
+    Build a palette, copy `theme.css` over yours. Nothing to run.
   </Card>
-</Cards>
-
-## The three component patterns
-
-Knowing which shape you are looking at tells you where its styles live and how to extend it.
-
-<Cards>
-  <Card title="Styled wrapper" href="/docs/native/components/icon">
-    No state. Props map to classes. `Icon` is the reference.
-  </Card>
-  <Card title="Compound + context" href="/docs/native/components/button">
-    A root shares `variant`, `size` and `isDisabled` with dot-notation parts, plus a `useX()` hook.
-  </Card>
-  <Card title="`tv()` variants" href="/docs/native/getting-started/styling">
-    Size and variant axes declared in a `tv()` slot set, never inline at the call site.
+  <Card title="Design principles" href="/docs/native/getting-started/design-principles">
+    Why icons are children, why sizes are one scale, and the three component shapes.
   </Card>
 </Cards>
-
-## Scope
-
-React Native only — iOS and Android, Expo or bare. No navigation dependency and no form-library
-dependency. Where a component needs to talk to a router it takes a callback instead:
-`Screen.Navbar.BackButton` has an `onPress`, not a `router.back()`.

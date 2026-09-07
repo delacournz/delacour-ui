@@ -31,6 +31,7 @@ const WEB = join(import.meta.dirname, "..");
 const ROOT = join(WEB, "..", "..");
 const REGISTRY = join(ROOT, "registry");
 const OUT = join(WEB, "src", "registry", "install.ts");
+const NATIVE_UI_PACKAGE = join(ROOT, "packages", "native-ui", "package.json");
 
 /** Where `delacour init` proposes each namespace lands — `DEFAULT_PATHS` in the CLI. */
 const DEFAULT_PATHS: Record<string, string> = {
@@ -115,9 +116,26 @@ function kindOf(item: RegistryItem, name: string): "self" | "component" | "share
 	return item.type === "registry:ui" ? "component" : "shared";
 }
 
+/**
+ * The names `native-ui` declares as peers, optional or not — minus the chart
+ * engine, which is documented on its own site with its own peers.
+ *
+ * The union of every closure is wider than the package's peer list in two ways
+ * a consumer of the package should not be told about: the library's own
+ * dependencies (`clsx`, `tailwind-merge`, `tailwind-variants`), which arrive
+ * transitively, and `chart`'s engine plus that engine's Skia, which belong to
+ * `delacour-react-native-charts`. Filtering the unions to this set is what keeps
+ * `peers` honest, and `src/registry/install.test.ts` pins it to `package.json`.
+ */
+function peerNames(): Set<string> {
+	const json = JSON.parse(readFileSync(NATIVE_UI_PACKAGE, "utf-8")) as { peerDependencies?: Record<string, string> };
+	const names = Object.keys(json.peerDependencies ?? {}).filter((name) => name !== "delacour-react-native-charts");
+	return new Set(names);
+}
+
 function build(): string {
 	const items = readItems();
-	const entries: string[] = [];
+	const entries: Entry[] = [];
 
 	for (const component of COMPONENTS) {
 		const item = items.get(component.slug);
@@ -146,23 +164,43 @@ function build(): string {
 			// which is the order someone copying by hand actually wants them in.
 			.sort((a, b) => rank(a.kind) - rank(b.kind));
 
-		entries.push(
-			serialiseEntry({
-				name: component.slug,
-				title: component.name,
-				description: item.description,
-				importPath: `delacour-react-native-ui/${component.slug}`,
-				exportName: component.name,
-				expo: union((i) => i.expoDependencies),
-				npm: union((i) => i.dependencies),
-				dev: union((i) => i.devDependencies),
-				groups,
-				fileCount: groups.reduce((total, group) => total + group.files.length, 0),
-			})
-		);
+		entries.push({
+			name: component.slug,
+			title: component.name,
+			description: item.description,
+			importPath: `delacour-react-native-ui/${component.slug}`,
+			exportName: component.name,
+			expo: union((i) => i.expoDependencies),
+			npm: union((i) => i.dependencies),
+			dev: union((i) => i.devDependencies),
+			groups,
+			fileCount: groups.reduce((total, group) => total + group.files.length, 0),
+		});
 	}
 
-	return `${HEADER}\n\nexport const install = {\n${entries.join("\n")}} as const satisfies Record<string, InstallEntry>;\n\nexport type InstallName = keyof typeof install;\n`;
+	const serialised = entries.map(serialiseEntry).join("\n");
+	return `${HEADER}\n\nexport const install = {\n${serialised}} as const satisfies Record<string, InstallEntry>;\n\nexport type InstallName = keyof typeof install;\n\n${serialisePeers(entries)}\n`;
+}
+
+/** The union of every entry's lists, filtered to the package's declared peers, sorted. */
+function serialisePeers(entries: Entry[]): string {
+	const declared = peerNames();
+	const union = (pick: (entry: Entry) => string[]): string[] =>
+		[...new Set(entries.flatMap(pick))].filter((name) => declared.has(name)).sort();
+
+	return [
+		"/**",
+		" * Every package the whole library needs — the union of every component's",
+		" * closure, so the Installation page's peer list is derived rather than typed",
+		" * and cannot omit a package some component depends on. Filtered to the",
+		" * package's declared peers — see `peerNames` in the generator.",
+		" */",
+		"export const peers = {",
+		`\texpo: ${list(union((entry) => entry.expo))},`,
+		`\tnpm: ${list(union((entry) => entry.npm))},`,
+		`\tdev: ${list(union((entry) => entry.dev))},`,
+		"} as const;",
+	].join("\n");
 }
 
 function rank(kind: "self" | "component" | "shared"): number {

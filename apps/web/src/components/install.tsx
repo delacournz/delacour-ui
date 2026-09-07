@@ -5,27 +5,44 @@ import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import type { ReactElement } from "react";
 import { gitConfig } from "@/lib/shared";
-import { type InstallEntry, type InstallGroup, type InstallName, install } from "@/registry/install";
+import { type InstallEntry, type InstallGroup, type InstallName, install, peers } from "@/registry/install";
 
 /**
  * The four package managers an Expo app is plausibly on, and how each spells
- * the three verbs this site needs.
+ * the five verbs this site needs.
  *
  * `expo` is not a stylistic variant of `add`. Expo pins every native module to a
  * version its SDK can build, and `bun add react-native-reanimated` fetches the
  * newest release instead — which on any older SDK is a package that fails at the
  * linker rather than at install time. That is why the registry splits
  * `dependencies` from `expoDependencies`, and why this table has a third column.
+ *
+ * `create` is the scaffolding verb — `<pm> create expo-app my-app` — which all
+ * four spell the same way apart from the manager's own name.
  */
 const MANAGERS = [
-	{ id: "bun", add: "bun add", dev: "bun add -d", dlx: "bunx", expo: "bunx expo install" },
-	{ id: "npm", add: "npm install", dev: "npm install -D", dlx: "npx", expo: "npx expo install" },
-	{ id: "pnpm", add: "pnpm add", dev: "pnpm add -D", dlx: "pnpm dlx", expo: "pnpm dlx expo install" },
-	{ id: "yarn", add: "yarn add", dev: "yarn add -D", dlx: "yarn dlx", expo: "yarn dlx expo install" },
+	{ id: "bun", add: "bun add", dev: "bun add -d", dlx: "bunx", expo: "bunx expo install", create: "bun create" },
+	{ id: "npm", add: "npm install", dev: "npm install -D", dlx: "npx", expo: "npx expo install", create: "npm create" },
+	{
+		id: "pnpm",
+		add: "pnpm add",
+		dev: "pnpm add -D",
+		dlx: "pnpm dlx",
+		expo: "pnpm dlx expo install",
+		create: "pnpm create",
+	},
+	{
+		id: "yarn",
+		add: "yarn add",
+		dev: "yarn add -D",
+		dlx: "yarn dlx",
+		expo: "yarn dlx expo install",
+		create: "yarn create",
+	},
 ] as const;
 
 type Manager = (typeof MANAGERS)[number];
-type Verb = "add" | "dev" | "dlx" | "expo";
+type Verb = "add" | "dev" | "dlx" | "expo" | "create";
 
 export type InstallTabsProps = {
 	/** One line per verb. A line whose package list is empty is dropped. */
@@ -57,6 +74,26 @@ export function InstallTabs({ commands }: InstallTabsProps): ReactElement {
 				</Tab>
 			))}
 		</Tabs>
+	);
+}
+
+/**
+ * The whole library as a package, on the Installation page.
+ *
+ * The peer list is `peers` from `@/registry/install` — the union of every
+ * component's closure, filtered to what `package.json` declares — rather than a
+ * list typed here. Three hand-written copies of it once disagreed, and the one a
+ * reader saw was missing `expo-linear-gradient`; a derived list cannot be.
+ */
+export function LibraryInstall(): ReactElement {
+	return (
+		<InstallTabs
+			commands={[
+				{ verb: "add", packages: ["delacour-react-native-ui@alpha"] },
+				{ verb: "expo", packages: peers.expo },
+				{ verb: "add", packages: peers.npm },
+			]}
+		/>
 	);
 }
 

@@ -6,7 +6,7 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import type { ComponentProps } from "react";
-import { ComponentInstall, InstallTabs } from "@/components/install";
+import { ComponentInstall, InstallTabs, LibraryInstall } from "@/components/install";
 import { Preview } from "@/components/preview";
 import { PreviewGrid } from "@/components/preview-grid";
 import { isFileHref } from "@/lib/shared";
@@ -40,6 +40,7 @@ export function getMDXComponents(components?: MDXComponents) {
 		Files,
 		Folder,
 		InstallTabs,
+		LibraryInstall,
 		Preview,
 		PreviewGrid,
 		Step,

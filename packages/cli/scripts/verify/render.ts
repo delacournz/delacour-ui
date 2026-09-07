@@ -181,9 +181,13 @@ export async function writeVerifyScreen(options: RenderOptions): Promise<void> {
  * `expo export` is the whole pipeline short of the native build, so it is the
  * cheapest thing that exercises the Uniwind transform — and the only stage
  * below a simulator that can fail on a class nobody compiled.
+ *
+ * `--no-bytecode` stops short of Hermes. Bytecode proves nothing Metro has not
+ * already proved, and the `hermesc` Expo ships for Linux is an x64 binary, so
+ * on an arm64 runner it fails with "cannot execute binary file".
  */
 export async function bundleWithMetro(appDir: string, reporter: Reporter): Promise<void> {
-	await run("bunx", ["expo", "export", "--platform", "ios", "--output-dir", "dist-verify"], {
+	await run("bunx", ["expo", "export", "--platform", "ios", "--no-bytecode", "--output-dir", "dist-verify"], {
 		cwd: appDir,
 		reporter,
 		label: "expo export",

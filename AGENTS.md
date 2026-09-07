@@ -82,7 +82,11 @@ gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.jso
 ## CI
 
 `.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
-`main` and `develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+`develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+
+It does not run on push to `main`. Every commit there is a squash-merged pull request whose checks
+were already green on an up-to-date branch, so a run on the merge commit would only repeat them.
+Railway does not wait on check suites, so no deploy depends on one either.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
 `namespace-profile-default-arm64` for Linux work, and `namespace-profile-mac-m4-6cpu-14gb` for any

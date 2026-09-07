@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 
 /**
@@ -16,18 +16,21 @@ import { basename, join } from "node:path";
  * `packages/native-ui/src/docs.test.ts`.
  */
 
-const COMPONENTS_DIR = join(import.meta.dirname, "..", "content", "docs", "native", "components");
+const CONTENT_DIR = join(import.meta.dirname, "..", "content", "docs");
+const COMPONENTS_DIR = join(CONTENT_DIR, "native", "components");
+const CHARTS_DIR = join(CONTENT_DIR, "charts");
 
 type Page = { slug: string; body: string };
 
-function pages(): Page[] {
-	return readdirSync(COMPONENTS_DIR)
-		.filter((name) => name.endsWith(".mdx") && name !== "index.mdx")
+function pagesIn(dir: string, { skipIndex }: { skipIndex: boolean }): Page[] {
+	if (!existsSync(dir)) return [];
+	return readdirSync(dir)
+		.filter((name) => name.endsWith(".mdx") && !(skipIndex && name === "index.mdx"))
 		.sort()
-		.map((name) => ({ slug: basename(name, ".mdx"), body: readFileSync(join(COMPONENTS_DIR, name), "utf-8") }));
+		.map((name) => ({ slug: basename(name, ".mdx"), body: readFileSync(join(dir, name), "utf-8") }));
 }
 
-const PAGES = pages();
+const PAGES = pagesIn(COMPONENTS_DIR, { skipIndex: true });
 
 /** The `##` headings, in order. */
 function sections(body: string): string[] {
@@ -75,5 +78,60 @@ describe("component pages", () => {
 			(p) => `${p.slug} → ${sections(p.body).at(-1) ?? "(none)"}`
 		);
 		expect(wrong).toEqual([]);
+	});
+});
+
+/**
+ * The chart engine pages — `content/docs/charts/` — are not component pages
+ * and do not follow that shape: there is no registry to install from and no
+ * single component to name. What they do share is the sidebar contract (every
+ * page listed, nothing listed that does not exist) and, for the six pages that
+ * each document one chart type, the same closing `## API Reference` heading
+ * the component pages end on — so a reader who learned where the props are on
+ * `Button` finds them in the same place on `Line`.
+ */
+
+const CHART_TYPE_PAGES = ["line", "area", "bar", "scatter", "candlestick", "pie"];
+
+const CHART_PAGES = pagesIn(CHARTS_DIR, { skipIndex: false });
+
+function chartsMetaPages(): string[] {
+	const path = join(CHARTS_DIR, "meta.json");
+	if (!existsSync(path)) return [];
+	const meta = JSON.parse(readFileSync(path, "utf-8")) as { pages?: unknown };
+	if (!Array.isArray(meta.pages)) return [];
+	return meta.pages.filter((entry): entry is string => typeof entry === "string" && !entry.startsWith("---"));
+}
+
+describe("chart engine pages", () => {
+	// A walker that found nothing would let every assertion below pass vacuously.
+	test("finds the chart engine pages", () => {
+		expect(CHART_PAGES.length).toBeGreaterThan(10);
+	});
+
+	test("every page listed in meta.json exists on disk", () => {
+		const slugs = new Set(CHART_PAGES.map((page) => page.slug));
+		const missing = chartsMetaPages().filter((slug) => !slugs.has(slug));
+		expect(missing).toEqual([]);
+	});
+
+	// A page missing from `pages` still resolves by URL but never appears in the
+	// sidebar, which is a page nobody finds.
+	test("every page on disk is listed in meta.json", () => {
+		const listed = new Set(chartsMetaPages());
+		const unlisted = CHART_PAGES.filter((page) => !listed.has(page.slug)).map((page) => page.slug);
+		expect(unlisted).toEqual([]);
+	});
+
+	test("every chart-type page ends at API Reference", () => {
+		const wrong = CHART_PAGES.filter((page) => CHART_TYPE_PAGES.includes(page.slug))
+			.filter((page) => sections(page.body).at(-1) !== "API Reference")
+			.map((page) => `${page.slug} → ${sections(page.body).at(-1) ?? "(none)"}`);
+		expect(wrong).toEqual([]);
+	});
+
+	test("every chart-type page is on disk", () => {
+		const slugs = new Set(CHART_PAGES.map((page) => page.slug));
+		expect(CHART_TYPE_PAGES.filter((slug) => !slugs.has(slug))).toEqual([]);
 	});
 });

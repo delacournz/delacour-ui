@@ -1,0 +1,172 @@
+---
+title: Pie
+description: A second root — slices, a donut hole, a gauge, and a tap that reports the slice under the finger.
+icon: ChartPie
+---
+
+<Preview id="charts/pie/pie" />
+
+```tsx
+import { PieInset, PieSlices, PolarChart } from "delacour-react-native-charts";
+
+<PolarChart data={rows} labelKey="browser" valueKey="share">
+  <PieSlices colors={["#0A84FF", "#30D158", "#FF9F0A", "#FF375F"]} />
+  <PieInset color="#FFFFFF" strokeWidth={2} />
+</PolarChart>;
+```
+
+`PolarChart` reads a value and a label from each row and nothing else; colours are mark props,
+cycled when there are more slices than colours. `PieInset` strokes the edge between neighbouring
+slices — in the background colour it reads as a gap, in a foreground colour as a border. Angles
+are degrees, 0° at 12 o'clock, clockwise.
+
+## Donut
+
+<Preview id="charts/pie/donut" />
+
+```tsx
+import { PieLabel, PieSlices, PolarChart, useSystemFont } from "delacour-react-native-charts";
+
+const font = useSystemFont(undefined, 12);
+
+<PolarChart data={rows} font={font} innerRadius="60%" labelKey="plan" valueKey="seats">
+  <PieSlices colors={["#0A84FF", "#30D158", "#FF9F0A"]} />
+  <PieLabel color="#FFFFFF" formatLabel={(slice) => `${Math.round(slice.fraction * 100)}%`} minSweep={12} />
+</PolarChart>;
+```
+
+`innerRadius` is the hole, in points or as a percentage of the radius. `PieLabel` prints Skia text
+on the bisector of every slice at least `minSweep` degrees wide — a label on a two-degree slice
+lands on its neighbours. `formatLabel` receives the resolved slice: its `label`, `value`,
+`fraction` and angles.
+
+## Gauge
+
+```tsx
+<PolarChart circleSweepDegrees={180} data={rows} innerRadius="70%" startAngle={270} valueKey="share">
+  <PieSlices colors={["#30D158", "#E5E5EA"]} />
+</PolarChart>
+```
+
+`circleSweepDegrees` is how much of the circle the slices fill; `startAngle` is where the first
+begins. A half circle starting at 9 o'clock is a gauge.
+
+## Selection
+
+```tsx
+const [selected, setSelected] = useState<number | null>(null);
+
+<PolarChart data={rows} labelKey="source" onSlicePress={setSelected} selectedIndex={selected} valueKey="sessions">
+  <PieSlices colors={palette} dimUnselected={0.4} />
+</PolarChart>;
+```
+
+The selection is yours. `onSlicePress` reports the tapped slice's index, or `null` for a tap
+outside every slice, and `selectedIndex` is what the marks read: `PieSlices` dims every slice but
+that one. The root never changes it, so a wrapper that already keeps selection state keeps one
+copy of it.
+
+The tap overlay mounts only with `onSlicePress`. A pie without one takes no touches at all and
+scrolls with its parent like a picture.
+
+## A single slice
+
+```tsx
+<PolarChart data={rows} valueKey="share">
+  <PieSlice color="#0A84FF" index={0} />
+  <PieSlice color="#E5E5EA" index={1} />
+</PolarChart>
+```
+
+`PieSlice` takes `index` or `slice`, the way a cartesian mark takes `yKey` or `points`. On mount
+it grows out of the centre: the entrance path is the same slice at radius zero.
+
+## API Reference
+
+### PolarChart
+
+<TypeTable
+  type={{
+    data: { type: "readonly Row[]" },
+    valueKey: { type: "string", description: "The field a slice's size comes from." },
+    labelKey: { type: "string", description: "The field a slice's label comes from. Without it, the row's index." },
+    innerRadius: {
+      type: "number | `${number}%`",
+      default: "0",
+      description: "The donut hole — points, or a percentage of the radius.",
+    },
+    startAngle: { type: "number", default: "0", description: "Where the first slice begins. Degrees clockwise from 12 o'clock." },
+    circleSweepDegrees: { type: "number", default: "360", description: "How much of the circle the slices fill. 180 is a half-pie gauge." },
+    size: { type: "number", description: "An explicit diameter. Otherwise the largest circle the canvas holds." },
+    padding: { type: "number | { top?; right?; bottom?; left? }", description: "Space between the canvas edge and the circle." },
+    animation: { type: "ChartAnimation", default: '{ type: "timing", duration: 300 }' },
+    font: { type: "SkFont | null", description: "For PieLabel. From useSystemFont, called above the chart." },
+    selectedIndex: { type: "number | null", description: "The slice to single out. Marks read it; the root does nothing with it." },
+    onSlicePress: {
+      type: "(index: number | null) => void",
+      description: "Called with the tapped slice's index, or null for a tap outside every slice. Mounts the tap overlay.",
+    },
+    children: { type: "ReactNode | ((args: PolarRenderArgs) => ReactNode)", description: "Skia children, or a function of the resolved chart." },
+  }}
+/>
+
+### PieSlices
+
+<TypeTable
+  type={{
+    colors: { type: "readonly string[]", description: "One per slice, cycled when there are more slices than colours." },
+    opacity: { type: "number", default: "1" },
+    dimUnselected: {
+      type: "number",
+      default: "0.4",
+      description: "Opacity of every slice but the selected one, while one is selected. 1 turns the dim off.",
+    },
+    animation: { type: "ChartAnimation" },
+    children: {
+      type: "(slice: PieSliceData, color: string) => ReactNode",
+      description: "Skia paint children for each slice — a gradient, a shader.",
+    },
+  }}
+/>
+
+### PieSlice
+
+<TypeTable
+  type={{
+    index: { type: "number", description: "Which slice to draw. Read from the chart's context." },
+    slice: { type: "PieSliceData", description: "The slice to draw, when it is not coming from context." },
+    color: { type: "string", description: "A flat fill. Leave it out when a child shader supplies the paint." },
+    opacity: { type: "number" },
+    animation: { type: "ChartAnimation" },
+    children: { type: "ReactNode", description: "Skia paint children — a gradient, a shader." },
+  }}
+/>
+
+### PieLabel
+
+<TypeTable
+  type={{
+    color: { type: "string" },
+    font: { type: "SkFont | null", description: "Overrides the chart's font." },
+    radiusOffset: {
+      type: "number",
+      default: "0.5",
+      description: "Across the annulus: 0 the inner edge, 1 the outer, more than 1 outside.",
+    },
+    formatLabel: { type: "(slice: PieSliceData) => string", description: "The text for a slice. Defaults to its label." },
+    minSweep: { type: "number", default: "0", description: "Slices narrower than this, in degrees, get no label." },
+    opacity: { type: "number" },
+    children: { type: "ReactNode", description: "Skia paint children — a shader for the text." },
+  }}
+/>
+
+### PieInset
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "The chart's background for a gap; a foreground colour for a border." },
+    strokeWidth: { type: "number", default: "1" },
+    opacity: { type: "number" },
+    animation: { type: "ChartAnimation" },
+  }}
+/>

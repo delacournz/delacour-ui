@@ -1,0 +1,71 @@
+---
+title: Scatter
+description: A circle, square or star per datum, all in one path.
+icon: ChartScatter
+---
+
+<Preview id="charts/scatter/scatter" />
+
+```tsx
+import { CartesianChart, ChartGrid, ChartScatter } from "delacour-react-native-charts";
+
+<CartesianChart data={rows} includeZero xKey="minutes" yKeys={["free", "pro"]}>
+  <ChartGrid axis="both" color="#E5E5EA" />
+  <ChartScatter color="#0A84FF" radius={5} yKey="free" />
+  <ChartScatter color="#FF9F0A" radius={5} yKey="pro" />
+</CartesianChart>;
+```
+
+One shape per row per series, on a numeric x. A whole series is one Skia path, so a hundred points
+is one node. A gap is the same shape at radius zero on the baseline, which is what keeps the series
+interpolatable when a datum comes and goes.
+
+## Shapes
+
+```tsx
+<ChartScatter color="#0A84FF" shape="circle" yKey="a" />
+<ChartScatter color="#30D158" shape="square" yKey="b" />
+<ChartScatter color="#FF9F0A" shape="star" yKey="c" />
+```
+
+Each shape is built on a fixed verb sequence, so a series that changes shape morphs between them.
+
+## Radius per point
+
+```tsx
+<ChartScatter color="#0A84FF" radius={(point) => 3 + (point.yValue ?? 0) / 40} yKey="sales" />
+```
+
+`radius` takes a number for every point, or a function of the point and its index for a bubble
+chart. The point carries both its canvas position and its domain values, so a size read off the
+data needs no inversion.
+
+## Rings
+
+```tsx
+<ChartScatter color="#0A84FF" radius={6} strokeWidth={1.5} style="stroke" yKey="pro" />
+```
+
+`style="stroke"` draws rings instead of discs, at `strokeWidth`.
+
+## API Reference
+
+### ChartScatter
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series to draw. Read from the chart's context." },
+    points: { type: "readonly ChartPoint[]", description: "The points to draw, when they are not coming from context." },
+    color: { type: "string" },
+    radius: {
+      type: "number | ((point: ChartPoint, index: number) => number)",
+      default: "4",
+      description: "One radius for every point, or one per point.",
+    },
+    shape: { type: '"circle" | "square" | "star"', default: '"circle"' },
+    style: { type: '"fill" | "stroke"', default: '"fill"', description: "Filled discs, or rings." },
+    strokeWidth: { type: "number", default: "1", description: "The ring's width, when style is stroke." },
+    opacity: { type: "number" },
+    animation: { type: "ChartAnimation" },
+  }}
+/>

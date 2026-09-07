@@ -1,0 +1,185 @@
+---
+title: Cursor and scrub
+description: A drag that solves the curve on the UI thread and reports nothing but numbers.
+icon: Crosshair
+---
+
+<Preview id="charts/cursor/scrub" />
+
+```tsx
+import {
+  CartesianChart,
+  ChartCursorDot,
+  ChartCursorLine,
+  ChartLine,
+  useChartScrub,
+} from "delacour-react-native-charts";
+
+function Revenue() {
+  const scrub = useChartScrub(["revenue"]);
+
+  return (
+    <CartesianChart data={rows} scrub={scrub} xKey="day" yKeys={["revenue"]}>
+      <ChartLine color="#0A84FF" curve="monotone" yKey="revenue" />
+      <ChartCursorLine axis="x" color="#8E8E93" dash={[4, 4]} />
+      <ChartCursorDot borderColor="#FFFFFF" color="#0A84FF" yKey="revenue" />
+    </CartesianChart>
+  );
+}
+```
+
+`useChartScrub` allocates a set of shared values, one group per key you name; the root's `scrub`
+prop is what makes the chart take touches at all. Hold and drag: the pan clamps the touch to the
+plot, inverts it through the scale, finds the nearest datum and solves the drawn curve — all on
+the UI thread, with no hop to JavaScript, which is what lets the dot keep up with a fast drag.
+
+`ChartCursorLine` and `ChartCursorDot` read those values and draw. Both are invisible until the
+scrub is active and both are parked off-canvas when there is nothing to point at, so a chart with
+no touch yet has no stray mark at the origin.
+
+## Behaviour
+
+```tsx
+<CartesianChart scrub={scrub} scrubConfig={{ behaviour: "claim" }} />
+<CartesianChart scrub={scrub} scrubConfig={{ behaviour: "hold", holdDuration: 150 }} />
+<CartesianChart scrub={scrub} scrubConfig={{ enabled: false }} />
+```
+
+`hold` is the default: the scrub activates after a long press, so a chart inside a scrolling feed
+takes nothing by accident. `claim` gives horizontal drags to the scrub and vertical ones to the
+scroll — for a chart that owns its width. `block` wins outright, and needs the scrollable's own
+gesture passed to `useScrubGesture` to block.
+
+## Reading the scrub from a view
+
+```tsx
+import type { ChartScrubState } from "delacour-react-native-charts";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+
+function Readout({ scrub }: { scrub: ChartScrubState }) {
+  const style = useAnimatedStyle(() => {
+    const x = scrub.snappedX.value;
+    return {
+      opacity: scrub.isActive.value ? 1 : 0,
+      transform: [{ translateX: Number.isFinite(x) ? x : 0 }],
+    };
+  });
+  return <Animated.View style={style} />;
+}
+```
+
+Every field on `ChartScrubState` holds a `number` or a `boolean` — never an `SkPath`, never an
+object. That is what lets a tooltip be an ordinary React Native view, positioned from a plain
+`useAnimatedStyle`, with no Skia import in sight. `series[key].value` is the nearest datum's value
+in domain units, which is what a label prints.
+
+<Callout type="warn">
+The per-series values start at `NaN` and `x`, `y` and `snappedX` go to `NaN` inside a gap. A `NaN`
+written into a style freezes that view with no error — guard with `Number.isFinite`, as above.
+</Callout>
+
+## `y` versus `snappedY`
+
+```tsx
+<ChartCursorDot color="#0A84FF" yKey="revenue" />
+<ChartCursorDot color="#0A84FF" snap={false} yKey="revenue" />
+```
+
+Each series carries two points. `snappedX`/`snappedY` are the nearest datum's canvas point: a dot
+bound to them lands on real measurements, which is what the readout beside it names. `x`/`y` are
+the position **on the drawn curve** at the touched x, solved against the same cubics the renderer
+drew: a dot bound to them glides continuously along the line. Both come out of one binary search.
+The marks snap by default; `snap={false}` glides, and the dot will then disagree with any label
+showing a measured value.
+
+On a horizontal chart there is no curve to glide along, so the glide values equal the snapped
+ones and the category lands in the root's `snappedY`.
+
+## Stacked series
+
+For a key in `stackKeys` the dot rides the top of the visible segment, while `series[key].value`
+stays the raw measurement — so the mark sits where the eye expects and the readout prints what
+was measured.
+
+## API Reference
+
+### useChartScrub
+
+```ts
+function useChartScrub(keys: readonly string[]): ChartScrubState;
+```
+
+Stable for the life of the component unless the set of keys changes. A fresh array of the same
+keys does not reallocate.
+
+### ChartCursorLine
+
+<TypeTable
+  type={{
+    axis: {
+      type: '"x" | "y"',
+      description: "x is a vertical rule, y a horizontal one — named for the axis the line reads against.",
+    },
+    yKey: {
+      type: "string",
+      description: "Which series the rule sits at. Without it the rule follows the touched category.",
+    },
+    color: { type: "string" },
+    width: { type: "number", default: "1" },
+    dash: { type: "readonly [number, number]", description: "Dash on/off lengths, in points." },
+    snap: { type: "boolean", default: "true", description: "Sit on the nearest datum rather than following the finger." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### ChartCursorDot
+
+<TypeTable
+  type={{
+    yKey: { type: "string", description: "Which series the dot rides." },
+    color: { type: "string" },
+    radius: { type: "number", default: "4" },
+    borderColor: { type: "string", description: "A ring around the dot, usually the chart's own background." },
+    borderWidth: { type: "number", default: "2" },
+    snap: { type: "boolean", default: "true", description: "Sit on the nearest datum rather than gliding along the curve." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### ScrubConfig
+
+<TypeTable
+  type={{
+    enabled: { type: "boolean", default: "true" },
+    behaviour: { type: '"hold" | "claim" | "block"', default: '"hold"', description: "How the scrub coexists with a scrolling parent." },
+    holdDuration: { type: "number", default: "250", description: "Milliseconds to hold before hold activates." },
+    activationDistance: { type: "number", default: "8", description: "How far a drag must travel before claim decides it is horizontal." },
+  }}
+/>
+
+### ChartScrubState
+
+<TypeTable
+  type={{
+    isActive: { type: "SharedValue<boolean>" },
+    x: { type: "SharedValue<number>", description: "Touch x in canvas points, clamped to the plot rect." },
+    y: { type: "SharedValue<number>", description: "Touch y in canvas points, clamped to the plot rect." },
+    snappedX: { type: "SharedValue<number>", description: "Canvas x of the nearest datum's category, on a vertical chart. NaN on a horizontal one." },
+    snappedY: { type: "SharedValue<number>", description: "Canvas y of the nearest datum's category, on a horizontal chart. NaN on a vertical one." },
+    xValue: { type: "SharedValue<number>", description: "The category value under the touch, in domain units." },
+    index: { type: "SharedValue<number>", description: "Nearest datum index. -1 before the first touch." },
+    series: { type: "Record<string, ChartScrubSeriesState>", description: "One entry per key given to useChartScrub." },
+  }}
+/>
+
+### ChartScrubSeriesState
+
+<TypeTable
+  type={{
+    x: { type: "SharedValue<number>", description: "Canvas x of the glide point." },
+    y: { type: "SharedValue<number>", description: "Canvas y on the drawn curve at the touched x. NaN inside a gap." },
+    snappedX: { type: "SharedValue<number>", description: "Canvas x of the nearest datum on this series." },
+    snappedY: { type: "SharedValue<number>", description: "Canvas y of the nearest datum on this series." },
+    value: { type: "SharedValue<number>", description: "The nearest datum's value in domain units, which is what a label prints." },
+  }}
+/>

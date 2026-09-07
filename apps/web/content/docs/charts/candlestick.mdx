@@ -1,0 +1,69 @@
+---
+title: Candlestick
+description: Open, high, low and close per row, coloured by sentiment.
+icon: ChartCandlestick
+---
+
+<Preview id="charts/candlestick/candlestick" />
+
+```tsx
+import { CartesianChart, ChartCandlestick, ChartGrid } from "delacour-react-native-charts";
+
+<CartesianChart data={rows} domainPadding={{ x: 0.5 }} xKey="at" yKeys={["open", "high", "low", "close"]}>
+  <ChartGrid color="#E5E5EA" />
+  <ChartCandlestick
+    candleColors={{ positive: "#30D158", negative: "#FF375F", neutral: "#8E8E93" }}
+    keys={{ open: "open", high: "high", low: "low", close: "close" }}
+  />
+</CartesianChart>;
+```
+
+The four prices are four of the root's `yKeys`, so the y domain covers every wick, and `keys`
+says which is which. `candleColors` names a colour per `Sentiment` — a candle that closed above
+its open is `positive`, below is `negative`, level is `neutral`. Like a bar, a candle is half a
+step wide and wants `domainPadding` of half a step.
+
+Six paths, not one per candle: bodies and wicks for each sentiment, and every candle is present in
+all six, degenerate where its sentiment does not apply. A close that crosses its open therefore
+morphs from one colour's path into the other rather than vanishing and reappearing.
+
+## Sizing
+
+```tsx
+<ChartCandlestick candleColors={colors} candleRatio={0.8} keys={keys} minBodyHeight={2} wickStrokeWidth={1.5} />
+<ChartCandlestick candleColors={colors} candleWidth={6} keys={keys} />
+```
+
+`candleRatio` is the fraction of each step a body fills; `candleWidth` is an exact width instead.
+`minBodyHeight` keeps a flat candle visible — a body thinner than it is expanded to it.
+
+## API Reference
+
+### ChartCandlestick
+
+<TypeTable
+  type={{
+    keys: {
+      type: "{ open: string; high: string; low: string; close: string }",
+      description: "The four series. Each must be one of the chart's yKeys; a missing one warns in development.",
+    },
+    candleColors: {
+      type: "{ positive: string; negative: string; neutral: string }",
+      description: "One colour per sentiment.",
+    },
+    candleRatio: { type: "number", default: "0.6", description: "The fraction of each step a body fills." },
+    candleWidth: { type: "number", description: "An exact body width, instead of a fraction of the step." },
+    candleCount: {
+      type: "number",
+      description: "Size candles as if the plot held this many, so charts of different lengths match.",
+    },
+    minBodyHeight: {
+      type: "number",
+      default: "1",
+      description: "A body thinner than this is expanded so a flat candle stays visible.",
+    },
+    wickStrokeWidth: { type: "number", default: "1" },
+    opacity: { type: "number" },
+    animation: { type: "ChartAnimation" },
+  }}
+/>

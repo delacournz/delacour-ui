@@ -1,0 +1,140 @@
+---
+title: Core
+description: The scales, ticks, curves and solvers on their own — importable with no Skia in the module graph.
+icon: Sigma
+---
+
+```ts
+import { closestIndex, invertValue, makeScale, scaleValue } from "delacour-react-native-charts/core";
+```
+
+`delacour-react-native-charts/core` is every number the package computes and nothing that draws.
+Nothing under it imports a runtime value from React, React Native, Skia, Reanimated or Gesture
+Handler, which is what lets a legend or a tooltip do scale arithmetic without mounting a canvas —
+and what lets the whole of it run under `bun test` with no simulator.
+
+```ts
+import { buildTicks, makeScale, scaleValue } from "delacour-react-native-charts/core";
+
+const y = makeScale({ kind: "linear", domain: [0, 240], range: [200, 0], nice: true });
+const ticks = buildTicks(y, { count: 4 });
+const zero = scaleValue(y, 0);
+```
+
+## A scale is data
+
+d3's scales are closures, and a closure cannot be read on the UI thread. `makeScale` lets d3 do
+the nicing and the time arithmetic, then throws the closure away and returns a `ScaleDescriptor`
+of plain numbers. Everything downstream — the marks, the ticks, the scrub — reads that.
+
+```ts
+type ScaleDescriptor =
+  | { kind: "linear"; domain: [number, number]; range: [number, number] }
+  | { kind: "time"; domain: [number, number]; range: [number, number] }
+  | { kind: "log"; domain: [number, number]; range: [number, number]; base: number };
+```
+
+A degenerate input returns a finite number, never `NaN`: a zero-width domain maps to the range
+midpoint, a collapsed plot rect stays a rect, an unreadable log domain yields no ticks rather than
+`-Infinity` ones. One `NaN` written into a shared value freezes a chart permanently with nothing
+on screen to say why, so the guard is at the bottom rather than at every call site.
+
+## The flat worklets
+
+Six functions carry a `"worklet"` directive and run on the UI thread every frame of a scrub:
+`scaleValue`, `invertValue`, `closestIndex`, `getYForX`, `readAt` and `sliceIndexAt`. Each calls
+nothing and closes over nothing but module-scope constants — a module-scope worklet that called
+another would bind at import time and hand the UI thread `undefined is not a function` the moment
+a finger landed. A worklet you build **inside a hook** is captured by ordinary closure and may call
+any of them, which is how the scrub gesture composes `closestIndex` and `getYForX` without
+duplicating either.
+
+## Scales and ticks
+
+| Export | What it does |
+| --- | --- |
+| `makeScale({ kind, domain, range, nice?, base? })` | Builds a scale and returns its descriptor |
+| `scaleValue(scale, value)` | A domain value's position along the range. Flat worklet |
+| `invertValue(scale, position)` | The domain value at a position. Flat worklet |
+| `buildTicks(scale, { count?, values? })` | Tick values, each already positioned on the canvas |
+| `linearTicks`, `logTicks`, `timeTicks` | The generators `buildTicks` dispatches to |
+| `downsampleTicks(values, count)` | At most `count` of `values`, evenly, both ends kept |
+| `normalizeTickCount(domain, count)` | Exactly `count` values across a domain, so two axes share gridlines |
+| `DEFAULT_TICK_COUNT` | `5` |
+| `ScaleDescriptor`, `ScaleType`, `ChartTick` | The types |
+
+## Curves and paths
+
+Every builder returns an **SVG path string**. This module cannot import Skia's path builder;
+`toSkPath` in the React surface parses the string.
+
+| Export | What it does |
+| --- | --- |
+| `CURVES`, `CURVE_TYPES`, `APPROXIMATING_CURVES` | The d3-shape interpolators by name, the names, and the ones that do not pass through their data |
+| `buildLinePath(points, { curve?, connectMissingData? })` | A path through the points; a gap is a new subpath |
+| `buildAreaPath(points, { baseline, curve?, lower?, orientation? })` | The same, closed against a baseline or a lower edge |
+| `isDrawable(point)` | Both coordinates finite, and not a gap |
+| `rectPath(left, top, right, bottom, radii)` | A rectangle as `M C L C L C L C Z` — every corner a cubic |
+| `barRects`, `barsPathFromRects`, `buildBarsPath`, `resolveBaseline` | Points or segments to bar rects, and one path for all of them |
+| `buildScatterPath(points, { radius, shape, baseline, orientation })` | A circle, square or star per point, on a fixed verb sequence |
+| `candlePoints`, `buildCandlePaths`, `candleSentiment`, `SENTIMENTS` | Candles zipped from four series; six paths, every candle in each |
+| `KAPPA` | The cubic control-point distance that best approximates a quarter circle |
+
+## Geometry
+
+| Export | What it does |
+| --- | --- |
+| `resolveDomain({ values, domain?, padding?, absolutePadding?, includeZero? })` | The domain a scale should take |
+| `resolveDomainPadding(value)` | `domainPadding` decoded to one number per axis |
+| `resolveStep(xValues)` | The smallest gap between x values — what a bar's width is stated in |
+| `resolveBand`, `groupLayout` | A datum's band on a scale with no band of its own, and where a group's bars sit inside it |
+| `stackSeries`, `collectStackedYValues` | Series stacked in data space, and the totals a stacked y domain needs |
+| `categoryDomainCovers(series, scale, step)` | Whether the domain holds the outermost bars — what `ChartBar` warns about |
+| `getChartBounds(canvas, padding?, gutters?)`, `hasArea` | The plot rect, and whether it has room to draw in |
+| `planAxis`, `resolveChartFrame`, `axisRanges`, `pickAxisRoles`, `placeAxisRoles` | The two layout passes, and the category/value roles onto the canvas axes |
+| `resolveXValues(data, xKey)` | The numeric-or-index decision, made once for the whole series |
+| `transformInputData({ data, yKeys, xValues, xScale, yScale, orientation })` | Rows to plotted points |
+| `gridSegments({ bounds, xTicks, yTicks, axis })` | One line segment per rule |
+| `resolveAxisGutters`, `anchorX`, `anchorY`, `labelHeight`, `barLabelAnchor` | Measured label widths to the space an axis needs, and text placed against a point |
+| `defaultTickFormat`, `formatNumberTick`, `formatDateTick`, `categoricalTickFormat` | The label formats the root falls back to |
+
+## Interaction
+
+| Export | What it does |
+| --- | --- |
+| `toCurvePath(svg)` | An SVG path string to flat cubic runs, for the UI thread. Every `L` becomes a cubic |
+| `closestIndex(xs, x)` | Nearest datum, by binary search. Flat worklet |
+| `getYForX(path, x)` | `y` on the drawn curve, by bisection. `NaN` inside a gap. Flat worklet |
+| `readAt(list, index)` | A list read that yields `NaN` for a gap or a missing index. Flat worklet |
+| `runSegmentCount`, `RUN_STRIDE` | How a run is laid out |
+
+## Animation
+
+| Export | What it does |
+| --- | --- |
+| `chooseMorphStrategy(previousXs, nextXs)` | `"none"`, `"pad-end"`, `"pad-start"` or `"resample"` — which end to pad, and when to resample instead |
+| `matchPointCounts`, `resamplePoints` | Two series brought to one length |
+
+## Polar
+
+| Export | What it does |
+| --- | --- |
+| `collectPieInput(data, valueKey, labelKey?)` | Rows to values and labels, nothing dropped |
+| `resolvePolarLayout({ canvas, padding?, size?, innerRadius? })`, `resolveInnerRadius` | The largest circle the padded canvas holds, and the hole inside it |
+| `resolveSlices({ values, labels, layout, startAngle, circleSweepDegrees })` | Values to angles; sweeps sum to the circle exactly |
+| `buildSlicePath(slice)`, `buildSliceEdgePath(slice, edge)` | A slice as eleven verbs, and one of its edges |
+| `sliceLabelPosition(slice, radiusOffset)` | A point on the bisector, offset across the annulus |
+| `sliceIndexAt(x, y, cx, cy, innerRadius, radius, starts, sweeps)` | Which slice is under a point. Flat worklet |
+| `sliceOpacity(index, selectedIndex, opacity, dimUnselected)` | What one slice draws at while another is selected |
+| `polarToCartesian`, `normalizeDegrees` | Degrees clockwise from 12 o'clock to a canvas point |
+| `PieSliceData`, `PolarLayout`, `InnerRadius`, `PolarPoint` | The types |
+
+## Utilities
+
+| Export | What it does |
+| --- | --- |
+| `asNumber`, `isPlottable` | A field to a number, or `null` |
+| `clamp(value, lo, hi)` | |
+| `extent(values)`, `unionExtents` | Min and max, ignoring gaps |
+| `sidesOf(value)`, `valueFromSidedNumber` | A `SidedNumber` — one number or four — decoded per side |
+| `ChartPoint`, `ChartSegment`, `ChartBounds`, `ChartSize`, `ChartRow`, `ChartOrientation` | The shapes everything above shares |

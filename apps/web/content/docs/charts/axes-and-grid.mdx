@@ -1,0 +1,173 @@
+---
+title: Axes and grid
+description: Tick labels in Skia text, one path for every gridline, and the root props that decide where the ticks fall.
+icon: Grid3x3
+---
+
+<Preview id="charts/axes/axes-grid" />
+
+```tsx
+import { CartesianChart, ChartGrid, ChartLine, ChartXAxis, ChartYAxis, useSystemFont } from "delacour-react-native-charts";
+
+const font = useSystemFont(undefined, 12);
+
+<CartesianChart
+  data={rows}
+  font={font}
+  xKey="day"
+  yAxis={{ tickCount: 4, formatLabel: (value) => `$${value}k` }}
+  yKeys={["revenue"]}
+>
+  <ChartGrid axis="both" color="#E5E5EA" />
+  <ChartYAxis color="#8E8E93" side="right" />
+  <ChartXAxis color="#8E8E93" />
+  <ChartLine color="#0A84FF" curve="monotone" yKey="revenue" />
+</CartesianChart>;
+```
+
+The root decides the ticks; the marks draw them. `ChartGrid` rules the plot at every tick,
+`ChartXAxis` prints the labels below it and `ChartYAxis` beside it, on whichever `side` it is
+given. All three are ordinary marks, so they draw in the order they are placed — the grid first.
+
+## The font
+
+Axis labels are Skia text, so they move with the canvas rather than lagging it by a frame from a
+React Native view. That means they need an `SkFont`, passed to the root as `font` and called
+**above** it — `useSystemFont` resolves one from the operating system, or load your own. While
+`font` is `null` the axes draw nothing, and the plot rect takes the whole canvas.
+
+The labels are measured with that font, which is how the plot rect knows how much room to leave
+for them: two passes, with the measuring between — see
+[Composition](/docs/charts/composition#data-becomes-a-context).
+
+## Tick options
+
+```tsx
+<CartesianChart
+  data={rows}
+  xAxis={{ tickCount: 6, formatLabel: (value) => new Date(value).toLocaleDateString() }}
+  yAxis={{ tickValues: [0, 50, 100], show: true }}
+/>
+```
+
+`xAxis` and `yAxis` take an `AxisOptions` each. `tickCount` is a suggestion the generator rounds
+to human values; `tickValues` names the exact values and generates none. `formatLabel` receives
+the domain value — epoch milliseconds on a time scale, the row's index on a categorical one — and
+the tick's index.
+
+A categorical x axis ticks on its own data, one per row, and prints the original label; more rows
+than `tickCount` are evenly downsampled, both ends kept.
+
+## The domain
+
+```tsx
+<CartesianChart data={rows} domain={{ y: [0, undefined] }} niceDomain />
+<CartesianChart data={rows} includeZero domainPadding={0.1} />
+<CartesianChart data={rows} domainPadding={{ x: 0.5, y: 0.05 }} padding={{ top: 8, right: 8 }} />
+```
+
+| Prop | What it does |
+| --- | --- |
+| `domain` | Explicit bounds per axis. Either end may be `undefined` to keep the data's own — pin the floor, let the ceiling grow |
+| `includeZero` | Pulls zero into the y domain. What a bar wants; a line usually does not |
+| `niceDomain` | Rounds the y domain out to tick values, so the top gridline is a round number |
+| `domainPadding` | A bare number pads y as a fraction of the extent. `x` is measured in **steps** — `0.5` is half a band each side |
+| `padding` | Space between the canvas edge and the axes, in points |
+
+A constant series comes back with a zero-width domain and draws flat through the middle rather
+than being stretched to fill the height; an empty series falls back to `[0, 1]`, so the axis still
+has something to say.
+
+## Log scale
+
+```tsx
+<CartesianChart data={rows} yScaleType="log" />
+```
+
+`yScaleType` and `xScaleType` take `linear`, `time` or `log`. A log domain is floored above zero,
+because d3 returns `-Infinity` for the whole range otherwise.
+
+## API Reference
+
+### AxisOptions
+
+<TypeTable
+  type={{
+    show: { type: "boolean", default: "true", description: "Draw this axis at all. Ticks and labels both." },
+    tickCount: { type: "number", default: "5", description: "How many ticks to aim for. The generator rounds it to human values." },
+    tickValues: { type: "readonly number[]", description: "Explicit tick values, instead of generating any." },
+    formatLabel: { type: "(value: number, index: number) => string" },
+  }}
+/>
+
+### ChartGrid
+
+<TypeTable
+  type={{
+    axis: { type: '"x" | "y" | "both"', default: '"y"', description: "Which ticks get a rule." },
+    color: { type: "string" },
+    lineWidth: { type: "number", default: "1" },
+    dash: { type: "readonly [number, number]", description: "Dash on/off lengths, in points." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### ChartXAxis
+
+<TypeTable
+  type={{
+    color: { type: "string" },
+    tickPadding: { type: "number", default: "6", description: "Space between the plot rect and the labels." },
+    opacity: { type: "number" },
+  }}
+/>
+
+### ChartYAxis
+
+<TypeTable
+  type={{
+    color: { type: "string" },
+    tickPadding: { type: "number", default: "6", description: "Space between the labels and the plot rect." },
+    side: { type: '"left" | "right"', default: '"left"' },
+    opacity: { type: "number" },
+  }}
+/>
+
+### CartesianChart
+
+The root's props, in full. Those above are the ones that shape the axes.
+
+<TypeTable
+  type={{
+    data: { type: "readonly Row[]" },
+    xKey: { type: "string", description: "The field every series is plotted against. A number, a Date, or a label." },
+    yKeys: { type: "readonly string[]", description: "The series. Each mark names one; the y domain covers all of them." },
+    padding: { type: "number | { top?; right?; bottom?; left? }", description: "Space between the canvas edge and the axes." },
+    domain: {
+      type: "{ x?: [number | undefined, number | undefined]; y?: [number | undefined, number | undefined] }",
+      description: "Explicit bounds. Either end of either axis may be omitted.",
+    },
+    domainPadding: {
+      type: "number | { x?: number; y?: number }",
+      description: "A bare number pads y as a fraction of the extent. x is measured in steps.",
+    },
+    stackKeys: { type: "readonly string[]", description: "Which of yKeys stack on one another, bottom first." },
+    orientation: { type: '"vertical" | "horizontal"', default: '"vertical"', description: "Categories along x, or along y." },
+    includeZero: { type: "boolean", description: "Pull zero into the y domain." },
+    niceDomain: { type: "boolean", description: "Round the y domain out to tick values." },
+    xScaleType: { type: '"linear" | "time" | "log"', description: "Defaults to time when the x field holds dates, linear otherwise." },
+    yScaleType: { type: '"linear" | "time" | "log"', default: '"linear"' },
+    curve: { type: "CurveType", default: '"linear"', description: "The interpolator every mark uses unless it overrides it." },
+    animation: { type: "ChartAnimation", default: '{ type: "timing", duration: 300 }' },
+    xAxis: { type: "AxisOptions" },
+    yAxis: { type: "AxisOptions" },
+    font: { type: "SkFont | null", default: "null", description: "For the axis labels and bar labels." },
+    scrub: { type: "ChartScrubState", description: "From useChartScrub. Without it the chart takes no touches." },
+    scrubConfig: { type: "ScrubConfig", description: "How the scrub coexists with a scrolling parent." },
+    onBoundsChange: { type: "(bounds: ChartBounds) => void", description: "Reports the plot rect whenever it changes." },
+    children: {
+      type: "ReactNode | ((args: CartesianRenderArgs) => ReactNode)",
+      description: "Skia children, or a function of the resolved chart.",
+    },
+  }}
+/>

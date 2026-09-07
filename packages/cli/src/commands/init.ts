@@ -267,6 +267,7 @@ async function wireUpApp(config: ResolvedConfig, workspaceRoot: string | null, o
 	}
 
 	await ensureUniwindEnv(config, output);
+	await ensureExpoEnv(config, output);
 
 	const block = buildStylesBlock({ cssPath: config.app.resolved.css, directories: config.directories });
 	const css = patchGlobalCss(await read(config.app.resolved.css), block);
@@ -299,6 +300,29 @@ async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise
 	await write(path, `${UNIWIND_ENV_REFERENCE}\n`);
 	output.success(`Wrote ${style.path("uniwind-env.d.ts")} — the app needs it too, not just the package`);
 }
+
+/**
+ * The file Expo's own CLI writes on first `start`, and nothing before that.
+ *
+ * `expo/types` is what declares `*.css` as a module. A template without a
+ * router — `blank-typescript` — ships no `expo-env.d.ts`, so the CSS import
+ * `init` just asked for fails `tsc` with "Cannot find module … './styles/global.css'"
+ * until the app has been started once. Metro is fine either way; only the
+ * typecheck a reader runs first is not.
+ */
+async function ensureExpoEnv(config: ResolvedConfig, output: Output): Promise<void> {
+	if (config.framework !== "expo") return;
+
+	const path = join(config.app.resolved.root, "expo-env.d.ts");
+	if (existsSync(path)) return;
+
+	await write(path, `${EXPO_ENV_REFERENCE}\n`);
+	output.success(`Wrote ${style.path("expo-env.d.ts")} — it declares *.css as a module`);
+}
+
+const EXPO_ENV_REFERENCE = `/// <reference types="expo/types" />
+
+// NOTE: This file should not be edited and should be in your git ignore`;
 
 /**
  * What is left, and why the CLI did not just do it.
@@ -336,8 +360,13 @@ export function followUps(config: ResolvedConfig): string[] {
 
 	// First, because it is the only one of the three that produces no error at
 	// all — the app boots and renders every component unstyled.
+	// Without an alias the path is where the file landed, relative to the app
+	// root — `./styles/global.css`, not `./global.css`.
+	const cssImport = config.aliases.styles
+		? `${config.aliases.styles}/${basename(config.app.resolved.css)}`
+		: `./${short(config.app.resolved.root, config.app.resolved.css)}`;
 	items.push(
-		`Import ${style.code(`"${config.aliases.styles ?? "."}/${basename(config.app.resolved.css)}"`)} as the first statement of your root layout — without it every component renders unstyled.`
+		`Import ${style.code(`"${cssImport}"`)} as the first statement of your root layout — without it every component renders unstyled.`
 	);
 	// The provider is already copied in; what is left is mounting it. Without an
 	// alias the path is where it landed, relative to the app root.

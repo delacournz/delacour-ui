@@ -67,6 +67,13 @@ describe("init and add, in a plain Expo app", () => {
 		await expect(exists(root, "src/hooks/use-keyboard-state-sync.tsx")).resolves.toBe(true);
 	});
 
+	// `expo/types` declares `*.css`; a template with no router ships no
+	// `expo-env.d.ts`, and the CSS import init asks for then fails `tsc`.
+	test("writes expo-env.d.ts so the CSS import typechecks before the first start", async () => {
+		await expect(exists(root, "expo-env.d.ts")).resolves.toBe(true);
+		expect(await read(root, "expo-env.d.ts")).toContain('reference types="expo/types"');
+	});
+
 	test("does not copy the library's tests", async () => {
 		await expect(exists(root, "src/components/ui/button/button.variants.test.ts")).resolves.toBe(false);
 	});

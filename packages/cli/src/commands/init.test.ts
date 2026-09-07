@@ -44,6 +44,14 @@ describe("followUps", () => {
 
 		expect(provider).toContain('"./src/components/ui/provider"');
 	});
+
+	// `"./global.css"` was the old fallback — the file is under `styles/`.
+	test("names the CSS entry where it landed when there is no alias", () => {
+		const plain = followUps(config({})).map(stripAnsi);
+		const css = plain.find((line) => line.includes("first statement"));
+
+		expect(css).toContain('"./src/styles/global.css"');
+	});
 });
 
 /** `style.code` colours its spans; the assertions are about the words. */

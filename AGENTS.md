@@ -82,7 +82,11 @@ gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.jso
 ## CI
 
 `.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
-`main` and `develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+`develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
+
+It does not run on push to `main`. Every commit there is a squash-merged pull request whose checks
+were already green on an up-to-date branch, so a run on the merge commit would only repeat them.
+Railway does not wait on check suites, so no deploy depends on one either.
 
 All four are required status checks on `main`, which makes the job `name:` values an API contract:
 they appear verbatim in `.github/rulesets/main.json` and GitHub matches them by string. Rename a job

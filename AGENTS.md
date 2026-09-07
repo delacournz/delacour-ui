@@ -89,9 +89,10 @@ were already green on an up-to-date branch, so a run on the merge commit would o
 Railway does not wait on check suites, so no deploy depends on one either.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
-`namespace-profile-default-arm64` for Linux work, and `namespace-profile-mac-m4-6cpu-14gb` for any
-job that needs macOS (Xcode, a simulator). Nothing needs macOS today, so the mac profile is unused.
-The `ubuntu-latest` / `macos-*` labels are not to be reintroduced — with one exception, below.
+`namespace-profile-linux-small` for Linux work, `namespace-profile-mac-small` for any job that
+needs macOS (Xcode, a simulator), and `namespace-profile-windows-small` for any job that needs
+Windows. Nothing needs macOS or Windows today, so those two profiles are unused.
+The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.
 
 The exception is the `release` job in `release.yml`, which stays on `ubuntu-latest`. npm's trusted
 publishing generates a sigstore provenance attestation and verifies it against the runner, and

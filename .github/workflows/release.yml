@@ -4,9 +4,12 @@ name: Release
 # `.changeset/`: pending changesets open (or refresh) the Version Packages PR;
 # no pending changesets means that PR has just merged, so publish.
 #
-# Publishing goes through the npm CLI, not `bun publish`, because npm is the only
-# one of the two that speaks OIDC — the trusted publisher configured on npmjs.com
-# is what authenticates this workflow, and there is no npm token anywhere.
+# Publishing is *staged*: `.github/changeset-stage.ts` runs `npm stage publish`
+# and a maintainer approves each staged version with 2FA. The trusted publisher
+# configured on npmjs.com for this workflow allows staging only, so a direct
+# `npm publish` — which is what `changeset publish` runs — is refused with
+# `E403 OIDC permission denied for this action`. That is what authenticates the
+# job; there is no npm token anywhere, and `bun publish` cannot do either.
 on:
   push:
     branches: [main]
@@ -55,8 +58,9 @@ jobs:
           node-version: 24
           registry-url: "https://registry.npmjs.org"
 
-      # Trusted publishing needs npm >= 11.5.1; the runner's bundled npm is older.
-      - name: Update npm for OIDC support
+      # Trusted publishing needs npm >= 11.5.1 and `npm stage` >= 11.15.0; the
+      # runner's bundled npm is older than both.
+      - name: Update npm for OIDC and staged publishing
         run: npm install -g npm@latest
 
       - run: bun install --frozen-lockfile
@@ -107,4 +111,10 @@ jobs:
           commit-message: "🔖 chore(release): version packages"
           pr-title: "🔖 chore(release): version packages"
           version-script: bun .github/changeset-version.ts
-          publish-script: bunx changeset publish
+          # Not `changeset publish`: it would run `npm publish`, which the
+          # trusted publisher refuses. The script stages every unpublished
+          # package, writes the stage ids to the step summary, then runs
+          # `changeset git-tag` so the action still pushes tags and opens the
+          # GitHub Releases. Nothing reaches a dist-tag until someone runs
+          # `npm stage approve <id>`.
+          publish-script: bun .github/changeset-stage.ts

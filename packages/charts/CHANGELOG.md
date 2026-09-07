@@ -1,5 +1,17 @@
 # delacour-react-native-charts
 
+## 0.1.0-alpha.2
+
+### Patch Changes
+
+- [#29](https://github.com/delacournz/delacour-ui/pull/29) [`840a3af`](https://github.com/delacournz/delacour-ui/commit/840a3af7e5dc4f0c0d98ee88a8e3fa9742406e5f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Let `useSystemFont(undefined, size)` fall through to the platform font
+
+  `matchFont` spreads the style it is given over its own defaults, so passing
+  `fontFamily: undefined` erased the default instead of deferring to it and
+  threw "Value is undefined, expected a String" from inside Skia. The key is now
+  omitted when no family is given, which is what the documentation had always
+  shown.
+
 ## 0.1.0-alpha.1
 
 ### Minor Changes

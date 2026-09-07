@@ -79,6 +79,114 @@ describe("component pages", () => {
 		);
 		expect(wrong).toEqual([]);
 	});
+
+	// The Usage block is the one thing a reader pastes. A fragment that names
+	// `save` or `setTab` without declaring them reads fine and does not compile,
+	// and nothing on this site compiles MDX — so the shape is asserted as text.
+	describe("Usage is one complete file", () => {
+		test("exactly one tsx fence", () => {
+			const wrong = PAGES.filter((page) => usageFences(page.body).length !== 1).map(
+				(p) => `${p.slug} → ${usageFences(p.body).length}`
+			);
+			expect(wrong).toEqual([]);
+		});
+
+		test("the fence is titled as a file", () => {
+			const wrong = PAGES.filter((page) => !usageFences(page.body).every((f) => f.title !== null)).map((p) => p.slug);
+			expect(wrong).toEqual([]);
+		});
+
+		test("the fence imports and exports a default component", () => {
+			const wrong = PAGES.filter(
+				(page) =>
+					!usageFences(page.body).every((f) => f.code.includes("import ") && f.code.includes("export default function"))
+			).map((p) => p.slug);
+			expect(wrong).toEqual([]);
+		});
+
+		test("the fence imports from the CLI alias, not the package", () => {
+			const wrong = PAGES.filter(
+				(page) =>
+					!usageFences(page.body).every(
+						(f) => f.code.includes('from "@/components/ui/') && !f.code.includes("delacour-react-native-ui/")
+					)
+			).map((p) => p.slug);
+			expect(wrong).toEqual([]);
+		});
+
+		test("the fence has no placeholders", () => {
+			const wrong = PAGES.filter((page) => usageFences(page.body).some((f) => f.code.includes("…"))).map((p) => p.slug);
+			expect(wrong).toEqual([]);
+		});
+	});
+
+	// `{…}` is a JSX expression holding an ellipsis, which does not parse. A bare
+	// `…` as a child in a later fragment is fine; this one never is.
+	test("no page holds a `{…}` placeholder", () => {
+		const wrong = PAGES.filter((page) => page.body.includes("{…}")).map((p) => p.slug);
+		expect(wrong).toEqual([]);
+	});
+});
+
+/** The ```tsx fences between `## Usage` and the next `##`. */
+function usageFences(body: string): { title: string | null; code: string }[] {
+	const start = body.indexOf("\n## Usage");
+	if (start === -1) return [];
+	const rest = body.slice(start + "\n## Usage".length);
+	const end = rest.search(/^## /m);
+	const block = end === -1 ? rest : rest.slice(0, end);
+	return [...block.matchAll(/^```tsx([^\n]*)\n([\s\S]*?)^```/gm)].map(([, meta, code]) => ({
+		title: (meta as string).match(/title="([^"]+)"/)?.[1] ?? null,
+		code: code as string,
+	}));
+}
+
+/**
+ * Getting Started opens on the Quick start — the page a reader lands on from
+ * `/docs`, the navbar and the hero — and it is the one page whose fence must be
+ * pasteable as a whole app.
+ */
+
+const GETTING_STARTED_DIR = join(CONTENT_DIR, "native", "getting-started");
+const QUICK_START = join(GETTING_STARTED_DIR, "index.mdx");
+
+function metaPages(dir: string): string[] {
+	const path = join(dir, "meta.json");
+	if (!existsSync(path)) return [];
+	const meta = JSON.parse(readFileSync(path, "utf-8")) as { pages?: unknown };
+	if (!Array.isArray(meta.pages)) return [];
+	return meta.pages.filter((entry): entry is string => typeof entry === "string" && !entry.startsWith("---"));
+}
+
+describe("quick start", () => {
+	const body = existsSync(QUICK_START) ? readFileSync(QUICK_START, "utf-8") : "";
+
+	test("is the Getting Started index", () => {
+		expect(body).toMatch(/^title: Quick start$/m);
+		expect(metaPages(GETTING_STARTED_DIR)[0]).toBe("index");
+	});
+
+	test("is a numbered flow of copyable commands", () => {
+		expect(body).toContain("<Steps>");
+		expect(body.match(/<InstallTabs/g)?.length ?? 0).toBeGreaterThanOrEqual(4);
+	});
+
+	test("carries one complete App.tsx whose first statement imports the CSS", () => {
+		const fences = [...body.matchAll(/^```tsx title="App\.tsx"\n([\s\S]*?)^```/gm)].map(([, code]) => code as string);
+		expect(fences.length).toBe(1);
+		const code = fences[0] as string;
+		expect(code.split("\n")[0]).toMatch(/^import "\.\/styles\/global\.css";$/);
+		expect(code).toContain("export default function");
+		expect(code).toContain("<DelacourProvider>");
+		expect(code).not.toContain("…");
+	});
+
+	test("every getting-started page is listed, and every listed page exists", () => {
+		const onDisk = pagesIn(GETTING_STARTED_DIR, { skipIndex: false }).map((page) => page.slug);
+		const listed = metaPages(GETTING_STARTED_DIR);
+		expect(listed.filter((slug) => !onDisk.includes(slug))).toEqual([]);
+		expect(onDisk.filter((slug) => !listed.includes(slug))).toEqual([]);
+	});
 });
 
 /**

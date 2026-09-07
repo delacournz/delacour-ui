@@ -93,3 +93,60 @@ describe("install manifest", () => {
 		expect(unknown).toEqual([]);
 	});
 });
+
+/**
+ * The library's peer list on the Installation page is derived, not typed.
+ *
+ * Three copies of that list used to exist — the README, `installation.mdx` and
+ * `package.json` — and they disagreed: `expo-linear-gradient`, which `Screen`
+ * needs, was in none of the two a reader sees. The manifest now exports `peers`,
+ * the union of every component's closure, and this pins it to the package.
+ */
+
+const NATIVE_UI_PACKAGE = join(ROOT, "packages", "native-ui", "package.json");
+const INSTALLATION_PAGE = join(CONTENT, "docs", "native", "getting-started", "installation.mdx");
+
+/** The names `react`/`react-native` are ambient and never installed; charts is documented on its own site. */
+const NEVER_LISTED = new Set(["react", "react-native", "delacour-react-native-charts"]);
+
+function peerDependencies(): { required: string[]; optional: string[] } {
+	const json = JSON.parse(readFileSync(NATIVE_UI_PACKAGE, "utf-8")) as {
+		peerDependencies?: Record<string, string>;
+		peerDependenciesMeta?: Record<string, { optional?: boolean }>;
+	};
+	const all = Object.keys(json.peerDependencies ?? {}).filter((name) => !NEVER_LISTED.has(name));
+	const optional = all.filter((name) => json.peerDependenciesMeta?.[name]?.optional === true);
+	return { required: all.filter((name) => !optional.includes(name)), optional };
+}
+
+/** The `peers` export, read as text. */
+function peers(): { expo: string[]; npm: string[] } {
+	const block = manifest().match(/export const peers = \{([\s\S]*?)\} as const/)?.[1] ?? "";
+	const pick = (key: "expo" | "npm"): string[] =>
+		[...(block.match(new RegExp(`${key}: \\[([^\\]]*)\\]`))?.[1] ?? "").matchAll(/"([^"]+)"/g)].map(
+			([, name]) => name as string
+		);
+	return { expo: pick("expo"), npm: pick("npm") };
+}
+
+describe("library peers", () => {
+	const { required, optional } = peerDependencies();
+	const derived = [...peers().expo, ...peers().npm];
+
+	test("the manifest exports them", () => {
+		expect(derived.length).toBeGreaterThan(5);
+	});
+
+	test("every required peer is derived from some component", () => {
+		expect(required.filter((name) => !derived.includes(name))).toEqual([]);
+	});
+
+	test("nothing derived is outside the package's peer list", () => {
+		expect(derived.filter((name) => !required.includes(name) && !optional.includes(name))).toEqual([]);
+	});
+
+	test("the Installation page names every optional peer", () => {
+		const page = existsSync(INSTALLATION_PAGE) ? readFileSync(INSTALLATION_PAGE, "utf-8") : "";
+		expect(optional.filter((name) => !page.includes(`\`${name}\``))).toEqual([]);
+	});
+});

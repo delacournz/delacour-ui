@@ -1,10 +1,13 @@
 name: CI
 
-# These four statuses are not decoration: the Railway service is configured to wait on check
-# suites, so it holds every deploy of ui.delacour.co.nz / ui.staging.delacour.co.nz until this
-# workflow is green.
-# A workflow that never runs on a branch means deploys from that branch wait forever; a workflow
-# that passes vacuously means a broken docs site ships. Keep `main` and `develop` listed below.
+# Not on push to `main`. Every commit on `main` arrives through a squash-merged pull request whose
+# four required checks were green on the same tree (`.github/rulesets/main.json` also requires the
+# branch to be up to date), so a second run on the merge commit could only repeat that answer.
+# Railway does not wait on check suites for ui.delacour.co.nz either — its builds start seconds
+# after the push, before this workflow could finish — so nothing downstream reads a `main` run.
+#
+# `develop` stays listed because nothing protects it: a direct push there is the first time the
+# tree is checked, and ui.staging.delacour.co.nz deploys from it.
 #
 # `release/playground/*` is listed for an unrelated reason: a push to a `release/playground/x.y.z`
 # branch triggers the EAS `release:prod` workflow, which ships the app to the stores. GitHub and EAS
@@ -19,7 +22,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, release/playground/*]
+    branches: [develop, release/playground/*]
   pull_request:
   workflow_dispatch:
 
@@ -31,8 +34,8 @@ permissions:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Pull requests only. Cancelling a push to main or develop reports `cancelled`, which is not
-  # success, and Railway would hold that deploy indefinitely.
+  # Pull requests only. A cancelled push run reports `cancelled`, which is not success, and a
+  # red run on `develop` or a release branch should mean the tree is broken, not superseded.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:

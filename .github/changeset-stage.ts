@@ -15,10 +15,13 @@
  *      written to `$CHANGESETS_OUTPUT` so the action pushes them and opens the
  *      GitHub Releases.
  *
- * The dist-tag comes from `.changeset/pre.json` while pre mode is on, not from
- * the plan. Changesets tags a package `latest` when every version it has ever
- * published is a prerelease — true of all three today — and an alpha on
- * `latest` is exactly what `publishConfig.tag` exists to prevent.
+ * Every version is staged on `latest`, alpha or not: a bare `bun add` of any
+ * package has to resolve to the newest build, and the plan's own tag cannot be
+ * trusted for that — Changesets writes the pre tag while pre mode is on. The
+ * pre tag (`alpha`) is still wanted as a second dist-tag, but the trusted
+ * publisher allows `npm stage publish` only and a staged version is not live
+ * until approved, so the summary hands the approver the `npm dist-tag add`
+ * that follows the approval.
  *
  * Every package is attempted even after one fails, so a run leaves the
  * registry in the most complete state it can and reports every problem at
@@ -59,6 +62,7 @@ export type StageRow = {
 	name: string;
 	version: string;
 	tag: string;
+	followUp: string | null;
 	outcome: StageResult;
 };
 
@@ -100,12 +104,21 @@ export function parsePreState(json: unknown): PreState | null {
 }
 
 /**
- * Pre mode wins over the plan. See the file comment for why the plan's own tag
- * cannot be trusted while the packages have only ever shipped prereleases.
+ * The tag the staged version is published under. Always `latest` — see the
+ * file comment — so `release` is only consulted when the plan names something
+ * that is neither `latest` nor the pre tag, which no current setup produces.
  */
 export function resolveDistTag(release: PublishRelease, preState: PreState | null): string {
-	if (preState?.mode === "pre") return preState.tag;
+	if (release.tag === "latest" || release.tag === preState?.tag) return "latest";
 	return release.tag;
+}
+
+/**
+ * The dist-tag the approver adds by hand once the version is live, or `null`
+ * outside pre mode when `latest` is the only tag wanted.
+ */
+export function followUpTag(preState: PreState | null): string | null {
+	return preState?.mode === "pre" ? preState.tag : null;
 }
 
 /**
@@ -172,9 +185,13 @@ function describe(outcome: StageResult): string {
 }
 
 /**
- * The GitHub step summary: what is waiting for approval and how to approve it.
+ * The GitHub step summary: what is waiting for approval, how to approve it, and
+ * the `dist-tag add` each approval is followed by while pre mode is on.
  */
 export function formatSummary(rows: StageRow[]): string {
+	const followUps = rows
+		.filter((row) => row.followUp !== null && row.outcome.result !== "failed")
+		.map((row) => `npm dist-tag add ${row.name}@${row.version} ${row.followUp}`);
 	const lines = [
 		"## Staged for npm",
 		"",
@@ -191,6 +208,16 @@ export function formatSummary(rows: StageRow[]): string {
 		...rows.map((row) => `| ${row.name} | ${row.version} | ${row.tag} | ${describe(row.outcome)} |`),
 		"",
 	];
+	if (followUps.length > 0) {
+		lines.push(
+			"Each approval goes live on `latest`. Then add the pre tag, which staging cannot set:",
+			"",
+			"```bash",
+			...followUps,
+			"```",
+			""
+		);
+	}
 	return lines.join("\n");
 }
 
@@ -263,13 +290,14 @@ async function main(): Promise<void> {
 	}
 
 	const rows: StageRow[] = [];
+	const followUp = followUpTag(preState);
 	for (const release of releases) {
 		const dir = dirs.get(release.name);
 		const tag = resolveDistTag(release, preState);
 		const outcome: StageResult = dir
 			? await stagePackage(dir, release, tag)
 			: { result: "failed", code: undefined, message: "not found in any workspace" };
-		rows.push({ name: release.name, version: release.version, tag, outcome });
+		rows.push({ name: release.name, version: release.version, tag, followUp, outcome });
 		console.log(`${release.name}@${release.version} (${tag}): ${describe(outcome)}`);
 	}
 

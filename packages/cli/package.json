@@ -18,8 +18,7 @@
 		"tailwind"
 	],
 	"publishConfig": {
-		"access": "public",
-		"tag": "alpha"
+		"access": "public"
 	},
 	"bin": {
 		"delacour": "./dist/index.js"

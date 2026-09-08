@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
 	findPackageDirs,
+	followUpTag,
 	formatSummary,
 	lastJsonObject,
 	type PublishRelease,
@@ -40,16 +41,31 @@ describe("parsePublishPlan", () => {
 });
 
 describe("resolveDistTag", () => {
-	test("pre mode overrides the plan's `latest`", () => {
-		expect(resolveDistTag(charts, { mode: "pre", tag: "alpha" })).toBe("alpha");
+	test("pre mode still stages on `latest`", () => {
+		expect(resolveDistTag(charts, { mode: "pre", tag: "alpha" })).toBe("latest");
 	});
 
-	test("an exited pre mode falls back to the plan", () => {
+	test("a plan that names the pre tag is rewritten to `latest`", () => {
+		expect(resolveDistTag({ ...charts, tag: "alpha" }, { mode: "pre", tag: "alpha" })).toBe("latest");
+	});
+
+	test("an exited pre mode is `latest`", () => {
 		expect(resolveDistTag(charts, { mode: "exit", tag: "alpha" })).toBe("latest");
 	});
 
-	test("no pre.json falls back to the plan", () => {
+	test("an unrelated plan tag is kept", () => {
 		expect(resolveDistTag({ ...charts, tag: "next" }, null)).toBe("next");
+	});
+});
+
+describe("followUpTag", () => {
+	test("pre mode wants the pre tag added after approval", () => {
+		expect(followUpTag({ mode: "pre", tag: "alpha" })).toBe("alpha");
+	});
+
+	test("nothing outside pre mode", () => {
+		expect(followUpTag({ mode: "exit", tag: "alpha" })).toBeNull();
+		expect(followUpTag(null)).toBeNull();
 	});
 });
 
@@ -126,18 +142,54 @@ describe("formatSummary", () => {
 			{
 				name: charts.name,
 				version: charts.version,
-				tag: "alpha",
+				tag: "latest",
+				followUp: "alpha",
 				outcome: { result: "staged", stageId: "abc" },
 			},
 			{
 				name: "delacour",
 				version: "0.1.0-alpha.1",
-				tag: "alpha",
+				tag: "latest",
+				followUp: "alpha",
 				outcome: { result: "failed", code: "E403", message: "denied\nmore" },
 			},
 		]);
 		expect(summary).toContain("npm stage approve abc");
-		expect(summary).toContain("| delacour | 0.1.0-alpha.1 | alpha | **failed** E403 denied |");
+		expect(summary).toContain("| delacour | 0.1.0-alpha.1 | latest | **failed** E403 denied |");
+	});
+
+	test("lists a `dist-tag add` for every staged package while in pre mode, and none for a failure", () => {
+		const summary = formatSummary([
+			{
+				name: charts.name,
+				version: charts.version,
+				tag: "latest",
+				followUp: "alpha",
+				outcome: { result: "staged", stageId: "abc" },
+			},
+			{
+				name: "delacour",
+				version: "0.1.0-alpha.1",
+				tag: "latest",
+				followUp: "alpha",
+				outcome: { result: "failed", code: undefined, message: "x" },
+			},
+		]);
+		expect(summary).toContain("npm dist-tag add delacour-react-native-charts@0.1.0-alpha.2 alpha");
+		expect(summary).not.toContain("npm dist-tag add delacour@");
+	});
+
+	test("no follow-up block outside pre mode", () => {
+		const summary = formatSummary([
+			{
+				name: charts.name,
+				version: "0.1.0",
+				tag: "latest",
+				followUp: null,
+				outcome: { result: "staged", stageId: "abc" },
+			},
+		]);
+		expect(summary).not.toContain("dist-tag add");
 	});
 });
 

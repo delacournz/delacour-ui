@@ -202,25 +202,23 @@ record `changeset pre exit` folds into the stable changelog.
 is on every `changeset version` produces the next `-alpha.N` rather than a stable version, and
 files the changesets it consumed under `.changeset/pre/` — they stay until the exit.
 
-Publishes go to npm's **`alpha` dist-tag**, from two directions: Changesets passes the pre tag, and
-`publishConfig.tag` in each package pins it so a hand-run `npm publish` cannot claim `latest`
-either. `latest` therefore points at nothing on purpose — an untested build should not be what
-`bun add delacour-react-native-ui` resolves to. Every documented command names the tag
-(`bunx delacour@alpha`, `bun add delacour-react-native-ui@alpha`).
+Every publish lands on npm's **`latest` dist-tag**, alpha or not, and pre mode adds **`alpha`** as a
+second tag on the same version. `latest` moves because a bare `bun add delacour-react-native-ui`
+has to resolve to the newest build rather than to whatever was published by hand first; `alpha`
+stays so the documented commands (`bunx delacour@alpha`, `bun add delacour-react-native-ui@alpha`)
+keep naming the prerelease line. Staging can set only one tag and the approval is a maintainer's
+2FA step, so the second tag is a maintainer's command too — the job summary prints it, see below.
 
-Going stable is four steps, and skipping any one of them ships an alpha as `latest`:
+Going stable is three steps:
 
 ```bash
 bunx changeset pre exit          # flips pre.json to mode "exit"; the next version deletes it
 bun run changeset                # the changeset that names the stable version
 ```
 
-then remove `"tag": "alpha"` from `publishConfig` in **all three** of
-`packages/cli/package.json`, `packages/native-ui/package.json` and
-`packages/charts/package.json`; delete the `DIST_TAG` map in
-`packages/cli/src/project/package-manager.ts`, which exists only because `latest` points at
-nothing during pre mode; and swap `@alpha` back to `@latest` across the READMEs and `apps/web`
-— `grep -rn "@alpha"` finds them.
+then delete the `DIST_TAG` map in `packages/cli/src/project/package-manager.ts`, which pins the
+`alpha` tag and the prerelease-admitting peer range, and swap `@alpha` back to `@latest` across the
+READMEs and `apps/web` — `grep -rn "@alpha"` finds them.
 
 **Publishing is staged, and npm auth is OIDC — there is no npm token.** All three packages are
 configured on npmjs.com with this repository and `release.yml` as a trusted publisher whose
@@ -235,8 +233,9 @@ approves each staged version with 2FA, from the **Staged Packages** tab on npmjs
 ```bash
 npm stage list                   # everything waiting, with ids
 npm stage view <stage-id>        # contents, tag, provenance
-npm stage approve <stage-id>     # 2FA prompt, then it is live
+npm stage approve <stage-id>     # 2FA prompt, then it is live on `latest`
 npm stage reject <stage-id>      # discard; the version can be staged again
+npm dist-tag add <name>@<version> alpha   # while in pre mode; the job summary lists each one
 ```
 
 Approve `delacour-react-native-charts` before `delacour-react-native-ui`, which peers on it.
@@ -245,10 +244,9 @@ maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot d
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
 build are Bun's.
 
-The stage script pins the dist-tag from `.changeset/pre.json` rather than trusting the plan.
-Changesets tags a package `latest` when every version it has ever published is a prerelease —
-true of all three today — and an alpha on `latest` is the one outcome pre mode exists to prevent.
-Once `pre.json` is gone the script uses the plan's tag, so going stable needs no change here.
+The stage script stages on `latest` regardless of the plan's tag, and reads `.changeset/pre.json`
+only to know which second tag to put in the summary. Once `pre.json` is gone there is no second
+tag, so going stable needs no change here.
 
 **`RELEASE_TOKEN` is a GitHub PAT, not an npm one.** Events raised by `GITHUB_TOKEN` do not start
 workflow runs, so a version PR opened with it would never run the four checks `main-protected`

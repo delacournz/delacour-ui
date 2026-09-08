@@ -18,8 +18,7 @@
 		"expo"
 	],
 	"publishConfig": {
-		"access": "public",
-		"tag": "alpha"
+		"access": "public"
 	},
 	"files": [
 		"src",

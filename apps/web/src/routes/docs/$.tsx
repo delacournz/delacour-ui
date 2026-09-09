@@ -2,20 +2,13 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useFumadocsLoader } from "fumadocs-core/source/client";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
-import {
-	DocsBody,
-	DocsDescription,
-	DocsPage,
-	DocsTitle,
-	MarkdownCopyButton,
-	ViewOptionsPopover,
-} from "fumadocs-ui/layouts/notebook/page";
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/notebook/page";
 import { Suspense, use } from "react";
+import { DocsToolbar } from "@/components/docs-toolbar";
 import { useMDXComponents } from "@/components/mdx";
-import { ScanToPreview } from "@/components/playground/scan-to-preview";
 import { playgroundSlugForDocsPath } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
-import { encodeMarkdownUrl, gitConfig } from "@/lib/shared";
+import { encodeMarkdownUrl } from "@/lib/shared";
 import { docs, source } from "@/lib/source";
 
 export const Route = createFileRoute("/docs/$")({
@@ -55,14 +48,7 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 		<DocsPage toc={toc}>
 			<DocsTitle>{page.title}</DocsTitle>
 			<DocsDescription>{page.description}</DocsDescription>
-			<div className="flex flex-row gap-2 items-center border-b -mt-4 pb-6">
-				<MarkdownCopyButton markdownUrl={markdownUrl} />
-				<ViewOptionsPopover
-					markdownUrl={markdownUrl}
-					githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/apps/web/content/docs/${path}`}
-				/>
-				{playgroundSlug && <ScanToPreview className="ml-auto" slug={playgroundSlug} />}
-			</div>
+			<DocsToolbar markdownUrl={markdownUrl} path={path} slug={playgroundSlug} />
 			<DocsBody>
 				<MDX components={useMDXComponents()} />
 			</DocsBody>

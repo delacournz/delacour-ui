@@ -104,6 +104,47 @@
 	--color-fd-muted-foreground: color-mix(in oklab, var(--color-fd-foreground) 78%, transparent);
 }
 
+/*
+ * The docs chrome, through Fumadocs' own hooks. Read mode: the structure is
+ * Fumadocs' untouched; the house shows in the accent on the active tab and
+ * sidebar row, the heading face on prose headings, and the code face on every
+ * block. Each rule is scoped to a Fumadocs id or class rather than an element.
+ */
+#nd-notebook-layout [data-header-tabs] a[data-active="true"],
+#nd-notebook-layout [data-header-tabs] a[aria-selected="true"] {
+	color: var(--color-fd-primary);
+	border-color: var(--color-fd-primary);
+}
+
+#nd-sidebar [data-active="true"] {
+	background: color-mix(in oklab, var(--color-fd-primary) 12%, transparent);
+	color: var(--color-fd-primary);
+}
+
+#nd-notebook-layout .prose :is(h1, h2, h3, h4) {
+	font-family: var(--font-heading);
+	letter-spacing: var(--tracking-display);
+}
+
+#nd-notebook-layout .prose a:not(:has(code)) {
+	text-decoration-color: color-mix(in oklab, var(--color-fd-primary) 60%, transparent);
+	text-underline-offset: 4px;
+}
+
+#nd-notebook-layout .prose a:hover {
+	text-decoration-color: var(--color-fd-primary);
+}
+
+#nd-notebook-layout :is(pre, code, kbd) {
+	font-family: var(--font-mono);
+}
+
+#nd-notebook-layout figure[data-rehype-pretty-code-figure],
+#nd-notebook-layout .fd-codeblock,
+#nd-notebook-layout .shiki {
+	border-radius: var(--radius-card);
+}
+
 @layer base {
 	html {
 		scrollbar-gutter: stable;

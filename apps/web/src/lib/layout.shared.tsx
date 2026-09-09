@@ -2,11 +2,16 @@ import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { appName, gitConfig } from "./shared";
 
+/**
+ * The lockup is the mark beside "Delacour UI" set in the house heading face.
+ * There is no wordmark: the mark's geometry is binding and the typeset name is
+ * the lockup, on every layout this returns options for.
+ */
 export function baseOptions(): BaseLayoutProps {
 	return {
 		nav: {
 			title: (
-				<span className="inline-flex items-center gap-2 font-semibold">
+				<span className="inline-flex items-center gap-2 font-heading font-semibold tracking-display">
 					<DelacourIcon size={20} />
 					{appName}
 				</span>

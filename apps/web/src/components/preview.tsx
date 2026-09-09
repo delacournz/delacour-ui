@@ -74,9 +74,11 @@ const DEVICE_MEDIA = `${MEDIA} max-h-[520px]`;
  * plain card — a component floating inside a phone silhouette reads as a
  * screenshot of somebody's app rather than as the component itself.
  *
- * The captured background is the library's `background` token, which is the
- * same value `app.css` transcribes onto `--color-fd-background`, so the media
- * meets the page with no colour seam.
+ * The captured background is the **library default's** `background` — the
+ * capture run forces `DEFAULT_CONFIG` — which is not the house page. The frame
+ * is painted `bg-capture`, generated from that default by `gen-theme`, so the
+ * media meets its frame with no colour seam and the frame reads as a card on
+ * the house page.
  */
 function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	if (entry.frame === "device") {
@@ -90,7 +92,7 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	}
 
 	return (
-		<div className="group/preview flex justify-center overflow-hidden rounded-xl border border-fd-border bg-fd-background">
+		<div className="group/preview flex justify-center overflow-hidden rounded-card border border-fd-border bg-capture">
 			<ThemedPreview entry={entry} className={STAGE_MEDIA} />
 		</div>
 	);

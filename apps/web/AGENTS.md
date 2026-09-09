@@ -151,6 +151,14 @@ The page slots must come from the **matching** package: `fumadocs-ui/layouts/not
 `.../layouts/docs/page`. Mixing them throws at render time with
 *"Please use `<DocsPage />` under `<DocsLayout />`"*.
 
+The docs chrome is Fumadocs' structure untouched, restyled three ways and no further: the
+`--color-fd-*` palette from `house.css`; the rules at the end of `app.css` scoped to Fumadocs' own
+ids (`#nd-notebook-layout`, `#nd-sidebar`, `#nd-home-layout #nd-nav` — the floating pill on the
+home layout); and two components of ours, `src/components/docs-toolbar.tsx` under the title and the
+`DeviceBezel` / `bg-capture` frames in `preview.tsx`. `bg-capture` is the library **default's**
+background, generated into `house.css`, because every capture was photographed on it and a frame
+in the house page colour would show a seam.
+
 ## Adding a page
 
 1. Drop an `.mdx` file in the right folder under `content/docs/native/`.

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { DEFAULT_CONFIG } from "@delacour/design-system/config";
 import { HOUSE_CONFIG } from "@delacour/design-system/house";
 import { resolveTokens } from "@delacour/design-system/resolve";
 import { fontDeclarations, houseMeta, MAPPING, oklchToHex, renderHouseCss, renderHouseMeta } from "./gen-theme";
@@ -73,6 +74,18 @@ describe("renderHouseCss", () => {
 
 	test("a card is not the page in light", () => {
 		expect(String(light.card)).not.toBe(String(light.background));
+	});
+
+	/**
+	 * The previews were photographed on the library default's background, not
+	 * the house's. The frame a capture sits in has to be that colour or the
+	 * image meets its frame with a seam — white on a `0.985` page in light.
+	 */
+	test("carries the capture background from the library default, in both modes", () => {
+		const { light: defaultLight, dark: defaultDark } = resolveTokens(DEFAULT_CONFIG);
+
+		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(defaultLight.background)};`);
+		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(defaultDark.background)};`);
 	});
 
 	test("the radius is the house corner in rem", () => {

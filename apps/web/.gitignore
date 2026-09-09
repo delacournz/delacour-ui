@@ -5,3 +5,6 @@
 .source
 .vercel
 src/routeTree.gen.ts
+
+# Finish-review captures: evidence for a review round, regenerated each time, not shipped.
+.impeccable/review/

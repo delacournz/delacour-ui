@@ -12,7 +12,7 @@ While the axes lived under `apps/playground/src/`, only one of them could.
 | Module | Import | What it is |
 | --- | --- | --- |
 | `base-colors.ts` | `@delacour/design-system/base-colors` | `BASE_COLORS` — 7 neutral ramps, light and dark, transcribed from shadcn |
-| `themes.ts` | `…/themes` | `ACCENT_THEMES` — 17 accents, ~9 tokens each |
+| `themes.ts` | `…/themes` | `ACCENT_THEMES` — 17 shadcn accents plus the house `delacour`, ~9 tokens each |
 | `styles.ts` | `…/styles` | `STYLES` — 8 geometry bundles, Vega … Rhea |
 | `radii.ts` | `…/radii` | `RADII` — five corners, `default` deferring to the style |
 | `fonts.ts` | `…/fonts` | `FONTS` — 26 families, each carrying its TTF-embedded name |
@@ -21,6 +21,7 @@ While the axes lived under `apps/playground/src/`, only one of them could.
 | `preset.ts` | `…/preset` | `encodePreset` / `decodePreset` — a config as a short shareable code |
 | `emit.ts` | `…/emit` | `resolveTokens`' output as CSS someone can paste |
 | `convert.ts` | `…/convert` | a web `globals.css` into this library's `theme.css` — what `delacour theme` runs |
+| `house.ts` | `…/house` | `HOUSE_CONFIG` and `HOUSE_PRESET_CODE` — the studio's own preset, plus `PRESET_SHORTCUTS` both customisers offer |
 
 No `"."` barrel, deliberately. `apps/playground/app.config.ts` reads only
 `FONTS`, and Expo loads that file through Node's CJS resolver — a barrel would
@@ -178,6 +179,19 @@ shape, which would otherwise be a second implementation of a shipped command.
 The CLI still owns the I/O in `commands/theme.ts`, and bundles this file into its
 `dist` — `tsdown.config.ts` sets `deps: { alwaysBundle: [/.*/] }`, so a workspace
 dependency inlines exactly as `commander` and `zod` already do.
+
+## The house preset is not the default
+
+`house.ts` names the studio's own look — zinc, the `delacour` accent, Inter under Outfit, a
+`small` corner — and pins its code. `apps/web` paints itself from it and `apps/playground` opens in
+it; that is the product's pitch proven on our own surfaces. It lives here rather than in either app
+because both read it, and because the CLI must not: `delacour init` ships `DEFAULT_CONFIG`, the
+neutral identity theme that `theme.css` declares, and `house.test.ts` fails if the two ever meet.
+
+The `delacour` accent exists for the same reason. shadcn's `amber` puts amber-800 at the dark
+`primary`, a brown that reads muddy on a zinc page; the brand hex `#FBBF24` only appears there as
+`chart-2`. So the house accent is appended as the eighteenth, ordinal 24, with the brand at
+`primary` in the dark and amber-600 in the light. Appended, never inserted — see the preset section.
 
 ## Commands
 

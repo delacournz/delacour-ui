@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_CONFIG, type DesignSystemConfig, SYSTEM_FONT } from "@delacour/design-system/config";
 import { decodePreset, encodePreset, PRESET_CODE_LENGTH } from "@delacour/design-system/preset";
+import { ACCENT_THEMES } from "@delacour/design-system/themes";
 import {
 	AXIS_KEYS,
 	type AxisKey,
@@ -314,11 +315,11 @@ describe("axisOptions", () => {
 		expect(zinc?.config).toEqual(config({ baseColor: "zinc", theme: "violet", chartColor: "amber" }));
 	});
 
-	test("the palette axes offer the base colour and the seventeen accents", () => {
+	test("the palette axes offer the base colour and every accent", () => {
 		for (const axis of ["theme", "chartColor"] as const) {
 			const options = axisOptions(DEFAULT_CONFIG, axis);
 
-			expect(options).toHaveLength(18);
+			expect(options).toHaveLength(ACCENT_THEMES.length + 1);
 			expect(options[0]?.value).toBe("neutral");
 			expect(options.map((option) => option.value)).not.toContain("stone");
 		}

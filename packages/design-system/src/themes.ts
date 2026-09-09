@@ -1,6 +1,6 @@
 import type { TokenValues } from "./base-colors";
 
-/** The seventeen accents shadcn ships, by the name shadcn gives each one. */
+/** The seventeen accents shadcn ships, by the name shadcn gives each one, plus the house amber. */
 export type ThemeName =
 	| "amber"
 	| "blue"
@@ -18,7 +18,8 @@ export type ThemeName =
 	| "sky"
 	| "teal"
 	| "violet"
-	| "yellow";
+	| "yellow"
+	| "delacour";
 
 /** The nine tokens an accent repaints, for both variants. Everything else is the base colour's. */
 export type AccentTheme = {
@@ -493,6 +494,42 @@ export const ACCENT_THEMES: readonly AccentTheme[] = [
 			"chart-5": "oklch(0.476 0.114 61.907)",
 			"sidebar-primary": "oklch(0.795 0.184 86.047)",
 			"sidebar-primary-foreground": "oklch(0.987 0.026 102.212)",
+		},
+	},
+	/**
+	 * The house amber — `#FBBF24`, the stroke of the mark.
+	 *
+	 * shadcn's `amber` is the wrong shape for it: that accent's dark `primary`
+	 * is amber-800, a brown that reads muddy on a zinc page, and the brand hex
+	 * only appears there as `chart-2`. This one puts the brand at `primary` in
+	 * the dark, steps down to amber-600 for contrast on white in the light, and
+	 * keeps shadcn's amber chart ramp in both. Appended last so every earlier
+	 * accent keeps its ordinal.
+	 */
+	{
+		name: "delacour",
+		title: "Delacour",
+		light: {
+			primary: "oklch(0.666 0.179 58.318)",
+			"primary-foreground": "oklch(0.987 0.022 95.277)",
+			"chart-1": "oklch(0.879 0.169 91.605)",
+			"chart-2": "oklch(0.769 0.188 70.08)",
+			"chart-3": "oklch(0.666 0.179 58.318)",
+			"chart-4": "oklch(0.555 0.163 48.998)",
+			"chart-5": "oklch(0.473 0.137 46.201)",
+			"sidebar-primary": "oklch(0.666 0.179 58.318)",
+			"sidebar-primary-foreground": "oklch(0.987 0.022 95.277)",
+		},
+		dark: {
+			primary: "oklch(0.769 0.188 70.08)",
+			"primary-foreground": "oklch(0.21 0.006 285.885)",
+			"chart-1": "oklch(0.879 0.169 91.605)",
+			"chart-2": "oklch(0.769 0.188 70.08)",
+			"chart-3": "oklch(0.666 0.179 58.318)",
+			"chart-4": "oklch(0.555 0.163 48.998)",
+			"chart-5": "oklch(0.473 0.137 46.201)",
+			"sidebar-primary": "oklch(0.769 0.188 70.08)",
+			"sidebar-primary-foreground": "oklch(0.21 0.006 285.885)",
 		},
 	},
 ];

@@ -15,7 +15,8 @@
 		"./resolve": "./src/resolve.ts",
 		"./preset": "./src/preset.ts",
 		"./emit": "./src/emit.ts",
-		"./convert": "./src/convert.ts"
+		"./convert": "./src/convert.ts",
+		"./house": "./src/house.ts"
 	},
 	"files": [
 		"src"

@@ -73,6 +73,18 @@
 }
 
 /*
+ * The rhythm tightens on a phone. Utilities read the variables live, so one
+ * override here moves every `py-section` and `gap-section-gap` together.
+ */
+@media (width < 40rem) {
+	:root {
+		--spacing-section: 4rem;
+		--spacing-section-sm: 3rem;
+		--spacing-section-gap: 2rem;
+	}
+}
+
+/*
  * Colours the axes cannot express, mixed from the ones they can: the faint dot
  * field under the page, the glow behind the accent, the translucent pill nav.
  * Never a hex — every one of these follows the theme because it is a mix of

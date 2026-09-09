@@ -17,6 +17,7 @@ import { Text } from "delacour-react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
+import { componentCount } from "../../components-index";
 
 export const meta: DemoMeta = {
 	title: "Most of the library, on one screen",
@@ -83,7 +84,7 @@ export function Demo(): ReactElement {
 			>
 				<View className="min-w-0 flex-1">
 					<Screen.Navbar.Title>Delacour UI</Screen.Navbar.Title>
-					<Screen.Navbar.Subtitle>Nineteen components</Screen.Navbar.Subtitle>
+					<Screen.Navbar.Subtitle>{`${componentCount()} components`}</Screen.Navbar.Subtitle>
 				</View>
 			</Screen.Navbar>
 

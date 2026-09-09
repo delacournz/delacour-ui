@@ -170,7 +170,7 @@ export function ThemePreview({ config }: { config: DesignSystemConfig }): ReactE
 	const fonts = resolveFonts(config);
 
 	return (
-		<div className="overflow-hidden rounded-lg border border-fd-border">
+		<div className="overflow-hidden rounded-card border border-fd-border">
 			<div className="dark:hidden">
 				<Surface fonts={fonts} mode={light} />
 			</div>

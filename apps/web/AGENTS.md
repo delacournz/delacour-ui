@@ -408,7 +408,8 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
 | File | What it is |
 | --- | --- |
 | `src/lib/theme-preset.ts` | `resolvePreset`, `axisOptions`, `themeSummary`, `presetNativeCss` / `presetCss` — the URL contract, testable with no renderer |
-| `src/lib/google-fonts.ts` | the two stylesheet requests the Font axis needs |
+| `src/lib/google-fonts.ts` | the site sheet every page loads, and the two the Font axis adds |
+| `src/components/presets-row.tsx` | the Presets row — `PRESETS` from `theme-preset.ts`: the design system's `PRESET_SHORTCUTS` (house first, library default second) plus two curated codes pinned as literals in the test |
 | `src/components/theme-builder.tsx` | the seven axes, as grids of links |
 | `src/components/theme-specimens.tsx` | what an axis looks like, shared by the tiles and the summary |
 | `src/components/theme-preview.tsx` | the mock interface the tokens are painted onto |

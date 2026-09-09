@@ -44,7 +44,7 @@ import {
  */
 
 const TILE =
-	"flex flex-col items-center gap-1.5 rounded-lg border px-2 py-2 text-center text-xs transition-colors hover:bg-fd-accent";
+	"flex flex-col items-center gap-1.5 rounded-tile border px-2 py-2 text-center text-xs transition-colors hover:bg-fd-accent";
 const TILE_SELECTED = "border-fd-primary ring-1 ring-fd-primary";
 const TILE_IDLE = "border-fd-border";
 
@@ -230,7 +230,7 @@ function FontAxis({ config, axis }: { config: DesignSystemConfig; axis: "font" |
 	return (
 		<Axis label={AXIS_LABELS[axis]}>
 			{sentinel ? <SentinelTile axis={axis} option={sentinel} /> : null}
-			<div className="rounded-lg border border-fd-border p-3">
+			<div className="rounded-tile border border-fd-border p-3">
 				{fontOptionGroups(config, axis).map((group) => (
 					<div className="mb-3 flex flex-col gap-2 last:mb-0" key={group.type}>
 						<h4 className="font-medium text-fd-muted-foreground text-xs">{group.label}</h4>
@@ -270,7 +270,7 @@ export function ThemeBuilder({ config }: { config: DesignSystemConfig }): ReactE
 export function ResetThemeLink(): ReactElement {
 	return (
 		<Link
-			className="rounded-md border border-fd-border px-3 py-1.5 font-medium text-sm transition-colors hover:bg-fd-accent"
+			className="rounded-full border border-fd-border px-4 py-1.5 font-medium text-sm transition-colors hover:bg-fd-accent"
 			search={{}}
 			to="/theme"
 		>

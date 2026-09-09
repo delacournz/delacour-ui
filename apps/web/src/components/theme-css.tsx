@@ -41,7 +41,7 @@ function Specimen({ row, config }: { row: ThemeSummaryRow; config: DesignSystemC
  */
 export function ThemeSummary({ config }: { config: DesignSystemConfig }): ReactElement {
 	return (
-		<dl className="grid grid-cols-1 gap-px overflow-hidden rounded-lg border bg-fd-border sm:grid-cols-2">
+		<dl className="grid grid-cols-1 gap-px overflow-hidden rounded-card border border-fd-border bg-fd-border sm:grid-cols-2">
 			{themeSummary(config).map((row) => (
 				<div className="flex items-center justify-between gap-3 bg-fd-card px-4 py-3" key={row.label}>
 					<dt className="text-fd-muted-foreground text-sm">{row.label}</dt>
@@ -128,7 +128,7 @@ export function CopyThemeButton({ css }: { css: string }): ReactElement {
 
 	return (
 		<button
-			className="w-full rounded-lg bg-fd-primary px-4 py-2.5 font-medium text-fd-primary-foreground text-sm transition-opacity hover:opacity-90"
+			className="inline-flex h-11 w-full items-center justify-center rounded-full bg-fd-primary px-5 font-medium text-fd-primary-foreground text-sm transition hover:shadow-[0_8px_24px_-8px_var(--glow)] hover:brightness-105"
 			onClick={onClick}
 			type="button"
 		>
@@ -146,7 +146,7 @@ export function CopyThemeButton({ css }: { css: string }): ReactElement {
  */
 export function PresetNotice({ code }: { code: string }): ReactElement {
 	return (
-		<div className="rounded-lg border border-fd-warning/40 bg-fd-warning/10 px-4 py-3 text-sm">
+		<div className="rounded-tile border border-fd-warning/40 bg-fd-warning/10 px-4 py-3 text-sm">
 			<p>
 				<span className="font-medium">That preset code could not be read.</span> Showing the default theme instead.
 			</p>

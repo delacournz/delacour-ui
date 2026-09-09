@@ -11,7 +11,7 @@ export function baseOptions(): BaseLayoutProps {
 	return {
 		nav: {
 			title: (
-				<span className="inline-flex items-center gap-2 font-heading font-semibold tracking-display">
+				<span className="inline-flex items-center gap-2 whitespace-nowrap font-heading font-semibold tracking-display">
 					<DelacourIcon size={20} />
 					{appName}
 				</span>

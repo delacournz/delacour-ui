@@ -53,16 +53,18 @@ running from another project does not silently serve this one.
 src/
 ├── app/                          expo-router routes
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
-│   ├── index.tsx                 the component index — a ListGroup of every gallery
+│   ├── index.tsx                 the home screen — the mark, the count, and every gallery grouped as the docs group them
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
 │   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
 │   └── (components)/             one route per component, grouped without a path segment
+├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── demo-pager/               the paged gallery — one demo per screen
+│   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
 │   ├── section.tsx               Section — a labelled block within one
 │   ├── theme/                    the trigger, the strips and the three remaining sheets
@@ -90,10 +92,13 @@ it fits on a page:
 - **A single file** — `(components)/button.tsx` → `/button`. Most components.
 - **A folder with an `index.tsx` and one file per facet** —
   `(components)/tabs/{index,variants,sizes,swipe,scrolling,composition}.tsx` →
-  `/tabs` plus `/tabs/variants` and the rest. The `index.tsx` is itself a
-  `ListGroup` of the facets. `screen/`, `tabs/`, `input/`, `field/` and
-  `bottom-sheet/` use this shape, because a component with five independent
-  behaviours on one scroll is a page nobody reads to the bottom of.
+  `/tabs` plus `/tabs/variants` and the rest. The `index.tsx` renders
+  `FolderIndex` — a list of the facets, one row each — from a `DEMOS` array and
+  nothing else. `screen/`, `tabs/`, `input/`, `field/`, `bottom-sheet/` and
+  `chart/` use this shape, because a component with five independent
+  behaviours on one scroll is a page nobody reads to the bottom of. Six routes
+  once wrote that screen by hand and had drifted in their subtitles, their
+  prose and their chrome; one component is what stops that coming back.
 
 Start with a single file. Split it the moment the page needs a second heading
 that is really a second subject.
@@ -165,8 +170,8 @@ to its narrowest row.
 
 `GalleryScreen` and `Section` are still here, and still a scrolling frame, for a
 page that genuinely needs hand-writing — `delacour-mark.tsx` is the one that
-does. The five folder index routes are hand-written too: they are `ListGroup`
-navigation, not demos. So are the eight `screen/*` routes and `input/form`,
+does. The six folder index routes render `FolderIndex`: they are `ListGroup`
+navigation, not demos. The eight `screen/*` routes and `input/form` are hand-written,
 whose demos **are** screens and must not be nested inside another one.
 
 ### The engine demos
@@ -196,11 +201,35 @@ Reanimated for the same reason: a reader of the engine's docs takes those direct
 
 ### Adding a component's first gallery
 
-As above, plus: create `src/app/(components)/{name}.tsx` as the shell, and **add
-a row to `COMPONENTS` in `src/app/index.tsx`** — `href`, `icon`, `title`,
-`description`, alphabetical by title, icon from
-`delacour-react-native-ui/icons/central`. A gallery with no row is a page only a URL
+As above, plus: create `src/app/(components)/{name}.tsx` as the shell, **add a
+row to `src/components-index.ts`** — `slug`, `title`, `description` and the
+docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/index.tsx`**,
+from `delacour-react-native-ui/icons/central`. The row is pure so `bun test` can hold
+it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
+without one is a type error. A gallery with no row is a page only a URL
 reaches, and nobody types URLs on a phone.
+
+## The home screen
+
+`src/app/index.tsx` is the first screen and the first place the house shows: the
+`DelacourMark` leads a static `Screen.Navbar`, the title is "Delacour UI", the
+subtitle counts the rows it draws, and `ThemeToggle` sits in the action slot.
+The rows are grouped under the documentation site's eight group names, in its
+order, so a component found on the site is found in the same place here.
+
+**The grouping is a copy, and a test keeps it honest.** The eight names and the
+slug→group map could not move into `@delacour/design-system` (app-free by rule)
+or into `native-ui` (it ships to consumers), so `src/components-index.ts`
+duplicates them and `components-index.test.ts` imports
+`apps/web/src/lib/components.ts` by relative path — the same cross-workspace move
+`global.css` makes with its `@source` — and asserts the groups, the slugs and each
+slug's group match. `provider` is the one docs component without a screen, and
+the test excludes it through the web's own `COMPONENTS_WITHOUT_SCREENS`.
+
+**The large title does not collapse.** A large title that shrinks to inline on
+scroll needs a native navigation header, and this app mounts the library's own
+`Screen.Navbar` instead so the navbar on show is the one consumers get. A static
+bar is HIG-acceptable for a tool; `DESIGN.md` records the trade.
 
 The pager carries the title on the back button rather than above the content, so
 a page begins at the top of the viewport. Both pieces of its chrome are

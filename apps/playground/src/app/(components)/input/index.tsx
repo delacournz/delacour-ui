@@ -1,4 +1,3 @@
-import { Icon } from "delacour-react-native-ui/icon";
 import {
 	IconColorSwatch,
 	IconEditSmall1,
@@ -7,14 +6,10 @@ import {
 	IconRuler,
 	IconSettingsToggle1,
 } from "delacour-react-native-ui/icons/central";
-import { ListGroup } from "delacour-react-native-ui/list-group";
-import { Screen } from "delacour-react-native-ui/screen";
-import { Text } from "delacour-react-native-ui/text";
-import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { View } from "react-native";
+import { FolderIndex, type FolderIndexItem } from "@/components/folder-index";
 
-const DEMOS = [
+const DEMOS: readonly FolderIndexItem[] = [
 	{
 		description: "Primary and secondary, at rest, focused, invalid and disabled",
 		href: "/input/variants",
@@ -51,50 +46,14 @@ const DEMOS = [
 		icon: IconEditSmall1,
 		title: "In a form",
 	},
-] as const;
+];
 
 /**
- * The Input gallery index.
+ * The Input gallery index — a `FolderIndex`, like the other five.
  *
- * A `Screen` rather than a `GalleryScreen`, matching the Screen gallery's own
- * index — a component with this many axes gets a page per axis instead of one
- * page that has to be scrolled past to reach the thing you came for.
+ * A component with this many axes gets a page per axis instead of one page
+ * that has to be scrolled past to reach the thing you came for.
  */
 export default function InputGallery(): ReactElement {
-	const router = useRouter();
-
-	return (
-		<Screen>
-			<Screen.Navbar>
-				<Screen.Navbar.BackButton onPress={() => router.back()}>
-					<View className="min-w-0 flex-1">
-						<Screen.Navbar.Title>Input</Screen.Navbar.Title>
-						<Screen.Navbar.Subtitle>{`${DEMOS.length} variations`}</Screen.Navbar.Subtitle>
-					</View>
-				</Screen.Navbar.BackButton>
-			</Screen.Navbar>
-
-			<Screen.ScrollArea contentContainerClassName="gap-6">
-				<ListGroup>
-					{DEMOS.map((demo) => (
-						<ListGroup.Item haptic="selection" key={demo.href} onPress={() => router.push(demo.href)}>
-							<ListGroup.ItemPrefix>
-								<Icon icon={demo.icon} />
-							</ListGroup.ItemPrefix>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>{demo.title}</ListGroup.ItemTitle>
-								<ListGroup.ItemDescription>{demo.description}</ListGroup.ItemDescription>
-							</ListGroup.ItemContent>
-							<ListGroup.ItemSuffix />
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-
-				<Text.Caption>
-					A field and the box `Input.Group` draws around one read the same slot, so a grouped input is the same box as a
-					lone one rather than a copy of it.
-				</Text.Caption>
-			</Screen.ScrollArea>
-		</Screen>
-	);
+	return <FolderIndex items={DEMOS} title="Input" />;
 }

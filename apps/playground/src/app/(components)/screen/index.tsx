@@ -1,4 +1,3 @@
-import { Icon } from "delacour-react-native-ui/icon";
 import {
 	IconBubble2,
 	IconBulletList,
@@ -9,14 +8,10 @@ import {
 	IconLayoutTopBottom,
 	IconWarningSign,
 } from "delacour-react-native-ui/icons/central";
-import { ListGroup } from "delacour-react-native-ui/list-group";
-import { Screen } from "delacour-react-native-ui/screen";
-import { Text } from "delacour-react-native-ui/text";
-import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { View } from "react-native";
+import { FolderIndex, type FolderIndexItem } from "@/components/folder-index";
 
-const DEMOS = [
+const DEMOS: readonly FolderIndexItem[] = [
 	{
 		description: "Overlay vs static navbar, footer, debug overlay",
 		href: "/screen/scroll",
@@ -65,55 +60,16 @@ const DEMOS = [
 		icon: IconWarningSign,
 		title: "Loading and error",
 	},
-] as const;
+];
 
 /**
- * The Screen gallery index.
+ * The Screen gallery index — a `FolderIndex`, like the other five.
  *
- * Itself a `Screen` rather than a `GalleryScreen`, so the plain
- * navbar-plus-scroll-plus-footer composition is on show here and needs no demo
- * of its own — and so this page proves the API on the way to demonstrating it.
- *
- * Doubles as the navbar's own smoke test: the content passes under an overlay
- * bar rather than starting below it, the title and subtitle stack on the back
- * button as they do in every other gallery, and the hairline is drawn from the
- * first frame — the Navbar demo toggles that to a scroll-linked fade.
+ * Itself a `Screen`, through `FolderIndex`, so the plain navbar-plus-scroll
+ * composition is on show here and needs no demo of its own — and so this page
+ * proves the API on the way to demonstrating it. The eight routes beneath it
+ * are screens themselves and must not be nested inside another one.
  */
 export default function ScreenGallery(): ReactElement {
-	const router = useRouter();
-
-	return (
-		<Screen>
-			<Screen.Navbar>
-				<Screen.Navbar.BackButton onPress={() => router.back()}>
-					<View className="min-w-0 flex-1">
-						<Screen.Navbar.Title>Screen</Screen.Navbar.Title>
-						<Screen.Navbar.Subtitle>{`${DEMOS.length} variations`}</Screen.Navbar.Subtitle>
-					</View>
-				</Screen.Navbar.BackButton>
-			</Screen.Navbar>
-
-			<Screen.ScrollArea contentContainerClassName="gap-6">
-				<ListGroup>
-					{DEMOS.map((demo) => (
-						<ListGroup.Item haptic="selection" key={demo.href} onPress={() => router.push(demo.href)}>
-							<ListGroup.ItemPrefix>
-								<Icon icon={demo.icon} />
-							</ListGroup.ItemPrefix>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>{demo.title}</ListGroup.ItemTitle>
-								<ListGroup.ItemDescription>{demo.description}</ListGroup.ItemDescription>
-							</ListGroup.ItemContent>
-							<ListGroup.ItemSuffix />
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-
-				<Text.Caption>
-					This page names no safe-area inset and no navbar height. The navbar measures itself into the screen context
-					and the scroll area reserves exactly that.
-				</Text.Caption>
-			</Screen.ScrollArea>
-		</Screen>
-	);
+	return <FolderIndex items={DEMOS} title="Screen" />;
 }

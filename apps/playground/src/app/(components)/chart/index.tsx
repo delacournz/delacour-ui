@@ -1,4 +1,3 @@
-import { Icon } from "delacour-react-native-ui/icon";
 import {
 	IconAnalytics,
 	IconBubbleDots,
@@ -9,14 +8,10 @@ import {
 	IconTradingViewCandles,
 	IconTrending1,
 } from "delacour-react-native-ui/icons/central";
-import { ListGroup } from "delacour-react-native-ui/list-group";
-import { Screen } from "delacour-react-native-ui/screen";
-import { Text } from "delacour-react-native-ui/text";
-import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { View } from "react-native";
+import { FolderIndex, type FolderIndexItem } from "@/components/folder-index";
 
-const DEMOS = [
+const DEMOS: readonly FolderIndexItem[] = [
 	{
 		description: "One series, several, dates on x, and the curves",
 		href: "/chart/line",
@@ -65,52 +60,15 @@ const DEMOS = [
 		icon: IconLayersTwo,
 		title: "Engine",
 	},
-] as const;
+];
 
 /**
- * The Chart gallery index.
+ * The Chart gallery index — a `FolderIndex`, like the other five.
  *
- * A `Screen` rather than a `GalleryScreen`, matching Tabs. A facet per chart
- * type, because a bar, a candlestick and a pie share a canvas height but
- * nothing else on screen, so one pager of twenty-seven charts would bury the
- * type someone came to see.
+ * A facet per chart type, because a bar, a candlestick and a pie share a canvas
+ * height but nothing else on screen, so one pager of twenty-seven charts would
+ * bury the type someone came to see.
  */
 export default function ChartGallery(): ReactElement {
-	const router = useRouter();
-
-	return (
-		<Screen>
-			<Screen.Navbar>
-				<Screen.Navbar.BackButton onPress={() => router.back()}>
-					<View className="min-w-0 flex-1">
-						<Screen.Navbar.Title>Chart</Screen.Navbar.Title>
-						<Screen.Navbar.Subtitle>{`${DEMOS.length} chart types`}</Screen.Navbar.Subtitle>
-					</View>
-				</Screen.Navbar.BackButton>
-			</Screen.Navbar>
-
-			<Screen.ScrollArea contentContainerClassName="gap-6">
-				<ListGroup>
-					{DEMOS.map((demo) => (
-						<ListGroup.Item haptic="selection" key={demo.href} onPress={() => router.push(demo.href)}>
-							<ListGroup.ItemPrefix>
-								<Icon icon={demo.icon} />
-							</ListGroup.ItemPrefix>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>{demo.title}</ListGroup.ItemTitle>
-								<ListGroup.ItemDescription>{demo.description}</ListGroup.ItemDescription>
-							</ListGroup.ItemContent>
-							<ListGroup.ItemSuffix />
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-
-				<Text.Caption>
-					Every type is one Chart root with a different mark inside it, so the grid, the axes, the tooltip and the
-					legend are the same parts whichever mark they sit around. Pie is the exception: it shares no axis with the
-					others, so it is a root of its own.
-				</Text.Caption>
-			</Screen.ScrollArea>
-		</Screen>
-	);
+	return <FolderIndex items={DEMOS} title="Chart" unit="chart types" />;
 }

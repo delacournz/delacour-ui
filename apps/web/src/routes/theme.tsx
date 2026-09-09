@@ -6,7 +6,7 @@ import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
 import { themeFontLinks } from "@/lib/google-fonts";
-import { baseOptions } from "@/lib/layout.shared";
+import { homeOptions } from "@/lib/layout.shared";
 import { appName } from "@/lib/shared";
 import { presetCss, presetNativeCss, resolvePreset, themeTitle } from "@/lib/theme-preset";
 
@@ -70,7 +70,7 @@ function ThemePage(): ReactElement {
 	const web = presetCss(resolved.config);
 
 	return (
-		<HomeLayout {...baseOptions()}>
+		<HomeLayout {...homeOptions()}>
 			<main className="mx-auto flex w-full max-w-4xl flex-col gap-section-gap px-6 py-section-sm">
 				{resolved.status === "invalid" ? (
 					<div>

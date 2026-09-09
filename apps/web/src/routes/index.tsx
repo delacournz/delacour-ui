@@ -9,7 +9,7 @@ import { Hero } from "@/components/landing/hero";
 import { Showcase } from "@/components/landing/showcase";
 import { ThemeTeaser } from "@/components/landing/theme-teaser";
 import { Tokens } from "@/components/landing/tokens";
-import { baseOptions } from "@/lib/layout.shared";
+import { homeOptions } from "@/lib/layout.shared";
 import { appDescription, appName } from "@/lib/shared";
 
 export const Route = createFileRoute("/")({
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/")({
  */
 function Home(): ReactElement {
 	return (
-		<HomeLayout {...baseOptions()}>
+		<HomeLayout {...homeOptions()}>
 			<Hero />
 			<Showcase />
 			<Tokens />

@@ -3,7 +3,7 @@ import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { ARROW_LINK, PillLink } from "@/components/landing/pill";
-import { baseOptions } from "@/lib/layout.shared";
+import { homeOptions } from "@/lib/layout.shared";
 
 /**
  * The page that is not there, in the house: the mark, the heading face, and
@@ -14,7 +14,7 @@ import { baseOptions } from "@/lib/layout.shared";
  */
 export function NotFound(): ReactElement {
 	return (
-		<HomeLayout {...baseOptions()}>
+		<HomeLayout {...homeOptions()}>
 			<main className="mx-auto flex w-full max-w-reading flex-1 flex-col items-start justify-center gap-8 px-6 py-section">
 				<DelacourIcon size={48} />
 				<div className="flex flex-col gap-4">

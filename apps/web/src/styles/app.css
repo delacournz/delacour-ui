@@ -255,17 +255,12 @@ body {
 }
 
 /*
- * Inside a shrink-wrapped pill the search trigger's `w-full` would otherwise
- * take the width the theme toggle's two icons need, and the icons collapse to
- * four pixels. The toggle's children are the one thing in the bar that must
- * never shrink; the trigger takes a fixed width instead.
+ * Inside a shrink-wrapped pill the theme toggle's two icons are the one thing
+ * that must never shrink; every other control in the bar is an icon button of
+ * the same size (`homeOptions()` makes the search one too).
  */
 #nd-home-layout #nd-nav [data-theme-toggle] > * {
 	flex: none;
-}
-
-#nd-home-layout #nd-nav > nav > div:first-child > div > button:first-child {
-	width: 14rem;
 }
 
 @media (width < 64rem) {

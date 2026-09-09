@@ -39,8 +39,8 @@ describe("the house preset", () => {
 	test("paints the brand amber as the dark primary", () => {
 		const { dark, light } = resolveTokens(HOUSE_CONFIG);
 
-		expect(dark.primary).toBe("oklch(0.769 0.188 70.08)");
-		expect(light.primary).toBe("oklch(0.666 0.179 58.318)");
+		expect(dark.primary).toBe("oklch(0.837 0.164 84.429)");
+		expect(light.primary).toBe("oklch(0.666 0.157 58.318)");
 		expect(dark["chart-2"]).toBe(dark.primary);
 	});
 });

@@ -497,38 +497,40 @@ export const ACCENT_THEMES: readonly AccentTheme[] = [
 		},
 	},
 	/**
-	 * The house amber — `#FBBF24`, the stroke of the mark.
+	 * The house amber — `#FBBF24`, the stroke of the mark, as the site sets it.
 	 *
 	 * shadcn's `amber` is the wrong shape for it: that accent's dark `primary`
-	 * is amber-800, a brown that reads muddy on a zinc page, and the brand hex
-	 * only appears there as `chart-2`. This one puts the brand at `primary` in
-	 * the dark, steps down to amber-600 for contrast on white in the light, and
-	 * keeps shadcn's amber chart ramp in both. Appended last so every earlier
-	 * accent keeps its ordinal.
+	 * is amber-800, a brown that reads muddy on a zinc page, and its brighter
+	 * steps are Tailwind's current amber, which is an orange next to the mark.
+	 * Every value here is the site's own hex converted, so the button on the
+	 * phone and the button on delacour.co.nz are the same colour: `#fbbf24` at
+	 * the dark `primary` over `#18181b` text, `#d97706` in the light under
+	 * `#451a03`, and the site's five-step chart ramp in both. Appended last so
+	 * every earlier accent keeps its ordinal.
 	 */
 	{
 		name: "delacour",
 		title: "Delacour",
 		light: {
-			primary: "oklch(0.666 0.179 58.318)",
-			"primary-foreground": "oklch(0.987 0.022 95.277)",
-			"chart-1": "oklch(0.879 0.169 91.605)",
-			"chart-2": "oklch(0.769 0.188 70.08)",
-			"chart-3": "oklch(0.666 0.179 58.318)",
-			"chart-4": "oklch(0.555 0.163 48.998)",
-			"chart-5": "oklch(0.473 0.137 46.201)",
-			"sidebar-primary": "oklch(0.666 0.179 58.318)",
-			"sidebar-primary-foreground": "oklch(0.987 0.022 95.277)",
+			primary: "oklch(0.666 0.157 58.318)",
+			"primary-foreground": "oklch(0.279 0.074 45.635)",
+			"chart-1": "oklch(0.879 0.153 91.605)",
+			"chart-2": "oklch(0.837 0.164 84.429)",
+			"chart-3": "oklch(0.769 0.165 70.08)",
+			"chart-4": "oklch(0.666 0.157 58.318)",
+			"chart-5": "oklch(0.555 0.146 48.998)",
+			"sidebar-primary": "oklch(0.666 0.157 58.318)",
+			"sidebar-primary-foreground": "oklch(0.279 0.074 45.635)",
 		},
 		dark: {
-			primary: "oklch(0.769 0.188 70.08)",
+			primary: "oklch(0.837 0.164 84.429)",
 			"primary-foreground": "oklch(0.21 0.006 285.885)",
-			"chart-1": "oklch(0.879 0.169 91.605)",
-			"chart-2": "oklch(0.769 0.188 70.08)",
-			"chart-3": "oklch(0.666 0.179 58.318)",
-			"chart-4": "oklch(0.555 0.163 48.998)",
-			"chart-5": "oklch(0.473 0.137 46.201)",
-			"sidebar-primary": "oklch(0.769 0.188 70.08)",
+			"chart-1": "oklch(0.879 0.153 91.605)",
+			"chart-2": "oklch(0.837 0.164 84.429)",
+			"chart-3": "oklch(0.769 0.165 70.08)",
+			"chart-4": "oklch(0.666 0.157 58.318)",
+			"chart-5": "oklch(0.555 0.146 48.998)",
+			"sidebar-primary": "oklch(0.837 0.164 84.429)",
 			"sidebar-primary-foreground": "oklch(0.21 0.006 285.885)",
 		},
 	},

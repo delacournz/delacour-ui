@@ -190,8 +190,9 @@ neutral identity theme that `theme.css` declares, and `house.test.ts` fails if t
 
 The `delacour` accent exists for the same reason. shadcn's `amber` puts amber-800 at the dark
 `primary`, a brown that reads muddy on a zinc page; the brand hex `#FBBF24` only appears there as
-`chart-2`. So the house accent is appended as the eighteenth, ordinal 24, with the brand at
-`primary` in the dark and amber-600 in the light. Appended, never inserted — see the preset section.
+`chart-2`, and Tailwind's current amber steps are an orange beside the mark. So the house accent is
+appended as the eighteenth, ordinal 24, with every value converted from the site's own hex: `#fbbf24`
+at the dark `primary`, `#d97706` in the light. Appended, never inserted — see the preset section.
 
 ## Commands
 

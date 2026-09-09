@@ -218,7 +218,19 @@ and `ThemeToggle`, and the content opens with "Delacour UI" as a large title —
 34 over 41, semibold, in the heading face — with the row count under it. The
 large title is where Outfit is actually legible as Outfit; at navbar size it is
 indistinguishable from the body face, which is how the finish review found the
-house's heading face nowhere on the phone. It is the one typeset lockup the
+house's heading face nowhere on the phone.
+
+**Its family is set inline from `resolveFonts(config).heading`, not through
+`font-heading`.** `--font-heading` is declared only inside the platform
+`@variant` blocks of the library's `theme.css`, so Tailwind mints no
+`font-heading` utility from it and the class resolves to nothing — verified on
+device: switching the Heading axis to Raleway moved no title on any screen while
+switching the body font moved every line. The library's own `Text.Display`,
+`Title` and `Header` presets carry that class and so render in the body face
+today; that is a library gap, recorded in `DESIGN.md`, and the reason the
+customiser's `FontPreview` and the preset tiles were already setting `fontFamily`
+inline. `.impeccable/review/evidence-heading-class-fallback.png` is the capture
+that proved it. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The rows
 are grouped under the documentation site's eight group names, in its order, so

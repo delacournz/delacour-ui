@@ -1,3 +1,4 @@
+import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "delacour-react-native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
@@ -31,6 +32,7 @@ import { DelacourMark } from "@/components/delacour-mark";
 import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
+import { useDesignSystem } from "@/design-system/store";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
 /**
@@ -85,8 +87,16 @@ const MARK_SIZE = 28;
  * Arbitrary values rather than a scale step because `text-3xl` is 30 and the
  * scale has no 34; the pair is written together so the leading survives the
  * size, the way the library's own presets pair them.
+ *
+ * The family is set inline from the resolved config rather than through
+ * `font-heading`, the same move the customiser's `FontPreview` makes and for
+ * the same reason: `--font-heading` is declared only inside the platform
+ * `@variant` blocks of `theme.css`, so Tailwind mints no `font-heading`
+ * utility from it and the class resolves to nothing — verified on device,
+ * where switching the Heading axis to Raleway moved no title while switching
+ * the body font moved every line. Inline, the family follows the axis.
  */
-const LARGE_TITLE_CLASS = "font-heading font-semibold text-[34px] leading-[41px] tracking-tight";
+const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tight";
 
 /**
  * The playground index: the library, grouped the way the documentation groups it.
@@ -121,6 +131,7 @@ const LARGE_TITLE_CLASS = "font-heading font-semibold text-[34px] leading-[41px]
 export default function Index(): ReactElement {
 	const router = useRouter();
 	const groups = groupedComponents();
+	const { heading } = resolveFonts(useDesignSystem());
 	const iconFor = (slug: ComponentSlug): IconComponent => ICONS[slug];
 
 	const row = (entry: ComponentIndexEntry, icon: IconComponent) => (
@@ -152,7 +163,11 @@ export default function Index(): ReactElement {
 
 			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<View className="gap-1">
-					<Text.Display accessibilityRole="header" className={LARGE_TITLE_CLASS}>
+					<Text.Display
+						accessibilityRole="header"
+						className={LARGE_TITLE_CLASS}
+						style={heading ? { fontFamily: heading } : undefined}
+					>
 						Delacour UI
 					</Text.Display>
 					<Text.Paragraph color="muted">{`${componentCount()} components`}</Text.Paragraph>

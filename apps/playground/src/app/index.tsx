@@ -80,14 +80,33 @@ const DEV_ROWS: readonly (ComponentIndexEntry & { icon: IconComponent })[] = [
 const MARK_SIZE = 28;
 
 /**
+ * The large title, at the platform's own step: 34 over 41, semibold.
+ *
+ * Arbitrary values rather than a scale step because `text-3xl` is 30 and the
+ * scale has no 34; the pair is written together so the leading survives the
+ * size, the way the library's own presets pair them.
+ */
+const LARGE_TITLE_CLASS = "font-heading font-semibold text-[34px] leading-[41px] tracking-tight";
+
+/**
  * The playground index: the library, grouped the way the documentation groups it.
  *
  * The screen the app opens on, and the first place the house shows: the mark
- * leads the navbar, the title is the product's name rather than the package's,
- * and the count is derived from the same index the rows are drawn from. The
- * navbar is the library's own `Screen.Navbar` — a large title that collapses
- * to inline on scroll needs a native header this app does not mount, and a
- * static bar is HIG-acceptable for a tool; DESIGN.md records the trade.
+ * leads the navbar, and the product's name — not the package's — opens the
+ * content as a large title in the heading face. That title is the one typeset
+ * lockup the brand has, since the mark's geometry is binding and there is no
+ * wordmark, and the large-title step is where Outfit is actually legible as
+ * Outfit; at navbar size it is indistinguishable from the body face, which is
+ * why the finish review could find the house's heading face nowhere. Every
+ * other title in the app stays inline, in the body face the platform expects
+ * of a navigation bar. The count under it is derived from the same index the
+ * rows are drawn from.
+ *
+ * The bar itself carries only the mark and the actions, the way a top-level
+ * screen's bar reads before its large title collapses. It does not collapse:
+ * that needs a native header this app does not mount, because the navbar on
+ * show is the library's own `Screen.Navbar`, the one consumers get. A static
+ * bar is HIG-acceptable for a tool; DESIGN.md records the trade.
  *
  * The groups are the docs' eight, in the docs' order, so a reader who found a
  * component on the site finds it in the same place here. Eight headings over
@@ -128,16 +147,17 @@ export default function Index(): ReactElement {
 				}
 				placement="static"
 			>
-				<View className="flex-row items-center gap-3">
-					<DelacourMark accessibilityLabel="Delacour" accessibilityRole="image" size={MARK_SIZE} />
-					<View className="min-w-0 flex-1">
-						<Screen.Navbar.Title>Delacour UI</Screen.Navbar.Title>
-						<Screen.Navbar.Subtitle>{`${componentCount()} components`}</Screen.Navbar.Subtitle>
-					</View>
-				</View>
+				<DelacourMark accessibilityLabel="Delacour" accessibilityRole="image" size={MARK_SIZE} />
 			</Screen.Navbar>
 
 			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
+				<View className="gap-1">
+					<Text.Display accessibilityRole="header" className={LARGE_TITLE_CLASS}>
+						Delacour UI
+					</Text.Display>
+					<Text.Paragraph color="muted">{`${componentCount()} components`}</Text.Paragraph>
+				</View>
+
 				{groups.map((group) => (
 					<View className={SECTION_GAP} key={group.name}>
 						<Text.Overline>{group.name}</Text.Overline>

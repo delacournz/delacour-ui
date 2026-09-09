@@ -213,10 +213,16 @@ reaches, and nobody types URLs on a phone.
 ## The home screen
 
 `src/app/index.tsx` is the first screen and the first place the house shows: the
-`DelacourMark` leads a static `Screen.Navbar`, the title is "Delacour UI", the
-subtitle counts the rows it draws, and `ThemeToggle` sits in the action slot.
-The rows are grouped under the documentation site's eight group names, in its
-order, so a component found on the site is found in the same place here.
+`DelacourMark` leads a static `Screen.Navbar` whose actions are `ThemeTrigger`
+and `ThemeToggle`, and the content opens with "Delacour UI" as a large title —
+34 over 41, semibold, in the heading face — with the row count under it. The
+large title is where Outfit is actually legible as Outfit; at navbar size it is
+indistinguishable from the body face, which is how the finish review found the
+house's heading face nowhere on the phone. It is the one typeset lockup the
+brand has, since the mark's geometry is binding and there is no wordmark; every
+other title stays inline, in the body face a navigation bar expects. The rows
+are grouped under the documentation site's eight group names, in its order, so
+a component found on the site is found in the same place here.
 
 **The grouping is a copy, and a test keeps it honest.** The eight names and the
 slug→group map could not move into `@delacour/design-system` (app-free by rule)
@@ -227,10 +233,12 @@ duplicates them and `components-index.test.ts` imports
 slug's group match. `provider` is the one docs component without a screen, and
 the test excludes it through the web's own `COMPONENTS_WITHOUT_SCREENS`.
 
-**The large title does not collapse.** A large title that shrinks to inline on
-scroll needs a native navigation header, and this app mounts the library's own
-`Screen.Navbar` instead so the navbar on show is the one consumers get. A static
-bar is HIG-acceptable for a tool; `DESIGN.md` records the trade.
+**The large title does not collapse.** A large title that shrinks into the bar
+on scroll needs a native navigation header, and this app mounts the library's
+own `Screen.Navbar` instead so the navbar on show is the one consumers get; the
+bar carries the mark and the actions and no title, the way a top-level bar reads
+before its large title collapses. A static bar is HIG-acceptable for a tool;
+`DESIGN.md` records the trade.
 
 The pager carries the title on the back button rather than above the content, so
 a page begins at the top of the viewport. Both pieces of its chrome are
@@ -542,11 +550,15 @@ shared value, racing across a pager swipe.
 
 **It is a later sibling than `ThemeTabsShadow`, and that is what makes it legible.** Paint order is
 source order, and an `overlay` footer draws no background of its own — so the scroll fade *is* the
-footer's backing. That fade also carries `coverBottom={footerOccupancy(0, bottom)}`: it anchors
-itself above the footer's measured *content* height, but the footer occupies its own padding and the
-safe-area band too, and without the cover a device with a home indicator leaves rows crisp for
-thirty-four points behind the button and then cuts them. The mirror of the bar's own `coverTop` at
-the other end.
+footer's backing. `Screen.ScrollShadow` anchors its bottom band at the footer's measured *content*
+height and extends `coverBottom` upward, so on its own the solid part sat above the button and the
+band beneath — the button's lower half, its padding and the safe-area strip — was never painted;
+the finish review caught rows running crisp through the home indicator. `ThemeTabsShadow` therefore
+wraps the fade in an animated view shifted down by that content height, and passes
+`coverBottom={footerOccupancy(contentHeight, bottom)}` — the footer's whole occupancy, read back
+from the screen context through `useAnimatedReaction` — so the solid band starts at the screen edge
+and the gradient dissolves the rows above the footer's top. The mirror of the bar's own `coverTop`
+at the other end.
 
 **Reset did not move into it.** A reset is the undo of one tab's decisions where the footer is the
 outcome of the whole screen, and an unconfirmed destructive action should not sit permanently under
@@ -814,8 +826,10 @@ version of it that checks.
 once above the `Stack`. That corner is where a `screen/*` demo draws its footer,
 so on the eight routes whose whole point is the footer the trigger sat on the
 thing being shown — and a floating button is a web pattern on a phone. It is a
-`Button size="icon-sm" variant="ghost"` in the navbar's action slot now, beside
-`ThemeToggle`, on the two kinds of screen that navigate rather than demonstrate:
+`Button size="icon-md" variant="ghost"` in the navbar's action slot now, beside
+`ThemeToggle` — `icon-md` because the medium button is 44pt, the platform's
+minimum target, where `icon-sm` is 36 — on the two kinds of screen that
+navigate rather than demonstrate:
 the home screen and the six folder indexes. A gallery's navbar carries the
 toggle alone; the customiser is one back-swipe away and a change there repaints
 every card behind it, so a look is still judged against the component you care

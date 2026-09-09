@@ -25,6 +25,7 @@ bun run start        # bun .output/server/index.mjs
 bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
+bun run gen-theme    # regenerate house.css + house-meta.ts from the house preset
 ```
 
 ## Directory structure
@@ -104,10 +105,15 @@ the logo in the nav bar cannot disagree with the favicon: both resolve to the sa
 `src/routes/__root.tsx` carries the icon links, the manifest link, the `theme-color` pair and the
 Open Graph / Twitter tags. Two things there are deliberate:
 
-- **`theme-color` is the page's background, not the icon's card** — `#ffffff` and `#0a0a0a`, the
-  two `--color-fd-background` values, behind a `prefers-color-scheme` media attribute. The
-  manifest's own `theme_color` *is* the card, because an installed app's splash sits behind the
-  icon rather than behind the page.
+- **`theme-color` is the page's background, not the icon's card** — the two `--color-fd-background`
+  values as hex, read from the generated `src/lib/house-meta.ts` so they cannot drift from
+  `house.css`, behind a `prefers-color-scheme` media attribute. The manifest's `theme_color` and
+  `background_color` are the dark value of the same pair, because an installed app's splash is
+  the page the app opens on.
+- **Dark is the default theme.** `RootProvider` is given `theme={{ defaultTheme: "dark" }}`; light
+  is a real theme behind the toggle and a visitor's choice persists.
+- **The direction contract is in the body.** `__root.tsx` renders an inert `<template>` holding the
+  contract this redesign was built to, as an HTML comment, so `grep 4a705b78 .output` finds it.
 - **The social card is `summary`, not `summary_large_image`.** `og:image` is the 512px icon; there
   is no 1200×630 card to point at. Claiming the large format without one gets the icon stretched
   and cropped. A real card would want `satori` and a pinned font — `docsImageRoute` in
@@ -319,20 +325,39 @@ not in `*.types.ts`, which holds only shapes shared by two or more modules in th
 | `theme.css` | **No.** Its palette lives under `@variant light` / `dark` / `ios` / `android`; `light`, `ios` and `android` are Uniwind variants that do not exist outside React Native. |
 | `base.css` / the `./styles` barrel | **No.** Pulls in `@import "uniwind"`. |
 
-So `src/styles/app.css` imports `tokens.css` and then transcribes `theme.css`'s palette onto
-Fumadocs' `--color-fd-*` names by hand. **When the library's palette changes, update that block** —
-`src/styles/app.css.test.ts` fails when the two disagree, comparing them token for token.
+So `src/styles/app.css` imports `tokens.css` and then `src/styles/house.css` — the palette, the
+three faces and the corner, **generated** from the house preset rather than written:
 
-The transcription is verbatim `oklch()`, the notation the library authors. A browser reads it
-natively, so there is nothing to convert and the comparison is string equality rather than a
-colour-space round trip that could disagree about rounding. `--color-fd-background` matching
-`--background` is the one that shows: `preview.tsx` composites a captured shot onto it, and the
-simulator painted that shot with `--background`.
+```bash
+bun run gen-theme       # after any change to HOUSE_CONFIG in @delacour/design-system/house
+```
 
-One deliberate divergence, and it is the reason the test's map omits `fd-card`: the library's `card`
-and `background` are both white in light, so `--color-fd-card` takes `tertiary` instead — a docs
-card has to read as a surface. `tertiary` is a `color-mix` of two variables `app.css` does not
-import, so its value is resolved there rather than copied.
+`scripts/gen-theme.ts` reads `HOUSE_CONFIG`, resolves it with `resolveTokens` / `resolveFonts`,
+and maps the library's token names onto Fumadocs' `--color-fd-*` slots (the `MAPPING` table in the
+script). The docs site is therefore themed by the customiser it sells: `/theme?preset=AQACGBgCCgLk`
+is this site's own palette. The values are verbatim `oklch()`, the notation the design system
+authors, so a browser reads them natively and nothing is converted on the way to the CSS.
+
+The same script writes `src/lib/house-meta.ts` — the two page backgrounds as hex, for the
+`theme-color` metas and the web manifest, which cannot read `oklch()`. `src/styles/app.css.test.ts`
+holds both generated files equal to a fresh render, the way `emit.test.ts` holds the emitter to
+`tokens.css`, and holds `app.css` to declaring no `--color-fd-*` literal of its own.
+
+Two things the script does not map, on purpose. `resolveTokens` carries no `success` / `warning` /
+`info` — `convertTheme` derives those on the way into a native `theme.css` — so Fumadocs' own values
+for the three stand. And `--color-fd-card` maps to `card` outright: the neutral base's `card` and
+`background` were the same white, which is why the old transcription substituted `tertiary`; zinc's
+`card` is white on a `0.985` page, so a docs card reads as a surface without a special case.
+
+What the axes cannot express, `app.css` mixes from the tokens they can — `--dot`, `--glow`,
+`--pill`, `--selection` are each a `color-mix()` of a `--color-fd-*` variable, never a hex. The
+same file adds the line heights `tokens.css` omits (React Native sets `lineHeight` per component;
+the web inherits), the display steps above `3xl`, the vertical rhythm (`py-section`,
+`gap-section-gap`, `max-w-reading`) and the radius scale every card takes (`rounded-card`,
+`rounded-tile`, `rounded-control`), all derived from the house `--radius`.
+
+The library default is untouched by any of this. `DEFAULT_CONFIG` and `theme.css` stay the neutral
+identity theme a fresh `delacour init` ships; the house is what *this site* wears.
 
 ## `/theme` builds a preset and renders it
 

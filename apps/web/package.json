@@ -8,6 +8,7 @@
 		"dev": "vite dev",
 		"codegen": "vite build --logLevel error",
 		"gen-install": "bun scripts/gen-install-manifest.ts",
+		"gen-theme": "bun scripts/gen-theme.ts",
 		"build": "vite build",
 		"start": "bun .output/server/index.mjs",
 		"check": "biome check ./src",

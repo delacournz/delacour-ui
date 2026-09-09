@@ -1,115 +1,73 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { renderHouseCss, renderHouseMeta } from "../../scripts/gen-theme";
 
 /**
- * The docs site's palette, pinned against the library's.
+ * The docs site's palette, held to the house preset.
  *
- * `app.css` cannot import `theme.css` — that file wires light and dark through
- * uniwind's `@variant`, which does not exist outside React Native — so it
- * transcribes the values by hand onto the `--color-fd-*` names Fumadocs paints
- * from. A transcription drifts, and this one drifts invisibly: the page still
- * renders, just in last season's greys, with every captured preview showing a
- * seam against the background behind it.
+ * `house.css` and `house-meta.ts` are committed output of `bun run gen-theme`,
+ * so the browser fetches the palette as plain CSS with no client work. Committed
+ * output drifts the moment someone edits the preset and forgets the script, and
+ * this drift is invisible: the site still renders, in last season's colours.
+ * So each file is held equal to a fresh render — the same pattern
+ * `emit.test.ts` uses against `tokens.css`.
  *
- * Both files author `oklch()`, so the comparison is string equality rather than
- * a colour-space conversion that could disagree about rounding.
+ * `app.css` itself is then held to declaring no palette of its own: every
+ * `--color-fd-*` on the site comes through the generator or not at all.
  */
-const APP_CSS = readFileSync(join(import.meta.dirname, "app.css"), "utf-8");
-const THEME_CSS = readFileSync(
-	join(import.meta.dirname, "../../../../packages/native-ui/src/styles/theme.css"),
-	"utf-8"
-);
+const STYLES = import.meta.dirname;
+const APP_CSS = readFileSync(join(STYLES, "app.css"), "utf-8");
+const HOUSE_CSS = readFileSync(join(STYLES, "house.css"), "utf-8");
+const HOUSE_META = readFileSync(join(STYLES, "..", "lib", "house-meta.ts"), "utf-8");
 
-/** The body of one `@variant` block of `theme.css`, brace-matched. */
-function libraryBlock(variant: "dark" | "light"): string {
-	const marker = `@variant ${variant} {`;
-	const start = THEME_CSS.indexOf(marker);
-	if (start === -1) throw new Error(`theme.css declares no @variant ${variant}`);
-
-	let depth = 1;
-	let index = start + marker.length;
-
-	while (index < THEME_CSS.length && depth > 0) {
-		if (THEME_CSS[index] === "{") depth += 1;
-		if (THEME_CSS[index] === "}") depth -= 1;
-		index += 1;
-	}
-
-	return THEME_CSS.slice(start + marker.length, index - 1);
-}
-
-/** The `@theme` block holds light; `.dark` holds dark. */
-function docsBlock(variant: "dark" | "light"): string {
-	const marker = variant === "light" ? "@theme {" : ".dark {";
-	const start = APP_CSS.indexOf(marker) + marker.length;
-
-	return APP_CSS.slice(start, APP_CSS.indexOf("}", start));
-}
-
-function declared(block: string, name: string): string | undefined {
-	return block.match(new RegExp(`${name}:\\s*([^;]+);`))?.[1]?.trim();
-}
-
-/**
- * Fumadocs slot ← library token.
- *
- * `fd-card` is absent on purpose: `card` and `background` are the same white in
- * the library, and a docs card has to read as a surface, so `app.css` resolves
- * `tertiary` instead — a `color-mix` of two variables this file cannot see.
- */
-const MAPPING: Record<string, string> = {
-	"fd-background": "background",
-	"fd-foreground": "foreground",
-	"fd-muted": "muted",
-	"fd-muted-foreground": "muted-foreground",
-	"fd-popover": "popover",
-	"fd-popover-foreground": "popover-foreground",
-	"fd-card-foreground": "card-foreground",
-	"fd-border": "border",
-	"fd-primary": "primary",
-	"fd-primary-foreground": "primary-foreground",
-	"fd-secondary": "secondary",
-	"fd-secondary-foreground": "secondary-foreground",
-	"fd-accent": "accent",
-	"fd-accent-foreground": "accent-foreground",
-	"fd-ring": "ring",
-	"fd-error": "destructive",
-	"fd-warning": "warning",
-	"fd-success": "success",
-	"fd-info": "info",
-};
-
-describe("the docs palette", () => {
-	// Every assertion below passes vacuously if a parse came back empty.
-	test("reads both files", () => {
-		expect(libraryBlock("light")).toContain("--background");
-		expect(docsBlock("light")).toContain("--color-fd-background");
-		expect(docsBlock("dark")).toContain("--color-fd-background");
+describe("house.css", () => {
+	test("is what `bun run gen-theme` writes today", () => {
+		expect(HOUSE_CSS).toBe(renderHouseCss());
 	});
 
-	for (const variant of ["light", "dark"] as const) {
-		test(`matches the library's ${variant} theme, token for token`, () => {
-			const docs = docsBlock(variant);
-			const library = libraryBlock(variant);
+	test("says so", () => {
+		expect(HOUSE_CSS).toContain("Do not edit");
+	});
+});
 
-			for (const [slot, token] of Object.entries(MAPPING)) {
-				expect({ slot, value: declared(docs, `--color-${slot}`) }).toEqual({
-					slot,
-					value: declared(library, `--${token}`),
-				});
-			}
-		});
-	}
+describe("house-meta.ts", () => {
+	test("is what `bun run gen-theme` writes today", () => {
+		expect(HOUSE_META).toBe(renderHouseMeta());
+	});
+});
 
-	// This one is what makes a captured preview seamless: `preview.tsx`
-	// composites the simulator's shot onto `--color-fd-background`, and the
-	// simulator painted the screen with `--background`.
-	test("paints the page in the same colour the previews were captured on", () => {
-		for (const variant of ["light", "dark"] as const) {
-			expect(declared(docsBlock(variant), "--color-fd-background")).toBe(
-				declared(libraryBlock(variant), "--background")
-			);
+describe("app.css", () => {
+	test("imports the generated palette after the library's scale", () => {
+		const tokens = APP_CSS.indexOf('@import "delacour-react-native-ui/styles/tokens"');
+		const house = APP_CSS.indexOf('@import "./house.css"');
+		const neutral = APP_CSS.indexOf('@import "fumadocs-ui/css/neutral.css"');
+
+		expect(tokens).toBeGreaterThan(-1);
+		expect(house).toBeGreaterThan(tokens);
+		expect(house).toBeGreaterThan(neutral);
+	});
+
+	test("declares no --color-fd-* literal of its own", () => {
+		const declared = [...APP_CSS.matchAll(/--color-fd-[a-z-]+:\s*([^;]+);/g)];
+		const literals = declared.filter(([, value]) => /(oklch|hsl|rgb|#)/.test(value ?? ""));
+
+		expect(literals.map(([line]) => line)).toEqual([]);
+	});
+
+	test("carries no hex colour at all", () => {
+		expect(APP_CSS).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+	});
+
+	test("gives every px type step a line height", () => {
+		for (const step of ["xs", "sm", "base", "lg", "xl", "2xl", "3xl"]) {
+			expect(APP_CSS).toContain(`--text-${step}--line-height:`);
+		}
+	});
+
+	test("declares the rhythm and the radius scale", () => {
+		for (const token of ["--spacing-section", "--spacing-section-gap", "--radius-card", "--radius-tile"]) {
+			expect(APP_CSS).toContain(`${token}:`);
 		}
 	});
 });

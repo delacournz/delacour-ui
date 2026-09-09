@@ -1,4 +1,4 @@
-import { DEFAULT_CONFIG } from "@delacour/design-system/config";
+import { HOUSE_CONFIG } from "@delacour/design-system/house";
 import { Text } from "delacour-react-native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -101,11 +101,14 @@ export default function Preview(): ReactElement {
 /**
  * Drives Uniwind's global theme from the route, and reports what actually took.
  *
- * **The default design system is forced here too.** A customized look survives
- * a restart, so without this a capture run would publish whichever palette,
+ * **The house preset is forced here too.** A customized look survives a
+ * restart, so without this a capture run would publish whichever palette,
  * geometry and typeface the last person happened to leave selected — the
  * documentation site quietly turning fuchsia and square because someone was
- * playing with the customizer on a simulator a week ago. `applyConfig` is
+ * playing with the customizer on a simulator a week ago. It pins
+ * `HOUSE_CONFIG` rather than the library default because the documentation
+ * site is painted from the same preset, and a capture in another theme would
+ * sit on the page as a component from somewhere else. `applyConfig` is
  * deliberately not `setAxis`: this repaints without touching what is stored, so
  * the app is still on the user's own configuration the next time it launches.
  *
@@ -127,7 +130,7 @@ function useAppliedTheme(requested: PreviewTheme): PreviewTheme | null {
 	const [applied, setApplied] = useState<PreviewTheme | null>(null);
 
 	useLayoutEffect(() => {
-		applyConfig(DEFAULT_CONFIG);
+		applyConfig(HOUSE_CONFIG);
 		Uniwind.setTheme(requested);
 		setApplied(requested);
 	}, [requested]);

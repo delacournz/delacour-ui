@@ -448,17 +448,20 @@ not the same one:
 
 | | Config | Where |
 | --- | --- | --- |
-| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — zinc, the `delacour` amber, Inter under Outfit, a small corner | what a fresh install opens in, dark; what a broken or partial store falls back to; the first tile of the preset strip |
-| **The library** | `DEFAULT_CONFIG` — Vega, neutral, the platform font | what `/preview` forces for every documentation capture; the second tile of the preset strip |
+| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — zinc, the `delacour` amber, Inter under Outfit, a small corner | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
+| **The library** | `DEFAULT_CONFIG` — Vega, neutral, the platform font | what `delacour init` ships to a consumer; the second tile of the preset strip, so that look is one tap away |
 
 The app is the studio's own site continued onto a phone, so it opens in the
 studio's look: `store.pure.ts`'s `parseStoredConfig` lands on `HOUSE_CONFIG` for
 an empty store, an unparseable one and a partial one alike, and
 `parseStoredMode` opens dark when nothing is stored. The documentation captures
-are unaffected — `preview.tsx` still calls `applyConfig(DEFAULT_CONFIG)` before
-it photographs anything, because the media has to show what a consumer gets, not
-what we chose for ourselves. `bun run previews` was not rerun for this change and
-must not need to be.
+are in the same preset: `preview.tsx` calls `applyConfig(HOUSE_CONFIG)` before it
+photographs anything, because the docs site is painted from that preset and a
+capture in another theme would sit on the page as a component from somewhere
+else. `bun run previews` has to be rerun after that change; `preview-route.test.ts`
+holds the route to the house so the two cannot drift apart again. It sits outside
+`src/app` because Expo Router registers every file there as a route, a test
+included — the first run put a `bun:test` import on the phone's red screen.
 
 The splash follows the house: `app.config.ts`'s two `backgroundColor`s are the
 sRGB of the house `--background` in each mode, and `app.config.test.ts` resolves
@@ -822,7 +825,7 @@ Mounted per screen, it needs no pathname gate: it is simply not on `/preview`,
 where `bun run previews` photographs every demo, nor on `/theme`, where it would
 push the screen you are already on.
 
-`preview.tsx` forces `DEFAULT_CONFIG` in the same layout effect that sets
+`preview.tsx` forces `HOUSE_CONFIG` in the same layout effect that sets
 the theme — a configuration survives a restart, so without that a capture run
 would publish whichever look was last selected. It calls `applyConfig`, not
 `setAxis`, so the stored choice is untouched.

@@ -35,8 +35,8 @@ export function Hero(): ReactElement {
 	const device = previews[HERO_DEVICE];
 
 	return (
-		<section className="mx-auto grid w-full max-w-page items-center gap-16 px-6 pt-section-sm pb-section lg:grid-cols-[minmax(0,var(--container-reading))_auto] lg:justify-center lg:gap-24 lg:pt-section">
-			<div className="flex max-w-reading flex-col items-start gap-8">
+		<section className="mx-auto grid w-full max-w-page grid-cols-1 items-center gap-16 px-6 pt-section-sm pb-section lg:grid-cols-[minmax(0,var(--container-reading))_auto] lg:justify-center lg:gap-24 lg:pt-section">
+			<div className="flex w-full min-w-0 max-w-reading flex-col items-start gap-8">
 				<Link
 					className="inline-flex items-center gap-2 rounded-full border border-fd-border bg-fd-card/60 py-1 ps-1.5 pe-3 font-medium text-fd-muted-foreground text-xs transition-colors hover:text-fd-foreground"
 					params={{ _splat: "native/releases" }}

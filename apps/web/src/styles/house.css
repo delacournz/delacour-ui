@@ -53,5 +53,5 @@
 	--color-fd-ring: oklch(0.552 0.016 285.938);
 	--color-fd-error: oklch(0.704 0.191 22.216);
 
-	--color-capture: oklch(0.145 0 0);
+	--color-capture: oklch(0.141 0.005 285.823);
 }

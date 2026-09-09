@@ -162,9 +162,9 @@ The docs chrome is Fumadocs' structure untouched, restyled three ways and no fur
 `--color-fd-*` palette from `house.css`; the rules at the end of `app.css` scoped to Fumadocs' own
 ids (`#nd-notebook-layout`, `#nd-sidebar`, `#nd-home-layout #nd-nav` — the floating pill on the
 home layout); and two components of ours, `src/components/docs-toolbar.tsx` under the title and the
-`DeviceBezel` / `bg-capture` frames in `preview.tsx`. `bg-capture` is the library **default's**
-background, generated into `house.css`, because every capture was photographed on it and a frame
-in the house page colour would show a seam.
+`DeviceBezel` / `bg-capture` frames in `preview.tsx`. `bg-capture` is the background every capture
+was photographed on — the house page, since `bun run previews` forces `HOUSE_CONFIG` — generated
+into `house.css` under its own name so a frame always meets its image with no seam.
 
 ## Adding a page
 

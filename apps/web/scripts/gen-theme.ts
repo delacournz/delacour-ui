@@ -23,7 +23,6 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { DEFAULT_CONFIG } from "@delacour/design-system/config";
 import { HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
 import { type ResolvedMode, resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { houseFonts } from "../src/lib/house";
@@ -113,15 +112,16 @@ function paletteLines(mode: ResolvedMode): string {
 /**
  * `house.css`, whole.
  *
- * `--color-capture` is the one token here that is not the house's: it is the
- * **library default's** page background, because that is what every preview
- * under `public/previews/` was photographed on (`bun run previews` forces
- * `DEFAULT_CONFIG`). A capture's frame is painted with it so the image meets
- * its frame with no seam, whatever the house page is.
+ * `--color-capture` is the page background every preview under
+ * `public/previews/` was photographed on. `bun run previews` forces
+ * `HOUSE_CONFIG` on the capture route, so today it is the house page itself;
+ * it keeps its own name so a frame is painted from what the media was shot on
+ * rather than from whatever the page happens to be, and the two cannot drift
+ * apart without this line changing.
  */
 export function renderHouseCss(): string {
 	const { light, dark } = resolveTokens(HOUSE_CONFIG);
-	const captured = resolveTokens(DEFAULT_CONFIG);
+	const captured = resolveTokens(HOUSE_CONFIG);
 	const fonts = fontDeclarations()
 		.map(([name, value]) => `\t${name}: ${value};`)
 		.join("\n");

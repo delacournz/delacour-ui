@@ -74,9 +74,9 @@ const DEVICE_MEDIA = `${MEDIA} max-h-[520px]`;
  * plain card — a component floating inside a phone silhouette reads as a
  * screenshot of somebody's app rather than as the component itself.
  *
- * The captured background is the **library default's** `background` — the
- * capture run forces `DEFAULT_CONFIG` — which is not the house page. The frame
- * is painted `bg-capture`, generated from that default by `gen-theme`, so the
+ * The captured background is the house `background` — the capture run forces
+ * `HOUSE_CONFIG` on the preview route. The frame is painted `bg-capture`,
+ * generated from that same preset by `gen-theme`, so the
  * media meets its frame with no colour seam and the frame reads as a card on
  * the house page.
  */

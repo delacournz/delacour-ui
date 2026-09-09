@@ -1,5 +1,4 @@
 import { describe, expect, test } from "bun:test";
-import { DEFAULT_CONFIG } from "@delacour/design-system/config";
 import { HOUSE_CONFIG } from "@delacour/design-system/house";
 import { resolveTokens } from "@delacour/design-system/resolve";
 import { fontDeclarations, houseMeta, MAPPING, oklchToHex, renderHouseCss, renderHouseMeta } from "./gen-theme";
@@ -77,15 +76,14 @@ describe("renderHouseCss", () => {
 	});
 
 	/**
-	 * The previews were photographed on the library default's background, not
-	 * the house's. The frame a capture sits in has to be that colour or the
-	 * image meets its frame with a seam — white on a `0.985` page in light.
+	 * The previews are photographed on the house background — `bun run previews`
+	 * pins `HOUSE_CONFIG` on the capture route. The frame a capture sits in has
+	 * to be that colour or the image meets its frame with a seam. It keeps its
+	 * own token so the day the capture preset changes, this line changes with it.
 	 */
-	test("carries the capture background from the library default, in both modes", () => {
-		const { light: defaultLight, dark: defaultDark } = resolveTokens(DEFAULT_CONFIG);
-
-		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(defaultLight.background)};`);
-		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(defaultDark.background)};`);
+	test("carries the capture background from the house preset, in both modes", () => {
+		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(light.background)};`);
+		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(dark.background)};`);
 	});
 
 	test("the radius is the house corner in rem", () => {

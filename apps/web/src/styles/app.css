@@ -157,6 +157,21 @@
 	border-radius: var(--radius-card);
 }
 
+/*
+ * Fumadocs floats the copy button over a code block's top-right corner. A
+ * long single line — every install command on a phone — scrolled its last
+ * characters under the button. The `pre` is `w-max`, so padding on its end
+ * grows the scroll width by the button's footprint and the text always clears
+ * it; the fade tells the reader there is more to the right.
+ */
+figure.shiki > .fd-scroll-container > pre {
+	padding-inline-end: 3.5rem;
+}
+
+figure.shiki > .fd-scroll-container {
+	mask-image: linear-gradient(to right, black calc(100% - 4.5rem), transparent calc(100% - 0.75rem));
+}
+
 @layer base {
 	html {
 		scrollbar-gutter: stable;

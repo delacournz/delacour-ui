@@ -1,37 +1,35 @@
-import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig, withAxis } from "@delacour/design-system/config";
+import { type DesignSystemConfig, withAxis } from "@delacour/design-system/config";
 import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { useSyncExternalStore } from "react";
 import { Platform } from "react-native";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
+import {
+	parseStoredConfig,
+	parseStoredMode,
+	type ResetTarget,
+	resetTarget,
+	THEME_MODES,
+	type ThemeMode,
+} from "@/design-system/store.pure";
 
-/** Light and dark are Uniwind's own themes; `system` is a magic string it intercepts. */
-export const THEME_MODES = ["system", "light", "dark"] as const;
-
-export type ThemeMode = (typeof THEME_MODES)[number];
+export { THEME_MODES, type ThemeMode };
 
 const storage = createMMKV({ id: "delacour-playground-design-system" });
 
 const CONFIG_KEY = "config";
 const MODE_KEY = "mode";
 
-function isThemeMode(value: string | undefined): value is ThemeMode {
-	return (THEME_MODES as readonly string[]).includes(value ?? "");
-}
-
+/**
+ * What the store holds, or the house when it holds nothing worth keeping.
+ *
+ * The fallbacks are `parseStoredConfig`'s — a fresh install, an older build's
+ * config and a partial write all land on `HOUSE_CONFIG` rather than the
+ * library's own default, which is what `/preview` forces and the one thing
+ * this app is not meant to open in.
+ */
 function readConfig(): DesignSystemConfig {
-	const raw = storage.getString(CONFIG_KEY);
-	if (!raw) return DEFAULT_CONFIG;
-
-	try {
-		return normalizeConfig(JSON.parse(raw) as Partial<DesignSystemConfig>);
-	} catch {
-		// A config written by an older build, or a partial write. The whole
-		// point of persisting per-axis defaults is that one bad value is not
-		// worth losing the rest, and unparseable JSON is the case where there
-		// is no rest to keep.
-		return DEFAULT_CONFIG;
-	}
+	return parseStoredConfig(storage.getString(CONFIG_KEY));
 }
 
 /**
@@ -101,8 +99,7 @@ function emit(): void {
  * palette and then repaint, on every cold start.
  */
 export function restoreDesignSystem(): void {
-	const mode = storage.getString(MODE_KEY);
-	if (isThemeMode(mode)) Uniwind.setTheme(mode);
+	Uniwind.setTheme(parseStoredMode(storage.getString(MODE_KEY)));
 
 	applyConfig(current);
 }
@@ -119,8 +116,16 @@ export function setAxis<Key extends keyof DesignSystemConfig>(key: Key, value: D
 	emit();
 }
 
-export function resetConfig(): void {
-	current = DEFAULT_CONFIG;
+/**
+ * Land on one of the two presets, replacing every axis at once.
+ *
+ * `house` is the studio's own look and what a fresh install opens in; `library`
+ * is what `delacour init` ships and what the documentation captures show. Both
+ * are written to the store rather than cleared from it, so a reset to the
+ * library default survives a restart exactly as a hand-built theme does.
+ */
+export function resetConfig(target: ResetTarget): void {
+	current = resetTarget(target);
 	storage.set(CONFIG_KEY, JSON.stringify(current));
 	applyConfig(current);
 	emit();

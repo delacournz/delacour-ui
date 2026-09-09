@@ -7,6 +7,7 @@ export { FontBottomSheet } from "./font.bottom-sheet";
 export { FontOptionList } from "./font-option-list";
 export { HeadingBottomSheet } from "./heading.bottom-sheet";
 export { IconLibraryBottomSheet } from "./icon-library.bottom-sheet";
+export { PresetStrip } from "./preset-strip";
 export { CHART_TOKENS, ColorPreview, FontPreview, RadiusPreview, SWATCH_TOKENS } from "./previews";
 export { RadiusStrip } from "./radius-strip";
 export { StyleStrip } from "./style-strip";

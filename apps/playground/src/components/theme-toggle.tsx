@@ -19,9 +19,9 @@ const FADE_IN_MS = 140;
  * toggle above a three-state control over one setting is two controls
  * disagreeing about how many states there are.
  *
- * **`system` therefore has no control anywhere.** The store still persists it
- * and a fresh install still starts on it, so the mode is reachable by clearing
- * app data and not otherwise. That is a real loss and a deliberate one: the
+ * **`system` therefore has no control anywhere.** The store still persists it,
+ * but a fresh install opens dark — the studio's own ground — so the mode is
+ * reachable only by a build that stored it. That is a real loss and a deliberate one: the
  * thing this is reached for is flipping a component between palettes while
  * looking at it, which wants one tap and no third state to read past.
  *

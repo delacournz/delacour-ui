@@ -5,9 +5,9 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { setAxis, useDesignSystem } from "@/design-system/store";
+import { SPECIMEN_HEIGHT } from "@/tokens";
 
-/** The miniature's own height. The specimen inside it is drawn at life size. */
-const SPECIMEN_BOX_HEIGHT = 56;
+/** The specimen inside the box is drawn at life size; the box itself is the strips' shared height. */
 const SPECIMEN_WIDTH = 46;
 
 /**
@@ -40,7 +40,7 @@ function StyleTile({ style, isSelected }: { style: Style; isSelected: boolean })
 		>
 			<View
 				className={`items-center justify-center border bg-muted ${isSelected ? "border-primary" : "border-border"}`}
-				style={{ borderRadius: style.geometry.radius, height: SPECIMEN_BOX_HEIGHT }}
+				style={{ borderRadius: style.geometry.radius, height: SPECIMEN_HEIGHT }}
 			>
 				<View
 					className={isSelected ? "bg-primary" : "bg-muted-foreground/55"}

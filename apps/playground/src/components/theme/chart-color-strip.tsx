@@ -8,9 +8,8 @@ import { AxisStrip } from "@/components/theme/axis-strip";
 import { CHART_TOKENS, paintable } from "@/components/theme/previews";
 import { usePaletteOptions } from "@/components/theme/use-palette-options";
 import { setAxis, useDesignSystem } from "@/design-system/store";
+import { SPECIMEN_HEIGHT } from "@/tokens";
 
-/** The box the bars stand in, matching the Base Color tile so the rows share a rhythm. */
-const SPECIMEN_HEIGHT = 56;
 /**
  * A fixed silhouette, so five palettes differ by hue and never by shape.
  *

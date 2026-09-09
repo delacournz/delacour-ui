@@ -6,8 +6,7 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";
 import { setAxis, useDesignSystem } from "@/design-system/store";
-
-const SPECIMEN_HEIGHT = 56;
+import { SPECIMEN_HEIGHT } from "@/tokens";
 
 /**
  * One corner, at the size it would actually draw.

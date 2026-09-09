@@ -16,6 +16,7 @@ import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
+import { LIST_GAP } from "@/tokens";
 
 /**
  * The axes that still open a sheet.
@@ -74,7 +75,7 @@ export default function ThemeDesignTab(): ReactElement {
 
 	return (
 		<>
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<ThemeTabBarSpacer />
 				<Text.Paragraph color="muted">
 					Every axis repaints the same tokens, so nothing below is restyled by hand.

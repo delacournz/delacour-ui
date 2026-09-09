@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import { Section } from "@/components/section";
+import { LIST_GAP } from "@/tokens";
 
 type State = "picker" | "loading" | "error" | "error-bare";
 
@@ -55,7 +56,7 @@ export default function ScreenStatesDemo(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<Section title="States">
 					<View className="gap-2">
 						<Button onPress={() => setState("loading")}>Screen.Loading</Button>

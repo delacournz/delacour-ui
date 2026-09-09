@@ -14,6 +14,7 @@ import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, type ReactNode, useState } from "react";
 import { View } from "react-native";
 import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
+import { LIST_GAP } from "@/tokens";
 
 /** The card surfaces, as data, so the pair stays symmetrical. */
 const PROJECTS = [
@@ -71,7 +72,7 @@ PreviewSection.displayName = "Playground.Theme.PreviewSection";
  */
 export default function ThemePreviewTab(): ReactElement {
 	return (
-		<Screen.ScrollArea contentContainerClassName="gap-6">
+		<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 			<ThemeTabBarSpacer />
 			<ButtonsPreview />
 			<SurfacesPreview />

@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import { Section } from "@/components/section";
+import { LIST_GAP } from "@/tokens";
 
 const LAYOUTS = ["back + title", "title + subtitle", "centre + actions", "close only"] as const;
 
@@ -70,7 +71,7 @@ export default function ScreenNavbarDemo(): ReactElement {
 				{layout === "close only" ? <Screen.Navbar.BackButton glyph="close" onPress={() => router.back()} /> : null}
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<Section title="Layout">
 					<View className="flex-row flex-wrap gap-2">
 						{LAYOUTS.map((value) => (

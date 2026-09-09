@@ -9,9 +9,8 @@ import { paintable } from "@/components/theme/previews";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
 import { resetConfig, useDesignSystem } from "@/design-system/store";
 import { configEquals, type ResetTarget } from "@/design-system/store.pure";
+import { SPECIMEN_HEIGHT } from "@/tokens";
 
-/** The specimen box, matching the axis strips so the rows share a rhythm. */
-const SPECIMEN_HEIGHT = 56;
 /** How wide a preset tile is — `w-28`, wider than an axis tile, because it shows a whole theme. */
 const TILE_WIDTH = 112;
 

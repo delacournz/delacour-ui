@@ -28,8 +28,10 @@ import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
+import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
+import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
 /**
  * One glyph per screen, keyed by slug so a row added to `components-index.ts`
@@ -117,7 +119,15 @@ export default function Index(): ReactElement {
 
 	return (
 		<Screen>
-			<Screen.Navbar actions={<ThemeToggle />} placement="static">
+			<Screen.Navbar
+				actions={
+					<>
+						<ThemeTrigger />
+						<ThemeToggle />
+					</>
+				}
+				placement="static"
+			>
 				<View className="flex-row items-center gap-3">
 					<DelacourMark accessibilityLabel="Delacour" accessibilityRole="image" size={MARK_SIZE} />
 					<View className="min-w-0 flex-1">
@@ -127,16 +137,16 @@ export default function Index(): ReactElement {
 				</View>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				{groups.map((group) => (
-					<View className="gap-2" key={group.name}>
+					<View className={SECTION_GAP} key={group.name}>
 						<Text.Overline>{group.name}</Text.Overline>
 						<ListGroup>{group.entries.map((entry) => row(entry, iconFor(entry.slug)))}</ListGroup>
 					</View>
 				))}
 
 				{__DEV__ ? (
-					<View className="gap-2">
+					<View className={SECTION_GAP}>
 						<Text.Overline>Development</Text.Overline>
 						<ListGroup>{DEV_ROWS.map((entry) => row(entry, entry.icon))}</ListGroup>
 					</View>

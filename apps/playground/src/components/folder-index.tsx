@@ -4,6 +4,7 @@ import { Screen } from "delacour-react-native-ui/screen";
 import { type Href, useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";
+import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export type FolderIndexItem = {
@@ -39,10 +40,12 @@ export type FolderIndexProps = {
  * every demo page because a paragraph above a control outweighed the control;
  * a paragraph under a list of five rows was doing the same to the list.
  *
- * The navbar carries `ThemeToggle`, as `DemoPager` and `GalleryScreen` do. A
- * folder index is one tap short of a gallery, and a screen whose chrome cannot
- * flip the theme beside one that can reads as a bug in whichever you reached
- * second.
+ * The navbar carries `ThemeToggle`, as `DemoPager` and `GalleryScreen` do, and
+ * `ThemeTrigger` beside it, as the home screen does. A folder index is one tap
+ * short of a gallery, and a screen whose chrome cannot flip the theme beside
+ * one that can reads as a bug in whichever you reached second; and it is a
+ * screen that navigates rather than demonstrates, which is where the
+ * customiser's action lives now that it no longer floats over demo footers.
  *
  * The title and subtitle ride the back button, the way every other gallery's
  * do, so the whole "‹ Tabs / 5 variations" block goes back and the list starts
@@ -53,7 +56,15 @@ export function FolderIndex({ title, items, unit = "variations" }: FolderIndexPr
 
 	return (
 		<Screen>
-			<Screen.Navbar actions={<ThemeToggle />} placement="static">
+			<Screen.Navbar
+				actions={
+					<>
+						<ThemeTrigger />
+						<ThemeToggle />
+					</>
+				}
+				placement="static"
+			>
 				<Screen.Navbar.BackButton onPress={() => router.back()}>
 					<View className="min-w-0 flex-1">
 						<Screen.Navbar.Title>{title}</Screen.Navbar.Title>

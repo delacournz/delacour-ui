@@ -196,6 +196,8 @@ The library's steps are 12 / 14 / 16 / 18 / 20 / 24 / 30; the large title is an 
 ### Named Rules
 **The One Outfit Rule.** Outfit is set at the large-title step only. Any smaller heading is Inter, because at navbar size Outfit is Inter with a different name and a second font loaded for nothing.
 
+**The Inline Family Rule.** A heading that must render in the heading face sets `fontFamily` inline from `resolveFonts(config).heading`, the way the large title, the preset tiles and the customiser's `FontPreview` do. The `font-heading` class is not a rule this world can lean on: `--font-heading` is declared only inside the platform `@variant` blocks of the library's `theme.css`, so no utility is minted from it and the class resolves to nothing — verified on device (`.impeccable/review/evidence-heading-class-fallback.png`). The library's own `Text.Display`, `Title` and `Header` presets carry that class and render in the body face today; that is a library gap, not a phone rule.
+
 **The Section Header Rule.** Uppercase 12pt semibold muted is a list's section header. It sits directly over a `ListGroup` or a rail, at `SECTION_GAP` (8pt). It is not a kicker, an eyebrow or a heading device, and it never sits over prose.
 
 **The Scaled Chrome Rule.** Text follows Dynamic Type up to a 1.4× cap, because the chrome — 36/44/52pt controls, a 56pt navbar row — is fixed and past that a label clips rather than grows.
@@ -225,7 +227,7 @@ Two things read as above the page and both are gradients, not shadows: the `Scre
 ### Named Rules
 **The Flat Ground Rule.** Surfaces are tonal steps and hairlines only. A shadow on the phone is a defect to remove, not a style to match.
 
-**The Fade Under Chrome Rule.** Content passing under a navbar, a tab bar or a footer is dissolved by a fade in the page colour, sized to the chrome's full occupancy — including the safe-area strip — so no row runs crisp through the home indicator.
+**The Fade Under Chrome Rule.** Content passing under a navbar, a tab bar or a footer is dissolved by a fade in the page colour, sized to the chrome's full occupancy — including the safe-area strip — so no row runs crisp through the home indicator. Known library gap: `Screen.ScrollShadow` learns the scrollable's content height only from the scroll handler, so the bottom fade does not paint until the first scroll.
 
 ## Shapes
 

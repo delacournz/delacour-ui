@@ -9,6 +9,7 @@ import {
 import type { ConversionResult } from "@delacour/design-system/convert";
 import { emitNativeCss, emitShadcnCss } from "@delacour/design-system/emit";
 import { FONT_GROUPS, type FontType, fontByName } from "@delacour/design-system/fonts";
+import { PRESET_SHORTCUTS, type PresetShortcut } from "@delacour/design-system/house";
 import { decodePreset, encodePreset } from "@delacour/design-system/preset";
 import { RADII, radiusByName } from "@delacour/design-system/radii";
 import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
@@ -44,6 +45,50 @@ export function resolvePreset(preset: string | undefined): ThemePreset {
 
 	return { status: "resolved", config, code: preset };
 }
+
+/**
+ * The presets the site offers as one-click starting points.
+ *
+ * The first two come from the design system — the house and the library
+ * default — so this row and the playground's preset strip cannot disagree
+ * about either. The rest are curated here: two configurations far enough from
+ * both to show the axes moving, with codes pinned as literals in
+ * `theme-preset.test.ts` so a codec change fails loudly rather than repointing
+ * a link on the landing page.
+ */
+export const PRESETS: readonly PresetShortcut[] = [
+	...PRESET_SHORTCUTS,
+	{
+		name: "harbour",
+		title: "Harbour",
+		blurb: "Stone under blue, Rhea's rounder geometry, Lora headings.",
+		config: {
+			style: "rhea",
+			baseColor: "stone",
+			theme: "blue",
+			chartColor: "blue",
+			font: "figtree",
+			fontHeading: "lora",
+			radius: "large",
+		},
+		code: "AQcBCAgFFwQ0",
+	},
+	{
+		name: "graphite",
+		title: "Graphite",
+		blurb: "Square corners, a green accent, Geist and Geist Mono.",
+		config: {
+			style: "lyra",
+			baseColor: "mist",
+			theme: "green",
+			chartColor: "green",
+			font: "geist",
+			fontHeading: "geist-mono",
+			radius: "none",
+		},
+		code: "AQMFDAwBEgHW",
+	},
+];
 
 /** The `globals.css` this configuration means — shadcn's `:root` / `.dark` shape, for a web app. */
 export function presetCss(config: DesignSystemConfig): string {

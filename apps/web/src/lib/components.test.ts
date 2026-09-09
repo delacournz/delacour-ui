@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { readdirSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { COMPONENTS, COMPONENTS_WITHOUT_SCREENS, PLAYGROUND_SLUGS, playgroundSlugForDocsPath } from "./components";
 
@@ -90,5 +90,58 @@ describe("playgroundSlugForDocsPath", () => {
 			(slug) => playgroundSlugForDocsPath(`native/components/${slug}.mdx`) === null
 		);
 		expect(unresolved).toEqual([]);
+	});
+});
+
+/**
+ * The one place the count is a word rather than a number. `index.mdx` said
+ * "Nineteen" for a whole component after the twentieth landed, and nothing
+ * noticed — the landing page now reads `COMPONENTS.length`, and this holds the
+ * MDX to the same number.
+ */
+describe("the components index page", () => {
+	const WORDS = [
+		"zero",
+		"one",
+		"two",
+		"three",
+		"four",
+		"five",
+		"six",
+		"seven",
+		"eight",
+		"nine",
+		"ten",
+		"eleven",
+		"twelve",
+		"thirteen",
+		"fourteen",
+		"fifteen",
+		"sixteen",
+		"seventeen",
+		"eighteen",
+		"nineteen",
+		"twenty",
+		"twenty-one",
+		"twenty-two",
+		"twenty-three",
+		"twenty-four",
+		"twenty-five",
+		"twenty-six",
+		"twenty-seven",
+		"twenty-eight",
+		"twenty-nine",
+		"thirty",
+	];
+
+	test("opens with the number of components there actually are", () => {
+		const page = readFileSync(
+			join(import.meta.dirname, "..", "..", "content/docs/native/components/index.mdx"),
+			"utf-8"
+		);
+		const word = WORDS[COMPONENTS.length];
+		if (!word) throw new Error(`no word for ${COMPONENTS.length}; extend WORDS`);
+
+		expect(page).toMatch(new RegExp(`^${word} components`, "im"));
 	});
 });

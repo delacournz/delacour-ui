@@ -83,11 +83,18 @@
 	--glow: color-mix(in oklab, var(--color-fd-primary) 28%, transparent);
 	--pill: color-mix(in oklab, var(--color-fd-card) 72%, transparent);
 	--selection: color-mix(in oklab, var(--color-fd-primary) 35%, transparent);
+	--shadow: color-mix(in oklab, var(--color-fd-foreground) 30%, transparent);
 }
 
+/*
+ * `--shadow` is mixed from the foreground in light — a darkening — and from
+ * the page in dark, because a white-mixed shadow on a black page is a halo,
+ * not depth.
+ */
 .dark {
 	--dot: color-mix(in oklab, var(--color-fd-foreground) 7%, transparent);
 	--pill: color-mix(in oklab, var(--color-fd-card) 70%, transparent);
+	--shadow: color-mix(in oklab, var(--color-fd-background) 80%, transparent);
 }
 
 /* `neutral.css` lifts the sidebar a shade in dark; keep that, on the house card. */
@@ -133,6 +140,101 @@
 	* {
 		scrollbar-width: thin;
 		scrollbar-color: var(--color-fd-border) transparent;
+	}
+}
+
+/*
+ * The ground: the studio site's faint particle field, as a dot grid mixed
+ * from the foreground. It sits on `body` so every route shares it; `--dot`
+ * is a `color-mix()` so it follows the theme and never names a colour.
+ */
+body {
+	background-image: radial-gradient(var(--dot) 1px, transparent 1.5px);
+	background-size: 28px 28px;
+}
+
+/*
+ * The floating pill nav on the home layout — the studio site's, on Fumadocs'
+ * own header. Scoped to `#nd-home-layout` so the notebook layout keeps its
+ * full-width bar, and by id so the rule outranks the header's `bg-*` utility
+ * without `!important`. The header is Fumadocs' structure untouched; only its
+ * frame moves.
+ */
+#nd-home-layout #nd-nav {
+	top: 0.75rem;
+	height: auto;
+	padding-inline: 0.75rem;
+}
+
+#nd-home-layout #nd-nav > nav {
+	width: max-content;
+	max-width: 100%;
+	margin-inline: auto;
+	border: 1px solid var(--color-fd-border);
+	border-radius: 9999px;
+	background: var(--pill);
+	backdrop-filter: blur(12px);
+	box-shadow: 0 8px 24px -16px var(--shadow);
+}
+
+#nd-home-layout #nd-nav > nav > div:first-child {
+	height: 3rem;
+	padding-inline: 0.875rem 0.5rem;
+}
+
+#nd-home-layout #nd-nav > nav > div:first-child > ul {
+	padding-inline: 1.5rem 0.75rem;
+}
+
+/*
+ * Inside a shrink-wrapped pill the search trigger's `w-full` would otherwise
+ * take the width the theme toggle's two icons need, and the icons collapse to
+ * four pixels. The toggle's children are the one thing in the bar that must
+ * never shrink; the trigger takes a fixed width instead.
+ */
+#nd-home-layout #nd-nav [data-theme-toggle] > * {
+	flex: none;
+}
+
+#nd-home-layout #nd-nav > nav > div:first-child > div > button:first-child {
+	width: 14rem;
+}
+
+@media (width < 64rem) {
+	#nd-home-layout #nd-nav > nav {
+		width: 100%;
+		border-radius: 1.5rem;
+	}
+}
+
+/*
+ * The reveal. A section below the fold is marked `out` on mount and `in` as
+ * it enters — see `components/landing/reveal.tsx`. Nothing is hidden in the
+ * server HTML, and reduced motion collapses the whole thing to a plain
+ * appearance: the observer still runs, the transition is simply gone.
+ */
+.reveal {
+	transition:
+		opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+		translate 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal[data-reveal="out"] {
+	opacity: 0;
+	translate: 0 16px;
+}
+
+.reveal[data-reveal="in"] {
+	opacity: 1;
+	translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.reveal,
+	.reveal[data-reveal="out"] {
+		opacity: 1;
+		translate: none;
+		transition: none;
 	}
 }
 

@@ -114,10 +114,17 @@ Open Graph / Twitter tags. Two things there are deliberate:
   is a real theme behind the toggle and a visitor's choice persists.
 - **The direction contract is in the body.** `__root.tsx` renders an inert `<template>` holding the
   contract this redesign was built to, as an HTML comment, so `grep 4a705b78 .output` finds it.
-- **The social card is `summary`, not `summary_large_image`.** `og:image` is the 512px icon; there
-  is no 1200×630 card to point at. Claiming the large format without one gets the icon stretched
-  and cropped. A real card would want `satori` and a pinned font — `docsImageRoute` in
-  `src/lib/shared.ts` is the placeholder that route would take.
+- **The social card is a rendered 1200×630 PNG.** `og:image` and `twitter:image` point at
+  `docsImageRoute` (`/og/docs`), a server handler in `src/routes/og/docs.ts` that rasterises
+  `src/og/card.ts`'s SVG with `@resvg/resvg-js` — the mark from `@delacour/brand`, the page title in
+  Outfit 600, a line in Inter, on the house dark page. A docs page adds `?title=` from its own
+  `head()`. resvg reads fonts from paths only, so the two TTFs are committed under `src/og/`
+  (OFL, the same files the playground embeds), imported `?inline` and written to the temp
+  directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
+  it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
+  `.output`; the builder's OS and architecture have to match the runtime's, which on Railway they do.
+- **The 404 is ours.** `src/components/not-found.tsx` replaces Fumadocs' default: the mark, the
+  heading face, and pills to the docs and the component index, under the same pill nav.
 
 `siteUrl` in `src/lib/shared.ts` makes the `og:` URLs absolute, which every scraper requires.
 Staging serves production's origin in those tags; threading a per-environment origin through SSR

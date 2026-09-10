@@ -8,3 +8,7 @@ src/routeTree.gen.ts
 
 # Finish-review captures: evidence for a review round, regenerated each time, not shipped.
 .impeccable/review/
+
+# PR screenshots: captured by `bun run screenshots`, pushed to an `assets/<branch>`
+# branch and linked from the pull request body — never committed to the source tree.
+screenshots/

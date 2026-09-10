@@ -14,7 +14,8 @@
 		"check": "biome check ./src",
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",
-		"icons": "bun scripts/generate-icons.ts"
+		"icons": "bun scripts/generate-icons.ts",
+		"screenshots": "bun scripts/screenshots.ts"
 	},
 	"dependencies": {
 		"@delacour/brand": "workspace:*",
@@ -42,6 +43,7 @@
 		"@types/react-dom": "^19.2.4",
 		"@vitejs/plugin-react": "^6.0.5",
 		"nitro": "3.0.260610-beta",
+		"playwright": "^1.63.0",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
 		"vite": "^8.2.1"

@@ -26,6 +26,7 @@ bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
 bun run gen-theme    # regenerate house.css + house-meta.ts from the house preset
+bun run screenshots  # recapture the pull request screenshot set (needs the site running)
 ```
 
 ## Directory structure
@@ -618,6 +619,59 @@ and checked against nothing.
 <!-- What a stale bundle id costs. -->
 A drifted value here does not throw. It produces an association file the operating system reads,
 accepts and quietly stops matching — a QR that opens Safari, on a page that looks entirely correct.
+
+## Pull request screenshots
+
+**A change to what anyone sees carries screenshots, and they are recaptured in the same push that
+changes the visuals.** That is the rule; the rest of this section is how, and why it is a rule at
+all.
+
+The reason is one this repository has already paid for. PR #40 dressed the site in the house theme
+and shot the set on the day it opened. Three commits later the nav's search was an icon button, the
+previews were recaptured in the house preset and the hero mock had a new subtitle — and the body
+still showed a 240px "Search ⌘K" bar over a neutral-grey phone. It even said so, in a paragraph
+apologising for its own pictures. A reviewer reading that body was reviewing a branch that no longer
+existed, and the apology is not a fix: nobody reads a PR body twice.
+
+```bash
+bun run start          # or bun run dev, in another shell
+bun run screenshots    # → apps/web/screenshots/, gitignored
+```
+
+`scripts/screenshots.ts` holds the shot list — eleven frames covering the landing page, a component
+page, the components index, the customiser and the 404, in both themes, at 1440×878 and 390×844@2.
+Add a frame there rather than photographing one by hand, so the next person's set is comparable to
+yours. Two details in it are load-bearing:
+
+- **Reduced motion is emulated.** `app.css` collapses `.reveal` to `opacity: 1` under
+  `prefers-reduced-motion: reduce`, so a full-page shot cannot catch a section mid-entrance. This is
+  the site's own accessibility path, not a capture hack, which is why nothing scripts a scroll to
+  trip the observers.
+- **`document.fonts.ready` is awaited.** The house faces are webfonts. Shooting before they land
+  photographs the fallback stack, and nobody notices until two runs are compared side by side.
+
+### The images go on an `assets/` branch, under the SHA they photograph
+
+They are review evidence, not product, so they are never committed to the source tree —
+`screenshots/` is gitignored. Push them to `assets/<branch>` in this repository and link the
+`raw.githubusercontent.com` URLs from the body; delete the branch when the pull request merges.
+
+| | Previews (`public/previews/**`) | PR screenshots |
+| --- | --- | --- |
+| What they are | the product — what a reader of the docs sees | evidence for one review |
+| Where they live | committed, in this workspace | an `assets/<branch>` branch |
+| Captured by | `bun run previews` (a simulator, needs a Mac) | `bun run screenshots` (headless Chromium) |
+| Lifetime | forever | deleted with the pull request |
+
+**Each recapture goes in a new directory named for the short SHA it photographs**, never over the
+last one. GitHub serves a body's images through camo, which caches by URL: overwrite a path and
+readers keep seeing the picture it used to hold, which is the failure this whole section exists to
+prevent. The SHA in the URL also answers the only question a reviewer has about a screenshot —
+which commit is this?
+
+Playwright is a devDependency of this workspace and downloads its own browser once
+(`bunx playwright install chromium`). It is not in `bun run build` and never runs in CI, for the
+same reason `bun run previews` does not.
 
 ## Previews are captured media, not live components
 

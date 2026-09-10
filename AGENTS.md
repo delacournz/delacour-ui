@@ -359,6 +359,14 @@ same commit as the code, and `bun test` fails by name for a component folder wit
 no `AGENTS.md`. That test exists because `Radio` shipped undocumented and nothing
 caught it for fifteen commits.
 
+**Screenshots are part of the change too.** A pull request that alters what
+anyone sees carries them, and recaptures them in the same push that moves the
+pixels — a body showing a control the branch no longer has is worse than a body
+showing none, because nobody reads a pull request twice. For the docs site,
+`cd apps/web && bun run screenshots` shoots the set; where the images go, and why
+they are keyed to a commit rather than overwritten, is in
+[apps/web/AGENTS.md](apps/web/AGENTS.md#pull-request-screenshots).
+
 ## Generated, do not edit
 
 `apps/*/ios`, `apps/*/android` (`expo prebuild`), `.expo`, `.turbo`,

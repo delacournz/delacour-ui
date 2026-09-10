@@ -30,8 +30,8 @@ describe("the hero", () => {
 	test("says what it said", () => {
 		expect(HERO).toEqual({
 			badge: "delacour-react-native-ui · alpha",
-			title: "The Foundation for your Mobile Design System",
-			lede: "Accessible, composable components with the hard decisions already made. The source lands in your repository, yours to reshape and extend — iOS and Android, painted from the same design tokens as your web app.",
+			title: "Own Your Mobile Design System",
+			lede: "Accessible, composable components with the defaults already decided. The source is yours from the first commit.",
 			primary: "Quick start",
 			secondary: "Browse components",
 			github: "GitHub →",

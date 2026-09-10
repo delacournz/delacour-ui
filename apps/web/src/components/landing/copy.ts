@@ -15,8 +15,8 @@ import { appName } from "@/lib/shared";
 
 export const HERO = {
 	badge: "delacour-react-native-ui · alpha",
-	title: "Build your React Native component library.",
-	lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
+	title: "The Foundation for your Mobile Design System",
+	lede: "Accessible, composable components with the hard decisions already made. The source lands in your repository, yours to reshape and extend — iOS and Android, painted from the same design tokens as your web app.",
 	primary: "Quick start",
 	secondary: "Browse components",
 	github: "GitHub →",

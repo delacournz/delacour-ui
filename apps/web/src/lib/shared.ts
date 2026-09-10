@@ -2,7 +2,7 @@ export const appName = "Delacour UI";
 
 /** One sentence, served as the meta description and as both social cards' body. */
 export const appDescription =
-	"Composable, accessible React Native components with thoughtful defaults. Code you can customize, extend and make your own — painted from the same design tokens as your shadcn web app.";
+	"Accessible, composable React Native components with the hard decisions already made — the foundation for a mobile design system that shares its tokens with your shadcn web app.";
 
 /**
  * The production origin, for the absolute URLs Open Graph and Twitter cards

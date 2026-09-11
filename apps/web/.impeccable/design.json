@@ -1,0 +1,225 @@
+{
+	"schemaVersion": 2,
+	"generatedAt": "2026-09-09T00:00:00Z",
+	"title": "Design System: Delacour UI docs",
+	"extensions": {
+		"colorMeta": {
+			"amber-dark": {
+				"role": "primary",
+				"displayName": "Brand Amber",
+				"canonical": "oklch(0.837 0.164 84.429)",
+				"tonalRamp": [
+					"oklch(0.25 0.09 84)",
+					"oklch(0.35 0.11 84)",
+					"oklch(0.45 0.13 84)",
+					"oklch(0.55 0.15 84)",
+					"oklch(0.666 0.157 58.318)",
+					"oklch(0.769 0.165 70.08)",
+					"oklch(0.837 0.164 84.429)",
+					"oklch(0.93 0.09 92)"
+				]
+			},
+			"page-dark": {
+				"role": "neutral",
+				"displayName": "Page",
+				"canonical": "oklch(0.141 0.005 285.823)",
+				"tonalRamp": [
+					"oklch(0.141 0.005 285.823)",
+					"oklch(0.21 0.006 285.885)",
+					"oklch(0.274 0.006 286.033)",
+					"oklch(0.37 0.013 285.805)",
+					"oklch(0.552 0.016 285.938)",
+					"oklch(0.705 0.015 286.067)",
+					"oklch(0.92 0.004 286.32)",
+					"oklch(0.985 0 0)"
+				]
+			},
+			"surface-dark": { "role": "neutral", "displayName": "Surface", "canonical": "oklch(0.21 0.006 285.885)" },
+			"hairline-dark": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(1 0 0 / 10%)" },
+			"ink-dark": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(0.985 0 0)" },
+			"ink-muted-dark": { "role": "neutral", "displayName": "Ink Muted", "canonical": "oklch(0.705 0.015 286.067)" },
+			"capture-dark": {
+				"role": "neutral",
+				"displayName": "Capture",
+				"canonical": "oklch(0.145 0 0)"
+			}
+		},
+		"typographyMeta": {
+			"display": { "displayName": "Display", "purpose": "The landing headline, the customiser title, the 404." },
+			"headline": { "displayName": "Headline", "purpose": "A landing section's heading under its eyebrow." },
+			"title": { "displayName": "Title", "purpose": "The customiser's section headings." },
+			"body": { "displayName": "Body", "purpose": "Prose in the 36rem column." },
+			"lede": { "displayName": "Lede", "purpose": "The sentence under a heading, in muted ink." },
+			"label": { "displayName": "Label", "purpose": "The eyebrow and group names, always uppercase and tracked." },
+			"code": { "displayName": "Code", "purpose": "Code blocks, inline code, the preset code." }
+		},
+		"shadows": [
+			{ "name": "phone-lift", "value": "0 24px 48px -20px var(--shadow)", "purpose": "Under the hero phone only." },
+			{ "name": "nav-float", "value": "0 8px 24px -16px var(--shadow)", "purpose": "Under the floating pill nav." },
+			{
+				"name": "amber-glow",
+				"value": "0 8px 24px -8px var(--glow)",
+				"purpose": "The primary pill on hover; the only glow."
+			}
+		],
+		"motion": [
+			{
+				"name": "reveal",
+				"value": "opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), translate 0.7s cubic-bezier(0.16, 1, 0.3, 1)",
+				"purpose": "A section lifting into place as it enters; gone under reduced motion."
+			},
+			{
+				"name": "phone-settle",
+				"value": "transform 0.5s ease-out",
+				"purpose": "The hero phone from rotate(2deg) scale(0.95) to flat on hover."
+			},
+			{ "name": "colour", "value": "150ms", "purpose": "Every hover colour change." }
+		],
+		"breakpoints": [{ "name": "sm", "value": "40rem" }, { "name": "lg", "value": "64rem" }],
+		"mixes": [
+			{
+				"name": "--dot",
+				"value": "color-mix(in oklab, var(--color-fd-foreground) 9%, transparent)",
+				"purpose": "The dot field; 7% in dark."
+			},
+			{
+				"name": "--pill",
+				"value": "color-mix(in oklab, var(--color-fd-card) 72%, transparent)",
+				"purpose": "The nav pill's fill; 70% in dark."
+			},
+			{
+				"name": "--glow",
+				"value": "color-mix(in oklab, var(--color-fd-primary) 28%, transparent)",
+				"purpose": "The hover glow."
+			},
+			{
+				"name": "--shadow",
+				"value": "color-mix(in oklab, var(--color-fd-foreground) 30%, transparent)",
+				"purpose": "Light: a darkening. Dark: 80% of the page, so it never halos."
+			},
+			{
+				"name": "--selection",
+				"value": "color-mix(in oklab, var(--color-fd-primary) 35%, transparent)",
+				"purpose": "Text selection."
+			}
+		]
+	},
+	"components": [
+		{
+			"name": "Primary Pill",
+			"kind": "button",
+			"refersTo": "button-primary",
+			"description": "The one amber call to action on a page.",
+			"html": "<a class=\"ds-pill-primary\" href=\"#\">Quick start</a>",
+			"css": ".ds-pill-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 9999px; background: var(--color-fd-primary, oklch(0.837 0.164 84.429)); color: var(--color-fd-primary-foreground, oklch(0.21 0.006 285.885)); font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: box-shadow 150ms, filter 150ms; } .ds-pill-primary:hover { box-shadow: 0 8px 24px -8px color-mix(in oklab, var(--color-fd-primary, oklch(0.837 0.164 84.429)) 28%, transparent); filter: brightness(1.05); } .ds-pill-primary:focus-visible { outline: 2px solid var(--color-fd-primary, oklch(0.837 0.164 84.429)); outline-offset: 2px; }"
+		},
+		{
+			"name": "Ghost Pill",
+			"kind": "button",
+			"refersTo": "button-ghost",
+			"description": "The second action beside the amber one.",
+			"html": "<a class=\"ds-pill-ghost\" href=\"#\">Browse components</a>",
+			"css": ".ds-pill-ghost { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: 9999px; border: 1px solid var(--color-fd-border, oklch(1 0 0 / 10%)); background: color-mix(in oklab, var(--color-fd-card, oklch(0.21 0.006 285.885)) 60%, transparent); color: var(--color-fd-foreground, oklch(0.985 0 0)); font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; text-decoration: none; transition: background-color 150ms; } .ds-pill-ghost:hover { background: var(--color-fd-accent, oklch(0.274 0.006 286.033)); } .ds-pill-ghost:focus-visible { outline: 2px solid var(--color-fd-primary, oklch(0.837 0.164 84.429)); outline-offset: 2px; }"
+		},
+		{
+			"name": "Eyebrow",
+			"kind": "custom",
+			"refersTo": "eyebrow",
+			"description": "The studio's section marker: a 6px amber dot and a tracked label.",
+			"html": "<p class=\"ds-eyebrow\"><span class=\"ds-eyebrow-dot\"></span>Components</p>",
+			"css": ".ds-eyebrow { display: inline-flex; align-items: center; gap: 8px; margin: 0; font: 500 13px/16px Inter, ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-fd-muted-foreground, oklch(0.705 0.015 286.067)); } .ds-eyebrow-dot { width: 6px; height: 6px; border-radius: 9999px; background: var(--color-fd-primary, oklch(0.837 0.164 84.429)); }"
+		},
+		{
+			"name": "Card",
+			"kind": "card",
+			"refersTo": "card",
+			"description": "A showcase or index tile: surface, hairline, house card radius, no shadow.",
+			"html": "<a class=\"ds-card\" href=\"#\"><span class=\"ds-card-stage\"></span><span class=\"ds-card-caption\"><span class=\"ds-card-name\">Button</span><span class=\"ds-card-blurb\">A pressable action, with composed icons and a loading state that costs no layout.</span></span></a>",
+			"css": ".ds-card { display: flex; flex-direction: column; overflow: hidden; border-radius: calc(0.45rem * 1.8); border: 1px solid var(--color-fd-border, oklch(1 0 0 / 10%)); background: var(--color-fd-card, oklch(0.21 0.006 285.885)); color: var(--color-fd-foreground, oklch(0.985 0 0)); text-decoration: none; transition: border-color 150ms; } .ds-card:hover { border-color: color-mix(in oklab, var(--color-fd-primary, oklch(0.837 0.164 84.429)) 50%, transparent); } .ds-card-stage { display: block; height: 160px; background: var(--color-capture, oklch(0.145 0 0)); } .ds-card-caption { display: flex; flex-direction: column; gap: 4px; padding: 16px; border-top: 1px solid var(--color-fd-border, oklch(1 0 0 / 10%)); } .ds-card-name { font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; } .ds-card-blurb { font: 400 12px/16px Inter, ui-sans-serif, system-ui, sans-serif; color: var(--color-fd-muted-foreground, oklch(0.705 0.015 286.067)); }"
+		},
+		{
+			"name": "Pill Nav",
+			"kind": "nav",
+			"refersTo": "nav-pill",
+			"description": "The floating, blurred, shrink-wrapped navigation bar.",
+			"html": "<nav class=\"ds-nav\"><span class=\"ds-nav-title\">Delacour UI</span><a class=\"ds-nav-link\" href=\"#\">Docs</a><a class=\"ds-nav-link ds-nav-link-active\" href=\"#\">Components</a><a class=\"ds-nav-link\" href=\"#\">Charts</a><a class=\"ds-nav-link\" href=\"#\">Theme</a></nav>",
+			"css": ".ds-nav { display: inline-flex; align-items: center; gap: 4px; height: 48px; padding: 0 8px 0 14px; border-radius: 9999px; border: 1px solid var(--color-fd-border, oklch(1 0 0 / 10%)); background: color-mix(in oklab, var(--color-fd-card, oklch(0.21 0.006 285.885)) 70%, transparent); backdrop-filter: blur(12px); box-shadow: 0 8px 24px -16px color-mix(in oklab, var(--color-fd-background, oklch(0.141 0.005 285.823)) 80%, transparent); } .ds-nav-title { margin-right: 20px; font: 600 16px/20px Outfit, ui-sans-serif, system-ui, sans-serif; letter-spacing: -0.025em; color: var(--color-fd-foreground, oklch(0.985 0 0)); } .ds-nav-link { padding: 8px; font: 400 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; color: var(--color-fd-muted-foreground, oklch(0.705 0.015 286.067)); text-decoration: none; transition: color 150ms; } .ds-nav-link:hover { color: var(--color-fd-foreground, oklch(0.985 0 0)); } .ds-nav-link-active { color: var(--color-fd-primary, oklch(0.837 0.164 84.429)); }"
+		},
+		{
+			"name": "Preset Tile",
+			"kind": "chip",
+			"refersTo": "preset-tile",
+			"description": "A customiser option: a hairline tile that rings in amber when selected.",
+			"html": "<a class=\"ds-tile ds-tile-selected\" href=\"#\"><span class=\"ds-tile-disc\"></span><span class=\"ds-tile-text\"><span class=\"ds-tile-title\">Delacour</span><span class=\"ds-tile-blurb\">The studio's own: zinc, amber, Inter and Outfit.</span></span></a>",
+			"css": ".ds-tile { display: flex; gap: 12px; padding: 12px; border-radius: calc(0.45rem * 1.4); border: 1px solid var(--color-fd-border, oklch(1 0 0 / 10%)); color: var(--color-fd-foreground, oklch(0.985 0 0)); text-decoration: none; transition: background-color 150ms; } .ds-tile:hover { background: var(--color-fd-accent, oklch(0.274 0.006 286.033)); } .ds-tile-selected { border-color: var(--color-fd-primary, oklch(0.837 0.164 84.429)); box-shadow: 0 0 0 1px var(--color-fd-primary, oklch(0.837 0.164 84.429)); } .ds-tile-disc { flex: none; width: 20px; height: 20px; border-radius: 9999px; background: var(--color-fd-primary, oklch(0.837 0.164 84.429)); } .ds-tile-text { display: flex; flex-direction: column; gap: 2px; } .ds-tile-title { font: 500 14px/20px Inter, ui-sans-serif, system-ui, sans-serif; } .ds-tile-blurb { font: 400 12px/16px Inter, ui-sans-serif, system-ui, sans-serif; color: var(--color-fd-muted-foreground, oklch(0.705 0.015 286.067)); }"
+		}
+	],
+	"narrative": {
+		"northStar": "The Studio, Continued",
+		"overview": "The documentation site is delacour.co.nz carried into the library it sells. One near-black ground with a faint field of dots under everything, zinc surfaces a shade above it, hairlines a shade above those, and a single amber that is spent only on what a reader can act on or must notice. The page is one reading column: thirty-six rem of Inter, top to bottom, with Outfit at 600 set tight for every heading. Every colour on the site is resolveTokens(HOUSE_CONFIG), the customiser's own house preset, generated into house.css — the theme you build at /theme is the theme this page is wearing.",
+		"keyCharacteristics": [
+			"Dark first; light is the same system with the roles swapped, never a second design.",
+			"One accent, amber, spent on interactives and markers only.",
+			"One column of 36rem for prose; the page widens only for a picture wall or an index.",
+			"Outfit 600, tracked −0.025em, for every heading; Inter body at 16/26; Geist Mono for code.",
+			"8px corners at the control, 1.8× that for a card, fully round for a pill.",
+			"A faint dot field is the only material; depth is a hairline or an offset shadow, never both.",
+			"One motion: the scroll reveal. No scattered hover effects."
+		],
+		"rules": [
+			{
+				"name": "The One Amber Rule",
+				"body": "Amber marks what a reader can do or must notice — an action, an active state, a marker — and nothing else. No amber band, no amber heading, no amber card.",
+				"section": "colors"
+			},
+			{
+				"name": "The Mixed-Not-Typed Rule",
+				"body": "A colour the axes cannot name (--dot, --pill, --glow, --shadow, --selection) is a color-mix() of a --color-fd-* token. app.css carries no hex and no oklch() of its own; the test fails if one appears.",
+				"section": "colors"
+			},
+			{
+				"name": "The Capture Rule",
+				"body": "A photographed preview sits on bg-capture, never on the page colour.",
+				"section": "colors"
+			},
+			{
+				"name": "The Heading Face Rule",
+				"body": "h1–h4 are Outfit 600, tracked −0.025em and balanced, by one base rule in app.css; no element re-declares a heading face.",
+				"section": "typography"
+			},
+			{
+				"name": "The Line-Height Rule",
+				"body": "Every px type step carries its own line height (--text-*--line-height) so a size never inherits its parent's ratio.",
+				"section": "typography"
+			},
+			{
+				"name": "The Border-or-Shadow Rule",
+				"body": "A card has a hairline and no shadow. Only the two floating objects — the phone and the nav — carry a shadow, and they carry it with a real offset.",
+				"section": "elevation"
+			},
+			{
+				"name": "The Dot Field Rule",
+				"body": "The ground is a 28px dot grid of --dot (9% of the foreground in light, 7% in dark) on body. It is the site's one texture and belongs to every route; nothing else is laid over the page.",
+				"section": "elevation"
+			}
+		],
+		"dos": [
+			"Do take every colour from house.css (--color-fd-*) or a color-mix() of one; regenerate with bun run gen-theme when the house preset moves.",
+			"Do set every heading in Outfit 600, tracked −0.025em, and every code span in Geist Mono.",
+			"Do keep prose in the 36rem column and separate sections with py-section, never with a rule or a tinted band.",
+			"Do round a card at rounded-card, a tile at rounded-tile, a control at rounded-control and a call to action fully; keep every border at 1px.",
+			"Do put a captured preview on bg-capture.",
+			"Do precede a section heading with the eyebrow (dot + tracked label) on the landing page and the component index, and nowhere in docs prose.",
+			"Do carry a shadow only with an offset and a blur, and only under something that floats."
+		],
+		"donts": [
+			"Don't type a hex or an oklch() in app.css or a component; the parity test fails on one.",
+			"Don't add a second accent, an amber background band or gradient text.",
+			"Don't put a glow behind the hero or a grid over the ground; the dot field is the only texture.",
+			"Don't nest a card in a card, or add a shadow to a card that already has a hairline.",
+			"Don't add a hover effect that moves, tilts or scales anything other than the hero phone; the reveal is the site's one motion.",
+			"Don't restyle Fumadocs by replacing its structure; theme it through its variables and rules scoped to #nd-* ids.",
+			"Don't reword landing copy without updating components/landing/copy.test.ts; the strings are held verbatim."
+		]
+	}
+}

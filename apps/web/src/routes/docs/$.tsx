@@ -2,20 +2,13 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { useFumadocsLoader } from "fumadocs-core/source/client";
 import { DocsLayout } from "fumadocs-ui/layouts/notebook";
-import {
-	DocsBody,
-	DocsDescription,
-	DocsPage,
-	DocsTitle,
-	MarkdownCopyButton,
-	ViewOptionsPopover,
-} from "fumadocs-ui/layouts/notebook/page";
+import { DocsBody, DocsDescription, DocsPage, DocsTitle } from "fumadocs-ui/layouts/notebook/page";
 import { Suspense, use } from "react";
+import { DocsToolbar } from "@/components/docs-toolbar";
 import { useMDXComponents } from "@/components/mdx";
-import { ScanToPreview } from "@/components/playground/scan-to-preview";
 import { playgroundSlugForDocsPath } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
-import { encodeMarkdownUrl, gitConfig } from "@/lib/shared";
+import { docsImageRoute, encodeMarkdownUrl, siteUrl } from "@/lib/shared";
 import { docs, source } from "@/lib/source";
 
 export const Route = createFileRoute("/docs/$")({
@@ -26,6 +19,14 @@ export const Route = createFileRoute("/docs/$")({
 		await docs.getPage(data.path)?.preload();
 		return data;
 	},
+	head: ({ loaderData }) => ({
+		meta: loaderData
+			? [
+					{ property: "og:image", content: docsImageUrl(loaderData.title) },
+					{ name: "twitter:image", content: docsImageUrl(loaderData.title) },
+				]
+			: [],
+	}),
 });
 
 const serverLoader = createServerFn({
@@ -38,10 +39,16 @@ const serverLoader = createServerFn({
 
 		return {
 			path: page.path,
+			title: page.data.title,
 			markdownUrl: encodeMarkdownUrl(page.slugs, page.locale),
 			pageTree: await source.serializePageTree(source.getPageTree()),
 		};
 	});
+
+/** The social card for a docs page: the shared route, with this page's title in the query. */
+function docsImageUrl(title: string): string {
+	return `${siteUrl}${docsImageRoute}?${new URLSearchParams({ title })}`;
+}
 
 function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 	const page = docs.getPage(path);
@@ -55,14 +62,7 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 		<DocsPage toc={toc}>
 			<DocsTitle>{page.title}</DocsTitle>
 			<DocsDescription>{page.description}</DocsDescription>
-			<div className="flex flex-row gap-2 items-center border-b -mt-4 pb-6">
-				<MarkdownCopyButton markdownUrl={markdownUrl} />
-				<ViewOptionsPopover
-					markdownUrl={markdownUrl}
-					githubUrl={`https://github.com/${gitConfig.user}/${gitConfig.repo}/blob/${gitConfig.branch}/apps/web/content/docs/${path}`}
-				/>
-				{playgroundSlug && <ScanToPreview className="ml-auto" slug={playgroundSlug} />}
-			</div>
+			<DocsToolbar markdownUrl={markdownUrl} path={path} slug={playgroundSlug} />
 			<DocsBody>
 				<MDX components={useMDXComponents()} />
 			</DocsBody>

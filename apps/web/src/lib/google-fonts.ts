@@ -1,14 +1,17 @@
 import type { DesignSystemConfig } from "@delacour/design-system/config";
 import { FONTS, type FontFamily, fontByName } from "@delacour/design-system/fonts";
 import { resolveFonts } from "@delacour/design-system/resolve";
+import { houseFonts, isHouseFont } from "@/lib/house";
 
 /**
- * The twenty-six families, on a page that until now loaded no webfont at all.
+ * The site's three faces, and the twenty-six the Font axis needs.
  *
- * The Font axis is the one axis a name cannot carry: "Lora" tells you nothing
- * unless you already know Lora. So the option tiles are set in the face they
- * choose — and the cost of that is twenty-six families on a documentation page,
- * which is why it is done in two requests rather than one.
+ * Every page loads the house faces — Inter, Outfit and Geist Mono — through
+ * `siteFontLinks`. `/theme` adds the catalogue on top, because the Font axis is
+ * the one axis a name cannot carry: "Lora" tells you nothing unless you already
+ * know Lora. So the option tiles are set in the face they choose — and the cost
+ * of that is twenty-six families on a documentation page, which is why it is
+ * done in two requests rather than one.
  *
  * **The order of the two is load-bearing.** The specimen sheet asks for the two
  * glyphs the tiles actually draw, so twenty-six families cost a few kilobytes
@@ -77,9 +80,28 @@ function stylesheet(fonts: readonly FontFamily[], wanted: readonly number[], tex
 	return `${CSS_API}?${query.join("&")}`;
 }
 
-/** Every family, subsetted to the two glyphs a tile draws. */
+/**
+ * Every family the site does not already carry, subsetted to the two glyphs a
+ * tile draws.
+ *
+ * The house faces are left out on purpose, and it is not an optimisation. The
+ * site sheet declares Inter at full coverage; a later `@font-face` for the same
+ * family and weight replaces it, and the specimen one holds two glyphs. Every
+ * paragraph on `/theme` would then fall through to the fallback stack for all
+ * but `A` and `g`. Excluding them makes the two sheets independent of order —
+ * their tiles are set from the full faces the whole site has anyway.
+ */
 export function specimenStylesheetHref(): string {
-	return stylesheet(FONTS, [400], SPECIMEN_TEXT);
+	return stylesheet(
+		FONTS.filter((font) => !isHouseFont(font)),
+		[400],
+		SPECIMEN_TEXT
+	);
+}
+
+/** The house faces, at the four weights the site sets: body, medium, semibold, bold. */
+export function siteStylesheetHref(): string {
+	return stylesheet(houseFonts(), [400, 500, 600, 700]);
 }
 
 /**
@@ -103,6 +125,20 @@ export function selectedStylesheetHref(config: DesignSystemConfig): string | und
 
 export type HeadLink = { rel: string; href: string; crossOrigin?: "anonymous" };
 
+const PRECONNECT: readonly HeadLink[] = [
+	{ rel: "preconnect", href: "https://fonts.googleapis.com" },
+	{ rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+];
+
+/**
+ * Every page's font links: the preconnect pair and the one sheet for the house
+ * faces. Wired into the root route's `head()`, so it precedes anything a route
+ * adds. Google Fonts is the only third-party origin the site loads from.
+ */
+export function siteFontLinks(): readonly HeadLink[] {
+	return [...PRECONNECT, { rel: "stylesheet", href: siteStylesheetHref() }];
+}
+
 /**
  * The route's font links, in the order they have to appear.
  *
@@ -115,8 +151,7 @@ export function themeFontLinks(config: DesignSystemConfig): readonly HeadLink[] 
 	const selected = selectedStylesheetHref(config);
 
 	return [
-		{ rel: "preconnect", href: "https://fonts.googleapis.com" },
-		{ rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+		...PRECONNECT,
 		{ rel: "stylesheet", href: specimenStylesheetHref() },
 		...(selected ? [{ rel: "stylesheet", href: selected }] : []),
 	];

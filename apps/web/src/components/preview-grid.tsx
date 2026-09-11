@@ -1,5 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactElement } from "react";
+import { Eyebrow } from "@/components/landing/section-heading";
+import { CARD } from "@/components/landing/showcase";
 import { ThemedPreview } from "@/components/preview";
 import { COMPONENT_GROUPS, type ComponentEntry, componentsInGroup } from "@/lib/components";
 import { heroPreviews, previews } from "@/previews/manifest";
@@ -14,13 +16,16 @@ import { heroPreviews, previews } from "@/previews/manifest";
  * A component with no captured hero still gets a card — with a placeholder
  * rather than a gap, because the page is the map of the library and a component
  * missing from it reads as a component that does not exist.
+ *
+ * The tile is the landing page's `ShowcaseCard` minus the blurb's arrow — the
+ * same `CARD` class — so the index and the showcase are one card language.
  */
 export function PreviewGrid(): ReactElement {
 	return (
 		<div className="not-prose flex flex-col gap-10">
 			{COMPONENT_GROUPS.map((group) => (
 				<section key={group}>
-					<h2 className="mb-4 font-medium text-fd-muted-foreground text-sm uppercase tracking-wide">{group}</h2>
+					<Eyebrow className="mb-4">{group}</Eyebrow>
 					<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 						{componentsInGroup(group).map((component) => (
 							<ComponentCard component={component} key={component.slug} />
@@ -37,12 +42,8 @@ function ComponentCard({ component }: { component: ComponentEntry }): ReactEleme
 	const hero = heroId ? previews[heroId] : undefined;
 
 	return (
-		<Link
-			className="group/preview flex flex-col overflow-hidden rounded-xl border border-fd-border transition-colors hover:border-fd-foreground/25"
-			params={{ _splat: `native/components/${component.slug}` }}
-			to="/docs/$"
-		>
-			<div className="flex h-40 items-center justify-center overflow-hidden border-fd-border border-b bg-fd-background">
+		<Link className={CARD} params={{ _splat: `native/components/${component.slug}` }} to="/docs/$">
+			<div className="flex h-40 items-center justify-center overflow-hidden border-fd-border border-b bg-capture">
 				{hero ? (
 					<ThemedPreview entry={hero} className="h-full w-full object-contain" />
 				) : (

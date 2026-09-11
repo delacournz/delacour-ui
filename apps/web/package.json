@@ -8,16 +8,19 @@
 		"dev": "vite dev",
 		"codegen": "vite build --logLevel error",
 		"gen-install": "bun scripts/gen-install-manifest.ts",
+		"gen-theme": "bun scripts/gen-theme.ts",
 		"build": "vite build",
 		"start": "bun .output/server/index.mjs",
 		"check": "biome check ./src",
 		"typecheck": "tsc --noEmit",
 		"test": "bun test",
-		"icons": "bun scripts/generate-icons.ts"
+		"icons": "bun scripts/generate-icons.ts",
+		"screenshots": "bun scripts/screenshots.ts"
 	},
 	"dependencies": {
 		"@delacour/brand": "workspace:*",
 		"@delacour/design-system": "workspace:*",
+		"@resvg/resvg-js": "^2.6.2",
 		"@tanstack/react-router": "1.170.27",
 		"@tanstack/react-router-devtools": "1.167.1",
 		"@tanstack/react-start": "1.168.44",
@@ -33,7 +36,6 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
-		"@resvg/resvg-js": "^2.6.2",
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^26.2.0",
@@ -41,6 +43,7 @@
 		"@types/react-dom": "^19.2.4",
 		"@vitejs/plugin-react": "^6.0.5",
 		"nitro": "3.0.260610-beta",
+		"playwright": "^1.63.0",
 		"tailwindcss": "^4.3.3",
 		"typescript": "^6.0.3",
 		"vite": "^8.2.1"

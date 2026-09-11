@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
+import { PresetsRow } from "@/components/presets-row";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
 import { themeFontLinks } from "@/lib/google-fonts";
-import { baseOptions } from "@/lib/layout.shared";
+import { homeOptions } from "@/lib/layout.shared";
 import { appName } from "@/lib/shared";
 import { presetCss, presetNativeCss, resolvePreset, themeTitle } from "@/lib/theme-preset";
 
@@ -69,66 +70,71 @@ function ThemePage(): ReactElement {
 	const web = presetCss(resolved.config);
 
 	return (
-		<HomeLayout {...baseOptions()}>
-			<main className="mx-auto w-full max-w-4xl px-6 py-16">
+		<HomeLayout {...homeOptions()}>
+			<main className="mx-auto flex w-full max-w-4xl flex-col gap-section-gap px-6 py-section-sm">
 				{resolved.status === "invalid" ? (
-					<div className="mb-8">
+					<div>
 						<PresetNotice code={resolved.code} />
 					</div>
 				) : null}
 
-				<header className="mb-8">
-					<h1 className="font-semibold text-3xl tracking-tight">Your theme</h1>
-					<p className="mt-2 text-fd-muted-foreground">
+				<header className="flex flex-col gap-3">
+					<h1 className="text-4xl sm:text-5xl">Your theme</h1>
+					<p className="text-fd-muted-foreground text-lg">
 						{resolved.status === "resolved"
 							? "Change any axis below, or copy theme.css straight into your project."
 							: "Build a theme by picking an option on any axis. The theme.css at the bottom is the result, ready to paste."}
 					</p>
 					{resolved.status === "resolved" ? (
-						<p className="mt-3 text-fd-muted-foreground text-sm">
+						<p className="text-fd-muted-foreground text-sm">
 							Preset code <code className="rounded bg-fd-muted px-1.5 py-0.5 font-mono text-xs">{resolved.code}</code>
 						</p>
 					) : null}
 				</header>
 
-				<section className="mb-8">
+				<section className="flex flex-col gap-4">
+					<h2 className="text-2xl">Presets</h2>
+					<PresetsRow current={resolved.status === "resolved" ? resolved.code : undefined} />
+				</section>
+
+				<section className="flex flex-col gap-4">
 					<ThemePreview config={resolved.config} />
 				</section>
 
-				<section className="mb-8">
-					<div className="mb-4 flex items-center justify-between gap-4">
-						<h2 className="font-medium text-sm">Axes</h2>
+				<section className="flex flex-col gap-4">
+					<div className="flex items-center justify-between gap-4">
+						<h2 className="text-2xl">Axes</h2>
 						<ResetThemeLink />
 					</div>
 					<ThemeBuilder config={resolved.config} />
 				</section>
 
-				<section className="mb-8">
-					<h2 className="mb-3 font-medium text-sm">What that adds up to</h2>
+				<section className="flex flex-col gap-4">
+					<h2 className="text-2xl">What that adds up to</h2>
 					<ThemeSummary config={resolved.config} />
 				</section>
 
-				<section className="mb-4">
-					<h2 className="mb-3 font-medium text-sm">Theme tokens</h2>
+				<section className="flex flex-col gap-4">
+					<h2 className="text-2xl">Theme tokens</h2>
 					<ThemeCssPanel native={native} web={web} />
 				</section>
 
 				<CopyThemeButton css={native} />
 
-				<section className="mt-12 border-t pt-8">
-					<h2 className="font-medium text-sm">Using it</h2>
-					<p className="mt-2 text-fd-muted-foreground text-sm">
+				<section className="flex flex-col gap-3 border-fd-border border-t pt-8">
+					<h2 className="text-2xl">Using it</h2>
+					<p className="text-fd-muted-foreground text-sm">
 						Replace the whole of <code className="font-mono text-xs">src/styles/theme.css</code> with the first tab.
 						There is nothing else to run — that file is the one a{" "}
 						<code className="font-mono text-xs">delacour init</code> project edits, and the library reads it as it is.
 					</p>
-					<p className="mt-2 text-fd-muted-foreground text-sm">
+					<p className="text-fd-muted-foreground text-sm">
 						The second tab is shadcn&apos;s <code className="font-mono text-xs">globals.css</code>, for a web app that
 						shares the theme.
 					</p>
-					<p className="mt-3 text-fd-muted-foreground text-sm">
+					<p className="text-fd-muted-foreground text-sm">
 						<Link
-							className="underline underline-offset-4"
+							className="underline decoration-fd-primary/60 underline-offset-4 hover:decoration-fd-primary"
 							to="/docs/$"
 							params={{ _splat: "native/getting-started/theming" }}
 						>

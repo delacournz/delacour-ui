@@ -1,12 +1,15 @@
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_CONFIG, type DesignSystemConfig, SYSTEM_FONT } from "@delacour/design-system/config";
+import { HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
 import { decodePreset, encodePreset, PRESET_CODE_LENGTH } from "@delacour/design-system/preset";
+import { ACCENT_THEMES } from "@delacour/design-system/themes";
 import {
 	AXIS_KEYS,
 	type AxisKey,
 	axisOptions,
 	fontOptionGroups,
 	inheritOption,
+	PRESETS,
 	presetCss,
 	presetNative,
 	presetNativeCss,
@@ -15,6 +18,42 @@ import {
 	themeSummary,
 	themeTitle,
 } from "./theme-preset";
+
+/**
+ * The presets row. The house leads and the library default follows — both
+ * read from the design system — and every code is a literal that decodes to
+ * the configuration beside it, so a codec change fails here rather than
+ * silently repointing a chip on the landing page.
+ */
+describe("PRESETS", () => {
+	test("the house is first, and the library default second", () => {
+		expect(PRESETS[0]?.config).toEqual(HOUSE_CONFIG);
+		expect(PRESETS[0]?.code).toBe(HOUSE_PRESET_CODE);
+		expect(PRESETS[1]?.config).toEqual(DEFAULT_CONFIG);
+	});
+
+	test("every code decodes to its own configuration", () => {
+		for (const preset of PRESETS) {
+			expect({ name: preset.name, config: decodePreset(preset.code) }).toEqual({
+				name: preset.name,
+				config: preset.config,
+			});
+			expect(encodePreset(preset.config)).toBe(preset.code);
+		}
+	});
+
+	test("every preset is a valid configuration with a title and a blurb", () => {
+		for (const preset of PRESETS) {
+			expect(preset.title.length).toBeGreaterThan(0);
+			expect(preset.blurb.length).toBeGreaterThan(0);
+			expect(presetNative(preset.config).warnings).toEqual([]);
+		}
+	});
+
+	test("names are unique", () => {
+		expect(new Set(PRESETS.map((preset) => preset.name)).size).toBe(PRESETS.length);
+	});
+});
 
 const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => ({
 	...DEFAULT_CONFIG,
@@ -314,11 +353,11 @@ describe("axisOptions", () => {
 		expect(zinc?.config).toEqual(config({ baseColor: "zinc", theme: "violet", chartColor: "amber" }));
 	});
 
-	test("the palette axes offer the base colour and the seventeen accents", () => {
+	test("the palette axes offer the base colour and every accent", () => {
 		for (const axis of ["theme", "chartColor"] as const) {
 			const options = axisOptions(DEFAULT_CONFIG, axis);
 
-			expect(options).toHaveLength(18);
+			expect(options).toHaveLength(ACCENT_THEMES.length + 1);
 			expect(options[0]?.value).toBe("neutral");
 			expect(options.map((option) => option.value)).not.toContain("stone");
 		}

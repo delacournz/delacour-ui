@@ -190,6 +190,18 @@ describe("the golden codes", () => {
 		[geist({ radius: "none" }), "AQAAAAABAAH8"],
 		[geist({ radius: "large" }), "AQAAAAABAARD"],
 		[config({ font: "inter", fontHeading: "playfair-display" }), "AQAAAAACGAAi"],
+		// The house preset; `house.ts` carries the same literal and `house.test.ts` holds them equal.
+		[
+			config({
+				baseColor: "zinc",
+				theme: "delacour",
+				chartColor: "delacour",
+				font: "inter",
+				fontHeading: "outfit",
+				radius: "small",
+			}),
+			"AQACGBgCCgLk",
+		],
 		[
 			config({
 				style: "sera",

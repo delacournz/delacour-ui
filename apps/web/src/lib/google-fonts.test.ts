@@ -5,9 +5,12 @@ import {
 	fontSpecimen,
 	SPECIMEN_TEXT,
 	selectedStylesheetHref,
+	siteFontLinks,
+	siteStylesheetHref,
 	specimenStylesheetHref,
 	themeFontLinks,
 } from "./google-fonts";
+import { houseFonts } from "./house";
 
 const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => ({
 	...DEFAULT_CONFIG,
@@ -17,9 +20,44 @@ const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => (
 const families = (href: string): string[] =>
 	[...new URL(href).searchParams.getAll("family")].map((clause) => clause.split(":")[0] ?? "");
 
+describe("siteStylesheetHref", () => {
+	test("names the three house faces and nothing else", () => {
+		expect(families(siteStylesheetHref()).sort()).toEqual(["Geist Mono", "Inter", "Outfit"]);
+	});
+
+	test("at full coverage", () => {
+		expect(new URL(siteStylesheetHref()).searchParams.get("text")).toBeNull();
+	});
+
+	test("asks each face only for weights it ships", () => {
+		expect(siteStylesheetHref()).toContain("family=Geist+Mono:wght@400;500");
+		expect(siteStylesheetHref()).toContain("family=Inter:wght@400;500;600;700");
+	});
+});
+
+describe("siteFontLinks", () => {
+	test("preconnects, then the one sheet", () => {
+		expect(siteFontLinks().map((link) => link.rel)).toEqual(["preconnect", "preconnect", "stylesheet"]);
+		expect(siteFontLinks().at(-1)?.href).toBe(siteStylesheetHref());
+	});
+});
+
 describe("specimenStylesheetHref", () => {
-	test("names every family in the catalogue", () => {
-		expect(families(specimenStylesheetHref())).toHaveLength(FONTS.length);
+	test("names every family in the catalogue the site does not already carry", () => {
+		expect(families(specimenStylesheetHref())).toHaveLength(FONTS.length - houseFonts().length);
+	});
+
+	/**
+	 * A later `@font-face` for the same family and weight replaces an earlier
+	 * one, and the specimen declaration holds two glyphs. Had it named Inter,
+	 * every paragraph on `/theme` would render out of the fallback stack for all
+	 * but `A` and `g` — whichever order the root's sheet and the route's landed
+	 * in the head.
+	 */
+	test("never re-declares a house face", () => {
+		const names = families(specimenStylesheetHref());
+
+		for (const font of houseFonts()) expect(names).not.toContain(font.family);
 	});
 
 	/**

@@ -30,6 +30,18 @@ export default defineConfig({
 			preset: "bun",
 		}),
 	],
+	// `@resvg/resvg-js` is a native N-API binary the OG route loads on the server.
+	// Vite's dependency optimiser tries to pre-bundle it and dies reading the
+	// `.node` file as UTF-8, which took `bun run dev` down with it; the build
+	// never touched it because Nitro traces the binary instead. Keep it out of
+	// the optimiser and external to the SSR bundle so both paths load it at
+	// runtime from node_modules.
+	optimizeDeps: {
+		exclude: ["@resvg/resvg-js"],
+	},
+	ssr: {
+		external: ["@resvg/resvg-js"],
+	},
 	resolve: {
 		tsconfigPaths: true,
 		alias: {

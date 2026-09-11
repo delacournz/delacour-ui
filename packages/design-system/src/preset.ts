@@ -96,6 +96,8 @@ export const PALETTE_ORDINALS: Record<string, number> = {
 	teal: 21,
 	violet: 22,
 	yellow: 23,
+	// Appended for the house accent; see `house.ts`.
+	delacour: 24,
 };
 
 /** `inherit` takes 0 because it is a legal `fontHeading`; it is never a legal `font`. */

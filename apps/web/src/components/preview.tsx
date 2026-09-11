@@ -1,4 +1,5 @@
-import { type ReactElement, type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactElement, useEffect, useRef, useState } from "react";
+import { DeviceBezel } from "@/components/device-bezel";
 import { type PreviewEntry, type PreviewId, type PreviewMedia, previews } from "@/previews/manifest";
 
 export type PreviewProps = {
@@ -73,9 +74,11 @@ const DEVICE_MEDIA = `${MEDIA} max-h-[520px]`;
  * plain card — a component floating inside a phone silhouette reads as a
  * screenshot of somebody's app rather than as the component itself.
  *
- * The captured background is the library's `background` token, which is the
- * same value `app.css` transcribes onto `--color-fd-background`, so the media
- * meets the page with no colour seam.
+ * The captured background is the house `background` — the capture run forces
+ * `HOUSE_CONFIG` on the preview route. The frame is painted `bg-capture`,
+ * generated from that same preset by `gen-theme`, so the
+ * media meets its frame with no colour seam and the frame reads as a card on
+ * the house page.
  */
 function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	if (entry.frame === "device") {
@@ -89,22 +92,8 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
 	}
 
 	return (
-		<div className="group/preview flex justify-center overflow-hidden rounded-xl border border-fd-border bg-fd-background">
+		<div className="group/preview flex justify-center overflow-hidden rounded-card border border-fd-border bg-capture">
 			<ThemedPreview entry={entry} className={STAGE_MEDIA} />
-		</div>
-	);
-}
-
-/**
- * The phone bezel a whole-screen capture sits in.
- *
- * Exported so the landing page draws its hero device with the same radii as
- * a component page draws a `device` preview — one bezel, not two that drift.
- */
-export function DeviceBezel({ children, className = "" }: { children: ReactNode; className?: string }): ReactElement {
-	return (
-		<div className={`group/preview rounded-[2.5rem] border border-fd-border bg-fd-card p-[6px] shadow-lg ${className}`}>
-			<div className="overflow-hidden rounded-[2.1rem]">{children}</div>
 		</div>
 	);
 }

@@ -49,6 +49,7 @@ src/
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
+├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
@@ -56,6 +57,7 @@ src/
 ├── routes/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
+│   ├── compare/heroui.tsx /compare/heroui — renders lib/comparison.ts
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
 │   ├── docs/{$}[.]md.ts   <page>.md — see "The .md routes 404 in dev"
@@ -145,9 +147,67 @@ than written:
   by existing.
 - **The TestFlight line reads `NATIVE_APP.IOS_TESTFLIGHT_URL`** through `isInstallable`, the same
   gate the QR popover uses, and renders nothing while the link is a placeholder.
+- **The showcase and component-index counts read `COMPONENTS.length`.** The showcase blurb used to
+  say *Nineteen components* and was wrong by the time anyone noticed; a number on this site is
+  derived or it is a bug waiting.
 
 The token section's code samples are hand-written illustrations of `delacour theme`'s input and
 output, not its real output — keep them to a handful of tokens.
+
+## `/compare/heroui` is data, not prose
+
+`src/routes/compare/heroui.tsx` renders `src/lib/comparison.ts` and writes down nothing about HeroUI
+itself. It is a **marketing route rather than a docs page** because it is not documentation: it does
+not tell a reader how to do anything, and a comparison against a named competitor sitting in the
+Getting Started sidebar would be the site's own voice arguing in the middle of its instructions. It
+is linked from the landing page's `Footer` rather than from `baseOptions().links` — the navbar is
+the docs' tab strip.
+
+**Its prose column is `max-w-measure`, not `max-w-reading`.** This is the one page whose chrome is
+wider than the landing column: the pill nav is `width: max-content`, so it is as wide as its links —
+631px with the five this site has — and 36rem of prose under it reads as a mistake rather than as a
+measure. `--container-measure` is 48rem for that reason, and `app.css.test.ts` keeps it between
+`reading` and `page`. Add a nav link and check this page still clears it.
+
+**The last section is one-sided, and that is the point.** It used to be a three-way *which one you
+should use*, with a card telling the reader to buy HeroUI Pro — a fair scoreboard and a bad closing
+argument, because a page spends its last section making its case rather than handing the reader back
+to the competitor. The concession did not move: **Where HeroUI is ahead** is still a table with the
+crosses in our own column, one section up, and `comparison.test.ts` will not let it be tidied away.
+Being honest there is what buys the right to close on the case. `COMPARE_COPY.verdict.otherwise` is
+the one line still pointing away, because *almost always* is not *always*.
+
+**It is drawn in the house world, through the landing page's own parts** — `Reveal`,
+`SectionHeading`, `Eyebrow`, the pills, `Footer` — and it takes `DESIGN.md`'s rules rather than
+inventing a second look for a second marketing page. Two of those rules decided how it reads: a
+section separates with the vertical rhythm rather than a rule or a tinted band, and **amber marks
+only what a reader can act on**, so sixty-nine ticks and crosses are ink and hairline. An amber
+tick in every other row is the wash the One Amber Rule exists to prevent. Its prose lives in
+`COMPARE_COPY`, beside the rows and the sources that back it, for the reason the landing page's
+lives in `copy.ts`.
+
+Five things about it are load-bearing:
+
+- **Every claim is a row in `comparison.ts`, with a source.** `SOURCES` carries the HeroUI page each
+  fact was read from, and the page prints the list. A claim written into JSX is a claim nobody can
+  audit, and this is the one page here that describes somebody else's product.
+- **No prices.** HeroUI publishes tier names and a licence model but not the amounts. A number this
+  repository guessed would be the one thing on the page a reader could not check.
+- **`comparison.test.ts` holds the concessions.** It fails if Delacour wins every row, if no row is
+  a clean win for HeroUI, or if any section is a sweep — a comparison table with one column ticking
+  everything is a table nobody believes, and that is the state the file drifts into one
+  well-meaning edit at a time. It also fails a mark with no note beside it.
+- **The two code samples live in `comparison.ts`, and their line length is a layout constraint.**
+  Each renders into about half of the `max-w-page` grid, and a `<pre>` wider than that scrolls inside
+  itself rather than wrapping — so an over-long line is clipped mid-sentence on an ordinary
+  desktop with nothing visibly wrong, which is what shipped first time on the one section that
+  carries the argument. `MAX_SAMPLE_LINE` is the limit and `comparison.test.ts` pins it; break a
+  statement across lines rather than letting one run.
+- **Every section is `mx-auto w-full max-w-*`, and the `w-full` is not decoration.** `HomeLayout`
+  renders its children into a flex *column*, and a flex item's `min-width: auto` is its
+  min-content — so a bare `max-w-page` section holding one code fence widened the whole page by
+  332px at 390px wide, with nothing visibly wrong on a desktop. The landing sections carry the
+  same pair. Measure a new section at phone width before adding it.
 
 ## The layout is `notebook`, not `docs`
 
@@ -638,8 +698,10 @@ bun run start          # or bun run dev, in another shell
 bun run screenshots    # → apps/web/screenshots/, gitignored
 ```
 
-`scripts/screenshots.ts` holds the shot list — eleven frames covering the landing page, a component
-page, the components index, the customiser and the 404, in both themes, at 1440×878 and 390×844@2.
+`scripts/screenshots.ts` holds the shot list — seventeen frames covering the landing page, a component
+page, the components index, the customiser, the 404 and `/compare/heroui`, in both themes, at
+1440×878 and 390×844@2. A frame's `path` may carry a fragment (`/compare/heroui#matrix`), which is
+how a shot lands on one section without scripting a scroll.
 Add a frame there rather than photographing one by hand, so the next person's set is comparable to
 yours. Two details in it are load-bearing:
 

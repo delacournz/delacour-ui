@@ -141,6 +141,7 @@ describe("the sections", () => {
 	test("footer", () => {
 		expect(FOOTER_COPY).toEqual({
 			line: "Delacour UI — React Native only. iOS and Android, Expo or bare.",
+			compare: "vs HeroUI",
 			github: "GitHub",
 			llms: "llms.txt",
 		});

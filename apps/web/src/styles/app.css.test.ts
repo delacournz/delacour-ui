@@ -70,4 +70,22 @@ describe("app.css", () => {
 			expect(APP_CSS).toContain(`${token}:`);
 		}
 	});
+
+	/*
+	 * The three column widths, in order. `measure` exists because the pill nav
+	 * is `width: max-content` and is therefore wider than the reading column —
+	 * a marketing page under it needs a measure that clears its own chrome. If
+	 * it ever shrinks back under `reading` the page it was added for looks
+	 * exactly as wrong as it did before.
+	 */
+	test("the column widths are ordered reading < measure < page", () => {
+		const rem = (token: string): number => {
+			const value = APP_CSS.match(new RegExp(`--container-${token}:\\s*([0-9.]+)rem;`))?.[1];
+			if (!value) throw new Error(`--container-${token} is not declared in rem`);
+			return Number(value);
+		};
+
+		expect(rem("reading")).toBeLessThan(rem("measure"));
+		expect(rem("measure")).toBeLessThan(rem("page"));
+	});
 });

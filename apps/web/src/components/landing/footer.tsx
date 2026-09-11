@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import type { ReactElement } from "react";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { FOOTER_COPY } from "@/components/landing/copy";
@@ -14,6 +15,12 @@ export function Footer(): ReactElement {
 					{FOOTER_COPY.line}
 				</span>
 				<div className="flex gap-5">
+					<Link
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						to="/compare/heroui"
+					>
+						{FOOTER_COPY.compare}
+					</Link>
 					<a
 						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
 						href={GITHUB_URL}

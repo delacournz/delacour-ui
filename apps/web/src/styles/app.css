@@ -58,6 +58,18 @@
 	--spacing-section-gap: 2.5rem;
 	--container-reading: 36rem;
 	--container-page: 72rem;
+
+	/*
+	 * The measure a marketing page outside the landing column takes.
+	 *
+	 * `/compare/heroui` is the one page whose chrome is wider than its prose
+	 * would otherwise be: the pill nav is `width: max-content`, so it is as wide
+	 * as its links — 631px with the five this site has — and a 36rem column
+	 * under it reads as a mistake rather than as a measure. This clears it with
+	 * room for a nav item or two; `app.css.test.ts` keeps it wider than the
+	 * reading column and narrower than the page.
+	 */
+	--container-measure: 48rem;
 }
 
 /*

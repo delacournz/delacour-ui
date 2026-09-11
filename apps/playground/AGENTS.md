@@ -173,7 +173,12 @@ to its narrowest row.
 `GalleryScreen` and `Section` are still here, and still a scrolling frame, for a
 page that genuinely needs hand-writing — `delacour-mark.tsx` is the one that
 does. The six folder index routes render `FolderIndex`: they are `ListGroup`
-navigation, not demos. The eight `screen/*` routes and `input/form` are hand-written,
+navigation, not demos. It passes `LIST_GAP` to its `Screen.ScrollArea` for the
+same reason every screen here does, and the reason is load-bearing rather than
+stylistic: `Screen.ScrollArea` zeroes the gutter's vertical half and its first
+child is a top inset spacer that resolves to **zero height** under a `static`
+navbar, so the container's `gap` is the only thing holding the first row off the
+navbar's hairline. Drop it and the content sits flush against the bar. The eight `screen/*` routes and `input/form` are hand-written,
 whose demos **are** screens and must not be nested inside another one.
 
 ### The engine demos
@@ -438,7 +443,7 @@ Which routes prove which layer: `/pressable` for the gesture root,
 
 A design-system customizer modelled on <https://ui.shadcn.com/create>: eight
 orthogonal axes the user combines themselves, on the `/theme` screen, reached by
-a navbar action on the home screen and every folder index, and persisted across
+the trigger floating over every screen, and persisted across
 restarts. It exists because a component library is
 judged on whether it holds up under someone else's brand, and until there was a
 second palette in this app nothing here proved the tokens were doing the work.

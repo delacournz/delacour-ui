@@ -5,6 +5,7 @@ import { type Href, useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LIST_GAP } from "@/tokens";
 
 export type FolderIndexItem = {
 	readonly href: Href;
@@ -48,6 +49,15 @@ export type FolderIndexProps = {
  * The title and subtitle ride the back button, the way every other gallery's
  * do, so the whole "‹ Tabs / 5 variations" block goes back and the list starts
  * at the top of the viewport.
+ *
+ * **`LIST_GAP` is what puts air between the navbar and the list**, and it is
+ * not optional decoration. `Screen.ScrollArea` zeroes the gutter's vertical
+ * half (`py-0`) and renders a top inset spacer as its first child; under a
+ * `static` navbar that spacer resolves to zero height, because the navbar
+ * already took its space in the flow. The container's `gap` is therefore the
+ * only thing standing between the first row and the navbar's hairline — this
+ * screen went without it for a while and the card sat flush against the bar.
+ * Every other screen in the app passes one for the same reason.
  */
 export function FolderIndex({ title, items, unit = "variations" }: FolderIndexProps): ReactElement {
 	const router = useRouter();
@@ -63,7 +73,7 @@ export function FolderIndex({ title, items, unit = "variations" }: FolderIndexPr
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea>
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<ListGroup>
 					{items.map((item) => (
 						<ListGroup.Item haptic="selection" key={item.title} onPress={() => router.push(item.href)}>

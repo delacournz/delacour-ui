@@ -83,7 +83,7 @@ export function Demo(): ReactElement {
 			>
 				<View className="min-w-0 flex-1">
 					<Screen.Navbar.Title>Delacour UI</Screen.Navbar.Title>
-					<Screen.Navbar.Subtitle>Nineteen components</Screen.Navbar.Subtitle>
+					<Screen.Navbar.Subtitle>React Native components</Screen.Navbar.Subtitle>
 				</View>
 			</Screen.Navbar>
 

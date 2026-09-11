@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
+import { HOUSE_CONFIG } from "@delacour/design-system/house";
+import { resolveTokens } from "@delacour/design-system/resolve";
 import { formatHex } from "culori";
 import expoConfig from "./app.config";
 
@@ -50,62 +52,23 @@ type SplashConfig = {
 const SPLASH_CANVAS = 288;
 
 /**
- * `theme.css`, read as text.
+ * `--background` for one mode, as the sRGB hex a storyboard takes.
  *
- * It cannot be imported: the palette is wired through Uniwind's `@variant`,
- * which only exists inside Metro. `apps/web/src/styles/app.css.test.ts` and
- * `packages/design-system/src/design-system.test.ts` both carry this same
- * reader for the same reason.
+ * Resolved from `HOUSE_CONFIG` rather than read out of `theme.css`: a fresh
+ * install opens in the house preset, so the splash — the frame before React
+ * mounts — has to match what the first painted frame will be, and that is the
+ * house's ground, not the library default's. The palette is authored in
+ * `oklch()` and the plugin wants a hex, so this is the one place in the repo
+ * that has to convert rather than compare strings.
  */
-const THEME_CSS = readFileSync(
-	join(PLAYGROUND, "..", "..", "packages", "native-ui", "src", "styles", "theme.css"),
-	"utf-8"
-);
+function backgroundHex(mode: "dark" | "light"): string {
+	const declared = resolveTokens(HOUSE_CONFIG)[mode].background;
 
-/**
- * The body of one `@variant` block, brace-matched.
- *
- * Counting braces rather than splitting on the first `}`: both blocks hold
- * `color-mix()` calls, and a split truncates the palette to whatever precedes
- * the first one. That reads as "the theme declares nothing", and every
- * assertion built on it would pass vacuously.
- */
-function themeBlock(variant: "dark" | "light"): string {
-	const marker = `@variant ${variant} {`;
-	const start = THEME_CSS.indexOf(marker);
-
-	if (start === -1) throw new Error(`theme.css declares no @variant ${variant}`);
-
-	let depth = 1;
-	let index = start + marker.length;
-
-	while (index < THEME_CSS.length && depth > 0) {
-		if (THEME_CSS[index] === "{") depth += 1;
-		if (THEME_CSS[index] === "}") depth -= 1;
-		index += 1;
-	}
-
-	if (depth !== 0) throw new Error(`theme.css never closes its @variant ${variant} block`);
-
-	return THEME_CSS.slice(start + marker.length, index - 1);
-}
-
-/**
- * `--background` for one variant, as the sRGB hex a storyboard takes.
- *
- * The palette is authored in `oklch()` and the plugin wants a hex, so this is
- * the one place in the repo that has to convert rather than compare strings.
- */
-function backgroundHex(variant: "dark" | "light"): string {
-	const declared = themeBlock(variant)
-		.match(/--background:\s*([^;]+);/)?.[1]
-		?.trim();
-
-	if (declared === undefined) throw new Error(`theme.css declares no --background under ${variant}`);
+	if (typeof declared !== "string") throw new Error(`the house preset resolves no --background under ${mode}`);
 
 	const hex = formatHex(declared);
 
-	if (!hex) throw new Error(`culori cannot parse --background under ${variant}: ${declared}`);
+	if (!hex) throw new Error(`culori cannot parse --background under ${mode}: ${declared}`);
 
 	return hex.toLowerCase();
 }
@@ -161,11 +124,13 @@ describe("app.config.ts assets", () => {
 	});
 });
 
-describe("the theme.css reader", () => {
-	// Every assertion below is worth nothing if the parse stopped early.
-	test("brace-matches, rather than stopping at the first color-mix", () => {
-		expect(themeBlock("light")).toContain("--overlay:");
-		expect(themeBlock("dark")).toContain("--overlay:");
+describe("the house background", () => {
+	// Every splash assertion below is worth nothing if the resolver handed back
+	// something culori could not read, or the two modes collapsed to one value.
+	test("resolves to two different hexes", () => {
+		expect(backgroundHex("light")).toMatch(/^#[0-9a-f]{6}$/);
+		expect(backgroundHex("dark")).toMatch(/^#[0-9a-f]{6}$/);
+		expect(backgroundHex("light")).not.toBe(backgroundHex("dark"));
 	});
 });
 
@@ -198,7 +163,9 @@ describe("expo-splash-screen", () => {
 	// The comment above the plugin entry claims these mirror `--background`, and
 	// for light it was wrong for as long as nothing checked: `#ffffff` against a
 	// token of `#fafafa`, so a light cold start stepped colour at first paint.
-	test("mirrors --background, which is what the app paints behind React", () => {
+	// The token is the house preset's now, because that is what a fresh install
+	// paints first.
+	test("mirrors the house --background, which is what the app paints behind React", () => {
 		expect(splash.backgroundColor?.toLowerCase()).toBe(backgroundHex("light"));
 		expect(splash.dark?.backgroundColor?.toLowerCase()).toBe(backgroundHex("dark"));
 	});

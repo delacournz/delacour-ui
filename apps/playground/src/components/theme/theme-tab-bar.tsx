@@ -3,6 +3,7 @@ import { Screen } from "delacour-react-native-ui/screen";
 import { Tabs } from "delacour-react-native-ui/tabs";
 import { createContext, type ReactElement, type ReactNode, useContext, useMemo, useState } from "react";
 import { Animated, type LayoutChangeEvent, View } from "react-native";
+import { LIST_GAP_POINTS } from "@/tokens";
 
 /** What the navigator hands a `tabBar`, restated — see the note in `ThemeTabBar`. */
 export type ThemeTabBarProps = {
@@ -25,14 +26,14 @@ export type ThemeTabBarProps = {
 };
 
 /**
- * The `gap-6` every tab's scroll content carries between its children.
+ * The `LIST_GAP` every tab's scroll content carries between its children, as points.
  *
  * The spacer is one of those children, so the container puts this much between
  * it and the first real row — and the spacer has to give it back, or the bar's
  * own bottom padding is paid twice and the content floats well clear of the
  * pill instead of sitting under it.
  */
-const CONTENT_GAP = 24;
+const CONTENT_GAP = LIST_GAP_POINTS;
 
 type TabFrame = { x: number; width: number };
 type ThemeTabBarInset = { inset: number; setInset: (height: number) => void };

@@ -132,11 +132,14 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
-		// The colours mirror --background in packages/native-ui/src/styles/theme.css:
-		// oklch(0.985 0 0) is #fafafa and oklch(0.145 0 0) is #0a0a0a. Restated as hex
-		// rather than imported because prebuild runs in Node and cannot read the CSS;
-		// every other consumer of the colour reads the token. app.config.test.ts
-		// converts the CSS and asserts both, which is what the import cannot do.
+		// The colours mirror --background as the house preset resolves it — zinc's
+		// oklch(0.985 0 0) is #fafafa and oklch(0.141 0.005 285.823) is #09090b —
+		// because a fresh install opens in HOUSE_CONFIG and the splash is the frame
+		// before it. Restated as hex rather than imported: prebuild loads this file
+		// through Node's CJS resolver, and resolving the tokens here would evaluate
+		// the whole oklch catalogue on every `expo config`. app.config.test.ts runs
+		// resolveTokens(HOUSE_CONFIG) and asserts both, which is what the import
+		// cannot do.
 		//
 		// Light was #ffffff until that test existed, against a token of #fafafa — the
 		// splash held pure white and the first frame repainted a shade darker. It is
@@ -169,7 +172,7 @@ const expoConfig: ExpoConfig = {
 				image: "./assets/splash-icon.png",
 				imageWidth: 240,
 				backgroundColor: "#fafafa",
-				dark: { image: "./assets/splash-icon-dark.png", backgroundColor: "#0a0a0a" },
+				dark: { image: "./assets/splash-icon-dark.png", backgroundColor: "#09090b" },
 			},
 		],
 		[

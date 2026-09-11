@@ -6,9 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } 
 import { scheduleOnRN } from "react-native-worklets";
 import { useUniwind } from "uniwind";
 import { setThemeMode } from "@/design-system/store";
-
-const FADE_OUT_MS = 90;
-const FADE_IN_MS = 140;
+import { FADE } from "@/tokens";
 
 /**
  * Flips the whole app between light and dark, from wherever you are.
@@ -19,9 +17,9 @@ const FADE_IN_MS = 140;
  * toggle above a three-state control over one setting is two controls
  * disagreeing about how many states there are.
  *
- * **`system` therefore has no control anywhere.** The store still persists it
- * and a fresh install still starts on it, so the mode is reachable by clearing
- * app data and not otherwise. That is a real loss and a deliberate one: the
+ * **`system` therefore has no control anywhere.** The store still persists it,
+ * but a fresh install opens dark — the studio's own ground — so the mode is
+ * reachable only by a build that stored it. That is a real loss and a deliberate one: the
  * thing this is reached for is flipping a component between palettes while
  * looking at it, which wants one tap and no third state to read past.
  *
@@ -42,6 +40,10 @@ const FADE_IN_MS = 140;
  * the new glyph immediately would fade out the icon that has already changed.
  * `scheduleOnRN` is how the UI-thread callback reaches React.
  *
+ * `icon-md`, not `icon-sm`: the medium button is 44pt, the platform's minimum
+ * target, and the navbar row is 56 so it fits with room. The small one is 36,
+ * which a thumb misses.
+ *
  * **Deliberately no spin.** A half turn per tap is the obvious motion for this
  * control and it is wrong here: it rests the crescent upside-down, and a full
  * turn to avoid that competes with the thing actually being animated, which is
@@ -55,10 +57,10 @@ export function ThemeToggle(): ReactElement {
 	useEffect(() => {
 		if (displayed === theme) return;
 		opacity.value = withSequence(
-			withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
+			withTiming(0, { duration: FADE.out }, (finished) => {
 				if (finished) scheduleOnRN(setDisplayed, theme);
 			}),
-			withTiming(1, { duration: FADE_IN_MS })
+			withTiming(1, { duration: FADE.in })
 		);
 	}, [displayed, theme, opacity]);
 
@@ -72,7 +74,7 @@ export function ThemeToggle(): ReactElement {
 			accessibilityLabel={isDark ? "Switch to light mode" : "Switch to dark mode"}
 			haptic="selection"
 			onPress={() => setThemeMode(isDark ? "light" : "dark")}
-			size="icon-sm"
+			size="icon-md"
 			testID="theme-toggle"
 			variant="ghost"
 		>

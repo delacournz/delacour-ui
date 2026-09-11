@@ -42,6 +42,46 @@ function SystemBackground(): null {
 }
 
 /**
+ * DIRECTION CONTRACT — DLC-BRAND-01, seed 4a705b78 (pinned by the user to delacour.co.nz).
+ *
+ * A native app has no HTML body to carry this in, so the root layout's doc
+ * comment is the artifact the build re-opens. It is the same contract
+ * `apps/web/src/routes/__root.tsx` carries as an HTML comment.
+ *
+ * THESIS: Delacour UI is the studio's own site continued into its component
+ * library: one black ground, one amber, one reading column. It refuses the
+ * wide grey docs hero with a glow behind it.
+ *
+ * OWN-WORLD: black page, zinc-900 surfaces, zinc-800 hairlines, #fafafa text,
+ * amber #fbbf24 for every interactive and every marker; Outfit 600 tight
+ * headings over Inter body, Geist Mono code; 8px corners, 1.8x cards, fully
+ * round pills; a faint particle-dot field under everything.
+ *
+ * STORY: a React Native developer recognises the studio, reads one column top
+ * to bottom, sees real phone captures, copies one command, and tries it on
+ * their phone.
+ *
+ * FIRST VIEWPORT: floating pill nav; a single 36rem column; the mark, then the
+ * headline (copy unchanged) in Outfit at 48/56, the lede in zinc-400, one
+ * amber pill CTA and one ghost CTA, the install tabs as the single calm card;
+ * the phone capture sits to the right only above 1024px.
+ *
+ * FORM: pinned by the user to the studio site; seed 4a705b78 spent; code-led.
+ *
+ * FINISH: unreviewed and undocumented is unfinished; this build ends with the
+ * finish review, the verdict, DESIGN.md, and every shipping raster carrying
+ * its provenance.
+ *
+ * ON THE PHONE the contract is read through the platform: the house reaches
+ * this app as `HOUSE_CONFIG` — zinc, the `delacour` amber, Inter under Outfit,
+ * a small corner — applied through the design system's own axes and nothing
+ * else. Structure, navigation and controls stay native (HIG on iOS, Material
+ * on Android): the library's own `Screen.Navbar`, 44pt targets, the edge-swipe
+ * back, crossfades that are opacity only so Reduce Motion has nothing to
+ * object to. No particle field, no floating pill, nothing web-shaped.
+ */
+
+/**
  * The global.css import must stay the first statement, and must live here
  * rather than in the registered root entry — importing it from index.ts breaks
  * Uniwind's hot reload and forces a full reload on every edit.
@@ -55,6 +95,11 @@ function SystemBackground(): null {
  * NavigationTheme hands the navigator the same tokens, which is what keeps the
  * container behind a screen transition from being React Navigation's own pale
  * default.
+ *
+ * `ThemeTrigger` floats over the `Stack`, and is mounted here rather than per
+ * screen so that every route has it without each one remembering to. It gates
+ * itself off `/preview` and `/theme` by pathname, which is only possible from
+ * up here — see `theme-trigger.tsx` for both reasons.
  *
  * Deliberately mounted with no props: the defaults are what a consuming app
  * gets, so a regression in one of them shows up here first.

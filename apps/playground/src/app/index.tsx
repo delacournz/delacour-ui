@@ -29,7 +29,6 @@ import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
-import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
 import { useDesignSystem } from "@/design-system/store";
@@ -149,15 +148,7 @@ export default function Index(): ReactElement {
 
 	return (
 		<Screen>
-			<Screen.Navbar
-				actions={
-					<>
-						<ThemeTrigger />
-						<ThemeToggle />
-					</>
-				}
-				placement="static"
-			>
+			<Screen.Navbar actions={<ThemeToggle />} placement="static">
 				<DelacourMark accessibilityLabel="Delacour" accessibilityRole="image" size={MARK_SIZE} />
 			</Screen.Navbar>
 

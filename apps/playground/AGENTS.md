@@ -67,7 +67,7 @@ src/
 │   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
 │   ├── section.tsx               Section — a labelled block within one
-│   ├── theme/                    the navbar trigger, the strips and the three remaining sheets
+│   ├── theme/                    the floating trigger, the strips and the three remaining sheets
 │   ├── theme-toggle.tsx          ThemeToggle — the navbar's light/dark action
 │   └── delacour-mark/            the brand mark in react-native-svg, from @delacour/brand
 ├── design-system/                the store, its pure half, and the link out — see Customizer
@@ -153,7 +153,8 @@ closed up into a solid bar, where across the width the same eighteen are about
 twenty points each and read as separate marks. It is still a two-point rule, and
 a poor target however wide its segments are, so moving between demos is the
 pager's swipe and picking one out by name is the index sheet's, opened by tapping
-the demo's name. One control per job, and no floating button left to explain.
+the demo's name. One control per job — the only thing floating over a demo is
+the customiser's trigger, which is deliberate.
 
 **`meta.caption` and `meta.note` are not drawn here.** They are still authored
 and still published — `scripts/previews/demo-source.ts` cuts them out of the
@@ -213,8 +214,9 @@ reaches, and nobody types URLs on a phone.
 ## The home screen
 
 `src/app/index.tsx` is the first screen and the first place the house shows: the
-`DelacourMark` leads a static `Screen.Navbar` whose actions are `ThemeTrigger`
-and `ThemeToggle`, and the content opens with "Delacour UI" as a large title —
+`DelacourMark` leads a static `Screen.Navbar` whose one action is `ThemeToggle`
+— the customiser's trigger floats over every screen, this one included — and
+the content opens with "Delacour UI" as a large title —
 34 over 41, semibold, in the heading face — with the row count under it. The
 large title is where Outfit is actually legible as Outfit; at navbar size it is
 indistinguishable from the body face, which is how the finish review found the
@@ -832,24 +834,36 @@ intersection with `any` collapses to `any`, so the layout restates the three
 fields it reads. That local type is narrower than the exported one and the only
 version of it that checks.
 
-### The trigger is a navbar action, and nothing floats
+### The trigger floats, on every screen
 
-`ThemeTrigger` used to float in the bottom-right corner of every screen, mounted
-once above the `Stack`. That corner is where a `screen/*` demo draws its footer,
-so on the eight routes whose whole point is the footer the trigger sat on the
-thing being shown — and a floating button is a web pattern on a phone. It is a
-`Button size="icon-md" variant="ghost"` in the navbar's action slot now, beside
-`ThemeToggle` — `icon-md` because the medium button is 44pt, the platform's
-minimum target, where `icon-sm` is 36 — on the two kinds of screen that
-navigate rather than demonstrate:
-the home screen and the six folder indexes. A gallery's navbar carries the
-toggle alone; the customiser is one back-swipe away and a change there repaints
-every card behind it, so a look is still judged against the component you care
-about.
+`ThemeTrigger` is a `Button size="icon-lg" variant="secondary"` floating in the
+bottom-right corner, mounted once in `_layout.tsx` above the `Stack` so every
+route carries it without each one remembering to.
 
-Mounted per screen, it needs no pathname gate: it is simply not on `/preview`,
-where `bun run previews` photographs every demo, nor on `/theme`, where it would
-push the screen you are already on.
+It was briefly a navbar action on the home screen and the six folder indexes
+instead. That is the wrong trade: reaching the customiser from the screen you
+are looking at is the whole point of this app, and confining the action to the
+screens that navigate put it two taps and a context switch away from the
+thirty-four galleries where a look actually gets judged. Floating, it is one tap
+from anywhere.
+
+**The cost is real and accepted.** The bottom-right corner is where a `screen/*`
+demo draws its footer, so on those eight routes the trigger sits over the thing
+being demonstrated. Every screen reaching the customiser is worth eight screens
+being partly covered while it does.
+
+**Two routes are gated off by pathname, and one of them is not cosmetic.**
+`/preview` is where `bun run previews` deep-links for every demo in both themes:
+anything floating at capture time is baked into all 120 published media files
+and shipped on the documentation site, so dropping that check silently poisons
+`apps/web/public/previews/**`. `/theme` is gated because pushing the screen you
+are already on stacks duplicate cards behind you. The check is a `usePathname`
+read rather than a prop precisely because the button mounts above the `Stack`
+that owns the route.
+
+`ThemeToggle` stays in the navbar at `icon-md` — 44pt, the platform's minimum
+target, where `icon-sm` is 36. Light and dark is a one-tap flip that belongs in
+the chrome; the customiser is a screen, and its way in is the floating button.
 
 `preview.tsx` forces `HOUSE_CONFIG` in the same layout effect that sets
 the theme — a configuration survives a restart, so without that a capture run

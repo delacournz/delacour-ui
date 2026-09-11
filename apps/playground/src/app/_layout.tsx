@@ -5,6 +5,7 @@ import { DelacourProvider } from "delacour-react-native-ui/provider";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
 import { useEffect } from "react";
+import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { restoreDesignSystem } from "@/design-system/store";
 
 /**
@@ -95,9 +96,10 @@ function SystemBackground(): null {
  * container behind a screen transition from being React Navigation's own pale
  * default.
  *
- * Nothing floats over the `Stack`. The customiser's trigger used to, and
- * landed on every `screen/*` demo's footer; it is a navbar action on the
- * screens that navigate now — see `theme-trigger.tsx`.
+ * `ThemeTrigger` floats over the `Stack`, and is mounted here rather than per
+ * screen so that every route has it without each one remembering to. It gates
+ * itself off `/preview` and `/theme` by pathname, which is only possible from
+ * up here — see `theme-trigger.tsx` for both reasons.
  *
  * Deliberately mounted with no props: the defaults are what a consuming app
  * gets, so a regression in one of them shows up here first.
@@ -108,6 +110,7 @@ export default function RootLayout() {
 			<SystemBackground />
 			<NavigationTheme>
 				<Stack screenOptions={{ headerShown: false }} />
+				<ThemeTrigger />
 			</NavigationTheme>
 		</DelacourProvider>
 	);

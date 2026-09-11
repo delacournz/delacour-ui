@@ -2,9 +2,7 @@ import { Text } from "delacour-react-native-ui/text";
 import { type ReactElement, useEffect, useState } from "react";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-
-const FADE_OUT_MS = 90;
-const FADE_IN_MS = 140;
+import { FADE } from "@/tokens";
 
 /**
  * The current demo's name, crossfaded rather than swapped.
@@ -33,10 +31,10 @@ export function DemoPageLabel({ title }: { title: string }): ReactElement {
 	useEffect(() => {
 		if (displayed === title) return;
 		opacity.value = withSequence(
-			withTiming(0, { duration: FADE_OUT_MS }, (finished) => {
+			withTiming(0, { duration: FADE.out }, (finished) => {
 				if (finished) scheduleOnRN(setDisplayed, title);
 			}),
-			withTiming(1, { duration: FADE_IN_MS })
+			withTiming(1, { duration: FADE.in })
 		);
 	}, [displayed, title, opacity]);
 

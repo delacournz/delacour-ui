@@ -1,5 +1,4 @@
 import { fontByName } from "@delacour/design-system/fonts";
-import { Button } from "delacour-react-native-ui/button";
 import { ListGroup } from "delacour-react-native-ui/list-group";
 import { Screen } from "delacour-react-native-ui/screen";
 import { Text } from "delacour-react-native-ui/text";
@@ -10,13 +9,14 @@ import { ChartColorStrip } from "@/components/theme/chart-color-strip";
 import { FontBottomSheet } from "@/components/theme/font.bottom-sheet";
 import { HeadingBottomSheet } from "@/components/theme/heading.bottom-sheet";
 import { IconLibraryBottomSheet } from "@/components/theme/icon-library.bottom-sheet";
+import { PresetStrip } from "@/components/theme/preset-strip";
 import { FontPreview } from "@/components/theme/previews";
 import { RadiusStrip } from "@/components/theme/radius-strip";
 import { StyleStrip } from "@/components/theme/style-strip";
 import { ThemeStrip } from "@/components/theme/theme-strip";
 import { ThemeTabBarSpacer } from "@/components/theme/theme-tab-bar";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
-import { resetConfig } from "@/design-system/store";
+import { LIST_GAP } from "@/tokens";
 
 /**
  * The axes that still open a sheet.
@@ -36,6 +36,12 @@ type AxisKey = "font" | "fontHeading" | "iconLibrary";
  * library is judged on whether it holds up under someone else's brand, and
  * until there was a second palette in this app nothing here proved the tokens
  * were doing the work.
+ *
+ * **The presets come first**, because they are the coarsest control here: every
+ * strip below changes one axis, the preset strip replaces all seven. It is also
+ * the reset — the house and the library default are the two places a reset can
+ * land, and a tile that shows which one is applied says more than a ghost
+ * button at the foot of the scroll ever did.
  *
  * **Five axes are strips, three are sheets**, and the split is which question
  * the axis asks: a style, a ramp or a palette is judged against its neighbours,
@@ -69,22 +75,19 @@ export default function ThemeDesignTab(): ReactElement {
 
 	return (
 		<>
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<ThemeTabBarSpacer />
 				<Text.Paragraph color="muted">
 					Every axis repaints the same tokens, so nothing below is restyled by hand.
 				</Text.Paragraph>
 
+				<PresetStrip />
 				<StyleStrip />
 				<RadiusStrip />
 				<BaseColorStrip />
 				<ThemeStrip />
 				<ChartColorStrip />
 				<AxisRows onOpen={setOpen} />
-
-				<Button onPress={resetConfig} size="sm" testID="theme-reset" variant="ghost">
-					Reset to Vega / Neutral
-				</Button>
 			</Screen.ScrollArea>
 
 			<HeadingBottomSheet {...sheet("fontHeading")} />

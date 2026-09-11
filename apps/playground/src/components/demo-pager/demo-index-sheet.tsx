@@ -1,12 +1,12 @@
 import { BottomSheet } from "delacour-react-native-ui/bottom-sheet";
 import { ListGroup } from "delacour-react-native-ui/list-group";
 import { Text } from "delacour-react-native-ui/text";
-import type { ReactElement } from "react";
-import { Dimensions, View } from "react-native";
+import { type ReactElement, useCallback, useState } from "react";
+import { Dimensions, type LayoutChangeEvent, View } from "react-native";
 import type { DemoEntry } from "@/demos/types";
 
-/** Roughly what one row occupies, for sizing the sheet to its own content. */
-const ROW_HEIGHT = 52;
+/** What one row occupies under Vega, used until the first row has been measured. */
+const FALLBACK_ROW_HEIGHT = 52;
 /** The title block above the rows, plus the sheet's own padding. */
 const CHROME_HEIGHT = 96;
 const MIN_FRACTION = 0.32;
@@ -33,6 +33,15 @@ export type DemoIndexSheetProps = {
  * ends of this library: Spinner has three demos and would open onto half a
  * screen of nothing, Button has eighteen and would open already needing a
  * scroll. One computed snap point costs a line and is right for both.
+ *
+ * **The row height is measured, not assumed.** A row's height moves with the
+ * Style axis — Mira packs its rows and Maia spreads them — and a constant
+ * tuned under Vega opened a Maia sheet short and a Mira sheet onto a band of
+ * nothing. The first row reports its `onLayout` height and the snap point is
+ * recomputed from it; the constant is only the guess for the frame before
+ * that measurement lands. The snap point is a percentage string because that
+ * is what the container takes, so a measured height is rounded once on the
+ * way out.
  *
  * **The title and the scroll view are siblings, not nested.** `BottomSheet.Content`
  * is a static padded box, so a scroll view inside one inherits no bounded height
@@ -67,10 +76,16 @@ export function DemoIndexSheet({
 	onOpenChange,
 	onSelect,
 }: DemoIndexSheetProps): ReactElement {
+	const [rowHeight, setRowHeight] = useState(FALLBACK_ROW_HEIGHT);
 	const screenHeight = Dimensions.get("window").height;
-	const wanted = (CHROME_HEIGHT + demos.length * ROW_HEIGHT) / screenHeight;
+	const wanted = (CHROME_HEIGHT + demos.length * rowHeight) / screenHeight;
 	const fraction = Math.min(Math.max(wanted, MIN_FRACTION), MAX_FRACTION);
 	const snapPoints = [`${Math.round(fraction * 100)}%`];
+
+	const measureRow = useCallback((event: LayoutChangeEvent) => {
+		const { height } = event.nativeEvent.layout;
+		if (height > 0) setRowHeight((current) => (Math.abs(current - height) < 1 ? current : height));
+	}, []);
 
 	const handleSelect = (index: number) => {
 		onOpenChange(false);
@@ -92,6 +107,7 @@ export function DemoIndexSheet({
 									className={index === activeIndex ? "rounded-lg bg-secondary" : undefined}
 									haptic="selection"
 									key={demo.id}
+									onLayout={index === 0 ? measureRow : undefined}
 									onPress={() => handleSelect(index)}
 									testID={`demo-index-${demo.id}`}
 								>

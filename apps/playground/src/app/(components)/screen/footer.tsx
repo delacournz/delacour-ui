@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { TextInput, View } from "react-native";
 import { Section } from "@/components/section";
+import { LIST_GAP } from "@/tokens";
 
 /**
  * The footer's placements, and what `sticky` changes.
@@ -33,7 +34,7 @@ export default function ScreenFooterDemo(): ReactElement {
 				</Screen.Navbar.BackButton>
 			</Screen.Navbar>
 
-			<Screen.ScrollArea contentContainerClassName="gap-6">
+			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<Section title="Placement">
 					<View className="flex-row gap-2">
 						{(["overlay", "static"] as const).map((value) => (

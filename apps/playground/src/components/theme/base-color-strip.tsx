@@ -7,9 +7,7 @@ import { AxisStrip } from "@/components/theme/axis-strip";
 import { paintable } from "@/components/theme/previews";
 import { useAxisPreview } from "@/components/theme/use-axis-preview";
 import { setAxis } from "@/design-system/store";
-
-/** The specimen box, matching the Style strip's so the two rows share a rhythm. */
-const SPECIMEN_HEIGHT = 56;
+import { SPECIMEN_HEIGHT } from "@/tokens";
 
 type Specimen = {
 	name: BaseColorName;

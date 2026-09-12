@@ -102,30 +102,48 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   the values live in `CHECKBOX_INDICATOR_ANIMATION` where a test pins that every
   track travels and that the filled end is a finished box rather than something
   stopped mid-way.
-- **The fill's corner radius is the box's minus its border width, and it does
-  not animate.** That subtraction is the rule for two rounded rectangles to sit
-  concentric, and the fill sits inside the border, so it is the only value that
-  looks right — in both directions. Rounder, and `overflow-hidden` cuts the
-  fill's corners back past the border's, leaving a sliver of the box's own
-  background at each one: that is what a `rounded-*` on the `indicator` slot
-  does, since a class can only name the box's *outer* radius. Squarer, and the
-  fill reads as a sharp square inside a rounded box for the whole of the
-  animation. Animating it only makes it correct at one end. `scale` shrinks the
-  rendered corner along with the square, which is what keeps a half-grown fill
-  looking like a smaller version of the finished one.
-- **It is computed from `--radius`, not written down.** The result is not a
-  scale — it is the box's own step with a border subtracted — so minting a token
-  for it would only give the pair a second place to disagree. It cannot be read
-  back either: the corner scale is `@theme inline`, so Tailwind substitutes each
-  step into its utilities and no `--radius-xs` variable reaches the runtime.
+- **The fill overlaps the border rather than meeting it, and its corner is the
+  box's own.** `-inset-px` on the `indicator` slot puts it a point past the
+  padding box on every side, so it runs *under* the border ring instead of
+  stopping against it, and `resolveCheckboxFillRadius` gives it the same corner
+  the box wears. It does not animate: `scale` shrinks the rendered corner along
+  with the square, which is what keeps a half-grown fill looking like a smaller
+  version of the finished one, and animating the radius would only make it
+  correct at one end.
+
+  **The overlap is the whole point, and it replaced the opposite rule.** The fill
+  used to be `inset-0` with the box's radius *minus* its border width — the rule
+  for two rounded rectangles to sit concentric. Concentric is exactly what went
+  wrong: the fill's outer curve and the border's inner curve became the same
+  curve, rasterised twice on two layers and antialiased independently. At a
+  corner pixel where each gives coverage `a` the composite covers `2a - a²`, so
+  `(1 - a)²` of the box's own `bg-card` bleeds through — a dull arc at each of
+  the four corners, on iOS and Android alike. The straight edges are pixel
+  aligned and showed nothing, which is what made it read as a corner artifact
+  rather than as a sizing bug. Overlapping the two removes the shared edge
+  instead of concealing it, and holds whichever way a platform orders its paint:
+  iOS draws a `CALayer` border above its sublayers, Android draws it below.
+
+  It went unnoticed until the playground opened in the house preset, whose
+  `radius: "small"` is 7.2 against the library default's 10. The seam is a fixed
+  sub-pixel width, so shrinking an `md` box's corner from 4pt to 2.88pt made the
+  same defect a third louder. Do not "tidy" the inset back to `inset-0`, or
+  restore the subtraction; a test fails by name if either happens.
+- **It is computed from `--radius`, not written down.** Minting a token for it
+  would only give the box and the fill a second place to disagree. It cannot be
+  read back either: the corner scale is `@theme inline`, so Tailwind substitutes
+  each step into its utilities and no `--radius-xs` variable reaches the runtime
+  — though what it substitutes still carries a live `var(--radius)`, which is
+  what keeps a class-based `rounded-xs` and this function in step when a preset
+  retunes the base at runtime.
   `resolveCheckboxFillRadius` takes the live `--radius` and applies
   `CHECKBOX_RADIUS_MULTIPLIER`, which is why a consumer pasting a theme with a
   different `--radius` moves the fill with the border instead of leaving it
   behind. `checkbox.variants.test.ts` reads `tokens.css` and asserts the
-  multipliers match it, that the result *is* that subtraction at any `--radius`,
-  that `CHECKBOX_RADIUS_STEP` names the `rounded-*` the `box` slot actually
-  wears, and that the box's border really is the bare 1pt `border` the
-  arithmetic assumes. Retuning the scale, or reaching for `border-2`, fails the
+  multipliers match it, that the result *is* the box's own step at any
+  `--radius`, that `CHECKBOX_RADIUS_STEP` names the `rounded-*` the `box` slot
+  actually wears, and that the box's border really is the bare 1pt `border` the
+  `-inset-px` assumes. Retuning the scale, or reaching for `border-2`, fails the
   build rather than quietly reopening the gap.
 - **The border is the one part of the box no `tv()` describes.** A colour that
   fades cannot be a class, so it interpolates between two token *values* —

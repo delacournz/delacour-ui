@@ -15,6 +15,7 @@ import { IconCheckmark1Small, IconMinusSmall } from "../../icons/central";
 import { Icon } from "../icon";
 import { useCheckboxPart } from "./checkbox.context";
 import {
+	CHECKBOX_BORDER_WIDTH,
 	CHECKBOX_GLYPH_TOKEN,
 	CHECKBOX_INDICATOR_ANIMATION,
 	CHECKBOX_INVALID_GLYPH_TOKEN,
@@ -36,8 +37,11 @@ import {
  *
  * - the **fill** fades and scales from the centre. A box is filled, not slid
  *   into, so it arrives from no edge. Its corner radius is fixed rather than
- *   animated — {@link resolveCheckboxFillRadius} keeps it concentric with the border
- *   at every scale, and the transform shrinks the rendered corner with it.
+ *   animated — {@link resolveCheckboxFillRadius} gives it the box's own corner at
+ *   every scale, and the transform shrinks the rendered one with it. It spans the
+ *   whole border box rather than the padding box, so it runs *under* the border
+ *   ring instead of stopping against it; two coincident antialiased curves leave
+ *   a seam at each corner, and there is no longer a shared edge to leave one.
  * - the **tick** is clipped by a container whose width opens from the left, so
  *   the stroke is drawn on when ticking and taken back when unticking rather
  *   than faded up in place.
@@ -48,9 +52,10 @@ import {
  *   the only part of the box a `tv()` does not describe.
  *
  * The clip needs the box's width in points, and a `size-checkbox-*` class cannot
- * be read from JavaScript. It comes from the fill's own `onLayout` rather than a
- * table of numbers restating `tokens.css` — that layer is already exactly the
- * size the clip has to span.
+ * be read from JavaScript. It comes from the box's own `onLayout` rather than a
+ * table of numbers restating `tokens.css`, less its two borders — `onLayout`
+ * reports the border box, and the clip is positioned in the padding box inside
+ * it. The fill cannot be the thing measured: it deliberately overhangs.
  *
  * Reduce-motion takes Reanimated's default `System` policy here, deliberately
  * unlike `Spinner`. Under it `withTiming` completes instantly, which for a
@@ -71,9 +76,12 @@ export function CheckboxBox(): ReactElement {
 		return () => cancelAnimation(progress);
 	}, [isFilled, progress]);
 
+	// Subtracting the border twice is what keeps the glyph on the box's centre
+	// line. `tick` and `tickInner` are positioned in the padding box, so handing
+	// them the border-box width moves the centre they resolve against.
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
-			boxWidth.value = event.nativeEvent.layout.width;
+			boxWidth.value = Math.max(0, event.nativeEvent.layout.width - 2 * CHECKBOX_BORDER_WIDTH);
 		},
 		[boxWidth]
 	);
@@ -118,15 +126,13 @@ export function CheckboxBox(): ReactElement {
 	const glyphColor = useThemeColor(isInvalid ? CHECKBOX_INVALID_GLYPH_TOKEN : CHECKBOX_GLYPH_TOKEN[color]);
 
 	return (
-		<Animated.View className={slots.box()} style={boxStyle}>
+		<Animated.View className={slots.box()} onLayout={handleLayout} style={boxStyle}>
 			<Animated.View
 				className={slots.indicator()}
-				onLayout={handleLayout}
-				// A fixed radius rather than an animated one: the fill has to stay
-				// concentric with the border at every scale, and the value that
-				// achieves that does not change while the box is growing. `scale`
-				// shrinks the rendered corner along with the square, which is what
-				// keeps a half-grown fill looking like a smaller version of the
+				// A fixed radius rather than an animated one: the fill wears the box's
+				// own corner, and that value does not change while the box is growing.
+				// `scale` shrinks the rendered corner along with the square, which is
+				// what keeps a half-grown fill looking like a smaller version of the
 				// finished one. It is read from `--radius` rather than written down
 				// because a consumer's theme is allowed to retune that.
 				style={[{ borderRadius: fillRadius }, fillStyle]}

@@ -295,8 +295,11 @@ Only `--radius` survives to runtime — `inline` means each step is substituted
 into its utilities and no `--radius-md` variable is emitted. A component that has
 to compute a corner in JavaScript reads `--radius` and applies its own
 multiplier, restated in TypeScript and pinned against `tokens.css` by a test.
-`resolveCheckboxFillRadius` is the one case: the fill has to stay concentric with
-a border whose radius a consumer is allowed to change.
+`resolveCheckboxFillRadius` is the one case: the fill has to track a border whose
+radius a consumer is allowed to change. It deliberately does *not* sit concentric
+inside that border — two coincident antialiased curves leave a seam at every
+corner, so the fill overlaps the ring instead. See
+[Checkbox](src/components/checkbox/AGENTS.md).
 
 **`Icon` and `Spinner` share one scale.** `SPINNER_SIZES` *is* `ICON_SIZES`, so
 `size="md"` is the same edge length in both and one can stand in for the other

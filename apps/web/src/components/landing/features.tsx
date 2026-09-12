@@ -11,6 +11,7 @@ import type { ReactElement } from "react";
 import { FEATURES_COPY } from "@/components/landing/copy";
 import { Reveal } from "@/components/landing/reveal";
 import { SectionHeading } from "@/components/landing/section-heading";
+import { PAGE_SECTION } from "@/components/section";
 
 /**
  * A glyph per principle, from the site's one icon set, keyed by the title so
@@ -28,22 +29,26 @@ const GLYPHS: Readonly<Record<(typeof FEATURES_COPY.items)[number]["title"], Luc
 };
 
 /**
- * The principles, as a list rather than a grid of cards: six rows in the
- * reading column, each a glyph, a title and one paragraph, divided by
- * hairlines. The column is the argument — you read them, in order.
+ * The principles: six rows, each a glyph, a title and one paragraph. They
+ * read in order down one column at phone width and fill the page container
+ * three-up from `lg`, which is what keeps a two-line paragraph from being
+ * stretched to the width of the page it sits on.
  */
 export function Features(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-reading px-6 py-section">
+		<Reveal className={`${PAGE_SECTION} py-section`}>
 			<SectionHeading eyebrow={FEATURES_COPY.eyebrow} title={FEATURES_COPY.title}>
 				{FEATURES_COPY.body}
 			</SectionHeading>
-			<ul className="mt-section-gap flex flex-col divide-y divide-fd-border">
+			<ul className="mt-section-gap grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
 				{FEATURES_COPY.items.map((feature) => {
 					const Glyph = GLYPHS[feature.title];
 
 					return (
-						<li className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 py-5 first:pt-0 last:pb-0" key={feature.title}>
+						<li
+							className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-fd-border border-t py-5 sm:[&:nth-child(-n+2)]:border-t-0 lg:[&:nth-child(-n+3)]:border-t-0 [&:first-child]:border-t-0"
+							key={feature.title}
+						>
 							<Glyph aria-hidden className="mt-0.5 size-icon-lg text-fd-primary" strokeWidth={1.75} />
 							<h3 className="text-base">{feature.title}</h3>
 							<p className="col-start-2 text-fd-muted-foreground text-sm">{feature.body}</p>

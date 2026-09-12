@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactElement } from "react";
 import { PresetsRow } from "@/components/presets-row";
+import { PAGE_SECTION } from "@/components/section";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
@@ -71,7 +72,7 @@ function ThemePage(): ReactElement {
 
 	return (
 		<HomeLayout {...homeOptions()}>
-			<main className="mx-auto flex w-full max-w-4xl flex-col gap-section-gap px-6 py-section-sm">
+			<main className={`${PAGE_SECTION} flex flex-col gap-section-gap py-section-sm`}>
 				{resolved.status === "invalid" ? (
 					<div>
 						<PresetNotice code={resolved.code} />

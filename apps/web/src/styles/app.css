@@ -49,13 +49,28 @@
 
 	/*
 	 * The vertical rhythm. A section is one band of `py-section`; the gap from
-	 * a heading to what it introduces is one `section-gap`; the reading column
-	 * is one `max-w-reading`. Every landing section and the customiser's
-	 * sections take these rather than their own numbers.
+	 * a heading to what it introduces is one `section-gap`. Every landing
+	 * section, the compare page and the customiser take these rather than
+	 * their own numbers.
 	 */
 	--spacing-section: 6rem;
 	--spacing-section-sm: 4rem;
 	--spacing-section-gap: 2.5rem;
+
+	/*
+	 * The two widths, and only two.
+	 *
+	 * `page` is **the** content container: every section on every page outside
+	 * the docs is one `PAGE_SECTION` — `mx-auto w-full max-w-page px-6` — so
+	 * the hero, the showcase, the prose sections, the compare tables, the
+	 * customiser and the footer all begin and end on the same two edges. A
+	 * page that alternates a 36rem column with a 72rem grid reads as two
+	 * pages; this is the fix, and `section.tsx` is where the class lives.
+	 *
+	 * `reading` is never a container. It is the cap on a line of prose inside
+	 * one — a lede, a paragraph in a list row — so the text keeps a measure
+	 * while its section keeps the page's edges.
+	 */
 	--container-reading: 36rem;
 	--container-page: 72rem;
 }

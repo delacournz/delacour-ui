@@ -24,6 +24,12 @@ export function Eyebrow({ children, className }: { children: ReactNode; classNam
 	);
 }
 
+/**
+ * The heading block: eyebrow, title, and an optional lede capped at the
+ * reading measure. The cap is here rather than at each call site because the
+ * section around it is always the full `PAGE_SECTION` — a lede that inherits
+ * 72rem is one line of prose 1100px wide.
+ */
 export function SectionHeading({
 	eyebrow,
 	title,
@@ -39,7 +45,7 @@ export function SectionHeading({
 		<div className={cn("flex flex-col gap-4", className)}>
 			<Eyebrow>{eyebrow}</Eyebrow>
 			<h2 className="text-3xl sm:text-4xl">{title}</h2>
-			{children ? <p className="text-fd-muted-foreground text-lg">{children}</p> : null}
+			{children ? <p className="max-w-reading text-fd-muted-foreground text-lg">{children}</p> : null}
 		</div>
 	);
 }

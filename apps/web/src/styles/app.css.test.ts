@@ -70,4 +70,21 @@ describe("app.css", () => {
 			expect(APP_CSS).toContain(`${token}:`);
 		}
 	});
+
+	/*
+	 * Two widths, and only two: the container every section takes, and the cap
+	 * a line of prose takes inside it. A third — there was a 48rem `measure`
+	 * once, for the compare page alone — is how a site ends up with a left
+	 * margin that moves as you scroll.
+	 */
+	test("declares one page container and one reading measure, in that order", () => {
+		const rem = (token: string): number => {
+			const value = APP_CSS.match(new RegExp(`--container-${token}:\\s*([0-9.]+)rem;`))?.[1];
+			if (!value) throw new Error(`--container-${token} is not declared in rem`);
+			return Number(value);
+		};
+
+		expect(rem("reading")).toBeLessThan(rem("page"));
+		expect(APP_CSS.match(/--container-[a-z]+:/g)).toEqual(["--container-reading:", "--container-page:"]);
+	});
 });

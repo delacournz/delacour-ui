@@ -5,6 +5,7 @@ import { ARROW_LINK } from "@/components/landing/pill";
 import { Reveal } from "@/components/landing/reveal";
 import { SectionHeading } from "@/components/landing/section-heading";
 import { ThemedPreview } from "@/components/preview";
+import { PAGE_SECTION } from "@/components/section";
 import { COMPONENTS, type ComponentEntry } from "@/lib/components";
 import { type PreviewId, previews } from "@/previews/manifest";
 
@@ -47,15 +48,14 @@ function componentBySlug(slug: string): ComponentEntry {
  * Every tile is a capture from `bun run previews`, which is the only way to
  * show these on the web at all — the library compiles under Metro, so nothing
  * here is a react-native-web imitation. The switch tile is a clip; the rest
- * are stills. The grid is the one place the page leaves its reading column:
- * thirteen pictures want the width, and the heading above them keeps the
- * column's left edge.
+ * are stills. Thirteen pictures fill the page container four across, and the
+ * heading above them keeps its left edge.
  */
 export function Showcase(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-page px-6 py-section">
+		<Reveal className={`${PAGE_SECTION} py-section`}>
 			<div className="flex flex-wrap items-end justify-between gap-6">
-				<SectionHeading className="max-w-reading" eyebrow={SHOWCASE_COPY.eyebrow} title={SHOWCASE_COPY.title}>
+				<SectionHeading eyebrow={SHOWCASE_COPY.eyebrow} title={SHOWCASE_COPY.title}>
 					{SHOWCASE_COPY.body(COMPONENTS.length)}
 				</SectionHeading>
 				<Link className={ARROW_LINK} params={{ _splat: "native/components" }} to="/docs/$">

@@ -4,6 +4,7 @@ import { COMPONENT_INDEX_COPY } from "@/components/landing/copy";
 import { ARROW_LINK } from "@/components/landing/pill";
 import { Reveal } from "@/components/landing/reveal";
 import { Eyebrow, SectionHeading } from "@/components/landing/section-heading";
+import { PAGE_SECTION } from "@/components/section";
 import { COMPONENT_GROUPS, COMPONENTS, componentsInGroup } from "@/lib/components";
 
 /**
@@ -13,13 +14,9 @@ import { COMPONENT_GROUPS, COMPONENTS, componentsInGroup } from "@/lib/component
  */
 export function ComponentIndex(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-page px-6 py-section">
+		<Reveal className={`${PAGE_SECTION} py-section`}>
 			<div className="flex flex-wrap items-end justify-between gap-4">
-				<SectionHeading
-					className="max-w-reading"
-					eyebrow={COMPONENT_INDEX_COPY.eyebrow}
-					title={COMPONENT_INDEX_COPY.title(COMPONENTS.length)}
-				/>
+				<SectionHeading eyebrow={COMPONENT_INDEX_COPY.eyebrow} title={COMPONENT_INDEX_COPY.title(COMPONENTS.length)} />
 				<Link className={ARROW_LINK} params={{ _splat: "native/components" }} to="/docs/$">
 					{COMPONENT_INDEX_COPY.link}
 				</Link>

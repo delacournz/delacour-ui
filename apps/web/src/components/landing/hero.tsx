@@ -6,6 +6,7 @@ import { InstallTabs } from "@/components/install";
 import { HERO } from "@/components/landing/copy";
 import { ARROW_LINK, PillLink } from "@/components/landing/pill";
 import { ThemedPreview } from "@/components/preview";
+import { PAGE_SECTION } from "@/components/section";
 import { isInstallable, NATIVE_APP } from "@/lib/native-app";
 import { gitConfig } from "@/lib/shared";
 import { type PreviewId, previews } from "@/previews/manifest";
@@ -25,18 +26,24 @@ const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
 const HERO_DEVICE: PreviewId = "screen/showcase";
 
 /**
- * The first viewport, as the direction contract has it: one reading column —
- * the mark, the headline, the lede, one amber pill and one ghost, the install
- * tabs as the single calm card — with the phone to its right only above the
- * `lg` breakpoint. There is no glow and no grid behind it; the dot field under
- * the whole page is the only material, and the phone is the only object.
+ * The first viewport, as the direction contract has it: the mark, the
+ * headline, the lede, one amber pill and one ghost, the install tabs as the
+ * single calm card — with the phone to its right only above the `lg`
+ * breakpoint. There is no glow and no grid behind it; the dot field under the
+ * whole page is the only material, and the phone is the only object.
+ *
+ * The column starts on the page container's left edge rather than centring
+ * itself with the phone, so the headline is on the same line as every section
+ * below it. Its prose keeps the reading measure inside that column.
  */
 export function Hero(): ReactElement {
 	const device = previews[HERO_DEVICE];
 
 	return (
-		<section className="mx-auto grid w-full max-w-page grid-cols-1 items-center gap-16 px-6 pt-section-sm pb-section lg:grid-cols-[minmax(0,var(--container-reading))_auto] lg:justify-center lg:gap-24 lg:pt-section">
-			<div className="flex w-full min-w-0 max-w-reading flex-col items-start gap-8">
+		<section
+			className={`${PAGE_SECTION} grid grid-cols-1 items-center gap-16 pt-section-sm pb-section lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-24 lg:pt-section`}
+		>
+			<div className="flex w-full min-w-0 flex-col items-start gap-8">
 				<Link
 					className="inline-flex items-center gap-2 rounded-full border border-fd-border bg-fd-card/60 py-1 ps-1.5 pe-3 font-medium text-fd-muted-foreground text-xs transition-colors hover:text-fd-foreground"
 					params={{ _splat: "native/releases" }}
@@ -49,7 +56,7 @@ export function Hero(): ReactElement {
 
 				<div className="flex flex-col gap-5">
 					<h1 className="text-4xl leading-[1.1] tracking-[-0.025em] sm:text-5xl">{HERO.title}</h1>
-					<p className="text-fd-muted-foreground text-lg">{HERO.lede}</p>
+					<p className="max-w-reading text-fd-muted-foreground text-lg">{HERO.lede}</p>
 				</div>
 
 				<div className="flex flex-wrap items-center gap-3">
@@ -64,7 +71,7 @@ export function Hero(): ReactElement {
 					</a>
 				</div>
 
-				<div className="w-full">
+				<div className="w-full max-w-reading">
 					<InstallTabs commands={[{ verb: "dlx", packages: [HERO.install] }]} />
 				</div>
 

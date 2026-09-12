@@ -157,6 +157,7 @@ export const COMPONENT_INDEX_COPY = {
 
 export const FOOTER_COPY = {
 	line: `${appName} — React Native only. iOS and Android, Expo or bare.`,
+	compare: "vs HeroUI",
 	github: "GitHub",
 	llms: "llms.txt",
 } as const;

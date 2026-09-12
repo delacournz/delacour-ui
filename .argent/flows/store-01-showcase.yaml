@@ -1,0 +1,15 @@
+steps:
+  - launch: nz.co.delacour.ui.playground
+  - await: { visible: { id: theme-trigger } }
+  - echo: Zinc base and amber accent are the house palette; the customizer starts from library default on a fresh install
+  - tap: { id: theme-trigger }
+  - await: { visible: { id: theme-base-color-zinc } }
+  - tap: { id: theme-base-color-zinc }
+  - wait: 500
+  - tap: { id: theme-accent-amber }
+  - wait: 400
+  - echo: The showcase demo lives only on the chrome-free preview route, so deep-link to it
+  - tool: open-url
+    args: { url: "dlc-ui-playground://preview?component=screen&demo=showcase&theme=dark" }
+  - await: { visible: { text: Get started } }
+  - await: { idle: true }

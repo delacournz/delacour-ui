@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The customizer (/theme) is open on its Design tab with zinc and amber
+  selected, left there by store-preview-01-open.
+steps:
+  - echo: Walk two axes so the repaint is visible, then flip to the live preview
+  - tap: { id: theme-style-maia }
+  - wait: 1000
+  - tap: { id: theme-accent-blue }
+  - wait: 1000
+  - tap: { id: theme-tab-preview }
+  - wait: 1800

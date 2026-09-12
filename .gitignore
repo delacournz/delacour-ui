@@ -66,3 +66,7 @@ expo-env.d.ts
 # the scaffolded app `bun run verify:expo` builds — a real Expo project with its
 # own node_modules, kept between runs so the install is not repeated
 /packages/cli/.verify
+
+# goldie — rendered App Store assets; `goldie/goldie.config.ts` and the store-* flows are committed
+/goldie/out
+/goldie/goldie.design.json

@@ -1,0 +1,25 @@
+executionPrerequisite: >-
+  The customizer's Preview tab is showing, left there by
+  store-preview-02-restyle. Back returns to the component list.
+steps:
+  - tap: { text: Back }
+  - await: { visible: { text: 19 components } }
+  - wait: 500
+  - tap: { text: Chart }
+  - await: { visible: { text: Candlestick } }
+  - wait: 600
+  - tap: { text: Bar }
+  - await: { visible: { id: demo-index-trigger } }
+  - wait: 800
+  - echo: The gallery header opens an index sheet; pick two more demos from it
+  - tap: { id: demo-index-trigger }
+  - await: { visible: { id: demo-index-chart/bar/bar-stacked } }
+  - wait: 500
+  - tap: { id: demo-index-chart/bar/bar-stacked }
+  - await: { visible: { text: Referral } }
+  - wait: 1100
+  - tap: { id: demo-index-trigger }
+  - await: { visible: { id: demo-index-chart/bar/bar-tooltip } }
+  - wait: 500
+  - tap: { id: demo-index-chart/bar/bar-tooltip }
+  - wait: 1000

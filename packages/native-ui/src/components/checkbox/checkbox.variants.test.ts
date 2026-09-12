@@ -151,10 +151,16 @@ describe("checkboxVariants box slot", () => {
 });
 
 describe("checkboxVariants indicator slot", () => {
-	test("fills the box edge to edge", () => {
+	test("fills the box past its edges, so its own edge coincides with nothing", () => {
 		const cls = checkboxVariants().indicator();
 		expect(cls).toContain("absolute");
-		expect(cls).toContain("inset-0");
+		// An absolute child is positioned against the padding box, so `inset-0`
+		// stops the fill exactly on the border's inner curve. Two coincident
+		// antialiased curves under-cover where they meet, and the box's `bg-card`
+		// bleeds through as an arc at each corner — the whole reason this is a
+		// negative inset. Do not tidy it back to `inset-0`.
+		expect(cls).toContain("-inset-px");
+		expect(cls).not.toMatch(/\binset-0\b/);
 	});
 
 	test("holds no layout for the glyph, which the tick layers own", () => {
@@ -165,11 +171,10 @@ describe("checkboxVariants indicator slot", () => {
 
 	test("carries no corner radius of its own, at any size", () => {
 		for (const size of CHECKBOX_SIZES) {
-			// `overflow-hidden` on the box can only subtract, so a radius here has
-			// to equal the border's *inner* curve — the box's radius minus its
-			// border width — or the corners are cut back further than the border's
-			// and the box's background shows through as a sliver. The radius is
-			// animated to zero instead and the box does the rounding.
+			// A class cannot read the live `--radius`, and the fill's corner has to
+			// track it — see `resolveCheckboxFillRadius`. It is an inline style
+			// instead, so a `rounded-*` here would be a second, stale definition
+			// tailwind-merge has no reason to drop.
 			expect(checkboxVariants({ size }).indicator()).not.toMatch(/\brounded-/);
 		}
 	});
@@ -190,15 +195,13 @@ describe("checkboxVariants indicator slot", () => {
 });
 
 describe("resolveCheckboxFillRadius", () => {
-	test("is the box's own radius minus its border, at every size", () => {
+	test("is the box's own radius, at every size", () => {
 		for (const size of CHECKBOX_SIZES) {
-			// The rule for two rounded rectangles to sit concentric. Rounder and
-			// `overflow-hidden` cuts the fill's corners back past the border's,
-			// leaving a sliver of the box's background at each one; squarer and the
-			// fill reads as a sharp square inside a rounded box.
-			expect(resolveCheckboxFillRadius(size, RADIUS_BASE_PX)).toBe(
-				radiusPx(CHECKBOX_RADIUS_STEP[size]) - CHECKBOX_BORDER_WIDTH
-			);
+			// The fill spans the border box, so it wears the box's corner rather than
+			// the border's inner one. Subtracting the border here is what made the two
+			// curves coincide, and coincident curves are what left a seam at each
+			// corner — see `resolveCheckboxFillRadius`.
+			expect(resolveCheckboxFillRadius(size, RADIUS_BASE_PX)).toBe(radiusPx(CHECKBOX_RADIUS_STEP[size]));
 		}
 	});
 
@@ -215,7 +218,7 @@ describe("resolveCheckboxFillRadius", () => {
 	test("follows --radius, so a pasted theme moves the fill with the border", () => {
 		for (const size of CHECKBOX_SIZES) {
 			const doubled = resolveCheckboxFillRadius(size, RADIUS_BASE_PX * 2);
-			expect(doubled).toBe(radiusPx(CHECKBOX_RADIUS_STEP[size]) * 2 - CHECKBOX_BORDER_WIDTH);
+			expect(doubled).toBe(radiusPx(CHECKBOX_RADIUS_STEP[size]) * 2);
 		}
 	});
 
@@ -225,17 +228,22 @@ describe("resolveCheckboxFillRadius", () => {
 
 	test("names the radius step the box actually wears", () => {
 		for (const size of CHECKBOX_SIZES) {
-			// Two places naming a radius is how the fill ends up concentric with a
-			// curve the box stopped using.
+			// Two places naming a radius is how the fill ends up wearing a curve the
+			// box stopped using.
 			expect(checkboxVariants({ size }).box()).toContain(`rounded-${CHECKBOX_RADIUS_STEP[size]}`);
 		}
 	});
 
 	test("assumes the bare border width the box actually sets", () => {
+		// Two things restate this number and neither can read a class: the
+		// `indicator` slot's `-inset-px`, which is how far the fill has to reach to
+		// clear the border ring, and `CheckboxBox`'s `onLayout`, which subtracts it
+		// twice to recover the padding box the tick clip sits in. A `border-2` here
+		// would leave the fill a point short of the ring on every side and put the
+		// glyph two points off centre.
+		expect(CHECKBOX_BORDER_WIDTH).toBe(1);
 		for (const size of CHECKBOX_SIZES) {
 			const cls = checkboxVariants({ size }).box();
-			// `CHECKBOX_BORDER_WIDTH` is Tailwind's bare `border`. A `border-2` here
-			// would silently make every fill a point too round.
 			expect(cls).toMatch(/(^|\s)border(\s|$)/);
 			expect(cls).not.toMatch(/\bborder-\d/);
 		}

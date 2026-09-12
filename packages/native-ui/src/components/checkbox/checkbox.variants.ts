@@ -57,13 +57,21 @@ export const CHECKBOX_SURFACE_TOKEN: Record<CheckboxColor, string> = {
 /**
  * The `rounded-*` step the box wears at each size.
  *
- * Named here as well as written into the `box` slot so the fill can be kept
- * concentric with it — see {@link resolveCheckboxFillRadius}. A test asserts the
+ * Named here as well as written into the `box` slot so the fill can be given
+ * the same corner — see {@link resolveCheckboxFillRadius}. A test asserts the
  * two still agree.
  */
 export const CHECKBOX_RADIUS_STEP: Record<CheckboxSize, "xs" | "sm"> = { sm: "xs", md: "xs", lg: "sm" };
 
-/** Width of the box's border in points — Tailwind's bare `border` utility. */
+/**
+ * Width of the box's border in points — Tailwind's bare `border` utility.
+ *
+ * Restated here because two other things have to agree with it: the `indicator`
+ * slot's `-inset-px`, which is how the fill reaches past the padding box to
+ * cover the border ring, and `CheckboxBox`'s `onLayout`, which subtracts it
+ * twice to turn the measured border box back into the padding box the tick clip
+ * is positioned in.
+ */
 export const CHECKBOX_BORDER_WIDTH = 1;
 
 /**
@@ -82,14 +90,19 @@ export const CHECKBOX_RADIUS_MULTIPLIER: Record<"sm" | "xs", number> = { xs: 0.4
 /**
  * Corner radius of the animated fill, in points.
  *
- * The box's own radius **minus its border width**, which is the rule for two
- * rounded rectangles to stay concentric. The fill sits inside the border, so its
- * corner has to be exactly that much tighter or the two curves disagree — and
- * they disagree visibly in both directions. Rounder than this and
- * `overflow-hidden` cuts the fill's corners back past the border's, leaving a
- * sliver of the box's own background at each one; squarer, and the fill reads as
- * a sharp-cornered square inside a rounded box for the whole of the animation
- * that matters.
+ * The box's **own** radius, not a tighter one. The fill spans the whole border
+ * box — see the `indicator` slot's `-inset-px` — so it wears the same corner the
+ * box does and runs underneath the border ring rather than stopping against it.
+ *
+ * It was this minus the border width until it was not, which is the rule for two
+ * rounded rectangles to stay concentric — and concentric was the bug. Two curves
+ * that coincide are rasterised twice, on two layers, and antialiased
+ * independently: at a corner pixel where each gives coverage `a` the composite
+ * covers `2a - a²`, so `(1 - a)²` of the box's own `bg-card` bleeds through as a
+ * dull arc. The straight edges are pixel-aligned and show nothing, which is why
+ * the artifact was corner-only. Overlapping the two removes the shared edge
+ * instead of concealing it, and holds on both platforms even though iOS paints a
+ * `CALayer` border above its sublayers and Android paints it below.
  *
  * A function of the live `--radius` rather than a table of points, because
  * `--radius` is a consumer's to set — a pasted theme retunes every corner in
@@ -102,7 +115,7 @@ export const CHECKBOX_RADIUS_MULTIPLIER: Record<"sm" | "xs", number> = { xs: 0.4
 export function resolveCheckboxFillRadius(size: CheckboxSize, radius: number): number {
 	const step = CHECKBOX_RADIUS_MULTIPLIER[CHECKBOX_RADIUS_STEP[size]];
 
-	return Math.max(0, radius * step - CHECKBOX_BORDER_WIDTH);
+	return Math.max(0, radius * step);
 }
 
 /** The border of a box that is not filled — the same chrome a field wears. */
@@ -131,9 +144,10 @@ export const CHECKBOX_INVALID_BORDER_TOKEN = "destructive";
  * and {@link resolveCheckboxBorderTokens} name the two ends; the base keeps
  * `border-input` as the resting appearance the animated style starts from.
  *
- * `overflow-hidden` on the box is load-bearing, not tidiness: the indicator is a
- * square layer under a rounded border, and without it the fill paints its own
- * corners over the box's.
+ * `overflow-hidden` on the box is load-bearing, not tidiness. The fill overhangs
+ * the border box by a point on every side, and on Android a border is painted
+ * below its children rather than above them — so the clip is what terminates the
+ * fill at the box's corner rather than a point outside it.
  *
  * `border` sits in the base rather than on the filled branch. A border declared
  * only where it shows would move the glyph inside by a point the moment the box
@@ -177,8 +191,15 @@ export const checkboxVariants = tv({
 	slots: {
 		root: "flex-row items-start",
 		box: "items-center justify-center overflow-hidden border border-input bg-card",
-		/** The animated fill. Sits under the box's border, and under the tick. */
-		indicator: "absolute inset-0 ",
+		/**
+		 * The animated fill. Runs under the box's border, and under the tick.
+		 *
+		 * `-inset-px` rather than `inset-0`, because an absolute child is positioned
+		 * against the padding box: a negative inset of one border width is what
+		 * reaches the border box. The overlap is what keeps the fill's edge and the
+		 * border's from coinciding — see {@link resolveCheckboxFillRadius}.
+		 */
+		indicator: "absolute -inset-px",
 		/**
 		 * Clips the tick. Pinned to the box's left edge with an animated width, so
 		 * the glyph is revealed across rather than grown into.

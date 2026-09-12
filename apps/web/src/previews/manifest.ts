@@ -1087,7 +1087,7 @@ export const previews = {
 		light: { poster: "/previews/checkbox/checkbox-group/light.png?v=3ae98de674cd" },
 		dark: { poster: "/previews/checkbox/checkbox-group/dark.png?v=3ae98de674cd" },
 		sourceHash: "3ae98de674cd",
-		capturedAt: "2026-09-09T17:11:57.351Z",
+		capturedAt: "2026-09-12T16:10:52.189Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"checkbox/colours": {
@@ -1103,7 +1103,7 @@ export const previews = {
 		light: { poster: "/previews/checkbox/colours/light.png?v=0c6838035f11" },
 		dark: { poster: "/previews/checkbox/colours/dark.png?v=0c6838035f11" },
 		sourceHash: "0c6838035f11",
-		capturedAt: "2026-09-09T17:11:57.351Z",
+		capturedAt: "2026-09-12T16:11:47.238Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"checkbox/indeterminate": {
@@ -1119,7 +1119,7 @@ export const previews = {
 		light: { poster: "/previews/checkbox/indeterminate/light.png?v=4d008f9f3a65" },
 		dark: { poster: "/previews/checkbox/indeterminate/dark.png?v=4d008f9f3a65" },
 		sourceHash: "4d008f9f3a65",
-		capturedAt: "2026-09-09T17:11:57.351Z",
+		capturedAt: "2026-09-12T16:10:52.189Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"checkbox/sizes": {
@@ -1135,7 +1135,7 @@ export const previews = {
 		light: { poster: "/previews/checkbox/sizes/light.png?v=698a4c11607b" },
 		dark: { poster: "/previews/checkbox/sizes/dark.png?v=698a4c11607b" },
 		sourceHash: "698a4c11607b",
-		capturedAt: "2026-09-09T17:11:57.351Z",
+		capturedAt: "2026-09-12T16:10:52.189Z",
 		device: "iPhone 17 Pro · iOS 26.3",
 	},
 	"field/anatomy/all-four": {

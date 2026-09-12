@@ -1,0 +1,21 @@
+{
+  "name": "Delacour UI",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "user": "ubuntu",
+  "install": "bun install",
+  "terminals": [
+    {
+      "name": "web",
+      "command": "bun run dev:web",
+      "description": "The docs site (apps/web) on http://localhost:3000 — TanStack Start via Vite dev."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ]
+}

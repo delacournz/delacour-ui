@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  Any screen of the app, with the customizer's choices from
+  store-preview-02-restyle still applied.
+steps:
+  - echo: Finish on the one-screen showcase, reached only through the preview deep link
+  - tool: open-url
+    args: { url: "dlc-ui-playground://preview?component=screen&demo=showcase&theme=dark" }
+  - await: { visible: { text: Get started } }
+  - wait: 1500

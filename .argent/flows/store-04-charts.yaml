@@ -1,0 +1,28 @@
+steps:
+  - launch: nz.co.delacour.ui.playground
+  - await: { visible: { id: theme-trigger } }
+  - echo: Zinc base and amber accent are the house palette; the customizer starts from library default on a fresh install
+  - tap: { id: theme-trigger }
+  - await: { visible: { id: theme-base-color-zinc } }
+  - tap: { id: theme-base-color-zinc }
+  - wait: 500
+  - tap: { id: theme-accent-amber }
+  - wait: 400
+  - echo: The chart colour strip sits under the Generate CSS button until the sheet scrolls; the accent alone leaves charts neutral
+  - tool: gesture-swipe
+    args: { fromX: 0.5, fromY: 0.75, toX: 0.5, toY: 0.35, durationMs: 400, momentum: false }
+  - await: { visible: { id: theme-chart-color-amber } }
+  - tap: { id: theme-chart-color-amber }
+  - wait: 400
+  - tap: { text: Back }
+  - await: { visible: { text: 19 components } }
+  - tap: { text: Chart }
+  - await: { visible: { text: Candlestick } }
+  - tap: { text: Bar }
+  - await: { visible: { id: demo-index-trigger } }
+  - echo: The gallery header is a trigger that opens an index sheet; jump straight to stacked bars
+  - tap: { id: demo-index-trigger }
+  - await: { visible: { id: demo-index-chart/bar/bar-stacked } }
+  - tap: { id: demo-index-chart/bar/bar-stacked }
+  - await: { visible: { text: Referral } }
+  - await: { idle: true }

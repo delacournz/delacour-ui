@@ -1,0 +1,12 @@
+steps:
+  - launch: nz.co.delacour.ui.playground
+  - await: { visible: { id: theme-trigger } }
+  - wait: 1000
+  - echo: Open the customizer from the floating trigger
+  - tap: { id: theme-trigger }
+  - await: { visible: { id: theme-base-color-zinc } }
+  - wait: 900
+  - tap: { id: theme-base-color-zinc }
+  - wait: 500
+  - tap: { id: theme-accent-amber }
+  - wait: 1200

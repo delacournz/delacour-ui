@@ -1,0 +1,13 @@
+steps:
+  - launch: nz.co.delacour.ui.playground
+  - await: { visible: { id: theme-trigger } }
+  - echo: Zinc base and amber accent are the house palette; the customizer starts from library default on a fresh install
+  - tap: { id: theme-trigger }
+  - await: { visible: { id: theme-base-color-zinc } }
+  - tap: { id: theme-base-color-zinc }
+  - wait: 500
+  - tap: { id: theme-accent-amber }
+  - wait: 400
+  - tap: { text: Back }
+  - await: { visible: { text: 19 components } }
+  - await: { idle: true }

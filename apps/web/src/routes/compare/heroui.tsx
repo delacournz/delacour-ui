@@ -8,6 +8,7 @@ import { Footer } from "@/components/landing/footer";
 import { ARROW_LINK, PILL_GHOST, PillLink } from "@/components/landing/pill";
 import { Reveal } from "@/components/landing/reveal";
 import { Eyebrow, SectionHeading } from "@/components/landing/section-heading";
+import { PAGE_SECTION } from "@/components/section";
 import { cn } from "@/lib/cn";
 import {
 	type Answer,
@@ -72,14 +73,14 @@ function CompareHeroUI(): ReactElement {
 
 function Hero(): ReactElement {
 	return (
-		<section className="mx-auto flex w-full max-w-measure flex-col items-start gap-8 px-6 pt-section-sm pb-section">
+		<section className={`${PAGE_SECTION} flex flex-col items-start gap-8 pt-section-sm pb-section`}>
 			<Eyebrow>{COMPARE_COPY.eyebrow}</Eyebrow>
 			<div className="flex flex-col gap-5">
-				<h1 className="text-4xl leading-[1.1] sm:text-5xl">{COMPARE_COPY.title}</h1>
-				<p className="text-fd-muted-foreground text-lg">{COMPARE_COPY.lede}</p>
+				<h1 className="max-w-reading text-4xl leading-[1.1] sm:text-5xl">{COMPARE_COPY.title}</h1>
+				<p className="max-w-reading text-fd-muted-foreground text-lg">{COMPARE_COPY.lede}</p>
 			</div>
 
-			<div className="flex w-full flex-col gap-4">
+			<div className="grid w-full gap-4 lg:grid-cols-2">
 				{COMPARE_COPY.where.map((card) => (
 					<WhereCard card={card} key={card.path} />
 				))}
@@ -117,12 +118,8 @@ function WhereCard({ card }: { card: (typeof COMPARE_COPY.where)[number] }): Rea
 /** The argument, once, in the smallest change a real team actually makes. */
 function TheChange(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-page px-6 py-section">
-			<SectionHeading
-				className="mx-auto max-w-measure"
-				eyebrow={COMPARE_COPY.change.eyebrow}
-				title={COMPARE_COPY.change.title}
-			>
+		<Reveal className={`${PAGE_SECTION} py-section`}>
+			<SectionHeading eyebrow={COMPARE_COPY.change.eyebrow} title={COMPARE_COPY.change.title}>
 				{COMPARE_COPY.change.body}
 			</SectionHeading>
 
@@ -137,23 +134,16 @@ function TheChange(): ReactElement {
 				</div>
 			</div>
 
-			<p className="mx-auto mt-section-gap max-w-measure text-fd-muted-foreground">{COMPARE_COPY.change.close}</p>
+			<p className="mt-section-gap max-w-reading text-fd-muted-foreground">{COMPARE_COPY.change.close}</p>
 		</Reveal>
 	);
 }
 
-/**
- * The tables are the one place this page leaves the reading column, for the
- * reason the showcase grid does: an index is not prose.
- */
+/** Four tables, each the width of the page container the whole page takes. */
 function Matrix(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-page scroll-mt-20 px-6 py-section" id="matrix">
-			<SectionHeading
-				className="mx-auto max-w-measure"
-				eyebrow={COMPARE_COPY.matrix.eyebrow}
-				title={COMPARE_COPY.matrix.title}
-			>
+		<Reveal className={`${PAGE_SECTION} scroll-mt-20 py-section`} id="matrix">
+			<SectionHeading eyebrow={COMPARE_COPY.matrix.eyebrow} title={COMPARE_COPY.matrix.title}>
 				{COMPARE_COPY.matrix.body}
 			</SectionHeading>
 
@@ -171,7 +161,7 @@ const COLUMNS = "md:grid-cols-[minmax(0,1.3fr)_repeat(3,minmax(0,1fr))]";
 function SectionTable({ section }: { section: Section }): ReactElement {
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="flex max-w-measure flex-col gap-2">
+			<div className="flex max-w-reading flex-col gap-2">
 				<h3 className="text-2xl">{section.title}</h3>
 				<p className="text-fd-muted-foreground">{section.blurb}</p>
 			</div>
@@ -271,19 +261,19 @@ function Mark({ support }: { support: Support }): ReactElement {
  */
 function Escape(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-measure px-6 py-section">
+		<Reveal className={`${PAGE_SECTION} py-section`}>
 			<SectionHeading eyebrow={COMPARE_COPY.escape.eyebrow} title={COMPARE_COPY.escape.title}>
 				{COMPARE_COPY.escape.body}
 			</SectionHeading>
 
-			<p className="mt-section-gap text-fd-muted-foreground">{COMPARE_COPY.escape.move}</p>
+			<p className="mt-section-gap max-w-reading text-fd-muted-foreground">{COMPARE_COPY.escape.move}</p>
 
-			<div className="mt-6 flex flex-col gap-6">
-				<div className="flex flex-col gap-2">
+			<div className="mt-6 grid gap-6 lg:grid-cols-2">
+				<div className="flex min-w-0 flex-col gap-2">
 					<p className="font-medium text-fd-muted-foreground text-sm">{COMPARE_COPY.escape.cli.label}</p>
 					<InstallTabs commands={[{ verb: "dlx", packages: [COMPARE_COPY.escape.cli.command] }]} />
 				</div>
-				<div className="flex flex-col gap-2">
+				<div className="flex min-w-0 flex-col gap-2">
 					<p className="font-medium text-fd-muted-foreground text-sm">{COMPARE_COPY.escape.pkg.label}</p>
 					<InstallTabs commands={[{ verb: "add", packages: [COMPARE_COPY.escape.pkg.command] }]} />
 				</div>
@@ -311,19 +301,22 @@ function Escape(): ReactElement {
  */
 function Verdict(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-measure scroll-mt-20 px-6 py-section" id="case">
+		<Reveal className={`${PAGE_SECTION} scroll-mt-20 py-section`} id="case">
 			<SectionHeading eyebrow={COMPARE_COPY.verdict.eyebrow} title={COMPARE_COPY.verdict.title}>
 				{COMPARE_COPY.verdict.body}
 			</SectionHeading>
-			<ul className="mt-section-gap flex flex-col divide-y divide-fd-border">
+			<ul className="mt-section-gap grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
 				{COMPARE_COPY.verdict.reasons.map((reason) => (
-					<li className="flex flex-col gap-1 py-5 first:pt-0 last:pb-0" key={reason.title}>
+					<li
+						className="flex flex-col gap-1 border-fd-border border-t py-5 sm:[&:nth-child(-n+2)]:border-t-0 lg:[&:nth-child(-n+3)]:border-t-0 [&:first-child]:border-t-0"
+						key={reason.title}
+					>
 						<h3 className="text-base">{reason.title}</h3>
 						<p className="text-fd-muted-foreground text-sm">{reason.body(COMPONENTS.length)}</p>
 					</li>
 				))}
 			</ul>
-			<p className="mt-section-gap text-fd-muted-foreground text-sm">{COMPARE_COPY.verdict.otherwise}</p>
+			<p className="mt-section-gap max-w-reading text-fd-muted-foreground text-sm">{COMPARE_COPY.verdict.otherwise}</p>
 			<div className="mt-6 flex flex-wrap items-center gap-3">
 				<PillLink params={{ _splat: "native/getting-started" }} to="/docs/$">
 					{COMPARE_COPY.verdict.cta}
@@ -340,11 +333,11 @@ function Verdict(): ReactElement {
  */
 function Sources(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-measure px-6 pb-section">
+		<Reveal className={`${PAGE_SECTION} pb-section`}>
 			<h2 className="font-medium text-fd-muted-foreground text-sm uppercase tracking-eyebrow">
 				{COMPARE_COPY.sources.title}
 			</h2>
-			<p className="mt-3 text-fd-muted-foreground text-sm">
+			<p className="mt-3 max-w-reading text-fd-muted-foreground text-sm">
 				{COMPARE_COPY.sources.body}{" "}
 				<a
 					className="underline decoration-fd-border underline-offset-4 transition-colors hover:decoration-fd-primary"

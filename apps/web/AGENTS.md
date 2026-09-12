@@ -163,12 +163,6 @@ Getting Started sidebar would be the site's own voice arguing in the middle of i
 is linked from the landing page's `Footer` rather than from `baseOptions().links` — the navbar is
 the docs' tab strip.
 
-**Its prose column is `max-w-measure`, not `max-w-reading`.** This is the one page whose chrome is
-wider than the landing column: the pill nav is `width: max-content`, so it is as wide as its links —
-631px with the five this site has — and 36rem of prose under it reads as a mistake rather than as a
-measure. `--container-measure` is 48rem for that reason, and `app.css.test.ts` keeps it between
-`reading` and `page`. Add a nav link and check this page still clears it.
-
 **The last section is one-sided, and that is the point.** It used to be a three-way *which one you
 should use*, with a card telling the reader to buy HeroUI Pro — a fair scoreboard and a bad closing
 argument, because a page spends its last section making its case rather than handing the reader back
@@ -198,16 +192,53 @@ Five things about it are load-bearing:
   everything is a table nobody believes, and that is the state the file drifts into one
   well-meaning edit at a time. It also fails a mark with no note beside it.
 - **The two code samples live in `comparison.ts`, and their line length is a layout constraint.**
-  Each renders into about half of the `max-w-page` grid, and a `<pre>` wider than that scrolls inside
+  Each renders into half of the page container, and a `<pre>` wider than that scrolls inside
   itself rather than wrapping — so an over-long line is clipped mid-sentence on an ordinary
   desktop with nothing visibly wrong, which is what shipped first time on the one section that
   carries the argument. `MAX_SAMPLE_LINE` is the limit and `comparison.test.ts` pins it; break a
   statement across lines rather than letting one run.
-- **Every section is `mx-auto w-full max-w-*`, and the `w-full` is not decoration.** `HomeLayout`
-  renders its children into a flex *column*, and a flex item's `min-width: auto` is its
-  min-content — so a bare `max-w-page` section holding one code fence widened the whole page by
-  332px at 390px wide, with nothing visibly wrong on a desktop. The landing sections carry the
-  same pair. Measure a new section at phone width before adding it.
+- **Every section is `PAGE_SECTION`, like every other page here.** See
+  [One container, every page](#one-container-every-page) — including why the `w-full min-w-0` in
+  it is load-bearing.
+
+## One container, every page
+
+`src/components/section.tsx` exports one class, and every section on every page outside the docs
+opens with it:
+
+```tsx
+<Reveal className={`${PAGE_SECTION} py-section`}>   // mx-auto w-full min-w-0 max-w-page px-6
+```
+
+`--container-page` is 72rem and it is the only content width the site has. Before this the same
+scroll alternated a 36rem column (the token pitch, the principles, the theme teaser, install) with
+a 72rem grid (the showcase, the component index, the footer), `/compare/heroui` sat at a third
+width of its own, and `/theme` at a fourth — so the left margin moved four times on the way down
+and the page read as several pages stapled together. One container is the fix; a fifth width is
+the bug.
+
+`--container-reading` (36rem) survives, but **it is never a container.** It is the cap on a line of
+prose inside one — `SectionHeading` puts it on its lede, the hero puts it on its headline and lede,
+the compare page puts it on its closing paragraphs — so text keeps a measure while its section
+keeps the page's edges. Everything that is not a line of prose (a grid of tiles, a table, a code
+block, a list of principles) spans the container, which is why the sections that used to be one
+narrow column are now two-, three- or four-up grids.
+
+Two things bite when a section is widened:
+
+- **`w-full min-w-0` is not decoration.** `HomeLayout` renders its children into a flex *column*,
+  and a flex item's `min-width: auto` is its min-content — so a section holding one code fence
+  widened the whole page by 332px at 390px wide, with nothing visibly wrong on a desktop. A grid
+  *track* is `auto` for the same reason: the two install-command cells each need their own
+  `min-w-0`, or the command inside sets the page's width. Measure `document.documentElement
+  .scrollWidth` against `innerWidth` at 390px before pushing a new section.
+- **A `DynamicCodeBlock` scrolls inside itself rather than wrapping.** Put two of them side by side
+  in a column narrower than their longest line and the line is cut with nothing visibly wrong —
+  which is why the token pitch's two theme files stay stacked at full width even here, and why
+  `MAX_SAMPLE_LINE` exists on the compare page.
+
+The `/docs` routes are the exception, and not really one: they are Fumadocs' notebook layout —
+sidebar, content, table of contents, full bleed — which owns its own widths.
 
 ## The layout is `notebook`, not `docs`
 

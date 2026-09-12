@@ -6,6 +6,7 @@ import { THEME_TEASER_COPY } from "@/components/landing/copy";
 import { ARROW_LINK } from "@/components/landing/pill";
 import { Reveal } from "@/components/landing/reveal";
 import { SectionHeading } from "@/components/landing/section-heading";
+import { PAGE_SECTION } from "@/components/section";
 import { length, swatch } from "@/components/theme-specimens";
 import { fontSpecimen } from "@/lib/google-fonts";
 import { PRESETS } from "@/lib/theme-preset";
@@ -21,11 +22,11 @@ import { PRESETS } from "@/lib/theme-preset";
  */
 export function ThemeTeaser(): ReactElement {
 	return (
-		<Reveal className="mx-auto w-full max-w-reading px-6 py-section">
+		<Reveal className={`${PAGE_SECTION} py-section`}>
 			<SectionHeading eyebrow={THEME_TEASER_COPY.eyebrow} title={THEME_TEASER_COPY.title}>
 				{THEME_TEASER_COPY.body}
 			</SectionHeading>
-			<ul className="mt-section-gap grid gap-3 sm:grid-cols-2">
+			<ul className="mt-section-gap grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
 				{PRESETS.map((preset) => (
 					<li key={preset.name}>
 						<PresetChip preset={preset} />

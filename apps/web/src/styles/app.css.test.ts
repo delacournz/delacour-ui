@@ -72,20 +72,19 @@ describe("app.css", () => {
 	});
 
 	/*
-	 * The three column widths, in order. `measure` exists because the pill nav
-	 * is `width: max-content` and is therefore wider than the reading column —
-	 * a marketing page under it needs a measure that clears its own chrome. If
-	 * it ever shrinks back under `reading` the page it was added for looks
-	 * exactly as wrong as it did before.
+	 * Two widths, and only two: the container every section takes, and the cap
+	 * a line of prose takes inside it. A third — there was a 48rem `measure`
+	 * once, for the compare page alone — is how a site ends up with a left
+	 * margin that moves as you scroll.
 	 */
-	test("the column widths are ordered reading < measure < page", () => {
+	test("declares one page container and one reading measure, in that order", () => {
 		const rem = (token: string): number => {
 			const value = APP_CSS.match(new RegExp(`--container-${token}:\\s*([0-9.]+)rem;`))?.[1];
 			if (!value) throw new Error(`--container-${token} is not declared in rem`);
 			return Number(value);
 		};
 
-		expect(rem("reading")).toBeLessThan(rem("measure"));
-		expect(rem("measure")).toBeLessThan(rem("page"));
+		expect(rem("reading")).toBeLessThan(rem("page"));
+		expect(APP_CSS.match(/--container-[a-z]+:/g)).toEqual(["--container-reading:", "--container-page:"]);
 	});
 });

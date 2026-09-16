@@ -26,7 +26,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "delacour-react-native-ui/spinner",
+					"from": "@delacour/native-ui/spinner",
 					"to": "@registry/ui/spinner"
 				}
 			]

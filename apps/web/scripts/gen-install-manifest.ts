@@ -124,12 +124,12 @@ function kindOf(item: RegistryItem, name: string): "self" | "component" | "share
  * a consumer of the package should not be told about: the library's own
  * dependencies (`clsx`, `tailwind-merge`, `tailwind-variants`), which arrive
  * transitively, and `chart`'s engine plus that engine's Skia, which belong to
- * `delacour-react-native-charts`. Filtering the unions to this set is what keeps
+ * `@delacour/charts`. Filtering the unions to this set is what keeps
  * `peers` honest, and `src/registry/install.test.ts` pins it to `package.json`.
  */
 function peerNames(): Set<string> {
 	const json = JSON.parse(readFileSync(NATIVE_UI_PACKAGE, "utf-8")) as { peerDependencies?: Record<string, string> };
-	const names = Object.keys(json.peerDependencies ?? {}).filter((name) => name !== "delacour-react-native-charts");
+	const names = Object.keys(json.peerDependencies ?? {}).filter((name) => name !== "@delacour/charts");
 	return new Set(names);
 }
 
@@ -168,7 +168,7 @@ function build(): string {
 			name: component.slug,
 			title: component.name,
 			description: item.description,
-			importPath: `delacour-react-native-ui/${component.slug}`,
+			importPath: `@delacour/native-ui/${component.slug}`,
 			exportName: component.name,
 			expo: union((i) => i.expoDependencies),
 			npm: union((i) => i.dependencies),

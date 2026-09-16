@@ -4,7 +4,7 @@ import {
 	ChartBar as EngineBar,
 	ChartBarGroup as EngineBarGroup,
 	ChartBarStack as EngineBarStack,
-} from "delacour-react-native-charts";
+} from "@delacour/charts";
 import { type ReactElement, useCallback, useMemo } from "react";
 import { useChart } from "./chart.context";
 import { barCorners, barRadiusFor, type ChartBarProps, resolveBarLabels } from "./chart-bar";

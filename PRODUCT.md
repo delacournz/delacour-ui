@@ -13,7 +13,7 @@ Two audiences, equally first-class:
 - **Public React Native / Expo developers.** Building an Expo app, they find the library via npm or
   `ui.delacour.co.nz` and want components whose source they own, not a dependency they configure
   around. They evaluate on a phone (the playground via QR / deep link), then either run `delacour add`
-  to copy source into their repo or `bun add delacour-react-native-ui@alpha`.
+  to copy source into their repo or `bun add @delacour/native-ui@alpha`.
 - **Delacour's own client projects.** The same kit reused across Delacour's consulting work, where the
   job is shipping a client app on a shared, documented component base.
 
@@ -63,7 +63,7 @@ feedback, and they can read exactly why every decision was made and change it in
   DelacourProvider), each a subpath export.
 - Three component patterns: styled wrapper, compound + context, `tv()` variants.
 - Charts: line, area, bar, scatter, candlestick, pie on the theme's five-colour ramp
-  (`delacour-react-native-charts`, an optional peer).
+  (`@delacour/charts`, an optional peer).
 - Design system axes: 7 neutral base ramps, 17 accents, 8 style geometries, 5 radii, 26 fonts;
   presets encode to a short shareable code.
 - Unit tests cover pure logic only; renderer behaviour is verified in the playground on a simulator.
@@ -73,8 +73,8 @@ feedback, and they can read exactly why every decision was made and change it in
 
 ## Brand Commitments
 
-- **Name:** Delacour / Delacour UI. Published packages are unscoped (`delacour`,
-  `delacour-react-native-ui`, `delacour-react-native-charts`); workspace-private ones are `@delacour/*`.
+- **Name:** Delacour / Delacour UI. Published libraries are scoped (`@delacour/native-ui`,
+  `@delacour/charts`); the CLI is the bare `delacour`. Workspace-private packages are `@delacour/*` too.
 - **The mark's geometry is binding.** `packages/brand` is the sole source; every rendering derives
   from it. Do not restyle the logo.
 - **NZ / British English is binding** across docs, code and copy: colour, licence, behaviour,

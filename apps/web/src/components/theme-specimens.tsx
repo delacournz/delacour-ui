@@ -16,7 +16,7 @@ import type { ReactElement } from "react";
  * once an accent is spread over it, so a tile painted from the option in
  * isolation promises a colour the click does not deliver.
  *
- * Nothing here imports `delacour-react-native-ui`. These are `div`s wearing
+ * Nothing here imports `@delacour/native-ui`. These are `div`s wearing
  * resolved values, which is a different thing from the live component previews
  * `AGENTS.md` rules out — those would need React Native's runtime in a browser.
  */

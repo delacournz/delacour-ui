@@ -29,7 +29,7 @@ import {
 describe("the hero", () => {
 	test("says what it said", () => {
 		expect(HERO).toEqual({
-			badge: "delacour-react-native-ui · alpha",
+			badge: "@delacour/native-ui · alpha",
 			title: "Build your React Native component library.",
 			lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
 			primary: "Quick start",
@@ -128,7 +128,7 @@ describe("the sections", () => {
 			title: "Own the source, or install the package.",
 			body: "The CLI writes each component's files into your project so you can change anything. The package is the same code, versioned, for a team that would rather take updates.",
 			cli: { label: "Copy a component's source in", command: "delacour@alpha add button" },
-			pkg: { label: "Or install the package", command: "delacour-react-native-ui@alpha" },
+			pkg: { label: "Or install the package", command: "@delacour/native-ui@alpha" },
 		});
 	});
 

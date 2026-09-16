@@ -42,7 +42,7 @@ Three peers are optional, resolved only if you import the subpath that needs the
 | Package | Needed by |
 | --- | --- |
 | `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` (the default `legend` variant) |
-| `expo-router` | `delacour-react-native-ui/expo/navigation-theme` |
+| `expo-router` | `@delacour/native-ui/expo/navigation-theme` |
 | `react-native-screens` | native stack navigation |
 
 ### Import from subpaths
@@ -51,14 +51,14 @@ There is no package-wide barrel, and that is deliberate: it is what lets an app 
 optional peers it never uses.
 
 ```tsx
-import { Button } from "delacour-react-native-ui/button";
-import { Icon } from "delacour-react-native-ui/icon";
-import { IconHeart } from "delacour-react-native-ui/icons/central";
+import { Button } from "@delacour/native-ui/button";
+import { Icon } from "@delacour/native-ui/icon";
+import { IconHeart } from "@delacour/native-ui/icons/central";
 ```
 
 ```tsx
 // This does not exist, and will not be added.
-import { Button } from "delacour-react-native-ui";
+import { Button } from "@delacour/native-ui";
 ```
 
 ### Wire up the CSS
@@ -69,10 +69,10 @@ Tailwind's scanner at the package source. The CLI writes this block itself.
 ```css title="src/styles/global.css"
 @import "tailwindcss";
 @import "uniwind";
-@import "delacour-react-native-ui/styles";
+@import "@delacour/native-ui/styles";
 
 @source "../**/*.{ts,tsx}";
-@source "../../node_modules/delacour-react-native-ui/src";
+@source "../../node_modules/@delacour/native-ui/src";
 ```
 
 <Callout type="warn" title="In a workspace, use the real path">
@@ -109,7 +109,7 @@ statement**, and wraps everything in the provider, once.
 
 ```tsx title="app/_layout.tsx"
 import "@/styles/global.css";
-import { DelacourProvider } from "delacour-react-native-ui/provider";
+import { DelacourProvider } from "@delacour/native-ui/provider";
 import { Stack } from "expo-router";
 
 export default function RootLayout() {
@@ -140,7 +140,7 @@ optional polish, and must be a child of `KeyboardProvider`.
 
 ```tsx
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import { KeyboardStateSync } from "delacour-react-native-ui/hooks/use-keyboard-state-sync";
+import { KeyboardStateSync } from "@delacour/native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
@@ -158,7 +158,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 ## Verify
 
 ```tsx title="app/index.tsx"
-import { Button } from "delacour-react-native-ui/button";
+import { Button } from "@delacour/native-ui/button";
 import { useState } from "react";
 import { View } from "react-native";
 

@@ -1,7 +1,7 @@
 import { PRESET_SHORTCUTS, type PresetShortcut } from "@delacour/design-system/house";
 import { resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
-import { Pressable } from "delacour-react-native-ui/pressable";
-import { Text } from "delacour-react-native-ui/text";
+import { Pressable } from "@delacour/native-ui/pressable";
+import { Text } from "@delacour/native-ui/text";
 import { type ReactElement, useMemo } from "react";
 import { View } from "react-native";
 import { AxisStrip } from "@/components/theme/axis-strip";

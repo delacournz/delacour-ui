@@ -1,5 +1,46 @@
 # @delacour/native-ui
 
+## 0.1.0-alpha.2
+
+### Minor Changes
+
+- [#48](https://github.com/delacournz/delacour-ui/pull/48) [`04bc15b`](https://github.com/delacournz/delacour-ui/commit/04bc15b32e86416bf32f4cece2fdf4e6af495f5b) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Publish the libraries under the `@delacour` org
+
+  `delacour-react-native-ui` is now `@delacour/native-ui`, and `delacour-react-native-charts` is now
+  `@delacour/charts`. The old names are deprecated and take no further versions. Nothing about the
+  components changed — swap the package and the import prefix:
+
+  ```bash
+  bun remove delacour-react-native-ui delacour-react-native-charts
+  bun add @delacour/native-ui@alpha @delacour/charts@alpha
+  ```
+
+  ```diff
+  - import { Button } from "delacour-react-native-ui/button";
+  + import { Button } from "@delacour/native-ui/button";
+  ```
+
+  and in `global.css`, `@import '@delacour/native-ui/styles';`.
+
+  The CLI keeps its name. `delacour add chart` now installs `@delacour/charts`.
+
+### Patch Changes
+
+- [#46](https://github.com/delacournz/delacour-ui/pull/46) [`77f41f1`](https://github.com/delacournz/delacour-ui/commit/77f41f1aeb271d24baee77a7b1a5240bbb2cf03d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Fix the corner seam on a checked `Checkbox`
+
+  The fill sat exactly inside the border, so its outer curve and the border's inner
+  curve were the same curve rasterised on two layers. Antialiased independently
+  they under-cover where they meet, letting the box's own `bg-card` bleed through
+  as a dull arc at each corner — on iOS and Android alike, and at every size. The
+  straight edges are pixel-aligned, which is why only the corners showed it.
+
+  The fill now overlaps the border ring instead of meeting it: `-inset-px` reaches
+  past the padding box, and it wears the box's own corner rather than one a border
+  width tighter. There is no longer a shared edge to leave a seam.
+
+- Updated dependencies [[`04bc15b`](https://github.com/delacournz/delacour-ui/commit/04bc15b32e86416bf32f4cece2fdf4e6af495f5b)]:
+  - @delacour/charts@0.1.0-alpha.3
+
 ## 0.1.0-alpha.1
 
 ### Minor Changes

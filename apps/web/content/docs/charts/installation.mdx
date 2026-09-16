@@ -6,7 +6,7 @@ icon: Download
 
 <InstallTabs
   commands={[
-    { verb: "add", packages: ["delacour-react-native-charts@alpha"] },
+    { verb: "add", packages: ["@delacour/charts@alpha"] },
     {
       verb: "expo",
       packages: [
@@ -46,7 +46,7 @@ and arrive on their own.
 
 Your app needs a `GestureHandlerRootView` around everything that takes touches. The package does
 not render one — a nested root is dead weight, and every React Native app that handles touch
-already has one. If you also use `delacour-react-native-ui`, its `DelacourProvider` is that root.
+already has one. If you also use `@delacour/native-ui`, its `DelacourProvider` is that root.
 
 ```tsx title="app/_layout.tsx"
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -80,7 +80,7 @@ A chart needs a height. The root fills whatever view it is placed in and measure
 `onLayout`, so give it a box.
 
 ```tsx
-import { CartesianChart, ChartLine } from "delacour-react-native-charts";
+import { CartesianChart, ChartLine } from "@delacour/charts";
 import { View } from "react-native";
 
 const rows = [
@@ -109,7 +109,7 @@ system already has, so an axis is legible with no `expo-font` and no config plug
 it cannot be called inside.
 
 ```tsx
-import { CartesianChart, ChartXAxis, useSystemFont } from "delacour-react-native-charts";
+import { CartesianChart, ChartXAxis, useSystemFont } from "@delacour/charts";
 
 const font = useSystemFont(undefined, 12);
 

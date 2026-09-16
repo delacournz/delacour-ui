@@ -1,5 +1,5 @@
 ---
-"delacour-react-native-ui": minor
+"@delacour/native-ui": minor
 ---
 
 **Breaking.** `Button`'s `isIconOnly` prop is removed. A square footprint is now a

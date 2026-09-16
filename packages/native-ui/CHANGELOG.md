@@ -1,4 +1,4 @@
-# delacour-react-native-ui
+# @delacour/native-ui
 
 ## 0.1.0-alpha.1
 
@@ -6,7 +6,7 @@
 
 - [#22](https://github.com/delacournz/delacour-ui/pull/22) [`16175b8`](https://github.com/delacournz/delacour-ui/commit/16175b800122c5732bcff0673aebbb3f7450ca80) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add bar, scatter, candlestick and pie charts, stacked areas and horizontal bars
 
-  **`delacour-react-native-charts`** gains four marks and a second root. `ChartBar` draws
+  **`@delacour/charts`** gains four marks and a second root. `ChartBar` draws
   one bar per datum on a cubic-cornered rect path, so a corner radius animates
   without snapping; sibling bars share a step and bars naming one `stackId`
   stack in data space, so the y domain covers the running totals rather than
@@ -16,10 +16,10 @@
   swaps the axis roles at the model, so bars grow rightward from a category
   axis. `PolarChart` is the new root, with `PieSlices` on a fixed-verb path
   that morphs between any two data sets and a scrub-free tap that resolves a
-  slice index. `delacour-react-native-charts/core` exports the bar, scatter, candle and
+  slice index. `@delacour/charts/core` exports the bar, scatter, candle and
   slice geometry alongside the scales.
 
-  **`delacour-react-native-ui/chart`** skins all of it. `Chart.Bar`, `Chart.Scatter`
+  **`@delacour/native-ui/chart`** skins all of it. `Chart.Bar`, `Chart.Scatter`
   and `Chart.Candlestick` join `Chart.Line` and `Chart.Area`; bars group by
   being siblings, stack by sharing a `stackId`, round their value end from
   `--radius`, and take `labels`. Candles borrow `success`, `destructive` and
@@ -103,14 +103,14 @@ init` writes today, and the default typeface is each platform's own sans rather 
 
 - [#22](https://github.com/delacournz/delacour-ui/pull/22) [`16175b8`](https://github.com/delacournz/delacour-ui/commit/16175b800122c5732bcff0673aebbb3f7450ca80) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add charts: a headless Skia engine, and the `Chart` component that skins it
 
-  **`delacour-react-native-charts` is new** — a token-free charting engine for React Native,
+  **`@delacour/charts` is new** — a token-free charting engine for React Native,
   drawn with Skia, animated with Reanimated and driven by Gesture Handler. It
   ships `CartesianChart` with `Line`, `Area`, `Grid` and both axes, a scrub whose
   dot rides the drawn curve rather than hopping between data points, and path
-  morphing that never falls back to snapping. `delacour-react-native-charts/core` is every
+  morphing that never falls back to snapping. `@delacour/charts/core` is every
   scale, tick, curve and solver in it, importable with no Skia in the module graph.
 
-  **`delacour-react-native-ui/chart`** is that engine wearing the theme. A shadcn-shaped
+  **`@delacour/native-ui/chart`** is that engine wearing the theme. A shadcn-shaped
   `config` names each series and assigns `--chart-1` … `--chart-5` by position, so
   a call site writes `<Chart.Line yKey="revenue" />` and never a colour. Parts are
   placed rather than configured: `Chart.Grid`, `Chart.Line`, `Chart.Area`,
@@ -125,7 +125,7 @@ init` writes today, and the default typeface is each platform's own sans rather 
   before running the playground.
 
   The CLI learns two things: how to install a Skia-backed component, and that
-  `delacour-react-native-charts` publishes to the `alpha` tag while this repository is in pre
+  `@delacour/charts` publishes to the `alpha` tag while this repository is in pre
   mode, since a bare `bun add` of it would resolve `latest` and find nothing.
 
 - [#19](https://github.com/delacournz/delacour-ui/pull/19) [`dea1a7c`](https://github.com/delacournz/delacour-ui/commit/dea1a7c30963629cb8581b6ea1ade7f266a70b57) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - **Breaking.** `Button`'s `isIconOnly` prop is removed. A square footprint is now a
@@ -158,4 +158,4 @@ init` writes today, and the default typeface is each platform's own sans rather 
 ### Patch Changes
 
 - Updated dependencies [[`16175b8`](https://github.com/delacournz/delacour-ui/commit/16175b800122c5732bcff0673aebbb3f7450ca80), [`16175b8`](https://github.com/delacournz/delacour-ui/commit/16175b800122c5732bcff0673aebbb3f7450ca80)]:
-  - delacour-react-native-charts@0.1.0-alpha.1
+  - @delacour/charts@0.1.0-alpha.1

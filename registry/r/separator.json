@@ -22,7 +22,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "delacour-react-native-ui/separator",
+					"from": "@delacour/native-ui/separator",
 					"to": "@registry/ui/separator"
 				}
 			]

@@ -6,7 +6,7 @@ import {
 	ChartYAxis,
 	type CurveType,
 	useSystemFont,
-} from "delacour-react-native-charts";
+} from "@delacour/charts";
 import type { ReactElement } from "react";
 import { StyleSheet, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

@@ -1,5 +1,5 @@
 ---
-"delacour-react-native-ui": minor
+"@delacour/native-ui": minor
 "delacour": minor
 ---
 

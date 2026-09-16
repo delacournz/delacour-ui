@@ -1,6 +1,6 @@
 # @delacour/playground — native-ui's Harness and Gallery
 
-An Expo app whose only job is to render `delacour-react-native-ui` on a device. It is
+An Expo app whose only job is to render `@delacour/native-ui` on a device. It is
 not a product and has no users. Every screen exists to make one component's
 behaviour visible, and step 5 of
 [Adding a component](../../packages/native-ui/AGENTS.md#adding-a-component)
@@ -10,7 +10,7 @@ requires a route here for anything new.
 
 - **Expo 57** with **expo-router** — file-based routing, `expo-dev-client`
 - **Uniwind** — the same styling layer the library uses, configured in Metro
-- **`delacour-react-native-ui`** as a workspace source dependency, not a build
+- **`@delacour/native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library
 
 ## Commands
@@ -183,10 +183,10 @@ whose demos **are** screens and must not be nested inside another one.
 
 ### The engine demos
 
-`src/demos/charts/` renders `delacour-react-native-charts` directly — `CartesianChart`,
+`src/demos/charts/` renders `@delacour/charts` directly — `CartesianChart`,
 `PolarChart` and their marks, with hard-coded colours and a `useSystemFont` font — so the
 documentation can show the engine standing on its own. Nothing in that folder imports
-`delacour-react-native-ui`, and `demos.test.ts` fails by name when one does. The key is `charts`,
+`@delacour/native-ui`, and `demos.test.ts` fails by name when one does. The key is `charts`,
 not `chart`, on purpose: it is a section of its own with its own hero, and the chart-shape rules
 in that test (at most two roots per demo) are about the themed component and do not apply. Its
 route is `(components)/chart/engine.tsx` rather than a top-level file, because
@@ -211,7 +211,7 @@ Reanimated for the same reason: a reader of the engine's docs takes those direct
 As above, plus: create `src/app/(components)/{name}.tsx` as the shell, **add a
 row to `src/components-index.ts`** — `slug`, `title`, `description` and the
 docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/index.tsx`**,
-from `delacour-react-native-ui/icons/central`. The row is pure so `bun test` can hold
+from `@delacour/native-ui/icons/central`. The row is pure so `bun test` can hold
 it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
 without one is a type error. A gallery with no row is a page only a URL
 reaches, and nobody types URLs on a phone.

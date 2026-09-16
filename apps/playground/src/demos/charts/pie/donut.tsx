@@ -1,4 +1,4 @@
-import { PieLabel, type PieSliceData, PieSlices, PolarChart, useSystemFont } from "delacour-react-native-charts";
+import { PieLabel, type PieSliceData, PieSlices, PolarChart, useSystemFont } from "@delacour/charts";
 import { type ReactElement, useState } from "react";
 import { StyleSheet, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

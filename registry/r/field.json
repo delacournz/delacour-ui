@@ -25,7 +25,7 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "delacour-react-native-ui/field",
+					"from": "@delacour/native-ui/field",
 					"to": "@registry/ui/field"
 				}
 			]

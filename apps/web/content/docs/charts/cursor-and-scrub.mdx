@@ -13,7 +13,7 @@ import {
   ChartCursorLine,
   ChartLine,
   useChartScrub,
-} from "delacour-react-native-charts";
+} from "@delacour/charts";
 
 function Revenue() {
   const scrub = useChartScrub(["revenue"]);
@@ -53,7 +53,7 @@ gesture passed to `useScrubGesture` to block.
 ## Reading the scrub from a view
 
 ```tsx
-import type { ChartScrubState } from "delacour-react-native-charts";
+import type { ChartScrubState } from "@delacour/charts";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 
 function Readout({ scrub }: { scrub: ChartScrubState }) {

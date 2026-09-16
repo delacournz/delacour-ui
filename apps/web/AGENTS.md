@@ -4,8 +4,8 @@ A TanStack Start + Fumadocs app. Marketing landing page at `/`, docs under `/doc
 library namespaced at `/docs/native/*` and the chart engine at `/docs/charts/*` — one namespace
 per library, so a third can be added without a URL migration.
 
-Documents `delacour-react-native-ui`, the `delacour` CLI that copies its components into a
-consumer's repository, and `delacour-react-native-charts`, the headless engine the library's
+Documents `@delacour/native-ui`, the `delacour` CLI that copies its components into a
+consumer's repository, and `@delacour/charts`, the headless engine the library's
 `Chart` skins. It does **not** import or render any of them — see **Why there are no live
 previews**.
 
@@ -13,7 +13,7 @@ previews**.
 
 - **TanStack Start** (Vite 8, Nitro) — SSR, file routes, server functions
 - **Fumadocs** — `fumadocs-core` + `fumadocs-ui` (aliased to `@fumadocs/base-ui`) + `fumadocs-mdx`
-- **Tailwind CSS v4**, painted from `delacour-react-native-ui`'s own token scale
+- **Tailwind CSS v4**, painted from `@delacour/native-ui`'s own token scale
 - **ZBSearch** (Fumadocs' default) for `/api/search`
 
 ## Commands
@@ -347,7 +347,7 @@ not.
 
 ### A charts page
 
-`content/docs/charts/` documents `packages/charts` — `delacour-react-native-charts`, the headless
+`content/docs/charts/` documents `packages/charts` — `@delacour/charts`, the headless
 engine — under its own `/docs/charts` namespace and its own "Charts" link in
 `src/lib/layout.shared.tsx`. Its `meta.json` is the one `root: true` folder there, so the layout
 tab strip shows a single tab; the sidebar sections are its `---Group---` separators.
@@ -360,7 +360,7 @@ that is not on disk — and, for the six pages that each document one chart type
 end on.
 
 Previews come from `apps/playground/src/demos/charts/` — a demo group that renders the engine
-directly, importing from `delacour-react-native-charts` and never from `delacour-react-native-ui`.
+directly, importing from `@delacour/charts` and never from `@delacour/native-ui`.
 Its component key is `charts`, deliberately not `chart`, so its captures land under
 `public/previews/charts/**` beside the skinned component's and `previews.test.ts`'s no-reuse rule
 keeps the two sets apart. Code beside a preview is hand-written at the call site, with literal
@@ -522,7 +522,7 @@ spread over it.
 
 `theme-preview.tsx` is **not** a live component preview and does not cross the line drawn in
 [Previews are captured media](#previews-are-captured-media-not-live-components): nothing imports
-`delacour-react-native-ui`, and it is `div`s wearing resolved values. It exists because the Style
+`@delacour/native-ui`, and it is `div`s wearing resolved values. It exists because the Style
 axis writes heights, corners and type scale, none of which a colour swatch can show.
 
 ### The Font axis loads webfonts, in two requests, in this order
@@ -817,7 +817,7 @@ It is a cap, not a fixed-height stage, so a short wide preview (`slider/anatomy`
 short instead of floating in letterbox bands. `preview-grid.tsx` uses neither — an index card is a
 uniform tile and wants its own `h-40 … object-contain`.
 
-**Why not render the components for real.** `delacour-react-native-ui` ships raw `.tsx` whose
+**Why not render the components for real.** `@delacour/native-ui` ships raw `.tsx` whose
 `className`s are compiled by Uniwind's **Metro** transform. Rendering one here would need
 react-native-web plus `uniwind/vite` and `vite-plugin-rnw`, and Reanimated 4, Gesture Handler and
 `react-native-keyboard-controller` are all unproven in that path. A photograph of the real component

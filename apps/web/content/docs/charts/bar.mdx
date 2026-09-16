@@ -7,7 +7,7 @@ icon: ChartBar
 <Preview id="charts/bar/bar" />
 
 ```tsx
-import { CartesianChart, ChartBar } from "delacour-react-native-charts";
+import { CartesianChart, ChartBar } from "@delacour/charts";
 
 <CartesianChart data={rows} domainPadding={{ x: 0.5 }} includeZero xKey="month" yKeys={["orders"]}>
   <ChartBar color="#0A84FF" roundedCorners={{ topLeft: 4, topRight: 4 }} yKey="orders" />
@@ -33,7 +33,7 @@ of data morphs rather than snaps. A gap is a zero-height bar at the baseline for
 <Preview id="charts/bar/grouped" />
 
 ```tsx
-import { ChartBarGroup } from "delacour-react-native-charts";
+import { ChartBarGroup } from "@delacour/charts";
 
 <CartesianChart data={rows} domainPadding={{ x: 0.5 }} includeZero xKey="month" yKeys={["desktop", "mobile"]}>
   <ChartBarGroup colors={["#0A84FF", "#30D158"]} roundedCorners={{ topLeft: 3, topRight: 3 }} yKeys={["desktop", "mobile"]} />
@@ -49,7 +49,7 @@ removed morphs on its own.
 <Preview id="charts/bar/stacked" />
 
 ```tsx
-import { ChartBarStack } from "delacour-react-native-charts";
+import { ChartBarStack } from "@delacour/charts";
 
 <CartesianChart data={rows} domainPadding={{ x: 0.5 }} stackKeys={["organic", "paid", "referral"]} xKey="month" yKeys={["organic", "paid", "referral"]}>
   <ChartBarStack

@@ -14,7 +14,7 @@ import { fontSpecimen } from "@/lib/google-fonts";
  * visibly moves something.
  *
  * **It is not a live component preview.** `apps/web/AGENTS.md` rules those out
- * because rendering `delacour-react-native-ui` in a browser means React Native's
+ * because rendering `@delacour/native-ui` in a browser means React Native's
  * whole runtime; nothing here imports the library. These are `div`s painted with
  * values, the same trick the axis specimens have always used — so what it shows
  * is the tokens, honestly, and not a promise that this is what `Button` renders.

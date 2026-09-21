@@ -406,6 +406,39 @@ Options:
   -h, --help        display help for command
 ```
 
+## skills
+
+Installs the agent skill into whichever coding assistants this project uses. See
+[Agent skills](/docs/native/getting-started/skills).
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills"] }]} />
+
+Nothing is fetched — the files are bundled into the binary, so a run works offline and installs the
+skill that matches the version of the CLI this project is pinned to.
+
+**Options**
+
+```txt
+Usage: delacour skills [options] [skills...]
+
+install the agent skill, so a coding assistant uses the real components
+
+Arguments:
+  skills              which skills to install — all of them by default
+
+Options:
+  --agent <agent...>  which assistants to install for; detected from the project
+                      by default (choices: "claude", "cursor", "opencode",
+                      "codex", "all")
+  --scope <scope>     where to install (choices: "project", "user", default:
+                      "project")
+  --list              print what is available and where it would go
+  -f, --force         replace a skill that is already there
+  -c, --cwd <path>    directory to work in (default: the current directory)
+  --silent            print nothing but errors
+  -h, --help          display help for command
+```
+
 ## Shared options
 
 `--cwd` decides which `native-components.json` applies: the nearest one, walking upwards. The walk

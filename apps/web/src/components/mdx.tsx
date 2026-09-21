@@ -6,6 +6,7 @@ import { TypeTable } from "fumadocs-ui/components/type-table";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import type { ComponentProps } from "react";
+import { AgentPrompt } from "@/components/agent-prompt";
 import { ComponentInstall, InstallTabs, LibraryInstall } from "@/components/install";
 import { Preview } from "@/components/preview";
 import { PreviewGrid } from "@/components/preview-grid";
@@ -35,6 +36,7 @@ export function getMDXComponents(components?: MDXComponents) {
 		a: Anchor,
 		Accordion,
 		Accordions,
+		AgentPrompt,
 		ComponentInstall,
 		File,
 		Files,

@@ -1,0 +1,13 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		// `components.generated.ts` is written by `bun run gen-skill`. Without the
+		// exclusion the pre-commit hook reformats it every time and the next run
+		// writes it straight back — permanent drift, and a CI check that can never
+		// pass. The same reason `registry/` and `apps/web`'s two generated modules
+		// are excluded.
+		"includes": ["src/**/*", "scripts/**/*", "!src/components.generated.ts"]
+	}
+}

@@ -15,6 +15,7 @@ The library takes no framework dependency and no third-party component kit.
 | [`@delacour/biome-config`](packages/biome-config) | Lint and format rules |
 | [`@delacour/tsconfig`](packages/tsconfig) | Shared TypeScript configs |
 | [`@delacour/types`](packages/types) | Shared utility types |
+| [`@delacour/skills`](packages/skills) | The agent skill the CLI installs and the docs site serves |
 
 ## Getting started
 

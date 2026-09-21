@@ -44,6 +44,7 @@ src/
 ├── components/mdx.tsx     the MDX component registry
 ├── components/delacour-icon.tsx  the brand mark, inline
 ├── components/install.tsx <ComponentInstall> and <InstallTabs>
+├── components/agent-prompt.tsx  <AgentPrompt> — the copyable setup prompt
 ├── components/playground/    the QR trigger and the install buttons
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
@@ -65,6 +66,7 @@ src/
 │   ├── playground/components/{$}.tsx  the deep link's web fallback
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
+│   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the native-ui palette
@@ -406,10 +408,27 @@ Three things are load-bearing:
   the difference. (That fence appeared once on the installation page and rendered as an
   unhighlighted block, because `fumadocs-docgen` is not installed. It is gone.)
 
+## The skill is served, not copied
+
+`src/routes/skills/$.ts` serves `@delacour/skills` at `/skills/<name>/<file>` as `text/markdown`.
+`delacour skills` writes the same bytes into a project; both read the one package, so neither can be
+the stale one. Its `AGENTS.md` is where the reasoning lives.
+
+A route handler rather than files in `public/`, for the reason the `.well-known` pair are — Nitro
+types a static response from its extension, and an agent should get `text/markdown` rather than the
+`text/plain` a `.md` file is served as. It is a **dynamic** route with a dotted last segment, so it
+404s under `bun run dev` — see [The `.md` routes 404 in
+dev](#the-md-routes-404-in-dev). Verify it against a production build. Link to it with a plain `<a>`; `isFileHref` already makes
+MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llmstxt-has-to-be-a-plain-anchor)).
+
+**It returns a plain `404` `Response`, not `notFound()`.** Thrown from a server handler on a route
+with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
+client reads as an error.
+
 ## MDX components must be registered
 
 `defaultMdxComponents` carries only `Callout`, `Card` and `Cards`. Everything else —
-`Tabs`/`Tab`, `TypeTable`, `Steps`/`Step`, `Accordion(s)`, `Files`/`File`/`Folder` — is registered
+`Tabs`/`Tab`, `TypeTable`, `Steps`/`Step`, `Accordion(s)`, `Files`/`File`/`Folder`, `AgentPrompt` — is registered
 by hand in `src/components/mdx.tsx`. An MDX file naming an unregistered component fails the render
 with *"Expected component X to be defined"* rather than degrading.
 

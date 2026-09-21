@@ -148,6 +148,15 @@ jobs:
 
       - run: git diff --exit-code apps/web/src/registry/install.ts
 
+      # The agent skill's component list is derived from the same registry. The
+      # skill itself names no component on purpose, so this is only what
+      # `delacour skills --list` prints — but a stale list is a stale list.
+      - name: Check the skill's component list is current
+        working-directory: packages/skills
+        run: bun run gen-skill
+
+      - run: git diff --exit-code packages/skills/src/components.generated.ts
+
       # Offline and fast: scaffolds an app, runs the CLI, and checks the shape
       # of what came out. The full run installs from npm and lives in its own job.
       # Both layouts: components in the app, and components in a shared package

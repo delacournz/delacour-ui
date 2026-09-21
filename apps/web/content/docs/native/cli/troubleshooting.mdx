@@ -198,6 +198,7 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
   type={{
     Expo: { type: "check", description: "An expo dependency exists; reports the SDK and React Native versions." },
     "New Architecture": { type: "check", description: "newArchEnabled is on. Reanimated 4 does not run without it." },
+    Styling: { type: "check", description: "Nothing else is compiling className. NativeWind wraps Metro too, and two Tailwind transforms cannot share one config." },
     Uniwind: { type: "check", description: "uniwind and tailwindcss are installed." },
     Metro: { type: "check", description: "withUniwindConfig is present, outermost, and points at the configured CSS entry." },
     "CSS entry": {

@@ -1,17 +1,20 @@
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
-import { basename, dirname, join, relative, resolve, sep } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
 import { findConfig, type ResolvedConfig, readConfig } from "../config/resolve";
 import { CONFIG_FILENAME, CONFIG_SCHEMA_URL, type Config, type ConfigPaths } from "../config/schema";
 import { aliasesForDirectories } from "../project/aliases";
 import { buildStylesBlock, patchGlobalCss } from "../project/css";
+import { findTailwindEntry } from "../project/css-entry";
 import { detectProject, type ProjectInfo } from "../project/detect";
-import { patchMetroConfig } from "../project/metro";
+import { patchMetroConfig, readUniwindPaths, type UniwindPaths } from "../project/metro";
+import { findRootLayout, renderRootLayout } from "../project/root-layout";
 import { UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import { CancelledError, createOutput, type Output, style } from "../ui/output";
 import { type AddResult, add } from "./add";
+import { checkGestureHandlerRoot, checkStylingConflict, filesImporting, layoutSpecifiers } from "./doctor";
 
 /**
  * Sets a project up to receive components.
@@ -66,7 +69,27 @@ export async function init(components: string[], options: InitOptions): Promise<
 
 	const placement = await choosePlacement(project, options, output);
 	const source = await chooseSourceDirectory(options, output);
-	const config = buildConfig({ project, root: placement.root, source, packageName: placement.packageName });
+
+	// Before the config is built, because a project that arrived with Uniwind
+	// already set up has chosen its own CSS entry and Metro compiles that file
+	// and no other — see `readUniwindPaths`. Failing that, an entry the app has
+	// but has not wired Metro to yet; failing that, the default below.
+	const appRoot = project.appRoot ?? placement.root;
+	const metroPaths = readUniwindPaths(await read(join(appRoot, "metro.config.js")));
+	const existingEntry = findTailwindEntry(appRoot);
+	const wired: UniwindPaths = {
+		...metroPaths,
+		css: metroPaths.css ?? (existingEntry ? relative(appRoot, existingEntry) : undefined),
+	};
+
+	const config = buildConfig({
+		project,
+		root: placement.root,
+		source,
+		packageName: placement.packageName,
+		wired,
+		appRoot,
+	});
 	const resolved = await writeConfigFile(config, placement.root, output);
 
 	await wireUpApp(resolved, resolved.package ? project.workspaceRoot : null, output);
@@ -80,45 +103,13 @@ export async function init(components: string[], options: InitOptions): Promise<
 		overwrite: true,
 	});
 
-	printFollowUps(resolved, output);
+	await printFollowUps(resolved, output);
 	output.outro(outro(components));
 
 	// Returned rather than swallowed: `add` delegates here for an unconfigured
 	// project, and its caller — a script, or the MCP server, which prints
 	// nothing of its own — still has to learn what the components need from npm.
 	return result;
-}
-
-/** How many names the outro recites before it counts them instead. */
-const OUTRO_NAME_LIMIT = 3;
-
-/**
- * The last line of a run.
- *
- * `add` delegates here whenever a project has no config, so by the time this
- * prints the reader has usually just run the command the outro used to
- * suggest — *"Ready. delacour add button to get started"* after `add button`
- * had already copied it in.
- *
- * It does not name `doctor` either. The follow-up block directly above ends on
- * it, and two consecutive lines pointing at the same command read as a glitch
- * rather than as emphasis. So what is left for the last line is the thing that
- * actually happened: the components are the reader's now.
- *
- * Exported so the wording is testable without a terminal.
- */
-export function outro(components: readonly string[]): string {
-	if (components.length === 0) return `Ready. ${style.code("delacour add button")} to get started.`;
-
-	if (components.length > OUTRO_NAME_LIMIT) {
-		return `Ready. ${components.length} components are yours to edit.`;
-	}
-
-	const named = components.map((name) => style.code(name));
-	const list =
-		named.length === 1 ? `${named[0]} is` : `${named.slice(0, -1).join(", ")} and ${named[named.length - 1]} are`;
-
-	return `Ready. ${list} yours to edit.`;
 }
 
 /**
@@ -236,6 +227,9 @@ type BuildConfigContext = {
 	source: string;
 	/** Set for the shared-package layout only. */
 	packageName?: string;
+	/** What an already-wired Metro config names, which wins over the defaults. */
+	wired: UniwindPaths;
+	appRoot: string;
 };
 
 function buildConfig(context: BuildConfigContext): Config {
@@ -253,7 +247,11 @@ function buildConfig(context: BuildConfigContext): Config {
 		NAMESPACES.map((namespace) => [namespace, resolve(context.root, paths[namespace])])
 	) as Record<(typeof NAMESPACES)[number], string>;
 
-	const appRoot = context.project.appRoot ?? context.root;
+	const { appRoot } = context;
+
+	// A path Metro already names is relative to the Metro config, which lives in
+	// the app; `app.css` is relative to wherever this config is being written.
+	const fromApp = (path: string) => toPosix(relative(context.root, resolve(appRoot, path)));
 
 	return {
 		$schema: CONFIG_SCHEMA_URL,
@@ -267,9 +265,9 @@ function buildConfig(context: BuildConfigContext): Config {
 		...(context.packageName ? { package: { name: context.packageName } } : {}),
 		app: {
 			root: toPosix(relative(context.root, appRoot)) || ".",
-			css: under("styles/global.css"),
+			css: context.wired.css ? fromApp(context.wired.css) : under("styles/global.css"),
 			metroConfig: "metro.config.js",
-			uniwindTypes: under("uniwind-types.d.ts"),
+			uniwindTypes: context.wired.types ? fromApp(context.wired.types) : under("uniwind-types.d.ts"),
 		},
 	};
 }
@@ -347,9 +345,9 @@ async function ensureUniwindEnv(config: ResolvedConfig, output: Output): Promise
 /**
  * The file Expo's own CLI writes on first `start`, and nothing before that.
  *
- * `expo/types` is what declares `*.css` as a module. A template without a
- * router — `blank-typescript` — ships no `expo-env.d.ts`, so the CSS import
- * `init` just asked for fails `tsc` with "Cannot find module … './styles/global.css'"
+ * `expo/types` is what declares `*.css` as a module. Several templates ship no
+ * `expo-env.d.ts` — `blank-typescript`, and `with-router-uniwind` too — so the
+ * CSS import fails `tsc` with "Cannot find module … './styles/global.css'"
  * until the app has been started once. Metro is fine either way; only the
  * typecheck a reader runs first is not.
  */
@@ -367,6 +365,38 @@ const EXPO_ENV_REFERENCE = `/// <reference types="expo/types" />
 
 // NOTE: This file should not be edited and should be in your git ignore`;
 
+/** How many names the outro recites before it counts them instead. */
+const OUTRO_NAME_LIMIT = 3;
+
+/**
+ * The last line of a run.
+ *
+ * `add` delegates here whenever a project has no config, so by the time this
+ * prints the reader has usually just run the command the outro used to
+ * suggest — *"Ready. delacour add button to get started"* after `add button`
+ * had already copied it in.
+ *
+ * It does not name `doctor` either. The follow-up block directly above ends on
+ * it, and two consecutive lines pointing at the same command read as a glitch
+ * rather than as emphasis. So what is left for the last line is the thing that
+ * actually happened: the components are the reader's now.
+ *
+ * Exported so the wording is testable without a terminal.
+ */
+export function outro(components: readonly string[]): string {
+	if (components.length === 0) return `Ready. ${style.code("delacour add button")} to get started.`;
+
+	if (components.length > OUTRO_NAME_LIMIT) {
+		return `Ready. ${components.length} components are yours to edit.`;
+	}
+
+	const named = components.map((name) => style.code(name));
+	const list =
+		named.length === 1 ? `${named[0]} is` : `${named.slice(0, -1).join(", ")} and ${named[named.length - 1]} are`;
+
+	return `Ready. ${list} yours to edit.`;
+}
+
 /**
  * What is left, and why the CLI did not just do it.
  *
@@ -374,15 +404,52 @@ const EXPO_ENV_REFERENCE = `/// <reference types="expo/types" />
  * `doctor` re-checks all of them, so this list is a starting point rather than
  * the only chance to see it.
  */
-function printFollowUps(config: ResolvedConfig, output: Output): void {
+async function printFollowUps(config: ResolvedConfig, output: Output): Promise<void> {
+	// Asked rather than assumed. A project scaffolded from Expo's
+	// `with-router-uniwind` example already imports its CSS entry from the root
+	// layout, and telling a reader to add an import that is on line one of the
+	// file they were just sent to is how a list of instructions stops being read.
+	const done = {
+		cssImported: (await filesImporting(config.app.resolved.root, config.app.resolved.css)).length > 0,
+		providerMounted: (await checkGestureHandlerRoot(config)).status === "pass",
+	};
+
+	const items = followUps(config, done);
+	if (items.length === 0) return;
+
+	// Two of those bullets are edits to one file. Printing it whole turns them
+	// into a paste — and names the right file, which on Expo Router is a
+	// `_layout.tsx` rather than the `App.tsx` a reader would otherwise open.
+	const layout = done.cssImported && done.providerMounted ? null : rootLayoutBlock(config);
+
 	output.info(
 		[
 			`A few things need you:`,
-			...followUps(config).map((line) => `  • ${line}`),
+			...items.map((line) => `  • ${line}`),
+			...(layout ? ["", ...layout] : []),
 			"",
 			`Run ${style.code("delacour doctor")} to check.`,
 		].join("\n")
 	);
+}
+
+/** The root layout, whole, or nothing when there is no file to name. */
+function rootLayoutBlock(config: ResolvedConfig): string[] | null {
+	const layout = findRootLayout(config.app.resolved.root);
+	if (!layout) return null;
+
+	const file = renderRootLayout(layout, layoutSpecifiers(config));
+
+	return [
+		style.path(layout.path),
+		// An empty line stays empty: indenting one leaves trailing whitespace
+		// down the side of the block.
+		...file.split("\n").map((line) => (line === "" ? "" : `  ${line}`)),
+		"",
+		layout.router
+			? `Already rendering a ${style.code("<Stack>")}? Keep it — wrap it, rather than replacing it with ${style.code("<Slot />")}.`
+			: "Wrap whatever this file already renders, rather than replacing it.",
+	];
 }
 
 /**
@@ -391,8 +458,15 @@ function printFollowUps(config: ResolvedConfig, output: Output): void {
  * Exported so the order is testable: the CSS import goes first because it is
  * the only one of these that produces no error at all, and the provider before
  * the theme because a theme is a choice and a root that receives touches is not.
+ *
+ * `done` is what the project already has. A scaffold that arrives with Uniwind
+ * set up has the CSS import on line one of its root layout, and an instruction
+ * to add it is worse than no instruction: it teaches the reader that this list
+ * is not about their project.
  */
-export function followUps(config: ResolvedConfig): string[] {
+export type FollowUpsDone = { cssImported?: boolean; providerMounted?: boolean };
+
+export function followUps(config: ResolvedConfig, done: FollowUpsDone = {}): string[] {
 	const items: string[] = [];
 
 	if (Object.keys(config.aliases).length > 0) {
@@ -403,20 +477,23 @@ export function followUps(config: ResolvedConfig): string[] {
 
 	// First, because it is the only one of the three that produces no error at
 	// all — the app boots and renders every component unstyled.
-	// Without an alias the path is where the file landed, relative to the app
-	// root — `./styles/global.css`, not `./global.css`.
-	const cssImport = config.aliases.styles
-		? `${config.aliases.styles}/${basename(config.app.resolved.css)}`
-		: `./${short(config.app.resolved.root, config.app.resolved.css)}`;
-	items.push(
-		`Import ${style.code(`"${cssImport}"`)} as the first statement of your root layout — without it every component renders unstyled.`
-	);
-	// The provider is already copied in; what is left is mounting it. Without an
-	// alias the path is where it landed, relative to the app root.
-	const providerImport = `${config.aliases.ui ?? `./${short(config.app.resolved.root, config.directories.ui)}`}/provider`;
-	items.push(
-		`Wrap the app root in ${style.code("<DelacourProvider>")} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
-	);
+	// `cssImportSpecifier` is `doctor`'s, deliberately: it prints the same
+	// instruction, and two spellings of one line is one of them being wrong.
+	const cssImport = layoutSpecifiers(config).css;
+	if (!done.cssImported) {
+		items.push(
+			`Import ${style.code(`"${cssImport}"`)} as the first statement of your root layout — without it every component renders unstyled.`
+		);
+	}
+	// The provider is already copied in; what is left is mounting it. The
+	// specifier is the root layout's, the same one the printed file uses —
+	// a bullet and a snippet disagreeing about one import is worse than either.
+	const providerImport = layoutSpecifiers(config).provider;
+	if (!done.providerMounted) {
+		items.push(
+			`Wrap the app root in ${style.code("<DelacourProvider>")} from ${style.code(`"${providerImport}"`)} — presses do nothing without it.`
+		);
+	}
 	items.push(
 		`${style.code("theme.css")} is the file to edit — replace it with the theme.css tab from https://ui.delacour.co.nz/theme, or paste a shadcn or tweakcn globals.css over it and run ${style.code("delacour theme")}.`
 	);
@@ -433,6 +510,12 @@ function warnAboutStack(project: ProjectInfo, output: Output): void {
 	if (!project.expoVersion && !project.reactNativeVersion) {
 		output.warn("This does not look like a React Native project — delacour components only run on React Native.");
 	}
+
+	// Before Metro is wrapped, not after. `doctor` reports the same thing, but by
+	// then the second transform is already installed and the reader is debugging
+	// a build that names neither library.
+	const styling = checkStylingConflict(project);
+	if (styling.status === "fail") output.warn([styling.detail, styling.fix].filter(Boolean).join("\n"));
 }
 
 function short(from: string, path: string): string {

@@ -30,8 +30,8 @@ Unlike shadcn, the target is Expo, which changes real things:
   `node_modules` symlink a monorepo creates, and a missed glob strips every
   class from a release build without erroring.
 - **`delacour doctor`** checks all of it, plus New Architecture, path aliases,
-  `GestureHandlerRootView`, whether anything actually imports the CSS entry, and duplicate copies
-  of a native module.
+  `GestureHandlerRootView`, whether anything actually imports the CSS entry, a competing Tailwind
+  transform (NativeWind wraps Metro too), and duplicate copies of a native module.
 
 ## Commands
 

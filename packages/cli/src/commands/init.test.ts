@@ -60,6 +60,36 @@ function stripAnsi(text: string): string {
 }
 
 /**
+ * A project that already has what a follow-up would ask for.
+ *
+ * Expo's `with-router-uniwind` example imports its CSS entry on line one of the
+ * root layout. Telling a reader to add an import that is already there is how a
+ * list of instructions stops being read.
+ */
+describe("followUps, on a project that is partly there", () => {
+	test("drops the CSS line once something imports the entry", () => {
+		const lines = followUps(config({}), { cssImported: true });
+
+		expect(lines.some((line) => line.includes("first statement"))).toBe(false);
+		expect(lines.some((line) => line.includes("DelacourProvider"))).toBe(true);
+	});
+
+	test("drops the provider line once it is mounted", () => {
+		const lines = followUps(config({}), { providerMounted: true });
+
+		expect(lines.some((line) => line.includes("DelacourProvider"))).toBe(false);
+		expect(lines.some((line) => line.includes("first statement"))).toBe(true);
+	});
+
+	test("leaves the theme line, which is a choice rather than a fix", () => {
+		const lines = followUps(config({}), { cssImported: true, providerMounted: true });
+
+		expect(lines.length).toBe(1);
+		expect(lines[0]).toContain("theme.css");
+	});
+});
+
+/**
  * The last line of a run.
  *
  * `add` delegates to `init` on an unconfigured project, so by the time this

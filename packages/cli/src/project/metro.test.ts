@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { patchMetroConfig } from "./metro";
+import { patchMetroConfig, readUniwindPaths } from "./metro";
 
 const OPTIONS = {
 	metroConfigPath: "/app/metro.config.js",
@@ -132,5 +132,30 @@ module.exports = config;
 		expect(result.content).toContain("config.watchFolders = [workspaceRoot];");
 		expect(result.content).toContain("module.exports = withUniwindConfig(config, {");
 		expect(result.content.indexOf("watchFolders")).toBeLessThan(result.content.indexOf("withUniwindConfig(config"));
+	});
+});
+
+describe("readUniwindPaths", () => {
+	test("reads what a wrapped config already compiles", () => {
+		const config = `const { withUniwindConfig } = require("uniwind/metro");
+module.exports = withUniwindConfig(config, {
+  // relative path to your global.css file
+  cssEntryFile: "./src/global.css",
+  // optional: path to typings
+  dtsFile: "./src/uniwind-types.d.ts",
+});`;
+
+		expect(readUniwindPaths(config)).toEqual({ css: "./src/global.css", types: "./src/uniwind-types.d.ts" });
+	});
+
+	test("reads a config that names only the entry", () => {
+		const config = `module.exports = withUniwindConfig(config, { cssEntryFile: './global.css' });`;
+		expect(readUniwindPaths(config)).toEqual({ css: "./global.css", types: undefined });
+	});
+
+	// Nothing to honour: `init` is about to wrap it with paths of its own.
+	test("says nothing about a config that is not wired", () => {
+		expect(readUniwindPaths("module.exports = config;")).toEqual({});
+		expect(readUniwindPaths(null)).toEqual({});
 	});
 });

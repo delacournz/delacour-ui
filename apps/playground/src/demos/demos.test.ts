@@ -248,9 +248,9 @@ describe("chart demos", () => {
 });
 
 /**
- * `charts/` renders `@delacour/charts` directly, with nothing from
+ * `charts/` renders `@delacour/react-native-charts` directly, with nothing from
  * the themed library in front of it. The section exists to show that the engine
- * stands on its own, so a demo there that reached for `@delacour/native-ui`
+ * stands on its own, so a demo there that reached for `@delacour/react-native-ui`
  * would be a picture of the wrong thing — and it would still render perfectly,
  * which is why only a text check can catch it.
  */
@@ -261,16 +261,16 @@ describe("engine demos", () => {
 		expect(ENGINE.length).toBeGreaterThan(12);
 	});
 
-	test("every engine demo imports from @delacour/charts", () => {
+	test("every engine demo imports from @delacour/react-native-charts", () => {
 		const missing = ENGINE.filter(
-			(id) => !/from "@delacour\/charts"/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
+			(id) => !/from "@delacour\/react-native-charts"/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
 		);
 		expect(missing).toEqual([]);
 	});
 
 	test("no engine demo imports the themed library", () => {
 		const offenders = ENGINE.filter((id) =>
-			/from "@delacour\/native-ui/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
+			/from "@delacour\/react-native-ui/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
 		);
 		expect(offenders).toEqual([]);
 	});

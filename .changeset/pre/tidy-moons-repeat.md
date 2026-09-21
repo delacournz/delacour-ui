@@ -1,5 +1,5 @@
 ---
-"@delacour/native-ui": patch
+"@delacour/react-native-ui": patch
 ---
 
 Fix the corner seam on a checked `Checkbox`

@@ -1,6 +1,6 @@
 # Delacour UI — Monorepo
 
-A Bun workspace holding `@delacour/native-ui`, a React Native component library,
+A Bun workspace holding `@delacour/react-native-ui`, a React Native component library,
 and the Expo app that renders it. Nothing here ships to a user; the library is
 the product.
 
@@ -8,8 +8,8 @@ the product.
 
 | Path | Package | What it is |
 | --- | --- | --- |
-| `packages/native-ui` | `@delacour/native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
-| `packages/charts` | `@delacour/charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
+| `packages/native-ui` | `@delacour/react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
+| `packages/charts` | `@delacour/react-native-charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
@@ -127,6 +127,13 @@ Every version here is the one Expo SDK 57 bundles. That is the rule, not a coinc
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
 fails at the linker rather than at install.
 
+`@types/react` is catalogued for the same reason a native module is, and it was added after the
+proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two
+copies were always installed and only bun's hoisting order decided which one landed at the root.
+Rename a package and that order changes — `packages/native-ui` then compiled against a different
+`@types/react` from the app, every `ComponentRef<typeof Animated.View>` collapsed to `never`, and
+`tsc` blamed `pressable.tsx`.
+
 **Bump a version in the catalog, never in a package.** Two versions of a native
 module register twice and break at runtime — which is also why `native-ui`
 declares every native module as a **peer** dependency rather than a dependency.
@@ -155,14 +162,15 @@ scripts by default, so the package is named in `trustedDependencies` in the root
 
 ## Releases
 
-Three packages reach npm — `delacour` (the CLI), `@delacour/native-ui` and `@delacour/charts`.
+Three packages reach npm — `delacour` (the CLI), `@delacour/react-native-ui` and `@delacour/react-native-charts`.
 Everything else in the workspace is `private: true`, which is the only thing stopping
 `changeset publish` from putting `@delacour/tsconfig` and friends on the registry the first time
 it runs.
 
 **Libraries are scoped; the CLI is not.** The `@delacour` org on npm is ours, so every library that
-publishes lives under it, named for its workspace folder — `packages/native-ui` is
-`@delacour/native-ui`. The CLI stays the bare `delacour` because it is typed, not imported:
+publishes lives under it, named for what a consumer installs rather than for its workspace folder —
+`packages/native-ui` publishes as `@delacour/react-native-ui`, because the thing in the import is
+React Native and the folder name is an internal detail nobody types. The CLI stays the bare `delacour` because it is typed, not imported:
 `bunx delacour add button` is the whole point of it. Moving a private package to published needs no
 rename, only `private: true` removed and the manual first publish below.
 
@@ -170,8 +178,8 @@ The two libraries were published as `delacour-react-native-ui` and `delacour-rea
 while the org belonged to someone else. Those names are deprecated on npm with a pointer here and
 take no further versions — do not publish to them.
 
-`@delacour/charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
-`import … from "@delacour/charts"` in `chart.tsx` is in the published tarball and gets resolved by
+`@delacour/react-native-charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
+`import … from "@delacour/react-native-charts"` in `chart.tsx` is in the published tarball and gets resolved by
 a stranger's Metro. It is an **optional peer** of `native-ui` rather than a dependency — a
 dependency may be nested, two copies mean two chart contexts, and a correctly-nested
 `<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
@@ -207,9 +215,9 @@ is on every `changeset version` produces the next `-alpha.N` rather than a stabl
 files the changesets it consumed under `.changeset/pre/` — they stay until the exit.
 
 Every publish lands on npm's **`latest` dist-tag**, alpha or not, and pre mode adds **`alpha`** as a
-second tag on the same version. `latest` moves because a bare `bun add @delacour/native-ui`
+second tag on the same version. `latest` moves because a bare `bun add @delacour/react-native-ui`
 has to resolve to the newest build rather than to whatever was published by hand first; `alpha`
-stays so the documented commands (`bunx delacour@alpha`, `bun add @delacour/native-ui@alpha`)
+stays so the documented commands (`bunx delacour@alpha`, `bun add @delacour/react-native-ui@alpha`)
 keep naming the prerelease line. Staging can set only one tag and the approval is a maintainer's
 2FA step, so the second tag is a maintainer's command too — the job summary prints it, see below.
 
@@ -242,7 +250,7 @@ npm stage reject <stage-id>      # discard; the version can be staged again
 npm dist-tag add <name>@<version> alpha   # while in pre mode; the job summary lists each one
 ```
 
-Approve `@delacour/charts` before `@delacour/native-ui`, which peers on it.
+Approve `@delacour/react-native-charts` before `@delacour/react-native-ui`, which peers on it.
 `npm stage` needs npm 11.15 or newer, which is why the job installs a current npm and why a
 maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot do any of this: it
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
@@ -268,7 +276,7 @@ gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
 bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
-workspace package a registry item depends on (`@delacour/charts`, for `chart`) and adds the
+workspace package a registry item depends on (`@delacour/react-native-charts`, for `chart`) and adds the
 tarball to the scaffolded app before `add`, so the check covers this branch's engine rather than
 whatever npm last served — and passes before the package exists there at all.
 

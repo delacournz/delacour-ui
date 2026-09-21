@@ -30,6 +30,7 @@
 		"catalog": {
 			"@legendapp/list": "^3.3.8",
 			"@shopify/react-native-skia": "2.6.2",
+			"@types/react": "19.2.18",
 			"react": "19.2.3",
 			"react-dom": "19.2.3",
 			"react-native": "0.86.2",

@@ -14,7 +14,7 @@ import {
 
 const charts: PublishRelease = {
 	kind: "publish",
-	name: "@delacour/charts",
+	name: "@delacour/react-native-charts",
 	version: "0.1.0-alpha.2",
 	access: "public",
 	tag: "latest",
@@ -175,7 +175,7 @@ describe("formatSummary", () => {
 				outcome: { result: "failed", code: undefined, message: "x" },
 			},
 		]);
-		expect(summary).toContain("npm dist-tag add @delacour/charts@0.1.0-alpha.2 alpha");
+		expect(summary).toContain("npm dist-tag add @delacour/react-native-charts@0.1.0-alpha.2 alpha");
 		expect(summary).not.toContain("npm dist-tag add delacour@");
 	});
 
@@ -210,7 +210,7 @@ describe("findPackageDirs", () => {
 	test("maps every workspace package to its directory", async () => {
 		const dirs = await findPackageDirs(new URL("..", import.meta.url).pathname);
 		expect(dirs.get("delacour")).toEndWith("/packages/cli");
-		expect(dirs.get("@delacour/charts")).toEndWith("/packages/charts");
-		expect(dirs.get("@delacour/native-ui")).toEndWith("/packages/native-ui");
+		expect(dirs.get("@delacour/react-native-charts")).toEndWith("/packages/charts");
+		expect(dirs.get("@delacour/react-native-ui")).toEndWith("/packages/native-ui");
 	});
 });

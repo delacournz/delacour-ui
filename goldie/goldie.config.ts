@@ -44,7 +44,7 @@ const config: GoldieConfig = {
 		price: "Free",
 		description: {
 			"en-US":
-				"Every component in @delacour/native-ui, running on your phone. Nineteen components, each with its own gallery of real demos: buttons, inputs, tabs, bottom sheets, charts drawn in Skia, and a full screen scaffold.\n\nOpen the customizer and restyle all of it at once. Eight axes — style, radius, base colour, accent, chart colours, fonts — repaint the same tokens, so what you see is exactly what the library ships. Generate the CSS and drop it into your app.\n\nScan the QR code on any documentation page to jump straight to that component.",
+				"Every component in @delacour/react-native-ui, running on your phone. Nineteen components, each with its own gallery of real demos: buttons, inputs, tabs, bottom sheets, charts drawn in Skia, and a full screen scaffold.\n\nOpen the customizer and restyle all of it at once. Eight axes — style, radius, base colour, accent, chart colours, fonts — repaint the same tokens, so what you see is exactly what the library ships. Generate the CSS and drop it into your app.\n\nScan the QR code on any documentation page to jump straight to that component.",
 		},
 	},
 

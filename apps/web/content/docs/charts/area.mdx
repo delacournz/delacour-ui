@@ -7,7 +7,7 @@ icon: ChartArea
 <Preview id="charts/area/area" />
 
 ```tsx
-import { CartesianChart, ChartArea, ChartLine } from "@delacour/charts";
+import { CartesianChart, ChartArea, ChartLine } from "@delacour/react-native-charts";
 
 <CartesianChart data={rows} includeZero xKey="day" yKeys={["visits"]}>
   <ChartArea color="#0A84FF33" curve="monotone" yKey="visits" />
@@ -35,7 +35,7 @@ charts side by side would disagree about what a colour meant.
 ## Baseline
 
 ```tsx
-import { scaleValue } from "@delacour/charts/core";
+import { scaleValue } from "@delacour/react-native-charts/core";
 
 <CartesianChart data={rows} includeZero xKey="day" yKeys={["delta"]}>
   {({ points, yScale }) => (

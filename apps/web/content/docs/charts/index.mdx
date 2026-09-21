@@ -6,14 +6,14 @@ icon: ChartLine
 
 <Preview id="charts/line/line" title={null} />
 
-`@delacour/charts` draws charts and nothing else. Every colour, font and size is a
+`@delacour/react-native-charts` draws charts and nothing else. Every colour, font and size is a
 value you pass in: there is no `className`, no token and no theme. The skinned
-[Chart](/docs/native/components/chart) in `@delacour/native-ui` is this engine with the
+[Chart](/docs/native/components/chart) in `@delacour/react-native-ui` is this engine with the
 theme attached, and it is the one to reach for when you want a chart that already matches the
 rest of the library.
 
 ```tsx
-import { CartesianChart, ChartLine } from "@delacour/charts";
+import { CartesianChart, ChartLine } from "@delacour/react-native-charts";
 
 <CartesianChart data={rows} xKey="day" yKeys={["revenue"]}>
   <ChartLine color="#0A84FF" curve="monotone" yKey="revenue" />

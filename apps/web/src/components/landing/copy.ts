@@ -14,7 +14,7 @@ import { appName } from "@/lib/shared";
  */
 
 export const HERO = {
-	badge: "@delacour/native-ui · alpha",
+	badge: "@delacour/react-native-ui · alpha",
 	title: "Build your React Native component library.",
 	lede: "Composable, accessible components with thoughtful defaults. Code you can customize, extend and make your own — for iOS and Android, painted from the same design tokens as your web app.",
 	primary: "Quick start",
@@ -92,8 +92,8 @@ export const NATIVE_THEME = `/* theme.css — the same tokens, in the shape Uniw
   }
 }`;
 
-export const NATIVE_USAGE = `import { Button } from "@delacour/native-ui/button";
-import { Text } from "@delacour/native-ui/text";
+export const NATIVE_USAGE = `import { Button } from "@delacour/react-native-ui/button";
+import { Text } from "@delacour/react-native-ui/text";
 
 <View className="bg-background p-4">
   <Text className="text-muted-foreground">Same names. Same palette.</Text>
@@ -146,7 +146,7 @@ export const GET_STARTED_COPY = {
 	title: "Own the source, or install the package.",
 	body: "The CLI writes each component's files into your project so you can change anything. The package is the same code, versioned, for a team that would rather take updates.",
 	cli: { label: "Copy a component's source in", command: "delacour@alpha add button" },
-	pkg: { label: "Or install the package", command: "@delacour/native-ui@alpha" },
+	pkg: { label: "Or install the package", command: "@delacour/react-native-ui@alpha" },
 } as const;
 
 export const COMPONENT_INDEX_COPY = {

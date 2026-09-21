@@ -6,7 +6,7 @@ import {
 	ChartXAxis,
 	ChartYAxis,
 	useSystemFont,
-} from "@delacour/charts";
+} from "@delacour/react-native-charts";
 import type { ReactElement } from "react";
 import { StyleSheet, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";

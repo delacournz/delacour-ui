@@ -10,7 +10,7 @@
  * light/dark palette through uniwind's `@variant light` (and `ios` / `android`),
  * none of which exist outside React Native.
  */
-@import "@delacour/native-ui/styles/tokens";
+@import "@delacour/react-native-ui/styles/tokens";
 
 /*
  * The palette, the three faces and the corner — generated from the house

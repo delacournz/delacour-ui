@@ -159,7 +159,7 @@ const STACK: Section = {
 		},
 		{
 			feature: "Granular subpath imports",
-			delacour: { support: "yes", note: "@delacour/native-ui/button — no package-wide barrel" },
+			delacour: { support: "yes", note: "@delacour/react-native-ui/button — no package-wide barrel" },
 			heroui: { support: "yes", note: "heroui-native/button" },
 			pro: { support: "yes", note: "heroui-native-pro subpaths" },
 		},
@@ -393,9 +393,9 @@ export const COMPARE_COPY = {
 		eyebrow: "Not a lock-in",
 		title: "The npm package is right there.",
 		body: "If your team would rather take updates than own files, install the package and skip the CLI entirely. It is the same source — the registry serves the library's own files rather than a copy of them — so the two can never drift.",
-		move: "You can also start on the package and move later. Run delacour add button in a project that already installs @delacour/native-ui, delete the package import, and point at the new path. Nothing about the component changes on the way across.",
+		move: "You can also start on the package and move later. Run delacour add button in a project that already installs @delacour/react-native-ui, delete the package import, and point at the new path. Nothing about the component changes on the way across.",
 		cli: { label: "Copy the source in", command: "delacour@alpha add button" },
-		pkg: { label: "Or install the package", command: "@delacour/native-ui@alpha" },
+		pkg: { label: "Or install the package", command: "@delacour/react-native-ui@alpha" },
 		link: "How the CLI works →",
 	},
 

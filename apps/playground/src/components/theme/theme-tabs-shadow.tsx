@@ -1,4 +1,4 @@
-import { footerOccupancy, Screen, useScreen } from "@delacour/native-ui/screen";
+import { footerOccupancy, Screen, useScreen } from "@delacour/react-native-ui/screen";
 import { type ReactElement, useState } from "react";
 import { StyleSheet } from "react-native";
 import Animated, { useAnimatedReaction, useAnimatedStyle } from "react-native-reanimated";

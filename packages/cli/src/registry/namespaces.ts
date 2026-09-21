@@ -2,8 +2,8 @@
  * The five destinations a registry file can land in, and the placeholder
  * scheme that keeps a file portable between them.
  *
- * A component in `native-ui` imports its neighbours by relative path —
- * `../../lib/cn`. That path is only correct for `native-ui`'s own layout, and
+ * A component in `react-native-ui` imports its neighbours by relative path —
+ * `../../lib/cn`. That path is only correct for `react-native-ui`'s own layout, and
  * the whole point of the CLI is that the consumer picks their own. So the
  * registry builder rewrites every cross-directory import into a placeholder
  * (`@registry/lib/cn`) and the `add` command substitutes the consumer's alias

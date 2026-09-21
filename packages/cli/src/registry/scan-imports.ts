@@ -5,7 +5,7 @@ import ts from "typescript";
  *
  * This exists because the obvious cheap option is wrong. `Bun.Transpiler`'s
  * `scanImports` reports what survives *transpilation*, so a type-only import is
- * simply absent from its output — and `native-ui` is full of them. Every
+ * simply absent from its output — and `react-native-ui` is full of them. Every
  * component's `index.ts` re-exports its prop types with
  * `export type { ButtonSlotProps } from "./button.types"`, and a scanner that
  * cannot see those lines would drop `button.types.ts` from the registry item

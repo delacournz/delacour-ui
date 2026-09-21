@@ -395,7 +395,7 @@ function formatSize(bytes: number): string {
  * be checking last release's engine against this branch's skin.
  */
 const WORKSPACE_PACKAGES: Record<string, string> = {
-	"@delacour/react-native-charts": "../../../charts",
+	"@delacour/react-native-charts": "../../../react-native-charts",
 };
 
 /**

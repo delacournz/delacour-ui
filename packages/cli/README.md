@@ -158,7 +158,7 @@ a JS reload alone will red-box. `add` says so at the point it becomes true.
 ## Working on this package
 
 ```bash
-bun run registry:build   # rebuild registry/ from packages/native-ui
+bun run registry:build   # rebuild registry/ from packages/react-native-ui
 bun test                 # unit + end-to-end against the local registry
 bun run verify:expo      # scaffold a real Expo app, add everything, typecheck it
 bun run build            # bundle dist/index.js
@@ -226,14 +226,14 @@ watching the check fire.
 `--all` adds components and what they pull in, so the run also names the standalone utilities
 explicitly — a verification pass has to cover the whole registry, not most of it.
 
-The registry is **derived** from `packages/native-ui/src` — one item per
+The registry is **derived** from `packages/react-native-ui/src` — one item per
 component folder, dependencies read off the imports. There is no `registry.json`
 to maintain, and the builder throws rather than guessing: an unclassified npm
 import or a component folder without an `index.ts` fails the build.
 
 It writes `registry.json` (the index), `r/<name>.json` (one item per component,
 naming its files) and the three JSON schemas. It writes **no copy of the
-source**: an item names the library's own file — `packages/native-ui/src/components/button/button.tsx` —
+source**: an item names the library's own file — `packages/react-native-ui/src/components/button/button.tsx` —
 and the client fetches it at the same ref the item came from, so the two cannot
 disagree. A component's diff is therefore the TypeScript that changed rather
 than a JSON string nobody can read.

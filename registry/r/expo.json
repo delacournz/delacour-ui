@@ -14,7 +14,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/expo/navigation-theme.tsx",
+			"path": "packages/react-native-ui/src/expo/navigation-theme.tsx",
 			"target": "expo/navigation-theme.tsx",
 			"namespace": "lib",
 			"rewrites": [

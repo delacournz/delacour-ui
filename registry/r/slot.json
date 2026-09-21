@@ -13,7 +13,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/lib/slot.tsx",
+			"path": "packages/react-native-ui/src/lib/slot.tsx",
 			"target": "slot.tsx",
 			"namespace": "lib"
 		}

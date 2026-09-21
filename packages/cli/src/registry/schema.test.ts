@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { registryFileSchema, registryItemSchema } from "./schema";
 
 const FILE = {
-	path: "packages/native-ui/src/components/button/button.tsx",
+	path: "packages/react-native-ui/src/components/button/button.tsx",
 	target: "button/button.tsx",
 	namespace: "ui",
 } as const;

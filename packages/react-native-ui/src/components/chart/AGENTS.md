@@ -1,7 +1,7 @@
 # Chart
 
 Skia charts wearing the theme's five-colour series ramp — the skin over
-[`@delacour/react-native-charts`](../../../../charts/AGENTS.md), which does the drawing and
+[`@delacour/react-native-charts`](../../../../react-native-charts/AGENTS.md), which does the drawing and
 knows nothing about tokens.
 
 `import { Chart, PieChart } from "@delacour/react-native-ui/chart";`

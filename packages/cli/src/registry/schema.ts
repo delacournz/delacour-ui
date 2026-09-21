@@ -12,7 +12,7 @@ import { NAMESPACES, parsePlaceholder } from "./namespaces";
  * field cannot make, and the one that decides whether an Expo build compiles.
  *
  * An item carries no file contents. `files[].path` names the library source the
- * file is — `packages/native-ui/src/components/button/button.tsx` — at the same
+ * file is — `packages/react-native-ui/src/components/button/button.tsx` — at the same
  * ref the item was read from, and the client fetches that. shadcn inlines
  * `content` here; the cost of that is a megabyte of unreadable diff every time a
  * component changes, and the benefit — one request per item — is worth less than
@@ -77,7 +77,7 @@ export const registryRewriteSchema = z.object({
 
 export const registryFileSchema = z
 	.object({
-		/** The file's path in the repository, e.g. `packages/native-ui/src/components/button/button.tsx`. */
+		/** The file's path in the repository, e.g. `packages/react-native-ui/src/components/button/button.tsx`. */
 		path: pathSchema,
 		/** Namespace-relative destination, e.g. `button/button.tsx`. */
 		target: targetSchema,

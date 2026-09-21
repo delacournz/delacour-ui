@@ -74,10 +74,10 @@ describe("the registry layout", () => {
 	const local = resolveRegistrySource({ cwd: CWD, url: "./registry" });
 
 	test("names a file where the library actually keeps it", () => {
-		expect(sourceFilePath("packages/native-ui", "components/button/button.tsx")).toBe(
-			"packages/native-ui/src/components/button/button.tsx"
+		expect(sourceFilePath("packages/react-native-ui", "components/button/button.tsx")).toBe(
+			"packages/react-native-ui/src/components/button/button.tsx"
 		);
-		expect(sourceFilePath("packages/native-ui", "lib/cn.ts")).toBe("packages/native-ui/src/lib/cn.ts");
+		expect(sourceFilePath("packages/react-native-ui", "lib/cn.ts")).toBe("packages/react-native-ui/src/lib/cn.ts");
 	});
 
 	// The index and the items live in `registry/`; a file lives wherever the
@@ -87,8 +87,8 @@ describe("the registry layout", () => {
 
 		expect(indexPath(remote)).toBe(`${base}/registry.json`);
 		expect(itemPath(remote, "button")).toBe(`${base}/r/button.json`);
-		expect(filePath(remote, "packages/native-ui/src/components/button/button.tsx")).toBe(
-			`${DEFAULT_REGISTRY_URL}/v0.1.0/packages/native-ui/src/components/button/button.tsx`
+		expect(filePath(remote, "packages/react-native-ui/src/components/button/button.tsx")).toBe(
+			`${DEFAULT_REGISTRY_URL}/v0.1.0/packages/react-native-ui/src/components/button/button.tsx`
 		);
 	});
 
@@ -96,8 +96,8 @@ describe("the registry layout", () => {
 	// at the committed directory and exercise the real read path offline.
 	test("resolves the same documents against a local source", () => {
 		expect(itemPath(local, "button")).toBe("/work/app/registry/r/button.json");
-		expect(filePath(local, "packages/native-ui/src/lib/cn.ts")).toBe(
-			join("/work/app/packages/native-ui/src/lib/cn.ts")
+		expect(filePath(local, "packages/react-native-ui/src/lib/cn.ts")).toBe(
+			join("/work/app/packages/react-native-ui/src/lib/cn.ts")
 		);
 	});
 

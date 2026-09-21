@@ -274,7 +274,7 @@ function FileList({ group }: { group: InstallGroup }): ReactElement {
 							rel="noreferrer noopener"
 							target="_blank"
 						>
-							{file.source.replace("packages/native-ui/src/", "")}
+							{file.source.replace("packages/react-native-ui/src/", "")}
 						</a>
 						<span className="font-mono text-fd-muted-foreground text-xs">→ {file.target}</span>
 					</li>

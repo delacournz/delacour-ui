@@ -10,7 +10,7 @@ The library takes no framework dependency and no third-party component kit.
 
 | Package | Description |
 | --- | --- |
-| [`@delacour/react-native-ui`](packages/native-ui) | The component library — one subpath export per component, no build step |
+| [`@delacour/react-native-ui`](packages/react-native-ui) | The component library — one subpath export per component, no build step |
 | [`@delacour/playground`](apps/playground) | Expo app rendering every component on a device |
 | [`@delacour/biome-config`](packages/biome-config) | Lint and format rules |
 | [`@delacour/tsconfig`](packages/tsconfig) | Shared TypeScript configs |
@@ -49,8 +49,8 @@ Every package carries an `AGENTS.md`, and it is the real documentation — the
 design decisions, the constraints, and the reasoning behind them.
 
 - [Repo conventions](AGENTS.md) — workspaces, the version catalog, hooks, commits
-- [`native-ui`](packages/native-ui/AGENTS.md) — the library's rules, plus a file
-  per component under [`src/components`](packages/native-ui/src/components)
+- [`react-native-ui`](packages/react-native-ui/AGENTS.md) — the library's rules, plus a file
+  per component under [`src/components`](packages/react-native-ui/src/components)
 - [`playground`](apps/playground/AGENTS.md) — routes, Metro, adding a gallery
 
 ## Licence

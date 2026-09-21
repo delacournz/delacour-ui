@@ -214,7 +214,7 @@ describe("presetCss", () => {
 
 /**
  * The first tab on `/theme`, and the one the copy button takes. It has to be
- * the shape `native-ui`'s `theme.css` is in — Uniwind reads a theme only from
+ * the shape `react-native-ui`'s `theme.css` is in — Uniwind reads a theme only from
  * `@variant light` / `@variant dark`, and a `.dark {` block would be stored as
  * a utility class with its dark palette never arriving.
  */

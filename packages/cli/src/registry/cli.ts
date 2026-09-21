@@ -3,7 +3,7 @@ import { buildRegistry } from "./build";
 import { writeRegistry } from "./write";
 
 /**
- * Builds `registry/` from `packages/native-ui`.
+ * Builds `registry/` from `packages/react-native-ui`.
  *
  * Run with `bun run registry:build` from `packages/cli`. Release CI runs it and
  * fails if the working tree comes back dirty — the registry is served from the
@@ -11,11 +11,11 @@ import { writeRegistry } from "./write";
  * publish components that no longer exist.
  */
 
-const PACKAGE_ROOT = join(import.meta.dirname, "../../../native-ui");
+const PACKAGE_ROOT = join(import.meta.dirname, "../../../react-native-ui");
 const OUT_DIR = join(import.meta.dirname, "../../../../registry");
 
 /** Repo-relative, because that is what an item's `files[].path` resolves against. */
-const PACKAGE_DIR = "packages/native-ui";
+const PACKAGE_DIR = "packages/react-native-ui";
 
 const result = await buildRegistry({ packageRoot: PACKAGE_ROOT, packageDir: PACKAGE_DIR });
 const { written, removed } = await writeRegistry(OUT_DIR, result);

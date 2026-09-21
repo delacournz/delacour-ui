@@ -10,7 +10,7 @@ Types and helpers that more than one package needs. Small on purpose.
 | `src/result.ts` | `Result` and its constructors |
 
 Entry point is `main: "./src/index.ts"` — raw TypeScript, no build step, the
-same trade `native-ui` makes. Consumers bundle it.
+same trade `react-native-ui` makes. Consumers bundle it.
 
 ## Result
 
@@ -41,7 +41,7 @@ type AsyncResult<Success, Error = string> = Promise<Result<Success, Error>>;
 ## Adding a type
 
 It belongs here only if **two or more packages** need it. A type with one
-consumer stays in that consumer — the same rule `native-ui` applies to its
+consumer stays in that consumer — the same rule `react-native-ui` applies to its
 `{name}.types.ts` files, and for the same reason: a shared file that accumulates
 single-use types becomes a place to look rather than a thing to use.
 

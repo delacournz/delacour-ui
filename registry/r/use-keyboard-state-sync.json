@@ -16,7 +16,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/hooks/use-keyboard-state-sync.tsx",
+			"path": "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx",
 			"target": "use-keyboard-state-sync.tsx",
 			"namespace": "hooks",
 			"rewrites": [

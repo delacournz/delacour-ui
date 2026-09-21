@@ -25,7 +25,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/slider/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/slider/AGENTS.md",
 			"target": "slider/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -36,17 +36,17 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/index.ts",
+			"path": "packages/react-native-ui/src/components/slider/index.ts",
 			"target": "slider/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider-fill.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider-fill.tsx",
 			"target": "slider/slider-fill.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider-output.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider-output.tsx",
 			"target": "slider/slider-output.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -57,12 +57,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider-thumb.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider-thumb.tsx",
 			"target": "slider/slider-thumb.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider-track.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider-track.tsx",
 			"target": "slider/slider-track.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -73,7 +73,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider.context.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider.context.tsx",
 			"target": "slider/slider.context.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -84,7 +84,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider.tsx",
+			"path": "packages/react-native-ui/src/components/slider/slider.tsx",
 			"target": "slider/slider.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -103,12 +103,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider.types.ts",
+			"path": "packages/react-native-ui/src/components/slider/slider.types.ts",
 			"target": "slider/slider.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/slider/slider.variants.ts",
+			"path": "packages/react-native-ui/src/components/slider/slider.variants.ts",
 			"target": "slider/slider.variants.ts",
 			"namespace": "ui",
 			"rewrites": [

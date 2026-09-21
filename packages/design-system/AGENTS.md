@@ -37,7 +37,7 @@ out of `bun test` — and that matrix is the only thing standing between a renam
 token and a customizer that writes a name no component reads.
 
 `design-system.test.ts` is what it buys: it reads
-`packages/native-ui/src/styles/theme.css` **as source text** and asserts every
+`packages/react-native-ui/src/styles/theme.css` **as source text** and asserts every
 name any axis writes is one the library actually declares. It reads the CSS by
 relative path rather than depending on `@delacour/react-native-ui` — the move
 `apps/web`'s `tokens-page.test.ts` and `app.css.test.ts` already make, and what
@@ -83,7 +83,7 @@ style.
 
 `emitNativeCss` is the other half, and since `/theme` shows it first it is the
 one most readers copy. `emit.test.ts` holds the default preset's native output
-equal to `packages/native-ui/src/styles/theme.css` — every `@variant` block and
+equal to `packages/react-native-ui/src/styles/theme.css` — every `@variant` block and
 the alias names, declaration for declaration, comments aside. That is the
 one-file contract: what `init` ships and what the page emits with no preset are
 the same theme, so "reset" on the page and a fresh `init` cannot disagree. Two
@@ -165,7 +165,7 @@ Two departures from shadcn, both deliberate, both asserted:
   palette in the same pass.
 
 **Vega is the identity element.** It restates the library's own numbers, so
-selecting it leaves an app exactly as `native-ui` ships — asserted against
+selecting it leaves an app exactly as `react-native-ui` ships — asserted against
 `theme.css` rather than against a copy.
 
 ## `convert.ts` lives here, not in the CLI

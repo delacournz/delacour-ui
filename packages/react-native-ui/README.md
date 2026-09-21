@@ -37,7 +37,7 @@ never makes Metro resolve its peers.
 
 ```css
 @import '@delacour/react-native-ui/styles';
-@source '../../../../packages/native-ui/src';
+@source '../../../../packages/react-native-ui/src';
 ```
 
 Use the real workspace path, not a `node_modules` one — Bun symlinks workspace

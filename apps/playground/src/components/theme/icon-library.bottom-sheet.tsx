@@ -10,7 +10,7 @@ const ICON_LIBRARY_ROW_COUNT = 4;
 /**
  * The one axis shadcn offers that this library cannot.
  *
- * `native-ui` rule 5 is "Central Icons only — never Lucide, Hugeicons, or
+ * `react-native-ui` rule 5 is "Central Icons only — never Lucide, Hugeicons, or
  * anything else", and rule 7 allows a single `withUniwind` wrapper, already
  * spent on the Central Icons proxy that covers the whole two-thousand-icon set.
  * A second icon set would cost both rules to gain a control this library has no

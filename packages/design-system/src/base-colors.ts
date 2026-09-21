@@ -31,13 +31,13 @@ export type BaseColor = {
  * a designer picked in a web app is a palette that looks almost right and
  * matches nothing.
  *
- * Only names `packages/native-ui/src/styles/theme.css` both declares and aliases
+ * Only names `packages/react-native-ui/src/styles/theme.css` both declares and aliases
  * appear here. `radius` is shadcn's one non-colour and is dropped on purpose:
  * corners come from `--radius` on a separate axis, so a base colour carrying one
  * would retune every rounded edge in the library as a side effect of picking a
  * grey.
  *
- * The tokens `native-ui` adds — `elevated`, `tertiary`, `success`, `warning`,
+ * The tokens `react-native-ui` adds — `elevated`, `tertiary`, `success`, `warning`,
  * `info`, the `-soft` pairs, `overlay` — are absent by design. Every one is
  * derived in `theme.css` from `background`, `foreground` or `secondary`, so it
  * follows a base colour without being restated; writing them out would freeze

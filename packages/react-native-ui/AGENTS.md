@@ -1,4 +1,4 @@
-# native-ui — Shared React Native Components
+# react-native-ui — Shared React Native Components
 
 A standalone React Native component library. Styling is Uniwind (Tailwind v4 for
 React Native); interaction is Reanimated + Gesture Handler; haptics are Pulsar.
@@ -662,7 +662,7 @@ types, its context and its variants. Nothing outside reaches past the index.
    Bun symlinks workspace packages and Tailwind's scanner cannot follow
    symlinks, so classes would be silently dropped from production builds. */
 @import '@delacour/react-native-ui/styles';
-@source '../../../../packages/native-ui/src';
+@source '../../../../packages/react-native-ui/src';
 ```
 
 Wrap the app's root in `DelacourProvider` — the gesture root every `Pressable`
@@ -731,7 +731,7 @@ comes from the imports, and the CLI's `classifySource` restates the same
 conventions `scripts/gen-exports.ts` reads.
 
 The registry is metadata only. An item names the file **here** —
-`packages/native-ui/src/components/button/button.tsx` — at the ref it was read
+`packages/react-native-ui/src/components/button/button.tsx` — at the ref it was read
 from, so there is no copy of this package anywhere in `registry/`. The import
 rewrite a copy used to carry travels beside the file instead, as a list of
 specifiers, and `add` applies it.

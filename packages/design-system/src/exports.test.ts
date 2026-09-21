@@ -8,7 +8,7 @@ const ROOT = join(import.meta.dirname, "..");
 /**
  * The half of a `gen-exports` script that catches real mistakes.
  *
- * `native-ui` generates its map because component folders churn; ten stable
+ * `react-native-ui` generates its map because component folders churn; ten stable
  * entries do not earn a generator. What they do earn is this: an entry pointing
  * at a file that no longer exists resolves to nothing at the consumer, and a
  * module with no entry is unreachable however correct it is — neither shows up

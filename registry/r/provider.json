@@ -20,7 +20,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/provider/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/provider/AGENTS.md",
 			"target": "provider/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -31,12 +31,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/provider/index.ts",
+			"path": "packages/react-native-ui/src/components/provider/index.ts",
 			"target": "provider/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/provider/provider.tsx",
+			"path": "packages/react-native-ui/src/components/provider/provider.tsx",
 			"target": "provider/provider.tsx",
 			"namespace": "ui",
 			"rewrites": [

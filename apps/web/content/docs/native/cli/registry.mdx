@@ -19,7 +19,7 @@ That is the whole registry. It holds no source, because it does not need to: an 
 the library's own files, at the same ref, and the client fetches them from there.
 
 ```txt
-packages/native-ui/src/components/button/button.tsx     what r/button.json names
+packages/react-native-ui/src/components/button/button.tsx     what r/button.json names
 ```
 
 shadcn inlines each file as a string inside the item JSON; the cost of that is a megabyte of
@@ -47,7 +47,7 @@ there. The ref pins the whole tree at once, so an item and its files can never d
   "devDependencies": [],
   "files": [
     {
-      "path": "packages/native-ui/src/components/button/button.tsx",
+      "path": "packages/react-native-ui/src/components/button/button.tsx",
       "target": "button/button.tsx",
       "namespace": "ui",
       "rewrites": [{ "from": "../icon", "to": "@registry/ui/icon" }]

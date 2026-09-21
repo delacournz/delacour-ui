@@ -14,7 +14,7 @@ import { siteUrl } from "./shared";
  * silently stops intercepting links, with nothing failing anywhere to say so.
  *
  * So the config is read as **text**, the way `content.test.ts` and
- * `packages/native-ui/src/docs.test.ts` do — no import, no transpile, no
+ * `packages/react-native-ui/src/docs.test.ts` do — no import, no transpile, no
  * React Native.
  */
 

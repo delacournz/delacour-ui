@@ -116,14 +116,14 @@ export const CHECKS: Check[] = [
 			// against the ref — the directory holding `registry/`, which on disk is
 			// the repository root.
 			const repoRoot = dirname(registryDir);
-			const libraryRoot = join(repoRoot, "packages", "native-ui", "src");
+			const libraryRoot = join(repoRoot, "packages", "react-native-ui", "src");
 
 			const library = new Set(
 				(await readdir(libraryRoot, { recursive: true, withFileTypes: true }))
 					.filter((entry) => entry.isFile())
 					.map((entry) => relative(libraryRoot, join(entry.parentPath, entry.name)).split(sep).join("/"))
 					.filter((path) => classifySource(path) !== null)
-					.map((path) => `packages/native-ui/src/${path}`)
+					.map((path) => `packages/react-native-ui/src/${path}`)
 			);
 
 			// An item naming a file that is not there is a 404 mid-copy. A library

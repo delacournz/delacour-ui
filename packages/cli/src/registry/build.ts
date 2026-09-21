@@ -9,7 +9,7 @@ import { toIndexEntry } from "./schema";
 import { sourceFilePath } from "./source";
 
 /**
- * Builds the registry from `packages/native-ui/src`.
+ * Builds the registry from `packages/react-native-ui/src`.
  *
  * There is no `registry.json` to maintain. The library already states which
  * files belong to a component (one folder, one `index.ts`) and which packages
@@ -24,7 +24,7 @@ import { sourceFilePath } from "./source";
  */
 
 export type BuildOptions = {
-	/** Absolute path to `packages/native-ui`. */
+	/** Absolute path to `packages/react-native-ui`. */
 	packageRoot: string;
 	/** The same directory, relative to the repository root — what `files[].path` is built from. */
 	packageDir: string;
@@ -39,7 +39,7 @@ export type BuildResult = {
 const DEFAULT_HOMEPAGE = "https://github.com/delacournz/delacour-ui";
 
 type SourceFile = {
-	/** Path relative to `packages/native-ui/src`. */
+	/** Path relative to `packages/react-native-ui/src`. */
 	path: string;
 	classification: SourceClassification;
 };

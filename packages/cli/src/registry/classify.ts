@@ -1,12 +1,12 @@
 import type { Namespace } from "./namespaces";
 
 /**
- * Maps a path inside `packages/native-ui/src` onto the registry item it
+ * Maps a path inside `packages/react-native-ui/src` onto the registry item it
  * belongs to and where it lands in a consumer's project.
  *
- * The rules here are `native-ui`'s own conventions, restated — one component
+ * The rules here are `react-native-ui`'s own conventions, restated — one component
  * per folder with an `index.ts` entry point, flat files under `lib/`, `hooks/`
- * and `icons/`. `packages/native-ui/scripts/gen-exports.ts` reads the same
+ * and `icons/`. `packages/react-native-ui/scripts/gen-exports.ts` reads the same
  * shape to build the package's `exports` map, so a component folder that is
  * malformed fails there first.
  *

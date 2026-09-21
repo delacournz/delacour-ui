@@ -27,7 +27,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/checkbox/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/checkbox/AGENTS.md",
 			"target": "checkbox/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -38,7 +38,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox-box.tsx",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox-box.tsx",
 			"target": "checkbox/checkbox-box.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -57,7 +57,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox-group.tsx",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox-group.tsx",
 			"target": "checkbox/checkbox-group.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -68,7 +68,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox-label.tsx",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox-label.tsx",
 			"target": "checkbox/checkbox-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -79,12 +79,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox.context.tsx",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox.context.tsx",
 			"target": "checkbox/checkbox.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox.tsx",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox.tsx",
 			"target": "checkbox/checkbox.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -103,7 +103,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox.types.ts",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox.types.ts",
 			"target": "checkbox/checkbox.types.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -114,7 +114,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/checkbox.variants.ts",
+			"path": "packages/react-native-ui/src/components/checkbox/checkbox.variants.ts",
 			"target": "checkbox/checkbox.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -129,7 +129,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/checkbox/index.ts",
+			"path": "packages/react-native-ui/src/components/checkbox/index.ts",
 			"target": "checkbox/index.ts",
 			"namespace": "ui"
 		}

@@ -33,7 +33,7 @@ export class UnknownItemError extends Error {
  * that imports it.
  *
  * `visiting` guards a cycle. The registry should not contain one —
- * `native-ui`'s own rules forbid the import shape that would create it — but a
+ * `react-native-ui`'s own rules forbid the import shape that would create it — but a
  * third-party registry can, and recursing forever is a worse failure than
  * emitting the item once and moving on.
  */

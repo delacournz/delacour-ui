@@ -13,7 +13,7 @@ import { basename, join } from "node:path";
  * quietly loses its install block renders perfectly well.
  *
  * Read as text and importing nothing, like `previews/previews.test.ts` and
- * `packages/native-ui/src/docs.test.ts`.
+ * `packages/react-native-ui/src/docs.test.ts`.
  */
 
 const CONTENT_DIR = join(import.meta.dirname, "..", "content", "docs");

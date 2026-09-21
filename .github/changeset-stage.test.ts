@@ -210,7 +210,7 @@ describe("findPackageDirs", () => {
 	test("maps every workspace package to its directory", async () => {
 		const dirs = await findPackageDirs(new URL("..", import.meta.url).pathname);
 		expect(dirs.get("delacour")).toEndWith("/packages/cli");
-		expect(dirs.get("@delacour/react-native-charts")).toEndWith("/packages/charts");
-		expect(dirs.get("@delacour/react-native-ui")).toEndWith("/packages/native-ui");
+		expect(dirs.get("@delacour/react-native-charts")).toEndWith("/packages/react-native-charts");
+		expect(dirs.get("@delacour/react-native-ui")).toEndWith("/packages/react-native-ui");
 	});
 });

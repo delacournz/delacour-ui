@@ -22,7 +22,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/button/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/button/AGENTS.md",
 			"target": "button/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -33,12 +33,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-end-content.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-end-content.tsx",
 			"target": "button/button-end-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-group-separator.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-group-separator.tsx",
 			"target": "button/button-group-separator.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -49,7 +49,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-group-text.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-group-text.tsx",
 			"target": "button/button-group-text.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -68,7 +68,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-group.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-group.tsx",
 			"target": "button/button-group.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -83,7 +83,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-label.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-label.tsx",
 			"target": "button/button-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -94,12 +94,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button-start-content.tsx",
+			"path": "packages/react-native-ui/src/components/button/button-start-content.tsx",
 			"target": "button/button-start-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button.context.tsx",
+			"path": "packages/react-native-ui/src/components/button/button.context.tsx",
 			"target": "button/button.context.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -110,7 +110,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button.tsx",
+			"path": "packages/react-native-ui/src/components/button/button.tsx",
 			"target": "button/button.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -133,12 +133,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button.types.ts",
+			"path": "packages/react-native-ui/src/components/button/button.types.ts",
 			"target": "button/button.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/button/button.variants.ts",
+			"path": "packages/react-native-ui/src/components/button/button.variants.ts",
 			"target": "button/button.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -153,7 +153,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/button/index.ts",
+			"path": "packages/react-native-ui/src/components/button/index.ts",
 			"target": "button/index.ts",
 			"namespace": "ui"
 		}

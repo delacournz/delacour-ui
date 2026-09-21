@@ -11,7 +11,7 @@ import { registryIndexSchema, registryItemSchema } from "./schema";
  * Two layers, and no source. `registry.json` is the index, carrying everything
  * except the file lists, so `add` can resolve a dependency graph in one request.
  * One small JSON per item under `r/` names the files that item is made of —
- * `packages/native-ui/src/components/button/button.tsx`, the library file
+ * `packages/react-native-ui/src/components/button/button.tsx`, the library file
  * itself, which is in the same commit and needs no copy here.
  *
  * That is the point. Inlining a component's source into its item JSON — which is

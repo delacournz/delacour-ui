@@ -35,7 +35,7 @@ export type DesignSystemConfig = {
  * What the app looks like before anyone touches a control.
  *
  * Vega is the library's own geometry and neutral is its own palette, so the
- * default config resolves to exactly what `native-ui` ships. That is what makes
+ * default config resolves to exactly what `react-native-ui` ships. That is what makes
  * "reset" meaningful and what lets `/preview` pin a known look for the capture
  * pipeline.
  */

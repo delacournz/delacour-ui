@@ -1,0 +1,110 @@
+---
+title: Agent skills
+description: Teach a coding assistant to copy the real components instead of writing plausible ones.
+icon: Sparkles
+---
+
+Ask an agent for "a button" with nothing installed and you get plausible JSX — the right shape, and
+none of the parts that matter here: the icon that inherits its size from the button's context, the
+spinner that *replaces* the icon so the label does not shift, the `expo install` route for the
+native modules underneath.
+
+A skill fixes that before the agent reaches for a tool at all. It is one Markdown file the
+assistant reads on its own, and it teaches four commands and the six failures that produce no error
+message.
+
+## Installation
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills"] }]} />
+
+It detects which assistants this project uses and writes for each of them. Nothing is fetched — the
+files are bundled into the CLI, so a run works offline and installs the skill matching the version
+you are pinned to.
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills --list"] }]} />
+
+`--list` prints what is available and exactly where it would go, and writes nothing.
+
+## Where it goes
+
+Detection is directory presence, so a skill only lands where an assistant is already in use. Name
+one explicitly with `--agent`, or all four with `--agent all`.
+
+| Assistant | `--agent` | Project scope | `--scope user` |
+| --- | --- | --- | --- |
+| Claude Code | `claude` | `.claude/skills/` | `~/.claude/skills/` |
+| Cursor | `cursor` | `.cursor/skills/` | `~/.cursor/skills/` |
+| OpenCode | `opencode` | `.opencode/skills/` | `~/.opencode/skills/` |
+| Codex | `codex` | `.agents/skills/` | `~/.agents/skills/` |
+
+Project scope is the default, and it is the one to want when only some of your work uses this
+library — a skill in every project's context is a skill competing with every other.
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills --scope user"] }]} />
+
+An existing skill is never replaced silently: a run that would overwrite one lists the files and
+stops. `--force` is how you mean it.
+
+## Using it
+
+Assistants discover a skill on their own; start a new session after installing. Then ask for what
+you want:
+
+```txt
+Add a settings screen with a switch for notifications and a slider for volume.
+```
+
+The agent runs `delacour list`, adds `switch` and `slider` by name, and writes the screen against
+the real API.
+
+## What it carries
+
+The skill is deliberately **procedural, not a catalogue**. It names no component, because a list
+written onto your disk is stale the day the next one ships — and the staleness is silent. It
+teaches the agent to ask instead:
+
+| The agent needs | It runs |
+| --- | --- |
+| what exists | `delacour list` |
+| one component's files, props and packages | `delacour view <name>` |
+| to add one | `delacour add <name>` |
+| why something renders wrong with no error | `delacour doctor` |
+
+What it does assert is the handful of rules no command reveals, each one a failure with **no error
+message**: the CSS import first, `DelacourProvider` at the root, `expo install` for native modules,
+the dev-client rebuild afterwards, importing from your own path rather than the package, and
+reading a component's `AGENTS.md` before editing it.
+
+Two reference files sit beside it and are loaded only when the agent is actually writing or
+debugging a screen — the token palette, the size scale, composition, the four Tailwind features
+that do not exist in React Native, and a symptom-to-cause table.
+
+## Structure
+
+<Files>
+  <Folder name="skills/delacour-ui" defaultOpen>
+    <File name="SKILL.md" />
+    <Folder name="references" defaultOpen>
+      <File name="rules.md" />
+      <File name="troubleshooting.md" />
+    </Folder>
+  </Folder>
+</Files>
+
+Read them before you install, or fetch them for an assistant that takes a URL:
+
+```bash
+curl https://ui.delacour.co.nz/skills/delacour-ui/SKILL.md
+```
+
+## Skill, MCP, or both
+
+<Callout title="They are a ladder, not alternatives">
+The skill is **knowledge** — what to run, and what fails silently. The
+[MCP server](/docs/native/cli/mcp) is **access** — `list_components`, `get_component`,
+`add_components`, `init_project` and `check_project` as tools the agent calls directly. Install the
+skill everywhere; add the MCP server where the host supports it.
+</Callout>
+
+An agent with neither still has [`/llms.txt`](/llms.txt) and every page's `.md` twin. See
+[LLMs.txt](/docs/native/getting-started/llms).

@@ -25,7 +25,7 @@ bun test                 # unit + end-to-end against the local registry
 ```
 src/
 ├── index.ts              commander wiring, and the one place a failure becomes a message
-├── commands/             init, add, browse (list/search/view/info), diff, doctor, theme, mcp
+├── commands/             init, add, browse (list/search/view/info), diff, doctor, theme, mcp, skills
 ├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
@@ -276,6 +276,22 @@ The MCP server runs `add` under `--silent` — its stdout is a JSON-RPC stream, 
 corrupt the protocol. Without a return value the agent copies a component and never learns it needs
 a package the project has not got. `AddResult` carries the plan, and `mcp` renders it into the tool
 reply. `null` is a run that copied nothing.
+
+### `skills` bundles its content rather than fetching it
+
+`@delacour/skills` is a workspace package and tsdown inlines it, so `delacour skills` works offline
+and always writes the skill matching the CLI a project is pinned to. See that package's `AGENTS.md`
+for why the markdown is a template-string module and not a `.md` file.
+
+Two things in `commands/skills.ts` are load-bearing:
+
+- **`Planned` carries `path` and `display` separately.** A relative path is resolved against
+  `process.cwd()`, not against `--cwd`, so writing the displayed form put every file in the wrong
+  directory the moment the two differed — which, in a test, was this repository.
+- **Detection writes only for assistants the project already uses**, by directory presence. A skill
+  in `.cursor/` in a repository that has never seen Cursor is a file in someone's diff they did not
+  ask for. With none found it falls back to Claude Code and says so; writing nothing and exiting
+  zero is the outcome nobody can debug.
 
 ### Errors go to stderr, always
 

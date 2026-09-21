@@ -7,6 +7,7 @@ import { diff } from "./commands/diff";
 import { doctor } from "./commands/doctor";
 import { init } from "./commands/init";
 import { mcp } from "./commands/mcp";
+import { AGENT_IDS, skills } from "./commands/skills";
 import { theme } from "./commands/theme";
 import { MissingConfigError } from "./config/resolve";
 import { CONFIG_FILENAME } from "./config/schema";
@@ -132,6 +133,22 @@ program
 	.option("--registry <url>", "registry to read from")
 	.option("--ref <ref>", "git ref to read the registry at")
 	.action((options) => run(() => mcp({ ...options, cwd: resolve(options.cwd) })));
+
+program
+	.command("skills")
+	.description("install the agent skill, so a coding assistant uses the real components")
+	.argument("[skills...]", "which skills to install — all of them by default")
+	.addOption(
+		new Option("--agent <agent...>", "which assistants to install for; detected from the project by default").choices(
+			AGENT_IDS
+		)
+	)
+	.addOption(new Option("--scope <scope>", "where to install").choices(["project", "user"]).default("project"))
+	.option("--list", "print what is available and where it would go")
+	.option("-f, --force", "replace a skill that is already there")
+	.option("-c, --cwd <path>", "directory to work in", process.cwd())
+	.option("--silent", "print nothing but errors")
+	.action((names: string[], options) => run(() => skills(names, { ...options, cwd: resolve(options.cwd) })));
 
 program
 	.command("theme")

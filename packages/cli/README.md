@@ -44,6 +44,8 @@ Unlike shadcn, the target is Expo, which changes real things:
 | `diff [name]` | What has changed upstream since you copied it |
 | `doctor` | Check this app is wired up correctly |
 | `info` | The resolved config and what was detected |
+| `skills` | Install the agent skill into Claude Code, Cursor, OpenCode or Codex |
+| `mcp` | Run as an MCP server, so an agent can browse and add components |
 
 Every registry-reading command takes `--registry <url>` (a URL,
 `github:owner/repo`, or a local path), `--ref <git-ref>`, `--offline`, and

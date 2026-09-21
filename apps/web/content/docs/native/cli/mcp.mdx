@@ -71,7 +71,11 @@ version.
     },
     add_components: {
       type: "(names, overwrite?, install?) => string",
-      description: "Copies components in, with rewritten imports, and reports the packages they need. install defaults to false — the reply carries the exact commands, so the agent decides.",
+      description: "Copies components in, with rewritten imports, and reports the packages they need. Sets the project up first if it has no native-components.json. install defaults to false — the reply carries the exact commands, so the agent decides.",
+    },
+    init_project: {
+      type: "(src?, packageName?, packagePath?, force?, install?) => string",
+      description: "Sets the project up deliberately — a shared package in a monorepo, or a source directory that is not src. Not needed for a plain app; add_components handles that on its own.",
     },
     check_project: {
       type: "() => string",
@@ -124,7 +128,7 @@ Every tool has a command behind it, so an agent with shell access needs nothing 
 ```bash
 delacour list --json
 delacour view button --json
-delacour add button --yes
+delacour add button --yes     # sets the project up first, if it has to
 delacour doctor --json
 ```
 

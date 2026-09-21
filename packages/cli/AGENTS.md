@@ -200,6 +200,25 @@ manager unprompted. `src/index.ts` declares `--install` first for the same reaso
 is `reportDependencies`, built from `planDependencies` in `project/package-manager.ts`, which is
 pure and tested; the decision is `shouldInstall`, which is three lines and no cleverness.
 
+### `add --no-init` is declared alone, and that is the opposite decision
+
+`add` sets an unconfigured project up rather than refusing it — `findConfig` misses, `init` runs
+with the names it was given, and its `AddResult` is returned. So one verb takes a bare
+`create-expo-app` to a rendered component, in a terminal, in CI and over MCP alike.
+
+It used to be a *question*, and only behind `output.interactive`. That gate is
+`!silent && !yes && isTTY`, so `--yes`, a pipe, a CI job and **every MCP call** (`mcp` passes
+`yes: true, silent: true`) fell through to `MissingConfigError` while a human at a prompt sailed
+past. An agent could not set a project up at all.
+
+`--no-init` is therefore declared **alone**, which is the exact inverse of the rule above: a lone
+`--no-` option *does* get a default, and `true` is the default wanted. Add an `--init` beside it
+"for symmetry" and the value goes `undefined`, which nothing reads — the setup silently stops
+happening for every caller that passes neither.
+
+`init` returns `Promise<AddResult | null>` for the same reason `add` does: the caller that set the
+project up still has to learn what the components need from npm.
+
 ### `add` returns its result because `mcp` prints nothing
 
 The MCP server runs `add` under `--silent` — its stdout is a JSON-RPC stream, so a log line would

@@ -140,12 +140,23 @@ export function lastJsonObject(text: string): Record<string, unknown> | null {
 	return null;
 }
 
-const ALREADY_STAGED = /already (?:been )?staged/i;
+/**
+ * What npm actually says when the version is already sitting in the stage
+ * queue: `E409 … Cannot stage previously published version "x.y.z"`. A staged
+ * version counts as published for uniqueness even though it is not live.
+ */
+const ALREADY_STAGED = /already (?:been )?staged|cannot stage previously published/i;
 
 /**
  * Reads one `npm stage publish --json` run. Success is keyed by package name:
  * `{ "<name>": { id, version, stageId, … } }`; failure is `{ error: { code,
  * summary, detail } }` as the last object on stdout.
+ *
+ * Any 409 is read as already staged. The publish plan only lists versions the
+ * registry does not serve, so a conflict on one of them means an earlier run
+ * claimed it — normally a stage awaiting approval. The one other claim is a
+ * version published and then unpublished, which can never be reused either;
+ * `npm stage list` tells the two apart.
  */
 export function parseStageResult(input: {
 	name: string;
@@ -169,7 +180,7 @@ export function parseStageResult(input: {
 	const summary = typeof error?.summary === "string" ? error.summary : "";
 	const detail = typeof error?.detail === "string" ? error.detail : "";
 	const message = [summary, detail].filter(Boolean).join("\n") || input.stderr || input.stdout || "Unknown error";
-	if (ALREADY_STAGED.test(message)) return { result: "already-staged" };
+	if (code === "E409" || ALREADY_STAGED.test(message)) return { result: "already-staged" };
 	return { result: "failed", code, message };
 }
 
@@ -178,7 +189,7 @@ function describe(outcome: StageResult): string {
 		case "staged":
 			return `staged — \`npm stage approve ${outcome.stageId}\``;
 		case "already-staged":
-			return "already staged from an earlier run";
+			return "already staged from an earlier run — find its id with `npm stage list`";
 		case "failed":
 			return `**failed** ${outcome.code ?? ""} ${outcome.message.split("\n")[0] ?? ""}`.trim();
 	}

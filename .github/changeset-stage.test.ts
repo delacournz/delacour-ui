@@ -126,8 +126,25 @@ describe("parseStageResult", () => {
 	});
 
 	test("a version already staged counts as success", () => {
-		const stdout = JSON.stringify({ error: { code: "E409", summary: "This version has already been staged" } });
+		const stdout = JSON.stringify({
+			error: {
+				code: "E409",
+				summary:
+					'409 Conflict - POST https://registry.npmjs.org/-/stage/package/delacour - Cannot stage previously published version "0.1.0-alpha.4".',
+				detail: "",
+			},
+		});
 		expect(parseStageResult({ name, exitCode: 1, stdout, stderr: "" })).toEqual({ result: "already-staged" });
+	});
+
+	test("any 409 is a version npm has already claimed, whatever it is worded as", () => {
+		const stdout = JSON.stringify({ error: { code: "E409", summary: "409 Conflict - something new" } });
+		expect(parseStageResult({ name, exitCode: 1, stdout, stderr: "" })).toEqual({ result: "already-staged" });
+	});
+
+	test("the wording alone is enough when npm printed no code", () => {
+		const stderr = 'npm error Cannot stage previously published version "0.1.0-alpha.4".';
+		expect(parseStageResult({ name, exitCode: 1, stdout: "", stderr })).toEqual({ result: "already-staged" });
 	});
 
 	test("falls back to stderr when npm printed no JSON", () => {

@@ -69,7 +69,7 @@ src/
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
-└── styles/app.css         Tailwind + Fumadocs preset + the native-ui palette
+└── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 scripts/generate-icons.ts  the browser icon set — see "Branding"
 public/favicon.*           generated
@@ -278,7 +278,7 @@ already have.
 
 Peer lists are derived, not typed: `<LibraryInstall />` renders `peers` from
 `src/registry/install.ts`, the union of every component's closure, and `install.test.ts` pins it
-to `packages/native-ui/package.json`. Do not hand-write an `expo install` list of the library's
+to `packages/react-native-ui/package.json`. Do not hand-write an `expo install` list of the library's
 peers anywhere on the site.
 
 ### A CLI page
@@ -342,14 +342,14 @@ and are not meant to be pasted whole.
 A component with no captured preview (`bottom-sheet`, `provider`) opens at `## Installation` rather
 than carrying a placeholder.
 
-Reasoning prose belongs in `packages/native-ui/src/components/<name>/AGENTS.md`, not here. A page
+Reasoning prose belongs in `packages/react-native-ui/src/components/<name>/AGENTS.md`, not here. A page
 section is a heading, at most one sentence, and the example. A `<Callout>` survives only if it warns
 a *reader* about a failure with no error message; a callout explaining a maintainer's reasoning does
 not.
 
 ### A charts page
 
-`content/docs/charts/` documents `packages/charts` — `@delacour/react-native-charts`, the headless
+`content/docs/charts/` documents `packages/react-native-charts` — `@delacour/react-native-charts`, the headless
 engine — under its own `/docs/charts` namespace and its own "Charts" link in
 `src/lib/layout.shared.tsx`. Its `meta.json` is the one `root: true` folder there, so the layout
 tab strip shows a single tab; the sidebar sections are its `---Group---` separators.
@@ -368,15 +368,15 @@ Its component key is `charts`, deliberately not `chart`, so its captures land un
 keeps the two sets apart. Code beside a preview is hand-written at the call site, with literal
 hex colours and `useSystemFont` for the font, because that is what a reader of this package types.
 
-Reasoning prose belongs in `packages/charts/AGENTS.md` and the per-folder `AGENTS.md` under
-`packages/charts/src/`; a page links there rather than repeating it.
+Reasoning prose belongs in `packages/react-native-charts/AGENTS.md` and the per-folder `AGENTS.md` under
+`packages/react-native-charts/src/`; a page links there rather than repeating it.
 
 ## The install block is derived
 
 `<ComponentInstall name="button" />` renders three tabs — **Command**, **Package**, **Manual** — and
 every fact in them is read from `src/registry/install.ts`, which
 `scripts/gen-install-manifest.ts` derives from `registry/r/*.json`, which the registry builder
-derives from `packages/native-ui/src`. Nothing is transcribed, so nothing can be wrong about which
+derives from `packages/react-native-ui/src`. Nothing is transcribed, so nothing can be wrong about which
 packages a component needs or which files it is made of.
 
 ```bash
@@ -398,7 +398,7 @@ Three things are load-bearing:
   so importing it would need a `server.fs.allow` entry; and a literal type makes
   `<ComponentInstall name="buton" />` a compile error rather than a runtime 500 a reader finds.
 - **The Manual tab's source path is the registry's own, unmapped.** An item names the library file
-  it is — `packages/native-ui/src/components/button/button.tsx` — so linking at the real thing is a
+  it is — `packages/react-native-ui/src/components/button/button.tsx` — so linking at the real thing is a
   copy, not a translation. This used to reverse a flattened `files/ui/button/button.tsx` through
   five rules with one exception; there is nothing to reverse now. The generator still throws on a
   path that is not on disk, and `src/registry/install.test.ts` asserts every emitted path exists.
@@ -455,7 +455,7 @@ not in `*.types.ts`, which holds only shapes shared by two or more modules in th
 
 ## Styling: only `tokens.css` is web-safe
 
-`packages/native-ui/src/styles/` splits three ways:
+`packages/react-native-ui/src/styles/` splits three ways:
 
 | File | Web-safe? |
 | --- | --- |
@@ -673,11 +673,11 @@ breaks hooks. Hydration warnings in the console are the first symptom.
   `*.types.ts`, which holds only shapes shared by two or more modules. Where a shape *is* shared
   (`ScreenInsetProps`, `ScreenPlacementProps`, `ScreenScrollableProps`), document it once and let
   the part tables stay short.
-- Component prose lives per component at `packages/native-ui/src/components/<name>/AGENTS.md`,
-  indexed from the package's own `AGENTS.md`. `packages/native-ui/src/docs.test.ts` fails the build
+- Component prose lives per component at `packages/react-native-ui/src/components/<name>/AGENTS.md`,
+  indexed from the package's own `AGENTS.md`. `packages/react-native-ui/src/docs.test.ts` fails the build
   on a component missing either, so that index is a reliable place to start when writing a page
   here — and it is where prose trimmed from a page belongs.
-- `releases/index.mdx` is hand-maintained from `git log --oneline -- packages/native-ui`.
+- `releases/index.mdx` is hand-maintained from `git log --oneline -- packages/react-native-ui`.
 
 ## Scan to preview
 

@@ -14,7 +14,7 @@ Three base configs. A package extends one by its file path; there is no
 ## Who extends what
 
 ```
-packages/native-ui   →  @delacour/tsconfig/tsconfig.react-native.json
+packages/react-native-ui   →  @delacour/tsconfig/tsconfig.react-native.json
 packages/types       →  @delacour/tsconfig/tsconfig.base.json
 apps/playground      →  expo/tsconfig.base            ← not this package
 ```
@@ -39,12 +39,12 @@ copy. That comment lives in the app's `tsconfig.json`; keep it there.
   none runs raw Node resolution, so subpath `exports` maps resolve the way the
   bundler will resolve them.
 - **`customConditions: ["@delacour/source"]`** is what lets a workspace package
-  be consumed as **source rather than as a build artefact**. `native-ui` ships
+  be consumed as **source rather than as a build artefact**. `react-native-ui` ships
   raw `.tsx` with no build step, because Uniwind's transform has to run inside
   the consuming app's Metro pipeline — a precompiled build would arrive with its
   classNames already dead. This condition is how TypeScript follows the same
   path Metro does.
-- **`composite: true`** in `base`, switched **off** in `native-ui` alongside
+- **`composite: true`** in `base`, switched **off** in `react-native-ui` alongside
   `noEmit: true`. A package that emits nothing has no project references to
   build, and leaving `composite` on would demand a `tsBuildInfoFile` for output
   that never appears.
@@ -64,7 +64,7 @@ Typecheck also runs as a **pre-push** hook — see the root [AGENTS.md](../../AG
 ## Changing a config
 
 Edit the file here. A package needing one different option sets it in its own
-`tsconfig.json` `compilerOptions`, as `native-ui` does with `composite: false`
+`tsconfig.json` `compilerOptions`, as `react-native-ui` does with `composite: false`
 and `types: ["bun"]` — never by copying a base config.
 
 Adding a file here means adding it to `files` in `package.json`, or it will not

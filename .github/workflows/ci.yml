@@ -130,7 +130,7 @@ jobs:
 
       # The registry is committed, so a component change that does not rebuild
       # it would publish a registry describing the previous version. It holds no
-      # source — an item names `packages/native-ui/src/...` at the same ref — so
+      # source — an item names `packages/react-native-ui/src/...` at the same ref — so
       # what drifts here is the metadata: a new file, a changed import, a
       # dependency that moved between `expo install` and the package manager.
       - name: Check the registry is current

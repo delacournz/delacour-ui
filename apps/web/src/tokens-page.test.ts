@@ -21,7 +21,7 @@ import { join } from "node:path";
 
 const ROOT = join(import.meta.dirname, "..", "..", "..");
 const PAGE = readFileSync(join(import.meta.dirname, "..", "content/docs/native/getting-started/tokens.mdx"), "utf-8");
-const THEME_CSS = readFileSync(join(ROOT, "packages/native-ui/src/styles/theme.css"), "utf-8");
+const THEME_CSS = readFileSync(join(ROOT, "packages/react-native-ui/src/styles/theme.css"), "utf-8");
 
 /** Token names declared inside one `@variant` block, brace-matched. */
 function declared(variant: "dark" | "light"): Set<string> {

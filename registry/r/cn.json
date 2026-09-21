@@ -15,7 +15,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/lib/cn.ts",
+			"path": "packages/react-native-ui/src/lib/cn.ts",
 			"target": "cn.ts",
 			"namespace": "lib",
 			"rewrites": [

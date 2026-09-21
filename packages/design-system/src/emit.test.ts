@@ -10,8 +10,8 @@ import { resolveFonts, resolveTokens } from "./resolve";
 import { GEOMETRY_TOKENS, STYLES } from "./styles";
 import { ACCENT_THEMES } from "./themes";
 
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/theme.css"), "utf-8");
-const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/tokens.css"), "utf-8");
+const THEME_CSS = readFileSync(join(import.meta.dirname, "../../react-native-ui/src/styles/theme.css"), "utf-8");
+const TOKENS_CSS = readFileSync(join(import.meta.dirname, "../../react-native-ui/src/styles/tokens.css"), "utf-8");
 
 const config = (overrides: Partial<DesignSystemConfig>): DesignSystemConfig => ({
 	...DEFAULT_CONFIG,

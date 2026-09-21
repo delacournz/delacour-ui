@@ -1,4 +1,4 @@
-<!-- Title: gitmoji + conventional type + package scope, e.g. `✨ feat(native-ui): add a swipeable Tabs pager`. -->
+<!-- Title: gitmoji + conventional type + package scope, e.g. `✨ feat(react-native-ui): add a swipeable Tabs pager`. -->
 
 ## What and why
 
@@ -29,7 +29,7 @@ same push that changed the visuals.
 
 ## Checklist
 
-- [ ] Docs updated in the same commit — `native-ui`'s `docs.test.ts` fails by name for a component folder with no `AGENTS.md`
+- [ ] Docs updated in the same commit — `react-native-ui`'s `docs.test.ts` fails by name for a component folder with no `AGENTS.md`
 - [ ] `bun.lock` committed alongside any dependency change — CI installs with `--frozen-lockfile` and fails on drift
 - [ ] `bun run previews` recaptured and committed, if a component's visuals changed (needs a Mac with Xcode; never runs in CI)
 - [ ] Screenshots above captured from the current head, if this changes what anyone sees

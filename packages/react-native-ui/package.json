@@ -7,7 +7,7 @@
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/delacournz/delacour-ui.git",
-		"directory": "packages/native-ui"
+		"directory": "packages/react-native-ui"
 	},
 	"keywords": [
 		"react-native",

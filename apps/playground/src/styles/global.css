@@ -8,4 +8,4 @@
 /* Real workspace path, not node_modules: Bun symlinks workspace packages and
    Tailwind's scanner cannot follow symlinks, so the library's classes would be
    silently dropped from production builds. */
-@source "../../../../packages/native-ui/src";
+@source "../../../../packages/react-native-ui/src";

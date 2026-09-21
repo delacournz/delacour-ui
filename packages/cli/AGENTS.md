@@ -11,7 +11,7 @@ an agent needs: what the pieces are, and which decisions are load-bearing.
 ## Commands
 
 ```bash
-bun run registry:build   # rebuild /registry from packages/native-ui
+bun run registry:build   # rebuild /registry from packages/react-native-ui
 bun run verify:expo      # scaffold a real Expo app, add everything, typecheck it
 bun run build            # bundle dist/index.js with tsdown
 bun run build:check      # assert the bundle stayed small and executable
@@ -95,7 +95,7 @@ scripts/
    else's linker rather than here.
 
 6. **An item references the library's own source; it does not carry a copy.** `r/button.json`
-   names `packages/native-ui/src/components/button/button.tsx`, and the client fetches it — from
+   names `packages/react-native-ui/src/components/button/button.tsx`, and the client fetches it — from
    the same ref the item came from, so the two can never disagree. shadcn inlines `content`
    instead, which is why their registry diffs are unreadable; copying the source into
    `registry/files/**`, which this used to do, was readable but duplicated the library two hundred
@@ -115,14 +115,14 @@ scripts/
 ## Adding a component to the registry
 
 Nothing to write by hand except metadata. See the **The registry** section of
-`packages/native-ui/AGENTS.md`: add an `ITEM_META` entry, classify any new npm import in
+`packages/react-native-ui/AGENTS.md`: add an `ITEM_META` entry, classify any new npm import in
 `PACKAGE_INSTALL`, then `bun run registry:build` and commit `registry/`. The rebuild touches item
 JSON only — the component's `.tsx` appears in the diff once, where you wrote it.
 
 ## Testing
 
 `bun test` is unit tests plus an end-to-end pass over a fixture, all offline. It runs the real
-builder against the real `packages/native-ui`, not a copy of the conventions — the point of
+builder against the real `packages/react-native-ui`, not a copy of the conventions — the point of
 deriving the registry is that the two cannot diverge.
 
 `bun run verify:expo` is the one that catches what a fixture cannot. A fixture has no
@@ -325,7 +325,7 @@ the first — writing a report to stdout would corrupt the protocol.
 
 ### `theme` exists because Uniwind cannot read a `.dark {}` block
 
-The palette `native-ui` paints from is shadcn's, name for name, so almost everything in a web app's
+The palette `react-native-ui` paints from is shadcn's, name for name, so almost everything in a web app's
 `globals.css` carries across untouched. The wrapper does not: Uniwind reads a theme only from
 `@variant light` / `@variant dark`, and a literal `.dark { … }` is registered as a **utility class
 named `dark`** that contributes nothing — no error, no warning, and a dark theme that never arrives.

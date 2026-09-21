@@ -24,7 +24,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/input/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/input/AGENTS.md",
 			"target": "input/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -35,12 +35,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/input/index.ts",
+			"path": "packages/react-native-ui/src/components/input/index.ts",
 			"target": "input/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input-group-decorator.tsx",
+			"path": "packages/react-native-ui/src/components/input/input-group-decorator.tsx",
 			"target": "input/input-group-decorator.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -59,17 +59,17 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input-group-prefix.tsx",
+			"path": "packages/react-native-ui/src/components/input/input-group-prefix.tsx",
 			"target": "input/input-group-prefix.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input-group-suffix.tsx",
+			"path": "packages/react-native-ui/src/components/input/input-group-suffix.tsx",
 			"target": "input/input-group-suffix.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input-group.tsx",
+			"path": "packages/react-native-ui/src/components/input/input-group.tsx",
 			"target": "input/input-group.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -92,12 +92,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input.context.tsx",
+			"path": "packages/react-native-ui/src/components/input/input.context.tsx",
 			"target": "input/input.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input.tsx",
+			"path": "packages/react-native-ui/src/components/input/input.tsx",
 			"target": "input/input.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -120,12 +120,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input.types.ts",
+			"path": "packages/react-native-ui/src/components/input/input.types.ts",
 			"target": "input/input.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/input/input.variants.ts",
+			"path": "packages/react-native-ui/src/components/input/input.variants.ts",
 			"target": "input/input.variants.ts",
 			"namespace": "ui",
 			"rewrites": [

@@ -28,7 +28,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/tabs/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/tabs/AGENTS.md",
 			"target": "tabs/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -39,22 +39,22 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/index.ts",
+			"path": "packages/react-native-ui/src/components/tabs/index.ts",
 			"target": "tabs/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-content.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-content.tsx",
 			"target": "tabs/tabs-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-indicator.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-indicator.tsx",
 			"target": "tabs/tabs-indicator.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-label.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-label.tsx",
 			"target": "tabs/tabs-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -69,7 +69,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-list.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-list.tsx",
 			"target": "tabs/tabs-list.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -80,17 +80,17 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-pager.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-pager.tsx",
 			"target": "tabs/tabs-pager.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-scroll-view.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-scroll-view.tsx",
 			"target": "tabs/tabs-scroll-view.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-separator.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-separator.tsx",
 			"target": "tabs/tabs-separator.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -101,7 +101,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs-trigger.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs-trigger.tsx",
 			"target": "tabs/tabs-trigger.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -124,12 +124,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs.context.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs.context.tsx",
 			"target": "tabs/tabs.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs.tsx",
+			"path": "packages/react-native-ui/src/components/tabs/tabs.tsx",
 			"target": "tabs/tabs.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -140,7 +140,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs.types.ts",
+			"path": "packages/react-native-ui/src/components/tabs/tabs.types.ts",
 			"target": "tabs/tabs.types.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -151,7 +151,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/tabs/tabs.variants.ts",
+			"path": "packages/react-native-ui/src/components/tabs/tabs.variants.ts",
 			"target": "tabs/tabs.variants.ts",
 			"namespace": "ui",
 			"rewrites": [

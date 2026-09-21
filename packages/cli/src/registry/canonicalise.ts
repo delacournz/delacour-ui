@@ -4,7 +4,7 @@ import type { Rewrite } from "./rewrite";
 import { scanImports } from "./scan-imports";
 
 /**
- * Rewrites a `native-ui` source file's imports into the portable placeholder
+ * Rewrites a `react-native-ui` source file's imports into the portable placeholder
  * form the registry ships.
  *
  * A relative import is only rewritten when it crosses a directory. `./cn` from
@@ -23,7 +23,7 @@ import { scanImports } from "./scan-imports";
  */
 
 export type CanonicaliseInput = {
-	/** Path relative to `packages/native-ui/src`. */
+	/** Path relative to `packages/react-native-ui/src`. */
 	path: string;
 	content: string;
 	/** Every source path in the tree, for resolving relative specifiers. */

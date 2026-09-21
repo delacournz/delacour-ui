@@ -14,7 +14,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/lib/tv.ts",
+			"path": "packages/react-native-ui/src/lib/tv.ts",
 			"target": "tv.ts",
 			"namespace": "lib",
 			"rewrites": [

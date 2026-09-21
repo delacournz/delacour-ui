@@ -8,14 +8,14 @@ import { scanImports } from "./scan-imports";
 import type { RegistryFile, RegistryItem } from "./schema";
 
 /**
- * Built against the real `packages/native-ui`, not a fixture.
+ * Built against the real `packages/react-native-ui`, not a fixture.
  *
  * A fixture would only assert that the builder agrees with a copy of the
  * conventions rather than with the library itself, and the whole point of
  * deriving the registry is that the two cannot diverge.
  */
-const PACKAGE_ROOT = join(import.meta.dirname, "../../../native-ui");
-const PACKAGE_DIR = "packages/native-ui";
+const PACKAGE_ROOT = join(import.meta.dirname, "../../../react-native-ui");
+const PACKAGE_DIR = "packages/react-native-ui";
 /** What `files[].path` resolves against, the way a ref does over HTTP. */
 const REPO_ROOT = join(PACKAGE_ROOT, "../..");
 
@@ -128,7 +128,7 @@ describe("buildRegistry", () => {
 
 	test("an item names the library source rather than a copy of it", () => {
 		expect(byName.get("button")?.files).toContainEqual({
-			path: "packages/native-ui/src/components/button/button.tsx",
+			path: "packages/react-native-ui/src/components/button/button.tsx",
 			target: "button/button.tsx",
 			namespace: "ui",
 			rewrites: [

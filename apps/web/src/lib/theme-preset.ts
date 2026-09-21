@@ -98,7 +98,7 @@ export function presetCss(config: DesignSystemConfig): string {
 /**
  * The `theme.css` this configuration means, with the emitter's own account of it.
  *
- * This is the file `native-ui` reads and the one the page puts first: Uniwind
+ * This is the file `react-native-ui` reads and the one the page puts first: Uniwind
  * takes a theme only from `@variant light` / `@variant dark`, so the web shape
  * above cannot be pasted into a React Native app without its wrapper rewritten.
  * Emitting the native shape here is what makes `/theme` a one-step flow —

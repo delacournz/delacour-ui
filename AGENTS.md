@@ -8,19 +8,20 @@ the product.
 
 | Path | Package | What it is |
 | --- | --- | --- |
-| `packages/native-ui` | `@delacour/react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
-| `packages/charts` | `@delacour/react-native-charts` | The headless charting engine `native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
+| `packages/react-native-ui` | `@delacour/react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
+| `packages/react-native-charts` | `@delacour/react-native-charts` | The headless charting engine `react-native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
 | `apps/web` | `@delacour/web` | The documentation site — TanStack Start + Fumadocs, deployed on Railway |
 | `packages/biome-config` | `@delacour/biome-config` | Lint and format rules, for everything |
 | `packages/brand` | `@delacour/brand` | The Delacour mark — master art plus the geometry every rendering reads |
+| `packages/skills` | `@delacour/skills` | The agent skill the CLI installs and the docs site serves |
 | `packages/tsconfig` | `@delacour/tsconfig` | Shared TypeScript configs |
 | `packages/types` | `@delacour/types` | Shared utility types — `Result` and its constructors |
 
 Each has its own `AGENTS.md`. **Read the one for the package you are editing** —
-`packages/native-ui/AGENTS.md` is the substantial one, and it indexes a further
+`packages/react-native-ui/AGENTS.md` is the substantial one, and it indexes a further
 file per component.
 
 ## Commands
@@ -130,12 +131,12 @@ fails at the linker rather than at install.
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two
 copies were always installed and only bun's hoisting order decided which one landed at the root.
-Rename a package and that order changes — `packages/native-ui` then compiled against a different
+Rename a package and that order changes — `packages/react-native-ui` then compiled against a different
 `@types/react` from the app, every `ComponentRef<typeof Animated.View>` collapsed to `never`, and
 `tsc` blamed `pressable.tsx`.
 
 **Bump a version in the catalog, never in a package.** Two versions of a native
-module register twice and break at runtime — which is also why `native-ui`
+module register twice and break at runtime — which is also why `react-native-ui`
 declares every native module as a **peer** dependency rather than a dependency.
 
 ## `linker = "hoisted"` is load-bearing
@@ -169,7 +170,7 @@ it runs.
 
 **Libraries are scoped; the CLI is not.** The `@delacour` org on npm is ours, so every library that
 publishes lives under it, named for what a consumer installs rather than for its workspace folder —
-`packages/native-ui` publishes as `@delacour/react-native-ui`, because the thing in the import is
+`packages/react-native-ui` publishes as `@delacour/react-native-ui`, because the thing in the import is
 React Native and the folder name is an internal detail nobody types. The CLI stays the bare `delacour` because it is typed, not imported:
 `bunx delacour add button` is the whole point of it. Moving a private package to published needs no
 rename, only `private: true` removed and the manual first publish below.
@@ -178,9 +179,9 @@ The two libraries were published as `delacour-react-native-ui` and `delacour-rea
 while the org belonged to someone else. Those names are deprecated on npm with a pointer here and
 take no further versions — do not publish to them.
 
-`@delacour/react-native-charts` is public because it has to be: `native-ui` ships raw `.tsx`, so the
+`@delacour/react-native-charts` is public because it has to be: `react-native-ui` ships raw `.tsx`, so the
 `import … from "@delacour/react-native-charts"` in `chart.tsx` is in the published tarball and gets resolved by
-a stranger's Metro. It is an **optional peer** of `native-ui` rather than a dependency — a
+a stranger's Metro. It is an **optional peer** of `react-native-ui` rather than a dependency — a
 dependency may be nested, two copies mean two chart contexts, and a correctly-nested
 `<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
 
@@ -355,7 +356,7 @@ shapes; `@delacour/types`' `Result` is the house example.
 
 **Tests.** Write them first. Colocate as `{name}.test.ts` beside the source. Run
 `bun test <path>` after each change and the related suites before committing.
-`native-ui` can only test pure logic — React Native ships Flow-typed source Bun's
+`react-native-ui` can only test pure logic — React Native ships Flow-typed source Bun's
 transpiler cannot parse — so behaviour that needs a renderer is verified in the
 playground on a simulator instead.
 
@@ -368,16 +369,16 @@ explanation goes in the component's doc comment or above the `return`.
 **Commits.** Gitmoji prefix, conventional type, package scope:
 
 ```
-✨ feat(native-ui): add Tabs with a swipeable pager and a measured indicator
-🐛 fix(native-ui): fade a Tabs separator only while the pager crosses it
-🎨 style(native-ui): adjust Switch content text sizes
+✨ feat(react-native-ui): add Tabs with a swipeable pager and a measured indicator
+🐛 fix(react-native-ui): fade a Tabs separator only while the pager crosses it
+🎨 style(react-native-ui): adjust Switch content text sizes
 ```
 
 `✨ feat` · `🐛 fix` · `🔧 chore` · `📝 docs` · `🎨 style` · `♻️ refactor` ·
 `✅ test` · `🚧 wip` · `👽️ types`. Commit messages end at their last real line —
 no trailers. Nothing lands on `main` by pushing to it — see [Branches](#branches).
 
-**Documentation is part of the change.** `native-ui`'s docs are updated in the
+**Documentation is part of the change.** `react-native-ui`'s docs are updated in the
 same commit as the code, and `bun test` fails by name for a component folder with
 no `AGENTS.md`. That test exists because `Radio` shipped undocumented and nothing
 caught it for fifteen commits.
@@ -396,5 +397,5 @@ they are keyed to a commit rather than overwritten, is in
 `apps/playground/src/uniwind-types.d.ts` (Uniwind's Metro plugin),
 `apps/playground/assets/{icon*,splash-icon*}.png` and `apps/web/public/{favicon*,icon-*,apple-touch-icon}.*`
 (`bun run icons`, in each app — the source is `packages/brand`),
-`apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `native-ui`'s
+`apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `react-native-ui`'s
 `package.json` `exports` map (`bun run gen-exports`).

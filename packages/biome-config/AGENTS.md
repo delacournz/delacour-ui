@@ -19,7 +19,7 @@ Inheritance is two hops, and only the first names this package:
 biome.jsonc  (repo root, "root": true)
   └── extends ["./packages/biome-config/root.jsonc"]
 
-packages/native-ui/biome.jsonc   "extends": "//",  "root": false
+packages/react-native-ui/biome.jsonc   "extends": "//",  "root": false
 apps/playground/biome.jsonc      "extends": "//",  "root": false
 packages/tsconfig/biome.jsonc    "extends": "//",  "root": false
 packages/types/biome.jsonc       "extends": "//",  "root": false
@@ -33,7 +33,7 @@ why adding a second file here does not automatically reach anyone.
 Each package config carries a `files.includes` narrowing the scope, and two
 carry a deliberate `overrides` block:
 
-- `native-ui` turns off `noDuplicateCustomProperties` for `src/styles/theme.css`,
+- `react-native-ui` turns off `noDuplicateCustomProperties` for `src/styles/theme.css`,
   because light and dark redefine the same token names inside their own
   `@variant` scopes and Biome reads the file as one flat block.
 - `playground` turns off `useFilenamingConvention` for `src/app/**`, because
@@ -65,7 +65,7 @@ Both carry the reason as a comment beside them. A new override needs one too.
   `runOnJS` and `runOnUI` are restricted from **both** `react-native-reanimated`
   and `react-native-worklets`, because the Reanimated shim forwards to exactly
   the call it replaces and importing it from either package would otherwise
-  compile. `native-ui`'s `Pressable` documentation names this rule as the reason
+  compile. `react-native-ui`'s `Pressable` documentation names this rule as the reason
   the deprecated forms cannot regress quietly — do not relax it.
 - **`noExplicitAny` is `warn`, not `error`**, and the repo standard is stricter
   than the linter: no `any`, discriminated unions instead. The warning is a
@@ -100,7 +100,7 @@ repo root. A schema ahead of the binary reports valid options as unknown.
 
 **`react.jsonc` is exported and shipped but nothing extends it.** It is
 `root.jsonc` plus `css.parser.tailwindDirectives`, and the two packages that
-need that parser — `native-ui` and `playground` — declare it inline in their own
+need that parser — `react-native-ui` and `playground` — declare it inline in their own
 `biome.jsonc` instead. So the setting is written in three places and the file
 that exists to hold it is dead. Either point those two configs at it or delete
 it; leaving it is the drift this package exists to prevent.

@@ -1,7 +1,7 @@
 /**
  * The import rewrite an item carries for each of its files, and how it is applied.
  *
- * The registry serves `packages/native-ui/src` itself rather than a copy of it,
+ * The registry serves `packages/react-native-ui/src` itself rather than a copy of it,
  * so the canonicalisation that used to be baked into a copied file now travels
  * beside it as data: `../icon` means `@registry/ui/icon` in this file. The
  * builder computes the list (it has the TypeScript compiler and the whole source

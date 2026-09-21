@@ -27,7 +27,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/chart/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/chart/AGENTS.md",
 			"target": "chart/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -42,32 +42,32 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-area.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-area.tsx",
 			"target": "chart/chart-area.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-bar.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-bar.tsx",
 			"target": "chart/chart-bar.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-bars.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-bars.tsx",
 			"target": "chart/chart-bars.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-candlestick.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-candlestick.tsx",
 			"target": "chart/chart-candlestick.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-grid.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-grid.tsx",
 			"target": "chart/chart-grid.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-legend.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-legend.tsx",
 			"target": "chart/chart-legend.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -82,32 +82,32 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-line.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-line.tsx",
 			"target": "chart/chart-line.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-scatter.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-scatter.tsx",
 			"target": "chart/chart-scatter.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-tooltip-dot.tsx",
 			"target": "chart/chart-tooltip-dot.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-tooltip-x.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-tooltip-x.tsx",
 			"target": "chart/chart-tooltip-x.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-tooltip-y.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-tooltip-y.tsx",
 			"target": "chart/chart-tooltip-y.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-tooltip.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-tooltip.tsx",
 			"target": "chart/chart-tooltip.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -122,22 +122,22 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-x-axis.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-x-axis.tsx",
 			"target": "chart/chart-x-axis.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart-y-axis.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart-y-axis.tsx",
 			"target": "chart/chart-y-axis.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart.context.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart.context.tsx",
 			"target": "chart/chart.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart.tsx",
+			"path": "packages/react-native-ui/src/components/chart/chart.tsx",
 			"target": "chart/chart.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -148,12 +148,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart.types.ts",
+			"path": "packages/react-native-ui/src/components/chart/chart.types.ts",
 			"target": "chart/chart.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/chart.variants.ts",
+			"path": "packages/react-native-ui/src/components/chart/chart.variants.ts",
 			"target": "chart/chart.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -168,12 +168,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/index.ts",
+			"path": "packages/react-native-ui/src/components/chart/index.ts",
 			"target": "chart/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart-center.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart-center.tsx",
 			"target": "chart/pie-chart-center.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -188,17 +188,17 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart-label.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart-label.tsx",
 			"target": "chart/pie-chart-label.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart-slice.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx",
 			"target": "chart/pie-chart-slice.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart-tooltip.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx",
 			"target": "chart/pie-chart-tooltip.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -213,12 +213,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart.context.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart.context.tsx",
 			"target": "chart/pie-chart.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/pie-chart.tsx",
+			"path": "packages/react-native-ui/src/components/chart/pie-chart.tsx",
 			"target": "chart/pie-chart.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -233,12 +233,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/use-chart-font.ts",
+			"path": "packages/react-native-ui/src/components/chart/use-chart-font.ts",
 			"target": "chart/use-chart-font.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/chart/use-chart-palette.ts",
+			"path": "packages/react-native-ui/src/components/chart/use-chart-palette.ts",
 			"target": "chart/use-chart-palette.ts",
 			"namespace": "ui",
 			"rewrites": [

@@ -163,4 +163,4 @@ with a poster instead of a still.
 
 - [`../../AGENTS.md`](../../AGENTS.md) — the playground, the preview route and the capture script
 - [`.argent/AGENTS.md`](../../../../.argent/AGENTS.md) — the interaction flows
-- [`packages/native-ui/AGENTS.md`](../../../../packages/native-ui/AGENTS.md) — the components themselves
+- [`packages/react-native-ui/AGENTS.md`](../../../../packages/react-native-ui/AGENTS.md) — the components themselves

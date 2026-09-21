@@ -15,7 +15,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/hooks/use-navigation-theme.ts",
+			"path": "packages/react-native-ui/src/hooks/use-navigation-theme.ts",
 			"target": "use-navigation-theme.ts",
 			"namespace": "hooks",
 			"rewrites": [

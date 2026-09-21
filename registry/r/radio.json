@@ -23,7 +23,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/radio/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/radio/AGENTS.md",
 			"target": "radio/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -34,12 +34,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/index.ts",
+			"path": "packages/react-native-ui/src/components/radio/index.ts",
 			"target": "radio/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio-group.tsx",
+			"path": "packages/react-native-ui/src/components/radio/radio-group.tsx",
 			"target": "radio/radio-group.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -54,12 +54,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio-indicator.tsx",
+			"path": "packages/react-native-ui/src/components/radio/radio-indicator.tsx",
 			"target": "radio/radio-indicator.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio-label.tsx",
+			"path": "packages/react-native-ui/src/components/radio/radio-label.tsx",
 			"target": "radio/radio-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -70,12 +70,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio.context.tsx",
+			"path": "packages/react-native-ui/src/components/radio/radio.context.tsx",
 			"target": "radio/radio.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio.tsx",
+			"path": "packages/react-native-ui/src/components/radio/radio.tsx",
 			"target": "radio/radio.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -98,7 +98,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/radio/radio.variants.ts",
+			"path": "packages/react-native-ui/src/components/radio/radio.variants.ts",
 			"target": "radio/radio.variants.ts",
 			"namespace": "ui",
 			"rewrites": [

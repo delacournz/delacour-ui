@@ -20,7 +20,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/text/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/text/AGENTS.md",
 			"target": "text/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -31,22 +31,22 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/text/index.ts",
+			"path": "packages/react-native-ui/src/components/text/index.ts",
 			"target": "text/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/text/text.context.tsx",
+			"path": "packages/react-native-ui/src/components/text/text.context.tsx",
 			"target": "text/text.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/text/text.tsx",
+			"path": "packages/react-native-ui/src/components/text/text.tsx",
 			"target": "text/text.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/text/text.variants.ts",
+			"path": "packages/react-native-ui/src/components/text/text.variants.ts",
 			"target": "text/text.variants.ts",
 			"namespace": "ui",
 			"rewrites": [

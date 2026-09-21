@@ -36,7 +36,7 @@ const GEOMETRY = new Set<string>(GEOMETRY_TOKENS);
 /**
  * The type scale, which no axis varies.
  *
- * Restated from `packages/native-ui/src/styles/tokens.css` rather than resolved,
+ * Restated from `packages/react-native-ui/src/styles/tokens.css` rather than resolved,
  * because nothing in the customizer writes these — but a pasted theme still
  * needs them or `text-sm` and its neighbours resolve to nothing.
  * `emit.test.ts` reads that file and fails if the two drift.

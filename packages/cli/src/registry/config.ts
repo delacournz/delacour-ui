@@ -2,7 +2,7 @@
  * The only hand-written data in the registry.
  *
  * Everything else — which files belong to an item, what it depends on, how its
- * imports are rewritten — is derived from `packages/native-ui/src`, so it
+ * imports are rewritten — is derived from `packages/react-native-ui/src`, so it
  * cannot drift from the source. What is left is the part no static analysis can
  * recover: how a package should be installed, and what to call a component in a
  * list.
@@ -21,7 +21,7 @@
 export type PackageInstall = "ambient" | "expo" | "npm" | "dev";
 
 /**
- * Every package `native-ui` can import, and how to install it.
+ * Every package `react-native-ui` can import, and how to install it.
  *
  * The builder throws on an import that is missing here, so a new dependency
  * cannot reach the registry without someone deciding which of these it is.

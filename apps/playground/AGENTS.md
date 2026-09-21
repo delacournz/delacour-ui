@@ -1,9 +1,9 @@
-# @delacour/playground — native-ui's Harness and Gallery
+# @delacour/playground — react-native-ui's Harness and Gallery
 
 An Expo app whose only job is to render `@delacour/react-native-ui` on a device. It is
 not a product and has no users. Every screen exists to make one component's
 behaviour visible, and step 5 of
-[Adding a component](../../packages/native-ui/AGENTS.md#adding-a-component)
+[Adding a component](../../packages/react-native-ui/AGENTS.md#adding-a-component)
 requires a route here for anything new.
 
 ## Stack
@@ -245,7 +245,7 @@ a component found on the site is found in the same place here.
 
 **The grouping is a copy, and a test keeps it honest.** The eight names and the
 slug→group map could not move into `@delacour/design-system` (app-free by rule)
-or into `native-ui` (it ships to consumers), so `src/components-index.ts`
+or into `react-native-ui` (it ships to consumers), so `src/components-index.ts`
 duplicates them and `components-index.test.ts` imports
 `apps/web/src/lib/components.ts` by relative path — the same cross-workspace move
 `global.css` makes with its `@source` — and asserts the groups, the slugs and each
@@ -431,7 +431,7 @@ Three things in that file are load-bearing:
   Uniwind's hot reload and forces a full reload on every edit.
 - **`NavigationTheme`** hands the navigator the library's tokens. Without it
   React Navigation's pale default paints the slab visible between cards during a
-  push — see [Theming](../../packages/native-ui/AGENTS.md#theming).
+  push — see [Theming](../../packages/react-native-ui/AGENTS.md#theming).
 - **`SystemBackground`** paints the native root view beneath the whole React
   tree. `app.config.ts` carries only one static `backgroundColor` and cannot
   follow a theme the user changes at runtime; this can, keyed on the same token.
@@ -524,7 +524,7 @@ registered theme must declare every variable at build time.
   secondary. Invisible on a web card; obvious on `Button variant="secondary"`
   and on a `ListGroup`. Dropping it lets the base colour's own secondary stand,
   and `design-system.test.ts` fails if a re-transcription brings it back.
-- **Icon Library offers one library.** `native-ui` rule 5 is "Central Icons
+- **Icon Library offers one library.** `react-native-ui` rule 5 is "Central Icons
   only", and rule 7's single `withUniwind` wrapper is already spent on the
   Central Icons proxy. The row is kept and opens a sheet holding that one
   option and the reason there is only one, so the omission is stated on the
@@ -552,7 +552,7 @@ and `height`, `borderRadius` and `fontSize` ignore it with no error. Values in t
 because the bundler converts their units at build time; a runtime override does not.
 
 **Vega is the identity element.** It restates the library's own numbers, so selecting it leaves the
-app exactly as `native-ui` ships — asserted against `theme.css` rather than against a copy.
+app exactly as `react-native-ui` ships — asserted against `theme.css` rather than against a copy.
 
 ### Generate CSS
 
@@ -899,7 +899,7 @@ declares two `@source` scans:
 
 ```css
 @source "../**/*.{ts,tsx}";
-@source "../../../../packages/native-ui/src";
+@source "../../../../packages/react-native-ui/src";
 ```
 
 **The second must be the real workspace path, never a `node_modules` one.** Bun
@@ -913,7 +913,7 @@ that looks right in dev and unstyled when shipped.
 failure attached:
 
 - **`watchFolders` + `nodeModulesPaths` reach the workspace root**, because
-  `native-ui` is consumed as source. `disableHierarchicalLookup` stops Metro
+  `react-native-ui` is consumed as source. `disableHierarchicalLookup` stops Metro
   walking up and finding a second copy on its own.
 - **`extraNodeModules` pins ten native modules to the root copy.** Bun
   materialises a second copy under this app, and two registrations of a native

@@ -32,7 +32,7 @@ const GLYPH: Record<ScreenBackButtonGlyph, typeof IconChevronLeft> = {
 /**
  * The navbar's leading control.
  *
- * Takes an `onPress` rather than calling a router itself. `native-ui` has no
+ * Takes an `onPress` rather than calling a router itself. `react-native-ui` has no
  * navigation dependency and should not gain one for a chevron — the screen
  * already knows how it was pushed, and an app on a different router still gets
  * to use this.

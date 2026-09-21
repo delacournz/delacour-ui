@@ -11,7 +11,7 @@ import { COMPONENT_GROUPS, COMPONENT_INDEX, componentCount, groupedComponents } 
  * what keeps the copy honest.
  *
  * The eight group names and the slug→group map could not move into
- * `@delacour/design-system` (it must stay app-free) or into `native-ui` (it
+ * `@delacour/design-system` (it must stay app-free) or into `react-native-ui` (it
  * ships to consumers), so they are duplicated here and read back against
  * `apps/web/src/lib/components.ts` by relative path — the same cross-workspace
  * move `global.css` makes with its `@source`. A component added to one index

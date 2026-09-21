@@ -8,7 +8,7 @@ import { COMPONENTS } from "../lib/components";
  * component.
  *
  * `src/registry/install.ts` is derived from `registry/r/*.json`, which is
- * derived from `packages/native-ui/src`. Two links in that chain can rot without
+ * derived from `packages/react-native-ui/src`. Two links in that chain can rot without
  * anything failing: a file renamed in the library leaves the manifest pointing at
  * a GitHub URL that 404s, and a component added to `COMPONENTS` without a
  * regenerate leaves `<ComponentInstall>` throwing at render for a reader.
@@ -83,7 +83,7 @@ describe("install manifest", () => {
 	});
 
 	test("every source path is inside the library", () => {
-		expect(SOURCES.filter((path) => !path.startsWith("packages/native-ui/src/"))).toEqual([]);
+		expect(SOURCES.filter((path) => !path.startsWith("packages/react-native-ui/src/"))).toEqual([]);
 	});
 
 	test("every <ComponentInstall> in the content names an entry that exists", () => {
@@ -103,7 +103,7 @@ describe("install manifest", () => {
  * the union of every component's closure, and this pins it to the package.
  */
 
-const NATIVE_UI_PACKAGE = join(ROOT, "packages", "native-ui", "package.json");
+const NATIVE_UI_PACKAGE = join(ROOT, "packages", "react-native-ui", "package.json");
 const INSTALLATION_PAGE = join(CONTENT, "docs", "native", "getting-started", "installation.mdx");
 
 /** The names `react`/`react-native` are ambient and never installed; charts is documented on its own site. */

@@ -14,7 +14,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/hooks/use-theme-color.ts",
+			"path": "packages/react-native-ui/src/hooks/use-theme-color.ts",
 			"target": "use-theme-color.ts",
 			"namespace": "hooks",
 			"rewrites": [

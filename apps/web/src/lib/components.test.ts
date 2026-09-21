@@ -15,7 +15,7 @@ import { COMPONENTS, COMPONENTS_WITHOUT_SCREENS, PLAYGROUND_SLUGS, playgroundSlu
  */
 
 const REPO = join(import.meta.dirname, "..", "..", "..", "..");
-const LIBRARY = join(REPO, "packages", "native-ui", "src", "components");
+const LIBRARY = join(REPO, "packages", "react-native-ui", "src", "components");
 const ROUTES = join(REPO, "apps", "playground", "src", "app", "(components)");
 
 /**

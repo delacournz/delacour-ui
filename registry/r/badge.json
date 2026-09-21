@@ -21,7 +21,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/badge/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/badge/AGENTS.md",
 			"target": "badge/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -32,7 +32,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge-close-button.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge-close-button.tsx",
 			"target": "badge/badge-close-button.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -51,12 +51,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge-end-content.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge-end-content.tsx",
 			"target": "badge/badge-end-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge-label.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge-label.tsx",
 			"target": "badge/badge-label.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -67,17 +67,17 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge-start-content.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge-start-content.tsx",
 			"target": "badge/badge-start-content.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge.context.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge.context.tsx",
 			"target": "badge/badge.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge.tsx",
+			"path": "packages/react-native-ui/src/components/badge/badge.tsx",
 			"target": "badge/badge.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -96,12 +96,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge.types.ts",
+			"path": "packages/react-native-ui/src/components/badge/badge.types.ts",
 			"target": "badge/badge.types.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/badge.variants.ts",
+			"path": "packages/react-native-ui/src/components/badge/badge.variants.ts",
 			"target": "badge/badge.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -112,7 +112,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/badge/index.ts",
+			"path": "packages/react-native-ui/src/components/badge/index.ts",
 			"target": "badge/index.ts",
 			"namespace": "ui"
 		}

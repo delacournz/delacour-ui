@@ -2,7 +2,7 @@
 //
 // Regenerate with `bun run gen-install` from apps/web. The data is derived from
 // `registry/r/*.json`, which the registry builder derives from
-// `packages/native-ui/src` — so the install instructions on a component page
+// `packages/react-native-ui/src` — so the install instructions on a component page
 // cannot disagree with the component.
 
 /** One file to copy: where it lives here, and where `delacour init` would put it. */
@@ -59,18 +59,18 @@ export const install = {
 				title: "Button",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
-					{ source: "packages/native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
-					{ source: "packages/native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
+					{ source: "packages/react-native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
+					{ source: "packages/react-native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
 				],
 			},
 			{
@@ -78,11 +78,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -90,10 +90,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -101,9 +101,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -111,13 +111,13 @@ export const install = {
 				title: "Spinner",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
 				],
 			},
 			{
@@ -125,11 +125,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -137,12 +137,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -150,7 +150,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -158,7 +158,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -166,7 +166,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -174,7 +174,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -182,7 +182,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -190,7 +190,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],
@@ -211,10 +211,10 @@ export const install = {
 				title: "Pressable",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -222,7 +222,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -230,12 +230,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -243,7 +243,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -251,7 +251,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],
@@ -272,20 +272,20 @@ export const install = {
 				title: "Field",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -293,10 +293,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -304,9 +304,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -314,11 +314,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -326,7 +326,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -334,12 +334,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -347,7 +347,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -355,7 +355,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -363,7 +363,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 		],
@@ -384,16 +384,16 @@ export const install = {
 				title: "Input",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
-					{ source: "packages/native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
-					{ source: "packages/native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
-					{ source: "packages/native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
-					{ source: "packages/native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
-					{ source: "packages/native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
-					{ source: "packages/native-ui/src/components/input/input.tsx", target: "src/components/ui/input/input.tsx" },
-					{ source: "packages/native-ui/src/components/input/input.types.ts", target: "src/components/ui/input/input.types.ts" },
-					{ source: "packages/native-ui/src/components/input/input.variants.ts", target: "src/components/ui/input/input.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.tsx", target: "src/components/ui/input/input.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.types.ts", target: "src/components/ui/input/input.types.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input.variants.ts", target: "src/components/ui/input/input.variants.ts" },
 				],
 			},
 			{
@@ -401,11 +401,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -413,10 +413,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -424,9 +424,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -434,13 +434,13 @@ export const install = {
 				title: "Spinner",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
 				],
 			},
 			{
@@ -448,11 +448,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -460,18 +460,18 @@ export const install = {
 				title: "Button",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
-					{ source: "packages/native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
-					{ source: "packages/native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
-					{ source: "packages/native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
-					{ source: "packages/native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
+					{ source: "packages/react-native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
+					{ source: "packages/react-native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
 				],
 			},
 			{
@@ -479,20 +479,20 @@ export const install = {
 				title: "Field",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -500,12 +500,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -513,7 +513,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -521,7 +521,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -529,7 +529,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -537,7 +537,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -545,7 +545,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -553,7 +553,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],
@@ -574,15 +574,15 @@ export const install = {
 				title: "Checkbox",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/checkbox/AGENTS.md", target: "src/components/ui/checkbox/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox-box.tsx", target: "src/components/ui/checkbox/checkbox-box.tsx" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox-group.tsx", target: "src/components/ui/checkbox/checkbox-group.tsx" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox-label.tsx", target: "src/components/ui/checkbox/checkbox-label.tsx" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox.context.tsx", target: "src/components/ui/checkbox/checkbox.context.tsx" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox.tsx", target: "src/components/ui/checkbox/checkbox.tsx" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox.types.ts", target: "src/components/ui/checkbox/checkbox.types.ts" },
-					{ source: "packages/native-ui/src/components/checkbox/checkbox.variants.ts", target: "src/components/ui/checkbox/checkbox.variants.ts" },
-					{ source: "packages/native-ui/src/components/checkbox/index.ts", target: "src/components/ui/checkbox/index.ts" },
+					{ source: "packages/react-native-ui/src/components/checkbox/AGENTS.md", target: "src/components/ui/checkbox/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox-box.tsx", target: "src/components/ui/checkbox/checkbox-box.tsx" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox-group.tsx", target: "src/components/ui/checkbox/checkbox-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox-label.tsx", target: "src/components/ui/checkbox/checkbox-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.context.tsx", target: "src/components/ui/checkbox/checkbox.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.tsx", target: "src/components/ui/checkbox/checkbox.tsx" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.types.ts", target: "src/components/ui/checkbox/checkbox.types.ts" },
+					{ source: "packages/react-native-ui/src/components/checkbox/checkbox.variants.ts", target: "src/components/ui/checkbox/checkbox.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/checkbox/index.ts", target: "src/components/ui/checkbox/index.ts" },
 				],
 			},
 			{
@@ -590,10 +590,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -601,9 +601,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -611,11 +611,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -623,20 +623,20 @@ export const install = {
 				title: "Field",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -644,11 +644,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -656,7 +656,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -664,12 +664,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -677,7 +677,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -685,7 +685,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -693,7 +693,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -701,7 +701,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -709,7 +709,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -717,7 +717,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -725,7 +725,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -746,14 +746,14 @@ export const install = {
 				title: "Radio",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/radio/AGENTS.md", target: "src/components/ui/radio/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/radio/index.ts", target: "src/components/ui/radio/index.ts" },
-					{ source: "packages/native-ui/src/components/radio/radio-group.tsx", target: "src/components/ui/radio/radio-group.tsx" },
-					{ source: "packages/native-ui/src/components/radio/radio-indicator.tsx", target: "src/components/ui/radio/radio-indicator.tsx" },
-					{ source: "packages/native-ui/src/components/radio/radio-label.tsx", target: "src/components/ui/radio/radio-label.tsx" },
-					{ source: "packages/native-ui/src/components/radio/radio.context.tsx", target: "src/components/ui/radio/radio.context.tsx" },
-					{ source: "packages/native-ui/src/components/radio/radio.tsx", target: "src/components/ui/radio/radio.tsx" },
-					{ source: "packages/native-ui/src/components/radio/radio.variants.ts", target: "src/components/ui/radio/radio.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/radio/AGENTS.md", target: "src/components/ui/radio/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/radio/index.ts", target: "src/components/ui/radio/index.ts" },
+					{ source: "packages/react-native-ui/src/components/radio/radio-group.tsx", target: "src/components/ui/radio/radio-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/radio/radio-indicator.tsx", target: "src/components/ui/radio/radio-indicator.tsx" },
+					{ source: "packages/react-native-ui/src/components/radio/radio-label.tsx", target: "src/components/ui/radio/radio-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/radio/radio.context.tsx", target: "src/components/ui/radio/radio.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/radio/radio.tsx", target: "src/components/ui/radio/radio.tsx" },
+					{ source: "packages/react-native-ui/src/components/radio/radio.variants.ts", target: "src/components/ui/radio/radio.variants.ts" },
 				],
 			},
 			{
@@ -761,10 +761,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -772,9 +772,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -782,11 +782,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -794,20 +794,20 @@ export const install = {
 				title: "Field",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -815,7 +815,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -823,12 +823,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -836,7 +836,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -844,7 +844,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -852,7 +852,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -860,7 +860,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -881,16 +881,16 @@ export const install = {
 				title: "Switch",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/switch/AGENTS.md", target: "src/components/ui/switch/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/switch/index.ts", target: "src/components/ui/switch/index.ts" },
-					{ source: "packages/native-ui/src/components/switch/switch-content.tsx", target: "src/components/ui/switch/switch-content.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch-end-content.tsx", target: "src/components/ui/switch/switch-end-content.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch-start-content.tsx", target: "src/components/ui/switch/switch-start-content.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch-thumb.tsx", target: "src/components/ui/switch/switch-thumb.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch.context.tsx", target: "src/components/ui/switch/switch.context.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch.tsx", target: "src/components/ui/switch/switch.tsx" },
-					{ source: "packages/native-ui/src/components/switch/switch.types.ts", target: "src/components/ui/switch/switch.types.ts" },
-					{ source: "packages/native-ui/src/components/switch/switch.variants.ts", target: "src/components/ui/switch/switch.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/switch/AGENTS.md", target: "src/components/ui/switch/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/switch/index.ts", target: "src/components/ui/switch/index.ts" },
+					{ source: "packages/react-native-ui/src/components/switch/switch-content.tsx", target: "src/components/ui/switch/switch-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch-end-content.tsx", target: "src/components/ui/switch/switch-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch-start-content.tsx", target: "src/components/ui/switch/switch-start-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch-thumb.tsx", target: "src/components/ui/switch/switch-thumb.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch.context.tsx", target: "src/components/ui/switch/switch.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch.tsx", target: "src/components/ui/switch/switch.tsx" },
+					{ source: "packages/react-native-ui/src/components/switch/switch.types.ts", target: "src/components/ui/switch/switch.types.ts" },
+					{ source: "packages/react-native-ui/src/components/switch/switch.variants.ts", target: "src/components/ui/switch/switch.variants.ts" },
 				],
 			},
 			{
@@ -898,10 +898,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -909,9 +909,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -919,11 +919,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -931,20 +931,20 @@ export const install = {
 				title: "Field",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -952,11 +952,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -964,7 +964,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -972,12 +972,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -985,7 +985,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -993,7 +993,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -1001,7 +1001,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1009,7 +1009,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1017,7 +1017,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -1025,7 +1025,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -1046,34 +1046,34 @@ export const install = {
 				title: "Chart",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-scatter.tsx", target: "src/components/ui/chart/chart-scatter.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-tooltip-dot.tsx", target: "src/components/ui/chart/chart-tooltip-dot.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-tooltip-x.tsx", target: "src/components/ui/chart/chart-tooltip-x.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-tooltip-y.tsx", target: "src/components/ui/chart/chart-tooltip-y.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-tooltip.tsx", target: "src/components/ui/chart/chart-tooltip.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-x-axis.tsx", target: "src/components/ui/chart/chart-x-axis.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart-y-axis.tsx", target: "src/components/ui/chart/chart-y-axis.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart.context.tsx", target: "src/components/ui/chart/chart.context.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart.tsx", target: "src/components/ui/chart/chart.tsx" },
-					{ source: "packages/native-ui/src/components/chart/chart.types.ts", target: "src/components/ui/chart/chart.types.ts" },
-					{ source: "packages/native-ui/src/components/chart/chart.variants.ts", target: "src/components/ui/chart/chart.variants.ts" },
-					{ source: "packages/native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
-					{ source: "packages/native-ui/src/components/chart/pie-chart.tsx", target: "src/components/ui/chart/pie-chart.tsx" },
-					{ source: "packages/native-ui/src/components/chart/use-chart-font.ts", target: "src/components/ui/chart/use-chart-font.ts" },
-					{ source: "packages/native-ui/src/components/chart/use-chart-palette.ts", target: "src/components/ui/chart/use-chart-palette.ts" },
+					{ source: "packages/react-native-ui/src/components/chart/AGENTS.md", target: "src/components/ui/chart/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-area.tsx", target: "src/components/ui/chart/chart-area.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-bar.tsx", target: "src/components/ui/chart/chart-bar.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-bars.tsx", target: "src/components/ui/chart/chart-bars.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-candlestick.tsx", target: "src/components/ui/chart/chart-candlestick.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-grid.tsx", target: "src/components/ui/chart/chart-grid.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-legend.tsx", target: "src/components/ui/chart/chart-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-line.tsx", target: "src/components/ui/chart/chart-line.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-scatter.tsx", target: "src/components/ui/chart/chart-scatter.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-tooltip-dot.tsx", target: "src/components/ui/chart/chart-tooltip-dot.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-tooltip-x.tsx", target: "src/components/ui/chart/chart-tooltip-x.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-tooltip-y.tsx", target: "src/components/ui/chart/chart-tooltip-y.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-tooltip.tsx", target: "src/components/ui/chart/chart-tooltip.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-x-axis.tsx", target: "src/components/ui/chart/chart-x-axis.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart-y-axis.tsx", target: "src/components/ui/chart/chart-y-axis.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart.context.tsx", target: "src/components/ui/chart/chart.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart.tsx", target: "src/components/ui/chart/chart.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/chart.types.ts", target: "src/components/ui/chart/chart.types.ts" },
+					{ source: "packages/react-native-ui/src/components/chart/chart.variants.ts", target: "src/components/ui/chart/chart.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/chart/index.ts", target: "src/components/ui/chart/index.ts" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-center.tsx", target: "src/components/ui/chart/pie-chart-center.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-label.tsx", target: "src/components/ui/chart/pie-chart-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-slice.tsx", target: "src/components/ui/chart/pie-chart-slice.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart-tooltip.tsx", target: "src/components/ui/chart/pie-chart-tooltip.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart.context.tsx", target: "src/components/ui/chart/pie-chart.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/pie-chart.tsx", target: "src/components/ui/chart/pie-chart.tsx" },
+					{ source: "packages/react-native-ui/src/components/chart/use-chart-font.ts", target: "src/components/ui/chart/use-chart-font.ts" },
+					{ source: "packages/react-native-ui/src/components/chart/use-chart-palette.ts", target: "src/components/ui/chart/use-chart-palette.ts" },
 				],
 			},
 			{
@@ -1081,11 +1081,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1093,12 +1093,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1106,7 +1106,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1114,7 +1114,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1122,7 +1122,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1130,7 +1130,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 			{
@@ -1138,7 +1138,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 		],
@@ -1159,16 +1159,16 @@ export const install = {
 				title: "Slider",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/slider/AGENTS.md", target: "src/components/ui/slider/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/slider/index.ts", target: "src/components/ui/slider/index.ts" },
-					{ source: "packages/native-ui/src/components/slider/slider-fill.tsx", target: "src/components/ui/slider/slider-fill.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider-output.tsx", target: "src/components/ui/slider/slider-output.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider-thumb.tsx", target: "src/components/ui/slider/slider-thumb.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider-track.tsx", target: "src/components/ui/slider/slider-track.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider.context.tsx", target: "src/components/ui/slider/slider.context.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider.tsx", target: "src/components/ui/slider/slider.tsx" },
-					{ source: "packages/native-ui/src/components/slider/slider.types.ts", target: "src/components/ui/slider/slider.types.ts" },
-					{ source: "packages/native-ui/src/components/slider/slider.variants.ts", target: "src/components/ui/slider/slider.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/slider/AGENTS.md", target: "src/components/ui/slider/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/slider/index.ts", target: "src/components/ui/slider/index.ts" },
+					{ source: "packages/react-native-ui/src/components/slider/slider-fill.tsx", target: "src/components/ui/slider/slider-fill.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider-output.tsx", target: "src/components/ui/slider/slider-output.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider-thumb.tsx", target: "src/components/ui/slider/slider-thumb.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider-track.tsx", target: "src/components/ui/slider/slider-track.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider.context.tsx", target: "src/components/ui/slider/slider.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider.tsx", target: "src/components/ui/slider/slider.tsx" },
+					{ source: "packages/react-native-ui/src/components/slider/slider.types.ts", target: "src/components/ui/slider/slider.types.ts" },
+					{ source: "packages/react-native-ui/src/components/slider/slider.variants.ts", target: "src/components/ui/slider/slider.variants.ts" },
 				],
 			},
 			{
@@ -1176,10 +1176,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -1187,9 +1187,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -1197,11 +1197,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1209,20 +1209,20 @@ export const install = {
 				title: "Field",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
-					{ source: "packages/native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
-					{ source: "packages/native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
-					{ source: "packages/native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
-					{ source: "packages/native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
 				],
 			},
 			{
@@ -1230,7 +1230,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -1238,12 +1238,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1251,7 +1251,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1259,7 +1259,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -1267,7 +1267,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1275,7 +1275,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -1296,11 +1296,11 @@ export const install = {
 				title: "Text",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1308,12 +1308,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1321,7 +1321,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1329,7 +1329,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 		],
@@ -1350,16 +1350,16 @@ export const install = {
 				title: "Badge",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge.tsx", target: "src/components/ui/badge/badge.tsx" },
-					{ source: "packages/native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
-					{ source: "packages/native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
-					{ source: "packages/native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge.context.tsx", target: "src/components/ui/badge/badge.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge.tsx", target: "src/components/ui/badge/badge.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
+					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
 				],
 			},
 			{
@@ -1367,11 +1367,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -1379,10 +1379,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -1390,11 +1390,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1402,12 +1402,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1415,7 +1415,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1423,7 +1423,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1431,7 +1431,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1439,7 +1439,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -1447,7 +1447,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -1455,7 +1455,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -1463,7 +1463,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],
@@ -1484,11 +1484,11 @@ export const install = {
 				title: "Icon",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -1496,12 +1496,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1509,7 +1509,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1517,7 +1517,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1525,7 +1525,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1533,7 +1533,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 		],
@@ -1554,18 +1554,18 @@ export const install = {
 				title: "List Group",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/list-group/AGENTS.md", target: "src/components/ui/list-group/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/list-group/index.ts", target: "src/components/ui/list-group/index.ts" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item-content.tsx", target: "src/components/ui/list-group/list-group-item-content.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item-description.tsx", target: "src/components/ui/list-group/list-group-item-description.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item-prefix.tsx", target: "src/components/ui/list-group/list-group-item-prefix.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item-suffix.tsx", target: "src/components/ui/list-group/list-group-item-suffix.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item-title.tsx", target: "src/components/ui/list-group/list-group-item-title.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group-item.tsx", target: "src/components/ui/list-group/list-group-item.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group.context.tsx", target: "src/components/ui/list-group/list-group.context.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group.tsx", target: "src/components/ui/list-group/list-group.tsx" },
-					{ source: "packages/native-ui/src/components/list-group/list-group.types.ts", target: "src/components/ui/list-group/list-group.types.ts" },
-					{ source: "packages/native-ui/src/components/list-group/list-group.variants.ts", target: "src/components/ui/list-group/list-group.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/list-group/AGENTS.md", target: "src/components/ui/list-group/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/list-group/index.ts", target: "src/components/ui/list-group/index.ts" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item-content.tsx", target: "src/components/ui/list-group/list-group-item-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item-description.tsx", target: "src/components/ui/list-group/list-group-item-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item-prefix.tsx", target: "src/components/ui/list-group/list-group-item-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item-suffix.tsx", target: "src/components/ui/list-group/list-group-item-suffix.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item-title.tsx", target: "src/components/ui/list-group/list-group-item-title.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group-item.tsx", target: "src/components/ui/list-group/list-group-item.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group.context.tsx", target: "src/components/ui/list-group/list-group.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group.tsx", target: "src/components/ui/list-group/list-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group.types.ts", target: "src/components/ui/list-group/list-group.types.ts" },
+					{ source: "packages/react-native-ui/src/components/list-group/list-group.variants.ts", target: "src/components/ui/list-group/list-group.variants.ts" },
 				],
 			},
 			{
@@ -1573,11 +1573,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -1585,10 +1585,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -1596,9 +1596,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -1606,11 +1606,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1618,12 +1618,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1631,7 +1631,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1639,7 +1639,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1647,7 +1647,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1655,7 +1655,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -1663,7 +1663,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -1671,7 +1671,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -1679,7 +1679,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 		],
@@ -1700,9 +1700,9 @@ export const install = {
 				title: "Separator",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -1710,12 +1710,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1723,7 +1723,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 		],
@@ -1744,18 +1744,18 @@ export const install = {
 				title: "Accordion",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/accordion/accordion-content.tsx", target: "src/components/ui/accordion/accordion-content.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion-description.tsx", target: "src/components/ui/accordion/accordion-description.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion-indicator.tsx", target: "src/components/ui/accordion/accordion-indicator.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion-item.tsx", target: "src/components/ui/accordion/accordion-item.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion-title.tsx", target: "src/components/ui/accordion/accordion-title.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion-trigger.tsx", target: "src/components/ui/accordion/accordion-trigger.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion.context.tsx", target: "src/components/ui/accordion/accordion.context.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion.tsx", target: "src/components/ui/accordion/accordion.tsx" },
-					{ source: "packages/native-ui/src/components/accordion/accordion.types.ts", target: "src/components/ui/accordion/accordion.types.ts" },
-					{ source: "packages/native-ui/src/components/accordion/accordion.variants.ts", target: "src/components/ui/accordion/accordion.variants.ts" },
-					{ source: "packages/native-ui/src/components/accordion/AGENTS.md", target: "src/components/ui/accordion/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/accordion/index.ts", target: "src/components/ui/accordion/index.ts" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-content.tsx", target: "src/components/ui/accordion/accordion-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-description.tsx", target: "src/components/ui/accordion/accordion-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-indicator.tsx", target: "src/components/ui/accordion/accordion-indicator.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-item.tsx", target: "src/components/ui/accordion/accordion-item.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-title.tsx", target: "src/components/ui/accordion/accordion-title.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion-trigger.tsx", target: "src/components/ui/accordion/accordion-trigger.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion.context.tsx", target: "src/components/ui/accordion/accordion.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion.tsx", target: "src/components/ui/accordion/accordion.tsx" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion.types.ts", target: "src/components/ui/accordion/accordion.types.ts" },
+					{ source: "packages/react-native-ui/src/components/accordion/accordion.variants.ts", target: "src/components/ui/accordion/accordion.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/accordion/AGENTS.md", target: "src/components/ui/accordion/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/accordion/index.ts", target: "src/components/ui/accordion/index.ts" },
 				],
 			},
 			{
@@ -1763,11 +1763,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -1775,10 +1775,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -1786,9 +1786,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -1796,11 +1796,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -1808,12 +1808,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1821,7 +1821,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1829,7 +1829,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1837,7 +1837,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1845,7 +1845,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -1853,7 +1853,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -1861,7 +1861,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -1869,7 +1869,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -1877,7 +1877,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -1898,13 +1898,13 @@ export const install = {
 				title: "Spinner",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
 				],
 			},
 			{
@@ -1912,11 +1912,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -1924,12 +1924,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -1937,7 +1937,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -1945,7 +1945,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -1953,7 +1953,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -1961,7 +1961,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 		],
@@ -1982,24 +1982,24 @@ export const install = {
 				title: "Bottom Sheet",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/bottom-sheet/AGENTS.md", target: "src/components/ui/bottom-sheet/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-background.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-background.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-close.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-close.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-container.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-container.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-content.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-content.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-description.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-description.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-title.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-title.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet-trigger.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-trigger.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.context.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.tsx" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
-					{ source: "packages/native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/AGENTS.md", target: "src/components/ui/bottom-sheet/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-background.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-background.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-close.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-close.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-container.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-container.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-content.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-description.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-title.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-title.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-trigger.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-trigger.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/use-bottom-sheet-input.ts", target: "src/components/ui/bottom-sheet/use-bottom-sheet-input.ts" },
 				],
 			},
 			{
@@ -2007,11 +2007,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -2019,10 +2019,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -2030,11 +2030,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -2042,12 +2042,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -2055,7 +2055,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -2063,7 +2063,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -2071,7 +2071,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -2079,7 +2079,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -2087,7 +2087,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -2095,7 +2095,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -2103,7 +2103,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -2111,7 +2111,7 @@ export const install = {
 				title: "Slot",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/slot.tsx", target: "src/lib/slot.tsx" },
+					{ source: "packages/react-native-ui/src/lib/slot.tsx", target: "src/lib/slot.tsx" },
 				],
 			},
 			{
@@ -2119,7 +2119,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 			{
@@ -2127,7 +2127,7 @@ export const install = {
 				title: "keyboardAnimation",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
+					{ source: "packages/react-native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
 				],
 			},
 			{
@@ -2135,7 +2135,7 @@ export const install = {
 				title: "useKeyboardStateSync",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
 				],
 			},
 		],
@@ -2156,20 +2156,20 @@ export const install = {
 				title: "Tabs",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/tabs/AGENTS.md", target: "src/components/ui/tabs/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/tabs/index.ts", target: "src/components/ui/tabs/index.ts" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-content.tsx", target: "src/components/ui/tabs/tabs-content.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-indicator.tsx", target: "src/components/ui/tabs/tabs-indicator.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-label.tsx", target: "src/components/ui/tabs/tabs-label.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-list.tsx", target: "src/components/ui/tabs/tabs-list.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-pager.tsx", target: "src/components/ui/tabs/tabs-pager.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-scroll-view.tsx", target: "src/components/ui/tabs/tabs-scroll-view.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-separator.tsx", target: "src/components/ui/tabs/tabs-separator.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs-trigger.tsx", target: "src/components/ui/tabs/tabs-trigger.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs.context.tsx", target: "src/components/ui/tabs/tabs.context.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs.tsx", target: "src/components/ui/tabs/tabs.tsx" },
-					{ source: "packages/native-ui/src/components/tabs/tabs.types.ts", target: "src/components/ui/tabs/tabs.types.ts" },
-					{ source: "packages/native-ui/src/components/tabs/tabs.variants.ts", target: "src/components/ui/tabs/tabs.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/tabs/AGENTS.md", target: "src/components/ui/tabs/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/tabs/index.ts", target: "src/components/ui/tabs/index.ts" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-content.tsx", target: "src/components/ui/tabs/tabs-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-indicator.tsx", target: "src/components/ui/tabs/tabs-indicator.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-label.tsx", target: "src/components/ui/tabs/tabs-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-list.tsx", target: "src/components/ui/tabs/tabs-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-pager.tsx", target: "src/components/ui/tabs/tabs-pager.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-scroll-view.tsx", target: "src/components/ui/tabs/tabs-scroll-view.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-separator.tsx", target: "src/components/ui/tabs/tabs-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs-trigger.tsx", target: "src/components/ui/tabs/tabs-trigger.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs.context.tsx", target: "src/components/ui/tabs/tabs.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs.tsx", target: "src/components/ui/tabs/tabs.tsx" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs.types.ts", target: "src/components/ui/tabs/tabs.types.ts" },
+					{ source: "packages/react-native-ui/src/components/tabs/tabs.variants.ts", target: "src/components/ui/tabs/tabs.variants.ts" },
 				],
 			},
 			{
@@ -2177,11 +2177,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -2189,10 +2189,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -2200,9 +2200,9 @@ export const install = {
 				title: "Separator",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
-					{ source: "packages/native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
 				],
 			},
 			{
@@ -2210,11 +2210,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -2222,12 +2222,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -2235,7 +2235,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -2243,7 +2243,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -2251,7 +2251,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -2259,7 +2259,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -2267,7 +2267,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -2275,7 +2275,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -2283,7 +2283,7 @@ export const install = {
 				title: "useControllableState",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 		],
@@ -2304,34 +2304,34 @@ export const install = {
 				title: "Screen",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/screen/AGENTS.md", target: "src/components/ui/screen/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/screen/index.ts", target: "src/components/ui/screen/index.ts" },
-					{ source: "packages/native-ui/src/components/screen/screen-chat-list.tsx", target: "src/components/ui/screen/screen-chat-list.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-content.tsx", target: "src/components/ui/screen/screen-content.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-debug.ts", target: "src/components/ui/screen/screen-debug.ts" },
-					{ source: "packages/native-ui/src/components/screen/screen-error.tsx", target: "src/components/ui/screen/screen-error.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-flat-list.tsx", target: "src/components/ui/screen/screen-flat-list.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-footer-background.tsx", target: "src/components/ui/screen/screen-footer-background.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-footer.tsx", target: "src/components/ui/screen/screen-footer.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-header.tsx", target: "src/components/ui/screen/screen-header.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-legend-list.tsx", target: "src/components/ui/screen/screen-legend-list.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-list-component.tsx", target: "src/components/ui/screen/screen-list-component.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-loading.tsx", target: "src/components/ui/screen/screen-loading.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-navbar-back-button.tsx", target: "src/components/ui/screen/screen-navbar-back-button.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-navbar-background.tsx", target: "src/components/ui/screen/screen-navbar-background.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-navbar-subtitle.tsx", target: "src/components/ui/screen/screen-navbar-subtitle.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-navbar-title.tsx", target: "src/components/ui/screen/screen-navbar-title.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen-view.tsx", target: "src/components/ui/screen/screen-view.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen.context.tsx", target: "src/components/ui/screen/screen.context.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen.tsx", target: "src/components/ui/screen/screen.tsx" },
-					{ source: "packages/native-ui/src/components/screen/screen.types.ts", target: "src/components/ui/screen/screen.types.ts" },
-					{ source: "packages/native-ui/src/components/screen/screen.variants.ts", target: "src/components/ui/screen/screen.variants.ts" },
-					{ source: "packages/native-ui/src/components/screen/use-screen-scroll-insets.ts", target: "src/components/ui/screen/use-screen-scroll-insets.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/AGENTS.md", target: "src/components/ui/screen/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/screen/index.ts", target: "src/components/ui/screen/index.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-chat-list.tsx", target: "src/components/ui/screen/screen-chat-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-content.tsx", target: "src/components/ui/screen/screen-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-debug.ts", target: "src/components/ui/screen/screen-debug.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-error.tsx", target: "src/components/ui/screen/screen-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-flat-list.tsx", target: "src/components/ui/screen/screen-flat-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-footer-background.tsx", target: "src/components/ui/screen/screen-footer-background.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-footer.tsx", target: "src/components/ui/screen/screen-footer.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-header.tsx", target: "src/components/ui/screen/screen-header.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-legend-list.tsx", target: "src/components/ui/screen/screen-legend-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-list-component.tsx", target: "src/components/ui/screen/screen-list-component.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-loading.tsx", target: "src/components/ui/screen/screen-loading.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-navbar-back-button.tsx", target: "src/components/ui/screen/screen-navbar-back-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-navbar-background.tsx", target: "src/components/ui/screen/screen-navbar-background.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-navbar-subtitle.tsx", target: "src/components/ui/screen/screen-navbar-subtitle.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-navbar-title.tsx", target: "src/components/ui/screen/screen-navbar-title.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-view.tsx", target: "src/components/ui/screen/screen-view.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen.context.tsx", target: "src/components/ui/screen/screen.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen.tsx", target: "src/components/ui/screen/screen.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen.types.ts", target: "src/components/ui/screen/screen.types.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/screen.variants.ts", target: "src/components/ui/screen/screen.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/screen/use-screen-scroll-insets.ts", target: "src/components/ui/screen/use-screen-scroll-insets.ts" },
 				],
 			},
 			{
@@ -2339,11 +2339,11 @@ export const install = {
 				title: "Icon",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
-					{ source: "packages/native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
-					{ source: "packages/native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
 				],
 			},
 			{
@@ -2351,10 +2351,10 @@ export const install = {
 				title: "Pressable",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -2362,13 +2362,13 @@ export const install = {
 				title: "Spinner",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
-					{ source: "packages/native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
 				],
 			},
 			{
@@ -2376,11 +2376,11 @@ export const install = {
 				title: "Text",
 				kind: "component",
 				files: [
-					{ source: "packages/native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
-					{ source: "packages/native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
-					{ source: "packages/native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
 				],
 			},
 			{
@@ -2388,12 +2388,12 @@ export const install = {
 				title: "Styles",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/styles/base.css", target: "src/styles/base.css" },
-					{ source: "packages/native-ui/src/styles/index.css", target: "src/styles/index.css" },
-					{ source: "packages/native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
-					{ source: "packages/native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
-					{ source: "packages/native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
-					{ source: "packages/native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
 				],
 			},
 			{
@@ -2401,7 +2401,7 @@ export const install = {
 				title: "cn",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
 				],
 			},
 			{
@@ -2409,7 +2409,7 @@ export const install = {
 				title: "isLiteralColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
 				],
 			},
 			{
@@ -2417,7 +2417,7 @@ export const install = {
 				title: "composeRefs",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -2425,7 +2425,7 @@ export const install = {
 				title: "tv",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
 				],
 			},
 			{
@@ -2433,7 +2433,7 @@ export const install = {
 				title: "useThemeColor",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
 				],
 			},
 			{
@@ -2441,7 +2441,7 @@ export const install = {
 				title: "Icons",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 			{
@@ -2449,7 +2449,7 @@ export const install = {
 				title: "mergeProps",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
 			{
@@ -2457,7 +2457,7 @@ export const install = {
 				title: "keyboardAnimation",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
+					{ source: "packages/react-native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
 				],
 			},
 			{
@@ -2465,7 +2465,7 @@ export const install = {
 				title: "useKeyboardStateSync",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
 				],
 			},
 		],
@@ -2486,9 +2486,9 @@ export const install = {
 				title: "Provider",
 				kind: "self",
 				files: [
-					{ source: "packages/native-ui/src/components/provider/AGENTS.md", target: "src/components/ui/provider/AGENTS.md" },
-					{ source: "packages/native-ui/src/components/provider/index.ts", target: "src/components/ui/provider/index.ts" },
-					{ source: "packages/native-ui/src/components/provider/provider.tsx", target: "src/components/ui/provider/provider.tsx" },
+					{ source: "packages/react-native-ui/src/components/provider/AGENTS.md", target: "src/components/ui/provider/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/provider/index.ts", target: "src/components/ui/provider/index.ts" },
+					{ source: "packages/react-native-ui/src/components/provider/provider.tsx", target: "src/components/ui/provider/provider.tsx" },
 				],
 			},
 			{
@@ -2496,7 +2496,7 @@ export const install = {
 				title: "keyboardAnimation",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
+					{ source: "packages/react-native-ui/src/lib/keyboard-animation.ts", target: "src/lib/keyboard-animation.ts" },
 				],
 			},
 			{
@@ -2504,7 +2504,7 @@ export const install = {
 				title: "useKeyboardStateSync",
 				kind: "shared",
 				files: [
-					{ source: "packages/native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
 				],
 			},
 		],

@@ -12,12 +12,12 @@ import { ACCENT_THEMES } from "./themes";
 /**
  * The library's own declarations, read as source text.
  *
- * The technique `native-ui`'s `styles/tokens.test.ts` and
+ * The technique `react-native-ui`'s `styles/tokens.test.ts` and
  * `styles/theme-tokens.test.ts` already use: these are CSS custom properties,
  * no renderer is involved, and reading the file is the only way to assert a
  * customizer still writes names the library actually declares.
  */
-const THEME_CSS = readFileSync(join(import.meta.dirname, "../../native-ui/src/styles/theme.css"), "utf-8");
+const THEME_CSS = readFileSync(join(import.meta.dirname, "../../react-native-ui/src/styles/theme.css"), "utf-8");
 
 function declaredIn(variant: string): Set<string> {
 	const block = THEME_CSS.split(`@variant ${variant} {`)[1]?.split("}")[0] ?? "";
@@ -167,7 +167,7 @@ describe("the styles", () => {
 	/**
 	 * Vega is the identity element.
 	 *
-	 * Selecting it must leave the app exactly as `native-ui` ships, because that
+	 * Selecting it must leave the app exactly as `react-native-ui` ships, because that
 	 * is what makes the customizer's reset meaningful and what `/preview` pins
 	 * for the capture pipeline. Asserted against the library's own CSS rather
 	 * than against a copy of the numbers.

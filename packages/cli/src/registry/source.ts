@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
  * item across several documents: `r/button.json` and the files it names are
  * read from one immutable tree, so there is no window in which they disagree.
  *
- * It is also why an item can name `packages/native-ui/src/...` directly rather
+ * It is also why an item can name `packages/react-native-ui/src/...` directly rather
  * than a copy under `registry/`: the library source is in that same immutable
  * tree. So a source has two roots — `base`, the registry directory holding the
  * index and the items, and `root`, the ref it sits in, which is what a file path
@@ -116,7 +116,7 @@ export function filePath(source: RegistrySource, path: string): string {
 	return source.kind === "local" ? join(source.root, path) : `${source.root}/${path}`;
 }
 
-/** Where a file actually lives: `packages/native-ui` + `components/button/button.tsx`. */
+/** Where a file actually lives: `packages/react-native-ui` + `components/button/button.tsx`. */
 export function sourceFilePath(packageDir: string, sourcePath: string): string {
 	return `${packageDir}/src/${sourcePath}`;
 }

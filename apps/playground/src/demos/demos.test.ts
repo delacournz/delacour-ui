@@ -11,7 +11,7 @@ import { readGroupOrder } from "../../scripts/previews/demo-source";
  * `react-native`, whose Flow-typed source Bun's transpiler cannot parse — the
  * same reason `bun test` in the library covers pure logic only. That is the
  * move available whenever a convention is real but no renderer can check it,
- * and `packages/native-ui/src/docs.test.ts` is the precedent.
+ * and `packages/react-native-ui/src/docs.test.ts` is the precedent.
  *
  * What each assertion is actually protecting:
  *
@@ -29,7 +29,7 @@ const DEMOS = join(PLAYGROUND, "src", "demos");
 const MEDIA = join(REPO, "apps", "web", "public", "previews");
 const MANIFEST = join(REPO, "apps", "web", "src", "previews", "manifest.ts");
 const FLOWS = join(REPO, ".argent", "flows", "previews");
-const COMPONENTS = join(REPO, "packages", "native-ui", "src", "components");
+const COMPONENTS = join(REPO, "packages", "react-native-ui", "src", "components");
 
 /**
  * `DelacourProvider` has no demo on purpose.

@@ -20,7 +20,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/icon/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/icon/AGENTS.md",
 			"target": "icon/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -35,12 +35,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/icon/icon.context.tsx",
+			"path": "packages/react-native-ui/src/components/icon/icon.context.tsx",
 			"target": "icon/icon.context.tsx",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/icon/icon.tsx",
+			"path": "packages/react-native-ui/src/components/icon/icon.tsx",
 			"target": "icon/icon.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -55,7 +55,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/icon/icon.variants.ts",
+			"path": "packages/react-native-ui/src/components/icon/icon.variants.ts",
 			"target": "icon/icon.variants.ts",
 			"namespace": "ui",
 			"rewrites": [
@@ -70,7 +70,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/icon/index.ts",
+			"path": "packages/react-native-ui/src/components/icon/index.ts",
 			"target": "icon/index.ts",
 			"namespace": "ui"
 		}

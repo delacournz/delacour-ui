@@ -21,7 +21,7 @@
 	"devDependencies": [],
 	"files": [
 		{
-			"path": "packages/native-ui/src/components/pressable/AGENTS.md",
+			"path": "packages/react-native-ui/src/components/pressable/AGENTS.md",
 			"target": "pressable/AGENTS.md",
 			"namespace": "ui",
 			"rewrites": [
@@ -32,12 +32,12 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/pressable/index.ts",
+			"path": "packages/react-native-ui/src/components/pressable/index.ts",
 			"target": "pressable/index.ts",
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/native-ui/src/components/pressable/pressable.tsx",
+			"path": "packages/react-native-ui/src/components/pressable/pressable.tsx",
 			"target": "pressable/pressable.tsx",
 			"namespace": "ui",
 			"rewrites": [
@@ -52,7 +52,7 @@
 			]
 		},
 		{
-			"path": "packages/native-ui/src/components/pressable/pressable.variants.ts",
+			"path": "packages/react-native-ui/src/components/pressable/pressable.variants.ts",
 			"target": "pressable/pressable.variants.ts",
 			"namespace": "ui"
 		}

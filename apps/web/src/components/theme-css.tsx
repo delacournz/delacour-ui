@@ -57,7 +57,7 @@ export function ThemeSummary({ config }: { config: DesignSystemConfig }): ReactE
 
 /** The two files a theme is, keyed by the tab that shows each. */
 export type ThemeCssFiles = {
-	/** `theme.css`, in the `@variant light` / `@variant dark` shape `native-ui` reads. */
+	/** `theme.css`, in the `@variant light` / `@variant dark` shape `react-native-ui` reads. */
 	native: string;
 	/** `globals.css`, in shadcn's `:root` / `.dark` shape, for a web app sharing the theme. */
 	web: string;

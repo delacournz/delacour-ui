@@ -83,7 +83,7 @@ jobs:
       - name: Fail if the committed registry is stale
         run: |
           if [ -n "$(git status --porcelain registry/)" ]; then
-            echo "registry/ does not match packages/native-ui. Run 'bun --filter delacour run registry:build' and commit the result."
+            echo "registry/ does not match packages/react-native-ui. Run 'bun --filter delacour run registry:build' and commit the result."
             git --no-pager diff --stat registry/
             exit 1
           fi

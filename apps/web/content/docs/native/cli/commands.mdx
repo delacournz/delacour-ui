@@ -11,6 +11,12 @@ delacour <command> [components...] [options]
 Every command that reads the registry also takes `--registry`, `--ref`, `--offline` and `--cwd`.
 The blocks below are that command's own `--help`.
 
+<Callout title="`--ref` will not read `main` in your terminal">
+The blocks below are printed from a working tree. A published build bakes in **the commit it was
+released against**, so the default your copy prints is a SHA — which is what keeps a version reading
+the registry it shipped with. Pass `--ref main` to opt into what has landed since.
+</Callout>
+
 ## init
 
 Sets the project up and writes `native-components.json`. Covered in full at

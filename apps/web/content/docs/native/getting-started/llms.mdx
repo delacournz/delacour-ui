@@ -13,15 +13,23 @@ Every page here is available as plain Markdown, and the whole site is available 
 | `<page>.md` | Any docs URL with `.md` appended returns that page as Markdown |
 
 ```bash
-curl https://delacour.co.nz/docs/native/components/button.md
+curl https://ui.delacour.co.nz/docs/native/components/button.md
 ```
 
 Content negotiation also works: a request to any docs page with `Accept: text/markdown` is
 redirected to the `.md` representation.
 
 ```bash
-curl -L -H "Accept: text/markdown" https://delacour.co.nz/docs/native/components/button
+curl -L -H "Accept: text/markdown" https://ui.delacour.co.nz/docs/native/components/button
 ```
+
+## A skill beats a paste
+
+Handing a model the whole site works, and an [agent skill](/docs/native/getting-started/skills)
+works better: it is one file the assistant reads on its own, and it teaches the four commands that
+fetch exactly what a task needs rather than filling the context with pages the task does not.
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills"] }]} />
 
 ## Copying a page
 

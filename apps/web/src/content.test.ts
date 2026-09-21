@@ -171,14 +171,60 @@ describe("quick start", () => {
 		expect(body.match(/<InstallTabs/g)?.length ?? 0).toBeGreaterThanOrEqual(4);
 	});
 
-	test("carries one complete App.tsx whose first statement imports the CSS", () => {
-		const fences = [...body.matchAll(/^```tsx title="App\.tsx"\n([\s\S]*?)^```/gm)].map(([, code]) => code as string);
-		expect(fences.length).toBe(1);
-		const code = fences[0] as string;
-		expect(code.split("\n")[0]).toMatch(/^import "\.\/styles\/global\.css";$/);
+	test("forks before the first command, and both branches land on the same anchor", () => {
+		expect(body).toContain("## A new app");
+		expect(body).toContain("## An existing app");
+		expect(body).toContain("## Use your first component");
+		expect(body.match(/\(#use-your-first-component\)/g)?.length ?? 0).toBeGreaterThanOrEqual(2);
+	});
+
+	/**
+	 * One verb, and this is where it is kept. `add` sets an unconfigured project
+	 * up on its own, so naming `init` here puts a second command in front of a
+	 * reader who needs one — which is exactly the state this page was rewritten
+	 * out of. `init` still exists, and `/docs/native/cli/init` still documents
+	 * it, for choosing placement deliberately.
+	 */
+	test("teaches `add`, and never `init`", () => {
+		const commands = [...body.matchAll(/delacour@alpha\s+([a-z-]+)/g)].map(([, verb]) => verb);
+
+		expect(commands).toContain("add");
+		expect(commands).not.toContain("init");
+	});
+
+	/**
+	 * The root layout is where both silent failures live: a CSS import that is
+	 * not the first statement renders every component unstyled, and a missing
+	 * provider stops presses landing. Neither logs anything, so the fence a
+	 * reader pastes has to carry both.
+	 */
+	test("carries a root layout whose first statement imports the CSS and mounts the provider", () => {
+		const fences = [...body.matchAll(/^```tsx title="([^"]+)"\n([\s\S]*?)^```/gm)].map(
+			([, title, code]) => [title as string, code as string] as const
+		);
+
+		const layout = fences.find(([title]) => title.includes("_layout.tsx"));
+		expect(layout).toBeDefined();
+
+		const [, code] = layout as readonly [string, string];
+		expect(code.split("\n")[0]).toMatch(/^import ".*\.css";$/);
 		expect(code).toContain("export default function");
 		expect(code).toContain("<DelacourProvider>");
-		expect(code).not.toContain("…");
+	});
+
+	test("carries a screen that uses a component, and nothing elided", () => {
+		const fences = [...body.matchAll(/^```tsx title="([^"]+)"\n([\s\S]*?)^```/gm)].map(
+			([, title, code]) => [title as string, code as string] as const
+		);
+
+		const screen = fences.find(([title]) => title.includes("index.tsx"));
+		expect(screen).toBeDefined();
+
+		const [, code] = screen as readonly [string, string];
+		expect(code).toContain("<Button");
+		expect(code).toContain("export default function");
+
+		for (const [, fence] of fences) expect(fence).not.toContain("…");
 	});
 
 	test("every getting-started page is listed, and every listed page exists", () => {

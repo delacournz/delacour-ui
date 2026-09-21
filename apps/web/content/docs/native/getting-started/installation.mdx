@@ -4,24 +4,26 @@ description: The CLI, the package, and the wiring both need.
 icon: Download
 ---
 
-The CLI and the package hold the same components. The CLI copies the source into your repository
-so you own `button.tsx`; the package is upgraded with `bun update`. Start with the CLI — it does
-the wiring below for you.
+Both deliver the same files. The package is a dependency you upgrade with `bun update`; the CLI
+fetches that same source straight from the library's repository — at the commit your version of the
+CLI shipped against — and writes it into your project with the imports rewritten onto your own
+paths, so you own `button.tsx`. Start with the CLI: it does the wiring below for you.
 
 ## Use the CLI
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --install"] }]} />
-
-`init` writes `native-components.json`, wraps your Metro config with Uniwind's transform, adds the
-`@source` globs to your Tailwind entry, copies the theme and the root provider in, and installs
-what they need. Then add components by name:
-
 <InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button input field --install"] }]} />
+
+One command. On a project it has not seen before it writes `native-components.json`, wraps your
+Metro config with Uniwind's transform, adds the `@source` globs to your Tailwind entry, and copies
+the theme and the root provider in — then adds the components you named and installs what they
+need.
 
 Two things remain yours: importing the CSS and mounting the provider — both shown in
 [Mount the provider](#mount-the-provider), and both done for you on the
-[Quick start](/docs/native/getting-started). See [the CLI docs](/docs/native/cli) for what `init`
-will and will not touch, and [Monorepos](/docs/native/cli/monorepo) for a shared package.
+[Quick start](/docs/native/getting-started). See [the CLI docs](/docs/native/cli) for what it will
+and will not touch, and [Monorepos](/docs/native/cli/monorepo) for putting the components in a
+package several apps share — the one case worth running
+[`init`](/docs/native/cli/init) yourself.
 
 ## Install the package
 
@@ -61,10 +63,21 @@ import { IconHeart } from "@delacour/native-ui/icons/central";
 import { Button } from "@delacour/native-ui";
 ```
 
+### Set up Uniwind
+
+`uniwind` and `tailwindcss` are in the list above, but installing them is not configuring them.
+Uniwind compiles every `className` these components use, and it does that in **your** app's Metro
+pipeline — so it needs a Metro wrapper and a CSS entry before anything renders styled.
+
+The next two blocks are that setup, and they are what `delacour add` writes for you on the CLI path.
+[Uniwind's installation guide](https://docs.uniwind.dev/quickstart) is the authority on its own
+options; [its migration guide](https://docs.uniwind.dev/migration-from-nativewind) is the way across
+from NativeWind, which cannot share a Metro config with it.
+
 ### Wire up the CSS
 
-On the package path, import the library's styles into your app's Tailwind entry and point
-Tailwind's scanner at the package source. The CLI writes this block itself.
+Import the library's styles into your app's Tailwind entry and point Tailwind's scanner at the
+package source.
 
 ```css title="src/styles/global.css"
 @import "tailwindcss";

@@ -67,7 +67,7 @@ src/
 │   ├── [.]well-known/     apple-app-site-association, assetlinks.json
 │   ├── api/search.ts
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
-│   └── llms[.]txt.ts, llms-full[.]txt.ts
+│   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
 ├── start.ts               csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the native-ui palette
 
@@ -425,6 +425,18 @@ MDX do that (see [A link to `/llms.txt` has to be a plain anchor](#a-link-to-llm
 with no component, `notFound()` came back as **`200`** carrying `{"isNotFound":true}` — a body no
 client reads as an error.
 
+`robots[.]txt.ts` exists for one reason: to name `/llms.txt` somewhere a crawler already looks. It
+carries no `Sitemap:` line, because prerendering is off and nothing produces a page list at build
+time — a hand-written sitemap is the transcription this site keeps deleting.
+
+## `<AgentPrompt>` hands the reader's own agent the setup
+
+`src/components/agent-prompt.tsx` is a copy button over `SETUP_PROMPT`, used on the Quick start. The
+prompt never describes the library: it points at `delacour add`, `delacour doctor` and this site's
+Markdown, because an agent left to its own memory invents package versions and a component API that
+looks right. The text is a plain exported string so a test can pin it, and
+`packages/cli/test/docs-commands.test.ts` checks every command inside it against the real CLI.
+
 ## MDX components must be registered
 
 `defaultMdxComponents` carries only `Callout`, `Card` and `Cards`. Everything else —
@@ -565,6 +577,14 @@ preset was the library's own defaults, which every visitor already has; with a b
 page is worth arriving at with nothing in hand. It stays linked from
 `getting-started/theming.mdx` as well.
 
+**The dev server fails on a busy port rather than wandering.** `server.strictPort: true`. Vite's
+default is to take the next free port, and on this machine the next port is argent's tool-server —
+so a busy 3000 answered the URL a reader was told to open with
+`{"error":"Missing or invalid Authorization header"}` from an unrelated product. `localhost`
+resolving to both stacks made which one you got a coin flip: argent held IPv4, Vite held IPv6, and
+the browser and `curl` disagreed. *Port 3000 is already in use* is the better failure. Pass
+`--port` when you want a different one.
+
 **The dev server binds to all interfaces.** `server.host: true` in `vite.config.ts`, because the
 playground's Generate CSS button opens this site at whatever host Metro reached the app on — a LAN
 address on a device, and on a simulator too whenever Metro was started on the LAN. Vite's default is
@@ -582,7 +602,9 @@ package rather than externalising it. Verified against `bun run build && bun run
 `/docs/native/components/button.md` returns Nitro's *"Cannot GET"* under `bun run dev` and works
 correctly under `bun run build && bun run start`. Vite's dev middleware claims any URL whose last
 segment contains a dot before Start's router sees it — this affects every dotted path served by a
-**dynamic** route. `/llms.txt` is unaffected because its route path is fully literal.
+**dynamic** route. `/skills/$` is the other one: `/skills/delacour-ui/SKILL.md` 404s in dev for the
+same reason and serves correctly in production. `/llms.txt` and `/robots.txt` are unaffected
+because their route paths are fully literal.
 
 Do not "fix" this. It is not a code bug, and the same is true of the `Accept: text/markdown`
 negotiation in `src/start.ts`, which redirects to a `.md` URL. Verify both against a production

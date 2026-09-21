@@ -141,7 +141,7 @@ jobs:
 
       # The docs site derives its per-component install block from the registry,
       # into a committed module. A stale one puts wrong dependencies and dead
-      # file links on nineteen component pages, silently.
+      # file links on every component page, silently.
       - name: Check the docs install manifest is current
         working-directory: apps/web
         run: bun run gen-install

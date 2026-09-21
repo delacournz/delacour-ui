@@ -84,6 +84,18 @@ version.
   }}
 />
 
+`add_components` is the one to reach for. It writes `native-components.json`, wires Metro and the
+Tailwind globs and copies the theme in before it copies the component, so it works against a bare
+`create-expo-app`. `init_project` exists for the case a default cannot infer: components belonging
+to a package several apps share, or a source directory this project spells differently.
+
+<Callout type="warn" title="Two things no tool can do for you">
+Importing the CSS entry as the **first statement** of the root layout, and wrapping the app in
+`<DelacourProvider>`. Both are edits to a file the user owns, and both fail silently — unstyled
+components, and presses that never land. `init_project` names them in its reply and `check_project`
+catches them afterwards.
+</Callout>
+
 `add_components` installs nothing unless asked. Its reply names what it copied and, when something
 is missing, the commands that would install it:
 

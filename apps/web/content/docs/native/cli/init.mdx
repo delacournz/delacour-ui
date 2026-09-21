@@ -4,9 +4,13 @@ description: What init changes, what it leaves alone, and the three things it ha
 icon: Wrench
 ---
 
-```bash
-bunx delacour@alpha init
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init"] }]} />
+
+<Callout title="Most projects never run this">
+[`add`](/docs/native/cli/commands#add) does everything on this page the first time it is used, with
+the layout inferred. Run `init` yourself for the two decisions inference cannot make: putting the
+components in a package several apps share, and a source directory this project spells its own way.
+</Callout>
 
 Two questions, both skippable with `--defaults`: where the components should live, and what your
 source directory is called. Everything else is read off the project — the package manager from the
@@ -14,9 +18,11 @@ lockfile, the Expo SDK from `package.json`, the path aliases from `tsconfig.json
 
 You can add components in the same run:
 
-```bash
-bunx delacour@alpha init button input field
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init button input field"] }]} />
+
+On a project that already has a `native-components.json`, `init` says so and does not rewrite it —
+`--force` is how you mean it. Component names given alongside are still added, as a plain `add`:
+a file you have edited is a conflict it asks about, rather than one it replaces.
 
 ## What it changes
 
@@ -164,10 +170,9 @@ npx expo run:ios     # or run:android
 
 ## Verify
 
-```bash
-bunx delacour@alpha add button
-bunx delacour@alpha doctor
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button"] }]} />
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha doctor"] }]} />
 
 ```tsx
 import { Button } from "@/components/ui/button";

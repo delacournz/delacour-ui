@@ -20,7 +20,7 @@
 	"dependencies": {
 		"@delacour/brand": "workspace:*",
 		"@delacour/design-system": "workspace:*",
-		"@delacour/native-ui": "workspace:*",
+		"@delacour/react-native-ui": "workspace:*",
 		"@delacour/skills": "workspace:*",
 		"@resvg/resvg-js": "^2.6.2",
 		"@tanstack/react-router": "1.170.27",
@@ -40,7 +40,7 @@
 		"@tailwindcss/vite": "^4.3.3",
 		"@types/mdx": "^2.0.14",
 		"@types/node": "^26.2.0",
-		"@types/react": "^19.2.18",
+		"@types/react": "catalog:",
 		"@types/react-dom": "^19.2.4",
 		"@vitejs/plugin-react": "^6.0.5",
 		"nitro": "3.0.260610-beta",

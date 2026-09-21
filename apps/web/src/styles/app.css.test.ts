@@ -39,7 +39,7 @@ describe("house-meta.ts", () => {
 
 describe("app.css", () => {
 	test("imports the generated palette after the library's scale", () => {
-		const tokens = APP_CSS.indexOf('@import "@delacour/native-ui/styles/tokens"');
+		const tokens = APP_CSS.indexOf('@import "@delacour/react-native-ui/styles/tokens"');
 		const house = APP_CSS.indexOf('@import "./house.css"');
 		const neutral = APP_CSS.indexOf('@import "fumadocs-ui/css/neutral.css"');
 

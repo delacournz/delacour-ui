@@ -7,7 +7,7 @@ import {
 	IconLayoutTop,
 	IconLayoutTopBottom,
 	IconWarningSign,
-} from "@delacour/native-ui/icons/central";
+} from "@delacour/react-native-ui/icons/central";
 import type { ReactElement } from "react";
 import { FolderIndex, type FolderIndexItem } from "@/components/folder-index";
 

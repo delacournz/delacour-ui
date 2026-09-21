@@ -9,7 +9,7 @@ ticks, the plot rect, every row turned into a canvas point — and publishes the
 context. A mark reads that context and draws one thing.
 
 ```tsx
-import { CartesianChart, ChartGrid, ChartLine, ChartXAxis, ChartYAxis } from "@delacour/charts";
+import { CartesianChart, ChartGrid, ChartLine, ChartXAxis, ChartYAxis } from "@delacour/react-native-charts";
 
 <CartesianChart data={rows} xKey="day" yKeys={["revenue"]}>
   <ChartGrid color="#E5E5EA" />
@@ -41,7 +41,7 @@ results passed down as values.** A theme hook, a font hook, anything backed by a
 own — there is nowhere inside the canvas to call one.
 
 ```tsx
-import { CartesianChart, ChartLine, ChartXAxis, useSystemFont } from "@delacour/charts";
+import { CartesianChart, ChartLine, ChartXAxis, useSystemFont } from "@delacour/react-native-charts";
 
 function Revenue() {
   const font = useSystemFont(undefined, 12);
@@ -189,7 +189,7 @@ inspector to look at.
 
 ```tsx
 import { Circle } from "@shopify/react-native-skia";
-import { useChartContext } from "@delacour/charts";
+import { useChartContext } from "@delacour/react-native-charts";
 
 function LastValueDot({ yKey, color }: { yKey: string; color: string }) {
   const { points } = useChartContext();

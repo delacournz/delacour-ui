@@ -21,12 +21,12 @@ import ts from "typescript";
  * consumer-shaped.
  *
  * The engine and its two drawing peers are here for the `charts/` demos, which
- * render `@delacour/charts` with nothing themed in front of it —
+ * render `@delacour/react-native-charts` with nothing themed in front of it —
  * so they, like a reader's app, take Skia and Reanimated directly.
  */
 const ALLOWED_IMPORT_PREFIXES = [
-	"@delacour/native-ui",
-	"@delacour/charts",
+	"@delacour/react-native-ui",
+	"@delacour/react-native-charts",
 	"react",
 	"react-native",
 	"@gorhom/bottom-sheet",

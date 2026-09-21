@@ -10,7 +10,7 @@ import { chartsPieDemos } from "./pie";
 import { chartsScatterDemos } from "./scatter";
 
 /**
- * The engine, `@delacour/charts`, rendered on its own.
+ * The engine, `@delacour/react-native-charts`, rendered on its own.
  *
  * Keyed `charts` rather than `chart` on purpose: `chart/` is the themed
  * library's component and these demos import nothing from it. Facet order is

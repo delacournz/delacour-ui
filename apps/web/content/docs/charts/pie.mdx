@@ -7,7 +7,7 @@ icon: ChartPie
 <Preview id="charts/pie/pie" />
 
 ```tsx
-import { PieInset, PieSlices, PolarChart } from "@delacour/charts";
+import { PieInset, PieSlices, PolarChart } from "@delacour/react-native-charts";
 
 <PolarChart data={rows} labelKey="browser" valueKey="share">
   <PieSlices colors={["#0A84FF", "#30D158", "#FF9F0A", "#FF375F"]} />
@@ -25,7 +25,7 @@ are degrees, 0° at 12 o'clock, clockwise.
 <Preview id="charts/pie/donut" />
 
 ```tsx
-import { PieLabel, PieSlices, PolarChart, useSystemFont } from "@delacour/charts";
+import { PieLabel, PieSlices, PolarChart, useSystemFont } from "@delacour/react-native-charts";
 
 const font = useSystemFont(undefined, 12);
 

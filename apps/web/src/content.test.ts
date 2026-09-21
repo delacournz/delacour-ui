@@ -108,7 +108,7 @@ describe("component pages", () => {
 			const wrong = PAGES.filter(
 				(page) =>
 					!usageFences(page.body).every(
-						(f) => f.code.includes('from "@/components/ui/') && !f.code.includes("@delacour/native-ui/")
+						(f) => f.code.includes('from "@/components/ui/') && !f.code.includes("@delacour/react-native-ui/")
 					)
 			).map((p) => p.slug);
 			expect(wrong).toEqual([]);

@@ -1,6 +1,6 @@
-import { Icon, type IconComponent } from "@delacour/native-ui/icon";
-import { ListGroup } from "@delacour/native-ui/list-group";
-import { Screen } from "@delacour/native-ui/screen";
+import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
+import { ListGroup } from "@delacour/react-native-ui/list-group";
+import { Screen } from "@delacour/react-native-ui/screen";
 import { type Href, useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { View } from "react-native";

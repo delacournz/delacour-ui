@@ -26,9 +26,9 @@
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/brand": "workspace:*",
-		"@delacour/charts": "workspace:*",
+		"@delacour/react-native-charts": "workspace:*",
 		"@delacour/design-system": "workspace:*",
-		"@delacour/native-ui": "workspace:*",
+		"@delacour/react-native-ui": "workspace:*",
 		"@expo-google-fonts/dm-sans": "^0.4.2",
 		"@expo-google-fonts/eb-garamond": "^0.4.3",
 		"@expo-google-fonts/figtree": "^0.4.1",
@@ -91,7 +91,7 @@
 		"@delacour/biome-config": "workspace:*",
 		"@resvg/resvg-js": "^2.6.2",
 		"@types/culori": "^4.0.1",
-		"@types/react": "~19.2.2",
+		"@types/react": "catalog:",
 		"dotenv-cli": "^11.0.0",
 		"typescript": "^5.9.3"
 	}

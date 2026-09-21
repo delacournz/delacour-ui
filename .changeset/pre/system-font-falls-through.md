@@ -1,5 +1,5 @@
 ---
-"@delacour/charts": patch
+"@delacour/react-native-charts": patch
 ---
 
 Let `useSystemFont(undefined, size)` fall through to the platform font

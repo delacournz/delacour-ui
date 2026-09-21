@@ -58,8 +58,5 @@
 	},
 	"trustedDependencies": [
 		"@shopify/react-native-skia"
-	],
-	"patchedDependencies": {
-		"expo-modules-jsi@57.0.5": "patches/expo-modules-jsi@57.0.5.patch"
-	}
+	]
 }

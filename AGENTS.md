@@ -325,9 +325,20 @@ anything.
 
 ## Patches
 
-`patches/expo-modules-jsi@57.0.5.patch`, applied through
-`patchedDependencies`. Changing the Expo SDK means checking whether it still
-applies.
+None. There was one — `patches/expo-modules-jsi@57.0.5.patch`, which declared
+`retainRuntimeScheduler` / `releaseRuntimeScheduler` for Swift bridging — and
+`expo-modules-jsi@57.1.0` ships those declarations itself, so it was removed
+along with the `patchedDependencies` entry that applied it.
+
+**A patch keyed to an exact version silently stops applying when the version
+moves, and the lockfile is the only thing holding it still.** That is what
+happened here: something already required `~57.1.0` while `bun.lock` still
+pinned `57.0.5`, so every install reproduced the patched tree and no install
+ever said the patch had become unnecessary. It surfaced only when a new
+workspace package forced a re-resolve and `--frozen-lockfile` began failing.
+
+If a patch comes back, pin the patched package explicitly rather than relying
+on the lockfile to do it, and re-check the patch whenever the Expo SDK moves.
 
 ## Conventions
 

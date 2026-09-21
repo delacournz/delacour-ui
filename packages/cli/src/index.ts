@@ -27,6 +27,10 @@ import { CancelledError, style } from "./ui/output";
  * alone, so declaring the pair leaves the value **undefined** when neither is
  * passed. Three states, and the third is the one that matters — unset means ask
  * when there is someone to ask, and install nothing when there is not.
+ *
+ * `add --no-init` is declared **alone** for the opposite reason. Two states are
+ * all it needs, and the default it therefore gets is the right one: `add` sets
+ * an unconfigured project up rather than refusing it.
  */
 
 declare const __CLI_VERSION__: string | undefined;
@@ -78,8 +82,18 @@ withRegistryOptions(
 		.option("-a, --all", "add every component")
 		.option("-o, --overwrite", "replace files that differ")
 		.option("-y, --yes", "accept every default without asking")
+		// Forwarded to `init`, and read only when this run is the one that sets
+		// the project up. The default is `src`, which is where most Expo
+		// templates keep their files; `--src .` is for the blank ones that keep
+		// theirs at the project root.
+		.option("-s, --src <dir>", "base directory for source files, when setting the project up")
 		.option("--install", "install the packages the components need, without asking")
 		.option("--no-install", "write the files and install nothing")
+		// Declared alone, unlike the pair above, and that is the difference: a
+		// lone `--no-` option *does* get a default, so `init` defaults to true.
+		// Which is what is wanted here — an unconfigured project is set up, not
+		// refused. Add an `--init` beside it and the default becomes undefined.
+		.option("--no-init", `error instead of writing ${CONFIG_FILENAME} when this project has none`)
 		.option("--silent", "print nothing but errors")
 ).action((components: string[], options) => run(() => add(components, { ...options, cwd: resolve(options.cwd) })));
 

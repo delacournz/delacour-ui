@@ -57,6 +57,18 @@ Copies components in, with everything they need.
 delacour add --all
 ```
 
+### It sets the project up if it has to
+
+A project with no `native-components.json` is not an error. `add` runs [`init`](/docs/native/cli/init)
+first — writing the config, wrapping Metro, pointing Tailwind at the components, copying the theme
+and the root provider in — and then adds what you asked for. That happens in a script, in CI and
+over MCP as readily as in a terminal, so `add` is the only command most projects ever need.
+
+Pass `--no-init` to be told instead. A build that should never reconfigure a checkout wants it;
+almost nothing else does.
+
+### What happens, in order
+
 The order is deliberate: resolve the dependency graph, plan every file, ask **once** about
 conflicts, write, then report what the components need from npm. Installing first would leave a
 project holding new native dependencies and no components if you answered "no" to the overwrite
@@ -111,8 +123,11 @@ Options:
   -a, --all         add every component
   -o, --overwrite   replace files that differ
   -y, --yes         accept every default without asking
+  -s, --src <dir>   base directory for source files, when setting the project up
   --install         install the packages the components need, without asking
   --no-install      write the files and install nothing
+  --no-init         error instead of writing native-components.json when this
+                    project has none
   --silent          print nothing but errors
   --registry <url>  registry to read from: a URL, github:owner/repo, or a local
                     path

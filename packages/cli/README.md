@@ -5,9 +5,12 @@ repository — you own `button.tsx` and can edit it, rather than waiting for a
 release.
 
 ```bash
-bunx delacour@alpha init
 bunx delacour@alpha add button
 ```
+
+That is the whole install. `add` sets the project up on its first run — config, Metro, the Tailwind
+globs, the theme and the root provider — and then copies the component in. Reach for `init`
+directly only to choose where the components live; see [Where components go](#where-components-go).
 
 ## Why not a component package
 
@@ -34,8 +37,8 @@ Unlike shadcn, the target is Expo, which changes real things:
 
 | | |
 |---|---|
-| `init [components...]` | Write `native-components.json`, wire up Metro and the CSS entry, add the theme |
-| `add <components...>` | Copy components and everything they need, and say what to install |
+| `add <components...>` | Copy components and everything they need, and say what to install. Sets the project up first if it has none |
+| `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
 | `diff [name]` | What has changed upstream since you copied it |

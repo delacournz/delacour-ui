@@ -11,7 +11,7 @@ import { patchMetroConfig } from "../project/metro";
 import { UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import { CancelledError, createOutput, type Output, style } from "../ui/output";
-import { add } from "./add";
+import { type AddResult, add } from "./add";
 
 /**
  * Sets a project up to receive components.
@@ -29,6 +29,9 @@ import { add } from "./add";
  * imports, which work whether or not `experiments.tsconfigPaths` is on. The
  * things that genuinely need a human are printed at the end and checked again
  * by `delacour doctor`.
+ *
+ * It returns what that inner `add` did, because `add` delegates here whenever a
+ * project has no config — see `AddResult`.
  */
 
 export type InitOptions = {
@@ -48,15 +51,14 @@ export type InitOptions = {
 	packagePath?: string;
 };
 
-export async function init(components: string[], options: InitOptions): Promise<void> {
+export async function init(components: string[], options: InitOptions): Promise<AddResult | null> {
 	const output = createOutput(options);
 	output.intro("delacour init");
 
 	const existing = findConfig(options.cwd);
 	if (existing && !options.force) {
 		output.warn(`${relative(options.cwd, existing) || CONFIG_FILENAME} already exists. Pass --force to rewrite it.`);
-		if (components.length > 0) await add(components, { ...options, cwd: options.cwd });
-		return;
+		return components.length > 0 ? add(components, { ...options, cwd: options.cwd }) : null;
 	}
 
 	const project = await detectProject(options.cwd);
@@ -72,10 +74,51 @@ export async function init(components: string[], options: InitOptions): Promise<
 	// The tokens every component's classes resolve against, and the root every
 	// pressable needs above it. Adding both here means a fresh project is
 	// renderable — and responds to touch — before a single component is chosen.
-	await add(["styles", "provider", ...components], { ...options, cwd: placement.root, overwrite: true });
+	const result = await add(["styles", "provider", ...components], {
+		...options,
+		cwd: placement.root,
+		overwrite: true,
+	});
 
 	printFollowUps(resolved, output);
-	output.outro(`Ready. ${style.code("delacour add button")} to get started.`);
+	output.outro(outro(components));
+
+	// Returned rather than swallowed: `add` delegates here for an unconfigured
+	// project, and its caller — a script, or the MCP server, which prints
+	// nothing of its own — still has to learn what the components need from npm.
+	return result;
+}
+
+/** How many names the outro recites before it counts them instead. */
+const OUTRO_NAME_LIMIT = 3;
+
+/**
+ * The last line of a run.
+ *
+ * `add` delegates here whenever a project has no config, so by the time this
+ * prints the reader has usually just run the command the outro used to
+ * suggest — *"Ready. delacour add button to get started"* after `add button`
+ * had already copied it in.
+ *
+ * It does not name `doctor` either. The follow-up block directly above ends on
+ * it, and two consecutive lines pointing at the same command read as a glitch
+ * rather than as emphasis. So what is left for the last line is the thing that
+ * actually happened: the components are the reader's now.
+ *
+ * Exported so the wording is testable without a terminal.
+ */
+export function outro(components: readonly string[]): string {
+	if (components.length === 0) return `Ready. ${style.code("delacour add button")} to get started.`;
+
+	if (components.length > OUTRO_NAME_LIMIT) {
+		return `Ready. ${components.length} components are yours to edit.`;
+	}
+
+	const named = components.map((name) => style.code(name));
+	const list =
+		named.length === 1 ? `${named[0]} is` : `${named.slice(0, -1).join(", ")} and ${named[named.length - 1]} are`;
+
+	return `Ready. ${list} yours to edit.`;
 }
 
 /**

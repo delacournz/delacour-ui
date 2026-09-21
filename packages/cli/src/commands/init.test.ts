@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { resolveConfig } from "../config/resolve";
 import { configSchema } from "../config/schema";
-import { followUps } from "./init";
+import { followUps, outro } from "./init";
 
 /**
  * The lines `init` hands back. Their order is the argument: the CSS import
@@ -58,3 +58,42 @@ describe("followUps", () => {
 function stripAnsi(text: string): string {
 	return text.replace(new RegExp(`${String.fromCharCode(27)}\\[[0-9;]*m`, "g"), "");
 }
+
+/**
+ * The last line of a run.
+ *
+ * `add` delegates to `init` on an unconfigured project, so by the time this
+ * prints the reader has usually just run the command it used to suggest —
+ * *"Ready. delacour add button to get started"* after `add button` had already
+ * copied it in. And the follow-up block ends on `delacour doctor`, so an outro
+ * naming doctor too put it twice in consecutive lines.
+ *
+ * What is left is the thing that actually happened: the components are theirs.
+ */
+describe("outro", () => {
+	test("points at the first component when nothing was added", () => {
+		expect(stripAnsi(outro([]))).toBe("Ready. delacour add button to get started.");
+	});
+
+	test("names the one component that landed", () => {
+		expect(stripAnsi(outro(["button"]))).toBe("Ready. button is yours to edit.");
+	});
+
+	test("names a short list", () => {
+		expect(stripAnsi(outro(["button", "switch", "slider"]))).toBe(
+			"Ready. button, switch and slider are yours to edit."
+		);
+	});
+
+	test("counts a long one rather than reciting it", () => {
+		expect(stripAnsi(outro(["button", "switch", "slider", "input", "field"]))).toBe(
+			"Ready. 5 components are yours to edit."
+		);
+	});
+
+	test("never mentions doctor, which the follow-ups already do", () => {
+		for (const names of [[], ["button"], ["button", "switch", "slider", "input", "field"]]) {
+			expect(outro(names)).not.toContain("doctor");
+		}
+	});
+});

@@ -7,8 +7,9 @@ import { detectProject } from "../project/detect";
 import { commandLine } from "../project/package-manager";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
-import { add } from "./add";
+import { type AddResult, add } from "./add";
 import { runChecks } from "./doctor";
+import { init } from "./init";
 
 /**
  * The same commands, over MCP, for an agent working inside someone's project.
@@ -99,7 +100,7 @@ export async function mcp(options: McpOptions): Promise<void> {
 		{
 			title: "Add components",
 			description:
-				"Copy components into this project, with their dependencies, rewritten imports and installs. Prefer this over writing the files yourself — it routes native modules through `expo install` so the SDK picks a buildable version.",
+				"Copy components into this project, with their dependencies, rewritten imports and installs. Prefer this over writing the files yourself — it routes native modules through `expo install` so the SDK picks a buildable version. A project with no `native-components.json` is set up first, so this works on a bare Expo app; call `init_project` instead when the layout has to be chosen — a monorepo, or a source directory that is not `src`.",
 			inputSchema: {
 				names: z.array(z.string()).describe("Component names to add"),
 				overwrite: z.boolean().optional().describe("Replace files that differ from the registry"),
@@ -122,31 +123,63 @@ export async function mcp(options: McpOptions): Promise<void> {
 				silent: true,
 			});
 
-			if (!result) return text(`Nothing was added for: ${names.join(", ")}.`);
+			if (!result) return text(`Nothing was added for: ${names.join(", ")}. Check the names against list_components.`);
 
-			// Everything `add` would have printed, which under `silent` it did not.
-			// Left out, an agent copies a component and never learns that it needs a
-			// package the project has not got.
-			const { dependencies } = result;
-			const lines = [`Added ${result.items.join(", ")} — ${result.written} files.`];
+			return text(describeAdd(result).join("\n"));
+		}
+	);
 
-			if (dependencies.missing.length === 0) {
-				if (dependencies.wanted.length > 0) lines.push("Every package they need is already installed.");
-			} else if (result.installed) {
-				lines.push(`Installed: ${dependencies.missing.join(", ")}.`);
-			} else {
-				lines.push(
-					"Not installed. These have to be run from the app before it will build:",
-					...dependencies.groups.map((group) => `  ${commandLine(group)}`),
-					"Re-run this tool with install: true to have them run for you."
-				);
-			}
+	server.registerTool(
+		"init_project",
+		{
+			title: "Set this project up",
+			description:
+				"Write `native-components.json`, wrap Metro with Uniwind's transform, point Tailwind at where the components will land, and copy the theme and the root provider in. `add_components` does all of this on its own for a plain app — call this one when the layout is not the default: a monorepo where the components belong to a shared package, or a source directory that is not `src`.",
+			inputSchema: {
+				src: z.string().optional().describe("Base directory for source files, e.g. `src` or `.`"),
+				packageName: z
+					.string()
+					.optional()
+					.describe("Put the components in a shared package with this name, e.g. `@acme/ui`"),
+				packagePath: z
+					.string()
+					.optional()
+					.describe("Where that package goes, relative to the workspace root. Defaults to `packages/ui`"),
+				force: z.boolean().optional().describe("Rewrite an existing `native-components.json`"),
+				install: z
+					.boolean()
+					.optional()
+					.describe(
+						"Run the project's package manager to install what the theme and provider need. Defaults to false — the reply lists the commands instead."
+					),
+			},
+		},
+		async ({ src, packageName, packagePath, force, install }) => {
+			const result = await init([], {
+				cwd: options.cwd,
+				ref: options.ref,
+				registry: options.registry,
+				src,
+				packageName,
+				packagePath,
+				force,
+				install: install ?? false,
+				yes: true,
+				silent: true,
+			});
 
-			if (dependencies.groups.some((group) => group.label === "expo install")) {
-				lines.push("A native module changed — rebuild the dev client; a JS reload will not pick it up.");
-			}
+			const configPath = findConfig(options.cwd);
 
-			return text(lines.join("\n"));
+			return text(
+				[
+					configPath ? `Set up. ${CONFIG_FILENAME} is at ${configPath}.` : "Nothing was written.",
+					...(result ? describeAdd(result) : []),
+					"Two things are left, because each is an edit to a file the user owns:",
+					"  import the CSS entry as the FIRST statement of the root layout — without it every component renders unstyled, and nothing logs an error",
+					"  wrap the app in `<DelacourProvider>` — without it presses stop landing, just as silently",
+					"Run check_project once both are done.",
+				].join("\n")
+			);
 		}
 	);
 
@@ -183,4 +216,34 @@ export async function mcp(options: McpOptions): Promise<void> {
 
 function text(body: string) {
 	return { content: [{ type: "text" as const, text: body }] };
+}
+
+/**
+ * Everything `add` would have printed, which under `--silent` it did not.
+ *
+ * Left out, an agent copies a component and never learns that it needs a
+ * package the project has not got. Shared by `add_components` and
+ * `init_project`, because `init` ends in an `add` and owes the same report.
+ */
+function describeAdd(result: AddResult): string[] {
+	const { dependencies } = result;
+	const lines = [`Added ${result.items.join(", ")} — ${result.written} files.`];
+
+	if (dependencies.missing.length === 0) {
+		if (dependencies.wanted.length > 0) lines.push("Every package they need is already installed.");
+	} else if (result.installed) {
+		lines.push(`Installed: ${dependencies.missing.join(", ")}.`);
+	} else {
+		lines.push(
+			"Not installed. These have to be run from the app before it will build:",
+			...dependencies.groups.map((group) => `  ${commandLine(group)}`),
+			"Re-run with install: true to have them run for you."
+		);
+	}
+
+	if (dependencies.groups.some((group) => group.label === "expo install")) {
+		lines.push("A native module changed — rebuild the dev client; a JS reload will not pick it up.");
+	}
+
+	return lines;
 }

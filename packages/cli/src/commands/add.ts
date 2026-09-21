@@ -41,6 +41,10 @@ export type AddOptions = {
 	silent?: boolean;
 	/** `true` installs, `false` never does, unset asks when there is someone to ask. */
 	install?: boolean;
+	/** `false` errors on an unconfigured project instead of setting it up. */
+	init?: boolean;
+	/** Base directory for source files. Read only when this run sets the project up. */
+	src?: string;
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
@@ -51,7 +55,9 @@ export type AddOptions = {
  *
  * `mcp` runs `add` silently — its stdout is a JSON-RPC stream — so the block a
  * human reads has to reach an agent some other way. `null` is a run that copied
- * nothing: an unconfigured project handed to `init`, or a conflict declined.
+ * nothing: an empty request, or a conflict declined. Setting an unconfigured
+ * project up is not one of those — it returns the result of the `add` `init`
+ * ran, so the caller still learns what the components need from npm.
  */
 export type AddResult = {
 	/** Every item copied, the dependency closure included. */
@@ -65,16 +71,18 @@ export type AddResult = {
 export async function add(names: string[], options: AddOptions): Promise<AddResult | null> {
 	const output = createOutput(options);
 
-	// Interactively, an unconfigured project is a question rather than an error.
-	// Non-interactively it stays an error: a script must not be silently
-	// reconfigured because a file happened to be missing.
-	if (!findConfig(options.cwd) && output.interactive) {
-		const { init } = await import("./init");
-		const setUp = await output.confirm(`No ${CONFIG_FILENAME} here. Set this project up first?`, true);
-		if (!setUp) throw new MissingConfigError(options.cwd);
+	// An unconfigured project is a step, not an error. It used to be a question,
+	// and only where there was a terminal to ask in — so a script, a CI job and
+	// every MCP call failed on a file that `add` was perfectly able to write.
+	// One command is the whole promise; `--no-init` is how a caller opts out.
+	if (!findConfig(options.cwd)) {
+		if (options.init === false) throw new MissingConfigError(options.cwd);
 
-		await init(names, options);
-		return null;
+		// Dynamic, because `init` imports this module: a static import cycles.
+		const { init } = await import("./init");
+		output.info(`No ${CONFIG_FILENAME} here — setting this project up first.`);
+
+		return init(names, options);
 	}
 
 	const config = await loadConfig(options.cwd);

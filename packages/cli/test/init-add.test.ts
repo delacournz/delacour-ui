@@ -223,6 +223,62 @@ describe("a shared package in a monorepo", () => {
 	});
 });
 
+/**
+ * `add` in a project that has never been set up.
+ *
+ * This used to be an error everywhere except an interactive terminal, which
+ * meant a script, a CI job and every MCP call hit `MissingConfigError` while a
+ * human at a prompt sailed through. One command is the whole promise, so `add`
+ * now sets the project up itself — and `--no-init` is how a caller says it
+ * would rather be told.
+ */
+describe("add in an uninitialised app", () => {
+	test("sets the project up, then copies what was asked for", async () => {
+		const root = await scaffold("expo-app");
+		const result = await add(["button"], { ...SHARED, cwd: root });
+
+		await expect(exists(root, "native-components.json")).resolves.toBe(true);
+		await expect(exists(root, "src/components/ui/button/button.tsx")).resolves.toBe(true);
+		// The two `init` always adds, so a fresh project renders and responds to touch.
+		await expect(exists(root, "src/styles/theme.css")).resolves.toBe(true);
+		await expect(exists(root, "src/components/ui/provider/provider.tsx")).resolves.toBe(true);
+
+		// The caller has to learn what the components now need from npm; before
+		// this returned `null` and an agent copied a component blind.
+		expect(result?.items).toContain("button");
+		expect(result?.items).toContain("provider");
+		expect(result?.installed).toBe(false);
+	});
+
+	test("wires Metro and the CSS entry, the same as a bare init would", async () => {
+		const root = await scaffold("expo-app");
+		await add(["separator"], { ...SHARED, cwd: root });
+
+		expect(await read(root, "metro.config.js")).toContain("withUniwindConfig");
+		expect(await read(root, "src/styles/global.css")).toContain("delacour:start");
+	});
+
+	test("refuses rather than setting up when --no-init is passed", async () => {
+		const root = await scaffold("expo-app");
+
+		await expect(add(["button"], { ...SHARED, cwd: root, init: false })).rejects.toThrow(/native-components\.json/);
+		await expect(exists(root, "native-components.json")).resolves.toBe(false);
+	});
+
+	test("does not set up again on the next add", async () => {
+		const root = await scaffold("expo-app");
+		await add(["separator"], { ...SHARED, cwd: root });
+
+		const before = await read(root, "native-components.json");
+		const result = await add(["badge"], { ...SHARED, cwd: root });
+
+		expect(await read(root, "native-components.json")).toBe(before);
+		expect(result?.items).toContain("badge");
+		// `init`'s own two are not re-added, so this was a plain `add`.
+		expect(result?.items).not.toContain("provider");
+	});
+});
+
 async function read(root: string, path: string): Promise<string> {
 	return readFile(join(root, path), "utf-8");
 }

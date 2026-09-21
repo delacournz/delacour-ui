@@ -16,7 +16,6 @@ the product.
 | `apps/web` | `@delacour/web` | The documentation site — TanStack Start + Fumadocs, deployed on Railway |
 | `packages/biome-config` | `@delacour/biome-config` | Lint and format rules, for everything |
 | `packages/brand` | `@delacour/brand` | The Delacour mark — master art plus the geometry every rendering reads |
-| `packages/skills` | `@delacour/skills` | The agent skill — written into a project by `delacour skills`, served by `apps/web` |
 | `packages/tsconfig` | `@delacour/tsconfig` | Shared TypeScript configs |
 | `packages/types` | `@delacour/types` | Shared utility types — `Result` and its constructors |
 

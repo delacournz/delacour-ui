@@ -35,7 +35,7 @@ describe("the hero", () => {
 			primary: "Quick start",
 			secondary: "Browse components",
 			github: "GitHub →",
-			install: "delacour@alpha init button switch slider",
+			install: "delacour@alpha add button switch slider",
 			phone: {
 				lead: "Or try every component on your phone —",
 				link: "join the iOS beta on TestFlight",
@@ -60,7 +60,7 @@ describe("the sections", () => {
 			eyebrow: "Design tokens",
 			title: "Your web theme is already your mobile theme.",
 			body: "The palette is shadcn's, in shadcn's shape. Every token your web app already defines — `--primary`, `--muted-foreground`, `--radius` — is the token these components paint from. Copy your `globals.css` across and the mobile app matches the website from day one: same colours, same corners, same light and dark, and styled composable components before you have written a single one.",
-			command: "bunx delacour theme ./globals.css",
+			command: "bunx delacour@alpha theme ./globals.css",
 			points: [
 				{
 					title: "One command, one file",

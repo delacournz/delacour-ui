@@ -1,35 +1,46 @@
 ---
 title: Quick start
-description: A themed, pressable Button on a simulator, in five commands and one file.
+description: A themed, pressable Button on a simulator, in two commands and two files.
 icon: Rocket
 ---
 
 By the end of this page an Expo app is running on a simulator with a Button that counts its
-presses, styled from the same tokens as your web app. Nothing here is explained yet — every
-command is copyable, and each links to the page that does explain it.
+presses, styled from the same tokens as your web app.
+
+One command does the setup: `add` writes `native-components.json`, wraps Metro with Uniwind's
+transform, points Tailwind at the components, copies the theme and the root provider in, and then
+copies what you asked for. Nothing is explained here — every command is copyable, and each links to
+the page that does explain it.
+
+## Start here
+
+<Cards>
+  <Card title="A new app" href="/docs/native/getting-started#a-new-app">
+    Nothing yet. Scaffold an Expo app, then add a component.
+  </Card>
+  <Card title="An existing app" href="/docs/native/getting-started#an-existing-app">
+    Already have an Expo project. One command, from its root.
+  </Card>
+  <Card title="Let your agent do it" href="/docs/native/getting-started#let-your-agent-do-it">
+    Hand the whole setup to Claude Code, Cursor, OpenCode or Codex.
+  </Card>
+</Cards>
+
+## A new app
 
 <Steps>
 <Step>
-### Create an app
+### Create it
 
-<InstallTabs commands={[{ verb: "create", packages: ["expo-app my-app --template blank-typescript"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["create-expo-app@latest my-app -e with-router-uniwind"] }]} />
 
 ```bash
 cd my-app
 ```
 
-Already have an Expo app? Skip to the next step and run it from your app's root.
-</Step>
-
-<Step>
-### Set up the project
-
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha init --src . --install"] }]} />
-
-One command writes `native-components.json`, wraps `metro.config.js` with Uniwind's transform,
-creates `styles/global.css` with the theme, copies the root `provider` into `components/ui/`, and
-installs what it needs with `expo install`. `--src .` puts everything at the project root, where
-this template keeps its files — drop it in an app that has a `src/`.
+Expo's [`with-router-uniwind`](https://github.com/expo/examples/tree/master/with-router-uniwind)
+example, which arrives with Expo Router, Uniwind and Tailwind already wired and its CSS entry
+imported. Any Expo app works — this one is simply the shortest path to a themed screen.
 </Step>
 
 <Step>
@@ -37,60 +48,122 @@ this template keeps its files — drop it in an app that has a `src/`.
 
 <InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button --install"] }]} />
 
-Copies `button` and the parts it renders into `components/ui/`, with imports rewritten for this
-project. Every component page carries this command for its own component.
+It finds the Uniwind setup this template already has, adds its own block to `src/global.css` rather
+than a second file, and copies `button` and the parts it renders into `src/components/ui/`.
+`--install` runs the installs; leave it off to see the commands first.
 </Step>
+</Steps>
 
-<Step>
-### Replace `App.tsx`
+Then [use your first component](#use-your-first-component).
 
-```tsx title="App.tsx"
-import "./styles/global.css";
-import { Button } from "./components/ui/button";
-import { DelacourProvider } from "./components/ui/provider";
-import { useState } from "react";
-import { View } from "react-native";
+## An existing app
 
-export default function App() {
-  const [count, setCount] = useState(0);
+One command, from the app's root:
 
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button --install"] }]} />
+
+### It sets Uniwind up for you
+
+These components are styled with [Uniwind](https://docs.uniwind.dev) — Tailwind CSS v4 for React
+Native. It is what compiles every `className` in the source you are about to own, so the app needs
+it whichever way you install.
+
+There is no separate step: on a project that has none, `add` installs `uniwind` and `tailwindcss`
+through `expo install`, wraps `metro.config.js` with `withUniwindConfig` **outermost**, and writes a
+Tailwind entry importing both. A project that already has Uniwind keeps its own setup — its CSS
+entry is read off the Metro config rather than replaced.
+
+[Uniwind's own installation guide](https://docs.uniwind.dev/quickstart) is worth reading for what
+its Metro options do and for the editor IntelliSense settings, neither of which the CLI touches.
+
+<Callout type="warn" title="NativeWind cannot stay">
+NativeWind is Tailwind for React Native too, and it also compiles `className` by wrapping Metro.
+Two transforms in one Metro config resolve classes through whichever wrapper ran last and fail
+naming neither library. Move across first —
+[Uniwind's migration guide](https://docs.uniwind.dev/migration-from-nativewind) is a few minutes —
+and `delacour doctor` will say so if you forget.
+</Callout>
+
+### Where the components land
+
+In a workspace `add` asks whether they belong to the app or to a package several apps share.
+[Monorepos](/docs/native/cli/monorepo) covers that, and [`init`](/docs/native/cli/init) is how to
+decide it without being asked.
+
+Then [use your first component](#use-your-first-component).
+
+## Let your agent do it
+
+Install the [skill](/docs/native/getting-started/skills) and your assistant copies real components
+instead of writing plausible ones:
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills"] }]} />
+
+Or paste this into any agent, with nothing installed:
+
+<AgentPrompt />
+
+## Use your first component
+
+Both paths land here. Two files: mount the provider once at the root, then use the component.
+
+```tsx title="src/app/_layout.tsx"
+import "../global.css";
+import { DelacourProvider } from "../components/ui/provider";
+import { Slot } from "expo-router";
+
+export default function Layout() {
   return (
     <DelacourProvider>
-      <View className="flex-1 items-center justify-center gap-4 bg-background">
-        <Button onPress={() => setCount(count + 1)}>Pressed {count} times</Button>
-        <Button variant="outline" onPress={() => setCount(0)}>
-          Reset
-        </Button>
-      </View>
+      <Slot />
     </DelacourProvider>
   );
 }
 ```
 
-<Callout type="warn" title="The CSS import stays first">
-Without it every component renders unstyled, and nothing logs an error. `DelacourProvider` is the
-gesture root every press needs above it — leave it out and presses stop landing, just as silently.
-</Callout>
-</Step>
+```tsx title="src/app/index.tsx"
+import { Button } from "../components/ui/button";
+import { useState } from "react";
+import { View } from "react-native";
 
-<Step>
-### Run it
+export default function Index() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View className="flex-1 items-center justify-center gap-4 bg-background">
+      <Button onPress={() => setCount(count + 1)}>Pressed {count} times</Button>
+      <Button variant="outline" onPress={() => setCount(0)}>
+        Reset
+      </Button>
+    </View>
+  );
+}
+```
+
+The imports are relative because this template declares no path aliases. Add
+`"paths": { "@/*": ["./src/*"] }` to `tsconfig.json` and `experiments.tsconfigPaths: true` to your
+Expo config and the CLI writes `@/components/ui/button` instead — the form every component page
+shows.
+
+<Callout type="warn" title="Both of these are silent failures">
+The CSS import must be the **first statement** of the root layout — this template already has it,
+and without it every component renders unstyled with nothing logged. `DelacourProvider` is the
+gesture root every press needs above it; leave it out and presses stop landing, just as quietly.
+</Callout>
+
+## Run it
 
 <InstallTabs commands={[{ verb: "dlx", packages: ["expo run:ios"] }]} />
 
 The components use native modules — Reanimated, Gesture Handler — so this is a native build, not
 Expo Go. The first one takes a few minutes; `expo run:android` is the same command for Android.
-</Step>
 
-<Step>
-### Check the wiring
+## Check the wiring
 
 <InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha doctor"] }]} />
 
-Every check is a failure that produces no error on its own. If the button rendered and counts,
-it passes; if something is off, `doctor` names the file and the fix.
-</Step>
-</Steps>
+Every check is a failure that produces no error on its own. If the button rendered and counts, it
+passes; if something is off, `doctor` names the file and the fix.
 
 ## Next
 

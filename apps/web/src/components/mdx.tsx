@@ -13,15 +13,21 @@ import { PreviewGrid } from "@/components/preview-grid";
 import { isFileHref } from "@/lib/shared";
 
 /**
- * Fumadocs' `a` routes every internal href through the client router. That is
- * right for a docs page and wrong for `/llms.txt`, `/llms-full.txt` and the
- * `.md` twins: those are route handlers with no component, so the router
- * matches the path and renders the 404 page. A plain anchor navigates the
- * document instead, in the same tab, and the handler answers — see
- * {@link isFileHref}.
+ * Fumadocs' `a` routes every internal href through the client router. Two kinds
+ * of href must not go that way.
+ *
+ * `/llms.txt`, `/llms-full.txt`, `/skills/**` and the `.md` twins are route
+ * handlers with no component, so the router matches the path and renders the
+ * 404 page — see {@link isFileHref}.
+ *
+ * A bare `#fragment` is not a navigation at all. TanStack's `Link` resolves it
+ * against the current route, and server and client disagree about the result:
+ * the server renders `/docs/…/#anchor`, the client renders `/docs/…` with
+ * `data-status="active"`, and React reports a hydration mismatch it will not
+ * patch up. A plain anchor is also what a fragment link *is*.
  */
 function Anchor({ href, ...props }: ComponentProps<"a">) {
-	if (href !== undefined && isFileHref(href)) return <a href={href} {...props} />;
+	if (href !== undefined && (href.startsWith("#") || isFileHref(href))) return <a href={href} {...props} />;
 	return <defaultMdxComponents.a href={href} {...props} />;
 }
 

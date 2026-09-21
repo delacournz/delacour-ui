@@ -8,6 +8,12 @@ import { defineConfig } from "vite";
 export default defineConfig({
 	server: {
 		port: 3000,
+		// Fail rather than wander. Vite's default is to take the next free port,
+		// and the next port here is argent's tool-server — so a busy 3000 served
+		// `{"error":"Missing or invalid Authorization header"}` from a different
+		// product on the URL a reader was told to open. `localhost` resolving to
+		// both stacks made it a coin flip, too: argent had IPv4, Vite had IPv6.
+		strictPort: true,
 		// All interfaces, not just loopback. `apps/playground`'s Generate CSS button
 		// opens this site at whatever host Metro reached the app on — a LAN address
 		// on a device, and on a simulator too whenever Metro was started on the LAN

@@ -10,7 +10,7 @@ The library takes no framework dependency and no third-party component kit.
 
 | Package | Description |
 | --- | --- |
-| [`@delacour/native-ui`](packages/native-ui) | The component library — 19 components, subpath exports, no build step |
+| [`@delacour/native-ui`](packages/native-ui) | The component library — one subpath export per component, no build step |
 | [`@delacour/playground`](apps/playground) | Expo app rendering every component on a device |
 | [`@delacour/biome-config`](packages/biome-config) | Lint and format rules |
 | [`@delacour/tsconfig`](packages/tsconfig) | Shared TypeScript configs |

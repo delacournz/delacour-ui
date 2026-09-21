@@ -5,16 +5,13 @@ icon: Rocket
 ---
 
 <Callout type="warn" title="Alpha">
-`@delacour/native-ui` and `delacour` are at `0.0.1-alpha.0`, published under npm's `alpha` tag.
-Nothing has been tested in a real app yet, and the API is still moving — component surfaces, prop
-names and token names can all change between releases.
+Every package here is on a `0.1.0-alpha.x` line, published under npm's `alpha` tag. The API is
+still moving — component surfaces, prop names and token names can all change between releases.
 
-`latest` deliberately points at nothing, so install the tag explicitly:
+`latest` follows the newest build, alpha included, so a bare install still resolves. Name the tag
+anyway: it is what keeps you on the prerelease line once a stable version exists.
 
-```bash
-bunx delacour@alpha init
-bun add @delacour/native-ui@alpha
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button"] }, { verb: "add", packages: ["@delacour/native-ui@alpha"] }]} />
 </Callout>
 
 <Callout title="Where the canonical record lives">
@@ -73,10 +70,6 @@ Releases for each package — those are authoritative when the two disagree.
 
 ### Changed
 
-- **The libraries publish under the `@delacour` org.** `delacour-react-native-ui` is now
-  `@delacour/native-ui` and `delacour-react-native-charts` is now `@delacour/charts`; the old names
-  are deprecated. Swap the package and the import prefix — nothing else moved. The CLI is still
-  `delacour`.
 - Compound components moved to one file per part, with the surface assembled by a closing
   `Object.assign`.
 - `Button`, `ListGroup` and `Screen` migrated onto `Text` rather than carrying their own type

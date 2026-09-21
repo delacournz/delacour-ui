@@ -24,8 +24,10 @@ bun test                 # unit + end-to-end against the local registry
 
 ```
 src/
-├── index.ts              commander wiring, and the one place a failure becomes a message
+├── index.ts              the shebang and the parse, and nothing else
+├── program.ts            commander wiring, and the one place a failure becomes a message
 ├── commands/             init, add, browse (list/search/view/info), diff, doctor, theme, mcp, skills
+│   └── manifest.ts       the command surface as data — read at test time only
 ├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
@@ -36,7 +38,9 @@ src/
 │   ├── jsonc.ts          tsconfig.json is JSONC and usually has comments
 │   ├── css-entry.ts      the Tailwind entry an app already has
 │   ├── root-layout.ts    where the app mounts everything, and what to put there
-│   └── write-files.ts    plan every file before writing any of it
+│   ├── write-files.ts    plan every file before writing any of it
+│   ├── exports-map.ts, package-scaffold.ts, shared-package.ts   the shared-package layout
+│   └── uniwind-env.ts    the type-shim constants
 ├── registry/             the registry, both halves
 │   ├── classify.ts       a source path → which item, which namespace, which target
 │   ├── canonicalise.ts   imports → @registry/* placeholders   (build time)
@@ -48,8 +52,6 @@ src/
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
 │   ├── source.ts, namespaces.ts, schema.ts
-├── project/              (continued) exports-map.ts, package-scaffold.ts, shared-package.ts —
-│                         the shared-package layout; uniwind-env.ts — the type-shim constants
 └── ui/                   output.ts (all printing), diff.ts (the line diff)
 
 The theme converter is NOT here. `@delacour/design-system/convert` owns it — see that package's
@@ -276,6 +278,23 @@ The MCP server runs `add` under `--silent` — its stdout is a JSON-RPC stream, 
 corrupt the protocol. Without a return value the agent copies a component and never learns it needs
 a package the project has not got. `AddResult` carries the plan, and `mcp` renders it into the tool
 reply. `null` is a run that copied nothing.
+
+### The program is a module, and the entry point is three lines
+
+`program.ts` builds the commander program; `index.ts` imports it and parses `process.argv`. Split
+because the command surface has to be **readable** — `commandManifest` walks the program, and
+`test/docs-commands.test.ts` holds every `delacour …` printed anywhere in this repository to it.
+Importing the entry point to get at the program would parse argv as a side effect.
+
+That test is the guard rule 1 is to the bundle: a flag that moves is caught here rather than in a
+reader's terminal. It scans `apps/web/content/docs/**`, the site's two structured command carriers,
+the agent skill and three READMEs, and checks the verb, every long flag, positional arity, and that
+a component named in an example is in `registry/registry.json`.
+
+It deliberately matches only what a reader can **copy** — a runner prefix, a shell-fence line, or a
+string inside `packages:` / `command:` / `install:`. A quoted sentence reads like a command to a
+regular expression (*"`delacour doctor` passes against the generated app"*), and a checker that
+fails on an accurate sentence is a checker somebody turns off.
 
 ### `skills` bundles its content rather than fetching it
 

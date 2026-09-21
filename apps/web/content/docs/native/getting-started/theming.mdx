@@ -44,16 +44,18 @@ palette colour or a `dark:` prefix. The variable swap handles the theme.
 
 Paste the file over `theme.css`, then:
 
-```bash
-npx delacour@alpha theme
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha theme"] }]} />
 
 Or point the command at the source and it writes `theme.css` for you:
 
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha theme ./src/app/globals.css"] }]} />
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha theme https://tweakcn.com/r/themes/<id>"] }]} />
+
+It also reads stdin, which is the shortest path from a generator's Copy button:
+
 ```bash
-npx delacour@alpha theme ./src/app/globals.css
-npx delacour@alpha theme https://tweakcn.com/r/themes/<id>
-pbpaste | npx delacour@alpha theme -
+pbpaste | bunx delacour@alpha theme -
 ```
 
 The one thing that cannot survive a straight paste is the wrapper. Uniwind reads a theme only from

@@ -52,8 +52,8 @@ export type InstallTabsProps = {
 const ITEMS = MANAGERS.map((manager) => manager.id);
 
 /**
- * Where `delacour init` puts a component, as the project imports it: the `ui`
- * alias it reads off a `"@/*": ["./src/*"]` mapping over the default
+ * Where the CLI puts a component, as the project imports it: the `ui` alias it
+ * reads off a `"@/*": ["./src/*"]` mapping over the default
  * `src/components/ui`. A project with no alias gets relative imports instead,
  * which the page says beside the line.
  */
@@ -135,11 +135,11 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 				<Accordions>
 					<Accordion title="First time in this project?">
 						<p className="mt-0 text-fd-muted-foreground text-sm">
-							<code>init</code> wires Metro and the CSS, copies the theme and the root provider in, and can take the
-							component in the same run. The <a href="/docs/native/getting-started">Quick start</a> is the whole path,
-							from an empty app to a rendered screen.
+							The same command. On a project with no <code>native-components.json</code> it wires Metro and the CSS,
+							copies the theme and the root provider in, and then adds the component. The{" "}
+							<a href="/docs/native/getting-started">Quick start</a> is the whole path, from an empty app to a rendered
+							screen.
 						</p>
-						<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha init --install ${entry.name}`] }]} />
 					</Accordion>
 				</Accordions>
 				<Requires entry={entry} />

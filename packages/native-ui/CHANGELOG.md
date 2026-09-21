@@ -1,5 +1,32 @@
 # @delacour/react-native-ui
 
+## 0.1.0-alpha.3
+
+### Minor Changes
+
+- [#53](https://github.com/delacournz/delacour-ui/pull/53) [`f05da78`](https://github.com/delacournz/delacour-ui/commit/f05da7876dcf7b63a99c3ec18dfe47f9d50c6657) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Name both libraries for what they are
+
+  `@delacour/react-native-ui` and `@delacour/react-native-charts` — the names they published under
+  before the scope, with the `delacour-` prefix traded for `@delacour/` rather than dropped. Every
+  subpath keeps its spelling (`@delacour/react-native-ui/button`, `@delacour/react-native-charts/core`),
+  so only the package half of an import changes.
+
+  The pair now matches: the charts package was briefly `@delacour/charts`, which did not say React
+  Native and did not sit beside its sibling. Neither intermediate spelling reached npm.
+
+  The CLI stays `delacour`, unscoped, because it is the thing people type:
+  `bunx delacour@alpha add button`.
+
+  `@types/react` is pinned in the workspace catalog as part of this: four packages declared three
+  different ranges, so two copies were always installed and only hoisting order decided which reached
+  the root. The rename changed that order, split `Ref` types across two copies and collapsed every
+  `ComponentRef<typeof Animated.View>` to `never`.
+
+### Patch Changes
+
+- Updated dependencies [[`f05da78`](https://github.com/delacournz/delacour-ui/commit/f05da7876dcf7b63a99c3ec18dfe47f9d50c6657)]:
+  - @delacour/react-native-charts@0.1.0-alpha.4
+
 ## 0.1.0-alpha.2
 
 ### Minor Changes

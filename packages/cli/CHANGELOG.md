@@ -1,5 +1,133 @@
 # delacour
 
+## 0.1.0-alpha.4
+
+### Minor Changes
+
+- [#49](https://github.com/delacournz/delacour-ui/pull/49) [`b8689cd`](https://github.com/delacournz/delacour-ui/commit/b8689cdc8210c4856edbbe28de5ee8b070616afe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add` sets the project up itself
+
+  `add` no longer fails on a project with no `native-components.json`. It runs `init` first — writing
+  the config, wrapping Metro, pointing Tailwind at the components and copying the theme and the root
+  provider in — and then adds what was asked for. That was previously a prompt, and only where there
+  was a terminal to ask in, so `--yes`, CI and every MCP call hit `MissingConfigError` while a human
+  sailed past. `--no-init` is the opt-out, and `-s, --src <dir>` forwards to `init` so a template that
+  keeps its files at the project root still needs one command.
+
+  `init` now returns the result of the `add` it ends on, so a caller that set a project up still
+  learns what the components need from npm.
+
+  New MCP tool `init_project`, for the layout an agent cannot infer — a shared package in a monorepo,
+  or a source directory that is not `src`. `add_components` needs it no more often than a person
+  needs `init`.
+
+- [#51](https://github.com/delacournz/delacour-ui/pull/51) [`09ea8bf`](https://github.com/delacournz/delacour-ui/commit/09ea8bfa066e1749622aee2a26fd511bb6be3348) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `delacour skills` installs an agent skill
+
+  An agent asked for "a button" writes plausible JSX — the right shape, and none of the parts that
+  matter: the icon that inherits its size from the button's context, the spinner that _replaces_ the
+  icon so the label does not shift, the `expo install` route for the native modules underneath.
+
+  `bunx delacour@alpha skills` installs a skill into whichever assistants a project uses — Claude
+  Code, Cursor, OpenCode or Codex, detected from the directories present, or named with `--agent`, in
+  `--scope project` or `user`. The files are bundled into the binary, so a run works offline and
+  installs the skill matching the version you are pinned to. The docs site serves the same bytes at
+  `/skills/delacour-ui/SKILL.md`.
+
+  The skill names no component on purpose. A catalogue on someone's disk is stale the day the next
+  component ships, and silently so — it teaches `list`, `view`, `add` and `doctor` instead, and spends
+  its own words on the failures that produce no error message.
+
+### Patch Changes
+
+- [#52](https://github.com/delacournz/delacour-ui/pull/52) [`9bf93d6`](https://github.com/delacournz/delacour-ui/commit/9bf93d67c6078e0ca512f8b265431753174c87b6) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Teach one verb, and hold the docs to the CLI
+
+  The Quick start forks before the first command — a new app, an existing one, or hand it to an
+  agent — and lands all three on one rendered Button. It scaffolds Expo's `with-router-uniwind`
+  example and never names `init`: `add` does that setup itself, so a reader learns one verb.
+
+  The landing page's hero says `add` too, the package path names Uniwind as a real setup step with
+  links to its own guide, and a handful of claims that had gone stale are corrected — the registry
+  holds no copy of the library's source, `/llms.txt` lives on `ui.delacour.co.nz`, and the releases
+  page no longer reports a version that was never published.
+
+  `docs-commands.test.ts` walks the commander program and holds every copyable `delacour …` in the
+  repository to it — verb, long flags, positional arity, and whether a component named in an example
+  is in the registry. It caught `add --src` before a reader did.
+
+- [#50](https://github.com/delacournz/delacour-ui/pull/50) [`1f0042b`](https://github.com/delacournz/delacour-ui/commit/1f0042bf4737075e596ff58a2e4a29babf07c6e8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `doctor` stops failing correct Metro configs, and tells you a path you can paste
+
+  - **`withUniwindConfig is not the outermost wrapper`, when it was.** The check required the export
+    expression to _begin_ with `withUniwindConfig`, so it failed both
+    `const c = withUniwindConfig(…); module.exports = c;` and the reassignment a Metro config uses
+    when it applies several wrappers in turn — `config = withUniwindConfig(config, …)`. A wrapper
+    genuinely applied after Uniwind still fails, which is the point of the check.
+  - **`cssEntryFile does not point at the configured entry` restated the problem rather than the
+    fix.** It now says which file Metro actually compiles and why that is the one that has to win.
+  - **The CSS import it told you to add did not resolve.** It was `./` plus the file's basename,
+    which is right only when the root layout sits in the same directory as the CSS. On the ordinary
+    Expo Router layout it is `../styles/global.css`, and that is what both `doctor` and `init` now
+    print — from one function.
+
+- [#50](https://github.com/delacournz/delacour-ui/pull/50) [`1f0042b`](https://github.com/delacournz/delacour-ui/commit/1f0042bf4737075e596ff58a2e4a29babf07c6e8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Adopt the Tailwind entry an app already has, and print the root layout
+
+  **One entry, never two.** `init` picked `<src>/styles/global.css` unless a wrapped Metro config
+  named another, so an app that had installed Uniwind and written its own `global.css` — without
+  wiring Metro to it yet — got a second entry. Tailwind then compiled the file holding the `@source`
+  globs while the app imported the one without them: every component unstyled, nothing logged, and
+  `doctor` reporting that nothing imports the entry. An entry already on disk is now adopted.
+
+  **The root layout is printed whole.** Two of the three follow-ups are edits to one file, so `init`
+  shows that file rather than describing it — and detects Expo Router, whose root layout is a
+  different file with a different shape (`app/_layout.tsx` rendering a `<Slot />`, not `App.tsx`).
+  The bullet and the snippet take their import paths from one function, so they cannot disagree.
+
+- [#55](https://github.com/delacournz/delacour-ui/pull/55) [`1947da7`](https://github.com/delacournz/delacour-ui/commit/1947da72a7b9c53aed55c6865c6f7c8985b04cb5) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Refresh the lockfile and drop an obsolete patch
+
+  `bun.lock` pinned `expo-modules-jsi@57.0.5` while a dependency already required `~57.1.0`, so
+  `bun install --frozen-lockfile` failed the moment anything forced a re-resolve. The patch that
+  pinning existed for — declaring `retainRuntimeScheduler` / `releaseRuntimeScheduler` for Swift
+  bridging — ships in `57.1.0` itself, so it and its `patchedDependencies` entry are gone.
+
+- [#49](https://github.com/delacournz/delacour-ui/pull/49) [`b8689cd`](https://github.com/delacournz/delacour-ui/commit/b8689cdc8210c4856edbbe28de5ee8b070616afe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Stop the last line suggesting a command that already ran
+
+  `add` delegates to `init` whenever a project has no config, so a run that copied `button` in ended
+  on _"Ready. `delacour add button` to get started."_ — the command the reader had just run. The outro
+  now names what landed instead: _"Ready. `button` is yours to edit."_
+
+  It no longer mentions `doctor` either. The follow-up block directly above it already ends on
+  `delacour doctor`, and two consecutive lines pointing at the same command read as a glitch rather
+  than as emphasis.
+
+- [#50](https://github.com/delacournz/delacour-ui/pull/50) [`1f0042b`](https://github.com/delacournz/delacour-ui/commit/1f0042bf4737075e596ff58a2e4a29babf07c6e8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Work correctly on a project that already has Uniwind
+
+  Three bugs, all found against Expo's `with-router-uniwind` example — a scaffold that arrives with
+  Uniwind, Tailwind and Metro already wired.
+
+  - **`init` wrote its `@source` block into a file Metro does not compile.** A wired Metro config
+    names its own `cssEntryFile`, and `init` recorded `<src>/styles/global.css` regardless — so
+    Tailwind scanned a file with no globs in it, every class the components use was dropped, and
+    every component rendered unstyled with nothing logged. It now reads `cssEntryFile` and `dtsFile`
+    off the wrapped config and records those.
+  - **`doctor` failed the official template.** Its outermost-wrapper check required the export
+    expression to begin with `withUniwindConfig`, and that template assigns the wrapped config to a
+    variable before exporting it. The exported name is now followed to the last thing assigned to it
+    above the export, a few hops deep.
+  - **`init` asked for a CSS import that was already there.** The follow-up list is now built from
+    what the project actually has, so neither the CSS import nor the provider is listed once it is
+    mounted.
+
+- [#50](https://github.com/delacournz/delacour-ui/pull/50) [`1f0042b`](https://github.com/delacournz/delacour-ui/commit/1f0042bf4737075e596ff58a2e4a29babf07c6e8) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Refuse to stack a second Tailwind transform
+
+  Nothing noticed when a project already had **NativeWind**. It is Tailwind for React Native too: it
+  compiles `className`, and it does that by wrapping Metro. Wrapping Metro again on top of it leaves
+  classes resolving through whichever wrapper ran last and a build that fails naming neither library.
+
+  `init` now warns before it touches `metro.config.js`, and `doctor` carries a `Styling` check that
+  keeps saying so.
+
+  It is deliberately not fixed automatically. Which of the two a project keeps is the owner's call,
+  and uninstalling someone's styling library is not a thing a component CLI gets to do — so the
+  message points at Uniwind's migration guide instead.
+
 ## 0.1.0-alpha.3
 
 ### Patch Changes

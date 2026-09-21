@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
-import { basename, dirname, join, relative, resolve } from "node:path";
+import { basename, dirname, join, relative, resolve, sep } from "node:path";
 import * as clack from "@clack/prompts";
 import { detectThemeShape } from "@delacour/design-system/convert";
 import { x } from "tinyexec";
@@ -8,6 +8,7 @@ import { loadConfig, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { findRootLayout } from "../project/root-layout";
 import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import { createOutput, type Output, style } from "../ui/output";
@@ -63,6 +64,7 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 	return [
 		checkFramework(project),
 		checkNewArchitecture(expoConfig, project),
+		checkStylingConflict(project),
 		checkUniwindInstalled(project),
 		await checkMetro(config),
 		await checkTailwindSources(config),
@@ -143,6 +145,44 @@ function checkNewArchitecture(expoConfig: ExpoConfig | null, project: ProjectInf
 	};
 }
 
+/**
+ * Styling libraries that cannot share a project with Uniwind.
+ *
+ * NativeWind is the one that matters: it is Tailwind for React Native too, it
+ * compiles `className` too, and it works by wrapping Metro too. A project
+ * holding both stacks one transform on the other — classes resolve through
+ * whichever wrapper ran last, and the build fails naming neither library.
+ */
+const CONFLICTING_STYLING = ["nativewind"] as const;
+
+/**
+ * Is anything here going to fight Uniwind for `className`?
+ *
+ * Exported and pure so the table is testable, and separate from
+ * `checkUniwindInstalled` because the two say opposite things: that one is
+ * about a package being absent, this one about a package being present.
+ *
+ * Deliberately not auto-fixed. Which of the two a project keeps is the owner's
+ * call, and uninstalling someone's styling library to make room is not a thing
+ * a component CLI gets to do.
+ */
+export function checkStylingConflict(project: ProjectInfo): Check {
+	const declared = {
+		...project.packageJson?.dependencies,
+		...project.packageJson?.devDependencies,
+	};
+	const found = CONFLICTING_STYLING.filter((name) => name in declared);
+
+	if (found.length === 0) return { name: "Styling", status: "pass", detail: "nothing competing with Uniwind" };
+
+	return {
+		name: "Styling",
+		status: "fail",
+		detail: `${found.join(", ")} installed — it compiles className too, and wraps Metro to do it`,
+		fix: "Two Tailwind transforms cannot share one Metro config. Remove it, or follow Uniwind's migration guide: https://docs.uniwind.dev/migration-from-nativewind",
+	};
+}
+
 function checkUniwindInstalled(project: ProjectInfo): Check {
 	if (project.hasUniwind && project.hasTailwind) {
 		return { name: "Uniwind", status: "pass", detail: "uniwind and tailwindcss installed" };
@@ -155,6 +195,70 @@ function checkUniwindInstalled(project: ProjectInfo): Check {
 		detail: `missing ${missing.join(", ")}`,
 		fix: `npx expo install ${missing.join(" ")}`,
 	};
+}
+
+/**
+ * Is `withUniwindConfig` the last wrapper applied?
+ *
+ * Exported and pure because the decision has a table behind it, and because
+ * the answer was wrong on real configs: Expo's own `with-router-uniwind`
+ * example assigns the wrapped config to a variable and exports *that*, and a
+ * Metro config that applies several wrappers in turn reassigns one binding —
+ * `config = withX(config)` — rather than naming each step. An "export
+ * expression starts with withUniwindConfig" test reads both as failures, and a
+ * check that fails on a correct config is a check people learn to ignore.
+ *
+ * So the exported expression is followed: a bare identifier resolves to the
+ * **last** thing assigned to that name above the export, and that is tested in
+ * turn, up to `MAX_HOPS`. The last assignment rather than the first, because
+ * the first is usually `getDefaultConfig(...)` and the wrapping comes after.
+ *
+ * Everything it cannot follow is a failure rather than a pass. Saying "I
+ * cannot tell" as a pass is how a silent unstyled build ships.
+ */
+const EXPORTED = /(?:module\.exports\s*=|export default)\s*([\s\S]*)$/;
+const BARE_IDENTIFIER = /^([A-Za-z_$][\w$]*)\s*;?\s*$/;
+const MAX_HOPS = 4;
+
+export function isOutermostWrapper(content: string): boolean {
+	const exported = EXPORTED.exec(content);
+	if (!exported) return false;
+
+	// Only what is above the export can be what was exported.
+	const body = content.slice(0, exported.index);
+	let expression = (exported[1] ?? "").trim();
+
+	for (let hop = 0; hop <= MAX_HOPS; hop += 1) {
+		if (expression.startsWith("withUniwindConfig")) return true;
+
+		const name = BARE_IDENTIFIER.exec(expression)?.[1];
+		if (!name) return false;
+
+		const assigned = lastAssignment(body, name);
+		if (assigned === null) return false;
+
+		expression = assigned;
+	}
+
+	return false;
+}
+
+/**
+ * The last value given to `name`, declared or reassigned.
+ *
+ * `\b` on both sides keeps `config` from matching `uniwindConfig`, and the
+ * lookahead keeps `=` from matching the first half of `===`. A property
+ * assignment — `config.resolver = …` — is excluded by the boundary, which
+ * matters: it is the line between "this binding was rewrapped" and "something
+ * hanging off it was edited".
+ */
+function lastAssignment(body: string, name: string): string | null {
+	const pattern = new RegExp(`(?:(?:const|let|var)\\s+)?\\b${name}\\b\\s*=\\s*(?!=)([\\s\\S]*?);`, "g");
+
+	let last: string | null = null;
+	for (const match of body.matchAll(pattern)) last = (match[1] ?? "").trim();
+
+	return last;
 }
 
 /**
@@ -178,8 +282,7 @@ async function checkMetro(config: ResolvedConfig): Promise<Check> {
 		};
 	}
 
-	const exported = /(?:module\.exports\s*=|export default)\s*([\s\S]*)$/.exec(content)?.[1] ?? "";
-	if (!exported.trimStart().startsWith("withUniwindConfig")) {
+	if (!isOutermostWrapper(content)) {
 		return {
 			name: "Metro",
 			status: "fail",
@@ -194,7 +297,7 @@ async function checkMetro(config: ResolvedConfig): Promise<Check> {
 			name: "Metro",
 			status: "warn",
 			detail: "cssEntryFile does not point at the configured entry",
-			fix: `${CONFIG_FILENAME} says app.css is ${expected}.`,
+			fix: `Metro compiles the file it names here and no other, so ${CONFIG_FILENAME}'s \`app.css\` — currently ${expected} — has to match it. Point one at the other; the @source globs and the import below are both written against \`app.css\`.`,
 		};
 	}
 
@@ -422,15 +525,55 @@ async function checkCssEntryImported(config: ResolvedConfig): Promise<Check> {
 		name: "CSS entry",
 		status: "fail",
 		detail: `nothing imports ${config.app.css}`,
-		fix: `Add \`import "${importSpecifierFor(config)}";\` as the first statement of your root layout — without it every component renders unstyled.`,
+		fix: `Add \`import "${cssImportSpecifier(config)}";\` as the first statement of your root layout — without it every component renders unstyled.`,
 	};
 }
 
-/** The specifier a root layout would use, preferring the alias when there is one. */
-function importSpecifierFor(config: ResolvedConfig): string {
-	const alias = config.aliases.styles;
-	if (alias) return `${alias.replace(/\/+$/, "")}/${basename(config.app.resolved.css)}`;
-	return `./${basename(config.app.resolved.css)}`;
+/**
+ * How the root layout refers to the two things it has to import.
+ *
+ * Exported because `init` prints the same instruction, and two spellings of one
+ * line is one of them being wrong.
+ *
+ * The CSS half was `./` plus the file's basename, which resolves only when the
+ * layout happens to sit in the same directory as the entry. On the ordinary
+ * Expo Router layout — `src/app/_layout.tsx` importing `src/styles/global.css`
+ * — `./global.css` resolves to nothing, so the instruction for the failure
+ * that renders every component unstyled was itself unpasteable.
+ *
+ * An alias wins when the project has one, because that is what the copied
+ * components already import by. Otherwise both are computed from wherever the
+ * root layout is, and from the app root when there is none to anchor on.
+ */
+export function layoutSpecifiers(config: ResolvedConfig): { css: string; provider: string } {
+	const appRoot = config.app.resolved.root;
+	const layout = findRootLayout(appRoot);
+	const from = layout ? dirname(join(appRoot, layout.path)) : appRoot;
+
+	const styles = config.aliases.styles;
+	const ui = config.aliases.ui;
+
+	return {
+		css: styles
+			? `${styles.replace(/\/+$/, "")}/${basename(config.app.resolved.css)}`
+			: relativeSpecifier(from, config.app.resolved.css),
+		provider: `${ui ? ui.replace(/\/+$/, "") : relativeSpecifier(from, config.directories.ui)}/provider`,
+	};
+}
+
+/** The specifier a root layout would use to import the Tailwind entry. */
+export function cssImportSpecifier(config: ResolvedConfig): string {
+	return layoutSpecifiers(config).css;
+}
+
+/** A relative path as an import specifier: `../styles/global.css`, `./global.css`. */
+function relativeSpecifier(from: string, target: string): string {
+	const path = toPosix(relative(from, target));
+	return path.startsWith(".") ? path : `./${path}`;
+}
+
+function toPosix(path: string): string {
+	return sep === "/" ? path : path.split(sep).join("/");
 }
 
 /**
@@ -438,7 +581,7 @@ function importSpecifierFor(config: ResolvedConfig): string {
  * project may reach its entry by alias, by relative path, or from a directory
  * two levels up.
  */
-async function filesImporting(root: string, target: string): Promise<string[]> {
+export async function filesImporting(root: string, target: string): Promise<string[]> {
 	let entries: string[];
 	try {
 		entries = await readdir(root, { recursive: true });

@@ -223,6 +223,25 @@ describe("a shared package in a monorepo", () => {
 	});
 });
 
+async function read(root: string, path: string): Promise<string> {
+	return readFile(join(root, path), "utf-8");
+}
+
+async function exists(root: string, path: string): Promise<boolean> {
+	return Bun.file(join(root, path)).exists();
+}
+
+/** Every file the CLI wrote into the project's source directories. */
+async function written(root: string): Promise<string[]> {
+	const { readdir } = await import("node:fs/promises");
+	const entries = await readdir(join(root, "src"), { recursive: true, withFileTypes: true });
+
+	return entries
+		.filter((entry) => entry.isFile())
+		.map((entry) => join(entry.parentPath, entry.name).slice(root.length + 1))
+		.filter((path) => !path.includes("/app/"));
+}
+
 /**
  * `add` in a project that has never been set up.
  *
@@ -279,21 +298,120 @@ describe("add in an uninitialised app", () => {
 	});
 });
 
-async function read(root: string, path: string): Promise<string> {
-	return readFile(join(root, path), "utf-8");
-}
+/**
+ * A project that already has Uniwind, from Expo's `with-router-uniwind`
+ * example — the scaffold the Quick start sends people to.
+ *
+ * Metro is already wrapped there, and it names a CSS entry of the template's
+ * own choosing: `src/global.css`, not the `src/styles/global.css` this CLI
+ * would have picked. `init` used to write its `@source` block into the path it
+ * preferred and leave Metro pointing at the other one, so Tailwind compiled a
+ * file with no globs in it and every component rendered unstyled — silently,
+ * which is the failure mode this whole library keeps warning about.
+ */
+describe("an app that already has Uniwind wired", () => {
+	let root: string;
 
-async function exists(root: string, path: string): Promise<boolean> {
-	return Bun.file(join(root, path)).exists();
-}
+	beforeAll(async () => {
+		root = await scaffold("uniwind-app");
+		await add(["button"], { ...SHARED, cwd: root });
+	});
 
-/** Every file the CLI wrote into the project's source directories. */
-async function written(root: string): Promise<string[]> {
-	const { readdir } = await import("node:fs/promises");
-	const entries = await readdir(join(root, "src"), { recursive: true, withFileTypes: true });
+	test("records the CSS entry Metro actually compiles", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+		expect(config.app.css).toBe("src/global.css");
+	});
 
-	return entries
-		.filter((entry) => entry.isFile())
-		.map((entry) => join(entry.parentPath, entry.name).slice(root.length + 1))
-		.filter((path) => !path.includes("/app/"));
+	test("adds its block to that file, and creates no second one", async () => {
+		expect(await read(root, "src/global.css")).toContain("delacour:start");
+		await expect(exists(root, "src/styles/global.css")).resolves.toBe(false);
+	});
+
+	test("keeps the template's own imports above the block", async () => {
+		const css = await read(root, "src/global.css");
+
+		expect(css).toContain('@import "tailwindcss";');
+		expect(css).toContain('@import "uniwind";');
+		expect(css.indexOf('@import "tailwindcss"')).toBeLessThan(css.indexOf("delacour:start"));
+	});
+
+	test("scans where the components landed", async () => {
+		const css = await read(root, "src/global.css");
+		expect(css).toContain('@source "./components/ui";');
+	});
+
+	test("leaves the wrapped Metro config alone", async () => {
+		const metro = await read(root, "metro.config.js");
+
+		expect(metro).toContain('cssEntryFile: "./src/global.css"');
+		// One wrapper, not two.
+		expect(metro.match(/withUniwindConfig/g)?.length).toBe(2);
+	});
+
+	test("records the type shim Metro generates, not one of its own", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+		expect(config.app.uniwindTypes).toBe("src/uniwind-types.d.ts");
+	});
+
+	test("writes relative imports, since the template has no path aliases", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+		expect(config.aliases).toEqual({});
+
+		const separator = await read(root, "src/components/ui/separator/separator.tsx");
+		expect(separator).toContain('from "../../../lib/tv"');
+		expect(separator).not.toContain("@registry/");
+	});
+});
+
+/**
+ * Uniwind installed, Metro not yet wired, and a Tailwind entry already on disk.
+ *
+ * Every app that ran `bun add uniwind tailwindcss`, made a `global.css` and
+ * stopped is in this state. `init` used to write a *second* entry at its own
+ * default path and wire Metro to that, leaving the layout importing the first
+ * one — so Tailwind compiled the file with the `@source` globs while the app
+ * loaded the file without them, and every component rendered unstyled.
+ */
+describe("an app with a Tailwind entry but no Metro wrapper", () => {
+	let root: string;
+
+	beforeAll(async () => {
+		root = await scaffold("uniwind-app");
+		// Uniwind installed and `src/global.css` present, but Metro untouched.
+		await write(root, "metro.config.js", UNWIRED_METRO);
+		await add(["button"], { ...SHARED, cwd: root });
+	});
+
+	test("adopts the entry the app already has", async () => {
+		const config = await readConfig(join(root, "native-components.json"));
+		expect(config.app.css).toBe("src/global.css");
+	});
+
+	test("writes no second entry", async () => {
+		await expect(exists(root, "src/styles/global.css")).resolves.toBe(false);
+	});
+
+	test("wires Metro to that same file", async () => {
+		const metro = await read(root, "metro.config.js");
+
+		expect(metro).toContain("withUniwindConfig");
+		expect(metro).toContain('cssEntryFile: "./src/global.css"');
+	});
+
+	test("leaves the block where the layout's import already points", async () => {
+		expect(await read(root, "src/global.css")).toContain("delacour:start");
+		expect(await read(root, "src/app/_layout.tsx")).toContain('import "../global.css"');
+	});
+});
+
+const UNWIRED_METRO = `const { getDefaultConfig } = require("expo/metro-config");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = config;
+`;
+
+async function write(root: string, path: string, content: string): Promise<void> {
+	const { writeFile } = await import("node:fs/promises");
+	await writeFile(join(root, path), content, "utf-8");
 }

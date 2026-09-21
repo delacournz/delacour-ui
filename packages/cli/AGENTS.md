@@ -34,6 +34,8 @@ src/
 │   ├── metro.ts          wrapping the export with withUniwindConfig
 │   ├── package-manager.ts  the expo install / pm add split
 │   ├── jsonc.ts          tsconfig.json is JSONC and usually has comments
+│   ├── css-entry.ts      the Tailwind entry an app already has
+│   ├── root-layout.ts    where the app mounts everything, and what to put there
 │   └── write-files.ts    plan every file before writing any of it
 ├── registry/             the registry, both halves
 │   ├── classify.ts       a source path → which item, which namespace, which target
@@ -199,6 +201,55 @@ manager unprompted. `src/index.ts` declares `--install` first for the same reaso
 `add` therefore always prints what the components need and only sometimes installs it. The report
 is `reportDependencies`, built from `planDependencies` in `project/package-manager.ts`, which is
 pure and tested; the decision is `shouldInstall`, which is three lines and no cleverness.
+
+### An existing Tailwind entry is adopted, never duplicated
+
+The entry is decided in one place, in this order:
+
+1. **`cssEntryFile` off a wrapped `metro.config.js`** — `readUniwindPaths`. Metro compiles the file
+   it names and no other.
+2. **A Tailwind entry already on disk** — `findTailwindEntry`, a `.css` importing `tailwindcss`,
+   shallowest first. This is every app that ran `bun add uniwind tailwindcss`, wrote a `global.css`
+   and stopped.
+3. The default, `<src>/styles/global.css`.
+
+Writing a second entry is the failure all of this prevents, and it is silent: Tailwind compiles the
+file holding the `@source` globs, the app imports the one without them, every component renders
+unstyled, and `doctor` reports that nothing imports the entry it was told about. Both fixture apps
+under `test/fixtures/` cover a branch of it.
+
+### The root layout is printed, not described
+
+Two of the three follow-ups are edits to one file, so `init` prints that file whole —
+`renderRootLayout`, from `project/root-layout.ts`.
+
+Expo Router is detected because its root layout is a **different file with a different shape**:
+`app/_layout.tsx` rendering a `<Slot />`, not an `App.tsx` rendering the app. Sending a Router app
+to `App.tsx` names a file that does not exist.
+
+`layoutSpecifiers` in `doctor.ts` computes both imports, and `followUps` uses it too. A bullet and a
+snippet disagreeing about one import path is worse than either alone — which is what shipped first,
+`./src/components/ui/provider` in the bullet against `../components/ui/provider` in the file.
+
+### A project that already has Uniwind keeps its own CSS entry
+
+`readUniwindPaths` reads `cssEntryFile` and `dtsFile` off an already-wrapped `metro.config.js`, and
+`buildConfig` records those rather than the `<src>/styles/global.css` this CLI would otherwise pick.
+
+Metro compiles **that file and no other**. Writing the `@source` block into a path of our own
+choosing left Tailwind scanning a file with no globs in it, so every class the components use was
+dropped and every component rendered unstyled — with nothing logged, on Expo's own
+`with-router-uniwind` example, which is the scaffold the Quick start sends people to.
+`test/fixtures/uniwind-app` is that template, and the end-to-end block over it is what pins this.
+
+`doctor`'s outermost-wrapper check had the same shape of bug: it required the *export expression* to
+start with `withUniwindConfig`, and that template assigns the wrapped config to a variable first.
+`isOutermostWrapper` follows one level of indirection and is exported so the table is testable. A
+check that fails on the official scaffold is a check people learn to ignore.
+
+`followUps` takes what the project already has, for the same reason — that template imports its CSS
+entry on line one of the root layout, and an instruction to add it teaches the reader the list is
+not about their project.
 
 ### `add --no-init` is declared alone, and that is the opposite decision
 

@@ -49,6 +49,39 @@ const IMPORT = 'import { withUniwindConfig } from "uniwind/metro";';
 const COMMONJS_EXPORT = /module\.exports\s*=\s*([\s\S]+?);?\s*$/;
 const ESM_EXPORT = /export default\s+([\s\S]+?);?\s*$/;
 
+/** What an already-wired config tells Metro to compile, as written in the file. */
+export type UniwindPaths = {
+	/** `cssEntryFile`, relative to the Metro config's own directory. */
+	css?: string;
+	/** `dtsFile`, same. */
+	types?: string;
+};
+
+const CSS_ENTRY = /cssEntryFile\s*:\s*["'`]([^"'`]+)["'`]/;
+const DTS_FILE = /dtsFile\s*:\s*["'`]([^"'`]+)["'`]/;
+
+/**
+ * Reads the paths a wrapped Metro config already names.
+ *
+ * A project that arrives with Uniwind set up — Expo's `with-router-uniwind`
+ * example is the common one — has chosen its own CSS entry, and Metro compiles
+ * **that file and no other**. Writing the `@source` block into the path this
+ * CLI would have picked leaves Tailwind scanning a file with no globs in it, so
+ * every class the components use is dropped and every one of them renders
+ * unstyled. Nothing errors; the app just looks wrong.
+ *
+ * So the wired config wins. Returns nothing when the config is not wired, in
+ * which case `init` is about to wrap it with paths of its own.
+ */
+export function readUniwindPaths(existing: string | null): UniwindPaths {
+	if (!existing?.includes("withUniwindConfig")) return {};
+
+	return {
+		css: CSS_ENTRY.exec(existing)?.[1],
+		types: DTS_FILE.exec(existing)?.[1],
+	};
+}
+
 export function patchMetroConfig(existing: string | null, options: MetroPatchOptions): MetroPatch {
 	const wrapper = optionsLiteral(options);
 

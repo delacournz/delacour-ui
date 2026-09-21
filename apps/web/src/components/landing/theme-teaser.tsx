@@ -46,7 +46,7 @@ function PresetChip({ preset }: { preset: PresetShortcut }): ReactElement {
 
 	return (
 		<Link
-			className="group/chip block rounded-card border border-fd-border transition-colors hover:border-fd-primary/50"
+			className="group/chip block overflow-hidden rounded-card border border-fd-border transition-colors hover:border-fd-primary/50"
 			search={{ preset: preset.code }}
 			to="/theme"
 		>
@@ -74,7 +74,7 @@ function Swatch({
 
 	return (
 		<span
-			className="flex flex-col gap-3 rounded-[inherit] p-3"
+			className="flex flex-col gap-3 p-3"
 			style={{ background: swatch(mode, "background"), color: swatch(mode, "foreground") }}
 		>
 			<span

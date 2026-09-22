@@ -196,9 +196,11 @@ describe("expo-insights", () => {
 /**
  * What the privacy manifest declares the app collects, against what it
  * actually sends: `expo-insights`' launch ping (an install id, counted for
- * analytics) and `expo-updates`' check (the same id, and a crash's message
- * after a crash, for app functionality). Apple builds the app's privacy report
- * from this file, and the App Store listing's answers have to agree with it.
+ * analytics), `expo-updates`' check (the same id, and a crash's message after
+ * a crash, for app functionality) and `expo-observe`'s reports (the same id,
+ * the screens opened, startup and render timings, device conditions, and
+ * errors with their stacks). Apple builds the app's privacy report from this
+ * file, and the App Store listing's answers have to agree with it.
  *
  * Prebuild merges these into the template's `PrivacyInfo.xcprivacy`, which
  * keeps the required-reason API entries the template already carries.
@@ -236,8 +238,23 @@ describe("ios.privacyManifests", () => {
 		);
 	});
 
-	test("declares the crash message the update check carries", () => {
-		expect(purposesOf("CrashData")).toContain("NSPrivacyCollectedDataTypePurposeAppFunctionality");
+	test("declares the crash message the update check carries, and Observe's error reports", () => {
+		expect(purposesOf("CrashData")).toEqual(
+			expect.arrayContaining([
+				"NSPrivacyCollectedDataTypePurposeAnalytics",
+				"NSPrivacyCollectedDataTypePurposeAppFunctionality",
+			])
+		);
+	});
+
+	test("declares Observe's startup and render timings", () => {
+		expect(purposesOf("PerformanceData")).toContain("NSPrivacyCollectedDataTypePurposeAnalytics");
+	});
+
+	// Battery, thermal state, network type, dropped frames and the device model
+	// ride on Observe's timings; none is a crash and none is a timing.
+	test("declares the device conditions Observe attaches", () => {
+		expect(purposesOf("OtherDiagnosticData")).toContain("NSPrivacyCollectedDataTypePurposeAnalytics");
 	});
 
 	// Nothing the app sends carries a name or an account, and none of it is

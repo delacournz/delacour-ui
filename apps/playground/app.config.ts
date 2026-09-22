@@ -88,8 +88,10 @@ const expoConfig: ExpoConfig = {
 		bundleIdentifier: "nz.co.delacour.ui.playground",
 		// What the app sends, declared the way Apple builds its privacy report:
 		// `expo-insights`' launch ping (an install id and the launch itself, for
-		// analytics) and `expo-updates`' check (the same id, and a crash's message
-		// after a crash, to keep updates working). Nothing is linked to a person
+		// analytics), `expo-updates`' check (the same id, and a crash's message
+		// after a crash, to keep updates working) and `expo-observe`'s reports (the
+		// same id, the screens opened, startup and render timings, device
+		// conditions, and errors with their stacks). Nothing is linked to a person
 		// and nothing tracks. Prebuild merges this into the template's
 		// PrivacyInfo.xcprivacy, keeping its required-reason API entries. The App
 		// Store listing's privacy answers and apps/web's /privacy page must say the
@@ -116,7 +118,22 @@ const expoConfig: ExpoConfig = {
 					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypeCrashData",
 					NSPrivacyCollectedDataTypeLinked: false,
 					NSPrivacyCollectedDataTypeTracking: false,
-					NSPrivacyCollectedDataTypePurposes: ["NSPrivacyCollectedDataTypePurposeAppFunctionality"],
+					NSPrivacyCollectedDataTypePurposes: [
+						"NSPrivacyCollectedDataTypePurposeAnalytics",
+						"NSPrivacyCollectedDataTypePurposeAppFunctionality",
+					],
+				},
+				{
+					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypePerformanceData",
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ["NSPrivacyCollectedDataTypePurposeAnalytics"],
+				},
+				{
+					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypeOtherDiagnosticData",
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ["NSPrivacyCollectedDataTypePurposeAnalytics"],
 				},
 			],
 		},

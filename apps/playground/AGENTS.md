@@ -1155,13 +1155,17 @@ the stores. The app version is the only field that separates them, and a local b
 **There is no consent prompt, by decision rather than omission.** The ping leaves from native code
 before any JavaScript runs, and the module has no API to hold or cancel it, so an opt-in cannot gate
 it. The app discloses it instead — on the privacy policy and on both stores' privacy forms, below.
-Anything that needs consent later — screen views, events, replay — needs its own SDK and a prompt,
-and cannot ride on this one.
+[Observe](#observe) is disclosed the same way, though it is not in the same position: its
+`dispatchingEnabled` option stops it at runtime, so an in-app switch or an opt-in could gate it.
+None is wired today. Anything that needs consent later — custom events, identified users, replay —
+needs its own SDK and a prompt.
 
-**The privacy manifest says what both Expo modules send.** `ios.privacyManifests` in
-`app.config.ts` declares Product Interaction, Device ID and Crash Data — the launch ping, the
-install id it shares with `expo-updates`' check, and the crash message that check carries after a
-crash — none linked, none tracking. `app.config.test.ts` holds those declarations, and
+**The privacy manifest says what the three Expo modules send.** `ios.privacyManifests` in
+`app.config.ts` declares Product Interaction, Device ID, Crash Data, Performance Data and Other
+Diagnostic Data — the launch ping and the screens Observe records, the install id all three modules
+share, the crash message the update check carries and Observe's error reports, Observe's startup and
+render timings, and the battery, thermal, network and frame readings it attaches — none linked,
+none tracking. `app.config.test.ts` holds those declarations, and
 `apps/web/src/lib/privacy.test.ts` holds the public policy to the same modules, down to the fields
 the launch ping sends.
 
@@ -1204,11 +1208,13 @@ installs pods, so a release build carries both — check the file after `pod ins
 - **Store privacy declarations.** Both stores ask outside the code, and their answers have to
   agree with `ios.privacyManifests` and with [`/privacy`](https://ui.delacour.co.nz/privacy). App
   Store Connect → App Privacy: **Usage Data → Product Interaction** (Analytics), **Identifiers →
-  Device ID** (Analytics, App Functionality) and **Diagnostics → Crash Data** (App Functionality),
-  none linked to the user and none used for tracking, with the privacy policy URL set to
-  `https://ui.delacour.co.nz/privacy`. Play Console → Data safety: **App activity → App
-  interactions** (Analytics), **Device or other IDs** (Analytics, App functionality) and **App info
-  and performance → Crash logs** (App functionality), encrypted in transit, with the same URL.
+  Device ID** (Analytics, App Functionality), **Diagnostics → Crash Data** (Analytics, App
+  Functionality), **Diagnostics → Performance Data** (Analytics) and **Diagnostics → Other
+  Diagnostic Data** (Analytics), none linked to the user and none used for tracking, with the
+  privacy policy URL set to `https://ui.delacour.co.nz/privacy`. Play Console → Data safety: **App
+  activity → App interactions** (Analytics), **Device or other IDs** (Analytics, App
+  functionality), and **App info and performance → Crash logs, Diagnostics and Other app
+  performance data** (Analytics, App functionality), encrypted in transit, with the same URL.
 - **CI on the release branch.** `.github/workflows/ci.yml` runs on
   `[main, develop, release/playground/*]`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub
@@ -1220,9 +1226,11 @@ installs pods, so a release build carries both — check the file after `pod ins
 `expo-observe` reports to the **Observe** tab of the EAS project: cold and warm
 launch, time to first render, time to interactive, bundle load, update download
 times, a render time per route (`cold_ttr` on first visit, `warm_ttr` after),
-and JavaScript errors and native crashes. It is
-the only telemetry in the app, and nothing it sends identifies a person —
-installs are anonymous ids.
+and JavaScript errors and native crashes. With `expo-insights`' launch ping (see
+[Insights](#insights)) it is one of the app's two telemetry sources, and nothing
+either sends identifies a person — installs are anonymous ids. Both are disclosed
+on [`/privacy`](https://ui.delacour.co.nz/privacy), and `apps/web`'s
+`privacy.test.ts` fails if either is installed without a disclosure naming it.
 
 Three pieces, all in [`src/app/_layout.tsx`](src/app/_layout.tsx):
 

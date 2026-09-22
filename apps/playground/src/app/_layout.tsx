@@ -2,11 +2,13 @@ import "../styles/global.css";
 import { NavigationTheme } from "@delacour/react-native-ui/expo/navigation-theme";
 import { useThemeColor } from "@delacour/react-native-ui/hooks/use-theme-color";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
+import { Observe, ObserveRoot } from "expo-observe";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
-import { useEffect } from "react";
+import { type ReactElement, useEffect } from "react";
 import { ThemeTrigger } from "@/components/theme/theme-trigger";
 import { restoreDesignSystem } from "@/design-system/store";
+import { observeConfig } from "@/lib/observe";
 
 /**
  * The stored design system, applied before anything renders.
@@ -18,6 +20,16 @@ import { restoreDesignSystem } from "@/design-system/store";
  * import above, which is what registers the themes it writes into.
  */
 restoreDesignSystem();
+
+/**
+ * EAS Observe, configured before `ObserveRoot` mounts.
+ *
+ * At module scope because it has to be: the expo-router integration is read
+ * once, when `ObserveRoot`'s provider first renders, and `expo-observe` throws
+ * if it changes after the app has mounted. What the config holds, and why, is
+ * in `observeConfig`.
+ */
+Observe.configure(observeConfig(process.env.EXPO_PUBLIC_OBSERVE_IN_DEBUG));
 
 /**
  * Paints the native root view — the layer beneath the whole React tree.
@@ -103,8 +115,23 @@ function SystemBackground(): null {
  *
  * Deliberately mounted with no props: the defaults are what a consuming app
  * gets, so a regression in one of them shows up here first.
+ *
+ * `ObserveRoot` wraps the whole of it, outside `DelacourProvider`, so time to
+ * first render is marked once everything below has mounted. It renders a
+ * fragment and nothing else — no view, no boundary — so it changes no layout.
+ *
+ * The app is interactive once the first screen has mounted: the design system
+ * is read synchronously from MMKV and the typefaces are embedded natively, so
+ * nothing loads after that. This effect runs after every descendant's, which is
+ * that moment. It is the raw `Observe.markInteractive` rather than
+ * `useObserve()`'s, because the hook attributes to a screen and must be called
+ * inside one; this is the app's time to interactive, not a route's.
  */
-export default function RootLayout() {
+function RootLayout(): ReactElement {
+	useEffect(() => {
+		Observe.markInteractive();
+	}, []);
+
 	return (
 		<DelacourProvider>
 			<SystemBackground />
@@ -115,3 +142,5 @@ export default function RootLayout() {
 		</DelacourProvider>
 	);
 }
+
+export default ObserveRoot.wrap(RootLayout);

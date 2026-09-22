@@ -59,7 +59,7 @@ export const PRIVACY = {
 	glance: [
 		"No accounts, sign-in or profiles. Nothing we receive has your name or email address on it.",
 		"No adverts, no tracking across other companies' apps or websites, and nothing is sold.",
-		"The app tells Expo each time it starts, and asks Expo whether there is an update.",
+		"The app tells Expo each time it starts, checks with Expo for updates, and sends Expo reports on its speed, the screens you open and any errors.",
 		"The website loads its fonts from Google, and sets no cookies.",
 		"Your settings — the site's light or dark choice, the app's theme — stay on your device.",
 	],
@@ -110,7 +110,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "the-app",
 		title: "The app",
 		body: [
-			"The Delacour UI app has no account and asks for no permissions — no camera, photos, contacts, location or notifications. Each time it starts, it makes two requests to Expo, the company whose tools it is built with.",
+			"The Delacour UI app has no account and asks for no permissions — no camera, photos, contacts, location or notifications. It reports to Expo, the company whose tools it is built with, in three ways.",
 		],
 		disclosures: [
 			{
@@ -126,14 +126,20 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 				source: { app: "playground", package: "expo-updates" },
 			},
 			{
+				what: "Performance and error reports: the same install ID and a session ID; the app version and its build and release identifiers; the device model, operating system and language setting; how long the app takes to start and to draw each of the screens you open, with their parameters — such as which demo is showing — and how long you use it; battery level and charging, power-saving mode, device temperature, network connection and dropped frames; the number, size, failures and timing of the app's network requests, and the host of the slowest; and, when something goes wrong, the error message and where in the code it happened",
+				to: "Expo — EAS Observe, `o.expo.dev`",
+				why: "To see how quickly the app starts and draws each screen, which demos get opened, and what breaks. Reports are sent when the app goes to the background, and the app keeps its own copy for up to seven days.",
+				source: { app: "playground", package: "expo-observe" },
+			},
+			{
 				what: "The theme you build in the customiser, and your light or dark choice",
 				to: "Your device only",
 				why: "So the app opens the way you left it. Deleting the app deletes them.",
 			},
 		],
 		after: [
-			"The install ID is a random number the app makes the first time it runs. It is not your name, your email address or your device's advertising identifier, and it is not linked to any of them. Deleting the app discards it, and reinstalling makes a new one.",
-			"The app cannot ask before sending the launch ping: it goes out as the app starts, before anything is on screen. There is no setting that turns it off. If you would rather it were not sent, the way to stop it is to delete the app.",
+			"The install ID is a random number the app makes the first time it runs. It is not your name, your email address or your device's advertising identifier, and it is not linked to any of them. Deleting the app discards it, and reinstalling makes a new one. The session ID is another random number, made each time you open the app, which only groups one visit's reports together.",
+			"The app cannot ask before sending the launch ping: it goes out as the app starts, before anything is on screen. The app has no setting that turns off the launch ping or the performance reports. If you would rather neither were sent, the way to stop them is to delete the app.",
 			"Two buttons open the website in your browser — Generate CSS, which puts your theme into the page address as a short code, and Privacy policy, which opens this page. The website section above then applies.",
 			"If you have chosen to share analytics with app developers in your device's settings, Apple or Google may also show us summary statistics about the app, such as crash counts. Their policies cover that sharing, and you can turn it off there.",
 		],
@@ -165,7 +171,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		title: "Who else handles it",
 		body: [
 			"The companies above process this information for us under their own terms. They are based in the United States, so it is processed there:",
-			"[Expo](https://expo.dev/privacy) for the app's launch pings and updates, [Railway](https://railway.com/legal/privacy) for hosting the website, [Google](https://policies.google.com/privacy) for its fonts, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
+			"[Expo](https://expo.dev/privacy) for the app's launch pings, performance reports and updates, [Railway](https://railway.com/legal/privacy) for hosting the website, [Google](https://policies.google.com/privacy) for its fonts, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
 			"We do not sell or rent anything to anyone, and we do not share it with anyone else unless the law requires us to.",
 		],
 	},
@@ -173,7 +179,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "why",
 		title: "Why we use it",
 		body: [
-			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
+			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, to see how fast the app is and which demos get opened, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
 			"If UK or EU data protection law applies to you, our lawful basis is our legitimate interest in running and improving these services, which we have weighed against your interests given how little is collected.",
 		],
 	},
@@ -181,7 +187,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "how-long",
 		title: "How long it is kept",
 		body: [
-			"What stays on your device is there until you clear it or delete the app. Railway, Expo and Google keep what they receive for the periods their own policies set, linked above. We keep no copies of our own.",
+			"What stays on your device is there until you clear it or delete the app, except the app's copy of its performance reports, which it deletes after seven days. Railway, Expo and Google keep what they receive for the periods their own policies set, linked above. We keep no copies of our own.",
 		],
 	},
 	{

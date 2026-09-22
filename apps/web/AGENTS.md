@@ -218,10 +218,13 @@ listings name, and the playground's home screen links to it.
   `source` is checked against that app's `package.json`.
 - **An installed package that phones home must be disclosed.** `PHONES_HOME` lists the analytics,
   crash-reporting, attribution and push SDKs a reviewer would expect a policy to name, plus Expo's
-  two services; any of them in `apps/playground` or `apps/web` without a matching `source` fails by
+  own services; any of them in `apps/playground` or `apps/web` without a matching `source` fails by
   name — `playground:expo-updates`, say.
-- **The launch ping's fields are read out of `expo-insights`' Swift.** A future version that sends
-  one more field fails before a binary carrying it reaches a store.
+- **The launch ping's fields are read out of `expo-insights`' Swift**, and **EAS Observe's are read
+  out of `expo-observe`'s `OpenTelemetry.swift` and `expo-app-metrics`' `MetricParamsBuilder.swift`**
+  — every attribute key and every device or network reading, each mapped to the words the policy
+  uses for it. A future version that sends one more field fails by that field's name before a
+  binary carrying it reaches a store.
 - **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
   them still do.
 

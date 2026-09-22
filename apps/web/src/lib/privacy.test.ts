@@ -35,11 +35,13 @@ function dependencies(app: SourceApp): string[] {
 /**
  * Packages whose job is to send something about the user somewhere: analytics,
  * crash and error reporting, attribution, push, session replay, and Expo's own
- * two services. Not exhaustive — it is the set a reviewer would expect to see
+ * services. Not exhaustive — it is the set a reviewer would expect to see
  * named in a policy, and the one a well-meaning install is most likely to add.
  */
 const PHONES_HOME: readonly RegExp[] = [
 	/^expo-insights$/,
+	/^expo-observe$/,
+	/^expo-app-metrics$/,
 	/^expo-updates$/,
 	/^expo-notifications$/,
 	/^expo-tracking-transparency$/,
@@ -115,6 +117,43 @@ describe("the privacy policy's claims", () => {
 		}
 	});
 
+	/**
+	 * EAS Observe's payload, read out of the two modules that build it: the
+	 * attributes `expo-observe` puts on every report, and the device and network
+	 * readings `expo-app-metrics` attaches to its timings. Either growing a key
+	 * fails here by the key's name, the same guarantee the launch ping has.
+	 */
+	test("describes every field EAS Observe's reports carry", () => {
+		const telemetry = readFileSync(join(REPO, "node_modules", "expo-observe", "ios", "OpenTelemetry.swift"), "utf-8");
+		const params = readFileSync(
+			join(REPO, "node_modules", "expo-app-metrics", "ios", "Utils", "MetricParamsBuilder.swift"),
+			"utf-8"
+		);
+
+		const attributes = [
+			...new Set([...telemetry.matchAll(/OTAttribute\(key: "([^"]+)"/g)].map((match) => match[1] as string)),
+		];
+		const readings = [
+			...new Set(
+				[...params.matchAll(/"?(expo\.(?:device|frameRate|network)\.[A-Za-z.]+)/g)].map((m) => m[1] as string)
+			),
+		];
+
+		expect(attributes.sort()).toEqual(Object.keys(OBSERVE_ATTRIBUTES).sort());
+		expect(readings.sort()).toEqual(Object.keys(OBSERVE_READINGS).sort());
+
+		const reports = DISCLOSURES.find((row) => row.source?.package === "expo-observe");
+
+		expect(reports).toBeDefined();
+		for (const phrase of [
+			...Object.values(OBSERVE_ATTRIBUTES),
+			...Object.values(OBSERVE_READINGS),
+			...OBSERVE_CONTENT,
+		]) {
+			if (phrase) expect(plainText((reports as Disclosure).what)).toContain(phrase);
+		}
+	});
+
 	test("names Google Fonts, the site's one third-party origin", () => {
 		const fonts = readFileSync(join(REPO, "apps", "web", "src", "lib", "google-fonts.ts"), "utf-8");
 
@@ -143,6 +182,68 @@ const LAUNCH_PING_FIELDS: Record<string, string | null> = {
 	platform: "platform",
 	os_version: "operating system version",
 };
+
+/**
+ * `expo-observe`'s report attributes, and the policy's words for each. `null`
+ * marks a key that describes the build or the SDK rather than the user — a
+ * version string, an update id, the event's own name — which the disclosure
+ * covers as "the app version and its build and release identifiers".
+ */
+const OBSERVE_ATTRIBUTES: Record<string, string | null> = {
+	"session.id": "session ID",
+	"expo.eas_client.id": "install ID",
+	"expo.route_name": "screens you open",
+	"expo.custom_params": null,
+	"expo.update_id": null,
+	"event.name": null,
+	"os.type": null,
+	"os.name": "operating system",
+	"os.version": "operating system",
+	"device.model.name": "device model",
+	"device.model.identifier": "device model",
+	"browser.language": "language",
+	"telemetry.sdk.name": null,
+	"telemetry.sdk.version": null,
+	"telemetry.sdk.language": null,
+	"expo.sdk.version": null,
+	"expo.react_native.version": null,
+	"service.name": null,
+	"service.version": "app version",
+	"expo.app.name": null,
+	"expo.app.build_number": "build and release identifiers",
+	"expo.app.update_id": "build and release identifiers",
+	"expo.app.updates.id": "build and release identifiers",
+	"expo.app.updates.channel": "build and release identifiers",
+	"expo.app.updates.runtime_version": "build and release identifiers",
+	"expo.environment": null,
+	"expo.eas_build.id": "build and release identifiers",
+};
+
+/** `expo-app-metrics`' readings, attached to a report as `expo.custom_params`. */
+const OBSERVE_READINGS: Record<string, string> = {
+	"expo.device.batteryLevel": "battery",
+	"expo.device.batteryCharging": "battery",
+	"expo.device.lowPowerMode": "power-saving",
+	"expo.device.thermalState": "temperature",
+	"expo.frameRate.slowFrames": "dropped frames",
+	"expo.frameRate.frozenFrames": "dropped frames",
+	"expo.frameRate.totalDelay": "dropped frames",
+	"expo.network.connected": "network connection",
+	"expo.network.type": "network connection",
+	"expo.network.requests.count": "network requests",
+	"expo.network.requests.failed": "network requests",
+	"expo.network.requests.bytesReceived": "network requests",
+	"expo.network.requests.bytesSent": "network requests",
+	"expo.network.requests.totalDuration": "network requests",
+	"expo.network.requests.slowestDuration": "network requests",
+	"expo.network.requests.slowestHost": "host",
+};
+
+/**
+ * What a report carries that is not a key at all: the route's parameters, and
+ * an error's message and stack. Free text is the part a reader most needs told.
+ */
+const OBSERVE_CONTENT: readonly string[] = ["parameters", "error message", "where in the code"];
 
 describe("the privacy policy page", () => {
 	test("carries a real date, and not one in the future", () => {

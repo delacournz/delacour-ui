@@ -144,6 +144,7 @@ describe("the sections", () => {
 			compare: "vs HeroUI",
 			github: "GitHub",
 			llms: "llms.txt",
+			privacy: "Privacy",
 		});
 	});
 });

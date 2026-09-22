@@ -160,4 +160,5 @@ export const FOOTER_COPY = {
 	compare: "vs HeroUI",
 	github: "GitHub",
 	llms: "llms.txt",
+	privacy: "Privacy",
 } as const;

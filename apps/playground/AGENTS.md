@@ -13,6 +13,7 @@ requires a route here for anything new.
 - **`@delacour/react-native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library
 - **EAS Observe** (`expo-observe`) — startup, per-route and error metrics from real installs; see [Observe](#observe)
+- **`expo-insights`** — cold-start counts on EAS Insights; see [Insights](#insights)
 
 ## Commands
 
@@ -62,6 +63,7 @@ src/
 ├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
+├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── demo-pager/               the paged gallery — one demo per screen
@@ -242,7 +244,11 @@ that proved it. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The rows
 are grouped under the documentation site's eight group names, in its order, so
-a component found on the site is found in the same place here.
+a component found on the site is found in the same place here. An **About** group closes the list
+with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the browser —
+App Review wants the link inside the app, not only on the listing. It always opens production,
+even from a dev build, and `src/lib/privacy-url.test.ts` holds its path to the site's
+`privacyRoute` and to a route file that exists.
 
 **The grouping is a copy, and a test keeps it honest.** The eight names and the
 slug→group map could not move into `@delacour/design-system` (app-free by rule)
@@ -1122,6 +1128,53 @@ too, with GitHub's `422` and the fix — push first.
 and every publish job has exactly one tag job, each sets every variable
 `REQUIRED_ENV` names for its kind, and none reads the other platform's outputs.
 
+### Insights
+
+`expo-insights` reports each cold start to EAS Insights — expo.dev → the project → **Insights →
+App usage**. There is no config plugin and nothing to import: autolinking registers the native
+module, and its `OnCreate` sends one `GET https://i.expo.dev/v1/c/<projectId>` per process. The
+query carries the EAS client id, the app version, the platform and the OS version, and nothing
+else — no screens, no events, no user. The client id is the per-install UUID `expo-eas-client`
+generates, the same one `expo-updates` already sends as `EAS-Client-ID`.
+
+It is a preview feature: free while it lasts, and Expo reserves the right to break it.
+
+**Only a native build carries it.** Adding the package moved the fingerprint, so the next
+`release:prod` push builds and submits by itself — no `[native]` needed. An OTA update cannot
+deliver a native module, so a binary built before it reports nothing, however current its bundle.
+
+**It reads `extra.eas.projectId`, and fails silently without it.** The module logs `Unable to get
+the project ID` and sends nothing — no build error, no crash, an Insights tab that simply stays
+empty. `app.config.test.ts` asserts the id is there and matches `updates.url`.
+
+**Every build reports, dev client included.** The payload has no channel and no build profile, so
+simulator sessions, argent QA runs and `bun run previews` land on the same chart as TestFlight and
+the stores. The app version is the only field that separates them, and a local build stamps
+`1.0.0` — read small numbers with that in mind.
+
+**There is no consent prompt, by decision rather than omission.** The ping leaves from native code
+before any JavaScript runs, and the module has no API to hold or cancel it, so an opt-in cannot gate
+it. The app discloses it instead — on the privacy policy and on both stores' privacy forms, below.
+[Observe](#observe) is disclosed the same way, though it is not in the same position: its
+`dispatchingEnabled` option stops it at runtime, so an in-app switch or an opt-in could gate it.
+None is wired today. Anything that needs consent later — custom events, identified users, replay —
+needs its own SDK and a prompt.
+
+**The privacy manifest says what the three Expo modules send.** `ios.privacyManifests` in
+`app.config.ts` declares Product Interaction, Device ID, Crash Data, Performance Data and Other
+Diagnostic Data — the launch ping and the screens Observe records, the install id all three modules
+share, the crash message the update check carries and Observe's error reports, Observe's startup and
+render timings, and the battery, thermal, network and frame readings it attaches — none linked,
+none tracking. `app.config.test.ts` holds those declarations, and
+`apps/web/src/lib/privacy.test.ts` holds the public policy to the same modules, down to the fields
+the launch ping sends.
+
+**An empty `NSPrivacyAccessedAPITypes` after prebuild is not a bug.** Expo's plugin writes the
+collected types into `ios/DelacourUI/PrivacyInfo.xcprivacy`; the required-reason API entries
+(UserDefaults, FileTimestamp, SystemBootTime) are aggregated from every pod's own manifest by React
+Native's `pod install`. `expo prebuild --no-install` therefore shows the array empty. EAS always
+installs pods, so a release build carries both — check the file after `pod install`, not before.
+
 ### What is not wired
 
 - **`EXPO_TOKEN`.** `.env.example` is committed, `.env` is gitignored, and the
@@ -1152,6 +1205,16 @@ and every publish job has exactly one tag job, each sets every variable
   submit and publish jobs do not depend on a tag job, so the release itself
   still ships — the run is red only because it went untagged. A fine-grained
   token expires; a `401` in a tag job is usually that.
+- **Store privacy declarations.** Both stores ask outside the code, and their answers have to
+  agree with `ios.privacyManifests` and with [`/privacy`](https://ui.delacour.co.nz/privacy). App
+  Store Connect → App Privacy: **Usage Data → Product Interaction** (Analytics), **Identifiers →
+  Device ID** (Analytics, App Functionality), **Diagnostics → Crash Data** (Analytics, App
+  Functionality), **Diagnostics → Performance Data** (Analytics) and **Diagnostics → Other
+  Diagnostic Data** (Analytics), none linked to the user and none used for tracking, with the
+  privacy policy URL set to `https://ui.delacour.co.nz/privacy`. Play Console → Data safety: **App
+  activity → App interactions** (Analytics), **Device or other IDs** (Analytics, App
+  functionality), and **App info and performance → Crash logs, Diagnostics and Other app
+  performance data** (Analytics, App functionality), encrypted in transit, with the same URL.
 - **CI on the release branch.** `.github/workflows/ci.yml` runs on
   `[main, develop, release/playground/*]`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub
@@ -1163,9 +1226,11 @@ and every publish job has exactly one tag job, each sets every variable
 `expo-observe` reports to the **Observe** tab of the EAS project: cold and warm
 launch, time to first render, time to interactive, bundle load, update download
 times, a render time per route (`cold_ttr` on first visit, `warm_ttr` after),
-and JavaScript errors and native crashes. It is
-the only telemetry in the app, and nothing it sends identifies a person —
-installs are anonymous ids.
+and JavaScript errors and native crashes. With `expo-insights`' launch ping (see
+[Insights](#insights)) it is one of the app's two telemetry sources, and nothing
+either sends identifies a person — installs are anonymous ids. Both are disclosed
+on [`/privacy`](https://ui.delacour.co.nz/privacy), and `apps/web`'s
+`privacy.test.ts` fails if either is installed without a disclosure naming it.
 
 Three pieces, all in [`src/app/_layout.tsx`](src/app/_layout.tsx):
 

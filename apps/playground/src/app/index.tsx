@@ -2,6 +2,7 @@ import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
+	IconArrowUpRight,
 	IconBrowserTabs,
 	IconBulletList,
 	IconChart1,
@@ -15,6 +16,7 @@ import {
 	IconLayoutTopBottom,
 	IconParagraph,
 	IconSettingsSliderHor,
+	IconShieldCheck,
 	IconSquareCheck,
 	IconSquareCursor,
 	IconStar,
@@ -27,11 +29,12 @@ import { Screen } from "@delacour/react-native-ui/screen";
 import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { View } from "react-native";
+import { Alert, Linking, View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
 import { useDesignSystem } from "@/design-system/store";
+import { PRIVACY_POLICY_URL } from "@/lib/privacy-url";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
 /**
@@ -126,12 +129,25 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tig
  * Doubles as the ListGroup's own smoke test — automatic dividers, the leading
  * icon cascade and the default trailing chevron are all on screen here, so a
  * regression in any of them is visible before a gallery is even opened.
+ *
+ * The last group, About, is not a component: it holds the privacy policy link
+ * App Review requires inside the app, not only on the listing. Its suffix is an
+ * outbound arrow rather than the chevron, because the row leaves the app for
+ * the browser instead of pushing a screen.
  */
 export default function Index(): ReactElement {
 	const router = useRouter();
 	const groups = groupedComponents();
 	const { heading } = resolveFonts(useDesignSystem());
 	const iconFor = (slug: ComponentSlug): IconComponent => ICONS[slug];
+
+	// `openURL` rejects when nothing is registered for https, which is an emulator
+	// image with no browser. The alert carries the URL so it can still be read.
+	const openPrivacyPolicy = () => {
+		Linking.openURL(PRIVACY_POLICY_URL).catch(() => {
+			Alert.alert("Could not open a browser", PRIVACY_POLICY_URL);
+		});
+	};
 
 	const row = (entry: ComponentIndexEntry, icon: IconComponent) => (
 		<ListGroup.Item haptic="selection" key={entry.slug} onPress={() => router.push(entry.href)}>
@@ -170,6 +186,30 @@ export default function Index(): ReactElement {
 						<ListGroup>{group.entries.map((entry) => row(entry, iconFor(entry.slug)))}</ListGroup>
 					</View>
 				))}
+
+				<View className={SECTION_GAP}>
+					<Text.Overline>About</Text.Overline>
+					<ListGroup>
+						<ListGroup.Item
+							accessibilityHint="Opens in your browser"
+							accessibilityRole="link"
+							haptic="selection"
+							onPress={openPrivacyPolicy}
+							testID="home-privacy-policy"
+						>
+							<ListGroup.ItemPrefix>
+								<Icon icon={IconShieldCheck} />
+							</ListGroup.ItemPrefix>
+							<ListGroup.ItemContent>
+								<ListGroup.ItemTitle>Privacy policy</ListGroup.ItemTitle>
+								<ListGroup.ItemDescription>What this app sends, and to whom</ListGroup.ItemDescription>
+							</ListGroup.ItemContent>
+							<ListGroup.ItemSuffix>
+								<Icon icon={IconArrowUpRight} />
+							</ListGroup.ItemSuffix>
+						</ListGroup.Item>
+					</ListGroup>
+				</View>
 
 				{__DEV__ ? (
 					<View className={SECTION_GAP}>

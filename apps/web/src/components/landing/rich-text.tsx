@@ -21,13 +21,17 @@ export function RichText({ text }: { text: string }): ReactElement {
 
 		const link = /^\[([^\]]+)\]\(([^)]+)\)$/.exec(part);
 		if (link) {
+			// Only a web page gets a new tab. A `mailto:` given `_blank` opens an
+			// empty tab beside the mail client in some browsers.
+			const external = /^https?:\/\//.test(link[2] as string);
+
 			return (
 				<a
 					className="text-fd-foreground underline decoration-fd-primary/60 underline-offset-4 transition-colors hover:decoration-fd-primary"
 					href={link[2]}
 					key={`${index}-${part}`}
-					rel="noreferrer noopener"
-					target="_blank"
+					rel={external ? "noreferrer noopener" : undefined}
+					target={external ? "_blank" : undefined}
 				>
 					{link[1]}
 				</a>

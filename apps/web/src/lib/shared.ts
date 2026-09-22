@@ -13,6 +13,8 @@ export const appDescription =
 export const siteUrl = "https://ui.delacour.co.nz";
 export const docsRoute = "/docs";
 export const docsImageRoute = "/og/docs";
+/** The privacy policy. The playground links here, and `privacy-url.test.ts` there holds the two together. */
+export const privacyRoute = "/privacy";
 
 export const gitConfig = {
 	user: "delacournz",

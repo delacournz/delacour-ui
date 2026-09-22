@@ -70,6 +70,10 @@ const SHOTS: Shot[] = [
 	{ id: "15-compare-hero-desktop-light", path: "/compare/heroui", frame: "desktop", theme: "light" },
 	{ id: "16-compare-case-desktop-dark", path: "/compare/heroui#case", frame: "desktop", theme: "dark" },
 	{ id: "17-compare-full-mobile-dark", path: "/compare/heroui", frame: "phone", theme: "dark", full: true },
+	{ id: "18-privacy-hero-desktop-dark", path: "/privacy", frame: "desktop", theme: "dark" },
+	{ id: "19-privacy-app-desktop-dark", path: "/privacy#the-app", frame: "desktop", theme: "dark" },
+	{ id: "20-privacy-hero-desktop-light", path: "/privacy", frame: "desktop", theme: "light" },
+	{ id: "21-privacy-full-mobile-dark", path: "/privacy", frame: "phone", theme: "dark", full: true },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

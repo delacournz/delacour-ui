@@ -51,6 +51,7 @@ src/
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
+├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
@@ -59,6 +60,7 @@ src/
 │   ├── __root.tsx         RootProvider + <html>
 │   ├── index.tsx          the landing page
 │   ├── compare/heroui.tsx /compare/heroui — renders lib/comparison.ts
+│   ├── privacy.tsx        /privacy — renders lib/privacy.ts
 │   ├── docs/index.tsx     /docs → /docs/native/getting-started
 │   ├── docs/$.tsx         the docs catch-all
 │   ├── docs/{$}[.]md.ts   <page>.md — see "The .md routes 404 in dev"
@@ -202,6 +204,42 @@ Five things about it are load-bearing:
 - **Every section is `PAGE_SECTION`, like every other page here.** See
   [One container, every page](#one-container-every-page) — including why the `w-full min-w-0` in
   it is load-bearing.
+
+## `/privacy` is held to the code
+
+`src/routes/privacy.tsx` renders `src/lib/privacy.ts` and writes down nothing itself — the same split
+as `/compare/heroui`, for a sharper reason: every sentence in a privacy policy is a claim about code
+somewhere else, and that code moves in pull requests about other things. It is the page both store
+listings name, and the playground's home screen links to it.
+
+`privacy.test.ts` is what makes the claims checkable rather than merely written down:
+
+- **A disclosure that names a package must name an installed one.** Each `Disclosure` with a
+  `source` is checked against that app's `package.json`.
+- **An installed package that phones home must be disclosed.** `PHONES_HOME` lists the analytics,
+  crash-reporting, attribution and push SDKs a reviewer would expect a policy to name, plus Expo's
+  own services; any of them in `apps/playground` or `apps/web` without a matching `source` fails by
+  name — `playground:expo-updates`, say.
+- **The launch ping's fields are read out of `expo-insights`' Swift**, and **EAS Observe's are read
+  out of `expo-observe`'s `OpenTelemetry.swift` and `expo-app-metrics`' `MetricParamsBuilder.swift`**
+  — every attribute key and every device or network reading, each mapped to the words the policy
+  uses for it. A future version that sends one more field fails by that field's name before a
+  binary carrying it reaches a store.
+- **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
+  them still do.
+
+Change `PRIVACY.updated` with anything a reader would care about. The page links to the file's
+history on GitHub, which is the changelog, so there is no second one to keep.
+
+It is a document, so it is drawn quieter than the landing page: no `Reveal`, a title step for each
+heading, prose on the reading measure and the disclosure tables across the container. Each table row
+is a `<dl>` rather than a `<tr>` — a table whose rows become grids at phone width loses its
+semantics in Safari — so every width reads "What: …, Goes to: …, Why: …". Headings carry
+`scroll-mt-24` themselves, because the anchor is the `<h2>` and the floating nav would otherwise
+cover it.
+
+The data-protection answers in the two store consoles, and the playground's
+`ios.privacyManifests`, have to say the same thing; see `apps/playground/AGENTS.md`, under Insights.
 
 ## One container, every page
 
@@ -770,8 +808,8 @@ bun run start          # or bun run dev, in another shell
 bun run screenshots    # → apps/web/screenshots/, gitignored
 ```
 
-`scripts/screenshots.ts` holds the shot list — seventeen frames covering the landing page, a component
-page, the components index, the customiser, the 404 and `/compare/heroui`, in both themes, at
+`scripts/screenshots.ts` holds the shot list — twenty-one frames covering the landing page, a component
+page, the components index, the customiser, the 404, `/compare/heroui` and `/privacy`, in both themes, at
 1440×878 and 390×844@2. A frame's `path` may carry a fragment (`/compare/heroui#matrix`), which is
 how a shot lands on one section without scripting a scroll.
 Add a frame there rather than photographing one by hand, so the next person's set is comparable to

@@ -948,7 +948,7 @@ profiles they name. Do not rename a profile: the YAML matches them by string.
 | --- | --- | --- |
 | `build:native:dev` | manual | Fingerprints, then builds only what has no matching binary — Android dev client, iOS dev client, iOS simulator (`cicd`) |
 | `build:native:prod` | manual | Builds both platforms unconditionally, submits both — the forced full rebuild |
-| `release:prod` | push to `release/playground/x.y.z`, or manual | Parses the version, then reuses a matching binary and ships an OTA update; only builds and submits when the fingerprint is new |
+| `release:prod` | push to `release/playground/x.y.z`, or manual | Parses the version, then reuses a matching binary and ships an OTA update; builds and submits when the fingerprint is new, or when the push is marked `[native]` |
 | `submit:native:prod` | manual | Submits store binaries that already exist, builds nothing |
 
 **A push to `release/playground/x.y.z` is usually not a build.** `release:prod`
@@ -969,6 +969,22 @@ published on the branch. `check_update_channel` runs
 `scripts/eas-check-channel.ts` before either publish job, and fails the run with
 the one-line fix — `eas channel:edit production --branch production` — rather
 than publishing to nowhere.
+
+**To force a full native build anyway, put `[native]` in the head commit
+message.** Under squash merge that is the pull request title. `release:prod`
+reads `github.commit_message`, and a marked push skips the OTA jobs and runs
+`Build` and `Submit` on both platforms even though the fingerprint already has a
+binary — a fresh compile of everything, on TestFlight and the Play track in one
+run. The manual form is `-F force_native=true`:
+
+```bash
+bun run eas:release:prod -F version=1.2.3 -F force_native=true
+```
+
+Prefer this over `build:native:prod` when the push is already happening: it is
+one run, the version still comes from the branch, and the same fingerprint
+economy resumes on the next unmarked push. The marker is case-sensitive and
+lives only in the head commit — a `[native]` three commits back does nothing.
 
 It is the only push trigger in this repo. `build:native:prod` used to carry one
 on `release/app/*` and no longer does: two workflows triggering on one branch

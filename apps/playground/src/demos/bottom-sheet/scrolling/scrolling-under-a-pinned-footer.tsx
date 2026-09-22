@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Scrolling under a pinned footer",
-	note: "Scroll the second list to its very end. The last row must clear the footer completely, not sit half behind it — that reserve is the footer's measured height plus the home indicator.\n\nWith either list scrolled to the top, drag down: the sheet moves. Scroll down a few rows and drag again: the list moves and the sheet stays put. A React Native ScrollView in here would take every drag and the sheet would stop responding.",
+	note: "Scroll the second list to its very end. The last row must clear the footer completely, not sit half behind it, and the scroll indicator must stop at the footer's hairline rather than run on underneath — the list's frame gives up the footer's measured height, home indicator included.\n\nWith either list scrolled to the top, drag down: the sheet moves. Scroll down a few rows and drag again: the list moves and the sheet stays put. A React Native ScrollView in here would take every drag and the sheet would stop responding.",
 };
 
 const SNAP_POINTS = ["55%", "90%"];

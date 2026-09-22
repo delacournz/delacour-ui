@@ -11,6 +11,7 @@ import {
 	bottomSheetVariants,
 	resolveFooterPlacement,
 	resolveSheetBottomInset,
+	resolveSheetScrollEndPadding,
 } from "./bottom-sheet.variants";
 
 const LIGHT = declaredTokens("light");
@@ -180,6 +181,22 @@ describe("resolveSheetBottomInset", () => {
 
 	test("is a no-op on a device with no bottom inset", () => {
 		expect(resolveSheetBottomInset({ bottom: 0, hasStickyFooter: false })).toBe(0);
+	});
+});
+
+describe("resolveSheetScrollEndPadding", () => {
+	test("gives the safe-area band to the content when nothing is pinned below it", () => {
+		expect(resolveSheetScrollEndPadding({ bottom: 34, hasStickyFooter: false })).toBe(34);
+	});
+
+	test("holds the content off a pinned footer by the gap alone", () => {
+		// The scroll view's frame already stops at the footer's top edge, so the
+		// footer's height — band included — is not the content's to reserve.
+		expect(resolveSheetScrollEndPadding({ bottom: 34, hasStickyFooter: true })).toBe(BOTTOM_SHEET_FOOTER_GAP);
+	});
+
+	test("keeps the gap on a device with no bottom inset", () => {
+		expect(resolveSheetScrollEndPadding({ bottom: 0, hasStickyFooter: true })).toBe(BOTTOM_SHEET_FOOTER_GAP);
 	});
 });
 

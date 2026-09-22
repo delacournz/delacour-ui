@@ -1,12 +1,12 @@
 import { BottomSheetScrollView as GorhomBottomSheetScrollView } from "@gorhom/bottom-sheet";
 import type { ComponentProps, ReactElement, ReactNode } from "react";
 import { View } from "react-native";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { withUniwind } from "uniwind";
 import { cn } from "../../lib/cn";
 import { useBottomSheetContainerContext } from "./bottom-sheet.context";
-import { BOTTOM_SHEET_FOOTER_GAP, bottomSheetVariants, resolveSheetBottomInset } from "./bottom-sheet.variants";
+import { bottomSheetVariants, resolveSheetScrollEndPadding } from "./bottom-sheet.variants";
 
 type GorhomScrollViewProps = ComponentProps<typeof GorhomBottomSheetScrollView>;
 
@@ -56,10 +56,16 @@ export type BottomSheetScrollViewProps = Omit<
  * *array* alongside any `contentContainerStyle`, and the two then fight over the
  * one style this component has to own — the safe-area band. One writer for it.
  *
- * A pinned footer is reserved by a spacer at the end of the content rather than
- * by gorhom's `enableFooterMarginAdjustment`, which routes the footer's measured
- * height through React state and would commit a render on every frame of the
- * keyboard animation. See `BottomSheet.Content` for the whole reasoning.
+ * **A pinned footer shortens the scroll view; it is not reserved inside it.**
+ * The footer draws over the sheet, so a scroll view that ran the sheet's full
+ * height would carry its indicator and its overscroll bounce on underneath the
+ * footer, the bottom of the track hidden behind the buttons. So the frame gives
+ * up the footer's measured height as a `marginBottom` and ends at the footer's
+ * hairline, and the content keeps only the gap
+ * ({@link resolveSheetScrollEndPadding}). The margin is an animated style off
+ * the footer's shared value, never gorhom's `enableFooterMarginAdjustment`,
+ * which routes that height through React state and would commit a render on
+ * every frame of the keyboard animation — see `BottomSheet.Content`.
  *
  * @example
  * <BottomSheet.Container enableDynamicSizing={false} snapPoints={["60%", "90%"]}>
@@ -70,6 +76,7 @@ export function BottomSheetScrollView({
 	className,
 	contentContainerClassName,
 	children,
+	style,
 	...props
 }: BottomSheetScrollViewProps): ReactElement {
 	const container = useBottomSheetContainerContext();
@@ -77,18 +84,21 @@ export function BottomSheetScrollView({
 	const hasStickyFooter = container?.hasStickyFooter ?? false;
 	const footerHeight = container?.footerHeight;
 
-	const reserve = useAnimatedStyle(() => ({
-		height: footerHeight === undefined ? 0 : footerHeight.value + BOTTOM_SHEET_FOOTER_GAP,
+	// The footer's height, band included, as the frame's own margin — so the
+	// indicator's track ends where the footer begins and follows it as the
+	// keyboard takes the band back.
+	const aboveFooter = useAnimatedStyle(() => ({
+		marginBottom: hasStickyFooter && footerHeight !== undefined ? footerHeight.value : 0,
 	}));
 
 	return (
 		<StyledScrollView
 			className={cn(className)}
-			contentContainerStyle={{ paddingBottom: resolveSheetBottomInset({ bottom, hasStickyFooter }) }}
+			contentContainerStyle={{ paddingBottom: resolveSheetScrollEndPadding({ bottom, hasStickyFooter }) }}
 			{...props}
+			style={[aboveFooter, style]}
 		>
 			<View className={bottomSheetVariants().scrollContent({ className: contentContainerClassName })}>{children}</View>
-			{hasStickyFooter ? <Animated.View style={reserve} /> : null}
 		</StyledScrollView>
 	);
 }

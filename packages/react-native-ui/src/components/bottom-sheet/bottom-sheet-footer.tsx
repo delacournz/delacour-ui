@@ -64,10 +64,12 @@ export type BottomSheetFooterProps = Omit<ViewProps, "children"> & {
  * lets the body's reserve shrink with it instead of over-reserving by the height
  * of a home indicator that is no longer there.
  *
- * It publishes its measured height into the sheet, and `BottomSheet.Content` and
- * `BottomSheet.ScrollView` reserve exactly that plus a gap. The height is a
- * shared value read by an animated spacer, never content-container padding —
- * `Screen` reserves its own chrome the same way and for the same reason.
+ * It publishes its measured height into the sheet. `BottomSheet.Content` reserves
+ * exactly that plus a gap with a spacer, and `BottomSheet.ScrollView` gives it up
+ * as its own frame so its scroll indicator stops at this footer's hairline. The
+ * height is a shared value read by an animated style either way, never
+ * content-container padding — `Screen` reserves its own chrome the same way and
+ * for the same reason.
  *
  * **Do not put a `KeyboardStickyView` in here.** gorhom's `animatedFooterPosition`
  * already carries the footer clear of the keyboard; this translate only gives up

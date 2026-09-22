@@ -124,9 +124,10 @@ export function BottomSheetContainer({
 	const hasStickyFooter = placement === "sticky";
 	const overlay = portal?.overlay ?? null;
 
-	// Written by the pinned footer's own onLayout, read by the body's spacer. It
-	// lives here because the two are siblings in gorhom's tree and neither can see
-	// the other — the footer is rendered outside the children this file wraps.
+	// Written by the pinned footer's own onLayout, read by the body — the
+	// content's spacer, or the scroll view's margin. It lives here because the two
+	// are siblings in gorhom's tree and neither can see the other — the footer is
+	// rendered outside the children this file wraps.
 	const footerHeight = useSharedValue(0);
 
 	const containerValue = useMemo(() => ({ footerHeight, hasStickyFooter }), [footerHeight, hasStickyFooter]);

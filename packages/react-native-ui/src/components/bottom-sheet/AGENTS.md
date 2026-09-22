@@ -119,6 +119,16 @@ library's first overlay. Compound root plus `BottomSheet.Trigger`,
   lands in front of it and silently doubles `BOTTOM_SHEET_FOOTER_GAP`. The
   container owns the shared value because the footer and the body are siblings in
   gorhom's tree and neither can see the other.
+- **`BottomSheet.ScrollView` gives the footer's height up as its own frame, not
+  as a spacer.** A spacer inside the content leaves the scroll view running the
+  sheet's full height, so its indicator and its overscroll bounce carry on
+  underneath the footer and the bottom of the track is hidden behind the buttons.
+  So the scroll view takes the same shared value as an animated `marginBottom`,
+  ends at the footer's hairline, and its content keeps only the gap —
+  `resolveSheetScrollEndPadding`. `BottomSheet.Content` keeps the spacer: it does
+  not scroll, so there is no indicator to stop. Confirmed on a simulator by
+  `measureInWindow` — the scroll view's bottom and the footer's top land on the
+  same point.
 - **Do not put a `KeyboardStickyView` inside a sheet.** This is the one keyboard
   rule that differs from [`Screen`](../screen/AGENTS.md). gorhom's `animatedFooterPosition` already
   carries a pinned footer clear of the keyboard and the translate above gives up

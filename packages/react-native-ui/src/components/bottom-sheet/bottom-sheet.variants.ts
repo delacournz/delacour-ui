@@ -197,3 +197,24 @@ export function resolveSheetBottomInset({
 }): number {
 	return hasStickyFooter ? 0 : bottom;
 }
+
+/**
+ * The padding at the end of `BottomSheet.ScrollView`'s content.
+ *
+ * A scroll view does not reserve a pinned footer the way `BottomSheet.Content`
+ * does — its FRAME stops at the footer's top edge instead, so the scroll
+ * indicator and the overscroll bounce end there too rather than running on
+ * underneath it. That leaves the content only the gap to hold it off the
+ * footer's hairline. With no pinned footer the content is the bottom-most thing
+ * in the sheet and takes the safe-area band, as {@link resolveSheetBottomInset}
+ * has it.
+ */
+export function resolveSheetScrollEndPadding({
+	hasStickyFooter,
+	bottom,
+}: {
+	hasStickyFooter: boolean;
+	bottom: number;
+}): number {
+	return hasStickyFooter ? BOTTOM_SHEET_FOOTER_GAP : resolveSheetBottomInset({ bottom, hasStickyFooter });
+}

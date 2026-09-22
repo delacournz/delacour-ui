@@ -947,8 +947,8 @@ profiles they name. Do not rename a profile: the YAML matches them by string.
 | Workflow | Trigger | Does |
 | --- | --- | --- |
 | `build:native:dev` | manual | Fingerprints, then builds only what has no matching binary — Android dev client, iOS dev client, iOS simulator (`cicd`) |
-| `build:native:prod` | manual | Builds both platforms unconditionally, submits both — the forced full rebuild |
-| `release:prod` | push to `release/playground/x.y.z`, or manual | Parses the version, then reuses a matching binary and ships an OTA update; builds and submits when the fingerprint is new, or when the push is marked `[native]` |
+| `build:native:prod` | manual | Builds both platforms unconditionally, submits and tags both — the forced full rebuild |
+| `release:prod` | push to `release/playground/x.y.z`, or manual | Parses the version, then reuses a matching binary and ships an OTA update; builds and submits when the fingerprint is new, or when the push is marked `[native]`. Tags every binary and update it ships |
 | `submit:native:prod` | manual | Submits store binaries that already exist, builds nothing |
 
 **A push to `release/playground/x.y.z` is usually not a build.** `release:prod`
@@ -979,7 +979,11 @@ first version of `check_update_channel` had none of the three and failed on
 `@delacour/design-system` — and the script runs `bunx eas-cli@latest`, which is
 what Expo's own `update` job does. `EXPO_TOKEN` *is* set in a custom job, to the
 workflow's robot token, so nothing needs passing. Any custom job added later
-needs the same opening.
+needs `eas/checkout` at least, and `eas-workflows.test.ts` fails by job name
+when one runs a `scripts/` file without it — `eas workflow:validate` passed the
+broken job, so it cannot be the guard. `install_node_modules` is only for a
+script that imports something or evaluates the config; the tag jobs below do
+neither and skip it.
 
 **To force a full native build anyway, put `[native]` in the head commit
 message.** Under squash merge that is the pull request title. `release:prod`
@@ -1072,6 +1076,51 @@ native module gets a new hash and a real build. Pinning a literal
 `runtimeVersion` would decouple the two and serve updates to binaries that
 cannot run them.
 
+### Git tags
+
+Every production binary and every OTA update is tagged on GitHub, on the commit
+it came from, by `scripts/eas-tag.ts`:
+
+| Tag | Is |
+| --- | --- |
+| `playground/build/ios/1.0.0+5` | the iOS binary 1.0.0, build 5 |
+| `playground/update/ios/1.0.0+5/acfbadee` | an OTA update landing on that binary — the first eight characters of its update group |
+
+Each is annotated with the expo.dev page for the build or the update group and
+its runtime version, so `git show` on a tag answers "what is on TestFlight, and
+from where". `git tag -l 'playground/update/ios/1.0.0+5/*'` lists every update a
+binary has received.
+
+`release:prod` runs four tag jobs and `build:native:prod` two, and each is gated
+by `needs` alone: a skipped build or publish skips its tag, so a `[native]` run
+tags only builds and an ordinary push only updates. Tag jobs run after the build
+or the publish, never after the submit — `Submit Android Build` is red until the
+service account key exists, and the Android binary is no less built for it.
+
+**An update is named for the binary it lands on.** It has no version of its own —
+it runs on whatever binary shares its fingerprint — so the version and build
+number come from `get_*_build`, and the update group is what keeps two pushes to
+one release branch apart. The jobs this replaced keyed update tags on the
+*build* id, and the second OTA onto a binary would have collided with the first.
+Those jobs were scaffolded commented out, called a `tag-build.ts` and a
+`tag-update.ts` that never existed, and pushed nothing: `PUSH_GIT_TAG` was read
+by nobody.
+
+**It writes through the GitHub API, not `git push`.** The checkout has a `.git`
+but no credentials for it, and a manual `eas workflow:run` uploads a local tree
+whose remote is not GitHub at all. The API needs only a token and a commit GitHub
+already has. The job's outputs reach the script as `env`, never spliced into
+`run`, so `updates_json` — a commit message and all — never meets a shell parser.
+
+**A tag is never moved.** One that already exists on the same commit is success,
+so re-running a job cannot turn a finished release red; one on a different
+commit fails the job. A manual run from a commit that was never pushed fails
+too, with GitHub's `422` and the fix — push first.
+
+`eas-workflows.test.ts` holds the YAML to the script: every production build job
+and every publish job has exactly one tag job, each sets every variable
+`REQUIRED_ENV` names for its kind, and none reads the other platform's outputs.
+
 ### What is not wired
 
 - **`EXPO_TOKEN`.** `.env.example` is committed, `.env` is gitignored, and the
@@ -1089,6 +1138,19 @@ cannot run them.
   can push anything. iOS is ready: `ascAppId` and `appleTeamId` are set. Until
   the key exists, the first push that moves the fingerprint goes green on iOS and
   red on `Submit Android Build` — the build itself still succeeds.
+- **`GITHUB_TAG_TOKEN`.** The tag jobs need a fine-grained GitHub token on
+  `delacournz/delacour-ui` with **Contents** read and write, stored as an EAS
+  secret in the `production` environment — the one a custom job loads by
+  default, and each tag job names it explicitly:
+
+  ```bash
+  bun run eas -- env:create production --name GITHUB_TAG_TOKEN --value <token> --visibility secret
+  ```
+
+  Until it exists every tag job fails with that command in its log. The build,
+  submit and publish jobs do not depend on a tag job, so the release itself
+  still ships — the run is red only because it went untagged. A fine-grained
+  token expires; a `401` in a tag job is usually that.
 - **CI on the release branch.** `.github/workflows/ci.yml` runs on
   `[main, develop, release/playground/*]`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub

@@ -12,6 +12,7 @@ requires a route here for anything new.
 - **Uniwind** — the same styling layer the library uses, configured in Metro
 - **`@delacour/react-native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library
+- **EAS Observe** (`expo-observe`) — startup, per-route and error metrics from real installs; see [Observe](#observe)
 
 ## Commands
 
@@ -1156,6 +1157,67 @@ and every publish job has exactly one tag job, each sets every variable
   typechecked, linted, tested and built. Those checks are advisory here: GitHub
   and EAS run independently, so a red check does not hold the release back. It
   only tells you a push shipped something broken.
+
+## Observe
+
+`expo-observe` reports to the **Observe** tab of the EAS project: cold and warm
+launch, time to first render, time to interactive, bundle load, update download
+times, a render time per route (`cold_ttr` on first visit, `warm_ttr` after),
+and JavaScript errors and native crashes. It is
+the only telemetry in the app, and nothing it sends identifies a person —
+installs are anonymous ids.
+
+Three pieces, all in [`src/app/_layout.tsx`](src/app/_layout.tsx):
+
+- **`Observe.configure(observeConfig(…))` at module scope.** The expo-router
+  integration is read once, when `ObserveRoot` first renders, and changing it
+  after mount throws — so it cannot be an effect. The config itself is
+  [`src/lib/observe.ts`](src/lib/observe.ts), kept pure so `bun test` can reach
+  it.
+- **`export default ObserveRoot.wrap(RootLayout)`.** Marks time to first render.
+  It renders a bare fragment, so it moves no layout.
+- **`Observe.markInteractive()` in `RootLayout`'s effect.** It runs after every
+  descendant's effect, so after the first screen has mounted — and nothing in
+  this app loads after that, so it is the app's time to interactive. It is the
+  raw call, not `useObserve()`'s, and deliberately not per screen: the hook
+  attributes TTI to the route it is called in and has to be rendered inside
+  that screen. A marker in the root `Stack`'s `screenLayout` was tried and
+  recorded every screen's TTI against `/`, because a `screenLayout` renders
+  outside the `SceneView` that provides a screen's own route path. With nothing
+  to load, a per-route TTI would only have been the render time plus ~10 ms.
+
+**The expo-router integration is opt-in**, and it is the part that answers
+"what gets opened" — without it there are launch metrics and nothing per route.
+Each metric is keyed by the route's segments, groups included —
+`/(components)/chart/line` — with its params: `/preview`'s `component`, `demo`
+and `theme` are the only ones any route reads, so nothing is filtered.
+
+**Debug builds dispatch nothing.** A dev client's numbers are Metro and
+unoptimised JS, and would drag the release percentiles. To prove the wiring from
+a dev client, set `EXPO_PUBLIC_OBSERVE_IN_DEBUG=1` in `.env` and restart Metro;
+it has no effect on a release build. Only the `production` profile builds
+release binaries on EAS, so in practice the dashboard is TestFlight and store
+installs — and any local `expo run:ios --configuration Release`, which is
+indistinguishable from them.
+
+**Source maps upload with every production build** (`uploadSourceMaps` in
+`eas.json`), which is what turns a minified JS stack into file and line on the
+dashboard. That key needs EAS CLI 22 or newer — older CLIs reject `eas.json`
+outright — hence the `cli.version` floor. Two gaps, both upstream: an OTA
+update's source maps are not uploaded, so an error from an update-delivered
+bundle shows minified positions; and native crashes are not symbolicated.
+
+**Adding it moved the fingerprint.** `expo-observe` is a native module, so the
+first release push after it builds and submits rather than shipping an OTA
+update — no `[native]` needed.
+
+```bash
+bun run eas -- observe:metrics-summary   # startup percentiles
+bun run eas -- observe:routes            # per-route render and TTI
+bun run eas -- observe:session           # one session's full timeline
+```
+
+Ingestion can be paused per project from the dashboard with no app change.
 
 ## Conventions
 

@@ -907,6 +907,14 @@ symlinks workspace packages and Tailwind's scanner cannot follow symlinks, so th
 library's classes would be silently dropped from production builds — a bundle
 that looks right in dev and unstyled when shipped.
 
+**And it must exist.** Tailwind treats a `@source` it cannot open as an empty
+one — no error, no warning, no rules. When `packages/native-ui` was renamed to
+`packages/react-native-ui` the directive lagged one commit behind, and TestFlight
+build 5 shipped from that commit with 211 fewer rules: every gutter, safe-area
+and padding class that only the library uses. `src/styles/sources.test.ts`
+resolves each directive's static prefix and fails by name if the directory is
+missing, so the next rename fails `bun test` instead of a release.
+
 ## Metro
 
 `metro.config.js` does three things no default config does, and each has a
@@ -950,6 +958,17 @@ push that moves the fingerprint builds and submits. So pushing again to the same
 release branch is cheap — it is the same economy
 [Fingerprints are the whole economy](#fingerprints-are-the-whole-economy)
 describes.
+
+**The channel has to be linked, and the workflow checks.** A binary on channel
+`production` only receives updates from a branch pointed at that channel, and
+nothing links the two: the channel is created by the first build, `eas update`
+publishes to the branch, and the server answers an unlinked channel with `There
+are no branches linked to the channel for the current request`. That is why
+TestFlight build 5 kept its embedded bundle on 2026-09-22 while the fix sat
+published on the branch. `check_update_channel` runs
+`scripts/eas-check-channel.ts` before either publish job, and fails the run with
+the one-line fix — `eas channel:edit production --branch production` — rather
+than publishing to nowhere.
 
 It is the only push trigger in this repo. `build:native:prod` used to carry one
 on `release/app/*` and no longer does: two workflows triggering on one branch

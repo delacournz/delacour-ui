@@ -16,6 +16,9 @@ import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
 import type { RegistryItem } from "../registry/schema";
 import { createOutput, type Output, style } from "../ui/output";
+// A cycle — `init` ends in an `add`. Safe, because neither module touches the
+// other at load time, only inside a call.
+import { init } from "./init";
 
 /**
  * Copies components into the project, with everything they need.
@@ -78,8 +81,6 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	if (!findConfig(options.cwd)) {
 		if (options.init === false) throw new MissingConfigError(options.cwd);
 
-		// Dynamic, because `init` imports this module: a static import cycles.
-		const { init } = await import("./init");
 		output.info(`No ${CONFIG_FILENAME} here — setting this project up first.`);
 
 		return init(names, options);

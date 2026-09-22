@@ -212,6 +212,7 @@ const expoConfig: ExpoConfig = {
 	// Written by hand because `eas init` cannot edit a dynamic config. It is the
 	// only link between this app and the EAS project the workflows build on, so
 	// losing it makes every `eas` command prompt to create a second project.
+	// `expo-insights` reads it at runtime too, and without it reports nothing.
 	extra: {
 		eas: {
 			projectId: "ff1b084f-0d41-43bb-9ce3-0b8cfb7e6f7e",

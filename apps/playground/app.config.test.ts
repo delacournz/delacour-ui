@@ -171,6 +171,28 @@ describe("expo-splash-screen", () => {
 	});
 });
 
+/**
+ * `expo-insights` reads `extra.eas.projectId` out of the embedded manifest on
+ * every cold start and reports the launch to that project. Without it the module
+ * logs "Unable to get the project ID" and sends nothing — no build error, no
+ * crash, just an EAS Insights tab that stays empty.
+ */
+describe("expo-insights", () => {
+	const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+	const projectId = (expoConfig.extra?.eas as { projectId?: unknown } | undefined)?.projectId;
+
+	test("has an EAS project id to report launches to", () => {
+		expect(projectId).toBeString();
+		expect(projectId as string).toMatch(UUID);
+	});
+
+	// Two ids naming two projects would put launches on one dashboard and the
+	// updates they ran on another.
+	test("reports to the same project the updates come from", () => {
+		expect(expoConfig.updates?.url).toBe(`https://u.expo.dev/${projectId as string}`);
+	});
+});
+
 describe("generate-icons.ts", () => {
 	const source = readFileSync(GENERATOR, "utf8");
 

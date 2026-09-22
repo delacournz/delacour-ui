@@ -13,6 +13,7 @@ requires a route here for anything new.
 - **`@delacour/react-native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library
 - **EAS Observe** (`expo-observe`) — startup, per-route and error metrics from real installs; see [Observe](#observe)
+- **`expo-insights`** — cold-start counts on EAS Insights; see [Insights](#insights)
 
 ## Commands
 
@@ -1122,6 +1123,36 @@ too, with GitHub's `422` and the fix — push first.
 and every publish job has exactly one tag job, each sets every variable
 `REQUIRED_ENV` names for its kind, and none reads the other platform's outputs.
 
+### Insights
+
+`expo-insights` reports each cold start to EAS Insights — expo.dev → the project → **Insights →
+App usage**. There is no config plugin and nothing to import: autolinking registers the native
+module, and its `OnCreate` sends one `GET https://i.expo.dev/v1/c/<projectId>` per process. The
+query carries the EAS client id, the app version, the platform and the OS version, and nothing
+else — no screens, no events, no user. The client id is the per-install UUID `expo-eas-client`
+generates, the same one `expo-updates` already sends as `EAS-Client-ID`.
+
+It is a preview feature: free while it lasts, and Expo reserves the right to break it.
+
+**Only a native build carries it.** Adding the package moved the fingerprint, so the next
+`release:prod` push builds and submits by itself — no `[native]` needed. An OTA update cannot
+deliver a native module, so a binary built before it reports nothing, however current its bundle.
+
+**It reads `extra.eas.projectId`, and fails silently without it.** The module logs `Unable to get
+the project ID` and sends nothing — no build error, no crash, an Insights tab that simply stays
+empty. `app.config.test.ts` asserts the id is there and matches `updates.url`.
+
+**Every build reports, dev client included.** The payload has no channel and no build profile, so
+simulator sessions, argent QA runs and `bun run previews` land on the same chart as TestFlight and
+the stores. The app version is the only field that separates them, and a local build stamps
+`1.0.0` — read small numbers with that in mind.
+
+**There is no consent prompt, by decision rather than omission.** The ping leaves from native code
+before any JavaScript runs, and the module has no API to hold or cancel it, so an opt-in cannot gate
+it. The app discloses it instead — on the privacy policy and on both stores' privacy forms, below.
+Anything that needs consent later — screen views, events, replay — needs its own SDK and a prompt,
+and cannot ride on this one.
+
 ### What is not wired
 
 - **`EXPO_TOKEN`.** `.env.example` is committed, `.env` is gitignored, and the
@@ -1152,6 +1183,12 @@ and every publish job has exactly one tag job, each sets every variable
   submit and publish jobs do not depend on a tag job, so the release itself
   still ships — the run is red only because it went untagged. A fine-grained
   token expires; a `401` in a tag job is usually that.
+- **Store privacy declarations for Insights.** Launch counts are data the app collects, and both
+  stores ask about it outside the code. App Store Connect → App Privacy: **Usage Data → Product
+  Interaction** (Apple's own example is "app launches"), purpose Analytics, not linked to the user,
+  not used for tracking. Play Console → Data safety: **App activity → App interactions**, Analytics.
+  Both also ask about the install UUID it sends. The policy both link to is meant to live at
+  `ui.delacour.co.nz/privacy`, and `apps/web` has no such page yet.
 - **CI on the release branch.** `.github/workflows/ci.yml` runs on
   `[main, develop, release/playground/*]`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub

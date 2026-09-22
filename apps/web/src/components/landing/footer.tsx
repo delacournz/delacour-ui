@@ -3,7 +3,7 @@ import type { ReactElement } from "react";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { FOOTER_COPY } from "@/components/landing/copy";
 import { PAGE_SECTION } from "@/components/section";
-import { gitConfig } from "@/lib/shared";
+import { gitConfig, privacyRoute } from "@/lib/shared";
 
 const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
 
@@ -38,6 +38,12 @@ export function Footer(): ReactElement {
 					>
 						{FOOTER_COPY.llms}
 					</a>
+					<Link
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						to={privacyRoute}
+					>
+						{FOOTER_COPY.privacy}
+					</Link>
 				</div>
 			</div>
 		</footer>

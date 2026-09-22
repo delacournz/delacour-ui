@@ -206,7 +206,7 @@
     },
     "packages/react-native-ui": {
       "name": "@delacour/react-native-ui",
-      "version": "0.1.0-alpha.3",
+      "version": "0.1.0-alpha.4",
       "dependencies": {
         "clsx": "^2.1.1",
         "tailwind-merge": "^3.6.0",

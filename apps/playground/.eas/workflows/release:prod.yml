@@ -178,50 +178,82 @@ jobs:
       branch: production
       platform: ios
 
-  # # Tag Android native build
-  # tag_android_build:
-  #   name: Tag Android Build
-  #   needs: [build_android]
-  #   if: ${{ needs.build_android.outputs.build_id }}
-  #   type: custom
-  #   env:
-  #     PUSH_GIT_TAG: "true"
-  #   steps:
-  #     - name: Create and push tag
-  #       run: bun scripts/tag-build.ts android ${{ needs.build_android.outputs.build_id }}
+  # Every production binary and every OTA update is tagged on GitHub, on the
+  # commit it came from — `scripts/eas-tag.ts` has the naming, and the
+  # "Git tags" section of AGENTS.md the setup. `needs` alone gates each one: a
+  # skipped build or publish skips its tag, so a forced-native run tags only
+  # builds and an OTA run only updates.
+  #
+  # A tag job opens with `eas/checkout` and nothing else. The script writes
+  # through the GitHub API with `GITHUB_TAG_TOKEN`, an EAS secret in the
+  # `production` environment — the checkout carries no push credentials — and
+  # it imports nothing, so the job skips `eas/install_node_modules`.
+  #
+  # An update is tagged for the binary it lands on, which is `get_*_build`'s
+  # output rather than anything the publish job reports. The outputs travel as
+  # `env` rather than being spliced into `run`, so `updates_json` — a commit
+  # message and all — never meets a shell parser.
 
-  # # Tag iOS native build
-  # tag_ios_build:
-  #   name: Tag iOS Build
-  #   needs: [build_ios]
-  #   if: ${{ needs.build_ios.outputs.build_id }}
-  #   type: custom
-  #   env:
-  #     PUSH_GIT_TAG: "true"
-  #   steps:
-  #     - name: Create and push tag
-  #       run: bun scripts/tag-build.ts ios ${{ needs.build_ios.outputs.build_id }}
+  # Tag the Android binary on the commit it was built from
+  tag_android_build:
+    name: Tag Android build
+    needs: [build_android]
+    environment: production
+    env:
+      TAG_PLATFORM: android
+      TAG_APP_VERSION: ${{ needs.build_android.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.build_android.outputs.app_build_version }}
+      TAG_RUNTIME_VERSION: ${{ needs.build_android.outputs.runtime_version }}
+      TAG_COMMIT: ${{ needs.build_android.outputs.git_commit_hash }}
+      TAG_BUILD_ID: ${{ needs.build_android.outputs.build_id }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the build
+        run: bun scripts/eas-tag.ts build
 
-  # # Tag Android OTA update
-  # tag_android_update:
-  #   name: Tag Android OTA Update
-  #   needs: [publish_android_update, get_android_build]
-  #   if: ${{ needs.get_android_build.outputs.build_id }}
-  #   type: custom
-  #   env:
-  #     PUSH_GIT_TAG: "true"
-  #   steps:
-  #     - name: Create and push tag
-  #       run: bun scripts/tag-update.ts android ${{ needs.get_android_build.outputs.build_id }}
+  # Tag the iOS binary on the commit it was built from
+  tag_ios_build:
+    name: Tag iOS build
+    needs: [build_ios]
+    environment: production
+    env:
+      TAG_PLATFORM: ios
+      TAG_APP_VERSION: ${{ needs.build_ios.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.build_ios.outputs.app_build_version }}
+      TAG_RUNTIME_VERSION: ${{ needs.build_ios.outputs.runtime_version }}
+      TAG_COMMIT: ${{ needs.build_ios.outputs.git_commit_hash }}
+      TAG_BUILD_ID: ${{ needs.build_ios.outputs.build_id }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the build
+        run: bun scripts/eas-tag.ts build
 
-  # # Tag iOS OTA update
-  # tag_ios_update:
-  #   name: Tag iOS OTA Update
-  #   needs: [publish_ios_update, get_ios_build]
-  #   if: ${{ needs.get_ios_build.outputs.build_id }}
-  #   type: custom
-  #   env:
-  #     PUSH_GIT_TAG: "true"
-  #   steps:
-  #     - name: Create and push tag
-  #       run: bun scripts/tag-update.ts ios ${{ needs.get_ios_build.outputs.build_id }}
+  # Tag the Android OTA update on the commit it was bundled from
+  tag_android_update:
+    name: Tag Android update
+    needs: [publish_android_update, get_android_build]
+    environment: production
+    env:
+      TAG_PLATFORM: android
+      TAG_APP_VERSION: ${{ needs.get_android_build.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.get_android_build.outputs.app_build_version }}
+      TAG_UPDATES_JSON: ${{ needs.publish_android_update.outputs.updates_json }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the update
+        run: bun scripts/eas-tag.ts update
+
+  # Tag the iOS OTA update on the commit it was bundled from
+  tag_ios_update:
+    name: Tag iOS update
+    needs: [publish_ios_update, get_ios_build]
+    environment: production
+    env:
+      TAG_PLATFORM: ios
+      TAG_APP_VERSION: ${{ needs.get_ios_build.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.get_ios_build.outputs.app_build_version }}
+      TAG_UPDATES_JSON: ${{ needs.publish_ios_update.outputs.updates_json }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the update
+        run: bun scripts/eas-tag.ts update

@@ -94,3 +94,39 @@ jobs:
     type: submit
     params:
       build_id: ${{ needs.build_ios.outputs.build_id }}
+
+  # Tag each binary on the commit it was built from — the same jobs, and the same
+  # reasoning, as `release:prod.yml`. A binary built here can later receive an
+  # OTA update from `release:prod`, whose tag names this build number, so an
+  # untagged build would leave that update pointing at nothing.
+  tag_android_build:
+    name: Tag Android build
+    needs: [build_android]
+    environment: production
+    env:
+      TAG_PLATFORM: android
+      TAG_APP_VERSION: ${{ needs.build_android.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.build_android.outputs.app_build_version }}
+      TAG_RUNTIME_VERSION: ${{ needs.build_android.outputs.runtime_version }}
+      TAG_COMMIT: ${{ needs.build_android.outputs.git_commit_hash }}
+      TAG_BUILD_ID: ${{ needs.build_android.outputs.build_id }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the build
+        run: bun scripts/eas-tag.ts build
+
+  tag_ios_build:
+    name: Tag iOS build
+    needs: [build_ios]
+    environment: production
+    env:
+      TAG_PLATFORM: ios
+      TAG_APP_VERSION: ${{ needs.build_ios.outputs.app_version }}
+      TAG_BUILD_NUMBER: ${{ needs.build_ios.outputs.app_build_version }}
+      TAG_RUNTIME_VERSION: ${{ needs.build_ios.outputs.runtime_version }}
+      TAG_COMMIT: ${{ needs.build_ios.outputs.git_commit_hash }}
+      TAG_BUILD_ID: ${{ needs.build_ios.outputs.build_id }}
+    steps:
+      - uses: eas/checkout
+      - name: Tag the build
+        run: bun scripts/eas-tag.ts build

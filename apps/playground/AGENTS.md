@@ -970,6 +970,17 @@ published on the branch. `check_update_channel` runs
 the one-line fix — `eas channel:edit production --branch production` — rather
 than publishing to nowhere.
 
+**A custom job starts from nothing.** Unlike the pre-packaged `type:` jobs, a job
+with only `steps` gets no source, no `node_modules` and no `eas` on the PATH. The
+first version of `check_update_channel` had none of the three and failed on
+`Module not found "scripts/eas-check-channel.ts"`. It now opens with
+`uses: eas/checkout` and `uses: eas/install_node_modules` — the second because
+`eas channel:view` evaluates `app.config.ts`, which imports
+`@delacour/design-system` — and the script runs `bunx eas-cli@latest`, which is
+what Expo's own `update` job does. `EXPO_TOKEN` *is* set in a custom job, to the
+workflow's robot token, so nothing needs passing. Any custom job added later
+needs the same opening.
+
 **To force a full native build anyway, put `[native]` in the head commit
 message.** Under squash merge that is the pull request title. `release:prod`
 reads `github.commit_message`, and a marked push skips the OTA jobs and runs

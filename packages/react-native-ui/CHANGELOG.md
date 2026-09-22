@@ -1,5 +1,11 @@
 # @delacour/react-native-ui
 
+## 0.1.0-alpha.4
+
+### Patch Changes
+
+- [#62](https://github.com/delacournz/delacour-ui/pull/62) [`cef6a2a`](https://github.com/delacournz/delacour-ui/commit/cef6a2a81a7b97034768c229ea87b8c11e768071) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - End `BottomSheet.ScrollView` at a sticky footer's top edge, so the scroll indicator and the overscroll bounce stop above the footer instead of running on underneath it
+
 ## 0.1.0-alpha.3
 
 ### Minor Changes

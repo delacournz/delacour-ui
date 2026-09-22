@@ -12,6 +12,10 @@ import { $ } from "bun";
  * until `eas channel:edit production --branch production` was run by hand.
  *
  * Usage: bun scripts/eas-check-channel.ts [channel]   (default: production)
+ *
+ * `eas` is not on the PATH of an EAS Workflows custom job — the pre-packaged
+ * `update` job shells out to `npx eas-cli@latest` for the same reason — so this
+ * runs the CLI through `bunx` rather than assuming a global install.
  */
 
 const channel = process.argv[2] ?? "production";
@@ -19,7 +23,7 @@ const channel = process.argv[2] ?? "production";
 type Channel = { readonly name?: string; readonly updateBranches?: readonly { readonly name: string }[] };
 type ChannelView = { readonly currentPage?: Channel } & Channel;
 
-const raw = await $`eas channel:view ${channel} --json --non-interactive`.text();
+const raw = await $`bunx eas-cli@latest channel:view ${channel} --json --non-interactive`.text();
 const start = raw.indexOf("{");
 if (start === -1) {
 	console.error(`❌ eas channel:view ${channel} returned no JSON:\n${raw}`);

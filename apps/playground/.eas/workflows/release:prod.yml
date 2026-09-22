@@ -84,10 +84,17 @@ jobs:
   # bundle. Both publish jobs need this, so an unlinked channel fails the run
   # instead of publishing to nowhere. Custom jobs run `eas` as the workflow's
   # robot user, so no token is passed here.
+  #
+  # A custom job starts from an empty VM: without `eas/checkout` the script is not
+  # there (`Module not found "scripts/eas-check-channel.ts"`), and without
+  # `eas/install_node_modules` `eas channel:view` cannot evaluate `app.config.ts`,
+  # which imports `@delacour/design-system` at runtime to find the project id.
   check_update_channel:
     name: Check update channel
     needs: [extract_version]
     steps:
+      - uses: eas/checkout
+      - uses: eas/install_node_modules
       - name: Verify the production channel has a branch
         run: bun scripts/eas-check-channel.ts production
 

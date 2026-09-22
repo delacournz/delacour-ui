@@ -193,6 +193,64 @@ describe("expo-insights", () => {
 	});
 });
 
+/**
+ * What the privacy manifest declares the app collects, against what it
+ * actually sends: `expo-insights`' launch ping (an install id, counted for
+ * analytics) and `expo-updates`' check (the same id, and a crash's message
+ * after a crash, for app functionality). Apple builds the app's privacy report
+ * from this file, and the App Store listing's answers have to agree with it.
+ *
+ * Prebuild merges these into the template's `PrivacyInfo.xcprivacy`, which
+ * keeps the required-reason API entries the template already carries.
+ */
+describe("ios.privacyManifests", () => {
+	type Collected = {
+		NSPrivacyCollectedDataType: string;
+		NSPrivacyCollectedDataTypeLinked: boolean;
+		NSPrivacyCollectedDataTypeTracking: boolean;
+		NSPrivacyCollectedDataTypePurposes: string[];
+	};
+
+	const manifest = expoConfig.ios?.privacyManifests as
+		| { NSPrivacyTracking?: boolean; NSPrivacyCollectedDataTypes?: Collected[] }
+		| undefined;
+	const collected = manifest?.NSPrivacyCollectedDataTypes ?? [];
+	const purposesOf = (type: string): string[] =>
+		collected.find((entry) => entry.NSPrivacyCollectedDataType === `NSPrivacyCollectedDataType${type}`)
+			?.NSPrivacyCollectedDataTypePurposes ?? [];
+
+	test("declares no tracking", () => {
+		expect(manifest?.NSPrivacyTracking).toBe(false);
+	});
+
+	test("declares the launch ping", () => {
+		expect(purposesOf("ProductInteraction")).toContain("NSPrivacyCollectedDataTypePurposeAnalytics");
+	});
+
+	test("declares the install id, for both the ping and the update check", () => {
+		expect(purposesOf("DeviceID")).toEqual(
+			expect.arrayContaining([
+				"NSPrivacyCollectedDataTypePurposeAnalytics",
+				"NSPrivacyCollectedDataTypePurposeAppFunctionality",
+			])
+		);
+	});
+
+	test("declares the crash message the update check carries", () => {
+		expect(purposesOf("CrashData")).toContain("NSPrivacyCollectedDataTypePurposeAppFunctionality");
+	});
+
+	// Nothing the app sends carries a name or an account, and none of it is
+	// shared for advertising. A `true` here would also need an ATT prompt.
+	test("links nothing to the user and tracks nothing", () => {
+		expect(collected.length).toBeGreaterThan(0);
+		for (const entry of collected) {
+			expect(entry.NSPrivacyCollectedDataTypeLinked).toBe(false);
+			expect(entry.NSPrivacyCollectedDataTypeTracking).toBe(false);
+		}
+	});
+});
+
 describe("generate-icons.ts", () => {
 	const source = readFileSync(GENERATOR, "utf8");
 

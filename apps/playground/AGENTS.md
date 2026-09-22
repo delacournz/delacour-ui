@@ -63,6 +63,7 @@ src/
 ├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
+├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── demo-pager/               the paged gallery — one demo per screen
@@ -243,7 +244,11 @@ that proved it. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The rows
 are grouped under the documentation site's eight group names, in its order, so
-a component found on the site is found in the same place here.
+a component found on the site is found in the same place here. An **About** group closes the list
+with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the browser —
+App Review wants the link inside the app, not only on the listing. It always opens production,
+even from a dev build, and `src/lib/privacy-url.test.ts` holds its path to the site's
+`privacyRoute` and to a route file that exists.
 
 **The grouping is a copy, and a test keeps it honest.** The eight names and the
 slug→group map could not move into `@delacour/design-system` (app-free by rule)
@@ -1153,6 +1158,19 @@ it. The app discloses it instead — on the privacy policy and on both stores' p
 Anything that needs consent later — screen views, events, replay — needs its own SDK and a prompt,
 and cannot ride on this one.
 
+**The privacy manifest says what both Expo modules send.** `ios.privacyManifests` in
+`app.config.ts` declares Product Interaction, Device ID and Crash Data — the launch ping, the
+install id it shares with `expo-updates`' check, and the crash message that check carries after a
+crash — none linked, none tracking. `app.config.test.ts` holds those declarations, and
+`apps/web/src/lib/privacy.test.ts` holds the public policy to the same modules, down to the fields
+the launch ping sends.
+
+**An empty `NSPrivacyAccessedAPITypes` after prebuild is not a bug.** Expo's plugin writes the
+collected types into `ios/DelacourUI/PrivacyInfo.xcprivacy`; the required-reason API entries
+(UserDefaults, FileTimestamp, SystemBootTime) are aggregated from every pod's own manifest by React
+Native's `pod install`. `expo prebuild --no-install` therefore shows the array empty. EAS always
+installs pods, so a release build carries both — check the file after `pod install`, not before.
+
 ### What is not wired
 
 - **`EXPO_TOKEN`.** `.env.example` is committed, `.env` is gitignored, and the
@@ -1183,12 +1201,14 @@ and cannot ride on this one.
   submit and publish jobs do not depend on a tag job, so the release itself
   still ships — the run is red only because it went untagged. A fine-grained
   token expires; a `401` in a tag job is usually that.
-- **Store privacy declarations for Insights.** Launch counts are data the app collects, and both
-  stores ask about it outside the code. App Store Connect → App Privacy: **Usage Data → Product
-  Interaction** (Apple's own example is "app launches"), purpose Analytics, not linked to the user,
-  not used for tracking. Play Console → Data safety: **App activity → App interactions**, Analytics.
-  Both also ask about the install UUID it sends. The policy both link to is meant to live at
-  `ui.delacour.co.nz/privacy`, and `apps/web` has no such page yet.
+- **Store privacy declarations.** Both stores ask outside the code, and their answers have to
+  agree with `ios.privacyManifests` and with [`/privacy`](https://ui.delacour.co.nz/privacy). App
+  Store Connect → App Privacy: **Usage Data → Product Interaction** (Analytics), **Identifiers →
+  Device ID** (Analytics, App Functionality) and **Diagnostics → Crash Data** (App Functionality),
+  none linked to the user and none used for tracking, with the privacy policy URL set to
+  `https://ui.delacour.co.nz/privacy`. Play Console → Data safety: **App activity → App
+  interactions** (Analytics), **Device or other IDs** (Analytics, App functionality) and **App info
+  and performance → Crash logs** (App functionality), encrypted in transit, with the same URL.
 - **CI on the release branch.** `.github/workflows/ci.yml` runs on
   `[main, develop, release/playground/*]`, so a push to a release branch is
   typechecked, linted, tested and built. Those checks are advisory here: GitHub

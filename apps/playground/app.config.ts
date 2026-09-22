@@ -86,6 +86,40 @@ const expoConfig: ExpoConfig = {
 			ITSAppUsesNonExemptEncryption: false,
 		},
 		bundleIdentifier: "nz.co.delacour.ui.playground",
+		// What the app sends, declared the way Apple builds its privacy report:
+		// `expo-insights`' launch ping (an install id and the launch itself, for
+		// analytics) and `expo-updates`' check (the same id, and a crash's message
+		// after a crash, to keep updates working). Nothing is linked to a person
+		// and nothing tracks. Prebuild merges this into the template's
+		// PrivacyInfo.xcprivacy, keeping its required-reason API entries. The App
+		// Store listing's privacy answers and apps/web's /privacy page must say the
+		// same — app.config.test.ts and apps/web's privacy.test.ts hold each side.
+		privacyManifests: {
+			NSPrivacyTracking: false,
+			NSPrivacyCollectedDataTypes: [
+				{
+					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypeProductInteraction",
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ["NSPrivacyCollectedDataTypePurposeAnalytics"],
+				},
+				{
+					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypeDeviceID",
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: [
+						"NSPrivacyCollectedDataTypePurposeAnalytics",
+						"NSPrivacyCollectedDataTypePurposeAppFunctionality",
+					],
+				},
+				{
+					NSPrivacyCollectedDataType: "NSPrivacyCollectedDataTypeCrashData",
+					NSPrivacyCollectedDataTypeLinked: false,
+					NSPrivacyCollectedDataTypeTracking: false,
+					NSPrivacyCollectedDataTypePurposes: ["NSPrivacyCollectedDataTypePurposeAppFunctionality"],
+				},
+			],
+		},
 		// The docs site's playground links open here rather than in Safari. Apple
 		// fetches `/.well-known/apple-app-site-association` from each domain
 		// listed, through its own CDN, when the app is installed — so the file

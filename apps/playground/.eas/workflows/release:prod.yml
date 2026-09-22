@@ -55,6 +55,20 @@ jobs:
     type: fingerprint
     needs: [extract_version]
 
+  # An update is only reachable if the `production` channel the binaries ask for
+  # has a branch pointed at it. A channel is created by the first build and never
+  # linked by `eas update`, so on 2026-09-22 every update this workflow had ever
+  # published sat behind an unlinked channel while TestFlight kept its embedded
+  # bundle. Both publish jobs need this, so an unlinked channel fails the run
+  # instead of publishing to nowhere. Custom jobs run `eas` as the workflow's
+  # robot user, so no token is passed here.
+  check_update_channel:
+    name: Check update channel
+    needs: [extract_version]
+    steps:
+      - name: Verify the production channel has a branch
+        run: bun scripts/eas-check-channel.ts production
+
   # Check for existing Android build
   get_android_build:
     name: Check for existing android build
@@ -118,7 +132,7 @@ jobs:
   # If there is an existing Android build, we want to create an OTA update for it.
   publish_android_update:
     name: Publish Android update
-    needs: [get_android_build]
+    needs: [get_android_build, check_update_channel]
     if: ${{ needs.get_android_build.outputs.build_id }}
     type: update
     params:
@@ -128,7 +142,7 @@ jobs:
   # If there is an existing iOS build, we want to create an OTA update for it.
   publish_ios_update:
     name: Publish iOS update
-    needs: [get_ios_build]
+    needs: [get_ios_build, check_update_channel]
     if: ${{ needs.get_ios_build.outputs.build_id }}
     type: update
     params:

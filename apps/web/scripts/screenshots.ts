@@ -28,6 +28,11 @@
  * next-themes reads under Fumadocs' `RootProvider` — and then asserted on
  * `<html>`. A wrong key would otherwise shoot the dark theme twice and label
  * one of them light.
+ *
+ * The cookie banner is answered ("denied") before every shot so it covers
+ * nothing, except the frames that set `consent: "ask"` to photograph it. It
+ * only exists on a build with `VITE_GA_ID` set; on any other build those
+ * frames show the page without it.
  */
 
 import { mkdir, rm } from "node:fs/promises";
@@ -50,6 +55,8 @@ type Shot = {
 	theme: Theme;
 	/** A full-page shot is the whole scroll height, for the `<details>` block. */
 	full?: boolean;
+	/** Leave the cookie banner unanswered, so it is in the shot. */
+	consent?: "ask";
 };
 
 const SHOTS: Shot[] = [
@@ -74,6 +81,9 @@ const SHOTS: Shot[] = [
 	{ id: "19-privacy-app-desktop-dark", path: "/privacy#the-app", frame: "desktop", theme: "dark" },
 	{ id: "20-privacy-hero-desktop-light", path: "/privacy", frame: "desktop", theme: "light" },
 	{ id: "21-privacy-full-mobile-dark", path: "/privacy", frame: "phone", theme: "dark", full: true },
+	{ id: "22-consent-desktop-dark", path: "/", frame: "desktop", theme: "dark", consent: "ask" },
+	{ id: "23-consent-mobile-dark", path: "/", frame: "phone", theme: "dark", consent: "ask" },
+	{ id: "24-privacy-website-desktop-dark", path: "/privacy#the-website", frame: "desktop", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");
@@ -112,6 +122,7 @@ async function main(): Promise<void> {
 			colorScheme: shot.theme,
 		});
 		await context.addInitScript(`localStorage.setItem("theme", ${JSON.stringify(shot.theme)})`);
+		if (shot.consent !== "ask") await context.addInitScript(`localStorage.setItem("consent.analytics", "denied")`);
 
 		const page = await context.newPage();
 		await page.goto(new URL(shot.path, url).href, { waitUntil: "domcontentloaded" });

@@ -3,6 +3,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "fumadocs-ui/components/
 import { QrCode, Smartphone } from "lucide-react";
 import type { ReactElement } from "react";
 import QRCode from "react-qr-code";
+import { track } from "@/lib/analytics/track";
 import { cn } from "@/lib/cn";
 import { NATIVE_APP, playgroundUrl, schemeUrl } from "@/lib/native-app";
 import { InstallButtons } from "./install-buttons";
@@ -43,7 +44,11 @@ type ScanToPreviewProps = {
  */
 export function ScanToPreview({ className, slug }: ScanToPreviewProps): ReactElement {
 	return (
-		<Popover>
+		<Popover
+			onOpenChange={(open) => {
+				if (open) track({ name: "preview-scan", slug });
+			}}
+		>
 			<PopoverTrigger
 				className={cn(
 					buttonVariants({

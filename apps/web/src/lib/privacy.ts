@@ -48,7 +48,7 @@ const MAIL = `[${CONTACT}](mailto:${CONTACT})`;
 const HISTORY = `https://github.com/${gitConfig.user}/${gitConfig.repo}/commits/${gitConfig.branch}/apps/web/src/lib/privacy.ts`;
 
 export const PRIVACY = {
-	updated: "2026-09-22",
+	updated: "2026-09-23",
 	controller: "Delacour Limited",
 	contact: CONTACT,
 	eyebrow: "Privacy",
@@ -60,7 +60,7 @@ export const PRIVACY = {
 		"No accounts, sign-in or profiles. Nothing we receive has your name or email address on it.",
 		"No adverts, no tracking across other companies' apps or websites, and nothing is sold.",
 		"The app tells Expo each time it starts, checks with Expo for updates, and sends Expo reports on its speed, the screens you open and any errors.",
-		"The website loads its fonts from Google, and sets no cookies.",
+		"The website counts visits with Umami, which sets no cookies. Google Analytics runs only if you accept its cookies. Fonts load from Google.",
 		"Your settings — the site's light or dark choice, the app's theme — stay on your device.",
 	],
 } as const;
@@ -78,7 +78,8 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "the-website",
 		title: "The website",
 		body: [
-			"`ui.delacour.co.nz` has no analytics, no tracking scripts and no cookies. Loading a page still involves two parties besides you.",
+			"`ui.delacour.co.nz` counts visits with Umami, which sets no cookies and needs no consent. We run Umami ourselves at `analytics.delacour.co.nz`, so what it records goes to no other analytics company. Google Analytics sets cookies only after you choose Accept in the banner; until then its script is not even loaded, so Google receives nothing. The site shows no adverts, so the advertising settings stay off whatever you choose.",
+			"Loading a page also involves the parties below.",
 		],
 		disclosures: [
 			{
@@ -92,12 +93,32 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 				why: "To draw the site's typefaces. The theme builder at `/theme` loads more families when you try its Font axis.",
 			},
 			{
-				what: "What you type into search",
-				to: "Our own server",
-				why: "Answered from an index held in memory. We do not store or log it.",
+				what: "Each page you visit: the address — including any `?preset=` theme code in it — the page that linked you here, your browser, operating system, device type, language and country. No cookies, and no identifier that follows you from one day to the next",
+				to: "Umami, which we run at `analytics.delacour.co.nz`, hosted by Railway",
+				why: "To count visits and see which pages and themes people use.",
 			},
 			{
-				what: "Your light or dark choice, and scroll positions",
+				what: "What you do on a page: links you follow to other sites, files you open such as `llms.txt`, and when you copy a command, a theme or a code sample",
+				to: "Umami, at `analytics.delacour.co.nz`",
+				why: "To see which parts of the documentation get used.",
+			},
+			{
+				what: "What you type into search, once you stop typing, and how many pages it found",
+				to: "Our own server to answer it, and Umami to count it",
+				why: "Answered from an index held in memory, which does not log it. The query and its result count go to Umami so we can see what people look for and what the docs are missing. Do not type anything personal into it.",
+			},
+			{
+				what: "When a program without a browser — a coding agent, a crawler or `curl` — reads `llms.txt`, a page's Markdown or a skill file: the address it read, its user agent and its language setting. Not its IP address",
+				to: "Umami, sent by our own server",
+				why: "To count how often the docs are read by agents, which never load the tracker a browser does.",
+			},
+			{
+				what: "Only if you accept: the pages you visit and what you do on them, your device and browser, and a random identifier stored in a cookie (`_ga`) that recognises your browser on a later visit",
+				to: "Google — Google Analytics, loaded from `googletagmanager.com`",
+				why: "To understand how people move through the docs over time. Decline, or never answer, and Google Analytics sets no cookies. Change your mind with Cookie settings at the foot of the home page.",
+			},
+			{
+				what: "Your light or dark choice, scroll positions, and your answer to the cookie banner",
 				to: "Your browser's local and session storage",
 				why: "So the site remembers them. They are never sent to us.",
 			},
@@ -171,7 +192,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		title: "Who else handles it",
 		body: [
 			"The companies above process this information for us under their own terms. They are based in the United States, so it is processed there:",
-			"[Expo](https://expo.dev/privacy) for the app's launch pings, performance reports and updates, [Railway](https://railway.com/legal/privacy) for hosting the website, [Google](https://policies.google.com/privacy) for its fonts, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
+			"[Expo](https://expo.dev/privacy) for the app's launch pings, performance reports and updates, [Railway](https://railway.com/legal/privacy) for hosting the website and the Umami instance that counts its visits, [Google](https://policies.google.com/privacy) for its fonts and Google Analytics, and [GitHub](https://docs.github.com/site-policy/privacy-policies/github-general-privacy-statement) for the CLI's downloads.",
 			"We do not sell or rent anything to anyone, and we do not share it with anyone else unless the law requires us to.",
 		],
 	},
@@ -179,15 +200,15 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		id: "why",
 		title: "Why we use it",
 		body: [
-			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, to see how fast the app is and which demos get opened, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
-			"If UK or EU data protection law applies to you, our lawful basis is our legitimate interest in running and improving these services, which we have weighed against your interests given how little is collected.",
+			"Only to run the website, the app and the CLI, to count how many people use them and on which versions, to see which pages, searches and demos get used, to see how fast the app is, and to fix what breaks. We do not combine it with anything else, and we do not use it to identify, profile or advertise to anyone.",
+			"If UK or EU data protection law applies to you, our lawful basis is our legitimate interest in running and improving these services, which we have weighed against your interests given how little is collected. For Google Analytics it is your consent, which you can withdraw at any time from Cookie settings.",
 		],
 	},
 	{
 		id: "how-long",
 		title: "How long it is kept",
 		body: [
-			"What stays on your device is there until you clear it or delete the app, except the app's copy of its performance reports, which it deletes after seven days. Railway, Expo and Google keep what they receive for the periods their own policies set, linked above. We keep no copies of our own.",
+			"What stays on your device is there until you clear it or delete the app, except the app's copy of its performance reports, which it deletes after seven days. Railway, Expo and Google keep what they receive for the periods their own policies set, linked above. What Umami records is ours, kept on our own instance until we delete it; it holds no cookies or identifiers that could tie it back to you.",
 		],
 	},
 	{

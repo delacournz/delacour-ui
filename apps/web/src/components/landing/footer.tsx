@@ -3,6 +3,8 @@ import type { ReactElement } from "react";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { FOOTER_COPY } from "@/components/landing/copy";
 import { PAGE_SECTION } from "@/components/section";
+import { ANALYTICS } from "@/lib/analytics/config";
+import { CONSENT_OPEN_EVENT } from "@/lib/analytics/consent";
 import { gitConfig, privacyRoute } from "@/lib/shared";
 
 const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
@@ -44,6 +46,15 @@ export function Footer(): ReactElement {
 					>
 						{FOOTER_COPY.privacy}
 					</Link>
+					{ANALYTICS.ga.kind === "on" ? (
+						<button
+							className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+							onClick={() => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT))}
+							type="button"
+						>
+							{FOOTER_COPY.cookies}
+						</button>
+					) : null}
 				</div>
 			</div>
 		</footer>

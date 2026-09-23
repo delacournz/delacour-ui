@@ -161,4 +161,5 @@ export const FOOTER_COPY = {
 	github: "GitHub",
 	llms: "llms.txt",
 	privacy: "Privacy",
+	cookies: "Cookie settings",
 } as const;

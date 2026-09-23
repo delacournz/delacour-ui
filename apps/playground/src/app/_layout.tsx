@@ -32,6 +32,16 @@ restoreDesignSystem();
 Observe.configure(observeConfig(process.env.EXPO_PUBLIC_OBSERVE_IN_DEBUG));
 
 /**
+ * The gallery home sits beneath every screen, however the app was opened.
+ *
+ * Without an anchor a cold-start deep link — the QR on a docs page — builds a
+ * stack holding only the linked screen, so its back button has nowhere to go.
+ * With it Expo Router mounts `index` first and pushes the link on top, which is
+ * what a warm start already does.
+ */
+export const unstable_settings = { anchor: "index" };
+
+/**
  * Paints the native root view — the layer beneath the whole React tree.
  *
  * `app.config.ts` can only carry one static `backgroundColor`, so it cannot

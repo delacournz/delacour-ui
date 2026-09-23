@@ -27,7 +27,8 @@ function isKnownRoute(route: string): boolean {
  * React Native — Flow-typed source Bun's transpiler cannot parse.
  *
  * `initial` is deliberately unused. A playground link means the same screen
- * whether the app was cold or already running.
+ * whether the app was cold or already running. The home screen beneath it on a
+ * cold start comes from the root layout's `unstable_settings.anchor`, not here.
  */
 export function redirectSystemPath({ path }: { path: string; initial: boolean }): string {
 	return deepLinkToRoute(path, isKnownRoute);

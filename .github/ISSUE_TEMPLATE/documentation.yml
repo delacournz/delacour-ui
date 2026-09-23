@@ -1,0 +1,26 @@
+name: 📝 Documentation
+description: Something in the docs is wrong, missing or unclear.
+title: "📝 docs: "
+labels: [documentation]
+body:
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: Link to the docs page.
+      placeholder: https://ui.delacour.co.nz/docs/…
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong or missing?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: What should it say instead?

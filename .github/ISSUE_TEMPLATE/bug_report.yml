@@ -1,0 +1,139 @@
+name: 🐛 Bug report
+description: Report a reproducible bug or regression in a component, the charts engine or the CLI.
+title: "🐛 bug(<component>): "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. A report we can reproduce gets fixed; one we cannot gets closed.
+
+        Not sure it is a bug? Read the [docs](https://ui.delacour.co.nz/docs) first, or open a [question](https://github.com/delacournz/delacour-ui/issues/new?template=question.yml).
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I tested on the latest `@alpha` release — the bug may already be fixed.
+          required: true
+        - label: I searched [open and closed issues](https://github.com/delacournz/delacour-ui/issues?q=is%3Aissue) for duplicates.
+          required: true
+        - label: I read the component's page in the [docs](https://ui.delacour.co.nz/docs).
+          required: true
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Package
+      description: Where does the bug live?
+      options:
+        - "@delacour/react-native-ui (components)"
+        - "@delacour/react-native-charts (Chart)"
+        - "delacour (CLI)"
+        - "Docs site / theme customizer"
+        - "Not sure"
+    validations:
+      required: true
+
+  - type: input
+    id: components
+    attributes:
+      label: Affected components
+      description: Which components or CLI commands are affected?
+      placeholder: e.g. Tabs, BottomSheet, `delacour add`
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How did you install it?
+      description: Copied source may have drifted — `bunx delacour@alpha diff` shows how far.
+      options:
+        - "npm package (`bun add @delacour/react-native-ui`)"
+        - "CLI copy (`bunx delacour add`), unmodified"
+        - "CLI copy (`bunx delacour add`), modified"
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Package or CLI version.
+      placeholder: 0.1.0-alpha.4
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platforms
+    attributes:
+      label: Platforms
+      multiple: true
+      options:
+        - iOS
+        - Android
+        - Web
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What happened, and what you expected instead. If you plan to open a PR, say how.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: The smallest code and steps that show the bug.
+      value: |
+        1. …
+        2. …
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction-link
+    attributes:
+      label: Reproduction repository
+      description: |
+        A link to a minimal Expo app on GitHub that shows the bug. `bunx create-expo-app` and one screen is enough.
+
+        > [!CAUTION]
+        > A report without a reproduction may be labelled `question` and closed.
+
+  - type: textarea
+    id: media
+    attributes:
+      label: Screenshots or video
+      description: Visual bugs need one. Drag files in; note the device and OS version.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Metro, Xcode or Logcat output around the error. Paste text, not a screenshot.
+      render: shell
+
+  - type: textarea
+    id: doctor
+    attributes:
+      label: "`delacour doctor` output"
+      description: Run `bunx delacour@alpha doctor --json` in your app and paste the result. It checks the Uniwind, Metro and native-module wiring that breaks silently.
+      render: json
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Run `npx expo-env-info` (or `npx react-native info` outside Expo) and paste the result.
+      render: shell
+    validations:
+      required: true

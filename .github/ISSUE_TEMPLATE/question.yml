@@ -1,0 +1,24 @@
+name: 💬 Question
+description: Ask how to do something. Use this when it works as documented but you need help.
+title: "💬 question: "
+labels: [question]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What are you trying to do, and what have you tried?
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code
+      render: tsx
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: 0.1.0-alpha.4

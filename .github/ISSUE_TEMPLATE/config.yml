@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://ui.delacour.co.nz/docs
+    about: Components, the CLI, charts and theming.
+  - name: 🤖 llms.txt
+    url: https://ui.delacour.co.nz/llms-full.txt
+    about: The whole docs site as one file, for asking an agent before asking here.

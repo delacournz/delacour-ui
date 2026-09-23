@@ -1,9 +1,14 @@
+import { posthogConsent } from "./posthog";
+
 /**
- * Consent for Google Analytics, which is loaded as `gtag.js` and sets cookies.
+ * Consent for analytics cookies: Google Analytics, which is loaded as
+ * `gtag.js` only on Accept, and PostHog, which runs cookieless until Accept.
+ * One banner and one answer gate both.
  *
- * The choice lives in `localStorage` under `CONSENT_KEY`. It is read twice: by
- * the inline bootstrap, before GA is configured, so a returning visitor who
- * accepted is counted from their first hit; and by the banner, to decide
+ * The choice lives in `localStorage` under `CONSENT_KEY`. It is read three
+ * times: by the inline bootstrap, before GA is configured, so a returning
+ * visitor who accepted is counted from their first hit; by `startPosthog`, to
+ * bring PostHog's own stored answer into line; and by the banner, to decide
  * whether to ask.
  */
 
@@ -71,8 +76,10 @@ export function readConsent(): Consent | null {
 }
 
 /**
- * Store the choice and tell GA. Accepting loads `gtag.js` for the first time on
- * this page; declining after an earlier accept stops GA writing cookies at once.
+ * Store the choice and tell both providers. Accepting loads `gtag.js` for the
+ * first time on this page and lets PostHog persist; declining after an earlier
+ * accept stops GA writing cookies at once and sends PostHog back to cookieless,
+ * clearing what it stored.
  */
 export function writeConsent(consent: Consent): void {
 	try {
@@ -82,4 +89,5 @@ export function writeConsent(consent: Consent): void {
 	}
 	window.gtag?.("consent", "update", { analytics_storage: consent });
 	if (consent === "granted") window.loadGa?.();
+	posthogConsent(consent);
 }

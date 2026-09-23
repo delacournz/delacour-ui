@@ -31,8 +31,8 @@
  *
  * The cookie banner is answered ("denied") before every shot so it covers
  * nothing, except the frames that set `consent: "ask"` to photograph it. It
- * only exists on a build with `VITE_GA_ID` set; on any other build those
- * frames show the page without it.
+ * only exists on a build with `VITE_GA_ID` or the two `VITE_POSTHOG_*` vars
+ * set; on any other build those frames show the page without it.
  */
 
 import { mkdir, rm } from "node:fs/promises";

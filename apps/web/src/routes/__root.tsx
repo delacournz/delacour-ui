@@ -5,6 +5,7 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { TrackedSearchDialog } from "@/components/search-dialog";
 import { ANALYTICS } from "@/lib/analytics/config";
 import { gaBootstrap } from "@/lib/analytics/consent";
+import { startPosthog } from "@/lib/analytics/posthog";
 import { installClickTracking } from "@/lib/analytics/track";
 import { siteFontLinks } from "@/lib/google-fonts";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
@@ -142,9 +143,11 @@ function DirectionContract() {
  *
  * Search is Fumadocs' own dialog rebuilt so the query can be counted — see
  * `search-dialog.tsx` — and one delegated listener counts outbound links,
- * downloads and code copies on every route.
+ * downloads and code copies on every route. PostHog starts on mount, on the
+ * client only; it has no tag in `<head>` — see `src/lib/analytics/posthog.ts`.
  */
 function RootComponent() {
+	useEffect(() => startPosthog(), []);
 	useEffect(() => installClickTracking(), []);
 
 	return (

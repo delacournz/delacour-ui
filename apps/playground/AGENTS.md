@@ -87,8 +87,9 @@ the file `(components)/button.tsx` is the route `/button`.
 
 `/theme` and `/preview` are the only two top-level routes that are not a
 component's gallery. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
-bare `<Stack>`, so expo-router registers both from their filenames and `/theme`
-pushes as an ordinary card.
+`<Stack>` with no children, so expo-router registers both from their filenames and
+`/theme` pushes as an ordinary card. Its one setting is the anchor — see
+[Deep links](#deep-links).
 
 A component's gallery takes one of two shapes, and which one depends on whether
 it fits on a page:
@@ -338,6 +339,18 @@ would break `bun run previews` in a way whose first symptom is a wall of identic
 
 A slug with no screen — `provider`, a typo, a truncated scan — opens the home screen. An unmatched
 route in a release build is a blank screen and a console warning nobody sees.
+
+### Home is always beneath a deep link
+
+`_layout.tsx` exports `unstable_settings = { anchor: "index" }`. Without it, a link that
+cold-starts the app builds a stack holding only the linked screen, so its back button does nothing.
+A warm start never showed this because home was already mounted. With the anchor, Expo Router
+mounts `index` first and pushes the link on top, so both starts give home → linked screen.
+
+The anchor is home, not the component's own index. A link to `/chart/line` backs out to home rather
+than to `/chart`, because the `(components)` folders have no layouts of their own to anchor. The
+`dlc-ui-playground://preview?…` capture links are cold starts too, so home mounts beneath `/preview`
+on the first capture of a run; it is covered, and it never reaches a frame.
 
 ### One intent filter per host
 

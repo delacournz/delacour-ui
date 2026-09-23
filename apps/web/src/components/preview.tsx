@@ -109,31 +109,65 @@ function PreviewFrame({ entry }: { entry: PreviewEntry }): ReactElement {
  *
  * `width`/`height` are the media's intrinsic pixels, so the box is reserved
  * before the image loads and the page does not jump.
+ *
+ * `fill` is for a caller that sizes the media against a fixed box — a landing
+ * tile, an index card — with `h-full w-full object-contain`. A clip sits in a
+ * wrapper that carries its controls, and an unsized wrapper resolves `h-full`
+ * against nothing: the video drew at its intrinsic 720px and the tile cropped
+ * it to a strip of the middle. `fill` makes that wrapper the box.
  */
-export function ThemedPreview({ entry, className }: { entry: PreviewEntry; className: string }): ReactElement {
+export function ThemedPreview({
+	entry,
+	className,
+	fill = false,
+}: {
+	entry: PreviewEntry;
+	className: string;
+	fill?: boolean;
+}): ReactElement {
 	return (
 		<>
-			<MediaFor className={`${className} dark:hidden`} entry={entry} media={entry.light} />
-			<MediaFor className={`${className} hidden dark:block`} entry={entry} media={entry.dark} />
+			<MediaFor className={className} entry={entry} fill={fill} media={entry.light} visibility="dark:hidden" />
+			<MediaFor className={className} entry={entry} fill={fill} media={entry.dark} visibility="hidden dark:block" />
 		</>
 	);
 }
 
+/**
+ * One theme's media. `visibility` is the class that shows it in its theme, and
+ * it goes on the outermost element — for a clip that is the wrapper, not the
+ * `<video>`, or the off-theme wrapper and its controls stay in the layout.
+ */
 function MediaFor({
 	className,
 	entry,
+	fill,
 	media,
+	visibility,
 }: {
 	className: string;
 	entry: PreviewEntry;
+	fill: boolean;
 	media: PreviewMedia;
+	visibility: string;
 }): ReactElement {
-	if (media.video) return <PreviewVideo className={className} entry={entry} src={media.video} poster={media.poster} />;
+	if (media.video) {
+		const box = fill ? "h-full w-full" : "";
+		return (
+			<PreviewVideo
+				boxClassName={`relative ${box} ${visibility}`}
+				className={className}
+				entry={entry}
+				poster={media.poster}
+				src={media.video}
+			/>
+		);
+	}
 
 	return (
 		<img
 			alt={entry.title}
-			className={className}
+			className={`${className} ${visibility}`}
 			decoding="async"
 			height={entry.height}
 			loading="lazy"
@@ -164,11 +198,13 @@ function MediaFor({
  * server build outright.
  */
 function PreviewVideo({
+	boxClassName,
 	className,
 	entry,
 	poster,
 	src,
 }: {
+	boxClassName: string;
 	className: string;
 	entry: PreviewEntry;
 	poster: string;
@@ -222,7 +258,7 @@ function PreviewVideo({
 	};
 
 	return (
-		<div className="relative">
+		<div className={boxClassName}>
 			<video
 				aria-label={entry.title}
 				className={className}

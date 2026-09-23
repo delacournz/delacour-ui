@@ -89,7 +89,7 @@ function ShowcaseCard({ tile }: { tile: ShowcaseTile }): ReactElement {
 	return (
 		<Link className={`${CARD} ${span}`} params={{ _splat: `native/components/${component.slug}` }} to="/docs/$">
 			<div className="flex h-56 items-center justify-center overflow-hidden bg-fd-background p-4">
-				<ThemedPreview className="h-full w-full object-contain" entry={entry} />
+				<ThemedPreview className="h-full w-full object-contain" entry={entry} fill />
 			</div>
 			<div className="flex items-start justify-between gap-3 border-fd-border border-t p-4">
 				<div className="flex flex-col gap-1">

@@ -45,7 +45,7 @@ function ComponentCard({ component }: { component: ComponentEntry }): ReactEleme
 		<Link className={CARD} params={{ _splat: `native/components/${component.slug}` }} to="/docs/$">
 			<div className="flex h-40 items-center justify-center overflow-hidden border-fd-border border-b bg-capture">
 				{hero ? (
-					<ThemedPreview entry={hero} className="h-full w-full object-contain" />
+					<ThemedPreview className="h-full w-full object-contain" entry={hero} fill />
 				) : (
 					<span className="text-fd-muted-foreground text-xs">No preview yet</span>
 				)}

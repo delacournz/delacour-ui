@@ -69,6 +69,9 @@ function Axis({ label, caption, children }: { label: string; caption?: string; c
  * `resetScroll={false}` because the destination is this same page: the router
  * scrolls to the top on every navigation by default, which threw the reader
  * back past the preview each time they picked an option.
+ *
+ * `rel="nofollow"` because every tile is a new URL one axis away, and a crawler
+ * following them walks every combination — see `routes/robots[.]txt.ts`.
  */
 function OptionLink({
 	option,
@@ -83,6 +86,7 @@ function OptionLink({
 		<Link
 			aria-current={option.isSelected ? "true" : undefined}
 			className={`${className ?? TILE} ${option.isSelected ? TILE_SELECTED : TILE_IDLE}`}
+			rel="nofollow"
 			resetScroll={false}
 			search={{ preset: option.code }}
 			to="/theme"

@@ -1036,7 +1036,7 @@ export const install = {
 		description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		importPath: "@delacour/react-native-ui/chart",
 		exportName: "Chart",
-		expo: ["@shopify/react-native-skia", "react-native-reanimated", "react-native-worklets", "uniwind"],
+		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-reanimated", "react-native-worklets", "uniwind"],
 		npm: ["@delacour/react-native-charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 44,

@@ -107,10 +107,17 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip.",
 		categories: ["display"],
-		// `@delacour/react-native-charts` peer-depends on Skia, and no file here imports it —
-		// so no scan can see it. Installing it with the package manager rather
-		// than `expo install` is a build that fails at the linker.
-		dependencies: ["@shopify/react-native-skia"],
+		// `@delacour/react-native-charts` peer-depends on Skia and Gesture Handler, and no
+		// file here imports either — so no scan can see them. Installing them with the
+		// package manager rather than `expo install` is a build that fails at the linker.
+		// Reanimated and Worklets are named too, so the list stays whole if a file
+		// here stops importing them.
+		dependencies: [
+			"@shopify/react-native-skia",
+			"react-native-gesture-handler",
+			"react-native-reanimated",
+			"react-native-worklets",
+		],
 	},
 	field: {
 		title: "Field",

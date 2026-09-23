@@ -541,6 +541,8 @@ client reads as an error.
 carries no `Sitemap:` line, because prerendering is off and nothing produces a page list at build
 time — a hand-written sitemap is the transcription this site keeps deleting.
 
+Its one rule is `Disallow: /theme?` — see the builder below for why.
+
 ## `<AgentPrompt>` hands the reader's own agent the setup
 
 `src/components/agent-prompt.tsx` is a copy button over `SETUP_PROMPT`, used on the Quick start. The
@@ -647,6 +649,10 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
   Every one of those links — options, presets, Reset — passes `resetScroll={false}`: the router
   scrolls to the top on each navigation, and a same-page edit should leave the reader where they
   clicked.
+  The option tiles also carry `rel="nofollow"`, and `robots.txt` disallows `/theme?`: every tile
+  is a fresh code one axis away, so to a crawler the page is an infinite graph. Googlebot,
+  GoogleOther and GPTBot walked it at ~40 requests a second, and on 2026-09-23 that crawl was ~99%
+  of the service's Railway egress. Keep both whenever a control here gains a new URL.
 
 ### The pieces
 
@@ -739,6 +745,16 @@ the address bar serves correctly.
 extension, which no docs URL does. Everything else keeps fumadocs' `Link` and its SPA navigation.
 A new file route served only by a handler needs no further work; a link to one that *has* no
 extension would.
+
+### Nothing is compressed unless this app does it
+
+Railway's edge passes the process's bytes through as written, and Nitro's Bun preset writes them
+raw. So `vite.config.ts` sets `compressPublicAssets` (static files are served from `.br`/`.gz`
+siblings written at build) and `src/start.ts` runs `gzipResponse` from `src/lib/compress.ts` as its
+outermost request middleware (rendered pages, gzipped as they stream). A new binary content type
+needs nothing; a new text type the regex there does not match goes out uncompressed.
+`/previews/**` gets a one-day `Cache-Control` from `routeRules` — it is not content-hashed, so it
+cannot be `immutable` the way `/assets` is.
 
 ### Prerendering is off
 

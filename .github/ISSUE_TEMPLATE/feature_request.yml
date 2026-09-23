@@ -1,0 +1,67 @@
+name: ✨ Feature request
+description: Propose a new component, a prop, or a change to the CLI or theming.
+title: "✨ feat(<component>): "
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Search [existing issues](https://github.com/delacournz/delacour-ui/issues?q=is%3Aissue) first — a 👍 on one that exists counts for more than a duplicate.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - New component
+        - Change to an existing component
+        - Charts
+        - CLI
+        - Theming / design system
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: components
+    attributes:
+      label: Related components
+      placeholder: e.g. Tabs, Slider
+    validations:
+      required: false
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what stops you today? Describe the need before the solution.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      description: How would you like to use it? A code sample of the call site is ideal.
+      render: tsx
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Workarounds you use now, or other libraries that solve it and how.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, designs, platform conventions (Human Interface Guidelines, Material), accessibility requirements.
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I'd like to open a pull request for this.

@@ -53,7 +53,7 @@ src/
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
-├── lib/analytics/         Google Analytics and consent — see "Analytics"
+├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
@@ -239,9 +239,11 @@ listings name, and the playground's home screen links to it.
   binary carrying it reaches a store.
 - **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
   them still do.
-- **The analytics are named from the code that loads them.** They are script tags, not packages, so
-  the `PHONES_HOME` check cannot see them: the test reads `consent.ts` for `googletagmanager.com`
-  and `search-dialog.tsx` for the search event, and holds the policy to each.
+- **The analytics are named from the code that loads them.** GA is a script tag, not a package, so
+  the `PHONES_HOME` check cannot see it: the test reads `consent.ts` for `googletagmanager.com`,
+  `search-dialog.tsx` for the search event and `server.ts` for `agent-fetch`, and holds the policy
+  to each. `posthog-js` *is* a package, so `PHONES_HOME` catches it; its host is an env var, so the
+  test holds the policy to naming the proxy, `i.delacour.co.nz`, directly.
 
 Change `PRIVACY.updated` with anything a reader would care about. The page links to the file's
 history on GitHub, which is the changelog, so there is no second one to keep.
@@ -463,43 +465,82 @@ Three things are load-bearing:
 
 ## Analytics
 
-One provider, Google Analytics, optional and off unless its env var is set at **build** time — it
-is `VITE_*`, so Vite inlines it into the client and server bundles alike. Railway sets it on
-production only; dev, CI and staging render no analytics tags at all. (Umami was removed; PostHog
-replaces it.)
+Two providers, PostHog and Google Analytics, each optional and off unless its env vars are set at
+**build** time — they are `VITE_*`, so Vite inlines them into the client and server bundles alike.
+Dev and CI set none and render no analytics at all. (Umami was removed; PostHog replaced it.)
 
 Railway builds with `bun run build --filter=@delacour/web`, which is `turbo build`, and turbo 2's
 strict env mode strips every variable a task does not list. `turbo.jsonc` therefore lists `VITE_*`
-on `build`; without it the ids inline as `undefined` and production ships with no tags and no
+on `build`; without it the ids inline as `undefined` and production ships with no analytics and no
 error. `config.test.ts` holds `turbo.jsonc` to it.
 
-| Var | Production value | Turns on |
-| --- | --- | --- |
-| `VITE_GA_ID` | `G-2REDJ2XPJZ` | GA4, loaded as `gtag.js` behind the consent banner |
+| Var | Production | Staging | Turns on |
+| --- | --- | --- | --- |
+| `VITE_POSTHOG_TOKEN` | the prod project's `phc_…` | the staging project's `phc_…` | PostHog, with the host below |
+| `VITE_POSTHOG_HOST` | `https://i.delacour.co.nz` | `https://i.delacour.co.nz` | — |
+| `VITE_GA_ID` | `G-2REDJ2XPJZ` | unset | GA4, loaded as `gtag.js` behind the consent banner |
 
-It is not a secret — it ends up in the page's HTML. `src/lib/analytics/config.ts` validates it and
-returns `off` for anything malformed rather than throwing. That is a security check as well as a
-convenience: the GA id is interpolated into an inline script.
+None is a secret — each ends up in the page's JavaScript or HTML — but the tokens live in Railway,
+not here. `src/lib/analytics/config.ts` validates each and returns `off` for anything malformed
+rather than throwing: a token must match `/^phc_[A-Za-z0-9]+$/` (a `phx_` personal key, which *is*
+a secret, is refused), the host must be an https origin, and the GA id is interpolated into an
+inline script, so its check is a security check as well as a convenience.
 
 | Piece | Where |
 | --- | --- |
-| Env → `{ ga }` | `src/lib/analytics/config.ts` |
+| Env → `{ ga, posthog }`, the counted hosts | `src/lib/analytics/config.ts` |
 | The event union, link classifier | `src/lib/analytics/events.ts` |
 | `track()`, the delegated click listener | `src/lib/analytics/track.ts` |
+| PostHog init options, lazy load, consent replay | `src/lib/analytics/posthog.ts`, started from `RootComponent` |
 | Consent Mode bootstrap, `gtag.js` loader, stored choice | `src/lib/analytics/consent.ts` |
-| The tags | `AnalyticsTags` in `src/routes/__root.tsx` |
+| Server `agent-fetch` events | `src/lib/analytics/server.ts`, called from `analyticsMiddleware` in `src/start.ts` |
+| The GA tag | `AnalyticsTags` in `src/routes/__root.tsx` |
 | The banner | `src/components/consent-banner.tsx`; reopened by the footer's Cookie settings |
 | Search queries | `src/components/search-dialog.tsx` |
 
-Three things are load-bearing:
+What is load-bearing:
 
+- **One banner, one stored answer, two providers.** `CONSENT_KEY` in `localStorage` is the answer;
+  `writeConsent` passes it to both. PostHog keeps its own copy too, and `consentReplay` brings that
+  into line on load whenever the two disagree — only then, because `opt_in_capturing` sends an
+  `$opt_in` event.
+- **PostHog is cookieless until Accept.** `cookieless_mode: "on_reject"` *alone* captures nothing
+  while the banner is unanswered (read `ConsentManager.isOptedOut` in posthog-js: pending counts as
+  opted out). `opt_out_capturing_by_default: true` makes an unanswered visitor count as rejected, and
+  a rejected one is captured cookieless — nothing in cookies or storage, users counted by PostHog's
+  daily-salted server hash. Accept calls `opt_in_capturing()` and PostHog writes its `ph_*` cookie
+  and local storage; Decline calls `opt_out_capturing()`, which deletes them and goes back to
+  cookieless. That is what the banner means by "Visits are counted without cookies either way".
+  **The PostHog project must have "Cookieless server hash mode" on** (Project settings → Web
+  analytics), or every cookieless event is dropped at ingestion.
+- **Everything the policy does not describe is off in code.** Autocapture, rage and dead clicks,
+  heatmaps, exceptions, web vitals, session replay and surveys are all off in `posthogOptions`, and
+  `advanced_disable_flags` plus `disable_external_dependency_loading` stop the SDK fetching remote
+  config or extra scripts — so a switch flipped in the PostHog UI cannot reach a visitor without a
+  code change and a policy change. `track()` is the only way a click reaches PostHog, so nothing is
+  counted twice. Page views are `capture_pageview: "history_change"`, which follows the router.
+- **PostHog goes through the managed reverse proxy, `i.delacour.co.nz`.** It is a CNAME to PostHog,
+  set up in PostHog's UI and added in Cloudflare as **DNS-only** (grey cloud), as PostHog's
+  managed-proxy setup requires. One proxy serves both projects; the token picks
+  the project. `ui_host` is fixed at `https://us.posthog.com` for the toolbar's links. Nothing in the
+  browser talks to `*.posthog.com`.
+- **The SDK is lazy.** `startPosthog` imports `posthog-js` only when PostHog is on *and* the page is
+  on a counted host (`isCountedHost`: production and staging), so a build without the vars, or a
+  production build on `localhost`, never requests it.
+- **Agents are counted on the server.** `/llms.txt`, `/llms-full.txt`, every `.md` twin and every
+  `/skills/*` file are read by programs that run no JavaScript. `analyticsMiddleware` posts one
+  `agent-fetch` event per read to `${host}/i/v0/e/`, fire-and-forget, never awaited. The caller's user
+  agent rides in the `agent` property and the `distinct_id` (`agent:<ua>`), not the header, which is
+  `SERVER_USER_AGENT` — `server.test.ts` holds it to passing `isbot`. No IP is forwarded, and
+  `$geoip_disable` stops PostHog locating the server's own. Same counted-host rule as the browser.
 - **GA runs in Consent Mode's *basic* mode: `gtag.js` is not requested until Accept.** `gaBootstrap`
   queues the all-denied defaults and `config`, and calls `loadGa()` only inside the stored-grant
   branch; the banner's Accept calls it otherwise. Before that Google receives nothing — not even
   the cookieless pings *advanced* mode sends — which is what the privacy policy promises and what
   `consent.test.ts` pins. Only `analytics_storage` is ever granted; the site has no adverts.
-  `track()` sends every event to GA through `gtag('event')` too; before consent it only queues.
   GTM was the first plan and was dropped: it would only ever have carried this one tag.
+- **`track()` sends every event to both.** GA through `gtag('event')`, which only queues before
+  consent; PostHog through `capture`, cookieless or not.
 - **One delegated click listener, not a DOM scan.** Tagging links on `DOMContentLoaded` misses
   everything an SPA renders after its first navigation. The listener on `document` sees every
   outbound link, every download (by `isFileHref`'s rule) and every Fumadocs code-block copy (found
@@ -509,8 +550,11 @@ Three things are load-bearing:
   `search` event per query the reader settles on (800 ms), carrying the text and the page count —
   the privacy policy says so, and its test reads this file.
 
-Verify against a production build with the var set; with it unset,
-`curl -s localhost:3000 | grep -c gtag` must print `0`.
+Verify against a production build with the vars set. With them unset,
+`curl -s localhost:3000 | grep -c gtag` must print `0` and no page may request the `posthog-js`
+chunk. PostHog drops everything from an automated browser (`navigator.webdriver`), so check its
+requests by hand, in a real browser, on staging: they go to `i.delacour.co.nz` and nothing to
+`*.posthog.com`.
 
 ## The skill is served, not copied
 

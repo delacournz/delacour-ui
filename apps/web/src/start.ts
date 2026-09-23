@@ -1,6 +1,7 @@
 import { redirect } from "@tanstack/react-router";
 import { createCsrfMiddleware, createMiddleware, createStart } from "@tanstack/react-start";
 import { isMarkdownPreferred } from "fumadocs-core/negotiation";
+import { reportAgentFetch } from "@/lib/analytics/server";
 import { gzipResponse } from "@/lib/compress";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
 
@@ -34,8 +35,18 @@ const compressionMiddleware = createMiddleware().server(async ({ next, request }
 	return gzipResponse(request, result.response);
 });
 
+/**
+ * Counts reads of the Markdown the site serves to agents — see
+ * `src/lib/analytics/server.ts`. `llmMiddleware`'s `Accept: text/markdown` redirect is
+ * not counted here; the `.md` request it redirects to is.
+ */
+const analyticsMiddleware = createMiddleware().server(({ next, request }) => {
+	reportAgentFetch(request);
+	return next();
+});
+
 export const startInstance = createStart(() => {
 	return {
-		requestMiddleware: [compressionMiddleware, csrfMiddleware, llmMiddleware],
+		requestMiddleware: [compressionMiddleware, csrfMiddleware, analyticsMiddleware, llmMiddleware],
 	};
 });

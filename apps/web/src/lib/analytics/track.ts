@@ -1,4 +1,5 @@
 import { type AnalyticsEvent, classifyLink, eventPayload } from "./events";
+import { posthogCapture } from "./posthog";
 
 declare global {
 	interface Window {
@@ -15,11 +16,16 @@ declare global {
  * GA gets the event through `gtag('event')`. Before consent it only joins the
  * queue — `gtag.js` is not loaded, so nothing leaves the page — and it is sent
  * only if the visitor accepts on this page.
+ *
+ * PostHog gets it through `capture`, cookieless or not as the visitor chose.
+ * Its autocapture is off, so this is the only way a click reaches it and
+ * nothing is counted twice.
  */
 export function track(event: AnalyticsEvent): void {
 	if (typeof window === "undefined") return;
 	const { name, data } = eventPayload(event);
 	window.gtag?.("event", name, data);
+	posthogCapture(name, data);
 }
 
 /**

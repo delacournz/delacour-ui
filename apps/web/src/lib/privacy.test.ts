@@ -174,12 +174,38 @@ describe("the privacy policy's claims", () => {
 		expect(EVERYTHING).toContain("Google Analytics");
 	});
 
+	/**
+	 * PostHog's host is an environment variable, so it cannot be read out of the
+	 * code the way GA's can. What the code does fix is the reverse proxy the
+	 * policy names, which `AGENTS.md` and Railway both point at.
+	 */
+	test("names PostHog and the reverse proxy it is reached through", () => {
+		expect(EVERYTHING).toContain("PostHog");
+		expect(EVERYTHING).toContain("i.delacour.co.nz");
+	});
+
 	test("says search queries are sent, since the search dialog sends them", () => {
 		const dialog = readFileSync(join(REPO, "apps", "web", "src", "components", "search-dialog.tsx"), "utf-8");
 		const search = DISCLOSURES.find((row) => row.what.startsWith("What you type into search"));
 
 		expect(dialog).toContain('name: "search"');
 		expect(search?.to).toContain("Google Analytics");
+		expect(search?.to).toContain("PostHog");
+	});
+
+	/**
+	 * The server reports reads of `llms.txt`, the `.md` twins and the skill
+	 * files, with the reader's user agent. No script runs for those readers, so
+	 * no banner can ask them either — the policy has to say it happens.
+	 */
+	test("discloses the server's agent-fetch event and the user agent it carries", () => {
+		const server = readFileSync(join(REPO, "apps", "web", "src", "lib", "analytics", "server.ts"), "utf-8");
+		const row = DISCLOSURES.find((disclosure) => disclosure.what.startsWith("When a program"));
+
+		expect(server).toContain('"agent-fetch"');
+		expect(row).toBeDefined();
+		expect(plainText((row as Disclosure).what)).toContain("user agent");
+		expect((row as Disclosure).to).toContain("PostHog");
 	});
 
 	test("names the host the CLI downloads components from", () => {

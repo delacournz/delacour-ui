@@ -8,7 +8,8 @@ import { DocsToolbar } from "@/components/docs-toolbar";
 import { useMDXComponents } from "@/components/mdx";
 import { playgroundSlugForDocsPath } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
-import { docsImageRoute, encodeMarkdownUrl, siteUrl } from "@/lib/shared";
+import { docsHead } from "@/lib/seo";
+import { encodeMarkdownUrl } from "@/lib/shared";
 import { docs, source } from "@/lib/source";
 
 export const Route = createFileRoute("/docs/$")({
@@ -19,14 +20,7 @@ export const Route = createFileRoute("/docs/$")({
 		await docs.getPage(data.path)?.preload();
 		return data;
 	},
-	head: ({ loaderData }) => ({
-		meta: loaderData
-			? [
-					{ property: "og:image", content: docsImageUrl(loaderData.title) },
-					{ name: "twitter:image", content: docsImageUrl(loaderData.title) },
-				]
-			: [],
-	}),
+	head: ({ loaderData }) => (loaderData ? docsHead(loaderData) : {}),
 });
 
 const serverLoader = createServerFn({
@@ -39,16 +33,13 @@ const serverLoader = createServerFn({
 
 		return {
 			path: page.path,
+			slugs: page.slugs,
 			title: page.data.title,
+			description: page.data.description,
 			markdownUrl: encodeMarkdownUrl(page.slugs, page.locale),
 			pageTree: await source.serializePageTree(source.getPageTree()),
 		};
 	});
-
-/** The social card for a docs page: the shared route, with this page's title in the query. */
-function docsImageUrl(title: string): string {
-	return `${siteUrl}${docsImageRoute}?${new URLSearchParams({ title })}`;
-}
 
 function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 	const page = docs.getPage(path);

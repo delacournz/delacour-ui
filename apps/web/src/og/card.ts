@@ -12,7 +12,7 @@ import {
 	delacourRectY,
 } from "@delacour/brand";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
-import { appName } from "@/lib/shared";
+import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
 
 /**
  * The social card, as an SVG string: 1200×630, the house dark page, the mark,
@@ -23,6 +23,10 @@ import { appName } from "@/lib/shared";
  * drawn from `@delacour/brand`'s numbers like every other rendering of it; the
  * colours are the generated house background and the brand's own two
  * literals, which are the icon's and look the same in both themes.
+ *
+ * `product` picks whose card it is. The charts card carries the charts
+ * package's name and line, its own docs URL in the footer, and a small amber
+ * line chart along the bottom, so the two read as different things in a feed.
  */
 
 export const OG_WIDTH = 1200;
@@ -33,10 +37,14 @@ const TITLE_CHARS_PER_LINE = 30;
 const TITLE_MAX_LINES = 3;
 
 /** What the card says when no page title is given: the site's own line. */
-export const OG_DEFAULT_TITLE = "Own your React Native UI";
-export const OG_DEFAULT_SUBTITLE = "Composable, accessible, painted from your web theme.";
+export const OG_DEFAULT_TITLE = PRODUCTS.ui.cardTitle;
+export const OG_DEFAULT_SUBTITLE = PRODUCTS.ui.cardLine;
 
-export type OgCard = { title?: string; subtitle?: string };
+export type OgCard = { title?: string; subtitle?: string; product?: DocsProduct };
+
+/** A fixed, gently rising series — the chart is a motif, not data, so it never changes between renders. */
+const CHART_SERIES = [0.32, 0.46, 0.38, 0.58, 0.5, 0.7, 0.62, 0.84, 0.76, 0.96];
+const CHART_BOX = { x: 640, y: 450, width: 464, height: 110 };
 
 function escapeXml(text: string): string {
 	return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -73,6 +81,12 @@ export function wrapTitle(title: string): string[] {
 	return kept;
 }
 
+/** The host, plus the product's docs path when it is not the site's own. */
+function footer(seo: ProductSeo): string {
+	const host = "ui.delacour.co.nz";
+	return seo === PRODUCTS.ui ? host : `${host}${seo.path}`;
+}
+
 /** The mark at `size` px, top-left at (x, y), rounded the way the favicon is. */
 function mark(x: number, y: number, size: number): string {
 	const scale = size / DELACOUR_CANVAS;
@@ -90,9 +104,36 @@ function mark(x: number, y: number, size: number): string {
 	].join("");
 }
 
-export function ogCardSvg({ title, subtitle }: OgCard = {}): string {
-	const lines = wrapTitle(title?.trim() || OG_DEFAULT_TITLE);
-	const line = subtitle?.trim() || OG_DEFAULT_SUBTITLE;
+/** A line and its area over three hairlines, in the mark's amber, inside `CHART_BOX`. */
+function chart(): string {
+	const { x, y, width, height } = CHART_BOX;
+	const step = width / (CHART_SERIES.length - 1);
+	const points = CHART_SERIES.map(
+		(value, index) => [Math.round(x + index * step), Math.round(y + height - value * height)] as const
+	);
+	const path = points.map(([px, py], index) => `${index ? "L" : "M"}${px} ${py}`).join(" ");
+	const last = points[points.length - 1] ?? [x + width, y];
+	const grid = [0, 0.5, 1]
+		.map((at) => {
+			const gy = Math.round(y + at * height);
+			return `<line x1="${x}" y1="${gy}" x2="${x + width}" y2="${gy}" stroke="#27272a" stroke-width="2"/>`;
+		})
+		.join("");
+
+	return [
+		'<g id="chart">',
+		grid,
+		`<path d="${path} L${x + width} ${y + height} L${x} ${y + height} Z" fill="${DELACOUR_STROKE_COLOUR}" fill-opacity="0.12"/>`,
+		`<path d="${path}" fill="none" stroke="${DELACOUR_STROKE_COLOUR}" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>`,
+		`<circle cx="${last[0]}" cy="${last[1]}" r="9" fill="${DELACOUR_STROKE_COLOUR}"/>`,
+		"</g>",
+	].join("");
+}
+
+export function ogCardSvg({ title, subtitle, product = "ui" }: OgCard = {}): string {
+	const seo = PRODUCTS[product];
+	const lines = wrapTitle(title?.trim() || seo.cardTitle);
+	const line = subtitle?.trim() || seo.cardLine;
 	const titleSize = lines.length === 1 ? 72 : 64;
 	const lineHeight = titleSize * 1.12;
 	const titleTop = 300 - ((lines.length - 1) * lineHeight) / 2;
@@ -110,11 +151,12 @@ export function ogCardSvg({ title, subtitle }: OgCard = {}): string {
 		`<svg width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">`,
 		`<rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="${HOUSE_BACKGROUND.dark}"/>`,
 		mark(96, 96, 72),
-		`<text x="192" y="146" font-family="Outfit" font-weight="600" font-size="34" letter-spacing="-0.5" fill="#fafafa">${escapeXml(appName)}</text>`,
+		`<text x="192" y="146" font-family="Outfit" font-weight="600" font-size="34" letter-spacing="-0.5" fill="#fafafa">${escapeXml(seo.name)}</text>`,
 		titleText,
 		`<circle cx="102" cy="${subtitleTop - 9}" r="5" fill="${DELACOUR_STROKE_COLOUR}"/>`,
 		`<text x="120" y="${subtitleTop}" font-family="Inter" font-size="28" fill="#a1a1aa">${escapeXml(line)}</text>`,
-		`<text x="96" y="${OG_HEIGHT - 72}" font-family="Inter" font-size="24" fill="#71717a">ui.delacour.co.nz</text>`,
+		product === "charts" ? chart() : "",
+		`<text x="96" y="${OG_HEIGHT - 72}" font-family="Inter" font-size="24" fill="#71717a">${escapeXml(footer(seo))}</text>`,
 		"</svg>",
 	].join("\n");
 }

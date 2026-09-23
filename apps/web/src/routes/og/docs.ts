@@ -3,12 +3,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import { createFileRoute } from "@tanstack/react-router";
+import type { DocsProduct } from "@/lib/seo";
 import { ogCardSvg } from "@/og/card";
 import interUrl from "@/og/inter-400.ttf?inline";
 import outfitUrl from "@/og/outfit-600.ttf?inline";
 
 /**
  * `/og/docs?title=Button` — a 1200×630 PNG for the social card.
+ * `&product=charts` draws the charts package's card instead of the library's.
  *
  * The SVG comes from `og/card.ts` and resvg rasterises it here, on the server,
  * with the two faces the card sets. resvg reads fonts from paths only, and the
@@ -46,12 +48,12 @@ function fonts(): string[] {
 	return fontFiles;
 }
 
-function render(title: string | undefined): Uint8Array {
-	const key = title ?? "";
+function render(product: DocsProduct, title: string | undefined): Uint8Array {
+	const key = `${product}:${title ?? ""}`;
 	const cached = cache.get(key);
 	if (cached) return cached;
 
-	const png = new Resvg(ogCardSvg({ title }), {
+	const png = new Resvg(ogCardSvg({ product, title }), {
 		font: { fontFiles: fonts(), loadSystemFonts: false, defaultFontFamily: "Inter" },
 	})
 		.render()
@@ -66,8 +68,10 @@ export const Route = createFileRoute("/og/docs")({
 	server: {
 		handlers: {
 			GET({ request }) {
-				const title = new URL(request.url).searchParams.get("title")?.slice(0, 200) ?? undefined;
-				const png = render(title || undefined);
+				const params = new URL(request.url).searchParams;
+				const title = params.get("title")?.slice(0, 200) ?? undefined;
+				const product: DocsProduct = params.get("product") === "charts" ? "charts" : "ui";
+				const png = render(product, title || undefined);
 
 				return new Response(Buffer.from(png), {
 					headers: {

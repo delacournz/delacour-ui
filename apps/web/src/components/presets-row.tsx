@@ -34,6 +34,7 @@ function PresetLink({ preset, isSelected }: { preset: PresetShortcut; isSelected
 				"flex h-full items-start gap-3 rounded-tile border p-3 text-left transition-colors hover:bg-fd-accent",
 				isSelected ? "border-fd-primary ring-1 ring-fd-primary" : "border-fd-border"
 			)}
+			resetScroll={false}
 			search={{ preset: preset.code }}
 			to="/theme"
 		>

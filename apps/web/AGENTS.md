@@ -49,6 +49,7 @@ src/
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
+├── lib/seo.ts             PRODUCTS (ui, charts) and docsHead() — each docs page's head tags
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
@@ -125,11 +126,21 @@ Open Graph / Twitter tags. Two things there are deliberate:
   `docsImageRoute` (`/og/docs`), a server handler in `src/routes/og/docs.ts` that rasterises
   `src/og/card.ts`'s SVG with `@resvg/resvg-js` — the mark from `@delacour/brand`, the page title in
   Outfit 600, a line in Inter, on the house dark page. A docs page adds `?title=` from its own
-  `head()`. resvg reads fonts from paths only, so the two TTFs are committed under `src/og/`
+  `head()`.
+  resvg reads fonts from paths only, so the two TTFs are committed under `src/og/`
   (OFL, the same files the playground embeds), imported `?inline` and written to the temp
   directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
   it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
   `.output`; the builder's OS and architecture have to match the runtime's, which on Railway they do.
+- **Charts is its own product in every head tag.** `@delacour/react-native-charts` is Skia with no
+  Tailwind, no Uniwind and no tokens, so a link to `/docs/charts/*` must not preview as the
+  library's "painted from your shadcn web app". `src/lib/seo.ts` holds `PRODUCTS` — name, headline,
+  description and card copy for `ui` and `charts` — and `docsHead()` builds each docs page's
+  `<title>`, description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the
+  root's site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
+  A charts page gets `og:site_name` "Delacour Charts" and `/og/docs?product=charts`, which draws the
+  charts card: its own name and line, `/docs/charts` in the footer, and an amber line chart along
+  the bottom. `seo.test.ts` fails if a charts page's tags mention Tailwind, Uniwind or shadcn.
 - **The 404 is ours.** `src/components/not-found.tsx` replaces Fumadocs' default: the mark, the
   heading face, and pills to the docs and the component index, under the same pill nav.
 

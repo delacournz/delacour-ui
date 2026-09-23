@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { PRODUCTS } from "@/lib/seo";
 import { OG_DEFAULT_TITLE, OG_HEIGHT, OG_WIDTH, ogCardSvg, wrapTitle } from "./card";
 
 describe("wrapTitle", () => {
@@ -56,5 +57,25 @@ describe("ogCardSvg", () => {
 
 	test("paints the house dark page", () => {
 		expect(ogCardSvg()).toContain('fill="#09090b"');
+	});
+});
+
+describe("ogCardSvg for charts", () => {
+	test("is branded as the charts package, not the component library", () => {
+		const svg = ogCardSvg({ product: "charts" });
+
+		expect(svg).toContain(">Delacour Charts</text>");
+		expect(svg).not.toContain(">Delacour UI</text>");
+		expect(svg).toContain(`>${PRODUCTS.charts.cardTitle}</text>`);
+		expect(svg).toContain("ui.delacour.co.nz/docs/charts");
+	});
+
+	test("draws a chart, which the library's card does not", () => {
+		expect(ogCardSvg({ product: "charts" })).toContain('id="chart"');
+		expect(ogCardSvg()).not.toContain('id="chart"');
+	});
+
+	test("never says the web theme line", () => {
+		expect(ogCardSvg({ product: "charts", title: "Line" })).not.toMatch(/web theme|tailwind|uniwind/i);
 	});
 });

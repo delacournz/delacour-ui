@@ -32,8 +32,23 @@ export default defineConfig({
 		react(),
 		// Railway runs the built server as a long-lived Bun process:
 		// `bun .output/server/index.mjs`, honouring $PORT.
+		//
+		// `compressPublicAssets` writes `.gz` and `.br` beside every static file at
+		// build and serves them by `Accept-Encoding`; nothing was compressed before,
+		// so every JS chunk went out at full size. Rendered pages are gzipped by
+		// `src/lib/compress.ts` instead.
+		//
+		// `/previews` is not content-hashed, so it cannot be `immutable` like
+		// `/assets`; a day, revalidated in the background, still turns a returning
+		// reader's clips and posters into cache hits instead of refetches.
 		nitro({
 			preset: "bun",
+			compressPublicAssets: true,
+			routeRules: {
+				"/previews/**": {
+					headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=604800" },
+				},
+			},
 		}),
 	],
 	// `@resvg/resvg-js` is a native N-API binary the OG route loads on the server.

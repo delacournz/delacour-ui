@@ -1,6 +1,5 @@
 /**
  * Consent for Google Analytics, which is loaded as `gtag.js` and sets cookies.
- * Umami sets none and needs no consent, so nothing here gates it.
  *
  * The choice lives in `localStorage` under `CONSENT_KEY`. It is read twice: by
  * the inline bootstrap, before GA is configured, so a returning visitor who

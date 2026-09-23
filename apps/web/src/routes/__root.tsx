@@ -122,32 +122,13 @@ CITED ADAPTATIONS: the page ground is the zinc base's own value — #09090b dark
  * The analytics tags, and nothing at all on a build without the env vars — see
  * `src/lib/analytics/config.ts`.
  *
- * Umami is its own tag, independent of GA: it sets no cookies and needs no
- * consent, so it should count a visitor who declines, blocks Google, or
- * never answers the banner. `data-domains` keeps a production build run on
- * `localhost` from counting itself. The script follows client-side navigation
- * by watching `pushState`, so the router needs nothing from it.
- *
  * GA's bootstrap sets Consent Mode's defaults before GA is configured; the
  * order of the statements inside it is the whole point of it.
  */
-function AnalyticsTags(): ReactElement {
-	const { umami, ga } = ANALYTICS;
+function AnalyticsTags(): ReactElement | null {
+	const { ga } = ANALYTICS;
 
-	return (
-		<>
-			{umami.kind === "on" ? (
-				<script
-					data-domains={new URL(siteUrl).host}
-					data-host-url={umami.host}
-					data-website-id={umami.websiteId}
-					defer
-					src={`${umami.host}/script.js`}
-				/>
-			) : null}
-			{ga.kind === "on" ? <script dangerouslySetInnerHTML={{ __html: gaBootstrap(ga.id) }} /> : null}
-		</>
-	);
+	return ga.kind === "on" ? <script dangerouslySetInnerHTML={{ __html: gaBootstrap(ga.id) }} /> : null;
 }
 
 function DirectionContract() {

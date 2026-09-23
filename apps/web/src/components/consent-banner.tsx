@@ -12,8 +12,7 @@ import { privacyRoute } from "@/lib/shared";
  * It renders nothing on the server and nothing until mounted, because the
  * answer lives in `localStorage` and a server-rendered banner would flash at
  * every visitor who has already chosen. It renders nothing at all on a build
- * without GA, since there is then nothing to consent to — Umami, which is
- * always on, sets no cookies.
+ * without GA, since there is then nothing to consent to.
  *
  * The two buttons are equal weight, and Decline is not hidden behind a
  * settings page: consent that is easier to give than to refuse is not consent

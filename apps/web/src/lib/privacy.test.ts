@@ -174,21 +174,12 @@ describe("the privacy policy's claims", () => {
 		expect(EVERYTHING).toContain("Google Analytics");
 	});
 
-	test("names Umami, which the root route loads, and says it sets no cookies", () => {
-		const root = readFileSync(join(REPO, "apps", "web", "src", "routes", "__root.tsx"), "utf-8");
-
-		expect(root).toContain("umami");
-		expect(EVERYTHING).toContain("Umami");
-		expect(EVERYTHING).toMatch(/Umami[^.]*no cookies|no cookies[^.]*Umami/);
-		expect(EVERYTHING).toContain("analytics.delacour.co.nz");
-	});
-
 	test("says search queries are sent, since the search dialog sends them", () => {
 		const dialog = readFileSync(join(REPO, "apps", "web", "src", "components", "search-dialog.tsx"), "utf-8");
 		const search = DISCLOSURES.find((row) => row.what.startsWith("What you type into search"));
 
 		expect(dialog).toContain('name: "search"');
-		expect(search?.to).toContain("Umami");
+		expect(search?.to).toContain("Google Analytics");
 	});
 
 	test("names the host the CLI downloads components from", () => {

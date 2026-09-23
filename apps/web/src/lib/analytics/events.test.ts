@@ -36,7 +36,7 @@ describe("classifyLink", () => {
 });
 
 describe("eventPayload", () => {
-	test("splits an event into Umami's name and data", () => {
+	test("splits an event into a name and data", () => {
 		expect(eventPayload({ name: "copy", what: "agent-prompt" })).toEqual({
 			name: "copy",
 			data: { what: "agent-prompt" },

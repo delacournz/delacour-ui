@@ -1,5 +1,13 @@
 # @delacour/react-native-charts
 
+## 0.1.0-alpha.5
+
+### Patch Changes
+
+- [#72](https://github.com/delacournz/delacour-ui/pull/72) [`cc9fb6a`](https://github.com/delacournz/delacour-ui/commit/cc9fb6afb7e2e4babe83653a9bf38c3278fc9c25) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - List every native peer in the install command. The charts README's `expo install` line named only Skia, and `delacour add chart` skipped Gesture Handler — the scrub and the pie's tap then never fire, with no error.
+
+- [#73](https://github.com/delacournz/delacour-ui/pull/73) [`e76311f`](https://github.com/delacournz/delacour-ui/commit/e76311f8a8f9ff6956bca6aa8361fb7ac2856cbe) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `ChartCursorLine` draws again. The rule resolved its position through a nested worklet helper and never appeared on device — in a bare scrub and in every themed `Chart.Tooltip` crosshair — while `ChartCursorDot` did. It now reads the scrub inline.
+
 ## 0.1.0-alpha.4
 
 ### Minor Changes

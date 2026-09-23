@@ -468,6 +468,11 @@ Two providers, both optional, both off unless their env vars are set at **build*
 `VITE_*`, so Vite inlines them into the client and server bundles alike. Railway sets them on
 production only; dev, CI and staging render no analytics tags at all.
 
+Railway builds with `bun run build --filter=@delacour/web`, which is `turbo build`, and turbo 2's
+strict env mode strips every variable a task does not list. `turbo.jsonc` therefore lists `VITE_*`
+on `build`; without it the ids inline as `undefined` and production ships with no tags and no
+error. `config.test.ts` holds `turbo.jsonc` to it.
+
 | Var | Production value | Turns on |
 | --- | --- | --- |
 | `VITE_UMAMI_HOST` | `https://analytics.delacour.co.nz` | Umami — our own instance, on Railway |

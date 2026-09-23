@@ -145,6 +145,7 @@ describe("the sections", () => {
 			github: "GitHub",
 			llms: "llms.txt",
 			privacy: "Privacy",
+			cookies: "Cookie settings",
 		});
 	});
 });

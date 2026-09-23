@@ -1,5 +1,6 @@
 import { Check, Copy } from "lucide-react";
 import { type ReactElement, useState } from "react";
+import { track } from "@/lib/analytics/track";
 import { siteUrl } from "@/lib/shared";
 
 /**
@@ -74,6 +75,7 @@ export function AgentPrompt({ prompt = SETUP_PROMPT }: { prompt?: string }): Rea
 		try {
 			await navigator.clipboard?.writeText(prompt);
 			setCopied(true);
+			track({ name: "copy", what: "agent-prompt" });
 			setTimeout(() => setCopied(false), 2000);
 		} catch {
 			setCopied(false);

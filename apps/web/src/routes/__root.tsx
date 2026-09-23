@@ -1,5 +1,11 @@
 import { createRootRoute, HeadContent, Outlet, Scripts } from "@tanstack/react-router";
 import { RootProvider } from "fumadocs-ui/provider/tanstack";
+import { type ReactElement, useEffect } from "react";
+import { ConsentBanner } from "@/components/consent-banner";
+import { TrackedSearchDialog } from "@/components/search-dialog";
+import { ANALYTICS } from "@/lib/analytics/config";
+import { gtmBootstrap } from "@/lib/analytics/consent";
+import { installClickTracking } from "@/lib/analytics/track";
 import { siteFontLinks } from "@/lib/google-fonts";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
 import { appDescription, appName, docsImageRoute, siteUrl } from "@/lib/shared";
@@ -112,6 +118,38 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
 CITED ADAPTATIONS: the page ground is the zinc base's own value — #09090b dark, #fafafa light — rather than the studio's #000 / #fff, because every colour on the site is resolveTokens(HOUSE_CONFIG) and the axes have no pure black or white page; the showcase grid and the library index leave the 36rem column because thirteen phone captures and twenty names in eight groups are a picture wall and an index, not prose, and each keeps its heading on the column's left edge.
 -->`;
 
+/**
+ * The analytics tags, and nothing at all on a build without the env vars — see
+ * `src/lib/analytics/config.ts`.
+ *
+ * Umami is its own tag rather than a tag inside GTM: it sets no cookies and
+ * needs no consent, so it should count a visitor who declines, blocks GTM, or
+ * never answers the banner. `data-domains` keeps a production build run on
+ * `localhost` from counting itself. The script follows client-side navigation
+ * by watching `pushState`, so the router needs nothing from it.
+ *
+ * GTM's bootstrap sets Consent Mode's defaults before the container loads; the
+ * order of the two children is the whole point of it.
+ */
+function AnalyticsTags(): ReactElement {
+	const { umami, gtm } = ANALYTICS;
+
+	return (
+		<>
+			{umami.kind === "on" ? (
+				<script
+					data-domains={new URL(siteUrl).host}
+					data-host-url={umami.host}
+					data-website-id={umami.websiteId}
+					defer
+					src={`${umami.host}/script.js`}
+				/>
+			) : null}
+			{gtm.kind === "on" ? <script dangerouslySetInnerHTML={{ __html: gtmBootstrap(gtm.id) }} /> : null}
+		</>
+	);
+}
+
 function DirectionContract() {
 	return <template dangerouslySetInnerHTML={{ __html: DIRECTION_CONTRACT }} id="direction-contract" />;
 }
@@ -120,18 +158,26 @@ function DirectionContract() {
  * Dark by default. The studio site is dark first and the house palette was
  * composed dark first; light stays a real, working theme behind the toggle,
  * and a visitor's choice persists the way `next-themes` always has.
+ *
+ * Search is Fumadocs' own dialog rebuilt so the query can be counted — see
+ * `search-dialog.tsx` — and one delegated listener counts outbound links,
+ * downloads and code copies on every route.
  */
 function RootComponent() {
+	useEffect(() => installClickTracking(), []);
+
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<head>
 				<HeadContent />
 				<ThemeColour />
+				<AnalyticsTags />
 			</head>
 			<body className="flex min-h-screen flex-col">
 				<DirectionContract />
-				<RootProvider theme={{ defaultTheme: "dark" }}>
+				<RootProvider search={{ SearchDialog: TrackedSearchDialog }} theme={{ defaultTheme: "dark" }}>
 					<Outlet />
+					<ConsentBanner />
 				</RootProvider>
 				<Scripts />
 			</body>

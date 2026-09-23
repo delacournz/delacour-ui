@@ -4,6 +4,7 @@ import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import type { ReactElement } from "react";
 import { ChartsSpecimen, CornerSpecimen, PrimarySpecimen, SurfaceSpecimen } from "@/components/theme-specimens";
+import { track } from "@/lib/analytics/track";
 import { type ThemeSummaryRow, themeSummary } from "@/lib/theme-preset";
 
 /**
@@ -124,7 +125,10 @@ export function ThemeCssPanel({ native, web }: ThemeCssFiles): ReactElement {
  * rather than scraping the DOM, so it cannot go stale against what is rendered.
  */
 export function CopyThemeButton({ css }: { css: string }): ReactElement {
-	const [copied, onClick] = useCopyButton(() => navigator.clipboard.writeText(css));
+	const [copied, onClick] = useCopyButton(async () => {
+		await navigator.clipboard.writeText(css);
+		track({ name: "copy", what: "theme-css" });
+	});
 
 	return (
 		<button

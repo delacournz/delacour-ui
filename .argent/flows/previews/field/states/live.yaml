@@ -1,0 +1,42 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on field/states/live and has settled — an empty email field with its label and description, no error. The
+  capture script navigates there before running this.
+steps:
+  - echo: Typing a name with no @, so the field goes destructive
+  - tap: { id: email }
+  - wait: 300
+  - tool: keyboard
+    args: { text: ada, delayMs: 120 }
+  - wait: 900
+  - echo: Finishing the address, so it resolves
+  - tool: keyboard
+    args: { text: "@mail.com", delayMs: 90 }
+  - wait: 900
+  - echo: Deleting it all, so the clip loops back to an empty field
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - echo: Submitting blurs the field, so it loops unfocused as it began
+  - tool: keyboard
+    args: { key: enter }

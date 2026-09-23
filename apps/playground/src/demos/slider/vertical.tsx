@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Vertical",
 	note: "The minimum is at the bottom. The inversion lives in valueFromOffset and in the sign of the thumb's translate, and nowhere else. A vertical slider needs a definite height from its parent — this row is h-56.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "slider/vertical" },
 };
 
 const VERTICAL_COLORS = ["default", "success", "warning"] as const;

@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet/anatomy/the-whole-composition and has settled — the trigger button with the sheet closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet
+  - tap: { id: open-sheet }
+  - await: { visible: { text: Keep yourself safe } }
+  - wait: 700
+  - echo: Dragging it down to dismiss
+  - swipe: { from: { text: Keep yourself safe }, by: { y: 0.24 }, duration: 250 }
+  - await: { hidden: { text: Keep yourself safe } }
+  - wait: 500
+  - echo: Opening it again and closing it from its own button
+  - tap: { id: open-sheet }
+  - await: { visible: { id: sheet-later } }
+  - wait: 800
+  - tap: { id: sheet-later }
+  - await: { hidden: { text: Keep yourself safe } }

@@ -1,0 +1,30 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on checkbox/colours and has settled —
+  six rows, the labelled box in each ticked. The capture script navigates there
+  before running this.
+steps:
+  - echo: Unticking every colour, top to bottom
+  - tap: { id: checkbox-default }
+  - wait: 150
+  - tap: { id: checkbox-primary }
+  - wait: 150
+  - tap: { id: checkbox-success }
+  - wait: 150
+  - tap: { id: checkbox-warning }
+  - wait: 150
+  - tap: { id: checkbox-destructive }
+  - wait: 150
+  - tap: { id: checkbox-info }
+  - wait: 600
+  - echo: And ticking them again, so the clip loops without a jump cut
+  - tap: { id: checkbox-default }
+  - wait: 150
+  - tap: { id: checkbox-primary }
+  - wait: 150
+  - tap: { id: checkbox-success }
+  - wait: 150
+  - tap: { id: checkbox-warning }
+  - wait: 150
+  - tap: { id: checkbox-destructive }
+  - wait: 150
+  - tap: { id: checkbox-info }

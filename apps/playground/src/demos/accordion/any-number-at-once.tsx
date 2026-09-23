@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Any number at once",
 	caption:
 		'`selectionMode="multiple"` reports a `string[]` instead of a `string | null`. This one is controlled, so the line below counts what is open.',
+	capture: { align: "stretch", flow: "accordion/any-number-at-once" },
 };
 
 const FAQ = [

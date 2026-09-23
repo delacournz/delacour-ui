@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"On and off at every colour. An off switch is the same chrome at all six — the colour only says what being on means. Both the track and the knob fade between two token values off the thumb's own travel.",
-	capture: {},
+	capture: { flow: "switch/colours" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */
@@ -35,7 +35,7 @@ function ColorRow({ color }: { color: (typeof SWITCH_COLORS)[number] }): ReactEl
 
 	return (
 		<View className="flex-row items-center gap-4">
-			<Switch color={color} isSelected={isSelected} onSelectedChange={setSelected} />
+			<Switch color={color} isSelected={isSelected} onSelectedChange={setSelected} testID={`switch-${color}`} />
 			<Switch color={color} defaultSelected={false} />
 			<Text.Caption>{LABELS[color]}</Text.Caption>
 		</View>

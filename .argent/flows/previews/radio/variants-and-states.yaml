@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on radio/variants-and-states and has
+  settled — two groups, each on Selected. The capture script navigates there
+  before running this.
+steps:
+  - echo: Moving each group to its second option
+  - tap: { id: radio-primary-off }
+  - wait: 400
+  - tap: { id: radio-secondary-off }
+  - wait: 700
+  - echo: And back, so the clip loops without a jump cut
+  - tap: { id: radio-primary-on }
+  - wait: 400
+  - tap: { id: radio-secondary-on }

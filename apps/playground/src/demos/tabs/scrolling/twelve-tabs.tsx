@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Twelve tabs",
 	caption: "The buttons set `scrollAlign` on the bar below them.",
 	note: "Swipe the panels rather than tapping, and the bar follows the finger: the auto-scroll interpolates the fractional trigger geometry off the same value the indicator reads, so it tracks the drag instead of jumping once it settles.\n\nScroll the bar by hand while a swipe is settling and the hand wins — and it keeps winning until the bar has actually stopped, not just until the finger lifts. Clearing that flag on release instead would let a retarget fight the momentum of a flick, which reads as the bar snapping backwards.\n\n`none` leaves the bar exactly where it is rather than sending it home, which is the difference that matters for a row the user has already scrolled themselves.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "tabs/scrolling/twelve-tabs" },
 };
 
 const SECTIONS = [

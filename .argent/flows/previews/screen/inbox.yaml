@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on screen/inbox and has settled — the inbox screen at the top of its list, nothing read. The
+  capture script navigates there before running this.
+steps:
+  - echo: Scrolling the list under the navbar
+  - swipe: { from: { x: 0.5, y: 0.7 }, by: { y: -0.35 }, momentum: false, duration: 700 }
+  - wait: 600
+  - echo: And back to the top, so the clip loops without a jump cut
+  - swipe: { from: { x: 0.5, y: 0.35 }, by: { y: 0.35 }, momentum: false, duration: 700 }

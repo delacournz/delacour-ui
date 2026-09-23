@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "All four",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch" },
 	keyboardAware: true,
 };
 

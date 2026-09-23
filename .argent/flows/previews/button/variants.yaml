@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/variants and has settled —
+  seven buttons, one per variant, stacked. The capture script navigates there
+  before running this.
+steps:
+  - echo: Pressing and holding each variant in turn, so the press feedback reads
+  - long-press: { on: { id: variant-primary }, duration: 260 }
+  - long-press: { on: { id: variant-secondary }, duration: 260 }
+  - long-press: { on: { id: variant-tertiary }, duration: 260 }
+  - long-press: { on: { id: variant-outline }, duration: 260 }
+  - long-press: { on: { id: variant-ghost }, duration: 260 }
+  - long-press: { on: { id: variant-destructive }, duration: 260 }
+  - long-press: { on: { id: variant-destructive-soft }, duration: 260 }

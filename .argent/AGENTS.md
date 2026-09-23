@@ -80,6 +80,33 @@ manifest. That split is why a flow stays short enough to read.
 - **Keep it under about three seconds.** The clip is an illustration, not a walkthrough.
 - **No credentials, ever.** Use `{{secret:NAME}}` if one is ever needed; the YAML is committed.
 
+### Which demos get a flow
+
+Any captured demo whose component answers a touch. A still of a switch, a tab bar or a text field
+shows what it looks like and nothing about how it feels, which is most of what a reader is deciding
+on. Only the components with nothing to press — `Text`, `Badge`'s colour matrix, `Icon`,
+`Separator` — stay stills.
+
+A component that moves on its own gets a clip too: `spinner/sizes` and `button/loading` are flows
+whose only step is a `wait:`. The flow is there to make the capture a recording, not to touch
+anything.
+
+### Patterns
+
+| Interaction | How the flow writes it | Example |
+| --- | --- | --- |
+| Tap | `tap: { id: … }` | `tabs/variants/every-variant` |
+| Press feedback | `long-press: { on: { id: … }, duration: 260 }` — a `tap` releases before the feedback shows | `button/variants` |
+| Drag a thumb | `swipe: { from: { id: thumb }, by: { x: 0.4 }, momentum: false }`, then the same `by` negated | `slider/anatomy` |
+| Page a pager | `swipe: { from: { id: … }, by: { x: -0.5 } }` | `tabs/swipe/swipeable-the-default` |
+| Type | `tap` the field, then `tool: keyboard` with `{ text, delayMs }` | `input/states/live-validation` |
+| Un-type | one `tool: keyboard` step with `{ key: backspace }` per character, then `{ key: enter }` so the field blurs as it began | `field/states/live` |
+| A portal | `frame: "device"`, then `await: { visible: … }` on something inside it before acting | `bottom-sheet/anatomy/the-whole-composition` |
+
+A typing demo has to **start empty and valid** for its clip to loop: `live-validation` and
+`field/states/live` hold `""` and only flag a non-empty value with no `@`, so the flow types a name
+(error), finishes the address (resolved), deletes it all and submits.
+
 ### Authoring one
 
 Record it against a running preview rather than writing YAML blind — the recorder executes each
@@ -113,7 +140,14 @@ argent run native-devtools-status --udid <UDID> --bundleId nz.co.delacour.ui.pla
 ```
 
 `"state": "stale_process"` means exactly this. The capture script restarts the app once per run and
-asserts the bridge is connected before it records anything.
+asserts the bridge is connected before it records anything — polling for up to 30 seconds while
+argent reports `connecting`, because a dev client loading its bundle from Metro takes far longer to
+open the bridge than a Release build does.
+
+`"state": "unregistered"` is the other one: the app loaded argent's dylib but the tool-server never
+saw it dial in, and no app restart changes that. `argent server stop && argent server start --detach`
+does. The tool-server is shared by every argent session on the machine, so check nobody else is
+mid-run first.
 
 ## Related
 

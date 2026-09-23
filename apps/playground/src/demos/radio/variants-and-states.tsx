@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Variants and states",
 	note: "The ring is drawn from Views, not an icon — so the dot springs in on the UI thread and every colour stays a class the variant tests can reach.",
-	capture: { hero: true },
+	capture: { flow: "radio/variants-and-states", hero: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Swipeable — the default",
 	note: "Drag slowly: the capsule tracks the finger rather than snapping at release. Let go before the halfway point and it returns. Flick hard across two panels and it still lands exactly one away — a flick is an instruction, not a licence to skip. Drag past the last panel and it resists rather than stopping dead.",
+	capture: { align: "stretch", flow: "tabs/swipe/swipeable-the-default" },
 };
 
 const PANELS = [
@@ -17,7 +18,7 @@ const PANELS = [
 
 function Panel({ label, tone }: { label: string; tone: string }): ReactElement {
 	return (
-		<View className={`h-28 items-center justify-center rounded-lg ${tone}`}>
+		<View className={`h-28 items-center justify-center rounded-lg ${tone}`} testID={`panel-${label}`}>
 			<Text.Header>{label}</Text.Header>
 		</View>
 	);

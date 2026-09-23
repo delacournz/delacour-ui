@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Loading",
 	caption:
 		"`isLoading` composes a spinner in and blocks the press. `spinnerPlacement` decides where it goes — `only` replaces the content and keeps the footprint.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "button/loading" },
 };
 
 const PLACEMENT_LABELS: Record<(typeof BUTTON_SPINNER_PLACEMENTS)[number], string> = {

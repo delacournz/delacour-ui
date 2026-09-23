@@ -27,7 +27,7 @@ export const SHOWCASE: readonly ShowcaseTile[] = [
 	{ slug: "slider", preview: "slider/anatomy" },
 	{ slug: "checkbox", preview: "checkbox/colours" },
 	{ slug: "tabs", preview: "tabs/variants/every-variant" },
-	{ slug: "input", preview: "input/variants/at-rest" },
+	{ slug: "input", preview: "input/states/live-validation" },
 	{ slug: "accordion", preview: "accordion/one-at-a-time", span: "wide" },
 	{ slug: "badge", preview: "badge/variants-and-colours" },
 	{ slug: "list-group", preview: "list-group/custom-suffix" },
@@ -47,8 +47,9 @@ function componentBySlug(slug: string): ComponentEntry {
  *
  * Every tile is a capture from `bun run previews`, which is the only way to
  * show these on the web at all — the library compiles under Metro, so nothing
- * here is a react-native-web imitation. The switch tile is a clip; the rest
- * are stills. Thirteen pictures fill the page container four across, and the
+ * here is a react-native-web imitation. A tile whose component answers a
+ * touch is a clip of someone touching it; the type scale and the badges have
+ * nothing to press, so they stay stills. Thirteen pictures fill the page container four across, and the
  * heading above them keeps its left edge.
  */
 export function Showcase(): ReactElement {
@@ -88,7 +89,7 @@ function ShowcaseCard({ tile }: { tile: ShowcaseTile }): ReactElement {
 	return (
 		<Link className={`${CARD} ${span}`} params={{ _splat: `native/components/${component.slug}` }} to="/docs/$">
 			<div className="flex h-56 items-center justify-center overflow-hidden bg-fd-background p-4">
-				<ThemedPreview className="h-full w-full object-contain" entry={entry} />
+				<ThemedPreview className="h-full w-full object-contain" entry={entry} fill />
 			</div>
 			<div className="flex items-start justify-between gap-3 border-fd-border border-t p-4">
 				<div className="flex flex-col gap-1">

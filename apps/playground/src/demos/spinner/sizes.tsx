@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "center",
-	capture: { hero: true },
+	capture: { flow: "spinner/sizes", hero: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

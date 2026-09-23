@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "A range",
 	note: "A range's thumb count is data, so the track takes a function and maps over the values it is handed. Neither thumb can pass the other, and the fill spans between them rather than starting at the minimum.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "slider/a-range" },
 };
 
 const CURRENCY = { currency: "NZD", style: "currency", maximumFractionDigits: 0 } as const;

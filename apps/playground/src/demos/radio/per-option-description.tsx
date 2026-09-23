@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Per-option description",
 	note: "There is no Radio.Description. The caption is composed inside the row, so it stays within the one tap target and inside the accessible name.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "radio/per-option-description" },
 };
 
 export function Demo(): ReactElement {

@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Named feedback",
 	caption:
 		"The vocabulary every pressable in the library shares. `scale-fade` moves both axes at once, taking each from the mode that owns it.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "pressable/named-feedback", hero: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

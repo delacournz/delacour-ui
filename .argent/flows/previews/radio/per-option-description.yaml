@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on radio/per-option-description and has settled — two delivery options, Standard selected. The
+  capture script navigates there before running this.
+steps:
+  - echo: Choosing Express
+  - tap: { id: radio-express }
+  - wait: 900
+  - echo: And back to Standard, so the clip loops without a jump cut
+  - tap: { id: radio-standard }

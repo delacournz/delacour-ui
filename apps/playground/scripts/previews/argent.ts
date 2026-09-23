@@ -61,15 +61,28 @@ export async function restartApp(udid: string, bundleId: string): Promise<void> 
 	await runJson("restart-app", ["--udid", udid, "--bundleId", bundleId]);
 }
 
-/** Whether argent's bridge is live for this app — the precondition for `id:` selectors. */
-export async function devtoolsConnected(udid: string, bundleId: string): Promise<boolean> {
-	const result = await runJson<{ connected: boolean }>("native-devtools-status", [
-		"--udid",
-		udid,
-		"--bundleId",
-		bundleId,
-	]);
-	return result.connected;
+/**
+ * Whether argent's bridge is live for this app — the precondition for `id:` selectors.
+ *
+ * Polls while argent reports `connecting` rather than answering once. The
+ * bridge opens only after the JS bundle has loaded, and a dev client fetching
+ * its bundle from Metro takes well past the few seconds a Release build does,
+ * so a single read straight after the restart failed runs that would have
+ * connected a moment later. Any other state is final and returns at once.
+ */
+export async function devtoolsConnected(udid: string, bundleId: string, timeoutMs = 30_000): Promise<boolean> {
+	const deadline = Date.now() + timeoutMs;
+	for (;;) {
+		const result = await runJson<{ connected: boolean; state?: string }>("native-devtools-status", [
+			"--udid",
+			udid,
+			"--bundleId",
+			bundleId,
+		]);
+		if (result.connected) return true;
+		if (result.state !== "connecting" || Date.now() > deadline) return false;
+		await Bun.sleep(2000);
+	}
 }
 
 export async function startRecording(udid: string, timeLimitSeconds: number): Promise<void> {

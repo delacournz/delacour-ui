@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on accordion/one-at-a-time and has
+  settled — three rows, Shipping open. The capture script navigates there
+  before running this.
+steps:
+  - echo: Opening Returns, which closes Shipping
+  - tap: { id: faq-returns }
+  - wait: 800
+  - echo: Then Warranty, which closes Returns
+  - tap: { id: faq-warranty }
+  - wait: 800
+  - echo: And Shipping again, so the clip loops without a jump cut
+  - tap: { id: faq-shipping }

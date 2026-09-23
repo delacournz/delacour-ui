@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Variants",
 	caption: "Every variant, at rest. Each one presses differently — hold one down to see it.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "button/variants", hero: true },
 };
 
 /**

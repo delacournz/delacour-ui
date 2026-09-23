@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on list-group/custom-suffix and has
+  settled — four rows, the third with a spinning suffix. The capture script
+  navigates there before running this.
+steps:
+  - echo: Pressing down each row, so the row highlight reads
+  - long-press: { on: { id: row-language }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-notifications }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-syncing }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-chevron }, duration: 300 }

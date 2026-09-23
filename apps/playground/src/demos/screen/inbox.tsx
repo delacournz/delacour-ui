@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "A navbar, a body and a footer",
 	caption:
 		"The whole composition, and the only one most screens need. Nothing here names a safe-area inset or a navbar height — each part measures itself into the screen context and the scroll area reserves exactly that, so the first row clears the bar and the last one clears the footer.",
-	capture: { frame: "device", hero: true },
+	capture: { flow: "screen/inbox", frame: "device", hero: true },
 };
 
 /**

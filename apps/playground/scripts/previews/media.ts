@@ -95,6 +95,15 @@ export async function hasBinary(name: string): Promise<boolean> {
 }
 
 /**
+ * Names the clip encoding, and feeds an animated demo's source hash.
+ *
+ * Bump it whenever {@link encodeVideo}'s output changes, so the next run
+ * re-encodes every clip rather than leaving half of them on the old settings.
+ * Stills do not hash it, so a change here never rewrites a PNG.
+ */
+export const VIDEO_ENCODING = "h264-rgb-to-bt709tv";
+
+/**
  * Encodes the published clip: crop, scale, h264.
  *
  * `-movflags +faststart` puts the index at the front so playback can begin
@@ -103,7 +112,13 @@ export async function hasBinary(name: string): Promise<boolean> {
  *
  * `libx264` rather than `h264_videotoolbox`: VideoToolbox encodes faster but
  * its rate control is visibly worse at these bitrates, and the encode is not
- * what makes a capture run slow.
+ * what makes a capture run slow. *
+ * **Limited range, BT.709, and tagged as such.** The simulator records full
+ * range with a BT.601 matrix, and encoding straight through carried that
+ * `color_range=pc` into every clip. Chrome misreads it: the house background,
+ * `#09090b` in the poster, played as `#000000`, and every clip on the landing
+ * page sat in a black box on a page one shade lighter. Converting and tagging
+ * explicitly is what browsers agree on — see {@link VIDEO_ENCODING}.
  */
 export async function encodeVideo(
 	input: string,
@@ -111,8 +126,20 @@ export async function encodeVideo(
 	crop: CropRect,
 	size: { width: number; height: number }
 ): Promise<void> {
+	// Through RGB, deliberately. The recording is `yuvj420p` tagged full range,
+	// and asking `scale` to convert that range in place was silently ignored —
+	// the clip came out limited-tagged but full-valued, a shade too dark. ffmpeg
+	// decodes the source to RGB correctly (the posters always matched a
+	// screenshot), so convert from there, where there is no range to misread.
+	const vf = [
+		`crop=${crop.width}:${crop.height}:${crop.x}:${crop.y}`,
+		`scale=${size.width}:${size.height}:flags=lanczos`,
+		"format=rgb24",
+		"scale=out_range=tv:out_color_matrix=bt709",
+		"format=yuv420p",
+	].join(",");
 	const result =
-		await $`ffmpeg -y -hide_banner -loglevel error -i ${input} -vf ${filter(crop, size)} -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 26 -preset slow -g 60 -keyint_min 60 -sc_threshold 0 -movflags +faststart -an -fps_mode cfr -r 30 ${output}`.quiet();
+		await $`ffmpeg -y -hide_banner -loglevel error -i ${input} -vf ${vf} -c:v libx264 -profile:v high -crf 26 -preset slow -g 60 -keyint_min 60 -sc_threshold 0 -color_range tv -colorspace bt709 -color_primaries bt709 -color_trc bt709 -movflags +faststart -an -fps_mode cfr -r 30 ${output}`.quiet();
 	if (result.exitCode !== 0) {
 		throw new Error(`ffmpeg failed encoding ${input}:\n${result.stderr.toString()}`);
 	}

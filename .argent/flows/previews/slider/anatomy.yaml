@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slider/anatomy and has settled — one
+  slider at 30, its thumb carrying the testID slider-thumb. The capture script
+  navigates there before running this.
+steps:
+  - echo: Dragging the thumb up the track
+  # A swipe anchored on the thumb rather than a coordinate, so a layout change
+  # moves the gesture with it. momentum:false so the thumb stops where the
+  # finger does rather than being flung by the release velocity.
+  - swipe: { from: { id: slider-thumb }, by: { x: 0.4 }, momentum: false, duration: 700 }
+  - wait: 500
+  - echo: And back down by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: slider-thumb }, by: { x: -0.4 }, momentum: false, duration: 700 }

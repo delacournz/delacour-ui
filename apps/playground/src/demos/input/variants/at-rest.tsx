@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "At rest",
 	caption:
 		"`primary` sits on a card with a visible border; `secondary` is a filled field with none, for a surface that already has one.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch" },
 	keyboardAware: true,
 };
 

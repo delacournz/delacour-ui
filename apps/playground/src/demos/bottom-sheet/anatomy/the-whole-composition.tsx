@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "The whole composition",
+	capture: { flow: "bottom-sheet/anatomy/the-whole-composition", frame: "device", hero: true },
 };
 
 /**
@@ -15,6 +16,11 @@ export const meta: DemoMeta = {
  * A swipe down, a press on the scrim, `BottomSheet.Close` and the button in the
  * content all reach the same `onOpenChange`, so the counter moves however the
  * sheet was dismissed.
+ *
+ * The root fills and centres because this demo is captured as a whole screen:
+ * the capture stage hands a `device` demo the full window with no insets, and a
+ * trigger left at the top sat under the Dynamic Island, where a tap never
+ * reached it.
  */
 export function Demo(): ReactElement {
 	const [isOpen, setOpen] = useState(false);
@@ -26,10 +32,12 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<View className="gap-3">
+		<View className="flex-1 items-center justify-center gap-3">
 			<BottomSheet isOpen={isOpen} onOpenChange={handleOpenChange}>
 				<BottomSheet.Trigger asChild>
-					<Button variant="secondary">Open the sheet</Button>
+					<Button testID="open-sheet" variant="secondary">
+						Open the sheet
+					</Button>
 				</BottomSheet.Trigger>
 				<BottomSheet.Portal>
 					<BottomSheet.Overlay />
@@ -41,7 +49,7 @@ export function Demo(): ReactElement {
 								Update to the latest version for better security and performance.
 							</BottomSheet.Description>
 							<Button onPress={() => setOpen(false)}>Update now</Button>
-							<Button onPress={() => setOpen(false)} variant="tertiary">
+							<Button onPress={() => setOpen(false)} testID="sheet-later" variant="tertiary">
 								Later
 							</Button>
 						</BottomSheet.Content>

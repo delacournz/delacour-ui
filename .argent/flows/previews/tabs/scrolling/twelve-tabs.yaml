@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tabs/scrolling/twelve-tabs and has settled — twelve tabs in a scrolling strip, Overview active. The
+  capture script navigates there before running this.
+steps:
+  - echo: Walking along the strip — each tab scrolls itself into view
+  - tap: { id: section-Activity }
+  - wait: 500
+  - tap: { id: section-Members }
+  - wait: 500
+  - tap: { id: section-Billing }
+  - wait: 700
+  - echo: And back to Overview, so the clip loops without a jump cut
+  - tap: { id: section-Members }
+  - wait: 500
+  - tap: { id: section-Activity }
+  - wait: 500
+  - tap: { id: section-Overview }

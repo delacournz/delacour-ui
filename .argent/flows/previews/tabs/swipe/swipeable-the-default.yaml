@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tabs/swipe/swipeable-the-default and has settled — three tabs over a coloured pager, the first active. The
+  capture script navigates there before running this.
+steps:
+  - echo: Swiping the pager left twice — the indicator follows the finger
+  # Anchored on the panel, not the trigger: the pager owns the pan, and a drag
+  # that starts on the tab bar is a press on a trigger rather than a swipe.
+  - swipe: { from: { id: panel-one }, by: { x: -0.4 }, duration: 400 }
+  - wait: 500
+  - swipe: { from: { id: panel-two }, by: { x: -0.4 }, duration: 400 }
+  - wait: 700
+  - echo: Then tapping back to the first, so the clip loops without a jump cut
+  - tap: { id: swipeable-one }

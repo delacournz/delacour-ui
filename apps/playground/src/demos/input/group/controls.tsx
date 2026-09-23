@@ -18,6 +18,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A `Button` in a decorator keeps its own press. Tapping the gutter beside it focuses the field instead — a grouped box behaves the way a lone field's does, edge to edge.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "input/group/controls" },
 };
 
 /** A search field whose clear button appears only once there is something to clear. */

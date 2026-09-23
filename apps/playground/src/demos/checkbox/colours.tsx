@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Ticked and unticked at every colour. An unticked box is chrome at all six — the colour only says what a tick means.",
-	capture: { hero: true },
+	capture: { flow: "checkbox/colours", hero: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

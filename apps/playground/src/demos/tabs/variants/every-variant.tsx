@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Every variant",
 	note: "`primary` is a muted track with a fully rounded capsule sliding under the active label; `secondary` drops the track for an underline. Both the track and the capsule are `rounded-full`, so the capsule sits concentric inside the track at any padding — a pill inside a pill always does, which is why there is no radius arithmetic anywhere in this component.\n\nThe capsule is painted on `elevated`, a surface that sits above `muted` in *both* themes. `card` cannot do that job: it is the same white as the background in light and darker than `muted` in dark, so a capsule on it reads as raised in one theme and sunken in the other.\n\nDrag any of them sideways. The capsule tracks the finger and the panel comes with it, because both read the same shared value rather than each running a clock of their own.\n\nDrag slowly and watch the labels: they crossfade between the two colours rather than flipping at the midpoint, because the colour interpolates off that same value. A tap fades too — the settle spring writes the value the label reads, so there is no second path to keep in step.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "tabs/variants/every-variant", hero: true },
 };
 
 const PANELS = [

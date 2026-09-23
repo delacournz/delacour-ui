@@ -1,0 +1,20 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on input/group/controls and has settled — an empty search field and a hidden password. The
+  capture script navigates there before running this.
+steps:
+  - echo: Typing a search, which brings the clear button in
+  - tap: { id: search }
+  - wait: 300
+  - tool: keyboard
+    args: { text: tabs, delayMs: 120 }
+  - wait: 700
+  - echo: Clearing it, and submitting so the field blurs as it began
+  - tap: { id: clear }
+  - wait: 300
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 500
+  - echo: Revealing the password and hiding it again
+  - tap: { id: reveal }
+  - wait: 900
+  - tap: { id: reveal }

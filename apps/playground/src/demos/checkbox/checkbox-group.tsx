@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Checkbox.Group",
 	caption: "One array of the children's values. `onChecked` fires with the whole new list every time a box is toggled.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "checkbox/checkbox-group" },
 };
 
 const CHANNELS = [

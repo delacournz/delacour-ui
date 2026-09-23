@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slider/a-range and has settled — a price range from 200 to 800. The
+  capture script navigates there before running this.
+steps:
+  - echo: Pulling the two thumbs toward each other
+  - swipe: { from: { id: thumb-0 }, by: { x: 0.18 }, momentum: false, duration: 600 }
+  - wait: 300
+  - swipe: { from: { id: thumb-1 }, by: { x: -0.18 }, momentum: false, duration: 600 }
+  - wait: 600
+  - echo: And back out by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: thumb-0 }, by: { x: -0.18 }, momentum: false, duration: 600 }
+  - wait: 300
+  - swipe: { from: { id: thumb-1 }, by: { x: 0.18 }, momentum: false, duration: 600 }

@@ -6,13 +6,14 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Live validation",
 	caption:
-		"Type an `@`. The border, the caret and the selection highlight leave destructive together — one state, not three places that have to be kept in step.",
+		"Start typing and the field turns destructive until there is an `@` in it. The border, the caret and the selection highlight leave destructive together — one state, not three places that have to be kept in step.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "input/states/live-validation", hero: true },
 };
 
 export function Demo(): ReactElement {
-	const [email, setEmail] = useState("not-an-email");
-	const isInvalid = !email.includes("@");
+	const [email, setEmail] = useState("");
+	const isInvalid = email.length > 0 && !email.includes("@");
 
 	return (
 		<Field>

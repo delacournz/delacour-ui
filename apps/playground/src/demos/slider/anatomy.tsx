@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Anatomy",
 	note: "One Gesture.Pan on the track drives every thumb. Touching down grabs the nearest one and moves it to the finger, so a press on empty groove lifts the handle it is about to move.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "slider/anatomy", hero: true },
 };
 
 export function Demo(): ReactElement {

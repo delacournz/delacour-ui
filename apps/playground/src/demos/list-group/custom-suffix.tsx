@@ -9,7 +9,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Custom suffix",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "list-group/custom-suffix", hero: true },
 };
 
 export function Demo(): ReactElement {

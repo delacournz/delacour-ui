@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on radio/custom-indicator and has settled — two options, the first selected. The
+  capture script navigates there before running this.
+steps:
+  - echo: Choosing the second option
+  - tap: { id: radio-trailing }
+  - wait: 900
+  - echo: And back to the first, so the clip loops without a jump cut
+  - tap: { id: radio-custom }

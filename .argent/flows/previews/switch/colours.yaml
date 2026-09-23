@@ -1,0 +1,31 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on switch/colours and has settled — six rows, the first switch in each on. The
+  capture script navigates there before running this.
+steps:
+  - echo: Switching every colour off, top to bottom
+  - tap: { id: switch-default }
+  - wait: 150
+  - tap: { id: switch-primary }
+  - wait: 150
+  - tap: { id: switch-success }
+  - wait: 150
+  - tap: { id: switch-warning }
+  - wait: 150
+  - tap: { id: switch-destructive }
+  - wait: 150
+  - tap: { id: switch-info }
+  - wait: 150
+  - wait: 500
+  - echo: And on again, so the clip loops without a jump cut
+  - tap: { id: switch-default }
+  - wait: 150
+  - tap: { id: switch-primary }
+  - wait: 150
+  - tap: { id: switch-success }
+  - wait: 150
+  - tap: { id: switch-warning }
+  - wait: 150
+  - tap: { id: switch-destructive }
+  - wait: 150
+  - tap: { id: switch-info }
+  - wait: 150

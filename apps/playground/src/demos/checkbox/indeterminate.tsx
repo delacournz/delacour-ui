@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Indeterminate",
 	caption:
 		"The parent draws a dash while its children are partly selected, and reports `mixed` to a screen reader rather than a half-truth.",
-	capture: {},
+	capture: { flow: "checkbox/indeterminate" },
 };
 
 const PERMISSIONS = ["Read", "Write", "Delete"] as const;

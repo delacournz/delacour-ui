@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on pressable/named-feedback and has settled — four cards, one per named feedback. The
+  capture script navigates there before running this.
+steps:
+  - echo: Pressing and holding each card, so each feedback reads in turn
+  - long-press: { on: { id: feedback-scale }, duration: 450 }
+  - wait: 200
+  - long-press: { on: { id: feedback-fade }, duration: 450 }
+  - wait: 200
+  - long-press: { on: { id: feedback-scale-fade }, duration: 450 }
+  - wait: 200
+  - long-press: { on: { id: feedback-none }, duration: 450 }

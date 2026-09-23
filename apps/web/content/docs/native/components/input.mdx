@@ -4,7 +4,7 @@ description: A text field, and the box that can hold content beside it.
 icon: TextCursorInput
 ---
 
-<Preview id="input/variants/at-rest" title={null} />
+<Preview id="input/states/live-validation" title={null} />
 
 ## Installation
 
@@ -57,6 +57,7 @@ Use `Input.Group` to put a prefix or a suffix inside the field's own border.
 
 <Preview id="input/group/icons" />
 <Preview id="input/group/text-affixes" />
+<Preview id="input/group/controls" />
 
 ```tsx
 <Input.Group>
@@ -76,6 +77,7 @@ The two state axes resolve `Input.Group` → the `Input`'s own prop → the encl
 are `??` chains, so an explicit `false` is a value rather than an absence.
 
 <Preview id="input/variants/invalid" />
+<Preview id="input/states/live-validation" />
 
 ```tsx
 <Input isInvalid />

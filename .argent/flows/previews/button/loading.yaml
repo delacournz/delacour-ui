@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/loading and has settled — every spinner placement and size, all loading. The
+  capture script navigates there before running this.
+steps:
+  - echo: Nothing to touch — a loading button is its spinner, so this only holds the camera on it
+  - wait: 2000

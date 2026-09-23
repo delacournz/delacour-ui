@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tabs/variants/every-variant and has
+  settled — a primary and a secondary tab bar, both on Overview. The capture
+  script navigates there before running this.
+steps:
+  - echo: Walking the primary bar across to Settings
+  - tap: { id: primary-activity }
+  - wait: 600
+  - tap: { id: primary-settings }
+  - wait: 600
+  - echo: Then the secondary bar
+  - tap: { id: secondary-activity }
+  - wait: 600
+  - tap: { id: secondary-settings }
+  - wait: 700
+  - echo: And both back to Overview, so the clip loops without a jump cut
+  - tap: { id: primary-overview }
+  - wait: 300
+  - tap: { id: secondary-overview }

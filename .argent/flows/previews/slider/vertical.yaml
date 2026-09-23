@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slider/vertical and has settled — three vertical sliders, each at 45. The
+  capture script navigates there before running this.
+steps:
+  - echo: Raising each slider in turn
+  - swipe: { from: { id: thumb-default }, by: { y: -0.07 }, momentum: false, duration: 500 }
+  - swipe: { from: { id: thumb-success }, by: { y: -0.1 }, momentum: false, duration: 500 }
+  - swipe: { from: { id: thumb-warning }, by: { y: -0.04 }, momentum: false, duration: 500 }
+  - wait: 500
+  - echo: And lowering them by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: thumb-default }, by: { y: 0.07 }, momentum: false, duration: 500 }
+  - swipe: { from: { id: thumb-success }, by: { y: 0.1 }, momentum: false, duration: 500 }
+  - swipe: { from: { id: thumb-warning }, by: { y: 0.04 }, momentum: false, duration: 500 }

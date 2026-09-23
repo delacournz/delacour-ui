@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "One at a time",
 	caption:
 		"The default. Opening a row closes the one that was open, and tapping the open one closes it — a panel's height is measured, then sprung from zero to whatever its content came out at.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "accordion/one-at-a-time", hero: true },
 };
 
 const FAQ = [

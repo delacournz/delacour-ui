@@ -4,7 +4,7 @@ description: A form field's layout, and the one place its state is written down.
 icon: SquarePen
 ---
 
-<Preview id="field/anatomy/all-four" title={null} />
+<Preview id="field/states/live" title={null} />
 
 ## Installation
 
@@ -32,6 +32,10 @@ export default function Example() {
   );
 }
 ```
+
+The four parts together — a label, the control, a description and an error:
+
+<Preview id="field/anatomy/all-four" />
 
 ## States
 
@@ -112,6 +116,8 @@ A labelled separator draws two rules with the label between them.
 
 `Field.Error` renders nothing when it has no children, so the line removes itself once the value is
 fixed.
+
+<Preview id="field/states/live" />
 
 ```tsx
 <Field.Error>{error}</Field.Error>

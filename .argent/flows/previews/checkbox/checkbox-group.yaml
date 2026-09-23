@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on checkbox/checkbox-group and has settled — three channels, Email ticked, the value printed beneath. The
+  capture script navigates there before running this.
+steps:
+  - echo: Ticking SMS and Push, and watching the value follow
+  - tap: { id: checkbox-sms }
+  - wait: 500
+  - tap: { id: checkbox-push }
+  - wait: 900
+  - echo: And unticking them again, so the clip loops without a jump cut
+  - tap: { id: checkbox-sms }
+  - wait: 500
+  - tap: { id: checkbox-push }

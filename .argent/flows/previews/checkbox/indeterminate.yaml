@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on checkbox/indeterminate and has settled — Select all and three permissions, none ticked. The
+  capture script navigates there before running this.
+steps:
+  - echo: Ticking permissions one at a time — the parent goes indeterminate, then ticked
+  - tap: { id: checkbox-Read }
+  - wait: 500
+  - tap: { id: checkbox-Write }
+  - wait: 500
+  - tap: { id: checkbox-Delete }
+  - wait: 900
+  - echo: Then Select all clears every one, so the clip loops without a jump cut
+  - tap: { id: checkbox-all }

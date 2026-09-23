@@ -10,6 +10,7 @@ import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
 import { DEMOS_DIR, DEVICE_MAX_EDGE, FLOWS_DIR, MAX_EDGE } from "./config";
 import { type DemoSource, readDemoSource, readGroupOrder } from "./demo-source";
+import { VIDEO_ENCODING } from "./media";
 
 /** Mirrors `DemoFrame` in `src/demos/types.ts`, which imports React and cannot be read here. */
 export type DemoFrame = "stage" | "device";
@@ -64,13 +65,15 @@ async function walk(dir: string): Promise<string[]> {
  * independently: raising `DEVICE_MAX_EDGE` re-captures the three device demos
  * and leaves the hundred stage ones hashing exactly as they did. Committed
  * media does not delta-compress, so a hash that mixed the two would rewrite the
- * whole tree for a change that reaches six files.
+ * whole tree for a change that reaches six files. The video encoding is
+ * hashed for the same reason, and only into a demo that has a flow.
  */
 function hashOf(source: DemoSource, flow: string | null, frame: DemoFrame): string {
 	return createHash("sha256")
 		.update(source.code)
 		.update(JSON.stringify(source.meta))
 		.update(flow ?? "")
+		.update(flow === null ? "" : `video:${VIDEO_ENCODING}`)
 		.update(`edge:${frame === "device" ? DEVICE_MAX_EDGE : MAX_EDGE}`)
 		.digest("hex")
 		.slice(0, 12);

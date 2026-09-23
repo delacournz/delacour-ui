@@ -1,10 +1,11 @@
 /**
- * Consent for Google Analytics, which runs through GTM and sets cookies.
+ * Consent for Google Analytics, which is loaded as `gtag.js` and sets cookies.
  * Umami sets none and needs no consent, so nothing here gates it.
  *
  * The choice lives in `localStorage` under `CONSENT_KEY`. It is read twice: by
- * the inline bootstrap, before GTM loads, so a returning visitor who accepted is
- * counted from their first hit; and by the banner, to decide whether to ask.
+ * the inline bootstrap, before GA is configured, so a returning visitor who
+ * accepted is counted from their first hit; and by the banner, to decide
+ * whether to ask.
  */
 
 export const CONSENT_KEY = "consent.analytics";
@@ -16,8 +17,10 @@ export const CONSENT_OPEN_EVENT = "consent:open";
 
 declare global {
 	interface Window {
-		/** Defined by `gtmBootstrap`, only on a build with GTM on. */
+		/** Defined by `gaBootstrap`, only on a build with GA on. */
 		gtag?: (...args: unknown[]) => void;
+		/** Defined by `gaBootstrap`: requests `gtag.js`, once. */
+		loadGa?: () => void;
 	}
 }
 
@@ -25,28 +28,38 @@ export function parseConsent(value: string | null): Consent | null {
 	return value === "granted" || value === "denied" ? value : null;
 }
 
+export function gaScriptUrl(id: string): string {
+	return `https://www.googletagmanager.com/gtag/js?id=${id}`;
+}
+
 /**
- * The inline script that goes in `<head>` ahead of everything GTM does.
+ * The inline script that goes in `<head>` ahead of everything GA does.
  *
- * Consent Mode v2 has to be told its defaults before the container loads, or
- * the container's first hits go out under no consent state at all. Everything
- * is denied, a stored grant is replayed, and only then is `gtm.js` requested.
- * Only `analytics_storage` is ever granted: the site shows no adverts, so the
- * three advertising types stay denied whatever the visitor chooses.
+ * This is Consent Mode's **basic** mode: `gtag.js` is not requested at all
+ * until the visitor accepts, so before that Google receives nothing — not even
+ * the cookieless pings advanced mode sends. The privacy policy promises exactly
+ * that, and `consent.test.ts` holds the script to it.
  *
- * `id` has already been held to `/^GTM-[A-Z0-9]+$/` by `analyticsConfig`, which
+ * The queue is still set up for everyone: consent defaults (all denied), then
+ * `config`, so that whenever `loadGa` runs — here for a stored grant, or from
+ * the banner's Accept — the library replays the queue in the right order. Only
+ * `analytics_storage` is ever granted; the site shows no adverts. GA4's enhanced
+ * measurement counts client-side navigations from the History API, so the
+ * router needs nothing from it.
+ *
+ * `id` has already been held to `/^G-[A-Z0-9]+$/` by `analyticsConfig`, which
  * is what makes interpolating it here safe.
  */
-export function gtmBootstrap(id: string): string {
+export function gaBootstrap(id: string): string {
 	return [
 		"window.dataLayer=window.dataLayer||[];",
 		"function gtag(){dataLayer.push(arguments);}",
-		"gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied',wait_for_update:500});",
-		`try{if(localStorage.getItem('${CONSENT_KEY}')==='granted'){gtag('consent','update',{analytics_storage:'granted'});}}catch(e){}`,
-		"(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});",
-		"var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';",
-		"j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);",
-		`})(window,document,'script','dataLayer','${id}');`,
+		"gtag('consent','default',{ad_storage:'denied',ad_user_data:'denied',ad_personalization:'denied',analytics_storage:'denied'});",
+		"function loadGa(){if(document.getElementById('ga-js'))return;",
+		`var s=document.createElement('script');s.id='ga-js';s.async=true;s.src='${gaScriptUrl(id)}';document.head.appendChild(s);}`,
+		`try{if(localStorage.getItem('${CONSENT_KEY}')==='granted'){gtag('consent','update',{analytics_storage:'granted'});loadGa();}}catch(e){}`,
+		"gtag('js',new Date());",
+		`gtag('config','${id}');`,
 	].join("");
 }
 
@@ -58,7 +71,10 @@ export function readConsent(): Consent | null {
 	}
 }
 
-/** Store the choice and tell GTM, which applies it to every tag without a reload. */
+/**
+ * Store the choice and tell GA. Accepting loads `gtag.js` for the first time on
+ * this page; declining after an earlier accept stops GA writing cookies at once.
+ */
 export function writeConsent(consent: Consent): void {
 	try {
 		window.localStorage.setItem(CONSENT_KEY, consent);
@@ -66,4 +82,5 @@ export function writeConsent(consent: Consent): void {
 		// A blocked storage still gets this page's answer; it just asks again next visit.
 	}
 	window.gtag?.("consent", "update", { analytics_storage: consent });
+	if (consent === "granted") window.loadGa?.();
 }

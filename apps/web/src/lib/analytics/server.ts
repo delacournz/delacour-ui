@@ -1,3 +1,4 @@
+import { siteUrl } from "@/lib/shared";
 import { ANALYTICS, type UmamiConfig } from "./config";
 
 /**
@@ -50,15 +51,22 @@ export function serverEventBody(umami: Extract<UmamiConfig, { kind: "on" }>, req
 	} as const;
 }
 
+const SITE_HOST = new URL(siteUrl).host;
+
 /**
- * Report an agent fetch, if this is one and Umami is on. Never awaited and
- * never throws: a slow or unreachable analytics host must not cost the reader
- * a millisecond. The visitor's IP is not forwarded.
+ * Report an agent fetch, if this is one, Umami is on, and the request arrived
+ * on the site's own host — the server's twin of the browser tag's
+ * `data-domains`, so a production build run on `localhost` never counts
+ * itself. Never awaited and never throws: a slow or unreachable analytics host
+ * must not cost the reader a millisecond. The visitor's IP is not forwarded.
  */
 export function reportAgentFetch(request: Request, umami: UmamiConfig = ANALYTICS.umami): void {
 	if (umami.kind === "off") return;
 
-	const kind = agentFetch(new URL(request.url).pathname);
+	const url = new URL(request.url);
+	if (url.host !== SITE_HOST) return;
+
+	const kind = agentFetch(url.pathname);
 	if (!kind) return;
 
 	void fetch(`${umami.host}/api/send`, {

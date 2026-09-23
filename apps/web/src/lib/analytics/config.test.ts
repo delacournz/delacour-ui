@@ -8,13 +8,13 @@ const UMAMI = {
 
 describe("analyticsConfig", () => {
 	test("is off for both providers when nothing is set", () => {
-		expect(analyticsConfig({})).toEqual({ umami: { kind: "off" }, gtm: { kind: "off" } });
+		expect(analyticsConfig({})).toEqual({ umami: { kind: "off" }, ga: { kind: "off" } });
 	});
 
 	test("is off for empty strings", () => {
-		expect(analyticsConfig({ VITE_UMAMI_HOST: "", VITE_UMAMI_WEBSITE_ID: "", VITE_GTM_ID: "" })).toEqual({
+		expect(analyticsConfig({ VITE_UMAMI_HOST: "", VITE_UMAMI_WEBSITE_ID: "", VITE_GA_ID: "" })).toEqual({
 			umami: { kind: "off" },
-			gtm: { kind: "off" },
+			ga: { kind: "off" },
 		});
 	});
 
@@ -48,12 +48,13 @@ describe("analyticsConfig", () => {
 		expect(analyticsConfig({ ...UMAMI, VITE_UMAMI_WEBSITE_ID: 'abc"><script>' }).umami).toEqual({ kind: "off" });
 	});
 
-	test("turns GTM on for a well-formed container id", () => {
-		expect(analyticsConfig({ VITE_GTM_ID: "GTM-AB12CD3" }).gtm).toEqual({ kind: "on", id: "GTM-AB12CD3" });
+	test("turns GA on for a well-formed measurement id", () => {
+		expect(analyticsConfig({ VITE_GA_ID: "G-2REDJ2XPJZ" }).ga).toEqual({ kind: "on", id: "G-2REDJ2XPJZ" });
 	});
 
-	test("refuses a malformed container id, since it is written into an inline script", () => {
-		expect(analyticsConfig({ VITE_GTM_ID: "G-AB12CD3" }).gtm).toEqual({ kind: "off" });
-		expect(analyticsConfig({ VITE_GTM_ID: "GTM-AB');alert(1);//" }).gtm).toEqual({ kind: "off" });
+	test("refuses a malformed measurement id, since it is written into an inline script", () => {
+		expect(analyticsConfig({ VITE_GA_ID: "GTM-AB12CD3" }).ga).toEqual({ kind: "off" });
+		expect(analyticsConfig({ VITE_GA_ID: "UA-1234-1" }).ga).toEqual({ kind: "off" });
+		expect(analyticsConfig({ VITE_GA_ID: "G-AB');alert(1);//" }).ga).toEqual({ kind: "off" });
 	});
 });

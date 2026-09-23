@@ -46,7 +46,7 @@ export function Footer(): ReactElement {
 					>
 						{FOOTER_COPY.privacy}
 					</Link>
-					{ANALYTICS.gtm.kind === "on" ? (
+					{ANALYTICS.ga.kind === "on" ? (
 						<button
 							className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
 							onClick={() => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT))}

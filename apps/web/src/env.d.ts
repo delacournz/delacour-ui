@@ -2,5 +2,5 @@
 interface ImportMetaEnv {
 	readonly VITE_UMAMI_HOST?: string;
 	readonly VITE_UMAMI_WEBSITE_ID?: string;
-	readonly VITE_GTM_ID?: string;
+	readonly VITE_GA_ID?: string;
 }

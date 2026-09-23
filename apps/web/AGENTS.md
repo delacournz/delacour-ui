@@ -53,7 +53,7 @@ src/
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
-├── lib/analytics/         Umami, GTM and consent — see "Analytics"
+├── lib/analytics/         Umami, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
@@ -468,21 +468,23 @@ Two providers, both optional, both off unless their env vars are set at **build*
 `VITE_*`, so Vite inlines them into the client and server bundles alike. Railway sets them on
 production only; dev, CI and staging render no analytics tags at all.
 
-| Var | Turns on |
-| --- | --- |
-| `VITE_UMAMI_HOST`, `VITE_UMAMI_WEBSITE_ID` | Umami — page views, custom events, server-side agent fetches |
-| `VITE_GTM_ID` | Google Tag Manager, and through it GA4 — behind the consent banner |
+| Var | Production value | Turns on |
+| --- | --- | --- |
+| `VITE_UMAMI_HOST` | `https://analytics.delacour.co.nz` | Umami — our own instance, on Railway |
+| `VITE_UMAMI_WEBSITE_ID` | `5fba0ae3-f56e-49a4-8f6d-55f0f0c297c1` | the "Delacour UI" website in it |
+| `VITE_GA_ID` | `G-2REDJ2XPJZ` | GA4, loaded as `gtag.js` behind the consent banner |
 
-`src/lib/analytics/config.ts` validates them and returns `off` for anything malformed rather than
-throwing. That is a security check as well as a convenience: the GTM id is interpolated into an
-inline script and the Umami values into attributes.
+None of the three is a secret — each ends up in the page's HTML. `src/lib/analytics/config.ts`
+validates them and returns `off` for anything malformed rather than throwing. That is a security
+check as well as a convenience: the GA id is interpolated into an inline script and the Umami
+values into attributes.
 
 | Piece | Where |
 | --- | --- |
-| Env → `{ umami, gtm }` | `src/lib/analytics/config.ts` |
+| Env → `{ umami, ga }` | `src/lib/analytics/config.ts` |
 | The event union, link classifier | `src/lib/analytics/events.ts` |
 | `track()`, the delegated click listener | `src/lib/analytics/track.ts` |
-| Consent Mode bootstrap, stored choice | `src/lib/analytics/consent.ts` |
+| Consent Mode bootstrap, `gtag.js` loader, stored choice | `src/lib/analytics/consent.ts` |
 | Agent-fetch events from the server | `src/lib/analytics/server.ts`, called from `src/start.ts` |
 | The tags | `AnalyticsTags` in `src/routes/__root.tsx` |
 | The banner | `src/components/consent-banner.tsx`; reopened by the footer's Cookie settings |
@@ -490,14 +492,15 @@ inline script and the Umami values into attributes.
 
 Five things are load-bearing:
 
-- **Umami is its own tag, not a tag inside GTM.** It sets no cookies and needs no consent, so it
-  must count a visitor who declines, blocks GTM or never answers. Loaded through GTM it would
-  inherit all three failures.
-- **Consent defaults are set before `gtm.js` is requested.** `gtmBootstrap` denies every Consent
-  Mode v2 type, replays a stored grant, and only then loads the container — the order the test
-  pins. Only `analytics_storage` is ever granted; the site has no adverts. The GA4 tag itself is
-  configured in the GTM UI, with its built-in consent check on; no GA id is in this repository.
-  `track()` pushes every event onto the data layer too, so a GTM trigger can forward one to GA.
+- **Umami is independent of Google.** It sets no cookies and needs no consent, so it must count a
+  visitor who declines, blocks Google or never answers the banner.
+- **GA runs in Consent Mode's *basic* mode: `gtag.js` is not requested until Accept.** `gaBootstrap`
+  queues the all-denied defaults and `config`, and calls `loadGa()` only inside the stored-grant
+  branch; the banner's Accept calls it otherwise. Before that Google receives nothing — not even
+  the cookieless pings *advanced* mode sends — which is what the privacy policy promises and what
+  `consent.test.ts` pins. Only `analytics_storage` is ever granted; the site has no adverts.
+  `track()` sends every event to GA through `gtag('event')` too; before consent it only queues.
+  GTM was the first plan and was dropped: it would only ever have carried this one tag.
 - **One delegated click listener, not a DOM scan.** Umami's guides tag links on
   `DOMContentLoaded`, which misses everything an SPA renders after its first navigation. The
   listener on `document` sees every outbound link, every download (by `isFileHref`'s rule) and

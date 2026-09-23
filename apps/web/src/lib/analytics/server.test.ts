@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { isbot } from "isbot";
-import { agentFetch, SERVER_USER_AGENT, serverEventBody } from "./server";
+import { agentFetch, reportAgentFetch, SERVER_USER_AGENT, serverEventBody } from "./server";
 
 describe("agentFetch", () => {
 	test("names the llms files", () => {
@@ -63,5 +63,32 @@ describe("the user agent the server sends as", () => {
 	 */
 	test("is not one Umami's bot check drops", () => {
 		expect(isbot(SERVER_USER_AGENT)).toBe(false);
+	});
+});
+
+describe("reportAgentFetch", () => {
+	const umami = { kind: "on", host: "https://analytics.example.com", websiteId: "site-id" } as const;
+
+	/**
+	 * The browser tag's `data-domains` keeps a production build on `localhost`
+	 * from counting itself; this is the same rule for the server's events, so a
+	 * `curl localhost:3000/llms.txt` while testing never reaches the real Umami.
+	 */
+	test("sends nothing for a request that did not arrive on the site's own host", () => {
+		const sent: string[] = [];
+		const original = globalThis.fetch;
+		globalThis.fetch = (async (input: string | URL | Request) => {
+			sent.push(String(input));
+			return new Response("ok");
+		}) as typeof fetch;
+
+		try {
+			reportAgentFetch(new Request("http://localhost:3000/llms.txt"), umami);
+			reportAgentFetch(new Request("https://ui.delacour.co.nz/llms.txt"), umami);
+		} finally {
+			globalThis.fetch = original;
+		}
+
+		expect(sent).toEqual(["https://analytics.example.com/api/send"]);
 	});
 });

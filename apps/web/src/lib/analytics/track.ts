@@ -4,7 +4,7 @@ declare global {
 	interface Window {
 		/** Umami's tracker, once `script.js` has loaded. */
 		umami?: { track: (name: string, data?: EventData) => void };
-		/** GTM's queue. `gtag()` pushes `arguments` objects onto it; `track` pushes plain events. */
+		/** gtag's queue, defined by `gaBootstrap`. */
 		dataLayer?: unknown[];
 	}
 }
@@ -14,14 +14,15 @@ declare global {
  * a build without the env vars, a blocker, a script still loading — so this is
  * a no-op rather than an error whenever neither is there.
  *
- * GTM gets the same event on its data layer, so a tag in the GTM UI can forward
- * it to GA without the site naming GA anywhere.
+ * GA gets the same event through `gtag('event')`. Before consent it only joins
+ * the queue — `gtag.js` is not loaded, so nothing leaves the page — and it is
+ * sent only if the visitor accepts on this page.
  */
 export function track(event: AnalyticsEvent): void {
 	if (typeof window === "undefined") return;
 	const { name, data } = eventPayload(event);
 	window.umami?.track(name, data);
-	window.dataLayer?.push({ event: name, ...data });
+	window.gtag?.("event", name, data);
 }
 
 /**

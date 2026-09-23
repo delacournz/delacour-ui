@@ -166,7 +166,7 @@ describe("the privacy policy's claims", () => {
 	 * above cannot see them. Each origin the site's own code loads a tracker
 	 * from is read out of that code and held to being named here.
 	 */
-	test("names Google Tag Manager, which the consent bootstrap loads", () => {
+	test("names Google Analytics and the origin the consent bootstrap loads it from", () => {
 		const consent = readFileSync(join(REPO, "apps", "web", "src", "lib", "analytics", "consent.ts"), "utf-8");
 
 		expect(consent).toContain("googletagmanager.com");
@@ -180,6 +180,7 @@ describe("the privacy policy's claims", () => {
 		expect(root).toContain("umami");
 		expect(EVERYTHING).toContain("Umami");
 		expect(EVERYTHING).toMatch(/Umami[^.]*no cookies|no cookies[^.]*Umami/);
+		expect(EVERYTHING).toContain("analytics.delacour.co.nz");
 	});
 
 	test("says search queries are sent, since the search dialog sends them", () => {

@@ -31,7 +31,7 @@
  *
  * The cookie banner is answered ("denied") before every shot so it covers
  * nothing, except the frames that set `consent: "ask"` to photograph it. It
- * only exists on a build with `VITE_GTM_ID` set; on any other build those
+ * only exists on a build with `VITE_GA_ID` set; on any other build those
  * frames show the page without it.
  */
 

@@ -4,7 +4,7 @@ import { type ReactElement, useEffect } from "react";
 import { ConsentBanner } from "@/components/consent-banner";
 import { TrackedSearchDialog } from "@/components/search-dialog";
 import { ANALYTICS } from "@/lib/analytics/config";
-import { gtmBootstrap } from "@/lib/analytics/consent";
+import { gaBootstrap } from "@/lib/analytics/consent";
 import { installClickTracking } from "@/lib/analytics/track";
 import { siteFontLinks } from "@/lib/google-fonts";
 import { HOUSE_BACKGROUND } from "@/lib/house-meta";
@@ -122,17 +122,17 @@ CITED ADAPTATIONS: the page ground is the zinc base's own value — #09090b dark
  * The analytics tags, and nothing at all on a build without the env vars — see
  * `src/lib/analytics/config.ts`.
  *
- * Umami is its own tag rather than a tag inside GTM: it sets no cookies and
- * needs no consent, so it should count a visitor who declines, blocks GTM, or
+ * Umami is its own tag, independent of GA: it sets no cookies and needs no
+ * consent, so it should count a visitor who declines, blocks Google, or
  * never answers the banner. `data-domains` keeps a production build run on
  * `localhost` from counting itself. The script follows client-side navigation
  * by watching `pushState`, so the router needs nothing from it.
  *
- * GTM's bootstrap sets Consent Mode's defaults before the container loads; the
- * order of the two children is the whole point of it.
+ * GA's bootstrap sets Consent Mode's defaults before GA is configured; the
+ * order of the statements inside it is the whole point of it.
  */
 function AnalyticsTags(): ReactElement {
-	const { umami, gtm } = ANALYTICS;
+	const { umami, ga } = ANALYTICS;
 
 	return (
 		<>
@@ -145,7 +145,7 @@ function AnalyticsTags(): ReactElement {
 					src={`${umami.host}/script.js`}
 				/>
 			) : null}
-			{gtm.kind === "on" ? <script dangerouslySetInnerHTML={{ __html: gtmBootstrap(gtm.id) }} /> : null}
+			{ga.kind === "on" ? <script dangerouslySetInnerHTML={{ __html: gaBootstrap(ga.id) }} /> : null}
 		</>
 	);
 }

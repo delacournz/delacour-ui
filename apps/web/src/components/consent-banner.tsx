@@ -12,7 +12,7 @@ import { privacyRoute } from "@/lib/shared";
  * It renders nothing on the server and nothing until mounted, because the
  * answer lives in `localStorage` and a server-rendered banner would flash at
  * every visitor who has already chosen. It renders nothing at all on a build
- * without GTM, since there is then nothing to consent to — Umami, which is
+ * without GA, since there is then nothing to consent to — Umami, which is
  * always on, sets no cookies.
  *
  * The two buttons are equal weight, and Decline is not hidden behind a
@@ -24,7 +24,7 @@ export function ConsentBanner(): ReactElement | null {
 	const [open, setOpen] = useState(false);
 
 	useEffect(() => {
-		if (ANALYTICS.gtm.kind === "off") return;
+		if (ANALYTICS.ga.kind === "off") return;
 		if (readConsent() === null) setOpen(true);
 
 		const reopen = () => setOpen(true);

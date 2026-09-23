@@ -65,6 +65,10 @@ function Axis({ label, caption, children }: { label: string; caption?: string; c
  * `aria-current` is set from the code in the URL rather than from anything the
  * client works out, so a screen reader and the ring agree in the server HTML —
  * and the tile is a link rather than a button so it survives with scripting off.
+ *
+ * `resetScroll={false}` because the destination is this same page: the router
+ * scrolls to the top on every navigation by default, which threw the reader
+ * back past the preview each time they picked an option.
  */
 function OptionLink({
 	option,
@@ -79,6 +83,7 @@ function OptionLink({
 		<Link
 			aria-current={option.isSelected ? "true" : undefined}
 			className={`${className ?? TILE} ${option.isSelected ? TILE_SELECTED : TILE_IDLE}`}
+			resetScroll={false}
 			search={{ preset: option.code }}
 			to="/theme"
 		>
@@ -271,6 +276,7 @@ export function ResetThemeLink(): ReactElement {
 	return (
 		<Link
 			className="rounded-full border border-fd-border px-4 py-1.5 font-medium text-sm transition-colors hover:bg-fd-accent"
+			resetScroll={false}
 			search={{}}
 			to="/theme"
 		>

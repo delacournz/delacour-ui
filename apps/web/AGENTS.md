@@ -644,6 +644,9 @@ Four things about it are load-bearing, and the fourth is what keeps the other th
   Base Color moves. So the page has exactly one input whatever the reader did, which is precisely
   why the emit stays on the server, the controls survive with scripting off, and every
   intermediate state is a URL. A `useState` customizer here would quietly cost all three.
+  Every one of those links — options, presets, Reset — passes `resetScroll={false}`: the router
+  scrolls to the top on each navigation, and a same-page edit should leave the reader where they
+  clicked.
 
 ### The pieces
 

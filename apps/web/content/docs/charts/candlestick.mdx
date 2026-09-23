@@ -27,6 +27,10 @@ Six paths, not one per candle: bodies and wicks for each sentiment, and every ca
 all six, degenerate where its sentiment does not apply. A close that crosses its open therefore
 morphs from one colour's path into the other rather than vanishing and reappearing.
 
+The [scrub](/docs/charts/cursor-and-scrub) needs nothing candle-specific. Name the four keys in
+`useChartScrub`, and a `ChartCursorLine` given `axis="y"` and `yKey="close"` rules the close of
+whichever candle is under the finger.
+
 ## Sizing
 
 ```tsx

@@ -52,6 +52,8 @@ gesture passed to `useScrubGesture` to block.
 
 ## Reading the scrub from a view
 
+<Preview id="charts/cursor/readout" />
+
 ```tsx
 import type { ChartScrubState } from "@delacour/react-native-charts";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
@@ -96,6 +98,8 @@ On a horizontal chart there is no curve to glide along, so the glide values equa
 ones and the category lands in the root's `snappedY`.
 
 ## Stacked series
+
+<Preview id="charts/cursor/stacked" />
 
 For a key in `stackKeys` the dot rides the top of the visible segment, while `series[key].value`
 stays the raw measurement — so the mark sits where the eye expects and the readout prints what

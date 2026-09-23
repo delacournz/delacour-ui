@@ -1,4 +1,5 @@
 import { concatDemoGroups } from "../define-demo-group";
+import { chartsAnimationDemos } from "./animation";
 import { chartsAreaDemos } from "./area";
 import { chartsAxesDemos } from "./axes";
 import { chartsBarDemos } from "./bar";
@@ -25,5 +26,6 @@ export const chartsDemos = concatDemoGroups(
 	chartsPieDemos,
 	chartsCompositionDemos,
 	chartsAxesDemos,
-	chartsCursorDemos
+	chartsCursorDemos,
+	chartsAnimationDemos
 );

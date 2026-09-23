@@ -34,6 +34,7 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"@shopify/react-native-skia",
 	"react-native-gesture-handler",
 	"react-native-reanimated",
+	"react-native-worklets",
 ];
 
 /** The one project-local import a demo may make, and the one the spliced source drops. */

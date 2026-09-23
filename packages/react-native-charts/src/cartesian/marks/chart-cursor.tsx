@@ -137,24 +137,24 @@ function CursorLine({
 	readonly scrub: ChartScrubState;
 	readonly series: ChartScrubSeriesState | undefined;
 }): ReactElement {
-	const at = (): number => {
-		"worklet";
+	// Resolved inline rather than through a component-scope worklet helper.
+	// The rule used to call an `at()` worklet from both points' derived values,
+	// and on device it never drew — in this chart and every themed tooltip —
+	// while the dots, which read their shared values directly, did.
+	const position = useDerivedValue(() => {
 		const source = series ?? scrub;
-		if (axis === "x") return snap ? source.snappedX.value : source.x.value;
-		return snap ? source.snappedY.value : source.y.value;
-	};
-
-	const p1 = useDerivedValue(() => {
-		const value = at();
-		const position = Number.isFinite(value) ? value : OFFSCREEN;
-		return axis === "x" ? { x: position, y: bounds.top } : { x: bounds.left, y: position };
+		const value =
+			axis === "x" ? (snap ? source.snappedX.value : source.x.value) : snap ? source.snappedY.value : source.y.value;
+		return Number.isFinite(value) ? value : OFFSCREEN;
 	});
 
-	const p2 = useDerivedValue(() => {
-		const value = at();
-		const position = Number.isFinite(value) ? value : OFFSCREEN;
-		return axis === "x" ? { x: position, y: bounds.bottom } : { x: bounds.right, y: position };
-	});
+	const p1 = useDerivedValue(() =>
+		axis === "x" ? { x: position.value, y: bounds.top } : { x: bounds.left, y: position.value }
+	);
+
+	const p2 = useDerivedValue(() =>
+		axis === "x" ? { x: position.value, y: bounds.bottom } : { x: bounds.right, y: position.value }
+	);
 
 	const alpha = useDerivedValue(() => (scrub.isActive.value ? (opacity ?? 1) : 0));
 

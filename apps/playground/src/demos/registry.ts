@@ -65,6 +65,8 @@ import * as demo_chart_pie_pie from "./chart/pie/pie";
 import * as demo_chart_pie_pie_labels from "./chart/pie/pie-labels";
 import * as demo_chart_pie_pie_tap from "./chart/pie/pie-tap";
 import * as demo_chart_scatter_scatter from "./chart/scatter/scatter";
+import * as demo_charts_animation_morph from "./charts/animation/morph";
+import * as demo_charts_animation_spring from "./charts/animation/spring";
 import * as demo_charts_area_area from "./charts/area/area";
 import * as demo_charts_area_gradient from "./charts/area/gradient";
 import * as demo_charts_area_stacked from "./charts/area/stacked";
@@ -77,7 +79,9 @@ import * as demo_charts_candlestick_candlestick from "./charts/candlestick/candl
 import * as demo_charts_composition_declarative from "./charts/composition/declarative";
 import * as demo_charts_composition_mixed from "./charts/composition/mixed";
 import * as demo_charts_composition_render_prop from "./charts/composition/render-prop";
+import * as demo_charts_cursor_readout from "./charts/cursor/readout";
 import * as demo_charts_cursor_scrub from "./charts/cursor/scrub";
+import * as demo_charts_cursor_stacked from "./charts/cursor/stacked";
 import * as demo_charts_line_curves from "./charts/line/curves";
 import * as demo_charts_line_line from "./charts/line/line";
 import * as demo_charts_line_time_series from "./charts/line/time-series";
@@ -254,6 +258,8 @@ export const DEMOS = {
 	"chart/pie/pie-labels": demo_chart_pie_pie_labels,
 	"chart/pie/pie-tap": demo_chart_pie_pie_tap,
 	"chart/scatter/scatter": demo_chart_scatter_scatter,
+	"charts/animation/morph": demo_charts_animation_morph,
+	"charts/animation/spring": demo_charts_animation_spring,
 	"charts/area/area": demo_charts_area_area,
 	"charts/area/gradient": demo_charts_area_gradient,
 	"charts/area/stacked": demo_charts_area_stacked,
@@ -266,7 +272,9 @@ export const DEMOS = {
 	"charts/composition/declarative": demo_charts_composition_declarative,
 	"charts/composition/mixed": demo_charts_composition_mixed,
 	"charts/composition/render-prop": demo_charts_composition_render_prop,
+	"charts/cursor/readout": demo_charts_cursor_readout,
 	"charts/cursor/scrub": demo_charts_cursor_scrub,
+	"charts/cursor/stacked": demo_charts_cursor_stacked,
 	"charts/line/curves": demo_charts_line_curves,
 	"charts/line/line": demo_charts_line_line,
 	"charts/line/time-series": demo_charts_line_time_series,

@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on charts/animation/spring and has
+  settled — "North" selected above six bars. The capture script navigates there
+  before running this.
+steps:
+  - echo: Swapping to the south, which springs every bar
+  - tap: { id: charts-spring-south }
+  - wait: 1300
+  - echo: And back, so the clip loops on the region it opened with
+  - tap: { id: charts-spring-north }
+  - wait: 1100

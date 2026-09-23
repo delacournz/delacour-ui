@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "A donut, with a tap",
 	caption:
 		"`innerRadius` cuts the hole, as points or a percentage of the radius. `onSlicePress` reports the slice under a tap, and `selectedIndex` hands it back so `PieSlices` can dim the others.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "charts/pie/donut" },
 };
 
 const DATA = [

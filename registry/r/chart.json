@@ -20,6 +20,7 @@
 	],
 	"expoDependencies": [
 		"@shopify/react-native-skia",
+		"react-native-gesture-handler",
 		"react-native-reanimated",
 		"react-native-worklets",
 		"uniwind"

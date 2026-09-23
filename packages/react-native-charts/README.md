@@ -17,12 +17,13 @@ Docs: [ui.delacour.co.nz/docs/charts](https://ui.delacour.co.nz/docs/charts).
 
 ```bash
 bun add @delacour/react-native-charts@alpha
-bunx expo install @shopify/react-native-skia
+bunx expo install @shopify/react-native-skia react-native-gesture-handler react-native-reanimated react-native-worklets
 ```
 
 Peers: `@shopify/react-native-skia`, `react-native-reanimated`,
 `react-native-gesture-handler`, `react-native-worklets`, `react`,
-`react-native`.
+`react-native`. The native four go through `expo install`, so the SDK picks
+versions it can build; `react` and `react-native` are already in any app.
 
 Your app needs a `GestureHandlerRootView` at its root. This package does not
 render one — a nested root is dead weight, and every React Native app that

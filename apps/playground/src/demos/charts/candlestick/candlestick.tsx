@@ -1,9 +1,11 @@
 import {
 	CartesianChart,
 	ChartCandlestick,
+	ChartCursorLine,
 	ChartGrid,
 	ChartXAxis,
 	ChartYAxis,
+	useChartScrub,
 	useSystemFont,
 } from "@delacour/react-native-charts";
 import type { ReactElement } from "react";
@@ -14,7 +16,8 @@ export const meta: DemoMeta = {
 	title: "Candlesticks",
 	caption:
 		"Four `yKeys` — open, high, low, close — and one mark that names which is which. `candleColors` paints a rising, a falling and a flat candle, and the wicks are drawn under the bodies.",
-	capture: { align: "stretch" },
+	note: "The scrub works here as on any other chart: name the keys, and `ChartCursorLine` with a `yKey` sits at that series — here, the close.",
+	capture: { align: "stretch", flow: "charts/candlestick/candlestick" },
 };
 
 const DATA = [
@@ -30,22 +33,19 @@ const DATA = [
 	{ day: "10", open: 111, high: 118, low: 110, close: 116 },
 ];
 
+const KEYS = ["open", "high", "low", "close"] as const;
+
 const styles = StyleSheet.create({
 	chart: { height: 240, width: "100%" },
 });
 
 export function Demo(): ReactElement {
 	const font = useSystemFont(undefined, 12);
+	const scrub = useChartScrub(KEYS);
 
 	return (
-		<View style={styles.chart}>
-			<CartesianChart
-				data={DATA}
-				domainPadding={{ x: 0.5, y: 0.1 }}
-				font={font}
-				xKey="day"
-				yKeys={["open", "high", "low", "close"]}
-			>
+		<View style={styles.chart} testID="charts-candlestick">
+			<CartesianChart data={DATA} domainPadding={{ x: 0.5, y: 0.1 }} font={font} scrub={scrub} xKey="day" yKeys={KEYS}>
 				<ChartGrid color="#8E8E9340" />
 				<ChartYAxis color="#8E8E93" />
 				<ChartXAxis color="#8E8E93" />
@@ -53,6 +53,8 @@ export function Demo(): ReactElement {
 					candleColors={{ positive: "#30D158", negative: "#FF375F", neutral: "#8E8E93" }}
 					keys={{ open: "open", high: "high", low: "low", close: "close" }}
 				/>
+				<ChartCursorLine axis="x" color="#8E8E93" dash={[4, 4]} />
+				<ChartCursorLine axis="y" color="#8E8E93" dash={[4, 4]} yKey="close" />
 			</CartesianChart>
 		</View>
 	);

@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on charts/animation/morph and has
+  settled — "This week" selected above a line and area. The capture script
+  navigates there before running this.
+steps:
+  - echo: Swapping to last week, which morphs every path
+  - tap: { id: charts-morph-last }
+  - wait: 1100
+  - echo: And back, so the clip loops on the week it opened with
+  - tap: { id: charts-morph-this }
+  - wait: 900

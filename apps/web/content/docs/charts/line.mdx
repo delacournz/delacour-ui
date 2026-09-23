@@ -71,6 +71,9 @@ a field holding epoch milliseconds. The ticks come from d3's `scaleTime`, which 
 a spring-forward day is 23 hours and that months are four different lengths — a hand-rolled ladder
 snapping on epoch multiples puts every tick an hour off midnight for half the year.
 
+A [scrub](/docs/charts/cursor-and-scrub) on a time axis inverts the touch through the same scale,
+so the dot lands on the nearest day rather than the nearest index.
+
 ## Gaps
 
 ```tsx

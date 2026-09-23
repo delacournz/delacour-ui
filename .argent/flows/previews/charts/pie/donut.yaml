@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on charts/pie/donut and has settled —
+  three slices, nothing selected, a 240-point donut centred on the screen with a
+  60% hole. The capture script navigates there before running this.
+steps:
+  # Coordinates rather than ids: a slice is a Skia path, not a view, so nothing
+  # under it carries a testID. Each point sits about 96 pt from the centre, in
+  # the middle of the ring, on or near the slice's bisector. Angles run
+  # clockwise from twelve.
+  - echo: Tapping Free, the 57% slice that crosses three o'clock
+  - tool: gesture-tap
+    args: { x: 0.74, y: 0.5 }
+  - wait: 800
+  - echo: Then Team, whose bisector sits at about 254°
+  - tool: gesture-tap
+    args: { x: 0.27, y: 0.53 }
+  - wait: 800
+  - echo: And the hole, which is no slice, so the clip loops back to nothing selected
+  - tool: gesture-tap
+    args: { x: 0.5, y: 0.5 }
+  - wait: 400

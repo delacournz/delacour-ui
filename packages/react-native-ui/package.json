@@ -81,7 +81,7 @@
 	},
 	"peerDependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
-		"@delacour/react-native-charts": ">=0.1.0-alpha.4",
+		"@delacour/react-native-charts": ">=0.1.0-alpha.5",
 		"@gorhom/bottom-sheet": "^5.2.8",
 		"@legendapp/list": ">=3.3",
 		"expo-linear-gradient": ">=15",

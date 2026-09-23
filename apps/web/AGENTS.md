@@ -53,7 +53,7 @@ src/
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
-├── lib/analytics/         Umami, Google Analytics and consent — see "Analytics"
+├── lib/analytics/         Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
 ├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
@@ -72,7 +72,7 @@ src/
 │   ├── api/search.ts
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
-├── start.ts               csrf + agent-fetch analytics + Accept: text/markdown negotiation
+├── start.ts               gzip + csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 scripts/generate-icons.ts  the browser icon set — see "Branding"
@@ -240,9 +240,8 @@ listings name, and the playground's home screen links to it.
 - **Google Fonts and the CLI's `raw.githubusercontent.com` are named** because the files that load
   them still do.
 - **The analytics are named from the code that loads them.** They are script tags, not packages, so
-  the `PHONES_HOME` check cannot see them: the test reads `consent.ts` for `googletagmanager.com`,
-  `__root.tsx` for Umami, and `search-dialog.tsx` for the search event, and holds the policy to
-  each.
+  the `PHONES_HOME` check cannot see them: the test reads `consent.ts` for `googletagmanager.com`
+  and `search-dialog.tsx` for the search event, and holds the policy to each.
 
 Change `PRIVACY.updated` with anything a reader would care about. The page links to the file's
 history on GitHub, which is the changelog, so there is no second one to keep.
@@ -464,9 +463,10 @@ Three things are load-bearing:
 
 ## Analytics
 
-Two providers, both optional, both off unless their env vars are set at **build** time — they are
-`VITE_*`, so Vite inlines them into the client and server bundles alike. Railway sets them on
-production only; dev, CI and staging render no analytics tags at all.
+One provider, Google Analytics, optional and off unless its env var is set at **build** time — it
+is `VITE_*`, so Vite inlines it into the client and server bundles alike. Railway sets it on
+production only; dev, CI and staging render no analytics tags at all. (Umami was removed; PostHog
+replaces it.)
 
 Railway builds with `bun run build --filter=@delacour/web`, which is `turbo build`, and turbo 2's
 strict env mode strips every variable a task does not list. `turbo.jsonc` therefore lists `VITE_*`
@@ -475,30 +475,24 @@ error. `config.test.ts` holds `turbo.jsonc` to it.
 
 | Var | Production value | Turns on |
 | --- | --- | --- |
-| `VITE_UMAMI_HOST` | `https://analytics.delacour.co.nz` | Umami — our own instance, on Railway |
-| `VITE_UMAMI_WEBSITE_ID` | `5fba0ae3-f56e-49a4-8f6d-55f0f0c297c1` | the "Delacour UI" website in it |
 | `VITE_GA_ID` | `G-2REDJ2XPJZ` | GA4, loaded as `gtag.js` behind the consent banner |
 
-None of the three is a secret — each ends up in the page's HTML. `src/lib/analytics/config.ts`
-validates them and returns `off` for anything malformed rather than throwing. That is a security
-check as well as a convenience: the GA id is interpolated into an inline script and the Umami
-values into attributes.
+It is not a secret — it ends up in the page's HTML. `src/lib/analytics/config.ts` validates it and
+returns `off` for anything malformed rather than throwing. That is a security check as well as a
+convenience: the GA id is interpolated into an inline script.
 
 | Piece | Where |
 | --- | --- |
-| Env → `{ umami, ga }` | `src/lib/analytics/config.ts` |
+| Env → `{ ga }` | `src/lib/analytics/config.ts` |
 | The event union, link classifier | `src/lib/analytics/events.ts` |
 | `track()`, the delegated click listener | `src/lib/analytics/track.ts` |
 | Consent Mode bootstrap, `gtag.js` loader, stored choice | `src/lib/analytics/consent.ts` |
-| Agent-fetch events from the server | `src/lib/analytics/server.ts`, called from `src/start.ts` |
 | The tags | `AnalyticsTags` in `src/routes/__root.tsx` |
 | The banner | `src/components/consent-banner.tsx`; reopened by the footer's Cookie settings |
 | Search queries | `src/components/search-dialog.tsx` |
 
-Five things are load-bearing:
+Three things are load-bearing:
 
-- **Umami is independent of Google.** It sets no cookies and needs no consent, so it must count a
-  visitor who declines, blocks Google or never answers the banner.
 - **GA runs in Consent Mode's *basic* mode: `gtag.js` is not requested until Accept.** `gaBootstrap`
   queues the all-denied defaults and `config`, and calls `loadGa()` only inside the stored-grant
   branch; the banner's Accept calls it otherwise. Before that Google receives nothing — not even
@@ -506,24 +500,17 @@ Five things are load-bearing:
   `consent.test.ts` pins. Only `analytics_storage` is ever granted; the site has no adverts.
   `track()` sends every event to GA through `gtag('event')` too; before consent it only queues.
   GTM was the first plan and was dropped: it would only ever have carried this one tag.
-- **One delegated click listener, not a DOM scan.** Umami's guides tag links on
-  `DOMContentLoaded`, which misses everything an SPA renders after its first navigation. The
-  listener on `document` sees every outbound link, every download (by `isFileHref`'s rule) and
-  every Fumadocs code-block copy (found by its `aria-label`, which is why a translated UI would
-  break it). Page views need nothing: Umami's script follows `pushState`.
+- **One delegated click listener, not a DOM scan.** Tagging links on `DOMContentLoaded` misses
+  everything an SPA renders after its first navigation. The listener on `document` sees every
+  outbound link, every download (by `isFileHref`'s rule) and every Fumadocs code-block copy (found
+  by its `aria-label`, which is why a translated UI would break it).
 - **Search is Fumadocs' dialog rebuilt from its own parts.** The default dialog keeps the query in
   internal state, and passing `onSearchChange` replaces its setter rather than observing it. One
   `search` event per query the reader settles on (800 ms), carrying the text and the page count —
   the privacy policy says so, and its test reads this file.
-- **Agent fetches are counted on the server.** `/llms.txt`, `.md` twins and `/skills/*` are read by
-  things that never run JavaScript. The request middleware fires an `agent-fetch` event at
-  Umami's `/api/send`, unawaited, without the visitor's IP. **It sends a fixed, browser-like user
-  agent and puts the caller's in the event data**, because Umami drops any request `isbot`
-  matches — `curl`, `ClaudeBot` and `Claude-User` all do, which is every reader this event exists
-  for. `server.test.ts` holds `SERVER_USER_AGENT` to passing `isbot`.
 
-Verify against a production build with the vars set; with them unset,
-`curl -s localhost:3000 | grep -c umami` must print `0`.
+Verify against a production build with the var set; with it unset,
+`curl -s localhost:3000 | grep -c gtag` must print `0`.
 
 ## The skill is served, not copied
 

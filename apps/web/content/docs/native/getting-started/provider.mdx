@@ -62,5 +62,26 @@ There are no per-layer escape hatches — no `gestureHandler={false}`, no `safeA
 genuinely breaks: two pairs of shared values, two sets of native observers.
 
 If you need a different stack, compose the providers by hand. They are all public from their own
-packages — see
-[Installation](/docs/native/getting-started/installation#composing-the-layers-by-hand).
+packages.
+
+## Composing the layers by hand
+
+Only if your app already has a root stack of its own. `<KeyboardStateSync />` is **required**, not
+optional polish, and must be a child of `KeyboardProvider`.
+
+```tsx
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { KeyboardStateSync } from "@delacour/react-native-ui/hooks/use-keyboard-state-sync";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context";
+
+<GestureHandlerRootView>
+  <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+    <KeyboardProvider>
+      <KeyboardStateSync />
+      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+    </KeyboardProvider>
+  </SafeAreaProvider>
+</GestureHandlerRootView>;
+```

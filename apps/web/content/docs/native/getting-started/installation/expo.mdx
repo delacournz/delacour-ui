@@ -1,0 +1,109 @@
+---
+title: Expo
+description: Install the package into an Expo app.
+---
+
+Scaffolded with `create-expo-app -e with-router-uniwind`? Metro is already wrapped: add step 2's
+lines to its `src/global.css` and skip step 3.
+
+<Steps>
+<Step>
+### Install the packages
+
+<LibraryInstall />
+
+The library and every native peer. `expo install` resolves each native module to the version your
+SDK builds.
+</Step>
+
+<Step>
+### Create the CSS entry
+
+```css title="src/global.css"
+@import "tailwindcss";
+@import "uniwind";
+@import "@delacour/react-native-ui/styles";
+
+@source "./**/*.{ts,tsx}";
+@source "../node_modules/@delacour/react-native-ui/src";
+```
+
+The second `@source` points Tailwind at the library. In a monorepo use the package's real path —
+Tailwind's scanner does not follow symlinks.
+</Step>
+
+<Step>
+### Wrap Metro with Uniwind
+
+```js title="metro.config.js"
+const { getDefaultConfig } = require("expo/metro-config");
+const { withUniwindConfig } = require("uniwind/metro");
+
+const config = getDefaultConfig(__dirname);
+
+module.exports = withUniwindConfig(config, {
+  cssEntryFile: "./src/global.css",
+  dtsFile: "./src/uniwind-types.d.ts",
+});
+```
+
+`withUniwindConfig` must be the **outermost** wrapper.
+</Step>
+
+<Step>
+### Mount the provider
+
+```tsx title="src/app/_layout.tsx"
+import "../global.css";
+import { DelacourProvider } from "@delacour/react-native-ui/provider";
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <DelacourProvider>
+      <Stack screenOptions={{ headerShown: false }} />
+    </DelacourProvider>
+  );
+}
+```
+
+The CSS import is the **first statement**. Both mistakes here fail silently: no CSS, nothing is
+styled; no provider, presses stop landing.
+</Step>
+
+<Step>
+### Use a component
+
+```tsx title="src/app/index.tsx"
+import { Button } from "@delacour/react-native-ui/button";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Index() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <View className="flex-1 items-center justify-center bg-background">
+      <Button onPress={() => setCount(count + 1)}>Pressed {count} times</Button>
+    </View>
+  );
+}
+```
+
+Import from subpaths — `@delacour/react-native-ui/<component>`. There is no package-wide barrel.
+</Step>
+
+<Step>
+### Build and run
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["expo run:ios"] }]} />
+
+A native build, not Expo Go. `expo run:android` for Android.
+</Step>
+</Steps>
+
+## Check the wiring
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha doctor"] }]} />
+
+Names the file and the fix for anything that fails silently.

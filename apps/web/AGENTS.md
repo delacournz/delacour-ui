@@ -43,7 +43,8 @@ content/docs/charts/       the /docs/charts namespace — one root folder, one n
 src/
 ├── components/mdx.tsx     the MDX component registry
 ├── components/delacour-icon.tsx  the brand mark, inline
-├── components/install.tsx <ComponentInstall> and <InstallTabs>
+├── components/install.tsx <ComponentInstall>, <InstallTabs>, <LibraryInstall>, componentSourceUrl
+├── components/docs-toolbar.tsx  copy / Open / Open Source / scan, under each title
 ├── components/agent-prompt.tsx  <AgentPrompt> — the copyable setup prompt
 ├── components/playground/    the QR trigger and the install buttons
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
@@ -331,6 +332,12 @@ fence's first statement is the CSS import. Philosophy goes in `design-principles
 test holds `getting-started/meta.json` and the folder to the sidebar contract the charts pages
 already have.
 
+**Installation is a folder** — `getting-started/installation/`: `index.mdx` (requirements, the
+Expo / React Native fork, optional peers), then `expo.mdx` and `react-native.mdx`, each one
+`<Steps>` a reader follows top to bottom. `content.test.ts` holds each step page to
+`<LibraryInstall />`, `withUniwindConfig`, and a root file whose first statement is the CSS import.
+Reasoning goes on the page it belongs to (Provider, the CLI docs), not into the steps.
+
 Peer lists are derived, not typed: `<LibraryInstall />` renders `peers` from
 `src/registry/install.ts`, the union of every component's closure, and `install.test.ts` pins it
 to `packages/react-native-ui/package.json`. Do not hand-write an `expo install` list of the library's
@@ -428,8 +435,14 @@ Reasoning prose belongs in `packages/react-native-charts/AGENTS.md` and the per-
 
 ## The install block is derived
 
-`<ComponentInstall name="button" />` renders three tabs — **Command**, **Package**, **Manual** — and
-every fact in them is read from `src/registry/install.ts`, which
+`<ComponentInstall name="button" />` renders two blocks: the package import
+(`import { Button } from "@delacour/react-native-ui/button"`), then *or copy the source* with
+`delacour add button`. There is **no Manual tab** — it listed dozens of files across several folders
+and asked the reader to repoint every relative import by hand, which is exactly what `add` does in
+one line. Do not bring it back. The docs toolbar's **Open Source** button, beside **Open**, links
+the component's folder on GitHub via `componentSourceUrl`, read off the same manifest.
+
+Every fact is read from `src/registry/install.ts`, which
 `scripts/gen-install-manifest.ts` derives from `registry/r/*.json`, which the registry builder
 derives from `packages/react-native-ui/src`. Nothing is transcribed, so nothing can be wrong about which
 packages a component needs or which files it is made of.
@@ -452,7 +465,7 @@ Three things are load-bearing:
 - **It is a generated module, not a JSON import.** `registry/` lives outside this app's Vite root,
   so importing it would need a `server.fs.allow` entry; and a literal type makes
   `<ComponentInstall name="buton" />` a compile error rather than a runtime 500 a reader finds.
-- **The Manual tab's source path is the registry's own, unmapped.** An item names the library file
+- **The source path is the registry's own, unmapped** — **Open Source** links its folder. An item names the library file
   it is — `packages/react-native-ui/src/components/button/button.tsx` — so linking at the real thing is a
   copy, not a translation. This used to reverse a flattened `files/ui/button/button.tsx` through
   five rules with one exception; there is nothing to reverse now. The generator still throws on a
@@ -460,7 +473,7 @@ Three things are load-bearing:
 - **`InstallTabs` keeps `expo install` separate from `add`.** That is not a spelling variant:
   `bun add react-native-reanimated` fetches the newest release, which on an older SDK fails at the
   linker. Do not replace this with `fumadocs-docgen`'s ```package-install fence — it cannot express
-  the difference. (That fence appeared once on the installation page and rendered as an
+  the difference. (That fence appeared once on an installation page and rendered as an
   unhighlighted block, because `fumadocs-docgen` is not installed. It is gone.)
 
 ## Analytics

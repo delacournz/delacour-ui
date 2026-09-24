@@ -80,10 +80,9 @@ fetches the newest release instead, which on any older SDK is a package that fai
 rather than at install time. A single `dependencies` field cannot express that difference.
 </Callout>
 
-That split is also what makes a **Manual** tab possible. Every component page here generates its
-install instructions from these fields — the closure of `registryDependencies`, the union of the
-three package lists, and the files each item names — so the packages a page tells you to install
-are the ones the component actually imports. Nothing on those pages is transcribed.
+The site reads these fields too: the package install list on the Installation pages is the union of
+every item's package lists, so the packages it tells you to install are the ones the components
+actually import. Nothing there is transcribed.
 
 
 Each item also carries the component's `AGENTS.md`, rewritten to cite your paths rather than the

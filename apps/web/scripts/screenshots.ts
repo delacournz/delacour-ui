@@ -84,6 +84,32 @@ const SHOTS: Shot[] = [
 	{ id: "22-consent-desktop-dark", path: "/", frame: "desktop", theme: "dark", consent: "ask" },
 	{ id: "23-consent-mobile-dark", path: "/", frame: "phone", theme: "dark", consent: "ask" },
 	{ id: "24-privacy-website-desktop-dark", path: "/privacy#the-website", frame: "desktop", theme: "dark" },
+	{
+		id: "25-install-index-desktop-dark",
+		path: "/docs/native/getting-started/installation",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "26-install-expo-full-desktop-dark",
+		path: "/docs/native/getting-started/installation/expo",
+		frame: "desktop",
+		theme: "dark",
+		full: true,
+	},
+	{
+		id: "27-install-rn-full-desktop-dark",
+		path: "/docs/native/getting-started/installation/react-native",
+		frame: "desktop",
+		theme: "dark",
+		full: true,
+	},
+	{
+		id: "28-button-install-desktop-dark",
+		path: "/docs/native/components/button#installation",
+		frame: "desktop",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

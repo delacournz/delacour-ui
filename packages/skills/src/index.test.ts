@@ -81,7 +81,7 @@ describe("every skill", () => {
 				]);
 
 				for (const file of skill.files) {
-					for (const [, verb] of file.content.matchAll(/delacour(?:@alpha)?\s+([a-z-]+)/g)) {
+					for (const [, verb] of file.content.matchAll(/delacour(?:@latest)?\s+([a-z-]+)/g)) {
 						expect({ file: file.path, verb, known: commands.has(verb) }).toEqual({
 							file: file.path,
 							verb,
@@ -127,7 +127,7 @@ describe("the delacour-ui skill", () => {
 		const named = COMPONENTS.filter((component) => prose.includes(`\`${component.name}\``));
 
 		expect(named.map((component) => component.name)).toEqual([]);
-		expect(prose).toInclude("delacour@alpha list");
+		expect(prose).toInclude("delacour@latest list");
 	});
 });
 

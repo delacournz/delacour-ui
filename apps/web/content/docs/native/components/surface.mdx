@@ -1,0 +1,150 @@
+---
+title: Surface
+description: A rounded container on the theme's fill ladder, stepping to the next fill as it nests.
+icon: Layers
+---
+
+<Preview id="surface/nesting" title={null} />
+
+## Installation
+
+<ComponentInstall name="surface" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Surface } from "@/components/ui/surface";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Surface className="gap-3">
+        <Text.Label>Account</Text.Label>
+        <Surface>
+          <Text.Caption>Signed in as sam@example.com</Text.Caption>
+        </Surface>
+      </Surface>
+    </View>
+  );
+}
+```
+
+## Variants
+
+`default` is the card, hairlined so it holds its edge on the page; `transparent` paints nothing.
+
+<Preview id="surface/variants" />
+
+```tsx
+<Surface variant="secondary">…</Surface>
+<Surface variant="tertiary">…</Surface>
+<Surface variant="transparent">…</Surface>
+```
+
+## Padding
+
+<Preview id="surface/padding" />
+
+```tsx
+<Surface padding="none">…</Surface>
+<Surface padding="sm">…</Surface>
+<Surface padding="lg">…</Surface>
+```
+
+## Nesting
+
+A surface that names no variant steps to the next fill from the one it sits in, so it never vanishes into its parent.
+
+<Preview id="surface/nesting" />
+
+```tsx
+<Surface>
+  <Surface>
+    <Surface>…</Surface>
+  </Surface>
+</Surface>
+```
+
+## Transparent
+
+A transparent surface passes the plane beneath it through, so a surface inside it still steps from the card.
+
+<Preview id="surface/transparent" />
+
+```tsx
+<Surface>
+  <Surface variant="transparent">
+    <Surface>…</Surface>
+  </Surface>
+</Surface>
+```
+
+## Bleed
+
+`padding="none"` clips, so content bled to the edge takes the surface's corner with it.
+
+<Preview id="surface/bleed" />
+
+```tsx
+<Surface padding="none">
+  <Image className="h-28 w-full" source={cover} />
+  <View className="p-4">…</View>
+</Surface>
+```
+
+## Composition
+
+<Preview id="surface/security-card" />
+
+```tsx
+<Surface className="gap-4" padding="lg">
+  <Text.Header>Security</Text.Header>
+  <Surface className="flex-row items-center gap-3" padding="sm">
+    <Text.Label className="flex-1">Two-factor authentication</Text.Label>
+    <Switch isSelected={isTwoFactor} onSelectedChange={setTwoFactor} />
+  </Surface>
+</Surface>
+```
+
+## API Reference
+
+### Surface
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "secondary" | "tertiary" | "transparent"',
+      description: "Omitted, a top-level surface is `default` and a nested one steps to the next fill.",
+    },
+    padding: {
+      type: '"none" | "sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Inner spacing. `none` also clips, for content bled to the corners.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### useSurface
+
+Reads the enclosing surface's fill, for a custom child that has to match it. Throws outside a `Surface`.
+
+<TypeTable
+  type={{
+    variant: { type: '"default" | "secondary" | "tertiary" | "transparent"', description: "The fill the surface resolved to." },
+    plane: {
+      type: '"default" | "secondary" | "tertiary" | null',
+      description: "The fill its content sits on — the plane beneath, for a transparent surface.",
+    },
+  }}
+/>
+
+<Callout type="warn">
+A surface does not colour its text. A React Native `View` does not cascade colour to a `Text`
+descendant, so a `text-*` class on a `Surface` does nothing — put it on the `Text`.
+</Callout>

@@ -1,0 +1,118 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "toggle-button",
+	"type": "registry:ui",
+	"title": "Toggle Button",
+	"description": "A button that stays pressed, alone or in a group with single or multiple selection.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"button",
+		"pressable",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/AGENTS.md",
+			"target": "toggle-button/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/index.ts",
+			"target": "toggle-button/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button-group.tsx",
+			"target": "toggle-button/toggle-button-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button-label.tsx",
+			"target": "toggle-button/toggle-button-label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button.context.tsx",
+			"target": "toggle-button/toggle-button.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button.tsx",
+			"target": "toggle-button/toggle-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button.variants.ts",
+			"target": "toggle-button/toggle-button.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				}
+			]
+		}
+	]
+}

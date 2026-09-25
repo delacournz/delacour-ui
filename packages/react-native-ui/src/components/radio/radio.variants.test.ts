@@ -192,10 +192,9 @@ describe("the root slot", () => {
 		expect([...gaps]).toEqual([...gaps].sort((a, b) => a - b));
 	});
 
-	// `root` is worn by Pressable's own Animated.View, whose useAnimatedStyle
-	// writes `opacity` every frame. A class here is overwritten before it is
-	// drawn — silently — so the fade has to live on the children instead.
-	test("never carries an opacity, which Pressable's animated style would overwrite", () => {
+	// The fade lives on the ring and the label; an `opacity-50` on the root as
+	// well would compound with them and land at a quarter.
+	test("never carries an opacity, which would compound with its children's", () => {
 		for (const cell of CELLS) {
 			expect(radioVariants(cell).root()).not.toMatch(/\bopacity-/);
 		}
@@ -397,8 +396,8 @@ describe("a trailing indicator", () => {
 });
 
 describe("a disabled radio", () => {
-	// The ring and the label are ordinary descendants of the pressable, so their
-	// opacity multiplies with the root's rather than being overwritten by it.
+	// The ring and the label carry the fade; the root stays clear so the two
+	// never compound.
 	test("fades its ring and its label", () => {
 		expect(radioVariants({ isDisabled: true }).indicator()).toContain("opacity-50");
 		expect(cls(radioVariants({ isDisabled: true }).label())).toContain("opacity-50");

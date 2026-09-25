@@ -13,8 +13,8 @@ describe("resolveRegistrySource", () => {
 		});
 	});
 
-	test("takes the ref from the caller, so --ref main opts into unreleased components", () => {
-		expect(resolveRegistrySource({ cwd: CWD, ref: "main" }).base).toContain("/main/registry");
+	test("takes the ref from the caller, so --ref develop opts into unreleased components", () => {
+		expect(resolveRegistrySource({ cwd: CWD, ref: "develop" }).base).toContain("/develop/registry");
 	});
 
 	test("expands the github: shorthand", () => {

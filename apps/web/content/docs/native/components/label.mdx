@@ -1,0 +1,160 @@
+---
+title: Label
+description: A form control's name, with required, invalid and disabled states.
+icon: Asterisk
+---
+
+<Preview id="label/sign-up" title={null} />
+
+## Installation
+
+<ComponentInstall name="label" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center gap-1.5 p-4">
+      <Label isRequired>Email</Label>
+      <Input inputMode="email" placeholder="you@example.com" />
+    </View>
+  );
+}
+```
+
+## Basic
+
+<Preview id="label/basic" />
+
+```tsx
+<Label>Full name</Label>
+<Input placeholder="Ada Lovelace" />
+```
+
+## States
+
+The three are independent, so a required field that is also wrong shows both.
+
+<Preview id="label/states" />
+
+```tsx
+<Label isRequired>Email</Label>
+<Label isInvalid>Phone</Label>
+<Label isInvalid isRequired>Password</Label>
+<Label isDisabled>Account ID</Label>
+```
+
+## Sizes
+
+`size` is `Text`'s own axis, and the required mark steps with it.
+
+<Preview id="label/sizes" />
+
+```tsx
+<Label isRequired size="xs">Small</Label>
+<Label isRequired size="sm">Medium</Label>
+<Label isRequired size="md">Large</Label>
+```
+
+## A label that wraps
+
+The asterisk follows the last word onto the last line.
+
+<Preview id="label/wrapping" />
+
+```tsx
+<Label isRequired>
+  I confirm the account details above are correct and that I am authorised to open it
+</Label>
+```
+
+## Restyling the mark
+
+```tsx
+<Label isRequired requiredMarkClassName="text-muted-foreground">
+  First name
+</Label>
+```
+
+## Inside a Field
+
+`Field.Label` reads the field's state and has no required mark, so a required field passes its
+state to a `Label` directly.
+
+```tsx
+<Field isInvalid={isInvalid}>
+  <Label isInvalid={isInvalid} isRequired>
+    Email
+  </Label>
+  <Input inputMode="email" onChangeText={setEmail} value={email} />
+  <Field.Error>{error}</Field.Error>
+</Field>
+```
+
+## Accessibility
+
+A required label of plain text is announced as "Email, required". Pass `accessibilityLabel` when
+the children are not text, and on Android pair the label's `nativeID` with the control's
+`accessibilityLabelledBy`.
+
+```tsx
+<Label isRequired nativeID="email-label">
+  Email
+</Label>
+<Input accessibilityLabelledBy="email-label" />
+```
+
+## API Reference
+
+### LabelProps
+
+`TextProps` with `variant` omitted and `children` and `accessibilityLabel` narrowed to plain
+values, plus:
+
+<TypeTable
+  type={{
+    isRequired: {
+      type: "boolean",
+      default: "false",
+      description: "Appends a destructive asterisk, and announces the label as required.",
+    },
+    isInvalid: {
+      type: "boolean",
+      default: "false",
+      description: "Turns the label destructive, to match a control whose value is wrong.",
+    },
+    isDisabled: {
+      type: "boolean",
+      default: "false",
+      description: "Fades the label and reports it disabled to assistive technology.",
+    },
+    requiredMarkClassName: {
+      type: "string",
+      description: "Merged into the required mark's class, last.",
+    },
+    children: { type: "ReactNode" },
+    accessibilityLabel: {
+      type: "string",
+      description: 'Defaults to "<text>, required" for a required label of plain text.',
+    },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  LABEL_REQUIRED_MARK,
+  LABEL_REQUIRED_MARK_COLOR,
+  labelText,
+  labelVariants,
+  resolveLabelAccessibilityLabel,
+  resolveLabelColor,
+} from "@delacour/react-native-ui/label";
+```

@@ -259,8 +259,8 @@ export const SWITCH_INVALID_CONTENT_TEXT_CLASS = "text-destructive-foreground";
  * **The fade lands on `touchArea`, the one slot no animated style touches.**
  * `track` and `thumb` both carry a `useAnimatedStyle`, and while neither writes
  * `opacity` today, a disabled treatment that would break the moment one did is a
- * treatment waiting to fail silently — the failure mode `Radio` records for a
- * class on `Pressable`'s own node.
+ * treatment waiting to fail silently — the failure mode `Pressable` once had
+ * with a class on its own animated node.
  *
  * **`self-start` is load-bearing.** A switch is sized by its own geometry, and
  * inside a gap column every child is stretch-aligned by default — without it the

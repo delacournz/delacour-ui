@@ -1,5 +1,13 @@
 # @delacour/react-native-ui
 
+## 0.1.0-alpha.5
+
+### Patch Changes
+
+- [#103](https://github.com/delacournz/delacour-ui/pull/103) [`96e65cd`](https://github.com/delacournz/delacour-ui/commit/96e65cd3d0dd824215cfab6bfdd12a32cf47bf0b) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Pressable multiplies a className's opacity into its press feedback instead of overwriting it, so a disabled Button, Badge, Checkbox, ListGroup.Item or Input.Group now fades as its variant asks.
+
+- [#100](https://github.com/delacournz/delacour-ui/pull/100) [`f0df6bd`](https://github.com/delacournz/delacour-ui/commit/f0df6bddbfe8e7ccee0e651c4224000eb2f74b74) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Slider.Thumb` now has an accessible name. It defaults to the enclosing `Field.Label`'s text — the label alone for one thumb, "…, minimum" and "…, maximum" for a range's two — and an `accessibilityLabel` on the thumb wins outright. A range with no label still reads "Minimum" and "Maximum". `Field.Label` registers its text with the field's context (`label` / `registerLabel`), so any control can read it; `resolveFieldLabelText` and `resolveThumbAccessibilityLabel` are exported.
+
 ## 0.1.0-alpha.4
 
 ### Patch Changes

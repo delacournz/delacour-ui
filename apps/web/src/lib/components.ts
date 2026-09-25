@@ -73,6 +73,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"Line, area, bar, scatter, candlestick and pie marks drawn in Skia, coloured from the theme's five-slot series ramp.",
 	},
 	{
+		slug: "rating",
+		name: "Rating",
+		group: "Forms",
+		blurb: "A row of stars that reads or sets a score, in whole or half steps.",
+	},
+	{
 		slug: "slider",
 		name: "Slider",
 		group: "Forms",

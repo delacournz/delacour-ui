@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on rating/anatomy and has settled — five
+  stars at 3, the row carrying the testID rating-stars. The capture script
+  navigates there before running this.
+steps:
+  - echo: Dragging from the middle star to the last
+  # Anchored on the row's centre, which is the third star, so a layout change
+  # moves the gesture with it. momentum:false so the drag ends where the finger does.
+  - swipe: { from: { id: rating-stars }, by: { x: 0.25 }, momentum: false, duration: 700 }
+  - wait: 400
+  - echo: And back down past the first
+  - swipe: { from: { id: rating-stars }, by: { x: -0.3 }, momentum: false, duration: 700 }
+  - wait: 400
+  - echo: A tap on the middle star, so the clip loops at 3 where it began
+  - tap: { id: rating-stars }

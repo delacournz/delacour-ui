@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on rating/a-review and has settled — Food
+  at 5, Service at 4, Value unrated and Submit disabled. The capture script
+  navigates there before running this.
+steps:
+  - echo: Rating Value, which enables Submit and moves the overall average
+  - tap: { id: rating-value }
+  - wait: 900
+  - echo: A second tap on the same star clears it, so the clip loops unrated
+  - tap: { id: rating-value }

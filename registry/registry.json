@@ -597,6 +597,43 @@
 			]
 		},
 		{
+			"name": "rating",
+			"type": "registry:ui",
+			"title": "Rating",
+			"description": "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/rating/AGENTS.md",
+				"ui/rating/index.ts",
+				"ui/rating/rating-output.tsx",
+				"ui/rating/rating-star.tsx",
+				"ui/rating/rating-stars.tsx",
+				"ui/rating/rating.context.tsx",
+				"ui/rating/rating.tsx",
+				"ui/rating/rating.variants.ts"
+			]
+		},
+		{
 			"name": "screen",
 			"type": "registry:ui",
 			"title": "Screen",

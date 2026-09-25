@@ -22,6 +22,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "provider", title: "Provider", description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling." },
 	{ name: "radio", title: "Radio", description: "A radio and the group that owns which one is selected." },
+	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },

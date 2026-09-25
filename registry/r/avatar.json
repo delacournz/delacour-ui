@@ -1,0 +1,115 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "avatar",
+	"type": "registry:ui",
+	"title": "Avatar",
+	"description": "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/avatar/AGENTS.md",
+			"target": "avatar/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/avatar",
+					"to": "@registry/ui/avatar"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar-badge.tsx",
+			"target": "avatar/avatar-badge.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar-group.tsx",
+			"target": "avatar/avatar-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar.context.tsx",
+			"target": "avatar/avatar.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar.tsx",
+			"target": "avatar/avatar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar.utils.ts",
+			"target": "avatar/avatar.utils.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/avatar.variants.ts",
+			"target": "avatar/avatar.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/avatar/index.ts",
+			"target": "avatar/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

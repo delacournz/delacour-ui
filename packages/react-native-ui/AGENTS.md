@@ -61,6 +61,7 @@ shares.
 | Component | Import | |
 | --- | --- | --- |
 | [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
+| [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |

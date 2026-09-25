@@ -43,6 +43,38 @@
 			]
 		},
 		{
+			"name": "avatar",
+			"type": "registry:ui",
+			"title": "Avatar",
+			"description": "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/avatar/AGENTS.md",
+				"ui/avatar/avatar-badge.tsx",
+				"ui/avatar/avatar-group.tsx",
+				"ui/avatar/avatar.context.tsx",
+				"ui/avatar/avatar.tsx",
+				"ui/avatar/avatar.utils.ts",
+				"ui/avatar/avatar.variants.ts",
+				"ui/avatar/index.ts"
+			]
+		},
+		{
 			"name": "badge",
 			"type": "registry:ui",
 			"title": "Badge",

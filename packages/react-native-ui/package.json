@@ -34,6 +34,7 @@
 		"./styles/tokens": "./src/styles/tokens.css",
 		"./styles/theme": "./src/styles/theme.css",
 		"./accordion": "./src/components/accordion/index.ts",
+		"./avatar": "./src/components/avatar/index.ts",
 		"./badge": "./src/components/badge/index.ts",
 		"./bottom-sheet": "./src/components/bottom-sheet/index.ts",
 		"./button": "./src/components/button/index.ts",

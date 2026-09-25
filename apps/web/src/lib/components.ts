@@ -103,6 +103,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		group: "Data display",
 		blurb: "The type scale, and the one component that reproduces React Native's text inheritance.",
 	},
+	{
+		slug: "avatar",
+		name: "Avatar",
+		group: "Data display",
+		blurb: "A person as a picture, with an initials fallback, a corner badge and a stack.",
+	},
 	{ slug: "badge", name: "Badge", group: "Data display", blurb: "A compact label for status, category or count." },
 	{ slug: "icon", name: "Icon", group: "Data display", blurb: "Central Icons, sized and coloured by inheritance." },
 	{

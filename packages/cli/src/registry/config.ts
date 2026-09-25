@@ -82,6 +82,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Collapsible sections whose panels animate to their measured height.",
 		categories: ["display"],
 	},
+	avatar: {
+		title: "Avatar",
+		description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",
+		categories: ["display"],
+	},
 	badge: {
 		title: "Badge",
 		description: "A compact label for status or a count, composed from parts like the button.",

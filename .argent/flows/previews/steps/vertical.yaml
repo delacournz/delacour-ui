@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on steps/vertical and has settled — four steps, the third
+  current. The capture script navigates there before running this.
+steps:
+  - echo: Advancing to the last step
+  - tap: { id: steps-vertical-3 }
+  - wait: 700
+  - echo: Back to the second
+  - tap: { id: steps-vertical-1 }
+  - wait: 700
+  - echo: And to the third, so the clip loops without a jump cut
+  - tap: { id: steps-vertical-2 }

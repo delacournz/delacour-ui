@@ -76,6 +76,7 @@ shares.
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
 | [Switch](src/components/switch/AGENTS.md) | `@delacour/react-native-ui/switch` | A track and a knob, dragged or tapped |
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |

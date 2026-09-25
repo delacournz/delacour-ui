@@ -117,6 +117,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge, built on @gorhom/bottom-sheet.",
 	},
 	{
+		slug: "steps",
+		name: "Steps",
+		group: "Navigation",
+		blurb: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+	},
+	{
 		slug: "tabs",
 		name: "Tabs",
 		group: "Navigation",

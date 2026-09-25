@@ -26,6 +26,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
+	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },

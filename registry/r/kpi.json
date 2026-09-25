@@ -1,0 +1,253 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "kpi",
+	"type": "registry:ui",
+	"title": "Kpi",
+	"description": "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"badge",
+		"card",
+		"chart",
+		"cn",
+		"icon",
+		"icons",
+		"separator",
+		"surface",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"@delacour/react-native-charts",
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/kpi/AGENTS.md",
+			"target": "kpi/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/kpi",
+					"to": "@registry/ui/kpi"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/index.ts",
+			"target": "kpi/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-action.tsx",
+			"target": "kpi/kpi-action.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-content.tsx",
+			"target": "kpi/kpi-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../card/card.variants",
+					"to": "@registry/ui/card/card.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-footer.tsx",
+			"target": "kpi/kpi-footer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../card",
+					"to": "@registry/ui/card"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-group.tsx",
+			"target": "kpi/kpi-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-header.tsx",
+			"target": "kpi/kpi-header.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../card/card.variants",
+					"to": "@registry/ui/card/card.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-icon.tsx",
+			"target": "kpi/kpi-icon.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-sparkline.tsx",
+			"target": "kpi/kpi-sparkline.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../chart",
+					"to": "@registry/ui/chart"
+				},
+				{
+					"from": "../chart/chart.context",
+					"to": "@registry/ui/chart/chart.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-stat.tsx",
+			"target": "kpi/kpi-stat.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-title.tsx",
+			"target": "kpi/kpi-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-trend.tsx",
+			"target": "kpi/kpi-trend.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../badge",
+					"to": "@registry/ui/badge"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi-value.tsx",
+			"target": "kpi/kpi-value.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../card/card.context",
+					"to": "@registry/ui/card/card.context"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi.context.tsx",
+			"target": "kpi/kpi.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi.tsx",
+			"target": "kpi/kpi.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../card",
+					"to": "@registry/ui/card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi.types.ts",
+			"target": "kpi/kpi.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/kpi/kpi.variants.ts",
+			"target": "kpi/kpi.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../card/card.variants",
+					"to": "@registry/ui/card/card.variants"
+				},
+				{
+					"from": "../chart/chart.types",
+					"to": "@registry/ui/chart/chart.types"
+				}
+			]
+		}
+	]
+}

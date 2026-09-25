@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on collapsible/a-section-of-detail and
+  has settled — one row reading What is included, open, its paragraph showing.
+  The capture script navigates there before running this.
+steps:
+  - echo: Closing the section
+  - tap: { id: included }
+  - wait: 1000
+  - echo: And opening it again, so the clip loops without a jump cut
+  - tap: { id: included }

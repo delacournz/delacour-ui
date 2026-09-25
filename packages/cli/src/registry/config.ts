@@ -129,6 +129,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	collapsible: {
+		title: "Collapsible",
+		description: "One section shown and hidden by its own trigger, animated to its measured height.",
+		categories: ["display"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

@@ -41,6 +41,7 @@
 		"./chart": "./src/components/chart/index.ts",
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./chip": "./src/components/chip/index.ts",
+		"./collapsible": "./src/components/collapsible/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",

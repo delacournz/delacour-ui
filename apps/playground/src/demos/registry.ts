@@ -114,6 +114,14 @@ import * as demo_chip_states from "./chip/states";
 import * as demo_chip_tags from "./chip/tags";
 import * as demo_chip_variants_and_colours from "./chip/variants-and-colours";
 import * as demo_chip_with_content from "./chip/with-content";
+import * as demo_collapsible_a_custom_indicator from "./collapsible/a-custom-indicator";
+import * as demo_collapsible_a_section_of_detail from "./collapsible/a-section-of-detail";
+import * as demo_collapsible_controlled from "./collapsible/controlled";
+import * as demo_collapsible_disabled from "./collapsible/disabled";
+import * as demo_collapsible_order_summary from "./collapsible/order-summary";
+import * as demo_collapsible_sizes from "./collapsible/sizes";
+import * as demo_collapsible_starts_open from "./collapsible/starts-open";
+import * as demo_collapsible_variants from "./collapsible/variants";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -389,6 +397,14 @@ export const DEMOS = {
 	"chip/tags": demo_chip_tags,
 	"chip/variants-and-colours": demo_chip_variants_and_colours,
 	"chip/with-content": demo_chip_with_content,
+	"collapsible/a-custom-indicator": demo_collapsible_a_custom_indicator,
+	"collapsible/a-section-of-detail": demo_collapsible_a_section_of_detail,
+	"collapsible/controlled": demo_collapsible_controlled,
+	"collapsible/disabled": demo_collapsible_disabled,
+	"collapsible/order-summary": demo_collapsible_order_summary,
+	"collapsible/sizes": demo_collapsible_sizes,
+	"collapsible/starts-open": demo_collapsible_starts_open,
+	"collapsible/variants": demo_collapsible_variants,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

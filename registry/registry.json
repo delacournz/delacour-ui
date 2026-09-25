@@ -344,6 +344,43 @@
 			]
 		},
 		{
+			"name": "collapsible",
+			"type": "registry:ui",
+			"title": "Collapsible",
+			"description": "One section shown and hidden by its own trigger, animated to its measured height.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/collapsible/AGENTS.md",
+				"ui/collapsible/collapsible-content.tsx",
+				"ui/collapsible/collapsible-description.tsx",
+				"ui/collapsible/collapsible-indicator.tsx",
+				"ui/collapsible/collapsible-title.tsx",
+				"ui/collapsible/collapsible-trigger.tsx",
+				"ui/collapsible/collapsible.context.tsx",
+				"ui/collapsible/collapsible.tsx",
+				"ui/collapsible/collapsible.types.ts",
+				"ui/collapsible/collapsible.variants.ts",
+				"ui/collapsible/index.ts"
+			]
+		},
+		{
 			"name": "color",
 			"type": "registry:lib",
 			"title": "isLiteralColor",

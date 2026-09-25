@@ -9,6 +9,16 @@ import * as demo_accordion_disabled from "./accordion/disabled";
 import * as demo_accordion_one_at_a_time from "./accordion/one-at-a-time";
 import * as demo_accordion_sizes from "./accordion/sizes";
 import * as demo_accordion_variants from "./accordion/variants";
+import * as demo_avatar_fallbacks from "./avatar/fallbacks";
+import * as demo_avatar_group from "./avatar/group";
+import * as demo_avatar_group_sizes_and_overlap from "./avatar/group-sizes-and-overlap";
+import * as demo_avatar_image_retry from "./avatar/image-retry";
+import * as demo_avatar_presence from "./avatar/presence";
+import * as demo_avatar_pressable_and_disabled from "./avatar/pressable-and-disabled";
+import * as demo_avatar_shared_with from "./avatar/shared-with";
+import * as demo_avatar_sizes from "./avatar/sizes";
+import * as demo_avatar_unread_count from "./avatar/unread-count";
+import * as demo_avatar_variants_and_colours from "./avatar/variants-and-colours";
 import * as demo_badge_composed_icon from "./badge/composed-icon";
 import * as demo_badge_dismissible from "./badge/dismissible";
 import * as demo_badge_sizes from "./badge/sizes";
@@ -94,6 +104,16 @@ import * as demo_checkbox_colours from "./checkbox/colours";
 import * as demo_checkbox_indeterminate from "./checkbox/indeterminate";
 import * as demo_checkbox_invalid_and_disabled from "./checkbox/invalid-and-disabled";
 import * as demo_checkbox_sizes from "./checkbox/sizes";
+import * as demo_chip_controlled_and_uncontrolled from "./chip/controlled-and-uncontrolled";
+import * as demo_chip_filter_row from "./chip/filter-row";
+import * as demo_chip_recipients from "./chip/recipients";
+import * as demo_chip_removable from "./chip/removable";
+import * as demo_chip_single_select from "./chip/single-select";
+import * as demo_chip_sizes from "./chip/sizes";
+import * as demo_chip_states from "./chip/states";
+import * as demo_chip_tags from "./chip/tags";
+import * as demo_chip_variants_and_colours from "./chip/variants-and-colours";
+import * as demo_chip_with_content from "./chip/with-content";
 import * as demo_collapsible_a_custom_indicator from "./collapsible/a-custom-indicator";
 import * as demo_collapsible_a_section_of_detail from "./collapsible/a-section-of-detail";
 import * as demo_collapsible_controlled from "./collapsible/controlled";
@@ -102,6 +122,14 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_empty_state_actions from "./empty-state/actions";
+import * as demo_empty_state_anatomy from "./empty-state/anatomy";
+import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
+import * as demo_empty_state_media from "./empty-state/media";
+import * as demo_empty_state_search from "./empty-state/search";
+import * as demo_empty_state_sizes from "./empty-state/sizes";
+import * as demo_empty_state_text_only from "./empty-state/text-only";
+import * as demo_empty_state_variants from "./empty-state/variants";
 import * as demo_field_anatomy_all_four from "./field/anatomy/all-four";
 import * as demo_field_anatomy_label_and_control from "./field/anatomy/label-and-control";
 import * as demo_field_anatomy_the_gap_ladder from "./field/anatomy/the-gap-ladder";
@@ -148,14 +176,37 @@ import * as demo_input_variants_at_rest from "./input/variants/at-rest";
 import * as demo_input_variants_disabled from "./input/variants/disabled";
 import * as demo_input_variants_focused from "./input/variants/focused";
 import * as demo_input_variants_invalid from "./input/variants/invalid";
+import * as demo_label_basic from "./label/basic";
+import * as demo_label_beside_a_switch from "./label/beside-a-switch";
+import * as demo_label_required_mark from "./label/required-mark";
+import * as demo_label_sign_up from "./label/sign-up";
+import * as demo_label_sizes from "./label/sizes";
+import * as demo_label_states from "./label/states";
+import * as demo_label_toggle_states from "./label/toggle-states";
+import * as demo_label_wrapping from "./label/wrapping";
 import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_meter_anatomy from "./meter/anatomy";
+import * as demo_meter_colours from "./meter/colours";
+import * as demo_meter_formatting from "./meter/formatting";
+import * as demo_meter_plan_usage from "./meter/plan-usage";
+import * as demo_meter_regions from "./meter/regions";
+import * as demo_meter_segments from "./meter/segments";
+import * as demo_meter_sizes from "./meter/sizes";
+import * as demo_meter_thresholds from "./meter/thresholds";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
+import * as demo_progress_anatomy from "./progress/anatomy";
+import * as demo_progress_colours from "./progress/colours";
+import * as demo_progress_controlled from "./progress/controlled";
+import * as demo_progress_formatting from "./progress/formatting";
+import * as demo_progress_indeterminate from "./progress/indeterminate";
+import * as demo_progress_sizes from "./progress/sizes";
+import * as demo_progress_upload from "./progress/upload";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
@@ -168,7 +219,14 @@ import * as demo_screen_showcase from "./screen/showcase";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
+import * as demo_skeleton_animations from "./skeleton/animations";
+import * as demo_skeleton_feed_post from "./skeleton/feed-post";
+import * as demo_skeleton_group from "./skeleton/group";
+import * as demo_skeleton_lines from "./skeleton/lines";
+import * as demo_skeleton_profile_card from "./skeleton/profile-card";
+import * as demo_skeleton_shapes from "./skeleton/shapes";
 import * as demo_slider_a_range from "./slider/a-range";
+import * as demo_slider_accessible_names from "./slider/accessible-names";
 import * as demo_slider_anatomy from "./slider/anatomy";
 import * as demo_slider_colours from "./slider/colours";
 import * as demo_slider_disabled_and_invalid from "./slider/disabled-and-invalid";
@@ -177,6 +235,13 @@ import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_surface_bleed from "./surface/bleed";
+import * as demo_surface_configurator from "./surface/configurator";
+import * as demo_surface_nesting from "./surface/nesting";
+import * as demo_surface_padding from "./surface/padding";
+import * as demo_surface_security_card from "./surface/security-card";
+import * as demo_surface_transparent from "./surface/transparent";
+import * as demo_surface_variants from "./surface/variants";
 import * as demo_switch_colours from "./switch/colours";
 import * as demo_switch_disabled_and_invalid from "./switch/disabled-and-invalid";
 import * as demo_switch_sizes from "./switch/sizes";
@@ -200,6 +265,23 @@ import * as demo_text_inline_presets from "./text/inline-presets";
 import * as demo_text_size from "./text/size";
 import * as demo_text_type_scale from "./text/type-scale";
 import * as demo_text_weight from "./text/weight";
+import * as demo_textarea_auto_grow from "./textarea/auto-grow";
+import * as demo_textarea_character_count from "./textarea/character-count";
+import * as demo_textarea_controlled from "./textarea/controlled";
+import * as demo_textarea_feedback_form from "./textarea/feedback-form";
+import * as demo_textarea_rows from "./textarea/rows";
+import * as demo_textarea_sizes from "./textarea/sizes";
+import * as demo_textarea_states from "./textarea/states";
+import * as demo_textarea_variants from "./textarea/variants";
+import * as demo_toggle_button_controlled from "./toggle-button/controlled";
+import * as demo_toggle_button_filters from "./toggle-button/filters";
+import * as demo_toggle_button_formatting from "./toggle-button/formatting";
+import * as demo_toggle_button_group_disabled from "./toggle-button/group-disabled";
+import * as demo_toggle_button_orientation from "./toggle-button/orientation";
+import * as demo_toggle_button_single_selection from "./toggle-button/single-selection";
+import * as demo_toggle_button_sizes from "./toggle-button/sizes";
+import * as demo_toggle_button_states from "./toggle-button/states";
+import * as demo_toggle_button_variants from "./toggle-button/variants";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -210,6 +292,16 @@ export const DEMOS = {
 	"accordion/one-at-a-time": demo_accordion_one_at_a_time,
 	"accordion/sizes": demo_accordion_sizes,
 	"accordion/variants": demo_accordion_variants,
+	"avatar/fallbacks": demo_avatar_fallbacks,
+	"avatar/group": demo_avatar_group,
+	"avatar/group-sizes-and-overlap": demo_avatar_group_sizes_and_overlap,
+	"avatar/image-retry": demo_avatar_image_retry,
+	"avatar/presence": demo_avatar_presence,
+	"avatar/pressable-and-disabled": demo_avatar_pressable_and_disabled,
+	"avatar/shared-with": demo_avatar_shared_with,
+	"avatar/sizes": demo_avatar_sizes,
+	"avatar/unread-count": demo_avatar_unread_count,
+	"avatar/variants-and-colours": demo_avatar_variants_and_colours,
 	"badge/composed-icon": demo_badge_composed_icon,
 	"badge/dismissible": demo_badge_dismissible,
 	"badge/sizes": demo_badge_sizes,
@@ -295,6 +387,16 @@ export const DEMOS = {
 	"checkbox/indeterminate": demo_checkbox_indeterminate,
 	"checkbox/invalid-and-disabled": demo_checkbox_invalid_and_disabled,
 	"checkbox/sizes": demo_checkbox_sizes,
+	"chip/controlled-and-uncontrolled": demo_chip_controlled_and_uncontrolled,
+	"chip/filter-row": demo_chip_filter_row,
+	"chip/recipients": demo_chip_recipients,
+	"chip/removable": demo_chip_removable,
+	"chip/single-select": demo_chip_single_select,
+	"chip/sizes": demo_chip_sizes,
+	"chip/states": demo_chip_states,
+	"chip/tags": demo_chip_tags,
+	"chip/variants-and-colours": demo_chip_variants_and_colours,
+	"chip/with-content": demo_chip_with_content,
 	"collapsible/a-custom-indicator": demo_collapsible_a_custom_indicator,
 	"collapsible/a-section-of-detail": demo_collapsible_a_section_of_detail,
 	"collapsible/controlled": demo_collapsible_controlled,
@@ -303,6 +405,14 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"empty-state/actions": demo_empty_state_actions,
+	"empty-state/anatomy": demo_empty_state_anatomy,
+	"empty-state/emptied-list": demo_empty_state_emptied_list,
+	"empty-state/media": demo_empty_state_media,
+	"empty-state/search": demo_empty_state_search,
+	"empty-state/sizes": demo_empty_state_sizes,
+	"empty-state/text-only": demo_empty_state_text_only,
+	"empty-state/variants": demo_empty_state_variants,
 	"field/anatomy/all-four": demo_field_anatomy_all_four,
 	"field/anatomy/label-and-control": demo_field_anatomy_label_and_control,
 	"field/anatomy/the-gap-ladder": demo_field_anatomy_the_gap_ladder,
@@ -349,14 +459,37 @@ export const DEMOS = {
 	"input/variants/disabled": demo_input_variants_disabled,
 	"input/variants/focused": demo_input_variants_focused,
 	"input/variants/invalid": demo_input_variants_invalid,
+	"label/basic": demo_label_basic,
+	"label/beside-a-switch": demo_label_beside_a_switch,
+	"label/required-mark": demo_label_required_mark,
+	"label/sign-up": demo_label_sign_up,
+	"label/sizes": demo_label_sizes,
+	"label/states": demo_label_states,
+	"label/toggle-states": demo_label_toggle_states,
+	"label/wrapping": demo_label_wrapping,
 	"list-group/custom-suffix": demo_list_group_custom_suffix,
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"meter/anatomy": demo_meter_anatomy,
+	"meter/colours": demo_meter_colours,
+	"meter/formatting": demo_meter_formatting,
+	"meter/plan-usage": demo_meter_plan_usage,
+	"meter/regions": demo_meter_regions,
+	"meter/segments": demo_meter_segments,
+	"meter/sizes": demo_meter_sizes,
+	"meter/thresholds": demo_meter_thresholds,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,
 	"pressable/named-feedback": demo_pressable_named_feedback,
+	"progress/anatomy": demo_progress_anatomy,
+	"progress/colours": demo_progress_colours,
+	"progress/controlled": demo_progress_controlled,
+	"progress/formatting": demo_progress_formatting,
+	"progress/indeterminate": demo_progress_indeterminate,
+	"progress/sizes": demo_progress_sizes,
+	"progress/upload": demo_progress_upload,
 	"radio/custom-indicator": demo_radio_custom_indicator,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,
 	"radio/per-option-description": demo_radio_per_option_description,
@@ -369,7 +502,14 @@ export const DEMOS = {
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
+	"skeleton/animations": demo_skeleton_animations,
+	"skeleton/feed-post": demo_skeleton_feed_post,
+	"skeleton/group": demo_skeleton_group,
+	"skeleton/lines": demo_skeleton_lines,
+	"skeleton/profile-card": demo_skeleton_profile_card,
+	"skeleton/shapes": demo_skeleton_shapes,
 	"slider/a-range": demo_slider_a_range,
+	"slider/accessible-names": demo_slider_accessible_names,
 	"slider/anatomy": demo_slider_anatomy,
 	"slider/colours": demo_slider_colours,
 	"slider/disabled-and-invalid": demo_slider_disabled_and_invalid,
@@ -378,6 +518,13 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"surface/bleed": demo_surface_bleed,
+	"surface/configurator": demo_surface_configurator,
+	"surface/nesting": demo_surface_nesting,
+	"surface/padding": demo_surface_padding,
+	"surface/security-card": demo_surface_security_card,
+	"surface/transparent": demo_surface_transparent,
+	"surface/variants": demo_surface_variants,
 	"switch/colours": demo_switch_colours,
 	"switch/disabled-and-invalid": demo_switch_disabled_and_invalid,
 	"switch/sizes": demo_switch_sizes,
@@ -401,6 +548,23 @@ export const DEMOS = {
 	"text/size": demo_text_size,
 	"text/type-scale": demo_text_type_scale,
 	"text/weight": demo_text_weight,
+	"textarea/auto-grow": demo_textarea_auto_grow,
+	"textarea/character-count": demo_textarea_character_count,
+	"textarea/controlled": demo_textarea_controlled,
+	"textarea/feedback-form": demo_textarea_feedback_form,
+	"textarea/rows": demo_textarea_rows,
+	"textarea/sizes": demo_textarea_sizes,
+	"textarea/states": demo_textarea_states,
+	"textarea/variants": demo_textarea_variants,
+	"toggle-button/controlled": demo_toggle_button_controlled,
+	"toggle-button/filters": demo_toggle_button_filters,
+	"toggle-button/formatting": demo_toggle_button_formatting,
+	"toggle-button/group-disabled": demo_toggle_button_group_disabled,
+	"toggle-button/orientation": demo_toggle_button_orientation,
+	"toggle-button/single-selection": demo_toggle_button_single_selection,
+	"toggle-button/sizes": demo_toggle_button_sizes,
+	"toggle-button/states": demo_toggle_button_states,
+	"toggle-button/variants": demo_toggle_button_variants,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

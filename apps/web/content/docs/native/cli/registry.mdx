@@ -94,14 +94,15 @@ The CLI is published with the git ref it was built from baked in, so a given ver
 the registry it shipped against. Override it two ways, in this order:
 
 ```bash
-delacour add tabs --ref main               # 1. the flag
+delacour add tabs --ref develop            # 1. the flag
 ```
 
 ```json title="native-components.json"
 { "registry": { "ref": "v0.2.0" } }        // 2. the config
 ```
 
-`--ref main` is how you take a component that has landed since your CLI was published. `bunx
+`--ref develop` is how you take a component that has landed since your CLI was published —
+`main` only moves on a release, so it holds nothing your newest CLI does not already read. `bunx
 delacour@alpha` gets you both the newest CLI and its matching registry.
 
 ## Reading from somewhere else

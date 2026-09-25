@@ -58,10 +58,31 @@ Turbo caching is **off** for every task but `build` (`cache: false` in
 
 ## Branches
 
-Nothing lands on `main` by pushing to it. The repository ruleset in `.github/rulesets/main.json`
-blocks force-pushes and deletion, requires linear history, and requires a pull request whose four
-CI checks are green, whose review threads are resolved, and whose branch is up to date with `main`.
-Squash is the only merge method.
+Two long-lived branches, and they move differently:
+
+| Branch | Holds | Moves by |
+| --- | --- | --- |
+| `develop` | Everything merged — where work lands | A squash-merged pull request, and nothing else |
+| `main` | The last release — the repository's default branch and front page | `release.yml` fast-forwarding it to the commit it released |
+
+`main` is the default branch so that anyone reaching the repository sees what was last published.
+GitHub also offers the default branch as the base of every new pull request, and it has no setting
+to offer a different one, so `.github/workflows/retarget-pr.yml` moves any pull request opened
+against `main` to `develop`. Open against `develop` in the first place — `gh pr create --base develop`,
+or `git config branch.<name>.gh-merge-base develop` once per branch — and branch off `origin/develop`,
+not `main`.
+
+`.github/rulesets/develop.json` (`develop-protected`) is the merge gate: it blocks force-pushes and
+deletion, requires linear history, and requires a pull request whose four CI checks are green, whose
+review threads are resolved, and whose branch is up to date with `develop`. Squash is the only merge
+method.
+
+`.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
+pushes, requires linear history, and restricts updates to its bypass list — repository admins. There
+is no pull request rule on it, because nothing reaches `main` by pull request. The one routine update
+is the release job's `git push`, made with `RELEASE_TOKEN`, which is why that token has to belong to an
+admin. Because `develop` only squash-merges and `main` only fast-forwards, `main` is always an ancestor
+of `develop`; a hand-made commit on `main` breaks that, and the next release then fails at the push.
 
 Approvals are **not** required — a sole maintainer cannot approve their own pull request — so the
 gate is CI plus resolved conversations. A worktree is therefore a feature branch: opening a pull
@@ -71,13 +92,15 @@ it when they do.
 Because the branch must be up to date, `gh pr merge --auto` waits on a stale branch rather than
 rebasing it. Press **Update branch**, or rebase, to clear it.
 
-GitHub does not apply the ruleset from that file; the file is the reproducible copy of what was
+GitHub does not apply the rulesets from those files; the files are the reproducible copy of what was
 applied. To change protection, edit the JSON, apply it, and commit both in the same change:
 
 ```bash
 REPO=delacournz/delacour-ui
-ID=$(gh api "repos/$REPO/rulesets" --jq '.[] | select(.name=="main-protected") | .id')
-gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.json
+for NAME in main develop; do
+  ID=$(gh api "repos/$REPO/rulesets" --jq ".[] | select(.name==\"$NAME-protected\") | .id")
+  gh api --method PUT "repos/$REPO/rulesets/$ID" --input ".github/rulesets/$NAME.json"
+done
 ```
 
 ## CI
@@ -85,9 +108,9 @@ gh api --method PUT "repos/$REPO/rulesets/$ID" --input .github/rulesets/main.jso
 `.github/workflows/ci.yml` runs four jobs in parallel on every pull request and on every push to
 `develop` — `typecheck`, `check (lint + format)`, `test`, `build` — in about a minute.
 
-It does not run on push to `main`. Every commit there is a squash-merged pull request whose checks
-were already green on an up-to-date branch, so a run on the merge commit would only repeat them.
-Railway does not wait on check suites, so no deploy depends on one either.
+It does not run on push to `main`. `main` only ever fast-forwards to a commit already on `develop`,
+whose push run checked that exact SHA, so a run there would only repeat it. Railway does not wait on
+check suites, so no deploy depends on one either.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
 `namespace-profile-linux-small` for Linux work, `namespace-profile-mac-small` for any job that
@@ -100,10 +123,10 @@ publishing generates a sigstore provenance attestation and verifies it against t
 sigstore only attests GitHub-hosted runners: on a Namespace runner every `npm stage publish` fails
 with `E422 … Unsupported GitHub Actions runner environment: "self-hosted"`. Moving it back to
 Namespace means either `--provenance=false` (OIDC without the attestation) or an npm token, and
-neither is worth one short job per merge to `main`.
+neither is worth one short job per release.
 
-All four are required status checks on `main`, which makes the job `name:` values an API contract:
-they appear verbatim in `.github/rulesets/main.json` and GitHub matches them by string. Rename a job
+All four are required status checks on `develop`, which makes the job `name:` values an API contract:
+they appear verbatim in `.github/rulesets/develop.json` and GitHub matches them by string. Rename a job
 without updating that file and every pull request blocks forever on a check that never reports.
 
 For the same reason the workflow carries no `paths:` filter and no draft skip. A check that is
@@ -192,15 +215,29 @@ should ship adds one:
 bun run changeset          # pick packages, pick a bump, describe it
 ```
 
-Commit that markdown file alongside the change. On merge to `main`,
-`.github/workflows/release.yml` reads `.changeset/` and does one of two things:
+Commit that markdown file alongside the change. `.github/workflows/release.yml` then does one of two
+things, chosen by how it was started:
 
-| `.changeset/` holds | What happens |
+| Trigger | What happens |
 | --- | --- |
-| pending changesets | Opens or refreshes the **🔖 chore(release): version packages** PR — bumps versions, writes `CHANGELOG.md`, regenerates `bun.lock` |
-| nothing | The version PR has just merged, so publish to npm and cut a GitHub Release per package |
+| push to `develop` with pending changesets | Opens or refreshes the **🔖 chore(release): version packages** PR against `develop` — bumps versions, writes `CHANGELOG.md`, regenerates `bun.lock` |
+| push to `develop` with none | Nothing. Merging the version PR does not publish |
+| **Run workflow** on `develop` | Stage every unpublished package on npm, push the tags, cut a GitHub Release per package, then fast-forward `main` to the released commit |
 
-So a release is two merges, and the versions are reviewable in between.
+So a release is a merge and a button, and the versions are reviewable in between:
+
+```bash
+gh workflow run release.yml --ref develop
+```
+
+A run started with changesets still pending fails before it builds — merge the version PR first — and
+one started from any other branch is skipped. The fast-forward is the last step and is never forced:
+if `main` has diverged the push is refused with the packages already staged, and once `main` is
+reconciled a re-run is safe, because the stage script counts an already-staged version as success.
+
+Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the production docs move with
+each release and not with each merge. It lands before the staged versions are approved; approve them
+promptly, or the site documents a version `latest` does not serve yet.
 
 The action is `changesets/action@v2`, and that major matters: `@changesets/cli` 3 moves every
 changeset a pre-mode `changeset version` consumes into `.changeset/pre/`, and v1 of the action read
@@ -262,13 +299,15 @@ only to know which second tag to put in the summary. Once `pre.json` is gone the
 tag, so going stable needs no change here.
 
 **`RELEASE_TOKEN` is a GitHub PAT, not an npm one.** Events raised by `GITHUB_TOKEN` do not start
-workflow runs, so a version PR opened with it would never run the four checks `main-protected`
-requires and could never be merged. The PAT exists for that reason alone. The workflow falls back
-to `GITHUB_TOKEN` when the secret is unset, because the publish half needs nothing more — a
+workflow runs, so a version PR opened with it would never run the four checks `develop-protected`
+requires and could never be merged. It is also the credential the release's fast-forward of `main`
+pushes with, and `main-protected` lets only admins update `main`, so **the PAT must belong to a
+repository admin**. The workflow falls back to `GITHUB_TOKEN` when the secret is unset — a
 missing PAT once failed a publish on `Input required and not supplied: github-token` before the
-action had looked at `.changeset/`. A version PR opened on the fallback has no checks; close and
-reopen it, or push an empty commit, to start them. Create the secret with a fine-grained PAT scoped
-to this repository with **Contents** and **Pull requests** read/write:
+action had looked at `.changeset/` — but on the fallback the fast-forward is refused, and a version
+PR opened on it has no checks; close and reopen it, or push an empty commit, to start them. Create
+the secret with a fine-grained PAT scoped to this repository with **Contents** and **Pull requests**
+read/write:
 
 ```bash
 gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
@@ -293,8 +332,8 @@ service settings.
 
 | Branch | Environment | Host |
 | --- | --- | --- |
-| `develop` | staging | `ui.staging.delacour.co.nz` |
-| `main` | production | `ui.delacour.co.nz` |
+| `develop` | staging — every merge | `ui.staging.delacour.co.nz` |
+| `main` | production — every release | `ui.delacour.co.nz` |
 
 `bun run previews` must never run in CI or in a deploy — it drives an iOS simulator and needs a Mac
 with Xcode. Its outputs are committed so the site builds on a simulator-less runner.
@@ -376,7 +415,7 @@ explanation goes in the component's doc comment or above the `return`.
 
 `✨ feat` · `🐛 fix` · `🔧 chore` · `📝 docs` · `🎨 style` · `♻️ refactor` ·
 `✅ test` · `🚧 wip` · `👽️ types`. Commit messages end at their last real line —
-no trailers. Nothing lands on `main` by pushing to it — see [Branches](#branches).
+no trailers. Pull requests target `develop`; `main` moves only on a release — see [Branches](#branches).
 
 **Documentation is part of the change.** `react-native-ui`'s docs are updated in the
 same commit as the code, and `bun test` fails by name for a component folder with

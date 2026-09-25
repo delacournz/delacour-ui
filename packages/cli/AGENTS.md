@@ -351,7 +351,9 @@ run is caught before a build renders its dark theme as a utility class.
 
 `tsdown.config.ts` defines `__REGISTRY_REF__` from `DELACOUR_REGISTRY_REF`, and release CI passes
 **the commit it is publishing** — `github.sha`, not the tag. A published version therefore always
-reads the registry it shipped against; `--ref main` opts into what has landed since.
+reads the registry it shipped against; `--ref develop` opts into what has landed since. `main`
+is the last release — `release.yml` fast-forwards it — so `--ref main` is only ever as new as the
+newest published CLI.
 
 A commit rather than a tag because `changesets/action` builds before it tags: a tag-derived ref
 would name something that does not exist yet, and a publish that succeeded before a failed tag

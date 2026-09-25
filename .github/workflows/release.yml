@@ -1,8 +1,14 @@
 name: Release
 
-# Two behaviours, one workflow, chosen by `changesets/action` from what is in
-# `.changeset/`: pending changesets open (or refresh) the Version Packages PR;
-# no pending changesets means that PR has just merged, so publish.
+# Two behaviours, chosen by the event:
+#
+# - push to `develop`: pending changesets open (or refresh) the Version Packages PR against
+#   `develop`. Publishing is never reached from a push — `publish-script` is unset for it — so
+#   merging that PR does not release anything by itself.
+# - workflow_dispatch on `develop`: the release. Stage every unpublished package on npm, push the
+#   tags, open the GitHub Releases, then fast-forward `main` to the commit that was released. That
+#   last step is the only way `main` moves, so the repository's front page is always the last
+#   release and `main` is always an ancestor of `develop`.
 #
 # Publishing is *staged*: `.github/changeset-stage.ts` runs `npm stage publish`
 # and a maintainer approves each staged version with 2FA. The trusted publisher
@@ -10,9 +16,12 @@ name: Release
 # `npm publish` — which is what `changeset publish` runs — is refused with
 # `E403 OIDC permission denied for this action`. That is what authenticates the
 # job; there is no npm token anywhere, and `bun publish` cannot do either.
+#
+# The trusted publisher binds to this file's name, not to a branch, so moving the trigger from
+# `main` to `develop` needs no change on npmjs.com.
 on:
   push:
-    branches: [main]
+    branches: [develop]
   workflow_dispatch:
 
 # Never let two releases interleave; a cancelled publish is worse than a slow one.
@@ -23,7 +32,9 @@ concurrency:
 jobs:
   release:
     name: Create Version PR or Publish
-    if: github.repository_owner == 'delacournz'
+    # A dispatch from any other branch would publish whatever that branch holds and then fail to
+    # fast-forward `main` to it — with the packages already staged.
+    if: github.repository_owner == 'delacournz' && github.ref == 'refs/heads/develop'
     # The one job that is not on a Namespace runner, and it cannot be: trusted
     # publishing generates a sigstore provenance attestation, and npm verifies
     # it against the runner environment. A self-hosted runner — which is what a
@@ -52,9 +63,26 @@ jobs:
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
 
     steps:
+      # The PAT, so the credentials checkout persists are the ones the final `git push` to `main`
+      # uses. `main-protected` restricts updates to repository admins; `GITHUB_TOKEN` is not one,
+      # and a push with it is refused. `RELEASE_TOKEN` must therefore belong to an admin.
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      # A dispatch with changesets still pending would make `changesets/action` open a Version
+      # Packages PR instead of publishing, and the run would then fast-forward `main` to a commit
+      # whose versions were never bumped. Merge the Version Packages PR first.
+      - name: Fail a release with changesets still pending
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          pending=$(find .changeset -maxdepth 1 -name '*.md' ! -name README.md)
+          if [ -n "$pending" ]; then
+            echo "::error::Changesets are still pending. Merge the Version Packages PR into develop, then run Release again."
+            echo "$pending"
+            exit 1
+          fi
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -104,11 +132,12 @@ jobs:
       # and the token has to arrive through `github-token`; the `GITHUB_TOKEN`
       # environment variable is ignored.
       - name: Create Version PR or publish to npm
+        id: changesets
         uses: changesets/action@v2
         with:
           # A PAT, not GITHUB_TOKEN: events raised by GITHUB_TOKEN do not start
           # workflow runs, so a Version Packages PR opened with it would never
-          # run the four checks `main-protected` requires and could never be
+          # run the four checks `develop-protected` requires and could never be
           # merged. The fallback is for the publish half only — tags and GitHub
           # Releases need nothing more than GITHUB_TOKEN — so a missing PAT
           # cannot stop a release that is already versioned. The input is
@@ -124,4 +153,16 @@ jobs:
           # `changeset git-tag` so the action still pushes tags and opens the
           # GitHub Releases. Nothing reaches a dist-tag until someone runs
           # `npm stage approve <id>`.
-          publish-script: bun .github/changeset-stage.ts
+          #
+          # Only on dispatch. On a push to `develop` with nothing pending — the merge of the Version
+          # Packages PR, say — an empty value leaves the action with nothing to do.
+          publish-script: ${{ github.event_name == 'workflow_dispatch' && 'bun .github/changeset-stage.ts' || '' }}
+
+      # Not `--force`, and it must never be. `develop` squash-merges and `main` moves only here, so
+      # `main` is always an ancestor of the released commit and this is a fast-forward. If it is
+      # not, someone pushed to `main` by hand: the push is refused, `non_fast_forward` in
+      # `main-protected` backs that up, and the packages are already staged — reconcile `main` and
+      # re-run, which the stage script treats as success for anything already staged.
+      - name: Fast-forward main to the released commit
+        if: github.event_name == 'workflow_dispatch'
+        run: git push origin "${GITHUB_SHA}:refs/heads/main"

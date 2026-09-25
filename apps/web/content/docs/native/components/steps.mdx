@@ -1,0 +1,261 @@
+---
+title: Steps
+description: A stepper for multi-step flows — completed, current and upcoming steps joined by a line.
+icon: ListOrdered
+---
+
+<Preview id="steps/horizontal" title={null} />
+
+## Installation
+
+<ComponentInstall name="steps" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Steps } from "@/components/ui/steps";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [step, setStep] = useState(1);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Steps value={step} onValueChange={setStep}>
+        <Steps.Item step={0}>Account</Steps.Item>
+        <Steps.Item step={1}>Shipping</Steps.Item>
+        <Steps.Item step={2}>Payment</Steps.Item>
+      </Steps>
+    </View>
+  );
+}
+```
+
+## Vertical
+
+Titles sit beside their indicators, with a description underneath.
+
+<Preview id="steps/vertical" />
+
+```tsx
+<Steps orientation="vertical" defaultValue={2}>
+  <Steps.Item step={0}>
+    <Steps.Title>Order placed</Steps.Title>
+    <Steps.Description>We have your order and your payment.</Steps.Description>
+  </Steps.Item>
+  <Steps.Item step={1}>
+    <Steps.Title>Packed</Steps.Title>
+    <Steps.Description>Your items are boxed and labelled.</Steps.Description>
+  </Steps.Item>
+</Steps>
+```
+
+## Variants
+
+`primary` rings the current step; `secondary` fills every indicator.
+
+<Preview id="steps/variants" />
+
+```tsx
+<Steps variant="primary" defaultValue={1}>…</Steps>
+<Steps variant="secondary" defaultValue={1}>…</Steps>
+```
+
+## Sizes
+
+<Preview id="steps/sizes" />
+
+```tsx
+<Steps size="sm">…</Steps>
+<Steps size="md">…</Steps>
+<Steps size="lg">…</Steps>
+```
+
+## States
+
+A step can be loading, invalid or disabled, and `completed` overrides whether it reads as done.
+
+<Preview id="steps/states" />
+
+```tsx
+<Steps.Item step={1} isLoading>Verify email</Steps.Item>
+<Steps.Item step={1} isInvalid>Verify email</Steps.Item>
+<Steps.Item step={2} completed={false}>Add-ons</Steps.Item>
+<Steps.Item step={3} isDisabled>Confirm</Steps.Item>
+```
+
+## Linear
+
+`isLinear` closes the steps ahead of the value, so only your own button moves forward.
+
+```tsx
+<Steps isLinear value={step} onValueChange={setStep}>
+  <Steps.Item step={0}>Profile</Steps.Item>
+  <Steps.Item step={1}>Team</Steps.Item>
+  <Steps.Item step={2}>Billing</Steps.Item>
+</Steps>
+```
+
+## Read-only
+
+A controlled `value` with no `onValueChange` is a progress display whose steps are not buttons.
+
+```tsx
+<Steps value={stage}>
+  <Steps.Item step={0}>Uploaded</Steps.Item>
+  <Steps.Item step={1} isLoading={stage === 1}>Processing</Steps.Item>
+  <Steps.Item step={2}>Published</Steps.Item>
+</Steps>
+```
+
+## Custom indicator
+
+`Steps.Indicator` takes a render function of the step's state, and an `Icon` inside inherits its size and colour.
+
+<Preview id="steps/custom-indicator" />
+
+```tsx
+<Steps.Item step={0}>
+  <Steps.Indicator>
+    {({ status }) => <Icon icon={status === "completed" ? IconCheckmark1Small : IconPeople} />}
+  </Steps.Indicator>
+  <Steps.Title>Contact</Steps.Title>
+</Steps.Item>
+```
+
+## Panels
+
+Put a step's form in a `Steps.Panel` — it renders below the title, outside the tap target, so its
+controls stay reachable by a screen reader.
+
+```tsx
+<Steps isLinear orientation="vertical" value={step} onValueChange={setStep}>
+  <Steps.Item step={0}>
+    <Steps.Title>Contact</Steps.Title>
+    {step === 0 ? (
+      <Steps.Panel className="gap-3 pt-3">
+        <Input placeholder="you@example.com" value={email} onChangeText={setEmail} />
+        <Button onPress={() => setStep(1)}>Continue</Button>
+      </Steps.Panel>
+    ) : null}
+  </Steps.Item>
+  <Steps.Item step={1}>Delivery</Steps.Item>
+</Steps>
+```
+
+<Callout type="warn">
+A form written directly inside `Steps.Item`, rather than in a `Steps.Panel`, merges into the step's
+single accessibility element — VoiceOver cannot focus its fields.
+</Callout>
+
+## Reading the stepper's state
+
+Use `useSteps()` for the stepper's value and count, and `useStepsItem()` for one step's settled state.
+
+```tsx
+import { useSteps, useStepsItem } from "@delacour/react-native-ui/steps";
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Steps` | Owns the value and the shared axes, and counts its items to draw the connectors |
+| `Steps.Item` | One step. A `Pressable` holding the indicator, title and description |
+| `Steps.Indicator` | The circle — number, check, cross or spinner. Composed in automatically |
+| `Steps.Title` | The step's name, and its accessible name. Bare text in an item becomes one |
+| `Steps.Description` | An optional line of supporting text |
+| `Steps.Panel` | Content below the title, outside the tap target |
+
+### Steps
+
+Extends `ViewProps`. Steps are zero-based; the indicator draws them one-based.
+
+<TypeTable
+  type={{
+    value: { type: "number", description: "The current step. Controlled." },
+    defaultValue: { type: "number", default: "0" },
+    onValueChange: {
+      type: "(step: number) => void",
+      description: "Called with the pressed step. Never for a re-press of the current one.",
+    },
+    orientation: { type: '"horizontal" | "vertical"', default: '"horizontal"' },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isLinear: { type: "boolean", description: "Steps ahead of the value cannot be pressed." },
+    isReadOnly: {
+      type: "boolean",
+      description: "Steps render as plain views. Defaults to true for a controlled `value` with no `onValueChange`.",
+    },
+    isDisabled: { type: "boolean", description: "Disables every step, over a step's own prop." },
+    className: { type: "string" },
+  }}
+/>
+
+<Callout type="warn">
+The connectors are drawn from a count of the `Steps.Item`s that are direct children. Render them
+directly or from a `.map()` — an item behind a wrapper component is not counted, and no line is drawn.
+</Callout>
+
+### Steps.Item
+
+A step is a `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable). `className` styles the step's outer box; every
+other prop reaches the pressable.
+
+<TypeTable
+  type={{
+    step: { type: "number", description: "This step's index, zero-based. Required." },
+    completed: {
+      type: "boolean",
+      description: "`true` completes the step wherever it sits; `false` un-completes a passed one. Never demotes the current step.",
+    },
+    isLoading: { type: "boolean", description: "A spinner in the indicator; announced busy." },
+    isInvalid: { type: "boolean", description: "A cross in the indicator and a destructive title." },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Steps.Title`." },
+  }}
+/>
+
+### Steps.Indicator
+
+<TypeTable
+  type={{
+    children: {
+      type: "ReactNode | ((props: StepsIndicatorChildrenProps) => ReactNode)",
+      description: "A render function receives `{ step, status, isCurrent, isInvalid, isLoading, size, variant }`.",
+    },
+    className: { type: "string" },
+  }}
+/>
+
+### Steps.Title and Steps.Description
+
+Both extend React Native's `TextProps` and take their size step from the stepper's.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Steps.Panel
+
+Extends `ViewProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Exports
+
+```tsx
+import {
+  Steps,
+  type StepsProps,
+  STEPS_VARIANTS,
+  STEPS_SIZES,
+  STEPS_ORIENTATIONS,
+  STEP_STATUSES,
+  useSteps,
+  useStepsItem,
+} from "@delacour/react-native-ui/steps";
+```

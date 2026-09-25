@@ -82,6 +82,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Collapsible sections whose panels animate to their measured height.",
 		categories: ["display"],
 	},
+	alert: {
+		title: "Alert",
+		description: "A status message with a glyph picked from its status, a title, a description and an optional action.",
+		categories: ["feedback"],
+	},
+	avatar: {
+		title: "Avatar",
+		description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",
+		categories: ["display"],
+	},
 	badge: {
 		title: "Badge",
 		description: "A compact label for status or a count, composed from parts like the button.",
@@ -97,10 +107,20 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A pressable action composed from parts, with variants, sizes and a loading state.",
 		categories: ["controls"],
 	},
+	card: {
+		title: "Card",
+		description: "A content surface with a header, a body and a footer, built on Surface.",
+		categories: ["layout"],
+	},
 	checkbox: {
 		title: "Checkbox",
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",
 		categories: ["forms"],
+	},
+	chip: {
+		title: "Chip",
+		description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+		categories: ["controls"],
 	},
 	chart: {
 		title: "Chart",
@@ -118,6 +138,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-reanimated",
 			"react-native-worklets",
 		],
+	},
+	collapsible: {
+		title: "Collapsible",
+		description: "One section shown and hidden by its own trigger, animated to its measured height.",
+		categories: ["display"],
+	},
+	"empty-state": {
+		title: "Empty State",
+		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+		categories: ["feedback"],
 	},
 	field: {
 		title: "Field",
@@ -139,6 +169,17 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A row of media, text and actions for lists and settings, standalone or as a List Group row.",
 		categories: ["layout"],
 	},
+	kpi: {
+		title: "Kpi",
+		description:
+			"One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
+		categories: ["display"],
+	},
+	label: {
+		title: "Label",
+		description: "A form control's name, with required, invalid and disabled states.",
+		categories: ["forms"],
+	},
 	"list-group": {
 		title: "List Group",
 		description: "A surface grouping related rows, with dividers inserted automatically.",
@@ -154,9 +195,24 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	meter: {
+		title: "Meter",
+		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+		categories: ["feedback"],
+	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",
+		categories: ["forms"],
+	},
+	rating: {
+		title: "Rating",
+		description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
 		categories: ["forms"],
 	},
 	screen: {
@@ -169,6 +225,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A one-pixel rule, hidden from assistive technology.",
 		categories: ["layout"],
 	},
+	skeleton: {
+		title: "Skeleton",
+		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
+		categories: ["feedback"],
+	},
 	slider: {
 		title: "Slider",
 		description: "A value along a track, dragged by a handle that follows the gesture.",
@@ -178,6 +239,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Spinner",
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
+	},
+	steps: {
+		title: "Steps",
+		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+		categories: ["navigation"],
+	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
 	},
 	switch: {
 		title: "Switch",
@@ -193,6 +264,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Text",
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
+	},
+	textarea: {
+		title: "Textarea",
+		description: "A multiline text field sized in rows, with auto-grow and a character count.",
+		categories: ["forms"],
+	},
+	"toggle-button": {
+		title: "Toggle Button",
+		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
+		categories: ["controls"],
 	},
 
 	expo: {

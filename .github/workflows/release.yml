@@ -1,8 +1,18 @@
 name: Release
 
-# Two behaviours, one workflow, chosen by `changesets/action` from what is in
-# `.changeset/`: pending changesets open (or refresh) the Version Packages PR;
-# no pending changesets means that PR has just merged, so publish.
+# The stable release, started by hand on `develop`:
+#
+#   gh workflow run release.yml --ref develop
+#
+# 1. `changeset version` consumes every pending changeset into stable versions and changelogs, and
+#    the result is committed and pushed to `develop` as "🔖 chore(release): version packages".
+# 2. Every unpublished package is staged on npm under `latest`, the tags are pushed and a GitHub
+#    Release is cut per package.
+# 3. `main` is fast-forwarded to that release commit. It is the only way `main` moves, so the
+#    repository's front page is always the last release and `main` is always an ancestor of
+#    `develop`.
+#
+# Alphas are not this file's job: `alpha.yml` publishes a snapshot on every merge to `develop`.
 #
 # Publishing is *staged*: `.github/changeset-stage.ts` runs `npm stage publish`
 # and a maintainer approves each staged version with 2FA. The trusted publisher
@@ -11,8 +21,6 @@ name: Release
 # `E403 OIDC permission denied for this action`. That is what authenticates the
 # job; there is no npm token anywhere, and `bun publish` cannot do either.
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
 
 # Never let two releases interleave; a cancelled publish is worse than a slow one.
@@ -22,8 +30,10 @@ concurrency:
 
 jobs:
   release:
-    name: Create Version PR or Publish
-    if: github.repository_owner == 'delacournz'
+    name: Release
+    # A dispatch from any other branch would release whatever that branch holds and then fail to
+    # fast-forward `main` to it — with the packages already staged.
+    if: github.repository_owner == 'delacournz' && github.ref == 'refs/heads/develop'
     # The one job that is not on a Namespace runner, and it cannot be: trusted
     # publishing generates a sigstore provenance attestation, and npm verifies
     # it against the runner environment. A self-hosted runner — which is what a
@@ -35,26 +45,37 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
-      pull-requests: write
       id-token: write
 
     env:
       TURBO_TELEMETRY_DISABLED: 1
-      # Job level, not step level. `npm publish` re-runs the CLI's
-      # `prepublishOnly`, which rebuilds the bundle — if the ref were unset for
-      # that rebuild it would silently bake "main" over the correct value.
-      #
-      # The commit, not the tag: `changesets/action` builds before it tags, so a
-      # tag-derived ref would name something that does not exist yet, and a
-      # publish that succeeded before a failed tag push would ship a CLI
-      # pointing at a ref that never appears. A SHA is immutable and already
-      # resolvable, and raw.githubusercontent.com serves it.
-      DELACOUR_REGISTRY_REF: ${{ github.sha }}
 
     steps:
+      # The PAT, so the credentials checkout persists are the ones both pushes use: the release
+      # commit to `develop`, which bypasses `develop-protected`'s pull request rule, and the
+      # fast-forward of `main`, which `main-protected` restricts to admins. `GITHUB_TOKEN` can do
+      # neither, so `RELEASE_TOKEN` must belong to a repository admin.
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      # Three cases. Pending changesets: a new release. None, and `develop`'s tip is the release
+      # commit: an earlier run pushed it and then failed, so resume from staging — the stage script
+      # counts an already-staged version as success. None otherwise: nothing to release, and
+      # carrying on would fast-forward `main` to a commit no release was cut from.
+      - name: Decide whether to version or resume
+        id: plan
+        run: |
+          if [ -n "$(find .changeset -maxdepth 1 -name '*.md' ! -name README.md)" ]; then
+            echo "resume=false" >> "$GITHUB_OUTPUT"
+          elif [ "$(git log -1 --format=%s)" = "🔖 chore(release): version packages" ]; then
+            echo "Resuming the release at $(git rev-parse --short HEAD)."
+            echo "resume=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::No pending changesets on develop, so there is nothing to release."
+            exit 1
+          fi
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -88,6 +109,35 @@ jobs:
             exit 1
           fi
 
+      # Not a pull request: the stable versions are whatever the pending changesets say, and the
+      # alphas published from them on every merge are what reviewing them looks like. The push
+      # fails if `develop` moved since the run started; run Release again.
+      #
+      # `GITHUB_TOKEN` at step level only, for `@changesets/changelog-github`. `changesets/action`
+      # below refuses to start when a `GITHUB_TOKEN` in its environment differs from its input.
+      - name: Version packages and push the release commit to develop
+        if: steps.plan.outputs.resume != 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          bun .github/changeset-version.ts
+          git add -A
+          git commit -m "🔖 chore(release): version packages"
+          git push origin HEAD:refs/heads/develop
+
+      # The commit, not the tag: `changesets/action` builds before it tags, so a tag-derived ref
+      # would name something that does not exist yet, and a publish that succeeded before a failed
+      # tag push would ship a CLI pointing at a ref that never appears. A SHA is immutable and
+      # already resolvable, and raw.githubusercontent.com serves it.
+      #
+      # Through `GITHUB_ENV`, not the job's `env:`, because the SHA is the release commit made in
+      # the step above. Every later step inherits it, including the CLI's `prepublishOnly` rebuild
+      # inside `npm stage publish` — unset there, it would silently bake "main" over the right value.
+      - name: Pin the CLI's registry ref to the release commit
+        run: echo "DELACOUR_REGISTRY_REF=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
       # Build before the action so a broken bundle fails the run outright, rather
       # than surfacing halfway through `prepublishOnly` with a package already up.
       - name: Build the CLI
@@ -99,25 +149,16 @@ jobs:
       # them in `pre.json`, and v1 read that directory as a Changesets-v1
       # changeset and died on `.changeset/pre/changes.md` — which is how the
       # first Version Packages merge published nothing. v2 knows the layout.
+      # The token has to arrive through `github-token`.
       #
-      # v2 also pushes through the GitHub API, so the version commit is signed
-      # and the token has to arrive through `github-token`; the `GITHUB_TOKEN`
-      # environment variable is ignored.
-      - name: Create Version PR or publish to npm
+      # Publish half only. The release commit consumed every changeset, so the action finds none
+      # and goes straight to `publish-script`, then pushes the tags it wrote and cuts the GitHub
+      # Releases.
+      - name: Stage on npm, tag and cut GitHub Releases
+        id: changesets
         uses: changesets/action@v2
         with:
-          # A PAT, not GITHUB_TOKEN: events raised by GITHUB_TOKEN do not start
-          # workflow runs, so a Version Packages PR opened with it would never
-          # run the four checks `main-protected` requires and could never be
-          # merged. The fallback is for the publish half only — tags and GitHub
-          # Releases need nothing more than GITHUB_TOKEN — so a missing PAT
-          # cannot stop a release that is already versioned. The input is
-          # required, and an unset secret is an empty string, which the action
-          # rejects before it reads `.changeset/` at all.
           github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
-          commit-message: "🔖 chore(release): version packages"
-          pr-title: "🔖 chore(release): version packages"
-          version-script: bun .github/changeset-version.ts
           # Not `changeset publish`: it would run `npm publish`, which the
           # trusted publisher refuses. The script stages every unpublished
           # package, writes the stage ids to the step summary, then runs
@@ -125,3 +166,11 @@ jobs:
           # GitHub Releases. Nothing reaches a dist-tag until someone runs
           # `npm stage approve <id>`.
           publish-script: bun .github/changeset-stage.ts
+
+      # Not `--force`, and it must never be. `develop` squash-merges and `main` moves only here, so
+      # `main` is always an ancestor of the released commit and this is a fast-forward. If it is
+      # not, someone pushed to `main` by hand: the push is refused, `non_fast_forward` in
+      # `main-protected` backs that up, and the packages are already staged — reconcile `main` and
+      # run Release again, which resumes from the release commit.
+      - name: Fast-forward main to the release commit
+        run: git push origin "$DELACOUR_REGISTRY_REF:refs/heads/main"

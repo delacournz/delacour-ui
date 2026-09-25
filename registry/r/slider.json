@@ -59,7 +59,13 @@
 		{
 			"path": "packages/react-native-ui/src/components/slider/slider-thumb.tsx",
 			"target": "slider/slider-thumb.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/slider/slider-track.tsx",

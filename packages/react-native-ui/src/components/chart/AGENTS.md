@@ -87,6 +87,14 @@ knows nothing about tokens.
   tailwind-merge is what lets a caller's `className="aspect-video h-auto"`
   cleanly win when they want that instead.
 
+- **`frameClassName` resizes the frame, not the root.** The canvas fills the
+  frame, and the frame carries the size's height, so a `className` on the root
+  cannot shorten the plot — the frame would overflow it. `frameClassName` is
+  merged after the size's `h-chart-*`, and the tokens are registered with
+  tailwind-merge, so `h-16` cleanly replaces it. `Kpi.Sparkline` is the reason
+  it exists: a sparkline is a chart with no axes a third the height of the
+  smallest one.
+
 - **The tooltip is a React Native view even though it floats over the canvas.**
   It wants `popover`, `border`, the radius scale and the type scale, none of
   which exist in Skia, and it is the part a caller most wants to restyle —

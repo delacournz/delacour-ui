@@ -1,0 +1,7 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on skeleton/animations and has settled —
+  three rows, the first shimmering and the second pulsing. The capture script
+  navigates there before running this.
+steps:
+  - echo: Nothing to touch — a skeleton is its motion, so this only holds the camera on it
+  - wait: 3000

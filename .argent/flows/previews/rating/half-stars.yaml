@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on rating/half-stars and has settled —
+  five stars at 2.5, the row carrying the testID rating-half. The capture script
+  navigates there before running this.
+steps:
+  - echo: Dragging slowly up the row, a half star at a time
+  - swipe: { from: { id: rating-half }, by: { x: 0.25 }, momentum: false, duration: 1200 }
+  - wait: 400
+  - echo: A tap on the middle star's centre lands on its half, where the clip began
+  - tap: { id: rating-half }

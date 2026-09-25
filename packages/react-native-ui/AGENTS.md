@@ -61,25 +61,41 @@ shares.
 | Component | Import | |
 | --- | --- | --- |
 | [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
+| [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
+| [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
+| [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
+| [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
+| [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |
 | [Item](src/components/item/AGENTS.md) | `@delacour/react-native-ui/item` | A row of media, text and actions — standalone, or as a `ListGroup` row |
+| [Kpi](src/components/kpi/AGENTS.md) | `@delacour/react-native-ui/kpi` | One number, its change and a sparkline, on `Card` |
+| [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
+| [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
+| [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
+| [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
+| [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |
 | [Switch](src/components/switch/AGENTS.md) | `@delacour/react-native-ui/switch` | A track and a knob, dragged or tapped |
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
+| [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
+| [ToggleButton](src/components/toggle-button/AGENTS.md) | `@delacour/react-native-ui/toggle-button` | A button that stays pressed, alone or in a group |
 | [DelacourProvider](src/components/provider/AGENTS.md) | `@delacour/react-native-ui/provider` | The app's root layer stack |
 
 A component missing from this table, or from its own folder, fails `bun test` —

@@ -1,0 +1,144 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "meter",
+	"type": "registry:ui",
+	"title": "Meter",
+	"description": "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"progress",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/meter/AGENTS.md",
+			"target": "meter/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/meter",
+					"to": "@registry/ui/meter"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/index.ts",
+			"target": "meter/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-fill.tsx",
+			"target": "meter/meter-fill.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-header.tsx",
+			"target": "meter/meter-header.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-label.tsx",
+			"target": "meter/meter-label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-output.tsx",
+			"target": "meter/meter-output.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress/progress.variants",
+					"to": "@registry/ui/progress/progress.variants"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-segments.tsx",
+			"target": "meter/meter-segments.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter-track.tsx",
+			"target": "meter/meter-track.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter.context.tsx",
+			"target": "meter/meter.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter.tsx",
+			"target": "meter/meter.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				},
+				{
+					"from": "../progress/progress.variants",
+					"to": "@registry/ui/progress/progress.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter.types.ts",
+			"target": "meter/meter.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/meter/meter.variants.ts",
+			"target": "meter/meter.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../progress/progress.variants",
+					"to": "@registry/ui/progress/progress.variants"
+				}
+			]
+		}
+	]
+}

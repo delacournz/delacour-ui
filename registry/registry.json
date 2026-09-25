@@ -43,6 +43,77 @@
 			]
 		},
 		{
+			"name": "alert",
+			"type": "registry:ui",
+			"title": "Alert",
+			"description": "A status message with a glyph picked from its status, a title, a description and an optional action.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/alert/AGENTS.md",
+				"ui/alert/alert-action.tsx",
+				"ui/alert/alert-close-button.tsx",
+				"ui/alert/alert-content.tsx",
+				"ui/alert/alert-description.tsx",
+				"ui/alert/alert-indicator.tsx",
+				"ui/alert/alert-title.tsx",
+				"ui/alert/alert.context.tsx",
+				"ui/alert/alert.tsx",
+				"ui/alert/alert.types.ts",
+				"ui/alert/alert.variants.ts",
+				"ui/alert/index.ts"
+			]
+		},
+		{
+			"name": "avatar",
+			"type": "registry:ui",
+			"title": "Avatar",
+			"description": "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/avatar/AGENTS.md",
+				"ui/avatar/avatar-badge.tsx",
+				"ui/avatar/avatar-group.tsx",
+				"ui/avatar/avatar.context.tsx",
+				"ui/avatar/avatar.tsx",
+				"ui/avatar/avatar.utils.ts",
+				"ui/avatar/avatar.variants.ts",
+				"ui/avatar/index.ts"
+			]
+		},
+		{
 			"name": "badge",
 			"type": "registry:ui",
 			"title": "Badge",
@@ -163,6 +234,39 @@
 			]
 		},
 		{
+			"name": "card",
+			"type": "registry:ui",
+			"title": "Card",
+			"description": "A content surface with a header, a body and a footer, built on Surface.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"surface",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/card/AGENTS.md",
+				"ui/card/card-action.tsx",
+				"ui/card/card-content.tsx",
+				"ui/card/card-description.tsx",
+				"ui/card/card-footer.tsx",
+				"ui/card/card-header.tsx",
+				"ui/card/card-title.tsx",
+				"ui/card/card.context.tsx",
+				"ui/card/card.tsx",
+				"ui/card/card.types.ts",
+				"ui/card/card.variants.ts",
+				"ui/card/index.ts"
+			]
+		},
+		{
 			"name": "chart",
 			"type": "registry:ui",
 			"title": "Chart",
@@ -259,6 +363,41 @@
 			]
 		},
 		{
+			"name": "chip",
+			"type": "registry:ui",
+			"title": "Chip",
+			"description": "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"badge",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/chip/AGENTS.md",
+				"ui/chip/chip-close-button.tsx",
+				"ui/chip/chip-end-content.tsx",
+				"ui/chip/chip-label.tsx",
+				"ui/chip/chip-start-content.tsx",
+				"ui/chip/chip.context.tsx",
+				"ui/chip/chip.tsx",
+				"ui/chip/chip.types.ts",
+				"ui/chip/chip.variants.ts",
+				"ui/chip/index.ts"
+			]
+		},
+		{
 			"name": "cn",
 			"type": "registry:lib",
 			"title": "cn",
@@ -274,6 +413,43 @@
 			"devDependencies": [],
 			"files": [
 				"lib/cn.ts"
+			]
+		},
+		{
+			"name": "collapsible",
+			"type": "registry:ui",
+			"title": "Collapsible",
+			"description": "One section shown and hidden by its own trigger, animated to its measured height.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/collapsible/AGENTS.md",
+				"ui/collapsible/collapsible-content.tsx",
+				"ui/collapsible/collapsible-description.tsx",
+				"ui/collapsible/collapsible-indicator.tsx",
+				"ui/collapsible/collapsible-title.tsx",
+				"ui/collapsible/collapsible-trigger.tsx",
+				"ui/collapsible/collapsible.context.tsx",
+				"ui/collapsible/collapsible.tsx",
+				"ui/collapsible/collapsible.types.ts",
+				"ui/collapsible/collapsible.variants.ts",
+				"ui/collapsible/index.ts"
 			]
 		},
 		{
@@ -300,6 +476,38 @@
 			"devDependencies": [],
 			"files": [
 				"lib/compose-refs.ts"
+			]
+		},
+		{
+			"name": "empty-state",
+			"type": "registry:ui",
+			"title": "Empty State",
+			"description": "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/empty-state/AGENTS.md",
+				"ui/empty-state/empty-state-content.tsx",
+				"ui/empty-state/empty-state-description.tsx",
+				"ui/empty-state/empty-state-header.tsx",
+				"ui/empty-state/empty-state-media.tsx",
+				"ui/empty-state/empty-state-title.tsx",
+				"ui/empty-state/empty-state.context.tsx",
+				"ui/empty-state/empty-state.tsx",
+				"ui/empty-state/empty-state.types.ts",
+				"ui/empty-state/empty-state.variants.ts",
+				"ui/empty-state/index.ts"
 			]
 		},
 		{
@@ -488,6 +696,80 @@
 			]
 		},
 		{
+			"name": "kpi",
+			"type": "registry:ui",
+			"title": "Kpi",
+			"description": "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"badge",
+				"card",
+				"chart",
+				"cn",
+				"icon",
+				"icons",
+				"separator",
+				"surface",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"@delacour/react-native-charts",
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/kpi/AGENTS.md",
+				"ui/kpi/index.ts",
+				"ui/kpi/kpi-action.tsx",
+				"ui/kpi/kpi-content.tsx",
+				"ui/kpi/kpi-footer.tsx",
+				"ui/kpi/kpi-group.tsx",
+				"ui/kpi/kpi-header.tsx",
+				"ui/kpi/kpi-icon.tsx",
+				"ui/kpi/kpi-sparkline.tsx",
+				"ui/kpi/kpi-stat.tsx",
+				"ui/kpi/kpi-title.tsx",
+				"ui/kpi/kpi-trend.tsx",
+				"ui/kpi/kpi-value.tsx",
+				"ui/kpi/kpi.context.tsx",
+				"ui/kpi/kpi.tsx",
+				"ui/kpi/kpi.types.ts",
+				"ui/kpi/kpi.variants.ts"
+			]
+		},
+		{
+			"name": "label",
+			"type": "registry:ui",
+			"title": "Label",
+			"description": "A form control's name, with required, invalid and disabled states.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/label/AGENTS.md",
+				"ui/label/index.ts",
+				"ui/label/label.tsx",
+				"ui/label/label.variants.ts"
+			]
+		},
+		{
 			"name": "list-group",
 			"type": "registry:ui",
 			"title": "List Group",
@@ -540,6 +822,41 @@
 			]
 		},
 		{
+			"name": "meter",
+			"type": "registry:ui",
+			"title": "Meter",
+			"description": "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"progress",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/meter/AGENTS.md",
+				"ui/meter/index.ts",
+				"ui/meter/meter-fill.tsx",
+				"ui/meter/meter-header.tsx",
+				"ui/meter/meter-label.tsx",
+				"ui/meter/meter-output.tsx",
+				"ui/meter/meter-segments.tsx",
+				"ui/meter/meter-track.tsx",
+				"ui/meter/meter.context.tsx",
+				"ui/meter/meter.tsx",
+				"ui/meter/meter.types.ts",
+				"ui/meter/meter.variants.ts"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",
@@ -569,7 +886,8 @@
 				"react-native-gesture-handler",
 				"react-native-pulsar",
 				"react-native-reanimated",
-				"react-native-worklets"
+				"react-native-worklets",
+				"uniwind"
 			],
 			"devDependencies": [],
 			"files": [
@@ -577,6 +895,39 @@
 				"ui/pressable/index.ts",
 				"ui/pressable/pressable.tsx",
 				"ui/pressable/pressable.variants.ts"
+			]
+		},
+		{
+			"name": "progress",
+			"type": "registry:ui",
+			"title": "Progress",
+			"description": "A bar showing how far a task has got, or a looping segment while it is under way.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress/AGENTS.md",
+				"ui/progress/index.ts",
+				"ui/progress/progress-fill.tsx",
+				"ui/progress/progress-header.tsx",
+				"ui/progress/progress-label.tsx",
+				"ui/progress/progress-output.tsx",
+				"ui/progress/progress-track.tsx",
+				"ui/progress/progress.context.tsx",
+				"ui/progress/progress.tsx",
+				"ui/progress/progress.types.ts",
+				"ui/progress/progress.variants.ts"
 			]
 		},
 		{
@@ -635,6 +986,43 @@
 				"ui/radio/radio.context.tsx",
 				"ui/radio/radio.tsx",
 				"ui/radio/radio.variants.ts"
+			]
+		},
+		{
+			"name": "rating",
+			"type": "registry:ui",
+			"title": "Rating",
+			"description": "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/rating/AGENTS.md",
+				"ui/rating/index.ts",
+				"ui/rating/rating-output.tsx",
+				"ui/rating/rating-star.tsx",
+				"ui/rating/rating-stars.tsx",
+				"ui/rating/rating.context.tsx",
+				"ui/rating/rating.tsx",
+				"ui/rating/rating.variants.ts"
 			]
 		},
 		{
@@ -725,6 +1113,36 @@
 			]
 		},
 		{
+			"name": "skeleton",
+			"type": "registry:ui",
+			"title": "Skeleton",
+			"description": "A placeholder that shimmers or pulses while content loads, in step across a group.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/skeleton/AGENTS.md",
+				"ui/skeleton/index.ts",
+				"ui/skeleton/skeleton-clock.ts",
+				"ui/skeleton/skeleton-group.tsx",
+				"ui/skeleton/skeleton-shimmer.tsx",
+				"ui/skeleton/skeleton.context.tsx",
+				"ui/skeleton/skeleton.tsx",
+				"ui/skeleton/skeleton.variants.ts"
+			]
+		},
+		{
 			"name": "slider",
 			"type": "registry:ui",
 			"title": "Slider",
@@ -808,6 +1226,45 @@
 			]
 		},
 		{
+			"name": "steps",
+			"type": "registry:ui",
+			"title": "Steps",
+			"description": "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"spinner",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/steps/AGENTS.md",
+				"ui/steps/index.ts",
+				"ui/steps/steps-connector.tsx",
+				"ui/steps/steps-description.tsx",
+				"ui/steps/steps-indicator.tsx",
+				"ui/steps/steps-item.tsx",
+				"ui/steps/steps-panel.tsx",
+				"ui/steps/steps-title.tsx",
+				"ui/steps/steps-track.tsx",
+				"ui/steps/steps.context.tsx",
+				"ui/steps/steps.tsx",
+				"ui/steps/steps.variants.ts"
+			]
+		},
+		{
 			"name": "styles",
 			"type": "registry:style",
 			"title": "Styles",
@@ -827,6 +1284,30 @@
 				"styles/tokens.css",
 				"styles/tokens.ts",
 				"styles/uniwind-env.d.ts"
+			]
+		},
+		{
+			"name": "surface",
+			"type": "registry:ui",
+			"title": "Surface",
+			"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/surface/AGENTS.md",
+				"ui/surface/index.ts",
+				"ui/surface/surface.context.tsx",
+				"ui/surface/surface.tsx",
+				"ui/surface/surface.variants.ts"
 			]
 		},
 		{
@@ -937,6 +1418,60 @@
 				"ui/text/text.context.tsx",
 				"ui/text/text.tsx",
 				"ui/text/text.variants.ts"
+			]
+		},
+		{
+			"name": "textarea",
+			"type": "registry:ui",
+			"title": "Textarea",
+			"description": "A multiline text field sized in rows, with auto-grow and a character count.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"input",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/textarea/AGENTS.md",
+				"ui/textarea/index.ts",
+				"ui/textarea/textarea.tsx",
+				"ui/textarea/textarea.variants.ts"
+			]
+		},
+		{
+			"name": "toggle-button",
+			"type": "registry:ui",
+			"title": "Toggle Button",
+			"description": "A button that stays pressed, alone or in a group with single or multiple selection.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"pressable",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/toggle-button/AGENTS.md",
+				"ui/toggle-button/index.ts",
+				"ui/toggle-button/toggle-button-group.tsx",
+				"ui/toggle-button/toggle-button-label.tsx",
+				"ui/toggle-button/toggle-button.context.tsx",
+				"ui/toggle-button/toggle-button.tsx",
+				"ui/toggle-button/toggle-button.variants.ts"
 			]
 		},
 		{

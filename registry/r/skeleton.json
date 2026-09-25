@@ -1,0 +1,93 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "skeleton",
+	"type": "registry:ui",
+	"title": "Skeleton",
+	"description": "A placeholder that shimmers or pulses while content loads, in step across a group.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"cn",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/AGENTS.md",
+			"target": "skeleton/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/skeleton",
+					"to": "@registry/ui/skeleton"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/index.ts",
+			"target": "skeleton/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton-clock.ts",
+			"target": "skeleton/skeleton-clock.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton-group.tsx",
+			"target": "skeleton/skeleton-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton-shimmer.tsx",
+			"target": "skeleton/skeleton-shimmer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton.context.tsx",
+			"target": "skeleton/skeleton.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton.tsx",
+			"target": "skeleton/skeleton.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/skeleton/skeleton.variants.ts",
+			"target": "skeleton/skeleton.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

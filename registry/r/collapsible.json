@@ -1,0 +1,136 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "collapsible",
+	"type": "registry:ui",
+	"title": "Collapsible",
+	"description": "One section shown and hidden by its own trigger, animated to its measured height.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/AGENTS.md",
+			"target": "collapsible/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/collapsible",
+					"to": "@registry/ui/collapsible"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible-content.tsx",
+			"target": "collapsible/collapsible-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible-description.tsx",
+			"target": "collapsible/collapsible-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible-indicator.tsx",
+			"target": "collapsible/collapsible-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible-title.tsx",
+			"target": "collapsible/collapsible-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible-trigger.tsx",
+			"target": "collapsible/collapsible-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible.context.tsx",
+			"target": "collapsible/collapsible.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible.tsx",
+			"target": "collapsible/collapsible.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible.types.ts",
+			"target": "collapsible/collapsible.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/collapsible.variants.ts",
+			"target": "collapsible/collapsible.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/collapsible/index.ts",
+			"target": "collapsible/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

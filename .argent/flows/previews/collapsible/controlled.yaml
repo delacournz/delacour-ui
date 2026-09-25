@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on collapsible/controlled and has
+  settled — Delivery notes open, a Hide notes button under it and a caption
+  reading Open. The capture script navigates there before running this.
+steps:
+  - echo: Closing it from the button outside the collapsible
+  - tap: { id: controlled-button }
+  - wait: 1000
+  - echo: And opening it from its own trigger, so the clip loops without a jump cut
+  - tap: { id: controlled-trigger }

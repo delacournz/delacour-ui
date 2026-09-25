@@ -111,6 +111,18 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "meter",
+		name: "Meter",
+		group: "Feedback",
+		blurb: "A measurement on a fixed scale, coloured by where it falls.",
+	},
+	{
+		slug: "progress",
+		name: "Progress",
+		group: "Feedback",
+		blurb: "A bar showing how far a task has got, or that it is under way.",
+	},
+	{
 		slug: "spinner",
 		name: "Spinner",
 		group: "Feedback",
@@ -133,6 +145,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Screen",
 		group: "Layout",
 		blurb: "A screen's frame: pinned chrome, a content region, and whatever scrolls between them.",
+	},
+	{
+		slug: "surface",
+		name: "Surface",
+		group: "Layout",
+		blurb: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
 	},
 	{
 		slug: "provider",

@@ -142,9 +142,9 @@ export const ACCORDION_CONTENT_FADE = { start: 0.1, end: 0.6 } as const;
  * because the travel has not started yet.
  *
  * **The disabled fade lands on `item`, never on `trigger`.** The trigger is a
- * `Pressable`, whose root `Animated.View` writes `opacity` every frame through a
- * `useAnimatedStyle` of its own — a class on that node is overwritten silently,
- * which is the failure `Switch` and `Radio` both record.
+ * `Pressable`, which now multiplies a className's opacity into its press rather
+ * than overwriting it — but the item already fades, header and panel together,
+ * and a fade on the trigger as well would compound to a quarter.
  *
  * No slot worn by a `View` carries `text-*`; a React Native `View` does not
  * cascade colour to a `Text` descendant, so the treatment lives on the `title` and

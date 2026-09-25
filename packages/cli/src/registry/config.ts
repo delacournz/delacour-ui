@@ -154,6 +154,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	meter: {
+		title: "Meter",
+		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+		categories: ["feedback"],
+	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",
@@ -178,6 +188,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Spinner",
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
+	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
 	},
 	switch: {
 		title: "Switch",

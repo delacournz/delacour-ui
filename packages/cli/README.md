@@ -5,7 +5,7 @@ repository — you own `button.tsx` and can edit it, rather than waiting for a
 release.
 
 ```bash
-bunx delacour@alpha add button
+bunx delacour@latest add button
 ```
 
 That is the whole install. `add` sets the project up on its first run — config, Metro, the Tailwind
@@ -66,7 +66,7 @@ Then it asks. `--install` answers yes without asking, `--no-install` answers no,
 nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
 
 ```bash
-bunx delacour@alpha add bottom-sheet --install
+bunx delacour@latest add bottom-sheet --install
 ```
 
 The missing packages are shown as commands, not names, because the command is the part that is not
@@ -86,7 +86,7 @@ import { Button } from "@acme/ui/button";
 ```
 
 ```bash
-bunx delacour@alpha init --package-name @acme/ui --package-path packages/ui   # no prompts
+bunx delacour@latest init --package-name @acme/ui --package-path packages/ui   # no prompts
 ```
 
 
@@ -95,8 +95,8 @@ bunx delacour@alpha init --package-name @acme/ui --package-path packages/ui   # 
 walking up from `--cwd`. In a monorepo that means:
 
 ```bash
-cd packages/ui && bunx delacour@alpha init    # shared package, several apps use it
-cd apps/mobile && bunx delacour@alpha init    # straight into the app
+cd packages/ui && bunx delacour@latest init    # shared package, several apps use it
+cd apps/mobile && bunx delacour@latest init    # straight into the app
 ```
 
 Either way the CLI finds the Expo app and wires *its* Metro config and CSS

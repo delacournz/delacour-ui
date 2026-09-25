@@ -523,6 +523,41 @@
 			]
 		},
 		{
+			"name": "meter",
+			"type": "registry:ui",
+			"title": "Meter",
+			"description": "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"progress",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/meter/AGENTS.md",
+				"ui/meter/index.ts",
+				"ui/meter/meter-fill.tsx",
+				"ui/meter/meter-header.tsx",
+				"ui/meter/meter-label.tsx",
+				"ui/meter/meter-output.tsx",
+				"ui/meter/meter-segments.tsx",
+				"ui/meter/meter-track.tsx",
+				"ui/meter/meter.context.tsx",
+				"ui/meter/meter.tsx",
+				"ui/meter/meter.types.ts",
+				"ui/meter/meter.variants.ts"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",
@@ -552,7 +587,8 @@
 				"react-native-gesture-handler",
 				"react-native-pulsar",
 				"react-native-reanimated",
-				"react-native-worklets"
+				"react-native-worklets",
+				"uniwind"
 			],
 			"devDependencies": [],
 			"files": [
@@ -560,6 +596,39 @@
 				"ui/pressable/index.ts",
 				"ui/pressable/pressable.tsx",
 				"ui/pressable/pressable.variants.ts"
+			]
+		},
+		{
+			"name": "progress",
+			"type": "registry:ui",
+			"title": "Progress",
+			"description": "A bar showing how far a task has got, or a looping segment while it is under way.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress/AGENTS.md",
+				"ui/progress/index.ts",
+				"ui/progress/progress-fill.tsx",
+				"ui/progress/progress-header.tsx",
+				"ui/progress/progress-label.tsx",
+				"ui/progress/progress-output.tsx",
+				"ui/progress/progress-track.tsx",
+				"ui/progress/progress.context.tsx",
+				"ui/progress/progress.tsx",
+				"ui/progress/progress.types.ts",
+				"ui/progress/progress.variants.ts"
 			]
 		},
 		{
@@ -810,6 +879,30 @@
 				"styles/tokens.css",
 				"styles/tokens.ts",
 				"styles/uniwind-env.d.ts"
+			]
+		},
+		{
+			"name": "surface",
+			"type": "registry:ui",
+			"title": "Surface",
+			"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/surface/AGENTS.md",
+				"ui/surface/index.ts",
+				"ui/surface/surface.context.tsx",
+				"ui/surface/surface.tsx",
+				"ui/surface/surface.variants.ts"
 			]
 		},
 		{

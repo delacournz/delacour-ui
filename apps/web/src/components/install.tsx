@@ -86,7 +86,7 @@ export function LibraryInstall(): ReactElement {
 	return (
 		<InstallTabs
 			commands={[
-				{ verb: "add", packages: ["@delacour/react-native-ui@alpha"] },
+				{ verb: "add", packages: ["@delacour/react-native-ui"] },
 				{ verb: "expo", packages: peers.expo },
 				{ verb: "add", packages: peers.npm },
 			]}
@@ -116,7 +116,7 @@ export function ComponentInstall({ name }: { name: InstallName }): ReactElement 
 			</p>
 			<DynamicCodeBlock code={`import { ${entry.exportName} } from "${entry.importPath}";`} lang="tsx" />
 			<p>Or copy the source into your project, to own and edit it:</p>
-			<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@alpha add ${entry.name}`] }]} />
+			<InstallTabs commands={[{ verb: "dlx", packages: [`delacour@latest add ${entry.name}`] }]} />
 		</>
 	);
 }

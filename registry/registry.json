@@ -303,6 +303,38 @@
 			]
 		},
 		{
+			"name": "empty-state",
+			"type": "registry:ui",
+			"title": "Empty State",
+			"description": "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/empty-state/AGENTS.md",
+				"ui/empty-state/empty-state-content.tsx",
+				"ui/empty-state/empty-state-description.tsx",
+				"ui/empty-state/empty-state-header.tsx",
+				"ui/empty-state/empty-state-media.tsx",
+				"ui/empty-state/empty-state-title.tsx",
+				"ui/empty-state/empty-state.context.tsx",
+				"ui/empty-state/empty-state.tsx",
+				"ui/empty-state/empty-state.types.ts",
+				"ui/empty-state/empty-state.variants.ts",
+				"ui/empty-state/index.ts"
+			]
+		},
+		{
 			"name": "expo",
 			"type": "registry:lib",
 			"title": "Navigation theme",

@@ -66,6 +66,7 @@ shares.
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |

@@ -1,0 +1,107 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "empty-state",
+	"type": "registry:ui",
+	"title": "Empty State",
+	"description": "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"icon",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/AGENTS.md",
+			"target": "empty-state/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/empty-state",
+					"to": "@registry/ui/empty-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state-content.tsx",
+			"target": "empty-state/empty-state-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state-description.tsx",
+			"target": "empty-state/empty-state-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state-header.tsx",
+			"target": "empty-state/empty-state-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state-media.tsx",
+			"target": "empty-state/empty-state-media.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state-title.tsx",
+			"target": "empty-state/empty-state-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state.context.tsx",
+			"target": "empty-state/empty-state.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state.tsx",
+			"target": "empty-state/empty-state.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state.types.ts",
+			"target": "empty-state/empty-state.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/empty-state.variants.ts",
+			"target": "empty-state/empty-state.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/empty-state/index.ts",
+			"target": "empty-state/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

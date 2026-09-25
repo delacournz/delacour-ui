@@ -66,6 +66,12 @@ const ROWS = [
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
 	{
+		slug: "empty-state",
+		title: "EmptyState",
+		description: "Media, title, actions, card variant",
+		group: "Feedback",
+	},
+	{
 		slug: "bottom-sheet",
 		title: "Bottom sheet",
 		description: "Overlay, snap points, sticky footer, keyboard",

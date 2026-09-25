@@ -9,6 +9,16 @@ import * as demo_accordion_disabled from "./accordion/disabled";
 import * as demo_accordion_one_at_a_time from "./accordion/one-at-a-time";
 import * as demo_accordion_sizes from "./accordion/sizes";
 import * as demo_accordion_variants from "./accordion/variants";
+import * as demo_avatar_fallbacks from "./avatar/fallbacks";
+import * as demo_avatar_group from "./avatar/group";
+import * as demo_avatar_group_sizes_and_overlap from "./avatar/group-sizes-and-overlap";
+import * as demo_avatar_image_retry from "./avatar/image-retry";
+import * as demo_avatar_presence from "./avatar/presence";
+import * as demo_avatar_pressable_and_disabled from "./avatar/pressable-and-disabled";
+import * as demo_avatar_shared_with from "./avatar/shared-with";
+import * as demo_avatar_sizes from "./avatar/sizes";
+import * as demo_avatar_unread_count from "./avatar/unread-count";
+import * as demo_avatar_variants_and_colours from "./avatar/variants-and-colours";
 import * as demo_badge_composed_icon from "./badge/composed-icon";
 import * as demo_badge_dismissible from "./badge/dismissible";
 import * as demo_badge_sizes from "./badge/sizes";
@@ -202,6 +212,16 @@ export const DEMOS = {
 	"accordion/one-at-a-time": demo_accordion_one_at_a_time,
 	"accordion/sizes": demo_accordion_sizes,
 	"accordion/variants": demo_accordion_variants,
+	"avatar/fallbacks": demo_avatar_fallbacks,
+	"avatar/group": demo_avatar_group,
+	"avatar/group-sizes-and-overlap": demo_avatar_group_sizes_and_overlap,
+	"avatar/image-retry": demo_avatar_image_retry,
+	"avatar/presence": demo_avatar_presence,
+	"avatar/pressable-and-disabled": demo_avatar_pressable_and_disabled,
+	"avatar/shared-with": demo_avatar_shared_with,
+	"avatar/sizes": demo_avatar_sizes,
+	"avatar/unread-count": demo_avatar_unread_count,
+	"avatar/variants-and-colours": demo_avatar_variants_and_colours,
 	"badge/composed-icon": demo_badge_composed_icon,
 	"badge/dismissible": demo_badge_dismissible,
 	"badge/sizes": demo_badge_sizes,

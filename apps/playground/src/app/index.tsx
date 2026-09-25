@@ -15,6 +15,7 @@ import {
 	IconLayoutBottomFull,
 	IconLayoutTopBottom,
 	IconParagraph,
+	IconPeople,
 	IconSettingsSliderHor,
 	IconShieldCheck,
 	IconSquareCheck,
@@ -43,6 +44,7 @@ import { LIST_GAP, SECTION_GAP } from "@/tokens";
  */
 const ICONS: Record<ComponentSlug, IconComponent> = {
 	accordion: IconChevronGrabberVertical,
+	avatar: IconPeople,
 	badge: IconTag,
 	"bottom-sheet": IconLayoutBottomFull,
 	button: IconSquareCursor,

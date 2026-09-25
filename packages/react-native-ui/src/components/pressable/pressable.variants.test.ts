@@ -4,6 +4,7 @@ import {
 	PRESSABLE_FEEDBACK_FALLBACK,
 	PRESSABLE_FEEDBACKS,
 	resolvePressedState,
+	resolveRestOpacity,
 } from "./pressable.variants";
 
 describe("PRESSABLE_FEEDBACK", () => {
@@ -95,5 +96,33 @@ describe("resolvePressedState", () => {
 	// 0 is a legitimate value on either axis and must not read as "unset".
 	test("treats an explicit zero as a value, not an absence", () => {
 		expect(resolvePressedState("scale", 0, 0)).toEqual({ opacity: 0, scale: 0 });
+	});
+});
+
+describe("resolveRestOpacity", () => {
+	// The animated style owns `opacity` on the view, so a caller's `opacity-50`
+	// would be overwritten by the resting `1` unless the press multiplies it in.
+	test("keeps an opacity the className resolved to", () => {
+		expect(resolveRestOpacity(0.5)).toBe(0.5);
+		expect(resolveRestOpacity(0)).toBe(0);
+		expect(resolveRestOpacity(1)).toBe(1);
+	});
+
+	test("falls back to fully opaque when the className sets none", () => {
+		expect(resolveRestOpacity(undefined)).toBe(1);
+	});
+
+	// Uniwind types `opacity` as an animatable value, so anything that is not a
+	// plain number is treated as unset rather than multiplied in as NaN.
+	test("ignores a value that is not a finite number", () => {
+		expect(resolveRestOpacity(Number.NaN)).toBe(1);
+		expect(resolveRestOpacity(Number.POSITIVE_INFINITY)).toBe(1);
+		expect(resolveRestOpacity("0.5")).toBe(1);
+		expect(resolveRestOpacity({})).toBe(1);
+	});
+
+	test("clamps a number into the unit range", () => {
+		expect(resolveRestOpacity(1.5)).toBe(1);
+		expect(resolveRestOpacity(-0.2)).toBe(0);
 	});
 });

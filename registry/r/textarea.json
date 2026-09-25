@@ -1,0 +1,68 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "textarea",
+	"type": "registry:ui",
+	"title": "Textarea",
+	"description": "A multiline text field sized in rows, with auto-grow and a character count.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"input",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/textarea/AGENTS.md",
+			"target": "textarea/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/textarea",
+					"to": "@registry/ui/textarea"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/textarea/index.ts",
+			"target": "textarea/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/textarea/textarea.tsx",
+			"target": "textarea/textarea.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/textarea/textarea.variants.ts",
+			"target": "textarea/textarea.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	]
+}

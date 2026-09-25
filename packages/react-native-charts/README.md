@@ -16,7 +16,7 @@ Docs: [ui.delacour.co.nz/docs/charts](https://ui.delacour.co.nz/docs/charts).
 ## Install
 
 ```bash
-bun add @delacour/react-native-charts@alpha
+bun add @delacour/react-native-charts
 bunx expo install @shopify/react-native-skia react-native-gesture-handler react-native-reanimated react-native-worklets
 ```
 

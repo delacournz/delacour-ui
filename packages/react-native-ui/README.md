@@ -11,7 +11,7 @@ arrive with its classNames already dead.
 ## Install
 
 ```bash
-bun add @delacour/react-native-ui@alpha
+bun add @delacour/react-native-ui
 ```
 
 Native modules are **peer dependencies**, because two copies of a native module

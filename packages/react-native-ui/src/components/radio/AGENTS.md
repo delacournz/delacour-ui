@@ -78,16 +78,14 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   A test asserts the `dot` slot claims neither `opacity-*` nor `scale-*` in any
   cell: a class fighting a `useAnimatedStyle` for the same property is a dot that
   never appears, with no error anywhere.
-- **The disabled fade lands on the ring and the label, never on the root.** The
-  `root` slot is worn by `Pressable`'s own `Animated.View`, whose
-  `useAnimatedStyle` writes `opacity` on every frame — at rest, 1. An
-  `opacity-50` class on that node is overwritten before it is ever drawn,
-  silently, so the row would stay at full contrast while behaving as disabled.
-  The ring and the label are ordinary descendants, so their opacity multiplies
-  with the root's instead of fighting it. The group must not fade either, or a
-  disabled group would compound `opacity-50` with each of its rows and land at a
-  quarter opacity. Tests pin both halves. This is the failure `Switch`, `Tabs`
-  and `Accordion` all cite back here.
+- **The disabled fade lands on the ring and the label, never on the root.** It
+  was placed there because [`Pressable`](../pressable/AGENTS.md)'s animated
+  style used to overwrite an `opacity-50` on the root; `Pressable` now
+  multiplies a className's opacity into its press, so the root *could* fade,
+  but the fade stays on the parts: an `opacity-50` on the root as well would
+  compound with them and land at a quarter. The group must not fade either, for
+  the same reason. Tests pin both halves. `Switch`, `Tabs` and `Accordion` all
+  cite back here.
 - **The ring is drawn from `View`s rather than a Central Icon.** Rule 5 governs
   icons and [Spinner](../spinner/AGENTS.md)'s arc is the precedent for
   primitives; here the set has no ring-with-a-centred-dot glyph at all. Two

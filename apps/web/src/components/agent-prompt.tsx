@@ -35,7 +35,7 @@ First, look at the project:
    GestureHandlerRootView already wraps the app. If one is there, reuse it — do not nest a second.
 
 Then install:
-- Run \`bunx delacour@alpha add button --install\` (spelled for this project's package manager).
+- Run \`bunx delacour@latest add button --install\` (spelled for this project's package manager).
   That writes native-components.json, wraps Metro with Uniwind's transform, points Tailwind at the
   components, copies the theme and the root provider in, and adds Button. There is no separate
   setup step.
@@ -49,8 +49,8 @@ Then make the two edits it cannot make for me, because both are in files I own:
   just as silently.
 
 Finally:
-- Run \`bunx delacour@alpha doctor\` and fix anything it names.
-- Run \`bunx delacour@alpha list\` to see what else is available, and add components by name rather
+- Run \`bunx delacour@latest doctor\` and fix anything it names.
+- Run \`bunx delacour@latest list\` to see what else is available, and add components by name rather
   than writing them.
 - Component reference: ${siteUrl}/llms.txt, or any docs page with .md appended.
 

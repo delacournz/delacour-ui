@@ -1,0 +1,268 @@
+---
+title: ToggleButton
+description: A button that stays pressed — alone, or in a group choosing one option or several.
+icon: Bold
+---
+
+<Preview id="toggle-button/variants" title={null} />
+
+## Installation
+
+<ComponentInstall name="toggle-button" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { ToggleButton } from "@/components/ui/toggle-button";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [isFollowing, setIsFollowing] = useState(false);
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <ToggleButton isSelected={isFollowing} onSelected={setIsFollowing}>
+        {isFollowing ? "Following" : "Follow"}
+      </ToggleButton>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<ToggleButton.Group>
+  <ToggleButton value="bold">
+    <Icon icon={IconBold} />
+    <ToggleButton.Label>Bold</ToggleButton.Label>
+  </ToggleButton>
+</ToggleButton.Group>
+```
+
+A toggle is a [Button](/docs/native/components/button). Each state draws with one of the button's
+own variants, so the fill, the label colour and the colour of a composed `Icon` change together, and
+the sizes, `haptic`, `feedback` and `isLoading` are the button's too.
+
+## Variants
+
+`default` is a quiet fill that takes the action colour when pressed; `outline` is a bordered button
+that fills; `ghost` is bare until pressed.
+
+<Preview id="toggle-button/variants" />
+
+```tsx
+<ToggleButton variant="default">Default</ToggleButton>
+<ToggleButton variant="outline">Outline</ToggleButton>
+<ToggleButton variant="ghost">Ghost</ToggleButton>
+```
+
+| Variant | Off | On |
+| --- | --- | --- |
+| `default` | `secondary` | `primary` |
+| `outline` | `outline` | `primary` |
+| `ghost` | `ghost` | `secondary` |
+
+## Sizes
+
+The button's steps. A square `icon-*` size holds a single glyph — give it an `accessibilityLabel`,
+since there is no text for a screen reader to fall back on.
+
+<Preview id="toggle-button/sizes" />
+
+```tsx
+<ToggleButton size="sm">Small</ToggleButton>
+<ToggleButton size="md">Medium</ToggleButton>
+<ToggleButton size="lg">Large</ToggleButton>
+<ToggleButton accessibilityLabel="Star" size="icon-md">
+  <Icon icon={IconStar} />
+</ToggleButton>
+```
+
+## Controlled and uncontrolled
+
+`isSelected` with `onSelected` puts the state in your hands; `defaultSelected` lets the toggle hold
+its own. Children may be a function of the state, for content that changes with it.
+
+<Preview id="toggle-button/controlled" />
+
+```tsx
+const [isSaved, setIsSaved] = useState(false);
+
+<ToggleButton isSelected={isSaved} onSelected={setIsSaved} variant="outline">
+  {({ isSelected }) => (
+    <>
+      <Icon icon={isSelected ? IconBookmarkCheck : IconBookmark} />
+      <ToggleButton.Label>{isSelected ? "Saved" : "Save"}</ToggleButton.Label>
+    </>
+  )}
+</ToggleButton>
+
+<ToggleButton defaultSelected>Notify me</ToggleButton>
+```
+
+## Disabled and loading
+
+`isDisabled` fades the toggle in either state. `isLoading` keeps full contrast, blocks presses and
+announces the toggle as busy — the shape for a toggle whose change is a request.
+
+```tsx
+<ToggleButton isDisabled>Disabled</ToggleButton>
+<ToggleButton isLoading={isSaving} isSelected={isFollowing} onSelected={follow}>
+  {isFollowing ? "Following" : "Follow"}
+</ToggleButton>
+```
+
+## Multiple selection
+
+`ToggleButton.Group` holds one array of its members' `value`s. The default `multiple` mode is a set
+of independent marks — bold *and* italic — and `onSelected` fires with the whole new list.
+
+<Preview id="toggle-button/formatting" />
+
+```tsx
+const [marks, setMarks] = useState<string[]>(["bold"]);
+
+<ToggleButton.Group selected={marks} onSelected={setMarks} size="icon-md" variant="outline">
+  <ToggleButton accessibilityLabel="Bold" value="bold">
+    <Icon icon={IconBold} />
+  </ToggleButton>
+  <ToggleButton accessibilityLabel="Italic" value="italic">
+    <Icon icon={IconItalic} />
+  </ToggleButton>
+  <ToggleButton accessibilityLabel="Underline" value="underline">
+    <Icon icon={IconUnderline} />
+  </ToggleButton>
+</ToggleButton.Group>
+```
+
+## Single selection
+
+`selectionMode="single"` is an either-or choice: picking one clears the last, and a re-press of the
+current one clears it too. `isSelectionRequired` keeps an answer on the board, so that re-press does
+nothing — and `onSelected` is never called for a press that changes nothing.
+
+<Preview id="toggle-button/single-selection" />
+
+```tsx
+<ToggleButton.Group
+  accessibilityLabel="Text alignment"
+  isSelectionRequired
+  selected={alignment}
+  onSelected={setAlignment}
+  selectionMode="single"
+  size="icon-md"
+>
+  <ToggleButton accessibilityLabel="Align left" value="left">
+    <Icon icon={IconAlignmentLeft} />
+  </ToggleButton>
+  <ToggleButton accessibilityLabel="Align centre" value="center">
+    <Icon icon={IconAlignmentCenter} />
+  </ToggleButton>
+</ToggleButton.Group>
+```
+
+For a run that fills its parent, put `className="w-full"` on the group and `className="flex-1"` on
+each toggle.
+
+## Layouts
+
+`attached`, the default, is a [`Button.Group`](/docs/native/components/button): the toggles join
+into one run with shared corners and a hairline seam, run either way with `orientation`, and take a
+`Button.Group.Separator` between two members. `detached` spaces them apart and wraps, for a row of
+filters.
+
+<Preview id="toggle-button/filters" />
+
+```tsx
+<ToggleButton.Group layout="detached" selected={statuses} onSelected={setStatuses} size="sm" variant="outline">
+  <ToggleButton value="open">Open</ToggleButton>
+  <ToggleButton value="review">In review</ToggleButton>
+  <ToggleButton value="done">Done</ToggleButton>
+</ToggleButton.Group>
+```
+
+The group's `variant`, `size`, `isDisabled` and `haptic` are defaults, not overrides: one option can
+disable itself inside a live group. An attached group owns the size step outright — controls of
+different heights do not join — while a square member stays square.
+
+<Callout type="warn">
+Inside a group, a toggle's `value` is required — the group tracks selection by it. A toggle without
+one renders but can never be selected, and warns in development.
+</Callout>
+
+## Accessibility
+
+The state is announced, not only drawn. A toggle on its own, or in a `multiple` group, is a
+`togglebutton` with `accessibilityState.checked` — read out as on or off. A member of a `single`
+group is a `radio` with `accessibilityState.selected`, inside a `radiogroup`. The toggle keeps its
+role, state and press handler: a caller's `onPress` still runs, first, but cannot pull the announced
+state away from the drawn one.
+
+## API Reference
+
+### ToggleButton
+
+Extends the [Button](/docs/native/components/button)'s props, except `variant`,
+`accessibilityRole` and `accessibilityState`, which the toggle owns.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Identifies the toggle inside a `ToggleButton.Group`. Required there." },
+    isSelected: { type: "boolean", description: "Controlled. Pair with `onSelected`. Ignored inside a group." },
+    defaultSelected: { type: "boolean", default: "false", description: "The starting state while uncontrolled." },
+    onSelected: {
+      type: "(isSelected: boolean) => void",
+      description: "Called with the new state on every press. Not called inside a group.",
+    },
+    variant: { type: '"default" | "outline" | "ghost"', default: '"default"' },
+    size: { type: '"sm" | "md" | "lg" | "icon-sm" | "icon-md" | "icon-lg"', default: '"md"' },
+    isDisabled: { type: "boolean", description: "Wins over the group's." },
+    isLoading: { type: "boolean", description: "Blocks presses and announces busy, at full contrast." },
+    haptic: { type: "false | HapticFeedback", description: "Falls back to the group's." },
+    onPress: { type: "() => void", description: "Runs before the state moves." },
+    className: { type: "string" },
+    children: {
+      type: "ReactNode | ((state: { isSelected: boolean; isDisabled: boolean }) => ReactNode)",
+      description: "Bare strings are wrapped in a label automatically.",
+    },
+  }}
+/>
+
+### ToggleButton.Group
+
+Owns the selection for the toggles inside it. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    selectionMode: { type: '"single" | "multiple"', default: '"multiple"' },
+    selected: { type: "string[]", description: "Controlled. The `value` of each selected toggle." },
+    defaultSelected: { type: "string[]", default: "[]" },
+    onSelected: {
+      type: "(selected: string[]) => void",
+      description: "Called with the whole new list. Never for a press that changes nothing.",
+    },
+    isSelectionRequired: { type: "boolean", default: "false", description: "Refuse to clear the last selection." },
+    layout: { type: '"attached" | "detached"', default: '"attached"' },
+    orientation: { type: '"horizontal" | "vertical"', default: '"horizontal"' },
+    variant: { type: '"default" | "outline" | "ghost"' },
+    size: { type: '"sm" | "md" | "lg" | "icon-sm" | "icon-md" | "icon-lg"' },
+    isDisabled: { type: "boolean", description: "Disables every toggle that does not say otherwise." },
+    haptic: { type: "false | HapticFeedback" },
+    feedback: { type: "PressableFeedback", description: "Unset, an attached toggle fades rather than scaling." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### ToggleButton.Label
+
+The toggle's text, coloured for the state it is in. Extends React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### useToggleButton
+
+Returns `{ isSelected, isDisabled, variant, size }` for a custom child that changes with the toggle.
+Throws outside a `<ToggleButton>`.

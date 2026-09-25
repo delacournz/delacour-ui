@@ -134,3 +134,17 @@ describe("cn with the semantic size tokens", () => {
 		expect(cn("border-input", "text-input-md")).toBe("border-input text-input-md");
 	});
 });
+
+describe("cn with Uniwind's corner-curve utilities", () => {
+	// `border-continuous` is a Uniwind utility, not a Tailwind one, and a bare
+	// tailwind-merge files it under border *colour* — so it and `border-border`
+	// were judged to conflict and one of them was silently dropped.
+	test("a corner curve and a border colour both survive", () => {
+		expect(cn("border-continuous", "border-border")).toBe("border-continuous border-border");
+		expect(cn("border-border", "border-continuous")).toBe("border-border border-continuous");
+	});
+
+	test("one corner curve replaces the other", () => {
+		expect(cn("border-continuous", "border-circular")).toBe("border-circular");
+	});
+});

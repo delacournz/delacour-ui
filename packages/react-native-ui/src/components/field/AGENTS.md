@@ -52,6 +52,18 @@ A form field's layout, and the one place its state is written down. Root plus
   `accessible={false}`, so the control stays the element a screen reader sees,
   and the inner detector claims a tap on the box itself rather than firing both.
   A field holds one control, so a second registration replaces the first.
+- **The label names the control, through the same context.** `Field.Label`
+  registers its text with `registerLabel`, the mirror of `registerPress`: a
+  control hands its press up, a label hands its name down. A control with no
+  text of its own — a [Slider](../slider/AGENTS.md) thumb is a capsule — reads
+  `field.label` as its `accessibilityLabel`, so "Volume" is announced rather than
+  a bare "40". React Native has no `<label for>`; this is that association, done
+  by hand. `resolveFieldLabelText` decides what qualifies and it is strict on
+  purpose: a plain string or number, trimmed, and nothing else. A label built
+  from elements has no text this side of a render, and guessing at one — an
+  icon's key, say — would name the control after the wrong thing. State rather
+  than a ref for the same reason as the press: the control renders differently
+  for it, and the label registers in an effect, so it costs one render on mount.
 - **A data-attribute class would also leave `bun test`.** Even for a part styling
   itself, `data-invalid:text-destructive` moves the decision from `field.variants.ts`
   into uniwind's runtime matcher, where no unit test can see it. The parts style
@@ -91,6 +103,13 @@ A form field's layout, and the one place its state is written down. Root plus
 - **`Field.Group` inserts no dividers**, unlike [`ListGroup`](../list-group/AGENTS.md). A list of rows
   without lines is a wall of text; fields are already held apart by whitespace,
   and a rule between every one is noise.
+- **`Field.Label` is not built on [`Label`](../label/AGENTS.md)**, the standalone
+  primitive. `Label` narrows `children` from `Text`'s and reports
+  `accessibilityState.disabled`, so wrapping it would change this part's public
+  surface. The two colour and fade identically instead, and
+  `label.variants.test.ts` holds them to it against `fieldVariants`' label slot
+  and `resolveFieldTextColor`. A required field uses `Label` directly, since
+  `Field.Label` has no `isRequired`.
 - **There is no `Field.Title`.** On the web it exists because a `<div>` is not a
   `<label>` — label-styled text with nothing to point `htmlFor` at. React Native
   has neither element nor association, so it and `Field.Label` would render the

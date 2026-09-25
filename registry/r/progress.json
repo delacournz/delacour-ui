@@ -1,0 +1,106 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "progress",
+	"type": "registry:ui",
+	"title": "Progress",
+	"description": "A bar showing how far a task has got, or a looping segment while it is under way.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/progress/AGENTS.md",
+			"target": "progress/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/index.ts",
+			"target": "progress/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress-fill.tsx",
+			"target": "progress/progress-fill.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress-header.tsx",
+			"target": "progress/progress-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress-label.tsx",
+			"target": "progress/progress-label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress-output.tsx",
+			"target": "progress/progress-output.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress-track.tsx",
+			"target": "progress/progress-track.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress.context.tsx",
+			"target": "progress/progress.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress.tsx",
+			"target": "progress/progress.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress.types.ts",
+			"target": "progress/progress.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress.variants.ts",
+			"target": "progress/progress.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	]
+}

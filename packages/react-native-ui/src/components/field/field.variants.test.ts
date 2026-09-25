@@ -7,6 +7,7 @@ import {
 	type FieldTextPart,
 	fieldVariants,
 	resolveFieldInteractive,
+	resolveFieldLabelText,
 	resolveFieldTextColor,
 } from "./field.variants";
 
@@ -212,5 +213,28 @@ describe("resolveFieldInteractive", () => {
 
 	test("hands the row to a control that offered one", () => {
 		expect(resolveFieldInteractive(() => undefined)).toBe(true);
+	});
+});
+
+describe("resolveFieldLabelText", () => {
+	test("hands a string label through, trimmed", () => {
+		expect(resolveFieldLabelText("Volume")).toBe("Volume");
+		expect(resolveFieldLabelText("  Volume\n")).toBe("Volume");
+	});
+
+	test("reads a number the way a screen reader would", () => {
+		expect(resolveFieldLabelText(42)).toBe("42");
+	});
+
+	// A label made of elements has no text this side of a render, and an empty
+	// string is not a name — both leave the control to name itself.
+	test("offers nothing for an element, an empty string, or no children at all", () => {
+		expect(resolveFieldLabelText("")).toBeNull();
+		expect(resolveFieldLabelText("   ")).toBeNull();
+		expect(resolveFieldLabelText(undefined)).toBeNull();
+		expect(resolveFieldLabelText(null)).toBeNull();
+		expect(resolveFieldLabelText(false)).toBeNull();
+		expect(resolveFieldLabelText({ type: "Text", props: {} })).toBeNull();
+		expect(resolveFieldLabelText(["a", "b"])).toBeNull();
 	});
 });

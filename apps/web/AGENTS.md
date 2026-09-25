@@ -52,6 +52,8 @@ src/
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
 ├── lib/seo.ts             PRODUCTS (ui, charts) and docsHead() — each docs page's head tags
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
+├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
+├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
 ├── lib/comparison.ts      the HeroUI comparison, as sourced data — see "/compare/heroui is data"
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
@@ -76,6 +78,7 @@ src/
 ├── start.ts               gzip + csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
+source.config.ts           global mdxOptions — remarkComponentCount, merged into Fumadocs' defaults
 scripts/generate-icons.ts  the browser icon set — see "Branding"
 public/favicon.*           generated
 public/icon-*.png          generated
@@ -166,7 +169,9 @@ than written:
   gate the QR popover uses, and renders nothing while the link is a placeholder.
 - **The showcase and component-index counts read `COMPONENTS.length`.** The showcase blurb used to
   say *Nineteen components* and was wrong by the time anyone noticed; a number on this site is
-  derived or it is a bug waiting.
+  derived or it is a bug waiting. The same rule holds in MDX: `components/index.mdx` opens with
+  `<ComponentCount />`, which a remark plugin spells from `COMPONENTS.length` — see
+  [A component page](#a-component-page).
 
 The token section's code samples are hand-written illustrations of `delacour theme`'s input and
 output, not its real output — keep them to a handful of tokens.
@@ -370,6 +375,23 @@ automatically.
 Add it to `content/docs/native/components/`, list it under the right `---Group---` in that folder's
 `meta.json`, and add an entry to `src/lib/components.ts` — that list drives the index grid and the
 landing page's component strip, so `components/index.mdx` needs nothing (it is `<PreviewGrid />`).
+
+Its opening sentence needs nothing either. It reads *Twenty components, each on its own import
+subpath*, and the word is `<ComponentCount />`, which `src/lib/remark-component-count.ts` replaces
+with `COMPONENTS.length` spelled through `numberToWords` in `src/lib/number-words.ts`. The word was
+typed into the prose once, and a test pinned it to the list's length; every branch that added a
+component then edited that line and that test, and the two branches conflicted on merge. Now the
+count is the list's, so the file it lives in is the file that changed anyway.
+
+It is a remark plugin, not a registered React component, because the docs are read four ways —
+the page, its `.md` twin, `llms-full.txt` and the search index — and only the page runs React.
+Fumadocs stringifies the processed markdown *after* the user's remark plugins, so a node replaced
+there reaches every reader as the word; a component would have left agents reading
+`<ComponentCount /> components`. The plugin is wired in `source.config.ts` as a **global**
+`mdxOptions`, which Fumadocs merges into its defaults — a collection-level `mdxOptions` on the
+`defineDocs` call in `src/lib/source.ts` would replace them. `number-words.ts` stops at 99 and
+throws past it; a helper for thousands would be untested weight. `remark-component-count.test.ts`
+checks the page opens with the element and that the sentence it renders counts the list.
 
 Every component page follows one shape, and `src/content.test.ts` fails the build if it does not:
 
@@ -953,6 +975,8 @@ bun run screenshots    # → apps/web/screenshots/, gitignored
 
 `scripts/screenshots.ts` holds the shot list — thirty-one frames covering the landing page, a component
 page and its install block, the components index, the installation pages, the customiser, the 404, `/compare/heroui`, `/privacy` and the cookie banner, in both themes, at
+`scripts/screenshots.ts` holds the shot list — thirty-one frames covering the landing page, a component
+page and its install block, the Chip page, the components index, the installation pages, the customiser, the 404, `/compare/heroui`, `/privacy` and the cookie banner, in both themes, at
 1440×878 and 390×844@2. A frame's `path` may carry a fragment (`/compare/heroui#matrix`), which is
 how a shot lands on one section without scripting a scroll.
 Add a frame there rather than photographing one by hand, so the next person's set is comparable to

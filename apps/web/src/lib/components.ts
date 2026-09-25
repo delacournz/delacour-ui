@@ -46,17 +46,36 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The Gesture API primitive every pressable in the library is built on.",
 	},
 	{
+		slug: "toggle-button",
+		name: "ToggleButton",
+		group: "Actions",
+		blurb: "A button that stays pressed \u2014 alone, or in a group choosing one option or several.",
+	},
+	{
 		slug: "field",
 		name: "Field",
 		group: "Forms",
 		blurb: "A form field's layout, and the one place its state is written down.",
 	},
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
+	{ slug: "textarea", name: "Textarea", group: "Forms", blurb: "A multiline text field, sized in rows." },
+	{
+		slug: "label",
+		name: "Label",
+		group: "Forms",
+		blurb: "A form control's name, with required, invalid and disabled states.",
+	},
 	{
 		slug: "checkbox",
 		name: "Checkbox",
 		group: "Forms",
 		blurb: "A box that is ticked or not \u2014 alone, or as one of a group sharing a value list.",
+	},
+	{
+		slug: "chip",
+		name: "Chip",
+		group: "Forms",
+		blurb: "An interactive pill — a filter that toggles, a tag, or a token with a remove control.",
 	},
 	{ slug: "radio", name: "Radio", group: "Forms", blurb: "One choice from a set, with a trailing indicator row." },
 	{
@@ -105,6 +124,18 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "meter",
+		name: "Meter",
+		group: "Feedback",
+		blurb: "A measurement on a fixed scale, coloured by where it falls.",
+	},
+	{
+		slug: "progress",
+		name: "Progress",
+		group: "Feedback",
+		blurb: "A bar showing how far a task has got, or that it is under way.",
+	},
+	{
 		slug: "spinner",
 		name: "Spinner",
 		group: "Feedback",
@@ -115,6 +146,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Skeleton",
 		group: "Feedback",
 		blurb: "A placeholder that shimmers or pulses while content loads.",
+	},
+	{
+		slug: "empty-state",
+		name: "EmptyState",
+		group: "Feedback",
+		blurb: "A placeholder for a list or screen with nothing in it, and the action that fills it.",
 	},
 	{
 		slug: "bottom-sheet",
@@ -133,6 +170,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Screen",
 		group: "Layout",
 		blurb: "A screen's frame: pinned chrome, a content region, and whatever scrolls between them.",
+	},
+	{
+		slug: "surface",
+		name: "Surface",
+		group: "Layout",
+		blurb: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
 	},
 	{
 		slug: "provider",

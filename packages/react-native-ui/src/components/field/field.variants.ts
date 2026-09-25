@@ -133,4 +133,24 @@ export function resolveFieldInteractive(press: (() => void) | null): press is ()
 	return press !== null;
 }
 
+/**
+ * The text a `Field.Label` can lend to the control beside it as its accessible
+ * name, or `null` when it has none to lend.
+ *
+ * Only a bare string or number qualifies. A label built from elements has no
+ * text this side of a render, and guessing at one would name a control after
+ * the wrong thing — an icon's key, say. Whitespace is trimmed and an empty
+ * string is an absence, because a screen reader handed `""` reads nothing at
+ * all, which is worse than reading the value alone.
+ *
+ * React Native has no `<label for>`; this is the association, done by hand
+ * through the field's context. Pure, so `bun test` reaches it. See AGENTS.md.
+ */
+export function resolveFieldLabelText(children: unknown): string | null {
+	if (typeof children === "number") return String(children);
+	if (typeof children !== "string") return null;
+	const text = children.trim();
+	return text === "" ? null : text;
+}
+
 export type FieldVariantProps = VariantProps<typeof fieldVariants>;

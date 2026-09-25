@@ -16,6 +16,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "chart", title: "Chart", description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip." },
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
+	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts a prefix or suffix inside its border." },

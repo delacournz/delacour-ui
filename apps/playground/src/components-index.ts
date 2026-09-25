@@ -76,6 +76,12 @@ const ROWS = [
 	{ slug: "progress", title: "Progress", description: "Values, indeterminate, colours, sizes", group: "Feedback" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
 	{
+		slug: "empty-state",
+		title: "EmptyState",
+		description: "Media, title, actions, card variant",
+		group: "Feedback",
+	},
+	{
 		slug: "bottom-sheet",
 		title: "Bottom sheet",
 		description: "Overlay, snap points, sticky footer, keyboard",

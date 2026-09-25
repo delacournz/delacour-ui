@@ -1,0 +1,157 @@
+---
+title: EmptyState
+description: A placeholder for a list or screen with nothing in it, and the action that fills it.
+icon: Inbox
+---
+
+<Preview id="empty-state/anatomy" title={null} />
+
+## Installation
+
+<ComponentInstall name="empty-state" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Icon } from "@/components/ui/icon";
+import { IconInboxEmpty } from "@/lib/icons/central";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 p-4">
+      <EmptyState>
+        <EmptyState.Header>
+          <EmptyState.Media variant="icon">
+            <Icon icon={IconInboxEmpty} />
+          </EmptyState.Media>
+          <EmptyState.Title>No messages yet</EmptyState.Title>
+          <EmptyState.Description>New conversations will show up here.</EmptyState.Description>
+        </EmptyState.Header>
+        <EmptyState.Content>
+          <Button onPress={() => console.log("compose")}>New message</Button>
+        </EmptyState.Content>
+      </EmptyState>
+    </View>
+  );
+}
+```
+
+## Variants
+
+`default` grows into its parent and centres itself there; `card` is a dashed block for an empty
+section beside populated ones.
+
+<Preview id="empty-state/variants" />
+
+```tsx
+<EmptyState>…</EmptyState>
+<EmptyState variant="card">…</EmptyState>
+```
+
+## Sizes
+
+One axis drives the padding, both gaps, the media box, the glyph and both type scales.
+
+<Preview id="empty-state/sizes" />
+
+```tsx
+<EmptyState size="sm">…</EmptyState>
+<EmptyState size="md">…</EmptyState>
+<EmptyState size="lg">…</EmptyState>
+```
+
+## Media
+
+`icon` tints a rounded box behind the glyph; `default` draws nothing, for an illustration that sizes
+itself.
+
+<Preview id="empty-state/media" />
+
+```tsx
+<EmptyState.Media variant="icon">
+  <Icon icon={IconCloudOff} />
+</EmptyState.Media>
+<EmptyState.Media>
+  <Image source={illustration} className="size-32" />
+</EmptyState.Media>
+```
+
+## Actions
+
+The buttons in `Content` keep their own loading and disabled states.
+
+<Preview id="empty-state/actions" />
+
+```tsx
+<EmptyState.Content>
+  <Button isLoading={isRetrying} onPress={retry}>Retry</Button>
+  <Button isDisabled variant="outline">Work offline</Button>
+</EmptyState.Content>
+```
+
+## In a list
+
+Render it in place of a list that has nothing to show.
+
+<Preview id="empty-state/emptied-list" />
+
+```tsx
+items.length === 0 ? (
+  <EmptyState variant="card">…</EmptyState>
+) : (
+  <ListGroup>…</ListGroup>
+);
+```
+
+## API Reference
+
+### EmptyState
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "card"',
+      default: '"default"',
+      description: "`default` grows into a bounded parent; `card` is a self-contained dashed block.",
+    },
+    size: {
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Drives the padding, both gaps, the media, the glyph and both type scales.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### EmptyState.Media
+
+Hidden from screen readers by default — the title already says what the picture shows.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "icon"',
+      default: '"default"',
+      description: "`icon` draws a tinted box sized for a glyph. A bare `Icon` inherits its size and colour either way.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### EmptyState.Header / Content
+
+`Header` is the centred column holding the media, title and description. `Content` is the action
+row under it, centred and wrapping.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### EmptyState.Title / Description
+
+The two lines of text. Extend React Native's `TextProps`; `Title` is announced as a header.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

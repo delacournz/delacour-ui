@@ -29,6 +29,7 @@
 		"meter",
 		"progress",
 		"spinner",
+		"empty-state",
 		"---Overlays---",
 		"bottom-sheet",
 		"---Navigation---",

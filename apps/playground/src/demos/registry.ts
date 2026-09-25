@@ -104,6 +104,14 @@ import * as demo_chip_states from "./chip/states";
 import * as demo_chip_tags from "./chip/tags";
 import * as demo_chip_variants_and_colours from "./chip/variants-and-colours";
 import * as demo_chip_with_content from "./chip/with-content";
+import * as demo_empty_state_actions from "./empty-state/actions";
+import * as demo_empty_state_anatomy from "./empty-state/anatomy";
+import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
+import * as demo_empty_state_media from "./empty-state/media";
+import * as demo_empty_state_search from "./empty-state/search";
+import * as demo_empty_state_sizes from "./empty-state/sizes";
+import * as demo_empty_state_text_only from "./empty-state/text-only";
+import * as demo_empty_state_variants from "./empty-state/variants";
 import * as demo_field_anatomy_all_four from "./field/anatomy/all-four";
 import * as demo_field_anatomy_label_and_control from "./field/anatomy/label-and-control";
 import * as demo_field_anatomy_the_gap_ladder from "./field/anatomy/the-gap-ladder";
@@ -347,6 +355,14 @@ export const DEMOS = {
 	"chip/tags": demo_chip_tags,
 	"chip/variants-and-colours": demo_chip_variants_and_colours,
 	"chip/with-content": demo_chip_with_content,
+	"empty-state/actions": demo_empty_state_actions,
+	"empty-state/anatomy": demo_empty_state_anatomy,
+	"empty-state/emptied-list": demo_empty_state_emptied_list,
+	"empty-state/media": demo_empty_state_media,
+	"empty-state/search": demo_empty_state_search,
+	"empty-state/sizes": demo_empty_state_sizes,
+	"empty-state/text-only": demo_empty_state_text_only,
+	"empty-state/variants": demo_empty_state_variants,
 	"field/anatomy/all-four": demo_field_anatomy_all_four,
 	"field/anatomy/label-and-control": demo_field_anatomy_label_and_control,
 	"field/anatomy/the-gap-ladder": demo_field_anatomy_the_gap_ladder,

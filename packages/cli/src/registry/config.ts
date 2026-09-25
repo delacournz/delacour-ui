@@ -124,6 +124,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	"empty-state": {
+		title: "Empty State",
+		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+		categories: ["feedback"],
+	},
 	field: {
 		title: "Field",
 		description: "One control with its label, description and error — and the state they all read.",

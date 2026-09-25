@@ -973,8 +973,8 @@ bun run start          # or bun run dev, in another shell
 bun run screenshots    # → apps/web/screenshots/, gitignored
 ```
 
-`scripts/screenshots.ts` holds the shot list — twenty-eight frames covering the landing page, a component
-page and its install block, the components index, the installation pages, the customiser, the 404, `/compare/heroui`, `/privacy` and the cookie banner, in both themes, at
+`scripts/screenshots.ts` holds the shot list — thirty-one frames covering the landing page, a component
+page and its install block, the Chip page, the components index, the installation pages, the customiser, the 404, `/compare/heroui`, `/privacy` and the cookie banner, in both themes, at
 1440×878 and 390×844@2. A frame's `path` may carry a fragment (`/compare/heroui#matrix`), which is
 how a shot lands on one section without scripting a scroll.
 Add a frame there rather than photographing one by hand, so the next person's set is comparable to

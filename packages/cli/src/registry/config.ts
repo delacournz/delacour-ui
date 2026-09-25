@@ -102,6 +102,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",
 		categories: ["forms"],
 	},
+	chip: {
+		title: "Chip",
+		description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+		categories: ["controls"],
+	},
 	chart: {
 		title: "Chart",
 		description:

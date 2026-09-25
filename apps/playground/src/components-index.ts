@@ -42,6 +42,7 @@ const ROWS = [
 	{ slug: "button", title: "Button", description: "Variants, sizes, icons, loading", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
+	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "label", title: "Label", description: "Required, invalid and disabled states", group: "Forms" },

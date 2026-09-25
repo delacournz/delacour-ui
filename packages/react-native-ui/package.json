@@ -39,6 +39,7 @@
 		"./button": "./src/components/button/index.ts",
 		"./chart": "./src/components/chart/index.ts",
 		"./checkbox": "./src/components/checkbox/index.ts",
+		"./chip": "./src/components/chip/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",

@@ -259,6 +259,41 @@
 			]
 		},
 		{
+			"name": "chip",
+			"type": "registry:ui",
+			"title": "Chip",
+			"description": "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"badge",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/chip/AGENTS.md",
+				"ui/chip/chip-close-button.tsx",
+				"ui/chip/chip-end-content.tsx",
+				"ui/chip/chip-label.tsx",
+				"ui/chip/chip-start-content.tsx",
+				"ui/chip/chip.context.tsx",
+				"ui/chip/chip.tsx",
+				"ui/chip/chip.types.ts",
+				"ui/chip/chip.variants.ts",
+				"ui/chip/index.ts"
+			]
+		},
+		{
 			"name": "cn",
 			"type": "registry:lib",
 			"title": "cn",

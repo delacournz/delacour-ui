@@ -71,6 +71,7 @@ export {
 	type ListOwnsReleaseInput,
 	listDragHeight,
 	listOwnsRelease,
+	restingDetent,
 	scrollLockTarget,
 } from "./scroll/scroll-pan";
 export {

@@ -7,7 +7,7 @@ The two pans that drive a sheet, and the haptic hooks they fire.
 | Path | What |
 | --- | --- |
 | `gesture.types.ts` | `SheetPans` (handle and content), `SheetHaptics` (the three worklet props), `SheetPanOptions`, the activation constants |
-| `use-sheet-pan.ts` | `useSheetPan(state, geometry, animateTo, options)` — both pans from one set of hook-scope handlers |
+| `use-sheet-pan.ts` | `useSheetPan(state, geometry, animateTo, settleAt, options)` — both pans from one set of hook-scope handlers |
 
 ## The handlers
 
@@ -26,6 +26,19 @@ detent haptic; entering the rubber band fires the over-drag haptic once.
 projects the release velocity a fifth of a second ahead and picks the nearest
 candidate, closing only when the pan may close, and `animateTo` gets half the
 velocity in height space — upward positive, so `−velocityY`.
+
+A content pan over a scrollable is shared with the list. When `listOwnsRelease`
+says the release is the list's — the sheet at its highest detent, the list
+scrolled — the sheet does not snap, but it **still settles**: the finger moved
+`base` by hand, so no animation ran and nothing else would write
+`currentIndex`. `restingDetent` names the detent under `base` and `settleAt`
+does the bookkeeping of a finished animation without the motion —
+`currentIndex`, then `onSettle`, so the handle's accessibility value and
+`onIndexChange` catch up. A `return` there once left the index at the previous
+detent (or at `-1`) under a sheet sitting at 90%, and the next overlay tap did
+nothing because `close` read the sheet as already closed. Between detents,
+which the ownership test should rule out, the sheet snaps to the nearest with
+no velocity and never closes: the release velocity is the list's momentum.
 
 ## Activation
 

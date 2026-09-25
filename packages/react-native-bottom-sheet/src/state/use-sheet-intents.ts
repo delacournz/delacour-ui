@@ -89,6 +89,7 @@ export function useSheetIntents(
 			const resolution = resolveIntent(
 				{
 					currentIndex: effectiveIndex,
+					base: state.base.value,
 					layoutReady: current.ready,
 					detents: geometry.detents.value,
 					closedHeight: geometry.closedHeight.value,

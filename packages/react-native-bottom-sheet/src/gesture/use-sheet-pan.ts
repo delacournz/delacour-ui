@@ -3,7 +3,7 @@ import { Gesture, type GestureType, type PanGesture } from "react-native-gesture
 import { KeyboardController } from "react-native-keyboard-controller";
 import { cancelAnimation, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
-import type { AnimateTo } from "../animation/animation.types";
+import type { AnimateTo, SettleAt } from "../animation/animation.types";
 import {
 	crossedDetent,
 	detentUnder,
@@ -12,6 +12,7 @@ import {
 	listDragHeight,
 	listOwnsRelease,
 	resistOverDrag,
+	restingDetent,
 	SCROLLABLE_TYPE,
 	selectSnapHeight,
 } from "../core";
@@ -44,6 +45,14 @@ function dismissKeyboard(): void {
  * heading for with `selectSnapHeight` and hands it to `animateTo` with the
  * release velocity. The close is a candidate only when `enablePanDownToClose`.
  *
+ * A content pan the list owns at release — the sheet at its top, the list
+ * scrolled — does not snap, but it still settles: the finger moved `base` by
+ * hand, so no animation ran and nothing else writes `currentIndex`. `settleAt`
+ * on the detent under `base` is the bookkeeping of a finished animation
+ * without the motion; between detents (which the list ownership test should
+ * rule out) the sheet snaps to the nearest one with no velocity instead, since
+ * the release velocity is the list's momentum.
+ *
  * The content pan waits six points of vertical travel before it claims a
  * touch and gives up after twelve horizontal, so a tap lands on the button or
  * the field under it and a horizontal pager inside the sheet keeps its swipe.
@@ -62,6 +71,7 @@ export function useSheetPan(
 	state: SheetSharedState,
 	geometry: SheetGeometry,
 	animateTo: AnimateTo,
+	settleAt: SettleAt,
 	options: SheetPanOptions
 ): SheetPans {
 	const startBase = useSharedValue(0);
@@ -152,6 +162,16 @@ export function useSheetPan(
 			animateTo(target, "gesture", velocity / 2);
 		};
 
+		// A release the list owns settles the sheet on the detent under `base`
+		// with no motion; `false` when it sits between detents and has to snap.
+		const settleResting = (): boolean => {
+			"worklet";
+			const resting = restingDetent(state.base.value, geometry.detents.value);
+			if (resting === null) return false;
+			settleAt(resting, "gesture");
+			return true;
+		};
+
 		const release = (event: PanEvent): void => {
 			"worklet";
 			if (state.gestureSource.value === GESTURE_SOURCE.NONE) return;
@@ -159,23 +179,25 @@ export function useSheetPan(
 			state.gestureSource.value = GESTURE_SOURCE.NONE;
 			const config = state.config.value;
 			const closed = geometry.closedHeight.value;
-			const velocity = -event.velocityY;
 
 			// The finger was scrolling rows at the top detent: the release is the
-			// list's momentum, not a snap.
+			// list's momentum, not a snap — but the sheet still settles where it is.
 			const listOwns = listOwnsRelease({
 				scrollable: overList(source),
 				offset: state.scrollOffsetY.value,
 				base: state.base.value,
 				highest: geometry.highest.value,
 			});
-			if (listOwns) return;
+			if (listOwns && settleResting()) return;
 
+			// A list-owned release between detents (which `listOwnsRelease` should
+			// rule out) snaps to the nearest with no velocity and never closes.
+			const velocity = listOwns ? 0 : -event.velocityY;
 			const target = selectSnapHeight({
 				height: state.base.value,
 				velocity,
 				detents: geometry.detents.value,
-				closedHeight: config.enablePanDownToClose ? closed : null,
+				closedHeight: config.enablePanDownToClose && !listOwns ? closed : null,
 				projection: SNAP_PROJECTION,
 			});
 
@@ -213,6 +235,7 @@ export function useSheetPan(
 		state,
 		geometry,
 		animateTo,
+		settleAt,
 		startBase,
 		startScroll,
 		listHeld,

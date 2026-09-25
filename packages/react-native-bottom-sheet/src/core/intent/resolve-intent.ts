@@ -1,9 +1,18 @@
 import type { SheetIntent } from "../sheet.types";
 
+/** Settle tolerance: a base within this of the closed height is closed. */
+const SETTLE_EPSILON = 0.5;
+
 /** What the resolver needs to know about the sheet at the moment an intent lands. */
 export type IntentState = {
 	/** The settled index, `-1` closed. */
 	currentIndex: number;
+	/**
+	 * The keyboard-free height right now. A sheet is open when either says so:
+	 * a release the list owned once left `currentIndex` at `-1` under a sheet
+	 * sitting at its top, and a `close` read it as closed and did nothing.
+	 */
+	base: number;
 	layoutReady: boolean;
 	/** Ascending, normalised detents. */
 	detents: readonly number[];
@@ -44,7 +53,7 @@ export function resolveIntent(state: IntentState, intent: SheetIntent): IntentRe
 	"worklet";
 	const detents = state.detents;
 	const count = detents.length;
-	const isOpen = state.currentIndex >= 0;
+	const isOpen = state.currentIndex >= 0 || state.base > state.closedHeight + SETTLE_EPSILON;
 
 	if (intent.kind === "close") {
 		return isOpen ? { action: "animate", target: state.closedHeight } : null;

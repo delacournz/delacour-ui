@@ -63,6 +63,24 @@ export function listOwnsRelease(input: ListOwnsReleaseInput): boolean {
 }
 
 /**
+ * The detent a base is resting on — the one within the settle tolerance of
+ * it — or `null` when it sits between two.
+ *
+ * A release the list owns still has to settle the sheet's bookkeeping: the
+ * finger carried the sheet to the top and kept going, so no animation ran and
+ * nothing wrote `currentIndex`. The pan asks which detent `base` is on and
+ * settles there without motion; between detents it snaps instead.
+ */
+export function restingDetent(base: number, detents: readonly number[]): number | null {
+	"worklet";
+	for (let index = 0; index < detents.length; index += 1) {
+		const detent = detents[index] as number;
+		if (Math.abs(base - detent) <= AT_DETENT) return detent;
+	}
+	return null;
+}
+
+/**
  * Where a list is held while the sheet is below its highest detent.
  *
  * Wherever it was when the lock engaged, never above the top — a handle drag

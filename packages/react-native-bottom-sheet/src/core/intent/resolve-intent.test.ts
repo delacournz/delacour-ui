@@ -4,13 +4,16 @@ import { type IntentState, resolveIntent } from "./resolve-intent";
 
 const ready: IntentState = {
 	currentIndex: -1,
+	base: 0,
 	layoutReady: true,
 	detents: [200, 400, 800],
 	closedHeight: 0,
 	maxHeight: 800,
 	initialIndex: 0,
 };
-const open: IntentState = { ...ready, currentIndex: 1 };
+const open: IntentState = { ...ready, currentIndex: 1, base: 400 };
+/** A sheet visibly open whose settled index never caught up — a release the list owned. */
+const staleClosed: IntentState = { ...ready, currentIndex: -1, base: 800 };
 const unmeasured: IntentState = { ...ready, layoutReady: false, detents: [] };
 
 const intent = (kind: SheetIntent["kind"], extra: Record<string, unknown> = {}): SheetIntent =>
@@ -33,6 +36,7 @@ describe("resolveIntent", () => {
 
 		test("is a no-op on a sheet that is already open", () => {
 			expect(resolveIntent(open, intent("open"))).toBeNull();
+			expect(resolveIntent(staleClosed, intent("open"))).toBeNull();
 		});
 
 		test("with nothing to open to there is nothing to do", () => {
@@ -47,6 +51,20 @@ describe("resolveIntent", () => {
 				action: "animate",
 				target: -50,
 			});
+		});
+
+		test("a visibly open sheet closes even when its settled index still says closed", () => {
+			expect(resolveIntent(staleClosed, intent("close"))).toEqual({ action: "animate", target: 0 });
+			expect(resolveIntent(staleClosed, intent("forceClose"))).toEqual({ action: "jump", target: 0 });
+			expect(resolveIntent(staleClosed, intent("snapToIndex", { index: -1 }))).toEqual({
+				action: "animate",
+				target: 0,
+			});
+		});
+
+		test("a sheet resting within the settle tolerance of closed is closed", () => {
+			expect(resolveIntent({ ...ready, base: 0.4 }, intent("close"))).toBeNull();
+			expect(resolveIntent({ ...ready, closedHeight: -50, base: -49.8 }, intent("close"))).toBeNull();
 		});
 
 		test("closing a closed sheet is nothing — no deadlock, no phantom onClose", () => {

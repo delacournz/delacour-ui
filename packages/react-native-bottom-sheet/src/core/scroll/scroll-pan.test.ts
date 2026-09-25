@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { SCROLLABLE_TYPE } from "../sheet.types";
-import { listDragHeight, listOwnsRelease, scrollLockTarget } from "./scroll-pan";
+import { listDragHeight, listOwnsRelease, restingDetent, scrollLockTarget } from "./scroll-pan";
 
 describe("listDragHeight", () => {
 	const highest = 600;
@@ -57,6 +57,25 @@ describe("listOwnsRelease", () => {
 
 	test("static content never hands a release to a list", () => {
 		expect(listOwnsRelease({ scrollable: false, offset: 120, base: 600, highest })).toBe(false);
+	});
+});
+
+describe("restingDetent", () => {
+	const detents = [200, 400, 600];
+
+	test("a base on a detent, or within the settle tolerance of one, is resting on it", () => {
+		expect(restingDetent(600, detents)).toBe(600);
+		expect(restingDetent(599.7, detents)).toBe(600);
+		expect(restingDetent(400.4, detents)).toBe(400);
+	});
+
+	test("a base between detents rests on none", () => {
+		expect(restingDetent(500, detents)).toBeNull();
+		expect(restingDetent(598, detents)).toBeNull();
+	});
+
+	test("with no detents nothing can be rested on", () => {
+		expect(restingDetent(0, [])).toBeNull();
 	});
 });
 

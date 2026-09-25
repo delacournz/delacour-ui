@@ -201,7 +201,7 @@ function BottomSheetRoot({
 		onClose,
 		onAnimate,
 	});
-	const { animateTo, jumpTo } = useAnimateTo({
+	const { animateTo, jumpTo, settleAt } = useAnimateTo({
 		state,
 		geometry,
 		animation,
@@ -211,7 +211,7 @@ function BottomSheetRoot({
 	});
 	const intents = useSheetIntents(state, geometry, animateTo, jumpTo);
 	const { dispatch } = intents;
-	const pans = useSheetPan(state, geometry, animateTo, {
+	const pans = useSheetPan(state, geometry, animateTo, settleAt, {
 		enableHandlePanningGesture,
 		enableContentPanningGesture,
 		onDetentHaptic,

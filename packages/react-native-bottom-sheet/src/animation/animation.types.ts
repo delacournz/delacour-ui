@@ -15,6 +15,13 @@ export type AnimateTo = (target: number, source: AnimationSource, velocity: numb
 /** Puts `base` at a height with no animation and settles immediately. */
 export type JumpTo = (target: number, source: AnimationSource) => void;
 
+/**
+ * Settles at a height the sheet is already on — the bookkeeping of a finished
+ * animation with no animation: `currentIndex`, then `onSettle`. For a release
+ * that moved the sheet by hand and never animated.
+ */
+export type SettleAt = (target: number, source: AnimationSource) => void;
+
 /** What the JS thread hears when an animation lands — `count` is how many detents there were, for the handle's accessibility value. */
 export type SettleListener = (index: number, height: number, source: AnimationSource, count: number) => void;
 

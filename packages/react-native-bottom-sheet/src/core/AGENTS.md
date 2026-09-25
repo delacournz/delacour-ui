@@ -47,11 +47,11 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `geometry/clamp-height.ts` | W `clampHeight` — `NaN` collapses to closed |
 | `geometry/detached-frame.ts` | `resolveDetached`, `DETACHED_DEFAULTS`, W `detachedFrame` — left, width, resting bottom |
 | `backdrop/backdrop-opacity.ts` | W `backdropOpacity`, W `backdropInteractive` |
-| `intent/resolve-intent.ts` | W `resolveIntent(state, intent)` — `wait` / `animate` / `jump` / `null` |
+| `intent/resolve-intent.ts` | W `resolveIntent(state, intent)` — `wait` / `animate` / `jump` / `null`; open means `currentIndex ≥ 0` **or** `base` above the closed height, so a stale index never strands a visible sheet |
 | `intent/layout-ready.ts` | W `isLayoutReady` |
 | `haptic/crossed-detent.ts` | W `crossedDetent` (boolean), W `detentUnder` (index) |
 | `scroll/scroll-lock.ts` | W `shouldLockScroll`, W `contentPanDrivesSheet` |
-| `scroll/scroll-pan.ts` | W `listDragHeight` — the start offset as a budget the finger spends before the sheet moves; W `listOwnsRelease`; W `scrollLockTarget` |
+| `scroll/scroll-pan.ts` | W `listDragHeight` — the start offset as a budget the finger spends before the sheet moves; W `listOwnsRelease`; W `restingDetent` — the detent within the settle tolerance of a base, for a release the list owned; W `scrollLockTarget` |
 | `animation/select-animation.ts` | `selectAnimation`, `IOS_SPRING`, `ANDROID_TIMING` — platform defaults as data, easing by name |
 
 W marks a module-scope `"worklet"`; each is flat (see the package `AGENTS.md`)

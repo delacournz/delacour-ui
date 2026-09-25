@@ -6,9 +6,9 @@ How `base` moves, and how the JS thread hears about it.
 
 | Path | What |
 | --- | --- |
-| `animation.types.ts` | `SheetAnimation` (the prop), `AnimateTo` / `JumpTo` (the worklets), `SettleListener` / `AnimateListener` (what JS hears) |
+| `animation.types.ts` | `SheetAnimation` (the prop), `AnimateTo` / `JumpTo` / `SettleAt` (the worklets), `SettleListener` / `AnimateListener` (what JS hears) |
 | `resolve-animation.ts` | Easing and reduce-motion names to Reanimated's values; `toReanimated` turns the core's resolved config into a `withSpring` / `withTiming` config |
-| `use-animate-to.ts` | `animateTo(target, source, velocity)` and `jumpTo(target, source)`, hook-scope worklets |
+| `use-animate-to.ts` | `animateTo(target, source, velocity)`, `jumpTo(target, source)` and `settleAt(target, source)`, hook-scope worklets |
 | `use-settle-callbacks.ts` | The two JS listeners, stable for the sheet's lifetime, reading every prop through a ref |
 
 ## The shape
@@ -27,6 +27,12 @@ index the sheet never reached. Settling writes `currentIndex` and schedules
 
 `jumpTo` is `animateTo` without the motion — `forceClose`, a container resize,
 `animateOnMount: false`.
+
+`settleAt` is the completion alone: no `onAnimate`, no target recorded, `base`
+written to the detent it is already within a settle tolerance of, then the same
+`currentIndex` write and `onSettle`. The content pan uses it for a release the
+list owns — the finger carried the sheet to the top and kept scrolling, so
+nothing animated and nothing else would report the index.
 
 ## Reanimated 4
 

@@ -4,7 +4,7 @@ import { cancelAnimation, withSpring, withTiming } from "react-native-reanimated
 import { scheduleOnRN } from "react-native-worklets";
 import { type AnimationSource, indexForHeight, type ReduceMotionMode, selectAnimation } from "../core";
 import { ANIM_STATUS, type SheetGeometry, type SheetSharedState } from "../state/state.types";
-import type { AnimateListener, AnimateTo, JumpTo, SettleListener, SheetAnimation } from "./animation.types";
+import type { AnimateListener, AnimateTo, JumpTo, SettleAt, SettleListener, SheetAnimation } from "./animation.types";
 import { toReanimated } from "./resolve-animation";
 
 export type UseAnimateToOptions = {
@@ -24,7 +24,11 @@ export type UseAnimateToOptions = {
  * tells the JS thread an animation started, and hands `base` to a spring or a
  * timing whose completion writes `currentIndex` and reports the settle.
  * `jumpTo` is the same without the motion — `forceClose`, a container resize,
- * and `animateOnMount: false`.
+ * and `animateOnMount: false`. `settleAt` is the completion alone: no
+ * `onAnimate`, no target recorded, `base` written to the detent it is already
+ * within a settle tolerance of. It is for the content pan whose release the
+ * list owns — the finger carried the sheet to the top and kept scrolling, so
+ * nothing animated and nothing would otherwise write `currentIndex`.
  *
  * Both are hook-scope worklets: they close over `indexForHeight` from the core
  * in the ordinary way, which is what the flat-worklet rule permits and what a
@@ -34,7 +38,11 @@ export type UseAnimateToOptions = {
  * and an animation that interrupted it has its own completion; settling on
  * `finished === false` would report an index the sheet never reached.
  */
-export function useAnimateTo(options: UseAnimateToOptions): { animateTo: AnimateTo; jumpTo: JumpTo } {
+export function useAnimateTo(options: UseAnimateToOptions): {
+	animateTo: AnimateTo;
+	jumpTo: JumpTo;
+	settleAt: SettleAt;
+} {
 	const { state, geometry, animation, overrideReduceMotion, onSettle, onAnimate } = options;
 	const platform = Platform.OS;
 	const animationKey = JSON.stringify(animation ?? null);
@@ -87,6 +95,13 @@ export function useAnimateTo(options: UseAnimateToOptions): { animateTo: Animate
 			settle(target, source);
 		};
 
-		return { animateTo, jumpTo };
+		const settleAt: SettleAt = (target, source) => {
+			"worklet";
+			cancelAnimation(state.base);
+			state.base.value = target;
+			settle(target, source);
+		};
+
+		return { animateTo, jumpTo, settleAt };
 	}, [state, geometry, resolved, onSettle, onAnimate]);
 }

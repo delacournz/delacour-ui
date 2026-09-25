@@ -73,9 +73,8 @@ import { cn } from "${lib}/cn";
 // Referenced so the bundler cannot tree-shake an import away and hide a module
 // that would have failed to resolve.
 const REGISTERED = [
-	Accordion, Badge, BottomSheet, Button, Checkbox, DelacourProvider, Field, Icon, Input, Label,
-	ListGroup, Meter, Pressable, Progress, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs,
-	Text,
+	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, Label, ListGroup, Meter,
+	Pressable, Progress, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
 ];
 
 /**

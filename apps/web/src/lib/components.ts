@@ -87,6 +87,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 	{ slug: "badge", name: "Badge", group: "Data display", blurb: "A compact label for status, category or count." },
 	{ slug: "icon", name: "Icon", group: "Data display", blurb: "Central Icons, sized and coloured by inheritance." },
 	{
+		slug: "item",
+		name: "Item",
+		group: "Data display",
+		blurb: "A row of media, text and actions — standalone, or as a ListGroup row.",
+	},
+	{
 		slug: "list-group",
 		name: "ListGroup",
 		group: "Data display",

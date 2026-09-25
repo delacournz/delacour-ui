@@ -1,0 +1,237 @@
+---
+title: Item
+description: A row of media, text and actions, for lists and settings — standalone, or as a ListGroup row.
+icon: PanelLeft
+---
+
+<Preview id="item/in-a-list-group" title={null} />
+
+## Installation
+
+<ComponentInstall name="item" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Item } from "@/components/ui/item";
+import { IconFileText } from "@/lib/icons/central";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Item variant="outline">
+        <Item.Media variant="icon">
+          <Icon icon={IconFileText} />
+        </Item.Media>
+        <Item.Content>
+          <Item.Title>Invoice.pdf</Item.Title>
+          <Item.Description>2.4 MB · Updated yesterday</Item.Description>
+        </Item.Content>
+        <Item.Actions>
+          <Button onPress={() => console.log("open")} size="sm" variant="outline">
+            <Button.Label>Open</Button.Label>
+          </Button>
+        </Item.Actions>
+      </Item>
+    </View>
+  );
+}
+```
+
+## Variants
+
+<Preview id="item/variants" />
+
+```tsx
+<Item variant="outline">…</Item>
+<Item variant="muted">…</Item>
+```
+
+## Sizes
+
+Set once on the item; the media, title and description follow it.
+
+<Preview id="item/sizes" />
+
+```tsx
+<Item size="sm">…</Item>
+<Item size="lg">…</Item>
+```
+
+## Media
+
+<Preview id="item/media" />
+
+```tsx
+<Item.Media>…</Item.Media>
+<Item.Media variant="icon">…</Item.Media>
+<Item.Media variant="image">…</Item.Media>
+```
+
+## In a ListGroup
+
+An item inside a `ListGroup` takes the group's size, draws no surface of its own and lines up with the group's dividers.
+
+<Preview id="item/in-a-list-group" />
+
+```tsx
+import { ListGroup } from "@/components/ui/list-group";
+
+<ListGroup>
+  <Item onPress={openWifi}>
+    <Item.Media>
+      <Icon icon={IconWifiFull} />
+    </Item.Media>
+    <Item.Content>
+      <Item.Title>Wi-Fi</Item.Title>
+    </Item.Content>
+    <Item.Actions>
+      <Icon icon={IconChevronRight} />
+    </Item.Actions>
+  </Item>
+</ListGroup>;
+```
+
+## Selection
+
+<Preview id="item/selection" />
+
+```tsx
+<Item isSelected={plan === "yearly"} onPress={() => setPlan("yearly")}>…</Item>
+```
+
+## States
+
+```tsx
+<Item isDisabled onPress={openSecurity}>…</Item>
+<Item busy={isSyncing} onPress={sync}>…</Item>
+```
+
+## Controls in the actions
+
+<Preview id="item/controls-in-actions" />
+
+```tsx
+<Item>
+  <Item.Content>
+    <Item.Title>Dark mode</Item.Title>
+  </Item.Content>
+  <Item.Actions>
+    <Switch accessibilityLabel="Dark mode" isSelected={isDark} onSelectedChange={setIsDark} />
+  </Item.Actions>
+</Item>
+```
+
+<Callout type="warn">
+Do not put a control inside an item that has an `onPress`. A pressable item merges its children into
+one accessible element, so VoiceOver cannot reach a button or switch inside it. Leave the item static,
+or make the whole row the control with `accessibilityRole="switch"`.
+</Callout>
+
+## Header and footer
+
+<Preview id="item/header-and-footer" />
+
+```tsx
+<Item orientation="vertical">
+  <Item.Header>…</Item.Header>
+  <Item.Content>…</Item.Content>
+  <Item.Footer>…</Item.Footer>
+</Item>
+```
+
+## Carousel
+
+```tsx
+<ScrollView horizontal>
+  <Item.Group orientation="horizontal">
+    <Item className="w-36" orientation="vertical" variant="outline">…</Item>
+  </Item.Group>
+</ScrollView>
+```
+
+## API Reference
+
+### Item
+
+A `Pressable` when given `onPress` or `onLongPress`, so `feedback`, `haptic` and `busy` are
+inherited; a plain view without either.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "outline" | "muted"',
+      default: '"default"',
+      description: "Ignored inside a `ListGroup`, which draws the surface.",
+    },
+    size: {
+      type: '"sm" | "md" | "lg"',
+      default: '"md"',
+      description: "Row density. Inside a `ListGroup`, defaults to the group's size.",
+    },
+    orientation: { type: '"horizontal" | "vertical"', default: '"horizontal"' },
+    isDisabled: { type: "boolean", default: "false" },
+    isSelected: {
+      type: "boolean",
+      default: "false",
+      description: "Lays the accent fill over the surface and announces the item as selected.",
+    },
+    onPress: { type: "() => void", description: "Makes the item a `Pressable` announced as a button." },
+    feedback: {
+      type: '"scale" | "fade" | "scale-fade" | "none"',
+      description: "`fade` inside a `ListGroup`, `scale` otherwise.",
+    },
+    className: { type: "string" },
+    children: {
+      type: "ReactNode",
+      description: "Bare strings become an `Item.Content` around an `Item.Title` automatically.",
+    },
+  }}
+/>
+
+### Item.Media
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"default" | "icon" | "image"',
+      default: '"default"',
+      description: "A bare icon, an icon on a filled tile, or a clipped square for an image.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Item.Content / Actions / Header / Footer
+
+Extend React Native's `ViewProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Item.Title / Description
+
+Extend React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Item.Group
+
+<TypeTable
+  type={{
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"vertical"',
+      description: "`horizontal` runs the items across, for a carousel.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Item.Separator
+
+A `Separator`. Takes its `orientation` and `className`.

@@ -81,6 +81,21 @@ and `Chip.CloseButton`.
   inner detector and never also toggles the chip. It presses with `fade` —
   a spring on a glyph that small reads as a jitter — and inherits the current
   surface's colour, so it turns with the label on selection.
+- **On a pressable chip, removal is an accessibility action, not a second
+  element.** iOS folds every descendant of an accessible view into one element,
+  so a close control inside a button or toggle chip was unreachable by swipe and
+  its label was read as part of the chip's — "React Native, Remove React
+  Native". `resolveChipCloseExposure` decides: a static chip leaves the close
+  control as its own element; a pressable one hides it
+  (`accessibilityElementsHidden`, `no-hide-descendants`) and adds a `remove`
+  action, labelled by `closeAccessibilityLabel`, that calls `onClose` —
+  VoiceOver's Actions rotor, TalkBack's actions menu. A caller's own
+  `accessibilityActions` are kept beside it.
+- **`self-start` is Badge's, and beside a taller sibling in a row it top-aligns
+  the chip.** It is what keeps a chip content-sized in a column, which is the
+  common case; in a `flex-row items-center` holding something taller — a
+  `Switch` — pass `className="self-center"`, which tailwind-merge lets win. The
+  playground's `controlled-and-uncontrolled` demo does exactly this.
 - **Icons are composed, never passed as props.** The root wraps its subtree in an
   `IconDefaultsProvider` and a `TextClassProvider` resolved from the *current*
   surface, so a bare `<Icon>` or `<Text>` follows the chip into and out of

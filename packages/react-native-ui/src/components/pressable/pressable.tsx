@@ -14,9 +14,10 @@ import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Presets } from "react-native-pulsar";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import { useResolveClassNames } from "uniwind";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
-import { type PressableFeedback, resolvePressedState } from "./pressable.variants";
+import { type PressableFeedback, resolvePressedState, resolveRestOpacity } from "./pressable.variants";
 
 const PRESS_SPRING = { damping: 18, mass: 0.4, stiffness: 320 } as const;
 
@@ -154,6 +155,10 @@ export function Pressable({
 	// the worklet closes over, and a fresh object each render would rebuild the
 	// animated style every render.
 	const { opacity: targetOpacity, scale: targetScale } = resolvePressedState(feedback, pressedScale, pressedOpacity);
+	// The animated style below owns `opacity` on the view, so a className's own
+	// opacity — a disabled variant's `opacity-50` — is read here and multiplied
+	// in rather than overwritten by the resting 1. See `resolveRestOpacity`.
+	const restOpacity = resolveRestOpacity(useResolveClassNames(className ?? "").opacity);
 
 	const gesture = useMemo(() => {
 		const tap = Gesture.Tap()
@@ -187,7 +192,7 @@ export function Pressable({
 	}, [haptic, interactive, onLongPress, onPress, pressed]);
 
 	const animatedStyle = useAnimatedStyle(() => ({
-		opacity: 1 - pressed.value * (1 - targetOpacity),
+		opacity: restOpacity * (1 - pressed.value * (1 - targetOpacity)),
 		transform: [{ scale: 1 - pressed.value * (1 - targetScale) }],
 	}));
 

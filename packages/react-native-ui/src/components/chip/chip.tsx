@@ -1,5 +1,5 @@
 import { Children, type ReactElement, type ReactNode, useCallback, useMemo } from "react";
-import { View } from "react-native";
+import { type AccessibilityActionEvent, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
@@ -11,6 +11,7 @@ import {
 	type ChipSize,
 	type ChipVariant,
 	chipVariants,
+	resolveChipCloseExposure,
 	resolveChipForegroundToken,
 	resolveChipMode,
 } from "./chip.variants";
@@ -59,11 +60,14 @@ function ChipRoot({
 	pressedScale,
 	pressedOpacity,
 	accessibilityState,
+	accessibilityActions,
+	onAccessibilityAction,
 	className,
 	children,
 	...props
 }: ChipProps): ReactElement {
 	const mode = resolveChipMode({ defaultSelected, isSelected, onLongPress, onPress, onSelectedChange });
+	const closeExposure = resolveChipCloseExposure({ hasClose: onClose !== undefined, mode });
 
 	const [ownSelected, setSelected] = useControllableState({
 		defaultValue: defaultSelected ?? false,
@@ -96,20 +100,50 @@ function ChipRoot({
 	const content = useMemo(() => wrapTextChildren(children), [children]);
 	const rootClassName = slots.root({ className });
 
+	// Inside a pressable chip the close control is folded into the chip's own
+	// accessibility element, so it is hidden there and offered as the `remove`
+	// action below instead — see `resolveChipCloseExposure`.
+	const closeHidden = closeExposure === "action";
 	const inner = (
 		<IconDefaultsProvider value={iconDefaults}>
 			<TextClassProvider value={slots.label()}>
 				{content}
-				{onClose ? <ChipCloseButton accessibilityLabel={closeAccessibilityLabel} onPress={onClose} /> : null}
+				{onClose ? (
+					<ChipCloseButton
+						accessibilityElementsHidden={closeHidden}
+						accessible={!closeHidden}
+						accessibilityLabel={closeAccessibilityLabel}
+						importantForAccessibility={closeHidden ? "no-hide-descendants" : "auto"}
+						onPress={onClose}
+					/>
+				) : null}
 			</TextClassProvider>
 		</IconDefaultsProvider>
 	);
+
+	const actions =
+		closeExposure === "action"
+			? [...(accessibilityActions ?? []), { label: closeAccessibilityLabel ?? "Remove", name: "remove" }]
+			: accessibilityActions;
+
+	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+		if (closeExposure === "action" && event.nativeEvent.actionName === "remove" && !isDisabled) {
+			onClose?.();
+			return;
+		}
+		onAccessibilityAction?.(event);
+	};
 
 	// A chip with nothing to do stays a plain box — see `resolveChipMode`.
 	if (mode === "static") {
 		return (
 			<ChipProvider value={context}>
-				<View className={rootClassName} {...props}>
+				<View
+					accessibilityActions={accessibilityActions}
+					className={rootClassName}
+					onAccessibilityAction={onAccessibilityAction}
+					{...props}
+				>
 					{inner}
 				</View>
 			</ChipProvider>
@@ -124,6 +158,7 @@ function ChipRoot({
 	return (
 		<ChipProvider value={context}>
 			<Pressable
+				accessibilityActions={actions}
 				accessibilityRole="button"
 				accessibilityState={state}
 				className={rootClassName}
@@ -131,6 +166,7 @@ function ChipRoot({
 				feedback={feedback}
 				haptic={haptic ?? (mode === "toggle" ? "selection" : false)}
 				hitSlop={CHIP_HIT_SLOP[size]}
+				onAccessibilityAction={handleAccessibilityAction}
 				onLongPress={onLongPress}
 				onPress={handlePress}
 				pressedOpacity={pressedOpacity}
@@ -187,7 +223,8 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  *   flips the state, a `selection` haptic ticks, and a screen reader hears
  *   whether it is selected. Controlled or uncontrolled, like `Checkbox`.
  * - **`onClose`** — adds a trailing remove control, a pressable of its own, so
- *   removing a chip never also toggles it. Combines with any of the above.
+ *   removing a chip never also toggles it. Combines with any of the above; on
+ *   a pressable chip a screen reader reaches it as a `remove` action.
  *
  * Shares Badge's `color` and `size` axes and its tones: an unselected chip is
  * painted exactly as the badge of the same `variant` and `color`. Selection

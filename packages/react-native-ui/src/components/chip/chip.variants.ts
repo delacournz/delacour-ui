@@ -298,4 +298,24 @@ export function resolveChipMode({
 	return "static";
 }
 
+/**
+ * How the remove control reaches assistive technology.
+ *
+ * - `none` — there is no `onClose`.
+ * - `element` — a static chip is not an accessibility element itself, so the
+ *   close control is announced on its own, as a button.
+ * - `action` — a pressable chip is one accessibility element, and iOS folds its
+ *   descendants into it: the close control is unreachable by swipe and its
+ *   label is read as part of the chip's. It is hidden, and removal is offered as
+ *   a `remove` accessibility action on the chip instead — VoiceOver's Actions
+ *   rotor, TalkBack's actions menu.
+ */
+export type ChipCloseExposure = "none" | "element" | "action";
+
+/** See {@link ChipCloseExposure}. Pure, so `bun test` reaches it. */
+export function resolveChipCloseExposure({ mode, hasClose }: { mode: ChipMode; hasClose: boolean }): ChipCloseExposure {
+	if (!hasClose) return "none";
+	return mode === "static" ? "element" : "action";
+}
+
 export type ChipVariantProps = VariantProps<typeof chipVariants>;

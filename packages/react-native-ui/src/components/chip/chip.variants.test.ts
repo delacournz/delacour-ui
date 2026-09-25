@@ -11,6 +11,7 @@ import {
 	CHIP_SURFACES,
 	CHIP_VARIANTS,
 	chipVariants,
+	resolveChipCloseExposure,
 	resolveChipForegroundToken,
 	resolveChipMode,
 	resolveChipSurface,
@@ -308,5 +309,27 @@ describe("hit slop", () => {
 		const slops = CHIP_SIZES.map((size) => CHIP_CLOSE_HIT_SLOP[size]);
 		expect(slops.every((slop) => slop > 0)).toBe(true);
 		expect([...slops]).toEqual([...slops].sort((a, b) => a - b));
+	});
+});
+
+describe("resolveChipCloseExposure", () => {
+	test("nothing to expose without onClose", () => {
+		for (const mode of ["static", "button", "toggle"] as const) {
+			expect(resolveChipCloseExposure({ mode, hasClose: false })).toBe("none");
+		}
+	});
+
+	// A static chip is not an accessibility element, so the close control is
+	// reachable on its own and needs nothing more.
+	test("a static chip leaves the close control as its own element", () => {
+		expect(resolveChipCloseExposure({ mode: "static", hasClose: true })).toBe("element");
+	});
+
+	// iOS folds every descendant of an accessible view into one element, so a
+	// close control inside a pressable chip is unreachable by swipe — it becomes
+	// an action on the chip instead.
+	test("a pressable chip offers removal as an accessibility action", () => {
+		expect(resolveChipCloseExposure({ mode: "button", hasClose: true })).toBe("action");
+		expect(resolveChipCloseExposure({ mode: "toggle", hasClose: true })).toBe("action");
 	});
 });

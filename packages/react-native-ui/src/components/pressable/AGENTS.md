@@ -46,6 +46,14 @@ and only `onPress` and `onLongPress` cross back to JS.
   itself, so assistive tech reports a control that is momentarily unavailable
   rather than one that is inert. Neither applies any opacity — that is the
   caller's variant's job.
+- **A className's opacity is multiplied into the press, never overwritten.**
+  The press feedback is an animated style, and an animated style owns every key
+  it writes on the view — so its resting `opacity: 1` silently replaced a
+  variant's `opacity-50`, and a disabled `Button`, `Badge` or `Chip` never faded.
+  The root now resolves its own `className` with Uniwind's
+  `useResolveClassNames` and animates `rest * press` instead, with
+  `resolveRestOpacity` guarding the value. Found validating `Chip`'s disabled
+  state on a simulator; no unit test could have seen it.
 - **A worklet crosses back to JS with `scheduleOnRN`**, imported from
   `react-native-worklets` — never Reanimated's `runOnJS`, which since Reanimated 4
   is a deprecated shim that forwards to exactly that call. `scheduleOnRN(fn, ...args)`

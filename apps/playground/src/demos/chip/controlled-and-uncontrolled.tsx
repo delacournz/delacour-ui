@@ -36,7 +36,13 @@ export function Demo(): ReactElement {
 			<View className="gap-2">
 				<Text.Caption color="muted">Controlled</Text.Caption>
 				<View className="flex-row items-center gap-3">
-					<Chip color="success" isSelected={isOn} onSelectedChange={setOn} testID="controlled-chip">
+					<Chip
+						className="self-center"
+						color="success"
+						isSelected={isOn}
+						onSelectedChange={setOn}
+						testID="controlled-chip"
+					>
 						Sync
 					</Chip>
 					<Switch accessibilityLabel="Sync" isSelected={isOn} onSelectedChange={setOn} testID="controlled-switch" />

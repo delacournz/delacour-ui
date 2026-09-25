@@ -27,3 +27,6 @@ changing its size, so a wrapping row never reflows. Parts: `Chip.Label`, `Chip.S
 selection.
 
 `bunx delacour add chip` copies it in, along with `badge`, whose tones it reads.
+
+`Pressable` now multiplies a `className`'s opacity into its press feedback instead of overwriting it,
+so a disabled `Button`, `Badge` or `Chip` fades as its variant says it should.

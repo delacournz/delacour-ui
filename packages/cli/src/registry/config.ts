@@ -107,6 +107,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",
 		categories: ["forms"],
 	},
+	chip: {
+		title: "Chip",
+		description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+		categories: ["controls"],
+	},
 	chart: {
 		title: "Chart",
 		description:
@@ -124,6 +129,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	"empty-state": {
+		title: "Empty State",
+		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+		categories: ["feedback"],
+	},
 	field: {
 		title: "Field",
 		description: "One control with its label, description and error — and the state they all read.",
@@ -137,6 +147,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	input: {
 		title: "Input",
 		description: "A text field, with a group that puts a prefix or suffix inside its border.",
+		categories: ["forms"],
+	},
+	label: {
+		title: "Label",
+		description: "A form control's name, with required, invalid and disabled states.",
 		categories: ["forms"],
 	},
 	"list-group": {
@@ -154,6 +169,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	meter: {
+		title: "Meter",
+		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+		categories: ["feedback"],
+	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",
@@ -169,6 +194,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A one-pixel rule, hidden from assistive technology.",
 		categories: ["layout"],
 	},
+	skeleton: {
+		title: "Skeleton",
+		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
+		categories: ["feedback"],
+	},
 	slider: {
 		title: "Slider",
 		description: "A value along a track, dragged by a handle that follows the gesture.",
@@ -178,6 +208,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Spinner",
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
+	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
 	},
 	switch: {
 		title: "Switch",
@@ -193,6 +228,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Text",
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
+	},
+	textarea: {
+		title: "Textarea",
+		description: "A multiline text field sized in rows, with auto-grow and a character count.",
+		categories: ["forms"],
+	},
+	"toggle-button": {
+		title: "Toggle Button",
+		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
+		categories: ["controls"],
 	},
 
 	expo: {

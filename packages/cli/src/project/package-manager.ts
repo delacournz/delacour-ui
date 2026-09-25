@@ -1,4 +1,5 @@
 import { x } from "tinyexec";
+import { type Channel, CLI_CHANNEL } from "./channel";
 import type { PackageJson, PackageManager } from "./detect";
 
 /**
@@ -29,6 +30,8 @@ export type InstallRequest = {
 	expoDependencies: readonly string[];
 	dependencies: readonly string[];
 	devDependencies: readonly string[];
+	/** The dist-tag line Delacour packages come from. Defaults to this build's own. */
+	channel?: Channel;
 };
 
 const ADD: Record<PackageManager, [string, string[]]> = {
@@ -54,46 +57,42 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
 };
 
 /**
- * Packages whose `latest` deliberately points at nothing.
+ * The packages this repository publishes, which follow the CLI's channel.
  *
- * This repository is in Changesets pre mode, so `@delacour/react-native-charts` publishes to
- * the `alpha` dist-tag and `latest` is empty — a bare `bun add @delacour/react-native-charts`
- * fails outright. It has never bitten because no registry item had ever depended
- * on a Delacour package until `chart`.
+ * On the alpha channel they are installed as `name@alpha`: the snapshot a
+ * merge to `develop` published, not the last stable release `latest` serves.
+ * Everything else is always installed untagged.
  *
  * Applied to the command's ARGS only, never to `packages`: `missingPackages`
  * compares bare names against the project's own `package.json`, and a tagged
  * spec there would never match anything and would reinstall on every run.
- *
- * Delete this map when `changeset pre exit` runs — see the root AGENTS.md.
  */
-const DIST_TAG: Record<string, string> = {
-	"@delacour/react-native-charts": "alpha",
-};
+const DELACOUR_PACKAGES: ReadonlySet<string> = new Set(["@delacour/react-native-charts", "@delacour/react-native-ui"]);
 
-/** A package name with its pinned dist-tag, where it has one. */
-function toSpec(name: string): string {
-	const tag = DIST_TAG[name];
-	return tag === undefined ? name : `${name}@${tag}`;
+/** A package name with the dist-tag its channel pins, where it has one. */
+function toSpec(name: string, channel: Channel): string {
+	return channel === "alpha" && DELACOUR_PACKAGES.has(name) ? `${name}@alpha` : name;
 }
 
 /**
  * The range a shared package declares for a peer it does not pin.
  *
- * `*` is the usual answer, and it is wrong for a package still in pre mode:
- * semver's `*` admits no prerelease, so a peer on `@delacour/react-native-charts` written as
- * `*` matches nothing `0.0.1-alpha.N` can ever satisfy. Bun then treats the
- * peer as unmet and goes to the registry for a version that does not exist —
- * which is how `add` failed inside `expo install`, a step that never named
- * the package. `>=0.0.0-0` is the range that admits every prerelease, and it
- * goes away with `DIST_TAG` when `changeset pre exit` runs.
+ * `*` is the usual answer, and it is wrong for a Delacour package: semver's
+ * `*` admits no prerelease, so a peer on `@delacour/react-native-charts`
+ * written as `*` matches nothing an `x.y.z-alpha.N` can ever satisfy. Bun then
+ * treats the peer as unmet and goes to the registry for a version that does
+ * not exist — which is how `add` failed inside `expo install`, a step that
+ * never named the package. `>=0.0.0-0` admits every prerelease and every
+ * stable version, so it holds on either channel.
  */
 export function peerRange(name: string): string {
-	return DIST_TAG[name] === undefined ? "*" : ">=0.0.0-0";
+	return DELACOUR_PACKAGES.has(name) ? ">=0.0.0-0" : "*";
 }
 
 export function installCommands(request: InstallRequest): InstallGroup[] {
 	const groups: InstallGroup[] = [];
+	const channel = request.channel ?? CLI_CHANNEL;
+	const spec = (name: string): string => toSpec(name, channel);
 	const [addCommand, addArgs] = ADD[request.packageManager];
 
 	if (request.expoDependencies.length > 0) {
@@ -101,7 +100,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: "expo install",
 			command,
-			args: [...args, ...request.expoDependencies.map(toSpec)],
+			args: [...args, ...request.expoDependencies.map(spec)],
 			packages: [...request.expoDependencies],
 		});
 	}
@@ -110,7 +109,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add`,
 			command: addCommand,
-			args: [...addArgs, ...request.dependencies.map(toSpec)],
+			args: [...addArgs, ...request.dependencies.map(spec)],
 			packages: [...request.dependencies],
 		});
 	}
@@ -119,7 +118,7 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 		groups.push({
 			label: `${addCommand} add --dev`,
 			command: addCommand,
-			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies.map(toSpec)],
+			args: [...addArgs, DEV_FLAG[request.packageManager], ...request.devDependencies.map(spec)],
 			packages: [...request.devDependencies],
 		});
 	}
@@ -156,6 +155,7 @@ export function planDependencies(request: InstallRequest, packageJson: PackageJs
 		expoDependencies: missingPackages(packageJson, request.expoDependencies),
 		dependencies: missingPackages(packageJson, request.dependencies),
 		devDependencies: missingPackages(packageJson, request.devDependencies),
+		channel: request.channel,
 	});
 
 	const wanted = unique([...request.expoDependencies, ...request.dependencies, ...request.devDependencies]);

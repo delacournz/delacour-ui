@@ -1,0 +1,183 @@
+---
+title: Skeleton
+description: A placeholder that shimmers or pulses while content loads.
+icon: SquareDashed
+---
+
+<Preview id="skeleton/profile-card" title={null} />
+
+## Installation
+
+<ComponentInstall name="skeleton" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Skeleton } from "@/components/ui/skeleton";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-row items-center gap-3 p-4">
+      <Skeleton shape="circle" />
+      <Skeleton.Lines className="flex-1" lines={2} />
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Skeleton.Group>
+  <Skeleton />
+  <Skeleton.Lines />
+</Skeleton.Group>
+```
+
+`Skeleton` is one placeholder. `Skeleton.Lines` is a paragraph of them. `Skeleton.Group` holds one
+clock and one loading flag for everything inside it. Each works on its own.
+
+## Sized by its content
+
+Pass the real content as children and the placeholder takes its exact size — the content is rendered
+invisibly underneath while it loads. Flip `isLoading` off and it fades in with nothing moving, and
+because it was never unmounted it keeps its own state.
+
+<Preview id="skeleton/profile-card" />
+
+```tsx
+<Skeleton isLoading={!user} shape="circle">
+  <Avatar user={user} />
+</Skeleton>
+```
+
+## Shapes
+
+`rect` for a card or an image, `line` for a line of text, `circle` for an avatar. A skeleton with no
+children takes a default size for its shape, which a `className` overrides.
+
+<Preview id="skeleton/shapes" />
+
+```tsx
+<Skeleton className="h-40 w-full" />
+<Skeleton shape="line" className="w-3/4" />
+<Skeleton shape="circle" className="size-12" />
+```
+
+## Animations
+
+`shimmer` sweeps a glint across the shape, `pulse` breathes its opacity and `none` holds it still. The
+fill is a tint of `muted-foreground`, so it steps off the page or a card in either theme, and the glint
+is painted in the `elevated` token, which rises above it in both. Both run on the
+UI thread and never re-render the component.
+
+<Preview id="skeleton/animations" />
+
+```tsx
+<Skeleton animation="shimmer" />
+<Skeleton animation="pulse" />
+<Skeleton animation="none" />
+```
+
+<Callout>
+Under the OS reduce-motion setting every animation holds still. The placeholder stays: the shape is
+the message, and a shape that stops moving still reads as content on its way.
+</Callout>
+
+## Lines
+
+`Skeleton.Lines` draws a paragraph. Only the last line is shortened, and only when there are two or
+more. Pass the paragraph as children and it is shown in place of the lines once loaded.
+
+<Preview id="skeleton/lines" />
+
+```tsx
+<Skeleton.Lines isLoading={!post} lines={3}>
+  <Text.Paragraph>{post?.body}</Text.Paragraph>
+</Skeleton.Lines>
+```
+
+## Groups
+
+Separate skeletons start their clocks when they mount, so rows that mount a frame apart shimmer out of
+step. Inside a `Skeleton.Group` they all read one clock and move as one sweep, and a single
+`isLoading` reveals the whole region. A skeleton's own `isLoading` or `animation` still wins.
+
+<Preview id="skeleton/group" />
+
+```tsx
+<Skeleton.Group isLoading={isFetching} label="Loading messages" className="gap-4">
+  {rows.map((row) => (
+    <View className="flex-row items-center gap-3" key={row.id}>
+      <Skeleton shape="circle" />
+      <Skeleton.Lines className="flex-1" lines={2} />
+    </View>
+  ))}
+</Skeleton.Group>
+```
+
+## Composition
+
+Match the shape of the real content. A placeholder the wrong size is worse than none, because the
+layout jumps when the data lands.
+
+<Preview id="skeleton/feed-post" />
+
+## Accessibility
+
+A placeholder is a picture of content that is not there, so it is hidden from screen readers by
+default. Pass `label` on the one skeleton — or the group, or the paragraph — that stands for the
+region, and the wait is announced once as a busy progress status. Leave it off the rest. Once loaded,
+the skeleton adds nothing and the content speaks for itself.
+
+## API Reference
+
+### Skeleton
+
+<TypeTable
+  type={{
+    shape: { type: '"rect" | "line" | "circle"', default: '"rect"', description: "A card or image, a line of text, or an avatar." },
+    animation: {
+      type: '"shimmer" | "pulse" | "none"',
+      default: '"shimmer"',
+      description: "Inherited from an enclosing `Skeleton.Group`. Stilled under reduce motion.",
+    },
+    isLoading: {
+      type: "boolean",
+      default: "true",
+      description: "Inherited from an enclosing `Skeleton.Group`. Off, the placeholder gives way to its children.",
+    },
+    label: { type: "string", description: "What is loading, for a screen reader. Unset, the placeholder is hidden from assistive technology." },
+    className: { type: "string" },
+    style: { type: "ViewStyle", description: "A computed dimension. The pulse owns `opacity`." },
+    children: { type: "ReactNode", description: "The real content. Sizes the placeholder while loading, and is shown once loaded." },
+  }}
+/>
+
+### Skeleton.Lines
+
+<TypeTable
+  type={{
+    lines: { type: "number", default: "3", description: "How many lines to draw." },
+    lastLineWidth: { type: "number", default: "0.6", description: "How far across the last line runs, 0–1. Only with two or more lines." },
+    lineClassName: { type: "string", description: "Classes for each line — a height to match the text, say." },
+    animation: { type: '"shimmer" | "pulse" | "none"' },
+    isLoading: { type: "boolean" },
+    label: { type: "string", description: "Announced once for the paragraph." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "The paragraph, shown in place of the lines once loaded." },
+  }}
+/>
+
+### Skeleton.Group
+
+<TypeTable
+  type={{
+    isLoading: { type: "boolean", default: "true", description: "Every skeleton inside follows it unless told otherwise." },
+    animation: { type: '"shimmer" | "pulse" | "none"', default: '"shimmer"', description: "Every skeleton inside runs it unless it names its own." },
+    label: { type: "string", description: "Announced once for the whole group, as a busy status." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>

@@ -1,0 +1,33 @@
+name: Retarget PR
+
+# `main` is the default branch so that the repository's front page shows the last release, and
+# GitHub offers the default branch as the base of every new pull request. It has no separate setting
+# for "base new PRs on X", so this does it after the fact: a pull request opened against `main` is
+# moved to `develop`, where work lands. `main` only moves when `release.yml` fast-forwards it.
+#
+# `pull_request_target`, not `pull_request`: a fork's `GITHUB_TOKEN` is read-only under
+# `pull_request`, so it could not edit its own base. The target event runs this file as it is on
+# `main` with a write token, which is safe here only because nothing checks out or runs the pull
+# request's code — the job is one API call.
+on:
+  pull_request_target:
+    types: [opened, reopened]
+    branches: [main]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  retarget:
+    name: retarget to develop
+    runs-on: namespace-profile-linux-small
+    timeout-minutes: 5
+    steps:
+      - name: Move the base to develop
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh pr edit "$PR" --base develop
+          gh pr comment "$PR" --body "Retargeted to \`develop\`. \`main\` only moves on a release — see [Branches](https://github.com/$GH_REPO/blob/main/AGENTS.md#branches)."

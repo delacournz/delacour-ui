@@ -1,0 +1,130 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "chip",
+	"type": "registry:ui",
+	"title": "Chip",
+	"description": "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"badge",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/chip/AGENTS.md",
+			"target": "chip/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/chip",
+					"to": "@registry/ui/chip"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip-close-button.tsx",
+			"target": "chip/chip-close-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip-end-content.tsx",
+			"target": "chip/chip-end-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip-label.tsx",
+			"target": "chip/chip-label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip-start-content.tsx",
+			"target": "chip/chip-start-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip.context.tsx",
+			"target": "chip/chip.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip.tsx",
+			"target": "chip/chip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip.types.ts",
+			"target": "chip/chip.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip.variants.ts",
+			"target": "chip/chip.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/chip/index.ts",
+			"target": "chip/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

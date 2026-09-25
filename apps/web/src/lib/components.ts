@@ -208,6 +208,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
 	},
 	{
+		slug: "card",
+		name: "Card",
+		group: "Layout",
+		blurb: "A content surface with a header, a body and a footer, built on Surface.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

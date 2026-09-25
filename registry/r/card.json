@@ -1,0 +1,132 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "card",
+	"type": "registry:ui",
+	"title": "Card",
+	"description": "A content surface with a header, a body and a footer, built on Surface.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"surface",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/card/AGENTS.md",
+			"target": "card/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/card",
+					"to": "@registry/ui/card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-action.tsx",
+			"target": "card/card-action.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-content.tsx",
+			"target": "card/card-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-description.tsx",
+			"target": "card/card-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-footer.tsx",
+			"target": "card/card-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-header.tsx",
+			"target": "card/card-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card-title.tsx",
+			"target": "card/card-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card.context.tsx",
+			"target": "card/card.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card.tsx",
+			"target": "card/card.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card.types.ts",
+			"target": "card/card.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/card.variants.ts",
+			"target": "card/card.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/card/index.ts",
+			"target": "card/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

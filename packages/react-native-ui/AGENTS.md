@@ -66,6 +66,7 @@ shares.
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
+| [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
 | [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |

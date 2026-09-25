@@ -9,6 +9,15 @@ import * as demo_accordion_disabled from "./accordion/disabled";
 import * as demo_accordion_one_at_a_time from "./accordion/one-at-a-time";
 import * as demo_accordion_sizes from "./accordion/sizes";
 import * as demo_accordion_variants from "./accordion/variants";
+import * as demo_alert_actions from "./alert/actions";
+import * as demo_alert_checkout from "./alert/checkout";
+import * as demo_alert_configurator from "./alert/configurator";
+import * as demo_alert_controlled from "./alert/controlled";
+import * as demo_alert_custom_indicator from "./alert/custom-indicator";
+import * as demo_alert_dismissible from "./alert/dismissible";
+import * as demo_alert_sizes from "./alert/sizes";
+import * as demo_alert_statuses from "./alert/statuses";
+import * as demo_alert_surface_variant from "./alert/surface-variant";
 import * as demo_avatar_fallbacks from "./avatar/fallbacks";
 import * as demo_avatar_group from "./avatar/group";
 import * as demo_avatar_group_sizes_and_overlap from "./avatar/group-sizes-and-overlap";
@@ -311,6 +320,15 @@ export const DEMOS = {
 	"accordion/one-at-a-time": demo_accordion_one_at_a_time,
 	"accordion/sizes": demo_accordion_sizes,
 	"accordion/variants": demo_accordion_variants,
+	"alert/actions": demo_alert_actions,
+	"alert/checkout": demo_alert_checkout,
+	"alert/configurator": demo_alert_configurator,
+	"alert/controlled": demo_alert_controlled,
+	"alert/custom-indicator": demo_alert_custom_indicator,
+	"alert/dismissible": demo_alert_dismissible,
+	"alert/sizes": demo_alert_sizes,
+	"alert/statuses": demo_alert_statuses,
+	"alert/surface-variant": demo_alert_surface_variant,
 	"avatar/fallbacks": demo_avatar_fallbacks,
 	"avatar/group": demo_avatar_group,
 	"avatar/group-sizes-and-overlap": demo_avatar_group_sizes_and_overlap,

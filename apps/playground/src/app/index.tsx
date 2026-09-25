@@ -14,6 +14,7 @@ import {
 	IconCursorClick,
 	IconDiamond,
 	IconDivider,
+	IconExclamationTriangle,
 	IconFilter1,
 	IconFontStyle,
 	IconGauge,
@@ -56,6 +57,7 @@ import { LIST_GAP, SECTION_GAP } from "@/tokens";
  */
 const ICONS: Record<ComponentSlug, IconComponent> = {
 	accordion: IconChevronGrabberVertical,
+	alert: IconExclamationTriangle,
 	avatar: IconPeople,
 	badge: IconTag,
 	"bottom-sheet": IconLayoutBottomFull,

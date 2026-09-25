@@ -10,6 +10,7 @@ export type SkillComponent = {
 
 export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "accordion", title: "Accordion", description: "Collapsible sections whose panels animate to their measured height." },
+	{ name: "alert", title: "Alert", description: "A status message with a glyph picked from its status, a title, a description and an optional action." },
 	{ name: "avatar", title: "Avatar", description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group." },
 	{ name: "badge", title: "Badge", description: "A compact label for status or a count, composed from parts like the button." },
 	{ name: "bottom-sheet", title: "Bottom Sheet", description: "A draggable sheet over the screen, on @gorhom/bottom-sheet." },

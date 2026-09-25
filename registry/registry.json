@@ -43,6 +43,45 @@
 			]
 		},
 		{
+			"name": "alert",
+			"type": "registry:ui",
+			"title": "Alert",
+			"description": "A status message with a glyph picked from its status, a title, a description and an optional action.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/alert/AGENTS.md",
+				"ui/alert/alert-action.tsx",
+				"ui/alert/alert-close-button.tsx",
+				"ui/alert/alert-content.tsx",
+				"ui/alert/alert-description.tsx",
+				"ui/alert/alert-indicator.tsx",
+				"ui/alert/alert-title.tsx",
+				"ui/alert/alert.context.tsx",
+				"ui/alert/alert.tsx",
+				"ui/alert/alert.types.ts",
+				"ui/alert/alert.variants.ts",
+				"ui/alert/index.ts"
+			]
+		},
+		{
 			"name": "avatar",
 			"type": "registry:ui",
 			"title": "Avatar",

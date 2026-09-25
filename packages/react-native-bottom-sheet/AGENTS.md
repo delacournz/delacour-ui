@@ -16,8 +16,14 @@ import { positionFor } from "@delacour/react-native-bottom-sheet/core";
 
 The package is being built in phases (plan `BSHEET`). Today it is `core/` —
 every number the sheet computes, as tested pure functions, plus the step
-machine — and the guard tests; the React layer, keyboard, scrollables, portal
-and steps arrive in BSHEET-2 to BSHEET-6.
+machine — and the React spine over it: state, geometry, animation, the two
+pans, layout measurement and the compound `BottomSheet` with `Trigger`,
+`Portal` (in place only, no host yet), `Overlay`, `Container`, `Background`,
+`Handle`, `Content`, `Close`, `Title` and `Description`. The keyboard and
+footer (BSHEET-3), scrollables (BSHEET-4), the teleport portal, host and
+registry (BSHEET-5) and steps (BSHEET-6b) are still to come; the shared
+values they write are allocated and derived over already, so each lands by
+writing a value rather than by re-plumbing the geometry.
 
 ## Commands
 
@@ -125,6 +131,12 @@ is copied into `core/result.ts` rather than depended on.
 | Path | What |
 | --- | --- |
 | `src/core` | Every number the sheet computes — detents, keyboard, footer, geometry, backdrop, intents, haptics, scroll lock, animation defaults and the step machine. Its own `AGENTS.md` indexes it and carries the formulas |
+| `src/state` | The shared values, the derived geometry (each formula as a `useDerivedValue`) and the intent queue |
+| `src/animation` | `animateTo` / `jumpTo`, the Reanimated config mapping, the settle listeners |
+| `src/gesture` | The handle and content pans, and the haptic worklet props |
+| `src/layout` | Measuring the frame, the handle and the content into shared values |
+| `src/components` | The compound `BottomSheet` and its parts, the three contexts |
+| `src/lib` | `Slot`, `mergeProps`, `composeRefs`, `useControllableState` — copied from the skin, minus its class merging |
 | `src/index.ts` | The React surface; re-exports `core` |
 | `src/purity.test.ts` | The purity rule, enforced against the source |
 | `src/flat-worklet.test.ts` | The worklet rule, enforced against the source |
@@ -132,7 +144,20 @@ is copied into `core/result.ts` rather than depended on.
 | `src/display-name.test.ts` | The `DelacourBottomSheet.` naming, enforced against the source |
 | `src/docs.test.ts` | Every subsystem folder documents itself |
 
-Planned subsystems, each with its own `AGENTS.md` when it lands: `state/`
-(shared values and the derived geometry), `animation/`, `gesture/`,
-`keyboard/`, `layout/`, `portal/`, `scrollable/`, `steps/`, `components/`,
-`lib/`.
+Planned subsystems, each with its own `AGENTS.md` when it lands: `keyboard/`
+(BSHEET-3), `scrollable/` (BSHEET-4), `portal/` (BSHEET-5), `steps/`
+(BSHEET-6b).
+
+## Verified on the simulator
+
+The BSHEET-2 engine demo (`apps/playground`, Bottom sheet → Engine) on an
+iPhone 17 Pro Max simulator: the trigger opens with the mount animation; a
+handle swipe reaches the second detent and the handle's accessibility value
+reads `Detent 2 of 2`; a swipe back lands on the first; a content pan past the
+first detent closes and `onOpenChange(false)` fires; an over-drag past the top
+settles back on the highest detent; **a tap on a `TextInput` inside the sheet
+focuses it on the first try**, so the overlay `Pressable` written before the
+panel does not compete for touches (the plan's first risk, resolved without
+the band-above fallback); the overlay and `Close` close; every ref method
+lands on its detent; and `close` / `dismiss` / `snapToIndex` on a closed sheet
+are no-ops or opens, never a deadlock.

@@ -1,6 +1,7 @@
 import {
 	IconEditSmall1,
 	IconExpandSimple,
+	IconLayersTwo,
 	IconLayoutAlignBottom,
 	IconLayoutBottom,
 	IconLayoutTopBottom,
@@ -38,6 +39,12 @@ const DEMOS: readonly FolderIndexItem[] = [
 		href: "/bottom-sheet/form",
 		icon: IconEditSmall1,
 		title: "In a form",
+	},
+	{
+		description: "The engine on its own — no theme, every value passed in",
+		href: "/bottom-sheet/engine",
+		icon: IconLayersTwo,
+		title: "Engine",
 	},
 ];
 

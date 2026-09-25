@@ -87,12 +87,24 @@ const BOUND = bound();
 const SHAPE = /^DelacourBottomSheet(\.[A-Z][A-Za-z0-9]*)+$/;
 
 /**
- * The floor under the walker. The package has no `.tsx` yet; BSHEET-2 raises
- * both to a real count so a walker matching nothing cannot keep the suite green
- * on an empty set.
+ * The floor under the walker: the eleven parts, the root, the slot and the
+ * context file, at the count BSHEET-2 landed. A walker matching nothing cannot
+ * keep the suite green on an empty set.
  */
-const MIN_SOURCES = 0;
-const MIN_DECLARED = 0;
+const MIN_SOURCES = 13;
+const MIN_DECLARED = 12;
+
+/**
+ * Every `*.context.tsx`, as a path → source map.
+ *
+ * A context is `createContext<T | null>(null)` with a `useX()` that throws
+ * outside its provider and a `useOptionalX()` that returns `null`. Both are
+ * exported by name from the file that declares the context, so the convention
+ * is checked against the same source text.
+ */
+const CONTEXT_SOURCES = [...SOURCES].filter(([path]) => path.endsWith(".context.tsx"));
+
+const CONTEXT_DECLARATION = /^export const ([A-Z][A-Za-z0-9]*)Context = createContext</gm;
 
 describe("displayName", () => {
 	test("finds the component tree", () => {
@@ -143,5 +155,27 @@ describe("displayName", () => {
 			return parent !== "DelacourBottomSheet" && !names.has(parent);
 		});
 		expect(orphans).toEqual([]);
+	});
+});
+
+describe("contexts", () => {
+	test("finds the context files", () => {
+		expect(CONTEXT_SOURCES.length).toBeGreaterThanOrEqual(1);
+	});
+
+	test("every context exports a throwing hook and an optional hook", () => {
+		const missing: string[] = [];
+		for (const [path, source] of CONTEXT_SOURCES) {
+			const contexts = [...source.matchAll(CONTEXT_DECLARATION)].map(([, name]) => name as string);
+			if (contexts.length === 0) missing.push(`${path.slice(SRC.length + 1)} declares no context`);
+			for (const name of contexts) {
+				if (!source.includes(`export function use${name}(`)) missing.push(`use${name}`);
+				if (!source.includes(`export function useOptional${name}(`)) missing.push(`useOptional${name}`);
+				if (!source.includes(`${name}Context.displayName = "DelacourBottomSheet.`)) {
+					missing.push(`${name}Context.displayName`);
+				}
+			}
+		}
+		expect(missing).toEqual([]);
 	});
 });

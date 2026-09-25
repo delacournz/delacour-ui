@@ -33,6 +33,7 @@ import * as demo_badge_dismissible from "./badge/dismissible";
 import * as demo_badge_sizes from "./badge/sizes";
 import * as demo_badge_status_dot from "./badge/status-dot";
 import * as demo_badge_variants_and_colours from "./badge/variants-and-colours";
+import * as demo_bottom_sheet_engine_anatomy_inline_two_detents from "./bottom-sheet-engine/anatomy/inline-two-detents";
 import * as demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss from "./bottom-sheet/anatomy/a-scrim-that-does-not-dismiss";
 import * as demo_bottom_sheet_anatomy_the_whole_composition from "./bottom-sheet/anatomy/the-whole-composition";
 import * as demo_bottom_sheet_anatomy_uncontrolled from "./bottom-sheet/anatomy/uncontrolled";
@@ -375,6 +376,7 @@ export const DEMOS = {
 	"badge/sizes": demo_badge_sizes,
 	"badge/status-dot": demo_badge_status_dot,
 	"badge/variants-and-colours": demo_badge_variants_and_colours,
+	"bottom-sheet-engine/anatomy/inline-two-detents": demo_bottom_sheet_engine_anatomy_inline_two_detents,
 	"bottom-sheet/anatomy/a-scrim-that-does-not-dismiss": demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss,
 	"bottom-sheet/anatomy/the-whole-composition": demo_bottom_sheet_anatomy_the_whole_composition,
 	"bottom-sheet/anatomy/uncontrolled": demo_bottom_sheet_anatomy_uncontrolled,

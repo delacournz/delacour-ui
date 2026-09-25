@@ -44,6 +44,7 @@
 		"./input": "./src/components/input/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
+		"./progress": "./src/components/progress/index.ts",
 		"./provider": "./src/components/provider/index.ts",
 		"./radio": "./src/components/radio/index.ts",
 		"./screen": "./src/components/screen/index.ts",

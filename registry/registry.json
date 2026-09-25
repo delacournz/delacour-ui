@@ -540,6 +540,39 @@
 			]
 		},
 		{
+			"name": "progress",
+			"type": "registry:ui",
+			"title": "Progress",
+			"description": "A bar showing how far a task has got, or a looping segment while it is under way.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress/AGENTS.md",
+				"ui/progress/index.ts",
+				"ui/progress/progress-fill.tsx",
+				"ui/progress/progress-header.tsx",
+				"ui/progress/progress-label.tsx",
+				"ui/progress/progress-output.tsx",
+				"ui/progress/progress-track.tsx",
+				"ui/progress/progress.context.tsx",
+				"ui/progress/progress.tsx",
+				"ui/progress/progress.types.ts",
+				"ui/progress/progress.variants.ts"
+			]
+		},
+		{
 			"name": "provider",
 			"type": "registry:ui",
 			"title": "Provider",

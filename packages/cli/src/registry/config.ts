@@ -149,6 +149,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",

@@ -64,6 +64,7 @@ const ROWS = [
 	{ slug: "list-group", title: "ListGroup", description: "Grouped rows, dividers, slots", group: "Data display" },
 	{ slug: "separator", title: "Separator", description: "Orientations, insets, weight", group: "Data display" },
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "progress", title: "Progress", description: "Values, indeterminate, colours, sizes", group: "Feedback" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
 	{
 		slug: "bottom-sheet",

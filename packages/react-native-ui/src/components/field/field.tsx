@@ -37,9 +37,15 @@ function FieldRoot({
 	// The updater form would call `press` instead of storing it.
 	const registerPress = useCallback((press: (() => void) | null) => setControlPress(() => press), []);
 
+	// The label's text, for a control inside to read as its accessible name.
+	// State for the same reason as the press: a control renders differently for
+	// it, and the label registers in an effect, so it costs one render on mount.
+	const [label, setLabel] = useState<string | null>(null);
+	const registerLabel = useCallback((next: string | null) => setLabel(next), []);
+
 	const context = useMemo<FieldContextValue>(
-		() => ({ isDisabled, isInvalid, orientation, registerPress }),
-		[isDisabled, isInvalid, orientation, registerPress]
+		() => ({ isDisabled, isInvalid, label, orientation, registerLabel, registerPress }),
+		[isDisabled, isInvalid, label, orientation, registerLabel, registerPress]
 	);
 
 	const rootClassName = fieldVariants({ isDisabled, isInvalid, orientation }).root({ className });
@@ -85,6 +91,13 @@ function FieldRoot({
  *
  * A control's own prop still wins, so one field inside an invalid group can opt
  * out with `<Input isInvalid={false} />`.
+ *
+ * **The label names the control, too.** `Field.Label` hands its text down the
+ * same context, so a control with no text of its own — a `Slider.Thumb`, a
+ * `Switch` — reads "Volume" to a screen reader rather than a bare number. React
+ * Native has no `<label for>`; this is that association. Only a plain string or
+ * number label is lent, since a label built from elements has no text to read
+ * before it renders.
  *
  * **The whole row drives the control**, once one offers a press through the same
  * context — so tapping "Accept the terms", or the description under it, ticks

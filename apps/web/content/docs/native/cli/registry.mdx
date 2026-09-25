@@ -94,15 +94,16 @@ The CLI is published with the git ref it was built from baked in, so a given ver
 the registry it shipped against. Override it two ways, in this order:
 
 ```bash
-delacour add tabs --ref main               # 1. the flag
+delacour add tabs --ref develop            # 1. the flag
 ```
 
 ```json title="native-components.json"
 { "registry": { "ref": "v0.2.0" } }        // 2. the config
 ```
 
-`--ref main` is how you take a component that has landed since your CLI was published. `bunx
-delacour@alpha` gets you both the newest CLI and its matching registry.
+`--ref develop` is how you take a component that has landed since your CLI was published —
+`main` only moves on a release, so it holds nothing your newest CLI does not already read. `bunx
+delacour@latest` gets you both the newest CLI and its matching registry.
 
 ## Reading from somewhere else
 
@@ -112,7 +113,7 @@ delacour@alpha` gets you both the newest CLI and its matching registry.
 <Tab value="A fork">
 
 ```bash
-bunx delacour@alpha add button --registry github:acme/ui --ref main
+bunx delacour@latest add button --registry github:acme/ui --ref main
 ```
 
 Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shorthand
@@ -122,7 +123,7 @@ Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shor
 <Tab value="A hosted registry">
 
 ```bash
-bunx delacour@alpha add card --registry https://ui.acme.com/r
+bunx delacour@latest add card --registry https://ui.acme.com/r
 ```
 
 Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
@@ -133,7 +134,7 @@ relationship `<ref>/registry` has to `<ref>`.
 <Tab value="A local path">
 
 ```bash
-bunx delacour@alpha add button --registry ./registry
+bunx delacour@latest add button --registry ./registry
 ```
 
 Reads from disk, skipping the network and the cache entirely. This is how the CLI's own tests run,

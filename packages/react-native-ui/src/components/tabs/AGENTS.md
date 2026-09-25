@@ -223,9 +223,10 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   state.
 - **The disabled fade lands on the label, never on the trigger.** The `trigger`
   slot is worn by [`Pressable`](../pressable/AGENTS.md)'s own `Animated.View`,
-  whose `useAnimatedStyle` writes `opacity` every frame —
-  [`Radio`](../radio/AGENTS.md)'s lesson, and it bites twice here because
-  `feedback` defaults to `fade`.
+  which now multiplies a className's opacity into its press rather than
+  overwriting it — but the label already fades, and a fade on the trigger as
+  well would compound the two to a quarter. [`Radio`](../radio/AGENTS.md)'s
+  arrangement.
 - **Selection changes the label's colour and nothing else.** A weight change
   would re-measure the label, which moves the frame the indicator is sitting on,
   on every tap. A test asserts the two class sets differ by exactly one `text-*`.

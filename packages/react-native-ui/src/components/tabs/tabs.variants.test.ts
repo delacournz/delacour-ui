@@ -236,7 +236,7 @@ describe("the indicator slot", () => {
 });
 
 describe("the trigger slot", () => {
-	test("never carries an opacity, which Pressable's animated style would overwrite", () => {
+	test("never carries an opacity, which would compound with the label's", () => {
 		for (const cell of CELLS) expect(cls(tabsVariants(cell).trigger())).not.toMatch(/\bopacity-/);
 	});
 

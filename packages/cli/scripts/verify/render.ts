@@ -56,6 +56,7 @@ import { Field } from "${ui}/field";
 import { Icon } from "${ui}/icon";
 import { Input } from "${ui}/input";
 import { ListGroup } from "${ui}/list-group";
+import { Meter } from "${ui}/meter";
 import { Pressable } from "${ui}/pressable";
 import { Progress } from "${ui}/progress";
 import { Radio } from "${ui}/radio";
@@ -71,7 +72,7 @@ import { cn } from "${lib}/cn";
 // Referenced so the bundler cannot tree-shake an import away and hide a module
 // that would have failed to resolve.
 const REGISTERED = [
-	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, ListGroup,
+	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, ListGroup, Meter,
 	Pressable, Progress, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
 ];
 
@@ -130,6 +131,8 @@ export function VerifyScreen() {
 				</Slider>
 
 				<Progress testID="verify-progress" value={40} />
+
+				<Meter accessibilityLabel="Storage" high={90} low={70} optimum={0} testID="verify-meter" value={82} />
 
 				<Spinner testID="verify-spinner" />
 

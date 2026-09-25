@@ -19,6 +19,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts a prefix or suffix inside its border." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
+	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },
 	{ name: "provider", title: "Provider", description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling." },

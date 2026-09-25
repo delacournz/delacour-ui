@@ -48,9 +48,6 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"expo-linear-gradient": "expo",
 	// Ships a Fabric view, so it is version-matched and needs a rebuild too.
 	"@legendapp/list": "expo",
-	// Built on Reanimated and Gesture Handler, and pinned against both. Nothing
-	// imports it any more; it leaves with the next major.
-	"@gorhom/bottom-sheet": "expo",
 	// Ships a Fabric portal view, so it is version-matched and needs a rebuild.
 	"react-native-teleport": "expo",
 	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`

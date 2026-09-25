@@ -58,7 +58,7 @@ whether or not any are missing:
 
 ```txt
 ●  Needs 14 external packages, 2 not here yet:
-│    bunx expo install @gorhom/bottom-sheet react-native-keyboard-controller
+│    bunx expo install react-native-teleport react-native-keyboard-controller
 │    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 

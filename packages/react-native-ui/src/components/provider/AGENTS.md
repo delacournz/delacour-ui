@@ -65,8 +65,8 @@ everything — a root layout, an `App.tsx`.
   safe area for its insets and the keyboard values a sheet's footer rides.
   `apps/playground/src/app/_layout.tsx` is the reference mount. Without it a
   `BottomSheet.Portal` still renders, where it is written, as an inline sheet.
-  `@gorhom/bottom-sheet` was a required peer while this component mounted its
-  modal provider; nothing imports it any more.
+  The previous sheet library was a required peer while this component mounted
+  its modal provider; nothing imports it any more.
 - **Deliberately not idempotent.** It does not detect an enclosing copy of
   itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
   `SafeAreaProvider` seeds from the parent's insets and costs a native view;

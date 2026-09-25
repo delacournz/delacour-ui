@@ -47,7 +47,7 @@ export type ReanimatedAnimation =
  *
  * Reanimated 4 replaced `restDisplacementThreshold` / `restSpeedThreshold`
  * with a single relative `energyThreshold`, so the two rest thresholds the
- * core carries — gorhom's defaults, kept as data for a future runtime that
+ * core carries — the previous engine's defaults, kept as data for a future runtime that
  * reads them — are not forwarded. With `overshootClamping` and a stiff spring
  * the default energy threshold settles within a frame or two of them anyway.
  */

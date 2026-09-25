@@ -41,7 +41,7 @@ nothing animated and nothing else would report the index.
 Reanimated. Reanimated 4 replaced the spring's `restDisplacementThreshold` and
 `restSpeedThreshold` with one relative `energyThreshold`, so those two fields
 of the core's `IOS_SPRING` are kept as data and not forwarded; with
-`overshootClamping` and the stiffness gorhom tuned, the default threshold
+`overshootClamping` and a stiff spring, the default threshold
 settles within a frame or two of them.
 
 ## The listeners

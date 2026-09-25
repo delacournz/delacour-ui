@@ -343,7 +343,26 @@ gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
-bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
+bind the publisher, and CI takes over. `@delacour/react-native-bottom-sheet` is the current case,
+and the steps, in order, are:
+
+```bash
+cd packages/react-native-bottom-sheet
+npx npm@latest publish --access public --tag alpha      # npm ≥ 11.15, prompts for 2FA
+```
+
+then on npmjs.com, under the package's **Settings → Trusted publisher**, bind GitHub Actions with
+repository `delacournz/delacour-ui`, workflow `release.yml`, and `npm stage publish` as the only
+allowed action — the same binding the other three carry. From the next version PR on, `release.yml`
+stages it with the rest. Approve in peer order, `@delacour/react-native-bottom-sheet` and
+`@delacour/react-native-charts` before `@delacour/react-native-ui`, and add the second tag by hand
+while pre mode is on:
+
+```bash
+npm dist-tag add @delacour/react-native-bottom-sheet@<version> alpha
+```
+
+`verify:expo` does not wait for that: it packs each
 workspace package a registry item depends on (`@delacour/react-native-charts` for `chart`,
 `@delacour/react-native-bottom-sheet` for `bottom-sheet`) and adds the tarball to the scaffolded app
 before `add`, so the check covers this branch's engines rather than whatever npm last served — and

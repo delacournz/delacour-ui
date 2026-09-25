@@ -27,7 +27,7 @@ export type SheetPans = {
 	content: GestureType;
 };
 
-/** Seconds of release velocity the snap projects along — gorhom's `0.2`. */
+/** Seconds of release velocity the snap projects along — the `0.2` the previous engine used. */
 export const SNAP_PROJECTION = 0.2;
 
 /** How far a finger travels vertically before the content pan claims it, in pixels. */

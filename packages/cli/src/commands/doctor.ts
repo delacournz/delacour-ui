@@ -127,7 +127,7 @@ function checkFramework(project: ProjectInfo): Check {
  * and every pressable in the library runs one. `react-native-teleport`, which
  * `BottomSheet` teleports through, ships a Fabric view and nothing else.
  */
-function checkNewArchitecture(expoConfig: ExpoConfig | null, project: ProjectInfo): Check {
+export function checkNewArchitecture(expoConfig: ExpoConfig | null, project: ProjectInfo): Check {
 	if (!expoConfig) return { name: "New Architecture", status: "skip", detail: "expo config not read (--fast)" };
 
 	const enabled = expoConfig.newArchEnabled !== false;
@@ -708,7 +708,7 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 	};
 }
 
-type ExpoConfig = {
+export type ExpoConfig = {
 	newArchEnabled?: boolean;
 	experiments?: { tsconfigPaths?: boolean };
 };

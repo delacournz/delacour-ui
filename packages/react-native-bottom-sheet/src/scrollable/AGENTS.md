@@ -47,7 +47,7 @@ move land in the same frame in no fixed order, and when the pan ran first the
 sheet dipped a pixel, the lock engaged and the list froze where it was. A
 fixed budget cannot race anything. A list held by the lock — scrolled, and
 below the top — has no budget until the sheet reaches the top this gesture
-(`listHeld` in `use-sheet-pan.ts`), which is gorhom's
+(`listHeld` in `use-sheet-pan.ts`), the previous engine's
 `isScrollablePositionLocked` under another name.
 
 The lock's target is taken when the lock engages, by any path — a drag, a

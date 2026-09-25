@@ -7,7 +7,7 @@ export type SelectSnapHeightInput = {
 	detents: readonly number[];
 	/** The closed height when closing is allowed from this gesture, else `null`. */
 	closedHeight: number | null;
-	/** Seconds of velocity to project — gorhom's `0.2`. */
+	/** Seconds of velocity to project — the `0.2` the previous engine used. */
 	projection: number;
 };
 

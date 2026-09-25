@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 };
 
 export function Demo(): ReactElement {
-	const [isOpen, setOpen] = useState(false);
+	const [isOpen, setOpen] = useState(true);
 
 	return (
 		<View className="gap-3">

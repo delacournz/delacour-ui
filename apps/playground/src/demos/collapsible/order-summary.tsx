@@ -38,7 +38,7 @@ function Line({ name, detail, price }: { name: string; detail: string; price: st
 export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
-			<Collapsible>
+			<Collapsible defaultOpen>
 				<Collapsible.Trigger testID="order-summary">
 					<Icon icon={IconReceiptBill} />
 					<Collapsible.Title>Order summary</Collapsible.Title>

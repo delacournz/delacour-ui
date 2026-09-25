@@ -1,0 +1,78 @@
+name: Alpha
+
+# Every push to `develop` that carries a pending changeset publishes a snapshot of each package it
+# names — `x.y.z-alpha.<datetime>` — to npm under the `alpha` dist-tag. `latest` is never touched;
+# only `release.yml` moves it. See `.github/changeset-alpha.ts` for the steps.
+#
+# This file has its own trusted publisher on npmjs.com, one per package, that allows a direct
+# `npm publish`: an alpha on every merge cannot wait for a maintainer's 2FA. `release.yml` keeps the
+# stage-only publisher, so a stable version still does. The publisher binds to this filename —
+# rename the file and every publish is refused until the publisher is recreated.
+#
+# A push with nothing pending — the release commit `release.yml` pushes, a docs-only merge —
+# publishes nothing and exits green.
+on:
+  push:
+    branches: [develop]
+
+# Queue, never cancel: a cancelled run can leave some packages published and others not, and the
+# next run's snapshot is a different version.
+concurrency:
+  group: alpha
+  cancel-in-progress: false
+
+jobs:
+  alpha:
+    name: Publish alpha snapshot
+    if: github.repository_owner == 'delacournz'
+    # Not a Namespace runner for the same reason as `release.yml`: npm verifies the provenance
+    # attestation against the runner, and sigstore only attests GitHub-hosted ones.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+
+    env:
+      TURBO_TELEMETRY_DISABLED: 1
+      # Job level so the CLI's `prepublishOnly` rebuild sees it too. The pushed commit is on
+      # `develop` and stays there, so `raw.githubusercontent.com` serves the registry at it.
+      DELACOUR_REGISTRY_REF: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: "https://registry.npmjs.org"
+
+      # Trusted publishing needs npm >= 11.5.1; the runner's bundled npm is older.
+      - name: Update npm for OIDC
+        run: npm install -g npm@latest
+
+      - run: bun install --frozen-lockfile
+
+      - name: Rebuild the registry
+        working-directory: packages/cli
+        run: bun run registry:build
+
+      - name: Fail if the committed registry is stale
+        run: |
+          if [ -n "$(git status --porcelain registry/)" ]; then
+            echo "registry/ does not match packages/react-native-ui. Run 'bun --filter delacour run registry:build' and commit the result."
+            git --no-pager diff --stat registry/
+            exit 1
+          fi
+
+      # The snapshot version writes changelog entries, and `@changesets/changelog-github` asks the
+      # API who wrote each commit — it fails without a token. Step level, not job level:
+      # nothing else here should see it.
+      - name: Version as a snapshot and publish under alpha
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: bun .github/changeset-alpha.ts

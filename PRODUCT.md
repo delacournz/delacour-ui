@@ -13,7 +13,7 @@ Two audiences, equally first-class:
 - **Public React Native / Expo developers.** Building an Expo app, they find the library via npm or
   `ui.delacour.co.nz` and want components whose source they own, not a dependency they configure
   around. They evaluate on a phone (the playground via QR / deep link), then either run `delacour add`
-  to copy source into their repo or `bun add @delacour/react-native-ui@alpha`.
+  to copy source into their repo or `bun add @delacour/react-native-ui`.
 - **Delacour's own client projects.** The same kit reused across Delacour's consulting work, where the
   job is shipping a client app on a shared, documented component base.
 

@@ -110,6 +110,24 @@ const SHOTS: Shot[] = [
 		frame: "desktop",
 		theme: "dark",
 	},
+	{
+		id: "29-docs-collapsible-desktop-dark",
+		path: "/docs/native/components/collapsible",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "30-docs-collapsible-desktop-light",
+		path: "/docs/native/components/collapsible",
+		frame: "desktop",
+		theme: "light",
+	},
+	{
+		id: "31-docs-collapsible-mobile-dark",
+		path: "/docs/native/components/collapsible",
+		frame: "phone",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

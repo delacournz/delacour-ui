@@ -189,6 +189,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
 	},
+	textarea: {
+		title: "Textarea",
+		description: "A multiline text field sized in rows, with auto-grow and a character count.",
+		categories: ["forms"],
+	},
 
 	expo: {
 		title: "Navigation theme",

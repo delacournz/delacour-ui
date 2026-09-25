@@ -899,6 +899,31 @@
 			]
 		},
 		{
+			"name": "textarea",
+			"type": "registry:ui",
+			"title": "Textarea",
+			"description": "A multiline text field sized in rows, with auto-grow and a character count.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"input",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/textarea/AGENTS.md",
+				"ui/textarea/index.ts",
+				"ui/textarea/textarea.tsx",
+				"ui/textarea/textarea.variants.ts"
+			]
+		},
+		{
 			"name": "tv",
 			"type": "registry:lib",
 			"title": "tv",

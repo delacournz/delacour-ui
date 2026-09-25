@@ -14,6 +14,7 @@ import {
 	IconFontStyle,
 	IconLayoutBottomFull,
 	IconLayoutTopBottom,
+	IconNoteText,
 	IconParagraph,
 	IconSettingsSliderHor,
 	IconShieldCheck,
@@ -61,6 +62,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
+	textarea: IconNoteText,
 };
 
 /**

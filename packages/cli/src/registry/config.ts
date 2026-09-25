@@ -164,6 +164,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A text field, with a group that puts a prefix or suffix inside its border.",
 		categories: ["forms"],
 	},
+	kpi: {
+		title: "Kpi",
+		description:
+			"One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
+		categories: ["display"],
+	},
 	label: {
 		title: "Label",
 		description: "A form control's name, with required, invalid and disabled states.",

@@ -37,6 +37,7 @@ import {
 	IconStarLines,
 	IconTag,
 	IconToggle,
+	IconTrending4,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
@@ -72,6 +73,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	field: IconParagraph,
 	icon: IconStar,
 	input: IconWindowCursor,
+	kpi: IconTrending4,
 	label: IconAsterisk,
 	"list-group": IconBulletList,
 	meter: IconGauge,

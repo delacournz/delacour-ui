@@ -655,6 +655,56 @@
 			]
 		},
 		{
+			"name": "kpi",
+			"type": "registry:ui",
+			"title": "Kpi",
+			"description": "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"badge",
+				"card",
+				"chart",
+				"cn",
+				"icon",
+				"icons",
+				"separator",
+				"surface",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"@delacour/react-native-charts",
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/kpi/AGENTS.md",
+				"ui/kpi/index.ts",
+				"ui/kpi/kpi-action.tsx",
+				"ui/kpi/kpi-content.tsx",
+				"ui/kpi/kpi-footer.tsx",
+				"ui/kpi/kpi-group.tsx",
+				"ui/kpi/kpi-header.tsx",
+				"ui/kpi/kpi-icon.tsx",
+				"ui/kpi/kpi-sparkline.tsx",
+				"ui/kpi/kpi-stat.tsx",
+				"ui/kpi/kpi-title.tsx",
+				"ui/kpi/kpi-trend.tsx",
+				"ui/kpi/kpi-value.tsx",
+				"ui/kpi/kpi.context.tsx",
+				"ui/kpi/kpi.tsx",
+				"ui/kpi/kpi.types.ts",
+				"ui/kpi/kpi.variants.ts"
+			]
+		},
+		{
 			"name": "label",
 			"type": "registry:ui",
 			"title": "Label",

@@ -72,6 +72,12 @@ export type ChartProps = {
 	/** How the scrub coexists with a scrolling parent. Defaults to holding. */
 	scrubConfig?: ScrubConfig;
 	className?: string;
+	/**
+	 * Merged onto the frame — the view the canvas fills — after the size's
+	 * height. `frameClassName="h-16"` is a sparkline; the three `size` heights
+	 * are for a chart someone reads with axes.
+	 */
+	frameClassName?: string;
 	/** Named on the frame, so a capture flow or a test can find the plot. */
 	testID?: string;
 	children?: ReactNode;
@@ -106,6 +112,7 @@ function ChartRoot({
 	orientation = "vertical",
 	scrubConfig,
 	className,
+	frameClassName,
 	testID,
 	children,
 }: ChartProps): ReactElement {
@@ -231,7 +238,7 @@ function ChartRoot({
 	return (
 		<ChartProvider value={value}>
 			<View className={slots.root({ className })}>
-				<View className={slots.frame()} onLayout={onLayout} testID={testID}>
+				<View className={slots.frame({ className: frameClassName })} onLayout={onLayout} testID={testID}>
 					<CartesianChart
 						curve={curve}
 						data={data}

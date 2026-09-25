@@ -194,6 +194,18 @@ import * as demo_input_variants_at_rest from "./input/variants/at-rest";
 import * as demo_input_variants_disabled from "./input/variants/disabled";
 import * as demo_input_variants_focused from "./input/variants/focused";
 import * as demo_input_variants_invalid from "./input/variants/invalid";
+import * as demo_kpi_anatomy from "./kpi/anatomy";
+import * as demo_kpi_colours from "./kpi/colours";
+import * as demo_kpi_configurator from "./kpi/configurator";
+import * as demo_kpi_dashboard from "./kpi/dashboard";
+import * as demo_kpi_good_direction from "./kpi/good-direction";
+import * as demo_kpi_group from "./kpi/group";
+import * as demo_kpi_inline from "./kpi/inline";
+import * as demo_kpi_loading from "./kpi/loading";
+import * as demo_kpi_scrub from "./kpi/scrub";
+import * as demo_kpi_scrub_controlled from "./kpi/scrub-controlled";
+import * as demo_kpi_sizes from "./kpi/sizes";
+import * as demo_kpi_trend_variants from "./kpi/trend-variants";
 import * as demo_label_basic from "./label/basic";
 import * as demo_label_beside_a_switch from "./label/beside-a-switch";
 import * as demo_label_required_mark from "./label/required-mark";
@@ -514,6 +526,18 @@ export const DEMOS = {
 	"input/variants/disabled": demo_input_variants_disabled,
 	"input/variants/focused": demo_input_variants_focused,
 	"input/variants/invalid": demo_input_variants_invalid,
+	"kpi/anatomy": demo_kpi_anatomy,
+	"kpi/colours": demo_kpi_colours,
+	"kpi/configurator": demo_kpi_configurator,
+	"kpi/dashboard": demo_kpi_dashboard,
+	"kpi/good-direction": demo_kpi_good_direction,
+	"kpi/group": demo_kpi_group,
+	"kpi/inline": demo_kpi_inline,
+	"kpi/loading": demo_kpi_loading,
+	"kpi/scrub": demo_kpi_scrub,
+	"kpi/scrub-controlled": demo_kpi_scrub_controlled,
+	"kpi/sizes": demo_kpi_sizes,
+	"kpi/trend-variants": demo_kpi_trend_variants,
 	"label/basic": demo_label_basic,
 	"label/beside-a-switch": demo_label_beside_a_switch,
 	"label/required-mark": demo_label_required_mark,

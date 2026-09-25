@@ -76,6 +76,7 @@ const ROWS = [
 	{ slug: "meter", title: "Meter", description: "Regions, thresholds, segments, colours", group: "Feedback" },
 	{ slug: "progress", title: "Progress", description: "Values, indeterminate, colours, sizes", group: "Feedback" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
+	{ slug: "skeleton", title: "Skeleton", description: "Shapes, shimmer, groups", group: "Feedback" },
 	{
 		slug: "empty-state",
 		title: "EmptyState",

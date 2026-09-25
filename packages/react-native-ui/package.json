@@ -53,6 +53,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
+		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./surface": "./src/components/surface/index.ts",

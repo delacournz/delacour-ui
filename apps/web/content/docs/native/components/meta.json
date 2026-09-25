@@ -30,6 +30,7 @@
 		"meter",
 		"progress",
 		"spinner",
+		"skeleton",
 		"empty-state",
 		"---Overlays---",
 		"bottom-sheet",

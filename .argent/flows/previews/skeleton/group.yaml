@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on skeleton/group and has settled — four
+  placeholder rows shimmering in step, Shimmer selected. The capture script
+  navigates there before running this.
+steps:
+  - wait: 1500
+  - tap: { id: skeleton-group-pulse }
+  - wait: 1600
+  - tap: { id: skeleton-group-shimmer }
+  - wait: 600

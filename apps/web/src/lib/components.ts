@@ -142,6 +142,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "An animated loading indicator that stands in for an icon.",
 	},
 	{
+		slug: "skeleton",
+		name: "Skeleton",
+		group: "Feedback",
+		blurb: "A placeholder that shimmers or pulses while content loads.",
+	},
+	{
 		slug: "empty-state",
 		name: "EmptyState",
 		group: "Feedback",

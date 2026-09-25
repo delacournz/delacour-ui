@@ -29,6 +29,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "radio", title: "Radio", description: "A radio and the group that owns which one is selected." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
+	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },

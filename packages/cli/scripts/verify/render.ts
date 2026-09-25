@@ -55,6 +55,7 @@ import { Checkbox } from "${ui}/checkbox";
 import { Field } from "${ui}/field";
 import { Icon } from "${ui}/icon";
 import { Input } from "${ui}/input";
+import { Label } from "${ui}/label";
 import { ListGroup } from "${ui}/list-group";
 import { Meter } from "${ui}/meter";
 import { Pressable } from "${ui}/pressable";
@@ -72,7 +73,7 @@ import { cn } from "${lib}/cn";
 // Referenced so the bundler cannot tree-shake an import away and hide a module
 // that would have failed to resolve.
 const REGISTERED = [
-	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, ListGroup, Meter,
+	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, Label, ListGroup, Meter,
 	Pressable, Progress, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
 ];
 
@@ -110,6 +111,9 @@ export function VerifyScreen() {
 					<Radio value="a">First</Radio>
 					<Radio value="b">Second</Radio>
 				</Radio.Group>
+
+				<Label isRequired testID="verify-label">Name</Label>
+				<Input placeholder="Ada Lovelace" />
 
 				<Field>
 					<Field.Label>Email</Field.Label>

@@ -140,6 +140,14 @@ import * as demo_input_variants_at_rest from "./input/variants/at-rest";
 import * as demo_input_variants_disabled from "./input/variants/disabled";
 import * as demo_input_variants_focused from "./input/variants/focused";
 import * as demo_input_variants_invalid from "./input/variants/invalid";
+import * as demo_label_basic from "./label/basic";
+import * as demo_label_beside_a_switch from "./label/beside-a-switch";
+import * as demo_label_required_mark from "./label/required-mark";
+import * as demo_label_sign_up from "./label/sign-up";
+import * as demo_label_sizes from "./label/sizes";
+import * as demo_label_states from "./label/states";
+import * as demo_label_toggle_states from "./label/toggle-states";
+import * as demo_label_wrapping from "./label/wrapping";
 import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
@@ -356,6 +364,14 @@ export const DEMOS = {
 	"input/variants/disabled": demo_input_variants_disabled,
 	"input/variants/focused": demo_input_variants_focused,
 	"input/variants/invalid": demo_input_variants_invalid,
+	"label/basic": demo_label_basic,
+	"label/beside-a-switch": demo_label_beside_a_switch,
+	"label/required-mark": demo_label_required_mark,
+	"label/sign-up": demo_label_sign_up,
+	"label/sizes": demo_label_sizes,
+	"label/states": demo_label_states,
+	"label/toggle-states": demo_label_toggle_states,
+	"label/wrapping": demo_label_wrapping,
 	"list-group/custom-suffix": demo_list_group_custom_suffix,
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,

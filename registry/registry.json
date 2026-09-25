@@ -447,6 +447,30 @@
 			]
 		},
 		{
+			"name": "label",
+			"type": "registry:ui",
+			"title": "Label",
+			"description": "A form control's name, with required, invalid and disabled states.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/label/AGENTS.md",
+				"ui/label/index.ts",
+				"ui/label/label.tsx",
+				"ui/label/label.variants.ts"
+			]
+		},
+		{
 			"name": "list-group",
 			"type": "registry:ui",
 			"title": "List Group",

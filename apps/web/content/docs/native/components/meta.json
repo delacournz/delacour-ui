@@ -10,6 +10,7 @@
 		"---Forms---",
 		"field",
 		"input",
+		"label",
 		"checkbox",
 		"radio",
 		"switch",

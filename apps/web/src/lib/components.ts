@@ -53,6 +53,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 	},
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
 	{
+		slug: "label",
+		name: "Label",
+		group: "Forms",
+		blurb: "A form control's name, with required, invalid and disabled states.",
+	},
+	{
 		slug: "checkbox",
 		name: "Checkbox",
 		group: "Forms",

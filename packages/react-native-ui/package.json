@@ -42,6 +42,7 @@
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",
+		"./label": "./src/components/label/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",

@@ -19,6 +19,7 @@ import {
 	IconInboxEmpty,
 	IconLayoutBottomFull,
 	IconLayoutTopBottom,
+	IconNoteText,
 	IconParagraph,
 	IconProgress75,
 	IconSettingsSliderHor,
@@ -74,6 +75,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
+	textarea: IconNoteText,
 	"toggle-button": IconBold,
 };
 

@@ -58,6 +58,7 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A form field's layout, and the one place its state is written down.",
 	},
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
+	{ slug: "textarea", name: "Textarea", group: "Forms", blurb: "A multiline text field, sized in rows." },
 	{
 		slug: "label",
 		name: "Label",

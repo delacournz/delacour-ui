@@ -219,6 +219,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
 	},
+	textarea: {
+		title: "Textarea",
+		description: "A multiline text field sized in rows, with auto-grow and a character count.",
+		categories: ["forms"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

@@ -241,6 +241,14 @@ import * as demo_text_inline_presets from "./text/inline-presets";
 import * as demo_text_size from "./text/size";
 import * as demo_text_type_scale from "./text/type-scale";
 import * as demo_text_weight from "./text/weight";
+import * as demo_textarea_auto_grow from "./textarea/auto-grow";
+import * as demo_textarea_character_count from "./textarea/character-count";
+import * as demo_textarea_controlled from "./textarea/controlled";
+import * as demo_textarea_feedback_form from "./textarea/feedback-form";
+import * as demo_textarea_rows from "./textarea/rows";
+import * as demo_textarea_sizes from "./textarea/sizes";
+import * as demo_textarea_states from "./textarea/states";
+import * as demo_textarea_variants from "./textarea/variants";
 import * as demo_toggle_button_controlled from "./toggle-button/controlled";
 import * as demo_toggle_button_filters from "./toggle-button/filters";
 import * as demo_toggle_button_formatting from "./toggle-button/formatting";
@@ -492,6 +500,14 @@ export const DEMOS = {
 	"text/size": demo_text_size,
 	"text/type-scale": demo_text_type_scale,
 	"text/weight": demo_text_weight,
+	"textarea/auto-grow": demo_textarea_auto_grow,
+	"textarea/character-count": demo_textarea_character_count,
+	"textarea/controlled": demo_textarea_controlled,
+	"textarea/feedback-form": demo_textarea_feedback_form,
+	"textarea/rows": demo_textarea_rows,
+	"textarea/sizes": demo_textarea_sizes,
+	"textarea/states": demo_textarea_states,
+	"textarea/variants": demo_textarea_variants,
 	"toggle-button/controlled": demo_toggle_button_controlled,
 	"toggle-button/filters": demo_toggle_button_filters,
 	"toggle-button/formatting": demo_toggle_button_formatting,

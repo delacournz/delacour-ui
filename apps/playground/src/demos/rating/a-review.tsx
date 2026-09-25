@@ -29,11 +29,11 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-4 rounded-lg border border-border bg-card p-4">
-			<View className="flex-row items-center justify-between">
+			<View>
 				<Text.Header>Harbourside Kitchen</Text.Header>
-				<Rating className="flex-row items-center gap-1" isReadOnly size="sm" value={average}>
+				<Rating className="flex-row items-center gap-2" isReadOnly size="sm" value={average}>
 					<Rating.Stars accessibilityLabel="Overall" testID="rating-overall" />
-					<Rating.Output>{({ value }) => value.toFixed(1)}</Rating.Output>
+					<Rating.Output color="muted">{({ value }) => `${value.toFixed(1)} overall`}</Rating.Output>
 				</Rating>
 			</View>
 			{ASPECTS.map((aspect) => (

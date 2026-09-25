@@ -47,7 +47,7 @@ export const RATING_TAP_SLOP = 6;
  * disabled *filled* star. A fraction of it is legible on both themes, and the
  * package has no token to add for one component's empty state (rule 11).
  */
-export const RATING_EMPTY_OPACITY = 0.3;
+export const RATING_EMPTY_OPACITY = 0.4;
 
 /**
  * The token each colour fills a star with.

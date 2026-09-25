@@ -81,7 +81,7 @@ is part of the context's own shape, so it lives beside it.
   token per colour and `resolveRatingPaint` settles it, so the whole paint matrix
   is reachable from `bun test`, which also checks every token it names exists in
   both variants of `theme.css`.
-- **An empty star is `muted-foreground` at 30% — the same chrome at every colour.**
+- **An empty star is `muted-foreground` at 40% — the same chrome at every colour.**
   No token sits where an empty star needs to: `border` and `input` vanish against
   a light card, and `muted-foreground` at full strength reads as a disabled
   filled star. The opacity is on the whole `Svg` view, not on the path's

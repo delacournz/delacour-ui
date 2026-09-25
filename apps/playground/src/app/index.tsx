@@ -1,6 +1,7 @@
 import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
+	IconArrowExpandVer,
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconBrowserTabs,
@@ -48,6 +49,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	button: IconSquareCursor,
 	checkbox: IconSquareCheck,
 	chart: IconChart1,
+	collapsible: IconArrowExpandVer,
 	field: IconParagraph,
 	icon: IconStar,
 	input: IconWindowCursor,

@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on collapsible/order-summary and has
+  settled — the Order summary row closed, with the Pay button under it. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the summary, and the button follows it down
+  - tap: { id: order-summary }
+  - wait: 1200
+  - echo: And closing it again, so the clip loops without a jump cut
+  - tap: { id: order-summary }

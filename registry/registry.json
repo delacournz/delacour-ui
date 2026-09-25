@@ -499,6 +499,41 @@
 			]
 		},
 		{
+			"name": "meter",
+			"type": "registry:ui",
+			"title": "Meter",
+			"description": "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"progress",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/meter/AGENTS.md",
+				"ui/meter/index.ts",
+				"ui/meter/meter-fill.tsx",
+				"ui/meter/meter-header.tsx",
+				"ui/meter/meter-label.tsx",
+				"ui/meter/meter-output.tsx",
+				"ui/meter/meter-segments.tsx",
+				"ui/meter/meter-track.tsx",
+				"ui/meter/meter.context.tsx",
+				"ui/meter/meter.tsx",
+				"ui/meter/meter.types.ts",
+				"ui/meter/meter.variants.ts"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",

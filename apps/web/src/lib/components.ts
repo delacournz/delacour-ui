@@ -105,6 +105,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "meter",
+		name: "Meter",
+		group: "Feedback",
+		blurb: "A measurement on a fixed scale, coloured by where it falls.",
+	},
+	{
 		slug: "progress",
 		name: "Progress",
 		group: "Feedback",

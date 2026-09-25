@@ -144,6 +144,14 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_meter_anatomy from "./meter/anatomy";
+import * as demo_meter_colours from "./meter/colours";
+import * as demo_meter_formatting from "./meter/formatting";
+import * as demo_meter_plan_usage from "./meter/plan-usage";
+import * as demo_meter_regions from "./meter/regions";
+import * as demo_meter_segments from "./meter/segments";
+import * as demo_meter_sizes from "./meter/sizes";
+import * as demo_meter_thresholds from "./meter/thresholds";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -352,6 +360,14 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"meter/anatomy": demo_meter_anatomy,
+	"meter/colours": demo_meter_colours,
+	"meter/formatting": demo_meter_formatting,
+	"meter/plan-usage": demo_meter_plan_usage,
+	"meter/regions": demo_meter_regions,
+	"meter/segments": demo_meter_segments,
+	"meter/sizes": demo_meter_sizes,
+	"meter/thresholds": demo_meter_thresholds,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

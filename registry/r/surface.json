@@ -1,0 +1,57 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "surface",
+	"type": "registry:ui",
+	"title": "Surface",
+	"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/surface/AGENTS.md",
+			"target": "surface/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/surface/index.ts",
+			"target": "surface/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/surface/surface.context.tsx",
+			"target": "surface/surface.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/surface/surface.tsx",
+			"target": "surface/surface.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/surface/surface.variants.ts",
+			"target": "surface/surface.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

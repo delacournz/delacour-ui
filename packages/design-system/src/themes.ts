@@ -505,8 +505,15 @@ export const ACCENT_THEMES: readonly AccentTheme[] = [
 	 * Every value here is the site's own hex converted, so the button on the
 	 * phone and the button on delacour.co.nz are the same colour: `#fbbf24` at
 	 * the dark `primary` over `#18181b` text, `#d97706` in the light under
-	 * `#451a03`, and the site's five-step chart ramp in both. Appended last so
-	 * every earlier accent keeps its ordinal.
+	 * `#451a03`. Appended last so every earlier accent keeps its ordinal.
+	 *
+	 * The chart ramp is the site's five steps, amber-300 … amber-700, in the
+	 * dark — but not in the light. Amber-300 is 1.4:1 against a white card,
+	 * and no amber lighter than about `L 0.67` clears WCAG's 3:1 non-text
+	 * minimum there, so the light ramp starts at amber-600 (the light
+	 * `primary`, the way the dark `chart-2` is the dark `primary`) and walks
+	 * Tailwind's own steps down to amber-950. `contrast.test.ts` holds the
+	 * first step at 3:1 against both the page and the card.
 	 */
 	{
 		name: "delacour",
@@ -514,11 +521,11 @@ export const ACCENT_THEMES: readonly AccentTheme[] = [
 		light: {
 			primary: "oklch(0.666 0.157 58.318)",
 			"primary-foreground": "oklch(0.279 0.074 45.635)",
-			"chart-1": "oklch(0.879 0.153 91.605)",
-			"chart-2": "oklch(0.837 0.164 84.429)",
-			"chart-3": "oklch(0.769 0.165 70.08)",
-			"chart-4": "oklch(0.666 0.157 58.318)",
-			"chart-5": "oklch(0.555 0.146 48.998)",
+			"chart-1": "oklch(0.666 0.157 58.318)",
+			"chart-2": "oklch(0.555 0.146 48.998)",
+			"chart-3": "oklch(0.473 0.137 46.201)",
+			"chart-4": "oklch(0.414 0.112 45.904)",
+			"chart-5": "oklch(0.279 0.074 45.635)",
 			"sidebar-primary": "oklch(0.666 0.157 58.318)",
 			"sidebar-primary-foreground": "oklch(0.279 0.074 45.635)",
 		},

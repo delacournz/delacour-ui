@@ -1,5 +1,11 @@
 # delacour
 
+## 0.1.0-alpha.6
+
+### Patch Changes
+
+- [#104](https://github.com/delacournz/delacour-ui/pull/104) [`21f692a`](https://github.com/delacournz/delacour-ui/commit/21f692af764ca3bf8adea2c36f6395bcaa13223f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Point the "registry may be newer than this CLI" hint at `--ref develop`. `main` now moves only on a release, so unreleased components live on `develop`.
+
 ## 0.1.0-alpha.5
 
 ### Patch Changes

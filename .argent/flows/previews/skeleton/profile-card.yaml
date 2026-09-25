@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on skeleton/profile-card and has settled —
+  the profile card still loading, its switch on. The capture script navigates
+  there before running this.
+steps:
+  - wait: 1200
+  - tap: { id: skeleton-loading }
+  - wait: 1400
+  - tap: { id: skeleton-loading }
+  - wait: 400

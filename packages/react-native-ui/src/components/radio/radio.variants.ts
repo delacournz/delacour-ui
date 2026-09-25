@@ -119,13 +119,12 @@ export const radioVariants = tv({
 		// caller's `justify-between` because the root already knows where the
 		// indicator landed — see {@link resolveIndicatorPlacement}.
 		isIndicatorTrailing: { true: { root: "justify-between" }, false: {} },
-		// The fade lands on the children, never on the `root`, and that is not a
-		// style choice. `root` is worn by `Pressable`'s own `Animated.View`, whose
-		// `useAnimatedStyle` writes `opacity` on every frame — at rest, 1. An
-		// `opacity-50` class on that node is overwritten before it is ever drawn,
-		// silently, so the row stays at full contrast while behaving as disabled.
-		// The ring and the label are ordinary descendants, so their opacity
-		// multiplies with the root's instead of fighting it.
+		// The fade lands on the children, never on the `root`. `root` is worn by
+		// `Pressable`'s own `Animated.View`, which now multiplies a className's
+		// opacity into its press — but the ring and the label fading on their own
+		// keeps the row's hit area at full contrast and lets each part be tuned,
+		// so it stays here. Putting `opacity-50` on the root as well would
+		// compound with these and land at a quarter.
 		//
 		// The group must not fade either, or a disabled group would compound
 		// `opacity-50` with each of its rows and land at a quarter opacity.

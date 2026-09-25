@@ -1,0 +1,184 @@
+---
+title: Avatar
+description: A person as a picture, with an initials fallback, a corner badge and a stack.
+icon: CircleUser
+---
+
+<Preview id="avatar/group" title={null} />
+
+## Installation
+
+<ComponentInstall name="avatar" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Avatar } from "@/components/ui/avatar";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Avatar name="Kate Austen" source={{ uri: "https://i.pravatar.cc/160?img=47" }} />
+    </View>
+  );
+}
+```
+
+## Image and fallbacks
+
+The initials show while the image loads, and in its place if it fails, so a dead URL never leaves an empty circle.
+
+<Preview id="avatar/fallbacks" />
+
+```tsx
+<Avatar name="Kate Austen" source={{ uri: user.avatarUrl }} />
+<Avatar name="Oliver Lee" />
+<Avatar fallback="DX" name="Design Crew" />
+<Avatar />
+```
+
+## Sizes
+
+A size is a fixed edge — 32, 40, 48 and 64 points.
+
+<Preview id="avatar/sizes" />
+
+```tsx
+<Avatar name="Ana Silva" size="sm" />
+<Avatar name="Ben Okafor" size="md" />
+<Avatar name="Chen Wei" size="lg" />
+<Avatar name="Dana Kim" size="xl" />
+```
+
+## Variants and colours
+
+`variant` and `color` paint the fallback, on the six colours `Badge` takes.
+
+<Preview id="avatar/variants-and-colours" />
+
+```tsx
+<Avatar name="Pri Mary" variant="soft" color="primary" />
+<Avatar name="Sue Cess" variant="solid" color="success" />
+```
+
+## Presence
+
+An empty `Avatar.Badge` is a presence dot; say the status in the avatar's own label.
+
+<Preview id="avatar/presence" />
+
+```tsx
+<Avatar accessibilityLabel="Kate Austen, online" name="Kate Austen" source={photo}>
+  <Avatar.Badge color="success" placement="bottom-right" />
+</Avatar>
+```
+
+## Unread count
+
+Given children, `Avatar.Badge` only pins them to the corner.
+
+<Preview id="avatar/unread-count" />
+
+```tsx
+import { Badge } from "@/components/ui/badge";
+
+<Avatar name="Oliver Lee" source={photo}>
+  <Avatar.Badge>
+    <Badge color="destructive" size="sm">3</Badge>
+  </Avatar.Badge>
+</Avatar>;
+```
+
+## Pressable avatars
+
+With no `onPress` and no `onLongPress` the root is a plain `View`; supply either and it becomes a `Pressable`.
+
+```tsx
+<Avatar name="Oliver Lee" onPress={openProfile} />
+```
+
+## Group
+
+`max` caps the faces, not the row, and `total` counts people who were never passed as children.
+
+```tsx
+<Avatar.Group max={3} total={40}>
+  <Avatar name="Kate Austen" source={kate} />
+  <Avatar name="Oliver Lee" source={oliver} />
+  <Avatar name="Chen Wei" />
+</Avatar.Group>
+```
+
+## Overlap
+
+`overlap` defaults to a third of the edge; `0` closes the stack into a plain row.
+
+```tsx
+<Avatar.Group overlap={0} size="sm">…</Avatar.Group>
+```
+
+## API Reference
+
+### AvatarProps
+
+A pressable avatar is a `Pressable`, so `feedback`, `haptic`, `onPress` and the rest are inherited rather than
+restated — see [Pressable](/docs/native/components/pressable). `asChild`, `busy` and `disabled` are withheld: use
+`isDisabled`.
+
+<TypeTable
+  type={{
+    source: {
+      type: "ImageSourcePropType",
+      description: "The picture. The fallback shows while it loads and if it fails; a new URI or header set retries.",
+    },
+    name: { type: "string", description: "Read by screen readers; its initials are the default fallback." },
+    fallback: { type: "string", description: "Drawn instead of the initials of `name`." },
+    variant: { type: '"soft" | "solid"', default: '"soft"' },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg" | "xl"', default: '"md", or the group\'s size' },
+    isDisabled: { type: "boolean", description: "Fades the avatar and blocks its press." },
+    imageProps: {
+      type: 'Omit<ImageProps, "source">',
+      description: "Passed to the `Image`. `onError` fires after the fallback has taken over.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Overlays — an `Avatar.Badge`." },
+  }}
+/>
+
+### Avatar.Badge
+
+An overlay pinned to a corner, outside the clipped circle. Empty, it draws a presence dot. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    placement: { type: '"top-right" | "bottom-right"', default: '"top-right"' },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
+      default: '"success"',
+      description: "The presence dot's colour. Ignored when there are children.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Avatar.Group
+
+A row of overlapping avatars, first on top, with the people who did not fit counted at the end. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    size: { type: '"sm" | "md" | "lg" | "xl"', default: '"md"', description: "A child's own `size` still wins." },
+    max: { type: "number", description: "How many faces to show. The rest are counted into a trailing `+N`." },
+    total: { type: "number", description: "How many people there are, when the children are only the first few." },
+    overlap: { type: "number", description: "Points each face slides under the one before. Defaults to a third of the size." },
+    onOverflowPress: { type: "() => void", description: "Makes the `+N` tile a button." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>

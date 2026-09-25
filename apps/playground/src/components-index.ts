@@ -41,10 +41,20 @@ export type ComponentIndexEntry = {
 const ROWS = [
 	{ slug: "button", title: "Button", description: "Variants, sizes, icons, loading", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
+	{
+		slug: "toggle-button",
+		title: "ToggleButton",
+		description: "Variants, sizes, single and multiple groups",
+		group: "Actions",
+	},
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
+	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
+	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },
+	{ slug: "label", title: "Label", description: "Required, invalid and disabled states", group: "Forms" },
 	{ slug: "radio", title: "Radio", description: "Groups, selection, sizes, orientation", group: "Forms" },
+	{ slug: "rating", title: "Rating", description: "Half stars, read-only, drag, clear", group: "Forms" },
 	{ slug: "slider", title: "Slider", description: "Range, orientation, colours, steps", group: "Forms" },
 	{ slug: "switch", title: "Switch", description: "Drag or tap, colours, sizes, end content", group: "Forms" },
 	{
@@ -53,6 +63,13 @@ const ROWS = [
 		description: "Selection modes, measured panels, indicators",
 		group: "Data display",
 	},
+	{
+		slug: "collapsible",
+		title: "Collapsible",
+		description: "One section, controlled or not, and an order summary",
+		group: "Data display",
+	},
+	{ slug: "avatar", title: "Avatar", description: "Fallbacks, sizes, badges, groups", group: "Data display" },
 	{ slug: "badge", title: "Badge", description: "Variants, colours, sizes, dismiss", group: "Data display" },
 	{ slug: "chart", title: "Chart", description: "Line, area, bar, scatter, candlestick, pie", group: "Data display" },
 	{
@@ -64,7 +81,16 @@ const ROWS = [
 	{ slug: "list-group", title: "ListGroup", description: "Grouped rows, dividers, slots", group: "Data display" },
 	{ slug: "separator", title: "Separator", description: "Orientations, insets, weight", group: "Data display" },
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "meter", title: "Meter", description: "Regions, thresholds, segments, colours", group: "Feedback" },
+	{ slug: "progress", title: "Progress", description: "Values, indeterminate, colours, sizes", group: "Feedback" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
+	{ slug: "skeleton", title: "Skeleton", description: "Shapes, shimmer, groups", group: "Feedback" },
+	{
+		slug: "empty-state",
+		title: "EmptyState",
+		description: "Media, title, actions, card variant",
+		group: "Feedback",
+	},
 	{
 		slug: "bottom-sheet",
 		title: "Bottom sheet",
@@ -74,6 +100,7 @@ const ROWS = [
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
+	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];
 
 /** A slug with a screen, as a literal union so a row without an icon is a type error. */

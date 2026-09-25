@@ -110,6 +110,9 @@ const SHOTS: Shot[] = [
 		frame: "desktop",
 		theme: "dark",
 	},
+	{ id: "29-docs-skeleton-desktop-dark", path: "/docs/native/components/skeleton", frame: "desktop", theme: "dark" },
+	{ id: "30-docs-skeleton-desktop-light", path: "/docs/native/components/skeleton", frame: "desktop", theme: "light" },
+	{ id: "31-docs-skeleton-mobile-dark", path: "/docs/native/components/skeleton", frame: "phone", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

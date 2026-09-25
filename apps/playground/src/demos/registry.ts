@@ -160,6 +160,12 @@ import * as demo_screen_showcase from "./screen/showcase";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
+import * as demo_skeleton_animations from "./skeleton/animations";
+import * as demo_skeleton_feed_post from "./skeleton/feed-post";
+import * as demo_skeleton_group from "./skeleton/group";
+import * as demo_skeleton_lines from "./skeleton/lines";
+import * as demo_skeleton_profile_card from "./skeleton/profile-card";
+import * as demo_skeleton_shapes from "./skeleton/shapes";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_anatomy from "./slider/anatomy";
 import * as demo_slider_colours from "./slider/colours";
@@ -353,6 +359,12 @@ export const DEMOS = {
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
+	"skeleton/animations": demo_skeleton_animations,
+	"skeleton/feed-post": demo_skeleton_feed_post,
+	"skeleton/group": demo_skeleton_group,
+	"skeleton/lines": demo_skeleton_lines,
+	"skeleton/profile-card": demo_skeleton_profile_card,
+	"skeleton/shapes": demo_skeleton_shapes,
 	"slider/a-range": demo_slider_a_range,
 	"slider/anatomy": demo_slider_anatomy,
 	"slider/colours": demo_slider_colours,

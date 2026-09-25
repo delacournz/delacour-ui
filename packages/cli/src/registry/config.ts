@@ -164,6 +164,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A one-pixel rule, hidden from assistive technology.",
 		categories: ["layout"],
 	},
+	skeleton: {
+		title: "Skeleton",
+		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
+		categories: ["feedback"],
+	},
 	slider: {
 		title: "Slider",
 		description: "A value along a track, dragged by a handle that follows the gesture.",

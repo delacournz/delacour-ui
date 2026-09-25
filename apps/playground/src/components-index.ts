@@ -65,6 +65,7 @@ const ROWS = [
 	{ slug: "separator", title: "Separator", description: "Orientations, insets, weight", group: "Data display" },
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },
+	{ slug: "skeleton", title: "Skeleton", description: "Shapes, shimmer, groups", group: "Feedback" },
 	{
 		slug: "bottom-sheet",
 		title: "Bottom sheet",

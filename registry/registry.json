@@ -684,6 +684,36 @@
 			]
 		},
 		{
+			"name": "skeleton",
+			"type": "registry:ui",
+			"title": "Skeleton",
+			"description": "A placeholder that shimmers or pulses while content loads, in step across a group.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/skeleton/AGENTS.md",
+				"ui/skeleton/index.ts",
+				"ui/skeleton/skeleton-clock.ts",
+				"ui/skeleton/skeleton-group.tsx",
+				"ui/skeleton/skeleton-shimmer.tsx",
+				"ui/skeleton/skeleton.context.tsx",
+				"ui/skeleton/skeleton.tsx",
+				"ui/skeleton/skeleton.variants.ts"
+			]
+		},
+		{
 			"name": "slider",
 			"type": "registry:ui",
 			"title": "Slider",

@@ -1966,6 +1966,79 @@ export const install = {
 			},
 		],
 	},
+	"skeleton": {
+		name: "skeleton",
+		title: "Skeleton",
+		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
+		importPath: "@delacour/react-native-ui/skeleton",
+		exportName: "Skeleton",
+		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 18,
+		groups: [
+			{
+				name: "skeleton",
+				title: "Skeleton",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/skeleton/AGENTS.md", target: "src/components/ui/skeleton/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/skeleton/index.ts", target: "src/components/ui/skeleton/index.ts" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-clock.ts", target: "src/components/ui/skeleton/skeleton-clock.ts" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-group.tsx", target: "src/components/ui/skeleton/skeleton-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton-shimmer.tsx", target: "src/components/ui/skeleton/skeleton-shimmer.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.context.tsx", target: "src/components/ui/skeleton/skeleton.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.tsx", target: "src/components/ui/skeleton/skeleton.tsx" },
+					{ source: "packages/react-native-ui/src/components/skeleton/skeleton.variants.ts", target: "src/components/ui/skeleton/skeleton.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+		],
+	},
 	"bottom-sheet": {
 		name: "bottom-sheet",
 		title: "BottomSheet",

@@ -2633,6 +2633,52 @@ export const install = {
 			},
 		],
 	},
+	"surface": {
+		name: "surface",
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		importPath: "@delacour/react-native-ui/surface",
+		exportName: "Surface",
+		expo: ["uniwind"],
+		npm: ["tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 12,
+		groups: [
+			{
+				name: "surface",
+				title: "Surface",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/surface/AGENTS.md", target: "src/components/ui/surface/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/surface/index.ts", target: "src/components/ui/surface/index.ts" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.context.tsx", target: "src/components/ui/surface/surface.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.tsx", target: "src/components/ui/surface/surface.tsx" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.variants.ts", target: "src/components/ui/surface/surface.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+		],
+	},
 	"provider": {
 		name: "provider",
 		title: "DelacourProvider",

@@ -17,6 +17,23 @@ export type FieldContextValue = {
 	 * second registration replaces the first.
 	 */
 	registerPress: (press: (() => void) | null) => void;
+	/**
+	 * The text of the `Field.Label` inside, or `null` while there is none.
+	 *
+	 * What a control reads for its accessible name when it holds no text of its
+	 * own — a `Slider.Thumb` is a capsule, and a `Switch` is a pill. React Native
+	 * has no `<label for>`; this is that association, carried by the same context
+	 * the state cascades down.
+	 */
+	label: string | null;
+	/**
+	 * A `Field.Label` offers its text here. Pass `null` on unmount.
+	 *
+	 * The counterpart of {@link FieldContextValue.registerPress} going the same
+	 * way: a control hands its press up, a label hands its name down. A field
+	 * holds one label, so a second registration replaces the first.
+	 */
+	registerLabel: (label: string | null) => void;
 };
 
 const FieldContext = createContext<FieldContextValue | null>(null);

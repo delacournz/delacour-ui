@@ -153,7 +153,7 @@ function build(): string {
 				kind: kindOf(dependency, component.slug),
 				files: dependency.files.map((file) => {
 					// Throws rather than falling through, the way the registry builder
-					// does. A dead link here would ship on nineteen component pages.
+					// does. A dead link here would ship on every component page.
 					if (!existsSync(join(ROOT, file.path))) {
 						throw new Error(`${component.slug}: ${file.path} does not exist`);
 					}

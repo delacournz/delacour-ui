@@ -259,6 +259,41 @@
 			]
 		},
 		{
+			"name": "chip",
+			"type": "registry:ui",
+			"title": "Chip",
+			"description": "An interactive pill: a filter that toggles, a tag, or a token with a remove control.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"badge",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/chip/AGENTS.md",
+				"ui/chip/chip-close-button.tsx",
+				"ui/chip/chip-end-content.tsx",
+				"ui/chip/chip-label.tsx",
+				"ui/chip/chip-start-content.tsx",
+				"ui/chip/chip.context.tsx",
+				"ui/chip/chip.tsx",
+				"ui/chip/chip.types.ts",
+				"ui/chip/chip.variants.ts",
+				"ui/chip/index.ts"
+			]
+		},
+		{
 			"name": "cn",
 			"type": "registry:lib",
 			"title": "cn",
@@ -300,6 +335,38 @@
 			"devDependencies": [],
 			"files": [
 				"lib/compose-refs.ts"
+			]
+		},
+		{
+			"name": "empty-state",
+			"type": "registry:ui",
+			"title": "Empty State",
+			"description": "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/empty-state/AGENTS.md",
+				"ui/empty-state/empty-state-content.tsx",
+				"ui/empty-state/empty-state-description.tsx",
+				"ui/empty-state/empty-state-header.tsx",
+				"ui/empty-state/empty-state-media.tsx",
+				"ui/empty-state/empty-state-title.tsx",
+				"ui/empty-state/empty-state.context.tsx",
+				"ui/empty-state/empty-state.tsx",
+				"ui/empty-state/empty-state.types.ts",
+				"ui/empty-state/empty-state.variants.ts",
+				"ui/empty-state/index.ts"
 			]
 		},
 		{
@@ -447,6 +514,30 @@
 			]
 		},
 		{
+			"name": "label",
+			"type": "registry:ui",
+			"title": "Label",
+			"description": "A form control's name, with required, invalid and disabled states.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/label/AGENTS.md",
+				"ui/label/index.ts",
+				"ui/label/label.tsx",
+				"ui/label/label.variants.ts"
+			]
+		},
+		{
 			"name": "list-group",
 			"type": "registry:ui",
 			"title": "List Group",
@@ -499,6 +590,41 @@
 			]
 		},
 		{
+			"name": "meter",
+			"type": "registry:ui",
+			"title": "Meter",
+			"description": "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"progress",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/meter/AGENTS.md",
+				"ui/meter/index.ts",
+				"ui/meter/meter-fill.tsx",
+				"ui/meter/meter-header.tsx",
+				"ui/meter/meter-label.tsx",
+				"ui/meter/meter-output.tsx",
+				"ui/meter/meter-segments.tsx",
+				"ui/meter/meter-track.tsx",
+				"ui/meter/meter.context.tsx",
+				"ui/meter/meter.tsx",
+				"ui/meter/meter.types.ts",
+				"ui/meter/meter.variants.ts"
+			]
+		},
+		{
 			"name": "navigation-theme",
 			"type": "registry:lib",
 			"title": "navigationTheme",
@@ -528,7 +654,8 @@
 				"react-native-gesture-handler",
 				"react-native-pulsar",
 				"react-native-reanimated",
-				"react-native-worklets"
+				"react-native-worklets",
+				"uniwind"
 			],
 			"devDependencies": [],
 			"files": [
@@ -536,6 +663,39 @@
 				"ui/pressable/index.ts",
 				"ui/pressable/pressable.tsx",
 				"ui/pressable/pressable.variants.ts"
+			]
+		},
+		{
+			"name": "progress",
+			"type": "registry:ui",
+			"title": "Progress",
+			"description": "A bar showing how far a task has got, or a looping segment while it is under way.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress/AGENTS.md",
+				"ui/progress/index.ts",
+				"ui/progress/progress-fill.tsx",
+				"ui/progress/progress-header.tsx",
+				"ui/progress/progress-label.tsx",
+				"ui/progress/progress-output.tsx",
+				"ui/progress/progress-track.tsx",
+				"ui/progress/progress.context.tsx",
+				"ui/progress/progress.tsx",
+				"ui/progress/progress.types.ts",
+				"ui/progress/progress.variants.ts"
 			]
 		},
 		{
@@ -789,6 +949,30 @@
 			]
 		},
 		{
+			"name": "surface",
+			"type": "registry:ui",
+			"title": "Surface",
+			"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/surface/AGENTS.md",
+				"ui/surface/index.ts",
+				"ui/surface/surface.context.tsx",
+				"ui/surface/surface.tsx",
+				"ui/surface/surface.variants.ts"
+			]
+		},
+		{
 			"name": "switch",
 			"type": "registry:ui",
 			"title": "Switch",
@@ -921,6 +1105,35 @@
 				"ui/textarea/index.ts",
 				"ui/textarea/textarea.tsx",
 				"ui/textarea/textarea.variants.ts"
+			]
+		},
+		{
+			"name": "toggle-button",
+			"type": "registry:ui",
+			"title": "Toggle Button",
+			"description": "A button that stays pressed, alone or in a group with single or multiple selection.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"pressable",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/toggle-button/AGENTS.md",
+				"ui/toggle-button/index.ts",
+				"ui/toggle-button/toggle-button-group.tsx",
+				"ui/toggle-button/toggle-button-label.tsx",
+				"ui/toggle-button/toggle-button.context.tsx",
+				"ui/toggle-button/toggle-button.tsx",
+				"ui/toggle-button/toggle-button.variants.ts"
 			]
 		},
 		{

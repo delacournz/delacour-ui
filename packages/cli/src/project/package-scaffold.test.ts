@@ -58,7 +58,7 @@ describe("mergePackageJson", () => {
 		expect(result.exports).toEqual(EXPORTS);
 	});
 
-	test("gives a pre-mode package a peer range its alpha can satisfy", () => {
+	test("gives a Delacour package a peer range an alpha can satisfy", () => {
 		const result = mergePackageJson(null, {
 			name: "@acme/ui",
 			exports: EXPORTS,

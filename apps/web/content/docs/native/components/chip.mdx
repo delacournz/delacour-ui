@@ -1,0 +1,188 @@
+---
+title: Chip
+description: An interactive pill — a filter that toggles, a tag, or a token with a remove control.
+icon: ListFilter
+---
+
+<Preview id="chip/filter-row" title={null} />
+
+## Installation
+
+<ComponentInstall name="chip" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Chip } from "@/components/ui/chip";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [isOpen, setOpen] = useState(true);
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Chip isSelected={isOpen} onSelectedChange={setOpen}>
+        Open only
+      </Chip>
+    </View>
+  );
+}
+```
+
+## Variants and colours
+
+`variant` is how an unselected chip is painted and `color` is what it means — the same tones as `Badge`.
+
+<Preview id="chip/variants-and-colours" />
+
+```tsx
+<Chip>Default</Chip>
+<Chip color="success">Shipped</Chip>
+<Chip variant="outline" color="warning">Beta</Chip>
+<Chip defaultSelected color="primary">Selected</Chip>
+```
+
+## Sizes
+
+A size sets padding, the label's type scale and the icon step, never a height.
+
+<Preview id="chip/sizes" />
+
+```tsx
+<Chip size="sm">Small</Chip>
+<Chip size="md">Medium</Chip>
+<Chip size="lg">Large</Chip>
+```
+
+## Filters
+
+Any selection prop makes the chip a toggle, announced to a screen reader as selected or not.
+
+```tsx
+const [active, setActive] = useState(new Set(["pizza"]));
+
+<Chip
+  isSelected={active.has("pizza")}
+  onSelectedChange={(isSelected) => toggle("pizza", isSelected)}
+  variant="outline"
+>
+  <Icon icon={IconPizza} />
+  <Chip.Label>Pizza</Chip.Label>
+</Chip>;
+```
+
+## Uncontrolled
+
+`defaultSelected` lets the chip hold its own state and report each change.
+
+```tsx
+<Chip defaultSelected onSelectedChange={(isSelected) => save(isSelected)}>
+  Notifications
+</Chip>
+```
+
+## Removable
+
+`onClose` adds a remove control with a press of its own, so removing a chip never also toggles it.
+
+<Preview id="chip/removable" />
+
+```tsx
+<Chip closeAccessibilityLabel={`Remove ${topic}`} onClose={() => remove(topic)}>
+  {topic}
+</Chip>
+```
+
+## Start and end content
+
+An `Icon` needs no wrapper; an avatar or a count goes in `Chip.StartContent` or `Chip.EndContent`.
+
+<Preview id="chip/with-content" />
+
+```tsx
+<Chip variant="outline">
+  <Chip.StartContent className="size-6 rounded-full bg-primary">
+    <Text className="text-[10px] text-primary-foreground">AM</Text>
+  </Chip.StartContent>
+  <Chip.Label>Aroha</Chip.Label>
+</Chip>
+```
+
+## Tags and buttons
+
+With no handler a chip is a plain view; with only `onPress` it is a button.
+
+```tsx
+<Chip color="info">Feature</Chip>
+<Chip onPress={openTag}>Design</Chip>
+```
+
+## API Reference
+
+### ChipProps
+
+A pressable chip is a `Pressable`, so `feedback`, `haptic`, `onPress` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable). `asChild`, `busy` and `disabled` are withheld: use
+`isDisabled`.
+
+<TypeTable
+  type={{
+    variant: { type: '"soft" | "outline"', default: '"soft"' },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isSelected: {
+      type: "boolean",
+      description: "Controlled selected state. Setting it, even to `false`, makes the chip a toggle.",
+    },
+    defaultSelected: { type: "boolean", description: "Starting state while uncontrolled." },
+    onSelectedChange: { type: "(isSelected: boolean) => void" },
+    isDisabled: { type: "boolean", description: "Fades the chip and blocks both its press and its remove control." },
+    onClose: { type: "() => void", description: "Composes a `Chip.CloseButton` in at the end." },
+    closeAccessibilityLabel: {
+      type: "string",
+      default: '"Remove"',
+      description: "The name a screen reader reads for that composed button.",
+    },
+    haptic: {
+      type: "false | HapticFeedback",
+      default: '"selection" on a toggle, false otherwise',
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Chip.Label` automatically." },
+  }}
+/>
+
+### Chip.Label
+
+The chip's text. Picks its colour and type scale from the chip's variant, colour, size and selection.
+Extends React Native's `TextProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Chip.CloseButton
+
+The remove pressable. Defaults its `accessibilityLabel` to `"Remove"` and its `feedback` to `fade`.
+Extends `PressableProps`.
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Remove"' },
+    onPress: { type: "() => void" },
+    className: { type: "string" },
+  }}
+/>
+
+### Chip.StartContent / Chip.EndContent
+
+Centred wrappers for leading and trailing content that is not an `Icon`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### useChip
+
+Reads the enclosing chip's `variant`, `color`, `size`, `isSelected` and `isDisabled`, for a custom child
+that restyles itself on selection. Throws outside a `<Chip>`.

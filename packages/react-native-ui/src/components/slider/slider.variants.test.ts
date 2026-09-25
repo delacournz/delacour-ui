@@ -10,6 +10,7 @@ import {
 	nearestThumbIndex,
 	progressOf,
 	resolveSliderAxes,
+	resolveThumbAccessibilityLabel,
 	SLIDER_COLORS,
 	SLIDER_DEFAULT_COLOR,
 	SLIDER_DEFAULT_ORIENTATION,
@@ -23,6 +24,7 @@ import {
 	SLIDER_SIZES,
 	SLIDER_STEP,
 	SLIDER_THUMB_ANIMATION,
+	SLIDER_THUMB_NAMES,
 	SLIDER_THUMB_SPRING,
 	shouldTickHaptic,
 	sliderVariants,
@@ -800,5 +802,55 @@ describe("shouldTickHaptic", () => {
 
 	test("keeps the travel gate positive whichever way the drag is going", () => {
 		expect(shouldTickHaptic({ ...base, position: 0, lastPosition: SLIDER_HAPTIC_MIN_TRAVEL })).toBe(true);
+	});
+});
+
+describe("resolveThumbAccessibilityLabel", () => {
+	// A lone thumb *is* the control, so it takes the control's name and nothing
+	// more — "Volume", not "Volume, thumb".
+	test("names a lone thumb after the slider", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Volume", index: 0, count: 1 })).toBe("Volume");
+	});
+
+	// Nothing to say is better than a made-up name: an unlabelled single slider
+	// falls through to the value alone, which is what the caller has to fix by
+	// wrapping it in a Field or passing a label.
+	test("names an unlabelled lone thumb nothing", () => {
+		expect(resolveThumbAccessibilityLabel({ label: null, index: 0, count: 1 })).toBeUndefined();
+		expect(resolveThumbAccessibilityLabel({ index: 0, count: 1 })).toBeUndefined();
+	});
+
+	test("tells a range's two thumbs apart by which end they hold", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Price range", index: 0, count: 2 })).toBe("Price range, minimum");
+		expect(resolveThumbAccessibilityLabel({ label: "Price range", index: 1, count: 2 })).toBe("Price range, maximum");
+	});
+
+	// Two thumbs reading the same bare number would be indistinguishable, so a
+	// range names its ends even with no label to hang them on.
+	test("still tells an unlabelled range's thumbs apart", () => {
+		expect(resolveThumbAccessibilityLabel({ label: null, index: 0, count: 2 })).toBe(SLIDER_THUMB_NAMES.minimum);
+		expect(resolveThumbAccessibilityLabel({ label: null, index: 1, count: 2 })).toBe(SLIDER_THUMB_NAMES.maximum);
+	});
+
+	test("counts the thumbs of a range with more than two", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Stops", index: 1, count: 3 })).toBe("Stops, 2 of 3");
+		expect(resolveThumbAccessibilityLabel({ label: null, index: 2, count: 3 })).toBe("Thumb 3 of 3");
+	});
+
+	test("lets an explicit name win over everything, even in a range", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Price range", index: 0, count: 2, override: "Lowest price" })).toBe(
+			"Lowest price"
+		);
+		expect(resolveThumbAccessibilityLabel({ index: 0, count: 1, override: "Brightness" })).toBe("Brightness");
+	});
+
+	// An empty override is an absence, not a name — the `??`-not-`||` rule read the
+	// other way round, because a screen reader given "" reads nothing at all.
+	test("treats an empty override as no override", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "Volume", index: 0, count: 1, override: "" })).toBe("Volume");
+	});
+
+	test("ignores whitespace around the label it is handed", () => {
+		expect(resolveThumbAccessibilityLabel({ label: "  Volume ", index: 0, count: 1 })).toBe("Volume");
 	});
 });

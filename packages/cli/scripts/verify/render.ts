@@ -57,6 +57,7 @@ import { Icon } from "${ui}/icon";
 import { Input } from "${ui}/input";
 import { ListGroup } from "${ui}/list-group";
 import { Pressable } from "${ui}/pressable";
+import { Progress } from "${ui}/progress";
 import { Radio } from "${ui}/radio";
 import { Screen } from "${ui}/screen";
 import { Separator } from "${ui}/separator";
@@ -71,7 +72,7 @@ import { cn } from "${lib}/cn";
 // that would have failed to resolve.
 const REGISTERED = [
 	Accordion, Badge, BottomSheet, Button, Checkbox, Field, Icon, Input, ListGroup,
-	Pressable, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
+	Pressable, Progress, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
 ];
 
 /**
@@ -127,6 +128,8 @@ export function VerifyScreen() {
 						)}
 					</Slider.Track>
 				</Slider>
+
+				<Progress testID="verify-progress" value={40} />
 
 				<Spinner testID="verify-spinner" />
 

@@ -148,6 +148,13 @@ import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
+import * as demo_progress_anatomy from "./progress/anatomy";
+import * as demo_progress_colours from "./progress/colours";
+import * as demo_progress_controlled from "./progress/controlled";
+import * as demo_progress_formatting from "./progress/formatting";
+import * as demo_progress_indeterminate from "./progress/indeterminate";
+import * as demo_progress_sizes from "./progress/sizes";
+import * as demo_progress_upload from "./progress/upload";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
@@ -341,6 +348,13 @@ export const DEMOS = {
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,
 	"pressable/named-feedback": demo_pressable_named_feedback,
+	"progress/anatomy": demo_progress_anatomy,
+	"progress/colours": demo_progress_colours,
+	"progress/controlled": demo_progress_controlled,
+	"progress/formatting": demo_progress_formatting,
+	"progress/indeterminate": demo_progress_indeterminate,
+	"progress/sizes": demo_progress_sizes,
+	"progress/upload": demo_progress_upload,
 	"radio/custom-indicator": demo_radio_custom_indicator,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,
 	"radio/per-option-description": demo_radio_per_option_description,

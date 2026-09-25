@@ -71,6 +71,7 @@ shares.
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
+| [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |

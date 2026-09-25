@@ -29,4 +29,5 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
+	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },
 ];

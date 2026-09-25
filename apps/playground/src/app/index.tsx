@@ -3,6 +3,7 @@ import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
+	IconBold,
 	IconBrowserTabs,
 	IconBulletList,
 	IconChart1,
@@ -61,6 +62,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
+	"toggle-button": IconBold,
 };
 
 /**

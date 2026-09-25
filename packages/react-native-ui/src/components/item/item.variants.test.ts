@@ -77,15 +77,16 @@ describe("resolveItemRender", () => {
 		expect(resolveItemRender({ isDisabled: true })).toBe("static");
 	});
 
-	test("is a pressable with an enabled handler", () => {
+	test("is a pressable with a handler", () => {
 		expect(resolveItemRender({ isDisabled: false, onPress: noop })).toBe("pressable");
 		expect(resolveItemRender({ isDisabled: false, onLongPress: noop })).toBe("pressable");
 	});
 
-	// A disabled Pressable's animated opacity beats `opacity-50`, so the row
-	// would never dim.
-	test("drops the pressable when disabled", () => {
-		expect(resolveItemRender({ isDisabled: true, onPress: noop })).toBe("inert");
+	// Pressable composes its resting opacity with the press animation, so a
+	// disabled Pressable dims through `opacity-50` like any other row.
+	test("stays a pressable when disabled", () => {
+		expect(resolveItemRender({ isDisabled: true, onPress: noop })).toBe("pressable");
+		expect(resolveItemRender({ isDisabled: true, onLongPress: noop })).toBe("pressable");
 	});
 });
 

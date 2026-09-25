@@ -105,13 +105,7 @@ function ItemRoot({
 
 	return (
 		<ItemProvider value={context}>
-			<Animated.View
-				accessibilityRole={render === "inert" ? "button" : undefined}
-				accessibilityState={state}
-				accessible={render === "inert" ? true : undefined}
-				className={rootClassName}
-				{...props}
-			>
+			<Animated.View accessibilityState={state} className={rootClassName} {...props}>
 				{content}
 			</Animated.View>
 		</ItemProvider>

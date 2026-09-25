@@ -67,16 +67,13 @@ export function resolveItemFeedback(feedback: PressableFeedback | undefined, isI
 /**
  * What an item renders as.
  *
- * - `pressable` — it has a handler and is enabled: a `Pressable`, announced as
- *   a button.
- * - `inert` — it has a handler but is disabled: a plain view still announced as
- *   a button, with `disabled` state. Not a disabled `Pressable`, because the
- *   press animation writes an inline `opacity` that beats the `opacity-50` class
- *   and the row would never dim.
+ * - `pressable` — it has a handler: a `Pressable`, announced as a button. A
+ *   disabled one keeps the role, reports `disabled`, and dims through
+ *   `opacity-50`, which `Pressable` composes with its press animation.
  * - `static` — no handler: a plain view with no role. A static row announcing
  *   itself as a button is a lie VoiceOver tells on every swipe.
  */
-export type ItemRender = "pressable" | "inert" | "static";
+export type ItemRender = "pressable" | "static";
 
 export function resolveItemRender(options: {
 	onPress?: () => void;
@@ -84,8 +81,7 @@ export function resolveItemRender(options: {
 	isDisabled: boolean;
 }): ItemRender {
 	const hasHandler = options.onPress !== undefined || options.onLongPress !== undefined;
-	if (!hasHandler) return "static";
-	return options.isDisabled ? "inert" : "pressable";
+	return hasHandler ? "pressable" : "static";
 }
 
 /**

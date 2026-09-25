@@ -27,6 +27,7 @@
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/brand": "workspace:*",
 		"@delacour/design-system": "workspace:*",
+		"@delacour/react-native-bottom-sheet": "workspace:*",
 		"@delacour/react-native-charts": "workspace:*",
 		"@delacour/react-native-ui": "workspace:*",
 		"@expo-google-fonts/dm-sans": "^0.4.2",
@@ -85,6 +86,7 @@
 		"react-native-screens": "catalog:",
 		"react-native-svg": "catalog:",
 		"react-native-tab-view": "^4.3.2",
+		"react-native-teleport": "^1.2.2",
 		"react-native-worklets": "catalog:",
 		"tailwindcss": "^4.3.3",
 		"uniwind": "^1.11.0"

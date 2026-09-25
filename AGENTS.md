@@ -10,6 +10,7 @@ the product.
 | --- | --- | --- |
 | `packages/react-native-ui` | `@delacour/react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
 | `packages/react-native-charts` | `@delacour/react-native-charts` | The headless charting engine `react-native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
+| `packages/react-native-bottom-sheet` | `@delacour/react-native-bottom-sheet` | The headless bottom sheet engine `react-native-ui`'s `BottomSheet` skins — Gesture Handler, Reanimated, keyboard-controller, teleport; no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
@@ -152,6 +153,11 @@ Every version here is the one Expo SDK 57 bundles. That is the rule, not a coinc
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
 fails at the linker rather than at install.
 
+A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
+and nothing else. `react-native-pulsar` (`^1.7.0`) and `react-native-teleport` (`^1.2.2`) are the
+two today; each workspace that needs one repeats the range verbatim, and a bump is a search for
+the range rather than a catalog edit.
+
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two
 copies were always installed and only bun's hoisting order decided which one landed at the root.
@@ -187,7 +193,8 @@ scripts by default, so the package is named in `trustedDependencies` in the root
 
 ## Releases
 
-Three packages reach npm — `delacour` (the CLI), `@delacour/react-native-ui` and `@delacour/react-native-charts`.
+Four packages reach npm — `delacour` (the CLI), `@delacour/react-native-ui`, `@delacour/react-native-charts`
+and `@delacour/react-native-bottom-sheet`.
 Everything else in the workspace is `private: true`, which is the only thing stopping
 `changeset publish` from putting `@delacour/tsconfig` and friends on the registry the first time
 it runs.
@@ -208,6 +215,8 @@ take no further versions — do not publish to them.
 a stranger's Metro. It is an **optional peer** of `react-native-ui` rather than a dependency — a
 dependency may be nested, two copies mean two chart contexts, and a correctly-nested
 `<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
+`@delacour/react-native-bottom-sheet` is public, and an optional peer, for exactly the same reasons:
+`bottom-sheet.tsx` imports it, and two copies would be two sheet contexts.
 
 Releases are driven by [Changesets](https://github.com/changesets/changesets). A change that
 should ship adds one:
@@ -269,7 +278,24 @@ workflows:
                  npm stage approve <id>
                  (charts before ui) ──────────────────────► npm  @latest
 
-  every push to develop ──► Railway staging  ui.staging.delacour.co.nz
+### All three libraries are in alpha
+
+`.changeset/pre.json` puts the repository in Changesets **pre mode**, tagged `alpha`. While pre mode
+is on every `changeset version` produces the next `-alpha.N` rather than a stable version, and
+files the changesets it consumed under `.changeset/pre/` — they stay until the exit.
+
+Every publish lands on npm's **`latest` dist-tag**, alpha or not, and pre mode adds **`alpha`** as a
+second tag on the same version. `latest` moves because a bare `bun add @delacour/react-native-ui`
+has to resolve to the newest build rather than to whatever was published by hand first; `alpha`
+stays so the documented commands (`bunx delacour@alpha`, `bun add @delacour/react-native-ui@alpha`)
+keep naming the prerelease line. Staging can set only one tag and the approval is a maintainer's
+2FA step, so the second tag is a maintainer's command too — the job summary prints it, see below.
+
+Going stable is three steps:
+
+```bash
+bunx changeset pre exit          # flips pre.json to mode "exit"; the next version deletes it
+bun run changeset                # the changeset that names the stable version
 ```
 
 ```mermaid
@@ -280,112 +306,15 @@ flowchart TD
     C --> D
     D -->|squash merge<br/>develop-protected| E[(develop)]
 
-    E -->|push| S[Railway staging<br/>ui.staging.delacour.co.nz]
-    E -->|push| F{alpha.yml:<br/>pending changesets?}
-    F -->|no| G[exit green]
-    F -->|yes| H[changeset version --snapshot alpha<br/>x.y.z-alpha.datetime, not committed]
-    H --> I[npm publish --tag alpha<br/>direct, trusted publisher]
-    I --> J[npm alpha]
-
-    E -->|gh workflow run release.yml --ref develop| K{ref is develop?}
-    K -->|no| X[skipped]
-    K -->|yes| L{pending changesets?}
-    L -->|none, tip is release commit| P
-    L -->|none| Y[fail: nothing to release]
-    L -->|yes| M[changeset version<br/>stable x.y.z + changelogs]
-    M --> N[commit version packages<br/>push to develop with admin PAT]
-    N --> E
-    N --> P[build CLI at release commit]
-    P --> Q[npm stage publish --tag latest]
-    Q --> R[git tags + GitHub Releases]
-    R --> T[git push SHA:main<br/>fast-forward, never forced]
-    T --> U[(main = release commit)]
-    U --> V[Railway production<br/>ui.delacour.co.nz]
-    Q -.->|maintainer 2FA<br/>charts before ui| W[npm latest]
-```
-
-### Alpha: every merge
-
-`alpha.yml` runs `.github/changeset-alpha.ts` on every push to `develop`. With no pending changeset
-it exits green — a docs-only merge, or the release commit itself. Otherwise it runs
-`changeset version --snapshot alpha`, which gives every package a pending changeset names (and its
-dependents) the version the next release would give it plus an `-alpha.<datetime>` suffix —
-`useCalculatedVersion` and `prereleaseTemplate` in `.changeset/config.json` set that shape. The
-suffix is a 14-digit number, so each snapshot sorts after the one before it. The bump is never
-committed: the runner's tree is thrown away, and the changesets stay pending for the release.
-
-Each unpublished snapshot then goes to npm with `npm publish --tag alpha`, directly. `latest` is
-never touched. No git tag and no GitHub Release is cut: a snapshot is a build, not a release.
-
-After a stable release `alpha` still names the last snapshot, which is older than the new
-`latest`, until the next merge with a changeset publishes a new one.
-
-### Stable: by hand
-
-`release.yml` has no push trigger. Run it on `develop` when the alphas are right:
-
-```bash
-gh workflow run release.yml --ref develop
-```
-
-It runs `changeset version` for real, consuming every pending changeset into stable versions and
-changelogs, and pushes the result to `develop` as **🔖 chore(release): version packages** — a direct
-push, which `RELEASE_TOKEN` makes as an admin bypassing `develop-protected`. The alphas published
-from those changesets are what reviewing the versions looks like, so there is no version pull
-request. The CLI is built with its registry ref pinned to that commit, every unpublished package is
-staged on `latest`, the tags are pushed, a GitHub Release is cut per package, and `main` is
-fast-forwarded to the release commit.
-
-A run from any other branch is skipped. A run with nothing pending fails, unless `develop`'s tip is
-already a release commit — an earlier run pushed it and then failed — in which case it resumes at
-the build, and the stage script counts an already-staged version as success. The push to `develop`
-fails if a merge landed during the run; run it again. The fast-forward is the last step and is never
-forced: if `main` has diverged the push is refused, and once `main` is reconciled a re-run resumes.
-
-Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the production docs move with
-each release and not with each merge. It lands before the staged versions are approved; approve them
-promptly, or the site documents a version `latest` does not serve yet.
-
-The action is `changesets/action@v2`, used for its publish half only: the release commit consumed
-every changeset, so it goes straight to `publish-script`, then pushes the tags that script wrote and
-cuts the Releases. v2 rather than v1 because `@changesets/cli` 3 files the changesets a pre-mode
-`changeset version` consumes under `.changeset/pre/`, and v1 read that directory as a Changesets-v1
-changeset and died on `.changeset/pre/changes.md`.
-
-### Leaving pre mode
-
-The packages were published as `0.1.0-alpha.N` from Changesets **pre mode**, which cannot coexist
-with snapshots (`changeset version --snapshot` refuses to run in it). `.changeset/pre.json` is
-therefore in mode `exit`: snapshots work, and the first stable release versions `0.1.0`, folds the
-changesets under `.changeset/pre/` into its changelog, and deletes `pre.json` and `pre/`. Do not
-delete them by hand before then — they are that changelog.
-
-### The CLI follows its own line
-
-A CLI reads the registry at the commit it was built from, so an alpha CLI can hand over components
-that use an API only the alpha packages have. `packages/cli/src/project/channel.ts` reads the CLI's
-own version: an `-alpha` build installs Delacour packages as `@alpha`, a stable one installs them
-untagged from `latest`. The documented commands are `bunx delacour@latest` and a bare
-`bun add @delacour/react-native-ui`; `@alpha` is how a consumer opts into the snapshot line.
-
-### npm authentication
-
-**Both workflows authenticate with OIDC — there is no npm token.** Each package has two trusted
-publishers on npmjs.com, bound to this repository and a workflow filename:
-
-| Workflow | Allowed action | Why |
-| --- | --- | --- |
-| `alpha.yml` | `npm publish` | An alpha on every merge cannot wait for 2FA |
-| `release.yml` | `npm stage publish` only | A stable version reaches `latest` only after a maintainer approves it |
-
-The binding is the filename: rename either workflow and its publishes are refused until the
-publisher is recreated. `release.yml` therefore does not run `changeset publish` — that shells out
-to `npm publish`, and the registry answers `E403 OIDC permission denied for this action`. It runs
-`.github/changeset-stage.ts` instead, which asks Changesets for the publish plan, runs
-`npm stage publish` in each unpublished package, writes the stage ids to the job summary, and
-finishes with `changeset git-tag` so the action still pushes the tags and opens the GitHub Releases.
-Nothing is on a dist-tag at that point. A maintainer approves each staged version with 2FA, from the
-**Staged Packages** tab on npmjs.com or:
+**Publishing is staged, and npm auth is OIDC — there is no npm token.** All four packages are
+configured on npmjs.com with this repository and `release.yml` as a trusted publisher whose
+allowed action is `npm stage publish` only. The workflow therefore does not run
+`changeset publish` — that shells out to `npm publish`, and the registry answers
+`E403 OIDC permission denied for this action`. It runs `.github/changeset-stage.ts` instead, which
+asks Changesets for the publish plan, runs `npm stage publish` in each unpublished package, writes
+the stage ids to the job summary, and finishes with `changeset git-tag` so the action still pushes
+the tags and opens the GitHub Releases. Nothing is on a dist-tag at that point. A maintainer
+approves each staged version with 2FA, from the **Staged Packages** tab on npmjs.com or:
 
 ```bash
 npm stage list                   # everything waiting, with ids
@@ -394,8 +323,9 @@ npm stage approve <stage-id>     # 2FA prompt, then it is live on `latest`
 npm stage reject <stage-id>      # discard; the version can be staged again
 ```
 
-Approve `@delacour/react-native-charts` before `@delacour/react-native-ui`, which peers on it.
-`npm stage` needs npm 11.15 or newer, which is why both jobs install a current npm and why a
+Approve `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` before
+`@delacour/react-native-ui`, which peers on both.
+`npm stage` needs npm 11.15 or newer, which is why the job installs a current npm and why a
 maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot do any of this: it
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
 build are Bun's.
@@ -413,9 +343,10 @@ gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
 bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
-workspace package a registry item depends on (`@delacour/react-native-charts`, for `chart`) and adds the
-tarball to the scaffolded app before `add`, so the check covers this branch's engine rather than
-whatever npm last served — and passes before the package exists there at all.
+workspace package a registry item depends on (`@delacour/react-native-charts` for `chart`,
+`@delacour/react-native-bottom-sheet` for `bottom-sheet`) and adds the tarball to the scaffolded app
+before `add`, so the check covers this branch's engines rather than whatever npm last served — and
+passes before a package exists there at all.
 
 The registry the published CLI reads is pinned to the **commit** being released, not the tag —
 `changesets/action` builds before it tags, so a tag-derived ref would name something that does not

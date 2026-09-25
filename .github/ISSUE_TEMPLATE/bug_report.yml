@@ -30,6 +30,7 @@ body:
       options:
         - "@delacour/react-native-ui (components)"
         - "@delacour/react-native-charts (Chart)"
+        - "@delacour/react-native-bottom-sheet (BottomSheet engine)"
         - "delacour (CLI)"
         - "Docs site / theme customizer"
         - "Not sure"

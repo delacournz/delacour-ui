@@ -14,8 +14,10 @@ Three base configs. A package extends one by its file path; there is no
 ## Who extends what
 
 ```
-packages/react-native-ui   →  @delacour/tsconfig/tsconfig.react-native.json
-packages/types       →  @delacour/tsconfig/tsconfig.base.json
+packages/react-native-ui           →  @delacour/tsconfig/tsconfig.react-native.json
+packages/react-native-charts       →  @delacour/tsconfig/tsconfig.react-native.json
+packages/react-native-bottom-sheet →  @delacour/tsconfig/tsconfig.react-native.json
+packages/types                     →  @delacour/tsconfig/tsconfig.base.json
 apps/playground      →  expo/tsconfig.base            ← not this package
 ```
 

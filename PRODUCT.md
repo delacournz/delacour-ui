@@ -63,6 +63,8 @@ feedback, and they can read exactly why every decision was made and change it in
 - Three component patterns: styled wrapper, compound + context, `tv()` variants.
 - Charts: line, area, bar, scatter, candlestick, pie on the theme's five-colour ramp
   (`@delacour/react-native-charts`, an optional peer).
+- Bottom sheet: a headless engine of our own (`@delacour/react-native-bottom-sheet`, an optional
+  peer) — detents, keyboard, sticky footer, portal, detached and multi-step sheets.
 - Design system axes: 7 neutral base ramps, 17 accents, 8 style geometries, 5 radii, 26 fonts;
   presets encode to a short shareable code.
 - Unit tests cover pure logic only; renderer behaviour is verified in the playground on a simulator.
@@ -73,7 +75,7 @@ feedback, and they can read exactly why every decision was made and change it in
 ## Brand Commitments
 
 - **Name:** Delacour / Delacour UI. Published libraries are scoped (`@delacour/react-native-ui`,
-  `@delacour/react-native-charts`); the CLI is the bare `delacour`. Workspace-private packages are `@delacour/*` too.
+  `@delacour/react-native-charts`, `@delacour/react-native-bottom-sheet`); the CLI is the bare `delacour`. Workspace-private packages are `@delacour/*` too.
 - **The mark's geometry is binding.** `packages/brand` is the sole source; every rendering derives
   from it. Do not restyle the logo.
 - **NZ / British English is binding** across docs, code and copy: colour, licence, behaviour,

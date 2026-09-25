@@ -11,6 +11,7 @@ export {
 	type FieldVariantProps,
 	fieldVariants,
 	resolveFieldInteractive,
+	resolveFieldLabelText,
 	resolveFieldTextColor,
 } from "./field.variants";
 export type { FieldContentProps } from "./field-content";

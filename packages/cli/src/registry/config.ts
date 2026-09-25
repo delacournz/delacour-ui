@@ -139,6 +139,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A text field, with a group that puts a prefix or suffix inside its border.",
 		categories: ["forms"],
 	},
+	label: {
+		title: "Label",
+		description: "A form control's name, with required, invalid and disabled states.",
+		categories: ["forms"],
+	},
 	"list-group": {
 		title: "List Group",
 		description: "A surface grouping related rows, with dividers inserted automatically.",
@@ -153,6 +158,16 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Provider",
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
+	},
+	meter: {
+		title: "Meter",
+		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+		categories: ["feedback"],
+	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
 	},
 	radio: {
 		title: "Radio",
@@ -178,6 +193,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Spinner",
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
+	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
 	},
 	switch: {
 		title: "Switch",

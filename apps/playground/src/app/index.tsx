@@ -3,6 +3,7 @@ import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
+	IconAsterisk,
 	IconBrowserTabs,
 	IconBulletList,
 	IconChart1,
@@ -13,11 +14,14 @@ import {
 	IconDivider,
 	IconFilter1,
 	IconFontStyle,
+	IconGauge,
 	IconLayoutBottomFull,
 	IconLayoutTopBottom,
 	IconParagraph,
+	IconProgress75,
 	IconSettingsSliderHor,
 	IconShieldCheck,
+	IconSquareBehindSquare1,
 	IconSquareCheck,
 	IconSquareCursor,
 	IconStar,
@@ -53,13 +57,17 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	field: IconParagraph,
 	icon: IconStar,
 	input: IconWindowCursor,
+	label: IconAsterisk,
 	"list-group": IconBulletList,
+	meter: IconGauge,
 	pressable: IconCursorClick,
+	progress: IconProgress75,
 	radio: IconCircleRecord,
 	separator: IconDivider,
 	screen: IconLayoutTopBottom,
 	slider: IconSettingsSliderHor,
 	spinner: IconArrowsRepeatCircle,
+	surface: IconSquareBehindSquare1,
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
@@ -124,7 +132,7 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tig
  *
  * The groups are the docs' eight, in the docs' order, so a reader who found a
  * component on the site finds it in the same place here. Eight headings over
- * nineteen rows is not many rows per heading, and that is the point: "Forms"
+ * twenty rows is not many rows per heading, and that is the point: "Forms"
  * over six rows says what the six have in common where an alphabet says
  * nothing. `components-index.test.ts` holds the two apps' groupings together.
  *

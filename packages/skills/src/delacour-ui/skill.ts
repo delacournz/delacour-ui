@@ -50,10 +50,10 @@ Run them with the project's package manager — \`bunx\`, \`npx\`, \`pnpm dlx\` 
 
 | You need | Run |
 | --- | --- |
-| what exists, and what each one is for | \`bunx delacour@alpha list\` |
-| one component's files, props, closure and packages | \`bunx delacour@alpha view <name>\` |
-| to add one | \`bunx delacour@alpha add <name>\` |
-| to find out why something renders wrong with no error | \`bunx delacour@alpha doctor\` |
+| what exists, and what each one is for | \`bunx delacour@latest list\` |
+| one component's files, props, closure and packages | \`bunx delacour@latest view <name>\` |
+| to add one | \`bunx delacour@latest add <name>\` |
+| to find out why something renders wrong with no error | \`bunx delacour@latest doctor\` |
 
 **Always \`list\` before writing any React Native UI in this project.** A component that exists here
 should be added, never reimplemented.
@@ -63,7 +63,7 @@ Uniwind's transform, points Tailwind at where the components landed, and copies 
 root provider in. There is no separate setup step to run first.
 
 \`\`\`bash
-bunx delacour@alpha add button input field
+bunx delacour@latest add button input field
 \`\`\`
 
 It prints what the components need from npm and **installs nothing** unless told to. Add
@@ -74,7 +74,7 @@ If the layout is not the default — a monorepo where the components belong to a
 source directory this project does not call \`src\` — run \`init\` deliberately instead:
 
 \`\`\`bash
-bunx delacour@alpha init --src app --package-name @acme/ui --package-path packages/ui
+bunx delacour@latest init --src app --package-name @acme/ui --package-path packages/ui
 \`\`\`
 
 ## Six things that fail silently
@@ -153,7 +153,7 @@ The palette is one file, \`styles/theme.css\`, in Uniwind's \`@variant light\` /
 shape. Two ways to change it, and neither is editing a component:
 
 - build one at <https://ui.delacour.co.nz/theme> and paste the \`theme.css\` tab over the file;
-- bring a web app's across — \`bunx delacour@alpha theme ./globals.css\` converts it in place.
+- bring a web app's across — \`bunx delacour@latest theme ./globals.css\` converts it in place.
 
 A literal \`.dark { … }\` block is the trap. Uniwind registers it as a **utility class named \`dark\`**
 that contributes nothing — no error, and a dark theme that never arrives. That is what \`theme\`
@@ -169,7 +169,7 @@ converts, and what \`doctor\` fails on.
 | composition, sizing, tokens, styling | \`references/rules.md\` beside this file |
 | something rendering wrong | \`references/troubleshooting.md\` beside this file |
 
-There is also an MCP server — \`bunx delacour@alpha mcp\` — which exposes \`list_components\`,
+There is also an MCP server — \`bunx delacour@latest mcp\` — which exposes \`list_components\`,
 \`get_component\`, \`add_components\`, \`init_project\` and \`check_project\` as tools. Prefer it when the
 host supports MCP; the commands above are the same functions and need nothing installed.
 `;

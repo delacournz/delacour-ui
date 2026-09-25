@@ -67,13 +67,14 @@ export function resolvePressedState(
  *
  * The press feedback is an animated style, and an animated style owns every
  * key it writes on the view — so a resting `opacity: 1` overwrote a caller's
- * `opacity-50` and a disabled `Button` or `Chip` never faded. The press now
- * multiplies this in rather than replacing it. Anything that is not a number
- * is treated as unset, and a number is clamped into `[0, 1]`.
+ * `opacity-50` and a disabled `Button`, `Badge` or `ListGroup.Item` never
+ * faded. The press now multiplies this in rather than replacing it. Uniwind
+ * types the value as animatable, so anything that is not a finite number is
+ * treated as unset, and a number is clamped into `[0, 1]`.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
 export function resolveRestOpacity(resolved: unknown): number {
-	if (typeof resolved !== "number" || Number.isNaN(resolved)) return 1;
+	if (typeof resolved !== "number" || !Number.isFinite(resolved)) return 1;
 	return Math.min(1, Math.max(0, resolved));
 }

@@ -15,13 +15,13 @@ message.
 
 ## Installation
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest skills"] }]} />
 
 It detects which assistants this project uses and writes for each of them. Nothing is fetched — the
 files are bundled into the CLI, so a run works offline and installs the skill matching the version
 you are pinned to.
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills --list"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest skills --list"] }]} />
 
 `--list` prints what is available and exactly where it would go, and writes nothing.
 
@@ -40,7 +40,7 @@ one explicitly with `--agent`, or all four with `--agent all`.
 Project scope is the default, and it is the one to want when only some of your work uses this
 library — a skill in every project's context is a skill competing with every other.
 
-<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha skills --scope user"] }]} />
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest skills --scope user"] }]} />
 
 An existing skill is never replaced silently: a run that would overwrite one lists the files and
 stops. `--force` is how you mean it.

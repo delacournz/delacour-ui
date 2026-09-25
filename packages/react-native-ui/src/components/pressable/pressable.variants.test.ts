@@ -105,15 +105,23 @@ describe("resolveRestOpacity", () => {
 	test("keeps an opacity the className resolved to", () => {
 		expect(resolveRestOpacity(0.5)).toBe(0.5);
 		expect(resolveRestOpacity(0)).toBe(0);
+		expect(resolveRestOpacity(1)).toBe(1);
 	});
 
 	test("falls back to fully opaque when the className sets none", () => {
 		expect(resolveRestOpacity(undefined)).toBe(1);
 	});
 
-	test("ignores a value that is not a finite unit number", () => {
+	// Uniwind types `opacity` as an animatable value, so anything that is not a
+	// plain number is treated as unset rather than multiplied in as NaN.
+	test("ignores a value that is not a finite number", () => {
 		expect(resolveRestOpacity(Number.NaN)).toBe(1);
+		expect(resolveRestOpacity(Number.POSITIVE_INFINITY)).toBe(1);
 		expect(resolveRestOpacity("0.5")).toBe(1);
+		expect(resolveRestOpacity({})).toBe(1);
+	});
+
+	test("clamps a number into the unit range", () => {
 		expect(resolveRestOpacity(1.5)).toBe(1);
 		expect(resolveRestOpacity(-0.2)).toBe(0);
 	});

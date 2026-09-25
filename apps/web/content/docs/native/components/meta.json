@@ -10,6 +10,7 @@
 		"---Forms---",
 		"field",
 		"input",
+		"label",
 		"checkbox",
 		"chip",
 		"radio",
@@ -24,6 +25,8 @@
 		"separator",
 		"accordion",
 		"---Feedback---",
+		"meter",
+		"progress",
 		"spinner",
 		"---Overlays---",
 		"bottom-sheet",
@@ -31,6 +34,7 @@
 		"tabs",
 		"---Layout---",
 		"screen",
+		"surface",
 		"---Utilities---",
 		"provider"
 	]

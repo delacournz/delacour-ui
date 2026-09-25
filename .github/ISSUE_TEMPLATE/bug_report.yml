@@ -15,7 +15,7 @@ body:
     attributes:
       label: Before submitting
       options:
-        - label: I tested on the latest `@alpha` release — the bug may already be fixed.
+        - label: I tested on the newest release — `@latest`, or `@alpha` if I am on the alpha line — the bug may already be fixed.
           required: true
         - label: I searched [open and closed issues](https://github.com/delacournz/delacour-ui/issues?q=is%3Aissue) for duplicates.
           required: true
@@ -49,7 +49,7 @@ body:
     id: install
     attributes:
       label: How did you install it?
-      description: Copied source may have drifted — `bunx delacour@alpha diff` shows how far.
+      description: Copied source may have drifted — `bunx delacour@latest diff` shows how far.
       options:
         - "npm package (`bun add @delacour/react-native-ui`)"
         - "CLI copy (`bunx delacour add`), unmodified"
@@ -124,7 +124,7 @@ body:
     id: doctor
     attributes:
       label: "`delacour doctor` output"
-      description: Run `bunx delacour@alpha doctor --json` in your app and paste the result. It checks the Uniwind, Metro and native-module wiring that breaks silently.
+      description: Run `bunx delacour@latest doctor --json` in your app and paste the result. It checks the Uniwind, Metro and native-module wiring that breaks silently.
       render: json
     validations:
       required: true

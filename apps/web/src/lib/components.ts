@@ -136,6 +136,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "alert",
+		name: "Alert",
+		group: "Feedback",
+		blurb: "A status message with a glyph picked from its status, a title, a description and an optional action.",
+	},
+	{
 		slug: "collapsible",
 		name: "Collapsible",
 		group: "Data display",

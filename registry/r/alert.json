@@ -1,0 +1,154 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "alert",
+	"type": "registry:ui",
+	"title": "Alert",
+	"description": "A status message with a glyph picked from its status, a title, a description and an optional action.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/alert/AGENTS.md",
+			"target": "alert/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/alert",
+					"to": "@registry/ui/alert"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-action.tsx",
+			"target": "alert/alert-action.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-close-button.tsx",
+			"target": "alert/alert-close-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-content.tsx",
+			"target": "alert/alert-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-description.tsx",
+			"target": "alert/alert-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-indicator.tsx",
+			"target": "alert/alert-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-title.tsx",
+			"target": "alert/alert-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert.context.tsx",
+			"target": "alert/alert.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert.tsx",
+			"target": "alert/alert.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert.types.ts",
+			"target": "alert/alert.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert.variants.ts",
+			"target": "alert/alert.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/index.ts",
+			"target": "alert/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

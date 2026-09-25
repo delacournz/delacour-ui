@@ -44,6 +44,7 @@
 		"---Layout---",
 		"screen",
 		"surface",
+		"card",
 		"---Utilities---",
 		"provider"
 	]

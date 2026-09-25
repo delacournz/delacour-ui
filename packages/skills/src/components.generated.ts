@@ -15,6 +15,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "badge", title: "Badge", description: "A compact label for status or a count, composed from parts like the button." },
 	{ name: "bottom-sheet", title: "Bottom Sheet", description: "A draggable sheet over the screen, on @gorhom/bottom-sheet." },
 	{ name: "button", title: "Button", description: "A pressable action composed from parts, with variants, sizes and a loading state." },
+	{ name: "card", title: "Card", description: "A content surface with a header, a body and a footer, built on Surface." },
 	{ name: "chart", title: "Chart", description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip." },
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },

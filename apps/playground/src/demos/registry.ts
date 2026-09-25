@@ -57,6 +57,15 @@ import * as demo_button_icons from "./button/icons";
 import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
 import * as demo_button_variants from "./button/variants";
+import * as demo_card_anatomy from "./card/anatomy";
+import * as demo_card_configurator from "./card/configurator";
+import * as demo_card_footer_band from "./card/footer-band";
+import * as demo_card_media from "./card/media";
+import * as demo_card_nesting from "./card/nesting";
+import * as demo_card_plan_picker from "./card/plan-picker";
+import * as demo_card_sign_in from "./card/sign-in";
+import * as demo_card_sizes from "./card/sizes";
+import * as demo_card_variants from "./card/variants";
 import * as demo_chart_area_area from "./chart/area/area";
 import * as demo_chart_area_area_stacked from "./chart/area/area-stacked";
 import * as demo_chart_bar_bar from "./chart/bar/bar";
@@ -368,6 +377,15 @@ export const DEMOS = {
 	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
 	"button/variants": demo_button_variants,
+	"card/anatomy": demo_card_anatomy,
+	"card/configurator": demo_card_configurator,
+	"card/footer-band": demo_card_footer_band,
+	"card/media": demo_card_media,
+	"card/nesting": demo_card_nesting,
+	"card/plan-picker": demo_card_plan_picker,
+	"card/sign-in": demo_card_sign_in,
+	"card/sizes": demo_card_sizes,
+	"card/variants": demo_card_variants,
 	"chart/area/area": demo_chart_area_area,
 	"chart/area/area-stacked": demo_chart_area_area_stacked,
 	"chart/bar/bar": demo_chart_bar_bar,

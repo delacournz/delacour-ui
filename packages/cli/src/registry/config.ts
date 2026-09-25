@@ -107,6 +107,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A pressable action composed from parts, with variants, sizes and a loading state.",
 		categories: ["controls"],
 	},
+	card: {
+		title: "Card",
+		description: "A content surface with a header, a body and a footer, built on Surface.",
+		categories: ["layout"],
+	},
 	checkbox: {
 		title: "Checkbox",
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",

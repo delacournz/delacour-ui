@@ -234,6 +234,39 @@
 			]
 		},
 		{
+			"name": "card",
+			"type": "registry:ui",
+			"title": "Card",
+			"description": "A content surface with a header, a body and a footer, built on Surface.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"surface",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/card/AGENTS.md",
+				"ui/card/card-action.tsx",
+				"ui/card/card-content.tsx",
+				"ui/card/card-description.tsx",
+				"ui/card/card-footer.tsx",
+				"ui/card/card-header.tsx",
+				"ui/card/card-title.tsx",
+				"ui/card/card.context.tsx",
+				"ui/card/card.tsx",
+				"ui/card/card.types.ts",
+				"ui/card/card.variants.ts",
+				"ui/card/index.ts"
+			]
+		},
+		{
 			"name": "chart",
 			"type": "registry:ui",
 			"title": "Chart",

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "SectionList with a sticky footer",
 	caption:
-		"Three sections of a dozen rows in a `BottomSheet.SectionList`, with sticky section headers, under a sticky footer. The list's bottom margin follows the footer's height, so the last row and the scroll indicator stop above the buttons rather than running under them.",
+		"Three sections of a dozen rows in a `BottomSheet.SectionList`, with sticky section headers, under a sticky footer. The list reaches the sheet's bottom edge and reserves the footer's height inside its content, so the rows scroll under the buttons and the last row — and the scroll indicator — can still be brought fully clear of them.",
 };
 
 type Row = { id: string; label: string };

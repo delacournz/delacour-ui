@@ -13,11 +13,15 @@ import { UNMEASURED } from "../core";
  * would animate before the new content had measured. `-1` puts the open back
  * on the queue until the measurement lands again.
  *
+ * `subtract` takes a constant off every measurement, never below zero: the
+ * footer measures its styled box, which pads through the safe-area band, and
+ * records the box less the band.
+ *
  * Written once per part rather than shared with the container, because a part
  * only wants its own height; the container also wants its offset from the
  * window's bottom.
  */
-export function useMeasureHeight(target: SharedValue<number>): (event: LayoutChangeEvent) => void {
+export function useMeasureHeight(target: SharedValue<number>, subtract = 0): (event: LayoutChangeEvent) => void {
 	useEffect(
 		() => () => {
 			target.value = UNMEASURED;
@@ -27,9 +31,10 @@ export function useMeasureHeight(target: SharedValue<number>): (event: LayoutCha
 
 	return useCallback(
 		(event: LayoutChangeEvent) => {
-			const height = event.nativeEvent.layout.height;
+			const measured = event.nativeEvent.layout.height - subtract;
+			const height = measured > 0 ? measured : 0;
 			if (target.value !== height) target.value = height;
 		},
-		[target]
+		[target, subtract]
 	);
 }

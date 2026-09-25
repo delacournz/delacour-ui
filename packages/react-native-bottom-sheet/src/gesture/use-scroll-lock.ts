@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps } from "react-native";
+import type { Insets, NativeScrollEvent, NativeSyntheticEvent, ScrollViewProps } from "react-native";
 import {
 	type AnimatedRef,
 	type SharedValue,
@@ -19,6 +19,10 @@ export type ScrollLockOptions = {
 	enableContentPan: boolean;
 	/** The caller's `showsVerticalScrollIndicator`; shown only while unlocked. @default true */
 	showsVerticalScrollIndicator?: boolean;
+	/** The caller's `scrollIndicatorInsets`; `indicatorInset` is added to its `bottom`. */
+	scrollIndicatorInsets?: Insets;
+	/** What trails the body — the geometry's `bodyInset` — so the indicator ends above the footer or the band. */
+	indicatorInset?: SharedValue<number>;
 	/** The caller's `bounces`; on only while unlocked. @default true */
 	bounces?: boolean;
 	/** The caller's `decelerationRate`; `0` while locked. @default "normal" */
@@ -34,14 +38,17 @@ export type ScrollListeners = Pick<
 	"onScroll" | "onScrollBeginDrag" | "onScrollEndDrag" | "onMomentumScrollEnd"
 >;
 
-type ScrollLockProps = Pick<ScrollViewProps, "decelerationRate" | "showsVerticalScrollIndicator" | "bounces">;
+type ScrollLockProps = Pick<
+	ScrollViewProps,
+	"decelerationRate" | "showsVerticalScrollIndicator" | "bounces" | "scrollIndicatorInsets"
+>;
 
 export type ScrollLock = {
 	/** `true` while the sheet is below its highest detent: the list is held at `scrollLockedAt`. */
 	locked: SharedValue<boolean>;
 	/** For the list's `onScroll`. Tracks the offset into `scrollOffsetY` and enforces the lock. */
 	scrollHandler: ReturnType<typeof useAnimatedScrollHandler>;
-	/** For the list's `animatedProps`: deceleration, indicator and bounce, switched by the lock. */
+	/** For the list's `animatedProps`: deceleration, indicator and bounce, switched by the lock, and the indicator's inset. */
 	animatedProps: Partial<ScrollLockProps>;
 };
 
@@ -64,7 +71,9 @@ export type ScrollLock = {
  * The animated props do the rest: `decelerationRate: 0` while locked so a
  * fling has no momentum for the lock to fight, the indicator hidden so a
  * pinned list does not flash a bar, and `bounces` off so a pull-down at the
- * top rubber-bands the sheet and not the rows.
+ * top rubber-bands the sheet and not the rows. The indicator's bottom inset
+ * follows `indicatorInset` — what the body reserves for the footer or the
+ * band — so the bar ends where the rows stop being visible.
  */
 export function useScrollLock(
 	state: SheetSharedState,
@@ -75,6 +84,8 @@ export function useScrollLock(
 	const {
 		enableContentPan,
 		showsVerticalScrollIndicator = true,
+		scrollIndicatorInsets,
+		indicatorInset,
 		bounces = true,
 		decelerationRate = "normal",
 		listeners,
@@ -134,10 +145,17 @@ export function useScrollLock(
 		}, [locked, scrollLockedAt, scrollOffsetY, ref, onScroll, onScrollBeginDrag, onScrollEndDrag, onMomentumScrollEnd])
 	);
 
+	const indicatorBottom = scrollIndicatorInsets?.bottom ?? 0;
 	const animatedProps = useAnimatedProps<ScrollLockProps>(() => ({
 		decelerationRate: locked.value ? 0 : decelerationRate,
 		showsVerticalScrollIndicator: showsVerticalScrollIndicator && !locked.value,
 		bounces: bounces && !locked.value,
+		scrollIndicatorInsets: {
+			top: scrollIndicatorInsets?.top,
+			left: scrollIndicatorInsets?.left,
+			right: scrollIndicatorInsets?.right,
+			bottom: indicatorBottom + (indicatorInset ? indicatorInset.value : 0),
+		},
 	}));
 
 	return useMemo(() => ({ locked, scrollHandler, animatedProps }), [locked, scrollHandler, animatedProps]);

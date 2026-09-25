@@ -16,7 +16,8 @@ none takes a class; every `displayName` is `DelacourBottomSheet.BottomSheet.X`.
 | `bottom-sheet-container.tsx` | The panel — the surface that moves; inset by `detachedFrame` and `box-none` when detached |
 | `bottom-sheet-background.tsx` | The panel's absolute-fill surface, `pointerEvents: none`; exactly the sheet's `height` tall when detached |
 | `bottom-sheet-handle.tsx` | The grabber's row: the handle pan and the adjustable accessibility element |
-| `bottom-sheet-content.tsx` | The static body: the content pan, the `contentArea` clamp, the measured inner box |
+| `bottom-sheet-content.tsx` | The static body: the content pan, the `bodyClip` clip, the `contentArea + bodyInset` layout box, the measured inner box and the inset spacer |
+| `bottom-sheet-footer.tsx` | The sticky footer: translated to `footerTop`, its styled box padded through the band and measured less the band into `footerContentHeight` |
 | `bottom-sheet-close.tsx` | The dismiss control; `asChild` donates `onPress` |
 | `bottom-sheet-title.tsx` | The heading; publishes the `nativeID` the panel is labelled by |
 | `bottom-sheet-description.tsx` | Supporting copy; publishes a `nativeID` of its own |
@@ -34,8 +35,10 @@ teleport Portal — only under a provider (absoluteFill of the host, zIndex from
   Container — the panel (absoluteFill, translateY: position; detached: left/width from detachedFrame, overflow visible, box-none)
     Background (absoluteFill, pointerEvents none; detached: height = sheet height)
     Handle     (pan detector; measures handleHeight)
-    Content    (pan detector; animated maxHeight = contentArea)
-      inner box (measures contentHeight) + trailing spacer (footerHeight)
+    Content    (pan detector; clip: overflow hidden, animated maxHeight = bodyClip)
+      layout box (animated maxHeight = contentArea + bodyInset; height too under fillParent)
+        inner box (measures contentHeight) + trailing spacer (bodyInset, + footerGap above a footer)
+    Footer     (absolute, translateY: footerTop; the styled box pads through the band, measures footerContentHeight = box − band)
 ```
 
 The overlay is written **before** the panel on purpose. Native hit-testing

@@ -1,6 +1,7 @@
-import { type ReactElement, useLayoutEffect } from "react";
-import { StyleSheet, View } from "react-native";
+import { type ReactElement, useLayoutEffect, useMemo } from "react";
+import { StyleSheet, View, type ViewStyle } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { bottomBand } from "../core";
 import { useMeasureHeight } from "../layout/use-measure-height";
 import { useBottomSheetInternal } from "./bottom-sheet.context";
 import type { BottomSheetFooterProps } from "./bottom-sheet.types";
@@ -13,12 +14,20 @@ import type { BottomSheetFooterProps } from "./bottom-sheet.types";
  * and translated to the geometry's `footerTop`, which the core proves is
  * constant for the whole of a keyboard animation: the keyboard's pixels come
  * off the lift in step with `progress`, so the footer's bottom lands on the
- * keyboard's top edge without ever moving. Its inner view — the one that
- * takes `style` and `padding` — is measured into `footerContentHeight`, which
- * the dynamic detent counts, and a spacer the height of the resting
- * safe-area band sits under it so the content clears the home indicator. The
- * band is constant on purpose — the footer's translate does the collapsing,
- * and a spacer that shrank as well would move the footer twice.
+ * keyboard's top edge without ever moving. Its one view — the one that takes
+ * `style` and `padding` — pads through the resting safe-area band as well, so
+ * the surface a caller styles reaches the sheet's bottom line and its
+ * background covers the band: while the sheet is dragged below its detent the
+ * footer holds the screen's bottom edge and the body slides down behind it,
+ * and a transparent band would show every line that passed. The box is
+ * measured less the band into `footerContentHeight`, which the dynamic detent
+ * counts. The band is constant on purpose — the footer's translate does the
+ * collapsing, and padding that shrank as well would move the footer twice.
+ *
+ * The bottom padding is composed on the JS side from the flattened style, so a
+ * `paddingBottom`, `paddingVertical` or `padding` a caller writes still
+ * applies above the band; one given as a string cannot be added to and is
+ * read as zero.
  *
  * Mounting tells the root there is a footer — synchronously, so the flag is
  * in the config before any measurement lands — and the layout then waits
@@ -37,9 +46,10 @@ export function BottomSheetFooter({
 	padding,
 	...props
 }: BottomSheetFooterProps): ReactElement {
-	const { state, geometry, setHasFooter } = useBottomSheetInternal();
-	const onLayout = useMeasureHeight(state.footerContentHeight);
-	const { footerTop, band } = geometry;
+	const { state, geometry, setHasFooter, detached, bottomInset } = useBottomSheetInternal();
+	const band = bottomBand(detached !== null, bottomInset);
+	const onLayout = useMeasureHeight(state.footerContentHeight, band);
+	const { footerTop } = geometry;
 
 	// A layout effect, not a passive one: the flag has to reach the root's
 	// config before the handle and the content report their heights, or the
@@ -54,24 +64,29 @@ export function BottomSheetFooter({
 	const translate = useAnimatedStyle(() => ({
 		transform: [{ translateY: footerTop.value }],
 	}));
-	const spacer = useAnimatedStyle(() => ({
-		height: band.value > 0 ? band.value : 0,
-	}));
 
-	const inner = padding === undefined ? style : [{ padding }, style];
+	const inner = useMemo<ViewStyle>(() => {
+		const flat = StyleSheet.flatten([padding === undefined ? null : { padding }, style]) ?? {};
+		return flat;
+	}, [padding, style]);
+	const surface = useMemo<ViewStyle>(() => {
+		if (!sticky) return inner;
+		const own = inner.paddingBottom ?? inner.paddingVertical ?? inner.padding ?? 0;
+		return { ...inner, paddingBottom: (typeof own === "number" ? own : 0) + band };
+	}, [inner, sticky, band]);
+
 	if (!sticky) {
 		return (
-			<View ref={ref} style={inner} {...props}>
+			<View ref={ref} style={surface} {...props}>
 				{children}
 			</View>
 		);
 	}
 	return (
 		<Animated.View pointerEvents="box-none" style={[styles.sticky, translate]}>
-			<View onLayout={onLayout} ref={ref} style={inner} {...props}>
+			<View onLayout={onLayout} ref={ref} style={surface} {...props}>
 				{children}
 			</View>
-			<Animated.View pointerEvents="none" style={spacer} />
 		</Animated.View>
 	);
 }

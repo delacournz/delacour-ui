@@ -8,7 +8,7 @@ factory that makes one out of any animated scrollable.
 | Path | What |
 | --- | --- |
 | `scrollable.types.ts` | `BottomSheetScrollableProps` (`focusHook`), `FocusHook`, `ScrollableHandle`, the inner shape the wrapper is written against, and the restated generic component types |
-| `create-bottom-sheet-scrollable.tsx` | `createBottomSheetScrollable(AnimatedComponent, type)` — the two detectors, the lock, the clamp, content size, registration |
+| `create-bottom-sheet-scrollable.tsx` | `createBottomSheetScrollable(AnimatedComponent, type)` — the two detectors, the lock, the clip and the clamp, the trailing spacer, content size, registration |
 | `bottom-sheet-scroll-view.tsx` | `BottomSheet.ScrollView` over `Animated.ScrollView` |
 | `bottom-sheet-flat-list.tsx` | `BottomSheet.FlatList` over `Animated.FlatList`, generic in `ItemT` |
 | `bottom-sheet-section-list.tsx` | `BottomSheet.SectionList` over a module-scope `createAnimatedComponent(SectionList)`, generic in `ItemT, SectionT` |
@@ -56,16 +56,38 @@ locks at `0`; a handle drag on a scrolled list holds the rows where they are.
 
 ## Sizing
 
-The scrollable's `maxHeight` follows `contentArea` on the UI thread, exactly
-as `Content`'s outer box does, and its `marginBottom` follows `footerHeight`
-so the last row and the indicator stop above a sticky footer. Both are one
-`useAnimatedStyle`.
+The list fills the body to the sheet's bottom line: its `maxHeight` follows
+`contentArea + bodyInset` on the UI thread, exactly as `Content`'s layout box
+does. What the footer or the safe-area band would cover is reserved *inside*
+the content, as a trailing spacer — appended to a `ScrollView`'s children,
+composed after the consumer's `ListFooterComponent` on a `FlatList` or
+`SectionList` — the height of the geometry's `bodyInset`, so the rows scroll
+under the footer or the band and the last row can still be brought fully clear
+of them. The spacer is animated because the band collapses as the keyboard
+rises, and `contentContainerStyle` cannot be; `scrollIndicatorInsets.bottom`
+follows the same value through the lock's `animatedProps`, so the indicator
+ends where the rows stop being visible. The outer view clips to `bodyClip`,
+which under a footer is the footer's live top edge.
 
-`onContentSizeChange` writes `contentHeight`, which is the dynamic detent's
+The list must not shrink to that clip. A React Native scrollable ships
+`flexShrink: 1`, and Yoga shrank it to the wrapper — the footer's top — so
+the spacer's clearance landed on top of the wrapper's and the last row stopped
+a whole footer above the footer. `flexShrink: 0` on the list leaves
+`maxHeight` as its only bound. A `marginBottom` of the footer's height was the
+earlier answer and is gone: it ended the list above the footer with the rows
+cut at that edge and an empty band under them.
+
+`onContentSizeChange`, less the spacer's own measured height
+(`scrollContentHeight`), writes `contentHeight`, which is the dynamic detent's
 measurement. A `BottomSheet.ScrollView` of forty rows therefore needs neither
 `snapPoints` nor `dynamicSizing={false}`: it sizes to its rows, capped by
-`maxDynamicContentSize`, and scrolls inside that. `contentHeight` goes back to
-`UNMEASURED` on unmount for the same reason `useMeasureHeight` resets it.
+`maxDynamicContentSize`, and scrolls inside that. The content size and the
+spacer's layout arrive as two events from one commit; both are held in refs
+and folded into a single write after the batch, because the first open
+resolves on whatever `contentHeight` says first and the mount animation, once
+running, ignores a corrected detent list — a frame of rows-plus-spacer would
+open the sheet a footer too tall. `contentHeight` goes back to `UNMEASURED` on
+unmount for the same reason `useMeasureHeight` resets it.
 
 ## The factory's contract
 

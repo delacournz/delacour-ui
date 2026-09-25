@@ -111,10 +111,19 @@ export type SheetGeometry = {
 	index: SharedValue<number>;
 	sheetState: SharedValue<SheetState>;
 	layoutReady: SharedValue<boolean>;
-	/** What the body may fill. */
+	/** What the body may fill above the footer or the band, sized against its detent. */
 	contentArea: SharedValue<number>;
 	footerHeight: SharedValue<number>;
 	footerTop: SharedValue<number>;
+	/** What trails the body: the footer, band included, or the band alone. The body reserves it at its end. */
+	bodyInset: SharedValue<number>;
+	/**
+	 * How tall the body's clipping box is: `contentArea + bodyInset` — the body
+	 * is laid out to the sheet's bottom line — held under a sticky footer to
+	 * the footer's live top edge, so nothing of the body shows below it while
+	 * the sheet is lower than its detent.
+	 */
+	bodyClip: SharedValue<number>;
 	/**
 	 * How tall a detached card's surface is: `height` between the detents, the
 	 * first detent's height below them and the last's above, so a close, a

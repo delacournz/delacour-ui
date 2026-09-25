@@ -3,6 +3,8 @@ import { useDerivedValue } from "react-native-reanimated";
 import {
 	availableHeight,
 	bandNow,
+	bodyClip,
+	bodyInset,
 	bottomBand,
 	clampHeight,
 	closedHeight,
@@ -107,6 +109,20 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			band: bandCurrent.value,
 		})
 	);
+	// The body is laid out to the sheet's bottom line and reserves `inset` at
+	// its end; the clip is what of it may show — under a footer, only what is
+	// above the footer's live top edge.
+	const inset = useDerivedValue(() => bodyInset(state.config.value.hasFooter, footer.value, bandCurrent.value));
+	const clip = useDerivedValue(() =>
+		bodyClip({
+			contentArea: area.value,
+			inset: inset.value,
+			hasFooter: state.config.value.hasFooter,
+			sheetHeight: height.value,
+			handleHeight: state.handleHeight.value,
+			keyboardHeight: keyboardEffective.value,
+		})
+	);
 
 	const surface = useDerivedValue(() => {
 		if (state.config.value.detached === null) return height.value;
@@ -133,6 +149,8 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			contentArea: area,
 			footerHeight: footer,
 			footerTop: top,
+			bodyInset: inset,
+			bodyClip: clip,
 			surfaceHeight: surface,
 		}),
 		[
@@ -152,6 +170,8 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			area,
 			footer,
 			top,
+			inset,
+			clip,
 			surface,
 		]
 	);

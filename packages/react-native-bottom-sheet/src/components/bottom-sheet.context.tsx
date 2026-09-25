@@ -63,6 +63,8 @@ export type BottomSheetInternalValue = {
 	presented: boolean;
 	keepMounted: boolean;
 	topInset: number;
+	/** The root's `bottomInset`, for a part that reserves the resting safe-area band on the JS side. */
+	bottomInset: number;
 	/** The overlay tells the panel it exists, for `accessibilityViewIsModal`. */
 	hasOverlay: boolean;
 	setHasOverlay: (has: boolean) => void;

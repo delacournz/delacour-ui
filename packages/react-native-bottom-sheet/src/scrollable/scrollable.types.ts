@@ -25,14 +25,20 @@ export type BottomSheetScrollableProps = {
 	focusHook?: FocusHook;
 };
 
+/** A list's `ListFooterComponent`, as the virtualised lists take it. */
+export type ScrollableListFooter = ComponentType<unknown> | ReactElement | null;
+
 /**
  * The props the wrapper itself reads or writes, and that every React Native
  * scrollable has. The generic list's remaining props pass through untouched.
+ * `ListFooterComponent` is the one list-only prop here: the wrapper appends
+ * its trailing spacer to it, where a `ScrollView` takes the spacer as a child.
  */
 export type ScrollableInnerProps = Omit<ScrollViewProps, "style"> & {
 	ref?: Ref<ScrollableHandle>;
 	style?: AnimatedProps<ScrollViewProps>["style"];
-	animatedProps?: Partial<ScrollViewProps>;
+	animatedProps?: Partial<ScrollViewProps> | readonly Partial<ScrollViewProps>[];
+	ListFooterComponent?: ScrollableListFooter;
 };
 
 /** The animated list a factory wraps — `Animated.ScrollView`, `Animated.FlatList`, or one made with `createAnimatedComponent`. */

@@ -231,6 +231,30 @@ so the pan spends the offset the list *began* with instead (`listDragHeight`);
 and the lock took whatever offset the last scroll event had reported (9
 points) when a content pan left the top, so a content pan now locks at `0`.
 
+Two body bugs, fixed on a `BSHEET-4 iPhone 17` simulator (iOS 26.5): with a
+sticky `Footer`, a sheet dragged down to close showed its fields *below* the
+footer's button — the footer holds the screen's bottom edge while the panel
+slides down under it, and the band under the footer was a transparent spacer
+anything behind it showed through. The footer's styled box now pads through
+the band (measured less the band, so `footerTop` and the dynamic detent are
+unchanged) and the body clips to the footer's live top edge (`bodyClip`), so
+the drag shows the footer's own background and nothing else under it, with
+or without the keyboard. And every scrollable ended a footer's height above
+the sheet's bottom with its rows cut at that edge, because it carried a
+`marginBottom` of the footer; the list now reaches the bottom line and
+reserves the footer or the band as a trailing spacer *inside* its content
+(`bodyInset`), so a `SectionList` scrolled to its end shows the last row
+whole just above the footer's hairline, a 200-row `FlatList` shows row 200
+whole above the home indicator, and the indicator ends above either. One
+detour on the way: Yoga shrank the list to the clipping wrapper (a scrollable
+ships `flexShrink: 1`) and the clearance doubled, hence `flexShrink: 0`. The
+dynamic `ScrollView` still opens on six rows plus the band and on the 420
+cap for forty, so the spacer is not counted in the detent. Seen and left
+alone: a long swipe up inside a list at the low detent carries the sheet to
+its top and then scrolls the rows, and because the list owns that release
+no snap runs, so `currentIndex` and the JS `index` stay on the detent it
+left while the sheet sits at its highest.
+
 The BSHEET-6b steps demos, on a `BSHEET-6 iPhone 17` simulator (iOS 26.5):
 the three-step form opens on details with **Next** disabled; the keyboard
 lifts the sheet with the sticky footer on the keyboard's top edge as before;

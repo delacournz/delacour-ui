@@ -40,7 +40,8 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `keyboard/keyboard-reset-guard.ts` | W `shouldResetKeyboardAnimation` — the stale keyboard-controller guard, ported from `react-native-ui` |
 | `footer/footer-top.ts` | W `footerTop` — constant across a keyboard animation; the sweep test proves it |
 | `footer/bottom-band.ts` | W `bottomBand`, W `bandNow`, W `footerHeight` |
-| `footer/sheet-insets.ts` | `resolveSheetBottomInset`, `resolveSheetScrollEndPadding` — the skin's padding rules, re-exported from there |
+| `footer/body-inset.ts` | W `bodyInset` — what trails the body, footer or band; W `bodyClip` — the body's clipping box, held to the footer's live top edge; `scrollContentHeight` — a scrollable's content size less its trailing spacer |
+| `footer/sheet-insets.ts` | `resolveSheetBottomInset` (what the engine reserves under static content), `resolveSheetScrollEndPadding` (what a skin adds at the end of scroll content — the `footerGap`, never the band) — re-exported by the skin |
 | `geometry/closed-height.ts` | W `restingBottom`, W `closedHeight`, W `availableHeight` |
 | `geometry/position.ts` | W `positionFor` — height to `translateY`, the only conversion |
 | `geometry/clamp-height.ts` | W `clampHeight` — `NaN` collapses to closed |
@@ -76,11 +77,26 @@ translateY    = C − restingBottom − height
 index         = piecewise(base, [closedHeight, …detents] → [−1, 0, 1, …])      // base, never height
 contentArea   = max(0, min(maxHeight, highest + keyboardLift) − handle − footerHeight − kb − (hasFooter ? 0 : bandNow))
 footerTop     = max(0, height − kb − footerContent − bandNow)
+bodyInset     = hasFooter ? footerHeight : bandNow
+bodyClip      = hasFooter ? max(0, min(contentArea + bodyInset, height − kb − handle − bodyInset)) : contentArea + bodyInset
 backdrop      = index ≥ appearsOn ? opacity : index ≤ disappearsOn ? 0 : linear
 ```
 
 The footer proof: `footerTop = base + kb − band·p − kb − footerContent − band + band·p = base − footerContent − band`,
 independent of `p`. `footer/footer-top.test.ts` sweeps it in twenty steps.
+
+The body — `Content`'s layout box, a scrollable's viewport — is laid out
+`contentArea + bodyInset` tall, to the sheet's bottom line, and reserves
+`bodyInset` at its end as a spacer inside itself, so a list's rows run under
+the footer or the band and its last row can still be scrolled clear of them.
+`bodyClip` is what of that may show: without a footer all of it, so a sheet
+slides as one body; under a footer only what is above the footer's live top
+edge — `height − kb − handle − footerHeight`, which is `footerTop − handle` —
+so while the sheet is dragged below its detent and the footer holds the
+screen's bottom edge, no line of the body is drawn under it. On the detent the
+clip is exactly `contentArea`. A scrollable's `contentHeight` is
+`scrollContentHeight(contentSize, spacer)`: the spacer is the footer and the
+band, which `dynamicDetent` adds once already.
 
 Two deviations from the plan's signatures, both on purpose:
 

@@ -15,6 +15,7 @@ export { type DetentError, normalizeDetents, type ParsedDetent, parseDetent } fr
 export { resistOverDrag } from "./detents/over-drag";
 export { type SelectSnapHeightInput, selectSnapHeight } from "./detents/select-snap-height";
 export { sheetState } from "./detents/sheet-state";
+export { type BodyClipInput, bodyClip, bodyInset, scrollContentHeight } from "./footer/body-inset";
 export { bandNow, bottomBand, footerHeight } from "./footer/bottom-band";
 export { type FooterTopInput, footerTop } from "./footer/footer-top";
 export { resolveSheetBottomInset, resolveSheetScrollEndPadding } from "./footer/sheet-insets";

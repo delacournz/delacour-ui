@@ -172,6 +172,14 @@ const DOCS_COMPONENT_PATH = /^native\/components\/([a-z0-9-]+)\.mdx$/;
  * no screen in the playground.
  */
 export function playgroundSlugForDocsPath(path: string): string | null {
-	const slug = DOCS_COMPONENT_PATH.exec(path)?.[1];
-	return slug !== undefined && hasPlaygroundScreen(slug) ? slug : null;
+	const slug = componentSlugForDocsPath(path);
+	return slug !== null && hasPlaygroundScreen(slug) ? slug : null;
+}
+
+/**
+ * The component a documentation page is about, or `null` outside
+ * `native/components` and for that folder's `index.mdx`.
+ */
+export function componentSlugForDocsPath(path: string): string | null {
+	return DOCS_COMPONENT_PATH.exec(path)?.[1] ?? null;
 }

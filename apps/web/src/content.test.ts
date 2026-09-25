@@ -228,11 +228,70 @@ describe("quick start", () => {
 	});
 
 	test("every getting-started page is listed, and every listed page exists", () => {
-		const onDisk = pagesIn(GETTING_STARTED_DIR, { skipIndex: false }).map((page) => page.slug);
+		const folders = readdirSync(GETTING_STARTED_DIR, { withFileTypes: true })
+			.filter((entry) => entry.isDirectory())
+			.map((entry) => entry.name);
+		const onDisk = [...pagesIn(GETTING_STARTED_DIR, { skipIndex: false }).map((page) => page.slug), ...folders];
 		const listed = metaPages(GETTING_STARTED_DIR);
 		expect(listed.filter((slug) => !onDisk.includes(slug))).toEqual([]);
 		expect(onDisk.filter((slug) => !listed.includes(slug))).toEqual([]);
 	});
+});
+
+/**
+ * Installation is a folder: an index holding the requirements and a fork, then
+ * one page of numbered steps per kind of app. Each step page is a reader's whole
+ * path, so each carries the package install and a root file whose first
+ * statement is the CSS import — the one silent failure every path shares.
+ */
+
+const INSTALLATION_DIR = join(GETTING_STARTED_DIR, "installation");
+const INSTALL_PATHS = ["expo", "react-native"];
+
+describe("installation", () => {
+	const read = (slug: string): string => {
+		const path = join(INSTALLATION_DIR, `${slug}.mdx`);
+		return existsSync(path) ? readFileSync(path, "utf-8") : "";
+	};
+
+	test("opens on the requirements, and names Uniwind among them", () => {
+		const index = read("index");
+		expect(sections(index)[0]).toBe("Requirements");
+		expect(index).toContain("Uniwind");
+		expect(index).toContain("New Architecture");
+	});
+
+	test("links every path from the index", () => {
+		const index = read("index");
+		for (const slug of INSTALL_PATHS) expect(index).toContain(`/docs/native/getting-started/installation/${slug}`);
+	});
+
+	test("lists every path in its meta.json, and nothing else", () => {
+		expect(metaPages(INSTALLATION_DIR)).toEqual(INSTALL_PATHS);
+	});
+
+	for (const slug of INSTALL_PATHS) {
+		describe(slug, () => {
+			const body = read(slug);
+
+			test("is numbered steps that install the package", () => {
+				expect(body).toContain("<Steps>");
+				expect(body).toContain("<LibraryInstall />");
+			});
+
+			test("wraps Metro with Uniwind", () => {
+				expect(body).toContain("withUniwindConfig");
+			});
+
+			test("imports the CSS as the root file's first statement, and mounts the provider", () => {
+				const root = [...body.matchAll(/^```tsx title="([^"]+)"\n([\s\S]*?)^```/gm)]
+					.map(([, , code]) => code as string)
+					.find((code) => code.includes("<DelacourProvider>"));
+				expect(root).toBeDefined();
+				expect((root as string).split("\n")[0]).toMatch(/^import ".*\.css";$/);
+			});
+		});
+	}
 });
 
 /**

@@ -1,0 +1,47 @@
+---
+title: Installation
+description: What your app needs, then the steps for Expo or plain React Native.
+icon: Download
+---
+
+## Requirements
+
+- **React Native 0.81+** on the **New Architecture** — Expo SDK 54+ qualifies. Built and tested on
+  SDK 57 with React Native 0.86.
+- **Node 20.19+**.
+- **Uniwind 1.11+ with Tailwind CSS v4**, wired into Metro. Every `className` in the library is
+  compiled by Uniwind in your app's Metro pipeline — without it nothing is styled. NativeWind cannot
+  share the app; [migrate first](https://docs.uniwind.dev/migration-from-nativewind).
+- **A development build**, not Expo Go. Reanimated, Gesture Handler and the keyboard controller are
+  native modules.
+- **Expo modules.** An Expo app has them; a plain React Native app adds them with one command.
+- Let `expo install` pick native module versions. `bun add react-native-reanimated` fetches the
+  newest release, which fails at the linker on an older SDK rather than at install time.
+
+## Pick your app
+
+<Cards>
+  <Card title="Expo" href="/docs/native/getting-started/installation/expo">
+    Expo Router or a plain Expo app. Five steps.
+  </Card>
+  <Card title="React Native" href="/docs/native/getting-started/installation/react-native">
+    A React Native CLI app. Adds Expo modules first.
+  </Card>
+</Cards>
+
+## Optional peers
+
+Resolved only if you import the subpath that needs them:
+
+| Package | Needed by |
+| --- | --- |
+| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` |
+| `expo-router` | `@delacour/react-native-ui/expo/navigation-theme` |
+| `react-native-screens` | native stack navigation |
+
+## Or let the CLI do it
+
+One command in an Expo app wires Uniwind, the theme and the provider, and copies the component
+source into your project so you own it. See the [Quick start](/docs/native/getting-started).
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@alpha add button --install"] }]} />

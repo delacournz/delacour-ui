@@ -77,7 +77,7 @@ describe("install manifest", () => {
 		expect(NAMES.filter((name) => !slugs.includes(name))).toEqual([]);
 	});
 
-	// This is the assertion that keeps the Manual tab's GitHub links alive.
+	// This is the assertion that keeps the Open Source button's GitHub links alive.
 	test("every source file exists", () => {
 		expect(SOURCES.filter((path) => !existsSync(join(ROOT, path)))).toEqual([]);
 	});
@@ -97,14 +97,14 @@ describe("install manifest", () => {
 /**
  * The library's peer list on the Installation page is derived, not typed.
  *
- * Three copies of that list used to exist — the README, `installation.mdx` and
+ * Three copies of that list used to exist — the README, the Installation page and
  * `package.json` — and they disagreed: `expo-linear-gradient`, which `Screen`
  * needs, was in none of the two a reader sees. The manifest now exports `peers`,
  * the union of every component's closure, and this pins it to the package.
  */
 
 const NATIVE_UI_PACKAGE = join(ROOT, "packages", "react-native-ui", "package.json");
-const INSTALLATION_PAGE = join(CONTENT, "docs", "native", "getting-started", "installation.mdx");
+const INSTALLATION_PAGE = join(CONTENT, "docs", "native", "getting-started", "installation", "index.mdx");
 
 /** The names `react`/`react-native` are ambient and never installed; charts is documented on its own site. */
 const NEVER_LISTED = new Set(["react", "react-native", "@delacour/react-native-charts"]);

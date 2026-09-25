@@ -11,27 +11,28 @@ none takes a class; every `displayName` is `DelacourBottomSheet.BottomSheet.X`.
 | `bottom-sheet.types.ts` | Every prop type, `BottomSheetRef`, `BottomSheetContextValue`, `BottomSheetAnimatedValue` |
 | `bottom-sheet.context.tsx` | Three contexts: `BottomSheet` (open state and ref methods), `BottomSheetAnimated` (the shared values), `BottomSheetInternal` (what the parts share) |
 | `bottom-sheet-trigger.tsx` | Opens the sheet; `asChild` donates `onPress` |
-| `bottom-sheet-portal.tsx` | The frame the sheet measures itself against — in place today, teleported to a host from BSHEET-5 |
+| `bottom-sheet-portal.tsx` | The frame the sheet measures itself against — inside a teleport `Portal` to the nearest host under a provider, in place with `inline` or without one; registers the sheet as presented |
 | `bottom-sheet-overlay.tsx` | The scrim: a React Native `Pressable`, written before the panel |
-| `bottom-sheet-container.tsx` | The panel — the surface that moves |
-| `bottom-sheet-background.tsx` | The panel's absolute-fill surface, `pointerEvents: none` |
+| `bottom-sheet-container.tsx` | The panel — the surface that moves; inset by `detachedFrame` and `box-none` when detached |
+| `bottom-sheet-background.tsx` | The panel's absolute-fill surface, `pointerEvents: none`; exactly the sheet's `height` tall when detached |
 | `bottom-sheet-handle.tsx` | The grabber's row: the handle pan and the adjustable accessibility element |
 | `bottom-sheet-content.tsx` | The static body: the content pan, the `contentArea` clamp, the measured inner box |
 | `bottom-sheet-close.tsx` | The dismiss control; `asChild` donates `onPress` |
 | `bottom-sheet-title.tsx` | The heading; publishes the `nativeID` the panel is labelled by |
 | `bottom-sheet-description.tsx` | Supporting copy; publishes a `nativeID` of its own |
 
-Parts that arrive later: `Footer` and `TextInput` (BSHEET-3), `ScrollView`,
-`FlatList` and `SectionList` (BSHEET-4), `Host` and `Provider` (BSHEET-5),
-`Steps` and `Step` (BSHEET-6b).
+`Host` and `Provider` live in `src/portal` and are named on the compound from
+there. Parts that arrive later: `Footer` and `TextInput` (BSHEET-3), `ScrollView`,
+`FlatList` and `SectionList` (BSHEET-4), `Steps` and `Step` (BSHEET-6b).
 
 ## The render tree
 
 ```
-Portal — the frame (absolute, top: topInset, box-none, overflow hidden; measures the container)
-  Overlay  (absoluteFill, opacity from index, pointerEvents auto|none, RN Pressable)
-  Container — the panel (absoluteFill, translateY: position)
-    Background (absoluteFill, pointerEvents none)
+teleport Portal — only under a provider (absoluteFill of the host, zIndex from the registry)
+ Portal — the frame (absolute, top: topInset, box-none, overflow hidden, zIndex; measures the container)
+  Overlay  (absoluteFill — margins and gap included, opacity from index, pointerEvents auto|none, RN Pressable)
+  Container — the panel (absoluteFill, translateY: position; detached: left/width from detachedFrame, overflow visible, box-none)
+    Background (absoluteFill, pointerEvents none; detached: height = sheet height)
     Handle     (pan detector; measures handleHeight)
     Content    (pan detector; animated maxHeight = contentArea)
       inner box (measures contentHeight) + trailing spacer (footerHeight)
@@ -69,7 +70,8 @@ technology while it is transparent.
 
 ## Contexts
 
-All three are provided once, by the root. A teleported portal (BSHEET-5) keeps
-the React tree in place, so they reach every part without being re-provided.
+All three are provided once, by the root. A teleported portal keeps the React
+tree in place, so they reach every part without being re-provided — and so
+does every context the app provides around the trigger.
 `useBottomSheetInternal` is exported for a part written outside the package —
 a skin's `Footer`, a scrollable — and never for an app.

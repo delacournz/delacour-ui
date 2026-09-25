@@ -1,13 +1,18 @@
 import { useMemo } from "react";
 import { Gesture, type GestureType, type PanGesture } from "react-native-gesture-handler";
+import { KeyboardController } from "react-native-keyboard-controller";
 import { cancelAnimation, useSharedValue } from "react-native-reanimated";
+import { scheduleOnRN } from "react-native-worklets";
 import type { AnimateTo } from "../animation/animation.types";
 import {
 	crossedDetent,
 	detentUnder,
 	GESTURE_SOURCE,
 	type GestureSource,
+	listDragHeight,
+	listOwnsRelease,
 	resistOverDrag,
+	SCROLLABLE_TYPE,
 	selectSnapHeight,
 } from "../core";
 import { ANIM_STATUS, type SheetGeometry, type SheetSharedState } from "../state/state.types";
@@ -20,6 +25,14 @@ import {
 } from "./gesture.types";
 
 type PanEvent = { translationY: number; velocityY: number };
+
+/** Settle tolerance: a sheet within this of a detent is on it. */
+const AT_DETENT = 0.5;
+
+/** JS-thread, so `scheduleOnRN` has a plain function to call; `dismiss` returns a promise nobody awaits. */
+function dismissKeyboard(): void {
+	void KeyboardController.dismiss();
+}
 
 /**
  * The two pans — handle and content — sharing one set of handlers.
@@ -54,6 +67,8 @@ export function useSheetPan(
 	const startBase = useSharedValue(0);
 	const lastDetent = useSharedValue(-1);
 	const overDragging = useSharedValue(false);
+	const startScroll = useSharedValue(0);
+	const listHeld = useSharedValue(false);
 	const { enableHandlePanningGesture, enableContentPanningGesture, onDetentHaptic, onCloseHaptic, onOverDragHaptic } =
 		options;
 
@@ -64,8 +79,17 @@ export function useSheetPan(
 			state.animStatus.value = ANIM_STATUS.IDLE;
 			state.gestureSource.value = source;
 			startBase.value = state.base.value;
+			startScroll.value = state.scrollOffsetY.value;
+			// A list scrolled and below the top is held by the lock: it has no travel
+			// to spend until the sheet reaches the highest detent.
+			listHeld.value = state.scrollOffsetY.value > 0 && state.base.value < geometry.highest.value - AT_DETENT;
 			lastDetent.value = detentUnder(state.base.value, geometry.detents.value);
 			overDragging.value = false;
+			// A finger on the sheet is a reason to put the keyboard away; the lift
+			// comes off as it goes and the drag continues from wherever `base` is.
+			if (state.config.value.enableBlurKeyboardOnGesture && state.keyboardProgress.value > 0) {
+				scheduleOnRN(dismissKeyboard);
+			}
 		};
 
 		const haptics = (raw: number, next: number, lowest: number, highest: number, detents: readonly number[]): void => {
@@ -80,31 +104,72 @@ export function useSheetPan(
 			}
 		};
 
+		// Whether this pan is a content pan over a registered scrollable.
+		const overList = (source: GestureSource): boolean => {
+			"worklet";
+			return source === GESTURE_SOURCE.CONTENT && state.scrollableType.value !== SCROLLABLE_TYPE.NONE;
+		};
+
+		// The finger's travel as a height. Over a list the offset the list began
+		// with is a budget spent before the sheet moves — see `listDragHeight`.
+		const dragged = (translationY: number, highest: number): number => {
+			"worklet";
+			if (!overList(state.gestureSource.value)) return startBase.value - translationY;
+			return listDragHeight({
+				startBase: startBase.value,
+				translationY,
+				startOffset: startScroll.value,
+				held: listHeld.value,
+				highest,
+			});
+		};
+
 		const move = (event: PanEvent): void => {
 			"worklet";
 			if (state.gestureSource.value === GESTURE_SOURCE.NONE) return;
 			const config = state.config.value;
 			const detents = geometry.detents.value;
 			const closed = geometry.closedHeight.value;
-			const scroll = state.gestureSource.value === GESTURE_SOURCE.CONTENT ? state.scrollOffsetY.value : 0;
-			const raw = startBase.value - event.translationY - scroll;
+			const highest = geometry.highest.value;
+			const raw = dragged(event.translationY, highest);
 
 			const lowest = config.enablePanDownToClose || detents.length === 0 ? closed : (detents[0] as number);
-			const highest = geometry.highest.value;
 			const factor = config.enableOverDrag ? config.overDragResistanceFactor : 0;
 			const next = Math.min(resistOverDrag(raw, lowest, highest, factor), geometry.maxHeight.value);
 
 			haptics(raw, next, lowest, highest, detents);
 			state.base.value = next;
+			if (listHeld.value && next >= highest - AT_DETENT) listHeld.value = false;
+		};
+
+		// The haptic for a close, the keyboard for a downward release — a release
+		// heading down under an open keyboard puts the keyboard away whatever
+		// `enableBlurKeyboardOnGesture` says — then the animation.
+		const settle = (target: number, closed: number, velocity: number): void => {
+			"worklet";
+			if (target <= closed && onCloseHaptic) onCloseHaptic();
+			if (target < startBase.value && state.keyboardProgress.value > 0) scheduleOnRN(dismissKeyboard);
+			animateTo(target, "gesture", velocity / 2);
 		};
 
 		const release = (event: PanEvent): void => {
 			"worklet";
 			if (state.gestureSource.value === GESTURE_SOURCE.NONE) return;
+			const source = state.gestureSource.value;
 			state.gestureSource.value = GESTURE_SOURCE.NONE;
 			const config = state.config.value;
 			const closed = geometry.closedHeight.value;
 			const velocity = -event.velocityY;
+
+			// The finger was scrolling rows at the top detent: the release is the
+			// list's momentum, not a snap.
+			const listOwns = listOwnsRelease({
+				scrollable: overList(source),
+				offset: state.scrollOffsetY.value,
+				base: state.base.value,
+				highest: geometry.highest.value,
+			});
+			if (listOwns) return;
 
 			const target = selectSnapHeight({
 				height: state.base.value,
@@ -114,8 +179,7 @@ export function useSheetPan(
 				projection: SNAP_PROJECTION,
 			});
 
-			if (target <= closed && onCloseHaptic) onCloseHaptic();
-			animateTo(target, "gesture", velocity / 2);
+			settle(target, closed, velocity);
 		};
 
 		const attach = (pan: PanGesture, source: GestureSource, enabled: boolean): GestureType =>
@@ -150,6 +214,8 @@ export function useSheetPan(
 		geometry,
 		animateTo,
 		startBase,
+		startScroll,
+		listHeld,
 		lastDetent,
 		overDragging,
 		enableHandlePanningGesture,

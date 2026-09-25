@@ -5,6 +5,9 @@ import type {
 	DetentSpec,
 	GestureSource,
 	KeyboardBehavior,
+	KeyboardBlurBehavior,
+	KeyboardScope,
+	ScrollableType,
 	SheetIntent,
 	SheetState,
 } from "../core";
@@ -34,6 +37,9 @@ export type SheetWorkletConfig = {
 	initialIndex: number;
 	animateOnMount: boolean;
 	keyboardBehavior: KeyboardBehavior;
+	keyboardBlurBehavior: KeyboardBlurBehavior;
+	keyboardScope: KeyboardScope;
+	enableBlurKeyboardOnGesture: boolean;
 };
 
 /**
@@ -60,9 +66,12 @@ export type SheetSharedState = {
 	animSource: SharedValue<AnimationSource>;
 	animTarget: SharedValue<number>;
 	gestureSource: SharedValue<GestureSource>;
-	/** The scrollable's offset, subtracted from a content pan. `0` until BSHEET-4 wires a scrollable. */
+	/** The scrollable's live offset, written by its scroll handler; negative while bounced past the top. */
 	scrollOffsetY: SharedValue<number>;
+	/** Where the scrollable is held while the sheet is below its highest detent. */
 	scrollLockedAt: SharedValue<number>;
+	/** Which scrollable is the body, `NONE` for static content. Set by `createBottomSheetScrollable` on focus. */
+	scrollableType: SharedValue<ScrollableType>;
 	keyboardOwned: SharedValue<boolean>;
 	/** keyboard-controller's `progress`, `0` until BSHEET-3 wires the keyboard. */
 	keyboardProgress: SharedValue<number>;
@@ -106,4 +115,11 @@ export type SheetGeometry = {
 	contentArea: SharedValue<number>;
 	footerHeight: SharedValue<number>;
 	footerTop: SharedValue<number>;
+	/**
+	 * How tall a detached card's surface is: `height` between the detents, the
+	 * first detent's height below them and the last's above, so a close, a
+	 * rubber-band and an over-drag move the card as a rigid body. Equal to
+	 * `height` when attached.
+	 */
+	surfaceHeight: SharedValue<number>;
 };

@@ -36,7 +36,7 @@ export function BottomSheetOverlay({
 	ref,
 	...props
 }: BottomSheetOverlayProps): ReactElement {
-	const { geometry, setHasOverlay } = useBottomSheetInternal();
+	const { geometry, setHasOverlay, stepOverride } = useBottomSheetInternal();
 	const { isOpen, close, collapse, snapToIndex } = useBottomSheet();
 	const index = geometry.index;
 
@@ -53,14 +53,16 @@ export function BottomSheetOverlay({
 		pointerEvents: !enableTouchThrough && backdropInteractive(index.value, disappearsOnIndex) ? "auto" : "none",
 	}));
 
+	// A step that is not dismissible takes the press away for as long as it is current.
+	const behavior = stepOverride?.dismissible === false ? "none" : pressBehavior;
 	const handlePress = useCallback(() => {
 		onPress?.();
-		if (pressBehavior === "close") close();
-		else if (pressBehavior === "collapse") collapse();
-		else if (typeof pressBehavior === "number") snapToIndex(pressBehavior);
-	}, [onPress, pressBehavior, close, collapse, snapToIndex]);
+		if (behavior === "close") close();
+		else if (behavior === "collapse") collapse();
+		else if (typeof behavior === "number") snapToIndex(behavior);
+	}, [onPress, behavior, close, collapse, snapToIndex]);
 
-	const pressable = pressBehavior !== "none";
+	const pressable = behavior !== "none";
 
 	return (
 		<Animated.View

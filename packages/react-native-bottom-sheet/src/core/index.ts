@@ -30,6 +30,7 @@ export {
 	resolveDetached,
 } from "./geometry/detached-frame";
 export { positionFor } from "./geometry/position";
+export { surfaceHeight } from "./geometry/surface-height";
 export { crossedDetent, detentUnder } from "./haptic/crossed-detent";
 export { isLayoutReady, type LayoutReadyInput } from "./intent/layout-ready";
 export { type IntentResolution, type IntentState, resolveIntent } from "./intent/resolve-intent";
@@ -37,7 +38,9 @@ export { acceptContainerLayout, type ContainerLayoutInput } from "./keyboard/con
 export { type ContentAreaInput, contentArea } from "./keyboard/content-area";
 export { type KeyboardLiftInput, keyboardInContainer, keyboardLift } from "./keyboard/keyboard-lift";
 export { type InputInsideSheetInput, isInputInsideSheet } from "./keyboard/keyboard-owner";
+export { type KeyboardOwnerInput, resolveKeyboardOwner } from "./keyboard/keyboard-ownership";
 export { type KeyboardAnimationState, shouldResetKeyboardAnimation } from "./keyboard/keyboard-reset-guard";
+export { type KeyboardStep, type KeyboardStepInput, keyboardStep } from "./keyboard/keyboard-step";
 export {
 	defineSheetMachine,
 	resolveTarget,
@@ -48,14 +51,27 @@ export {
 	type SheetStateNode,
 	type SheetStates,
 	type SheetStepDirection,
+	type SheetStepFrame,
+	type SheetStepOverride,
+	type SheetStepRole,
+	type SheetStepTransition,
 	type SheetTransitionError,
 	type SheetTransitionObject,
 	type SheetTransitionResult,
 	type SheetTransitionTarget,
+	stepFrame,
+	stepOverride,
 	transition,
 } from "./machine";
 export { type ErrorResult, err, ok, type Result, type SuccessResult } from "./result";
 export { type ContentPanInput, contentPanDrivesSheet, shouldLockScroll } from "./scroll/scroll-lock";
+export {
+	type ListDragInput,
+	type ListOwnsReleaseInput,
+	listDragHeight,
+	listOwnsRelease,
+	scrollLockTarget,
+} from "./scroll/scroll-pan";
 export {
 	type AnimationSource,
 	CLOSED_INDEX,
@@ -65,6 +81,8 @@ export {
 	type KeyboardBehavior,
 	type KeyboardBlurBehavior,
 	type KeyboardScope,
+	SCROLLABLE_TYPE,
+	type ScrollableType,
 	SHEET_STATE,
 	type SheetIntent,
 	type SheetState,

@@ -1,5 +1,5 @@
 import type { ReactNode, Ref } from "react";
-import type { PressableProps, TextProps, View, ViewProps } from "react-native";
+import type { PressableProps, TextInput, TextInputProps, TextProps, View, ViewProps } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import type { SheetAnimation } from "../animation/animation.types";
 import type {
@@ -74,7 +74,13 @@ export type BottomSheetProps = SheetHaptics & {
 	topInset?: number;
 	/** The safe-area inset an attached sheet reserves under its content. @default 0 */
 	bottomInset?: number;
-	/** A floating card. Geometry lands in BSHEET-5; accepted now so a skin can pass it through. */
+	/**
+	 * A floating card: inset by `horizontalMargin` on both sides, resting
+	 * `bottomOffset` above `bottomInset`, every corner the `Background`'s to
+	 * round. `true` is `{ horizontalMargin: 16, bottomOffset: 16 }`. Closed is
+	 * fully off-screen, `%` detents resolve against the height above the resting
+	 * line, and a tap in the margins or the gap closes.
+	 */
 	detached?: DetachedProp;
 	/** @default true */
 	enablePanDownToClose?: boolean;
@@ -102,6 +108,13 @@ export type BottomSheetProps = SheetHaptics & {
 	animateOnMount?: boolean;
 	/** Keep the portal's children mounted while closed. @default false */
 	keepMounted?: boolean;
+	/**
+	 * What opening does to the other sheets already open in the same host:
+	 * `push` stacks on top of them, `replace` closes them. @default "push"
+	 */
+	stackBehavior?: "push" | "replace";
+	/** Android's back button closes the sheet while it is the top one in its host. @default true */
+	closeOnBack?: boolean;
 };
 
 export type BottomSheetTriggerProps = Omit<PressableProps, "children"> & {
@@ -116,11 +129,18 @@ export type BottomSheetPortalProps = {
 	style?: ViewProps["style"];
 	ref?: Ref<View>;
 	/**
-	 * Render where written rather than teleporting to a host. The only mode until
-	 * BSHEET-5; `hostName` is accepted now so a skin can pass it through.
+	 * Render where written — an absolute fill of the nearest positioned
+	 * ancestor — rather than teleporting to a host. A persistent drawer, a map's
+	 * result list. Never unmounts unless `unmountOnClose` says so.
 	 */
 	inline?: boolean;
+	/** The `BottomSheet.Host` to teleport to. Default: the nearest one — `root` under a bare provider. */
 	hostName?: string;
+	/**
+	 * Unmount the children once a close has settled. Default `true` when
+	 * teleported and `false` when inline; the root's `keepMounted` forces it off.
+	 */
+	unmountOnClose?: boolean;
 };
 
 export type BottomSheetOverlayProps = Omit<ViewProps, "style"> & {
@@ -159,6 +179,21 @@ export type BottomSheetContentProps = ViewProps & {
 	ref?: Ref<View>;
 	/** Extra space between the content and a sticky footer. @default 0 */
 	footerGap?: number;
+};
+
+export type BottomSheetFooterProps = ViewProps & {
+	ref?: Ref<View>;
+	/**
+	 * Stay put over the body and ride the keyboard by transform. Off, it is a
+	 * plain `View` for a footer that scrolls with the content. @default true
+	 */
+	sticky?: boolean;
+	/** Padding on the measured inner view, so it counts in the sheet's height. */
+	padding?: number;
+};
+
+export type BottomSheetTextInputProps = TextInputProps & {
+	ref?: Ref<TextInput>;
 };
 
 export type BottomSheetCloseProps = Omit<PressableProps, "children"> & {

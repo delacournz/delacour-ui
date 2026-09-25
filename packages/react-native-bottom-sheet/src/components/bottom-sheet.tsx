@@ -1,5 +1,6 @@
 import {
 	type ReactElement,
+	type RefObject,
 	useCallback,
 	useEffect,
 	useId,
@@ -8,21 +9,43 @@ import {
 	useRef,
 	useState,
 } from "react";
+import { BackHandler } from "react-native";
 import { useAnimateTo } from "../animation/use-animate-to";
 import { useSettleCallbacks } from "../animation/use-settle-callbacks";
-import { CLOSED_INDEX, indexForHeight, resolveDetached } from "../core";
+import {
+	CLOSED_INDEX,
+	indexForHeight,
+	resolveDetached,
+	SCROLLABLE_TYPE,
+	type ScrollableType,
+	type SheetEvent,
+	type SheetStepOverride,
+} from "../core";
 import { useSheetPan } from "../gesture/use-sheet-pan";
+import { useSheetKeyboard } from "../keyboard/use-sheet-keyboard";
 import { useContainerLayout } from "../layout/use-container-layout";
 import { useControllableState } from "../lib/use-controllable-state";
+import { BottomSheetHost } from "../portal/bottom-sheet-host";
+import { BottomSheetProvider } from "../portal/bottom-sheet-provider";
+import { isTop } from "../portal/sheet-registry";
+import { useOptionalSheetRegistry } from "../portal/sheet-registry.context";
+import { BottomSheetFlatList } from "../scrollable/bottom-sheet-flat-list";
+import { BottomSheetScrollView } from "../scrollable/bottom-sheet-scroll-view";
+import { BottomSheetSectionList } from "../scrollable/bottom-sheet-section-list";
+import type { ScrollableHandle } from "../scrollable/scrollable.types";
 import { ANIM_STATUS, type SheetWorkletConfig } from "../state/state.types";
 import { useSheetGeometry } from "../state/use-sheet-geometry";
 import { type IntentRequest, useSheetIntents } from "../state/use-sheet-intents";
 import { useSheetState } from "../state/use-sheet-state";
+import { BottomSheetStep } from "../steps/bottom-sheet-step";
+import { BottomSheetSteps } from "../steps/bottom-sheet-steps";
+import type { SheetStepController } from "../steps/steps.types";
 import {
 	BottomSheetAnimatedContext,
 	BottomSheetContext,
 	BottomSheetInternalContext,
 	type BottomSheetInternalValue,
+	type ContentHeightSource,
 } from "./bottom-sheet.context";
 import type {
 	BottomSheetAnimatedValue,
@@ -35,9 +58,11 @@ import { BottomSheetClose } from "./bottom-sheet-close";
 import { BottomSheetContainer } from "./bottom-sheet-container";
 import { BottomSheetContent } from "./bottom-sheet-content";
 import { BottomSheetDescription } from "./bottom-sheet-description";
+import { BottomSheetFooter } from "./bottom-sheet-footer";
 import { BottomSheetHandle } from "./bottom-sheet-handle";
 import { BottomSheetOverlay } from "./bottom-sheet-overlay";
 import { BottomSheetPortal } from "./bottom-sheet-portal";
+import { BottomSheetTextInput } from "./bottom-sheet-text-input";
 import { BottomSheetTitle } from "./bottom-sheet-title";
 import { BottomSheetTrigger } from "./bottom-sheet-trigger";
 
@@ -84,10 +109,15 @@ function BottomSheetRoot({
 	enableOverDrag = true,
 	overDragResistanceFactor = 2.5,
 	keyboardBehavior = "interactive",
+	keyboardBlurBehavior = "restore",
+	keyboardScope = "inside",
+	enableBlurKeyboardOnGesture = true,
 	animation,
 	overrideReduceMotion,
 	animateOnMount = true,
 	keepMounted = false,
+	stackBehavior = "push",
+	closeOnBack = true,
 	onDetentHaptic,
 	onCloseHaptic,
 	onOverDragHaptic,
@@ -101,40 +131,65 @@ function BottomSheetRoot({
 	const [index, setIndex] = useState(CLOSED_INDEX);
 	const [detentCount, setDetentCount] = useState(0);
 	const [hasOverlay, setHasOverlay] = useState(false);
+	const [hasFooter, setHasFooter] = useState(false);
 	const handleMounted = useRef(false);
 	const titleId = useId();
 	const descriptionId = useId();
+	const sheetId = useId();
+	const registry = useOptionalSheetRegistry();
 
 	const detachedOptions = useMemo(() => resolveDetached(detached), [detached]);
+
+	// A `Steps` body may override the detents and the dismissibility for the
+	// step it is on. A step that names its `snapPoints` is sized by them, so
+	// dynamic sizing is off while it is current.
+	const [stepOverride, setStepOverride] = useState<SheetStepOverride | null>(null);
+	const [stepController, setStepController] = useState<SheetStepController<string, unknown, SheetEvent> | null>(null);
+	const stepControllerRef = useRef<SheetStepController<string, unknown, SheetEvent> | null>(null);
+	const contentHeightSource = useRef<ContentHeightSource>("content");
+	const setContentHeightSource = useCallback((source: ContentHeightSource) => {
+		contentHeightSource.current = source;
+	}, []);
+	const effectiveSnapPoints = stepOverride?.snapPoints ?? snapPoints;
+	const effectiveDynamicSizing = stepOverride?.snapPoints === undefined ? dynamicSizing : false;
+	const effectivePanDownToClose = stepOverride?.dismissible === false ? false : enablePanDownToClose;
+
 	const config = useMemo<SheetWorkletConfig>(
 		() => ({
-			dynamicSizing,
+			dynamicSizing: effectiveDynamicSizing,
 			maxDynamicContentSize,
-			hasFooter: false,
+			hasFooter,
 			bottomInset,
 			detached: detachedOptions,
-			enablePanDownToClose,
+			enablePanDownToClose: effectivePanDownToClose,
 			enableOverDrag,
 			overDragResistanceFactor,
 			initialIndex,
 			animateOnMount,
 			keyboardBehavior,
+			keyboardBlurBehavior,
+			keyboardScope,
+			enableBlurKeyboardOnGesture,
 		}),
 		[
-			dynamicSizing,
+			effectiveDynamicSizing,
 			maxDynamicContentSize,
+			hasFooter,
 			bottomInset,
 			detachedOptions,
-			enablePanDownToClose,
+			effectivePanDownToClose,
 			enableOverDrag,
 			overDragResistanceFactor,
 			initialIndex,
 			animateOnMount,
 			keyboardBehavior,
+			keyboardBlurBehavior,
+			keyboardScope,
+			enableBlurKeyboardOnGesture,
 		]
 	);
 
-	const state = useSheetState(snapPoints, config);
+	const state = useSheetState(effectiveSnapPoints, config);
 	const geometry = useSheetGeometry(state);
 	const listeners = useSettleCallbacks({
 		isOpen,
@@ -164,6 +219,28 @@ function BottomSheetRoot({
 		onOverDragHaptic,
 	});
 	const containerLayout = useContainerLayout(state);
+	const keyboard = useSheetKeyboard({ state, geometry, animateTo, presented });
+
+	// One scrollable at a time: the last to focus is the body the content pan
+	// reasons about, and its withdrawal puts the offset back to the top.
+	const scrollableRef = useRef<RefObject<ScrollableHandle | null> | null>(null);
+	const setScrollableRef = useCallback(
+		(ref: RefObject<ScrollableHandle | null>, type: ScrollableType) => {
+			scrollableRef.current = ref;
+			state.scrollableType.value = type;
+		},
+		[state]
+	);
+	const removeScrollableRef = useCallback(
+		(ref: RefObject<ScrollableHandle | null>) => {
+			if (scrollableRef.current !== ref) return;
+			scrollableRef.current = null;
+			state.scrollableType.value = SCROLLABLE_TYPE.NONE;
+			state.scrollOffsetY.value = 0;
+			state.scrollLockedAt.value = 0;
+		},
+		[state]
+	);
 
 	// Open for the purpose of a close: settled above the closed height, or on
 	// the way there.
@@ -236,6 +313,27 @@ function BottomSheetRoot({
 
 	useImperativeHandle(ref, () => methods, [methods]);
 
+	// The registry closes sheets it holds no ref to — `dismissAll`, a `replace`
+	// open in the same host — through the same methods the ref exposes.
+	const register = registry?.register;
+	useEffect(() => {
+		if (register === undefined) return;
+		return register(sheetId, { close: methods.close, forceClose: methods.forceClose });
+	}, [register, sheetId, methods]);
+
+	// Android's back button closes the top sheet of its host and nothing else:
+	// without a registry every sheet is its own top. Subscribed only while
+	// presented, so a closed sheet never swallows a press.
+	const registryTop = registry === null ? true : isTop(registry.state, sheetId);
+	useEffect(() => {
+		if (!presented || !closeOnBack || !registryTop) return;
+		const subscription = BackHandler.addEventListener("hardwareBackPress", () => {
+			methods.close();
+			return true;
+		});
+		return () => subscription.remove();
+	}, [presented, closeOnBack, registryTop, methods]);
+
 	const contextValue = useMemo<BottomSheetContextValue>(
 		() => ({ ...methods, isOpen, setOpen, index, detentCount }),
 		[methods, isOpen, setOpen, index, detentCount]
@@ -270,10 +368,28 @@ function BottomSheetRoot({
 			topInset,
 			hasOverlay,
 			setHasOverlay,
+			hasFooter,
+			setHasFooter,
+			keyboard,
 			handleMounted,
 			enableHandlePanningGesture,
+			enableContentPanningGesture,
+			setScrollableRef,
+			removeScrollableRef,
 			titleId,
 			descriptionId,
+			sheetId,
+			stackBehavior,
+			detached: detachedOptions,
+			animation,
+			overrideReduceMotion,
+			contentHeightSource,
+			setContentHeightSource,
+			stepOverride,
+			setStepOverride,
+			stepControllerRef,
+			stepController,
+			setStepController,
 		}),
 		[
 			state,
@@ -286,9 +402,22 @@ function BottomSheetRoot({
 			keepMounted,
 			topInset,
 			hasOverlay,
+			hasFooter,
+			keyboard,
 			enableHandlePanningGesture,
+			enableContentPanningGesture,
+			setScrollableRef,
+			removeScrollableRef,
 			titleId,
 			descriptionId,
+			sheetId,
+			stackBehavior,
+			detachedOptions,
+			animation,
+			overrideReduceMotion,
+			setContentHeightSource,
+			stepOverride,
+			stepController,
 		]
 	);
 
@@ -331,5 +460,14 @@ export const BottomSheet = Object.assign(BottomSheetRoot, {
 	Close: BottomSheetClose,
 	Title: BottomSheetTitle,
 	Description: BottomSheetDescription,
+	Footer: BottomSheetFooter,
+	TextInput: BottomSheetTextInput,
+	ScrollView: BottomSheetScrollView,
+	FlatList: BottomSheetFlatList,
+	SectionList: BottomSheetSectionList,
+	Host: BottomSheetHost,
+	Provider: BottomSheetProvider,
+	Steps: BottomSheetSteps,
+	Step: BottomSheetStep,
 	displayName: "DelacourBottomSheet.BottomSheet",
 });

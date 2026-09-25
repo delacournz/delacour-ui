@@ -5,6 +5,8 @@ import {
 	CLOSED_INDEX,
 	type DetentSpec,
 	GESTURE_SOURCE,
+	SCROLLABLE_TYPE,
+	type ScrollableType,
 	type SheetIntent,
 	UNMEASURED,
 } from "../core";
@@ -34,6 +36,7 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 	const gestureSource = useSharedValue<(typeof GESTURE_SOURCE)[keyof typeof GESTURE_SOURCE]>(GESTURE_SOURCE.NONE);
 	const scrollOffsetY = useSharedValue(0);
 	const scrollLockedAt = useSharedValue(0);
+	const scrollableType = useSharedValue<ScrollableType>(SCROLLABLE_TYPE.NONE);
 	const keyboardOwned = useSharedValue(false);
 	const keyboardProgress = useSharedValue(0);
 	const keyboardHeight = useSharedValue(0);
@@ -60,6 +63,9 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 		initialIndex,
 		animateOnMount,
 		keyboardBehavior,
+		keyboardBlurBehavior,
+		keyboardScope,
+		enableBlurKeyboardOnGesture,
 	} = config;
 	const detachedKey = detached === null ? "" : `${detached.horizontalMargin}/${detached.bottomOffset}`;
 	// biome-ignore lint/correctness/useExhaustiveDependencies: `detached` is keyed by its two numbers, not its identity
@@ -76,6 +82,9 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 			initialIndex,
 			animateOnMount,
 			keyboardBehavior,
+			keyboardBlurBehavior,
+			keyboardScope,
+			enableBlurKeyboardOnGesture,
 		};
 	}, [
 		configValue,
@@ -90,6 +99,9 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 		initialIndex,
 		animateOnMount,
 		keyboardBehavior,
+		keyboardBlurBehavior,
+		keyboardScope,
+		enableBlurKeyboardOnGesture,
 	]);
 
 	return useMemo<SheetSharedState>(
@@ -108,6 +120,7 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 			gestureSource,
 			scrollOffsetY,
 			scrollLockedAt,
+			scrollableType,
 			keyboardOwned,
 			keyboardProgress,
 			keyboardHeight,
@@ -131,6 +144,7 @@ export function useSheetState(snapPoints: readonly DetentSpec[], config: SheetWo
 			gestureSource,
 			scrollOffsetY,
 			scrollLockedAt,
+			scrollableType,
 			keyboardOwned,
 			keyboardProgress,
 			keyboardHeight,

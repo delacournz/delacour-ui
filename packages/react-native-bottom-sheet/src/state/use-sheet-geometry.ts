@@ -15,6 +15,7 @@ import {
 	positionFor,
 	restingBottom,
 	sheetState,
+	surfaceHeight,
 } from "../core";
 import type { SheetGeometry, SheetSharedState } from "./state.types";
 import { useDetents } from "./use-detents";
@@ -48,9 +49,14 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 		const list = detents.value;
 		return list.length > 0 ? (list[list.length - 1] as number) : closed.value;
 	});
+	// The keyboard the sheet answers to: owned, and under a behaviour that does
+	// anything about it. `none` neither lifts nor shrinks the body.
+	const keyboardEffective = useDerivedValue(() =>
+		state.keyboardOwned.value && state.config.value.keyboardBehavior !== "none" ? state.keyboardHeight.value : 0
+	);
 	const lift = useDerivedValue(() =>
 		keyboardLift({
-			keyboardHeight: state.keyboardOwned.value ? state.keyboardHeight.value : 0,
+			keyboardHeight: keyboardEffective.value,
 			progress: state.keyboardProgress.value,
 			band: band.value,
 			behavior: state.config.value.keyboardBehavior,
@@ -80,25 +86,34 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 	const footer = useDerivedValue(() =>
 		footerHeight(state.config.value.hasFooter, state.footerContentHeight.value, bandCurrent.value)
 	);
+	// The body is sized against the highest detent rather than `base`, so it
+	// never reflows during a snap between detents — but a `fillParent` snap
+	// takes `base` above every detent, and the body follows it up.
 	const area = useDerivedValue(() => {
-		const owned = state.keyboardOwned.value ? state.keyboardHeight.value : 0;
-		const sheetHeight = Math.min(maxHeight.value, highest.value + lift.value);
+		const sheetHeight = Math.min(maxHeight.value, Math.max(highest.value, state.base.value) + lift.value);
 		return contentArea({
 			sheetHeight,
 			handleHeight: state.handleHeight.value,
 			footerHeight: footer.value,
-			keyboardHeight: owned,
+			keyboardHeight: keyboardEffective.value,
 			trailingBand: state.config.value.hasFooter ? 0 : bandCurrent.value,
 		});
 	});
 	const top = useDerivedValue(() =>
 		footerTop({
 			sheetHeight: height.value,
-			keyboardHeight: state.keyboardOwned.value ? state.keyboardHeight.value : 0,
+			keyboardHeight: keyboardEffective.value,
 			footerContentHeight: state.footerContentHeight.value,
 			band: bandCurrent.value,
 		})
 	);
+
+	const surface = useDerivedValue(() => {
+		if (state.config.value.detached === null) return height.value;
+		const list = detents.value;
+		const lowest = list.length > 0 ? (list[0] as number) : 0;
+		return surfaceHeight(height.value, lowest, highest.value);
+	});
 
 	return useMemo<SheetGeometry>(
 		() => ({
@@ -118,6 +133,7 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			contentArea: area,
 			footerHeight: footer,
 			footerTop: top,
+			surfaceHeight: surface,
 		}),
 		[
 			resting,
@@ -136,6 +152,7 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			area,
 			footer,
 			top,
+			surface,
 		]
 	);
 }

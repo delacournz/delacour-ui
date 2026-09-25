@@ -37,6 +37,8 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"react-native-gesture-handler",
 	"react-native-reanimated",
 	"react-native-worklets",
+	"react-native-safe-area-context",
+	"react-native-keyboard-controller",
 ];
 
 /** The one project-local import a demo may make, and the one the spliced source drops. */

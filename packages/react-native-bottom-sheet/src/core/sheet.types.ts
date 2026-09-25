@@ -76,3 +76,18 @@ export const UNMEASURED = -1;
 
 /** The index the sheet reports while closed. */
 export const CLOSED_INDEX = -1;
+
+/**
+ * What kind of scrollable, if any, is the sheet's body. Written by
+ * `createBottomSheetScrollable` on focus, `NONE` for static content — a
+ * content pan over static content may over-drag past the top, one over a list
+ * lets the list bounce instead.
+ */
+export const SCROLLABLE_TYPE = {
+	NONE: 0,
+	SCROLL_VIEW: 1,
+	FLAT_LIST: 2,
+	SECTION_LIST: 3,
+} as const;
+
+export type ScrollableType = (typeof SCROLLABLE_TYPE)[keyof typeof SCROLLABLE_TYPE];

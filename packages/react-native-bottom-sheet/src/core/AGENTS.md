@@ -50,6 +50,7 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `intent/layout-ready.ts` | W `isLayoutReady` |
 | `haptic/crossed-detent.ts` | W `crossedDetent` (boolean), W `detentUnder` (index) |
 | `scroll/scroll-lock.ts` | W `shouldLockScroll`, W `contentPanDrivesSheet` |
+| `scroll/scroll-pan.ts` | W `listDragHeight` — the start offset as a budget the finger spends before the sheet moves; W `listOwnsRelease`; W `scrollLockTarget` |
 | `animation/select-animation.ts` | `selectAnimation`, `IOS_SPRING`, `ANDROID_TIMING` — platform defaults as data, easing by name |
 
 W marks a module-scope `"worklet"`; each is flat (see the package `AGENTS.md`)
@@ -118,6 +119,7 @@ is deliberately nothing more than a config and a reducer.
 | `machine/machine.types.ts` | `SheetMachineConfig`, `SheetStateNode`, `SheetMachineSnapshot`, `SheetTransitionError`, `SheetMachine` |
 | `machine/transition.ts` | `transition(states, snapshot, event)` — the one step, as a `Result` |
 | `machine/define-sheet-machine.ts` | `defineSheetMachine(config)` — `initial`, `transition`, `can`, `steps`, `directionOf`, `nodeOf` |
+| `machine/step-transition.ts` | `stepFrame(transition, role, direction, progress, width)` — the opacity and offset of a step mid-change, for `crossfade` / `slide` / `none`; `stepOverride(node)` — the `snapPoints` / `dismissible` a step asks of the root |
 
 - **A snapshot is a value.** `{ value, context, history }` in, a new one out;
   `assign` returns a fresh context and the incoming snapshot is never touched.

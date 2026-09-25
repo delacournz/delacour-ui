@@ -1,0 +1,130 @@
+---
+title: Textarea
+description: A multiline text field, sized in rows.
+icon: TextQuote
+---
+
+<Preview id="textarea/character-count" title={null} />
+
+## Installation
+
+<ComponentInstall name="textarea" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Field } from "@/components/ui/field";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [notes, setNotes] = useState("");
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Field>
+        <Field.Label>Notes</Field.Label>
+        <Textarea value={notes} onChangeText={setNotes} placeholder="Anything we should know?" />
+      </Field>
+    </View>
+  );
+}
+```
+
+## Rows
+
+`rows` is how many lines tall the field is before it scrolls.
+
+<Preview id="textarea/rows" />
+
+```tsx
+<Textarea rows={2} />
+<Textarea rows={4} />
+<Textarea rows={6} />
+```
+
+## Auto-grow
+
+`autoGrow` starts at `rows` and grows a line at a time up to `maxRows`, then scrolls.
+
+```tsx
+<Textarea autoGrow rows={2} maxRows={6} placeholder="Message" />
+```
+
+## Character count
+
+`showCount` needs `maxLength`, and turns destructive at the limit.
+
+<Preview id="textarea/character-count" />
+
+```tsx
+<Textarea maxLength={80} showCount value={status} onChangeText={setStatus} />
+```
+
+## Variants
+
+The box is `Input`'s, so the variants are too.
+
+<Preview id="textarea/variants" />
+
+```tsx
+<Textarea variant="primary" />
+<Textarea variant="secondary" />
+```
+
+## Sizes
+
+`size` moves the type and the leading, not the row count.
+
+<Preview id="textarea/sizes" />
+
+```tsx
+<Textarea size="sm" rows={3} />
+<Textarea size="md" rows={3} />
+<Textarea size="lg" rows={3} />
+```
+
+## States
+
+Invalid and disabled are read from an enclosing `Field`, the same way `Input` reads them.
+
+<Preview id="textarea/states" />
+
+```tsx
+<Field isInvalid={isInvalid}>
+  <Field.Label>Reason</Field.Label>
+  <Textarea value={reason} onChangeText={setReason} />
+  <Field.Error>At least 20 characters, please.</Field.Error>
+</Field>
+```
+
+## In a form
+
+A textarea under a single-line field reads as the same control at a different height.
+
+<Preview id="textarea/feedback-form" />
+
+## API Reference
+
+### Textarea
+
+Extends `Input`'s props, without `multiline` and `numberOfLines` — it is always multiline, and its
+height comes from `rows`.
+
+<TypeTable
+  type={{
+    rows: { type: "number", default: "4", description: "Lines tall — the height when fixed, the floor when growing." },
+    autoGrow: { type: "boolean", default: "false", description: "Grow with the text up to `maxRows`, then scroll." },
+    maxRows: { type: "number", default: "10", description: "The tallest `autoGrow` goes. Only accepted with `autoGrow`." },
+    showCount: { type: "boolean", default: "false", description: "Show the character count under the field. Requires `maxLength`." },
+    maxLength: { type: "number" },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    className: { type: "string", description: "Styles the field." },
+    containerClassName: { type: "string", description: "Styles the view holding the field and its count." },
+    ref: { type: "Ref<TextInput>" },
+  }}
+/>

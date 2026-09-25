@@ -1,0 +1,174 @@
+---
+title: Collapsible
+description: One section of content, shown and hidden by its own trigger.
+icon: ChevronDown
+---
+
+<Preview id="collapsible/a-section-of-detail" title={null} />
+
+## Installation
+
+<ComponentInstall name="collapsible" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Collapsible } from "@/components/ui/collapsible";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Collapsible>
+        <Collapsible.Trigger>
+          <Collapsible.Title>What is included</Collapsible.Title>
+          <Collapsible.Description>Pro plan, billed yearly</Collapsible.Description>
+        </Collapsible.Trigger>
+        <Collapsible.Content>
+          <Text.Paragraph>Unlimited projects, 100 GB of storage and priority email support.</Text.Paragraph>
+        </Collapsible.Content>
+      </Collapsible>
+    </View>
+  );
+}
+```
+
+## Variants
+
+The same four surfaces as `Accordion` and `ListGroup`.
+
+<Preview id="collapsible/variants" />
+
+```tsx
+<Collapsible variant="secondary">…</Collapsible>
+<Collapsible variant="tertiary">…</Collapsible>
+<Collapsible variant="transparent">…</Collapsible>
+```
+
+## Sizes
+
+<Preview id="collapsible/sizes" />
+
+```tsx
+<Collapsible size="sm">…</Collapsible>
+<Collapsible size="md">…</Collapsible>
+<Collapsible size="lg">…</Collapsible>
+```
+
+## Controlled
+
+Pass `isOpen` and `onOpenChange` to own the state; leave them off, or set `defaultOpen`, and it holds its own.
+
+<Preview id="collapsible/controlled" />
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+
+<Collapsible isOpen={isOpen} onOpenChange={setOpen}>…</Collapsible>
+```
+
+## Disabled
+
+`isDisabled` stops the trigger in both directions, so an open section stays open.
+
+<Preview id="collapsible/disabled" />
+
+```tsx
+<Collapsible defaultOpen isDisabled>…</Collapsible>
+```
+
+## Custom indicator
+
+Hand the indicator a function of the open state, and set `isAnimated={false}` when the glyph itself carries the change.
+
+```tsx
+<Collapsible.Trigger>
+  <Collapsible.Title>Two-year warranty</Collapsible.Title>
+  <Collapsible.Indicator isAnimated={false}>
+    {({ isOpen }) => <Icon icon={isOpen ? IconMinusSmall : IconPlusSmall} />}
+  </Collapsible.Indicator>
+</Collapsible.Trigger>
+```
+
+## Order summary
+
+The panel's height is measured and animated, so whatever sits below it follows it down.
+
+<Preview id="collapsible/order-summary" />
+
+```tsx
+<Collapsible>
+  <Collapsible.Trigger>
+    <Icon icon={IconReceiptBill} />
+    <Collapsible.Title>Order summary</Collapsible.Title>
+    <Collapsible.Description>3 items · $346.00</Collapsible.Description>
+  </Collapsible.Trigger>
+  <Collapsible.Content className="gap-3">…</Collapsible.Content>
+</Collapsible>
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Collapsible` | The surface. Owns the open state and the shared axes |
+| `Collapsible.Trigger` | The row that opens the section. A `Pressable`, so it inherits the whole vocabulary |
+| `Collapsible.Title` | The trigger's primary line. Bare string children become one automatically |
+| `Collapsible.Description` | The trigger's secondary line, stacked under the title |
+| `Collapsible.Indicator` | The glyph that turns as the panel opens. Composed in when a trigger holds none |
+| `Collapsible.Content` | The measured, clipped panel. Mounts on first open and stays mounted |
+
+### CollapsibleProps
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controlled open state. Leave it off and the collapsible holds its own." },
+    defaultOpen: { type: "boolean", default: "false", description: "Initial open state while uncontrolled." },
+    onOpenChange: { type: "(isOpen: boolean) => void", description: "Called whenever the trigger opens or closes it." },
+    variant: {
+      type: '"default" | "secondary" | "tertiary" | "transparent"',
+      default: '"default"',
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: {
+      type: "boolean",
+      default: "false",
+      description: "Stops the trigger and fades the surface. An open section stays open.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Collapsible.Trigger
+
+<TypeTable
+  type={{
+    feedback: { type: "PressableFeedback", default: '"fade"' },
+    haptic: { type: "HapticFeedback | false", default: '"selection"' },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Strings become a title; the indicator is composed in when absent." },
+  }}
+/>
+
+### Collapsible.Indicator
+
+<TypeTable
+  type={{
+    isAnimated: { type: "boolean", default: "true", description: "Turn with the panel. Set false for a glyph that swaps." },
+    className: { type: "string" },
+    children: { type: "ReactNode | ((state: { isOpen: boolean }) => ReactNode)", description: "Replaces the default chevron." },
+  }}
+/>
+
+### Collapsible.Content
+
+<TypeTable
+  type={{
+    className: { type: "string", description: "Lands on the measured layer, so padding and gap are part of the height." },
+    children: { type: "ReactNode" },
+  }}
+/>

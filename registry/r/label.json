@@ -1,0 +1,63 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "label",
+	"type": "registry:ui",
+	"title": "Label",
+	"description": "A form control's name, with required, invalid and disabled states.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/label/AGENTS.md",
+			"target": "label/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/label",
+					"to": "@registry/ui/label"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/label/index.ts",
+			"target": "label/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/label/label.tsx",
+			"target": "label/label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/label/label.variants.ts",
+			"target": "label/label.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	]
+}

@@ -1,10 +1,12 @@
 import { type ComponentProps, type ReactElement, useCallback } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
 import Animated, { useAnimatedStyle, useDerivedValue, withSpring } from "react-native-reanimated";
+import { useFieldContext } from "../field/field.context";
 import { useSliderPart } from "./slider.context";
 import {
 	formatSliderValue,
 	progressOf,
+	resolveThumbAccessibilityLabel,
 	SLIDER_THUMB_ANIMATION,
 	SLIDER_THUMB_SPRING,
 	sliderVariants,
@@ -16,6 +18,15 @@ const CONTINUOUS_ACCESSIBILITY_STEPS = 10;
 export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
 	/** Which value this thumb drives. `0` unless the slider holds a range. */
 	index?: number;
+	/**
+	 * The name a screen reader reads before the value.
+	 *
+	 * Defaults to the enclosing `Field.Label`'s text — "Volume", or for a range
+	 * "Price range, minimum" and "Price range, maximum". Set it to name one thumb
+	 * yourself; it wins outright. A slider with no `Field` and no label here reads
+	 * only its value.
+	 */
+	accessibilityLabel?: string;
 	className?: string;
 	/**
 	 * Passed to the knob inside the capsule.
@@ -56,8 +67,21 @@ export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
  * TalkBack read; the increment and decrement actions are what their swipe
  * gestures call. Without them a slider with no gesture on its thumb would have no
  * assistive path to its value at all.
+ *
+ * **The name comes from the `Field.Label` a row away.** The thumb is a capsule
+ * with no text, so a value alone — "40" — says nothing about what it is a value
+ * *of*. React Native has no `<label for>`, so the field's context carries the
+ * label's text down and `resolveThumbAccessibilityLabel` turns it into a name:
+ * the label itself for a lone thumb, the label plus the end it holds for a
+ * range. An `accessibilityLabel` written here wins over all of it.
  */
-export function SliderThumb({ index = 0, className, knobProps, ...props }: SliderThumbProps): ReactElement {
+export function SliderThumb({
+	index = 0,
+	accessibilityLabel,
+	className,
+	knobProps,
+	...props
+}: SliderThumbProps): ReactElement {
 	const {
 		positions,
 		trackSize,
@@ -75,6 +99,7 @@ export function SliderThumb({ index = 0, className, knobProps, ...props }: Slide
 		isDisabled,
 		updateValue,
 	} = useSliderPart("Slider.Thumb");
+	const field = useFieldContext();
 	const isVertical = orientation === "vertical";
 	const slots = sliderVariants({ color, isDisabled, isInvalid, orientation, size });
 
@@ -118,6 +143,12 @@ export function SliderThumb({ index = 0, className, knobProps, ...props }: Slide
 	const knobStyle = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }));
 
 	const value = values[index] ?? minValue;
+	const label = resolveThumbAccessibilityLabel({
+		count: values.length,
+		index,
+		label: field?.label,
+		override: accessibilityLabel,
+	});
 	const nudge = step > 0 ? step : (maxValue - minValue) / CONTINUOUS_ACCESSIBILITY_STEPS;
 
 	const handleAccessibilityAction = useCallback(
@@ -131,6 +162,7 @@ export function SliderThumb({ index = 0, className, knobProps, ...props }: Slide
 	return (
 		<Animated.View
 			accessibilityActions={ACCESSIBILITY_ACTIONS}
+			accessibilityLabel={label}
 			accessibilityRole="adjustable"
 			accessibilityState={{ disabled: isDisabled }}
 			accessibilityValue={{

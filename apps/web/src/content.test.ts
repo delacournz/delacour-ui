@@ -186,7 +186,7 @@ describe("quick start", () => {
 	 * it, for choosing placement deliberately.
 	 */
 	test("teaches `add`, and never `init`", () => {
-		const commands = [...body.matchAll(/delacour@alpha\s+([a-z-]+)/g)].map(([, verb]) => verb);
+		const commands = [...body.matchAll(/delacour@latest\s+([a-z-]+)/g)].map(([, verb]) => verb);
 
 		expect(commands).toContain("add");
 		expect(commands).not.toContain("init");

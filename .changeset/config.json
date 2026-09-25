@@ -7,5 +7,6 @@
 	"access": "public",
 	"baseBranch": "develop",
 	"updateInternalDependencies": "patch",
-	"ignore": ["@delacour/web", "@delacour/playground"]
+	"ignore": ["@delacour/web", "@delacour/playground"],
+	"snapshot": { "useCalculatedVersion": true, "prereleaseTemplate": "{tag}.{datetime}" }
 }

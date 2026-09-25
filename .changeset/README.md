@@ -14,4 +14,7 @@ should read. Commit the generated markdown file with the change it describes.
 Only three packages are releasable: `delacour` (the CLI), `@delacour/react-native-ui` and
 `@delacour/react-native-charts`. Everything else in the workspace is private.
 
-See [the root AGENTS.md](../AGENTS.md#releases) for what happens after the changeset is merged.
+Once merged into `develop`, a changeset publishes an `x.y.z-alpha.<datetime>` snapshot of every
+package it names to npm under `alpha`, and stays pending. `gh workflow run release.yml --ref develop`
+consumes every pending changeset into a stable release on `latest` and fast-forwards `main`. See
+[the root AGENTS.md](../AGENTS.md#releases) for the whole flow, diagrams included.

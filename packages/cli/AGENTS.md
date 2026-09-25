@@ -142,8 +142,9 @@ The monorepo layout adds one rule to `mergePackageJson`: a package the shared ma
 depends on is not recorded as a peer as well. bun resolves a peer against the registry even when
 a dependency on the same name satisfies it, so a peer on an unpublished or tarball-installed
 package fails every later install in the workspace — inside `expo install`, which never named it.
-A peer on a package still in pre mode is written as `>=0.0.0-0` rather than `*`, since `*` admits
-no prerelease; `peerRange` derives that from `DIST_TAG` and goes away with it.
+A peer on a Delacour package is written as `>=0.0.0-0` rather than `*`, since `*` admits no
+prerelease and an alpha app installs `x.y.z-alpha.N`; the range admits a stable version too, so it
+holds on either line.
 
 | Level | Proves |
 | --- | --- |
@@ -350,7 +351,8 @@ run is caught before a build renders its dark theme as a utility class.
 ### The registry ref is baked in at build time
 
 `tsdown.config.ts` defines `__REGISTRY_REF__` from `DELACOUR_REGISTRY_REF`, and release CI passes
-**the commit it is publishing** — `github.sha`, not the tag. A published version therefore always
+**the commit it is publishing**, not the tag — `alpha.yml` the pushed `develop` commit, `release.yml`
+the release commit it just made. A published version therefore always
 reads the registry it shipped against; `--ref develop` opts into what has landed since. `main`
 is the last release — `release.yml` fast-forwards it — so `--ref main` is only ever as new as the
 newest published CLI.
@@ -360,9 +362,19 @@ would name something that does not exist yet, and a publish that succeeded befor
 push would ship a CLI pointing at a ref that never appears. `raw.githubusercontent.com` serves a
 full SHA just as happily.
 
-`DELACOUR_REGISTRY_REF` is set at **job** level in `release.yml`, not on the build step. `npm
-publish` re-runs `prepublishOnly`, which rebuilds the bundle — if the ref were unset for that
-rebuild it would silently bake `main` over the correct value.
+`DELACOUR_REGISTRY_REF` is never set on the build step alone: `alpha.yml` sets it at job level, and
+`release.yml` writes it to `GITHUB_ENV` once the release commit exists. `npm publish` re-runs
+`prepublishOnly`, which rebuilds the bundle — if the ref were unset for that rebuild it would
+silently bake `main` over the correct value.
+
+### The install channel comes from the CLI's version
+
+`src/project/channel.ts` reads `__CLI_VERSION__`: an `x.y.z-alpha.N` build is on the **alpha**
+channel and installs `@delacour/react-native-ui` and `@delacour/react-native-charts` as `name@alpha`;
+anything else — a stable version, or `0.0.0-dev` from an unbuilt tree — installs them untagged from
+`latest`. An alpha CLI reads a registry that can use an API only the alpha packages have, so it has
+to install those; a stable CLI must never pull a prerelease into an app. Nothing is baked in beyond
+the version, so the snapshot bump in `alpha.yml` is what switches it.
 
 ### The CLI version is baked in too
 

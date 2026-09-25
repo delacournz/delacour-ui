@@ -1,13 +1,14 @@
 name: CI
 
-# Not on push to `main`. Every commit on `main` arrives through a squash-merged pull request whose
-# four required checks were green on the same tree (`.github/rulesets/main.json` also requires the
-# branch to be up to date), so a second run on the merge commit could only repeat that answer.
-# Railway does not wait on check suites for ui.delacour.co.nz either — its builds start seconds
-# after the push, before this workflow could finish — so nothing downstream reads a `main` run.
+# Not on push to `main`. `main` moves only when `release.yml` fast-forwards it to a commit that is
+# already on `develop`, and that commit's push to `develop` ran these checks on the same SHA — a run
+# on `main` could only repeat the answer. Railway does not wait on check suites for
+# ui.delacour.co.nz either, so nothing downstream reads a `main` run.
 #
-# `develop` stays listed because nothing protects it: a direct push there is the first time the
-# tree is checked, and ui.staging.delacour.co.nz deploys from it.
+# `develop` is listed because every commit there — a squash-merged pull request — is the tree
+# ui.staging.delacour.co.nz deploys and the one a release later ships, and its push run is the check
+# the commit itself carries. `develop-protected` requires the pull request to be green and up to
+# date, so this run should only ever repeat it; if it is red, the tree is broken.
 #
 # `release/playground/*` is listed for an unrelated reason: a push to a `release/playground/x.y.z`
 # branch triggers the EAS `release:prod` workflow, which ships the app to the stores. GitHub and EAS
@@ -16,8 +17,8 @@ name: CI
 # these branches.
 #
 # The four job `name:` values are also an API contract, not labels. They are listed verbatim as
-# required status checks in `.github/rulesets/main.json`, and GitHub matches them by string.
-# Rename a job without updating that file and every pull request into `main` blocks forever on a
+# required status checks in `.github/rulesets/develop.json`, and GitHub matches them by string.
+# Rename a job without updating that file and every pull request into `develop` blocks forever on a
 # check that will never report.
 
 on:

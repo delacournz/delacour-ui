@@ -68,9 +68,16 @@ export const CHART_SIZE_TOKENS = ["chart-sm", "chart-md", "chart-lg"] as const;
  * `text-button-md` as an unrecognised utility — which is how a size token ends
  * up colliding with a colour and silently dropping it. One config, read by
  * `lib/cn.ts` and `lib/tv.ts`, so they cannot drift apart.
+ *
+ * `border-curve` is Uniwind's, not Tailwind's: `border-continuous` sets iOS's
+ * `borderCurve`. Unregistered, tailwind-merge reads it as a border *colour*,
+ * and `border-continuous border-border` loses one of the two.
  */
 export const TW_MERGE_CONFIG = {
 	extend: {
+		classGroups: {
+			"border-curve": ["border-continuous", "border-circular"],
+		},
 		theme: {
 			radius: [...BUTTON_RADIUS_TOKENS],
 			spacing: [
@@ -84,3 +91,6 @@ export const TW_MERGE_CONFIG = {
 		},
 	},
 } as const;
+
+/** Class groups `TW_MERGE_CONFIG` adds, which tailwind-merge's extension has to be told about by name. */
+export type CustomClassGroupId = keyof typeof TW_MERGE_CONFIG.extend.classGroups;

@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
-import { TW_MERGE_CONFIG } from "../styles/tokens";
+import { type CustomClassGroupId, TW_MERGE_CONFIG } from "../styles/tokens";
 
 /**
  * tailwind-merge, taught the semantic size tokens from `tokens.css`.
@@ -15,7 +15,7 @@ import { TW_MERGE_CONFIG } from "../styles/tokens";
  *
  * `tv()` needs the same treatment for its own merger — see `lib/tv.ts`.
  */
-const twMerge = extendTailwindMerge(TW_MERGE_CONFIG);
+const twMerge = extendTailwindMerge<CustomClassGroupId>(TW_MERGE_CONFIG);
 
 /**
  * Merges class names and resolves Tailwind conflicts so the last utility wins.

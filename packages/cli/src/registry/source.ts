@@ -8,8 +8,9 @@ import { fileURLToPath } from "node:url";
  * `raw.githubusercontent.com`, so there is nothing to host and nothing to keep
  * running. The cost is that a ref has to be chosen: the CLI is published with
  * the tag it was built from baked in, so a given version always reads the
- * registry it shipped against, and `--ref main` opts into whatever has landed
- * since.
+ * registry it shipped against, and `--ref develop` opts into whatever has
+ * landed since. `main` is the last release, so `--ref main` only catches up to
+ * the newest published CLI.
  *
  * That a ref pins the whole registry is also what makes it safe to split an
  * item across several documents: `r/button.json` and the files it names are

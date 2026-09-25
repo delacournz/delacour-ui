@@ -155,7 +155,7 @@ Two greys and one amber: the zinc ramp supplies every surface, text and hairline
 
 ### Primary
 - **Studio Amber** (`{colors.amber-dark}` in dark, `{colors.amber-light}` in light): the one hue. In dark it fills the primary button, rings the selected tile on every strip, fills the theme disc and the mark; its own text is `{colors.amber-on-dark}`, near-black. In light it deepens to the `#d97706` the site's light mode uses, with `#451a03` type on it, so a primary button keeps its contrast without a second accent being invented.
-- **Chart Ramp** (five amber steps, `oklch(0.879 0.153 91.605)` → `oklch(0.555 0.146 48.998)`, `#fbbf24` second): set by the house preset for `chart-1`…`chart-5`. **Unverified on device** — no capture in this round exercised a chart; recorded from the preset, not from a screen.
+- **Chart Ramp** (five amber steps): set by the house preset for `chart-1`…`chart-5`. In dark, amber-300 → amber-700 (`oklch(0.879 0.153 91.605)` → `oklch(0.555 0.146 48.998)`, `#fbbf24` second). In light, amber-600 → amber-950 (`oklch(0.666 0.157 58.318)` → `oklch(0.279 0.074 45.635)`), because amber-300 is 1.4:1 on a white card and the first step has to clear 3:1 for a single-series chart to read.
 
 ### Neutral
 - **Ground** (`{colors.ground-dark}` / `{colors.ground-light}`): the page, the navbar's backing, the native root view and the splash. The same value paints all four, so a cold start, a bounce past a modal and a screen are one colour.

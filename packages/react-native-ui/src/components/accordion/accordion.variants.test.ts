@@ -344,9 +344,8 @@ describe("accordionVariants slots", () => {
 	});
 
 	test("the disabled fade lands on the item, never on the trigger", () => {
-		// The trigger is a `Pressable`, whose root Animated.View writes `opacity`
-		// every frame through a useAnimatedStyle of its own. A class on that node
-		// is overwritten silently — the failure `Switch` and `Radio` both record.
+		// The item fades header and panel together; a fade on the trigger as well
+		// would compound the two to a quarter.
 		for (const size of ACCORDION_SIZES) {
 			const slots = accordionVariants({ isDisabled: true, size, variant: ACCORDION_DEFAULT_VARIANT });
 			expect(cls(slots.item())).toMatch(/\bopacity-50\b/);

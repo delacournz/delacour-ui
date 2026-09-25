@@ -1,5 +1,6 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as aRange from "./a-range";
+import * as accessibleNames from "./accessible-names";
 import * as anatomy from "./anatomy";
 import * as colours from "./colours";
 import * as disabledAndInvalid from "./disabled-and-invalid";
@@ -13,5 +14,6 @@ export const sliderDemos = defineDemoGroup("slider", {
 	sizes,
 	vertical,
 	"a-range": aRange,
+	"accessible-names": accessibleNames,
 	"disabled-and-invalid": disabledAndInvalid,
 });

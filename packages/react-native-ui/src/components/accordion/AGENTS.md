@@ -139,9 +139,10 @@ a list of rows.
   `onPress` is the one prop `Omit`ed rather than forwarded: the press *is* the
   toggle, and a side effect belongs on `onValueChange`. `Checkbox`'s trade.
 - **The disabled fade lands on the item, never on the trigger.** The trigger is a
-  `Pressable`, whose root `Animated.View` writes `opacity` every frame through a
-  `useAnimatedStyle` of its own — a class on that node is overwritten silently,
-  the failure `Switch` and `Radio` both record. A test sweeps for it.
+  `Pressable`, which now multiplies a className's opacity into its press rather
+  than overwriting it — but the item already fades, header and panel together,
+  and a fade on the trigger as well would compound to a quarter. A test sweeps
+  for it.
 - **The trigger assembles its own row.** Titles and descriptions stack in a
   column, anything else — a leading `Icon`, a `Badge` — stays where it was
   written as a row sibling, and the indicator is moved to the end and composed in

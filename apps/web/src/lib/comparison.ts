@@ -394,8 +394,8 @@ export const COMPARE_COPY = {
 		title: "The npm package is right there.",
 		body: "If your team would rather take updates than own files, install the package and skip the CLI entirely. It is the same source — the registry serves the library's own files rather than a copy of them — so the two can never drift.",
 		move: "You can also start on the package and move later. Run delacour add button in a project that already installs @delacour/react-native-ui, delete the package import, and point at the new path. Nothing about the component changes on the way across.",
-		cli: { label: "Copy the source in", command: "delacour@alpha add button" },
-		pkg: { label: "Or install the package", command: "@delacour/react-native-ui@alpha" },
+		cli: { label: "Copy the source in", command: "delacour@latest add button" },
+		pkg: { label: "Or install the package", command: "@delacour/react-native-ui" },
 		link: "How the CLI works →",
 	},
 

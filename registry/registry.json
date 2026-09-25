@@ -528,7 +528,8 @@
 				"react-native-gesture-handler",
 				"react-native-pulsar",
 				"react-native-reanimated",
-				"react-native-worklets"
+				"react-native-worklets",
+				"uniwind"
 			],
 			"devDependencies": [],
 			"files": [
@@ -819,6 +820,30 @@
 				"styles/tokens.css",
 				"styles/tokens.ts",
 				"styles/uniwind-env.d.ts"
+			]
+		},
+		{
+			"name": "surface",
+			"type": "registry:ui",
+			"title": "Surface",
+			"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/surface/AGENTS.md",
+				"ui/surface/index.ts",
+				"ui/surface/surface.context.tsx",
+				"ui/surface/surface.tsx",
+				"ui/surface/surface.variants.ts"
 			]
 		},
 		{

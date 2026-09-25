@@ -179,6 +179,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
 	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
+	},
 	switch: {
 		title: "Switch",
 		description: "An on/off control whose thumb can be dragged as well as tapped.",

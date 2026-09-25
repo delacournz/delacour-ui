@@ -109,6 +109,48 @@ development and the slider keeps following you.
 It fills whatever it is given, so a wrapper with `h-48` or `flex-1` is not optional.
 </Callout>
 
+## Accessibility
+
+Each thumb is an `adjustable` with a value, and its **name** comes from the `Field.Label` a row
+away. A lone thumb reads the label — "Volume, 40". A range's two thumbs read the label plus the end
+each holds — "Price range, minimum" and "Price range, maximum" — and with no label at all they
+still read "Minimum" and "Maximum", because two thumbs announcing the same bare number are
+indistinguishable.
+
+```tsx
+<Field>
+  <Field.Label>Price range</Field.Label>
+  <Slider value={range} onChange={setRange}>
+    <Slider.Track>
+      {({ values }) => (
+        <>
+          <Slider.Fill />
+          {values.map((_, index) => (
+            <Slider.Thumb index={index} key={index} />
+          ))}
+        </>
+      )}
+    </Slider.Track>
+  </Slider>
+</Field>
+```
+
+An `accessibilityLabel` on a thumb names that thumb yourself, and wins outright:
+
+```tsx
+<Slider.Thumb accessibilityLabel="Lowest price" index={0} />
+<Slider.Thumb accessibilityLabel="Highest price" index={1} />
+```
+
+<Callout type="warn">
+A `Text.Label` sitting beside the slider does not name it — React Native has no `<label for>`. Only
+a `Field.Label` reaches the thumb, and only when its children are a plain string. A slider with
+neither reads its value alone.
+</Callout>
+
+A VoiceOver or TalkBack swipe steps the value by `step`, or by a tenth of the range when the slider
+is continuous.
+
 ## Inside a scroll view
 
 ```tsx
@@ -164,5 +206,20 @@ prop at your call site, not something the component can set.
     onChange: { type: "(value: number | number[]) => void", description: "Fires on every change during the drag." },
     onChangeEnd: { type: "(value: number | number[]) => void", description: "Fires once, when the drag is released. Where a network write belongs." },
     children: { type: "ReactNode" },
+  }}
+/>
+
+### Slider.Thumb
+
+<TypeTable
+  type={{
+    index: { type: "number", default: "0", description: "Which value this thumb drives, in a range." },
+    accessibilityLabel: {
+      type: "string",
+      description:
+        "The name a screen reader reads before the value. Defaults to the enclosing Field.Label's text — plus \"minimum\" or \"maximum\" in a range. Wins outright when set.",
+    },
+    className: { type: "string" },
+    knobProps: { type: "ViewProps", description: "Passed to the knob inside the capsule." },
   }}
 />

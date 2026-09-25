@@ -100,8 +100,7 @@ describe("flat worklets", () => {
 
 	test("finds the module-scope worklets, so a broken walker cannot pass silently", () => {
 		const total = files.reduce((count, file) => count + moduleScopeWorklets(read(file)).length, 0);
-		// A stub-sized floor. BSHEET-1 raises this to `> 3`, and to `> 20` when reached.
-		expect(total).toBeGreaterThan(0);
+		expect(total).toBeGreaterThan(20);
 	});
 
 	test("no module-scope worklet calls an imported or module-scope function", () => {

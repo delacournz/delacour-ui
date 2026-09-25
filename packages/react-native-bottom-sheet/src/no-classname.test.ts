@@ -16,9 +16,8 @@ import { read, relative, SRC, sourceFiles } from "./source-tree.test";
 describe("no className", () => {
 	const files = sourceFiles(SRC, { skipTests: true });
 
-	// A stub-sized floor. BSHEET-2 raises this to `> 20` once the React layer lands.
 	test("finds the source, so a broken walker cannot pass silently", () => {
-		expect(files.length).toBeGreaterThan(4);
+		expect(files.length).toBeGreaterThan(20);
 	});
 
 	test("no module names className", () => {

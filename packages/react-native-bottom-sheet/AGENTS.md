@@ -14,9 +14,10 @@ import { BottomSheet } from "@delacour/react-native-bottom-sheet";
 import { positionFor } from "@delacour/react-native-bottom-sheet/core";
 ```
 
-The package is being built in phases (plan `BSHEET`). Today it is `core/` and
-the guard tests; the React layer, keyboard, scrollables, portal and steps
-arrive in BSHEET-1 to BSHEET-6.
+The package is being built in phases (plan `BSHEET`). Today it is `core/` —
+every number the sheet computes, as tested pure functions, plus the step
+machine — and the guard tests; the React layer, keyboard, scrollables, portal
+and steps arrive in BSHEET-2 to BSHEET-6.
 
 ## Commands
 
@@ -123,7 +124,7 @@ is copied into `core/result.ts` rather than depended on.
 
 | Path | What |
 | --- | --- |
-| `src/core` | Every number the sheet computes — types, `Result`, and the height-to-transform worklet. Its own `AGENTS.md` indexes it |
+| `src/core` | Every number the sheet computes — detents, keyboard, footer, geometry, backdrop, intents, haptics, scroll lock, animation defaults and the step machine. Its own `AGENTS.md` indexes it and carries the formulas |
 | `src/index.ts` | The React surface; re-exports `core` |
 | `src/purity.test.ts` | The purity rule, enforced against the source |
 | `src/flat-worklet.test.ts` | The worklet rule, enforced against the source |

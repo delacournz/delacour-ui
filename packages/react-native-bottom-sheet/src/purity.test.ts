@@ -46,9 +46,8 @@ function isTypeOnly(clause: string): boolean {
 describe("core purity", () => {
 	const files = sourceFiles(join(SRC, "core"));
 
-	// A stub-sized floor. BSHEET-1 fills `core/` and raises this to `> 20`.
 	test("finds the core modules, so a broken walker cannot pass silently", () => {
-		expect(files.length).toBeGreaterThan(3);
+		expect(files.length).toBeGreaterThan(20);
 	});
 
 	test("no module under src/core imports a React Native runtime value", () => {

@@ -603,4 +603,59 @@ export function resolveSliderAxes({ own, field }: { own?: SliderOwnAxes; field?:
 	};
 }
 
+/**
+ * What a range's thumbs are called when nothing names them.
+ *
+ * Written out once so the two ends and the counted form cannot drift apart, and
+ * so the playground and the docs can quote the same words.
+ */
+export const SLIDER_THUMB_NAMES = { minimum: "Minimum", maximum: "Maximum", thumb: "Thumb" } as const;
+
+/**
+ * The accessible name a `Slider.Thumb` announces.
+ *
+ * A thumb is a capsule with no text, so without this a screen reader reads a
+ * bare number and nothing about what it is a number *of*. The ladder is the one
+ * every prop in this package climbs: an explicit `accessibilityLabel` on the
+ * thumb wins, then the slider's name, then nothing — an empty override counts as
+ * no override, because a screen reader handed `""` reads nothing at all.
+ *
+ * A lone thumb *is* the control, so it takes the control's name unadorned. A
+ * range has to tell its two thumbs apart, so each is named for the end it holds
+ * — "Price range, minimum" — and that holds even with no name to hang it on,
+ * since two thumbs reading the same bare number are indistinguishable. Past two
+ * thumbs there are no ends to name, so they count: "Stops, 2 of 3".
+ *
+ * Pure, so the whole ladder is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveThumbAccessibilityLabel({
+	label,
+	index,
+	count,
+	override,
+}: {
+	/** The slider's own name — a `Field.Label`'s text, or nothing. */
+	label?: string | null;
+	/** Which thumb, in the order the values were given. */
+	index: number;
+	/** How many thumbs the slider holds. */
+	count: number;
+	/** An `accessibilityLabel` written on the thumb itself. */
+	override?: string;
+}): string | undefined {
+	const explicit = override?.trim();
+	if (explicit) return explicit;
+
+	const name = label?.trim() || undefined;
+	if (count <= 1) return name;
+
+	if (count === 2) {
+		const end = index === 0 ? SLIDER_THUMB_NAMES.minimum : SLIDER_THUMB_NAMES.maximum;
+		return name ? `${name}, ${end.toLowerCase()}` : end;
+	}
+
+	const position = `${index + 1} of ${count}`;
+	return name ? `${name}, ${position}` : `${SLIDER_THUMB_NAMES.thumb} ${position}`;
+}
+
 export type SliderVariantProps = VariantProps<typeof sliderVariants>;

@@ -161,6 +161,7 @@ import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-g
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
 import * as demo_slider_a_range from "./slider/a-range";
+import * as demo_slider_accessible_names from "./slider/accessible-names";
 import * as demo_slider_anatomy from "./slider/anatomy";
 import * as demo_slider_colours from "./slider/colours";
 import * as demo_slider_disabled_and_invalid from "./slider/disabled-and-invalid";
@@ -354,6 +355,7 @@ export const DEMOS = {
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
 	"slider/a-range": demo_slider_a_range,
+	"slider/accessible-names": demo_slider_accessible_names,
 	"slider/anatomy": demo_slider_anatomy,
 	"slider/colours": demo_slider_colours,
 	"slider/disabled-and-invalid": demo_slider_disabled_and_invalid,

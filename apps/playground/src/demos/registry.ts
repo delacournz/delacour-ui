@@ -94,6 +94,16 @@ import * as demo_checkbox_colours from "./checkbox/colours";
 import * as demo_checkbox_indeterminate from "./checkbox/indeterminate";
 import * as demo_checkbox_invalid_and_disabled from "./checkbox/invalid-and-disabled";
 import * as demo_checkbox_sizes from "./checkbox/sizes";
+import * as demo_chip_controlled_and_uncontrolled from "./chip/controlled-and-uncontrolled";
+import * as demo_chip_filter_row from "./chip/filter-row";
+import * as demo_chip_recipients from "./chip/recipients";
+import * as demo_chip_removable from "./chip/removable";
+import * as demo_chip_single_select from "./chip/single-select";
+import * as demo_chip_sizes from "./chip/sizes";
+import * as demo_chip_states from "./chip/states";
+import * as demo_chip_tags from "./chip/tags";
+import * as demo_chip_variants_and_colours from "./chip/variants-and-colours";
+import * as demo_chip_with_content from "./chip/with-content";
 import * as demo_field_anatomy_all_four from "./field/anatomy/all-four";
 import * as demo_field_anatomy_label_and_control from "./field/anatomy/label-and-control";
 import * as demo_field_anatomy_the_gap_ladder from "./field/anatomy/the-gap-ladder";
@@ -287,6 +297,16 @@ export const DEMOS = {
 	"checkbox/indeterminate": demo_checkbox_indeterminate,
 	"checkbox/invalid-and-disabled": demo_checkbox_invalid_and_disabled,
 	"checkbox/sizes": demo_checkbox_sizes,
+	"chip/controlled-and-uncontrolled": demo_chip_controlled_and_uncontrolled,
+	"chip/filter-row": demo_chip_filter_row,
+	"chip/recipients": demo_chip_recipients,
+	"chip/removable": demo_chip_removable,
+	"chip/single-select": demo_chip_single_select,
+	"chip/sizes": demo_chip_sizes,
+	"chip/states": demo_chip_states,
+	"chip/tags": demo_chip_tags,
+	"chip/variants-and-colours": demo_chip_variants_and_colours,
+	"chip/with-content": demo_chip_with_content,
 	"field/anatomy/all-four": demo_field_anatomy_all_four,
 	"field/anatomy/label-and-control": demo_field_anatomy_label_and_control,
 	"field/anatomy/the-gap-ladder": demo_field_anatomy_the_gap_ladder,

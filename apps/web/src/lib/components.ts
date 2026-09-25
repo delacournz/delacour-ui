@@ -58,6 +58,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		group: "Forms",
 		blurb: "A box that is ticked or not \u2014 alone, or as one of a group sharing a value list.",
 	},
+	{
+		slug: "chip",
+		name: "Chip",
+		group: "Forms",
+		blurb: "An interactive pill — a filter that toggles, a tag, or a token with a remove control.",
+	},
 	{ slug: "radio", name: "Radio", group: "Forms", blurb: "One choice from a set, with a trailing indicator row." },
 	{
 		slug: "switch",

@@ -21,7 +21,7 @@ export class UnknownItemError extends Error {
 	) {
 		super(
 			requiredBy
-				? `"${item}" is not in the registry, and is required by "${requiredBy}". The registry may be newer than this CLI — try \`--ref main\`.`
+				? `"${item}" is not in the registry, and is required by "${requiredBy}". The registry may be newer than this CLI — try \`--ref develop\`.`
 				: `"${item}" is not in the registry. Run \`delacour list\` to see what is available.`
 		);
 		this.name = "UnknownItemError";

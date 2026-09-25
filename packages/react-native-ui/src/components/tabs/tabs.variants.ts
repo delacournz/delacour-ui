@@ -559,12 +559,10 @@ export function resolveScrollOffset(state: {
  * three are an animated style, and a class fighting a `useAnimatedStyle` for the
  * same property is an indicator that never appears, with no error anywhere.
  *
- * **The `trigger` slot carries no `opacity-*`, in any cell.** It is worn by
- * `Pressable`'s own `Animated.View`, whose `useAnimatedStyle` writes `opacity` on
- * every frame — at rest, 1 — so a class there is overwritten before it is ever
- * drawn and the tab stays at full contrast while behaving as disabled. The
- * disabled fade lands on the label instead. This is `Radio`'s lesson, and it bites
- * twice here because `feedback` defaults to `fade`.
+ * **The `trigger` slot carries no `opacity-*`, in any cell.** The disabled fade
+ * lands on the label instead. `Pressable` now multiplies a className's opacity
+ * into its press, so a fade on the trigger would draw — but the label already
+ * fades, and the two would compound to a quarter. This is `Radio`'s arrangement.
  *
  * **Selection changes the label's colour and nothing else.** A weight change would
  * re-measure the label, which moves the frame the indicator is sitting on, on

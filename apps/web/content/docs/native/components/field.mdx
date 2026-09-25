@@ -237,6 +237,16 @@ caller turn a description into a heading and lose the type scale the component e
       required: true,
       description: "A control inside offers its press here so the whole row can drive it. Pass null on unmount. A field holds one control, so a second registration replaces the first.",
     },
+    label: {
+      type: "string | null",
+      required: true,
+      description: "The Field.Label's text, for a control with no text of its own to read as its accessible name. null until a string label registers.",
+    },
+    registerLabel: {
+      type: "(label: string | null) => void",
+      required: true,
+      description: "Field.Label offers its text here. Pass null on unmount. A field holds one label, so a second registration replaces the first.",
+    },
   }}
 />
 
@@ -250,5 +260,6 @@ import {
   fieldVariants,
   resolveFieldTextColor,
   resolveFieldInteractive,
+  resolveFieldLabelText,
 } from "@delacour/react-native-ui/field";
 ```

@@ -127,19 +127,19 @@ describe("commandLine", () => {
 	});
 });
 
-describe("pre-mode dist tags", () => {
-	test("peers a pre-mode package with a range its alpha satisfies", () => {
+describe("channel dist tags", () => {
+	test("peers a Delacour package with a range both an alpha and a stable satisfy", () => {
 		expect(peerRange("@delacour/react-native-charts")).toBe(">=0.0.0-0");
 		expect(peerRange("clsx")).toBe("*");
 	});
 
-	test("installs @delacour/react-native-charts from the alpha tag", () => {
-		// `latest` deliberately points at nothing while this repository is in
-		// Changesets pre mode, so an untagged add fails outright.
+	test("installs Delacour packages from the alpha tag when the CLI is an alpha build", () => {
+		// An alpha CLI reads a registry that may name APIs only an alpha package has.
 		const [group] = installCommands({
 			...NONE,
 			packageManager: "bun",
 			dependencies: ["@delacour/react-native-charts"],
+			channel: "alpha",
 		});
 
 		expect(commandLine(group as InstallGroup)).toBe("bun add @delacour/react-native-charts@alpha");
@@ -150,9 +150,21 @@ describe("pre-mode dist tags", () => {
 			...NONE,
 			packageManager: "bun",
 			dependencies: ["clsx", "@delacour/react-native-charts"],
+			channel: "alpha",
 		});
 
 		expect(commandLine(group as InstallGroup)).toBe("bun add clsx @delacour/react-native-charts@alpha");
+	});
+
+	test("installs untagged from latest when the CLI is a stable build", () => {
+		const [group] = installCommands({
+			...NONE,
+			packageManager: "bun",
+			dependencies: ["@delacour/react-native-charts"],
+			channel: "latest",
+		});
+
+		expect(commandLine(group as InstallGroup)).toBe("bun add @delacour/react-native-charts");
 	});
 
 	test("tags the args but not the packages, so the satisfied check still matches", () => {
@@ -165,6 +177,7 @@ describe("pre-mode dist tags", () => {
 				expoDependencies: [],
 				dependencies: ["@delacour/react-native-charts"],
 				devDependencies: [],
+				channel: "alpha",
 			},
 			{ dependencies: { "@delacour/react-native-charts": "^0.1.0" } }
 		);

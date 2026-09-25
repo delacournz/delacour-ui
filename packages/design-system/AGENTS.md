@@ -22,6 +22,7 @@ While the axes lived under `apps/playground/src/`, only one of them could.
 | `emit.ts` | `…/emit` | `resolveTokens`' output as CSS someone can paste |
 | `convert.ts` | `…/convert` | a web `globals.css` into this library's `theme.css` — what `delacour theme` runs |
 | `house.ts` | `…/house` | `HOUSE_CONFIG` and `HOUSE_PRESET_CODE` — the studio's own preset, plus `PRESET_SHORTCUTS` both customisers offer |
+| `contrast.ts` | `…/contrast` | `contrastRatio` — WCAG 2 contrast between two `oklch()` literals, dependency-free, for the ramp tests |
 
 No `"."` barrel, deliberately. `apps/playground/app.config.ts` reads only
 `FONTS`, and Expo loads that file through Node's CJS resolver — a barrel would
@@ -193,6 +194,13 @@ The `delacour` accent exists for the same reason. shadcn's `amber` puts amber-80
 `chart-2`, and Tailwind's current amber steps are an orange beside the mark. So the house accent is
 appended as the eighteenth, ordinal 24, with every value converted from the site's own hex: `#fbbf24`
 at the dark `primary`, `#d97706` in the light. Appended, never inserted — see the preset section.
+
+Its chart ramp is the site's amber-300 … amber-700 in the dark only. In the light that ramp's first
+step was 1.4:1 against a white card — a single-series line or bar in `chart-1` was a highlight, not a
+series — and no amber lighter than about `L 0.67` clears WCAG's 3:1 non-text minimum on white. So the
+light ramp starts at amber-600, the light `primary`, and walks Tailwind's steps down to amber-950.
+`contrast.test.ts` holds `chart-1` at 3:1 against both the page and the card and the ramp in
+descending lightness; `contrast.ts` is the pure oklch → sRGB → WCAG helper it reads through.
 
 ## Commands
 

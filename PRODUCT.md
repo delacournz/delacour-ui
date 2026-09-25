@@ -13,7 +13,7 @@ Two audiences, equally first-class:
 - **Public React Native / Expo developers.** Building an Expo app, they find the library via npm or
   `ui.delacour.co.nz` and want components whose source they own, not a dependency they configure
   around. They evaluate on a phone (the playground via QR / deep link), then either run `delacour add`
-  to copy source into their repo or `bun add @delacour/react-native-ui@alpha`.
+  to copy source into their repo or `bun add @delacour/react-native-ui`.
 - **Delacour's own client projects.** The same kit reused across Delacour's consulting work, where the
   job is shipping a client app on a shared, documented component base.
 
@@ -58,9 +58,8 @@ feedback, and they can read exactly why every decision was made and change it in
 
 ## Capabilities and Constraints
 
-- 20 components (Accordion, Badge, BottomSheet, Button, Checkbox, Chart, Field, Icon, Input,
-  ListGroup, Pressable, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
-  DelacourProvider), each a subpath export.
+- One component per subpath export; the list, and its count, is `apps/web/src/lib/components.ts`
+  (buttons, forms, charts, sheets, tabs, a screen scaffold, a root provider).
 - Three component patterns: styled wrapper, compound + context, `tv()` variants.
 - Charts: line, area, bar, scatter, candlestick, pie on the theme's five-colour ramp
   (`@delacour/react-native-charts`, an optional peer).

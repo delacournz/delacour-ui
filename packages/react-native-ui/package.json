@@ -58,6 +58,7 @@
 		"./switch": "./src/components/switch/index.ts",
 		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",
+		"./toggle-button": "./src/components/toggle-button/index.ts",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",

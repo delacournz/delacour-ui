@@ -46,6 +46,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The Gesture API primitive every pressable in the library is built on.",
 	},
 	{
+		slug: "toggle-button",
+		name: "ToggleButton",
+		group: "Actions",
+		blurb: "A button that stays pressed \u2014 alone, or in a group choosing one option or several.",
+	},
+	{
 		slug: "field",
 		name: "Field",
 		group: "Forms",

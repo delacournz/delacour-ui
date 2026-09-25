@@ -233,6 +233,15 @@ import * as demo_text_inline_presets from "./text/inline-presets";
 import * as demo_text_size from "./text/size";
 import * as demo_text_type_scale from "./text/type-scale";
 import * as demo_text_weight from "./text/weight";
+import * as demo_toggle_button_controlled from "./toggle-button/controlled";
+import * as demo_toggle_button_filters from "./toggle-button/filters";
+import * as demo_toggle_button_formatting from "./toggle-button/formatting";
+import * as demo_toggle_button_group_disabled from "./toggle-button/group-disabled";
+import * as demo_toggle_button_orientation from "./toggle-button/orientation";
+import * as demo_toggle_button_single_selection from "./toggle-button/single-selection";
+import * as demo_toggle_button_sizes from "./toggle-button/sizes";
+import * as demo_toggle_button_states from "./toggle-button/states";
+import * as demo_toggle_button_variants from "./toggle-button/variants";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -467,6 +476,15 @@ export const DEMOS = {
 	"text/size": demo_text_size,
 	"text/type-scale": demo_text_type_scale,
 	"text/weight": demo_text_weight,
+	"toggle-button/controlled": demo_toggle_button_controlled,
+	"toggle-button/filters": demo_toggle_button_filters,
+	"toggle-button/formatting": demo_toggle_button_formatting,
+	"toggle-button/group-disabled": demo_toggle_button_group_disabled,
+	"toggle-button/orientation": demo_toggle_button_orientation,
+	"toggle-button/single-selection": demo_toggle_button_single_selection,
+	"toggle-button/sizes": demo_toggle_button_sizes,
+	"toggle-button/states": demo_toggle_button_states,
+	"toggle-button/variants": demo_toggle_button_variants,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

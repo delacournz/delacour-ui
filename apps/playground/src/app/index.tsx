@@ -4,6 +4,7 @@ import {
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconAsterisk,
+	IconBold,
 	IconBrowserTabs,
 	IconBulletList,
 	IconChart1,
@@ -71,6 +72,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
+	"toggle-button": IconBold,
 };
 
 /**

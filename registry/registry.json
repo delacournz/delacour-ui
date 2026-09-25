@@ -1051,6 +1051,35 @@
 			]
 		},
 		{
+			"name": "toggle-button",
+			"type": "registry:ui",
+			"title": "Toggle Button",
+			"description": "A button that stays pressed, alone or in a group with single or multiple selection.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"pressable",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/toggle-button/AGENTS.md",
+				"ui/toggle-button/index.ts",
+				"ui/toggle-button/toggle-button-group.tsx",
+				"ui/toggle-button/toggle-button-label.tsx",
+				"ui/toggle-button/toggle-button.context.tsx",
+				"ui/toggle-button/toggle-button.tsx",
+				"ui/toggle-button/toggle-button.variants.ts"
+			]
+		},
+		{
 			"name": "tv",
 			"type": "registry:lib",
 			"title": "tv",

@@ -214,6 +214,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
 	},
+	"toggle-button": {
+		title: "Toggle Button",
+		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
+		categories: ["controls"],
+	},
 
 	expo: {
 		title: "Navigation theme",

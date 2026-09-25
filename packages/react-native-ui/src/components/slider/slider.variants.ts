@@ -167,8 +167,7 @@ export const SLIDER_RANGE_SEPARATOR = " – ";
  * wrong one.
  *
  * **The fade lands on the root**, which is a plain `View` here rather than a
- * `Pressable` — so unlike `Radio`, an `opacity-50` class on it is not overwritten
- * by an animated style writing `opacity` every frame.
+ * `Pressable`, so nothing animated shares the `opacity` property with it.
  *
  * No slot worn by a `View` carries `text-*` or `font-*`: `Slider.Output` renders
  * a `Text` preset and names a step — see {@link SLIDER_OUTPUT_TEXT_SIZE}.

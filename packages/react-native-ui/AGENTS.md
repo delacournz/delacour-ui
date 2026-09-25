@@ -75,6 +75,7 @@ shares.
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |
+| [Item](src/components/item/AGENTS.md) | `@delacour/react-native-ui/item` | A row of media, text and actions — standalone, or as a `ListGroup` row |
 | [Kpi](src/components/kpi/AGENTS.md) | `@delacour/react-native-ui/kpi` | One number, its change and a sparkline, on `Card` |
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |

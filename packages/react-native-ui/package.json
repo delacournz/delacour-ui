@@ -48,6 +48,7 @@
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",
+		"./item": "./src/components/item/index.ts",
 		"./kpi": "./src/components/kpi/index.ts",
 		"./label": "./src/components/label/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",

@@ -1,0 +1,158 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "item",
+	"type": "registry:ui",
+	"title": "Item",
+	"description": "A row of media, text and actions for lists and settings, standalone or as a List Group row.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"icon",
+		"list-group",
+		"pressable",
+		"separator",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/item/AGENTS.md",
+			"target": "item/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/item",
+					"to": "@registry/ui/item"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/index.ts",
+			"target": "item/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-actions.tsx",
+			"target": "item/item-actions.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-content.tsx",
+			"target": "item/item-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-description.tsx",
+			"target": "item/item-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-footer.tsx",
+			"target": "item/item-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-group.tsx",
+			"target": "item/item-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-header.tsx",
+			"target": "item/item-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-media.tsx",
+			"target": "item/item-media.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-separator.tsx",
+			"target": "item/item-separator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item-title.tsx",
+			"target": "item/item-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item.context.tsx",
+			"target": "item/item.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item.tsx",
+			"target": "item/item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group/list-group.context",
+					"to": "@registry/ui/list-group/list-group.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item.types.ts",
+			"target": "item/item.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/item/item.variants.ts",
+			"target": "item/item.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable.variants",
+					"to": "@registry/ui/pressable/pressable.variants"
+				}
+			]
+		}
+	]
+}

@@ -24,6 +24,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts a prefix or suffix inside its border." },
+	{ name: "item", title: "Item", description: "A row of media, text and actions for lists and settings, standalone or as a List Group row." },
 	{ name: "kpi", title: "Kpi", description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card." },
 	{ name: "label", title: "Label", description: "A form control's name, with required, invalid and disabled states." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },

@@ -642,6 +642,47 @@
 			]
 		},
 		{
+			"name": "item",
+			"type": "registry:ui",
+			"title": "Item",
+			"description": "A row of media, text and actions for lists and settings, standalone or as a List Group row.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"icon",
+				"list-group",
+				"pressable",
+				"separator",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/item/AGENTS.md",
+				"ui/item/index.ts",
+				"ui/item/item-actions.tsx",
+				"ui/item/item-content.tsx",
+				"ui/item/item-description.tsx",
+				"ui/item/item-footer.tsx",
+				"ui/item/item-group.tsx",
+				"ui/item/item-header.tsx",
+				"ui/item/item-media.tsx",
+				"ui/item/item-separator.tsx",
+				"ui/item/item-title.tsx",
+				"ui/item/item.context.tsx",
+				"ui/item/item.tsx",
+				"ui/item/item.types.ts",
+				"ui/item/item.variants.ts"
+			]
+		},
+		{
 			"name": "keyboard-animation",
 			"type": "registry:lib",
 			"title": "keyboardAnimation",

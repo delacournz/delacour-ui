@@ -194,6 +194,16 @@ import * as demo_input_variants_at_rest from "./input/variants/at-rest";
 import * as demo_input_variants_disabled from "./input/variants/disabled";
 import * as demo_input_variants_focused from "./input/variants/focused";
 import * as demo_input_variants_invalid from "./input/variants/invalid";
+import * as demo_item_carousel from "./item/carousel";
+import * as demo_item_controls_in_actions from "./item/controls-in-actions";
+import * as demo_item_header_and_footer from "./item/header-and-footer";
+import * as demo_item_in_a_list_group from "./item/in-a-list-group";
+import * as demo_item_inbox from "./item/inbox";
+import * as demo_item_media from "./item/media";
+import * as demo_item_selection from "./item/selection";
+import * as demo_item_sizes from "./item/sizes";
+import * as demo_item_states from "./item/states";
+import * as demo_item_variants from "./item/variants";
 import * as demo_kpi_anatomy from "./kpi/anatomy";
 import * as demo_kpi_colours from "./kpi/colours";
 import * as demo_kpi_configurator from "./kpi/configurator";
@@ -526,6 +536,16 @@ export const DEMOS = {
 	"input/variants/disabled": demo_input_variants_disabled,
 	"input/variants/focused": demo_input_variants_focused,
 	"input/variants/invalid": demo_input_variants_invalid,
+	"item/carousel": demo_item_carousel,
+	"item/controls-in-actions": demo_item_controls_in_actions,
+	"item/header-and-footer": demo_item_header_and_footer,
+	"item/in-a-list-group": demo_item_in_a_list_group,
+	"item/inbox": demo_item_inbox,
+	"item/media": demo_item_media,
+	"item/selection": demo_item_selection,
+	"item/sizes": demo_item_sizes,
+	"item/states": demo_item_states,
+	"item/variants": demo_item_variants,
 	"kpi/anatomy": demo_kpi_anatomy,
 	"kpi/colours": demo_kpi_colours,
 	"kpi/configurator": demo_kpi_configurator,

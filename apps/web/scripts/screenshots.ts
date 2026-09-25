@@ -110,6 +110,9 @@ const SHOTS: Shot[] = [
 		frame: "desktop",
 		theme: "dark",
 	},
+	{ id: "29-docs-item-desktop-dark", path: "/docs/native/components/item", frame: "desktop", theme: "dark" },
+	{ id: "30-docs-item-desktop-light", path: "/docs/native/components/item", frame: "desktop", theme: "light" },
+	{ id: "31-docs-item-mobile-dark", path: "/docs/native/components/item", frame: "phone", theme: "dark", full: true },
 	{ id: "29-docs-kpi-desktop-dark", path: "/docs/native/components/kpi", frame: "desktop", theme: "dark" },
 	{ id: "30-docs-kpi-desktop-light", path: "/docs/native/components/kpi", frame: "desktop", theme: "light" },
 	{

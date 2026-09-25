@@ -67,6 +67,12 @@ describe("resolveIntent", () => {
 			expect(resolveIntent({ ...ready, closedHeight: -50, base: -49.8 }, intent("close"))).toBeNull();
 		});
 
+		test("a never-opened detached sheet (negative closedHeight, base 0) is closed, so open resolves", () => {
+			const detached: IntentState = { ...ready, currentIndex: -1, closedHeight: -50, base: 0 };
+			expect(resolveIntent(detached, intent("open"))).not.toBeNull();
+			expect(resolveIntent(detached, intent("close"))).toBeNull();
+		});
+
 		test("closing a closed sheet is nothing — no deadlock, no phantom onClose", () => {
 			expect(resolveIntent(ready, intent("close"))).toBeNull();
 			expect(resolveIntent(unmeasured, intent("close"))).toBeNull();

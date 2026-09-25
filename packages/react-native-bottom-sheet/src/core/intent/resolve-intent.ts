@@ -53,7 +53,10 @@ export function resolveIntent(state: IntentState, intent: SheetIntent): IntentRe
 	"worklet";
 	const detents = state.detents;
 	const count = detents.length;
-	const isOpen = state.currentIndex >= 0 || state.base > state.closedHeight + SETTLE_EPSILON;
+	// A detached sheet's closed height is negative and `base` starts at 0, so a
+	// never-opened card must not read as open: a sheet is visibly open only when
+	// its height is positive, hence the floor at 0.
+	const isOpen = state.currentIndex >= 0 || state.base > Math.max(state.closedHeight, 0) + SETTLE_EPSILON;
 
 	if (intent.kind === "close") {
 		return isOpen ? { action: "animate", target: state.closedHeight } : null;

@@ -18,7 +18,7 @@ export type CommandSpec = {
 	aliases: string[];
 	/** Long flags only — `--install`, `--no-init`. Short ones are unambiguous. */
 	flags: string[];
-	/** Of those, the ones that consume the next token — `--ref main`. */
+	/** Of those, the ones that consume the next token — `--ref develop`. */
 	flagsWithValue: string[];
 	/** Whether the command takes positional arguments at all. */
 	takesArguments: boolean;

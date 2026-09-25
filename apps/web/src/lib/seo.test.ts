@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { type DocsPageSeo, docsHead as docsHeadRaw, docsImageUrl, docsProduct, PRODUCTS } from "./seo";
+import { type DocsPageSeo, docsHead as docsHeadRaw, docsImageUrl, docsProduct, isDocsProduct, PRODUCTS } from "./seo";
 
 type Meta = { name?: string; property?: string; content?: string; title?: string };
 
@@ -13,8 +13,9 @@ function content(meta: Meta[], key: string): string | undefined {
 }
 
 /**
- * `@delacour/react-native-charts` is a separate package — Skia, no Tailwind, no Uniwind — so a
- * link to its docs has to preview as that package, not as the component library's card.
+ * `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` are separate
+ * packages — Skia, Reanimated, keyboard-controller; no Tailwind, no Uniwind — so a link to
+ * either's docs has to preview as that package, not as the component library's card.
  */
 describe("docsProduct", () => {
 	test("the charts tree is its own product", () => {
@@ -22,10 +23,27 @@ describe("docsProduct", () => {
 		expect(docsProduct(["charts", "line"])).toBe("charts");
 	});
 
+	test("the bottom-sheet tree is its own product", () => {
+		expect(docsProduct(["bottom-sheet"])).toBe("bottom-sheet");
+		expect(docsProduct(["bottom-sheet", "steps"])).toBe("bottom-sheet");
+	});
+
 	test("everything else is the component library", () => {
 		expect(docsProduct([])).toBe("ui");
 		expect(docsProduct(["native", "components", "button"])).toBe("ui");
+		expect(docsProduct(["native", "components", "bottom-sheet"])).toBe("ui");
 		expect(docsProduct(["chartsy"])).toBe("ui");
+		expect(docsProduct(["ui"])).toBe("ui");
+	});
+});
+
+describe("isDocsProduct", () => {
+	test("admits every product in PRODUCTS and nothing else", () => {
+		for (const product of Object.keys(PRODUCTS)) expect(isDocsProduct(product)).toBe(true);
+		expect(isDocsProduct("chartsy")).toBe(false);
+		expect(isDocsProduct("toString")).toBe(false);
+		expect(isDocsProduct(null)).toBe(false);
+		expect(isDocsProduct(undefined)).toBe(false);
 	});
 });
 
@@ -83,6 +101,25 @@ describe("docsHead", () => {
 		const { meta } = docsHead({ slugs: ["charts", "core"], title: "Core" });
 
 		expect(content(meta, "description")).toBe(PRODUCTS.charts.description);
+	});
+
+	test("the bottom-sheet landing page carries its own title, card and canonical", () => {
+		const { meta, links } = docsHead({ slugs: ["bottom-sheet"], title: "Overview" });
+
+		expect(meta.find((tag) => tag.title)?.title).toBe(PRODUCTS["bottom-sheet"].headline);
+		expect(content(meta, "og:site_name")).toBe("Delacour Bottom Sheet");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=bottom-sheet");
+		expect(links).toContainEqual({ rel: "canonical", href: "https://ui.delacour.co.nz/docs/bottom-sheet" });
+	});
+
+	test("an inner bottom-sheet page is titled for itself, and never mentions a styling library", () => {
+		const { meta } = docsHead({ slugs: ["bottom-sheet", "steps"], title: "Steps" });
+		const text = meta.map((tag) => `${tag.title ?? ""} ${tag.content ?? ""}`).join(" ");
+
+		expect(meta.find((tag) => tag.title)?.title).toBe("Steps — Delacour Bottom Sheet");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=bottom-sheet&title=Steps");
+		expect(text).not.toMatch(/tailwind|uniwind|shadcn|design tokens/i);
+		expect(text).toMatch(/keyboard/i);
 	});
 
 	test("a component page stays under the library's name", () => {

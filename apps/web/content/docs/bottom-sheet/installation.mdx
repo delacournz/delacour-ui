@@ -1,0 +1,157 @@
+---
+title: Installation
+description: The package, its native peers, the architecture it needs, and the four providers your app mounts.
+icon: Download
+---
+
+<InstallTabs
+  commands={[
+    { verb: "add", packages: ["@delacour/react-native-bottom-sheet@alpha"] },
+    {
+      verb: "expo",
+      packages: [
+        "react-native-gesture-handler",
+        "react-native-reanimated",
+        "react-native-worklets",
+        "react-native-keyboard-controller",
+        "react-native-safe-area-context",
+        "react-native-teleport",
+      ],
+    },
+  ]}
+/>
+
+The package ships raw `.ts` and `.tsx`, and every native module it moves with is a **peer**. Two
+copies of Reanimated or Gesture Handler register twice and fail at runtime, which is why they are
+not dependencies.
+
+<Callout type="warn" title="Do not install native modules with your package manager">
+`bun add react-native-reanimated` fetches the newest release, which on any older SDK is a package
+that fails at the linker rather than at install time. `expo install` asks the SDK what it supports.
+</Callout>
+
+<Callout type="warn" title="Fabric only, dev client only">
+`react-native-teleport` moves native views between hosts, which needs the new architecture — the
+default since React Native 0.76 and the only architecture in Expo SDK 53 and later. It is a native
+module, so it does not run in Expo Go: build a dev client (`npx expo run:ios`, or an EAS development
+build) and rebuild it after installing.
+</Callout>
+
+## Peer dependencies
+
+| Package | Range | Needed for |
+| --- | --- | --- |
+| `react-native-gesture-handler` | `>=2.28` | the handle and content pans |
+| `react-native-reanimated` | `>=4` | every animated value |
+| `react-native-worklets` | `>=0.5` | `scheduleOnRN` from the UI thread |
+| `react-native-keyboard-controller` | `>=1.18` | the only keyboard source — frame-accurate height and progress |
+| `react-native-safe-area-context` | `>=5` | the bottom band under a sticky footer |
+| `react-native-teleport` | `>=1.2` | the portal — the React tree stays put, so context reaches every part |
+| `react` | `>=19` | ref-as-prop |
+| `react-native` | `>=0.81` | |
+
+The package has no runtime dependencies of its own.
+
+## The providers
+
+Your app mounts four, in this order. The package renders only the last: a nested gesture root is
+dead weight, and a nested `KeyboardProvider` is a second keyboard that disagrees with the first.
+If you also use `@delacour/react-native-ui`, its `DelacourProvider` is the first three.
+
+```tsx title="app/_layout.tsx"
+import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
+import { Stack } from "expo-router";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { KeyboardProvider } from "react-native-keyboard-controller";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+
+export default function RootLayout() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <KeyboardProvider>
+          <BottomSheetProvider>
+            <Stack />
+          </BottomSheetProvider>
+        </KeyboardProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+```
+
+`BottomSheetProvider` is three things in one: teleport's `PortalProvider`, which renders its
+children and then a `root` host over them, so a sheet draws above the navigator and the tab bar;
+the registry, which gives every open sheet its place in the z-order; and the host-name context,
+which is what lets a `Portal` written anywhere below teleport there without being told. Put it
+**around the navigator**, so the root host covers every screen.
+
+<Callout type="warn">
+Without the gesture root neither pan ever activates. Without `KeyboardProvider` the sheet never
+hears about a keyboard. Without `BottomSheetProvider` a `Portal` renders in place — which is the
+inline form, and a sheet written in a scrolling screen then scrolls with it. None of the three
+logs anything.
+</Callout>
+
+## The worklets plugin
+
+Reanimated 4 compiles its UI-thread functions with the `react-native-worklets/plugin` Babel
+plugin. `babel-preset-expo` adds it for you once `react-native-worklets` is installed; a bare React
+Native app lists it **last** in `babel.config.js`.
+
+```js title="babel.config.js"
+module.exports = {
+  presets: ["module:@react-native/babel-preset"],
+  plugins: ["react-native-worklets/plugin"],
+};
+```
+
+## Verify
+
+A sheet needs the safe-area insets to know where its footer ends and where a detached card
+rests. Pass them in — the package reads `react-native-safe-area-context` for nothing on its own.
+
+```tsx
+import { BottomSheet } from "@delacour/react-native-bottom-sheet";
+import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const styles = StyleSheet.create({
+  button: { alignSelf: "flex-start", backgroundColor: "#8E8E9326", borderRadius: 8, padding: 12 },
+  overlay: { backgroundColor: "#00000099" },
+  background: { backgroundColor: "#2C2C2E", borderTopLeftRadius: 16, borderTopRightRadius: 16 },
+  handle: { alignItems: "center", paddingBottom: 8, paddingTop: 10 },
+  pill: { backgroundColor: "#8E8E93", borderRadius: 2, height: 4, width: 36 },
+  content: { gap: 12, paddingHorizontal: 16, paddingVertical: 8 },
+  title: { color: "#FFFFFF", fontSize: 18, fontWeight: "600" },
+});
+
+export function Example() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <BottomSheet bottomInset={insets.bottom} topInset={insets.top}>
+      <BottomSheet.Trigger style={styles.button}>
+        <Text>Open</Text>
+      </BottomSheet.Trigger>
+      <BottomSheet.Portal>
+        <BottomSheet.Overlay style={styles.overlay} />
+        <BottomSheet.Container>
+          <BottomSheet.Background style={styles.background} />
+          <BottomSheet.Handle style={styles.handle}>
+            <View style={styles.pill} />
+          </BottomSheet.Handle>
+          <BottomSheet.Content style={styles.content}>
+            <BottomSheet.Title style={styles.title}>It works</BottomSheet.Title>
+          </BottomSheet.Content>
+        </BottomSheet.Container>
+      </BottomSheet.Portal>
+    </BottomSheet>
+  );
+}
+```
+
+With no `snapPoints` the sheet has one detent, the height of its handle and content plus the
+bottom inset, and it opens there. A sheet that never appears has usually not measured: the open
+waits for the frame, the handle and the content to report a size, and a `Portal` inside a view of
+zero height reports a frame of zero.

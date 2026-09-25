@@ -1,0 +1,150 @@
+---
+title: Core
+description: Every number the sheet computes — detents, keyboard, footer, geometry, the step machine — as pure functions with no native module in the graph.
+icon: Sigma
+---
+
+```ts
+import { dynamicDetent, keyboardLift, positionFor, UNMEASURED } from "@delacour/react-native-bottom-sheet/core";
+```
+
+`@delacour/react-native-bottom-sheet/core` is every number the package computes and nothing that
+renders. Nothing under it imports a runtime value from React, React Native, Reanimated, Gesture
+Handler, keyboard-controller, safe-area-context or teleport, which is what lets a skin re-export the
+footer's inset rules without mounting a sheet — and what lets the whole of it, the footer-on-keyboard
+proof included, run under `bun test` with no simulator.
+
+```ts
+import { footerTop, keyboardLift } from "@delacour/react-native-bottom-sheet/core";
+
+const lift = keyboardLift({ keyboardHeight: 336, progress: 1, band: 34, behavior: "interactive", gapBelow: 0 });
+const top = footerTop({ sheetHeight: 420 + lift, keyboardHeight: 336, footerContentHeight: 72, band: 0 });
+```
+
+## Height space
+
+Every value is a **height**: pixels of sheet visible above its resting bottom line. `0` is closed,
+detents ascend, and `UNMEASURED` (`-1`) is a measurement that has not happened. `translateY` is
+derived from a height only at the moment a view needs it, by `positionFor`, and nowhere else.
+
+## The formulas
+
+With `C` the container height, `inset` the safe-area bottom, `kb` the owned keyboard within the
+container and `p` keyboard-controller's `progress`:
+
+```txt
+restingBottom = detached ? bottomOffset + inset : 0          closedHeight = −restingBottom
+available     = C − restingBottom                            maxHeight = available
+band          = detached ? 0 : inset                         bandNow = band · (1 − p)
+footerHeight  = hasFooter ? footerContent + bandNow : 0
+dynamicDetent = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
+detents       = sortAsc(unique(normalize(spec, available) ∪ {dynamicDetent if dynamicSizing}))
+keyboardLift  = behavior ∈ {interactive, extend} ? max(0, kb − band · p − (detached ? restingBottom : 0)) : 0
+height        = clamp(base + keyboardLift, closedHeight, maxHeight)
+translateY    = C − restingBottom − height
+index         = piecewise(base, [closedHeight, …detents] → [−1, 0, 1, …])      base, never height
+contentArea   = max(0, min(maxHeight, highest + keyboardLift) − handle − footerHeight − kb − (hasFooter ? 0 : bandNow))
+footerTop     = max(0, height − kb − footerContent − bandNow)
+backdrop      = index ≥ appearsOn ? opacity : index ≤ disappearsOn ? 0 : linear
+```
+
+`base` is the one value a gesture or an animation writes — the keyboard-free height. Everything
+else is derived from it on the UI thread, one `useDerivedValue` per line above.
+
+## The flat worklets
+
+Most functions here carry a `"worklet"` directive and run on the UI thread every frame of a drag.
+Each calls nothing and closes over nothing but module-scope constants — a module-scope worklet that
+called another would bind at import time and hand the UI thread `undefined is not a function` the
+moment a finger landed. A worklet you build **inside a hook** is captured by ordinary closure and
+may call any of them, which is how the pan composes `resistOverDrag` and `selectSnapHeight` without
+duplicating either.
+
+A degenerate input returns a finite number, never `NaN`: one `NaN` written into `base` freezes a
+sheet permanently with nothing on screen to say why.
+
+## Detents
+
+| Export | What it does |
+| --- | --- |
+| `parseDetent(spec)` | One `DetentSpec` to `{ kind: "px" \| "percent", value }`, as a `Result` |
+| `normalizeDetents(spec, available)` | Ascending, unique, clamped; invalid entries skipped. Worklet |
+| `dynamicDetent({ handleHeight, contentHeight, footerContentHeight, hasFooter, band, available, maxDynamicContentSize? })` | The content's own detent. Worklet |
+| `indexForHeight(height, detents, closedHeight)`, `heightForIndex(index, detents, closedHeight)` | Piecewise-linear over `[closed, …detents]`, clamped. Worklets |
+| `selectSnapHeight({ height, velocity, detents, closedHeight, projection })` | The candidate nearest `height + projection · velocity`. Worklet |
+| `resistOverDrag(height, min, max, factor)` | Slope one at the edge, square root beyond; factor `0` clamps. Worklet |
+| `sheetState(base, height, detents, closedHeight, maxHeight)` | `SHEET_STATE.CLOSED \| OPENED \| EXTENDED \| OVER_EXTENDED \| FILL`. Worklet |
+
+## Keyboard
+
+| Export | What it does |
+| --- | --- |
+| `keyboardInContainer(rawKeyboardHeight, containerBottomOffset)` | keyboard-controller's negative height to the positive overlap with the frame. Worklet |
+| `keyboardLift({ keyboardHeight, progress, band, behavior, gapBelow })` | The lift: keyboard less the band in step with progress, less a detached gap. Worklet |
+| `resolveKeyboardOwner(input)` | Whose keyboard it is, under `keyboardScope`, sticky through a transition |
+| `isInputInsideSheet(input)` | The `inside` scope's geometry test, in window space. Worklet |
+| `keyboardStep(input)` | What a behaviour does this frame: `apply`, `restore`, `release` or nothing |
+| `contentArea({ sheetHeight, handleHeight, footerHeight, keyboardHeight, trailingBand })` | What the body may fill, never negative. Worklet |
+| `acceptContainerLayout(input)` | Refuses Android's `adjustResize` double-count while a keyboard is up |
+| `shouldResetKeyboardAnimation(state)` | The stale keyboard-controller guard. Worklet |
+
+## Footer
+
+| Export | What it does |
+| --- | --- |
+| `bottomBand(detached, bottomInset)`, `bandNow(band, progress)`, `footerHeight(hasFooter, footerContentHeight, band)` | The band and what the footer occupies. Worklets |
+| `footerTop({ sheetHeight, keyboardHeight, footerContentHeight, band })` | The footer's offset inside the panel — constant across a keyboard animation. Worklet |
+| `resolveSheetBottomInset`, `resolveSheetScrollEndPadding` | The skin's padding rules, re-exported by it |
+
+## Geometry
+
+| Export | What it does |
+| --- | --- |
+| `restingBottom(detached, bottomOffset, bottomInset)`, `closedHeight(restingBottom)`, `availableHeight(containerHeight, restingBottom)` | Where the sheet rests, what closed is, what it may fill. Worklets |
+| `positionFor(containerHeight, restingBottom, height)` | Height to `translateY`, the only conversion. Worklet |
+| `clampHeight(height, closedHeight, maxHeight)` | `NaN` collapses to closed. Worklet |
+| `surfaceHeight(height, lowestDetent, highestDetent)` | What a detached card's surface is tall — between its detents, the nearest detent beyond them. Worklet |
+| `resolveDetached(prop)`, `DETACHED_DEFAULTS` | The `detached` prop to `{ horizontalMargin, bottomOffset }` or `null` |
+| `detachedFrame({ containerWidth, horizontalMargin, bottomOffset, bottomInset })` | `{ left, width, restingBottom }`. Worklet |
+
+## Backdrop, intents, haptics, scroll
+
+| Export | What it does |
+| --- | --- |
+| `backdropOpacity(index, disappearsOn, appearsOn, opacity)`, `backdropInteractive(index, disappearsOn)` | What the overlay draws at, and whether it takes touches. Worklets |
+| `resolveIntent(state, intent)` | `{ action: "wait" \| "animate" \| "jump" }` or `null` — what a ref method does given where the sheet is. Worklet |
+| `isLayoutReady(input)` | Whether every measurement the configuration needs has landed. Worklet |
+| `crossedDetent(lastIndex, height, detents)`, `detentUnder(height, detents)` | Whether a frame's travel crossed a detent, and which is under a height. Worklets |
+| `shouldLockScroll(state, enableContentPan)`, `contentPanDrivesSheet({ locked, contentOffsetY, translationY })` | The scroll lock's two questions. Worklets |
+| `listDragHeight(input)`, `listOwnsRelease({ scrollable, offset, base, highest })`, `scrollLockTarget(offset, byContentPan)` | The start offset as a budget the finger spends, whose the release is, where the lock holds. Worklets |
+
+## Animation
+
+| Export | What it does |
+| --- | --- |
+| `selectAnimation(config, platform, overrideReduceMotion)` | The consumer's config over the platform default, every field filled, as data |
+| `IOS_SPRING`, `ANDROID_TIMING` | The two defaults |
+| `SheetAnimationConfig`, `ResolvedAnimation`, `EasingName`, `ReduceMotionMode` | The types |
+
+## Machine
+
+| Export | What it does |
+| --- | --- |
+| `defineSheetMachine(config)` | `{ config, initial, transition, can, steps, directionOf, nodeOf }` |
+| `transition(states, snapshot, event)` | The one step, as a `Result<Snapshot, SheetTransitionError>` — never throws, never mutates |
+| `resolveTarget(target)` | A bare target or an object to `{ target, guard?, assign? }` |
+| `stepFrame(transition, role, direction, progress, width)` | A step's opacity and offset mid-change, for `crossfade`, `slide` and `none`. Worklet |
+| `stepOverride(node)` | The `snapPoints` and `dismissible` a step asks of the root |
+| `SheetMachine`, `SheetMachineConfig`, `SheetStateNode`, `SheetMachineSnapshot`, `SheetTransitionError` | The types |
+
+## Vocabulary
+
+| Export | What it is |
+| --- | --- |
+| `DetentSpec` | `number \| \`${number}%\`` |
+| `KeyboardBehavior`, `KeyboardBlurBehavior`, `KeyboardScope` | The three keyboard unions |
+| `AnimationSource` | `"mount" \| "gesture" \| "user" \| "snapPoints" \| "keyboard" \| "container"` |
+| `SheetIntent` | The request a ref method writes, keyed by `id` so two identical requests both run |
+| `GESTURE_SOURCE`, `SHEET_STATE`, `SCROLLABLE_TYPE` | Numeric enums — a shared value holding a string serialises on every write |
+| `UNMEASURED`, `CLOSED_INDEX` | `-1` and `-1` |
+| `Result`, `ok`, `err` | The house result union, copied in so the package depends on nothing private |

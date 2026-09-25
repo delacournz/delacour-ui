@@ -3896,13 +3896,13 @@ export const install = {
 	"bottom-sheet": {
 		name: "bottom-sheet",
 		title: "BottomSheet",
-		description: "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+		description: "A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 		importPath: "@delacour/react-native-ui/bottom-sheet",
 		exportName: "BottomSheet",
-		expo: ["@gorhom/bottom-sheet", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 49,
+		fileCount: 97,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -3915,14 +3915,17 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-container.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-container.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-content.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-description.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-flat-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-flat-list.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-footer.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
-					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-portal.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-steps.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-steps.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-text-input.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-text-input.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-title.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-title.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-trigger.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-trigger.tsx" },
-					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.context.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.variants.ts", target: "src/components/ui/bottom-sheet/bottom-sheet.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/index.ts", target: "src/components/ui/bottom-sheet/index.ts" },
@@ -3953,6 +3956,30 @@ export const install = {
 				],
 			},
 			{
+				name: "separator",
+				title: "Separator",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/separator/AGENTS.md", target: "src/components/ui/separator/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/separator/index.ts", target: "src/components/ui/separator/index.ts" },
+					{ source: "packages/react-native-ui/src/components/separator/separator.tsx", target: "src/components/ui/separator/separator.tsx" },
+				],
+			},
+			{
+				name: "spinner",
+				title: "Spinner",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+				],
+			},
+			{
 				name: "text",
 				title: "Text",
 				kind: "component",
@@ -3962,6 +3989,63 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
 					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "button",
+				title: "Button",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/button/AGENTS.md", target: "src/components/ui/button/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/button/button-end-content.tsx", target: "src/components/ui/button/button-end-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-separator.tsx", target: "src/components/ui/button/button-group-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group-text.tsx", target: "src/components/ui/button/button-group-text.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-group.tsx", target: "src/components/ui/button/button-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-label.tsx", target: "src/components/ui/button/button-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button-start-content.tsx", target: "src/components/ui/button/button-start-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.context.tsx", target: "src/components/ui/button/button.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.tsx", target: "src/components/ui/button/button.tsx" },
+					{ source: "packages/react-native-ui/src/components/button/button.types.ts", target: "src/components/ui/button/button.types.ts" },
+					{ source: "packages/react-native-ui/src/components/button/button.variants.ts", target: "src/components/ui/button/button.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/button/index.ts", target: "src/components/ui/button/index.ts" },
+				],
+			},
+			{
+				name: "field",
+				title: "Field",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/field/AGENTS.md", target: "src/components/ui/field/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/field/field-content.tsx", target: "src/components/ui/field/field-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-description.tsx", target: "src/components/ui/field/field-description.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-error.tsx", target: "src/components/ui/field/field-error.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-group.tsx", target: "src/components/ui/field/field-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-label.tsx", target: "src/components/ui/field/field-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-legend.tsx", target: "src/components/ui/field/field-legend.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-separator.tsx", target: "src/components/ui/field/field-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field-set.tsx", target: "src/components/ui/field/field-set.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.context.tsx", target: "src/components/ui/field/field.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.tsx", target: "src/components/ui/field/field.tsx" },
+					{ source: "packages/react-native-ui/src/components/field/field.types.ts", target: "src/components/ui/field/field.types.ts" },
+					{ source: "packages/react-native-ui/src/components/field/field.variants.ts", target: "src/components/ui/field/field.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/field/index.ts", target: "src/components/ui/field/index.ts" },
+				],
+			},
+			{
+				name: "input",
+				title: "Input",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.tsx", target: "src/components/ui/input/input.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input.types.ts", target: "src/components/ui/input/input.types.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input.variants.ts", target: "src/components/ui/input/input.variants.ts" },
 				],
 			},
 			{
@@ -3983,6 +4067,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
 				],
 			},
 			{
@@ -4018,14 +4110,6 @@ export const install = {
 				],
 			},
 			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
 				name: "merge-props",
 				title: "mergeProps",
 				kind: "shared",
@@ -4039,14 +4123,6 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/slot.tsx", target: "src/lib/slot.tsx" },
-				],
-			},
-			{
-				name: "use-controllable-state",
-				title: "useControllableState",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
 				],
 			},
 			{
@@ -4692,7 +4768,7 @@ export const install = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		importPath: "@delacour/react-native-ui/provider",
 		exportName: "DelacourProvider",
-		expo: ["@gorhom/bottom-sheet", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets"],
+		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets"],
 		npm: [],
 		dev: [],
 		fileCount: 5,
@@ -4735,7 +4811,7 @@ export type InstallName = keyof typeof install;
  * package's declared peers — see `peerNames` in the generator.
  */
 export const peers = {
-	expo: ["@gorhom/bottom-sheet", "@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
+	expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 	npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
 	dev: [],
 } as const;

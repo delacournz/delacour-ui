@@ -12,7 +12,6 @@
 	],
 	"dependencies": [],
 	"expoDependencies": [
-		"@gorhom/bottom-sheet",
 		"react-native-gesture-handler",
 		"react-native-keyboard-controller",
 		"react-native-safe-area-context"
@@ -43,6 +42,10 @@
 				{
 					"from": "../../hooks/use-keyboard-state-sync",
 					"to": "@registry/hooks/use-keyboard-state-sync"
+				},
+				{
+					"from": "@delacour/react-native-ui/bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
 				},
 				{
 					"from": "@delacour/react-native-ui/provider",

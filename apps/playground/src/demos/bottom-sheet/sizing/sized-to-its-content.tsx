@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 };
 
 /**
- * Dynamic sizing is gorhom's default and this component keeps it, so the common
+ * Dynamic sizing is the engine's default and this component keeps it, so the common
  * case — a title, some copy and two buttons — needs no numbers at all.
  */
 export function Demo(): ReactElement {

@@ -116,20 +116,24 @@ function kindOf(item: RegistryItem, name: string): "self" | "component" | "share
 	return item.type === "registry:ui" ? "component" : "shared";
 }
 
+/** The two engines `react-native-ui` skins. Each is documented on its own site with its own peers. */
+const ENGINES = new Set(["@delacour/react-native-charts", "@delacour/react-native-bottom-sheet"]);
+
 /**
- * The names `react-native-ui` declares as peers, optional or not — minus the chart
- * engine, which is documented on its own site with its own peers.
+ * The names `react-native-ui` declares as peers, optional or not — minus the two
+ * engines, which are documented on their own sites with their own peers.
  *
  * The union of every closure is wider than the package's peer list in two ways
  * a consumer of the package should not be told about: the library's own
  * dependencies (`clsx`, `tailwind-merge`, `tailwind-variants`), which arrive
- * transitively, and `chart`'s engine plus that engine's Skia, which belong to
- * `@delacour/react-native-charts`. Filtering the unions to this set is what keeps
- * `peers` honest, and `src/registry/install.test.ts` pins it to `package.json`.
+ * transitively, and the engines plus their own native peers — Skia for
+ * `@delacour/react-native-charts`, teleport for `@delacour/react-native-bottom-sheet`.
+ * Filtering the unions to this set is what keeps `peers` honest, and
+ * `src/registry/install.test.ts` pins it to `package.json`.
  */
 function peerNames(): Set<string> {
 	const json = JSON.parse(readFileSync(NATIVE_UI_PACKAGE, "utf-8")) as { peerDependencies?: Record<string, string> };
-	const names = Object.keys(json.peerDependencies ?? {}).filter((name) => name !== "@delacour/react-native-charts");
+	const names = Object.keys(json.peerDependencies ?? {}).filter((name) => !ENGINES.has(name));
 	return new Set(names);
 }
 

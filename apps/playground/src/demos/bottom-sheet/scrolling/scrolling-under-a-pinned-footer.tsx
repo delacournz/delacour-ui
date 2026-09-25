@@ -9,19 +9,19 @@ export const meta: DemoMeta = {
 	note: "Scroll the second list to its very end. The last row must clear the footer completely, not sit half behind it, and the scroll indicator must stop at the footer's hairline rather than run on underneath — the list's frame gives up the footer's measured height, home indicator included.\n\nWith either list scrolled to the top, drag down: the sheet moves. Scroll down a few rows and drag again: the list moves and the sheet stays put. A React Native ScrollView in here would take every drag and the sheet would stop responding.",
 };
 
-const SNAP_POINTS = ["55%", "90%"];
+const SNAP_POINTS = ["55%", "90%"] as const;
 const ROWS = Array.from({ length: 24 }, (_, index) => `Row ${index + 1}`);
 
-/** The same list, under a footer lifted out of the tree and handed to gorhom. */
+/** The same list, under a footer pinned over it at the sheet's footer line. */
 export function Demo(): ReactElement {
 	return (
-		<BottomSheet>
+		<BottomSheet dynamicSizing={false} snapPoints={SNAP_POINTS}>
 			<BottomSheet.Trigger asChild>
 				<Button variant="outline">Open with a footer</Button>
 			</BottomSheet.Trigger>
 			<BottomSheet.Portal>
 				<BottomSheet.Overlay />
-				<BottomSheet.Container enableDynamicSizing={false} snapPoints={SNAP_POINTS}>
+				<BottomSheet.Container>
 					<BottomSheet.ScrollView>
 						<ListGroup>
 							{ROWS.map((row) => (

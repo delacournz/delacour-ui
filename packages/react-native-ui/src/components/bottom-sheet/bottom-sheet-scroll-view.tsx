@@ -1,37 +1,31 @@
-import { BottomSheetScrollView as GorhomBottomSheetScrollView } from "@gorhom/bottom-sheet";
-import type { ComponentProps, ReactElement, ReactNode } from "react";
+import {
+	BottomSheet as Headless,
+	type BottomSheetScrollViewProps as HeadlessProps,
+	useBottomSheetInternal,
+} from "@delacour/react-native-bottom-sheet";
+import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
-import { useAnimatedStyle } from "react-native-reanimated";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { withUniwind } from "uniwind";
 import { cn } from "../../lib/cn";
-import { useBottomSheetContainerContext } from "./bottom-sheet.context";
-import { bottomSheetVariants, resolveSheetScrollEndPadding } from "./bottom-sheet.variants";
-
-type GorhomScrollViewProps = ComponentProps<typeof GorhomBottomSheetScrollView>;
+import { BOTTOM_SHEET_FOOTER_GAP, bottomSheetVariants } from "./bottom-sheet.variants";
 
 /**
  * The one class prop this file uses, restated so the props survive the wrapper.
  *
  * `withUniwind`'s return type maps over a component's props, and over a
- * scrollable's animated ones it collapses to a single entry — `data`,
- * `contentContainerStyle` and the rest would all check against nothing. Writing
- * the signature out keeps them, the way `Screen.LegendList` already has to.
+ * scrollable's animated ones it collapses to a single entry. Writing the
+ * signature out keeps them, the way `Screen.LegendList` already has to.
  *
- * `contentContainerClassName` is deliberately absent even though the wrapper adds
- * one at runtime: passing it would put a second writer on `contentContainerStyle`
- * and cost the safe-area band — see the component's doc comment.
+ * `contentContainerClassName` is deliberately absent even though the wrapper
+ * adds one at runtime — see the component's doc comment.
  */
-type StyledScrollViewComponent = (props: GorhomScrollViewProps & { className?: string }) => ReactElement | null;
+type StyledScrollViewComponent = (props: HeadlessProps & { className?: string }) => ReactElement | null;
 
-// Third-party, so `className` needs the wrapper — and it has to be built at
-// module scope or every render mints a new component type and remounts the list.
-const StyledScrollView = withUniwind(GorhomBottomSheetScrollView) as unknown as StyledScrollViewComponent;
+// Third-party to Uniwind, so `className` needs the wrapper — built at module
+// scope or every render mints a new component type and remounts the list.
+const StyledScrollView = withUniwind(Headless.ScrollView) as unknown as StyledScrollViewComponent;
 
-export type BottomSheetScrollViewProps = Omit<
-	GorhomScrollViewProps,
-	"children" | "contentContainerStyle" | "enableFooterMarginAdjustment"
-> & {
+export type BottomSheetScrollViewProps = Omit<HeadlessProps, "children"> & {
 	className?: string;
 	/** Classes for the padded box the children sit in. */
 	contentContainerClassName?: string;
@@ -39,64 +33,46 @@ export type BottomSheetScrollViewProps = Omit<
 };
 
 /**
- * A scrolling body for a sheet taller than its snap point.
+ * A scrolling body.
  *
- * Use this rather than a plain `ScrollView`: gorhom's scrollable and the sheet's
- * pan negotiate with each other, so dragging a list that is already at its top
- * moves the sheet instead of fighting it. A React Native `ScrollView` in here has
- * no such arrangement, and the sheet stops responding to a drag over the list.
+ * Use this rather than a plain `ScrollView`: the engine's scrollable and the
+ * sheet's pan share a finger — below the highest detent the list is held and
+ * the drag moves the sheet, at the highest the list scrolls, and a drag down
+ * from the top hands back to the sheet. A React Native `ScrollView` in here has
+ * no such arrangement.
  *
- * **It needs a height to scroll within.** With `enableDynamicSizing` left on, the
- * sheet grows to whatever the content measures and there is nothing to scroll —
- * pass `enableDynamicSizing={false}` and explicit `snapPoints` on the
- * `BottomSheet.Container` around it.
+ * **It needs no `snapPoints` and no `dynamicSizing={false}`.** The list
+ * reports its content size, and that is the dynamic detent: six rows make a
+ * short sheet, forty make one capped at `maxDynamicContentSize` that scrolls
+ * inside the cap. Explicit `snapPoints` on the root still work, for a height
+ * that is a decision rather than a measurement.
  *
- * The classes go on an inner `View`, not on gorhom's own content container, and
- * that is not tidiness: uniwind compiles a `contentContainerClassName` into an
- * *array* alongside any `contentContainerStyle`, and the two then fight over the
- * one style this component has to own — the safe-area band. One writer for it.
- *
- * **A pinned footer shortens the scroll view; it is not reserved inside it.**
- * The footer draws over the sheet, so a scroll view that ran the sheet's full
- * height would carry its indicator and its overscroll bounce on underneath the
- * footer, the bottom of the track hidden behind the buttons. So the frame gives
- * up the footer's measured height as a `marginBottom` and ends at the footer's
- * hairline, and the content keeps only the gap
- * ({@link resolveSheetScrollEndPadding}). The margin is an animated style off
- * the footer's shared value, never gorhom's `enableFooterMarginAdjustment`,
- * which routes that height through React state and would commit a render on
- * every frame of the keyboard animation — see `BottomSheet.Content`.
+ * The classes go on an inner `View`, not on the engine's content container,
+ * so the one style this component writes there — the gap that holds the last
+ * row off a pinned footer's hairline — has a single writer. The engine already
+ * clamps the list above a sticky footer and the safe-area band, so nothing
+ * else is reserved here.
  *
  * @example
- * <BottomSheet.Container enableDynamicSizing={false} snapPoints={["60%", "90%"]}>
+ * <BottomSheet maxDynamicContentSize={420}>
+ *   …
  *   <BottomSheet.ScrollView>{rows}</BottomSheet.ScrollView>
- * </BottomSheet.Container>
+ * </BottomSheet>
  */
 export function BottomSheetScrollView({
 	className,
 	contentContainerClassName,
+	contentContainerStyle,
 	children,
-	style,
 	...props
 }: BottomSheetScrollViewProps): ReactElement {
-	const container = useBottomSheetContainerContext();
-	const { bottom } = useSafeAreaInsets();
-	const hasStickyFooter = container?.hasStickyFooter ?? false;
-	const footerHeight = container?.footerHeight;
-
-	// The footer's height, band included, as the frame's own margin — so the
-	// indicator's track ends where the footer begins and follows it as the
-	// keyboard takes the band back.
-	const aboveFooter = useAnimatedStyle(() => ({
-		marginBottom: hasStickyFooter && footerHeight !== undefined ? footerHeight.value : 0,
-	}));
+	const { hasFooter } = useBottomSheetInternal();
 
 	return (
 		<StyledScrollView
 			className={cn(className)}
-			contentContainerStyle={{ paddingBottom: resolveSheetScrollEndPadding({ bottom, hasStickyFooter }) }}
+			contentContainerStyle={[{ paddingBottom: hasFooter ? BOTTOM_SHEET_FOOTER_GAP : 0 }, contentContainerStyle]}
 			{...props}
-			style={[aboveFooter, style]}
 		>
 			<View className={bottomSheetVariants().scrollContent({ className: contentContainerClassName })}>{children}</View>
 		</StyledScrollView>

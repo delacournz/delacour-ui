@@ -8,24 +8,24 @@ export const meta: DemoMeta = {
 	title: "A scrolling sheet",
 };
 
-const SNAP_POINTS = ["55%", "90%"];
+const SNAP_POINTS = ["55%", "90%"] as const;
 const ROWS = Array.from({ length: 24 }, (_, index) => `Row ${index + 1}`);
 
 /**
  * A body taller than the sheet.
  *
- * `BottomSheet.ScrollView` is gorhom's scrollable rather than a React Native
- * one, which is what lets the sheet and the list negotiate a single drag.
+ * `BottomSheet.ScrollView` is the engine's scrollable rather than a React Native
+ * one, which is what lets the sheet and the list share a single drag.
  */
 export function Demo(): ReactElement {
 	return (
-		<BottomSheet>
+		<BottomSheet dynamicSizing={false} snapPoints={SNAP_POINTS}>
 			<BottomSheet.Trigger asChild>
 				<Button variant="secondary">Open a long list</Button>
 			</BottomSheet.Trigger>
 			<BottomSheet.Portal>
 				<BottomSheet.Overlay />
-				<BottomSheet.Container enableDynamicSizing={false} snapPoints={SNAP_POINTS}>
+				<BottomSheet.Container>
 					<BottomSheet.ScrollView>
 						<ListGroup>
 							{ROWS.map((row) => (

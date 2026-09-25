@@ -57,9 +57,9 @@ type AxisKey = "font" | "fontHeading" | "iconLibrary";
  * at a time" is structural rather than something three handlers have to agree
  * about — and it is what makes the never-nest-two-sheets rule impossible to
  * break here. **All three stay mounted**, with `isOpen` deciding which
- * presents: rendering only the open one would unmount gorhom's modal the
- * instant the key goes `null`, and the sheet would vanish rather than slide
- * down. It is affordable because gorhom renders nothing until presented.
+ * presents: rendering only the open one would unmount the sheet the instant
+ * the key goes `null`, and it would vanish rather than slide down. It is
+ * affordable because a closed sheet's portal renders nothing.
  *
  * The tab bar, the navbar and the `Screen` around them live in `_layout.tsx`,
  * because they are chrome both tabs share and neither should move when a page

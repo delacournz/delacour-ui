@@ -121,10 +121,11 @@ function checkFramework(project: ProjectInfo): Check {
 }
 
 /**
- * Reanimated 4 is New Architecture only.
+ * Reanimated 4 is New Architecture only, and so is the bottom sheet's portal.
  *
- * On the old architecture it fails at build or at the first worklet, and every
- * pressable in the library runs one.
+ * On the old architecture Reanimated fails at build or at the first worklet,
+ * and every pressable in the library runs one. `react-native-teleport`, which
+ * `BottomSheet` teleports through, ships a Fabric view and nothing else.
  */
 function checkNewArchitecture(expoConfig: ExpoConfig | null, project: ProjectInfo): Check {
 	if (!expoConfig) return { name: "New Architecture", status: "skip", detail: "expo config not read (--fast)" };
@@ -141,7 +142,7 @@ function checkNewArchitecture(expoConfig: ExpoConfig | null, project: ProjectInf
 		name: "New Architecture",
 		status: "fail",
 		detail: "disabled",
-		fix: 'Set "newArchEnabled": true — Reanimated 4 does not run without it.',
+		fix: 'Set "newArchEnabled": true — Reanimated 4 does not run without it, and BottomSheet needs the new architecture for its portal.',
 	};
 }
 
@@ -681,7 +682,9 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 		"react-native",
 		"react-native-reanimated",
 		"react-native-gesture-handler",
+		"react-native-keyboard-controller",
 		"react-native-svg",
+		"react-native-teleport",
 	];
 	const duplicated = watched.filter(
 		(name) =>

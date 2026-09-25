@@ -82,6 +82,25 @@ describe("buildRegistry", () => {
 		expect(byName.get("cn")?.dependencies).toEqual(["clsx", "tailwind-merge"]);
 	});
 
+	test("installs the bottom sheet's engine from npm and its native peers through expo", () => {
+		// The skin imports the engine; the engine's native peers — teleport above
+		// all, a Fabric view the scan cannot see — come from `ITEM_META`.
+		const sheet = byName.get("bottom-sheet");
+		expect(sheet?.dependencies).toContain("@delacour/react-native-bottom-sheet");
+		expect(sheet?.expoDependencies).toEqual(
+			expect.arrayContaining([
+				"react-native-teleport",
+				"react-native-keyboard-controller",
+				"react-native-safe-area-context",
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets",
+			])
+		);
+		expect(sheet?.dependencies).not.toContain("react-native-teleport");
+		expect([...(sheet?.dependencies ?? []), ...(sheet?.expoDependencies ?? [])]).not.toContain("@gorhom/bottom-sheet");
+	});
+
 	test("never installs react or react-native — every Expo app already has them", () => {
 		for (const item of registry.items) {
 			expect([...item.dependencies, ...item.expoDependencies, ...item.devDependencies]).not.toContain("react");

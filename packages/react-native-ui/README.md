@@ -19,14 +19,16 @@ register twice and break at runtime. The complete list — native modules throug
 `expo install`, the rest through your package manager — is derived from the
 components' own imports and kept on the
 [Installation page](https://ui.delacour.co.nz/docs/native/getting-started/installation).
-Four peers are optional and resolve only if you import the subpath that needs them:
+Six peers are optional and resolve only if you import the subpath that needs them:
 
 | Peer | Needed for |
 | --- | --- |
 | `expo-router` | `@delacour/react-native-ui/expo/navigation-theme` |
-| `@legendapp/list` | `Screen.LegendList` and `Screen.ChatList` |
+| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` and `BottomSheet.LegendList` |
 | `react-native-screens` | native stack navigation |
 | `@delacour/react-native-charts` | `Chart` |
+| `@delacour/react-native-bottom-sheet` | `BottomSheet` — the engine it skins |
+| `react-native-teleport` | `BottomSheet` — the engine's portal; a native module, so rebuild the dev client after installing |
 
 Granular exports are what make that safe: an app that never imports a subpath
 never makes Metro resolve its peers.

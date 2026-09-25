@@ -58,9 +58,8 @@ feedback, and they can read exactly why every decision was made and change it in
 
 ## Capabilities and Constraints
 
-- 20 components (Accordion, Badge, BottomSheet, Button, Checkbox, Chart, Field, Icon, Input,
-  ListGroup, Pressable, Radio, Screen, Separator, Slider, Spinner, Switch, Tabs, Text,
-  DelacourProvider), each a subpath export.
+- One component per subpath export; the list, and its count, is `apps/web/src/lib/components.ts`
+  (buttons, forms, charts, sheets, tabs, a screen scaffold, a root provider).
 - Three component patterns: styled wrapper, compound + context, `tv()` variants.
 - Charts: line, area, bar, scatter, candlestick, pie on the theme's five-colour ramp
   (`@delacour/react-native-charts`, an optional peer).

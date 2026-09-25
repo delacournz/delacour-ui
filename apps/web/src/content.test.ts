@@ -8,7 +8,7 @@ import { basename, join } from "node:path";
  * The pages follow shadcn's order — hero, `## Installation`, `## Usage`, flat
  * example sections, `## API Reference` — and the value of that is entirely in it
  * being the *same* order every time: a reader who has found the install block
- * once knows where it is on all nineteen. Nothing else can hold that. `tsc`
+ * once knows where it is on every one. Nothing else can hold that. `tsc`
  * covers `**\/*.ts{,x}` only, so MDX is never typechecked, and a page that
  * quietly loses its install block renders perfectly well.
  *

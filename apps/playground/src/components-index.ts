@@ -73,6 +73,7 @@ const ROWS = [
 	},
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
+	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];
 
 /** A slug with a screen, as a literal union so a row without an icon is a type error. */

@@ -1,7 +1,7 @@
 {
 	"name": "@delacour/react-native-ui",
 	"version": "0.1.0-alpha.5",
-	"description": "React Native UI components \u2014 Uniwind, Reanimated, Gesture Handler",
+	"description": "React Native UI components — Uniwind, Reanimated, Gesture Handler",
 	"type": "module",
 	"license": "MIT",
 	"repository": {
@@ -50,6 +50,7 @@
 		"./separator": "./src/components/separator/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
+		"./surface": "./src/components/surface/index.ts",
 		"./switch": "./src/components/switch/index.ts",
 		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",

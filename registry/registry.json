@@ -790,6 +790,30 @@
 			]
 		},
 		{
+			"name": "surface",
+			"type": "registry:ui",
+			"title": "Surface",
+			"description": "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/surface/AGENTS.md",
+				"ui/surface/index.ts",
+				"ui/surface/surface.context.tsx",
+				"ui/surface/surface.tsx",
+				"ui/surface/surface.variants.ts"
+			]
+		},
+		{
 			"name": "switch",
 			"type": "registry:ui",
 			"title": "Switch",

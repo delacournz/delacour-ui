@@ -65,13 +65,27 @@ export function resolveItemFeedback(feedback: PressableFeedback | undefined, isI
 }
 
 /**
- * Whether an item renders as a `Pressable`.
+ * What an item renders as.
  *
- * A row with no press handler is a plain `View`: a static row announcing
- * itself as a button is a lie VoiceOver tells on every swipe.
+ * - `pressable` — it has a handler and is enabled: a `Pressable`, announced as
+ *   a button.
+ * - `inert` — it has a handler but is disabled: a plain view still announced as
+ *   a button, with `disabled` state. Not a disabled `Pressable`, because the
+ *   press animation writes an inline `opacity` that beats the `opacity-50` class
+ *   and the row would never dim.
+ * - `static` — no handler: a plain view with no role. A static row announcing
+ *   itself as a button is a lie VoiceOver tells on every swipe.
  */
-export function isItemInteractive(handlers: { onPress?: () => void; onLongPress?: () => void }): boolean {
-	return handlers.onPress !== undefined || handlers.onLongPress !== undefined;
+export type ItemRender = "pressable" | "inert" | "static";
+
+export function resolveItemRender(options: {
+	onPress?: () => void;
+	onLongPress?: () => void;
+	isDisabled: boolean;
+}): ItemRender {
+	const hasHandler = options.onPress !== undefined || options.onLongPress !== undefined;
+	if (!hasHandler) return "static";
+	return options.isDisabled ? "inert" : "pressable";
 }
 
 /**
@@ -171,6 +185,10 @@ export const itemVariants = tv({
 		{ mediaVariant: "image", size: "sm", class: { media: "size-10" } },
 		{ mediaVariant: "image", size: "md", class: { media: "size-12" } },
 		{ mediaVariant: "image", size: "lg", class: { media: "size-14" } },
+		// A tile is `bg-muted`, so on a muted or selected surface it would vanish
+		// into the row.
+		{ mediaVariant: ["icon", "image"], surface: "muted", class: { media: "bg-background" } },
+		{ mediaVariant: ["icon", "image"], isSelected: true, class: { media: "bg-background" } },
 	],
 	defaultVariants: {
 		surface: "default",

@@ -50,11 +50,15 @@ A row of media, text and actions, for lists and settings. Compound root plus
   `gap`, `px` and `py` against `listGroupVariants().item()` at every size, and
   the bare media icon against the group's `prefixIcon` — change one without the
   other and `bun test` fails by name.
-- **Pressable only with a handler.** `onPress` or `onLongPress` makes the root a
-  `Pressable` (role `button`, children merged into one accessible element);
-  without either it is a plain `Animated.View`, so a static row never announces
-  itself as a button. `isItemInteractive` decides. The static branch is an
-  `Animated.View` rather than a `View` so the `ref` type is the same on both.
+- **Pressable only with an enabled handler.** `resolveItemRender` returns one
+  of three: `pressable` (a handler, enabled — a `Pressable`, role `button`,
+  children merged into one accessible element), `static` (no handler — a plain
+  `Animated.View` with no role, so a static row never announces itself as a
+  button), or `inert` (a handler, disabled — a plain view that keeps the
+  `button` role and `disabled` state). The `inert` branch exists because a
+  disabled `Pressable` never dims: its animated style writes an inline
+  `opacity` that beats the `opacity-50` class. The plain branches are
+  `Animated.View` rather than `View` so the `ref` type is one type.
 - **A pressable item must not hold another control.** iOS merges an accessible
   element's children into it, so a `Button` in the actions of a pressable item
   is unreachable by VoiceOver. Either leave the item static and let the actions

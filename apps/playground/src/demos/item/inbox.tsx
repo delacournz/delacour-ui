@@ -11,7 +11,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inbox",
 	caption: "A composed list: mark a message read, star it, or delete it and undo.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 type Message = { id: string; from: string; subject: string; isRead: boolean; isStarred: boolean };
@@ -58,7 +58,7 @@ export function Demo(): ReactElement {
 							</Item.Title>
 							<Item.Description numberOfLines={1}>{message.subject}</Item.Description>
 						</Item.Content>
-						<Item.Actions>
+						<Item.Actions className="gap-0">
 							<Button
 								accessibilityLabel={message.isRead ? "Mark unread" : "Mark read"}
 								onPress={() => update(message.id, { isRead: !message.isRead })}

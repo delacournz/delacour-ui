@@ -6,6 +6,7 @@ import { type ReactElement, useEffect, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "States",
 	caption:
 		"`isDisabled` dims the row and blocks presses; `busy` blocks them while work is in flight; no `onPress` renders a static row.",

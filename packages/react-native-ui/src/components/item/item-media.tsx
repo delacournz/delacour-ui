@@ -23,8 +23,8 @@ export type ItemMediaProps = ItemSlotProps & {
  * out right with nothing said at the call site.
  */
 export function ItemMedia({ variant = "default", className, children, ...props }: ItemMediaProps): ReactElement {
-	const { size } = useItemPart("Item.Media");
-	const slots = itemVariants({ mediaVariant: variant, size });
+	const { isSelected, size, surface } = useItemPart("Item.Media");
+	const slots = itemVariants({ isSelected, mediaVariant: variant, size, surface });
 	const iconClassName = slots.mediaIcon();
 	const iconDefaults = useMemo(() => ({ className: iconClassName, color: ITEM_MEDIA_ICON_TOKEN }), [iconClassName]);
 

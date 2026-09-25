@@ -8,9 +8,9 @@ import {
 	type ItemOrientation,
 	type ItemSize,
 	type ItemVariant,
-	isItemInteractive,
 	itemVariants,
 	resolveItemFeedback,
+	resolveItemRender,
 	resolveItemSize,
 	resolveItemSurface,
 } from "./item.variants";
@@ -68,17 +68,17 @@ function ItemRoot({
 	const surface = resolveItemSurface(variant, isInGroup);
 
 	const context = useMemo<ItemContextValue>(
-		() => ({ isDisabled, orientation, size: resolvedSize, surface }),
-		[isDisabled, orientation, resolvedSize, surface]
+		() => ({ isDisabled, isSelected, orientation, size: resolvedSize, surface }),
+		[isDisabled, isSelected, orientation, resolvedSize, surface]
 	);
 	const content = useMemo(() => wrapTextChildren(children), [children]);
 	const rootClassName = itemVariants({ isDisabled, isSelected, orientation, size: resolvedSize, surface }).root({
 		className,
 	});
 
-	// Two branches rather than a pressable that is sometimes inert: a static row
-	// announced as a button is a lie VoiceOver tells on every swipe.
-	if (isItemInteractive({ onLongPress, onPress })) {
+	const render = resolveItemRender({ isDisabled, onLongPress, onPress });
+
+	if (render === "pressable") {
 		return (
 			<ItemProvider value={context}>
 				<Pressable
@@ -105,7 +105,13 @@ function ItemRoot({
 
 	return (
 		<ItemProvider value={context}>
-			<Animated.View accessibilityState={state} className={rootClassName} {...props}>
+			<Animated.View
+				accessibilityRole={render === "inert" ? "button" : undefined}
+				accessibilityState={state}
+				accessible={render === "inert" ? true : undefined}
+				className={rootClassName}
+				{...props}
+			>
 				{content}
 			</Animated.View>
 		</ItemProvider>
@@ -156,7 +162,7 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  *
  * Give it an `onPress` and it renders as a `Pressable` announced as a button;
  * leave it off and it is a plain view, so a static row never claims to be a
- * control. `size` is set once here — the media, the title and the description
+ * control. `resolveItemRender` makes that call, and a disabled one too. `size` is set once here — the media, the title and the description
  * read it from context.
  *
  * It drops straight into a `ListGroup` as a row: inside one it takes the

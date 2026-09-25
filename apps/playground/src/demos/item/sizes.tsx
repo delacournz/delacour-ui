@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	caption: "Size is set once on the item; the media, title and description follow it.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

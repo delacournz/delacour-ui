@@ -35,7 +35,7 @@ export function Demo(): ReactElement {
 			</Item>
 			<Item variant="outline">
 				<Item.Media className="rounded-full bg-primary" variant="image">
-					<View className="size-full items-center justify-center">
+					<View accessibilityElementsHidden className="size-full items-center justify-center">
 						<Text className="font-semibold text-primary-foreground">AR</Text>
 					</View>
 				</Item.Media>

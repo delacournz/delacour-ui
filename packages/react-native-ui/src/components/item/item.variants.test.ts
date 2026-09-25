@@ -6,9 +6,9 @@ import {
 	ITEM_ORIENTATIONS,
 	ITEM_SIZES,
 	ITEM_VARIANTS,
-	isItemInteractive,
 	itemVariants,
 	resolveItemFeedback,
+	resolveItemRender,
 	resolveItemSize,
 	resolveItemSurface,
 } from "./item.variants";
@@ -69,11 +69,23 @@ describe("resolveItemFeedback", () => {
 	});
 });
 
-describe("isItemInteractive", () => {
-	test("is a pressable only with a press handler", () => {
-		expect(isItemInteractive({})).toBe(false);
-		expect(isItemInteractive({ onPress: () => {} })).toBe(true);
-		expect(isItemInteractive({ onLongPress: () => {} })).toBe(true);
+describe("resolveItemRender", () => {
+	const noop = () => {};
+
+	test("is static without a press handler, disabled or not", () => {
+		expect(resolveItemRender({ isDisabled: false })).toBe("static");
+		expect(resolveItemRender({ isDisabled: true })).toBe("static");
+	});
+
+	test("is a pressable with an enabled handler", () => {
+		expect(resolveItemRender({ isDisabled: false, onPress: noop })).toBe("pressable");
+		expect(resolveItemRender({ isDisabled: false, onLongPress: noop })).toBe("pressable");
+	});
+
+	// A disabled Pressable's animated opacity beats `opacity-50`, so the row
+	// would never dim.
+	test("drops the pressable when disabled", () => {
+		expect(resolveItemRender({ isDisabled: true, onPress: noop })).toBe("inert");
 	});
 });
 
@@ -207,6 +219,18 @@ describe("itemVariants media slot", () => {
 			});
 			for (const edge of edges) expect(edge).toBeGreaterThan(0);
 			expect([...edges].sort((a, b) => a - b)).toEqual(edges);
+		}
+	});
+
+	test("a tile stays visible on the muted and the selected surface", () => {
+		for (const mediaVariant of ["icon", "image"] as const) {
+			for (const cls of [
+				itemVariants({ mediaVariant, surface: "muted" }).media(),
+				itemVariants({ isSelected: true, mediaVariant }).media(),
+			]) {
+				expect(cls).toContain("bg-background");
+				expect(cls).not.toContain("bg-muted");
+			}
 		}
 	});
 

@@ -10,6 +10,8 @@ export type ItemContextValue = {
 	surface: ItemSurface;
 	/** Whether the item is disabled. */
 	isDisabled: boolean;
+	/** Whether the item is selected. */
+	isSelected: boolean;
 };
 
 const ItemContext = createContext<ItemContextValue | null>(null);

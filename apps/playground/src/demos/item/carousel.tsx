@@ -6,6 +6,7 @@ import { ScrollView } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Carousel",
 	caption: "A horizontal `Item.Group` in a scroll view, each item stacked into a card.",
 };

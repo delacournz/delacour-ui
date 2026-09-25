@@ -3,6 +3,7 @@ import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
+	IconAsterisk,
 	IconBrowserTabs,
 	IconBulletList,
 	IconChart1,
@@ -51,6 +52,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	field: IconParagraph,
 	icon: IconStar,
 	input: IconWindowCursor,
+	label: IconAsterisk,
 	"list-group": IconBulletList,
 	pressable: IconCursorClick,
 	radio: IconCircleRecord,
@@ -122,7 +124,7 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tig
  *
  * The groups are the docs' eight, in the docs' order, so a reader who found a
  * component on the site finds it in the same place here. Eight headings over
- * nineteen rows is not many rows per heading, and that is the point: "Forms"
+ * twenty rows is not many rows per heading, and that is the point: "Forms"
  * over six rows says what the six have in common where an alphabet says
  * nothing. `components-index.test.ts` holds the two apps' groupings together.
  *

@@ -91,6 +91,13 @@ A form field's layout, and the one place its state is written down. Root plus
 - **`Field.Group` inserts no dividers**, unlike [`ListGroup`](../list-group/AGENTS.md). A list of rows
   without lines is a wall of text; fields are already held apart by whitespace,
   and a rule between every one is noise.
+- **`Field.Label` is not built on [`Label`](../label/AGENTS.md)**, the standalone
+  primitive. `Label` narrows `children` from `Text`'s and reports
+  `accessibilityState.disabled`, so wrapping it would change this part's public
+  surface. The two colour and fade identically instead, and
+  `label.variants.test.ts` holds them to it against `fieldVariants`' label slot
+  and `resolveFieldTextColor`. A required field uses `Label` directly, since
+  `Field.Label` has no `isRequired`.
 - **There is no `Field.Title`.** On the web it exists because a `<div>` is not a
   `<label>` — label-styled text with nothing to point `htmlFor` at. React Native
   has neither element nor association, so it and `Field.Label` would render the

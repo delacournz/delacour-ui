@@ -558,6 +558,71 @@ export const install = {
 			},
 		],
 	},
+	"label": {
+		name: "label",
+		title: "Label",
+		description: "A form control's name, with required, invalid and disabled states.",
+		importPath: "@delacour/react-native-ui/label",
+		exportName: "Label",
+		expo: ["react-native-reanimated", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 17,
+		groups: [
+			{
+				name: "label",
+				title: "Label",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/label/AGENTS.md", target: "src/components/ui/label/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/label/index.ts", target: "src/components/ui/label/index.ts" },
+					{ source: "packages/react-native-ui/src/components/label/label.tsx", target: "src/components/ui/label/label.tsx" },
+					{ source: "packages/react-native-ui/src/components/label/label.variants.ts", target: "src/components/ui/label/label.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+		],
+	},
 	"checkbox": {
 		name: "checkbox",
 		title: "Checkbox",

@@ -134,6 +134,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A text field, with a group that puts a prefix or suffix inside its border.",
 		categories: ["forms"],
 	},
+	label: {
+		title: "Label",
+		description: "A form control's name, with required, invalid and disabled states.",
+		categories: ["forms"],
+	},
 	"list-group": {
 		title: "List Group",
 		description: "A surface grouping related rows, with dividers inserted automatically.",

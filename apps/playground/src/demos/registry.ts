@@ -245,6 +245,15 @@ import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_steps_checkout from "./steps/checkout";
+import * as demo_steps_custom_indicator from "./steps/custom-indicator";
+import * as demo_steps_horizontal from "./steps/horizontal";
+import * as demo_steps_linear from "./steps/linear";
+import * as demo_steps_read_only from "./steps/read-only";
+import * as demo_steps_sizes from "./steps/sizes";
+import * as demo_steps_states from "./steps/states";
+import * as demo_steps_variants from "./steps/variants";
+import * as demo_steps_vertical from "./steps/vertical";
 import * as demo_surface_bleed from "./surface/bleed";
 import * as demo_surface_configurator from "./surface/configurator";
 import * as demo_surface_nesting from "./surface/nesting";
@@ -538,6 +547,15 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"steps/checkout": demo_steps_checkout,
+	"steps/custom-indicator": demo_steps_custom_indicator,
+	"steps/horizontal": demo_steps_horizontal,
+	"steps/linear": demo_steps_linear,
+	"steps/read-only": demo_steps_read_only,
+	"steps/sizes": demo_steps_sizes,
+	"steps/states": demo_steps_states,
+	"steps/variants": demo_steps_variants,
+	"steps/vertical": demo_steps_vertical,
 	"surface/bleed": demo_surface_bleed,
 	"surface/configurator": demo_surface_configurator,
 	"surface/nesting": demo_surface_nesting,

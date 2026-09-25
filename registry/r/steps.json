@@ -1,0 +1,146 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "steps",
+	"type": "registry:ui",
+	"title": "Steps",
+	"description": "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"spinner",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/steps/AGENTS.md",
+			"target": "steps/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/steps",
+					"to": "@registry/ui/steps"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/index.ts",
+			"target": "steps/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-connector.tsx",
+			"target": "steps/steps-connector.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-description.tsx",
+			"target": "steps/steps-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-indicator.tsx",
+			"target": "steps/steps-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-item.tsx",
+			"target": "steps/steps-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-panel.tsx",
+			"target": "steps/steps-panel.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-title.tsx",
+			"target": "steps/steps-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps-track.tsx",
+			"target": "steps/steps-track.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps.context.tsx",
+			"target": "steps/steps.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps.tsx",
+			"target": "steps/steps.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/steps/steps.variants.ts",
+			"target": "steps/steps.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	]
+}

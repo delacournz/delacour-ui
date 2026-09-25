@@ -59,6 +59,7 @@
 		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
+		"./steps": "./src/components/steps/index.ts",
 		"./surface": "./src/components/surface/index.ts",
 		"./switch": "./src/components/switch/index.ts",
 		"./tabs": "./src/components/tabs/index.ts",

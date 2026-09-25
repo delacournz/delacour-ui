@@ -1063,6 +1063,45 @@
 			]
 		},
 		{
+			"name": "steps",
+			"type": "registry:ui",
+			"title": "Steps",
+			"description": "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"spinner",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/steps/AGENTS.md",
+				"ui/steps/index.ts",
+				"ui/steps/steps-connector.tsx",
+				"ui/steps/steps-description.tsx",
+				"ui/steps/steps-indicator.tsx",
+				"ui/steps/steps-item.tsx",
+				"ui/steps/steps-panel.tsx",
+				"ui/steps/steps-title.tsx",
+				"ui/steps/steps-track.tsx",
+				"ui/steps/steps.context.tsx",
+				"ui/steps/steps.tsx",
+				"ui/steps/steps.variants.ts"
+			]
+		},
+		{
 			"name": "styles",
 			"type": "registry:style",
 			"title": "Styles",

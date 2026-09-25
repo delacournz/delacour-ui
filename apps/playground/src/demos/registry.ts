@@ -169,6 +169,13 @@ import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_surface_bleed from "./surface/bleed";
+import * as demo_surface_configurator from "./surface/configurator";
+import * as demo_surface_nesting from "./surface/nesting";
+import * as demo_surface_padding from "./surface/padding";
+import * as demo_surface_security_card from "./surface/security-card";
+import * as demo_surface_transparent from "./surface/transparent";
+import * as demo_surface_variants from "./surface/variants";
 import * as demo_switch_colours from "./switch/colours";
 import * as demo_switch_disabled_and_invalid from "./switch/disabled-and-invalid";
 import * as demo_switch_sizes from "./switch/sizes";
@@ -362,6 +369,13 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"surface/bleed": demo_surface_bleed,
+	"surface/configurator": demo_surface_configurator,
+	"surface/nesting": demo_surface_nesting,
+	"surface/padding": demo_surface_padding,
+	"surface/security-card": demo_surface_security_card,
+	"surface/transparent": demo_surface_transparent,
+	"surface/variants": demo_surface_variants,
 	"switch/colours": demo_switch_colours,
 	"switch/disabled-and-invalid": demo_switch_disabled_and_invalid,
 	"switch/sizes": demo_switch_sizes,

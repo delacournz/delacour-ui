@@ -129,6 +129,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A screen's frame: pinned chrome, a content region, and whatever scrolls between them.",
 	},
 	{
+		slug: "surface",
+		name: "Surface",
+		group: "Layout",
+		blurb: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

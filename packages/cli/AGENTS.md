@@ -131,7 +131,8 @@ installed package. It scaffolds a real Expo app, installs Uniwind and Tailwind, 
 the stock Metro config so the *patch* path is exercised, adds every item, and typechecks.
 
 One thing it does not take from npm: a workspace package a registry item depends on.
-`chart` installs `@delacour/react-native-charts`, and `scripts/verify/harness.ts` packs that package with
+`chart` installs `@delacour/react-native-charts` and `bottom-sheet` installs
+`@delacour/react-native-bottom-sheet`, and `scripts/verify/harness.ts` packs each of those with
 `bun pm pack` and adds the tarball to the project between `init` and `add`, so `add` sees the
 dependency declared and installs nothing for it. A tarball rather than a link, deliberately: the
 pack is what a consumer receives — `files`, `exports`, no dev dependencies — so a type package

@@ -181,8 +181,9 @@ declares every native module as a **peer** dependency rather than a dependency.
 
 Do not remove it, and do not switch a package to an isolated install. Even
 hoisted, Bun materialises a second copy of some native modules under the app,
-which is why `apps/playground`'s `metro.config.js` pins nine of them to the
-workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
+which is why `apps/playground`'s `metro.config.js` pins twelve of them — plus `react` and
+`culori`, for a single copy of each — to the workspace-root copy and its `tsconfig.json` pins
+`react-native` the same way. `react-native-teleport`, outside the catalog, is one of the twelve.
 
 ## `trustedDependencies`
 

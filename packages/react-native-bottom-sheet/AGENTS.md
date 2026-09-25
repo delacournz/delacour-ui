@@ -14,16 +14,19 @@ import { BottomSheet } from "@delacour/react-native-bottom-sheet";
 import { positionFor } from "@delacour/react-native-bottom-sheet/core";
 ```
 
-The package is being built in phases (plan `BSHEET`). Today it is `core/` —
-every number the sheet computes, as tested pure functions, plus the step
-machine — and the React spine over it: state, geometry, animation, the two
-pans, layout measurement and the compound `BottomSheet` with `Trigger`,
-`Portal` (teleported to the nearest host, in place without a provider), `Overlay`, `Container`, `Background`,
-`Handle`, `Content`, `Close`, `Title` and `Description`; the keyboard and
-footer (BSHEET-3), scrollables (BSHEET-4), the teleport portal, host and
-registry (BSHEET-5) and the multi-step body `Steps` / `Step` over the
-`core/machine` step machine (BSHEET-6b). Each landed by writing a shared
-value the geometry already derived over rather than by re-plumbing it.
+`src/core` is every number the sheet computes, as tested pure functions, plus
+the step machine. Above it, thin translators between shared values and those
+functions: state and geometry, animation and intents, the two pans, layout
+measurement, the keyboard, the scrollables, the teleport portal with its host
+and registry, the multi-step body, and the compound `BottomSheet` — `Trigger`,
+`Portal`, `Overlay`, `Container`, `Background`, `Handle`, `Content`,
+`ScrollView`, `FlatList`, `SectionList`, `Footer`, `TextInput`, `Close`,
+`Title`, `Description`, `Steps`, `Step`, `Host` and `Provider`. Each subsystem
+landed by writing a shared value the geometry already derived over rather than
+by re-plumbing it. The public surface is documented at
+[ui.delacour.co.nz/docs/bottom-sheet](https://ui.delacour.co.nz/docs/bottom-sheet)
+from `apps/web/content/docs/bottom-sheet/`; the skin that wears it is
+`packages/react-native-ui/src/components/bottom-sheet/`.
 
 ## Commands
 
@@ -147,138 +150,67 @@ is copied into `core/result.ts` rather than depended on.
 | `src/no-classname.test.ts` | The token-free promise, enforced against the source |
 | `src/display-name.test.ts` | The `DelacourBottomSheet.` naming, enforced against the source |
 | `src/docs.test.ts` | Every subsystem folder documents itself |
+| `src/source-tree.test.ts` | The shared walker and `read` the guard tests above use — not a test itself, despite the suffix |
 
 Every subsystem above carries its own `AGENTS.md`; `src/docs.test.ts` fails by
 name for one that does not.
 
 ## Verified on the simulator
 
-The BSHEET-2 engine demo (`apps/playground`, Bottom sheet → Engine) on an
-iPhone 17 Pro Max simulator: the trigger opens with the mount animation; a
-handle swipe reaches the second detent and the handle's accessibility value
-reads `Detent 2 of 2`; a swipe back lands on the first; a content pan past the
-first detent closes and `onOpenChange(false)` fires; an over-drag past the top
-settles back on the highest detent; **a tap on a `TextInput` inside the sheet
-focuses it on the first try**, so the overlay `Pressable` written before the
-panel does not compete for touches (the plan's first risk, resolved without
-the band-above fallback); the overlay and `Close` close; every ref method
-lands on its detent; and `close` / `dismiss` / `snapToIndex` on a closed sheet
-are no-ops or opens, never a deadlock.
+Every subsystem was verified on an iOS simulator through `apps/playground`'s
+Bottom sheet → Engine gallery before it was called done, and the bugs that
+only a device shows were fixed there. What was seen, in short:
 
-The BSHEET-3 keyboard and footer demos, same simulator: a sheet sized to its
-content with three fields and a sticky `Footer` opens with the footer's
-buttons ending exactly `bottomInset` above the screen's edge; a tap on a
-plain `TextInput` lifts the sheet by the keyboard's height less that band and
-the footer's padded bottom edge lands on the keyboard's top edge, to the
-point; a tap on the `BottomSheet.TextInput` and on the hook-registered field
-moves focus with no second resize; the return key drops the keyboard and the
-sheet settles back on its detent with the footer above the home indicator
-again; `extend` snaps to the second detent on focus (`onIndexChange` reports
-`keyboard`) and restores the first on dismiss; `fillParent` takes the sheet to
-its top inset and the body shrinks to the space above the keyboard; `none`
-leaves the sheet where it was under the keyboard; and a footer button press
-closes the sheet. One bug was found and fixed on the device: the footer's
-`hasFooter` flag reached the config a tick after the handle and content had
-measured, so the first open resolved on a detent with no footer in it and the
-footer covered the last field — hence the `useLayoutEffect` in
-`bottom-sheet-footer.tsx`.
+- **Spine.** The trigger opens with the mount animation; a handle swipe reaches
+  the second detent and the handle's accessibility value reads `Detent 2 of 2`;
+  a content pan past the first detent closes and `onOpenChange(false)` fires;
+  an over-drag settles back; a tap on a `TextInput` inside the sheet focuses
+  on the first try, so the overlay written before the panel does not compete
+  for touches; every ref method lands, and `close` / `dismiss` / `snapToIndex`
+  on a closed sheet never deadlock.
+- **Keyboard and footer.** A sticky `Footer` ends exactly `bottomInset` above
+  the screen's edge; a focused field lifts the sheet by the keyboard less that
+  band and the footer's padded edge lands on the keyboard's top, to the point;
+  moving focus between registered fields is one resize; `extend`, `fillParent`
+  and `none` each do what they say and `restore` returns. Fixed on the device:
+  the footer's `hasFooter` flag reached the config a tick late, hence the
+  `useLayoutEffect` in `bottom-sheet-footer.tsx`; with a sticky footer a
+  closing sheet showed its fields under the footer's button, hence the footer
+  pads through the band and the body clips to the footer's live top edge
+  (`bodyClip`); and every scrollable ended a footer's height short with its
+  rows cut, hence the trailing spacer inside the list's content (`bodyInset`)
+  and `flexShrink: 0` on the list.
+- **Scrollables.** In a `ScrollView` behind `["45%", "90%"]`, a swipe up at the
+  low detent moves the sheet with the list held at offset `0`; the same swipe
+  at the top scrolls the list; a drag down scrolls the list back to `0` and
+  the sheet follows only then; a fling down with the list scrolled never snaps
+  the sheet. A `ScrollView` with no `snapPoints` sizes to its rows and stops
+  at `maxDynamicContentSize`. Fixed on the device: the pan spends the offset
+  the list *began* with (`listDragHeight`), not its live one, and a content pan
+  leaving the top locks at `0`. Seen and left alone: a long swipe that carries
+  the sheet to its top and then scrolls leaves `index` on the detent it left,
+  because the list owns that release.
+- **Portal, host, detached.** A `Portal` under the playground's provider draws
+  over the navigator's header, and a context provided around the trigger reads
+  inside the sheet; a second sheet stacks above the first with its own overlay;
+  `stackBehavior="replace"` and `dismissAll` do what they say; a sheet inside
+  a native `Modal` wrapped in `<BottomSheet.Host name="modal">` draws over the
+  modal; a `detached` card sits at its margins, rounds all four corners, is
+  fully off-screen when closed, closes on a tap in the gap under it, and drags
+  as one rigid body. Fixed on the device: an effect keyed on the registry's
+  context object looped (`Maximum update depth exceeded`) until keyed on its
+  two stable callbacks; the frame-tall panel painted a detached card's surface
+  to the screen's edge, so a detached `Background` is sized by the geometry's
+  `surfaceHeight` and the panel is `box-none`.
+- **Steps.** The three-step form's panel top glides 186 px over thirteen
+  frames with monotonic, decelerating deltas and no single-frame jump, measured
+  from a recording; `dismissible: false` refuses the scrim and rubber-bands the
+  pan; a per-step `snapPoints: ["35%"]` lands at exactly 35%; `resetOnClose`
+  runs from the unmount path. Fixed on the device: the React Compiler memoised
+  `can({ type: "NEXT" })` on a `can` that read a ref, so `can` and `matches`
+  are rebuilt with the snapshot they close over; and `Steps` writes its
+  controller into a root ref during render so a `Footer` beside the body reads
+  it on the first pass.
 
-The BSHEET-5 portal and detached demos, on a `BSHEET-5 iPhone 17` simulator:
-a `Portal` with no `inline` under the playground's `BottomSheetProvider` draws
-over the navigator's header and the demo pager, and a `createContext` value
-provided around the trigger reads `from the trigger's screen` inside the
-sheet — teleport moved the native view and left the React tree alone; a
-second sheet opened from inside the first lands above it, and its own overlay
-dims the first; `stackBehavior="replace"` on a third closes the first before
-the third opens; `dismissAll` from `useBottomSheetRegistry()` closes both of a
-stack; a sheet written inside a native `Modal` wrapped in
-`<BottomSheet.Host name="modal">` draws over the modal, not behind it; a
-`detached` card sits 16 in from each side and 50 above the bottom (16 plus a
-34 inset), rounds all four corners, is fully off-screen when closed, and a
-tap in the gap under it closes it; `detached={{ horizontalMargin: 24,
-bottomOffset: 32 }}` moves it accordingly. Two things were found and fixed on
-the device: an effect keyed on the registry's context object presented,
-re-rendered, dismissed and presented without end (`Maximum update depth
-exceeded`) until it was keyed on the two stable callbacks instead; and the
-frame-tall panel painted the card's surface to the screen's bottom edge and
-swallowed the gap's taps, so a detached `Background` is now sized by the
-geometry's `surfaceHeight` — the sheet's height between its detents, the
-nearest detent's beyond them — the panel is `box-none`, and the body is
-clamped to what the surface shows. A handle drag down from the detent then
-moves the whole card as one rigid body: the top corners, the copy, the button
-and the bottom corners slide through the gap together and off the screen,
-nothing shrinking onto the resting line. Android's back button cannot be pressed on an iOS
-simulator; the registry's `isTop` is unit-tested instead.
-
-The BSHEET-4 scrollables demos, on a `BSHEET-4 iPhone 17` simulator (iOS 26.5):
-in a `ScrollView` behind `["45%", "90%"]`, a swipe up inside the list at the
-low detent moves the sheet to `Detent 2 of 2` with the list still at offset
-`0` and no scroll indicator drawn; the same swipe at the top scrolls the list
-(offset `204`, indicator at 29%) with the sheet still on the top detent; a
-slow drag down from offset `255` scrolls the list back to `68` with the sheet
-unmoved, a second spends the rest and the sheet follows once the list is at
-`0`; a fling down from the top lands on detent 1 with the list held at exactly
-`0`; a fling down with the list scrolled scrolls the list and never snaps the
-sheet (the release is the list's). A `FlatList` of 200 rows flings to row 57
-in three swipes with the sheet on the top detent. A `ScrollView` with no
-`snapPoints` sizes to six rows, grows to the 420-point `maxDynamicContentSize`
-cap for forty and scrolls inside it. A `SectionList` under a sticky `Footer`
-scrolls to its last row fully above the buttons, section headers stick, and
-the footer's button closes the sheet. Two things were found on the device and
-fixed: subtracting the list's *live* offset from a content pan raced the pan
-by a frame — the sheet dipped a pixel, the lock engaged and the list froze —
-so the pan spends the offset the list *began* with instead (`listDragHeight`);
-and the lock took whatever offset the last scroll event had reported (9
-points) when a content pan left the top, so a content pan now locks at `0`.
-
-Two body bugs, fixed on a `BSHEET-4 iPhone 17` simulator (iOS 26.5): with a
-sticky `Footer`, a sheet dragged down to close showed its fields *below* the
-footer's button — the footer holds the screen's bottom edge while the panel
-slides down under it, and the band under the footer was a transparent spacer
-anything behind it showed through. The footer's styled box now pads through
-the band (measured less the band, so `footerTop` and the dynamic detent are
-unchanged) and the body clips to the footer's live top edge (`bodyClip`), so
-the drag shows the footer's own background and nothing else under it, with
-or without the keyboard. And every scrollable ended a footer's height above
-the sheet's bottom with its rows cut at that edge, because it carried a
-`marginBottom` of the footer; the list now reaches the bottom line and
-reserves the footer or the band as a trailing spacer *inside* its content
-(`bodyInset`), so a `SectionList` scrolled to its end shows the last row
-whole just above the footer's hairline, a 200-row `FlatList` shows row 200
-whole above the home indicator, and the indicator ends above either. One
-detour on the way: Yoga shrank the list to the clipping wrapper (a scrollable
-ships `flexShrink: 1`) and the clearance doubled, hence `flexShrink: 0`. The
-dynamic `ScrollView` still opens on six rows plus the band and on the 420
-cap for forty, so the spacer is not counted in the detent. Seen and left
-alone: a long swipe up inside a list at the low detent carries the sheet to
-its top and then scrolls the rows, and because the list owns that release
-no snap runs, so `currentIndex` and the JS `index` stay on the detent it
-left while the sheet sits at its highest.
-
-The BSHEET-6b steps demos, on a `BSHEET-6 iPhone 17` simulator (iOS 26.5):
-the three-step form opens on details with **Next** disabled; the keyboard
-lifts the sheet with the sticky footer on the keyboard's top edge as before;
-typing a name and a valid email unlocks **Next** live, and clearing the name
-locks it again; **Next** crossfades to confirm and the panel's top edge
-glides down 186 px over thirteen frames at 30 fps with monotonic,
-decelerating deltas (43, 41, 33, 24, 17, 11, 6, 5, 2, 2, 1, 0, 1) — no
-single-frame jump — measured from a screen recording; on confirm
-(`dismissible: false`) a tap on the scrim does nothing and a pan down
-rubber-bands 94 px and springs back; **Back** restores details with the
-fields intact; **Submit** lands on success at exactly 35% of the available
-height (`snapPoints: ["35%"]` with dynamic sizing off for that step); **Done**
-closes and the next open shows details with empty fields, so `resetOnClose`
-ran from the unmount path. The per-step demo cycles dynamic → 75% → 50% →
-dynamic on one button. The slide demo moves page one's button out to the
-left as page two arrives from the right, and page three arrives taller with
-the sheet growing to meet it. One bug was found on the device: the
-playground runs the React Compiler, which memoised `can({ type: "NEXT" })`
-on the identity of `can`, and a `can` that was stable across snapshots and
-read a ref answered from the render it was first called in — the footer's
-**Next** never unlocked while the readout above the sheet said it should.
-`can` and `matches` are now rebuilt with the snapshot they close over. A
-second problem was designed around before it shipped: a `Footer` written
-beside the body is not a descendant of `Steps`, so `useSheetStep` there read
-a controller registered a render late and threw on the first pass; `Steps`
-now writes the controller into a root ref during its own render, which a
-footer rendered after it in the same pass already sees.
+Android's back button cannot be pressed on an iOS simulator; the registry's
+`isTop` is unit-tested instead.

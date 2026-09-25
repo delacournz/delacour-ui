@@ -50,7 +50,7 @@ src/
 ├── registry/install.ts    here, **generated** — see "The install block is derived"
 ├── lib/source.ts          defineDocs + loader, baseUrl "/docs"
 ├── lib/shared.ts          appName, docsRoute, gitConfig, markdown URL encode/decode
-├── lib/seo.ts             PRODUCTS (ui, charts) and docsHead() — each docs page's head tags
+├── lib/seo.ts             PRODUCTS (ui, charts, bottom-sheet), isDocsProduct() and docsHead() — each docs page's head tags
 ├── lib/components.ts      COMPONENTS, PLAYGROUND_SLUGS — every component, once
 ├── lib/number-words.ts    numberToWords — 0–99 as English, for <ComponentCount />
 ├── lib/remark-component-count.ts  the remark plugin that spells <ComponentCount /> — wired in source.config.ts
@@ -137,15 +137,21 @@ Open Graph / Twitter tags. Two things there are deliberate:
   directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
   it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
   `.output`; the builder's OS and architecture have to match the runtime's, which on Railway they do.
-- **Charts is its own product in every head tag.** `@delacour/react-native-charts` is Skia with no
-  Tailwind, no Uniwind and no tokens, so a link to `/docs/charts/*` must not preview as the
-  library's "painted from your shadcn web app". `src/lib/seo.ts` holds `PRODUCTS` — name, headline,
-  description and card copy for `ui` and `charts` — and `docsHead()` builds each docs page's
-  `<title>`, description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the
-  root's site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
-  A charts page gets `og:site_name` "Delacour Charts" and `/og/docs?product=charts`, which draws the
-  charts card: its own name and line, `/docs/charts` in the footer, and an amber line chart along
-  the bottom. `seo.test.ts` fails if a charts page's tags mention Tailwind, Uniwind or shadcn.
+- **Each engine is its own product in every head tag.** `@delacour/react-native-charts` and
+  `@delacour/react-native-bottom-sheet` carry no Tailwind, no Uniwind and no tokens, so a link to
+  `/docs/charts/*` or `/docs/bottom-sheet/*` must not preview as the library's "painted from your
+  shadcn web app". `src/lib/seo.ts` holds `PRODUCTS` — name, headline, description and card copy
+  for `ui`, `charts` and `bottom-sheet` — and `docsHead()` builds each docs page's `<title>`,
+  description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the root's
+  site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
+  `isDocsProduct()` is the one place a product name is checked — `/og/docs?product=` goes through
+  it — and `MOTIFS` in `src/og/card.ts` is the one place a product's drawing is named: an amber
+  line chart on the charts card, a sheet resting on a detent inside a phone frame on the
+  bottom-sheet card, nothing on the library's. A charts page gets `og:site_name` "Delacour
+  Charts" and `/og/docs?product=charts`; a bottom-sheet page the same with its own name and
+  `/docs/bottom-sheet` in the footer. `seo.test.ts` fails if an engine page's tags mention
+  Tailwind, Uniwind or shadcn. A fourth product is an entry in `PRODUCTS`, a motif in `MOTIFS`, a
+  row in `content.test.ts`'s product table and a folder under `content/docs/`.
 - **The 404 is ours.** `src/components/not-found.tsx` replaces Fumadocs' default: the mark, the
   heading face, and pills to the docs and the component index, under the same pill nav.
 
@@ -431,29 +437,44 @@ section is a heading, at most one sentence, and the example. A `<Callout>` survi
 a *reader* about a failure with no error message; a callout explaining a maintainer's reasoning does
 not.
 
-### A charts page
+### An engine page
 
-`content/docs/charts/` documents `packages/react-native-charts` — `@delacour/react-native-charts`, the headless
-engine — under its own `/docs/charts` namespace and its own "Charts" link in
-`src/lib/layout.shared.tsx`. Its `meta.json` is the one `root: true` folder there, so the layout
-tab strip shows a single tab; the sidebar sections are its `---Group---` separators.
+Two headless engines are documented as products of their own, each under its own namespace, its
+own `root: true` folder and its own link in `src/lib/layout.shared.tsx`:
+
+| Folder | Package | Namespace | Reference pages |
+| --- | --- | --- | --- |
+| `content/docs/charts/` | `@delacour/react-native-charts` | `/docs/charts` | `line`, `area`, `bar`, `scatter`, `candlestick`, `pie` |
+| `content/docs/bottom-sheet/` | `@delacour/react-native-bottom-sheet` | `/docs/bottom-sheet` | `composition`, `scrollables`, `portal-and-host`, `steps` |
+
+Both are listed in `content/docs/native/meta.json` as `"../charts"` and `"../bottom-sheet"`, which
+is what puts their tabs in the layout's strip after Components and in that order. Each `meta.json`
+is the one `root: true` folder in its namespace, so the strip shows a single tab per engine; the
+sidebar sections are its `---Group---` separators.
 
 The pages are not component pages: there is no registry to install from, so no
-`<ComponentInstall>`, and the shape assertions in `src/content.test.ts` do not apply. What that
-test does hold them to is the sidebar contract — every page listed in `meta.json`, nothing listed
-that is not on disk — and, for the six pages that each document one chart type (`line`, `area`,
-`bar`, `scatter`, `candlestick`, `pie`), the same closing `## API Reference` the component pages
-end on.
+`<ComponentInstall>` (the engine's `installation` page uses `<InstallTabs>` with the package and
+its native peers spelled out), and the shape assertions in `src/content.test.ts` do not apply.
+What that test does hold them to is the sidebar contract — every page listed in `meta.json`,
+nothing listed that is not on disk — and, for the reference pages in the table, the same closing
+`## API Reference` the component pages end on. The table there is `PRODUCTS`; a third engine is a
+row in it and a folder here.
 
-Previews come from `apps/playground/src/demos/charts/` — a demo group that renders the engine
-directly, importing from `@delacour/react-native-charts` and never from `@delacour/react-native-ui`.
-Its component key is `charts`, deliberately not `chart`, so its captures land under
-`public/previews/charts/**` beside the skinned component's and `previews.test.ts`'s no-reuse rule
-keeps the two sets apart. Code beside a preview is hand-written at the call site, with literal
-hex colours and `useSystemFont` for the font, because that is what a reader of this package types.
+Previews come from a demo group in `apps/playground/src/demos/` that renders the engine directly —
+`charts/` and `bottom-sheet-engine/` — importing from the engine and never from
+`@delacour/react-native-ui`. Their component keys are `charts` and `bottom-sheet-engine`,
+deliberately not `chart` and `bottom-sheet`, so their captures land under
+`public/previews/<key>/**` beside the skinned component's and `previews.test.ts`'s no-reuse rule
+keeps the sets apart. Code beside a preview is hand-written at the call site, with literal hex
+colours, plain `style` objects and (for charts) `useSystemFont` for the font, because that is what
+a reader of the package types.
 
-Reasoning prose belongs in `packages/react-native-charts/AGENTS.md` and the per-folder `AGENTS.md` under
-`packages/react-native-charts/src/`; a page links there rather than repeating it.
+The skinned component's page — `native/components/chart.mdx`, `native/components/bottom-sheet.mdx`
+— documents the skin's props and links to the engine's pages for the behaviour rather than
+repeating them, and closes with a `<Callout type="info">` naming the engine.
+
+Reasoning prose belongs in the engine's `AGENTS.md` and the per-folder `AGENTS.md` under its
+`src/`; a page links there rather than repeating it.
 
 ## The install block is derived
 
@@ -884,10 +905,10 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 ## Known content gaps
 
-- **Two components have no preview.** `bottom-sheet` and `provider` have no captured demos, so
-  their cards on the components index show a placeholder and their pages open at
-  `## Installation`. Every other component page, and every charts page but `installation`,
-  `animation` and `core`, opens on one. `apps/playground/src/demos/demos.test.ts` fails by name
+- **One component has no preview.** `provider` has no captured demo, so its card on the
+  components index shows a placeholder and its page opens at `## Installation`. Every other
+  component page, and every engine page but `installation`, `animation` and `core`, opens on
+  one. `apps/playground/src/demos/demos.test.ts` fails by name
   for a library component with no demo, so that list stays honest on its own.
 - **Every component page now carries a hand-written `<TypeTable>`.** The "prop tables in progress"
   and "reference docs in progress" callouts are gone; do not reintroduce one without the gap it

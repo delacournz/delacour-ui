@@ -55,8 +55,10 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 ```
 
 That is the gesture root every `Pressable` needs above it, the safe-area provider
-and keyboard provider `Screen` reads, the bottom-sheet modal provider, and the
-keyboard state sync that keeps them honest.
+and keyboard provider `Screen` reads, and the keyboard state sync that keeps them
+honest. An app with a `BottomSheet` mounts `BottomSheetProvider` inside it, from
+`@delacour/react-native-ui/bottom-sheet` — the sheet's engine is an optional peer,
+so the provider cannot.
 
 ## Usage
 
@@ -80,7 +82,7 @@ import { IconArrowRight } from "@delacour/react-native-ui/icons/central";
 | --- | --- | --- |
 | Accordion | `@delacour/react-native-ui/accordion` | Selection modes, measured panels, indicators |
 | Badge | `@delacour/react-native-ui/badge` | Variants, colours, sizes, dismiss |
-| BottomSheet | `@delacour/react-native-ui/bottom-sheet` | Overlay, snap points, sticky footer, keyboard |
+| BottomSheet | `@delacour/react-native-ui/bottom-sheet` | Detents, keyboard, sticky footer, scrollables, steps, detached, teleported portal |
 | Button | `@delacour/react-native-ui/button` | Variants, sizes, icons, loading |
 | Checkbox | `@delacour/react-native-ui/checkbox` | Colours, sizes, indeterminate, groups |
 | Field | `@delacour/react-native-ui/field` | Form layout, grouping, state cascade |

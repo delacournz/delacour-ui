@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "A failed image, retried",
 	align: "center",
 	caption:
-		"A failure is remembered for that source only. Swap in a working URL and the avatar tries again on its own; break it and the initials come straight back.",
+		"A failure is remembered for that source only. Swap in a working URL and the avatar tries again on its own; switch back to the dead one and the initials return without it being requested again.",
 };
 
 const WORKING = "https://i.pravatar.cc/160?img=32";

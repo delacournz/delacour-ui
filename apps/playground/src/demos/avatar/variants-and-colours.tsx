@@ -23,7 +23,7 @@ const NAMES: Record<(typeof AVATAR_COLORS)[number], string> = {
 	success: "Sue Cess",
 	warning: "Wren Ing",
 	destructive: "Des Troy",
-	info: "Ivo Info",
+	info: "Ivy Nash",
 };
 
 export function Demo(): ReactElement {

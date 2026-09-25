@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Shared with",
 	caption:
-		"A realistic composition: tap a person to share with them, and the stack above updates. The stack is capped at three faces and counts the rest.",
+		"A realistic composition: tap a person to share with them, and the stack above updates. The stack is capped at three faces and counts the rest. The row already names the person, so its avatar is hidden from screen readers rather than read twice.",
 };
 
 const PEOPLE = [
@@ -60,7 +60,13 @@ export function Demo(): ReactElement {
 							testID={`share-${person.id}`}
 						>
 							<ListGroup.ItemPrefix>
-								<Avatar name={person.name} size="sm" source={"photo" in person ? { uri: person.photo } : undefined} />
+								<Avatar
+									accessibilityElementsHidden
+									importantForAccessibility="no-hide-descendants"
+									name={person.name}
+									size="sm"
+									source={"photo" in person ? { uri: person.photo } : undefined}
+								/>
 							</ListGroup.ItemPrefix>
 							<ListGroup.ItemContent>
 								<ListGroup.ItemTitle>{person.name}</ListGroup.ItemTitle>

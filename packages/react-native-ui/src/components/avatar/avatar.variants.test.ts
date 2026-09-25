@@ -48,7 +48,7 @@ describe("sizes", () => {
 		// The group computes its overlap in points; a class that drifted from the
 		// number would slide faces too far or not far enough.
 		for (const size of AVATAR_SIZES) {
-			expect(edgeOf(avatarVariants({ size }).face())).toBe(AVATAR_SIZE_POINTS[size]);
+			expect(edgeOf(avatarVariants({ size }).root())).toBe(AVATAR_SIZE_POINTS[size]);
 		}
 	});
 
@@ -69,7 +69,7 @@ describe("sizes", () => {
 	test("the overflow tile is the same edge as a face", () => {
 		for (const size of AVATAR_SIZES) {
 			const slots = avatarVariants({ size });
-			expect(edgeOf(slots.overflow())).toBe(edgeOf(slots.face()));
+			expect(edgeOf(slots.overflow())).toBe(edgeOf(slots.root()));
 		}
 	});
 });
@@ -130,8 +130,15 @@ describe("structure", () => {
 		expect(slots.root()).not.toContain("overflow-hidden");
 	});
 
-	test("the root sizes to its content and is not stretched by a column", () => {
-		expect(avatarVariants().root()).toContain("self-start");
+	test("the root holds a fixed edge and never overrides its parent's alignment", () => {
+		// `self-start` pinned every avatar in an `items-end` or `items-center` row
+		// to its top. A fixed size is what keeps a column from stretching it.
+		for (const size of AVATAR_SIZES) {
+			const slots = avatarVariants({ size });
+			expect(slots.root()).not.toMatch(/\bself-/);
+			expect(slots.face()).toContain("size-full");
+		}
+		expect(avatarVariants().group()).not.toMatch(/\bself-/);
 	});
 
 	test("no view slot carries a text colour", () => {
@@ -151,7 +158,7 @@ describe("structure", () => {
 		// The overflow tile is wrapped in the same item, so it wears the same ring
 		// and lines up with the faces rather than sitting four points smaller.
 		expect(avatarVariants().groupItem()).toContain("border-background");
-		expect(avatarVariants().overflow()).not.toContain("border");
+		expect(avatarVariants().overflow()).not.toContain("border-background");
 	});
 
 	test("every badge placement pins to a different corner", () => {
@@ -170,6 +177,32 @@ describe("structure", () => {
 		);
 		for (const dot of dots) expect(Number.isFinite(dot)).toBe(true);
 		expect([...dots].sort((a, b) => a - b)).toEqual(dots);
+	});
+});
+
+describe("the neutral edge", () => {
+	test("a default-colour fallback carries a hairline border in both variants", () => {
+		// Its fill sits a percent or two from the page in light, so without an
+		// edge a neutral face vanishes into the background.
+		for (const variant of AVATAR_VARIANTS) {
+			expect(avatarVariants({ variant, color: "default", hasImage: false }).face()).toContain("border-border");
+		}
+	});
+
+	test("the border goes once a photo is on top", () => {
+		for (const variant of AVATAR_VARIANTS) {
+			expect(avatarVariants({ variant, color: "default", hasImage: true }).face()).not.toMatch(/\bborder\b/);
+		}
+	});
+
+	test("a coloured fallback needs no edge", () => {
+		for (const color of AVATAR_COLORS.filter((value) => value !== "default")) {
+			expect(avatarVariants({ color, hasImage: false }).face()).not.toMatch(/\bborder\b/);
+		}
+	});
+
+	test("the overflow tile carries it too", () => {
+		expect(avatarVariants().overflow()).toContain("border-border");
 	});
 });
 

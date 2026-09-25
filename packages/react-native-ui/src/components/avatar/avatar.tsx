@@ -77,13 +77,13 @@ function AvatarRoot({
 		() => ({ size, variant, color, isDisabled }),
 		[size, variant, color, isDisabled]
 	);
-	const slots = avatarVariants({ size, variant, color, isDisabled });
 
 	// Remembered by key, not by object: an inline `source={{ uri }}` is a new
 	// object every render, and a new URI has to retry on its own.
 	const sourceKey = resolveAvatarSourceKey(source);
 	const [failedKey, setFailedKey] = useState<string | null>(null);
 	const showsImage = resolveAvatarShowsImage({ sourceKey, failedKey });
+	const slots = avatarVariants({ size, variant, color, isDisabled, hasImage: showsImage });
 
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
 	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback });

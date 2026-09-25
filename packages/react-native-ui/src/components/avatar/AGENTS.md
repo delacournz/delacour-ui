@@ -33,6 +33,13 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   inline `source={{ uri }}` is new every render and a dead URL would retry
   forever; keyed by URI alone, a token refresh in the headers would never retry.
   A consumer's `imageProps.onError` fires after the fallback has taken over.
+- **The root carries the edge; there is no `self-start`.** A fixed width and
+  height is something a column's `stretch` never overrides, so the avatar keeps
+  its size without the `self-start` a [`Badge`](../badge/AGENTS.md) needs — and
+  it leaves the parent's alignment alone. With `self-start`, every avatar in an
+  `items-end` or `items-center` row was pinned to the row's top: mixed sizes lost
+  their baseline and a list row's avatar sat above its title. Found on the
+  simulator; a test now forbids any `self-*` on the root or the group.
 - **Two boxes, not one.** `root` is unclipped and holds the overlays; `face` is
   the clipped circle. An `Avatar.Badge` hangs over the circle's edge, and a
   single clipped box would cut it in half. A test asserts `overflow-hidden` is on
@@ -49,6 +56,12 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   of one colour read as one family. `AVATAR_FOREGROUND_TOKEN` gives the person
   glyph the same shade as the initials; a test pins each entry to the token the
   `fallbackLabel` slot resolves to, and checks every token exists in both themes.
+- **A neutral face has a hairline edge; a photo does not.** `muted` and
+  `secondary` sit a percent or two from the page in light — on the simulator a
+  `default` fallback and the `+N` tile all but vanished. They draw
+  `border-border` inside the box, so nothing moves, and the edge goes while a
+  photo is mounted (`hasImage`), since a grey line around a face reads as a
+  frame. The coloured fallbacks have fill enough without one.
 - **A size is a fixed edge, unlike a badge.** `sm`/`md`/`lg`/`xl` are
   32/40/48/64 points. Faces line up against each other and against list rows, and
   a circle that grew with OS font scaling would break the stack; the initials

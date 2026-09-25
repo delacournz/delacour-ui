@@ -62,6 +62,13 @@ export const AVATAR_FOREGROUND_TOKEN: Record<AvatarVariant, Record<AvatarColor, 
 /**
  * Styling for every part of an avatar, and of a group of them.
  *
+ * **The root carries the edge, not `self-start`.** A fixed width and height is
+ * something Yoga's `stretch` never overrides, so an avatar in a column keeps its
+ * size without the escape hatch `Badge` needs — and, unlike `self-start`, it
+ * leaves the parent's own alignment alone. `self-start` pinned every avatar in
+ * an `items-end` or `items-center` row to the top of it: mixed sizes lost their
+ * baseline and a list row's avatar sat above its text. The face fills the root.
+ *
  * **Two boxes, not one.** `root` is unclipped and `face` is the clipped circle
  * inside it. An `Avatar.Badge` hangs over the circle's edge, and a single
  * clipped box would cut it in half; a test asserts `overflow-hidden` is on the
@@ -82,6 +89,12 @@ export const AVATAR_FOREGROUND_TOKEN: Record<AvatarVariant, Record<AvatarColor, 
  * same edge as one outside it and the stack reads as separate people on any
  * surface. The overflow tile sits in the same wrapper for the same reason.
  *
+ * **A neutral face has an edge.** `muted` and `secondary` sit a percent or two
+ * from the page in light, so a `default` fallback and the `+N` tile draw a
+ * hairline `border-border` — inside the box, so no size moves. It goes while a
+ * photo is mounted (`hasImage`), because a photo carries its own edge and a
+ * grey line around a face reads as a frame.
+ *
  * The neutral end of the colour matrix reuses the fills `Badge` does — `muted`
  * and `tertiary` for `soft`, `secondary` for a `solid` default — so an avatar
  * beside a badge of the same colour reads as one family.
@@ -93,17 +106,17 @@ export const AVATAR_FOREGROUND_TOKEN: Record<AvatarVariant, Record<AvatarColor, 
  */
 export const avatarVariants = tv({
 	slots: {
-		root: "relative self-start",
-		face: "items-center justify-center overflow-hidden rounded-full",
+		root: "relative",
+		face: "size-full items-center justify-center overflow-hidden rounded-full",
 		image: "absolute inset-0",
 		fallbackLabel: "text-center font-medium",
 		/** Edge length the fallback glyph inherits. */
 		icon: "",
 		badge: "absolute items-center justify-center",
 		dot: "rounded-full border-2 border-background",
-		group: "flex-row items-center self-start",
+		group: "flex-row items-center",
 		groupItem: "rounded-full border-2 border-background",
-		overflow: "items-center justify-center overflow-hidden rounded-full bg-muted",
+		overflow: "items-center justify-center overflow-hidden rounded-full border border-border bg-muted",
 		overflowLabel: "text-center font-medium text-muted-foreground",
 	},
 	variants: {
@@ -123,7 +136,7 @@ export const avatarVariants = tv({
 		},
 		size: {
 			sm: {
-				face: "size-8",
+				root: "size-8",
 				fallbackLabel: "text-xs",
 				icon: "size-icon-sm",
 				dot: "size-2.5",
@@ -131,7 +144,7 @@ export const avatarVariants = tv({
 				overflowLabel: "text-xs",
 			},
 			md: {
-				face: "size-10",
+				root: "size-10",
 				fallbackLabel: "text-sm",
 				icon: "size-icon-lg",
 				dot: "size-3",
@@ -139,7 +152,7 @@ export const avatarVariants = tv({
 				overflowLabel: "text-sm",
 			},
 			lg: {
-				face: "size-12",
+				root: "size-12",
 				fallbackLabel: "text-base",
 				icon: "size-icon-xl",
 				dot: "size-3.5",
@@ -147,7 +160,7 @@ export const avatarVariants = tv({
 				overflowLabel: "text-base",
 			},
 			xl: {
-				face: "size-16",
+				root: "size-16",
 				fallbackLabel: "text-xl",
 				icon: "size-icon-2xl",
 				dot: "size-4",
@@ -156,9 +169,12 @@ export const avatarVariants = tv({
 			},
 		},
 		placement: {
-			"top-right": { badge: "-top-0.5 -right-0.5" },
+			"top-right": { badge: "-top-1 -right-1" },
 			"bottom-right": { badge: "-bottom-0.5 -right-0.5" },
 		},
+		// Whether a photo is mounted over the fallback. Read only by the neutral
+		// edge below — a photo carries its own edge.
+		hasImage: { true: {}, false: {} },
 		// The empty `false` branch is load-bearing typing, not a placeholder.
 		// See the note in button.variants.ts.
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
@@ -197,12 +213,15 @@ export const avatarVariants = tv({
 			class: { face: "bg-destructive", fallbackLabel: "text-destructive-foreground" },
 		},
 		{ variant: "solid", color: "info", class: { face: "bg-info", fallbackLabel: "text-info-foreground" } },
+
+		{ color: "default", hasImage: false, class: { face: "border border-border" } },
 	],
 	defaultVariants: {
 		variant: "soft",
 		color: "default",
 		size: "md",
 		placement: "top-right",
+		hasImage: false,
 		isDisabled: false,
 	},
 });

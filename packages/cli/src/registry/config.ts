@@ -189,6 +189,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A radio and the group that owns which one is selected.",
 		categories: ["forms"],
 	},
+	rating: {
+		title: "Rating",
+		description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
+		categories: ["forms"],
+	},
 	screen: {
 		title: "Screen",
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",

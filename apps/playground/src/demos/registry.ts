@@ -212,6 +212,16 @@ import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
 import * as demo_radio_sizes from "./radio/sizes";
 import * as demo_radio_variants_and_states from "./radio/variants-and-states";
+import * as demo_rating_a_review from "./rating/a-review";
+import * as demo_rating_allow_clear from "./rating/allow-clear";
+import * as demo_rating_anatomy from "./rating/anatomy";
+import * as demo_rating_colours from "./rating/colours";
+import * as demo_rating_controlled from "./rating/controlled";
+import * as demo_rating_disabled_and_invalid from "./rating/disabled-and-invalid";
+import * as demo_rating_half_stars from "./rating/half-stars";
+import * as demo_rating_more_stars from "./rating/more-stars";
+import * as demo_rating_read_only from "./rating/read-only";
+import * as demo_rating_sizes from "./rating/sizes";
 import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
@@ -495,6 +505,16 @@ export const DEMOS = {
 	"radio/per-option-description": demo_radio_per_option_description,
 	"radio/sizes": demo_radio_sizes,
 	"radio/variants-and-states": demo_radio_variants_and_states,
+	"rating/a-review": demo_rating_a_review,
+	"rating/allow-clear": demo_rating_allow_clear,
+	"rating/anatomy": demo_rating_anatomy,
+	"rating/colours": demo_rating_colours,
+	"rating/controlled": demo_rating_controlled,
+	"rating/disabled-and-invalid": demo_rating_disabled_and_invalid,
+	"rating/half-stars": demo_rating_half_stars,
+	"rating/more-stars": demo_rating_more_stars,
+	"rating/read-only": demo_rating_read_only,
+	"rating/sizes": demo_rating_sizes,
 	"screen/a-pushed-screen": demo_screen_a_pushed_screen,
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,

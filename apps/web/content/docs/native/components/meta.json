@@ -18,6 +18,7 @@
 		"radio",
 		"switch",
 		"slider",
+		"rating",
 		"---Data Display---",
 		"text",
 		"chart",

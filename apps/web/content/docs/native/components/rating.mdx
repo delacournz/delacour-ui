@@ -1,0 +1,186 @@
+---
+title: Rating
+description: A row of stars that reads or sets a score, by tap or by drag.
+icon: Star
+---
+
+<Preview id="rating/anatomy" title={null} />
+
+## Installation
+
+<ComponentInstall name="rating" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Rating } from "@/components/ui/rating";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [score, setScore] = useState(3);
+
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Rating value={score} onChange={setScore}>
+        <Rating.Stars accessibilityLabel="Your rating" />
+        <Rating.Output />
+      </Rating>
+    </View>
+  );
+}
+```
+
+## Half stars
+
+`step={0.5}` splits every star at its centre.
+
+<Preview id="rating/half-stars" />
+
+```tsx
+<Rating step={0.5} value={score} onChange={setScore}>
+  <Rating.Stars accessibilityLabel="Your rating" />
+</Rating>
+```
+
+## Colours
+
+`color` paints the filled stars; an empty star looks the same at every colour.
+
+<Preview id="rating/colours" />
+
+```tsx
+<Rating color="default" />
+<Rating color="primary" />
+<Rating color="success" />
+<Rating color="warning" />
+<Rating color="destructive" />
+<Rating color="info" />
+```
+
+## Sizes
+
+The star steps up the icon scale while the row stays a 44-point target.
+
+<Preview id="rating/sizes" />
+
+```tsx
+<Rating size="sm" />
+<Rating size="md" />
+<Rating size="lg" />
+```
+
+## Read-only
+
+`isReadOnly` shows any value — an average of 4.3 fills part of the fifth star — without taking a touch.
+
+<Preview id="rating/read-only" />
+
+```tsx
+<Rating className="flex-row items-center gap-2" isReadOnly size="sm" value={4.3}>
+  <Rating.Stars accessibilityLabel="Average rating" />
+  <Rating.Output>{({ value }) => `${value.toFixed(1)} · 128 reviews`}</Rating.Output>
+</Rating>
+```
+
+## Clearing
+
+`allowClear` lets a tap on the star already held withdraw the rating.
+
+```tsx
+<Rating allowClear defaultValue={4}>
+  <Rating.Stars accessibilityLabel="Your rating" />
+</Rating>
+```
+
+## Star count
+
+`maxValue` is how many stars the row draws.
+
+```tsx
+<Rating defaultValue={7} maxValue={10} size="sm">
+  <Rating.Stars accessibilityLabel="Score out of ten" />
+  <Rating.Output>{({ value, count }) => `${value} / ${count}`}</Rating.Output>
+</Rating>
+```
+
+## In a form
+
+A `Field` cascades `isInvalid` and `isDisabled`, and the empty stars turn destructive too.
+
+<Preview id="rating/a-review" />
+
+```tsx
+<Field isInvalid={score === 0}>
+  <Field.Label>Required</Field.Label>
+  <Rating value={score} onChange={setScore}>
+    <Rating.Stars accessibilityLabel="Required rating" />
+  </Rating>
+  <Field.Error>{score === 0 ? "Choose at least one star." : undefined}</Field.Error>
+</Field>
+```
+
+<Callout type="warn">
+Label the row with `accessibilityLabel` on `Rating.Stars`, not on the root. The stars are the
+control screen readers adjust; without a label they say only "Rating".
+</Callout>
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Rating` | Owns the value, the count, the step and the axes |
+| `Rating.Stars` | The row of stars — the drag surface and the adjustable control |
+| `Rating.Output` | The value, formatted. Give it a function to label it yourself |
+
+### Rating
+
+<TypeTable
+  type={{
+    value: { type: "number", description: "Controlled value. Any number is drawn; only step limits what a touch can set." },
+    defaultValue: { type: "number", default: "0", description: "Starting value while uncontrolled." },
+    maxValue: { type: "number", default: "5", description: "How many stars. A fraction rounds down." },
+    step: { type: "number", default: "1", description: "The increment a touch snaps to — 1 for whole stars, 0.5 for halves. Must divide one star." },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
+      default: '"warning"',
+      description: "What a filled star means.",
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: { type: "boolean", description: "Blocks the gesture and fades the control. Inherited from an enclosing Field." },
+    isInvalid: { type: "boolean", description: "Paints the stars destructive. Inherited from an enclosing Field." },
+    isReadOnly: { type: "boolean", description: "Shows the score without taking a touch, and without fading." },
+    allowClear: { type: "boolean", default: "false", description: "A tap on the value already held clears it to zero." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"selection"',
+      description: "Played on grab, on every star crossed and on a clear.",
+    },
+    onChange: { type: "(value: number) => void", description: "Fires on every change during a drag." },
+    onChangeEnd: { type: "(value: number) => void", description: "Fires once, when the gesture ends. Where a network write belongs." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Rating.Stars
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Rating"', description: "What is being rated, for screen readers." },
+    className: { type: "string" },
+  }}
+/>
+
+### Rating.Output
+
+<TypeTable
+  type={{
+    children: {
+      type: "ReactNode | ((props: RatingRenderProps) => ReactNode)",
+      description: "Custom content, or a function called with value, count, step and the state flags.",
+    },
+    size: { type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"', description: "Defaults to the rating's own size." },
+  }}
+/>

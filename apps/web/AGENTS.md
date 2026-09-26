@@ -790,6 +790,26 @@ package rather than externalising it. Verified against `bun run build && bun run
 
 ## Gotchas
 
+### The sidebar keeps its own scroll offset
+
+`useSidebarScrollMemory` in `src/lib/sidebar-scroll.ts`, called from `docs/$.tsx`, holds the
+desktop sidebar's offset in `sessionStorage` and puts it back after every navigation and reload.
+The sidebar used to jump to the top on a click. That reproduced in the maintainer's Chrome but in
+no automated browser, so the fix does not depend on which cause it was.
+
+TanStack's scroll restoration finds a scrolled element again by an `nth-child` path from `<html>`
+unless the element carries `data-scroll-restoration-id`. Fumadocs gives its sidebar viewport no
+way to take one, so anything that shifts that path, remounts the layout or reloads the page loses
+the offset. The hook snapshots the offset on `onBeforeNavigate`, stops saving until `onRendered`,
+and restores both then and on the next frame. The pause matters because a reset to the top fires a
+scroll event, which would otherwise save `0` over the snapshot. If the restored offset hides the
+active item, only the viewport scrolls to show it, never the window.
+
+Two selectors in it are Fumadocs' markup, not ours: the viewport is
+`#nd-sidebar [data-id$="-viewport"]`, and the first `[data-active="true"]` inside it is the
+collapsed tab switcher's hidden link, which is why the active item is picked by `offsetHeight`.
+Re-check both after a Fumadocs upgrade.
+
 ### The `.md` routes 404 in dev
 
 `/docs/native/components/button.md` returns Nitro's *"Cannot GET"* under `bun run dev` and works

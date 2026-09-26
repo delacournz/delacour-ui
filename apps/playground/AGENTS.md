@@ -771,9 +771,9 @@ single `theme || chartColor` pane had to be:
 **Which sheet is open is one nullable key on `/theme`, not eight booleans**, so
 "only one at a time" is structural rather than something eight handlers have to
 agree about. **All eight stay mounted**, with `isOpen` deciding which presents:
-rendering only the open one unmounts gorhom's modal the instant the key goes
-`null`, and the sheet vanishes instead of sliding down. It is affordable because
-gorhom renders nothing until presented, because the two font lists resolve no
+rendering only the open one unmounts the sheet the instant the key goes
+`null`, and it vanishes instead of sliding down. It is affordable because a
+closed sheet renders nothing until presented, because the two font lists resolve no
 tokens at all, and because `useAxisPreview` memoises on `[config, mode]` — an
 identity that only changes when `setAxis` or `resetConfig` replaces it.
 

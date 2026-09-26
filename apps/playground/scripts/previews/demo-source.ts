@@ -31,7 +31,6 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"@delacour/react-native-bottom-sheet",
 	"react",
 	"react-native",
-	"@gorhom/bottom-sheet",
 	"@legendapp/list",
 	"@shopify/react-native-skia",
 	"react-native-gesture-handler",

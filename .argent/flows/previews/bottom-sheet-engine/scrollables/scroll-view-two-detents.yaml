@@ -1,0 +1,24 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/scrollables/scroll-view-two-detents and has settled — the trigger button
+  with the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening at the low detent
+  - tap: { id: scroll-view-open }
+  - await: { visible: { text: { matches: '^Row 1$' } } }
+  - wait: 600
+  - echo: A swipe up inside the list moves the sheet to the high detent, not the rows
+  - swipe: { from: { text: Row 3 }, by: { y: -0.35 }, duration: 300, momentum: false }
+  - await: { visible: { text: { matches: '^Row 1$' } } }
+  - wait: 600
+  - echo: At the high detent the same swipe scrolls the list
+  - swipe: { from: { text: Row 8 }, by: { y: -0.35 }, duration: 300, momentum: false }
+  - await: { hidden: { text: { matches: '^Row 1$' } } }
+  - wait: 600
+  - echo: Scrolling back to the top, then dragging the sheet down and away
+  - swipe: { from: { id: scroll-view-list }, by: { y: 0.4 }, duration: 300, momentum: false }
+  - await: { visible: { text: { matches: '^Row 1$' } } }
+  - wait: 400
+  - swipe: { from: { text: Row 2 }, by: { y: 0.4 }, duration: 300, momentum: false }
+  - wait: 500
+  - swipe: { from: { text: { matches: '^Row 1$' } }, by: { y: 0.3 }, duration: 250 }
+  - await: { hidden: { text: { matches: '^Row 1$' } } }

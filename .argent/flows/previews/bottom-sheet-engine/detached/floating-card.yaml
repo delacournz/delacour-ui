@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/detached/floating-card and has settled — the trigger button with the card
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the floating card
+  - tap: { id: detached-open }
+  - await: { visible: { text: Turn on notifications? } }
+  - wait: 700
+  - echo: Dragging the whole card down through the gap to dismiss it
+  - swipe: { from: { text: Turn on notifications? }, by: { y: 0.22 }, duration: 250 }
+  - await: { hidden: { text: Turn on notifications? } }
+  - wait: 500
+  - echo: Opening it again and closing it from its own button
+  - tap: { id: detached-open }
+  - await: { visible: { id: detached-close } }
+  - wait: 800
+  - tap: { id: detached-close }
+  - await: { hidden: { text: Turn on notifications? } }

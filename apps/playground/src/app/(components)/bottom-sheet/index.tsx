@@ -5,6 +5,8 @@ import {
 	IconLayoutAlignBottom,
 	IconLayoutBottom,
 	IconLayoutTopBottom,
+	IconLayoutWindow,
+	IconNumberedList,
 } from "@delacour/react-native-ui/icons/central";
 import type { ReactElement } from "react";
 import { FolderIndex, type FolderIndexItem } from "@/components/folder-index";
@@ -39,6 +41,18 @@ const DEMOS: readonly FolderIndexItem[] = [
 		href: "/bottom-sheet/form",
 		icon: IconEditSmall1,
 		title: "In a form",
+	},
+	{
+		description: "A body that follows a step machine, and a height that glides between steps",
+		href: "/bottom-sheet/steps",
+		icon: IconNumberedList,
+		title: "Steps",
+	},
+	{
+		description: "A sheet inside a native modal, teleported to the modal's own host",
+		href: "/bottom-sheet/hosting",
+		icon: IconLayoutWindow,
+		title: "Hosting",
 	},
 	{
 		description: "The engine on its own — no theme, every value passed in",

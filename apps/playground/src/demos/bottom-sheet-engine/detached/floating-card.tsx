@@ -7,12 +7,12 @@ export const meta: DemoMeta = {
 	title: "Floating card",
 	caption:
 		"`detached` floats the sheet as a card: 16 in from each side, 16 above the bottom inset, every corner the `Background`'s to round. Closed is fully off-screen, and a tap in the margins or the gap under the card closes it — the overlay covers the whole frame.",
+	capture: { flow: "bottom-sheet-engine/detached/floating-card", frame: "device", hero: true },
 };
 
 const styles = StyleSheet.create({
-	root: { gap: 12, width: "100%" },
+	root: { alignItems: "center", flex: 1, gap: 12, justifyContent: "center", width: "100%" },
 	button: {
-		alignSelf: "flex-start",
 		backgroundColor: "#8E8E9326",
 		borderRadius: 8,
 		paddingHorizontal: 12,

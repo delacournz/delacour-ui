@@ -187,16 +187,38 @@ whose demos **are** screens and must not be nested inside another one.
 
 ### The engine demos
 
-`src/demos/charts/` renders `@delacour/react-native-charts` directly — `CartesianChart`,
-`PolarChart` and their marks, with hard-coded colours and a `useSystemFont` font — so the
-documentation can show the engine standing on its own. Nothing in that folder imports
-`@delacour/react-native-ui`, and `demos.test.ts` fails by name when one does. The key is `charts`,
-not `chart`, on purpose: it is a section of its own with its own hero, and the chart-shape rules
-in that test (at most two roots per demo) are about the themed component and do not apply. Its
-route is `(components)/chart/engine.tsx` rather than a top-level file, because
+Two demo groups render an engine on its own, with nothing from the themed library in front of it,
+so the documentation can show each standing alone:
+
+| Group | Engine | Route |
+| --- | --- | --- |
+| `src/demos/charts/` | `@delacour/react-native-charts` — `CartesianChart`, `PolarChart` and their marks, hard-coded colours, a `useSystemFont` font | `(components)/chart/engine.tsx` |
+| `src/demos/bottom-sheet-engine/` | `@delacour/react-native-bottom-sheet` — the headless sheet with `StyleSheet` colours, a hand-drawn handle pill and RN `Pressable`s | `(components)/bottom-sheet/engine.tsx` |
+
+Nothing in either folder imports `@delacour/react-native-ui`, and `demos.test.ts` fails by name
+when one does, with a floor under each filter (12 chart demos, 8 sheet demos) so a broken prefix
+cannot pass on an empty set. The keys are `charts` and `bottom-sheet-engine`, not `chart` and
+`bottom-sheet`, on purpose: each is a section of its own with its own hero, its captures land under
+`public/previews/<key>/**` beside the skinned component's, and the chart-shape rules in that test
+(at most two roots per demo) are about the themed component and do not apply. The routes sit under
+the component's own folder rather than at the top level, because
 `apps/web/src/lib/components.test.ts` asserts that `(components)/` equals the library's component
-list. The import allowlist in `scripts/previews/demo-source.ts` admits the engine, Skia and
-Reanimated for the same reason: a reader of the engine's docs takes those directly.
+list. The import allowlist in `scripts/previews/demo-source.ts` admits both engines, Skia,
+Reanimated, gesture-handler, keyboard-controller and safe-area-context for the same reason: a
+reader of an engine's docs takes those directly.
+
+The sheet engine's demos are grouped by what the engine owns — `anatomy`, `keyboard`, `footer`,
+`scrollables`, `portal`, `detached`, `steps` — and three of them opt into capture:
+`detached/floating-card` (the hero), `steps/three-step-form` and
+`scrollables/scroll-view-two-detents`. A captured engine demo is a `device` frame, because the
+sheet teleports out of the measured stage, so its root fills and centres the trigger the way
+`bottom-sheet/anatomy/the-whole-composition` does; a trigger left at the top of a device frame sits
+under the Dynamic Island.
+
+The themed `bottom-sheet/` gallery has seven facets — `anatomy`, `sizing`, `scrolling`, `footer`,
+`form`, `steps`, `hosting` — plus the `engine` row. `steps` is `BottomSheet.Steps` over a
+`defineSheetMachine`; `hosting` is a sheet inside a React Native `Modal`, teleported to a
+`BottomSheet.Host` written as the modal's outermost view.
 
 ### Adding a demo
 
@@ -422,7 +444,12 @@ for the flows themselves — and for the two argent behaviours that will otherwi
 
 ### Release, not the dev client
 
-`--dev` exists for authoring and is not how media should be published. A Release build has no
+`--dev` exists for authoring and is not how media should be published. One dev-client artefact the
+script does remove: expo-dev-menu's floating "Tools" button, a round gear drawn over the top-right of
+every screen, `/preview` included. A `device` frame keeps the whole screen, so every clip carried it
+until the script began writing the app's `EXDevMenuShowFloatingActionButton` default to `NO` through
+`simctl` before its restart (`hideDevMenuButton` in `scripts/previews/argent.ts`). A Release build has
+no dev menu and needs nothing hidden. A Release build has no
 dev-launcher screen, no dev menu, no LogBox overlay along the bottom of every frame, and no Fast
 Refresh to reload something mid-recording — and Reanimated and Hermes run at production speed,
 which is what the documentation should actually show.

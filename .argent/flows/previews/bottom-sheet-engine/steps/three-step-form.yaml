@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/steps/three-step-form and has settled — the trigger button with the sheet
+  closed and the machine on details. The capture script navigates there before running this.
+steps:
+  - echo: Opening on the details step and filling both fields
+  - tap: { id: steps-form-open }
+  - await: { visible: { id: steps-form-name } }
+  - wait: 500
+  - type: { into: { id: steps-form-name }, text: Ada, submit: false }
+  - type: { into: { id: steps-form-email }, text: ada@example.com, submit: false }
+  - wait: 300
+  - echo: Next glides the sheet to the confirm step
+  - tap: { id: steps-form-next }
+  - await: { visible: { id: steps-form-submit } }
+  - wait: 700
+  - tap: { id: steps-form-submit }
+  - await: { visible: { id: steps-form-done } }
+  - wait: 800
+  - echo: Done closes it and resets the machine
+  - tap: { id: steps-form-done }
+  - await: { hidden: { id: steps-form-done } }

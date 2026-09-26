@@ -256,11 +256,11 @@ describe("chart demos", () => {
  * would still render perfectly, which is why only a text check can catch it.
  */
 describe("engine demos", () => {
-	// `min` is the floor under the filter; the sheet's rises to 8 in BSHEET-8,
-	// when its other facets land.
+	// `min` is the floor under the filter, so a broken prefix cannot pass on an
+	// empty set.
 	const ENGINES = [
 		{ prefix: "charts/", pkg: "@delacour/react-native-charts", min: 12 },
-		{ prefix: "bottom-sheet-engine/", pkg: "@delacour/react-native-bottom-sheet", min: 1 },
+		{ prefix: "bottom-sheet-engine/", pkg: "@delacour/react-native-bottom-sheet", min: 8 },
 	] as const;
 
 	for (const { prefix, pkg, min } of ENGINES) {

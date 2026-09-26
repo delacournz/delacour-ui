@@ -52,18 +52,24 @@ import * as demo_bottom_sheet_engine_steps_per_step_snap_points from "./bottom-s
 import * as demo_bottom_sheet_engine_steps_slide_transition from "./bottom-sheet-engine/steps/slide-transition";
 import * as demo_bottom_sheet_engine_steps_three_step_form from "./bottom-sheet-engine/steps/three-step-form";
 import * as demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss from "./bottom-sheet/anatomy/a-scrim-that-does-not-dismiss";
+import * as demo_bottom_sheet_anatomy_inline_persistent from "./bottom-sheet/anatomy/inline-persistent";
 import * as demo_bottom_sheet_anatomy_the_whole_composition from "./bottom-sheet/anatomy/the-whole-composition";
 import * as demo_bottom_sheet_anatomy_uncontrolled from "./bottom-sheet/anatomy/uncontrolled";
 import * as demo_bottom_sheet_footer_inline_in_the_flow from "./bottom-sheet/footer/inline-in-the-flow";
 import * as demo_bottom_sheet_footer_on_a_short_sheet_sticky_still_pins from "./bottom-sheet/footer/on-a-short-sheet-sticky-still-pins";
 import * as demo_bottom_sheet_footer_sticky_pinned_to_the_sheet from "./bottom-sheet/footer/sticky-pinned-to-the-sheet";
 import * as demo_bottom_sheet_form_a_form_in_a_sheet from "./bottom-sheet/form/a-form-in-a-sheet";
+import * as demo_bottom_sheet_form_keyboard_footer_and_inset from "./bottom-sheet/form/keyboard-footer-and-inset";
+import * as demo_bottom_sheet_hosting_inside_a_native_modal from "./bottom-sheet/hosting/inside-a-native-modal";
 import * as demo_bottom_sheet_scrolling_a_scrolling_sheet from "./bottom-sheet/scrolling/a-scrolling-sheet";
 import * as demo_bottom_sheet_scrolling_scrolling_under_a_pinned_footer from "./bottom-sheet/scrolling/scrolling-under-a-pinned-footer";
+import * as demo_bottom_sheet_sizing_detached from "./bottom-sheet/sizing/detached";
 import * as demo_bottom_sheet_sizing_dynamic_but_capped from "./bottom-sheet/sizing/dynamic-but-capped";
 import * as demo_bottom_sheet_sizing_explicit_snap_points from "./bottom-sheet/sizing/explicit-snap-points";
 import * as demo_bottom_sheet_sizing_sized_to_its_content from "./bottom-sheet/sizing/sized-to-its-content";
 import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-sheet/sizing/the-same-sheet-more-content";
+import * as demo_bottom_sheet_steps_per_step_snap_points from "./bottom-sheet/steps/per-step-snap-points";
+import * as demo_bottom_sheet_steps_three_step_form from "./bottom-sheet/steps/three-step-form";
 import * as demo_button_disabled from "./button/disabled";
 import * as demo_button_group from "./button/group";
 import * as demo_button_group_input from "./button/group-input";
@@ -412,18 +418,24 @@ export const DEMOS = {
 	"bottom-sheet-engine/steps/slide-transition": demo_bottom_sheet_engine_steps_slide_transition,
 	"bottom-sheet-engine/steps/three-step-form": demo_bottom_sheet_engine_steps_three_step_form,
 	"bottom-sheet/anatomy/a-scrim-that-does-not-dismiss": demo_bottom_sheet_anatomy_a_scrim_that_does_not_dismiss,
+	"bottom-sheet/anatomy/inline-persistent": demo_bottom_sheet_anatomy_inline_persistent,
 	"bottom-sheet/anatomy/the-whole-composition": demo_bottom_sheet_anatomy_the_whole_composition,
 	"bottom-sheet/anatomy/uncontrolled": demo_bottom_sheet_anatomy_uncontrolled,
 	"bottom-sheet/footer/inline-in-the-flow": demo_bottom_sheet_footer_inline_in_the_flow,
 	"bottom-sheet/footer/on-a-short-sheet-sticky-still-pins": demo_bottom_sheet_footer_on_a_short_sheet_sticky_still_pins,
 	"bottom-sheet/footer/sticky-pinned-to-the-sheet": demo_bottom_sheet_footer_sticky_pinned_to_the_sheet,
 	"bottom-sheet/form/a-form-in-a-sheet": demo_bottom_sheet_form_a_form_in_a_sheet,
+	"bottom-sheet/form/keyboard-footer-and-inset": demo_bottom_sheet_form_keyboard_footer_and_inset,
+	"bottom-sheet/hosting/inside-a-native-modal": demo_bottom_sheet_hosting_inside_a_native_modal,
 	"bottom-sheet/scrolling/a-scrolling-sheet": demo_bottom_sheet_scrolling_a_scrolling_sheet,
 	"bottom-sheet/scrolling/scrolling-under-a-pinned-footer": demo_bottom_sheet_scrolling_scrolling_under_a_pinned_footer,
+	"bottom-sheet/sizing/detached": demo_bottom_sheet_sizing_detached,
 	"bottom-sheet/sizing/dynamic-but-capped": demo_bottom_sheet_sizing_dynamic_but_capped,
 	"bottom-sheet/sizing/explicit-snap-points": demo_bottom_sheet_sizing_explicit_snap_points,
 	"bottom-sheet/sizing/sized-to-its-content": demo_bottom_sheet_sizing_sized_to_its_content,
 	"bottom-sheet/sizing/the-same-sheet-more-content": demo_bottom_sheet_sizing_the_same_sheet_more_content,
+	"bottom-sheet/steps/per-step-snap-points": demo_bottom_sheet_steps_per_step_snap_points,
+	"bottom-sheet/steps/three-step-form": demo_bottom_sheet_steps_three_step_form,
 	"button/disabled": demo_button_disabled,
 	"button/group": demo_button_group,
 	"button/group-input": demo_button_group_input,

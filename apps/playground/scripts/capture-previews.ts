@@ -33,6 +33,7 @@ import {
 	type Device,
 	describe,
 	devtoolsConnected,
+	hideDevMenuButton,
 	listDevices,
 	openUrl,
 	readFlags,
@@ -264,6 +265,8 @@ function parseBounds(description: string, sentinel: string): DemoBounds | null {
 	return null;
 }
 
+const NAVIGATION_TIMEOUT_MS = 30_000;
+
 type Captured = { width: number; height: number; durationMs?: number };
 
 /**
@@ -283,8 +286,10 @@ async function captureDemo(
 	const url = `${SCHEME}://preview?component=${demo.component}&demo=${demo.demo}&theme=${theme}`;
 	await openUrl(udid, url);
 
+	// The first deep link after `restartApp` waits on a cold JS load — measured at
+	// 15s against a dev client — so the sentinel gets more than the default 10s.
 	const sentinel = `preview-ready:${demo.id}:${theme}:`;
-	if (!(await awaitElement(udid, sentinel))) {
+	if (!(await awaitElement(udid, sentinel, NAVIGATION_TIMEOUT_MS))) {
 		throw new Error(
 			`the preview never announced itself (${sentinel}).\n` +
 				"      Either the deep link did not navigate, or the demo threw while rendering."
@@ -453,7 +458,9 @@ async function main(): Promise<void> {
 	console.log(`  ${demos.length} demos × ${options.themes.length} themes\n`);
 
 	// restart, not launch — see restartApp. A stale process has no devtools
-	// bridge, and every flow's `id:` selector then fails.
+	// bridge, and every flow's `id:` selector then fails. On a dev client the
+	// dev menu's floating button is switched off first, or it is in every frame.
+	if (options.dev) await hideDevMenuButton(device.udid, BUNDLE_ID);
 	await restartApp(device.udid, BUNDLE_ID);
 	await Bun.sleep(6000);
 

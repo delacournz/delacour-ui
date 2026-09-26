@@ -8,15 +8,15 @@ export const meta: DemoMeta = {
 	title: "ScrollView, two detents",
 	caption:
 		"Thirty rows in a `BottomSheet.ScrollView` behind two explicit detents. At the low detent a swipe up inside the list moves the sheet, not the rows, and the indicator stays hidden; at the high detent the same swipe scrolls. A drag down at the top of the list brings the sheet with it, and a drag down from further in scrolls the list back to the top first. The readout is the consumer's own `onScroll`, called on the JS thread.",
+	capture: { flow: "bottom-sheet-engine/scrollables/scroll-view-two-detents", frame: "device" },
 };
 
 const SNAP_POINTS = ["45%", "90%"] as const;
 const ROWS = Array.from({ length: 30 }, (_, index) => `Row ${index + 1}`);
 
 const styles = StyleSheet.create({
-	root: { gap: 12, width: "100%" },
+	root: { alignItems: "center", flex: 1, gap: 12, justifyContent: "center", width: "100%" },
 	button: {
-		alignSelf: "flex-start",
 		backgroundColor: "#8E8E9326",
 		borderRadius: 8,
 		paddingHorizontal: 12,

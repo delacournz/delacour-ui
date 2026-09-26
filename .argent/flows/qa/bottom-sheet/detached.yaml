@@ -1,0 +1,23 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/sizing/detached, settled, card closed.
+steps:
+  - echo: Open; margins on both sides, a gap under the card, every corner rounded — see the screenshot
+  - tap: { id: detached-open }
+  - await: { visible: { text: Oh! Your wallet is empty } }
+  - wait: 700
+  - tool: screenshot
+  - echo: A tap in the gap under the card closes it (a point; the overlay has no id)
+  - tap: { x: 0.5, y: 0.985 }
+  - await: { hidden: { text: Oh! Your wallet is empty } }
+  - echo: Open again; a tap in the side margin closes it too
+  - tap: { id: detached-open }
+  - await: { visible: { text: Oh! Your wallet is empty } }
+  - wait: 600
+  - tap: { x: 0.015, y: 0.9 }
+  - await: { hidden: { text: Oh! Your wallet is empty } }
+  - echo: Open again; a drag down carries the whole card off-screen as one body
+  - tap: { id: detached-open }
+  - await: { visible: { text: Oh! Your wallet is empty } }
+  - wait: 600
+  - swipe: { from: { text: Oh! Your wallet is empty }, by: { y: 0.24 }, duration: 250 }
+  - await: { hidden: { text: Oh! Your wallet is empty } }

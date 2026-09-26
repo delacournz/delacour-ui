@@ -1,0 +1,33 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/form/keyboard-footer-and-inset, settled, sheet closed, keyboard down.
+steps:
+  - echo: Open; the footer sits on the home indicator with the safe-area band under it
+  - tap: { id: kb-form-open }
+  - await: { visible: { id: kb-form-save } }
+  - wait: 600
+  - tool: screenshot
+  - echo: Focus the first field — one rise, footer bottom on the keyboard's top edge. The keyboard is system UI, outside the runner tree, so the accessibility tree is asked directly
+  - tap: { id: kb-form-name }
+  - tool: await-ui-element
+    args: { condition: visible, selector: { identifier: Return }, timeoutMs: 5000 }
+  - wait: 700
+  - tool: screenshot
+  - echo: Move to the second and third fields with the keyboard up — nothing resizes twice
+  - tap: { id: kb-form-email }
+  - wait: 500
+  - assert: { visible: { id: kb-form-save } }
+  - tap: { id: kb-form-city }
+  - wait: 500
+  - assert: { visible: { id: kb-form-save } }
+  - tool: screenshot
+  - echo: Return blurs the field; the sheet restores to the height it had
+  - tool: keyboard
+    args: { key: enter }
+  - tool: await-ui-element
+    args: { condition: hidden, selector: { identifier: Return }, timeoutMs: 5000 }
+  - wait: 700
+  - assert: { visible: { id: kb-form-save } }
+  - tool: screenshot
+  - echo: Save closes it
+  - tap: { id: kb-form-save }
+  - await: { hidden: { id: kb-form-save } }

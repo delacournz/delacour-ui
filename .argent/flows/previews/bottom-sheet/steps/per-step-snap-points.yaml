@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet/steps/per-step-snap-points and has settled — the trigger button with the sheet
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening on the compact step
+  - tap: { id: steps-snap-open }
+  - await: { visible: { id: steps-snap-to-tall } }
+  - wait: 700
+  - echo: Tall is 75%, half is 50%, compact is dynamic again
+  - tap: { id: steps-snap-to-tall }
+  - await: { visible: { id: steps-snap-to-half } }
+  - wait: 700
+  - tap: { id: steps-snap-to-half }
+  - await: { visible: { id: steps-snap-to-compact } }
+  - wait: 700
+  - tap: { id: steps-snap-to-compact }
+  - await: { visible: { id: steps-snap-to-tall } }
+  - wait: 600
+  - echo: Dragging it down to close
+  - swipe: { from: { text: Compact }, by: { y: 0.15 }, duration: 250 }
+  - await: { hidden: { id: steps-snap-to-tall } }

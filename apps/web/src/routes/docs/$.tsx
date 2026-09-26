@@ -10,6 +10,7 @@ import { playgroundSlugForDocsPath } from "@/lib/components";
 import { baseOptions } from "@/lib/layout.shared";
 import { docsHead } from "@/lib/seo";
 import { encodeMarkdownUrl } from "@/lib/shared";
+import { useSidebarScrollMemory } from "@/lib/sidebar-scroll";
 import { docs, source } from "@/lib/source";
 
 export const Route = createFileRoute("/docs/$")({
@@ -68,6 +69,7 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
  */
 function Page() {
 	const { path, pageTree, markdownUrl } = useFumadocsLoader(Route.useLoaderData());
+	useSidebarScrollMemory();
 
 	return (
 		<DocsLayout {...baseOptions()} tree={pageTree} tabMode="navbar">

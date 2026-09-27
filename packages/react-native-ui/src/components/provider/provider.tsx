@@ -1,6 +1,5 @@
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
-import type { ReactElement, ReactNode } from "react";
-import type { StyleProp, ViewStyle } from "react-native";
+import type { ComponentProps, ReactElement, ReactNode } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, type Metrics, SafeAreaProvider } from "react-native-safe-area-context";
@@ -28,8 +27,12 @@ export type DelacourProviderProps = {
 	 * its own `{ flex: 1 }` whenever `style` is undefined. Pass one and that
 	 * default is gone, so include `flex: 1` unless the root genuinely should not
 	 * fill the window.
+	 *
+	 * Typed from the gesture root's own props rather than as `StyleProp<ViewStyle>`:
+	 * on React Native 0.88 its codegen props take the internal view style type,
+	 * which the public one does not satisfy.
 	 */
-	style?: StyleProp<ViewStyle>;
+	style?: ComponentProps<typeof GestureHandlerRootView>["style"];
 };
 
 /**

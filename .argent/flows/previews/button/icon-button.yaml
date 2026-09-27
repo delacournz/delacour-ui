@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/icon-button and has settled — three
+  favourite buttons, small to large, then delete and add. The capture script navigates there before running this.
+steps:
+  - echo: Pressing and holding each icon button in turn, so the press feedback reads
+  - long-press: { on: { id: favourite-icon-sm }, duration: 260 }
+  - long-press: { on: { id: favourite-icon-md }, duration: 260 }
+  - long-press: { on: { id: favourite-icon-lg }, duration: 260 }
+  - long-press: { on: { id: delete }, duration: 260 }
+  - long-press: { on: { id: add }, duration: 260 }

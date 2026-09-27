@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on list-group/variants and has settled — four
+  two-row groups, one per variant. The capture script navigates there before running this.
+steps:
+  - echo: Pressing down the first row of each variant, so the highlight reads on every surface
+  - long-press: { on: { id: row-default }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-secondary }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-tertiary }, duration: 300 }
+  - wait: 150
+  - long-press: { on: { id: row-transparent }, duration: 300 }

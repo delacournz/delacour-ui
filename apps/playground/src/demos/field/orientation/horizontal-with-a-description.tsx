@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Horizontal, with a description",
 	caption:
 		"`Field.Content` bundles the label and its description into one block, so the row lays out as text-then-control rather than three things in a line. Without it the description would become a third column.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "field/orientation/horizontal-with-a-description" },
 };
 
 export function Demo(): ReactElement {

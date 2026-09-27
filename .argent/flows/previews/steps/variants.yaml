@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on steps/variants and has settled — a primary
+  and a secondary stepper, each on Details. The capture script navigates there before running this.
+steps:
+  - echo: Moving both to Review
+  - tap: { id: steps-primary-2 }
+  - wait: 250
+  - tap: { id: steps-secondary-2 }
+  - wait: 800
+  - echo: And back to Details, so the clip loops without a jump cut
+  - tap: { id: steps-primary-1 }
+  - wait: 250
+  - tap: { id: steps-secondary-1 }

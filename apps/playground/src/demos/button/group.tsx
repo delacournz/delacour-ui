@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Button.Group` joins several buttons into one run. Members square the corners crossing each seam and overlap by a point, so two borders draw as one hairline.",
 	align: "center",
-	capture: {},
+	capture: { flow: "button/group" },
 };
 
 export function Demo(): ReactElement {

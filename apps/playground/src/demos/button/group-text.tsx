@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Button.Group.Text` is a member that says something rather than doing something. It draws the button's own chrome, so its height and corner match the buttons beside it exactly.",
 	align: "center",
-	capture: {},
+	capture: { flow: "button/group-text" },
 };
 
 export function Demo(): ReactElement {

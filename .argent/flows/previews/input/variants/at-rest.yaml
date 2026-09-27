@@ -1,0 +1,22 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on input/variants/at-rest and has settled — a
+  primary and a secondary field sharing one empty value, neither focused. The capture script navigates there before running this.
+steps:
+  - echo: Focusing the primary field and typing, so both boxes fill
+  - tap: { id: input-primary }
+  - wait: 300
+  - tool: keyboard
+    args: { text: Ada, delayMs: 120 }
+  - wait: 500
+  - echo: Moving focus to the secondary field and deleting it all
+  - tap: { id: input-secondary }
+  - wait: 400
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - echo: Submitting blurs the field, so it loops unfocused as it began
+  - tool: keyboard
+    args: { key: enter }

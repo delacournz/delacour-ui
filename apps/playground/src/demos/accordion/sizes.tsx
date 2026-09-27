@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Sizes",
 	caption:
 		"One axis drives the row metrics, both type scales, the chevron's step, the panel's padding and the divider inset — so a panel's text starts on the same margin as the title above it at every size.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "accordion/sizes" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

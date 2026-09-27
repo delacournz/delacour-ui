@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "A glyph beside the title",
 	caption:
 		"A trigger assembles its own row: titles and descriptions stack in a column, anything else stays where it was written, and the indicator is moved to the end. An `Icon` needs nothing said at the call site — it inherits the accordion's glyph step and foreground.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "accordion/a-glyph-beside-the-title" },
 };
 
 export function Demo(): ReactElement {

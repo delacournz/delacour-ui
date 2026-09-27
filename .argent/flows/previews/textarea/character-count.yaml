@@ -9,7 +9,7 @@ steps:
     args: { key: arrow-down }
   - tool: keyboard
     args: { key: arrow-down }
-  - echo: Typing past the limit: the twelfth character turns the count destructive and the thirteenth is refused
+  - echo: Typing past the limit — the twelfth character turns the count destructive and the thirteenth is refused
   - tool: keyboard
     args: { text: " Maybe seven.", delayMs: 70 }
   - wait: 700

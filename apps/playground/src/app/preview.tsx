@@ -150,13 +150,15 @@ function useAppliedTheme(requested: PreviewTheme): PreviewTheme | null {
  *
  * Along the top edge rather than behind the stage, because an `id:` tap lands on
  * the centre of the element's frame, and the centre of a full-screen backdrop is
- * the demo itself. The top edge is outside every stage crop.
+ * the demo itself. The top edge is outside every stage crop. Tall enough that its
+ * centre clears the Dynamic Island, which swallows a touch before the app sees it —
+ * at 64 points tall the tap landed on the island and nothing blurred.
  */
 function KeyboardDismiss(): ReactElement {
 	return (
 		<Pressable
 			accessible={false}
-			className="absolute inset-x-0 top-0 h-16"
+			className="absolute inset-x-0 top-0 h-32"
 			onPress={() => Keyboard.dismiss()}
 			testID="preview-dismiss-keyboard"
 		/>

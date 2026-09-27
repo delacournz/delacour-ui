@@ -11,6 +11,9 @@ steps:
   - tool: keyboard
     args: { text: "Works well.", delayMs: 60 }
   - wait: 400
+  - echo: Dismissing the keyboard first, which would otherwise cover the button
+  - tap: { id: preview-dismiss-keyboard }
+  - wait: 300
   - echo: Sending blurs the fields and clears them; the thank-you times out back to the start
   - tap: { id: send }
   - wait: 2300

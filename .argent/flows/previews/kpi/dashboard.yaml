@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on kpi/dashboard and has settled — the 30 days period and
+  the Revenue metric selected, Revenue drawn large below. The capture script navigates there before
+  running this.
+steps:
+  - echo: Choosing Orders, then the 7 day period, which redraws every series
+  - tap: { id: kpi-dashboard-orders }
+  - wait: 700
+  - tap: { id: kpi-dashboard-period-7d }
+  - wait: 800
+  - echo: Back to Revenue over 30 days, so the clip loops where it began
+  - tap: { id: kpi-dashboard-revenue }
+  - wait: 500
+  - tap: { id: kpi-dashboard-period-30d }

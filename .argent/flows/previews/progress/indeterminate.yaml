@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on progress/indeterminate and has settled — four
+  indeterminate bars, already sweeping. The capture script navigates there before running this.
+steps:
+  - echo: Nothing to touch — the sweep is the behaviour, so this only holds the camera on it
+  - wait: 2400

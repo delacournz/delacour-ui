@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on empty-state/anatomy and has settled — "No messages yet"
+  with New message and Clear drafts buttons. The capture script navigates there before running this.
+steps:
+  - echo: Starting two drafts, which rewords the description
+  - tap: { id: compose }
+  - wait: 600
+  - tap: { id: compose }
+  - wait: 900
+  - echo: Clearing them, so the clip loops where it began
+  - tap: { id: reset }

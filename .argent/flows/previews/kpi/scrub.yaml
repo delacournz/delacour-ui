@@ -1,0 +1,28 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on kpi/scrub and has settled — the sparkline
+  (testID kpi-scrub-chart) spanning x 0.09–0.91 of the screen with its vertical centre at y 0.56,
+  no cursor, the value showing the latest point. The capture script navigates there before running this.
+steps:
+  - await: { visible: { id: kpi-scrub-chart } }
+  - echo: Holding to arm the scrub, which does not activate on a plain drag
+  # A raw gesture-custom rather than a directive: the scrub is a partial drag behind a long
+  # press, which no tap/swipe directive can express. y is the kpi-scrub-chart frame's centre and
+  # x walks from its right end (the latest point) to its left and back, so letting go
+  # returns the value to where it began.
+  - tool: gesture-custom
+    args:
+      interpolate: 6
+      events:
+        - { type: Down, x: 0.88, y: 0.56 }
+        - { type: Move, x: 0.87, y: 0.56, delayMs: 500 }
+        - { type: Move, x: 0.66, y: 0.56, delayMs: 260 }
+        - { type: Move, x: 0.44, y: 0.56, delayMs: 260 }
+        - { type: Move, x: 0.14, y: 0.56, delayMs: 300 }
+  - echo: And back to the latest point, so the clip loops without the value jumping
+  - tool: gesture-custom
+    args:
+      interpolate: 6
+      events:
+        - { type: Move, x: 0.5, y: 0.56, delayMs: 260 }
+        - { type: Move, x: 0.87, y: 0.56, delayMs: 260 }
+        - { type: Up, x: 0.88, y: 0.56, delayMs: 160 }

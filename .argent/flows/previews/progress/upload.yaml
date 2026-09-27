@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on progress/upload and has settled — Brief.pdf done,
+  Hero shot.jpg paused at 3.1 MB and Assets.zip waiting, with a Reset queue button below. The
+  capture script navigates there before running this.
+steps:
+  - echo: Resuming the paused upload and starting the waiting one
+  - tap: { id: upload-hero-action }
+  - wait: 200
+  - tap: { id: upload-assets-action }
+  - echo: Letting Hero shot.jpg land, about two seconds at the demo's tick
+  - wait: 2600
+  - echo: Resetting the queue, so the clip loops where it began
+  - tap: { id: upload-reset }

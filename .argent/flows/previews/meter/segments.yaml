@@ -1,0 +1,33 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on meter/segments and has settled — a password field
+  holding "Harbour7" (secure, unfocused) and a four-block strength meter reading Good. The capture
+  script navigates there before running this.
+steps:
+  - echo: Clearing the password, which empties the meter
+  - tap: { id: meter-password-input }
+  - wait: 300
+  # A secure field clears whole on the first delete after it gains focus; the rest are no-ops
+  # there, and still clear it character by character if iOS ever stops doing that.
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 300
+  - echo: Retyping it, so the blocks light one by one back to Good, then submitting to blur
+  - tool: keyboard
+    args: { text: Harbour7, delayMs: 110 }
+  - wait: 300
+  - tool: keyboard
+    args: { key: enter }

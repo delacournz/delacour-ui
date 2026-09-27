@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Anatomy",
 	caption:
 		"A header with a tinted icon, the metric's name and an action; the value and its change stacked as one fact; the sparkline under everything; and a footer for the comparison.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "kpi/anatomy", hero: true },
 };
 
 const REVENUE = [31.2, 33.8, 32.9, 36.4, 35.1, 38.7, 41.2, 40.3, 43.9, 44.6, 46.1, 48.1];

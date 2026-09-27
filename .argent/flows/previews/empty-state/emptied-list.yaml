@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on empty-state/emptied-list and has settled — a list of
+  three items, each with a remove button. The capture script navigates there before running this.
+steps:
+  - echo: Removing every item — each removal re-indexes the rest, so remove-0 is always the top row
+  - tap: { id: remove-0 }
+  - wait: 350
+  - tap: { id: remove-0 }
+  - wait: 350
+  - tap: { id: remove-0 }
+  - await: { visible: { id: restore } }
+  - wait: 900
+  - echo: Restoring them, so the clip loops where it began
+  - tap: { id: restore }

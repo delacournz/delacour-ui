@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Dashboard",
 	caption:
 		"Three metrics as a picker, each a `Pressable` around a small inline card, and the chosen one drawn large below — hold its sparkline to read any day. The period switches every series at once.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "kpi/dashboard" },
 };
 
 type Period = "7d" | "30d" | "90d";

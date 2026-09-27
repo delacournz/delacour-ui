@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Password strength",
 	note: "Four whole blocks, because a password is not seventy percent strong. Any score above zero lights at least one block, thresholds turn it from destructive to success, and valueLabel speaks the word rather than a number — on screen and to the screen reader alike.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "meter/segments" },
 	keyboardAware: true,
 };
 

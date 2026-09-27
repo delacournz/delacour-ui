@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Indeterminate",
 	note: "A segment sweeps from wholly off the left edge to wholly off the right, so the loop's seam is never on screen. With Reduce Motion on, it breathes in place instead. It reports busy and no value to a screen reader, and the default readout renders nothing.",
+	capture: { align: "stretch", flow: "progress/indeterminate" },
 };
 
 export function Demo(): ReactElement {

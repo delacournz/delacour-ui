@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Plan usage",
 	note: "A composed billing card. Every quota is judged the same way — optimum at zero, warning past 80%, destructive past 95% — so the eye finds the one about to run out. Simulate a day of use to push them over, and the readout says how much is left as well as painting it.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "meter/plan-usage" },
 };
 
 type Quota = {

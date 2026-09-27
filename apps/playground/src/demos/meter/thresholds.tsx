@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Thresholds",
 	note: "Each threshold names the colour from a point on the scale, in the reading's own units. The highest one reached wins, whatever order they are listed in; below all of them the color prop applies. Step the load and watch it cross each one.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "meter/thresholds" },
 };
 
 const THRESHOLDS: readonly MeterThreshold[] = [

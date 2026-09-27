@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on meter/regions and has settled — disk at 82%, battery
+  at 14% and the living room at 21 °C, each with a slider whose thumb carries the testID
+  meter-region-<id>-thumb. The capture script navigates there before running this.
+steps:
+  - echo: Filling the disk past high, then draining the battery's reading up into its optimum
+  # momentum:false so each thumb stops where the finger does, and the same `by` negated brings it back.
+  - swipe: { from: { id: meter-region-disk-thumb }, by: { x: 0.12 }, momentum: false, duration: 500 }
+  - swipe: { from: { id: meter-region-battery-thumb }, by: { x: 0.5 }, momentum: false, duration: 700 }
+  - wait: 400
+  - echo: And both back by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: meter-region-battery-thumb }, by: { x: -0.5 }, momentum: false, duration: 700 }
+  - swipe: { from: { id: meter-region-disk-thumb }, by: { x: -0.12 }, momentum: false, duration: 500 }

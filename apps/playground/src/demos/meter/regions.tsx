@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Low, high and optimum",
 	note: "The same three regions read three ways. With optimum below low, the bottom is good — a disk. Above high, the top is — a battery. Between them, the band is good and either side is worse — a room. Drag each reading across its boundaries. A valueLabel function words the region, and because the label is spoken as well as drawn, the judgement never rests on colour alone.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "meter/regions" },
 };
 
 type Scenario = {

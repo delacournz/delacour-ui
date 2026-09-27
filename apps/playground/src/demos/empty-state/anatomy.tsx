@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Anatomy",
 	caption:
 		"`Header` stacks the media, title and description; `Content` holds the actions. A bare `Icon` in `Media` inherits its size and colour.",
-	capture: { hero: true, align: "stretch" },
+	capture: { hero: true, align: "stretch", flow: "empty-state/anatomy" },
 };
 
 export function Demo(): ReactElement {

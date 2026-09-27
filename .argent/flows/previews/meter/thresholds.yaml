@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on meter/thresholds and has settled — CPU load at 45
+  in the info colour, with −10, +10 and Reset buttons below. The capture script navigates there
+  before running this.
+steps:
+  - echo: Stepping the load up past the warning threshold at 70 and the destructive one at 90
+  - tap: { id: meter-thresholds-increment }
+  - wait: 300
+  - tap: { id: meter-thresholds-increment }
+  - wait: 300
+  - tap: { id: meter-thresholds-increment }
+  - wait: 450
+  - tap: { id: meter-thresholds-increment }
+  - wait: 300
+  - tap: { id: meter-thresholds-increment }
+  - wait: 700
+  - echo: Resetting to 45, so the clip loops where it began
+  - tap: { id: meter-thresholds-reset }

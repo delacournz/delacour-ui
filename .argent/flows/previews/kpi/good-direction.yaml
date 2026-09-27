@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on kpi/good-direction and has settled — Revenue, Churn and
+  Headcount all showing +6.4%, above a Change slider whose thumb carries the testID
+  kpi-direction-thumb. The capture script navigates there before running this.
+steps:
+  - echo: Dragging the change negative, so revenue turns bad and churn turns good
+  - swipe: { from: { id: kpi-direction-thumb }, by: { x: -0.5 }, momentum: false, duration: 900 }
+  - wait: 500
+  - echo: And back by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: kpi-direction-thumb }, by: { x: 0.5 }, momentum: false, duration: 900 }

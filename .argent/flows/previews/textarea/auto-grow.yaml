@@ -1,0 +1,62 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on textarea/auto-grow and has settled — an empty two-row textarea, unfocused. The
+  capture script navigates there before running this.
+steps:
+  - echo: Typing four short lines, so the field grows a row at a time
+  - tap: { id: auto-grow }
+  - wait: 250
+  - tool: keyboard
+    args: { text: "One", delayMs: 60 }
+  - tool: keyboard
+    args: { key: enter }
+  - tool: keyboard
+    args: { text: "Two", delayMs: 60 }
+  - tool: keyboard
+    args: { key: enter }
+  - tool: keyboard
+    args: { text: "Three", delayMs: 60 }
+  - tool: keyboard
+    args: { key: enter }
+  - tool: keyboard
+    args: { text: "Four", delayMs: 60 }
+  - wait: 600
+  - echo: Deleting all eighteen characters, so it shrinks back to two rows
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 300
+  - echo: Tapping the preview's dismiss strip, since return in a textarea is a newline, not a blur
+  - tap: { id: preview-dismiss-keyboard }

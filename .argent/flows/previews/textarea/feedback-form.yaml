@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on textarea/feedback-form and has settled — empty subject and feedback fields, no error, no thank-you. The
+  capture script navigates there before running this.
+steps:
+  - echo: Sending it empty, so the Field reports the error
+  - tap: { id: send }
+  - wait: 700
+  - echo: Typing clears the error
+  - tap: { id: feedback }
+  - wait: 200
+  - tool: keyboard
+    args: { text: "Works well.", delayMs: 60 }
+  - wait: 400
+  - echo: Sending blurs the fields and clears them; the thank-you times out back to the start
+  - tap: { id: send }
+  - wait: 2300

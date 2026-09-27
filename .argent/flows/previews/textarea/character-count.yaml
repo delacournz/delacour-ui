@@ -1,0 +1,43 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on textarea/character-count and has settled — a status of 68 of 80 characters, unfocused. The
+  capture script navigates there before running this.
+steps:
+  - echo: Focusing, and moving the caret to the end of the text
+  - tap: { id: status }
+  - wait: 200
+  - tool: keyboard
+    args: { key: arrow-down }
+  - tool: keyboard
+    args: { key: arrow-down }
+  - echo: Typing past the limit: the twelfth character turns the count destructive and the thirteenth is refused
+  - tool: keyboard
+    args: { text: " Maybe seven.", delayMs: 70 }
+  - wait: 700
+  - echo: Deleting back to 68
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 300
+  - echo: Tapping the preview's dismiss strip, since return in a textarea is a newline, not a blur
+  - tap: { id: preview-dismiss-keyboard }

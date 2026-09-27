@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Beside a switch",
 	caption:
 		"Outside a form layout, a label is just the text beside a control. `Text` takes `onPress`, so tapping the label can drive the control — the first row is controlled, the second leaves its switch uncontrolled and is disabled. A pressable label is hidden from assistive technology, since iOS would otherwise announce it as a link and the switch already carries its name.",
+	capture: { align: "stretch", flow: "label/beside-a-switch" },
 };
 
 export function Demo(): ReactElement {

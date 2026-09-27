@@ -26,9 +26,9 @@ function validate(field: FieldName, value: string): string | undefined {
 export const meta: DemoMeta = {
 	title: "Sign-up form",
 	caption:
-		"Two required fields and an optional one. Tap Create account with them empty and both labels turn destructive with their fields; each clears as soon as its value is acceptable.",
+		"Two required fields and an optional one. Tap Create account with them empty and both labels turn destructive with their fields; each clears as soon as its value is acceptable, and emptying every field starts the form over.",
 	keyboardAware: true,
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "label/sign-up", hero: true },
 };
 
 function Row({
@@ -64,9 +64,13 @@ export function Demo(): ReactElement {
 
 	const errorFor = (field: FieldName): string | undefined => (isSubmitted ? validate(field, values[field]) : undefined);
 
+	// A form emptied back to blank is a form nobody has submitted yet, so it
+	// drops its errors rather than shouting at a reader who has started over.
 	const change = (field: FieldName) => (value: string) => {
-		setValues((current) => ({ ...current, [field]: value }));
+		const next = { ...values, [field]: value };
+		setValues(next);
 		setIsDone(false);
+		if (Object.values(next).every((entry) => entry === "")) setIsSubmitted(false);
 	};
 
 	const submit = () => {

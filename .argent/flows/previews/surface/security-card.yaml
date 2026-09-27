@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on surface/security-card and has
+  settled — two-factor off, one passkey. The capture script navigates there
+  before running this.
+steps:
+  - echo: Turning two-factor on, so the status line follows the switch
+  - tap: { id: security-two-factor }
+  - wait: 1000
+  - echo: And off again, so the clip loops without a jump cut
+  - tap: { id: security-two-factor }

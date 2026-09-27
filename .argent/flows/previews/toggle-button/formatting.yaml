@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toggle-button/formatting and has
+  settled — four marks, Bold on, ["bold"] printed beneath. The capture script
+  navigates there before running this.
+steps:
+  - echo: Adding Italic and Underline alongside Bold
+  - tap: { id: formatting-italic }
+  - wait: 450
+  - tap: { id: formatting-underline }
+  - wait: 800
+  - echo: And taking them off again, so the clip loops without a jump cut
+  - tap: { id: formatting-underline }
+  - wait: 450
+  - tap: { id: formatting-italic }

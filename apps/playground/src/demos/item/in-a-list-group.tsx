@@ -17,7 +17,7 @@ export const meta: DemoMeta = {
 	title: "In a ListGroup",
 	caption:
 		"Items drop straight in as rows: the group draws the surface and the dividers, and each item takes the group's size.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "item/in-a-list-group", hero: true },
 };
 
 export function Demo(): ReactElement {

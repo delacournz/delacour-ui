@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"`max` caps the faces, not the row; the rest are counted into a trailing `+N`. Each face wears a ring in the page background, and the first sits on top.",
-	capture: { hero: true },
+	capture: { flow: "avatar/group", hero: true },
 };
 
 const TEAM = [

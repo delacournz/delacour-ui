@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on card/footer-band and has settled —
+  the workspace card with a band footer, Band selected beneath. The capture
+  script navigates there before running this.
+steps:
+  - echo: Switching the footer to Default and back to Band
+  - tap: { id: card-band-footer-default }
+  - wait: 1000
+  - tap: { id: card-band-footer-band }

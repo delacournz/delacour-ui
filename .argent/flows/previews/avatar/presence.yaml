@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on avatar/presence and has settled —
+  Kate Austen with a green online dot. The capture script navigates there
+  before running this.
+steps:
+  - echo: Cycling through all four statuses, which lands back on online
+  - tap: { id: avatar-presence }
+  - wait: 600
+  - tap: { id: avatar-presence }
+  - wait: 600
+  - tap: { id: avatar-presence }
+  - wait: 600
+  - tap: { id: avatar-presence }

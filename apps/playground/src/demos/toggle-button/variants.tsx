@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Each variant off and on. Every state is a button variant, so the fill, the label and any icon change together. Tap one to flip it.",
 	align: "center",
-	capture: { hero: true },
+	capture: { flow: "toggle-button/variants", hero: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

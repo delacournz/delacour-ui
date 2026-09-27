@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on item/variants and has settled —
+  three items stacked, default, outline and muted. The capture script
+  navigates there before running this.
+steps:
+  - echo: Pressing and holding each variant in turn, so the press feedback reads
+  - long-press: { on: { id: item-default }, duration: 400 }
+  - wait: 200
+  - long-press: { on: { id: item-outline }, duration: 400 }
+  - wait: 200
+  - long-press: { on: { id: item-muted }, duration: 400 }

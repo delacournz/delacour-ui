@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on card/media and has settled — the
+  Lake Tekapo card, not saved. The capture script navigates there before
+  running this.
+steps:
+  - echo: Saving it and un-saving it, so the heart fills and clears
+  - tap: { id: card-media-save }
+  - wait: 900
+  - tap: { id: card-media-save }

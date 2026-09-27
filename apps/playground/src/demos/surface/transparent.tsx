@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Transparent",
 	caption:
 		"A transparent surface keeps the padding and the corner and paints nothing — so what is inside it still sits on the fill beneath. Toggle the wrapper: the inner panel steps from the card either way.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "surface/transparent" },
 };
 
 export function Demo(): ReactElement {

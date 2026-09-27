@@ -3,19 +3,21 @@ import { Field } from "@delacour/react-native-ui/field";
 import { Input } from "@delacour/react-native-ui/input";
 import { Text } from "@delacour/react-native-ui/text";
 import { Textarea } from "@delacour/react-native-ui/textarea";
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Feedback form",
 	caption:
-		"A textarea under a single-line field reads as the same control at a different height. Send it empty and the `Field` reports the error; start typing and it clears.",
+		"A textarea under a single-line field reads as the same control at a different height. Send it empty and the `Field` reports the error; start typing and it clears. The thank-you stays for two seconds, then the form is ready for the next one.",
 	keyboardAware: true,
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "textarea/feedback-form" },
 };
 
 const LIMIT = 500;
+
+const THANKS_MS = 2000;
 
 type Status = { kind: "editing"; attempted: boolean } | { kind: "sent"; length: number };
 
@@ -23,6 +25,12 @@ export function Demo(): ReactElement {
 	const [subject, setSubject] = useState("");
 	const [body, setBody] = useState("");
 	const [status, setStatus] = useState<Status>({ attempted: false, kind: "editing" });
+
+	useEffect(() => {
+		if (status.kind !== "sent") return;
+		const timer = setTimeout(() => setStatus({ attempted: false, kind: "editing" }), THANKS_MS);
+		return () => clearTimeout(timer);
+	}, [status]);
 
 	const isBodyInvalid = status.kind === "editing" && status.attempted && body.trim().length === 0;
 

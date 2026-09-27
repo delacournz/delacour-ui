@@ -1,0 +1,24 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on label/sign-up and has settled — three empty fields, no errors, the button reading Create account. The
+  capture script navigates there before running this.
+steps:
+  - echo: Submitting empty turns both required labels destructive
+  - tap: { id: submit }
+  - wait: 700
+  - echo: A name clears its own error
+  - tap: { id: name }
+  - wait: 200
+  - tool: keyboard
+    args: { text: "Ada", delayMs: 90 }
+  - wait: 600
+  - echo: Emptying the form starts it over, so every error goes
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 300
+  - echo: Return blurs the single-line field, so the clip loops unfocused
+  - tool: keyboard
+    args: { key: enter }

@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on accordion/a-glyph-beside-the-title and has
+  settled — one closed Delivery row with a truck glyph. The capture script navigates there before running this.
+steps:
+  - echo: Opening the row, so the glyph and title stay put while the chevron turns
+  - tap: { id: delivery }
+  - wait: 1200
+  - echo: And closing it, so the clip loops without a jump cut
+  - tap: { id: delivery }

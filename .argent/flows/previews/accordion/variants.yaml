@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on accordion/variants and has settled — four
+  accordions, one per variant, every row closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the first row of each variant
+  - tap: { id: variant-default }
+  - wait: 250
+  - tap: { id: variant-secondary }
+  - wait: 250
+  - tap: { id: variant-tertiary }
+  - wait: 250
+  - tap: { id: variant-transparent }
+  - wait: 700
+  - echo: And closing them again, so the clip loops without a jump cut
+  - tap: { id: variant-default }
+  - wait: 250
+  - tap: { id: variant-secondary }
+  - wait: 250
+  - tap: { id: variant-tertiary }
+  - wait: 250
+  - tap: { id: variant-transparent }

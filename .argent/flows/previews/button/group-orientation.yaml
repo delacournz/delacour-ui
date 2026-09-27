@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/group-orientation and has settled —
+  a horizontal pair and a vertical pair of icon buttons. The capture script navigates there before running this.
+steps:
+  - echo: Pressing each member of the horizontal run, then the vertical one
+  - long-press: { on: { id: horizontal-fewer }, duration: 260 }
+  - long-press: { on: { id: horizontal-more }, duration: 260 }
+  - wait: 150
+  - long-press: { on: { id: vertical-more }, duration: 260 }
+  - long-press: { on: { id: vertical-fewer }, duration: 260 }

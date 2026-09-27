@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on accordion/sizes and has settled — three
+  accordions, small to large, each with its one row open. The capture script navigates there before running this.
+steps:
+  - echo: Closing each size in turn, so the panel spring reads at every scale
+  - tap: { id: size-sm }
+  - wait: 350
+  - tap: { id: size-md }
+  - wait: 350
+  - tap: { id: size-lg }
+  - wait: 700
+  - echo: And opening them again, so the clip loops without a jump cut
+  - tap: { id: size-sm }
+  - wait: 350
+  - tap: { id: size-md }
+  - wait: 350
+  - tap: { id: size-lg }

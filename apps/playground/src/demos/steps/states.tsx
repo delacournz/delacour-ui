@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Loading, invalid, disabled and skipped",
 	caption:
 		"A spinner outranks a cross, which outranks a check. `completed={false}` leaves a passed optional step looking unfinished, and a disabled step fades and takes no press.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "steps/states" },
 };
 
 /** One labelled switch. A module-scope helper, so the demo reads as the stepper and its controls. */

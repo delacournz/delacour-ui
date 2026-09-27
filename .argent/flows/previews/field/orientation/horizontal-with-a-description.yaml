@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on field/orientation/horizontal-with-a-description
+  and has settled — two horizontal fields, Sync checked and Delete after 30 days
+  unchecked. The capture script navigates there before running this.
+steps:
+  - echo: Flipping both boxes
+  - tap: { id: sync }
+  - wait: 400
+  - tap: { id: delete-after-30-days }
+  - wait: 900
+  - echo: And back, so the clip loops without a jump cut
+  - tap: { id: sync }
+  - wait: 400
+  - tap: { id: delete-after-30-days }

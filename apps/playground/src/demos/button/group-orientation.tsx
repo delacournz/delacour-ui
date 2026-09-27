@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A vertical run squares top and bottom instead of the ends. Horizontal groups square the inline axis, so they flip under RTL.",
 	align: "center",
-	capture: {},
+	capture: { flow: "button/group-orientation" },
 };
 
 export function Demo(): ReactElement {

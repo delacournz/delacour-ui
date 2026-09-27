@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/group and has settled — two
+  three-member groups and a single-member one. The capture script navigates there before running this.
+steps:
+  - echo: Pressing and holding across each run, so the press feedback reads member by member
+  - long-press: { on: { id: group-archive }, duration: 260 }
+  - long-press: { on: { id: group-report }, duration: 260 }
+  - long-press: { on: { id: group-snooze }, duration: 260 }
+  - long-press: { on: { id: group-day }, duration: 260 }
+  - long-press: { on: { id: group-week }, duration: 260 }
+  - long-press: { on: { id: group-month }, duration: 260 }
+  - long-press: { on: { id: group-alone }, duration: 260 }

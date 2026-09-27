@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on spinner/colours and has settled — six
+  spinners in named, token and hex colours, already turning. The capture script navigates there before running this.
+steps:
+  - echo: Nothing to touch — a spinner is its motion, so this only holds the camera on it
+  - wait: 2000

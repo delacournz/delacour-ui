@@ -91,6 +91,11 @@ and `Chip.CloseButton`.
   action, labelled by `closeAccessibilityLabel`, that calls `onClose` —
   VoiceOver's Actions rotor, TalkBack's actions menu. A caller's own
   `accessibilityActions` are kept beside it.
+- **`closeTestID` reaches the composed close control.** The root's own `testID`
+  names the chip; the close part is a separate pressable with no id of its own
+  unless the root forwards one, so a flow or test could only find it by its label.
+  `closeTestID` is named like `closeAccessibilityLabel`, the other prop the root
+  passes through to it.
 - **`self-start` is Badge's, and beside a taller sibling in a row it top-aligns
   the chip.** It is what keeps a chip content-sized in a column, which is the
   common case; in a `flex-row items-center` holding something taller — a

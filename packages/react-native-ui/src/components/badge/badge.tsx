@@ -28,6 +28,8 @@ export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | 
 	onClose?: () => void;
 	/** Name a screen reader gives the dismiss control. Defaults to `Remove`. */
 	closeAccessibilityLabel?: string;
+	/** `testID` for the dismiss control, so a test or automation can press it. */
+	closeTestID?: string;
 	children?: ReactNode;
 };
 
@@ -38,6 +40,7 @@ function BadgeRoot({
 	isDisabled = false,
 	onClose,
 	closeAccessibilityLabel,
+	closeTestID,
 	onPress,
 	onLongPress,
 	haptic,
@@ -70,7 +73,9 @@ function BadgeRoot({
 		<IconDefaultsProvider value={iconDefaults}>
 			<TextClassProvider value={slots.label()}>
 				{content}
-				{onClose ? <BadgeCloseButton accessibilityLabel={closeAccessibilityLabel} onPress={onClose} /> : null}
+				{onClose ? (
+					<BadgeCloseButton accessibilityLabel={closeAccessibilityLabel} onPress={onClose} testID={closeTestID} />
+				) : null}
 			</TextClassProvider>
 		</IconDefaultsProvider>
 	);

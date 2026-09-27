@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on alert/custom-indicator and has settled.
+  The sync alert's 2.5 s timer has run out while the capture script waited for the
+  spinner to stop, so it reads "Library up to date" with a "Sync again" button, above
+  the text-only warning. The capture script navigates there before running this.
+steps:
+  - echo: Waiting for the sync to finish, in case the screen settled early
+  - await: { visible: { id: custom-sync-again } }
+  - wait: 400
+  - echo: Syncing again — the spinner replaces the glyph for 2.5 s
+  - tap: { id: custom-sync-again }
+  - await: { hidden: { id: custom-sync-again } }
+  - echo: Back to up to date, so the clip loops without a jump cut
+  - await: { visible: { id: custom-sync-again } }
+  - wait: 300

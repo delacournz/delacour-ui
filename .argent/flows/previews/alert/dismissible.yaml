@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on alert/dismissible and has settled — the
+  "Tip" and "Invite sent" alerts, each with its close control, above a Reset
+  button. The capture script navigates there before running this.
+steps:
+  - echo: Dismissing both alerts — each fades out and the layout follows
+  - tap: { id: dismissible-tip-close }
+  - wait: 600
+  - tap: { id: dismissible-success-close }
+  - wait: 700
+  - echo: Reset remounts them, so the clip loops without a jump cut
+  - tap: { id: dismissible-reset }
+  - await: { visible: { id: dismissible-tip-close } }

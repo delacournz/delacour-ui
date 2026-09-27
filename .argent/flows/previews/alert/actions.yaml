@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on alert/actions and has settled — the
+  "Sync failed" alert with no retries yet, and the "New: shared folders" alert
+  below it. The capture script navigates there before running this.
+steps:
+  - echo: Retrying — the button spins, then the description counts the retry
+  - tap: { id: actions-retry }
+  - wait: 1600
+  - echo: Got it closes the second alert from inside it, through useAlert().dismiss
+  - tap: { id: actions-got-it }
+  - await: { visible: { id: actions-reset } }
+  - wait: 500
+  - echo: Reset clears the count and brings the alert back, so the clip loops
+  - tap: { id: actions-reset }
+  - await: { visible: { id: actions-got-it } }

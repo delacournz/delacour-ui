@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on alert/checkout and has settled — the
+  order card with a "Card declined" alert and its "Try again" button. The capture
+  script navigates there before running this.
+steps:
+  - echo: Retrying the charge — the button spins for 1.2 s, then the alert turns to success
+  - tap: { id: checkout-retry }
+  - await: { visible: { id: checkout-reset } }
+  - wait: 1000
+  - echo: Starting over, so the clip loops back to the declined card
+  - tap: { id: checkout-reset }
+  - await: { visible: { id: checkout-retry } }

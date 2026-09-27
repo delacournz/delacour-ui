@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Checkout",
 	caption:
 		"A failed payment as an app would show it: the alert sits inside the order card, retries in place, and turns to success when the charge goes through.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "alert/checkout" },
 };
 
 type Payment = { state: "failed" } | { state: "retrying" } | { state: "paid"; reference: string };

@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on chip/removable and has settled — six
+  topic chips, Reanimated and Expo selected, and no Reset row. The capture script
+  navigates there before running this.
+steps:
+  - echo: Removing Reanimated, a selected chip — its remove control never toggles it
+  - tap: { id: topic-1-close }
+  - wait: 600
+  - echo: The row reflows, so Expo is now at index 3
+  - tap: { id: topic-3-close }
+  - wait: 700
+  - echo: Reset brings all six back, selection intact, so the clip loops
+  - tap: { id: reset-topics }
+  - await: { hidden: { id: reset-topics } }

@@ -7,8 +7,8 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Actions",
 	caption:
-		"`Alert.Action` is a wrapping row under the description, and the buttons in it are the caller's. `useAlert().dismiss` closes the alert from inside.",
-	capture: { align: "stretch" },
+		"`Alert.Action` is a wrapping row under the description, and the buttons in it are the caller's. `useAlert().dismiss` closes the alert from inside. Reset brings it back.",
+	capture: { align: "stretch", flow: "alert/actions" },
 };
 
 /** An action that closes the alert it sits in, with no setter passed down. */
@@ -24,6 +24,12 @@ function GotIt(): ReactElement {
 export function Demo(): ReactElement {
 	const [isRetrying, setRetrying] = useState(false);
 	const [attempts, setAttempts] = useState(0);
+	const [isWhatsNewOpen, setWhatsNewOpen] = useState(true);
+
+	const reset = () => {
+		setAttempts(0);
+		setWhatsNewOpen(true);
+	};
 
 	useEffect(() => {
 		if (!isRetrying) return;
@@ -61,7 +67,7 @@ export function Demo(): ReactElement {
 					</Alert.Action>
 				</Alert.Content>
 			</Alert>
-			<Alert status="info" testID="actions-whats-new">
+			<Alert isOpen={isWhatsNewOpen} onOpenChange={setWhatsNewOpen} status="info" testID="actions-whats-new">
 				<Alert.Indicator />
 				<Alert.Content>
 					<Alert.Title>New: shared folders</Alert.Title>
@@ -71,6 +77,11 @@ export function Demo(): ReactElement {
 					</Alert.Action>
 				</Alert.Content>
 			</Alert>
+			{isWhatsNewOpen ? null : (
+				<Button className="self-center" onPress={reset} size="sm" testID="actions-reset" variant="outline">
+					Reset
+				</Button>
+			)}
 		</View>
 	);
 }

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Removable",
 	caption:
 		"`onClose` adds a remove control with a press of its own. On these selectable chips, removing one never also toggles it.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "chip/removable" },
 };
 
 const TOPICS = ["React Native", "Reanimated", "Uniwind", "Gesture Handler", "Expo", "Skia"] as const;
@@ -33,6 +33,7 @@ export function Demo(): ReactElement {
 				{topics.map((topic, index) => (
 					<Chip
 						closeAccessibilityLabel={`Remove ${topic}`}
+						closeTestID={`topic-${index}-close`}
 						color="primary"
 						isSelected={followed.has(topic)}
 						key={topic}
@@ -44,9 +45,9 @@ export function Demo(): ReactElement {
 					</Chip>
 				))}
 			</View>
-			{topics.length === 0 ? (
+			{topics.length < TOPICS.length ? (
 				<View className="flex-row items-center gap-3">
-					<Text.Caption color="muted">All removed.</Text.Caption>
+					{topics.length === 0 ? <Text.Caption color="muted">All removed.</Text.Caption> : null}
 					<Button onPress={() => setTopics(TOPICS)} size="sm" testID="reset-topics" variant="secondary">
 						Reset
 					</Button>

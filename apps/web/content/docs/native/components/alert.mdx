@@ -99,6 +99,8 @@ A size moves the padding, the gap, the type and the glyph together.
 `isDismissible` adds a close control. Left uncontrolled, the alert hides itself when it is pressed;
 pass `isOpen` and `onOpenChange` to own that state.
 
+<Preview id="alert/dismissible" />
+
 ```tsx
 const [isOpen, setOpen] = useState(true);
 
@@ -207,6 +209,7 @@ Extends [Surface](/docs/native/components/surface)'s props, less `variant` and `
     defaultOpen: { type: "boolean", default: "true", description: "Whether an uncontrolled alert starts shown." },
     onOpenChange: { type: "(isOpen: boolean) => void", description: "Called with `false` when the alert is dismissed." },
     closeAccessibilityLabel: { type: "string", default: '"Dismiss"' },
+    closeTestID: { type: "string", description: "The `testID` of the composed close control." },
     className: { type: "string" },
     children: { type: "ReactNode" },
   }}

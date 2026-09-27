@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on badge/dismissible and has settled — six
+  soft primary badges, each with a dismiss control, and no Reset row. The capture
+  script navigates there before running this.
+steps:
+  - echo: Dismissing Reanimated, then Gesture Handler (index 2 once the row has reflowed)
+  - tap: { id: tag-1-close }
+  - wait: 600
+  - tap: { id: tag-2-close }
+  - wait: 700
+  - echo: Reset brings all six back, so the clip loops without a jump cut
+  - tap: { id: reset-tags }
+  - await: { hidden: { id: reset-tags } }

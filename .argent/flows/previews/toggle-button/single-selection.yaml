@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toggle-button/single-selection and
+  has settled — alignment on left, range on Week. The capture script
+  navigates there before running this.
+steps:
+  - echo: Moving the alignment across, each pick clearing the last
+  - tap: { id: alignment-center }
+  - wait: 450
+  - tap: { id: alignment-right }
+  - wait: 450
+  - tap: { id: range-month }
+  - wait: 800
+  - echo: And back to where it began, so the clip loops without a jump cut
+  - tap: { id: range-week }
+  - wait: 450
+  - tap: { id: alignment-left }

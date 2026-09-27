@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on item/in-a-list-group and has
+  settled — airplane mode off, Wi-Fi enabled, notifications on. The capture
+  script navigates there before running this.
+steps:
+  - echo: Airplane mode on, which disables the Wi-Fi row
+  - tap: { id: item-airplane }
+  - wait: 900
+  - tap: { id: item-notifications }
+  - wait: 700
+  - echo: And both back, so the clip loops without a jump cut
+  - tap: { id: item-notifications }
+  - wait: 500
+  - tap: { id: item-airplane }

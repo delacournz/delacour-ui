@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Media",
 	caption:
 		'The padding lives on the parts and the card clips, so media placed straight in it reaches the side edges. `className="pt-0"` bleeds it to the top as well.',
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "card/media" },
 };
 
 export function Demo(): ReactElement {

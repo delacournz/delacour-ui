@@ -18,7 +18,7 @@ export const meta: DemoMeta = {
 	title: "Filter row",
 	caption:
 		"Controlled, multi-select. The screen owns the set and the chips report into it — the count and the clear action read the same state the chips paint.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "chip/filter-row", hero: true },
 };
 
 type Cuisine = "pizza" | "burgers" | "world" | "favourites" | "top-rated";

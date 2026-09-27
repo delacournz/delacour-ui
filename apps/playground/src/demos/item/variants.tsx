@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Variants",
 	caption: "`default` draws no surface, `outline` a hairline border, `muted` a fill.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "item/variants" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

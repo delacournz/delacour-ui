@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on card/plan-picker and has settled —
+  three plan cards, Pro outlined and checked, Legacy retired. The capture
+  script navigates there before running this.
+steps:
+  - echo: Picking Hobby, then back to Pro
+  - tap: { id: card-plan-hobby }
+  - wait: 900
+  - tap: { id: card-plan-pro }

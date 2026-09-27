@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A set of independent marks — bold *and* italic. The group holds one array of values and `onSelected` fires with the whole new list.",
 	align: "center",
-	capture: {},
+	capture: { flow: "toggle-button/formatting" },
 };
 
 const MARKS = [

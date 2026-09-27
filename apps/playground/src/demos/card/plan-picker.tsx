@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	title: "Plan picker",
 	caption:
 		"A card is layout, so a card that selects is a `Pressable` around it. The selection is controlled, the chosen card is outlined in the primary colour, and the retired plan is disabled.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "card/plan-picker" },
 };
 
 type Plan = {

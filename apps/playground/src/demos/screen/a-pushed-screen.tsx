@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	title: "A pushed screen",
 	caption:
 		"The leading slot, the trailing `actions` and the sticky footer, on the screen a row was tapped to reach. The title and subtitle stack inside the back control so the whole block shares its tap target, and `min-w-0 flex-1` truncates a long name to one line rather than pushing the actions off the right edge.",
-	capture: { frame: "device" },
+	capture: { flow: "screen/a-pushed-screen", frame: "device" },
 };
 
 const NOTES = [

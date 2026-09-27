@@ -46,6 +46,11 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   with `fade` rather than the root's `scale` — a spring on a glyph that small
   reads as a jitter. Reach for the part by hand only to place it somewhere other
   than last.
+- **`closeTestID` reaches the composed close control.** The root's own `testID`
+  names the badge; the close part is a separate pressable with no id of its own
+  unless the root forwards one, so a flow or test could only find it by its label.
+  `closeTestID` is named like `closeAccessibilityLabel`, the other prop the root
+  passes through to it.
 - **A size is padding, never a height.** `Text` respects OS font scaling, so a
   fixed height clips the label at a large accessibility step instead of growing
   with it — and unlike `h-button-*` or `h-navbar-row`, a badge lines up against

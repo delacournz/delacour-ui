@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on steps/states and has settled — four vertical
+  steps, Verify email current and invalid, Confirm disabled; the loading switch
+  off and the other two on. The capture script navigates there before running this.
+steps:
+  - echo: Loading outranks invalid, so the cross becomes a spinner
+  - tap: { id: steps-toggle-loading }
+  - wait: 900
+  - tap: { id: steps-toggle-loading }
+  - wait: 400
+  - echo: Enabling Confirm, then disabling it again, so the clip loops without a jump cut
+  - tap: { id: steps-toggle-disabled }
+  - wait: 800
+  - tap: { id: steps-toggle-disabled }

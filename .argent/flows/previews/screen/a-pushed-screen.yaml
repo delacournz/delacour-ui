@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on screen/a-pushed-screen with the whole device
+  frame and has settled — Ada Lovelace's pushed screen, with a back control and a
+  sticky Done button. The capture script navigates there before running this.
+steps:
+  - echo: Going back to the contacts list
+  - tap: { id: back }
+  - wait: 900
+  - echo: And tapping the row again, so the clip loops on the pushed screen
+  - tap: { id: row-ada }

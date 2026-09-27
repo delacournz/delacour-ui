@@ -40,6 +40,8 @@ export type ChipProps = Omit<PressableProps, "asChild" | "busy" | "children" | "
 	onClose?: () => void;
 	/** Name a screen reader gives the remove control. Defaults to `Remove`. */
 	closeAccessibilityLabel?: string;
+	/** `testID` for the remove control, so a test or automation can press it. */
+	closeTestID?: string;
 	children?: ReactNode;
 };
 
@@ -53,6 +55,7 @@ function ChipRoot({
 	isDisabled = false,
 	onClose,
 	closeAccessibilityLabel,
+	closeTestID,
 	onPress,
 	onLongPress,
 	haptic,
@@ -115,6 +118,7 @@ function ChipRoot({
 						accessibilityLabel={closeAccessibilityLabel}
 						importantForAccessibility={closeHidden ? "no-hide-descendants" : "auto"}
 						onPress={onClose}
+						testID={closeTestID}
 					/>
 				) : null}
 			</TextClassProvider>

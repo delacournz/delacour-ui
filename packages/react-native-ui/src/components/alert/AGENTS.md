@@ -87,6 +87,11 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
   alert rather than part of what it says, and a red cross beside a red title
   reads as a second warning. It presses with `fade` — a spring on a glyph that
   small is a jitter — and carries `hitSlop={10}` to reach the 44-point target.
+- **`closeTestID` reaches the composed close control.** The root's own `testID`
+  names the alert's surface; the close part is a separate pressable with no id of its own
+  unless the root forwards one, so a flow or test could only find it by its label.
+  `closeTestID` is named like `closeAccessibilityLabel`, the other prop the root
+  passes through to it.
 - **Actions are the caller's.** `Alert.Action` is a wrapping row and styles
   nothing in it; a `Button` in there is sized and painted however the caller
   says. It wraps rather than overflowing, because two buttons and a long label

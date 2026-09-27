@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Variants",
 	caption:
 		"`ListGroup`'s set, because an accordion is the same kind of thing and the two sit beside each other on a screen. The variant paints the root alone — a trigger and a panel look the same in all four.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "accordion/variants" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

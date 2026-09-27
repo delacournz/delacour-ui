@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Icon button",
 	caption: "An `icon-*` size squares the footprint. The glyph needs an `accessibilityLabel`.",
 	align: "center",
-	capture: {},
+	capture: { flow: "button/icon-button" },
 };
 
 const LABELS: Record<ButtonIconSize, string> = {

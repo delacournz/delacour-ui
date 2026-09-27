@@ -41,6 +41,8 @@ export type AlertProps = Omit<SurfaceProps, "variant" | "padding"> & {
 	onOpenChange?: (isOpen: boolean) => void;
 	/** Name a screen reader gives the dismiss control. Defaults to `Dismiss`. */
 	closeAccessibilityLabel?: string;
+	/** `testID` for the dismiss control, so a test or automation can press it. */
+	closeTestID?: string;
 	children?: ReactNode;
 };
 
@@ -53,6 +55,7 @@ function AlertRoot({
 	defaultOpen = true,
 	onOpenChange,
 	closeAccessibilityLabel,
+	closeTestID,
 	className,
 	children,
 	...props
@@ -90,7 +93,9 @@ function AlertRoot({
 				>
 					<IconDefaultsProvider value={iconDefaults}>
 						{children}
-						{isDismissible ? <AlertCloseButton accessibilityLabel={closeAccessibilityLabel} /> : null}
+						{isDismissible ? (
+							<AlertCloseButton accessibilityLabel={closeAccessibilityLabel} testID={closeTestID} />
+						) : null}
 					</IconDefaultsProvider>
 				</Surface>
 			</Animated.View>

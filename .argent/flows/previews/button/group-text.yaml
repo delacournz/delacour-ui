@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/group-text and has settled — a
+  stepper around "12 items" and a https:// prefix before a domain. The capture script navigates there before running this.
+steps:
+  - echo: Pressing the buttons beside each text member; the text itself takes no press
+  - long-press: { on: { id: stepper-fewer }, duration: 260 }
+  - wait: 150
+  - long-press: { on: { id: stepper-more }, duration: 260 }
+  - wait: 150
+  - long-press: { on: { id: labelled-domain }, duration: 260 }

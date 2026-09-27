@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on alert/custom-indicator — the sync alert
+  still spinning on "Syncing your library" above the text-only warning. The capture
+  script's idle gate settles before the 2.5 s timer runs out, because the spinner is
+  too small to hold it, so the clip opens mid-sync. The capture script navigates
+  there before running this.
+steps:
+  - echo: Letting the sync finish — the spinner gives way to the cloud glyph
+  - await: { visible: { id: custom-sync-again } }
+  - wait: 1000
+  - echo: Syncing again, and stopping mid-sync so the clip loops back to its opening
+  - tap: { id: custom-sync-again }
+  - await: { hidden: { id: custom-sync-again } }
+  - wait: 400

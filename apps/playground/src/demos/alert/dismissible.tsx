@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Dismissible",
 	caption:
 		"Uncontrolled: `isDismissible` adds the close control and the alert hides itself when it is pressed. Reset remounts them.",
+	capture: { align: "stretch", flow: "alert/dismissible" },
 };
 
 export function Demo(): ReactElement {
@@ -15,14 +16,20 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-3">
-			<Alert isDismissible key={`tip-${round}`} testID="dismissible-tip">
+			<Alert closeTestID="dismissible-tip-close" isDismissible key={`tip-${round}`} testID="dismissible-tip">
 				<Alert.Indicator />
 				<Alert.Content>
 					<Alert.Title>Tip</Alert.Title>
 					<Alert.Description>Swipe left on a message to archive it.</Alert.Description>
 				</Alert.Content>
 			</Alert>
-			<Alert isDismissible key={`success-${round}`} status="success" testID="dismissible-success">
+			<Alert
+				closeTestID="dismissible-success-close"
+				isDismissible
+				key={`success-${round}`}
+				status="success"
+				testID="dismissible-success"
+			>
 				<Alert.Indicator />
 				<Alert.Content>
 					<Alert.Title>Invite sent</Alert.Title>

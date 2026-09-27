@@ -46,7 +46,7 @@ const PACKAGE_JSON = {
 		tailwindcss: "^4.3.3",
 	},
 	devDependencies: {
-		"@types/react": "~19.2.2",
+		"@types/react": "~19.3.0",
 		typescript: "^5.9.3",
 	},
 };

@@ -1,5 +1,11 @@
 import { useMemo } from "react";
-import { Gesture, type GestureType } from "react-native-gesture-handler";
+import {
+	type ComposedGesture,
+	type PanGesture,
+	type PanGestureConfig,
+	type SingleGesture,
+	usePanGesture,
+} from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
 import { closestIndex } from "../core/interaction/closest-index";
 import { getYForX } from "../core/interaction/y-for-x";
@@ -16,7 +22,7 @@ export type UseScrubGestureOptions = {
 	readonly model: SharedValue<ScrubModel>;
 	readonly config?: ScrubConfig;
 	/** The scrollable's gesture to out-prioritise, for `behaviour: "block"`. */
-	readonly blocks?: GestureType;
+	readonly blocks?: SingleGesture | ComposedGesture;
 };
 
 /**
@@ -33,12 +39,16 @@ export type UseScrubGestureOptions = {
  * a bar has no curve to slide along — so every series reports its snapped
  * point twice.
  *
- * The handlers are built inside this `useMemo`, so they close over
+ * The handlers close over `apply`, a hook-scope worklet that reaches
  * `closestIndex`, `getYForX`, `invertValue` and `clamp` in the ordinary way.
  * See the package AGENTS.md: that is legal precisely because these are not
  * module-scope worklets.
+ *
+ * The pan hook runs on every render — the rules of hooks allow no early return —
+ * so a chart with nothing to scrub still holds one, disabled, and `null` is
+ * returned in its place so no overlay is mounted for it.
  */
-export function useScrubGesture(options: UseScrubGestureOptions): GestureType | null {
+export function useScrubGesture(options: UseScrubGestureOptions): PanGesture | null {
 	const { state, model, config, blocks } = options;
 	const enabled = (config?.enabled ?? true) && state !== undefined;
 	const behaviour = config?.behaviour ?? "hold";
@@ -47,43 +57,49 @@ export function useScrubGesture(options: UseScrubGestureOptions): GestureType | 
 
 	const apply = useScrubApply(state, model);
 
-	return useMemo(() => {
-		if (state === undefined || apply === null) return null;
-
-		const finish = (): void => {
-			"worklet";
-			state.isActive.value = false;
-		};
-
-		let pan = Gesture.Pan()
-			.enabled(enabled)
-			.averageTouches(true)
-			// A finger dragged above or below the plot keeps scrubbing. Cancelling
-			// there strands the dot mid-gesture for anyone whose thumb drifts.
-			.shouldCancelWhenOutside(false)
-			.onStart((event) => {
-				"worklet";
-				state.isActive.value = true;
-				apply(event.x, event.y);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				apply(event.x, event.y);
-			})
-			// onFinalize, never onEnd: a gesture that fails after activating never
-			// fires onEnd, and the dot is stranded on screen until the next touch.
-			.onFinalize(finish);
-
-		if (behaviour === "hold") pan = pan.activateAfterLongPress(holdDuration);
+	// Only the options the behaviour names. `activateAfterLongPress`, the offsets
+	// and `block` each change how the pan activates just by being present.
+	const activation = useMemo((): PanGestureConfig => {
+		if (behaviour === "hold") return { activateAfterLongPress: holdDuration };
 		if (behaviour === "claim") {
-			pan = pan
-				.activeOffsetX([-activationDistance, activationDistance])
-				.failOffsetY([-activationDistance, activationDistance]);
+			return {
+				activeOffsetX: [-activationDistance, activationDistance],
+				failOffsetY: [-activationDistance, activationDistance],
+			};
 		}
-		if (behaviour === "block" && blocks !== undefined) pan = pan.blocksExternalGesture(blocks);
+		if (behaviour === "block" && blocks !== undefined) return { block: blocks };
+		return {};
+	}, [behaviour, holdDuration, activationDistance, blocks]);
 
-		return pan;
-	}, [state, apply, enabled, behaviour, holdDuration, activationDistance, blocks]);
+	const pan = usePanGesture({
+		...activation,
+		enabled: enabled && apply !== null,
+		averageTouches: true,
+		// A finger dragged above or below the plot keeps scrubbing. Cancelling
+		// there strands the dot mid-gesture for anyone whose thumb drifts.
+		shouldCancelWhenOutside: false,
+		onActivate: (event) => {
+			"worklet";
+			if (state === undefined || apply === null) return;
+			state.isActive.value = true;
+			apply(event.x, event.y);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			if (apply === null) return;
+			apply(event.x, event.y);
+		},
+		// onFinalize, never onDeactivate alone: it is the one callback that runs
+		// on every path out of the gesture, so the dot is never stranded on screen
+		// until the next touch.
+		onFinalize: () => {
+			"worklet";
+			if (state === undefined) return;
+			state.isActive.value = false;
+		},
+	});
+
+	return state === undefined || apply === null ? null : pan;
 }
 
 type ScrubApply = (touchX: number, touchY: number) => void;

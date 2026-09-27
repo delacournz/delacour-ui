@@ -243,7 +243,8 @@ react-native-svg 15.16.0  react-native-worklets 0.13.0
 
 Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
-fails at the linker rather than at install.
+fails at the linker rather than at install. SDK 58 is the first to bundle Gesture Handler 3, whose
+gesture hooks every gesture in `react-native-ui` and `react-native-charts` is built on.
 
 `react-native-skia` is the one exception. SDK 58 bundles `@shopify/react-native-skia` 2.14, the last
 release under that name; v3 moved to `react-native-skia` and draws through Graphite, so `expo install`

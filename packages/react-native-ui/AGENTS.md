@@ -12,7 +12,11 @@ React Native component kit. Do not add one, and do not port patterns from one.
 - **tailwind-variants** (`tv`) — variant systems
 - **react-native-reanimated** — UI-thread animation
 - **react-native-worklets** — worklet threading (`scheduleOnRN`, `scheduleOnUI`)
-- **react-native-gesture-handler** — the Gesture API
+- **react-native-gesture-handler** 3 — the gesture hooks (`usePanGesture`,
+  `useTapGesture`, `useSimultaneousGestures`). Never the v2 builder
+  (`Gesture.Pan()`), which v3 keeps only for compatibility. A hook runs every
+  render, so a gesture a component does not always need is mounted with
+  `enabled: false` rather than skipped — see [Pressable](src/components/pressable/AGENTS.md)
 - **react-native-pulsar** — worklet-callable haptics
 - **Central Icons** — the icon set (never Lucide, Hugeicons, or anything else)
 

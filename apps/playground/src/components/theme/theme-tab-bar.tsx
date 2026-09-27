@@ -12,6 +12,7 @@ export type ThemeTabBarProps = {
 	emitter: {
 		emit: (event: { canPreventDefault: true; target: string; type: "tabPress" }) => { defaultPrevented: boolean };
 	};
+	/** Switches to a tab by its route key — the navigator's own, since Expo Router 58 hands no `navigation`. */
 	navigateToTab: (routeKey: string) => void;
 	/**
 	 * The pager's live offset, in page units, as a React Native `Animated` node.

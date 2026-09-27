@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on surface/transparent and has
+  settled — the wrapper switch on, the dashed transparent wrapper around the
+  inner panel. The capture script navigates there before running this.
+steps:
+  - echo: Unwrapping the panel and wrapping it again — its fill does not change
+  - tap: { id: transparent-toggle }
+  - wait: 1000
+  - tap: { id: transparent-toggle }

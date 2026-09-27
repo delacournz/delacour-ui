@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Footer band",
 	caption:
 		'`variant="band"` sets the footer into the card: a rule across its top, the next fill down, and the card\'s own bottom corners — for a footer that is what somebody does with the card rather than more of what it says.',
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "card/footer-band" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

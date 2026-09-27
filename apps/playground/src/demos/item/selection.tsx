@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Selection",
 	caption: "`isSelected` lays the accent over the row and announces it as selected; the check is composed in.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "item/selection" },
 };
 
 const PLANS = [

@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on surface/nesting and has settled —
+  three nested surfaces, "3 levels" between the buttons. The capture script
+  navigates there before running this.
+steps:
+  - echo: Adding two levels, so each new one steps from the last
+  - tap: { id: nesting-add }
+  - wait: 450
+  - tap: { id: nesting-add }
+  - wait: 800
+  - echo: And removing them again, so the clip loops without a jump cut
+  - tap: { id: nesting-remove }
+  - wait: 450
+  - tap: { id: nesting-remove }

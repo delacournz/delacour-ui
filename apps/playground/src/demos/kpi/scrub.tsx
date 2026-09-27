@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Scrub",
 	caption:
 		"Hold the sparkline and drag. A dot rides the line and the value follows it — the KPI holds the scrubbed point itself, and `useKpi()` reads it from a part of your own. Let go and it returns to the latest.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "kpi/scrub" },
 };
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;

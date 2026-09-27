@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Nesting",
 	caption:
 		"None of these surfaces names a variant. Each reads the one it sits in and steps to the next fill, so a panel inside a card never vanishes into it. Add and remove levels to watch it step.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch", flow: "surface/nesting", hero: true },
 };
 
 const MIN_DEPTH = 1;

@@ -16,7 +16,7 @@ export const meta: DemoMeta = {
 	caption:
 		'`selectionMode="single"` is an either-or choice: picking one clears the last. `isSelectionRequired` keeps an answer on the board, so a re-press of the current one does nothing. Each option is announced as a radio.',
 	align: "center",
-	capture: {},
+	capture: { flow: "toggle-button/single-selection" },
 };
 
 const ALIGNMENTS = [

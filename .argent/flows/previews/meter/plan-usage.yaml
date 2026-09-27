@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on meter/plan-usage and has settled — a Team plan card on
+  day 24 of 30 with three quotas, and Simulate a day and Reset buttons below. The capture script
+  navigates there before running this.
+steps:
+  - echo: Simulating three days, which pushes the quotas past their warning and destructive marks
+  - tap: { id: meter-quota-simulate }
+  - wait: 450
+  - tap: { id: meter-quota-simulate }
+  - wait: 450
+  - tap: { id: meter-quota-simulate }
+  - wait: 800
+  - echo: Resetting to day 24, so the clip loops where it began
+  - tap: { id: meter-quota-reset }

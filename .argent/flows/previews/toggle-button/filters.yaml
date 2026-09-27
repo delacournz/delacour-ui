@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toggle-button/filters and has
+  settled — Open and In review on, three tasks listed. The capture script
+  navigates there before running this.
+steps:
+  - echo: Adding Done and dropping Open, so the list reshapes twice
+  - tap: { id: filter-done }
+  - wait: 600
+  - tap: { id: filter-open }
+  - wait: 800
+  - echo: And back to Open and In review, so the clip loops without a jump cut
+  - tap: { id: filter-open }
+  - wait: 600
+  - tap: { id: filter-done }

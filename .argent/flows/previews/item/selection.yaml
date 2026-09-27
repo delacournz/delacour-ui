@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on item/selection and has settled —
+  three plans, Yearly selected with its check. The capture script navigates
+  there before running this.
+steps:
+  - echo: Moving the selection down the list and back
+  - tap: { id: item-lifetime }
+  - wait: 600
+  - tap: { id: item-monthly }
+  - wait: 600
+  - tap: { id: item-yearly }

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Given children, `Avatar.Badge` only pins them — a `Badge` keeps the look it has everywhere else, and hangs over the edge of the circle without being clipped.",
-	capture: {},
+	capture: { flow: "avatar/unread-count" },
 };
 
 export function Demo(): ReactElement {

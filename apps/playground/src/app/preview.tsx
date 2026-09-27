@@ -3,7 +3,7 @@ import { Text } from "@delacour/react-native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { type ComponentRef, type ReactElement, useCallback, useLayoutEffect, useRef, useState } from "react";
-import { Dimensions, View } from "react-native";
+import { Dimensions, Keyboard, Pressable, View } from "react-native";
 import { Uniwind } from "uniwind";
 import { DEMOS, type DemoId } from "@/demos/registry";
 import { applyConfig } from "@/design-system/store";
@@ -91,6 +91,7 @@ export default function Preview(): ReactElement {
 			<Stack.Screen options={{ animation: "none" }} />
 			<StatusBar hidden />
 			{bounds ? <Sentinel bounds={bounds} id={id} theme={applied} /> : null}
+			<KeyboardDismiss />
 			<View className={stageClass} key={`${id}:${applied}`} onLayout={measure} ref={stage}>
 				<Demo />
 			</View>
@@ -136,6 +137,32 @@ function useAppliedTheme(requested: PreviewTheme): PreviewTheme | null {
 	}, [requested]);
 
 	return applied;
+}
+
+/**
+ * An invisible strip across the top of the screen that blurs whatever is focused.
+ *
+ * A single-line field blurs on return, so its flow ends on `{ key: enter }`. A
+ * textarea takes return as a newline, and the stage is a bare `View` — no
+ * `ScrollView` to dismiss the keyboard on a tap outside — so without this a
+ * textarea's flow has no way back to the unfocused frame it started on, and the
+ * clip jump-cuts at the seam. A flow taps `preview-dismiss-keyboard` instead.
+ *
+ * Along the top edge rather than behind the stage, because an `id:` tap lands on
+ * the centre of the element's frame, and the centre of a full-screen backdrop is
+ * the demo itself. The top edge is outside every stage crop. Tall enough that its
+ * centre clears the Dynamic Island, which swallows a touch before the app sees it —
+ * at 64 points tall the tap landed on the island and nothing blurred.
+ */
+function KeyboardDismiss(): ReactElement {
+	return (
+		<Pressable
+			accessible={false}
+			className="absolute inset-x-0 top-0 h-32"
+			onPress={() => Keyboard.dismiss()}
+			testID="preview-dismiss-keyboard"
+		/>
+	);
 }
 
 /**

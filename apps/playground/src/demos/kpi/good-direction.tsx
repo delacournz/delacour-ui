@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	title: "Which way is good",
 	caption:
 		"Colour comes from what the movement means, not from its sign. Drag the change: revenue reads a rise as good news, churn reads the same rise as bad, and headcount reads it as neither.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "kpi/good-direction" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

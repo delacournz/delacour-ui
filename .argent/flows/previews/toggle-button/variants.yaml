@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toggle-button/variants and has
+  settled — three rows, each variant off on the left and on on the right. The
+  capture script navigates there before running this.
+steps:
+  - echo: Flipping each off button on, top to bottom
+  - tap: { id: variant-default-off }
+  - wait: 350
+  - tap: { id: variant-outline-off }
+  - wait: 350
+  - tap: { id: variant-ghost-off }
+  - wait: 800
+  - echo: And off again, so the clip loops without a jump cut
+  - tap: { id: variant-ghost-off }
+  - wait: 350
+  - tap: { id: variant-outline-off }
+  - wait: 350
+  - tap: { id: variant-default-off }

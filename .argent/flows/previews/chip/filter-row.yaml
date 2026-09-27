@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on chip/filter-row and has settled —
+  five filter chips with Pizza and 4.5+ selected, "2 active · 74 places"
+  beneath. The capture script navigates there before running this.
+steps:
+  - echo: Adding Burgers and World food, and watching the count follow
+  - tap: { id: filter-burgers }
+  - wait: 450
+  - tap: { id: filter-world }
+  - wait: 800
+  - echo: Taking them off again, so the clip loops without a jump cut
+  - tap: { id: filter-world }
+  - wait: 450
+  - tap: { id: filter-burgers }

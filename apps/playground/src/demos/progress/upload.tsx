@@ -9,7 +9,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "An upload queue",
 	note: "A composed card: each row's bar is fed by a ticking upload, counts in megabytes through formatOptions, and turns success when it lands or destructive when it fails. Start, pause and retry are ordinary state — the bar only ever renders the value it is handed.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "progress/upload" },
 };
 
 type Status = { kind: "waiting" } | { kind: "uploading" } | { kind: "paused" } | { kind: "failed" } | { kind: "done" };

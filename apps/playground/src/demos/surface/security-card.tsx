@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	title: "Security card",
 	caption:
 		"A settings card as an app would write it. The inner panels name no variant — they step from the card — and the switch is controlled, so the status line follows it.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "surface/security-card" },
 };
 
 export function Demo(): ReactElement {

@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on chip/sizes and has settled — three
+  rows, small to large, only Medium selected. The capture script navigates
+  there before running this.
+steps:
+  - echo: Selecting Small and Large, so every size shows both states
+  - tap: { id: size-sm }
+  - wait: 450
+  - tap: { id: size-lg }
+  - wait: 800
+  - echo: And clearing them again, so the clip loops without a jump cut
+  - tap: { id: size-lg }
+  - wait: 450
+  - tap: { id: size-sm }

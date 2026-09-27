@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on label/beside-a-switch and has settled — Notifications on, Location sharing on and disabled. The
+  capture script navigates there before running this.
+steps:
+  - echo: Tapping the label drives the switch off
+  - tap: { id: notifications-label }
+  - wait: 800
+  - echo: And the switch itself turns it back on
+  - tap: { id: notifications }

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`autoGrow` starts at `rows` and grows a line at a time up to `maxRows`, then scrolls. Clear it and it goes back to two rows, not one.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "textarea/auto-grow" },
 };
 
 export function Demo(): ReactElement {

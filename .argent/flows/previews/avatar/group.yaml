@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on avatar/group and has settled —
+  four faces and a +3, "max 4" between the buttons. The capture script
+  navigates there before running this.
+steps:
+  - echo: Raising max so the +N counts down, then back
+  - tap: { id: group-more }
+  - wait: 450
+  - tap: { id: group-more }
+  - wait: 800
+  - tap: { id: group-fewer }
+  - wait: 450
+  - tap: { id: group-fewer }

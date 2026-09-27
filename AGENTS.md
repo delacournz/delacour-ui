@@ -142,15 +142,26 @@ Shared native and React versions are pinned once, in the root `package.json`
 `workspaces.catalog`, and referenced as `catalog:` from each package:
 
 ```
-@legendapp/list  @shopify/react-native-skia 2.6.2  react 19.2.3  react-native 0.86.2
-react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-reanimated 4.5.1
-react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0  react-native-svg 15.15.4
-react-native-worklets 0.10.1
+@legendapp/list  @shopify/react-native-skia 2.11.2  react 19.3.0  react-native 0.88.0-rc.1
+react-native-gesture-handler ~3.2.1  react-native-keyboard-controller  react-native-reanimated 4.7.0
+react-native-safe-area-context ~5.9.1  react-native-screens ~4.28.0  react-native-svg 15.15.5
+react-native-worklets 0.13.0
 ```
 
-Every version here is the one Expo SDK 57 bundles. That is the rule, not a coincidence: `expo
+Every version here is the one Expo SDK 58 bundles — `expo@58.0.0-preview.7`'s
+`bundledNativeModules.json`, while 58 is in preview. That is the rule, not a coincidence: `expo
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
-fails at the linker rather than at install.
+fails at the linker rather than at install. SDK 58 is the first to bundle Gesture Handler 3, whose
+gesture hooks every gesture in `react-native-ui` and `react-native-charts` is built on.
+
+**The prerelease pair is also held by `overrides`.** `expo` and `react-native` are prereleases
+while SDK 58 is in preview, and a semver range never matches a prerelease — so every package that
+peers on `react-native >=0.81`, or on `expo: "*"`, was handed a second, stable copy of its own:
+fifty nested React Natives at 0.86.2, and `tsc` in `react-native-ui` silently resolving the old
+types through `uniwind/node_modules`. The root `overrides` pin both to the catalog's version so bun
+installs one of each. When SDK 58 goes stable, move both to the stable versions and the overrides
+become redundant rather than wrong; delete them then. `packages/cli/scripts/verify/harness.ts`
+carries the same pair for the app it scaffolds.
 
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two

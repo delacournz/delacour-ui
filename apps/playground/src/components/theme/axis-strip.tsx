@@ -1,5 +1,5 @@
 import { Text } from "@delacour/react-native-ui/text";
-import { type ReactElement, type ReactNode, useCallback, useRef } from "react";
+import { type ComponentRef, type ReactElement, type ReactNode, useCallback, useRef } from "react";
 import { ScrollView, View } from "react-native";
 
 /** The gap between tiles, as a number because the alignment maths needs it. */
@@ -49,7 +49,7 @@ export type AxisStripProps = {
  * lines up with the cards below.
  */
 export function AxisStrip({ label, caption, selectedIndex, itemWidth, children }: AxisStripProps): ReactElement {
-	const scrollRef = useRef<ScrollView>(null);
+	const scrollRef = useRef<ComponentRef<typeof ScrollView>>(null);
 	const hasAlignedRef = useRef(false);
 
 	const alignToSelection = useCallback(() => {

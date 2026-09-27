@@ -56,7 +56,7 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   the measured `x` values ascend and the list warns by name in development. Every
   trigger reporting an `x` of 0 catches the other shape — a trigger wrapped in a
   `View`, measuring itself against the wrapper rather than the row.
-- **`isSwipeable={false}` is one `.enabled(false)` on the pan and nothing else.**
+- **`isSwipeable={false}` is one `enabled: false` on the pan and nothing else.**
   Every panel mounts either way. Gating mounting on it would make one boolean
   change both the gesture and the mounting model, and the two are not the same
   setting — you cannot drag to a panel that is not there. Lazy mounting is the
@@ -121,25 +121,26 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
 - **The pan claims sideways and gives up vertical**, `activeOffsetX` under
   `failOffsetY` so a diagonal drag resolves to exactly one of them. That is the
   whole mechanism, and it is what lets a pager live inside
-  [`Screen.ScrollArea`](../screen/AGENTS.md). `blocksExternalGesture` is **not**
-  the alternative — `Screen.ScrollArea` renders React Native's own `ScrollView`,
-  which has no handler tag to resolve, so the call is dropped without an error.
+  [`Screen.ScrollArea`](../screen/AGENTS.md). `block` is **not** the
+  alternative — `Screen.ScrollArea` renders React Native's own `ScrollView`,
+  which has no Gesture Handler gesture to name.
   [`Slider.Track`](../slider/AGENTS.md) found that first, and reaches the opposite
   conclusion for the opposite reason: a slider must claim even a stationary tap,
-  so it takes `minDistance(0)` and no axis offsets at all.
-- **The settle lives in `onFinalize`, and the spring is cancelled in `onStart`.**
-  Both halves were wrong once and the symptom was the same: a pager frozen half
-  way between two panels. `onBegin` fires for *every* touch the pager sees — a
-  tap on a panel, the first moment of a vertical scroll — and most of those go on
-  to FAIL against `failOffsetY`. Cancelling the settle spring there killed an
-  animation for a gesture that never became a drag, and because `onEnd` only runs
-  for a pan that actually activated, nothing restarted it. `onFinalize` is the
-  one callback that runs on every path out of a gesture, END, FAILED and
-  CANCELLED alike, from any state — the rule
-  [`Slider.Track`](../slider/AGENTS.md) already states — so it owns the settle,
-  guarded by a flag so a touch that never activated cannot retarget a spring it
-  never disturbed. Reproduce the old bug by swiping and then scrolling the page
-  before the spring has finished.
+  so it takes `minDistance: 0` and no axis offsets at all.
+- **The settle lives in `onDeactivate`, and the spring is cancelled in
+  `onActivate`.** Both halves were wrong once and the symptom was the same: a
+  pager frozen half way between two panels. `onBegin` fires for *every* touch the
+  pager sees — a tap on a panel, the first moment of a vertical scroll — and most
+  of those go on to FAIL against `failOffsetY`. Cancelling the settle spring there
+  killed an animation for a gesture that never became a drag, and nothing
+  restarted it. Gesture Handler 3's `onDeactivate` runs on every path out of an
+  *active* pan — END, FAILED and CANCELLED alike — and on no other, so it owns
+  the settle with no flag: a touch that never activated never reaches it and
+  cannot retarget a spring it never disturbed. Its event carries `canceled`, and a
+  cancelled drag settles by position alone, with no fling velocity. (Under
+  Gesture Handler 2 this was `onFinalize` plus an `isPanning` flag, because
+  `onEnd` there could not be trusted to see a cancelled drag.) Reproduce the old
+  bug by swiping and then scrolling the page before the spring has finished.
 - **The drag's origin is back-computed at activation, not captured at
   touch-down.** `translationX` counts from touch-down but the pan does not
   activate until the finger has crossed `activateX`, so an origin taken at
@@ -149,9 +150,14 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   mid-spring grab pick up exactly where the capsule is.
 - **A horizontal scrollable *inside* a panel is the caller's to settle**, because
   only they know which should win. The pager publishes its pan on
-  `useTabsMotion()`, and the caller writes
-  `Gesture.Native().blocksExternalGesture(panGesture)`. A hook rather than a
+  `useTabsMotion()` as a Gesture Handler 3 `PanGesture`, and the caller writes
+  `useNativeGesture({ block: panGesture })`. A hook rather than a
   prop, the trade `useScreenFooterKeyboardClearance` already makes.
+- **The pan's config is the library's one memoised gesture config.** Gesture
+  Handler 3 keys a gesture on its config object's identity, so an inline object
+  hands back a new `panGesture` on every render of the root — harmless for a
+  gesture that stays inside its component, but this one is published, and every
+  `useTabsMotion()` consumer would re-render with the root.
 
 ## The auto-scrolling bar
 

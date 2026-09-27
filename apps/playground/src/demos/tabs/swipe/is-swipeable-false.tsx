@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "isSwipeable={false}",
-	note: "One `.enabled(false)` on the pan, and nothing else in the component branches on it. Presses animate exactly as they do above, and every panel is still mounted — you cannot drag to a panel that is not there, so mounting is not something this prop gets to change as a side effect.",
+	note: "One `enabled: false` on the pan, and nothing else in the component branches on it. Presses animate exactly as they do above, and every panel is still mounted — you cannot drag to a panel that is not there, so mounting is not something this prop gets to change as a side effect.",
 };
 
 const PANELS = [

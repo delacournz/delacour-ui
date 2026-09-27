@@ -11,7 +11,7 @@ and only `onPress` and `onLongPress` cross back to JS.
 | File | What it holds |
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/pressable` |
-| `pressable.tsx` | The Gesture API primitive |
+| `pressable.tsx` | The gesture-hook primitive |
 | `pressable.variants.ts` | Shared feedback vocabulary, no RN imports |
 | `pressable.variants.test.ts` | |
 
@@ -56,6 +56,16 @@ and only `onPress` and `onLongPress` cross back to JS.
   `resolveRestOpacity` guarding the value. A press still fades relative to the
   rest — a disabled control cannot be pressed, so the two never compound. No
   unit test could have seen the bug; it was found on a simulator.
+- **The tap and the long press are both mounted, always.** Gesture Handler 3's
+  gestures are hooks, and a hook cannot be skipped on the render where
+  `onLongPress` is absent, so a pressable with no long press still holds one —
+  `enabled: false` — composed with the tap through `useSimultaneousGestures`. A
+  disabled gesture never begins, so it costs the tap nothing.
+- **`onPress` fires from the tap's `onDeactivate`, guarded by `!event.canceled`.**
+  `onDeactivate` runs on every path out of an *active* tap, including the one
+  where the finger slid off or another gesture won, and neither of those is a
+  press. The long press fires from `onActivate`, the moment its duration elapses,
+  which is when a native long press reports too.
 - **A worklet crosses back to JS with `scheduleOnRN`**, imported from
   `react-native-worklets` — never Reanimated's `runOnJS`, which since Reanimated 4
   is a deprecated shim that forwards to exactly that call. `scheduleOnRN(fn, ...args)`

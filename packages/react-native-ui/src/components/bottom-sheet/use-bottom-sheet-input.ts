@@ -1,5 +1,5 @@
 import { useBottomSheetInternal } from "@gorhom/bottom-sheet";
-import { type RefCallback, useCallback, useRef } from "react";
+import { type ComponentRef, type RefCallback, useCallback, useRef } from "react";
 import { type BlurEvent, type FocusEvent, findNodeHandle, TextInput } from "react-native";
 
 /**
@@ -11,13 +11,13 @@ import { type BlurEvent, type FocusEvent, findNodeHandle, TextInput } from "reac
  * cast, in one place, rather than at each call.
  */
 function nodeHandleOf(instance: unknown): number | null {
-	return findNodeHandle(instance as Parameters<typeof findNodeHandle>[0]);
+	return findNodeHandle(instance as Parameters<typeof findNodeHandle>[0]) ?? null;
 }
 
 export type BottomSheetInputHandlers = {
 	onFocus: (event: FocusEvent) => void;
 	onBlur: (event: BlurEvent) => void;
-	ref: RefCallback<TextInput | null>;
+	ref: RefCallback<ComponentRef<typeof TextInput> | null>;
 };
 
 /**
@@ -67,7 +67,7 @@ export function useBottomSheetInput(): BottomSheetInputHandlers {
 	// A JS ref rather than a shared value: nothing renders differently for it.
 	const registeredNodeRef = useRef<number | null>(null);
 
-	const ref = useCallback<RefCallback<TextInput | null>>(
+	const ref = useCallback<RefCallback<ComponentRef<typeof TextInput> | null>>(
 		(instance) => {
 			const nodes = internal?.textInputNodesRef.current;
 			const previous = registeredNodeRef.current;

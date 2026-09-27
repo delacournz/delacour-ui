@@ -7,10 +7,14 @@ import {
 	type ReactElement,
 	type ReactNode,
 	type Ref,
-	useMemo,
 } from "react";
 import type { AccessibilityState, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import {
+	GestureDetector,
+	useLongPressGesture,
+	useSimultaneousGestures,
+	useTapGesture,
+} from "react-native-gesture-handler";
 import { Presets } from "react-native-pulsar";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -129,9 +133,9 @@ export type PressableProps = Omit<ViewProps, "style"> & {
  * pressable in this library shares, or from `pressedScale` / `pressedOpacity`
  * for a value the named modes do not cover.
  *
- * Built on the Gesture API rather than a ready-made pressable so the animation,
- * the haptic and the gesture stay on one thread, and so nothing depends on
- * Gesture Handler's own `Pressable`, which was renamed in its v3.
+ * Built on Gesture Handler 3's gesture hooks rather than a ready-made pressable
+ * so the animation, the haptic and the gesture stay on one thread, and so
+ * nothing depends on Gesture Handler's own `Pressable`.
  */
 export function Pressable({
 	children,
@@ -160,36 +164,38 @@ export function Pressable({
 	// in rather than overwritten by the resting 1. See `resolveRestOpacity`.
 	const restOpacity = resolveRestOpacity(useResolveClassNames(className ?? "").opacity);
 
-	const gesture = useMemo(() => {
-		const tap = Gesture.Tap()
-			.enabled(interactive)
-			.shouldCancelWhenOutside(true)
-			.onBegin(() => {
-				"worklet";
-				pressed.value = withSpring(1, PRESS_SPRING);
-				if (haptic) playHaptic(haptic);
-			})
-			.onEnd(() => {
-				"worklet";
-				if (onPress) scheduleOnRN(onPress);
-			})
-			.onFinalize(() => {
-				"worklet";
-				pressed.value = withSpring(0, PRESS_SPRING);
-			});
+	// Both hooks run every render — the rules of hooks allow no early return —
+	// so a pressable with no `onLongPress` keeps the long press but disables it.
+	// `onDeactivate` also fires when the tap is cancelled (the finger slid off,
+	// or another gesture won), which is not a press.
+	const tap = useTapGesture({
+		enabled: interactive,
+		shouldCancelWhenOutside: true,
+		onBegin: () => {
+			"worklet";
+			pressed.value = withSpring(1, PRESS_SPRING);
+			if (haptic) playHaptic(haptic);
+		},
+		onDeactivate: (event) => {
+			"worklet";
+			if (!event.canceled && onPress) scheduleOnRN(onPress);
+		},
+		onFinalize: () => {
+			"worklet";
+			pressed.value = withSpring(0, PRESS_SPRING);
+		},
+	});
 
-		if (!onLongPress) return tap;
+	const longPress = useLongPressGesture({
+		enabled: interactive && onLongPress !== undefined,
+		shouldCancelWhenOutside: true,
+		onActivate: () => {
+			"worklet";
+			if (onLongPress) scheduleOnRN(onLongPress);
+		},
+	});
 
-		const longPress = Gesture.LongPress()
-			.enabled(interactive)
-			.shouldCancelWhenOutside(true)
-			.onStart(() => {
-				"worklet";
-				scheduleOnRN(onLongPress);
-			});
-
-		return Gesture.Simultaneous(tap, longPress);
-	}, [haptic, interactive, onLongPress, onPress, pressed]);
+	const gesture = useSimultaneousGestures(tap, longPress);
 
 	const animatedStyle = useAnimatedStyle(() => ({
 		opacity: restOpacity * (1 - pressed.value * (1 - targetOpacity)),

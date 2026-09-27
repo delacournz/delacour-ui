@@ -11,7 +11,7 @@ import {
 	useState,
 } from "react";
 import { View, type ViewProps } from "react-native";
-import { Gesture } from "react-native-gesture-handler";
+import { type PanGestureConfig, usePanGesture } from "react-native-gesture-handler";
 import { cancelAnimation, useAnimatedReaction, useSharedValue, withSpring } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
@@ -119,10 +119,6 @@ function TabsRoot({
 	const position = useSharedValue(selectedIndex < 0 ? 0 : selectedIndex);
 	const pageWidth = useSharedValue(0);
 	const panStart = useSharedValue(0);
-	// Whether the pan actually became active. `onFinalize` fires for every touch
-	// the pager sees, including ones that never activated, and it must not settle
-	// those — see the gesture below.
-	const isPanning = useSharedValue(false);
 
 	// Where `position` is settled or heading. A plain ref rather than a shared
 	// value: only the JS thread ever asks, and a `.value` read from an effect
@@ -196,69 +192,67 @@ function TabsRoot({
 		position.value = mode === "jump" ? selectedIndex : withSpring(selectedIndex, TABS_SETTLE_SPRING);
 	}, [commits, position, selected, selectedIndex]);
 
-	const panGesture = useMemo(
-		() =>
-			Gesture.Pan()
-				// One builder call is the whole of `isSwipeable`. Nothing else in the
-				// component branches on it.
-				.enabled(isSwipeable && count > 1)
-				// The pager claims a sideways drag and gives up a vertical one, which is
-				// what lets it live inside a scrolling screen at all. `blocksExternalGesture`
-				// is not the alternative: `Screen.ScrollArea` renders React Native's own
-				// `ScrollView`, which has no handler tag to resolve, so the call is
-				// dropped without an error — see `Slider.Track`.
-				.activeOffsetX([-TABS_PAN.activateX, TABS_PAN.activateX])
-				.failOffsetY([-TABS_PAN.failY, TABS_PAN.failY])
-				// The spring is cancelled on ACTIVATION, never on touch-down. `onBegin`
-				// fires for every touch the pager sees — a tap on a panel, the start of
-				// a vertical scroll — and most of those go on to FAIL against
-				// `failOffsetY`. Cancelling there would kill an in-flight settle for a
-				// gesture that never became a drag, and since `onEnd` only runs for a
-				// pan that actually activated, nothing would ever restart it: the pager
-				// freezes half way between two panels. Found by dragging, then scrolling
-				// the page before the spring had finished.
-				.onStart((event) => {
-					"worklet";
-					cancelAnimation(position);
-					isPanning.value = true;
-					// Interruptible: grabbing a pager mid-settle picks it up where it is
-					// rather than snapping to the target first.
-					panStart.value = resolvePanOrigin(position.value, event.translationX, pageWidth.value);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					position.value = resolvePanPosition({
-						count,
-						pageWidth: pageWidth.value,
-						startPosition: panStart.value,
-						translationX: event.translationX,
-					});
-				})
-				// `onFinalize`, not `onEnd`, because it is the one callback that runs on
-				// every path out of the gesture — END, FAILED and CANCELLED alike, from
-				// any state. `Slider.Track` states the same rule for the same reason. A
-				// drag cancelled mid-flight by the OS or by another handler reaches only
-				// this one, and without it the pager would be left wherever the finger
-				// happened to be. The flag is what keeps a touch that never activated
-				// from retargeting a spring it never disturbed.
-				.onFinalize((event, success) => {
-					"worklet";
-					if (!isPanning.value) return;
-					isPanning.value = false;
+	// Memoised, unlike every other gesture in the library, because this one is
+	// published: Gesture Handler 3 keys a gesture on its config object, and a
+	// fresh one each render would hand every `useTabsMotion()` consumer a new
+	// context value on every render of the root.
+	const panConfig = useMemo(
+		(): PanGestureConfig => ({
+			// One option is the whole of `isSwipeable`. Nothing else in the component
+			// branches on it.
+			enabled: isSwipeable && count > 1,
+			// The pager claims a sideways drag and gives up a vertical one, which is
+			// what lets it live inside a scrolling screen at all. `block` is not the
+			// alternative: `Screen.ScrollArea` renders React Native's own `ScrollView`,
+			// which has no gesture to name, so there is nothing to block — see
+			// `Slider.Track`.
+			activeOffsetX: [-TABS_PAN.activateX, TABS_PAN.activateX],
+			failOffsetY: [-TABS_PAN.failY, TABS_PAN.failY],
+			// The spring is cancelled on ACTIVATION, never on touch-down. `onBegin`
+			// fires for every touch the pager sees — a tap on a panel, the start of a
+			// vertical scroll — and most of those go on to FAIL against `failOffsetY`.
+			// Cancelling there would kill an in-flight settle for a gesture that never
+			// became a drag, and nothing would ever restart it: the pager freezes half
+			// way between two panels. Found by dragging, then scrolling the page before
+			// the spring had finished.
+			onActivate: (event) => {
+				"worklet";
+				cancelAnimation(position);
+				// Interruptible: grabbing a pager mid-settle picks it up where it is
+				// rather than snapping to the target first.
+				panStart.value = resolvePanOrigin(position.value, event.translationX, pageWidth.value);
+			},
+			onUpdate: (event) => {
+				"worklet";
+				position.value = resolvePanPosition({
+					count,
+					pageWidth: pageWidth.value,
+					startPosition: panStart.value,
+					translationX: event.translationX,
+				});
+			},
+			// `onDeactivate`, not `onFinalize`, because it runs on every path out of an
+			// ACTIVE pan — END, FAILED and CANCELLED alike — and on no other. A drag
+			// cancelled mid-flight by the OS or by another handler still reaches it, so
+			// the pager is never left wherever the finger happened to be, and a touch
+			// that never activated never retargets a spring it never disturbed.
+			onDeactivate: (event) => {
+				"worklet";
+				const width = pageWidth.value;
+				// Index units per second, so the threshold means the same flick on a
+				// phone as on a tablet. A cancelled drag settles by position alone.
+				const velocity = !event.canceled && width > 0 ? -event.velocityX / width : 0;
+				const startIndex = Math.round(panStart.value);
+				const next = resolveSettleIndex({ count, position: position.value, startIndex, velocity });
 
-					const width = pageWidth.value;
-					// Index units per second, so the threshold means the same flick on a
-					// phone as on a tablet.
-					const velocity = success && width > 0 ? -event.velocityX / width : 0;
-					const startIndex = Math.round(panStart.value);
-					const next = resolveSettleIndex({ count, position: position.value, startIndex, velocity });
+				position.value = withSpring(next, { ...TABS_SETTLE_SPRING, velocity });
 
-					position.value = withSpring(next, { ...TABS_SETTLE_SPRING, velocity });
-
-					if (next !== startIndex) scheduleOnRN(commitFromPan, next);
-				}),
-		[commitFromPan, count, isPanning, isSwipeable, pageWidth, panStart, position]
+				if (next !== startIndex) scheduleOnRN(commitFromPan, next);
+			},
+		}),
+		[commitFromPan, count, isSwipeable, pageWidth, panStart, position]
 	);
+	const panGesture = usePanGesture(panConfig);
 
 	// The visual selection, and the one hop from the UI thread back to React that
 	// is not the value itself. Without it a filled capsule sitting halfway over the

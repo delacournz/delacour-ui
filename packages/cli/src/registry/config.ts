@@ -50,7 +50,7 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"@legendapp/list": "expo",
 	// Built on Reanimated and Gesture Handler, and pinned against both.
 	"@gorhom/bottom-sheet": "expo",
-	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
+	// Ships a native 2D renderer, and Expo 58 bundles 2.11.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
 

@@ -1,7 +1,7 @@
 import { Canvas } from "@shopify/react-native-skia";
 import { type ReactElement, useMemo, useRef } from "react";
 import { StyleSheet, View } from "react-native";
-import { Gesture, type GestureType } from "react-native-gesture-handler";
+import { type TapGesture, useTapGesture } from "react-native-gesture-handler";
 import { useCanvasSize } from "../cartesian/hooks/use-canvas-size";
 import type { ChartRow } from "../core/chart.types";
 import { sliceIndexAt } from "../core/polar/slice-index-at";
@@ -60,30 +60,33 @@ PolarChart.displayName = "DelacourCharts.PolarChart";
  * A tap that reports the slice under the finger, or `null` when there is none.
  *
  * The callback is read through a ref so an inline arrow — the usual way to
- * pass it — does not rebuild the gesture on every render, and the gesture is
- * keyed on the model so a data change is picked up by the next tap.
+ * pass it — does not change the gesture's callback on every render, and the
+ * slice angles are keyed on the model so a data change is picked up by the next
+ * tap.
  */
 function useSliceTap(
 	model: PolarContextValue,
 	onSlicePress: ((index: number | null) => void) | undefined
-): GestureType | null {
+): TapGesture | null {
 	const handler = useRef(onSlicePress);
 	handler.current = onSlicePress;
 	const enabled = onSlicePress !== undefined;
 
-	return useMemo(() => {
-		if (!enabled) return null;
-		const { center, innerRadius, radius, slices } = model;
-		const starts = slices.map((slice) => slice.startAngle);
-		const sweeps = slices.map((slice) => slice.sweepAngle);
-		return Gesture.Tap()
-			.runOnJS(true)
-			.onEnd((event, success) => {
-				if (!success) return;
-				const index = sliceIndexAt(event.x, event.y, center.x, center.y, innerRadius, radius, starts, sweeps);
-				handler.current?.(index === -1 ? null : index);
-			});
-	}, [enabled, model]);
+	const { center, innerRadius, radius, slices } = model;
+	const starts = useMemo(() => slices.map((slice) => slice.startAngle), [slices]);
+	const sweeps = useMemo(() => slices.map((slice) => slice.sweepAngle), [slices]);
+
+	const tap = useTapGesture({
+		enabled,
+		runOnJS: true,
+		onDeactivate: (event) => {
+			if (event.canceled) return;
+			const index = sliceIndexAt(event.x, event.y, center.x, center.y, innerRadius, radius, starts, sweeps);
+			handler.current?.(index === -1 ? null : index);
+		},
+	});
+
+	return enabled ? tap : null;
 }
 
 const styles = StyleSheet.create({

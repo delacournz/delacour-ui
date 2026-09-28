@@ -150,29 +150,35 @@
 			"name": "bottom-sheet",
 			"type": "registry:ui",
 			"title": "Bottom Sheet",
-			"description": "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+			"description": "A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 			"categories": [
 				"overlays"
 			],
 			"registryDependencies": [
 				"cn",
+				"compose-refs",
 				"icon",
 				"icons",
+				"input",
 				"pressable",
 				"slot",
 				"text",
 				"tv",
-				"use-controllable-state",
 				"use-keyboard-state-sync"
 			],
 			"dependencies": [
+				"@delacour/react-native-bottom-sheet",
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"@gorhom/bottom-sheet",
+				"@legendapp/list",
+				"react-native-gesture-handler",
 				"react-native-keyboard-controller",
+				"react-native-pulsar",
 				"react-native-reanimated",
 				"react-native-safe-area-context",
+				"react-native-teleport",
+				"react-native-worklets",
 				"uniwind"
 			],
 			"devDependencies": [],
@@ -183,14 +189,17 @@
 				"ui/bottom-sheet/bottom-sheet-container.tsx",
 				"ui/bottom-sheet/bottom-sheet-content.tsx",
 				"ui/bottom-sheet/bottom-sheet-description.tsx",
+				"ui/bottom-sheet/bottom-sheet-flat-list.tsx",
 				"ui/bottom-sheet/bottom-sheet-footer.tsx",
 				"ui/bottom-sheet/bottom-sheet-handle.tsx",
+				"ui/bottom-sheet/bottom-sheet-legend-list.tsx",
 				"ui/bottom-sheet/bottom-sheet-overlay.tsx",
-				"ui/bottom-sheet/bottom-sheet-portal.tsx",
 				"ui/bottom-sheet/bottom-sheet-scroll-view.tsx",
+				"ui/bottom-sheet/bottom-sheet-section-list.tsx",
+				"ui/bottom-sheet/bottom-sheet-steps.tsx",
+				"ui/bottom-sheet/bottom-sheet-text-input.tsx",
 				"ui/bottom-sheet/bottom-sheet-title.tsx",
 				"ui/bottom-sheet/bottom-sheet-trigger.tsx",
-				"ui/bottom-sheet/bottom-sheet.context.tsx",
 				"ui/bottom-sheet/bottom-sheet.tsx",
 				"ui/bottom-sheet/bottom-sheet.variants.ts",
 				"ui/bottom-sheet/index.ts",
@@ -943,7 +952,6 @@
 			],
 			"dependencies": [],
 			"expoDependencies": [
-				"@gorhom/bottom-sheet",
 				"react-native-gesture-handler",
 				"react-native-keyboard-controller",
 				"react-native-safe-area-context"

@@ -1,32 +1,27 @@
-import { type ReactElement, useCallback } from "react";
+import { BottomSheet as Headless } from "@delacour/react-native-bottom-sheet";
+import type { ReactElement } from "react";
 import { Slot } from "../../lib/slot";
 import { Pressable, type PressableProps } from "../pressable";
-import { useBottomSheetPart } from "./bottom-sheet.context";
 
 export type BottomSheetTriggerProps = PressableProps;
 
 /**
  * The control that opens the sheet.
  *
- * On its own it is a `Pressable`, so `feedback`, `haptic` and the rest are
- * inherited rather than restated. It opens through the same state a controlled
- * `isOpen` drives, so a sheet can be opened from here and from elsewhere on the
- * same screen without the two disagreeing, and a caller's own `onPress` still
- * runs after the open.
+ * On its own it is this library's `Pressable`, so `feedback`, `haptic` and the
+ * rest are inherited rather than restated. It opens through the same state a
+ * controlled `isOpen` drives, and a caller's own `onPress` still runs after
+ * the open.
  *
- * **`asChild` donates the press rather than wrapping the child**, which is where
- * it differs from `Pressable`'s own. `Pressable asChild` keeps its gesture and
- * renders the child inside it — correct for a child that is not itself a
- * control, and wrong here, because the thing anyone wraps in a trigger is a
- * `Button`. Two tap gestures in an ancestor/descendant pair are not
- * simultaneous, so Gesture Handler gives the press to the DESCENDANT: the
- * button's own detector wins, fires the `onPress` it does not have, and the
- * sheet never opens. Nothing announces this — the press simply does nothing.
- *
- * So the trigger hands its `onPress` down as a prop instead, through `Slot`,
- * which chains it ahead of any the child already had. The child keeps its own
- * gesture, its own feedback and its own haptic, and there is still no extra view
- * in the tree.
+ * **`asChild` donates the press rather than wrapping the child**, which is
+ * where it differs from `Pressable`'s own. Two tap gestures in an
+ * ancestor/descendant pair are not simultaneous: Gesture Handler gives the
+ * press to the DESCENDANT, so a `Button` wrapped in a pressable trigger would
+ * win the touch, fire the `onPress` it does not have, and the sheet would never
+ * open. The engine's `Trigger asChild` hands `onPress` down as a prop instead,
+ * chained ahead of any the child already had — the child keeps its own
+ * gesture, feedback and haptic, and there is no extra view in the tree. The
+ * remaining props reach the child through this library's `Slot`, one layer in.
  *
  * The corollary: **the child has to be something that handles `onPress`.** A
  * `View` or a `Text` takes the prop and ignores it. Wrap a `Button`, a
@@ -49,25 +44,12 @@ export function BottomSheetTrigger({
 	onPress,
 	...props
 }: BottomSheetTriggerProps): ReactElement {
-	const { open } = useBottomSheetPart("BottomSheet.Trigger");
-
-	const handlePress = useCallback(() => {
-		open();
-		onPress?.();
-	}, [onPress, open]);
-
-	if (asChild) {
-		return (
-			<Slot onPress={handlePress} {...props}>
-				{children}
-			</Slot>
-		);
-	}
+	const child = asChild ? <Slot {...props}>{children}</Slot> : <Pressable {...props}>{children}</Pressable>;
 
 	return (
-		<Pressable onPress={handlePress} {...props}>
-			{children}
-		</Pressable>
+		<Headless.Trigger asChild onPress={onPress}>
+			{child}
+		</Headless.Trigger>
 	);
 }
 BottomSheetTrigger.displayName = "DelacourUI.BottomSheet.Trigger";

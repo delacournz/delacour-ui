@@ -146,6 +146,28 @@ const SHOTS: Shot[] = [
 	{ id: "41-docs-chip-desktop-dark", path: "/docs/native/components/chip", frame: "desktop", theme: "dark" },
 	{ id: "42-docs-chip-desktop-light", path: "/docs/native/components/chip", frame: "desktop", theme: "light" },
 	{ id: "43-docs-chip-mobile-dark", path: "/docs/native/components/chip", frame: "phone", theme: "dark" },
+	{
+		id: "44-docs-bottom-sheet-desktop-dark",
+		path: "/docs/native/components/bottom-sheet",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "45-docs-bottom-sheet-desktop-light",
+		path: "/docs/native/components/bottom-sheet",
+		frame: "desktop",
+		theme: "light",
+	},
+	{
+		id: "46-docs-bottom-sheet-mobile-dark",
+		path: "/docs/native/components/bottom-sheet",
+		frame: "phone",
+		theme: "dark",
+	},
+	{ id: "47-sheet-index-desktop-dark", path: "/docs/bottom-sheet", frame: "desktop", theme: "dark" },
+	{ id: "48-sheet-steps-desktop-dark", path: "/docs/bottom-sheet/steps", frame: "desktop", theme: "dark" },
+	{ id: "49-sheet-detached-desktop-light", path: "/docs/bottom-sheet/detached", frame: "desktop", theme: "light" },
+	{ id: "50-sheet-index-mobile-dark", path: "/docs/bottom-sheet", frame: "phone", theme: "dark", full: true },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

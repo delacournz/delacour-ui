@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/hosting/inside-a-native-modal, settled, no modal presented.
+steps:
+  - echo: Present the native modal
+  - tap: { id: modal-open }
+  - await: { visible: { id: modal-open-sheet } }
+  - wait: 600
+  - echo: The sheet teleports to the modal's own host and draws over it
+  - tap: { id: modal-open-sheet }
+  - await: { visible: { text: Above the modal } }
+  - assert: { visible: { id: modal-close-sheet } }
+  - wait: 600
+  - tool: screenshot
+  - tap: { id: modal-close-sheet }
+  - await: { hidden: { text: Above the modal } }
+  - echo: The modal is still there; dismiss it
+  - assert: { visible: { id: modal-dismiss } }
+  - tap: { id: modal-dismiss }
+  - await: { visible: { id: modal-open } }

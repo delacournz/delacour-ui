@@ -86,16 +86,16 @@ describe("planDependencies", () => {
 		const plan = planDependencies(
 			{
 				packageManager: "bun",
-				expoDependencies: ["react-native-reanimated", "@gorhom/bottom-sheet"],
+				expoDependencies: ["react-native-reanimated", "react-native-teleport"],
 				dependencies: ["tailwind-variants"],
 				devDependencies: ["typescript"],
 			},
 			packageJson
 		);
 
-		expect(plan.groups.map((group) => group.packages)).toEqual([["@gorhom/bottom-sheet"], ["tailwind-variants"]]);
+		expect(plan.groups.map((group) => group.packages)).toEqual([["react-native-teleport"], ["tailwind-variants"]]);
 		expect(plan.satisfied).toEqual(["react-native-reanimated", "typescript"]);
-		expect(plan.missing).toEqual(["@gorhom/bottom-sheet", "tailwind-variants"]);
+		expect(plan.missing).toEqual(["react-native-teleport", "tailwind-variants"]);
 	});
 
 	test("a package wanted by two routes is reported once", () => {
@@ -130,6 +130,7 @@ describe("commandLine", () => {
 describe("channel dist tags", () => {
 	test("peers a Delacour package with a range both an alpha and a stable satisfy", () => {
 		expect(peerRange("@delacour/react-native-charts")).toBe(">=0.0.0-0");
+		expect(peerRange("@delacour/react-native-bottom-sheet")).toBe(">=0.0.0-0");
 		expect(peerRange("clsx")).toBe("*");
 	});
 

@@ -1,0 +1,115 @@
+---
+title: Animation
+description: A spring or a timing. The platform defaults, reduce motion, and what each callback hears.
+icon: Sparkles
+---
+
+```tsx
+<BottomSheet animation={{ type: "spring", damping: 30, stiffness: 300 }}>
+```
+
+One `animation` for every move: the open, the close, a snap, the keyboard's `extend`, a detent that
+moved under a settled sheet. A gesture's release hands the spring half its velocity, so a flick
+continues rather than starting from rest.
+
+## `SheetAnimation`
+
+```ts
+type SheetAnimation =
+  | {
+      type: "spring";
+      damping?: number;
+      stiffness?: number;
+      mass?: number;
+      overshootClamping?: boolean;
+      restDisplacementThreshold?: number;
+      restSpeedThreshold?: number;
+      reduceMotion?: "system" | "always" | "never";
+    }
+  | {
+      type: "timing";
+      duration?: number;
+      easing?: "linear" | "outExp" | "outCubic" | "inOutCubic";
+      reduceMotion?: "system" | "always" | "never";
+    };
+```
+
+Every field is optional; a missing one is filled from the platform default. `easing` is a **name**,
+not a function, because the config is resolved as plain data in the pure core and only becomes a
+Reanimated `Easing` once, on the JS thread, when it changes.
+
+## Platform defaults
+
+| Platform | Default |
+| --- | --- |
+| iOS | `{ type: "spring", damping: 500, stiffness: 1000, mass: 3, overshootClamping: true }` |
+| everything else | `{ type: "timing", duration: 250, easing: "outExp" }` |
+
+The spring is stiff and over-damped — it settles in a few frames with no overshoot — and it is the
+same tuning the library this replaces shipped, so a sheet migrated from it moves the same. Android
+gets a timing because a spring is the worse guess wherever there is no native driver tuned for it.
+
+Reanimated 4 replaced the spring's two rest thresholds with one relative `energyThreshold`; the two
+fields are accepted and kept as data, and the default threshold settles within a frame or two of
+them.
+
+## Reduce motion
+
+Every config carries Reanimated's `ReduceMotion`, `system` by default: a reader who has asked the
+OS to reduce motion gets the end state and no animation. `overrideReduceMotion` on the root beats
+the config's own `reduceMotion`, which beats `"system"`.
+
+```tsx
+<BottomSheet overrideReduceMotion="never">
+```
+
+## Mount
+
+`animateOnMount` (the default) animates the first open from closed; off, the sheet lands on its
+detent. Either way the first open waits for layout: the frame, the handle, the content and — when
+there is one — the footer all have to report a size before the sheet has a detent to move to. An
+open asked for before that is queued, not dropped.
+
+## Callbacks
+
+| Prop | Fires | With |
+| --- | --- | --- |
+| `onAnimate` | an animation started | `fromIndex, toIndex, fromHeight, toHeight, source` |
+| `onIndexChange` | a settle moved the index | `index, height, source` — `-1` on close |
+| `onClose` | the sheet reached its closed height, by any path | |
+| `onOpenChange` | open state flipped, by any path | `isOpen` — `false` follows `onClose` |
+
+`source` is why the move happened: `mount`, `gesture`, `user` (a method or a controlled prop),
+`snapPoints` (the detents changed under a settled sheet), `keyboard` or `container` (a resize).
+
+A cancelled animation settles nothing: a drag that interrupts an open owns the height from that
+frame, and reporting the open's target would name an index the sheet never reached. The callbacks
+read their latest props through a ref, so a handler that changes identity every render is fine.
+
+## The step transition
+
+[`BottomSheet.Steps`](/docs/bottom-sheet/steps) takes an `animation` of its own for the height
+glide and the crossfade or slide between steps. Omitted, it uses the root's, which is what keeps the
+panel's top edge and the body's bottom edge moving together.
+
+## API Reference
+
+<TypeTable
+  type={{
+    animation: {
+      type: "SheetAnimation",
+      description: "A spring or a timing, every field optional. The platform default when omitted.",
+    },
+    overrideReduceMotion: {
+      type: '"system" | "always" | "never"',
+      description: "Beats the config's own reduceMotion, which beats system.",
+    },
+    animateOnMount: { type: "boolean", default: "true", description: "Animate the first open, or land on it." },
+    onAnimate: {
+      type: "(fromIndex: number, toIndex: number, fromHeight: number, toHeight: number, source: AnimationSource) => void",
+    },
+    onIndexChange: { type: "(index: number, height: number, source: AnimationSource) => void" },
+    onClose: { type: "() => void" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+  }}
+/>

@@ -20,9 +20,11 @@ export const PINNED_MODULES = [
 	"react",
 	"react-native",
 	"react-native-gesture-handler",
+	"react-native-keyboard-controller",
 	"react-native-reanimated",
 	"react-native-safe-area-context",
 	"react-native-svg",
+	"react-native-teleport",
 	"react-native-worklets",
 ] as const;
 

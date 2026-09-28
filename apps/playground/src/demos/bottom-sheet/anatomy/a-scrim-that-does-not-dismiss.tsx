@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "A scrim that does not dismiss",
 };
 
-/** `isCloseOnPress={false}` leaves the scrim inert, for a sheet that must be answered. */
+/** `pressBehavior="none"` leaves the scrim inert, for a sheet that must be answered. */
 export function Demo(): ReactElement {
 	return (
 		<BottomSheet>
@@ -15,7 +15,7 @@ export function Demo(): ReactElement {
 				<Button variant="outline">Open</Button>
 			</BottomSheet.Trigger>
 			<BottomSheet.Portal>
-				<BottomSheet.Overlay isCloseOnPress={false} />
+				<BottomSheet.Overlay pressBehavior="none" />
 				<BottomSheet.Container>
 					<BottomSheet.Content>
 						<BottomSheet.Title>Confirm first</BottomSheet.Title>

@@ -7,7 +7,7 @@ steps:
   - await: { visible: { text: Keep yourself safe } }
   - wait: 700
   - echo: Dragging it down to dismiss
-  - swipe: { from: { text: Keep yourself safe }, by: { y: 0.24 }, duration: 250 }
+  - swipe: { from: { text: Keep yourself safe }, by: { y: 0.2 }, duration: 250 }
   - await: { hidden: { text: Keep yourself safe } }
   - wait: 500
   - echo: Opening it again and closing it from its own button

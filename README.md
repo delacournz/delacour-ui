@@ -55,8 +55,10 @@ design decisions, the constraints, and the reasoning behind them.
 
 ## Licence
 
-MIT. Three packages are published — [`delacour`](https://www.npmjs.com/package/delacour), the CLI,
+MIT. Four packages are published — [`delacour`](https://www.npmjs.com/package/delacour), the CLI,
 [`@delacour/react-native-ui`](https://www.npmjs.com/package/@delacour/react-native-ui), the components,
-and [`@delacour/react-native-charts`](https://www.npmjs.com/package/@delacour/react-native-charts), the
-charting engine. Everything else in the workspace is private. See
+[`@delacour/react-native-charts`](https://www.npmjs.com/package/@delacour/react-native-charts), the
+charting engine, and
+[`@delacour/react-native-bottom-sheet`](https://www.npmjs.com/package/@delacour/react-native-bottom-sheet),
+the bottom sheet engine. Everything else in the workspace is private. See
 [Releases](AGENTS.md#releases) for how a change gets to npm.

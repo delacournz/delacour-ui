@@ -20,6 +20,8 @@ biome.jsonc  (repo root, "root": true)
   └── extends ["./packages/biome-config/root.jsonc"]
 
 packages/react-native-ui/biome.jsonc   "extends": "//",  "root": false
+packages/react-native-charts/biome.jsonc       "extends": "//",  "root": false
+packages/react-native-bottom-sheet/biome.jsonc "extends": "//",  "root": false
 apps/playground/biome.jsonc      "extends": "//",  "root": false
 packages/tsconfig/biome.jsonc    "extends": "//",  "root": false
 packages/types/biome.jsonc       "extends": "//",  "root": false

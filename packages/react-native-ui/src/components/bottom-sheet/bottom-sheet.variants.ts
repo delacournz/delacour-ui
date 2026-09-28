@@ -13,44 +13,22 @@ export const BOTTOM_SHEET_OVERLAY_TOKEN = "overlay";
 /**
  * The backdrop's opacity at full appearance.
  *
- * **1, not gorhom's 0.5.** The alpha lives in `--overlay`, so leaving the
- * library default in place would multiply the two and land the scrim at roughly
- * a fifth of what the theme asked for. One source for the alpha, and it is the
- * token — which is also what lets the two theme variants differ.
+ * **1.** The alpha lives in `--overlay`, so any other number here would multiply
+ * against it and land the scrim somewhere the theme did not ask for. One source
+ * for the alpha, and it is the token — which is also what lets the two theme
+ * variants differ.
  */
 export const BOTTOM_SHEET_OVERLAY_OPACITY = 1;
 
 /**
- * The snap indices the scrim appears and disappears on.
+ * The detent indices the scrim appears and disappears on.
  *
- * gorhom defaults to `{ appearsOnIndex: 1, disappearsOnIndex: 0 }`, which suits
- * a persistent sheet that rests collapsed on the screen and only dims the app
- * once it is expanded. A modal sheet has no resting state: it is either
- * presented or gone, so the scrim belongs from the FIRST snap point (`0`) and
- * is only absent when the sheet is closed (`-1`).
+ * A modal sheet has no resting state: it is either presented or gone, so the
+ * scrim belongs from the FIRST detent (`0`) and is only absent when the sheet
+ * is closed (`-1`). These are the engine's own defaults too; they are named
+ * here so the test that pins them has something to read.
  */
 export const BOTTOM_SHEET_BACKDROP_INDICES = { appearsOnIndex: 0, disappearsOnIndex: -1 } as const;
-
-/**
- * Keyboard behaviour every `BottomSheet.Container` starts from.
- *
- * A const rather than three defaults spelled inline, so `bun test` pins them and
- * a retune is one edit rather than three.
- *
- * - `interactive` — the sheet grows to keep its content above the keyboard,
- *   following it frame by frame rather than snapping once it has settled.
- * - `restore` — blurring returns the sheet to the snap point it was on. Without
- *   it a sheet that grew for the keyboard stays grown over empty screen.
- * - `adjustResize` — gorhom's own default is `adjustPan`, which leaves the
- *   Android window height alone and slides the whole view up, so a sheet's
- *   footer lands off-screen. `resize` is already what Expo configures and what
- *   `KeyboardProvider` requires, so this is the value that matches the window.
- */
-export const BOTTOM_SHEET_KEYBOARD_DEFAULTS = {
-	keyboardBehavior: "interactive",
-	keyboardBlurBehavior: "restore",
-	android_keyboardInputMode: "adjustResize",
-} as const;
 
 /**
  * Slop around `BottomSheet.Close`.
@@ -62,22 +40,23 @@ export const BOTTOM_SHEET_KEYBOARD_DEFAULTS = {
 export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 8;
 
 /**
- * The padding a pinned footer keeps whatever the keyboard is doing.
+ * The padding a pinned footer's measured box carries.
  *
- * A number rather than a `p-4`, and for `SCREEN_FOOTER_PADDING`'s reason: the
- * footer's bottom padding is an animated value — the safe-area band collapses
- * into it as the keyboard arrives — and a class cannot carry one. Its top
- * padding is written the same way so the two cannot drift.
+ * A number rather than a `p-4`, because it is handed to the engine's `padding`
+ * prop: the engine measures the footer's inner box into the dynamic detent,
+ * and padding written there is counted where a class on the outer view would
+ * not be. The horizontal gutter still comes from the `stickyFooter` slot, which
+ * is merged after it.
  */
 export const BOTTOM_SHEET_FOOTER_PADDING = 16;
 
 /**
  * The gap between the last of the content and a pinned footer.
  *
- * Also a number, because the reserve it belongs to is computed at runtime from
- * the footer's measured height. Without it the last row of a list sits flush
- * against the footer's hairline, which reads as content clipped rather than
- * content ended.
+ * Also a number, because it is the engine's `footerGap` — added to the spacer it
+ * reserves under the body from the footer's measured height. Without it the last
+ * row of a list sits flush against the footer's hairline, which reads as content
+ * clipped rather than content ended.
  */
 export const BOTTOM_SHEET_FOOTER_GAP = 16;
 
@@ -85,7 +64,7 @@ export const bottomSheetVariants = tv({
 	slots: {
 		/**
 		 * The scrim. Carries the colour and nothing else — the fade is an animated
-		 * opacity gorhom drives off the sheet's own position.
+		 * opacity the engine drives off the sheet's own index.
 		 */
 		overlay: "bg-overlay",
 		/**
@@ -94,7 +73,8 @@ export const bottomSheetVariants = tv({
 		 * surface token nothing else in the package had claimed.
 		 *
 		 * Only the top corners round. The bottom edge runs off the screen, and a
-		 * radius there shows as two notches of the app behind it.
+		 * radius there shows as two notches of the app behind it. The `detached`
+		 * variant is the exception — a floating card has a visible bottom edge.
 		 */
 		background: "rounded-t-2xl bg-popover",
 		handle: "items-center justify-center pt-3 pb-1",
@@ -102,6 +82,14 @@ export const bottomSheetVariants = tv({
 		content: "gap-4 px-screen-gutter pt-2",
 		/** A scrollable body's content container. Same treatment as `content`. */
 		scrollContent: "gap-4 px-screen-gutter pt-2",
+		/**
+		 * A multi-step body. The gutter only: the engine measures each `Step`, not
+		 * the box around the stack, so vertical padding here would be height the
+		 * sheet never counts.
+		 */
+		steps: "px-screen-gutter",
+		/** One step of a multi-step body — `content` less the gutter `steps` already carries. */
+		step: "gap-4 pt-2",
 		footer: "gap-3 px-screen-gutter pt-4",
 		/**
 		 * A pinned footer draws OVER the content, so unlike the inline one it has
@@ -110,9 +98,8 @@ export const bottomSheetVariants = tv({
 		 * to overlap blank space. The same reason `Screen.Footer`'s backing lives
 		 * inside its sticky view.
 		 *
-		 * It carries no vertical padding: that is an animated style, because the
-		 * safe-area band inside it collapses as the keyboard arrives. See
-		 * {@link BOTTOM_SHEET_FOOTER_PADDING}.
+		 * It carries no vertical padding: that is the engine's `padding` prop, so
+		 * the measured box counts it. See {@link BOTTOM_SHEET_FOOTER_PADDING}.
 		 */
 		stickyFooter: "gap-3 border-border border-t bg-popover px-screen-gutter",
 		close: "absolute top-4 right-4 z-10",
@@ -131,90 +118,27 @@ export const bottomSheetVariants = tv({
 		 */
 		title: "pr-8",
 	},
+	variants: {
+		/**
+		 * A floating card. Every corner is on screen, so every corner rounds;
+		 * `rounded-2xl` replaces `rounded-t-2xl` through tailwind-merge rather
+		 * than stacking beside it.
+		 */
+		detached: {
+			true: {
+				background: "rounded-2xl",
+			},
+		},
+	},
 });
 
 /**
- * There is no `description` or `scrollView` slot.
+ * There is no `description`, `panel`, `portal` or `scrollView` slot.
  *
- * Neither has any layout of its own — a description is a `Text.Paragraph` in a
- * gap column and a scroll view fills whatever it is given — and `tv` emits
- * `undefined` for a slot whose class string is empty, so a slot that says
- * nothing is a slot no test can assert against. Those two parts merge the
- * caller's `className` with `cn()` instead.
+ * None has any layout of its own — a description is a `Text.Paragraph` in a
+ * gap column, the panel is a transparent frame the engine positions, a scroll
+ * view fills whatever it is given — and `tv` emits `undefined` for a slot whose
+ * class string is empty, so a slot that says nothing is a slot no test can
+ * assert against. Those parts merge the caller's `className` with `cn()` instead.
  */
 export type BottomSheetVariantProps = VariantProps<typeof bottomSheetVariants>;
-
-/** Where a `BottomSheet.Footer` among a container's children has to be rendered. */
-export type BottomSheetFooterPlacement = "sticky" | "inline" | "none";
-
-/** One child of a `BottomSheet.Container`, reduced to what the placement turns on. */
-export type BottomSheetFooterFlag = {
-	isFooter: boolean;
-	isSticky: boolean;
-};
-
-/**
- * Whether a container's children hold a footer, and where it has to go.
- *
- * gorhom takes a footer as a `footerComponent` render prop rather than as a
- * child, so a sticky one has to be lifted out of the tree it was written in and
- * handed over; an inline one simply stays put. This is the decision, kept pure
- * so `bun test` reaches the whole matrix — the walk over `Children.toArray` that
- * produces the flags lives with its caller, the way `withIndicator` does in
- * `radio.tsx`.
- *
- * A single sticky footer anywhere in the children wins, because two footers is
- * not a state worth expressing and the pinned one is the one a caller meant.
- */
-export function resolveFooterPlacement(flags: readonly BottomSheetFooterFlag[]): BottomSheetFooterPlacement {
-	let hasFooter = false;
-
-	for (const flag of flags) {
-		if (!flag.isFooter) continue;
-		if (flag.isSticky) return "sticky";
-		hasFooter = true;
-	}
-
-	return hasFooter ? "inline" : "none";
-}
-
-/**
- * The safe-area band `BottomSheet.Content` and `BottomSheet.ScrollView` reserve.
- *
- * Exactly one thing in the sheet pays for the home indicator. A pinned footer is
- * the bottom-most thing there is, and its own box carries the band so its surface
- * reaches the bottom of the screen — gorhom then adds that whole measured height
- * to the content's reserve, so the content asking for the band as well would
- * count it twice and leave a gap the height of the indicator above the footer.
- * With no pinned footer the content IS the bottom-most thing and takes it.
- */
-export function resolveSheetBottomInset({
-	hasStickyFooter,
-	bottom,
-}: {
-	hasStickyFooter: boolean;
-	bottom: number;
-}): number {
-	return hasStickyFooter ? 0 : bottom;
-}
-
-/**
- * The padding at the end of `BottomSheet.ScrollView`'s content.
- *
- * A scroll view does not reserve a pinned footer the way `BottomSheet.Content`
- * does — its FRAME stops at the footer's top edge instead, so the scroll
- * indicator and the overscroll bounce end there too rather than running on
- * underneath it. That leaves the content only the gap to hold it off the
- * footer's hairline. With no pinned footer the content is the bottom-most thing
- * in the sheet and takes the safe-area band, as {@link resolveSheetBottomInset}
- * has it.
- */
-export function resolveSheetScrollEndPadding({
-	hasStickyFooter,
-	bottom,
-}: {
-	hasStickyFooter: boolean;
-	bottom: number;
-}): number {
-	return hasStickyFooter ? BOTTOM_SHEET_FOOTER_GAP : resolveSheetBottomInset({ bottom, hasStickyFooter });
-}

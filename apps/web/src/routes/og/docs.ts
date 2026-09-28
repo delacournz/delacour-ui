@@ -3,14 +3,16 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import { createFileRoute } from "@tanstack/react-router";
-import type { DocsProduct } from "@/lib/seo";
+import { type DocsProduct, isDocsProduct } from "@/lib/seo";
 import { ogCardSvg } from "@/og/card";
 import interUrl from "@/og/inter-400.ttf?inline";
 import outfitUrl from "@/og/outfit-600.ttf?inline";
 
 /**
  * `/og/docs?title=Button` — a 1200×630 PNG for the social card.
- * `&product=charts` draws the charts package's card instead of the library's.
+ * `&product=charts` or `&product=bottom-sheet` draws that package's card instead of the
+ * library's; `isDocsProduct` is the one place a product name is checked, so a fourth product
+ * needs an entry in `PRODUCTS` and nothing here.
  *
  * The SVG comes from `og/card.ts` and resvg rasterises it here, on the server,
  * with the two faces the card sets. resvg reads fonts from paths only, and the
@@ -70,7 +72,8 @@ export const Route = createFileRoute("/og/docs")({
 			GET({ request }) {
 				const params = new URL(request.url).searchParams;
 				const title = params.get("title")?.slice(0, 200) ?? undefined;
-				const product: DocsProduct = params.get("product") === "charts" ? "charts" : "ui";
+				const requested = params.get("product");
+				const product: DocsProduct = isDocsProduct(requested) ? requested : "ui";
 				const png = render(product, title || undefined);
 
 				return new Response(Buffer.from(png), {

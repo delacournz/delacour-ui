@@ -64,7 +64,7 @@ shares.
 | [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
 | [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
-| [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A modal sheet, on `@gorhom/bottom-sheet` |
+| [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A sheet over the app — a Uniwind skin on `@delacour/react-native-bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
 | [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
@@ -684,20 +684,25 @@ types, its context and its variants. Nothing outside reaches past the index.
 
 Wrap the app's root in `DelacourProvider` — the gesture root every `Pressable`
 needs above it, the safe-area provider and the keyboard provider `Screen` reads,
-and the keyboard state sync that keeps them honest:
+and the keyboard state sync that keeps them honest. An app that uses
+`BottomSheet` mounts the engine's `BottomSheetProvider` inside it, from the
+sheet's own subpath — `DelacourProvider` cannot, because the engine is an
+optional peer:
 
 ```tsx
+import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
 
-<DelacourProvider>{children}</DelacourProvider>;
+<DelacourProvider>
+  <BottomSheetProvider>{children}</BottomSheetProvider>
+</DelacourProvider>;
 ```
 
-Compose the five by hand only in an app that already has a root stack of its
+Compose the four by hand only in an app that already has a root stack of its
 own — and then `<KeyboardStateSync />` is required, not optional polish, and must
 be a child of `KeyboardProvider`:
 
 ```tsx
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { KeyboardStateSync } from "@delacour/react-native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -707,7 +712,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
   <SafeAreaProvider initialMetrics={initialWindowMetrics}>
     <KeyboardProvider>
       <KeyboardStateSync />
-      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+      {children}
     </KeyboardProvider>
   </SafeAreaProvider>
 </GestureHandlerRootView>;

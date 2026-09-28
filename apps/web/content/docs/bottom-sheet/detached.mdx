@@ -1,0 +1,122 @@
+---
+title: Detached
+description: A floating card — inset from the sides, resting above the safe area, every corner rounded — that closes as one rigid body.
+icon: Square
+---
+
+```tsx
+import { BottomSheet } from "@delacour/react-native-bottom-sheet";
+import { StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+const styles = StyleSheet.create({
+  overlay: { backgroundColor: "#00000099" },
+  background: { backgroundColor: "#2C2C2E", borderRadius: 24 },
+  handle: { alignItems: "center", paddingBottom: 8, paddingTop: 10 },
+  pill: { backgroundColor: "#8E8E93", borderRadius: 2, height: 4, width: 36 },
+  content: { gap: 12, paddingBottom: 20, paddingHorizontal: 20, paddingTop: 4 },
+  title: { color: "#FFFFFF", fontSize: 20, fontWeight: "700" },
+  description: { color: "#8E8E93", fontSize: 15, lineHeight: 21 },
+  primary: { alignItems: "center", backgroundColor: "#30D158", borderRadius: 12, paddingVertical: 14 },
+  primaryLabel: { color: "#FFFFFF", fontSize: 15, fontWeight: "600" },
+});
+
+export function FloatingCard() {
+  const insets = useSafeAreaInsets();
+
+  return (
+    <BottomSheet bottomInset={insets.bottom} detached>
+      <BottomSheet.Trigger>
+        <Text>Open a floating card</Text>
+      </BottomSheet.Trigger>
+      <BottomSheet.Portal>
+        <BottomSheet.Overlay style={styles.overlay} />
+        <BottomSheet.Container>
+          <BottomSheet.Background style={styles.background} />
+          <BottomSheet.Handle style={styles.handle}>
+            <View style={styles.pill} />
+          </BottomSheet.Handle>
+          <BottomSheet.Content style={styles.content}>
+            <BottomSheet.Title style={styles.title}>Turn on notifications?</BottomSheet.Title>
+            <BottomSheet.Description style={styles.description}>
+              A card that floats above the safe area, with room on every side. Tap outside it to close.
+            </BottomSheet.Description>
+            <BottomSheet.Close style={styles.primary}>
+              <Text style={styles.primaryLabel}>Allow</Text>
+            </BottomSheet.Close>
+          </BottomSheet.Content>
+        </BottomSheet.Container>
+      </BottomSheet.Portal>
+    </BottomSheet>
+  );
+}
+```
+
+`detached` floats the sheet as a card. `true` is `{ horizontalMargin: 16, bottomOffset: 16 }`: 16
+in from each side, resting 16 above `bottomInset`. The corners are yours — `borderRadius` on the
+`Background` rounds all four, because the surface is exactly the sheet's height tall.
+
+```tsx
+<BottomSheet detached={{ horizontalMargin: 24, bottomOffset: 32 }}>
+```
+
+## Geometry
+
+The card rests `bottomOffset + bottomInset` above the frame's bottom edge — the **resting line**.
+Every detent is a height above that line, so `"50%"` is half of the height between the resting
+line and the top inset, and the card's detents read the same as an attached sheet's.
+
+```txt
+restingBottom = bottomOffset + bottomInset
+available     = containerHeight − restingBottom
+closed        = translateY = containerHeight        the card's top edge at the frame's bottom, fully off-screen
+```
+
+Closed is fully off-screen: not resting on the line with zero height, but below the frame entirely.
+The band under a sticky footer is zero — the card already floats above the inset — and the
+keyboard lift subtracts the gap, so a card lifting for a keyboard lands its footer on the
+keyboard's edge like an attached sheet does.
+
+## The overlay covers the margins
+
+The overlay fills the frame, margins and gap included, and the panel is `box-none` where the card
+is not, so a tap beside the card or in the gap under it reaches the overlay and closes. A card with
+no `Overlay` leaves those areas to the screen behind.
+
+## The card moves as one rigid body
+
+A drag down to close, the close animation, a rubber band under the lowest detent and an over-drag
+past the highest all move the **whole card** — the top corners, the copy, the footer and the bottom
+corners together — through the gap and off the screen. Nothing clips or shrinks at the resting
+line.
+
+The panel is as tall as the frame, so the card's surface is sized separately: the sheet's height
+between its detents, the lowest detent's height below them, the highest's above them. The body is
+clamped to what the surface shows. That is what keeps the bottom corners real while the card
+travels, and it is why a detached `Background` needs no fixed height.
+
+## Attached or detached
+
+| | attached (default) | `detached` |
+| --- | --- | --- |
+| Rests on | the frame's bottom edge | `bottomOffset` above `bottomInset` |
+| Width | the frame's | the frame's less two margins |
+| Corners to round | the top two | all four |
+| Safe-area band | `bottomInset`, under the content or the footer | none — the card floats above it |
+| Closed | height `0`, on the bottom edge | fully off-screen |
+| A tap in the gap | — | closes, through the overlay |
+
+## API Reference
+
+### detached
+
+<TypeTable
+  type={{
+    detached: {
+      type: "boolean | { horizontalMargin?: number; bottomOffset?: number }",
+      description: "true is { horizontalMargin: 16, bottomOffset: 16 }. A partial object fills the rest from those defaults.",
+    },
+    horizontalMargin: { type: "number", default: "16", description: "Inset from each side of the frame." },
+    bottomOffset: { type: "number", default: "16", description: "How far above bottomInset the card rests." },
+  }}
+/>

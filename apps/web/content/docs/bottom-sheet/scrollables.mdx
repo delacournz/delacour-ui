@@ -1,0 +1,164 @@
+---
+title: Scrollables
+description: A ScrollView, FlatList or SectionList as the sheet's body, the factory that makes one from any animated list, and the rule for which of the two a finger moves.
+icon: ScrollText
+---
+
+```tsx
+import { BottomSheet } from "@delacour/react-native-bottom-sheet";
+
+<BottomSheet snapPoints={["45%", "90%"]} dynamicSizing={false}>
+  <BottomSheet.Portal>
+    <BottomSheet.Overlay style={styles.overlay} />
+    <BottomSheet.Container>
+      <BottomSheet.Background style={styles.background} />
+      <BottomSheet.Handle style={styles.handle}>
+        <View style={styles.pill} />
+      </BottomSheet.Handle>
+      <BottomSheet.ScrollView contentContainerStyle={styles.list}>
+        {rows.map((label) => (
+          <View key={label} style={styles.row}>
+            <Text style={styles.rowLabel}>{label}</Text>
+          </View>
+        ))}
+      </BottomSheet.ScrollView>
+    </BottomSheet.Container>
+  </BottomSheet.Portal>
+</BottomSheet>;
+```
+
+A scrollable replaces `Content` as the body. It takes the list's own props — `data`, `renderItem`,
+`sections`, `onScroll` — plus one of its own, `focusHook`.
+
+## The built-ins
+
+| Part | Over | Generic in |
+| --- | --- | --- |
+| `BottomSheet.ScrollView` | `Animated.ScrollView` | |
+| `BottomSheet.FlatList` | `Animated.FlatList` | `ItemT` |
+| `BottomSheet.SectionList` | `Animated.createAnimatedComponent(SectionList)` | `ItemT, SectionT` |
+
+```tsx
+<BottomSheet.FlatList
+  data={rows}
+  keyExtractor={(row) => row.id}
+  renderItem={({ item }) => <Row row={item} />}
+/>
+```
+
+`data` and `renderItem` keep checking against each other: the generic signature is restated after
+the factory so `<ItemT>` survives it.
+
+## Who moves
+
+The content pan and the list's native scroll are **simultaneous** — both see every touch — and the
+sheet's state decides which one moves:
+
+- **Below the highest detent, the list is locked.** Every scroll event is answered by scrolling
+  back to where the lock engaged, so the list consumes nothing and the pan moves the sheet. The
+  indicator is hidden, bounce is off and momentum is cut, so a fling has nothing for the lock to
+  fight.
+- **At the highest detent, the list scrolls.** A drag down spends the offset the list *began* the
+  gesture with first — the rows scroll one-for-one under the finger — and the sheet takes over the
+  moment the list reaches its top. Upward, the list scrolls and bounces rather than the sheet
+  over-dragging.
+- **A release while scrolled belongs to the list.** The velocity is the list's momentum, not a
+  snap; the sheet stays where it is.
+
+The budget is the offset at the *start* of the gesture, never the live one. The pan and the scroll
+event for one touch move land in the same frame in no fixed order, and a live subtraction let the
+sheet dip a pixel, the lock engage, and the list freeze.
+
+The lock's target is taken when the lock engages, by any path — a drag, a `snapToIndex`, a keyboard
+— as the offset at that moment. A pull-down from the top locks at `0`; a handle drag on a scrolled
+list holds the rows where they are.
+
+## Sizing
+
+The list's `maxHeight` follows the area above the footer and the keyboard on the UI thread, and its
+`marginBottom` follows the footer's height, so the last row and the indicator stop above a sticky
+footer.
+
+`onContentSizeChange` feeds the dynamic detent. A `BottomSheet.ScrollView` therefore needs neither
+`snapPoints` nor `dynamicSizing={false}`: it sizes to its rows, capped by `maxDynamicContentSize`,
+and scrolls inside that.
+
+```tsx
+<BottomSheet maxDynamicContentSize={420}>
+  …
+  <BottomSheet.ScrollView>{rows}</BottomSheet.ScrollView>
+</BottomSheet>
+```
+
+Six rows make a short sheet; forty make one 420 tall that scrolls. Toggle between the two while
+open and the sheet animates between the heights.
+
+## Under React Navigation
+
+`focusHook` defaults to `useEffect`, which registers the list with the sheet on mount. Pass
+`useFocusEffect` and a list on a screen that is not showing withdraws from the sheet, so two
+screens in a stack that each put a list in the same sheet hand it the one the reader sees.
+
+```tsx
+import { useFocusEffect } from "@react-navigation/native";
+
+<BottomSheet.FlatList data={rows} focusHook={useFocusEffect} renderItem={renderRow} />
+```
+
+## Your own scrollable
+
+```tsx
+import { createBottomSheetScrollable, SCROLLABLE_TYPE } from "@delacour/react-native-bottom-sheet";
+import { LegendList } from "@legendapp/list";
+import Animated from "react-native-reanimated";
+
+const AnimatedLegendList = Animated.createAnimatedComponent(LegendList);
+export const BottomSheetLegendList = createBottomSheetScrollable(AnimatedLegendList, SCROLLABLE_TYPE.FLAT_LIST);
+```
+
+The component handed in must already be animated and must be made **once, at module scope**. The
+wrapper drives it with `animatedProps` and an animated `onScroll`; a component created inside a
+render is a new type every frame and remounts its subtree.
+
+`contentContainerStyle` reaches the list flattened to one object — a virtualised list measures its
+content container, and an array style makes that measurement lag the layout by a frame. Your
+`onScroll`, `onScrollBeginDrag`, `onScrollEndDrag` and `onMomentumScrollEnd` are called on the JS
+thread with the event the worklet saw; they cannot be worklets of their own.
+
+<Callout type="warn">
+`refreshControl` and `onRefresh` pass through untouched, but a pull-to-refresh at the top of a
+locked list fights the sheet's own pull-down, and no rule for that is written yet.
+</Callout>
+
+## API Reference
+
+### ScrollView, FlatList, SectionList
+
+<TypeTable
+  type={{
+    focusHook: {
+      type: "(effect: EffectCallback, deps?: DependencyList) => void",
+      default: "useEffect",
+      description: "The hook that runs the registration effect. useFocusEffect under React Navigation.",
+    },
+    "...ScrollViewProps | FlatListProps<ItemT> | SectionListProps<ItemT, SectionT>": {
+      type: "the list's own props",
+      description: "Everything else passes through. children is the ScrollView's; the lists take data and renderItem.",
+    },
+  }}
+/>
+
+### createBottomSheetScrollable
+
+<TypeTable
+  type={{
+    AnimatedComponent: {
+      type: "ComponentType<ScrollableInnerProps>",
+      description: "An already-animated scrollable, made once at module scope.",
+    },
+    type: {
+      type: "SCROLLABLE_TYPE.SCROLL_VIEW | FLAT_LIST | SECTION_LIST",
+      description: "What kind of body this is, so a content pan over it lets the list bounce rather than over-dragging.",
+    },
+  }}
+/>

@@ -5,7 +5,13 @@ import { dirname, join } from "node:path";
 import { resolveConfig } from "../config/resolve";
 import { configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
-import { checkGestureHandlerRoot, checkStylingConflict, cssImportSpecifier, isOutermostWrapper } from "./doctor";
+import {
+	checkGestureHandlerRoot,
+	checkNewArchitecture,
+	checkStylingConflict,
+	cssImportSpecifier,
+	isOutermostWrapper,
+} from "./doctor";
 
 /**
  * The gesture-root check, against the layouts an Expo app actually has.
@@ -235,6 +241,38 @@ describe("checkStylingConflict", () => {
 
 	test("says nothing about a project with neither", () => {
 		expect(checkStylingConflict(project({})).status).toBe("pass");
+	});
+});
+
+/**
+ * The New Architecture check, which two libraries depend on.
+ *
+ * Reanimated 4 has always needed it; `react-native-teleport`, the portal
+ * `BottomSheet` renders through, ships a Fabric view and nothing else. A
+ * consumer who set `newArchEnabled: false` gets a sheet that renders nowhere,
+ * so the failure has to name the sheet, not only Reanimated.
+ */
+describe("checkNewArchitecture", () => {
+	const project = (expoVersion: string | null): ProjectInfo => ({ expoVersion }) as unknown as ProjectInfo;
+
+	test("passes an SDK 52+ app that says nothing, because the default is on", () => {
+		expect(checkNewArchitecture({}, project("~57.0.0")).status).toBe("pass");
+	});
+
+	test("fails an app that switched it off, naming BottomSheet in the fix", () => {
+		const check = checkNewArchitecture({ newArchEnabled: false }, project("~57.0.0"));
+
+		expect(check.status).toBe("fail");
+		expect(check.fix).toContain("BottomSheet");
+		expect(check.fix).toContain("newArchEnabled");
+	});
+
+	test("fails an SDK before 52 that did not opt in, because the default there is off", () => {
+		expect(checkNewArchitecture({}, project("~51.0.0")).status).toBe("fail");
+	});
+
+	test("skips when the expo config could not be read", () => {
+		expect(checkNewArchitecture(null, project("~57.0.0")).status).toBe("skip");
 	});
 });
 

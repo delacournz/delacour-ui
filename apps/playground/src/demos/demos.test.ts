@@ -151,7 +151,7 @@ describe("demos", () => {
 		const missing: string[] = [];
 		for (const id of FILES) {
 			const source = readFileSync(join(DEMOS, `${id}.tsx`), "utf-8");
-			const flow = source.match(/flow:\s*"([^"]+)"/)?.[1];
+			const flow = source.match(/\bflow:\s*"([^"]+)"/)?.[1];
 			if (flow && !existsSync(join(FLOWS, `${flow}.yaml`))) missing.push(`${id} → ${flow}.yaml`);
 		}
 		expect(missing).toEqual([]);
@@ -248,30 +248,37 @@ describe("chart demos", () => {
 });
 
 /**
- * `charts/` renders `@delacour/react-native-charts` directly, with nothing from
- * the themed library in front of it. The section exists to show that the engine
- * stands on its own, so a demo there that reached for `@delacour/react-native-ui`
- * would be a picture of the wrong thing — and it would still render perfectly,
- * which is why only a text check can catch it.
+ * `charts/` renders `@delacour/react-native-charts` directly, and
+ * `bottom-sheet-engine/` renders `@delacour/react-native-bottom-sheet`, with
+ * nothing from the themed library in front of either. The sections exist to
+ * show that an engine stands on its own, so a demo there that reached for
+ * `@delacour/react-native-ui` would be a picture of the wrong thing — and it
+ * would still render perfectly, which is why only a text check can catch it.
  */
 describe("engine demos", () => {
-	const ENGINE = FILES.filter((file) => file.startsWith("charts/"));
+	// `min` is the floor under the filter, so a broken prefix cannot pass on an
+	// empty set.
+	const ENGINES = [
+		{ prefix: "charts/", pkg: "@delacour/react-native-charts", min: 12 },
+		{ prefix: "bottom-sheet-engine/", pkg: "@delacour/react-native-bottom-sheet", min: 8 },
+	] as const;
 
-	test("finds the engine demos, so a broken filter cannot pass silently", () => {
-		expect(ENGINE.length).toBeGreaterThan(12);
-	});
+	for (const { prefix, pkg, min } of ENGINES) {
+		const ENGINE = FILES.filter((file) => file.startsWith(prefix));
+		const imports = (id: string): string => readFileSync(join(DEMOS, `${id}.tsx`), "utf-8");
 
-	test("every engine demo imports from @delacour/react-native-charts", () => {
-		const missing = ENGINE.filter(
-			(id) => !/from "@delacour\/react-native-charts"/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
-		);
-		expect(missing).toEqual([]);
-	});
+		test(`finds the ${prefix} demos, so a broken filter cannot pass silently`, () => {
+			expect(ENGINE.length).toBeGreaterThanOrEqual(min);
+		});
 
-	test("no engine demo imports the themed library", () => {
-		const offenders = ENGINE.filter((id) =>
-			/from "@delacour\/react-native-ui/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8"))
-		);
-		expect(offenders).toEqual([]);
-	});
+		test(`every ${prefix} demo imports from ${pkg}`, () => {
+			const missing = ENGINE.filter((id) => !imports(id).includes(`from "${pkg}"`));
+			expect(missing).toEqual([]);
+		});
+
+		test(`no ${prefix} demo imports the themed library`, () => {
+			const offenders = ENGINE.filter((id) => /from "@delacour\/react-native-ui/.test(imports(id)));
+			expect(offenders).toEqual([]);
+		});
+	}
 });

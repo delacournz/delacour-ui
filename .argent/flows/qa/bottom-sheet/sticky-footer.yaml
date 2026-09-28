@@ -1,0 +1,24 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/scrolling/scrolling-under-a-pinned-footer, settled, sheet closed.
+steps:
+  - echo: Open; the pinned footer's bottom is the screen's bottom
+  - tap: { text: Open with a footer }
+  - await: { visible: { text: Select all } }
+  - await: { visible: { text: Row 1 } }
+  - wait: 600
+  - tool: screenshot
+  - echo: Drag the sheet to its high detent from the top of the list, then scroll to the end
+  - swipe: { from: { text: Row 2 }, by: { y: -0.35 }, duration: 300, momentum: false }
+  - wait: 600
+  - scroll-to: { target: { text: Row 24 } }
+  - await: { visible: { text: Row 24 } }
+  - assert: { visible: { text: Select all } }
+  - wait: 400
+  - echo: Row 24 must sit fully above the footer's hairline — see the screenshot
+  - tool: screenshot
+  - echo: Back to the top (scrolling up past offset 0 hands the drag to the sheet, so the detent it lands on is not fixed), then a scrim tap above either detent closes it
+  - scroll-to: { target: { text: Row 1 }, direction: up }
+  - await: { visible: { text: Row 1 } }
+  - wait: 400
+  - tap: { x: 0.5, y: 0.06 }
+  - await: { hidden: { text: Select all } }

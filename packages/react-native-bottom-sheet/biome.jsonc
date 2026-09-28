@@ -1,0 +1,20 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.10/schema.json",
+	"extends": "//",
+	"root": false,
+	"files": {
+		"includes": ["src/**/*", "package.json"]
+	},
+	"overrides": [
+		{
+			// The source-text guard tests are small parsers; a parser's shape is its
+			// grammar, and flattening the branches would only hide it.
+			"includes": ["src/**/*.test.ts"],
+			"linter": {
+				"rules": {
+					"complexity": { "noExcessiveCognitiveComplexity": "off" }
+				}
+			}
+		}
+	]
+}

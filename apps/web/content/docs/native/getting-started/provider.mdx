@@ -1,6 +1,6 @@
 ---
 title: Provider
-description: The five layers DelacourProvider composes, in order, and what breaks at each.
+description: The four layers DelacourProvider composes, in order, what breaks at each, and the one it leaves to you.
 icon: Layers
 ---
 
@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The five layers
+## The four layers
 
 Outermost first. The order is not stylistic.
 
@@ -21,8 +21,26 @@ Outermost first. The order is not stylistic.
 | `GestureHandlerRootView` | Must be an ancestor **native view** of every handler a `Pressable` creates. Its absence is silent — no error, presses simply stop landing. |
 | `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
-| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the sheet host, not a parent of it. |
-| `BottomSheetModalProvider` | The host every `BottomSheet` portals into, innermost around the children. |
+| `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the children, not a parent of them. |
+
+## The fifth layer is yours
+
+An app that uses [`BottomSheet`](/docs/native/components/bottom-sheet) mounts `BottomSheetProvider`
+itself, inside `DelacourProvider` and around the navigator. It is the root host every modal sheet
+teleports to, and `DelacourProvider` cannot mount it: the sheet's engine,
+`@delacour/react-native-bottom-sheet`, is an **optional** peer, and an import here would make every
+app resolve it and build its native peer `react-native-teleport`, sheet or no sheet.
+
+```tsx title="app/_layout.tsx"
+import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
+import { DelacourProvider } from "@delacour/react-native-ui/provider";
+
+<DelacourProvider>
+  <BottomSheetProvider>{children}</BottomSheetProvider>
+</DelacourProvider>;
+```
+
+Without it a sheet still renders — where it is written, as an inline sheet, under the navigator.
 
 ## Why the safe-area seed matters
 
@@ -67,10 +85,11 @@ packages.
 ## Composing the layers by hand
 
 Only if your app already has a root stack of its own. `<KeyboardStateSync />` is **required**, not
-optional polish, and must be a child of `KeyboardProvider`.
+optional polish, and must be a child of `KeyboardProvider`. `BottomSheetProvider` goes innermost,
+and only if the app has sheets.
 
 ```tsx
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
 import { KeyboardStateSync } from "@delacour/react-native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -80,7 +99,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
   <SafeAreaProvider initialMetrics={initialWindowMetrics}>
     <KeyboardProvider>
       <KeyboardStateSync />
-      <BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+      <BottomSheetProvider>{children}</BottomSheetProvider>
     </KeyboardProvider>
   </SafeAreaProvider>
 </GestureHandlerRootView>;

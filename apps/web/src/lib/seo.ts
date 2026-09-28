@@ -1,15 +1,21 @@
 import { appDescription, appName, docsImageRoute, docsRoute, siteUrl } from "./shared";
 
 /**
- * The two things the docs site documents, and what a search result or a link
+ * The three things the docs site documents, and what a search result or a link
  * preview calls each.
  *
- * `@delacour/react-native-charts` is its own package — Skia, Reanimated and Gesture
- * Handler, with no Tailwind, no Uniwind and no tokens — so its pages must not
- * preview as the component library's "painted from your shadcn web app".
- * Everything under `/docs/charts` is `charts`; everything else is `ui`.
+ * `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` are
+ * their own packages — Skia, Reanimated, Gesture Handler and keyboard-controller,
+ * with no Tailwind, no Uniwind and no tokens — so their pages must not preview
+ * as the component library's "painted from your shadcn web app". Everything
+ * under `/docs/charts` is `charts`, everything under `/docs/bottom-sheet` is
+ * `bottom-sheet`; everything else is `ui`.
+ *
+ * The slug a product's tree lives under is the product's own name, which is
+ * what lets `docsProduct` and the `/og/docs` route parse it with one guard
+ * rather than a literal per product.
  */
-export type DocsProduct = "ui" | "charts";
+export type DocsProduct = "ui" | "charts" | "bottom-sheet";
 
 export type ProductSeo = {
 	/** `og:site_name`, the name on the card, and the suffix on an inner page's title. */
@@ -44,10 +50,30 @@ export const PRODUCTS: Record<DocsProduct, ProductSeo> = {
 		cardLine: "Headless. Animated. No tokens, no className.",
 		path: `${docsRoute}/charts`,
 	},
+	"bottom-sheet": {
+		name: "Delacour Bottom Sheet",
+		headline: "Delacour Bottom Sheet — a headless sheet engine for React Native",
+		description:
+			"A headless bottom sheet engine for React Native. Detents, dynamic sizing, keyboard-aware sticky footers, scrollables, a teleported portal, detached cards and a typed multi-step machine — every radius, colour and inset is a style you pass in. No tokens, no className, no styling library.",
+		cardTitle: "Bottom sheets for React Native",
+		cardLine: "Detents, keyboard, footer, steps. No tokens, no className.",
+		path: `${docsRoute}/bottom-sheet`,
+	},
 };
 
+/** The products a docs tree can be namespaced under — every product but the library, whose pages are everything else. */
+const NAMESPACED_PRODUCTS: readonly DocsProduct[] = (Object.keys(PRODUCTS) as DocsProduct[]).filter(
+	(product) => product !== "ui"
+);
+
+/** Whether a string names a docs product. The guard both `docsProduct` and the `/og/docs` query parse through. */
+export function isDocsProduct(value: string | null | undefined): value is DocsProduct {
+	return value !== null && value !== undefined && Object.hasOwn(PRODUCTS, value);
+}
+
 export function docsProduct(slugs: readonly string[]): DocsProduct {
-	return slugs[0] === "charts" ? "charts" : "ui";
+	const first = slugs[0];
+	return isDocsProduct(first) && NAMESPACED_PRODUCTS.includes(first) ? first : "ui";
 }
 
 /** The social card for a docs page, absolute. `ui` and a missing title are the route's defaults, so they stay out of the query. */

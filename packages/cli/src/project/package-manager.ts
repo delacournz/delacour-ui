@@ -67,7 +67,11 @@ const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
  * compares bare names against the project's own `package.json`, and a tagged
  * spec there would never match anything and would reinstall on every run.
  */
-const DELACOUR_PACKAGES: ReadonlySet<string> = new Set(["@delacour/react-native-charts", "@delacour/react-native-ui"]);
+const DELACOUR_PACKAGES: ReadonlySet<string> = new Set([
+	"@delacour/react-native-bottom-sheet",
+	"@delacour/react-native-charts",
+	"@delacour/react-native-ui",
+]);
 
 /** A package name with the dist-tag its channel pins, where it has one. */
 function toSpec(name: string, channel: Channel): string {

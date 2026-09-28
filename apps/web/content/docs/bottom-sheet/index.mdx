@@ -1,0 +1,98 @@
+---
+title: Overview
+description: A headless bottom sheet engine for React Native — Gesture Handler for the pans, Reanimated for the motion, keyboard-controller for the keyboard, teleport for the portal.
+icon: PanelBottom
+---
+
+`@delacour/react-native-bottom-sheet` moves a sheet and nothing else. Every radius, colour and
+inset is a `style` you pass in: there is no `className`, no token and no theme. The skinned
+[BottomSheet](/docs/native/components/bottom-sheet) in `@delacour/react-native-ui` is this engine
+with the theme attached, and it is the one to reach for when you want a sheet that already matches
+the rest of the library.
+
+```tsx
+import { BottomSheet } from "@delacour/react-native-bottom-sheet";
+import { Text, View } from "react-native";
+
+<BottomSheet snapPoints={["40%", "85%"]} dynamicSizing={false}>
+  <BottomSheet.Trigger style={styles.button}>
+    <Text style={styles.buttonLabel}>Open</Text>
+  </BottomSheet.Trigger>
+  <BottomSheet.Portal>
+    <BottomSheet.Overlay style={styles.overlay} />
+    <BottomSheet.Container>
+      <BottomSheet.Background style={styles.background} />
+      <BottomSheet.Handle style={styles.handle}>
+        <View style={styles.pill} />
+      </BottomSheet.Handle>
+      <BottomSheet.Content style={styles.content}>
+        <BottomSheet.Title style={styles.title}>Two detents</BottomSheet.Title>
+        <BottomSheet.Description style={styles.description}>
+          Drag the handle up for the second. Drag past the first to close.
+        </BottomSheet.Description>
+        <BottomSheet.Close style={styles.close}>
+          <Text style={styles.closeLabel}>Close</Text>
+        </BottomSheet.Close>
+      </BottomSheet.Content>
+    </BottomSheet.Container>
+  </BottomSheet.Portal>
+</BottomSheet>;
+```
+
+A sheet is a root and the parts you place inside it. The root owns the state — where the sheet
+is, which detents it may rest at, whose keyboard it is lifting for — and publishes it through a
+context; a part reads that context and renders one thing. [Composition](/docs/bottom-sheet/composition)
+lays the parts out and names every prop.
+
+## What it does
+
+<Cards>
+  <Card title="Detents" href="/docs/bottom-sheet/detents">
+    Pixels, percentages, and the content's own height. Where the sheet may rest.
+  </Card>
+  <Card title="Gestures" href="/docs/bottom-sheet/gestures">
+    Two pans, a rubber band, a velocity snap, and a haptic on every crossing.
+  </Card>
+  <Card title="Keyboard" href="/docs/bottom-sheet/keyboard">
+    Four behaviours, three scopes, and a footer that lands on the keyboard's edge.
+  </Card>
+  <Card title="Footer" href="/docs/bottom-sheet/footer">
+    Inline or sticky. The safe-area band, counted once and collapsed with the keyboard.
+  </Card>
+  <Card title="Scrollables" href="/docs/bottom-sheet/scrollables">
+    A list as the body, and the rule for which of the two a finger moves.
+  </Card>
+</Cards>
+
+## Where it draws
+
+<Cards>
+  <Card title="Portal and host" href="/docs/bottom-sheet/portal-and-host">
+    Modal by default, inline on request, and a host for a native modal screen.
+  </Card>
+  <Card title="Detached" href="/docs/bottom-sheet/detached">
+    A floating card with margins, four rounded corners, and a rigid close.
+  </Card>
+</Cards>
+
+## Reference
+
+<Cards>
+  <Card title="Steps" href="/docs/bottom-sheet/steps">
+    A typed machine, a body that follows it, and a height that glides between steps.
+  </Card>
+  <Card title="Animation" href="/docs/bottom-sheet/animation">
+    A spring or a timing. Platform defaults, reduce motion, and what the callbacks hear.
+  </Card>
+  <Card title="Core" href="/docs/bottom-sheet/core">
+    Every number the sheet computes, as pure functions with no native module in the graph.
+  </Card>
+</Cards>
+
+## What is not here
+
+A `className`. A colour token. A `GestureHandlerRootView`, a `SafeAreaProvider` or a
+`KeyboardProvider` — your app has all three already, and a nested `KeyboardProvider` is a second,
+disagreeing keyboard. A `BottomSheetModal` component: a modal sheet is a sheet whose portal
+teleports, and that is the default. The reasoning behind each is in the package's own
+[`AGENTS.md`](https://github.com/delacournz/delacour-ui/blob/main/packages/react-native-bottom-sheet/AGENTS.md).

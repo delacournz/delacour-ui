@@ -23,6 +23,7 @@
         "@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
         "@delacour/brand": "workspace:*",
         "@delacour/design-system": "workspace:*",
+        "@delacour/react-native-bottom-sheet": "workspace:*",
         "@delacour/react-native-charts": "workspace:*",
         "@delacour/react-native-ui": "workspace:*",
         "@expo-google-fonts/dm-sans": "^0.4.2",
@@ -51,7 +52,6 @@
         "@expo-google-fonts/roboto-slab": "^0.4.2",
         "@expo-google-fonts/source-sans-3": "^0.4.1",
         "@expo-google-fonts/space-grotesk": "^0.4.1",
-        "@gorhom/bottom-sheet": "^5.2.8",
         "@legendapp/list": "catalog:",
         "@shopify/react-native-skia": "catalog:",
         "culori": "^4.0.2",
@@ -81,6 +81,7 @@
         "react-native-screens": "catalog:",
         "react-native-svg": "catalog:",
         "react-native-tab-view": "^4.3.2",
+        "react-native-teleport": "^1.2.2",
         "react-native-worklets": "catalog:",
         "tailwindcss": "^4.3.3",
         "uniwind": "^1.11.0",
@@ -186,6 +187,28 @@
         "typescript": "^5.9.3",
       },
     },
+    "packages/react-native-bottom-sheet": {
+      "name": "@delacour/react-native-bottom-sheet",
+      "version": "0.1.0-alpha.0",
+      "devDependencies": {
+        "@delacour/biome-config": "workspace:*",
+        "@delacour/tsconfig": "workspace:*",
+        "@types/bun": "^1.3.8",
+        "@types/react": "catalog:",
+        "react-native-teleport": "^1.2.2",
+        "typescript": "^5.9.3",
+      },
+      "peerDependencies": {
+        "react": ">=19",
+        "react-native": ">=0.81",
+        "react-native-gesture-handler": ">=2.28",
+        "react-native-keyboard-controller": ">=1.18",
+        "react-native-reanimated": ">=4",
+        "react-native-safe-area-context": ">=5",
+        "react-native-teleport": ">=1.2",
+        "react-native-worklets": ">=0.5",
+      },
+    },
     "packages/react-native-charts": {
       "name": "@delacour/react-native-charts",
       "version": "0.1.0-alpha.5",
@@ -222,17 +245,19 @@
       },
       "devDependencies": {
         "@delacour/biome-config": "workspace:*",
+        "@delacour/react-native-bottom-sheet": "workspace:*",
         "@delacour/react-native-charts": "workspace:*",
         "@delacour/tsconfig": "workspace:*",
         "@types/bun": "^1.3.8",
         "@types/react": "catalog:",
         "expo-router": "~57.0.15",
+        "react-native-teleport": "^1.2.2",
         "typescript": "^5.9.3",
       },
       "peerDependencies": {
         "@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
+        "@delacour/react-native-bottom-sheet": ">=0.1.0-alpha.0",
         "@delacour/react-native-charts": ">=0.1.0-alpha.5",
-        "@gorhom/bottom-sheet": "^5.2.8",
         "@legendapp/list": ">=3.3",
         "expo-linear-gradient": ">=15",
         "expo-router": ">=57",
@@ -245,15 +270,18 @@
         "react-native-safe-area-context": ">=5",
         "react-native-screens": ">=4.16",
         "react-native-svg": ">=15",
+        "react-native-teleport": ">=1.2",
         "react-native-worklets": ">=0.5",
         "tailwindcss": "^4",
         "uniwind": "^1.11.0",
       },
       "optionalPeers": [
+        "@delacour/react-native-bottom-sheet",
         "@delacour/react-native-charts",
         "@legendapp/list",
         "expo-router",
         "react-native-screens",
+        "react-native-teleport",
       ],
     },
     "packages/skills": {
@@ -514,6 +542,8 @@
 
     "@delacour/playground": ["@delacour/playground@workspace:apps/playground"],
 
+    "@delacour/react-native-bottom-sheet": ["@delacour/react-native-bottom-sheet@workspace:packages/react-native-bottom-sheet"],
+
     "@delacour/react-native-charts": ["@delacour/react-native-charts@workspace:packages/react-native-charts"],
 
     "@delacour/react-native-ui": ["@delacour/react-native-ui@workspace:packages/react-native-ui"],
@@ -713,10 +743,6 @@
     "@fumadocs/tailwind": ["@fumadocs/tailwind@0.1.1", "", { "peerDependencies": { "tailwindcss": "^4.0.0" }, "optionalPeers": ["tailwindcss"] }, "sha512-BnPe52UxSaG8yKlHMKBxXw8h6GpK5qO55ci6+Qd5JnquTvIw6SpfbC1P+qAi82PuPWv1KZAWY8bxRk4+x9ctXw=="],
 
     "@fumari/image-size": ["@fumari/image-size@0.1.1", "", {}, "sha512-iaiV2wyzJ4mW358NX4CX3yGit+WjKYzpaQ+rldK9BjL/5jFpeV6ruWnZVq7MEyMn3Gd0DLi8g/79NZAAQaGscw=="],
-
-    "@gorhom/bottom-sheet": ["@gorhom/bottom-sheet@5.2.14", "", { "dependencies": { "@gorhom/portal": "1.0.14", "invariant": "^2.2.4" }, "peerDependencies": { "@types/react": "*", "@types/react-native": "*", "react": "*", "react-native": "*", "react-native-gesture-handler": ">=2.16.1", "react-native-reanimated": ">=3.16.0 || >=4.0.0-" }, "optionalPeers": ["@types/react", "@types/react-native"] }, "sha512-uLQFlDjp9z+jrOFcMSEldPqL5JdaXL3vXOh+juhwoNvXgTsEorJLjHTugXu+YccAG/0KJnShzKCrb71MHBsvJg=="],
-
-    "@gorhom/portal": ["@gorhom/portal@1.0.14", "", { "dependencies": { "nanoid": "^3.3.1" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-MXyL4xvCjmgaORr/rtryDNFy3kU4qUbKlwtQqqsygd0xX3mhKjOLn6mQK8wfu0RkoE0pBE0nAasRoHua+/QZ7A=="],
 
     "@hono/node-server": ["@hono/node-server@2.1.1", "", { "peerDependencies": { "hono": "^4" } }, "sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg=="],
 
@@ -2175,6 +2201,8 @@
     "react-native-svg": ["react-native-svg@15.15.4", "", { "dependencies": { "css-select": "^5.1.0", "css-tree": "^1.1.3", "warn-once": "0.1.1" }, "peerDependencies": { "react": "*", "react-native": "*" } }, "sha512-boT/vIRgj6zZKBpfTPJJiYWMbZE9duBMOwPK6kCSTgxsS947IFMOq9OgIFkpWZTB7t229H24pDRkh3W9ZK/J1A=="],
 
     "react-native-tab-view": ["react-native-tab-view@4.3.2", "", { "dependencies": { "use-latest-callback": "^0.2.4" }, "peerDependencies": { "react": ">= 18.2.0", "react-native": "*", "react-native-pager-view": ">= 6.0.0" } }, "sha512-QCHX9bTGMeME5pt4jJ1/H7oshX7Z2nA/Ts3m7FpKUbWfPPIL8rlNLZwkedgV273Eqau8jj8deRtfSZl9LCctCw=="],
+
+    "react-native-teleport": ["react-native-teleport@1.2.2", "", { "peerDependencies": { "react": "*", "react-dom": "*", "react-native": "*" } }, "sha512-ot9G+y7VyvHE9kij4q82IcVikAlL+bgmzKn1O8BdtTgOsrfxQhfQ6I4vJJQla491CbRSHLqwRno8jOwYJocXyA=="],
 
     "react-native-worklets": ["react-native-worklets@0.10.1", "", { "dependencies": { "@babel/plugin-transform-arrow-functions": "^7.27.1", "@babel/plugin-transform-class-properties": "^7.28.6", "@babel/plugin-transform-classes": "^7.28.6", "@babel/plugin-transform-nullish-coalescing-operator": "^7.28.6", "@babel/plugin-transform-optional-chaining": "^7.28.6", "@babel/plugin-transform-shorthand-properties": "^7.27.1", "@babel/plugin-transform-template-literals": "^7.27.1", "@babel/plugin-transform-unicode-regex": "^7.27.1", "@babel/preset-typescript": "^7.28.5", "@babel/types": "^7.27.1", "convert-source-map": "^2.0.0", "semver": "^7.7.4" }, "peerDependencies": { "@babel/core": "*", "@react-native/metro-config": "*", "react": "*", "react-native": "0.83 - 0.86" } }, "sha512-62mRM19bDpfpdI8HLkEErcdOsrAPDtE9lA/sw+5lLRpzBHNhxaoj9QyY2KjXqUmirelxkX4zuPGTC3VdA0feJA=="],
 

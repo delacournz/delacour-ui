@@ -130,26 +130,12 @@ describe("commandLine", () => {
 describe("channel dist tags", () => {
 	test("peers a Delacour package with a range both an alpha and a stable satisfy", () => {
 		expect(peerRange("@delacour/react-native-charts")).toBe(">=0.0.0-0");
+		expect(peerRange("@delacour/react-native-bottom-sheet")).toBe(">=0.0.0-0");
 		expect(peerRange("clsx")).toBe("*");
 	});
 
-	test("installs @delacour/react-native-bottom-sheet from the alpha tag too", () => {
-		// Same pre mode, same empty `latest`: the sheet engine is the second
-		// Delacour package a registry item depends on.
-		expect(peerRange("@delacour/react-native-bottom-sheet")).toBe(">=0.0.0-0");
-
-		const [group] = installCommands({
-			...NONE,
-			packageManager: "bun",
-			dependencies: ["@delacour/react-native-bottom-sheet"],
-		});
-
-		expect(commandLine(group as InstallGroup)).toBe("bun add @delacour/react-native-bottom-sheet@alpha");
-	});
-
-	test("installs @delacour/react-native-charts from the alpha tag", () => {
-		// `latest` deliberately points at nothing while this repository is in
-		// Changesets pre mode, so an untagged add fails outright.
+	test("installs Delacour packages from the alpha tag when the CLI is an alpha build", () => {
+		// An alpha CLI reads a registry that may name APIs only an alpha package has.
 		const [group] = installCommands({
 			...NONE,
 			packageManager: "bun",

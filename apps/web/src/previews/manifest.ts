@@ -3966,7 +3966,9 @@ export type PreviewId = keyof typeof previews;
 /** Demo ids per component, in the order that component's barrel lists them. */
 export const previewsByComponent: Readonly<Record<string, readonly PreviewId[]>> = {
 	"accordion": ["accordion/variants", "accordion/sizes", "accordion/one-at-a-time", "accordion/any-number-at-once", "accordion/a-glyph-beside-the-title"],
-	"badge": ["badge/variants-and-colours", "badge/sizes", "badge/composed-icon", "badge/status-dot"],
+	"alert": ["alert/statuses", "alert/surface-variant", "alert/sizes", "alert/dismissible", "alert/actions", "alert/custom-indicator", "alert/checkout"],
+	"avatar": ["avatar/fallbacks", "avatar/sizes", "avatar/variants-and-colours", "avatar/presence", "avatar/unread-count", "avatar/group"],
+	"badge": ["badge/variants-and-colours", "badge/sizes", "badge/composed-icon", "badge/status-dot", "badge/dismissible"],
 	"bottom-sheet": ["bottom-sheet/anatomy/inline-persistent", "bottom-sheet/anatomy/the-whole-composition", "bottom-sheet/hosting/inside-a-native-modal", "bottom-sheet/sizing/detached", "bottom-sheet/steps/per-step-snap-points"],
 	"bottom-sheet-engine": ["bottom-sheet-engine/detached/floating-card", "bottom-sheet-engine/scrollables/scroll-view-two-detents", "bottom-sheet-engine/steps/three-step-form"],
 	"button": ["button/variants", "button/sizes", "button/disabled", "button/loading", "button/icons", "button/icon-button", "button/group", "button/group-orientation", "button/group-separator", "button/group-text", "button/group-input"],

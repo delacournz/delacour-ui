@@ -1,73 +1,106 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo, useRef } from "react";
-import { useControllableState } from "../../hooks/use-controllable-state";
-import { type BottomSheetContextValue, type BottomSheetHandle, BottomSheetProvider } from "./bottom-sheet.context";
+import {
+	BottomSheetHost,
+	BottomSheetProvider,
+	BottomSheet as Headless,
+	type BottomSheetProps as HeadlessBottomSheetProps,
+} from "@delacour/react-native-bottom-sheet";
+import type { ReactElement } from "react";
+import { Presets } from "react-native-pulsar";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useKeyboardAnimationGuard } from "../../hooks/use-keyboard-state-sync";
+import { BottomSheetBackground } from "./bottom-sheet-background";
 import { BottomSheetClose } from "./bottom-sheet-close";
 import { BottomSheetContainer } from "./bottom-sheet-container";
 import { BottomSheetContent } from "./bottom-sheet-content";
 import { BottomSheetDescription } from "./bottom-sheet-description";
+import { BottomSheetFlatList } from "./bottom-sheet-flat-list";
 import { BottomSheetFooter } from "./bottom-sheet-footer";
+import { BottomSheetHandle } from "./bottom-sheet-handle";
+import { BottomSheetLegendList } from "./bottom-sheet-legend-list";
 import { BottomSheetOverlay } from "./bottom-sheet-overlay";
-import { BottomSheetPortal } from "./bottom-sheet-portal";
 import { BottomSheetScrollView } from "./bottom-sheet-scroll-view";
+import { BottomSheetSectionList } from "./bottom-sheet-section-list";
+import { BottomSheetStep, BottomSheetSteps } from "./bottom-sheet-steps";
+import { BottomSheetTextInput } from "./bottom-sheet-text-input";
 import { BottomSheetTitle } from "./bottom-sheet-title";
 import { BottomSheetTrigger } from "./bottom-sheet-trigger";
 
-export type BottomSheetProps = {
-	children?: ReactNode;
-	/** Controlled open state. Leave it off and the sheet holds its own. */
-	isOpen?: boolean;
-	/** Initial open state while uncontrolled. */
-	defaultOpen?: boolean;
-	/**
-	 * Called whenever the sheet opens or closes — by a trigger, a swipe down, a
-	 * press on the backdrop, `BottomSheet.Close`, or a controlled `isOpen`.
-	 *
-	 * One callback for every path, deliberately. gorhom's own `onClose` fires for
-	 * the gesture alone, which is the shape that makes a caller wire three
-	 * handlers and still miss one.
-	 */
-	onOpenChange?: (isOpen: boolean) => void;
-};
+/**
+ * Every prop the engine's root takes, with two defaults this skin fills in:
+ * `bottomInset` is the device's safe-area bottom unless a caller says
+ * otherwise, and the two haptics are the library's own.
+ */
+export type BottomSheetProps = HeadlessBottomSheetProps;
 
-function BottomSheetRoot({ children, defaultOpen = false, isOpen, onOpenChange }: BottomSheetProps): ReactElement {
-	const sheetRef = useRef<BottomSheetHandle | null>(null);
-	const [isSheetOpen, setOpen] = useControllableState<boolean>({
-		defaultValue: defaultOpen,
-		onChange: onOpenChange,
-		value: isOpen,
-	});
+/**
+ * The haptics the sheet plays, as module-scope worklets.
+ *
+ * Both run on the UI thread from inside the engine's pan, so they are
+ * `Presets.System.*` — themselves worklets — and nothing else: a JS function
+ * here would be `undefined is not a function` at the moment a finger crosses a
+ * detent. `selection` on a detent because that is what a picker's tick feels
+ * like, and `impactLight` on a close because letting go of a sheet is a
+ * heavier event than passing a stop, but not by much.
+ */
+const detentHaptic = Presets.System.selection;
+const closeHaptic = Presets.System.impactLight;
 
-	const open = useCallback(() => setOpen(true), [setOpen]);
-	const close = useCallback(() => setOpen(false), [setOpen]);
+/**
+ * The engine's root with this library's defaults on it. It renders no view of
+ * its own.
+ *
+ * Three things happen here and nowhere else in the skin:
+ *
+ * - **`bottomInset` defaults to the safe-area bottom**, read from
+ *   `useSafeAreaInsets()`. The engine reserves that band under the body or the
+ *   sticky footer and gives it back to the keyboard as it arrives; a caller
+ *   never pads for the home indicator by hand.
+ * - **The haptics are on by default.** Pass `onDetentHaptic={undefined}` to
+ *   turn one off, or a worklet of your own to change it.
+ * - **The stale-keyboard guard runs on mount.** A sheet mounted while
+ *   `KeyboardProvider`'s shared values are pinned open by a keyboard that
+ *   vanished without a `will` event would lift for a keyboard that is not
+ *   there; `Screen.Footer` runs the same repair for the same reason.
+ *
+ * `topInset` is left at the engine's zero, so a `%` detent is a fraction of the
+ * whole window — the same fraction it was before this rewrite.
+ */
+function BottomSheetRoot({
+	bottomInset,
+	onDetentHaptic = detentHaptic,
+	onCloseHaptic = closeHaptic,
+	...props
+}: BottomSheetProps): ReactElement {
+	const insets = useSafeAreaInsets();
+	useKeyboardAnimationGuard();
 
-	const context = useMemo<BottomSheetContextValue>(
-		() => ({ close, isOpen: isSheetOpen, open, setOpen, sheetRef }),
-		[close, isSheetOpen, open, setOpen]
+	return (
+		<Headless
+			bottomInset={bottomInset ?? insets.bottom}
+			onCloseHaptic={onCloseHaptic}
+			onDetentHaptic={onDetentHaptic}
+			{...props}
+		/>
 	);
-
-	return <BottomSheetProvider value={context}>{children}</BottomSheetProvider>;
 }
 
 /**
  * A panel that slides up from the bottom of the screen, over everything.
  *
- * The library's first overlay, built on `@gorhom/bottom-sheet`'s modal. It
- * renders no view of its own — it owns the open state and hands it to the parts
- * through context, so a trigger anywhere inside can open a sheet declared
- * anywhere else in the same tree.
+ * A thin Uniwind skin over `@delacour/react-native-bottom-sheet`: every part
+ * here is the engine's part with this library's classes, `Text` presets and
+ * `Pressable` on it. The engine owns the state, the geometry, the gestures,
+ * the keyboard, the portal and the accessibility; this file owns what it looks
+ * like.
  *
- * **The app must mount `DelacourProvider` at its root.** The sheet hosts itself in
- * the `BottomSheetModalProvider` that provider's innermost layer supplies, and it
- * needs the gesture root above it for the pan.
- *
- * **Two parts are not drawn where they are written.** `BottomSheet.Overlay` and a
- * `BottomSheet.Footer sticky` are lifted out of the tree and handed to gorhom as
- * render props — see `BottomSheet.Portal` and `BottomSheet.Container` for why the
- * anatomy is worth that. Everything else renders in place.
+ * **The app mounts `BottomSheetProvider` once**, inside `DelacourProvider` and
+ * around its navigator. `DelacourProvider` cannot do it — the engine is an
+ * optional peer of this library — so the provider is exported from this
+ * subpath for the app to place. Without it a `Portal` renders where it is
+ * written, which is the inline sheet.
  *
  * Controlled or not, from one hook: pass `isOpen` and `onOpenChange` to own the
- * state, or nothing at all and let the sheet hold it. Which mode is in play is
- * locked in on first render.
+ * state, or nothing at all and let the sheet hold it.
  *
  * @example
  * <BottomSheet>
@@ -90,12 +123,12 @@ function BottomSheetRoot({ children, defaultOpen = false, isOpen, onOpenChange }
  * </BottomSheet>
  *
  * @example
- * // Controlled, and opened from somewhere other than a trigger.
- * <BottomSheet isOpen={isOpen} onOpenChange={setOpen}>
+ * // Controlled, snapped, and scrolling.
+ * <BottomSheet dynamicSizing={false} isOpen={isOpen} onOpenChange={setOpen} snapPoints={["50%", "90%"]}>
  *   <BottomSheet.Portal>
  *     <BottomSheet.Overlay />
  *     <BottomSheet.Container>
- *       <BottomSheet.Content>{…}</BottomSheet.Content>
+ *       <BottomSheet.ScrollView>{rows}</BottomSheet.ScrollView>
  *     </BottomSheet.Container>
  *   </BottomSheet.Portal>
  * </BottomSheet>
@@ -103,23 +136,43 @@ function BottomSheetRoot({ children, defaultOpen = false, isOpen, onOpenChange }
 export const BottomSheet = Object.assign(BottomSheetRoot, {
 	/** The control that opens the sheet. `asChild` to make a `Button` the trigger. */
 	Trigger: BottomSheetTrigger,
-	/** Everything drawn above the app. Lifts the overlay out to the container. */
-	Portal: BottomSheetPortal,
-	/** The scrim. Written beside the container, drawn as its backdrop. */
+	/** Everything drawn above the app, teleported to the nearest host. `inline` to render in place. */
+	Portal: Headless.Portal,
+	/** The scrim. Omit it and the sheet has none. */
 	Overlay: BottomSheetOverlay,
-	/** The sheet itself. Every gorhom prop passes through it. */
+	/** The panel that moves. Brings its own `Background` and `Handle` unless you write them. */
 	Container: BottomSheetContainer,
-	/** The sheet's body, sized to itself under `enableDynamicSizing`. */
+	/** The panel's surface — `bg-popover`, top corners rounded, every corner when `detached`. */
+	Background: BottomSheetBackground,
+	/** The grabber's row, and the sheet's one adjustable accessibility element. */
+	Handle: BottomSheetHandle,
+	/** The static body. A sheet sized to its content is sized to this. */
 	Content: BottomSheetContent,
-	/** A scrolling body. Needs `enableDynamicSizing={false}` and snap points. */
+	/** A scrolling body. Sizes to its rows, capped by `maxDynamicContentSize`, or fills explicit `snapPoints`. */
 	ScrollView: BottomSheetScrollView,
+	/** A virtualised body. */
+	FlatList: BottomSheetFlatList,
+	/** A virtualised body with sticky section headers. */
+	SectionList: BottomSheetSectionList,
+	/** A `LegendList` body. Needs the optional `@legendapp/list` peer. */
+	LegendList: BottomSheetLegendList,
+	/** Controls at the bottom. `sticky` pins them over the body and rides the keyboard. */
+	Footer: BottomSheetFooter,
 	/** The dismiss control, positioned out of the content's flow. */
 	Close: BottomSheetClose,
-	/** The sheet's heading — a `Text.Header` with the close control's clearance. */
+	/** The sheet's heading — a `Text.Header` that labels the panel for a screen reader. */
 	Title: BottomSheetTitle,
 	/** Supporting copy under the title — a muted `Text.Paragraph`. */
 	Description: BottomSheetDescription,
-	/** Controls at the bottom. `sticky` pins them above the keyboard. */
-	Footer: BottomSheetFooter,
+	/** An `Input` registered with the sheet, so the keyboard it raises is the sheet's. */
+	TextInput: BottomSheetTextInput,
+	/** A body whose contents follow a step machine and whose height glides between them. */
+	Steps: BottomSheetSteps,
+	/** One step of a `Steps` body. */
+	Step: BottomSheetStep,
+	/** A place for sheets to teleport to other than the root — the recipe for a native modal. */
+	Host: BottomSheetHost,
+	/** The engine's provider. Mount it once, inside `DelacourProvider`. */
+	Provider: BottomSheetProvider,
 	displayName: "DelacourUI.BottomSheet",
 });

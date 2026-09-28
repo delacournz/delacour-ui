@@ -40,6 +40,12 @@ export function baseOptions(): BaseLayoutProps {
 			},
 			{
 				type: "main",
+				text: "Bottom Sheet",
+				url: "/docs/bottom-sheet",
+				active: "nested-url",
+			},
+			{
+				type: "main",
 				text: "Theme",
 				url: "/theme",
 				active: "nested-url",

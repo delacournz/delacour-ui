@@ -1,17 +1,14 @@
 import { describe, expect, test } from "bun:test";
+import { resolveSheetBottomInset, resolveSheetScrollEndPadding } from "@delacour/react-native-bottom-sheet/core";
 import { declaredTokens, tokenValue } from "../../styles/theme-tokens.test";
 import {
 	BOTTOM_SHEET_BACKDROP_INDICES,
 	BOTTOM_SHEET_CLOSE_HIT_SLOP,
 	BOTTOM_SHEET_FOOTER_GAP,
 	BOTTOM_SHEET_FOOTER_PADDING,
-	BOTTOM_SHEET_KEYBOARD_DEFAULTS,
 	BOTTOM_SHEET_OVERLAY_OPACITY,
 	BOTTOM_SHEET_OVERLAY_TOKEN,
 	bottomSheetVariants,
-	resolveFooterPlacement,
-	resolveSheetBottomInset,
-	resolveSheetScrollEndPadding,
 } from "./bottom-sheet.variants";
 
 const LIGHT = declaredTokens("light");
@@ -33,6 +30,7 @@ function colorTokens(cls: string): string[] {
 }
 
 const SLOTS = bottomSheetVariants();
+const DETACHED = bottomSheetVariants({ detached: true });
 
 /**
  * The slots this component declares, pinned rather than derived.
@@ -48,6 +46,8 @@ const SLOT_NAMES = [
 	"handleIndicator",
 	"content",
 	"scrollContent",
+	"steps",
+	"step",
 	"footer",
 	"stickyFooter",
 	"close",
@@ -82,8 +82,8 @@ describe("the overlay token", () => {
 			expect(alpha).toBeLessThan(1);
 		}
 
-		// Leaving gorhom's 0.5 in place would multiply against that alpha and land
-		// the scrim at roughly a fifth of what the theme asked for.
+		// Any other opacity would multiply against that alpha and land the scrim
+		// somewhere the theme did not ask for.
 		expect(BOTTOM_SHEET_OVERLAY_OPACITY).toBe(1);
 	});
 
@@ -112,91 +112,29 @@ describe("every token the slots name", () => {
 });
 
 describe("the backdrop indices", () => {
-	test("show the scrim from the first snap point and hide it only when closed", () => {
-		// gorhom's own defaults (1 / 0) suit a persistent sheet resting collapsed
-		// on screen. A modal sheet has no resting state.
+	test("show the scrim from the first detent and hide it only when closed", () => {
+		// A modal sheet has no resting state: presented or gone.
 		expect(BOTTOM_SHEET_BACKDROP_INDICES.appearsOnIndex).toBe(0);
 		expect(BOTTOM_SHEET_BACKDROP_INDICES.disappearsOnIndex).toBe(-1);
 		expect(BOTTOM_SHEET_BACKDROP_INDICES.disappearsOnIndex).toBeLessThan(BOTTOM_SHEET_BACKDROP_INDICES.appearsOnIndex);
 	});
 });
 
-describe("the keyboard defaults", () => {
-	test("follow the keyboard, restore on blur, and resize the Android window", () => {
-		expect(BOTTOM_SHEET_KEYBOARD_DEFAULTS).toEqual({
-			keyboardBehavior: "interactive",
-			keyboardBlurBehavior: "restore",
-			android_keyboardInputMode: "adjustResize",
-		});
-	});
-
-	test("does not leave Android on gorhom's adjustPan", () => {
-		// `adjustPan` slides the whole window up instead of resizing it, which puts
-		// a sheet's footer off-screen. `resize` is what Expo configures and what
-		// `KeyboardProvider` requires, so this is the value that matches reality.
-		expect(BOTTOM_SHEET_KEYBOARD_DEFAULTS.android_keyboardInputMode).not.toBe("adjustPan");
-	});
-});
-
-describe("resolveFooterPlacement", () => {
-	const footer = (isSticky: boolean) => ({ isFooter: true, isSticky });
-	const other = { isFooter: false, isSticky: false };
-
-	test("reports none for children holding no footer", () => {
-		expect(resolveFooterPlacement([])).toBe("none");
-		expect(resolveFooterPlacement([other, other])).toBe("none");
-	});
-
-	test("reports inline for a footer that did not ask to be pinned", () => {
-		expect(resolveFooterPlacement([other, footer(false)])).toBe("inline");
-	});
-
-	test("reports sticky for one that did, wherever it sits", () => {
-		expect(resolveFooterPlacement([footer(true), other])).toBe("sticky");
-		expect(resolveFooterPlacement([other, footer(true)])).toBe("sticky");
-	});
-
-	test("lets a single sticky footer win over an inline one", () => {
-		// Two footers is not a state worth expressing, and the pinned one is the
-		// one a caller meant.
-		expect(resolveFooterPlacement([footer(false), footer(true)])).toBe("sticky");
-		expect(resolveFooterPlacement([footer(true), footer(false)])).toBe("sticky");
-	});
-
-	test("never reads a sticky flag off a child that is not a footer", () => {
-		expect(resolveFooterPlacement([{ isFooter: false, isSticky: true }])).toBe("none");
-	});
-});
-
-describe("resolveSheetBottomInset", () => {
-	test("gives the safe-area band to the content when nothing is pinned below it", () => {
+describe("the inset helpers the engine's core exports", () => {
+	// They used to live here. They moved to the engine so the engine's own footer
+	// and body could share them; the skin re-exports them for the callers that
+	// imported them from `@delacour/react-native-ui/bottom-sheet`.
+	test("give the safe-area band to static content when nothing is pinned below it", () => {
 		expect(resolveSheetBottomInset({ bottom: 34, hasStickyFooter: false })).toBe(34);
 	});
 
-	test("withholds it once a pinned footer's own box is carrying it", () => {
-		// gorhom adds the footer's whole measured height — band included — to the
-		// content's reserve, so asking for it here too counts it twice.
+	test("hold content off a pinned footer by the gap alone, never the band", () => {
+		// The footer's own box carries the band; the content asking for it too
+		// would count it twice.
 		expect(resolveSheetBottomInset({ bottom: 34, hasStickyFooter: true })).toBe(0);
-	});
-
-	test("is a no-op on a device with no bottom inset", () => {
-		expect(resolveSheetBottomInset({ bottom: 0, hasStickyFooter: false })).toBe(0);
-	});
-});
-
-describe("resolveSheetScrollEndPadding", () => {
-	test("gives the safe-area band to the content when nothing is pinned below it", () => {
-		expect(resolveSheetScrollEndPadding({ bottom: 34, hasStickyFooter: false })).toBe(34);
-	});
-
-	test("holds the content off a pinned footer by the gap alone", () => {
-		// The scroll view's frame already stops at the footer's top edge, so the
-		// footer's height — band included — is not the content's to reserve.
-		expect(resolveSheetScrollEndPadding({ bottom: 34, hasStickyFooter: true })).toBe(BOTTOM_SHEET_FOOTER_GAP);
-	});
-
-	test("keeps the gap on a device with no bottom inset", () => {
-		expect(resolveSheetScrollEndPadding({ bottom: 0, hasStickyFooter: true })).toBe(BOTTOM_SHEET_FOOTER_GAP);
+		expect(
+			resolveSheetScrollEndPadding({ bottom: 34, footerGap: BOTTOM_SHEET_FOOTER_GAP, hasStickyFooter: true })
+		).toBe(BOTTOM_SHEET_FOOTER_GAP);
 	});
 });
 
@@ -228,13 +166,24 @@ describe("bottomSheetVariants slots", () => {
 		expect(declared.sort()).toEqual([...SLOT_NAMES].sort());
 	});
 
-	test("the sheet's surface rounds its top corners only", () => {
+	test("an attached sheet's surface rounds its top corners only", () => {
 		const background = SLOTS.background();
 		expect(background).toMatch(/\brounded-t-/);
 		expect(background).not.toMatch(/\brounded-b-/);
 		// A bare `rounded-*` would round the bottom edge too, and that edge runs off
 		// the screen — the radius shows as two notches of the app behind it.
 		expect(background).not.toMatch(/\brounded-(?:none|xs|sm|md|lg|xl|2xl|3xl|full)\b/);
+	});
+
+	test("a detached card's surface rounds every corner, and only once", () => {
+		const background = DETACHED.background();
+		// The card floats, so its bottom edge is on screen and needs the radius.
+		expect(background).toMatch(/\brounded-2xl\b/);
+		// tailwind-merge has to have replaced the top-only radius, not stacked
+		// beside it — two radius utilities on one view is order-dependent.
+		expect(background).not.toMatch(/\brounded-t-/);
+		// The surface itself is unchanged.
+		expect(colorTokens(background)).toEqual(colorTokens(SLOTS.background()));
 	});
 
 	test("a pinned footer brings a surface and a line where an inline one does not", () => {
@@ -246,10 +195,10 @@ describe("bottomSheetVariants slots", () => {
 		expect(SLOTS.footer()).not.toMatch(/\bborder-t\b/);
 	});
 
-	test("a pinned footer writes its vertical padding as a style, never a class", () => {
-		// The bottom padding is animated — the safe-area band collapses into it as
-		// the keyboard arrives — and a class cannot carry an animated value. The
-		// top is written the same way so the two cannot drift.
+	test("a pinned footer writes its vertical padding as the engine's prop, never a class", () => {
+		// The engine measures the footer's inner box into the sheet's height, and
+		// padding handed to its `padding` prop lands on that box. A class on the
+		// outer view would be height the detent never counts.
 		expect(SLOTS.stickyFooter()).not.toMatch(/\bp[tby]?-[\d.]+\b/);
 		expect(BOTTOM_SHEET_FOOTER_PADDING).toBeGreaterThan(0);
 	});
@@ -273,9 +222,20 @@ describe("bottomSheetVariants slots", () => {
 		expect(SLOTS.scrollContent()).toMatch(/\bpx-screen-gutter\b/);
 	});
 
+	test("a multi-step body keeps the gutter on the stack and the vertical padding on each step", () => {
+		// The engine measures each `Step`, not the box around the stack, so
+		// vertical padding on `steps` would be height the sheet never counts.
+		expect(SLOTS.steps()).toMatch(/\bpx-screen-gutter\b/);
+		expect(SLOTS.steps()).not.toMatch(/\bp[tby]-[\d.]+\b/);
+		expect(SLOTS.step()).not.toMatch(/\bpx-/);
+		// A step reads like static content: same gap, same top padding.
+		expect(SLOTS.step().match(/\bgap-[\d.]+\b/)?.[0]).toBe(SLOTS.content().match(/\bgap-[\d.]+\b/)?.[0]);
+		expect(SLOTS.step().match(/\bpt-[\d.]+\b/)?.[0]).toBe(SLOTS.content().match(/\bpt-[\d.]+\b/)?.[0]);
+	});
+
 	test("the overlay sets no opacity of its own", () => {
-		// gorhom animates the scrim's opacity off the sheet's position; a class here
-		// would be a second writer of the same style property.
+		// The engine animates the scrim's opacity off the sheet's index; a class
+		// here would be a second writer of the same style property.
 		expect(SLOTS.overlay()).not.toMatch(/\bopacity-\d/);
 	});
 

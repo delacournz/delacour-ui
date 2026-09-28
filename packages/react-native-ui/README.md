@@ -19,14 +19,16 @@ register twice and break at runtime. The complete list — native modules throug
 `expo install`, the rest through your package manager — is derived from the
 components' own imports and kept on the
 [Installation page](https://ui.delacour.co.nz/docs/native/getting-started/installation).
-Four peers are optional and resolve only if you import the subpath that needs them:
+Six peers are optional and resolve only if you import the subpath that needs them:
 
 | Peer | Needed for |
 | --- | --- |
 | `expo-router` | `@delacour/react-native-ui/expo/navigation-theme` |
-| `@legendapp/list` | `Screen.LegendList` and `Screen.ChatList` |
+| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` and `BottomSheet.LegendList` |
 | `react-native-screens` | native stack navigation |
 | `@delacour/react-native-charts` | `Chart` |
+| `@delacour/react-native-bottom-sheet` | `BottomSheet` — the engine it skins |
+| `react-native-teleport` | `BottomSheet` — the engine's portal; a native module, so rebuild the dev client after installing |
 
 Granular exports are what make that safe: an app that never imports a subpath
 never makes Metro resolve its peers.
@@ -53,8 +55,10 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 ```
 
 That is the gesture root every `Pressable` needs above it, the safe-area provider
-and keyboard provider `Screen` reads, the bottom-sheet modal provider, and the
-keyboard state sync that keeps them honest.
+and keyboard provider `Screen` reads, and the keyboard state sync that keeps them
+honest. An app with a `BottomSheet` mounts `BottomSheetProvider` inside it, from
+`@delacour/react-native-ui/bottom-sheet` — the sheet's engine is an optional peer,
+so the provider cannot.
 
 ## Usage
 
@@ -78,7 +82,7 @@ import { IconArrowRight } from "@delacour/react-native-ui/icons/central";
 | --- | --- | --- |
 | Accordion | `@delacour/react-native-ui/accordion` | Selection modes, measured panels, indicators |
 | Badge | `@delacour/react-native-ui/badge` | Variants, colours, sizes, dismiss |
-| BottomSheet | `@delacour/react-native-ui/bottom-sheet` | Overlay, snap points, sticky footer, keyboard |
+| BottomSheet | `@delacour/react-native-ui/bottom-sheet` | Detents, keyboard, sticky footer, scrollables, steps, detached, teleported portal |
 | Button | `@delacour/react-native-ui/button` | Variants, sizes, icons, loading |
 | Checkbox | `@delacour/react-native-ui/checkbox` | Colours, sizes, indeterminate, groups |
 | Field | `@delacour/react-native-ui/field` | Form layout, grouping, state cascade |

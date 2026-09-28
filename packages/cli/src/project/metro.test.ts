@@ -110,6 +110,19 @@ describe("monorepo resolver wiring", () => {
 		expect(result.content).toContain("react-native-reanimated");
 	});
 
+	/** The bottom sheet's two native peers register twice as readily as the rest. */
+	test("pins teleport and keyboard-controller alongside the others", () => {
+		const result = patchMetroConfig(null, MONOREPO);
+		if (result.status !== "created") throw new Error("expected created");
+
+		expect(result.content).toContain(
+			'"react-native-teleport": path.resolve(workspaceRoot, "node_modules/react-native-teleport")'
+		);
+		expect(result.content).toContain(
+			'"react-native-keyboard-controller": path.resolve(workspaceRoot, "node_modules/react-native-keyboard-controller")'
+		);
+	});
+
 	test("keeps withUniwindConfig outermost, after the resolver block", () => {
 		const result = patchMetroConfig(null, MONOREPO);
 		if (result.status !== "created") throw new Error("expected created");

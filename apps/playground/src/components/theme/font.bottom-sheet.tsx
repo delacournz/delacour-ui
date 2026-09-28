@@ -1,11 +1,7 @@
-import { FONTS } from "@delacour/design-system/fonts";
 import type { ReactElement } from "react";
 import { AxisSheet, type AxisSheetControlProps, useAxisChoice } from "@/components/theme/axis-sheet";
 import { FontOptionList } from "@/components/theme/font-option-list";
 import { useDesignSystem } from "@/design-system/store";
-
-/** Every family, the three group labels, and the System row above them. */
-const FONT_ROW_COUNT = FONTS.length + 4;
 
 /**
  * The family behind `--font-sans`, which every text surface in the app reads.
@@ -20,7 +16,7 @@ export function FontBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps)
 	const choose = useAxisChoice("font", onOpenChange);
 
 	return (
-		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={FONT_ROW_COUNT} title="Font">
+		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} title="Font">
 			<FontOptionList onSelect={choose} selected={config.font} withSystem />
 		</AxisSheet>
 	);

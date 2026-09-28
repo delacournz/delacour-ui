@@ -228,7 +228,7 @@ function report(
  * What these components need from npm, printed every time.
  *
  * Every time, including the run where nothing is missing. A component that
- * needs `@gorhom/bottom-sheet` and got it three components ago is not the same
+ * needs `react-native-teleport` and got it three components ago is not the same
  * thing as a component that needs nothing, and a reader who sees no block at
  * all cannot tell which they are looking at.
  *

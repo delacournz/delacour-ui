@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet/hosting/inside-a-native-modal and has settled — the trigger button with no modal
+  presented. The capture script navigates there before running this.
+steps:
+  - echo: Presenting the native modal
+  - tap: { id: modal-open }
+  - await: { visible: { id: modal-open-sheet } }
+  - wait: 600
+  - echo: Opening a sheet inside it — it draws over the modal, not behind it
+  - tap: { id: modal-open-sheet }
+  - await: { visible: { text: Above the modal } }
+  - wait: 900
+  - tap: { id: modal-close-sheet }
+  - await: { hidden: { text: Above the modal } }
+  - wait: 400
+  - echo: Dismissing the modal
+  - tap: { id: modal-dismiss }
+  - await: { visible: { id: modal-open } }

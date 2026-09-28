@@ -1,3 +1,4 @@
+import { BottomSheet as Headless } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
 import { cn } from "../../lib/cn";
 import { Text, type TextPresetProps } from "../text";
@@ -10,7 +11,8 @@ export type BottomSheetDescriptionProps = TextPresetProps;
  * *Is* a `Text.Paragraph`, defaulting to the muted token — the title is what the
  * sheet is about and this is what it means, so the two need to read as a
  * hierarchy rather than as two equal lines. `color` is an ordinary prop, so a
- * description that needs the page colour asks for it.
+ * description that needs the page colour asks for it. The engine's
+ * `Description asChild` gives it the `nativeID` a skin can describe the panel by.
  *
  * It has no slot in `bottomSheetVariants`, and that is deliberate: it carries no
  * layout of its own, and `tv` emits `undefined` for an empty class string, so a
@@ -24,6 +26,10 @@ export function BottomSheetDescription({
 	color = "muted",
 	...props
 }: BottomSheetDescriptionProps): ReactElement {
-	return <Text.Paragraph className={cn(className)} color={color} {...props} />;
+	return (
+		<Headless.Description asChild>
+			<Text.Paragraph className={cn(className)} color={color} {...props} />
+		</Headless.Description>
+	);
 }
 BottomSheetDescription.displayName = "DelacourUI.BottomSheet.Description";

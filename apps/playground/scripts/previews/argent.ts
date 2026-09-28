@@ -62,6 +62,29 @@ export async function restartApp(udid: string, bundleId: string): Promise<void> 
 }
 
 /**
+ * Hides expo-dev-menu's floating "Tools" button before a dev-client capture.
+ *
+ * A development build draws that round gear over the top-right of every
+ * screen, `/preview` included, and a `device` frame keeps the whole screen —
+ * so with it on, every captured clip carried a dev-tools button the library
+ * does not have. The preference is a plain `UserDefaults` bool in the app's
+ * own domain (`EXDevMenuShowFloatingActionButton`, read on launch), so it is
+ * written through `simctl` before the restart that follows. A Release build
+ * has no dev menu and nothing to hide, which is why this is only ever called
+ * on the `--dev` path.
+ */
+export async function hideDevMenuButton(udid: string, bundleId: string): Promise<void> {
+	const result =
+		await $`xcrun simctl spawn ${udid} defaults write ${bundleId} EXDevMenuShowFloatingActionButton -bool NO`
+			.cwd(AT_REPO.cwd)
+			.quiet()
+			.nothrow();
+	if (result.exitCode !== 0) {
+		throw new Error(`could not hide the dev menu button:\n${result.stderr.toString()}`);
+	}
+}
+
+/**
  * Whether argent's bridge is live for this app — the precondition for `id:` selectors.
  *
  * Polls while argent reports `connecting` rather than answering once. The

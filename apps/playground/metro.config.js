@@ -32,6 +32,7 @@ config.resolver.extraNodeModules = {
 	"react-native-reanimated": path.resolve(workspaceRoot, "node_modules/react-native-reanimated"),
 	"react-native-safe-area-context": path.resolve(workspaceRoot, "node_modules/react-native-safe-area-context"),
 	"react-native-svg": path.resolve(workspaceRoot, "node_modules/react-native-svg"),
+	"react-native-teleport": path.resolve(workspaceRoot, "node_modules/react-native-teleport"),
 	"react-native-worklets": path.resolve(workspaceRoot, "node_modules/react-native-worklets"),
 };
 

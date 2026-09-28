@@ -1,4 +1,5 @@
 import { defineDemoGroup } from "../../define-demo-group";
+import * as detached from "./detached";
 import * as dynamicButCapped from "./dynamic-but-capped";
 import * as explicitSnapPoints from "./explicit-snap-points";
 import * as sizedToItsContent from "./sized-to-its-content";
@@ -10,4 +11,5 @@ export const bottomSheetSizingDemos = defineDemoGroup("bottom-sheet/sizing", {
 	"the-same-sheet-more-content": theSameSheetMoreContent,
 	"explicit-snap-points": explicitSnapPoints,
 	"dynamic-but-capped": dynamicButCapped,
+	detached,
 });

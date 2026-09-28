@@ -28,9 +28,10 @@ Mount it once, around everything — a root layout, an `App.tsx`.
 
 ## Layers
 
-Five, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
-`KeyboardProvider` → `<KeyboardStateSync />` beside the children →
-`BottomSheetModalProvider` around them.
+Four, outermost first: `GestureHandlerRootView` → `SafeAreaProvider` →
+`KeyboardProvider` → `<KeyboardStateSync />` beside the children. An app with a
+[`BottomSheet`](/docs/native/components/bottom-sheet) mounts `BottomSheetProvider` inside it, from
+the sheet's own subpath — the engine is an optional peer, so this component cannot.
 
 <Callout type="warn">
 The order is load-bearing, and one failure is silent: without the gesture root every `Pressable`

@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet/sizing/detached and has settled — the trigger button with the card closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the floating card
+  - tap: { id: detached-open }
+  - await: { visible: { text: Oh! Your wallet is empty } }
+  - wait: 700
+  - echo: Dragging the whole card down through the gap to dismiss it
+  - swipe: { from: { text: Oh! Your wallet is empty }, by: { y: 0.24 }, duration: 250 }
+  - await: { hidden: { text: Oh! Your wallet is empty } }
+  - wait: 500
+  - echo: Opening it again and closing it from its own button
+  - tap: { id: detached-open }
+  - await: { visible: { id: detached-add-funds } }
+  - wait: 800
+  - tap: { id: detached-add-funds }
+  - await: { hidden: { text: Oh! Your wallet is empty } }

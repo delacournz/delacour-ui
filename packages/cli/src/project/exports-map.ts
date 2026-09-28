@@ -12,7 +12,7 @@ import type { Namespace } from "../registry/namespaces";
  * Granular on purpose, and **no root `"."` entry**: a barrel would make every
  * consuming app resolve every optional peer, which is the reason the library
  * has none. An app that never imports `./bottom-sheet` never makes Metro
- * resolve `@gorhom/bottom-sheet`.
+ * resolve `@delacour/react-native-bottom-sheet`.
  *
  * Pure — it takes the file lists rather than reading the disk, so the whole
  * mapping is reachable from `bun test`.

@@ -4,9 +4,6 @@ import type { ReactElement } from "react";
 import { View } from "react-native";
 import { AXIS_SELECTED_ROW_CLASS, AxisSheet, type AxisSheetControlProps } from "@/components/theme/axis-sheet";
 
-/** The one row, the caption under it, and the room the caption needs. */
-const ICON_LIBRARY_ROW_COUNT = 4;
-
 /**
  * The one axis shadcn offers that this library cannot.
  *
@@ -27,7 +24,7 @@ const ICON_LIBRARY_ROW_COUNT = 4;
  */
 export function IconLibraryBottomSheet({ isOpen, onOpenChange }: AxisSheetControlProps): ReactElement {
 	return (
-		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} rowCount={ICON_LIBRARY_ROW_COUNT} title="Icon Library">
+		<AxisSheet isOpen={isOpen} onOpenChange={onOpenChange} title="Icon Library">
 			<View className="gap-3">
 				<ListGroup isDivided={false} variant="transparent">
 					<ListGroup.Item

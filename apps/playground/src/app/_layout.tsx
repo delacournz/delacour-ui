@@ -1,4 +1,5 @@
 import "../styles/global.css";
+import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
 import { NavigationTheme } from "@delacour/react-native-ui/expo/navigation-theme";
 import { useThemeColor } from "@delacour/react-native-ui/hooks/use-theme-color";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
@@ -114,6 +115,13 @@ function SystemBackground(): null {
  * Screen reads to move its footer, and the KeyboardStateSync that repairs the
  * one pair of animation values that provider shares with the whole app.
  *
+ * `BottomSheetProvider` sits inside `DelacourProvider` and around the
+ * navigator: it is the engine's teleport root, so a sheet's portal draws over
+ * the stack and the theme trigger, and it needs the gesture root and keyboard
+ * provider above it. `DelacourProvider` cannot mount it — the engine is an
+ * optional peer of the library — so the app does, once, here, from the
+ * library's own sheet subpath, which re-exports it.
+ *
  * NavigationTheme hands the navigator the same tokens, which is what keeps the
  * container behind a screen transition from being React Navigation's own pale
  * default.
@@ -144,11 +152,13 @@ function RootLayout(): ReactElement {
 
 	return (
 		<DelacourProvider>
-			<SystemBackground />
-			<NavigationTheme>
-				<Stack screenOptions={{ headerShown: false }} />
-				<ThemeTrigger />
-			</NavigationTheme>
+			<BottomSheetProvider>
+				<SystemBackground />
+				<NavigationTheme>
+					<Stack screenOptions={{ headerShown: false }} />
+					<ThemeTrigger />
+				</NavigationTheme>
+			</BottomSheetProvider>
 		</DelacourProvider>
 	);
 }

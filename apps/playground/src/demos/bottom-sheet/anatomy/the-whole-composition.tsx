@@ -13,9 +13,10 @@ export const meta: DemoMeta = {
 /**
  * Every part in one sheet, and the four ways it closes.
  *
- * A swipe down, a press on the scrim, `BottomSheet.Close` and the button in the
- * content all reach the same `onOpenChange`, so the counter moves however the
- * sheet was dismissed.
+ * A swipe down, a press on the scrim and `BottomSheet.Close` all reach
+ * `onOpenChange`; the buttons in the content are the parent's own close, so
+ * they call the same handler — a controlled `isOpen` the parent lowers itself
+ * is not reported back to it, the usual controlled-component contract.
  *
  * The root fills and centres because this demo is captured as a whole screen:
  * the capture stage hands a `device` demo the full window with no insets, and a
@@ -43,13 +44,13 @@ export function Demo(): ReactElement {
 					<BottomSheet.Overlay />
 					<BottomSheet.Container>
 						<BottomSheet.Content>
-							<BottomSheet.Close />
+							<BottomSheet.Close testID="sheet-close" />
 							<BottomSheet.Title>Keep yourself safe</BottomSheet.Title>
 							<BottomSheet.Description>
 								Update to the latest version for better security and performance.
 							</BottomSheet.Description>
-							<Button onPress={() => setOpen(false)}>Update now</Button>
-							<Button onPress={() => setOpen(false)} testID="sheet-later" variant="tertiary">
+							<Button onPress={() => handleOpenChange(false)}>Update now</Button>
+							<Button onPress={() => handleOpenChange(false)} testID="sheet-later" variant="tertiary">
 								Later
 							</Button>
 						</BottomSheet.Content>

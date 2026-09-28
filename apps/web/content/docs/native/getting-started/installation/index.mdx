@@ -36,9 +36,11 @@ Resolved only if you import the subpath that needs them:
 
 | Package | Needed by |
 | --- | --- |
-| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList` |
+| `@delacour/react-native-bottom-sheet` | `BottomSheet` — the engine it skins |
+| `@legendapp/list` | `Screen.LegendList`, `Screen.ChatList`, `BottomSheet.LegendList` |
 | `expo-router` | `@delacour/react-native-ui/expo/navigation-theme` |
 | `react-native-screens` | native stack navigation |
+| `react-native-teleport` | `BottomSheet` — the engine's portal. A native module: `expo install` it and rebuild the dev client |
 
 ## Or let the CLI do it
 

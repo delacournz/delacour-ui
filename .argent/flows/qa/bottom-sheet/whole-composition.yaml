@@ -1,0 +1,32 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/anatomy/the-whole-composition, settled, counter reading "Closed 0 times".
+steps:
+  - echo: 1/4 — open via the trigger, close with a swipe down on the panel
+  - assert: { text: { in: { text: Closed }, contains: Closed 0 times } }
+  - tap: { id: open-sheet }
+  - await: { visible: { text: Keep yourself safe } }
+  - await: { visible: { id: sheet-later } }
+  - swipe: { from: { text: Keep yourself safe }, by: { y: 0.2 }, duration: 250 }
+  - await: { hidden: { text: Keep yourself safe } }
+  - await: { text: { in: { text: Closed }, contains: Closed 1 times } }
+  - echo: 2/4 — open, close with a tap on the scrim (a point above the sheet; the scrim has no id)
+  - tap: { id: open-sheet }
+  - await: { visible: { text: Keep yourself safe } }
+  - wait: 500
+  - tap: { x: 0.5, y: 0.15 }
+  - await: { hidden: { text: Keep yourself safe } }
+  - await: { text: { in: { text: Closed }, contains: Closed 2 times } }
+  - echo: 3/4 — open, close with BottomSheet.Close
+  - tap: { id: open-sheet }
+  - await: { visible: { id: sheet-close } }
+  - wait: 500
+  - tap: { id: sheet-close }
+  - await: { hidden: { text: Keep yourself safe } }
+  - await: { text: { in: { text: Closed }, contains: Closed 3 times } }
+  - echo: 4/4 — open, close with the button in the content
+  - tap: { id: open-sheet }
+  - await: { visible: { id: sheet-later } }
+  - wait: 500
+  - tap: { id: sheet-later }
+  - await: { hidden: { text: Keep yourself safe } }
+  - await: { text: { in: { text: Closed }, contains: Closed 4 times } }

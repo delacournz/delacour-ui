@@ -1,36 +1,41 @@
-import type { BottomSheetHandleProps as GorhomBottomSheetHandleProps } from "@gorhom/bottom-sheet";
+import {
+	BottomSheet as Headless,
+	type BottomSheetHandleProps as HeadlessProps,
+} from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
-import { View, type ViewProps } from "react-native";
+import { type StyleProp, View, type ViewStyle } from "react-native";
+import { withUniwind } from "uniwind";
 import { bottomSheetVariants } from "./bottom-sheet.variants";
 
-export type BottomSheetHandleProps = Partial<GorhomBottomSheetHandleProps> &
-	Omit<ViewProps, "children"> & {
-		className?: string;
-		/** Style for the pill itself. What gorhom's `handleIndicatorStyle` becomes. */
-		indicatorStyle?: ViewProps["style"];
-		indicatorClassName?: string;
-	};
+type StyledHandleComponent = (props: HeadlessProps & { className?: string }) => ReactElement | null;
+
+// Built at module scope, or every render mints a new component type and the
+// engine's pan re-attaches to a fresh view.
+const StyledHandle = withUniwind(Headless.Handle) as unknown as StyledHandleComponent;
+
+export type BottomSheetHandleProps = HeadlessProps & {
+	className?: string;
+	/** Classes for the grabber itself. */
+	indicatorClassName?: string;
+	indicatorStyle?: StyleProp<ViewStyle>;
+};
 
 /**
- * The grabber at the top of the sheet.
+ * The grabber's row.
  *
- * Supplied to gorhom as `handleComponent` for the same reason the background is:
- * this package paints with classNames, and gorhom's `handleStyle` /
- * `handleIndicatorStyle` cannot carry one. Both still arrive — gorhom passes
- * them down as `style` and `indicatorStyle` — so a caller who has a style object
- * rather than a class is not locked out.
+ * The engine's handle draws nothing of its own: it owns the pan, measures
+ * itself into the sheet's height, and is the adjustable element a screen
+ * reader steps through the detents with. This puts the pill inside it, and
+ * classes on both.
  *
- * The pill is drawn but never announced: gorhom's own handle container wraps this
- * in the `Animated.View` that owns the pan and carries the accessibility surface,
- * so a second announced element here would put a nameless control in front of
- * every sheet.
+ * Pass children to replace the pill; the row, the pan and the accessibility
+ * stay.
  *
- * The two animated variables are destructured off rather than spread — see
- * `BottomSheetBackground`.
+ * @example
+ * <BottomSheet.Handle indicatorClassName="bg-primary" />
  */
 export function BottomSheetHandle({
-	animatedIndex: _animatedIndex,
-	animatedPosition: _animatedPosition,
+	children,
 	className,
 	indicatorClassName,
 	indicatorStyle,
@@ -39,9 +44,9 @@ export function BottomSheetHandle({
 	const slots = bottomSheetVariants();
 
 	return (
-		<View className={slots.handle({ className })} {...props}>
-			<View className={slots.handleIndicator({ className: indicatorClassName })} style={indicatorStyle} />
-		</View>
+		<StyledHandle className={slots.handle({ className })} {...props}>
+			{children ?? <View className={slots.handleIndicator({ className: indicatorClassName })} style={indicatorStyle} />}
+		</StyledHandle>
 	);
 }
 BottomSheetHandle.displayName = "DelacourUI.BottomSheet.Handle";

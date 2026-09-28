@@ -1,0 +1,107 @@
+---
+title: Footer
+description: A row of actions that stays put over the body, stands on the safe-area band, and lands on the keyboard's edge.
+icon: PanelBottomDashed
+---
+
+```tsx
+<BottomSheet.Container>
+  <BottomSheet.Background style={styles.background} />
+  <BottomSheet.Handle style={styles.handle}>
+    <View style={styles.pill} />
+  </BottomSheet.Handle>
+  <BottomSheet.Content style={styles.content}>
+    <BottomSheet.Title style={styles.title}>Discard changes?</BottomSheet.Title>
+    <BottomSheet.Description style={styles.description}>
+      Two lines of copy and a footer. The whole sheet is as tall as the four of them.
+    </BottomSheet.Description>
+  </BottomSheet.Content>
+  <BottomSheet.Footer padding={16} style={styles.footer}>
+    <Pressable onPress={() => choose("keep")} style={styles.action}>
+      <Text style={styles.actionLabel}>Keep</Text>
+    </Pressable>
+    <Pressable onPress={() => choose("discard")} style={styles.action}>
+      <Text style={styles.actionLabel}>Discard</Text>
+    </Pressable>
+  </BottomSheet.Footer>
+</BottomSheet.Container>
+```
+
+`Footer` is written **beside** the body — after `Content`, a scrollable or `Steps`, inside
+`Container` — never inside it. One per sheet.
+
+## Sticky or inline
+
+| | `sticky` (default) | `sticky={false}` |
+| --- | --- | --- |
+| Position | absolute over the body, at the sheet's bottom | a plain `View` in the panel's flow |
+| Scrolls with a list | no — the list's last row stops above it | yes |
+| On the keyboard | rides it by transform, in the same frame | moves with the sheet |
+| Counts in the dynamic detent | yes | yes |
+
+The body is clamped to the area above a sticky footer, and a scrollable's `marginBottom` follows
+the footer's height, so the last row and the scroll indicator stop above the buttons rather than
+under them.
+
+## The band
+
+An attached sheet's bottom edge is the screen's bottom edge, and the safe-area inset — the home
+indicator — is between the two. The footer stands on that **band**: `bottomInset` of empty space
+under the buttons, counted **once** in the sheet's height whether there is a footer or not. A sheet
+with no footer reserves the same band under its content.
+
+```txt
+dynamicDetent = handle + content + footerContent + band
+```
+
+Pass `bottomInset={insets.bottom}` from `useSafeAreaInsets()`; the package reads no insets of its
+own. A detached card floats above the inset instead, so its band is zero.
+
+## The band collapses with the keyboard
+
+When the keyboard rises the sheet lifts by the keyboard's height **less the band times
+`progress`**, so the band is what collapses: at full keyboard the footer's bottom edge is exactly
+on the keyboard's top edge, with no home-indicator's height of dead space between them.
+
+```txt
+footerTop = height − keyboard − footerContent − band · (1 − progress)
+          = base − footerContent − band                    for every progress
+```
+
+The footer's position inside the panel is therefore **constant** while the keyboard animates; only
+the panel moves. That is the property the library this replaces committed React state per keyboard
+frame to approximate, and it is proved by a test that sweeps `progress` from 0 to 1 in twenty
+steps rather than by a screenshot.
+
+## Padding
+
+`padding` goes on the footer's **measured inner view**, so it counts in the sheet's height. Padding
+in `style` goes on the outer view and does not. Use `padding` for the space around the buttons and
+`style` for the surface and the hairline.
+
+```tsx
+<BottomSheet.Footer padding={16} style={{ backgroundColor: "#2C2C2E", borderTopWidth: StyleSheet.hairlineWidth }}>
+```
+
+`Content`'s `footerGap` adds space between the last line of content and the footer's top, for a
+body that ends in a field.
+
+## With steps
+
+A footer written beside a [`Steps`](/docs/bottom-sheet/steps) body reads the machine through
+`useSheetStep()` and shows the step's actions. It is not a descendant of `Steps`, so `Steps`
+registers its controller with the root for the footer to find.
+
+## API Reference
+
+<TypeTable
+  type={{
+    sticky: {
+      type: "boolean",
+      default: "true",
+      description: "Stay put over the body and ride the keyboard by transform. Off, a plain View that scrolls with the content.",
+    },
+    padding: { type: "number", description: "Padding on the measured inner view, so it counts in the sheet's height." },
+    "...ViewProps": { type: "ViewProps", description: "style lands on the outer view." },
+  }}
+/>

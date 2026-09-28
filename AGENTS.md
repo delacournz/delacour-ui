@@ -10,6 +10,7 @@ the product.
 | --- | --- | --- |
 | `packages/react-native-ui` | `@delacour/react-native-ui` | **The product.** A React Native component library. Ships raw `.tsx`, no build step |
 | `packages/react-native-charts` | `@delacour/react-native-charts` | The headless charting engine `react-native-ui`'s `Chart` skins — Skia, no tokens, no `className` |
+| `packages/react-native-bottom-sheet` | `@delacour/react-native-bottom-sheet` | The headless bottom sheet engine `react-native-ui`'s `BottomSheet` skins — Gesture Handler, Reanimated, keyboard-controller, teleport; no tokens, no `className` |
 | `packages/design-system` | `@delacour/design-system` | The customizer's axes, the resolver, the preset codec and the CSS emitters |
 | `packages/cli` | `delacour` | The CLI that copies the library's source into someone else's repo, and the builder for the `registry/` it reads |
 | `apps/playground` | `@delacour/playground` | Expo app — the library's harness and gallery |
@@ -163,6 +164,11 @@ installs one of each. When SDK 58 goes stable, move both to the stable versions 
 become redundant rather than wrong; delete them then. `packages/cli/scripts/verify/harness.ts`
 carries the same pair for the app it scaffolds.
 
+A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
+and nothing else. `react-native-pulsar` (`^1.7.0`) and `react-native-teleport` (`^1.2.2`) are the
+two today; each workspace that needs one repeats the range verbatim, and a bump is a search for
+the range rather than a catalog edit.
+
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two
 copies were always installed and only bun's hoisting order decided which one landed at the root.
@@ -186,8 +192,9 @@ declares every native module as a **peer** dependency rather than a dependency.
 
 Do not remove it, and do not switch a package to an isolated install. Even
 hoisted, Bun materialises a second copy of some native modules under the app,
-which is why `apps/playground`'s `metro.config.js` pins nine of them to the
-workspace-root copy and its `tsconfig.json` pins `react-native` the same way.
+which is why `apps/playground`'s `metro.config.js` pins twelve of them — plus `react` and
+`culori`, for a single copy of each — to the workspace-root copy and its `tsconfig.json` pins
+`react-native` the same way. `react-native-teleport`, outside the catalog, is one of the twelve.
 
 ## `trustedDependencies`
 
@@ -198,7 +205,8 @@ scripts by default, so the package is named in `trustedDependencies` in the root
 
 ## Releases
 
-Three packages reach npm — `delacour` (the CLI), `@delacour/react-native-ui` and `@delacour/react-native-charts`.
+Four packages reach npm — `delacour` (the CLI), `@delacour/react-native-ui`, `@delacour/react-native-charts`
+and `@delacour/react-native-bottom-sheet`.
 Everything else in the workspace is `private: true`, which is the only thing stopping
 `changeset publish` from putting `@delacour/tsconfig` and friends on the registry the first time
 it runs.
@@ -219,6 +227,8 @@ take no further versions — do not publish to them.
 a stranger's Metro. It is an **optional peer** of `react-native-ui` rather than a dependency — a
 dependency may be nested, two copies mean two chart contexts, and a correctly-nested
 `<Chart.Line>` then throws "must be used inside a `<Chart>`" from inside a `<Chart>`.
+`@delacour/react-native-bottom-sheet` is public, and an optional peer, for exactly the same reasons:
+`bottom-sheet.tsx` imports it, and two copies would be two sheet contexts.
 
 Releases are driven by [Changesets](https://github.com/changesets/changesets). A change that
 should ship adds one:
@@ -405,7 +415,8 @@ npm stage approve <stage-id>     # 2FA prompt, then it is live on `latest`
 npm stage reject <stage-id>      # discard; the version can be staged again
 ```
 
-Approve `@delacour/react-native-charts` before `@delacour/react-native-ui`, which peers on it.
+Approve `@delacour/react-native-charts` and `@delacour/react-native-bottom-sheet` before
+`@delacour/react-native-ui`, which peers on both.
 `npm stage` needs npm 11.15 or newer, which is why both jobs install a current npm and why a
 maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot do any of this: it
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
@@ -423,10 +434,26 @@ gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,
-bind the publisher, and CI takes over. `verify:expo` does not wait for that: it packs each
-workspace package a registry item depends on (`@delacour/react-native-charts`, for `chart`) and adds the
-tarball to the scaffolded app before `add`, so the check covers this branch's engine rather than
-whatever npm last served — and passes before the package exists there at all.
+bind the publisher, and CI takes over. `@delacour/react-native-bottom-sheet` is the current case,
+and the steps, in order, are:
+
+```bash
+cd packages/react-native-bottom-sheet
+npx npm@latest publish --access public --tag alpha      # npm ≥ 11.15, prompts for 2FA
+```
+
+then on npmjs.com, under the package's **Settings → Trusted publishers**, bind GitHub Actions to
+repository `delacournz/delacour-ui` twice — workflow `alpha.yml` allowed `npm publish`, and workflow
+`release.yml` allowed `npm stage publish` only — the same two bindings the other packages carry. From
+the next merge on, `alpha.yml` snapshots it with the rest and `release.yml` stages it; approve in
+peer order, `@delacour/react-native-bottom-sheet` and `@delacour/react-native-charts` before
+`@delacour/react-native-ui`.
+
+`verify:expo` does not wait for that: it packs each
+workspace package a registry item depends on (`@delacour/react-native-charts` for `chart`,
+`@delacour/react-native-bottom-sheet` for `bottom-sheet`) and adds the tarball to the scaffolded app
+before `add`, so the check covers this branch's engines rather than whatever npm last served — and
+passes before a package exists there at all.
 
 The registry the published CLI reads is pinned to the **commit** being released, not the tag —
 `changesets/action` builds before it tags, so a tag-derived ref would name something that does not

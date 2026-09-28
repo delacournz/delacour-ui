@@ -1,0 +1,35 @@
+executionPrerequisite: >-
+  Preview route open on bottom-sheet/steps/three-step-form, settled, sheet closed, readout "Step: details".
+steps:
+  - echo: Open on details; Next is disabled until both fields pass the guard
+  - assert: { text: { in: { id: steps-form-readout }, contains: details } }
+  - tap: { id: steps-form-open }
+  - await: { visible: { id: steps-form-name } }
+  - wait: 500
+  - type: { into: { id: steps-form-name }, text: Ada, submit: false }
+  - type: { into: { id: steps-form-email }, text: ada@example.com, submit: false }
+  - wait: 300
+  - echo: Next glides to confirm — no height jump (record with screen-recording for the eye)
+  - tap: { id: steps-form-next }
+  - await: { visible: { id: steps-form-submit } }
+  - await: { text: { in: { id: steps-form-readout }, contains: confirm } }
+  - wait: 600
+  - echo: Confirm is not dismissible — a tap on the scrim leaves it up
+  - tap: { x: 0.5, y: 0.15 }
+  - wait: 600
+  - assert: { visible: { id: steps-form-submit } }
+  - echo: Back returns to details with the values kept, Next again, Submit, Done
+  - tap: { id: steps-form-back }
+  - await: { visible: { id: steps-form-next } }
+  - wait: 500
+  - tap: { id: steps-form-next }
+  - await: { visible: { id: steps-form-submit } }
+  - wait: 500
+  - tap: { id: steps-form-submit }
+  - await: { visible: { id: steps-form-done } }
+  - await: { text: { in: { id: steps-form-readout }, contains: done } }
+  - wait: 500
+  - tap: { id: steps-form-done }
+  - await: { hidden: { id: steps-form-done } }
+  - echo: Closing resets the machine
+  - await: { text: { in: { id: steps-form-readout }, contains: details } }

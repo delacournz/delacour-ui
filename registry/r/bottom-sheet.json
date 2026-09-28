@@ -3,29 +3,35 @@
 	"name": "bottom-sheet",
 	"type": "registry:ui",
 	"title": "Bottom Sheet",
-	"description": "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+	"description": "A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 	"categories": [
 		"overlays"
 	],
 	"registryDependencies": [
 		"cn",
+		"compose-refs",
 		"icon",
 		"icons",
+		"input",
 		"pressable",
 		"slot",
 		"text",
 		"tv",
-		"use-controllable-state",
 		"use-keyboard-state-sync"
 	],
 	"dependencies": [
+		"@delacour/react-native-bottom-sheet",
 		"tailwind-variants"
 	],
 	"expoDependencies": [
-		"@gorhom/bottom-sheet",
+		"@legendapp/list",
+		"react-native-gesture-handler",
 		"react-native-keyboard-controller",
+		"react-native-pulsar",
 		"react-native-reanimated",
 		"react-native-safe-area-context",
+		"react-native-teleport",
+		"react-native-worklets",
 		"uniwind"
 	],
 	"devDependencies": [],
@@ -71,8 +77,8 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-keyboard-state-sync",
-					"to": "@registry/hooks/use-keyboard-state-sync"
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
 				}
 			]
 		},
@@ -97,6 +103,17 @@
 			]
 		},
 		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-flat-list.tsx",
+			"target": "bottom-sheet/bottom-sheet-flat-list.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
 			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-footer.tsx",
 			"target": "bottom-sheet/bottom-sheet-footer.tsx",
 			"namespace": "ui"
@@ -107,19 +124,19 @@
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx",
-			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx",
+			"target": "bottom-sheet/bottom-sheet-legend-list.tsx",
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../pressable",
-					"to": "@registry/ui/pressable"
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
 				}
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-portal.tsx",
-			"target": "bottom-sheet/bottom-sheet-portal.tsx",
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx",
+			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
 			"namespace": "ui"
 		},
 		{
@@ -130,6 +147,37 @@
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx",
+			"target": "bottom-sheet/bottom-sheet-section-list.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-steps.tsx",
+			"target": "bottom-sheet/bottom-sheet-steps.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-text-input.tsx",
+			"target": "bottom-sheet/bottom-sheet-text-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
 				}
 			]
 		},
@@ -160,18 +208,13 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.context.tsx",
-			"target": "bottom-sheet/bottom-sheet.context.tsx",
-			"namespace": "ui"
-		},
-		{
 			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet.tsx",
 			"target": "bottom-sheet/bottom-sheet.tsx",
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../../hooks/use-controllable-state",
-					"to": "@registry/hooks/use-controllable-state"
+					"from": "../../hooks/use-keyboard-state-sync",
+					"to": "@registry/hooks/use-keyboard-state-sync"
 				}
 			]
 		},

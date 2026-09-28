@@ -18,7 +18,6 @@ import { basename, join } from "node:path";
 
 const CONTENT_DIR = join(import.meta.dirname, "..", "content", "docs");
 const COMPONENTS_DIR = join(CONTENT_DIR, "native", "components");
-const CHARTS_DIR = join(CONTENT_DIR, "charts");
 
 type Page = { slug: string; body: string };
 
@@ -295,56 +294,94 @@ describe("installation", () => {
 });
 
 /**
- * The chart engine pages — `content/docs/charts/` — are not component pages
- * and do not follow that shape: there is no registry to install from and no
- * single component to name. What they do share is the sidebar contract (every
- * page listed, nothing listed that does not exist) and, for the six pages that
- * each document one chart type, the same closing `## API Reference` heading
- * the component pages end on — so a reader who learned where the props are on
- * `Button` finds them in the same place on `Line`.
+ * The engine pages — `content/docs/charts/` and `content/docs/bottom-sheet/`
+ * — are not component pages and do not follow that shape: there is no
+ * registry to install from and no single component to name. What they do
+ * share is the sidebar contract (every page listed, nothing listed that does
+ * not exist) and, for the pages that each document one type or one part, the
+ * same closing `## API Reference` heading the component pages end on — so a
+ * reader who learned where the props are on `Button` finds them in the same
+ * place on `Line` and on `Composition`.
+ *
+ * One row per product. A third engine adds a row here and a folder there.
  */
 
-const CHART_TYPE_PAGES = ["line", "area", "bar", "scatter", "candlestick", "pie"];
+type Product = {
+	/** The folder under `content/docs`, which is also the `/docs/<slug>` namespace and the `DocsProduct`. */
+	slug: string;
+	/** The pages that each document one type or part, and so end at `## API Reference`. */
+	referencePages: string[];
+	/** How many pages the folder holds at the least — a walker that found nothing would pass vacuously. */
+	atLeast: number;
+};
 
-const CHART_PAGES = pagesIn(CHARTS_DIR, { skipIndex: false });
+const PRODUCTS: Product[] = [
+	{
+		slug: "charts",
+		referencePages: ["line", "area", "bar", "scatter", "candlestick", "pie"],
+		atLeast: 10,
+	},
+	{
+		slug: "bottom-sheet",
+		referencePages: ["composition", "scrollables", "portal-and-host", "steps"],
+		atLeast: 12,
+	},
+];
 
-function chartsMetaPages(): string[] {
-	const path = join(CHARTS_DIR, "meta.json");
-	if (!existsSync(path)) return [];
-	const meta = JSON.parse(readFileSync(path, "utf-8")) as { pages?: unknown };
-	if (!Array.isArray(meta.pages)) return [];
-	return meta.pages.filter((entry): entry is string => typeof entry === "string" && !entry.startsWith("---"));
-}
+describe.each(PRODUCTS)("$slug engine pages", ({ slug, referencePages, atLeast }) => {
+	const dir = join(CONTENT_DIR, slug);
+	const pages = pagesIn(dir, { skipIndex: false });
+	const meta = existsSync(join(dir, "meta.json"))
+		? (JSON.parse(readFileSync(join(dir, "meta.json"), "utf-8")) as { root?: unknown; pages?: unknown })
+		: {};
 
-describe("chart engine pages", () => {
-	// A walker that found nothing would let every assertion below pass vacuously.
-	test("finds the chart engine pages", () => {
-		expect(CHART_PAGES.length).toBeGreaterThan(10);
+	test("finds the pages", () => {
+		expect(pages.length).toBeGreaterThan(atLeast);
+	});
+
+	// One `root: true` folder per namespace is what gives the layout a single tab
+	// and the sidebar its `---Group---` separators.
+	test("is a root folder", () => {
+		expect(meta.root).toBe(true);
 	});
 
 	test("every page listed in meta.json exists on disk", () => {
-		const slugs = new Set(CHART_PAGES.map((page) => page.slug));
-		const missing = chartsMetaPages().filter((slug) => !slugs.has(slug));
+		const slugs = new Set(pages.map((page) => page.slug));
+		const missing = metaPages(dir).filter((page) => !slugs.has(page));
 		expect(missing).toEqual([]);
 	});
 
 	// A page missing from `pages` still resolves by URL but never appears in the
 	// sidebar, which is a page nobody finds.
 	test("every page on disk is listed in meta.json", () => {
-		const listed = new Set(chartsMetaPages());
-		const unlisted = CHART_PAGES.filter((page) => !listed.has(page.slug)).map((page) => page.slug);
+		const listed = new Set(metaPages(dir));
+		const unlisted = pages.filter((page) => !listed.has(page.slug)).map((page) => page.slug);
 		expect(unlisted).toEqual([]);
 	});
 
-	test("every chart-type page ends at API Reference", () => {
-		const wrong = CHART_PAGES.filter((page) => CHART_TYPE_PAGES.includes(page.slug))
+	test("every page has a title and a description", () => {
+		const wrong = pages
+			.filter((page) => !/^title: .+$/m.test(page.body) || !/^description: .+$/m.test(page.body))
+			.map((page) => page.slug);
+		expect(wrong).toEqual([]);
+	});
+
+	test("every reference page ends at API Reference", () => {
+		const wrong = pages
+			.filter((page) => referencePages.includes(page.slug))
 			.filter((page) => sections(page.body).at(-1) !== "API Reference")
 			.map((page) => `${page.slug} → ${sections(page.body).at(-1) ?? "(none)"}`);
 		expect(wrong).toEqual([]);
 	});
 
-	test("every chart-type page is on disk", () => {
-		const slugs = new Set(CHART_PAGES.map((page) => page.slug));
-		expect(CHART_TYPE_PAGES.filter((slug) => !slugs.has(slug))).toEqual([]);
+	test("every reference page is on disk", () => {
+		const slugs = new Set(pages.map((page) => page.slug));
+		expect(referencePages.filter((page) => !slugs.has(page))).toEqual([]);
+	});
+
+	// `{…}` is a JSX expression holding an ellipsis, which does not parse.
+	test("no page holds a `{…}` placeholder", () => {
+		const wrong = pages.filter((page) => page.body.includes("{…}")).map((page) => page.slug);
+		expect(wrong).toEqual([]);
 	});
 });

@@ -14,15 +14,15 @@ everything — a root layout, an `App.tsx`.
 
 ## Design
 
-- **Five layers, outermost first**: `GestureHandlerRootView` →
+- **Four layers, outermost first**: `GestureHandlerRootView` →
   `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside the
-  children → `BottomSheetModalProvider` around them. The order is not stylistic.
-  The gesture root has to be an ancestor native view of every handler a
-  `Pressable` creates, and its absence is *silent* — no error, no warning,
-  presses simply stop landing. `KeyboardStateSync` has to be a CHILD of
-  `KeyboardProvider`, because it calls `useKeyboardContext()`, and it stays a
-  SIBLING of the modal provider rather than moving inside it: the repair is
-  global and has to outlive any layer that can remount.
+  children. The order is not stylistic. The gesture root has to be an ancestor
+  native view of every handler a `Pressable` creates, and its absence is
+  *silent* — no error, no warning, presses simply stop landing.
+  `KeyboardStateSync` has to be a CHILD of `KeyboardProvider`, because it calls
+  `useKeyboardContext()`, and it stays a SIBLING of the children rather than
+  wrapping them: the repair is global and has to outlive any layer that can
+  remount.
 - **`initialMetrics` defaults to `initialWindowMetrics`, and that is
   load-bearing.** `SafeAreaProvider` renders `null` — not unstyled children,
   *nothing* — until its native view reports the first `onInsetsChange`, so
@@ -44,25 +44,29 @@ everything — a root layout, an `App.tsx`.
   failure mode, which is the least debuggable outcome in the package. And a prop
   surface that names the layers changes shape every time a layer is added:
   `children`, `style` and `initialMetrics` say nothing about what is inside, so a
-  future `BottomSheetModalProvider` or portal host is an edit to one file rather
-  than a breaking change. An app that genuinely needs a different stack composes
+  future portal host or toast host is an edit to one file rather than a
+  breaking change. An app that genuinely needs a different stack composes
   the providers by hand — they are all public from their own packages, and this
   is a convenience, not a gate.
 - **A new layer goes innermost.** Anything that draws above the app — a
-  bottom-sheet modal provider, a portal host, a toast host — has to sit inside
-  every provider it reads, so it wraps `{children}` and nothing else moves. A
-  layer that brings a new native peer is a peer-dependency decision first.
-  `BottomSheetModalProvider` is the case this rule was written for and now the
-  case it governs: it reads the gesture root for its pan, the safe area for its
-  insets and the keyboard values a sheet's footer rides, so it is last.
-- **`@gorhom/bottom-sheet` is a required peer because of this component**, on
-  exactly the argument `react-native-keyboard-controller` already carries. It was
-  optional while nothing imported it. The recommended root now does, so every app
-  resolves it, and a flag saying otherwise would only suppress the install
-  warning that explains the Metro resolution error coming out of the app's root
-  layout. It is pure JavaScript over Reanimated and Gesture Handler — both
-  required peers already — so this costs an install and no native build. Rule 3's
-  promise survives intact: `/button` still pulls nothing sheet-related.
+  portal host, a toast host — has to sit inside every provider it reads, so it
+  wraps `{children}` and nothing else moves. A layer that brings a new native
+  peer is a peer-dependency decision first.
+- **`BottomSheetProvider` is the layer this component does not mount, and the
+  reason is the peer decision above.** The sheet's engine,
+  `@delacour/react-native-bottom-sheet`, is an **optional** peer of this
+  library, the way `@delacour/react-native-charts` is: an app with no sheet
+  never resolves it, and its native peer `react-native-teleport` never has to
+  be in that app's build. An import here would make every app resolve both,
+  sheet or no sheet. So the provider is exported beside `BottomSheet`, from the
+  sheet's own subpath, and the app mounts it itself, once,
+  inside `DelacourProvider` and around its navigator — innermost, exactly where
+  the rule above puts it, because it reads the gesture root for its pans, the
+  safe area for its insets and the keyboard values a sheet's footer rides.
+  `apps/playground/src/app/_layout.tsx` is the reference mount. Without it a
+  `BottomSheet.Portal` still renders, where it is written, as an inline sheet.
+  The previous sheet library was a required peer while this component mounted
+  its modal provider; nothing imports it any more.
 - **Deliberately not idempotent.** It does not detect an enclosing copy of
   itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
   `SafeAreaProvider` seeds from the parent's insets and costs a native view;

@@ -106,8 +106,13 @@ describe("install manifest", () => {
 const NATIVE_UI_PACKAGE = join(ROOT, "packages", "react-native-ui", "package.json");
 const INSTALLATION_PAGE = join(CONTENT, "docs", "native", "getting-started", "installation", "index.mdx");
 
-/** The names `react`/`react-native` are ambient and never installed; charts is documented on its own site. */
-const NEVER_LISTED = new Set(["react", "react-native", "@delacour/react-native-charts"]);
+/** The names `react`/`react-native` are ambient and never installed; the two engines are documented on their own sites. */
+const NEVER_LISTED = new Set([
+	"react",
+	"react-native",
+	"@delacour/react-native-charts",
+	"@delacour/react-native-bottom-sheet",
+]);
 
 function peerDependencies(): { required: string[]; optional: string[] } {
 	const json = JSON.parse(readFileSync(NATIVE_UI_PACKAGE, "utf-8")) as {

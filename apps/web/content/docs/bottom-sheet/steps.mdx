@@ -1,0 +1,294 @@
+---
+title: Steps
+description: A typed machine, a body whose contents follow it, and a height that glides between steps instead of jumping.
+icon: ListOrdered
+---
+
+```tsx
+import { BottomSheet, defineSheetMachine, useSheetMachine, useSheetStep } from "@delacour/react-native-bottom-sheet";
+```
+
+A multi-step sheet is three things: a **machine** that says which steps there are and how events
+move between them, a **controller** that runs the machine as React state, and a **body** —
+`BottomSheet.Steps` — that renders the current step and animates the sheet's height to it. No
+XState in the graph; any object with the controller's shape may stand in.
+
+## Define the machine
+
+```tsx
+type Step = "details" | "confirm" | "success";
+type Context = { name: string; email: string };
+type Event =
+  | { type: "NEXT" }
+  | { type: "BACK" }
+  | { type: "SUBMIT" }
+  | { type: "EDIT"; field: keyof Context; value: string };
+
+const EMAIL = /^\S+@\S+\.\S+$/;
+
+const machine = defineSheetMachine<Step, Context, Event>({
+  id: "signup",
+  initial: "details",
+  context: { name: "", email: "" },
+  states: {
+    details: {
+      on: {
+        NEXT: { target: "confirm", guard: (context) => context.name.trim().length > 0 && EMAIL.test(context.email) },
+        EDIT: { target: "details", assign: (context, event) => ({ ...context, [event.field]: event.value }) },
+      },
+    },
+    confirm: {
+      dismissible: false,
+      on: { BACK: "details", SUBMIT: "success" },
+    },
+    success: {
+      snapPoints: ["35%"],
+    },
+  },
+});
+```
+
+A machine is a plain description. `states` is every step, keyed by name, in **declaration order**
+— which is the order `Steps` reads as forward. Each step's `on` maps an event type to a transition:
+a bare target, or `{ target, guard?, assign? }`. `guard` says whether the event may fire; `assign`
+returns a new context and never mutates the one it was given. A self-target with `assign` edits
+context in place without changing step.
+
+The handler under `on.EDIT` sees only `Extract<Event, { type: "EDIT" }>`, so `assign` reads
+`event.field` with no cast.
+
+Two fields on a step speak to the sheet rather than the machine:
+
+| Field | While the step is current |
+| --- | --- |
+| `snapPoints` | replaces the root's, and turns dynamic sizing off — the step is sized by its detents |
+| `dismissible: false` | switches off pan-down-to-close and the overlay's press. `Close` and the ref still work |
+
+## Run it
+
+```tsx
+function SignUp() {
+  const controller = useSheetMachine(machine, {
+    onTransition: (from, to, event) => track(event.type, to.value),
+    onRejected: (error) => console.warn(error.code, error.from),
+  });
+
+  return (
+    <BottomSheet bottomInset={insets.bottom} topInset={insets.top}>
+      <BottomSheet.Trigger>
+        <Text>Open</Text>
+      </BottomSheet.Trigger>
+      <BottomSheet.Portal>
+        <BottomSheet.Overlay style={styles.overlay} />
+        <BottomSheet.Container>
+          <BottomSheet.Background style={styles.background} />
+          <BottomSheet.Handle style={styles.handle}>
+            <View style={styles.pill} />
+          </BottomSheet.Handle>
+          <BottomSheet.Steps controller={controller} style={styles.steps}>
+            <BottomSheet.Step name="details" style={styles.step}>
+              <BottomSheet.Title style={styles.title}>Your details</BottomSheet.Title>
+              <DetailsFields />
+            </BottomSheet.Step>
+            <BottomSheet.Step name="confirm" style={styles.step}>
+              <Text style={styles.title}>Confirm</Text>
+              <Summary />
+            </BottomSheet.Step>
+            <BottomSheet.Step name="success" style={styles.step}>
+              <Text style={styles.title}>You are in</Text>
+            </BottomSheet.Step>
+          </BottomSheet.Steps>
+          <BottomSheet.Footer padding={16} style={styles.footer}>
+            <StepActions />
+          </BottomSheet.Footer>
+        </BottomSheet.Container>
+      </BottomSheet.Portal>
+    </BottomSheet>
+  );
+}
+```
+
+`useSheetMachine` runs the machine as React state and returns the controller: the snapshot
+(`value`, `context`, `history`) plus `send`, `can`, `matches`, `reset` and `direction`. A `send`
+that the machine refuses leaves the state alone and calls `onRejected` with why — `no-transition`
+or `guard-rejected` — so a refusal is data, not an exception.
+
+`Steps` replaces `Content` as the body. Each `Step` names a key of the machine's `states`; only the
+current one is rendered, and during a change the one leaving.
+
+## Read it anywhere inside the sheet
+
+```tsx
+function StepActions() {
+  const { send, can, matches } = useSheetStep<Step, Context, Event>();
+  const { close } = useBottomSheet();
+  if (matches("details")) return <Action disabled={!can({ type: "NEXT" })} label="Next" onPress={() => send({ type: "NEXT" })} />;
+  if (matches("confirm")) {
+    return (
+      <>
+        <Action label="Back" onPress={() => send({ type: "BACK" })} />
+        <Action label="Submit" onPress={() => send({ type: "SUBMIT" })} />
+      </>
+    );
+  }
+  return <Action label="Done" onPress={close} />;
+}
+
+function DetailsFields() {
+  const { context, send } = useSheetStep<Step, Context, Event>();
+  return (
+    <>
+      <BottomSheet.TextInput onChangeText={(value) => send({ type: "EDIT", field: "name", value })} value={context.name} />
+      <BottomSheet.TextInput onChangeText={(value) => send({ type: "EDIT", field: "email", value })} value={context.email} />
+    </>
+  );
+}
+```
+
+`useSheetStep()` returns the controller with its generics asserted back on. `can({ type: "NEXT" })`
+is how the Next button is disabled while a guard says no, and it re-evaluates with every context
+change. The footer is written beside the body, not inside `Steps`, so `Steps` also registers its
+controller with the root for the footer to find; anywhere inside the `BottomSheet` works once the
+body has mounted. `useOptionalSheetStep()` returns `null` outside one.
+
+## The height glides
+
+When the current step measures, `Steps` writes the number to the sheet's content height at once
+and springs its own stack to it. The dynamic detent re-derives on the UI thread, the root animates
+the sheet to the same index in the new list with the sheet's own animation, and — because the stack
+uses the same config — the panel's top edge and the body's bottom edge move together. No jump. A
+sheet resting on an explicit detent does not move at all.
+
+## Transitions
+
+```tsx
+<BottomSheet.Steps controller={controller} transition="slide">
+```
+
+| `transition` | The outgoing step | The incoming step |
+| --- | --- | --- |
+| `crossfade` (default) | fades out | fades in |
+| `slide` | moves out a frame-width along `direction` | arrives from the other side |
+| `none` | gone on the first frame | there on the first frame |
+
+`direction` is `forward` or `back`: a step's explicit `direction` first, else declaration order.
+A `reset` reads as `back`.
+
+## Reset
+
+`resetOnClose` (the default) sends the controller back to `machine.initial` once the sheet has
+closed, so the next open starts at the first step with fresh context. It resets from the `isOpen`
+flip for a body that stays mounted and from the unmount for one the portal takes down.
+
+## Per-step snap points
+
+```tsx
+const machine = defineSheetMachine<"compact" | "tall" | "half", Record<string, never>, { type: "GO" }>({
+  initial: "compact",
+  context: {},
+  states: {
+    compact: { on: { GO: "tall" } },
+    tall: { snapPoints: ["75%"], on: { GO: "half" } },
+    half: { snapPoints: ["50%"], on: { GO: "compact" } },
+  },
+});
+```
+
+A step that names `snapPoints` is sized by them while it is current; a step that names none is
+sized by what it measures. Each change animates the sheet to the new step's first detent.
+
+## XState, or your own controller
+
+Nothing checks the controller by identity. `BottomSheet.Steps` and `useSheetStep` want an object
+with this shape:
+
+```ts
+type SheetStepController<S extends string, C, E extends { type: string }> = {
+  value: S;
+  context: C;
+  history: readonly S[];
+  machine: SheetMachine<S, C, E>; // steps, directionOf, nodeOf
+  steps: readonly S[];
+  direction: "forward" | "back";
+  send: (event: E) => void;
+  can: (event: E) => boolean;
+  matches: (step: S) => boolean;
+  reset: () => void;
+};
+```
+
+An adapter over an XState actor is a `useMemo` that maps `snapshot.value`, `snapshot.context`,
+`actor.send` and `snapshot.can` onto these, with a `machine` whose `steps`, `directionOf` and
+`nodeOf` come from `defineSheetMachine` over the same state names. `nodeOf(step).snapPoints` and
+`.dismissible` are what `Steps` reads for the per-step overrides.
+
+## API Reference
+
+### defineSheetMachine
+
+<TypeTable
+  type={{
+    id: { type: "string" },
+    initial: { type: "S", description: "The first step." },
+    context: { type: "C", description: "The initial context." },
+    states: {
+      type: "{ [K in S]: SheetStateNode }",
+      description: "Every step, keyed by name. Declaration order is step order.",
+    },
+  }}
+/>
+
+### SheetStateNode
+
+<TypeTable
+  type={{
+    on: {
+      type: '{ [T in E["type"]]?: S | { target: S; guard?; assign? } }',
+      description: "An event type to its transition. The handler sees only that member of the event union.",
+    },
+    snapPoints: { type: "readonly DetentSpec[]", description: "Replaces the root's while current; dynamic sizing off." },
+    dismissible: { type: "boolean", description: "false switches off pan-down-to-close and the overlay press while current." },
+    direction: { type: '"forward" | "back"', description: "How arriving at this step reads. Else declaration order." },
+  }}
+/>
+
+### useSheetMachine
+
+<TypeTable
+  type={{
+    machine: { type: "SheetMachine<S, C, E>" },
+    onTransition: {
+      type: "(from: Snapshot, to: Snapshot, event: E) => void",
+      description: "A transition succeeded.",
+    },
+    onRejected: {
+      type: "(error: SheetTransitionError<S>, event: E) => void",
+      description: "A transition was refused: no-transition or guard-rejected. The snapshot is unchanged.",
+    },
+  }}
+/>
+
+### Steps
+
+<TypeTable
+  type={{
+    controller: { type: "SheetStepController<S, C, E>", description: "From useSheetMachine, or any object with its shape." },
+    transition: { type: '"crossfade" | "slide" | "none"', default: '"crossfade"' },
+    animation: {
+      type: "SheetAnimation",
+      description: "The spring or timing for the height and the transition. The root's when omitted.",
+    },
+    resetOnClose: { type: "boolean", default: "true", description: "Back to the initial step once the sheet has closed." },
+    footerGap: { type: "number", default: "0", description: "Extra space between the steps and a sticky footer." },
+    "...ViewProps": { type: "ViewProps", description: "style lands around the stack — put vertical padding on the Step." },
+  }}
+/>
+
+### Step
+
+<TypeTable
+  type={{
+    name: { type: "S", description: "The step this body belongs to — a key of the machine's states." },
+    "...ViewProps": { type: "ViewProps", description: "style is what the step measures, padding included." },
+  }}
+/>

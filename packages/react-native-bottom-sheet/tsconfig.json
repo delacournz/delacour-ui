@@ -1,0 +1,12 @@
+{
+	"extends": "@delacour/tsconfig/tsconfig.react-native.json",
+	"compilerOptions": {
+		"composite": false,
+		"noEmit": true,
+		"rootDir": ".",
+		"baseUrl": ".",
+		"paths": { "@/*": ["./src/*"] },
+		"types": ["bun"]
+	},
+	"include": ["src/**/*.ts", "src/**/*.tsx"]
+}

@@ -48,8 +48,8 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"expo-linear-gradient": "expo",
 	// Ships a Fabric view, so it is version-matched and needs a rebuild too.
 	"@legendapp/list": "expo",
-	// Built on Reanimated and Gesture Handler, and pinned against both.
-	"@gorhom/bottom-sheet": "expo",
+	// Ships a Fabric portal view, so it is version-matched and needs a rebuild.
+	"react-native-teleport": "expo",
 	// Ships a native 2D renderer, and Expo 58 bundles 2.11.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
@@ -58,6 +58,10 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
 	// what need the SDK, and `ITEM_META.chart.dependencies` names them.
 	"@delacour/react-native-charts": "npm",
+	// Plain TypeScript over Reanimated, Gesture Handler, keyboard-controller and
+	// teleport. Its own peers are what need the SDK, and
+	// `ITEM_META["bottom-sheet"].dependencies` names them.
+	"@delacour/react-native-bottom-sheet": "npm",
 	clsx: "npm",
 	tailwindcss: "npm",
 	"tailwind-merge": "npm",
@@ -99,8 +103,23 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	"bottom-sheet": {
 		title: "Bottom Sheet",
-		description: "A draggable sheet over the screen, on @gorhom/bottom-sheet.",
+		description:
+			"A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 		categories: ["overlays"],
+		// `@delacour/react-native-bottom-sheet` peer-depends on teleport,
+		// keyboard-controller, safe-area-context, Gesture Handler, Reanimated and
+		// Worklets, and the skin's files import only some of them — so no scan can
+		// see the rest. Teleport in particular is a native module: installed with
+		// the package manager rather than `expo install` it is a build that fails
+		// at the linker, and it needs a dev-client rebuild either way.
+		dependencies: [
+			"react-native-teleport",
+			"react-native-keyboard-controller",
+			"react-native-safe-area-context",
+			"react-native-gesture-handler",
+			"react-native-reanimated",
+			"react-native-worklets",
+		],
 	},
 	button: {
 		title: "Button",

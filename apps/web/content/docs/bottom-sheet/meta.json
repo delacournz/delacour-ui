@@ -1,0 +1,25 @@
+{
+	"title": "Bottom Sheet",
+	"icon": "PanelBottom",
+	"root": true,
+	"description": "A headless bottom sheet engine for React Native.",
+	"pages": [
+		"---Overview---",
+		"index",
+		"installation",
+		"composition",
+		"---Behaviour---",
+		"detents",
+		"gestures",
+		"keyboard",
+		"footer",
+		"scrollables",
+		"---Presentation---",
+		"portal-and-host",
+		"detached",
+		"---Reference---",
+		"steps",
+		"animation",
+		"core"
+	]
+}

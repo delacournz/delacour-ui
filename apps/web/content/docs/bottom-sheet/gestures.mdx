@@ -1,0 +1,104 @@
+---
+title: Gestures
+description: The two pans, the rubber band past the last detent, the velocity snap, and the haptics that fire on each crossing.
+icon: Hand
+---
+
+Two `Gesture.Pan()`s move a sheet: one on the `Handle`, one on the `Content`. Both are built from
+the same handlers and both write the same value — the sheet's keyboard-free height — so a drag
+that starts on the pill and a drag that starts on the copy feel the same.
+
+```tsx
+<BottomSheet
+  enableContentPanningGesture
+  enableHandlePanningGesture
+  enableOverDrag
+  enablePanDownToClose
+  overDragResistanceFactor={2.5}
+>
+```
+
+## The handle pan
+
+Claims a touch immediately. The handle is the surface for dragging, so there is nothing under it a
+tap could have meant.
+
+```tsx
+<BottomSheet.Handle enablePanningGesture={false} />
+```
+
+A per-part opt-out leaves the detector out for that handle alone; the root's
+`enableHandlePanningGesture` switches every handle off.
+
+## The content pan
+
+Waits six points of vertical travel before it claims a touch and gives up after twelve horizontal.
+A tap lands on the button or the field under it, and a horizontal pager inside the sheet keeps its
+swipe. Both pans keep running when the finger leaves the view.
+
+A scrollable body wraps its own native scroll in a gesture declared simultaneous with this pan;
+[Scrollables](/docs/bottom-sheet/scrollables) is the rule for which of the two a finger moves.
+
+## Over-drag
+
+Past the highest detent — and, when the sheet may not close, past the lowest — the sheet follows
+the finger with a rubber band: slope one at the edge, square root beyond. `overDragResistanceFactor`
+scales the travel; larger allows more. `enableOverDrag={false}` clamps instead.
+
+The sheet never goes above the frame, however far the finger does.
+
+## Pan down to close
+
+With `enablePanDownToClose` (the default) the closed position is a candidate for the release, and a
+drag below the lowest detent runs toward it. Off, the lowest detent is the floor and a drag below it
+rubber-bands back. A [step](/docs/bottom-sheet/steps) marked `dismissible: false` switches it off
+for as long as that step is current.
+
+## The snap
+
+A release picks the candidate nearest to where the finger was **heading**: the height it let go at
+plus a fifth of a second of its velocity. A quick flick lands a detent away; a slow drag lands on
+the nearest one. Closed is a candidate only when the pan may close. On a tie the lower one wins.
+
+The animation gets half the release velocity, in height space, so a spring continues the drag
+rather than starting from rest.
+
+<Callout type="warn">
+The snap runs on `onFinalize`, not `onEnd`: a gesture that fails after activating never fires
+`onEnd`, and the sheet would be left between detents. If you compose a gesture of your own with the
+pans, read the finalize.
+</Callout>
+
+## The keyboard, mid-drag
+
+`enableBlurKeyboardOnGesture` (the default) dismisses the keyboard the moment a pan starts, and a
+pan that ends heading down dismisses it regardless. Both go through keyboard-controller's
+`KeyboardController.dismiss` on the JS thread.
+
+## Haptics
+
+The package imports nothing from a haptics library. Three props take a **worklet** and run it on
+the UI thread, in the frame the crossing happened:
+
+| Prop | Fires when |
+| --- | --- |
+| `onDetentHaptic` | a drag crossed a detent |
+| `onCloseHaptic` | a drag let go on a close |
+| `onOverDragHaptic` | a drag left the detent range and the rubber band took over — once per entry |
+
+```tsx
+import { Presets } from "react-native-pulsar";
+
+<BottomSheet onCloseHaptic={Presets.System.impactLight} onDetentHaptic={Presets.System.selection}>
+```
+
+Pulsar's presets are worklets already; a function of your own needs the `"worklet"` directive and
+may call nothing that is not one.
+
+## Your own gesture
+
+The pans are on the internal context as `pans.handle` and `pans.content`, ready for a
+`GestureDetector` each. They are one shared object per pan and a gesture builder mutates in place,
+so hand them to a detector untouched; a part that opts out leaves the detector out rather than
+calling `.enabled(false)` on the shared object, which would switch it off for every other part
+too.

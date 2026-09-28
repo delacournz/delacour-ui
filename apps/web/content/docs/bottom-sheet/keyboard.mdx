@@ -1,0 +1,124 @@
+---
+title: Keyboard
+description: What the sheet does when a keyboard appears, which keyboards count as its own, and how a field tells it.
+icon: Keyboard
+---
+
+```tsx
+<BottomSheet keyboardBehavior="interactive" keyboardBlurBehavior="restore" keyboardScope="inside">
+```
+
+The sheet reads the keyboard from `react-native-keyboard-controller` and nothing else: a
+frame-accurate height and a `progress` that tracks an interactive dismiss frame by frame, both as
+UI-thread shared values. Every keyboard term in the sheet's geometry is a derivation over them, so
+the sheet rides the keyboard up and follows it back down without a JavaScript round trip.
+
+## Behaviours
+
+| `keyboardBehavior` | On show | On hide, with `keyboardBlurBehavior: "restore"` |
+| --- | --- | --- |
+| `interactive` (default) | The sheet lifts by the keyboard's height less the safe-area band. Nothing snaps; the detent is unchanged. | Nothing to restore — the sheet never left its detent |
+| `extend` | Snap to the highest detent, then lift from there | Back to the detent held before |
+| `fillParent` | Snap to the top of the frame; no lift; the body shrinks by the keyboard | Back to the detent held before |
+| `none` | Nothing. The keyboard is not the sheet's problem | Nothing |
+
+`interactive` is a pure derivation, which is why it needs no restore: the **keyboard lift** is a
+term added on top of the sheet's resting height, and it goes to zero as `progress` does. The index
+and the overlay read the resting height, so a keyboard never changes the reported detent and never
+darkens the scrim.
+
+```tsx
+<BottomSheet keyboardBehavior="extend" snapPoints={["35%", "80%"]} dynamicSizing={false}>
+```
+
+`extend` on two explicit detents: focusing a field snaps to 80% and the keyboard lifts the sheet
+from there; the return key drops the keyboard and the sheet is back at 35%. `onIndexChange` reports
+both snaps with `source: "keyboard"`.
+
+## The lift, exactly
+
+```txt
+lift = keyboard − band · progress − (detached ? gap : 0)
+```
+
+The safe-area band under a sticky footer collapses in step with the keyboard, so the footer's
+bottom edge lands **on** the keyboard's top edge rather than a home-indicator's height above it. A
+detached card already floats above the inset, so its gap is subtracted too. This is the formula the
+[footer proof](/docs/bottom-sheet/footer#the-band-collapses-with-the-keyboard) rests on.
+
+## Ownership
+
+Not every keyboard is the sheet's to lift for. A field in the screen behind an open sheet raises a
+keyboard too, and a sheet that lifted for it would climb over nothing. `keyboardScope` picks the
+rule:
+
+| `keyboardScope` | Counts as the sheet's |
+| --- | --- |
+| `registered` | only a field that went through `useBottomSheetTextInput` or `BottomSheet.TextInput` |
+| `inside` (default) | those, plus any focused input whose frame lies inside the sheet |
+| `always` | every keyboard, whoever asked for it |
+
+`inside` reads the focused field's frame from keyboard-controller and compares it with the sheet's
+top in window space, so a plain `TextInput` written in the body is found by geometry with no
+registration. Ownership is sticky through a transition: the frame can land a frame after `progress`
+starts and goes null the moment a field blurs, while the keyboard takes another quarter second to
+leave.
+
+## Registering a field
+
+Registration is the reliable path, and it is what makes moving focus from one field to the next a
+single resize rather than a close and a reopen.
+
+```tsx
+import { BottomSheet, useBottomSheetTextInput } from "@delacour/react-native-bottom-sheet";
+import { TextInput } from "react-native";
+
+<BottomSheet.TextInput placeholder="Registered by component" style={styles.input} />;
+
+function Field() {
+  const handlers = useBottomSheetTextInput();
+  return <TextInput {...handlers} placeholder="Registered by hook" style={styles.input} />;
+}
+```
+
+`useBottomSheetTextInput()` returns `{ ref, onFocus, onBlur }`. All three matter: `ref` puts the
+field's native node in the sheet's registry, `onFocus` claims the keyboard, and `onBlur` gives it
+up — unless focus moved to another registered field in the same sheet, which React Native's own
+focus registry already knows. Outside a sheet the handlers are inert, so a form shared between a
+screen and a sheet needs no branch.
+
+`BottomSheet.TextInput` is the hook over React Native's `TextInput`, for the plain case. Spread the
+hook onto a skin's field, a library's, or your own.
+
+## Blur
+
+`keyboardBlurBehavior` is what `extend` and `fillParent` do when the keyboard they snapped for goes
+away: `restore` (the default) returns to the detent held before; `none` stays. `interactive` has
+nothing to restore.
+
+A pan starting on the sheet dismisses the keyboard first when `enableBlurKeyboardOnGesture` is on,
+and a pan that ends heading down dismisses it regardless — see [Gestures](/docs/bottom-sheet/gestures).
+
+## Android
+
+There is no `android_keyboardInputMode` prop. keyboard-controller owns the resize mode, and the
+sheet refuses the one measurement Android's `adjustResize` double-counts: a frame that shrinks
+while `progress` is above zero is not a new container height.
+
+## The stale-keyboard guard
+
+On iOS keyboard-controller writes its values on `keyboardWillShow` and `keyboardWillHide` and
+nothing else, so a teardown that produces no `willHide` — a native-stack pop over a focused field,
+an app suspend — leaves them pinned open app-wide, and a sheet mounted into that would lift for a
+keyboard that is not there. The sheet snaps them to closed on every presentation when React
+Native's focus registry says nothing is focused. `useKeyboardAnimationGuard` is the same thing for
+a screen of your own.
+
+```tsx
+import { useKeyboardAnimationGuard } from "@delacour/react-native-bottom-sheet";
+
+function Screen() {
+  useKeyboardAnimationGuard();
+  return …;
+}
+```

@@ -1,4 +1,3 @@
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import type { ComponentProps, ReactElement, ReactNode } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -41,7 +40,7 @@ export type DelacourProviderProps = {
  * Mount it ONCE, around everything — a root layout, an `App.tsx`. It is not
  * idempotent and does not detect an enclosing copy of itself; see AGENTS.md.
  *
- * Five layers, outermost first, and the order is not stylistic:
+ * Four layers, outermost first, and the order is not stylistic:
  *
  * 1. `GestureHandlerRootView` — an ancestor native view every gesture handler
  *    `Pressable` creates has to attach to. Its absence is silent: no error, no
@@ -55,15 +54,20 @@ export type DelacourProviderProps = {
  *    `will` events, so a keyboard that vanishes without one — an interactive
  *    dismiss interrupted by navigation, a stack pop, an app suspend — leaves
  *    every screen in the app believing it is still open.
- * 5. `BottomSheetModalProvider` — the host every `BottomSheet` portals into. It
- *    goes innermost because it draws ABOVE the app and reads every layer over
- *    it: the gesture root for the pan, the safe area for its insets, and the
- *    keyboard values a sheet's footer rides. It wraps `{children}` and nothing
- *    else moves, which is what a new layer here always looks like.
  *
- * `KeyboardStateSync` stays a SIBLING of it rather than a child. The repair is
- * global and has to run for the whole app's lifetime; inside a layer that can
- * remount it would be torn down with it.
+ * **`BottomSheetProvider` is not here, and the app mounts it.** The sheet's
+ * engine, `@delacour/react-native-bottom-sheet`, is an optional peer of this
+ * library: importing it from the recommended root would make every app resolve
+ * it, sheet or no sheet. So the provider is exported from
+ * `@delacour/react-native-ui/bottom-sheet` and goes innermost, inside this and
+ * around the navigator — it reads the gesture root for its pans, the safe area
+ * for its insets and the keyboard values a sheet's footer rides, and it draws
+ * above the app, so it wraps `{children}` and nothing else moves. That is what
+ * a new layer here always looks like, one package along.
+ *
+ * `KeyboardStateSync` is a sibling of `{children}` rather than a wrapper. The
+ * repair is global and has to run for the whole app's lifetime; inside a layer
+ * that can remount it would be torn down with it.
  *
  * There are no per-layer escape hatches and no layer-named props on purpose.
  * An app that needs a different stack composes the providers by hand; they are
@@ -72,13 +76,16 @@ export type DelacourProviderProps = {
  * @example
  * // expo-router root layout. The css import must stay the first statement.
  * import "../styles/global.css";
+ * import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
  * import { DelacourProvider } from "@delacour/react-native-ui/provider";
  * import { Stack } from "expo-router";
  *
  * export default function RootLayout() {
  *   return (
  *     <DelacourProvider>
- *       <Stack screenOptions={{ headerShown: false }} />
+ *       <BottomSheetProvider>
+ *         <Stack screenOptions={{ headerShown: false }} />
+ *       </BottomSheetProvider>
  *     </DelacourProvider>
  *   );
  * }
@@ -99,7 +106,7 @@ export function DelacourProvider({
 			<SafeAreaProvider initialMetrics={initialMetrics}>
 				<KeyboardProvider>
 					<KeyboardStateSync />
-					<BottomSheetModalProvider>{children}</BottomSheetModalProvider>
+					{children}
 				</KeyboardProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

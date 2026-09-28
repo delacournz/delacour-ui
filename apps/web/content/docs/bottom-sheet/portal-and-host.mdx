@@ -1,0 +1,186 @@
+---
+title: Portal and host
+description: Where a sheet draws — over the navigator by default, in place on request, or inside a native modal — and who is on top when two are open.
+icon: AppWindow
+---
+
+`BottomSheet.Portal` is one component with two destinations. Under a `BottomSheetProvider` it
+teleports to the nearest host; without one, or with `inline`, it renders where it is written.
+There is no `BottomSheetModal`: a modal sheet is a sheet whose portal teleports, and that is the
+default.
+
+## Modal
+
+```tsx
+<BottomSheet>
+  <BottomSheet.Trigger />
+  <BottomSheet.Portal>
+    <BottomSheet.Overlay />
+    <BottomSheet.Container>…</BottomSheet.Container>
+  </BottomSheet.Portal>
+</BottomSheet>
+```
+
+The default. `Portal` teleports to the app's root host — the one `BottomSheetProvider` renders over
+its children — so the sheet draws over the navigator, the header and the tab bar, wherever in the
+tree it was written. Its children unmount when the sheet has closed, so a closed sheet costs
+nothing.
+
+Teleport moves the **native** view and leaves the React tree where it was. A context provided
+around the trigger — a theme, a form, a query client, a value of your own — reads inside the sheet
+with nothing re-provided, and so do the sheet's own three.
+
+```tsx
+const ScreenContext = createContext("not provided");
+
+<ScreenContext.Provider value="from the trigger's screen">
+  <BottomSheet>
+    <BottomSheet.Trigger />
+    <BottomSheet.Portal>
+      <BottomSheet.Container>
+        <ContextReadout />
+      </BottomSheet.Container>
+    </BottomSheet.Portal>
+  </BottomSheet>
+</ScreenContext.Provider>;
+```
+
+## Inline
+
+```tsx
+<View style={{ flex: 1 }}>
+  <MapView />
+  <BottomSheet snapPoints={["25%", "60%"]} dynamicSizing={false} enablePanDownToClose={false} defaultOpen>
+    <BottomSheet.Portal inline>
+      <BottomSheet.Container>…</BottomSheet.Container>
+    </BottomSheet.Portal>
+  </BottomSheet>
+</View>
+```
+
+`<BottomSheet.Portal inline>` renders where written, as an absolute fill of the nearest positioned
+ancestor — so the parent must have a size. It never unmounts its children unless `unmountOnClose`
+says so. This is the form for a persistent drawer, a map's result list, a sheet inside a stage that
+is not the whole screen. With no `Overlay` the view around it stays interactive.
+
+A `Portal` with no provider above it is inline whether or not it says so.
+
+## Inside a native modal
+
+```tsx
+<Modal animationType="slide" visible={visible}>
+  <BottomSheet.Host name="modal" style={styles.modal}>
+    <Text>A native modal. Its own window.</Text>
+    <BottomSheet snapPoints={["50%"]} dynamicSizing={false}>
+      <BottomSheet.Trigger />
+      <BottomSheet.Portal>
+        <BottomSheet.Overlay />
+        <BottomSheet.Container>…</BottomSheet.Container>
+      </BottomSheet.Portal>
+    </BottomSheet>
+  </BottomSheet.Host>
+</Modal>
+```
+
+A native `Modal`, or a screen a navigator presents as one, is its own window, and a sheet teleported
+to the root host draws **behind** it. The fix is one wrapper: `<BottomSheet.Host name="modal">`
+around the screen's content, and every sheet written inside targets it with no `hostName` — the
+host provides its own name as the nearest one.
+
+With no children the host is an absolute fill instead: write `<BottomSheet.Host name="modal" />`
+**last** in the screen so it is the topmost sibling, and a sheet elsewhere in that screen names it
+with `hostName="modal"`.
+
+<Callout type="warn">
+A host needs the provider above it, and it must not be written inside a sheet — a sheet teleported
+into another sheet's panel is clipped by it and moves with it. Both warn in development.
+</Callout>
+
+## The registry
+
+Every presented sheet is in the registry from the open that mounted its children to the settle
+that unmounts them, under the host its portal chose. The registry stamps each open with the next
+`zIndex`, so a sheet opened from inside another lands on top of it, and re-opening an open sheet
+brings it forward.
+
+```tsx
+<BottomSheet stackBehavior="replace">
+```
+
+`stackBehavior` is what opening does to the other sheets open in the same host: `push` (the
+default) stacks on top of them; `replace` closes them first. An inline sheet is its own host, so
+nothing replaces it and it is always its own top.
+
+```tsx
+import { useBottomSheetRegistry } from "@delacour/react-native-bottom-sheet";
+
+function DismissAll() {
+  const { dismissAll } = useBottomSheetRegistry();
+  return <Pressable onPress={dismissAll}>…</Pressable>;
+}
+```
+
+`useBottomSheetRegistry()` returns `dismissAll` and `dismiss(id)`, for closing sheets with no ref
+in hand. It throws outside the provider; `useOptionalBottomSheetRegistry()` returns `null`.
+
+`closeOnBack` (the default) subscribes to Android's `BackHandler` while the sheet is presented
+**and** the top one in its host, so a back press closes the top sheet and the one under it
+survives.
+
+## Provider
+
+```tsx
+import { BottomSheetProvider } from "@delacour/react-native-bottom-sheet";
+```
+
+Mounted once by the app, inside its gesture root and keyboard provider, around its navigator — see
+[Installation](/docs/bottom-sheet/installation#the-providers). It is also named on the compound as
+`BottomSheet.Provider`. Nothing else is provided by this package.
+
+## API Reference
+
+### Portal
+
+<TypeTable
+  type={{
+    inline: {
+      type: "boolean",
+      description: "Render where written — an absolute fill of the nearest positioned ancestor — rather than teleporting to a host.",
+    },
+    hostName: {
+      type: "string",
+      description: "The Host to teleport to. Default: the nearest one — root under a bare provider, or the enclosing Host.",
+    },
+    unmountOnClose: {
+      type: "boolean",
+      description: "Unmount the children once a close has settled. Default true when teleported and false when inline; the root's keepMounted forces it off.",
+    },
+    style: { type: "ViewStyle" },
+  }}
+/>
+
+### Host
+
+<TypeTable
+  type={{
+    name: { type: "string", description: "What a Portal's hostName names. Unique across the mounted hosts." },
+    children: {
+      type: "ReactNode",
+      description: "The screen the host serves. With children the host is the screen's outermost view; without, an absolute fill written last in the screen.",
+    },
+    style: { type: "ViewStyle" },
+  }}
+/>
+
+### Provider
+
+<TypeTable type={{ children: { type: "ReactNode" } }} />
+
+### useBottomSheetRegistry
+
+<TypeTable
+  type={{
+    dismissAll: { type: "() => void", description: "Close every presented sheet in the provider." },
+    dismiss: { type: "(id: string) => void", description: "Close one, by the id the root registered under." },
+  }}
+/>

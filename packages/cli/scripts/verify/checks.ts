@@ -239,6 +239,39 @@ export const CHECKS: Check[] = [
 	},
 
 	{
+		name: "Every package the registry declares is installed",
+		needsInstall: true,
+		async run(context) {
+			// The import scan above sees only what the copied files name. A native
+			// module a workspace package needs — `react-native-teleport`, which the
+			// sheet engine imports and the `bottom-sheet` item declares under
+			// `expoDependencies` — is never imported by a copied file, so only the
+			// declaration, and the `expo install` it drives, puts it in the tree.
+			const index = registryIndexSchema.parse(
+				JSON.parse(await readFile(join(context.registryDir, "registry.json"), "utf-8"))
+			);
+			const requested = context.only ? new Set(context.only) : null;
+			const problems = new Set<string>();
+			let declared = 0;
+
+			for (const entry of index.items) {
+				if (requested && !requested.has(entry.name)) continue;
+				const item = registryItemSchema.parse(
+					JSON.parse(await readFile(join(context.registryDir, "r", `${entry.name}.json`), "utf-8"))
+				);
+				for (const name of [...item.dependencies, ...item.expoDependencies, ...item.devDependencies]) {
+					declared += 1;
+					if (!isInstalled(name, context)) problems.add(`${name} — declared by ${entry.name}`);
+				}
+			}
+
+			return problems.size === 0
+				? { ok: true, summary: `${declared} declarations, every package present in node_modules` }
+				: { ok: false, summary: `${problems.size} missing — declared but not installed`, details: [...problems] };
+		},
+	},
+
+	{
 		name: "The app is wired up (delacour doctor)",
 		needsInstall: true,
 		async run({ configDir, reporter }) {

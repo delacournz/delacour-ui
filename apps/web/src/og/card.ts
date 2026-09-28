@@ -24,9 +24,12 @@ import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
  * colours are the generated house background and the brand's own two
  * literals, which are the icon's and look the same in both themes.
  *
- * `product` picks whose card it is. The charts card carries the charts
- * package's name and line, its own docs URL in the footer, and a small amber
- * line chart along the bottom, so the two read as different things in a feed.
+ * `product` picks whose card it is. A package's card carries that package's
+ * name and line, its own docs URL in the footer, and a small amber motif in
+ * the bottom-right — a line chart for charts, a sheet with its handle and two
+ * detent lines for the bottom sheet — so the three read as different things
+ * in a feed. `MOTIFS` is the one place a product's drawing is named; the
+ * library's card has none.
  */
 
 export const OG_WIDTH = 1200;
@@ -45,6 +48,9 @@ export type OgCard = { title?: string; subtitle?: string; product?: DocsProduct 
 /** A fixed, gently rising series — the chart is a motif, not data, so it never changes between renders. */
 const CHART_SERIES = [0.32, 0.46, 0.38, 0.58, 0.5, 0.7, 0.62, 0.84, 0.76, 0.96];
 const CHART_BOX = { x: 640, y: 450, width: 464, height: 110 };
+
+/** The sheet motif's phone-shaped frame, and where its panel rests inside it. */
+const SHEET_BOX = { x: 760, y: 396, width: 344, height: 190 };
 
 function escapeXml(text: string): string {
 	return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -130,6 +136,50 @@ function chart(): string {
 	].join("");
 }
 
+/**
+ * A sheet resting on a detent inside a phone-shaped frame, in the mark's amber:
+ * the dimmed frame, the panel with its rounded top corners, the handle pill,
+ * and two hairlines for the detents it could settle at.
+ */
+function sheet(): string {
+	const { x, y, width, height } = SHEET_BOX;
+	const panelTop = Math.round(y + height * 0.42);
+	const radius = 22;
+	const panel = [
+		`M${x} ${y + height}`,
+		`L${x} ${panelTop + radius}`,
+		`Q${x} ${panelTop} ${x + radius} ${panelTop}`,
+		`L${x + width - radius} ${panelTop}`,
+		`Q${x + width} ${panelTop} ${x + width} ${panelTop + radius}`,
+		`L${x + width} ${y + height}`,
+		"Z",
+	].join(" ");
+	const handleWidth = 64;
+	const handleX = Math.round(x + (width - handleWidth) / 2);
+	const detents = [0.12, 0.27]
+		.map((at) => {
+			const dy = Math.round(y + height * at);
+			return `<line x1="${x + 24}" y1="${dy}" x2="${x + width - 24}" y2="${dy}" stroke="#27272a" stroke-width="2" stroke-dasharray="8 10"/>`;
+		})
+		.join("");
+
+	return [
+		'<g id="sheet">',
+		`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="28" fill="#18181b"/>`,
+		detents,
+		`<path d="${panel}" fill="${DELACOUR_STROKE_COLOUR}" fill-opacity="0.16" stroke="${DELACOUR_STROKE_COLOUR}" stroke-width="4" stroke-linejoin="round"/>`,
+		`<rect x="${handleX}" y="${panelTop + 14}" width="${handleWidth}" height="6" rx="3" fill="${DELACOUR_STROKE_COLOUR}"/>`,
+		"</g>",
+	].join("");
+}
+
+/** The motif each package's card carries in its bottom-right. The library's card has none. */
+const MOTIFS: Record<DocsProduct, (() => string) | null> = {
+	ui: null,
+	charts: chart,
+	"bottom-sheet": sheet,
+};
+
 export function ogCardSvg({ title, subtitle, product = "ui" }: OgCard = {}): string {
 	const seo = PRODUCTS[product];
 	const lines = wrapTitle(title?.trim() || seo.cardTitle);
@@ -155,7 +205,7 @@ export function ogCardSvg({ title, subtitle, product = "ui" }: OgCard = {}): str
 		titleText,
 		`<circle cx="102" cy="${subtitleTop - 9}" r="5" fill="${DELACOUR_STROKE_COLOUR}"/>`,
 		`<text x="120" y="${subtitleTop}" font-family="Inter" font-size="28" fill="#a1a1aa">${escapeXml(line)}</text>`,
-		product === "charts" ? chart() : "",
+		MOTIFS[product]?.() ?? "",
 		`<text x="96" y="${OG_HEIGHT - 72}" font-family="Inter" font-size="24" fill="#71717a">${escapeXml(footer(seo))}</text>`,
 		"</svg>",
 	].join("\n");

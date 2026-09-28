@@ -1,4 +1,13 @@
-import type { Component, ComponentType, DependencyList, EffectCallback, ReactElement, Ref, RefAttributes } from "react";
+import type {
+	Component,
+	ComponentRef,
+	ComponentType,
+	DependencyList,
+	EffectCallback,
+	ReactElement,
+	Ref,
+	RefAttributes,
+} from "react";
 import type { FlatList, FlatListProps, ScrollView, ScrollViewProps, SectionList, SectionListProps } from "react-native";
 import type { AnimatedProps } from "react-native-reanimated";
 
@@ -46,7 +55,7 @@ export type ScrollableInnerComponent = ComponentType<ScrollableInnerProps>;
 
 export type BottomSheetScrollViewProps = ScrollViewProps &
 	BottomSheetScrollableProps & {
-		ref?: Ref<ScrollView>;
+		ref?: Ref<ComponentRef<typeof ScrollView>>;
 	};
 
 export type BottomSheetFlatListProps<ItemT> = Omit<FlatListProps<ItemT>, "children"> & BottomSheetScrollableProps;

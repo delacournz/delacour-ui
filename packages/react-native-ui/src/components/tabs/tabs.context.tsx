@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
-import type { GestureType } from "react-native-gesture-handler";
+import type { PanGesture } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
 import type { TabMeasurement, TabsSize, TabsVariant, TabTracks } from "./tabs.variants";
 
@@ -53,11 +53,11 @@ export type TabsMotionValue = {
 	 *
 	 * A horizontal scrollable *inside* a panel is a head-on conflict that only the
 	 * caller can settle, because only they know which should win:
-	 * `Gesture.Native().blocksExternalGesture(panGesture)` hands the touch to
+	 * `useNativeGesture({ block: panGesture })` hands the touch to
 	 * theirs. A hook rather than a prop, the trade `useScreenFooterKeyboardClearance`
 	 * already makes.
 	 */
-	panGesture: GestureType;
+	panGesture: PanGesture;
 };
 
 export type TabsListValue = {

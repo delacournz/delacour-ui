@@ -1,11 +1,14 @@
 import { type ForwardedRef, forwardRef, type ReactElement, type RefAttributes, useMemo } from "react";
-import { type DefaultSectionT, SectionList, type SectionListProps, View } from "react-native";
+import { SectionList, type SectionListProps, View } from "react-native";
 import Animated from "react-native-reanimated";
 import { cn } from "../../lib/cn";
 import type { ScreenScrollableProps } from "./screen.types";
 import { screenVariants } from "./screen.variants";
 import { resolveListComponent } from "./screen-list-component";
 import { useScreenScrollInsets } from "./use-screen-scroll-insets";
+
+/** A section's own fields when the caller names none. React Native 0.88 stopped exporting its default. */
+type DefaultSectionT = Record<string, unknown>;
 
 // `Animated.createAnimatedComponent` erases the generic parameters; the recast
 // puts them back so `sections` and `renderItem` still check against each other.

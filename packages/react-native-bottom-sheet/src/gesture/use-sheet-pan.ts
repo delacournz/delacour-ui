@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Gesture, type GestureType, type PanGesture } from "react-native-gesture-handler";
+import { type PanGestureConfig, usePanGesture } from "react-native-gesture-handler";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { cancelAnimation, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -38,12 +38,18 @@ function dismissKeyboard(): void {
 /**
  * The two pans — handle and content — sharing one set of handlers.
  *
- * Everything runs on the UI thread. `onStart` cancels whatever animation owns
- * `base` and remembers where the drag began; `onChange` turns the finger's
+ * Everything runs on the UI thread. `onActivate` cancels whatever animation
+ * owns `base` and remembers where the drag began; `onUpdate` turns the finger's
  * travel into a height, rubber-banded past the detents by `resistOverDrag`
- * and never above the container; `onFinalize` picks the detent the finger was
+ * and never above the container; `onDeactivate` picks the detent the finger was
  * heading for with `selectSnapHeight` and hands it to `animateTo` with the
  * release velocity. The close is a candidate only when `enablePanDownToClose`.
+ *
+ * The release is `onDeactivate`, not `onFinalize`: Gesture Handler 3's
+ * `onFinalize` event carries only the pointer's position, no velocity, and
+ * `onDeactivate` runs on every path out of an ACTIVE pan — END, FAILED and
+ * CANCELLED alike — which is exactly the set the `gestureSource` guard in
+ * `release` already limited it to.
  *
  * A content pan the list owns at release — the sheet at its top, the list
  * scrolled — does not snap, but it still settles: the finger moved `base` by
@@ -60,12 +66,16 @@ function dismissKeyboard(): void {
  *
  * The handlers are built inside this `useMemo`, so they close over the core's
  * worklets in the ordinary way. See the package `AGENTS.md`: that is legal
- * precisely because these are not module-scope worklets.
+ * precisely because these are not module-scope worklets. The memo returns the
+ * two pans' configs rather than the pans: Gesture Handler 3's gestures are
+ * hooks, keyed on their config object, and both pans are published — to the
+ * handle, the content and every scrollable's native gesture — so a fresh
+ * config each render would hand all of them a new gesture each render.
  *
  * Per-gesture memory — where the drag began, the detent last under it,
  * whether it is over-dragging — lives in shared values rather than closure
  * variables. Each worklet gets its own copy of a captured `let`, so a write in
- * `onStart` would never be seen by `onChange`.
+ * `onActivate` would never be seen by `onUpdate`.
  */
 export function useSheetPan(
 	state: SheetSharedState,
@@ -82,7 +92,7 @@ export function useSheetPan(
 	const { enableHandlePanningGesture, enableContentPanningGesture, onDetentHaptic, onCloseHaptic, onOverDragHaptic } =
 		options;
 
-	return useMemo(() => {
+	const configs = useMemo(() => {
 		const begin = (source: GestureSource): void => {
 			"worklet";
 			cancelAnimation(state.base);
@@ -204,31 +214,29 @@ export function useSheetPan(
 			settle(target, closed, velocity);
 		};
 
-		const attach = (pan: PanGesture, source: GestureSource, enabled: boolean): GestureType =>
-			pan
-				.enabled(enabled)
-				.shouldCancelWhenOutside(false)
-				.onStart(() => {
-					"worklet";
-					begin(source);
-				})
-				.onChange((event) => {
-					"worklet";
-					move(event);
-				})
-				.onFinalize((event) => {
-					"worklet";
-					release(event);
-				});
+		const attach = (source: GestureSource, enabled: boolean): PanGestureConfig => ({
+			enabled,
+			shouldCancelWhenOutside: false,
+			onActivate: () => {
+				"worklet";
+				begin(source);
+			},
+			onUpdate: (event) => {
+				"worklet";
+				move(event);
+			},
+			onDeactivate: (event) => {
+				"worklet";
+				release(event);
+			},
+		});
 
-		const handle = attach(Gesture.Pan(), GESTURE_SOURCE.HANDLE, enableHandlePanningGesture);
-		const content = attach(
-			Gesture.Pan()
-				.activeOffsetY([-CONTENT_ACTIVE_OFFSET_Y, CONTENT_ACTIVE_OFFSET_Y])
-				.failOffsetX([-CONTENT_FAIL_OFFSET_X, CONTENT_FAIL_OFFSET_X]),
-			GESTURE_SOURCE.CONTENT,
-			enableContentPanningGesture
-		);
+		const handle = attach(GESTURE_SOURCE.HANDLE, enableHandlePanningGesture);
+		const content: PanGestureConfig = {
+			...attach(GESTURE_SOURCE.CONTENT, enableContentPanningGesture),
+			activeOffsetY: [-CONTENT_ACTIVE_OFFSET_Y, CONTENT_ACTIVE_OFFSET_Y],
+			failOffsetX: [-CONTENT_FAIL_OFFSET_X, CONTENT_FAIL_OFFSET_X],
+		};
 
 		return { handle, content };
 	}, [
@@ -247,4 +255,8 @@ export function useSheetPan(
 		onCloseHaptic,
 		onOverDragHaptic,
 	]);
+
+	const handle = usePanGesture(configs.handle);
+	const content = usePanGesture(configs.content);
+	return useMemo(() => ({ handle, content }), [handle, content]);
 }

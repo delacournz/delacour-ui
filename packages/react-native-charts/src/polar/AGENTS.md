@@ -35,7 +35,7 @@ Mounted the way `cartesian/` is — a measuring `View`, a `Canvas`, the provider
   label from each row and nothing else. A colour column would be a token in
   disguise, and this package has none.
 
-- **The tap runs on the JavaScript thread.** `Gesture.Tap().runOnJS(true)`
+- **The tap runs on the JavaScript thread.** `useTapGesture({ runOnJS: true })`
   calls `sliceIndexAt` and hands the index to React state. A scrub reads a
   shared value every frame of a drag and has to stay on the UI thread; a tap
   fires once and nothing on the UI side wants its result. `sliceIndexAt` is

@@ -7,22 +7,24 @@ The two pans that drive a sheet, and the haptic hooks they fire.
 | Path | What |
 | --- | --- |
 | `gesture.types.ts` | `SheetPans` (handle and content), `SheetHaptics` (the three worklet props), `SheetPanOptions`, the activation constants |
-| `use-sheet-pan.ts` | `useSheetPan(state, geometry, animateTo, settleAt, options)` — both pans from one set of hook-scope handlers |
+| `use-sheet-pan.ts` | `useSheetPan(state, geometry, animateTo, settleAt, options)` — both pans, as Gesture Handler 3 `usePanGesture` hooks, from one set of hook-scope handlers |
 
 ## The handlers
 
-`onStart` cancels the animation that owns `base`, records the source (handle
+`onActivate` cancels the animation that owns `base`, records the source (handle
 or content), where the drag began and which detent was under it.
 
-`onChange` turns the finger's travel into a height — `startBase −
+`onUpdate` turns the finger's travel into a height — `startBase −
 translationY`, less the scrollable's offset for a content pan once BSHEET-4
 wires one — rubber-banded by `resistOverDrag` past the lowest and highest
 detent and never above the container. The lowest is the closed height when
 `enablePanDownToClose`, else the first detent. `crossedDetent` decides the
 detent haptic; entering the rubber band fires the over-drag haptic once.
 
-`onFinalize`, not `onEnd`: a gesture that fails after activating never fires
-`onEnd`, and the sheet would be stranded between detents. `selectSnapHeight`
+`onDeactivate` releases. It runs on every path out of an ACTIVE pan — END,
+FAILED and CANCELLED alike — so a gesture that fails after activating still
+settles rather than stranding the sheet between detents, and it carries the
+release velocity, which Gesture Handler 3's `onFinalize` event does not. `selectSnapHeight`
 projects the release velocity a fifth of a second ahead and picks the nearest
 candidate, closing only when the pan may close, and `animateTo` gets half the
 velocity in height space — upward positive, so `−velocityY`.
@@ -46,15 +48,20 @@ The content pan waits six points of vertical travel before it claims a touch
 and gives up after twelve horizontal, so a tap lands on the button or the
 field under it and a horizontal pager inside the sheet keeps its swipe. The
 handle pan claims immediately. Both keep running when the finger leaves the
-view. Scrollables (BSHEET-4) wrap their native gesture in
-`simultaneousWithExternalGesture(pans.content)`.
+view. Scrollables (BSHEET-4) declare their native gesture
+`useNativeGesture({ simultaneousWith: pans.content })`.
+
+Both pans' configs are built in one `useMemo` and handed to `usePanGesture`.
+Gesture Handler 3 keys a gesture on its config object, and the pans are
+published to the handle, the content and every scrollable, so an inline
+config would hand all of them a new gesture on every render.
 
 ## Per-gesture memory
 
 Where the drag began, the detent last under it and whether it is over-dragging
 live in shared values rather than closure variables. Each worklet gets its own
-copy of a captured `let`, so a write in `onStart` would never be seen by
-`onChange`.
+copy of a captured `let`, so a write in `onActivate` would never be seen by
+`onUpdate`.
 
 ## Haptics
 

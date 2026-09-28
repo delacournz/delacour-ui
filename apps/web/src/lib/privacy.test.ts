@@ -277,13 +277,19 @@ const OBSERVE_READINGS: Record<string, string> = {
 	"expo.frameRate.totalDelay": "dropped frames",
 	"expo.network.connected": "network connection",
 	"expo.network.type": "network connection",
+	"expo.network.isExpensive": "metered",
+	"expo.network.isConstrained": "low-data mode",
 	"expo.network.requests.count": "network requests",
 	"expo.network.requests.failed": "network requests",
 	"expo.network.requests.bytesReceived": "network requests",
 	"expo.network.requests.bytesSent": "network requests",
 	"expo.network.requests.totalDuration": "network requests",
-	"expo.network.requests.slowestDuration": "network requests",
-	"expo.network.requests.slowestHost": "host",
+	"expo.network.requests.throughputBytesPerSecond": "throughput",
+	"expo.network.requests.slowest.bytesReceived": "network requests",
+	"expo.network.requests.slowest.duration": "network requests",
+	"expo.network.requests.slowest.host": "host",
+	"expo.network.requests.slowest.statusCode": "status code",
+	"expo.network.requests.slowest.timeToFirstByte": "network requests",
 };
 
 /**

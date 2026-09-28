@@ -1,8 +1,8 @@
 import { Tabs, useTabsMotion } from "@delacour/react-native-ui/tabs";
 import { Text } from "@delacour/react-native-ui/text";
-import { type ReactElement, useMemo } from "react";
+import type { ReactElement } from "react";
 import { ScrollView, View } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useNativeGesture } from "react-native-gesture-handler";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -21,7 +21,7 @@ export const meta: DemoMeta = {
  */
 function CardStrip(): ReactElement {
 	const { panGesture } = useTabsMotion();
-	const native = useMemo(() => Gesture.Native().blocksExternalGesture(panGesture), [panGesture]);
+	const native = useNativeGesture({ block: panGesture });
 
 	return (
 		<GestureDetector gesture={native}>

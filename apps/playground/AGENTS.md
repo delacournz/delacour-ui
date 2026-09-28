@@ -8,7 +8,7 @@ requires a route here for anything new.
 
 ## Stack
 
-- **Expo 57** with **expo-router** — file-based routing, `expo-dev-client`
+- **Expo 58** (preview) with **expo-router** — file-based routing, `expo-dev-client`
 - **Uniwind** — the same styling layer the library uses, configured in Metro
 - **`@delacour/react-native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library

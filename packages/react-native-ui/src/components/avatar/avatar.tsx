@@ -1,12 +1,5 @@
 import { type ReactElement, type ReactNode, useMemo, useState } from "react";
-import {
-	Image,
-	type ImageErrorEventData,
-	type ImageProps,
-	type ImageSourcePropType,
-	type NativeSyntheticEvent,
-	View,
-} from "react-native";
+import { Image, type ImageProps, type ImageSourcePropType, View } from "react-native";
 import { IconPeople } from "../../icons/central";
 import { cn } from "../../lib/cn";
 import { Icon } from "../icon";
@@ -88,7 +81,7 @@ function AvatarRoot({
 	const initials = fallback?.trim() || resolveAvatarInitials(name);
 	const label = resolveAvatarAccessibilityLabel({ accessibilityLabel, name, fallback });
 
-	const onImageError = (event: NativeSyntheticEvent<ImageErrorEventData>) => {
+	const onImageError = (event: Parameters<NonNullable<ImageProps["onError"]>>[0]) => {
 		setFailedKey(sourceKey);
 		imageProps?.onError?.(event);
 	};

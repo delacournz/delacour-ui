@@ -36,7 +36,7 @@ installing.
 | --- | --- | --- |
 | `react` | `>=19` | Ref-as-prop |
 | `react-native` | `>=0.81` | Fabric `getBoundingClientRect` |
-| `react-native-gesture-handler` | `>=2.28` | The handle and content pans |
+| `react-native-gesture-handler` | `>=3` | The handle and content pans, as gesture hooks |
 | `react-native-reanimated` | `>=4` | Every animated value |
 | `react-native-worklets` | `>=0.5` | `scheduleOnRN` from the UI thread |
 | `react-native-keyboard-controller` | `>=1.18` | The only keyboard source — frame-accurate height and progress |

@@ -16,8 +16,11 @@
 			// node_modules. TypeScript treats the two paths as different
 			// modules, so uniwind's `className` augmentation — applied to the
 			// workspace-root copy — would not reach components resolved from
-			// the nested one. Pin both to the root copy.
-			"react-native": ["../../node_modules/react-native"],
+			// the nested one. Pin both to the root copy. The bare specifier names
+			// the declaration file itself: React Native 0.88 publishes its types
+			// only through `exports`, which `paths` bypasses, so a pin to the
+			// package directory resolves to no types at all.
+			"react-native": ["../../node_modules/react-native/types_generated/index.d.ts"],
 			"react-native/*": ["../../node_modules/react-native/*"]
 		}
 	},

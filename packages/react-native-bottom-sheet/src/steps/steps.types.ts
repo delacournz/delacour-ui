@@ -1,4 +1,4 @@
-import type { ReactNode, Ref } from "react";
+import type { ComponentRef, ReactNode, Ref } from "react";
 import type { View, ViewProps } from "react-native";
 import type { SheetAnimation } from "../animation/animation.types";
 import type {
@@ -42,7 +42,7 @@ export type UseSheetMachineOptions<S extends string, C, E extends SheetEvent> = 
 
 export type BottomSheetStepsProps<S extends string, C, E extends SheetEvent> = Omit<ViewProps, "children"> & {
 	children?: ReactNode;
-	ref?: Ref<View>;
+	ref?: Ref<ComponentRef<typeof View>>;
 	controller: SheetStepController<S, C, E>;
 	/** How one step gives way to the next. @default "crossfade" */
 	transition?: SheetStepTransition;
@@ -55,7 +55,7 @@ export type BottomSheetStepsProps<S extends string, C, E extends SheetEvent> = O
 };
 
 export type BottomSheetStepProps<S extends string = string> = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ComponentRef<typeof View>>;
 	/** The step this body belongs to — a key of the machine's `states`. */
 	name: S;
 };

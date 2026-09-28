@@ -50,7 +50,7 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"@legendapp/list": "expo",
 	// Ships a Fabric portal view, so it is version-matched and needs a rebuild.
 	"react-native-teleport": "expo",
-	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
+	// Ships a native 2D renderer, and Expo 58 bundles 2.11.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
 

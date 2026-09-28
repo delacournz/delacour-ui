@@ -440,7 +440,7 @@ export function switchTravel({
  *
  * Three questions in order, and the order is the design. A release whose finger
  * barely moved **in any direction** is a tap, so it toggles whatever the state
- * was — this is what lets one `Gesture.Pan()` serve both gestures rather than
+ * was — this is what lets one `usePanGesture` serve both gestures rather than
  * racing a `Tap` against it. `distance` is deliberately not the along-track
  * translation: a vertical swipe that began on the switch moves nothing
  * horizontally, and reading only that axis would turn every attempt to scroll

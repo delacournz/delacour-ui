@@ -25,7 +25,7 @@ export type SwitchThumbProps = Omit<ViewProps, "children" | "style"> & {
  * already a complete control — `Radio`'s rule for its indicator. Write it out by
  * hand only to restyle it, or to put a glyph inside it.
  *
- * **It holds no gesture of its own.** One `Gesture.Pan()` on the root drives it,
+ * **It holds no gesture of its own.** One `usePanGesture` on the root drives it,
  * because a touch anywhere on the pill should move the knob it is about to
  * move — and a gesture here would nest a descendant recogniser inside the root's,
  * leaving two to negotiate for one drag. `Slider.Thumb` makes the same trade for

@@ -9,10 +9,11 @@ import { LIST_GAP_POINTS } from "@/tokens";
 export type ThemeTabBarProps = {
 	state: { index: number; routes: readonly { key: string; name: string }[] };
 	descriptors: Record<string, { options: { title?: string } } | undefined>;
-	navigation: {
+	emitter: {
 		emit: (event: { canPreventDefault: true; target: string; type: "tabPress" }) => { defaultPrevented: boolean };
-		navigate: (name: string) => void;
 	};
+	/** Switches to a tab by its route key — the navigator's own, since Expo Router 58 hands no `navigation`. */
+	navigateToTab: (routeKey: string) => void;
 	/**
 	 * The pager's live offset, in page units, as a React Native `Animated` node.
 	 *
@@ -159,7 +160,7 @@ TabIndicator.displayName = "Playground.ThemeTabBar.Indicator";
  * contract — a screen can cancel it — and it is what keeps a re-press of the
  * focused tab from re-entering it.
  */
-function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarProps): ReactElement {
+function ThemeTabBar({ state, descriptors, emitter, navigateToTab, position }: ThemeTabBarProps): ReactElement {
 	const context = useContext(ThemeTabBarInsetContext);
 	const inset = context?.inset ?? 0;
 	const current = state.routes[state.index]?.name ?? null;
@@ -185,10 +186,10 @@ function ThemeTabBar({ state, descriptors, navigation, position }: ThemeTabBarPr
 		const route = state.routes.find((candidate) => candidate.name === name);
 		if (!route || route.name === current) return;
 
-		const event = navigation.emit({ canPreventDefault: true, target: route.key, type: "tabPress" });
+		const event = emitter.emit({ canPreventDefault: true, target: route.key, type: "tabPress" });
 		if (event.defaultPrevented) return;
 
-		navigation.navigate(route.name);
+		navigateToTab(route.key);
 	};
 
 	return (

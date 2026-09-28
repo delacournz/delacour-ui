@@ -48,7 +48,7 @@ const MAIL = `[${CONTACT}](mailto:${CONTACT})`;
 const HISTORY = `https://github.com/${gitConfig.user}/${gitConfig.repo}/commits/${gitConfig.branch}/apps/web/src/lib/privacy.ts`;
 
 export const PRIVACY = {
-	updated: "2026-09-23",
+	updated: "2026-09-27",
 	controller: "Delacour Limited",
 	contact: CONTACT,
 	eyebrow: "Privacy",
@@ -144,7 +144,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 				source: { app: "playground", package: "expo-updates" },
 			},
 			{
-				what: "Performance and error reports: the same install ID and a session ID; the app version and its build and release identifiers; the device model, operating system and language setting; how long the app takes to start and to draw each of the screens you open, with their parameters — such as which demo is showing — and how long you use it; battery level and charging, power-saving mode, device temperature, network connection and dropped frames; the number, size, failures and timing of the app's network requests, and the host of the slowest; and, when something goes wrong, the error message and where in the code it happened",
+				what: "Performance and error reports: the same install ID and a session ID; the app version and its build and release identifiers; the device model, operating system and language setting; how long the app takes to start and to draw each of the screens you open, with their parameters — such as which demo is showing — and how long you use it; battery level and charging, power-saving mode, device temperature, network connection — including whether it is metered or in a low-data mode — and dropped frames; the number, size, failures, timing and throughput of the app's network requests, and the host, status code, size and timing of the slowest; and, when something goes wrong, the error message and where in the code it happened",
 				to: "Expo — EAS Observe, `o.expo.dev`",
 				why: "To see how quickly the app starts and draws each screen, which demos get opened, and what breaks. Reports are sent when the app goes to the background, and the app keeps its own copy for up to seven days.",
 				source: { app: "playground", package: "expo-observe" },

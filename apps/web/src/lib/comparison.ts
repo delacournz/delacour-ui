@@ -171,7 +171,7 @@ const STACK: Section = {
 		},
 		{
 			feature: "iOS and Android, Expo or bare",
-			delacour: { support: "yes", note: "pinned to the versions Expo SDK 57 bundles" },
+			delacour: { support: "yes", note: "pinned to the versions Expo SDK 58 bundles" },
 			heroui: { support: "yes", note: "peer ranges, checked by the install" },
 			pro: { support: "yes", note: "peer ranges, checked by the install" },
 		},

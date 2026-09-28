@@ -487,7 +487,7 @@ increment and decrement move a detent, escape closes. Extends `ViewProps`.
     enablePanningGesture: { type: "boolean", description: "Overrides the root's enableHandlePanningGesture for this handle." },
     className: { type: "string" },
     indicatorClassName: { type: "string", description: "The pill." },
-    indicatorStyle: { type: "StyleProp<ViewStyle>" },
+    indicatorStyle: { type: 'ViewProps["style"]' },
     children: { type: "ReactNode", description: "Replaces the pill." },
   }}
 />

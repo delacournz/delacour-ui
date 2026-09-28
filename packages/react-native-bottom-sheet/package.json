@@ -39,7 +39,7 @@
 	"peerDependencies": {
 		"react": ">=19",
 		"react-native": ">=0.81",
-		"react-native-gesture-handler": ">=2.28",
+		"react-native-gesture-handler": ">=3",
 		"react-native-keyboard-controller": ">=1.18",
 		"react-native-reanimated": ">=4",
 		"react-native-safe-area-context": ">=5",

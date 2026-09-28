@@ -164,6 +164,13 @@ installs one of each. When SDK 58 goes stable, move both to the stable versions 
 become redundant rather than wrong; delete them then. `packages/cli/scripts/verify/harness.ts`
 carries the same pair for the app it scaffolds.
 
+**A style that reaches a `View` is typed as that component's own prop, never `StyleProp<ViewStyle>`.**
+React Native 0.88's `View` takes its generated style type, and every Expo app's `expo-env.d.ts` loads
+`expo/types`, which widens the public `ViewStyle` with web-only values (`position: "fixed"`, a string
+`backgroundImage`) that the generated type refuses. Nothing in this repository loads `expo/types`, so
+`bun run typecheck` passes and only `verify:expo` fails — write `ViewProps["style"]`, or
+`ComponentProps<typeof X>["style"]` for a third-party view, and let `StyleSheet.flatten` infer.
+
 A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
 and nothing else. `react-native-pulsar` (`^1.7.0`) and `react-native-teleport` (`^1.2.2`) are the
 two today; each workspace that needs one repeats the range verbatim, and a bump is a search for

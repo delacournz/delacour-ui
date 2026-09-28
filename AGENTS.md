@@ -251,6 +251,13 @@ release under that name; v3 moved to `react-native-skia` and draws through Graph
 and `expo-doctor` flag it — that is expected. v3 needs Android API 26 (Vulkan 1.1), which the
 playground sets through `expo-build-properties`.
 
+**A style that reaches a `View` is typed as that component's own prop, never `StyleProp<ViewStyle>`.**
+React Native 0.88's `View` takes its generated style type, and every Expo app's `expo-env.d.ts` loads
+`expo/types`, which widens the public `ViewStyle` with web-only values (`position: "fixed"`, a string
+`backgroundImage`) that the generated type refuses. Nothing in this repository loads `expo/types`, so
+`bun run typecheck` passes and only `verify:expo` fails — write `ViewProps["style"]`, or
+`ComponentProps<typeof X>["style"]` for a third-party view, and let `StyleSheet.flatten` infer.
+
 A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
 and nothing else. `react-native-pulsar` (`^1.7.0`), `react-native-teleport` (`^1.2.2`) and
 `@maplibre/maplibre-react-native` (`^11.5.0`) are the three today; each workspace that needs one

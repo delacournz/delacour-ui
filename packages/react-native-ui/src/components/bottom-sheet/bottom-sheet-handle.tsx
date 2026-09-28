@@ -3,7 +3,7 @@ import {
 	type BottomSheetHandleProps as HeadlessProps,
 } from "@delacour/react-native-bottom-sheet";
 import type { ReactElement } from "react";
-import { type StyleProp, View, type ViewStyle } from "react-native";
+import { View, type ViewProps } from "react-native";
 import { withUniwind } from "uniwind";
 import { bottomSheetVariants } from "./bottom-sheet.variants";
 
@@ -17,7 +17,7 @@ export type BottomSheetHandleProps = HeadlessProps & {
 	className?: string;
 	/** Classes for the grabber itself. */
 	indicatorClassName?: string;
-	indicatorStyle?: StyleProp<ViewStyle>;
+	indicatorStyle?: ViewProps["style"];
 };
 
 /**

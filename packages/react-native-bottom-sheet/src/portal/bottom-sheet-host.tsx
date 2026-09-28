@@ -1,5 +1,5 @@
-import { type ReactElement, type ReactNode, useEffect } from "react";
-import { StyleSheet, type ViewProps } from "react-native";
+import { type ComponentProps, type ReactElement, type ReactNode, useEffect } from "react";
+import { StyleSheet } from "react-native";
 import { PortalHost } from "react-native-teleport";
 import { useOptionalBottomSheetInternal } from "../components/bottom-sheet.context";
 import { BottomSheetHostNameContext, useOptionalBottomSheetHostName } from "./host.context";
@@ -7,7 +7,8 @@ import { BottomSheetHostNameContext, useOptionalBottomSheetHostName } from "./ho
 export type BottomSheetHostProps = {
 	/** What a `Portal`'s `hostName` names. Unique across the mounted hosts. */
 	name: string;
-	style?: ViewProps["style"];
+	/** Typed as `PortalHost`'s own, which is where it lands. */
+	style?: ComponentProps<typeof PortalHost>["style"];
 	/**
 	 * The screen the host serves. A sheet written inside targets this host
 	 * without a `hostName`, and teleport draws every portal over the children,

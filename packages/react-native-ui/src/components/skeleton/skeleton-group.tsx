@@ -1,6 +1,6 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import { View, type ViewProps } from "react-native";
-import { useReducedMotion } from "react-native-reanimated";
+import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
 import { type SkeletonGroupContextValue, SkeletonGroupProvider } from "./skeleton.context";
 import { resolveSkeletonAccessibility, resolveSkeletonAnimation, type SkeletonAnimation } from "./skeleton.variants";
@@ -38,8 +38,8 @@ export function SkeletonGroup({
 	children,
 	...props
 }: SkeletonGroupProps): ReactElement {
-	const isReduceMotion = useReducedMotion();
-	const resolvedAnimation = resolveSkeletonAnimation(animation, isReduceMotion);
+	const isCalm = useCalmMotion();
+	const resolvedAnimation = resolveSkeletonAnimation(animation, isCalm);
 	const isRunning = isLoading && resolvedAnimation !== "none";
 	const progress = useSkeletonClock(isRunning);
 

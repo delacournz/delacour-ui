@@ -3,6 +3,7 @@ import type { StyleProp, ViewStyle } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { initialWindowMetrics, type Metrics, SafeAreaProvider } from "react-native-safe-area-context";
+import { CalmMotionProvider } from "../../hooks/use-calm-motion";
 import { KeyboardStateSync } from "../../hooks/use-keyboard-state-sync";
 
 export type DelacourProviderProps = {
@@ -21,6 +22,16 @@ export type DelacourProviderProps = {
 	 */
 	initialMetrics?: Metrics | null;
 	/**
+	 * Hold every decorative loop still — a skeleton's shimmer or pulse — whatever
+	 * the OS reduce-motion setting says. Defaults to `false`.
+	 *
+	 * For an E2E build. A test runner that waits for the screen to stop moving
+	 * before each gesture (Argent, Detox, Maestro) pays its whole timeout on any
+	 * screen holding a loop that never ends. Motion that *is* the behaviour — a
+	 * `Spinner`, an indeterminate `Progress` — keeps moving either way.
+	 */
+	isMotionCalm?: boolean;
+	/**
 	 * Style for the outermost `GestureHandlerRootView`.
 	 *
 	 * Forwarded untouched, with no default merged in: the gesture root applies
@@ -37,7 +48,7 @@ export type DelacourProviderProps = {
  * Mount it ONCE, around everything — a root layout, an `App.tsx`. It is not
  * idempotent and does not detect an enclosing copy of itself; see AGENTS.md.
  *
- * Four layers, outermost first, and the order is not stylistic:
+ * Five layers, outermost first, and the order is not stylistic:
  *
  * 1. `GestureHandlerRootView` — an ancestor native view every gesture handler
  *    `Pressable` creates has to attach to. Its absence is silent: no error, no
@@ -51,6 +62,9 @@ export type DelacourProviderProps = {
  *    `will` events, so a keyboard that vanishes without one — an interactive
  *    dismiss interrupted by navigation, a stack pop, an app suspend — leaves
  *    every screen in the app believing it is still open.
+ * 5. `CalmMotionProvider` — the app's `isMotionCalm`, for `useCalmMotion()`.
+ *    Pure context, no native view, so it wraps `{children}` alone — innermost,
+ *    where a new layer goes.
  *
  * **`BottomSheetProvider` is not here, and the app mounts it.** The sheet's
  * engine, `@delacour/react-native-bottom-sheet`, is an optional peer of this
@@ -92,10 +106,16 @@ export type DelacourProviderProps = {
  * // app that launches into a rotated or split-screen window and cannot
  * // tolerate one stale frame.
  * <DelacourProvider initialMetrics={null}>{children}</DelacourProvider>
+ *
+ * @example
+ * // An E2E build: decorative loops hold still so the test runner never waits
+ * // out a shimmer. `IS_E2E` is the app's own build flag.
+ * <DelacourProvider isMotionCalm={IS_E2E}>{children}</DelacourProvider>
  */
 export function DelacourProvider({
 	children,
 	initialMetrics = initialWindowMetrics,
+	isMotionCalm = false,
 	style,
 }: DelacourProviderProps): ReactElement {
 	return (
@@ -103,7 +123,7 @@ export function DelacourProvider({
 			<SafeAreaProvider initialMetrics={initialMetrics}>
 				<KeyboardProvider>
 					<KeyboardStateSync />
-					{children}
+					<CalmMotionProvider isMotionCalm={isMotionCalm}>{children}</CalmMotionProvider>
 				</KeyboardProvider>
 			</SafeAreaProvider>
 		</GestureHandlerRootView>

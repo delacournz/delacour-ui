@@ -1,6 +1,6 @@
 ---
 title: Provider
-description: The four layers DelacourProvider composes, in order, what breaks at each, and the one it leaves to you.
+description: The five layers DelacourProvider composes, in order, what breaks at each, and the one it leaves to you.
 icon: Layers
 ---
 
@@ -12,7 +12,7 @@ import { DelacourProvider } from "@delacour/react-native-ui/provider";
 <DelacourProvider>{children}</DelacourProvider>;
 ```
 
-## The four layers
+## The five layers
 
 Outermost first. The order is not stylistic.
 
@@ -22,8 +22,9 @@ Outermost first. The order is not stylistic.
 | `SafeAreaProvider` | Seeded with `initialWindowMetrics`. |
 | `KeyboardProvider` | Owns one pair of shared animation values for the whole app. |
 | `<KeyboardStateSync />` | Must be a **child** of `KeyboardProvider` — it calls `useKeyboardContext()`. A **sibling** of the children, not a parent of them. |
+| `CalmMotionProvider` | Pure context carrying `isMotionCalm`. Wraps the children alone. |
 
-## The fifth layer is yours
+## One more layer is yours
 
 An app that uses [`BottomSheet`](/docs/native/components/bottom-sheet) mounts `BottomSheetProvider`
 itself, inside `DelacourProvider` and around the navigator. It is the root host every modal sheet
@@ -73,6 +74,23 @@ and that `flex: 1` is gone — include it yourself.
 <DelacourProvider style={{ flex: 1, backgroundColor: "#000" }}>{children}</DelacourProvider>
 ```
 
+## `isMotionCalm` holds decorative loops still
+
+For an E2E build. A test runner that waits for the screen to stop moving before each gesture —
+Argent, Detox and Maestro all do — pays its whole timeout on any screen holding a loop that never
+ends, so one shimmering `Skeleton` turns every tap there into a wait.
+
+```tsx
+<DelacourProvider isMotionCalm={IS_E2E}>{children}</DelacourProvider>
+```
+
+`IS_E2E` is your app's own build flag. Decorative loops — a `Skeleton`'s shimmer or pulse — then
+hold still exactly as they do under the OS reduce-motion setting. Motion that *is* the behaviour
+keeps moving: a `Spinner` still says work is in flight, an indeterminate `Progress` still sweeps.
+
+Your own components ask the same question with `useCalmMotion()`, from
+`@delacour/react-native-ui/hooks/use-calm-motion`.
+
 ## What it deliberately does not do
 
 There are no per-layer escape hatches — no `gestureHandler={false}`, no `safeAreaProps`, no
@@ -85,11 +103,13 @@ packages.
 ## Composing the layers by hand
 
 Only if your app already has a root stack of its own. `<KeyboardStateSync />` is **required**, not
-optional polish, and must be a child of `KeyboardProvider`. `BottomSheetProvider` goes innermost,
+optional polish, and must be a child of `KeyboardProvider`. `CalmMotionProvider` is optional —
+without it `useCalmMotion()` follows reduce motion alone. `BottomSheetProvider` goes innermost,
 and only if the app has sheets.
 
 ```tsx
 import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
+import { CalmMotionProvider } from "@delacour/react-native-ui/hooks/use-calm-motion";
 import { KeyboardStateSync } from "@delacour/react-native-ui/hooks/use-keyboard-state-sync";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -99,7 +119,9 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
   <SafeAreaProvider initialMetrics={initialWindowMetrics}>
     <KeyboardProvider>
       <KeyboardStateSync />
-      <BottomSheetProvider>{children}</BottomSheetProvider>
+      <CalmMotionProvider isMotionCalm={IS_E2E}>
+        <BottomSheetProvider>{children}</BottomSheetProvider>
+      </CalmMotionProvider>
     </KeyboardProvider>
   </SafeAreaProvider>
 </GestureHandlerRootView>;

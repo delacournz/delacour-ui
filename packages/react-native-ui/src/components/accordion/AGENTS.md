@@ -24,7 +24,7 @@ a list of rows.
 | `accordion.context.tsx` | `AccordionContext` and `AccordionItemContext`, with their hooks |
 | `accordion.types.ts` | Prop types shared by two or more parts |
 | `accordion.variants.ts` | Pure `tv()` slots + the selection maths, no RN imports |
-| `accordion.variants.test.ts` | |
+| `accordion.variants.test.ts` | `accordionTravelTarget`, and the sweep for a JS-thread `contentHeight.value` read (exports `jsThreadSource` and `CONTENT_HEIGHT_READ` for `Collapsible`'s) |
 
 ## Design
 
@@ -90,12 +90,23 @@ a list of rows.
   effect.** A panel that has never mounted has no height to travel against, so
   springing on the state change would run the whole animation at zero and jump
   the moment a measurement arrived. The item's effect skips exactly that one
-  case and `accordion-content.tsx`'s `onLayout` starts it instead. Every later
-  toggle, in either direction, is the item's.
+  case and `accordion-content.tsx`'s `onLayout` reports the measurement, which
+  flips the item's `isMeasured` state and re-runs the effect. Every later toggle,
+  in either direction, is the item's. The decision is `accordionTravelTarget`,
+  pure and tested.
+- **Nothing on the JS thread reads `contentHeight.value`.** "Has this panel
+  measured?" is React state (`isMeasured`, on both the item and the panel), never
+  a read of the shared value. A JS-thread write to a shared value is *queued* onto
+  the UI runtime, while a JS-thread read runs there synchronously under its lock
+  without draining that queue — so the item's effect, running straight after the
+  `onLayout` that wrote the height, can read `ACCORDION_UNMEASURED`. A Release
+  build does, deterministically: the effect bailed, nothing re-ran it, and the
+  panel reported `expanded` while never opening (a Debug client is slow enough
+  for the write to land first, which is why it hid). `accordion.variants.test.ts`
+  sweeps both files for such a read outside `useAnimatedStyle`.
 - **`ACCORDION_UNMEASURED` is negative, and that is load-bearing.** A panel that
-  measured `0` is a real answer — content that rendered nothing — and an item
-  treating it as "still waiting" would never start its spring, leaving the
-  indicator pointing the wrong way. Only a value no layout can produce can mean
+  measured `0` is a real answer — content that rendered nothing — and must still
+  open, indicator and all. Only a value no layout can produce can mean
   *unmeasured*, so the height style floors it.
 
 ## Selection

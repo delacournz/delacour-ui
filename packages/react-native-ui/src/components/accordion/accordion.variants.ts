@@ -76,16 +76,40 @@ export const ACCORDION_INDICATOR_ROTATION = { collapsed: 0, expanded: 180 } as c
  * What {@link AccordionItemContextValue.contentHeight} holds before a panel has
  * ever reported its own layout.
  *
- * Negative rather than zero, because the two mean different things and the
- * difference is load-bearing. A panel that measured `0` is a real answer — a
- * panel whose content rendered nothing — and an item that treated it as "still
- * waiting" would never start its spring, leaving the indicator stuck pointing the
- * wrong way for an empty panel. Only a value no layout can produce can mean
- * *unmeasured*.
+ * Negative rather than zero, because the two mean different things. A panel that
+ * measured `0` is a real answer — a panel whose content rendered nothing — and
+ * still opens, indicator and all. Only a value no layout can produce can mean
+ * *unmeasured*. Whether a panel *has* measured is never decided by comparing
+ * against this on the JS thread — see {@link accordionTravelTarget}.
  *
  * The height style therefore floors it: `progress * max(contentHeight, 0)`.
  */
 export const ACCORDION_UNMEASURED = -1;
+
+/**
+ * Where an item's `progress` should spring to, or `null` to wait.
+ *
+ * Only an expand waits, and only for a panel that has never measured: it has no
+ * height to travel against yet, and the measurement is what starts it. A collapse
+ * never waits.
+ *
+ * `isMeasured` is **React state**, never a read of `contentHeight` on the JS
+ * thread. A JS-thread write to a shared value is queued onto the UI runtime, while
+ * a JS-thread read runs there synchronously without draining that queue, so a read
+ * straight after the panel's `onLayout` wrote the height can still see
+ * {@link ACCORDION_UNMEASURED}. A Release build does, every time — the item bailed
+ * and nothing re-ran it, so the panel said `expanded` and stayed shut.
+ */
+export function accordionTravelTarget({
+	isExpanded,
+	isMeasured,
+}: {
+	isExpanded: boolean;
+	isMeasured: boolean;
+}): 0 | 1 | null {
+	if (!isExpanded) return 0;
+	return isMeasured ? 1 : null;
+}
 
 /**
  * The window of the travel the panel's opacity ramps across.

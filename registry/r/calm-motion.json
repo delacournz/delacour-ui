@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "calm-motion",
+	"type": "registry:lib",
+	"title": "calmMotion",
+	"description": "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/calm-motion.ts",
+			"target": "calm-motion.ts",
+			"namespace": "lib"
+		}
+	]
+}

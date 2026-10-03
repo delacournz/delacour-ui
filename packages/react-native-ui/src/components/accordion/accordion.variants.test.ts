@@ -16,6 +16,7 @@ import {
 	ACCORDION_SPRING,
 	ACCORDION_UNMEASURED,
 	ACCORDION_VARIANTS,
+	accordionTravelTarget,
 	accordionVariants,
 	isItemExpanded,
 	resolveAccordionItemAxes,
@@ -430,5 +431,66 @@ describe("accordion animation", () => {
 		expect(start).toBeGreaterThanOrEqual(0);
 		expect(end).toBeGreaterThan(start);
 		expect(end).toBeLessThan(1);
+	});
+});
+
+describe("accordionTravelTarget", () => {
+	test("an expand waits for the panel's first measurement", () => {
+		expect(accordionTravelTarget({ isExpanded: true, isMeasured: false })).toBeNull();
+	});
+
+	test("an expand travels to 1 once the panel has measured", () => {
+		expect(accordionTravelTarget({ isExpanded: true, isMeasured: true })).toBe(1);
+	});
+
+	test("a collapse never waits, measured or not", () => {
+		expect(accordionTravelTarget({ isExpanded: false, isMeasured: false })).toBe(0);
+		expect(accordionTravelTarget({ isExpanded: false, isMeasured: true })).toBe(0);
+	});
+});
+
+/**
+ * A file's source with comments and every `useAnimatedStyle(...)` call stripped — the one
+ * place a read of a shared value runs on the UI runtime — leaving only code that runs on the
+ * JS thread.
+ */
+export function jsThreadSource(path: string): string {
+	const source = readFileSync(path, "utf8")
+		.replace(/\/\*[\s\S]*?\*\//g, "")
+		.replace(/\/\/.*$/gm, "");
+	let out = "";
+	let index = 0;
+	for (;;) {
+		const start = source.indexOf("useAnimatedStyle(", index);
+		if (start === -1) return out + source.slice(index);
+		out += source.slice(index, start);
+		let depth = 0;
+		let cursor = start + "useAnimatedStyle".length;
+		do {
+			if (source[cursor] === "(") depth++;
+			if (source[cursor] === ")") depth--;
+			cursor++;
+		} while (depth > 0 && cursor < source.length);
+		index = cursor;
+	}
+}
+
+/** `contentHeight.value` as a read: anything but the left side of a plain `=`. */
+export const CONTENT_HEIGHT_READ = /\bcontentHeight\.value\b(?!\s*=(?!=))/;
+
+describe("the measured height is never read on the JS thread", () => {
+	// A JS-thread write to a shared value is queued onto the UI runtime, while a JS-thread read
+	// runs there synchronously under its lock without draining that queue. A read straight after
+	// the write — the item's effect after the panel's `onLayout` — can see the old value. In a
+	// Release build it does, every time: the item read `ACCORDION_UNMEASURED`, bailed, and nothing
+	// re-ran it, so the panel said `expanded` and stayed shut.
+	test.each(["accordion-item.tsx", "accordion-content.tsx"])("%s", (file) => {
+		expect(jsThreadSource(join(import.meta.dirname, file))).not.toMatch(CONTENT_HEIGHT_READ);
+	});
+
+	test("the guard sees a read and ignores a write", () => {
+		expect("if (contentHeight.value === -1) return;").toMatch(CONTENT_HEIGHT_READ);
+		expect("const was = contentHeight.value > -1;").toMatch(CONTENT_HEIGHT_READ);
+		expect("contentHeight.value = event.nativeEvent.layout.height;").not.toMatch(CONTENT_HEIGHT_READ);
 	});
 });

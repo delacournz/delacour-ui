@@ -5,6 +5,7 @@ import { type AccordionItemContextValue, AccordionItemProvider, useAccordionPart
 import {
 	ACCORDION_SPRING,
 	ACCORDION_UNMEASURED,
+	accordionTravelTarget,
 	accordionVariants,
 	isItemExpanded,
 	resolveAccordionItemAxes,
@@ -42,25 +43,26 @@ export function AccordionItem({ value, isDisabled, className, children, ...props
 	const progress = useSharedValue(isExpanded ? 1 : 0);
 	const contentHeight = useSharedValue(ACCORDION_UNMEASURED);
 
-	// Bumped the first time this item's panel reports a height, purely to make the
-	// effect below run again. See `onMeasured` on the item context for why the
-	// panel must not start the spring itself.
-	const [measurements, setMeasurements] = useState(0);
-	const onMeasured = useCallback(() => setMeasurements((count) => count + 1), []);
+	// Whether this item's panel has ever reported a height. React state, not a read
+	// of `contentHeight` on the JS thread: that write is queued onto the UI runtime
+	// and a read straight after it can still see `ACCORDION_UNMEASURED` — which a
+	// Release build does, every time. See `accordionTravelTarget`.
+	const [isMeasured, setMeasured] = useState(false);
+	const onMeasured = useCallback(() => setMeasured(true), []);
 
-	// `measurements` is not read in the body — being unread is the whole point of
-	// it, the way `settledDrags` is for a `Switch`. The first expand of a panel
-	// that has never been mounted has no height to travel against, so this run
-	// bails; the measurement that follows is what brings it back.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: the extra dependency is the re-run trigger, see above
+	// The first expand of a panel that has never been mounted has no height to
+	// travel against, so this run waits; the measurement that follows flips
+	// `isMeasured` and brings it back. See `onMeasured` on the item context for why
+	// the panel must not start the spring itself.
 	useEffect(() => {
-		if (isExpanded && contentHeight.value === ACCORDION_UNMEASURED) return;
+		const target = accordionTravelTarget({ isExpanded, isMeasured });
+		if (target === null) return;
 
-		progress.value = withSpring(isExpanded ? 1 : 0, ACCORDION_SPRING);
+		progress.value = withSpring(target, ACCORDION_SPRING);
 
 		// Without this an item unmounted mid-travel leaves its spring running.
 		return () => cancelAnimation(progress);
-	}, [contentHeight, isExpanded, measurements, progress]);
+	}, [isExpanded, isMeasured, progress]);
 
 	const context = useMemo<AccordionItemContextValue>(
 		() => ({ contentHeight, isDisabled: axes.isDisabled, isExpanded, onMeasured, progress, value }),

@@ -18,13 +18,18 @@ export type CollapsibleContextValue = {
 	 * and the indicator's rotation — so they cannot drift out of step by a frame.
 	 */
 	progress: SharedValue<number>;
-	/** The panel's natural height in points, or {@link COLLAPSIBLE_UNMEASURED} until it has reported. */
+	/**
+	 * The panel's natural height in points, or {@link COLLAPSIBLE_UNMEASURED} until it
+	 * has reported. Read on the UI runtime only, by the height style — a JS-thread read
+	 * can lag the panel's write. See {@link onMeasured}.
+	 */
 	contentHeight: SharedValue<number>;
 	/**
 	 * Told by the panel that it has measured itself for the first time.
 	 *
-	 * Internal machinery: the root is the only owner of the spring, and this gives
-	 * its effect a reason to re-run once there is a height to travel against. The
+	 * Internal machinery: the root is the only owner of the spring, and this flips
+	 * its `isMeasured` state — the reason its effect re-runs once there is a height
+	 * to travel against, and how it knows, never by reading `contentHeight`. The
 	 * panel cannot start the spring itself — `onLayout` lands either side of
 	 * React's effects, and a spring started there is sometimes cancelled by the
 	 * cleanup of the effect it raced. `Accordion.Item`'s `onMeasured`, verbatim.

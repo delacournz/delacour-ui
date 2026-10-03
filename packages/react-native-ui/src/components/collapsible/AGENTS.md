@@ -23,7 +23,7 @@ section first. What follows is only where a standalone disclosure differs.
 | `collapsible.context.tsx` | `CollapsibleContext`, `useCollapsible` and the internal part hook |
 | `collapsible.types.ts` | `CollapsibleTextProps`, shared by the title, description and trigger |
 | `collapsible.variants.ts` | Pure `tv()` slots, the constants, the toggle and the accessibility resolver — no RN imports |
-| `collapsible.variants.test.ts` | |
+| `collapsible.variants.test.ts` | `collapsibleTravelTarget`, pinned equal to the accordion's, and the JS-thread `contentHeight.value` sweep |
 
 ## Design
 
@@ -41,9 +41,14 @@ section first. What follows is only where a standalone disclosure differs.
   is the only thing that imports both, and tests are not shipped.
 - **The root owns the state and the travel.** With no item layer, what
   `Accordion.Item` owns — `progress`, `contentHeight`, the spring, the
-  `onMeasured` re-run counter — lives on the root. The race that counter closes
+  `isMeasured` state `onMeasured` flips — lives on the root. The race it closes
   (`onLayout` landing either side of React's effects) is the same one, so the
   panel reports its first measurement and never starts the spring itself.
+- **Nothing on the JS thread reads `contentHeight.value`** — the accordion's
+  Release-build bug, in the same shape: a JS read can lag the panel's queued
+  write, see `COLLAPSIBLE_UNMEASURED`, and leave the panel shut. "Measured" is
+  React state and the decision is `collapsibleTravelTarget`; the test sweeps both
+  files. See the accordion's AGENTS.md.
 - **The disabled fade lands on the root.** Never on the trigger, which is a
   `Pressable` whose `Animated.View` writes `opacity` every frame; the accordion
   fades its item for the same reason, and a collapsible's root is its item.

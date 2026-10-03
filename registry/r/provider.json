@@ -8,6 +8,7 @@
 		"primitives"
 	],
 	"registryDependencies": [
+		"use-calm-motion",
 		"use-keyboard-state-sync"
 	],
 	"dependencies": [],
@@ -39,6 +40,10 @@
 			"target": "provider/provider.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
 				{
 					"from": "../../hooks/use-keyboard-state-sync",
 					"to": "@registry/hooks/use-keyboard-state-sync"

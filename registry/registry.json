@@ -243,6 +243,19 @@
 			]
 		},
 		{
+			"name": "calm-motion",
+			"type": "registry:lib",
+			"title": "calmMotion",
+			"description": "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/calm-motion.ts"
+			]
+		},
+		{
 			"name": "card",
 			"type": "registry:ui",
 			"title": "Card",
@@ -948,6 +961,7 @@
 				"primitives"
 			],
 			"registryDependencies": [
+				"use-calm-motion",
 				"use-keyboard-state-sync"
 			],
 			"dependencies": [],
@@ -1131,6 +1145,7 @@
 			"registryDependencies": [
 				"cn",
 				"tv",
+				"use-calm-motion",
 				"use-theme-color"
 			],
 			"dependencies": [],
@@ -1497,6 +1512,23 @@
 			"devDependencies": [],
 			"files": [
 				"lib/tv.ts"
+			]
+		},
+		{
+			"name": "use-calm-motion",
+			"type": "registry:hook",
+			"title": "useCalmMotion",
+			"description": "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+			"registryDependencies": [
+				"calm-motion"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-calm-motion.tsx"
 			]
 		},
 		{

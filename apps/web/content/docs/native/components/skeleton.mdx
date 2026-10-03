@@ -81,8 +81,10 @@ UI thread and never re-render the component.
 ```
 
 <Callout>
-Under the OS reduce-motion setting every animation holds still. The placeholder stays: the shape is
-the message, and a shape that stops moving still reads as content on its way.
+Under the OS reduce-motion setting every animation holds still, and under `DelacourProvider`'s
+[`isMotionCalm`](/docs/native/getting-started/provider) — an E2E build's switch, so a test runner
+never waits out a shimmer. The placeholder stays: the shape is the message, and a shape that stops
+moving still reads as content on its way.
 </Callout>
 
 ## Lines
@@ -141,7 +143,7 @@ the skeleton adds nothing and the content speaks for itself.
     animation: {
       type: '"shimmer" | "pulse" | "none"',
       default: '"shimmer"',
-      description: "Inherited from an enclosing `Skeleton.Group`. Stilled under reduce motion.",
+      description: "Inherited from an enclosing `Skeleton.Group`. Stilled under reduce motion and `isMotionCalm`.",
     },
     isLoading: {
       type: "boolean",

@@ -1,12 +1,7 @@
 import { type ReactElement, type ReactNode, useEffect } from "react";
 import { View, type ViewProps } from "react-native";
-import Animated, {
-	useAnimatedRef,
-	useAnimatedStyle,
-	useReducedMotion,
-	useSharedValue,
-	withTiming,
-} from "react-native-reanimated";
+import Animated, { useAnimatedRef, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
 import { useSkeletonGroup } from "./skeleton.context";
 import {
@@ -29,7 +24,7 @@ export type SkeletonProps = Omit<ViewProps, "children"> & {
 	/**
 	 * `shimmer` sweeps a glint across the placeholder, `pulse` breathes its
 	 * opacity, `none` holds it still. Inherited from an enclosing `Skeleton.Group`,
-	 * then `shimmer`. Every animation stills under the OS reduce-motion setting.
+	 * then `shimmer`. Every animation stills under the OS reduce-motion setting, and under `DelacourProvider`'s `isMotionCalm`.
 	 */
 	animation?: SkeletonAnimation;
 	/**
@@ -63,10 +58,10 @@ function SkeletonRoot({
 	...props
 }: SkeletonProps): ReactElement {
 	const group = useSkeletonGroup();
-	const isReduceMotion = useReducedMotion();
+	const isCalm = useCalmMotion();
 
 	const loading = isLoading ?? group?.isLoading ?? true;
-	const resolvedAnimation = resolveSkeletonAnimation(animation ?? group?.animation, isReduceMotion);
+	const resolvedAnimation = resolveSkeletonAnimation(animation ?? group?.animation, isCalm);
 	const isAnimating = loading && resolvedAnimation !== "none";
 
 	// One clock drives either animation, so a group's clock serves every

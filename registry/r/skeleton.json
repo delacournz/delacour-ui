@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"cn",
 		"tv",
+		"use-calm-motion",
 		"use-theme-color"
 	],
 	"dependencies": [],
@@ -46,6 +47,10 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"
 				}
@@ -72,6 +77,10 @@
 			"target": "skeleton/skeleton.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
 				{
 					"from": "../../lib/cn",
 					"to": "@registry/lib/cn"

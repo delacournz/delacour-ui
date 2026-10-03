@@ -61,16 +61,14 @@ export const SKELETON_SHIMMER_STOPS: readonly SkeletonShimmerStop[] = [
 /**
  * The animation a skeleton actually runs.
  *
- * Reduce-motion stills every animation rather than hiding the placeholder: the
- * shape is the message, and a shape that stops moving still reads as content on
- * its way. The clock then never starts, which is also why the timing itself can
- * set `ReduceMotion.Never` — see AGENTS.md.
+ * Calm motion — the OS reduce-motion setting, or an app's `isMotionCalm` — stills
+ * every animation rather than hiding the placeholder: the shape is the message,
+ * and a shape that stops moving still reads as content on its way. The clock then
+ * never starts, which is also why the timing itself can set `ReduceMotion.Never` —
+ * see AGENTS.md.
  */
-export function resolveSkeletonAnimation(
-	animation: SkeletonAnimation | undefined,
-	isReduceMotion: boolean
-): SkeletonAnimation {
-	if (isReduceMotion) return "none";
+export function resolveSkeletonAnimation(animation: SkeletonAnimation | undefined, isCalm: boolean): SkeletonAnimation {
+	if (isCalm) return "none";
 	return animation ?? SKELETON_FALLBACK_ANIMATION;
 }
 

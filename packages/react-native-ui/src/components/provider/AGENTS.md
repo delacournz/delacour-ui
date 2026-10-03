@@ -14,9 +14,9 @@ everything — a root layout, an `App.tsx`.
 
 ## Design
 
-- **Four layers, outermost first**: `GestureHandlerRootView` →
-  `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside the
-  children. The order is not stylistic. The gesture root has to be an ancestor
+- **Five layers, outermost first**: `GestureHandlerRootView` →
+  `SafeAreaProvider` → `KeyboardProvider` → `<KeyboardStateSync />` beside
+  `CalmMotionProvider`, which wraps the children. The order is not stylistic. The gesture root has to be an ancestor
   native view of every handler a `Pressable` creates, and its absence is
   *silent* — no error, no warning, presses simply stop landing.
   `KeyboardStateSync` has to be a CHILD of `KeyboardProvider`, because it calls
@@ -67,6 +67,15 @@ everything — a root layout, an `App.tsx`.
   `BottomSheet.Portal` still renders, where it is written, as an inline sheet.
   The previous sheet library was a required peer while this component mounted
   its modal provider; nothing imports it any more.
+- **`isMotionCalm` is a behaviour prop, not a layer-named one.** It feeds
+  `CalmMotionProvider` (`hooks/use-calm-motion.tsx`), which `useCalmMotion()`
+  reads beside the OS reduce-motion setting. It exists for E2E builds: a runner
+  that waits for the screen to settle before each gesture (Argent waits up to
+  3 s) pays the whole wait on a screen holding a never-ending loop. Only
+  decorative loops ask — `Skeleton` today; `Spinner` and an indeterminate
+  `Progress` are the behaviour and keep moving. The context defaults to `false`,
+  so a component used without this provider (a `delacour add` copy in an app
+  with its own stack) still honours reduce motion.
 - **Deliberately not idempotent.** It does not detect an enclosing copy of
   itself. Nesting `GestureHandlerRootView` costs a `View`; nesting
   `SafeAreaProvider` seeds from the parent's insets and costs a native view;
@@ -87,7 +96,7 @@ everything — a root layout, an `App.tsx`.
   per-subpath and survives intact: `/button` still pulls nothing
   keyboard-related.
 - **Nothing here for `bun test`, and no `provider.variants.ts` to give it
-  some.** The component is four nested elements and one default parameter;
+  some.** The component is five nested elements and one default parameter;
   extracting a `resolveInitialMetrics()` would be a unit test of `??`. The rule
   that pure decisions live in a `*.variants.ts` has no decision here to
   relocate.

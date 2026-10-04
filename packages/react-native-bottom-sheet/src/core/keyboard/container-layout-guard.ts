@@ -17,7 +17,7 @@ const TOLERANCE = 2;
  * shrinking the window under a keyboard the sheet is already lifting for.
  *
  * Accepting the second would count the keyboard twice: once as the lift, once
- * as a smaller container with every percent detent re-derived against it.
+ * as a smaller container with every percent snap point re-derived against it.
  * So while the keyboard is in play, a shrink no larger than the keyboard is
  * refused. A shrink larger than that — a rotation, a split view — is real
  * whatever the keyboard is doing, and growth and first measurement always

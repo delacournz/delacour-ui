@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Custom margins",
 	caption:
-		"`detached` takes an object: `horizontalMargin` insets the card from each side and `bottomOffset` lifts it above the bottom inset. Two explicit detents, as a `%` of the height that is left above the resting line. Close it, pick another preset and open again; the frame is derived on the UI thread from the measured width, so a rotation re-derives it too.",
+		"`detached` takes an object: `horizontalMargin` insets the card from each side and `bottomOffset` lifts it above the bottom inset. Two explicit snap points, as a `%` of the height that is left above the resting line. Close it, pick another preset and open again; the frame is derived on the UI thread from the measured width, so a rotation re-derives it too.",
 };
 
 const SNAP_POINTS = ["35%", "70%"] as const;
@@ -73,7 +73,8 @@ export function Demo(): ReactElement {
 						<BottomSheet.Content style={styles.content}>
 							<BottomSheet.Title style={styles.title}>Margins and offset</BottomSheet.Title>
 							<BottomSheet.Description style={styles.description}>
-								Drag the handle up for the second detent. Close, pick another preset, and open again to move the card.
+								Drag the handle up for the second snapPoint. Close, pick another preset, and open again to move the
+								card.
 							</BottomSheet.Description>
 						</BottomSheet.Content>
 					</BottomSheet.Container>

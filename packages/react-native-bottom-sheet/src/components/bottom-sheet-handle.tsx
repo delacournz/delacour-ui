@@ -15,9 +15,9 @@ const ACTIONS = [{ name: "increment" }, { name: "decrement" }, { name: "escape" 
  * sized to its content counts it. A handle that is never written is a handle
  * of height zero; see `Container`.
  *
- * For a screen reader it is the sheet: `adjustable`, with the detent as its
- * value, increment and decrement moving one detent either way, and the escape
- * gesture closing. Nothing else in the sheet has to know about detents.
+ * For a screen reader it is the sheet: `adjustable`, with the snap point as its
+ * value, increment and decrement moving one snap point either way, and the escape
+ * gesture closing. Nothing else in the sheet has to know about snap points.
  */
 export function BottomSheetHandle({
 	style,
@@ -27,7 +27,7 @@ export function BottomSheetHandle({
 	...props
 }: BottomSheetHandleProps): ReactElement {
 	const { state, pans, handleMounted, enableHandlePanningGesture } = useBottomSheetInternal();
-	const { index, detentCount: count, snapToIndex, close } = useBottomSheet();
+	const { index, snapPointCount: count, snapToIndex, close } = useBottomSheet();
 	const onLayout = useMeasureHeight(state.handleHeight);
 
 	useEffect(() => {
@@ -56,7 +56,7 @@ export function BottomSheetHandle({
 			accessibilityActions={ACTIONS}
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole="adjustable"
-			accessibilityValue={{ text: index < 0 ? "Closed" : `Detent ${index + 1} of ${count}` }}
+			accessibilityValue={{ text: index < 0 ? "Closed" : `Snap point ${index + 1} of ${count}` }}
 			accessible
 			onAccessibilityAction={onAccessibilityAction}
 			onAccessibilityEscape={close}

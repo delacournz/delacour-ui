@@ -112,7 +112,7 @@ describe("every token the slots name", () => {
 });
 
 describe("the backdrop indices", () => {
-	test("show the scrim from the first detent and hide it only when closed", () => {
+	test("show the scrim from the first snap point and hide it only when closed", () => {
 		// A modal sheet has no resting state: presented or gone.
 		expect(BOTTOM_SHEET_BACKDROP_INDICES.appearsOnIndex).toBe(0);
 		expect(BOTTOM_SHEET_BACKDROP_INDICES.disappearsOnIndex).toBe(-1);
@@ -198,7 +198,7 @@ describe("bottomSheetVariants slots", () => {
 	test("a pinned footer writes its vertical padding as the engine's prop, never a class", () => {
 		// The engine measures the footer's inner box into the sheet's height, and
 		// padding handed to its `padding` prop lands on that box. A class on the
-		// outer view would be height the detent never counts.
+		// outer view would be height the snap point never counts.
 		expect(SLOTS.stickyFooter()).not.toMatch(/\bp[tby]?-[\d.]+\b/);
 		expect(BOTTOM_SHEET_FOOTER_PADDING).toBeGreaterThan(0);
 	});

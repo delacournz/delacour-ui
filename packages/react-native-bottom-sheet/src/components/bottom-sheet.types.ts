@@ -5,11 +5,11 @@ import type { SheetAnimation } from "../animation/animation.types";
 import type {
 	AnimationSource,
 	DetachedProp,
-	DetentSpec,
 	KeyboardBehavior,
 	KeyboardBlurBehavior,
 	KeyboardScope,
 	ReduceMotionMode,
+	SnapPointSpec,
 } from "../core";
 import type { SheetHaptics } from "../gesture/gesture.types";
 
@@ -20,12 +20,12 @@ import type { SheetHaptics } from "../gesture/gesture.types";
  * `dismiss` is `close` under the name the library this replaces used. Every
  * method is an intent: none of them animates from the JS thread, and each is
  * a no-op when it makes no sense — `close` on a closed sheet, `snapToIndex(4)`
- * with two detents.
+ * with two snap points.
  */
 export type BottomSheetRef = {
 	snapToIndex: (index: number) => void;
-	/** A height or a `%` of the available height; clamped, never added as a detent. */
-	snapToPosition: (position: DetentSpec) => void;
+	/** A height or a `%` of the available height; clamped, never added as a snap point. */
+	snapToPosition: (position: SnapPointSpec) => void;
 	expand: () => void;
 	collapse: () => void;
 	close: () => void;
@@ -48,9 +48,9 @@ export type BottomSheetProps = SheetHaptics & {
 	 * `isOpen`. One callback for every path.
 	 */
 	onOpenChange?: (isOpen: boolean) => void;
-	/** Controlled detent index. Changing it snaps an open sheet. */
+	/** Controlled snap point index. Changing it snaps an open sheet. */
 	index?: number;
-	/** The detent `open` lands on. @default 0 */
+	/** The snap point `open` lands on. @default 0 */
 	initialIndex?: number;
 	/** The settled index changed — `-1` on close. */
 	onIndexChange?: (index: number, height: number, source: AnimationSource) => void;
@@ -65,10 +65,10 @@ export type BottomSheetProps = SheetHaptics & {
 	/** The sheet reached its closed height, by any path. `onOpenChange(false)` follows. */
 	onClose?: () => void;
 	/** Heights above the resting bottom, or `%` of the available height. @default [] */
-	snapPoints?: readonly DetentSpec[];
-	/** Adds the content's own height as a detent. @default true */
+	snapPoints?: readonly SnapPointSpec[];
+	/** Adds the content's own height as a snap point. @default true */
 	dynamicSizing?: boolean;
-	/** Caps the dynamic detent. */
+	/** Caps the dynamic snap point. */
 	maxDynamicContentSize?: number;
 	/** Pixels the frame leaves clear at the top. @default 0 */
 	topInset?: number;
@@ -78,7 +78,7 @@ export type BottomSheetProps = SheetHaptics & {
 	 * A floating card: inset by `horizontalMargin` on both sides, resting
 	 * `bottomOffset` above `bottomInset`, every corner the `Background`'s to
 	 * round. `true` is `{ horizontalMargin: 16, bottomOffset: 16 }`. Closed is
-	 * fully off-screen, `%` detents resolve against the height above the resting
+	 * fully off-screen, `%` snap points resolve against the height above the resting
 	 * line, and a tap in the margins or the gap closes.
 	 */
 	detached?: DetachedProp;
@@ -88,7 +88,7 @@ export type BottomSheetProps = SheetHaptics & {
 	enableHandlePanningGesture?: boolean;
 	/** @default true */
 	enableContentPanningGesture?: boolean;
-	/** Rubber-band past the detents. @default true */
+	/** Rubber-band past the snap points. @default true */
 	enableOverDrag?: boolean;
 	/** Larger allows more travel. @default 2.5 */
 	overDragResistanceFactor?: number;
@@ -152,7 +152,7 @@ export type BottomSheetOverlayProps = Omit<ViewProps, "style"> & {
 	disappearsOnIndex?: number;
 	/** Opacity at full appearance. @default 1 */
 	opacity?: number;
-	/** What a press does: close, collapse to the first detent, snap to an index, or nothing. @default "close" */
+	/** What a press does: close, collapse to the first snap point, snap to an index, or nothing. @default "close" */
 	pressBehavior?: "close" | "collapse" | "none" | number;
 	/** Let touches reach the app behind the scrim. @default false */
 	enableTouchThrough?: boolean;
@@ -216,8 +216,8 @@ export type BottomSheetContextValue = BottomSheetRef & {
 	setOpen: (open: boolean) => void;
 	/** The settled index, `-1` closed. React state, updated on settle. */
 	index: number;
-	/** How many detents there were at the last settle. React state, for the handle's accessibility value. */
-	detentCount: number;
+	/** How many snap points there were at the last settle. React state, for the handle's accessibility value. */
+	snapPointCount: number;
 };
 
 /** What `useBottomSheetAnimated()` returns: the shared values a skin animates against. */
@@ -230,6 +230,6 @@ export type BottomSheetAnimatedValue = {
 	contentHeight: SharedValue<number>;
 	footerHeight: SharedValue<number>;
 	keyboardLift: SharedValue<number>;
-	detents: SharedValue<readonly number[]>;
+	snapPoints: SharedValue<readonly number[]>;
 	closedHeight: SharedValue<number>;
 };

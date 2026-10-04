@@ -19,7 +19,7 @@ export type SheetIntentDispatch = (request: IntentRequest) => void;
  * A JS write to a shared value is queued to the UI thread, so reading
  * `state.intent.value` straight after a `dispatch` still returns what was
  * there before — the root once read `null` that way, queued an `open` on top
- * of a ref's `expand`, and the sheet landed on the wrong detent. `clear`
+ * of a ref's `expand`, and the sheet landed on the wrong snap point. `clear`
  * writes `null` in order after whatever was queued, which is what a controlled
  * `isOpen: false` needs to cancel an open still waiting on layout.
  */
@@ -43,7 +43,7 @@ export type SheetIntents = {
  * jump rather than an animation when `animateOnMount` is off. `mountPending`
  * is the flag, and it clears on that first resolution whatever kind it was.
  *
- * A second reaction handles the detents moving under a settled sheet — dynamic
+ * A second reaction handles the snap points moving under a settled sheet — dynamic
  * content growing, a `snapPoints` change — by animating to the same index in
  * the new list, and a container resize by jumping there instead. Neither runs
  * while a gesture or an animation owns `base`.
@@ -84,14 +84,14 @@ export function useSheetIntents(
 			// a close during the open animation has to see an open sheet.
 			const effectiveIndex =
 				state.animStatus.value === ANIM_STATUS.RUNNING
-					? Math.round(indexForHeight(state.animTarget.value, geometry.detents.value, geometry.closedHeight.value))
+					? Math.round(indexForHeight(state.animTarget.value, geometry.snapPoints.value, geometry.closedHeight.value))
 					: state.currentIndex.value;
 			const resolution = resolveIntent(
 				{
 					currentIndex: effectiveIndex,
 					base: state.base.value,
 					layoutReady: current.ready,
-					detents: geometry.detents.value,
+					snapPoints: geometry.snapPoints.value,
 					closedHeight: geometry.closedHeight.value,
 					maxHeight: geometry.maxHeight.value,
 					initialIndex: state.config.value.initialIndex,
@@ -117,18 +117,21 @@ export function useSheetIntents(
 	);
 
 	useAnimatedReaction(
-		() => ({ detents: geometry.detents.value.join(","), container: state.containerHeight.value }),
+		() => ({ snapPoints: geometry.snapPoints.value.join(","), container: state.containerHeight.value }),
 		(current, previous) => {
-			if (previous === null || (current.detents === previous.detents && current.container === previous.container)) {
+			if (
+				previous === null ||
+				(current.snapPoints === previous.snapPoints && current.container === previous.container)
+			) {
 				return;
 			}
 			const busy = state.animStatus.value !== ANIM_STATUS.IDLE || state.gestureSource.value !== GESTURE_SOURCE.NONE;
 			const index = state.currentIndex.value;
 			if (busy || index < 0) return;
 
-			const detents = geometry.detents.value;
-			if (detents.length === 0) return;
-			const target = heightForIndex(Math.min(index, detents.length - 1), detents, geometry.closedHeight.value);
+			const snapPoints = geometry.snapPoints.value;
+			if (snapPoints.length === 0) return;
+			const target = heightForIndex(Math.min(index, snapPoints.length - 1), snapPoints, geometry.closedHeight.value);
 			if (Math.abs(target - state.base.value) < 0.5) return;
 
 			if (current.container !== previous.container) {

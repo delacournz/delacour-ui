@@ -1,23 +1,23 @@
 executionPrerequisite: >-
-  Preview route open on bottom-sheet/anatomy/inline-persistent, settled, drawer resting on its first detent.
+  Preview route open on bottom-sheet/anatomy/inline-persistent, settled, drawer resting on its first snap point.
 steps:
-  - echo: The drawer is open on entry, inside the stage, on its first detent
+  - echo: The drawer is open on entry, inside the stage, on its first snap point
   - assert: { visible: { id: inline-panel } }
   - assert: { visible: { text: Nearby } }
-  - assert: { text: { in: { id: inline-readout }, contains: Detent 1 of 2 } }
+  - assert: { text: { in: { id: inline-readout }, contains: Snap point 1 of 2 } }
   - tool: screenshot
-  - echo: Drag up to the second detent, and back down to the first
+  - echo: Drag up to the second snap point, and back down to the first
   - swipe: { from: { text: Nearby }, by: { y: -0.3 }, duration: 300, momentum: false }
-  - await: { text: { in: { id: inline-readout }, contains: Detent 2 of 2 } }
+  - await: { text: { in: { id: inline-readout }, contains: Snap point 2 of 2 } }
   - wait: 600
   - tool: screenshot
   - swipe: { from: { text: Nearby }, by: { y: 0.3 }, duration: 300, momentum: false }
-  - await: { text: { in: { id: inline-readout }, contains: Detent 1 of 2 } }
+  - await: { text: { in: { id: inline-readout }, contains: Snap point 1 of 2 } }
   - wait: 600
-  - echo: A drag down past the first detent does not close it
+  - echo: A drag down past the first snap point does not close it
   - swipe: { from: { text: Nearby }, by: { y: 0.3 }, duration: 300, momentum: false }
   - wait: 800
-  - assert: { text: { in: { id: inline-readout }, contains: Detent 1 of 2 } }
+  - assert: { text: { in: { id: inline-readout }, contains: Snap point 1 of 2 } }
   - assert: { visible: { text: Nearby } }
   - assert: { visible: { id: inline-panel } }
   - tool: screenshot

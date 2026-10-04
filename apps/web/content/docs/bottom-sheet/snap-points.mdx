@@ -1,5 +1,5 @@
 ---
-title: Detents
+title: Snap points
 description: The heights a sheet may rest at — pixels, percentages, and the content's own size — and the index that names them.
 icon: Rows3
 ---
@@ -8,29 +8,29 @@ icon: Rows3
 <BottomSheet snapPoints={["40%", "85%"]} dynamicSizing={false}>
 ```
 
-A **detent** is a resting height: a height the sheet settles at when a drag lets go or a method
-asks for it. The sheet is always at a detent, moving between two, or closed. Closed is a position
-the sheet can be in, but it is not a detent — it has no index a method can name, and a sheet that
+A **snap point** is a resting height: a height the sheet settles at when a drag lets go or a method
+asks for it. The sheet is always at a snap point, moving between two, or closed. Closed is a position
+the sheet can be in, but it is not a snap point — it has no index a method can name, and a sheet that
 may not close never reaches it.
 
 ## Height space
 
 Every number here is a **height**: pixels of sheet visible above its resting bottom line. `0` is
-closed, detents ascend, and the highest detent is the largest number. There is no `translateY` in
+closed, snap points ascend, and the highest snap point is the largest number. There is no `translateY` in
 the public surface; the engine derives it from a height at the moment a view needs it, and nowhere
-else. That is why a detached card's detents read the same as an attached sheet's even though the
+else. That is why a detached card's snap points read the same as an attached sheet's even though the
 card rests above the screen's bottom edge.
 
-## Three kinds of detent
+## Three kinds of snap point
 
 | Written as | Resolves to |
 | --- | --- |
 | `240` | 240 pixels of sheet above the resting line |
 | `"50%"` | half of the height **available** to the sheet — the frame's height above the resting line |
-| the dynamic detent | handle + content + footer content + the safe-area band, once |
+| the dynamic snap point | handle + content + footer content + the safe-area band, once |
 
 `snapPoints` takes the first two. The third is added when `dynamicSizing` is on, which it is by
-default, and it is the detent a sheet with no `snapPoints` has. A `BottomSheet.ScrollView` feeds
+default, and it is the snap point a sheet with no `snapPoints` has. A `BottomSheet.ScrollView` feeds
 it from its content size rather than its layout, which is what lets a list of forty rows size to
 its rows and then scroll inside `maxDynamicContentSize`.
 
@@ -39,10 +39,10 @@ height, invalid entries skipped. So `["85%", "40%"]` and `["40%", "85%"]` are th
 `"120%"` is the top of the frame.
 
 ```tsx
-// One detent, the content's own height, capped at 420.
+// One snap point, the content's own height, capped at 420.
 <BottomSheet maxDynamicContentSize={420}>
 
-// Two explicit detents and the content's height, wherever it sorts among them.
+// Two explicit snap points and the content's height, wherever it sorts among them.
 <BottomSheet snapPoints={["30%", "90%"]}>
 
 // Exactly two, whatever the content measures.
@@ -50,7 +50,7 @@ height, invalid entries skipped. So `["85%", "40%"]` and `["40%", "85%"]` are th
 ```
 
 <Callout type="warn">
-The footer is **inside** the dynamic detent. A sheet sized to its content with a sticky footer is
+The footer is **inside** the dynamic snap point. A sheet sized to its content with a sticky footer is
 as tall as the handle, the content, the footer and the band — the footer never covers the last
 line of content, and the buttons never sit on the home indicator. The library this replaces
 excluded it, which is where most of its keyboard workarounds came from.
@@ -58,7 +58,7 @@ excluded it, which is where most of its keyboard workarounds came from.
 
 ## Index
 
-Detents are named by their position in the sorted list: `0` is the lowest, `detents.length - 1`
+Snap points are named by their position in the sorted list: `0` is the lowest, `snapPoints.length - 1`
 the highest, and `-1` is closed. `initialIndex` is where `open` lands; a controlled `index` snaps
 an open sheet; `onIndexChange` reports every settle.
 
@@ -71,14 +71,14 @@ an open sheet; `onIndexChange` reports every settle.
 ```
 
 The animated index — `animatedIndex` from `useBottomSheetAnimated()` — is continuous: `0.5` is
-halfway between the first two detents, `-0.5` halfway closed. It is interpolated from the
+halfway between the first two snap points, `-0.5` halfway closed. It is interpolated from the
 **keyboard-free** height, so a keyboard lifting the sheet never moves the index or darkens the
 overlay; only the sheet moves.
 
 `source` names why the settle happened: `mount`, `gesture`, `user`, `snapPoints`, `keyboard` or
 `container`.
 
-## Detents move under a settled sheet
+## Snap points move under a settled sheet
 
 When the list changes while the sheet is open and idle — content grew, `snapPoints` changed — the
 sheet animates to the same index in the new list. A container resize (a rotation) jumps instead: a

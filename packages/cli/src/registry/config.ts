@@ -104,7 +104,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"bottom-sheet": {
 		title: "Bottom Sheet",
 		description:
-			"A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
+			"A draggable sheet over the screen: snap points, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 		categories: ["overlays"],
 		// `@delacour/react-native-bottom-sheet` peer-depends on teleport,
 		// keyboard-controller, safe-area-context, Gesture Handler, Reanimated and

@@ -104,7 +104,7 @@ import { BottomSheet } from "@delacour/react-native-bottom-sheet";
 
 `Container` is the panel that moves; `Content` is the static body inside it.
 Swap the body for `BottomSheet.ScrollView`, `FlatList` or `SectionList` and
-the list's content size becomes the sheet's own detent; swap it for
+the list's content size becomes the sheet's own snap point; swap it for
 `BottomSheet.Steps` with a controller from `useSheetMachine` and the sheet's
 height glides between the steps of a typed machine. `Footer` is sticky by
 default, standing on the safe-area band and riding the keyboard's edge.
@@ -119,7 +119,7 @@ take `asChild` to hand their behaviour to an element of yours.
 
 ## The maths on its own
 
-`@delacour/react-native-bottom-sheet/core` is every detent, keyboard, footer
+`@delacour/react-native-bottom-sheet/core` is every snap point, keyboard, footer
 and geometry calculation in the package, plus the step machine, importable
 with no native module in the module graph:
 

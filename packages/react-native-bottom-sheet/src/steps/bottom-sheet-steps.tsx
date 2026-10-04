@@ -34,20 +34,20 @@ function animateWith(animation: ReanimatedAnimation, value: number, complete: (f
  * across the top of the stack and only the current step and, during a change,
  * the one leaving are rendered. The stack's height is a shared value animated
  * to whatever the current step measures, and that same measurement is written
- * to the sheet's `contentHeight` the moment it lands, so the dynamic detent
- * moves once and the root's detent-change reaction animates `base` there with
+ * to the sheet's `contentHeight` the moment it lands, so the dynamic snap point
+ * moves once and the root's snap-point-change reaction animates `base` there with
  * the same spring the body is using: the panel's top edge and the body's
- * bottom edge glide together, and a sheet resting on an explicit detent does
- * not move at all. Should the sheet have been busy when the detent moved — a
+ * bottom edge glide together, and a sheet resting on an explicit snap point does
+ * not move at all. Should the sheet have been busy when the snap point moved — a
  * step change mid-open — the height animation's completion nudges it onto its
- * detent.
+ * snap point.
  *
  * `Content`'s own measurement is switched off while this is the body, or its
  * layout events would race the animated height with stale numbers.
  *
  * The step the machine is on decides two things about the sheet: its
  * `snapPoints` replace the root's while it is current (and dynamic sizing is
- * off for it — a step that names its detents is sized by them), and
+ * off for it — a step that names its snap points is sized by them), and
  * `dismissible: false` disables pan-down-to-close and the overlay's press.
  * Both go through the root, since the overlay is not a descendant of the body.
  *
@@ -159,9 +159,9 @@ export function BottomSheetSteps<S extends string, C, E extends SheetEvent>({
 				if (finished !== true) return;
 				const busy = state.animStatus.value !== ANIM_STATUS.IDLE || state.gestureSource.value !== GESTURE_SOURCE.NONE;
 				const index = state.currentIndex.value;
-				const detents = geometry.detents.value;
-				if (busy || index < 0 || detents.length === 0) return;
-				const target = heightForIndex(Math.min(index, detents.length - 1), detents, geometry.closedHeight.value);
+				const snapPoints = geometry.snapPoints.value;
+				if (busy || index < 0 || snapPoints.length === 0) return;
+				const target = heightForIndex(Math.min(index, snapPoints.length - 1), snapPoints, geometry.closedHeight.value);
 				if (Math.abs(target - state.base.value) > 0.5) animateTo(target, "snapPoints", 0);
 			};
 			stepHeight.value = animateWith(resolved, height, settle);

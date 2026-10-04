@@ -25,7 +25,7 @@ export type BottomSheetHandleProps = HeadlessProps & {
  *
  * The engine's handle draws nothing of its own: it owns the pan, measures
  * itself into the sheet's height, and is the adjustable element a screen
- * reader steps through the detents with. This puts the pill inside it, and
+ * reader steps through the snap points with. This puts the pill inside it, and
  * classes on both.
  *
  * Pass children to replace the pill; the row, the pan and the accessibility

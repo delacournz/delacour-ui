@@ -4,9 +4,9 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
-	title: "Inline, two detents",
+	title: "Inline, two snap points",
 	caption:
-		"The engine with nothing themed in front of it: two explicit detents, a handle, an overlay, a field and a close button, rendered in place inside a stage. The counter under the stage counts every close — swipe, scrim, button or ref — because `onOpenChange` is the only callback there is.",
+		"The engine with nothing themed in front of it: two explicit snap points, a handle, an overlay, a field and a close button, rendered in place inside a stage. The counter under the stage counts every close — swipe, scrim, button or ref — because `onOpenChange` is the only callback there is.",
 	keyboardAware: true,
 };
 
@@ -107,7 +107,7 @@ export function Demo(): ReactElement {
 								<View style={styles.pill} />
 							</BottomSheet.Handle>
 							<BottomSheet.Content style={styles.content}>
-								<BottomSheet.Title style={styles.title}>Two detents</BottomSheet.Title>
+								<BottomSheet.Title style={styles.title}>Two snap points</BottomSheet.Title>
 								<BottomSheet.Description style={styles.description}>
 									Drag the handle up for the second. Drag past the first to close.
 								</BottomSheet.Description>

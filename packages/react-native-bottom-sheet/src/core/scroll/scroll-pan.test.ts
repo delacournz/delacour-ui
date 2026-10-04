@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { SCROLLABLE_TYPE } from "../sheet.types";
-import { listDragHeight, listOwnsRelease, restingDetent, scrollLockTarget } from "./scroll-pan";
+import { listDragHeight, listOwnsRelease, restingSnapPoint, scrollLockTarget } from "./scroll-pan";
 
 describe("listDragHeight", () => {
 	const highest = 600;
@@ -41,7 +41,7 @@ describe("listDragHeight", () => {
 describe("listOwnsRelease", () => {
 	const highest = 600;
 
-	test("a content pan released with the list scrolled and the sheet at the highest detent is the list's", () => {
+	test("a content pan released with the list scrolled and the sheet at the highest snap point is the list's", () => {
 		expect(listOwnsRelease({ scrollable: true, offset: 120, base: 600, highest })).toBe(true);
 		expect(listOwnsRelease({ scrollable: true, offset: 120, base: 599.7, highest })).toBe(true);
 	});
@@ -51,7 +51,7 @@ describe("listOwnsRelease", () => {
 		expect(listOwnsRelease({ scrollable: true, offset: -12, base: 600, highest })).toBe(false);
 	});
 
-	test("below the highest detent the sheet takes it whatever the offset", () => {
+	test("below the highest snap point the sheet takes it whatever the offset", () => {
 		expect(listOwnsRelease({ scrollable: true, offset: 120, base: 300, highest })).toBe(false);
 	});
 
@@ -60,22 +60,22 @@ describe("listOwnsRelease", () => {
 	});
 });
 
-describe("restingDetent", () => {
-	const detents = [200, 400, 600];
+describe("restingSnapPoint", () => {
+	const snapPoints = [200, 400, 600];
 
-	test("a base on a detent, or within the settle tolerance of one, is resting on it", () => {
-		expect(restingDetent(600, detents)).toBe(600);
-		expect(restingDetent(599.7, detents)).toBe(600);
-		expect(restingDetent(400.4, detents)).toBe(400);
+	test("a base on a snap point, or within the settle tolerance of one, is resting on it", () => {
+		expect(restingSnapPoint(600, snapPoints)).toBe(600);
+		expect(restingSnapPoint(599.7, snapPoints)).toBe(600);
+		expect(restingSnapPoint(400.4, snapPoints)).toBe(400);
 	});
 
-	test("a base between detents rests on none", () => {
-		expect(restingDetent(500, detents)).toBeNull();
-		expect(restingDetent(598, detents)).toBeNull();
+	test("a base between snap points rests on none", () => {
+		expect(restingSnapPoint(500, snapPoints)).toBeNull();
+		expect(restingSnapPoint(598, snapPoints)).toBeNull();
 	});
 
-	test("with no detents nothing can be rested on", () => {
-		expect(restingDetent(0, [])).toBeNull();
+	test("with no snap points nothing can be rested on", () => {
+		expect(restingSnapPoint(0, [])).toBeNull();
 	});
 });
 

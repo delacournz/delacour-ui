@@ -6,7 +6,7 @@ const ready: IntentState = {
 	currentIndex: -1,
 	base: 0,
 	layoutReady: true,
-	detents: [200, 400, 800],
+	snapPoints: [200, 400, 800],
 	closedHeight: 0,
 	maxHeight: 800,
 	initialIndex: 0,
@@ -14,7 +14,7 @@ const ready: IntentState = {
 const open: IntentState = { ...ready, currentIndex: 1, base: 400 };
 /** A sheet visibly open whose settled index never caught up — a release the list owned. */
 const staleClosed: IntentState = { ...ready, currentIndex: -1, base: 800 };
-const unmeasured: IntentState = { ...ready, layoutReady: false, detents: [] };
+const unmeasured: IntentState = { ...ready, layoutReady: false, snapPoints: [] };
 
 const intent = (kind: SheetIntent["kind"], extra: Record<string, unknown> = {}): SheetIntent =>
 	({ id: 1, kind, ...extra }) as SheetIntent;
@@ -26,7 +26,7 @@ describe("resolveIntent", () => {
 			expect(resolveIntent({ ...ready, initialIndex: 2 }, intent("open"))).toEqual({ action: "animate", target: 800 });
 		});
 
-		test("an initial index past the last detent lands on the last", () => {
+		test("an initial index past the last snap point lands on the last", () => {
 			expect(resolveIntent({ ...ready, initialIndex: 9 }, intent("open"))).toEqual({ action: "animate", target: 800 });
 		});
 
@@ -40,7 +40,7 @@ describe("resolveIntent", () => {
 		});
 
 		test("with nothing to open to there is nothing to do", () => {
-			expect(resolveIntent({ ...ready, detents: [] }, intent("open"))).toBeNull();
+			expect(resolveIntent({ ...ready, snapPoints: [] }, intent("open"))).toBeNull();
 		});
 	});
 
@@ -90,7 +90,7 @@ describe("resolveIntent", () => {
 	});
 
 	describe("snapToIndex", () => {
-		test("animates to the detent at that index", () => {
+		test("animates to the snap point at that index", () => {
 			expect(resolveIntent(open, intent("snapToIndex", { index: 2 }))).toEqual({ action: "animate", target: 800 });
 		});
 
@@ -110,7 +110,7 @@ describe("resolveIntent", () => {
 	});
 
 	describe("snapToPosition", () => {
-		test("a pixel height animates as written, without becoming a detent", () => {
+		test("a pixel height animates as written, without becoming a snap point", () => {
 			expect(resolveIntent(open, intent("snapToPosition", { position: 333 }))).toEqual({
 				action: "animate",
 				target: 333,
@@ -146,7 +146,7 @@ describe("resolveIntent", () => {
 	});
 
 	describe("expand and collapse", () => {
-		test("expand animates to the highest detent, collapse to the lowest", () => {
+		test("expand animates to the highest snap point, collapse to the lowest", () => {
 			expect(resolveIntent(open, intent("expand"))).toEqual({ action: "animate", target: 800 });
 			expect(resolveIntent(open, intent("collapse"))).toEqual({ action: "animate", target: 200 });
 		});
@@ -155,9 +155,9 @@ describe("resolveIntent", () => {
 			expect(resolveIntent(ready, intent("expand"))).toEqual({ action: "animate", target: 800 });
 		});
 
-		test("both wait for layout and refuse an empty detent list", () => {
+		test("both wait for layout and refuse an empty snap point list", () => {
 			expect(resolveIntent(unmeasured, intent("expand"))).toEqual({ action: "wait" });
-			expect(resolveIntent({ ...ready, detents: [] }, intent("collapse"))).toBeNull();
+			expect(resolveIntent({ ...ready, snapPoints: [] }, intent("collapse"))).toBeNull();
 		});
 	});
 });

@@ -210,7 +210,7 @@ reader of an engine's docs takes those directly.
 The sheet engine's demos are grouped by what the engine owns — `anatomy`, `keyboard`, `footer`,
 `scrollables`, `portal`, `detached`, `steps` — and three of them opt into capture:
 `detached/floating-card` (the hero), `steps/three-step-form` and
-`scrollables/scroll-view-two-detents`. A captured engine demo is a `device` frame, because the
+`scrollables/scroll-view-two-snap-points`. A captured engine demo is a `device` frame, because the
 sheet teleports out of the measured stage, so its root fills and centres the trigger the way
 `bottom-sheet/anatomy/the-whole-composition` does; a trigger left at the top of a device frame sits
 under the Dynamic Island.

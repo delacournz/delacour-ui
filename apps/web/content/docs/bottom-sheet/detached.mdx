@@ -63,8 +63,8 @@ in from each side, resting 16 above `bottomInset`. The corners are yours — `bo
 ## Geometry
 
 The card rests `bottomOffset + bottomInset` above the frame's bottom edge — the **resting line**.
-Every detent is a height above that line, so `"50%"` is half of the height between the resting
-line and the top inset, and the card's detents read the same as an attached sheet's.
+Every snap point is a height above that line, so `"50%"` is half of the height between the resting
+line and the top inset, and the card's snap points read the same as an attached sheet's.
 
 ```txt
 restingBottom = bottomOffset + bottomInset
@@ -85,13 +85,13 @@ no `Overlay` leaves those areas to the screen behind.
 
 ## The card moves as one rigid body
 
-A drag down to close, the close animation, a rubber band under the lowest detent and an over-drag
+A drag down to close, the close animation, a rubber band under the lowest snap point and an over-drag
 past the highest all move the **whole card** — the top corners, the copy, the footer and the bottom
 corners together — through the gap and off the screen. Nothing clips or shrinks at the resting
 line.
 
 The panel is as tall as the frame, so the card's surface is sized separately: the sheet's height
-between its detents, the lowest detent's height below them, the highest's above them. The body is
+between its snap points, the lowest snap point's height below them, the highest's above them. The body is
 clamped to what the surface shows. That is what keeps the bottom corners real while the card
 travels, and it is why a detached `Background` needs no fixed height.
 

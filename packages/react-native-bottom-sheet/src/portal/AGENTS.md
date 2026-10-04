@@ -86,15 +86,15 @@ thread, turns `overflow` visible so a card's shadow is not clipped, and is
 overlay. The frame is `overflow: visible` too. The overlay is unchanged — it
 fills the frame, margins and gap included, so a tap there closes. The rest is
 `core/`: `closedHeight` is `−restingBottom`, so closed is `translateY =
-containerHeight` and the card is fully off-screen; `%` detents resolve against
+containerHeight` and the card is fully off-screen; `%` snap points resolve against
 the height above the resting line; `keyboardLift` subtracts the gap. The
 corners are the consumer's `Background` style.
 
 **The card moves as one rigid body.** The panel is as tall as the frame, so a
 detached `Background` is sized by the geometry's `surfaceHeight`
-(`core/geometry/surface-height.ts`): the sheet's `height` between its detents,
-the first detent's height below them and the last's above. A drag down to
-close, the close animation, a rubber-band under the lowest detent and an
+(`core/geometry/surface-height.ts`): the sheet's `height` between its snap points,
+the first snap point's height below them and the last's above. A drag down to
+close, the close animation, a rubber-band under the lowest snap point and an
 over-drag past the highest therefore leave the surface, the body and the
 footer exactly as they were and let `translateY` alone move the card, bottom
 corners included, through the gap and off the screen. `Content` clamps its

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Per-step snap points",
 	caption:
-		'A step that names `snapPoints` is sized by them while it is current; one that names none is sized by what it measures. Compact is dynamic, Tall is `["75%"]`, Half is `["50%"]`, and each change glides the sheet to the new step\'s first detent.',
+		'A step that names `snapPoints` is sized by them while it is current; one that names none is sized by what it measures. Compact is dynamic, Tall is `["75%"]`, Half is `["50%"]`, and each change glides the sheet to the new step\'s first snap point.',
 	capture: { flow: "bottom-sheet/steps/per-step-snap-points", frame: "device" },
 };
 

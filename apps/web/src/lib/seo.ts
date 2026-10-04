@@ -54,9 +54,9 @@ export const PRODUCTS: Record<DocsProduct, ProductSeo> = {
 		name: "Delacour Bottom Sheet",
 		headline: "Delacour Bottom Sheet — a headless sheet engine for React Native",
 		description:
-			"A headless bottom sheet engine for React Native. Detents, dynamic sizing, keyboard-aware sticky footers, scrollables, a teleported portal, detached cards and a typed multi-step machine — every radius, colour and inset is a style you pass in. No tokens, no className, no styling library.",
+			"A headless bottom sheet engine for React Native. Snap points, dynamic sizing, keyboard-aware sticky footers, scrollables, a teleported portal, detached cards and a typed multi-step machine — every radius, colour and inset is a style you pass in. No tokens, no className, no styling library.",
 		cardTitle: "Bottom sheets for React Native",
-		cardLine: "Detents, keyboard, footer, steps. No tokens, no className.",
+		cardLine: "Snap points, keyboard, footer, steps. No tokens, no className.",
 		path: `${docsRoute}/bottom-sheet`,
 	},
 };

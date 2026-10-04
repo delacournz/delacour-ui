@@ -5,10 +5,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
-	title: "ScrollView, two detents",
+	title: "ScrollView, two snap points",
 	caption:
-		"Thirty rows in a `BottomSheet.ScrollView` behind two explicit detents. At the low detent a swipe up inside the list moves the sheet, not the rows, and the indicator stays hidden; at the high detent the same swipe scrolls. A drag down at the top of the list brings the sheet with it, and a drag down from further in scrolls the list back to the top first. The readout is the consumer's own `onScroll`, called on the JS thread.",
-	capture: { flow: "bottom-sheet-engine/scrollables/scroll-view-two-detents", frame: "device" },
+		"Thirty rows in a `BottomSheet.ScrollView` behind two explicit snap points. At the low snap point a swipe up inside the list moves the sheet, not the rows, and the indicator stays hidden; at the high snap point the same swipe scrolls. A drag down at the top of the list brings the sheet with it, and a drag down from further in scrolls the list back to the top first. The readout is the consumer's own `onScroll`, called on the JS thread.",
+	capture: { flow: "bottom-sheet-engine/scrollables/scroll-view-two-snap-points", frame: "device" },
 };
 
 const SNAP_POINTS = ["45%", "90%"] as const;

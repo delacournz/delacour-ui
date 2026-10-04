@@ -25,7 +25,7 @@ export type UseAnimateToOptions = {
  * timing whose completion writes `currentIndex` and reports the settle.
  * `jumpTo` is the same without the motion — `forceClose`, a container resize,
  * and `animateOnMount: false`. `settleAt` is the completion alone: no
- * `onAnimate`, no target recorded, `base` written to the detent it is already
+ * `onAnimate`, no target recorded, `base` written to the snap point it is already
  * within a settle tolerance of. It is for the content pan whose release the
  * list owns — the finger carried the sheet to the top and kept scrolling, so
  * nothing animated and nothing would otherwise write `currentIndex`.
@@ -57,9 +57,9 @@ export function useAnimateTo(options: UseAnimateToOptions): {
 		const settle = (target: number, source: AnimationSource): void => {
 			"worklet";
 			state.animStatus.value = ANIM_STATUS.IDLE;
-			const index = Math.round(indexForHeight(target, geometry.detents.value, geometry.closedHeight.value));
+			const index = Math.round(indexForHeight(target, geometry.snapPoints.value, geometry.closedHeight.value));
 			state.currentIndex.value = index;
-			scheduleOnRN(onSettle, index, target, source, geometry.detents.value.length);
+			scheduleOnRN(onSettle, index, target, source, geometry.snapPoints.value.length);
 		};
 
 		const begin = (target: number, source: AnimationSource): void => {
@@ -67,7 +67,7 @@ export function useAnimateTo(options: UseAnimateToOptions): {
 			cancelAnimation(state.base);
 			const fromHeight = state.base.value;
 			const fromIndex = geometry.index.value;
-			const toIndex = indexForHeight(target, geometry.detents.value, geometry.closedHeight.value);
+			const toIndex = indexForHeight(target, geometry.snapPoints.value, geometry.closedHeight.value);
 			state.animStatus.value = ANIM_STATUS.RUNNING;
 			state.animSource.value = source;
 			state.animTarget.value = target;

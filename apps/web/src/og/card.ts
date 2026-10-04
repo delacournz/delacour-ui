@@ -27,7 +27,7 @@ import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
  * `product` picks whose card it is. A package's card carries that package's
  * name and line, its own docs URL in the footer, and a small amber motif in
  * the bottom-right — a line chart for charts, a sheet with its handle and two
- * detent lines for the bottom sheet — so the three read as different things
+ * snap point lines for the bottom sheet — so the three read as different things
  * in a feed. `MOTIFS` is the one place a product's drawing is named; the
  * library's card has none.
  */
@@ -137,9 +137,9 @@ function chart(): string {
 }
 
 /**
- * A sheet resting on a detent inside a phone-shaped frame, in the mark's amber:
+ * A sheet resting on a snap point inside a phone-shaped frame, in the mark's amber:
  * the dimmed frame, the panel with its rounded top corners, the handle pill,
- * and two hairlines for the detents it could settle at.
+ * and two hairlines for the snap points it could settle at.
  */
 function sheet(): string {
 	const { x, y, width, height } = SHEET_BOX;
@@ -156,7 +156,7 @@ function sheet(): string {
 	].join(" ");
 	const handleWidth = 64;
 	const handleX = Math.round(x + (width - handleWidth) / 2);
-	const detents = [0.12, 0.27]
+	const snapPoints = [0.12, 0.27]
 		.map((at) => {
 			const dy = Math.round(y + height * at);
 			return `<line x1="${x + 24}" y1="${dy}" x2="${x + width - 24}" y2="${dy}" stroke="#27272a" stroke-width="2" stroke-dasharray="8 10"/>`;
@@ -166,7 +166,7 @@ function sheet(): string {
 	return [
 		'<g id="sheet">',
 		`<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="28" fill="#18181b"/>`,
-		detents,
+		snapPoints,
 		`<path d="${panel}" fill="${DELACOUR_STROKE_COLOUR}" fill-opacity="0.16" stroke="${DELACOUR_STROKE_COLOUR}" stroke-width="4" stroke-linejoin="round"/>`,
 		`<rect x="${handleX}" y="${panelTop + 14}" width="${handleWidth}" height="6" rx="3" fill="${DELACOUR_STROKE_COLOUR}"/>`,
 		"</g>",

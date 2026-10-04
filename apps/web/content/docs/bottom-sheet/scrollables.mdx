@@ -54,11 +54,11 @@ the factory so `<ItemT>` survives it.
 The content pan and the list's native scroll are **simultaneous** — both see every touch — and the
 sheet's state decides which one moves:
 
-- **Below the highest detent, the list is locked.** Every scroll event is answered by scrolling
+- **Below the highest snap point, the list is locked.** Every scroll event is answered by scrolling
   back to where the lock engaged, so the list consumes nothing and the pan moves the sheet. The
   indicator is hidden, bounce is off and momentum is cut, so a fling has nothing for the lock to
   fight.
-- **At the highest detent, the list scrolls.** A drag down spends the offset the list *began* the
+- **At the highest snap point, the list scrolls.** A drag down spends the offset the list *began* the
   gesture with first — the rows scroll one-for-one under the finger — and the sheet takes over the
   moment the list reaches its top. Upward, the list scrolls and bounces rather than the sheet
   over-dragging.
@@ -79,7 +79,7 @@ The list's `maxHeight` follows the area above the footer and the keyboard on the
 `marginBottom` follows the footer's height, so the last row and the indicator stop above a sticky
 footer.
 
-`onContentSizeChange` feeds the dynamic detent. A `BottomSheet.ScrollView` therefore needs neither
+`onContentSizeChange` feeds the dynamic snap point. A `BottomSheet.ScrollView` therefore needs neither
 `snapPoints` nor `dynamicSizing={false}`: it sizes to its rows, capped by `maxDynamicContentSize`,
 and scrolls inside that.
 

@@ -38,11 +38,11 @@ export type BottomSheetProps = HeadlessBottomSheetProps;
  * Both run on the UI thread from inside the engine's pan, so they are
  * `Presets.System.*` — themselves worklets — and nothing else: a JS function
  * here would be `undefined is not a function` at the moment a finger crosses a
- * detent. `selection` on a detent because that is what a picker's tick feels
+ * snap point. `selection` on a snap point because that is what a picker's tick feels
  * like, and `impactLight` on a close because letting go of a sheet is a
  * heavier event than passing a stop, but not by much.
  */
-const detentHaptic = Presets.System.selection;
+const snapPointHaptic = Presets.System.selection;
 const closeHaptic = Presets.System.impactLight;
 
 /**
@@ -55,19 +55,19 @@ const closeHaptic = Presets.System.impactLight;
  *   `useSafeAreaInsets()`. The engine reserves that band under the body or the
  *   sticky footer and gives it back to the keyboard as it arrives; a caller
  *   never pads for the home indicator by hand.
- * - **The haptics are on by default.** Pass `onDetentHaptic={undefined}` to
+ * - **The haptics are on by default.** Pass `onSnapPointHaptic={undefined}` to
  *   turn one off, or a worklet of your own to change it.
  * - **The stale-keyboard guard runs on mount.** A sheet mounted while
  *   `KeyboardProvider`'s shared values are pinned open by a keyboard that
  *   vanished without a `will` event would lift for a keyboard that is not
  *   there; `Screen.Footer` runs the same repair for the same reason.
  *
- * `topInset` is left at the engine's zero, so a `%` detent is a fraction of the
+ * `topInset` is left at the engine's zero, so a `%` snap point is a fraction of the
  * whole window — the same fraction it was before this rewrite.
  */
 function BottomSheetRoot({
 	bottomInset,
-	onDetentHaptic = detentHaptic,
+	onSnapPointHaptic = snapPointHaptic,
 	onCloseHaptic = closeHaptic,
 	...props
 }: BottomSheetProps): ReactElement {
@@ -78,7 +78,7 @@ function BottomSheetRoot({
 		<Headless
 			bottomInset={bottomInset ?? insets.bottom}
 			onCloseHaptic={onCloseHaptic}
-			onDetentHaptic={onDetentHaptic}
+			onSnapPointHaptic={onSnapPointHaptic}
 			{...props}
 		/>
 	);

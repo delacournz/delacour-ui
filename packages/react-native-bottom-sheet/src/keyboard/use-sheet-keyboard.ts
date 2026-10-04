@@ -48,9 +48,9 @@ export type UseSheetKeyboardOptions = {
  *
  * The second is the behaviour. `interactive` and `none` need none: one lifts
  * by derivation, the other ignores the keyboard. `extend` and `fillParent`
- * snap — to the highest detent or the container — when an owned keyboard
+ * snap — to the highest snap point or the container — when an owned keyboard
  * rises, and `keyboardBlurBehavior: "restore"` sends the sheet back to the
- * detent it held when the keyboard leaves. `keyboardStep` in the core makes
+ * snap point it held when the keyboard leaves. `keyboardStep` in the core makes
  * that call from two consecutive samples; this reaction only carries it out,
  * and stays out of the way of a gesture that owns `base`.
  */
@@ -139,7 +139,7 @@ export function useSheetKeyboard({
 				if (dragging) return;
 				applied.value = true;
 				indexBefore.value = running
-					? Math.round(indexForHeight(state.animTarget.value, geometry.detents.value, closed))
+					? Math.round(indexForHeight(state.animTarget.value, geometry.snapPoints.value, closed))
 					: state.currentIndex.value;
 				const target = config.keyboardBehavior === "fillParent" ? geometry.maxHeight.value : geometry.highest.value;
 				if (running || Math.abs(target - state.base.value) > 0.5) animateTo(target, "keyboard", 0);
@@ -151,9 +151,9 @@ export function useSheetKeyboard({
 			indexBefore.value = CLOSED_INDEX;
 			if (step !== "restore" || dragging || !sheetOpen || index < 0) return;
 
-			const detents = geometry.detents.value;
-			if (detents.length === 0) return;
-			const target = heightForIndex(Math.min(index, detents.length - 1), detents, closed);
+			const snapPoints = geometry.snapPoints.value;
+			if (snapPoints.length === 0) return;
+			const target = heightForIndex(Math.min(index, snapPoints.length - 1), snapPoints, closed);
 			if (Math.abs(target - state.base.value) > 0.5) animateTo(target, "keyboard", 0);
 		},
 		[state, geometry, animateTo, progress, applied, indexBefore]

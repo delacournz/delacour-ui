@@ -41,11 +41,11 @@ bun run check            # Biome
 The engine has one coordinate system, and it is not `translateY`.
 
 `base` and `height` are **pixels of sheet visible above its resting bottom
-line**: `0` is closed, detents ascend, and the highest detent is the largest
+line**: `0` is closed, snap points ascend, and the highest snap point is the largest
 number. `translateY = containerHeight − restingBottom − height` is derived from
 a height at the moment a view needs it, by `core/geometry/position.ts`, and
 nowhere else. A detached sheet rests `restingBottom` above the container's
-bottom edge, so its closed position is off-screen and every detent sits that
+bottom edge, so its closed position is off-screen and every snap point sits that
 much higher; nothing above `core/` has to know.
 
 `base` is the only animated value — the keyboard-free height. The keyboard
@@ -133,13 +133,13 @@ is copied into `core/result.ts` rather than depended on.
 
 | Path | What |
 | --- | --- |
-| `src/core` | Every number the sheet computes — detents, keyboard, footer, geometry, backdrop, intents, haptics, scroll lock, animation defaults and the step machine. Its own `AGENTS.md` indexes it and carries the formulas |
+| `src/core` | Every number the sheet computes — snap points, keyboard, footer, geometry, backdrop, intents, haptics, scroll lock, animation defaults and the step machine. Its own `AGENTS.md` indexes it and carries the formulas |
 | `src/state` | The shared values, the derived geometry (each formula as a `useDerivedValue`) and the intent queue |
 | `src/animation` | `animateTo` / `jumpTo`, the Reanimated config mapping, the settle listeners |
 | `src/gesture` | The handle and content pans, and the haptic worklet props |
 | `src/keyboard` | keyboard-controller's values into the sheet's, who owns the keyboard, the `extend` / `fillParent` snaps, `useBottomSheetTextInput`, the stale-keyboard guard |
 | `src/layout` | Measuring the frame, the handle and the content into shared values |
-| `src/scrollable` | `BottomSheet.ScrollView` / `FlatList` / `SectionList` and `createBottomSheetScrollable` — the scroll lock, the drag budget, content size as the dynamic detent |
+| `src/scrollable` | `BottomSheet.ScrollView` / `FlatList` / `SectionList` and `createBottomSheetScrollable` — the scroll lock, the drag budget, content size as the dynamic snap point |
 | `src/portal` | `BottomSheetProvider`, `BottomSheet.Host`, the nearest-host context and the registry that gives every open sheet its `zIndex`, `replace` and `dismissAll` |
 | `src/steps` | `BottomSheet.Steps` / `Step`, `useSheetMachine`, `useSheetStep` — a body whose contents follow a machine and whose height glides between them |
 | `src/components` | The compound `BottomSheet` and its parts, the three contexts |
@@ -162,8 +162,8 @@ Bottom sheet → Engine gallery before it was called done, and the bugs that
 only a device shows were fixed there. What was seen, in short:
 
 - **Spine.** The trigger opens with the mount animation; a handle swipe reaches
-  the second detent and the handle's accessibility value reads `Detent 2 of 2`;
-  a content pan past the first detent closes and `onOpenChange(false)` fires;
+  the second snap point and the handle's accessibility value reads `SnapPoint 2 of 2`;
+  a content pan past the first snap point closes and `onOpenChange(false)` fires;
   an over-drag settles back; a tap on a `TextInput` inside the sheet focuses
   on the first try, so the overlay written before the panel does not compete
   for touches; every ref method lands, and `close` / `dismiss` / `snapToIndex`
@@ -181,14 +181,14 @@ only a device shows were fixed there. What was seen, in short:
   rows cut, hence the trailing spacer inside the list's content (`bodyInset`)
   and `flexShrink: 0` on the list.
 - **Scrollables.** In a `ScrollView` behind `["45%", "90%"]`, a swipe up at the
-  low detent moves the sheet with the list held at offset `0`; the same swipe
+  low snap point moves the sheet with the list held at offset `0`; the same swipe
   at the top scrolls the list; a drag down scrolls the list back to `0` and
   the sheet follows only then; a fling down with the list scrolled never snaps
   the sheet. A `ScrollView` with no `snapPoints` sizes to its rows and stops
   at `maxDynamicContentSize`. Fixed on the device: the pan spends the offset
   the list *began* with (`listDragHeight`), not its live one, and a content pan
   leaving the top locks at `0`. Seen and left alone: a long swipe that carries
-  the sheet to its top and then scrolls leaves `index` on the detent it left,
+  the sheet to its top and then scrolls leaves `index` on the snap point it left,
   because the list owns that release.
 - **Portal, host, detached.** A `Portal` under the playground's provider draws
   over the navigator's header, and a context provided around the trigger reads

@@ -2,7 +2,6 @@ import type { SharedValue } from "react-native-reanimated";
 import type {
 	AnimationSource,
 	DetachedOptions,
-	DetentSpec,
 	GestureSource,
 	KeyboardBehavior,
 	KeyboardBlurBehavior,
@@ -10,6 +9,7 @@ import type {
 	ScrollableType,
 	SheetIntent,
 	SheetState,
+	SnapPointSpec,
 } from "../core";
 
 /** Whether an animation is running. Numeric so the UI thread never serialises a string. */
@@ -68,7 +68,7 @@ export type SheetSharedState = {
 	gestureSource: SharedValue<GestureSource>;
 	/** The scrollable's live offset, written by its scroll handler; negative while bounced past the top. */
 	scrollOffsetY: SharedValue<number>;
-	/** Where the scrollable is held while the sheet is below its highest detent. */
+	/** Where the scrollable is held while the sheet is below its highest snap point. */
 	scrollLockedAt: SharedValue<number>;
 	/** Which scrollable is the body, `NONE` for static content. Set by `createBottomSheetScrollable` on focus. */
 	scrollableType: SharedValue<ScrollableType>;
@@ -82,7 +82,7 @@ export type SheetSharedState = {
 	/** Whether the next open is the mount open — reported as `"mount"` and skipped by `animateOnMount: false`. */
 	mountPending: SharedValue<boolean>;
 	/** The `snapPoints` prop, string-keyed so identity churn is harmless. */
-	detentSpec: SharedValue<readonly DetentSpec[]>;
+	snapPointSpec: SharedValue<readonly SnapPointSpec[]>;
 	config: SharedValue<SheetWorkletConfig>;
 };
 
@@ -93,14 +93,14 @@ export type SheetSharedState = {
 export type SheetGeometry = {
 	restingBottom: SharedValue<number>;
 	closedHeight: SharedValue<number>;
-	/** The height the sheet may occupy; what a `%` detent resolves against. */
+	/** The height the sheet may occupy; what a `%` snap point resolves against. */
 	maxHeight: SharedValue<number>;
 	/** The safe-area band an attached sheet reserves. */
 	band: SharedValue<number>;
 	bandNow: SharedValue<number>;
-	/** Ascending, unique, the dynamic detent included when sizing to content. */
-	detents: SharedValue<readonly number[]>;
-	/** The last detent, or the closed height when there is none yet. */
+	/** Ascending, unique, the dynamic snap point included when sizing to content. */
+	snapPoints: SharedValue<readonly number[]>;
+	/** The last snap point, or the closed height when there is none yet. */
 	highest: SharedValue<number>;
 	keyboardLift: SharedValue<number>;
 	/** `base + keyboardLift`, clamped. What the view shows. */
@@ -111,7 +111,7 @@ export type SheetGeometry = {
 	index: SharedValue<number>;
 	sheetState: SharedValue<SheetState>;
 	layoutReady: SharedValue<boolean>;
-	/** What the body may fill above the footer or the band, sized against its detent. */
+	/** What the body may fill above the footer or the band, sized against its snap point. */
 	contentArea: SharedValue<number>;
 	footerHeight: SharedValue<number>;
 	footerTop: SharedValue<number>;
@@ -121,12 +121,12 @@ export type SheetGeometry = {
 	 * How tall the body's clipping box is: `contentArea + bodyInset` — the body
 	 * is laid out to the sheet's bottom line — held under a sticky footer to
 	 * the footer's live top edge, so nothing of the body shows below it while
-	 * the sheet is lower than its detent.
+	 * the sheet is lower than its snap point.
 	 */
 	bodyClip: SharedValue<number>;
 	/**
-	 * How tall a detached card's surface is: `height` between the detents, the
-	 * first detent's height below them and the last's above, so a close, a
+	 * How tall a detached card's surface is: `height` between the snap points, the
+	 * first snap point's height below them and the last's above, so a close, a
 	 * rubber-band and an over-drag move the card as a rigid body. Equal to
 	 * `height` when attached.
 	 */

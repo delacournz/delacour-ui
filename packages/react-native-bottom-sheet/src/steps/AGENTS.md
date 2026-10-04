@@ -60,23 +60,23 @@ function Actions() {
   height is a shared value. Only the current step and, during a change, the
   one leaving are rendered; each is absolutely positioned across the top of
   the stack, measured by its `onLayout` while current.
-- **The height glides because the detent moves once.** When the current step
+- **The height glides because the snap point moves once.** When the current step
   measures, `Steps` writes the number to the sheet's `contentHeight` straight
-  away and springs the stack's height to it. The dynamic detent re-derives on
-  the UI thread, the root's detent-change reaction (`state/use-sheet-intents.ts`)
+  away and springs the stack's height to it. The dynamic snap point re-derives on
+  the UI thread, the root's snap-point-change reaction (`state/use-sheet-intents.ts`)
   animates `base` to the same index in the new list with the sheet's own
   animation, and — because the stack's spring is resolved from the same
   config — the panel's top edge and the body's bottom edge move together. A
-  sheet resting on an explicit detent does not move at all. If the sheet was
-  busy when the detent moved (a step change mid-open), the stack animation's
-  completion nudges `base` onto its detent.
+  sheet resting on an explicit snap point does not move at all. If the sheet was
+  busy when the snap point moved (a step change mid-open), the stack animation's
+  completion nudges `base` onto its snap point.
 - **`Content` stops measuring.** The internal context's
   `contentHeightSource` reads `steps` while a `Steps` body is mounted, and
   `Content`'s `onLayout` returns early; its layout events would otherwise be
   the stack mid-animation, a frame stale. The unmount reset to `UNMEASURED`
   still runs, so the next open waits for the first step to measure again.
 - **A step's `snapPoints` replace the root's, and turn dynamic sizing off,
-  while it is current.** A step that names its detents is sized by them.
+  while it is current.** A step that names its snap points is sized by them.
   `dismissible: false` switches off pan-down-to-close and the overlay's press
   for that step — `Close` and the ref still work. Both go through
   `setStepOverride` on the root (`components/bottom-sheet.tsx`), because the

@@ -16,7 +16,7 @@ export function bodyInset(hasFooter: boolean, footerHeight: number, band: number
 }
 
 export type BodyClipInput = {
-	/** The geometry's `contentArea` — the body sized against its detent. */
+	/** The geometry's `contentArea` — the body sized against its snap point. */
 	contentArea: number;
 	/** `bodyInset` — what the body reserves at its end. */
 	inset: number;
@@ -35,7 +35,7 @@ export type BodyClipInput = {
  * — and without a footer that is the clip too: the sheet slides as one body
  * and nothing needs hiding. Under a sticky footer the clip also follows the
  * footer's top edge, `sheetHeight − keyboard − handle − inset`, which is where
- * `footerTop` puts it. On the detent the two agree and the clip is exactly
+ * `footerTop` puts it. On the snap point the two agree and the clip is exactly
  * `contentArea`; below it — a drag to close, the close animation — the footer
  * stays on the screen's bottom edge while the panel slides down under it, and
  * the clip shrinks in step so no line of the body is ever drawn below the
@@ -56,7 +56,7 @@ export function bodyClip(input: BodyClipInput): number {
 /**
  * The rows' own height: a scrollable's reported content size less the
  * trailing spacer it renders inside that content. This is what the dynamic
- * detent counts — the spacer is the footer and the band, which the detent
+ * snap point counts — the spacer is the footer and the band, which the snap point
  * already adds once. An unmeasured spacer subtracts nothing; never negative.
  */
 export function scrollContentHeight(contentSize: number, spacer: number): number {

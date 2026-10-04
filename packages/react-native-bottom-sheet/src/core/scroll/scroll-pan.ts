@@ -7,7 +7,7 @@ export type ListDragInput = {
 	startOffset: number;
 	/**
 	 * Whether the list is being held by the lock at that offset — it began
-	 * scrolled *and* below the highest detent — and the sheet has not reached
+	 * scrolled *and* below the highest snap point — and the sheet has not reached
 	 * the top yet this gesture. A held list scrolls nothing, so it has no
 	 * budget to spend.
 	 */
@@ -45,43 +45,43 @@ export type ListOwnsReleaseInput = {
 	highest: number;
 };
 
-/** Settle tolerance: a sheet within this of a detent is on it. */
-const AT_DETENT = 0.5;
+/** Settle tolerance: a sheet within this of a snap point is on it. */
+const AT_SNAP_POINT = 0.5;
 
 /**
  * Whether a released content pan belongs to the list rather than the sheet:
- * the sheet is on its highest detent and the list is scrolled, so the finger
+ * the sheet is on its highest snap point and the list is scrolled, so the finger
  * was scrolling rows and the release velocity is the list's momentum, not a
  * snap. Snapping here is what made the library this replaces hop from the
- * top to a lower detent under a series of interrupted scrolls.
+ * top to a lower snap point under a series of interrupted scrolls.
  */
 export function listOwnsRelease(input: ListOwnsReleaseInput): boolean {
 	"worklet";
 	if (!input.scrollable) return false;
 	if (input.offset <= 0) return false;
-	return input.base >= input.highest - AT_DETENT;
+	return input.base >= input.highest - AT_SNAP_POINT;
 }
 
 /**
- * The detent a base is resting on — the one within the settle tolerance of
+ * The snap point a base is resting on — the one within the settle tolerance of
  * it — or `null` when it sits between two.
  *
  * A release the list owns still has to settle the sheet's bookkeeping: the
  * finger carried the sheet to the top and kept going, so no animation ran and
- * nothing wrote `currentIndex`. The pan asks which detent `base` is on and
- * settles there without motion; between detents it snaps instead.
+ * nothing wrote `currentIndex`. The pan asks which snap point `base` is on and
+ * settles there without motion; between snap points it snaps instead.
  */
-export function restingDetent(base: number, detents: readonly number[]): number | null {
+export function restingSnapPoint(base: number, snapPoints: readonly number[]): number | null {
 	"worklet";
-	for (let index = 0; index < detents.length; index += 1) {
-		const detent = detents[index] as number;
-		if (Math.abs(base - detent) <= AT_DETENT) return detent;
+	for (let index = 0; index < snapPoints.length; index += 1) {
+		const snapPoint = snapPoints[index] as number;
+		if (Math.abs(base - snapPoint) <= AT_SNAP_POINT) return snapPoint;
 	}
 	return null;
 }
 
 /**
- * Where a list is held while the sheet is below its highest detent.
+ * Where a list is held while the sheet is below its highest snap point.
  *
  * Wherever it was when the lock engaged, never above the top — a handle drag
  * or a `snapToIndex` on a scrolled list keeps its rows. A content pan is the

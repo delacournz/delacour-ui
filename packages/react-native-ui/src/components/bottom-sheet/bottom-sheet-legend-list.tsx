@@ -44,7 +44,7 @@ export type BottomSheetLegendListProps<ItemT> = Omit<AnimatedLegendListProps<Ite
  * Built here rather than in the engine because `@legendapp/list` is this
  * library's optional peer, not the engine's: the engine exports the factory,
  * and this is what the factory is for. The same scroll lock, drag budget and
- * content-size detent as the other three bodies.
+ * content-size snap point as the other three bodies.
  *
  * @example
  * <BottomSheet.LegendList data={rows} keyExtractor={(row) => row.id} renderItem={renderRow} />

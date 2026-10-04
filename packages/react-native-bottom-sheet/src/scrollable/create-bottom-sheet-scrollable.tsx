@@ -58,7 +58,7 @@ function footerElement(footer: ScrollableListFooter | undefined): ReactElement |
  *   object `Content` uses; the inner is a `Native` gesture on the list itself,
  *   declared simultaneous with that pan and kept alive when the finger leaves
  *   the view. Both run at once, and the pan subtracts what the list consumed.
- * - The scroll lock (`useScrollLock`). Below the highest detent the list is
+ * - The scroll lock (`useScrollLock`). Below the highest snap point the list is
  *   held where it was, so the pan moves the sheet; at the highest it scrolls,
  *   and a drag down at the top hands back to the sheet. The indicator hides,
  *   bounce switches off and momentum is cut while locked.
@@ -72,11 +72,11 @@ function footerElement(footer: ScrollableListFooter | undefined): ReactElement |
  *   shows below the footer's top edge, at rest or while the sheet is dragged
  *   down; the list itself does not shrink to that clip (see `styles.list`).
  * - Content size. `onContentSizeChange` less the spacer's own measured height
- *   feeds `contentHeight`, which is the dynamic detent's measurement: a
+ *   feeds `contentHeight`, which is the dynamic snap point's measurement: a
  *   `ScrollView` of forty rows needs no `snapPoints` and no
  *   `dynamicSizing={false}` — it sizes to its rows up to
  *   `maxDynamicContentSize`, then scrolls. The two layout events land in one
- *   batch and are folded into one write, so the detent never sees the rows
+ *   batch and are folded into one write, so the snap point never sees the rows
  *   plus the spacer for a frame — a first open resolved on that sum would
  *   animate to it and ignore the correction.
  * - Registration. On focus the list tells the sheet what kind it is, and on

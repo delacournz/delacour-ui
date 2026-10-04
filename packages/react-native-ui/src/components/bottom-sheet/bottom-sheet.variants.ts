@@ -21,10 +21,10 @@ export const BOTTOM_SHEET_OVERLAY_TOKEN = "overlay";
 export const BOTTOM_SHEET_OVERLAY_OPACITY = 1;
 
 /**
- * The detent indices the scrim appears and disappears on.
+ * The snap point indices the scrim appears and disappears on.
  *
  * A modal sheet has no resting state: it is either presented or gone, so the
- * scrim belongs from the FIRST detent (`0`) and is only absent when the sheet
+ * scrim belongs from the FIRST snap point (`0`) and is only absent when the sheet
  * is closed (`-1`). These are the engine's own defaults too; they are named
  * here so the test that pins them has something to read.
  */
@@ -43,7 +43,7 @@ export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 8;
  * The padding a pinned footer's measured box carries.
  *
  * A number rather than a `p-4`, because it is handed to the engine's `padding`
- * prop: the engine measures the footer's inner box into the dynamic detent,
+ * prop: the engine measures the footer's inner box into the dynamic snap point,
  * and padding written there is counted where a class on the outer view would
  * not be. The horizontal gutter still comes from the `stickyFooter` slot, which
  * is merged after it.

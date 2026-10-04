@@ -8,11 +8,11 @@ import type { GestureType } from "react-native-gesture-handler";
 export type HapticWorklet = () => void;
 
 export type SheetHaptics = {
-	/** A drag crossed a detent. */
-	onDetentHaptic?: HapticWorklet;
+	/** A drag crossed a snap point. */
+	onSnapPointHaptic?: HapticWorklet;
 	/** A drag let go on a close. */
 	onCloseHaptic?: HapticWorklet;
-	/** A drag left the detent range and the rubber band took over. */
+	/** A drag left the snap point range and the rubber band took over. */
 	onOverDragHaptic?: HapticWorklet;
 };
 

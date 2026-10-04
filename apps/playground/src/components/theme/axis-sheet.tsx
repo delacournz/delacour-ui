@@ -40,7 +40,7 @@ export type AxisSheetProps = AxisSheetControlProps & {
  * sheets removes the reason for the swap entirely.
  *
  * **Sized to its own content, capped.** The scroll view reports its content
- * size and that is the sheet's one detent: Radius's five rows make a short
+ * size and that is the sheet's one snap point: Radius's five rows make a short
  * sheet, Font's twenty-nine make one at `maxDynamicContentSize` that scrolls
  * inside the cap. The engine counts the handle and the safe-area band itself,
  * so nothing here measures a row or budgets for the home indicator — the

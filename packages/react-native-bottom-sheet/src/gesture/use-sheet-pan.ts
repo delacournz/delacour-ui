@@ -5,16 +5,16 @@ import { cancelAnimation, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import type { AnimateTo, SettleAt } from "../animation/animation.types";
 import {
-	crossedDetent,
-	detentUnder,
+	crossedSnapPoint,
 	GESTURE_SOURCE,
 	type GestureSource,
 	listDragHeight,
 	listOwnsRelease,
 	resistOverDrag,
-	restingDetent,
+	restingSnapPoint,
 	SCROLLABLE_TYPE,
 	selectSnapHeight,
+	snapPointUnder,
 } from "../core";
 import { ANIM_STATUS, type SheetGeometry, type SheetSharedState } from "../state/state.types";
 import {
@@ -27,8 +27,8 @@ import {
 
 type PanEvent = { translationY: number; velocityY: number };
 
-/** Settle tolerance: a sheet within this of a detent is on it. */
-const AT_DETENT = 0.5;
+/** Settle tolerance: a sheet within this of a snap point is on it. */
+const AT_SNAP_POINT = 0.5;
 
 /** JS-thread, so `scheduleOnRN` has a plain function to call; `dismiss` returns a promise nobody awaits. */
 function dismissKeyboard(): void {
@@ -40,16 +40,16 @@ function dismissKeyboard(): void {
  *
  * Everything runs on the UI thread. `onStart` cancels whatever animation owns
  * `base` and remembers where the drag began; `onChange` turns the finger's
- * travel into a height, rubber-banded past the detents by `resistOverDrag`
- * and never above the container; `onFinalize` picks the detent the finger was
+ * travel into a height, rubber-banded past the snap points by `resistOverDrag`
+ * and never above the container; `onFinalize` picks the snap point the finger was
  * heading for with `selectSnapHeight` and hands it to `animateTo` with the
  * release velocity. The close is a candidate only when `enablePanDownToClose`.
  *
  * A content pan the list owns at release — the sheet at its top, the list
  * scrolled — does not snap, but it still settles: the finger moved `base` by
  * hand, so no animation ran and nothing else writes `currentIndex`. `settleAt`
- * on the detent under `base` is the bookkeeping of a finished animation
- * without the motion; between detents (which the list ownership test should
+ * on the snap point under `base` is the bookkeeping of a finished animation
+ * without the motion; between snap points (which the list ownership test should
  * rule out) the sheet snaps to the nearest one with no velocity instead, since
  * the release velocity is the list's momentum.
  *
@@ -62,7 +62,7 @@ function dismissKeyboard(): void {
  * worklets in the ordinary way. See the package `AGENTS.md`: that is legal
  * precisely because these are not module-scope worklets.
  *
- * Per-gesture memory — where the drag began, the detent last under it,
+ * Per-gesture memory — where the drag began, the snap point last under it,
  * whether it is over-dragging — lives in shared values rather than closure
  * variables. Each worklet gets its own copy of a captured `let`, so a write in
  * `onStart` would never be seen by `onChange`.
@@ -75,12 +75,17 @@ export function useSheetPan(
 	options: SheetPanOptions
 ): SheetPans {
 	const startBase = useSharedValue(0);
-	const lastDetent = useSharedValue(-1);
+	const lastSnapPoint = useSharedValue(-1);
 	const overDragging = useSharedValue(false);
 	const startScroll = useSharedValue(0);
 	const listHeld = useSharedValue(false);
-	const { enableHandlePanningGesture, enableContentPanningGesture, onDetentHaptic, onCloseHaptic, onOverDragHaptic } =
-		options;
+	const {
+		enableHandlePanningGesture,
+		enableContentPanningGesture,
+		onSnapPointHaptic,
+		onCloseHaptic,
+		onOverDragHaptic,
+	} = options;
 
 	return useMemo(() => {
 		const begin = (source: GestureSource): void => {
@@ -91,9 +96,9 @@ export function useSheetPan(
 			startBase.value = state.base.value;
 			startScroll.value = state.scrollOffsetY.value;
 			// A list scrolled and below the top is held by the lock: it has no travel
-			// to spend until the sheet reaches the highest detent.
-			listHeld.value = state.scrollOffsetY.value > 0 && state.base.value < geometry.highest.value - AT_DETENT;
-			lastDetent.value = detentUnder(state.base.value, geometry.detents.value);
+			// to spend until the sheet reaches the highest snap point.
+			listHeld.value = state.scrollOffsetY.value > 0 && state.base.value < geometry.highest.value - AT_SNAP_POINT;
+			lastSnapPoint.value = snapPointUnder(state.base.value, geometry.snapPoints.value);
 			overDragging.value = false;
 			// A finger on the sheet is a reason to put the keyboard away; the lift
 			// comes off as it goes and the drag continues from wherever `base` is.
@@ -102,15 +107,21 @@ export function useSheetPan(
 			}
 		};
 
-		const haptics = (raw: number, next: number, lowest: number, highest: number, detents: readonly number[]): void => {
+		const haptics = (
+			raw: number,
+			next: number,
+			lowest: number,
+			highest: number,
+			snapPoints: readonly number[]
+		): void => {
 			"worklet";
 			const over = raw > highest || raw < lowest;
 			if (over && !overDragging.value && onOverDragHaptic) onOverDragHaptic();
 			overDragging.value = over;
 
-			if (crossedDetent(lastDetent.value, next, detents)) {
-				lastDetent.value = detentUnder(next, detents);
-				if (onDetentHaptic) onDetentHaptic();
+			if (crossedSnapPoint(lastSnapPoint.value, next, snapPoints)) {
+				lastSnapPoint.value = snapPointUnder(next, snapPoints);
+				if (onSnapPointHaptic) onSnapPointHaptic();
 			}
 		};
 
@@ -138,18 +149,18 @@ export function useSheetPan(
 			"worklet";
 			if (state.gestureSource.value === GESTURE_SOURCE.NONE) return;
 			const config = state.config.value;
-			const detents = geometry.detents.value;
+			const snapPoints = geometry.snapPoints.value;
 			const closed = geometry.closedHeight.value;
 			const highest = geometry.highest.value;
 			const raw = dragged(event.translationY, highest);
 
-			const lowest = config.enablePanDownToClose || detents.length === 0 ? closed : (detents[0] as number);
+			const lowest = config.enablePanDownToClose || snapPoints.length === 0 ? closed : (snapPoints[0] as number);
 			const factor = config.enableOverDrag ? config.overDragResistanceFactor : 0;
 			const next = Math.min(resistOverDrag(raw, lowest, highest, factor), geometry.maxHeight.value);
 
-			haptics(raw, next, lowest, highest, detents);
+			haptics(raw, next, lowest, highest, snapPoints);
 			state.base.value = next;
-			if (listHeld.value && next >= highest - AT_DETENT) listHeld.value = false;
+			if (listHeld.value && next >= highest - AT_SNAP_POINT) listHeld.value = false;
 		};
 
 		// The haptic for a close, the keyboard for a downward release — a release
@@ -162,11 +173,11 @@ export function useSheetPan(
 			animateTo(target, "gesture", velocity / 2);
 		};
 
-		// A release the list owns settles the sheet on the detent under `base`
-		// with no motion; `false` when it sits between detents and has to snap.
+		// A release the list owns settles the sheet on the snap point under `base`
+		// with no motion; `false` when it sits between snap points and has to snap.
 		const settleResting = (): boolean => {
 			"worklet";
-			const resting = restingDetent(state.base.value, geometry.detents.value);
+			const resting = restingSnapPoint(state.base.value, geometry.snapPoints.value);
 			if (resting === null) return false;
 			settleAt(resting, "gesture");
 			return true;
@@ -180,7 +191,7 @@ export function useSheetPan(
 			const config = state.config.value;
 			const closed = geometry.closedHeight.value;
 
-			// The finger was scrolling rows at the top detent: the release is the
+			// The finger was scrolling rows at the top snap point: the release is the
 			// list's momentum, not a snap — but the sheet still settles where it is.
 			const listOwns = listOwnsRelease({
 				scrollable: overList(source),
@@ -190,13 +201,13 @@ export function useSheetPan(
 			});
 			if (listOwns && settleResting()) return;
 
-			// A list-owned release between detents (which `listOwnsRelease` should
+			// A list-owned release between snap points (which `listOwnsRelease` should
 			// rule out) snaps to the nearest with no velocity and never closes.
 			const velocity = listOwns ? 0 : -event.velocityY;
 			const target = selectSnapHeight({
 				height: state.base.value,
 				velocity,
-				detents: geometry.detents.value,
+				snapPoints: geometry.snapPoints.value,
 				closedHeight: config.enablePanDownToClose && !listOwns ? closed : null,
 				projection: SNAP_PROJECTION,
 			});
@@ -239,11 +250,11 @@ export function useSheetPan(
 		startBase,
 		startScroll,
 		listHeld,
-		lastDetent,
+		lastSnapPoint,
 		overDragging,
 		enableHandlePanningGesture,
 		enableContentPanningGesture,
-		onDetentHaptic,
+		onSnapPointHaptic,
 		onCloseHaptic,
 		onOverDragHaptic,
 	]);

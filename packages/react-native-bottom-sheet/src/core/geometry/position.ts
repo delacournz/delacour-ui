@@ -5,7 +5,7 @@
  * Height space is the engine's coordinate system; this is the one place it is
  * converted to a transform. A detached sheet rests `restingBottom` above the
  * container's bottom edge, so its closed position is the full container
- * height and every detent sits that much higher.
+ * height and every snap point sits that much higher.
  */
 export function positionFor(containerHeight: number, restingBottom: number, height: number): number {
 	"worklet";

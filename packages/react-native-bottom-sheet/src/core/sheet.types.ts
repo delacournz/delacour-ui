@@ -8,13 +8,13 @@
  */
 
 /**
- * A detent as the consumer writes it — pixels of sheet visible above its
+ * A snap point as the consumer writes it — pixels of sheet visible above its
  * resting bottom line, or a percentage of the height available to the sheet.
  *
- * Height space throughout: `0` is closed, detents ascend, and `translateY` is
+ * Height space throughout: `0` is closed, snap points ascend, and `translateY` is
  * derived from a height only at the moment a view needs it.
  */
-export type DetentSpec = number | `${number}%`;
+export type SnapPointSpec = number | `${number}%`;
 
 /** What the sheet does when a keyboard it owns appears. */
 export type KeyboardBehavior = "interactive" | "extend" | "fillParent" | "none";
@@ -47,7 +47,7 @@ export type SheetIntent =
 	| { id: number; kind: "close" }
 	| { id: number; kind: "forceClose" }
 	| { id: number; kind: "snapToIndex"; index: number }
-	| { id: number; kind: "snapToPosition"; position: DetentSpec }
+	| { id: number; kind: "snapToPosition"; position: SnapPointSpec }
 	| { id: number; kind: "expand" }
 	| { id: number; kind: "collapse" };
 
@@ -60,7 +60,7 @@ export const GESTURE_SOURCE = {
 
 export type GestureSource = (typeof GESTURE_SOURCE)[keyof typeof GESTURE_SOURCE];
 
-/** Where the sheet sits relative to its detents. */
+/** Where the sheet sits relative to its snap points. */
 export const SHEET_STATE = {
 	CLOSED: 0,
 	OPENED: 1,

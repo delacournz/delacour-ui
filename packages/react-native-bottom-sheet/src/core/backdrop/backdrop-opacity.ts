@@ -1,6 +1,6 @@
 /**
  * The overlay's opacity at an index: `0` up to `disappearsOn`, rising
- * linearly to `opacity` at `appearsOn`, and a plateau above — a higher detent
+ * linearly to `opacity` at `appearsOn`, and a plateau above — a higher snap point
  * is no darker. Fed the keyboard-free index, so a keyboard lift never dims
  * the app behind the sheet.
  *

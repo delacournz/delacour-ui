@@ -71,7 +71,7 @@ engine's names win everywhere; this skin aliases nothing.
 ## What the engine owns
 
 Everything that is not a class. The open state and the intent queue; the
-height-space geometry and the detents; the handle and content pans and how a
+height-space geometry and the snap points; the handle and content pans and how a
 list shares a finger with them; the keyboard — who owns it, `interactive` /
 `extend` / `fillParent` / `none`, the lift and the restore; the sticky footer's
 line and the safe-area band under it; the teleport portal, the hosts, the
@@ -92,7 +92,7 @@ read those before touching behaviour, because behaviour is not here.
   components applies: the engine is another package.
 - **Where the classes land.** `Content`, `Footer` and `Steps` hand `style` to
   the engine's *measured* inner view, so a class there is height the dynamic
-  detent counts. `ScrollView` puts its content classes on an inner `View`
+  snap point counts. `ScrollView` puts its content classes on an inner `View`
   rather than the content container, so the one style this file writes there —
   the gap above a pinned footer — has a single writer. The three virtualised
   lists have no inner box, so theirs go on `contentContainerClassName`; the
@@ -115,16 +115,16 @@ read those before touching behaviour, because behaviour is not here.
   `fade` and an 8pt slop, for `Badge.CloseButton`'s and `Checkbox`'s reasons.
 - **The root fills in three defaults.** `bottomInset` is `useSafeAreaInsets().bottom`,
   so the engine reserves the home-indicator band and nobody pads for it by
-  hand. `onDetentHaptic` is `Presets.System.selection` and `onCloseHaptic` is
+  hand. `onSnapPointHaptic` is `Presets.System.selection` and `onCloseHaptic` is
   `Presets.System.impactLight` — pulsar's presets are worklets, so they are
   passed as they are; a JS function there is `undefined is not a function` on
   the UI thread. And `useKeyboardAnimationGuard()` runs on mount, the same
   stale-keyboard repair `Screen.Footer` runs. `topInset` stays at the engine's
-  zero, so a `%` detent is the fraction of the window it always was.
+  zero, so a `%` snap point is the fraction of the window it always was.
 - **`Footer.sticky` defaults to `false`**, matching `Screen.Footer`, and this is
   the one engine default the skin overrides. A pinned footer takes
   `padding={BOTTOM_SHEET_FOOTER_PADDING}` through the engine's prop rather
-  than a class, so the padding is inside the box the detent measures; the
+  than a class, so the padding is inside the box the snap point measures; the
   `stickyFooter` slot carries the gutter, the surface and the hairline, and
   the test asserts it carries no vertical padding.
 - **The overlay's opacity is 1**, because `--overlay` carries its own alpha and
@@ -178,7 +178,7 @@ problem it has:
 - nesting a sheet in a sheet — the registry stacks them; `stackBehavior` and
   `dismissAll` are for exactly that
 - `ScrollView` needing `dynamicSizing={false}` and `snapPoints` — a list's
-  content size is the dynamic detent
+  content size is the dynamic snap point
 - lifting `Overlay` and a sticky `Footer` out of the tree as render props —
   every part renders where it is written
 - a `Content` inside a `Container` paying the safe-area band by hand — the

@@ -1,5 +1,5 @@
-/** Everything the dynamic detent is a sum of, in height space. */
-export type DynamicDetentInput = {
+/** Everything the dynamic snap point is a sum of, in height space. */
+export type DynamicSnapPointInput = {
 	/** Measured handle height; `UNMEASURED` counts as zero. */
 	handleHeight: number;
 	/** Measured content height; `UNMEASURED` counts as zero. */
@@ -11,19 +11,19 @@ export type DynamicDetentInput = {
 	hasFooter: boolean;
 	/** The height the sheet may occupy. */
 	available: number;
-	/** An optional cap on the whole detent, below `available`. */
+	/** An optional cap on the whole snap point, below `available`. */
 	maxDynamicContentSize?: number;
 };
 
 /**
- * The detent a sheet sized to its content settles at.
+ * The snap point a sheet sized to its content settles at.
  *
  * Handle, content and — unlike the library this replaces — the footer's
  * content are all in, and the safe-area band exactly once: it lives inside the
  * footer when there is one and under the content when there is not. Capped by
  * `maxDynamicContentSize` and always by `available`.
  */
-export function dynamicDetent(input: DynamicDetentInput): number {
+export function dynamicSnapPoint(input: DynamicSnapPointInput): number {
 	"worklet";
 	const handle = input.handleHeight > 0 ? input.handleHeight : 0;
 	const content = input.contentHeight > 0 ? input.contentHeight : 0;

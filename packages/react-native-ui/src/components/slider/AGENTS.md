@@ -2,7 +2,7 @@
 
 A value picked by dragging along a track — one value, or a range. Compound root
 plus `Slider.Output`, `Slider.Track`, `Slider.Fill` and `Slider.Thumb`. The
-package's first drag-driven control, and its first `Gesture.Pan()`.
+package's first drag-driven control, and its first pan gesture.
 
 `import { Slider } from "@delacour/react-native-ui/slider";`
 
@@ -37,13 +37,13 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
 
 - **The root is not a `Pressable`, and neither is the thumb.** Three reasons and
   all of them structural. [Pressable](../pressable/AGENTS.md) mounts a
-  `Gesture.Tap()` whose `onEnd` fires `onPress`, so every tap-to-position would
+  tap whose `onDeactivate` fires `onPress`, so every tap-to-position would
   also fire a press. Its root `Animated.View` already owns `opacity` and
   `transform` through a `useAnimatedStyle` of its own, and the thumb's position
   *is* a `transform` — two animated styles on one node fight for the same prop,
   the rule `Radio.Indicator` states and the reason `Radio` takes no `asChild`.
   And a thumb wrapped in its own `Pressable` would nest a descendant `Tap`
-  inside the track's ancestor `Pan`, leaving two recognisers to negotiate for
+  inside the track's ancestor pan, leaving two recognisers to negotiate for
   one drag. What is inherited is the *vocabulary*: `HapticFeedback` and
   `playHaptic` come from `pressable.tsx`, which is exported for exactly this —
   one haptic switch in the library, never a second.
@@ -54,23 +54,22 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   press state the thumb owns.
 - **The value is written in `onBegin`, not only in `onUpdate`.** This is the one
   that will bite a rewrite. A pan activates on the first *movement*, so a
-  stationary tap never reaches `onStart` or `onUpdate`: a slider that computed
+  stationary tap never reaches `onActivate` or `onUpdate`: a slider that computed
   only there would tick, lift its thumb, and then not move it. `onFinalize` is
   likewise where the drag is reported finished, because it is the only callback
   that fires on every path, the never-activated one included.
-- **`minDistance(0)` is what wins the touch from a scroll view**, and it is not
+- **`minDistance: 0` is what wins the touch from a scroll view**, and it is not
   tuning. `Screen.ScrollArea` renders React Native's own `ScrollView`
   (`Animated.ScrollView`), not Gesture Handler's, so there is no sibling handler
   to negotiate with — the two race, and a pan that activates on the first move
   beats a scroll view's ten-point slop on both platforms. Which is also why there
   is **no `activeOffsetX`**: waiting for the axis to declare itself hands the
   scroll the first move and puts a dead zone at the start of every drag.
-  **`blocksExternalGesture` is not the escape hatch it looks like** — it resolves
-  a ref to a handler tag, a plain `ScrollView` has none, and Gesture Handler drops
-  the call without an error. If Android ever hands a drag to the scroll anyway,
+  **`block` is not the escape hatch it looks like** — it names another Gesture
+  Handler gesture, and a plain `ScrollView` has none to name. If Android ever hands a drag to the scroll anyway,
   the documented fix is a nested `GestureHandlerRootView` around the slider, not
   an offset filter.
-- **`shouldCancelWhenOutside(false)`**, where `Pressable`'s tap sets it `true`.
+- **`shouldCancelWhenOutside: false`**, where `Pressable`'s tap sets it `true`.
   Dragging a thumb to the far end routinely leaves the track's bounds, and the
   value has to keep tracking rather than the gesture giving up half way.
 - **On iOS, a slider inside a scroll view feels late until

@@ -1,4 +1,4 @@
-import { type ReactElement, type Ref, useCallback, useState } from "react";
+import { type ComponentRef, type ReactElement, type Ref, useCallback, useState } from "react";
 import { TextInput, type TextInputProps } from "react-native";
 import { composeRefs } from "../../lib/compose-refs";
 import { useButtonGroupItemContext } from "../button/button.context";
@@ -49,7 +49,7 @@ export type InputProps = Omit<TextInputProps, "placeholderTextColorClassName"> &
 	 * primary token, or the destructive one while the field is invalid.
 	 */
 	selectionColorClassName?: string;
-	ref?: Ref<TextInput>;
+	ref?: Ref<ComponentRef<typeof TextInput>>;
 };
 
 function InputRoot({

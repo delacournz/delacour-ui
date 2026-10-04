@@ -23,7 +23,19 @@ export type Reporter = {
 };
 
 /** Pinned to the SDK this monorepo develops against. */
-const EXPO_SDK = "~57.0.15";
+const EXPO_SDK = "58.0.0-preview.7";
+const REACT_NATIVE = "0.88.0-rc.1";
+
+/**
+ * Held at one copy each, the way the repository root holds them.
+ *
+ * Both are prereleases while SDK 58 is in preview, and a semver range —
+ * `>=0.81`, `*` — never matches a prerelease, so every package peering on
+ * either would be handed a second, stable copy of its own. Two React Natives
+ * register every native module twice. Bun honours `overrides` only at the
+ * install root, so the monorepo scaffold carries them on its root package.
+ */
+const PRERELEASE_OVERRIDES = { expo: EXPO_SDK, "react-native": REACT_NATIVE };
 
 const PACKAGE_JSON = {
 	name: "delacour-verify-app",
@@ -34,10 +46,11 @@ const PACKAGE_JSON = {
 		start: "expo start",
 		typecheck: "tsc --noEmit",
 	},
+	overrides: PRERELEASE_OVERRIDES,
 	dependencies: {
 		expo: EXPO_SDK,
-		react: "19.2.3",
-		"react-native": "0.86.2",
+		react: "19.3.0",
+		"react-native": REACT_NATIVE,
 		// Uniwind and Tailwind are the styling foundation every component
 		// resolves its classes through, so a real consumer has them before the
 		// first `add`. Installed here rather than left to the CLI so the run
@@ -46,7 +59,7 @@ const PACKAGE_JSON = {
 		tailwindcss: "^4.3.3",
 	},
 	devDependencies: {
-		"@types/react": "~19.2.2",
+		"@types/react": "~19.3.0",
 		typescript: "^5.9.3",
 	},
 };
@@ -207,6 +220,7 @@ const ROOT_PACKAGE_JSON = {
 	version: "1.0.0",
 	private: true,
 	workspaces: ["apps/*", "packages/*"],
+	overrides: PRERELEASE_OVERRIDES,
 };
 
 export async function scaffoldWorkspace(

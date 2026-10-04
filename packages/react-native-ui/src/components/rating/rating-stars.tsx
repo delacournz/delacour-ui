@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useEffect, useMemo, useState } from "react";
+import { type ReactElement, useCallback, useEffect, useState } from "react";
 import { type AccessibilityActionEvent, type LayoutChangeEvent, View, type ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import { useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useThemeColor } from "../../hooks/use-theme-color";
@@ -28,14 +28,14 @@ export type RatingStarsProps = Omit<ViewProps, "children" | "style"> & {
  * **It is not a `Pressable`, and neither is a star.** The reasons are
  * `Slider.Track`'s: `Pressable`'s tap fires `onPress` on every touch-to-set, and a
  * `Pressable` per star would nest five taps inside the row's pan and leave them
- * to negotiate for one drag. One `Gesture.Pan()` on the row reads the star under
+ * to negotiate for one drag. One `usePanGesture` on the row reads the star under
  * the finger, on touch-down and throughout the drag. What is inherited is the
  * vocabulary — `playHaptic` from `pressable.tsx`, the one haptic switch.
  *
  * **The value is written in `onBegin`**, because a pan activates on the first
  * movement and a stationary tap would otherwise never set anything.
- * `minDistance(0)` wins the touch from an enclosing scroll view, and
- * `shouldCancelWhenOutside(false)` keeps a drag past the last star tracking it.
+ * `minDistance: 0` wins the touch from an enclosing scroll view, and
+ * `shouldCancelWhenOutside: false` keeps a drag past the last star tracking it.
  * `onFinalize` is where a clear is decided and the gesture reported finished,
  * because it is the one callback that fires on every path.
  *
@@ -97,71 +97,56 @@ export function RatingStars({ className, onLayout, ...props }: RatingStarsProps)
 		[onLayout, width]
 	);
 
-	const gesture = useMemo(() => {
-		// Beside its callers rather than at module scope, so it is captured by
-		// ordinary closure — see Slider's AGENTS.md on module-scope worklets.
-		const applyTouch = (x: number, isGrab: boolean) => {
+	// Beside its callers rather than at module scope, so it is captured by
+	// ordinary closure — see Slider's AGENTS.md on module-scope worklets.
+	const applyTouch = (x: number, isGrab: boolean) => {
+		"worklet";
+		const next = ratingFromOffset({ count, position: x, step, width: width.value });
+		if (next <= 0) return;
+
+		const changed = next !== current.value;
+		if (changed) {
+			current.value = next;
+			scheduleOnRN(setValue, next);
+		}
+		if (haptic !== false && (isGrab || changed)) playHaptic(haptic);
+	};
+
+	const gesture = usePanGesture({
+		enabled: isInteractive,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
 			"worklet";
-			const next = ratingFromOffset({ count, position: x, step, width: width.value });
-			if (next <= 0) return;
-
-			const changed = next !== current.value;
-			if (changed) {
-				current.value = next;
-				scheduleOnRN(setValue, next);
+			startValue.value = current.value;
+			startX.value = event.x;
+			travel.value = 0;
+			applyTouch(event.x, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const moved = Math.abs(event.x - startX.value);
+			if (moved > travel.value) travel.value = moved;
+			applyTouch(event.x, false);
+		},
+		onFinalize: () => {
+			"worklet";
+			if (
+				shouldClearRating({
+					allowClear,
+					startValue: startValue.value,
+					touchedValue: current.value,
+					travel: travel.value,
+				})
+			) {
+				current.value = 0;
+				scheduleOnRN(setValue, 0);
+				if (haptic !== false) playHaptic(haptic);
 			}
-			if (haptic !== false && (isGrab || changed)) playHaptic(haptic);
-		};
-
-		return Gesture.Pan()
-			.enabled(isInteractive)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.onBegin((event) => {
-				"worklet";
-				startValue.value = current.value;
-				startX.value = event.x;
-				travel.value = 0;
-				applyTouch(event.x, true);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const moved = Math.abs(event.x - startX.value);
-				if (moved > travel.value) travel.value = moved;
-				applyTouch(event.x, false);
-			})
-			.onFinalize(() => {
-				"worklet";
-				if (
-					shouldClearRating({
-						allowClear,
-						startValue: startValue.value,
-						touchedValue: current.value,
-						travel: travel.value,
-					})
-				) {
-					current.value = 0;
-					scheduleOnRN(setValue, 0);
-					if (haptic !== false) playHaptic(haptic);
-				}
-				scheduleOnRN(commitEnd, current.value);
-				scheduleOnRN(settle);
-			});
-	}, [
-		allowClear,
-		commitEnd,
-		count,
-		current,
-		haptic,
-		isInteractive,
-		setValue,
-		settle,
-		startValue,
-		startX,
-		step,
-		travel,
-		width,
-	]);
+			scheduleOnRN(commitEnd, current.value);
+			scheduleOnRN(settle);
+		},
+	});
 
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {

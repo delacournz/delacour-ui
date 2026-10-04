@@ -433,7 +433,7 @@ describe("switchTravel", () => {
 
 describe("resolveSwitchRelease", () => {
 	test("a release that barely moved is a tap, and toggles", () => {
-		// This is what lets one Gesture.Pan() serve both gestures rather than
+		// This is what lets one usePanGesture serve both gestures rather than
 		// racing a Tap against it.
 		expect(resolveSwitchRelease({ progress: 0, distance: 0, velocity: 0, wasSelected: false })).toBe(true);
 		expect(resolveSwitchRelease({ progress: 1, distance: 0, velocity: 0, wasSelected: true })).toBe(false);

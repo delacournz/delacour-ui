@@ -46,7 +46,7 @@ in [Provider](/docs/native/getting-started/provider).
   type={{
     children: { type: "ReactNode", required: true },
     style: {
-      type: "StyleProp<ViewStyle>",
+      type: 'ViewProps["style"]',
       description: "Reaches the gesture root. Carries no default — GestureHandlerRootView applies its own { flex: 1 } only while this is undefined, so passing a style means including it yourself.",
     },
     initialMetrics: {

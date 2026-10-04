@@ -21,7 +21,7 @@ The numbers are `core/scroll/`: `shouldLockScroll`, `listDragHeight`,
 ## How a list and the sheet share a finger
 
 The content pan and the list's native scroll are **simultaneous**: the list's
-`Native` gesture is declared `simultaneousWithExternalGesture(pans.content)`,
+`Native` gesture is declared `useNativeGesture({ simultaneousWith: pans.content })`,
 so both see every touch. The rule for who moves is the sheet's state:
 
 - **Below the highest detent — locked.** Every scroll event is answered with

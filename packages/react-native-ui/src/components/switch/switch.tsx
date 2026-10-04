@@ -10,7 +10,7 @@ import {
 	useState,
 } from "react";
 import type { AccessibilityActionEvent, LayoutChangeEvent, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, {
 	cancelAnimation,
 	interpolateColor,
@@ -96,6 +96,11 @@ function SwitchRoot({
 	// rather than state: nothing renders differently for it, so a commit on every
 	// touch would be pure cost.
 	const isPressed = useSharedValue(0);
+	// The drag's last translation and horizontal velocity. Gesture Handler 3
+	// hands `onFinalize` only the pointer's position, and a tap that never moved
+	// never reaches `onUpdate` — so both are reset on the grab and read back on
+	// the release.
+	const moved = useSharedValue({ translationX: 0, translationY: 0, velocityX: 0 });
 
 	// A ref rather than state: the pan reads it twice a drag and nothing renders
 	// differently for it, so a re-render on touch-down would be pure cost.
@@ -139,56 +144,56 @@ function SwitchRoot({
 		[trackWidth]
 	);
 
-	const gesture = useMemo(
-		() =>
-			Gesture.Pan()
-				.enabled(!axes.isDisabled)
-				.minDistance(0)
-				.shouldCancelWhenOutside(false)
-				.onBegin(() => {
-					"worklet";
-					grabbed.value = progress.value;
-					isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
-					scheduleOnRN(setDragging, true);
-				})
-				.onUpdate((event) => {
-					"worklet";
-					const travel = switchTravel({
-						inset: SWITCH_THUMB_INSET,
-						thumbWidth: thumbWidth.value,
-						trackWidth: trackWidth.value,
-					});
-					if (travel <= 0) return;
+	const gesture = usePanGesture({
+		enabled: !axes.isDisabled,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: () => {
+			"worklet";
+			grabbed.value = progress.value;
+			moved.value = { translationX: 0, translationY: 0, velocityX: 0 };
+			isPressed.value = withSpring(1, SWITCH_PRESS_SPRING);
+			scheduleOnRN(setDragging, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			moved.value = { translationX: event.translationX, translationY: event.translationY, velocityX: event.velocityX };
+			const travel = switchTravel({
+				inset: SWITCH_THUMB_INSET,
+				thumbWidth: thumbWidth.value,
+				trackWidth: trackWidth.value,
+			});
+			if (travel <= 0) return;
 
-					progress.value = Math.min(1, Math.max(0, grabbed.value + event.translationX / travel));
-				})
-				.onFinalize((event) => {
-					"worklet";
-					// Whichever axis moved further. A vertical swipe that began on the
-					// switch has to count as movement, or every attempt to scroll past
-					// the control would read as a tap and toggle it.
-					const target = resolveSwitchRelease({
-						distance: Math.max(Math.abs(event.translationX), Math.abs(event.translationY)),
-						progress: progress.value,
-						velocity: event.velocityX,
-						wasSelected: selected,
-					});
+			progress.value = Math.min(1, Math.max(0, grabbed.value + event.translationX / travel));
+		},
+		onFinalize: () => {
+			"worklet";
+			const { translationX, translationY, velocityX } = moved.value;
+			// Whichever axis moved further. A vertical swipe that began on the
+			// switch has to count as movement, or every attempt to scroll past
+			// the control would read as a tap and toggle it.
+			const target = resolveSwitchRelease({
+				distance: Math.max(Math.abs(translationX), Math.abs(translationY)),
+				progress: progress.value,
+				velocity: velocityX,
+				wasSelected: selected,
+			});
 
-					progress.value = withSpring(target ? 1 : 0, SWITCH_THUMB_SPRING);
-					isPressed.value = withSpring(0, SWITCH_PRESS_SPRING);
-					// At the commit, never at the grab. A drag taken half way and
-					// released back has changed nothing, and a switch that buzzed for it
-					// would be reporting a state change that did not happen.
-					if (haptic !== false && target !== selected) playHaptic(haptic);
+			progress.value = withSpring(target ? 1 : 0, SWITCH_THUMB_SPRING);
+			isPressed.value = withSpring(0, SWITCH_PRESS_SPRING);
+			// At the commit, never at the grab. A drag taken half way and
+			// released back has changed nothing, and a switch that buzzed for it
+			// would be reporting a state change that did not happen.
+			if (haptic !== false && target !== selected) playHaptic(haptic);
 
-					// Order matters: the root must have stopped treating this as a live
-					// drag before `commit` asks it to re-sync. `scheduleOnRN` keeps them
-					// in the order they were queued.
-					scheduleOnRN(setDragging, false);
-					scheduleOnRN(commit, target);
-				}),
-		[axes.isDisabled, commit, grabbed, haptic, isPressed, progress, selected, setDragging, thumbWidth, trackWidth]
-	);
+			// Order matters: the root must have stopped treating this as a live
+			// drag before `commit` asks it to re-sync. `scheduleOnRN` keeps them
+			// in the order they were queued.
+			scheduleOnRN(setDragging, false);
+			scheduleOnRN(commit, target);
+		},
+	});
 
 	const toggle = useCallback(() => {
 		commit(!selectedRef.current);
@@ -361,7 +366,7 @@ function isSwitchThumbElement(child: ReactNode): boolean {
 /**
  * A binary preference, flipped by a tap or by dragging its thumb.
  *
- * The whole pill is the control and one `Gesture.Pan()` drives it: a tap toggles,
+ * The whole pill is the control and one `usePanGesture` drives it: a tap toggles,
  * a drag takes the thumb with the finger, and a release settles by position or by
  * a flick's velocity. There is no separate tap mode — a release that barely moved
  * *is* the tap, which is why the two never race.

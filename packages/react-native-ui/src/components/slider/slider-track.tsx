@@ -1,6 +1,6 @@
-import { type ReactElement, useCallback, useMemo } from "react";
+import { type ReactElement, useCallback } from "react";
 import type { LayoutChangeEvent, ViewProps } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, usePanGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { playHaptic } from "../pressable";
@@ -27,7 +27,7 @@ export type SliderTrackProps = Omit<ViewProps, "children" | "style"> & {
 /**
  * The groove the thumbs run along, and the surface the drag is claimed on.
  *
- * This is where the whole gesture lives. One `Gesture.Pan()` drives every thumb:
+ * This is where the whole gesture lives. One `usePanGesture` drives every thumb:
  * touching down grabs the nearest one and moves it to the finger, and from there
  * the drag tracks it. One rule rather than a tap mode and a drag mode — the
  * alternative, dragging the handle only, is what iOS's own slider does and it is
@@ -35,23 +35,22 @@ export type SliderTrackProps = Omit<ViewProps, "children" | "style"> & {
  * are pointing.
  *
  * **The value is written in `onBegin`, not only in `onUpdate`.** A pan activates
- * on the first *movement*, so a stationary tap never reaches `onStart` or
+ * on the first *movement*, so a stationary tap never reaches `onActivate` or
  * `onUpdate` at all — a slider that only computed there would tick, lift its
  * thumb and then not move it. `onFinalize` is likewise where the drag is reported
  * as finished, because it is the one callback that fires on every path, including
  * the one where the pan never activated.
  *
- * **`minDistance(0)` is what wins the touch from a scroll view.**
+ * **`minDistance: 0` is what wins the touch from a scroll view.**
  * `Screen.ScrollArea` renders React Native's own `ScrollView`, not Gesture
  * Handler's, so there is no handler to negotiate with — the two race, and a pan
  * that activates on the first move beats a scroll view's ten-point slop on both
  * platforms. It is also why there is no `activeOffsetX` here: waiting for the
  * axis to declare itself would hand the scroll the first move and put a dead zone
- * at the start of every drag. `blocksExternalGesture` is not the answer either —
- * it resolves a ref to a handler tag, a plain `ScrollView` has none, and the call
- * is dropped without an error.
+ * at the start of every drag. `block` is not the answer either — it names another
+ * Gesture Handler gesture, and a plain `ScrollView` has none to name.
  *
- * **`shouldCancelWhenOutside(false)`** where `Pressable`'s tap sets it `true`:
+ * **`shouldCancelWhenOutside: false`** where `Pressable`'s tap sets it `true`:
  * dragging a thumb to the far end routinely leaves the track's bounds, and the
  * value must keep tracking rather than the gesture giving up.
  *
@@ -95,107 +94,91 @@ export function SliderTrack({ children, className, ...props }: SliderTrackProps)
 		[isVertical, trackSize]
 	);
 
-	const gesture = useMemo(() => {
-		// Declared here rather than at module scope, and called only from the two
-		// callbacks below. A worklet defined beside its callers in one scope is
-		// captured by ordinary closure; a module-scope one binds at import time, in
-		// source order, which is how a helper ends up `undefined` on the UI thread.
-		const applyTouch = (along: number, forIndex: number, isGrab: boolean) => {
+	// Declared here rather than at module scope, and called only from the two
+	// callbacks below. A worklet defined beside its callers in one scope is
+	// captured by ordinary closure; a module-scope one binds at import time, in
+	// source order, which is how a helper ends up `undefined` on the UI thread.
+	const applyTouch = (along: number, forIndex: number, isGrab: boolean) => {
+		"worklet";
+		const thumb = thumbSize.value;
+		const travel = trackSize.value - thumb;
+		// The touch is read in the thumb's own frame — its centre, not its left
+		// edge — so the handle stays inside the groove at both ends.
+		const position = along - thumb / 2;
+		const raw = valueFromOffset({ position, travel, minValue, maxValue, isVertical });
+		const snapped = snapToStep(raw, step, minValue, maxValue);
+		const current = positions.value;
+		const next = clampThumb(snapped, current, forIndex, minValue, maxValue);
+
+		if (next !== current[forIndex]) {
+			const updated = [...current];
+			updated[forIndex] = next;
+			positions.value = updated;
+		}
+
+		// The grab itself always confirms, the way a press does. After that the
+		// ticks are the step crossings, rate-limited by distance travelled.
+		if (isGrab) {
+			lastTick.value = next;
+			lastTickPosition.value = position;
+			if (haptic !== false) playHaptic(haptic);
+			return;
+		}
+
+		if (
+			haptic !== false &&
+			shouldTickHaptic({
+				lastPosition: lastTickPosition.value,
+				lastSnapped: lastTick.value,
+				maxValue,
+				minValue,
+				position,
+				snapped: next,
+				step,
+			})
+		) {
+			playHaptic(haptic);
+			lastTick.value = next;
+			lastTickPosition.value = position;
+		}
+	};
+
+	const gesture = usePanGesture({
+		enabled: !isDisabled,
+		minDistance: 0,
+		shouldCancelWhenOutside: false,
+		onBegin: (event) => {
 			"worklet";
+			const along = isVertical ? event.y : event.x;
 			const thumb = thumbSize.value;
-			const travel = trackSize.value - thumb;
-			// The touch is read in the thumb's own frame — its centre, not its left
-			// edge — so the handle stays inside the groove at both ends.
-			const position = along - thumb / 2;
-			const raw = valueFromOffset({ position, travel, minValue, maxValue, isVertical });
-			const snapped = snapToStep(raw, step, minValue, maxValue);
-			const current = positions.value;
-			const next = clampThumb(snapped, current, forIndex, minValue, maxValue);
-
-			if (next !== current[forIndex]) {
-				const updated = [...current];
-				updated[forIndex] = next;
-				positions.value = updated;
-			}
-
-			// The grab itself always confirms, the way a press does. After that the
-			// ticks are the step crossings, rate-limited by distance travelled.
-			if (isGrab) {
-				lastTick.value = next;
-				lastTickPosition.value = position;
-				if (haptic !== false) playHaptic(haptic);
-				return;
-			}
-
-			if (
-				haptic !== false &&
-				shouldTickHaptic({
-					lastPosition: lastTickPosition.value,
-					lastSnapped: lastTick.value,
-					maxValue,
-					minValue,
-					position,
-					snapped: next,
-					step,
-				})
-			) {
-				playHaptic(haptic);
-				lastTick.value = next;
-				lastTickPosition.value = position;
-			}
-		};
-
-		return Gesture.Pan()
-			.enabled(!isDisabled)
-			.minDistance(0)
-			.shouldCancelWhenOutside(false)
-			.onBegin((event) => {
-				"worklet";
-				const along = isVertical ? event.y : event.x;
-				const thumb = thumbSize.value;
-				const raw = valueFromOffset({
-					isVertical,
-					maxValue,
-					minValue,
-					position: along - thumb / 2,
-					travel: trackSize.value - thumb,
-				});
-				const index = nearestThumbIndex(positions.value, raw);
-				activeIndex.value = index;
-				scheduleOnRN(setDragging, true);
-				applyTouch(along, index, true);
-			})
-			.onUpdate((event) => {
-				"worklet";
-				const index = activeIndex.value;
-				if (index < 0) return;
-				applyTouch(isVertical ? event.y : event.x, index, false);
-			})
-			.onFinalize(() => {
-				"worklet";
-				activeIndex.value = -1;
-				// Order matters: the root must have stopped treating this as a live
-				// drag before `commitEnd` asks it to re-sync. `scheduleOnRN` keeps
-				// them in the order they were queued.
-				scheduleOnRN(setDragging, false);
-				scheduleOnRN(commitEnd, [...positions.value]);
+			const raw = valueFromOffset({
+				isVertical,
+				maxValue,
+				minValue,
+				position: along - thumb / 2,
+				travel: trackSize.value - thumb,
 			});
-	}, [
-		activeIndex,
-		commitEnd,
-		haptic,
-		isDisabled,
-		isVertical,
-		lastTick,
-		lastTickPosition,
-		maxValue,
-		minValue,
-		positions,
-		setDragging,
-		step,
-		thumbSize,
-		trackSize,
-	]);
+			const index = nearestThumbIndex(positions.value, raw);
+			activeIndex.value = index;
+			scheduleOnRN(setDragging, true);
+			applyTouch(along, index, true);
+		},
+		onUpdate: (event) => {
+			"worklet";
+			const index = activeIndex.value;
+			if (index < 0) return;
+			applyTouch(isVertical ? event.y : event.x, index, false);
+		},
+		onFinalize: () => {
+			"worklet";
+			activeIndex.value = -1;
+			// Order matters: the root must have stopped treating this as a live
+			// drag before `commitEnd` asks it to re-sync. `scheduleOnRN` keeps
+			// them in the order they were queued.
+			scheduleOnRN(setDragging, false);
+			scheduleOnRN(commitEnd, [...positions.value]);
+		},
+	});
 
 	// The one hop from the UI thread back to React, and it is gated element-wise:
 	// `useAnimatedReaction` re-runs on every write, and `positions` is a fresh

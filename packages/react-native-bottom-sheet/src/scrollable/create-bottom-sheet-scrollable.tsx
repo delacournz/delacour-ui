@@ -10,7 +10,7 @@ import {
 	useRef,
 } from "react";
 import { type LayoutChangeEvent, StyleSheet } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { GestureDetector, useNativeGesture } from "react-native-gesture-handler";
 import Animated, { useAnimatedRef, useAnimatedStyle } from "react-native-reanimated";
 import { useBottomSheetInternal } from "../components/bottom-sheet.context";
 import { SCROLLABLE_TYPE, type ScrollableType, scrollContentHeight, UNMEASURED } from "../core";
@@ -134,9 +134,8 @@ export function createBottomSheetScrollable<P extends object>(
 			listeners: { onScroll, onScrollBeginDrag, onScrollEndDrag, onMomentumScrollEnd },
 		});
 
-		const native = useMemo(
-			() => Gesture.Native().simultaneousWithExternalGesture(pans.content).shouldCancelWhenOutside(false),
-			[pans.content]
+		const native = useNativeGesture(
+			useMemo(() => ({ simultaneousWith: pans.content, shouldCancelWhenOutside: false }), [pans.content])
 		);
 
 		const composedRef = useMemo(

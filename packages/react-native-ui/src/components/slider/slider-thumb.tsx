@@ -42,7 +42,7 @@ export type SliderThumbProps = Omit<ViewProps, "children" | "style"> & {
  * The grab handle.
  *
  * **It holds no gesture of its own**, which is the design rather than an
- * omission. One `Gesture.Pan()` on the track drives every thumb: a press 40pt
+ * omission. One `usePanGesture` on the track drives every thumb: a press 40pt
  * along an empty groove should still lift the thumb it is about to move, and a
  * per-thumb gesture could not know that. It would also nest a descendant handler
  * inside the track's, leaving two recognisers to negotiate for one drag.

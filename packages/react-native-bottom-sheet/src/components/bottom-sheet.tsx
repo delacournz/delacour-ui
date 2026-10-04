@@ -118,7 +118,7 @@ function BottomSheetRoot({
 	keepMounted = false,
 	stackBehavior = "push",
 	closeOnBack = true,
-	onDetentHaptic,
+	onSnapPointHaptic,
 	onCloseHaptic,
 	onOverDragHaptic,
 }: BottomSheetProps): ReactElement {
@@ -129,7 +129,7 @@ function BottomSheetRoot({
 	});
 	const [presented, setPresented] = useState(isOpen);
 	const [index, setIndex] = useState(CLOSED_INDEX);
-	const [detentCount, setDetentCount] = useState(0);
+	const [snapPointCount, setSnapPointCount] = useState(0);
 	const [hasOverlay, setHasOverlay] = useState(false);
 	const [hasFooter, setHasFooter] = useState(false);
 	const handleMounted = useRef(false);
@@ -140,7 +140,7 @@ function BottomSheetRoot({
 
 	const detachedOptions = useMemo(() => resolveDetached(detached), [detached]);
 
-	// A `Steps` body may override the detents and the dismissibility for the
+	// A `Steps` body may override the snap points and the dismissibility for the
 	// step it is on. A step that names its `snapPoints` is sized by them, so
 	// dynamic sizing is off while it is current.
 	const [stepOverride, setStepOverride] = useState<SheetStepOverride | null>(null);
@@ -196,7 +196,7 @@ function BottomSheetRoot({
 		setOpen,
 		setPresented,
 		setIndex,
-		setDetentCount,
+		setSnapPointCount,
 		onIndexChange,
 		onClose,
 		onAnimate,
@@ -214,7 +214,7 @@ function BottomSheetRoot({
 	const pans = useSheetPan(state, geometry, animateTo, settleAt, {
 		enableHandlePanningGesture,
 		enableContentPanningGesture,
-		onDetentHaptic,
+		onSnapPointHaptic,
 		onCloseHaptic,
 		onOverDragHaptic,
 	});
@@ -246,7 +246,9 @@ function BottomSheetRoot({
 	// the way there.
 	const isEffectivelyOpen = useCallback((): boolean => {
 		if (state.animStatus.value === ANIM_STATUS.RUNNING) {
-			return indexForHeight(state.animTarget.value, geometry.detents.value, geometry.closedHeight.value) > CLOSED_INDEX;
+			return (
+				indexForHeight(state.animTarget.value, geometry.snapPoints.value, geometry.closedHeight.value) > CLOSED_INDEX
+			);
 		}
 		return state.currentIndex.value > CLOSED_INDEX;
 	}, [state, geometry]);
@@ -262,7 +264,7 @@ function BottomSheetRoot({
 		if (isOpen) {
 			setPresented(true);
 			// A move queued by the ref on a closed sheet is a more specific open;
-			// it waits on the same layout and lands on its own detent.
+			// it waits on the same layout and lands on its own snap point.
 			if (!moveQueued.current) dispatch({ kind: "open" });
 			moveQueued.current = false;
 			return;
@@ -288,7 +290,7 @@ function BottomSheetRoot({
 			if (latestOpen.current) setOpen(false);
 		};
 		// A move on a closed sheet is an open: the state flips first so the
-		// portal mounts, and the queued intent lands on the requested detent.
+		// portal mounts, and the queued intent lands on the requested snap point.
 		const move = (request: IntentRequest): void => {
 			if (!isEffectivelyOpen() && !latestOpen.current) {
 				moveQueued.current = true;
@@ -335,8 +337,8 @@ function BottomSheetRoot({
 	}, [presented, closeOnBack, registryTop, methods]);
 
 	const contextValue = useMemo<BottomSheetContextValue>(
-		() => ({ ...methods, isOpen, setOpen, index, detentCount }),
-		[methods, isOpen, setOpen, index, detentCount]
+		() => ({ ...methods, isOpen, setOpen, index, snapPointCount }),
+		[methods, isOpen, setOpen, index, snapPointCount]
 	);
 
 	const animatedValue = useMemo<BottomSheetAnimatedValue>(
@@ -349,7 +351,7 @@ function BottomSheetRoot({
 			contentHeight: state.contentHeight,
 			footerHeight: geometry.footerHeight,
 			keyboardLift: geometry.keyboardLift,
-			detents: geometry.detents,
+			snapPoints: geometry.snapPoints,
 			closedHeight: geometry.closedHeight,
 		}),
 		[geometry, state]

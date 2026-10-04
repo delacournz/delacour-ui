@@ -1,6 +1,6 @@
 ---
 title: BottomSheet
-description: A sheet that rises from the bottom edge — detents, keyboard, sticky footer, scrollables and multi-step bodies, on @delacour/react-native-bottom-sheet.
+description: A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and multi-step bodies, on @delacour/react-native-bottom-sheet.
 icon: PanelBottom
 ---
 
@@ -75,7 +75,7 @@ sheet.current?.snapToIndex(1);
 ## Sizing
 
 Sizing is the **root's**: by default a sheet is as tall as its content, and `snapPoints` add
-detents to rest at. Heights are pixels above the safe-area bottom, or a percentage of the window.
+snap points to rest at. Heights are pixels above the safe-area bottom, or a percentage of the window.
 
 ```tsx
 <BottomSheet>…</BottomSheet>
@@ -84,13 +84,13 @@ detents to rest at. Heights are pixels above the safe-area bottom, or a percenta
 <BottomSheet snapPoints={[320]} dynamicSizing={false}>…</BottomSheet>
 ```
 
-`maxDynamicContentSize` caps the content detent, and `dynamicSizing={false}` drops it so the
-sheet rests only on the detents you named. The rules — height space, the three kinds of detent,
-the index — are on [Detents](/docs/bottom-sheet/detents).
+`maxDynamicContentSize` caps the content snap point, and `dynamicSizing={false}` drops it so the
+sheet rests only on the snap points you named. The rules — height space, the three kinds of snap point,
+the index — are on [Snap points](/docs/bottom-sheet/snap-points).
 
 ## Scrolling
 
-A list as the body needs nothing else: its content size is the dynamic detent, capped by
+A list as the body needs nothing else: its content size is the dynamic snap point, capped by
 `maxDynamicContentSize`, and a finger at the top of the list moves the sheet while one anywhere
 else scrolls.
 
@@ -151,7 +151,7 @@ function Field() {
 Registration is what makes moving focus between two fields one resize rather than a close and a
 reopen. By default the sheet also claims any keyboard opened by a field inside its frame; the
 `keyboardBehavior` and `keyboardScope` props on the root choose what it does with one —
-`interactive` lifts the sheet by the keyboard, `extend` snaps to the next detent, `fillParent`
+`interactive` lifts the sheet by the keyboard, `extend` snaps to the next snap point, `fillParent`
 takes the sheet to the top. See [Keyboard](/docs/bottom-sheet/keyboard).
 
 ## Detached
@@ -311,8 +311,8 @@ only by an app that imports this subpath — and the app mounts
 | `BottomSheet.Container` | The panel that moves. Writes `Background` and `Handle` when you write neither |
 | `BottomSheet.Background` | The panel's surface — `bg-popover`, top corners rounded, every corner when detached |
 | `BottomSheet.Handle` | The grabber's row and the pill inside it; the one accessibility-adjustable element |
-| `BottomSheet.Content` | The static body, measured for the content detent |
-| `BottomSheet.ScrollView` / `FlatList` / `SectionList` / `LegendList` | A scrolling body; its content size is the content detent |
+| `BottomSheet.Content` | The static body, measured for the content snap point |
+| `BottomSheet.ScrollView` / `FlatList` / `SectionList` / `LegendList` | A scrolling body; its content size is the content snap point |
 | `BottomSheet.Steps` / `BottomSheet.Step` | A body whose contents follow a machine, one `Step` per state |
 | `BottomSheet.Footer` | Controls at the bottom. In the flow by default, `sticky` to pin |
 | `BottomSheet.Close` | The dismiss control, out of the content's flow in the top-right |
@@ -329,7 +329,7 @@ reads inside the sheet.
 ### BottomSheet
 
 The engine's root with this library's defaults: `bottomInset` from the safe area, `selection`
-haptics on a detent and `impactLight` on a close, and the stale-keyboard guard on mount.
+haptics on a snap point and `impactLight` on a close, and the stale-keyboard guard on mount.
 
 <TypeTable
   type={{
@@ -339,20 +339,20 @@ haptics on a detent and `impactLight` on a close, and the stale-keyboard guard o
       type: "(isOpen: boolean) => void",
       description: "Every open and close — trigger, swipe, overlay, Close, the ref, or a controlled isOpen.",
     },
-    index: { type: "number", description: "Controlled detent index. Changing it snaps an open sheet." },
-    initialIndex: { type: "number", default: "0", description: "The detent open lands on." },
+    index: { type: "number", description: "Controlled snap point index. Changing it snaps an open sheet." },
+    initialIndex: { type: "number", default: "0", description: "The snap point open lands on." },
     onIndexChange: {
       type: "(index: number, height: number, source: AnimationSource) => void",
       description: "The settled index changed; -1 on close.",
     },
     onClose: { type: "() => void", description: "The sheet reached its closed height. onOpenChange(false) follows." },
     snapPoints: {
-      type: "readonly DetentSpec[]",
+      type: "readonly SnapPointSpec[]",
       default: "[]",
       description: "Heights above the safe-area bottom in pixels, or a percentage of the window.",
     },
-    dynamicSizing: { type: "boolean", default: "true", description: "Adds the content's own height as a detent." },
-    maxDynamicContentSize: { type: "number", description: "Caps the content detent." },
+    dynamicSizing: { type: "boolean", default: "true", description: "Adds the content's own height as a snap point." },
+    maxDynamicContentSize: { type: "number", description: "Caps the content snap point." },
     detached: {
       type: "boolean | { horizontalMargin?: number; bottomOffset?: number }",
       description: "A floating card. true is { horizontalMargin: 16, bottomOffset: 16 }.",
@@ -365,7 +365,7 @@ haptics on a detent and `impactLight` on a close, and the stale-keyboard guard o
     enablePanDownToClose: { type: "boolean", default: "true" },
     enableHandlePanningGesture: { type: "boolean", default: "true" },
     enableContentPanningGesture: { type: "boolean", default: "true" },
-    enableOverDrag: { type: "boolean", default: "true", description: "Rubber-band past the detents." },
+    enableOverDrag: { type: "boolean", default: "true", description: "Rubber-band past the snap points." },
     keyboardBehavior: {
       type: '"interactive" | "extend" | "fillParent" | "none"',
       default: '"interactive"',
@@ -389,7 +389,7 @@ haptics on a detent and `impactLight` on a close, and the stale-keyboard guard o
       description: "What opening does to the other sheets open in the same host.",
     },
     closeOnBack: { type: "boolean", default: "true", description: "Android's back button closes the top sheet." },
-    onDetentHaptic: { type: "() => void", default: "Presets.System.selection", description: "A worklet. A drag crossed a detent." },
+    onSnapPointHaptic: { type: "() => void", default: "Presets.System.selection", description: "A worklet. A drag crossed a snap point." },
     onCloseHaptic: { type: "() => void", default: "Presets.System.impactLight", description: "A worklet. A drag let go on a close." },
     ref: { type: "Ref<BottomSheetRef>", description: "open, close, snapToIndex, snapToPosition, expand, collapse, forceClose." },
     children: { type: "ReactNode" },
@@ -444,7 +444,7 @@ the index, never the keyboard, so a lift does not dim the app.
     pressBehavior: {
       type: '"close" | "collapse" | "none" | number',
       default: '"close"',
-      description: "What a press does: close, collapse to the first detent, snap to an index, or nothing.",
+      description: "What a press does: close, collapse to the first snap point, snap to an index, or nothing.",
     },
     enableTouchThrough: { type: "boolean", default: "false", description: "Let touches reach the app behind the scrim." },
     accessibilityLabel: { type: "string", default: '"Close"' },
@@ -480,7 +480,7 @@ when the root is `detached`. Extends `ViewProps`.
 ### `BottomSheet.Handle`
 
 The grabber's row and the pill inside it. The sheet's one `adjustable` accessibility element —
-increment and decrement move a detent, escape closes. Extends `ViewProps`.
+increment and decrement move a snap point, escape closes. Extends `ViewProps`.
 
 <TypeTable
   type={{
@@ -494,7 +494,7 @@ increment and decrement move a detent, escape closes. Extends `ViewProps`.
 
 ### `BottomSheet.Content`
 
-The static body, with the gutter and gap on the box the content detent measures. Extends
+The static body, with the gutter and gap on the box the content snap point measures. Extends
 `ViewProps`.
 
 <TypeTable
@@ -613,6 +613,6 @@ This library's `Input` with `useBottomSheetInput()` spread on it. Takes `InputPr
 <Callout type="info">
 The behaviour is [`@delacour/react-native-bottom-sheet`](/docs/bottom-sheet), a headless engine
 with no tokens and no `className` of its own, documented under its own tab. It installs alongside
-this component and is where to go for a sheet this one does not skin, and for how the detents,
+this component and is where to go for a sheet this one does not skin, and for how the snap points,
 the keyboard and the footer are computed.
 </Callout>

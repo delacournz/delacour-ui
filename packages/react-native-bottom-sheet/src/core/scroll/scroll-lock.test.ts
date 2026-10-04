@@ -3,12 +3,12 @@ import { SHEET_STATE } from "../sheet.types";
 import { contentPanDrivesSheet, shouldLockScroll } from "./scroll-lock";
 
 describe("shouldLockScroll", () => {
-	test("locked below the highest detent — a drag on the list moves the sheet, not the rows", () => {
+	test("locked below the highest snap point — a drag on the list moves the sheet, not the rows", () => {
 		expect(shouldLockScroll(SHEET_STATE.CLOSED, true)).toBe(true);
 		expect(shouldLockScroll(SHEET_STATE.OPENED, true)).toBe(true);
 	});
 
-	test("unlocked at the highest detent and beyond", () => {
+	test("unlocked at the highest snap point and beyond", () => {
 		expect(shouldLockScroll(SHEET_STATE.EXTENDED, true)).toBe(false);
 		expect(shouldLockScroll(SHEET_STATE.OVER_EXTENDED, true)).toBe(false);
 		expect(shouldLockScroll(SHEET_STATE.FILL, true)).toBe(false);

@@ -24,12 +24,12 @@ The content pan and the list's native scroll are **simultaneous**: the list's
 `Native` gesture is declared `simultaneousWithExternalGesture(pans.content)`,
 so both see every touch. The rule for who moves is the sheet's state:
 
-- **Below the highest detent — locked.** Every scroll event is answered with
+- **Below the highest snap point — locked.** Every scroll event is answered with
   `scrollTo(ref, 0, scrollLockedAt, false)` and the offset the pan reads is
   pinned there, so the list consumes nothing and the pan moves the sheet. The
   indicator is hidden, `bounces` is off and `decelerationRate` is `0`, so a
   fling has no momentum for the lock to fight.
-- **At the highest detent — unlocked.** The list scrolls. The pan treats the
+- **At the highest snap point — unlocked.** The list scrolls. The pan treats the
   offset the list *began* the gesture with as a budget the finger spends
   downward before the sheet moves (`listDragHeight`): the list scrolls
   one-for-one under the same finger, so it reaches its top exactly as the
@@ -38,7 +38,7 @@ so both see every touch. The rule for who moves is the sheet's state:
   over-dragging.
 - **A release while scrolled at the top** belongs to the list
   (`listOwnsRelease`): the velocity is the list's momentum, not a snap. The
-  library this replaces snapped here and hopped a detent under interrupted
+  library this replaces snapped here and hopped a snap point under interrupted
   scrolls.
 
 The budget is the offset at the *start* of the gesture, never the live one.
@@ -78,14 +78,14 @@ earlier answer and is gone: it ended the list above the footer with the rows
 cut at that edge and an empty band under them.
 
 `onContentSizeChange`, less the spacer's own measured height
-(`scrollContentHeight`), writes `contentHeight`, which is the dynamic detent's
+(`scrollContentHeight`), writes `contentHeight`, which is the dynamic snap point's
 measurement. A `BottomSheet.ScrollView` of forty rows therefore needs neither
 `snapPoints` nor `dynamicSizing={false}`: it sizes to its rows, capped by
 `maxDynamicContentSize`, and scrolls inside that. The content size and the
 spacer's layout arrive as two events from one commit; both are held in refs
 and folded into a single write after the batch, because the first open
 resolves on whatever `contentHeight` says first and the mount animation, once
-running, ignores a corrected detent list — a frame of rows-plus-spacer would
+running, ignores a corrected snap point list — a frame of rows-plus-spacer would
 open the sheet a footer too tall. `contentHeight` goes back to `UNMEASURED` on
 unmount for the same reason `useMeasureHeight` resets it.
 

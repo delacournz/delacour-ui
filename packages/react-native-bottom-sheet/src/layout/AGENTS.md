@@ -13,11 +13,11 @@ How the sheet learns the sizes the geometry needs.
 
 | Value | By | Read for |
 | --- | --- | --- |
-| `containerHeight`, `containerWidth` | the frame `Portal` renders | every detent, `position`, the detached frame |
+| `containerHeight`, `containerWidth` | the frame `Portal` renders | every snap point, `position`, the detached frame |
 | `containerBottomOffset` | the same frame, via `measureInWindow` | how much of a keyboard overlaps the sheet at all (BSHEET-3) |
-| `handleHeight` | `Handle` | the dynamic detent, `contentArea` |
-| `contentHeight` | `Content`'s inner box | the dynamic detent |
-| `footerContentHeight` | `Footer`'s inner box (BSHEET-3) | the dynamic detent, `footerTop` |
+| `handleHeight` | `Handle` | the dynamic snap point, `contentArea` |
+| `contentHeight` | `Content`'s inner box | the dynamic snap point |
+| `footerContentHeight` | `Footer`'s inner box (BSHEET-3) | the dynamic snap point, `footerTop` |
 
 Scrollables (BSHEET-4) feed `contentHeight` from `onContentSizeChange`
 instead of a layout.
@@ -40,7 +40,7 @@ The frame's height goes through `acceptContainerLayout`, which refuses
 Android's adjustResize double-count while a keyboard is up. Inert until
 BSHEET-3 writes `keyboardHeight`, and correct once it does. A height that is
 accepted while the sheet is open makes the intent reaction jump the sheet to
-the same index in the re-derived detents (`state/`).
+the same index in the re-derived snap points (`state/`).
 
 ## No synchronous first read
 

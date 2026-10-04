@@ -18,10 +18,10 @@ export type KeyboardStepInput = {
 /**
  * What the behaviour reaction does this frame.
  *
- * `apply` — snap for the keyboard: `extend` to the highest detent,
+ * `apply` — snap for the keyboard: `extend` to the highest snap point,
  * `fillParent` to the container. `restore` — the keyboard is leaving or focus
  * left the sheet, and `keyboardBlurBehavior: "restore"` sends the sheet back
- * to the detent it held before. `release` — the same moment under
+ * to the snap point it held before. `release` — the same moment under
  * `blurBehavior: "none"`: nothing moves, but the record clears so the next
  * rise applies again. `null` — nothing.
  */

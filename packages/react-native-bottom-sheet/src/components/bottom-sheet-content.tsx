@@ -20,10 +20,10 @@ const UNCLAMPED = 100_000;
  * Three boxes. The outermost is the content pan's detector and the clip: its
  * `maxHeight` follows the geometry's `bodyClip` on the UI thread, so under a
  * sticky footer nothing of the body is drawn below the footer's top edge, at
- * rest or while the sheet is dragged below its detent and the footer holds
+ * rest or while the sheet is dragged below its snap point and the footer holds
  * the screen's bottom. The middle box is the layout: `contentArea` plus the
  * `bodyInset` the body reserves at its end, which reaches the sheet's bottom
- * line, and it never reflows during a snap between detents. The innermost is
+ * line, and it never reflows during a snap between snap points. The innermost is
  * the caller's — it takes the `style` — and its measured height is what a
  * sheet sized to its content grows to. Yoga lays the inner box out at its
  * natural height whatever the outer clamps say, which is what makes the
@@ -56,7 +56,7 @@ export function BottomSheetContent({
 
 	// A detached card's surface is only as tall as the sheet, so its body is
 	// also held to what the surface shows, or the opening animation would draw
-	// the body under the card. The surface keeps its detent's height while the
+	// the body under the card. The surface keeps its snap point's height while the
 	// card slides closed, so the body slides with it, unchanged.
 	const clip = useAnimatedStyle(() => {
 		if (!layoutReady.value) return { maxHeight: UNCLAMPED };

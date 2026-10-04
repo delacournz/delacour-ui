@@ -55,8 +55,8 @@ stops a tap from one field to the next reading as a close and a reopen.
 | `keyboardBehavior` | On show | `keyboardBlurBehavior: "restore"` on hide |
 | --- | --- | --- |
 | `interactive` (default) | Nothing — `keyboardLift` is a derivation over `progress`, so the sheet rides the keyboard up and follows an interactive dismiss down | Nothing to restore; `base` never moved |
-| `extend` | `animateTo(highest, "keyboard")` | Back to the detent held before |
-| `fillParent` | `animateTo(maxHeight, "keyboard")`; no lift; the body shrinks by the keyboard | Back to the detent held before |
+| `extend` | `animateTo(highest, "keyboard")` | Back to the snap point held before |
+| `fillParent` | `animateTo(maxHeight, "keyboard")`; no lift; the body shrinks by the keyboard | Back to the snap point held before |
 | `none` | Nothing; the keyboard is not the sheet's problem | Nothing |
 
 The behaviour reaction samples `progress` and `keyboardOwned` and hands two

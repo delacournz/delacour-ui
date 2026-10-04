@@ -17,10 +17,10 @@ import type { BottomSheetFooterProps } from "./bottom-sheet.types";
  * keyboard's top edge without ever moving. Its one view — the one that takes
  * `style` and `padding` — pads through the resting safe-area band as well, so
  * the surface a caller styles reaches the sheet's bottom line and its
- * background covers the band: while the sheet is dragged below its detent the
+ * background covers the band: while the sheet is dragged below its snap point the
  * footer holds the screen's bottom edge and the body slides down behind it,
  * and a transparent band would show every line that passed. The box is
- * measured less the band into `footerContentHeight`, which the dynamic detent
+ * measured less the band into `footerContentHeight`, which the dynamic snap point
  * counts. The band is constant on purpose — the footer's translate does the
  * collapsing, and padding that shrank as well would move the footer twice.
  *
@@ -53,7 +53,7 @@ export function BottomSheetFooter({
 
 	// A layout effect, not a passive one: the flag has to reach the root's
 	// config before the handle and the content report their heights, or the
-	// first open resolves on a detent with no footer in it and the mount
+	// first open resolves on a snap point with no footer in it and the mount
 	// animation, already running, keeps the corrected list from applying.
 	useLayoutEffect(() => {
 		if (!sticky) return;

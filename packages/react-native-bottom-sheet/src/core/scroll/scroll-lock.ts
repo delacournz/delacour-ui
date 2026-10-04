@@ -3,8 +3,8 @@ import { SHEET_STATE, type SheetState } from "../sheet.types";
 /**
  * Whether a scrollable inside the sheet is pinned in place.
  *
- * Below the highest detent a drag on the list moves the sheet, not the rows,
- * so the list is held at its lock offset every frame. At the highest detent
+ * Below the highest snap point a drag on the list moves the sheet, not the rows,
+ * so the list is held at its lock offset every frame. At the highest snap point
  * and beyond it scrolls. With the content pan disabled there is nothing else
  * the drag could do, so the list is never locked.
  */

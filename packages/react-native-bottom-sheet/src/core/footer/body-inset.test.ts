@@ -24,18 +24,18 @@ describe("bodyClip", () => {
 	const at = (sheetHeight: number) =>
 		bodyClip({ contentArea: 486, inset: 90, hasFooter: true, sheetHeight, handleHeight: 24, keyboardHeight: 0 });
 
-	test("at rest on its detent the body is clipped exactly at the footer's top edge", () => {
+	test("at rest on its snap point the body is clipped exactly at the footer's top edge", () => {
 		// contentArea 486 = 600 − 24 − 90; the body is laid out 90 deeper, to the
 		// sheet's bottom line, and the clip hides that 90 behind the footer.
 		expect(at(600)).toBe(486);
 	});
 
-	test("dragged below its detent the clip follows the live height, so nothing shows under the footer", () => {
+	test("dragged below its snap point the clip follows the live height, so nothing shows under the footer", () => {
 		expect(at(500)).toBe(386);
 		expect(at(200)).toBe(86);
 	});
 
-	test("above its detent — an over-drag — the clip stays at the laid-out body", () => {
+	test("above its snap point — an over-drag — the clip stays at the laid-out body", () => {
 		expect(at(700)).toBe(486 + 90);
 	});
 

@@ -13,7 +13,7 @@ import type { BottomSheetBackgroundProps } from "./bottom-sheet.types";
  * The panel is as tall as the frame, so an attached surface fills it and its
  * bottom edge is always off-screen. A detached card has a visible bottom
  * edge: the surface is then the geometry's `surfaceHeight` tall, on the UI
- * thread — the sheet's height between its detents, and the nearest detent's
+ * thread — the sheet's height between its snap points, and the nearest snap point's
  * height beyond them — so the corners the skin rounds are on screen, the gap
  * under the card is the overlay's, and a close or an over-drag moves the
  * whole card as one rigid body rather than shrinking it onto the resting

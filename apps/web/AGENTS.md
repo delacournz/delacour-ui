@@ -146,7 +146,7 @@ Open Graph / Twitter tags. Two things there are deliberate:
   site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
   `isDocsProduct()` is the one place a product name is checked — `/og/docs?product=` goes through
   it — and `MOTIFS` in `src/og/card.ts` is the one place a product's drawing is named: an amber
-  line chart on the charts card, a sheet resting on a detent inside a phone frame on the
+  line chart on the charts card, a sheet resting on a snap point inside a phone frame on the
   bottom-sheet card, nothing on the library's. A charts page gets `og:site_name` "Delacour
   Charts" and `/og/docs?product=charts`; a bottom-sheet page the same with its own name and
   `/docs/bottom-sheet` in the footer. `seo.test.ts` fails if an engine page's tags mention

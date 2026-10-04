@@ -3,7 +3,7 @@ export type LayoutReadyInput = {
 	handleHeight: number;
 	contentHeight: number;
 	footerContentHeight: number;
-	/** Whether the content's height is a detent, and so has to be known. */
+	/** Whether the content's height is a snap point, and so has to be known. */
 	dynamicSizing: boolean;
 	hasFooter: boolean;
 };

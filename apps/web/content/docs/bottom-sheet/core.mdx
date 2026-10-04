@@ -1,11 +1,11 @@
 ---
 title: Core
-description: Every number the sheet computes — detents, keyboard, footer, geometry, the step machine — as pure functions with no native module in the graph.
+description: Every number the sheet computes — snap points, keyboard, footer, geometry, the step machine — as pure functions with no native module in the graph.
 icon: Sigma
 ---
 
 ```ts
-import { dynamicDetent, keyboardLift, positionFor, UNMEASURED } from "@delacour/react-native-bottom-sheet/core";
+import { dynamicSnapPoint, keyboardLift, positionFor, UNMEASURED } from "@delacour/react-native-bottom-sheet/core";
 ```
 
 `@delacour/react-native-bottom-sheet/core` is every number the package computes and nothing that
@@ -24,7 +24,7 @@ const top = footerTop({ sheetHeight: 420 + lift, keyboardHeight: 336, footerCont
 ## Height space
 
 Every value is a **height**: pixels of sheet visible above its resting bottom line. `0` is closed,
-detents ascend, and `UNMEASURED` (`-1`) is a measurement that has not happened. `translateY` is
+snap points ascend, and `UNMEASURED` (`-1`) is a measurement that has not happened. `translateY` is
 derived from a height only at the moment a view needs it, by `positionFor`, and nowhere else.
 
 ## The formulas
@@ -37,12 +37,12 @@ restingBottom = detached ? bottomOffset + inset : 0          closedHeight = −r
 available     = C − restingBottom                            maxHeight = available
 band          = detached ? 0 : inset                         bandNow = band · (1 − p)
 footerHeight  = hasFooter ? footerContent + bandNow : 0
-dynamicDetent = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
-detents       = sortAsc(unique(normalize(spec, available) ∪ {dynamicDetent if dynamicSizing}))
+dynamicSnapPoint = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
+snapPoints       = sortAsc(unique(normalize(spec, available) ∪ {dynamicSnapPoint if dynamicSizing}))
 keyboardLift  = behavior ∈ {interactive, extend} ? max(0, kb − band · p − (detached ? restingBottom : 0)) : 0
 height        = clamp(base + keyboardLift, closedHeight, maxHeight)
 translateY    = C − restingBottom − height
-index         = piecewise(base, [closedHeight, …detents] → [−1, 0, 1, …])      base, never height
+index         = piecewise(base, [closedHeight, …snapPoints] → [−1, 0, 1, …])      base, never height
 contentArea   = max(0, min(maxHeight, highest + keyboardLift) − handle − footerHeight − kb − (hasFooter ? 0 : bandNow))
 footerTop     = max(0, height − kb − footerContent − bandNow)
 backdrop      = index ≥ appearsOn ? opacity : index ≤ disappearsOn ? 0 : linear
@@ -63,17 +63,17 @@ duplicating either.
 A degenerate input returns a finite number, never `NaN`: one `NaN` written into `base` freezes a
 sheet permanently with nothing on screen to say why.
 
-## Detents
+## Snap points
 
 | Export | What it does |
 | --- | --- |
-| `parseDetent(spec)` | One `DetentSpec` to `{ kind: "px" \| "percent", value }`, as a `Result` |
-| `normalizeDetents(spec, available)` | Ascending, unique, clamped; invalid entries skipped. Worklet |
-| `dynamicDetent({ handleHeight, contentHeight, footerContentHeight, hasFooter, band, available, maxDynamicContentSize? })` | The content's own detent. Worklet |
-| `indexForHeight(height, detents, closedHeight)`, `heightForIndex(index, detents, closedHeight)` | Piecewise-linear over `[closed, …detents]`, clamped. Worklets |
-| `selectSnapHeight({ height, velocity, detents, closedHeight, projection })` | The candidate nearest `height + projection · velocity`. Worklet |
+| `parseSnapPoint(spec)` | One `SnapPointSpec` to `{ kind: "px" \| "percent", value }`, as a `Result` |
+| `normalizeSnapPoints(spec, available)` | Ascending, unique, clamped; invalid entries skipped. Worklet |
+| `dynamicSnapPoint({ handleHeight, contentHeight, footerContentHeight, hasFooter, band, available, maxDynamicContentSize? })` | The content's own snap point. Worklet |
+| `indexForHeight(height, snapPoints, closedHeight)`, `heightForIndex(index, snapPoints, closedHeight)` | Piecewise-linear over `[closed, …snapPoints]`, clamped. Worklets |
+| `selectSnapHeight({ height, velocity, snapPoints, closedHeight, projection })` | The candidate nearest `height + projection · velocity`. Worklet |
 | `resistOverDrag(height, min, max, factor)` | Slope one at the edge, square root beyond; factor `0` clamps. Worklet |
-| `sheetState(base, height, detents, closedHeight, maxHeight)` | `SHEET_STATE.CLOSED \| OPENED \| EXTENDED \| OVER_EXTENDED \| FILL`. Worklet |
+| `sheetState(base, height, snapPoints, closedHeight, maxHeight)` | `SHEET_STATE.CLOSED \| OPENED \| EXTENDED \| OVER_EXTENDED \| FILL`. Worklet |
 
 ## Keyboard
 
@@ -103,7 +103,7 @@ sheet permanently with nothing on screen to say why.
 | `restingBottom(detached, bottomOffset, bottomInset)`, `closedHeight(restingBottom)`, `availableHeight(containerHeight, restingBottom)` | Where the sheet rests, what closed is, what it may fill. Worklets |
 | `positionFor(containerHeight, restingBottom, height)` | Height to `translateY`, the only conversion. Worklet |
 | `clampHeight(height, closedHeight, maxHeight)` | `NaN` collapses to closed. Worklet |
-| `surfaceHeight(height, lowestDetent, highestDetent)` | What a detached card's surface is tall — between its detents, the nearest detent beyond them. Worklet |
+| `surfaceHeight(height, lowestSnapPoint, highestSnapPoint)` | What a detached card's surface is tall — between its snap points, the nearest snap point beyond them. Worklet |
 | `resolveDetached(prop)`, `DETACHED_DEFAULTS` | The `detached` prop to `{ horizontalMargin, bottomOffset }` or `null` |
 | `detachedFrame({ containerWidth, horizontalMargin, bottomOffset, bottomInset })` | `{ left, width, restingBottom }`. Worklet |
 
@@ -114,7 +114,7 @@ sheet permanently with nothing on screen to say why.
 | `backdropOpacity(index, disappearsOn, appearsOn, opacity)`, `backdropInteractive(index, disappearsOn)` | What the overlay draws at, and whether it takes touches. Worklets |
 | `resolveIntent(state, intent)` | `{ action: "wait" \| "animate" \| "jump" }` or `null` — what a ref method does given where the sheet is. Worklet |
 | `isLayoutReady(input)` | Whether every measurement the configuration needs has landed. Worklet |
-| `crossedDetent(lastIndex, height, detents)`, `detentUnder(height, detents)` | Whether a frame's travel crossed a detent, and which is under a height. Worklets |
+| `crossedSnapPoint(lastIndex, height, snapPoints)`, `snapPointUnder(height, snapPoints)` | Whether a frame's travel crossed a snap point, and which is under a height. Worklets |
 | `shouldLockScroll(state, enableContentPan)`, `contentPanDrivesSheet({ locked, contentOffsetY, translationY })` | The scroll lock's two questions. Worklets |
 | `listDragHeight(input)`, `listOwnsRelease({ scrollable, offset, base, highest })`, `scrollLockTarget(offset, byContentPan)` | The start offset as a budget the finger spends, whose the release is, where the lock holds. Worklets |
 
@@ -141,7 +141,7 @@ sheet permanently with nothing on screen to say why.
 
 | Export | What it is |
 | --- | --- |
-| `DetentSpec` | `number \| \`${number}%\`` |
+| `SnapPointSpec` | `number \| \`${number}%\`` |
 | `KeyboardBehavior`, `KeyboardBlurBehavior`, `KeyboardScope` | The three keyboard unions |
 | `AnimationSource` | `"mount" \| "gesture" \| "user" \| "snapPoints" \| "keyboard" \| "container"` |
 | `SheetIntent` | The request a ref method writes, keyed by `id` so two identical requests both run |

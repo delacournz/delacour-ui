@@ -11,8 +11,8 @@
 **Renamed and moved props.** The engine's names win, and sizing and behaviour move from `Container` to the root:
 
 - `<BottomSheet.Container enableDynamicSizing={false} snapPoints={…} maxDynamicContentSize={…}>` → `<BottomSheet dynamicSizing={false} snapPoints={…} maxDynamicContentSize={…}>`. `Container` takes `className`, `style` and the three `*ClassName` props only.
-- `keyboardBehavior`, `keyboardBlurBehavior`, `enablePanDownToClose`, `enableOverDrag` and the other gorhom modal props move to the root under the same names; `android_keyboardInputMode` is gone (keyboard-controller owns the window). New on the root: `keyboardScope`, `detached`, `topInset`, `bottomInset` (defaults to the safe-area bottom), `stackBehavior`, `closeOnBack`, `keepMounted`, `animation`, `onDetentHaptic` / `onCloseHaptic` / `onOverDragHaptic`.
+- `keyboardBehavior`, `keyboardBlurBehavior`, `enablePanDownToClose`, `enableOverDrag` and the other gorhom modal props move to the root under the same names; `android_keyboardInputMode` is gone (keyboard-controller owns the window). New on the root: `keyboardScope`, `detached`, `topInset`, `bottomInset` (defaults to the safe-area bottom), `stackBehavior`, `closeOnBack`, `keepMounted`, `animation`, `onSnapPointHaptic` / `onCloseHaptic` / `onOverDragHaptic`.
 - `<BottomSheet.Overlay isCloseOnPress={false}>` → `<BottomSheet.Overlay pressBehavior="none">`. Omitting `Overlay` still draws no scrim.
-- `BottomSheet.ScrollView` no longer needs `dynamicSizing={false}` or `snapPoints`: a list's content size is the dynamic detent, capped by `maxDynamicContentSize`.
+- `BottomSheet.ScrollView` no longer needs `dynamicSizing={false}` or `snapPoints`: a list's content size is the dynamic snap point, capped by `maxDynamicContentSize`.
 - `BottomSheetHandle` (the ref type) is now `BottomSheetRef`; the old name is a deprecated alias. `useBottomSheetInput()` stays as an alias of the engine's `useBottomSheetTextInput()`. `resolveSheetBottomInset` / `resolveSheetScrollEndPadding` are re-exported from the engine's `./core`.
 - Removed: `BOTTOM_SHEET_KEYBOARD_DEFAULTS`, `resolveFooterPlacement`, and the container and portal contexts.

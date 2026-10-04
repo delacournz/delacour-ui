@@ -7,8 +7,8 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inline and persistent",
 	caption:
-		"`<BottomSheet.Portal inline>` renders the sheet where it is written — an absolute fill of the nearest positioned ancestor — instead of teleporting it above the app. With `defaultOpen`, no overlay and `enablePanDownToClose={false}` it is a drawer that is always there: a map's result list, a player's queue. Drag the handle between the two detents; a drag past the first does nothing.",
-	note: "With VoiceOver on, the handle is the one adjustable element: swipe up to raise the sheet a detent and down to lower it.",
+		"`<BottomSheet.Portal inline>` renders the sheet where it is written — an absolute fill of the nearest positioned ancestor — instead of teleporting it above the app. With `defaultOpen`, no overlay and `enablePanDownToClose={false}` it is a drawer that is always there: a map's result list, a player's queue. Drag the handle between the two snap points; a drag past the first does nothing.",
+	note: "With VoiceOver on, the handle is the one adjustable element: swipe up to raise the sheet a snap point and down to lower it.",
 	capture: { align: "stretch", flow: "bottom-sheet/anatomy/inline-persistent" },
 };
 
@@ -18,7 +18,7 @@ const STAGE_HEIGHT = 520;
 /**
  * A stage the sheet lives inside — the drawer's host, and the only reason the
  * sheet has a bottom edge to rest on. The readout under it is `onIndexChange`,
- * which is how a flow proves which detent the drawer is on.
+ * which is how a flow proves which snap point the drawer is on.
  */
 export function Demo(): ReactElement {
 	const [index, setIndex] = useState(0);
@@ -45,7 +45,7 @@ export function Demo(): ReactElement {
 							<BottomSheet.Content>
 								<BottomSheet.Title>Nearby</BottomSheet.Title>
 								<BottomSheet.Description>
-									Two detents, 30% and 70% of the stage. There is no closed state to fall into.
+									Two snap points, 30% and 70% of the stage. There is no closed state to fall into.
 								</BottomSheet.Description>
 							</BottomSheet.Content>
 						</BottomSheet.Container>
@@ -53,7 +53,7 @@ export function Demo(): ReactElement {
 				</BottomSheet>
 			</View>
 			<Text.Caption color="muted" testID="inline-readout">
-				{`Detent ${index + 1} of ${SNAP_POINTS.length}`}
+				{`Snap point ${index + 1} of ${SNAP_POINTS.length}`}
 			</Text.Caption>
 		</View>
 	);

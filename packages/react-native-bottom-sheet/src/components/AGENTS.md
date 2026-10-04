@@ -67,8 +67,8 @@ No `accessible` container: one would collapse the whole sheet into a single
 VoiceOver element. Instead the panel is `accessibilityViewIsModal` while open
 under an overlay, its descendants are hidden while it is closed, and the title
 labels it through `accessibilityLabelledBy`. The handle is the sheet's one
-`adjustable` element: increment and decrement move a detent, escape closes,
-and its value reads `Detent i of n`. The overlay is hidden from assistive
+`adjustable` element: increment and decrement move a snap point, escape closes,
+and its value reads `SnapPoint i of n`. The overlay is hidden from assistive
 technology while it is transparent.
 
 ## Contexts

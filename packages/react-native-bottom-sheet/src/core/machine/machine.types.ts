@@ -8,7 +8,7 @@
  * controller.
  */
 import type { Result } from "../result";
-import type { DetentSpec } from "../sheet.types";
+import type { SnapPointSpec } from "../sheet.types";
 
 /** The least an event can be. Discriminate on `type`; carry anything else. */
 export type SheetEvent = { type: string };
@@ -37,7 +37,7 @@ export type SheetTransitionTarget<S extends string, C, E extends SheetEvent> = S
  */
 export type SheetStateNode<S extends string, C, E extends SheetEvent> = {
 	on?: { [T in E["type"]]?: SheetTransitionTarget<S, C, Extract<E, { type: T }>> };
-	snapPoints?: readonly DetentSpec[];
+	snapPoints?: readonly SnapPointSpec[];
 	dismissible?: boolean;
 	direction?: SheetStepDirection;
 };

@@ -4,7 +4,7 @@ import { createBottomSheetScrollable } from "./create-bottom-sheet-scrollable";
 import type { BottomSheetScrollViewComponent } from "./scrollable.types";
 
 /**
- * A `ScrollView` as the sheet's body: locked below the highest detent, sized
+ * A `ScrollView` as the sheet's body: locked below the highest snap point, sized
  * to its content when the sheet is dynamic. `Animated.ScrollView` is
  * Reanimated's own, made once at module scope.
  */

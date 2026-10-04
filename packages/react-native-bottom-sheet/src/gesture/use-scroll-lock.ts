@@ -44,7 +44,7 @@ type ScrollLockProps = Pick<
 >;
 
 export type ScrollLock = {
-	/** `true` while the sheet is below its highest detent: the list is held at `scrollLockedAt`. */
+	/** `true` while the sheet is below its highest snap point: the list is held at `scrollLockedAt`. */
 	locked: SharedValue<boolean>;
 	/** For the list's `onScroll`. Tracks the offset into `scrollOffsetY` and enforces the lock. */
 	scrollHandler: ReturnType<typeof useAnimatedScrollHandler>;
@@ -55,14 +55,14 @@ export type ScrollLock = {
 /**
  * The scroll lock: the UI-thread half of a scrollable body.
  *
- * Below the highest detent a drag on the list must move the sheet, not the
+ * Below the highest snap point a drag on the list must move the sheet, not the
  * rows. The content pan already does the moving — the native scroll and the
  * pan are simultaneous — so this hook's job is to make sure the list does not
  * *also* move: every scroll event while locked is answered with a `scrollTo`
  * back to where the lock engaged, and the offset the pan reads is pinned
  * there too, so the pan sees the list consume nothing.
  *
- * The lock engages when the sheet leaves its highest detent by any path — a
+ * The lock engages when the sheet leaves its highest snap point by any path — a
  * drag, a `snapToIndex`, a keyboard — and takes the offset of that moment as
  * its target. A list scrolled a hundred pixels, then collapsed by the handle,
  * holds those hundred pixels rather than jumping to the top; when the sheet

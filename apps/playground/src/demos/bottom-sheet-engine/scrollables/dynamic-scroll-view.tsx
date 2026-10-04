@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Dynamic ScrollView",
 	caption:
-		"No `snapPoints`, no `dynamicSizing={false}`. The `BottomSheet.ScrollView` reports its content size and that is the sheet's one detent: six rows make a short sheet, forty make one capped at `maxDynamicContentSize` that scrolls inside the cap. Toggle the count while it is open and the sheet animates between the two heights.",
+		"No `snapPoints`, no `dynamicSizing={false}`. The `BottomSheet.ScrollView` reports its content size and that is the sheet's one snap point: six rows make a short sheet, forty make one capped at `maxDynamicContentSize` that scrolls inside the cap. Toggle the count while it is open and the sheet animates between the two heights.",
 };
 
 const SHORT = 6;

@@ -26,7 +26,7 @@ import { Text, View } from "react-native";
         <View style={styles.pill} />
       </BottomSheet.Handle>
       <BottomSheet.Content style={styles.content}>
-        <BottomSheet.Title style={styles.title}>Two detents</BottomSheet.Title>
+        <BottomSheet.Title style={styles.title}>Two snap points</BottomSheet.Title>
         <BottomSheet.Description style={styles.description}>
           Drag the handle up for the second. Drag past the first to close.
         </BottomSheet.Description>
@@ -40,14 +40,14 @@ import { Text, View } from "react-native";
 ```
 
 A sheet is a root and the parts you place inside it. The root owns the state — where the sheet
-is, which detents it may rest at, whose keyboard it is lifting for — and publishes it through a
+is, which snap points it may rest at, whose keyboard it is lifting for — and publishes it through a
 context; a part reads that context and renders one thing. [Composition](/docs/bottom-sheet/composition)
 lays the parts out and names every prop.
 
 ## What it does
 
 <Cards>
-  <Card title="Detents" href="/docs/bottom-sheet/detents">
+  <Card title="Snap points" href="/docs/bottom-sheet/snap-points">
     Pixels, percentages, and the content's own height. Where the sheet may rest.
   </Card>
   <Card title="Gestures" href="/docs/bottom-sheet/gestures">

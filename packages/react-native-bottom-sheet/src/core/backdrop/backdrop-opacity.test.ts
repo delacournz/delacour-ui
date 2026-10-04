@@ -12,7 +12,7 @@ describe("backdropOpacity", () => {
 		expect(backdropOpacity(-0.25, -1, 0, 0.6)).toBeCloseTo(0.45);
 	});
 
-	test("plateaus above the appearing index — a higher detent is no darker", () => {
+	test("plateaus above the appearing index — a higher snap point is no darker", () => {
 		expect(backdropOpacity(1, -1, 0, 1)).toBe(1);
 		expect(backdropOpacity(2.5, -1, 0, 0.7)).toBe(0.7);
 	});
@@ -42,7 +42,7 @@ describe("backdropInteractive", () => {
 		expect(backdropInteractive(0, -1)).toBe(true);
 	});
 
-	test("with a higher disappearing index the lowest detent leaves the app tappable", () => {
+	test("with a higher disappearing index the lowest snap point leaves the app tappable", () => {
 		expect(backdropInteractive(0, 0)).toBe(false);
 		expect(backdropInteractive(1, 0)).toBe(true);
 	});

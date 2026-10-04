@@ -5,7 +5,7 @@ icon: Blocks
 ---
 
 A sheet is a root and the parts placed inside it. The root does all of the arithmetic — the
-detents, the keyboard lift, where the footer sits — and publishes it through three contexts. A part
+snap points, the keyboard lift, where the footer sits — and publishes it through three contexts. A part
 reads those and renders one thing, and every part accepts `style` and `ref`.
 
 ```tsx
@@ -83,8 +83,8 @@ function Chevron() {
 
 | Hook | Returns | Thread |
 | --- | --- | --- |
-| `useBottomSheet()` | `isOpen`, `setOpen`, `index`, `detentCount`, and every ref method | JS — React state, updated on settle |
-| `useBottomSheetAnimated()` | `animatedIndex`, `animatedPosition`, `animatedHeight`, `containerHeight`, `handleHeight`, `contentHeight`, `footerHeight`, `keyboardLift`, `detents`, `closedHeight` | UI — shared values, for `useAnimatedStyle` |
+| `useBottomSheet()` | `isOpen`, `setOpen`, `index`, `snapPointCount`, and every ref method | JS — React state, updated on settle |
+| `useBottomSheetAnimated()` | `animatedIndex`, `animatedPosition`, `animatedHeight`, `containerHeight`, `handleHeight`, `contentHeight`, `footerHeight`, `keyboardLift`, `snapPoints`, `closedHeight` | UI — shared values, for `useAnimatedStyle` |
 | `useBottomSheetInternal()` | what the parts share, for a part written outside the package | |
 
 Each throws outside a `<BottomSheet>`; the `useOptional…` form returns `null` instead.
@@ -105,8 +105,8 @@ sheet.current?.forceClose(); // no animation
 ```
 
 Every method is an intent: none animates from the JS thread, and each is a no-op when it makes no
-sense — `close` on a closed sheet, `snapToIndex(4)` with two detents. `snapToPosition` clamps to
-the available height and never adds a detent. `open` and `close` are the same state a controlled
+sense — `close` on a closed sheet, `snapToIndex(4)` with two snap points. `snapToPosition` clamps to
+the available height and never adds a snap point. `open` and `close` are the same state a controlled
 `isOpen` drives.
 
 ## API Reference
@@ -121,8 +121,8 @@ the available height and never adds a detent. `open` and `close` are the same st
       type: "(isOpen: boolean) => void",
       description: "Every open and close — trigger, swipe, overlay, Close, the ref, or a controlled isOpen.",
     },
-    index: { type: "number", description: "Controlled detent index. Changing it snaps an open sheet." },
-    initialIndex: { type: "number", default: "0", description: "The detent `open` lands on." },
+    index: { type: "number", description: "Controlled snap point index. Changing it snaps an open sheet." },
+    initialIndex: { type: "number", default: "0", description: "The snap point `open` lands on." },
     onIndexChange: {
       type: "(index: number, height: number, source: AnimationSource) => void",
       description: "The settled index changed; -1 on close.",
@@ -133,12 +133,12 @@ the available height and never adds a detent. `open` and `close` are the same st
     },
     onClose: { type: "() => void", description: "The sheet reached its closed height. onOpenChange(false) follows." },
     snapPoints: {
-      type: "readonly DetentSpec[]",
+      type: "readonly SnapPointSpec[]",
       default: "[]",
       description: "Heights above the resting bottom, or % of the available height.",
     },
-    dynamicSizing: { type: "boolean", default: "true", description: "Adds the content's own height as a detent." },
-    maxDynamicContentSize: { type: "number", description: "Caps the dynamic detent." },
+    dynamicSizing: { type: "boolean", default: "true", description: "Adds the content's own height as a snap point." },
+    maxDynamicContentSize: { type: "number", description: "Caps the dynamic snap point." },
     topInset: { type: "number", default: "0", description: "Pixels the frame leaves clear at the top." },
     bottomInset: {
       type: "number",
@@ -152,7 +152,7 @@ the available height and never adds a detent. `open` and `close` are the same st
     enablePanDownToClose: { type: "boolean", default: "true" },
     enableHandlePanningGesture: { type: "boolean", default: "true" },
     enableContentPanningGesture: { type: "boolean", default: "true" },
-    enableOverDrag: { type: "boolean", default: "true", description: "Rubber-band past the detents." },
+    enableOverDrag: { type: "boolean", default: "true", description: "Rubber-band past the snap points." },
     overDragResistanceFactor: { type: "number", default: "2.5", description: "Larger allows more travel." },
     keyboardBehavior: { type: '"interactive" | "extend" | "fillParent" | "none"', default: '"interactive"' },
     keyboardBlurBehavior: { type: '"none" | "restore"', default: '"restore"' },
@@ -172,7 +172,7 @@ the available height and never adds a detent. `open` and `close` are the same st
       default: "true",
       description: "Android's back button closes the sheet while it is the top one in its host.",
     },
-    onDetentHaptic: { type: "() => void", description: "A worklet. A drag crossed a detent." },
+    onSnapPointHaptic: { type: "() => void", description: "A worklet. A drag crossed a snap point." },
     onCloseHaptic: { type: "() => void", description: "A worklet. A drag let go on a close." },
     onOverDragHaptic: { type: "() => void", description: "A worklet. A drag entered the rubber band." },
     ref: { type: "Ref<BottomSheetRef>" },
@@ -214,7 +214,7 @@ place with `inline` or without one. See [Portal and host](/docs/bottom-sheet/por
 ### Overlay
 
 The scrim. Its opacity follows the keyboard-free index on the UI thread, so a keyboard lift never
-dims the app and a higher detent is no darker.
+dims the app and a higher snap point is no darker.
 
 <TypeTable
   type={{
@@ -224,7 +224,7 @@ dims the app and a higher detent is no darker.
     pressBehavior: {
       type: '"close" | "collapse" | "none" | number',
       default: '"close"',
-      description: "What a press does: close, collapse to the first detent, snap to an index, or nothing.",
+      description: "What a press does: close, collapse to the first snap point, snap to an index, or nothing.",
     },
     enableTouchThrough: { type: "boolean", default: "false", description: "Let touches reach the app behind the scrim." },
     accessibilityLabel: { type: "string", default: '"Close"' },
@@ -251,7 +251,7 @@ corners are real.
 ### Handle
 
 The grabber's row: a pan detector, and the sheet's one `adjustable` accessibility element —
-increment and decrement move a detent, escape closes, and its value reads *Detent i of n*. Put the
+increment and decrement move a snap point, escape closes, and its value reads *Snap point i of n*. Put the
 pill inside it.
 
 <TypeTable
@@ -264,7 +264,7 @@ pill inside it.
 ### Content
 
 The static body: a pan detector, clamped to the area above the footer and the keyboard, with an
-inner box that measures the dynamic detent.
+inner box that measures the dynamic snap point.
 
 <TypeTable
   type={{

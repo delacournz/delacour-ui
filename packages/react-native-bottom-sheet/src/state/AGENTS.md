@@ -9,9 +9,9 @@ queue that moves them.
 | --- | --- |
 | `state.types.ts` | `SheetSharedState` (the raw shared values), `SheetGeometry` (the derived ones), `SheetWorkletConfig` (the props a worklet reads), `ANIM_STATUS` |
 | `use-sheet-state.ts` | Allocates the raw values once per sheet; mirrors `snapPoints` and the config into them, keyed on serialisation rather than identity |
-| `use-detents.ts` | `detents` — `normalizeDetents` plus the dynamic detent once handle and content have measured |
+| `use-snap-points.ts` | `snapPoints` — `normalizeSnapPoints` plus the dynamic snap point once handle and content have measured |
 | `use-sheet-geometry.ts` | Every formula in `core/AGENTS.md` as a `useDerivedValue`, in dependency order |
-| `use-sheet-intents.ts` | The JS-thread `dispatch`, the reaction that resolves an intent on the UI thread, and the reaction that follows a detent change or a container resize |
+| `use-sheet-intents.ts` | The JS-thread `dispatch`, the reaction that resolves an intent on the UI thread, and the reaction that follows a snap point change or a container resize |
 
 ## The model
 
@@ -47,9 +47,9 @@ would see a closed sheet, resolve to nothing, and let the sheet finish opening.
 The first open a sheet resolves is reported as `"mount"` and, with
 `animateOnMount: false`, jumps. `mountPending` is that flag.
 
-## Detents moving under a settled sheet
+## Snap points moving under a settled sheet
 
-The second reaction watches the detent list and the container height. When
+The second reaction watches the snap point list and the container height. When
 the list changes with the sheet idle and open, the sheet animates to the same
 index in the new list — dynamic content growing, a `snapPoints` change. When
 the container changed, it jumps there instead: a rotation is not something to

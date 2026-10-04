@@ -32,7 +32,7 @@ export type DemoIndexSheetProps = {
  * ends of this library: Spinner has three demos and would open onto half a
  * screen of nothing, Button has eighteen and would open already needing a
  * scroll. The scroll view reports its content size and that is the sheet's one
- * detent, up to `maxDynamicContentSize`; the engine counts the handle and the
+ * snap point, up to `maxDynamicContentSize`; the engine counts the handle and the
  * safe-area band itself, so no row is measured and no chrome is budgeted for.
  * A row's height still moves with the Style axis — Mira packs, Maia spreads —
  * and the measurement follows it for free.

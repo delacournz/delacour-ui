@@ -36,7 +36,7 @@ export type BottomSheetFooterProps = HeadlessProps & {
  * geometry's footer line, which the core proves holds still through a keyboard
  * animation, so its buttons land on the keyboard's top edge without moving;
  * the safe-area band under it is a spacer the geometry owns; and its measured
- * height is what the body reserves and the dynamic detent counts. The
+ * height is what the body reserves and the dynamic snap point counts. The
  * `padding` goes to the engine rather than a class for that reason — it has to
  * be inside the measured box.
  *

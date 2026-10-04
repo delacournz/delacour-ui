@@ -70,7 +70,7 @@ export type BottomSheetInternalValue = {
 	setHasOverlay: (has: boolean) => void;
 	/** A handle sets this on mount; a container with none reports a zero handle height. */
 	handleMounted: RefObject<boolean>;
-	/** A sticky footer sets this on mount; the dynamic detent counts it and the body reserves space for it. */
+	/** A sticky footer sets this on mount; the dynamic snap point counts it and the body reserves space for it. */
 	hasFooter: boolean;
 	setHasFooter: (has: boolean) => void;
 	/** Where `useBottomSheetTextInput` registers its field. */

@@ -20,7 +20,7 @@ import {
 	surfaceHeight,
 } from "../core";
 import type { SheetGeometry, SheetSharedState } from "./state.types";
-import { useDetents } from "./use-detents";
+import { useSnapPoints } from "./use-snap-points";
 
 /**
  * Where an unmeasured panel goes: far enough down that no frame of it shows
@@ -46,9 +46,9 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 	const maxHeight = useDerivedValue(() => availableHeight(state.containerHeight.value, resting.value));
 	const band = useDerivedValue(() => bottomBand(state.config.value.detached !== null, state.config.value.bottomInset));
 	const bandCurrent = useDerivedValue(() => bandNow(band.value, state.keyboardProgress.value));
-	const detents = useDetents(state, maxHeight, band);
+	const snapPoints = useSnapPoints(state, maxHeight, band);
 	const highest = useDerivedValue(() => {
-		const list = detents.value;
+		const list = snapPoints.value;
 		return list.length > 0 ? (list[list.length - 1] as number) : closed.value;
 	});
 	// The keyboard the sheet answers to: owned, and under a behaviour that does
@@ -71,9 +71,9 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 		if (!(container > 0)) return OFFSCREEN;
 		return positionFor(container, resting.value, height.value);
 	});
-	const index = useDerivedValue(() => indexForHeight(state.base.value, detents.value, closed.value));
+	const index = useDerivedValue(() => indexForHeight(state.base.value, snapPoints.value, closed.value));
 	const sheetStateValue = useDerivedValue(() =>
-		sheetState(state.base.value, height.value, detents.value, closed.value, maxHeight.value)
+		sheetState(state.base.value, height.value, snapPoints.value, closed.value, maxHeight.value)
 	);
 	const layoutReady = useDerivedValue(() =>
 		isLayoutReady({
@@ -88,9 +88,9 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 	const footer = useDerivedValue(() =>
 		footerHeight(state.config.value.hasFooter, state.footerContentHeight.value, bandCurrent.value)
 	);
-	// The body is sized against the highest detent rather than `base`, so it
-	// never reflows during a snap between detents — but a `fillParent` snap
-	// takes `base` above every detent, and the body follows it up.
+	// The body is sized against the highest snap point rather than `base`, so it
+	// never reflows during a snap between snap points — but a `fillParent` snap
+	// takes `base` above every snap point, and the body follows it up.
 	const area = useDerivedValue(() => {
 		const sheetHeight = Math.min(maxHeight.value, Math.max(highest.value, state.base.value) + lift.value);
 		return contentArea({
@@ -126,7 +126,7 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 
 	const surface = useDerivedValue(() => {
 		if (state.config.value.detached === null) return height.value;
-		const list = detents.value;
+		const list = snapPoints.value;
 		const lowest = list.length > 0 ? (list[0] as number) : 0;
 		return surfaceHeight(height.value, lowest, highest.value);
 	});
@@ -138,7 +138,7 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			maxHeight,
 			band,
 			bandNow: bandCurrent,
-			detents,
+			snapPoints,
 			highest,
 			keyboardLift: lift,
 			height,
@@ -159,7 +159,7 @@ export function useSheetGeometry(state: SheetSharedState): SheetGeometry {
 			maxHeight,
 			band,
 			bandCurrent,
-			detents,
+			snapPoints,
 			highest,
 			lift,
 			height,

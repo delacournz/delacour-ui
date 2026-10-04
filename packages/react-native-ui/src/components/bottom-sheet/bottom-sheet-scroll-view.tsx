@@ -36,13 +36,13 @@ export type BottomSheetScrollViewProps = Omit<HeadlessProps, "children"> & {
  * A scrolling body.
  *
  * Use this rather than a plain `ScrollView`: the engine's scrollable and the
- * sheet's pan share a finger — below the highest detent the list is held and
+ * sheet's pan share a finger — below the highest snap point the list is held and
  * the drag moves the sheet, at the highest the list scrolls, and a drag down
  * from the top hands back to the sheet. A React Native `ScrollView` in here has
  * no such arrangement.
  *
  * **It needs no `snapPoints` and no `dynamicSizing={false}`.** The list
- * reports its content size, and that is the dynamic detent: six rows make a
+ * reports its content size, and that is the dynamic snap point: six rows make a
  * short sheet, forty make one capped at `maxDynamicContentSize` that scrolls
  * inside the cap. Explicit `snapPoints` on the root still work, for a height
  * that is a decision rather than a measurement.

@@ -8,7 +8,7 @@ icon: Sparkles
 <BottomSheet animation={{ type: "spring", damping: 30, stiffness: 300 }}>
 ```
 
-One `animation` for every move: the open, the close, a snap, the keyboard's `extend`, a detent that
+One `animation` for every move: the open, the close, a snap, the keyboard's `extend`, a snap point that
 moved under a settled sheet. A gesture's release hands the spring half its velocity, so a flick
 continues rather than starting from rest.
 
@@ -66,8 +66,8 @@ the config's own `reduceMotion`, which beats `"system"`.
 ## Mount
 
 `animateOnMount` (the default) animates the first open from closed; off, the sheet lands on its
-detent. Either way the first open waits for layout: the frame, the handle, the content and — when
-there is one — the footer all have to report a size before the sheet has a detent to move to. An
+snap point. Either way the first open waits for layout: the frame, the handle, the content and — when
+there is one — the footer all have to report a size before the sheet has a snap point to move to. An
 open asked for before that is queued, not dropped.
 
 ## Callbacks
@@ -80,7 +80,7 @@ open asked for before that is queued, not dropped.
 | `onOpenChange` | open state flipped, by any path | `isOpen` — `false` follows `onClose` |
 
 `source` is why the move happened: `mount`, `gesture`, `user` (a method or a controlled prop),
-`snapPoints` (the detents changed under a settled sheet), `keyboard` or `container` (a resize).
+`snapPoints` (the snap points changed under a settled sheet), `keyboard` or `container` (a resize).
 
 A cancelled animation settles nothing: a drag that interrupts an open owns the height from that
 frame, and reporting the open's target would name an index the sheet never reached. The callbacks

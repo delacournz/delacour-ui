@@ -3912,7 +3912,7 @@ export const install = {
 	"bottom-sheet": {
 		name: "bottom-sheet",
 		title: "BottomSheet",
-		description: "A draggable sheet over the screen: detents, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
+		description: "A draggable sheet over the screen: snap points, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet.",
 		importPath: "@delacour/react-native-ui/bottom-sheet",
 		exportName: "BottomSheet",
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],

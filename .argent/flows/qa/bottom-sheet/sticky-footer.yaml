@@ -7,7 +7,7 @@ steps:
   - await: { visible: { text: Row 1 } }
   - wait: 600
   - tool: screenshot
-  - echo: Drag the sheet to its high detent from the top of the list, then scroll to the end
+  - echo: Drag the sheet to its high snap point from the top of the list, then scroll to the end
   - swipe: { from: { text: Row 2 }, by: { y: -0.35 }, duration: 300, momentum: false }
   - wait: 600
   - scroll-to: { target: { text: Row 24 } }
@@ -16,7 +16,7 @@ steps:
   - wait: 400
   - echo: Row 24 must sit fully above the footer's hairline — see the screenshot
   - tool: screenshot
-  - echo: Back to the top (scrolling up past offset 0 hands the drag to the sheet, so the detent it lands on is not fixed), then a scrim tap above either detent closes it
+  - echo: Back to the top (scrolling up past offset 0 hands the drag to the sheet, so the snap point it lands on is not fixed), then a scrim tap above either snap point closes it
   - scroll-to: { target: { text: Row 1 }, direction: up }
   - await: { visible: { text: Row 1 } }
   - wait: 400

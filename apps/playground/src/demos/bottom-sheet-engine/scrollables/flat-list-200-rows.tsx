@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "FlatList, 200 rows",
 	caption:
-		"Two hundred rows in a `BottomSheet.FlatList`, virtualised as any FlatList is. The list is generic — `data` and `renderItem` check against each other — and the sheet's lock rides the same scroll handler, so a fling at the low detent goes to the sheet and a fling at the high detent goes to the rows.",
+		"Two hundred rows in a `BottomSheet.FlatList`, virtualised as any FlatList is. The list is generic — `data` and `renderItem` check against each other — and the sheet's lock rides the same scroll handler, so a fling at the low snap point goes to the sheet and a fling at the high snap point goes to the rows.",
 };
 
 type Row = { id: string; label: string; detail: string };

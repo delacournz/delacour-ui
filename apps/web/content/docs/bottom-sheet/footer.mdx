@@ -37,7 +37,7 @@ icon: PanelBottomDashed
 | Position | absolute over the body, at the sheet's bottom | a plain `View` in the panel's flow |
 | Scrolls with a list | no — the list's last row stops above it | yes |
 | On the keyboard | rides it by transform, in the same frame | moves with the sheet |
-| Counts in the dynamic detent | yes | yes |
+| Counts in the dynamic snap point | yes | yes |
 
 The body is clamped to the area above a sticky footer, and a scrollable's `marginBottom` follows
 the footer's height, so the last row and the scroll indicator stop above the buttons rather than
@@ -51,7 +51,7 @@ under the buttons, counted **once** in the sheet's height whether there is a foo
 with no footer reserves the same band under its content.
 
 ```txt
-dynamicDetent = handle + content + footerContent + band
+dynamicSnapPoint = handle + content + footerContent + band
 ```
 
 Pass `bottomInset={insets.bottom}` from `useSafeAreaInsets()`; the package reads no insets of its

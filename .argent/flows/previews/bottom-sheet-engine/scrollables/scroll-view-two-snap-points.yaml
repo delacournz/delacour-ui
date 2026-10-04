@@ -1,16 +1,16 @@
 executionPrerequisite: >-
-  The chrome-free preview route is open on bottom-sheet-engine/scrollables/scroll-view-two-detents and has settled — the trigger button
+  The chrome-free preview route is open on bottom-sheet-engine/scrollables/scroll-view-two-snap-points and has settled — the trigger button
   with the sheet closed. The capture script navigates there before running this.
 steps:
-  - echo: Opening at the low detent
+  - echo: Opening at the low snap point
   - tap: { id: scroll-view-open }
   - await: { visible: { text: { matches: '^Row 1$' } } }
   - wait: 600
-  - echo: A swipe up inside the list moves the sheet to the high detent, not the rows
+  - echo: A swipe up inside the list moves the sheet to the high snap point, not the rows
   - swipe: { from: { text: Row 3 }, by: { y: -0.35 }, duration: 300, momentum: false }
   - await: { visible: { text: { matches: '^Row 1$' } } }
   - wait: 600
-  - echo: At the high detent the same swipe scrolls the list
+  - echo: At the high snap point the same swipe scrolls the list
   - swipe: { from: { text: Row 8 }, by: { y: -0.35 }, duration: 300, momentum: false }
   - await: { hidden: { text: { matches: '^Row 1$' } } }
   - wait: 600

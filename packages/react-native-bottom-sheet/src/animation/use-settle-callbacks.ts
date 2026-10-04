@@ -7,9 +7,9 @@ export type UseSettleCallbacksOptions = {
 	setOpen: (open: boolean) => void;
 	/** Unmounts the portal's children once a close has landed, unless the sheet is kept mounted. */
 	setPresented: (presented: boolean) => void;
-	/** The settled index and the detent count, for the handle's accessibility value. */
+	/** The settled index and the snap point count, for the handle's accessibility value. */
 	setIndex: (index: number) => void;
-	setDetentCount: (count: number) => void;
+	setSnapPointCount: (count: number) => void;
 	onIndexChange: ((index: number, height: number, source: AnimationSource) => void) | undefined;
 	onClose: (() => void) | undefined;
 	onAnimate: AnimateListener | undefined;
@@ -41,7 +41,7 @@ export function useSettleCallbacks(options: UseSettleCallbacksOptions): {
 	const onSettle = useCallback<SettleListener>((index, height, source, count) => {
 		const current = latest.current;
 		current.setIndex(index);
-		current.setDetentCount(count);
+		current.setSnapPointCount(count);
 		if (index !== lastReported.current) {
 			lastReported.current = index;
 			current.onIndexChange?.(index, height, source);

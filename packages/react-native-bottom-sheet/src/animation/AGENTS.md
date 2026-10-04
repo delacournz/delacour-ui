@@ -29,7 +29,7 @@ index the sheet never reached. Settling writes `currentIndex` and schedules
 `animateOnMount: false`.
 
 `settleAt` is the completion alone: no `onAnimate`, no target recorded, `base`
-written to the detent it is already within a settle tolerance of, then the same
+written to the snap point it is already within a settle tolerance of, then the same
 `currentIndex` write and `onSettle`. The content pan uses it for a release the
 list owns — the finger carried the sheet to the top and kept scrolling, so
 nothing animated and nothing else would report the index.

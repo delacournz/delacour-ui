@@ -37,7 +37,7 @@ export type BottomSheetFlatListProps<ItemT> = HeadlessProps<ItemT> & {
  * A virtualised body.
  *
  * The engine's `FlatList` — the scroll lock, the drag budget and content size
- * as the dynamic detent are all its — with the library's gutter on the content
+ * as the dynamic snap point are all its — with the library's gutter on the content
  * container. A virtualised list has no inner box to put the classes on, so
  * here they go on `contentContainerClassName`; the engine flattens the
  * resulting style to one object before the list measures it.

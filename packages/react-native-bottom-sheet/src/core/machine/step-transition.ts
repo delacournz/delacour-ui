@@ -6,7 +6,7 @@
  * frame from it here. Kept in core so the three transitions are a table a
  * test can read rather than three `useAnimatedStyle`s a device has to show.
  */
-import type { DetentSpec } from "../sheet.types";
+import type { SnapPointSpec } from "../sheet.types";
 import type { SheetEvent, SheetStateNode, SheetStepDirection } from "./machine.types";
 
 /** The `transition` prop of `BottomSheet.Steps`. */
@@ -47,7 +47,7 @@ export function stepFrame(
 
 /** What a step asks the root to change while it is current. */
 export type SheetStepOverride = {
-	snapPoints: readonly DetentSpec[] | undefined;
+	snapPoints: readonly SnapPointSpec[] | undefined;
 	dismissible: boolean | undefined;
 };
 

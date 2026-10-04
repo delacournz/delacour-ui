@@ -22,7 +22,7 @@ export type JumpTo = (target: number, source: AnimationSource) => void;
  */
 export type SettleAt = (target: number, source: AnimationSource) => void;
 
-/** What the JS thread hears when an animation lands — `count` is how many detents there were, for the handle's accessibility value. */
+/** What the JS thread hears when an animation lands — `count` is how many snap points there were, for the handle's accessibility value. */
 export type SettleListener = (index: number, height: number, source: AnimationSource, count: number) => void;
 
 /** What the JS thread hears when an animation starts. */

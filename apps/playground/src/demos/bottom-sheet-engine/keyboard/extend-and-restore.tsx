@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Extend, then restore",
 	caption:
-		'`keyboardBehavior="extend"` on two explicit detents. Focusing the field snaps the sheet to its highest detent and the keyboard lifts it from there; dismissing the keyboard restores the detent it held before, because `keyboardBlurBehavior` defaults to `restore`. The readout is `onIndexChange`, so the two snaps show up as `keyboard` sources.',
+		'`keyboardBehavior="extend"` on two explicit snap points. Focusing the field snaps the sheet to its highest snap point and the keyboard lifts it from there; dismissing the keyboard restores the snap point it held before, because `keyboardBlurBehavior` defaults to `restore`. The readout is `onIndexChange`, so the two snaps show up as `keyboard` sources.',
 };
 
 const SNAP_POINTS = ["35%", "80%"] as const;

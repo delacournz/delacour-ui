@@ -1,19 +1,19 @@
 executionPrerequisite: >-
-  Preview route open on bottom-sheet-engine/scrollables/scroll-view-two-detents, settled, sheet closed, readout "index: -1" (the offset half is the last scroll the consumer saw and is not reset by a close).
+  Preview route open on bottom-sheet-engine/scrollables/scroll-view-two-snap-points, settled, sheet closed, readout "index: -1" (the offset half is the last scroll the consumer saw and is not reset by a close).
 steps:
-  - echo: Open at the low detent
+  - echo: Open at the low snap point
   - assert: { text: { in: { id: scroll-view-readout }, contains: "index: -1" } }
   - tap: { id: scroll-view-open }
   - await: { visible: { text: { matches: '^Row 1$' } } }
   - await: { text: { in: { id: scroll-view-readout }, contains: "index: 0" } }
   - wait: 600
-  - echo: Locked — a swipe up inside the list moves the sheet to the high detent and Row 1 stays at the top
+  - echo: Locked — a swipe up inside the list moves the sheet to the high snap point and Row 1 stays at the top
   - swipe: { from: { text: Row 3 }, by: { y: -0.35 }, duration: 300, momentum: false }
   - await: { text: { in: { id: scroll-view-readout }, contains: "index: 1" } }
   - wait: 500
   - assert: { visible: { text: { matches: '^Row 1$' } } }
   - tool: screenshot
-  - echo: Unlocked at the high detent — the same swipe scrolls the list, Row 1 leaves and the offset grows
+  - echo: Unlocked at the high snap point — the same swipe scrolls the list, Row 1 leaves and the offset grows
   - swipe: { from: { text: Row 8 }, by: { y: -0.35 }, duration: 300, momentum: false }
   - wait: 700
   - assert: { hidden: { text: { matches: '^Row 1$' } } }
@@ -24,7 +24,7 @@ steps:
   - wait: 600
   - assert: { visible: { text: { matches: '^Row 1$' } } }
   - assert: { text: { in: { id: scroll-view-readout }, contains: "index: 1" } }
-  - echo: At offset 0 a drag down brings the sheet with it — to the low detent, then closed
+  - echo: At offset 0 a drag down brings the sheet with it — to the low snap point, then closed
   - swipe: { from: { text: Row 2 }, by: { y: 0.4 }, duration: 300, momentum: false }
   - await: { text: { in: { id: scroll-view-readout }, contains: "index: 0" } }
   - wait: 500

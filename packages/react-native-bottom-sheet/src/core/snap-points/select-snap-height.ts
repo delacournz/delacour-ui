@@ -3,8 +3,8 @@ export type SelectSnapHeightInput = {
 	height: number;
 	/** Release velocity in height space — upward positive, so pass `-velocityY`. */
 	velocity: number;
-	/** Ascending detents. */
-	detents: readonly number[];
+	/** Ascending snap points. */
+	snapPoints: readonly number[];
 	/** The closed height when closing is allowed from this gesture, else `null`. */
 	closedHeight: number | null;
 	/** Seconds of velocity to project — the `0.2` the previous engine used. */
@@ -12,7 +12,7 @@ export type SelectSnapHeightInput = {
 };
 
 /**
- * The detent a released drag settles at: the candidate nearest to where the
+ * The snap point a released drag settles at: the candidate nearest to where the
  * finger was heading, `height + projection · velocity`.
  *
  * Closing is a candidate only when `closedHeight` is given; the pan passes
@@ -31,8 +31,8 @@ export function selectSnapHeight(input: SelectSnapHeightInput): number {
 		bestDistance = Math.abs(projected - input.closedHeight);
 	}
 
-	for (let index = 0; index < input.detents.length; index += 1) {
-		const candidate = input.detents[index] as number;
+	for (let index = 0; index < input.snapPoints.length; index += 1) {
+		const candidate = input.snapPoints[index] as number;
 		const distance = Math.abs(projected - candidate);
 		if (distance < bestDistance) {
 			best = candidate;

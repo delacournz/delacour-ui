@@ -9,7 +9,7 @@ import type { BottomSheetOverlayProps } from "./bottom-sheet.types";
  * The scrim over the app behind the sheet.
  *
  * Its opacity follows the keyboard-free index on the UI thread, so a keyboard
- * lift never dims the app and a higher detent is no darker. Omit it and the
+ * lift never dims the app and a higher snap point is no darker. Omit it and the
  * sheet has no scrim at all.
  *
  * **It is a React Native `Pressable`, never a Gesture Handler tap, and it is

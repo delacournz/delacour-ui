@@ -61,7 +61,7 @@ Two fields on a step speak to the sheet rather than the machine:
 
 | Field | While the step is current |
 | --- | --- |
-| `snapPoints` | replaces the root's, and turns dynamic sizing off — the step is sized by its detents |
+| `snapPoints` | replaces the root's, and turns dynamic sizing off — the step is sized by its snap points |
 | `dismissible: false` | switches off pan-down-to-close and the overlay's press. `Close` and the ref still work |
 
 ## Run it
@@ -154,10 +154,10 @@ body has mounted. `useOptionalSheetStep()` returns `null` outside one.
 ## The height glides
 
 When the current step measures, `Steps` writes the number to the sheet's content height at once
-and springs its own stack to it. The dynamic detent re-derives on the UI thread, the root animates
+and springs its own stack to it. The dynamic snap point re-derives on the UI thread, the root animates
 the sheet to the same index in the new list with the sheet's own animation, and — because the stack
 uses the same config — the panel's top edge and the body's bottom edge move together. No jump. A
-sheet resting on an explicit detent does not move at all.
+sheet resting on an explicit snap point does not move at all.
 
 ## Transitions
 
@@ -195,7 +195,7 @@ const machine = defineSheetMachine<"compact" | "tall" | "half", Record<string, n
 ```
 
 A step that names `snapPoints` is sized by them while it is current; a step that names none is
-sized by what it measures. Each change animates the sheet to the new step's first detent.
+sized by what it measures. Each change animates the sheet to the new step's first snap point.
 
 ## XState, or your own controller
 
@@ -246,7 +246,7 @@ An adapter over an XState actor is a `useMemo` that maps `snapshot.value`, `snap
       type: '{ [T in E["type"]]?: S | { target: S; guard?; assign? } }',
       description: "An event type to its transition. The handler sees only that member of the event union.",
     },
-    snapPoints: { type: "readonly DetentSpec[]", description: "Replaces the root's while current; dynamic sizing off." },
+    snapPoints: { type: "readonly SnapPointSpec[]", description: "Replaces the root's while current; dynamic sizing off." },
     dismissible: { type: "boolean", description: "false switches off pan-down-to-close and the overlay press while current." },
     direction: { type: '"forward" | "back"', description: "How arriving at this step reads. Else declaration order." },
   }}

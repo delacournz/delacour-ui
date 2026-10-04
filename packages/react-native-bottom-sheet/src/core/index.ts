@@ -9,12 +9,6 @@ export {
 	selectAnimation,
 } from "./animation/select-animation";
 export { backdropInteractive, backdropOpacity } from "./backdrop/backdrop-opacity";
-export { type DynamicDetentInput, dynamicDetent } from "./detents/dynamic-detent";
-export { heightForIndex, indexForHeight } from "./detents/index-for-height";
-export { type DetentError, normalizeDetents, type ParsedDetent, parseDetent } from "./detents/normalize-detents";
-export { resistOverDrag } from "./detents/over-drag";
-export { type SelectSnapHeightInput, selectSnapHeight } from "./detents/select-snap-height";
-export { sheetState } from "./detents/sheet-state";
 export { type BodyClipInput, bodyClip, bodyInset, scrollContentHeight } from "./footer/body-inset";
 export { bandNow, bottomBand, footerHeight } from "./footer/bottom-band";
 export { type FooterTopInput, footerTop } from "./footer/footer-top";
@@ -32,7 +26,7 @@ export {
 } from "./geometry/detached-frame";
 export { positionFor } from "./geometry/position";
 export { surfaceHeight } from "./geometry/surface-height";
-export { crossedDetent, detentUnder } from "./haptic/crossed-detent";
+export { crossedSnapPoint, snapPointUnder } from "./haptic/crossed-snap-point";
 export { isLayoutReady, type LayoutReadyInput } from "./intent/layout-ready";
 export { type IntentResolution, type IntentState, resolveIntent } from "./intent/resolve-intent";
 export { acceptContainerLayout, type ContainerLayoutInput } from "./keyboard/container-layout-guard";
@@ -71,13 +65,12 @@ export {
 	type ListOwnsReleaseInput,
 	listDragHeight,
 	listOwnsRelease,
-	restingDetent,
+	restingSnapPoint,
 	scrollLockTarget,
 } from "./scroll/scroll-pan";
 export {
 	type AnimationSource,
 	CLOSED_INDEX,
-	type DetentSpec,
 	GESTURE_SOURCE,
 	type GestureSource,
 	type KeyboardBehavior,
@@ -88,5 +81,17 @@ export {
 	SHEET_STATE,
 	type SheetIntent,
 	type SheetState,
+	type SnapPointSpec,
 	UNMEASURED,
 } from "./sheet.types";
+export { type DynamicSnapPointInput, dynamicSnapPoint } from "./snap-points/dynamic-snap-point";
+export { heightForIndex, indexForHeight } from "./snap-points/index-for-height";
+export {
+	normalizeSnapPoints,
+	type ParsedSnapPoint,
+	parseSnapPoint,
+	type SnapPointError,
+} from "./snap-points/normalize-snap-points";
+export { resistOverDrag } from "./snap-points/over-drag";
+export { type SelectSnapHeightInput, selectSnapHeight } from "./snap-points/select-snap-height";
+export { sheetState } from "./snap-points/sheet-state";

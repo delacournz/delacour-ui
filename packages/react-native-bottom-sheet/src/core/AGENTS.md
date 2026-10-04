@@ -17,7 +17,7 @@ failure mode makes a test necessary rather than a convention sufficient.
 ## Height space
 
 Every value here is a **height**: pixels of sheet visible above its resting
-bottom line. `0` is closed, detents ascend, `-1` (`UNMEASURED`) is a
+bottom line. `0` is closed, snap points ascend, `-1` (`UNMEASURED`) is a
 measurement that has not happened. `translateY` is derived from a height only
 at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 
@@ -25,14 +25,14 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 
 | Path | What |
 | --- | --- |
-| `sheet.types.ts` | `DetentSpec`, the keyboard behaviours, `AnimationSource`, `SheetIntent`, the numeric enums and the two sentinels |
+| `sheet.types.ts` | `SnapPointSpec`, the keyboard behaviours, `AnimationSource`, `SheetIntent`, the numeric enums and the two sentinels |
 | `result.ts` | The house `Result` union, copied from the private `@delacour/types` |
-| `detents/normalize-detents.ts` | `parseDetent` (JS, a `Result`) and W `normalizeDetents(spec, available)` — ascending, unique, clamped, invalid entries skipped |
-| `detents/dynamic-detent.ts` | W `dynamicDetent` — handle + content + footer content + band once, capped |
-| `detents/index-for-height.ts` | W `indexForHeight` / `heightForIndex` — piecewise-linear over `[closed, …detents]`, clamped |
-| `detents/select-snap-height.ts` | W `selectSnapHeight` — nearest candidate to `height + projection · velocity`; closes only when given a closed height |
-| `detents/over-drag.ts` | W `resistOverDrag` — slope 1 at the edge, square-root beyond; factor 0 clamps |
-| `detents/sheet-state.ts` | W `sheetState` — closed / opened / extended / overExtended / fill |
+| `snap-points/normalize-snap-points.ts` | `parseSnapPoint` (JS, a `Result`) and W `normalizeSnapPoints(spec, available)` — ascending, unique, clamped, invalid entries skipped |
+| `snap-points/dynamic-snap-point.ts` | W `dynamicSnapPoint` — handle + content + footer content + band once, capped |
+| `snap-points/index-for-height.ts` | W `indexForHeight` / `heightForIndex` — piecewise-linear over `[closed, …snapPoints]`, clamped |
+| `snap-points/select-snap-height.ts` | W `selectSnapHeight` — nearest candidate to `height + projection · velocity`; closes only when given a closed height |
+| `snap-points/over-drag.ts` | W `resistOverDrag` — slope 1 at the edge, square-root beyond; factor 0 clamps |
+| `snap-points/sheet-state.ts` | W `sheetState` — closed / opened / extended / overExtended / fill |
 | `keyboard/keyboard-lift.ts` | W `keyboardInContainer`, W `keyboardLift` — the lift, band and gap subtracted in step with progress |
 | `keyboard/keyboard-owner.ts` | W `isInputInsideSheet` — the `keyboardScope: "inside"` geometry test |
 | `keyboard/content-area.ts` | W `contentArea` — what the body may fill, never negative |
@@ -49,9 +49,9 @@ at the moment a view needs it, by `geometry/position.ts`, and nowhere else.
 | `backdrop/backdrop-opacity.ts` | W `backdropOpacity`, W `backdropInteractive` |
 | `intent/resolve-intent.ts` | W `resolveIntent(state, intent)` — `wait` / `animate` / `jump` / `null`; open means `currentIndex ≥ 0` **or** `base` above the closed height, so a stale index never strands a visible sheet |
 | `intent/layout-ready.ts` | W `isLayoutReady` |
-| `haptic/crossed-detent.ts` | W `crossedDetent` (boolean), W `detentUnder` (index) |
+| `haptic/crossed-snap-point.ts` | W `crossedSnapPoint` (boolean), W `snapPointUnder` (index) |
 | `scroll/scroll-lock.ts` | W `shouldLockScroll`, W `contentPanDrivesSheet` |
-| `scroll/scroll-pan.ts` | W `listDragHeight` — the start offset as a budget the finger spends before the sheet moves; W `listOwnsRelease`; W `restingDetent` — the detent within the settle tolerance of a base, for a release the list owned; W `scrollLockTarget` |
+| `scroll/scroll-pan.ts` | W `listDragHeight` — the start offset as a budget the finger spends before the sheet moves; W `listOwnsRelease`; W `restingSnapPoint` — the snap point within the settle tolerance of a base, for a release the list owned; W `scrollLockTarget` |
 | `animation/select-animation.ts` | `selectAnimation`, `IOS_SPRING`, `ANDROID_TIMING` — platform defaults as data, easing by name |
 
 W marks a module-scope `"worklet"`; each is flat (see the package `AGENTS.md`)
@@ -69,12 +69,12 @@ restingBottom = detached ? bottomOffset + inset : 0          closedHeight = −r
 available     = C − restingBottom                            maxHeight = available
 band          = detached ? 0 : inset                         bandNow = band · (1 − p)
 footerHeight  = hasFooter ? footerContent + bandNow : 0
-dynamicDetent = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
-detents       = sortAsc(unique(normalize(spec, available) ∪ {dynamicDetent if dynamicSizing}))
+dynamicSnapPoint = min(handle + content + (hasFooter ? footerContent : 0) + band, maxDynamicContentSize, available)
+snapPoints       = sortAsc(unique(normalize(spec, available) ∪ {dynamicSnapPoint if dynamicSizing}))
 keyboardLift  = behavior ∈ {interactive, extend} ? max(0, kb − band · p − (detached ? restingBottom : 0)) : 0
 height        = clamp(base + keyboardLift, closedHeight, maxHeight)
 translateY    = C − restingBottom − height
-index         = piecewise(base, [closedHeight, …detents] → [−1, 0, 1, …])      // base, never height
+index         = piecewise(base, [closedHeight, …snapPoints] → [−1, 0, 1, …])      // base, never height
 contentArea   = max(0, min(maxHeight, highest + keyboardLift) − handle − footerHeight − kb − (hasFooter ? 0 : bandNow))
 footerTop     = max(0, height − kb − footerContent − bandNow)
 bodyInset     = hasFooter ? footerHeight : bandNow
@@ -92,18 +92,18 @@ the footer or the band and its last row can still be scrolled clear of them.
 `bodyClip` is what of that may show: without a footer all of it, so a sheet
 slides as one body; under a footer only what is above the footer's live top
 edge — `height − kb − handle − footerHeight`, which is `footerTop − handle` —
-so while the sheet is dragged below its detent and the footer holds the
-screen's bottom edge, no line of the body is drawn under it. On the detent the
+so while the sheet is dragged below its snap point and the footer holds the
+screen's bottom edge, no line of the body is drawn under it. On the snap point the
 clip is exactly `contentArea`. A scrollable's `contentHeight` is
 `scrollContentHeight(contentSize, spacer)`: the spacer is the footer and the
-band, which `dynamicDetent` adds once already.
+band, which `dynamicSnapPoint` adds once already.
 
 Two deviations from the plan's signatures, both on purpose:
 
 - `resolveIntent` returns `{ action } | null` rather than `number | null`,
   because `forceClose` needs a jump the caller can tell from an animate, and
   an open before layout needs a *wait* the caller can tell from a no-op.
-- `crossedDetent` returns a boolean and `detentUnder` the index, rather than
+- `crossedSnapPoint` returns a boolean and `snapPointUnder` the index, rather than
   one function doing both — a number that means "unchanged" when it equals its
   input is a comparison the caller has to make anyway, spelled worse.
 

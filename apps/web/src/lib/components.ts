@@ -193,7 +193,7 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		slug: "bottom-sheet",
 		name: "BottomSheet",
 		group: "Overlays",
-		blurb: "A sheet that rises from the bottom edge — detents, keyboard, sticky footer, scrollables and steps.",
+		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
 		slug: "steps",

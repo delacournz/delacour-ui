@@ -73,7 +73,7 @@ const PACKAGE_CARDS: { product: DocsProduct; name: string; path: string; motif: 
 		name: "Delacour Bottom Sheet",
 		path: "/docs/bottom-sheet",
 		motif: "sheet",
-		page: "Detents",
+		page: "Snap points",
 	},
 ];
 

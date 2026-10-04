@@ -55,11 +55,32 @@ export const COLLAPSIBLE_INDICATOR_ROTATION = { collapsed: 0, expanded: 180 } as
 /**
  * What the measured height holds before the panel has ever reported its layout.
  *
- * Negative rather than zero: a panel that measured `0` is a real answer, and
- * treating it as "still waiting" would never start the spring. Only a value no
- * layout can produce can mean *unmeasured*, so the height style floors it.
+ * Negative rather than zero: a panel that measured `0` is a real answer and still
+ * opens. Only a value no layout can produce can mean *unmeasured*, so the height
+ * style floors it. Whether the panel *has* measured is never decided by comparing
+ * against this on the JS thread — see {@link collapsibleTravelTarget}.
  */
 export const COLLAPSIBLE_UNMEASURED = -1;
+
+/**
+ * Where the root's `progress` should spring to, or `null` to wait — only an open,
+ * and only before the panel's first measurement.
+ *
+ * `isMeasured` is React state, never a JS-thread read of the measured height: the
+ * panel's write is queued onto the UI runtime, and a read straight after it can
+ * still see {@link COLLAPSIBLE_UNMEASURED} — a Release build does, every time, and
+ * the panel stays shut. `accordionTravelTarget`, restated.
+ */
+export function collapsibleTravelTarget({
+	isOpen,
+	isMeasured,
+}: {
+	isOpen: boolean;
+	isMeasured: boolean;
+}): 0 | 1 | null {
+	if (!isOpen) return 0;
+	return isMeasured ? 1 : null;
+}
 
 /**
  * The window of the travel the panel's opacity ramps across — ahead of the

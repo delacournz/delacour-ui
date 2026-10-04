@@ -3729,7 +3729,7 @@ export const install = {
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
 		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 18,
+		fileCount: 20,
 		groups: [
 			{
 				name: "skeleton",
@@ -3773,6 +3773,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
 				],
 			},
 			{
@@ -4771,7 +4787,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets"],
 		npm: [],
 		dev: [],
-		fileCount: 5,
+		fileCount: 7,
 		groups: [
 			{
 				name: "provider",
@@ -4781,6 +4797,22 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/provider/AGENTS.md", target: "src/components/ui/provider/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/provider/index.ts", target: "src/components/ui/provider/index.ts" },
 					{ source: "packages/react-native-ui/src/components/provider/provider.tsx", target: "src/components/ui/provider/provider.tsx" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
 				],
 			},
 			{

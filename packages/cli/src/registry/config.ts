@@ -300,6 +300,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Hands expo-router's navigator this library's colours, including the slab behind a push.",
 	},
 
+	"calm-motion": {
+		title: "calmMotion",
+		description: "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
+	},
 	cn: { title: "cn", description: "Class merging that understands the library's semantic size tokens." },
 	color: { title: "isLiteralColor", description: "Tells a literal colour from a theme token name." },
 	"compose-refs": { title: "composeRefs", description: "Merges several refs onto one node." },
@@ -315,6 +319,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	slot: { title: "Slot", description: "Renders into a child element instead of a wrapper." },
 	tv: { title: "tv", description: "tailwind-variants, taught the library's semantic size tokens." },
 
+	"use-calm-motion": {
+		title: "useCalmMotion",
+		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
 	"use-keyboard-state-sync": {
 		title: "useKeyboardStateSync",
 		description: "Keeps the keyboard's height and progress on the UI thread, for layout that tracks it.",

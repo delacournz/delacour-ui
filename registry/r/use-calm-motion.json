@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-calm-motion",
+	"type": "registry:hook",
+	"title": "useCalmMotion",
+	"description": "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	"registryDependencies": [
+		"calm-motion"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-calm-motion.tsx",
+			"target": "use-calm-motion.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/calm-motion",
+					"to": "@registry/lib/calm-motion"
+				}
+			]
+		}
+	]
+}

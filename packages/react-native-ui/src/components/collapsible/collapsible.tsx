@@ -10,6 +10,7 @@ import {
 	COLLAPSIBLE_UNMEASURED,
 	type CollapsibleSize,
 	type CollapsibleVariant,
+	collapsibleTravelTarget,
 	collapsibleVariants,
 	toggleCollapsibleOpen,
 } from "./collapsible.variants";
@@ -79,21 +80,22 @@ function CollapsibleRoot({
 	const progress = useSharedValue(isOpen ? 1 : 0);
 	const contentHeight = useSharedValue(COLLAPSIBLE_UNMEASURED);
 
-	// Bumped the first time the panel reports a height, purely to re-run the
-	// effect below. See `onMeasured` on the context.
-	const [measurements, setMeasurements] = useState(0);
-	const onMeasured = useCallback(() => setMeasurements((count) => count + 1), []);
+	// Whether the panel has ever reported a height — React state, never a JS-thread
+	// read of `contentHeight`, which can lag the write. See `collapsibleTravelTarget`
+	// and `onMeasured` on the context.
+	const [isMeasured, setMeasured] = useState(false);
+	const onMeasured = useCallback(() => setMeasured(true), []);
 
 	// The first open of a panel that has never mounted has no height to travel
-	// against, so that run bails and the measurement that follows brings it back.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: `measurements` is the re-run trigger, see above
+	// against, so that run waits and the measurement that follows brings it back.
 	useEffect(() => {
-		if (isOpen && contentHeight.value === COLLAPSIBLE_UNMEASURED) return;
+		const target = collapsibleTravelTarget({ isMeasured, isOpen });
+		if (target === null) return;
 
-		progress.value = withSpring(isOpen ? 1 : 0, COLLAPSIBLE_SPRING);
+		progress.value = withSpring(target, COLLAPSIBLE_SPRING);
 
 		return () => cancelAnimation(progress);
-	}, [contentHeight, isOpen, measurements, progress]);
+	}, [isMeasured, isOpen, progress]);
 
 	const context = useMemo<CollapsibleContextValue>(
 		() => ({ contentHeight, isDisabled, isOpen, onMeasured, progress, size, toggle, variant }),

@@ -78,9 +78,12 @@ with a glint sweeping across it, or a pulse, on the UI thread. Compound root plu
   line into a full one, that line's glint sat off-centre and swept visibly out
   of step with the rest. `StyleSheet.absoluteFill` plus
   `preserveAspectRatio="none"` makes the native view follow the band.
-- **Reduce-motion stills the skeleton, it does not hide it.**
-  `resolveSkeletonAnimation` returns `none` while the OS setting is on, and the
-  clock is never started. The shape is the message: a placeholder that stops
+- **Calm motion stills the skeleton, it does not hide it.**
+  `resolveSkeletonAnimation` returns `none` while `useCalmMotion()` is true — the
+  OS reduce-motion setting, or `DelacourProvider`'s `isMotionCalm` — and the
+  clock is never started. The second half is for E2E builds: a test runner that
+  waits for the screen to settle before each gesture pays its whole timeout on a
+  screen holding a shimmer that never ends. The shape is the message: a placeholder that stops
   moving still reads as content on its way. The clock's own timing sets
   `ReduceMotion.Never` because the decision has already been made one level up —
   under the default `System` policy `withTiming` completes instantly and

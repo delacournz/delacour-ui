@@ -2,7 +2,7 @@ import { type ReactElement, type ReactNode, useCallback, useState } from "react"
 import { type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useAccordionItemPart, useAccordionPart } from "./accordion.context";
-import { ACCORDION_CONTENT_FADE, ACCORDION_UNMEASURED, accordionVariants } from "./accordion.variants";
+import { ACCORDION_CONTENT_FADE, accordionVariants } from "./accordion.variants";
 
 export type AccordionContentProps = Omit<ViewProps, "style"> & {
 	className?: string;
@@ -55,7 +55,6 @@ export function AccordionContent({ className, children, ...props }: AccordionCon
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
-			const wasMeasured = contentHeight.value > ACCORDION_UNMEASURED;
 			contentHeight.value = event.nativeEvent.layout.height;
 
 			// The panel reports its first measurement and stops there — it must not
@@ -64,11 +63,15 @@ export function AccordionContent({ className, children, ...props }: AccordionCon
 			// is sometimes cancelled a moment later by the cleanup of the item's
 			// effect it raced, leaving the panel shut and the indicator pointing the
 			// wrong way. Telling the item instead leaves one owner of the spring.
-			if (wasMeasured) return;
+			//
+			// "First" is this component's own state, never `contentHeight.value`: the
+			// write above is queued onto the UI runtime, and a JS-thread read straight
+			// after it can still see the old value.
+			if (isMeasured) return;
 			setMeasured(true);
 			onMeasured();
 		},
-		[contentHeight, onMeasured]
+		[contentHeight, isMeasured, onMeasured]
 	);
 
 	// Height and opacity off the one `progress`, never off a timing of their own —

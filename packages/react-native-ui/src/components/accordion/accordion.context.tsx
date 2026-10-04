@@ -35,8 +35,9 @@ export type AccordionItemContextValue = {
 	 * The panel's natural height in points, from its own `onLayout`.
 	 *
 	 * Holds {@link ACCORDION_UNMEASURED} until a panel has reported, which is not
-	 * the same as a panel that measured zero: the item's spring waits on the first
-	 * measurement rather than travelling against a height that is not there yet.
+	 * the same as a panel that measured zero. Read on the UI runtime only — by the
+	 * height style — and written from the panel's `onLayout`; nothing on the JS
+	 * thread reads it, because a JS read can lag a JS write. See {@link onMeasured}.
 	 */
 	contentHeight: SharedValue<number>;
 	/**
@@ -46,9 +47,14 @@ export type AccordionItemContextValue = {
 	 * spring. The panel cannot start the travel itself: `onLayout` is dispatched
 	 * from the native side and can land either side of React's effects, so a panel
 	 * that started its own spring would sometimes have it cancelled a moment later
-	 * by the cleanup of the effect it raced. This hands the item a reason to re-run
-	 * instead — `Slider`'s and `Switch`'s `settledDrags`, for the same reason: a
-	 * counter whose only job is to give an effect something to fire on.
+	 * by the cleanup of the effect it raced. This flips the item's own
+	 * `isMeasured` state instead, which is what re-runs the item's effect.
+	 *
+	 * That state, not a JS-thread read of {@link contentHeight}, is how the item
+	 * knows a panel has measured. The panel's write is queued onto the UI runtime
+	 * and a read straight after it can still see `ACCORDION_UNMEASURED` — a Release
+	 * build does, every time, and the panel stayed shut. See
+	 * `accordionTravelTarget`.
 	 */
 	onMeasured: () => void;
 };

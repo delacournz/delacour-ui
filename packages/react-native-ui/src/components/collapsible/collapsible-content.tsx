@@ -2,12 +2,7 @@ import { type ReactElement, type ReactNode, useCallback, useState } from "react"
 import { type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import Animated, { interpolate, useAnimatedStyle } from "react-native-reanimated";
 import { useCollapsiblePart } from "./collapsible.context";
-import {
-	COLLAPSIBLE_CONTENT_FADE,
-	COLLAPSIBLE_UNMEASURED,
-	collapsibleVariants,
-	resolveCollapsibleAccessibility,
-} from "./collapsible.variants";
+import { COLLAPSIBLE_CONTENT_FADE, collapsibleVariants, resolveCollapsibleAccessibility } from "./collapsible.variants";
 
 export type CollapsibleContentProps = Omit<ViewProps, "style"> & {
 	className?: string;
@@ -47,13 +42,15 @@ export function CollapsibleContent({ className, children, ...props }: Collapsibl
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
-			const wasMeasured = contentHeight.value > COLLAPSIBLE_UNMEASURED;
 			contentHeight.value = event.nativeEvent.layout.height;
-			if (wasMeasured) return;
+			// "First" is this component's own state, never `contentHeight.value`: the
+			// write above is queued onto the UI runtime, and a read straight after it
+			// can still see the old value.
+			if (isMeasured) return;
 			setMeasured(true);
 			onMeasured();
 		},
-		[contentHeight, onMeasured]
+		[contentHeight, isMeasured, onMeasured]
 	);
 
 	const clipStyle = useAnimatedStyle(() => ({

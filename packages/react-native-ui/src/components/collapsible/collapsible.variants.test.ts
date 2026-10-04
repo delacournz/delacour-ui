@@ -9,8 +9,10 @@ import {
 	ACCORDION_SIZES,
 	ACCORDION_SPRING,
 	ACCORDION_VARIANTS,
+	accordionTravelTarget,
 	accordionVariants,
 } from "../accordion/accordion.variants";
+import { CONTENT_HEIGHT_READ, jsThreadSource } from "../accordion/accordion.variants.test";
 import { ICON_SIZES } from "../icon/icon.variants";
 import {
 	COLLAPSIBLE_CONTENT_FADE,
@@ -24,6 +26,7 @@ import {
 	COLLAPSIBLE_SPRING,
 	COLLAPSIBLE_UNMEASURED,
 	COLLAPSIBLE_VARIANTS,
+	collapsibleTravelTarget,
 	collapsibleVariants,
 	resolveCollapsibleAccessibility,
 	toggleCollapsibleOpen,
@@ -298,5 +301,38 @@ describe("collapsible and accordion move alike", () => {
 			const accordion = accordionVariants({ isDisabled: false, size: COLLAPSIBLE_DEFAULT_SIZE, variant });
 			expect(cls(own.root())).toBe(cls(accordion.root()));
 		}
+	});
+});
+
+describe("collapsibleTravelTarget", () => {
+	test("an open waits for the panel's first measurement", () => {
+		expect(collapsibleTravelTarget({ isOpen: true, isMeasured: false })).toBeNull();
+	});
+
+	test("an open travels to 1 once the panel has measured", () => {
+		expect(collapsibleTravelTarget({ isOpen: true, isMeasured: true })).toBe(1);
+	});
+
+	test("a close never waits, measured or not", () => {
+		expect(collapsibleTravelTarget({ isOpen: false, isMeasured: false })).toBe(0);
+		expect(collapsibleTravelTarget({ isOpen: false, isMeasured: true })).toBe(0);
+	});
+
+	test("agrees with the accordion's rule on every input", () => {
+		for (const isOpen of [false, true]) {
+			for (const isMeasured of [false, true]) {
+				expect(collapsibleTravelTarget({ isOpen, isMeasured })).toBe(
+					accordionTravelTarget({ isExpanded: isOpen, isMeasured })
+				);
+			}
+		}
+	});
+});
+
+describe("the measured height is never read on the JS thread", () => {
+	// `Accordion`'s Release-build bug, in the same two files: a JS-thread read straight after the
+	// panel's `onLayout` wrote the height can still see `COLLAPSIBLE_UNMEASURED`.
+	test.each(["collapsible.tsx", "collapsible-content.tsx"])("%s", (file) => {
+		expect(jsThreadSource(join(import.meta.dirname, file))).not.toMatch(CONTENT_HEIGHT_READ);
 	});
 });

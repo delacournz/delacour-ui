@@ -281,14 +281,22 @@ Registry: `ITEM_META["page-header"] = { title: "Page Header", description: "A co
 
 ## Acceptance checklist
 
-- [ ] `page-header.variants.test.ts` and `page-header.utils.test.ts` written first, failing, then passing (`bun test packages/react-native-ui/src/components/page-header`)
-- [ ] `avatar.variants.test.ts` extended for `2xl` and passing
-- [ ] `bun run typecheck` and `bun run check` clean; no `any`; no comments in JSX
-- [ ] Every part, provider and leaf has a `DelacourUI.PageHeader…` displayName (`display-name.test.ts` passes)
-- [ ] `page-header/AGENTS.md` written (file map, axes, the overlap-by-context decision, why not inside `Screen.Header`); row added to the Components table; `docs.test.ts` passes
-- [ ] `bun run gen-exports` run; `package.json` exports include `./page-header`
-- [ ] Demos list, route, home row, `bun run gen-demos`; `demos.test.ts` passes; 4-6 capture, one hero
-- [ ] Docs page + `meta.json` entry; `ITEM_META["page-header"]`; registry builder passes (`packages/cli` tests)
-- [ ] Changeset added
-- [ ] Simulator (agent-device, `warden claim ios` first): cover gradient clears the status bar on a notched device in `page` variant; avatar ring colour matches the page in light and dark and the card in `card`; equal-width stats keep the middle one under the title with "Followers" vs "Posts"; stat press fires and announces as a button; VoiceOver reads `"1,234 Followers"`; dynamic type at the largest setting does not clip stats; header inside `Screen.ScrollArea` with an overlay navbar does not leave a gap or hide the avatar
-- [ ] `agent-device close` and `warden release` on completion
+- [x] `page-header.variants.test.ts` and `page-header.utils.test.ts` written first, failing, then passing (`bun test packages/react-native-ui/src/components/page-header`)
+- [x] `avatar.variants.test.ts` extended for `2xl` and passing
+- [x] `bun run typecheck` and `bun run check` clean; no `any`; no comments in JSX
+- [x] Every part, provider and leaf has a `DelacourUI.PageHeader…` displayName (`display-name.test.ts` passes)
+- [x] `page-header/AGENTS.md` written; row added to the Components table; `docs.test.ts` passes
+- [x] `bun run gen-exports` run; `package.json` exports include `./page-header`
+- [x] Demos list, route, home row, `bun run gen-demos`; `demos.test.ts` passes. **Captures deferred**: `bun run previews` needs the argent CLI, which is not installed, so no demo carries `meta.capture` and the docs page has no `<Preview>` yet — the intended set is in the component AGENTS.md
+- [x] Docs page + `meta.json` entry; `ITEM_META["page-header"]`; registry rebuilt; install manifest and skill list regenerated
+- [x] Changeset added
+- [x] Simulator (agent-device on a warden-claimed iPhone 17): results in the component AGENTS.md **Verification** section. The card check found and fixed a page-coloured band across a card's cover
+- [x] `agent-device close` and `warden release` on completion
+
+## Deviations from this spec
+
+- `PageHeader.Meta`'s `icon` is typed `IconComponent` (what `Icon` takes), not `IconGlyph` — the latter is `Icon`'s private proxy.
+- `PageHeader.Cover`'s `colors` is a two-to-four tuple rather than `[string, string, ...string[]]`, so the fixed four `useThemeColor` lookups cover every case.
+- The `cover` slot carries the variant's ground (`bg-card` / `bg-background`) and the default gradient fades into it, so a card's cover does not end in page colour.
+- An extra gallery-only demo, `in-a-screen`, shows the header in a real `Screen.ScrollArea` under an overlay navbar.
+- `PageHeader.Avatar` takes a `ringClassName` for the ring; `className` styles the avatar.

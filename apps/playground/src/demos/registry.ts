@@ -296,6 +296,12 @@ import * as demo_scroll_blur_horizontal from "./scroll-blur/horizontal";
 import * as demo_scroll_blur_layers_and_intensity from "./scroll-blur/layers-and-intensity";
 import * as demo_scroll_blur_list_under_button from "./scroll-blur/list-under-button";
 import * as demo_scroll_blur_search_over_media from "./scroll-blur/search-over-media";
+import * as demo_scroll_header_blur_bar from "./scroll-header/blur-bar";
+import * as demo_scroll_header_cover from "./scroll-header/cover";
+import * as demo_scroll_header_early_handover from "./scroll-header/early-handover";
+import * as demo_scroll_header_large_title_list from "./scroll-header/large-title-list";
+import * as demo_scroll_header_no_large from "./scroll-header/no-large";
+import * as demo_scroll_header_react_to_collapse from "./scroll-header/react-to-collapse";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
@@ -668,6 +674,12 @@ export const DEMOS = {
 	"scroll-blur/layers-and-intensity": demo_scroll_blur_layers_and_intensity,
 	"scroll-blur/list-under-button": demo_scroll_blur_list_under_button,
 	"scroll-blur/search-over-media": demo_scroll_blur_search_over_media,
+	"scroll-header/blur-bar": demo_scroll_header_blur_bar,
+	"scroll-header/cover": demo_scroll_header_cover,
+	"scroll-header/early-handover": demo_scroll_header_early_handover,
+	"scroll-header/large-title-list": demo_scroll_header_large_title_list,
+	"scroll-header/no-large": demo_scroll_header_no_large,
+	"scroll-header/react-to-collapse": demo_scroll_header_react_to_collapse,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,

@@ -1,0 +1,265 @@
+---
+title: ScrollHeader
+description: A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.
+icon: PanelTopClose
+---
+
+## Installation
+
+<ComponentInstall name="scroll-header" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { ListGroup } from "@/components/ui/list-group";
+import { ScrollHeader } from "@/components/ui/scroll-header";
+import { Text } from "@/components/ui/text";
+import { IconMagnifyingGlass } from "@/lib/icons/central";
+import { View } from "react-native";
+
+const ALBUMS = ["Blue", "Kind of Blue", "Rumours", "Pet Sounds", "Abbey Road", "Horses", "Hounds of Love"];
+
+export default function Library() {
+  return (
+    <ScrollHeader>
+      <ScrollHeader.Bar>
+        <ScrollHeader.BarTitle>Library</ScrollHeader.BarTitle>
+        <View className="ml-auto">
+          <Button accessibilityLabel="Search" size="icon-sm" variant="secondary">
+            <Icon icon={IconMagnifyingGlass} />
+          </Button>
+        </View>
+      </ScrollHeader.Bar>
+      <ScrollHeader.Large>
+        <Text.Title>Library</Text.Title>
+        <Text.Caption>{`${ALBUMS.length} albums`}</Text.Caption>
+      </ScrollHeader.Large>
+      <ScrollHeader.ScrollView contentContainerClassName="px-screen-gutter pb-12">
+        <ListGroup>
+          {ALBUMS.map((album) => (
+            <ListGroup.Item key={album}>
+              <ListGroup.ItemTitle>{album}</ListGroup.ItemTitle>
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
+      </ScrollHeader.ScrollView>
+    </ScrollHeader>
+  );
+}
+```
+
+The title block scrolls away while the bar's title fades in to replace it, and the bar's surface and
+hairline arrive with it. Let go half way and the header settles open or closed.
+
+The root is `flex-1`: give its parent a height, or it collapses to nothing.
+
+## Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `ScrollHeader.Bar` | The pinned bar — the safe-area band, then one row of controls. Its surface fades in as the header collapses; its controls never fade. |
+| `ScrollHeader.BarTitle` | The bar's title, the compact half of the crossfade. |
+| `ScrollHeader.Large` | The large title block. Measured, so its height is the collapse distance. Display-only: it takes no touches. |
+| `ScrollHeader.Cover` | An image or a gradient behind the bar and the title. |
+| `ScrollHeader.ScrollView` / `.FlatList` | The scroller, already wired. Exactly one per header. |
+| `ScrollHeader.Inset` | The spacer a custom scroller renders at its top. |
+
+The parts may come in any order — they stack by z-index, not by position.
+
+## Cover and stretch
+
+```tsx
+<ScrollHeader>
+  <ScrollHeader.Cover source={{ uri: "https://picsum.photos/id/1018/1200/800" }} />
+  <ScrollHeader.Bar>
+    <Button accessibilityLabel="Back" onPress={router.back} size="icon-sm" variant="secondary">
+      <Icon icon={IconChevronLeft} />
+    </Button>
+    <ScrollHeader.BarTitle>Ridge walk</ScrollHeader.BarTitle>
+  </ScrollHeader.Bar>
+  <ScrollHeader.Large className="pt-24">
+    <Text.Title className="text-white">Ridge walk</Text.Title>
+  </ScrollHeader.Large>
+  <ScrollHeader.ScrollView>{stops}</ScrollHeader.ScrollView>
+</ScrollHeader>
+```
+
+The cover ends exactly where the first row begins. Pull down and it grows from its top edge; pass
+`stretch={false}` to have it ride down with the content instead. `colors` draws a gradient in place
+of an image, and `scrim={false}` drops the darkening wash.
+
+There is no back-button part: pass a `Button` with a chevron and your router's `back`.
+
+## The blur bar
+
+`surface="blur"` frosts the bar with the blur engine `ScrollBlurLayerProvider` names — set that up
+once at the root, as on the [ScrollBlur](/docs/native/components/scroll-blur) page. With no engine,
+or with Reduce Transparency on, the bar is `plain`.
+
+```tsx
+<ScrollHeader.Bar surface="blur" intensity={60}>…</ScrollHeader.Bar>
+```
+
+`plain` is the page colour, `muted` a muted fill, and `none` no backing at all.
+
+## Early handover
+
+`threshold` is the fraction of the Large block's height at which the bar has fully taken over.
+`threshold={0.6}` suits a tall block with a paragraph under its title.
+
+```tsx
+<ScrollHeader threshold={0.6}>…</ScrollHeader>
+```
+
+## Reacting to collapse
+
+`onCollapsedChange` fires once per crossing, on the JS thread. `progress` is written every frame,
+0 open to 1 collapsed, for effects on the UI thread.
+
+```tsx
+const progress = useSharedValue(0);
+const [isCollapsed, setIsCollapsed] = useState(false);
+const avatarStyle = useAnimatedStyle(() => ({ opacity: progress.value }));
+
+<ScrollHeader onCollapsedChange={setIsCollapsed} progress={progress}>
+  <ScrollHeader.Bar>
+    <Animated.View style={avatarStyle}>
+      <Avatar name="Mere Tane" size="sm" />
+    </Animated.View>
+    <ScrollHeader.BarTitle>Mere Tane</ScrollHeader.BarTitle>
+    {isCollapsed ? <Button size="sm"><Button.Label>Follow</Button.Label></Button> : null}
+  </ScrollHeader.Bar>
+  …
+</ScrollHeader>;
+```
+
+## Using another scroller
+
+For a `SectionList`, a `LegendList` or any other scrollable, spread `useScrollHeader().scrollProps`
+onto its animated form and render `ScrollHeader.Inset` at the top of its content. The scroller has
+to be a child of the header.
+
+```tsx
+function Sections() {
+  const { scrollProps } = useScrollHeader();
+
+  return (
+    <Animated.SectionList
+      ListHeaderComponent={<ScrollHeader.Inset />}
+      renderItem={renderItem}
+      sections={sections}
+      {...scrollProps}
+    />
+  );
+}
+```
+
+A scroller part's own `onScroll` is composed with the header's: a `useAnimatedScrollHandler` runs on
+the UI thread, a plain function receives the `NativeScrollEvent` on the JS thread. `RefreshControl`
+works unchanged.
+
+For a page too short to scroll, `contentContainerStyle={{ flexGrow: 1 }}` keeps it filling the
+screen; the header stays open.
+
+## Inside a Screen
+
+`ScrollHeader` takes the place of `Screen.Navbar`. Inside a `<Screen>`, mount no `Screen.Navbar` and
+use `ScrollHeader.ScrollView` or `.FlatList` — not `Screen.ScrollArea`, whose own top inset would
+stack on the header's. `Screen.Footer` composes fine.
+
+```tsx
+<Screen>
+  <ScrollHeader>
+    <ScrollHeader.Bar>…</ScrollHeader.Bar>
+    <ScrollHeader.Large>…</ScrollHeader.Large>
+    <ScrollHeader.ScrollView>…</ScrollHeader.ScrollView>
+  </ScrollHeader>
+  <Screen.Footer>…</Screen.Footer>
+</Screen>
+```
+
+## Accessibility
+
+One title is announced at a time: the bar title is hidden from screen readers while the header is
+open, and the Large block once it has collapsed. The bar's controls stay reachable in both states.
+Under Reduce Motion the cover does not stretch and the snap is instant; the crossfade still follows
+your finger. Under Reduce Transparency the blur bar is plain.
+
+## API Reference
+
+### ScrollHeader
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    threshold: { type: "number", default: "1", description: "Fraction of the Large block's height at which the bar has fully taken over, 0.1–1." },
+    snap: { type: "boolean", default: "true", description: "Settle a half-scrolled header open or closed when the scroll comes to rest." },
+    stretch: { type: "boolean", default: "true", description: "Let the cover grow when pulled down. Off under Reduce Motion." },
+    onCollapsedChange: { type: "(isCollapsed: boolean) => void", description: "Fires once per crossing of fully collapsed, on the JS thread." },
+    progress: { type: "SharedValue<number>", description: "Written every frame, 0 (open) to 1 (collapsed)." },
+    children: { type: "ReactNode", required: true },
+    className: { type: "string" },
+  }}
+/>
+
+### ScrollHeader.Bar
+
+<TypeTable
+  type={{
+    surface: { type: '"plain" | "muted" | "none" | "blur"', default: '"plain"', description: "The backing that fades in on collapse." },
+    divider: { type: "boolean", default: "true", description: "A hairline under the bar, fading in with the surface." },
+    intensity: { type: "number", default: "40", description: 'Blur strength, 0–100. `surface="blur"` only.' },
+    barHeight: { type: "number", description: "The row's height in points, before the safe-area band. Measured when omitted." },
+    layer: { type: "BlurLayerComponent", description: "The blur engine; overrides ScrollBlurLayerProvider." },
+    className: { type: "string" },
+  }}
+/>
+
+### ScrollHeader.BarTitle
+
+<TypeTable
+  type={{
+    children: { type: "string", required: true },
+    className: { type: "string" },
+  }}
+/>
+
+### ScrollHeader.Cover
+
+Takes `source` or `colors`, never both.
+
+<TypeTable
+  type={{
+    source: { type: "ImageSourcePropType", description: "An image, drawn to cover." },
+    colors: { type: "readonly [string, string, ...string[]]", description: "A top-to-bottom gradient." },
+    scrim: { type: "boolean", default: "true", description: "A darkening wash for text legibility." },
+    className: { type: "string" },
+  }}
+/>
+
+### ScrollHeader.ScrollView / ScrollHeader.FlatList
+
+Every `ScrollView` / `FlatList` prop, plus:
+
+<TypeTable
+  type={{
+    onScroll: { type: "ScrollHandlerProcessed | ((event: NativeScrollEvent) => void)", description: "Composed with the header's, never replaced." },
+    contentContainerClassName: { type: "string" },
+    className: { type: "string" },
+  }}
+/>
+
+### useScrollHeader
+
+<TypeTable
+  type={{
+    source: { type: "ScrollSource", description: "The header's scroll source." },
+    scrollProps: { type: "ScrollSourceProps", description: "Spread onto a custom scroller. Includes the snap handlers." },
+    progress: { type: "SharedValue<number>", description: "0 (open) to 1 (collapsed)." },
+    collapseDistance: { type: "SharedValue<number>", description: "Points of scroll from open to collapsed." },
+    topInset: { type: "SharedValue<number>", description: "Safe-area band + bar + Large block." },
+  }}
+/>

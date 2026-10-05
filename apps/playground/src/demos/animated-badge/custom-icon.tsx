@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Custom icon",
 	align: "center",
 	note: "A custom icon takes the badge's icon size and colour. `showIcon={false}` drops the glyph.",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

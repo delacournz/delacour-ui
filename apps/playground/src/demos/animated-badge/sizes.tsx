@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "center",
 	note: "The same padding, type and icon step as a Badge of the same size, so the two sit level.",
+	capture: {},
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

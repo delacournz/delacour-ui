@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inside text",
 	caption: "With `animateLayout={false}` the badge stays in its place in the sentence as the words around it reflow.",
+	capture: { flow: "animated-badge/inline-text", align: "stretch" },
 };
 
 const BEFORE = "This listing has".split(" ");

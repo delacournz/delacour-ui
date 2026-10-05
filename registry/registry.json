@@ -1918,6 +1918,19 @@
 			]
 		},
 		{
+			"name": "scroll-sections",
+			"type": "registry:lib",
+			"title": "scrollSections",
+			"description": "Which section a scroll offset is in, and how far down the content it is.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/scroll-sections.ts"
+			]
+		},
+		{
 			"name": "search-bar",
 			"type": "registry:ui",
 			"title": "Search Bar",
@@ -2892,6 +2905,24 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-navigation-theme.ts"
+			]
+		},
+		{
+			"name": "use-scroll-sections",
+			"type": "registry:hook",
+			"title": "useScrollSections",
+			"description": "Tracks the section a scroll view is showing and its progress, on the UI thread.",
+			"registryDependencies": [
+				"scroll-sections"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-scroll-sections.ts"
 			]
 		},
 		{

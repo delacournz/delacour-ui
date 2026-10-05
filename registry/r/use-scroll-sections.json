@@ -1,0 +1,29 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-scroll-sections",
+	"type": "registry:hook",
+	"title": "useScrollSections",
+	"description": "Tracks the section a scroll view is showing and its progress, on the UI thread.",
+	"registryDependencies": [
+		"scroll-sections"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-scroll-sections.ts",
+			"target": "use-scroll-sections.ts",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/scroll-sections",
+					"to": "@registry/lib/scroll-sections"
+				}
+			]
+		}
+	]
+}

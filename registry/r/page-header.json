@@ -1,0 +1,236 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "page-header",
+	"type": "registry:ui",
+	"title": "Page Header",
+	"description": "A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"avatar",
+		"cn",
+		"color",
+		"icon",
+		"icons",
+		"pressable",
+		"screen",
+		"surface",
+		"text",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"expo-linear-gradient",
+		"react-native-reanimated",
+		"react-native-safe-area-context"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/page-header/AGENTS.md",
+			"target": "page-header/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/page-header",
+					"to": "@registry/ui/page-header"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/index.ts",
+			"target": "page-header/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-actions.tsx",
+			"target": "page-header/page-header-actions.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-avatar.tsx",
+			"target": "page-header/page-header-avatar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../avatar",
+					"to": "@registry/ui/avatar"
+				},
+				{
+					"from": "../avatar/avatar.variants",
+					"to": "@registry/ui/avatar/avatar.variants"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-content.tsx",
+			"target": "page-header/page-header-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-cover.tsx",
+			"target": "page-header/page-header-cover.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../screen/screen.context",
+					"to": "@registry/ui/screen/screen.context"
+				},
+				{
+					"from": "../screen/screen.variants",
+					"to": "@registry/ui/screen/screen.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-description.tsx",
+			"target": "page-header/page-header-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-meta.tsx",
+			"target": "page-header/page-header-meta.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-stat.tsx",
+			"target": "page-header/page-header-stat.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-stats.tsx",
+			"target": "page-header/page-header-stats.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header-title.tsx",
+			"target": "page-header/page-header-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.context.tsx",
+			"target": "page-header/page-header.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../avatar/avatar.variants",
+					"to": "@registry/ui/avatar/avatar.variants"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.tsx",
+			"target": "page-header/page-header.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../screen/screen.context",
+					"to": "@registry/ui/screen/screen.context"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				},
+				{
+					"from": "../surface/surface.context",
+					"to": "@registry/ui/surface/surface.context"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.types.ts",
+			"target": "page-header/page-header.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.utils.ts",
+			"target": "page-header/page-header.utils.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/page-header/page-header.variants.ts",
+			"target": "page-header/page-header.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../avatar/avatar.variants",
+					"to": "@registry/ui/avatar/avatar.variants"
+				}
+			]
+		}
+	]
+}

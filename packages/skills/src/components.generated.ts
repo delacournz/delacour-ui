@@ -50,6 +50,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "number-input", title: "Number Input", description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur." },
 	{ name: "otp-input", title: "OTP Input", description: "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste." },
 	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },
+	{ name: "page-header", title: "Page Header", description: "A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen." },
 	{ name: "pagination", title: "Pagination", description: "Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows." },
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },

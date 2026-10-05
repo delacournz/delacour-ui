@@ -1,0 +1,285 @@
+---
+title: PageHeader
+description: The head of a profile or place screen — a cover, an overlapping avatar, a title block, actions and stats.
+icon: SquareUser
+---
+
+<Preview id="page-header/in-a-screen" title={null} />
+
+## Installation
+
+<ComponentInstall name="page-header" />
+
+## Usage
+
+```tsx title="app/profile.tsx"
+import { Button } from "@/components/ui/button";
+import { IconMapPin } from "@/lib/icons/central";
+import { PageHeader } from "@/components/ui/page-header";
+import { Screen } from "@/components/ui/screen";
+
+export default function Profile() {
+  return (
+    <Screen>
+      <Screen.Navbar placement="overlay" />
+      <Screen.ScrollArea
+        header={
+          <PageHeader>
+            <PageHeader.Cover source={{ uri: "https://example.com/cover.jpg" }} />
+            <PageHeader.Avatar isVerified name="Kate Austen" source={{ uri: "https://example.com/kate.jpg" }} />
+            <PageHeader.Content>
+              <PageHeader.Title>Kate Austen</PageHeader.Title>
+              <PageHeader.Meta icon={IconMapPin}>Auckland, New Zealand</PageHeader.Meta>
+              <PageHeader.Description>Product designer. Weekends on the water.</PageHeader.Description>
+            </PageHeader.Content>
+            <PageHeader.Actions>
+              <Button>Follow</Button>
+            </PageHeader.Actions>
+            <PageHeader.Stats isDivided>
+              <PageHeader.Stat label="Followers" onPress={() => {}} value={1234} />
+              <PageHeader.Stat label="Posts" value={87} />
+              <PageHeader.Stat label="Following" value={312} />
+            </PageHeader.Stats>
+          </PageHeader>
+        }
+      />
+    </Screen>
+  );
+}
+```
+
+## Anatomy
+
+<Preview id="page-header/profile" />
+
+```tsx
+<PageHeader>
+  <PageHeader.Cover />
+  <PageHeader.Avatar />
+  <PageHeader.Content>
+    <PageHeader.Title />
+    <PageHeader.Meta />
+    <PageHeader.Description />
+  </PageHeader.Content>
+  <PageHeader.Actions />
+  <PageHeader.Stats>
+    <PageHeader.Stat />
+  </PageHeader.Stats>
+</PageHeader>
+```
+
+Every part is optional and drawn in the order you write it. The header degrades one part at a time: no
+cover, and the face does not lift; no stats, and nothing is left behind.
+
+## Cover
+
+<Preview id="page-header/gradient-cover" />
+
+A picture, or a gradient. The gradient is always painted and the picture is drawn over it, so a slow or
+broken URL shows the theme's gradient rather than an empty box — there is no loading state to manage.
+With no `source` the default fades `primary` into the page; pass two to four theme tokens or colours of
+your own.
+
+```tsx
+<PageHeader.Cover source={{ uri: team.cover }} accessibilityLabel="The clubhouse at dusk" />
+<PageHeader.Cover colors={["chart-2", "chart-4", "background"]} height={96} />
+```
+
+In the `page` variant the cover reaches the top of the screen. Inside a `Screen` it runs under the status
+bar and an `overlay` navbar with no gap; outside one it grows by the safe-area inset. Pass
+`isInsetAware={false}` to keep it at its own height. Children are an overlay — a back button pinned to a
+corner — and start below that inset, so they never sit under the clock.
+
+Without an `accessibilityLabel` the picture is decorative and hidden from screen readers. An overlaid
+button stays reachable either way.
+
+## Avatar and overlap
+
+`PageHeader.Avatar` is an `Avatar` in a ring of the header's own ground — the page background, or the
+card's fill — so a face lifted over a photo is cut out cleanly. With a cover mounted it lifts by half its
+size, so its middle sits on the cover's edge. Centred, it defaults to `2xl` (96pt); on the leading edge,
+`xl` (64pt).
+
+`isVerified` draws a rosette in the corner and appends ", verified" to the avatar's spoken label. `badge`
+replaces the rosette with your own content; `isOverlapping={false}` keeps the face below the cover.
+
+## Alignment
+
+<Preview id="page-header/aligned-start" />
+
+```tsx
+<PageHeader align="start">…</PageHeader>
+```
+
+`center` stacks the face, the text, the actions and the stats down the middle. `start` puts them on the
+leading edge, for a header that shares the screen with a busier body.
+
+## Stats
+
+<Preview id="page-header/stats" />
+
+```tsx
+<PageHeader.Stats layout="stacked" isDivided>
+  <PageHeader.Stat label="Followers" value={12500} />
+  <PageHeader.Stat label="Posts" value={87} />
+  <PageHeader.Stat label="Rank" value="Top 5" />
+</PageHeader.Stats>
+```
+
+`stacked` puts each value over its label in **equal-width cells**, so the middle stat stays under the title
+however wide the labels are. `inline` runs each value into its label and wraps. `isDivided` adds hairlines
+between them.
+
+A number is compacted on screen — `1234` is `1.2K`, `999950` is `1M` — and read in full: a screen reader
+hears "1,234 Followers". A string is drawn and read as given. Give a stat `onPress` and it becomes a button.
+
+## Card variant
+
+<Preview id="page-header/card-in-list" />
+
+```tsx
+<PageHeader variant="card" align="start">…</PageHeader>
+```
+
+`card` is a clipped `Surface`: the cover is cut by its corner, the ring matches the card, and nothing
+reaches under the status bar. A column of them is a list of people.
+
+## Inside a Screen
+
+<Preview id="page-header/in-a-screen" />
+
+Pass `PageHeader` to a scrollable's `header` prop directly. Do not wrap it in `Screen.Header` — that is a
+plain titled block, and wrapping one in the other adds a view for nothing. In the `page` variant the
+header takes the screen's side gutter back so its cover meets both edges, and its parts restore the
+gutter on themselves.
+
+## Accessibility
+
+- `PageHeader.Title` is announced as a heading. The whole header is not, so its buttons stay reachable.
+- The avatar is one element; `isVerified` is part of its label.
+- Each stat is one element labelled with the full number and its label; a pressable stat is a button.
+- Dividers and a decorative cover's picture are hidden from assistive technology.
+- Text scales with the system font size; stacked labels wrap to two lines instead of clipping.
+
+## API Reference
+
+### PageHeader
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"page" | "card"',
+      default: '"page"',
+      description: "`page` paints nothing and bleeds to the screen edges; `card` is a clipped `Surface`.",
+    },
+    align: {
+      type: '"center" | "start"',
+      default: '"center"',
+      description: "Where the face and the text sit.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### PageHeader.Cover
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    source: { type: "ImageSourcePropType", description: "A picture, drawn over the default gradient." },
+    colors: {
+      type: "string[]",
+      description: "Two to four theme tokens or colours, when there is no `source`. Default `primary` into the page.",
+    },
+    height: { type: "number", default: "128", description: "Content height, before any inset it extends under." },
+    isInsetAware: {
+      type: "boolean",
+      default: "true",
+      description: "`page` only: extend under the status bar and an overlay navbar.",
+    },
+    accessibilityLabel: { type: "string", description: "Absent, the picture is decorative." },
+    imageProps: { type: "ImageProps", description: "Passed to the `Image`." },
+    onError: { type: "ImageProps['onError']", description: "Fires when the picture fails." },
+    children: { type: "ReactNode", description: "An overlay, positioned by you." },
+  }}
+/>
+
+### PageHeader.Avatar
+
+Extends `Avatar`'s props.
+
+<TypeTable
+  type={{
+    size: { type: "AvatarSize", description: "Default `2xl` centred, `xl` on the leading edge." },
+    isVerified: { type: "boolean", default: "false", description: "Draws a rosette and says so in the label." },
+    badge: { type: "ReactNode", description: "Corner content in place of the rosette." },
+    isOverlapping: { type: "boolean", description: "Default: true when a cover is mounted." },
+    ringClassName: { type: "string", description: "Classes for the ring around the face." },
+  }}
+/>
+
+### PageHeader.Content
+
+The column holding the title, meta and description. Extends `ViewProps`.
+
+### PageHeader.Title
+
+`Text.Title` on one line, announced as a heading. Renders nothing when empty. Extends `Text`'s props.
+
+### PageHeader.Description
+
+`Text.Paragraph` on the muted token, three lines by default. Extends `Text`'s props.
+
+### PageHeader.Meta
+
+<TypeTable
+  type={{
+    icon: { type: "IconComponent", description: "A Central glyph, drawn small and muted." },
+    children: { type: "ReactNode", description: "Bare text is wrapped in a muted caption." },
+  }}
+/>
+
+### PageHeader.Actions
+
+A wrapping row of your buttons. Extends `ViewProps`.
+
+### PageHeader.Stats
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    layout: { type: '"stacked" | "inline"', default: '"stacked"' },
+    isDivided: { type: "boolean", default: "false", description: "Hairlines between the stats." },
+  }}
+/>
+
+### PageHeader.Stat
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    value: { type: "number | string", required: true, description: "A number is compacted on screen and read in full." },
+    label: { type: "string", required: true },
+    onPress: { type: "() => void", description: "Makes the stat a button." },
+  }}
+/>
+
+### usePageHeader
+
+Reads the enclosing header's state, for a custom part. Throws outside a `<PageHeader>`.
+
+<TypeTable
+  type={{
+    variant: { type: '"page" | "card"' },
+    align: { type: '"center" | "start"' },
+    hasCover: { type: "boolean" },
+    avatarSize: { type: "AvatarSize" },
+    plane: { type: "SurfacePlane | null" },
+  }}
+/>

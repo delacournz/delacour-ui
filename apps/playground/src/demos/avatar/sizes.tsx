@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "center",
-	note: "A size is a fixed edge — 32, 40, 48 and 64 points — so faces line up in a stack and beside list rows.",
+	note: "A size is a fixed edge — 32, 40, 48, 64 and 96 points — so faces line up in a stack and beside list rows.",
 	capture: {},
 };
 
@@ -16,6 +16,7 @@ const PEOPLE: Record<(typeof AVATAR_SIZES)[number], { name: string; photo?: stri
 	md: { name: "Ben Okafor", photo: "https://i.pravatar.cc/160?img=12" },
 	lg: { name: "Chen Wei" },
 	xl: { name: "Dana Kim", photo: "https://i.pravatar.cc/160?img=32" },
+	"2xl": { name: "Eli Moreau" },
 };
 
 export function Demo(): ReactElement {

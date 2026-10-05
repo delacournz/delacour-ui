@@ -38,7 +38,7 @@ function iconStep(cls: string): number {
 	return ICON_SIZE_TOKENS.indexOf(token as (typeof ICON_SIZE_TOKENS)[number]);
 }
 
-const TEXT_SCALE = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl"] as const;
+const TEXT_SCALE = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl"] as const;
 function textStep(cls: string): number {
 	return TEXT_SCALE.findIndex((step) => new RegExp(`\\b${step}\\b`).test(cls));
 }
@@ -50,6 +50,12 @@ describe("sizes", () => {
 		for (const size of AVATAR_SIZES) {
 			expect(edgeOf(avatarVariants({ size }).root())).toBe(AVATAR_SIZE_POINTS[size]);
 		}
+	});
+
+	test("2xl is a 96-point face, the step a profile header leads with", () => {
+		expect(AVATAR_SIZES).toContain("2xl");
+		expect(AVATAR_SIZE_POINTS["2xl"]).toBe(96);
+		expect(AVATAR_SIZES.at(-1)).toBe("2xl");
 	});
 
 	test("the scale ascends", () => {

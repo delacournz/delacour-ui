@@ -40,7 +40,7 @@ The initials show while the image loads, and in its place if it fails, so a dead
 
 ## Sizes
 
-A size is a fixed edge — 32, 40, 48 and 64 points.
+A size is a fixed edge — 32, 40, 48, 64 and 96 points.
 
 <Preview id="avatar/sizes" />
 
@@ -139,7 +139,7 @@ restated — see [Pressable](/docs/native/components/pressable). `asChild`, `bus
       type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
       default: '"default"',
     },
-    size: { type: '"sm" | "md" | "lg" | "xl"', default: '"md", or the group\'s size' },
+    size: { type: '"sm" | "md" | "lg" | "xl" | "2xl"', default: '"md", or the group\'s size' },
     isDisabled: { type: "boolean", description: "Fades the avatar and blocks its press." },
     imageProps: {
       type: 'Omit<ImageProps, "source">',
@@ -173,7 +173,7 @@ A row of overlapping avatars, first on top, with the people who did not fit coun
 
 <TypeTable
   type={{
-    size: { type: '"sm" | "md" | "lg" | "xl"', default: '"md"', description: "A child's own `size` still wins." },
+    size: { type: '"sm" | "md" | "lg" | "xl" | "2xl"', default: '"md"', description: "A child's own `size` still wins." },
     max: { type: "number", description: "How many faces to show. The rest are counted into a trailing `+N`." },
     total: { type: "number", description: "How many people there are, when the children are only the first few." },
     overlap: { type: "number", description: "Points each face slides under the one before. Defaults to a third of the size." },

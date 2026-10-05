@@ -74,6 +74,12 @@ const ROWS = [
 	{ slug: "chart", title: "Chart", description: "Line, area, bar, scatter, candlestick, pie", group: "Data display" },
 	{ slug: "kpi", title: "Kpi", description: "Trend tones, sparkline layouts, scrub, groups", group: "Data display" },
 	{
+		slug: "timeline",
+		title: "Timeline",
+		description: "Progress and tone, variants, horizontal strip, long lists",
+		group: "Data display",
+	},
+	{
 		slug: "icon",
 		title: "Icon",
 		description: "The size scale, colour tokens, inherited defaults",

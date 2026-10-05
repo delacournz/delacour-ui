@@ -356,6 +356,16 @@ import * as demo_textarea_rows from "./textarea/rows";
 import * as demo_textarea_sizes from "./textarea/sizes";
 import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
+import * as demo_timeline_cards from "./timeline/cards";
+import * as demo_timeline_compact from "./timeline/compact";
+import * as demo_timeline_horizontal from "./timeline/horizontal";
+import * as demo_timeline_icons from "./timeline/icons";
+import * as demo_timeline_long_list from "./timeline/long-list";
+import * as demo_timeline_masthead_stats from "./timeline/masthead-stats";
+import * as demo_timeline_numbered from "./timeline/numbered";
+import * as demo_timeline_order_history from "./timeline/order-history";
+import * as demo_timeline_tones from "./timeline/tones";
+import * as demo_timeline_with_aside from "./timeline/with-aside";
 import * as demo_toggle_button_controlled from "./toggle-button/controlled";
 import * as demo_toggle_button_filters from "./toggle-button/filters";
 import * as demo_toggle_button_formatting from "./toggle-button/formatting";
@@ -722,6 +732,16 @@ export const DEMOS = {
 	"textarea/sizes": demo_textarea_sizes,
 	"textarea/states": demo_textarea_states,
 	"textarea/variants": demo_textarea_variants,
+	"timeline/cards": demo_timeline_cards,
+	"timeline/compact": demo_timeline_compact,
+	"timeline/horizontal": demo_timeline_horizontal,
+	"timeline/icons": demo_timeline_icons,
+	"timeline/long-list": demo_timeline_long_list,
+	"timeline/masthead-stats": demo_timeline_masthead_stats,
+	"timeline/numbered": demo_timeline_numbered,
+	"timeline/order-history": demo_timeline_order_history,
+	"timeline/tones": demo_timeline_tones,
+	"timeline/with-aside": demo_timeline_with_aside,
 	"toggle-button/controlled": demo_toggle_button_controlled,
 	"toggle-button/filters": demo_toggle_button_filters,
 	"toggle-button/formatting": demo_toggle_button_formatting,

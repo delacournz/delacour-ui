@@ -130,8 +130,8 @@ describe("resolveStaggerDelay", () => {
 		const a = resolveStaggerDelays(12, 10, "random", 7);
 		const b = resolveStaggerDelays(12, 10, "random", 7);
 		expect(a).toEqual(b);
-		expect([...a].sort((x, y) => x - y)).toEqual(resolveStaggerDelays(12, 10, "forward"));
-		expect(a).not.toEqual(resolveStaggerDelays(12, 10, "forward"));
+		expect([...a].sort((x, y) => x - y)).toEqual([...resolveStaggerDelays(12, 10, "forward")]);
+		expect(a).not.toEqual([...resolveStaggerDelays(12, 10, "forward")]);
 	});
 
 	test("a different seed is a different order", () => {
@@ -506,6 +506,14 @@ describe("textAnimationVariants", () => {
 		expect(slots.word()).toContain("flex-row");
 		expect(slots.word()).not.toContain("flex-wrap");
 		expect(slots.lines()).toContain("w-full");
+	});
+
+	test("phrases measure on a stage wider than any slot, unseen", () => {
+		const probe = textAnimationVariants().probe();
+		expect(probe).toContain("absolute");
+		expect(probe).toContain("opacity-0");
+		expect(probe).toContain("items-start");
+		expect(probe).toMatch(/w-\[\d+px\]/);
 	});
 
 	test("the wheel window clips its column", () => {

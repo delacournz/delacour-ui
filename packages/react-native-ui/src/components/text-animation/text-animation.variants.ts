@@ -111,6 +111,8 @@ export const TEXT_ANIMATION_NO_VALUE = "\u2014";
  * - `caret` — the typing caret's box; its colour comes from {@link resolveCaretClass}.
  * - `slot` — `Rotating`'s inline box, sized by its widest phrase.
  * - `layer` — a phrase drawn over that box.
+ * - `probe` — a wide, invisible stage the phrases measure on, so none is
+ *   clamped to the slot it is being measured to size.
  * - `number` — a numeric part's row; tabular figures so no digit is wider than another.
  * - `wheel` — one odometer digit's window.
  * - `column` — the 0–9 strip that rolls inside it.
@@ -124,6 +126,7 @@ export const textAnimationVariants = tv({
 		caret: "absolute top-0 bottom-0",
 		slot: "relative self-start",
 		layer: "absolute top-0 left-0",
+		probe: "absolute top-0 left-0 w-[4096px] items-start opacity-0",
 		number: "flex-row items-end self-start",
 		wheel: "relative overflow-hidden",
 		column: "absolute top-0 left-0",
@@ -492,6 +495,19 @@ export function resolveWidestPhrase(phrases: readonly string[]): number {
 /* Numbers                                                                    */
 /* ------------------------------------------------------------------------- */
 
+/** Thousands-groups a run of whole digits. Left alone when off, or when `toFixed` fell back to exponent form. */
+function groupDigits(whole: string, separator: string): string {
+	"worklet";
+	if (separator === "" || whole.indexOf("e") !== -1) return whole;
+	let grouped = "";
+	for (let i = 0; i < whole.length; i++) {
+		const fromEnd = whole.length - i;
+		grouped += whole.charAt(i);
+		if (fromEnd > 1 && fromEnd % 3 === 1) grouped += separator;
+	}
+	return grouped;
+}
+
 /**
  * Writes a number with grouping, fixed decimals, a prefix and a suffix.
  *
@@ -513,15 +529,7 @@ export function formatNumber(value: number, format: TextAnimationNumberFormat): 
 	const whole = point === -1 ? fixed : fixed.slice(0, point);
 	const fraction = point === -1 ? "" : fixed.slice(point + 1);
 
-	let grouped = whole;
-	if (groupSeparator !== "" && whole.indexOf("e") === -1) {
-		grouped = "";
-		for (let i = 0; i < whole.length; i++) {
-			const fromEnd = whole.length - i;
-			grouped += whole.charAt(i);
-			if (fromEnd > 1 && fromEnd % 3 === 1) grouped += groupSeparator;
-		}
-	}
+	const grouped = groupDigits(whole, groupSeparator);
 
 	const isZero = /^[0.]*$/.test(fixed);
 	// U+2212, a true minus — the width of a plus and of a tabular digit — rather than a hyphen.

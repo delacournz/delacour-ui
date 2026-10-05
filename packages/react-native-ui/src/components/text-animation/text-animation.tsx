@@ -3,12 +3,6 @@ import { type NativeSyntheticEvent, Text as NativeText, type TextLayoutEventData
 import type { SharedValue } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
-import { useTextAnimationClock } from "./text-animation-clock";
-import { TextAnimationCounting } from "./text-animation-counting";
-import { TextAnimationRolling } from "./text-animation-rolling";
-import { TextAnimationRotating } from "./text-animation-rotating";
-import { TextAnimationTyping } from "./text-animation-typing";
-import { TextAnimationUnit, useTextAnimationClass } from "./text-animation-unit";
 import type { TextAnimationBase } from "./text-animation.types";
 import {
 	hashText,
@@ -24,6 +18,12 @@ import {
 	type TextAnimationUnit as TextAnimationUnitKind,
 	textAnimationVariants,
 } from "./text-animation.variants";
+import { useTextAnimationClock } from "./text-animation-clock";
+import { TextAnimationCounting } from "./text-animation-counting";
+import { TextAnimationRolling } from "./text-animation-rolling";
+import { TextAnimationRotating } from "./text-animation-rotating";
+import { TextAnimationTyping } from "./text-animation-typing";
+import { TextAnimationUnit, useTextAnimationClass } from "./text-animation-unit";
 
 export type TextAnimationRevealProps = TextAnimationBase & {
 	children: string;
@@ -99,7 +99,7 @@ type UnitShared = {
 	isAtRest: boolean;
 	delays: readonly number[];
 	allowFontScaling?: boolean;
-	maxFontSizeMultiplier?: number;
+	maxFontSizeMultiplier?: number | null;
 };
 
 function renderUnit(shared: UnitShared, key: string, text: string, index: number, numberOfLines?: number): ReactNode {
@@ -158,7 +158,10 @@ function TextAnimationReveal({
 		[children, split]
 	);
 	const count = split === "line" ? (lines?.length ?? 0) : pieceCount;
-	const delays = useMemo(() => resolveStaggerDelays(count, step, order, hashText(children)), [count, step, order, children]);
+	const delays = useMemo(
+		() => resolveStaggerDelays(count, step, order, hashText(children)),
+		[count, step, order, children]
+	);
 	const total = resolveTotalDuration(count, step, durationMs, delayMs, order);
 
 	const runKey = `${children}|${split}|${order}|${step}|${durationMs}|${delayMs}|${JSON.stringify(effect)}|${isActive}`;

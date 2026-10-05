@@ -63,7 +63,7 @@ export type TextAnimationUnitProps = {
 	isAtRest: boolean;
 	numberOfLines?: number;
 	allowFontScaling?: boolean;
-	maxFontSizeMultiplier?: number;
+	maxFontSizeMultiplier?: number | null;
 };
 
 /**
@@ -89,9 +89,7 @@ export function TextAnimationUnit({
 			const shown = isAtRest || (sample.phraseIndex === drive.phraseIndex && drive.index < sample.visibleCount);
 			return { opacity: shown ? 1 : 0 };
 		}
-		const t = isAtRest
-			? 1
-			: resolveUnitProgress(drive.elapsed.value, drive.delayMs, drive.staggerMs, drive.durationMs);
+		const t = isAtRest ? 1 : resolveUnitProgress(drive.elapsed.value, drive.delayMs, drive.staggerMs, drive.durationMs);
 		const frame = resolveEffectFrame(drive.effect, t);
 		return {
 			opacity: frame.opacity,

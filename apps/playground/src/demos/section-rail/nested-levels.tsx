@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Nested levels",
 	caption:
 		"`level` shortens a bar and indents its row by the same step, so the rail and the outline agree about what nests. Level 2 and deeper share the shortest bar; long titles wrap to two lines, then truncate.",
+	capture: { align: "stretch", flow: "section-rail/nested-levels" },
 };
 
 const SECTIONS = [
@@ -53,7 +54,7 @@ export function Demo(): ReactElement {
 				))}
 			</Animated.ScrollView>
 
-			<SectionRail onValueChange={sections.scrollTo} value={sections.activeId}>
+			<SectionRail onValueChange={sections.scrollTo} value={sections.activeId ?? SECTIONS[0].id}>
 				<SectionRail.Trigger testID="section-rail-nested-trigger">
 					{SECTIONS.map((section) => (
 						<SectionRail.Bar key={section.id} level={section.level} value={section.id} />

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled open state",
 	caption:
 		"`isOpen` and `onOpenChange` hand the panel to the caller — here a button opens it, and the rail still closes it after a pick, on an outside tap or on Android's back.",
+	capture: { align: "stretch", flow: "section-rail/controlled-open" },
 };
 
 const SECTIONS = [

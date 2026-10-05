@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "A documentation page",
 	caption:
 		'Paired with `useScrollSections`: the rail follows the scroll, and a pick scrolls there. `align="bottom"` keeps it in the thumb\'s reach. Tap the rail to open the outline, or drag along it to scrub.',
+	capture: { align: "stretch", flow: "section-rail/docs-page", hero: true },
 };
 
 const SECTIONS = [
@@ -52,7 +53,7 @@ export function Demo(): ReactElement {
 				))}
 			</Animated.ScrollView>
 
-			<SectionRail align="bottom" onValueChange={sections.scrollTo} value={sections.activeId}>
+			<SectionRail align="bottom" onValueChange={sections.scrollTo} value={sections.activeId ?? SECTIONS[0].id}>
 				<SectionRail.Trigger testID="section-rail-docs-trigger">
 					{SECTIONS.map((section) => (
 						<SectionRail.Bar key={section.id} level={section.level} value={section.id} />

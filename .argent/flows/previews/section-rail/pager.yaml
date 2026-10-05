@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on section-rail/pager and has settled — a five-page pager on Welcome with the
+  rail closed on its end edge. The capture script navigates there before running this.
+steps:
+  - echo: Picking Interests from the rail pages the pager there
+  - tap: { id: section-rail-pager-trigger }
+  - await: { visible: { id: section-rail-pager-interests } }
+  - wait: 600
+  - tap: { id: section-rail-pager-interests }
+  - wait: 1200
+  - echo: And back to Welcome, so the clip loops without a jump cut
+  - tap: { id: section-rail-pager-trigger }
+  - await: { visible: { id: section-rail-pager-welcome } }
+  - wait: 500
+  - tap: { id: section-rail-pager-welcome }
+  - wait: 900

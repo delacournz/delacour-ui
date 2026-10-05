@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "On the start edge",
 	caption:
 		'`placement="start"` moves the rail to the leading edge — the left in left-to-right, the right in right-to-left — and the panel grows from that side.',
+	capture: { align: "stretch" },
 };
 
 const SECTIONS = [
@@ -50,7 +51,7 @@ export function Demo(): ReactElement {
 				))}
 			</Animated.ScrollView>
 
-			<SectionRail placement="start" onValueChange={sections.scrollTo} value={sections.activeId}>
+			<SectionRail placement="start" onValueChange={sections.scrollTo} value={sections.activeId ?? SECTIONS[0].id}>
 				<SectionRail.Trigger testID="section-rail-start-trigger">
 					{SECTIONS.map((section) => (
 						<SectionRail.Bar key={section.id} level={section.level} value={section.id} />

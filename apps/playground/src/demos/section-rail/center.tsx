@@ -9,6 +9,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Centred on the edge",
 	caption: "The default: the rail sits halfway down the end edge and the panel grows out from its middle.",
+	capture: { align: "stretch" },
 };
 
 const SECTIONS = [
@@ -49,7 +50,7 @@ export function Demo(): ReactElement {
 				))}
 			</Animated.ScrollView>
 
-			<SectionRail onValueChange={sections.scrollTo} value={sections.activeId}>
+			<SectionRail onValueChange={sections.scrollTo} value={sections.activeId ?? SECTIONS[0].id}>
 				<SectionRail.Trigger testID="section-rail-center-trigger">
 					{SECTIONS.map((section) => (
 						<SectionRail.Bar key={section.id} level={section.level} value={section.id} />

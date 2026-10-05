@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on feedback/basic and has settled — the Give feedback button with the dialog
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the feedback dialog
+  - tap: { id: feedback-basic-open }
+  - await: { visible: { id: feedback-basic-field } }
+  - wait: 700
+  - echo: Typing into the well; Send enables with the first character
+  - tap: { id: feedback-basic-field }
+  - wait: 900
+  - tool: keyboard
+    args: { text: "The export button is hard to find", delayMs: 70 }
+  - wait: 900
+  - echo: Sending closes it
+  - tap: { id: feedback-basic-send }
+  - await: { hidden: { id: feedback-basic-field } }

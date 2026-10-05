@@ -38,6 +38,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
+	{ name: "sortable", title: "Sortable", description: "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },

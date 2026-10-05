@@ -1219,6 +1219,42 @@
 			]
 		},
 		{
+			"name": "sortable",
+			"type": "registry:ui",
+			"title": "Sortable",
+			"description": "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/sortable/AGENTS.md",
+				"ui/sortable/index.ts",
+				"ui/sortable/sortable-handle.tsx",
+				"ui/sortable/sortable-item.tsx",
+				"ui/sortable/sortable.context.tsx",
+				"ui/sortable/sortable.tsx",
+				"ui/sortable/sortable.types.ts",
+				"ui/sortable/sortable.variants.ts",
+				"ui/sortable/use-sortable-drag-gesture.ts"
+			]
+		},
+		{
 			"name": "spinner",
 			"type": "registry:ui",
 			"title": "Spinner",

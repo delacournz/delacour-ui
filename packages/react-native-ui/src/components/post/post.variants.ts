@@ -34,6 +34,25 @@ export const POST_FILL_PATHS = {
 		"M19.25 20.2515V3.75C19.25 3.19772 18.8023 2.75 18.25 2.75H5.75C5.19772 2.75 4.75 3.19771 4.75 3.75V20.2515C4.75 21.0522 5.64414 21.5281 6.30839 21.081L11.4416 17.6259C11.7792 17.3986 12.2208 17.3986 12.5584 17.6259L17.6916 21.081C18.3559 21.5282 19.25 21.0522 19.25 20.2515Z",
 } as const;
 
+/**
+ * How far a 32-point control's touch area reaches past its edge — to 44, the
+ * smallest target a fingertip hits reliably, without growing the row it sits in.
+ */
+export const POST_HIT_SLOP = 6;
+
+/** The edge a 32-point control reaches with {@link POST_HIT_SLOP}. */
+export const POST_CONTROL_POINTS = 32;
+
+/**
+ * The colour of type and glyphs laid over the picture in `media`. A literal,
+ * deliberately: a photograph has no theme surface to take a foreground from,
+ * and the scrim under it is what guarantees the contrast.
+ */
+export const POST_ON_MEDIA_COLOR = "#ffffff";
+
+/** The darkest stop of a media scrim. The scrim is static black under white type, in both themes. */
+export const POST_SCRIM_COLOR = "rgba(0, 0, 0, 0.55)";
+
 /** What a variant decides about layout — never which parts exist. */
 export type PostLayout = {
 	/** Whether `Post.Media` renders at all. `compact` is a timeline row: no picture. */

@@ -1,7 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
+	POST_CONTROL_POINTS,
 	POST_FILL_PATHS,
+	POST_HIT_SLOP,
 	POST_MEDIA_SCRIMS,
 	POST_SIZES,
 	POST_STAT_TONES,
@@ -196,6 +198,18 @@ describe("resolvePostAvatarSize", () => {
 
 	test("compact is always the small face", () => {
 		expect(resolvePostAvatarSize("default", "compact")).toBe("sm");
+	});
+});
+
+describe("touch targets", () => {
+	test("a 32-point control with its hit slop reaches 44 points", () => {
+		expect(POST_CONTROL_POINTS + 2 * POST_HIT_SLOP).toBeGreaterThanOrEqual(44);
+	});
+
+	test("the action and vote arrows are the 32-point control", () => {
+		const edge = (cls: string) => Number(cls.match(/\bsize-(\d+)\b/)?.[1]) * 4;
+		expect(edge(postVariants().action())).toBe(POST_CONTROL_POINTS);
+		expect(edge(postVariants().voteArrow())).toBe(POST_CONTROL_POINTS);
 	});
 });
 

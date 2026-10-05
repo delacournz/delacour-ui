@@ -9,6 +9,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "An empty conversation",
+	align: "stretch",
 	caption: "With no messages, `ListEmptyComponent` stands in — here an `EmptyState`.",
 };
 
@@ -32,7 +33,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
-			className="h-80 rounded-lg border border-border bg-background"
+			className="h-80 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}
 			getSenderId={(message) => message.author}

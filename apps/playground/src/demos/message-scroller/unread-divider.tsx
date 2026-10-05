@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "The unread divider",
+	align: "stretch",
 	caption:
 		'`firstUnreadKey` draws a rule above the first message you have not read, and `initialScrollTarget="unread"` opens the list there rather than at the end.',
 };
@@ -39,7 +40,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
-			className="h-96 rounded-lg border border-border bg-background"
+			className="h-96 flex-none rounded-lg border border-border bg-background"
 			firstUnreadKey={`u${COUNT - UNREAD}`}
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}

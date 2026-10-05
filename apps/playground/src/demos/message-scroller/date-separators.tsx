@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Day separators",
+	align: "stretch",
 	caption:
 		"Five days of messages. Each new calendar day gets a separator — Today, Yesterday, then a weekday inside the week — and a day boundary always starts a new run.",
 };
@@ -41,7 +42,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
-			className="h-96 rounded-lg border border-border bg-background"
+			className="h-96 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}
 			getSenderId={(message) => message.author}

@@ -107,8 +107,20 @@ needed.
 
 ## Verified on a device
 
-Not yet. The simulator check (follow at end, hold when scrolled up, prepend without a jump, keyboard,
-VoiceOver order, 5,000-message scroll) is outstanding.
+iOS simulator (iPhone 17, dev client), 2026-10-05: opens at the end; a reply at the end is followed,
+one while scrolled up is held and the jump button appears with its count; the button scrolls to the
+end and leaves the accessibility tree; four older pages prepend down to the first message with the
+viewport held (a ~4pt drift on landing); the unread divider and day separators draw; sending from
+history scrolls to the end; with a measured `keyboardOffset` the newest message stays above the
+keyboard. **Outstanding:** Android, VoiceOver walk order and announcements, and a 5,000-message
+scroll.
+
+- **The jump button's transform is two translations.** `withTiming` returns an animation
+  descriptor, not a number; `withTiming(…) - lift` was NaN and the pill rendered nowhere while its
+  accessibility node said "3 unread". Found on the simulator.
+- **`keyboardOffset` must be the list's real distance from the screen's bottom.** Left at 0 for a
+  list that ends above the bottom, the full keyboard lift scrolls every row out of a short list. The
+  `keyboard` demo measures it with `measureInWindow`.
 
 **Preview media is a follow-up.** No demo carries `capture` yet, because a captured demo without a
 manifest entry fails `demos.test.ts`, and the docs page carries no `<Preview>` for the same reason.

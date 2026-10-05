@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Jump to latest",
+	align: "stretch",
 	caption:
 		"Replies keep arriving every two seconds. Scroll up and the jump button appears with a count of what you have missed; tap it, or scroll back down, and the count clears.",
 };
@@ -57,7 +58,7 @@ export function Demo(): ReactElement {
 
 	return (
 		<MessageScroller
-			className="h-96 rounded-lg border border-border bg-background"
+			className="h-96 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}
 			getSenderId={(message) => message.author}

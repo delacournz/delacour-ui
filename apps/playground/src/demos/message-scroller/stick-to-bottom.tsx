@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Stick to the newest",
+	align: "stretch",
 	caption:
 		"At the end, a new message pulls the list with it. Scroll up and a reply lands without moving you. Sending your own always brings you back down.",
 };
@@ -53,7 +54,7 @@ export function Demo(): ReactElement {
 	return (
 		<View className="gap-3">
 			<MessageScroller
-				className="h-80 rounded-lg border border-border bg-background"
+				className="h-80 flex-none rounded-lg border border-border bg-background"
 				getDate={(message) => message.sentAt}
 				getKey={(message) => message.id}
 				getSenderId={(message) => message.author}

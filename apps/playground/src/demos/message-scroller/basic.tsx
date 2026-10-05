@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "A conversation",
+	align: "stretch",
 	caption:
 		"Forty messages, opened at the newest. Runs from one sender close up, and `renderMessage` gets each message's `position` to pass to its bubble.",
 };
@@ -48,7 +49,7 @@ function Bubble({ message, position }: { message: ChatMessage; position: Message
 export function Demo(): ReactElement {
 	return (
 		<MessageScroller
-			className="h-96 rounded-lg border border-border bg-background"
+			className="h-96 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}
 			getSenderId={(message) => message.author}

@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Loading older history",
+	align: "stretch",
 	caption:
 		"Reach the top and the next page of twenty loads, with a spinner while it is in flight. The page lands above you without moving what you were reading; after three, `hasOlder` turns off.",
 };
@@ -58,7 +59,7 @@ export function Demo(): ReactElement {
 
 	return (
 		<MessageScroller
-			className="h-96 rounded-lg border border-border bg-background"
+			className="h-96 flex-none rounded-lg border border-border bg-background"
 			getDate={(message) => message.sentAt}
 			getKey={(message) => message.id}
 			getSenderId={(message) => message.author}

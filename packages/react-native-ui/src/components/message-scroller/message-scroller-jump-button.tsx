@@ -58,7 +58,9 @@ export function MessageScrollerJumpButton({
 		const duration = MESSAGE_SCROLLER_JUMP_TIMING_MS;
 		return {
 			opacity: withTiming(motion.opacity, { duration }),
-			transform: [{ translateY: withTiming(motion.translateY, { duration }) - lift }],
+			// Two translations, not one sum: `withTiming` returns an animation descriptor, not a number,
+			// and arithmetic on it is NaN. The lift tracks the keyboard frame by frame; the slide eases.
+			transform: [{ translateY: -lift }, { translateY: withTiming(motion.translateY, { duration }) }],
 		};
 	});
 

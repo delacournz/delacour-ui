@@ -1066,6 +1066,7 @@
 				"text",
 				"tv",
 				"use-keyboard-state-sync",
+				"use-scroll-source",
 				"use-theme-color"
 			],
 			"dependencies": [
@@ -1103,6 +1104,7 @@
 				"ui/screen/screen-root.tsx",
 				"ui/screen/screen-scroll-area.tsx",
 				"ui/screen/screen-scroll-shadow.tsx",
+				"ui/screen/screen-scroll-source.tsx",
 				"ui/screen/screen-section-list.tsx",
 				"ui/screen/screen-view.tsx",
 				"ui/screen/screen.context.tsx",
@@ -1110,6 +1112,34 @@
 				"ui/screen/screen.types.ts",
 				"ui/screen/screen.variants.ts",
 				"ui/screen/use-screen-scroll-insets.ts"
+			]
+		},
+		{
+			"name": "scroll-edges",
+			"type": "registry:lib",
+			"title": "scrollEdges",
+			"description": "Where an affordance at a scrollable's edges sits, and which way its gradient runs.",
+			"registryDependencies": [
+				"scroll-maths"
+			],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/scroll-edges.ts"
+			]
+		},
+		{
+			"name": "scroll-maths",
+			"type": "registry:lib",
+			"title": "scrollMaths",
+			"description": "The pure maths behind the scroll-linked components.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/scroll-maths.ts"
 			]
 		},
 		{
@@ -1579,6 +1609,23 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-navigation-theme.ts"
+			]
+		},
+		{
+			"name": "use-scroll-source",
+			"type": "registry:hook",
+			"title": "useScrollSource",
+			"description": "The scroll offset and sizes of a scrollable, on the UI thread, for effects that follow it.",
+			"registryDependencies": [
+				"scroll-maths"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"hooks/use-scroll-source.tsx"
 			]
 		},
 		{

@@ -75,6 +75,7 @@
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",
 		"./hooks/use-navigation-theme": "./src/hooks/use-navigation-theme.ts",
+		"./hooks/use-scroll-source": "./src/hooks/use-scroll-source.tsx",
 		"./hooks/use-theme-color": "./src/hooks/use-theme-color.ts",
 		"./lib/calm-motion": "./src/lib/calm-motion.ts",
 		"./lib/cn": "./src/lib/cn.ts",
@@ -83,6 +84,8 @@
 		"./lib/keyboard-animation": "./src/lib/keyboard-animation.ts",
 		"./lib/merge-props": "./src/lib/merge-props.ts",
 		"./lib/navigation-theme": "./src/lib/navigation-theme.ts",
+		"./lib/scroll-edges": "./src/lib/scroll-edges.ts",
+		"./lib/scroll-maths": "./src/lib/scroll-maths.ts",
 		"./lib/slot": "./src/lib/slot.tsx",
 		"./lib/tv": "./src/lib/tv.ts",
 		"./icons/central": "./src/icons/central.ts"

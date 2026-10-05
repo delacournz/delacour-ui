@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`isExtended` turns the circle into a stadium the height of its size, with a `Fab.Label` beside the icon. The label is what a screen reader announces, so no `accessibilityLabel` is needed.",
 	align: "center",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

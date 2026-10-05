@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption:
 		"`placement` pins the fab to the bottom of its nearest positioned ancestor, `offset` points in from the edges. Start and end are logical, so a right-to-left layout mirrors them. On a screen, `isSafeAreaAware` adds the bottom inset; this box has none, so it is off.",
+	capture: { align: "stretch" },
 };
 
 const LABELS: Record<FabPlacement, string> = {

@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Without `placement` a fab sits in flow like any other view. Rows are the variants, columns the sizes — 44, 56 and 64pt, from their own tokens rather than the button's.",
 	align: "center",
+	capture: {},
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

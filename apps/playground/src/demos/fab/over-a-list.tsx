@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Over a list",
 	caption:
 		"One primary action pinned to the bottom corner of the screen it belongs to. The list pads its bottom by the fab's height plus its offset, so the last row can scroll clear of it.",
+	capture: { align: "stretch", flow: "fab/over-a-list" },
 };
 
 const NOTES = [
@@ -26,7 +27,7 @@ const NOTES = [
 export function Demo(): ReactElement {
 	return (
 		<View className="h-96 overflow-hidden rounded-xl border border-border bg-background">
-			<ScrollView contentContainerClassName="pb-24">
+			<ScrollView contentContainerClassName="pb-24" testID="fab-list">
 				{NOTES.map((note) => (
 					<View className="border-border border-b px-4 py-3" key={note}>
 						<Text className="font-medium">{note}</Text>

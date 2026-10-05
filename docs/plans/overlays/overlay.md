@@ -14,7 +14,7 @@ through its exit animation, and an Android back button that closes only the topm
 ## Public API
 
 ```tsx
-/** Mount once, inside DelacourProvider, outside BottomSheetProvider and the navigator. */
+/** Mount once, inside DelacourProvider, around BottomSheetProvider and the navigator. `Overlay` is the same component. */
 <OverlayProvider>{children}</OverlayProvider>
 
 type OverlayLayer = "modal" | "anchored" | "toast";
@@ -23,6 +23,8 @@ type OverlayPortalProps = {
 	/** Which band of the z-order this overlay draws in. */
 	layer: OverlayLayer;
 	children: ReactNode;
+	/** Registry id; pass the same id to useOverlayBackHandler. Defaults to useId(). */
+	id?: string;
 	/** Render where written instead of teleporting. Default false. */
 	isInline?: boolean;
 	/** Teleport host. Default "root" — the host OverlayProvider's teleport provider mounts. */
@@ -57,7 +59,7 @@ function useOverlayPresence(options: {
 }): OverlayPresence;
 
 /** Subscribes to Android's back button only while this overlay is the topmost back-capturing one. */
-function useOverlayBackHandler(options: { isEnabled: boolean; onBack: () => void }): void;
+function useOverlayBackHandler(options: { id: string; isEnabled: boolean; onBack: () => void }): void;
 
 /** True inside an OverlayProvider. */
 function useOptionalOverlay(): OverlayContextValue | null;
@@ -68,8 +70,7 @@ function useOptionalOverlay(): OverlayContextValue | null;
 | File | What |
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/overlay` |
-| `overlay.tsx` | `Overlay` — `Object.assign` of `Portal`, `Scrim`; `displayName` `DelacourUI.Overlay` |
-| `overlay-provider.tsx` | `OverlayProvider` — teleport `PortalProvider` (skipped when one is already provided), registry provider, context |
+| `overlay.tsx` | `Overlay` (alias `OverlayProvider`) — the root, `displayName` `DelacourUI.Overlay`, `Object.assign` of `Portal`, `Scrim`: teleport `PortalProvider` (skipped when one is already provided), registry provider, context |
 | `overlay-portal.tsx` | `Overlay.Portal` — registers on mount, teleports to `"root"` inside an absolute-fill, `box-none` wrapper carrying the registry's `zIndex` |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `Animated` absolute fill, `bg-overlay`, opacity = progress; not accessible |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext`, `useOptionalOverlay`, `useIsTeleportProvided` — imported across folders by `bottom-sheet` |

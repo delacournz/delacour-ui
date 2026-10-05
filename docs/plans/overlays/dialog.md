@@ -112,7 +112,7 @@ than pushes the card's top under the top safe-area inset. Pure and tested.
 - On open: `AccessibilityInfo.setAccessibilityFocus` on the title once `onEntered` fires. On close:
   focus returns to the trigger if it is still mounted.
 - `onAccessibilityEscape` on the card closes when dismissible.
-- `useOverlayBackHandler({ isEnabled: isPresent && isDismissible, onBack: close })`.
+- `useOverlayBackHandler({ id, isEnabled: isPresent && isDismissible, onBack: close })`, with the same `id` (from `useId()`) passed to `Overlay.Portal`.
 - `Dialog.Close` without children has `accessibilityLabel="Close"`, `role="button"`, 8pt
   `hitSlop`, `feedback="fade"`.
 

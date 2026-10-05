@@ -48,6 +48,7 @@
 		"surface",
 		"card",
 		"---Utilities---",
-		"provider"
+		"provider",
+		"overlay"
 	]
 }

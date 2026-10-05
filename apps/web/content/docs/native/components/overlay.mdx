@@ -1,0 +1,87 @@
+---
+title: OverlayProvider
+description: The one teleport host every dialog, drawer, popover, tooltip, toast and sheet draws into, and the z-order between them.
+icon: Layers2
+---
+
+## Installation
+
+<ComponentInstall name="overlay" />
+
+## Usage
+
+```tsx title="app/_layout.tsx"
+import "@/styles/global.css";
+import { BottomSheetProvider } from "@/components/ui/bottom-sheet";
+import { OverlayProvider } from "@/components/ui/overlay";
+import { DelacourProvider } from "@/components/ui/provider";
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <DelacourProvider>
+      <OverlayProvider>
+        <BottomSheetProvider>
+          <Stack screenOptions={{ headerShown: false }} />
+        </BottomSheetProvider>
+      </OverlayProvider>
+    </DelacourProvider>
+  );
+}
+```
+
+Mount it once, inside [`DelacourProvider`](/docs/native/components/provider) and around the
+navigator. `DelacourProvider` cannot mount it for you: `react-native-teleport` is an optional peer,
+and an app with no overlay never has to build it.
+
+## What it does
+
+- **One teleport host for everything.** Overlays and bottom sheets all draw into the same `"root"`
+  host over the navigator. `OverlayProvider` and `BottomSheetProvider` each mount teleport's
+  provider only when the other has not, so either order works — and there is never a second host
+  with the same name.
+- **One z-order.** Every overlay draws above every sheet; a popover draws above the dialog that
+  opened it; a toast draws above everything. Within a layer the latest open is on top.
+- **One back button.** On Android, back closes the topmost dialog, drawer or popover and nothing
+  under it. A toast never takes it.
+
+<Callout type="warn">
+Without the provider an overlay still renders, inline where it is written, and warns once in
+development — but it can be clipped by any ancestor with `overflow: hidden`, and it draws under
+the navigator's header.
+</Callout>
+
+## API Reference
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode" },
+  }}
+/>
+
+## Building your own overlay
+
+The parts the library's overlays are drawn with are exported too:
+
+```tsx
+import { Overlay, useOverlayBackHandler, useOverlayPresence } from "@/components/ui/overlay";
+import { useId } from "react";
+
+function Sheetlet({ isOpen, onClose, children }) {
+  const id = useId();
+  const { isPresent, progress } = useOverlayPresence({ isOpen });
+  useOverlayBackHandler({ id, isEnabled: isPresent, onBack: onClose });
+
+  if (!isPresent) return null;
+  return (
+    <Overlay.Portal id={id} layer="modal">
+      <Overlay.Scrim progress={progress} onDismiss={onClose} />
+      {children}
+    </Overlay.Portal>
+  );
+}
+```
+
+`useOverlayPresence` keeps the overlay mounted until its exit animation finishes and drives
+`progress` from 0 to 1 and back; under reduce motion it still fades, and `isReduced` tells you to
+drop your transforms.

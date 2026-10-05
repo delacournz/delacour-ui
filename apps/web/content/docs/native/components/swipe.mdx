@@ -1,0 +1,225 @@
+---
+title: Swipe
+description: A row that slides aside to reveal actions behind it — delete, archive, snooze, mark done.
+icon: ArrowLeftRight
+---
+
+## Installation
+
+<ComponentInstall name="swipe" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { IconTrashCan } from "@/lib/icons/central";
+import { Item } from "@/components/ui/item";
+import { Swipe } from "@/components/ui/swipe";
+import { useState } from "react";
+
+export default function Example() {
+  const [isDeleted, setIsDeleted] = useState(false);
+
+  if (isDeleted) return null;
+
+  return (
+    <Swipe haptic="selection">
+      <Swipe.End>
+        <Swipe.Action color="destructive" icon={IconTrashCan} label="Delete" onPress={() => setIsDeleted(true)} />
+      </Swipe.End>
+      <Item>
+        <Item.Content>
+          <Item.Title>Invoice #2041</Item.Title>
+        </Item.Content>
+      </Item>
+    </Swipe>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Swipe.Group>
+  <Swipe>
+    <Swipe.Start>
+      <Swipe.Action />
+    </Swipe.Start>
+    <Swipe.End>
+      <Swipe.Action />
+      <Swipe.Action />
+    </Swipe.End>
+    <Item />
+  </Swipe>
+</Swipe.Group>
+```
+
+`Swipe.Start` and `Swipe.End` are markers. The root lifts their actions out and lays them out
+itself, because only the root knows how wide the gap behind the row is. Everything else in
+`children` is the row, and order does not matter.
+
+The actions sit **behind** the row rather than beside it, so nothing reflows when one opens, and
+only the row moves, on the UI thread. The panel behind it is exactly as wide as the gap the row has
+left, so it never paints over the row and the row needs no background of its own.
+
+## Both sides
+
+`end` is the edge text runs toward, so sliding the row toward the start reveals `Swipe.End`. Under
+right to left the sides mirror with no change to your code.
+
+```tsx
+<Swipe>
+  <Swipe.Start>
+    <Swipe.Action color="success" icon={IconCheckmark2} label="Done" onPress={complete} />
+  </Swipe.Start>
+  <Swipe.End>
+    <Swipe.Action color="warning" icon={IconBell2Snooze} label="Snooze" onPress={snooze} />
+    <Swipe.Action color="destructive" icon={IconTrashCan} label="Delete" onPress={remove} />
+  </Swipe.End>
+  <Item>…</Item>
+</Swipe>
+```
+
+A side with no actions does not open: the row follows the finger a little, then returns.
+
+## Colours
+
+`default`, `primary`, `success`, `warning`, `info` and `destructive`. A tile draws on `bg-{color}`
+with its glyph and caption in `{color}-foreground`; `default` is `bg-muted`.
+
+## Full swipe
+
+Drag well past the actions and release, and the **outermost** action fires — the last one on `end`,
+the first on `start` — while the row is carried off. Past the tiles, that outermost tile grows to
+fill the overshoot, so the gesture reads as more of that action rather than an empty strip. It is on
+by default; `isFullSwipe={false}` turns it off.
+
+The finger itself has to be past the point, not just a fast flick, because the outermost action is
+often Delete. `haptic` ticks once as the drag crosses it, and again if it crosses back.
+
+```tsx
+<Swipe haptic="selection" isFullSwipe>
+  …
+</Swipe>
+```
+
+## Keeping the row open
+
+A tap on a tile runs its `onPress` and closes the row. `isKeptOpen` leaves it open — for a toggle
+such as a bookmark, whose new state the reader wants to see. Tapping the open row closes it without
+passing the tap through.
+
+```tsx
+<Swipe.Action
+  color="primary"
+  icon={isSaved ? IconBookmarkCheck : IconBookmark}
+  isKeptOpen
+  label={isSaved ? "Saved" : "Save"}
+  onPress={() => setIsSaved((value) => !value)}
+/>
+```
+
+## One open at a time
+
+`Swipe.Group` keeps a single row open: opening one closes the rest. Rows register with the group
+through context, so a row nested inside a `ListGroup`, a `.map()` or a component of your own still
+belongs. `useSwipeGroup().closeAll()` closes every row — outside a group it does nothing, so a
+screen can call it either way.
+
+```tsx
+<Swipe.Group>
+  <ListGroup>
+    {reminders.map((reminder) => (
+      <Swipe key={reminder.id}>…</Swipe>
+    ))}
+  </ListGroup>
+</Swipe.Group>
+```
+
+## From code
+
+A ref exposes `open(side)` and `close()`. `onOpenChange` reports the side that settled open, or
+`null` once the row is shut.
+
+```tsx
+const swipe = useRef<SwipeHandle>(null);
+
+<Swipe onOpenChange={setOpenSide} ref={swipe}>…</Swipe>
+<Button onPress={() => swipe.current?.open("end")}>
+  <Button.Label>Show actions</Button.Label>
+</Button>
+```
+
+## Sharing the screen with a scroller
+
+The row claims the touch only once a drag is clearly sideways (10pt horizontally) and gives it up as
+soon as it commits vertically (8pt), so a list of rows scrolls as it would without them. Nothing
+re-renders during a drag. Close open rows before the list moves out from under them — call
+`useSwipeGroup().closeAll()` from the list's `onScrollBeginDrag`, or when the screen loses focus.
+
+## Accessibility
+
+A swipe is invisible to a screen reader, so the row publishes **every action as an accessibility
+action**, named by its `label`; VoiceOver offers them from the actions rotor and TalkBack from its
+actions menu. That is why `label` is required even on a tile whose glyph says it all. The tiles
+are buttons, and they are hidden from assistive technology while the row is shut. Under reduced
+motion every spring becomes a short timing and a full swipe fades the row instead of carrying it
+off.
+
+## API Reference
+
+### Swipe
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "`Swipe.Start`, `Swipe.End` and the row." },
+    isFullSwipe: { type: "boolean", default: "true", description: "A drag far past the actions fires the outermost." },
+    isDisabled: { type: "boolean", default: "false", description: "Turns the gesture off." },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Ticks as a drag crosses the full-swipe point." },
+    onOpenChange: { type: '(side: "start" | "end" | null) => void' },
+    ref: { type: "Ref<SwipeHandle>", description: '`{ open(side: "start" | "end"): void; close(): void }`' },
+    className: { type: "string" },
+    contentClassName: { type: "string", description: "The moving row." },
+  }}
+/>
+
+### Swipe.Start / Swipe.End
+
+Markers. Their children are the side's `Swipe.Action`s, in visual order.
+
+### Swipe.Action
+
+<TypeTable
+  type={{
+    label: { type: "string", description: "The caption, and the accessibility action's name. Required." },
+    icon: { type: "IconComponent", description: "A Central Icon component; the tile sizes and tints it." },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "info" | "destructive"',
+      default: '"default"',
+    },
+    onPress: { type: "() => void" },
+    isKeptOpen: { type: "boolean", default: "false", description: "Leave the row open after the action runs." },
+    className: { type: "string" },
+    labelClassName: { type: "string" },
+  }}
+/>
+
+### Swipe.Group
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    isExclusive: { type: "boolean", default: "true", description: "Opening one row closes the rest." },
+    className: { type: "string" },
+  }}
+/>
+
+### useSwipe
+
+Returns `{ openSide, open, close }` for a custom child of the row. Throws outside a `<Swipe>`.
+
+### useSwipeGroup
+
+Returns `{ closeAll }`. Outside a `Swipe.Group` it is a no-op.

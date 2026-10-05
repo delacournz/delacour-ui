@@ -99,6 +99,7 @@ shares.
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
 | [ToggleButton](src/components/toggle-button/AGENTS.md) | `@delacour/react-native-ui/toggle-button` | A button that stays pressed, alone or in a group |
+| [Tooltip](src/components/tooltip/AGENTS.md) | `@delacour/react-native-ui/tooltip` | A short label on a long press — anchored to its control, gone on its own |
 | [DelacourProvider](src/components/provider/AGENTS.md) | `@delacour/react-native-ui/provider` | The app's root layer stack |
 
 A component missing from this table, or from its own folder, fails `bun test` —

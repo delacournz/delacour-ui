@@ -3174,6 +3174,97 @@ export const install = {
 			},
 		],
 	},
+	"marquee": {
+		name: "marquee",
+		title: "Marquee",
+		description: "Content that travels across its container on a loop, held still on touch.",
+		importPath: "@delacour/react-native-ui/marquee",
+		exportName: "Marquee",
+		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-svg", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 22,
+		groups: [
+			{
+				name: "marquee",
+				title: "Marquee",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/marquee/AGENTS.md", target: "src/components/ui/marquee/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/marquee/index.ts", target: "src/components/ui/marquee/index.ts" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee-fade.tsx", target: "src/components/ui/marquee/marquee-fade.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee-group.tsx", target: "src/components/ui/marquee/marquee-group.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee-scroller.tsx", target: "src/components/ui/marquee/marquee-scroller.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee-track.tsx", target: "src/components/ui/marquee/marquee-track.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee.context.tsx", target: "src/components/ui/marquee/marquee.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee.tsx", target: "src/components/ui/marquee/marquee.tsx" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee.types.ts", target: "src/components/ui/marquee/marquee.types.ts" },
+					{ source: "packages/react-native-ui/src/components/marquee/marquee.variants.ts", target: "src/components/ui/marquee/marquee.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+		],
+	},
 	"alert": {
 		name: "alert",
 		title: "Alert",

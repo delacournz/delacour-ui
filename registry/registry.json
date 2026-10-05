@@ -829,6 +829,40 @@
 			]
 		},
 		{
+			"name": "marquee",
+			"type": "registry:ui",
+			"title": "Marquee",
+			"description": "Content that travels across its container on a loop, held still on touch.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv",
+				"use-calm-motion",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/marquee/AGENTS.md",
+				"ui/marquee/index.ts",
+				"ui/marquee/marquee-fade.tsx",
+				"ui/marquee/marquee-group.tsx",
+				"ui/marquee/marquee-scroller.tsx",
+				"ui/marquee/marquee-track.tsx",
+				"ui/marquee/marquee.context.tsx",
+				"ui/marquee/marquee.tsx",
+				"ui/marquee/marquee.types.ts",
+				"ui/marquee/marquee.variants.ts"
+			]
+		},
+		{
 			"name": "merge-props",
 			"type": "registry:lib",
 			"title": "mergeProps",

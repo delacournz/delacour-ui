@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on marquee/two-rows and has settled — the strip
+  already travelling. The capture script navigates there before running this.
+steps:
+  - echo: Nothing to touch — a marquee is its motion, so this only holds the camera on it
+  - wait: 4000

@@ -120,3 +120,13 @@ The category README lists no spike for Marquee. The decisions verified on the si
 
 - **Press-to-hold with a child press.** Verified that a `Gesture.Manual` that never activates holds
   the strip while a finger is down and still lets a child `Pressable` fire its `onPress`.
+
+## Previews (follow-up)
+
+No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and the
+media are shot after integration. The five to capture, all `align: "stretch"` and all clips, each
+with its flow already written under `.argent/flows/previews/marquee/`: `badges` (**hero**),
+`two-rows`, `vertical`, `hold-to-pause`, `speed`. `cards` stays gallery-only. Add
+`<Preview id="marquee/badges" title={null} />` above `## Installation` in `marquee.mdx`, and the
+others beside their sections, in the same change — a `<Preview id>` for an uncaptured demo throws
+at render.

@@ -252,6 +252,12 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_marquee_badges from "./marquee/badges";
+import * as demo_marquee_cards from "./marquee/cards";
+import * as demo_marquee_hold_to_pause from "./marquee/hold-to-pause";
+import * as demo_marquee_speed from "./marquee/speed";
+import * as demo_marquee_two_rows from "./marquee/two-rows";
+import * as demo_marquee_vertical from "./marquee/vertical";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -618,6 +624,12 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"marquee/badges": demo_marquee_badges,
+	"marquee/cards": demo_marquee_cards,
+	"marquee/hold-to-pause": demo_marquee_hold_to_pause,
+	"marquee/speed": demo_marquee_speed,
+	"marquee/two-rows": demo_marquee_two_rows,
+	"marquee/vertical": demo_marquee_vertical,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

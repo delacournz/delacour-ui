@@ -204,6 +204,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A surface grouping related rows, with dividers inserted automatically.",
 		categories: ["layout"],
 	},
+	marquee: {
+		title: "Marquee",
+		description: "Content that travels across its container on a loop, held still on touch.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

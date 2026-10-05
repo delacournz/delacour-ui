@@ -2,6 +2,7 @@ import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowExpandVer,
+	IconArrowLeftRight,
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconAsterisk,
@@ -78,6 +79,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	kpi: IconTrending4,
 	label: IconAsterisk,
 	"list-group": IconBulletList,
+	marquee: IconArrowLeftRight,
 	meter: IconGauge,
 	pressable: IconCursorClick,
 	progress: IconProgress75,

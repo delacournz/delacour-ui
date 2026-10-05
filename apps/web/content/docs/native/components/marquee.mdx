@@ -1,0 +1,176 @@
+---
+title: Marquee
+description: Content that travels across its container on a loop, at a speed in points per second, held still on touch.
+icon: ArrowLeftRight
+---
+
+## Installation
+
+<ComponentInstall name="marquee" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Badge } from "@/components/ui/badge";
+import { Marquee } from "@/components/ui/marquee";
+import { View } from "react-native";
+
+const TAGS = ["Design", "Motion", "Typography", "Colour", "Layout", "Tokens"];
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center">
+      <Marquee contentClassName="gap-2" fade={{ kind: "edges" }} gap="sm" speed={40}>
+        {TAGS.map((tag) => (
+          <Badge key={tag} variant="soft">
+            {tag}
+          </Badge>
+        ))}
+      </Marquee>
+    </View>
+  );
+}
+```
+
+Any children work — badges, logos, cards, a line of text. The marquee lays copies of them end to end
+and slides the strip, so whatever you pass is what loops.
+
+## Direction
+
+`direction` is the axis and the sign in one value: `left` and `right` run along the row, `up` and
+`down` along the column. A vertical marquee needs a bounded height from its `className` — a column of
+unbounded height has nothing to clip against, and simply shows every copy stacked.
+
+```tsx
+<Marquee direction="right">
+  <Badge>Travels left to right</Badge>
+</Marquee>
+
+<Marquee className="h-48" direction="up">
+  <Text>Deploy finished</Text>
+  <Text>Storage is 82% full</Text>
+</Marquee>
+```
+
+## Speed
+
+`speed` is points per second, never a duration. A duration makes a three-badge strip crawl and a
+thirty-badge strip fly; a speed keeps every strip moving at the pace you asked for, however much it
+holds. The default is 40. Zero or less holds the strip still.
+
+```tsx
+<Marquee speed={20}>…</Marquee>
+<Marquee speed={120}>…</Marquee>
+```
+
+Changing `speed` while the strip runs glides to the new pace from wherever it is — there is no jump.
+
+## Gap
+
+`gap` is the space after each copy, on the spacing scale (`none`, `xs`, `sm`, `md`, `lg`, `xl`;
+default `md`). It is applied as trailing padding rather than space between copies, so the loop's
+period includes it and the wrap is seamless. Space the items inside a copy with
+`contentClassName="gap-2"`, and match `gap` to it for an even rhythm.
+
+## Edge fades
+
+`fade={{ kind: "edges" }}` dissolves the content into the surface at both edges instead of cutting it
+off. The fade is drawn in a theme colour, so it has to name the surface the marquee sits on:
+
+```tsx
+<Marquee fade={{ kind: "edges", size: 40, color: "card" }}>…</Marquee>
+```
+
+`color` is one of `background` (the default), `card`, `muted` or `elevated`; `size` is how far each
+fade reaches in, in points (default 24).
+
+## Pausing
+
+By default a finger anywhere on the strip holds it — `pause={{ kind: "press" }}`. The strip eases to a
+stop over `easeMs` (default 250) and eases back up from exactly where it stopped. A child's own press
+still fires, moving or held, so a strip of tappable cards works.
+
+Hand the decision to the app with `controlled`, or turn holding off with `none`:
+
+```tsx
+const [isPaused, setIsPaused] = useState(false);
+
+<Marquee pause={{ kind: "controlled", isPaused }}>…</Marquee>
+<Marquee pause={{ kind: "none" }}>…</Marquee>
+```
+
+## Rows in step
+
+`Marquee.Group` gives every strip inside it one speed and one pause. A finger on any row holds them
+all, and rows running opposite ways stay in proportion.
+
+```tsx
+<Marquee.Group className="gap-3" speed={30}>
+  <Marquee direction="left">…</Marquee>
+  <Marquee direction="right">…</Marquee>
+</Marquee.Group>
+```
+
+A strip's own `speed` wins over the group's; the group's `pause` wins over a strip's.
+
+## Reduced motion
+
+With the system's Reduce Motion on, or `isMotionCalm` set on `DelacourProvider`, the marquee does
+not move at all. It becomes a still strip of one copy that the reader scrolls by hand, so nothing it
+would have shown is out of reach — and a UI test runner waiting for the screen to idle is never kept
+waiting. The switch is live if the setting changes.
+
+## Accessibility
+
+- Only the first copy is exposed to VoiceOver and TalkBack; the duplicates that make the loop are
+  hidden, so each item is read once.
+- The first copy stays focusable while it moves.
+- For purely decorative content — a wall of logos — pass `accessibilityLabel`. The marquee becomes
+  one element with that label, and its content is hidden.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Marquee` | The clipped strip: copies of its children, translated on the UI thread |
+| `Marquee.Group` | Holds one pause and a default speed for every strip inside it |
+
+### Marquee
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "What loops." },
+    direction: { type: '"left" | "right" | "up" | "down"', default: '"left"', description: "Which way the content travels." },
+    speed: { type: "number", default: "40", description: "Points per second. Inherited from a Marquee.Group when unset." },
+    gap: { type: '"none" | "xs" | "sm" | "md" | "lg" | "xl"', default: '"md"', description: "The trailing space after each copy." },
+    fade: {
+      type: '{ kind: "none" } | { kind: "edges"; size?: number; color?: "background" | "card" | "muted" | "elevated" }',
+      default: '{ kind: "none" }',
+      description: "Gradients at both edges, in the colour of the surface underneath.",
+    },
+    pause: {
+      type: '{ kind: "none" } | { kind: "press" } | { kind: "controlled"; isPaused: boolean }',
+      default: '{ kind: "press" }',
+      description: "When the strip holds. A Marquee.Group's pause wins.",
+    },
+    easeMs: { type: "number", default: "250", description: "How long the strip takes to slow to a hold or get back to speed. 0 is instant." },
+    accessibilityLabel: { type: "string", description: "One label for the whole strip. Set, the content is hidden from assistive technology." },
+    className: { type: "string", description: "The clipping container. A vertical marquee needs a height here." },
+    contentClassName: { type: "string", description: "The row or column wrapping each copy of the children." },
+  }}
+/>
+
+### Marquee.Group
+
+<TypeTable
+  type={{
+    speed: { type: "number", description: "Points per second for every strip inside that sets none." },
+    pause: {
+      type: '{ kind: "none" } | { kind: "press" } | { kind: "controlled"; isPaused: boolean }',
+      description: "One pause for every strip inside. Unset, each strip keeps its own.",
+    },
+    className: { type: "string" },
+  }}
+/>

@@ -76,6 +76,7 @@ export const SCROLL_TEXT_HIGHLIGHT_ALPHA = 0.2;
  * line layout's equivalent. `measure` is the hidden `Text` the block reads its
  * lines and its space width from — out of flow, so it never adds height, and
  * transparent rather than unmounted, so it keeps measuring at the live width.
+ * `space` is the same, shrink-wrapped, so its width is one space glyph's.
  */
 export const scrollTextVariants = tv({
 	slots: {
@@ -86,6 +87,7 @@ export const scrollTextVariants = tv({
 		break: "h-0 w-full",
 		band: "rounded-sm",
 		measure: "absolute top-0 right-0 left-0 opacity-0",
+		space: "absolute top-0 left-0 opacity-0",
 	},
 	variants: {
 		align: {

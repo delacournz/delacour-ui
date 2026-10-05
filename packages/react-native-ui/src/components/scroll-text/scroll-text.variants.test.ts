@@ -508,6 +508,13 @@ describe("scrollTextVariants", () => {
 		expect(measure).toContain("opacity-0");
 	});
 
+	test("the space measurer shrink-wraps, so its width is the glyph's", () => {
+		const space = scrollTextVariants().space();
+		expect(space).toContain("absolute");
+		expect(space).toContain("opacity-0");
+		expect(space).not.toContain("right-0");
+	});
+
 	test("the three splits", () => {
 		expect(SCROLL_TEXT_SPLITS).toEqual(["character", "word", "line"]);
 	});

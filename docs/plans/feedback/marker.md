@@ -196,3 +196,11 @@ Variants, Pressable, Running (shimmer, and the rule to drop it), Accessibility, 
   `conversation` `{ align: "stretch", hero: true }`; `variants`, `pressable`, `running`
   `{ align: "stretch" }` — run `bun run previews -- -- --only marker`, and add the hero `<Preview>`
   plus one per Variants / Pressable / Running section of `marker.mdx`.
+
+## Simulator verification
+
+2026-10-05, iPhone 17 (warden), dev client on Metro: the conversation demo draws the `separator`
+rules to both edges and the `border` capsule hugging its words; each static marker reads once as
+text with its icon hidden; the pressable marker is a button and expands its files; the running
+marker is announced busy and settles to its finished label; the disabled one is a not-enabled
+button.

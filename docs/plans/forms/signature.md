@@ -1,6 +1,6 @@
 # Signature
 
-- **Status**: built on `feature/forms-signature`. Verified on an iOS simulator (draw, tap-dot, undo, clear, Field invalid, dark). Preview media not captured: `bun run previews` needs the argent CLI, which is not installed — the demos carry no `capture` yet, so the docs page opens at Installation
+- **Status**: built on `feature/forms-signature`. Verified on an iOS simulator; previews captured from the dev client (2 stills, 3 clips)
 - **Wave**: 1 (independent)
 - **Depends on**: `Field`, `Pressable`, `Button`, `Text`, `Icon`, `Surface` conventions; `react-native-svg`, Gesture Handler, Reanimated, Pulsar. No new peers.
 

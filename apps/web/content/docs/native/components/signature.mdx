@@ -4,6 +4,8 @@ description: A pad to sign with a finger or a stylus, handing back the strokes a
 icon: Signature
 ---
 
+<Preview id="signature/with-toolbar" title={null} />
+
 ## Installation
 
 <ComponentInstall name="signature" />
@@ -31,6 +33,8 @@ export default function Example() {
 Not everyone can trace a path with a finger, so pass `onRequestAlternative` on every pad: it adds a
 "Can't sign? Type your name" link that hands off to a flow you own.
 
+<Preview id="signature/alternative" />
+
 ```tsx
 const [isTyping, setIsTyping] = useState(false);
 
@@ -48,6 +52,8 @@ isTyping ? (
 
 Write the anatomy out to pick the toolbar's buttons; each is disabled while it would do nothing.
 
+<Preview id="signature/with-toolbar" />
+
 ```tsx
 <Signature>
   <Signature.Pad />
@@ -64,17 +70,21 @@ Write the anatomy out to pick the toolbar's buttons; each is disabled while it w
 
 A `Field` cascades `isInvalid` and `isDisabled`, and its label names the pad to a screen reader.
 
+<Preview id="signature/in-field" />
+
 ```tsx
 <Field isInvalid={submitted && !signature}>
   <Field.Label>Signature</Field.Label>
   <Signature onValueChange={setSignature} />
-  <Field.Error>Please sign to accept the delivery</Field.Error>
+  <Field.Error>{submitted && !signature ? "Please sign to accept the delivery" : undefined}</Field.Error>
 </Field>
 ```
 
 ## The value
 
 `onValueChange` fires when a finger lifts, never while it moves, with plain JSON — or `null` once the pad is empty.
+
+<Preview id="signature/basic" />
 
 ```ts
 type SignatureValue = {
@@ -122,6 +132,8 @@ const svg = pad.current?.toSVG({ viewBox: "tight", padding: 8, background: "#fff
 ## Disabled and read-only
 
 `isReadOnly` shows the drawing at full strength with no toolbar; `isDisabled` fades both and takes no touch.
+
+<Preview id="signature/disabled-and-read-only" />
 
 ```tsx
 <Signature defaultValue={signed} isReadOnly />

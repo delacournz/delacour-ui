@@ -35,6 +35,7 @@
 		"./styles/theme": "./src/styles/theme.css",
 		"./accordion": "./src/components/accordion/index.ts",
 		"./alert": "./src/components/alert/index.ts",
+		"./animated-badge": "./src/components/animated-badge/index.ts",
 		"./avatar": "./src/components/avatar/index.ts",
 		"./badge": "./src/components/badge/index.ts",
 		"./bottom-sheet": "./src/components/bottom-sheet/index.ts",

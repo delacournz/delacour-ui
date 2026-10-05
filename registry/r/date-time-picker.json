@@ -1,0 +1,305 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "date-time-picker",
+	"type": "registry:ui",
+	"title": "Date Time Picker",
+	"description": "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"bottom-sheet",
+		"button",
+		"calendar",
+		"cn",
+		"date-picker",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"separator",
+		"tabs",
+		"text",
+		"time-picker",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/AGENTS.md",
+			"target": "date-time-picker/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/date-time-picker",
+					"to": "@registry/ui/date-time-picker"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-calendar.tsx",
+			"target": "date-time-picker/date-time-picker-calendar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../calendar",
+					"to": "@registry/ui/calendar"
+				},
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-clear.tsx",
+			"target": "date-time-picker/date-time-picker-clear.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-content.tsx",
+			"target": "date-time-picker/date-time-picker-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../tabs",
+					"to": "@registry/ui/tabs"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-done.tsx",
+			"target": "date-time-picker/date-time-picker-done.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-icon.tsx",
+			"target": "date-time-picker/date-time-picker-icon.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../date-picker/date-picker.variants",
+					"to": "@registry/ui/date-picker/date-picker.variants"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-time.tsx",
+			"target": "date-time-picker/date-time-picker-time.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../time-picker",
+					"to": "@registry/ui/time-picker"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-trigger.tsx",
+			"target": "date-time-picker/date-time-picker-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../date-picker/date-picker.variants",
+					"to": "@registry/ui/date-picker/date-picker.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker-value.tsx",
+			"target": "date-time-picker/date-time-picker-value.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../date-picker/date-picker.variants",
+					"to": "@registry/ui/date-picker/date-picker.variants"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.context.tsx",
+			"target": "date-time-picker/date-time-picker.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../calendar/calendar.types",
+					"to": "@registry/ui/calendar/calendar.types"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.tsx",
+			"target": "date-time-picker/date-time-picker.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../date-picker/date-picker.variants",
+					"to": "@registry/ui/date-picker/date-picker.variants"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.types.ts",
+			"target": "date-time-picker/date-time-picker.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../calendar/calendar.types",
+					"to": "@registry/ui/calendar/calendar.types"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.value.ts",
+			"target": "date-time-picker/date-time-picker.value.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.variants.ts",
+			"target": "date-time-picker/date-time-picker.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				},
+				{
+					"from": "../time-picker/time-picker.variants",
+					"to": "@registry/ui/time-picker/time-picker.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/index.ts",
+			"target": "date-time-picker/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

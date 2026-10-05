@@ -592,6 +592,58 @@
 			]
 		},
 		{
+			"name": "date-time-picker",
+			"type": "registry:ui",
+			"title": "Date Time Picker",
+			"description": "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"calendar",
+				"cn",
+				"date-picker",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"separator",
+				"tabs",
+				"text",
+				"time-picker",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/date-time-picker/AGENTS.md",
+				"ui/date-time-picker/date-time-picker-calendar.tsx",
+				"ui/date-time-picker/date-time-picker-clear.tsx",
+				"ui/date-time-picker/date-time-picker-content.tsx",
+				"ui/date-time-picker/date-time-picker-done.tsx",
+				"ui/date-time-picker/date-time-picker-icon.tsx",
+				"ui/date-time-picker/date-time-picker-time.tsx",
+				"ui/date-time-picker/date-time-picker-trigger.tsx",
+				"ui/date-time-picker/date-time-picker-value.tsx",
+				"ui/date-time-picker/date-time-picker.context.tsx",
+				"ui/date-time-picker/date-time-picker.tsx",
+				"ui/date-time-picker/date-time-picker.types.ts",
+				"ui/date-time-picker/date-time-picker.value.ts",
+				"ui/date-time-picker/date-time-picker.variants.ts",
+				"ui/date-time-picker/index.ts"
+			]
+		},
+		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",

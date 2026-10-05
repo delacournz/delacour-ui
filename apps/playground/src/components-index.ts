@@ -118,6 +118,12 @@ const ROWS = [
 		description: "Placement, flip and shift, arrow, trigger width",
 		group: "Overlays",
 	},
+	{
+		slug: "toast",
+		title: "Toast",
+		description: "Statuses, action, placement, promise, stacking, custom",
+		group: "Overlays",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

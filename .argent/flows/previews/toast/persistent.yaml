@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/persistent and has settled — the Go offline and Hide all
+  buttons, no toast on screen. The capture script navigates there before running this.
+steps:
+  - echo: A toast with no timeout
+  - tap: { id: toast-persistent }
+  - await: { visible: { text: You are offline } }
+  - wait: 1800
+  - echo: Still there; hidden from code
+  - tap: { id: toast-hide-all }
+  - await: { hidden: { text: You are offline } }

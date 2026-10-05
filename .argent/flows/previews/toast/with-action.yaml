@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/with-action and has settled — the Archive button, no toast on
+  screen. The capture script navigates there before running this.
+steps:
+  - echo: Archiving
+  - tap: { id: toast-with-action }
+  - await: { visible: { text: Conversation archived } }
+  - wait: 1200
+  - echo: Undoing from the toast
+  - tap: { text: Undo }
+  - await: { visible: { text: Conversation restored } }
+  - await: { hidden: { text: Conversation archived } }
+  - wait: 1000
+  - echo: Swiping the confirmation away, so the clip loops with no toast on screen
+  - swipe: { from: { text: Conversation restored }, by: { x: 0.4 }, duration: 200 }
+  - await: { hidden: { text: Conversation restored } }

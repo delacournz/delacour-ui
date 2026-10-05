@@ -130,7 +130,7 @@ expires), `resolveToastDuration`, `resolveToastStack` (≤3 visible, ordering, d
 
 `statuses` (hero, capture), `with-action` (undo, capture), `placement` (top/bottom, capture),
 `promise` (capture), `stacking` (fire five quickly), `persistent` (`duration: 0`), `custom`
-(`render`), `over-dialog` (only once Dialog is merged — otherwise omit). `testID`s.
+(`render`). `testID`s.
 
 ## Docs
 

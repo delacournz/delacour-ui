@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/promise and has settled — Upload and Upload offline buttons, no
+  toast on screen. The capture script navigates there before running this.
+steps:
+  - echo: Loading, then success in place
+  - tap: { id: toast-promise-success }
+  - await: { visible: { text: Uploading 3 photos… } }
+  - await: { visible: { text: 3 photos uploaded } }
+  - wait: 900
+  - swipe: { from: { text: 3 photos uploaded }, by: { x: 0.4 }, duration: 200 }
+  - await: { hidden: { text: 3 photos uploaded } }
+  - echo: Loading, then failure in place
+  - tap: { id: toast-promise-error }
+  - await: { visible: { text: Uploading 3 photos… } }
+  - await: { visible: { text: The server is offline } }
+  - wait: 1200
+  - swipe: { from: { text: The server is offline }, by: { x: 0.4 }, duration: 200 }
+  - await: { hidden: { text: The server is offline } }

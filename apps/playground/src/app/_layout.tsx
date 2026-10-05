@@ -4,6 +4,7 @@ import { NavigationTheme } from "@delacour/react-native-ui/expo/navigation-theme
 import { useThemeColor } from "@delacour/react-native-ui/hooks/use-theme-color";
 import { OverlayProvider } from "@delacour/react-native-ui/overlay";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
+import { ToastViewport } from "@delacour/react-native-ui/toast";
 import { Observe, ObserveRoot } from "expo-observe";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
@@ -124,6 +125,10 @@ function SystemBackground(): null {
  * by `DelacourProvider` — teleport and the sheet engine are optional peers of the
  * library — so the app does, once each, here.
  *
+ * `ToastViewport` draws every `toast()` call, wherever it was made. It sits
+ * inside `OverlayProvider`, beside the navigator, and teleports into the same
+ * root host in the overlay z-order's top band — above every sheet and dialog.
+ *
  * NavigationTheme hands the navigator the same tokens, which is what keeps the
  * container behind a screen transition from being React Navigation's own pale
  * default.
@@ -161,6 +166,7 @@ function RootLayout(): ReactElement {
 						<Stack screenOptions={{ headerShown: false }} />
 						<ThemeTrigger />
 					</NavigationTheme>
+					<ToastViewport />
 				</BottomSheetProvider>
 			</OverlayProvider>
 		</DelacourProvider>

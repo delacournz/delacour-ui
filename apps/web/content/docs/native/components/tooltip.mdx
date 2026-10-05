@@ -4,6 +4,8 @@ description: A short label naming the control under the finger — opened by a l
 icon: Info
 ---
 
+<Preview id="tooltip/icon-buttons" title={null} />
+
 ## Installation
 
 <ComponentInstall name="tooltip" />
@@ -45,6 +47,8 @@ export default function Example() {
 
 A long press shows the label with a light haptic. A plain tap still presses the button.
 
+<Preview id="tooltip/icon-buttons" />
+
 ## Anatomy
 
 ```tsx
@@ -68,6 +72,8 @@ Phones have no hover, so a tooltip opens on a **long press** by default and leav
 tap alone — the trigger's own `onLongPress` still runs too. `openOn="press"` opens it on a tap
 instead, for a trigger with no tap of its own, like an info glyph:
 
+<Preview id="tooltip/press" />
+
 ```tsx
 <Tooltip label="Includes photos, files and backups" openOn="press">
   <Tooltip.Trigger accessibilityLabel="About storage" hitSlop={12}>
@@ -87,6 +93,8 @@ Opening one tooltip closes any other.
 A tooltip hides itself `duration` milliseconds after it appears — 1500 by default. `duration={0}`
 keeps it until the trigger is used again or something else is tapped.
 
+<Preview id="tooltip/persistent" />
+
 A tap anywhere else closes it **and still lands**: the button you tapped is pressed, the list you
 touched scrolls. A tooltip is never something you have to dismiss before you can carry on. The
 tooltip itself takes no touch either.
@@ -97,12 +105,16 @@ tooltip itself takes no touch either.
 
 `isOpen` and `onOpenChange` control it from outside; it still hides itself after `duration`.
 
+<Preview id="tooltip/controlled" />
+
 ## Placement
 
 `placement` is the side the label prefers — `top` by default — and `align` lines it up along that
 side. It is placed exactly as a [Popover](/docs/native/components/popover) is: it flips when that
 side lacks room, slides along the trigger to stay inside the safe area, and the arrow keeps
 pointing at the trigger's centre.
+
+<Preview id="tooltip/placements" />
 
 ```tsx
 <Tooltip.Content align="start" offset={10} placement="bottom">…</Tooltip.Content>
@@ -112,6 +124,8 @@ pointing at the trigger's centre.
 
 `inverted`, the default, is a compact chip in the foreground colour that reads over anything in
 light and dark. `surface` is the popover card, with room for a title and a line.
+
+<Preview id="tooltip/surface" />
 
 ```tsx
 <Tooltip.Content className="max-w-64" variant="surface">

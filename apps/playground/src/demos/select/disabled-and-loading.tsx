@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Disabled, read-only and loading",
 	caption:
 		"Disabled fades and never opens. Read-only looks normal, shows its value and never opens either. Loading swaps the chevron for a spinner, and an empty sheet shows one too.",
+	capture: { align: "stretch" },
 };
 
 const PLANS = [

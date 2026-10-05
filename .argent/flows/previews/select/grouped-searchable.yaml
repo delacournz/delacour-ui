@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on select/grouped-searchable and has settled — the City trigger showing its
+  placeholder, the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet and searching — accents fold and emptied groups disappear
+  - tap: { id: select-grouped }
+  - await: { visible: { id: select-grouped-search } }
+  - wait: 500
+  - type: { into: { id: select-grouped-search }, text: "zur", submit: false }
+  - await: { visible: { id: select-grouped-option-zrh } }
+  - wait: 900
+  - echo: Closing clears the search and leaves the value unchanged
+  - tap: { id: select-grouped-close }
+  - await: { hidden: { id: select-grouped-search } }
+  - wait: 500

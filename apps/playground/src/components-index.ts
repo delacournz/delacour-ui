@@ -41,6 +41,7 @@ export type ComponentIndexEntry = {
 const ROWS = [
 	{ slug: "button", title: "Button", description: "Variants, sizes, icons, loading", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
+	{ slug: "swipe", title: "Swipe", description: "Actions behind a row, full swipe, groups", group: "Actions" },
 	{
 		slug: "toggle-button",
 		title: "ToggleButton",

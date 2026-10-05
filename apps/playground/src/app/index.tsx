@@ -2,6 +2,7 @@ import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowExpandVer,
+	IconArrowLeftRight,
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconAsterisk,
@@ -90,6 +91,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	spinner: IconArrowsRepeatCircle,
 	steps: IconNumberedList,
 	surface: IconSquareBehindSquare1,
+	swipe: IconArrowLeftRight,
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,

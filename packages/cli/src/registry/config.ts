@@ -150,6 +150,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A content surface with a header, a body and a footer, built on Surface.",
 		categories: ["layout"],
 	},
+	carousel: {
+		title: "Carousel",
+		description:
+			"Swipeable slides on one fractional position, with peek, loop, vertical and coverflow layouts, dots and arrows.",
+		categories: ["layout"],
+	},
 	checkbox: {
 		title: "Checkbox",
 		description: "A checkbox with an indeterminate state, and a group that owns the selection.",
@@ -577,6 +583,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The pure maths behind the scroll-linked components.",
 	},
 	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
+	paging: {
+		title: "paging",
+		description: "Worklet-safe maths of paging through slides on one fractional position.",
+	},
 	"scroll-sections": {
 		title: "scrollSections",
 		description: "Which section a scroll offset is in, and how far down the content it is.",

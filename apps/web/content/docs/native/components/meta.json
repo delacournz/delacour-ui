@@ -84,6 +84,7 @@
 		"scroll-fade",
 		"surface",
 		"card",
+		"carousel",
 		"scroll-blur",
 		"scroll-header",
 		"scroll-canvas",

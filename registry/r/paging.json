@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "paging",
+	"type": "registry:lib",
+	"title": "paging",
+	"description": "Worklet-safe maths of paging through slides on one fractional position.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/paging.ts",
+			"target": "paging.ts",
+			"namespace": "lib"
+		}
+	]
+}

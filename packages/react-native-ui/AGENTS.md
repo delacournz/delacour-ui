@@ -41,6 +41,7 @@ src/
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
+│                         paging,
 │                         scroll-maths, scroll-edges,
 │                         scroll-sections
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
@@ -105,6 +106,7 @@ shares.
 | [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
 | [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
+| [Carousel](src/components/carousel/AGENTS.md) | `@delacour/react-native-ui/carousel` | Swipeable slides on one fractional position — peek, loop, vertical, coverflow, dots and arrows |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [ColorPicker](src/components/color-picker/AGENTS.md) | `@delacour/react-native-ui/color-picker` | A colour dragged on an area and tracks, typed as hex, or tapped from swatches |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |

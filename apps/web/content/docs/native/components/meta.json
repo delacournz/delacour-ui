@@ -70,6 +70,7 @@
 		"dialog",
 		"feedback",
 		"---Navigation---",
+		"breadcrumb",
 		"section-rail",
 		"section-progress",
 		"steps",

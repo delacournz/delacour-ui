@@ -210,6 +210,42 @@
 			]
 		},
 		{
+			"name": "breadcrumb",
+			"type": "registry:ui",
+			"title": "Breadcrumb",
+			"description": "The path to the current screen: links back up each level, the current page last, with automatic separators, a collapsing middle or a scrolling trail.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/breadcrumb/AGENTS.md",
+				"ui/breadcrumb/breadcrumb-ellipsis.tsx",
+				"ui/breadcrumb/breadcrumb-glyph.tsx",
+				"ui/breadcrumb/breadcrumb-item.tsx",
+				"ui/breadcrumb/breadcrumb-link.tsx",
+				"ui/breadcrumb/breadcrumb-list.tsx",
+				"ui/breadcrumb/breadcrumb-page.tsx",
+				"ui/breadcrumb/breadcrumb-separator.tsx",
+				"ui/breadcrumb/breadcrumb.context.tsx",
+				"ui/breadcrumb/breadcrumb.tsx",
+				"ui/breadcrumb/breadcrumb.types.ts",
+				"ui/breadcrumb/breadcrumb.variants.ts",
+				"ui/breadcrumb/index.ts"
+			]
+		},
+		{
 			"name": "button",
 			"type": "registry:ui",
 			"title": "Button",

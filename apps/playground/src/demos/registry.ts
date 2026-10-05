@@ -367,6 +367,13 @@ import * as demo_otp_input_in_field from "./otp-input/in-field";
 import * as demo_otp_input_pin_masked from "./otp-input/pin-masked";
 import * as demo_otp_input_sizes from "./otp-input/sizes";
 import * as demo_otp_input_states from "./otp-input/states";
+import * as demo_pagination_compact from "./pagination/compact";
+import * as demo_pagination_controlled_list from "./pagination/controlled-list";
+import * as demo_pagination_disabled from "./pagination/disabled";
+import * as demo_pagination_numbers from "./pagination/numbers";
+import * as demo_pagination_simple from "./pagination/simple";
+import * as demo_pagination_sizes from "./pagination/sizes";
+import * as demo_pagination_with_summary from "./pagination/with-summary";
 import * as demo_popover_arrow from "./popover/arrow";
 import * as demo_popover_basic from "./popover/basic";
 import * as demo_popover_edge_collision from "./popover/edge-collision";
@@ -955,6 +962,13 @@ export const DEMOS = {
 	"otp-input/pin-masked": demo_otp_input_pin_masked,
 	"otp-input/sizes": demo_otp_input_sizes,
 	"otp-input/states": demo_otp_input_states,
+	"pagination/compact": demo_pagination_compact,
+	"pagination/controlled-list": demo_pagination_controlled_list,
+	"pagination/disabled": demo_pagination_disabled,
+	"pagination/numbers": demo_pagination_numbers,
+	"pagination/simple": demo_pagination_simple,
+	"pagination/sizes": demo_pagination_sizes,
+	"pagination/with-summary": demo_pagination_with_summary,
 	"popover/arrow": demo_popover_arrow,
 	"popover/basic": demo_popover_basic,
 	"popover/edge-collision": demo_popover_edge_collision,

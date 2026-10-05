@@ -94,6 +94,7 @@ shares.
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [MarkdownEditor](src/components/markdown-editor/AGENTS.md) | `@delacour/react-native-ui/markdown-editor` | A Markdown field — a formatting toolbar, a write pane and a rendered preview |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Pagination](src/components/pagination/AGENTS.md) | `@delacour/react-native-ui/pagination` | A fixed-width run of pages and gaps, a compact readout, or labelled arrows |
 | [OtpInput](src/components/otp-input/AGENTS.md) | `@delacour/react-native-ui/otp-input` | A one-time code or PIN — cells drawn over one hidden field, with autofill and paste |
 | [NumberInput](src/components/number-input/AGENTS.md) | `@delacour/react-native-ui/number-input` | A number between a minus and a plus — tap, hold to repeat, or type |
 | [Menu](src/components/menu/AGENTS.md) | `@delacour/react-native-ui/menu` | A list of actions dropped from the control that opens it |

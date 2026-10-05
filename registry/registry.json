@@ -1598,6 +1598,46 @@
 			]
 		},
 		{
+			"name": "pagination",
+			"type": "registry:ui",
+			"title": "Pagination",
+			"description": "Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/pagination/AGENTS.md",
+				"ui/pagination/index.ts",
+				"ui/pagination/pagination-compact.tsx",
+				"ui/pagination/pagination-control.tsx",
+				"ui/pagination/pagination-ellipsis.tsx",
+				"ui/pagination/pagination-item.tsx",
+				"ui/pagination/pagination-next.tsx",
+				"ui/pagination/pagination-previous.tsx",
+				"ui/pagination/pagination-status.tsx",
+				"ui/pagination/pagination-summary.tsx",
+				"ui/pagination/pagination.context.tsx",
+				"ui/pagination/pagination.tsx",
+				"ui/pagination/pagination.types.ts",
+				"ui/pagination/pagination.variants.ts"
+			]
+		},
+		{
 			"name": "popover",
 			"type": "registry:ui",
 			"title": "Popover",

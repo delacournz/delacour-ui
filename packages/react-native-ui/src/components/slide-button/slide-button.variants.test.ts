@@ -124,9 +124,7 @@ describe("resolveSlideRelease", () => {
 		const strict = { ...base, threshold: 1 };
 		expect(resolveSlideRelease({ ...strict, offset: 150, velocity: 5000 })).toBe("return");
 		expect(resolveSlideRelease({ ...strict, offset: 199, velocity: 5000 })).toBe("return");
-		expect(resolveSlideRelease({ ...strict, offset: 200 - SLIDE_BUTTON_FAR_END_SLOP, velocity: 0 })).toBe(
-			"complete"
-		);
+		expect(resolveSlideRelease({ ...strict, offset: 200 - SLIDE_BUTTON_FAR_END_SLOP, velocity: 0 })).toBe("complete");
 		expect(resolveSlideRelease({ ...strict, offset: 200, velocity: 0 })).toBe("complete");
 	});
 
@@ -146,7 +144,8 @@ describe("motion constants", () => {
 	});
 
 	test("the release spring overshoots only a little", () => {
-		const ratio = SLIDE_BUTTON_SPRING.damping / (2 * Math.sqrt(SLIDE_BUTTON_SPRING.stiffness * SLIDE_BUTTON_SPRING.mass));
+		const ratio =
+			SLIDE_BUTTON_SPRING.damping / (2 * Math.sqrt(SLIDE_BUTTON_SPRING.stiffness * SLIDE_BUTTON_SPRING.mass));
 		expect(ratio).toBeGreaterThan(0.7);
 	});
 });

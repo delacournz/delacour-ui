@@ -10,8 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Mirrored rows",
 	caption:
-		"The same group twice, once per direction. Nothing in the rows changed: Yoga reverses each row, swaps the start and end insets and right-aligns the text, so the icon leads from the right and the chevron trails to the left.",
-	capture: { align: "stretch", hero: true },
+		"The same group twice, once per direction. Nothing in the rows changed: Yoga reverses each row and swaps the start and end insets, so the icon leads from the right and the chevron trails to the left.",
 };
 
 const LABELS: Record<DirectionValue, string> = {

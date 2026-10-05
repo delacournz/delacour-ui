@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Controls",
+	align: "stretch",
 	caption: "Previous, dots and next in a row. The arrows disable at the ends of a run that does not loop.",
 };
 

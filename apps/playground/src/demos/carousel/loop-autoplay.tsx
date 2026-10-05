@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Loop and autoplay",
+	align: "stretch",
 	caption:
 		"loop leads the last slide back to the first with no jump. autoplay advances on a timer and stops for good on the first touch.",
 	note: "Autoplay never runs under reduce motion or while a screen reader is on.",

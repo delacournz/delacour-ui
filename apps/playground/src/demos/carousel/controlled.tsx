@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Controlled",
+	align: "stretch",
 	caption:
 		"index and onIndexChange hand the slide to the caller. onIndexChange fires once per swipe, from the release.",
 };

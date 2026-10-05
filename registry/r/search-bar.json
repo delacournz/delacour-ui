@@ -1,0 +1,184 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "search-bar",
+	"type": "registry:ui",
+	"title": "Search Bar",
+	"description": "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"button",
+		"chip",
+		"compose-refs",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"spinner",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/AGENTS.md",
+			"target": "search-bar/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/search-bar",
+					"to": "@registry/ui/search-bar"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/index.ts",
+			"target": "search-bar/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar-cancel-reveal.tsx",
+			"target": "search-bar/search-bar-cancel-reveal.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar-cancel.tsx",
+			"target": "search-bar/search-bar-cancel.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar-clear.tsx",
+			"target": "search-bar/search-bar-clear.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar-tokens.tsx",
+			"target": "search-bar/search-bar-tokens.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../chip",
+					"to": "@registry/ui/chip"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.context.tsx",
+			"target": "search-bar/search-bar.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.debounce.ts",
+			"target": "search-bar/search-bar.debounce.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.tsx",
+			"target": "search-bar/search-bar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.types.ts",
+			"target": "search-bar/search-bar.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.variants.ts",
+			"target": "search-bar/search-bar.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	]
+}

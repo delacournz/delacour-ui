@@ -239,6 +239,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"search-bar": {
+		title: "Search Bar",
+		description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens.",
+		categories: ["forms"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

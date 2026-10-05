@@ -294,6 +294,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
 		categories: ["controls"],
 	},
+	tree: {
+		title: "Tree",
+		description:
+			"A hierarchy opened one level at a time: branches that expand and collapse, with optional single or multiple selection.",
+		categories: ["navigation"],
+	},
 
 	expo: {
 		title: "Navigation theme",

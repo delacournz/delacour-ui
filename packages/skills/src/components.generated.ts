@@ -46,4 +46,5 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },
 	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },
+	{ name: "tree", title: "Tree", description: "A hierarchy opened one level at a time: branches that expand and collapse, with optional single or multiple selection." },
 ];

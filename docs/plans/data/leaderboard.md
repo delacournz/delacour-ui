@@ -89,8 +89,8 @@ hidden. `unit` documented as required for meaning.
 
 ## Playground demos
 
-`bars` (hero, capture), `cards` (capture), `ascending-times` (capture), `highlight-pinned` (limit 5,
-me at 14, capture), `ties`, `movement`, `with-avatars` (renderMedia + Avatar), `empty`, `pressable`.
+`bars` (capture), `cards` (capture), `ascending-times` (capture), `highlight-pinned` (limit 5,
+me at 14, capture), `ties`, `with-avatars` (renderMedia + Avatar), `empty`, `movement` (capture), `pressable` (hero, capture, flow).
 
 ## Docs page
 
@@ -108,9 +108,10 @@ custom media, accessibility, API.
 
 ## Delivery notes
 
-- **Previews not captured (follow-up).** The argent CLI the capture script drives is not installed on
-  the build machine, so `bun run previews` cannot run. The demos carry `align: "stretch"` but no
-  `capture` (a captured demo without a manifest entry fails `demos.test.ts`), and `leaderboard.mdx`
-  opens at `## Installation` with no `<Preview>`. Follow-up: restore `capture` on `bars` (hero),
-  `cards`, `ascending-times`, `highlight-pinned` and `movement`, run
-  `bun run previews -- -- --only leaderboard`, and add the hero `<Preview>` to the page.
+- **Previews captured.** Six demos, both themes, from the dev client: stills of `bars`, `cards`,
+  `ascending-times`, `highlight-pinned` and `movement` (all `align: "stretch"`), and one clip,
+  `pressable`, the hero. The hero is `pressable` rather than `bars` because the bars grow on mount,
+  before the capture starts recording, so a `bars` clip would be a motionless screen — replaying the
+  mount needs a harness change this branch does not make. `pressable` taps the leader, second, then
+  a row, and taps that row again to clear the pick (the demo now toggles), so the clip loops on
+  "Tap a place". Flow: `.argent/flows/previews/leaderboard/pressable.yaml`.

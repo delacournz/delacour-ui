@@ -4,6 +4,8 @@ description: Ranked people or teams with ties, the top three on a podium, and th
 icon: Trophy
 ---
 
+<Preview id="leaderboard/pressable" title={null} />
+
 ## Installation
 
 <ComponentInstall name="leaderboard" />
@@ -35,6 +37,8 @@ export default function Example() {
 
 Pass entries in any order: the board sorts them stably and ranks them `1, 2, 2, 4`, with tied entries kept in the order given.
 
+<Preview id="leaderboard/ascending-times" />
+
 ```tsx
 <Leaderboard data={entries} unit="points" />
 <Leaderboard data={laps} formatValue={formatLapTime} order="asc" unit="seconds" />
@@ -43,6 +47,10 @@ Pass entries in any order: the board sorts them stably and ranks them `1, 2, 2, 
 ## Podium
 
 `bars` grow on mount, third to first; `cards` lift the leader. Both need three entries on show, and fall back to rows without them.
+
+<Preview id="leaderboard/bars" />
+
+<Preview id="leaderboard/cards" />
 
 ```tsx
 <Leaderboard data={entries} podium="bars" />
@@ -62,6 +70,8 @@ Pass entries in any order: the board sorts them stably and ranks them `1, 2, 2, 
 
 `limit` cuts the board, and a highlighted entry below the cut is pinned after a gap with its true rank.
 
+<Preview id="leaderboard/highlight-pinned" />
+
 ```tsx
 <Leaderboard data={entries} highlightId={me} limit={5} unit="points" />
 ```
@@ -69,6 +79,8 @@ Pass entries in any order: the board sorts them stably and ranks them `1, 2, 2, 
 ## Movement
 
 An entry's `change` draws ▲ or ▼ with the places moved, or a dash for none; the column only appears when some entry has one.
+
+<Preview id="leaderboard/movement" />
 
 ```tsx
 <Leaderboard data={[{ id: "a", name: "Aroha", value: 1240, change: 3 }]} unit="points" />
@@ -85,6 +97,8 @@ An entry's `change` draws ▲ or ▼ with the places moved, or a dash for none; 
 ## Pressable
 
 `onPressEntry` makes every place a button, with a selection haptic.
+
+<Preview id="leaderboard/pressable" />
 
 ```tsx
 <Leaderboard data={entries} onPressEntry={(entry, rank) => open(entry.id, rank)} />

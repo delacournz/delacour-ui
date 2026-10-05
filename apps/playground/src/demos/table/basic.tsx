@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Columns are declared once on the table and every row reads them by position, so the header, the line items and the total line up.",
+	align: "stretch",
 };
 
 const LINES = [
@@ -16,7 +17,7 @@ const LINES = [
 
 export function Demo(): ReactElement {
 	return (
-		<Table columns={[{ flex: 1 }, { width: 56, align: "end" }, { width: 88, align: "end" }]} variant="outline">
+		<Table columns={[{ flex: 1 }, { width: 64, align: "end" }, { width: 96, align: "end" }]} variant="outline">
 			<Table.Header>
 				<Table.Row>
 					<Table.Head>Item</Table.Head>

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Empty",
 	caption:
 		"`Table.Empty` sits inside the body beside the `.map()`, and shows only when the map produces no rows. The header stays.",
+	align: "stretch",
 };
 
 const ORDERS = [

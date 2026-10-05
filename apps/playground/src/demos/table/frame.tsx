@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Frame",
 	caption:
 		"`Table.Frame` is a card with a title, a description and an action, holding the table flush to its sides and bottom.",
+	align: "stretch",
 };
 
 const PAYMENTS = [
@@ -27,7 +28,7 @@ export function Demo(): ReactElement {
 			description="Last 30 days"
 			title="Payments"
 		>
-			<Table columns={[{ flex: 1 }, { width: 72, align: "center" }, { width: 80, align: "end" }]} striped>
+			<Table columns={[{ flex: 1 }, { width: 88, align: "center" }, { width: 100, align: "end" }]} striped>
 				<Table.Header>
 					<Table.Row>
 						<Table.Head>Client</Table.Head>

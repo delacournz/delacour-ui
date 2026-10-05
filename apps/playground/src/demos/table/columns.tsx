@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Columns",
 	caption:
 		"`{ flex }` columns share what the fixed ones leave, by weight; `{ width }` columns are exact. Each takes an `align`, and a cell's `column` prop overrides its own.",
+	align: "stretch",
 };
 
 const FIXTURES = [
@@ -17,7 +18,7 @@ const FIXTURES = [
 export function Demo(): ReactElement {
 	return (
 		<Table
-			columns={[{ width: 40, align: "center" }, { flex: 2 }, { width: 64, align: "center" }, { flex: 2, align: "end" }]}
+			columns={[{ width: 52, align: "center" }, { flex: 4 }, { width: 72, align: "center" }, { flex: 3, align: "end" }]}
 			variant="outline"
 		>
 			<Table.Header>

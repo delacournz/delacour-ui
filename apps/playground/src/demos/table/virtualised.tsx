@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Virtualised",
 	caption:
 		"A long table renders its rows from a `FlatList`. With no body around them, each row takes `index` and `isLast` itself, so it still stripes and drops its last hairline.",
+	align: "stretch",
 };
 
 type Entry = { id: string; name: string; score: number };
@@ -21,7 +22,7 @@ export function Demo(): ReactElement {
 	return (
 		<Table
 			className="h-96"
-			columns={[{ width: 48, align: "end" }, { flex: 1 }, { width: 80, align: "end" }]}
+			columns={[{ width: 64, align: "end" }, { flex: 1 }, { width: 96, align: "end" }]}
 			striped
 			variant="outline"
 		>

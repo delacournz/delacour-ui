@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Striped, small",
 	caption: '`size="sm"` tightens the rows and steps the type down; `striped` paints every second body row.',
+	align: "stretch",
 };
 
 const ROWS = [

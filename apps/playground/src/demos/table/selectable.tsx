@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Selectable",
 	caption:
 		"With `onPress` a row is one button, named by all of its cells. `isSelected` paints it on the accent; `isDisabled` fades its cells and blocks the press.",
+	align: "stretch",
 };
 
 const INVOICES = [
@@ -19,7 +20,7 @@ export function Demo(): ReactElement {
 	const [selected, setSelected] = useState<string>("INV-042");
 
 	return (
-		<Table columns={[{ width: 84 }, { flex: 1 }, { width: 96, align: "end" }]} variant="outline">
+		<Table columns={[{ width: 104 }, { flex: 1 }, { width: 120, align: "end" }]} variant="outline">
 			<Table.Header>
 				<Table.Row>
 					<Table.Head>Invoice</Table.Head>

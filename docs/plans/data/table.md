@@ -134,11 +134,18 @@ owns order), selection, wide tables, long tables (FlatList recipe), accessibilit
 
 ## Acceptance
 
-- [ ] `bun test packages/react-native-ui/src/components/table` green; covers every resolver above
-- [ ] Columns align across header/body/footer with mixed flex + fixed widths (simulator)
-- [ ] `minWidth` scrolls horizontally with edge fades that hide at the ends
-- [ ] Pressable row announces as one button with all cell values; sortable head announces sort state
-- [ ] `Table.Empty` keeps the header
-- [ ] FlatList demo uses `index`/`isLast` and stripes correctly
-- [ ] AGENTS.md (folder) + Components row + ITEM_META + gen-exports + registry:build + demos + docs + changeset
-- [ ] `bun test`, `bun run typecheck`, `bun run check` green at the repo root
+- [x] `bun test packages/react-native-ui/src/components/table` green; covers every resolver above
+- [x] Columns align across header/body/footer with mixed flex + fixed widths (simulator)
+- [x] `minWidth` scrolls horizontally with edge fades that hide at the ends
+- [x] Pressable row announces as one button with all cell values; sortable head announces sort state
+- [x] `Table.Empty` keeps the header
+- [x] FlatList demo uses `index`/`isLast` and stripes correctly
+- [x] AGENTS.md (folder) + Components row + ITEM_META + gen-exports + registry:build + demos + docs + changeset
+- [x] `bun test`, `bun run typecheck`, `bun run check` green at the repo root
+
+Simulator check (2026-10-05, warden-iphone-17-2, dev client): every demo renders with columns aligned
+across header, body and footer; the wide table scrolls with each edge fading only while columns
+remain past it; a pressable row reads as one button with every cell and moves `selected` on press;
+a sortable head is a button whose value reads "sorted ascending" / "not sorted"; `Table.Empty`
+keeps the header; the FlatList demo stripes. Demo column widths were sized to the md cell inset
+(16 pt a side) so no fixed column wraps mid-word. Preview media is still to be captured (above).

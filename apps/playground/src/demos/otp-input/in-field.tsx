@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The label names the field for a screen reader and focuses it when tapped. The code is checked the moment the last cell fills — 123456 is right, anything else turns the field invalid with an error haptic.",
 	keyboardAware: true,
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const CORRECT_CODE = "123456";

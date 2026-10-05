@@ -226,6 +226,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "sketch",
+		name: "Sketch",
+		group: "Layout",
+		blurb:
+			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

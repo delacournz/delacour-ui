@@ -1,0 +1,209 @@
+---
+title: Sketch
+description: A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.
+icon: PenTool
+---
+
+## Installation
+
+<ComponentInstall name="sketch" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Sketch, type SketchHandle } from "@/components/ui/sketch";
+import { useRef } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const sketch = useRef<SketchHandle>(null);
+
+  return (
+    <View className="flex-1 gap-3 p-4">
+      <Sketch className="flex-1" ref={sketch} />
+      <Button onPress={() => console.log(sketch.current?.toSVG({ background: null }))}>
+        <Button.Label>Done</Button.Label>
+      </Button>
+    </View>
+  );
+}
+```
+
+## Tools and shapes
+
+`shapes` chooses which of the eight shapes the toolbar offers; a shape is drawn by dragging.
+
+```tsx
+<Sketch defaultTool="shape" defaultShape="arrow" shapes={["arrow", "rectangle", "ellipse"]} />
+```
+
+## Colours
+
+`colors` takes theme tokens and literals; each mark keeps the colour it was drawn in, whatever the theme does next.
+
+```tsx
+<Sketch colors={["foreground", "primary", "#ec4899", "#14b8a6"]} defaultColor="#ec4899" />
+```
+
+## Stroke width
+
+`size` is the width in points, between `minSize` and `maxSize`. It applies to the next stroke only.
+
+```tsx
+<Sketch defaultSize={8} minSize={2} maxSize={32} />
+```
+
+## Eraser
+
+The eraser hides only ink drawn **before** it — a later stroke over the same spot is untouched, and undo brings erased ink back.
+
+## Undo and the handle
+
+`Sketch.Undo` removes the last mark; the `ref` carries the same operations for buttons outside the sketch.
+
+```tsx
+const sketch = useRef<SketchHandle>(null);
+
+sketch.current?.undo();
+sketch.current?.clear();
+sketch.current?.isEmpty();
+```
+
+## Exporting SVG
+
+`toSVG()` returns a self-contained SVG on the theme's `background` — pass `background: null` for a transparent file; saving it, or rasterising it to PNG, is your app's job.
+
+```tsx
+const svg = sketch.current?.toSVG({ background: null }) ?? "";
+```
+
+## Your own toolbar
+
+Pass children to choose and order the parts yourself.
+
+```tsx
+<Sketch className="flex-1">
+  <Sketch.Canvas />
+  <Sketch.Toolbar>
+    <Sketch.Tool tool="pen" />
+    <Sketch.Tool tool="shape" shape="arrow" />
+    <Sketch.Tool tool="eraser" />
+    <Sketch.Swatches />
+    <Sketch.Undo />
+  </Sketch.Toolbar>
+</Sketch>
+```
+
+## Annotating an image
+
+`Sketch.Canvas` children are painted under the marks; the export holds only the marks.
+
+```tsx
+<Sketch className="flex-1">
+  <Sketch.Canvas>
+    <Image className="absolute inset-0" resizeMode="contain" source={photo} />
+  </Sketch.Canvas>
+  <Sketch.Toolbar />
+</Sketch>
+```
+
+## Accessibility
+
+The canvas reads as an image ("Drawing, 3 marks") with **undo** and **clear** actions.
+
+<Callout type="warn">
+Drawing by touch exploration is not supported. Where the drawing matters, offer screen-reader users
+another way to provide it.
+</Callout>
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Sketch` | Owns the marks, the tool, the shape, the colour and the width, and the handle |
+| `Sketch.Canvas` | The drawing surface. Children are painted under the marks |
+| `Sketch.Toolbar` | The tool tray — every tool when it has no children |
+| `Sketch.Tool` | One tool: the pen, the eraser, or a shape |
+| `Sketch.Swatches` | The colour swatches, as a radio group |
+| `Sketch.Size` | The stroke-width slider |
+| `Sketch.Undo` | Removes the last mark |
+
+### Sketch
+
+<TypeTable
+  type={{
+    items: { type: "readonly SketchItem[]", description: "Controlled marks. Pass onChange with it." },
+    defaultItems: { type: "readonly SketchItem[]", default: "[]", description: "Starting marks while uncontrolled." },
+    onChange: { type: "(items: readonly SketchItem[]) => void", description: "Called after each stroke, undo and clear." },
+    tool: { type: '"pen" | "shape" | "eraser"', description: "Controlled tool." },
+    defaultTool: { type: '"pen" | "shape" | "eraser"', default: '"pen"', description: "Starting tool." },
+    onToolChange: { type: "(tool: SketchTool) => void", description: "Called when a tool is picked." },
+    shape: { type: "SketchShape", description: "Controlled shape." },
+    defaultShape: { type: "SketchShape", default: '"rectangle"', description: "Starting shape." },
+    shapes: { type: "readonly SketchShape[]", default: "all eight", description: "Which shapes the toolbar offers, in order." },
+    onShapeChange: { type: "(shape: SketchShape) => void", description: "Called when a shape is picked." },
+    colors: { type: "readonly string[]", default: "foreground, destructive, warning, success, info, primary", description: "Theme tokens or literals." },
+    color: { type: "string", description: "Controlled colour." },
+    defaultColor: { type: "string", default: "the first colour", description: "Starting colour." },
+    onColorChange: { type: "(color: string) => void", description: "Called when a swatch is picked." },
+    size: { type: "number", description: "Controlled stroke width in points." },
+    defaultSize: { type: "number", default: "4", description: "Starting stroke width." },
+    minSize: { type: "number", default: "1", description: "The slider's minimum." },
+    maxSize: { type: "number", default: "24", description: "The slider's maximum." },
+    onSizeChange: { type: "(size: number) => void", description: "Called as the width changes." },
+    isDisabled: { type: "boolean", default: "false", description: "Blocks drawing, tools and undo. The marks stay at full strength." },
+    haptic: { type: "false | HapticFeedback", default: '"selection"', description: "Played on a tool or colour change and on undo." },
+    ref: { type: "Ref<SketchHandle>", description: "undo, clear, isEmpty and toSVG." },
+  }}
+/>
+
+### Sketch.Tool
+
+<TypeTable
+  type={{
+    tool: { type: '"pen" | "shape" | "eraser"', description: "Which tool the button picks." },
+    shape: { type: "SketchShape", description: 'With tool="shape", the shape it picks. Omitted, it shows and keeps the current shape.' },
+    children: { type: "ReactNode", description: "Replaces the default glyph." },
+  }}
+/>
+
+### Sketch.Swatches
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "Trailing content — a trigger for your own colour picker." },
+  }}
+/>
+
+### Sketch.Size
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Stroke width"', description: "The thumb's accessible name." },
+    step: { type: "number", default: "1", description: "The increment the width snaps to." },
+  }}
+/>
+
+### SketchHandle
+
+<TypeTable
+  type={{
+    undo: { type: "() => void", description: "Removes the last mark." },
+    clear: { type: "() => void", description: "Removes every mark." },
+    isEmpty: { type: "() => boolean", description: "Whether there is anything drawn." },
+    toSVG: { type: "(options?: { background?: string | null }) => string", description: "The drawing as a self-contained SVG string." },
+  }}
+/>
+
+### SketchItem
+
+<TypeTable
+  type={{
+    'kind: "stroke"': { type: "{ id, d, color, width }", description: "A pen stroke as SVG path data, in the literal colour it was drawn in." },
+    'kind: "shape"': { type: "{ id, shape, d, color, width }", description: "A shape, also stored as path data." },
+    'kind: "erase"': { type: "{ id, d, width }", description: "An eraser stroke — a mask over the marks before it." },
+  }}
+/>

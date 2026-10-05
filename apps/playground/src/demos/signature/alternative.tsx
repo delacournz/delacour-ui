@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Not everyone can trace a path with a finger, and no accessibility label changes that. `onRequestAlternative` adds a link that hands off to a typed name — offer it on every pad.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "signature/alternative" },
 };
 
 export function Demo(): ReactElement {
@@ -34,7 +35,14 @@ export function Demo(): ReactElement {
 	return (
 		<Field>
 			<Field.Label>Signature</Field.Label>
-			<Signature onRequestAlternative={() => setIsTyping(true)} testID="signature-alternative" />
+			<Signature onRequestAlternative={() => setIsTyping(true)}>
+				<Signature.Pad testID="signature-alternative-pad" />
+				<Signature.Toolbar>
+					<Signature.Alternative testID="signature-alternative" />
+					<Signature.Undo />
+					<Signature.Clear />
+				</Signature.Toolbar>
+			</Signature>
 		</Field>
 	);
 }

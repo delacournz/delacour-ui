@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Disabled and read-only",
 	caption:
 		"Disabled fades the pad and its toolbar and takes no touch. Read-only shows the drawing at full strength with no toolbar at all — a signature on a receipt is content, not a control.",
+	capture: { align: "stretch" },
 };
 
 /** A pad-sized drawing to start from: a looped name, its underline and a full stop. */

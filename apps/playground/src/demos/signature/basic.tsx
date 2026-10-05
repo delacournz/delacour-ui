@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"A bare `<Signature />` is a pad, a line to sign on and a toolbar holding undo and clear. Draw with a finger — the stroke is smoothed into ink as it goes, and a tap leaves a dot.",
+	capture: { align: "stretch" },
 };
 
 /** A pad-sized drawing to start from: a looped name, its underline and a full stop. */

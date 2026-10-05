@@ -7,7 +7,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Several days",
 	caption: '`mode="multiple"` toggles each day in and out. The list comes back sorted, earliest first.',
-	capture: { align: "stretch" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

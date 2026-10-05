@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Single day",
 	caption:
 		"One day, held as a `CalendarDate` — a year, a month and a day with no time zone to shift it. A tap on the selected day clears it. Swipe the grid or tap the arrows to page; tap the caption to jump by month or year.",
-	capture: { hero: true, align: "stretch" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

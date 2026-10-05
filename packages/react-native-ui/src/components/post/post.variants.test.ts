@@ -23,7 +23,26 @@ const DARK = declaredTokens("dark");
 /** Every slot of one resolved variant combination, as class strings. */
 function allSlots(props: Parameters<typeof postVariants>[0]): string[] {
 	const slots = postVariants(props);
-	return Object.values(slots).map((slot) => slot());
+	return Object.values(slots)
+		.map((slot) => slot())
+		.filter((cls): cls is string => typeof cls === "string");
+}
+
+/** Every slot's class string across the whole variant matrix. */
+function everySlotClass(): string[] {
+	const classes: string[] = [];
+	const votes = ["none", "up", "down"] as const;
+	for (const variant of POST_VARIANTS) {
+		for (const size of POST_SIZES) {
+			for (const tone of POST_STAT_TONES) {
+				for (const vote of votes) {
+					classes.push(...allSlots({ variant, size, tone, vote, active: true }));
+					classes.push(...allSlots({ variant, size, tone, vote, active: false }));
+				}
+			}
+		}
+	}
+	return classes;
 }
 
 /** Every theme colour token a class string names (`text-x`, `bg-x`, `border-x`). */
@@ -148,8 +167,24 @@ describe("resolveStatTone", () => {
 describe("resolveVoteTone", () => {
 	test("the cast direction tints", () => {
 		expect(resolveVoteTone(null)).toBe("muted-foreground");
-		expect(resolveVoteTone("up")).toBe("primary");
-		expect(resolveVoteTone("down")).toBe("destructive");
+		expect(resolveVoteTone("up")).toBe("warning-soft-foreground");
+		expect(resolveVoteTone("down")).toBe("info-soft-foreground");
+	});
+
+	test("every vote token exists in both themes", () => {
+		for (const vote of [null, "up", "down"] as const) {
+			expect(LIGHT.has(resolveVoteTone(vote))).toBe(true);
+			expect(DARK.has(resolveVoteTone(vote))).toBe(true);
+		}
+	});
+
+	test("the pill tints with the cast arrow", () => {
+		const none = postVariants({ vote: "none" }).votes();
+		const up = postVariants({ vote: "up" }).votes();
+		const down = postVariants({ vote: "down" }).votes();
+		expect(new Set([none, up, down]).size).toBe(3);
+		expect(up).toMatch(/\bbg-warning-soft\b/);
+		expect(down).toMatch(/\bbg-info-soft\b/);
 	});
 });
 
@@ -176,7 +211,9 @@ describe("postVariants", () => {
 	test("every tone x active cell has a colour on the value", () => {
 		for (const tone of POST_STAT_TONES) {
 			for (const active of [true, false]) {
-				expect(postVariants({ tone, active }).statValue()).toMatch(/\btext-[a-z-]*foreground|text-(destructive|primary|success)\b/);
+				expect(postVariants({ tone, active }).statValue()).toMatch(
+					/\btext-[a-z-]*foreground|text-(destructive|primary|success)\b/
+				);
 			}
 		}
 	});
@@ -190,9 +227,10 @@ describe("postVariants", () => {
 	});
 
 	test("compact hides the media slot", () => {
-		expect(postVariants({ variant: "compact" }).media()).toMatch(/\bhidden\b/);
+		const display = /(^|\s)hidden(\s|$)/;
+		expect(postVariants({ variant: "compact" }).media()).toMatch(display);
 		for (const variant of ["feed", "vote", "media"] as const) {
-			expect(postVariants({ variant }).media()).not.toMatch(/\bhidden\b/);
+			expect(postVariants({ variant }).media()).not.toMatch(display);
 		}
 	});
 
@@ -233,32 +271,16 @@ describe("postVariants", () => {
 	});
 
 	test("no slot uses dark: or a raw palette colour", () => {
-		for (const variant of POST_VARIANTS) {
-			for (const size of POST_SIZES) {
-				for (const tone of POST_STAT_TONES) {
-					for (const active of [true, false]) {
-						for (const cls of allSlots({ variant, size, tone, active })) {
-							expect(cls).not.toMatch(/\bdark:/);
-							expect(cls).not.toMatch(/-(slate|gray|zinc|neutral|stone|red|blue|green|amber|emerald|rose)-\d{2,3}\b/);
-						}
-					}
-				}
-			}
+		for (const cls of everySlotClass()) {
+			expect(cls).not.toMatch(/\bdark:/);
+			expect(cls).not.toMatch(/-(slate|gray|zinc|neutral|stone|red|blue|green|amber|emerald|rose)-\d{2,3}\b/);
 		}
 	});
 
 	test("every colour token a slot names exists in both themes", () => {
-		for (const variant of POST_VARIANTS) {
-			for (const tone of POST_STAT_TONES) {
-				for (const active of [true, false]) {
-					for (const cls of allSlots({ variant, tone, active })) {
-						for (const token of colourTokens(cls)) {
-							expect({ token, light: LIGHT.has(token) }).toEqual({ token, light: true });
-							expect({ token, dark: DARK.has(token) }).toEqual({ token, dark: true });
-						}
-					}
-				}
-			}
+		for (const token of new Set(everySlotClass().flatMap(colourTokens))) {
+			expect({ token, light: LIGHT.has(token) }).toEqual({ token, light: true });
+			expect({ token, dark: DARK.has(token) }).toEqual({ token, dark: true });
 		}
 	});
 

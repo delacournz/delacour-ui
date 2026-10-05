@@ -81,6 +81,11 @@ half-initialised.
   place — the panel is teleported to a host that fills the window. The panel sits at the window's
   origin and moves by `translateX/Y`, never `left`/`top`: a translate is not layout, so moving it
   never re-wraps a content-fit panel and never fires another `onLayout`.
+- **The panel sits inside a positioner, and the safe-span cap is on the positioner.** The
+  positioner is measured, translated and animated, and carries `maxWidth` = the safe span; the
+  panel inside it carries the classes and the resolved width and `maxHeight`. An inline
+  `maxWidth` on the panel itself beat every class, so a caller's `max-w-64` was silently ignored
+  — found on a simulator with the `arrow` demo.
 - **One invisible frame before the entrance.** The panel mounts at opacity 0, reports its size,
   is resolved, and only then is presence told to open — so the entrance always starts from the
   right side and the right place. Presence follows `isOpen && position !== null`; the exit does

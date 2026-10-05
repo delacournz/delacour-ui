@@ -48,11 +48,17 @@ export type AnchoredContent = {
 	position: AnchoredPosition | null;
 	/** The panel's measured size, `null` until its first layout. */
 	size: AnchoredSize | null;
-	/** Put on the panel: it is how the panel is measured. */
+	/** Put on the positioner: it is how the panel is measured. */
 	onLayout: (event: LayoutChangeEvent) => void;
-	/** Width constraints and the clamped `maxHeight`, for the panel's `style`. */
-	frameStyle: ResolvedPopoverWidth & { maxHeight?: number };
-	/** Position, opacity and the entrance transform — put on the panel after `frameStyle`. */
+	/**
+	 * The positioner's cap: the safe span. It sits on a wrapper rather than the
+	 * panel because an inline `maxWidth` beats any class, and a caller's
+	 * `max-w-64` on the panel has to keep working inside it.
+	 */
+	positionerStyle: { position: "absolute"; left: 0; top: 0; maxWidth: number };
+	/** The panel's fixed width or `minWidth`, and the clamped `maxHeight`. */
+	frameStyle: Omit<ResolvedPopoverWidth, "maxWidth"> & { maxHeight?: number };
+	/** Position, opacity and the entrance transform — put on the positioner after `positionerStyle`. */
 	animatedStyle: AnimatedStyle<ViewStyle>;
 };
 
@@ -81,7 +87,8 @@ function useKeyboardHeight(): number {
 /**
  * Everything an anchored panel needs between its trigger and its first frame.
  *
- * 1. **Measure off-screen.** The panel mounts at the window's origin with
+ * 1. **Measure off-screen.** The panel mounts at the window's origin, inside
+ *    a positioner that carries the measure, the cap and the motion, with
  *    opacity 0; its first layout reports its size.
  * 2. **Resolve.** With the anchor's rect and the panel's size,
  *    `resolveAnchoredPosition` picks the side, the shift, the clamped
@@ -165,7 +172,9 @@ export function useAnchoredContent({
 	}, []);
 
 	const widths = resolvePopoverWidth({ width, anchorWidth: anchor?.width ?? 0, bounds, collisionPadding, minWidth });
-	const frameStyle = position === null ? widths : { ...widths, maxHeight: position.maxHeight };
+	const { maxWidth, ...panelWidths } = widths;
+	const positionerStyle = { position: "absolute", left: 0, top: 0, maxWidth } as const;
+	const frameStyle = position === null ? panelWidths : { ...panelWidths, maxHeight: position.maxHeight };
 
 	// Destructured to primitives on purpose, as `Pressable` does: the worklet
 	// closes over what it reads, and these are what change between renders.
@@ -206,5 +215,5 @@ export function useAnchoredContent({
 		};
 	});
 
-	return { presence, isMounted, position, size, onLayout, frameStyle, animatedStyle };
+	return { presence, isMounted, position, size, onLayout, positionerStyle, frameStyle, animatedStyle };
 }

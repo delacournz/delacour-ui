@@ -67,7 +67,7 @@ describe("resolveBarLength", () => {
 		expect(resolveBarLength(9)).toBe("w-2");
 	});
 
-	test("a negative or fractional level reads as the nearest real one", () => {
+	test("a negative level reads as the top, a fractional one rounds down", () => {
 		expect(resolveBarLength(-1)).toBe("w-4");
 		expect(resolveBarLength(1.6)).toBe("w-3");
 	});
@@ -89,10 +89,11 @@ describe("resolveItemIndent", () => {
 		}
 	});
 
-	test("the indent wins over the item slot's own start padding", () => {
-		const item = sectionRailVariants().item({ className: resolveItemIndent(2) });
-		expect(item).toContain("ps-9");
-		expect(item).not.toMatch(/(?:^|\s)px-3(?:\s|$)/);
+	test("the item slot leaves the start padding to the indent", () => {
+		const item = sectionRailVariants().item();
+		expect(item).not.toMatch(/(?:^|\s)(?:px|ps|p)-/);
+		expect(item).toContain("pe-3");
+		expect(resolveItemIndent(0)).toBe("ps-3");
 	});
 });
 
@@ -270,12 +271,16 @@ describe("sectionRailVariants", () => {
 		for (const isActive of [false, true]) {
 			const slots = sectionRailVariants({ isActive });
 			for (const slot of ["bar", "barFill", "content", "item", "itemLabel", "scrim"] as const) {
-				for (const [, token] of cls(slots[slot]()).matchAll(/(?:^|\s)(?:bg|text|border)-([a-z-]+?)(?:\/\d+)?(?=\s|$)/g)) {
+				for (const [, token] of cls(slots[slot]()).matchAll(
+					/(?:^|\s)(?:bg|text|border)-([a-z-]+?)(?:\/\d+)?(?=\s|$)/g
+				)) {
 					if (token !== undefined) tokens.add(token);
 				}
 			}
 		}
-		const colourTokens = [...tokens].filter((token) => !/^(?:\d|transparent|none)/.test(token));
+		const colourTokens = [...tokens].filter(
+			(token) => !/^(?:\d|transparent|none|xs|sm|base|lg|xl)$/.test(token) && !/^\d/.test(token)
+		);
 		expect(colourTokens.length).toBeGreaterThan(0);
 		for (const variant of ["light", "dark"] as const) {
 			const declared = declaredTokens(variant);

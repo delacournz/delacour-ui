@@ -106,6 +106,12 @@ const ROWS = [
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },
 	{
+		slug: "number-input",
+		title: "NumberInput",
+		description: "Steppers, hold to repeat, bounds, formatting",
+		group: "Forms",
+	},
+	{
 		slug: "markdown-editor",
 		title: "MarkdownEditor",
 		description: "Toolbar, preview, list continuation",

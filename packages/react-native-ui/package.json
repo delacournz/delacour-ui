@@ -65,6 +65,7 @@
 		"./markdown-editor": "./src/components/markdown-editor/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
+		"./number-input": "./src/components/number-input/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",
 		"./popover": "./src/components/popover/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",

@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on number-input/basic and has settled — one number input at 2,
+  its steppers carrying the testIDs basic-decrement and basic-increment. The capture script navigates
+  there before running this.
+steps:
+  - echo: Stepping up three times
+  - tap: { id: basic-increment }
+  - wait: 350
+  - tap: { id: basic-increment }
+  - wait: 350
+  - tap: { id: basic-increment }
+  - wait: 700
+  - echo: And back down three, so the clip loops at 2 without a jump cut
+  - tap: { id: basic-decrement }
+  - wait: 350
+  - tap: { id: basic-decrement }
+  - wait: 350
+  - tap: { id: basic-decrement }

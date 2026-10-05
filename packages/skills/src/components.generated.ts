@@ -41,6 +41,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "markdown-editor", title: "Markdown Editor", description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
+	{ name: "number-input", title: "Number Input", description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur." },
 	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },

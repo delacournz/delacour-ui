@@ -1,0 +1,216 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "toast",
+	"type": "registry:ui",
+	"title": "Toast",
+	"description": "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"alert",
+		"icon",
+		"icons",
+		"overlay",
+		"pressable",
+		"spinner",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-teleport",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/toast/AGENTS.md",
+			"target": "toast/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/toast",
+					"to": "@registry/ui/toast"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/index.ts",
+			"target": "toast/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-action.tsx",
+			"target": "toast/toast-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-api.ts",
+			"target": "toast/toast-api.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-close.tsx",
+			"target": "toast/toast-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-content.tsx",
+			"target": "toast/toast-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-description.tsx",
+			"target": "toast/toast-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-indicator.tsx",
+			"target": "toast/toast-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../alert/alert-glyphs",
+					"to": "@registry/ui/alert/alert-glyphs"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-item.tsx",
+			"target": "toast/toast-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay/overlay.variants",
+					"to": "@registry/ui/overlay/overlay.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-title.tsx",
+			"target": "toast/toast-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast-viewport.tsx",
+			"target": "toast/toast-viewport.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.context.tsx",
+			"target": "toast/toast.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.store.ts",
+			"target": "toast/toast.store.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../alert/alert.variants",
+					"to": "@registry/ui/alert/alert.variants"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.timer.ts",
+			"target": "toast/toast.timer.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.tsx",
+			"target": "toast/toast.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/toast/toast.variants.ts",
+			"target": "toast/toast.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../alert/alert.variants",
+					"to": "@registry/ui/alert/alert.variants"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		}
+	]
+}

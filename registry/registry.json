@@ -72,6 +72,7 @@
 				"ui/alert/alert-close-button.tsx",
 				"ui/alert/alert-content.tsx",
 				"ui/alert/alert-description.tsx",
+				"ui/alert/alert-glyphs.ts",
 				"ui/alert/alert-indicator.tsx",
 				"ui/alert/alert-title.tsx",
 				"ui/alert/alert.context.tsx",
@@ -1502,6 +1503,55 @@
 				"ui/textarea/index.ts",
 				"ui/textarea/textarea.tsx",
 				"ui/textarea/textarea.variants.ts"
+			]
+		},
+		{
+			"name": "toast",
+			"type": "registry:ui",
+			"title": "Toast",
+			"description": "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"alert",
+				"icon",
+				"icons",
+				"overlay",
+				"pressable",
+				"spinner",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-teleport",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/toast/AGENTS.md",
+				"ui/toast/index.ts",
+				"ui/toast/toast-action.tsx",
+				"ui/toast/toast-api.ts",
+				"ui/toast/toast-close.tsx",
+				"ui/toast/toast-content.tsx",
+				"ui/toast/toast-description.tsx",
+				"ui/toast/toast-indicator.tsx",
+				"ui/toast/toast-item.tsx",
+				"ui/toast/toast-title.tsx",
+				"ui/toast/toast-viewport.tsx",
+				"ui/toast/toast.context.tsx",
+				"ui/toast/toast.store.ts",
+				"ui/toast/toast.timer.ts",
+				"ui/toast/toast.tsx",
+				"ui/toast/toast.variants.ts"
 			]
 		},
 		{

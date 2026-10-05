@@ -1493,6 +1493,41 @@
 			]
 		},
 		{
+			"name": "otp-input",
+			"type": "registry:ui",
+			"title": "OTP Input",
+			"description": "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"field",
+				"input",
+				"pressable",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/otp-input/AGENTS.md",
+				"ui/otp-input/index.ts",
+				"ui/otp-input/otp-input-group.tsx",
+				"ui/otp-input/otp-input-separator.tsx",
+				"ui/otp-input/otp-input-slot.tsx",
+				"ui/otp-input/otp-input.context.tsx",
+				"ui/otp-input/otp-input.logic.ts",
+				"ui/otp-input/otp-input.tsx",
+				"ui/otp-input/otp-input.variants.ts"
+			]
+		},
+		{
 			"name": "overlay",
 			"type": "registry:ui",
 			"title": "Overlay",

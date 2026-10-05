@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'`pattern="alphanumeric"` brings up the full keyboard and uppercases as you type. A dash or a space in a pasted code is dropped rather than refused.',
+	capture: { flow: "otp-input/alphanumeric" },
 };
 
 export function Demo(): ReactElement {

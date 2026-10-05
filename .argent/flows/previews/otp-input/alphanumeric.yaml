@@ -1,0 +1,27 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on otp-input/alphanumeric and has settled — eight small
+  cells in two groups of four holding K7Q, not focused. The capture script navigates there before
+  running this.
+steps:
+  - echo: Typing lowercase; each letter lands uppercased, and the eighth character completes it
+  - tap: { id: otp-alnum }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "x9m2p", delayMs: 140 }
+  - wait: 1000
+  - echo: Deleting the five typed, so the clip loops back to K7Q
+  - tap: { id: otp-alnum }
+  - wait: 200
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 400

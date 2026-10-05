@@ -1,0 +1,29 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on otp-input/basic and has settled — six empty cells in two
+  groups of three, not focused. The capture script navigates there before running this.
+steps:
+  - echo: Typing the code one digit at a time; the sixth completes it and dismisses the keyboard
+  - tap: { id: otp-basic }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "123456", delayMs: 140 }
+  - wait: 1000
+  - echo: Deleting it all, so the clip loops back to six empty cells
+  - tap: { id: otp-basic }
+  - wait: 200
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - echo: Submitting blurs the field, so it loops unfocused as it began
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 400

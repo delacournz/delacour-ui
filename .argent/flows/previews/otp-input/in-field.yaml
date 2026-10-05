@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on otp-input/in-field and has settled — a labelled, empty,
+  valid code field with its description and a Clear button, not focused. The capture script
+  navigates there before running this.
+steps:
+  - echo: A wrong code; the field turns invalid the moment the last cell fills
+  - tap: { id: otp-field }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "123450", delayMs: 120 }
+  - wait: 1200
+  - echo: Clear empties the code and resets the error; submitting blurs it, so it loops empty and unfocused as it began
+  - tap: { id: otp-field-clear }
+  - wait: 300
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 400

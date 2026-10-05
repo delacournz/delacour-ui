@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "States",
 	align: "center",
 	note: "Filled, invalid and disabled. Invalid paints every cell destructive and stays that way while focused; disabled fades the whole row and takes no input.",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "center",
 	note: "A cell is an Input box cut square — 36, 44 and 52 points, on the same tokens as a text field, so the two sit level.",
+	capture: {},
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

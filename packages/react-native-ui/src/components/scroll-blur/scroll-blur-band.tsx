@@ -6,7 +6,7 @@ import type { ScrollSource } from "../../hooks/use-scroll-source";
 import { resolveFadeBand, resolveFadeGradient } from "../../lib/scroll-edges";
 import { type ScrollEdge, scrollEdgeOpacity } from "../../lib/scroll-maths";
 import type { BlurLayerComponent, BlurMaterial } from "./scroll-blur.types";
-import type { BlurStrip } from "./scroll-blur.variants";
+import type { BlurStackView } from "./scroll-blur.variants";
 
 export type ScrollBlurBandProps = {
 	edge: ScrollEdge;
@@ -14,7 +14,8 @@ export type ScrollBlurBandProps = {
 	size: number;
 	inset: number;
 	fadeInDistance: number;
-	strips: BlurStrip[];
+	/** The nested blur views, widest first. */
+	stack: BlurStackView[];
 	/** The engine to draw strips with; null draws the wash alone. */
 	layer: BlurLayerComponent | null;
 	material: BlurMaterial;
@@ -34,13 +35,12 @@ export type ScrollBlurBandProps = {
  * native blur's radius per frame is expensive on iOS and unreliable on Android
  * — so a scroll moves one style on the UI thread and re-renders nothing.
  *
- * **A strip is placed with the band geometry, not a second copy of it.** A
- * strip `offset` points in from the edge and `height` deep is exactly a band
- * `inset` points in and `size` deep, so `resolveFadeBand` places both.
+ * **The blur views are nested at the edge, not laid side by side** — see
+ * `resolveBlurStack`. Each is placed with the band geometry, not a second copy
+ * of it: a view pinned at the edge and `size` deep is a band at inset 0.
  *
- * The wash is painted last, over the strips: the steps between strips of
- * different intensity are visible on their own, and a gradient of the surface
- * colour across them is what turns a staircase into a ramp.
+ * The wash is painted last, over the blur, so what remains of each small step
+ * between views is ramped away into the surface colour.
  */
 export const ScrollBlurBand = memo(function ScrollBlurBand({
 	edge,
@@ -48,7 +48,7 @@ export const ScrollBlurBand = memo(function ScrollBlurBand({
 	size,
 	inset,
 	fadeInDistance,
-	strips,
+	stack,
 	layer: Layer,
 	material,
 	nearColor,
@@ -70,8 +70,8 @@ export const ScrollBlurBand = memo(function ScrollBlurBand({
 		}),
 	}));
 
-	// Strips first, wash last: paint order is source order, and the wash has to
-	// sit over the seams between strips to hide them.
+	// Blur first, wash last: paint order is source order, and the wash has to
+	// sit over the steps between blur views to ramp them away.
 	return (
 		<Animated.View
 			accessible={false}
@@ -81,15 +81,15 @@ export const ScrollBlurBand = memo(function ScrollBlurBand({
 			style={[placement, opacityStyle]}
 		>
 			{Layer
-				? strips.map((strip) => (
+				? stack.map((view) => (
 						<Layer
-							intensity={strip.intensity}
-							key={strip.offset}
+							intensity={view.intensity}
+							key={view.size}
 							material={material}
 							style={[
 								{ position: "absolute" },
 								crossAxis,
-								resolveFadeBand({ orientation, edge, size: strip.height, inset: strip.offset }),
+								resolveFadeBand({ orientation, edge, size: view.size, inset: 0 }),
 							]}
 						/>
 					))

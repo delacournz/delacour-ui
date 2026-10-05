@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { resolveBlurLayers, resolveBlurWash, scrollBlurVariants } from "./scroll-blur.variants";
+import { resolveBlurLayers, resolveBlurStack, resolveBlurWash, scrollBlurVariants } from "./scroll-blur.variants";
 
 describe("resolveBlurLayers", () => {
 	test("splits the band into equal strips ordered edge to inward, intensity falling linearly", () => {
@@ -31,6 +31,27 @@ describe("resolveBlurLayers", () => {
 	test("draws nothing for a band with no depth", () => {
 		expect(resolveBlurLayers({ size: 0, layers: 8, intensity: 56 })).toEqual([]);
 		expect(resolveBlurLayers({ size: -10, layers: 8, intensity: 56 })).toEqual([]);
+	});
+});
+
+describe("resolveBlurStack", () => {
+	test("nests every view at the edge, each reaching as far inward as its strip ends", () => {
+		const stack = resolveBlurStack(resolveBlurLayers({ size: 80, layers: 4, intensity: 40 }));
+		expect(stack.map((view) => view.size)).toEqual([80, 60, 40, 20]);
+	});
+
+	test("each view adds an equal share, so a point's summed blur is its strip's intensity", () => {
+		const strips = resolveBlurLayers({ size: 80, layers: 4, intensity: 40 });
+		const stack = resolveBlurStack(strips);
+		expect(stack.map((view) => view.intensity)).toEqual([10, 10, 10, 10]);
+		for (const strip of strips) {
+			const covering = stack.filter((view) => view.size > strip.offset);
+			expect(covering.reduce((sum, view) => sum + view.intensity, 0)).toBe(strip.intensity);
+		}
+	});
+
+	test("is empty for no strips", () => {
+		expect(resolveBlurStack([])).toEqual([]);
 	});
 });
 

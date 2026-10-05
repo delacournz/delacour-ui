@@ -39,9 +39,15 @@ Shared with the rest of the scroll family and not owned here: `hooks/use-scroll-
   must accept.
 - **A progressive blur is a stack of strips.** No engine blurs along a gradient, so a band is cut
   into `layers` equal strips (1–16, default 8), edge first, each blurring
-  `intensity * (layers - k) / layers`. More strips is a smoother ramp and one more native view each.
-  A strip is placed by `resolveFadeBand` — a strip `offset` in and `height` deep is a band `inset` in
-  and `size` deep — so the geometry exists once.
+  `intensity * (layers - k) / layers` (`resolveBlurLayers`). More strips is a smoother ramp and one
+  more native view each.
+- **The strips are drawn as nested views, never side by side.** Laid edge to edge, each blur view
+  blurs only what is behind it, so every boundary is a hard cut between two radii — on the
+  simulator that showed as a ladder of seams over a light ground that no wash could hide.
+  `resolveBlurStack` pins every view at the band's edge, reaching inward to where its strip ends,
+  each adding an equal share of the edge intensity: a blur view blurs the ones beneath it, so a point
+  under `n` views sits at its strip's intensity and each boundary is one small share. Each view is
+  placed by `resolveFadeBand` at inset 0, so the geometry exists once.
 - **The wash goes over the strips, not under them.** Adjacent strips at different intensities show
   a step at every seam; a gradient of the surface colour across them — `tint` alpha at the edge
   (`withAlpha`), zero inward (`transparentOf`) — is what turns a staircase into a ramp. The far stop
@@ -86,3 +92,20 @@ The docs page therefore opens at `## Installation`, as `bottom-sheet`'s did. To 
 `blur-vs-fade` compares against the wash fallback (`ScrollBlurLayerProvider layer={null}`) rather
 than `ScrollFade`, which ships on a separate branch and must not be imported from this one. A
 `ScrollBlurLayerProvider` takes `null` for exactly this: turning the blur off for a subtree.
+
+## Simulator check
+
+iPhone 17 simulator (warden lease), a dev client rebuilt with `expo-blur` 57.0.3, through
+agent-device and the `/preview` route:
+
+- `list-under-button`, dark: rows defocus under the band and the button's label stays legible; the
+  end band is gone once the list reaches its end; drags starting on the button are taken by the
+  button, so the band passes touches through.
+- `search-over-media`: the start band is clear at rest and arrives with the first points of travel.
+- `horizontal`, light: left and right bands follow the row.
+- `blur-vs-fade`, light: the fade side is a gradient into the page, the blur side keeps the tile
+  colour. The first build stepped visibly between strips; the nested stack above is the fix.
+
+Not checked: Reduce Transparency toggled live (no `simctl` switch for it — check by hand in
+Settings › Accessibility › Display & Text Size), the Android emulator (`ExpoBlurLayer` renders
+`null` there, so it is the wash), and a React DevTools profile while scrolling.

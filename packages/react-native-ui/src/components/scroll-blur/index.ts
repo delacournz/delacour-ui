@@ -10,8 +10,10 @@ export {
 	type ScrollBlurProps,
 } from "./scroll-blur.types";
 export {
+	type BlurStackView,
 	type BlurStrip,
 	resolveBlurLayers,
+	resolveBlurStack,
 	resolveBlurWash,
 	type ScrollBlurVariantProps,
 	scrollBlurVariants,

@@ -66,6 +66,30 @@ export function resolveBlurLayers({
 	}));
 }
 
+/** One native blur view in a band's stack, pinned at the band's edge. */
+export type BlurStackView = { size: number; intensity: number };
+
+/**
+ * The blur views that draw a band's strips — nested, not side by side.
+ *
+ * Strips laid edge to edge each blur only what is behind them, so every
+ * boundary is a hard cut from one radius to the next, and it shows as a seam
+ * the wash cannot cover over a light ground. Nested instead, every view is
+ * pinned at the edge and reaches inward to where its strip ends, and each adds
+ * the same share of the edge intensity: a blur view blurs the blur views
+ * beneath it, so a point covered by `n` of them sits under `n` shares — the
+ * strip's own intensity — and each boundary is one small share rather than a
+ * cut. Ordered widest first, which is the paint order.
+ */
+export function resolveBlurStack(strips: readonly BlurStrip[]): BlurStackView[] {
+	return strips
+		.map((strip, k) => ({
+			size: strip.offset + strip.height,
+			intensity: strip.intensity - (strips[k + 1]?.intensity ?? 0),
+		}))
+		.reverse();
+}
+
 /** The wash's alpha at the band's edge, from a `tint` clamped to 0..1. */
 export function resolveBlurWash({ tint }: { tint: number }): { edgeAlpha: number } {
 	return { edgeAlpha: tint < 0 ? 0 : tint > 1 ? 1 : tint };

@@ -8,7 +8,7 @@ import { transparentOf, withAlpha } from "../../lib/color";
 import { resolveFadeEdges } from "../../lib/scroll-edges";
 import { useBlurLayer } from "./scroll-blur.context";
 import type { ScrollBlurProps } from "./scroll-blur.types";
-import { resolveBlurLayers, resolveBlurWash, scrollBlurVariants } from "./scroll-blur.variants";
+import { resolveBlurLayers, resolveBlurStack, resolveBlurWash, scrollBlurVariants } from "./scroll-blur.variants";
 import { ScrollBlurBand } from "./scroll-blur-band";
 
 /**
@@ -75,7 +75,10 @@ export function ScrollBlur({
 	const nearColor = withAlpha(paint, edgeAlpha);
 	const farColor = transparentOf(paint);
 
-	const strips = useMemo(() => resolveBlurLayers({ size, layers, intensity }), [size, layers, intensity]);
+	const stack = useMemo(
+		() => resolveBlurStack(resolveBlurLayers({ size, layers, intensity })),
+		[size, layers, intensity]
+	);
 	const show = resolveFadeEdges(enabled ? edges : "none");
 	const slots = scrollBlurVariants({ orientation: source.orientation });
 	const band = slots.band();
@@ -84,7 +87,7 @@ export function ScrollBlur({
 		source,
 		size,
 		fadeInDistance,
-		strips,
+		stack,
 		layer: Layer,
 		material,
 		nearColor,

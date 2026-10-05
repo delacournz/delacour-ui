@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on swipe/one-open-at-a-time and has settled — three reminder rows in a
+  Swipe.Group, all shut. The capture script navigates there before running this.
+steps:
+  - echo: Opening the first row
+  - swipe: { from: { id: swipe-plants }, by: { x: -0.3 }, momentum: false }
+  - wait: 600
+  - echo: Opening the second closes the first
+  - swipe: { from: { id: swipe-bank }, by: { x: -0.3 }, momentum: false }
+  - wait: 600
+  - echo: Opening the third closes the second
+  - swipe: { from: { id: swipe-dentist }, by: { x: -0.3 }, momentum: false }
+  - wait: 600
+  - echo: Tapping the open row shuts it, so the clip loops without a jump cut
+  - tap: { id: swipe-dentist }
+  - wait: 500

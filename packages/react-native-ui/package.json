@@ -77,6 +77,7 @@
 		"./stack-card": "./src/components/stack-card/index.ts",
 		"./steps": "./src/components/steps/index.ts",
 		"./surface": "./src/components/surface/index.ts",
+		"./swipe": "./src/components/swipe/index.ts",
 		"./switch": "./src/components/switch/index.ts",
 		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",

@@ -1,0 +1,125 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "swipe",
+	"type": "registry:ui",
+	"title": "Swipe",
+	"description": "A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"pressable",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/swipe/AGENTS.md",
+			"target": "swipe/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/swipe",
+					"to": "@registry/ui/swipe"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/index.ts",
+			"target": "swipe/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe-action.tsx",
+			"target": "swipe/swipe-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon/icon",
+					"to": "@registry/ui/icon/icon"
+				},
+				{
+					"from": "../icon/icon.context",
+					"to": "@registry/ui/icon/icon.context"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				},
+				{
+					"from": "../text/text",
+					"to": "@registry/ui/text/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe-end.tsx",
+			"target": "swipe/swipe-end.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe-group.tsx",
+			"target": "swipe/swipe-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe-panel.tsx",
+			"target": "swipe/swipe-panel.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe-start.tsx",
+			"target": "swipe/swipe-start.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe.context.tsx",
+			"target": "swipe/swipe.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe.tsx",
+			"target": "swipe/swipe.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe.types.ts",
+			"target": "swipe/swipe.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/swipe/swipe.variants.ts",
+			"target": "swipe/swipe.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

@@ -307,7 +307,7 @@ describe("resolveCardPlacement", () => {
 		const centred = resolveCardPlacement({
 			...base,
 			window: wide,
-			hole: { x: 480, y: 100, width: 64, height: 40, radius: 8 },
+			hole: { x: 480, y: 100, width: 64, height: 40 },
 			preference: "auto",
 		});
 		expect(centred.left).toBe(512 - 180);
@@ -315,7 +315,7 @@ describe("resolveCardPlacement", () => {
 		const atStart = resolveCardPlacement({
 			...base,
 			window: wide,
-			hole: { x: 0, y: 100, width: 40, height: 40, radius: 8 },
+			hole: { x: 0, y: 100, width: 40, height: 40 },
 			preference: "auto",
 		});
 		expect(atStart.left).toBe(16);
@@ -323,7 +323,7 @@ describe("resolveCardPlacement", () => {
 		const atEnd = resolveCardPlacement({
 			...base,
 			window: wide,
-			hole: { x: 1000, y: 100, width: 24, height: 40, radius: 8 },
+			hole: { x: 1000, y: 100, width: 24, height: 40 },
 			preference: "auto",
 		});
 		expect(atEnd.left).toBe(1024 - 16 - 360);
@@ -334,7 +334,7 @@ describe("resolveCardPlacement", () => {
 			...base,
 			window: { width: 844, height: 390 },
 			insets: { top: 0, bottom: 21, left: 47, right: 47 },
-			hole: { x: 0, y: 50, width: 40, height: 40, radius: 8 },
+			hole: { x: 0, y: 50, width: 40, height: 40 },
 			preference: "auto",
 		});
 		expect(landscape.left).toBe(47 + 16);

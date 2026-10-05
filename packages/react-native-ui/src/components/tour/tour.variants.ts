@@ -250,6 +250,17 @@ export type TourCardPlacement = {
 	width: number;
 };
 
+/** The side a card goes on when at least one side fits: the preferred one if it does, else the other. */
+function resolveFittingSide(
+	preference: TourPlacement,
+	fitsAbove: boolean,
+	fitsBelow: boolean
+): TourCardPlacement["side"] {
+	if (preference === "top") return fitsAbove ? "top" : "bottom";
+	if (preference === "bottom") return fitsBelow ? "bottom" : "top";
+	return fitsBelow ? "bottom" : "top";
+}
+
 /**
  * Where the card goes.
  *
@@ -289,16 +300,12 @@ export function resolveCardPlacement({
 	const fitsBelow = belowTop + cardHeight <= maxBottom;
 	const fitsAbove = aboveTop >= minTop;
 
-	let side: TourCardPlacement["side"];
-	if (preference === "top") side = fitsAbove || !fitsBelow ? "top" : "bottom";
-	else if (preference === "bottom") side = fitsBelow || !fitsAbove ? "bottom" : "top";
-	else side = fitsBelow ? "bottom" : "top";
-
-	if (!fitsAbove && !fitsBelow) {
-		const roomAbove = hole.y - gap - minTop;
-		const roomBelow = maxBottom - belowTop;
-		side = roomAbove >= roomBelow ? "top" : "bottom";
-	}
+	const side =
+		fitsAbove || fitsBelow
+			? resolveFittingSide(preference, fitsAbove, fitsBelow)
+			: hole.y - gap - minTop >= maxBottom - belowTop
+				? "top"
+				: "bottom";
 
 	const rawTop = side === "bottom" ? belowTop : aboveTop;
 	const top = Math.max(minTop, Math.min(rawTop, maxBottom - cardHeight));

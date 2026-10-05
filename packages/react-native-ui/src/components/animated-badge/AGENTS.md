@@ -123,3 +123,10 @@ one job, a small closed API.
 - The spec's file map has no measurer, roll hook or types file. Each exists
   because the root, the content and the measurer all need the frame, and a part
   must never import its own root (package rule 3).
+- No demo carries `meta.capture` yet. A captured demo must have committed media
+  in `apps/web/src/previews/manifest.ts`, and that is written only by
+  `bun run previews` on a simulator, which this change did not run. The intended
+  set is `status-flow` (hero), `statuses`, `sizes`, `custom-icon` and
+  `inline-text`; `reduced-motion` stays uncaptured. Add `capture` to those five
+  in the same commit that photographs them, then add `<Preview>` heroes to the
+  docs page.

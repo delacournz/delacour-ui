@@ -18,6 +18,12 @@ import * as demo_alert_dismissible from "./alert/dismissible";
 import * as demo_alert_sizes from "./alert/sizes";
 import * as demo_alert_statuses from "./alert/statuses";
 import * as demo_alert_surface_variant from "./alert/surface-variant";
+import * as demo_animated_badge_custom_icon from "./animated-badge/custom-icon";
+import * as demo_animated_badge_inline_text from "./animated-badge/inline-text";
+import * as demo_animated_badge_reduced_motion from "./animated-badge/reduced-motion";
+import * as demo_animated_badge_sizes from "./animated-badge/sizes";
+import * as demo_animated_badge_status_flow from "./animated-badge/status-flow";
+import * as demo_animated_badge_statuses from "./animated-badge/statuses";
 import * as demo_avatar_fallbacks from "./avatar/fallbacks";
 import * as demo_avatar_group from "./avatar/group";
 import * as demo_avatar_group_sizes_and_overlap from "./avatar/group-sizes-and-overlap";
@@ -384,6 +390,12 @@ export const DEMOS = {
 	"alert/sizes": demo_alert_sizes,
 	"alert/statuses": demo_alert_statuses,
 	"alert/surface-variant": demo_alert_surface_variant,
+	"animated-badge/custom-icon": demo_animated_badge_custom_icon,
+	"animated-badge/inline-text": demo_animated_badge_inline_text,
+	"animated-badge/reduced-motion": demo_animated_badge_reduced_motion,
+	"animated-badge/sizes": demo_animated_badge_sizes,
+	"animated-badge/status-flow": demo_animated_badge_status_flow,
+	"animated-badge/statuses": demo_animated_badge_statuses,
 	"avatar/fallbacks": demo_avatar_fallbacks,
 	"avatar/group": demo_avatar_group,
 	"avatar/group-sizes-and-overlap": demo_avatar_group_sizes_and_overlap,

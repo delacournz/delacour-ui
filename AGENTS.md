@@ -144,9 +144,9 @@ Shared native and React versions are pinned once, in the root `package.json`
 
 ```
 @legendapp/list  @shopify/react-native-skia 2.6.2  react 19.2.3  react-native 0.86.2
-react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-reanimated 4.5.1
-react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0  react-native-svg 15.15.4
-react-native-worklets 0.10.1
+react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-maps 1.27.2
+react-native-reanimated 4.5.1  react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0
+react-native-svg 15.15.4  react-native-worklets 0.10.1
 ```
 
 Every version here is the one Expo SDK 57 bundles. That is the rule, not a coincidence: `expo

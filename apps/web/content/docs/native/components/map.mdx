@@ -1,0 +1,281 @@
+---
+title: Map
+description: Places and paths on a themed map — markers, labels, popups, routes, arcs and controls, on react-native-maps.
+icon: Map
+---
+
+<Preview id="map/places" title={null} />
+
+## Installation
+
+<ComponentInstall name="map" />
+
+<Callout type="warn" title="Rebuild the dev client">
+`react-native-maps` is a native module, so after installing, rebuild the dev client (`npx expo run:ios`,
+or an EAS development build). It does not run in Expo Go. Android needs a Google Maps API key — without
+one the map renders blank, with no error.
+</Callout>
+
+```ts title="app.config.ts"
+plugins: [
+  ["react-native-maps", { androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY }],
+],
+```
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Map } from "@/components/ui/map";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Map center={[174.776, -41.286]} className="h-96" zoom={13}>
+        <Map.Marker accessibilityLabel="Museum" lngLat={[174.782, -41.2905]}>
+          <Map.Pin />
+          <Map.Label>Museum</Map.Label>
+        </Map.Marker>
+        <Map.Controls />
+      </Map>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Map ref={ref} center={center} zoom={12}>
+  <Map.Marker lngLat={lngLat}>
+    <Map.Popup title="…" />
+    <Map.Pin />
+    <Map.Label />
+  </Map.Marker>
+  <Map.Route coordinates={path} />
+  <Map.Arc from={from} to={to} />
+  <Map.Controls />
+  <Map.UserLocation />
+</Map>
+```
+
+Coordinates are `[longitude, latitude]` everywhere — GeoJSON's order, so a coordinate copied from a web
+map lands in the right hemisphere.
+
+## Initial view and the ref
+
+`center`, `zoom` and `bounds` set the view the map opens on; changing them later does not move it. The
+`ref` moves the camera, and `useMap()` hands the same handle to anything inside the map.
+
+<Preview id="map/fly-to" />
+
+```tsx
+const ref = useRef<MapHandle>(null);
+
+<Map center={wellington} ref={ref} zoom={11} />
+
+ref.current?.flyTo({ center: auckland, zoom: 12 });
+ref.current?.fitBounds([166.3, -46.7, 174.4, -40.4], { padding: 40 });
+ref.current?.recenter();
+```
+
+## Markers and labels
+
+A marker is a React view on a coordinate, and it anchors on its pin's tip, so a label under the pin moves
+nothing. Give it `onPress` and it becomes a button.
+
+<Preview id="map/places" />
+
+```tsx
+<Map.Marker accessibilityLabel="Museum" lngLat={museum} onPress={() => setSelected("museum")}>
+  <Map.Pin tone="primary" />
+  <Map.Label>Museum</Map.Label>
+</Map.Marker>
+```
+
+## Popups
+
+A themed card over the marker's pin — write it before the pin. It holds no open state: render it while
+the place is selected. Outside a marker it needs its own `lngLat`.
+
+<Preview id="map/popup" />
+
+```tsx
+<Map.Marker accessibilityLabel="Corner café" lngLat={cafe} onPress={() => setOpen(true)}>
+  {open ? (
+    <Map.Popup title="Corner café">
+      <Text.Caption>Open until 6 pm</Text.Caption>
+    </Map.Popup>
+  ) : null}
+  <Map.Pin />
+</Map.Marker>
+```
+
+## Routes and arcs
+
+A route is a line through a list of coordinates; an arc is a curve between two points, for a connection
+rather than a path. Both are the theme's `primary` unless given a colour.
+
+<Preview id="map/route" />
+
+<Preview id="map/arcs" />
+
+```tsx
+<Map.Route coordinates={walked} width={4} />
+<Map.Route coordinates={ahead} isDashed opacity={0.6} />
+<Map.Arc curvature={0.25} from={wellington} to={auckland} />
+```
+
+## Controls and location
+
+Zoom, compass, recenter and locate buttons, floated in a corner. Locate and `Map.UserLocation` turn on the
+platform's location dot, which asks for location permission the first time.
+
+<Preview id="map/controls" />
+
+```tsx
+<Map.Controls corner="bottom-right" showCompass showLocate showRecenter />
+<Map.UserLocation showsHeading />
+```
+
+<Callout type="warn">
+On iOS, location needs `NSLocationWhenInUseUsageDescription` in `ios.infoPlist`. Without it the
+permission prompt never appears and the dot never shows.
+</Callout>
+
+## Theming
+
+Light and dark follow the app's active theme, not the system's. On Android the basemap is painted from
+the theme's tokens — water `muted`, land `background`, roads `border`, labels `muted-foreground`. Apple
+Maps takes no style beyond light and dark.
+
+## Accessibility
+
+The map is announced as "Map". Each marker is announced by its `accessibilityLabel`, and is a button when
+it has an `onPress`. The pin is hidden from assistive technology; control buttons are labelled by what
+they do.
+
+## API Reference
+
+### Map
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    center: { type: "LngLat", description: "Where the map opens. Initial only." },
+    zoom: { type: "number", default: "2", description: "How far in it opens: 0 the world, ~12 a city, ~16 a street." },
+    bearing: { type: "number", default: "0", description: "Degrees clockwise from north it opens turned to." },
+    pitch: { type: "number", default: "0", description: "Degrees of tilt it opens at." },
+    bounds: { type: "LngLatBounds", description: "A box to open framed on. Beats `center` and `zoom`." },
+    isRotatable: { type: "boolean", default: "false", description: "Whether two fingers turn and tilt the map." },
+    isInteractive: { type: "boolean", default: "true", description: "Whether the map pans and zooms at all." },
+    onViewStateChange: { type: "(viewState: ViewState) => void", description: "Called when the camera comes to rest." },
+    onPress: { type: "(lngLat: LngLat) => void", description: "A tap on the map, not on a marker." },
+    onReady: { type: "() => void", description: "Called once the native map has loaded." },
+    ref: { type: "Ref<MapHandle>", description: "`flyTo`, `fitBounds`, `recenter`, `getViewState`." },
+    className: { type: "string", default: '"h-72 w-full"', description: "Sizes the map." },
+  }}
+/>
+
+### MapHandle
+
+<TypeTable
+  type={{
+    flyTo: { type: "(options: { center: LngLat; zoom?: number; duration?: number }) => void" },
+    fitBounds: { type: "(bounds: LngLatBounds, options?: { padding?: number; duration?: number }) => void" },
+    recenter: { type: "(duration?: number) => void", description: "Back to the view the map opened on." },
+    getViewState: { type: "() => Promise<ViewState>" },
+  }}
+/>
+
+### Map.Marker
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    lngLat: { type: "LngLat", description: "Where it sits." },
+    anchor: {
+      type: '"center" | "top" | "bottom" | "left" | "right"',
+      description: "Which point sits on `lngLat`. Omitted: the pin's tip, or the centre without a pin.",
+    },
+    onPress: { type: "() => void", description: "Makes the marker a button." },
+    accessibilityLabel: { type: "string", description: "Name the place, not the pin." },
+  }}
+/>
+
+### Map.Pin
+
+<TypeTable
+  type={{
+    tone: { type: '"primary" | "default" | "destructive"', default: '"primary"' },
+    size: { type: '"sm" | "md"', default: '"md"' },
+  }}
+/>
+
+### Map.Label
+
+<TypeTable
+  type={{
+    side: { type: '"top" | "bottom"', default: '"bottom"', description: "The side of the pin it keeps its gap from." },
+    size: { type: '"sm" | "md"', default: '"sm"' },
+    tone: { type: '"default" | "muted" | "primary"', default: '"default"' },
+  }}
+/>
+
+### Map.Popup
+
+<TypeTable
+  type={{
+    title: { type: "string", description: "A heading over the content." },
+    lngLat: { type: "LngLat", description: "Required outside a `Map.Marker`." },
+  }}
+/>
+
+### Map.Controls
+
+<TypeTable
+  type={{
+    corner: { type: '"top-left" | "top-right" | "bottom-left" | "bottom-right"', default: '"bottom-right"' },
+    showZoom: { type: "boolean", default: "true" },
+    showLocate: { type: "boolean", default: "false", description: "Asks for location permission the first time." },
+    showCompass: { type: "boolean", default: "false" },
+    showRecenter: { type: "boolean", default: "false" },
+    onLocate: { type: "(lngLat: LngLat) => void", description: "Called once a locate press has flown there." },
+  }}
+/>
+
+### Map.Route
+
+<TypeTable
+  type={{
+    coordinates: { type: "readonly LngLat[]" },
+    color: { type: "string", default: '"primary"', description: "A theme token or a literal colour." },
+    width: { type: "number", default: "3" },
+    isDashed: { type: "boolean", default: "false" },
+    opacity: { type: "number", default: "1" },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Map.Arc
+
+<TypeTable
+  type={{
+    from: { type: "LngLat" },
+    to: { type: "LngLat" },
+    curvature: { type: "number", default: "0.2", description: "The bow, as a fraction of the length; negative bows the other way." },
+    color: { type: "string", default: '"primary"' },
+    width: { type: "number", default: "2" },
+    opacity: { type: "number", default: "0.9" },
+  }}
+/>
+
+### Map.UserLocation
+
+<TypeTable
+  type={{
+    showsHeading: { type: "boolean", default: "false", description: "A cone in the direction the device faces." },
+  }}
+/>

@@ -133,6 +133,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [Leaderboard](src/components/leaderboard/AGENTS.md) | `@delacour/react-native-ui/leaderboard` | Ranked entries with ties, a podium for the top three and the highlighted entry pinned below the cut |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on `react-native-maps` |
 | [MarkdownEditor](src/components/markdown-editor/AGENTS.md) | `@delacour/react-native-ui/markdown-editor` | A Markdown field — a formatting toolbar, a write pane and a rendered preview |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
 | [PageHeader](src/components/page-header/AGENTS.md) | `@delacour/react-native-ui/page-header` | A cover, an overlapping avatar, a title block, actions and stats — the head of a profile |

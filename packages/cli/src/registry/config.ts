@@ -55,6 +55,9 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
+	// Ships Apple and Google map views, and Expo 57 bundles 1.27.2. Only `map`
+	// imports it, so an app without a map never installs it.
+	"react-native-maps": "expo",
 
 	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "npm",
 	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
@@ -353,6 +356,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen.",
 		categories: ["layout"],
+	},
+	map: {
+		title: "Map",
+		description:
+			"A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+		categories: ["display"],
 	},
 	pressable: {
 		title: "Pressable",

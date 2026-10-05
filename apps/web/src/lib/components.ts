@@ -297,6 +297,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A surface grouping related rows, with dividers inserted for you.",
 	},
 	{
+		slug: "map",
+		name: "Map",
+		group: "Data display",
+		blurb: "Places and paths on a themed map — markers, labels, popups, routes, arcs and controls.",
+	},
+	{
 		slug: "separator",
 		name: "Separator",
 		group: "Data display",

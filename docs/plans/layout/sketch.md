@@ -311,6 +311,6 @@ Registry: `ITEM_META.sketch = { title: "Sketch", description: "A finger-drawing 
 - `Sketch.Tool tool="shape"` takes an **optional** `shape`; without one it shows and keeps the current shape (the default toolbar's middle button).
 - The root slot carries no `flex-1`: inside a parent with no definite height its zero basis beat a caller's `h-*`. Callers size the root.
 - The default toolbar puts the width slider in the tool row; beside six swatches it had no width.
-- Previews deferred: the argent CLI the capture script needs is not installed, so no demo sets `capture` and the docs page has no `<Preview>`. Flows are written; see the component AGENTS.md.
+- Previews captured 2026-10-06 (dev client): hero clip `default`, clips `shapes`, `eraser`, `annotate`, still `colours`; the hero is stage-framed (`align: "stretch"`), not `frame: "device"` — the demo is a container, not a whole screen. Flows wait after each tool/swatch tap; see the component AGENTS.md.
 - Simulator: verified on an iOS dev client. Release build, performance at 200 strokes, theme toggle, VoiceOver actions and Android masks are still open.
 - No cross-category imports. Signature (Forms) can import `sketch.paths.ts` as a leaf.

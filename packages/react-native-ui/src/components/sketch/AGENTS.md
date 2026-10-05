@@ -176,12 +176,15 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
   Release-specific), 200-stroke performance, the theme toggle, VoiceOver's
   undo/clear actions, and Android `Mask` rendering — the weaker platform for SVG
   masks; if it breaks, record it here and gate the eraser.
-- **No captured previews yet.** The argent CLI the capture script drives is not
-  installed, so no demo sets `capture` and the docs page carries no `<Preview>`.
-  Flows for `draw`, `shapes` and `eraser` are written in
-  `.argent/flows/previews/sketch/`; the follow-up is to set `capture` (hero on
-  `default`, `frame: "device"`), run `bun run previews -- -- --only sketch`, and
-  add the `<Preview>`s.
+- **Previews (2026-10-06, dev client, iPhone 17 Pro):** `default` is the hero clip,
+  `shapes`, `eraser` and `annotate` are clips, `colours` is a still. The flows in
+  `.argent/flows/previews/sketch/` draw pen strokes with raw `gesture-custom`
+  points (a `swipe` is one straight line) and undo back to the seed, so every
+  clip loops. **Every flow waits ~400ms after a tool or swatch tap before
+  drawing**: the pan reads tool and ink from shared values the canvas updates in
+  an effect, and a stroke begun straight after the tap took the old ink (a black
+  loop) or the old tool (an ellipse instead of a tick). No finger is that fast;
+  argent is.
 
 ## Out of scope
 

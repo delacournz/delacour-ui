@@ -4,6 +4,8 @@ description: A finger-drawing surface with a pen, eight shapes, an eraser, colou
 icon: PenTool
 ---
 
+<Preview id="sketch/default" title={null} />
+
 ## Installation
 
 <ComponentInstall name="sketch" />
@@ -34,6 +36,8 @@ export default function Example() {
 
 `shapes` chooses which of the eight shapes the toolbar offers; a shape is drawn by dragging.
 
+<Preview id="sketch/shapes" />
+
 ```tsx
 <Sketch defaultTool="shape" defaultShape="arrow" shapes={["arrow", "rectangle", "ellipse"]} />
 ```
@@ -41,6 +45,8 @@ export default function Example() {
 ## Colours
 
 `colors` takes theme tokens and literals; each mark keeps the colour it was drawn in, whatever the theme does next.
+
+<Preview id="sketch/colours" />
 
 ```tsx
 <Sketch colors={["foreground", "primary", "#ec4899", "#14b8a6"]} defaultColor="#ec4899" />
@@ -57,6 +63,8 @@ export default function Example() {
 ## Eraser
 
 The eraser hides only ink drawn **before** it — a later stroke over the same spot is untouched, and undo brings erased ink back.
+
+<Preview id="sketch/eraser" />
 
 ## Undo and the handle
 
@@ -98,6 +106,8 @@ Pass children to choose and order the parts yourself.
 ## Annotating an image
 
 `Sketch.Canvas` children are painted under the marks; the export holds only the marks.
+
+<Preview id="sketch/annotate" />
 
 ```tsx
 <Sketch className="flex-1">

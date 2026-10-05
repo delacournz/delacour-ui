@@ -60,8 +60,10 @@ export type TimeWheelColumnProps = {
  * **Resting is decided twice, and only a hand-scroll counts.** A flick rests on
  * momentum end; a drag released still has no momentum, so it rests on drag end.
  * A programmatic scroll — the column moving to a value set from outside, or back
- * off a dimmed row — also ends in a momentum event on iOS, and is ignored, which
- * is what keeps a controlled value from echoing back through `onValueChange`.
+ * off a dimmed row — also ends in a momentum event on iOS, and reports nothing,
+ * which is what keeps a controlled value from echoing back through
+ * `onValueChange`. It does re-check where the column came to rest: the
+ * corrective scroll and iOS's own snap can cut each other short.
  *
  * **A dimmed row is bounced off by the parent, not here.** The column reports
  * the row it landed on; the wheel pulls the time inside the bounds and hands back
@@ -102,6 +104,11 @@ export function TimeWheelColumn({
 		[kind, onSettle]
 	);
 
+	// Re-checks the resting row without reporting one. A drag released still
+	// settles at once, but iOS's own snap deceleration can still be running and
+	// cut the corrective scroll short, leaving the column between rows.
+	const realign = useCallback(() => setSettleCount((current) => current + 1), []);
+
 	useEffect(() => {
 		void settleCount;
 		const target = indexToOffset(selectedIndex, rowHeight);
@@ -132,7 +139,10 @@ export function TimeWheelColumn({
 			scheduleOnRN(settle, offsetToIndex(event.contentOffset.y, rowHeight, count));
 		},
 		onMomentumEnd: (event) => {
-			if (!isUserScroll.value) return;
+			if (!isUserScroll.value) {
+				scheduleOnRN(realign);
+				return;
+			}
 			isUserScroll.value = false;
 			scheduleOnRN(settle, offsetToIndex(event.contentOffset.y, rowHeight, count));
 		},

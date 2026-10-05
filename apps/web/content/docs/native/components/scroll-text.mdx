@@ -4,6 +4,8 @@ description: Text that resolves word by word as the screen scrolls past it.
 icon: ScrollText
 ---
 
+<Preview id="scroll-text/colour" title={null} />
+
 ## Installation
 
 <ComponentInstall name="scroll-text" />
@@ -49,25 +51,54 @@ With the default `screen` source and no `Screen` above it, the text renders full
 not move — a development build warns once.
 </Callout>
 
-## Effects
+## Colour
 
-`colour` (the default) goes from `muted-foreground` to `foreground`, `fade` and `rise` lift opacity
-from a 0.15 floor, and `highlight` fills a band behind each unit.
+The default effect takes each word from `muted-foreground` to `foreground`; name either end with `from` and `to`.
+
+<Preview id="scroll-text/colour" />
 
 ```tsx
 <ScrollText effect={{ kind: "colour", from: "muted-foreground", to: "primary" }}>…</ScrollText>
-<ScrollText effect={{ kind: "fade", from: 0.2 }}>…</ScrollText>
-<ScrollText effect={{ kind: "rise", distance: 16 }}>…</ScrollText>
-<ScrollText effect={{ kind: "highlight" }}>…</ScrollText>
 ```
 
-## Splitting and stagger
+## Rise
 
-`split` picks the unit — `word`, `character` or `line` — and `overlap` runs from 0, one after
-another, to 1, all together.
+`rise` lifts each unit `distance` points into place while it fades up from a 0.15 floor; `fade` is the same without the lift.
+
+<Preview id="scroll-text/rise" />
+
+```tsx
+<ScrollText effect={{ kind: "rise", distance: 16 }} size="3xl" weight="bold">Every word arrives on time.</ScrollText>
+<ScrollText effect={{ kind: "fade", from: 0.2 }}>…</ScrollText>
+```
+
+## Highlight
+
+`highlight` fills a band behind each unit — `primary` at 20% unless you name a `color`.
+
+<Preview id="scroll-text/highlight" />
+
+```tsx
+<ScrollText effect={{ kind: "highlight" }} overlap={0.2}>A marker band sweeps through the sentence.</ScrollText>
+```
+
+## Characters
+
+`split="character"` reveals one grapheme at a time, and a low `overlap` makes it read as typing.
+
+<Preview id="scroll-text/characters" />
 
 ```tsx
 <ScrollText split="character" overlap={0.1} effect={{ kind: "fade" }}>Letter by letter.</ScrollText>
+```
+
+## Lines
+
+`split="line"` reveals the lines a plain `Text` of the same string would break into.
+
+<Preview id="scroll-text/lines" />
+
+```tsx
 <ScrollText split="line" effect={{ kind: "rise", distance: 10 }}>…</ScrollText>
 ```
 
@@ -84,10 +115,13 @@ its reveal.
 
 A `progress` source takes a shared value already in 0..1, so a slider, a pager or a gesture can drive it.
 
+<Preview id="scroll-text/scrub" />
+
 ```tsx
 const progress = useSharedValue(0);
 
 <ScrollText source={{ kind: "progress", progress }}>The same text, by hand.</ScrollText>
+<Slider defaultValue={0} onChange={(value) => (progress.value = Number(value) / 100)} />
 ```
 
 ## Reduced motion

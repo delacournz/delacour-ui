@@ -216,3 +216,12 @@ The playground root mounts `ScrollBlurLayerProvider layer={ExpoBlurLayer}`. Rout
 - [ ] Dev client rebuilt with `expo-blur`; simulator via agent-device (`warden claim ios --json`, explicit `--udid`/`--session`): blur visibly defocuses rows at the edge and is absent at rest at the start edge; scroll to end removes end band; no seam lines between strips in light and dark; floating button remains tappable; enabling Settings > Accessibility > Display > Reduce Transparency turns blur into wash live; app without the provider shows the gradient fallback and logs no warning
 - [ ] Android emulator: no crash, wash fallback shown
 - [ ] No React re-renders while scrolling (React DevTools profiler), frame time steady on a 100-row list
+
+## Implementation notes (as built)
+
+- **Strips are nested, not side by side.** `resolveBlurStack` pins every blur view at the edge, each adding `intensity / layers`; side-by-side strips showed seams on the simulator. `resolveBlurLayers` keeps the tested shape above.
+- **`ScrollBlurLayerProvider` takes `layer: BlurLayerComponent | null`.** `null` turns the blur off for a subtree. The `fallback` and `blur-vs-fade` demos use it, because `layer={undefined}` still falls through to the root provider.
+- **`blur-vs-fade` compares against the wash fallback, not ScrollFade.** ScrollFade ships on a separate branch and is not imported here.
+- **`expo/blur-layer.tsx` is its own registry item, `blur-layer`, not part of `expo`.** Folded into `expo`, `delacour add expo` would install `expo-blur` and `add blur-layer` would install `expo-router`. `scroll-blur` alone pulls neither.
+- **No preview media yet.** The `argent` CLI that `bun run previews` drives was not installed, so no demo is marked `capture` and the docs page opens at Installation. The plan for publishing is in the component's AGENTS.md.
+- **Simulator:** verified on iOS (see the component's AGENTS.md). Not checked: Reduce Transparency toggled live, the Android emulator, and a DevTools profile.

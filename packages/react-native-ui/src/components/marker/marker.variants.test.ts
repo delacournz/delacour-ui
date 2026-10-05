@@ -35,8 +35,18 @@ describe("markerVariants root slot", () => {
 			expect(cls).toContain("flex-row");
 			expect(cls).toContain("items-center");
 			expect(cls).toContain("justify-center");
-			expect(cls).toContain("py-2");
 		}
+	});
+
+	// Stacked markers between bubbles need room to breathe. The capsule spends
+	// half of it inside its border and half outside, so the line it occupies is
+	// as tall as a plain marker's.
+	test("keeps the same vertical rhythm at every variant", () => {
+		expect(markerVariants({ variant: "default" }).root()).toContain("py-2");
+		expect(markerVariants({ variant: "separator" }).root()).toContain("py-2");
+		const border = markerVariants({ variant: "border" }).root();
+		expect(border).toContain("py-1");
+		expect(border).toContain("my-1");
 	});
 
 	test("only border draws a border and a capsule", () => {

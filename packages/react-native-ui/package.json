@@ -60,6 +60,7 @@
 		"./feedback": "./src/components/feedback/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./frame": "./src/components/frame/index.ts",
+		"./grid-item": "./src/components/grid-item/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./image-viewer": "./src/components/image-viewer/index.ts",
 		"./input": "./src/components/input/index.ts",

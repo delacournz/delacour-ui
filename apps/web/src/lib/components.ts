@@ -456,6 +456,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "grid-item",
+		name: "GridItem",
+		group: "Layout",
+		blurb: "A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
+	},
+	{
 		slug: "frame",
 		name: "Frame",
 		group: "Layout",

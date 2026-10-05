@@ -285,6 +285,12 @@ import * as demo_frame_sections from "./frame/sections";
 import * as demo_frame_settings from "./frame/settings";
 import * as demo_frame_sizes from "./frame/sizes";
 import * as demo_frame_variants from "./frame/variants";
+import * as demo_grid_item_backgrounds from "./grid-item/backgrounds";
+import * as demo_grid_item_dashboard from "./grid-item/dashboard";
+import * as demo_grid_item_interactive from "./grid-item/interactive";
+import * as demo_grid_item_quick_actions from "./grid-item/quick-actions";
+import * as demo_grid_item_row_sizing from "./grid-item/row-sizing";
+import * as demo_grid_item_variants from "./grid-item/variants";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -962,6 +968,12 @@ export const DEMOS = {
 	"frame/settings": demo_frame_settings,
 	"frame/sizes": demo_frame_sizes,
 	"frame/variants": demo_frame_variants,
+	"grid-item/backgrounds": demo_grid_item_backgrounds,
+	"grid-item/dashboard": demo_grid_item_dashboard,
+	"grid-item/interactive": demo_grid_item_interactive,
+	"grid-item/quick-actions": demo_grid_item_quick_actions,
+	"grid-item/row-sizing": demo_grid_item_row_sizing,
+	"grid-item/variants": demo_grid_item_variants,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,

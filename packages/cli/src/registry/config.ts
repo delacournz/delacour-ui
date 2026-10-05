@@ -263,6 +263,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A titled shell around a card of divided rows, with sections and a footer.",
 		categories: ["layout"],
 	},
+	"grid-item": {
+		title: "Grid Item",
+		description:
+			"A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
+		categories: ["layout"],
+	},
 	icon: {
 		title: "Icon",
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",

@@ -121,6 +121,7 @@ shares.
 | [Fab](src/components/fab/AGENTS.md) | `@delacour/react-native-ui/fab` | A floating action button, and a dial of related actions that unfolds from it |
 | [Feedback](src/components/feedback/AGENTS.md) | `@delacour/react-native-ui/feedback` | A dialog for writing — the field in a recessed well, the actions on the band around it |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
+| [GridItem](src/components/grid-item/AGENTS.md) | `@delacour/react-native-ui/grid-item` | A bento grid of whole-cell tiles with aligned edges, and the tile |
 | [Frame](src/components/frame/AGENTS.md) | `@delacour/react-native-ui/frame` | A titled shell around a card of rows, with sections and a footer |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [ImageViewer](src/components/image-viewer/AGENTS.md) | `@delacour/react-native-ui/image-viewer` | A full-screen gallery opened from a thumbnail — pinch, pan and double-tap zoom, swipe, drag to dismiss |

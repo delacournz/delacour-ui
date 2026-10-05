@@ -129,3 +129,14 @@ no context.
 ### Simulator note
 
 Pending.
+
+## Demos and previews
+
+`apps/playground/src/demos/circular-text/`: `seal` (the intended hero), `two-rings`, `arc`, `badge`,
+`loading-ring`, `hold-to-pause`, `controlled`.
+
+**Previews are a follow-up.** No demo sets `meta.capture` yet: `demos.test.ts` requires a manifest
+entry and committed media for every captured demo, and the media is recaptured by the lead after
+integration. When it is, mark `seal` `hero: true`, capture `arc` as a still and the spinning ones as
+clips (`hold-to-pause` needs a press-and-hold flow on `circular-text-hold`), and add the
+`<Preview>` hero to the docs page.

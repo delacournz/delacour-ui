@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled",
 	caption:
 		'`spin={{ kind: "controlled", rotation }}` hands the angle to the app — a scroll offset, a gesture, or here a slider. There is no clock, and reduce motion leaves it alone: the caller owns the movement.',
+	capture: { align: "stretch", flow: "circular-text/controlled" },
 };
 
 export function Demo(): ReactElement {

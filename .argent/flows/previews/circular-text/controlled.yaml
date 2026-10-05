@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on circular-text/controlled and has settled — one ring at 0°
+  over a slider at 0, its thumb carrying the testID circular-text-dial. The capture script navigates there before running this.
+steps:
+  - echo: Dragging the thumb turns the ring with it
+  # momentum:false so the thumb stops where the finger does.
+  - swipe: { from: { id: circular-text-dial }, by: { x: 0.5 }, momentum: false, duration: 1000 }
+  - wait: 400
+  - echo: And back past the start, so the slider clamps at 0 and the clip loops where it began
+  - swipe: { from: { id: circular-text-dial }, by: { x: -0.55 }, momentum: false, duration: 1000 }
+  # The slider reports to React, so the ring trails the thumb by a few frames under a dev bundle —
+  # hold until it is back at 0° so the seam does not jump.
+  - wait: 1200

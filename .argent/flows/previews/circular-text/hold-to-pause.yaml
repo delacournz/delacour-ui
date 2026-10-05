@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on circular-text/hold-to-pause and has settled — one ring
+  turning at 48° a second, carrying the testID circular-text-hold. The capture script navigates there before running this.
+steps:
+  - echo: Holding a finger on the ring so it eases to a halt
+  - long-press: { on: { id: circular-text-hold }, duration: 1600 }
+  - echo: Released — it eases back up to speed from the same angle, as it began
+  # The ring repeats every 120°. Measured from the recording, this wait leaves the whole clip, lead
+  # and tail included, turning 240° net of the pause, so it loops without a jump.
+  - wait: 450

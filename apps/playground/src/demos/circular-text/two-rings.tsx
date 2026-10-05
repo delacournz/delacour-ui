@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Rings nest by radius alone, because `radius` names the middle of the type. The outer turns clockwise, the inner counterclockwise and faster.",
+	capture: { flow: "circular-text/two-rings" },
 };
 
 export function Demo(): ReactElement {
@@ -19,7 +20,7 @@ export function Demo(): ReactElement {
 					repeat="fill"
 					separator=" · "
 					size="xs"
-					spin={{ kind: "loop", speed: 40 }}
+					spin={{ kind: "loop", speed: 30 }}
 					weight="medium"
 				>
 					SCROLL DOWN
@@ -27,7 +28,7 @@ export function Demo(): ReactElement {
 			}
 			radius={80}
 			repeat="fill"
-			spin={{ kind: "loop", speed: 18 }}
+			spin={{ kind: "loop", speed: 20 }}
 		>
 			MADE IN AOTEAROA
 		</CircularText>

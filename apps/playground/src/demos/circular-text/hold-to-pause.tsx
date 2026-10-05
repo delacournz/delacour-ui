@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'`pause={{ kind: "press" }}` eases the ring to a halt while a finger is down and back up to speed on release, from the same angle — no snap.',
+	capture: { flow: "circular-text/hold-to-pause" },
 };
 
 export function Demo(): ReactElement {

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Arc",
 	align: "center",
 	caption: "A 140° arc centred on the top, over a mark. Static — the ends stay open.",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'A ring around an `Avatar`. `side="outside"` stands the glyphs with their tops away from the centre; `side="inside"` turns them toward it, so the words read along the bottom.',
+	capture: { flow: "circular-text/badge" },
 };
 
 export function Demo(): ReactElement {
@@ -19,7 +20,7 @@ export function Demo(): ReactElement {
 				color="muted"
 				radius={52}
 				repeat="fill"
-				spin={{ kind: "loop", speed: 12 }}
+				spin={{ kind: "loop" }}
 			>
 				TOP CONTRIBUTOR
 			</CircularText>
@@ -29,7 +30,7 @@ export function Demo(): ReactElement {
 				radius={52}
 				repeat="fill"
 				side="inside"
-				spin={{ kind: "loop", speed: 12 }}
+				spin={{ kind: "loop" }}
 			>
 				TOP CONTRIBUTOR
 			</CircularText>

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'A phrase repeated to close the ring, turning at 24° a second around an icon that stays upright. `repeat="fill"` estimates the copies; `textLength` absorbs the error as spacing.',
+	capture: { flow: "circular-text/seal", hero: true },
 };
 
 export function Demo(): ReactElement {

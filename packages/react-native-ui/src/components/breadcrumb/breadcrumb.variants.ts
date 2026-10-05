@@ -33,7 +33,8 @@ export const BREADCRUMB_MIN_TOUCH_TARGET = 44;
 type HitSlop = { top: number; bottom: number; left: number; right: number };
 
 /**
- * Slop that lifts a link's one line of text to {@link BREADCRUMB_MIN_TOUCH_TARGET}.
+ * Slop that lifts a link's one line of text — and the ellipsis, whose box is
+ * held to that same line height — to {@link BREADCRUMB_MIN_TOUCH_TARGET}.
  *
  * Vertical only: the line is 20 or 24 points tall, so ten or twelve points above
  * and below reach 44. The sides get a little — enough to forgive a thumb, not
@@ -76,8 +77,8 @@ export const breadcrumbVariants = tv({
 	},
 	variants: {
 		size: {
-			sm: { list: "gap-x-1 gap-y-1", scroller: "gap-x-1", glyph: "size-icon-xs" },
-			md: { list: "gap-x-1.5 gap-y-1.5", scroller: "gap-x-1.5", glyph: "size-icon-sm" },
+			sm: { list: "gap-x-1 gap-y-1", scroller: "gap-x-1", glyph: "size-icon-xs", ellipsis: "h-5" },
+			md: { list: "gap-x-1.5 gap-y-1.5", scroller: "gap-x-1.5", glyph: "size-icon-sm", ellipsis: "h-6" },
 		},
 		overflow: {
 			wrap: { list: "flex-wrap" },
@@ -234,7 +235,12 @@ export function resolveBreadcrumbSeparatorGlyph(isRTL: boolean): "chevron-right"
 	return isRTL ? "chevron-left" : "chevron-right";
 }
 
-/** The ellipsis button's accessible name. */
-export function resolveBreadcrumbEllipsisLabel(hiddenCount: number): string {
-	return `Show ${hiddenCount} hidden ${hiddenCount === 1 ? "level" : "levels"}`;
+/**
+ * The ellipsis' accessible name. A button offers to show the levels; a static
+ * mark only says they are there. With no count it names no number.
+ */
+export function resolveBreadcrumbEllipsisLabel(hiddenCount: number | undefined, isInteractive: boolean): string {
+	const noun = hiddenCount === 1 ? "level" : "levels";
+	if (isInteractive) return hiddenCount === undefined ? "Show hidden levels" : `Show ${hiddenCount} hidden ${noun}`;
+	return hiddenCount === undefined ? "Hidden levels" : `${hiddenCount} hidden ${noun}`;
 }

@@ -201,9 +201,16 @@ describe("resolveBreadcrumbSeparatorGlyph", () => {
 });
 
 describe("resolveBreadcrumbEllipsisLabel", () => {
-	test("names the hidden count, singular for one", () => {
-		expect(resolveBreadcrumbEllipsisLabel(3)).toBe("Show 3 hidden levels");
-		expect(resolveBreadcrumbEllipsisLabel(1)).toBe("Show 1 hidden level");
+	test("a button offers to show the hidden count, singular for one", () => {
+		expect(resolveBreadcrumbEllipsisLabel(3, true)).toBe("Show 3 hidden levels");
+		expect(resolveBreadcrumbEllipsisLabel(1, true)).toBe("Show 1 hidden level");
+		expect(resolveBreadcrumbEllipsisLabel(undefined, true)).toBe("Show hidden levels");
+	});
+
+	test("a static mark only says the levels are there", () => {
+		expect(resolveBreadcrumbEllipsisLabel(3, false)).toBe("3 hidden levels");
+		expect(resolveBreadcrumbEllipsisLabel(1, false)).toBe("1 hidden level");
+		expect(resolveBreadcrumbEllipsisLabel(undefined, false)).toBe("Hidden levels");
 	});
 });
 
@@ -268,6 +275,11 @@ describe("breadcrumbVariants", () => {
 });
 
 describe("BREADCRUMB_LINK_HIT_SLOP", () => {
+	test("the ellipsis box is the label's line height, so the same slop reaches 44", () => {
+		expect(cls(breadcrumbVariants({ size: "sm" }).ellipsis())).toMatch(/\bh-5\b/);
+		expect(cls(breadcrumbVariants({ size: "md" }).ellipsis())).toMatch(/\bh-6\b/);
+	});
+
 	test("lifts every link's line to the minimum touch target", () => {
 		expect(BREADCRUMB_MIN_TOUCH_TARGET).toBe(44);
 		for (const size of BREADCRUMB_SIZES) {

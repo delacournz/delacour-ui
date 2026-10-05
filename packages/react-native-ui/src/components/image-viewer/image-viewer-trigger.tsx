@@ -44,6 +44,13 @@ export type ImageViewerTriggerProps = ImageViewerTriggerBaseProps &
 /** The thumbnail fills its Trigger, under any corner the Trigger clips to. */
 const FILL = { height: "100%", width: "100%" } as const;
 
+/**
+ * Custom children size the Trigger themselves, so their wrapper takes the width
+ * only: a percentage height on a content-sized Trigger resolves against its
+ * parent and stretched a card to the full screen.
+ */
+const WRAP = { width: "100%" } as const;
+
 /** No-op load and error handlers for a thumbnail, which reports nothing. */
 const ignore = (): void => {};
 
@@ -157,7 +164,10 @@ export function ImageViewerTrigger(props: ImageViewerTriggerProps): ReactElement
 			<View
 				collapsable={false}
 				ref={ref}
-				style={[FILL, radius !== undefined ? { borderRadius: radius, overflow: "hidden" } : null]}
+				style={[
+					children === undefined ? FILL : WRAP,
+					radius !== undefined ? { borderRadius: radius, overflow: "hidden" } : null,
+				]}
 			>
 				{children ??
 					(image ? (

@@ -1,3 +1,4 @@
+import type { CalendarDate } from "@delacour/react-native-ui/calendar";
 import { DateTimePicker, type DateTimeValue, formatDateTime } from "@delacour/react-native-ui/date-time-picker";
 import { Text } from "@delacour/react-native-ui/text";
 import { type ReactElement, useState } from "react";
@@ -8,7 +9,10 @@ export const meta: DemoMeta = {
 	title: "Inline",
 	caption: '`presentation="inline"` draws the panel in place on a card, with no trigger, no sheet and no Done.',
 	align: "stretch",
+	capture: {},
 };
+
+const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };
 
 export function Demo(): ReactElement {
 	const [when, setWhen] = useState<DateTimeValue | null>({
@@ -23,6 +27,7 @@ export function Demo(): ReactElement {
 				onValueChange={setWhen}
 				presentation="inline"
 				testID="date-time-picker-inline"
+				today={TODAY}
 				value={when}
 			/>
 			<Text.Caption className="text-center">

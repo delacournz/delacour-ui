@@ -1,0 +1,39 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on date-time-picker/tabs-layout and has settled — the
+  trigger reads Wed, Oct 14 at 12:00 PM and the sheet is closed. The capture script navigates
+  there before running this.
+# Each wheel column is dragged once per opening. A column that has already settled can miss
+# a second drag (it is still realigning), so the way back to the start is a second opening.
+steps:
+  - echo: Opening the sheet and moving the day to the 21st
+  - tap: { id: date-time-picker-tabs-trigger }
+  - await: { visible: { id: date-time-picker-tabs-calendar-day-2026-10-21 } }
+  - wait: 600
+  - tap: { id: date-time-picker-tabs-calendar-day-2026-10-21 }
+  - wait: 700
+  - echo: Over to Time, rolling the hour forward
+  - tap: { id: date-time-picker-tabs-tab-time }
+  - await: { visible: { text: Hour } }
+  - wait: 600
+  - swipe: { from: { text: Hour }, by: { y: -0.09 }, momentum: false, duration: 600 }
+  - wait: 1000
+  - tap: { id: date-time-picker-tabs-done }
+  - await: { hidden: { id: date-time-picker-tabs-calendar } }
+  - wait: 900
+  - echo: Reopening to put it back — the hour to 12, the day to the 14th — so the clip loops
+  - tap: { id: date-time-picker-tabs-trigger }
+  - await: { visible: { id: date-time-picker-tabs-tab-time } }
+  - wait: 600
+  - tap: { id: date-time-picker-tabs-tab-time }
+  - await: { visible: { text: Hour } }
+  - wait: 600
+  - swipe: { from: { text: Hour }, by: { y: 0.09 }, momentum: false, duration: 600 }
+  - wait: 1000
+  - tap: { id: date-time-picker-tabs-tab-date }
+  - await: { visible: { id: date-time-picker-tabs-calendar-day-2026-10-14 } }
+  - wait: 600
+  - tap: { id: date-time-picker-tabs-calendar-day-2026-10-14 }
+  - wait: 600
+  - tap: { id: date-time-picker-tabs-done }
+  - await: { hidden: { id: date-time-picker-tabs-calendar } }
+  - wait: 500

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Inside a `Field` the trigger takes `isInvalid` and `isDisabled` with nothing said at the call site, names itself from `Field.Label`, and a tap on the label opens the sheet. Invalid until a date and time are set; Clear empties it again.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

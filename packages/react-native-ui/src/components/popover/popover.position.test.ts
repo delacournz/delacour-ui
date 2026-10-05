@@ -3,6 +3,7 @@ import {
 	type AnchoredInput,
 	type PopoverPlacement,
 	resolveAnchoredPosition,
+	resolveArrowFrame,
 	resolveEnterTranslate,
 	resolvePopoverWidth,
 	resolveTransformOrigin,
@@ -331,5 +332,23 @@ describe("motion geometry", () => {
 		expect(resolveTransformOrigin("top", 40, size)).toEqual({ x: 40, y: 100 });
 		expect(resolveTransformOrigin("right", 30, size)).toEqual({ x: 0, y: 30 });
 		expect(resolveTransformOrigin("left", 30, size)).toEqual({ x: 200, y: 30 });
+	});
+});
+
+describe("resolveArrowFrame", () => {
+	const size = { width: 200, height: 100 };
+
+	test("sits half over the edge facing the anchor, centred on the offset", () => {
+		expect(resolveArrowFrame("bottom", 40, size, 10)).toEqual({ left: 35, top: -5, rotate: 225 });
+		expect(resolveArrowFrame("top", 40, size, 10)).toEqual({ left: 35, top: 95, rotate: 45 });
+		expect(resolveArrowFrame("right", 30, size, 10)).toEqual({ left: -5, top: 25, rotate: 135 });
+		expect(resolveArrowFrame("left", 30, size, 10)).toEqual({ left: 195, top: 25, rotate: 315 });
+	});
+
+	test("turns the bordered corner toward the anchor in every placement", () => {
+		const pointing = { bottom: 225, top: 45, right: 135, left: 315 } as const;
+		for (const placement of ["top", "bottom", "left", "right"] as const) {
+			expect(resolveArrowFrame(placement, 40, size, 10).rotate).toBe(pointing[placement]);
+		}
 	});
 });

@@ -128,6 +128,15 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 - **The Time panel's readout row is one accessibility element**, "Time, 3:30 PM", ahead of the
   wheel's adjustable columns. In `stacked` it is a button with an expanded state.
 
+## Test ids
+
+- **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`, as
+  `DatePicker`'s do: `-trigger`, `-calendar` (so a day is `-calendar-day-2026-10-14`),
+  `-tab-date`, `-tab-time`, `-time-row`, `-time-wheel`, `-title`, `-close`, `-clear`, `-done`. No
+  root id, no part ids. An explicit `testID` on `Trigger`, `Done`, `Clear` or `Time` wins.
+- **`today` pins the clock's day** — the calendar's marker and the day a time picked first lands
+  on — so a preview or a test does not change with the date it runs on.
+
 ## Native `Date`
 
 - **`toNativeDate` and `fromNativeDate` read and write local fields.** A wall-clock value has no

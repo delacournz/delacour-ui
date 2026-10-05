@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import type { ViewProps } from "react-native";
-import type { DateMatcher, Weekday } from "../calendar/calendar.date";
+import type { CalendarDate, DateMatcher, Weekday } from "../calendar/calendar.date";
 import type { CalendarCaptionLayout } from "../calendar/calendar.types";
 import type { InputSize, InputVariant } from "../input/input.variants";
 import type { HourCycle, TimeMinuteStep } from "../time-picker/time-picker.time";
@@ -43,6 +43,8 @@ export type DateTimePickerProps = Omit<ViewProps, "children"> & {
 	weekStartsOn?: Weekday | "auto";
 	/** `picker` makes the calendar's caption open the month and year views. Default `picker`. */
 	captionLayout?: CalendarCaptionLayout;
+	/** Overrides today — on the calendar, and as the day a time picked first lands on. For a demo, a screenshot or a test. */
+	today?: CalendarDate;
 	/** Replaces the trigger's text. Gets the resolved locale and hour cycle. */
 	format?: DateTimePickerFormat;
 	/** Shown while nothing is set. Default "Select date and time". */
@@ -81,6 +83,12 @@ export type DateTimePickerProps = Omit<ViewProps, "children"> & {
 	/** The trigger's accessible name. Omitted, the enclosing `Field.Label`'s text, else "Date and time". */
 	accessibilityLabel?: string;
 	className?: string;
+	/**
+	 * Lands on the root, and names every part after it: `-trigger`, `-calendar` (so a day is
+	 * `-calendar-day-2026-10-14`), `-tab-date`, `-tab-time`, `-time-row`, `-time-wheel`, `-title`,
+	 * `-close`, `-clear` and `-done`. No root `testID`, no part ids.
+	 */
+	testID?: string;
 	/** A custom anatomy. Omitted, the trigger and the sheet — or, inline, the panel. */
 	children?: ReactNode;
 };

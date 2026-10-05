@@ -49,6 +49,7 @@ function DateTimePickerRoot({
 	locale,
 	weekStartsOn = "auto",
 	captionLayout = "picker",
+	today: todayProp,
 	format,
 	placeholder = DATE_TIME_PICKER_DEFAULTS.placeholder,
 	layout = "tabs",
@@ -69,6 +70,7 @@ function DateTimePickerRoot({
 	isClearable = false,
 	accessibilityLabel,
 	className,
+	testID,
 	children,
 	...viewProps
 }: DateTimePickerProps): ReactElement {
@@ -123,10 +125,10 @@ function DateTimePickerRoot({
 
 	const setTime = useCallback(
 		(time: TimeValue) => {
-			const next = applyTime(value, time, { rules, today: today() });
+			const next = applyTime(value, time, { rules, today: todayProp ?? today() });
 			if (next) setValue(next);
 		},
-		[rules, setValue, value]
+		[rules, setValue, todayProp, value]
 	);
 
 	const trigger = resolveTriggerState({ ...axes, isOpen });
@@ -176,7 +178,10 @@ function DateTimePickerRoot({
 
 	// The wheel's bounds: those of the chosen day, or — while empty — of the day a time pick would
 	// land on, so the rows the wheel dims are the ones `setTime` would refuse.
-	const wheelDate = useMemo(() => value?.date ?? nearestAllowedDate(today(), rules), [rules, value]);
+	const wheelDate = useMemo(
+		() => value?.date ?? nearestAllowedDate(todayProp ?? today(), rules),
+		[rules, todayProp, value]
+	);
 	const wheelBounds = useMemo(
 		() => (wheelDate ? (timeBoundsForDate(wheelDate, minDateTime, maxDateTime) ?? {}) : {}),
 		[maxDateTime, minDateTime, wheelDate]
@@ -198,6 +203,7 @@ function DateTimePickerRoot({
 				disabled: disabledDates,
 				maxDate: calendarBounds.maxDate,
 				minDate: calendarBounds.minDate,
+				today: todayProp,
 				weekStartsOn,
 			},
 			canOpen: trigger.canOpen,
@@ -227,6 +233,7 @@ function DateTimePickerRoot({
 			setTimeExpanded,
 			setValue,
 			size: axes.size,
+			testID,
 			timeBoundsForDate: wheelBounds,
 			timeLabel,
 			timeReadout: resolveTimeReadout(value, formatContext),
@@ -270,8 +277,10 @@ function DateTimePickerRoot({
 			setTime,
 			setValue,
 			showSeconds,
+			testID,
 			timeLabel,
 			title,
+			todayProp,
 			trigger.canOpen,
 			value,
 			weekStartsOn,
@@ -285,7 +294,7 @@ function DateTimePickerRoot({
 	if (presentation === "inline") {
 		return (
 			<DateTimePickerProvider value={context}>
-				<View className={className} {...viewProps}>
+				<View className={className} testID={testID} {...viewProps}>
 					{children ?? <DateTimePickerContent />}
 				</View>
 			</DateTimePickerProvider>
@@ -295,7 +304,7 @@ function DateTimePickerRoot({
 	return (
 		<DateTimePickerProvider value={context}>
 			<BottomSheet enableContentPanningGesture={false} isOpen={isOpen} onOpenChange={handleSheetOpenChange}>
-				<View className={className} {...viewProps}>
+				<View className={className} testID={testID} {...viewProps}>
 					{children ?? (
 						<>
 							<DateTimePickerTrigger />

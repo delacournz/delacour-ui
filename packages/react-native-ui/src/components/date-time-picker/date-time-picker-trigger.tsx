@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { resolveDatePickerTriggerClass, resolveTriggerState } from "../date-picker/date-picker.variants";
 import { Pressable, type PressableProps } from "../pressable";
 import { useDateTimePickerPart } from "./date-time-picker.context";
@@ -21,6 +22,7 @@ export function DateTimePickerTrigger({
 	children,
 	className,
 	feedback = "fade",
+	testID,
 	...props
 }: DateTimePickerTriggerProps): ReactElement | null {
 	const picker = useDateTimePickerPart("DateTimePicker.Trigger");
@@ -46,6 +48,7 @@ export function DateTimePickerTrigger({
 			disabled={!state.canOpen}
 			feedback={feedback}
 			onPress={picker.open}
+			testID={testID ?? resolvePartTestID(picker.testID, "trigger")}
 			{...props}
 		>
 			{children ?? (

@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { cn } from "../../lib/cn";
 import { Button, type ButtonProps } from "../button";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { useDateTimePickerPart } from "./date-time-picker.context";
 
 export type DateTimePickerClearProps = Omit<ButtonProps, "onPress">;
@@ -11,6 +12,7 @@ export function DateTimePickerClear({
 	className,
 	isDisabled,
 	variant = "secondary",
+	testID,
 	...props
 }: DateTimePickerClearProps): ReactElement {
 	const picker = useDateTimePickerPart("DateTimePicker.Clear");
@@ -20,6 +22,7 @@ export function DateTimePickerClear({
 			className={cn("flex-1", className)}
 			isDisabled={isDisabled ?? (!picker.hasValue || picker.isDisabled || picker.isReadOnly)}
 			onPress={picker.clear}
+			testID={testID ?? resolvePartTestID(picker.testID, "clear")}
 			variant={variant}
 			{...props}
 		>

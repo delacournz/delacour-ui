@@ -2,6 +2,7 @@ import { type ReactElement, useCallback, useEffect } from "react";
 import { View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { Pressable } from "../pressable";
 import { Separator } from "../separator";
 import { Text } from "../text";
@@ -34,7 +35,7 @@ function DateTimePickerWheel({ testID }: { testID?: string }): ReactElement {
 				onValueChange={picker.setTime}
 				showSeconds={picker.wheel.showSeconds}
 				size="md"
-				testID={testID}
+				testID={testID ?? resolvePartTestID(picker.testID, "time-wheel")}
 				value={picker.value?.time ?? null}
 			/>
 		</View>
@@ -88,6 +89,7 @@ function DateTimePickerStackedTime({ className, testID }: DateTimePickerTimeProp
 				disabled={isInert}
 				feedback="fade"
 				onPress={toggle}
+				testID={resolvePartTestID(picker.testID, "time-row")}
 			>
 				<Text className={slots.timeLabel()}>{picker.timeLabel}</Text>
 				<Text className={slots.timeValue()}>{picker.timeReadout}</Text>
@@ -130,6 +132,7 @@ export function DateTimePickerTime({ className, testID }: DateTimePickerTimeProp
 				accessibilityLabel={`${picker.timeLabel}, ${picker.value ? picker.timeReadout : "not set"}`}
 				accessible
 				className={slots.timeRow()}
+				testID={resolvePartTestID(picker.testID, "time-row")}
 			>
 				<Text className={slots.timeLabel()}>{picker.timeLabel}</Text>
 				<Text className={slots.timeValue()}>{picker.timeReadout}</Text>

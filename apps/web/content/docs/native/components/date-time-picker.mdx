@@ -196,6 +196,7 @@ Its `footer` prop replaces Done (and Clear).
     locale: { type: "string", description: "A BCP 47 tag. Omitted, the device's." },
     weekStartsOn: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | "auto"', default: '"auto"' },
     captionLayout: { type: '"label" | "picker"', default: '"picker"' },
+    today: { type: "CalendarDate", description: "Overrides today — the calendar's marker, and the day a time picked first lands on." },
     format: { type: "(value: DateTimeValue, ctx: { locale, hourCycle }) => string", description: "Replaces the trigger's text." },
     placeholder: { type: "string", default: '"Select date and time"' },
     layout: { type: '"tabs" | "stacked"', default: '"tabs"' },
@@ -215,6 +216,7 @@ Its `footer` prop replaces Done (and Clear).
     timeLabel: { type: "string", default: '"Time"' },
     isClearable: { type: "boolean", default: "false" },
     accessibilityLabel: { type: "string", description: "Omitted, the Field.Label's text, else \"Date and time\"." },
+    testID: { type: "string", description: "The root's; every part derives its own — -trigger, -calendar, -tab-date, -tab-time, -time-row, -time-wheel, -title, -close, -clear, -done." },
     children: { type: "ReactNode", description: "A custom anatomy." },
   }}
 />

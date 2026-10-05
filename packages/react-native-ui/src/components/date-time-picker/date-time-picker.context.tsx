@@ -70,8 +70,11 @@ export type DateTimePickerContextValue = {
 		disabled: readonly DateMatcher[] | undefined;
 		weekStartsOn: Weekday | "auto";
 		captionLayout: CalendarCaptionLayout;
+		today: CalendarDate | undefined;
 	};
 	wheel: { minuteStep: TimeMinuteStep; showSeconds: boolean };
+	/** The root's `testID`, which every part derives its own from. */
+	testID: string | undefined;
 };
 
 const DateTimePickerContext = createContext<DateTimePickerContextValue | null>(null);

@@ -1,6 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 import { View } from "react-native";
 import { BottomSheet } from "../bottom-sheet";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { Tabs } from "../tabs";
 import { useDateTimePickerPart } from "./date-time-picker.context";
 import {
@@ -67,8 +68,12 @@ function DateTimePickerTabs({ children }: { children?: ReactNode }): ReactElemen
 			>
 				<Tabs.List>
 					<Tabs.Indicator />
-					<Tabs.Trigger value="date">{picker.dateLabel}</Tabs.Trigger>
-					<Tabs.Trigger value="time">{picker.timeLabel}</Tabs.Trigger>
+					<Tabs.Trigger testID={resolvePartTestID(picker.testID, "tab-date")} value="date">
+						{picker.dateLabel}
+					</Tabs.Trigger>
+					<Tabs.Trigger testID={resolvePartTestID(picker.testID, "tab-time")} value="time">
+						{picker.timeLabel}
+					</Tabs.Trigger>
 				</Tabs.List>
 				<Tabs.Content value="date">
 					<View className={slots.panel()}>{date}</View>
@@ -129,8 +134,10 @@ export function DateTimePickerContent({
 			<BottomSheet.Overlay />
 			<BottomSheet.Container>
 				<BottomSheet.Content className={className}>
-					<BottomSheet.Close />
-					<BottomSheet.Title>{title ?? picker.title}</BottomSheet.Title>
+					<BottomSheet.Close testID={resolvePartTestID(picker.testID, "close")} />
+					<BottomSheet.Title testID={resolvePartTestID(picker.testID, "title")}>
+						{title ?? picker.title}
+					</BottomSheet.Title>
 					{panel}
 				</BottomSheet.Content>
 				<BottomSheet.Footer className={slots.footer()} sticky>

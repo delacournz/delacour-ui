@@ -1,6 +1,7 @@
 import { type ReactElement, useCallback } from "react";
 import { Calendar, type CalendarProps } from "../calendar";
 import type { CalendarDate } from "../calendar/calendar.date";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { useDateTimePickerPart } from "./date-time-picker.context";
 
 export type DateTimePickerCalendarProps = Omit<
@@ -52,6 +53,8 @@ export function DateTimePickerCalendar(props: DateTimePickerCalendarProps): Reac
 			maxDate={calendar.maxDate}
 			minDate={calendar.minDate}
 			swipeToPage={picker.layout !== "tabs"}
+			testID={resolvePartTestID(picker.testID, "calendar")}
+			today={calendar.today}
 			weekStartsOn={calendar.weekStartsOn}
 			{...props}
 			mode="single"

@@ -57,6 +57,10 @@
 				{
 					"from": "../calendar/calendar.date",
 					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -72,6 +76,10 @@
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -83,6 +91,10 @@
 				{
 					"from": "../bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				},
 				{
 					"from": "../tabs",
@@ -102,6 +114,10 @@
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -134,6 +150,10 @@
 					"to": "@registry/hooks/use-calm-motion"
 				},
 				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
+				},
+				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"
 				},
@@ -156,6 +176,10 @@
 			"target": "date-time-picker/date-time-picker-trigger.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
+				},
 				{
 					"from": "../date-picker/date-picker.variants",
 					"to": "@registry/ui/date-picker/date-picker.variants"

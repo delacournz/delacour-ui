@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The landing route: who answers, whether anyone is there, three ways in, and two past requests — one with a reply nobody has read, one that only moved.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const TEAM = ["Khalid Abdi", "Mere Tane", "Sofia Rossi"] as const;

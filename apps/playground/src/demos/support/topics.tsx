@@ -8,8 +8,9 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Topics",
 	caption:
-		"One request goes to one queue, so the topics are a radio group: one is ever selected, and pressing it again keeps it. Continue waits until one is picked.",
+		"One request goes to one queue, so the topics are a radio group: one is ever selected, and pressing it again keeps it. Continue waits until one is picked, and sending the request clears the form.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "support/topics", hero: true },
 };
 
 export function Demo(): ReactElement {
@@ -44,7 +45,7 @@ export function Demo(): ReactElement {
 					value="account"
 				/>
 			</Support.Topics>
-			<Button isDisabled={topic === null} onPress={() => {}} testID="support-continue">
+			<Button isDisabled={topic === null} onPress={() => setTopic(null)} testID="support-continue">
 				Continue
 			</Button>
 		</Support>

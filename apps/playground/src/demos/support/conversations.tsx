@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Every ticket status as a soft badge. The accent dot is a reply nobody has read; the grey one, a thread that moved with nothing new to read. Both are spoken in the row's label.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 type Request = {

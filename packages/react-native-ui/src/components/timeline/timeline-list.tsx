@@ -18,7 +18,10 @@ import { useTimelineReadingEdge } from "./use-timeline-reading-edge";
 
 type HorizontalOptions = Omit<Extract<TimelineOrientationProps, { orientation: "horizontal" }>, "orientation">;
 
-type TimelineListBaseProps<T> = Omit<FlatListProps<T>, "renderItem" | "horizontal" | "onScroll"> &
+type TimelineListBaseProps<T> = Omit<
+	FlatListProps<T>,
+	"renderItem" | "horizontal" | "onScroll" | "CellRendererComponent"
+> &
 	TimelineAxesProps & {
 		/** Returns a `Timeline.Item`. The list supplies its `step`, `isLast` and `width`. */
 		renderItem: (info: ListRenderItemInfo<T>) => ReactElement;

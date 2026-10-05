@@ -46,7 +46,16 @@ function colorTokens(cls: string): string[] {
 }
 
 /** The slots this component declares, pinned so a new one cannot escape the sweeps below. */
-const SLOT_NAMES = ["trigger", "backdrop", "chrome", "counter", "caption", "captionFrame", "error", "errorText"] as const;
+const SLOT_NAMES = [
+	"trigger",
+	"backdrop",
+	"chrome",
+	"counter",
+	"caption",
+	"captionFrame",
+	"error",
+	"errorText",
+] as const;
 
 describe("the media tokens", () => {
 	test("are declared in both themes and aliased", () => {

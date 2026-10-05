@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "A cap of three",
 	caption:
 		"`max={3}` caps both a tap and select-all. At the cap the rest stop going on, but a pick still comes off, and select-all reads Deselect all because there is nothing left for it to add.",
+	capture: { align: "stretch", flow: "selection-mode/max-limit" },
 };
 
 const TOPPINGS = [
@@ -28,7 +29,7 @@ export function Demo(): ReactElement {
 				max={3}
 				values={TOPPINGS.map((topping) => topping.id)}
 			>
-				<SelectionMode.Header title="Toppings" />
+				<SelectionMode.Header selectAllTestID="toppings-select-all" title="Toppings" />
 				<ScrollView contentContainerClassName="pt-3">
 					<SelectionMode.Group>
 						{TOPPINGS.map((topping) => (

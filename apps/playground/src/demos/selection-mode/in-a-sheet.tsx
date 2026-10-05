@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A composition rather than a part: the selection wraps the sheet, so its context reaches through the portal, and the bar sits in the sheet's own sticky footer instead of over the page.",
 	note: "The bar is made `relative` and transparent there, and leaves the inset to the footer, which already clears the home indicator.",
+	capture: { flow: "selection-mode/in-a-sheet", frame: "device" },
 };
 
 const SNAP_POINTS = ["60%"] as const;

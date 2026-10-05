@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/max-limit and has settled — six toppings, Olive and
+  Basil picked, the header reading "Toppings · 2 of 6" with Select all. The capture script navigates there before
+  running this.
+steps:
+  - echo: Select all stops at the cap of three and flips to Deselect all
+  - tap: { id: toppings-select-all }
+  - wait: 700
+  - echo: A fourth does not go on
+  - tap: { id: topping-pepper }
+  - wait: 700
+  - echo: But a pick still comes off, back to where the clip began
+  - tap: { id: topping-mushroom }
+  - wait: 600

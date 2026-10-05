@@ -100,9 +100,12 @@ Compound root plus twelve parts: `Header`, `Title`, `Today`, `Nav`, `Action`,
   delivers the key, so nothing slides and VoiceOver is not told about a month
   it is not looking at. The parts' effects run before the root's, which is
   what lets the grid read the direction before it is cleared.
-- **The swipe claims sideways fingers only.** `activeOffsetX([-20, 20])` and
-  `failOffsetY([-12, 12])`: a vertical scroll around the planner keeps its
-  scroll, and a tap on a day is still a tap. On release the grid always
+- **The swipe claims sideways fingers only, and claims them early.** `PLANNER_PAN`
+  — 10pt sideways to activate, 14pt vertical to fail, the `Tabs` pager's
+  numbers: a vertical scroll around the planner keeps its scroll, and a tap on
+  a day is still a tap. It was 20pt, and on iOS the stack's full-width back
+  swipe claimed a rightward drag first and popped the screen instead of paging
+  back a month; a test pins it at or under the pager's. On release the grid always
   settles back; an accepted month replaces that with its own slide, and a
   refused one leaves nothing half off-screen. `resolveSwipePage` decides —
   a quarter of the width, or a flick that is not flicking back — on the JS
@@ -135,8 +138,14 @@ Compound root plus twelve parts: `Header`, `Title`, `Today`, `Nav`, `Action`,
 - **A tile has room for one icon.** `resolveDayDisplay` shows the first entry
   on a tile whatever `entryLimit` says, and the rest are "+N". `default` draws
   a dot per distinct colour (up to three) and up to `entryLimit` icons;
-  `calendar` draws up to `entryLimit` blocks — three by default — then
-  "+N more".
+  `calendar` draws up to `entryLimit` lines — three by default.
+- **A calendar day never draws more lines than its limit.** "+N more" is a
+  line of its own, so on a day with overflow it takes the last of the
+  `entryLimit` lines instead of adding one: four entries at three draw two
+  blocks and "+2 more". Drawn as three blocks plus the line, the fourth line
+  spilled out of a `fill` cell into the week below. The cell also clips, so a
+  `fill` too short for even its limit cuts its own day off rather than drawing
+  over the next.
 - **Pressing a selected day clears it.** Without `Details` there is otherwise
   no way back to no selection. `onDayPress` fires first, every time, with the
   day's entries — the hook for pushing a screen instead of opening a sheet.

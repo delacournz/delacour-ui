@@ -12,7 +12,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import { cn } from "../../lib/cn";
 import { usePlannerPart } from "./planner.context";
 import type { PlannerDayRenderer } from "./planner.types";
-import { PLANNER_PAGE_DURATION, plannerVariants, resolveSwipePage } from "./planner.variants";
+import { PLANNER_PAGE_DURATION, PLANNER_PAN, plannerVariants, resolveSwipePage } from "./planner.variants";
 import { buildMonthGrid, toDayKey } from "./planner-dates";
 import { PlannerDay } from "./planner-day";
 import { PlannerWeekdays } from "./planner-weekdays";
@@ -35,7 +35,7 @@ const FADE_DURATION = 150;
  *
  * Always six weeks, so paging between a four-week February and a six-week
  * month never moves anything below it. A horizontal swipe pages a month — the
- * pan only claims a finger that has travelled 20pt sideways, and lets go of one
+ * pan only claims a finger that has travelled 10pt sideways, and lets go of one
  * that moves vertically first, so a scroll view around the planner keeps its
  * scroll and a tap on a day is still a tap. The new month slides in from the
  * side it was asked for over 220 ms, or crossfades under reduce motion.
@@ -86,8 +86,8 @@ export function PlannerGrid({
 
 		return Gesture.Pan()
 			.enabled(isSwipeEnabled)
-			.activeOffsetX([-20, 20])
-			.failOffsetY([-12, 12])
+			.activeOffsetX([-PLANNER_PAN.activateX, PLANNER_PAN.activateX])
+			.failOffsetY([-PLANNER_PAN.failY, PLANNER_PAN.failY])
 			.onUpdate((event) => {
 				"worklet";
 				if (!reduceMotion) translateX.value = event.translationX;

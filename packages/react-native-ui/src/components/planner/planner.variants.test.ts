@@ -1,10 +1,12 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
+import { TABS_PAN } from "../tabs/tabs.variants";
 import type { PlannerCategory, PlannerEntry } from "./planner.types";
 import {
 	countByCategory,
 	groupEntriesByDay,
 	PLANNER_COLOR_INDEXES,
+	PLANNER_PAN,
 	PLANNER_VARIANTS,
 	plannerVariants,
 	resolveDayDisplay,
@@ -77,10 +79,28 @@ describe("resolveEntryLimit", () => {
 describe("resolveDayDisplay", () => {
 	const five = ["a", "b", "c", "d", "e"].map((id) => entry(id, "2026-10-14"));
 
-	test("default and calendar show up to the limit and count the rest", () => {
+	test("default shows up to the limit and counts the rest", () => {
 		expect(resolveDayDisplay(five, "default", 2)).toEqual({ shown: five.slice(0, 2), overflow: 3 });
-		expect(resolveDayDisplay(five, "calendar", 3)).toEqual({ shown: five.slice(0, 3), overflow: 2 });
 		expect(resolveDayDisplay(five.slice(0, 2), "default", 2)).toEqual({ shown: five.slice(0, 2), overflow: 0 });
+	});
+
+	// Four entries at a limit of three drew three blocks and a "+1 more" line —
+	// four lines in a cell sized for three, spilling into the week below.
+	test("calendar's \"+N more\" takes the last of the limit's lines, so a day never draws more than the limit", () => {
+		expect(resolveDayDisplay(five, "calendar", 3)).toEqual({ shown: five.slice(0, 2), overflow: 3 });
+		expect(resolveDayDisplay(five.slice(0, 4), "calendar", 3)).toEqual({ shown: five.slice(0, 2), overflow: 2 });
+		for (let limit = 1; limit <= 5; limit++) {
+			for (let count = 0; count <= 5; count++) {
+				const { shown, overflow } = resolveDayDisplay(five.slice(0, count), "calendar", limit);
+				expect(shown.length + (overflow > 0 ? 1 : 0)).toBeLessThanOrEqual(Math.max(limit, 1));
+				expect(shown.length + overflow).toBe(count);
+			}
+		}
+	});
+
+	test("a calendar limit of one is all overflow line once there is more than one entry", () => {
+		expect(resolveDayDisplay(five.slice(0, 1), "calendar", 1)).toEqual({ shown: five.slice(0, 1), overflow: 0 });
+		expect(resolveDayDisplay(five.slice(0, 2), "calendar", 1)).toEqual({ shown: [], overflow: 2 });
 	});
 
 	test("a full limit is not reported as overflow", () => {
@@ -184,6 +204,18 @@ describe("resolvePlannerDayLabel", () => {
 		expect(resolvePlannerDayLabel({ date, entries: [], categories: CATEGORIES, isToday: true, locale: "en-NZ" })).toBe(
 			"Wednesday, 14 October, no entries, today"
 		);
+	});
+});
+
+describe("PLANNER_PAN", () => {
+	// At 20pt iOS's full-width back swipe claimed a rightward drag on the grid
+	// first and popped the screen; Tabs' pager, at 10pt, keeps it.
+	test("claims a sideways drag as early as the Tabs pager, so the stack's back swipe does not win", () => {
+		expect(PLANNER_PAN.activateX).toBeLessThanOrEqual(TABS_PAN.activateX);
+	});
+
+	test("gives up a vertical drag before it claims a sideways one", () => {
+		expect(PLANNER_PAN.failY).toBeGreaterThan(PLANNER_PAN.activateX);
 	});
 });
 

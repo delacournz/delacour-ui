@@ -21,6 +21,7 @@ export {
 	PLANNER_COLOR_INDEXES,
 	PLANNER_ENTRY_LIMITS,
 	PLANNER_PAGE_DURATION,
+	PLANNER_PAN,
 	PLANNER_VARIANTS,
 	type PlannerCategoryCount,
 	type PlannerColorIndex,

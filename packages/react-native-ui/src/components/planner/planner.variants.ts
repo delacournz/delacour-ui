@@ -24,6 +24,15 @@ export const PLANNER_ENTRY_LIMITS: Record<PlannerVariant, number> = { default: 2
 /** The duration of a month's slide, in ms. */
 export const PLANNER_PAGE_DURATION = 220;
 
+/**
+ * Where the grid's swipe claims a drag and where it lets one go, in points.
+ *
+ * The same thresholds as the `Tabs` pager. At 20pt iOS's full-width back
+ * swipe claimed a rightward drag first and popped the screen instead of
+ * paging back a month.
+ */
+export const PLANNER_PAN = { activateX: 10, failY: 14 } as const;
+
 /** A drag this fraction of the grid's width pages a month. */
 export const PLANNER_SWIPE_DISTANCE = 0.25;
 
@@ -90,7 +99,12 @@ export const plannerVariants = tv({
 		variant: {
 			default: { cell: "h-16" },
 			tiles: { cell: "aspect-square" },
-			calendar: { cell: "min-h-24", day: "items-start gap-0.5", marker: "ml-0.5 size-6", markerFill: "size-5" },
+			calendar: {
+				cell: "min-h-24 overflow-hidden",
+				day: "items-start gap-0.5",
+				marker: "ml-0.5 size-6",
+				markerFill: "size-5",
+			},
 		},
 		fill: {
 			true: { root: "flex-1", grid: "flex-1", week: "flex-1", cell: "h-auto min-h-0" },
@@ -159,7 +173,9 @@ export function groupEntriesByDay(entries: readonly PlannerEntry[]): Map<string,
  * What a day draws and how many it leaves to a "+N".
  *
  * A tile has room for one icon whatever the limit, so the rest of its entries
- * are the overflow.
+ * are the overflow. A `calendar` day's "+N more" is a line of its own, so when
+ * there is overflow it takes the last of the limit's lines rather than adding
+ * one — a day never draws more lines than the cell was sized for.
  */
 export function resolveDayDisplay(
 	entries: readonly PlannerEntry[],
@@ -167,7 +183,8 @@ export function resolveDayDisplay(
 	entryLimit: number
 ): { shown: readonly PlannerEntry[]; overflow: number } {
 	const limit = variant === "tiles" ? 1 : Math.max(1, entryLimit);
-	const shown = entries.slice(0, limit);
+	const fits = entries.length <= limit;
+	const shown = entries.slice(0, variant === "calendar" && !fits ? limit - 1 : limit);
 	return { shown, overflow: entries.length - shown.length };
 }
 

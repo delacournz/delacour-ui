@@ -892,6 +892,49 @@
 			]
 		},
 		{
+			"name": "number-input",
+			"type": "registry:ui",
+			"title": "Number Input",
+			"description": "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"cn",
+				"compose-refs",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/number-input/AGENTS.md",
+				"ui/number-input/index.ts",
+				"ui/number-input/number-input-decrement.tsx",
+				"ui/number-input/number-input-field.tsx",
+				"ui/number-input/number-input-increment.tsx",
+				"ui/number-input/number-input-stepper.tsx",
+				"ui/number-input/number-input.context.tsx",
+				"ui/number-input/number-input.format.ts",
+				"ui/number-input/number-input.tsx",
+				"ui/number-input/number-input.types.ts",
+				"ui/number-input/number-input.variants.ts",
+				"ui/number-input/use-step-repeat.ts"
+			]
+		},
+		{
 			"name": "pressable",
 			"type": "registry:ui",
 			"title": "Pressable",

@@ -204,6 +204,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A surface grouping related rows, with dividers inserted automatically.",
 		categories: ["layout"],
 	},
+	"number-input": {
+		title: "Number Input",
+		description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur.",
+		categories: ["forms"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

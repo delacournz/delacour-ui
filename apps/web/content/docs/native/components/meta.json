@@ -47,6 +47,7 @@
 		"screen",
 		"surface",
 		"card",
+		"scroll-canvas",
 		"---Utilities---",
 		"provider"
 	]

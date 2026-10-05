@@ -226,6 +226,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "scroll-canvas",
+		name: "ScrollCanvas",
+		group: "Layout",
+		blurb: "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

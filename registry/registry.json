@@ -1115,6 +1115,38 @@
 			]
 		},
 		{
+			"name": "scroll-canvas",
+			"type": "registry:ui",
+			"title": "ScrollCanvas",
+			"description": "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"tv",
+				"use-calm-motion",
+				"use-scroll-source"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/scroll-canvas/AGENTS.md",
+				"ui/scroll-canvas/index.ts",
+				"ui/scroll-canvas/scroll-canvas-image.tsx",
+				"ui/scroll-canvas/scroll-canvas-sequence.tsx",
+				"ui/scroll-canvas/scroll-canvas.tsx",
+				"ui/scroll-canvas/scroll-canvas.types.ts",
+				"ui/scroll-canvas/scroll-canvas.variants.ts",
+				"ui/scroll-canvas/use-frame-progress.ts"
+			]
+		},
+		{
 			"name": "scroll-edges",
 			"type": "registry:lib",
 			"title": "scrollEdges",

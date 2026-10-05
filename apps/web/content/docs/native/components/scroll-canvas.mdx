@@ -1,0 +1,166 @@
+---
+title: ScrollCanvas
+description: An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.
+icon: Image
+---
+
+## Installation
+
+<ComponentInstall name="scroll-canvas" />
+
+## Usage
+
+Inside a `Screen` there is nothing to wire: the screen is the scroll source. Put the canvas
+directly in the scroll content.
+
+```tsx title="app/article.tsx"
+import { Screen } from "@/components/ui/screen";
+import { ScrollCanvas } from "@/components/ui/scroll-canvas";
+import { Text } from "@/components/ui/text";
+
+export default function Article() {
+  return (
+    <Screen>
+      <Screen.ScrollArea>
+        <ScrollCanvas accessibilityLabel="Fog over a mountain ridge" source={require("./ridge.jpg")} />
+        <Text.Paragraph>The track drops into beech forest after the saddle.</Text.Paragraph>
+      </Screen.ScrollArea>
+    </Screen>
+  );
+}
+```
+
+## Your own scrollable
+
+Outside a `Screen`, make a source for the scrollable with `useScrollSource` and spread its props
+onto it. Nothing clones the scroll view for you.
+
+```tsx
+import { useScrollSource } from "@/hooks/use-scroll-source";
+import Animated from "react-native-reanimated";
+
+function Story() {
+  const { source, scrollProps } = useScrollSource();
+
+  return (
+    <Animated.ScrollView {...scrollProps}>
+      <ScrollCanvas scrollSource={source} source={hero} />
+    </Animated.ScrollView>
+  );
+}
+```
+
+## Effects
+
+The frame is the layout and never moves on its own; only the picture inside it does. Every effect
+moves by `transform` alone, on the UI thread, so nothing re-lays out mid-scroll.
+
+### Parallax
+
+The default. The picture drifts against the scroll, so it seems to sit further away than the page.
+It is oversized by `distance` (a share of the frame height, each way) and never shows a frame edge at
+either end of its travel. It runs for the frame's whole time on screen.
+
+```tsx
+<ScrollCanvas source={hero} />
+<ScrollCanvas distance={0.35} source={hero} />
+```
+
+### Zoom
+
+The picture enters oversized by `distance` and settles to its natural size by the time the frame's
+top is 30% down the view.
+
+```tsx
+<ScrollCanvas effect="zoom" distance={0.3} source={hero} />
+```
+
+### Reveal
+
+A cover in the page's colour retreats upward as the frame rises, uncovering the picture from its
+bottom edge. `coverClassName` restyles it — `bg-card` inside a card, say.
+
+```tsx
+<ScrollCanvas effect="reveal" source={hero} />
+```
+
+### Sequence
+
+Scroll position picks which of N frames is showing — a product turning, a diagram assembling. Each
+band of progress is one frame, with no cross-fade, so a slow drag scrubs and stops on a frame. At rest
+above its window it shows frame 0: make that the poster.
+
+```tsx
+<ScrollCanvas effect="sequence" sources={spinFrames} />
+```
+
+<Callout type="warn">
+Every frame of a sequence is mounted at once, so it is memory, not bandwidth, that runs out. Keep it
+to 20–30 frames, exported at the size the canvas draws them rather than at full resolution. More
+than 30 warns in development.
+</Callout>
+
+## The window
+
+`start` and `end` say where the effect runs, in viewport terms: where the frame's top sits when it
+begins and when it is complete. `1` is the bottom edge, `0` the top, and a negative value is past the
+top. Every effect starts at `1`, as the frame enters. Parallax ends as the frame leaves; the others
+end at `0.3`. Set them equal for a step.
+
+```tsx
+<ScrollCanvas effect="zoom" start={0.9} end={0.6} source={hero} />
+```
+
+To drive an effect from something other than the scroll — a pager's position, a gesture — pass a
+`progress` shared value from 0 to 1 instead. Nothing is measured, and no scroll source is needed.
+
+## Where the frame is
+
+The effect needs the frame's top in the scroll content. How it finds it depends on the source:
+
+| Source | Measured by | Holds when |
+| --- | --- | --- |
+| `useScrollSource` | `measureLayout` against the scroller, re-run when the content size changes | always — the canvas may be nested at any depth |
+| A `Screen` | the frame's own `onLayout` | the canvas is a **direct child** of the scroll content |
+| `progress` | nothing | always |
+
+Inside a `Screen`, wrapping a canvas in a card or a `View` offsets its window by the wrapper's top.
+Pass a `useScrollSource` source or `progress` there instead.
+
+## Reduced motion
+
+A picture moving independently of the finger is a vestibular trigger, so with Reduce Motion on — or
+`DelacourProvider`'s [`isMotionCalm`](/docs/native/getting-started/provider), or `enabled={false}` —
+every effect draws its resting state: parallax centred, zoom at natural size, reveal uncovered, a
+sequence on frame 0. Nothing shifts when the setting flips. A canvas with `enabled={false}` needs no
+scroll source at all.
+
+## Accessibility
+
+Give the canvas an `accessibilityLabel` and it is one image to a screen reader — a sequence is
+announced once, never per frame. Leave it off and the canvas is decorative and hidden. A sequence
+should carry nothing a single frame does not: the motion is decoration.
+
+## API Reference
+
+### ScrollCanvas
+
+<TypeTable
+  type={{
+    effect: { type: '"parallax" | "zoom" | "reveal" | "sequence"', default: '"parallax"', description: "What moves inside the frame." },
+    source: { type: "ImageSourcePropType", description: "The picture. Every effect but `sequence`." },
+    sources: { type: "readonly ImageSourcePropType[]", description: "The frames, in scroll order. `sequence` only." },
+    aspectRatio: { type: "number", default: "16 / 10", description: "Frame width over height." },
+    distance: { type: "number", default: "0.2", description: "Parallax travel or zoom overscale, as a share of the frame. Clamped 0–1." },
+    start: { type: "number", default: "1", description: "Where the frame's top sits in the viewport when the effect starts." },
+    end: { type: "number", default: "parallax: as the frame leaves; others: 0.3", description: "Where it sits when the effect is complete." },
+    progress: { type: "SharedValue<number>", description: "Drive the effect directly, 0–1. Skips measurement." },
+    scrollSource: { type: "ScrollSource", description: "Otherwise the nearest provider — a `Screen` counts." },
+    enabled: { type: "boolean", default: "true", description: "Off, the resting state is drawn and no source is needed." },
+    accessibilityLabel: { type: "string", description: "Describes the picture. Unset, the canvas is decorative." },
+    resizeMode: { type: '"cover" | "contain" | "stretch" | "center"', default: '"cover"' },
+    coverClassName: { type: "string", default: '"bg-background"', description: "`reveal` only: the retreating cover." },
+    className: { type: "string", description: "The frame." },
+    imageClassName: { type: "string", description: "The picture, or each frame." },
+  }}
+/>

@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`minTime` and `maxTime` dim every row outside 9:00 to 17:30. A wheel that comes to rest on one moves back to the nearest time that can be picked.",
 	align: "stretch",
+	capture: { flow: "time-picker/bounds", align: "stretch" },
 };
 
 const OPENS: TimeValue = { hour: 9, minute: 0 };

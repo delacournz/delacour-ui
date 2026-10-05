@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -146,6 +147,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Accordion",
 		group: "Data display",
 		blurb: "Sections that expand and collapse, animated from a measured height.",
+	},
+	{
+		slug: "message-scroller",
+		name: "MessageScroller",
+		group: "Media",
+		blurb:
+			"A conversation list that sticks to the newest message, jumps back with an unread count and loads older history.",
 	},
 	{
 		slug: "alert",

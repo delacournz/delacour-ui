@@ -241,7 +241,8 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	input: {
 		title: "Input",
-		description: "A text field, with a group that puts a prefix or suffix inside its border.",
+		description:
+			"A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border.",
 		categories: ["forms"],
 	},
 	item: {

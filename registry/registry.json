@@ -978,6 +978,45 @@
 			]
 		},
 		{
+			"name": "qr-code",
+			"type": "registry:ui",
+			"title": "QRCode",
+			"description": "A string a camera can read, drawn as one vector path, with an optional centre logo.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/qr-code/AGENTS.md",
+				"ui/qr-code/index.ts",
+				"ui/qr-code/qr-code-logo.tsx",
+				"ui/qr-code/qr-code.constants.ts",
+				"ui/qr-code/qr-code.context.tsx",
+				"ui/qr-code/qr-code.encode.ts",
+				"ui/qr-code/qr-code.format.ts",
+				"ui/qr-code/qr-code.gf.ts",
+				"ui/qr-code/qr-code.logo.ts",
+				"ui/qr-code/qr-code.mask.ts",
+				"ui/qr-code/qr-code.matrix.ts",
+				"ui/qr-code/qr-code.path.ts",
+				"ui/qr-code/qr-code.tables.ts",
+				"ui/qr-code/qr-code.tsx",
+				"ui/qr-code/qr-code.types.ts",
+				"ui/qr-code/qr-code.variants.ts",
+				"ui/qr-code/qr-code.warn.ts",
+				"ui/qr-code/use-qr-code.ts"
+			]
+		},
+		{
 			"name": "radio",
 			"type": "registry:ui",
 			"title": "Radio",

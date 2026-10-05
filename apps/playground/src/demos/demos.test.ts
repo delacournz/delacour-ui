@@ -40,6 +40,16 @@ const COMPONENTS = join(REPO, "packages", "react-native-ui", "src", "components"
  */
 const COMPONENTS_WITHOUT_DEMOS = new Set(["provider"]);
 
+/**
+ * Components whose demos opt into capture but have not been shot yet.
+ *
+ * A media component is built on its own branch, with no simulator lease to
+ * spare, and its media is recaptured by the lead once the category is merged —
+ * so its `meta.capture` and `hero` are written ahead of the files. Each entry
+ * here is a capture still owed; delete it in the commit that adds the media.
+ */
+const AWAITING_FIRST_CAPTURE = new Set(["qr-code"]);
+
 function demoFiles(): string[] {
 	const found: string[] = [];
 	const walk = (dir: string): void => {
@@ -161,7 +171,8 @@ describe("demos", () => {
 describe("captured previews", () => {
 	test("every captured demo has a manifest entry", () => {
 		const ids = new Set(manifestIds());
-		expect(capturedIds().filter((id) => !ids.has(id))).toEqual([]);
+		const owed = (id: string): boolean => AWAITING_FIRST_CAPTURE.has(id.split("/")[0] as string);
+		expect(capturedIds().filter((id) => !ids.has(id) && !owed(id))).toEqual([]);
 	});
 
 	test("every manifest entry's media exists", () => {
@@ -192,6 +203,13 @@ describe("captured previews", () => {
 });
 
 describe("coverage", () => {
+	// An owed capture is a promise, not an exemption: once its media lands the
+	// entry must go, or the next component's missing shots would hide behind it.
+	test("nothing awaits a capture it already has", () => {
+		const shot = new Set(manifestIds().map((id) => id.split("/")[0] as string));
+		expect([...AWAITING_FIRST_CAPTURE].filter((component) => shot.has(component))).toEqual([]);
+	});
+
 	// The assertion that would have caught Radio.
 	test("every component in the library has at least one demo", () => {
 		const folders = readdirSync(COMPONENTS, { withFileTypes: true })

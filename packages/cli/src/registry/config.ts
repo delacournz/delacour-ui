@@ -224,6 +224,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
 		categories: ["feedback"],
 	},
+	"qr-code": {
+		title: "QRCode",
+		description: "A string a camera can read, drawn as one vector path, with an optional centre logo.",
+		categories: ["media"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",

@@ -121,6 +121,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	breadcrumb: {
+		title: "Breadcrumb",
+		description:
+			"The path to the current screen: links back up each level, the current page last, with automatic separators, a collapsing middle or a scrolling trail.",
+		categories: ["navigation"],
+	},
 	button: {
 		title: "Button",
 		description: "A pressable action composed from parts, with variants, sizes and a loading state.",

@@ -1,0 +1,155 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "breadcrumb",
+	"type": "registry:ui",
+	"title": "Breadcrumb",
+	"description": "The path to the current screen: links back up each level, the current page last, with automatic separators, a collapsing middle or a scrolling trail.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/AGENTS.md",
+			"target": "breadcrumb/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/breadcrumb",
+					"to": "@registry/ui/breadcrumb"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-ellipsis.tsx",
+			"target": "breadcrumb/breadcrumb-ellipsis.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-glyph.tsx",
+			"target": "breadcrumb/breadcrumb-glyph.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-item.tsx",
+			"target": "breadcrumb/breadcrumb-item.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-link.tsx",
+			"target": "breadcrumb/breadcrumb-link.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-list.tsx",
+			"target": "breadcrumb/breadcrumb-list.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-page.tsx",
+			"target": "breadcrumb/breadcrumb-page.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb-separator.tsx",
+			"target": "breadcrumb/breadcrumb-separator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.context.tsx",
+			"target": "breadcrumb/breadcrumb.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.tsx",
+			"target": "breadcrumb/breadcrumb.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.types.ts",
+			"target": "breadcrumb/breadcrumb.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/breadcrumb.variants.ts",
+			"target": "breadcrumb/breadcrumb.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/breadcrumb/index.ts",
+			"target": "breadcrumb/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

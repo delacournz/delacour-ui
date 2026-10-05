@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Upload states",
 	note: "The app owns the upload and hands the attachment its `status`. Uploading draws a bar — determinate with a `progress`, looping without — and remove becomes cancel. An error edges it in the destructive colour, shows the app's message and offers retry.",
-	capture: { align: "stretch" },
+	capture: { align: "stretch", flow: "attachment/upload-states", hero: true },
 };
 
 const TICK_MS = 120;
@@ -55,6 +55,8 @@ export function Demo(): ReactElement {
 				name="elevation.png"
 				onRemove={() => setFailed({ message: "The connection dropped.", type: "error" })}
 				onRetry={() => setFailed({ type: "done" })}
+				removeTestID="attachment-upload-error-remove"
+				retryTestID="attachment-upload-error-retry"
 				sizeBytes={907_264}
 				source={{ uri: "https://picsum.photos/seed/elevation/240" }}
 				status={failed}

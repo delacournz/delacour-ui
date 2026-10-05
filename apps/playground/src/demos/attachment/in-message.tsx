@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Inside a message",
 	note: "A `card` is the attachment's home in a conversation: full width, read-only, tapped to open. The bubble here is a plain view — the attachment only needs to be its child.",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

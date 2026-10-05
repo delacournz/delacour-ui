@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Layouts",
 	note: "`chip` is the composer pill, `tile` a square thumbnail for a photo tray, `card` a full-width row for inside a message.",
-	capture: { align: "stretch", hero: true },
+	capture: { align: "stretch" },
 };
 
 const PHOTO = { uri: "https://picsum.photos/seed/terrace/320" };

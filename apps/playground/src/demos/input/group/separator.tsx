@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Separator",
 	caption: "`Input.Group.Separator` draws a hairline between a decorator and the field — vertical in the row.",
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

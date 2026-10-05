@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A decorator holding only text or an `Icon` is decorative: screen readers skip it and a tap on it focuses the field. Name the field itself with an `accessibilityLabel` when the affix carries meaning.",
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

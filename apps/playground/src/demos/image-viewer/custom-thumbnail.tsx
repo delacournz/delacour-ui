@@ -8,7 +8,8 @@ export const meta: DemoMeta = {
 	title: "Custom thumbnail",
 	align: "stretch",
 	caption:
-		"Children replace the drawn thumbnail — here a card with a title under the photo. The viewer still opens on the Trigger's own image.",
+		"Children replace the drawn thumbnail — here a list row with the photo beside its title. The viewer still opens on the Trigger's own image.",
+	capture: { align: "stretch" },
 };
 
 const SOURCE = { uri: "https://picsum.photos/seed/cabin/800/600" };
@@ -25,12 +26,14 @@ export function Demo(): ReactElement {
 				source={SOURCE}
 				width={800}
 			>
-				<Image className="aspect-[4/3] w-full" source={SOURCE} />
-				<View className="gap-1 p-3">
-					<Text weight="semibold">Hut, second night</Text>
-					<Text color="muted" size="sm">
-						Tap to view full screen
-					</Text>
+				<View className="flex-row items-center gap-3 p-2">
+					<Image className="h-16 w-20 rounded-md" source={SOURCE} />
+					<View className="flex-1 gap-0.5">
+						<Text weight="semibold">Hut, second night</Text>
+						<Text color="muted" size="sm">
+							Tap to view full screen
+						</Text>
+					</View>
 				</View>
 			</ImageViewer.Trigger>
 		</ImageViewer>

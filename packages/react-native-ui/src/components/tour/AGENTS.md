@@ -70,7 +70,9 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 - **A `Modal` cannot be interactive.** It is a separate native window, so no touch inside the hole
   could reach the app beneath. With `isInteractive` the overlay is drawn inside `Tour`'s own root
   instead — the root is a `flex-1` `View` for exactly this — as `StyleSheet.absoluteFill` with
-  `pointerEvents="box-none"`. The scrim becomes four `Pressable`s tiling the window around the
+  `pointerEvents="box-none"`. The children sit in an inner `grow` view, not `flex-1`: a zero
+  flex basis collapses them to nothing when the root sits in an auto-height parent such as a
+  scroll view, which the simulator showed as a toolbar drawn zero-high. The scrim becomes four `Pressable`s tiling the window around the
   hole (`resolveScrimRects`), following it on the UI thread, so a touch inside the hole meets
   nothing in the overlay and falls through. The app advances with `useTour().next()`.
 - **The trade:** an interactive tour covers only the tour's root, not the status bar or a tab bar

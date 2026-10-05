@@ -199,7 +199,7 @@ function TourRoot({
 				<View className={tourVariants().root({ className })} collapsable={false} ref={rootRef}>
 					<View
 						accessibilityElementsHidden={isAppHidden}
-						className="flex-1"
+						className="grow"
 						importantForAccessibility={isAppHidden ? "no-hide-descendants" : "auto"}
 					>
 						{children}

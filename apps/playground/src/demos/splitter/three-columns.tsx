@@ -7,7 +7,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Three columns",
 	note: "Any number of panes, one handle between each pair. A handle moves only the two panes either side of it, so dragging the second seam never shifts the first column.",
-	capture: { align: "stretch" },
 };
 
 const COLUMNS = ["Files", "Editor", "Inspector"] as const;

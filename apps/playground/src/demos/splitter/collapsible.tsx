@@ -8,7 +8,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Collapsible",
 	note: "isCollapsible lets a pane fold away: drag it past half its minSize and it snaps to collapsedSize; drag back over that line and it reopens at its floor. useSplitter() hands a custom child togglePane, so a button can do the same.",
-	capture: { align: "stretch" },
 };
 
 function ToggleSidebar(): ReactElement {

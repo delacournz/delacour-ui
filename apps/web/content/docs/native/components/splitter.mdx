@@ -4,8 +4,6 @@ description: Two or more panes divided by draggable, adjustable handles, sized i
 icon: Columns2
 ---
 
-<Preview id="splitter/anatomy" title={null} />
-
 ## Installation
 
 <ComponentInstall name="splitter" />
@@ -43,8 +41,6 @@ size divides nothing.
 
 `variant="panes"` gives each pane its own card surface, with a gap in place of the seam's rule.
 
-<Preview id="splitter/panes" />
-
 ```tsx
 <Splitter className="h-64" variant="panes">
   <Splitter.Pane />
@@ -56,8 +52,6 @@ size divides nothing.
 ## Three columns
 
 Any number of panes, one handle between each pair; a handle moves only the two panes beside it.
-
-<Preview id="splitter/three-columns" />
 
 ```tsx
 <Splitter className="h-64" defaultLayout={[25, 50, 25]}>
@@ -73,8 +67,6 @@ Any number of panes, one handle between each pair; a handle moves only the two p
 
 `orientation="vertical"` stacks the panes and drags along y.
 
-<Preview id="splitter/vertical" />
-
 ```tsx
 <Splitter className="h-80" orientation="vertical" defaultLayout={[60, 40]}>
   <Splitter.Pane minSize={25} />
@@ -86,8 +78,6 @@ Any number of panes, one handle between each pair; a handle moves only the two p
 ## Collapsible
 
 A collapsible pane folds away once dragged past half its `minSize`, and `useSplitter()` can toggle it.
-
-<Preview id="splitter/collapsible" />
 
 ```tsx
 function ToggleSidebar() {

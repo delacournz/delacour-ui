@@ -3918,7 +3918,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 97,
+		fileCount: 109,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -3936,6 +3936,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-handle.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-handle.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-legend-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-legend-list.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-provider.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-scroll-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-section-list.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-section-list.tsx" },
 					{ source: "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-steps.tsx", target: "src/components/ui/bottom-sheet/bottom-sheet-steps.tsx" },
@@ -4062,6 +4063,24 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/input/input.tsx", target: "src/components/ui/input/input.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.types.ts", target: "src/components/ui/input/input.types.ts" },
 					{ source: "packages/react-native-ui/src/components/input/input.variants.ts", target: "src/components/ui/input/input.variants.ts" },
+				],
+			},
+			{
+				name: "overlay",
+				title: "Overlay",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/overlay/AGENTS.md", target: "src/components/ui/overlay/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/overlay/index.ts", target: "src/components/ui/overlay/index.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-portal.tsx", target: "src/components/ui/overlay/overlay-portal.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
 				],
 			},
 			{

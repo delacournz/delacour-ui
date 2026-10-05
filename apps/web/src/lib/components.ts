@@ -196,6 +196,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One number, its change coloured by what it means, and a sparkline of how it got there.",
 	},
 	{
+		slug: "timeline",
+		name: "Timeline",
+		group: "Data display",
+		blurb: "Dated events down a rail or across a snapping strip — progress fills the rail, tone tints the marker.",
+	},
+	{
 		slug: "planner",
 		name: "Planner",
 		group: "Data display",

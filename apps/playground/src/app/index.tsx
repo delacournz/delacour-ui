@@ -192,6 +192,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"tag-input": IconHashtag,
 	text: IconFontStyle,
 	textarea: IconNoteText,
+	timeline: IconClock,
 	"theme-selector": IconCircleHalfFill,
 	"time-picker": IconClock,
 	"toggle-button": IconBold,

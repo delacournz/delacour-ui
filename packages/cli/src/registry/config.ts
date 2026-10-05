@@ -601,6 +601,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
 		categories: ["layout"],
 	},
+	timeline: {
+		title: "Timeline",
+		description:
+			"Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories.",
+		categories: ["display"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

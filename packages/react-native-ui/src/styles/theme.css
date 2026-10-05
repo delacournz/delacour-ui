@@ -350,6 +350,10 @@
 			--spacing-chart-sm: 160px;
 			--spacing-chart-md: 220px;
 			--spacing-chart-lg: 280px;
+
+			--spacing-fab-sm: 44px;
+			--spacing-fab-md: 56px;
+			--spacing-fab-lg: 64px;
 		}
 	}
 }

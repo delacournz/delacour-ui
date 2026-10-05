@@ -38,6 +38,7 @@ const SLOTS = [
 	"scaleLabels",
 	"footer",
 	"spacer",
+	"action",
 ] as const;
 
 /** A slot's class string, with `tv`'s empty-slot `undefined` flattened. */
@@ -220,6 +221,13 @@ describe("questionnaireVariants", () => {
 				/\b(?:bg|text|border)-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose|black|white)\b/
 			);
 		}
+	});
+});
+
+describe("the dimmed action", () => {
+	test("fades without disabling", () => {
+		expect(cls(questionnaireVariants({ isDimmed: true }).action())).toBe("opacity-50");
+		expect(cls(questionnaireVariants({ isDimmed: false }).action())).toBe("");
 	});
 });
 

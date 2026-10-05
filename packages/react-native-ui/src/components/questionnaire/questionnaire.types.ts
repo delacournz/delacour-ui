@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { ButtonProps } from "../button";
 import type { HapticFeedback } from "../pressable";
 import type { QuestionnaireSize, QuestionnaireVariant } from "./questionnaire.variants";
 
@@ -61,7 +62,13 @@ export type Question =
 			/** Caption under the high end — "Very likely". */
 			maxLabel?: string;
 	  })
-	| (QuestionBase & { kind: "yesNo" });
+	| (QuestionBase & {
+			kind: "yesNo";
+			/** The first button's text. Default "Yes". */
+			yesLabel?: string;
+			/** The second button's text. Default "No". */
+			noLabel?: string;
+	  });
 
 export type QuestionKind = Question["kind"];
 
@@ -160,3 +167,10 @@ export type QuestionnaireProps = {
 	/** The anatomy. With none, renders Title-less Progress, Question and the default Footer. */
 	children?: ReactNode;
 };
+
+/**
+ * What Back, Skip, Next and Submit take — a `Button`'s props, with the press
+ * owned by the questionnaire. A caller's `onPress` still runs, after the
+ * questionnaire's action; `size` follows the questionnaire unless named.
+ */
+export type QuestionnaireButtonProps = ButtonProps;

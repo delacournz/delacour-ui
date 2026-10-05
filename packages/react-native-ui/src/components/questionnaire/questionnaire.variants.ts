@@ -63,6 +63,7 @@ export const questionnaireVariants = tv({
 		scaleLabels: "flex-row justify-between",
 		footer: "flex-row items-center",
 		spacer: "flex-1",
+		action: "",
 	},
 	variants: {
 		size: {
@@ -92,6 +93,14 @@ export const questionnaireVariants = tv({
 				footer: "gap-3",
 			},
 		},
+		/**
+		 * Next and Submit while the current answer would not pass: faded, and
+		 * still pressable, so a press can say why. Not `isDisabled`.
+		 */
+		isDimmed: {
+			true: { action: "opacity-50" },
+			false: {},
+		},
 		isFramed: {
 			true: {
 				root: "overflow-hidden",
@@ -111,6 +120,7 @@ export const questionnaireVariants = tv({
 		{ isFramed: false, size: "lg", class: { root: "gap-5" } },
 	],
 	defaultVariants: {
+		isDimmed: false,
 		isFramed: true,
 		size: "md",
 	},

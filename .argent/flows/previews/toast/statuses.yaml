@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/statuses and has settled — five status buttons, no toast on
+  screen. The capture script navigates there before running this.
+steps:
+  - echo: A plain toast
+  - tap: { id: toast-status-default }
+  - await: { visible: { text: Link copied } }
+  - wait: 900
+  - echo: A success, then a failure, stacking in front
+  - tap: { id: toast-status-success }
+  - await: { visible: { text: Changes saved } }
+  - wait: 900
+  - tap: { id: toast-status-destructive }
+  - await: { visible: { text: Upload failed } }
+  - wait: 1800

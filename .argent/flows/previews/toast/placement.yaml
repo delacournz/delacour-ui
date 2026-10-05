@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/placement and has settled — Top and Bottom buttons, no toast on
+  screen. The capture script navigates there before running this.
+steps:
+  - echo: From the top
+  - tap: { id: toast-placement-top }
+  - await: { visible: { text: From the top } }
+  - wait: 900
+  - echo: From the bottom
+  - tap: { id: toast-placement-bottom }
+  - await: { visible: { text: From the bottom } }
+  - wait: 1800

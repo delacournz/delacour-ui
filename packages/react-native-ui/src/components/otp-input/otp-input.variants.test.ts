@@ -14,34 +14,35 @@ const BOOLEANS = [false, true] as const;
 /** Every border colour a cell can draw. */
 const BORDER_COLOURS = new Set(["border-input", "border-transparent", "border-ring", "border-destructive"]);
 
+/** Every combination of the boolean state axes. */
+function stateMatrix(): { isActive: boolean; isDisabled: boolean; isFilled: boolean; isInvalid: boolean }[] {
+	return BOOLEANS.flatMap((isActive) =>
+		BOOLEANS.flatMap((isInvalid) =>
+			BOOLEANS.flatMap((isDisabled) => BOOLEANS.map((isFilled) => ({ isActive, isDisabled, isFilled, isInvalid })))
+		)
+	);
+}
+
 /** Every class string `otpInputVariants` can emit, across the whole matrix. */
 function everyClass(): string[] {
-	const out: string[] = [];
-	for (const variant of INPUT_VARIANTS) {
-		for (const size of INPUT_SIZES) {
-			for (const isActive of BOOLEANS) {
-				for (const isInvalid of BOOLEANS) {
-					for (const isDisabled of BOOLEANS) {
-						for (const isFilled of BOOLEANS) {
-							const slots = otpInputVariants({ isActive, isDisabled, isFilled, isInvalid, size, variant });
-							out.push(
-								slots.root(),
-								slots.row(),
-								slots.field(),
-								slots.group(),
-								slots.slot(),
-								slots.char(),
-								slots.placeholder(),
-								slots.separator(),
-								slots.caret()
-							);
-						}
-					}
-				}
-			}
-		}
-	}
-	return out;
+	return INPUT_VARIANTS.flatMap((variant) =>
+		INPUT_SIZES.flatMap((size) =>
+			stateMatrix().flatMap((state) => {
+				const slots = otpInputVariants({ ...state, size, variant });
+				return [
+					slots.root(),
+					slots.row(),
+					slots.field(),
+					slots.group(),
+					slots.slot(),
+					slots.char(),
+					slots.placeholder(),
+					slots.separator(),
+					slots.caret(),
+				];
+			})
+		)
+	);
 }
 
 function tokens(value: string): string[] {

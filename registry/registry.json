@@ -82,6 +82,41 @@
 			]
 		},
 		{
+			"name": "animated-badge",
+			"type": "registry:ui",
+			"title": "AnimatedBadge",
+			"description": "A status pill that rolls its content and springs its width when the status changes.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"badge",
+				"calm-motion",
+				"icon",
+				"icons",
+				"spinner",
+				"text",
+				"use-calm-motion"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/animated-badge/AGENTS.md",
+				"ui/animated-badge/animated-badge-content.tsx",
+				"ui/animated-badge/animated-badge-glyph.tsx",
+				"ui/animated-badge/animated-badge-measure.tsx",
+				"ui/animated-badge/animated-badge.tsx",
+				"ui/animated-badge/animated-badge.types.ts",
+				"ui/animated-badge/animated-badge.variants.ts",
+				"ui/animated-badge/index.ts",
+				"ui/animated-badge/use-animated-badge-roll.ts"
+			]
+		},
+		{
 			"name": "avatar",
 			"type": "registry:ui",
 			"title": "Avatar",

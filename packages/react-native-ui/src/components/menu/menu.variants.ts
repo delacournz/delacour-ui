@@ -285,6 +285,11 @@ export function resolveMenuItemAccessibility(input: MenuItemAccessibilityInput):
  */
 export const menuVariants = tv({
 	slots: {
+		/**
+		 * The positioned, animated layer. Casts the panel's shadow, so it carries no
+		 * `overflow-hidden` — iOS clips a shadow to a clipping view's own bounds.
+		 */
+		panel: "absolute shadow-lg",
 		/** The panel's frame: corner, hairline and clip. Its surface is `background`. */
 		content: "overflow-hidden rounded-lg border border-border",
 		/** The panel's surface, drawn behind the scroller. */

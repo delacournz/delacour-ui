@@ -259,6 +259,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
 	},
+	splitter: {
+		title: "Splitter",
+		description: "Two or more panes divided by draggable handles, sized in percent.",
+		categories: ["layout"],
+	},
 	steps: {
 		title: "Steps",
 		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",

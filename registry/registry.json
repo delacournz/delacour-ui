@@ -1249,6 +1249,41 @@
 			]
 		},
 		{
+			"name": "splitter",
+			"type": "registry:ui",
+			"title": "Splitter",
+			"description": "Two or more panes divided by draggable handles, sized in percent.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"pressable",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/splitter/AGENTS.md",
+				"ui/splitter/index.ts",
+				"ui/splitter/splitter-grip.tsx",
+				"ui/splitter/splitter-handle.tsx",
+				"ui/splitter/splitter-pane.tsx",
+				"ui/splitter/splitter.context.tsx",
+				"ui/splitter/splitter.math.ts",
+				"ui/splitter/splitter.tsx",
+				"ui/splitter/splitter.types.ts",
+				"ui/splitter/splitter.variants.ts"
+			]
+		},
+		{
 			"name": "steps",
 			"type": "registry:ui",
 			"title": "Steps",

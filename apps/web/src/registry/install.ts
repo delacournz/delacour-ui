@@ -4778,6 +4778,100 @@ export const install = {
 			},
 		],
 	},
+	"splitter": {
+		name: "splitter",
+		title: "Splitter",
+		description: "Two or more panes divided by draggable handles, sized in percent.",
+		importPath: "@delacour/react-native-ui/splitter",
+		exportName: "Splitter",
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 25,
+		groups: [
+			{
+				name: "splitter",
+				title: "Splitter",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/splitter/AGENTS.md", target: "src/components/ui/splitter/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/splitter/index.ts", target: "src/components/ui/splitter/index.ts" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter-grip.tsx", target: "src/components/ui/splitter/splitter-grip.tsx" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter-handle.tsx", target: "src/components/ui/splitter/splitter-handle.tsx" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter-pane.tsx", target: "src/components/ui/splitter/splitter-pane.tsx" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter.context.tsx", target: "src/components/ui/splitter/splitter.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter.math.ts", target: "src/components/ui/splitter/splitter.math.ts" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter.tsx", target: "src/components/ui/splitter/splitter.tsx" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter.types.ts", target: "src/components/ui/splitter/splitter.types.ts" },
+					{ source: "packages/react-native-ui/src/components/splitter/splitter.variants.ts", target: "src/components/ui/splitter/splitter.variants.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+		],
+	},
 	"provider": {
 		name: "provider",
 		title: "DelacourProvider",

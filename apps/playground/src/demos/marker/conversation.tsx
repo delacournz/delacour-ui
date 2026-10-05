@@ -10,7 +10,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Between turns",
 	caption: "Markers note what happened between two turns: no speaker, no bubble. A separator marker breaks the day.",
-	capture: { align: "stretch", hero: true },
 };
 
 /** A turn in the conversation, drawn from `Surface` and `Text` alone. */

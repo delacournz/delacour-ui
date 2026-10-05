@@ -187,3 +187,12 @@ Variants, Pressable, Running (shimmer, and the rule to drop it), Accessibility, 
       registry entry, changeset.
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green.
 - [ ] Simulator verification via warden + agent-device, or its absence recorded in the commit body.
+
+## Follow-ups
+
+- **Preview capture.** The capture tool is not installed on the machine that built Marker, and a
+  captured demo with no manifest entry fails `demos.test.ts`, so the demos ship uncaptured and the
+  docs page has no `<Preview>`. When previews can run: restore `capture` on the demos —
+  `conversation` `{ align: "stretch", hero: true }`; `variants`, `pressable`, `running`
+  `{ align: "stretch" }` — run `bun run previews -- -- --only marker`, and add the hero `<Preview>`
+  plus one per Variants / Pressable / Running section of `marker.mdx`.

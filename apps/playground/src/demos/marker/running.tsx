@@ -10,7 +10,6 @@ export const meta: DemoMeta = {
 	title: "Running",
 	caption:
 		"`shimmer` breathes the text while the step runs. Drop it the moment the step ends: a marker that shimmers forever reads as a stuck one.",
-	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

@@ -14,7 +14,6 @@ export const meta: DemoMeta = {
 	title: "Pressable",
 	caption:
 		"Give a marker `onPress` and it becomes a button that fades on press. Here it expands the step it summarises.",
-	capture: { align: "stretch" },
 };
 
 const FILES = [

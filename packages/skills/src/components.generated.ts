@@ -29,6 +29,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "label", title: "Label", description: "A form control's name, with required, invalid and disabled states." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
+	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },
 	{ name: "provider", title: "Provider", description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling." },

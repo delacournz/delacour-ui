@@ -82,9 +82,27 @@ overlay and every sheet teleports into the same `"root"` host, ordered by `zInde
 Nothing in Overlays depends on another category. `Alert` (status glyphs and tokens, used by Toast)
 and `BottomSheet` are already in `develop`.
 
+## Where each component lives
+
+Each component stays on its own child branch, branched from this one, so it can be reviewed and
+merged on its own. This branch holds only the specs and the shared foundation (OVL-P0).
+
+| Branch | Holds | Stacked on |
+| --- | --- | --- |
+| `feature/cat-overlays` | specs + overlay foundation | `develop` |
+| `feature/overlays-dialog` | Dialog | `feature/cat-overlays` |
+| `feature/overlays-popover` | Popover | `feature/cat-overlays` |
+| `feature/overlays-drawer` | Drawer | `feature/cat-overlays` |
+| `feature/overlays-feedback` | Feedback | `feature/overlays-dialog` |
+| `feature/overlays-tooltip` | Tooltip | `feature/overlays-popover` |
+| `feature/overlays-toast` | Toast | `feature/overlays-dialog` (its over-dialog demo) |
+
+Merge in stack order. Generated files (below) are regenerated on each branch, so whichever lands
+second regenerates them again.
+
 ## Files every child touches (merge hot spots)
 
-The lead resolves these at integration; children should touch them only as their spec says.
+Shared lists and generated files; whoever merges second keeps both entries and regenerates.
 
 | File | Resolution |
 | --- | --- |
@@ -96,10 +114,17 @@ The lead resolves these at integration; children should touch them only as their
 | `apps/web/content/docs/native/components/meta.json` | keep both, under `---Overlays---` |
 | `apps/playground/src/app/index.tsx` icon map / rows | keep both |
 
-`bun run previews` drives a simulator and rewrites one shared manifest; **children mark demos
-`capture` but do not run it.** The lead runs it once after integration if a simulator is free.
+`bun run previews` drives a simulator through the argent CLI, which is retired on the
+maintainer's machine, and `demos.test.ts` fails for any demo marked `capture` with no media in the
+manifest. So **no overlay demo is marked `capture` yet.** The flows each child wrote stay in
+`.argent/flows/previews/<component>/`, ready for the follow-up below.
 
 ## Out of scope (recorded)
+
+- Preview media. Re-add `capture` to each component's demos and shoot them with
+  `bun run previews -- -- --only <component>` once a capture tool is available. Dialog's were:
+  `confirm` `{ flow: "dialog/confirm", frame: "device", hero: true }`, and `alert-dialog`, `form`,
+  `sizes` `{ flow: "dialog/<id>", frame: "device" }`.
 
 - Frosted backdrops (`blur`) — needs `expo-blur` as a new optional peer; a follow-up decision.
 - Popover `presentation="bottom-sheet"` — would couple Popover to the optional sheet engine;

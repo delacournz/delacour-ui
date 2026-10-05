@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Sizes and variants",
 	caption:
 		"The box is `Input`'s, so a tag input sits level with a field beside it at every size. Chips step down a size so the first one never makes the box taller.",
+	capture: { align: "stretch" },
 	keyboardAware: true,
 };
 

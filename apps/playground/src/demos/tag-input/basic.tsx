@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Type, then press Return or a comma: the text becomes a chip and the keyboard stays up for the next. Backspace on an empty field arms the last chip, and a second Backspace removes it.",
+	capture: { align: "stretch", flow: "tag-input/basic", hero: true },
 	keyboardAware: true,
 };
 

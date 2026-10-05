@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tag-input/overflow-invalid and has settled — a Shortlist field holding four
+  chips against a max of three, invalid, with a destructive 4/3 counter and an unfocused input. The capture script
+  navigates there before running this.
+steps:
+  - echo: Removing the fourth brings the list to 3/3, and the field is valid again
+  - tap: { id: tag-input-overflow-tag-3-remove }
+  - wait: 900
+  - echo: Adding it back goes over, and the field turns invalid
+  - tap: { id: tag-input-overflow-input }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "Dunedin,", delayMs: 90 }
+  - wait: 700
+  - echo: Return on the empty field blurs it, so the clip loops unfocused as it began
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 300

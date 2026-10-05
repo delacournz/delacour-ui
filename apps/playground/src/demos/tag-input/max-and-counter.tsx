@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Max and counter",
 	caption:
 		"`max` caps the list and `showCount` reads it back. Once it is full the field steps aside, so there is nothing to type into that would only be refused.",
+	capture: { align: "stretch", flow: "tag-input/max-and-counter" },
 	keyboardAware: true,
 };
 

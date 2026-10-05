@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Overflow",
 	caption:
 		"With `allowOverflow` a tag past `max` is accepted, and the box turns invalid with a destructive counter until the list is back under. Remove one to clear it.",
+	capture: { align: "stretch", flow: "tag-input/overflow-invalid" },
 	keyboardAware: true,
 };
 

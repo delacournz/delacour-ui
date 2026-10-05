@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Email validation",
 	caption:
 		"Comma, space and semicolon all commit, so a pasted list of addresses lands as several chips. An address `validate` refuses stays in the field to be corrected, and `onReject` says why.",
+	capture: { align: "stretch", flow: "tag-input/email-validation" },
 	keyboardAware: true,
 };
 

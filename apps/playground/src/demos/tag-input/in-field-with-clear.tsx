@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "In a field, with clear",
 	caption:
 		"Inside a `Field` the label names the input and a tap on it focuses the box. `isClearable` adds a clear-all control while there is anything to clear.",
+	capture: { align: "stretch" },
 	keyboardAware: true,
 };
 

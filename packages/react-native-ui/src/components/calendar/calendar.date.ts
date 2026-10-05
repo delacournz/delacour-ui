@@ -324,15 +324,13 @@ export function normaliseRange(a: CalendarDate, b: CalendarDate): CalendarDateRa
 /**
  * The range after a tap on `date`.
  *
- * Empty or complete, a tap starts a new range there. Started, a tap on or after the start
- * completes it — the same day twice is a one-day range — and a tap before the start moves the
- * start rather than completing backwards, because someone reaching for an earlier day has changed
- * their mind about where the range begins.
+ * Empty or complete, a tap starts a new range there. Started, a second tap completes it in
+ * either direction — the earlier of the two days is always the start — and the same day twice is
+ * a one-day range. Booking a stay backwards, check-out first, is as natural as forwards.
  */
 export function applyRangeTap(range: CalendarDateRange, date: CalendarDate): CalendarDateRange {
 	if (!range.start || range.end) return { start: date, end: null };
-	if (compareDates(date, range.start) < 0) return { start: date, end: null };
-	return { start: range.start, end: date };
+	return normaliseRange(range.start, date);
 }
 
 /** Whether any day from `a` to `b`, both inclusive, is disabled. */

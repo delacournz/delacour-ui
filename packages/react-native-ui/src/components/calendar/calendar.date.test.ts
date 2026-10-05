@@ -262,10 +262,17 @@ describe("range selection", () => {
 		});
 	});
 
-	test("an earlier second tap moves the start", () => {
+	test("an earlier second tap completes the range backwards, earliest day first", () => {
 		expect(applyRangeTap({ start: d(2026, 10, 5), end: null }, d(2026, 10, 2))).toEqual({
 			start: d(2026, 10, 2),
-			end: null,
+			end: d(2026, 10, 5),
+		});
+	});
+
+	test("a backwards range across a month boundary is ordered", () => {
+		expect(applyRangeTap({ start: d(2026, 11, 3), end: null }, d(2026, 10, 28))).toEqual({
+			start: d(2026, 10, 28),
+			end: d(2026, 11, 3),
 		});
 	});
 

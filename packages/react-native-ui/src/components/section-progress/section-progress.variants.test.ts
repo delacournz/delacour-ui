@@ -1,12 +1,16 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
+	resolveLabelMaxWidth,
 	resolvePanelDirection,
 	resolvePanelMaxHeight,
+	resolvePanelTransformOrigin,
 	resolvePlacementStyle,
+	resolveProgressPercent,
 	resolveRevealed,
 	resolveRingDashOffset,
 	resolveRingGeometry,
+	resolveRingTransition,
 	resolveSectionColor,
 	resolveSectionColorToken,
 	resolveSectionLabel,
@@ -18,10 +22,10 @@ import {
 	SECTION_PROGRESS_PANEL_PADDING,
 	SECTION_PROGRESS_PANEL_ROWS,
 	SECTION_PROGRESS_PLACEMENTS,
+	SECTION_PROGRESS_RING_JUMP,
 	SECTION_PROGRESS_RING_SIZE,
 	SECTION_PROGRESS_RING_STROKE,
 	sectionProgressVariants,
-	shouldEmitSection,
 } from "./section-progress.variants";
 
 const SPACING_STEP_PX = 4;
@@ -231,11 +235,43 @@ describe("resolveSectionColorToken", () => {
 	});
 });
 
-describe("shouldEmitSection", () => {
-	test("re-picking the active section does not emit", () => {
-		expect(shouldEmitSection("intro", "intro")).toBe(false);
-		expect(shouldEmitSection("intro", "pricing")).toBe(true);
-		expect(shouldEmitSection(undefined, "intro")).toBe(true);
+describe("resolveRingTransition", () => {
+	test("a scroll step tracks, a jump eases", () => {
+		expect(resolveRingTransition(0.3, 0.31)).toBe("track");
+		expect(resolveRingTransition(0.31, 0.3)).toBe("track");
+		expect(resolveRingTransition(0.1, 0.1 + SECTION_PROGRESS_RING_JUMP + 0.01)).toBe("ease");
+		expect(resolveRingTransition(0.9, 0.2)).toBe("ease");
+	});
+});
+
+describe("resolveProgressPercent", () => {
+	test("rounded and clamped", () => {
+		expect(resolveProgressPercent(0.424)).toBe(42);
+		expect(resolveProgressPercent(-0.1)).toBe(0);
+		expect(resolveProgressPercent(1.2)).toBe(100);
+		expect(resolveProgressPercent(Number.NaN)).toBe(0);
+	});
+});
+
+describe("resolvePanelTransformOrigin", () => {
+	test("the panel grows out of the pill's edge and side", () => {
+		expect(resolvePanelTransformOrigin("bottom-center", false)).toBe("center bottom");
+		expect(resolvePanelTransformOrigin("top-center", false)).toBe("center top");
+		expect(resolvePanelTransformOrigin("bottom-start", false)).toBe("left bottom");
+		expect(resolvePanelTransformOrigin("top-end", false)).toBe("right top");
+	});
+
+	test("start and end mirror under RTL", () => {
+		expect(resolvePanelTransformOrigin("bottom-start", true)).toBe("right bottom");
+		expect(resolvePanelTransformOrigin("top-end", true)).toBe("left top");
+		expect(resolvePanelTransformOrigin("bottom-center", true)).toBe("center bottom");
+	});
+});
+
+describe("resolveLabelMaxWidth", () => {
+	test("sixty percent of the window, rounded", () => {
+		expect(resolveLabelMaxWidth(390)).toBe(234);
+		expect(resolveLabelMaxWidth(393)).toBe(236);
 	});
 });
 

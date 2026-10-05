@@ -4,6 +4,8 @@ description: Pick a colour by dragging — an area, a hue track, an optional opa
 icon: Palette
 ---
 
+<Preview id="color-picker/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="color-picker" />
@@ -40,6 +42,8 @@ track, the opacity track when `hasAlpha`, and the hex field.
 
 `presentation="sheet"` puts the surface in a `BottomSheet` behind a trigger row — a preview, the
 hex and a chevron, drawn on `Input`'s own box so it sits level with every field beside it.
+
+<Preview id="color-picker/sheet-trigger" />
 
 ```tsx
 <Field>
@@ -86,6 +90,8 @@ and keeps the hue of a grey or black rather than snapping it to red.
 `hasAlpha` adds the opacity track — the colour fading to a checkerboard, with the same RGB the whole
 way. Without it the alpha is pinned at one on every path, and `ColorPicker.Alpha` renders nothing.
 
+<Preview id="color-picker/with-alpha" />
+
 ```tsx
 <ColorPicker defaultValue="#3b82f6b3" hasAlpha>
   <ColorPicker.Content>
@@ -105,6 +111,8 @@ way. Without it the alpha is pinned at one on every path, and `ColorPicker.Alpha
 Presets in any notation. Tapping one sets the colour and commits; the current colour's swatch is
 ringed, compared as hex.
 
+<Preview id="color-picker/swatches" />
+
 ```tsx
 <ColorPicker.Swatches colors={["#ef4444", "#f59e0b", "#22c55e", "#3b82f6"]} />
 ```
@@ -114,6 +122,8 @@ ringed, compared as hex.
 `size` is `Input`'s `sm`, `md` or `lg`: the area is 160, 200 or 240 points tall, and the tracks,
 thumbs, swatches and field step with it. `variant` (`primary` or `secondary`) reaches the trigger
 row and the hex field — never the gradients.
+
+<Preview id="color-picker/sizes" />
 
 ## States
 

@@ -67,6 +67,7 @@ export function ColorPickerSwatch({
 			<View className={slots.swatchFill()}>
 				<ColorPickerCheckerboard />
 				<View style={[StyleSheet.absoluteFill, { backgroundColor: formatColor(preset, "rgb") }]} />
+				<View className={slots.edge({ className: "rounded-full" })} />
 			</View>
 		</Pressable>
 	);

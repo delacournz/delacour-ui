@@ -1,5 +1,5 @@
 import { type ReactElement, useCallback, useMemo } from "react";
-import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, type ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -43,7 +43,12 @@ export type ColorPickerAreaProps = Omit<ViewProps, "children" | "style"> & {
  * saturation by five percent, and two custom actions, Brighter and Darker, move
  * brightness.
  */
-export function ColorPickerArea({ accessibilityLabel, className, ...props }: ColorPickerAreaProps): ReactElement {
+export function ColorPickerArea({
+	accessibilityLabel,
+	className,
+	testID,
+	...props
+}: ColorPickerAreaProps): ReactElement {
 	const {
 		live,
 		hsva,
@@ -153,17 +158,20 @@ export function ColorPickerArea({ accessibilityLabel, className, ...props }: Col
 				className={slots.area({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
 				onLayout={handleLayout}
+				testID={testID}
 				{...props}
 			>
 				<Animated.View className={slots.areaSurface()}>
 					<Animated.View style={[StyleSheet.absoluteFill, hueStyle]} />
 					<ColorPickerAreaGradient />
+					<View className={slots.edge({ className: "rounded-lg" })} />
 				</Animated.View>
 				<ColorPickerThumb
 					className="top-0"
 					extent={width}
 					isGrabbed={isGrabbed}
 					size={thumbSize}
+					testID={testID ? `${testID}-thumb` : undefined}
 					tint="color"
 					x={x}
 					y={y}

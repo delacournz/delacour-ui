@@ -107,6 +107,16 @@ registers a press: tapping the label opens the sheet, or focuses the hex field i
 - Trigger: `button`, "Accent, #f59e0b, opens picker".
 - The value is announced on commit, never per frame. Preview is hidden from assistive tech.
 
+**A clipped surface never carries its own hairline.** The area, track, preview and swatch each
+clip their colour layers with `overflow-hidden`, and the `border-border` hairline is a separate
+`edge` view drawn last inside them. Dark's `border` is translucent, and iOS clips a rounded view
+with a translucent border to a faceted path — every dark swatch drew as an octagon and the track
+ends as flats. The variants test fails on a slot that both clips and draws `border-border`.
+
+A `testID` on Area, Hue or Alpha also names the part's thumb, as `<testID>-thumb`. A test or a
+preview flow drags from the thumb rather than a coordinate, so a change to the area's height or
+the starting colour cannot leave the gesture starting on empty surface.
+
 ## Default anatomy
 
 `<ColorPicker />` with no children draws Area, Hue, Alpha (when `hasAlpha`) and Input — behind a

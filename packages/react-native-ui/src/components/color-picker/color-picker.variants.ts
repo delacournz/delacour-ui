@@ -76,25 +76,32 @@ export const colorPickerVariants = tv({
 		/** The saturation and brightness square. Positions its thumb. */
 		area: "relative w-full",
 		/** The clipped layer the area's gradients are drawn in, under the thumb. */
-		areaSurface: "absolute inset-0 overflow-hidden rounded-lg border border-border",
+		areaSurface: "absolute inset-0 overflow-hidden rounded-lg",
 		/** The transparent box a track's drag is claimed on. Padded on the cross axis only. */
 		touchArea: "w-full justify-center",
 		/** A hue or alpha track. Centres its thumb on the cross axis. */
 		track: "relative w-full justify-center",
 		/** The clipped layer a track's gradient is drawn in, under the thumb. */
-		trackSurface: "absolute inset-0 overflow-hidden rounded-full border border-border",
+		trackSurface: "absolute inset-0 overflow-hidden rounded-full",
 		/** The ring. Its position and scale are one animated transform. */
 		thumb: "absolute left-0 rounded-full border-2 border-background",
 		/** The hairline inside the ring, and the current colour inside that. */
 		thumbInner: "flex-1 overflow-hidden rounded-full border border-foreground",
+		/**
+		 * The hairline over a clipped surface, drawn as its last child; the caller
+		 * passes the surface's corner. Never on the clipping view itself: dark's
+		 * `border` is translucent, and iOS clips a rounded view with a translucent
+		 * border to a faceted path — a swatch drew as an octagon.
+		 */
+		edge: "pointer-events-none absolute inset-0 border border-border",
 		/** The current colour, over a checkerboard. */
-		preview: "overflow-hidden rounded-md border border-border",
+		preview: "overflow-hidden rounded-md",
 		swatches: "flex-row flex-wrap gap-2",
 		/** A preset. The ring is the border; the colour is inset from it. */
 		swatch: "rounded-full border-2 border-transparent p-0.5",
 		/** The selection ring, over the swatch's own border. Its opacity is animated. */
 		swatchRing: "absolute -inset-0.5 rounded-full border-2 border-foreground",
-		swatchFill: "flex-1 overflow-hidden rounded-full border border-border",
+		swatchFill: "flex-1 overflow-hidden rounded-full",
 		/** The row the sheet's trigger draws — the field box comes from Input's own resolver. */
 		trigger: "",
 		triggerLabel: "flex-1 font-sans text-foreground",

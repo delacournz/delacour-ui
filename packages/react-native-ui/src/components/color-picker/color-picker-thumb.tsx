@@ -23,6 +23,8 @@ export type ColorPickerThumbProps = {
 	 * the colour at its alpha over a checkerboard.
 	 */
 	tint: "color" | "hue" | "alpha";
+	/** The owning part's `testID` plus `-thumb`, so a test or a capture flow can find the handle. */
+	testID?: string;
 	className?: string;
 };
 
@@ -49,6 +51,7 @@ export function ColorPickerThumb({
 	isGrabbed,
 	onSize,
 	tint,
+	testID,
 	className,
 }: ColorPickerThumbProps): ReactElement {
 	const { live, size: step } = useColorPickerPart("ColorPicker.Thumb");
@@ -89,6 +92,7 @@ export function ColorPickerThumb({
 			onLayout={handleLayout}
 			pointerEvents="none"
 			style={ringStyle}
+			testID={testID}
 		>
 			<Animated.View className={slots.thumbInner()}>
 				{tint === "alpha" ? <ColorPickerCheckerboard /> : null}

@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { StyleSheet, type ViewProps } from "react-native";
+import { StyleSheet, View, type ViewProps } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
 import { hsvToRgb } from "./color-picker.color";
 import { useColorPickerPart } from "./color-picker.context";
@@ -35,6 +35,7 @@ export function ColorPickerPreview({ className, ...props }: ColorPickerPreviewPr
 		>
 			<ColorPickerCheckerboard />
 			<Animated.View style={[StyleSheet.absoluteFill, colorStyle]} />
+			<View className={slots.edge({ className: "rounded-md" })} />
 		</Animated.View>
 	);
 }

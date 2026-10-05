@@ -166,6 +166,19 @@ describe("tokens", () => {
 		expect(cls(enabled.area())).not.toMatch(/opacity/);
 	});
 
+	test("no slot that clips also draws the translucent hairline, which iOS then clips to a polygon", () => {
+		// Dark's `border` is translucent. On a rounded view that also clips, iOS
+		// masks with a faceted path, and a swatch or a track end draws as an octagon.
+		const slots = colorPickerVariants();
+		for (const [name, slot] of Object.entries(slots)) {
+			const classes = cls(slot());
+			const drawsHairlineOnClip = /\boverflow-hidden\b/.test(classes) && /\bborder-border\b/.test(classes);
+			expect({ name, drawsHairlineOnClip }).toEqual({ name, drawsHairlineOnClip: false });
+		}
+		expect(cls(slots.edge())).toMatch(/\babsolute inset-0\b.*\bborder-border\b/);
+		expect(cls(slots.edge())).not.toMatch(/overflow-hidden/);
+	});
+
 	test("the grab scales the thumb up", () => {
 		expect(COLOR_PICKER_THUMB_ANIMATION.grabbedScale).toBe(1.15);
 		expect(COLOR_PICKER_THUMB_ANIMATION.restScale).toBe(1);

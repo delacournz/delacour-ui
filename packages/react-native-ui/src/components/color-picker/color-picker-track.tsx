@@ -1,5 +1,5 @@
 import { type ReactElement, useCallback, useMemo, useState } from "react";
-import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, type ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -51,6 +51,7 @@ export function ColorPickerTrack({
 	channel: channelName,
 	accessibilityLabel,
 	className,
+	testID,
 	...props
 }: ColorPickerTrackProps & { channel: keyof typeof CHANNELS }): ReactElement {
 	const {
@@ -181,6 +182,7 @@ export function ColorPickerTrack({
 				accessible
 				className={slots.touchArea({ className })}
 				onAccessibilityAction={handleAccessibilityAction}
+				testID={testID}
 				{...props}
 			>
 				<Animated.View className={slots.track()} onLayout={handleLayout}>
@@ -193,12 +195,14 @@ export function ColorPickerTrack({
 								<ColorPickerCheckerboard fade={inset} />
 							</>
 						)}
+						<View className={slots.edge({ className: "rounded-full" })} />
 					</Animated.View>
 					<ColorPickerThumb
 						extent={width}
 						isGrabbed={isGrabbed}
 						onSize={handleThumbSize}
 						size={thumbSize}
+						testID={testID ? `${testID}-thumb` : undefined}
 						tint={isHue ? "hue" : "alpha"}
 						x={x}
 					/>

@@ -77,6 +77,12 @@ engine. An app that imports no picker still never resolves it.
   `ListHeaderComponent` they count towards the content height the sheet sizes
   itself to, and the search field is a `BottomSheet.TextInput`, so the keyboard
   it raises is the sheet's to lift for.
+- **A sheet sized to its rows is capped.** `resolveSelectSheetMaxHeight` hands
+  the sheet `maxDynamicContentSize` — the lower of 85% of the window and the room
+  below the top inset less a 24pt gap — and the list scrolls inside it. Without
+  the cap two hundred options measured taller than the screen and the sheet rose
+  under the status bar with nothing of the page left above it. `snapPoints`
+  bypasses dynamic sizing, and the cap with it.
 - **The row floor is ListGroup's**, `min-h-12/14/16`, pinned by the test, so a
   row in the sheet sits level with a `ListGroup` row on the screen behind it. It
   is a floor, never a height, so a description can wrap.

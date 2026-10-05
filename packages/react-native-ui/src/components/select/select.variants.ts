@@ -38,6 +38,31 @@ export const SELECT_INDICATOR_FROM_SCALE = 0.6;
 /** How long the chevron's half-turn takes under calm motion, where the spring becomes a timing. */
 export const SELECT_CHEVRON_CALM_DURATION_MS = 160;
 
+/** The most of the window a sheet sized to its rows may take — a long list scrolls inside it. */
+export const SELECT_SHEET_MAX_FRACTION = 0.85;
+
+/** Points kept clear below the top safe-area inset, so the sheet never meets the status bar. */
+export const SELECT_SHEET_TOP_GAP = 24;
+
+/**
+ * The ceiling for a sheet that sizes itself to its rows.
+ *
+ * Without one, two hundred options measure taller than the screen and the sheet
+ * rises under the status bar with nothing of the page left above it. The lower
+ * of a fraction of the window and the room below the top inset wins.
+ */
+export function resolveSelectSheetMaxHeight({
+	windowHeight,
+	topInset,
+}: {
+	windowHeight: number;
+	topInset: number;
+}): number {
+	const byFraction = windowHeight * SELECT_SHEET_MAX_FRACTION;
+	const belowInset = windowHeight - topInset - SELECT_SHEET_TOP_GAP;
+	return Math.max(0, Math.floor(Math.min(byFraction, belowInset)));
+}
+
 /**
  * Styling for every part of a select.
  *

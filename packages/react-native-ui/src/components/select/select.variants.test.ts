@@ -12,9 +12,12 @@ import {
 	normalizeSearchText,
 	resolveSelectIconToken,
 	resolveSelectRowState,
+	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerClass,
 	resolveSelectTriggerText,
 	SELECT_DEFAULT_MAX_LABELS,
+	SELECT_SHEET_MAX_FRACTION,
+	SELECT_SHEET_TOP_GAP,
 	selectVariants,
 	splitHighlight,
 	toggleSelection,
@@ -528,5 +531,27 @@ describe("splitHighlight", () => {
 			{ isHighlighted: false, text: "a" },
 			{ isHighlighted: true, text: "r" },
 		]);
+	});
+});
+
+describe("resolveSelectSheetMaxHeight", () => {
+	test("caps a long list at a fraction of the window, so the page stays visible above it", () => {
+		expect(resolveSelectSheetMaxHeight({ topInset: 0, windowHeight: 800 })).toBe(800 * SELECT_SHEET_MAX_FRACTION);
+	});
+
+	test("never reaches under the status bar, keeping a gap below the top inset", () => {
+		const windowHeight = 400;
+		const topInset = 100;
+		expect(resolveSelectSheetMaxHeight({ topInset, windowHeight })).toBe(
+			windowHeight - topInset - SELECT_SHEET_TOP_GAP
+		);
+	});
+
+	test("is a whole number of points", () => {
+		expect(Number.isInteger(resolveSelectSheetMaxHeight({ topInset: 59, windowHeight: 874 }))).toBe(true);
+	});
+
+	test("never goes negative on a degenerate window", () => {
+		expect(resolveSelectSheetMaxHeight({ topInset: 50, windowHeight: 20 })).toBe(0);
 	});
 });

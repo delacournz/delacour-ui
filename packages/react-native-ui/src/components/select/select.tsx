@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconMagnifyingGlass } from "../../icons/central";
 import { BottomSheet, type BottomSheetProps } from "../bottom-sheet";
@@ -20,6 +21,7 @@ import {
 	normalizeOptions,
 	resolveSelectedOptions,
 	resolveSelectRowState,
+	resolveSelectSheetMaxHeight,
 	resolveSelectTriggerText,
 	type SelectToggleOptions,
 	selectVariants,
@@ -127,6 +129,8 @@ function SelectRoot(props: SelectProps): ReactElement {
 	const single = props.selectionMode === "multiple" ? null : props;
 
 	const field = useFieldContext();
+	const { height: windowHeight } = useWindowDimensions();
+	const { top: topInset } = useSafeAreaInsets();
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
 	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
 
@@ -291,6 +295,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 			<BottomSheet
 				dynamicSizing={snapPoints === undefined}
 				isOpen={isOpen}
+				maxDynamicContentSize={resolveSelectSheetMaxHeight({ topInset, windowHeight })}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}
 			>

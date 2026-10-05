@@ -71,8 +71,12 @@ export const searchBarVariants = tv({
 		field: "min-w-0 flex-1",
 		tokens: "max-w-[60%] shrink grow-0",
 		tokensContent: "flex-row items-center gap-1",
-		cancel: "self-stretch overflow-hidden",
-		cancelContent: "absolute start-0 top-0 bottom-0 justify-center ps-2",
+		/** The reveal: clips Cancel while its width animates. */
+		cancel: "overflow-hidden",
+		/** Cancel's first frame: out of the row and invisible, so it can be measured at its natural width. */
+		cancelMeasure: "absolute end-0 opacity-0",
+		/** Cancel itself, with the gap to the field inside its measured width. */
+		cancelContent: "flex-row items-center ps-2",
 		clear: "items-center justify-center",
 	},
 	variants: {

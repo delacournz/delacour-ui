@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/floating-bar and has settled — five albums, the marks
+  showing, nothing picked, the floating bar up. The capture script navigates there before running this.
+steps:
+  - echo: Picking two albums
+  - tap: { id: album-a1 }
+  - wait: 400
+  - tap: { id: album-a3 }
+  - wait: 800
+  - echo: And unpicking them, so the clip loops without a jump cut
+  - tap: { id: album-a3 }
+  - wait: 400
+  - tap: { id: album-a1 }
+  - wait: 400

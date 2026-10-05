@@ -295,6 +295,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"selection-mode": {
+		title: "Selection Mode",
+		description:
+			"Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
+		categories: ["controls"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

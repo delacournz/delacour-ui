@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/inbox-mode and has settled — six messages, the mode
+  off, no header and no bar. The capture script navigates there before running this.
+steps:
+  - echo: A long press enters the mode with the pressed message picked
+  - long-press: { on: { id: message-m2 }, duration: 700 }
+  - await: { visible: { id: inbox-close } }
+  - wait: 500
+  - echo: Taps now toggle
+  - tap: { id: message-m3 }
+  - wait: 400
+  - tap: { id: message-m5 }
+  - wait: 900
+  - echo: Close leaves the mode and clears, so the clip loops without a jump cut
+  - tap: { id: inbox-close }
+  - await: { hidden: { id: inbox-close } }
+  - wait: 400

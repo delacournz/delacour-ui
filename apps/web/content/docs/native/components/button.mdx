@@ -234,12 +234,23 @@ axis, so it flips under right-to-left layout without being told to.
 ```
 
 Horizontal groups are content-width, because that is what a segmented control is. For a run that
-fills its parent, put `w-full` on the group and `flex-1` on each member.
+fills its parent, set `isFullWidth`.
+
+## Full-width group
+
+`isFullWidth` spans the parent and splits it equally between the members, whatever each label
+says. Every member gets `flex-1 basis-0`: the zero basis is what makes the split equal — with
+`flex-1` alone Yoga shares out only the space left after each label, so a long label still takes
+a wider segment and the dividers move whenever the copy changes. A separator and a
+`Button.Group.Text` keep their own width. A member's own `className` still wins, so
+`className="flex-none"` opts one out. On a vertical group it only fills the width, which its
+members already stretch across.
 
 ```tsx
-<Button.Group className="w-full">
-  <Button className="flex-1">Decline</Button>
-  <Button className="flex-1">Accept</Button>
+<Button.Group isFullWidth variant="outline">
+  <Button>Monthly</Button>
+  <Button>Annual</Button>
+  <Button>One-off</Button>
 </Button.Group>
 ```
 
@@ -250,6 +261,21 @@ the group collapses onto its buttons and a `flex-1` member between them is squee
 points. It reads as though `w-full` were ignored; there was simply no width to take a percentage
 of.
 </Callout>
+
+## Spaced group
+
+`isAttached={false}` keeps what the group shares — `variant`, `size`, `isDisabled`, `feedback` —
+and drops the joined shape. Every member draws its own corners, nothing overlaps, and the run takes
+a gap: a toolbar rather than a segmented control. With no seam to tear, a press scales again, as
+it does on a lone button. A separator still draws between spaced members.
+
+```tsx
+<Button.Group isAttached={false} size="sm" variant="outline">
+  <Button onPress={find}>Find</Button>
+  <Button onPress={exportAll}>Export</Button>
+  <Button onPress={share}>Share</Button>
+</Button.Group>
+```
 
 ## Group separator
 
@@ -397,7 +423,7 @@ Extends `PressableProps`, minus `busy`, `children`, `disabled`, `pressedOpacity`
     onLongPress: { type: "() => void" },
     feedback: {
       type: '"scale" | "fade" | "scale-fade" | "none"',
-      default: '"scale", or "fade" inside a Button.Group',
+      default: '"scale", or "fade" inside an attached Button.Group',
       description: "How the press moves the element. A joined member fades rather than scaling, because a scaling member tears the seam open for the length of the press. pressedScale / pressedOpacity still win on the axis they name.",
     },
     haptic: {
@@ -440,8 +466,18 @@ Extends React Native's `ViewProps`.
     },
     feedback: {
       type: '"scale" | "fade" | "scale-fade" | "none"',
-      default: '"fade"',
+      default: '"fade" attached, "scale" when isAttached is false',
       description: "Press treatment for every member. A member's own prop still wins.",
+    },
+    isAttached: {
+      type: "boolean",
+      default: "true",
+      description: "Joins the members into one shape. Off, each member keeps its own corners, no seam overlaps and the run takes a gap; the shared variant, size, isDisabled and feedback still apply.",
+    },
+    isFullWidth: {
+      type: "boolean",
+      default: "false",
+      description: "Spans the parent and splits it equally between members (flex-1 basis-0 each). Separators and Text keep their width. The parent needs a definite width.",
     },
     children: { type: "ReactNode" },
     className: { type: "string" },

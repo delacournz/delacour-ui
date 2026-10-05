@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Scrub",
 	note: "A progress source skips the geometry entirely: the shared value is already 0..1, so anything can drive it — here a Slider, with no scrolling at all.",
+	capture: { align: "stretch", flow: "scroll-text/scrub" },
 };
 
 export function Demo(): ReactElement {

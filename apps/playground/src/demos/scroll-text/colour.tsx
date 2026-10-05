@@ -28,7 +28,7 @@ export function Demo(): ReactElement {
 			scrollEventThrottle={16}
 			testID="scroll-text-host"
 		>
-			<View className="h-72" />
+			<View className="h-60" />
 			<View className="px-5">
 				<ScrollText size="2xl" weight="semibold" source={{ kind: "offset", scrollY, viewport }}>
 					{TEXT}

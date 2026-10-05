@@ -404,6 +404,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Content that travels across its container on a loop, held still on touch.",
 		categories: ["media"],
 	},
+	post: {
+		title: "Post",
+		description: "A social card: author, body, media and animated counts, in four shapes.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

@@ -91,6 +91,7 @@
 		"./pagination": "./src/components/pagination/index.ts",
 		"./planner": "./src/components/planner/index.ts",
 		"./popover": "./src/components/popover/index.ts",
+		"./post": "./src/components/post/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
 		"./progress": "./src/components/progress/index.ts",
 		"./progress-button": "./src/components/progress-button/index.ts",

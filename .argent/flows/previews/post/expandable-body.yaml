@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on post/expandable-body and has settled — the body clamped to three
+  lines with "more" after it. The capture script navigates there before running this.
+steps:
+  - echo: Opening the clamped body
+  - tap: { id: post-body-more }
+  - wait: 1400
+  - echo: And closing it, so the clip loops without a jump cut
+  - tap: { id: post-body-more }

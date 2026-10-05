@@ -214,6 +214,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	marker: {
+		title: "Marker",
+		description: "A centred inline note for a step or a day break between conversation turns, static or pressable.",
+		categories: ["feedback"],
+	},
 	meter: {
 		title: "Meter",
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",

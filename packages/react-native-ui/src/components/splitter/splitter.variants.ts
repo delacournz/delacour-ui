@@ -194,38 +194,63 @@ export function fitLayout(layout: readonly number[], constraints: readonly Split
 	const bounds = constraints.map(boundsOf);
 	if (layout.length !== count || !isFeasible(bounds)) return equalLayout(count);
 
-	const fixed: boolean[] = [];
-	const next: SplitterLayout = [];
-	for (let index = 0; index < count; index++) {
-		const size = layout[index] as number;
-		const pane = bounds[index] as PaneBounds;
-		if (!Number.isFinite(size)) return equalLayout(count);
-		const isCollapsed = pane.isCollapsible && (size <= pane.collapsed + EPSILON || size < pane.min / 2);
-		fixed.push(isCollapsed);
-		next.push(isCollapsed ? pane.collapsed : clamp(size, pane.min, pane.max));
-	}
-
+	const clamped = clampEach(layout, bounds);
+	if (clamped === null) return equalLayout(count);
+	const { next, fixed } = clamped;
 	for (let pass = 0; pass < count; pass++) {
-		const remainder = 100 - sumOf(next);
-		if (Math.abs(remainder) < EPSILON) break;
-		const open: number[] = [];
-		for (let index = 0; index < count; index++) {
-			const pane = bounds[index] as PaneBounds;
-			const size = next[index] as number;
-			const hasRoom = remainder > 0 ? size < pane.max - EPSILON : size > pane.min + EPSILON;
-			if (!fixed[index] && hasRoom) open.push(index);
-		}
-		if (open.length === 0) break;
-		const share = remainder / open.length;
-		for (const index of open) {
-			const pane = bounds[index] as PaneBounds;
-			next[index] = clamp((next[index] as number) + share, pane.min, pane.max);
-		}
+		if (!shareRemainder(next, fixed, bounds)) break;
 	}
 
 	const leftover = 100 - sumOf(next);
 	if (Math.abs(leftover) >= EPSILON && count > 0) next[count - 1] = (next[count - 1] as number) + leftover;
 	return next;
+}
+
+/**
+ * Each pane clamped to its own bounds — or held at its collapsed size, and
+ * marked fixed, when it is collapsible and already below half its floor. `null`
+ * for a size that is not a finite number.
+ */
+function clampEach(
+	layout: readonly number[],
+	bounds: readonly PaneBounds[]
+): { next: SplitterLayout; fixed: boolean[] } | null {
+	"worklet";
+	const fixed: boolean[] = [];
+	const next: SplitterLayout = [];
+	for (let index = 0; index < bounds.length; index++) {
+		const size = layout[index] as number;
+		const pane = bounds[index] as PaneBounds;
+		if (!Number.isFinite(size)) return null;
+		const isCollapsed = pane.isCollapsible && (size <= pane.collapsed + EPSILON || size < pane.min / 2);
+		fixed.push(isCollapsed);
+		next.push(isCollapsed ? pane.collapsed : clamp(size, pane.min, pane.max));
+	}
+	return { fixed, next };
+}
+
+/**
+ * One pass of sharing what `next` is short of (or over) 100 among the panes with
+ * room, in place. `false` once there is nothing left to share or nowhere to put it.
+ */
+function shareRemainder(next: SplitterLayout, fixed: readonly boolean[], bounds: readonly PaneBounds[]): boolean {
+	"worklet";
+	const remainder = 100 - sumOf(next);
+	if (Math.abs(remainder) < EPSILON) return false;
+	const open: number[] = [];
+	for (let index = 0; index < bounds.length; index++) {
+		const pane = bounds[index] as PaneBounds;
+		const size = next[index] as number;
+		const hasRoom = remainder > 0 ? size < pane.max - EPSILON : size > pane.min + EPSILON;
+		if (!fixed[index] && hasRoom) open.push(index);
+	}
+	if (open.length === 0) return false;
+	const share = remainder / open.length;
+	for (const index of open) {
+		const pane = bounds[index] as PaneBounds;
+		next[index] = clamp((next[index] as number) + share, pane.min, pane.max);
+	}
+	return true;
 }
 
 /**
@@ -248,18 +273,9 @@ export function resolveInitialLayout(
 		return isLayoutValid(layout, count) ? fitLayout(layout, constraints) : equalLayout(count);
 	}
 
-	let named = 0;
-	let unnamed = 0;
-	for (const pane of constraints) {
-		const size = pane.defaultSize;
-		if (size === undefined) {
-			unnamed++;
-		} else if (!Number.isFinite(size) || size < 0) {
-			return equalLayout(count);
-		} else {
-			named += size;
-		}
-	}
+	const defaults = sumDefaults(constraints);
+	if (defaults === null) return equalLayout(count);
+	const { named, unnamed } = defaults;
 	if (named > 100 + EPSILON) return equalLayout(count);
 	if (unnamed === 0 && Math.abs(named - 100) > LAYOUT_SUM_TOLERANCE) return equalLayout(count);
 	if (!isFeasible(constraints.map(boundsOf))) return equalLayout(count);
@@ -269,6 +285,24 @@ export function resolveInitialLayout(
 		constraints.map((pane) => pane.defaultSize ?? share),
 		constraints
 	);
+}
+
+/** The sum of every `defaultSize` named, and how many panes name none. `null` for a negative or non-finite one. */
+function sumDefaults(constraints: readonly SplitterPaneConstraints[]): { named: number; unnamed: number } | null {
+	"worklet";
+	let named = 0;
+	let unnamed = 0;
+	for (const pane of constraints) {
+		const size = pane.defaultSize;
+		if (size === undefined) {
+			unnamed++;
+		} else if (!Number.isFinite(size) || size < 0) {
+			return null;
+		} else {
+			named += size;
+		}
+	}
+	return { named, unnamed };
 }
 
 export type ResolveDragOptions = {
@@ -498,6 +532,43 @@ export function layoutsEqual(a: readonly number[], b: readonly number[]): boolea
 		if (Math.abs((a[index] as number) - (b[index] as number)) >= EPSILON) return false;
 	}
 	return true;
+}
+
+/** What an assistive action on a handle asks the root to do. */
+export type SplitterAction =
+	| { kind: "apply"; layout: SplitterLayout }
+	| { kind: "reset" }
+	| { kind: "toggle"; index: number };
+
+/**
+ * Turns an assistive action on handle `handleIndex` into what the root should do,
+ * or `null` when it should do nothing — a step a bound stops, a collapse beside
+ * no collapsible pane, an action this handle never offered.
+ */
+export function resolveSplitterAction({
+	name,
+	layout,
+	handleIndex,
+	step,
+	constraints,
+}: {
+	name: string;
+	layout: SplitterLayout;
+	handleIndex: number;
+	step: number;
+	constraints: readonly SplitterPaneConstraints[];
+}): SplitterAction | null {
+	if (name === "increment" || name === "decrement") {
+		const direction = name === "increment" ? 1 : -1;
+		const next = resolveKeyboardStep({ constraints, direction, handleIndex, layout, step });
+		return next === layout ? null : { kind: "apply", layout: next };
+	}
+	if (name === "reset") return { kind: "reset" };
+	if (name === "collapse" || name === "expand") {
+		const index = adjacentCollapsibleIndex(handleIndex, constraints);
+		return index < 0 ? null : { index, kind: "toggle" };
+	}
+	return null;
 }
 
 /** What a screen reader reads as a handle's value: the leading pane, in whole percent. */

@@ -13,7 +13,7 @@ import {
 	isSeamHeld,
 	resolveDrag,
 	resolveDragEnd,
-	resolveKeyboardStep,
+	resolveSplitterAction,
 	SPLITTER_DRAWS_LINE,
 	SPLITTER_HANDLE_SIZE,
 	seamOffset,
@@ -216,23 +216,18 @@ export function SplitterHandle({
 	const handleAccessibilityAction = useCallback(
 		(event: AccessibilityActionEvent) => {
 			if (isDisabled) return;
-			const name = event.nativeEvent.actionName;
-			if (name === "increment" || name === "decrement") {
-				const next = resolveKeyboardStep({
-					constraints,
-					direction: name === "increment" ? 1 : -1,
-					handleIndex: index,
-					layout,
-					step,
-				});
-				if (next !== layout) apply(next);
-			} else if (name === "reset") {
-				reset();
-			} else if ((name === "collapse" || name === "expand") && collapsibleIndex >= 0) {
-				togglePane(collapsibleIndex);
-			}
+			const action = resolveSplitterAction({
+				constraints,
+				handleIndex: index,
+				layout,
+				name: event.nativeEvent.actionName,
+				step,
+			});
+			if (action?.kind === "apply") apply(action.layout);
+			else if (action?.kind === "reset") reset();
+			else if (action?.kind === "toggle") togglePane(action.index);
 		},
-		[apply, collapsibleIndex, constraints, index, isDisabled, layout, reset, step, togglePane]
+		[apply, constraints, index, isDisabled, layout, reset, step, togglePane]
 	);
 
 	const slots = splitterVariants({ isActive, isDisabled, orientation, variant });

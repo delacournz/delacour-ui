@@ -16,6 +16,7 @@ import {
 	resolveDragEnd,
 	resolveInitialLayout,
 	resolveKeyboardStep,
+	resolveSplitterAction,
 	resolveSplitterStep,
 	SPLITTER_DEFAULT_ORIENTATION,
 	SPLITTER_DEFAULT_STEP,
@@ -523,5 +524,64 @@ describe("describeSplitterChildren", () => {
 		expect(describeSplitterChildren(["pane", "handle"])).toMatch(/end/);
 		expect(describeSplitterChildren(["pane", "pane"])).toMatch(/alternate/);
 		expect(describeSplitterChildren(["pane", "other", "pane"])).toMatch(/Splitter\.Pane/);
+	});
+});
+
+describe("resolveSplitterAction", () => {
+	const constraints = [{ collapsedSize: 0, isCollapsible: true, minSize: 20 }, {}];
+
+	test("increment and decrement step the seam", () => {
+		expect(
+			resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "increment", step: 5 })
+		).toEqual({
+			kind: "apply",
+			layout: [55, 45],
+		});
+		expect(
+			resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "decrement", step: 5 })
+		).toEqual({
+			kind: "apply",
+			layout: [45, 55],
+		});
+	});
+
+	test("a step a bound stops is no action", () => {
+		expect(
+			resolveSplitterAction({
+				constraints: [{}, { minSize: 50 }],
+				handleIndex: 0,
+				layout: [50, 50],
+				name: "increment",
+				step: 5,
+			})
+		).toBeNull();
+	});
+
+	test("reset resets", () => {
+		expect(resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "reset", step: 5 })).toEqual({
+			kind: "reset",
+		});
+	});
+
+	test("collapse and expand toggle the adjacent collapsible pane", () => {
+		expect(resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "collapse", step: 5 })).toEqual(
+			{
+				index: 0,
+				kind: "toggle",
+			}
+		);
+		expect(resolveSplitterAction({ constraints, handleIndex: 0, layout: [0, 100], name: "expand", step: 5 })).toEqual({
+			index: 0,
+			kind: "toggle",
+		});
+	});
+
+	test("collapse beside no collapsible pane, or an unknown action, is nothing", () => {
+		expect(
+			resolveSplitterAction({ constraints: [{}, {}], handleIndex: 0, layout: [50, 50], name: "collapse", step: 5 })
+		).toBeNull();
+		expect(
+			resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "activate", step: 5 })
+		).toBeNull();
 	});
 });

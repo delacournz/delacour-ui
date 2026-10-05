@@ -2,9 +2,7 @@ executionPrerequisite: >-
   The chrome-free preview route is open on feedback/sending and has settled — the Report a problem button with the
   dialog closed and the failure switch off. The capture script navigates there before running this.
 steps:
-  - echo: Failing the next send, then opening the dialog
-  - tap: { id: feedback-sending-fail }
-  - wait: 400
+  - echo: Opening the dialog and writing a report
   - tap: { id: feedback-sending-open }
   - await: { visible: { id: feedback-sending-field } }
   - wait: 600
@@ -13,7 +11,7 @@ steps:
   - tool: keyboard
     args: { text: "Checkout froze on the last step", delayMs: 70 }
   - wait: 600
-  - echo: Send spins and the field is read-only; the failure keeps the draft
+  - echo: Send spins and the field is read-only until the promise settles, then the dialog closes and clears
   - tap: { id: feedback-sending-send }
-  - await: { visible: { id: feedback-sending-error } }
-  - wait: 1500
+  - await: { hidden: { id: feedback-sending-field } }
+  - wait: 600

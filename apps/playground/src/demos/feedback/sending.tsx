@@ -13,6 +13,7 @@ export const meta: DemoMeta = {
 	note: "Turn on the failure switch and send: the error shows in the well and the draft is still there to retry.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "feedback/sending", frame: "device" },
 };
 
 const SEND_MS = 1500;
@@ -64,7 +65,7 @@ export function Demo(): ReactElement {
 	const [shouldFail, setShouldFail] = useState(false);
 
 	return (
-		<View className="items-center gap-4">
+		<View className="flex-1 items-center justify-center gap-4">
 			<Feedback>
 				<Feedback.Trigger asChild>
 					<Button testID="feedback-sending-open" variant="secondary">

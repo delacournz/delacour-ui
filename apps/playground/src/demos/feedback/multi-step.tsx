@@ -3,6 +3,7 @@ import { Feedback, useFeedback } from "@delacour/react-native-ui/feedback";
 import { Rating } from "@delacour/react-native-ui/rating";
 import { Text } from "@delacour/react-native-ui/text";
 import { type ReactElement, useState } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -11,6 +12,7 @@ export const meta: DemoMeta = {
 		"A rating, then a message, then thanks — the caller swaps the panel's and footer's children. The well eases between heights; the shell never jumps.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "feedback/multi-step", frame: "device" },
 };
 
 type Step = "rating" | "message" | "thanks";
@@ -86,13 +88,15 @@ export function Demo(): ReactElement {
 	const [step, setStep] = useState<Step>("rating");
 
 	return (
-		<Feedback onOpenChange={(isOpen) => isOpen && setStep("rating")}>
-			<Feedback.Trigger asChild>
-				<Button testID="feedback-steps-open" variant="secondary">
-					Rate checkout
-				</Button>
-			</Feedback.Trigger>
-			<Steps setStep={setStep} step={step} />
-		</Feedback>
+		<View className="flex-1 items-center justify-center">
+			<Feedback onOpenChange={(isOpen) => isOpen && setStep("rating")}>
+				<Feedback.Trigger asChild>
+					<Button testID="feedback-steps-open" variant="secondary">
+						Rate checkout
+					</Button>
+				</Feedback.Trigger>
+				<Steps setStep={setStep} step={step} />
+			</Feedback>
+		</View>
 	);
 }

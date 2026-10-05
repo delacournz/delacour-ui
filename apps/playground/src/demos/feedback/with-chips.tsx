@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 		"Chips above the field answer the common cases in a tap. `canSubmitEmpty` follows them, so Send opens for a chip or for text.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "feedback/with-chips", frame: "device" },
 };
 
 type Topic = "slow" | "confusing" | "missing" | "broken";
@@ -73,13 +74,15 @@ function Body(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Feedback>
-			<Feedback.Trigger asChild>
-				<Button testID="feedback-chips-open" variant="secondary">
-					Tell us more
-				</Button>
-			</Feedback.Trigger>
-			<Body />
-		</Feedback>
+		<View className="flex-1 items-center justify-center">
+			<Feedback>
+				<Feedback.Trigger asChild>
+					<Button testID="feedback-chips-open" variant="secondary">
+						Tell us more
+					</Button>
+				</Feedback.Trigger>
+				<Body />
+			</Feedback>
+		</View>
 	);
 }

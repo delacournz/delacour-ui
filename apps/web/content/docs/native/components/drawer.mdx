@@ -4,6 +4,8 @@ description: A panel that slides in from an edge and covers the app until dismis
 icon: PanelLeft
 ---
 
+<Preview id="drawer/navigation" title={null} />
+
 ## Installation
 
 <ComponentInstall name="drawer" />
@@ -79,6 +81,10 @@ direction: `start` is the left edge in a left-to-right app and the right edge in
 one. The direction comes from `I18nManager.isRTL`, so a `direction` style on a wrapper does not
 change it.
 
+<Preview id="drawer/notifications" />
+
+<Preview id="drawer/rtl" />
+
 ```tsx
 <Drawer.Content side="start">…</Drawer.Content>
 <Drawer.Content side="end">…</Drawer.Content>
@@ -98,6 +104,8 @@ up to 400pt, and `full` 94% with no cap. A phone always keeps a strip of the app
 tap away on. The size measures the content: the safe-area inset on the docked edge — the status bar
 above a top drawer, the home indicator below a bottom one — is added on top of it.
 
+<Preview id="drawer/sizes" />
+
 ```tsx
 <Drawer.Content size="sm">…</Drawer.Content>
 <Drawer.Content size="lg">…</Drawer.Content>
@@ -111,6 +119,8 @@ other way. Let go past 40% of the panel, or flick toward the edge, and it carrie
 finger left it; let go short of that and it eases back. A light haptic marks the moment you cross
 the threshold. The scrim thins as you drag.
 
+<Preview id="drawer/navigation" />
+
 The swipe waits for 10pt of travel along the panel's axis and gives up on the same travel across
 it, so a tap reaches the row under the finger and a vertical scroll in a start or end drawer's body
 never moves the drawer. A slider inside the panel keeps its own drag. `isSwipeDismissible={false}`
@@ -120,6 +130,8 @@ turns the swipe off.
 drawer's swipe shares the vertical axis with a scroll, so keep that content short.
 
 ## A filter panel
+
+<Preview id="drawer/filters" />
 
 ```tsx
 <Drawer>

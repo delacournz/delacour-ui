@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/group-full-width and has settled — three
+  full-width runs: Monthly / Annual / One-off, A / Annual plan / B, and a spaced Cancel / Confirm.
+  The capture script navigates there before running this.
+steps:
+  - echo: Pressing and holding across the equal segments, so each share reads on its own
+  - long-press: { on: { id: full-monthly }, duration: 260 }
+  - long-press: { on: { id: full-annual }, duration: 260 }
+  - long-press: { on: { id: full-once }, duration: 260 }
+  - long-press: { on: { id: full-a }, duration: 260 }
+  - long-press: { on: { id: full-annual-plan }, duration: 260 }
+  - long-press: { on: { id: full-b }, duration: 260 }
+  - long-press: { on: { id: full-confirm }, duration: 260 }

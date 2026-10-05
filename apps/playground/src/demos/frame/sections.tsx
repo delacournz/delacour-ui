@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Sections",
 	caption:
 		"`Frame.Section` clusters rows under a caption inside one tray. A full-bleed rule sets each cluster off; rows within it keep the inset one.",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

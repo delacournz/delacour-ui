@@ -10,6 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Members",
 	caption: "A member list: avatar rows with a role and a chevron, and an invite link in the header.",
+	capture: { align: "stretch", flow: "frame/members" },
 };
 
 const MEMBERS = [
@@ -28,8 +29,8 @@ export function Demo(): ReactElement {
 				</Frame.Action>
 			</Frame.Header>
 			<Frame.Tray>
-				{MEMBERS.map((member) => (
-					<Item key={member.name} onPress={() => {}}>
+				{MEMBERS.map((member, index) => (
+					<Item key={member.name} onPress={() => {}} testID={`member-${index}`}>
 						<Item.Media>
 							<Avatar name={member.name} size="sm" />
 						</Item.Media>

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Decision footer",
 	caption:
 		'An `inset` frame sets its footer in the band under the tray. `align="stretch"` gives each button an equal share of the row.',
+	capture: { align: "stretch", flow: "frame/decision-footer" },
 };
 
 export function Demo(): ReactElement {
@@ -28,7 +29,12 @@ export function Demo(): ReactElement {
 						<Item.Title>Archive files</Item.Title>
 					</Item.Content>
 					<Item.Actions>
-						<Switch accessibilityLabel="Archive files" isSelected={isArchived} onSelectedChange={setIsArchived} />
+						<Switch
+							accessibilityLabel="Archive files"
+							isSelected={isArchived}
+							onSelectedChange={setIsArchived}
+							testID="switch-archive"
+						/>
 					</Item.Actions>
 				</Item>
 				<Item>
@@ -36,7 +42,12 @@ export function Demo(): ReactElement {
 						<Item.Title>Notify members</Item.Title>
 					</Item.Content>
 					<Item.Actions>
-						<Switch accessibilityLabel="Notify members" isSelected={isNotified} onSelectedChange={setIsNotified} />
+						<Switch
+							accessibilityLabel="Notify members"
+							isSelected={isNotified}
+							onSelectedChange={setIsNotified}
+							testID="switch-notify"
+						/>
 					</Item.Actions>
 				</Item>
 			</Frame.Tray>

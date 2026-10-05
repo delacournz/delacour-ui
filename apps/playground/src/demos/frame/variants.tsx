@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Variants",
 	caption:
 		"`default` is a tinted shell with a narrow lip, `inset` sets the tray into a wider band, and `plain` paints nothing for a frame already inside a container.",
+	capture: { align: "stretch" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

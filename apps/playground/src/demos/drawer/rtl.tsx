@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`start` and `end` resolve against `I18nManager.isRTL`, not a `direction` style, so a wrapper cannot flip them — the table shows the edge each side takes in both directions, and the drawer opens on the end edge for this app's direction.",
 	align: "center",
+	capture: {},
 };
 
 /** Reads the side and edge the open panel resolved, from inside it. */

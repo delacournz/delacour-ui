@@ -4,16 +4,21 @@ executionPrerequisite: >-
 steps:
   - echo: Small
   - tap: { id: drawer-sizes-sm }
-  - await: { visible: { text: Small } }
-  - wait: 900
-  - tap: { x: 0.95, y: 0.5 }
-  - wait: 500
+  - await: { visible: { id: drawer-sizes-panel-sm } }
+  - wait: 800
+  - swipe: { from: { id: drawer-sizes-panel-sm }, by: { x: -0.295 }, duration: 300 }
+  - await: { hidden: { id: drawer-sizes-panel-sm } }
+  - wait: 300
   - echo: Large
   - tap: { id: drawer-sizes-lg }
-  - wait: 900
-  - tap: { x: 0.97, y: 0.5 }
-  - wait: 500
+  - await: { visible: { id: drawer-sizes-panel-lg } }
+  - wait: 800
+  - swipe: { from: { id: drawer-sizes-panel-lg }, by: { x: -0.42 }, duration: 300 }
+  - await: { hidden: { id: drawer-sizes-panel-lg } }
+  - wait: 300
   - echo: Full
   - tap: { id: drawer-sizes-full }
-  - wait: 900
-  - tap: { x: 0.98, y: 0.5 }
+  - await: { visible: { id: drawer-sizes-panel-full } }
+  - wait: 800
+  - swipe: { from: { id: drawer-sizes-panel-full }, by: { x: -0.45 }, duration: 300 }
+  - await: { hidden: { id: drawer-sizes-panel-full } }

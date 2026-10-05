@@ -123,6 +123,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A value picked from a range by dragging a handle along a track.",
 	},
 	{
+		slug: "time-picker",
+		name: "TimePicker",
+		group: "Forms",
+		blurb: "A time of day on snapping wheels, in a bottom sheet or inline.",
+	},
+	{
 		slug: "text",
 		name: "Text",
 		group: "Data display",

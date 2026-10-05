@@ -151,6 +151,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"markdown-editor": IconTextEdit,
 	menu: IconDotGrid1x3Horizontal,
 	meter: IconGauge,
+	planner: IconCalendar1,
 	pagination: IconPageEmpty,
 	"otp-input": IconPasswordStars,
 	popover: IconBubble2,

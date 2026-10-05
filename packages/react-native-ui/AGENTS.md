@@ -136,6 +136,7 @@ shares.
 | [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on `react-native-maps` |
 | [MarkdownEditor](src/components/markdown-editor/AGENTS.md) | `@delacour/react-native-ui/markdown-editor` | A Markdown field — a formatting toolbar, a write pane and a rendered preview |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Planner](src/components/planner/AGENTS.md) | `@delacour/react-native-ui/planner` | A month of days, each showing what falls on it, with a details sheet |
 | [PageHeader](src/components/page-header/AGENTS.md) | `@delacour/react-native-ui/page-header` | A cover, an overlapping avatar, a title block, actions and stats — the head of a profile |
 | [Pagination](src/components/pagination/AGENTS.md) | `@delacour/react-native-ui/pagination` | A fixed-width run of pages and gaps, a compact readout, or labelled arrows |
 | [OtpInput](src/components/otp-input/AGENTS.md) | `@delacour/react-native-ui/otp-input` | A one-time code or PIN — cells drawn over one hidden field, with autofill and paste |

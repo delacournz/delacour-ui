@@ -80,6 +80,7 @@
 		"./overlay": "./src/components/overlay/index.ts",
 		"./page-header": "./src/components/page-header/index.ts",
 		"./pagination": "./src/components/pagination/index.ts",
+		"./planner": "./src/components/planner/index.ts",
 		"./popover": "./src/components/popover/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
 		"./progress": "./src/components/progress/index.ts",

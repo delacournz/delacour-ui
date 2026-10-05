@@ -56,6 +56,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },
 	{ name: "page-header", title: "Page Header", description: "A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen." },
 	{ name: "pagination", title: "Pagination", description: "Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows." },
+	{ name: "planner", title: "Planner", description: "A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day." },
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },

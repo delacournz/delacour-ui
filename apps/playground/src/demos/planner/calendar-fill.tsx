@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Calendar, filling its space",
 	caption:
 		'`variant="calendar"` names each entry in a block of its colour, up to three lines a day, the last one a `+N more` when they do not all fit. It needs height, so `fill` shares the planner\'s among the six weeks.',
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [

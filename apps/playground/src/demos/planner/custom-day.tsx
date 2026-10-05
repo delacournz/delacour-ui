@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Days of your own",
 	caption:
 		"`renderDay` draws the inside of each day — here a bar of the distance run. The button, its spoken label and the selection stay the planner's.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const DISTANCES = [0, 6, 0, 8, 5, 0, 18, 0, 7, 0, 10, 6, 0, 21, 0, 6, 0, 9, 5, 0, 16, 0, 8, 0, 12, 6, 0, 24, 0, 5, 7];
@@ -25,7 +25,8 @@ const ENTRIES: readonly PlannerEntry[] = (() => {
 /** The longest run sets the scale, so the tallest bar fills its day. */
 const MAX_KM = Math.max(...DISTANCES);
 
-function DistanceDay({ date, entries, isInMonth, isSelected, isToday }: PlannerDayInfo): ReactElement {
+function DistanceDay({ info }: { info: PlannerDayInfo }): ReactElement {
+	const { date, entries, isInMonth, isSelected, isToday } = info;
 	const km = entries.reduce((sum, entry) => sum + Number.parseFloat(entry.label), 0);
 	return (
 		<View className={`flex-1 items-center justify-end gap-0.5 rounded-md pb-1 ${isSelected ? "bg-primary/10" : ""}`}>
@@ -46,7 +47,7 @@ export function Demo(): ReactElement {
 				<Planner.Title />
 				<Planner.Nav />
 			</Planner.Header>
-			<Planner.Grid renderDay={(info) => <DistanceDay {...info} />} />
+			<Planner.Grid renderDay={(info) => <DistanceDay info={info} />} />
 		</Planner>
 	);
 }

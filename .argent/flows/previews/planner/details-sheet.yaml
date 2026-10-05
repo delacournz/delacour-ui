@@ -8,6 +8,6 @@ steps:
   - await: { visible: { text: Tempo run · 8 km } }
   - wait: 1200
   - echo: Dragging the sheet down closes it and clears the selection
-  - swipe: { from: { text: Tempo run · 8 km }, by: { y: 0.25 }, duration: 250 }
+  - swipe: { from: { text: 3 sessions planned }, by: { y: 0.12 }, duration: 250 }
   - await: { hidden: { text: Tempo run · 8 km } }
   - wait: 600

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "A sheet of the day",
 	caption:
 		"`Planner.Details` opens a sheet while a day is selected. Closing it — the button, a swipe, the scrim — clears the selection.",
-	align: "stretch",
+	capture: { flow: "planner/details-sheet", frame: "device" },
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [
@@ -36,24 +36,26 @@ const COLOR: Record<string, string> = { run: "chart-1", strength: "chart-2", rid
 
 export function Demo(): ReactElement {
 	return (
-		<Planner categories={CATEGORIES} defaultMonth={new Date(2026, 9, 1)} entries={ENTRIES}>
-			<Planner.Header>
-				<Planner.Title />
-				<Planner.Nav />
-			</Planner.Header>
-			<Planner.Grid testID="planner-details" />
-			<Planner.Details description={(_, entries) => `${entries.length} sessions planned`}>
-				{(_, entries) => (
-					<View className="gap-3 pb-2">
-						{entries.map((entry) => (
-							<View className="flex-row items-center gap-3" key={entry.id}>
-								{entry.icon ? <Icon color={COLOR[entry.category ?? ""]} icon={entry.icon} /> : null}
-								<Text.Paragraph>{entry.label}</Text.Paragraph>
-							</View>
-						))}
-					</View>
-				)}
-			</Planner.Details>
-		</Planner>
+		<View className="flex-1 justify-center px-4">
+			<Planner categories={CATEGORIES} defaultMonth={new Date(2026, 9, 1)} entries={ENTRIES}>
+				<Planner.Header>
+					<Planner.Title />
+					<Planner.Nav />
+				</Planner.Header>
+				<Planner.Grid testID="planner-details" />
+				<Planner.Details description={(_, entries) => `${entries.length} sessions planned`}>
+					{(_, entries) => (
+						<View className="gap-3 pb-2">
+							{entries.map((entry) => (
+								<View className="flex-row items-center gap-3" key={entry.id}>
+									{entry.icon ? <Icon color={COLOR[entry.category ?? ""]} icon={entry.icon} /> : null}
+									<Text.Paragraph>{entry.label}</Text.Paragraph>
+								</View>
+							))}
+						</View>
+					)}
+				</Planner.Details>
+			</Planner>
+		</View>
 	);
 }

@@ -612,6 +612,12 @@ import * as demo_scroll_header_early_handover from "./scroll-header/early-handov
 import * as demo_scroll_header_large_title_list from "./scroll-header/large-title-list";
 import * as demo_scroll_header_no_large from "./scroll-header/no-large";
 import * as demo_scroll_header_react_to_collapse from "./scroll-header/react-to-collapse";
+import * as demo_scroll_text_characters from "./scroll-text/characters";
+import * as demo_scroll_text_colour from "./scroll-text/colour";
+import * as demo_scroll_text_highlight from "./scroll-text/highlight";
+import * as demo_scroll_text_lines from "./scroll-text/lines";
+import * as demo_scroll_text_rise from "./scroll-text/rise";
+import * as demo_scroll_text_scrub from "./scroll-text/scrub";
 import * as demo_search_bar_basic from "./search-bar/basic";
 import * as demo_search_bar_debounced_filter_list from "./search-bar/debounced-filter-list";
 import * as demo_search_bar_in_sheet from "./search-bar/in-sheet";
@@ -1460,6 +1466,12 @@ export const DEMOS = {
 	"scroll-header/large-title-list": demo_scroll_header_large_title_list,
 	"scroll-header/no-large": demo_scroll_header_no_large,
 	"scroll-header/react-to-collapse": demo_scroll_header_react_to_collapse,
+	"scroll-text/characters": demo_scroll_text_characters,
+	"scroll-text/colour": demo_scroll_text_colour,
+	"scroll-text/highlight": demo_scroll_text_highlight,
+	"scroll-text/lines": demo_scroll_text_lines,
+	"scroll-text/rise": demo_scroll_text_rise,
+	"scroll-text/scrub": demo_scroll_text_scrub,
 	"search-bar/basic": demo_search_bar_basic,
 	"search-bar/debounced-filter-list": demo_search_bar_debounced_filter_list,
 	"search-bar/in-sheet": demo_search_bar_in_sheet,

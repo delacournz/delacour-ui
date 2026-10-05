@@ -334,6 +334,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "scroll-text",
+		name: "ScrollText",
+		group: "Media",
+		blurb: "Text that resolves word by word as the screen scrolls past it.",
+	},
+	{
 		slug: "qr-code",
 		name: "QRCode",
 		group: "Media",

@@ -162,6 +162,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollText](src/components/scroll-text/AGENTS.md) | `@delacour/react-native-ui/scroll-text` | Text that resolves word by word as the screen scrolls |
 | [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
 | [ScrollHeader](src/components/scroll-header/AGENTS.md) | `@delacour/react-native-ui/scroll-header` | A large title that collapses into a pinned bar as the page scrolls |
 | [ScrollCanvas](src/components/scroll-canvas/AGENTS.md) | `@delacour/react-native-ui/scroll-canvas` | An image in a still frame that moves as the page scrolls |

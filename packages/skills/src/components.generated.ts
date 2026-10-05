@@ -81,6 +81,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "scroll-canvas", title: "ScrollCanvas", description: "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls." },
 	{ name: "scroll-fade", title: "ScrollFade", description: "A gradient at a scrollable's edges while content runs past them, on any axis." },
 	{ name: "scroll-header", title: "Scroll Header", description: "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap." },
+	{ name: "scroll-text", title: "ScrollText", description: "Text that resolves word by word as the screen scrolls past it." },
 	{ name: "search-bar", title: "Search Bar", description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens." },
 	{ name: "section-progress", title: "SectionProgress", description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to." },
 	{ name: "section-rail", title: "SectionRail", description: "A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through." },

@@ -535,6 +535,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
 		categories: ["layout"],
 	},
+	"scroll-text": {
+		title: "ScrollText",
+		description: "Text that resolves word by word as the screen scrolls past it.",
+		categories: ["media"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

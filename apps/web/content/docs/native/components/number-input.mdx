@@ -4,6 +4,8 @@ description: A number between a minus and a plus — tap, hold to repeat, or typ
 icon: Diff
 ---
 
+<Preview id="number-input/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="number-input" />
@@ -39,6 +41,8 @@ step, or typed text on blur or submit. It never fires per keystroke.
 `min` and `max` hold the value in range, and the stepper that would leave it dims. `step` is the
 grid the value snaps to, measured from a finite `min` or from zero.
 
+<Preview id="number-input/bounds" />
+
 ```tsx
 <NumberInput min={1} max={10} />
 <NumberInput min={0} max={8} step={0.25} />
@@ -57,6 +61,8 @@ Pressing a stepper on an empty input starts from zero, held inside the bounds �
 
 `formatOptions` formats the number at rest through `Intl.NumberFormat` — a currency, a unit, a
 percentage. Focus the field and the formatting steps aside, leaving the bare number to edit.
+
+<Preview id="number-input/currency" />
 
 ```tsx
 <NumberInput
@@ -81,6 +87,8 @@ while typing commits the text first, then steps.
 `commitMode` decides what an out-of-range number does on commit. `clamp`, the default, pulls it in.
 `validate` keeps it and turns the input invalid, for a form that would rather say what is wrong:
 
+<Preview id="number-input/in-field" />
+
 ```tsx
 <Field isInvalid={months !== null && months > 12}>
   <Field.Label>Term in months</Field.Label>
@@ -103,6 +111,8 @@ five repeats, 90ms to the fifteenth, then 45ms. From the 25th repeat each tick m
 
 The hold stops at a limit with one `light` haptic, rather than one per tick. Each applied step
 plays `haptic` (default `selection`); `haptic={false}` silences both.
+
+<Preview id="number-input/hold-to-repeat" />
 
 ## Custom anatomy
 
@@ -131,6 +141,8 @@ function Readout() {
 The box is `Input`'s — it renders `Input.Group` — so it takes `Input`'s variants and sizes and sits
 flush beside an `Input`. A stepper is as wide as the box is tall: 44pt at `md`, and `sm` makes up
 the difference with hit slop.
+
+<Preview id="number-input/sizes-variants" />
 
 The field takes whatever width the row leaves it. Inside a parent that shrink-wraps its children —
 `items-center`, say — there is nothing to take, and the field falls back to a 64pt floor; give the

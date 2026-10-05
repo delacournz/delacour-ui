@@ -365,11 +365,13 @@ describe("resolveEffectFrame", () => {
 		expect(resolveEffectFrame({ kind: "fade" }, 0).opacity).toBe(SCROLL_TEXT_MIN_OPACITY);
 	});
 
-	test.each(SCROLL_TEXT_EFFECT_KINDS)("%s at 1 is fully revealed and in place", (kind) => {
-		const frame = resolveEffectFrame(DEFAULT_EFFECTS[kind], 1);
-		expect(frame.opacity).toBe(1);
-		expect(frame.translate).toBe(0);
-	});
+	for (const kind of SCROLL_TEXT_EFFECT_KINDS) {
+		test(`${kind} at 1 is fully revealed and in place`, () => {
+			const frame = resolveEffectFrame(DEFAULT_EFFECTS[kind], 1);
+			expect(frame.opacity).toBe(1);
+			expect(frame.translate).toBe(0);
+		});
+	}
 
 	test("rise starts its distance below and arrives", () => {
 		expect(resolveEffectFrame({ kind: "rise", distance: 20 }, 0).translate).toBe(20);
@@ -484,10 +486,12 @@ describe("scrollTextVariants", () => {
 		expect(scrollTextVariants().row()).toContain("flex-wrap");
 	});
 
-	test.each(TEXT_ALIGNS)("align %s justifies the row", (align) => {
-		const expected = { left: "justify-start", center: "justify-center", right: "justify-end" }[align];
-		expect(scrollTextVariants({ align }).row()).toContain(expected);
-	});
+	for (const align of TEXT_ALIGNS) {
+		test(`align ${align} justifies the row`, () => {
+			const expected = { left: "justify-start", center: "justify-center", right: "justify-end" }[align];
+			expect(scrollTextVariants({ align }).row()).toContain(expected);
+		});
+	}
 
 	test("a word group never breaks mid-glyph", () => {
 		expect(scrollTextVariants().word()).toContain("flex-row");

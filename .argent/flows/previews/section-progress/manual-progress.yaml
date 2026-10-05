@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on section-progress/manual-progress and has settled — a slider at
+  25 above a pill reading "Address" with its ring a quarter full. The capture script navigates there before
+  running this.
+steps:
+  - echo: Dragging the slider up, so the ring fills and the step advances
+  # momentum:false so the thumb stops where the finger does.
+  - swipe: { from: { id: section-progress-manual-thumb }, by: { x: 0.4 }, momentum: false, duration: 900 }
+  - wait: 600
+  - echo: And back down by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: section-progress-manual-thumb }, by: { x: -0.4 }, momentum: false, duration: 900 }

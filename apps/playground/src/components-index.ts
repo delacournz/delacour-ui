@@ -224,6 +224,12 @@ const ROWS = [
 		description: "Long press, press, placements, surface, persistent",
 		group: "Overlays",
 	},
+	{
+		slug: "section-progress",
+		title: "SectionProgress",
+		description: "Article, placements, colours, manual, controlled",
+		group: "Navigation",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

@@ -420,6 +420,11 @@ import * as demo_search_bar_in_sheet from "./search-bar/in-sheet";
 import * as demo_search_bar_loading_and_tokens from "./search-bar/loading-and-tokens";
 import * as demo_search_bar_sizes_and_shapes from "./search-bar/sizes-and-shapes";
 import * as demo_search_bar_with_cancel from "./search-bar/with-cancel";
+import * as demo_section_progress_article from "./section-progress/article";
+import * as demo_section_progress_colored_sections from "./section-progress/colored-sections";
+import * as demo_section_progress_controlled_open from "./section-progress/controlled-open";
+import * as demo_section_progress_manual_progress from "./section-progress/manual-progress";
+import * as demo_section_progress_placements from "./section-progress/placements";
 import * as demo_select_data_driven from "./select/data-driven";
 import * as demo_select_disabled_and_loading from "./select/disabled-and-loading";
 import * as demo_select_grouped_searchable from "./select/grouped-searchable";
@@ -991,6 +996,11 @@ export const DEMOS = {
 	"search-bar/loading-and-tokens": demo_search_bar_loading_and_tokens,
 	"search-bar/sizes-and-shapes": demo_search_bar_sizes_and_shapes,
 	"search-bar/with-cancel": demo_search_bar_with_cancel,
+	"section-progress/article": demo_section_progress_article,
+	"section-progress/colored-sections": demo_section_progress_colored_sections,
+	"section-progress/controlled-open": demo_section_progress_controlled_open,
+	"section-progress/manual-progress": demo_section_progress_manual_progress,
+	"section-progress/placements": demo_section_progress_placements,
 	"select/data-driven": demo_select_data_driven,
 	"select/disabled-and-loading": demo_select_disabled_and_loading,
 	"select/grouped-searchable": demo_select_grouped_searchable,

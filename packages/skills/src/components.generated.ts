@@ -54,6 +54,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "search-bar", title: "Search Bar", description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens." },
+	{ name: "section-progress", title: "SectionProgress", description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to." },
 	{ name: "select", title: "Select", description: "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable." },
 	{ name: "selection-mode", title: "Selection Mode", description: "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },

@@ -4,6 +4,8 @@ description: A thin rail of bars along a screen edge — one per section of a lo
 icon: TableOfContents
 ---
 
+<Preview id="section-rail/docs-page" title={null} />
+
 ## Installation
 
 <ComponentInstall name="section-rail" />
@@ -16,6 +18,8 @@ the reader is in.
 Mount the rail as the **last child of the screen's container**, a sibling of the scroll view. It
 fills that container and passes every touch it does not own through, so the content keeps
 scrolling everywhere but the rail.
+
+<Preview id="section-rail/docs-page" />
 
 ```tsx title="app/index.tsx"
 import { SectionRail } from "@/components/ui/section-rail";
@@ -84,6 +88,10 @@ same order with the same `level`s. Map both from one array, as above.
 picks where along it: `center` (the default), or `bottom`, which keeps the rail in the thumb's reach
 and grows the panel upward from the bottom corner. `offset` is the gap to the safe-area edge.
 
+<Preview id="section-rail/center" />
+
+<Preview id="section-rail/start-edge" />
+
 ```tsx
 <SectionRail placement="start">…</SectionRail>
 <SectionRail align="bottom" offset={16}>…</SectionRail>
@@ -94,6 +102,8 @@ and grows the panel upward from the bottom corner. `offset` is the gap to the sa
 `level` shortens a bar and indents its row by the same step, so the rail and the outline agree
 about what nests. Level 2 and deeper share the shortest bar. Titles wrap to two lines, then
 truncate.
+
+<Preview id="section-rail/nested-levels" />
 
 ```tsx
 <SectionRail.Trigger>
@@ -113,6 +123,8 @@ truncate.
 There is no pager mode. Give the rail the page as its `value` and scroll the pager in
 `onValueChange`.
 
+<Preview id="section-rail/pager" />
+
 ```tsx
 const [page, setPage] = useState("welcome");
 
@@ -131,6 +143,8 @@ const [page, setPage] = useState("welcome");
 
 `isOpen` and `onOpenChange` hand the panel to you. The rail still asks to close after a pick, on an
 outside tap and on back.
+
+<Preview id="section-rail/controlled-open" />
 
 ```tsx
 const [isOpen, setOpen] = useState(false);

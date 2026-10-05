@@ -4,6 +4,7 @@ import {
 	OTP_CARET_BLINK,
 	OTP_DEFAULT_SIZE,
 	OTP_DEFAULT_VARIANT,
+	OTP_MAX_FONT_SCALE,
 	otpInputVariants,
 	resolveOtpSlotClasses,
 } from "./otp-input.variants";
@@ -194,5 +195,18 @@ describe("OTP_CARET_BLINK", () => {
 		expect(OTP_CARET_BLINK.holdMs).toBeGreaterThanOrEqual(300);
 		expect(OTP_CARET_BLINK.fadeMs).toBeLessThan(OTP_CARET_BLINK.holdMs);
 		expect(OTP_CARET_BLINK.fadeMs).toBeGreaterThan(0);
+	});
+});
+
+describe("OTP_MAX_FONT_SCALE", () => {
+	/** `--spacing-input-*` and `--text-input-*` in points, as `tokens.css` declares them. */
+	const EDGE: Record<string, number> = { sm: 36, md: 44, lg: 52 };
+	const TYPE: Record<string, number> = { sm: 14, md: 16, lg: 18 };
+
+	test("lets the character grow with the system text size, but never past its cell", () => {
+		expect(OTP_MAX_FONT_SCALE).toBeGreaterThan(1);
+		for (const size of INPUT_SIZES) {
+			expect((TYPE[size] ?? 0) * OTP_MAX_FONT_SCALE).toBeLessThan((EDGE[size] ?? 0) * 0.75);
+		}
 	});
 });

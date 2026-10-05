@@ -260,6 +260,12 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_otp_input_alphanumeric from "./otp-input/alphanumeric";
+import * as demo_otp_input_basic from "./otp-input/basic";
+import * as demo_otp_input_in_field from "./otp-input/in-field";
+import * as demo_otp_input_pin_masked from "./otp-input/pin-masked";
+import * as demo_otp_input_sizes from "./otp-input/sizes";
+import * as demo_otp_input_states from "./otp-input/states";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -626,6 +632,12 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"otp-input/alphanumeric": demo_otp_input_alphanumeric,
+	"otp-input/basic": demo_otp_input_basic,
+	"otp-input/in-field": demo_otp_input_in_field,
+	"otp-input/pin-masked": demo_otp_input_pin_masked,
+	"otp-input/sizes": demo_otp_input_sizes,
+	"otp-input/states": demo_otp_input_states,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

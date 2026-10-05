@@ -81,6 +81,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [OtpInput](src/components/otp-input/AGENTS.md) | `@delacour/react-native-ui/otp-input` | A one-time code or PIN — cells drawn over one hidden field, with autofill and paste |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
 | [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |

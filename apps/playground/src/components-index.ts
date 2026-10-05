@@ -52,6 +52,7 @@ const ROWS = [
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },
+	{ slug: "otp-input", title: "OtpInput", description: "Autofill, paste, groups, masked PIN", group: "Forms" },
 	{ slug: "label", title: "Label", description: "Required, invalid and disabled states", group: "Forms" },
 	{ slug: "radio", title: "Radio", description: "Groups, selection, sizes, orientation", group: "Forms" },
 	{ slug: "rating", title: "Rating", description: "Half stars, read-only, drag, clear", group: "Forms" },

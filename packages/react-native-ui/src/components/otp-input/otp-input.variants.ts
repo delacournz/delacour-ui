@@ -13,6 +13,13 @@ export const OTP_DEFAULT_VARIANT: InputVariant = "primary";
 export const OTP_CARET_BLINK = { holdMs: 450, fadeMs: 100 } as const;
 
 /**
+ * How far a cell's character follows the system text size. The cell is a fixed square on the input
+ * scale, so an uncapped character at the largest accessibility size would spill out of it; 1.5×
+ * keeps it inside three quarters of the edge at every size, which the test pins against the tokens.
+ */
+export const OTP_MAX_FONT_SCALE = 1.5;
+
+/**
  * Styling for every part of a one-time-code field.
  *
  * A cell is a lone `Input` box cut square: the same `border-input bg-card` / `bg-secondary` per

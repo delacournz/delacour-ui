@@ -1,0 +1,131 @@
+# CircularText
+
+Text set around a circle, optionally turning — a seal, a badge, a "scroll down" ring, a loading
+ring, an arc of words over a mark. Something can sit in the middle. A single component: no parts,
+no context.
+
+`import { CircularText } from "@delacour/react-native-ui/circular-text";`
+
+```tsx
+<CircularText radius={72} repeat="fill" spin={{ kind: "loop" }} centerContent={<Icon icon={IconStar} />}>
+  DELACOUR UI
+</CircularText>
+```
+
+## Files
+
+| File | What it holds |
+| --- | --- |
+| `index.ts` | → `@delacour/react-native-ui/circular-text` |
+| `circular-text.tsx` | `CircularText` — resolves the typography and geometry, the rotating wrapper, the gesture, `centerContent` |
+| `circular-text-ring.tsx` | `CircularText.Ring` (internal, `memo`) — the `Svg` with the text on a `TextPath` |
+| `circular-text-spin.ts` | `useCircularSpin` — the frame-callback integrator behind the rotation shared value |
+| `circular-text.types.ts` | `CircularTextProps`, `CircularTextSpin`, `CircularTextPause` |
+| `circular-text.variants.ts` | Geometry and resolvers, no RN imports |
+| `circular-text.variants.test.ts` | |
+
+## Axes
+
+| Prop | Shape | Default |
+| --- | --- | --- |
+| `radius` | points, the text's centreline — required | — |
+| `span` | `full` · `arc { sweep, startAngle? }` · `natural { startAngle? }` | `full` |
+| `side` | `outside` (tops away from the centre) · `inside` (tops toward it) | `outside` |
+| `spin` | `none` · `loop { speed? }` (deg/s) · `controlled { rotation }` (deg) | `none` |
+| `direction` | `clockwise` · `counterclockwise` — the sign of a `loop` | `clockwise` |
+| `pause` | `none` · `press` · `controlled { isPaused }` | `none` |
+| `repeat` / `separator` | a count or `"fill"`, and what goes after each copy | `1`, `" • "` |
+| `size` / `weight` / `color` / `className` | `Text`'s axes | `xs`, `semibold`, `default` |
+
+`span`, `spin` and `pause` are discriminated unions so an `arc` without a `sweep` and a
+`controlled` spin without a `rotation` do not typecheck.
+
+## Design
+
+- **The ring's size is `radius`, a number, not a class.** An SVG path needs a number, and a numeric
+  size can never become a class (see **Sizing** in the package AGENTS.md). The box is
+  `resolveRingBox`: twice the outermost ink — ascenders outside, descenders inside — rounded up to
+  a whole point.
+- **`radius` is the centreline of the type, not its baseline.** `resolveBaselineRadius` moves the
+  path half a cap height toward the glyph feet, so an outside and an inside ring of the same radius
+  sit on the same circle and two rings nest by radius alone. Measuring to the baseline made an
+  inside ring sit a full line-height away from the outside ring it was meant to match.
+- **Typography is `Text`'s, resolved once.** SVG text takes no `className`, so the root runs
+  `resolveTextClass` through Uniwind's `useResolveClassNames` and hands `fontSize`, `fontFamily`,
+  `fontWeight`, `letterSpacing` and the colour to the SVG `Text`. The family therefore follows
+  `--font-sans` like every other `Text`. There is no `font` axis: `Text` has none either — a family
+  goes in `className` (`font-mono`, `font-heading`).
+- **SVG text does not scale with the OS text size.** The geometry is fixed by `radius`, so a scaled
+  font would overrun the circle; the ring stays at its declared size. Keep rings decorative and
+  short, and do not put information only here.
+- **`side` decides the path's direction; `direction` decides the spin.** A `TextPath` stands each
+  glyph with its top to the left of the path's travel, so a clockwise path puts tops outside and a
+  counterclockwise one puts them inside. Coupling reading direction to spin direction as well would
+  make two of the four combinations mirror writing. `resolveCirclePath` therefore takes `side`
+  only, and an `inside` arc travels from its end back to its start, so the words read left to right
+  along the bottom of a seal.
+- **A full circle is two arcs.** One `A` whose ends coincide draws nothing. A partial arc is one
+  `A`, with `large-arc` set past 180°.
+- **`full` and `arc` close exactly with `textLength`.** `textLength` = the arc length at the
+  baseline and `lengthAdjust="spacing"`, so the engine spreads the letter spacing to fit whatever
+  the font's metrics. `natural` sets no length, for an arc whose spacing matters more than its ends.
+- **`repeat: "fill"` floors its estimate.** `resolveRepeatCount` assumes an average advance of
+  `0.58·fontSize`; floored, an error opens the spacing slightly rather than asking `textLength` for
+  negative spacing and colliding the glyphs.
+- **One copy is the caller's text exactly.** A trailing separator they wrote stays, and one they
+  left off closes the ring with no gap. Several copies write `separator` after each, and never
+  double one the text already ends with.
+
+## Motion
+
+- **Spin turns the whole drawing, never a glyph.** An `Animated.View` with a `rotate` transform
+  wraps a static `Svg`: the path is laid out once and only a layer transform changes per frame.
+  `CircularText.Ring` is `memo`ed and its props do not change while spinning, so nothing
+  re-renders on the JS thread.
+- **A frame-callback integrator, in degrees per second.** `withRepeat` cannot pause or change speed
+  without restarting from an angle of its own — a snap. `useCircularSpin` integrates
+  `advanceRotation(rotation, dt, velocity)`, wrapping into [0, 360) (a 360° turn is the identity,
+  so the wrap is invisible), and a pause or a speed change only eases the velocity with `withTiming`
+  over `CIRCULAR_TEXT_EASE_MS`.
+- **The callback is inactive unless the ring loops.** `none`, `controlled` and calm rings put
+  nothing on the frame loop.
+- **Calm motion holds a `loop` still at 0°.** Under the OS reduce-motion setting or
+  `DelacourProvider`'s `isMotionCalm`, `loop` behaves as `none` and the angle returns to 0, so the
+  text reads from 12 o'clock. The spin is decoration; holding it still makes the words legible and
+  costs nothing. A `controlled` spin still follows its caller, who owns that motion.
+- **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It reads only `onBegin` and
+  `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
+  press action, which is why it is a raw gesture rather than a `Pressable`. `centerContent` sits
+  above the ring with `pointerEvents="box-none"`: a button there keeps its own tap, and a touch on
+  empty middle reaches the ring.
+
+## Accessibility
+
+- **One text element, the words once.** The non-rotating wrapper of the ring is `accessible` with
+  `accessibilityRole="text"` and the label `resolveRingLabel(children, separator)` — separators
+  stripped, so "DELACOUR • UI •" is not read "DELACOUR bullet UI bullet", and `repeat` copies never
+  reach it. The `Svg` is hidden from assistive technology.
+- **`centerContent` is a sibling, not a child of the labelled view,** so an icon button in the
+  middle stays independently focusable with its own role.
+- Text on a circle is harder to read than a line: keep it at 12pt or more and under ~28 characters
+  per half circle.
+
+## Refuses
+
+- **No Skia.** `@delacour/react-native-charts` is an optional peer; depending on it would turn a
+  lightweight display component into one that needs a native graphics stack. `TextPath` does it.
+- **No per-glyph layout.** Positioning N `Text`s by measured advance needs N layouts and drifts on
+  kerning. `resolveGlyphAngles` and `resolveGlyphPosition` are specified and tested as the fallback
+  only, and nothing renders through them today.
+- **Invalid input renders nothing.** `radius <= 0` or blank text returns `null` and warns once in
+  development (`resolveCircularTextIssue`).
+
+## Spikes
+
+- **`textLength` / `lengthAdjust` on iOS:** see the simulator note below.
+- **Uniwind font family inside SVG text:** see the simulator note below.
+- **Android:** not verified on this branch — see the simulator note below.
+
+### Simulator note
+
+Pending.

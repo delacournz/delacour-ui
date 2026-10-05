@@ -7,9 +7,9 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sequence",
-	align: "stretch",
+	capture: { align: "stretch", flow: "scroll-canvas/sequence" },
 	caption:
-		"Twenty-four frames, scrubbed by the scroll: each band of progress shows one of them, with no cross-fade. At rest above the window it shows frame 0, the poster.",
+		"Twenty-four frames, scrubbed by the scroll: each band of progress shows one of them, with no cross-fade. At rest above its window — here 40% down the view to just past the top — it shows frame 0, the poster.",
 	note: "Every frame is mounted at once, so keep a sequence to 20–30 frames at the size it is drawn.",
 };
 
@@ -40,19 +40,35 @@ const SPIN = [
 	require("../../../assets/scroll-canvas/spin/frame-23.jpg"),
 ];
 
+const INTRO = [
+	"The dial is drawn twenty-four times, fifteen degrees apart.",
+	"Each band of scroll shows exactly one of them.",
+	"There is no blending between frames, so a slow drag lands on one.",
+	"Scroll slowly and the dial turns a full revolution.",
+];
+
 export function Demo(): ReactElement {
 	const { source, scrollProps } = useScrollSource();
 
 	return (
 		<Animated.ScrollView
-			className="h-[480px]"
-			contentContainerClassName="gap-4 py-[600px]"
+			className="h-[560px] grow-0"
+			contentContainerClassName="gap-4 pt-6 pb-[320px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-sequence"
 			{...scrollProps}
 		>
-			<Text.Paragraph>Scroll slowly and the dial turns a full revolution.</Text.Paragraph>
-			<ScrollCanvas accessibilityLabel="A turning dial" effect="sequence" scrollSource={source} sources={SPIN} />
+			{INTRO.map((line) => (
+				<Text.Paragraph key={line}>{line}</Text.Paragraph>
+			))}
+			<ScrollCanvas
+				accessibilityLabel="A turning dial"
+				effect="sequence"
+				scrollSource={source}
+				sources={SPIN}
+				end={-0.05}
+				start={0.4}
+			/>
 			<Text.Paragraph>Scroll back and it turns the other way.</Text.Paragraph>
 		</Animated.ScrollView>
 	);

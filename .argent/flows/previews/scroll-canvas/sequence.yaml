@@ -1,11 +1,11 @@
 executionPrerequisite: >-
-  The chrome-free preview route is open on scroll-canvas/sequence and has settled — a short scrolling page with a
-  24-frame sequence canvas below a paragraph, scrolled to the top, showing frame 1/24. The capture script navigates
-  there before running this.
+  The chrome-free preview route is open on scroll-canvas/sequence and has settled — a 560pt scroll window at rest
+  (offset 0), four paragraphs above the canvas and its top edge a little over half way down the window. The capture
+  script navigates there before running this.
 steps:
-  - echo: A slow drag up scrubs the frames forward
-  - swipe: { from: { id: scroll-canvas-sequence }, by: { y: -0.4 }, momentum: false, duration: 1400 }
-  - wait: 400
-  - echo: And back down, scrubbing them in reverse to frame 1, so the clip loops
-  - swipe: { from: { id: scroll-canvas-sequence }, by: { y: 0.4 }, momentum: false, duration: 1400 }
-  - wait: 400
+  - echo: A slow drag up raises the canvas through its window — the dial scrubs forward through its 24 frames
+  - swipe: { from: { id: scroll-canvas-sequence }, by: { y: -0.35 }, momentum: false, duration: 1400 }
+  - wait: 500
+  - echo: And a slightly longer drag back down, which settles at offset 0 so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-canvas-sequence }, by: { y: 0.45 }, momentum: false, duration: 1400 }
+  - wait: 800

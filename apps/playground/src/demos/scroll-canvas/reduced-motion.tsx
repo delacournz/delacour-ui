@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Resting states",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"With Reduce Motion on, or `enabled={false}`, each effect draws its resting state: parallax centred, zoom at natural size, reveal uncovered, a sequence on frame 0. A still canvas needs no scroll source.",
 };

@@ -1,10 +1,11 @@
 executionPrerequisite: >-
-  The chrome-free preview route is open on scroll-canvas/reveal and has settled — a short scrolling page with the
-  reveal canvas below a paragraph, scrolled to the top. The capture script navigates there before running this.
+  The chrome-free preview route is open on scroll-canvas/reveal and has settled — a 560pt scroll window at rest
+  (offset 0), four paragraphs above the canvas and its top edge a little over half way down the window. The capture
+  script navigates there before running this.
 steps:
-  - echo: Scrolling the page up, so the canvas rises through its window
-  - swipe: { from: { id: scroll-canvas-reveal }, by: { y: -0.35 }, momentum: false }
+  - echo: A slow drag up raises the canvas through its window — the cover retreats upward and uncovers the picture from the bottom edge
+  - swipe: { from: { id: scroll-canvas-reveal }, by: { y: -0.35 }, momentum: false, duration: 1400 }
   - wait: 500
-  - echo: And back down, so the clip loops without a jump cut
-  - swipe: { from: { id: scroll-canvas-reveal }, by: { y: 0.35 }, momentum: false }
-  - wait: 400
+  - echo: And a slightly longer drag back down, which settles at offset 0 so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-canvas-reveal }, by: { y: 0.45 }, momentum: false, duration: 1400 }
+  - wait: 800

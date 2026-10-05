@@ -21,8 +21,8 @@ export function Demo(): ReactElement {
 
 	return (
 		<Animated.ScrollView
-			className="h-[480px]"
-			contentContainerClassName="gap-4 py-[600px]"
+			className="h-[560px] grow-0"
+			contentContainerClassName="gap-4 pt-[340px] pb-[480px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-window"
 			{...scrollProps}

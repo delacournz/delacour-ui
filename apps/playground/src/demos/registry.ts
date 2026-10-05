@@ -164,6 +164,10 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_direction_mirrored_rows from "./direction/mirrored-rows";
+import * as demo_direction_nested_override from "./direction/nested-override";
+import * as demo_direction_toggle from "./direction/toggle";
+import * as demo_direction_uniwind_variants from "./direction/uniwind-variants";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -530,6 +534,10 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"direction/mirrored-rows": demo_direction_mirrored_rows,
+	"direction/nested-override": demo_direction_nested_override,
+	"direction/toggle": demo_direction_toggle,
+	"direction/uniwind-variants": demo_direction_uniwind_variants,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

@@ -2,6 +2,7 @@ import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowExpandVer,
+	IconArrowLeftRight,
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconAsterisk,
@@ -70,6 +71,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"empty-state": IconInboxEmpty,
 	chart: IconChart1,
 	collapsible: IconArrowExpandVer,
+	direction: IconArrowLeftRight,
 	chip: IconFilter1,
 	field: IconParagraph,
 	icon: IconStar,

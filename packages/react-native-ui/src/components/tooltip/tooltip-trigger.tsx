@@ -3,7 +3,7 @@ import type { GestureResponderEvent } from "react-native";
 import { Slot } from "../../lib/slot";
 import { Pressable, type PressableProps } from "../pressable";
 import { useTooltipContext } from "./tooltip.context";
-import { resolveTooltipAccessibility } from "./tooltip.variants";
+import { readableTextOf, resolveTooltipAccessibility } from "./tooltip.variants";
 
 export type TooltipTriggerProps = PressableProps;
 
@@ -12,6 +12,19 @@ function childLabel(children: PressableProps["children"]): string | undefined {
 	if (!isValidElement<{ accessibilityLabel?: unknown }>(children)) return undefined;
 	const label = children.props.accessibilityLabel;
 	return typeof label === "string" ? label : undefined;
+}
+
+/**
+ * What the trigger is already called: its own label, the child's when it is
+ * donated to, or else its visible text — which is what a screen reader names
+ * a control by when nothing else does.
+ */
+function triggerName(
+	accessibilityLabel: string | undefined,
+	asChild: boolean,
+	children: PressableProps["children"]
+): string | undefined {
+	return accessibilityLabel ?? (asChild ? childLabel(children) : undefined) ?? readableTextOf(children);
 }
 
 /**
@@ -28,7 +41,8 @@ function childLabel(children: PressableProps["children"]): string | undefined {
  * be built on `Pressable`.
  *
  * The tooltip's `label` becomes the trigger's accessibility label when it has
- * none, or its hint when it does.
+ * none, or its hint when it does — and visible text counts as a name, so a
+ * `<Button>Sync now</Button>` keeps saying "Sync now".
  *
  * @example
  * <Tooltip.Trigger asChild>
@@ -48,7 +62,7 @@ export function TooltipTrigger({
 
 	const accessibility = resolveTooltipAccessibility({
 		label,
-		triggerLabel: accessibilityLabel ?? (asChild ? childLabel(children) : undefined),
+		triggerLabel: triggerName(accessibilityLabel, asChild, children),
 	});
 
 	const handlers = {

@@ -5,6 +5,7 @@ export {
 	useTooltip,
 } from "./tooltip.context";
 export {
+	readableTextOf,
 	resolveTooltipAccessibility,
 	resolveTooltipDuration,
 	shouldTooltipActivate,

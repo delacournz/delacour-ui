@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
+import { createElement } from "react";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
+	readableTextOf,
 	resolveTooltipAccessibility,
 	resolveTooltipDuration,
 	shouldTooltipActivate,
@@ -185,6 +187,27 @@ describe("resolveTooltipAccessibility", () => {
 
 	test("a label identical to the trigger's is not read twice", () => {
 		expect(resolveTooltipAccessibility({ label: "Share", triggerLabel: "Share" })).toEqual({});
+	});
+});
+
+describe("readableTextOf", () => {
+	test("reads a bare string or number", () => {
+		expect(readableTextOf("Sync now")).toBe("Sync now");
+		expect(readableTextOf(3)).toBe("3");
+	});
+
+	test("reads text nested in elements, the way a screen reader names a control from its content", () => {
+		const child = createElement("Label", null, "Sync ", createElement("Strong", null, "now"));
+		expect(readableTextOf(child)).toBe("Sync now");
+	});
+
+	test("an icon-only child has no text", () => {
+		expect(readableTextOf(createElement("Icon", { icon: "share" }))).toBeUndefined();
+		expect(readableTextOf(undefined)).toBeUndefined();
+	});
+
+	test("whitespace alone is no text", () => {
+		expect(readableTextOf("  ")).toBeUndefined();
 	});
 });
 

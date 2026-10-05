@@ -52,7 +52,7 @@ export const selectionModeVariants = tv({
 	slots: {
 		root: "flex-1",
 		item: "relative",
-		indicatorSlot: "overflow-hidden",
+		indicatorSlot: "absolute inset-y-0 start-4 justify-center",
 		indicator: "size-5.5 items-center justify-center rounded-full border-2",
 		indicatorCheck: "size-icon-xs",
 		ring: "absolute -inset-1 rounded-xl border-2 border-primary",
@@ -68,7 +68,7 @@ export const selectionModeVariants = tv({
 	},
 	variants: {
 		indicator: {
-			leading: { item: "flex-row items-center px-4 py-0" },
+			leading: { item: "flex-row items-center" },
 			ring: {},
 			none: {},
 		},

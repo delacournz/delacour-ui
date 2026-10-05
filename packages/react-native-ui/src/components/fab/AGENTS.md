@@ -109,6 +109,7 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   follow-up once `Menu` has merged, reusing its rows.
 - **A blurred scrim.** It needs `expo-blur`, which is not a peer.
 - **Design-system styles do not retune the fab.** `@delacour/design-system`'s
-  `STYLES` carry no `spacing-fab-*`, so a style switch leaves the fab at
-  44/56/64 while buttons move. Add the three numbers there when a style needs a
+  `STYLES` write `spacing-fab-*` as the same 44/56/64 under every style
+  (`LIBRARY_FAB` in `styles.ts`), so a style switch moves the buttons and leaves
+  the fab where it is. Give a style its own numbers there when one needs a
   different fab.

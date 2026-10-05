@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Icons",
+	align: "stretch",
 	caption:
 		"`icon` holds a glyph per event. Write it into `Timeline.Indicator`; it inherits the marker's size and colour.",
 };

@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Masthead and stats",
+	align: "stretch",
 	caption: "`Timeline.Masthead` heads the sequence; `Timeline.Stats` sums an event up in a row of figures.",
 };
 

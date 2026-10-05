@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Compact",
+	align: "stretch",
 	caption: "`compact` halves the gaps, for a dense log at `sm`.",
 };
 

@@ -4,9 +4,9 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Tones",
+	align: "stretch",
 	caption:
 		"Progress is solid, kind is tinted. A toned event keeps its soft fill whatever its progress, so a failed step stays visible once the sequence moves past it.",
-	capture: { align: "stretch" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

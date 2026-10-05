@@ -4,8 +4,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Cards",
-	caption: "`card` sets each event's content on a surface, with the marker meeting the card's title.",
-	capture: { align: "stretch" },
+	align: "stretch",
+	caption: "`card` sets each event's `Timeline.Content` on a surface, with the marker meeting the card's title.",
 };
 
 const UPDATES = [
@@ -24,11 +24,13 @@ export function Demo(): ReactElement {
 					testID={`timeline-card-${index}`}
 					tone={index === 2 ? "success" : "default"}
 				>
-					<Timeline.Header>
-						<Timeline.Title>{update.title}</Timeline.Title>
-						<Timeline.Date>{update.date}</Timeline.Date>
-					</Timeline.Header>
-					<Timeline.Description>{update.description}</Timeline.Description>
+					<Timeline.Content>
+						<Timeline.Header>
+							<Timeline.Title>{update.title}</Timeline.Title>
+							<Timeline.Date>{update.date}</Timeline.Date>
+						</Timeline.Header>
+						<Timeline.Description>{update.description}</Timeline.Description>
+					</Timeline.Content>
 				</Timeline.Item>
 			))}
 		</Timeline>

@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Times beside the rail",
+	align: "stretch",
 	caption:
 		"`Timeline.Aside` holds a left column — here the time of day — and `Timeline.Trailing` a right one. Vertical only.",
 };

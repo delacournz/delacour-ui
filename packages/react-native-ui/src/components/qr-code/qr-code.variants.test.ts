@@ -12,6 +12,7 @@ import {
 	resolveQrSize,
 	resolveQuietZone,
 	shouldWarnContrast,
+	shouldWarnMissingLabel,
 } from "./qr-code.variants";
 
 describe("resolveEffectiveEcc", () => {
@@ -118,5 +119,14 @@ describe("qrCodeVariants", () => {
 	test("a caller's corner wins", () => {
 		expect(qrCodeVariants().tile({ className: "rounded-none" })).toContain("rounded-none");
 		expect(qrCodeVariants().tile({ className: "rounded-none" })).not.toContain("rounded-lg");
+	});
+});
+
+describe("shouldWarnMissingLabel", () => {
+	test("a value with no label warns unless the code is decorative", () => {
+		expect(shouldWarnMissingLabel("https://x.co", undefined, false)).toBe(true);
+		expect(shouldWarnMissingLabel("https://x.co", "Open the menu", false)).toBe(false);
+		expect(shouldWarnMissingLabel("https://x.co", undefined, true)).toBe(false);
+		expect(shouldWarnMissingLabel("", undefined, false)).toBe(false);
 	});
 });

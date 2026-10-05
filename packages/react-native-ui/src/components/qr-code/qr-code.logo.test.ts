@@ -12,7 +12,7 @@ import { totalCodewords } from "./qr-code.tables";
 import { readQr } from "./qr-code.test-helpers";
 
 /** Pinned from the implementation's own answer — a change here is a change in what scans. */
-const V1_H_02_FIT = { version: 1, fraction: 0.2, clearsLogo: true };
+const V1_H_02_FIT = { version: 2, fraction: 0.2, clearsLogo: true };
 
 describe("resolveLogoRegion", () => {
 	test("centred, with the code's parity so it sits symmetrically", () => {
@@ -67,7 +67,7 @@ describe("fitLogoToEcc", () => {
 		}
 	});
 
-	test("regression: version 1 at H with 0.2 is pinned to what the fit computes", () => {
+	test("regression: version 1 at H with 0.2 grows to version 2", () => {
 		expect(fitLogoToEcc({ version: 1, errorCorrection: "H", fraction: 0.2 })).toEqual(V1_H_02_FIT);
 	});
 

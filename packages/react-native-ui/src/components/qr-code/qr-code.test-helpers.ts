@@ -6,7 +6,7 @@ import {
 	type QrMatrix,
 } from "./qr-code.constants";
 import { formatWord } from "./qr-code.format";
-import { gfExp, gfMultiply } from "./qr-code.gf";
+import { gfExp, gfLog, gfMultiply } from "./qr-code.gf";
 import { maskPredicate } from "./qr-code.mask";
 import { buildFunctionMap } from "./qr-code.matrix";
 import { blockLayout, QR_ALPHANUMERIC_CHARSET, totalCodewords } from "./qr-code.tables";
@@ -84,6 +84,91 @@ function readCodewords(
 	return codewords;
 }
 
+function syndromesOf(block: readonly number[], ecLength: number): number[] {
+	const syndromes: number[] = [];
+	for (let root = 0; root < ecLength; root++) {
+		const x = gfExp(root);
+		let value = 0;
+		for (const coefficient of block) value = gfMultiply(value, x) ^ coefficient;
+		syndromes.push(value);
+	}
+	return syndromes;
+}
+
+function gfInverse(value: number): number {
+	return gfExp(255 - gfLog(value));
+}
+
+/** Evaluates a low-order-first polynomial at `x`. */
+function evaluateLow(poly: readonly number[], x: number): number {
+	let value = 0;
+	for (let index = poly.length - 1; index >= 0; index--) value = gfMultiply(value, x) ^ (poly[index] ?? 0);
+	return value;
+}
+
+/**
+ * Corrects a block in place — Berlekamp–Massey for the locator, Chien search
+ * for the positions, Forney for the magnitudes (first consecutive root 0).
+ * Returns false when the block has more errors than it can correct.
+ */
+function correctBlock(block: number[], ecLength: number): boolean {
+	const syndromes = syndromesOf(block, ecLength);
+	if (syndromes.every((value) => value === 0)) return true;
+
+	let locator = [1];
+	let previous = [1];
+	let length = 0;
+	let shift = 1;
+	let lastDiscrepancy = 1;
+	for (let step = 0; step < ecLength; step++) {
+		let discrepancy = syndromes[step] ?? 0;
+		for (let index = 1; index <= length; index++) {
+			discrepancy ^= gfMultiply(locator[index] ?? 0, syndromes[step - index] ?? 0);
+		}
+		if (discrepancy === 0) {
+			shift++;
+			continue;
+		}
+		const scale = gfMultiply(discrepancy, gfInverse(lastDiscrepancy));
+		const next = locator.slice();
+		for (let index = 0; index < previous.length; index++) {
+			next[index + shift] = (next[index + shift] ?? 0) ^ gfMultiply(scale, previous[index] ?? 0);
+		}
+		if (2 * length <= step) {
+			previous = locator;
+			length = step + 1 - length;
+			lastDiscrepancy = discrepancy;
+			shift = 1;
+		} else {
+			shift++;
+		}
+		locator = next;
+	}
+	if (2 * length > ecLength) return false;
+
+	const evaluator: number[] = new Array<number>(ecLength).fill(0);
+	for (let i = 0; i < ecLength; i++) {
+		for (let j = 0; j <= i && j < locator.length; j++) {
+			evaluator[i] = (evaluator[i] ?? 0) ^ gfMultiply(syndromes[i - j] ?? 0, locator[j] ?? 0);
+		}
+	}
+	const derivative = locator.map((coefficient, index) => (index % 2 === 1 ? coefficient : 0)).slice(1);
+
+	let found = 0;
+	for (let degree = 0; degree < block.length; degree++) {
+		const inverse = gfInverse(gfExp(degree));
+		if (evaluateLow(locator, inverse) !== 0) continue;
+		const magnitude = gfMultiply(
+			gfMultiply(gfExp(degree), evaluateLow(evaluator, inverse)),
+			gfInverse(evaluateLow(derivative, inverse))
+		);
+		const position = block.length - 1 - degree;
+		block[position] = (block[position] ?? 0) ^ magnitude;
+		found++;
+	}
+	return found === length && syndromesOf(block, ecLength).every((value) => value === 0);
+}
+
 function syndromesAreZero(block: readonly number[], ecLength: number): boolean {
 	for (let root = 0; root < ecLength; root++) {
 		const x = gfExp(root);
@@ -143,8 +228,13 @@ function decodeData(data: readonly number[], version: number): string | null {
 	return null;
 }
 
+export type QrReadOptions = {
+	/** Run Reed–Solomon correction on each block before decoding — for tests that damage the symbol. */
+	correct?: boolean;
+};
+
 /** Reads a symbol back from its modules alone. */
-export function readQr(modules: Uint8Array, size: number): QrRead {
+export function readQr(modules: Uint8Array, size: number, options: QrReadOptions = {}): QrRead {
 	const format = readFormat(modules, size);
 	if (!format) return { errorCorrection: null, mask: null, syndromesClean: false, value: null };
 
@@ -168,9 +258,19 @@ export function readQr(modules: Uint8Array, size: number): QrRead {
 		for (const block of blocksEc) block.push(codewords[cursor++] ?? 0);
 	}
 
-	const syndromesClean = blocksData.every((data, block) =>
-		syndromesAreZero([...data, ...(blocksEc[block] ?? [])], layout.ecPerBlock)
-	);
+	let corrected = true;
+	if (options.correct) {
+		blocksData.forEach((data, block) => {
+			const whole = [...data, ...(blocksEc[block] ?? [])];
+			if (!correctBlock(whole, layout.ecPerBlock)) corrected = false;
+			data.splice(0, data.length, ...whole.slice(0, data.length));
+			blocksEc[block] = whole.slice(data.length);
+		});
+	}
+
+	const syndromesClean =
+		corrected &&
+		blocksData.every((data, block) => syndromesAreZero([...data, ...(blocksEc[block] ?? [])], layout.ecPerBlock));
 	return {
 		errorCorrection: format.level,
 		mask: format.mask,

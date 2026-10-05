@@ -11,7 +11,6 @@ export const meta: DemoMeta = {
 	note: "Dismiss the keyboard and the card settles back to the centre. Save stays disabled until the name changes, and closing resets it.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "dialog/form", frame: "device" },
 };
 
 const INITIAL_NAME = "Harbour Bridge";

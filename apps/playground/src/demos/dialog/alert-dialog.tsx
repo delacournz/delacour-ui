@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	caption:
 		"`isDismissible={false}`: the scrim takes the touch but does nothing, Android back is ignored, and only the dialog's own action closes it.",
 	align: "center",
-	capture: { flow: "dialog/alert-dialog", frame: "device" },
 };
 
 /** A decision the user has to make before going on — there is no way out but the button. */

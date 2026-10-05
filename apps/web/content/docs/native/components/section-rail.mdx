@@ -1,0 +1,262 @@
+---
+title: SectionRail
+description: A thin rail of bars along a screen edge — one per section of a long screen — that opens into an outline to jump or scrub through.
+icon: TableOfContents
+---
+
+## Installation
+
+<ComponentInstall name="section-rail" />
+
+`add section-rail` brings `useScrollSections` with it — the hook that tells the rail which section
+the reader is in.
+
+## Usage
+
+Mount the rail as the **last child of the screen's container**, a sibling of the scroll view. It
+fills that container and passes every touch it does not own through, so the content keeps
+scrolling everywhere but the rail.
+
+```tsx title="app/index.tsx"
+import { SectionRail } from "@/components/ui/section-rail";
+import { useScrollSections } from "@/hooks/use-scroll-sections";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+import Animated from "react-native-reanimated";
+
+const SECTIONS = [
+  { id: "intro", title: "Introduction", level: 0 },
+  { id: "setup", title: "Setup", level: 0 },
+  { id: "setup-ios", title: "iOS", level: 1 },
+  { id: "faq", title: "Questions", level: 0 },
+] as const;
+
+export default function Example() {
+  const sections = useScrollSections({ readingLine: 16 });
+
+  return (
+    <View className="flex-1">
+      <Animated.ScrollView
+        ref={sections.scrollRef}
+        onScroll={sections.scrollHandler}
+        scrollEventThrottle={16}
+        contentContainerClassName="gap-6 p-5 pe-14"
+      >
+        {SECTIONS.map((section) => (
+          <View key={section.id} onLayout={sections.register(section.id)}>
+            <Text.Header>{section.title}</Text.Header>
+            <Text.Paragraph>…</Text.Paragraph>
+          </View>
+        ))}
+      </Animated.ScrollView>
+
+      <SectionRail value={sections.activeId} onValueChange={sections.scrollTo} align="bottom">
+        <SectionRail.Trigger>
+          {SECTIONS.map((section) => (
+            <SectionRail.Bar key={section.id} value={section.id} level={section.level} />
+          ))}
+        </SectionRail.Trigger>
+        <SectionRail.Content>
+          {SECTIONS.map((section) => (
+            <SectionRail.Item key={section.id} value={section.id} level={section.level}>
+              {section.title}
+            </SectionRail.Item>
+          ))}
+        </SectionRail.Content>
+      </SectionRail>
+    </View>
+  );
+}
+```
+
+Tap the rail to open the outline, then tap a row to jump there. Or **scrub**: drag along the rail
+and the row under your finger highlights; let go to jump. After a pick the panel lingers for
+`closeDelay` (300ms) so a mis-tap can be corrected. An outside tap or Android's back closes it.
+
+<Callout type="warn">
+The bars and the rows are written separately and should mirror each other — the same values in the
+same order with the same `level`s. Map both from one array, as above.
+</Callout>
+
+## Placement
+
+`placement` picks the edge — `end` (the default, the right in left-to-right) or `start`. `align`
+picks where along it: `center` (the default), or `bottom`, which keeps the rail in the thumb's reach
+and grows the panel upward from the bottom corner. `offset` is the gap to the safe-area edge.
+
+```tsx
+<SectionRail placement="start">…</SectionRail>
+<SectionRail align="bottom" offset={16}>…</SectionRail>
+```
+
+## Nested sections
+
+`level` shortens a bar and indents its row by the same step, so the rail and the outline agree
+about what nests. Level 2 and deeper share the shortest bar. Titles wrap to two lines, then
+truncate.
+
+```tsx
+<SectionRail.Trigger>
+  <SectionRail.Bar value="layout" />
+  <SectionRail.Bar value="layout-flex" level={1} />
+  <SectionRail.Bar value="layout-flex-wrap" level={2} />
+</SectionRail.Trigger>
+<SectionRail.Content>
+  <SectionRail.Item value="layout">Layout</SectionRail.Item>
+  <SectionRail.Item value="layout-flex" level={1}>Flexbox</SectionRail.Item>
+  <SectionRail.Item value="layout-flex-wrap" level={2}>Wrapping</SectionRail.Item>
+</SectionRail.Content>
+```
+
+## Driving a pager
+
+There is no pager mode. Give the rail the page as its `value` and scroll the pager in
+`onValueChange`.
+
+```tsx
+const [page, setPage] = useState("welcome");
+
+<SectionRail
+  value={page}
+  onValueChange={(id) => {
+    setPage(id);
+    pager.current?.scrollTo({ x: PAGES.findIndex((p) => p.id === id) * width });
+  }}
+>
+  …
+</SectionRail>
+```
+
+## Controlled open state
+
+`isOpen` and `onOpenChange` hand the panel to you. The rail still asks to close after a pick, on an
+outside tap and on back.
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+
+<Button onPress={() => setOpen(true)}>Show outline</Button>
+<SectionRail isOpen={isOpen} onOpenChange={setOpen} value={section} onValueChange={setSection}>
+  …
+</SectionRail>
+```
+
+## Haptics
+
+`haptic` ticks once per section crossed while scrubbing, and once on a tap that opens the panel.
+It is off by default.
+
+```tsx
+<SectionRail haptic="selection">…</SectionRail>
+```
+
+## Accessibility
+
+- The rail is one **adjustable** element named "Sections", valued by the active section's title.
+  Swipe up or down to move to the next or previous section; double-tap to open the outline.
+- The bars are hidden from VoiceOver and TalkBack — the rail speaks for them.
+- Rows are buttons, the active one announced selected. When the outline opens, focus moves to the
+  section you are in.
+- The open outline is modal to VoiceOver, and the escape gesture closes it.
+- The rail is at least 44 points wide however thin its bars, and each row at least 44 points tall.
+- Reduce motion keeps the panel's fade and drops its scale.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `SectionRail` | Owns the value, the open state and the placement; fills its container |
+| `SectionRail.Trigger` | The rail — the bars' column, its tap and scrub, and the adjustable element |
+| `SectionRail.Bar` | One section's bar. A direct child of the trigger |
+| `SectionRail.Content` | The outline panel that opens from the rail's edge |
+| `SectionRail.Item` | One row of the outline |
+
+### SectionRail
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    value: {
+      type: "string | undefined",
+      description: "The active section. Controlled — `undefined` means no section yet, so a scroll hook's `activeId` can be passed before the first scroll.",
+    },
+    defaultValue: { type: "string" },
+    onValueChange: {
+      type: "(value: string) => void",
+      description: "Called with a picked section. Never for a re-pick of the active one.",
+    },
+    placement: { type: '"end" | "start"', default: '"end"' },
+    align: { type: '"center" | "bottom"', default: '"center"' },
+    isOpen: { type: "boolean", description: "Whether the outline is open. Controlled." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    closeDelay: { type: "number", default: "300", description: "ms the outline lingers after a pick." },
+    offset: { type: "number", default: "12", description: "Points between the rail and the safe-area edge." },
+    haptic: { type: "false | HapticFeedback", default: "false" },
+    className: { type: "string" },
+  }}
+/>
+
+### SectionRail.Trigger
+
+Extends `ViewProps`. Its children are the bars.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### SectionRail.Bar
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The section — the same value as its row. Required." },
+    level: { type: "number", default: "0", description: "Nesting depth. Each level is one step shorter." },
+    className: { type: "string" },
+  }}
+/>
+
+<Callout type="warn">
+A bar must be a direct child of `SectionRail.Trigger`. The scrub maps your finger through each bar's
+measured box, which is relative to its parent — a wrapper between them shifts every box.
+</Callout>
+
+### SectionRail.Content
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    maxWidth: { type: "number | `${number}%`", default: '"78%"', description: "How wide the outline may grow." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### SectionRail.Item
+
+A row is a `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable).
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The section this row jumps to. Required." },
+    level: { type: "number", default: "0", description: "Nesting depth. Each level indents one step." },
+    children: { type: "string", description: "The section's title — also what the rail speaks while it is active." },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  SectionRail,
+  type SectionRailProps,
+  SECTION_RAIL_PLACEMENTS,
+  SECTION_RAIL_ALIGNS,
+  useSectionRail,
+} from "@delacour/react-native-ui/section-rail";
+```

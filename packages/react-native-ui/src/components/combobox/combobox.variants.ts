@@ -85,7 +85,7 @@ export function resolveComboboxTriggerClass({
 	className?: string;
 }): string {
 	if (!hasChips) return resolveSelectTriggerClass({ ...state, className });
-	const own = selectVariants({ size: state.size, variant: state.variant }).trigger();
+	const own = cn(selectVariants({ size: state.size, variant: state.variant }).trigger(), "items-start");
 	return cn(resolveInputGroupClass({ ...state, className: own, isMultiline: true }), className);
 }
 

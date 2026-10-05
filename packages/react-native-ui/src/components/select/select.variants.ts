@@ -96,8 +96,12 @@ export function resolveSelectSheetMaxHeight({
  */
 export const selectVariants = tv({
 	slots: {
-		/** Added to Input's box: the trigger is never a text field, so it never shows a caret. */
-		trigger: "",
+		/*
+		 * Added to Input's box. The box is no longer a row itself — `Input.Group`
+		 * lays its decorators out in an inner row — so the trigger, which has no
+		 * inner row, lays out the value and the chevron here.
+		 */
+		trigger: "flex-row items-center",
 		value: "flex-1 font-sans text-foreground",
 		placeholder: "flex-1 font-sans text-muted-foreground",
 		/** Edge length of the chevron and the spinner that replaces it. */
@@ -125,6 +129,7 @@ export const selectVariants = tv({
 		},
 		size: {
 			sm: {
+				trigger: "gap-1.5",
 				value: "text-input-sm leading-tight",
 				placeholder: "text-input-sm leading-tight",
 				chevron: "size-icon-sm",
@@ -137,6 +142,7 @@ export const selectVariants = tv({
 				groupHeading: "px-3",
 			},
 			md: {
+				trigger: "gap-2",
 				value: "text-input-md leading-tight",
 				placeholder: "text-input-md leading-tight",
 				chevron: "size-icon-md",
@@ -149,6 +155,7 @@ export const selectVariants = tv({
 				groupHeading: "px-4",
 			},
 			lg: {
+				trigger: "gap-2.5",
 				value: "text-input-lg leading-tight",
 				placeholder: "text-input-lg leading-tight",
 				chevron: "size-icon-lg",

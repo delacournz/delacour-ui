@@ -15,6 +15,7 @@ import {
 	resolvePostLayout,
 	resolveScrimStops,
 	resolveStatDirection,
+	resolveStatFillPath,
 	resolveStatTone,
 	resolveVoteTone,
 } from "./post.variants";
@@ -218,6 +219,27 @@ describe("POST_FILL_PATHS", () => {
 		for (const path of Object.values(POST_FILL_PATHS)) {
 			expect(path).toMatch(/^M[\d.\sMCLHVZcvlhzm-]+$/);
 		}
+	});
+});
+
+describe("resolveStatFillPath", () => {
+	test("like fills the heart and save the bookmark", () => {
+		expect(resolveStatFillPath("like")).toBe(POST_FILL_PATHS.heart);
+		expect(resolveStatFillPath("save")).toBe(POST_FILL_PATHS.bookmark);
+	});
+
+	test("neutral and repost light by colour alone", () => {
+		expect(resolveStatFillPath("neutral")).toBeUndefined();
+		expect(resolveStatFillPath("repost")).toBeUndefined();
+	});
+
+	test("a caller's path wins over the tone's", () => {
+		expect(resolveStatFillPath("like", "M0 0Z")).toBe("M0 0Z");
+		expect(resolveStatFillPath("repost", "M0 0Z")).toBe("M0 0Z");
+	});
+
+	test("an empty path opts a tone out of its fill", () => {
+		expect(resolveStatFillPath("like", "")).toBeUndefined();
 	});
 });
 

@@ -152,6 +152,21 @@ export function resolvePostAvatarSize(size: PostSize, variant: PostVariant): Ava
 	return size === "sm" ? "sm" : "md";
 }
 
+/**
+ * The filled outline a stat draws under its glyph when it is lit.
+ *
+ * `like` fills the heart and `save` the bookmark — the glyphs those tones are
+ * drawn with in every demo. A caller's `fillPath` wins, and an empty string opts
+ * a tone out, for a `like` drawn with a glyph that is not the heart: a heart
+ * filled under a thumb would show through it.
+ */
+export function resolveStatFillPath(tone: PostStatTone, fillPath?: string): string | undefined {
+	if (fillPath !== undefined) return fillPath === "" ? undefined : fillPath;
+	if (tone === "like") return POST_FILL_PATHS.heart;
+	if (tone === "save") return POST_FILL_PATHS.bookmark;
+	return undefined;
+}
+
 /** The `vote` axis' key for a cast vote. `tv` cannot key a variant on `null`. */
 export function resolveVoteKey(vote: PostVote): "up" | "down" | "none" {
 	return vote ?? "none";
@@ -194,10 +209,13 @@ export const postVariants = tv({
 		action: "size-8 items-center justify-center rounded-full",
 		actionIcon: "size-icon-sm",
 		title: "font-semibold text-foreground",
+		bodyFrame: "",
 		body: "text-foreground",
+		bodyMeasure: "absolute inset-x-0 top-0 opacity-0",
 		bodyTag: "text-info",
 		bodyToggle: "font-medium text-muted-foreground",
 		media: "w-full overflow-hidden bg-muted",
+		mediaPress: "absolute inset-0",
 		mediaImage: "absolute inset-0 h-full w-full",
 		mediaFallback: "absolute inset-0 items-center justify-center",
 		mediaFallbackIcon: "size-icon-xl",
@@ -205,6 +223,7 @@ export const postVariants = tv({
 		footer: "flex-row items-center gap-1",
 		stat: "min-h-8 flex-row items-center gap-1.5 rounded-full px-1.5",
 		statIcon: "",
+		statFill: "absolute inset-0",
 		statCount: "overflow-hidden",
 		statValue: "tabular-nums",
 		votes: "flex-row items-center self-start rounded-full",
@@ -226,6 +245,7 @@ export const postVariants = tv({
 				communityName: "text-white",
 				title: "px-4",
 				body: "px-4",
+				bodyToggle: "px-4",
 				footer: "px-3",
 			},
 		},

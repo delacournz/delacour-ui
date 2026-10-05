@@ -271,6 +271,13 @@ import * as demo_progress_formatting from "./progress/formatting";
 import * as demo_progress_indeterminate from "./progress/indeterminate";
 import * as demo_progress_sizes from "./progress/sizes";
 import * as demo_progress_upload from "./progress/upload";
+import * as demo_questionnaire_basic from "./questionnaire/basic";
+import * as demo_questionnaire_conditional from "./questionnaire/conditional";
+import * as demo_questionnaire_controlled from "./questionnaire/controlled";
+import * as demo_questionnaire_progress_variants from "./questionnaire/progress-variants";
+import * as demo_questionnaire_text_and_scale from "./questionnaire/text-and-scale";
+import * as demo_questionnaire_unframed_in_sheet from "./questionnaire/unframed-in-sheet";
+import * as demo_questionnaire_validation from "./questionnaire/validation";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
@@ -637,6 +644,13 @@ export const DEMOS = {
 	"progress/indeterminate": demo_progress_indeterminate,
 	"progress/sizes": demo_progress_sizes,
 	"progress/upload": demo_progress_upload,
+	"questionnaire/basic": demo_questionnaire_basic,
+	"questionnaire/conditional": demo_questionnaire_conditional,
+	"questionnaire/controlled": demo_questionnaire_controlled,
+	"questionnaire/progress-variants": demo_questionnaire_progress_variants,
+	"questionnaire/text-and-scale": demo_questionnaire_text_and_scale,
+	"questionnaire/unframed-in-sheet": demo_questionnaire_unframed_in_sheet,
+	"questionnaire/validation": demo_questionnaire_validation,
 	"radio/custom-indicator": demo_radio_custom_indicator,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,
 	"radio/per-option-description": demo_radio_per_option_description,

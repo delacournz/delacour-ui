@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Aligned to the start",
 	caption:
 		'`align="start"` puts a 64-point face and the text on the leading edge, for a header that shares the screen with a busier body. Inline stats run each value into its label.',
-	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

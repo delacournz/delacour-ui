@@ -23,20 +23,15 @@ const POINTS_PER_STEP = 4;
 
 /** Every class each slot can emit, across every axis. */
 function everyClass(): string[] {
-	const classes: string[] = [];
-	for (const size of SIGNATURE_SIZES) {
-		for (const variant of SIGNATURE_VARIANTS) {
-			for (const isInvalid of [true, false]) {
-				for (const isDisabled of [true, false]) {
-					const slots = signatureVariants({ isDisabled, isInvalid, size, variant });
-					for (const slot of Object.values(slots)) {
-						classes.push(...(slot() ?? "").split(/\s+/).filter(Boolean));
-					}
-				}
-			}
-		}
-	}
-	return classes;
+	const flags = [true, false];
+	const combos = SIGNATURE_SIZES.flatMap((size) =>
+		SIGNATURE_VARIANTS.flatMap((variant) =>
+			flags.flatMap((isInvalid) => flags.map((isDisabled) => ({ isDisabled, isInvalid, size, variant })))
+		)
+	);
+	return combos.flatMap((axes) =>
+		Object.values(signatureVariants(axes)).flatMap((slot) => (slot() ?? "").split(/\s+/).filter(Boolean))
+	);
 }
 
 /** The `h-*` step a class string sets — `h-45` yields 45. */

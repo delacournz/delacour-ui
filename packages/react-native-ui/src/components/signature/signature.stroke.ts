@@ -145,6 +145,26 @@ function withStroke(state: SignatureHistory, stroke: SignatureStroke): Signature
 	return { ...state, strokes: [...state.strokes, stroke], redo: NO_STROKES, current: null };
 }
 
+/** Re-fits the strokes and the redo stack to a newly measured pad. */
+function withLayout(state: SignatureHistory, width: number, height: number): SignatureHistory {
+	if (width <= 0 || height <= 0) return state;
+	if (width === state.width && height === state.height) return state;
+	if (state.width <= 0 || state.height <= 0) return { ...state, width, height };
+	const fit = (strokes: readonly SignatureStroke[]) =>
+		strokes.length === 0
+			? strokes
+			: scaleValue({ width: state.width, height: state.height, strokes }, width, height).strokes;
+	return { ...state, width, height, strokes: fit(state.strokes), redo: fit(state.redo) };
+}
+
+/** Replaces the drawing and drops its history, fitted to the pad when it has been measured. */
+function withValue(state: SignatureHistory, value: SignatureValue | null): SignatureHistory {
+	if (value === null) return { ...state, strokes: NO_STROKES, redo: NO_STROKES, current: null };
+	if (state.width <= 0 || state.height <= 0) return { ...createHistory(value) };
+	const fitted = scaleValue(value, state.width, state.height);
+	return { ...state, strokes: fitted.strokes, redo: NO_STROKES, current: null };
+}
+
 /**
  * The undo history as a reducer.
  *
@@ -181,24 +201,10 @@ export function historyReducer(state: SignatureHistory, action: SignatureHistory
 		case "clear":
 			if (state.strokes.length === 0 && state.redo.length === 0) return state;
 			return { ...state, strokes: NO_STROKES, redo: NO_STROKES, current: null };
-		case "layout": {
-			const { width, height } = action;
-			if (width <= 0 || height <= 0) return state;
-			if (width === state.width && height === state.height) return state;
-			if (state.width <= 0 || state.height <= 0) return { ...state, width, height };
-			const fit = (strokes: readonly SignatureStroke[]) =>
-				strokes.length === 0
-					? strokes
-					: scaleValue({ width: state.width, height: state.height, strokes }, width, height).strokes;
-			return { ...state, width, height, strokes: fit(state.strokes), redo: fit(state.redo) };
-		}
-		case "reset": {
-			const { value } = action;
-			if (value === null) return { ...state, strokes: NO_STROKES, redo: NO_STROKES, current: null };
-			if (state.width <= 0 || state.height <= 0) return { ...createHistory(value) };
-			const fitted = scaleValue(value, state.width, state.height);
-			return { ...state, strokes: fitted.strokes, redo: NO_STROKES, current: null };
-		}
+		case "layout":
+			return withLayout(state, action.width, action.height);
+		case "reset":
+			return withValue(state, action.value);
 	}
 }
 
@@ -244,10 +250,10 @@ export function boundsOf(strokes: readonly SignatureStroke[], strokeWidth: numbe
 
 	for (const stroke of strokes) {
 		for (const point of stroke) {
-			if (point.x < minX) minX = point.x;
-			if (point.y < minY) minY = point.y;
-			if (point.x > maxX) maxX = point.x;
-			if (point.y > maxY) maxY = point.y;
+			minX = Math.min(minX, point.x);
+			minY = Math.min(minY, point.y);
+			maxX = Math.max(maxX, point.x);
+			maxY = Math.max(maxY, point.y);
 		}
 	}
 	if (!Number.isFinite(minX)) return null;

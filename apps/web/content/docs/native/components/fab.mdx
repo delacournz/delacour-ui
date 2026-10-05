@@ -4,6 +4,8 @@ description: One primary action floating over the screen, extended with a label 
 icon: CirclePlus
 ---
 
+<Preview id="fab/speed-dial" title={null} />
+
 ## Installation
 
 <ComponentInstall name="fab" />
@@ -68,6 +70,8 @@ A `Fab` composes its icon the way a [Button](/docs/native/components/button) doe
 `placement` pins the fab to the bottom of its nearest positioned ancestor; without it the fab sits
 in flow like any other view.
 
+<Preview id="fab/placements" />
+
 ```tsx
 <Fab accessibilityLabel="Record" placement="bottom-start">…</Fab>
 <Fab accessibilityLabel="Add" placement="bottom-center">…</Fab>
@@ -78,6 +82,8 @@ in flow like any other view.
 A pinned fab covers the bottom of your list. Pad the scroll content's bottom by the fab's height
 plus its offset — `pb-28` clears a medium fab — or the last row can never scroll out from under it.
 </Callout>
+
+<Preview id="fab/over-a-list" />
 
 ## Safe area
 
@@ -92,6 +98,8 @@ as above a tab bar.
 ## Sizes
 
 `sm`, `md` and `lg` are 44, 56 and 64pt, from the fab's own size tokens.
+
+<Preview id="fab/sizes-and-variants" />
 
 ```tsx
 <Fab accessibilityLabel="Add" size="sm">…</Fab>
@@ -115,6 +123,8 @@ matching token.
 
 `isExtended` makes a stadium with a `Fab.Label` beside the icon, and the label names the button.
 
+<Preview id="fab/extended" />
+
 ```tsx
 <Fab isExtended placement="bottom-end" onPress={write}>
   <Icon icon={IconPencil} />
@@ -126,6 +136,8 @@ matching token.
 
 `Fab.Group` unfolds a dial of related actions over a scrim; pressing an action runs it and closes
 the dial.
+
+<Preview id="fab/speed-dial" />
 
 ```tsx
 <Fab.Group accessibilityLabel="Add something" icon={IconPlusLarge}>

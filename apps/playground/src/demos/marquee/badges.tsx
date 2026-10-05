@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Badges drifting left at 40 points per second, dissolving into the background at both edges. Hold a finger on the strip and it eases to a stop.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "marquee/badges" },
 };
 
 const TAGS = ["Design", "Motion", "Typography", "Colour", "Layout", "Accessibility", "Tokens", "Haptics"] as const;

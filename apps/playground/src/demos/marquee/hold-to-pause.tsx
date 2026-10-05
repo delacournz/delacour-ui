@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		'The default pause is `{ kind: "press" }`: a finger down anywhere on the strip eases it to a stop over `easeMs`, and lifting it eases back up to speed from exactly where it was.',
 	align: "stretch",
+	capture: { align: "stretch", flow: "marquee/hold-to-pause" },
 };
 
 const ITEMS = ["Hold", "anywhere", "on", "the", "strip", "to", "stop", "it"] as const;

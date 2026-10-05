@@ -365,6 +365,12 @@ import * as demo_toggle_button_single_selection from "./toggle-button/single-sel
 import * as demo_toggle_button_sizes from "./toggle-button/sizes";
 import * as demo_toggle_button_states from "./toggle-button/states";
 import * as demo_toggle_button_variants from "./toggle-button/variants";
+import * as demo_tour_basic from "./tour/basic";
+import * as demo_tour_circle_shape from "./tour/circle-shape";
+import * as demo_tour_custom_labels from "./tour/custom-labels";
+import * as demo_tour_interactive from "./tour/interactive";
+import * as demo_tour_placement from "./tour/placement";
+import * as demo_tour_scroll_into_view from "./tour/scroll-into-view";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -731,6 +737,12 @@ export const DEMOS = {
 	"toggle-button/sizes": demo_toggle_button_sizes,
 	"toggle-button/states": demo_toggle_button_states,
 	"toggle-button/variants": demo_toggle_button_variants,
+	"tour/basic": demo_tour_basic,
+	"tour/circle-shape": demo_tour_circle_shape,
+	"tour/custom-labels": demo_tour_custom_labels,
+	"tour/interactive": demo_tour_interactive,
+	"tour/placement": demo_tour_placement,
+	"tour/scroll-into-view": demo_tour_scroll_into_view,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

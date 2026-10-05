@@ -11,6 +11,7 @@ import {
 	IconChart1,
 	IconChevronGrabberVertical,
 	IconCircleRecord,
+	IconCompassPointer,
 	IconCursorClick,
 	IconDiamond,
 	IconDivider,
@@ -95,6 +96,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	text: IconFontStyle,
 	textarea: IconNoteText,
 	"toggle-button": IconBold,
+	tour: IconCompassPointer,
 };
 
 /**

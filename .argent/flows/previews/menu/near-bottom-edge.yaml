@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on menu/near-bottom-edge and has settled — the More button at the bottom-left
+  of the screen with the menu closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the menu — with no room below, it flips above the trigger
+  - tap: { id: menu-bottom-trigger }
+  - await: { visible: { id: menu-bottom-rename } }
+  - wait: 1400
+  - echo: Choosing Rename closes it
+  - tap: { id: menu-bottom-rename }
+  - await: { hidden: { id: menu-bottom-rename } }

@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on menu/long-list and has settled — the Pacific/Auckland button with the
+  menu closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the capped panel
+  - tap: { id: menu-zone-trigger }
+  - await: { visible: { id: menu-zone-Pacific/Auckland } }
+  - wait: 500
+  - echo: Scrolling the rows — a drag chooses nothing
+  - swipe: { from: { id: menu-zone-Asia/Dubai }, by: { y: -0.2 }, duration: 500, momentum: false }
+  - wait: 500
+  - swipe: { from: { id: menu-zone-Asia/Dubai }, by: { y: 0.2 }, duration: 500, momentum: false }
+  - wait: 500
+  - echo: Choosing the current zone again closes it with nothing changed
+  - tap: { id: menu-zone-Pacific/Auckland }
+  - await: { hidden: { id: menu-zone-Pacific/Auckland } }

@@ -1,0 +1,23 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on menu/checkbox-and-radio and has settled — the View button with the menu
+  closed, Completed checked and Comfortable chosen. The capture script navigates there before running this.
+steps:
+  - echo: Opening the menu
+  - tap: { id: menu-view-trigger }
+  - await: { visible: { id: menu-view-done } }
+  - wait: 600
+  - echo: A checkbox row toggles and the menu stays open
+  - tap: { id: menu-view-done }
+  - wait: 500
+  - tap: { id: menu-view-done }
+  - wait: 500
+  - echo: A radio row chooses and closes
+  - tap: { id: menu-view-compact }
+  - await: { hidden: { id: menu-view-done } }
+  - wait: 500
+  - echo: Back to Comfortable, so the clip loops without a jump cut
+  - tap: { id: menu-view-trigger }
+  - await: { visible: { id: menu-view-comfortable } }
+  - wait: 600
+  - tap: { id: menu-view-comfortable }
+  - await: { hidden: { id: menu-view-done } }

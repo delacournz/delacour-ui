@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on menu/submenu and has settled — the Message button with the menu closed.
+  The capture script navigates there before running this.
+steps:
+  - echo: Opening the menu
+  - tap: { id: menu-sub-trigger }
+  - await: { visible: { id: menu-sub-move } }
+  - wait: 500
+  - echo: Expanding Move to in place, then folding it away again
+  - tap: { id: menu-sub-move }
+  - wait: 1100
+  - tap: { id: menu-sub-move }
+  - wait: 600
+  - echo: Choosing Edit closes the menu
+  - tap: { id: menu-sub-edit }
+  - await: { hidden: { id: menu-sub-move } }

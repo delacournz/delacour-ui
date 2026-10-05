@@ -1,0 +1,186 @@
+---
+title: SectionProgress
+description: A floating pill over a long read — a ring filling with scroll progress, the section being read, and a list to jump between them.
+icon: BookOpen
+---
+
+## Installation
+
+<ComponentInstall name="section-progress" />
+
+## Usage
+
+```tsx title="app/policy.tsx"
+import { useScrollSections } from "@/hooks/use-scroll-sections";
+import { SectionProgress } from "@/components/ui/section-progress";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+import Animated from "react-native-reanimated";
+
+const SECTIONS = [
+  { id: "intro", title: "Introduction", body: "What this policy covers, and who it applies to." },
+  { id: "pricing", title: "Pricing", body: "What each plan costs, and when you are billed." },
+  { id: "faq", title: "Questions", body: "The answers people ask for most often." },
+];
+
+export default function Policy() {
+  const sections = useScrollSections({ readingLine: 96 });
+
+  return (
+    <View className="flex-1">
+      <Animated.ScrollView
+        ref={sections.scrollRef}
+        onScroll={sections.scrollHandler}
+        scrollEventThrottle={16}
+        contentContainerClassName="pb-32"
+      >
+        {SECTIONS.map((section) => (
+          <View key={section.id} onLayout={sections.register(section.id)}>
+            <Text.Header>{section.title}</Text.Header>
+            <Text.Paragraph>{section.body}</Text.Paragraph>
+          </View>
+        ))}
+      </Animated.ScrollView>
+
+      <SectionProgress scroll={sections} value={sections.activeId} onValueChange={sections.scrollTo}>
+        {SECTIONS.map((section) => (
+          <SectionProgress.Item key={section.id} value={section.id}>
+            {section.title}
+          </SectionProgress.Item>
+        ))}
+      </SectionProgress>
+    </View>
+  );
+}
+```
+
+`useScrollSections` tracks the scroll view; the pill reads its `progress` and `scrollY` through
+`scroll`, its `activeId` as `value` and its `scrollTo` as `onValueChange`. The ring fills on the UI
+thread, so scrolling renders nothing — the label changes only when the section does.
+
+<Callout type="warn">
+Mount the pill as the **last child of the screen's container**, a sibling of the scroll view. It
+positions itself absolutely inside that container and is not portalled. Leave bottom padding at the
+end of the scroll content so the pill never covers the last line.
+</Callout>
+
+Each registered section must be a direct child of the scroll content: `onLayout` reports `y`
+relative to its parent.
+
+## Placements
+
+Six placements, `offset` points in from the safe area. A `top-*` pill opens its panel downward and a
+`bottom-*` one upward; `start` and `end` mirror under right-to-left.
+
+```tsx
+<SectionProgress placement="top-end" offset={12} …>…</SectionProgress>
+```
+
+## Reveal
+
+The pill appears once the reader scrolls past `revealAt` (64 points by default) and stays from then
+on, so it never blinks near the top. `revealAt={0}` shows it at once.
+
+## Coloured sections
+
+An item's `color` paints its marker in the panel, and the ring while that section is being read.
+
+```tsx
+<SectionProgress.Item value="known-issues" color="warning">Known issues</SectionProgress.Item>
+```
+
+## Manual progress
+
+`progress` overrides the scroll — a number or a shared value from 0 to 1. Small steps track
+directly; a jump of more than a tenth eases over 180ms.
+
+```tsx
+<SectionProgress progress={step / steps.length} revealAt={0} value={current}>…</SectionProgress>
+```
+
+## Controlled open
+
+`isOpen` and `onOpenChange` hand the panel to you. The pill, an outside tap, the escape gesture and
+Android back all close it through the same callback.
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+
+<SectionProgress isOpen={isOpen} onOpenChange={setOpen} …>…</SectionProgress>
+```
+
+## Accessibility
+
+- The pill is one button, read as "Sections, Pricing, 42 percent", with an expanded state.
+- The percent only reaches React while a screen reader is running; with none, scrolling renders nothing.
+- Opening moves focus to the active section. The panel is modal to VoiceOver, and the escape
+  gesture closes it.
+- Sections are buttons; the active one is announced selected. The ring and the markers are hidden.
+- Android back closes the open panel.
+- Reduce motion turns the panel's scale into a fade. The ring keeps tracking — it is information,
+  not decoration.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `SectionProgress` | The floating pill, its panel and the outside-tap scrim |
+| `SectionProgress.Item` | One section — a coloured marker and its title, which is also the pill's label while active |
+
+### SectionProgress
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    scroll: { type: "UseScrollSectionsResult", description: "Drives the ring and the reveal. It reads `progress` and `scrollY`." },
+    progress: { type: "SharedValue<number> | number", description: "Overrides the scroll-derived ring fill, 0–1." },
+    value: { type: "string", description: "The active section. Controlled — pass `activeId` even while it is undefined." },
+    defaultValue: { type: "string" },
+    onValueChange: { type: "(value: string) => void", description: "Called with the picked section. Wire it to `scrollTo`." },
+    isOpen: { type: "boolean" },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    placement: {
+      type: '"bottom-center" | "top-center" | "bottom-start" | "bottom-end" | "top-start" | "top-end"',
+      default: '"bottom-center"',
+    },
+    offset: { type: "number", default: "16", description: "Points from the safe-area edge." },
+    revealAt: { type: "number", default: "64", description: "Scroll Y before the pill appears. 0 is always visible." },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Played when the active section changes." },
+    accessibilityLabel: { type: "string", default: '"Sections"' },
+    className: { type: "string" },
+  }}
+/>
+
+### SectionProgress.Item
+
+A `Pressable`, so `feedback`, `haptic` and the rest are inherited — see
+[Pressable](/docs/native/components/pressable).
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The id the section was registered under." },
+    color: {
+      type: '"foreground" | "primary" | "success" | "warning" | "info" | "destructive"',
+      default: '"foreground"',
+    },
+    children: { type: "string", description: "The section's title." },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  SectionProgress,
+  type SectionProgressProps,
+  type SectionProgressItemProps,
+  SECTION_PROGRESS_PLACEMENTS,
+  SECTION_PROGRESS_COLORS,
+  useSectionProgress,
+} from "@delacour/react-native-ui/section-progress";
+```

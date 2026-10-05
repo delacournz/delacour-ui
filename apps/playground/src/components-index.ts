@@ -101,6 +101,7 @@ const ROWS = [
 	{ slug: "label", title: "Label", description: "Required, invalid and disabled states", group: "Forms" },
 	{ slug: "radio", title: "Radio", description: "Groups, selection, sizes, orientation", group: "Forms" },
 	{ slug: "rating", title: "Rating", description: "Half stars, read-only, drag, clear", group: "Forms" },
+	{ slug: "select", title: "Select", description: "Single, multiple, groups, search", group: "Forms" },
 	{ slug: "slider", title: "Slider", description: "Range, orientation, colours, steps", group: "Forms" },
 	{ slug: "switch", title: "Switch", description: "Drag or tap, colours, sizes, end content", group: "Forms" },
 	{

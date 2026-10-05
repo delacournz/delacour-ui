@@ -308,6 +308,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
 		categories: ["forms"],
 	},
+	select: {
+		title: "Select",
+		description:
+			"A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable.",
+		categories: ["forms"],
+	},
 	screen: {
 		title: "Screen",
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",

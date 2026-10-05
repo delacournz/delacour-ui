@@ -24,6 +24,7 @@
 		"checkbox",
 		"chip",
 		"radio",
+		"select",
 		"switch",
 		"slider",
 		"rating",

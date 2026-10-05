@@ -1,0 +1,233 @@
+---
+title: Select
+description: A closed set of choices behind a field-shaped trigger, picked from a bottom sheet.
+icon: SquareChevronDown
+---
+
+<Preview id="select/single" title={null} />
+
+## Installation
+
+<ComponentInstall name="select" />
+
+<Callout type="warn" title="Mount BottomSheetProvider">
+The options open in a [BottomSheet](/docs/native/components/bottom-sheet), so the app installs
+`@delacour/react-native-bottom-sheet` and mounts `BottomSheetProvider` once, inside
+`DelacourProvider`. Without it the trigger renders and the sheet never opens.
+</Callout>
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Select } from "@/components/ui/select";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [fruit, setFruit] = useState<string | null>(null);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Select onValueChange={setFruit} placeholder="Choose a fruit" title="Fruit" value={fruit}>
+        <Select.Item label="Apple" value="apple" />
+        <Select.Item label="Feijoa" value="feijoa" />
+        <Select.Item description="Green or gold" label="Kiwifruit" value="kiwifruit" />
+        <Select.Item isDisabled label="Durian" value="durian" />
+      </Select>
+    </View>
+  );
+}
+```
+
+## Multiple
+
+`selectionMode="multiple"` keeps the sheet open, closes from a Done footer, and hands `onValueChange` an array.
+
+<Preview id="select/multiple" />
+
+```tsx
+<Select
+  maxSelected={3}
+  onValueChange={setToppings}
+  options={toppings}
+  selectionMode="multiple"
+  value={selected}
+/>
+```
+
+## Groups
+
+`Select.Group` puts a heading over a run of options, announced as a header.
+
+```tsx
+<Select placeholder="Choose a city">
+  <Select.Group label="Aotearoa">
+    <Select.Item label="Auckland" value="akl" />
+    <Select.Item label="Wellington" value="wlg" />
+  </Select.Group>
+  <Select.Group label="Australia">
+    <Select.Item label="Sydney" value="syd" />
+  </Select.Group>
+</Select>
+```
+
+## Searchable
+
+`isSearchable` adds a search field that matches case- and accent-insensitively, hides emptied groups, and clears on close.
+
+<Preview id="select/grouped-searchable" />
+
+```tsx
+<Select isSearchable options={cities} searchPlaceholder="Search cities" />
+```
+
+## Data-driven
+
+The `options` prop takes options and `{ label, options }` groups in the same shape as the children, and the rows are virtualised.
+
+```tsx
+const options = [
+  { label: "Free", value: "free" },
+  { label: "Team", value: "team", description: "Up to ten seats" },
+];
+
+<Select options={options} placeholder="Choose a plan" />;
+```
+
+## In a Field
+
+Inside a `Field` the select takes its invalid and disabled state, reads `Field.Label` as its name and sheet title, and opens when the label is tapped.
+
+<Preview id="select/in-a-field" />
+
+```tsx
+<Field isInvalid={role === null}>
+  <Field.Label>Role</Field.Label>
+  <Select onValueChange={setRole} options={roles} placeholder="Choose" value={role} />
+  <Field.Error>Choose a role to continue.</Field.Error>
+</Field>
+```
+
+## States
+
+`isDisabled` fades the trigger, `isReadOnly` shows the value and never opens, and `isLoading` swaps the chevron for a spinner.
+
+<Preview id="select/disabled-and-loading" />
+
+```tsx
+<Select isDisabled options={plans} value="team" />
+<Select isReadOnly options={plans} value="free" />
+<Select isLoading options={[]} placeholder="Loading plans" />
+```
+
+## Custom trigger
+
+Compose `Select.Trigger` with `asChild` to open the sheet from a control of your own.
+
+```tsx
+<Select onValueChange={setSort} options={sorts} title="Sort by" value={sort}>
+  <Select.Trigger asChild>
+    <Button variant="outline">Sort</Button>
+  </Select.Trigger>
+</Select>
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Select` | The root: owns the selection, renders the trigger and the sheet |
+| `Select.Item` | One option, declared as a child. Renders nothing; the root reads its props |
+| `Select.Group` | A titled run of `Select.Item`s |
+| `Select.Trigger` | The field-shaped control that opens the sheet. Compose it only to replace it |
+
+### Select
+
+<TypeTable
+  type={{
+    selectionMode: { type: '"single" | "multiple"', default: '"single"' },
+    value: { type: "string | null (single) · string[] (multiple)", description: "Controlled." },
+    defaultValue: { type: "string | null (single) · string[] (multiple)" },
+    onValueChange: {
+      type: "(value: string | null) => void (single) · (value: string[]) => void (multiple)",
+    },
+    options: {
+      type: "(SelectOption | SelectOptionGroup)[]",
+      description: "The options as data. Leave it off to compose `Select.Item` children.",
+    },
+    placeholder: { type: "string" },
+    title: { type: "string", description: "The sheet's heading. Defaults to the enclosing `Field.Label`." },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isReadOnly: { type: "boolean", default: "false" },
+    isLoading: { type: "boolean", default: "false" },
+    isSearchable: { type: "boolean", default: "false" },
+    searchPlaceholder: { type: "string", default: '"Search"' },
+    emptyText: { type: "string", default: '"No results"' },
+    presentation: { type: '"sheet"', default: '"sheet"' },
+    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it sizes to its rows." },
+    renderValue: { type: "(selected: SelectOption[]) => ReactNode", description: "Custom trigger content." },
+    maxLabels: { type: "number", default: "2", description: "Labels a multiple trigger joins before it counts." },
+    formatSelectedCount: { type: "(count: number) => string", default: "(n) => `${n} selected`" },
+    isClearable: { type: "boolean", default: "false", description: "Single only. A second press clears." },
+    maxSelected: { type: "number", description: "Multiple only. Disables the remaining rows once reached." },
+    limitReachedText: { type: "string", default: '"Limit reached"', description: "Multiple only." },
+    doneText: { type: "string", default: '"Done"', description: "Multiple only. The footer button." },
+    className: { type: "string", description: "Classes for the trigger." },
+    testID: { type: "string", description: "Rows take `-option-<value>`, search `-search`, close `-close`, Done `-done`." },
+  }}
+/>
+
+### Select.Item
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Unique within the list. A duplicate is dropped." },
+    label: { type: "string", description: "The trigger text, the accessible name and what search matches." },
+    description: { type: "string" },
+    isDisabled: { type: "boolean" },
+    icon: { type: "IconComponent", description: "A leading glyph." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Drawn in place of the label." },
+  }}
+/>
+
+### Select.Group
+
+<TypeTable
+  type={{
+    label: { type: "string", description: "The heading over the group's rows." },
+    children: { type: "ReactNode", description: "`Select.Item`s." },
+  }}
+/>
+
+### Select.Trigger
+
+A `Pressable`, so `feedback`, `haptic` and the rest are inherited.
+
+<TypeTable
+  type={{
+    asChild: { type: "boolean", default: "false", description: "Hand the press to the single child instead of drawing the box." },
+    children: { type: "ReactNode", description: "Replaces the value and chevron, or the whole trigger with `asChild`." },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  Select,
+  useSelect,
+  type SelectProps,
+  type SelectOption,
+  type SelectOptionGroup,
+  matchesQuery,
+  toggleSelection,
+  resolveSelectTriggerText,
+} from "@delacour/react-native-ui/select";
+```

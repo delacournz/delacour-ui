@@ -284,6 +284,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
 	},
+	"text-animation": {
+		title: "TextAnimation",
+		description: "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
+		categories: ["media"],
+	},
 	textarea: {
 		title: "Textarea",
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",

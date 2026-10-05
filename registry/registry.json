@@ -1444,6 +1444,41 @@
 			]
 		},
 		{
+			"name": "text-animation",
+			"type": "registry:ui",
+			"title": "TextAnimation",
+			"description": "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/text-animation/AGENTS.md",
+				"ui/text-animation/index.ts",
+				"ui/text-animation/text-animation-caret.tsx",
+				"ui/text-animation/text-animation-clock.ts",
+				"ui/text-animation/text-animation-counting.tsx",
+				"ui/text-animation/text-animation-rolling.tsx",
+				"ui/text-animation/text-animation-rotating.tsx",
+				"ui/text-animation/text-animation-typing.tsx",
+				"ui/text-animation/text-animation-unit.tsx",
+				"ui/text-animation/text-animation.tsx",
+				"ui/text-animation/text-animation.types.ts",
+				"ui/text-animation/text-animation.variants.ts"
+			]
+		},
+		{
 			"name": "textarea",
 			"type": "registry:ui",
 			"title": "Textarea",

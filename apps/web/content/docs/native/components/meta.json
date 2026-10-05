@@ -47,6 +47,7 @@
 		"screen",
 		"surface",
 		"card",
+		"direction",
 		"---Utilities---",
 		"provider"
 	]

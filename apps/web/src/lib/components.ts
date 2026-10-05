@@ -226,6 +226,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "direction",
+		name: "Direction",
+		group: "Layout",
+		blurb: "Sets left-to-right or right-to-left for a subtree, and tells gesture maths which way is start.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

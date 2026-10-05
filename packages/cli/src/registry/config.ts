@@ -163,6 +163,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",
 		categories: ["display"],
 	},
+	direction: {
+		title: "Direction",
+		description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
+		categories: ["layout"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

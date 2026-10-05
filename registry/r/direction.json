@@ -1,0 +1,49 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "direction",
+	"type": "registry:ui",
+	"title": "Direction",
+	"description": "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/direction/AGENTS.md",
+			"target": "direction/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/direction",
+					"to": "@registry/ui/direction"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/direction/direction.context.tsx",
+			"target": "direction/direction.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/direction/direction.tsx",
+			"target": "direction/direction.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/direction/direction.variants.ts",
+			"target": "direction/direction.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/direction/index.ts",
+			"target": "direction/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

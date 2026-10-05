@@ -501,6 +501,28 @@
 			]
 		},
 		{
+			"name": "direction",
+			"type": "registry:ui",
+			"title": "Direction",
+			"description": "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/direction/AGENTS.md",
+				"ui/direction/direction.context.tsx",
+				"ui/direction/direction.tsx",
+				"ui/direction/direction.variants.ts",
+				"ui/direction/index.ts"
+			]
+		},
+		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",

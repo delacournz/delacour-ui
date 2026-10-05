@@ -46,6 +46,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The Gesture API primitive every pressable in the library is built on.",
 	},
 	{
+		slug: "progress-button",
+		name: "ProgressButton",
+		group: "Actions",
+		blurb: "A button held, not tapped, to confirm \u2014 the action fires when the fill reaches the end.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",

@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	caption:
 		'`shape="rounded"` trades the capsule for the card\'s corner, so the button sits square with a rounded `Button` beside it.',
 	align: "center",
-	capture: {},
 };
 
 export function Demo(): ReactElement {

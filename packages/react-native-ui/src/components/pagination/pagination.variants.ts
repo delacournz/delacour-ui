@@ -25,6 +25,9 @@ export const PAGINATION_DEFAULT_SIBLINGS = 1;
 export const PAGINATION_DEFAULT_BOUNDARIES = 1;
 export const PAGINATION_DEFAULT_PAGE_JUMP = 5;
 
+/** How long the current page's fill takes to cross-fade. Reduce motion snaps it. */
+export const PAGINATION_FILL_DURATION_MS = 150;
+
 /** The smallest target a thumb is promised, in points. */
 export const PAGINATION_MIN_TARGET = 44;
 
@@ -259,6 +262,8 @@ export const paginationVariants = tv({
 		itemLabel: "font-medium",
 		/** The previous or next arrow. */
 		control: "flex-row items-center justify-center gap-1",
+		/** The chevron's size class, handed to its `IconDefaultsProvider`. */
+		glyph: "",
 		/** "Previous" / "Next" beside the chevron, when shown. */
 		controlLabel: "font-medium text-foreground",
 		/** A gap that jumps `pageJump` pages. */
@@ -282,6 +287,7 @@ export const paginationVariants = tv({
 				itemLabel: "text-sm",
 				control: "h-button-sm min-w-button-sm rounded-button-sm",
 				controlLabel: "text-sm",
+				glyph: "size-icon-sm",
 				ellipsis: "h-button-sm min-w-button-sm",
 				ellipsisLabel: "text-sm",
 				compact: "h-button-sm",
@@ -294,6 +300,7 @@ export const paginationVariants = tv({
 				itemLabel: "text-base",
 				control: "h-button-md min-w-button-md rounded-button-md",
 				controlLabel: "text-base",
+				glyph: "size-icon-md",
 				ellipsis: "h-button-md min-w-button-md",
 				ellipsisLabel: "text-base",
 				compact: "h-button-md",

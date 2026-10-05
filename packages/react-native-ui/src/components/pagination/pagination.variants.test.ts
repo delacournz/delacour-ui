@@ -13,6 +13,7 @@ import {
 	PAGINATION_DEFAULT_SIBLINGS,
 	PAGINATION_DEFAULT_SIZE,
 	PAGINATION_DEFAULT_VARIANT,
+	PAGINATION_FILL_DURATION_MS,
 	PAGINATION_HIT_SLOP,
 	PAGINATION_MIN_TARGET,
 	PAGINATION_SIZES,
@@ -212,46 +213,47 @@ describe("resolvePaginationRange", () => {
 					});
 
 					test(`${label}: pages ascend, within 1…count, and the ends are drawn whenever boundaries are`, () => {
-						for (const run of runs) {
-							const drawn = pages(run.tokens);
-							expect(drawn).toEqual([...drawn].sort((a, b) => a - b));
-							expect(new Set(drawn).size).toBe(drawn.length);
-							for (const page of drawn) {
-								expect(page).toBeGreaterThanOrEqual(1);
-								expect(page).toBeLessThanOrEqual(count);
-							}
-							if (count > 0 && boundaries > 0) {
-								expect(drawn[0]).toBe(1);
-								expect(drawn.at(-1)).toBe(count);
-							}
-						}
+						for (const run of runs) expectOrderedRun(pages(run.tokens), count, boundaries);
 					});
 
 					test(`${label}: an ellipsis never hides a single page, and only an ellipsis hides any`, () => {
-						for (const run of runs) {
-							const { tokens } = run;
-							for (let index = 0; index < tokens.length; index++) {
-								const token = tokens[index];
-								if (token?.kind !== "ellipsis") continue;
-								const before = index === 0 ? 0 : pageAt(tokens, index - 1);
-								const after = index === tokens.length - 1 ? count + 1 : pageAt(tokens, index + 1);
-								expect(after - before - 1).toBeGreaterThanOrEqual(2);
-								expect(token.direction).toBe(after <= run.page ? -1 : 1);
-							}
-							for (let index = 1; index < tokens.length; index++) {
-								const previous = tokens[index - 1];
-								const current = tokens[index];
-								if (previous?.kind === "page" && current?.kind === "page") {
-									expect(current.page).toBe(previous.page + 1);
-								}
-							}
-						}
+						for (const run of runs) expectHonestGaps(run.tokens, run.page, count);
 					});
 				}
 			}
 		}
 	});
 });
+
+/** Pages ascend without repeats, sit within 1…count, and include both ends whenever boundaries do. */
+function expectOrderedRun(drawn: readonly number[], count: number, boundaries: number): void {
+	expect(drawn).toEqual([...drawn].sort((a, b) => a - b));
+	expect(new Set(drawn).size).toBe(drawn.length);
+	for (const page of drawn) {
+		expect(page).toBeGreaterThanOrEqual(1);
+		expect(page).toBeLessThanOrEqual(count);
+	}
+	if (count > 0 && boundaries > 0) {
+		expect(drawn[0]).toBe(1);
+		expect(drawn.at(-1)).toBe(count);
+	}
+}
+
+/** Every ellipsis hides at least two pages and points away from the current one; adjacent pages are consecutive. */
+function expectHonestGaps(tokens: readonly PaginationToken[], current: number, count: number): void {
+	tokens.forEach((token, index) => {
+		if (token.kind !== "ellipsis") return;
+		const before = index === 0 ? 0 : pageAt(tokens, index - 1);
+		const after = index === tokens.length - 1 ? count + 1 : pageAt(tokens, index + 1);
+		expect(after - before - 1).toBeGreaterThanOrEqual(2);
+		expect(token.direction).toBe(after <= current ? -1 : 1);
+	});
+	for (let index = 1; index < tokens.length; index++) {
+		const previous = tokens[index - 1];
+		const token = tokens[index];
+		if (previous?.kind === "page" && token?.kind === "page") expect(token.page).toBe(previous.page + 1);
+	}
+}
 
 /** The page at an index the invariants know to be a page. */
 function pageAt(tokens: readonly PaginationToken[], index: number): number {
@@ -309,14 +311,38 @@ describe("resolvePageCorrection", () => {
 
 describe("resolvePaginationStatus", () => {
 	test.each([
-		[{ page: 1, pageSize: 20, total: 472 }, { from: 1, to: 20, total: 472 }],
-		[{ page: 3, pageSize: 20, total: 472 }, { from: 41, to: 60, total: 472 }],
-		[{ page: 24, pageSize: 20, total: 472 }, { from: 461, to: 472, total: 472 }],
-		[{ page: 99, pageSize: 20, total: 472 }, { from: 461, to: 472, total: 472 }],
-		[{ page: 0, pageSize: 20, total: 472 }, { from: 1, to: 20, total: 472 }],
-		[{ page: 1, pageSize: 20, total: 0 }, { from: 0, to: 0, total: 0 }],
-		[{ page: 1, pageSize: 0, total: 30 }, { from: 0, to: 0, total: 0 }],
-		[{ page: 1, pageSize: 50, total: 7 }, { from: 1, to: 7, total: 7 }],
+		[
+			{ page: 1, pageSize: 20, total: 472 },
+			{ from: 1, to: 20, total: 472 },
+		],
+		[
+			{ page: 3, pageSize: 20, total: 472 },
+			{ from: 41, to: 60, total: 472 },
+		],
+		[
+			{ page: 24, pageSize: 20, total: 472 },
+			{ from: 461, to: 472, total: 472 },
+		],
+		[
+			{ page: 99, pageSize: 20, total: 472 },
+			{ from: 461, to: 472, total: 472 },
+		],
+		[
+			{ page: 0, pageSize: 20, total: 472 },
+			{ from: 1, to: 20, total: 472 },
+		],
+		[
+			{ page: 1, pageSize: 20, total: 0 },
+			{ from: 0, to: 0, total: 0 },
+		],
+		[
+			{ page: 1, pageSize: 0, total: 30 },
+			{ from: 0, to: 0, total: 0 },
+		],
+		[
+			{ page: 1, pageSize: 50, total: 7 },
+			{ from: 1, to: 7, total: 7 },
+		],
 	])("%p → %p", (input, expected) => {
 		expect(resolvePaginationStatus(input)).toEqual(expected);
 	});
@@ -398,6 +424,20 @@ describe("paginationVariants", () => {
 		for (const size of PAGINATION_SIZES) {
 			const gapPx = step(cls(paginationVariants({ size }).run()), "gap") * 4;
 			expect(gapPx).toBeGreaterThanOrEqual(2 * PAGINATION_HIT_SLOP[size]);
+		}
+	});
+});
+
+describe("motion", () => {
+	test("the current page's fill cross-fades in 150ms", () => {
+		expect(PAGINATION_FILL_DURATION_MS).toBe(150);
+	});
+});
+
+describe("glyph", () => {
+	test("each size's chevron is the icon step of the same name", () => {
+		for (const size of PAGINATION_SIZES) {
+			expect(cls(paginationVariants({ size }).glyph())).toBe(`size-icon-${size}`);
 		}
 	});
 });

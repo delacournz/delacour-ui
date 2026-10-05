@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`sm` 320, `md` 400, `lg` 520 and `full`, each a cap on a full-width card — a phone narrower than the cap shows them alike. An `sm` footer stacks its actions.",
 	align: "center",
+	capture: { flow: "dialog/sizes", frame: "device" },
 };
 
 const LABELS: Record<DialogSize, string> = {
@@ -21,7 +22,7 @@ const LABELS: Record<DialogSize, string> = {
 /** One trigger per size, mapped over the library's own tuple. */
 export function Demo(): ReactElement {
 	return (
-		<View className="gap-3">
+		<View className="flex-1 items-center justify-center gap-3">
 			{DIALOG_SIZES.map((size) => (
 				<Dialog key={size}>
 					<Dialog.Trigger asChild>

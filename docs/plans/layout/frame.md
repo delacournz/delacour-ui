@@ -239,7 +239,7 @@ Route `apps/playground/src/app/(components)/frame.tsx`; `components-index.ts` ro
 - [x] Simulator via agent-device (2026-10-05, iPhone 17 dev client: action press, switch toggle, footer, both themes; header role asserted in source — agent-device reports no trait) (claim a device with `warden claim ios`): open `frame/settings`, `snapshot -i`, `press id=frame-action`, `is` title has header role, toggle a Switch row and `get` its value, verify inset footer buttons visible above the safe area; `close` and `warden release`
 - [x] Dark and light themes both show the tray distinct from the shell
 
-- [ ] Preview capture deferred: the argent CLI `bun run previews` needs is not installed. No demo carries `meta.capture` and `frame.mdx` has no `<Preview>` until it runs; see `frame/AGENTS.md`.
+- [x] Previews captured: settings (hero clip), decision-footer and members clips, variants and sections stills.
 
 ## Open questions
 

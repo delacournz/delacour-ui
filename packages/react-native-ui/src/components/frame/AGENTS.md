@@ -94,13 +94,10 @@ plus seven parts: `Header`, `Title`, `Description`, `Action`, `Tray`, `Section`,
   gallery demos in dark, `variants` in light: the tray reads distinct from the
   shell in both. `Frame.Action` presses, a `Switch` row in the tray toggles
   (`value` 0 → 1), and the inset footer's stretched Cancel/Save sit in the band.
-- **No demo is captured yet.** `bun run previews` needs the argent CLI, which is
-  not installed on the machine this was built on, and a captured demo without a
-  manifest entry fails `demos.test.ts` — so no demo carries `meta.capture` and
-  the docs page carries no `<Preview>`. Follow-up: mark `settings` (hero),
-  `variants`, `sections`, `decision-footer` and `members` for capture, **with
-  `capture.align: "stretch"`**, run `bun run previews -- -- --only frame`, and
-  add the `<Preview>` tags back to `frame.mdx`.
+- **Five demos are captured** (2026-10-06, dev client, iPhone 17 Pro):
+  `settings` (the hero), `decision-footer` and `members` as clips, `variants`
+  and `sections` as stills, every one `capture.align: "stretch"`. `sizes` is
+  gallery-only.
 - **A shrink-wrapped frame squeezes its title, not its action.** At the preview
   route's default `center` the header's text column collapses to the width the
   action leaves — a frame is a container and is only ever captured `stretch`.

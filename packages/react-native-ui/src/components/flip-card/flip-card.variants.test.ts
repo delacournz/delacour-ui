@@ -5,12 +5,14 @@ import {
 	FLIP_CARD_FACES,
 	FLIP_CARD_HAPTIC_HYSTERESIS,
 	FLIP_CARD_MOTION,
+	FLIP_CARD_PRESSED_SCALE,
 	FLIP_CARD_RUBBER_BAND,
 	FLIP_CARD_TRIGGERS,
 	FLIP_CARD_VELOCITY_THRESHOLD,
 	faceFromRotation,
 	faceRotation,
 	flipCardVariants,
+	isFlipCardFaceName,
 	normalizeRotation,
 	oppositeFace,
 	resolveFaceA11y,
@@ -18,6 +20,7 @@ import {
 	resolveFaceTransform,
 	resolveFlipCardActions,
 	resolveFlipCardClasses,
+	resolveFlipCardTriggerHint,
 	resolveFlipFaces,
 	resolveFlipTarget,
 	resolveRubberBand,
@@ -362,5 +365,57 @@ describe("resolveFlipCardClasses", () => {
 
 	test("a caller className lands on the surface", () => {
 		expect(resolveFlipCardClasses({ className: "items-center", face: "front" }).surface).toContain("items-center");
+	});
+});
+
+describe("FLIP_CARD_PRESSED_SCALE", () => {
+	test("a press dips the card a little, never grows it", () => {
+		expect(FLIP_CARD_PRESSED_SCALE).toBeLessThan(1);
+		expect(FLIP_CARD_PRESSED_SCALE).toBeGreaterThanOrEqual(0.95);
+	});
+});
+
+describe("resolveFlipCardTriggerHint", () => {
+	test("names the face a press goes to", () => {
+		expect(resolveFlipCardTriggerHint("back")).toBe("Shows the back");
+		expect(resolveFlipCardTriggerHint("front")).toBe("Shows the front");
+	});
+});
+
+describe("flipCardVariants trigger slot", () => {
+	test("an icon-only trigger is a square button footprint", () => {
+		const cls = flipCardVariants({ isIconOnly: true }).trigger();
+		expect(cls).toContain("size-button-md");
+		expect(cls).toContain("rounded-button-md");
+	});
+
+	test("a trigger with children leaves its shape to them", () => {
+		expect(flipCardVariants({ isIconOnly: false }).trigger()).not.toContain("size-button-md");
+	});
+
+	test("a caller className wins", () => {
+		expect(flipCardVariants({ isIconOnly: true }).trigger({ className: "size-button-lg" })).toContain("size-button-lg");
+		expect(flipCardVariants({ isIconOnly: true }).trigger({ className: "size-button-lg" })).not.toContain(
+			"size-button-md"
+		);
+	});
+});
+
+describe("flipCardVariants container slot", () => {
+	test("stacks the card above anything that is not a face", () => {
+		expect(flipCardVariants().container()).toContain("gap-");
+	});
+});
+
+describe("isFlipCardFaceName", () => {
+	test("matches the two faces by displayName, which survives a rewritten element type", () => {
+		expect(isFlipCardFaceName("DelacourUI.FlipCard.Front")).toBe(true);
+		expect(isFlipCardFaceName("DelacourUI.FlipCard.Back")).toBe(true);
+	});
+
+	test("anything else renders beneath the card", () => {
+		expect(isFlipCardFaceName("DelacourUI.FlipCard.Trigger")).toBe(false);
+		expect(isFlipCardFaceName("DelacourUI.Text")).toBe(false);
+		expect(isFlipCardFaceName(undefined)).toBe(false);
 	});
 });

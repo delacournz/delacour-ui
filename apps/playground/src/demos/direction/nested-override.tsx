@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Nested override",
 	caption:
 		"An Arabic contact card reads right to left, but a phone number does not. The inner `Direction` puts the number's row back to left to right without touching the card around it. Alignment follows the app's locale until it is set; inside a `Direction`, React Native reads `text-left` as the start edge, so the Arabic lines carry it.",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "rtl: and ltr: classes",
 	caption:
 		"Uniwind's `rtl:` and `ltr:` variants resolve against the nearest `Direction`, not the app. The same classes paint the accent bar on the start edge of each card and pick its colour per subtree.",
+	capture: { align: "stretch" },
 };
 
 function Sample({ label }: { label: string }): ReactElement {

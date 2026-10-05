@@ -10,7 +10,8 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Mirrored rows",
 	caption:
-		"The same group twice, once per direction. Nothing in the rows changed: Yoga reverses each row and swaps the start and end insets, so the icon leads from the right and the chevron trails to the left.",
+		"The same group twice, once per direction. Nothing in the rows changed: Yoga reverses each row and swaps the start and end insets, so the icon leads from the right and the chevron trails to the left. The titles carry `text-left`, which React Native reads as the start edge.",
+	capture: { align: "stretch" },
 };
 
 const LABELS: Record<DirectionValue, string> = {
@@ -31,8 +32,8 @@ export function Demo(): ReactElement {
 									<Icon icon={IconGlobe} />
 								</ListGroup.ItemPrefix>
 								<ListGroup.ItemContent>
-									<ListGroup.ItemTitle>Language</ListGroup.ItemTitle>
-									<ListGroup.ItemDescription>Shown in every menu</ListGroup.ItemDescription>
+									<ListGroup.ItemTitle className="text-left">Language</ListGroup.ItemTitle>
+									<ListGroup.ItemDescription className="text-left">Shown in every menu</ListGroup.ItemDescription>
 								</ListGroup.ItemContent>
 								<ListGroup.ItemSuffix />
 							</ListGroup.Item>
@@ -41,7 +42,7 @@ export function Demo(): ReactElement {
 									<Icon icon={IconBell} />
 								</ListGroup.ItemPrefix>
 								<ListGroup.ItemContent>
-									<ListGroup.ItemTitle>Notifications</ListGroup.ItemTitle>
+									<ListGroup.ItemTitle className="text-left">Notifications</ListGroup.ItemTitle>
 								</ListGroup.ItemContent>
 								<ListGroup.ItemSuffix />
 							</ListGroup.Item>

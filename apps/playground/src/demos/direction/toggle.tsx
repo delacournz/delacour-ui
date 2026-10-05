@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Toggle at runtime",
 	caption:
 		"`dir` is an ordinary prop. Flip it and the card relayouts on the next frame — no remount, no restart, which is what `I18nManager.forceRTL` would need. The step numbers sit in their own left-to-right `Direction`, so their order holds.",
+	capture: { align: "stretch", flow: "direction/toggle", hero: true },
 };
 
 const LABELS: Record<DirectionValue, string> = {
@@ -41,7 +42,7 @@ export function Demo(): ReactElement {
 								key={step}
 								testID={`dir-step-${step.toLowerCase()}`}
 							>
-								<Text.Label>{step}</Text.Label>
+								<Text.Label className="text-left">{step}</Text.Label>
 							</View>
 						))}
 					</View>

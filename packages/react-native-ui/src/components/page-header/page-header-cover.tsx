@@ -16,8 +16,11 @@ import {
 	resolvePageHeaderCoverOffset,
 } from "./page-header.variants";
 
-/** `primary` fading into the page. */
-const DEFAULT_COVER_COLORS = ["primary", "background"] as const;
+/** `primary` fading into the ground the header sits on — the page, or the card. */
+const DEFAULT_COVER_COLORS = {
+	page: ["primary", "background"],
+	card: ["primary", "card"],
+} as const;
 
 /** A picture or a gradient — never both, so the type says which is drawn. */
 type PageHeaderCoverPaint =
@@ -99,7 +102,7 @@ export function PageHeaderCover({
 
 	// A fixed number of lookups — hook order cannot depend on how many colours
 	// were passed. An absent stop repeats the first and is dropped below.
-	const stops = colors ?? DEFAULT_COVER_COLORS;
+	const stops = colors ?? DEFAULT_COVER_COLORS[variant];
 	const resolved = [
 		useThemeColor(stops[0]),
 		useThemeColor(stops[1]),

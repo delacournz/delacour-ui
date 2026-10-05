@@ -56,7 +56,9 @@ export const PAGE_HEADER_ROSETTE_FOREGROUND_TOKEN = "primary-foreground";
  *
  * **The ring is the fill the header sits on.** `bg-background` in `page`,
  * `bg-card` in `card`, so a face lifted over the cover is cut out of it by the
- * same colour as the ground below — never a grey or white halo.
+ * same colour as the ground below — never a grey or white halo. The cover's own
+ * fill is the same ground, so a gradient fading to nothing lands on the card in
+ * a card rather than leaving a band of page colour across it.
  *
  * **A page header bleeds through the screen gutter.** `Screen`'s scrollables pad
  * their content by `px-screen-gutter`; the root takes the same amount back with
@@ -86,7 +88,7 @@ export const PAGE_HEADER_ROSETTE_FOREGROUND_TOKEN = "primary-foreground";
 export const pageHeaderVariants = tv({
 	slots: {
 		root: "",
-		cover: "w-full overflow-hidden bg-background",
+		cover: "w-full overflow-hidden",
 		coverFallback: "absolute inset-0",
 		coverOverlay: "absolute inset-0",
 		avatarRing: "mt-3 rounded-full p-1",
@@ -106,6 +108,7 @@ export const pageHeaderVariants = tv({
 		variant: {
 			card: {
 				root: "overflow-hidden rounded-lg pb-4",
+				cover: "bg-card",
 				avatarRing: "mx-4 bg-card",
 				rosette: "border-card",
 				content: "px-4",
@@ -113,6 +116,7 @@ export const pageHeaderVariants = tv({
 				stats: "px-4",
 			},
 			page: {
+				cover: "bg-background",
 				avatarRing: "mx-screen-gutter bg-background",
 				rosette: "border-background",
 				content: "px-screen-gutter",

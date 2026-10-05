@@ -76,11 +76,11 @@ export function resolvePageHeaderAvatarLabel(name: string | undefined, isVerifie
 /**
  * The cover gradient's stops, from the colours the theme resolved them to.
  *
- * The default is `primary` fading into the page: primary, then primary at zero
- * alpha over the cover's `bg-background` — never the keyword `transparent`,
- * which is transparent black and drags the fade through grey. When primary
- * arrives in a notation {@link transparentOf} cannot take apart, the far stop is
- * the page colour itself, which lands on the same picture.
+ * The default is `primary` fading into the ground: primary, then primary at zero
+ * alpha over the cover's own fill (the page, or the card) — never the keyword
+ * `transparent`, which is transparent black and drags the fade through grey.
+ * When primary arrives in a notation {@link transparentOf} cannot take apart,
+ * the far stop is the ground colour itself, which lands on the same picture.
  *
  * Caller colours are drawn as given, minus any that did not resolve. Fewer than
  * two left is no gradient at all — `null` — and the cover's own fill shows.
@@ -93,8 +93,8 @@ export function resolvePageHeaderCoverStops({
 	isDefault: boolean;
 }): readonly [string, string, ...string[]] | null {
 	if (isDefault) {
-		const [primary, background] = resolved;
-		const far = transparentOf(primary) ?? background;
+		const [primary, ground] = resolved;
+		const far = transparentOf(primary) ?? ground;
 		return primary && far ? [primary, far] : null;
 	}
 

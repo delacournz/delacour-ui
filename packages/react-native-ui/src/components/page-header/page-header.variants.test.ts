@@ -143,6 +143,13 @@ describe("resolvePageHeaderRing", () => {
 		expect(resolvePageHeaderRing("page")).toBe("bg-background");
 	});
 
+	test("the cover's own fill is the same ground, so a fade lands on the card rather than the page", () => {
+		for (const variant of PAGE_HEADER_VARIANTS) {
+			expect(pageHeaderVariants({ variant }).cover()).toContain(resolvePageHeaderRing(variant));
+		}
+		expect(pageHeaderVariants({ variant: "card" }).cover()).not.toContain("bg-background");
+	});
+
 	test("matches the avatarRing slot", () => {
 		for (const variant of PAGE_HEADER_VARIANTS) {
 			expect(pageHeaderVariants({ variant }).avatarRing()).toContain(resolvePageHeaderRing(variant));

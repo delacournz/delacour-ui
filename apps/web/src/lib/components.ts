@@ -104,6 +104,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A month grid for picking a day, several days or a range, with no date library and no time zone.",
 	},
 	{
+		slug: "date-picker",
+		name: "DatePicker",
+		group: "Forms",
+		blurb:
+			"A field that opens a calendar in a bottom sheet — one day, a range or several, closing when the pick is finished.",
+	},
+	{
 		slug: "rating",
 		name: "Rating",
 		group: "Forms",

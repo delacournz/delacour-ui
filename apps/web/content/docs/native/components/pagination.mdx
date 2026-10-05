@@ -4,6 +4,8 @@ description: Moves through pages of a result set — a fixed-width run of number
 icon: Ellipsis
 ---
 
+<Preview id="pagination/numbers" title={null} />
+
 ## Installation
 
 <ComponentInstall name="pagination" />
@@ -31,6 +33,8 @@ export default function Example() {
 The run keeps `2 × boundaries + 2 × siblings + 3` targets on every page, so the number under your
 thumb never slides away; tap a gap to jump `pageJump` pages.
 
+<Preview id="pagination/numbers" />
+
 ```tsx
 <Pagination count={100} page={page} onPageChange={setPage} />
 <Pagination count={100} siblings={1} boundaries={0} page={page} onPageChange={setPage} />
@@ -41,6 +45,8 @@ thumb never slides away; tap a gap to jump `pageJump` pages.
 One "3 / 12" readout between the arrows — and one adjustable element for VoiceOver, which swipes a
 page at a time.
 
+<Preview id="pagination/compact" />
+
 ```tsx
 <Pagination count={12} variant="compact" />
 ```
@@ -48,6 +54,8 @@ page at a time.
 ## Simple
 
 Two labelled arrows and nothing between them.
+
+<Preview id="pagination/simple" />
 
 ```tsx
 <Pagination count={8} variant="simple" />
@@ -58,6 +66,8 @@ Two labelled arrows and nothing between them.
 `sm` draws at 36 points and reaches out to 44 with hit slop, so the run is tighter but no harder to
 hit.
 
+<Preview id="pagination/sizes" />
+
 ```tsx
 <Pagination count={24} size="sm" />
 <Pagination count={24} size="md" />
@@ -67,6 +77,8 @@ hit.
 
 Leading content sits at the start and pushes the arrows to the end. `Pagination.Status` reads the
 page from the pagination it sits in.
+
+<Preview id="pagination/with-summary" />
 
 ```tsx
 <Pagination count={Math.ceil(472 / 20)} page={page} onPageChange={setPage} variant="compact">
@@ -79,6 +91,8 @@ page from the pagination it sits in.
 ## A controlled list
 
 The pagination owns the arithmetic; you slice the rows.
+
+<Preview id="pagination/controlled-list" />
 
 ```tsx
 const PAGE_SIZE = 20;

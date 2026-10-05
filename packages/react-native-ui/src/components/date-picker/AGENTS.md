@@ -82,6 +82,12 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   `formatRange` replaces the whole range. Multiple lists two days, then counts — a list of seven
   dates does not fit a field.
 
+- **Parts derive their `testID` from the root's**, through the calendar's `resolvePartTestID`:
+  `testID="stay"` names the trigger `stay-trigger`, the calendar `stay-calendar` (so a day is
+  `stay-calendar-day-2026-10-12`), and the sheet's `stay-title`, `stay-close`, `stay-clear` and
+  `stay-done`. The default anatomy renders every one of those parts without the caller writing
+  them, and a recorded flow still has to reach a particular day. No root `testID`, no part ids.
+
 ## Sheet
 
 - **`DatePicker.Content` is a whole `BottomSheet`**: portal, overlay, container, close, title,

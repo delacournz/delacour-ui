@@ -98,6 +98,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 		accessibilityLabel,
 		className,
 		children,
+		testID,
 		mode: _mode,
 		value: _value,
 		defaultValue: _defaultValue,
@@ -241,6 +242,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			placeholder: placeholder ?? resolveDefaultPlaceholder(mode),
 			presentation,
 			select,
+			testID,
 			shown,
 			size: axes.size,
 			title,
@@ -275,6 +277,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 			select,
 			selectOutsideDays,
 			shown,
+			testID,
 			title,
 			today,
 			trigger.canOpen,
@@ -288,7 +291,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	if (presentation === "inline") {
 		return (
 			<DatePickerProvider value={context}>
-				<View className={className} {...viewProps}>
+				<View className={className} testID={testID} {...viewProps}>
 					{children ?? <DatePickerContent />}
 				</View>
 			</DatePickerProvider>
@@ -298,7 +301,7 @@ function DatePickerRoot(props: DatePickerProps): ReactElement {
 	return (
 		<DatePickerProvider value={context}>
 			<BottomSheet isOpen={isOpen} onOpenChange={handleSheetOpenChange}>
-				<View className={className} {...viewProps}>
+				<View className={className} testID={testID} {...viewProps}>
 					{children ?? (
 						<>
 							<DatePickerTrigger />

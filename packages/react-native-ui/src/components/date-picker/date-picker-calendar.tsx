@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { Calendar, type CalendarProps } from "../calendar";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { useDatePickerPart } from "./date-picker.context";
 
 export type DatePickerCalendarProps = Omit<
@@ -40,6 +41,7 @@ export function DatePickerCalendar(props: DatePickerCalendarProps): ReactElement
 		selectOutsideDays: calendar.selectOutsideDays,
 		size: calendar.size,
 		today: calendar.today,
+		testID: resolvePartTestID(picker.testID, "calendar"),
 		weekStartsOn: calendar.weekStartsOn,
 		...props,
 	};

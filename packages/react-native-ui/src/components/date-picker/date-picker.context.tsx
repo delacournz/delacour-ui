@@ -23,6 +23,8 @@ export type DatePickerContextValue = {
 	/** The trigger's accessible name. */
 	accessibilityLabel: string;
 	isOpen: boolean;
+	/** The root's `testID`, which the parts derive theirs from — `resolvePartTestID`. */
+	testID: string | undefined;
 	/** Opens the sheet. Ignored while disabled or read-only. */
 	open: () => void;
 	/** Closes the sheet, discarding a half-picked range. */

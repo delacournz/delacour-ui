@@ -1,0 +1,22 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on date-picker/multiple and has settled — the trigger lists
+  7 and 9 October 2026 and the sheet is closed. The capture script navigates there before running this.
+steps:
+  - echo: Adding a third day — the trigger switches from a list to a count
+  - tap: { id: date-picker-multiple-trigger }
+  - await: { visible: { id: date-picker-multiple-calendar-day-2026-10-13 } }
+  - wait: 500
+  - tap: { id: date-picker-multiple-calendar-day-2026-10-13 }
+  - wait: 500
+  - tap: { id: date-picker-multiple-done }
+  - await: { hidden: { id: date-picker-multiple-calendar } }
+  - wait: 900
+  - echo: Taking it out again, so the clip loops
+  - tap: { id: date-picker-multiple-trigger }
+  - await: { visible: { id: date-picker-multiple-calendar-day-2026-10-13 } }
+  - wait: 400
+  - tap: { id: date-picker-multiple-calendar-day-2026-10-13 }
+  - wait: 400
+  - tap: { id: date-picker-multiple-done }
+  - await: { hidden: { id: date-picker-multiple-calendar } }
+  - wait: 500

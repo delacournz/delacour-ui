@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The root reveals a string unit by unit. Each word fades and slides up into place, 90 ms after the last. The paragraph is laid out before the first word moves, so it never reflows.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "text-animation/reveal-words", hero: true },
 };
 
 export function Demo(): ReactElement {

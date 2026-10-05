@@ -1,0 +1,7 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on text-animation/reveal-words and has settled — the sentence fully revealed,
+  a Replay button under it. The capture script navigates there before running this.
+steps:
+  - echo: Replaying the reveal — every word drops out and slides back up in turn
+  - tap: { id: text-animation-reveal-words-replay }
+  - wait: 1800

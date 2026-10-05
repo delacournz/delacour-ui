@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'`split="character"` scales each grapheme in, and `order="center"` starts from the middle and works outwards. A word is held on one line, so it never breaks mid-glyph.',
+	capture: { flow: "text-animation/reveal-characters" },
 };
 
 export function Demo(): ReactElement {

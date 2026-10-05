@@ -227,4 +227,17 @@ export function resolveTriggerAccessibilityLabel({ hex, label }: { hex: string; 
 	return `${label || "Colour"}, ${hex}, opens picker`;
 }
 
+/**
+ * Where a track's gradient starts and ends, as fractions of its width.
+ *
+ * The thumb's centre travels the track less one thumb, so the gradient is inset
+ * by half a thumb at each end: the colour under the thumb's centre is then the
+ * value it reports, at both extremes. Unmeasured, it spans the whole width.
+ */
+export function resolveTrackInset(track: number, thumb: number): { start: number; end: number } {
+	if (track <= 0 || thumb <= 0) return { start: 0, end: 1 };
+	const start = Math.min(0.5, thumb / 2 / track);
+	return { start, end: 1 - start };
+}
+
 export type ColorPickerVariantProps = VariantProps<typeof colorPickerVariants>;

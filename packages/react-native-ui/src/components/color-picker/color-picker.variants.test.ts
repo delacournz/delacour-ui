@@ -19,6 +19,7 @@ import {
 	describeHueValue,
 	resolveColorPickerAxes,
 	resolveColorPickerLabel,
+	resolveTrackInset,
 	resolveTriggerAccessibilityLabel,
 } from "./color-picker.variants";
 
@@ -204,5 +205,20 @@ describe("accessibility text", () => {
 	test("assistive steps are five percent and ten degrees", () => {
 		expect(COLOR_PICKER_STEP).toBe(0.05);
 		expect(COLOR_PICKER_HUE_STEP).toBe(10);
+	});
+});
+
+describe("resolveTrackInset", () => {
+	test("insets the gradient to the thumb's travel", () => {
+		expect(resolveTrackInset(200, 20)).toEqual({ start: 0.05, end: 0.95 });
+	});
+
+	test("an unmeasured track spans the whole width, never NaN", () => {
+		expect(resolveTrackInset(0, 20)).toEqual({ start: 0, end: 1 });
+		expect(resolveTrackInset(200, 0)).toEqual({ start: 0, end: 1 });
+	});
+
+	test("a thumb wider than the track collapses to the middle", () => {
+		expect(resolveTrackInset(10, 40)).toEqual({ start: 0.5, end: 0.5 });
 	});
 });

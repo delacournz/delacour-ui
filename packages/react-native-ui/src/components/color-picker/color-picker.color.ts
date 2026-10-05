@@ -174,18 +174,23 @@ export function parseColor(input: string): Hsva | null {
 
 	const alpha = readAlpha(tokens[3]);
 	if (alpha === null) return null;
+	return kind === "rgb" ? readRgbChannels(tokens, alpha) : readHslChannels(tokens, alpha);
+}
 
-	if (kind === "rgb") {
-		const channels: number[] = [];
-		for (const token of tokens.slice(0, 3)) {
-			const parsed = readNumber(token);
-			if (!parsed || parsed.unit === "deg") return null;
-			channels.push(clamp(parsed.unit === "%" ? (parsed.value / 100) * 255 : parsed.value, 0, 255));
-		}
-		const [r = 0, g = 0, b = 0] = channels;
-		return rgbToHsv({ r, g, b, a: alpha });
+/** The three channels of an `rgb()` — numbers or percentages, clamped to 0–255. */
+function readRgbChannels(tokens: readonly string[], alpha: number): Hsva | null {
+	const channels: number[] = [];
+	for (const token of tokens.slice(0, 3)) {
+		const parsed = readNumber(token);
+		if (!parsed || parsed.unit === "deg") return null;
+		channels.push(clamp(parsed.unit === "%" ? (parsed.value / 100) * 255 : parsed.value, 0, 255));
 	}
+	const [r = 0, g = 0, b = 0] = channels;
+	return rgbToHsv({ r, g, b, a: alpha });
+}
 
+/** The three channels of an `hsl()` — a hue that is not a percentage, then two that are not angles. */
+function readHslChannels(tokens: readonly string[], alpha: number): Hsva | null {
 	const hue = readNumber(tokens[0] ?? "");
 	const saturation = readNumber(tokens[1] ?? "");
 	const lightness = readNumber(tokens[2] ?? "");

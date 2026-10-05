@@ -307,3 +307,11 @@ Registry (`packages/cli/src/registry/config.ts`): `ITEM_META["scroll-fade"]` `{ 
 - [ ] Changeset added
 - [ ] Simulator via agent-device (claim device with `warden claim ios --json`, pass `--udid`/`--session`): vertical list - top fade absent at rest, bottom present; scroll 40pt -> top fade present; scroll to end -> bottom fade gone; horizontal carousel same on x; short list -> no fades; `<Screen>` ambient case with no `scrollSource`; dark theme fade colour matches surface (no grey band); VoiceOver does not announce the overlays
 - [ ] Screen regression: `Screen.ScrollShadow`, `fadeBorderOnScroll` and chat list unchanged in the playground `screen` gallery
+
+## Implementation notes (2026-10-05)
+
+- Stacked on `layout-scroll-source`; this branch carries only `components/scroll-fade/*` and its demo, docs, registry item and changeset. `scroll-fade.variants.ts` keeps the `tv()` slots and defaults; `SCROLL_FADE_EDGES` re-exports `SCROLL_EDGES`.
+- **Fix to the shared hook, carried as its own first commit** ("type useScrollSource's ref…"): `AnimatedRef<Component>` did not typecheck as `Animated.ScrollView`'s ref under Reanimated 4.5, so the documented `{...scrollProps}` failed `tsc`. It belongs on `layout-scroll-source`; once it lands there this commit drops out on rebase.
+- **Nested Screen caveat:** a Screen inside another reports to the outer one, so the bridge publishes the outer scroll. Demo 5 is therefore `through-a-provider` rather than `inside-screen` (the gallery itself is a Screen).
+- **No preview capture:** the argent CLI is not installed, so demos carry no `capture` and the docs page opens at `## Installation`. Follow-up: capture `vertical-list` (hero), `horizontal-cards`, `single-edge`, `on-a-surface`.
+- Simulator results are in the component `AGENTS.md`, under Verification.

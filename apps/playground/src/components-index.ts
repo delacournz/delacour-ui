@@ -50,6 +50,12 @@ const ROWS = [
 	{ slug: "calendar", title: "Calendar", description: "Single, multiple, range, bounds, locale", group: "Forms" },
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
 	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
+	{
+		slug: "date-picker",
+		title: "Date Picker",
+		description: "Single, range, multiple, bounds, in a field",
+		group: "Forms",
+	},
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },

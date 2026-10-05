@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Reacting to the collapse",
 	caption:
 		"`progress` is written every frame — here it shrinks the avatar in the bar as it fades in. `onCollapsedChange` fires once per crossing, on the JS thread — here it swaps the bar's button for a compact one once the full-size button has scrolled away.",
-	align: "stretch",
+	capture: { frame: "device", flow: "scroll-header/react-to-collapse" },
 };
 
 const POSTS = [

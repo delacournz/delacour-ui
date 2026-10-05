@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "A frosted bar over media",
 	caption:
 		'`surface="blur"` draws the engine `ScrollBlurLayerProvider` names behind a light wash, so the tiles stay visible, defocused, under the bar. With no engine, or with Reduce Transparency on, it is the plain surface instead.',
-	align: "stretch",
+	capture: { frame: "device", flow: "scroll-header/blur-bar" },
 };
 
 const TILES = [

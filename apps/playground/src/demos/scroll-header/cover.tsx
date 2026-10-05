@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "A cover that stretches",
 	caption:
 		"`ScrollHeader.Cover` sits behind the bar and the title, sized to end exactly where the first row starts. Pull down past the top and it grows from its top edge; scroll up and it leaves with the content while the bar's surface fades in over it.",
-	align: "stretch",
+	capture: { frame: "device", flow: "scroll-header/cover" },
 };
 
 const COVER = { uri: "https://picsum.photos/id/1018/1200/800" };

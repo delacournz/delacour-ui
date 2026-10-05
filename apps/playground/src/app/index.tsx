@@ -38,6 +38,7 @@ import {
 	IconStarLines,
 	IconTag,
 	IconToggle,
+	IconTree,
 	IconTrending4,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
@@ -95,6 +96,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	text: IconFontStyle,
 	textarea: IconNoteText,
 	"toggle-button": IconBold,
+	tree: IconTree,
 };
 
 /**

@@ -365,6 +365,13 @@ import * as demo_toggle_button_single_selection from "./toggle-button/single-sel
 import * as demo_toggle_button_sizes from "./toggle-button/sizes";
 import * as demo_toggle_button_states from "./toggle-button/states";
 import * as demo_toggle_button_variants from "./toggle-button/variants";
+import * as demo_tree_controlled_expanded from "./tree/controlled-expanded";
+import * as demo_tree_file_browser from "./tree/file-browser";
+import * as demo_tree_lazy_load from "./tree/lazy-load";
+import * as demo_tree_lines from "./tree/lines";
+import * as demo_tree_multi_select from "./tree/multi-select";
+import * as demo_tree_single_select from "./tree/single-select";
+import * as demo_tree_sizes from "./tree/sizes";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -731,6 +738,13 @@ export const DEMOS = {
 	"toggle-button/sizes": demo_toggle_button_sizes,
 	"toggle-button/states": demo_toggle_button_states,
 	"toggle-button/variants": demo_toggle_button_variants,
+	"tree/controlled-expanded": demo_tree_controlled_expanded,
+	"tree/file-browser": demo_tree_file_browser,
+	"tree/lazy-load": demo_tree_lazy_load,
+	"tree/lines": demo_tree_lines,
+	"tree/multi-select": demo_tree_multi_select,
+	"tree/single-select": demo_tree_single_select,
+	"tree/sizes": demo_tree_sizes,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

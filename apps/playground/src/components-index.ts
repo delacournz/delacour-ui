@@ -106,6 +106,12 @@ const ROWS = [
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
 	{ slug: "carousel", title: "Carousel", description: "Peek, loop, coverflow, vertical, autoplay", group: "Layout" },
+	{
+		slug: "image-viewer",
+		title: "Image Viewer",
+		description: "Full screen from a thumbnail — zoom, swipe, drag to dismiss",
+		group: "Layout",
+	},
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];
 
 /** A slug with a screen, as a literal union so a row without an icon is a type error. */

@@ -65,12 +65,12 @@ export function Demo(): ReactElement {
 							<BottomSheet.Title>Hidden levels</BottomSheet.Title>
 							{hidden.map((index) => (
 								<Button
-									key={trail[index]}
+									key={INITIAL[index]}
 									onPress={() => goTo(index)}
 									testID={`breadcrumb-ellipsis-sheet-${index}`}
 									variant="ghost"
 								>
-									{trail[index]}
+									{INITIAL[index]}
 								</Button>
 							))}
 						</BottomSheet.Content>

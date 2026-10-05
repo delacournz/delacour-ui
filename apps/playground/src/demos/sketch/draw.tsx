@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Draw",
 	caption:
 		"A finger is the pen. The stroke is smoothed and drawn on the UI thread as it goes, and a tap leaves a dot the width of the pen.",
+	align: "stretch",
 };
 
 export function Demo(): ReactElement {

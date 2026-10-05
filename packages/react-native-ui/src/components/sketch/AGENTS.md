@@ -102,6 +102,13 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   annotate, or an empty-state hint. The `Svg` is `pointerEvents="none"` and the
   pan sits on the canvas `View`.
 
+## Layout
+
+- **The root does not size itself.** Give it `flex-1` or a height. Its slot used
+  to carry `flex-1`, and inside a parent with no definite height a zero flex
+  basis beat the caller's `h-*`: the canvas measured 0 and the toolbar floated
+  over nothing. A test pins that the slot stays without it.
+
 ## Toolbar
 
 - **Tools are `ToggleButton`s**, ghost at rest and filled when in hand, at
@@ -111,10 +118,11 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   that shape; without, it switches to the shape tool with whatever shape is
   current and shows it — the default toolbar's middle button. The spec had
   `shape` required; optional is what makes a one-button shape entry possible.
-- **The default tray is three rows**: pen / shape / eraser with undo at the far
-  end; the shape list, only while the shape tool is in hand, scrolling rather
-  than wrapping (eight 44pt targets are a hair wider than a small phone); then
-  the swatches beside the width slider.
+- **The default tray is two rows, three with shapes**: pen / shape / eraser, the
+  width slider and undo at the far end; the shape list, only while the shape
+  tool is in hand, scrolling rather than wrapping (eight 44pt targets are a hair
+  wider than a small phone); then the swatches alone. The slider first sat beside
+  the swatches and the simulator showed six swatches leave it no width at all.
 - **The shape glyphs are drawn by `buildSketchShapePath`**, at the icon set's 1.5
   stroke, shaped like a Central component so `Icon` sizes and colours them.
   Central has no matching set of eight, and a glyph that is not the shape the
@@ -158,13 +166,22 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
 
 - `bun test packages/react-native-ui/src/components/sketch` covers the leaf and
   the resolvers.
-- Simulator: see the card comment / PR body for the run. The checklist is in
-  `docs/plans/layout/sketch.md` — Release-build stroke without a worklet crash,
-  tap dot, shapes and the sub-4pt rule, eraser leaves later strokes intact, undo
-  reverses an erase, theme toggle leaves ink unchanged, VoiceOver label and
-  actions, disabled blocks drawing.
-- **Android `Mask` rendering is unverified.** It is the weaker platform for SVG
+- **Checked on an iOS simulator (iPhone 17, dev client, 2026-10-05):** a pen
+  stroke and a tap dot draw with no worklet crash; the eraser hides earlier ink
+  and a later stroke over the gap is intact; two undos remove that stroke and
+  bring the erased ink back; a swatch change applies to the next stroke; the
+  star draws and a sub-4pt shape tap commits nothing; the canvas reads "Drawing,
+  3 marks"; drawing over `Sketch.Canvas` children and `toSVG` work.
+- **Not yet checked:** a Release build (the worklet-capture risk is
+  Release-specific), 200-stroke performance, the theme toggle, VoiceOver's
+  undo/clear actions, and Android `Mask` rendering — the weaker platform for SVG
   masks; if it breaks, record it here and gate the eraser.
+- **No captured previews yet.** The argent CLI the capture script drives is not
+  installed, so no demo sets `capture` and the docs page carries no `<Preview>`.
+  Flows for `draw`, `shapes` and `eraser` are written in
+  `.argent/flows/previews/sketch/`; the follow-up is to set `capture` (hero on
+  `default`, `frame: "device"`), run `bun run previews -- -- --only sketch`, and
+  add the `<Preview>`s.
 
 ## Out of scope
 

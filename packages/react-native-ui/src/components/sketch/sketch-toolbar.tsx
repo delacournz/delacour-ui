@@ -15,9 +15,10 @@ export type SketchToolbarProps = Omit<ViewProps, "children"> & {
 /**
  * The tool tray, ruled off the canvas below it.
  *
- * With no children it is the whole set, in three rows sized for a thumb: pen,
- * shape and eraser with undo at the far end; the shapes, while the shape tool
- * is in hand; then the swatches beside the width slider. Pass children to
+ * With no children it is the whole set, sized for a thumb: pen, shape and
+ * eraser, the width slider, and undo at the far end; the shapes, while the shape
+ * tool is in hand; then the swatches on a row of their own, which six 36-point
+ * targets fill. Pass children to
  * choose and order the tools yourself.
  *
  * Disabled fades the tray and never the canvas — the marks are content and stay
@@ -44,7 +45,7 @@ export function SketchToolbar({ children, className, ...props }: SketchToolbarPr
 				<SketchTool testID="sketch-tool-pen" tool="pen" />
 				<SketchTool testID="sketch-tool-shape" tool="shape" />
 				<SketchTool testID="sketch-tool-eraser" tool="eraser" />
-				<View className="flex-1" />
+				<SketchSize className="mx-2 flex-1" />
 				<SketchUndo testID="sketch-undo" />
 			</View>
 			{tool === "shape" && shapes.length > 1 ? (
@@ -56,11 +57,7 @@ export function SketchToolbar({ children, className, ...props }: SketchToolbarPr
 					</View>
 				</ScrollView>
 			) : null}
-			<View className={slots.toolbarRow({ className: "gap-3" })}>
-				<SketchSwatches testID="sketch-swatches" />
-				<View className={slots.divider()} />
-				<SketchSize className="flex-1" />
-			</View>
+			<SketchSwatches testID="sketch-swatches" />
 		</View>
 	);
 }

@@ -213,3 +213,9 @@ describe("resolveSketchExportBackground", () => {
 		expect(resolveSketchExportBackground('red" onload="x', tokens)).toBeNull();
 	});
 });
+
+describe("the root's size", () => {
+	test("is the caller's: no flex-1, whose zero basis would beat a height the caller sets", () => {
+		expect(sketchVariants().root().split(" ")).not.toContain("flex-1");
+	});
+});

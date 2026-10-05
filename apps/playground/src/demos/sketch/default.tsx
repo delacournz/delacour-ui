@@ -14,6 +14,7 @@ export const meta: DemoMeta = {
 	title: "Default",
 	caption:
 		"`<Sketch />` on its own: the canvas takes the room and every tool sits under it. Seeded with a small drawing so there is something to erase and undo.",
+	align: "stretch",
 };
 
 function stroke(id: string, points: SketchPoint[], color: string, width: number): SketchItem {
@@ -46,5 +47,5 @@ const SEED: SketchItem[] = [
 ];
 
 export function Demo(): ReactElement {
-	return <Sketch className="h-150" defaultItems={SEED} testID="sketch-default" />;
+	return <Sketch className="h-140" defaultItems={SEED} testID="sketch-default" />;
 }

@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Colours",
 	caption:
 		"`colors` takes theme tokens and literals together. A token swatch follows the theme; the ink it lays down does not — each mark keeps the colour it was drawn in.",
+	align: "stretch",
 };
 
 const COLORS = ["foreground", "primary", "#ec4899", "#8b5cf6", "#14b8a6"] as const;

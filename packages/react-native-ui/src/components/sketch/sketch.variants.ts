@@ -72,7 +72,7 @@ export const SKETCH_SLOTS = [
  */
 export const sketchVariants = tv({
 	slots: {
-		root: "flex-1 flex-col gap-3",
+		root: "flex-col gap-3",
 		canvas: "flex-1 overflow-hidden rounded-lg border border-border border-continuous bg-card",
 		toolbar: "gap-2 border-t border-border bg-card px-screen-gutter py-2",
 		toolbarRow: "flex-row items-center gap-1",

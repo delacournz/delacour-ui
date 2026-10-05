@@ -3,6 +3,7 @@ import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	resolveAdjacentSection,
 	resolveBarLength,
+	resolveBarOrder,
 	resolveItemIndent,
 	resolvePanelAnchor,
 	resolvePanelTransformOrigin,
@@ -142,6 +143,35 @@ describe("shouldEmitSection", () => {
 	});
 });
 
+describe("resolveBarOrder", () => {
+	test("laid-out bars sort by their top, whatever order they measured in", () => {
+		const order = resolveBarOrder([
+			{ height: 3, value: "faq", y: 30 },
+			{ height: 3, value: "intro", y: 0 },
+			{ height: 3, value: "setup", y: 10 },
+		]);
+		expect(order.map((bar) => bar.value)).toEqual(["intro", "setup", "faq"]);
+	});
+
+	test("bars not yet laid out keep their mount order, after the measured ones", () => {
+		const order = resolveBarOrder([
+			{ height: 0, value: "b", y: undefined },
+			{ height: 3, value: "a", y: 10 },
+			{ height: 0, value: "c", y: undefined },
+		]);
+		expect(order.map((bar) => bar.value)).toEqual(["a", "b", "c"]);
+	});
+
+	test("does not mutate its input", () => {
+		const input = [
+			{ height: 3, value: "b", y: 10 },
+			{ height: 3, value: "a", y: 0 },
+		];
+		resolveBarOrder(input);
+		expect(input[0]?.value).toBe("b");
+	});
+});
+
 describe("resolveAdjacentSection", () => {
 	const order = ["intro", "setup", "setup-ios", "faq"] as const;
 
@@ -231,6 +261,7 @@ describe("sectionRailVariants", () => {
 	test("the root lets touches through to the screen beneath", () => {
 		expect(sectionRailVariants().root()).toContain("absolute");
 		expect(sectionRailVariants().root()).toContain("inset-0");
+		expect(sectionRailVariants().frame()).toBe("absolute inset-0");
 	});
 
 	test("the trigger is at least a 44pt target", () => {
@@ -267,20 +298,7 @@ describe("sectionRailVariants", () => {
 	});
 
 	test("every colour token the slots name is declared in both themes", () => {
-		const tokens = new Set<string>();
-		for (const isActive of [false, true]) {
-			const slots = sectionRailVariants({ isActive });
-			for (const slot of ["bar", "barFill", "content", "item", "itemLabel", "scrim"] as const) {
-				for (const [, token] of cls(slots[slot]()).matchAll(
-					/(?:^|\s)(?:bg|text|border)-([a-z-]+?)(?:\/\d+)?(?=\s|$)/g
-				)) {
-					if (token !== undefined) tokens.add(token);
-				}
-			}
-		}
-		const colourTokens = [...tokens].filter(
-			(token) => !/^(?:\d|transparent|none|xs|sm|base|lg|xl)$/.test(token) && !/^\d/.test(token)
-		);
+		const colourTokens = [...slotTokens()].filter((token) => !NON_COLOUR.test(token));
 		expect(colourTokens.length).toBeGreaterThan(0);
 		for (const variant of ["light", "dark"] as const) {
 			const declared = declaredTokens(variant);
@@ -288,3 +306,20 @@ describe("sectionRailVariants", () => {
 		}
 	});
 });
+
+/** Utility suffixes that follow `bg-`/`text-`/`border-` without naming a colour. */
+const NON_COLOUR = /^(?:\d.*|transparent|none|xs|sm|base|lg|xl)$/;
+
+/** Every `bg-`/`text-`/`border-` suffix the coloured slots carry, resting and active. */
+function slotTokens(): Set<string> {
+	const tokens = new Set<string>();
+	for (const isActive of [false, true]) {
+		const slots = sectionRailVariants({ isActive });
+		for (const slot of ["bar", "barFill", "content", "item", "itemLabel", "scrim"] as const) {
+			for (const [, token] of cls(slots[slot]()).matchAll(/(?:^|\s)(?:bg|text|border)-([a-z-]+?)(?:\/\d+)?(?=\s|$)/g)) {
+				if (token !== undefined) tokens.add(token);
+			}
+		}
+	}
+	return tokens;
+}

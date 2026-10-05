@@ -71,6 +71,24 @@ export function resolveScrubIndex(y: number, rowTops: readonly number[], rowHeig
 	return count - 1;
 }
 
+/** One bar as the rail tracks it: its section, and its box in the trigger once laid out. */
+export type SectionRailBarLayout = { value: string; y: number | undefined; height: number };
+
+/**
+ * The bars in rail order — what the scrub maps a finger through and what an
+ * assistive increment steps along.
+ *
+ * Measured bars sort by their top, because `onLayout` reports in whatever order
+ * the native views measure. A bar not yet laid out keeps its mount order after
+ * the measured ones, so the order is usable on the first frame.
+ */
+export function resolveBarOrder(bars: readonly SectionRailBarLayout[]): SectionRailBarLayout[] {
+	const measured = bars.filter((bar) => bar.y !== undefined);
+	const pending = bars.filter((bar) => bar.y === undefined);
+	measured.sort((a, b) => (a.y ?? 0) - (b.y ?? 0));
+	return [...measured, ...pending];
+}
+
 /** Whether a pick is worth reporting: a section, and not the one already active. */
 export function shouldEmitSection(current: string | undefined, next: string | undefined): next is string {
 	"worklet";
@@ -179,6 +197,8 @@ export const sectionRailVariants = tv({
 	slots: {
 		/** Fills the screen container and passes every touch it does not own through. */
 		root: "absolute inset-0",
+		/** The full-screen frame the trigger and the panel are each positioned in, by `resolveRailPlacementStyle`. */
+		frame: "absolute inset-0",
 		/** Catches the outside tap while the panel is open. */
 		scrim: "absolute inset-0 bg-transparent",
 		/** The rail's hit area: at least 44pt wide, however short its bars. */
@@ -188,7 +208,7 @@ export const sectionRailVariants = tv({
 		/** The active colour over a bar, faded in. */
 		barFill: "absolute inset-0 rounded-full bg-foreground",
 		/** The panel. */
-		content: "rounded-lg border border-border bg-popover p-1",
+		content: "shrink overflow-hidden rounded-lg border border-border bg-popover p-1",
 		/** One row of the panel. No start padding: that is the level's indent, from `resolveItemIndent`. */
 		item: "min-h-11 justify-center rounded-md py-2 pe-3",
 		/** The row's title. Handed to a `Text`. */

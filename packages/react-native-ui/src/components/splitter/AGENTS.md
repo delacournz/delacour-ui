@@ -157,6 +157,13 @@ imports this folder's maths leaf rather than copying it.
   `DEFAULT_DECELERATION_RATE`.
 - `nearestSnapIndex` and `projectSnap` are unused here — no snap points — and
   exist for `SplitView`.
+- **A worklet helper is declared above its first caller.** The worklets plugin
+  captures a worklet's closure where the function is *declared*, so a worklet
+  calling a helper further down the file captures `undefined` and throws
+  "undefined is not a function" on a device — while `bun test`, which runs no
+  plugin, passes. It shipped once (`resolveInitialLayout → sumDefaults`); the
+  "worklet declaration order" test in `splitter.variants.test.ts` now reads the
+  source and fails by name.
 
 ## Out of scope
 
@@ -167,5 +174,22 @@ wins the touch".
 
 ## Notes
 
-- Verified on a simulator through warden and agent-device — see the card
-  comment for the result of the last run.
+- **Simulator check, 2026-10-05** (iPhone 17 sim via warden, agent-device, dev
+  client): a drag moves both panes and the handle with them and rounds to
+  `step` on release; a floor clamps (three columns: the editor stops at 55 with
+  the inspector at its 15 floor) and the other seam does not move; a collapsible
+  pane snaps to 0 past half its floor and `togglePane` restores it; double tap
+  resets; vertical drags along y; the controlled readout updates once per
+  release; a disabled handle reports `enabled=false`; inside the gallery's pager
+  the handle wins the touch. The handle's value reads "N percent". Not checked:
+  the edge haptic (no haptics on a simulator), rotation, Reduce Motion, and a
+  VoiceOver increment (agent-device cannot fire an accessibility action).
+- **No captured previews yet.** The preview capture needs the argent CLI, which
+  is not installed on the build machine, so no demo carries `capture` and the
+  docs page has no `<Preview>`. When it is back: mark `anatomy` (hero, flow
+  `splitter/anatomy` — the flow file is already in `.argent/flows/previews/`),
+  `panes`, `three-columns`, `vertical` and `collapsible` as captured, run
+  `bun run previews -- -- --only splitter`, and add the `<Preview>`s back.
+- **A collapsed leading pane puts half the handle outside the box.** The touch
+  box is centred on the seam, so at 0 its leading 22pt hang past the root's
+  edge. The trailing half is still a full-height target; nothing clips it.

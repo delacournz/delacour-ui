@@ -84,6 +84,7 @@ shares.
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
 | [Overlay](src/components/overlay/AGENTS.md) | `@delacour/react-native-ui/overlay` | The provider, portal, scrim, presence and back button every overlay is drawn with |
+| [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
 | [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |

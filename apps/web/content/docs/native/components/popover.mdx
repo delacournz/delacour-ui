@@ -1,0 +1,270 @@
+---
+title: Popover
+description: A small panel anchored to the control that opened it — it flips and shifts to stay on screen, and its arrow keeps pointing at the trigger.
+icon: MessageSquare
+---
+
+<Preview id="popover/basic" title={null} />
+
+## Installation
+
+<ComponentInstall name="popover" />
+
+Popover draws through the overlay layer, so mount [OverlayProvider](/docs/native/components/overlay)
+once at the app root.
+
+## Usage
+
+<Preview id="popover/basic" />
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Popover } from "@/components/ui/popover";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Popover>
+        <Popover.Trigger asChild>
+          <Button variant="secondary">What changed?</Button>
+        </Popover.Trigger>
+        <Popover.Content>
+          <Popover.Arrow />
+          <Popover.Close />
+          <Popover.Title>Version 2.4</Popover.Title>
+          <Popover.Description>Faster sync, offline drafts and a new share sheet.</Popover.Description>
+        </Popover.Content>
+      </Popover>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Popover>
+  <Popover.Trigger />
+  <Popover.Anchor />
+  <Popover.Content>
+    <Popover.Arrow />
+    <Popover.Close />
+    <Popover.Title />
+    <Popover.Description />
+  </Popover.Content>
+</Popover>
+```
+
+`Popover.Anchor` is optional — without it the panel anchors to the trigger. Write the arrow, the
+close control, the title and the description only where you want them.
+
+## Placement
+
+`placement` is the side the panel prefers — `bottom` by default — and `align` lines it up along
+that side: `start`, `center` or `end`. It is a preference. When that side lacks room and the
+opposite side has more, the panel flips; then it slides along the anchor to stay inside the safe
+area, and the arrow keeps pointing at the trigger's centre.
+
+<Preview id="popover/placements" />
+
+```tsx
+<Popover.Content placement="top" align="start" offset={12}>…</Popover.Content>
+```
+
+`start` and `end` are logical on `top` and `bottom` placements, so they mirror in a right-to-left
+layout. `alignOffset` nudges the panel inward from the aligned edge. `usePopover().placement` tells
+you which side it actually landed on.
+
+## Arrow
+
+`Popover.Arrow` points from the panel at the anchor's centre — not the panel's — and follows a
+flip. It stays clear of the panel's rounded corners.
+
+<Preview id="popover/arrow" />
+
+```tsx
+<Popover>
+  <Popover.Trigger accessibilityLabel="Beta, what does this mean?">
+    <Badge variant="soft">Beta</Badge>
+  </Popover.Trigger>
+  <Popover.Content align="start">
+    <Popover.Arrow />
+    <Popover.Title>Beta</Popover.Title>
+    <Popover.Description>This feature is still changing.</Popover.Description>
+  </Popover.Content>
+</Popover>
+```
+
+## Width and forms
+
+`width` takes a number, `"trigger"` for the anchor's width, `"full"` for the width of the screen
+inside its safe area, or `"content-fit"`, the default. `minWidth` raises any of them. The keyboard
+counts as the bottom of the screen, so a field inside the panel moves it above its trigger rather
+than typing under the keyboard.
+
+<Preview id="popover/trigger-width-form" />
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+
+<Popover isOpen={isOpen} onOpenChange={setOpen}>
+  <Popover.Trigger asChild>
+    <Button className="self-stretch" variant="secondary">{name}</Button>
+  </Popover.Trigger>
+  <Popover.Content align="start" minWidth={260} width="trigger">
+    <Popover.Arrow />
+    <Popover.Title>Rename</Popover.Title>
+    <Input autoFocus onChangeText={setDraft} value={draft} />
+    <View className="flex-row justify-end gap-2">
+      <Popover.Close asChild>
+        <Button size="sm" variant="ghost">Cancel</Button>
+      </Popover.Close>
+      <Button onPress={save} size="sm">Save</Button>
+    </View>
+  </Popover.Content>
+</Popover>;
+```
+
+## Scrolling
+
+`maxHeight` caps the panel — it is clamped to the room on the side the panel lands on anyway — and
+`isScrollable` scrolls what does not fit. The arrow is lifted out of the scrolling body, so it is
+never scrolled away or clipped.
+
+<Preview id="popover/scrollable" />
+
+```tsx
+<Popover.Content isScrollable maxHeight={240} minWidth={220}>
+  <Popover.Arrow />
+  <ListGroup variant="transparent">
+    <ListGroup.Item onPress={() => pick("Auckland")}>
+      <ListGroup.ItemContent>
+        <ListGroup.ItemTitle>Auckland</ListGroup.ItemTitle>
+      </ListGroup.ItemContent>
+    </ListGroup.Item>
+  </ListGroup>
+</Popover.Content>
+```
+
+## Dismissing
+
+A tap outside the panel closes it, and so do Android's back button and the iOS escape gesture. The
+outside tap is swallowed — it never presses what is under it. `hasScrim` dims the app behind the
+panel; without it the app stays visible and an outside tap still closes the popover.
+`isDismissible={false}` leaves only your own controls able to close it.
+
+<Preview id="popover/scrim" />
+
+```tsx
+<Popover isDismissible={false}>…</Popover>
+<Popover.Content hasScrim>…</Popover.Content>
+```
+
+## Custom surface
+
+`isUnstyled` drops the panel's fill, border, corner and padding. Draw your own behind the content
+with `background`.
+
+```tsx
+<Popover.Content
+  background={<View className="flex-1 rounded-3xl bg-primary" />}
+  className="px-5 py-4"
+  isUnstyled
+>
+  <Text.Label className="text-primary-foreground">Drawn by the caller.</Text.Label>
+</Popover.Content>
+```
+
+## Where it draws
+
+The panel is drawn in the overlay layer, above every bottom sheet and above a dialog it was opened
+from, and over the navigator's header. It is measured in window coordinates, so a trigger inside a
+`ScrollView` or a bottom sheet places it correctly. Rotating the device re-places an open popover.
+
+## Accessibility
+
+The panel is a modal dialog for assistive technology: focus is held inside it, moves to the title
+when it opens and back to the trigger when it closes, and the panel is labelled by
+`Popover.Title`. The trigger reports whether the panel is expanded. The escape gesture closes it.
+Under Reduce Motion the panel fades without sliding or scaling.
+
+## API Reference
+
+### Popover
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controls whether the panel is open." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    isDismissible: {
+      type: "boolean",
+      default: "true",
+      description: "An outside tap, Android back and the escape gesture close it.",
+    },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Popover.Trigger
+
+Takes `Pressable`'s props. With `asChild` it hands the toggle to its child's `onPress` instead of
+wrapping it, so the child must be built on `Pressable` — a `Button`, a `ListGroup.Item`.
+
+### Popover.Anchor
+
+Takes React Native's `ViewProps`, plus `asChild`. While it is mounted the panel anchors to it
+instead of the trigger.
+
+### Popover.Content
+
+Takes React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    placement: { type: '"top" | "bottom" | "left" | "right"', default: '"bottom"' },
+    align: { type: '"start" | "center" | "end"', default: '"center"' },
+    offset: { type: "number", default: "8", description: "The gap between the anchor and the panel." },
+    alignOffset: { type: "number", default: "0", description: "A nudge inward from the aligned edge." },
+    width: { type: 'number | "trigger" | "content-fit" | "full"', default: '"content-fit"' },
+    minWidth: { type: "number" },
+    maxHeight: { type: "number", description: "Clamped to the room on the side the panel lands on." },
+    isScrollable: { type: "boolean", default: "false" },
+    isUnstyled: { type: "boolean", default: "false", description: "No fill, border, corner or padding." },
+    background: { type: "ReactNode", description: "Drawn behind the content, filling the panel." },
+    hasScrim: { type: "boolean", default: "false", description: "Dims the app behind the panel." },
+    scrimClassName: { type: "string" },
+    className: { type: "string" },
+  }}
+/>
+
+### Popover.Arrow
+
+<TypeTable type={{ className: { type: "string" } }} />
+
+### Popover.Title, Popover.Description
+
+Take `Text`'s props. The title is a `Text.Label` announced as a header; the description is a muted
+`Text.Caption`.
+
+### Popover.Close
+
+Without `asChild`, a ✕ in the panel's top-right corner, labelled `Close`. With `asChild`, it closes
+the popover from its child's `onPress`. Takes `Pressable`'s props either way.
+
+### usePopover
+
+Reads the enclosing popover. Throws outside a `Popover`.
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean" },
+    setOpen: { type: "(isOpen: boolean) => void" },
+    close: { type: "() => void" },
+    placement: {
+      type: '"top" | "bottom" | "left" | "right"',
+      description: "The side the panel landed on, after any flip.",
+    },
+  }}
+/>

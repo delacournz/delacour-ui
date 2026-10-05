@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`labels` replaces any of the English defaults — the buttons, the progress text and the screen reader's position. `hasSkip={false}` drops Skip, and `isDismissible={false}` stops a scrim tap closing the tour.",
 	align: "stretch",
+	capture: { flow: "tour/custom-labels", frame: "device" },
 };
 
 const LABELS: Partial<TourLabels> = {
@@ -30,10 +31,15 @@ function StartButton(): ReactElement {
 	);
 }
 
+/**
+ * Fills and centres because it is captured as a whole screen: the tour is a `Modal`, so a crop to
+ * the demo's own bounds would cut the card off. `flex-auto` rather than `flex-1`, so in the
+ * gallery's auto-height page it keeps its content's height instead of collapsing.
+ */
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none" hasSkip={false} isDismissible={false} labels={LABELS}>
-			<View className="gap-4">
+		<Tour className="flex-auto" hasSkip={false} isDismissible={false} labels={LABELS} testID="tour-labels">
+			<View className="flex-auto justify-center gap-4 px-screen-gutter">
 				<View className="flex-row justify-center gap-4">
 					<Tour.Step description="Trouvez votre chemin." order={1} title="Explorer">
 						<Button accessibilityLabel="Explorer" size="icon-md" testID="tour-labels-explore" variant="secondary">

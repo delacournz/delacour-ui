@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Three steps over a toolbar. The screen dims, a hole opens around the control and the card explains it; Next glides the hole to the next one, Back returns, Skip closes early.",
 	align: "stretch",
+	capture: { flow: "tour/basic", frame: "device" },
 };
 
 /** Lives inside the tour, so `useTour()` can start it. */
@@ -24,10 +25,15 @@ function StartButton(): ReactElement {
 	);
 }
 
+/**
+ * Fills and centres because it is captured as a whole screen: the tour is a `Modal`, so a crop to
+ * the demo's own bounds would cut the card off. `flex-auto` rather than `flex-1`, so in the
+ * gallery's auto-height page it keeps its content's height instead of collapsing.
+ */
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none">
-			<View className="gap-4">
+		<Tour className="flex-auto" testID="tour-basic">
+			<View className="flex-auto justify-center gap-4 px-screen-gutter">
 				<View className="flex-row items-center justify-between rounded-lg border border-border p-2">
 					<Text.Label className="ps-2">Library</Text.Label>
 					<View className="flex-row gap-1">

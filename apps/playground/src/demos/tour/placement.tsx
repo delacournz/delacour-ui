@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`auto` puts the card below the hole when it fits and above it otherwise. A step can ask for `top` or `bottom`; the tour honours it when it fits and flips when only the other side does.",
 	align: "stretch",
+	capture: { flow: "tour/placement", frame: "device" },
 };
 
 function StartButton(): ReactElement {
@@ -21,10 +22,15 @@ function StartButton(): ReactElement {
 	);
 }
 
+/**
+ * Fills and centres because it is captured as a whole screen: the tour is a `Modal`, so a crop to
+ * the demo's own bounds would cut the card off. `flex-auto` rather than `flex-1`, so in the
+ * gallery's auto-height page it keeps its content's height instead of collapsing.
+ */
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none">
-			<View className="gap-4">
+		<Tour className="flex-auto" testID="tour-placement">
+			<View className="flex-auto justify-center gap-4 px-screen-gutter">
 				<View className="gap-3">
 					<Tour.Step className="rounded-md bg-secondary p-3" order={1} placement="auto" title="auto">
 						<Text.Paragraph>Below when it fits.</Text.Paragraph>

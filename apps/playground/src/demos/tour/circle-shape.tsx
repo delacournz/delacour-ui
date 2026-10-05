@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`shape=\"circle\"` on a step cuts a round hole — a square around the target's larger side — for a floating button. The first step keeps the tour's rounded rectangle, and the hole morphs between them.",
 	align: "stretch",
+	capture: { flow: "tour/circle-shape", frame: "device" },
 };
 
 function StartButton(): ReactElement {
@@ -23,10 +24,15 @@ function StartButton(): ReactElement {
 	);
 }
 
+/**
+ * Fills and centres because it is captured as a whole screen: the tour is a `Modal`, so a crop to
+ * the demo's own bounds would cut the card off. `flex-auto` rather than `flex-1`, so in the
+ * gallery's auto-height page it keeps its content's height instead of collapsing.
+ */
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none">
-			<View className="gap-4">
+		<Tour className="flex-auto" testID="tour-circle">
+			<View className="flex-auto justify-center gap-4 px-screen-gutter">
 				<View className="h-40 justify-between rounded-lg border border-border p-4">
 					<Tour.Step description="Everything you have written, newest first." order={1} title="Your notes">
 						<Text.Header>Notes</Text.Header>

@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tour/circle-shape and has settled — a notes panel with a round add button,
+  a "Start tour" button below, the tour closed. The capture script navigates there before running this.
+steps:
+  - echo: Starting on the heading, in the tour's rounded rectangle
+  - tap: { id: tour-circle-start }
+  - await: { visible: { id: tour-circle-next } }
+  - wait: 1100
+  - echo: Next morphs the hole into a circle around the add button
+  - tap: { id: tour-circle-next }
+  - wait: 1300
+  - echo: Done closes it, so the clip loops back to the closed screen
+  - tap: { id: tour-circle-next }
+  - await: { hidden: { id: tour-circle-card } }

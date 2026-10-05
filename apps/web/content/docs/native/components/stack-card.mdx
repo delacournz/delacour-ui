@@ -4,6 +4,8 @@ description: A deck taken one card at a time by throwing the top one off — one
 icon: Layers
 ---
 
+<Preview id="stack-card/review-queue" title={null} />
+
 ## Installation
 
 <ComponentInstall name="stack-card" />
@@ -81,6 +83,8 @@ card behind slides into place on the same progress — so when the top card leav
 still gives a little under the finger and returns, so the card reads as "not that way" rather than
 frozen.
 
+<Preview id="stack-card/review-queue" />
+
 ## Directions
 
 `directions` defaults to left and right. A horizontal-only deck lets vertical drags through, so it
@@ -105,6 +109,8 @@ A deck that throws all four ways claims both axes. Do not nest it in a scroller.
 `layout` draws the cards behind the top: `stack` steps each one down and smaller, `fan` turns them
 about the bottom centre, `flat` hides them. `depth` (0–4, default 2) is how many are drawn.
 
+<Preview id="stack-card/layouts" />
+
 ```tsx
 <StackCard depth={3} layout="fan">…</StackCard>
 ```
@@ -113,6 +119,8 @@ about the bottom centre, `flat` hides them. `depth` (0–4, default 2) is how ma
 
 `StackCard.Action action="undo"`, the ref's `undo()` or `useStackCard().undo` brings the last card
 back from the side it left. `onSwipe` is not called for an undo.
+
+<Preview id="stack-card/undo" />
 
 ```tsx
 function Finished() {
@@ -133,6 +141,8 @@ function Finished() {
 `index` with `onIndexChange` puts the deck in your hands. A controlled deck that leaves `index`
 where it was **declines** the throw, and the card flies back in from the side it left. That is how a
 confirm step is built: decline, ask, and on yes throw again through the ref and accept it.
+
+<Preview id="stack-card/controlled-decline" />
 
 ```tsx
 const deck = useRef<StackCardHandle>(null);
@@ -165,6 +175,8 @@ last card leaves.
 
 Only a window around the top card is mounted: one behind for undo, the `depth` drawn, and one more
 that fades in. A deck of five hundred costs what a deck of five does.
+
+<Preview id="stack-card/large-deck" />
 
 ## Haptics
 

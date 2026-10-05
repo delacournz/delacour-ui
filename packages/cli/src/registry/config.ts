@@ -294,6 +294,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
 		categories: ["controls"],
 	},
+	tour: {
+		title: "Tour",
+		description:
+			"A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
+		categories: ["navigation"],
+	},
 
 	expo: {
 		title: "Navigation theme",

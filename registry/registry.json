@@ -1498,6 +1498,46 @@
 			]
 		},
 		{
+			"name": "tour",
+			"type": "registry:ui",
+			"title": "Tour",
+			"description": "A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"button",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/tour/AGENTS.md",
+				"ui/tour/index.ts",
+				"ui/tour/tour-card.tsx",
+				"ui/tour/tour-mask.tsx",
+				"ui/tour/tour-overlay.tsx",
+				"ui/tour/tour-scrim.tsx",
+				"ui/tour/tour-step.tsx",
+				"ui/tour/tour.context.tsx",
+				"ui/tour/tour.tsx",
+				"ui/tour/tour.types.ts",
+				"ui/tour/tour.variants.ts"
+			]
+		},
+		{
 			"name": "tv",
 			"type": "registry:lib",
 			"title": "tv",

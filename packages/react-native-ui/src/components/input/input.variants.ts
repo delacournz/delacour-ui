@@ -1,7 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { cn } from "../../lib/cn";
 import { tv } from "../../lib/tv";
-import type { ButtonGroupOrientation, ButtonGroupSlotPosition } from "../button/button.variants";
+import type { ButtonGroupOrientation, ButtonGroupSlotPosition, ButtonSize } from "../button/button.variants";
 
 export const INPUT_VARIANTS = ["primary", "secondary"] as const;
 
@@ -9,6 +9,14 @@ export const INPUT_SIZES = ["sm", "md", "lg"] as const;
 
 export type InputVariant = (typeof INPUT_VARIANTS)[number];
 export type InputSize = (typeof INPUT_SIZES)[number];
+
+/**
+ * Where a part of a group sits: inside a row — the field's row, or a block's —
+ * or directly in the box, between a block and the row.
+ */
+export const INPUT_GROUP_PLACEMENTS = ["row", "box"] as const;
+
+export type InputGroupPlacement = (typeof INPUT_GROUP_PLACEMENTS)[number];
 
 /** Theme token an icon in a decorator inherits, and the one it takes when invalid. */
 export const INPUT_DECORATOR_ICON_TOKEN = "muted-foreground";
@@ -60,8 +68,17 @@ export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
 export const inputVariants = tv({
 	slots: {
 		root: "overflow-hidden border",
-		/** Layout for the group's row. Never applied to a lone field, which is not a row. */
-		row: "flex-row items-center",
+		/*
+		 * Layout for the group's inner row, which holds the decorators and the
+		 * field. Never applied to a lone field, which is not a row. `grow` rather
+		 * than `flex-1`: a zero flex-basis collapses inside a box with no fixed
+		 * height, which is exactly the box a block leaves behind.
+		 */
+		row: "grow flex-row items-center",
+		/** A full-width section above or below the row. The box supplies its horizontal inset. */
+		block: "flex-row flex-wrap items-center",
+		/** A hairline between a decorator and the field, or between a block and the row. */
+		separator: "bg-border",
 		/*
 		 * The one text surface in this package that is not a `Text`: a raw React
 		 * Native `TextInput`, which inherits nothing. `font-sans` is restated for
@@ -84,6 +101,7 @@ export const inputVariants = tv({
 			sm: {
 				root: "px-2.5",
 				row: "gap-1.5",
+				block: "gap-1.5 py-1",
 				field: "text-input-sm leading-tight",
 				decoratorIcon: "size-icon-sm",
 				decoratorText: "text-input-sm",
@@ -91,6 +109,7 @@ export const inputVariants = tv({
 			md: {
 				root: "px-3",
 				row: "gap-2",
+				block: "gap-2 py-1.5",
 				field: "text-input-md leading-tight",
 				decoratorIcon: "size-icon-md",
 				decoratorText: "text-input-md",
@@ -98,6 +117,7 @@ export const inputVariants = tv({
 			lg: {
 				root: "px-3.5",
 				row: "gap-2.5",
+				block: "gap-2.5 py-2",
 				field: "text-input-lg leading-tight",
 				decoratorIcon: "size-icon-lg",
 				decoratorText: "text-input-lg",
@@ -109,6 +129,14 @@ export const inputVariants = tv({
 		// `inputVariants({ isFocused })`. See button.variants.ts for the same note.
 		isFocused: { true: { root: "border-ring" }, false: {} },
 		isInvalid: { true: { root: "border-destructive", decoratorText: "text-destructive" }, false: {} },
+		/**
+		 * Which way a separator runs, read from where it sits: across a row it is
+		 * vertical, between the box's sections it is horizontal.
+		 */
+		placement: {
+			row: { separator: "my-2 w-px self-stretch" },
+			box: { separator: "h-px self-stretch" },
+		},
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 		isMultiline: { true: {}, false: {} },
 		// A grouped field shares its row, so it stretches — and it clears React
@@ -145,6 +173,11 @@ export const inputVariants = tv({
 		// field that went grey the moment it was tapped would drop the only
 		// signal it has that its value is wrong, exactly while it is being fixed.
 		{ isFocused: true, isInvalid: true, class: { root: "border-destructive" } },
+		// A horizontal hairline bleeds out by exactly the box's inset, so it
+		// meets the border on both sides rather than stopping short of it.
+		{ placement: "box", size: "sm", class: { separator: "-mx-2.5" } },
+		{ placement: "box", size: "md", class: { separator: "-mx-3" } },
+		{ placement: "box", size: "lg", class: { separator: "-mx-3.5" } },
 		// The corner a lone field draws: the generic ramp, deliberately not the
 		// button's, because a field and the button beside it are meant to be
 		// retunable apart. `sm` steps down a notch; the other two share `lg`.
@@ -242,6 +275,7 @@ export const inputVariants = tv({
 		isDisabled: false,
 		isMultiline: false,
 		isGrouped: false,
+		placement: "row",
 		orientation: "horizontal",
 		groupPosition: "none",
 		isSeamed: false,
@@ -287,15 +321,136 @@ export function resolveInputFieldClass({
 	return isGrouped ? slots.field({ className }) : cn(slots.root(), slots.field({ className }));
 }
 
+/** The box state of a group, which also knows whether it holds a block. */
+export type InputGroupBoxState = InputBoxState & {
+	/** A block above or below the row, which frees the box to grow past one line. */
+	hasBlocks?: boolean;
+	className?: string;
+};
+
 /**
- * The class `Input.Group`'s row wears: the same box a lone field would draw,
- * laid out as a row so the decorators and the field can share it.
+ * The class `Input.Group`'s outer element wears: the same box a lone field
+ * would draw, and nothing else. The row inside it is {@link resolveInputGroupRowClass}.
+ *
+ * A block makes the box taller than one line, so with one present the box takes
+ * the multiline branch of the height — a floor plus vertical padding — whatever
+ * the field is. The row keeps its own alignment, so a single-line field stays
+ * centred in it.
  *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
-export function resolveInputGroupClass({ className, ...state }: InputBoxState & { className?: string }): string {
-	const slots = inputVariants({ ...state, isGrouped: true });
-	return cn(slots.root(), slots.row({ className }));
+export function resolveInputGroupClass({
+	className,
+	hasBlocks = false,
+	isMultiline = false,
+	...state
+}: InputGroupBoxState): string {
+	return inputVariants({ ...state, isGrouped: true, isMultiline: isMultiline || hasBlocks }).root({ className });
+}
+
+/**
+ * The class `Input.Group`'s inner row wears — layout only, never chrome. The
+ * row is always rendered, blocks or not, so adding one never remounts the field.
+ *
+ * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveInputGroupRowClass({ className, hasBlocks: _hasBlocks, ...state }: InputGroupBoxState): string {
+	return inputVariants({ ...state, isGrouped: true }).row({ className });
+}
+
+/** What a decorator's child is, as far as deciding whether it is decorative goes. */
+export type InputDecoratorChildKind = "text" | "icon" | "other";
+
+/**
+ * Whether a decorator is purely visual — hidden from screen readers and
+ * transparent to touches.
+ *
+ * An explicit value wins. Otherwise a decorator holding only bare text and
+ * `Icon`s is decorative — a currency sign, a unit, a magnifying glass — and one
+ * holding anything else might be a control, so it stays reachable. An empty
+ * decorator has nothing to hide.
+ *
+ * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveIsDecorative({
+	explicit,
+	kinds,
+}: {
+	explicit?: boolean;
+	kinds: readonly InputDecoratorChildKind[];
+}): boolean {
+	if (explicit !== undefined) return explicit;
+	return kinds.length > 0 && kinds.every((kind) => kind !== "other");
+}
+
+/**
+ * The size of a `Button` inside a group: one step below the box, so it sits
+ * inside the border with room around it, and square when it holds only an icon.
+ * `sm` has no smaller step, so it stays `sm`.
+ *
+ * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveGroupButtonSize(size: InputSize, isIconOnly: boolean): ButtonSize {
+	const step = GROUP_BUTTON_STEP[size];
+	return isIconOnly ? `icon-${step}` : step;
+}
+
+const GROUP_BUTTON_STEP: Record<InputSize, InputSize> = { sm: "sm", md: "sm", lg: "md" };
+
+/**
+ * The extra class a `Button` inside a group takes.
+ *
+ * A disabled group fades its whole box once. The button inside it is disabled
+ * too, so it is inert — but its own `opacity-50` would fade it a second time, to
+ * a quarter. `opacity-100` replaces that one utility through the button's own
+ * className merge, and leaves the rest of its disabled treatment alone.
+ *
+ * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveGroupButtonClass({
+	isDisabled,
+	className,
+}: {
+	isDisabled: boolean;
+	className?: string;
+}): string {
+	return cn(isDisabled && "opacity-100", className);
+}
+
+/** What a direct child of a group is, as far as placing it goes. */
+export type InputGroupChildKind = "block-start" | "block-end" | "separator" | "content";
+
+/** Where a direct child of a group renders: above the row, in it, or below it. */
+export type InputGroupSegment = "start" | "row" | "end";
+
+/**
+ * Sorts a group's direct children into the box's three sections.
+ *
+ * A block goes where its `position` says, wherever it was written. Everything
+ * else is row content, except a separator written outside the content — before
+ * the first piece of it or after the last — which divides a block from the row
+ * and so belongs to the box. A separator between two pieces of content stays in
+ * the row as a vertical hairline.
+ *
+ * Done by sorting rather than by a block registering itself after mount: the
+ * sections are known in the first render, so the box never draws one frame as a
+ * row and the next as a column.
+ *
+ * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveGroupSegments(kinds: readonly InputGroupChildKind[]): InputGroupSegment[] {
+	const first = kinds.indexOf("content");
+	const last = kinds.lastIndexOf("content");
+
+	return kinds.map((kind, index) => {
+		if (kind === "block-start") return "start";
+		if (kind === "block-end") return "end";
+		if (kind === "content") return "row";
+		if (first === -1) return "start";
+		if (index < first) return "start";
+		if (index > last) return "end";
+		return "row";
+	});
 }
 
 /**

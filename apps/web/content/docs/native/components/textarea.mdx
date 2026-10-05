@@ -52,6 +52,21 @@ export default function Example() {
 <Textarea autoGrow rows={2} maxRows={6} placeholder="Message" />
 ```
 
+## In an Input.Group
+
+Inside `Input.Group` a `Textarea` is the group's field: the group draws the box and owns the size,
+and `Input.Group.Block` stacks a toolbar or a footer in the same border. See
+[Input → Blocks and Textarea](/docs/native/components/input#blocks-and-textarea).
+
+```tsx
+<Input.Group>
+  <Textarea autoGrow rows={2} placeholder="Message" />
+  <Input.Group.Block position="end">
+    <Input.Group.Button variant="secondary" onPress={send}>Send</Input.Group.Button>
+  </Input.Group.Block>
+</Input.Group>
+```
+
 ## Character count
 
 `showCount` needs `maxLength`, and turns destructive at the limit.

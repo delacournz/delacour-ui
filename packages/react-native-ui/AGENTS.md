@@ -75,7 +75,7 @@ shares.
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
-| [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |
+| [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside, above and below it |
 | [Item](src/components/item/AGENTS.md) | `@delacour/react-native-ui/item` | A row of media, text and actions — standalone, or as a `ListGroup` row |
 | [Kpi](src/components/kpi/AGENTS.md) | `@delacour/react-native-ui/kpi` | One number, its change and a sparkline, on `Card` |
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |

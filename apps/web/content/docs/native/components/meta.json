@@ -70,6 +70,7 @@
 		"dialog",
 		"feedback",
 		"---Navigation---",
+		"sortable",
 		"pagination",
 		"breadcrumb",
 		"section-rail",

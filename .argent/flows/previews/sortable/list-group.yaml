@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sortable/list-group and has settled — Home, Search, Library and Profile in
+  one card, in that order. The capture script navigates there before running this.
+steps:
+  - echo: Dragging Home to the bottom of the card
+  - swipe: { from: { id: sortable-list-group-home }, by: { y: 0.234 }, momentum: false, duration: 1000 }
+  - wait: 700
+  - echo: And back to the top, so the clip loops without a jump cut
+  - swipe: { from: { id: sortable-list-group-home }, by: { y: -0.234 }, momentum: false, duration: 1000 }

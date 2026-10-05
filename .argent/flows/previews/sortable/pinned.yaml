@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sortable/pinned and has settled — Inbox pinned first, Later disabled last,
+  This week fourth. The capture script navigates there before running this.
+steps:
+  - echo: Dragging This week toward the top; it stops below the pinned Inbox
+  # Three pitches up, one more than there is room for, so the clip shows the pinned row holding.
+  - swipe: { from: { id: sortable-pinned-week }, by: { y: -0.27 }, momentum: false, duration: 900 }
+  - wait: 700
+  - echo: And back down to fourth, so the clip loops without a jump cut
+  - swipe: { from: { id: sortable-pinned-week }, by: { y: 0.178 }, momentum: false, duration: 900 }

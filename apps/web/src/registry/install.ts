@@ -9885,6 +9885,127 @@ export const install = {
 			},
 		],
 	},
+	"sortable": {
+		name: "sortable",
+		title: "Sortable",
+		description: "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions.",
+		importPath: "@delacour/react-native-ui/sortable",
+		exportName: "Sortable",
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 31,
+		groups: [
+			{
+				name: "sortable",
+				title: "Sortable",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/sortable/AGENTS.md", target: "src/components/ui/sortable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/sortable/index.ts", target: "src/components/ui/sortable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable-handle.tsx", target: "src/components/ui/sortable/sortable-handle.tsx" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable-item.tsx", target: "src/components/ui/sortable/sortable-item.tsx" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable.context.tsx", target: "src/components/ui/sortable/sortable.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable.tsx", target: "src/components/ui/sortable/sortable.tsx" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable.types.ts", target: "src/components/ui/sortable/sortable.types.ts" },
+					{ source: "packages/react-native-ui/src/components/sortable/sortable.variants.ts", target: "src/components/ui/sortable/sortable.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/sortable/use-sortable-drag-gesture.ts", target: "src/components/ui/sortable/use-sortable-drag-gesture.ts" },
+				],
+			},
+			{
+				name: "icon",
+				title: "Icon",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "icons",
+				title: "Icons",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+		],
+	},
 	"pagination": {
 		name: "pagination",
 		title: "Pagination",

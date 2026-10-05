@@ -144,6 +144,81 @@ function sumOf(layout: readonly number[], from = 0, to = layout.length): number 
 	return total;
 }
 
+/** Element-wise equality, to a hair. */
+export function layoutsEqual(a: readonly number[], b: readonly number[]): boolean {
+	"worklet";
+	if (a.length !== b.length) return false;
+	for (let index = 0; index < a.length; index++) {
+		if (Math.abs((a[index] as number) - (b[index] as number)) >= EPSILON) return false;
+	}
+	return true;
+}
+
+/** The sum of every `defaultSize` named, and how many panes name none. `null` for a negative or non-finite one. */
+function sumDefaults(constraints: readonly SplitterPaneConstraints[]): { named: number; unnamed: number } | null {
+	"worklet";
+	let named = 0;
+	let unnamed = 0;
+	for (const pane of constraints) {
+		const size = pane.defaultSize;
+		if (size === undefined) {
+			unnamed++;
+		} else if (!Number.isFinite(size) || size < 0) {
+			return null;
+		} else {
+			named += size;
+		}
+	}
+	return { named, unnamed };
+}
+
+/**
+ * Each pane clamped to its own bounds — or held at its collapsed size, and
+ * marked fixed, when it is collapsible and already below half its floor. `null`
+ * for a size that is not a finite number.
+ */
+function clampEach(
+	layout: readonly number[],
+	bounds: readonly PaneBounds[]
+): { next: SplitterLayout; fixed: boolean[] } | null {
+	"worklet";
+	const fixed: boolean[] = [];
+	const next: SplitterLayout = [];
+	for (let index = 0; index < bounds.length; index++) {
+		const size = layout[index] as number;
+		const pane = bounds[index] as PaneBounds;
+		if (!Number.isFinite(size)) return null;
+		const isCollapsed = pane.isCollapsible && (size <= pane.collapsed + EPSILON || size < pane.min / 2);
+		fixed.push(isCollapsed);
+		next.push(isCollapsed ? pane.collapsed : clamp(size, pane.min, pane.max));
+	}
+	return { fixed, next };
+}
+
+/**
+ * One pass of sharing what `next` is short of (or over) 100 among the panes with
+ * room, in place. `false` once there is nothing left to share or nowhere to put it.
+ */
+function shareRemainder(next: SplitterLayout, fixed: readonly boolean[], bounds: readonly PaneBounds[]): boolean {
+	"worklet";
+	const remainder = 100 - sumOf(next);
+	if (Math.abs(remainder) < EPSILON) return false;
+	const open: number[] = [];
+	for (let index = 0; index < bounds.length; index++) {
+		const pane = bounds[index] as PaneBounds;
+		const size = next[index] as number;
+		const hasRoom = remainder > 0 ? size < pane.max - EPSILON : size > pane.min + EPSILON;
+		if (!fixed[index] && hasRoom) open.push(index);
+	}
+	if (open.length === 0) return false;
+	const share = remainder / open.length;
+	for (const index of open) {
+		const pane = bounds[index] as PaneBounds;
+		next[index] = clamp((next[index] as number) + share, pane.min, pane.max);
+	}
+	return true;
+}
+
 /** A step between 0 (exclusive) and 50, or the default. A step past half the box could never land. */
 export function resolveSplitterStep(step: number | undefined): number {
 	"worklet";
@@ -207,53 +282,6 @@ export function fitLayout(layout: readonly number[], constraints: readonly Split
 }
 
 /**
- * Each pane clamped to its own bounds — or held at its collapsed size, and
- * marked fixed, when it is collapsible and already below half its floor. `null`
- * for a size that is not a finite number.
- */
-function clampEach(
-	layout: readonly number[],
-	bounds: readonly PaneBounds[]
-): { next: SplitterLayout; fixed: boolean[] } | null {
-	"worklet";
-	const fixed: boolean[] = [];
-	const next: SplitterLayout = [];
-	for (let index = 0; index < bounds.length; index++) {
-		const size = layout[index] as number;
-		const pane = bounds[index] as PaneBounds;
-		if (!Number.isFinite(size)) return null;
-		const isCollapsed = pane.isCollapsible && (size <= pane.collapsed + EPSILON || size < pane.min / 2);
-		fixed.push(isCollapsed);
-		next.push(isCollapsed ? pane.collapsed : clamp(size, pane.min, pane.max));
-	}
-	return { fixed, next };
-}
-
-/**
- * One pass of sharing what `next` is short of (or over) 100 among the panes with
- * room, in place. `false` once there is nothing left to share or nowhere to put it.
- */
-function shareRemainder(next: SplitterLayout, fixed: readonly boolean[], bounds: readonly PaneBounds[]): boolean {
-	"worklet";
-	const remainder = 100 - sumOf(next);
-	if (Math.abs(remainder) < EPSILON) return false;
-	const open: number[] = [];
-	for (let index = 0; index < bounds.length; index++) {
-		const pane = bounds[index] as PaneBounds;
-		const size = next[index] as number;
-		const hasRoom = remainder > 0 ? size < pane.max - EPSILON : size > pane.min + EPSILON;
-		if (!fixed[index] && hasRoom) open.push(index);
-	}
-	if (open.length === 0) return false;
-	const share = remainder / open.length;
-	for (const index of open) {
-		const pane = bounds[index] as PaneBounds;
-		next[index] = clamp((next[index] as number) + share, pane.min, pane.max);
-	}
-	return true;
-}
-
-/**
  * The layout a splitter starts from.
  *
  * A valid `layout` from the caller wins, fitted to the bounds. Otherwise each
@@ -285,24 +313,6 @@ export function resolveInitialLayout(
 		constraints.map((pane) => pane.defaultSize ?? share),
 		constraints
 	);
-}
-
-/** The sum of every `defaultSize` named, and how many panes name none. `null` for a negative or non-finite one. */
-function sumDefaults(constraints: readonly SplitterPaneConstraints[]): { named: number; unnamed: number } | null {
-	"worklet";
-	let named = 0;
-	let unnamed = 0;
-	for (const pane of constraints) {
-		const size = pane.defaultSize;
-		if (size === undefined) {
-			unnamed++;
-		} else if (!Number.isFinite(size) || size < 0) {
-			return null;
-		} else {
-			named += size;
-		}
-	}
-	return { named, unnamed };
 }
 
 export type ResolveDragOptions = {
@@ -522,16 +532,6 @@ export function lerpLayout(from: readonly number[], to: readonly number[], t: nu
 	"worklet";
 	if (from.length !== to.length) return [...to];
 	return to.map((size, index) => (from[index] as number) + (size - (from[index] as number)) * t);
-}
-
-/** Element-wise equality, to a hair. */
-export function layoutsEqual(a: readonly number[], b: readonly number[]): boolean {
-	"worklet";
-	if (a.length !== b.length) return false;
-	for (let index = 0; index < a.length; index++) {
-		if (Math.abs((a[index] as number) - (b[index] as number)) >= EPSILON) return false;
-	}
-	return true;
 }
 
 /** What an assistive action on a handle asks the root to do. */

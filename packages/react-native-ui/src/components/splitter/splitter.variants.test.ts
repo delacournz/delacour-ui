@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { declarationCount } from "../../styles/theme-tokens.test";
 import {
 	adjacentCollapsibleIndex,
@@ -583,5 +585,31 @@ describe("resolveSplitterAction", () => {
 		expect(
 			resolveSplitterAction({ constraints, handleIndex: 0, layout: [50, 50], name: "activate", step: 5 })
 		).toBeNull();
+	});
+});
+
+describe("worklet declaration order", () => {
+	// The worklets plugin captures a worklet's closure where the function is
+	// DECLARED, not where it is called — so a worklet calling a helper declared
+	// further down the file captures `undefined` and throws "undefined is not a
+	// function" on a device, while `bun test` (no plugin) passes. Declare every
+	// helper above its first caller.
+	test("no worklet calls a function declared below it", () => {
+		const source = readFileSync(join(import.meta.dirname, "splitter.variants.ts"), "utf-8");
+		const declared = new Map<string, number>();
+		for (const match of source.matchAll(/^(?:export )?function (\w+)/gm)) {
+			declared.set(match[1] as string, match.index);
+		}
+		const late: string[] = [];
+		for (const [name, at] of declared) {
+			const body = source.slice(at, source.indexOf("\n}\n", at));
+			if (!body.includes('"worklet";')) continue;
+			for (const call of body.matchAll(/\b(\w+)\(/g)) {
+				const callee = call[1] as string;
+				const calleeAt = declared.get(callee);
+				if (callee !== name && calleeAt !== undefined && calleeAt > at) late.push(`${name} → ${callee}`);
+			}
+		}
+		expect([...new Set(late)]).toEqual([]);
 	});
 });

@@ -224,6 +224,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
 		categories: ["feedback"],
 	},
+	questionnaire: {
+		title: "Questionnaire",
+		description:
+			"A guided form, one question at a time: single and multiple choice, text, rating, scale and yes/no, with branching, skips, validation and progress.",
+		categories: ["forms"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",

@@ -1,0 +1,134 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "section-rail",
+	"type": "registry:ui",
+	"title": "SectionRail",
+	"description": "A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"compose-refs",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-scroll-sections"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/AGENTS.md",
+			"target": "section-rail/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/section-rail",
+					"to": "@registry/ui/section-rail"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/index.ts",
+			"target": "section-rail/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail-bar.tsx",
+			"target": "section-rail/section-rail-bar.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail-content.tsx",
+			"target": "section-rail/section-rail-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail-item.tsx",
+			"target": "section-rail/section-rail-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail-scrim.tsx",
+			"target": "section-rail/section-rail-scrim.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail-trigger.tsx",
+			"target": "section-rail/section-rail-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail.context.tsx",
+			"target": "section-rail/section-rail.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail.tsx",
+			"target": "section-rail/section-rail.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-rail/section-rail.variants.ts",
+			"target": "section-rail/section-rail.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

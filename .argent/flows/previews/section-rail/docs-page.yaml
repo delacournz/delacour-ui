@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on section-rail/docs-page and has settled — a scrolled-to-top page of seven
+  sections with the rail closed at the bottom of its end edge, the Introduction bar active. The capture script
+  navigates there before running this.
+steps:
+  - echo: Tapping the rail open and picking Usage
+  - tap: { id: section-rail-docs-trigger }
+  - await: { visible: { id: section-rail-docs-usage } }
+  - wait: 600
+  - tap: { id: section-rail-docs-usage }
+  - wait: 1300
+  - echo: Scrubbing the rail back up to Introduction, so the clip loops without a jump cut
+  - swipe: { from: { id: section-rail-docs-trigger }, by: { y: -0.15 }, momentum: false, duration: 900 }
+  - wait: 1200

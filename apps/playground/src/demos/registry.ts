@@ -425,6 +425,12 @@ import * as demo_section_progress_colored_sections from "./section-progress/colo
 import * as demo_section_progress_controlled_open from "./section-progress/controlled-open";
 import * as demo_section_progress_manual_progress from "./section-progress/manual-progress";
 import * as demo_section_progress_placements from "./section-progress/placements";
+import * as demo_section_rail_center from "./section-rail/center";
+import * as demo_section_rail_controlled_open from "./section-rail/controlled-open";
+import * as demo_section_rail_docs_page from "./section-rail/docs-page";
+import * as demo_section_rail_nested_levels from "./section-rail/nested-levels";
+import * as demo_section_rail_pager from "./section-rail/pager";
+import * as demo_section_rail_start_edge from "./section-rail/start-edge";
 import * as demo_select_data_driven from "./select/data-driven";
 import * as demo_select_disabled_and_loading from "./select/disabled-and-loading";
 import * as demo_select_grouped_searchable from "./select/grouped-searchable";
@@ -1001,6 +1007,12 @@ export const DEMOS = {
 	"section-progress/controlled-open": demo_section_progress_controlled_open,
 	"section-progress/manual-progress": demo_section_progress_manual_progress,
 	"section-progress/placements": demo_section_progress_placements,
+	"section-rail/center": demo_section_rail_center,
+	"section-rail/controlled-open": demo_section_rail_controlled_open,
+	"section-rail/docs-page": demo_section_rail_docs_page,
+	"section-rail/nested-levels": demo_section_rail_nested_levels,
+	"section-rail/pager": demo_section_rail_pager,
+	"section-rail/start-edge": demo_section_rail_start_edge,
 	"select/data-driven": demo_select_data_driven,
 	"select/disabled-and-loading": demo_select_disabled_and_loading,
 	"select/grouped-searchable": demo_select_grouped_searchable,

@@ -337,6 +337,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
+		slug: "section-rail",
+		name: "SectionRail",
+		group: "Navigation",
+		blurb:
+			"A thin rail of bars along a screen edge, one per section, that opens into an outline to jump or scrub through.",
+	},
+	{
 		slug: "section-progress",
 		name: "SectionProgress",
 		group: "Navigation",

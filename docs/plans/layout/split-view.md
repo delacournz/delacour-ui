@@ -252,6 +252,18 @@ Registry `ITEM_META`:
 - Dragging the panes' content (only the drag row is a handle).
 - Animated pane content reflow beyond a height change.
 
+## Implementation notes
+
+- **Stacked on `layout-splitter`** (branch `feature/layout-splitter`) rather than waiting for it to merge; imports only `../splitter/splitter.math` (`clamp`, `projectSnap`). `nearestSnapIndex` is not needed directly — `projectSnap` calls it.
+- **`Result` is restated, not imported.** `@delacour/types` is private to the monorepo and this folder is copied into consumers' repos and published to npm, so `sortSnapPoints` returns a local `SplitViewResult` of the same shape.
+- **Indices are ordered by resolved height.** `resolveSnapHeights` sorts its output, because mixed units (`[120, 0.5, 1]`) only have an order once the box is known. With one unit this equals the sorted `snapPoints`.
+- **Projection uses UIScrollView's `fast` deceleration (0.99)**, not the leaf's `normal` default, which turned every lazy release into a skip.
+- **Announcement**: activate (VoiceOver double tap = tap-to-cycle) announces "Position N of M" when a screen reader is on; increment/decrement do not, since VoiceOver reads the adjustable value itself.
+- **Tap and pan share a 6pt slop** (`SPLIT_VIEW_TAP_SLOP`) so one touch is a tap or a drag, never both.
+- **Demos**: `scrolling-panes` uses Gesture Handler's `ScrollView`; `Screen.ScrollArea` pads for screen insets a pane does not have. Home-row icon is `IconLayoutAlignTopBottom` (`IconLayoutBottomFull` is `bottom-sheet`'s).
+- **Previews: deferred**, as for Splitter — the capture tool is not installed, so no demo carries `capture` and the docs page has no `<Preview>`.
+- **Simulator**: checked 2026-10-05; see the component AGENTS.md. Rotation, Reduce Motion, haptics and VoiceOver actions not checked.
+
 ## Acceptance checklist
 
 - [ ] LAYOUT-13 merged; `split-view` imports only `../splitter/splitter.math`, never `../splitter`.

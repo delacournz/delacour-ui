@@ -164,4 +164,25 @@ over its table.
 - **Worklet helpers are declared above their callers.** The worklets plugin
   captures a worklet's closure where the function is declared; `Splitter` shipped
   that bug once. The "worklet declaration order" test reads the source.
-- Simulator check: see the card comment and the entry below.
+- **Simulator check, 2026-10-05** (iPhone 17 sim via warden, agent-device, dev
+  client): renders at the middle stop with the drag row reading "Resize map,
+  Position 2 of 3"; a slow short drag returns to its stop; a slow longer drag
+  settles on the nearest; the same ~50pt drag lands one stop further when
+  released at ~550pt/s and returns when released slowly (velocity projection
+  works); taps cycle 2 → 3 → 1, wrapping; the bottom list scrolls without moving
+  the divider; the controlled readout and `snapTo` buttons track; mixed units
+  (`[120, 0.5, 1]`) put the top pane at 120pt; `seam` draws the rule through the
+  grip; disabled ignores a tap and reports `enabled=false`. Not checked: the
+  haptic (none on a simulator), rotation, Reduce Motion, and a VoiceOver
+  increment or activate (agent-device cannot fire an accessibility action).
+- **agent-device's synthetic flings are slow** (~300pt/s) and a 40ms `gesture
+  pan` delivers no intermediate update, so neither proves a skip. A 100ms
+  `gesture pan` of 50pt is what showed it.
+- **No captured previews yet.** The capture tool is not installed, so no demo
+  carries `capture` and the docs page has no `<Preview>`. When it is back: mark
+  `anatomy` (hero), `seam`, `snap-points`, `controlled` and `scrolling-panes` as
+  captured, run `bun run previews -- -- --only split-view`, and add the
+  `<Preview>`s back to the docs page.
+- **The scrolling-panes demo uses Gesture Handler's `ScrollView`, not
+  `Screen.ScrollArea`.** The latter pads for the screen's insets and navbar,
+  which a pane in the middle of a screen does not have.

@@ -2,7 +2,11 @@ import { type ReactElement, useCallback } from "react";
 import { Button } from "../button";
 import { useQuestionnairePart } from "./questionnaire.context";
 import type { QuestionnaireButtonProps } from "./questionnaire.types";
-import { questionnaireVariants, resolveQuestionnaireFooterButtons } from "./questionnaire.variants";
+import {
+	questionnaireVariants,
+	resolveQuestionnaireFooterButtons,
+	resolveQuestionnaireTestId,
+} from "./questionnaire.variants";
 
 /**
  * Validates every visible question and calls `onSubmit`.
@@ -18,7 +22,7 @@ export function QuestionnaireSubmit({
 	...props
 }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Submit");
-	const { axes, submit, isCurrentValid, isDisabled, isReadOnly, isSubmitting } = questionnaire;
+	const { axes, testID, submit, isCurrentValid, isDisabled, isReadOnly, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -42,6 +46,7 @@ export function QuestionnaireSubmit({
 			isLoading={isSubmitting}
 			onPress={handlePress}
 			size={axes.buttonSize}
+			testID={resolveQuestionnaireTestId(testID, "submit")}
 			variant={axes.nextVariant}
 			{...props}
 		>

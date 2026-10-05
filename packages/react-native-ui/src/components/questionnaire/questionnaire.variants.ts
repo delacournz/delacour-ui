@@ -219,3 +219,12 @@ export function resolveQuestionnaireFooterButtons({
 	if (isSubmitted) return { back: false, next: false, skip: false, submit: false };
 	return { back: canBack, next: !isLast, skip: canSkip, submit: isLast };
 }
+
+/**
+ * A derived `testID` — the root's, then the parts naming one element inside:
+ * `survey-role-design` for an option, `survey-next` for a footer button.
+ * `undefined` when the root has none, so nothing is tagged by accident.
+ */
+export function resolveQuestionnaireTestId(root: string | undefined, ...parts: readonly string[]): string | undefined {
+	return root === undefined ? undefined : [root, ...parts].join("-");
+}

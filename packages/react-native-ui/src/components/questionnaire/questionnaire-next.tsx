@@ -2,7 +2,11 @@ import { type ReactElement, useCallback } from "react";
 import { Button } from "../button";
 import { useQuestionnairePart } from "./questionnaire.context";
 import type { QuestionnaireButtonProps } from "./questionnaire.types";
-import { questionnaireVariants, resolveQuestionnaireFooterButtons } from "./questionnaire.variants";
+import {
+	questionnaireVariants,
+	resolveQuestionnaireFooterButtons,
+	resolveQuestionnaireTestId,
+} from "./questionnaire.variants";
 
 /**
  * Validates the current question and moves to the next visible one.
@@ -19,7 +23,7 @@ export function QuestionnaireNext({
 	...props
 }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Next");
-	const { axes, next, isCurrentValid, isDisabled, isSubmitting } = questionnaire;
+	const { axes, testID, next, isCurrentValid, isDisabled, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -42,6 +46,7 @@ export function QuestionnaireNext({
 			isDisabled={isDisabled || isSubmitting}
 			onPress={handlePress}
 			size={axes.buttonSize}
+			testID={resolveQuestionnaireTestId(testID, "next")}
 			variant={axes.nextVariant}
 			{...props}
 		>

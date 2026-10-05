@@ -2,7 +2,7 @@ import { type ReactElement, useCallback } from "react";
 import { Button } from "../button";
 import { useQuestionnairePart } from "./questionnaire.context";
 import type { QuestionnaireButtonProps } from "./questionnaire.types";
-import { resolveQuestionnaireFooterButtons } from "./questionnaire.variants";
+import { resolveQuestionnaireFooterButtons, resolveQuestionnaireTestId } from "./questionnaire.variants";
 
 /**
  * Records a deliberate omission and moves on. Renders only on an optional
@@ -10,7 +10,7 @@ import { resolveQuestionnaireFooterButtons } from "./questionnaire.variants";
  */
 export function QuestionnaireSkip({ children, onPress, ...props }: QuestionnaireButtonProps): ReactElement | null {
 	const questionnaire = useQuestionnairePart("Questionnaire.Skip");
-	const { axes, skip, isDisabled, isReadOnly, isSubmitting } = questionnaire;
+	const { axes, testID, skip, isDisabled, isReadOnly, isSubmitting } = questionnaire;
 	const shown = resolveQuestionnaireFooterButtons({
 		canBack: questionnaire.canBack,
 		canSkip: questionnaire.canSkip,
@@ -31,6 +31,7 @@ export function QuestionnaireSkip({ children, onPress, ...props }: Questionnaire
 			isDisabled={isDisabled || isSubmitting}
 			onPress={handlePress}
 			size={axes.buttonSize}
+			testID={resolveQuestionnaireTestId(testID, "skip")}
 			variant={axes.skipVariant}
 			{...props}
 		>

@@ -66,6 +66,7 @@ export {
 	questionnaireVariants,
 	resolveQuestionnaireAxes,
 	resolveQuestionnaireFooterButtons,
+	resolveQuestionnaireTestId,
 } from "./questionnaire.variants";
 export type { QuestionnaireFooterProps } from "./questionnaire-footer";
 export type { QuestionnaireProgressProps } from "./questionnaire-progress";

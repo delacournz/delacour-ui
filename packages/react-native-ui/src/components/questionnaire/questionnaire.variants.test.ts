@@ -20,6 +20,7 @@ import {
 	questionnaireVariants,
 	resolveQuestionnaireAxes,
 	resolveQuestionnaireFooterButtons,
+	resolveQuestionnaireTestId,
 } from "./questionnaire.variants";
 
 const SLOTS = [
@@ -235,5 +236,16 @@ describe("the transition", () => {
 	test("slides 24pt over 220ms", () => {
 		expect(QUESTIONNAIRE_SLIDE_DISTANCE).toBe(24);
 		expect(QUESTIONNAIRE_TRANSITION_MS).toEqual({ calm: 100, full: 220 });
+	});
+});
+
+describe("resolveQuestionnaireTestId", () => {
+	test("joins the root's testID with the parts that name the element", () => {
+		expect(resolveQuestionnaireTestId("survey", "role", "design")).toBe("survey-role-design");
+		expect(resolveQuestionnaireTestId("survey", "next")).toBe("survey-next");
+	});
+
+	test("is undefined without a root testID, so nothing is tagged by accident", () => {
+		expect(resolveQuestionnaireTestId(undefined, "role", "design")).toBeUndefined();
 	});
 });

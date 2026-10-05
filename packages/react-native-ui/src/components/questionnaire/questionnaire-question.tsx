@@ -71,6 +71,7 @@ export function QuestionnaireQuestion({
 		isSubmitting,
 		setAnswer,
 		size,
+		testID,
 	} = questionnaire;
 	const isCalm = useCalmMotion();
 	const headingRef = useRef<NativeView>(null);
@@ -111,6 +112,7 @@ export function QuestionnaireQuestion({
 			onAnswer={onAnswer}
 			question={current}
 			size={size}
+			testID={testID}
 		/>
 	);
 

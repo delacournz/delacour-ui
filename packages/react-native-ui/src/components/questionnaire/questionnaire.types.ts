@@ -163,6 +163,12 @@ export type QuestionnaireProps = {
 	getErrorMessage?: (error: ValidationError, question: Question) => string;
 	/** The questionnaire's own haptics — navigation, a blocked Next, Submit. `false` silences them. */
 	haptic?: false | HapticFeedback;
+	/**
+	 * Tags every element inside for tests and recorded flows: `<testID>-<questionId>-<value>` on each
+	 * option, `<testID>-<questionId>` on a field or the stars, `<testID>-next` (and `-back`, `-skip`,
+	 * `-submit`) on the footer buttons.
+	 */
+	testID?: string;
 	className?: string;
 	/** The anatomy. With none, renders Title-less Progress, Question and the default Footer. */
 	children?: ReactNode;

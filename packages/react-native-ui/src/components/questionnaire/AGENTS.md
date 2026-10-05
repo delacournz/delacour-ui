@@ -86,6 +86,16 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
   changed identity and drag a controlled flow back to a stale id. A sync is not reported back as
   an answer change, since the caller already has those answers.
 
+## Test ids
+
+- **The controls are internal, so their `testID`s are derived.** A caller cannot reach an option's
+  `Radio` to tag it, so the root's `testID` is the one input: `<testID>-<questionId>-<value>` on an
+  option, scale step or yes/no button; `<testID>-<questionId>` on a text field or the stars;
+  `<testID>-<questionId>-other` on the Other field; `<testID>-next` / `-back` / `-skip` / `-submit`
+  on the footer. `resolveQuestionnaireTestId` builds them and returns `undefined` with no root id,
+  so nothing is tagged by accident. A footer button's own `testID` prop still wins. The preview
+  flows in `.argent/flows/previews/questionnaire/` depend on these names.
+
 ## Accessibility
 
 - After every move the question is announced as "Question 2 of 5: <title>" and focus moves to its

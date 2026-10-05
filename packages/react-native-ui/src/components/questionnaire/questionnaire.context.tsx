@@ -48,6 +48,8 @@ export type QuestionnaireContextValue = {
 	axes: QuestionnaireAxes;
 	/** The questionnaire's own haptic, or `false`. */
 	haptic: false | HapticFeedback;
+	/** The root's `testID`, which every part derives its own from. */
+	testID: string | undefined;
 	/** Words an error for a question — the caller's `getErrorMessage`, or the English default. */
 	formatError: (error: ValidationError, question: Question) => string;
 	next: () => void;

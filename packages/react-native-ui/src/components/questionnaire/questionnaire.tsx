@@ -125,6 +125,7 @@ function QuestionnaireRoot({
 	isReadOnly = false,
 	getErrorMessage,
 	haptic,
+	testID,
 	className,
 	children,
 }: QuestionnaireProps): ReactElement | null {
@@ -257,6 +258,7 @@ function QuestionnaireRoot({
 			skip: guard(() => {
 				if (!isReadOnly) dispatch({ type: "skip" });
 			}),
+			testID,
 			submit: guard(() => {
 				if (!isReadOnly) dispatch({ type: "submit" });
 			}),
@@ -275,6 +277,7 @@ function QuestionnaireRoot({
 		isSubmitting,
 		size,
 		state,
+		testID,
 		variant,
 	]);
 
@@ -293,11 +296,13 @@ function QuestionnaireRoot({
 	return (
 		<QuestionnaireProvider value={context}>
 			{isFramed ? (
-				<Surface className={rootClass} padding="none">
+				<Surface className={rootClass} padding="none" testID={testID}>
 					{content}
 				</Surface>
 			) : (
-				<View className={rootClass}>{content}</View>
+				<View className={rootClass} testID={testID}>
+					{content}
+				</View>
 			)}
 		</QuestionnaireProvider>
 	);

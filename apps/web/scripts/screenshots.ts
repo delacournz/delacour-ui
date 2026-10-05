@@ -168,6 +168,25 @@ const SHOTS: Shot[] = [
 	{ id: "48-sheet-steps-desktop-dark", path: "/docs/bottom-sheet/steps", frame: "desktop", theme: "dark" },
 	{ id: "49-sheet-detached-desktop-light", path: "/docs/bottom-sheet/detached", frame: "desktop", theme: "light" },
 	{ id: "50-sheet-index-mobile-dark", path: "/docs/bottom-sheet", frame: "phone", theme: "dark", full: true },
+	{
+		id: "51-docs-time-picker-desktop-dark",
+		path: "/docs/native/components/time-picker",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "52-docs-time-picker-desktop-light",
+		path: "/docs/native/components/time-picker",
+		frame: "desktop",
+		theme: "light",
+	},
+	{
+		id: "53-docs-time-picker-mobile-dark",
+		path: "/docs/native/components/time-picker",
+		frame: "phone",
+		theme: "dark",
+		full: true,
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

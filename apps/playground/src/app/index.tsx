@@ -11,6 +11,7 @@ import {
 	IconChart1,
 	IconChevronGrabberVertical,
 	IconCircleRecord,
+	IconClock,
 	IconCursorClick,
 	IconDiamond,
 	IconDivider,
@@ -94,6 +95,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
 	textarea: IconNoteText,
+	"time-picker": IconClock,
 	"toggle-button": IconBold,
 };
 

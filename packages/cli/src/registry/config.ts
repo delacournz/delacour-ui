@@ -289,6 +289,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",
 		categories: ["forms"],
 	},
+	"time-picker": {
+		title: "Time Picker",
+		description:
+			"A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline.",
+		categories: ["forms"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

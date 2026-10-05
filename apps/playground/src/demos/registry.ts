@@ -356,6 +356,13 @@ import * as demo_textarea_rows from "./textarea/rows";
 import * as demo_textarea_sizes from "./textarea/sizes";
 import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
+import * as demo_time_picker_basic_sheet from "./time-picker/basic-sheet";
+import * as demo_time_picker_bounds from "./time-picker/bounds";
+import * as demo_time_picker_in_field_invalid from "./time-picker/in-field-invalid";
+import * as demo_time_picker_inline_wheel from "./time-picker/inline-wheel";
+import * as demo_time_picker_minute_step_15 from "./time-picker/minute-step-15";
+import * as demo_time_picker_twenty_four_hour from "./time-picker/twenty-four-hour";
+import * as demo_time_picker_with_seconds from "./time-picker/with-seconds";
 import * as demo_toggle_button_controlled from "./toggle-button/controlled";
 import * as demo_toggle_button_filters from "./toggle-button/filters";
 import * as demo_toggle_button_formatting from "./toggle-button/formatting";
@@ -722,6 +729,13 @@ export const DEMOS = {
 	"textarea/sizes": demo_textarea_sizes,
 	"textarea/states": demo_textarea_states,
 	"textarea/variants": demo_textarea_variants,
+	"time-picker/basic-sheet": demo_time_picker_basic_sheet,
+	"time-picker/bounds": demo_time_picker_bounds,
+	"time-picker/in-field-invalid": demo_time_picker_in_field_invalid,
+	"time-picker/inline-wheel": demo_time_picker_inline_wheel,
+	"time-picker/minute-step-15": demo_time_picker_minute_step_15,
+	"time-picker/twenty-four-hour": demo_time_picker_twenty_four_hour,
+	"time-picker/with-seconds": demo_time_picker_with_seconds,
 	"toggle-button/controlled": demo_toggle_button_controlled,
 	"toggle-button/filters": demo_toggle_button_filters,
 	"toggle-button/formatting": demo_toggle_button_formatting,

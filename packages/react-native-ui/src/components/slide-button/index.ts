@@ -1,0 +1,43 @@
+export { SlideButton, type SlideButtonProps } from "./slide-button";
+export {
+	type SlideButtonContextValue,
+	SlideButtonProvider,
+	useSlideButton,
+	useSlideButtonContext,
+} from "./slide-button.context";
+export {
+	isSlideArmed,
+	resolveSlideHandleWidth,
+	resolveSlideLabelGutter,
+	resolveSlideRelease,
+	resolveSlideThreshold,
+	resolveSlideTrailOpacity,
+	resolveSlideTrailWidth,
+	resolveSlideTravel,
+	SLIDE_BUTTON_ACTIVE_OFFSET_X,
+	SLIDE_BUTTON_ARM_SLACK,
+	SLIDE_BUTTON_DEFAULT_AUTO_RESET_MS,
+	SLIDE_BUTTON_DEFAULT_SIZE,
+	SLIDE_BUTTON_DEFAULT_THRESHOLD,
+	SLIDE_BUTTON_DEFAULT_VARIANT,
+	SLIDE_BUTTON_FAIL_OFFSET_Y,
+	SLIDE_BUTTON_FAR_END_SLOP,
+	SLIDE_BUTTON_GLYPH_MS,
+	SLIDE_BUTTON_GLYPH_TOKEN,
+	SLIDE_BUTTON_HANDLE_RATIO,
+	SLIDE_BUTTON_INSET,
+	SLIDE_BUTTON_LOOKAHEAD,
+	SLIDE_BUTTON_MIN_THRESHOLD,
+	SLIDE_BUTTON_REDUCED_MOTION_MS,
+	SLIDE_BUTTON_SIZES,
+	SLIDE_BUTTON_SPRING,
+	SLIDE_BUTTON_TRAIL_FADE,
+	SLIDE_BUTTON_VARIANTS,
+	type SlideButtonSize,
+	type SlideButtonVariant,
+	type SlideButtonVariantProps,
+	type SlideRelease,
+	slideButtonVariants,
+} from "./slide-button.variants";
+export type { SlideButtonLabelProps } from "./slide-button-label";
+export type { SlideButtonThumbProps } from "./slide-button-thumb";

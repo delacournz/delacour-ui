@@ -49,6 +49,12 @@ const ROWS = [
 	{ slug: "menu", title: "Menu", description: "Actions, checkbox and radio rows, submenus", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
 	{
+		slug: "slide-button",
+		title: "SlideButton",
+		description: "Drag to confirm, thresholds, async completion",
+		group: "Actions",
+	},
+	{
 		slug: "selection-mode",
 		title: "SelectionMode",
 		description: "Long press to pick several, then act from a bar",

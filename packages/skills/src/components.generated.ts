@@ -47,6 +47,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "selection-mode", title: "Selection Mode", description: "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
+	{ name: "slide-button", title: "Slide Button", description: "A handle dragged across a rail to confirm an action a tap should not reach." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },

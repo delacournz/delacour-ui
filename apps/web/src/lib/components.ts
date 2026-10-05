@@ -59,6 +59,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The Gesture API primitive every pressable in the library is built on.",
 	},
 	{
+		slug: "slide-button",
+		name: "SlideButton",
+		group: "Actions",
+		blurb: "A handle dragged across a rail to confirm — for an action a stray tap should never reach.",
+	},
+	{
 		slug: "selection-mode",
 		name: "SelectionMode",
 		group: "Actions",

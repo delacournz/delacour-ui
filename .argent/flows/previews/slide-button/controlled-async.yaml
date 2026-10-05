@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slide-button/controlled-async and has settled — a full-width rail
+  with its handle at the start, the status reading idle, and a Reset button (controlled-reset). The capture
+  script navigates there before running this.
+steps:
+  - echo: The release asks for completion; the handle waits while the 1500ms request runs
+  - swipe: { from: { id: controlled-transfer-thumb }, by: { x: 0.8 }, momentum: false, duration: 800 }
+  - wait: 2300
+  - echo: Reset hands isCompleted back to false, so the clip loops with the handle home and the status idle
+  - tap: { id: controlled-reset }
+  - wait: 900

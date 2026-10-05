@@ -77,9 +77,11 @@ sheets.
 
 - **A day is three layers:** `band` (absolute, edge to edge, behind), `dayBase` (the circle) and
   the label. The band spans the full cell so adjacent days join into one strip.
-- **Band rounding is by `rangeRole`:** start rounds left, end right, `only` both, middle none — and
-  a lone `only` day draws no band at all, just the filled circle. At a week's edge the strip simply
-  stops and resumes on the next row; it is not re-rounded there.
+- **The band ends at the centre of each end cell, and the circle is the cap.** Start runs from its
+  cell's centre to the right edge, end from the left edge to its centre, middle spans the cell; none
+  is rounded. A cell is wider than its circle, so the first version — a band rounded across the
+  whole end cell — showed a crescent of band beside the circle at both ends. A lone `only` day
+  draws no band. At a week's edge the strip simply stops and resumes on the next row.
 - **Today is a ring (`border-ring`) and `text-primary`, never a fill**, so it cannot be mistaken
   for a selection.
 - **Variant:** `primary` fills `bg-primary`, band `bg-primary/15`; `secondary` fills

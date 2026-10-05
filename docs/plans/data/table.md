@@ -119,13 +119,13 @@ No new peers.
 capture), `selectable` (press to select, capture), `striped-small`, `frame` (capture), `wide-scroll`
 (minWidth 640), `empty`, `virtualised` (FlatList + `Table.Row index/isLast`).
 
-**Captures deferred (2026-10-05).** `bun run previews` shells out to the `argent` CLI, which is
-retired and not installed on the build machine, so no media could be recorded. The five demos
-above marked "capture" ship without `capture` meta (the BottomSheet arrangement: demos, no
-captures), because `demos.test.ts` fails a captured demo with no manifest entry. When the preview
-pipeline moves to agent-device, restore `capture: { align: "stretch" }` on `columns`, `sortable`,
-`selectable`, `frame`, and `capture: { align: "stretch", hero: true }` on `basic`, run
-`bun run previews -- -- --only table`, and add `<Preview>`s to `table.mdx`.
+**Captures (2026-10-06).** Six demos are captured with `capture: { align: "stretch" }`: stills of
+`basic`, `columns` and `frame`, and clips of `sortable` (the hero — sorts by name both ways and
+back to points descending), `selectable` (selects the last and first rows, presses the disabled
+one, returns to INV-042) and `wide-scroll` (drags to the later months and flicks back). Flows live
+at `.argent/flows/previews/table/`. `sortable`'s flow taps each head's label `within` its testID:
+the testID is on the column-wide cell while the button hugs the label, so the cell's centre misses
+it on a flex column.
 
 ## Docs page
 

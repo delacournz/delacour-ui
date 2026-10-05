@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Wide",
 	caption:
 		"A `minWidth` wider than the screen scrolls sideways, with a fade at each edge that has more columns past it.",
-	align: "stretch",
+	capture: { align: "stretch", flow: "table/wide-scroll" },
 };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] as const;
@@ -21,7 +21,7 @@ const COLUMNS = [{ width: 132 }, ...MONTHS.map(() => ({ flex: 1, align: "end" as
 
 export function Demo(): ReactElement {
 	return (
-		<Table columns={COLUMNS} minWidth={640} variant="outline">
+		<Table columns={COLUMNS} minWidth={640} testID="table-wide" variant="outline">
 			<Table.Header>
 				<Table.Row>
 					<Table.Head>Region</Table.Head>

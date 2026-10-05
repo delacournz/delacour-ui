@@ -536,6 +536,13 @@ import * as demo_sortable_variable_heights from "./sortable/variable-heights";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_split_view_accessible_names from "./split-view/accessible-names";
+import * as demo_split_view_anatomy from "./split-view/anatomy";
+import * as demo_split_view_controlled from "./split-view/controlled";
+import * as demo_split_view_disabled from "./split-view/disabled";
+import * as demo_split_view_scrolling_panes from "./split-view/scrolling-panes";
+import * as demo_split_view_seam from "./split-view/seam";
+import * as demo_split_view_snap_points from "./split-view/snap-points";
 import * as demo_splitter_accessible_names from "./splitter/accessible-names";
 import * as demo_splitter_anatomy from "./splitter/anatomy";
 import * as demo_splitter_collapsible from "./splitter/collapsible";
@@ -1196,6 +1203,13 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"split-view/accessible-names": demo_split_view_accessible_names,
+	"split-view/anatomy": demo_split_view_anatomy,
+	"split-view/controlled": demo_split_view_controlled,
+	"split-view/disabled": demo_split_view_disabled,
+	"split-view/scrolling-panes": demo_split_view_scrolling_panes,
+	"split-view/seam": demo_split_view_seam,
+	"split-view/snap-points": demo_split_view_snap_points,
 	"splitter/accessible-names": demo_splitter_accessible_names,
 	"splitter/anatomy": demo_splitter_anatomy,
 	"splitter/collapsible": demo_splitter_collapsible,

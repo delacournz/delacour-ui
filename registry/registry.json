@@ -2771,6 +2771,42 @@
 			]
 		},
 		{
+			"name": "split-view",
+			"type": "registry:ui",
+			"title": "SplitView",
+			"description": "Two stacked panes with a grip that settles on named heights.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"pressable",
+				"splitter",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/split-view/AGENTS.md",
+				"ui/split-view/index.ts",
+				"ui/split-view/split-view-bottom.tsx",
+				"ui/split-view/split-view-drag-area.tsx",
+				"ui/split-view/split-view-handle.tsx",
+				"ui/split-view/split-view-top.tsx",
+				"ui/split-view/split-view.context.tsx",
+				"ui/split-view/split-view.tsx",
+				"ui/split-view/split-view.types.ts",
+				"ui/split-view/split-view.variants.ts"
+			]
+		},
+		{
 			"name": "splitter",
 			"type": "registry:ui",
 			"title": "Splitter",

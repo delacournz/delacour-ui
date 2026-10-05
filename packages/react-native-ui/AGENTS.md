@@ -74,6 +74,7 @@ shares.
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
 | [Dialog](src/components/dialog/AGENTS.md) | `@delacour/react-native-ui/dialog` | A centred card over a dimmed app that asks for a decision or a short input |
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
+| [Feedback](src/components/feedback/AGENTS.md) | `@delacour/react-native-ui/feedback` | A dialog for writing — the field in a recessed well, the actions on the band around it |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |

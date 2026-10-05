@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Pinned and disabled",
 	caption:
 		"A pinned row never moves and the others reorder around it. A disabled row cannot be lifted, but the others still move past it.",
+	capture: { align: "stretch", flow: "sortable/pinned" },
 };
 
 const PRIORITIES: Record<string, string> = {

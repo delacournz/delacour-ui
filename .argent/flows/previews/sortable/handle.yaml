@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sortable/handle and has settled — five tracks in their starting order,
+  Dawn Chorus first. The capture script navigates there before running this.
+steps:
+  - echo: Dragging Dawn Chorus down two slots by its grip
+  # momentum:false so the row lands where the finger lifts. 0.183 is two row pitches (a row plus the gap) on the
+  # iPhone 17 Pro the capture is pinned to.
+  - swipe: { from: { id: sortable-handle-dawn }, by: { y: 0.183 }, momentum: false, duration: 900 }
+  - wait: 700
+  - echo: And back up by the same distance, so the clip loops without a jump cut
+  - swipe: { from: { id: sortable-handle-dawn }, by: { y: -0.183 }, momentum: false, duration: 900 }

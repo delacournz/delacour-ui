@@ -36,16 +36,47 @@ src/
 ├── expo/                 Expo-only entry points — navigation-theme
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
-│                         use-calm-motion, use-scroll-sections
+│                         use-calm-motion, use-scroll-source, use-scroll-sections
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
+│                         scroll-maths, scroll-edges,
 │                         scroll-sections
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
 └── uniwind-env.d.ts      /// <reference types="uniwind/types" />
 ```
+
+### The scroll family's shared code
+
+`ScrollFade`, `ScrollBlur`, `ScrollCanvas` and `ScrollHeader` follow a scrollable
+without wrapping it, and they share three modules that sit outside any one
+folder, so none of the four imports another:
+
+| Module | What it holds |
+| --- | --- |
+| `hooks/use-scroll-source.tsx` | `ScrollSource` — offset, content and layout size as shared values, plus the axis and an animated ref. `useScrollSource()` makes one for a scrollable of your own and returns the props to spread onto it; `ScrollSourceProvider` shares one; `useResolvedScrollSource(name, explicit?)` is how an effect finds its source — the prop, else the nearest provider, else a thrown error naming the effect |
+| `lib/scroll-maths.ts` | The pure maths: `readScrollEvent`, `scrollEdgeOpacity`, `scrollProgress` |
+| `lib/scroll-edges.ts` | The pure edge-band geometry: `SCROLL_EDGES`, `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` |
+
+Three rules hold them together:
+
+- **Nothing clones a scrollable to attach `onScroll`.** The caller spreads
+  `scrollProps` onto it. Cloning collides with Reanimated's handler composition
+  and with the handlers every `Screen` scrollable already owns.
+- **A `<Screen>` is a source with no wiring.** `ScreenRoot` mounts an internal
+  bridge (`screen/screen-scroll-source.tsx`) that republishes the screen's own
+  `scrollY` / `contentHeight` / `layoutHeight`. The import points screen → hook,
+  never back, so installing the hook never drags `Screen` in. A Screen's source
+  learns its sizes only from scroll events; `useScrollSource` also measures on
+  layout. `scrollEdgeOpacity`'s unmeasured policy — start follows the offset,
+  end draws — covers the gap.
+- **Every function in `scroll-maths.ts` and `scroll-edges.ts` is a
+  self-contained `"worklet"`.** A module-scope helper called from inside a worklet
+  can be missing from its closure on the UI thread — `undefined is not a
+  function` mid-scroll, invisible to `bun test`. Each writes its own clamp inline
+  and none calls another; do not tidy the repetition into a helper.
 
 Everything belonging to a component — sub-components, variants, tests, local
 hooks, helpers — lives in its folder and is re-exported from that `index.ts`.

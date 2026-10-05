@@ -12382,7 +12382,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 64,
+		fileCount: 67,
 		groups: [
 			{
 				name: "screen",
@@ -12410,6 +12410,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-source.tsx", target: "src/components/ui/screen/screen-scroll-source.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-view.tsx", target: "src/components/ui/screen/screen-view.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen.context.tsx", target: "src/components/ui/screen/screen.context.tsx" },
@@ -12551,6 +12552,22 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-keyboard-state-sync.tsx", target: "src/hooks/use-keyboard-state-sync.tsx" },
+				],
+			},
+			{
+				name: "scroll-maths",
+				title: "scrollMaths",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-maths.ts", target: "src/lib/scroll-maths.ts" },
+				],
+			},
+			{
+				name: "use-scroll-source",
+				title: "useScrollSource",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-source.tsx", target: "src/hooks/use-scroll-source.tsx" },
 				],
 			},
 		],

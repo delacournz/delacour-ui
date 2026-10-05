@@ -1,5 +1,6 @@
 import {
 	QR_ERROR_CORRECTIONS,
+	type QrEncodeError,
 	type QrEncodeOptions,
 	type QrEncodeResult,
 	type QrErrorCorrection,
@@ -125,32 +126,43 @@ function pushBits(bits: number[], value: number, length: number): void {
 	for (let index = length - 1; index >= 0; index--) bits.push((value >>> index) & 1);
 }
 
+function pushNumeric(bits: number[], value: string): void {
+	for (let index = 0; index < value.length; index += 3) {
+		const group = value.slice(index, index + 3);
+		pushBits(bits, Number.parseInt(group, 10), group.length * 3 + 1);
+	}
+}
+
+function pushAlphanumeric(bits: number[], value: string): void {
+	for (let index = 0; index < value.length; index += 2) {
+		const first = QR_ALPHANUMERIC_CHARSET.indexOf(value.charAt(index));
+		if (index + 1 < value.length) {
+			pushBits(bits, first * 45 + QR_ALPHANUMERIC_CHARSET.indexOf(value.charAt(index + 1)), 11);
+		} else {
+			pushBits(bits, first, 6);
+		}
+	}
+}
+
+/** The character count and the payload, in the mode's own packing. */
+function pushPayload(bits: number[], value: string, mode: QrMode, version: QrVersion): void {
+	const countBits = characterCountBits(mode, version);
+	if (mode === "byte") {
+		const bytes = encodeUtf8(value);
+		pushBits(bits, bytes.length, countBits);
+		for (const byte of bytes) pushBits(bits, byte, 8);
+		return;
+	}
+	pushBits(bits, value.length, countBits);
+	if (mode === "numeric") pushNumeric(bits, value);
+	else pushAlphanumeric(bits, value);
+}
+
 /** The data codewords: mode, count, payload, terminator, byte padding, then 0xEC / 0x11 to capacity. */
 export function encodeBitStream(value: string, mode: QrMode, version: QrVersion, level: QrErrorCorrection): number[] {
 	const bits: number[] = [];
 	pushBits(bits, MODE_INDICATOR[mode], 4);
-
-	if (mode === "numeric") {
-		pushBits(bits, value.length, characterCountBits(mode, version));
-		for (let index = 0; index < value.length; index += 3) {
-			const group = value.slice(index, index + 3);
-			pushBits(bits, Number.parseInt(group, 10), group.length * 3 + 1);
-		}
-	} else if (mode === "alphanumeric") {
-		pushBits(bits, value.length, characterCountBits(mode, version));
-		for (let index = 0; index < value.length; index += 2) {
-			const first = QR_ALPHANUMERIC_CHARSET.indexOf(value.charAt(index));
-			if (index + 1 < value.length) {
-				pushBits(bits, first * 45 + QR_ALPHANUMERIC_CHARSET.indexOf(value.charAt(index + 1)), 11);
-			} else {
-				pushBits(bits, first, 6);
-			}
-		}
-	} else {
-		const bytes = encodeUtf8(value);
-		pushBits(bits, bytes.length, characterCountBits(mode, version));
-		for (const byte of bytes) pushBits(bits, byte, 8);
-	}
+	pushPayload(bits, value, mode, version);
 
 	const capacity = dataCodewords(version, level) * 8;
 	pushBits(bits, 0, Math.min(4, capacity - bits.length));
@@ -204,6 +216,33 @@ function isVersion(value: number): boolean {
 	return Number.isInteger(value) && value >= QR_MIN_VERSION && value <= QR_MAX_VERSION;
 }
 
+/** The first thing wrong with the input, or null. */
+function validateOptions(
+	value: string,
+	minVersion: QrVersion,
+	maxVersion: QrVersion,
+	mask: QrMask | "auto"
+): QrEncodeError | null {
+	if (value.length === 0) return { kind: "empty" };
+	if (!isVersion(minVersion)) return { kind: "invalid-option", option: "minVersion", value: minVersion };
+	if (!isVersion(maxVersion) || maxVersion < minVersion) {
+		return { kind: "invalid-option", option: "maxVersion", value: maxVersion };
+	}
+	if (mask !== "auto" && !(Number.isInteger(mask) && mask >= 0 && mask <= 7)) {
+		return { kind: "invalid-option", option: "mask", value: mask };
+	}
+	return null;
+}
+
+/** The strongest level at or above `level` that still holds the value at `version`. */
+function boostLevel(mode: QrMode, units: number, version: QrVersion, level: QrErrorCorrection): QrErrorCorrection {
+	let boosted = level;
+	for (const stronger of QR_ERROR_CORRECTIONS.slice(QR_ERROR_CORRECTIONS.indexOf(level) + 1)) {
+		if (fits(mode, units, version, stronger)) boosted = stronger;
+	}
+	return boosted;
+}
+
 /**
  * Encodes a string as a QR symbol.
  *
@@ -216,15 +255,8 @@ export function encodeQr(value: string, options: QrEncodeOptions = {}): QrEncode
 	const { minVersion = QR_MIN_VERSION, maxVersion = QR_MAX_VERSION, mask = "auto", boostEcc = false } = options;
 	let level: QrErrorCorrection = options.errorCorrection ?? "M";
 
-	if (value.length === 0) return { ok: false, error: { kind: "empty" } };
-	if (!isVersion(minVersion))
-		return { ok: false, error: { kind: "invalid-option", option: "minVersion", value: minVersion } };
-	if (!isVersion(maxVersion) || maxVersion < minVersion) {
-		return { ok: false, error: { kind: "invalid-option", option: "maxVersion", value: maxVersion } };
-	}
-	if (mask !== "auto" && !(Number.isInteger(mask) && mask >= 0 && mask <= 7)) {
-		return { ok: false, error: { kind: "invalid-option", option: "mask", value: mask } };
-	}
+	const invalid = validateOptions(value, minVersion, maxVersion, mask);
+	if (invalid) return { ok: false, error: invalid };
 
 	const choice = selectVersion(value, level, minVersion, maxVersion);
 	if (!choice.ok) {
@@ -235,12 +267,7 @@ export function encodeQr(value: string, options: QrEncodeOptions = {}): QrEncode
 	}
 	const { version, mode } = choice;
 
-	if (boostEcc) {
-		const units = unitsOf(value, mode);
-		for (const stronger of QR_ERROR_CORRECTIONS.slice(QR_ERROR_CORRECTIONS.indexOf(level) + 1)) {
-			if (fits(mode, units, version, stronger)) level = stronger;
-		}
-	}
+	if (boostEcc) level = boostLevel(mode, unitsOf(value, mode), version, level);
 
 	const codewords = buildCodewords(encodeBitStream(value, mode, version, level), version, level);
 	const { modules: unmasked, owner, isFunction } = placeData(codewords, version);

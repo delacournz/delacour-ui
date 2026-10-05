@@ -10,6 +10,7 @@ import {
 	resolveEffectiveEcc,
 	resolveQrLabel,
 	resolveQrSize,
+	resolveQrWarnings,
 	resolveQuietZone,
 	shouldWarnContrast,
 	shouldWarnMissingLabel,
@@ -128,5 +129,33 @@ describe("shouldWarnMissingLabel", () => {
 		expect(shouldWarnMissingLabel("https://x.co", "Open the menu", false)).toBe(false);
 		expect(shouldWarnMissingLabel("https://x.co", undefined, true)).toBe(false);
 		expect(shouldWarnMissingLabel("", undefined, false)).toBe(false);
+	});
+});
+
+describe("resolveQrWarnings", () => {
+	const quiet = {
+		requestedEcc: undefined,
+		hasLogo: false,
+		logoDropped: false,
+		quietZone: 4,
+		color: "#000000",
+		backgroundColor: "#ffffff",
+		value: "https://x.co",
+		accessibilityLabel: "Open the menu",
+		isDecorative: false,
+	};
+
+	test("a well-formed code warns about nothing", () => {
+		expect(resolveQrWarnings(quiet)).toEqual([]);
+	});
+
+	test("each problem earns its own warning", () => {
+		expect(resolveQrWarnings({ ...quiet, hasLogo: true, requestedEcc: "L" })[0]).toContain('raised to "H"');
+		expect(resolveQrWarnings({ ...quiet, hasLogo: true, requestedEcc: "H" })).toEqual([]);
+		expect(resolveQrWarnings({ ...quiet, logoDropped: true })[0]).toContain("dropped");
+		expect(resolveQrWarnings({ ...quiet, quietZone: 1 })[0]).toContain("quiet zone of 1");
+		expect(resolveQrWarnings({ ...quiet, color: "#ffffff", backgroundColor: "#000000" })[0]).toContain("inverted");
+		expect(resolveQrWarnings({ ...quiet, color: "oklch(0.2 0 0)" })).toEqual([]);
+		expect(resolveQrWarnings({ ...quiet, accessibilityLabel: undefined })[0]).toContain("accessibilityLabel");
 	});
 });

@@ -40,6 +40,15 @@ describe("formatWord", () => {
 	});
 });
 
+/** The BCH(18,6) remainder of an 18-bit word — zero for every valid version word. */
+function remainderByGenerator(word: number): number {
+	let remainder = word;
+	for (let bit = 17; bit >= 12; bit--) {
+		if ((remainder >>> bit) & 1) remainder ^= 0x1f25 << (bit - 12);
+	}
+	return remainder;
+}
+
 describe("versionWord", () => {
 	test("versions below 7 carry none", () => {
 		for (let version = 1; version <= 6; version++) expect(versionWord(version)).toBeNull();
@@ -54,20 +63,14 @@ describe("versionWord", () => {
 	});
 
 	test("every word is a multiple of the generator and the set is 8 apart", () => {
-		const words: number[] = [];
-		for (let version = 7; version <= 40; version++) {
-			const word = versionWord(version) ?? 0;
-			expect(word >>> 12).toBe(version);
-			let remainder = word;
-			for (let bit = 17; bit >= 12; bit--) {
-				if ((remainder >>> bit) & 1) remainder ^= 0x1f25 << (bit - 12);
-			}
-			expect(remainder).toBe(0);
-			words.push(word);
-		}
+		const words = Array.from({ length: 34 }, (_, index) => versionWord(index + 7) ?? 0);
+		words.forEach((word, index) => {
+			expect(word >>> 12).toBe(index + 7);
+			expect(remainderByGenerator(word)).toBe(0);
+		});
 		for (let i = 0; i < words.length; i++) {
 			for (let j = i + 1; j < words.length; j++) {
-				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(7);
+				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(8);
 			}
 		}
 	});

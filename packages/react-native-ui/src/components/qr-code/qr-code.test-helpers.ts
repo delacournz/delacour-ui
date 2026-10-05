@@ -52,6 +52,33 @@ function readFormat(modules: Uint8Array, size: number): { level: QrErrorCorrecti
 	return null;
 }
 
+/** The data-order walk, restated independently of `qr-code.matrix.ts`. */
+function zigzagOrder(size: number): number[] {
+	const order: number[] = [];
+	let column = size - 1;
+	let upward = true;
+	while (column > 0) {
+		if (column === 6) column--;
+		for (let step = 0; step < size; step++) {
+			const row = upward ? size - 1 - step : step;
+			order.push(row * size + column, row * size + column - 1);
+		}
+		upward = !upward;
+		column -= 2;
+	}
+	return order;
+}
+
+function bitsToBytes(bits: readonly number[], count: number): number[] {
+	const bytes: number[] = [];
+	for (let index = 0; index + 8 <= bits.length && bytes.length < count; index += 8) {
+		let byte = 0;
+		for (let offset = 0; offset < 8; offset++) byte = (byte << 1) | (bits[index + offset] ?? 0);
+		bytes.push(byte);
+	}
+	return bytes;
+}
+
 function readCodewords(
 	modules: Uint8Array,
 	isFunction: Uint8Array,
@@ -60,28 +87,13 @@ function readCodewords(
 	count: number
 ): number[] {
 	const bits: number[] = [];
-	let column = size - 1;
-	let upward = true;
-	while (column > 0) {
-		if (column === 6) column--;
-		for (let step = 0; step < size; step++) {
-			const row = upward ? size - 1 - step : step;
-			for (const col of [column, column - 1]) {
-				const index = row * size + col;
-				if (isFunction[index]) continue;
-				bits.push((modules[index] ?? 0) ^ (maskPredicate(mask, row, col) ? 1 : 0));
-			}
-		}
-		upward = !upward;
-		column -= 2;
+	for (const index of zigzagOrder(size)) {
+		if (isFunction[index]) continue;
+		const row = Math.floor(index / size);
+		const col = index % size;
+		bits.push((modules[index] ?? 0) ^ (maskPredicate(mask, row, col) ? 1 : 0));
 	}
-	const codewords: number[] = [];
-	for (let index = 0; index + 8 <= bits.length && codewords.length < count; index += 8) {
-		let byte = 0;
-		for (let offset = 0; offset < 8; offset++) byte = (byte << 1) | (bits[index + offset] ?? 0);
-		codewords.push(byte);
-	}
-	return codewords;
+	return bitsToBytes(bits, count);
 }
 
 function syndromesOf(block: readonly number[], ecLength: number): number[] {
@@ -106,34 +118,27 @@ function evaluateLow(poly: readonly number[], x: number): number {
 	return value;
 }
 
-/**
- * Corrects a block in place — Berlekamp–Massey for the locator, Chien search
- * for the positions, Forney for the magnitudes (first consecutive root 0).
- * Returns false when the block has more errors than it can correct.
- */
-function correctBlock(block: number[], ecLength: number): boolean {
-	const syndromes = syndromesOf(block, ecLength);
-	if (syndromes.every((value) => value === 0)) return true;
-
+/** Berlekamp–Massey: the error locator (low order first) and its degree. */
+function errorLocator(syndromes: readonly number[]): { locator: number[]; length: number } {
 	let locator = [1];
 	let previous = [1];
 	let length = 0;
 	let shift = 1;
 	let lastDiscrepancy = 1;
-	for (let step = 0; step < ecLength; step++) {
-		let discrepancy = syndromes[step] ?? 0;
+	syndromes.forEach((syndrome, step) => {
+		let discrepancy = syndrome;
 		for (let index = 1; index <= length; index++) {
 			discrepancy ^= gfMultiply(locator[index] ?? 0, syndromes[step - index] ?? 0);
 		}
 		if (discrepancy === 0) {
 			shift++;
-			continue;
+			return;
 		}
 		const scale = gfMultiply(discrepancy, gfInverse(lastDiscrepancy));
 		const next = locator.slice();
-		for (let index = 0; index < previous.length; index++) {
-			next[index + shift] = (next[index + shift] ?? 0) ^ gfMultiply(scale, previous[index] ?? 0);
-		}
+		previous.forEach((coefficient, index) => {
+			next[index + shift] = (next[index + shift] ?? 0) ^ gfMultiply(scale, coefficient);
+		});
 		if (2 * length <= step) {
 			previous = locator;
 			length = step + 1 - length;
@@ -143,15 +148,31 @@ function correctBlock(block: number[], ecLength: number): boolean {
 			shift++;
 		}
 		locator = next;
-	}
-	if (2 * length > ecLength) return false;
+	});
+	return { locator, length };
+}
 
-	const evaluator: number[] = new Array<number>(ecLength).fill(0);
-	for (let i = 0; i < ecLength; i++) {
-		for (let j = 0; j <= i && j < locator.length; j++) {
-			evaluator[i] = (evaluator[i] ?? 0) ^ gfMultiply(syndromes[i - j] ?? 0, locator[j] ?? 0);
-		}
-	}
+/** Omega(x) = S(x) * Lambda(x) mod x^ecLength. */
+function errorEvaluator(syndromes: readonly number[], locator: readonly number[]): number[] {
+	return syndromes.map((_, i) => {
+		let value = 0;
+		for (let j = 0; j <= i && j < locator.length; j++) value ^= gfMultiply(syndromes[i - j] ?? 0, locator[j] ?? 0);
+		return value;
+	});
+}
+
+/**
+ * Corrects a block in place — Berlekamp–Massey for the locator, Chien search
+ * for the positions, Forney for the magnitudes (first consecutive root 0).
+ * Returns false when the block has more errors than it can correct.
+ */
+function correctBlock(block: number[], ecLength: number): boolean {
+	const syndromes = syndromesOf(block, ecLength);
+	if (syndromes.every((value) => value === 0)) return true;
+
+	const { locator, length } = errorLocator(syndromes);
+	if (2 * length > ecLength) return false;
+	const evaluator = errorEvaluator(syndromes, locator);
 	const derivative = locator.map((coefficient, index) => (index % 2 === 1 ? coefficient : 0)).slice(1);
 
 	let found = 0;
@@ -193,38 +214,41 @@ class BitReader {
 	}
 }
 
+function decodeNumeric(reader: BitReader, count: number): string {
+	let out = "";
+	for (let left = count; left > 0; left -= 3) {
+		const digits = Math.min(3, left);
+		out += String(reader.read(digits * 3 + 1)).padStart(digits, "0");
+	}
+	return out;
+}
+
+function decodeAlphanumeric(reader: BitReader, count: number): string {
+	let out = "";
+	for (let left = count; left > 0; left -= 2) {
+		if (left >= 2) {
+			const pair = reader.read(11);
+			out += QR_ALPHANUMERIC_CHARSET.charAt(Math.floor(pair / 45)) + QR_ALPHANUMERIC_CHARSET.charAt(pair % 45);
+		} else {
+			out += QR_ALPHANUMERIC_CHARSET.charAt(reader.read(6));
+		}
+	}
+	return out;
+}
+
+function decodeBytes(reader: BitReader, count: number): string {
+	const bytes = new Uint8Array(count);
+	for (let index = 0; index < count; index++) bytes[index] = reader.read(8);
+	return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+}
+
 function decodeData(data: readonly number[], version: number): string | null {
 	const reader = new BitReader(data);
 	const mode = reader.read(4);
 	const band = version <= 9 ? 0 : version <= 26 ? 1 : 2;
-	if (mode === 0b0001) {
-		const count = reader.read([10, 12, 14][band] ?? 0);
-		let out = "";
-		for (let left = count; left > 0; left -= 3) {
-			const digits = Math.min(3, left);
-			out += String(reader.read(digits * 3 + 1)).padStart(digits, "0");
-		}
-		return out;
-	}
-	if (mode === 0b0010) {
-		const count = reader.read([9, 11, 13][band] ?? 0);
-		let out = "";
-		for (let left = count; left > 0; left -= 2) {
-			if (left >= 2) {
-				const pair = reader.read(11);
-				out += QR_ALPHANUMERIC_CHARSET.charAt(Math.floor(pair / 45)) + QR_ALPHANUMERIC_CHARSET.charAt(pair % 45);
-			} else {
-				out += QR_ALPHANUMERIC_CHARSET.charAt(reader.read(6));
-			}
-		}
-		return out;
-	}
-	if (mode === 0b0100) {
-		const count = reader.read(version <= 9 ? 8 : 16);
-		const bytes = new Uint8Array(count);
-		for (let index = 0; index < count; index++) bytes[index] = reader.read(8);
-		return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
-	}
+	if (mode === 0b0001) return decodeNumeric(reader, reader.read([10, 12, 14][band] ?? 0));
+	if (mode === 0b0010) return decodeAlphanumeric(reader, reader.read([9, 11, 13][band] ?? 0));
+	if (mode === 0b0100) return decodeBytes(reader, reader.read(version <= 9 ? 8 : 16));
 	return null;
 }
 

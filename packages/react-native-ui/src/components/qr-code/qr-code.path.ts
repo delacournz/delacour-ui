@@ -116,33 +116,40 @@ function squarePath(size: number, dark: Dark, quietZone: number): string {
 		.join("");
 }
 
-/** Each module rounded only on the corners where neither orthogonal neighbour is dark, so runs fuse. */
-function roundedPath(size: number, dark: Dark, quietZone: number): string {
+type Corners = { topLeft: number; topRight: number; bottomRight: number; bottomLeft: number };
+
+/** A corner is rounded only when neither orthogonal neighbour on its two sides is dark. */
+function cornersOf(dark: Dark, row: number, col: number): Corners {
+	const up = dark(row - 1, col);
+	const down = dark(row + 1, col);
+	const left = dark(row, col - 1);
+	const right = dark(row, col + 1);
+	return {
+		topLeft: !up && !left ? MODULE_RADIUS : 0,
+		topRight: !up && !right ? MODULE_RADIUS : 0,
+		bottomRight: !down && !right ? MODULE_RADIUS : 0,
+		bottomLeft: !down && !left ? MODULE_RADIUS : 0,
+	};
+}
+
+/** One module, clockwise from its top-left, with an arc at each rounded corner. */
+function roundedModule(x: number, y: number, { topLeft, topRight, bottomRight, bottomLeft }: Corners): string {
 	const r = num(MODULE_RADIUS);
+	const arc = (radius: number, dx: string, dy: string): string => (radius ? `a${r} ${r} 0 0 1 ${dx} ${dy}` : "");
+	return (
+		`M${num(x)} ${num(y + topLeft)}${arc(topLeft, r, `-${r}`)}` +
+		`h${num(1 - topLeft - topRight)}${arc(topRight, r, r)}` +
+		`v${num(1 - topRight - bottomRight)}${arc(bottomRight, `-${r}`, r)}` +
+		`h-${num(1 - bottomRight - bottomLeft)}${arc(bottomLeft, `-${r}`, `-${r}`)}z`
+	);
+}
+
+/** Each module rounded only where it has no neighbour, so runs fuse into one liquid shape. */
+function roundedPath(size: number, dark: Dark, quietZone: number): string {
 	let d = "";
 	for (let row = 0; row < size; row++) {
 		for (let col = 0; col < size; col++) {
-			if (!dark(row, col)) continue;
-			const up = dark(row - 1, col);
-			const down = dark(row + 1, col);
-			const left = dark(row, col - 1);
-			const right = dark(row, col + 1);
-			const topLeft = !up && !left ? MODULE_RADIUS : 0;
-			const topRight = !up && !right ? MODULE_RADIUS : 0;
-			const bottomRight = !down && !right ? MODULE_RADIUS : 0;
-			const bottomLeft = !down && !left ? MODULE_RADIUS : 0;
-			const x = col + quietZone;
-			const y = row + quietZone;
-
-			d += `M${num(x)} ${num(y + topLeft)}`;
-			if (topLeft) d += `a${r} ${r} 0 0 1 ${r} -${r}`;
-			d += `h${num(1 - topLeft - topRight)}`;
-			if (topRight) d += `a${r} ${r} 0 0 1 ${r} ${r}`;
-			d += `v${num(1 - topRight - bottomRight)}`;
-			if (bottomRight) d += `a${r} ${r} 0 0 1 -${r} ${r}`;
-			d += `h-${num(1 - bottomRight - bottomLeft)}`;
-			if (bottomLeft) d += `a${r} ${r} 0 0 1 -${r} -${r}`;
-			d += "z";
+			if (dark(row, col)) d += roundedModule(col + quietZone, row + quietZone, cornersOf(dark, row, col));
 		}
 	}
 	return d;

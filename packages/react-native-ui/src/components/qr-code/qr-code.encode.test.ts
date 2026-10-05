@@ -194,7 +194,7 @@ describe("golden matrices from an independent encoder", () => {
 			});
 			expect(matrix.version).toBe(fixture.version);
 			expect(matrix.mode).toBe(fixture.mode);
-			expect(matrixToRows(matrix)).toEqual(fixture.rows);
+			expect(matrixToRows(matrix)).toEqual([...fixture.rows]);
 		});
 	}
 });

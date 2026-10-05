@@ -120,3 +120,36 @@ export function shouldWarnContrast(color: string, background: string): boolean {
 export function shouldWarnMissingLabel(value: string, label: string | undefined, isDecorative: boolean): boolean {
 	return !isDecorative && !label && value.length > 0;
 }
+
+export type QrWarningInput = {
+	requestedEcc: QrErrorCorrection | undefined;
+	hasLogo: boolean;
+	logoDropped: boolean;
+	quietZone: number;
+	color: string | undefined;
+	backgroundColor: string | undefined;
+	value: string;
+	accessibilityLabel: string | undefined;
+	isDecorative: boolean;
+};
+
+/** Every development warning a code's props earn, in a stable order. Empty for a well-formed code. */
+export function resolveQrWarnings(input: QrWarningInput): string[] {
+	const warnings: string[] = [];
+	if (input.hasLogo && input.requestedEcc && input.requestedEcc !== "H") {
+		warnings.push(`errorCorrection "${input.requestedEcc}" was raised to "H" because a Logo is present.`);
+	}
+	if (input.logoDropped) warnings.push("the Logo cannot fit at any size this code can afford, so it was dropped.");
+	if (input.quietZone < QR_MIN_SAFE_QUIET_ZONE) {
+		warnings.push(`a quiet zone of ${input.quietZone} is too narrow for many scanners.`);
+	}
+	if (input.color && input.backgroundColor && shouldWarnContrast(input.color, input.backgroundColor)) {
+		warnings.push(
+			`${input.color} on ${input.backgroundColor} is inverted or under 3:1 — many scanners will not read it.`
+		);
+	}
+	if (shouldWarnMissingLabel(input.value, input.accessibilityLabel, input.isDecorative)) {
+		warnings.push("pass an accessibilityLabel that says what the code is for, or isDecorative.");
+	}
+	return warnings;
+}

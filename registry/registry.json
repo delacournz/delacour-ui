@@ -1126,6 +1126,45 @@
 			]
 		},
 		{
+			"name": "section-progress",
+			"type": "registry:ui",
+			"title": "SectionProgress",
+			"description": "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"compose-refs",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-scroll-sections",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/section-progress/AGENTS.md",
+				"ui/section-progress/index.ts",
+				"ui/section-progress/section-progress-item.tsx",
+				"ui/section-progress/section-progress-panel.tsx",
+				"ui/section-progress/section-progress-pill.tsx",
+				"ui/section-progress/section-progress-ring.tsx",
+				"ui/section-progress/section-progress.context.tsx",
+				"ui/section-progress/section-progress.tsx",
+				"ui/section-progress/section-progress.variants.ts"
+			]
+		},
+		{
 			"name": "separator",
 			"type": "registry:ui",
 			"title": "Separator",

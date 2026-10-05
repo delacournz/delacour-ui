@@ -239,6 +239,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"section-progress": {
+		title: "SectionProgress",
+		description:
+			"A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
+		categories: ["navigation"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

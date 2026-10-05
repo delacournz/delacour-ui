@@ -1,0 +1,132 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "section-progress",
+	"type": "registry:ui",
+	"title": "SectionProgress",
+	"description": "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"compose-refs",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-scroll-sections",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-svg",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/AGENTS.md",
+			"target": "section-progress/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/section-progress",
+					"to": "@registry/ui/section-progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/index.ts",
+			"target": "section-progress/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress-item.tsx",
+			"target": "section-progress/section-progress-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress-panel.tsx",
+			"target": "section-progress/section-progress-panel.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress-pill.tsx",
+			"target": "section-progress/section-progress-pill.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress-ring.tsx",
+			"target": "section-progress/section-progress-ring.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress.context.tsx",
+			"target": "section-progress/section-progress.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress.tsx",
+			"target": "section-progress/section-progress.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../hooks/use-scroll-sections",
+					"to": "@registry/hooks/use-scroll-sections"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/section-progress/section-progress.variants.ts",
+			"target": "section-progress/section-progress.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

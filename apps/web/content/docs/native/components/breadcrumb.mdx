@@ -4,6 +4,8 @@ description: The path to the current screen — links back up each level, the cu
 icon: ChevronsRight
 ---
 
+<Preview id="breadcrumb/ellipsis-sheet" title={null} />
+
 ## Installation
 
 <ComponentInstall name="breadcrumb" />
@@ -41,10 +43,13 @@ export default function Example() {
 The list puts a separator between every pair of items and none after the last, so a trail is only
 its items. Links take an `onPress` — there is no router coupling.
 
+<Preview id="breadcrumb/basic" />
+
 ## Sizes
 
 `sm` sets the labels on the caption step and `md` on the body step; the chevrons follow.
 
+<Preview id="breadcrumb/sizes" />
 
 ```tsx
 <Breadcrumb size="sm">…</Breadcrumb>
@@ -56,6 +61,7 @@ its items. Links take an `onPress` — there is no router coupling.
 The root's `separator` replaces every chevron; a string is drawn as muted text. An `Icon` inside a
 link takes the glyph's size and colour.
 
+<Preview id="breadcrumb/custom-separator" />
 
 ```tsx
 <Breadcrumb separator="/">…</Breadcrumb>
@@ -75,6 +81,7 @@ automatic one beside it.
 Past `maxItems` the middle of the trail folds into an ellipsis. `itemsBeforeCollapse` and
 `itemsAfterCollapse` choose how much of each end stays; the current page always does.
 
+<Preview id="breadcrumb/collapsed" />
 
 ```tsx
 <Breadcrumb.List maxItems={4} itemsAfterCollapse={2}>
@@ -95,6 +102,8 @@ Past `maxItems` the middle of the trail folds into an ellipsis. `itemsBeforeColl
 `onEllipsisPress` turns the ellipsis into a button and hands you the hidden items' indices. Open
 whatever suits the screen — a bottom sheet listing them works well on a phone.
 
+<Preview id="breadcrumb/ellipsis-sheet" />
+
 ```tsx
 <Breadcrumb.List
   maxItems={3}
@@ -112,6 +121,7 @@ whatever suits the screen — a bottom sheet listing them works well on a phone.
 `overflow="scroll"` keeps the whole trail on one line in a horizontal scroller, opened at its end so
 the current page is in view.
 
+<Preview id="breadcrumb/scroll-overflow" />
 
 ```tsx
 <Breadcrumb.List overflow="scroll">…</Breadcrumb.List>

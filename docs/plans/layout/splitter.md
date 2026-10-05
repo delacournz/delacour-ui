@@ -291,7 +291,7 @@ splitter: {
 ## Implementation notes
 
 - **Hardware-keyboard arrows: scoped out.** RN 0.86 has no cross-platform `onKeyDown` on a `View`; the handle is reachable through its assistive actions only (Full Keyboard Access maps to them).
-- **Previews: deferred.** The argent CLI the capture script drives is not installed, so no demo is marked `capture` and the docs page carries no `<Preview>`. The `splitter/anatomy` flow is written; see the component AGENTS.md for the follow-up.
+- **Previews**: five captured clips (anatomy as hero, panes, three-columns, vertical, collapsible), each driven by a looping flow.
 - **Double tap is `Simultaneous` with the pan, not `Exclusive`** — exclusive made the pan wait for the tap to fail.
 - **Assistive actions resolve through `resolveSplitterAction`** (a discriminated union), so the mapping is unit-tested.
 - **Worklet helpers must be declared above their callers** — found on the simulator; now pinned by a source-reading test.

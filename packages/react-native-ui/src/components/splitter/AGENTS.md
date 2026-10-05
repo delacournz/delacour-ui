@@ -184,12 +184,11 @@ wins the touch".
   the handle wins the touch. The handle's value reads "N percent". Not checked:
   the edge haptic (no haptics on a simulator), rotation, Reduce Motion, and a
   VoiceOver increment (agent-device cannot fire an accessibility action).
-- **No captured previews yet.** The preview capture needs the argent CLI, which
-  is not installed on the build machine, so no demo carries `capture` and the
-  docs page has no `<Preview>`. When it is back: mark `anatomy` (hero, flow
-  `splitter/anatomy` — the flow file is already in `.argent/flows/previews/`),
-  `panes`, `three-columns`, `vertical` and `collapsible` as captured, run
-  `bun run previews -- -- --only splitter`, and add the `<Preview>`s back.
+- **Previews, 2026-10-06**: `anatomy` (hero), `panes`, `three-columns`,
+  `vertical` and `collapsible` are captured as clips on the iPhone 17 Pro dev
+  client, each from a flow in `.argent/flows/previews/splitter/`. Every flow undoes
+  its own drags by the same distance, and a release rounds to `step`, so each
+  clip ends on the layout it began with and loops without a cut.
 - **A collapsed leading pane puts half the handle outside the box.** The touch
   box is centred on the seam, so at 0 its leading 22pt hang past the root's
   edge. The trailing half is still a full-height target; nothing clips it.

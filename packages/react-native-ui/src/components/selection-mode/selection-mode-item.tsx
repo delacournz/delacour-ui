@@ -1,5 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo } from "react";
-import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
+import { type AccessibilityActionEvent, View, type ViewProps, type ViewStyle } from "react-native";
 import Animated, {
 	ReduceMotion,
 	useAnimatedStyle,
@@ -49,8 +49,8 @@ export type SelectionModeItemProps = Omit<ViewProps, "children"> & {
  * and only the fade plays, 150ms.
  */
 function useLeadingStyles(isShown: boolean): {
-	spacerStyle: ReturnType<typeof useAnimatedStyle>;
-	markStyle: ReturnType<typeof useAnimatedStyle>;
+	spacerStyle: ReturnType<typeof useAnimatedStyle<ViewStyle>>;
+	markStyle: ReturnType<typeof useAnimatedStyle<ViewStyle>>;
 } {
 	const isReducedMotion = useReducedMotion();
 	const slide = useSharedValue(isShown ? 1 : 0);

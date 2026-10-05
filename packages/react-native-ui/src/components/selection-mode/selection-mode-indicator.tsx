@@ -1,5 +1,5 @@
 import { type ReactElement, useEffect } from "react";
-import type { ViewProps } from "react-native";
+import type { ViewProps, ViewStyle } from "react-native";
 import Animated, {
 	ReduceMotion,
 	useAnimatedStyle,
@@ -24,7 +24,7 @@ export type SelectionModeIndicatorProps = ViewProps & {
  * Animates a picked state in: the check fades, and the whole mark pops from 0.8
  * on a spring. Under reduced motion the pop is dropped and the fade is 150ms.
  */
-function usePickedStyle(isSelected: boolean): ReturnType<typeof useAnimatedStyle> {
+function usePickedStyle(isSelected: boolean): ReturnType<typeof useAnimatedStyle<ViewStyle>> {
 	const isReducedMotion = useReducedMotion();
 	const picked = useSharedValue(isSelected ? 1 : 0);
 	const scale = useSharedValue(1);

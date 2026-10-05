@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Accessible names",
+	align: "stretch",
 	note: 'Each handle is adjustable. A screen reader reads its label and the size of the pane before it — "Resize navigation, 25 percent" — and swipes up or down move it by step. Name which panes a handle divides; the default is a bare "Resize".',
 };
 

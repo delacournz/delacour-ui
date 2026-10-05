@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Controlled",
+	align: "stretch",
 	note: "Pass layout and onLayoutChange to own the sizes. onLayoutChange fires once per release, never per frame, so it is the place to persist a layout.",
 };
 

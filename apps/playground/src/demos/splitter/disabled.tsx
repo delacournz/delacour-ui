@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Disabled",
+	align: "stretch",
 	note: "isDisabled on the root freezes every seam; on a handle it freezes that seam alone. A frozen grip dims and the handle reports disabled.",
 };
 

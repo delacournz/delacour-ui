@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Vertical",
+	align: "stretch",
 	note: 'orientation="vertical" stacks the panes and drags along y. Sizes are still percentages of the box, so the layout survives a rotation untouched.',
 };
 

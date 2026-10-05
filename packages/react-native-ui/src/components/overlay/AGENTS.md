@@ -15,7 +15,7 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 | File | What it holds |
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/overlay` |
-| `overlay.tsx` | `Overlay` — the root is the provider: teleport's `PortalProvider` (skipped when one is already above) and the registry; the `Object.assign` names `Portal` and `Scrim`. `OverlayProvider` is the same component, under the name a root layout reads best with |
+| `overlay.tsx` | `Overlay` — the root is the provider: teleport's `PortalProvider` (skipped when one is already above), the registry and the touch-start fan-out; the `Object.assign` names `Portal` and `Scrim`. `OverlayProvider` is the same component, under the name a root layout reads best with |
 | `overlay-portal.tsx` | `Overlay.Portal` — registers while mounted, teleports to `"root"` in a `box-none` absolute fill carrying the registry's `zIndex`; inline without a provider |
 | `overlay-scrim.tsx` | `Overlay.Scrim` — `bg-overlay`, opacity follows presence, hidden from assistive technology |
 | `overlay.context.tsx` | **Leaf.** `OverlayContext`, `TeleportProvidedContext` and their hooks. `bottom-sheet/` imports it |
@@ -66,6 +66,14 @@ imports an overlay never resolves it. The consequence is the same one thing to d
   dismisses through the panel's `onAccessibilityEscape` or the back button.
 - **The portal's wrapper is `box-none`.** An overlay with no scrim — a toast, a tooltip — leaves
   the app under it interactive.
+- **The provider hears every touch that starts beneath it, and claims none.** Its children sit in a
+  `flex: 1` `View` whose `onTouchStart` fans out to `subscribeTouchStart` listeners. `onTouchStart`
+  is a bubbling touch event, not a responder negotiation, so it never stops the touch reaching its
+  target or a Gesture Handler gesture; and React Native bubbles it through the React tree rather
+  than the native one, so a touch inside a teleported overlay arrives too. It exists for Tooltip,
+  whose outside tap must close it *and* still press what it landed on — a full-screen catcher
+  under the panel, Popover's way, would swallow that tap, and nothing but a common ancestor of the
+  whole app can hear a touch on a view the tooltip knows nothing about.
 - **No provider, no teleport.** Without `OverlayProvider` a portal renders inline, in an absolute
   fill of the nearest positioned ancestor, and warns once in development; it may be clipped. That
   is a working fallback for a `delacour add` copy in an app that has not mounted the provider yet,

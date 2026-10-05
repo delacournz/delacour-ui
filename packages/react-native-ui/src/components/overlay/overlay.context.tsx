@@ -9,6 +9,13 @@ export type OverlayContextValue = {
 	present: (id: string, layer: OverlayLayer) => void;
 	/** The overlay's portal unmounted. */
 	dismissed: (id: string) => void;
+	/**
+	 * Hear every touch that starts anywhere under the provider — the app, a
+	 * sheet, another overlay — without taking it. A non-modal overlay closes on
+	 * an outside tap this way and the tap still reaches what was under it.
+	 * Returns the unsubscribe.
+	 */
+	subscribeTouchStart: (listener: () => void) => () => void;
 };
 
 export const OverlayContext = createContext<OverlayContextValue | null>(null);

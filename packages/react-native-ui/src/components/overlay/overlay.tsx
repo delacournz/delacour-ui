@@ -1,4 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { PortalProvider } from "react-native-teleport";
 import {
 	OverlayContext,
@@ -36,9 +37,33 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 		setState(next);
 	}, []);
 
-	const value = useMemo<OverlayContextValue>(() => ({ state, present, dismissed }), [state, present, dismissed]);
+	const touchListeners = useRef(new Set<() => void>());
+	const subscribeTouchStart = useCallback((listener: () => void) => {
+		touchListeners.current.add(listener);
+		return () => {
+			touchListeners.current.delete(listener);
+		};
+	}, []);
+	const onTouchStart = useCallback(() => {
+		for (const listener of [...touchListeners.current]) listener();
+	}, []);
 
-	const registry = <OverlayContext.Provider value={value}>{children}</OverlayContext.Provider>;
+	const value = useMemo<OverlayContextValue>(
+		() => ({ state, present, dismissed, subscribeTouchStart }),
+		[state, present, dismissed, subscribeTouchStart]
+	);
+
+	// `onTouchStart` is a bubbling touch event, not a responder claim: it fires
+	// for a touch on any descendant in the React tree — teleported overlays
+	// included, since teleport leaves the fiber where it was — and never stops
+	// the touch reaching its target or a gesture handler.
+	const registry = (
+		<OverlayContext.Provider value={value}>
+			<View onTouchStart={onTouchStart} style={styles.fill}>
+				{children}
+			</View>
+		</OverlayContext.Provider>
+	);
 	if (isTeleportProvided) return registry;
 
 	return (
@@ -47,6 +72,8 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
 		</PortalProvider>
 	);
 }
+
+const styles = StyleSheet.create({ fill: { flex: 1 } });
 
 /**
  * The layer every overlay in this library draws into. Mount it once, inside
@@ -58,7 +85,9 @@ function OverlayRoot({ children }: OverlayProviderProps): ReactElement {
  * skipped when a provider above already mounted one, because two would mean
  * two native hosts with one name. And the overlay registry, which gives every
  * presented overlay a `zIndex` in its layer's band and tells each one whether it
- * is the top, the one Android's back button closes.
+ * is the top, the one Android's back button closes. It also hears every touch
+ * that starts beneath it, without claiming one, so a tooltip can close on an
+ * outside tap that still lands where it was aimed.
  *
  * `DelacourProvider` cannot mount this, for the reason it cannot mount
  * `BottomSheetProvider`: `react-native-teleport` is an optional peer, and an

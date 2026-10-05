@@ -2,6 +2,7 @@ import "../styles/global.css";
 import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
 import { NavigationTheme } from "@delacour/react-native-ui/expo/navigation-theme";
 import { useThemeColor } from "@delacour/react-native-ui/hooks/use-theme-color";
+import { OverlayProvider } from "@delacour/react-native-ui/overlay";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
 import { Observe, ObserveRoot } from "expo-observe";
 import { Stack } from "expo-router";
@@ -115,12 +116,13 @@ function SystemBackground(): null {
  * Screen reads to move its footer, and the KeyboardStateSync that repairs the
  * one pair of animation values that provider shares with the whole app.
  *
- * `BottomSheetProvider` sits inside `DelacourProvider` and around the
- * navigator: it is the engine's teleport root, so a sheet's portal draws over
- * the stack and the theme trigger, and it needs the gesture root and keyboard
- * provider above it. `DelacourProvider` cannot mount it — the engine is an
- * optional peer of the library — so the app does, once, here, from the
- * library's own sheet subpath, which re-exports it.
+ * `OverlayProvider` sits inside `DelacourProvider` and around everything else:
+ * it mounts the one teleport root every dialog, drawer, popover, tooltip, toast
+ * and sheet draws into, over the stack and the theme trigger, and the registry
+ * that orders them. `BottomSheetProvider` sits inside it, sees the teleport
+ * root already mounted and adds only the sheet registry. Neither can be mounted
+ * by `DelacourProvider` — teleport and the sheet engine are optional peers of the
+ * library — so the app does, once each, here.
  *
  * NavigationTheme hands the navigator the same tokens, which is what keeps the
  * container behind a screen transition from being React Navigation's own pale
@@ -152,13 +154,15 @@ function RootLayout(): ReactElement {
 
 	return (
 		<DelacourProvider>
-			<BottomSheetProvider>
-				<SystemBackground />
-				<NavigationTheme>
-					<Stack screenOptions={{ headerShown: false }} />
-					<ThemeTrigger />
-				</NavigationTheme>
-			</BottomSheetProvider>
+			<OverlayProvider>
+				<BottomSheetProvider>
+					<SystemBackground />
+					<NavigationTheme>
+						<Stack screenOptions={{ headerShown: false }} />
+						<ThemeTrigger />
+					</NavigationTheme>
+				</BottomSheetProvider>
+			</OverlayProvider>
 		</DelacourProvider>
 	);
 }

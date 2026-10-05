@@ -160,6 +160,7 @@
 				"icon",
 				"icons",
 				"input",
+				"overlay",
 				"pressable",
 				"slot",
 				"text",
@@ -194,6 +195,7 @@
 				"ui/bottom-sheet/bottom-sheet-handle.tsx",
 				"ui/bottom-sheet/bottom-sheet-legend-list.tsx",
 				"ui/bottom-sheet/bottom-sheet-overlay.tsx",
+				"ui/bottom-sheet/bottom-sheet-provider.tsx",
 				"ui/bottom-sheet/bottom-sheet-scroll-view.tsx",
 				"ui/bottom-sheet/bottom-sheet-section-list.tsx",
 				"ui/bottom-sheet/bottom-sheet-steps.tsx",
@@ -889,6 +891,40 @@
 			"devDependencies": [],
 			"files": [
 				"lib/navigation-theme.ts"
+			]
+		},
+		{
+			"name": "overlay",
+			"type": "registry:ui",
+			"title": "Overlay",
+			"description": "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-teleport",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/overlay/AGENTS.md",
+				"ui/overlay/index.ts",
+				"ui/overlay/overlay-portal.tsx",
+				"ui/overlay/overlay-presence.ts",
+				"ui/overlay/overlay-registry.ts",
+				"ui/overlay/overlay-scrim.tsx",
+				"ui/overlay/overlay.context.tsx",
+				"ui/overlay/overlay.tsx",
+				"ui/overlay/overlay.variants.ts",
+				"ui/overlay/use-overlay-back-handler.ts",
+				"ui/overlay/use-overlay-presence.ts"
 			]
 		},
 		{

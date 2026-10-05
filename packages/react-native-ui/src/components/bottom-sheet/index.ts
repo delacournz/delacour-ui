@@ -3,8 +3,6 @@ export {
 	type BottomSheetContextValue,
 	type BottomSheetHostProps,
 	type BottomSheetPortalProps,
-	BottomSheetProvider,
-	type BottomSheetProviderProps,
 	type BottomSheetRef,
 	type BottomSheetRegistryValue,
 	type BottomSheetTextInputHandlers,
@@ -46,6 +44,7 @@ export type { BottomSheetFooterProps } from "./bottom-sheet-footer";
 export type { BottomSheetHandleProps } from "./bottom-sheet-handle";
 export type { BottomSheetLegendListProps } from "./bottom-sheet-legend-list";
 export type { BottomSheetOverlayProps } from "./bottom-sheet-overlay";
+export { BottomSheetProvider, type BottomSheetProviderProps } from "./bottom-sheet-provider";
 export type { BottomSheetScrollViewProps } from "./bottom-sheet-scroll-view";
 export type { BottomSheetSectionListProps } from "./bottom-sheet-section-list";
 export type { BottomSheetStepProps, BottomSheetStepsProps } from "./bottom-sheet-steps";

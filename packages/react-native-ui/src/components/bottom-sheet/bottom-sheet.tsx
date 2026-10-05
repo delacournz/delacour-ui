@@ -1,6 +1,5 @@
 import {
 	BottomSheetHost,
-	BottomSheetProvider,
 	BottomSheet as Headless,
 	type BottomSheetProps as HeadlessBottomSheetProps,
 } from "@delacour/react-native-bottom-sheet";
@@ -18,6 +17,7 @@ import { BottomSheetFooter } from "./bottom-sheet-footer";
 import { BottomSheetHandle } from "./bottom-sheet-handle";
 import { BottomSheetLegendList } from "./bottom-sheet-legend-list";
 import { BottomSheetOverlay } from "./bottom-sheet-overlay";
+import { BottomSheetProvider } from "./bottom-sheet-provider";
 import { BottomSheetScrollView } from "./bottom-sheet-scroll-view";
 import { BottomSheetSectionList } from "./bottom-sheet-section-list";
 import { BottomSheetStep, BottomSheetSteps } from "./bottom-sheet-steps";
@@ -172,7 +172,7 @@ export const BottomSheet = Object.assign(BottomSheetRoot, {
 	Step: BottomSheetStep,
 	/** A place for sheets to teleport to other than the root — the recipe for a native modal. */
 	Host: BottomSheetHost,
-	/** The engine's provider. Mount it once, inside `DelacourProvider`. */
+	/** The engine's provider, sharing `OverlayProvider`'s teleport host. Mount it once, inside `DelacourProvider`. */
 	Provider: BottomSheetProvider,
 	displayName: "DelacourUI.BottomSheet",
 });

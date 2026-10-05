@@ -13,6 +13,7 @@
 		"icon",
 		"icons",
 		"input",
+		"overlay",
 		"pressable",
 		"slot",
 		"text",
@@ -138,6 +139,17 @@
 			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-overlay.tsx",
 			"target": "bottom-sheet/bottom-sheet-overlay.tsx",
 			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-provider.tsx",
+			"target": "bottom-sheet/bottom-sheet-provider.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay/overlay.context",
+					"to": "@registry/ui/overlay/overlay.context"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/bottom-sheet/bottom-sheet-scroll-view.tsx",

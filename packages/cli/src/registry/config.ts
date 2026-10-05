@@ -204,6 +204,13 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A surface grouping related rows, with dividers inserted automatically.",
 		categories: ["layout"],
 	},
+	overlay: {
+		title: "Overlay",
+		description:
+			"The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with.",
+		categories: ["overlays"],
+		dependencies: ["react-native-teleport", "react-native-reanimated", "react-native-worklets"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

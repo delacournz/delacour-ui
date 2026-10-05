@@ -32,13 +32,14 @@ const FLOWS = join(REPO, ".argent", "flows", "previews");
 const COMPONENTS = join(REPO, "packages", "react-native-ui", "src", "components");
 
 /**
- * `DelacourProvider` has no demo on purpose.
+ * `DelacourProvider` and the overlay foundation have no demo on purpose.
  *
- * It has nothing to render — every route in the playground already renders
- * downstream of it, which is a stronger check than a readout page. The
- * library's own docs make the same exception for its gallery.
+ * Neither has anything to render. Every route in the playground already renders
+ * downstream of the provider, which is a stronger check than a readout page, and
+ * the overlay foundation is drawn by every overlay's gallery — Dialog's first.
+ * The library's own docs make the same exception for both.
  */
-const COMPONENTS_WITHOUT_DEMOS = new Set(["provider"]);
+const COMPONENTS_WITHOUT_DEMOS = new Set(["overlay", "provider"]);
 
 function demoFiles(): string[] {
 	const found: string[] = [];

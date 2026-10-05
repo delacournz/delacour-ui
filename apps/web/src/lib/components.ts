@@ -231,6 +231,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		group: "Utilities",
 		blurb: "Every provider an app needs at its root, in one component.",
 	},
+	{
+		slug: "overlay",
+		name: "Overlay",
+		group: "Utilities",
+		blurb: "The provider, portal, scrim and presence lifecycle every overlay is drawn with.",
+	},
 ];
 
 /** The components in a group, in declaration order. */
@@ -241,12 +247,13 @@ export function componentsInGroup(group: ComponentGroup): readonly ComponentEntr
 /**
  * Components with no screen in the playground.
  *
- * `DelacourProvider` has nothing to render on its own — every route in the
- * playground already sits downstream of it — so it has no route to deep-link
- * into, and no "Scan to preview" button. The same exception, for the same
+ * `DelacourProvider` and the overlay foundation have nothing to render on
+ * their own — every route in the playground already sits downstream of the
+ * provider, and every overlay's gallery draws the foundation — so neither has a
+ * route to deep-link into, and neither has a "Scan to preview" button. The same exception, for the same
  * reason, as `COMPONENTS_WITHOUT_DEMOS` in `apps/playground/src/demos/demos.test.ts`.
  */
-export const COMPONENTS_WITHOUT_SCREENS: ReadonlySet<string> = new Set(["provider"]);
+export const COMPONENTS_WITHOUT_SCREENS: ReadonlySet<string> = new Set(["overlay", "provider"]);
 
 /** The slugs a playground link can name. Kept honest by `components.test.ts`. */
 export const PLAYGROUND_SLUGS: readonly string[] = COMPONENTS.map((component) => component.slug).filter(

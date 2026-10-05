@@ -4,6 +4,8 @@ description: A button held, not tapped, to confirm — a fill grows from the lea
 icon: Timer
 ---
 
+<Preview id="progress-button/hold-to-erase" title={null} />
+
 ## Installation
 
 <ComponentInstall name="progress-button" />
@@ -40,6 +42,8 @@ taps in a row are a rhythm a hand falls into; a two-second hold cannot be done b
 habit. Nothing fires before the fill completes, and there is no tolerance near the end. Let go early
 and the fill plays back at the same rate; press again and it resumes from where it is.
 
+<Preview id="progress-button/hold-to-erase" />
+
 `ProgressButton.Done` is optional. Without one the button draws a tick in the fill's foreground.
 
 ## Variants
@@ -47,6 +51,8 @@ and the fill plays back at the same rate; press again and it resumes from where 
 Every variant rests on the same `secondary` surface and carries its colour in the label and the
 fill. The label is drawn twice — once on the surface, once inside the fill — so it stays readable
 exactly where the wipe crosses it.
+
+<Preview id="progress-button/variants" />
 
 ```tsx
 <ProgressButton variant="primary">Hold to confirm</ProgressButton>
@@ -68,6 +74,8 @@ The [Button](/docs/native/components/button)'s own heights, padding and label st
 button sits level with a `Button` beside it. There is no square icon size: a hold has to say what it
 does.
 
+<Preview id="progress-button/sizes" />
+
 ```tsx
 <ProgressButton size="sm">Small</ProgressButton>
 <ProgressButton size="md">Medium</ProgressButton>
@@ -78,6 +86,8 @@ does.
 
 `pill`, the default, takes the button's capsule corner, so the wipe's leading edge goes out as a
 curve. `rounded` takes the card's corner, `rounded-lg`, to sit square with a rounded `Button`.
+
+<Preview id="progress-button/shape-rounded" />
 
 ```tsx
 <View className="flex-row gap-3">
@@ -134,6 +144,8 @@ const [phase, setPhase] = useState<"idle" | "sending" | "sent">("idle");
 
 A `ProgressButton.Done` you write replaces the default tick. A bare `Icon` and a
 `ProgressButton.Label` inside it take the fill's foreground.
+
+<Preview id="progress-button/custom-done" />
 
 ```tsx
 <ProgressButton isAutoReset size="lg" variant="success">

@@ -55,6 +55,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "map", title: "Map", description: "A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref." },
 	{ name: "markdown-editor", title: "Markdown Editor", description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview." },
 	{ name: "marker", title: "Marker", description: "A centred inline note for a step or a day break between conversation turns, static or pressable." },
+	{ name: "marquee", title: "Marquee", description: "Content that travels across its container on a loop, held still on touch." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "message", title: "Message", description: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter." },
 	{ name: "message-scroller", title: "Message Scroller", description: "A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard." },

@@ -443,6 +443,12 @@ import * as demo_marker_disabled from "./marker/disabled";
 import * as demo_marker_pressable from "./marker/pressable";
 import * as demo_marker_running from "./marker/running";
 import * as demo_marker_variants from "./marker/variants";
+import * as demo_marquee_badges from "./marquee/badges";
+import * as demo_marquee_cards from "./marquee/cards";
+import * as demo_marquee_hold_to_pause from "./marquee/hold-to-pause";
+import * as demo_marquee_speed from "./marquee/speed";
+import * as demo_marquee_two_rows from "./marquee/two-rows";
+import * as demo_marquee_vertical from "./marquee/vertical";
 import * as demo_menu_actions from "./menu/actions";
 import * as demo_menu_checkbox_and_radio from "./menu/checkbox-and-radio";
 import * as demo_menu_custom_background from "./menu/custom-background";
@@ -1267,6 +1273,12 @@ export const DEMOS = {
 	"marker/pressable": demo_marker_pressable,
 	"marker/running": demo_marker_running,
 	"marker/variants": demo_marker_variants,
+	"marquee/badges": demo_marquee_badges,
+	"marquee/cards": demo_marquee_cards,
+	"marquee/hold-to-pause": demo_marquee_hold_to_pause,
+	"marquee/speed": demo_marquee_speed,
+	"marquee/two-rows": demo_marquee_two_rows,
+	"marquee/vertical": demo_marquee_vertical,
 	"menu/actions": demo_menu_actions,
 	"menu/checkbox-and-radio": demo_menu_checkbox_and_radio,
 	"menu/custom-background": demo_menu_custom_background,

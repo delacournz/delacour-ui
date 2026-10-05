@@ -138,6 +138,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [Leaderboard](src/components/leaderboard/AGENTS.md) | `@delacour/react-native-ui/leaderboard` | Ranked entries with ties, a podium for the top three and the highlighted entry pinned below the cut |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Marquee](src/components/marquee/AGENTS.md) | `@delacour/react-native-ui/marquee` | Content looping across its container at a speed in points per second, held still on touch |
 | [MessageScroller](src/components/message-scroller/AGENTS.md) | `@delacour/react-native-ui/message-scroller` | A conversation list — anchored at the newest message, jump to latest, loads older history |
 | [Message](src/components/message/AGENTS.md) | `@delacour/react-native-ui/message` | A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter |
 | [Marker](src/components/marker/AGENTS.md) | `@delacour/react-native-ui/marker` | A centred inline note for a step or a day break between conversation turns |

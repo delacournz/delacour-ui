@@ -160,6 +160,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	leaderboard: IconTrophy,
 	"number-input": IconDecimalNumberDot,
 	"list-group": IconBulletList,
+	marquee: IconArrowLeftRight,
 	"message-scroller": IconBubble2,
 	message: IconBubble2,
 	marker: IconHistory,

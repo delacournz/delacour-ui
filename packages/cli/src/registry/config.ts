@@ -399,6 +399,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard.",
 		categories: ["media"],
 	},
+	marquee: {
+		title: "Marquee",
+		description: "Content that travels across its container on a loop, held still on touch.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

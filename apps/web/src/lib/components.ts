@@ -334,6 +334,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "marquee",
+		name: "Marquee",
+		group: "Media",
+		blurb: "Content that travels across its container on a loop, at a speed in points per second.",
+	},
+	{
 		slug: "flip-card",
 		name: "FlipCard",
 		group: "Media",

@@ -84,6 +84,12 @@ const ROWS = [
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
 	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
 	{
+		slug: "combobox",
+		title: "Combobox",
+		description: "Type-ahead, chips, server results, custom values",
+		group: "Forms",
+	},
+	{
 		slug: "date-picker",
 		title: "Date Picker",
 		description: "Single, range, multiple, bounds, in a field",

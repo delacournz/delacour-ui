@@ -21,6 +21,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
+	{ name: "combobox", title: "Combobox", description: "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values." },
 	{ name: "context-menu", title: "Context Menu", description: "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview." },
 	{ name: "date-picker", title: "Date Picker", description: "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished." },
 	{ name: "date-time-picker", title: "Date Time Picker", description: "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window." },

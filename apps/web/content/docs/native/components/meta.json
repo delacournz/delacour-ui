@@ -23,6 +23,7 @@
 		"label",
 		"checkbox",
 		"chip",
+		"combobox",
 		"radio",
 		"select",
 		"switch",

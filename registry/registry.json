@@ -538,6 +538,59 @@
 			]
 		},
 		{
+			"name": "combobox",
+			"type": "registry:ui",
+			"title": "Combobox",
+			"description": "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"chip",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"select",
+				"slot",
+				"spinner",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/combobox/AGENTS.md",
+				"ui/combobox/combobox-chip-row.tsx",
+				"ui/combobox/combobox-create-row.tsx",
+				"ui/combobox/combobox-empty.tsx",
+				"ui/combobox/combobox-group.tsx",
+				"ui/combobox/combobox-item.tsx",
+				"ui/combobox/combobox-trigger.tsx",
+				"ui/combobox/combobox.collect.ts",
+				"ui/combobox/combobox.context.tsx",
+				"ui/combobox/combobox.filter.ts",
+				"ui/combobox/combobox.tsx",
+				"ui/combobox/combobox.types.ts",
+				"ui/combobox/combobox.variants.ts",
+				"ui/combobox/index.ts"
+			]
+		},
+		{
 			"name": "compose-refs",
 			"type": "registry:lib",
 			"title": "composeRefs",

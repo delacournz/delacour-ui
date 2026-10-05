@@ -45,6 +45,7 @@
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./chip": "./src/components/chip/index.ts",
 		"./collapsible": "./src/components/collapsible/index.ts",
+		"./combobox": "./src/components/combobox/index.ts",
 		"./context-menu": "./src/components/context-menu/index.ts",
 		"./date-picker": "./src/components/date-picker/index.ts",
 		"./date-time-picker": "./src/components/date-time-picker/index.ts",

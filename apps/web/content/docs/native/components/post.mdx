@@ -4,11 +4,15 @@ description: A social card with an author, body, media and animated counts.
 icon: MessageSquare
 ---
 
+<Preview id="post/feed-card" title={null} />
+
 ## Installation
 
 <ComponentInstall name="post" />
 
 ## Usage
+
+<Preview id="post/feed-card" />
 
 ```tsx title="app/index.tsx"
 import { Icon } from "@/components/ui/icon";
@@ -88,6 +92,12 @@ The variant decides padding, the media's frame and where the author sits, never 
 | `compact` | A timeline row — the handle and time inline, a small face, no picture |
 | `media` | The picture is the card; the author is laid over it under a scrim |
 
+<Preview id="post/vote" />
+
+<Preview id="post/compact-timeline" />
+
+<Preview id="post/media-first" />
+
 ```tsx
 <Post variant="vote">
   <Post.Header>
@@ -130,6 +140,8 @@ What Post owns is what a press looks like. The number rolls up from below when i
 from above when it falls. A lit glyph is the same outline, filled, with a one-shot pop on
 activation. Numbers print compactly — `1234` as `1.2K` — unless `compact={false}`.
 
+<Preview id="post/live-counts" />
+
 `Post.Votes` reports the next vote through `onVote`. Pressing the arrow already cast reports
 `null`.
 
@@ -149,6 +161,8 @@ stay plain text, and a tag needs a letter, so `#123` is not one. Pass a node ins
 for your own rich text.
 
 `expandable` with `numberOfLines` clamps the body and offers "more" only when it overflows.
+
+<Preview id="post/expandable-body" />
 
 ## Media and the `children` slot
 

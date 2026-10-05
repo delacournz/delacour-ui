@@ -16,6 +16,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "bottom-sheet", title: "Bottom Sheet", description: "A draggable sheet over the screen: snap points, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet." },
 	{ name: "button", title: "Button", description: "A pressable action composed from parts, with variants, sizes and a loading state." },
 	{ name: "card", title: "Card", description: "A content surface with a header, a body and a footer, built on Surface." },
+	{ name: "carousel", title: "Carousel", description: "Swipeable slides on one fractional position, with peek, loop, vertical and coverflow layouts, dots and arrows." },
 	{ name: "chart", title: "Chart", description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip." },
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },

@@ -1,0 +1,243 @@
+---
+title: Carousel
+description: Swipeable slides on one fractional position — peek, loop, vertical, coverflow, autoplay, dots and arrows.
+icon: GalleryHorizontal
+---
+
+## Installation
+
+<ComponentInstall name="carousel" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Carousel } from "@/components/ui/carousel";
+import { Image, View } from "react-native";
+
+const PHOTOS = [
+  { id: "harbour", title: "Harbour at dawn" },
+  { id: "ridge", title: "Ridge line" },
+  { id: "orchard", title: "Orchard rows" },
+];
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Carousel accessibilityLabel="Featured">
+        <Carousel.Content aspectRatio={4 / 3}>
+          {PHOTOS.map((photo) => (
+            <Carousel.Item key={photo.id}>
+              <Image className="size-full" source={{ uri: `https://picsum.photos/seed/${photo.id}/800/600` }} />
+              <Carousel.Caption>{photo.title}</Carousel.Caption>
+            </Carousel.Item>
+          ))}
+        </Carousel.Content>
+        <Carousel.Dots />
+      </Carousel>
+    </View>
+  );
+}
+```
+
+Slides are `Carousel.Item`s, **direct children** of `Carousel.Content`, and their source order is the
+order of record. A wrapper around an Item hides it, and a development warning says so. It is built
+for a handful of hand-written slides — a feed belongs in a list.
+
+## Peek and centring
+
+`itemSize`, in points, smaller than the viewport centres the active slide and lets its neighbours show
+either side. Omitted, each slide is the viewport's length.
+
+```tsx
+<Carousel accessibilityLabel="Trees" itemSize={260}>
+  <Carousel.Content aspectRatio={1.2}>{slides}</Carousel.Content>
+</Carousel>
+```
+
+## Looping
+
+`loop` leads the last slide back to the first, both ways, with no clones and no jump. `previous`,
+`next` and `scrollTo` take the short way round.
+
+```tsx
+<Carousel accessibilityLabel="Times of day" loop>
+  <Carousel.Content aspectRatio={16 / 9}>{slides}</Carousel.Content>
+</Carousel>
+```
+
+## Orientation
+
+`orientation="vertical"` pages up and down. A vertical viewport takes its height from a class —
+`aspectRatio` is horizontal only. The controls row and the dots turn into columns.
+
+```tsx
+<Carousel accessibilityLabel="Stories" className="flex-row" orientation="vertical">
+  <Carousel.Content className="h-96 flex-1">{slides}</Carousel.Content>
+  <Carousel.Dots />
+</Carousel>
+```
+
+## Coverflow
+
+`variant="coverflow"` turns, shrinks and fades each slide by its distance from the centre. Pair it
+with `itemSize` so the neighbours show. Under reduce motion it draws as a plain track.
+
+```tsx
+<Carousel accessibilityLabel="Albums" itemSize={200} variant="coverflow">
+  <Carousel.Content aspectRatio={1.6}>{slides}</Carousel.Content>
+</Carousel>
+```
+
+## Autoplay
+
+`autoplay` advances every `autoplayInterval` milliseconds (default 4000).
+
+```tsx
+<Carousel accessibilityLabel="Highlights" autoplay autoplayInterval={3000} loop>
+  <Carousel.Content aspectRatio={16 / 9}>{slides}</Carousel.Content>
+</Carousel>
+```
+
+<Callout type="info">
+Autoplay stops for good on the first touch, an arrow press or a `scrollTo`, and at the end of a run
+that does not loop. It never runs under reduce motion or while a screen reader is on (WCAG 2.2.2),
+and it pauses while the app is in the background.
+</Callout>
+
+## Controls and dots
+
+`Carousel.Controls` lays out `Previous` · `Dots` · `Next`. The arrows disable at the ends unless the
+carousel loops. Dots are decoration — not tappable and hidden from assistive tech; past `maxDots`
+(default 7) they show a sliding window. `tone="overlay"` draws light dots for sitting on a photo.
+
+```tsx
+<Carousel accessibilityLabel="Tour">
+  <Carousel.Content aspectRatio={1.6}>{slides}</Carousel.Content>
+  <Carousel.Controls>
+    <Carousel.Previous />
+    <Carousel.Dots />
+    <Carousel.Next />
+  </Carousel.Controls>
+</Carousel>
+```
+
+## Controlled
+
+Pass `index` with `onIndexChange` to own the slide. `onIndexChange` fires once per swipe, from the
+release — never per frame. A change you reject springs back.
+
+```tsx
+const [index, setIndex] = useState(0);
+
+<Carousel accessibilityLabel="Colours" index={index} onIndexChange={setIndex}>
+  <Carousel.Content aspectRatio={2}>{slides}</Carousel.Content>
+</Carousel>
+```
+
+For a custom control inside the carousel, `useCarousel()` returns the index, the count and the
+actions.
+
+```tsx
+function Counter() {
+  const { index, count } = useCarousel();
+  return <Text>{`${index + 1} / ${count}`}</Text>;
+}
+```
+
+## Inside a scroll view
+
+The pan claims its own axis and yields the other, so a horizontal carousel sits inside a vertical
+`Screen.ScrollArea` and the page still scrolls. A `Pressable` inside a slide still taps.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Carousel` | Owns the index, the options and autoplay |
+| `Carousel.Content` | The clipped viewport, the pan and the adjustable element |
+| `Carousel.Item` | One slide, absolutely placed and moved by transform |
+| `Carousel.Caption` | A caption on a scrim at the slide's foot, visible only while active |
+| `Carousel.Dots` | One dot per slide, the active one a pill |
+| `Carousel.Previous` / `Carousel.Next` | Icon buttons, disabled at the ends unless looping |
+| `Carousel.Controls` | A row for the arrows and dots — a column when vertical |
+
+### Carousel
+
+<TypeTable
+  type={{
+    index: { type: "number", description: "The committed slide, controlled. Clamped into the run." },
+    defaultIndex: { type: "number", default: "0", description: "The slide to start on, while uncontrolled." },
+    onIndexChange: { type: "(index: number) => void", description: "Fires once per settled change." },
+    variant: { type: '"track" | "coverflow"', default: '"track"' },
+    orientation: { type: '"horizontal" | "vertical"', default: '"horizontal"' },
+    loop: { type: "boolean", default: "false" },
+    itemSize: { type: "number", description: "Slide length along the travel axis, in points. Smaller than the viewport peeks." },
+    gap: { type: "number", default: "12", description: "Gap between slides, in points." },
+    windowSize: { type: "number", default: "2", description: "Slides mounted either side of the active one." },
+    isDisabled: { type: "boolean", description: "No gesture, arrows disabled, announced as disabled." },
+    isScrollEnabled: { type: "boolean", default: "true", description: "false turns off the pan only; arrows and scrollTo still work." },
+    autoplay: { type: "boolean", default: "false" },
+    autoplayInterval: { type: "number", default: "4000", description: "Milliseconds per slide." },
+    accessibilityLabel: { type: "string", description: "The carousel's name, read with its \"2 of 5\" value." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Carousel.Content
+
+<TypeTable
+  type={{
+    aspectRatio: { type: "number", description: "Horizontal only. Sets the viewport height from its width." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Carousel.Item elements, as direct children." },
+  }}
+/>
+
+### Carousel.Item
+
+<TypeTable
+  type={{
+    asChild: { type: "boolean", default: "false", description: "Render the single child in place of the inner View." },
+    className: { type: "string" },
+  }}
+/>
+
+### Carousel.Dots
+
+<TypeTable
+  type={{
+    maxDots: { type: "number", default: "7", description: "Beyond it, a sliding window of this many." },
+    tone: { type: '"default" | "overlay"', default: '"default"' },
+    className: { type: "string" },
+  }}
+/>
+
+### Carousel.Previous / Carousel.Next
+
+Take every `Button` prop but `onPress`. `children` replaces the chevron; `accessibilityLabel` defaults
+to "Previous slide" / "Next slide".
+
+### useCarousel
+
+<TypeTable
+  type={{
+    index: { type: "number" },
+    count: { type: "number" },
+    orientation: { type: '"horizontal" | "vertical"' },
+    canGoPrevious: { type: "boolean" },
+    canGoNext: { type: "boolean" },
+    scrollTo: { type: "(index: number, options?: { animated?: boolean }) => void" },
+    previous: { type: "() => void" },
+    next: { type: "() => void" },
+  }}
+/>
+
+### Accessibility
+
+`Carousel.Content` is an adjustable element: a VoiceOver or TalkBack swipe up or down moves a slide
+and reads "2 of 5". Off-screen slides are hidden from assistive tech unless the carousel peeks. Under
+reduce motion the settle is a short timing instead of a spring, coverflow flattens, and autoplay is
+off.

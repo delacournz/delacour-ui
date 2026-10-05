@@ -221,7 +221,8 @@ describe("splitFrameHeaderChildren", () => {
 	function Action(): null {
 		return null;
 	}
-	const isAction = (node: ReactNode) => typeof node === "object" && node !== null && "type" in node && node.type === Action;
+	const isAction = (node: ReactNode) =>
+		typeof node === "object" && node !== null && "type" in node && node.type === Action;
 
 	test("lifts actions out wherever they are written, keeping text order", () => {
 		const children = [

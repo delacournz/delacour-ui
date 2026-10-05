@@ -46,6 +46,7 @@
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./field": "./src/components/field/index.ts",
+		"./frame": "./src/components/frame/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",
 		"./item": "./src/components/item/index.ts",

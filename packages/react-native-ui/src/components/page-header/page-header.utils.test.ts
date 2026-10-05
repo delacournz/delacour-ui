@@ -1,5 +1,10 @@
 import { describe, expect, test } from "bun:test";
-import { formatStatCount, resolvePageHeaderAvatarLabel, resolveStatLabel } from "./page-header.utils";
+import {
+	formatStatCount,
+	resolvePageHeaderAvatarLabel,
+	resolvePageHeaderCoverStops,
+	resolveStatLabel,
+} from "./page-header.utils";
 
 describe("formatStatCount", () => {
 	test("draws a number under a thousand as it is", () => {
@@ -74,5 +79,33 @@ describe("resolvePageHeaderAvatarLabel", () => {
 
 	test("is undefined with neither, so the avatar stays unannounced", () => {
 		expect(resolvePageHeaderAvatarLabel(undefined, false)).toBeUndefined();
+	});
+});
+
+describe("resolvePageHeaderCoverStops", () => {
+	test("the default fades primary to its own zero alpha, never the transparent keyword", () => {
+		expect(resolvePageHeaderCoverStops({ resolved: ["#112233", "#fafafa"], isDefault: true })).toEqual([
+			"#112233",
+			"#11223300",
+		]);
+	});
+
+	test("the default falls back to the page colour when primary cannot be faded", () => {
+		expect(resolvePageHeaderCoverStops({ resolved: ["oklch(0.2 0 0)", "#fafafa"], isDefault: true })).toEqual([
+			"oklch(0.2 0 0)",
+			"#fafafa",
+		]);
+	});
+
+	test("caller colours are drawn as given, dropping any that did not resolve", () => {
+		expect(resolvePageHeaderCoverStops({ resolved: ["#111", undefined, "#333"], isDefault: false })).toEqual([
+			"#111",
+			"#333",
+		]);
+	});
+
+	test("fewer than two colours draws no gradient, leaving the cover's own fill", () => {
+		expect(resolvePageHeaderCoverStops({ resolved: ["#111", undefined], isDefault: false })).toBeNull();
+		expect(resolvePageHeaderCoverStops({ resolved: [undefined, undefined], isDefault: true })).toBeNull();
 	});
 });

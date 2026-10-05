@@ -1,3 +1,5 @@
+import { transparentOf } from "../../lib/color";
+
 /** Drawn for a count that is not a count — `NaN`, or either infinity. An en dash, not a hyphen. */
 const NOT_A_COUNT = "–";
 
@@ -69,4 +71,33 @@ export function resolvePageHeaderAvatarLabel(name: string | undefined, isVerifie
 	const trimmed = name?.trim();
 	if (!isVerified) return trimmed || undefined;
 	return trimmed ? `${trimmed}, verified` : "Verified";
+}
+
+/**
+ * The cover gradient's stops, from the colours the theme resolved them to.
+ *
+ * The default is `primary` fading into the page: primary, then primary at zero
+ * alpha over the cover's `bg-background` — never the keyword `transparent`,
+ * which is transparent black and drags the fade through grey. When primary
+ * arrives in a notation {@link transparentOf} cannot take apart, the far stop is
+ * the page colour itself, which lands on the same picture.
+ *
+ * Caller colours are drawn as given, minus any that did not resolve. Fewer than
+ * two left is no gradient at all — `null` — and the cover's own fill shows.
+ */
+export function resolvePageHeaderCoverStops({
+	resolved,
+	isDefault,
+}: {
+	resolved: readonly (string | undefined)[];
+	isDefault: boolean;
+}): readonly [string, string, ...string[]] | null {
+	if (isDefault) {
+		const [primary, background] = resolved;
+		const far = transparentOf(primary) ?? background;
+		return primary && far ? [primary, far] : null;
+	}
+
+	const [first, second, ...rest] = resolved.filter((color): color is string => color !== undefined);
+	return first && second ? [first, second, ...rest] : null;
 }

@@ -219,6 +219,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
 		categories: ["feedback"],
 	},
+	pagination: {
+		title: "Pagination",
+		description:
+			"Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows.",
+		categories: ["navigation"],
+	},
 	progress: {
 		title: "Progress",
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",

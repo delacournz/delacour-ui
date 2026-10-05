@@ -1,0 +1,181 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "pagination",
+	"type": "registry:ui",
+	"title": "Pagination",
+	"description": "Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/pagination/AGENTS.md",
+			"target": "pagination/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/pagination",
+					"to": "@registry/ui/pagination"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/index.ts",
+			"target": "pagination/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-compact.tsx",
+			"target": "pagination/pagination-compact.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-control.tsx",
+			"target": "pagination/pagination-control.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-ellipsis.tsx",
+			"target": "pagination/pagination-ellipsis.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-item.tsx",
+			"target": "pagination/pagination-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-next.tsx",
+			"target": "pagination/pagination-next.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-previous.tsx",
+			"target": "pagination/pagination-previous.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-status.tsx",
+			"target": "pagination/pagination-status.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination-summary.tsx",
+			"target": "pagination/pagination-summary.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination.context.tsx",
+			"target": "pagination/pagination.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination.tsx",
+			"target": "pagination/pagination.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination.types.ts",
+			"target": "pagination/pagination.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/pagination/pagination.variants.ts",
+			"target": "pagination/pagination.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

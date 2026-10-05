@@ -194,3 +194,23 @@ export function arcCoordinates(from: LngLat, to: LngLat, curvature = 0.2, sample
 
 	return points;
 }
+
+/**
+ * A region widened so that, framed in a view of `size`, the original box clears
+ * `padding` points on every side.
+ *
+ * Done on the region rather than handed to the native fit, because the native
+ * fit takes corner coordinates and would frame a box across the antimeridian
+ * the long way round. Padding that would leave no room is ignored.
+ */
+export function padRegion(region: MapRegion, padding: number, size: { width: number; height: number }): MapRegion {
+	const innerWidth = size.width - 2 * padding;
+	const innerHeight = size.height - 2 * padding;
+	if (padding <= 0 || innerWidth <= 0 || innerHeight <= 0) return region;
+
+	return {
+		...region,
+		latitudeDelta: Math.min(MAX_LATITUDE_DELTA, region.latitudeDelta * (size.height / innerHeight)),
+		longitudeDelta: Math.min(MAP_MAX_LONGITUDE_DELTA, region.longitudeDelta * (size.width / innerWidth)),
+	};
+}

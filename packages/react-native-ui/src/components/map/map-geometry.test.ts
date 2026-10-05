@@ -10,6 +10,7 @@ import {
 	longitudeDeltaToZoom,
 	MAP_MAX_LONGITUDE_DELTA,
 	normalizeLongitude,
+	padRegion,
 	regionToBounds,
 	regionToViewState,
 	zoomToLongitudeDelta,
@@ -218,5 +219,26 @@ describe("arcCoordinates", () => {
 
 	test("a zero-length arc is its one point, twice", () => {
 		expect(arcCoordinates(WELLINGTON, WELLINGTON, 0.2, 8)).toEqual([WELLINGTON, WELLINGTON]);
+	});
+});
+
+describe("padRegion", () => {
+	const REGION = { latitude: -41, longitude: 175, latitudeDelta: 2, longitudeDelta: 2 };
+
+	test("no padding is the region untouched", () => {
+		expect(padRegion(REGION, 0, { width: 400, height: 300 })).toEqual(REGION);
+	});
+
+	test("widens each span so the box clears the padding on both sides", () => {
+		const padded = padRegion(REGION, 50, { width: 400, height: 300 });
+		close(padded.longitudeDelta, 2 * (400 / 300));
+		close(padded.latitudeDelta, 2 * (300 / 200));
+		expect(padded.longitude).toBe(175);
+		expect(padded.latitude).toBe(-41);
+	});
+
+	test("padding that would leave no room is ignored rather than inverting the region", () => {
+		expect(padRegion(REGION, 200, { width: 400, height: 300 })).toEqual(REGION);
+		expect(padRegion(REGION, 20, { width: 0, height: 0 })).toEqual(REGION);
 	});
 });

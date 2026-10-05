@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -146,6 +147,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Accordion",
 		group: "Data display",
 		blurb: "Sections that expand and collapse, animated from a measured height.",
+	},
+	{
+		slug: "qr-code",
+		name: "QRCode",
+		group: "Media",
+		blurb: "A string a camera can read, drawn as one vector path, with an optional logo in the middle.",
 	},
 	{
 		slug: "alert",

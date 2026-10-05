@@ -37,4 +37,4 @@ export function QRCodeLogo({ className, children }: QRCodeLogoProps): ReactEleme
 		</View>
 	);
 }
-QRCodeLogo.displayName = QR_CODE_LOGO_DISPLAY_NAME;
+QRCodeLogo.displayName = "DelacourUI.QRCode.Logo";

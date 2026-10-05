@@ -271,6 +271,15 @@ import * as demo_progress_formatting from "./progress/formatting";
 import * as demo_progress_indeterminate from "./progress/indeterminate";
 import * as demo_progress_sizes from "./progress/sizes";
 import * as demo_progress_upload from "./progress/upload";
+import * as demo_qr_code_anatomy from "./qr-code/anatomy";
+import * as demo_qr_code_colours from "./qr-code/colours";
+import * as demo_qr_code_dark_theme from "./qr-code/dark-theme";
+import * as demo_qr_code_error_correction from "./qr-code/error-correction";
+import * as demo_qr_code_module_styles from "./qr-code/module-styles";
+import * as demo_qr_code_sizes from "./qr-code/sizes";
+import * as demo_qr_code_too_long from "./qr-code/too-long";
+import * as demo_qr_code_wifi_share from "./qr-code/wifi-share";
+import * as demo_qr_code_with_logo from "./qr-code/with-logo";
 import * as demo_radio_custom_indicator from "./radio/custom-indicator";
 import * as demo_radio_horizontal_wrapping from "./radio/horizontal-wrapping";
 import * as demo_radio_per_option_description from "./radio/per-option-description";
@@ -637,6 +646,15 @@ export const DEMOS = {
 	"progress/indeterminate": demo_progress_indeterminate,
 	"progress/sizes": demo_progress_sizes,
 	"progress/upload": demo_progress_upload,
+	"qr-code/anatomy": demo_qr_code_anatomy,
+	"qr-code/colours": demo_qr_code_colours,
+	"qr-code/dark-theme": demo_qr_code_dark_theme,
+	"qr-code/error-correction": demo_qr_code_error_correction,
+	"qr-code/module-styles": demo_qr_code_module_styles,
+	"qr-code/sizes": demo_qr_code_sizes,
+	"qr-code/too-long": demo_qr_code_too_long,
+	"qr-code/wifi-share": demo_qr_code_wifi_share,
+	"qr-code/with-logo": demo_qr_code_with_logo,
 	"radio/custom-indicator": demo_radio_custom_indicator,
 	"radio/horizontal-wrapping": demo_radio_horizontal_wrapping,
 	"radio/per-option-description": demo_radio_per_option_description,

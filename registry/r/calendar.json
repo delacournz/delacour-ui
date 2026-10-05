@@ -31,6 +31,17 @@
 	"devDependencies": [],
 	"files": [
 		{
+			"path": "packages/react-native-ui/src/components/calendar/AGENTS.md",
+			"target": "calendar/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/calendar",
+					"to": "@registry/ui/calendar"
+				}
+			]
+		},
+		{
 			"path": "packages/react-native-ui/src/components/calendar/calendar-caption.tsx",
 			"target": "calendar/calendar-caption.tsx",
 			"namespace": "ui",

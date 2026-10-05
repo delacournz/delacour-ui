@@ -15,6 +15,7 @@ export const meta: DemoMeta = {
 	title: "Sizes and variants",
 	caption:
 		"`primary` fills the selected days; `secondary` softens them. The three sizes step the cell along the input scale — 36, 44 and 52 points — so a calendar beside a field shares its density.",
+	capture: { flow: "calendar/sizes-variants", align: "stretch" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

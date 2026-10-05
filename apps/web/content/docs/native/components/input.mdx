@@ -78,6 +78,8 @@ it falls through to the group, which focuses the field. Anything else — a `But
 view — stays reachable. Pass `isDecorative` to override either way. When the affix carries
 meaning, say it in the field's `accessibilityLabel`.
 
+<Preview id="input/group/decorative" />
+
 ```tsx
 <Input.Group>
   <Input accessibilityLabel="Discount, percent" inputMode="decimal" />
@@ -93,6 +95,8 @@ meaning, say it in the field's `accessibilityLabel`.
 icon, and disabled with the group without fading twice. Its press is its own. Name an icon-only one
 with `accessibilityLabel`; development builds warn when it is missing.
 
+<Preview id="input/group/group-button" />
+
 ```tsx
 <Input.Group>
   <Input value={query} onChangeText={setQuery} placeholder="Search" />
@@ -107,6 +111,8 @@ with `accessibilityLabel`; development builds warn when it is missing.
 `Input.Group.Separator` draws a hairline. Its direction comes from where it is written: in the row
 it is vertical, between a block and the row it is horizontal and meets the border on both sides.
 
+<Preview id="input/group/separator" />
+
 ```tsx
 <Input.Group size="lg">
   <Input.Group.Prefix>$</Input.Group.Prefix>
@@ -120,6 +126,8 @@ it is vertical, between a block and the row it is horizontal and meets the borde
 `Input.Group.Block` adds a full-width section above (`position="start"`) or below
 (`position="end"`) the field, inside the same border and focus ring. A `Textarea` can take the
 field's place, which makes a message composer one box. A block must be a direct child of the group.
+
+<Preview id="input/group/composer" />
 
 ```tsx
 <Input.Group>

@@ -4,6 +4,8 @@ description: Five ways a piece of text or a number arrives — reveal, typing, r
 icon: WandSparkles
 ---
 
+<Preview id="text-animation/reveal-words" title={null} />
+
 ## Installation
 
 <ComponentInstall name="text-animation" />
@@ -42,6 +44,10 @@ the part draws; wrap the part in a `View` to place it.
 
 ## Reveal
 
+<Preview id="text-animation/reveal-words" />
+
+<Preview id="text-animation/reveal-characters" />
+
 ```tsx
 <TextAnimation effect={{ kind: "fade" }}>Fades in, word by word</TextAnimation>
 <TextAnimation effect={{ kind: "slide", from: "down", distance: 16 }}>Rises into place</TextAnimation>
@@ -61,6 +67,8 @@ the part draws; wrap the part in a `View` to place it.
 
 ## Typing
 
+<Preview id="text-animation/typing" />
+
 ```tsx
 <TextAnimation.Typing caret={{ kind: "bar" }} size="2xl">
   {["Design systems that ship.", "Native apps that feel native."]}
@@ -76,6 +84,8 @@ waiting; while characters land it is solid.
 
 ## Rotating
 
+<Preview id="text-animation/rotating" />
+
 ```tsx
 <View className="flex-row items-end">
   <Text size="2xl">Built for </Text>
@@ -90,6 +100,8 @@ never move. Use `reserve="current"` for a word that ends a line.
 
 ## Counting
 
+<Preview id="text-animation/counting" />
+
 ```tsx
 <TextAnimation.Counting format={{ prefix: "$", decimals: 2 }} value={balance} />
 ```
@@ -102,6 +114,8 @@ A new `value` tweens from whatever is on screen — not from `from`, which is on
 start. `animateOnMount={false}` shows the value at once and tweens only later changes.
 
 ## Rolling
+
+<Preview id="text-animation/rolling" />
 
 ```tsx
 <TextAnimation.Rolling value={odometer} />

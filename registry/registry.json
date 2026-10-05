@@ -3054,6 +3054,45 @@
 			]
 		},
 		{
+			"name": "tree",
+			"type": "registry:ui",
+			"title": "Tree",
+			"description": "A hierarchy opened one level at a time: branches that expand and collapse, with optional single or multiple selection.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/tree/AGENTS.md",
+				"ui/tree/index.ts",
+				"ui/tree/tree-actions.tsx",
+				"ui/tree/tree-group.tsx",
+				"ui/tree/tree-icon.tsx",
+				"ui/tree/tree-indicator.tsx",
+				"ui/tree/tree-item.tsx",
+				"ui/tree/tree-label.tsx",
+				"ui/tree/tree-trigger.tsx",
+				"ui/tree/tree.context.tsx",
+				"ui/tree/tree.tsx",
+				"ui/tree/tree.types.ts",
+				"ui/tree/tree.variants.ts"
+			]
+		},
+		{
 			"name": "tv",
 			"type": "registry:lib",
 			"title": "tv",

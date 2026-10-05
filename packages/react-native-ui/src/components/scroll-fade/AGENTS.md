@@ -134,5 +134,6 @@ threw; the accessibility snapshot shows no node for any band. Not exercised on a
 device: a list too short to scroll (covered by `scrollEdgeOpacity`'s tests),
 VoiceOver itself, right-to-left, Android, and a `Screen` route body (the bridge
 was seen to resolve, but only nested inside the gallery's own Screen — see
-Design). The demos carry no `capture`: `bun run previews` needs the argent CLI,
-which is not installed, so preview media is a follow-up.
+Design). Preview media is captured from the dev client on an iPhone 17 Pro:
+`vertical-list` (hero clip), `horizontal-cards` and `single-edge` (clips) and
+`on-a-surface` (still), each in both themes.

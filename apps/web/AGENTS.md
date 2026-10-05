@@ -905,9 +905,8 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 ## Known content gaps
 
-- **Two components have no preview.** `provider` has no captured demo, and `scroll-fade`'s demos
-  are not captured yet (that needs `bun run previews` on a simulator), so each card on the
-  components index shows a placeholder and each page opens at `## Installation`. Every other
+- **One component has no preview.** `provider` has no captured demo, so its card on the
+  components index shows a placeholder and its page opens at `## Installation`. Every other
   component page, and every engine page but `installation`, `animation` and `core`, opens on
   one. `apps/playground/src/demos/demos.test.ts` fails by name
   for a library component with no demo, so that list stays honest on its own.

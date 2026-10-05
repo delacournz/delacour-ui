@@ -1,0 +1,28 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sketch/annotate and has settled — a
+  receipt under an empty canvas carrying the testID sketch-canvas, the pen in
+  hand in destructive ink, with tools sketch-shape-ellipse, sketch-tool-pen and
+  sketch-undo. The capture script navigates there before running this.
+steps:
+  - echo: Ring the croissant with the ellipse tool
+  - tap: { id: sketch-shape-ellipse }
+  - wait: 400
+  - swipe: { from: { id: sketch-canvas }, by: { x: 0.35, y: 0.06 }, momentum: false, duration: 600 }
+  - wait: 250
+  - echo: Then a freehand tick beside the total
+  - tap: { id: sketch-tool-pen }
+  - wait: 400
+  - tool: gesture-custom
+    args:
+      interpolate: 4
+      events:
+        - { type: Down, x: 0.620, y: 0.500 }
+        - { type: Move, x: 0.660, y: 0.530, delayMs: 45 }
+        - { type: Move, x: 0.700, y: 0.560, delayMs: 45 }
+        - { type: Move, x: 0.760, y: 0.490, delayMs: 45 }
+        - { type: Up, x: 0.820, y: 0.420, delayMs: 45 }
+  - wait: 700
+  - echo: Undo both, so the clip loops on the clean receipt
+  - tap: { id: sketch-undo }
+  - wait: 200
+  - tap: { id: sketch-undo }

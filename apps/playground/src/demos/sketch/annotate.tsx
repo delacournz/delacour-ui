@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Sketch.Canvas` children are painted under the marks, so the drawing goes over whatever is there — a receipt here, a photo in an app. The handle's `toSVG` exports only the marks.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "sketch/annotate" },
 };
 
 const LINES = [
@@ -41,11 +42,11 @@ export function Demo(): ReactElement {
 					</View>
 				</Sketch.Canvas>
 				<Sketch.Toolbar>
-					<Sketch.Tool tool="pen" />
-					<Sketch.Tool shape="ellipse" tool="shape" />
+					<Sketch.Tool testID="sketch-tool-pen" tool="pen" />
+					<Sketch.Tool shape="ellipse" testID="sketch-shape-ellipse" tool="shape" />
 					<Sketch.Tool shape="arrow" tool="shape" />
 					<Sketch.Swatches />
-					<Sketch.Undo />
+					<Sketch.Undo testID="sketch-undo" />
 				</Sketch.Toolbar>
 			</Sketch>
 			<Button onPress={() => setExported(sketch.current?.toSVG({ background: null }).length ?? 0)} variant="outline">

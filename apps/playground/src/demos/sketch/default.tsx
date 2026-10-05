@@ -15,6 +15,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`<Sketch />` on its own: the canvas takes the room and every tool sits under it. Seeded with a small drawing so there is something to erase and undo.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "sketch/default", hero: true },
 };
 
 function stroke(id: string, points: SketchPoint[], color: string, width: number): SketchItem {

@@ -53,19 +53,21 @@ function everySlotClass(): string[] {
 
 const BOOLS = [false, true] as const;
 
+/** Every variant, size and state the trigger can be drawn in. */
+function everyCell() {
+	return INPUT_VARIANTS.flatMap((variant) =>
+		INPUT_SIZES.flatMap((size) =>
+			BOOLS.flatMap((isDisabled) =>
+				BOOLS.flatMap((isFocused) => BOOLS.map((isInvalid) => ({ isDisabled, isFocused, isInvalid, size, variant })))
+			)
+		)
+	);
+}
+
 describe("resolveComboboxTriggerClass", () => {
 	test("is Select's trigger exactly, at every cell, while it shows text", () => {
-		for (const variant of INPUT_VARIANTS) {
-			for (const size of INPUT_SIZES) {
-				for (const isDisabled of BOOLS) {
-					for (const isFocused of BOOLS) {
-						for (const isInvalid of BOOLS) {
-							const state = { isDisabled, isFocused, isInvalid, size, variant };
-							expect(resolveComboboxTriggerClass({ ...state, hasChips: false })).toBe(resolveSelectTriggerClass(state));
-						}
-					}
-				}
-			}
+		for (const state of everyCell()) {
+			expect(resolveComboboxTriggerClass({ ...state, hasChips: false })).toBe(resolveSelectTriggerClass(state));
 		}
 	});
 

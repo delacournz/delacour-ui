@@ -4,6 +4,8 @@ description: A guided walkthrough — the screen dims, a hole opens around one c
 icon: Signpost
 ---
 
+<Preview id="tour/interactive" title={null} />
+
 ## Installation
 
 <ComponentInstall name="tour" />
@@ -42,6 +44,8 @@ export default function Example() {
 Steps are sorted by `order`, so gaps are fine — 10, 20, 30 leaves room to insert one later. A
 `Tour.Step` that is not mounted is not in the tour.
 
+<Preview id="tour/basic" />
+
 ## Opening it
 
 Three ways, the same as any disclosure in the library:
@@ -61,6 +65,8 @@ The tour keeps no record of having been seen. `onFinish` (Done on the last step)
 target's larger side, for a floating button. Set it on the tour for every step, or on one step.
 The hole glides between the two.
 
+<Preview id="tour/circle-shape" />
+
 ```tsx
 <Tour.Step order={2} shape="circle" padding={6} title="New note">
   <Fab />
@@ -73,6 +79,8 @@ The hole glides between the two.
 and `bottom` are honoured when they fit and flip when only the other side does. The card is
 centred on the hole and clamped to the screen's gutters, at most 360 points wide.
 
+<Preview id="tour/placement" />
+
 ```tsx
 <Tour.Step order={3} placement="top" title="Composer">…</Tour.Step>
 ```
@@ -82,6 +90,8 @@ centred on the hole and clamped to the screen's gutters, at most 360 points wide
 By default the tour is a `Modal`: it covers the status bar and the tab bar and swallows every
 touch. `isInteractive` draws it inside the tour's own root instead and lets touches inside the
 hole reach the control — whose handler then advances the tour.
+
+<Preview id="tour/interactive" />
 
 ```tsx
 function LikeButton() {
@@ -125,6 +135,8 @@ animation — the tour measures one frame later.
 
 Every string on the card can be replaced. `progress` is the visible "2 of 5"; `announcement` is
 what a screen reader hears before the title.
+
+<Preview id="tour/custom-labels" />
 
 ```tsx
 <Tour
@@ -185,6 +197,7 @@ what a screen reader hears before the title.
     labels: { type: "Partial<TourLabels>" },
     cardClassName: { type: "string" },
     className: { type: "string", description: "The root `View`, which fills its parent." },
+    testID: { type: "string", description: "The root's, and the stem of the card's: `-card`, `-next`, `-back`, `-skip`." },
   }}
 />
 

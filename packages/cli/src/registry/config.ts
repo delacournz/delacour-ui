@@ -234,6 +234,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
 		categories: ["forms"],
 	},
+	signature: {
+		title: "Signature",
+		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+		categories: ["forms"],
+	},
 	screen: {
 		title: "Screen",
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",

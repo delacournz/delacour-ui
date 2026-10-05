@@ -1,12 +1,12 @@
 executionPrerequisite: >-
   The chrome-free preview route is open on flip-card/swipe and has settled — a swipe card on its
-  front, carrying the testID flip-card-swipe. The capture script navigates there before running this.
+  front (swipeDistance 240, so 0.15 of the screen is under half a turn and 0.45 is past it), carrying the testID flip-card-swipe. The capture script navigates there before running this.
 steps:
   - echo: Dragging the card a little under half way — it settles back on the front
-  - swipe: { from: { id: flip-card-swipe }, by: { x: 0.2 }, momentum: false, duration: 900 }
+  - swipe: { from: { id: flip-card-swipe }, by: { x: 0.15 }, momentum: false, duration: 900 }
   - wait: 800
   - echo: Then past half way — it settles on the back
-  - swipe: { from: { id: flip-card-swipe }, by: { x: 0.6 }, momentum: false, duration: 900 }
+  - swipe: { from: { id: flip-card-swipe }, by: { x: 0.45 }, momentum: false, duration: 900 }
   - wait: 900
   - echo: A flick the other way brings the front back for the loop
   - swipe: { from: { id: flip-card-swipe }, by: { x: -0.4 }, duration: 200 }

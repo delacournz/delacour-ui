@@ -16,6 +16,7 @@ import {
 	resolveDayTone,
 	resolveMonthBounds,
 	resolvePageDirection,
+	resolvePartTestID,
 	resolveRangeRole,
 } from "./calendar.variants";
 
@@ -344,5 +345,16 @@ describe("resolvePageDirection", () => {
 
 	test("an unmeasured grid never pages", () => {
 		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
+	});
+});
+
+describe("resolvePartTestID", () => {
+	test("derives a part's id from the calendar's", () => {
+		expect(resolvePartTestID("booking", "day-2026-10-05")).toBe("booking-day-2026-10-05");
+		expect(resolvePartTestID("booking", "next")).toBe("booking-next");
+	});
+
+	test("names nothing when the calendar has no id", () => {
+		expect(resolvePartTestID(undefined, "next")).toBeUndefined();
 	});
 });

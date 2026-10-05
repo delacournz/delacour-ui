@@ -6,7 +6,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
 import { formatMonthYear, formatYear } from "./calendar.date";
-import { calendarVariants } from "./calendar.variants";
+import { calendarVariants, resolvePartTestID } from "./calendar.variants";
 
 export type CalendarCaptionProps = Omit<ViewProps, "children"> & {
 	className?: string;
@@ -41,6 +41,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 		locale,
 		setView,
 		size,
+		testID,
 		variant,
 		view,
 		visibleMonth,
@@ -78,6 +79,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 				accessible
 				className={slots.caption({ className })}
 				onAccessibilityAction={handleAction}
+				testID={resolvePartTestID(testID, "caption")}
 				{...props}
 			>
 				{label}
@@ -103,6 +105,7 @@ export function CalendarCaption({ className, ...props }: CalendarCaptionProps): 
 			haptic="selection"
 			onAccessibilityAction={handleAction}
 			onPress={handlePress}
+			testID={resolvePartTestID(testID, "caption")}
 			{...props}
 		>
 			{label}

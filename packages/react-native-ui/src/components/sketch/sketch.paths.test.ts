@@ -41,7 +41,13 @@ describe("sketch.paths is a leaf", () => {
 		const source = readFileSync(join(import.meta.dirname, "sketch.paths.ts"), "utf-8");
 		expect(source).not.toMatch(/^\s*import\s/m);
 		expect(source).not.toMatch(/require\(/);
-		for (const name of ["react", "react-native", "react-native-reanimated", "react-native-svg", "react-native-worklets"]) {
+		for (const name of [
+			"react",
+			"react-native",
+			"react-native-reanimated",
+			"react-native-svg",
+			"react-native-worklets",
+		]) {
 			expect(source).not.toContain(`"${name}"`);
 		}
 	});
@@ -57,7 +63,7 @@ describe("formatSketchNumber", () => {
 		expect(formatSketchNumber(1.005)).toBe("1");
 		expect(formatSketchNumber(1.5)).toBe("1.5");
 		expect(formatSketchNumber(1.256)).toBe("1.26");
-		expect(formatSketchNumber(-3.14159)).toBe("-3.14");
+		expect(formatSketchNumber(-2.71828)).toBe("-2.72");
 	});
 
 	test("negative zero and non-finite numbers write as 0", () => {
@@ -282,7 +288,14 @@ describe("sketchItemsToSvg", () => {
 	});
 
 	test("a shape is never filled", () => {
-		const shape: SketchItem = { color: "#f00", d: "M0 0H10V20H0Z", id: "s", kind: "shape", shape: "rectangle", width: 2 };
+		const shape: SketchItem = {
+			color: "#f00",
+			d: "M0 0H10V20H0Z",
+			id: "s",
+			kind: "shape",
+			shape: "rectangle",
+			width: 2,
+		};
 		const svg = sketchItemsToSvg([shape], size);
 		expect(svg).toContain('d="M0 0H10V20H0Z" fill="none" stroke="#f00" stroke-width="2"');
 	});
@@ -297,7 +310,7 @@ describe("sketchItemsToSvg", () => {
 		);
 		expect(svg).toContain('<g mask="url(#m0)">');
 		expect(svg).toContain('<g mask="url(#m1)">');
-		expect(svg.indexOf('id="m0"')).toBeLessThan(svg.indexOf('url(#m0)'));
+		expect(svg.indexOf('id="m0"')).toBeLessThan(svg.indexOf("url(#m0)"));
 	});
 
 	test("an unmasked group is drawn bare", () => {

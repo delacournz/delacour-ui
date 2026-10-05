@@ -143,9 +143,7 @@ describe("clampSketchSize", () => {
 describe("accessibility labels", () => {
 	test("the canvas counts marks, erasers included", () => {
 		expect(resolveSketchAccessibilityLabel([])).toBe("Drawing, empty");
-		expect(resolveSketchAccessibilityLabel([{ d: "M0 0", id: "a", kind: "erase", width: 4 }])).toBe(
-			"Drawing, 1 mark"
-		);
+		expect(resolveSketchAccessibilityLabel([{ d: "M0 0", id: "a", kind: "erase", width: 4 }])).toBe("Drawing, 1 mark");
 		const three = ["a", "b", "c"].map((id) => ({ d: "M0 0", id, kind: "erase" as const, width: 4 }));
 		expect(resolveSketchAccessibilityLabel(three)).toBe("Drawing, 3 marks");
 	});

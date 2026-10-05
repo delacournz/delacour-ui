@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Reveal",
+	align: "stretch",
 	caption:
 		"A cover in the page's own colour retreats upward as the frame rises, uncovering the picture from its bottom edge.",
 };
@@ -18,8 +19,8 @@ export function Demo(): ReactElement {
 
 	return (
 		<Animated.ScrollView
-			className="h-[460px]"
-			contentContainerClassName="gap-4 pt-[300px] pb-[300px]"
+			className="h-[480px]"
+			contentContainerClassName="gap-4 py-[600px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-reveal"
 			{...scrollProps}

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sequence",
+	align: "stretch",
 	caption:
 		"Twenty-four frames, scrubbed by the scroll: each band of progress shows one of them, with no cross-fade. At rest above the window it shows frame 0, the poster.",
 	note: "Every frame is mounted at once, so keep a sequence to 20–30 frames at the size it is drawn.",
@@ -44,8 +45,8 @@ export function Demo(): ReactElement {
 
 	return (
 		<Animated.ScrollView
-			className="h-[460px]"
-			contentContainerClassName="gap-4 pt-[300px] pb-[300px]"
+			className="h-[480px]"
+			contentContainerClassName="gap-4 py-[600px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-sequence"
 			{...scrollProps}

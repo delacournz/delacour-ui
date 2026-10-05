@@ -8,6 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Window and distance",
+	align: "stretch",
 	caption:
 		"`start` and `end` place the effect in viewport terms — where the frame's top sits when it begins and when it completes. `distance` is how far it goes. The canvases sit inside a nested view, measured against the scroller.",
 };
@@ -20,8 +21,8 @@ export function Demo(): ReactElement {
 
 	return (
 		<Animated.ScrollView
-			className="h-[460px]"
-			contentContainerClassName="gap-4 pt-[300px] pb-[300px]"
+			className="h-[480px]"
+			contentContainerClassName="gap-4 py-[600px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-window"
 			{...scrollProps}

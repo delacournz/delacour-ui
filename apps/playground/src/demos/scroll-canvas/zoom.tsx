@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Zoom",
+	align: "stretch",
 	caption: "The picture enters oversized and settles to its natural size by the time the frame is 30% down the view.",
 };
 
@@ -17,8 +18,8 @@ export function Demo(): ReactElement {
 
 	return (
 		<Animated.ScrollView
-			className="h-[460px]"
-			contentContainerClassName="gap-4 pt-[300px] pb-[300px]"
+			className="h-[480px]"
+			contentContainerClassName="gap-4 py-[600px]"
 			showsVerticalScrollIndicator={false}
 			testID="scroll-canvas-zoom"
 			{...scrollProps}

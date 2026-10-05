@@ -1,0 +1,91 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "overlay",
+	"type": "registry:ui",
+	"title": "Overlay",
+	"description": "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-teleport",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/overlay/AGENTS.md",
+			"target": "overlay/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/index.ts",
+			"target": "overlay/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-portal.tsx",
+			"target": "overlay/overlay-portal.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-presence.ts",
+			"target": "overlay/overlay-presence.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-registry.ts",
+			"target": "overlay/overlay-registry.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx",
+			"target": "overlay/overlay-scrim.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay.context.tsx",
+			"target": "overlay/overlay.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay.tsx",
+			"target": "overlay/overlay.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay.variants.ts",
+			"target": "overlay/overlay.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts",
+			"target": "overlay/use-overlay-back-handler.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts",
+			"target": "overlay/use-overlay-presence.ts",
+			"namespace": "ui"
+		}
+	]
+}

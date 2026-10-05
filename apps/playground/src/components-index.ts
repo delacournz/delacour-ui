@@ -42,6 +42,12 @@ const ROWS = [
 	{ slug: "button", title: "Button", description: "Variants, sizes, icons, loading", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
 	{
+		slug: "selection-mode",
+		title: "SelectionMode",
+		description: "Long press to pick several, then act from a bar",
+		group: "Actions",
+	},
+	{
 		slug: "toggle-button",
 		title: "ToggleButton",
 		description: "Variants, sizes, single and multiple groups",

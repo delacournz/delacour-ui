@@ -150,8 +150,11 @@ Pure logic is covered by the two test files. Checked on an iPhone 17 simulator
   wrap leave a hairline at the end of the first row — a divider cannot know
   where the row breaks. Prefer `stacked` when dividers matter.
 
-**Preview capture is deferred.** `bun run previews` needs the argent CLI, which
-is not installed here, so no demo carries `meta.capture` and the docs page has
-no `<Preview>`. When the tool is back: mark `profile` (hero), `gradient-cover`,
-`aligned-start`, `stats` and `card-in-list` as captures, all
-`align: "stretch"`, and add the `<Preview>` blocks to `page-header.mdx`.
+**Previews.** Six demos are captured on an iPhone 17 Pro from the dev client.
+`in-a-screen` is the hero: a device-frame clip that joins (and the Members count
+ticks over), scrolls the header away under the navbar, comes back to the top and
+leaves again. `profile` is a clip of Follow and unfollow. `gradient-cover`,
+`aligned-start`, `stats` and `card-in-list` are stills. `in-a-screen` needs a
+body taller than the screen, or the swipe only rubber-bands and the header never
+scrolls away. `stats` draws dividers on the stacked strip only, because of the
+inline-wrap hairline above.

@@ -4,6 +4,8 @@ description: The head of a profile or place screen — a cover, an overlapping a
 icon: SquareUser
 ---
 
+<Preview id="page-header/in-a-screen" title={null} />
+
 ## Installation
 
 <ComponentInstall name="page-header" />
@@ -48,6 +50,8 @@ export default function Profile() {
 
 ## Anatomy
 
+<Preview id="page-header/profile" />
+
 ```tsx
 <PageHeader>
   <PageHeader.Cover />
@@ -68,6 +72,8 @@ Every part is optional and drawn in the order you write it. The header degrades 
 cover, and the face does not lift; no stats, and nothing is left behind.
 
 ## Cover
+
+<Preview id="page-header/gradient-cover" />
 
 A picture, or a gradient. The gradient is always painted and the picture is drawn over it, so a slow or
 broken URL shows the theme's gradient rather than an empty box — there is no loading state to manage.
@@ -99,6 +105,8 @@ replaces the rosette with your own content; `isOverlapping={false}` keeps the fa
 
 ## Alignment
 
+<Preview id="page-header/aligned-start" />
+
 ```tsx
 <PageHeader align="start">…</PageHeader>
 ```
@@ -107,6 +115,8 @@ replaces the rosette with your own content; `isOverlapping={false}` keeps the fa
 leading edge, for a header that shares the screen with a busier body.
 
 ## Stats
+
+<Preview id="page-header/stats" />
 
 ```tsx
 <PageHeader.Stats layout="stacked" isDivided>
@@ -125,6 +135,8 @@ hears "1,234 Followers". A string is drawn and read as given. Give a stat `onPre
 
 ## Card variant
 
+<Preview id="page-header/card-in-list" />
+
 ```tsx
 <PageHeader variant="card" align="start">…</PageHeader>
 ```
@@ -133,6 +145,8 @@ hears "1,234 Followers". A string is drawn and read as given. Give a stat `onPre
 reaches under the status bar. A column of them is a list of people.
 
 ## Inside a Screen
+
+<Preview id="page-header/in-a-screen" />
 
 Pass `PageHeader` to a scrollable's `header` prop directly. Do not wrap it in `Screen.Header` — that is a
 plain titled block, and wrapping one in the other adds a view for nothing. In the `page` variant the

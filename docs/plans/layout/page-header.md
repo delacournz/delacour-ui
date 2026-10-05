@@ -287,7 +287,7 @@ Registry: `ITEM_META["page-header"] = { title: "Page Header", description: "A co
 - [x] Every part, provider and leaf has a `DelacourUI.PageHeader…` displayName (`display-name.test.ts` passes)
 - [x] `page-header/AGENTS.md` written; row added to the Components table; `docs.test.ts` passes
 - [x] `bun run gen-exports` run; `package.json` exports include `./page-header`
-- [x] Demos list, route, home row, `bun run gen-demos`; `demos.test.ts` passes. **Captures deferred**: `bun run previews` needs the argent CLI, which is not installed, so no demo carries `meta.capture` and the docs page has no `<Preview>` yet — the intended set is in the component AGENTS.md
+- [x] Demos list, route, home row, `bun run gen-demos`; `demos.test.ts` passes; six captured (two clips, four stills), hero `in-a-screen`
 - [x] Docs page + `meta.json` entry; `ITEM_META["page-header"]`; registry rebuilt; install manifest and skill list regenerated
 - [x] Changeset added
 - [x] Simulator (agent-device on a warden-claimed iPhone 17): results in the component AGENTS.md **Verification** section. The card check found and fixed a page-coloured band across a card's cover

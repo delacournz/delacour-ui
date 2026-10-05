@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Disabled",
 	caption: "`isDisabled` dims the marker and, on an interactive one, blocks the press and announces it.",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

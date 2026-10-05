@@ -14,6 +14,7 @@ export const meta: DemoMeta = {
 	title: "Pressable",
 	caption:
 		"Give a marker `onPress` and it becomes a button that fades on press. Here it expands the step it summarises.",
+	capture: { align: "stretch", flow: "marker/pressable" },
 };
 
 const FILES = [
@@ -23,11 +24,15 @@ const FILES = [
 	"global.css",
 ] as const;
 
+/**
+ * The demo holds the expanded height from the start, so opening the step grows into room
+ * already on the page instead of pushing the marker up out of a published crop.
+ */
 export function Demo(): ReactElement {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
-		<View className="gap-1">
+		<View className="min-h-32 gap-1">
 			<Marker
 				accessibilityHint={isOpen ? "Hides the files" : "Shows the files"}
 				onPress={() => setIsOpen((open) => !open)}

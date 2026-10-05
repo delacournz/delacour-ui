@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Variants",
 	caption:
 		"`default` is a bare row, `border` a hairline capsule that hugs its words, `separator` a label ruled to both edges.",
+	capture: { align: "stretch" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

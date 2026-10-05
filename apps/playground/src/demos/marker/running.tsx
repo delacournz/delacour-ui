@@ -10,10 +10,11 @@ export const meta: DemoMeta = {
 	title: "Running",
 	caption:
 		"`shimmer` breathes the text while the step runs. Drop it the moment the step ends: a marker that shimmers forever reads as a stuck one.",
+	capture: { align: "stretch", flow: "marker/running" },
 };
 
 export function Demo(): ReactElement {
-	const [isRunning, setIsRunning] = useState(true);
+	const [isRunning, setIsRunning] = useState(false);
 
 	return (
 		<View className="items-center gap-3">
@@ -24,7 +25,7 @@ export function Demo(): ReactElement {
 				<Marker.Content shimmer={isRunning}>{isRunning ? "Searching files" : "Searched 128 files"}</Marker.Content>
 			</Marker>
 			<Button onPress={() => setIsRunning((running) => !running)} size="sm" testID="toggle-running" variant="secondary">
-				{isRunning ? "Finish step" : "Run again"}
+				{isRunning ? "Finish step" : "Run step"}
 			</Button>
 		</View>
 	);

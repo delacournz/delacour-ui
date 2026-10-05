@@ -3,13 +3,15 @@ import { IconCheckCircle2, IconFileText, IconMagnifyingGlass } from "@delacour/r
 import { Marker } from "@delacour/react-native-ui/marker";
 import { Surface } from "@delacour/react-native-ui/surface";
 import { Text } from "@delacour/react-native-ui/text";
-import type { ReactElement } from "react";
+import { type ReactElement, useState } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Between turns",
-	caption: "Markers note what happened between two turns: no speaker, no bubble. A separator marker breaks the day.",
+	caption:
+		"Markers note what happened between two turns: no speaker, no bubble. Tap a step to see what it covered; a separator marker breaks the day.",
+	capture: { align: "stretch", flow: "marker/conversation", hero: true },
 };
 
 /** A turn in the conversation, drawn from `Surface` and `Text` alone. */
@@ -25,17 +27,35 @@ function Bubble({ from, children }: { from: "me" | "them"; children: string }): 
 	);
 }
 
+const SEARCHED = ["src/app/index.tsx", "src/components/theme-toggle.tsx", "global.css"] as const;
+
+/** Holds the open step's height from the start, as `pressable` does, so the clip's crop never cuts it. */
 export function Demo(): ReactElement {
+	const [isOpen, setIsOpen] = useState(false);
+
 	return (
-		<View className="gap-1">
+		<View className="min-h-[25rem] gap-1">
 			<Marker variant="separator">Today</Marker>
 			<Bubble from="me">Where is the theme toggle wired up?</Bubble>
-			<Marker>
+			<Marker
+				accessibilityHint={isOpen ? "Hides the matches" : "Shows the matches"}
+				onPress={() => setIsOpen((open) => !open)}
+				testID="conversation-search"
+			>
 				<Marker.Icon>
 					<Icon icon={IconMagnifyingGlass} />
 				</Marker.Icon>
 				<Marker.Content>Searched 128 files</Marker.Content>
 			</Marker>
+			{isOpen ? (
+				<View className="items-center gap-1 pb-1">
+					{SEARCHED.map((file) => (
+						<Text.Code className="text-muted-foreground text-xs" key={file}>
+							{file}
+						</Text.Code>
+					))}
+				</View>
+			) : null}
 			<Marker>
 				<Marker.Icon>
 					<Icon icon={IconFileText} />

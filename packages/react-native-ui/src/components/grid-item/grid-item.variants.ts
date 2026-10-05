@@ -59,6 +59,24 @@ export function joinGridItemLabel(parts: GridItemLabelParts): string | undefined
 }
 
 /**
+ * The plain text inside a text part's children, for the tile's joined label.
+ *
+ * Strings and numbers are read; an array of them — JSX splits `{used} GB` into
+ * two children — is joined. Anything else (an element, a boolean) contributes
+ * nothing, and a part holding only elements collects no text at all; pass the
+ * tile an `accessibilityLabel` then.
+ */
+export function readGridItemText(children: unknown): string | undefined {
+	if (typeof children === "string") return children;
+	if (typeof children === "number") return String(children);
+	if (!Array.isArray(children)) return undefined;
+	const text = children
+		.filter((child): child is string | number => typeof child === "string" || typeof child === "number")
+		.join("");
+	return text.length > 0 ? text : undefined;
+}
+
+/**
  * Styling for every part of a grid tile.
  *
  * Every variant reserves the same one-point border, transparent where the

@@ -4,6 +4,7 @@ import {
 	GRID_ITEM_VARIANTS,
 	gridItemVariants,
 	joinGridItemLabel,
+	readGridItemText,
 	resolveGridItemRender,
 	resolveGridItemSize,
 	resolveGridItemVariant,
@@ -191,5 +192,24 @@ describe("joinGridItemLabel", () => {
 
 	test("nothing collected, no label", () => {
 		expect(joinGridItemLabel({})).toBeUndefined();
+	});
+});
+
+describe("readGridItemText", () => {
+	test("strings and numbers are their own text", () => {
+		expect(readGridItemText("Storage")).toBe("Storage");
+		expect(readGridItemText(82)).toBe("82");
+	});
+
+	test("an array of strings and numbers joins, as JSX splits `{n} GB`", () => {
+		expect(readGridItemText([74, " GB"])).toBe("74 GB");
+	});
+
+	test("anything else has no collectable text", () => {
+		expect(readGridItemText(undefined)).toBeUndefined();
+		expect(readGridItemText(null)).toBeUndefined();
+		expect(readGridItemText(true)).toBeUndefined();
+		expect(readGridItemText({ type: "View" })).toBeUndefined();
+		expect(readGridItemText(["Storage", { type: "View" }])).toBe("Storage");
 	});
 });

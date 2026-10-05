@@ -63,7 +63,7 @@ describe("formatMessageTime", () => {
 	});
 
 	test("the locale is honoured", () => {
-		expect(formatMessageTime(new Date(2026, 9, 5, 9, 41), now, "en-GB")).toBe("09:41");
+		expect(formatMessageTime(new Date(2026, 9, 5, 21, 5), now, "en-GB")).toBe("21:05");
 	});
 
 	test("never emits a narrow no-break space", () => {

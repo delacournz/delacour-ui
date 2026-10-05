@@ -1,9 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on scroll-blur/list-under-button and has settled — the list at its top, the end band
-  in. The capture script navigates there before running this.
-steps:
-  - echo: Scrolling the rows down under the floating button
-  - swipe: { from: { x: 0.5, y: 0.65 }, by: { y: -0.3 }, momentum: false, duration: 800 }
-  - wait: 600
-  - echo: And back to the top, so the clip loops without a jump cut
-  - swipe: { from: { x: 0.5, y: 0.35 }, by: { y: 0.3 }, momentum: false, duration: 800 }

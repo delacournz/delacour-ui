@@ -72,3 +72,17 @@ A `blurLayer` prop on `DelacourProvider` (the provider folder is shared across c
 `ScrollBlurLayerProvider` instead); real blur on Android and the web; animating blur intensity per
 frame; vibrancy; Skia backdrop blur (it needs the scrollable inside a Skia canvas); a general
 `BlurView` component.
+
+## Demos and preview media
+
+Six demos in `apps/playground/src/demos/scroll-blur/`. **None is marked `capture` yet**: the
+`argent` CLI `bun run previews` drives was not installed on the machine this branch was built on, so
+no media could be photographed, and a captured demo without a manifest entry fails `demos.test.ts`.
+The docs page therefore opens at `## Installation`, as `bottom-sheet`'s did. To publish, mark
+`list-under-button` (`hero`, with a scroll flow under `.argent/flows/previews/scroll-blur/`),
+`search-over-media`, `horizontal` and `blur-vs-fade` with `capture: { align: "stretch" }`, run
+`bun run previews -- -- --only scroll-blur`, and add a `<Preview>` above each matching docs section.
+
+`blur-vs-fade` compares against the wash fallback (`ScrollBlurLayerProvider layer={null}`) rather
+than `ScrollFade`, which ships on a separate branch and must not be imported from this one. A
+`ScrollBlurLayerProvider` takes `null` for exactly this: turning the blur off for a subtree.

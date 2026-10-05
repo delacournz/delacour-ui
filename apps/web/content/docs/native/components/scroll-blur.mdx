@@ -4,8 +4,6 @@ description: A progressive blur at a scrollable's edges that keeps floating cont
 icon: Blend
 ---
 
-<Preview id="scroll-blur/list-under-button" title={null} />
-
 ## Installation
 
 <ComponentInstall name="scroll-blur" />
@@ -79,8 +77,6 @@ The floating control is a sibling after the `ScrollBlur`, never a child, or it s
 
 A start band is clear at rest and arrives over the first `fadeInDistance` points of travel.
 
-<Preview id="scroll-blur/search-over-media" />
-
 ```tsx
 <ScrollBlur edges="start" scrollSource={source} size={96}>
   <Animated.ScrollView {...scrollProps}>…</Animated.ScrollView>
@@ -91,8 +87,6 @@ A start band is clear at rest and arrives over the first `fadeInDistance` points
 
 The source fixes the axis, so a horizontal scrollable gets left and right bands.
 
-<Preview id="scroll-blur/horizontal" />
-
 ```tsx
 const { source, scrollProps } = useScrollSource({ orientation: "horizontal" });
 ```
@@ -100,8 +94,6 @@ const { source, scrollProps } = useScrollSource({ orientation: "horizontal" });
 ## Blur or fade
 
 Over coloured content a fade reads as a grey band and a blur keeps the colour; over a plain page a fade is cheaper and looks the same.
-
-<Preview id="scroll-blur/blur-vs-fade" />
 
 ## Layers and intensity
 

@@ -1,0 +1,20 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on time-picker/basic-sheet and has settled — one
+  trigger reading 12:00 PM (testID time-picker-basic), the sheet closed. The capture script
+  navigates there before running this.
+steps:
+  - echo: Opening the sheet from the trigger
+  - tap: { id: time-picker-basic }
+  - await: { visible: { text: Done } }
+  - wait: 600
+  - echo: Rolling the hour wheel forward a couple of rows
+  - swipe: { from: { text: Hour }, by: { y: -0.09 }, momentum: false, duration: 600 }
+  - wait: 1000
+  # Back past the top on purpose: 12 is the hour wheel's first row, so an overshoot
+  # always rests there, where a swipe of the same length back lands a row either side.
+  - echo: And back to 12, so the clip loops on 12:00 PM
+  - swipe: { from: { text: Hour }, by: { y: 0.2 }, momentum: false, duration: 700 }
+  - wait: 1000
+  - tap: { text: Done }
+  - await: { hidden: { text: Done } }
+  - wait: 400

@@ -8,14 +8,15 @@ export const meta: DemoMeta = {
 	title: "Inline",
 	caption: '`presentation="inline"` draws the bare wheel in place, with no trigger and no sheet.',
 	align: "stretch",
+	capture: { flow: "time-picker/inline-wheel", align: "stretch" },
 };
 
 export function Demo(): ReactElement {
-	const [time, setTime] = useState<TimeValue | null>({ hour: 7, minute: 15 });
+	const [time, setTime] = useState<TimeValue | null>({ hour: 7, minute: 0 });
 
 	return (
 		<View className="gap-3">
-			<TimePicker onValueChange={setTime} presentation="inline" value={time} />
+			<TimePicker onValueChange={setTime} presentation="inline" testID="time-picker-inline" value={time} />
 			<Text.Caption className="text-center">
 				{time ? formatTime(time, { locale: "en-US", hourCycle: 12 }) : "Not set"}
 			</Text.Caption>

@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The same stored value, `{ hour: 18, minute: 45 }`, on a 12-hour and a 24-hour clock. The hour cycle changes how it reads, never what is stored.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

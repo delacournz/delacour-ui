@@ -4,6 +4,8 @@ description: A time of day on snapping wheels — hour, minute, optional second 
 icon: Clock
 ---
 
+<Preview id="time-picker/basic-sheet" title={null} />
+
 ## Installation
 
 <ComponentInstall name="time-picker" />
@@ -16,6 +18,8 @@ too — even if you only ever use `presentation="inline"`. Mount
 </Callout>
 
 ## Usage
+
+<Preview id="time-picker/basic-sheet" />
 
 ```tsx title="app/index.tsx"
 import { TimePicker, type TimeValue } from "@/components/ui/time-picker";
@@ -52,6 +56,8 @@ refused.
 
 ## 12 and 24 hours
 
+<Preview id="time-picker/twenty-four-hour" />
+
 `hourCycle` defaults to `"auto"`, which follows the locale. Set `12` or `24` to pin it.
 
 ```tsx
@@ -60,6 +66,8 @@ refused.
 ```
 
 ## Bounds
+
+<Preview id="time-picker/bounds" />
 
 `minTime` and `maxTime` dim the rows outside them. A wheel that comes to rest on a dimmed row moves
 back to the nearest time that can be picked, so `onValueChange` never sees one.
@@ -75,6 +83,8 @@ back to the nearest time that can be picked, so `onValueChange` never sees one.
 ```
 
 ## Inline
+
+<Preview id="time-picker/inline-wheel" />
 
 `presentation="inline"` draws the bare wheel in place — no trigger and no sheet.
 
@@ -106,6 +116,8 @@ composes one.
 ```
 
 ## In a Field
+
+<Preview id="time-picker/in-field-invalid" />
 
 Inside a `Field` the picker takes the field's invalid and disabled state, reads `Field.Label` as
 its accessible name, and opens when the label is tapped. Write the parts out to change any of them.

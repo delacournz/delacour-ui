@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on time-picker/in-field-invalid and has settled —
+  a Field labelled Reminder, its trigger (testID time-picker-field) empty and invalid. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet and accepting the time it starts on
+  - tap: { id: time-picker-field }
+  - await: { visible: { text: Done } }
+  - wait: 600
+  - tap: { text: Done }
+  - await: { hidden: { text: Done } }
+  - wait: 900
+  - echo: Opening it again and clearing, so the clip loops on the empty, invalid field
+  - tap: { id: time-picker-field }
+  - await: { visible: { text: Clear } }
+  - wait: 500
+  - tap: { text: Clear }
+  - await: { hidden: { text: Clear } }
+  - wait: 600

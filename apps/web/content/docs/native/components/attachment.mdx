@@ -4,6 +4,8 @@ description: A file, image or recording — a thumbnail, a name, a size, an uplo
 icon: Paperclip
 ---
 
+<Preview id="attachment/upload-states" title={null} />
+
 ## Installation
 
 <ComponentInstall name="attachment" />
@@ -37,6 +39,8 @@ export default function Example() {
 
 `kind` picks the glyph and its tint; an image needs a `source`, a video's poster is optional, and a file reads its extension from `name`.
 
+<Preview id="attachment/kinds" />
+
 ```tsx
 <Attachment kind="image" name="harbour.jpg" source={{ uri: photo.uri }} sizeBytes={2516582} />
 <Attachment kind="video" name="teaser.mov" durationMs={42000} />
@@ -47,6 +51,8 @@ export default function Example() {
 ## Layouts
 
 `chip` is the composer pill, `tile` a square thumbnail for a photo tray, and `card` a full-width row for inside a message.
+
+<Preview id="attachment/layouts" />
 
 ```tsx
 <Attachment kind="file" layout="chip" name="site-plan.pdf" onRemove={remove} />
@@ -67,6 +73,8 @@ export default function Example() {
 ## Upload states
 
 The app owns the upload and hands the attachment its `status`; remove becomes cancel while uploading, and retry appears in error.
+
+<Preview id="attachment/upload-states" />
 
 ```tsx
 <Attachment
@@ -89,6 +97,8 @@ The app owns the upload and hands the attachment its `status`; remove becomes ca
 
 `Attachment.Group` scrolls sideways, hands its `layout` and `size` down, and slides the rest along when one is removed.
 
+<Preview id="attachment/composer-tray" />
+
 ```tsx
 <Attachment.Group layout="tile">
   {drafts.map((draft) => (
@@ -110,6 +120,8 @@ Key each attachment by its file's id, not its index, or removing the first one r
 ## Inside a message
 
 A `card` takes the width of whatever holds it, so a message bubble only needs to render it as a child.
+
+<Preview id="attachment/in-message" />
 
 ```tsx
 <View className="max-w-[85%] gap-2 self-start rounded-2xl bg-muted p-2">

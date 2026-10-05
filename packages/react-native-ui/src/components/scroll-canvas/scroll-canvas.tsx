@@ -64,7 +64,7 @@ export function ScrollCanvas({
 	...props
 }: ScrollCanvasProps): ReactElement {
 	const isCalm = useCalmMotion();
-	const frame = useFrameProgress({ effect, start, end, progress, scrollSource, isStill: isCalm || !enabled });
+	const frame = useFrameProgress({ effect, start, end, progress, scrollSource, enabled, isCalm });
 	const slots = scrollCanvasVariants();
 	const accessibility = resolveCanvasAccessibility(accessibilityLabel);
 

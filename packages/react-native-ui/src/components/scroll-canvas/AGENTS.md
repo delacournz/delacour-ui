@@ -38,8 +38,11 @@ thumb. The frame is the layout; only what is inside it moves. A single component
   `useScrollSource` source or `progress`, or its window is off by the card's top.
 - **The source is resolved by hand, not through `useResolvedScrollSource`.**
   That hook throws when there is no source, but a canvas driven by `progress`
-  needs none — it can sit in a static layout or a pager. With neither, the
-  canvas throws, naming both ways out.
+  needs none — it can sit in a static layout or a pager — and nor does one
+  switched off with `enabled={false}`. With none of the three, the canvas
+  throws, naming the ways out. Reduce Motion does **not** waive the source: a
+  canvas that only rendered with the setting on would break the moment it was
+  turned off.
 - **A window, not a range of offsets.** The caller places the effect in viewport
   terms — `start` and `end` are where the frame's top sits (1 = bottom edge,
   0 = top, negative = past the top) — so one number reads the same on every

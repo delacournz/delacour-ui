@@ -25,8 +25,10 @@ export type UseFrameProgressOptions = {
 	/** Drive the effect directly; nothing is measured. */
 	progress?: SharedValue<number>;
 	scrollSource?: ScrollSource;
-	/** Hold the resting state — Reduce Motion, the calm flag, or `enabled={false}`. */
-	isStill: boolean;
+	/** `false` holds the resting state and needs no source. */
+	enabled: boolean;
+	/** Reduce Motion or the calm flag: holds the resting state. */
+	isCalm: boolean;
 };
 
 export type FrameProgress = {
@@ -52,13 +54,17 @@ export type FrameProgress = {
  * direct child of the scroll content container.
  *
  * Resolving the source by hand rather than through `useResolvedScrollSource` is
- * what lets a canvas driven by `progress` render with no scroller anywhere.
+ * what lets a canvas driven by `progress`, or switched off with
+ * `enabled={false}`, render with no scroller anywhere. Reduce Motion does not
+ * waive the source: a canvas that only works with the setting on would break
+ * the moment it is turned off.
  */
 export function useFrameProgress(options: UseFrameProgressOptions): FrameProgress {
-	const { effect, start, end, progress: drive, scrollSource, isStill } = options;
+	const { effect, start, end, progress: drive, scrollSource, enabled, isCalm } = options;
+	const isStill = isCalm || !enabled;
 	const ambient = useScrollSourceContext();
 	const source = scrollSource ?? ambient;
-	if (!source && !drive) {
+	if (enabled && !source && !drive) {
 		throw new Error(
 			"`ScrollCanvas` must be given a `scrollSource` or `progress`, or rendered inside a Screen / ScrollSourceProvider."
 		);

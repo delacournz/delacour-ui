@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Kept open",
 	caption:
 		"`isKeptOpen` leaves the row open after the action runs, so a toggle can be flipped and checked in one place. Tap the row to close it.",
+	capture: { align: "stretch", flow: "swipe/kept-open" },
 };
 
 export function Demo(): ReactElement {
@@ -24,6 +25,7 @@ export function Demo(): ReactElement {
 						isKeptOpen
 						label={isSaved ? "Saved" : "Save"}
 						onPress={() => setIsSaved((value) => !value)}
+						testID="swipe-save"
 					/>
 				</Swipe.End>
 				<Item>

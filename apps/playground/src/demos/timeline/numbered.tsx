@@ -4,7 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Numbered",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption: "`numbered` puts each event's position in its marker. Two sizes, `sm` and `md`.",
 };
 

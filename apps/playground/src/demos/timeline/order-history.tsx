@@ -4,7 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Order history",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"One `value` says how far along the order is: events before it are completed, the one at it is current, and the rail fills up to it.",
 };

@@ -4,7 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Cards",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption: "`card` sets each event's `Timeline.Content` on a surface, with the marker meeting the card's title.",
 };
 

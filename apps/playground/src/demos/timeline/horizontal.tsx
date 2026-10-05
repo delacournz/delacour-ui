@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Horizontal",
-	align: "stretch",
+	capture: { align: "stretch", flow: "timeline/horizontal", hero: true },
 	caption:
 		"A swipeable strip of columns. `snap` lands each fling on a column, `onColumnChange` and a selection haptic fire as a new one reaches the left edge, and a column with no content collapses to a tick.",
 };

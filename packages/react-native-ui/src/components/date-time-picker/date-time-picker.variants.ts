@@ -27,14 +27,14 @@ export const DATE_TIME_PICKER_DEFAULTS = {
 	title: "Select date and time",
 } as const;
 
-/** How long the stacked layout's wheel takes to open or close, in milliseconds. */
+/** How long the stacked layout's wheel takes to fade in or out, in milliseconds. */
 export const DATE_TIME_PICKER_EXPAND_DURATION = 220;
 
 /**
  * The height the stacked layout's wheel opens to: the `md` wheel's own, rows times row height.
  *
- * Known up front rather than measured, so the expansion animates a number and never waits a
- * frame for a layout pass — the wheel is always `md` inside the panel, whatever the trigger's size.
+ * Known up front rather than measured, so the expansion is one committed style the sheet's own
+ * layout measurement sees — the wheel is always `md` inside the panel, whatever the trigger's size.
  */
 export const DATE_TIME_PICKER_WHEEL_HEIGHT = TIME_PICKER_ROW_HEIGHTS.md * TIME_PICKER_DEFAULT_VISIBLE_ROWS;
 
@@ -83,7 +83,7 @@ export const dateTimePickerVariants = tv({
 
 export type DateTimePickerVariantProps = VariantProps<typeof dateTimePickerVariants>;
 
-/** The stacked wheel's travel — none under calm motion, where it should simply appear. */
+/** The stacked wheel's fade — none under calm motion, where it should simply appear. */
 export function resolveExpandDuration(isCalm: boolean): number {
 	return isCalm ? 0 : DATE_TIME_PICKER_EXPAND_DURATION;
 }

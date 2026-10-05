@@ -92,10 +92,15 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
   that is the moment the time is a guess. With a value already set, or after the first advance,
   it never jumps, so going back to change the day is not undone.
 - **`stacked`** — the calendar, a hairline, then a "Time  3:30 PM" row that opens the wheel beneath
-  it. The wheel's height is known up front (`DATE_TIME_PICKER_WHEEL_HEIGHT`, the `md` wheel's own),
-  so the expansion animates a number on the UI thread and never waits for a layout pass; under calm
-  motion it appears instantly. Closed, the wheel stays mounted but leaves the accessibility tree
-  and stops taking touches. For tablets and tall sheets.
+  it. For tablets and tall sheets.
+- **The stacked wheel's height is committed by React, never animated on the UI thread.** The sheet
+  sizes itself from its content's measured layout, and a height written by a Reanimated style does
+  not reach that measurement: on the simulator the row turned primary, the wheel opened *behind*
+  the footer, and the sheet moved three points. The clip's height is therefore a plain style —
+  `DATE_TIME_PICKER_WHEEL_HEIGHT`, the `md` wheel's own, known up front — so the sheet springs to
+  its new snap point and that spring is the motion; the wheel fades in on top, and under calm
+  motion it does not. Closed, the wheel stays mounted (its scroll position survives) but takes no
+  height, leaves the accessibility tree and stops taking touches.
 - **`DateTimePicker.Content`'s children are walked by type in `tabs`.** `DateTimePicker.Calendar`
   goes in the Date panel, `DateTimePicker.Time` in the Time panel, a section left out falls back to
   the default part, and anything else follows the tabs — the same child walk `Tabs` does for its
@@ -133,10 +138,10 @@ The subpath imports `BottomSheet`, so an app using it installs the optional
 
 ## Open questions
 
-- `Tabs` inside a `BottomSheet`: the pager's horizontal pan is the one horizontal gesture left in
-  the panel, and the sheet's content pan is off, so they should not fight — but that is to be
-  verified on device on both platforms. The fallback is a `ToggleButton` group switching panels
-  with no pager.
+- `Tabs` inside a `BottomSheet`: verified on the iOS simulator — a wheel drag scrolls the wheel and
+  never the sheet, tab presses slide the pager, and a horizontal fling below the wheel did not page
+  (nor fight anything). Android is unverified. The fallback, if the pager ever fights, is a
+  `ToggleButton` group switching panels with no pager.
 - `minDateTime` / `maxDateTime` replace separate date and time bounds; confirm the single-window
   API is acceptable.
 - Out of scope: time zones (store the zone beside the value), clock and ruler faces, an anchored

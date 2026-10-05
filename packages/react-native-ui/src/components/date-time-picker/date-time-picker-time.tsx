@@ -45,10 +45,13 @@ DateTimePickerWheel.displayName = "DelacourUI.DateTimePicker.Time.Wheel";
 /**
  * The stacked layout's time row and the wheel it opens beneath it.
  *
- * The wheel's height is the `md` wheel's own, known up front, so the expansion animates a number
- * on the UI thread and never waits for a layout pass. Under calm motion it simply appears. Closed,
- * the wheel stays mounted — its scroll position survives — but leaves the accessibility tree and
- * stops taking touches.
+ * **The height is committed by React, not animated on the UI thread.** The sheet sizes itself from
+ * its content's measured layout, and a height written by a Reanimated style never reaches that
+ * measurement — the wheel opened behind the footer while the sheet stayed where it was. So the
+ * clip's height is a plain style, known up front (`DATE_TIME_PICKER_WHEEL_HEIGHT`), and the motion
+ * is the sheet's own spring to its new snap point plus a fade on the wheel; under calm motion the
+ * fade is skipped. Closed, the wheel stays mounted — its scroll position survives — but takes no
+ * height, leaves the accessibility tree and stops taking touches.
  */
 function DateTimePickerStackedTime({ className, testID }: DateTimePickerTimeProps): ReactElement {
 	const picker = useDateTimePickerPart("DateTimePicker.Time");
@@ -60,17 +63,14 @@ function DateTimePickerStackedTime({ className, testID }: DateTimePickerTimeProp
 		layout: "stacked",
 	});
 
-	const progress = useSharedValue(isTimeExpanded ? 1 : 0);
+	const opacity = useSharedValue(isTimeExpanded ? 1 : 0);
 	useEffect(() => {
 		const target = isTimeExpanded ? 1 : 0;
 		const duration = resolveExpandDuration(isCalm);
-		progress.value = duration === 0 ? target : withTiming(target, { duration });
-	}, [isCalm, isTimeExpanded, progress]);
+		opacity.value = duration === 0 ? target : withTiming(target, { duration });
+	}, [isCalm, isTimeExpanded, opacity]);
 
-	const clipStyle = useAnimatedStyle(() => ({
-		height: progress.value * DATE_TIME_PICKER_WHEEL_HEIGHT,
-		opacity: progress.value,
-	}));
+	const fadeStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
 	const toggle = useCallback(() => setTimeExpanded(!isTimeExpanded), [isTimeExpanded, setTimeExpanded]);
 	const isInert = picker.isDisabled || picker.isReadOnly;
@@ -92,15 +92,17 @@ function DateTimePickerStackedTime({ className, testID }: DateTimePickerTimeProp
 				<Text className={slots.timeLabel()}>{picker.timeLabel}</Text>
 				<Text className={slots.timeValue()}>{picker.timeReadout}</Text>
 			</Pressable>
-			<Animated.View
+			<View
 				accessibilityElementsHidden={!isTimeExpanded}
 				className={slots.timeWheel()}
 				importantForAccessibility={isTimeExpanded ? "auto" : "no-hide-descendants"}
 				pointerEvents={isTimeExpanded ? "auto" : "none"}
-				style={clipStyle}
+				style={{ height: isTimeExpanded ? DATE_TIME_PICKER_WHEEL_HEIGHT : 0 }}
 			>
-				<DateTimePickerWheel testID={testID} />
-			</Animated.View>
+				<Animated.View style={fadeStyle}>
+					<DateTimePickerWheel testID={testID} />
+				</Animated.View>
+			</View>
 		</View>
 	);
 }

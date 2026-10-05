@@ -70,6 +70,12 @@ import * as demo_bottom_sheet_sizing_sized_to_its_content from "./bottom-sheet/s
 import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-sheet/sizing/the-same-sheet-more-content";
 import * as demo_bottom_sheet_steps_per_step_snap_points from "./bottom-sheet/steps/per-step-snap-points";
 import * as demo_bottom_sheet_steps_three_step_form from "./bottom-sheet/steps/three-step-form";
+import * as demo_breadcrumb_basic from "./breadcrumb/basic";
+import * as demo_breadcrumb_collapsed from "./breadcrumb/collapsed";
+import * as demo_breadcrumb_custom_separator from "./breadcrumb/custom-separator";
+import * as demo_breadcrumb_ellipsis_sheet from "./breadcrumb/ellipsis-sheet";
+import * as demo_breadcrumb_scroll_overflow from "./breadcrumb/scroll-overflow";
+import * as demo_breadcrumb_sizes from "./breadcrumb/sizes";
 import * as demo_button_disabled from "./button/disabled";
 import * as demo_button_group from "./button/group";
 import * as demo_button_group_input from "./button/group-input";
@@ -436,6 +442,12 @@ export const DEMOS = {
 	"bottom-sheet/sizing/the-same-sheet-more-content": demo_bottom_sheet_sizing_the_same_sheet_more_content,
 	"bottom-sheet/steps/per-step-snap-points": demo_bottom_sheet_steps_per_step_snap_points,
 	"bottom-sheet/steps/three-step-form": demo_bottom_sheet_steps_three_step_form,
+	"breadcrumb/basic": demo_breadcrumb_basic,
+	"breadcrumb/collapsed": demo_breadcrumb_collapsed,
+	"breadcrumb/custom-separator": demo_breadcrumb_custom_separator,
+	"breadcrumb/ellipsis-sheet": demo_breadcrumb_ellipsis_sheet,
+	"breadcrumb/scroll-overflow": demo_breadcrumb_scroll_overflow,
+	"breadcrumb/sizes": demo_breadcrumb_sizes,
 	"button/disabled": demo_button_disabled,
 	"button/group": demo_button_group,
 	"button/group-input": demo_button_group_input,

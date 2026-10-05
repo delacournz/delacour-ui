@@ -196,10 +196,6 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
-		group: "Overlays",
-		blurb: "A centred card over a dimmed app that asks for a decision or a short input — confirm, alert dialog, form.",
-	},
-	{
 		slug: "toast",
 		name: "Toast",
 		group: "Overlays",

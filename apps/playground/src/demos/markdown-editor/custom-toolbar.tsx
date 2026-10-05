@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "A smaller toolbar",
 	caption:
 		"`actions` picks the buttons and their order. A comment box rarely needs a heading or a code block, and four buttons fit a phone's row without scrolling.",

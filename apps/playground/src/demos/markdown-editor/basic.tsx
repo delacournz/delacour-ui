@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Basic",
 	caption:
 		"Select a word and press **B** — it is wrapped and stays selected, so a second press takes it off again. With nothing selected, the markers go in and the caret lands between them. Return on a list line starts the next item.",

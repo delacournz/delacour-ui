@@ -51,7 +51,7 @@ export function MarkdownEditorToolbar({
 }: MarkdownEditorToolbarProps): ReactElement {
 	const editor = useMarkdownEditorPart("MarkdownEditor.Toolbar");
 	const { registerToolbar, setMode } = editor;
-	const slots = markdownEditorVariants({ toolbar: variant });
+	const slots = markdownEditorVariants({ size: editor.size, toolbar: variant });
 	const resolved = resolveMarkdownToolbarActions(actions);
 
 	useEffect(() => {
@@ -68,8 +68,8 @@ export function MarkdownEditorToolbar({
 		>
 			{resolved.length > 0 ? (
 				<ScrollView
-					className={variant === "bar" ? "flex-1" : "shrink grow-0"}
-					contentContainerClassName={slots.actions()}
+					className={slots.actions()}
+					contentContainerClassName={slots.actionRow()}
 					horizontal
 					keyboardShouldPersistTaps="always"
 					showsHorizontalScrollIndicator={false}
@@ -81,6 +81,7 @@ export function MarkdownEditorToolbar({
 			) : null}
 			{showModeSwitch ? (
 				<Tabs
+					className={slots.modeSwitch()}
 					isDisabled={editor.isDisabled}
 					isSwipeable={false}
 					onValueChange={(value) => setMode(value === "preview" ? "preview" : "write")}

@@ -88,9 +88,19 @@ parts.
 - **A `bar` toolbar is the panes' lid.** It registers its look with the root
   (`registerToolbar`), and a pane under a `bar` drops its top corners
   (`resolveMarkdownPaneClass`) so bar and pane read as one box. A `pill` is a
-  floating capsule centred above the pane and needs nothing from it.
-- **The preview follows the field's variant.** Filled (`bg-muted`) on
-  `primary`, outlined on `secondary`, floored at the write pane's height
+  floating capsule above the pane and needs nothing from it; the capsule is
+  the action scroller's own box, not its content's, so a row too long for the
+  screen scrolls inside the capsule rather than having its end cut off.
+- **The mode switch has a definite width per size.** Its triggers are
+  `flex-1` in a bar that does not scroll, so with no width of its own it
+  collapsed to its padding beside an action row that takes every point it is
+  offered — seen on a simulator as an empty grey pill.
+- **The preview restates the field's box.** `Input`'s `primary` is outlined
+  on `bg-card` and its `secondary` filled `bg-secondary`, and the preview
+  draws the same two — a test reads `inputVariants` and fails if they part —
+  so flipping modes never changes what kind of box is on screen. On the
+  filled one an inline code run lifts to `bg-card`, or `Text.Code`'s muted run
+  would vanish into it. Floored at the write pane's height
   (`resolveTextareaRowsHeight`) so flipping does not jump the screen. It is a
   plain view, never a scroller: a long document grows the pane and the screen
   scrolls, so there is no nested scroll to trap a thumb.
@@ -99,8 +109,10 @@ parts.
   deliberately not announced as a heading, so it would make a third-level
   heading a secondary line instead. All three carry the `header` role.
   Strikethrough has no `Text` preset and is a bare `Text` with `line-through`.
-  A code block is a `bg-muted` view around `Text.Code` with its own background
-  cleared — the pattern `Text.Code`'s doc comment gives.
+  A code block is a view around `Text.Code` with its own background cleared —
+  the pattern `Text.Code`'s doc comment gives — but on `bg-card` with a
+  hairline rather than `bg-muted`, which vanished into the filled preview on a
+  simulator.
 - **Links open only on an allow-list.** `isSafeUrl` passes `http`, `https`,
   `mailto` and `tel`; the parser drops anything else — `javascript:`, `data:`,
   `file:` — to its label as plain text, so there is nothing to press. The

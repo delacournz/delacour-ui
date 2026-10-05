@@ -4,6 +4,7 @@ import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "In a field",
 	caption:
 		"Inside a `Field` the editor takes the field's invalid and disabled states with nothing said at the call site. Clear the text and the border, caret and error go destructive together.",

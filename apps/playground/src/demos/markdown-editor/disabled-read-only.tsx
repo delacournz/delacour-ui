@@ -5,6 +5,7 @@ import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Disabled and read-only",
 	caption:
 		"Disabled blocks the text, the toolbar and the mode switch. Read-only keeps the text selectable and the switch working, and turns formatting off.",

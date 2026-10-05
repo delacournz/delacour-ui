@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { BUTTON_ICON_SIZES } from "../button/button.variants";
-import { INPUT_SIZES, INPUT_VARIANTS } from "../input/input.variants";
+import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
 import { TABS_SIZES } from "../tabs/tabs.variants";
 import type { MarkdownInline } from "./markdown-editor.parse";
 import type { MarkdownToolbarAction } from "./markdown-editor.types";
@@ -147,14 +147,24 @@ describe("panes", () => {
 		expect(markdownEditorVariants().input()).toContain("font-mono");
 	});
 
-	test("the preview is filled on primary and outlined on secondary", () => {
-		expect(markdownEditorVariants({ variant: "primary" }).preview()).toContain("bg-muted");
-		expect(markdownEditorVariants({ variant: "secondary" }).preview()).toContain("border-border");
+	test("the preview restates Input's box for each variant", () => {
+		const box = (variant: "primary" | "secondary"): string[] =>
+			(inputVariants({ variant }).root() ?? "").split(" ").filter((cls) => /^(?:bg|border)-[a-z]/.test(cls));
+		for (const variant of MARKDOWN_EDITOR_VARIANTS) {
+			const preview = markdownEditorVariants({ variant }).preview() ?? "";
+			for (const cls of box(variant)) expect(preview).toContain(cls);
+		}
+	});
+
+	test("the mode switch has a definite width at every size", () => {
+		for (const size of MARKDOWN_EDITOR_SIZES) {
+			expect(markdownEditorVariants({ size }).modeSwitch()).toMatch(/(?:^|\s)w-\d+(?:\s|$)/);
+		}
 	});
 
 	test("the bar is a card row and the pill a floating capsule", () => {
 		expect(markdownEditorVariants({ toolbar: "bar" }).toolbar()).toContain("bg-card");
-		const pill = markdownEditorVariants({ toolbar: "pill" }).actions();
+		const pill = markdownEditorVariants({ toolbar: "pill" }).actions() ?? "";
 		expect(pill).toContain("rounded-full");
 		expect(pill).toContain("bg-elevated");
 	});
@@ -170,6 +180,9 @@ describe("tokens", () => {
 		slot.root(),
 		slot.toolbar(),
 		slot.actions(),
+		slot.actionRow(),
+		slot.inlineCode(),
+		slot.modeSwitch(),
 		slot.input(),
 		slot.preview(),
 		slot.quote(),
@@ -181,7 +194,7 @@ describe("tokens", () => {
 	test("every colour class names a token both themes declare", () => {
 		const light = declaredTokens("light");
 		const dark = declaredTokens("dark");
-		const names = new Set(classes.flatMap(colorTokens));
+		const names = new Set(classes.flatMap((cls) => colorTokens(cls ?? "")));
 		expect(names.size).toBeGreaterThan(0);
 		for (const name of names) {
 			expect(light.has(name)).toBe(true);

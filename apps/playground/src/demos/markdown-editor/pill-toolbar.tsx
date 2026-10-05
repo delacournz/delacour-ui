@@ -3,9 +3,10 @@ import type { ReactElement } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Pill toolbar",
 	caption:
-		'`variant="pill"` floats the actions in a capsule above the field instead of sitting on its top edge. `secondary` outlines the field and the preview rather than filling them.',
+		'`variant="pill"` floats the actions in a capsule above the field instead of sitting on its top edge. `secondary` fills the field and the preview rather than outlining them.',
 	keyboardAware: true,
 };
 

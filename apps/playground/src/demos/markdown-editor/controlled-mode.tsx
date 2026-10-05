@@ -5,6 +5,7 @@ import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Controlled mode",
 	caption:
 		"`mode` and `onModeChange` put the pane in the caller's hands — here a button outside the editor flips it, and the toolbar's own switch keeps working beside it.",

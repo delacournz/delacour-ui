@@ -55,7 +55,7 @@ export function MarkdownEditorPreview({
 			{blocks.length === 0 ? (
 				<Text.Caption>{emptyText}</Text.Caption>
 			) : (
-				<MarkdownBlocks blocks={blocks} onLinkPress={editor.onLinkPress} />
+				<MarkdownBlocks blocks={blocks} codeClassName={slots.inlineCode()} onLinkPress={editor.onLinkPress} />
 			)}
 		</Animated.View>
 	);

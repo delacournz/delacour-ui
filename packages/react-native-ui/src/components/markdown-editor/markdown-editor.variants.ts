@@ -69,9 +69,16 @@ export const MARKDOWN_EDITOR_TABS_SIZE: Record<MarkdownEditorSize, TabsSize> = {
  *
  * The write pane's box is `Textarea`'s — `Input`'s, really — and is not
  * restated: `input` adds only the monospaced face. `preview` is the one
- * surface the editor paints itself, and it follows the field's `variant` so
- * flipping modes does not change what kind of box is on screen: filled on
- * `primary`, outlined on `secondary`.
+ * surface the editor paints itself, and it restates `Input`'s two boxes so
+ * flipping modes does not change what kind of box is on screen: outlined on
+ * `bg-card` for `primary`, filled `bg-secondary` for `secondary`.
+ *
+ * `inlineCode` lifts `Text.Code`'s muted run to `bg-card` on the filled
+ * `secondary` preview, where muted on secondary would draw no run at all.
+ *
+ * `modeSwitch` is a definite width, per size: its triggers are `flex-1` in a
+ * bar that does not scroll, so with no width of its own the switch collapses
+ * to its padding beside an action row that takes every point it is offered.
  *
  * `toolbar` picks the bar's look. A `bar` is a card row sitting on the pane's
  * top edge — the pane drops its top corners to meet it, see
@@ -84,33 +91,44 @@ export const markdownEditorVariants = tv({
 	slots: {
 		root: "gap-2",
 		toolbar: "flex-row items-center gap-2",
-		actions: "flex-row items-center",
+		actions: "",
+		actionRow: "flex-row items-center",
 		input: "font-mono",
 		pane: "",
 		preview: "gap-3 rounded-lg px-3 py-3",
 		quote: "gap-2 border-l-2 border-border pl-3",
-		codeBlock: "rounded-lg bg-muted p-3",
+		codeBlock: "rounded-md border border-border bg-card p-3",
 		listItem: "flex-row gap-2",
 		listMarker: "min-w-5 text-muted-foreground tabular-nums",
+		modeSwitch: "shrink-0",
+		inlineCode: "",
 	},
 	variants: {
+		size: {
+			sm: { modeSwitch: "w-40" },
+			md: { modeSwitch: "w-52" },
+			lg: { modeSwitch: "w-60" },
+		},
 		toolbar: {
 			bar: {
 				root: "gap-0",
 				toolbar: "rounded-t-lg border border-b-0 border-border bg-card px-1 py-1",
-				actions: "gap-0.5",
+				actions: "flex-1",
+				actionRow: "gap-0.5",
 			},
 			pill: {
 				toolbar: "justify-center",
-				actions: "self-center rounded-full border border-border bg-elevated px-1 py-1",
+				actions: "shrink grow-0 overflow-hidden rounded-full border border-border bg-elevated",
+				actionRow: "px-1 py-1",
 			},
 		},
 		variant: {
-			primary: { preview: "border border-transparent bg-muted" },
-			secondary: { preview: "border border-border bg-transparent" },
+			primary: { preview: "border border-input bg-card" },
+			secondary: { preview: "border border-transparent bg-secondary", inlineCode: "bg-card" },
 		},
 	},
 	defaultVariants: {
+		size: "md",
 		toolbar: "bar",
 		variant: "primary",
 	},

@@ -72,7 +72,7 @@ Return on a list or quote line starts the next item — the same bullet, the nex
 
 ## Toolbar looks
 
-`bar` sits on the field's top edge as its lid. `pill` floats an icon-only capsule above it.
+`bar` sits on the field's top edge as its lid. `pill` floats an icon-only capsule above it. `variant` styles the field and the preview together — outlined on `primary`, filled on `secondary`, the same two boxes as `Input`.
 
 ```tsx
 <MarkdownEditor variant="secondary">
@@ -113,7 +113,7 @@ The preview draws the subset the toolbar writes, on the library's own `Text` pre
 | --- | --- |
 | `#`, `##`, `###` | `Text.Title`, `Text.Header`, `Text.Header` at `lg` — announced as headings |
 | `**bold**`, `_italic_` / `*italic*`, `~~struck~~` | `Text.Strong`, `Text.Emphasis`, a line-through |
-| `` `code` `` and fenced blocks | `Text.Code`; a block sits on a muted panel |
+| `` `code` `` and fenced blocks | `Text.Code`; a block sits on a bordered panel |
 | `[label](url)` | `Text.Link` |
 | `> quote` | a ruled, indented block |
 | `- item`, `1. item` | rows with a bullet or a number |

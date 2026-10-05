@@ -52,6 +52,7 @@
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./color-picker": "./src/components/color-picker/index.ts",
 		"./combobox": "./src/components/combobox/index.ts",
+		"./compare": "./src/components/compare/index.ts",
 		"./context-menu": "./src/components/context-menu/index.ts",
 		"./countdown": "./src/components/countdown/index.ts",
 		"./date-picker": "./src/components/date-picker/index.ts",

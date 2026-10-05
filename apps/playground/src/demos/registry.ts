@@ -223,6 +223,15 @@ import * as demo_combobox_grouped_with_descriptions from "./combobox/grouped-wit
 import * as demo_combobox_in_field_invalid from "./combobox/in-field-invalid";
 import * as demo_combobox_multiple_chips from "./combobox/multiple-chips";
 import * as demo_combobox_single from "./combobox/single";
+import * as demo_compare_accessible_names from "./compare/accessible-names";
+import * as demo_compare_anatomy from "./compare/anatomy";
+import * as demo_compare_colours_and_sizes from "./compare/colours-and-sizes";
+import * as demo_compare_controlled from "./compare/controlled";
+import * as demo_compare_disabled from "./compare/disabled";
+import * as demo_compare_grab_anywhere from "./compare/grab-anywhere";
+import * as demo_compare_snap_points from "./compare/snap-points";
+import * as demo_compare_themes from "./compare/themes";
+import * as demo_compare_vertical from "./compare/vertical";
 import * as demo_context_menu_anchored_to_row from "./context-menu/anchored-to-row";
 import * as demo_context_menu_hold_timing from "./context-menu/hold-timing";
 import * as demo_context_menu_lifted_preview from "./context-menu/lifted-preview";
@@ -1029,6 +1038,15 @@ export const DEMOS = {
 	"combobox/in-field-invalid": demo_combobox_in_field_invalid,
 	"combobox/multiple-chips": demo_combobox_multiple_chips,
 	"combobox/single": demo_combobox_single,
+	"compare/accessible-names": demo_compare_accessible_names,
+	"compare/anatomy": demo_compare_anatomy,
+	"compare/colours-and-sizes": demo_compare_colours_and_sizes,
+	"compare/controlled": demo_compare_controlled,
+	"compare/disabled": demo_compare_disabled,
+	"compare/grab-anywhere": demo_compare_grab_anywhere,
+	"compare/snap-points": demo_compare_snap_points,
+	"compare/themes": demo_compare_themes,
+	"compare/vertical": demo_compare_vertical,
 	"context-menu/anchored-to-row": demo_context_menu_anchored_to_row,
 	"context-menu/hold-timing": demo_context_menu_hold_timing,
 	"context-menu/lifted-preview": demo_context_menu_lifted_preview,

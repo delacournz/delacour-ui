@@ -261,6 +261,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
 		categories: ["display"],
 	},
+	compare: {
+		title: "Compare",
+		description: "Two layers of one frame with a seam you drag across, revealed by a transform rather than a resize.",
+		categories: ["media"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

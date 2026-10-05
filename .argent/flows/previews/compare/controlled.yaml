@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on compare/controlled and has settled — the seam at 50%, three outline buttons
+  below it (testIDs compare-controlled-before, -half and -after), and a caption reading "50% before". The capture
+  script navigates there before running this.
+steps:
+  - echo: The parent writes the position, and the seam springs to it
+  - tap: { id: compare-controlled-before }
+  - wait: 700
+  - tap: { id: compare-controlled-after }
+  - wait: 700
+  - echo: And back to half, so the clip loops without a jump cut
+  - tap: { id: compare-controlled-half }
+  - wait: 300

@@ -113,6 +113,7 @@ shares.
 | [CircularText](src/components/circular-text/AGENTS.md) | `@delacour/react-native-ui/circular-text` | Text set around a circle, optionally turning |
 | [ColorPicker](src/components/color-picker/AGENTS.md) | `@delacour/react-native-ui/color-picker` | A colour dragged on an area and tracks, typed as hex, or tapped from swatches |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
+| [Compare](src/components/compare/AGENTS.md) | `@delacour/react-native-ui/compare` | Two layers of one frame, revealed by a draggable seam |
 | [Countdown](src/components/countdown/AGENTS.md) | `@delacour/react-native-ui/countdown` | Time left until a fixed moment, as sliding segmented digits or an inline run |
 | [Direction](src/components/direction/AGENTS.md) | `@delacour/react-native-ui/direction` | LTR or RTL for a subtree, and the sign gesture maths multiplies by |
 | [Combobox](src/components/combobox/AGENTS.md) | `@delacour/react-native-ui/combobox` | A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet |

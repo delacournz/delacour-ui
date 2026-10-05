@@ -8,6 +8,7 @@ import {
 	LEADERBOARD_BAR_STAGGER_MS,
 	LEADERBOARD_DEFAULT_PODIUM_HEIGHT,
 	LEADERBOARD_MIN_BAR_RATIO,
+	LEADERBOARD_MOVEMENT_COLOR,
 	LEADERBOARD_ORDERS,
 	LEADERBOARD_PODIUM_SCALES,
 	LEADERBOARD_PODIUMS,
@@ -468,9 +469,17 @@ describe("leaderboardVariants", () => {
 		expect(leaderboardVariants({ movement: "same" }).movementText()).toContain("text-muted-foreground");
 	});
 
+	test("the glyph token matches the text class for every movement", () => {
+		for (const movement of ["up", "down", "same"] as const) {
+			expect(leaderboardVariants({ movement }).movementText()).toContain(
+				`text-${LEADERBOARD_MOVEMENT_COLOR[movement]}`
+			);
+		}
+	});
+
 	test("the cards podium raises the leader by 12pt", () => {
-		expect(leaderboardVariants({ place: 1 }).podiumCard()).toContain("-mt-3");
-		expect(leaderboardVariants({ place: 2 }).podiumCard()).not.toContain("-mt-3");
+		expect(leaderboardVariants({ place: 1 }).podiumCard()).toContain("mb-3");
+		expect(leaderboardVariants({ place: 2 }).podiumCard()).not.toContain("mb-3");
 	});
 
 	test("no view slot carries a text colour or size (rule 1)", () => {

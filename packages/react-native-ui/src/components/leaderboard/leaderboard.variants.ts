@@ -61,7 +61,7 @@ export const leaderboardVariants = tv({
 		podiumValue: "text-center text-muted-foreground tabular-nums",
 		podiumBar: "mt-1 w-full items-center overflow-hidden rounded-t-md pt-2",
 		podiumBarRank: "font-semibold text-lg text-primary-foreground tabular-nums",
-		podiumCard: "min-w-0 flex-1 items-center gap-1",
+		podiumCard: "w-full items-center gap-1",
 		podiumCardRank: "mb-1 size-7 items-center justify-center rounded-full",
 		podiumCardRankText: "font-semibold text-primary-foreground text-sm tabular-nums",
 		rows: "gap-1",
@@ -80,12 +80,12 @@ export const leaderboardVariants = tv({
 	},
 	variants: {
 		place: {
-			1: { podiumBar: "bg-primary", podiumCard: "-mt-3", podiumCardRank: "bg-primary" },
+			1: { podiumBar: "bg-primary", podiumCard: "mb-3", podiumCardRank: "bg-primary" },
 			2: { podiumBar: "bg-primary/70", podiumCardRank: "bg-primary/70" },
 			3: { podiumBar: "bg-primary/45", podiumCardRank: "bg-primary/45" },
 		},
 		isHighlighted: {
-			true: { row: "bg-primary/10" },
+			true: { row: "bg-primary/10", podiumCard: "border-primary" },
 			false: {},
 		},
 		movement: {
@@ -260,6 +260,16 @@ export function applyLeaderboardLimit(
 
 /** Which way an entry moved since the last period, in whole places. */
 export type LeaderboardMovement = { kind: "up" | "down"; places: number } | { kind: "same" } | { kind: "none" };
+
+/**
+ * The theme token a movement glyph is drawn in, matching `movementText` —
+ * an `Icon` takes its colour as a token, not a class.
+ */
+export const LEADERBOARD_MOVEMENT_COLOR: Record<"up" | "down" | "same", string> = {
+	up: "success-soft-foreground",
+	down: "destructive",
+	same: "muted-foreground",
+};
 
 /** Reads an entry's `change`: positive climbed, negative fell, zero held, absent says nothing. */
 export function resolveMovement(change: number | undefined): LeaderboardMovement {

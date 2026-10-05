@@ -39,6 +39,7 @@ import {
 	IconTag,
 	IconToggle,
 	IconTrending4,
+	IconTrophy,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
@@ -77,6 +78,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	item: IconLayoutLeft,
 	kpi: IconTrending4,
 	label: IconAsterisk,
+	leaderboard: IconTrophy,
 	"list-group": IconBulletList,
 	meter: IconGauge,
 	pressable: IconCursorClick,

@@ -25,6 +25,7 @@ export {
 	resolveDrawerEdge,
 	resolveDrawerExitDuration,
 	resolveDrawerExtent,
+	resolveDrawerFrameExtent,
 	resolveDrawerInsets,
 	resolveDrawerOffset,
 	resolveDrawerRelease,

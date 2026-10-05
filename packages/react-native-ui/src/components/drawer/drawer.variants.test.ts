@@ -19,6 +19,7 @@ import {
 	resolveDrawerEdge,
 	resolveDrawerExitDuration,
 	resolveDrawerExtent,
+	resolveDrawerFrameExtent,
 	resolveDrawerInsets,
 	resolveDrawerOffset,
 	resolveDrawerRelease,
@@ -287,6 +288,20 @@ describe("resolveDrawerInsets", () => {
 	});
 });
 
+describe("resolveDrawerFrameExtent", () => {
+	const insets = { bottom: 34, left: 0, right: 0, top: 62 };
+
+	test("the docked edge's inset is added, so the size measures the content, not the status bar", () => {
+		expect(resolveDrawerFrameExtent("top", 280, insets)).toBe(342);
+		expect(resolveDrawerFrameExtent("bottom", 280, insets)).toBe(314);
+	});
+
+	test("a side drawer in portrait has no inset on its docked edge", () => {
+		expect(resolveDrawerFrameExtent("left", 320, insets)).toBe(320);
+		expect(resolveDrawerFrameExtent("right", 320, { ...insets, right: 47 })).toBe(367);
+	});
+});
+
 describe("drawerVariants", () => {
 	test("the panel is a popover surface", () => {
 		expect(drawerVariants().content()).toContain("bg-popover");
@@ -346,6 +361,10 @@ describe("drawerVariants", () => {
 		const footer = drawerVariants().footer();
 		expect(footer).toContain("border-t");
 		expect(footer).toContain("border-border");
+	});
+
+	test("the footer pins to the panel's end even with no body above it", () => {
+		expect(drawerVariants().footer()).toContain("mt-auto");
 	});
 
 	test("the body takes the panel's remaining height", () => {

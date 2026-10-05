@@ -95,7 +95,8 @@ status bar and the home indicator.
 `size` sets the panel's width for `start` and `end`, and its height for `top` and `bottom`, as a
 fraction of the window with a cap: `sm` 62% up to 280pt, `md` 78% up to 320pt (the default), `lg` 88%
 up to 400pt, and `full` 94% with no cap. A phone always keeps a strip of the app beside the panel to
-tap away on.
+tap away on. The size measures the content: the safe-area inset on the docked edge — the status bar
+above a top drawer, the home indicator below a bottom one — is added on top of it.
 
 ```tsx
 <Drawer.Content size="sm">…</Drawer.Content>

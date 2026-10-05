@@ -28,7 +28,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 | `drawer-close.tsx` | `Drawer.Close` — the ✕, or with `asChild` any control that closes |
 | `use-drawer-pan.ts` | `useDrawerPan` — the swipe-to-dismiss pan, its threshold haptic and its release |
 | `drawer.variants.ts` | The slotted `tv()`, the size table, the release constants and the pure geometry — no RN imports |
-| `drawer.variants.test.ts` | Edges both directions, extents, offsets, drag, release, exit duration, insets, slots per edge, tokens in both themes |
+| `drawer.variants.test.ts` | Edges both directions, extents, frame extents, offsets, drag, release, exit duration, insets, slots per edge, tokens in both themes |
 
 ## Design
 
@@ -48,7 +48,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   400, `full` 94% uncapped — of the width for a start/end drawer, of the height for top/bottom. A
   fraction keeps a strip of the app in view to tap away on; the cap keeps a tablet's drawer a drawer.
   The extent is a fixed width or height rather than a measured one, so the first frame already knows
-  how far off-screen the panel starts.
+  how far off-screen the panel starts. **The docked edge's inset is added on top**
+  (`resolveDrawerFrameExtent`): the size measures the content, not the band under the status bar. A
+  top `sm` drawer once spent 62 of its 280pt there and clipped its third row.
 - **Insets go on every side that meets a screen edge.** `resolveDrawerInsets` pads the docked side and
   the two beside it, and nothing on the side facing the app, so a start drawer clears the status bar,
   the home indicator and a landscape notch, and a top drawer does not pad for the home indicator it
@@ -86,8 +88,9 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   sits at the trailing edge, so a long title wraps before it and RTL needs no rule. `isCloseHidden`
   drops it. There is no `title` or `description` slot — both are text presets with no layout of their
   own, and `tv` emits `undefined` for an empty slot; the parts merge `className` with `cn()`.
-- **The body scrolls by default and takes the slack**, so a footer sits at the panel's end however
-  short the content. A top or bottom drawer's pan shares the vertical axis with a scroll — keep that
+- **The body scrolls by default and takes the slack, and the footer is `mt-auto`**, so the footer sits
+  at the panel's end however short the content — even with no body, which the simulator caught: a
+  header-and-footer bottom drawer left its footer floating under the header. A top or bottom drawer's pan shares the vertical axis with a scroll — keep that
   content short, or use a `BottomSheet`.
 - **It draws in the `modal` band**, over the navigator's header and over an open bottom sheet.
 - **Triggers and closes donate the press** with `asChild`, for `BottomSheet.Trigger`'s reason.
@@ -111,7 +114,7 @@ and the flows are in `.argent/flows/previews/drawer/`:
 
 ## Testing
 
-`bun test` reaches the edge resolution in both directions, the extents on a small and a wide window,
+`bun test` reaches the edge resolution in both directions, the extents on a small and a wide window, the frame extent with the docked inset,
 the offset, the drag and its rubber band, the drag fraction, the release (threshold, fling toward,
 fling away), the exit duration, the insets per edge and the slots per edge with their tokens in both
 themes. All four sides from every dismissal path, the swipe's continue-and-restore, the scrolling

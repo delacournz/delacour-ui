@@ -81,7 +81,8 @@ export const drawerVariants = tv({
 		body: "flex-1",
 		/** The body's padding, on the scroll content so it scrolls with it. */
 		bodyContent: "gap-3 px-5 pb-5",
-		footer: "flex-row items-center justify-end gap-2 border-border border-t px-5 py-4",
+		/** `mt-auto` so it sits at the panel's end even when no body takes the slack. */
+		footer: "mt-auto flex-row items-center justify-end gap-2 border-border border-t px-5 py-4",
 		close: "shrink-0",
 	},
 	variants: {
@@ -227,4 +228,17 @@ export function resolveDrawerInsets(edge: DrawerEdge, insets: DrawerInsets): Dra
 		bottom: edge === "top" ? 0 : insets.bottom,
 		left: edge === "right" ? 0 : insets.left,
 	};
+}
+
+/**
+ * The panel's full width or height: the size's extent plus the inset on the
+ * docked edge.
+ *
+ * The size measures the content, not the safe-area band it sits under — a
+ * top drawer at `sm` would otherwise hand a third of its 280pt to the status
+ * bar and clip its rows. The motion uses this, so the panel starts fully off
+ * screen.
+ */
+export function resolveDrawerFrameExtent(edge: DrawerEdge, extent: number, insets: DrawerInsets): number {
+	return extent + insets[edge];
 }

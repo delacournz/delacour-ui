@@ -19,6 +19,7 @@ import {
 	resolveDrawerDragFraction,
 	resolveDrawerEdge,
 	resolveDrawerExtent,
+	resolveDrawerFrameExtent,
 	resolveDrawerInsets,
 	resolveDrawerOffset,
 } from "./drawer.variants";
@@ -87,8 +88,13 @@ export function DrawerContent({
 	const edge = resolveDrawerEdge(side, isRTL);
 	const isHorizontal = edge === "left" || edge === "right";
 	const window = useWindowDimensions();
-	const extent = resolveDrawerExtent(size, isHorizontal ? window.width : window.height);
-	const insets = resolveDrawerInsets(edge, useSafeAreaInsets());
+	const safeArea = useSafeAreaInsets();
+	const insets = resolveDrawerInsets(edge, safeArea);
+	const extent = resolveDrawerFrameExtent(
+		edge,
+		resolveDrawerExtent(size, isHorizontal ? window.width : window.height),
+		insets
+	);
 
 	const handleEntered = useCallback(() => focus(titleRef.current), [titleRef]);
 	const handleExited = useCallback(() => focus(triggerRef.current), [triggerRef]);

@@ -4,11 +4,15 @@ description: A large title that collapses into a pinned bar as the page scrolls,
 icon: PanelTopClose
 ---
 
+<Preview id="scroll-header/large-title-list" title={null} />
+
 ## Installation
 
 <ComponentInstall name="scroll-header" />
 
 ## Usage
+
+<Preview id="scroll-header/large-title-list" />
 
 ```tsx title="app/index.tsx"
 import { Button } from "@/components/ui/button";
@@ -70,6 +74,8 @@ The parts may come in any order — they stack by z-index, not by position.
 
 ## Cover and stretch
 
+<Preview id="scroll-header/cover" />
+
 ```tsx
 <ScrollHeader>
   <ScrollHeader.Cover source={{ uri: "https://picsum.photos/id/1018/1200/800" }} />
@@ -94,6 +100,8 @@ There is no back-button part: pass a `Button` with a chevron and your router's `
 
 ## The blur bar
 
+<Preview id="scroll-header/blur-bar" />
+
 `surface="blur"` frosts the bar with the blur engine `ScrollBlurLayerProvider` names — set that up
 once at the root, as on the [ScrollBlur](/docs/native/components/scroll-blur) page. With no engine,
 or with Reduce Transparency on, the bar is `plain`.
@@ -114,6 +122,8 @@ or with Reduce Transparency on, the bar is `plain`.
 ```
 
 ## Reacting to collapse
+
+<Preview id="scroll-header/react-to-collapse" />
 
 `onCollapsedChange` fires once per crossing, on the JS thread. `progress` is written every frame,
 0 open to 1 collapsed, for effects on the UI thread.

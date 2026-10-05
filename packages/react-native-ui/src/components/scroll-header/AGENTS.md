@@ -126,13 +126,19 @@ on the scroller, but its offset is not wired into `progress`); changes to `Scree
 ## Demos and preview media
 
 Six demos in `apps/playground/src/demos/scroll-header/`, each a whole screen (`min-h-[600px] flex-1`,
-so it fills the device preview and still has a height inside the gallery pager). **None is marked
-`capture` yet**, for the same reason as ScrollBlur: the `argent` CLI `bun run previews` drives is not
-installed on the machine this branch was built on, and a captured demo without a manifest entry fails
-`demos.test.ts`. To publish, mark `large-title-list` (`hero`, flow: scroll, settle, snap), `cover`
-(flow: pull then scroll), `blur-bar` and `react-to-collapse` (flow: scroll) with
-`capture: { frame: "device" }`, write the flows under `.argent/flows/previews/scroll-header/`, run
-`bun run previews -- -- --only scroll-header`, and add a `<Preview>` above each matching docs section.
+so it fills the device preview and still has a height inside the gallery pager). Four are captured
+with `frame: "device"`, each a clip whose flow in `.argent/flows/previews/scroll-header/` swipes
+from the scroller's testID with `momentum: false` and returns to rest, so the loop is seamless:
+
+| Demo | Flow | Docs section |
+| --- | --- | --- |
+| `large-title-list` (**hero**) | collapse, then back open | above Installation, and Usage |
+| `cover` | pull to stretch, collapse, back open | Cover and stretch |
+| `blur-bar` | collapse under the blur bar, back open | The blur bar |
+| `react-to-collapse` | collapse (avatar and Follow arrive), back open | Reacting to collapse |
+
+`early-handover` and `no-large` stay gallery-only (`align: "stretch"`). Recapture with
+`bun run previews -- -- --only scroll-header`; `cover` loads a remote image, so it needs network.
 
 ## Simulator check
 

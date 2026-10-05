@@ -158,6 +158,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	"circular-text": {
+		title: "Circular Text",
+		description: "Text set around a circle on an SVG path, optionally turning, with content in the middle.",
+		categories: ["media"],
+	},
 	collapsible: {
 		title: "Collapsible",
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",

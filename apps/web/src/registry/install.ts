@@ -3473,6 +3473,90 @@ export const install = {
 			},
 		],
 	},
+	"circular-text": {
+		name: "circular-text",
+		title: "CircularText",
+		description: "Text set around a circle on an SVG path, optionally turning, with content in the middle.",
+		importPath: "@delacour/react-native-ui/circular-text",
+		exportName: "CircularText",
+		expo: ["react-native-gesture-handler", "react-native-reanimated", "react-native-svg", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 22,
+		groups: [
+			{
+				name: "circular-text",
+				title: "Circular Text",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/circular-text/AGENTS.md", target: "src/components/ui/circular-text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/circular-text/circular-text-ring.tsx", target: "src/components/ui/circular-text/circular-text-ring.tsx" },
+					{ source: "packages/react-native-ui/src/components/circular-text/circular-text-spin.ts", target: "src/components/ui/circular-text/circular-text-spin.ts" },
+					{ source: "packages/react-native-ui/src/components/circular-text/circular-text.tsx", target: "src/components/ui/circular-text/circular-text.tsx" },
+					{ source: "packages/react-native-ui/src/components/circular-text/circular-text.types.ts", target: "src/components/ui/circular-text/circular-text.types.ts" },
+					{ source: "packages/react-native-ui/src/components/circular-text/circular-text.variants.ts", target: "src/components/ui/circular-text/circular-text.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/circular-text/index.ts", target: "src/components/ui/circular-text/index.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+		],
+	},
 	"meter": {
 		name: "meter",
 		title: "Meter",

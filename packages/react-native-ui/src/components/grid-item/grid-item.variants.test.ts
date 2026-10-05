@@ -62,7 +62,7 @@ describe("gridItemVariants — variant", () => {
 			for (const size of GRID_ITEM_SIZES) {
 				const slots = gridItemVariants({ isDisabled: true, size, variant });
 				for (const slot of Object.values(slots)) {
-					expect(slot()).not.toMatch(/\bshadow/);
+					expect(slot() ?? "").not.toMatch(/\bshadow/);
 				}
 			}
 		}

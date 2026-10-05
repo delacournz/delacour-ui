@@ -6,7 +6,6 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Reads the live theme — System while the app follows the device — and applies a press through `Uniwind.setTheme`. Change the theme anywhere else and it follows.",
-	capture: { align: "stretch", hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -6,7 +6,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	caption: "The button's label steps. `sm` reaches a little past its edges, so it is still a 44pt target.",
-	capture: { align: "stretch" },
 };
 
 const LABELS: Record<ThemeSelectorSize, string> = {

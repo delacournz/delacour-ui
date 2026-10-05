@@ -4,8 +4,6 @@ description: System, Light or Dark — read from the live theme, and applied to 
 icon: SunMoon
 ---
 
-<Preview id="theme-selector/basic" title={null} />
-
 ## Installation
 
 <ComponentInstall name="theme-selector" />
@@ -38,8 +36,6 @@ device, so a theme changed anywhere else re-selects every mounted selector.
 
 `variant="cards"` stands the options apart as tiles, a larger glyph over each label.
 
-<Preview id="theme-selector/cards" />
-
 ```tsx
 <ThemeSelector variant="cards" />
 ```
@@ -47,8 +43,6 @@ device, so a theme changed anywhere else re-selects every mounted selector.
 ## Sizes
 
 The button's label steps; `sm` reaches past its edges to stay a 44pt target.
-
-<Preview id="theme-selector/sizes" />
 
 ```tsx
 <ThemeSelector size="sm" />
@@ -68,8 +62,6 @@ The button's label steps; `sm` reaches past its edges to stay a 44pt target.
 
 Uniwind forgets its theme on restart; with `applyTheme={false}` the selector only reports, so the
 app saves the choice, applies it and passes the saved mode back as `value`.
-
-<Preview id="theme-selector/persisted" />
 
 ```tsx
 import { restoreThemeMode, ThemeSelector, type ThemeMode } from "@/components/ui/theme-selector";
@@ -106,8 +98,6 @@ export function AppearanceSetting() {
 ## In a field
 
 Inside a `Field`, the label names the group and `isDisabled` cascades.
-
-<Preview id="theme-selector/in-field" />
 
 ```tsx
 <Field>

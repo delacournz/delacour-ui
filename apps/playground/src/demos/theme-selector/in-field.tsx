@@ -6,7 +6,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "In a field",
 	caption: "Inside a `Field` the label names the group for a screen reader, and `isDisabled` cascades.",
-	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

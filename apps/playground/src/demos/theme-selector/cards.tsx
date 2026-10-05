@@ -5,7 +5,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Cards",
 	caption: '`variant="cards"` stands the options apart as tiles, a larger glyph over each label.',
-	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

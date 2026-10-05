@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	title: "Persisted",
 	caption:
 		"With `applyTheme={false}` the selector only reports. The app saves the choice, applies it, and shows the saved value — here a stand-in store; in an app, MMKV or AsyncStorage.",
-	capture: { align: "stretch" },
 };
 
 const storage = new Map<string, string>();

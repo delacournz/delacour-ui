@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	title: "File browser",
 	caption:
 		"Folders open from the chevron or the row, files select. A folder glyph that follows its branch reads `useTreeItem`; the count sits in `Tree.Actions`, outside the row's tap target.",
-	capture: { align: "stretch", hero: true },
 };
 
 /** A folder glyph that opens with its branch. */

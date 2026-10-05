@@ -9,7 +9,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	caption: "`sm` rows are 36 points and `md` 44; the label, the glyph and the chevron's column step with them.",
-	capture: { align: "stretch" },
 };
 
 const LABELS: Record<TreeSize, string> = {

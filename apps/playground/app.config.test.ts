@@ -268,6 +268,29 @@ describe("ios.privacyManifests", () => {
 	});
 });
 
+describe("react-native-maps", () => {
+	/**
+	 * The Map demos turn on the location dot, and iOS refuses the permission
+	 * prompt outright — no dialog, no dot — when the usage string is missing.
+	 */
+	test("declares why the app asks for location", () => {
+		expect(expoConfig.ios?.infoPlist?.NSLocationWhenInUseUsageDescription).toBeString();
+	});
+
+	/**
+	 * The key is read from the environment at build time. An empty string
+	 * written into the manifest is a key Google rejects, and a blank map with no
+	 * error; no key at all is the same blank map, but the plugin then writes no
+	 * meta-data entry for anyone to mistake for a working one.
+	 */
+	test("passes the Android key only when the build has one", () => {
+		const options = pluginEntry("react-native-maps") as { androidGoogleMapsApiKey?: string };
+		const key = (process.env as Record<string, string | undefined>).GOOGLE_MAPS_ANDROID_API_KEY;
+
+		expect(options.androidGoogleMapsApiKey).toBe(key || undefined);
+	});
+});
+
 describe("generate-icons.ts", () => {
 	const source = readFileSync(GENERATOR, "utf8");
 

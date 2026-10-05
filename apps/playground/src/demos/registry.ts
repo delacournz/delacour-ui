@@ -252,6 +252,13 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_map_arcs from "./map/arcs";
+import * as demo_map_controls from "./map/controls";
+import * as demo_map_fly_to from "./map/fly-to";
+import * as demo_map_places from "./map/places";
+import * as demo_map_popup from "./map/popup";
+import * as demo_map_route from "./map/route";
+import * as demo_map_tones from "./map/tones";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -618,6 +625,13 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"map/arcs": demo_map_arcs,
+	"map/controls": demo_map_controls,
+	"map/fly-to": demo_map_fly_to,
+	"map/places": demo_map_places,
+	"map/popup": demo_map_popup,
+	"map/route": demo_map_route,
+	"map/tones": demo_map_tones,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

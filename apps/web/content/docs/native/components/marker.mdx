@@ -4,11 +4,15 @@ description: A centred inline note for a step or a day break between conversatio
 icon: History
 ---
 
+<Preview id="marker/conversation" title={null} />
+
 ## Installation
 
 <ComponentInstall name="marker" />
 
 ## Usage
+
+<Preview id="marker/conversation" />
 
 ```tsx title="app/index.tsx"
 import { Icon } from "@/components/ui/icon";
@@ -35,6 +39,8 @@ export default function Example() {
 `default` is a bare row, `border` a hairline capsule for closing a section, `separator` a label
 ruled off to both edges for day breaks.
 
+<Preview id="marker/variants" />
+
 ```tsx
 <Marker>Explored 4 files</Marker>
 <Marker variant="border">Task complete</Marker>
@@ -45,6 +51,8 @@ ruled off to both edges for day breaks.
 
 With no `onPress` and no `onLongPress` a marker is a plain `View`, read as text; give it either and
 it becomes a `Pressable` announced as a button.
+
+<Preview id="marker/pressable" />
 
 ```tsx
 <Marker accessibilityHint="Shows the files" onPress={() => setIsOpen((open) => !open)}>
@@ -60,6 +68,8 @@ it becomes a `Pressable` announced as a button.
 `shimmer` on `Marker.Content` says the step is still running: the text breathes, and the marker is
 announced busy.
 
+<Preview id="marker/running" />
+
 ```tsx
 <Marker>
   <Marker.Icon>
@@ -70,6 +80,21 @@ announced busy.
 ```
 
 <Callout type="warn">Drop `shimmer` the moment the step finishes. A marker that shimmers forever reads as a stuck one.</Callout>
+
+## Disabled
+
+`isDisabled` dims the marker. On a pressable one it also blocks the press and is announced.
+
+<Preview id="marker/disabled" />
+
+```tsx
+<Marker isDisabled onPress={() => expand(step)}>
+  <Marker.Icon>
+    <Icon icon={IconMagnifyingGlass} />
+  </Marker.Icon>
+  <Marker.Content>Explored 4 files</Marker.Content>
+</Marker>
+```
 
 ## Accessibility
 

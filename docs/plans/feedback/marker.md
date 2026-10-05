@@ -188,14 +188,14 @@ Variants, Pressable, Running (shimmer, and the rule to drop it), Accessibility, 
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green.
 - [ ] Simulator verification via warden + agent-device, or its absence recorded in the commit body.
 
-## Follow-ups
+## Previews
 
-- **Preview capture.** The capture tool is not installed on the machine that built Marker, and a
-  captured demo with no manifest entry fails `demos.test.ts`, so the demos ship uncaptured and the
-  docs page has no `<Preview>`. When previews can run: restore `capture` on the demos —
-  `conversation` `{ align: "stretch", hero: true }`; `variants`, `pressable`, `running`
-  `{ align: "stretch" }` — run `bun run previews -- -- --only marker`, and add the hero `<Preview>`
-  plus one per Variants / Pressable / Running section of `marker.mdx`.
+Captured 2026-10-06 on an iPhone 17 Pro dev client: `conversation` (hero clip — a step in the
+thread opens and closes), `pressable` and `running` (clips), `variants` and `disabled` (stills).
+`conversation` and `pressable` hold their expanded height from the start (`min-h-[25rem]`,
+`min-h-32`): the stage crops to the collapsed size, so an expansion otherwise pushed the marker out
+of frame. `running` starts finished and its flow runs exactly two shimmer cycles before finishing,
+so its first and last frames match.
 
 ## Simulator verification
 

@@ -4,6 +4,8 @@ description: A one-time code or PIN — cells drawn over one hidden field, with 
 icon: KeyRound
 ---
 
+<Preview id="otp-input/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="otp-input" />
@@ -37,6 +39,8 @@ pasteboard follows the Mac's.
 
 `onComplete` fires once when the last cell fills, with a `success` haptic and the keyboard dismissed.
 
+<Preview id="otp-input/basic" />
+
 ```tsx
 <OtpInput onComplete={verify} />
 <OtpInput blurOnComplete={false} haptic={false} onComplete={verify} />
@@ -45,6 +49,8 @@ pasteboard follows the Mac's.
 ## Pattern and keyboard
 
 `pattern` decides which characters a cell takes, and `"digits"` shows the number pad.
+
+<Preview id="otp-input/alphanumeric" />
 
 ```tsx
 <OtpInput length={6} pattern="digits" />
@@ -89,6 +95,8 @@ Write the anatomy out for any other shape.
 
 `isMasked` draws `•` in filled cells without switching off autofill, and `placeholder` dims one character into each empty cell.
 
+<Preview id="otp-input/pin-masked" />
+
 ```tsx
 <OtpInput isMasked length={4} size="lg" />
 <OtpInput placeholder="○" />
@@ -98,6 +106,8 @@ Write the anatomy out for any other shape.
 
 `Input`'s own axes, so a code field sits level with a text field beside it.
 
+<Preview id="otp-input/sizes" />
+
 ```tsx
 <OtpInput size="sm" />
 <OtpInput size="md" />
@@ -105,9 +115,24 @@ Write the anatomy out for any other shape.
 <OtpInput variant="secondary" />
 ```
 
+## States
+
+Invalid paints every cell destructive and stays so while focused; disabled fades the row and takes no input.
+
+<Preview id="otp-input/states" />
+
+```tsx
+<OtpInput length={4} placeholder="○" />
+<OtpInput defaultValue="4821" length={4} />
+<OtpInput defaultValue="4829" isInvalid length={4} />
+<OtpInput defaultValue="48" isDisabled length={4} />
+```
+
 ## In a form
 
 A `Field` cascades `isInvalid` and `isDisabled`, and its label names and focuses the field.
+
+<Preview id="otp-input/in-field" />
 
 ```tsx
 <Field isInvalid={isWrong}>

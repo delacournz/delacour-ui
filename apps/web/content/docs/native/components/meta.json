@@ -84,6 +84,7 @@
 		"scroll-fade",
 		"surface",
 		"card",
+		"direction",
 		"split-view",
 		"splitter",
 		"carousel",

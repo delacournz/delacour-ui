@@ -29,6 +29,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "date-picker", title: "Date Picker", description: "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished." },
 	{ name: "date-time-picker", title: "Date Time Picker", description: "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window." },
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },
+	{ name: "direction", title: "Direction", description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths." },
 	{ name: "drawer", title: "Drawer", description: "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides." },
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "fab", title: "Fab", description: "A floating action button, extended with a label or unfolding a dial of related actions." },

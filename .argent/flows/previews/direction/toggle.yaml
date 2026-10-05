@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on direction/toggle and has settled — the switch off, the card reading left to
+  right. The capture script navigates there before running this.
+steps:
+  - echo: Flipping the card to right to left
+  - tap: { id: dir-toggle }
+  - wait: 1200
+  - echo: And back, so the clip loops without a jump cut
+  - tap: { id: dir-toggle }
+  - wait: 900

@@ -119,6 +119,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	fab: IconPlusLarge,
 	chart: IconChart1,
 	collapsible: IconArrowExpandVer,
+	direction: IconArrowLeftRight,
 	"color-picker": IconColorPalette,
 	combobox: IconMagnifyingGlass2,
 	"context-menu": IconBubbleDots,

@@ -229,6 +229,10 @@ import * as demo_dialog_controlled from "./dialog/controlled";
 import * as demo_dialog_form from "./dialog/form";
 import * as demo_dialog_over_sheet from "./dialog/over-sheet";
 import * as demo_dialog_sizes from "./dialog/sizes";
+import * as demo_direction_mirrored_rows from "./direction/mirrored-rows";
+import * as demo_direction_nested_override from "./direction/nested-override";
+import * as demo_direction_toggle from "./direction/toggle";
+import * as demo_direction_uniwind_variants from "./direction/uniwind-variants";
 import * as demo_drawer_controlled from "./drawer/controlled";
 import * as demo_drawer_filters from "./drawer/filters";
 import * as demo_drawer_navigation from "./drawer/navigation";
@@ -896,6 +900,10 @@ export const DEMOS = {
 	"dialog/form": demo_dialog_form,
 	"dialog/over-sheet": demo_dialog_over_sheet,
 	"dialog/sizes": demo_dialog_sizes,
+	"direction/mirrored-rows": demo_direction_mirrored_rows,
+	"direction/nested-override": demo_direction_nested_override,
+	"direction/toggle": demo_direction_toggle,
+	"direction/uniwind-variants": demo_direction_uniwind_variants,
 	"drawer/controlled": demo_drawer_controlled,
 	"drawer/filters": demo_drawer_filters,
 	"drawer/navigation": demo_drawer_navigation,

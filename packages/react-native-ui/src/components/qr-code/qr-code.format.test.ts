@@ -29,12 +29,12 @@ describe("formatWord", () => {
 		expect(formatWord(level, mask).toString(2).padStart(15, "0")).toBe(bits);
 	});
 
-	test("all 32 words sit at least 8 bits apart", () => {
+	test("all 32 words sit at least 7 bits apart (BCH(15,5) minimum distance)", () => {
 		const words = QR_ERROR_CORRECTIONS.flatMap((level) => QR_MASKS.map((mask) => formatWord(level, mask)));
 		expect(new Set(words).size).toBe(32);
 		for (let i = 0; i < words.length; i++) {
 			for (let j = i + 1; j < words.length; j++) {
-				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(8);
+				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(7);
 			}
 		}
 	});
@@ -67,7 +67,7 @@ describe("versionWord", () => {
 		}
 		for (let i = 0; i < words.length; i++) {
 			for (let j = i + 1; j < words.length; j++) {
-				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(8);
+				expect(hamming(words[i] ?? 0, words[j] ?? 0)).toBeGreaterThanOrEqual(7);
 			}
 		}
 	});

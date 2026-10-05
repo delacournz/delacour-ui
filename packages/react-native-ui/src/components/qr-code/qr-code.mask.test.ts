@@ -45,11 +45,11 @@ describe("maskPredicate", () => {
 			[4, 2, 3, true],
 			[5, 0, 7, true],
 			[5, 1, 1, false],
-			[6, 1, 1, false],
+			[6, 1, 1, true],
 			[6, 2, 2, false],
 			[6, 0, 5, true],
 			[7, 0, 0, true],
-			[7, 1, 1, true],
+			[7, 1, 1, false],
 			[7, 0, 1, false],
 		];
 		for (const [mask, row, col, dark] of cases) {

@@ -99,6 +99,13 @@ no directions.
   `absolute inset-0` layer beside the map with `pointerEvents="box-none"`, so a pan
   on empty space still reaches the map. Each group is a `Surface` of ghost
   `Button`s at `icon-sm`, each labelled by what it does.
+- **A camera move the map makes settles itself.** Apple Maps does not always fire
+  `onRegionChangeComplete` after a long animated move — a `flyTo` from Wellington to
+  Auckland landed and reported nothing, leaving `onViewStateChange` and the region the
+  zoom buttons step from on the old view until the next touch. Every move through the
+  handle therefore arms a timer for its duration plus `MAP_SETTLE_GRACE`
+  (`resolveSettleDelay`) that reports the target region; the native event, which
+  carries the true region, cancels it when it does arrive.
 - **The zoom buttons step the region, not the camera's zoom.** Apple's camera reports
   an altitude rather than a zoom, so halving the region's spans is the one step that
   means the same on both platforms.

@@ -249,6 +249,24 @@ export function resolveCameraDuration(duration: number | undefined, isReducedMot
 	return Math.max(0, duration ?? MAP_CAMERA_DURATION);
 }
 
+/**
+ * How long past a camera move's duration the map waits for the native
+ * "region settled" event before reporting the view itself, in ms.
+ */
+export const MAP_SETTLE_GRACE = 250;
+
+/**
+ * When a camera move the map made itself counts as settled.
+ *
+ * Apple Maps does not always report the end of a long animated move, so the
+ * map reports it itself once the flight and a grace period have passed — the
+ * grace lets the native event, which carries the true region, arrive first
+ * and cancel this one.
+ */
+export function resolveSettleDelay(duration: number): number {
+	return duration + MAP_SETTLE_GRACE;
+}
+
 /** A device heading as a rotation in degrees, or `undefined` when the device does not know it. */
 export function resolveHeadingRotation(heading: number | undefined): number | undefined {
 	if (heading === undefined || !Number.isFinite(heading) || heading < 0) return undefined;

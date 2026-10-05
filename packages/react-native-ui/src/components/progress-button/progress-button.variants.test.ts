@@ -37,6 +37,21 @@ function colorTokens(cls: string): string[] {
 
 const SLOT_NAMES = ["root", "content", "fill", "fillContent", "label", "fillLabel", "done", "icon"] as const;
 
+/** Every colour token any slot names, across the whole variant × size × shape matrix. */
+function everySlotToken(): string[] {
+	const tokens = new Set<string>();
+	const combos = PROGRESS_BUTTON_VARIANTS.flatMap((variant) =>
+		PROGRESS_BUTTON_SIZES.flatMap((size) => PROGRESS_BUTTON_SHAPES.map((shape) => ({ shape, size, variant })))
+	);
+	for (const combo of combos) {
+		const slots = progressButtonVariants(combo);
+		for (const name of SLOT_NAMES) {
+			for (const token of colorTokens(slots[name]() ?? "")) tokens.add(token);
+		}
+	}
+	return [...tokens];
+}
+
 describe("resolveHoldDuration", () => {
 	test("defaults to two seconds", () => {
 		expect(PROGRESS_BUTTON_DEFAULT_HOLD_MS).toBe(2000);
@@ -267,33 +282,15 @@ describe("progressButtonVariants — the button's box", () => {
 });
 
 describe("progressButtonVariants — theme tokens", () => {
-	test("the theme reader found both variants", () => {
+	test("the theme reader found both variants, and the slots name some tokens", () => {
 		expect(LIGHT.size).toBeGreaterThan(0);
 		expect(DARK.size).toBeGreaterThan(0);
+		expect(everySlotToken().length).toBeGreaterThan(4);
 	});
 
 	test("every token named in every slot, at every axis, exists in both themes", () => {
-		for (const variant of PROGRESS_BUTTON_VARIANTS) {
-			for (const size of PROGRESS_BUTTON_SIZES) {
-				for (const shape of PROGRESS_BUTTON_SHAPES) {
-					const slots = progressButtonVariants({ shape, size, variant });
-					for (const name of SLOT_NAMES) {
-						for (const token of colorTokens(slots[name]() ?? "")) {
-							expect({ theme: "light", token, has: LIGHT.has(token) }).toEqual({
-								has: true,
-								theme: "light",
-								token,
-							});
-							expect({ theme: "dark", token, has: DARK.has(token) }).toEqual({
-								has: true,
-								theme: "dark",
-								token,
-							});
-						}
-					}
-				}
-			}
-		}
+		const missing = everySlotToken().filter((token) => !(LIGHT.has(token) && DARK.has(token)));
+		expect(missing).toEqual([]);
 	});
 
 	test("every token in the colour tables exists in both themes", () => {

@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on split-view/anatomy and has settled — the
+  map over the results at the middle of three stops, the drag row between them
+  carrying the testID drag-area. The capture script navigates there before running this.
+steps:
+  - echo: Dragging the row down to the last stop, so the map takes the box
+  # Anchored on the drag row, which moves with the pane, so each step starts
+  # wherever the last one settled. momentum:false so the release is slow and
+  # settles on the nearest stop rather than being thrown past it. The three drags
+  # visit every stop and end on the middle one, so the clip loops without a jump.
+  - swipe: { from: { id: drag-area }, by: { y: 0.2 }, momentum: false, duration: 600 }
+  - wait: 600
+  - echo: Up to the smallest stop, so the results take the room
+  - swipe: { from: { id: drag-area }, by: { y: -0.35 }, momentum: false, duration: 700 }
+  - wait: 600
+  - echo: And back to the middle
+  - swipe: { from: { id: drag-area }, by: { y: 0.15 }, momentum: false, duration: 600 }
+  - wait: 600

@@ -7,8 +7,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Seam",
-	align: "stretch",
 	note: 'variant="seam" drops the pane surfaces and draws a hairline behind the grip, for a split that already sits on a card or a sheet.',
+	capture: { align: "stretch", flow: "split-view/seam" },
 };
 
 export function Demo(): ReactElement {

@@ -298,4 +298,5 @@ Registry: `ITEM_META["image-viewer"] = { title: "Image Viewer", description: "A 
 
 - The full-screen layer shipped as planned: an internal React Native `Modal` inside `ImageViewerLayer`, with its own `GestureHandlerRootView` and the outer safe-area insets re-supplied. Overlays' `Dialog` is not imported.
 - `VIEWER_LOAD_WAIT_MS` (250 ms) was added: the opening flight waits for the active page's thumbnail to decode, or for that long, because a remote thumbnail had not drawn when the spring started.
-- Previews are not captured yet (the capture tooling was not installed), so the demos carry no `capture` and the docs page opens at `## Installation`.
+- Captured: `gallery-grid` (hero), `zoom` and `drag-to-dismiss` as device-frame clips, `custom-thumbnail` as a stage still. `captions-full-source` and `controlled` were left uncaptured to keep the media under `BUDGET_BYTES`, and `custom-thumbnail` became a compact list row for the same reason.
+- Capturing it found a bug: the Trigger's inner wrapper was always `height: "100%"`, so custom children with no fixed size stretched to their parent's height. Custom children now get a width-only wrapper.

@@ -171,5 +171,11 @@ Verified on an iOS 26 simulator (iPhone 17, dev client, Debug) through `agent-de
 - A 60 pt drag springs back; a 260 pt drag dismisses. Close and dismiss both fly back into the thumbnail.
 
 Not verified: Android, Reduce Motion, VoiceOver, a Release build, and the controlled and data-mode
-demos. No demo carries `capture` and the docs page has no `<Preview>`: the capture tooling was not
-installed when this landed, so `bun run previews` could not run. Add both together.
+demos.
+
+**Captured previews:** `gallery-grid` (hero), `zoom` and `drag-to-dismiss` are `frame: "device"`
+clips, because the viewer is a full-screen Modal; each demo's root fills and centres itself for that
+reason. `custom-thumbnail` is a stage still. The media budget is tight, so captions and controlled
+stay gallery-only. **A Trigger with custom children must not fill its height:** the inner wrapper
+used to be `height: "100%"` either way, and a content-sized card stretched to the whole screen.
+Children now get a width-only wrapper; the drawn thumbnail still fills.

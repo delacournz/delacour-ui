@@ -4,6 +4,8 @@ description: A full-screen viewer that opens out of a thumbnail — pinch, pan a
 icon: Images
 ---
 
+<Preview id="image-viewer/gallery-grid" title={null} />
+
 ## Installation
 
 <ComponentInstall name="image-viewer" />
@@ -38,6 +40,8 @@ back. `alt` is required — it is what a screen reader hears on the thumbnail an
 Every `ImageViewer.Trigger` inside one `ImageViewer` joins its gallery, in mount order. Swipe
 sideways between them; the counter reads "2 / 6".
 
+<Preview id="image-viewer/gallery-grid" />
+
 ```tsx
 <ImageViewer>
   <View className="flex-row flex-wrap gap-2">
@@ -56,6 +60,8 @@ sideways between them; the counter reads "2 / 6".
 
 ## Zoom and gestures
 
+<Preview id="image-viewer/zoom" />
+
 | Gesture | What it does |
 | --- | --- |
 | Pinch | Zooms about the point under your fingers, up to `maxScale` (4×). Past either end it gives, then settles |
@@ -67,6 +73,8 @@ sideways between them; the counter reads "2 / 6".
 
 While zoomed, a sideways drag pans the image rather than paging: zoom out to move on. The chrome hides
 itself while you are zoomed in.
+
+<Preview id="image-viewer/drag-to-dismiss" />
 
 `isDismissible={false}` turns the drag-to-dismiss off. The close button and Android's back button
 still close the viewer.
@@ -160,10 +168,14 @@ import { Image as ExpoImage } from "expo-image";
 Children replace the drawn thumbnail. The Trigger still opens on its own image, and still flies from
 its own frame.
 
+<Preview id="image-viewer/custom-thumbnail" />
+
 ```tsx
 <ImageViewer.Trigger alt="A cabin under snow" className="rounded-xl border border-border bg-card" id="cabin" source={source}>
-  <Image className="aspect-[4/3] w-full" source={source} />
-  <Text weight="semibold">Hut, second night</Text>
+  <View className="flex-row items-center gap-3 p-2">
+    <Image className="h-16 w-20 rounded-md" source={source} />
+    <Text weight="semibold">Hut, second night</Text>
+  </View>
 </ImageViewer.Trigger>
 ```
 

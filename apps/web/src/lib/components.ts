@@ -40,6 +40,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A pressable action, with composed icons and a loading state that costs no layout.",
 	},
 	{
+		slug: "context-menu",
+		name: "ContextMenu",
+		group: "Actions",
+		blurb: "The actions that belong to a piece of content, reached by holding it \u2014 with a lifted preview.",
+	},
+	{
 		slug: "menu",
 		name: "Menu",
 		group: "Actions",

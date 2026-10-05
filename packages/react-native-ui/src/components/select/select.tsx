@@ -1,5 +1,6 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { useWindowDimensions, View } from "react-native";
+import { KeyboardEvents } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconMagnifyingGlass } from "../../icons/central";
@@ -70,7 +71,7 @@ type SelectBaseProps = {
 	formatSelectedCount?: (count: number) => string;
 	/** Classes for the trigger. */
 	className?: string;
-	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, Done `-done`. */
+	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, close `-close`, Done `-done`. */
 	testID?: string;
 	/** `Select.Item`, `Select.Group`, and optionally a `Select.Trigger` to replace the default one. */
 	children?: ReactNode;
@@ -101,6 +102,31 @@ export type SelectMultipleProps = SelectBaseProps & {
 export type SelectProps = SelectSingleProps | SelectMultipleProps;
 
 const NO_VALUES: readonly string[] = [];
+
+/**
+ * The keyboard's height while `isActive`, else zero.
+ *
+ * Read on the JS thread from the will-show and will-hide events, so the sheet's
+ * cap shrinks as the keyboard starts to rise rather than after it lands.
+ */
+function useKeyboardHeight(isActive: boolean): number {
+	const [height, setHeight] = useState(0);
+
+	useEffect(() => {
+		if (!isActive) {
+			setHeight(0);
+			return;
+		}
+		const show = KeyboardEvents.addListener("keyboardWillShow", (event) => setHeight(event.height));
+		const hide = KeyboardEvents.addListener("keyboardWillHide", () => setHeight(0));
+		return () => {
+			show.remove();
+			hide.remove();
+		};
+	}, [isActive]);
+
+	return height;
+}
 
 function SelectRoot(props: SelectProps): ReactElement {
 	const {
@@ -154,6 +180,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 
 	const [isOpen, setOpen] = useState(false);
 	const [query, setQuery] = useState("");
+	const keyboardHeight = useKeyboardHeight(isOpen && isSearchable);
 	const canOpen = !resolvedIsDisabled && !isReadOnly;
 
 	const open = useCallback(() => {
@@ -255,7 +282,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 	// above it, so they count towards the height the sheet sizes itself to.
 	const header = (
 		<View className={slots.header()}>
-			<BottomSheet.Close />
+			<BottomSheet.Close testID={testID ? `${testID}-close` : undefined} />
 			{sheetTitle ? <BottomSheet.Title>{sheetTitle}</BottomSheet.Title> : null}
 			{isSearchable ? (
 				<Input.Group size={size}>
@@ -295,7 +322,7 @@ function SelectRoot(props: SelectProps): ReactElement {
 			<BottomSheet
 				dynamicSizing={snapPoints === undefined}
 				isOpen={isOpen}
-				maxDynamicContentSize={resolveSelectSheetMaxHeight({ topInset, windowHeight })}
+				maxDynamicContentSize={resolveSelectSheetMaxHeight({ keyboardHeight, topInset, windowHeight })}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}
 			>

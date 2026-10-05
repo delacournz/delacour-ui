@@ -551,6 +551,17 @@ describe("resolveSelectSheetMaxHeight", () => {
 		expect(Number.isInteger(resolveSelectSheetMaxHeight({ topInset: 59, windowHeight: 874 }))).toBe(true);
 	});
 
+	test("leaves room for the keyboard, which the sheet is lifted above", () => {
+		const open = resolveSelectSheetMaxHeight({ keyboardHeight: 336, topInset: 62, windowHeight: 874 });
+		expect(open).toBe(874 - 62 - SELECT_SHEET_TOP_GAP - 336);
+	});
+
+	test("an absent keyboard is a zero-height one", () => {
+		expect(resolveSelectSheetMaxHeight({ keyboardHeight: 0, topInset: 62, windowHeight: 874 })).toBe(
+			resolveSelectSheetMaxHeight({ topInset: 62, windowHeight: 874 })
+		);
+	});
+
 	test("never goes negative on a degenerate window", () => {
 		expect(resolveSelectSheetMaxHeight({ topInset: 50, windowHeight: 20 })).toBe(0);
 	});

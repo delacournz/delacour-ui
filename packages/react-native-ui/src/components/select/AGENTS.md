@@ -81,8 +81,14 @@ engine. An app that imports no picker still never resolves it.
   the sheet `maxDynamicContentSize` — the lower of 85% of the window and the room
   below the top inset less a 24pt gap — and the list scrolls inside it. Without
   the cap two hundred options measured taller than the screen and the sheet rose
-  under the status bar with nothing of the page left above it. `snapPoints`
-  bypasses dynamic sizing, and the cap with it.
+  under the status bar with nothing of the page left above it. An open
+  keyboard comes off the cap too — the engine lifts the sheet above it, and a
+  full list plus the keyboard reached the top of the screen. The height arrives
+  on the JS thread from `keyboardWillShow` while the lift runs on the UI thread,
+  so for about a quarter of a second the sheet still overshoots before settling;
+  removing that needs the engine to clamp its keyboard lift to
+  `maxDynamicContentSize`. `snapPoints` bypasses dynamic sizing, and the cap
+  with it.
 - **The row floor is ListGroup's**, `min-h-12/14/16`, pinned by the test, so a
   row in the sheet sits level with a `ListGroup` row on the screen behind it. It
   is a floor, never a height, so a description can wrap.

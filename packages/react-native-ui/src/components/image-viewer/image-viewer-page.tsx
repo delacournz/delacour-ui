@@ -48,6 +48,8 @@ export type ImageViewerPageProps = {
 	renderImage?: ImageViewerRenderImage;
 	/** Reports the image's intrinsic aspect once it decodes. */
 	onAspect: (id: string, aspect: number) => void;
+	/** The thumbnail has drawn, or failed: the opening flight may start. */
+	onBaseLoad: (id: string) => void;
 };
 
 /** Both image layers fill the flying frame. */
@@ -79,6 +81,7 @@ export function ImageViewerPage({
 	motion,
 	renderImage,
 	onAspect,
+	onBaseLoad,
 }: ImageViewerPageProps): ReactElement {
 	const { cornerRadius, dismissY, exitScale, origin, position, progress, scale, translateX, translateY } = motion;
 	const [hasBaseError, setBaseError] = useState(false);
@@ -121,8 +124,9 @@ export function ImageViewerPage({
 	const handleBaseLoad = useCallback(
 		(size: { width: number; height: number }) => {
 			if (!hasIntrinsicSize && size.height > 0) onAspect(id, size.width / size.height);
+			onBaseLoad(id);
 		},
-		[hasIntrinsicSize, id, onAspect]
+		[hasIntrinsicSize, id, onAspect, onBaseLoad]
 	);
 
 	const handleFullLoad = useCallback(
@@ -133,7 +137,10 @@ export function ImageViewerPage({
 		[fullOpacity, hasIntrinsicSize, id, isCalm, onAspect]
 	);
 
-	const handleBaseError = useCallback(() => setBaseError(true), []);
+	const handleBaseError = useCallback(() => {
+		setBaseError(true);
+		onBaseLoad(id);
+	}, [id, onBaseLoad]);
 	const handleFullError = useCallback(() => setFullError(true), []);
 
 	const slots = imageViewerVariants();

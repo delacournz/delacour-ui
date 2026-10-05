@@ -19,6 +19,8 @@ export const VIEWER_PAN_ACTIVATE = 10;
 export const VIEWER_ZOOMED_THRESHOLD = 1.05;
 /** Every fade under calm motion, and the full-resolution source's cross-fade. */
 export const VIEWER_FADE_DURATION_MS = 150;
+/** The longest the opening flight waits for the thumbnail to decode before it flies anyway. */
+export const VIEWER_LOAD_WAIT_MS = 250;
 /** The flight home when the viewer closes to its thumbnail. */
 export const VIEWER_CLOSE_DURATION_MS = 260;
 /** How far, in points, a translation past its bound may give. */

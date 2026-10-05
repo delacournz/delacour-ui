@@ -48,6 +48,7 @@ import {
 	resolveViewerA11yValue,
 	VIEWER_CLOSE_DURATION_MS,
 	VIEWER_FADE_DURATION_MS,
+	VIEWER_LOAD_WAIT_MS,
 	VIEWER_PAGE_GAP_POINTS,
 	VIEWER_PAN_ACTIVATE,
 	VIEWER_SPRING,
@@ -174,21 +175,46 @@ export function ImageViewerLayer({
 		if (activeRect) activeFitted.value = activeRect;
 	}, [activeFitted, activeRect]);
 
+	// The entrance, run once per open. The flight waits for the active page's
+	// thumbnail to decode — a fresh `Image` of a remote source draws nothing for a
+	// few frames even when the Trigger beside it is showing, and a spring started
+	// at once flies an empty frame and pops the photo in at rest. The wait is
+	// capped, so a slow or failed load still opens.
+	const hasEntered = useRef(false);
+	const enter = useCallback(() => {
+		if (hasEntered.current) return;
+		hasEntered.current = true;
+		cancelAnimation(exitScale);
+		exitScale.value = 1;
+		if (isCalm || origin.value === null) {
+			progress.value = 1;
+			fade.value = withTiming(1, { duration: VIEWER_FADE_DURATION_MS });
+		} else {
+			fade.value = 1;
+			progress.value = withSpring(1, VIEWER_SPRING);
+		}
+	}, [exitScale, fade, isCalm, origin, progress]);
+
+	const activeId = activeImage?.id;
+	const handleBaseLoad = useCallback(
+		(id: string) => {
+			if (id === activeId) enter();
+		},
+		[activeId, enter]
+	);
+
 	// In and out. Keyed on `isOpen` alone: re-opening during the close simply
 	// retargets the same values, and the interrupted close never calls `onExited`.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: runs on the open/close edge only; see above
 	useEffect(() => {
 		if (isOpen) {
-			cancelAnimation(exitScale);
-			exitScale.value = 1;
-			if (isCalm || origin.value === null) {
-				progress.value = 1;
-				fade.value = withTiming(1, { duration: VIEWER_FADE_DURATION_MS });
-			} else {
-				fade.value = 1;
-				progress.value = withSpring(1, VIEWER_SPRING);
+			if (hasEntered.current || isCalm || origin.value === null) {
+				hasEntered.current = false;
+				enter();
+				return undefined;
 			}
-			return;
+			const timer = setTimeout(enter, VIEWER_LOAD_WAIT_MS);
+			return () => clearTimeout(timer);
 		}
 
 		measureOrigin(index, (measured) => {
@@ -216,6 +242,7 @@ export function ImageViewerLayer({
 				fade.value = withTiming(0, { duration: VIEWER_FADE_DURATION_MS }, finish);
 			}
 		});
+		return undefined;
 	}, [isOpen]);
 
 	// The page changed: snap the zoom back (paging needs scale 1 anyway) and move
@@ -568,6 +595,7 @@ export function ImageViewerLayer({
 											key={image.id}
 											motion={motion}
 											onAspect={handleAspect}
+											onBaseLoad={handleBaseLoad}
 											pageIndex={pageIndex}
 											pitch={pitch}
 											renderImage={renderImage}

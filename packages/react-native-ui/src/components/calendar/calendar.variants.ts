@@ -159,8 +159,8 @@ export const calendarVariants = tv({
 			tone: "selected",
 			class: { pickerItem: "bg-primary", pickerItemLabel: "text-primary-foreground" },
 		},
-		{ variant: "primary", class: { band: "bg-accent" } },
-		{ variant: "primary", tone: "band", class: { dayLabel: "text-accent-foreground" } },
+		{ variant: "primary", class: { band: "bg-primary/15" } },
+		{ variant: "primary", tone: "band", class: { dayLabel: "text-foreground" } },
 		{
 			variant: "secondary",
 			tone: "selected",

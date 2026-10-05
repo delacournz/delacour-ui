@@ -1,8 +1,8 @@
-import { type ReactElement, type ReactNode, useCallback, useEffect, useId, useMemo } from "react";
-import { type AccessibilityActionEvent, type LayoutChangeEvent, View, type ViewProps } from "react-native";
+import { Canvas, Group, Path, Picture, Skia } from "@shopify/react-native-skia";
+import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo } from "react";
+import { type AccessibilityActionEvent, type LayoutChangeEvent, StyleSheet, View, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedProps, useSharedValue } from "react-native-reanimated";
-import Svg, { Defs, G, Mask, Path, Rect } from "react-native-svg";
+import { useDerivedValue, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN, scheduleOnUI } from "react-native-worklets";
 import { useSketchPart } from "./sketch.context";
 import {
@@ -14,17 +14,14 @@ import {
 	type SketchShape,
 	startSketchPath,
 } from "./sketch.paths";
+import { recordSketchPicture } from "./sketch.skia";
 import type { SketchCommit } from "./sketch.types";
 import { resolveSketchAccessibilityLabel, sketchVariants } from "./sketch.variants";
-import { SketchGroups } from "./sketch-groups";
 
 export type SketchCanvasProps = Omit<ViewProps, "children"> & {
 	/** Painted under the marks, on screen only — an image being annotated, or an empty-state hint. */
 	children?: ReactNode;
 };
-
-/** Created once, at module scope: a component type minted in render would remount every frame. */
-const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 /** What the live stroke is. `none` between strokes. */
 const LIVE_NONE = 0;
@@ -40,9 +37,10 @@ const ACCESSIBILITY_ACTIONS = [
  * The drawing surface: the committed marks, the live stroke, and the pan.
  *
  * **The stroke never touches the JS thread until it ends.** `onBegin` starts a
- * path, `onUpdate` appends one quadratic segment per sample as a string, and the
- * live `Path` reads that string as an animated prop. `onFinalize` hands the
- * finished path to React once, which mints the id and appends the item.
+ * path, `onUpdate` appends one quadratic segment per sample as a string, and a
+ * derived value turns that string into the Skia path the live `Path` draws.
+ * `onFinalize` hands the finished path to React once, which mints the id and
+ * appends the item.
  *
  * **`onBegin`, not `onStart`, starts the stroke.** A pan activates on movement,
  * so a finger that lands and lifts never reaches `onStart` — and a pen tap has to
@@ -50,8 +48,10 @@ const ACCESSIBILITY_ACTIONS = [
  * reaches, so it is where the stroke commits.
  *
  * **The tool is read once, at touch-down.** Tool, shape, ink and width live in
- * shared values the pan copies into the stroke at `onBegin`, so a swatch tapped
- * mid-stroke with another finger cannot split the stroke in two colours.
+ * the root's shared values — written by the setters themselves, so a stroke
+ * begun the instant after a tap already has the new tool — and the pan copies
+ * them into the stroke at `onBegin`, so a swatch tapped mid-stroke with another
+ * finger cannot split the stroke in two colours.
  *
  * **The live path is cleared after the commit renders**, not in the worklet. A
  * worklet clear lands a frame before React draws the committed copy, which is a
@@ -59,30 +59,18 @@ const ACCESSIBILITY_ACTIONS = [
  * which is invisible. A sequence number keeps that late clear off a stroke that
  * began in between.
  *
- * **The eraser is a mask.** Committed marks render in runs, each masked by the
- * erasers drawn after it — see `SketchGroups`. While erasing, the live eraser
- * stroke sits in one more mask over all of them, mounted always so starting an
- * erase does not remount the drawing.
+ * **The eraser is paint order.** The committed marks are one recorded picture —
+ * see `recordSketchPicture` — in which an erase is a `Clear` stroke over the
+ * marks before it. The live eraser is one more `Clear` path in the same layer,
+ * after the picture, so it cuts committed ink only; the live ink path sits
+ * outside the layer and is never erased while it is being drawn.
  *
  * Until it has been measured the canvas is 0×0 and the pan is disabled: a stroke
  * on an unmeasured canvas would export into a `0 0 0 0` viewBox.
  */
 export function SketchCanvas({ children, className, onLayout, ...props }: SketchCanvasProps): ReactElement {
-	const { items, tool, shape, ink, size, isDisabled, commit, canvasSize, setCanvasSize, handle } =
-		useSketchPart("Sketch.Canvas");
-	const maskId = `sketch-live-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
-
-	const toolValue = useSharedValue(tool);
-	const shapeValue = useSharedValue<SketchShape>(shape);
-	const inkValue = useSharedValue(ink ?? "");
-	const sizeValue = useSharedValue(size);
-
-	useEffect(() => {
-		toolValue.value = tool;
-		shapeValue.value = shape;
-		inkValue.value = ink ?? "";
-		sizeValue.value = size;
-	}, [ink, inkValue, shape, shapeValue, size, sizeValue, tool, toolValue]);
+	const { items, shape, brush, isDisabled, commit, canvasSize, setCanvasSize, handle } = useSketchPart("Sketch.Canvas");
+	const { tool: toolValue, shape: shapeValue, ink: inkValue, size: sizeValue } = brush;
 
 	/** Whether a stroke is under the finger, and which layer it draws in. */
 	const liveKind = useSharedValue(LIVE_NONE);
@@ -222,16 +210,20 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 	// The layer outlives the stroke on purpose: after release the live path stays
 	// up until the committed copy renders, and it has to stay in the layer it was
 	// drawn in — an erase must not flash up as ink for that frame.
-	const inkProps = useAnimatedProps(() => ({
-		d: liveLayer.value === LIVE_INK ? liveD.value : "",
-		stroke: liveColor.value === "" ? "transparent" : liveColor.value,
-		strokeWidth: liveWidth.value,
-	}));
+	const inkPath = useDerivedValue(() =>
+		liveLayer.value === LIVE_INK && liveD.value !== ""
+			? (Skia.Path.MakeFromSVGString(liveD.value) ?? Skia.Path.Make())
+			: Skia.Path.Make()
+	);
+	const eraserPath = useDerivedValue(() =>
+		liveLayer.value === LIVE_ERASE && liveD.value !== ""
+			? (Skia.Path.MakeFromSVGString(liveD.value) ?? Skia.Path.Make())
+			: Skia.Path.Make()
+	);
+	const inkColor = useDerivedValue(() => (liveColor.value === "" ? "transparent" : liveColor.value));
 
-	const eraserProps = useAnimatedProps(() => ({
-		d: liveLayer.value === LIVE_ERASE ? liveD.value : "",
-		strokeWidth: liveWidth.value,
-	}));
+	const { width, height } = canvasSize;
+	const picture = useMemo(() => recordSketchPicture(items, { height, width }), [items, height, width]);
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
@@ -251,11 +243,8 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 		[handle, isDisabled]
 	);
 
-	const { width, height } = canvasSize;
-
-	// The caller's children sit under the SVG, so an image being annotated is
-	// drawn on. The live ink path is outside the mask: it is never erased while
-	// it is being drawn.
+	// The caller's children sit under the Skia canvas, so an image being annotated
+	// is drawn on; the layer keeps every `Clear` inside the marks.
 	return (
 		<GestureDetector gesture={gesture}>
 			<View
@@ -269,28 +258,29 @@ export function SketchCanvas({ children, className, onLayout, ...props }: Sketch
 				{...props}
 			>
 				{children}
-				<Svg height={height} pointerEvents="none" style={SVG_STYLE} width={width}>
-					<Defs>
-						<Mask height={height} id={maskId} maskUnits="userSpaceOnUse" width={width} x={0} y={0}>
-							<Rect fill="#fff" height={height} width={width} />
-							<AnimatedPath
-								animatedProps={eraserProps}
-								fill="none"
-								stroke="#000"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</Mask>
-					</Defs>
-					<G mask={`url(#${maskId})`}>
-						<SketchGroups height={height} idPrefix={maskId} items={items} width={width} />
-					</G>
-					<AnimatedPath animatedProps={inkProps} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-				</Svg>
+				<Canvas pointerEvents="none" style={StyleSheet.absoluteFill}>
+					<Group layer>
+						<Picture picture={picture} />
+						<Path
+							blendMode="clear"
+							path={eraserPath}
+							strokeCap="round"
+							strokeJoin="round"
+							strokeWidth={liveWidth}
+							style="stroke"
+						/>
+					</Group>
+					<Path
+						color={inkColor}
+						path={inkPath}
+						strokeCap="round"
+						strokeJoin="round"
+						strokeWidth={liveWidth}
+						style="stroke"
+					/>
+				</Canvas>
 			</View>
 		</GestureDetector>
 	);
 }
 SketchCanvas.displayName = "DelacourUI.Sketch.Canvas";
-
-const SVG_STYLE = { left: 0, position: "absolute", top: 0 } as const;

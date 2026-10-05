@@ -347,3 +347,13 @@ describe("undoSketchItems", () => {
 		expect(undoSketchItems(empty)).toBe(empty);
 	});
 });
+
+describe("the drawing surface is Skia", () => {
+	test("the canvas and the renderer import Skia and not react-native-svg", () => {
+		for (const file of ["sketch-canvas.tsx", "sketch.skia.ts"]) {
+			const source = readFileSync(join(import.meta.dirname, file), "utf-8");
+			expect(source).toContain('from "@shopify/react-native-skia"');
+			expect(source).not.toContain("react-native-svg");
+		}
+	});
+});

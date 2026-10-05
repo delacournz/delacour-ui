@@ -3,17 +3,19 @@ import {
 	type ReactNode,
 	type Ref,
 	useCallback,
+	useEffect,
 	useImperativeHandle,
 	useMemo,
 	useRef,
 	useState,
 } from "react";
-import { AccessibilityInfo, View, type ViewProps } from "react-native";
+import { AccessibilityInfo, PixelRatio, View, type ViewProps } from "react-native";
+import { useSharedValue } from "react-native-reanimated";
 import { useCSSVariable } from "uniwind";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { themeVariableName } from "../../lib/color";
 import type { HapticFeedback } from "../pressable";
-import { type SketchContextValue, SketchProvider } from "./sketch.context";
+import { type SketchBrush, type SketchContextValue, SketchProvider } from "./sketch.context";
 import {
 	SKETCH_SHAPES,
 	type SketchItem,
@@ -22,7 +24,14 @@ import {
 	sketchItemsToSvg,
 	undoSketchItems,
 } from "./sketch.paths";
-import type { SketchCanvasSize, SketchCommit, SketchExportOptions, SketchHandle } from "./sketch.types";
+import { renderSketchPng } from "./sketch.skia";
+import type {
+	SketchCanvasSize,
+	SketchCommit,
+	SketchExportOptions,
+	SketchHandle,
+	SketchPngOptions,
+} from "./sketch.types";
 import {
 	clampSketchSize,
 	resolveSketchColor,
@@ -83,7 +92,7 @@ export type SketchProps = Omit<ViewProps, "children"> & {
 	isDisabled?: boolean;
 	/** Played on a tool or colour change and on each undo. `false` silences it. Default `"selection"`. */
 	haptic?: false | HapticFeedback;
-	/** The imperative handle — `undo`, `clear`, `isEmpty`, `toSVG`. */
+	/** The imperative handle — `undo`, `clear`, `isEmpty`, `toSVG`, `toPNG`. */
 	ref?: Ref<SketchHandle>;
 	/** Your own layout of `Sketch.Canvas` and `Sketch.Toolbar`. Omitted, both are rendered with every tool. */
 	children?: ReactNode;
@@ -130,22 +139,22 @@ function SketchRoot({
 		onChange,
 		value: items,
 	});
-	const [currentTool, setTool] = useControllableState<SketchTool>({
+	const [currentTool, setToolState] = useControllableState<SketchTool>({
 		defaultValue: defaultTool,
 		onChange: onToolChange,
 		value: tool,
 	});
-	const [currentShape, setShape] = useControllableState<SketchShape>({
+	const [currentShape, setShapeState] = useControllableState<SketchShape>({
 		defaultValue: defaultShape,
 		onChange: onShapeChange,
 		value: shape,
 	});
-	const [currentColor, setColor] = useControllableState<string>({
+	const [currentColor, setColorState] = useControllableState<string>({
 		defaultValue: defaultColor ?? colors[0] ?? "foreground",
 		onChange: onColorChange,
 		value: color,
 	});
-	const [rawSize, setRawSize] = useControllableState<number>({
+	const [rawSize, setRawSizeState] = useControllableState<number>({
 		defaultValue: defaultSize,
 		onChange: onSizeChange,
 		value: size,
@@ -171,10 +180,59 @@ function SketchRoot({
 	const swatches = useMemo(() => resolveSketchSwatches(colors, tokens), [colors, tokens]);
 	const ink = resolveSketchColor(currentColor, tokens);
 
+	// The pan reads these at touch-down. The setters below write them as they run
+	// — waiting for the render would leave a stroke begun straight after a tap in
+	// the old tool or ink — and the effect re-syncs them from what the render
+	// resolved, which covers a controlled value the parent did not accept.
+	const toolValue = useSharedValue<SketchTool>(currentTool);
+	const shapeValue = useSharedValue<SketchShape>(currentShape);
+	const inkValue = useSharedValue(ink ?? "");
+	const sizeValue = useSharedValue(currentSize);
+	const brush = useMemo<SketchBrush>(
+		() => ({ ink: inkValue, shape: shapeValue, size: sizeValue, tool: toolValue }),
+		[inkValue, shapeValue, sizeValue, toolValue]
+	);
+
+	useEffect(() => {
+		toolValue.value = currentTool;
+		shapeValue.value = currentShape;
+		inkValue.value = ink ?? "";
+		sizeValue.value = currentSize;
+	}, [currentShape, currentSize, currentTool, ink, inkValue, shapeValue, sizeValue, toolValue]);
+
 	// The handle reads through refs, so it is one object for the sketch's life and
 	// an export called from a stale closure still sees the drawing as it is now.
-	const latest = useRef({ canvasSize, items: currentItems, tokens });
-	latest.current = { canvasSize, items: currentItems, tokens };
+	const latest = useRef({ canvasSize, items: currentItems, maxSize, minSize, tokens });
+	latest.current = { canvasSize, items: currentItems, maxSize, minSize, tokens };
+
+	const setTool = useCallback(
+		(next: SketchTool) => {
+			toolValue.value = next;
+			setToolState(next);
+		},
+		[setToolState, toolValue]
+	);
+	const setShape = useCallback(
+		(next: SketchShape) => {
+			shapeValue.value = next;
+			setShapeState(next);
+		},
+		[setShapeState, shapeValue]
+	);
+	const setColor = useCallback(
+		(next: string) => {
+			inkValue.value = resolveSketchColor(next, latest.current.tokens) ?? "";
+			setColorState(next);
+		},
+		[inkValue, setColorState]
+	);
+	const setRawSize = useCallback(
+		(next: number) => {
+			sizeValue.value = clampSketchSize(next, latest.current.minSize, latest.current.maxSize);
+			setRawSizeState(next);
+		},
+		[setRawSizeState, sizeValue]
+	);
 
 	const commit = useCallback(
 		(stroke: SketchCommit) => {
@@ -203,6 +261,15 @@ function SketchRoot({
 					width: measured.width,
 				});
 			},
+			toPNG: (options?: SketchPngOptions) => {
+				const { canvasSize: measured, items: marks, tokens: resolved } = latest.current;
+				return renderSketchPng(marks, {
+					background: resolveSketchExportBackground(options?.background, resolved),
+					height: measured.height,
+					scale: options?.scale ?? PixelRatio.get(),
+					width: measured.width,
+				});
+			},
 			undo: () => {
 				const next = undoSketchItems(latest.current.items);
 				if (next === latest.current.items) return;
@@ -218,6 +285,7 @@ function SketchRoot({
 
 	const context = useMemo<SketchContextValue>(
 		() => ({
+			brush,
 			canvasSize,
 			color: currentColor,
 			commit,
@@ -240,6 +308,7 @@ function SketchRoot({
 			tool: currentTool,
 		}),
 		[
+			brush,
 			canvasSize,
 			commit,
 			currentColor,
@@ -280,27 +349,27 @@ function SketchRoot({
 
 /**
  * A freehand drawing surface with its tools: a pen, eight shapes, an eraser,
- * colour swatches, a stroke width and undo — delivered as an SVG string.
+ * colour swatches, a stroke width and undo — delivered as SVG or PNG.
  *
  * `<Sketch />` alone is the whole thing: a canvas that takes the room, with the
  * toolbar under it. Compose `Sketch.Canvas` and `Sketch.Toolbar` yourself to
  * move or trim the tools, or to draw over an image.
  *
  * **Strokes run on the UI thread.** One Gesture Handler pan builds the live path
- * as a string and draws it through an animated `Path`; React hears about a
- * stroke once, when it ends.
+ * as a string and Skia draws it from a derived value; React hears about a stroke
+ * once, when it ends, and the committed marks replay as one recorded picture.
  *
  * **Ink is content, not chrome.** A mark stores the literal its colour resolved
  * to when it was drawn, so switching the theme does not recolour a drawing. The
  * export paints the theme's background behind it unless told otherwise, so the
  * file stays legible either way.
  *
- * **The eraser is a mask.** It hides the ink under it that was drawn before it,
+ * **The eraser is paint order.** It clears the ink under it that was drawn before it,
  * and leaves a later stroke over the same spot alone. Undo removes an erase like
  * any other mark.
  *
  * Every axis — marks, tool, shape, colour, size — works controlled or
- * uncontrolled. A `ref` receives `undo`, `clear`, `isEmpty` and `toSVG`.
+ * uncontrolled. A `ref` receives `undo`, `clear`, `isEmpty`, `toSVG` and `toPNG`.
  *
  * @example
  * const sketch = useRef<SketchHandle>(null);

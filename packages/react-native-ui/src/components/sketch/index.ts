@@ -1,5 +1,11 @@
 export { Sketch, type SketchProps } from "./sketch";
-export { type SketchContextValue, SketchProvider, useSketch, useSketchContext } from "./sketch.context";
+export {
+	type SketchBrush,
+	type SketchContextValue,
+	SketchProvider,
+	useSketch,
+	useSketchContext,
+} from "./sketch.context";
 export {
 	appendSketchSegment,
 	buildSketchShapePath,
@@ -25,7 +31,13 @@ export {
 	startSketchPath,
 	undoSketchItems,
 } from "./sketch.paths";
-export type { SketchCanvasSize, SketchCommit, SketchExportOptions, SketchHandle } from "./sketch.types";
+export type {
+	SketchCanvasSize,
+	SketchCommit,
+	SketchExportOptions,
+	SketchHandle,
+	SketchPngOptions,
+} from "./sketch.types";
 export {
 	clampSketchSize,
 	resolveSketchAccessibilityLabel,

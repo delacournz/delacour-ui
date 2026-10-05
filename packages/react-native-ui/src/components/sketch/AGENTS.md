@@ -1,15 +1,17 @@
 # Sketch
 
 A freehand drawing surface with its tools around it: a pen, eight shapes, an
-eraser, colour swatches, a stroke width and undo — delivered as an SVG string.
-Drawn with `react-native-svg`, driven by one Gesture Handler pan on the UI thread.
+eraser, colour swatches, a stroke width and undo — delivered as SVG or PNG.
+Drawn with Skia (`@shopify/react-native-skia`, an optional peer), driven by one
+Gesture Handler pan on the UI thread.
 
 `import { Sketch } from "@delacour/react-native-ui/sketch";`
 
 It is a drawing canvas, not a "sketchy" rendering style. It is also not a
 signature pad (one ink, no tools — that is Forms' Signature, which shares only
 the maths), not a paint program (no layers, selection, fills, text, zoom or
-pressure), not a raster exporter (`toSVG()` only) and not a modal (presenting it
+pressure), not an image editor (it exports its own marks, never what is under
+them) and not a modal (presenting it
 full-screen or in a sheet is the caller's composition).
 
 ## Files
@@ -18,23 +20,23 @@ full-screen or in a sheet is the caller's composition).
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/sketch` |
 | `sketch.tsx` | Root: the five controllable axes, the token lookup, the handle, the `Object.assign` surface |
-| `sketch-canvas.tsx` | `Sketch.Canvas` — the `Svg`, the live paths, the eraser's live mask and the pan |
-| `sketch-groups.tsx` | Internal: the committed drawing as `memo`'d masked runs |
+| `sketch-canvas.tsx` | `Sketch.Canvas` — the Skia `Canvas`, the recorded picture, the live paths and the pan |
+| `sketch.skia.ts` | Internal: `drawSketchItems`, the picture recorder and the off-screen PNG render |
 | `sketch-toolbar.tsx` | `Sketch.Toolbar` — the default three-row tray, or the caller's tools in a row |
 | `sketch-tool.tsx` | `Sketch.Tool` — a `ToggleButton` per tool or shape, and the shape glyphs |
 | `sketch-swatches.tsx` | `Sketch.Swatches` — the colour radio group |
 | `sketch-size.tsx` | `Sketch.Size` — the stroke-width `Slider` |
 | `sketch-undo.tsx` | `Sketch.Undo` |
-| `sketch.context.tsx` | `SketchProvider`, `useSketch`, `useSketchContext`, internal `useSketchPart` |
-| `sketch.types.ts` | `SketchHandle`, `SketchExportOptions`, `SketchCommit`, `SketchCanvasSize` |
+| `sketch.context.tsx` | `SketchProvider`, `useSketch`, `useSketchContext`, internal `useSketchPart`, `SketchBrush` |
+| `sketch.types.ts` | `SketchHandle`, `SketchExportOptions`, `SketchPngOptions`, `SketchCommit`, `SketchCanvasSize` |
 | `sketch.paths.ts` | **Leaf**: stroke smoothing, the shapes, eraser grouping, SVG export. Imports nothing |
-| `sketch.paths.test.ts` | Including a text-level assertion that the leaf has no `import` |
+| `sketch.paths.test.ts` | Including text-level assertions that the leaf has no `import` and the canvas is Skia, not SVG |
 | `sketch.variants.ts` | The slotted `tv()`, the label record, colour/size/label/export resolvers |
 | `sketch.variants.test.ts` | |
 
 DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
-`.Swatches`, `.Size`, `.Undo`, and the internal `.Sketch.Provider`,
-`.Sketch.Groups`, `.Sketch.Group` and `.Sketch.ShapeGlyph.<shape>`.
+`.Swatches`, `.Size`, `.Undo`, and the internal `.Sketch.Provider` and
+`.Sketch.ShapeGlyph.<shape>`.
 
 ## Model
 
@@ -47,11 +49,15 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   default `foreground` swatch is therefore near-black when drawn in light and
   near-white when drawn in dark. `toSVG`'s default background is resolved at
   export time, so the file stays legible either way.
-- **The eraser is a mask, not geometry deletion.** It hides only the ink under it
-  that was drawn *before* it; a stroke drawn afterwards over the same spot is
-  intact. `groupSketchItems` splits the drawing at every eraser and masks each run
-  of ink by the erasers after it. The canvas and `sketchItemsToSvg` share that one
-  model, so the file matches the screen. Undo removes an erase like any mark.
+- **The eraser is not geometry deletion.** It hides only the ink under it that
+  was drawn *before* it; a stroke drawn afterwards over the same spot is intact.
+  Undo removes an erase like any mark. Two renderings, one meaning: on screen and
+  in the PNG it is **paint order** — every item drawn oldest first into one layer,
+  an erase as a `BlendMode.Clear` stroke, which zeroes what is already there and
+  cannot touch what is painted after it. In the SVG it is **masks** —
+  `groupSketchItems` splits the drawing at every eraser and masks each run by the
+  erasers after it, because SVG has no clear blend. Both read the same items in
+  the same order, so the file matches the screen.
 - **Ids are minted on the JS thread** when a stroke commits. They only have to be
   unique within the drawing.
 
@@ -63,16 +69,26 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
   it is the one callback every path reaches. Nothing runs on the JS thread during
   a stroke.
 - **The tool is snapshotted at touch-down.** Tool, shape, ink and width live in
-  shared values the pan copies into the stroke in `onBegin`, so a swatch changed
-  mid-stroke cannot split it. The gesture is not rebuilt when the tool changes.
+  the root's shared values (`SketchBrush`, on the context) and the pan copies them
+  into the stroke in `onBegin`, so a swatch changed mid-stroke cannot split it.
+  The gesture is not rebuilt when the tool changes.
+- **The setters write the brush as they run.** It used to be synced from an
+  effect after the render, and a stroke begun straight after a tap took the old
+  ink (a black loop in red's place) or the old tool. An effect still re-syncs
+  from the resolved values, which is what puts back a controlled value the parent
+  refused. What is left is the toggle button's own press dispatch: on the
+  simulator a stroke 50ms after a tool tap can still beat it, one 120ms after
+  cannot — faster than a finger, slower than argent, so the preview flows wait.
 - **The live path is cleared after the commit renders, not in the worklet.**
   Clearing in the worklet leaves a frame with no ink before React draws the
   committed copy; clearing late leaves a frame of the same ink twice, which is
   invisible. A stroke sequence number stops the late clear from wiping a stroke
   that began in between. The live path also keeps its *layer* (ink or eraser)
   after release, so a finished erase never flashes up as ink.
-- **The live eraser sits in an always-mounted mask over every committed run.**
-  Mounting it only while erasing would remount the drawing at touch-down.
+- **The live eraser is a `Clear` path in the picture's layer; the live ink is
+  outside it.** So the eraser cuts committed ink as it moves, and the stroke
+  being drawn is never erased by itself. Both paths are always mounted, empty
+  between strokes.
 - **A shape drag under 4pt on both axes commits nothing**; a tap with a shape tool
   is not a shape. Line and arrow follow the drag; the rest use its normalised
   bounds, so dragging up-left draws the same rectangle as down-right.
@@ -88,19 +104,44 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 
 ## Rendering
 
-- **SVG, not Skia.** Sketch needs only path strings, which SVG draws and which
-  are already the export format. Skia would be a 6 MB+ native view for every
-  consumer of the folder and a second drawing model whose output is not SVG.
-  Revisit only on profiling data; the maths is path-string based either way.
-- **Committed runs are `memo`'d by item identity** (`SketchGroupView`), because
-  `groupSketchItems` rebuilds the group objects each time. A new stroke re-renders
-  the last run; an erase re-renders the runs it masks.
-- **Mask cost scales with mask count.** Consecutive erasers merge into one mask.
-  There is no cap on items in v1; if a long session with many erases drags, the
-  answer is a future `Sketch.flatten` that bakes runs together, not a cap.
+- **Skia, not SVG.** It started on `react-native-svg`: a `<Path>` per mark,
+  each run of ink wrapped in a `<Mask>` per eraser group, and an animated `d`
+  re-parsed by the SVG renderer every frame. Node and mask count grew with the
+  drawing, and Android `Mask` rendering was never verified. On Skia the
+  committed drawing is one recorded `SkPicture` (`recordSketchPicture`), replayed
+  as one draw however many strokes there are; the eraser is a blend mode rather
+  than a mask; and the live path is a derived `SkPath` on the UI thread.
+- **The picture is re-recorded when `items` or the canvas size change**, in a
+  `useMemo` on the JS thread. Recording is a loop of `drawPath` calls with no
+  rasterising, so a commit costs one pass over the marks — not a re-render of
+  one node per mark.
+- **The marks stay strings.** Skia parses each item's `d` with
+  `Path.MakeFromSVGString` while recording; the leaf's smoother, the item shape,
+  `toSVG` and Signature's import are untouched by the move. Data that does not
+  parse is skipped.
+- **The layer is load-bearing.** Everything — the picture and the live eraser —
+  draws inside one `saveLayer`, so a `Clear` zeroes ink in that layer and leaves
+  the canvas transparent rather than punching through to black. That is what
+  lets an annotated image or the canvas's own surface show through an erased
+  gap.
 - **`Sketch.Canvas` children are painted under the marks** — an image to
-  annotate, or an empty-state hint. The `Svg` is `pointerEvents="none"` and the
-  pan sits on the canvas `View`.
+  annotate, or an empty-state hint. The Skia `Canvas` is absolutely positioned
+  over them with `pointerEvents="none"`, and the pan sits on the canvas `View`.
+- **The toolbar glyphs stay on `react-native-svg`.** The Central icons the
+  toolbar already uses are SVG, and a Skia surface per glyph would be eleven
+  surfaces for eleven 24pt icons. Only the drawing moved.
+
+## Export
+
+- **`toSVG()` is vector and `toPNG()` is raster; both hold the marks and the
+  background only.** Neither includes what `Sketch.Canvas` children paint under
+  the marks.
+- **`toPNG()` renders off screen**, on a CPU surface (`Skia.Surface.Make`) sized
+  to the canvas times `scale` (default the screen's pixel ratio), by the same
+  `drawSketchItems` the picture records — not a snapshot of the visible canvas,
+  which would need the view mounted and would capture nothing of the background
+  option. It is synchronous and returns base64 without a `data:` prefix; `""`
+  before the canvas is measured. Saving or sharing it is the app's job.
 
 ## Layout
 
@@ -166,7 +207,14 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
 
 - `bun test packages/react-native-ui/src/components/sketch` covers the leaf and
   the resolvers.
-- **Checked on an iOS simulator (iPhone 17, dev client, 2026-10-05):** a pen
+- **Checked on Skia (iPhone 17 Pro simulator, dev client, 2026-10-06):** the
+  seeded picture renders; a red stroke drawn with no pause after the swatch tap
+  is red; the eraser clears earlier marks and a later pen stroke over the gap is
+  intact; in dark, theme inks parse and `toPNG()` (the `export` demo, not
+  captured) matches the screen on the theme's background; erased gaps show the
+  canvas surface, not black. All five previews recaptured and identical in
+  content to the SVG captures.
+- **Checked on SVG, before the move (iPhone 17, dev client, 2026-10-05):** a pen
   stroke and a tap dot draw with no worklet crash; the eraser hides earlier ink
   and a later stroke over the gap is intact; two undos remove that stroke and
   bring the erased ink back; a swatch change applies to the next stroke; the
@@ -174,24 +222,20 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
   3 marks"; drawing over `Sketch.Canvas` children and `toSVG` work.
 - **Not yet checked:** a Release build (the worklet-capture risk is
   Release-specific), 200-stroke performance, the theme toggle, VoiceOver's
-  undo/clear actions, and Android `Mask` rendering — the weaker platform for SVG
-  masks; if it breaks, record it here and gate the eraser.
-- **Previews (2026-10-06, dev client, iPhone 17 Pro):** `default` is the hero clip,
-  `shapes`, `eraser` and `annotate` are clips, `colours` is a still. The flows in
+  undo/clear actions, and Android.
+- **Previews (2026-10-06, dev client, iPhone 17 Pro, recaptured on Skia):**
+  `default` is the hero clip, `shapes`, `eraser` and `annotate` are clips, `colours` is a still. The flows in
   `.argent/flows/previews/sketch/` draw pen strokes with raw `gesture-custom`
   points (a `swipe` is one straight line) and undo back to the seed, so every
   clip loops. **Every flow waits ~400ms after a tool or swatch tap before
-  drawing**: the pan reads tool and ink from shared values the canvas updates in
-  an effect, and a stroke begun straight after the tap took the old ink (a black
-  loop) or the old tool (an ellipse instead of a tick). No finger is that fast;
-  argent is.
+  drawing** — see "The setters write the brush as they run" for the press
+  dispatch that is still slower than argent.
 
 ## Out of scope
 
-`Sketch.Sheet` and any native sheet; PNG export (`react-native-view-shot` would be
-a new native peer); a custom colour picker (`Sketch.Swatches` takes trailing
+`Sketch.Sheet` and any native sheet; exporting what is under the marks; a custom colour picker (`Sketch.Swatches` takes trailing
 children for one); selecting, moving or restyling marks; text; layers; redo;
-zoom; pressure; multi-touch; persistence; Skia; Signature itself.
+zoom; pressure; multi-touch; persistence; Signature itself.
 
 ## Signature (Forms)
 

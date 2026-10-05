@@ -37,7 +37,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
-	{ name: "sketch", title: "Sketch", description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG." },
+	{ name: "sketch", title: "Sketch", description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },

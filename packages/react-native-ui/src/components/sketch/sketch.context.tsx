@@ -1,8 +1,24 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
+import type { SharedValue } from "react-native-reanimated";
 import type { HapticFeedback } from "../pressable";
 import type { SketchItem, SketchShape, SketchTool } from "./sketch.paths";
 import type { SketchCanvasSize, SketchCommit, SketchHandle } from "./sketch.types";
 import type { SketchSwatch } from "./sketch.variants";
+
+/**
+ * What the canvas's pan reads at touch-down, on the UI thread.
+ *
+ * Written by the root's setters as they run and synced from the resolved values
+ * after each render, so a stroke begun the instant after a tap has the new tool
+ * or ink, and a controlled value the parent overrides is put back. `ink` is `""`
+ * when the colour resolves to nothing; `size` is already clamped.
+ */
+export type SketchBrush = {
+	tool: SharedValue<SketchTool>;
+	shape: SharedValue<SketchShape>;
+	ink: SharedValue<string>;
+	size: SharedValue<number>;
+};
 
 export type SketchContextValue = {
 	/** Every committed mark, oldest first. */
@@ -19,6 +35,8 @@ export type SketchContextValue = {
 	ink: string | undefined;
 	/** Stroke width in points. */
 	size: number;
+	/** The tool, shape, ink and width as the canvas's pan reads them. */
+	brush: SketchBrush;
 	minSize: number;
 	maxSize: number;
 	isDisabled: boolean;

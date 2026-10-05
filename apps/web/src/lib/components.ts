@@ -230,7 +230,7 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Sketch",
 		group: "Layout",
 		blurb:
-			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG or PNG.",
 	},
 	{
 		slug: "provider",

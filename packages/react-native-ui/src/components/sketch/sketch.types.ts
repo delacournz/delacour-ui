@@ -10,6 +10,12 @@ export type SketchExportOptions = {
 	background?: string | null;
 };
 
+/** What `toPNG` takes. */
+export type SketchPngOptions = SketchExportOptions & {
+	/** Pixels per point. Default: the screen's pixel ratio. */
+	scale?: number;
+};
+
 /** The imperative handle a `ref` on `<Sketch>` receives. */
 export type SketchHandle = {
 	/** Removes the last mark. An eraser stroke is one mark. */
@@ -19,6 +25,12 @@ export type SketchHandle = {
 	isEmpty: () => boolean;
 	/** Self-contained SVG: the viewBox is the canvas, an optional background rect, masks inlined. */
 	toSVG: (options?: SketchExportOptions) => string;
+	/**
+	 * The drawing as a base64-encoded PNG (no `data:` prefix), the canvas's size
+	 * times `scale`. Holds the marks and the background only — never what
+	 * `Sketch.Canvas` children paint under them. `""` before the canvas is measured.
+	 */
+	toPNG: (options?: SketchPngOptions) => string;
 };
 
 /**

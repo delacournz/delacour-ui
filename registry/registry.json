@@ -1169,7 +1169,7 @@
 			"name": "sketch",
 			"type": "registry:ui",
 			"title": "Sketch",
-			"description": "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+			"description": "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG.",
 			"categories": [
 				"layout"
 			],
@@ -1188,6 +1188,7 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
+				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
 				"react-native-svg",
@@ -1199,7 +1200,6 @@
 				"ui/sketch/AGENTS.md",
 				"ui/sketch/index.ts",
 				"ui/sketch/sketch-canvas.tsx",
-				"ui/sketch/sketch-groups.tsx",
 				"ui/sketch/sketch-size.tsx",
 				"ui/sketch/sketch-swatches.tsx",
 				"ui/sketch/sketch-tool.tsx",
@@ -1207,6 +1207,7 @@
 				"ui/sketch/sketch-undo.tsx",
 				"ui/sketch/sketch.context.tsx",
 				"ui/sketch/sketch.paths.ts",
+				"ui/sketch/sketch.skia.ts",
 				"ui/sketch/sketch.tsx",
 				"ui/sketch/sketch.types.ts",
 				"ui/sketch/sketch.variants.ts"

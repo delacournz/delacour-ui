@@ -1,6 +1,6 @@
 ---
 title: Sketch
-description: A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.
+description: A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG or PNG.
 icon: PenTool
 ---
 
@@ -80,10 +80,19 @@ sketch.current?.isEmpty();
 
 ## Exporting SVG
 
-`toSVG()` returns a self-contained SVG on the theme's `background` — pass `background: null` for a transparent file; saving it, or rasterising it to PNG, is your app's job.
+`toSVG()` returns a self-contained SVG on the theme's `background` — pass `background: null` for a transparent file; saving it is your app's job.
 
 ```tsx
 const svg = sketch.current?.toSVG({ background: null }) ?? "";
+```
+
+## Exporting PNG
+
+`toPNG()` renders the marks off screen at the screen's pixel ratio and returns base64, with the same `background` option and a `scale` for the pixels per point.
+
+```tsx
+const png = sketch.current?.toPNG({ scale: 2 }) ?? "";
+const uri = `data:image/png;base64,${png}`;
 ```
 
 ## Your own toolbar
@@ -105,7 +114,7 @@ Pass children to choose and order the parts yourself.
 
 ## Annotating an image
 
-`Sketch.Canvas` children are painted under the marks; the export holds only the marks.
+`Sketch.Canvas` children are painted under the marks; either export holds only the marks.
 
 <Preview id="sketch/annotate" />
 
@@ -166,7 +175,7 @@ another way to provide it.
     onSizeChange: { type: "(size: number) => void", description: "Called as the width changes." },
     isDisabled: { type: "boolean", default: "false", description: "Blocks drawing, tools and undo. The marks stay at full strength." },
     haptic: { type: "false | HapticFeedback", default: '"selection"', description: "Played on a tool or colour change and on undo." },
-    ref: { type: "Ref<SketchHandle>", description: "undo, clear, isEmpty and toSVG." },
+    ref: { type: "Ref<SketchHandle>", description: "undo, clear, isEmpty, toSVG and toPNG." },
   }}
 />
 
@@ -205,6 +214,7 @@ another way to provide it.
     clear: { type: "() => void", description: "Removes every mark." },
     isEmpty: { type: "() => boolean", description: "Whether there is anything drawn." },
     toSVG: { type: "(options?: { background?: string | null }) => string", description: "The drawing as a self-contained SVG string." },
+    toPNG: { type: "(options?: { background?: string | null; scale?: number }) => string", description: "The drawing as a base64 PNG, without the data: prefix." },
   }}
 />
 

@@ -252,7 +252,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	sketch: {
 		title: "Sketch",
 		description:
-			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG.",
 		categories: ["layout"],
 	},
 	slider: {

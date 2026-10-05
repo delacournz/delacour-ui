@@ -4781,10 +4781,10 @@ export const install = {
 	"sketch": {
 		name: "sketch",
 		title: "Sketch",
-		description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+		description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG.",
 		importPath: "@delacour/react-native-ui/sketch",
 		exportName: "Sketch",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 95,
@@ -4797,7 +4797,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/sketch/AGENTS.md", target: "src/components/ui/sketch/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/sketch/index.ts", target: "src/components/ui/sketch/index.ts" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch-canvas.tsx", target: "src/components/ui/sketch/sketch-canvas.tsx" },
-					{ source: "packages/react-native-ui/src/components/sketch/sketch-groups.tsx", target: "src/components/ui/sketch/sketch-groups.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch-size.tsx", target: "src/components/ui/sketch/sketch-size.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch-swatches.tsx", target: "src/components/ui/sketch/sketch-swatches.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch-tool.tsx", target: "src/components/ui/sketch/sketch-tool.tsx" },
@@ -4805,6 +4804,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/sketch/sketch-undo.tsx", target: "src/components/ui/sketch/sketch-undo.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch.context.tsx", target: "src/components/ui/sketch/sketch.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch.paths.ts", target: "src/components/ui/sketch/sketch.paths.ts" },
+					{ source: "packages/react-native-ui/src/components/sketch/sketch.skia.ts", target: "src/components/ui/sketch/sketch.skia.ts" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch.tsx", target: "src/components/ui/sketch/sketch.tsx" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch.types.ts", target: "src/components/ui/sketch/sketch.types.ts" },
 					{ source: "packages/react-native-ui/src/components/sketch/sketch.variants.ts", target: "src/components/ui/sketch/sketch.variants.ts" },
@@ -5084,7 +5084,7 @@ export type InstallName = keyof typeof install;
  * package's declared peers — see `peerNames` in the generator.
  */
 export const peers = {
-	expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
+	expo: ["@legendapp/list", "@shopify/react-native-skia", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 	npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
 	dev: [],
 } as const;

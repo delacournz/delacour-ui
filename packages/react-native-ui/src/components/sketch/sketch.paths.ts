@@ -1,6 +1,6 @@
 /**
  * The maths under a drawing surface: smoothing a touch path into SVG path data,
- * the eight shapes, the eraser's mask groups and the SVG export.
+ * the eight shapes, the eraser's mask groups for the SVG export, and the export.
  *
  * **A leaf that imports nothing.** Not React, not React Native, not Reanimated,
  * not `react-native-svg` — not even a sibling. A freehand signature is the same

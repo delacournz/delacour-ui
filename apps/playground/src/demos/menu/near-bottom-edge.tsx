@@ -9,11 +9,12 @@ export const meta: DemoMeta = {
 	title: "Near the bottom edge",
 	caption:
 		"With no room below the trigger the panel flips above it, and it stays inside the safe area at the sides. `placement` names the side it prefers; the room decides.",
+	capture: { frame: "device", flow: "menu/near-bottom-edge" },
 };
 
 export function Demo(): ReactElement {
 	return (
-		<View className="min-h-[560px] justify-end">
+		<View className="min-h-[560px] flex-1 justify-end px-screen-gutter pb-16">
 			<View className="items-start">
 				<Menu>
 					<Menu.Trigger asChild>
@@ -22,7 +23,9 @@ export function Demo(): ReactElement {
 						</Button>
 					</Menu.Trigger>
 					<Menu.Content>
-						<Menu.Item icon={IconPencil}>Rename</Menu.Item>
+						<Menu.Item icon={IconPencil} testID="menu-bottom-rename">
+							Rename
+						</Menu.Item>
 						<Menu.Item icon={IconShareOs}>Share</Menu.Item>
 						<Menu.Separator />
 						<Menu.Item icon={IconTrashCan} variant="destructive">

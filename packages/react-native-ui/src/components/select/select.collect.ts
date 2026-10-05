@@ -1,4 +1,4 @@
-import { Children, type ComponentType, isValidElement, type ReactElement, type ReactNode } from "react";
+import { Children, type ComponentType, Fragment, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { SelectRowOption } from "./select.types";
 import type { SelectRowOptionGroup } from "./select.variants";
 import { SelectGroup, type SelectGroupProps } from "./select-group";
@@ -9,7 +9,7 @@ function flatElements(children: ReactNode): ReactElement[] {
 	const out: ReactElement[] = [];
 	for (const child of Children.toArray(children)) {
 		if (!isValidElement(child)) continue;
-		if (child.type === Symbol.for("react.fragment")) {
+		if (child.type === Fragment) {
 			out.push(...flatElements((child.props as { children?: ReactNode }).children));
 			continue;
 		}

@@ -24,8 +24,9 @@ export type CircularTextRingProps = {
  * ring turns. `memo`, because its props are frozen while spinning: re-rendering a `TextPath` every
  * frame would re-lay-out every glyph.
  *
- * `textLength` with `lengthAdjust="spacing"` closes a full ring exactly, whatever the font: the
- * engine opens or tightens the letter spacing rather than scaling the glyphs.
+ * `textLength` with `lengthAdjust="spacing"` asks the engine to close the ring, but iOS ignores it;
+ * the root also hands down a `letterSpacing` measured to the same length, which is what closes it
+ * there.
  *
  * Hidden from assistive technology — the wrapper carries the label, once, without the repeats.
  */

@@ -1,5 +1,5 @@
-import type { ReactElement } from "react";
-import { type ColorValue, StyleSheet, View } from "react-native";
+import { type ReactElement, useState } from "react";
+import { type ColorValue, type LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useResolveClassNames } from "uniwind";
@@ -12,6 +12,7 @@ import {
 	resolveBaselineRadius,
 	resolveCirclePath,
 	resolveCircularTextIssue,
+	resolveFillLetterSpacing,
 	resolveRepeatCount,
 	resolveRingBox,
 	resolveRingLabel,
@@ -74,12 +75,17 @@ function CircularTextRoot({
 		transform: [{ rotate: `${controlled ? controlled.value : rotation.value}deg` }],
 	}));
 
+	const [measured, setMeasured] = useState<{ key: string; width: number } | null>(null);
+
 	const press = Gesture.LongPress()
 		.minDuration(0)
 		.maxDistance(Number.MAX_SAFE_INTEGER)
 		.shouldCancelWhenOutside(false)
 		.enabled(pause.kind === "press" && spin.kind === "loop")
 		.onBegin(() => {
+			isPressed.value = true;
+		})
+		.onStart(() => {
 			isPressed.value = true;
 		})
 		.onFinalize(() => {
@@ -108,11 +114,46 @@ function CircularTextRoot({
 				)
 			: repeat;
 
+	const text = resolveRingText(children, copies, separator);
+	const fontFamily = typeof typography.fontFamily === "string" ? typography.fontFamily : undefined;
+	const fontWeight = typography.fontWeight === undefined ? undefined : String(typography.fontWeight);
+	const baseSpacing = typeof typography.letterSpacing === "number" ? typography.letterSpacing : 0;
+	const length = hasLength ? resolveRingLength(baseline, sweep) : undefined;
+	const measureKey = `${text}|${fontSize}|${fontFamily}|${fontWeight}|${baseSpacing}`;
+	const naturalWidth = measured?.key === measureKey ? measured.width : null;
+	const letterSpacing =
+		length === undefined || naturalWidth === null
+			? baseSpacing
+			: resolveFillLetterSpacing(length, naturalWidth, countGlyphs(text), baseSpacing);
+	const isWaitingForWidth = length !== undefined && naturalWidth === null;
+	const onMeasure = (event: LayoutChangeEvent) => {
+		setMeasured({ key: measureKey, width: event.nativeEvent.layout.width });
+	};
+
+	// `textLength` alone would close the ring, but iOS ignores it, so a spanned ring measures its text
+	// once with the platform's own shaper — an invisible, unwrapped `Text` in the same face — and
+	// spreads the difference as letter spacing. The ring stays hidden until then, so it never
+	// appears with a gap and jumps shut.
+	//
 	// The ring and its label sit on a View that does not turn, so a screen reader's focus frame stays
 	// square while the glyphs rotate. `centerContent` is a sibling drawn over it, not a child, so an
 	// icon button there keeps its own role; it passes touches it does not handle through to the ring.
 	return (
 		<View {...props} style={[{ height: box, width: box }, style]}>
+			{length === undefined ? null : (
+				<View pointerEvents="none" style={styles.measure}>
+					<Text
+						accessibilityElementsHidden
+						allowFontScaling={false}
+						importantForAccessibility="no-hide-descendants"
+						numberOfLines={1}
+						onLayout={onMeasure}
+						style={{ fontFamily, fontSize, fontWeight: typography.fontWeight, letterSpacing: baseSpacing }}
+					>
+						{text}
+					</Text>
+				</View>
+			)}
 			<GestureDetector gesture={press}>
 				<View
 					accessibilityLabel={accessibilityLabel ?? resolveRingLabel(children, separator)}
@@ -120,17 +161,17 @@ function CircularTextRoot({
 					accessible
 					style={StyleSheet.absoluteFill}
 				>
-					<Animated.View style={[StyleSheet.absoluteFill, rotationStyle]}>
+					<Animated.View style={[StyleSheet.absoluteFill, rotationStyle, isWaitingForWidth && styles.hidden]}>
 						<CircularTextRing
 							box={box}
 							d={d}
 							fill={toFill(typography.color)}
-							fontFamily={typeof typography.fontFamily === "string" ? typography.fontFamily : undefined}
+							fontFamily={fontFamily}
 							fontSize={fontSize}
-							fontWeight={typography.fontWeight === undefined ? undefined : String(typography.fontWeight)}
-							letterSpacing={typeof typography.letterSpacing === "number" ? typography.letterSpacing : undefined}
-							text={resolveRingText(children, copies, separator)}
-							textLength={hasLength ? resolveRingLength(baseline, sweep) : undefined}
+							fontWeight={fontWeight}
+							letterSpacing={letterSpacing === 0 ? undefined : letterSpacing}
+							text={text}
+							textLength={length}
 						/>
 					</Animated.View>
 				</View>
@@ -144,7 +185,11 @@ function CircularTextRoot({
 	);
 }
 
-const styles = StyleSheet.create({ center: { alignItems: "center", justifyContent: "center" } });
+const styles = StyleSheet.create({
+	center: { alignItems: "center", justifyContent: "center" },
+	hidden: { opacity: 0 },
+	measure: { alignItems: "flex-start", left: 0, opacity: 0, position: "absolute", top: 0, width: 100_000 },
+});
 
 /**
  * Text set around a circle, optionally turning — a seal, a badge, a "scroll down" ring, a loading

@@ -9,6 +9,7 @@ import {
 	resolveCirclePath,
 	resolveCircularTextIssue,
 	resolveCircumference,
+	resolveFillLetterSpacing,
 	resolveGlyphAngles,
 	resolveGlyphPosition,
 	resolveRepeatCount,
@@ -308,5 +309,27 @@ describe("the exported tuples", () => {
 	test("name both directions and both sides", () => {
 		expect([...CIRCULAR_TEXT_DIRECTIONS]).toEqual(["clockwise", "counterclockwise"]);
 		expect([...CIRCULAR_TEXT_SIDES]).toEqual(["outside", "inside"]);
+	});
+});
+
+describe("resolveFillLetterSpacing", () => {
+	test("adds the shortfall spread over every glyph, so the run ends exactly at the length", () => {
+		const spacing = resolveFillLetterSpacing(300, 240, 20, 0);
+		expect(spacing).toBeCloseTo(3);
+		expect(240 + 20 * (spacing - 0)).toBeCloseTo(300);
+	});
+
+	test("keeps the typography's own tracking underneath the extra", () => {
+		expect(resolveFillLetterSpacing(300, 240, 20, 0.5)).toBeCloseTo(3.5);
+	});
+
+	test("tightens when the text overruns the length", () => {
+		expect(resolveFillLetterSpacing(200, 240, 20, 0)).toBeCloseTo(-2);
+	});
+
+	test("falls back to the base tracking with nothing to measure", () => {
+		expect(resolveFillLetterSpacing(300, 0, 20, 1)).toBe(1);
+		expect(resolveFillLetterSpacing(300, 240, 0, 1)).toBe(1);
+		expect(resolveFillLetterSpacing(300, Number.NaN, 20, 1)).toBe(1);
 	});
 });

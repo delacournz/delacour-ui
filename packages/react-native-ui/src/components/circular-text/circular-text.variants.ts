@@ -137,6 +137,24 @@ export function resolveCirclePath(
 	return `M ${pointAt(cx, cy, radius, from)} A ${r} ${r} 0 ${largeArc} ${flag} ${pointAt(cx, cy, radius, to)}`;
 }
 
+/**
+ * The letter spacing that spreads a run measured at `naturalWidth` across `length`.
+ *
+ * The fallback for `textLength`, which iOS's `react-native-svg` ignores: SVG letter spacing is
+ * added after every glyph, the last included, so the shortfall over `glyphCount` lands the run
+ * exactly at the length — and the trailing gap is the seam where a full ring closes. `base` is
+ * the typography's own tracking, already inside the measured width.
+ */
+export function resolveFillLetterSpacing(
+	length: number,
+	naturalWidth: number,
+	glyphCount: number,
+	base: number
+): number {
+	if (!(naturalWidth > 0) || !(glyphCount > 0)) return base;
+	return base + (length - naturalWidth) / glyphCount;
+}
+
 /** Glyphs as a reader counts them — code points, so an astral symbol is one. */
 export function countGlyphs(text: string): number {
 	return Array.from(text).length;

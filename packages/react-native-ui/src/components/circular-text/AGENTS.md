@@ -66,9 +66,15 @@ no context.
   along the bottom of a seal.
 - **A full circle is two arcs.** One `A` whose ends coincide draws nothing. A partial arc is one
   `A`, with `large-arc` set past 180°.
-- **`full` and `arc` close exactly with `textLength`.** `textLength` = the arc length at the
-  baseline and `lengthAdjust="spacing"`, so the engine spreads the letter spacing to fit whatever
-  the font's metrics. `natural` sets no length, for an arc whose spacing matters more than its ends.
+- **`full` and `arc` close exactly by a measured letter spacing, not by `textLength` alone.**
+  `textLength` (the arc length at the baseline, with `lengthAdjust="spacing"`) is still set, but
+  iOS's `react-native-svg` ignores it — on the simulator the ring stopped short and left a gap at
+  12 o'clock. So the root measures the string once with an invisible, unwrapped RN `Text` in the
+  same face, size, weight and tracking, and `resolveFillLetterSpacing(length, width, glyphs, base)`
+  spreads the shortfall over every glyph. SVG adds spacing after the last glyph too, so that
+  trailing gap is the seam where the ring closes and it matches every other join. The ring is
+  `opacity: 0` until the width arrives, so it never shows with a gap and jumps shut. `natural`
+  sets no length and measures nothing.
 - **`repeat: "fill"` floors its estimate.** `resolveRepeatCount` assumes an average advance of
   `0.58·fontSize`; floored, an error opens the spacing slightly rather than asking `textLength` for
   negative spacing and colliding the glyphs.
@@ -93,8 +99,9 @@ no context.
   `DelacourProvider`'s `isMotionCalm`, `loop` behaves as `none` and the angle returns to 0, so the
   text reads from 12 o'clock. The spin is decoration; holding it still makes the words legible and
   costs nothing. A `controlled` spin still follows its caller, who owns that motion.
-- **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It reads only `onBegin` and
-  `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
+- **Press-to-pause is a `LongPress` with `minDuration(0)` on the ring.** It sets the pressed flag in
+  both `onBegin` and `onStart` — on the iOS simulator `onBegin` never fired for it, and the ring
+  kept turning under the finger until `onStart` set it too — and clears it in `onFinalize`, so a scroll that takes the touch over still resumes the ring. It is a hold, not a
   press action, which is why it is a raw gesture rather than a `Pressable`. `centerContent` sits
   above the ring with `pointerEvents="box-none"`: a button there keeps its own tap, and a touch on
   empty middle reaches the ring.
@@ -122,13 +129,20 @@ no context.
 
 ## Spikes
 
-- **`textLength` / `lengthAdjust` on iOS:** see the simulator note below.
-- **Uniwind font family inside SVG text:** see the simulator note below.
-- **Android:** not verified on this branch — see the simulator note below.
+Verified on an iOS 26 simulator (iPhone 17) on 2026-10-05:
 
-### Simulator note
-
-Pending.
+- **`textLength` / `lengthAdjust`: ignored on iOS.** The fallback above (`resolveFillLetterSpacing`
+  from one measured width) is what closes the ring; after it, a full ring closes with an even seam.
+- **Uniwind font family inside SVG text: renders.** The ring draws in the theme's sans face, not a
+  system fallback.
+- **Orientation:** `outside` tops point away from the centre, `inside` toward it with the words
+  reading left to right along the bottom; nested rings at different radii line up.
+- **Calm motion:** with the OS Reduce Motion setting on, a `loop` holds still at 0° (two frames
+  seconds apart are identical, the text starts at 12 o'clock); off, it turns.
+- **Press-to-pause:** still under a held finger, turning again after release.
+- **Android: not verified on this branch.** No emulator check was run. If Android honours
+  `textLength`, the measured spacing and `textLength` agree on the same length, so they should not
+  fight — check it when Android is verified.
 
 ## Demos and previews
 

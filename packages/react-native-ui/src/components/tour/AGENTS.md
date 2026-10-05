@@ -62,6 +62,10 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   x=20 at x=20. The card restores the app's direction for its own content, so its footer still
   mirrors. This is the one place the package positions with `left` rather than `start`, and it is
   why.
+- **`testID` reaches the card.** The tour draws the card, so a caller cannot tag its actions;
+  the root's `testID` is the stem `resolveTourTestIDs` derives `<testID>-card`, `-next`, `-back`
+  and `-skip` from. One stem rather than a `closeTestID`-style prop per action, because there are
+  four of them. A capture flow presses Next through `-next`.
 - **Scrim colour is the `overlay` token**, through `useThemeColor`; the suite asserts both themes
   declare it.
 

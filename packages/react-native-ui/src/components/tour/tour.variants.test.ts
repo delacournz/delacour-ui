@@ -15,6 +15,7 @@ import {
 	resolveTourFooter,
 	resolveTourLabels,
 	resolveTourProgressLabel,
+	resolveTourTestIDs,
 	resolveTourTransitionDuration,
 	sortSteps,
 	TOUR_CARD_GAP,
@@ -454,5 +455,25 @@ describe("tourVariants", () => {
 
 	test("the card is absolutely positioned, so placement is a style and not layout", () => {
 		expect(cls(tourVariants().card()).split(" ")).toContain("absolute");
+	});
+});
+
+describe("resolveTourTestIDs", () => {
+	test("derives the card and each action from the tour's testID", () => {
+		expect(resolveTourTestIDs("onboarding")).toEqual({
+			card: "onboarding-card",
+			next: "onboarding-next",
+			back: "onboarding-back",
+			skip: "onboarding-skip",
+		});
+	});
+
+	test("leaves every one unset when the tour has none", () => {
+		expect(resolveTourTestIDs(undefined)).toEqual({
+			card: undefined,
+			next: undefined,
+			back: undefined,
+			skip: undefined,
+		});
 	});
 });

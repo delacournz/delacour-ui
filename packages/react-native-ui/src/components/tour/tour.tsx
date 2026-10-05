@@ -57,6 +57,11 @@ export type TourProps = TourGeometryProps & {
 	cardClassName?: string;
 	/** Classes on the root `View`, which fills its parent. */
 	className?: string;
+	/**
+	 * On the root `View`, and the stem of the card's own: `<testID>-card`, `-next`, `-back` and
+	 * `-skip`, so a test or automation can press the actions the tour draws.
+	 */
+	testID?: string;
 	children: ReactNode;
 };
 
@@ -81,6 +86,7 @@ function TourRoot({
 	labels: labelsProp,
 	cardClassName,
 	className,
+	testID,
 	children,
 }: TourProps): ReactElement {
 	const rootRef = useRef<View>(null);
@@ -182,6 +188,7 @@ function TourRoot({
 				onSkip={skip}
 				options={resolveStepOptions({ padding, radius, shape, placement }, entry.options)}
 				rootRef={rootRef}
+				testID={testID}
 				total={total}
 			/>
 		) : null;
@@ -196,7 +203,7 @@ function TourRoot({
 	return (
 		<TourRegistryProvider value={registry}>
 			<TourProvider value={context}>
-				<View className={tourVariants().root({ className })} collapsable={false} ref={rootRef}>
+				<View className={tourVariants().root({ className })} collapsable={false} ref={rootRef} testID={testID}>
 					<View
 						accessibilityElementsHidden={isAppHidden}
 						className="grow"

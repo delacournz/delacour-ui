@@ -7,6 +7,7 @@ import { Text } from "../text";
 import {
 	resolveTourAnnouncement,
 	resolveTourProgressLabel,
+	resolveTourTestIDs,
 	TOUR_CARD_FADE_MS,
 	type TourCardPlacement,
 	type TourFooter,
@@ -35,6 +36,8 @@ type TourCardProps = {
 	onEscape?: () => void;
 	haptic: false | HapticFeedback;
 	className?: string;
+	/** The tour's; the card and each action carry one derived from it (`resolveTourTestIDs`). */
+	testID?: string;
 };
 
 /**
@@ -70,6 +73,7 @@ export function TourCard({
 	onEscape,
 	haptic,
 	className,
+	testID,
 }: TourCardProps): ReactElement {
 	const slots = tourVariants();
 	const header = useRef<View>(null);
@@ -97,6 +101,7 @@ export function TourCard({
 	};
 
 	const current = index + 1;
+	const testIDs = resolveTourTestIDs(testID);
 	const announcement = resolveTourAnnouncement({ current, total, title, description, labels });
 
 	return (
@@ -105,6 +110,7 @@ export function TourCard({
 			className={slots.card({ className })}
 			onAccessibilityEscape={onEscape}
 			onLayout={handleLayout}
+			testID={testIDs.card}
 			style={[
 				{
 					direction: I18nManager.isRTL ? "rtl" : "ltr",
@@ -130,16 +136,16 @@ export function TourCard({
 			</View>
 			<View className={slots.footer()}>
 				{footer.hasSkip ? (
-					<Button className="me-auto" haptic={haptic} onPress={onSkip} variant="ghost">
+					<Button className="me-auto" haptic={haptic} onPress={onSkip} testID={testIDs.skip} variant="ghost">
 						{labels.skip}
 					</Button>
 				) : null}
 				{footer.hasBack ? (
-					<Button haptic={haptic} onPress={onBack} variant="outline">
+					<Button haptic={haptic} onPress={onBack} testID={testIDs.back} variant="outline">
 						{labels.back}
 					</Button>
 				) : null}
-				<Button haptic={haptic} onPress={onNext} variant="primary">
+				<Button haptic={haptic} onPress={onNext} testID={testIDs.next} variant="primary">
 					{footer.isLast ? labels.finish : labels.next}
 				</Button>
 			</View>

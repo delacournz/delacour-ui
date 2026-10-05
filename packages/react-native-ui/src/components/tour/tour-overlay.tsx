@@ -41,6 +41,8 @@ export type TourOverlayProps = {
 	onNext: () => void;
 	onBack: () => void;
 	onSkip: () => void;
+	/** The tour's, for the card's parts to derive theirs from. */
+	testID?: string;
 };
 
 /** A measured target, tagged with the step it belongs to so a stale measurement is never placed. */
@@ -85,6 +87,7 @@ export function TourOverlay({
 	onNext,
 	onBack,
 	onSkip,
+	testID,
 }: TourOverlayProps): ReactElement {
 	const window = useWindowDimensions();
 	const insets = useSafeAreaInsets();
@@ -221,6 +224,7 @@ export function TourOverlay({
 				onNext={onNext}
 				onSkip={onSkip}
 				placement={placement}
+				testID={testID}
 				title={entry.title}
 				total={total}
 			/>

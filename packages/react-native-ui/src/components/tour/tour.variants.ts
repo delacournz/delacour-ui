@@ -380,6 +380,25 @@ export function resolveTourFooter({
 	return { hasBack: index > 0, hasSkip: hasSkip && !isLast, isLast };
 }
 
+/** The `testID`s the card's parts carry, each unset when the tour has none. */
+export type TourTestIDs = {
+	card: string | undefined;
+	next: string | undefined;
+	back: string | undefined;
+	skip: string | undefined;
+};
+
+/**
+ * The card's `testID`s, derived from the tour's own.
+ *
+ * The card is drawn by the tour, so a caller cannot reach its actions to tag them — and a test or
+ * a capture flow has to press Next. One root `testID` names all four rather than a prop per action.
+ */
+export function resolveTourTestIDs(testID: string | undefined): TourTestIDs {
+	const derive = (part: string): string | undefined => (testID === undefined ? undefined : `${testID}-${part}`);
+	return { card: derive("card"), next: derive("next"), back: derive("back"), skip: derive("skip") };
+}
+
 /**
  * How long the hole takes to reach a new target. Zero jumps.
  *

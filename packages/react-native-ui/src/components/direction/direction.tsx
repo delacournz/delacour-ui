@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
-import { I18nManager } from "react-native";
+import { I18nManager, View, type ViewStyle } from "react-native";
 import { LayoutDirection } from "uniwind";
 import { DirectionProvider, directionContextValue, useDirectionContext } from "./direction.context";
 import { type DirectionValue, resolveDirection } from "./direction.variants";
@@ -10,7 +10,22 @@ export type DirectionProps = {
 	 * enclosing `Direction`, else the app's `I18nManager.isRTL`.
 	 */
 	dir?: DirectionValue;
+	/**
+	 * Classes for the box that carries the direction. It is an ordinary `View`,
+	 * so a wrapper around a whole screen needs `flex-1`.
+	 */
+	className?: string;
 	children?: ReactNode;
+};
+
+/**
+ * One style per state, so the wrapper never allocates. With no `dir` the box
+ * is `display: contents` — it adds nothing to layout and writes no direction.
+ */
+const STYLES: Record<DirectionValue | "inherit", ViewStyle> = {
+	inherit: { display: "contents" },
+	ltr: { direction: "ltr" },
+	rtl: { direction: "rtl" },
 };
 
 /**
@@ -22,10 +37,12 @@ export type DirectionProps = {
  * `useDirection()` / `useDirectionSign()` report it, so gesture and `translateX`
  * maths can follow. No remount — changing `dir` relayouts in place.
  *
- * The wrapper is `display: contents`: it adds no box, so a `flex-1` child keeps
- * flexing against the real parent. That is why there is no `className` or
- * `style`; nest a `View` for a box. With `dir` omitted it writes no direction at
- * all, so an unconditional wrapper costs nothing.
+ * With `dir` set the wrapper is a real `View`, not a `display: contents` node:
+ * on React Native 0.86 Yoga does not pass `direction` from a contents node to
+ * its children, so a box is the only thing that flips them. Lay it out like any
+ * `View` — `className="flex-1"` around a screen. With `dir` omitted it is
+ * `display: contents` and writes no direction, so an unconditional wrapper
+ * costs nothing.
  *
  * It does not translate, format numbers or dates, or reach content portalled
  * out of the tree — a sheet, popover or toast re-wraps itself with the value
@@ -50,14 +67,18 @@ export type DirectionProps = {
  * </Direction>
  * ```
  */
-export function Direction({ dir, children }: DirectionProps): ReactElement {
+export function Direction({ dir, className, children }: DirectionProps): ReactElement {
 	const parent = useDirectionContext();
 	const resolved = resolveDirection(dir, parent?.dir ?? null, I18nManager.isRTL);
 
+	// The outer View flips the layout; `LayoutDirection` inside it only scopes
+	// Uniwind's `rtl:` / `ltr:` variants, since its own contents node cannot.
 	return (
-		<LayoutDirection rtl={dir === undefined ? undefined : dir === "rtl"}>
-			<DirectionProvider value={directionContextValue(resolved)}>{children}</DirectionProvider>
-		</LayoutDirection>
+		<View className={className} style={STYLES[dir ?? "inherit"]}>
+			<LayoutDirection rtl={dir === undefined ? undefined : dir === "rtl"}>
+				<DirectionProvider value={directionContextValue(resolved)}>{children}</DirectionProvider>
+			</LayoutDirection>
+		</View>
 	);
 }
 Direction.displayName = "DelacourUI.Direction";

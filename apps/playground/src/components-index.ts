@@ -49,6 +49,12 @@ const ROWS = [
 	{ slug: "menu", title: "Menu", description: "Actions, checkbox and radio rows, submenus", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
 	{
+		slug: "stack-card",
+		title: "StackCard",
+		description: "Throw, stamps, layouts, undo, decline",
+		group: "Actions",
+	},
+	{
 		slug: "slide-button",
 		title: "SlideButton",
 		description: "Drag to confirm, thresholds, async completion",

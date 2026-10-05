@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on stack-card/controlled-decline and has settled — a deck of four files with
+  holiday.mov on top (testID decline-card-holiday) and no question showing. The capture script navigates there before
+  running this.
+steps:
+  - echo: Throwing holiday.mov left, which the deck declines while it asks
+  - swipe: { from: { id: decline-card-holiday }, by: { x: -0.45 }, duration: 400 }
+  - wait: 1000
+  - echo: Answering No — the card stays, the question goes, and the clip loops where it began
+  - tap: { id: decline-no }
+  - wait: 700

@@ -1,0 +1,138 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "stack-card",
+	"type": "registry:ui",
+	"title": "Stack Card",
+	"description": "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"button",
+		"cn",
+		"icon",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/AGENTS.md",
+			"target": "stack-card/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/stack-card",
+					"to": "@registry/ui/stack-card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/index.ts",
+			"target": "stack-card/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-action.tsx",
+			"target": "stack-card/stack-card-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-actions.tsx",
+			"target": "stack-card/stack-card-actions.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-card.tsx",
+			"target": "stack-card/stack-card-card.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-empty.tsx",
+			"target": "stack-card/stack-card-empty.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-slot.tsx",
+			"target": "stack-card/stack-card-slot.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card-stamp.tsx",
+			"target": "stack-card/stack-card-stamp.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card.context.tsx",
+			"target": "stack-card/stack-card.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card.tsx",
+			"target": "stack-card/stack-card.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card.types.ts",
+			"target": "stack-card/stack-card.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/stack-card/stack-card.variants.ts",
+			"target": "stack-card/stack-card.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

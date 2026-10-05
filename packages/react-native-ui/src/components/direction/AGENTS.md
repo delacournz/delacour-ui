@@ -84,8 +84,6 @@ only because a component's pure resolvers live in a leaf with no React Native im
 - Simulator, 2026-10-05, via warden + agent-device on the toggle demo: before the toggle,
   `dir-step-one` at x 37; after, at x 261 and `dir-step-three` at x 37. The nested LTR row
   (`dir-fixed-1..3`) kept x 37 / 149 / 261 in both states.
-- No preview media is captured: argent is uninstalled on the capture machine, so the demos carry no
-  `capture` and the docs page has no `<Preview>`. `.argent/flows/previews/direction/toggle.yaml` is
-  ready for when they are captured — restore `capture` on `mirrored-rows` (hero, `align: "stretch"`),
-  `nested-override` and `toggle` (`flow: "direction/toggle"`), run `bun run previews -- --only direction`,
-  and add the `<Preview>` tags.
+- Previews captured 2026-10-06 on an iPhone 17 Pro dev client (`--dev`): `toggle` is the hero clip
+  (flow `direction/toggle`, flips to RTL and back so it loops); `mirrored-rows`, `nested-override` and
+  `uniwind-variants` are stills. All four are `align: "stretch"`.

@@ -165,7 +165,7 @@ Then `bun run gen-exports`. Provider display name: `DelacourUI.Direction.Provide
 
 | File | Shows | Capture |
 | --- | --- | --- |
-| `mirrored-rows.tsx` (hero) | the same `ListGroup` rendered in LTR and RTL side by side | yes, `align: "stretch"` — deferred: argent is uninstalled, captures are off until previews can run |
+| `mirrored-rows.tsx` (hero) | the same `ListGroup` rendered in LTR and RTL side by side | yes, `align: "stretch"` — captured 2026-10-06 |
 | `nested-override.tsx` | RTL paragraph with an LTR phone number | yes |
 | `toggle.tsx` | a `Switch` flipping `dir` for a sample card at runtime | yes, flow `direction/toggle` |
 | `uniwind-variants.tsx` | `rtl:`/`ltr:` classes resolving per subtree | no |

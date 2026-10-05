@@ -4,6 +4,8 @@ description: Sets left-to-right or right-to-left for a subtree, and tells gestur
 icon: ArrowLeftRight
 ---
 
+<Preview id="direction/toggle" title={null} />
+
 ## Installation
 
 <ComponentInstall name="direction" />
@@ -28,6 +30,31 @@ export default function Example() {
 }
 ```
 
+## Mirrored rows
+
+Rows reverse and `start`/`end` insets swap with nothing changed in the rows themselves.
+
+<Preview id="direction/mirrored-rows" />
+
+```tsx
+<Direction dir="rtl">
+  <ListGroup>
+    <ListGroup.Item>…</ListGroup.Item>
+  </ListGroup>
+</Direction>
+```
+
+## Changing at runtime
+
+`dir` is an ordinary prop, so flipping it relayouts on the next frame with no remount or restart.
+
+<Preview id="direction/toggle" />
+
+```tsx
+const [dir, setDir] = useState<DirectionValue>("ltr");
+<Direction dir={dir}>…</Direction>
+```
+
 ## Whole app vs one section
 
 `I18nManager.forceRTL` sets the app's locale after a restart; `Direction` overrides one subtree live, and follows `I18nManager` when `dir` is omitted.
@@ -43,6 +70,8 @@ export default function Example() {
 ## Nesting
 
 An inner `Direction` overrides the outer one for its own subtree, so a phone number keeps its order inside right-to-left copy.
+
+<Preview id="direction/nested-override" />
 
 ```tsx
 <Direction dir="rtl">
@@ -67,6 +96,8 @@ Unset alignment follows the app's locale; inside a `Direction`, React Native rea
 ## Uniwind variants
 
 `rtl:` and `ltr:` resolve against the nearest `Direction`, not the app.
+
+<Preview id="direction/uniwind-variants" />
 
 ```tsx
 <View className="ltr:bg-primary rtl:bg-destructive" />

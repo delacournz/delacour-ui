@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`hasAlpha` adds the opacity track: the current colour fading to a checkerboard, with the same RGB the whole way. Hex grows to eight digits below full opacity.",
 	keyboardAware: true,
+	capture: { flow: "color-picker/with-alpha", align: "stretch" },
 };
 
 export function Demo(): ReactElement {

@@ -7,16 +7,23 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
-		"A bare `<ColorPicker />` is complete: the saturation and brightness area, the hue track and the hex field. The readout updates on release, through `onValueCommit`.",
+		"The saturation and brightness area, the hue track and the hex field — what a bare `<ColorPicker />` draws. The readout updates on release, through `onValueCommit`.",
 	keyboardAware: true,
+	capture: { flow: "color-picker/basic", hero: true, align: "stretch" },
 };
 
 export function Demo(): ReactElement {
-	const [committed, setCommitted] = useState("#f59e0b");
+	const [committed, setCommitted] = useState("#ffa100");
 
 	return (
 		<View className="gap-3">
-			<ColorPicker defaultValue="#f59e0b" onValueCommit={setCommitted} testID="color-picker-basic" />
+			<ColorPicker defaultValue="#ffa100" onValueCommit={setCommitted}>
+				<ColorPicker.Content>
+					<ColorPicker.Area testID="color-picker-basic-area" />
+					<ColorPicker.Hue testID="color-picker-basic-hue" />
+					<ColorPicker.Input />
+				</ColorPicker.Content>
+			</ColorPicker>
 			<Text.Caption color="muted" testID="color-picker-basic-value">{`Committed: ${committed}`}</Text.Caption>
 		</View>
 	);

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	note: "Input's three steps. The area is 160, 200 and 240 points tall, the tracks and thumbs step with it, and every track stays a 44-point target.",
+	capture: { align: "stretch" },
 };
 
 const LABELS: Record<ColorPickerSize, string> = { sm: "Small", md: "Medium", lg: "Large" };

@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Incoming and outgoing",
 	caption:
 		"`direction` sets the side and the fill: incoming on `muted` with an avatar gutter, outgoing on `primary` with its delivery receipt underneath.",
-	capture: { align: "stretch", hero: true },
+	align: "stretch",
 };
 
 const SENT_AT = new Date();

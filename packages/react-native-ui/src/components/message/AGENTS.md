@@ -129,3 +129,11 @@ Compound root plus `Message.Avatar`, `.Header`, `.Author`, `.Bubble`, `.Text`,
 Menu / context menu (the long-press menu is app code; `isSelected` is the visual
 seam), toast, markdown and link detection (pass nested `Text`), swipe to reply,
 an image viewer, text selection by default (`selectable` steals the long press).
+
+## Previews (follow-up)
+
+No demo carries `capture` yet: a captured demo with no manifest entry fails
+`demos.test.ts`, and the media are shot after integration. The four to capture,
+all `align: "stretch"`: `directions` (**hero**), `runs`, `status`, `reactions`.
+Add the `<Preview>` blocks to `message.mdx` in the same change — a `<Preview id>`
+for an uncaptured demo throws at render.

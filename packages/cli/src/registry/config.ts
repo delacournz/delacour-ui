@@ -168,6 +168,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
 		categories: ["feedback"],
 	},
+	fab: {
+		title: "Fab",
+		description: "A floating action button, extended with a label or unfolding a dial of related actions.",
+		categories: ["controls"],
+	},
 	field: {
 		title: "Field",
 		description: "One control with its label, description and error — and the state they all read.",

@@ -60,6 +60,13 @@ export const drawerVariants = tv({
 		/** The foundation's scrim token. The fade is `Overlay.Scrim`'s own. */
 		scrim: "bg-overlay",
 		/**
+		 * A window-sized frame the panel is positioned in, laid out left to
+		 * right whatever the app's direction, so the panel's classes and its
+		 * safe-area padding are physical — the same terms its motion and its pan
+		 * are measured in. `inner` restores the app's direction for the content.
+		 */
+		positioner: "absolute inset-0",
+		/**
 		 * The panel. Docked flush to its edge with square corners there, and the
 		 * card corner on the two corners facing the app. `popover` because a
 		 * drawer is a layer over the app, as `Dialog` and `BottomSheet` are.

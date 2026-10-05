@@ -43,6 +43,7 @@ function colorTokens(cls: string): string[] {
 /** The slots this component declares, pinned so a new one has to be added before the sweeps can miss it. */
 const SLOT_NAMES = [
 	"scrim",
+	"positioner",
 	"content",
 	"inner",
 	"header",
@@ -326,6 +327,10 @@ describe("drawerVariants", () => {
 		const content = drawerVariants().content({ className: "bg-card" });
 		expect(content).toContain("bg-card");
 		expect(content).not.toContain("bg-popover");
+	});
+
+	test("the positioner fills the window the panel is placed in", () => {
+		expect(drawerVariants().positioner()).toBe("absolute inset-0");
 	});
 
 	test("the scrim paints the foundation's token", () => {

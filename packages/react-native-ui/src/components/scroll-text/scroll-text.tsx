@@ -89,6 +89,27 @@ function ScrollTextMeasure({
 }
 ScrollTextMeasure.displayName = "DelacourUI.ScrollText.Measure";
 
+/**
+ * Both ends of an effect's colour pair, resolved once per theme and handed to
+ * every unit as plain strings — so a frame interpolates two constants rather than
+ * looking a token up. `fade` and `rise` draw no colour and get none.
+ */
+function useScrollTextColors(effect: ScrollTextEffect): ScrollTextUnitColors {
+	const tokens = resolveScrollTextColorTokens(effect);
+	const toColor = useThemeColor(tokens.to ?? "foreground");
+	const fromColor = useThemeColor(tokens.from ?? "foreground");
+	const bandTo = tokens.isDefaultHighlight ? withAlpha(toColor, SCROLL_TEXT_HIGHLIGHT_ALPHA) : toColor;
+
+	switch (effect.kind) {
+		case "colour":
+			return { textFrom: fromColor, textTo: toColor };
+		case "highlight":
+			return { bandFrom: tokens.from ? fromColor : transparentOf(bandTo), bandTo };
+		default:
+			return {};
+	}
+}
+
 function ScrollTextRoot({
 	children,
 	effect = DEFAULT_EFFECT,
@@ -135,19 +156,7 @@ function ScrollTextRoot({
 	);
 	const layout = useMemo(() => resolveScrollTextLayout(units, split), [units, split]);
 
-	// Both ends of either colour pair are resolved here, once per theme, and handed
-	// to every unit as plain strings — so a frame interpolates two constants rather
-	// than looking a token up.
-	const tokens = resolveScrollTextColorTokens(effect);
-	const toColor = useThemeColor(tokens.to ?? "foreground");
-	const fromColor = useThemeColor(tokens.from ?? "foreground");
-	const bandTo = tokens.isDefaultHighlight ? withAlpha(toColor, SCROLL_TEXT_HIGHLIGHT_ALPHA) : toColor;
-	const colors: ScrollTextUnitColors =
-		effect.kind === "colour"
-			? { textFrom: fromColor, textTo: toColor }
-			: effect.kind === "highlight"
-				? { bandFrom: tokens.from ? fromColor : transparentOf(bandTo), bandTo }
-				: {};
+	const colors = useScrollTextColors(effect);
 
 	const isMeasured = isLines ? lines !== null : spaceWidth !== null;
 	const slots = scrollTextVariants({ align });

@@ -240,33 +240,45 @@ const NEWLINE = /\r\n|\r|\n/g;
  * paragraph's stagger is spread over its words rather than over its spaces too.
  */
 export function resolveScrollTextLayout(units: readonly TextUnit[], split: ScrollTextSplit): ScrollTextLayout {
+	return split === "line" ? layoutLines(units) : layoutWords(units, split === "character");
+}
+
+/** One single-line unit per line; a blank line keeps its height as a break. */
+function layoutLines(units: readonly TextUnit[]): ScrollTextLayout {
 	const groups: ScrollTextGroup[] = [];
 	let count = 0;
-
-	if (split === "line") {
-		for (const unit of units) {
-			if (unit.isSpace) groups.push({ kind: "break", isBlank: true });
-			else groups.push({ kind: "line", unit: { text: unit.text, index: count++ } });
-		}
-		return { groups, count };
+	for (const unit of units) {
+		if (unit.isSpace) groups.push({ kind: "break", isBlank: true });
+		else groups.push({ kind: "line", unit: { text: unit.text, index: count++ } });
 	}
+	return { groups, count };
+}
 
+/** The breaks a whitespace run makes: one per newline, the second and later blank. */
+function breaksOf(space: string): ScrollTextGroup[] {
+	const newlines = space.match(NEWLINE)?.length ?? 0;
+	return Array.from({ length: newlines }, (_, line) => ({ kind: "break", isBlank: line > 0 }));
+}
+
+/** Words as groups; graphemes, when `isCharacters`, gathered into their word's group. */
+function layoutWords(units: readonly TextUnit[], isCharacters: boolean): ScrollTextLayout {
+	const groups: ScrollTextGroup[] = [];
+	let count = 0;
 	let word: ScrollTextIndexedUnit[] | null = null;
 
 	for (const unit of units) {
 		if (unit.isSpace) {
 			word = null;
-			const newlines = unit.text.match(NEWLINE)?.length ?? 0;
-			for (let line = 0; line < newlines; line++) groups.push({ kind: "break", isBlank: line > 0 });
+			groups.push(...breaksOf(unit.text));
 			continue;
 		}
 
 		const indexed = { text: unit.text, index: count++ };
-		if (split === "word" || word === null) {
+		if (isCharacters && word !== null) {
+			word.push(indexed);
+		} else {
 			word = [indexed];
 			groups.push({ kind: "word", units: word });
-		} else {
-			word.push(indexed);
 		}
 	}
 

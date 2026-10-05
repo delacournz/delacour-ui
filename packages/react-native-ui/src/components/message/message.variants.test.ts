@@ -68,6 +68,9 @@ function everySlotClass(): string[] {
 	return out;
 }
 
+const HAS_ABOVE: ReadonlySet<string> = new Set(["middle", "last"]);
+const HAS_BELOW: ReadonlySet<string> = new Set(["first", "middle"]);
+
 describe("resolveMessageCorners", () => {
 	const corners = (direction: (typeof MESSAGE_DIRECTIONS)[number], position: (typeof MESSAGE_POSITIONS)[number]) =>
 		resolveMessageCorners(direction, position);
@@ -106,17 +109,15 @@ describe("resolveMessageCorners", () => {
 		}
 	});
 
-	test("a joined corner always faces a neighbour", () => {
-		for (const direction of MESSAGE_DIRECTIONS) {
-			const side = direction === "outgoing" ? "End" : "Start";
-			for (const position of MESSAGE_POSITIONS) {
-				const c = corners(direction, position);
-				const hasAbove = position === "middle" || position === "last";
-				const hasBelow = position === "first" || position === "middle";
-				expect(c[`top${side}`]).toBe(hasAbove ? "sm" : "lg");
-				expect(c[`bottom${side}`]).toBe(hasBelow ? "sm" : "lg");
-			}
-		}
+	const RUN_SIDES = MESSAGE_DIRECTIONS.flatMap((direction) =>
+		MESSAGE_POSITIONS.map((position) => [direction, position] as const)
+	);
+
+	test.each(RUN_SIDES)("%s %s: a joined corner always faces a neighbour", (direction, position) => {
+		const c = corners(direction, position);
+		const [top, bottom] = direction === "outgoing" ? [c.topEnd, c.bottomEnd] : [c.topStart, c.bottomStart];
+		expect(top).toBe(HAS_ABOVE.has(position) ? "sm" : "lg");
+		expect(bottom).toBe(HAS_BELOW.has(position) ? "sm" : "lg");
 	});
 });
 

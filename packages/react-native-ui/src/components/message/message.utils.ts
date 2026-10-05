@@ -1,3 +1,4 @@
+import { isValidElement, type ReactNode } from "react";
 import type { MessageStatus } from "./message.types";
 import type { MessageDirection, MessagePosition } from "./message.variants";
 
@@ -131,39 +132,42 @@ export function isEmojiOnly(text: string): boolean {
 	let i = 0;
 
 	while (i < cps.length) {
-		const cp = cps[i] ?? 0;
-
-		if (isSpace(cp)) {
+		if (isSpace(cps[i] ?? 0)) {
 			i += 1;
 			continue;
 		}
-
-		if (isKeycapBase(cp)) {
-			let next = i + 1;
-			if (cps[next] === 0xfe0f) next += 1;
-			if (cps[next] !== 0x20e3) return false;
-			i = next + 1;
-		} else if (isRegionalIndicator(cp)) {
-			i += isRegionalIndicator(cps[i + 1] ?? 0) ? 2 : 1;
-		} else if (isEmojiBase(cp)) {
-			i += 1;
-			for (;;) {
-				while (i < cps.length && isEmojiModifier(cps[i] ?? 0)) i += 1;
-				if (cps[i] === 0x200d && isEmojiBase(cps[i + 1] ?? 0)) {
-					i += 2;
-					continue;
-				}
-				break;
-			}
-		} else {
-			return false;
-		}
-
+		const next = consumeEmoji(cps, i);
+		if (next < 0) return false;
+		i = next;
 		count += 1;
 		if (count > EMOJI_ONLY_MAX) return false;
 	}
 
 	return count > 0;
+}
+
+/** The index past the one emoji starting at `i`, or -1 when no emoji starts there. */
+function consumeEmoji(cps: readonly number[], i: number): number {
+	const cp = cps[i] ?? 0;
+
+	if (isKeycapBase(cp)) {
+		const next = cps[i + 1] === 0xfe0f ? i + 2 : i + 1;
+		return cps[next] === 0x20e3 ? next + 1 : -1;
+	}
+	if (isRegionalIndicator(cp)) {
+		return isRegionalIndicator(cps[i + 1] ?? 0) ? i + 2 : i + 1;
+	}
+	return isEmojiBase(cp) ? consumeEmojiSequence(cps, i + 1) : -1;
+}
+
+/** Past an emoji base: its modifiers, then any ZWJ-joined bases and their modifiers. */
+function consumeEmojiSequence(cps: readonly number[], start: number): number {
+	let j = start;
+	for (;;) {
+		while (j < cps.length && isEmojiModifier(cps[j] ?? 0)) j += 1;
+		if (cps[j] !== 0x200d || !isEmojiBase(cps[j + 1] ?? 0)) return j;
+		j += 2;
+	}
 }
 
 /** Whether a receipt is drawn: outgoing only, and only under the last bubble of a run. */
@@ -248,4 +252,78 @@ export function resolveMessageAccessibilityActions({
 	if (hasLongPress) actions.push({ name: "longpress" }, { name: "more", label: "More actions" });
 	if (hasRetry) actions.push({ name: "retry", label: "Retry" });
 	return actions;
+}
+
+/**
+ * A piece of a message's spoken label, reported by the part that draws it.
+ *
+ * The root cannot read its parts' props — they sit at any depth under it — so
+ * each part that holds words reports them instead, and the root composes them.
+ */
+export type MessageLabelPart =
+	| { kind: "author"; value: string }
+	| { kind: "text"; value: string }
+	| { kind: "time"; value: string }
+	| { kind: "statusLabel"; value: string }
+	| { kind: "typing" };
+
+export type MessageLabelParts = {
+	author?: string;
+	text?: string;
+	time?: string;
+	statusLabel?: string;
+	isTyping: boolean;
+};
+
+/**
+ * Folds the parts' reports into the fields {@link resolveMessageAccessibilityLabel}
+ * takes. Every `text` is kept, joined in render order — a bubble may hold more
+ * than one `Message.Text`. Of the rest, the first report wins: a second author
+ * is a mistake, not a co-author.
+ */
+export function resolveMessageLabelParts(parts: readonly MessageLabelPart[]): MessageLabelParts {
+	const result: MessageLabelParts = { isTyping: false };
+	const texts: string[] = [];
+
+	for (const part of parts) {
+		if (part.kind === "typing") {
+			result.isTyping = true;
+			continue;
+		}
+		const value = part.value.trim();
+		if (!value) continue;
+		if (part.kind === "text") texts.push(value);
+		else if (result[part.kind] === undefined) result[part.kind] = value;
+	}
+
+	if (texts.length > 0) result.text = texts.join(" ");
+	return result;
+}
+
+/** `Message.Avatar`'s `displayName`, which is how the root finds it among its children. */
+export const MESSAGE_AVATAR_DISPLAY_NAME = "DelacourUI.Message.Avatar";
+
+/**
+ * Where a child of the root is laid out: `Message.Avatar` in the gutter beside
+ * the column, everything else stacked in the column.
+ *
+ * Classified by `displayName` rather than by `child.type === MessageAvatar`:
+ * a development bundle delivers component types wrapped, so identity is false
+ * for every element there and the avatar would land in the column.
+ */
+export function resolveMessageChildSlot(displayName: string | undefined): "gutter" | "column" {
+	return displayName === MESSAGE_AVATAR_DISPLAY_NAME ? "gutter" : "column";
+}
+
+/**
+ * The words in a node, in order — strings and numbers, walked through arrays,
+ * fragments and nested elements' `children`. A link nested in a `Message.Text`
+ * is read as part of the sentence it sits in.
+ */
+export function extractMessageText(node: ReactNode): string {
+	if (typeof node === "string") return node;
+	if (typeof node === "number") return String(node);
+	if (Array.isArray(node)) return node.map(extractMessageText).join("");
+	if (isValidElement<{ children?: ReactNode }>(node)) return extractMessageText(node.props.children);
+	return "";
 }

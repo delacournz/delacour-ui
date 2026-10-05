@@ -1,10 +1,15 @@
 import { describe, expect, test } from "bun:test";
+import { createElement, Fragment } from "react";
 import type { MessageStatus } from "./message.types";
 import {
+	extractMessageText,
 	formatMessageTime,
 	isEmojiOnly,
+	MESSAGE_AVATAR_DISPLAY_NAME,
 	resolveMessageAccessibilityActions,
 	resolveMessageAccessibilityLabel,
+	resolveMessageChildSlot,
+	resolveMessageLabelParts,
 	resolveMessageStatusLabel,
 	shouldAnnounceStatusChange,
 	shouldShowAvatar,
@@ -229,5 +234,74 @@ describe("resolveMessageAccessibilityActions", () => {
 		const actions = resolveMessageAccessibilityActions({ hasLongPress: true, hasPress: true, hasRetry: true });
 		expect(actions.map((a) => a.name)).toEqual(["activate", "longpress", "more", "retry"]);
 		expect(actions.find((a) => a.name === "retry")?.label).toBe("Retry");
+	});
+});
+
+describe("resolveMessageLabelParts", () => {
+	test("no parts, nothing known", () => {
+		expect(resolveMessageLabelParts([])).toEqual({ isTyping: false });
+	});
+
+	test("each part lands on its own field", () => {
+		expect(
+			resolveMessageLabelParts([
+				{ kind: "author", value: "Kate" },
+				{ kind: "time", value: "9:41 AM" },
+				{ kind: "text", value: "Hi" },
+				{ kind: "statusLabel", value: "Seen" },
+			])
+		).toEqual({ author: "Kate", isTyping: false, statusLabel: "Seen", text: "Hi", time: "9:41 AM" });
+	});
+
+	test("texts join in order; author and time keep the first", () => {
+		const parts = resolveMessageLabelParts([
+			{ kind: "text", value: "Are we" },
+			{ kind: "author", value: "Kate" },
+			{ kind: "text", value: "still on?" },
+			{ kind: "author", value: "Ignored" },
+		]);
+		expect(parts.text).toBe("Are we still on?");
+		expect(parts.author).toBe("Kate");
+	});
+
+	test("a blank part is dropped", () => {
+		expect(resolveMessageLabelParts([{ kind: "text", value: "  " }]).text).toBeUndefined();
+	});
+
+	test("a typing part marks the message as typing", () => {
+		expect(resolveMessageLabelParts([{ kind: "typing" }]).isTyping).toBe(true);
+	});
+});
+
+describe("resolveMessageChildSlot", () => {
+	test("the avatar goes in the gutter", () => {
+		expect(resolveMessageChildSlot(MESSAGE_AVATAR_DISPLAY_NAME)).toBe("gutter");
+	});
+
+	test("anything else goes in the column", () => {
+		expect(resolveMessageChildSlot("DelacourUI.Message.Bubble")).toBe("column");
+		expect(resolveMessageChildSlot(undefined)).toBe("column");
+	});
+});
+
+describe("extractMessageText", () => {
+	test("strings and numbers read as written", () => {
+		expect(extractMessageText("Hi")).toBe("Hi");
+		expect(extractMessageText(42)).toBe("42");
+	});
+
+	test("nothing reads as nothing", () => {
+		expect(extractMessageText(null)).toBe("");
+		expect(extractMessageText(undefined)).toBe("");
+		expect(extractMessageText(false)).toBe("");
+	});
+
+	test("arrays and nested elements are walked in order", () => {
+		const nested = createElement("Text", null, "see ", createElement("Text", null, "this link"), "!");
+		expect(extractMessageText(["Look, ", nested])).toBe("Look, see this link!");
+	});
+
+	test("fragments are walked", () => {
+		expect(extractMessageText(createElement(Fragment, null, "a", "b"))).toBe("ab");
 	});
 });

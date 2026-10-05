@@ -135,3 +135,14 @@ the media are shot after integration. The five to capture, all `align: "stretch"
 `conversations`, and `thread` (flow `support/thread`). The three flows are already written under
 `.argent/flows/previews/support/`. Add the `<Preview>` blocks to `support.mdx` in the same change —
 a `<Preview id>` for an uncaptured demo throws at render.
+
+## Simulator check (2026-10-05, iPhone 17, iOS dev client)
+
+- `topics`: one topic checked at a time (`radio button, checked` / `unchecked`), re-pressing the
+  selected one keeps it, Continue enables on the first pick.
+- `thread`: `Support.Agent` reads "Khalid Abdi is typing" with the dots, then "Khalid Abdi, Support,
+  online" once typing stops. Under OS Reduce Motion two frames 370ms apart are pixel-identical, the
+  dots stepped `1, 0.6, 0.3`.
+- `disabled-channel`: the shut "Call us" row is present, dimmed and `enabled: false`.
+- `help-screen`: unread (accent) and updated (grey) dots differ, and both rows speak the dot and
+  status in their label.

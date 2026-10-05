@@ -7,6 +7,7 @@
 		"---Actions---",
 		"button",
 		"pressable",
+		"slide-button",
 		"toggle-button",
 		"---Forms---",
 		"field",

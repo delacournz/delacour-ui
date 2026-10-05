@@ -24,6 +24,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
+	{ name: "image-viewer", title: "Image Viewer", description: "A fullscreen viewer that opens from a thumbnail: pinch, pan and double-tap zoom, swipe between images, drag down to dismiss." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts a prefix or suffix inside its border." },
 	{ name: "item", title: "Item", description: "A row of media, text and actions for lists and settings, standalone or as a List Group row." },
 	{ name: "kpi", title: "Kpi", description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card." },

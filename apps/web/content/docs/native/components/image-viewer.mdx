@@ -1,0 +1,279 @@
+---
+title: Image Viewer
+description: A full-screen viewer that opens out of a thumbnail — pinch, pan and double-tap zoom, swipe between images, drag to dismiss.
+icon: Images
+---
+
+## Installation
+
+<ComponentInstall name="image-viewer" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { ImageViewer } from "@/components/ui/image-viewer";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <ImageViewer>
+        <ImageViewer.Trigger
+          alt="A harbour at dawn"
+          className="size-40 rounded-lg"
+          id="harbour"
+          source={{ uri: "https://picsum.photos/seed/harbour/800/600" }}
+        />
+      </ImageViewer>
+    </View>
+  );
+}
+```
+
+Tap the thumbnail and the photo grows out of its own frame to fill the screen; close it and it flies
+back. `alt` is required — it is what a screen reader hears on the thumbnail and in the viewer.
+
+## A gallery
+
+Every `ImageViewer.Trigger` inside one `ImageViewer` joins its gallery, in mount order. Swipe
+sideways between them; the counter reads "2 / 6".
+
+```tsx
+<ImageViewer>
+  <View className="flex-row flex-wrap gap-2">
+    {photos.map((photo) => (
+      <ImageViewer.Trigger
+        alt={photo.alt}
+        className="aspect-square w-[31%] rounded-md"
+        id={photo.id}
+        key={photo.id}
+        source={photo.thumb}
+      />
+    ))}
+  </View>
+</ImageViewer>
+```
+
+## Zoom and gestures
+
+| Gesture | What it does |
+| --- | --- |
+| Pinch | Zooms about the point under your fingers, up to `maxScale` (4×). Past either end it gives, then settles |
+| Double-tap | Zooms to `doubleTapScale` (2.5×) about the tapped point; again to zoom out |
+| Drag, zoomed | Pans the image, resisting at its edges |
+| Swipe sideways | The next or previous image, one per swipe |
+| Drag up or down | Dismisses past 15% of the screen or with a flick; a shorter drag springs back |
+| Single tap | Hides or shows the close button, counter and caption |
+
+While zoomed, a sideways drag pans the image rather than paging: zoom out to move on. The chrome hides
+itself while you are zoomed in.
+
+`isDismissible={false}` turns the drag-to-dismiss off. The close button and Android's back button
+still close the viewer.
+
+## Full-resolution sources
+
+Give a `fullSource` and the viewer loads it once open. The thumbnail draws immediately underneath —
+it is already decoded — and the sharp image fades in over it. If the full source fails, the
+thumbnail stays.
+
+```tsx
+<ImageViewer.Trigger
+  alt="Wind-ribbed sand dunes"
+  caption="Dunes, late afternoon"
+  fullSource={{ uri: "https://example.com/dunes-1600.jpg" }}
+  height={1600}
+  id="dunes"
+  source={{ uri: "https://example.com/dunes-200.jpg" }}
+  width={1600}
+/>
+```
+
+`width` and `height` are the image's intrinsic size. They are optional, but with them the opening frame
+is right from the first frame instead of correcting once a remote image reports its own size.
+
+## Data mode for lists
+
+A virtualised list unmounts rows as they scroll away, so a gallery built from mounted Triggers would
+shrink. Pass the whole gallery as `images`, and give each Trigger an `index` into it.
+
+```tsx
+<ImageViewer images={photos}>
+  <FlatList
+    data={photos}
+    keyExtractor={(photo) => photo.id}
+    numColumns={3}
+    renderItem={({ index }) => <ImageViewer.Trigger className="aspect-square flex-1" index={index} />}
+  />
+</ImageViewer>
+```
+
+If the Trigger for the image showing has scrolled out of view by the time the viewer closes, it fades
+out instead of flying to a frame nobody can see.
+
+## Controlled
+
+`open` with `onOpenChange`, and `index` with `onIndexChange`, each work controlled or not. Open
+straight at an image from anywhere:
+
+```tsx
+const [isOpen, setOpen] = useState(false);
+const [index, setIndex] = useState(0);
+
+<ImageViewer index={index} onIndexChange={setIndex} onOpenChange={setOpen} open={isOpen}>
+  {triggers}
+  <Button onPress={() => { setIndex(2); setOpen(true); }}>
+    <Button.Label>Open the third</Button.Label>
+  </Button>
+</ImageViewer>
+```
+
+Inside the viewer's tree, `useImageViewer()` returns the same state and the actions —
+`open(index?)`, `close()`, `scrollTo(index)`.
+
+## Custom images with renderImage
+
+The viewer draws React Native's `Image`. `renderImage` swaps in anything else — `expo-image` for its
+cache, say — without the library taking it as a dependency. It is handed the source, the resize mode,
+the style and two callbacks.
+
+```tsx
+import { Image as ExpoImage } from "expo-image";
+
+<ImageViewer
+  renderImage={(image) => (
+    <ExpoImage
+      contentFit={image.resizeMode}
+      onError={image.onError}
+      onLoad={(event) => image.onLoad(event.source)}
+      source={image.source}
+      style={image.style}
+    />
+  )}
+>
+  {triggers}
+</ImageViewer>
+```
+
+## Custom thumbnails
+
+Children replace the drawn thumbnail. The Trigger still opens on its own image, and still flies from
+its own frame.
+
+```tsx
+<ImageViewer.Trigger alt="A cabin under snow" className="rounded-xl border border-border bg-card" id="cabin" source={source}>
+  <Image className="aspect-[4/3] w-full" source={source} />
+  <Text weight="semibold">Hut, second night</Text>
+</ImageViewer.Trigger>
+```
+
+## Accessibility
+
+- A Trigger is an image button labelled by its `alt`, hinted "Opens full screen image viewer".
+- In the viewer, the image is one adjustable element: swipe up or down to change image, and it reads
+  "2 of 5". Its actions menu has **Zoom in**, **Zoom out** and **Reset zoom**, so detail is reachable
+  without a pinch.
+- Focus moves into the viewer when it opens and back to the thumbnail when it closes.
+- The close button is always there and labelled "Close image viewer"; no gesture is the only way out.
+- Under reduce motion there is no flight: the viewer cross-fades in and out, and zoom settles without a
+  spring. Pinch and pan still follow your fingers.
+
+## Theming
+
+The stage and its chrome paint with two tokens, `media` and `media-foreground`. Both are derived —
+`media` is `foreground` in light and `background` in dark, so the stage is dark in both themes, and
+`media-foreground` is the reverse. A pasted palette carries them along. See
+[Tokens](/docs/native/getting-started/tokens).
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `ImageViewer` | Owns the open state, the index and the gallery; renders the viewer while open |
+| `ImageViewer.Trigger` | A thumbnail that opens the viewer at its image, and the frame the image flies from |
+| `ImageViewer.Close` | A close button. The chrome already draws one |
+
+### ImageViewer
+
+<TypeTable
+  type={{
+    open: { type: "boolean", description: "Whether the viewer is open, controlled." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(open: boolean) => void" },
+    index: { type: "number", description: "The image showing, controlled. Clamped into the gallery." },
+    defaultIndex: { type: "number", default: "0" },
+    onIndexChange: { type: "(index: number) => void", description: "Fires once per settled change." },
+    images: { type: "readonly ImageViewerImage[]", description: "Data mode: the gallery. Omitted, it is the mounted Triggers." },
+    renderImage: { type: "(props: ImageViewerRenderImageProps) => ReactElement", description: "Draws every image. Default: React Native's Image." },
+    maxScale: { type: "number", default: "4" },
+    doubleTapScale: { type: "number", default: "2.5" },
+    isDismissible: { type: "boolean", default: "true", description: "Drag up or down to dismiss." },
+    isDisabled: { type: "boolean", description: "Triggers inert and announced disabled; open() does nothing." },
+    showsChrome: { type: "boolean", default: "true", description: "Close button, counter and caption." },
+    cornerRadius: { type: "number", description: "The corner at the thumbnail's frame. Default: the Trigger's own." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### ImageViewer.Trigger
+
+Takes every `Pressable` prop but `onPress`, plus either an image (composed mode) or an `index` (data
+mode).
+
+<TypeTable
+  type={{
+    index: { type: "number", description: "Data mode: the root's images[index]. Omit it and pass the image fields." },
+    radius: { type: "number", description: "The thumbnail's corner, in points. Default: its className's own." },
+    className: { type: "string", description: "Size the thumbnail here." },
+    children: { type: "ReactNode", description: "A custom thumbnail. Default: the image, drawn cover." },
+  }}
+/>
+
+### ImageViewerImage
+
+<TypeTable
+  type={{
+    id: { type: "string", required: true, description: "Stable key." },
+    source: { type: "ImageSourcePropType", required: true, description: "The thumbnail, and the viewer's base layer." },
+    fullSource: { type: "ImageSourcePropType", description: "Loaded once open, faded in over the thumbnail." },
+    alt: { type: "string", required: true },
+    caption: { type: "string" },
+    width: { type: "number", description: "Intrinsic width." },
+    height: { type: "number", description: "Intrinsic height." },
+  }}
+/>
+
+### ImageViewerRenderImageProps
+
+<TypeTable
+  type={{
+    source: { type: "ImageSourcePropType" },
+    alt: { type: "string" },
+    resizeMode: { type: '"cover" | "contain"' },
+    style: { type: "StyleProp<ImageStyle>" },
+    onLoad: { type: "(size: { width: number; height: number }) => void", description: "Call with the decoded size." },
+    onError: { type: "() => void" },
+    testID: { type: "string" },
+  }}
+/>
+
+### ImageViewer.Close
+
+Takes every `Button` prop but `onPress`. `children` replaces the cross; `accessibilityLabel` defaults
+to "Close image viewer".
+
+### useImageViewer
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean" },
+    index: { type: "number" },
+    count: { type: "number" },
+    images: { type: "readonly ImageViewerImage[]" },
+    open: { type: "(index?: number) => void" },
+    close: { type: "() => void" },
+    scrollTo: { type: "(index: number) => void" },
+  }}
+/>

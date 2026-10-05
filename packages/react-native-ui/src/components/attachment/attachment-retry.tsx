@@ -3,7 +3,11 @@ import { IconArrowRotateCounterClockwise } from "../../icons/central";
 import { Icon } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { useAttachmentPart } from "./attachment.context";
-import { ATTACHMENT_ACTION_FOREGROUND_TOKEN, ATTACHMENT_ACTION_HIT_SLOP, attachmentVariants } from "./attachment.variants";
+import {
+	ATTACHMENT_ACTION_FOREGROUND_TOKEN,
+	ATTACHMENT_ACTION_HIT_SLOP,
+	attachmentVariants,
+} from "./attachment.variants";
 
 export type AttachmentRetryProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled"> & {
 	/** Defaults to the root's `onRetry`. */
@@ -39,7 +43,11 @@ export function AttachmentRetry({
 			onPress={onPress ?? onRetry}
 			{...props}
 		>
-			<Icon className="size-icon-sm" color={ATTACHMENT_ACTION_FOREGROUND_TOKEN[layout]} icon={IconArrowRotateCounterClockwise} />
+			<Icon
+				className="size-icon-sm"
+				color={ATTACHMENT_ACTION_FOREGROUND_TOKEN[layout]}
+				icon={IconArrowRotateCounterClockwise}
+			/>
 		</Pressable>
 	);
 }

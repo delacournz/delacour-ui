@@ -193,20 +193,21 @@ describe("states", () => {
 
 describe("tokens", () => {
 	test("every colour a slot paints exists in both themes", () => {
-		for (const { layout, size } of everyCell()) {
-			for (const status of ATTACHMENT_STATUS_TYPES) {
-				for (const kind of ATTACHMENT_KINDS) {
-					for (const isDisabled of [false, true]) {
-						const slots = attachmentVariants({ isDisabled, kind, layout, size, status });
-						for (const slot of SLOTS) {
-							for (const token of colorTokens(slots[slot]())) {
-								expect(`${slot}:${token}:${LIGHT.has(token)}`).toBe(`${slot}:${token}:true`);
-								expect(`${slot}:${token}:${DARK.has(token)}`).toBe(`${slot}:${token}:true`);
-							}
-						}
-					}
-				}
+		const cells = everyCell().flatMap((cell) =>
+			ATTACHMENT_STATUS_TYPES.flatMap((status) =>
+				ATTACHMENT_KINDS.flatMap((kind) => [false, true].map((isDisabled) => ({ ...cell, isDisabled, kind, status })))
+			)
+		);
+		const painted = new Set<string>();
+		for (const cell of cells) {
+			const slots = attachmentVariants(cell);
+			for (const slot of SLOTS) {
+				for (const token of colorTokens(slots[slot]())) painted.add(`${slot}:${token}`);
 			}
+		}
+		for (const entry of painted) {
+			const token = entry.slice(entry.indexOf(":") + 1);
+			expect(`${entry}:${LIGHT.has(token)}:${DARK.has(token)}`).toBe(`${entry}:true:true`);
 		}
 	});
 

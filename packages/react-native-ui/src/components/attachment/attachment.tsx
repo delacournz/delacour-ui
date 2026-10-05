@@ -15,6 +15,7 @@ import {
 	AttachmentProvider,
 	useAttachmentGroupContext,
 	useAttachmentGroupItem,
+	useAttachmentPart,
 } from "./attachment.context";
 import type { AttachmentMedia } from "./attachment.types";
 import {
@@ -30,6 +31,7 @@ import {
 	ATTACHMENT_ERROR_NUDGE,
 	type AttachmentKind,
 	type AttachmentLayout,
+	type AttachmentParts,
 	type AttachmentSize,
 	type AttachmentStatus,
 	attachmentVariants,
@@ -88,6 +90,186 @@ type LooseMedia = {
 	durationMs?: number;
 	extension?: string;
 };
+
+/**
+ * One nudge, and one spoken notice, on entering `error` — never on mounting in
+ * it, which is a row scrolling back into view rather than news. The nudge is
+ * decoration, so calm motion stills it; the notice is not.
+ */
+function useErrorEntry(status: AttachmentStatus, name: string) {
+	const isCalm = useCalmMotion();
+	const offset = useSharedValue(0);
+	const errorMessage = status.type === "error" ? status.message : undefined;
+	const wasError = useRef(errorMessage !== undefined);
+
+	useEffect(() => {
+		const was = wasError.current;
+		wasError.current = errorMessage !== undefined;
+		if (errorMessage === undefined || was) return;
+
+		if (Platform.OS === "ios") {
+			AccessibilityInfo.announceForAccessibility(`Upload failed, ${name}, ${errorMessage}`);
+		}
+		if (isCalm) return;
+
+		const { distance, stepMs } = ATTACHMENT_ERROR_NUDGE;
+		offset.value = withSequence(
+			withTiming(distance, { duration: stepMs }),
+			withTiming(-distance, { duration: stepMs }),
+			withTiming(0, { duration: stepMs })
+		);
+	}, [errorMessage, isCalm, name, offset]);
+
+	return useAnimatedStyle(() => ({ transform: [{ translateX: offset.value }] }));
+}
+
+type AttachmentActionsInput = Pick<AttachmentOwnProps, "onLongPress" | "onPress" | "onRemove" | "onRetry"> &
+	Pick<ViewProps, "accessibilityActions" | "onAccessibilityAction"> & {
+		isDisabled: boolean;
+		isInteractive: boolean;
+		removeLabel: string;
+		status: AttachmentStatus;
+	};
+
+/**
+ * The root's accessibility actions — open, menu, retry, remove — and the
+ * handler that routes each to its callback. Remove and retry live here rather
+ * than as elements so VoiceOver meets the attachment as one stop.
+ */
+function useAttachmentActions({
+	accessibilityActions,
+	isDisabled,
+	isInteractive,
+	onAccessibilityAction,
+	onLongPress,
+	onPress,
+	onRemove,
+	onRetry,
+	removeLabel,
+	status,
+}: AttachmentActionsInput) {
+	const actions = [
+		...(accessibilityActions ?? []),
+		...resolveAttachmentActions({
+			hasLongPress: isInteractive && onLongPress !== undefined,
+			hasPress: isInteractive && onPress !== undefined,
+			hasRemove: !isDisabled && onRemove !== undefined,
+			hasRetry: !isDisabled && onRetry !== undefined,
+			removeLabel,
+			status,
+		}),
+	];
+
+	const handlers: Record<string, (() => void) | undefined> = {
+		activate: isInteractive ? onPress : undefined,
+		longpress: isInteractive ? onLongPress : undefined,
+		remove: isDisabled ? undefined : onRemove,
+		retry: isDisabled ? undefined : onRetry,
+	};
+
+	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
+		handlers[event.nativeEvent.actionName]?.();
+		onAccessibilityAction?.(event);
+	};
+
+	return { actions, handleAccessibilityAction };
+}
+
+/**
+ * What the attachment draws with no children. The text and the bar a tile
+ * draws over its picture belong to the press target; a chip's bar runs along
+ * the root's own bottom edge, outside it, in {@link AttachmentDefaultTrailing}.
+ */
+function AttachmentDefaultBody({ parts }: { parts: AttachmentParts }): ReactElement {
+	const { layout } = useAttachmentPart("Attachment");
+	if (layout === "card") {
+		return (
+			<>
+				<AttachmentPreview />
+				<AttachmentContent>
+					<AttachmentName />
+					<AttachmentMeta />
+					{parts.showsProgress ? <AttachmentProgress /> : null}
+				</AttachmentContent>
+			</>
+		);
+	}
+	return (
+		<>
+			<AttachmentPreview />
+			<AttachmentContent />
+			{layout === "tile" && parts.showsProgress ? <AttachmentProgress /> : null}
+		</>
+	);
+}
+AttachmentDefaultBody.displayName = "DelacourUI.Attachment.DefaultBody";
+
+/**
+ * A chip's bottom-edge bar and the remove and retry controls — siblings of the
+ * press target, never inside it, so their taps cannot open the attachment.
+ */
+function AttachmentDefaultTrailing({
+	actionsClassName,
+	parts,
+	removeTestID,
+	retryTestID,
+}: {
+	actionsClassName: string;
+	parts: AttachmentParts;
+	removeTestID?: string;
+	retryTestID?: string;
+}): ReactElement {
+	const { layout } = useAttachmentPart("Attachment");
+	const hasActions = parts.showsRetry || parts.showsRemove;
+	return (
+		<>
+			{layout === "chip" && parts.showsProgress ? <AttachmentProgress /> : null}
+			{hasActions ? (
+				<View className={actionsClassName}>
+					{parts.showsRetry ? <AttachmentRetry testID={retryTestID} /> : null}
+					{parts.showsRemove ? <AttachmentRemove testID={removeTestID} /> : null}
+				</View>
+			) : null}
+		</>
+	);
+}
+AttachmentDefaultTrailing.displayName = "DelacourUI.Attachment.DefaultTrailing";
+
+/**
+ * The press target: a `Pressable` when there is a handler, a plain `View`
+ * otherwise. Hidden from accessibility — the root is the one element, and
+ * routes `activate` and `longpress` itself.
+ */
+function AttachmentPressTarget({
+	className,
+	onPress,
+	onLongPress,
+	children,
+}: {
+	className: string;
+	onPress?: () => void;
+	onLongPress?: () => void;
+	children: ReactNode;
+}): ReactElement {
+	const { isDisabled } = useAttachmentPart("Attachment");
+	if (onPress === undefined && onLongPress === undefined) {
+		return <View className={className}>{children}</View>;
+	}
+	return (
+		<Pressable
+			accessible={false}
+			className={className}
+			disabled={isDisabled}
+			feedback="fade"
+			importantForAccessibility="no"
+			onLongPress={onLongPress}
+			onPress={onPress}
+		>
+			{children}
+		</Pressable>
+	);
+}
+AttachmentPressTarget.displayName = "DelacourUI.Attachment.PressTarget";
 
 function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 	const loose: LooseMedia & Omit<ViewProps, "children"> & AttachmentOwnProps = allProps;
@@ -170,105 +352,26 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 		]
 	);
 
-	const isCalm = useCalmMotion();
-	const offset = useSharedValue(0);
-	const errorMessage = status.type === "error" ? status.message : undefined;
-	const wasError = useRef(errorMessage !== undefined);
-
-	// One nudge, and one spoken notice, on entering `error` — never on mounting
-	// in it, which is a row scrolling back into view rather than news.
-	useEffect(() => {
-		const was = wasError.current;
-		wasError.current = errorMessage !== undefined;
-		if (errorMessage === undefined || was) return;
-
-		if (Platform.OS === "ios") {
-			AccessibilityInfo.announceForAccessibility(`Upload failed, ${name}, ${errorMessage}`);
-		}
-		if (isCalm) return;
-
-		const { distance, stepMs } = ATTACHMENT_ERROR_NUDGE;
-		offset.value = withSequence(
-			withTiming(distance, { duration: stepMs }),
-			withTiming(-distance, { duration: stepMs }),
-			withTiming(0, { duration: stepMs })
-		);
-	}, [errorMessage, isCalm, name, offset]);
-
-	const nudgeStyle = useAnimatedStyle(() => ({ transform: [{ translateX: offset.value }] }));
+	const nudgeStyle = useErrorEntry(status, name);
 
 	const slots = attachmentVariants({ isDisabled, kind, layout, size, status: status.type });
 
-	const actions = [
-		...(accessibilityActions ?? []),
-		...resolveAttachmentActions({
-			hasLongPress: isInteractive && onLongPress !== undefined,
-			hasPress: isInteractive && onPress !== undefined,
-			hasRemove: !isDisabled && onRemove !== undefined,
-			hasRetry: !isDisabled && onRetry !== undefined,
-			removeLabel,
-			status,
-		}),
-	];
-
-	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
-		switch (event.nativeEvent.actionName) {
-			case "activate":
-				if (isInteractive) onPress?.();
-				break;
-			case "longpress":
-				if (isInteractive) onLongPress?.();
-				break;
-			case "remove":
-				if (!isDisabled) onRemove?.();
-				break;
-			case "retry":
-				if (!isDisabled) onRetry?.();
-				break;
-		}
-		onAccessibilityAction?.(event);
-	};
+	const { actions, handleAccessibilityAction } = useAttachmentActions({
+		accessibilityActions,
+		isDisabled,
+		isInteractive,
+		onAccessibilityAction,
+		onLongPress,
+		onPress,
+		onRemove,
+		onRetry,
+		removeLabel,
+		status,
+	});
 
 	const label =
-		accessibilityLabel ??
-		resolveAttachmentAccessibilityLabel({ durationMs, kind, name, sizeBytes, status });
+		accessibilityLabel ?? resolveAttachmentAccessibilityLabel({ durationMs, kind, name, sizeBytes, status });
 	const hint = accessibilityHint ?? (groupItem ? `${groupItem.index + 1} of ${groupItem.count}` : undefined);
-
-	// The text and the bar a tile draws over its picture belong to the press
-	// target; a chip's bar runs along the root's own bottom edge, outside it.
-	const body = children ?? (
-		<>
-			<AttachmentPreview />
-			{layout === "card" ? (
-				<AttachmentContent>
-					<AttachmentName />
-					<AttachmentMeta />
-					{parts.showsProgress ? <AttachmentProgress /> : null}
-				</AttachmentContent>
-			) : (
-				<AttachmentContent />
-			)}
-			{layout === "tile" && parts.showsProgress ? <AttachmentProgress /> : null}
-		</>
-	);
-
-	const press = hasHandler ? (
-		<Pressable
-			accessible={false}
-			className={slots.press()}
-			disabled={isDisabled}
-			feedback="fade"
-			importantForAccessibility="no"
-			onLongPress={onLongPress}
-			onPress={onPress}
-		>
-			{body}
-		</Pressable>
-	) : (
-		<View className={slots.press()}>{body}</View>
-	);
-
-	const hasActions = children === undefined && (parts.showsRetry || parts.showsRemove);
 
 	return (
 		<AttachmentProvider value={context}>
@@ -286,13 +389,16 @@ function AttachmentRoot(allProps: AttachmentProps): ReactElement {
 				style={nudgeStyle}
 				{...props}
 			>
-				{press}
-				{children === undefined && layout === "chip" && parts.showsProgress ? <AttachmentProgress /> : null}
-				{hasActions ? (
-					<View className={slots.actions()}>
-						{parts.showsRetry ? <AttachmentRetry testID={retryTestID} /> : null}
-						{parts.showsRemove ? <AttachmentRemove testID={removeTestID} /> : null}
-					</View>
+				<AttachmentPressTarget className={slots.press()} onLongPress={onLongPress} onPress={onPress}>
+					{children ?? <AttachmentDefaultBody parts={parts} />}
+				</AttachmentPressTarget>
+				{children === undefined ? (
+					<AttachmentDefaultTrailing
+						actionsClassName={slots.actions()}
+						parts={parts}
+						removeTestID={removeTestID}
+						retryTestID={retryTestID}
+					/>
 				) : null}
 			</Animated.View>
 		</AttachmentProvider>

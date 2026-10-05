@@ -33,6 +33,7 @@
 		"collapsible",
 		"---Feedback---",
 		"alert",
+		"marker",
 		"meter",
 		"progress",
 		"spinner",

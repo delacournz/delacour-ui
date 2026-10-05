@@ -252,6 +252,11 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_marker_conversation from "./marker/conversation";
+import * as demo_marker_disabled from "./marker/disabled";
+import * as demo_marker_pressable from "./marker/pressable";
+import * as demo_marker_running from "./marker/running";
+import * as demo_marker_variants from "./marker/variants";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -618,6 +623,11 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"marker/conversation": demo_marker_conversation,
+	"marker/disabled": demo_marker_disabled,
+	"marker/pressable": demo_marker_pressable,
+	"marker/running": demo_marker_running,
+	"marker/variants": demo_marker_variants,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

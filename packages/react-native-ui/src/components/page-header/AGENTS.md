@@ -91,7 +91,7 @@ parts, every one optional.
   there is no loading state. The default fades `primary` into its own zero
   alpha via `transparentOf` (never the `transparent` keyword, which is
   transparent black and greys the fade); if primary arrives in a notation
-  `transparentOf` cannot read, the far stop is the page colour.
+  `transparentOf` cannot read, the far stop is the ground colour — the page, or the card.
   `resolvePageHeaderCoverStops` holds both rules. Colour lookups are a fixed
   four `useThemeColor` calls so hook order never depends on how many colours
   were passed.
@@ -131,8 +131,27 @@ the navbar, breadcrumbs and back buttons, upload UI for the cover or the face, a
 
 ## Verification
 
-Pure logic is covered by the two test files. The simulator checks in
-`docs/plans/layout/page-header.md` — status-bar clearance, ring colour in both
-themes, equal-width stats, VoiceOver labels, the largest dynamic type, an
-overlay navbar — are recorded in the branch's card comment with what was and was
-not run.
+Pure logic is covered by the two test files. Checked on an iPhone 17 simulator
+(dev client, 2026-10-05):
+
+- **Inside a `Screen` with an overlay navbar** (`in-a-screen`): the cover's
+  frame is `y=0`, full width — under the status bar and the navbar, no gap — and
+  the avatar's centre sits on the cover's lower edge. The navbar's resting
+  background paints over the top of the cover; that is the navbar's, not this
+  component's.
+- **Ring and fade match the ground** in light and dark, on the page and in a
+  card. The card check found the cover's base fill was `bg-background`, which
+  left a band of page colour across every card; the `cover` slot now takes the
+  variant's fill and a test holds it.
+- **Equal-width stats**: two stacked stats measured 180.7 and 180.3pt.
+- **VoiceOver labels**: "Kate Austen, verified", "1,234 Followers" as a button,
+  "87 Posts" as plain content. The stat press fired.
+- **Largest Dynamic Type**: no stat clipped. Inline stats with `isDivided` that
+  wrap leave a hairline at the end of the first row — a divider cannot know
+  where the row breaks. Prefer `stacked` when dividers matter.
+
+**Preview capture is deferred.** `bun run previews` needs the argent CLI, which
+is not installed here, so no demo carries `meta.capture` and the docs page has
+no `<Preview>`. When the tool is back: mark `profile` (hero), `gradient-cover`,
+`aligned-start`, `stats` and `card-in-list` as captures, all
+`align: "stretch"`, and add the `<Preview>` blocks to `page-header.mdx`.

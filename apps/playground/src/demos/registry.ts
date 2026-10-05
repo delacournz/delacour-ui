@@ -263,6 +263,7 @@ import * as demo_meter_thresholds from "./meter/thresholds";
 import * as demo_page_header_aligned_start from "./page-header/aligned-start";
 import * as demo_page_header_card_in_list from "./page-header/card-in-list";
 import * as demo_page_header_gradient_cover from "./page-header/gradient-cover";
+import * as demo_page_header_in_a_screen from "./page-header/in-a-screen";
 import * as demo_page_header_no_cover from "./page-header/no-cover";
 import * as demo_page_header_profile from "./page-header/profile";
 import * as demo_page_header_stats from "./page-header/stats";
@@ -635,6 +636,7 @@ export const DEMOS = {
 	"page-header/aligned-start": demo_page_header_aligned_start,
 	"page-header/card-in-list": demo_page_header_card_in_list,
 	"page-header/gradient-cover": demo_page_header_gradient_cover,
+	"page-header/in-a-screen": demo_page_header_in_a_screen,
 	"page-header/no-cover": demo_page_header_no_cover,
 	"page-header/profile": demo_page_header_profile,
 	"page-header/stats": demo_page_header_stats,

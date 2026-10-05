@@ -4,6 +4,8 @@ description: A brief message about something that just happened — shown from a
 icon: Bell
 ---
 
+<Preview id="toast/statuses" title={null} />
+
 ## Installation
 
 <ComponentInstall name="toast" />
@@ -77,6 +79,8 @@ The five statuses are [Alert](/docs/native/components/alert)'s, with the same gl
 colours, so a toast and an alert saying the same thing look like one family. Success, warning and
 destructive also play their notification haptic.
 
+<Preview id="toast/statuses" />
+
 ```tsx
 toast("Link copied");
 toast.info("Sync paused");
@@ -90,6 +94,8 @@ toast.error("Upload failed"); // status "destructive"
 One action — an undo, a retry. Pressing it runs `onPress` and hides the toast. A toast with an
 action stays six seconds rather than four.
 
+<Preview id="toast/with-action" />
+
 ```tsx
 toast.show({
   title: "Conversation archived",
@@ -101,6 +107,8 @@ toast.show({
 
 `toast.promise` shows one toast with a spinner and turns it into the success or the failure in
 place. It returns the promise it was given, so `await` still sees a rejection.
+
+<Preview id="toast/promise" />
 
 ```tsx
 await toast.promise(uploadPhotos(), {
@@ -116,14 +124,20 @@ await toast.promise(uploadPhotos(), {
 ride up with the keyboard; top toasts sit under the status bar. `ToastViewport`'s `offset` adds
 space at either edge — to clear a tab bar, `<ToastViewport offset={{ bottom: 56 }} />`.
 
+<Preview id="toast/placement" />
+
 Each edge draws its three newest toasts, the newest in front and each older one a step further back.
 The rest wait their turn and appear as the ones in front leave. Several shown at once enter a beat
 apart.
+
+<Preview id="toast/stacking" />
 
 ## Hiding
 
 A toast hides itself after `duration` ms: 4000, or 6000 with an action. `duration: 0` keeps it until
 it is hidden. Its clock pauses while the app is in the background and while a finger is on it.
+
+<Preview id="toast/persistent" />
 
 Swipe it toward its edge, or sideways, to dismiss it; pulled toward the middle it resists and
 springs back. The ✕, `toast.hide(id)` and `toast.hideAll()` hide it too, and `onHide` runs once it

@@ -4,6 +4,8 @@ description: The query field at the top of a list — clear, Cancel, debounced c
 icon: Search
 ---
 
+<Preview id="search-bar/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="search-bar" />
@@ -30,6 +32,8 @@ export default function Example() {
 
 `onDebouncedChange` fires `debounce` ms after the last keystroke, at once on the search key, and with `""` at once on clear or Cancel.
 
+<Preview id="search-bar/debounced-filter-list" />
+
 ```tsx
 <SearchBar
   debounce={300}
@@ -43,6 +47,8 @@ export default function Example() {
 ## Cancel modes
 
 `cancel` is `focus` by default; `always` keeps the action on screen and `never` leaves the field the full width.
+
+<Preview id="search-bar/with-cancel" />
 
 ```tsx
 <SearchBar cancel="focus" />
@@ -71,6 +77,8 @@ Pass a `SearchBar.Cancel` as the child to change its label, variant or content; 
 ## Tokens
 
 Active filters sit inside the box as chips; Backspace on an empty field removes the last one.
+
+<Preview id="search-bar/loading-and-tokens" />
 
 ```tsx
 const [filters, setFilters] = useState([
@@ -130,6 +138,8 @@ const sheetInput = useBottomSheetInput();
 ## Sizes, shapes and variants
 
 The box is `Input`'s — three sizes and two variants — drawn as a pill or with the field's own corner.
+
+<Preview id="search-bar/sizes-and-shapes" />
 
 ```tsx
 <SearchBar size="sm" />

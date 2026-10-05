@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`delay` is how long the hold lasts before it opens, and `slop` how far the finger may drift meanwhile — past it, a scroll takes the touch.",
 	note: "The delay has a 150ms floor: anything shorter is a tap.",
+	capture: { frame: "device", flow: "context-menu/hold-timing" },
 };
 
 const TIMINGS = [
@@ -20,7 +21,7 @@ const TIMINGS = [
 
 export function Demo(): ReactElement {
 	return (
-		<View className="gap-3">
+		<View className="flex-1 justify-center gap-3 px-screen-gutter">
 			{TIMINGS.map(({ delay, label }) => (
 				<ContextMenu key={label}>
 					<ContextMenu.Trigger anchor="target" delay={delay} haptic="light" testID={`context-menu-hold-${delay}`}>
@@ -30,7 +31,9 @@ export function Demo(): ReactElement {
 						</View>
 					</ContextMenu.Trigger>
 					<ContextMenu.Content>
-						<ContextMenu.Item icon={IconPin}>Pin</ContextMenu.Item>
+						<ContextMenu.Item icon={IconPin} testID={`context-menu-hold-${delay}-pin`}>
+							Pin
+						</ContextMenu.Item>
 						<ContextMenu.Item icon={IconShareOs}>Share</ContextMenu.Item>
 					</ContextMenu.Content>
 				</ContextMenu>

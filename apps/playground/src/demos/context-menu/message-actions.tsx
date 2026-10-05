@@ -15,13 +15,14 @@ export const meta: DemoMeta = {
 	title: "Message actions",
 	caption:
 		"Hold a message for what you can do with it. The panel opens at your finger, over a dimmed screen; each row runs its action and closes.",
+	capture: { frame: "device", flow: "context-menu/message-actions", hero: true },
 };
 
 export function Demo(): ReactElement {
 	const [last, setLast] = useState("Hold the message");
 
 	return (
-		<View className="gap-3">
+		<View className="flex-1 justify-center gap-3 px-screen-gutter">
 			<ContextMenu>
 				<ContextMenu.Trigger accessibilityLabel="Message from Ana" haptic="medium" testID="context-menu-message">
 					<View className="max-w-[80%] self-start rounded-2xl rounded-bl-sm bg-secondary px-4 py-3">

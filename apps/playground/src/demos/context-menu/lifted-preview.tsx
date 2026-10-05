@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Lifted preview",
 	caption:
 		"`ContextMenu.Preview` lifts a copy of the held card over the dimmed list, and the panel opens beside it — never across it.",
+	capture: { frame: "device", flow: "context-menu/lifted-preview" },
 };
 
 const PLACES = [
@@ -28,7 +29,7 @@ function Place({ name, detail }: { name: string; detail: string }): ReactElement
 
 export function Demo(): ReactElement {
 	return (
-		<View className="gap-3">
+		<View className="flex-1 justify-center gap-3 px-screen-gutter">
 			{PLACES.map((place) => (
 				<ContextMenu key={place.name}>
 					<ContextMenu.Trigger haptic="medium" testID={`context-menu-place-${place.name}`}>
@@ -36,7 +37,9 @@ export function Demo(): ReactElement {
 					</ContextMenu.Trigger>
 					<ContextMenu.Content>
 						<ContextMenu.Preview />
-						<ContextMenu.Item icon={IconHeart}>Favourite</ContextMenu.Item>
+						<ContextMenu.Item icon={IconHeart} testID={`context-menu-place-${place.name}-favourite`}>
+							Favourite
+						</ContextMenu.Item>
 						<ContextMenu.Item icon={IconShareOs}>Share</ContextMenu.Item>
 						<ContextMenu.Separator />
 						<ContextMenu.Item icon={IconTrashCan} variant="destructive">

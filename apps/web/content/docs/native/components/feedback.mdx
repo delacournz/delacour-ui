@@ -1,0 +1,295 @@
+---
+title: Feedback
+description: A dialog for writing — "What should we fix first?", a bug report, a one-question survey — with the field in a recessed well and the actions on the band around it.
+icon: MessageSquareText
+---
+
+<Preview id="feedback/basic" title={null} />
+
+## Installation
+
+<ComponentInstall name="feedback" />
+
+Feedback is a [Dialog](/docs/native/components/dialog), so it draws through the
+[overlay foundation](/docs/native/components/overlay): mount `OverlayProvider` once at your app's
+root, inside `DelacourProvider`.
+
+## Usage
+
+<Preview id="feedback/basic" />
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Feedback, useFeedback } from "@/components/ui/feedback";
+import { View } from "react-native";
+
+function Send() {
+  const { clear, close } = useFeedback();
+  return (
+    <Feedback.Submit
+      onSubmit={async (message) => {
+        await sendFeedback(message);
+        close();
+        clear();
+      }}
+    />
+  );
+}
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Feedback>
+        <Feedback.Trigger asChild>
+          <Button variant="secondary">Give feedback</Button>
+        </Feedback.Trigger>
+        <Feedback.Content>
+          <Feedback.Panel>
+            <Feedback.Title>What should we fix first?</Feedback.Title>
+            <Feedback.Close />
+            <Feedback.Field placeholder="Tell us what got in your way" />
+          </Feedback.Panel>
+          <Feedback.Footer>
+            <Feedback.Cancel />
+            <Send />
+          </Feedback.Footer>
+        </Feedback.Content>
+      </Feedback>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Feedback>
+  <Feedback.Trigger />
+  <Feedback.Content>
+    <Feedback.Panel>
+      <Feedback.Title />
+      <Feedback.Close />
+      <Feedback.Field />
+    </Feedback.Panel>
+    <Feedback.Footer>
+      <Feedback.Action />
+      <Feedback.Cancel />
+      <Feedback.Submit />
+    </Feedback.Footer>
+  </Feedback.Content>
+</Feedback>
+```
+
+`Feedback.Content` is the shell — a dialog card on the muted band colour. `Feedback.Panel` is the
+recessed well inside it, on the page colour, which is what tells the user where to type.
+`Feedback.Field` has no border of its own; the well is its box. The footer's actions sit on the band
+under the well.
+
+Use Feedback for writing. For a confirmation or a warning, use a [Dialog](/docs/native/components/dialog).
+
+## The draft
+
+The draft belongs to the root, not to the field, so it survives the dialog closing and opening
+again: Cancel, the ✕, the scrim and Android back all keep it. `useFeedback().clear()` is the one
+way to empty it — call it once a send has gone through.
+
+Pass `value` and `onValueChange` to own the draft — to prefill it, or read it while the dialog is
+closed:
+
+```tsx
+const [draft, setDraft] = useState("");
+
+<Feedback value={draft} onValueChange={setDraft}>…</Feedback>;
+```
+
+## Sending
+
+`Feedback.Submit` is disabled while the draft is empty or only whitespace, and passes `onSubmit`
+the trimmed text. **It never closes the dialog.** When `onSubmit` returns a promise, the button shows
+its spinner and the field is read-only until the promise settles — and the dialog is still open, so
+a failure can be shown in the well with the draft intact. Close and clear from `onSubmit` on
+success.
+
+<Preview id="feedback/sending" />
+
+```tsx
+function Send() {
+  const { clear, close } = useFeedback();
+  const [error, setError] = useState<string | null>(null);
+
+  return (
+    <>
+      {error ? <Text.Caption color="destructive">{error}</Text.Caption> : null}
+      <Feedback.Submit
+        onSubmit={async (message) => {
+          try {
+            await sendFeedback(message);
+            close();
+            clear();
+          } catch {
+            setError("That didn't send. Try again.");
+          }
+        }}
+      />
+    </>
+  );
+}
+```
+
+Handle failures inside `onSubmit`. A rejected promise is not caught for you, so it still reaches your
+app's error reporting rather than vanishing.
+
+## Chips and empty messages
+
+`canSubmitEmpty` lets Submit through with no text — for when chips or a rating carry the answer.
+Tie it to whatever the user picked:
+
+<Preview id="feedback/with-chips" />
+
+```tsx
+<Feedback.Panel>
+  <Feedback.Title>What got in your way?</Feedback.Title>
+  <View className="flex-row flex-wrap gap-2">{chips}</View>
+  <Feedback.Field minRows={3} placeholder="Anything else?" />
+</Feedback.Panel>
+<Feedback.Footer>
+  <Feedback.Cancel />
+  <Feedback.Submit canSubmitEmpty={picked.size > 0} onSubmit={send} />
+</Feedback.Footer>
+```
+
+## Multiple steps
+
+A rating, then a message, then thanks: swap the panel's and the footer's children as the user moves
+on. The well eases to each step's height over 200ms and the card grows or shrinks with it, staying
+centred, so nothing jumps. `Feedback.Action` is a secondary button for the steps' own actions —
+Next, Back, Done.
+
+<Preview id="feedback/multi-step" />
+
+```tsx
+<Feedback.Content>
+  {step === "rating" ? (
+    <>
+      <Feedback.Panel>
+        <Feedback.Title>How was checkout?</Feedback.Title>
+        <Rating onChange={setScore} value={score}>
+          <Rating.Stars />
+        </Rating>
+      </Feedback.Panel>
+      <Feedback.Footer>
+        <Feedback.Cancel />
+        <Feedback.Action isDisabled={score === 0} onPress={() => setStep("message")} variant="primary">
+          Next
+        </Feedback.Action>
+      </Feedback.Footer>
+    </>
+  ) : (
+    …
+  )}
+</Feedback.Content>
+```
+
+## Keyboard
+
+The dialog lifts just far enough to keep its footer above the keyboard while the field has focus,
+and settles back when the keyboard closes. The field starts six rows tall (`minRows`), grows with
+the text, and scrolls past twelve (`maxRows`), so a long message never pushes Send under the
+keyboard.
+
+## Accessibility
+
+Everything a [Dialog](/docs/native/components/dialog#accessibility) does: the card is modal to
+assistive technology, labelled by the title, and focus moves to the title on open and back to the
+trigger on close. When the title is plain text it is also the field's label, so a screen reader
+announces the question rather than only the placeholder. The ✕ is labelled `Close`. Submit
+announces its busy state while a send is in flight.
+
+Under Reduce Motion the card fades without growing, and the well changes height without easing.
+
+## API Reference
+
+### Feedback
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controls whether the dialog is open." },
+    defaultOpen: { type: "boolean", default: "false", description: "Whether an uncontrolled dialog starts open." },
+    onOpenChange: { type: "(isOpen: boolean) => void", description: "Called whenever the dialog opens or closes, from any path." },
+    value: { type: "string", description: "Controls the draft." },
+    defaultValue: { type: "string", default: '""', description: "The draft an uncontrolled dialog starts with." },
+    onValueChange: { type: "(value: string) => void", description: "Called with the draft on every change, including `clear()`." },
+    isDismissible: {
+      type: "boolean",
+      default: "true",
+      description: "Whether a scrim tap, Android back and the iOS escape gesture close it.",
+    },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Feedback.Trigger
+
+`Dialog.Trigger`. With `asChild` it hands its press to the single child.
+
+### Feedback.Content
+
+`Dialog.Content` — `size`, `className`, `scrimClassName` and React Native's `ViewProps`.
+
+### Feedback.Panel, Feedback.Footer
+
+Take React Native's `ViewProps` and `className`.
+
+### Feedback.Title
+
+`Dialog.Title` — `Text`'s props.
+
+### Feedback.Close
+
+`Dialog.Close` — the ✕ in the well's corner, or with `asChild` any control that closes.
+
+### Feedback.Field
+
+Takes `TextInput`'s props, less `value`, `onChangeText` and `multiline` — the draft is the root's.
+
+<TypeTable
+  type={{
+    minRows: { type: "number", default: "6", description: "Rows tall before it grows." },
+    maxRows: { type: "number", default: "12", description: "Rows it grows to before it scrolls." },
+    isDisabled: { type: "boolean", default: "false", description: "Read-only. A send in flight makes it read-only on its own." },
+    className: { type: "string" },
+  }}
+/>
+
+### Feedback.Action, Feedback.Cancel
+
+Take `Button`'s props. Both are `secondary` by default. Cancel is labelled "Cancel" and closes the
+dialog, keeping the draft.
+
+### Feedback.Submit
+
+Takes `Button`'s props, less `onPress`. Labelled "Send" unless given children.
+
+<TypeTable
+  type={{
+    onSubmit: {
+      type: "(value: string) => void | Promise<void>",
+      description: "Receives the trimmed draft. Does not close — return a promise to show the loading state.",
+    },
+    canSubmitEmpty: { type: "boolean", default: "false", description: "Allow submitting with no text." },
+  }}
+/>
+
+### useFeedback
+
+Reads the enclosing feedback dialog. Throws outside a `Feedback`.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The draft, untrimmed." },
+    setValue: { type: "(value: string) => void" },
+    isOpen: { type: "boolean" },
+    close: { type: "() => void", description: "Closes the dialog and keeps the draft." },
+    clear: { type: "() => void", description: "Empties the draft." },
+  }}
+/>

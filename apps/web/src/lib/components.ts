@@ -221,6 +221,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A centred card over a dimmed app that asks for a decision or a short input — confirm, alert dialog, form.",
 	},
 	{
+		slug: "feedback",
+		name: "Feedback",
+		group: "Overlays",
+		blurb: "A dialog for writing — the field in a recessed well, a send that waits, steps that ease between heights.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

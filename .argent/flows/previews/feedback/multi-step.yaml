@@ -1,0 +1,22 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on feedback/multi-step and has settled — the Rate checkout button with the
+  dialog closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening on the rating step
+  - tap: { id: feedback-steps-open }
+  - await: { visible: { id: feedback-steps-rating } }
+  - wait: 700
+  - echo: Rating, then moving on; the well eases to the message step's height
+  - tap: { id: feedback-steps-rating }
+  - wait: 600
+  - tap: { id: feedback-steps-next }
+  - await: { visible: { id: feedback-steps-field } }
+  - wait: 900
+  - echo: Sending without a message lands on thanks
+  - tap: { id: feedback-steps-send }
+  - await: { visible: { id: feedback-steps-done } }
+  - wait: 1200
+  - echo: Done closes it and resets the rating, so the next open starts over
+  - tap: { id: feedback-steps-done }
+  - await: { hidden: { id: feedback-steps-done } }
+  - wait: 500

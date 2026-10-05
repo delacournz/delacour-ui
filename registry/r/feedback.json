@@ -1,0 +1,171 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "feedback",
+	"type": "registry:ui",
+	"title": "Feedback",
+	"description": "A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"button",
+		"dialog",
+		"input",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/feedback/AGENTS.md",
+			"target": "feedback/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/feedback",
+					"to": "@registry/ui/feedback"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-action.tsx",
+			"target": "feedback/feedback-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-cancel.tsx",
+			"target": "feedback/feedback-cancel.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-close.tsx",
+			"target": "feedback/feedback-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-content.tsx",
+			"target": "feedback/feedback-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-field.tsx",
+			"target": "feedback/feedback-field.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-footer.tsx",
+			"target": "feedback/feedback-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-panel.tsx",
+			"target": "feedback/feedback-panel.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-submit.tsx",
+			"target": "feedback/feedback-submit.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-title.tsx",
+			"target": "feedback/feedback-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback-trigger.tsx",
+			"target": "feedback/feedback-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback.context.tsx",
+			"target": "feedback/feedback.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback.tsx",
+			"target": "feedback/feedback.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/feedback.variants.ts",
+			"target": "feedback/feedback.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/feedback/index.ts",
+			"target": "feedback/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

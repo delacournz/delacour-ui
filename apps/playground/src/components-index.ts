@@ -124,6 +124,12 @@ const ROWS = [
 		description: "Statuses, action, placement, promise, stacking, custom",
 		group: "Overlays",
 	},
+	{
+		slug: "feedback",
+		title: "Feedback",
+		description: "Basic, sending, multi-step, chips, controlled draft",
+		group: "Overlays",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

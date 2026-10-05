@@ -122,6 +122,38 @@ export function computeOffsets(
 	return offsets;
 }
 
+/** The furthest slot below `activeIndex` whose midpoint `bottom` has passed, or `activeIndex`. */
+function crossedBelow(
+	activeIndex: number,
+	bottom: number,
+	offsets: readonly number[],
+	heights: readonly number[]
+): number {
+	"worklet";
+	let target = activeIndex;
+	for (let index = activeIndex + 1; index < offsets.length; index++) {
+		if (bottom <= (offsets[index] ?? 0) + (heights[index] ?? 0) / 2) break;
+		target = index;
+	}
+	return target;
+}
+
+/** The furthest slot above `activeIndex` whose midpoint `top` has passed, or `activeIndex`. */
+function crossedAbove(
+	activeIndex: number,
+	top: number,
+	offsets: readonly number[],
+	heights: readonly number[]
+): number {
+	"worklet";
+	let target = activeIndex;
+	for (let index = activeIndex - 1; index >= 0; index--) {
+		if (top >= (offsets[index] ?? 0) + (heights[index] ?? 0) / 2) break;
+		target = index;
+	}
+	return target;
+}
+
 /**
  * The slot the dragged row would drop into, from where it is now.
  *
@@ -153,21 +185,8 @@ export function resolveTargetIndex({
 	pinned: readonly boolean[];
 }): number {
 	"worklet";
-	let target = activeIndex;
-	const bottom = activeTop + activeHeight;
-
-	for (let index = activeIndex + 1; index < offsets.length; index++) {
-		const midpoint = (offsets[index] ?? 0) + (heights[index] ?? 0) / 2;
-		if (bottom > midpoint) target = index;
-		else break;
-	}
-	if (target === activeIndex) {
-		for (let index = activeIndex - 1; index >= 0; index--) {
-			const midpoint = (offsets[index] ?? 0) + (heights[index] ?? 0) / 2;
-			if (activeTop < midpoint) target = index;
-			else break;
-		}
-	}
+	const below = crossedBelow(activeIndex, activeTop + activeHeight, offsets, heights);
+	let target = below === activeIndex ? crossedAbove(activeIndex, activeTop, offsets, heights) : below;
 
 	const step = target > activeIndex ? -1 : 1;
 	while (target !== activeIndex && pinned[target] === true) target += step;

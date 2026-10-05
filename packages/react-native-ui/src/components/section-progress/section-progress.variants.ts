@@ -88,7 +88,7 @@ export const sectionProgressVariants = tv({
 		/** The box at the placement's edge, holding the pill or the panel. */
 		stack: "absolute",
 		/** The closed pill: the ring and the label in a capsule. */
-		pill: "min-h-11 flex-row items-center gap-2 self-start rounded-full border border-border bg-card py-2 ps-2.5 pe-4",
+		pill: "min-h-11 flex-row items-center gap-2 rounded-full border border-border bg-card py-2 ps-2.5 pe-4",
 		/** The pill's row inside the open panel — the same content, without the capsule. */
 		pillRow: "min-h-11 flex-row items-center gap-2 py-2 ps-2.5 pe-4",
 		/** The SVG ring's box. Hidden from assistive technology. */

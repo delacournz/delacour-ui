@@ -62,6 +62,7 @@
 		"./separator": "./src/components/separator/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slider": "./src/components/slider/index.ts",
+		"./sortable": "./src/components/sortable/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./steps": "./src/components/steps/index.ts",
 		"./surface": "./src/components/surface/index.ts",

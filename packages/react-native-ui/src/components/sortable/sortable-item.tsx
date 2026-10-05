@@ -7,7 +7,6 @@ import Animated, {
 	useDerivedValue,
 	useSharedValue,
 	withSpring,
-	withTiming,
 } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { cn } from "../../lib/cn";
@@ -87,7 +86,7 @@ export function SortableItem({
 		() => shifts.value[id] ?? 0,
 		(next, previous) => {
 			if (next === previous) return;
-			if (phase.value === 0 || isReducedMotion) shift.value = withTiming(next, { duration: 0 });
+			if (phase.value === 0 || isReducedMotion) shift.value = next;
 			else shift.value = withSpring(next, SORTABLE_SHIFT_SPRING);
 		},
 		[id, isReducedMotion]

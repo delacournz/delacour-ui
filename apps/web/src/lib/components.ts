@@ -209,6 +209,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A row of stars that reads or sets a score, in whole or half steps.",
 	},
 	{
+		slug: "search-bar",
+		name: "SearchBar",
+		group: "Forms",
+		blurb: "The query field at the top of a list, with clear, Cancel, debounced reporting and filter tokens.",
+	},
+	{
 		slug: "select",
 		name: "Select",
 		group: "Forms",

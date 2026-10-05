@@ -1918,6 +1918,50 @@
 			]
 		},
 		{
+			"name": "search-bar",
+			"type": "registry:ui",
+			"title": "Search Bar",
+			"description": "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"button",
+				"chip",
+				"compose-refs",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"spinner",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/search-bar/AGENTS.md",
+				"ui/search-bar/index.ts",
+				"ui/search-bar/search-bar-cancel-reveal.tsx",
+				"ui/search-bar/search-bar-cancel.tsx",
+				"ui/search-bar/search-bar-clear.tsx",
+				"ui/search-bar/search-bar-tokens.tsx",
+				"ui/search-bar/search-bar.context.tsx",
+				"ui/search-bar/search-bar.debounce.ts",
+				"ui/search-bar/search-bar.responder.ts",
+				"ui/search-bar/search-bar.tsx",
+				"ui/search-bar/search-bar.types.ts",
+				"ui/search-bar/search-bar.variants.ts"
+			]
+		},
+		{
 			"name": "select",
 			"type": "registry:ui",
 			"title": "Select",

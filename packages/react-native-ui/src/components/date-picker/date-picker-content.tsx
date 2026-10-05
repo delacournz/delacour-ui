@@ -1,6 +1,7 @@
 import type { ReactElement, ReactNode } from "react";
 import { View } from "react-native";
 import { BottomSheet } from "../bottom-sheet";
+import { resolvePartTestID } from "../calendar/calendar.variants";
 import { useDatePickerPart } from "./date-picker.context";
 import { datePickerVariants } from "./date-picker.variants";
 import { DatePickerCalendar } from "./date-picker-calendar";
@@ -44,9 +45,11 @@ export function DatePickerContent({ title, className, children }: DatePickerCont
 			<BottomSheet.Overlay />
 			<BottomSheet.Container>
 				<BottomSheet.Content className={className}>
-					<BottomSheet.Close />
+					<BottomSheet.Close testID={resolvePartTestID(picker.testID, "close")} />
 					<View className={slots.header()}>
-						<BottomSheet.Title>{title ?? picker.title}</BottomSheet.Title>
+						<BottomSheet.Title testID={resolvePartTestID(picker.testID, "title")}>
+							{title ?? picker.title}
+						</BottomSheet.Title>
 					</View>
 					{children ?? (
 						<>

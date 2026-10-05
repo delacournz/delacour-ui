@@ -85,10 +85,12 @@ sheets.
 - **Today is a ring (`border-ring`) and `text-primary`, never a fill**, so it cannot be mistaken
   for a selection.
 - **Variant:** `primary` fills `bg-primary`, band `bg-primary/15`; `secondary` fills
-  `bg-secondary`, band `bg-muted`. The primary band is a tint of the selection colour, not
+  `bg-primary/25` under `text-foreground`, band `bg-primary/10`. The primary band is a tint of the selection colour, not
   `bg-accent`: light `--accent` is 0.97 on a 0.985 page, so the band all but vanished in light
   while reading fine in dark. A tint of `primary` reads in both themes and joins the end caps
-  as one shape. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
+  as one shape. `secondary` is tinted from `primary` for the same reason — `bg-secondary`
+  and `bg-muted` are 0.97 on the same 0.985 page, and the recorded preview showed a soft
+  selection with no visible circle at all. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
 - **Colour is on the text slots only** (rule 1): `dayLabel`, `weekdayLabel`, `captionText`,
   `pickerItemLabel`. A test holds every `View` slot to carrying no `text-*` colour.
 - **Custom day content** gets `labelClassName` in its render props, so a price under the number
@@ -121,6 +123,12 @@ sheets.
 - A month change is announced with `AccessibilityInfo.announceForAccessibility` — on change only,
   never on mount, because the caption already says it.
 - Today is re-read on `AppState` → `active`, so a calendar left open overnight marks the right day.
+
+- **Parts derive their `testID` from the root's** (`resolvePartTestID`): `testID="booking"`
+  names the days `booking-day-2026-10-05`, the arrows `booking-prev`/`booking-next`, the caption
+  `booking-caption` and the jump-view items `booking-month-10`/`booking-year-2026`. The default
+  anatomy renders forty-odd parts no caller writes, and an end-to-end test or a recorded preview
+  flow has to reach one particular day all the same. No root `testID`, no part ids.
 
 ## Field
 

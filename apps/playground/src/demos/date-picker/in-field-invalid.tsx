@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "In a field",
 	caption:
 		"Inside a `Field` the trigger takes `isInvalid` and `isDisabled` with nothing said at the call site, names itself from `Field.Label`, and a tap on the label opens the sheet. Invalid here until a day is picked.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

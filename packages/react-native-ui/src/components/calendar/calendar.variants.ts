@@ -168,13 +168,13 @@ export const calendarVariants = tv({
 			variant: "secondary",
 			tone: "selected",
 			class: {
-				dayBase: "bg-secondary",
-				dayLabel: "text-secondary-foreground",
-				pickerItem: "bg-secondary",
-				pickerItemLabel: "text-secondary-foreground",
+				dayBase: "bg-primary/25",
+				dayLabel: "text-foreground",
+				pickerItem: "bg-primary/25",
+				pickerItemLabel: "text-foreground",
 			},
 		},
-		{ variant: "secondary", class: { band: "bg-muted" } },
+		{ variant: "secondary", class: { band: "bg-primary/10" } },
 		{ variant: "secondary", tone: "band", class: { dayLabel: "text-foreground" } },
 		{
 			isInvalid: true,
@@ -410,4 +410,17 @@ export function resolveCalendarAxes({
 		isInvalid: own?.isInvalid ?? field?.isInvalid ?? false,
 		isReadOnly: own?.isReadOnly ?? false,
 	};
+}
+
+/**
+ * A part's `testID`, derived from the calendar's own: `booking` names its days `booking-day-2026-10-05`,
+ * its arrows `booking-prev` and `booking-next`, its caption `booking-caption` and the jump views'
+ * items `booking-month-10` and `booking-year-2026`.
+ *
+ * Derived rather than taken per part because the default anatomy renders forty-odd parts no caller
+ * writes, and an end-to-end test or a recorded flow has to reach a particular day all the same.
+ * A calendar with no `testID` gives its parts none.
+ */
+export function resolvePartTestID(root: string | undefined, part: string): string | undefined {
+	return root === undefined ? undefined : `${root}-${part}`;
 }

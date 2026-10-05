@@ -96,6 +96,10 @@ and `useSelectionMode()`.
   toggle that changed something — called from JS through `playHaptic`, since
   neither moment is a gesture callback.
 - **Every part but the root throws outside a `SelectionMode`**, by name.
+- **The header's two controls take their own `testID`s** — `closeTestID` and
+  `selectAllTestID` — the way `Alert` and `Chip` forward one to their close
+  control. A `testID` on the header lands on its row, and a test that has to
+  leave the mode cannot reach a button the component draws for itself.
 
 ## Motion
 

@@ -13,6 +13,10 @@ export type SelectionModeHeaderProps = ViewProps & {
 	title?: string;
 	/** Drop the select-all control. It is also dropped when the root has no `values` to pick from. */
 	isSelectAllHidden?: boolean;
+	/** `testID` for the close control, so a test or automation can leave the mode. */
+	closeTestID?: string;
+	/** `testID` for the select-all control. */
+	selectAllTestID?: string;
 	className?: string;
 };
 
@@ -38,6 +42,8 @@ const REDUCED_EXITING = FadeOut.duration(SELECTION_MODE_MOTION.reducedFadeMs).re
 export function SelectionModeHeader({
 	title = "Select",
 	isSelectAllHidden = false,
+	closeTestID,
+	selectAllTestID,
 	className,
 	...props
 }: SelectionModeHeaderProps): ReactElement | null {
@@ -62,14 +68,14 @@ export function SelectionModeHeader({
 			exiting={isReducedMotion ? REDUCED_EXITING : EXITING}
 			{...props}
 		>
-			<Button accessibilityLabel="Stop selecting" onPress={exit} size="icon-md" variant="ghost">
+			<Button accessibilityLabel="Stop selecting" onPress={exit} size="icon-md" testID={closeTestID} variant="ghost">
 				<Icon icon={IconCrossMedium} />
 			</Button>
 			<Text accessibilityLiveRegion="polite" className={slots.headerTitle()} numberOfLines={1}>
 				{label}
 			</Text>
 			{hasSelectAll ? (
-				<Button onPress={isAllSelected ? clear : selectAll} size="sm" variant="ghost">
+				<Button onPress={isAllSelected ? clear : selectAll} size="sm" testID={selectAllTestID} variant="ghost">
 					<Button.Label>{isAllSelected ? "Deselect all" : "Select all"}</Button.Label>
 				</Button>
 			) : null}

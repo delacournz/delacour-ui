@@ -1577,6 +1577,44 @@
 			]
 		},
 		{
+			"name": "leaderboard",
+			"type": "registry:ui",
+			"title": "Leaderboard",
+			"description": "Ranked people or teams with ties, the top three on a podium of growing bars or lifted cards, and the highlighted entry pinned below the cut.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"empty-state",
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/leaderboard/AGENTS.md",
+				"ui/leaderboard/index.ts",
+				"ui/leaderboard/leaderboard-empty.tsx",
+				"ui/leaderboard/leaderboard-movement.tsx",
+				"ui/leaderboard/leaderboard-podium-place.tsx",
+				"ui/leaderboard/leaderboard-podium.tsx",
+				"ui/leaderboard/leaderboard-row.tsx",
+				"ui/leaderboard/leaderboard.context.tsx",
+				"ui/leaderboard/leaderboard.tsx",
+				"ui/leaderboard/leaderboard.types.ts",
+				"ui/leaderboard/leaderboard.variants.ts"
+			]
+		},
+		{
 			"name": "list-group",
 			"type": "registry:ui",
 			"title": "List Group",

@@ -45,6 +45,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "item", title: "Item", description: "A row of media, text and actions for lists and settings, standalone or as a List Group row." },
 	{ name: "kpi", title: "Kpi", description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card." },
 	{ name: "label", title: "Label", description: "A form control's name, with required, invalid and disabled states." },
+	{ name: "leaderboard", title: "Leaderboard", description: "Ranked people or teams with ties, the top three on a podium of growing bars or lifted cards, and the highlighted entry pinned below the cut." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
 	{ name: "markdown-editor", title: "Markdown Editor", description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },

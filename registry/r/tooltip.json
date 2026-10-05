@@ -1,0 +1,180 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tooltip",
+	"type": "registry:ui",
+	"title": "Tooltip",
+	"description": "A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"overlay",
+		"popover",
+		"pressable",
+		"slot",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/AGENTS.md",
+			"target": "tooltip/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/tooltip",
+					"to": "@registry/ui/tooltip"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/index.ts",
+			"target": "tooltip/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-arrow.tsx",
+			"target": "tooltip/tooltip-arrow.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../popover/popover-arrow",
+					"to": "@registry/ui/popover/popover-arrow"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-content.tsx",
+			"target": "tooltip/tooltip-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				},
+				{
+					"from": "../popover/popover.position",
+					"to": "@registry/ui/popover/popover.position"
+				},
+				{
+					"from": "../popover/popover.variants",
+					"to": "@registry/ui/popover/popover.variants"
+				},
+				{
+					"from": "../popover/use-anchored-content",
+					"to": "@registry/ui/popover/use-anchored-content"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-description.tsx",
+			"target": "tooltip/tooltip-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-text.tsx",
+			"target": "tooltip/tooltip-text.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-title.tsx",
+			"target": "tooltip/tooltip-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip-trigger.tsx",
+			"target": "tooltip/tooltip-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip.context.tsx",
+			"target": "tooltip/tooltip.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../popover/popover.position",
+					"to": "@registry/ui/popover/popover.position"
+				},
+				{
+					"from": "../popover/use-anchor-measure",
+					"to": "@registry/ui/popover/use-anchor-measure"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip.tsx",
+			"target": "tooltip/tooltip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../overlay/overlay.context",
+					"to": "@registry/ui/overlay/overlay.context"
+				},
+				{
+					"from": "../popover/use-anchor-measure",
+					"to": "@registry/ui/popover/use-anchor-measure"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tooltip/tooltip.variants.ts",
+			"target": "tooltip/tooltip.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../popover/popover.position",
+					"to": "@registry/ui/popover/popover.position"
+				}
+			]
+		}
+	]
+}

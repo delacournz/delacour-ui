@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/controlled and has settled — Export, Show the hint, and the caption
+  reading Closed. The capture script navigates there before running this.
+steps:
+  - echo: Show the hint opens the Export tooltip from outside
+  - tap: { id: tooltip-controlled-show }
+  - await: { visible: { text: Exports as CSV } }
+  - echo: Holding while it hides itself and the caption returns to Closed
+  - wait: 2000

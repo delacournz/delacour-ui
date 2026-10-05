@@ -42,6 +42,7 @@
 		"bottom-sheet",
 		"toast",
 		"popover",
+		"tooltip",
 		"drawer",
 		"dialog",
 		"feedback",

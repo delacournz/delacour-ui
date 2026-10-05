@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/placements and has settled — four trigger buttons with no tooltip
+  showing. The capture script navigates there before running this.
+steps:
+  - echo: Opening each placement in turn; each one closes the last
+  - tap: { id: tooltip-top }
+  - await: { visible: { text: On the top } }
+  - wait: 700
+  - tap: { id: tooltip-right }
+  - wait: 700
+  - tap: { id: tooltip-bottom }
+  - wait: 700
+  - tap: { id: tooltip-left }
+  - echo: Holding until the last label hides itself, so the clip loops on four bare buttons
+  - wait: 2000

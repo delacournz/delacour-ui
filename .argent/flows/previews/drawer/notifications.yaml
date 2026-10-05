@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on drawer/notifications and has settled — the Notifications button with the
+  drawer closed. The capture script navigates there before running this.
+steps:
+  - echo: Pulling the tray down from the top
+  - tap: { id: drawer-notifications-open }
+  - await: { visible: { id: drawer-notifications-panel } }
+  - wait: 1400
+  - echo: Swiping it back up
+  - swipe: { from: { id: drawer-notifications-panel }, by: { y: -0.18 }, duration: 300 }
+  - await: { hidden: { id: drawer-notifications-panel } }

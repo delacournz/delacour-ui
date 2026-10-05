@@ -164,6 +164,12 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_drawer_controlled from "./drawer/controlled";
+import * as demo_drawer_filters from "./drawer/filters";
+import * as demo_drawer_navigation from "./drawer/navigation";
+import * as demo_drawer_notifications from "./drawer/notifications";
+import * as demo_drawer_rtl from "./drawer/rtl";
+import * as demo_drawer_sizes from "./drawer/sizes";
 import * as demo_dialog_alert_dialog from "./dialog/alert-dialog";
 import * as demo_dialog_confirm from "./dialog/confirm";
 import * as demo_dialog_controlled from "./dialog/controlled";
@@ -536,6 +542,12 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"drawer/controlled": demo_drawer_controlled,
+	"drawer/filters": demo_drawer_filters,
+	"drawer/navigation": demo_drawer_navigation,
+	"drawer/notifications": demo_drawer_notifications,
+	"drawer/rtl": demo_drawer_rtl,
+	"drawer/sizes": demo_drawer_sizes,
 	"dialog/alert-dialog": demo_dialog_alert_dialog,
 	"dialog/confirm": demo_dialog_confirm,
 	"dialog/controlled": demo_dialog_controlled,

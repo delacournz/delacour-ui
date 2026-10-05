@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"Reach the top and the next page of twenty loads, with a spinner while it is in flight. The page lands above you without moving what you were reading; after three, `hasOlder` turns off.",
+	capture: { align: "stretch", flow: "message-scroller/load-older" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

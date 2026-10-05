@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"Replies keep arriving every two seconds. Scroll up and the jump button appears with a count of what you have missed; tap it, or scroll back down, and the count clears.",
+	capture: { align: "stretch", flow: "message-scroller/jump-to-latest" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };
@@ -17,12 +18,19 @@ const START = new Date(2026, 9, 5, 9, 0).getTime();
 const ARRIVAL_MS = 2000;
 const LIMIT = 60;
 
-const SEED: ChatMessage[] = Array.from({ length: 30 }, (_, index) => ({
-	id: `j${index}`,
-	author: index % 4 === 0 ? "me" : "kate",
-	text: index % 4 === 0 ? "Go on…" : `Point ${index + 1} of the story`,
-	sentAt: new Date(START + index * 60_000),
-}));
+const SEED_LENGTH = 30;
+const MY_LAST = 21;
+
+/** Kate's run at the end matches what keeps arriving, so the newest end looks the same however much has landed. */
+const SEED: ChatMessage[] = Array.from({ length: SEED_LENGTH }, (_, index) => {
+	const isMine = index % 4 === 0 && index <= MY_LAST;
+	return {
+		id: `j${index}`,
+		author: isMine ? "me" : "kate",
+		text: isMine ? "Go on…" : `Point ${index + 1} of the story`,
+		sentAt: new Date(START + index * 60_000),
+	};
+});
 
 const RUN_GAP: Record<MessageRunPosition, string> = { single: "mt-3", first: "mt-3", middle: "mt-0.5", last: "mt-0.5" };
 
@@ -48,7 +56,7 @@ export function Demo(): ReactElement {
 				{
 					id: `j${current.length}`,
 					author: "kate",
-					text: `And another thing (${current.length + 1})`,
+					text: `Point ${current.length + 1} of the story`,
 					sentAt: new Date(START + current.length * 60_000),
 				},
 			]);

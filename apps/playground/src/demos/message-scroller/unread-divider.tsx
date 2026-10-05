@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		'`firstUnreadKey` draws a rule above the first message you have not read, and `initialScrollTarget="unread"` opens the list there rather than at the end.',
+	capture: { align: "stretch" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

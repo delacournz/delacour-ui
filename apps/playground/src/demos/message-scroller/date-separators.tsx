@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"Five days of messages. Each new calendar day gets a separator — Today, Yesterday, then a weekday inside the week — and a day boundary always starts a new run.",
+	capture: { align: "stretch" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

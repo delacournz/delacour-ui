@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"Forty messages, opened at the newest. Runs from one sender close up, and `renderMessage` gets each message's `position` to pass to its bubble.",
+	capture: { align: "stretch", flow: "message-scroller/basic", hero: true },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

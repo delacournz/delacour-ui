@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled open",
 	caption:
 		"`isOpen` and `onOpenChange` hand the panel to the caller — a button elsewhere on the screen opens it, and the pill, an outside tap, the escape gesture and Android back still close it through the same callback.",
+	capture: { align: "stretch", flow: "section-progress/controlled-open" },
 };
 
 const CHAPTERS = [
@@ -48,6 +49,7 @@ export function Demo(): ReactElement {
 					onValueChange={setChapter}
 					progress={0.35}
 					revealAt={0}
+					testID="section-progress-controlled"
 					value={chapter}
 				>
 					{CHAPTERS.map((item) => (

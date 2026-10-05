@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Coloured sections",
 	caption:
 		"An item's `color` paints its marker in the panel, and the ring while that section is being read — a warning section turns the ring amber as the reader enters it.",
+	capture: { align: "stretch", flow: "section-progress/colored-sections", hero: true },
 };
 
 const SECTIONS: readonly { id: string; title: string; color: SectionProgressColor }[] = [
@@ -35,6 +36,7 @@ export function Demo(): ReactElement {
 				onScroll={sections.scrollHandler}
 				ref={sections.scrollRef}
 				scrollEventThrottle={16}
+				testID="section-progress-colored-scroll"
 			>
 				{SECTIONS.map((section) => (
 					<View className="gap-2 px-4 pt-6" key={section.id} onLayout={sections.register(section.id)}>
@@ -44,9 +46,20 @@ export function Demo(): ReactElement {
 					</View>
 				))}
 			</Animated.ScrollView>
-			<SectionProgress onValueChange={sections.scrollTo} revealAt={0} scroll={sections} value={sections.activeId}>
+			<SectionProgress
+				onValueChange={sections.scrollTo}
+				revealAt={0}
+				scroll={sections}
+				testID="section-progress-colored"
+				value={sections.activeId}
+			>
 				{SECTIONS.map((section) => (
-					<SectionProgress.Item color={section.color} key={section.id} value={section.id}>
+					<SectionProgress.Item
+						color={section.color}
+						key={section.id}
+						testID={`section-progress-colored-${section.id}`}
+						value={section.id}
+					>
 						{section.title}
 					</SectionProgress.Item>
 				))}

@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption:
 		"Six placements, `offset` points in from the safe area. A `top-*` pill opens its panel downward, a `bottom-*` one upward, and `start` and `end` mirror under right-to-left.",
+	capture: { align: "stretch", flow: "section-progress/placements" },
 };
 
 const LABELS: Record<SectionProgressPlacement, string> = {
@@ -42,7 +43,14 @@ export function Demo(): ReactElement {
 				))}
 			</View>
 			<View className="h-[360px] w-full overflow-hidden rounded-xl border border-border bg-muted">
-				<SectionProgress defaultValue="pricing" offset={12} placement={placement} progress={0.42} revealAt={0}>
+				<SectionProgress
+					defaultValue="pricing"
+					offset={12}
+					placement={placement}
+					progress={0.42}
+					revealAt={0}
+					testID="section-progress-placement"
+				>
 					<SectionProgress.Item value="introduction">Introduction</SectionProgress.Item>
 					<SectionProgress.Item value="pricing">Pricing</SectionProgress.Item>
 					<SectionProgress.Item value="faq">Questions</SectionProgress.Item>

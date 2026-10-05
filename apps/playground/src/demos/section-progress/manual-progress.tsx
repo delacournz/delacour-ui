@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Manual progress",
 	caption:
 		"`progress` overrides the scroll — a number or a shared value, 0 to 1. Here a slider drives it: small steps track, and a jump of more than a tenth eases over 180ms.",
+	capture: { align: "stretch", flow: "section-progress/manual-progress" },
 };
 
 const STEPS = [

@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-blur/list-under-button and has settled — coloured rows at the top of
+  their list, blurring out under a floating Continue button. The capture script navigates there before running this.
+steps:
+  - echo: Scrolling the rows up under the button — each blurs as it reaches the edge
+  # Anchored on the list, above the button: a drag that starts on the button is a press, not a scroll.
+  - swipe: { from: { id: scroll-blur-list }, by: { y: -0.3 }, momentum: false, duration: 1200 }
+  - wait: 600
+  - echo: And back to the top, so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-blur-list }, by: { y: 0.3 }, momentum: false, duration: 1200 }
+  - wait: 600

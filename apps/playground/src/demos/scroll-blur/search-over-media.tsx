@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "A search field over media",
 	caption:
 		'`edges="start"` under a sticky field. The band is clear at rest and arrives over the first `fadeInDistance` points of travel, so the top row is crisp until it starts to pass under the field.',
-	align: "stretch",
+	capture: { align: "stretch", flow: "scroll-blur/search-over-media" },
 	keyboardAware: true,
 };
 

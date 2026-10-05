@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "A list under a floating button",
 	caption:
 		"The rows blur out as they reach the button, so its label stays legible over whatever colour is passing beneath. The button is a sibling after the `ScrollBlur`, never a child — the band paints over its children.",
-	align: "stretch",
+	capture: { align: "stretch", flow: "scroll-blur/list-under-button", hero: true },
 };
 
 const ROWS = [

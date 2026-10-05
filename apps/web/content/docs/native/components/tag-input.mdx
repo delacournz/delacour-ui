@@ -36,7 +36,8 @@ tag is trimmed, and whitespace on its own never commits.
 ## Delimiters and paste
 
 `delimiters` lists the single characters that commit the text before them — a comma by default.
-Return always commits. A paste holding delimiters lands as several tags at once.
+Return always commits, and on an empty field it blurs instead — the "done" key. A paste holding
+delimiters lands as several tags at once.
 
 ```tsx
 <TagInput delimiters={[",", " ", ";"]} keyboardType="email-address" />

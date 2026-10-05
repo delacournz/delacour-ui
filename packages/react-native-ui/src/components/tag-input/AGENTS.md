@@ -58,6 +58,8 @@ list.
   whatever the last row has left.
 - **Return commits and keeps the keyboard up.** `submitBehavior="submit"`, so
   entering ten recipients is ten Returns rather than ten taps back into the box.
+  **Return on an empty field blurs it** (`resolveSubmit`): with nothing to
+  commit it is the "done" key, and without that the keyboard had no way down.
   Delimiters are single characters, a newline always splits (a one-line field
   can only receive one by paste), and a multi-character delimiter is ignored
   rather than half-matched.
@@ -105,7 +107,7 @@ list.
 - **Haptics are one per commit, and the warning is throttled.** `selection` on
   add, `light` on remove and on arming, `warning` on refusal — at most once per
   `REJECT_HAPTIC_INTERVAL_MS`, so a paste refused ten times buzzes once. An
-  `empty` Return is reported and announced but does not buzz: nothing is wrong
+  `empty` `add()` is reported and announced but does not buzz: nothing is wrong
   with the list.
 - **Motion is a 150ms layout transition and a 120ms zoom in.** Each chip sits in
   an `Animated.View` so the row reflows as tags come and go. Calm motion

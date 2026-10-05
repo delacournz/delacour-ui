@@ -13,6 +13,7 @@ import {
 	resolveCounterText,
 	resolveRejectAnnouncement,
 	resolveRemoveAnnouncement,
+	resolveSubmit,
 	resolveTagInputState,
 	resolveTagsAccessibilityLabel,
 	shouldFireRejectHaptic,
@@ -395,5 +396,19 @@ describe("resolveTagInputState", () => {
 		expect(resolveTagInputState({ ...base, count: 3, max: 3 }).isHidden).toBe(true);
 		expect(resolveTagInputState({ ...base, isReadOnly: true }).isHidden).toBe(true);
 		expect(resolveTagInputState(base).isHidden).toBe(false);
+	});
+});
+
+describe("resolveSubmit", () => {
+	test("Return with text commits it", () => {
+		expect(resolveSubmit("design")).toBe("commit");
+		expect(resolveSubmit(" a, b ")).toBe("commit");
+	});
+
+	// Return keeps the keyboard up for the next tag, so with nothing typed it is
+	// the one key that says "done" — otherwise the keyboard could not be dismissed.
+	test("Return on an empty or whitespace field blurs it", () => {
+		expect(resolveSubmit("")).toBe("blur");
+		expect(resolveSubmit("   ")).toBe("blur");
 	});
 });

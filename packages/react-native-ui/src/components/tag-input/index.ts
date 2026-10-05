@@ -11,6 +11,7 @@ export {
 	resolveBackspace,
 	resolveBlur,
 	resolveCounterText,
+	resolveSubmit,
 	resolveTagInputState,
 	shouldHideInput,
 	splitByDelimiters,

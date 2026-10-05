@@ -216,6 +216,15 @@ export function resolveBlur(behavior: TagInputBlurBehavior, draft: string): "com
 	return "none";
 }
 
+/**
+ * What Return does. Text commits, and the keyboard stays up for the next tag;
+ * an empty field has nothing to commit, so Return there means "done" and blurs
+ * it — the one way off the keyboard while Return keeps it up otherwise.
+ */
+export function resolveSubmit(draft: string): "commit" | "blur" {
+	return draft.trim().length > 0 ? "commit" : "blur";
+}
+
 /** Past `max`, not at it. The field turns invalid when this holds. */
 export function isOverflowing({ count, max }: { count: number; max?: number }): boolean {
 	return max !== undefined && count > max;

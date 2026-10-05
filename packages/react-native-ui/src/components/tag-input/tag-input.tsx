@@ -37,6 +37,7 @@ import {
 	resolveBlur,
 	resolveRejectAnnouncement,
 	resolveRemoveAnnouncement,
+	resolveSubmit,
 	resolveTagInputState,
 	resolveTagsAccessibilityLabel,
 	shouldFireRejectHaptic,
@@ -88,7 +89,7 @@ function tagKeys(tags: readonly string[]): string[] {
  * sees the one the accepted pieces landed in.
  *
  * One haptic per commit whatever its size, and the warning is throttled — a
- * paste refused ten times buzzes once. An `empty` Return is reported and
+ * paste refused ten times buzzes once. An `empty` `add()` is reported and
  * announced but does not buzz: nothing is wrong with the list, only nothing
  * was typed.
  */
@@ -356,7 +357,8 @@ function TagInputRoot({
 	};
 
 	const handleSubmitEditing = () => {
-		apply(commitDraft(draft, tags, options));
+		if (resolveSubmit(draft) === "blur") fieldRef.current?.blur();
+		else apply(commitDraft(draft, tags, options));
 	};
 
 	// Backspace only reaches `onKeyPress` reliably while the field is empty —

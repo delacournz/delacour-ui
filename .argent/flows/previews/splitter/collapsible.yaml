@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on splitter/collapsible and has settled —
+  the sidebar open at 35, the toggle button carrying the testID toggle-sidebar.
+steps:
+  - echo: Collapsing the sidebar from the button, then restoring it
+  - tap: { id: toggle-sidebar }
+  - wait: 900
+  - tap: { id: toggle-sidebar }
+  - wait: 600

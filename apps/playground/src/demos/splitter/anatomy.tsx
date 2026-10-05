@@ -6,8 +6,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Anatomy",
-	align: "stretch",
 	note: "Two Splitter.Pane children with a Splitter.Handle between them. The handle is a 44pt touch box laid over the seam, so it takes no room from either pane; drag it and both panes follow on the UI thread. Double-tap it to reset.",
+	capture: { align: "stretch", flow: "splitter/anatomy", hero: true },
 };
 
 function PaneLabel({ children }: { children: string }): ReactElement {

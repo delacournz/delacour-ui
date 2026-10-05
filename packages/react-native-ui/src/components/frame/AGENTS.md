@@ -87,3 +87,20 @@ plus seven parts: `Header`, `Title`, `Description`, `Action`, `Tray`, `Section`,
   follows calm motion; depth is carried by fill, as everywhere in this package.
 - **No text treatment on the root, header, section or footer** (rule 1). The
   tests assert it across every combination.
+
+## Verification notes
+
+- **Checked on an iOS simulator (iPhone 17, dev client), 2026-10-05.** All six
+  gallery demos in dark, `variants` in light: the tray reads distinct from the
+  shell in both. `Frame.Action` presses, a `Switch` row in the tray toggles
+  (`value` 0 → 1), and the inset footer's stretched Cancel/Save sit in the band.
+- **No demo is captured yet.** `bun run previews` needs the argent CLI, which is
+  not installed on the machine this was built on, and a captured demo without a
+  manifest entry fails `demos.test.ts` — so no demo carries `meta.capture` and
+  the docs page carries no `<Preview>`. Follow-up: mark `settings` (hero),
+  `variants`, `sections`, `decision-footer` and `members` for capture, **with
+  `capture.align: "stretch"`**, run `bun run previews -- -- --only frame`, and
+  add the `<Preview>` tags back to `frame.mdx`.
+- **A shrink-wrapped frame squeezes its title, not its action.** At the preview
+  route's default `center` the header's text column collapses to the width the
+  action leaves — a frame is a container and is only ever captured `stretch`.

@@ -4,8 +4,6 @@ description: A titled shell around a card of divided rows, with sections and a f
 icon: PanelsTopLeft
 ---
 
-<Preview id="frame/settings" title={null} />
-
 ## Installation
 
 <ComponentInstall name="frame" />
@@ -71,8 +69,6 @@ title wraps in the width it leaves.
 
 ## Variants
 
-<Preview id="frame/variants" />
-
 ```tsx
 <Frame>…</Frame>
 <Frame variant="inset">…</Frame>
@@ -103,8 +99,6 @@ vanishing into it.
 off; rows inside a cluster keep the inset rule. With a title it is announced as a summary labelled by that
 title, so a screen reader names the cluster once.
 
-<Preview id="frame/sections" />
-
 ```tsx
 <Frame.Tray>
   <Frame.Section title="Visibility">
@@ -122,8 +116,6 @@ title, so a screen reader names the cluster once.
 `Frame.Footer` sits under the tray. `align` places its children: `end` (the default), `start`, `between`,
 or `stretch`, which gives each child an equal share of the row.
 
-<Preview id="frame/decision-footer" />
-
 ```tsx
 <Frame variant="inset">
   <Frame.Header>
@@ -138,8 +130,6 @@ or `stretch`, which gives each child an equal share of the row.
 ```
 
 ## Member lists
-
-<Preview id="frame/members" />
 
 ```tsx
 <Frame>

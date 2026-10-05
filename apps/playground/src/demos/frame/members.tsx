@@ -10,7 +10,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Members",
 	caption: "A member list: avatar rows with a role and a chevron, and an invite link in the header.",
-	capture: { align: "stretch" },
 };
 
 const MEMBERS = [

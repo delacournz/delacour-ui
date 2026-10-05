@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`isFullWidth` spans the parent and splits it equally, whatever each label says. The parent needs a definite width for there to be anything to split.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "button/group-full-width" },
 };
 
 export function Demo(): ReactElement {

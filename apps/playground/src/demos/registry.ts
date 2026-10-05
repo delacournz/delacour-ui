@@ -417,6 +417,14 @@ import * as demo_menu_inset_rows from "./menu/inset-rows";
 import * as demo_menu_long_list from "./menu/long-list";
 import * as demo_menu_near_bottom_edge from "./menu/near-bottom-edge";
 import * as demo_menu_submenu from "./menu/submenu";
+import * as demo_message_scroller_basic from "./message-scroller/basic";
+import * as demo_message_scroller_date_separators from "./message-scroller/date-separators";
+import * as demo_message_scroller_empty from "./message-scroller/empty";
+import * as demo_message_scroller_jump_to_latest from "./message-scroller/jump-to-latest";
+import * as demo_message_scroller_keyboard from "./message-scroller/keyboard";
+import * as demo_message_scroller_load_older from "./message-scroller/load-older";
+import * as demo_message_scroller_stick_to_bottom from "./message-scroller/stick-to-bottom";
+import * as demo_message_scroller_unread_divider from "./message-scroller/unread-divider";
 import * as demo_message_directions from "./message/directions";
 import * as demo_message_emoji_and_plain from "./message/emoji-and-plain";
 import * as demo_message_long_press from "./message/long-press";
@@ -1191,6 +1199,14 @@ export const DEMOS = {
 	"menu/long-list": demo_menu_long_list,
 	"menu/near-bottom-edge": demo_menu_near_bottom_edge,
 	"menu/submenu": demo_menu_submenu,
+	"message-scroller/basic": demo_message_scroller_basic,
+	"message-scroller/date-separators": demo_message_scroller_date_separators,
+	"message-scroller/empty": demo_message_scroller_empty,
+	"message-scroller/jump-to-latest": demo_message_scroller_jump_to_latest,
+	"message-scroller/keyboard": demo_message_scroller_keyboard,
+	"message-scroller/load-older": demo_message_scroller_load_older,
+	"message-scroller/stick-to-bottom": demo_message_scroller_stick_to_bottom,
+	"message-scroller/unread-divider": demo_message_scroller_unread_divider,
 	"message/directions": demo_message_directions,
 	"message/emoji-and-plain": demo_message_emoji_and_plain,
 	"message/long-press": demo_message_long_press,

@@ -1,0 +1,267 @@
+---
+title: Message Scroller
+description: A conversation list that sticks to the newest message, jumps back with an unread count and loads older history.
+icon: MessagesSquare
+---
+
+<Preview id="message-scroller/basic" title={null} />
+
+## Installation
+
+<ComponentInstall name="message-scroller" />
+
+`MessageScroller` draws its list with LegendList and lifts it with keyboard-controller. Both are
+peers: `@legendapp/list` and `react-native-keyboard-controller` must be installed, and the app
+must sit inside `DelacourProvider` (or a `KeyboardProvider` of its own).
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { MessageScroller } from "@/components/ui/message-scroller";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+
+type ChatMessage = { id: string; authorId: string; text: string; sentAt: Date };
+
+const MESSAGES: ChatMessage[] = [
+  { id: "1", authorId: "kate", text: "Are we still on for Saturday?", sentAt: new Date(2026, 9, 5, 9, 0) },
+  { id: "2", authorId: "me", text: "Yes! What time works?", sentAt: new Date(2026, 9, 5, 9, 1) },
+  { id: "3", authorId: "kate", text: "Ten-ish?", sentAt: new Date(2026, 9, 5, 9, 2) },
+];
+
+export default function Example() {
+  return (
+    <MessageScroller
+      className="flex-1"
+      messages={MESSAGES}
+      getKey={(message) => message.id}
+      getDate={(message) => message.sentAt}
+      getSenderId={(message) => message.authorId}
+      viewerId="me"
+      renderMessage={({ message }) => (
+        <View className="mt-2 self-start rounded-2xl bg-secondary px-3 py-2">
+          <Text className="text-secondary-foreground">{message.text}</Text>
+        </View>
+      )}
+    />
+  );
+}
+```
+
+`messages` is chronological, oldest first, and is never sorted for you. The scroller has no size of
+its own: give the root a `className` that sizes it.
+
+## Stick to the newest
+
+While the reader is within `stickThreshold` points of the end (80 by default), a new message pulls
+the list with it. Once they scroll up into history, new messages land without moving them. A
+message from `viewerId` always scrolls to the end — sending is a request to see what you sent.
+
+<Preview id="message-scroller/stick-to-bottom" />
+
+## Jump to latest
+
+With no children, the scroller draws its list and a floating jump button. The button appears once
+the reader is half as far again past the threshold, so it cannot flicker at the edge, and shows how
+many messages from other people arrived while they were away. Tapping it scrolls to the end and
+clears the count.
+
+<Preview id="message-scroller/jump-to-latest" />
+
+Pass children to place it yourself, or to restyle it:
+
+```tsx
+<MessageScroller {...props}>
+  <MessageScroller.List />
+  <MessageScroller.JumpButton placement="center" label="New messages" />
+</MessageScroller>
+```
+
+## Loading older messages
+
+Set `hasOlder` while more history exists. Reaching the top calls `onLoadOlder` once; it is not
+called again until the first message changes — the page you prepend is what re-arms it — and never
+while `isLoadingOlder` is true, during which a spinner row sits above the first message. The page
+lands without moving what the reader was looking at.
+
+<Preview id="message-scroller/load-older" />
+
+```tsx
+<MessageScroller
+  {...props}
+  hasOlder={hasOlder}
+  isLoadingOlder={isFetchingOlder}
+  onLoadOlder={fetchOlder}
+/>
+```
+
+## Date separators and the unread divider
+
+A separator is drawn at each new calendar day: Today, Yesterday, a weekday inside the last week,
+then the date. Turn them off with `separateDates={false}`, or write your own labels with
+`formatDate`. A new day always starts a new run, separator or not.
+
+<Preview id="message-scroller/date-separators" />
+
+`firstUnreadKey` draws an "N new messages" rule above that message, and
+`initialScrollTarget="unread"` opens the list there instead of at the end.
+
+<Preview id="message-scroller/unread-divider" />
+
+## Keyboard
+
+The list rises with the keyboard by its height less `keyboardOffset` — the distance from the bottom
+of the list to the bottom of the screen. A reader at the end stays at the end; a reader in history
+keeps their place. `bottomInset` reserves room below the newest message for a composer drawn over
+the list, and the jump button floats above it.
+
+## Rendering a message
+
+`renderMessage` gets the app's own message type back, with no casts, plus where it sits in its
+sender's run:
+
+| `position` | Means |
+| --- | --- |
+| `single` | The only message in its run |
+| `first` | Opens a run of two or more |
+| `middle` | Inside a run |
+| `last` | Closes a run |
+
+A run breaks on a change of sender, a gap longer than `runWindowMs` (five minutes), a new day or the
+unread divider. Pass `position` straight to a bubble that rounds its corners by it. `isNew` is true
+for a message that arrived after the list first rendered — gate an entrance animation on it, so
+history does not animate in.
+
+## Using it with `Screen.ChatList`
+
+`useMessageScrollerState` is the same behaviour without the list. Spread what it returns onto
+`Screen.ChatList` and the jump button works beside it:
+
+```tsx
+import { MessageScroller, useMessageScrollerState } from "@/components/ui/message-scroller";
+
+const scroller = useMessageScrollerState({
+  keys: messages.map((message) => message.id),
+  isOwn: (key) => byId.get(key)?.authorId === viewerId,
+});
+
+<MessageScroller.Provider value={scroller}>
+  <Screen.ChatList
+    ref={scroller.listRef}
+    sharedValues={scroller.sharedValues}
+    onLayout={scroller.onLayout}
+    onContentSizeChange={scroller.onContentSizeChange}
+    maintainScrollAtEndThreshold={scroller.maintainScrollAtEndThreshold}
+    data={messages}
+    keyExtractor={(message) => message.id}
+    renderItem={renderItem}
+  />
+  <MessageScroller.JumpButton />
+</MessageScroller.Provider>
+```
+
+## Accessibility
+
+- The list is not inverted. An inverted list flips its rows with a transform, and VoiceOver then
+  reads the conversation backwards; this one anchors to the end with the order intact, so a screen
+  reader walks it oldest to newest.
+- Date separators and the unread divider are headers, so heading navigation moves a day at a time.
+- A message from someone else arriving while the reader is at the end is announced — "New message
+  from Kate" — and several inside a second and a half become one "3 new messages".
+- The jump button says its count: "Jump to latest, 3 unread". Hidden, it is out of the accessibility
+  tree and cannot be tapped.
+- Under reduce motion, scrolling to the end jumps instead of animating and the jump button fades
+  without sliding.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `MessageScroller` | Owns the messages, the rows and the scroll state; with no children draws `List` and `JumpButton` |
+| `MessageScroller.List` | The keyboard-aware list itself |
+| `MessageScroller.JumpButton` | The floating "jump to latest" pill and its count |
+| `MessageScroller.DateSeparator` | A day's label between hairlines |
+| `MessageScroller.UnreadDivider` | The "N new messages" rule |
+| `MessageScroller.LoadingOlder` | The spinner row shown while an older page loads |
+| `MessageScroller.Provider` | Supplies a `useMessageScrollerState` value to parts outside a `MessageScroller` |
+
+### MessageScroller
+
+<TypeTable
+  type={{
+    messages: { type: "readonly T[]", required: true, description: "Chronological, oldest first. Not sorted here." },
+    getKey: { type: "(message: T) => string", required: true },
+    getDate: { type: "(message: T) => Date", required: true },
+    getSenderId: { type: "(message: T) => string", required: true },
+    renderMessage: {
+      type: "(info: { message: T; position; isNew: boolean; index: number }) => ReactElement",
+      required: true,
+    },
+    getSenderName: { type: "(message: T) => string | undefined", description: "The name a screen reader hears for an arrival." },
+    viewerId: { type: "string", description: "Their own messages never count as unread, and always scroll to the end." },
+    runWindowMs: { type: "number", default: "300000", description: "A gap longer than this ends a run." },
+    separateDates: { type: "boolean", default: "true" },
+    formatDate: { type: "(date: Date, now: Date) => string", description: "The separator's label." },
+    firstUnreadKey: { type: "string", description: "Draws the unread divider before this message." },
+    hasOlder: { type: "boolean", default: "false" },
+    isLoadingOlder: { type: "boolean", default: "false" },
+    onLoadOlder: { type: "() => void", description: "Called once per reach of the top." },
+    loadOlderThreshold: { type: "number", default: "1", description: "How near the top, in viewport heights, counts." },
+    stickThreshold: { type: "number", default: "80", description: "Points from the end still counted as the end." },
+    initialScrollTarget: { type: '"end" | "unread"', default: '"end"' },
+    keyboardOffset: { type: "number", default: "0", description: "Distance from the list's bottom to the screen's." },
+    bottomInset: { type: "number", default: "0", description: "Clearance below the newest message." },
+    estimatedItemSize: { type: "number", default: "56" },
+    ListHeaderComponent: { type: "ReactElement" },
+    ListEmptyComponent: { type: "ReactElement" },
+    onAtEndChange: { type: "(isAtEnd: boolean) => void" },
+    onScrollerReady: { type: "(controller: MessageScrollerController) => void" },
+    className: { type: "string" },
+    contentContainerClassName: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### MessageScroller.JumpButton
+
+<TypeTable
+  type={{
+    label: { type: "string", default: '"Jump to latest"', description: "The accessibility label's first half." },
+    placement: { type: '"center" | "end"', default: '"end"' },
+    showCount: { type: "boolean", default: "true" },
+    onPress: { type: "() => void", description: "Default: scroll to the end." },
+    children: { type: "ReactNode", description: "Replaces the arrow and the count." },
+    className: { type: "string" },
+  }}
+/>
+
+### MessageScrollerController
+
+<TypeTable
+  type={{
+    scrollToEnd: { type: "(options?: { animated?: boolean }) => void" },
+    scrollToKey: {
+      type: "(key: string, options?: { animated?: boolean; viewPosition?: number }) => void",
+      description: "viewPosition 0 is the top of the viewport, 1 the bottom; default 0.5.",
+    },
+    isAtEnd: { type: "() => boolean" },
+  }}
+/>
+
+### useMessageScrollerState
+
+<TypeTable
+  type={{
+    keys: { type: "readonly string[]", required: true, description: "The list's keys, oldest first." },
+    isOwn: { type: "(key: string) => boolean" },
+    getSenderName: { type: "(key: string) => string | undefined" },
+    stickThreshold: { type: "number", default: "80" },
+    isLoadingOlder: { type: "boolean" },
+    keyboardOffset: { type: "number" },
+    bottomInset: { type: "number" },
+    onAtEndChange: { type: "(isAtEnd: boolean) => void" },
+    onScrollerReady: { type: "(controller: MessageScrollerController) => void" },
+  }}
+/>

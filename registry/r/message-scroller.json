@@ -1,0 +1,180 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "message-scroller",
+	"type": "registry:ui",
+	"title": "Message Scroller",
+	"description": "A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"spinner",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"@legendapp/list",
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-worklets",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/AGENTS.md",
+			"target": "message-scroller/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/message-scroller",
+					"to": "@registry/ui/message-scroller"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/index.ts",
+			"target": "message-scroller/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller-date-separator.tsx",
+			"target": "message-scroller/message-scroller-date-separator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller-jump-button.tsx",
+			"target": "message-scroller/message-scroller-jump-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller-list.tsx",
+			"target": "message-scroller/message-scroller-list.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller-loading-older.tsx",
+			"target": "message-scroller/message-scroller-loading-older.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller-unread-divider.tsx",
+			"target": "message-scroller/message-scroller-unread-divider.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller.context.tsx",
+			"target": "message-scroller/message-scroller.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller.tsx",
+			"target": "message-scroller/message-scroller.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller.types.ts",
+			"target": "message-scroller/message-scroller.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller.utils.ts",
+			"target": "message-scroller/message-scroller.utils.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/message-scroller.variants.ts",
+			"target": "message-scroller/message-scroller.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/message-scroller/use-message-scroller-state.ts",
+			"target": "message-scroller/use-message-scroller-state.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		}
+	]
+}

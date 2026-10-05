@@ -53,6 +53,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "marker", title: "Marker", description: "A centred inline note for a step or a day break between conversation turns, static or pressable." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "message", title: "Message", description: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter." },
+	{ name: "message-scroller", title: "Message Scroller", description: "A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
 	{ name: "number-input", title: "Number Input", description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur." },
 	{ name: "otp-input", title: "OTP Input", description: "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste." },

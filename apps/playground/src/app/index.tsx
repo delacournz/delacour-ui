@@ -151,6 +151,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	leaderboard: IconTrophy,
 	"number-input": IconDecimalNumberDot,
 	"list-group": IconBulletList,
+	"message-scroller": IconBubble2,
 	message: IconBubble2,
 	marker: IconHistory,
 	map: IconMap,

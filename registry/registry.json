@@ -1346,6 +1346,46 @@
 			]
 		},
 		{
+			"name": "flip-card",
+			"type": "registry:ui",
+			"title": "FlipCard",
+			"description": "Two faces of one card and a turn between them, by tap, swipe or code.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/flip-card/AGENTS.md",
+				"ui/flip-card/flip-card-back.tsx",
+				"ui/flip-card/flip-card-face.tsx",
+				"ui/flip-card/flip-card-front.tsx",
+				"ui/flip-card/flip-card-trigger.tsx",
+				"ui/flip-card/flip-card.context.tsx",
+				"ui/flip-card/flip-card.tsx",
+				"ui/flip-card/flip-card.types.ts",
+				"ui/flip-card/flip-card.variants.ts",
+				"ui/flip-card/index.ts"
+			]
+		},
+		{
 			"name": "flow",
 			"type": "registry:ui",
 			"title": "Flow",

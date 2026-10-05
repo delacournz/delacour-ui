@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"A URL encoded at level M and drawn as one vector path. The four-module quiet zone sits inside the tile, and the tile stays white in both themes — the code is for someone else's camera.",
-	capture: { hero: true },
+	capture: {},
 };
 
 export function Demo(): ReactElement {

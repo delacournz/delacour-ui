@@ -48,7 +48,7 @@ const COMPONENTS_WITHOUT_DEMOS = new Set(["provider"]);
  * so its `meta.capture` and `hero` are written ahead of the files. Each entry
  * here is a capture still owed; delete it in the commit that adds the media.
  */
-const AWAITING_FIRST_CAPTURE = new Set(["qr-code"]);
+const AWAITING_FIRST_CAPTURE = new Set<string>([]);
 
 function demoFiles(): string[] {
 	const found: string[] = [];

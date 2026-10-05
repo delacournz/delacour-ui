@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Loading older history",
 	caption:
 		"Reach the top and the next page of twenty loads, with a spinner while it is in flight. The page lands above you without moving what you were reading; after three, `hasOlder` turns off.",
-	capture: { align: "stretch" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

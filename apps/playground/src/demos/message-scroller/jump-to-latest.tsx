@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Jump to latest",
 	caption:
 		"Replies keep arriving every two seconds. Scroll up and the jump button appears with a count of what you have missed; tap it, or scroll back down, and the count clears.",
-	capture: { align: "stretch" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

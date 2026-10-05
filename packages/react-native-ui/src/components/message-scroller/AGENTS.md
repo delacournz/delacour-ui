@@ -108,4 +108,9 @@ needed.
 ## Verified on a device
 
 Not yet. The simulator check (follow at end, hold when scrolled up, prepend without a jump, keyboard,
-VoiceOver order, 5,000-message scroll) is outstanding, along with preview media.
+VoiceOver order, 5,000-message scroll) is outstanding.
+
+**Preview media is a follow-up.** No demo carries `capture` yet, because a captured demo without a
+manifest entry fails `demos.test.ts`, and the docs page carries no `<Preview>` for the same reason.
+When capturing: `basic` (hero), `stick-to-bottom`, `jump-to-latest` and `load-older`, each
+`align: "stretch"`.

@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "A conversation",
 	caption:
 		"Forty messages, opened at the newest. Runs from one sender close up, and `renderMessage` gets each message's `position` to pass to its bubble.",
-	capture: { align: "stretch", hero: true },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

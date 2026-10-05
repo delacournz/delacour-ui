@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	title: "Stick to the newest",
 	caption:
 		"At the end, a new message pulls the list with it. Scroll up and a reply lands without moving you. Sending your own always brings you back down.",
-	capture: { align: "stretch" },
 };
 
 type ChatMessage = { id: string; author: "me" | "kate"; text: string; sentAt: Date };

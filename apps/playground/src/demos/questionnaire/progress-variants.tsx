@@ -29,9 +29,9 @@ const TITLES: Record<QuestionnaireProgressVariant, string> = {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="gap-4">
+		<View className="gap-8">
 			{QUESTIONNAIRE_PROGRESS_VARIANTS.map((variant) => (
-				<Questionnaire defaultCurrentId="again" key={variant} questions={QUESTIONS} size="sm">
+				<Questionnaire defaultCurrentId="again" isFramed={false} key={variant} questions={QUESTIONS} size="sm">
 					<Questionnaire.Title>{TITLES[variant]}</Questionnaire.Title>
 					<Questionnaire.Progress variant={variant} />
 				</Questionnaire>

@@ -4,6 +4,8 @@ description: A pan-and-zoom canvas of nodes joined by edges that route themselve
 icon: Workflow
 ---
 
+<Preview id="flow/pipeline" title={null} />
+
 ## Installation
 
 <ComponentInstall name="flow" />
@@ -81,6 +83,8 @@ Positions are props, and the canvas never changes them. A drag moves the node on
 finger is down, then reports once through `onNodeDragEnd`; a dragged connection reports through
 `onConnect`. Store the result and pass it back, and the node lands exactly where the drag left it.
 
+<Preview id="flow/pipeline" />
+
 ```tsx
 <Flow
   onNodeDragEnd={(id, position) => moveNode(id, position)}
@@ -114,6 +118,8 @@ An edge names its ends as `"nodeId"` or `"nodeId.handleId"` and routes itself fr
 now — on the same frame as a drag, not a render behind. With no handle and no `fromSide` / `toSide`, it
 leaves the side facing the other node.
 
+<Preview id="flow/edge-variants" />
+
 ```tsx
 <Flow.Edge from="a" to="b" />
 <Flow.Edge from="a.out" to="b.in" variant="smoothstep" radius={12} />
@@ -126,11 +132,15 @@ leaves the side facing the other node.
 `straight` is a line. `isAnimated` marches the dashes toward the target, and holds still under reduce
 motion.
 
+<Preview id="flow/animated-edges" />
+
 ## Groups
 
 A group is a labelled box its nodes move with. It is not a coordinate space: a grouped node's position is
 a graph coordinate like any other. Dragging the box carries every node in it and fires `onNodeDragEnd`
 for the group and for each node.
+
+<Preview id="flow/groups" />
 
 ```tsx
 <Flow.Group id="ingest" label="Ingest" position={{ x: 0, y: 0 }} size={{ width: 420, height: 220 }}>
@@ -147,6 +157,8 @@ rides the group; `isDraggable={false}` keeps it where it is, group or no group.
 Drag from one handle to another and the canvas asks before it connects: the handle types first — a drag
 may start at either end, and a node never connects to itself — then `isValidConnection`. Only a
 connection both accept reaches `onConnect`, and the app adds the edge.
+
+<Preview id="flow/connect" />
 
 ```tsx
 <Flow
@@ -165,6 +177,8 @@ frames every node once they have measured, and never magnifies past one to one.
 `Flow.Controls` adds zoom, fit and lock buttons; lock stops pan, zoom, every drag and every connection.
 `Flow.MiniMap` draws every node in a corner and frames the part on screen. For controls of your own,
 `useFlow()` returns the same actions from anywhere inside the canvas.
+
+<Preview id="flow/controls-minimap" />
 
 ```tsx
 function FrameButton() {

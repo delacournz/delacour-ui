@@ -1,0 +1,172 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "text-animation",
+	"type": "registry:ui",
+	"title": "TextAnimation",
+	"description": "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/AGENTS.md",
+			"target": "text-animation/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/text-animation",
+					"to": "@registry/ui/text-animation"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/index.ts",
+			"target": "text-animation/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-caret.tsx",
+			"target": "text-animation/text-animation-caret.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-clock.ts",
+			"target": "text-animation/text-animation-clock.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-counting.tsx",
+			"target": "text-animation/text-animation-counting.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-rolling.tsx",
+			"target": "text-animation/text-animation-rolling.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-rotating.tsx",
+			"target": "text-animation/text-animation-rotating.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-typing.tsx",
+			"target": "text-animation/text-animation-typing.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation-unit.tsx",
+			"target": "text-animation/text-animation-unit.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation.tsx",
+			"target": "text-animation/text-animation.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation.types.ts",
+			"target": "text-animation/text-animation.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text/text",
+					"to": "@registry/ui/text/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/text-animation/text-animation.variants.ts",
+			"target": "text-animation/text-animation.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	]
+}

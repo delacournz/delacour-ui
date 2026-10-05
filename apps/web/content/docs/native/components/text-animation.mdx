@@ -1,0 +1,242 @@
+---
+title: TextAnimation
+description: Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling — on one clock.
+icon: WandSparkles
+---
+
+<Preview id="text-animation/reveal-words" title={null} />
+
+## Installation
+
+<ComponentInstall name="text-animation" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { TextAnimation } from "@/components/ui/text-animation";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <TextAnimation effect={{ kind: "slide", from: "down" }} size="3xl" weight="bold">
+        Ship the release before lunch
+      </TextAnimation>
+    </View>
+  );
+}
+```
+
+The root reveals a string, and the four parts hang off it. Every part takes `Text`'s axes —
+`variant`, `size`, `weight`, `color`, `align`, `transform` — and joins the `Text` cascade, so a
+`TextAnimation` inside a muted `Text` comes out muted. `className` is applied to each piece of text
+the part draws; wrap the part in a `View` to place it.
+
+## Anatomy
+
+| Part | What it does |
+| --- | --- |
+| `TextAnimation` | Reveals a string unit by unit — by word, character or line — with a fade, slide or scale |
+| `TextAnimation.Typing` | Types a phrase, or cycles several, with a blinking caret and an optional erase |
+| `TextAnimation.Rotating` | Swaps one phrase for the next in place — one word inside a sentence |
+| `TextAnimation.Counting` | Tweens a number to a new value, formatted |
+| `TextAnimation.Rolling` | An odometer: each digit is a wheel that rolls to its new digit |
+
+## Reveal
+
+<Preview id="text-animation/reveal-words" />
+
+<Preview id="text-animation/reveal-characters" />
+
+```tsx
+<TextAnimation effect={{ kind: "fade" }}>Fades in, word by word</TextAnimation>
+<TextAnimation effect={{ kind: "slide", from: "down", distance: 16 }}>Rises into place</TextAnimation>
+<TextAnimation effect={{ kind: "scale", from: 0.4 }} order="center" split="character">
+  Delacour
+</TextAnimation>
+```
+
+- **`split`** — `word` (the default), `character` or `line`. A character split holds each word on
+  one line, so a word never breaks mid-glyph. A line split reads the breaks the platform chose.
+- **`stagger`** — the delay between consecutive units: 40 ms for characters, 90 ms otherwise.
+- **`order`** — `forward`, `reverse`, `center` (from the middle outwards) or `random`, which is
+  seeded by the text so a replay is the same shuffle.
+- **`isActive`** — `false` holds the text hidden; flipping it to `true` plays from the start. Change
+  the `key` to replay.
+- **`onFinished`** — fires once when the last unit lands, never for a run that was interrupted.
+
+## Typing
+
+<Preview id="text-animation/typing" />
+
+```tsx
+<TextAnimation.Typing caret={{ kind: "bar" }} size="2xl">
+  {["Design systems that ship.", "Native apps that feel native."]}
+</TextAnimation.Typing>
+```
+
+One phrase types once and holds. Several cycle: each is typed at `speed` characters a second, held
+for `holdMs`, then erased at `eraseSpeed`. `eraseSpeed={0}` skips the erase and the next phrase
+replaces the last. Speeds, not durations — a phrase twice as long takes twice as long.
+
+The caret is `bar`, `block` or `none`, and it takes the text's own colour. It blinks only while
+waiting; while characters land it is solid.
+
+## Rotating
+
+<Preview id="text-animation/rotating" />
+
+```tsx
+<View className="flex-row items-end">
+  <Text size="2xl">Built for </Text>
+  <TextAnimation.Rotating phrases={["fast", "small", "remote"]} size="2xl" transition={{ kind: "slide" }} />
+  <Text size="2xl"> teams</Text>
+</View>
+```
+
+The phrase changes every `intervalMs`, crossing over in `transitionMs` with a fade or a vertical
+slide. `reserve="widest"` — the default — holds the widest phrase's width, so the words around it
+never move. Use `reserve="current"` for a word that ends a line.
+
+## Counting
+
+<Preview id="text-animation/counting" />
+
+```tsx
+<TextAnimation.Counting format={{ prefix: "$", decimals: 2 }} value={balance} />
+```
+
+`format` writes the number: `decimals`, `groupSeparator` (`","` by default, `""` for none),
+`decimalSeparator`, `prefix` and `suffix`. A negative takes a true minus ahead of the prefix —
+`−$5`. `NaN` and the infinities are an em dash.
+
+A new `value` tweens from whatever is on screen — not from `from`, which is only the first mount's
+start. `animateOnMount={false}` shows the value at once and tweens only later changes.
+
+## Rolling
+
+<Preview id="text-animation/rolling" />
+
+```tsx
+<TextAnimation.Rolling value={odometer} />
+```
+
+Each digit rolls the short way to its new digit, in the direction the value moved: 9 → 0 on the way
+up rolls forward through the wrap, not back through 8…1. When the number grows a digit — 999 to
+1,000 — the new wheel rolls up from 0. Wheels start least-significant first, `stagger` ms apart.
+Separators, the sign, the prefix and the suffix stay put.
+
+## Why nothing reflows
+
+Every part lays its text out before anything moves, and animates only opacity and transform:
+
+- A reveal's units are siblings in a wrapping row, laid out at full size and invisible, so a
+  paragraph wraps once and never again.
+- Typing lays out the whole phrase and shows it as the typed count passes each character. The box
+  keeps the tallest phrase's height.
+- Rotating holds its widest phrase's width; Counting holds the wider of its start and its target.
+- Both numeric parts use tabular figures, so no digit is wider than another.
+
+## What a screen reader gets
+
+The final plain text, once. Each part is a single text element whose label is the whole revealed
+string, the last typed phrase, the current rotating phrase, or the **formatted target** of a count
+or a roll — never a half-typed word or an in-flight digit. Rotating and Counting do not announce a
+change: a reader interrupted every two seconds is no help.
+
+## Reduced motion
+
+Under the system's reduce-motion setting, or `isMotionCalm` on `DelacourProvider`, every part shows
+its final text on the first frame:
+
+| Part | Shows |
+| --- | --- |
+| `TextAnimation` | The whole text, at rest; `onFinished` still fires |
+| `TextAnimation.Typing` | The last phrase, typed in full, with a steady caret |
+| `TextAnimation.Rotating` | The first phrase, held — a rotating word is a loop |
+| `TextAnimation.Counting` | The value at once — it is information |
+| `TextAnimation.Rolling` | Every wheel at its digit |
+
+## API Reference
+
+### TextAnimation
+
+<TypeTable
+  type={{
+    children: { type: "string", required: true, description: "The text to reveal." },
+    split: { type: '"character" | "word" | "line"', default: '"word"', description: "What enters as one unit." },
+    effect: {
+      type: '{ kind: "fade" } | { kind: "slide"; from: "up" | "down" | "left" | "right"; distance?: number } | { kind: "scale"; from?: number }',
+      default: '{ kind: "fade" }',
+      description: "How each unit arrives. Slide distance defaults to 12 pt; scale starts at 0.8.",
+    },
+    stagger: { type: "number", default: "40 / 90", description: "Delay between units, ms — 40 for characters, 90 otherwise." },
+    order: { type: '"forward" | "reverse" | "center" | "random"', default: '"forward"', description: "Which unit enters first." },
+    durationMs: { type: "number", default: "420", description: "One unit's entrance, ms." },
+    delayMs: { type: "number", default: "0", description: "Before the first unit, ms." },
+    isActive: { type: "boolean", default: "true", description: "`false` holds the text hidden; `true` plays." },
+    onFinished: { type: "() => void", description: "Once per play, when the last unit lands." },
+  }}
+/>
+
+Every part also takes `variant`, `size`, `weight`, `color`, `align`, `transform`, `className`,
+`allowFontScaling`, `maxFontSizeMultiplier`, `testID`, `nativeID` and `accessibilityHint`.
+
+### TextAnimation.Typing
+
+<TypeTable
+  type={{
+    children: { type: "string | readonly string[]", required: true, description: "One phrase types and holds; several cycle." },
+    caret: {
+      type: '{ kind: "none" } | { kind: "bar"; blinkMs?: number } | { kind: "block"; blinkMs?: number }',
+      default: '{ kind: "bar" }',
+      description: "The caret. `blinkMs` is one half-cycle, default 530.",
+    },
+    speed: { type: "number", default: "22", description: "Characters per second." },
+    eraseSpeed: { type: "number", default: "40", description: "Characters per second; `0` replaces instead of erasing." },
+    holdMs: { type: "number", default: "1400", description: "The pause on a finished phrase." },
+    loop: { type: "boolean", default: "true with several phrases", description: "Cycle back to the first phrase." },
+    isActive: { type: "boolean", default: "true", description: "`false` holds the field empty with the caret showing." },
+    onPhraseTyped: { type: "(index: number) => void", description: "Each time a phrase finishes typing." },
+  }}
+/>
+
+### TextAnimation.Rotating
+
+<TypeTable
+  type={{
+    phrases: { type: "readonly string[]", required: true, description: "At least one. A single phrase never moves." },
+    intervalMs: { type: "number", default: "2200", description: "How long each phrase holds." },
+    transition: { type: '{ kind: "fade" } | { kind: "slide"; distance?: number }', default: '{ kind: "fade" }', description: "Slide is vertical, 14 pt by default." },
+    transitionMs: { type: "number", default: "360", description: "The swap itself." },
+    reserve: { type: '"widest" | "current"', default: '"widest"', description: "Whose width the slot holds." },
+    isActive: { type: "boolean", default: "true", description: "`false` holds the current phrase." },
+  }}
+/>
+
+### TextAnimation.Counting
+
+<TypeTable
+  type={{
+    value: { type: "number", required: true, description: "The number to show." },
+    from: { type: "number", default: "0", description: "Where the first count starts." },
+    format: {
+      type: "{ decimals?: number; groupSeparator?: string; decimalSeparator?: string; prefix?: string; suffix?: string }",
+      description: 'Defaults: 0 decimals, "," grouping, "." decimal.',
+    },
+    durationMs: { type: "number", default: "900", description: "The tween." },
+    easing: { type: '"linear" | "out" | "inOut"', default: '"out"' },
+    animateOnMount: { type: "boolean", default: "true", description: "`false` shows `value` at once on mount." },
+  }}
+/>
+
+### TextAnimation.Rolling
+
+<TypeTable
+  type={{
+    value: { type: "number", required: true, description: "The number to show." },
+    format: { type: "TextAnimationNumberFormat", description: "The same shape as Counting's. Separators render static." },
+    durationMs: { type: "number", default: "600", description: "One wheel's roll." },
+    stagger: { type: "number", default: "40", description: "Delay between wheels, least significant first." },
+  }}
+/>

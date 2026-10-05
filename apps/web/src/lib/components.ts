@@ -290,6 +290,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The type scale, and the one component that reproduces React Native's text inheritance.",
 	},
 	{
+		slug: "text-animation",
+		name: "TextAnimation",
+		group: "Media",
+		blurb: "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
+	},
+	{
 		slug: "avatar",
 		name: "Avatar",
 		group: "Data display",

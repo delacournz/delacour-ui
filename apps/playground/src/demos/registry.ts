@@ -780,6 +780,13 @@ import * as demo_tag_input_in_field_with_clear from "./tag-input/in-field-with-c
 import * as demo_tag_input_max_and_counter from "./tag-input/max-and-counter";
 import * as demo_tag_input_overflow_invalid from "./tag-input/overflow-invalid";
 import * as demo_tag_input_sizes_and_variants from "./tag-input/sizes-and-variants";
+import * as demo_text_animation_counting from "./text-animation/counting";
+import * as demo_text_animation_orders from "./text-animation/orders";
+import * as demo_text_animation_reveal_characters from "./text-animation/reveal-characters";
+import * as demo_text_animation_reveal_words from "./text-animation/reveal-words";
+import * as demo_text_animation_rolling from "./text-animation/rolling";
+import * as demo_text_animation_rotating from "./text-animation/rotating";
+import * as demo_text_animation_typing from "./text-animation/typing";
 import * as demo_text_alignment from "./text/alignment";
 import * as demo_text_colour from "./text/colour";
 import * as demo_text_inline_presets from "./text/inline-presets";
@@ -1634,6 +1641,13 @@ export const DEMOS = {
 	"tag-input/max-and-counter": demo_tag_input_max_and_counter,
 	"tag-input/overflow-invalid": demo_tag_input_overflow_invalid,
 	"tag-input/sizes-and-variants": demo_tag_input_sizes_and_variants,
+	"text-animation/counting": demo_text_animation_counting,
+	"text-animation/orders": demo_text_animation_orders,
+	"text-animation/reveal-characters": demo_text_animation_reveal_characters,
+	"text-animation/reveal-words": demo_text_animation_reveal_words,
+	"text-animation/rolling": demo_text_animation_rolling,
+	"text-animation/rotating": demo_text_animation_rotating,
+	"text-animation/typing": demo_text_animation_typing,
 	"text/alignment": demo_text_alignment,
 	"text/colour": demo_text_colour,
 	"text/inline-presets": demo_text_inline_presets,

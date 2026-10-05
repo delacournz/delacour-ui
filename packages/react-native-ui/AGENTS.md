@@ -192,6 +192,7 @@ shares.
 | [TagInput](src/components/tag-input/AGENTS.md) | `@delacour/react-native-ui/tag-input` | Free-form tags typed into one field box, as removable chips |
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
+| [TextAnimation](src/components/text-animation/AGENTS.md) | `@delacour/react-native-ui/text-animation` | Reveal, typing, rotating, counting and rolling text on one clock |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
 | [Timeline](src/components/timeline/AGENTS.md) | `@delacour/react-native-ui/timeline` | Dated events down a rail or across a strip — progress on the rail, kind on the marker |
 | [ThemeSelector](src/components/theme-selector/AGENTS.md) | `@delacour/react-native-ui/theme-selector` | System, Light or Dark, read from and applied to the live theme |

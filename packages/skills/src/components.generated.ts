@@ -26,6 +26,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "color-picker", title: "Color Picker", description: "A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet." },
 	{ name: "combobox", title: "Combobox", description: "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values." },
 	{ name: "context-menu", title: "Context Menu", description: "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview." },
+	{ name: "countdown", title: "Countdown", description: "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run." },
 	{ name: "date-picker", title: "Date Picker", description: "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished." },
 	{ name: "date-time-picker", title: "Date Time Picker", description: "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window." },
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },

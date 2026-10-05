@@ -73,6 +73,16 @@ export type DemoCapture = {
 	 */
 	tailMs?: number;
 	/**
+	 * How long the screen must hold still before the capture starts, in ms. Default 500.
+	 *
+	 * For a demo that moves on a clock rather than on a touch. A countdown slides a
+	 * digit once a second, so the default window always closes most of a second
+	 * after a tick — and the recording, starting a moment later, opens on the next
+	 * slide, which is also the poster. A shorter window starts it mid-second, on a
+	 * settled frame.
+	 */
+	settleMs?: number;
+	/**
 	 * Fronts this component's card on the components index.
 	 *
 	 * Exactly one demo per component sets it, and `demos.test.ts` fails by name

@@ -237,6 +237,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
 		categories: ["layout"],
 	},
+	countdown: {
+		title: "Countdown",
+		description:
+			"Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
+		categories: ["display"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

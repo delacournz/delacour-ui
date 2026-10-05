@@ -297,7 +297,7 @@ async function captureDemo(
 	}
 
 	// The screen must hold still before it is worth photographing — see awaitIdle.
-	await awaitIdle(udid);
+	await awaitIdle(udid, demo.settleMs);
 
 	const bounds = parseBounds(await describe(udid), sentinel);
 	if (!bounds) throw new Error(`could not read the demo's measured bounds from ${sentinel}`);

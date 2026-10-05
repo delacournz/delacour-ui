@@ -208,6 +208,13 @@ import * as demo_context_menu_lifted_preview from "./context-menu/lifted-preview
 import * as demo_context_menu_message_actions from "./context-menu/message-actions";
 import * as demo_context_menu_stateful_rows from "./context-menu/stateful-rows";
 import * as demo_context_menu_with_own_press from "./context-menu/with-own-press";
+import * as demo_countdown_complete from "./countdown/complete";
+import * as demo_countdown_inline from "./countdown/inline";
+import * as demo_countdown_labels from "./countdown/labels";
+import * as demo_countdown_segmented from "./countdown/segmented";
+import * as demo_countdown_sizes from "./countdown/sizes";
+import * as demo_countdown_units from "./countdown/units";
+import * as demo_countdown_urgent from "./countdown/urgent";
 import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bounds-and-disabled-weekends";
 import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
 import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
@@ -904,6 +911,13 @@ export const DEMOS = {
 	"context-menu/message-actions": demo_context_menu_message_actions,
 	"context-menu/stateful-rows": demo_context_menu_stateful_rows,
 	"context-menu/with-own-press": demo_context_menu_with_own_press,
+	"countdown/complete": demo_countdown_complete,
+	"countdown/inline": demo_countdown_inline,
+	"countdown/labels": demo_countdown_labels,
+	"countdown/segmented": demo_countdown_segmented,
+	"countdown/sizes": demo_countdown_sizes,
+	"countdown/units": demo_countdown_units,
+	"countdown/urgent": demo_countdown_urgent,
 	"date-picker/bounds-and-disabled-weekends": demo_date_picker_bounds_and_disabled_weekends,
 	"date-picker/controlled-open": demo_date_picker_controlled_open,
 	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,

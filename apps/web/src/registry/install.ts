@@ -4619,6 +4619,90 @@ export const install = {
 			},
 		],
 	},
+	"countdown": {
+		name: "countdown",
+		title: "Countdown",
+		description: "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
+		importPath: "@delacour/react-native-ui/countdown",
+		exportName: "Countdown",
+		expo: ["react-native-reanimated", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 22,
+		groups: [
+			{
+				name: "countdown",
+				title: "Countdown",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/countdown/AGENTS.md", target: "src/components/ui/countdown/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/countdown/countdown-digit.tsx", target: "src/components/ui/countdown/countdown-digit.tsx" },
+					{ source: "packages/react-native-ui/src/components/countdown/countdown-segment.tsx", target: "src/components/ui/countdown/countdown-segment.tsx" },
+					{ source: "packages/react-native-ui/src/components/countdown/countdown.tsx", target: "src/components/ui/countdown/countdown.tsx" },
+					{ source: "packages/react-native-ui/src/components/countdown/countdown.variants.ts", target: "src/components/ui/countdown/countdown.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/countdown/index.ts", target: "src/components/ui/countdown/index.ts" },
+					{ source: "packages/react-native-ui/src/components/countdown/use-countdown-clock.ts", target: "src/components/ui/countdown/use-countdown-clock.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+		],
+	},
 	"kpi": {
 		name: "kpi",
 		title: "Kpi",

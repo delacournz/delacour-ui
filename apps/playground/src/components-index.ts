@@ -247,6 +247,7 @@ const ROWS = [
 	{ slug: "scroll-fade", title: "ScrollFade", description: "Edges, axes, surfaces", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
+	{ slug: "splitter", title: "Splitter", description: "Resizable panes, orientation, collapse", group: "Layout" },
 	{ slug: "carousel", title: "Carousel", description: "Peek, loop, coverflow, vertical, autoplay", group: "Layout" },
 	{
 		slug: "image-viewer",

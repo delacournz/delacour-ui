@@ -5,6 +5,7 @@ import {
 	IconArrowsRepeatCircle,
 	IconArrowUpRight,
 	IconAsterisk,
+	IconBell,
 	IconBold,
 	IconBrowserTabs,
 	IconBulletList,
@@ -95,6 +96,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	text: IconFontStyle,
 	textarea: IconNoteText,
 	"toggle-button": IconBold,
+	toast: IconBell,
 };
 
 /**

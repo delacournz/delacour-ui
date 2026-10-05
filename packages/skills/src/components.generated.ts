@@ -42,6 +42,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },
+	{ name: "table", title: "Table", description: "Rows and columns of short values lined up by one set of column rules, with sortable heads, selectable rows, a horizontal scroll for wide tables and a card frame." },
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },

@@ -43,6 +43,12 @@ list.
   rather than making the box jump.
 - **Chips step down a size from the field** — `sm`→`sm`, `md`→`sm`, `lg`→`md` —
   for the same reason: a chip the field's own size would not fit its floor.
+- **A soft chip on a `secondary` box lifts to `bg-elevated`.** A soft default
+  chip is `bg-muted` and a secondary box is `bg-secondary` — the same step in
+  both themes — so the pills vanished into the box and only their text and
+  glyphs showed. `elevated` is the surface the theme defines to sit above
+  `muted`; `resolveTagInputChip` adds it, and only there. Outline chips and an
+  armed chip keep their own edge and take nothing.
 - **The text field and the suffix are a chip's height tall.** A wrapped line
   holding only the text field would otherwise be shorter than a line of chips,
   and the rows would read as uneven. `h-6.5` / `h-8.5` are the chip heights; a
@@ -62,6 +68,11 @@ list.
   refusal the user can fix by editing. A duplicate, an empty or an over-limit
   piece has nothing to fix and is dropped. One refusal in a paste never drops
   the pieces around it.
+- **The draft is written before a commit is reported.** A refused piece going
+  back into the field fires `onInputValueChange`; were that to run after
+  `onReject`, a caller clearing its hint on input change would wipe the hint
+  `onReject` had just set — which the email demo did on device. `onReject` is
+  the last thing a caller hears.
 - **Backspace arms, then removes.** On an empty field the first press turns the
   last chip soft destructive — `Chip`'s own tone, so no colour is invented — and
   a second removes it. One stray press never deletes a tag. Any other key, a

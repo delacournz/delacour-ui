@@ -42,7 +42,12 @@ export function TagInputChip({ tag, index, renderTag }: TagInputChipProps): Reac
 		if (isRemovable) context.remove(index);
 	};
 	const removeLabel = context.removeAccessibilityLabel(tag);
-	const chip = resolveTagInputChip({ isPendingRemove, size: context.size, variant: context.chipVariant });
+	const chip = resolveTagInputChip({
+		boxVariant: context.variant,
+		isPendingRemove,
+		size: context.size,
+		variant: context.chipVariant,
+	});
 	const testID = context.testID ? `${context.testID}-tag-${index}` : undefined;
 
 	const handleAccessibilityAction = (event: AccessibilityActionEvent) => {
@@ -58,6 +63,7 @@ export function TagInputChip({ tag, index, renderTag }: TagInputChipProps): Reac
 			accessibilityLabel={tag}
 			accessible
 			closeAccessibilityLabel={removeLabel}
+			className={chip.className}
 			closeTestID={testID ? `${testID}-remove` : undefined}
 			color={chip.color}
 			onAccessibilityAction={handleAccessibilityAction}

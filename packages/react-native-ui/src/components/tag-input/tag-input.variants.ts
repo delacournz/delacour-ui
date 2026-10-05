@@ -2,7 +2,13 @@ import type { VariantProps } from "tailwind-variants";
 import { cn } from "../../lib/cn";
 import { tv } from "../../lib/tv";
 import type { ChipColor, ChipSize, ChipVariant } from "../chip/chip.variants";
-import { type InputBoxState, type InputSize, inputVariants, resolveInputGroupClass } from "../input/input.variants";
+import {
+	type InputBoxState,
+	type InputSize,
+	type InputVariant,
+	inputVariants,
+	resolveInputGroupClass,
+} from "../input/input.variants";
 
 /**
  * The chip size each field size draws its tags at.
@@ -109,16 +115,22 @@ export function resolveTagInputCounterColor(isOverflowing: boolean): "muted" | "
 export function resolveTagInputChip({
 	size,
 	variant,
+	boxVariant,
 	isPendingRemove,
 }: {
 	size: InputSize;
 	variant: ChipVariant;
+	/** The box the chip sits in. */
+	boxVariant: InputVariant;
 	isPendingRemove: boolean;
-}): { size: ChipSize; color: ChipColor; variant: ChipVariant } {
+}): { size: ChipSize; color: ChipColor; variant: ChipVariant; className?: string } {
 	const chipSize = TAG_INPUT_CHIP_SIZE[size];
-	return isPendingRemove
-		? { color: "destructive", size: chipSize, variant: "soft" }
-		: { color: "default", size: chipSize, variant };
+	if (isPendingRemove) return { color: "destructive", size: chipSize, variant: "soft" };
+	// A soft default chip is `bg-muted` and a secondary box is `bg-secondary`,
+	// the same step in both themes. `elevated` is the surface defined to sit
+	// above `muted`, so the pill keeps its edge.
+	const lift = boxVariant === "secondary" && variant === "soft" ? { className: "bg-elevated" } : {};
+	return { color: "default", size: chipSize, variant, ...lift };
 }
 
 export type TagInputVariantProps = VariantProps<typeof tagInputVariants>;

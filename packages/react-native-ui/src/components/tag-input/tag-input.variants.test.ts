@@ -147,15 +147,41 @@ describe("the chips", () => {
 	});
 
 	test("rest in the caller's variant and default colour", () => {
-		expect(resolveTagInputChip({ isPendingRemove: false, size: "md", variant: "outline" })).toEqual({
+		expect(
+			resolveTagInputChip({ boxVariant: "primary", isPendingRemove: false, size: "md", variant: "outline" })
+		).toEqual({
 			color: "default",
 			size: "sm",
 			variant: "outline",
 		});
 	});
 
+	// A soft default chip is `bg-muted`, and a secondary box is `bg-secondary` —
+	// the same step in both themes, so the pill vanished into the box.
+	test("a soft chip on a secondary box lifts to the elevated surface", () => {
+		expect(
+			resolveTagInputChip({ boxVariant: "secondary", isPendingRemove: false, size: "md", variant: "soft" })
+		).toEqual({
+			className: "bg-elevated",
+			color: "default",
+			size: "sm",
+			variant: "soft",
+		});
+		expect(
+			resolveTagInputChip({ boxVariant: "secondary", isPendingRemove: false, size: "md", variant: "outline" }).className
+		).toBeUndefined();
+		expect(
+			resolveTagInputChip({ boxVariant: "secondary", isPendingRemove: true, size: "md", variant: "soft" }).className
+		).toBeUndefined();
+		expect(
+			resolveTagInputChip({ boxVariant: "primary", isPendingRemove: false, size: "md", variant: "soft" }).className
+		).toBeUndefined();
+	});
+
 	test("an armed chip turns soft destructive", () => {
-		expect(resolveTagInputChip({ isPendingRemove: true, size: "lg", variant: "outline" })).toEqual({
+		expect(
+			resolveTagInputChip({ boxVariant: "primary", isPendingRemove: true, size: "lg", variant: "outline" })
+		).toEqual({
 			color: "destructive",
 			size: "md",
 			variant: "soft",

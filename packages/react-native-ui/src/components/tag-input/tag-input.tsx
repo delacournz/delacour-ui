@@ -301,10 +301,13 @@ function TagInputRoot({
 		reportCommit(result, { lastRejectHapticAt, onReject, rejectMessages, speak });
 	};
 
+	// The draft is written before the commit is reported, so a caller's
+	// `onReject` is the last thing it hears — a hint it sets there is not wiped
+	// by its own `onInputValueChange` reacting to the refused piece going back.
 	const apply = (result: TagInputCommitResult) => {
 		setArmed(false);
-		applyTags(result);
 		if (result.draft !== draft) setDraft(result.draft);
+		applyTags(result);
 	};
 
 	const remove = (index: number) => {

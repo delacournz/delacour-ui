@@ -47,6 +47,7 @@
 		"screen",
 		"surface",
 		"card",
+		"split-view",
 		"splitter",
 		"---Utilities---",
 		"provider"

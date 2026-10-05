@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sketch/shapes and has settled — the
+  full toolset with the shape tool in hand on the arrow. The default layout gives
+  the canvas the testID sketch-canvas and each tool its own. The capture script
+  navigates there before running this.
+steps:
+  - echo: An arrow, dragged up and to the right
+  - swipe: { from: { id: sketch-canvas }, by: { x: 0.3, y: -0.2 }, momentum: false, duration: 600 }
+  - wait: 400
+  - echo: Then a star
+  - tap: { id: sketch-shape-star }
+  - wait: 400
+  - swipe: { from: { id: sketch-canvas }, by: { x: -0.25, y: 0.12 }, momentum: false, duration: 600 }
+  - wait: 600
+  - echo: Undo both, and back to the arrow, so the clip loops where it began
+  - tap: { id: sketch-undo }
+  - wait: 200
+  - tap: { id: sketch-undo }
+  - tap: { id: sketch-shape-arrow }

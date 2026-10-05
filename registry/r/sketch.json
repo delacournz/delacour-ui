@@ -1,0 +1,180 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "sketch",
+	"type": "registry:ui",
+	"title": "Sketch",
+	"description": "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"button",
+		"color",
+		"icon",
+		"icons",
+		"pressable",
+		"slider",
+		"toggle-button",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-svg",
+		"react-native-worklets",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/sketch/AGENTS.md",
+			"target": "sketch/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/sketch",
+					"to": "@registry/ui/sketch"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/index.ts",
+			"target": "sketch/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-canvas.tsx",
+			"target": "sketch/sketch-canvas.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-groups.tsx",
+			"target": "sketch/sketch-groups.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-size.tsx",
+			"target": "sketch/sketch-size.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../slider",
+					"to": "@registry/ui/slider"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-swatches.tsx",
+			"target": "sketch/sketch-swatches.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-tool.tsx",
+			"target": "sketch/sketch-tool.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-toolbar.tsx",
+			"target": "sketch/sketch-toolbar.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch-undo.tsx",
+			"target": "sketch/sketch-undo.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch.context.tsx",
+			"target": "sketch/sketch.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch.paths.ts",
+			"target": "sketch/sketch.paths.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch.tsx",
+			"target": "sketch/sketch.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch.types.ts",
+			"target": "sketch/sketch.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sketch/sketch.variants.ts",
+			"target": "sketch/sketch.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

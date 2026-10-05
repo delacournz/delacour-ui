@@ -461,6 +461,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A handle dragged across a rail to confirm an action a tap should not reach.",
 		categories: ["controls"],
 	},
+	sketch: {
+		title: "Sketch",
+		description:
+			"A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG.",
+		categories: ["layout"],
+	},
 	slider: {
 		title: "Slider",
 		description: "A value along a track, dragged by a handle that follows the gesture.",

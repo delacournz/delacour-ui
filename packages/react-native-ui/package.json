@@ -97,6 +97,7 @@
 		"./separator": "./src/components/separator/index.ts",
 		"./signature": "./src/components/signature/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
+		"./sketch": "./src/components/sketch/index.ts",
 		"./slide-button": "./src/components/slide-button/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./sortable": "./src/components/sortable/index.ts",

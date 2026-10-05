@@ -73,6 +73,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "signature", title: "Signature", description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
+	{ name: "sketch", title: "Sketch", description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, exported as SVG." },
 	{ name: "slide-button", title: "Slide Button", description: "A handle dragged across a rail to confirm an action a tap should not reach." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "sortable", title: "Sortable", description: "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions." },

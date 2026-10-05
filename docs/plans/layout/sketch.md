@@ -305,3 +305,12 @@ Registry: `ITEM_META.sketch = { title: "Sketch", description: "A finger-drawing 
 - [ ] Simulator (agent-device; `warden claim ios --json`, `--platform ios --udid <id> --session sketch`): Release build draws a stroke without a worklet crash; a stationary tap leaves a dot; pen stays smooth at speed (no JS-thread frame drops with 200 strokes); each shape draws and a sub-4pt drag commits nothing; eraser removes only what it crosses and a stroke drawn afterwards over the erased spot is intact; undo reverses an erase; swatch/size changes apply to the next stroke only; `toSVG()` pasted into a browser matches the screen; light/dark toggle leaves existing ink unchanged; VoiceOver reads `"Drawing, 3 marks"` and the undo/clear actions work; disabled blocks drawing
 - [ ] Android emulator check for `Mask` rendering (known weaker platform for SVG masks); if broken, record in AGENTS.md and gate the eraser accordingly
 - [ ] `agent-device close` and `warden release` on completion
+
+## Implementation notes (2026-10-05)
+
+- `Sketch.Tool tool="shape"` takes an **optional** `shape`; without one it shows and keeps the current shape (the default toolbar's middle button).
+- The root slot carries no `flex-1`: inside a parent with no definite height its zero basis beat a caller's `h-*`. Callers size the root.
+- The default toolbar puts the width slider in the tool row; beside six swatches it had no width.
+- Previews captured 2026-10-06 (dev client): hero clip `default`, clips `shapes`, `eraser`, `annotate`, still `colours`; the hero is stage-framed (`align: "stretch"`), not `frame: "device"` — the demo is a container, not a whole screen. Flows wait after each tool/swatch tap; see the component AGENTS.md.
+- Simulator: verified on an iOS dev client. Release build, performance at 200 strokes, theme toggle, VoiceOver actions and Android masks are still open.
+- No cross-category imports. Signature (Forms) can import `sketch.paths.ts` as a leaf.

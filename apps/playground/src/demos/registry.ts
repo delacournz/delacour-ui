@@ -325,6 +325,13 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_markdown_editor_basic from "./markdown-editor/basic";
+import * as demo_markdown_editor_controlled_mode from "./markdown-editor/controlled-mode";
+import * as demo_markdown_editor_custom_toolbar from "./markdown-editor/custom-toolbar";
+import * as demo_markdown_editor_disabled_read_only from "./markdown-editor/disabled-read-only";
+import * as demo_markdown_editor_in_field from "./markdown-editor/in-field";
+import * as demo_markdown_editor_pill_toolbar from "./markdown-editor/pill-toolbar";
+import * as demo_markdown_editor_preview_mode from "./markdown-editor/preview-mode";
 import * as demo_menu_actions from "./menu/actions";
 import * as demo_menu_checkbox_and_radio from "./menu/checkbox-and-radio";
 import * as demo_menu_custom_background from "./menu/custom-background";
@@ -842,6 +849,13 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"markdown-editor/basic": demo_markdown_editor_basic,
+	"markdown-editor/controlled-mode": demo_markdown_editor_controlled_mode,
+	"markdown-editor/custom-toolbar": demo_markdown_editor_custom_toolbar,
+	"markdown-editor/disabled-read-only": demo_markdown_editor_disabled_read_only,
+	"markdown-editor/in-field": demo_markdown_editor_in_field,
+	"markdown-editor/pill-toolbar": demo_markdown_editor_pill_toolbar,
+	"markdown-editor/preview-mode": demo_markdown_editor_preview_mode,
 	"menu/actions": demo_menu_actions,
 	"menu/checkbox-and-radio": demo_menu_checkbox_and_radio,
 	"menu/custom-background": demo_menu_custom_background,

@@ -295,6 +295,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
 		categories: ["controls"],
 	},
+	"markdown-editor": {
+		title: "Markdown Editor",
+		description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview.",
+		categories: ["forms"],
+	},
 	meter: {
 		title: "Meter",
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",

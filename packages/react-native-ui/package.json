@@ -62,6 +62,7 @@
 		"./kpi": "./src/components/kpi/index.ts",
 		"./label": "./src/components/label/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
+		"./markdown-editor": "./src/components/markdown-editor/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",

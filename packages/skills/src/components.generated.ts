@@ -38,6 +38,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "kpi", title: "Kpi", description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card." },
 	{ name: "label", title: "Label", description: "A form control's name, with required, invalid and disabled states." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
+	{ name: "markdown-editor", title: "Markdown Editor", description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
 	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },

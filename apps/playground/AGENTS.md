@@ -461,6 +461,7 @@ which is what the documentation should actually show.
 | Rows collapsed, text missing | The demo is a container and needs `capture.align: "stretch"` — unless it is a `device` frame, which is full-bleed already and cannot be fixed this way |
 | Empty box | The demo mounts into a portal; it needs `capture.frame: "device"` |
 | A control caught mid-animation | The idle gate settled early — the demo probably animates for longer than it looks |
+| A clock-driven demo caught mid-tick, every time | The default 500 ms idle window closes most of a second after a tick, so the capture lands on the next one. Set `capture.settleMs` lower — `countdown` uses 150 |
 | The clip jump-cuts at the loop | Its flow does not return the UI to where it started |
 | A clip of a motionless screen | The flow's `id:` selectors found nothing; see the devtools note in `.argent/AGENTS.md` |
 

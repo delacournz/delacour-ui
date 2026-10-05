@@ -49,6 +49,7 @@ export type DemoCaptureMeta = {
 	flow?: string;
 	leadMs?: number;
 	tailMs?: number;
+	settleMs?: number;
 	hero?: boolean;
 };
 

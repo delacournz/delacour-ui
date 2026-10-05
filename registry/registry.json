@@ -1150,6 +1150,7 @@
 				"ui/search-bar/search-bar-tokens.tsx",
 				"ui/search-bar/search-bar.context.tsx",
 				"ui/search-bar/search-bar.debounce.ts",
+				"ui/search-bar/search-bar.responder.ts",
 				"ui/search-bar/search-bar.tsx",
 				"ui/search-bar/search-bar.types.ts",
 				"ui/search-bar/search-bar.variants.ts"

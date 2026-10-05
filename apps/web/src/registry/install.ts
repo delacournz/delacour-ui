@@ -2144,7 +2144,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 107,
+		fileCount: 108,
 		groups: [
 			{
 				name: "search-bar",
@@ -2159,6 +2159,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar-tokens.tsx", target: "src/components/ui/search-bar/search-bar-tokens.tsx" },
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.context.tsx", target: "src/components/ui/search-bar/search-bar.context.tsx" },
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.debounce.ts", target: "src/components/ui/search-bar/search-bar.debounce.ts" },
+					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.responder.ts", target: "src/components/ui/search-bar/search-bar.responder.ts" },
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.tsx", target: "src/components/ui/search-bar/search-bar.tsx" },
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.types.ts", target: "src/components/ui/search-bar/search-bar.types.ts" },
 					{ source: "packages/react-native-ui/src/components/search-bar/search-bar.variants.ts", target: "src/components/ui/search-bar/search-bar.variants.ts" },

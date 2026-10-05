@@ -1,8 +1,9 @@
 import type { ReactElement } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Chip } from "../chip";
 import { Icon } from "../icon";
 import { useSearchBarPart } from "./search-bar.context";
+import { claimSearchBarTouch } from "./search-bar.responder";
 import type { SearchBarToken } from "./search-bar.types";
 import { SEARCH_BAR_TOKEN_CHIP_SIZE, searchBarVariants } from "./search-bar.variants";
 
@@ -16,7 +17,8 @@ export type SearchBarTokensProps = {
  *
  * A horizontal scroller capped at a share of the field's width, so a long list
  * of filters scrolls rather than squeezing the text to nothing. Taps inside it
- * are `handled`, so removing a chip never also dismisses the keyboard.
+ * claim the touch (`claimSearchBarTouch`), so removing a chip never also
+ * dismisses the keyboard — `handled` alone cannot see a Gesture Handler tap.
  *
  * Each chip is static apart from its remove control, which is its own
  * accessible element labelled with the token's name. A disabled bar draws the
@@ -29,26 +31,27 @@ export function SearchBarTokens({ tokens, onTokenRemove }: SearchBarTokensProps)
 	return (
 		<ScrollView
 			className={slots.tokens()}
-			contentContainerClassName={slots.tokensContent()}
 			horizontal
 			keyboardShouldPersistTaps="handled"
 			showsHorizontalScrollIndicator={false}
 		>
-			{tokens.map((token) => (
-				<Chip
-					className="self-center"
-					closeAccessibilityLabel={`Remove ${token.label}`}
-					closeTestID={testID ? `${testID}-token-${token.id}-remove` : undefined}
-					isDisabled={isDisabled}
-					key={token.id}
-					onClose={onTokenRemove && !isDisabled ? () => onTokenRemove(token) : undefined}
-					size={SEARCH_BAR_TOKEN_CHIP_SIZE[size]}
-					testID={testID ? `${testID}-token-${token.id}` : undefined}
-				>
-					{token.icon ? <Icon icon={token.icon} /> : null}
-					{token.label}
-				</Chip>
-			))}
+			<View className={slots.tokensContent()} onStartShouldSetResponder={claimSearchBarTouch}>
+				{tokens.map((token) => (
+					<Chip
+						className="self-center"
+						closeAccessibilityLabel={`Remove ${token.label}`}
+						closeTestID={testID ? `${testID}-token-${token.id}-remove` : undefined}
+						isDisabled={isDisabled}
+						key={token.id}
+						onClose={onTokenRemove && !isDisabled ? () => onTokenRemove(token) : undefined}
+						size={SEARCH_BAR_TOKEN_CHIP_SIZE[size]}
+						testID={testID ? `${testID}-token-${token.id}` : undefined}
+					>
+						{token.icon ? <Icon icon={token.icon} /> : null}
+						{token.label}
+					</Chip>
+				))}
+			</View>
 		</ScrollView>
 	);
 }

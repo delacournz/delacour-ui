@@ -335,7 +335,6 @@ function SearchBarRoot({
 						autoCorrect={false}
 						clearButtonMode="never"
 						enterKeyHint="search"
-						inputMode="search"
 						placeholder={placeholder}
 						returnKeyType="search"
 						testID={testID}

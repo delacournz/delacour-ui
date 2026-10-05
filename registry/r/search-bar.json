@@ -112,6 +112,11 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/search-bar/search-bar.responder.ts",
+			"target": "search-bar/search-bar.responder.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/search-bar/search-bar.tsx",
 			"target": "search-bar/search-bar.tsx",
 			"namespace": "ui",

@@ -17,6 +17,7 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
 | `search-bar-clear.tsx` | Internal: the clear button in the box's trailing slot |
 | `search-bar-tokens.tsx` | Internal: the horizontal row of token chips |
 | `search-bar.context.tsx` | `SearchBarProvider`, `useSearchBar()`, `useSearchBarContext()`, `useSearchBarPart()` |
+| `search-bar.responder.ts` | `claimSearchBarTouch` — why clear and the chips keep the keyboard |
 | `search-bar.types.ts` | `SearchBarToken`, `SearchBarHandle` |
 | `search-bar.variants.ts` | Pure `tv()` slots, size maps and the resolvers — no RN imports |
 | `search-bar.variants.test.ts` | |
@@ -79,13 +80,23 @@ optional Cancel action and debounced change reporting, over `Input.Group`. Root 
   control or Backspace on an empty field (`resolveTokenBackspace`) — the recipient-field
   move. Wiping every filter on a clear would punish the most common tap in the bar.
 - **The token row is capped at 60% of the box and scrolls.** A long filter list would
-  otherwise squeeze the text to nothing. Its taps are `keyboardShouldPersistTaps="handled"`,
-  so removing a chip never also dismisses the keyboard.
+  otherwise squeeze the text to nothing.
+- **Clear and the token row claim the touch, or the keyboard drops.** `Pressable` is a
+  Gesture Handler tap, which React Native's responder system never sees, so a `ScrollView`
+  with `keyboardShouldPersistTaps="handled"` — every `Screen.ScrollArea`, and the token row
+  itself — finds the tap unclaimed, becomes the responder and blurs the field on release.
+  On a simulator that blurred the field on every clear and every chip removal, *after*
+  `clear` had refocused it. The view around clear and around the chips answers
+  `onStartShouldSetResponder` with `claimSearchBarTouch` (`search-bar.responder.ts`); the
+  tap still reaches the gesture, which runs natively. Cancel does not claim it — blurring
+  is its job.
 - **The field announces itself as a search.** `accessibilityRole="search"`, named by the
   enclosing `Field.Label` when there is one and by the placeholder when not;
-  `accessibilityState.busy` while loading. `returnKeyType`, `enterKeyHint` and `inputMode`
-  default to search, capitalisation and autocorrect off — all set before the caller's
-  props, so each can be overridden.
+  `accessibilityState.busy` while loading. `returnKeyType` and `enterKeyHint` default to
+  search, capitalisation and autocorrect off — all set before the caller's
+  props, so each can be overridden. **`inputMode` is deliberately not `search`:** on iOS it
+  selects the web-search keyboard, whose return key reads "go" whatever `returnKeyType`
+  says — seen on a simulator, and fixed by leaving the keyboard type alone.
 - **`testID` names the field, and the bar's own controls suffix it.** `{testID}-clear`,
   `{testID}-cancel`, `{testID}-token-{id}` and `{testID}-token-{id}-remove`, so a flow can
   reach every control from the one id a caller sets.

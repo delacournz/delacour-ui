@@ -6,6 +6,7 @@ import {
 	BUTTON_SIZE_TOKENS,
 	BUTTON_TEXT_TOKENS,
 	CHART_SIZE_TOKENS,
+	FAB_SIZE_TOKENS,
 	ICON_SIZE_TOKENS,
 	INPUT_SIZE_TOKENS,
 	INPUT_TEXT_TOKENS,
@@ -44,6 +45,7 @@ describe("tokens.ts and tokens.css", () => {
 		const registered = [
 			...BUTTON_SIZE_TOKENS,
 			...CHART_SIZE_TOKENS,
+			...FAB_SIZE_TOKENS,
 			...ICON_SIZE_TOKENS,
 			...INPUT_SIZE_TOKENS,
 			...SCREEN_SIZE_TOKENS,
@@ -177,5 +179,25 @@ describe("the input scale", () => {
 		for (const [index, token] of INPUT_SIZE_TOKENS.entries()) {
 			expect(px(`spacing-${token}`)).toBe(px(`spacing-${BUTTON_SIZE_TOKENS[index]}`));
 		}
+	});
+});
+
+describe("the fab scale", () => {
+	test("ascends in the order the registry lists it", () => {
+		const values = FAB_SIZE_TOKENS.map((token) => px(`spacing-${token}`));
+		expect(values).toEqual([...values].sort((a, b) => a - b));
+		expect(new Set(values).size).toBe(FAB_SIZE_TOKENS.length);
+	});
+
+	// The smallest fab is still a touch target, which the platform guidelines
+	// put at 44pt — the same floor the medium button sits on.
+	test("never drops below a touch target", () => {
+		expect(px("spacing-fab-sm")).toBeGreaterThanOrEqual(44);
+	});
+
+	// A fab's glyph indexes the shared icon scale: sm → icon-md, md and lg → icon-lg.
+	test("holds its glyph with room around it", () => {
+		expect(px("spacing-icon-md")).toBeLessThan(px("spacing-fab-sm") / 2);
+		expect(px("spacing-icon-lg")).toBeLessThan(px("spacing-fab-md") / 2);
 	});
 });

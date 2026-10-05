@@ -83,6 +83,7 @@ describe("the geometry block", () => {
 			"--spacing-navbar-row",
 			"--spacing-screen-gutter",
 			...(["sm", "md", "lg"] as const).map((step) => `--spacing-chart-${step}`),
+			...(["sm", "md", "lg"] as const).map((step) => `--spacing-fab-${step}`),
 		];
 
 		for (const name of required) {

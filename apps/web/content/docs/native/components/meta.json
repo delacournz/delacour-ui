@@ -8,6 +8,7 @@
 		"button",
 		"pressable",
 		"toggle-button",
+		"fab",
 		"---Forms---",
 		"field",
 		"input",

@@ -47,6 +47,7 @@
 		"./drawer": "./src/components/drawer/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
+		"./fab": "./src/components/fab/index.ts",
 		"./feedback": "./src/components/feedback/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",

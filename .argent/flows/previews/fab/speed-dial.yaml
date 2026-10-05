@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on fab/speed-dial and has settled — the dial closed, the plus trigger in the
+  bottom-end corner of the box. The capture script navigates there before running this.
+steps:
+  - echo: Opening the dial, the plus turning into a cross
+  - tap: { id: fab-dial }
+  - wait: 1100
+  - echo: Pressing an action runs it and folds the dial away
+  - tap: { id: fab-dial-photo }
+  - wait: 900
+  - echo: Open again and close from the cross, so the clip ends closed where it began
+  - tap: { id: fab-dial }
+  - wait: 1000
+  - tap: { id: fab-dial }
+  - wait: 900

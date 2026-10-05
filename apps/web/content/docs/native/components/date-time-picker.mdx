@@ -4,6 +4,8 @@ description: One field for "when" — a calendar and a time wheel in one bottom 
 icon: CalendarClock
 ---
 
+<Preview id="date-time-picker/tabs-layout" title={null} />
+
 ## Installation
 
 <ComponentInstall name="date-time-picker" />
@@ -40,6 +42,10 @@ A value is `{ date, time }` — a [`CalendarDate`](/docs/native/components/calen
 and its text is formatted from the value: "Mon, Oct 5, 3:30 PM" in en-US.
 
 ## Layouts
+
+<Preview id="date-time-picker/tabs-layout" />
+
+<Preview id="date-time-picker/stacked-layout" />
 
 ```tsx
 <DateTimePicker layout="tabs" />
@@ -84,6 +90,8 @@ pulls an earlier time up to the minimum. `disabledDates` takes the calendar's ma
 
 ## Minute step and 12/24 hour
 
+<Preview id="date-time-picker/step-15-24h" />
+
 ```tsx
 <DateTimePicker minuteStep={15} hourCycle={24} />
 <DateTimePicker showSeconds />
@@ -119,6 +127,8 @@ and read `YYYY-MM-DDTHH:mm` with no zone — store the zone beside it if you nee
 
 ## In a field
 
+<Preview id="date-time-picker/in-field-invalid" />
+
 ```tsx
 <Field isInvalid={when === null}>
   <Field.Label>Departure</Field.Label>
@@ -132,6 +142,8 @@ with nothing said at the call site, names itself from `Field.Label`, and a tap o
 the sheet. An explicit prop on the picker still wins. `isReadOnly` shows the value and never opens.
 
 ## Inline
+
+<Preview id="date-time-picker/inline" />
 
 ```tsx
 <DateTimePicker presentation="inline" value={when} onValueChange={setWhen} />

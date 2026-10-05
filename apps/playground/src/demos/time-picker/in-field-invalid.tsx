@@ -25,7 +25,7 @@ export function Demo(): ReactElement {
 					<TimePicker.Wheel />
 				</TimePicker.Content>
 			</TimePicker>
-			<Field.Error>Pick a time for the reminder.</Field.Error>
+			<Field.Error>{time === null ? "Pick a time for the reminder." : undefined}</Field.Error>
 		</Field>
 	);
 }

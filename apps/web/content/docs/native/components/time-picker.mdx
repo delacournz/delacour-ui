@@ -122,7 +122,7 @@ its accessible name, and opens when the label is tapped. Write the parts out to 
       <TimePicker.Wheel />
     </TimePicker.Content>
   </TimePicker>
-  <Field.Error>Pick a time for the reminder.</Field.Error>
+  <Field.Error>{time === null ? "Pick a time for the reminder." : undefined}</Field.Error>
 </Field>
 ```
 

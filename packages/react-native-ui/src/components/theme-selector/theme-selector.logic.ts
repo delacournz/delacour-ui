@@ -117,3 +117,14 @@ export function resolveOptions({
 	const picked = unique.length > 0 ? unique : THEME_MODES;
 	return picked.map((mode) => ({ label: resolveModeLabel(mode, labels), mode }));
 }
+
+/**
+ * The `testID` an option drawn by the root carries: the selector's own, then
+ * `-` and the mode — `appearance-dark`.
+ *
+ * Without it a test, or a capture flow, could find the group but not the option
+ * to press. No selector `testID`, no option `testID`.
+ */
+export function resolveOptionTestID(testID: string | undefined, mode: ThemeMode): string | undefined {
+	return testID ? `${testID}-${mode}` : undefined;
+}

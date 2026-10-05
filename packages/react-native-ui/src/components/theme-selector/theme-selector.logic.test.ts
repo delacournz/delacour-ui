@@ -4,6 +4,7 @@ import {
 	resolveModeLabel,
 	resolveNextMode,
 	resolveOptions,
+	resolveOptionTestID,
 	resolveSelectedMode,
 	resolveThemeFamily,
 	restoreThemeMode,
@@ -143,5 +144,17 @@ describe("resolveOptions", () => {
 			{ label: "Light", mode: "light" },
 			{ label: "Night", mode: "dark" },
 		]);
+	});
+});
+
+describe("resolveOptionTestID", () => {
+	test("suffixes the selector's testID with the mode", () => {
+		expect(resolveOptionTestID("appearance", "dark")).toBe("appearance-dark");
+		expect(resolveOptionTestID("appearance", "system")).toBe("appearance-system");
+	});
+
+	test("no selector testID means no option testID", () => {
+		expect(resolveOptionTestID(undefined, "light")).toBeUndefined();
+		expect(resolveOptionTestID("", "light")).toBeUndefined();
 	});
 });

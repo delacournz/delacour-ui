@@ -90,6 +90,10 @@ hook for the live theme with no selector mounted.
   pressed; anything the selector animated would compete with that. The
   playground's navbar toggle made the same call. `useCalmMotion` therefore has
   nothing to turn off.
+- **An option drawn from `modes` is addressable.** The root's `testID` names
+  the group, and each option it draws takes that plus `-<mode>`
+  (`resolveOptionTestID`) — a test or a capture flow that could find the group
+  but not the option to press would record a still screen.
 - **Joins `Field`.** Inside `<Field isDisabled>` every option disables with
   nothing said at the call site; an explicit `isDisabled` still wins.
 - **`useThemeSelection` is usable on its own.** It returns `{ mode, resolved,

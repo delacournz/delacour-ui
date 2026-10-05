@@ -10,6 +10,7 @@ export {
 	resolveModeLabel,
 	resolveNextMode,
 	resolveOptions,
+	resolveOptionTestID,
 	resolveSelectedMode,
 	resolveThemeFamily,
 	restoreThemeMode,

@@ -7,6 +7,7 @@ import {
 	isThemeMode,
 	resolveNextMode,
 	resolveOptions,
+	resolveOptionTestID,
 	type ThemeMode,
 	type ThemeModeLabels,
 } from "./theme-selector.logic";
@@ -44,6 +45,7 @@ export type ThemeSelectorProps = {
 	className?: string;
 	/** The group's accessible name. Default the enclosing `Field.Label`'s text, then "Theme". */
 	accessibilityLabel?: string;
+	/** The group's testID. Each option drawn from `modes` takes it plus `-<mode>`. */
 	testID?: string;
 	/** Custom `ThemeSelector.Option`s. Without them, one option is drawn per `modes`. */
 	children?: ReactNode;
@@ -101,7 +103,12 @@ function ThemeSelectorRoot({
 	const options =
 		children ??
 		resolveOptions({ labels, modes }).map((option) => (
-			<ThemeSelectorOption key={option.mode} label={option.label} value={option.mode} />
+			<ThemeSelectorOption
+				key={option.mode}
+				label={option.label}
+				testID={resolveOptionTestID(testID, option.mode)}
+				value={option.mode}
+			/>
 		));
 
 	return (

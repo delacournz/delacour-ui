@@ -140,6 +140,7 @@ shares.
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
 | [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
+| [ScrollHeader](src/components/scroll-header/AGENTS.md) | `@delacour/react-native-ui/scroll-header` | A large title that collapses into a pinned bar as the page scrolls |
 | [ScrollCanvas](src/components/scroll-canvas/AGENTS.md) | `@delacour/react-native-ui/scroll-canvas` | An image in a still frame that moves as the page scrolls |
 | [ScrollFade](src/components/scroll-fade/AGENTS.md) | `@delacour/react-native-ui/scroll-fade` | A gradient at a scrollable's edges while content runs past them |
 | [SectionRail](src/components/section-rail/AGENTS.md) | `@delacour/react-native-ui/section-rail` | A rail of bars along a screen edge that opens into a jump-to-section outline |

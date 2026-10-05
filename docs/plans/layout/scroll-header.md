@@ -244,3 +244,14 @@ Route `src/app/(components)/scroll-header.tsx`; `components-index.ts` row (`grou
 - [ ] Reduce Motion: no stretch, instant snap, crossfade still follows the finger; Reduce Transparency: blur bar renders plain
 - [ ] FlatList variant with 500 rows scrolls at steady frame time; SectionList via `useScrollHeader` + `Inset` lines up
 - [ ] Inside `<Screen>` without `Screen.Navbar`: no double top inset; with `Screen.Footer`: bottom inset still correct
+
+## Implementation notes (as built)
+
+- **`ScrollHeader.Large` is `pointerEvents="none"`.** It floats over the scroller, and on iOS a drag starting on a view outside a scroll view never reaches its pan, so the block is display-only; controls go in the bar or the content.
+- **A plain-function `onScroll` receives a `NativeScrollEvent`**, not a `NativeSyntheticEvent`: an animated `onScroll` replaces a JS one, so it is forwarded with `scheduleOnRN` carrying the payload. The prop type is `ScrollHeaderOnScroll`, the union of that and a Reanimated handler (composed on the UI thread).
+- **Snap goes through a `snapTarget` shared value.** The end-of-drag worklets are created before `useScrollSource` returns the animated ref, so a reaction declared after it performs the `scrollTo`.
+- **An extra internal file, `use-scroll-header-scroll-props.ts`,** holds the scroller parts' shared wiring (handler composition, scroller registration).
+- **Registry title is "Scroll Header"**, spaced like every other item, because the skills list test pins the registry's titles.
+- **No back-button part and no Navigation import**; demos use a plain `Button` with a chevron.
+- **No preview media yet.** The `argent` CLI was not installed, so no demo is marked `capture`, the docs page opens at Installation, and the publishing plan is in the component's AGENTS.md. Demos carry `align: "stretch"` so the preview route lays them out full width.
+- **Simulator:** verified on iOS — layout at rest, crossfade, snap both ways, cover stretch, blur bar, `onCollapsedChange` + `progress`, no-Large fade (details in the component's AGENTS.md). Found and fixed a worklet capturing `scrollProps` (with its handler) on the first run. Not checked: VoiceOver, Reduce Motion / Transparency live, rotation and Dynamic Type, fling, FlatList at 500 rows, SectionList via `useScrollHeader`, inside `<Screen>`, Android.

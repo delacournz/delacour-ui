@@ -445,6 +445,12 @@ import * as demo_scroll_fade_on_a_surface from "./scroll-fade/on-a-surface";
 import * as demo_scroll_fade_single_edge from "./scroll-fade/single-edge";
 import * as demo_scroll_fade_through_a_provider from "./scroll-fade/through-a-provider";
 import * as demo_scroll_fade_vertical_list from "./scroll-fade/vertical-list";
+import * as demo_scroll_header_blur_bar from "./scroll-header/blur-bar";
+import * as demo_scroll_header_cover from "./scroll-header/cover";
+import * as demo_scroll_header_early_handover from "./scroll-header/early-handover";
+import * as demo_scroll_header_large_title_list from "./scroll-header/large-title-list";
+import * as demo_scroll_header_no_large from "./scroll-header/no-large";
+import * as demo_scroll_header_react_to_collapse from "./scroll-header/react-to-collapse";
 import * as demo_search_bar_basic from "./search-bar/basic";
 import * as demo_search_bar_debounced_filter_list from "./search-bar/debounced-filter-list";
 import * as demo_search_bar_in_sheet from "./search-bar/in-sheet";
@@ -1077,6 +1083,12 @@ export const DEMOS = {
 	"scroll-fade/single-edge": demo_scroll_fade_single_edge,
 	"scroll-fade/through-a-provider": demo_scroll_fade_through_a_provider,
 	"scroll-fade/vertical-list": demo_scroll_fade_vertical_list,
+	"scroll-header/blur-bar": demo_scroll_header_blur_bar,
+	"scroll-header/cover": demo_scroll_header_cover,
+	"scroll-header/early-handover": demo_scroll_header_early_handover,
+	"scroll-header/large-title-list": demo_scroll_header_large_title_list,
+	"scroll-header/no-large": demo_scroll_header_no_large,
+	"scroll-header/react-to-collapse": demo_scroll_header_react_to_collapse,
 	"search-bar/basic": demo_search_bar_basic,
 	"search-bar/debounced-filter-list": demo_search_bar_debounced_filter_list,
 	"search-bar/in-sheet": demo_search_bar_in_sheet,

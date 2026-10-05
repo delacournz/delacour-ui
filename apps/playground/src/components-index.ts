@@ -248,6 +248,7 @@ const ROWS = [
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
 	{ slug: "scroll-blur", title: "ScrollBlur", description: "Edges, layers, fallback", group: "Layout" },
+	{ slug: "scroll-header", title: "ScrollHeader", description: "Large title, cover, blur bar", group: "Layout" },
 	{ slug: "scroll-canvas", title: "ScrollCanvas", description: "Four scroll effects", group: "Layout" },
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];
 

@@ -82,6 +82,7 @@
 		"./scroll-blur": "./src/components/scroll-blur/index.ts",
 		"./scroll-canvas": "./src/components/scroll-canvas/index.ts",
 		"./scroll-fade": "./src/components/scroll-fade/index.ts",
+		"./scroll-header": "./src/components/scroll-header/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
 		"./section-progress": "./src/components/section-progress/index.ts",
 		"./section-rail": "./src/components/section-rail/index.ts",

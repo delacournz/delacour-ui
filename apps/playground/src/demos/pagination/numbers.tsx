@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Numbers",
 	caption:
 		"The run keeps the same number of targets on every page, so the one you are aiming at never slides away. Tap a gap to jump five pages.",
+	capture: { flow: "pagination/numbers", hero: true },
 };
 
 export function Demo(): ReactElement {

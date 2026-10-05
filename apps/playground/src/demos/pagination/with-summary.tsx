@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Leading content sits at the start and pushes the arrows to the end; the status reads the page from the pagination.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "pagination/with-summary" },
 };
 
 const PAGE_SIZE = 20;

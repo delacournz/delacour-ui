@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	caption: "Small draws at 36 points and reaches out to 44 with hit slop, so the run is tighter but no harder to hit.",
+	capture: {},
 };
 
 const LABELS: Record<PaginationSize, string> = {

@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Controlled list",
 	caption: "The pagination owns the arithmetic; the screen owns the slice. Five rows a page across 470 orders.",
+	capture: { align: "stretch", flow: "pagination/controlled-list" },
 };
 
 const PAGE_SIZE = 5;

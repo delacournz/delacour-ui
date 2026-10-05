@@ -85,6 +85,10 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   closes; it is a button labelled "Close".
 - **Android back closes an open dial**, through a `BackHandler` subscription
   that exists only while the dial is open.
+- **`testID` lands on what a finger presses.** `Fab.Group`'s goes on the
+  trigger, not the layer or the anchor — the layer covers the whole parent and
+  the anchor's centre is inside the dial once it opens, so neither is something
+  a test can tap. `Fab.Action`'s goes on its round button.
 - **`isOpen` / `defaultOpen` / `onOpenChange`** through `useControllableState`.
 - **Haptics are off by default.** `haptic` on `Fab` plays on press; on
   `Fab.Group` it plays on the trigger and on every action.

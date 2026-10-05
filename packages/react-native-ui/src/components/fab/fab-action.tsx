@@ -23,6 +23,8 @@ export type FabActionProps = {
 	isDestructive?: boolean;
 	className?: string;
 	labelClassName?: string;
+	/** Lands on the round button. */
+	testID?: string;
 };
 
 /**
@@ -48,6 +50,7 @@ export function FabAction({
 	isDestructive = false,
 	className,
 	labelClassName,
+	testID,
 }: FabActionProps): ReactElement {
 	const { progress, count, labelSide, size, haptic, isReducedMotion, close } = useFabGroupPart("Fab.Action");
 	const { index } = useFabActionItem("Fab.Action");
@@ -100,6 +103,7 @@ export function FabAction({
 					feedback="scale"
 					haptic={haptic}
 					onPress={handlePress}
+					testID={testID}
 				>
 					<Icon
 						className={slots.actionIcon()}

@@ -54,6 +54,8 @@ export type FabGroupProps = Omit<ViewProps, "children"> &
 		placement?: FabPlacement;
 		/** Turn the glyph 45° as the dial opens. Default `true`. */
 		isRotatedOnOpen?: boolean;
+		/** Lands on the trigger, the one element a test or a flow presses. */
+		testID?: string;
 		/** Required: the trigger is a glyph, and the dial it opens needs a name. */
 		accessibilityLabel: string;
 		className?: string;
@@ -89,6 +91,7 @@ export function FabGroup({
 	isRotatedOnOpen = true,
 	accessibilityLabel,
 	className,
+	testID,
 	...props
 }: FabGroupProps): ReactElement {
 	const [isOpen, setIsOpen] = useControllableState({
@@ -192,6 +195,7 @@ export function FabGroup({
 						feedback="scale"
 						haptic={haptic}
 						onPress={toggle}
+						testID={testID}
 					>
 						<Animated.View style={glyphStyle}>
 							<Icon className={slots.icon()} color={FAB_FOREGROUND_TOKEN[variant]} icon={icon} />

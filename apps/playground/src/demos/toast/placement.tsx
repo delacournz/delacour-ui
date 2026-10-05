@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`placement` picks the edge. Top toasts sit under the status bar; bottom ones above the home indicator, and above the keyboard when it is open.",
 	align: "center",
+	capture: { flow: "toast/placement", frame: "device" },
 };
 
 const LABELS: Record<ToastPlacement, string> = {
@@ -18,7 +19,7 @@ const LABELS: Record<ToastPlacement, string> = {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="flex-row gap-3">
+		<View className="flex-1 flex-row items-center justify-center gap-3">
 			{TOAST_PLACEMENTS.map((placement) => (
 				<Button
 					key={placement}

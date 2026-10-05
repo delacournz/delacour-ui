@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`toast()` from a button — Alert's five statuses, glyphs and title colours. Success, warning and destructive play their haptic.",
 	align: "center",
+	capture: { flow: "toast/statuses", frame: "device", hero: true },
 };
 
 const LABELS: Record<ToastStatus, string> = {
@@ -29,7 +30,7 @@ const MESSAGES: Record<ToastStatus, { title: string; description: string }> = {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="items-center gap-3">
+		<View className="flex-1 items-center justify-center gap-3">
 			{TOAST_STATUSES.map((status) => (
 				<Button
 					key={status}

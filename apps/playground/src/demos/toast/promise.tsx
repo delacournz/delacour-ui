@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`toast.promise` shows one toast with a spinner and turns it into the success or the failure in place. Called from a plain function — no hook, no provider.",
 	align: "center",
+	capture: { flow: "toast/promise", frame: "device" },
 };
 
 /** Stands in for an API call: settles after a second and a half. */
@@ -31,7 +32,7 @@ function uploadPhotos(shouldFail: boolean): void {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="flex-row gap-3">
+		<View className="flex-1 flex-row items-center justify-center gap-3">
 			<Button onPress={() => uploadPhotos(false)} testID="toast-promise-success">
 				Upload
 			</Button>

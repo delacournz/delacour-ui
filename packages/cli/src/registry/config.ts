@@ -126,6 +126,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A pressable action composed from parts, with variants, sizes and a loading state.",
 		categories: ["controls"],
 	},
+	calendar: {
+		title: "Calendar",
+		description:
+			"A month grid for picking a day, several days or a range, with swipe paging and month and year jump views.",
+		categories: ["forms"],
+	},
 	card: {
 		title: "Card",
 		description: "A content surface with a header, a body and a footer, built on Surface.",

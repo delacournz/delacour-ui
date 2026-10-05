@@ -7,7 +7,6 @@ export const meta: DemoMeta = {
 	title: "Controls and minimap",
 	caption:
 		"`Flow.Controls` zooms, fits and locks the canvas; `Flow.MiniMap` draws every node and frames the part on screen. Both float above the canvas, unscaled.",
-	capture: { align: "stretch" },
 };
 
 const NODES = Array.from({ length: 12 }, (_, index) => ({

@@ -92,6 +92,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"Line, area, bar, scatter, candlestick and pie marks drawn in Skia, coloured from the theme's five-slot series ramp.",
 	},
 	{
+		slug: "flow",
+		name: "Flow",
+		group: "Data display",
+		blurb: "A pan-and-zoom canvas of nodes joined by edges that route themselves, for pipelines and builders.",
+	},
+	{
 		slug: "kpi",
 		name: "Kpi",
 		group: "Data display",

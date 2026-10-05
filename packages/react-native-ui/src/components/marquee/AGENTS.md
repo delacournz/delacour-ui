@@ -65,7 +65,9 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
 - **The root lays out along the axis, and the track never shrinks.** The track is a main-axis item
   at its full content length rather than stretched to the container's. A track only as long as the
   container hit-tests only that far, so once translated the copies sliding in from the trailing edge
-  would sit outside its bounds and take no touches.
+  would sit outside its bounds and take no touches. A horizontal root is `w-full` for the mirror
+  reason: in a content-sized parent (`items-center`) a row root grew to the track's length — 9,640
+  points on the simulator — clipped nothing and mounted the copy cap.
 - **Pause is velocity easing.** A `useAnimatedReaction` on the UI thread picks the target — zero
   while held, else the signed speed — and eases `velocity` to it over `easeMs` with
   `ReduceMotion.Never` (calm motion is handled one level up, where the track is never mounted). A
@@ -118,8 +120,21 @@ Display names: `DelacourUI.Marquee`, `.Group`, `.Group.Provider`, `.Track`, `.Sc
 
 The category README lists no spike for Marquee. The decisions verified on the simulator are below.
 
-- **Press-to-hold with a child press.** Verified that a `Gesture.Manual` that never activates holds
-  the strip while a finger is down and still lets a child `Pressable` fire its `onPress`.
+Verified on an iPhone 17 simulator (iOS, dev client), 2026-10-05:
+
+- **Press-to-hold.** Two frames 1.5 s apart during a long press on `hold-to-pause` are pixel-identical;
+  frames after release differ — the strip holds and resumes.
+- **A child press while moving.** On `cards`, pressing a moving `Item` fired its `onPress`
+  ("Tapped Wellington") — the never-activating `Gesture.Manual` steals nothing.
+- **Duplicates hidden.** With copy 2's "Motion" on screen, the AX tree held no "Motion" — only
+  copy 1's items are exposed.
+- **Calm motion.** With the OS Reduce Motion on, `badges` rendered a `ScrollView` holding one copy,
+  and a hand pan scrolled it to the last item.
+- **Content-sized parent.** Found here: without `w-full` a horizontal root in a shrink-wrapped stage
+  measured 9,640 pt wide. Fixed; it now measures the container's 402 pt.
+
+Not verified on a device: Android / TalkBack, the loop seam over many wraps frame by frame, and a
+rotation re-resolving the copy count.
 
 ## Previews (follow-up)
 

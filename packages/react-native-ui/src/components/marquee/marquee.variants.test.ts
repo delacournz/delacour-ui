@@ -239,6 +239,11 @@ describe("marqueeVariants", () => {
 		expect(marqueeVariants({ axis: "horizontal" }).root()).toContain("overflow-hidden");
 	});
 
+	test("a horizontal root fills its parent's width, so a content-sized parent cannot grow it to the strip's length", () => {
+		expect(marqueeVariants({ axis: "horizontal" }).root()).toContain("w-full");
+		expect(marqueeVariants({ axis: "vertical" }).root()).not.toContain("w-full");
+	});
+
 	test("the root lays out along the axis so the track keeps its full length", () => {
 		expect(marqueeVariants({ axis: "horizontal" }).root()).toContain("flex-row");
 		expect(marqueeVariants({ axis: "vertical" }).root()).toContain("flex-col");

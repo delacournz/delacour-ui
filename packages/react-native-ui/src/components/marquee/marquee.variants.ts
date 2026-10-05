@@ -183,6 +183,10 @@ export function resolveMarqueeHeld(pause: MarqueePause, isPressed: boolean): boo
  * container's. A track only as wide as the container would hit-test only that
  * far: once translated, the copies sliding in from the trailing edge would sit
  * outside its bounds and take no touches.
+ *
+ * A horizontal root is `w-full` for the same reason in the other direction: in
+ * a content-sized parent (`items-center`, a shrink-wrapped stage) a row root
+ * would grow to the track's length — thousands of points — and clip nothing.
  */
 export const marqueeVariants = tv({
 	slots: {
@@ -193,7 +197,7 @@ export const marqueeVariants = tv({
 	},
 	variants: {
 		axis: {
-			horizontal: { root: "flex-row", track: "flex-row", copy: "flex-row items-center", fade: "inset-y-0" },
+			horizontal: { root: "w-full flex-row", track: "flex-row", copy: "flex-row items-center", fade: "inset-y-0" },
 			vertical: { root: "flex-col", track: "flex-col", copy: "flex-col", fade: "inset-x-0" },
 		},
 		gap: {

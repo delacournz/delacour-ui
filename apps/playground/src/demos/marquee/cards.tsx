@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Tappable content",
+	align: "stretch",
 	caption:
 		"Each card is a pressable `Item`. A tap still lands while the strip moves and while it is held — the hold never steals a child's press.",
 };

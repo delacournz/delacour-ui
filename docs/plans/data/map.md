@@ -139,4 +139,4 @@ accessibility, API.
   `capture: { align: "stretch" }`, run `bun run previews -- -- --only map`, add the `<Preview>`s.
 - The planned `dark` demo became `tones` (pins in every tone); the basemap's theme is checked with the gallery's
   own theme toggle rather than a demo that flips the app theme.
-- `verify:expo` not run.
+- `bun --filter delacour run verify:expo` passes (map copied, `react-native-maps` expo-installed, app typechecks).

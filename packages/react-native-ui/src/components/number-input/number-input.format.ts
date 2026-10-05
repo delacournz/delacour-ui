@@ -190,18 +190,45 @@ export function stepValue(
 	return { blocked: false, reachedLimit: atLimit(value), value };
 }
 
-/** The decimal and group separators a locale writes numbers with. Falls back to English on an invalid locale. */
+/** Digits `Intl` may write a number in: ASCII, Arabic-Indic, Extended Arabic-Indic, Devanagari. */
+const ANY_DIGIT = "0-9\u0660-\u0669\u06f0-\u06f9\u0966-\u096f";
+
+/**
+ * What sits between two digits — each separator a formatted number holds, in
+ * order. The trailing digit is a lookahead so the next run can start from it;
+ * no lookbehind, which older Hermes builds reject.
+ */
+const BETWEEN_DIGITS = new RegExp(`[${ANY_DIGIT}]([^${ANY_DIGIT}]+)(?=[${ANY_DIGIT}])`, "g");
+
+/**
+ * The separators in `11111.1` as a locale formatted it.
+ *
+ * The last run of non-digits between two digits is the decimal, and the first,
+ * when there are two, is the group. A locale that leaves five digits ungrouped
+ * gets whichever of `,` and `.` its decimal leaves free.
+ */
+export function readNumberSeparators(formatted: string): NumberSeparators {
+	const runs = [...formatted.matchAll(BETWEEN_DIGITS)].map((match) => match[1] as string);
+	const decimal = runs.at(-1);
+	if (decimal === undefined) return { decimal: ".", group: "," };
+	const group = runs.length > 1 ? (runs[0] as string) : decimal === "," ? "." : ",";
+	return { decimal, group };
+}
+
+/**
+ * The decimal and group separators a locale writes numbers with. Falls back to English on an invalid locale.
+ *
+ * Read from `format`, not `formatToParts`: Hermes on iOS ships
+ * `Intl.NumberFormat` without `formatToParts`.
+ */
 export function getNumberSeparators(locale?: string): NumberSeparators {
-	let parts: Intl.NumberFormatPart[];
+	let formatted: string;
 	try {
-		parts = new Intl.NumberFormat(locale).formatToParts(11111.1);
+		formatted = new Intl.NumberFormat(locale).format(11111.1);
 	} catch {
-		parts = new Intl.NumberFormat(FALLBACK_LOCALE).formatToParts(11111.1);
+		formatted = new Intl.NumberFormat(FALLBACK_LOCALE).format(11111.1);
 	}
-	return {
-		decimal: parts.find((part) => part.type === "decimal")?.value ?? ".",
-		group: parts.find((part) => part.type === "group")?.value ?? ",",
-	};
+	return readNumberSeparators(formatted);
 }
 
 /** Arabic-Indic and Extended Arabic-Indic digits, rewritten as ASCII. */

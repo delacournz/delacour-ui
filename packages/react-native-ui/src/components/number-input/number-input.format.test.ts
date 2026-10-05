@@ -11,6 +11,7 @@ import {
 	NUMBER_INPUT_REPEAT_DELAY_MS,
 	type NumberInputConfig,
 	parseNumberInput,
+	readNumberSeparators,
 	reconcile,
 	resolveDraftCommit,
 	resolveNumberInputKeyboard,
@@ -201,6 +202,42 @@ describe("getNumberSeparators", () => {
 
 	test("an invalid locale falls back to English", () => {
 		expect(getNumberSeparators("not a locale!")).toEqual({ decimal: ".", group: "," });
+	});
+
+	// Hermes on iOS ships `Intl.NumberFormat` without `formatToParts`, and
+	// reaching for it threw on the first keystroke on a device.
+	test("does not need formatToParts", () => {
+		const prototype = Intl.NumberFormat.prototype as { formatToParts?: unknown };
+		const original = prototype.formatToParts;
+		prototype.formatToParts = undefined;
+		try {
+			expect(getNumberSeparators("de-DE")).toEqual({ decimal: ",", group: "." });
+			expect(getNumberSeparators("en-NZ")).toEqual({ decimal: ".", group: "," });
+		} finally {
+			prototype.formatToParts = original;
+		}
+	});
+});
+
+describe("readNumberSeparators", () => {
+	test("reads the group and the decimal from a formatted 11111.1", () => {
+		expect(readNumberSeparators("11,111.1")).toEqual({ decimal: ".", group: "," });
+		expect(readNumberSeparators("11.111,1")).toEqual({ decimal: ",", group: "." });
+		expect(readNumberSeparators("11\u202f111,1")).toEqual({ decimal: ",", group: "\u202f" });
+		expect(readNumberSeparators("11'111.1")).toEqual({ decimal: ".", group: "'" });
+	});
+
+	test("reads past non-ASCII digits", () => {
+		expect(readNumberSeparators("١١٬١١١٫١")).toEqual({ decimal: "٫", group: "٬" });
+	});
+
+	test("a locale that does not group picks the group its decimal leaves free", () => {
+		expect(readNumberSeparators("11111,1")).toEqual({ decimal: ",", group: "." });
+		expect(readNumberSeparators("11111.1")).toEqual({ decimal: ".", group: "," });
+	});
+
+	test("unreadable text falls back to English", () => {
+		expect(readNumberSeparators("")).toEqual({ decimal: ".", group: "," });
 	});
 });
 

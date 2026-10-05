@@ -22,6 +22,7 @@ export {
 	type NumberSeparators,
 	type ParsedNumberInput,
 	parseNumberInput,
+	readNumberSeparators,
 	reconcile,
 	resolveDraftCommit,
 	resolveFormatOptions,

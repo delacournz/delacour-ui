@@ -4,6 +4,8 @@ description: Time left until a fixed moment — a sale ending, a launch, a booki
 icon: Timer
 ---
 
+<Preview id="countdown/segmented" title={null} />
+
 ## Installation
 
 <ComponentInstall name="countdown" />
@@ -41,6 +43,10 @@ the device slept. Each tick is aimed at the next whole-second boundary, so it ne
 `segmented` draws each unit in its own box with a caption beneath and slides a changed digit in from above.
 `inline` is one run of text for a row or a banner.
 
+<Preview id="countdown/segmented" />
+
+<Preview id="countdown/inline" />
+
 ```tsx
 <Countdown to={endsAt} />
 <Countdown to={endsAt} variant="inline" size="sm" />
@@ -53,6 +59,8 @@ padded to two digits.
 
 `size` steps the digits up the type scale and the box padding with them.
 
+<Preview id="countdown/sizes" />
+
 ```tsx
 <Countdown size="sm" to={endsAt} />
 <Countdown size="md" to={endsAt} />
@@ -63,6 +71,8 @@ padded to two digits.
 
 Pick which units to show. The largest absorbs everything above it, so hours and minutes read `48:00` for two
 days rather than dropping the days.
+
+<Preview id="countdown/units" />
 
 ```tsx
 <Countdown to={endsAt} units={["hours", "minutes", "seconds"]} />
@@ -84,6 +94,8 @@ selected, so the last minute still reads `0:59`. Turn it off to keep every unit 
 
 `urgentBelow` takes seconds; at or below it the digits turn destructive.
 
+<Preview id="countdown/urgent" />
+
 ```tsx
 <Countdown to={holdEndsAt} urgentBelow={60} />
 ```
@@ -102,6 +114,8 @@ Seconds round up: the final second reads `0:01`, and `0:00` appears only when ti
 ## Labels
 
 `labels` replaces the captions under the boxes, and names the units a screen reader hears.
+
+<Preview id="countdown/labels" />
 
 ```tsx
 <Countdown labels={{ days: "Tage", hours: "Std.", minutes: "Min.", seconds: "Sek." }} to={endsAt} />

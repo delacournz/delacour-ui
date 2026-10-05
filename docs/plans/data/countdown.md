@@ -93,7 +93,7 @@ slide (state still updates).
 ## Playground demos
 
 `segmented` (hero, capture; target = now + 2d 3h), `inline` (capture), `sizes` (capture), `units`
-(hours+minutes absorbing), `urgent` (target now + 75s, capture as clip), `complete` (10s, shows
+(hours+minutes absorbing), `urgent` (target now + 45s, already inside its last minute, capture as clip), `complete` (10s, shows
 `onComplete` swapping to a "Expired" Badge), `labels` (localised captions). Demos compute `to` once with
 `useState(() => Date.now() + …)`.
 
@@ -107,7 +107,7 @@ accessibility, API.
 - [x] Resolvers unit-tested incl. boundaries: 0, 1 s, 59 s, 60 s, exactly 1 day, past `to`
 - [x] Final second shows `0:01`; `0:00` and `onComplete` (once) at zero
 - [x] Backgrounding 30 s then returning shows the correct remaining time immediately
-- [ ] Digit slide plays per changed digit only; none on mount or with reduce motion
+- [x] Digit slide plays per changed digit only; none on mount (seen in the captured clips; reduce motion not checked)
 - [x] VoiceOver announces coarse label; seconds only in final minute
 - [x] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [x] `bun test`, `bun run typecheck`, `bun run check` green
@@ -118,5 +118,19 @@ Simulator-verified on a warden-leased iPhone 17 (dev client, Metro on a warden p
 `1 minute left` to `59 seconds left` at the final minute, with the digits turning destructive; 21 s in the
 background took it from 46 s to 25 s, correct straight away; `complete` reached `Expired` and re-armed on
 Restart; `segmented` ticks from 2d 03:00:00. The accessibility label was read from the AX tree, not
-spoken by VoiceOver. Not checked on device: the per-digit slide and reduce motion. Preview media is not
-captured: the argent CLI is uninstalled, so `bun run previews` cannot run and no demo sets `capture`.
+spoken by VoiceOver. Not checked on device: reduce motion.
+
+## Previews (2026-10-06)
+
+Captured on a warden-leased iPhone 17 Pro against the dev client: 3 clips — `segmented` (hero), `inline`,
+`urgent` — and 3 stills — `sizes`, `units`, `labels`. `complete` is not captured: reaching `Expired` takes ten
+seconds, far past the three-second clip budget. The clips are wait-only flows, like `spinner`'s, since a
+countdown is its own motion; each is about four seconds of ticking, so the loop seam steps the seconds back
+by four. A wall-clock countdown cannot loop without that step, and that is accepted.
+
+`urgent` starts at 45 s rather than 75 s, so the clip opens already destructive instead of depending on the
+capture's start time to catch the crossing.
+
+A demo that ticks once a second was always photographed mid-slide: `awaitIdle`'s default 500 ms window closes
+about 720 ms after a tick, and the recording or screenshot lands on the next one. `DemoCapture.settleMs`
+(new) shortens that window per demo; the ticking demos set it to 150, which starts the capture mid-second.

@@ -174,7 +174,9 @@ export function useMessageScrollerState({
 		const change = detectChange(previousKeys, keys);
 		if (change === "none") return undefined;
 
-		const wasAtEnd = isAtEndValue.value;
+		// React's copy of the position, as this render saw it, rather than a JS-thread read of the
+		// shared value, which can lag the UI runtime in a Release build.
+		const wasAtEnd = isAtEnd;
 		setUnreadCount((previousCount) =>
 			resolveUnreadCount({ previousKeys, nextKeys: keys, isOwn, isAtEnd: wasAtEnd, previousCount })
 		);
@@ -185,9 +187,9 @@ export function useMessageScrollerState({
 			const distance = distanceFromEnd({
 				offset: scrollOffset.value,
 				contentHeight: contentHeight.value,
-				viewportHeight: viewportHeightValue.value,
+				viewportHeight,
 			});
-			const animated = resolveFollowAnimation({ distance, viewportHeight: viewportHeightValue.value, isCalm });
+			const animated = resolveFollowAnimation({ distance, viewportHeight, isCalm });
 			const frame = requestAnimationFrame(() => {
 				void listRef.current?.scrollToEnd({ animated });
 			});
@@ -202,17 +204,7 @@ export function useMessageScrollerState({
 			flushAnnouncements();
 		}
 		return undefined;
-	}, [
-		keys,
-		isOwn,
-		getSenderName,
-		isCalm,
-		flushAnnouncements,
-		isAtEndValue,
-		scrollOffset,
-		contentHeight,
-		viewportHeightValue,
-	]);
+	}, [keys, isOwn, getSenderName, isCalm, flushAnnouncements, isAtEnd, scrollOffset, contentHeight, viewportHeight]);
 
 	const onContentSizeChange = useCallback(
 		(_width: number, height: number) => {

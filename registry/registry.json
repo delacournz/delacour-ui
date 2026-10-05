@@ -1113,6 +1113,50 @@
 			]
 		},
 		{
+			"name": "select",
+			"type": "registry:ui",
+			"title": "Select",
+			"description": "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"slot",
+				"spinner",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/select/AGENTS.md",
+				"ui/select/index.ts",
+				"ui/select/select-group.tsx",
+				"ui/select/select-item.tsx",
+				"ui/select/select-option-row.tsx",
+				"ui/select/select-trigger.tsx",
+				"ui/select/select.collect.ts",
+				"ui/select/select.context.tsx",
+				"ui/select/select.tsx",
+				"ui/select/select.types.ts",
+				"ui/select/select.variants.ts"
+			]
+		},
+		{
 			"name": "separator",
 			"type": "registry:ui",
 			"title": "Separator",

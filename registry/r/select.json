@@ -1,0 +1,229 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "select",
+	"type": "registry:ui",
+	"title": "Select",
+	"description": "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"bottom-sheet",
+		"button",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"slot",
+		"spinner",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/select/AGENTS.md",
+			"target": "select/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/select",
+					"to": "@registry/ui/select"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/index.ts",
+			"target": "select/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select-group.tsx",
+			"target": "select/select-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select-item.tsx",
+			"target": "select/select-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon/icon",
+					"to": "@registry/ui/icon/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select-option-row.tsx",
+			"target": "select/select-option-row.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select-trigger.tsx",
+			"target": "select/select-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.collect.ts",
+			"target": "select/select.collect.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.context.tsx",
+			"target": "select/select.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.tsx",
+			"target": "select/select.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.types.ts",
+			"target": "select/select.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon/icon",
+					"to": "@registry/ui/icon/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/select/select.variants.ts",
+			"target": "select/select.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	]
+}

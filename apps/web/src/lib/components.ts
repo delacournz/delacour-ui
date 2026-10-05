@@ -104,6 +104,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A row of stars that reads or sets a score, in whole or half steps.",
 	},
 	{
+		slug: "select",
+		name: "Select",
+		group: "Forms",
+		blurb: "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet.",
+	},
+	{
 		slug: "slider",
 		name: "Slider",
 		group: "Forms",

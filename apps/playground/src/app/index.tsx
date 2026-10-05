@@ -74,6 +74,7 @@ import {
 	IconSidebarFloating,
 	IconSignature,
 	IconSlidesWide,
+	IconSparkle,
 	IconSquareBehindSquare1,
 	IconSquareCheck,
 	IconSquareCursor,
@@ -110,6 +111,7 @@ import { LIST_GAP, SECTION_GAP } from "@/tokens";
 const ICONS: Record<ComponentSlug, IconComponent> = {
 	accordion: IconChevronGrabberVertical,
 	alert: IconExclamationTriangle,
+	"animated-badge": IconSparkle,
 	avatar: IconPeople,
 	badge: IconTag,
 	"bottom-sheet": IconLayoutBottomFull,

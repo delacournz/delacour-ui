@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on animated-badge/statuses and has settled — six badges, the loading one
+  already spinning. The capture script navigates there before running this.
+steps:
+  - echo: Nothing to touch — the loading glyph is the motion, so this only holds the camera on it
+  - wait: 2000

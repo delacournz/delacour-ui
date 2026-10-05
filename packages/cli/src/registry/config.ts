@@ -101,6 +101,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A status message with a glyph picked from its status, a title, a description and an optional action.",
 		categories: ["feedback"],
 	},
+	"animated-badge": {
+		title: "AnimatedBadge",
+		description: "A status pill that rolls its content and springs its width when the status changes.",
+		categories: ["feedback"],
+	},
 	avatar: {
 		title: "Avatar",
 		description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group.",

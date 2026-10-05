@@ -175,6 +175,14 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bounds-and-disabled-weekends";
+import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
+import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
+import * as demo_date_picker_in_field_invalid from "./date-picker/in-field-invalid";
+import * as demo_date_picker_multiple from "./date-picker/multiple";
+import * as demo_date_picker_range_booking from "./date-picker/range-booking";
+import * as demo_date_picker_single from "./date-picker/single";
+import * as demo_date_picker_sizes_variants from "./date-picker/sizes-variants";
 import * as demo_context_menu_anchored_to_row from "./context-menu/anchored-to-row";
 import * as demo_context_menu_hold_timing from "./context-menu/hold-timing";
 import * as demo_context_menu_lifted_preview from "./context-menu/lifted-preview";
@@ -653,6 +661,14 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"date-picker/bounds-and-disabled-weekends": demo_date_picker_bounds_and_disabled_weekends,
+	"date-picker/controlled-open": demo_date_picker_controlled_open,
+	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,
+	"date-picker/in-field-invalid": demo_date_picker_in_field_invalid,
+	"date-picker/multiple": demo_date_picker_multiple,
+	"date-picker/range-booking": demo_date_picker_range_booking,
+	"date-picker/single": demo_date_picker_single,
+	"date-picker/sizes-variants": demo_date_picker_sizes_variants,
 	"context-menu/anchored-to-row": demo_context_menu_anchored_to_row,
 	"context-menu/hold-timing": demo_context_menu_hold_timing,
 	"context-menu/lifted-preview": demo_context_menu_lifted_preview,

@@ -189,6 +189,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
 		categories: ["controls"],
 	},
+	"date-picker": {
+		title: "Date Picker",
+		description:
+			"An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished.",
+		categories: ["forms"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

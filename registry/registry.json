@@ -679,6 +679,50 @@
 			]
 		},
 		{
+			"name": "date-picker",
+			"type": "registry:ui",
+			"title": "Date Picker",
+			"description": "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"calendar",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/date-picker/AGENTS.md",
+				"ui/date-picker/date-picker-calendar.tsx",
+				"ui/date-picker/date-picker-clear.tsx",
+				"ui/date-picker/date-picker-content.tsx",
+				"ui/date-picker/date-picker-done.tsx",
+				"ui/date-picker/date-picker-icon.tsx",
+				"ui/date-picker/date-picker-trigger.tsx",
+				"ui/date-picker/date-picker-value.tsx",
+				"ui/date-picker/date-picker.context.tsx",
+				"ui/date-picker/date-picker.tsx",
+				"ui/date-picker/date-picker.types.ts",
+				"ui/date-picker/date-picker.variants.ts",
+				"ui/date-picker/index.ts"
+			]
+		},
+		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",

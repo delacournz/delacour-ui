@@ -1,0 +1,256 @@
+---
+title: TimePicker
+description: A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline.
+icon: Clock
+---
+
+<Preview id="time-picker/basic-sheet" title={null} />
+
+## Installation
+
+<ComponentInstall name="time-picker" />
+
+<Callout type="warn" title="It needs the sheet engine">
+`time-picker` imports `BottomSheet`, so installing it installs `@delacour/react-native-bottom-sheet`
+too — even if you only ever use `presentation="inline"`. Mount
+[`BottomSheetProvider`](/docs/native/components/bottom-sheet#provider) once, inside
+`DelacourProvider`, and rebuild the dev client.
+</Callout>
+
+## Usage
+
+<Preview id="time-picker/basic-sheet" />
+
+```tsx title="app/index.tsx"
+import { TimePicker, type TimeValue } from "@/components/ui/time-picker";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [time, setTime] = useState<TimeValue | null>(null);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <TimePicker value={time} onValueChange={setTime} />
+    </View>
+  );
+}
+```
+
+The trigger is an `Input`'s box, so it lines up with the fields around it. Pressing it opens a
+sheet of wheels. `onValueChange` fires each time a wheel comes to rest; Done closes the sheet, and
+swiping it away keeps the value.
+
+**The value is always 24-hour.** `{ hour: 15, minute: 5 }` is 3:05 PM whatever the clock shows;
+`hourCycle` and `locale` change how it reads, never what is stored. `null` means "not set" and shows
+the placeholder.
+
+## Minute step
+
+`minuteStep` sets the minute wheel's granularity. A value off the step is rounded to it, not
+refused.
+
+```tsx
+<TimePicker minuteStep={15} placeholder="Pick a slot" value={time} onValueChange={setTime} />
+```
+
+## 12 and 24 hours
+
+<Preview id="time-picker/twenty-four-hour" />
+
+`hourCycle` defaults to `"auto"`, which follows the locale. Set `12` or `24` to pin it.
+
+```tsx
+<TimePicker hourCycle={12} locale="en-US" value={time} onValueChange={setTime} />
+<TimePicker hourCycle={24} locale="en-GB" value={time} onValueChange={setTime} />
+```
+
+## Bounds
+
+<Preview id="time-picker/bounds" />
+
+`minTime` and `maxTime` dim the rows outside them. A wheel that comes to rest on a dimmed row moves
+back to the nearest time that can be picked, so `onValueChange` never sees one.
+
+```tsx
+<TimePicker
+  minTime={{ hour: 9, minute: 0 }}
+  maxTime={{ hour: 17, minute: 30 }}
+  minuteStep={5}
+  value={time}
+  onValueChange={setTime}
+/>
+```
+
+## Inline
+
+<Preview id="time-picker/inline-wheel" />
+
+`presentation="inline"` draws the bare wheel in place — no trigger and no sheet.
+
+```tsx
+<TimePicker presentation="inline" value={time} onValueChange={setTime} />
+```
+
+`TimePickerWheel` is the same wheel with no picker around it, for a screen or another control that
+composes one.
+
+```tsx
+<TimePickerWheel minuteStep={5} value={time} onValueChange={setTime} />
+```
+
+## Seconds
+
+`showSeconds` adds a third wheel, and the value carries a `second` field.
+
+```tsx
+<TimePicker hourCycle={24} showSeconds value={time} onValueChange={setTime} />
+```
+
+## Controlled open
+
+`isOpen` and `onOpenChange` drive the sheet from outside.
+
+```tsx
+<TimePicker isOpen={open} onOpenChange={setOpen} value={time} onValueChange={setTime} />
+```
+
+## In a Field
+
+<Preview id="time-picker/in-field-invalid" />
+
+Inside a `Field` the picker takes the field's invalid and disabled state, reads `Field.Label` as
+its accessible name, and opens when the label is tapped. Write the parts out to change any of them.
+
+```tsx
+<Field isInvalid={time === null}>
+  <Field.Label>Reminder</Field.Label>
+  <TimePicker clearable minuteStep={5} value={time} onValueChange={setTime}>
+    <TimePicker.Trigger>
+      <TimePicker.Value placeholder="Choose a reminder time" />
+      <TimePicker.Icon />
+    </TimePicker.Trigger>
+    <TimePicker.Content title="Reminder time">
+      <TimePicker.Wheel />
+    </TimePicker.Content>
+  </TimePicker>
+  <Field.Error>{time === null ? "Pick a time for the reminder." : undefined}</Field.Error>
+</Field>
+```
+
+## Custom format
+
+`format` replaces the locale's own reading of the time on the trigger.
+
+```tsx
+<TimePicker
+  format={(value) => `${value.hour}h${String(value.minute).padStart(2, "0")}`}
+  value={time}
+  onValueChange={setTime}
+/>
+```
+
+## Accessibility
+
+The trigger is a button whose value is the formatted time, or "not set". Each wheel column is one
+adjustable element — "Hour", "Minute", "Second", "AM/PM" — so a screen reader swipes up or down to
+step a row instead of flicking a wheel. The rows themselves are hidden.
+
+## Time helpers
+
+The subpath also exports the pure helpers the picker is built on, for a form that has to store,
+validate or show a time.
+
+```tsx
+import { formatTime, parseTime, serialiseTime } from "@/components/ui/time-picker";
+
+parseTime("09:30"); // { hour: 9, minute: 30 }
+serialiseTime({ hour: 9, minute: 30 }); // "09:30"
+formatTime({ hour: 15, minute: 5 }, { locale: "en-US", hourCycle: 12 }); // "3:05 PM"
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `TimePicker` | Owns the value, the open state, the clock and the sheet |
+| `TimePicker.Trigger` | The field-shaped control that opens the sheet |
+| `TimePicker.Value` | The formatted time, or the placeholder |
+| `TimePicker.Icon` | The trigger's glyph — a clock unless you pass another |
+| `TimePicker.Content` | The sheet: scrim, panel, title, body and footer |
+| `TimePicker.Wheel` | The wheel, wired to the picker |
+| `TimePicker.Done` | Closes the sheet, committing an untouched wheel's time |
+| `TimePicker.Clear` | Sets the value to `null` and closes |
+
+### TimePicker
+
+<TypeTable
+  type={{
+    value: { type: "TimeValue | null", description: "Controlled value. Always 24-hour." },
+    defaultValue: { type: "TimeValue | null", default: "null", description: "Starting value while uncontrolled." },
+    onValueChange: { type: "(value: TimeValue | null) => void", description: "Fires when a wheel comes to rest, when Done commits an untouched wheel, and on Clear." },
+    minTime: { type: "TimeValue", description: "The earliest selectable time." },
+    maxTime: { type: "TimeValue", description: "The latest selectable time." },
+    minuteStep: { type: "1 | 2 | 5 | 10 | 15 | 20 | 30", default: "1" },
+    showSeconds: { type: "boolean", default: "false" },
+    hourCycle: { type: '12 | 24 | "auto"', default: '"auto"', description: "Display only." },
+    locale: { type: "string", description: "A BCP 47 tag. Defaults to the device's." },
+    format: { type: "(value: TimeValue, context: { locale: string; hourCycle: 12 | 24 }) => string" },
+    placeholder: { type: "string", default: '"Select time"' },
+    presentation: { type: '"sheet" | "inline"', default: '"sheet"' },
+    visibleRows: { type: "3 | 5 | 7", default: "5" },
+    isOpen: { type: "boolean" },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    isDisabled: { type: "boolean", description: "Inherited from an enclosing Field." },
+    isReadOnly: { type: "boolean", description: "Shows the value but never opens the sheet." },
+    isInvalid: { type: "boolean", description: "Inherited from an enclosing Field." },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"', description: "The trigger's box and the wheel's row height." },
+    title: { type: "string", default: '"Select time"' },
+    doneLabel: { type: "string", default: '"Done"' },
+    clearable: { type: "boolean", default: "false", description: "Adds Clear to the sheet's footer." },
+    clearLabel: { type: "string", default: '"Clear"' },
+    accessibilityLabel: { type: "string", description: "Falls back to Field.Label, then \"Time\"." },
+    className: { type: "string", description: "Lands on the trigger in a sheet, on the wheel inline." },
+    children: { type: "ReactNode", description: "Omit for the default anatomy." },
+  }}
+/>
+
+### TimePicker.Content
+
+<TypeTable
+  type={{
+    title: { type: "string", description: "Defaults to the root's title." },
+    footer: { type: "ReactNode", description: "Replaces Done (and Clear)." },
+    children: { type: "ReactNode", description: "Defaults to the wheel." },
+    className: { type: "string" },
+  }}
+/>
+
+### TimePickerWheel
+
+<TypeTable
+  type={{
+    value: { type: "TimeValue | null", description: "null starts the wheels at now, on the step and inside the bounds." },
+    onValueChange: { type: "(value: TimeValue) => void", description: "Fires each time a wheel comes to rest." },
+    minTime: { type: "TimeValue" },
+    maxTime: { type: "TimeValue" },
+    minuteStep: { type: "1 | 2 | 5 | 10 | 15 | 20 | 30", default: "1" },
+    showSeconds: { type: "boolean", default: "false" },
+    hourCycle: { type: '12 | 24 | "auto"', default: '"auto"' },
+    locale: { type: "string" },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    visibleRows: { type: "3 | 5 | 7", default: "5" },
+    isDisabled: { type: "boolean" },
+    className: { type: "string" },
+  }}
+/>
+
+### useTimePicker
+
+Reads the enclosing picker — `value`, `setValue`, `isOpen`, `open`, `close`, `hourCycle`, `locale`,
+`display`, `isDisabled`, `isInvalid` and the rest — for a custom trigger or footer. Throws outside a
+`TimePicker`; `useTimePickerContext()` returns `null` instead.

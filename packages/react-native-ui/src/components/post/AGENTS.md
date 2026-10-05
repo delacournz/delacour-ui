@@ -119,3 +119,12 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 | `Post.Media` | `image` with `alt`; `alt=""` is skipped |
 | `Post.Stat` | `button`, "Like, 216", `selected` when lit |
 | `Post.Votes` | "Upvote" / "Downvote" buttons, `selected` when cast; "Score 1,240" live region |
+
+## Previews (follow-up)
+
+No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and
+the media are shot after integration. The five to capture, all `align: "stretch"`: `feed-card`
+(**hero**), `vote` (flow `post/vote` — tap `post-vote-up`, then again to clear), `compact-timeline`,
+`media-first` and `live-counts` (flow `post/live-counts` — tap `post-like`, `post-repost`, then each
+again). Add `<Preview id="post/feed-card" title={null} />` above `## Installation` in `post.mdx` in
+the same change — a `<Preview id>` for an uncaptured demo throws at render.

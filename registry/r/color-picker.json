@@ -1,0 +1,259 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "color-picker",
+	"type": "registry:ui",
+	"title": "Color Picker",
+	"description": "A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"bottom-sheet",
+		"compose-refs",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-svg",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/AGENTS.md",
+			"target": "color-picker/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/color-picker",
+					"to": "@registry/ui/color-picker"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-alpha.tsx",
+			"target": "color-picker/color-picker-alpha.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-area.tsx",
+			"target": "color-picker/color-picker-area.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-checkerboard.tsx",
+			"target": "color-picker/color-picker-checkerboard.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-content.tsx",
+			"target": "color-picker/color-picker-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-gradient.tsx",
+			"target": "color-picker/color-picker-gradient.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-hue.tsx",
+			"target": "color-picker/color-picker-hue.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-input.tsx",
+			"target": "color-picker/color-picker-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-preview.tsx",
+			"target": "color-picker/color-picker-preview.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-sheet.tsx",
+			"target": "color-picker/color-picker-sheet.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-swatch.tsx",
+			"target": "color-picker/color-picker-swatch.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-swatches.tsx",
+			"target": "color-picker/color-picker-swatches.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-thumb.tsx",
+			"target": "color-picker/color-picker-thumb.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-track.tsx",
+			"target": "color-picker/color-picker-track.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker-trigger.tsx",
+			"target": "color-picker/color-picker-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.color.ts",
+			"target": "color-picker/color-picker.color.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.context.tsx",
+			"target": "color-picker/color-picker.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.tsx",
+			"target": "color-picker/color-picker.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.types.ts",
+			"target": "color-picker/color-picker.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/color-picker.variants.ts",
+			"target": "color-picker/color-picker.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/color-picker/index.ts",
+			"target": "color-picker/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

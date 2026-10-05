@@ -1,0 +1,20 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on color-picker/sheet-trigger and has settled — the Accent
+  field with its trigger row showing #f59e0b and the sheet closed. The capture script navigates
+  there before running this.
+steps:
+  - echo: Opening the sheet from the trigger row
+  - tap: { id: color-picker-trigger }
+  - await: { visible: { id: color-picker-sheet-swatch-3b82f6 } }
+  - wait: 600
+  - echo: Picking blue, then the original amber again
+  - tap: { id: color-picker-sheet-swatch-3b82f6 }
+  - wait: 600
+  - tap: { id: color-picker-sheet-swatch-f59e0b }
+  - wait: 500
+  - echo: Dragging the sheet down by its handle to dismiss it, so the clip ends where it began
+  # The handle is the engine's own adjustable element, labelled "Bottom sheet".
+  # A swipe from a swatch would run off the bottom of the screen.
+  - swipe: { from: { text: Bottom sheet }, by: { y: 0.35 }, duration: 250 }
+  - await: { hidden: { id: color-picker-sheet-swatch-ef4444 } }
+  - wait: 500

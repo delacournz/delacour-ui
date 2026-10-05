@@ -29,6 +29,7 @@
 		"switch",
 		"slider",
 		"rating",
+		"color-picker",
 		"calendar",
 		"date-picker",
 		"date-time-picker",

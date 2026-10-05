@@ -83,6 +83,7 @@ const ROWS = [
 	{ slug: "calendar", title: "Calendar", description: "Single, multiple, range, bounds, locale", group: "Forms" },
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
 	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
+	{ slug: "color-picker", title: "ColorPicker", description: "Area, hue, alpha, hex, swatches, sheet", group: "Forms" },
 	{
 		slug: "combobox",
 		title: "Combobox",

@@ -72,6 +72,7 @@ shares.
 | [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
 | [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [ColorPicker](src/components/color-picker/AGENTS.md) | `@delacour/react-native-ui/color-picker` | A colour dragged on an area and tracks, typed as hex, or tapped from swatches |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
 | [Combobox](src/components/combobox/AGENTS.md) | `@delacour/react-native-ui/combobox` | A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet |
 | [DatePicker](src/components/date-picker/AGENTS.md) | `@delacour/react-native-ui/date-picker` | A field-shaped trigger that opens a calendar in a bottom sheet — a day, a range or several |

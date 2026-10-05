@@ -80,6 +80,19 @@ describe("classifySource", () => {
 		});
 	});
 
+	// An engine for an optional native peer rides along with nothing: an app adding the navigation
+	// theme must not be handed `expo-blur`, and one adding the blur engine must not be handed
+	// `expo-router`. It still lands under `lib/expo/`, beside the theme.
+	test("the blur engine is an expo file with an item of its own", () => {
+		expect(classifySource("expo/blur-layer.tsx")).toEqual({
+			item: "blur-layer",
+			type: "registry:lib",
+			namespace: "lib",
+			target: "expo/blur-layer.tsx",
+			moduleId: "expo/blur-layer",
+		});
+	});
+
 	test("tests are excluded — they reach into internals a consumer will not have", () => {
 		expect(classifySource("components/button/button.variants.test.ts")).toBeNull();
 		expect(classifySource("lib/cn.test.ts")).toBeNull();

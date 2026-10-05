@@ -46,6 +46,8 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	"expo-router": "expo",
 	// Ships a native gradient view, so it is version-matched and needs a rebuild.
 	"expo-linear-gradient": "expo",
+	// Ships a native blur view, so it is version-matched and needs a rebuild.
+	"expo-blur": "expo",
 	// Ships a Fabric view, so it is version-matched and needs a rebuild too.
 	"@legendapp/list": "expo",
 	// Ships a Fabric portal view, so it is version-matched and needs a rebuild.
@@ -289,6 +291,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",
 		categories: ["forms"],
 	},
+	"scroll-blur": {
+		title: "Scroll Blur",
+		description: "A progressive blur at a scrollable's edges that falls back to a gradient fade.",
+		categories: ["layout"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
@@ -298,6 +305,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	expo: {
 		title: "Navigation theme",
 		description: "Hands expo-router's navigator this library's colours, including the slab behind a push.",
+	},
+
+	"blur-layer": {
+		title: "Expo blur layer",
+		description: "expo-blur as ScrollBlur's engine — mount it once with ScrollBlurLayerProvider.",
 	},
 
 	"calm-motion": {
@@ -330,6 +342,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-reduce-transparency": {
+		title: "useReduceTransparency",
+		description: "Whether iOS's Reduce Transparency is on, live, so a blur can swap for an opaque wash.",
 	},
 	"use-scroll-source": {
 		title: "useScrollSource",

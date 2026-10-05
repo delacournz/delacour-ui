@@ -226,6 +226,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "scroll-blur",
+		name: "ScrollBlur",
+		group: "Layout",
+		blurb: "A progressive blur at a scrollable's edges that falls back to a gradient fade.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

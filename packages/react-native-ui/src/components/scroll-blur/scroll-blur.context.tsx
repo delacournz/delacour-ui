@@ -4,8 +4,11 @@ import type { BlurLayerComponent } from "./scroll-blur.types";
 const BlurLayerContext = createContext<BlurLayerComponent | null>(null);
 
 export type ScrollBlurLayerProviderProps = {
-	/** The engine every `ScrollBlur` beneath draws its strips with. */
-	layer: BlurLayerComponent;
+	/**
+	 * The engine every `ScrollBlur` beneath draws its strips with. `null` turns
+	 * the blur off for a subtree — every band beneath draws the gradient wash.
+	 */
+	layer: BlurLayerComponent | null;
 	children: ReactNode;
 };
 

@@ -71,7 +71,24 @@ const DIRECTORIES: Record<string, (rest: string[]) => SourceClassification | nul
 	// of its own: it is a helper that happens to import from expo-router, and a
 	// sixth configurable path would be one more thing to answer at `init`.
 	expo: (rest) =>
-		classifyDirectoryItem(rest, { item: "expo", namespace: "lib", type: "registry:lib", prefix: "expo/" }),
+		classifyDirectoryItem(rest, {
+			item: EXPO_OWN_ITEMS[rest.join("/")] ?? "expo",
+			namespace: "lib",
+			type: "registry:lib",
+			prefix: "expo/",
+		}),
+};
+
+/**
+ * `expo/` files that are items of their own rather than part of the `expo` item.
+ *
+ * A blur engine is an adapter for one optional native peer, and it is useful
+ * without the navigation theme and vice versa. Folded into one item, adding
+ * either would install both `expo-router` and `expo-blur` — a native module and
+ * a rebuild for an app that asked for neither.
+ */
+const EXPO_OWN_ITEMS: Record<string, string> = {
+	"blur-layer.tsx": "blur-layer",
 };
 
 /** A component is a folder; a bare file directly under `components/` is not one. */

@@ -1,8 +1,10 @@
 import "../styles/global.css";
 import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
+import { ExpoBlurLayer } from "@delacour/react-native-ui/expo/blur-layer";
 import { NavigationTheme } from "@delacour/react-native-ui/expo/navigation-theme";
 import { useThemeColor } from "@delacour/react-native-ui/hooks/use-theme-color";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
+import { ScrollBlurLayerProvider } from "@delacour/react-native-ui/scroll-blur";
 import { Observe, ObserveRoot } from "expo-observe";
 import { Stack } from "expo-router";
 import * as SystemUI from "expo-system-ui";
@@ -122,6 +124,10 @@ function SystemBackground(): null {
  * optional peer of the library — so the app does, once, here, from the
  * library's own sheet subpath, which re-exports it.
  *
+ * `ScrollBlurLayerProvider` names the blur engine once for every `ScrollBlur`
+ * in the app. `ExpoBlurLayer` is the only import of `expo-blur`, an optional
+ * peer the library never resolves on its own.
+ *
  * NavigationTheme hands the navigator the same tokens, which is what keeps the
  * container behind a screen transition from being React Navigation's own pale
  * default.
@@ -154,10 +160,12 @@ function RootLayout(): ReactElement {
 		<DelacourProvider>
 			<BottomSheetProvider>
 				<SystemBackground />
-				<NavigationTheme>
-					<Stack screenOptions={{ headerShown: false }} />
-					<ThemeTrigger />
-				</NavigationTheme>
+				<ScrollBlurLayerProvider layer={ExpoBlurLayer}>
+					<NavigationTheme>
+						<Stack screenOptions={{ headerShown: false }} />
+						<ThemeTrigger />
+					</NavigationTheme>
+				</ScrollBlurLayerProvider>
 			</BottomSheetProvider>
 		</DelacourProvider>
 	);

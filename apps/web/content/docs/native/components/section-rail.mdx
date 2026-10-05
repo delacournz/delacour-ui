@@ -25,10 +25,10 @@ import { View } from "react-native";
 import Animated from "react-native-reanimated";
 
 const SECTIONS = [
-  { id: "intro", title: "Introduction", level: 0 },
-  { id: "setup", title: "Setup", level: 0 },
-  { id: "setup-ios", title: "iOS", level: 1 },
-  { id: "faq", title: "Questions", level: 0 },
+  { id: "intro", title: "Introduction", level: 0, body: "What the library is and who it is for." },
+  { id: "setup", title: "Setup", level: 0, body: "Install the package and wrap your app." },
+  { id: "setup-ios", title: "iOS", level: 1, body: "Run pod install, then rebuild the dev client." },
+  { id: "faq", title: "Questions", level: 0, body: "The answers people ask for most." },
 ] as const;
 
 export default function Example() {
@@ -45,7 +45,7 @@ export default function Example() {
         {SECTIONS.map((section) => (
           <View key={section.id} onLayout={sections.register(section.id)}>
             <Text.Header>{section.title}</Text.Header>
-            <Text.Paragraph>…</Text.Paragraph>
+            <Text.Paragraph>{section.body}</Text.Paragraph>
           </View>
         ))}
       </Animated.ScrollView>

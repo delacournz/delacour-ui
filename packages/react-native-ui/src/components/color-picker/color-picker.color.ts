@@ -312,6 +312,43 @@ export function isSameColor(value: string, hsva: Hsva, format: ColorFormat): boo
 	return formatColor(preserveHue(parsed, hsva), format) === formatColor(hsva, format);
 }
 
+/**
+ * A model brought into range for a picker: hue folded into 0–360 (360 kept, as
+ * the hue track's right end), the rest clamped to 0–1, and alpha pinned at one
+ * when the picker has no alpha track to move it.
+ */
+export function normalizeHsva({ h, s, v, a }: Hsva, hasAlpha: boolean): Hsva {
+	return {
+		h: h === 360 ? 360 : wrapHue(h),
+		s: clampUnit(s),
+		v: clampUnit(v),
+		a: hasAlpha ? clampUnit(a) : 1,
+	};
+}
+
+/**
+ * What a picker's model becomes when a caller passes it a value, or null to
+ * keep the model as it is.
+ *
+ * Null for text that is not a colour and for a value the picker already holds —
+ * the controlled echo of its own last change, which must not re-derive the
+ * model and drift the hue of a grey. Otherwise the parsed colour, with the
+ * remembered hue carried across a grey or black and the alpha pinned as
+ * {@link normalizeHsva} pins it.
+ */
+export function resolveIncomingColor(
+	value: string,
+	current: Hsva,
+	format: ColorFormat,
+	hasAlpha: boolean
+): Hsva | null {
+	const parsed = parseColor(value);
+	if (!parsed) return null;
+	const next = normalizeHsva(preserveHue(parsed, current), hasAlpha);
+	if (formatColor(next, format) === formatColor(current, format)) return null;
+	return next;
+}
+
 /** WCAG relative luminance, 0 for black to 1 for white. Alpha is ignored. */
 export function relativeLuminance({ r, g, b }: Rgba): number {
 	const linear = (channel: number): number => {

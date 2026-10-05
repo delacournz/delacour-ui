@@ -91,7 +91,9 @@ export const colorPickerVariants = tv({
 		preview: "overflow-hidden rounded-md border border-border",
 		swatches: "flex-row flex-wrap gap-2",
 		/** A preset. The ring is the border; the colour is inset from it. */
-		swatch: "rounded-full border-2 p-0.5",
+		swatch: "rounded-full border-2 border-transparent p-0.5",
+		/** The selection ring, over the swatch's own border. Its opacity is animated. */
+		swatchRing: "absolute -inset-0.5 rounded-full border-2 border-foreground",
 		swatchFill: "flex-1 overflow-hidden rounded-full border border-border",
 		/** The row the sheet's trigger draws — the field box comes from Input's own resolver. */
 		trigger: "",
@@ -133,16 +135,19 @@ export const colorPickerVariants = tv({
 		// resolver, which the trigger and the hex field both call.
 		variant: { primary: {}, secondary: {} },
 		// The empty `false` branches are load-bearing typing — see button.variants.ts.
-		isDisabled: { true: { root: "opacity-50" }, false: {} },
+		// Each drawn part fades, never the root: the trigger row and the hex field
+		// are Input boxes that fade themselves, and a faded root would compound them.
+		isDisabled: {
+			true: { area: "opacity-50", touchArea: "opacity-50", preview: "opacity-50", swatches: "opacity-50" },
+			false: {},
+		},
 		isInvalid: { true: {}, false: {} },
-		isSelected: { true: { swatch: "border-foreground" }, false: { swatch: "border-transparent" } },
 	},
 	defaultVariants: {
 		size: COLOR_PICKER_DEFAULT_SIZE,
 		variant: COLOR_PICKER_DEFAULT_VARIANT,
 		isDisabled: false,
 		isInvalid: false,
-		isSelected: false,
 	},
 });
 

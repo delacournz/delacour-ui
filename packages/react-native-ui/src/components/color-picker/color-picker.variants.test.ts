@@ -49,14 +49,12 @@ function everyCell(): {
 	variant: (typeof COLOR_PICKER_VARIANTS)[number];
 	isDisabled: boolean;
 	isInvalid: boolean;
-	isSelected: boolean;
 }[] {
 	const cells = [];
 	for (const size of COLOR_PICKER_SIZES)
 		for (const variant of COLOR_PICKER_VARIANTS)
 			for (const isDisabled of [true, false])
-				for (const isInvalid of [true, false])
-					for (const isSelected of [true, false]) cells.push({ size, variant, isDisabled, isInvalid, isSelected });
+				for (const isInvalid of [true, false]) cells.push({ size, variant, isDisabled, isInvalid });
 	return cells;
 }
 
@@ -140,14 +138,26 @@ describe("tokens", () => {
 		}
 	});
 
-	test("a selected swatch is ringed, an unselected one is not", () => {
-		expect(cls(colorPickerVariants({ isSelected: true }).swatch())).toMatch(/\bborder-foreground\b/);
-		expect(cls(colorPickerVariants({ isSelected: false }).swatch())).toMatch(/\bborder-transparent\b/);
+	test("the selection ring is a separate layer over a same-width transparent border", () => {
+		// The ring is its own layer so its opacity can fade; the swatch keeps a
+		// transparent border of the same width so nothing shifts as it appears.
+		const slots = colorPickerVariants();
+		expect(cls(slots.swatchRing())).toMatch(/\bborder-foreground\b/);
+		expect(cls(slots.swatchRing())).toMatch(/\bborder-2\b/);
+		expect(cls(slots.swatch())).toMatch(/\bborder-transparent\b/);
+		expect(cls(slots.swatch())).toMatch(/\bborder-2\b/);
 	});
 
-	test("disabled fades the root", () => {
-		expect(cls(colorPickerVariants({ isDisabled: true }).root())).toMatch(/\bopacity-50\b/);
-		expect(cls(colorPickerVariants({ isDisabled: false }).root())).not.toMatch(/opacity/);
+	test("disabled fades each drawn part once, never the root", () => {
+		const disabled = colorPickerVariants({ isDisabled: true });
+		for (const slot of [disabled.area, disabled.touchArea, disabled.preview, disabled.swatches]) {
+			expect(cls(slot())).toMatch(/\bopacity-50\b/);
+		}
+		// The trigger row and the hex field are Input boxes, which fade themselves;
+		// a faded root would compound them to a quarter.
+		expect(cls(disabled.root())).not.toMatch(/opacity/);
+		const enabled = colorPickerVariants({ isDisabled: false });
+		expect(cls(enabled.area())).not.toMatch(/opacity/);
 	});
 
 	test("the grab scales the thumb up", () => {

@@ -18,8 +18,8 @@ export type ColorPickerPreviewProps = Omit<ViewProps, "children" | "style"> & {
  * what the area, the tracks and the field already announce.
  */
 export function ColorPickerPreview({ className, ...props }: ColorPickerPreviewProps): ReactElement {
-	const { live, size } = useColorPickerPart("ColorPicker.Preview");
-	const slots = colorPickerVariants({ size });
+	const { live, size, isDisabled } = useColorPickerPart("ColorPicker.Preview");
+	const slots = colorPickerVariants({ isDisabled, size });
 
 	const colorStyle = useAnimatedStyle(() => {
 		const { r, g, b, a } = hsvToRgb(live.value);

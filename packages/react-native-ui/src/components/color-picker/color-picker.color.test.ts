@@ -10,9 +10,11 @@ import {
 	hsvToHsl,
 	hsvToRgb,
 	isSameColor,
+	normalizeHsva,
 	parseColor,
 	preserveHue,
 	relativeLuminance,
+	resolveIncomingColor,
 	rgbaToHex,
 	rgbToHsv,
 	stepHsva,
@@ -321,5 +323,44 @@ describe("withAlpha", () => {
 	test("keeps the RGB and swaps the alpha — never the keyword transparent", () => {
 		expect(withAlpha({ r: 10, g: 20, b: 30, a: 1 }, 0)).toBe("rgba(10, 20, 30, 0)");
 		expect(withAlpha({ r: 10, g: 20, b: 30, a: 0.2 }, 1)).toBe("rgba(10, 20, 30, 1)");
+	});
+});
+
+describe("resolveIncomingColor", () => {
+	const red: Hsva = { h: 0, s: 1, v: 1, a: 1 };
+	const blue: Hsva = { h: 240, s: 0.5, v: 0.8, a: 1 };
+
+	test("a value the picker already holds changes nothing", () => {
+		expect(resolveIncomingColor("#ff0000", red, "hex", false)).toBeNull();
+	});
+
+	test("a new value re-derives the model", () => {
+		expect(resolveIncomingColor("#00ff00", red, "hex", false)).toEqual({ h: 120, s: 1, v: 1, a: 1 });
+	});
+
+	test("unparseable text changes nothing", () => {
+		expect(resolveIncomingColor("nope", red, "hex", false)).toBeNull();
+	});
+
+	test("a grey keeps the remembered hue, black keeps hue and saturation", () => {
+		expect(resolveIncomingColor("#808080", blue, "hex", false)?.h).toBe(240);
+		const black = resolveIncomingColor("#000000", blue, "hex", false);
+		expect(black).toEqual({ h: 240, s: 0.5, v: 0, a: 1 });
+	});
+
+	test("without hasAlpha the alpha is pinned at one", () => {
+		expect(resolveIncomingColor("#00ff0080", red, "hex", false)?.a).toBe(1);
+		expect(resolveIncomingColor("#00ff0080", red, "hex", true)?.a).toBeCloseTo(128 / 255, 5);
+	});
+});
+
+describe("normalizeHsva", () => {
+	test("pins alpha without hasAlpha and clamps every channel", () => {
+		expect(normalizeHsva({ h: 400, s: 2, v: -1, a: 0.5 }, false)).toEqual({ h: 40, s: 1, v: 0, a: 1 });
+		expect(normalizeHsva({ h: -30, s: 0.5, v: 0.5, a: 0.5 }, true)).toEqual({ h: 330, s: 0.5, v: 0.5, a: 0.5 });
+	});
+
+	test("keeps a hue of exactly 360 as the track's right end", () => {
+		expect(normalizeHsva({ h: 360, s: 1, v: 1, a: 1 }, false).h).toBe(360);
 	});
 });

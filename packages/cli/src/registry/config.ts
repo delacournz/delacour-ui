@@ -163,6 +163,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",
 		categories: ["display"],
 	},
+	"context-menu": {
+		title: "Context Menu",
+		description:
+			"The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+		categories: ["controls"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

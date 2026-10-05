@@ -20,6 +20,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
+	{ name: "context-menu", title: "Context Menu", description: "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview." },
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },

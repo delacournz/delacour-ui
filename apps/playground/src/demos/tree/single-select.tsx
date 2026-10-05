@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Single selection",
 	caption:
 		'`selectionMode="single"` with `expandOnPress={false}`: a row selects and only the chevron opens a branch, so a category can be picked without opening it. Pressing the selected row again keeps it selected.',
+	capture: { align: "stretch", flow: "tree/single-select" },
 };
 
 export function Demo(): ReactElement {

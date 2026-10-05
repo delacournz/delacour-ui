@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "File browser",
 	caption:
 		"Folders open from the chevron or the row, files select. A folder glyph that follows its branch reads `useTreeItem`; the count sits in `Tree.Actions`, outside the row's tap target.",
+	capture: { align: "stretch", flow: "tree/file-browser", hero: true },
 };
 
 /** A folder glyph that opens with its branch. */
@@ -29,8 +30,8 @@ function Folder({
 	children: ReactElement | ReactElement[];
 }): ReactElement {
 	return (
-		<Tree.Item testID={`file-browser-${value}`} value={value}>
-			<Tree.Trigger>
+		<Tree.Item value={value}>
+			<Tree.Trigger testID={`file-browser-${value}`}>
 				<Tree.Icon>
 					<FolderIcon />
 				</Tree.Icon>
@@ -50,8 +51,8 @@ function Folder({
 
 function File({ value, name }: { value: string; name: string }): ReactElement {
 	return (
-		<Tree.Item testID={`file-browser-${value}`} value={value}>
-			<Tree.Trigger>
+		<Tree.Item value={value}>
+			<Tree.Trigger testID={`file-browser-${value}`}>
 				<Tree.Icon>
 					<Icon icon={IconFileText} />
 				</Tree.Icon>

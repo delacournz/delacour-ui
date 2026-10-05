@@ -6,7 +6,8 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Lazy loading",
 	caption:
-		"`hasChildren` marks a node a branch before its children exist, so the chevron shows from the start. Opening it fetches the children, with a spinner in `Tree.Actions` until they arrive.",
+		"`hasChildren` marks a node a branch before its children exist, so the chevron shows from the start. Opening it fetches the children, with a spinner in `Tree.Actions` until they arrive. Northland starts loaded and open; the rest fetch on first open.",
+	capture: { align: "stretch", flow: "tree/lazy-load" },
 };
 
 /** How long the pretend fetch takes, so the loading state is visible. */
@@ -22,7 +23,9 @@ const CITIES: Record<(typeof REGIONS)[number], readonly string[]> = {
 };
 
 export function Demo(): ReactElement {
-	const [loaded, setLoaded] = useState<Partial<Record<string, readonly string[]>>>({});
+	const [loaded, setLoaded] = useState<Partial<Record<string, readonly string[]>>>({
+		Northland: CITIES.Northland,
+	});
 	const [loading, setLoading] = useState<readonly string[]>([]);
 	const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
@@ -45,7 +48,7 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<Tree onExpandedChange={handleExpandedChange}>
+		<Tree defaultExpanded={["Northland"]} onExpandedChange={handleExpandedChange}>
 			{REGIONS.map((region) => {
 				const cities = loaded[region];
 				return (

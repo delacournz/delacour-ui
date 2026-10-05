@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tree/single-select and has settled — Clothing open, Tops selected. The
+  capture script navigates there before running this.
+steps:
+  - echo: Moving the selection down the tree, branches included
+  - tap: { id: single-trousers }
+  - wait: 500
+  - tap: { id: single-shoes }
+  - wait: 500
+  - tap: { id: single-accessories }
+  - wait: 500
+  - echo: And back to Tops, so the clip loops without a jump cut
+  - tap: { id: single-tops }
+  - wait: 500

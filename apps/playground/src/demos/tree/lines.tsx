@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Guide lines",
 	caption: "`hasLines` draws a hairline down every open group, under its branch's chevron, so depth reads at a glance.",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

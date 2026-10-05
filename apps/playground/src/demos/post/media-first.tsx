@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`media` makes the picture the card. The author is laid over it in white, and a static black scrim along the top keeps that type legible over a bright photo in either theme.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

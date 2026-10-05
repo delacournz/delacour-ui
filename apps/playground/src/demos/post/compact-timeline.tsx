@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`compact` is a timeline row: the handle and time sit on the name's line, the face is small, and there is no picture.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 type Row = { name: string; handle: string; avatar: number; minutes: number; body: string; likes: number };

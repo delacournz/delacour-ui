@@ -1,5 +1,6 @@
 import { Post } from "@delacour/react-native-ui/post";
 import type { ReactElement } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -7,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`expandable` with `numberOfLines` clamps the body and offers more only when it actually overflows, then less once it is open.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "post/expandable-body" },
 };
 
 const BODY =
@@ -14,18 +16,20 @@ const BODY =
 
 export function Demo(): ReactElement {
 	return (
-		<Post>
-			<Post.Header>
-				<Post.Author
-					avatar={{ uri: "https://i.pravatar.cc/96?img=33" }}
-					handle="@charles"
-					name="Charles Babbage"
-					timestamp="3d"
-				/>
-			</Post.Header>
-			<Post.Body expandable numberOfLines={3} testID="post-body">
-				{BODY}
-			</Post.Body>
-		</Post>
+		<View className="min-h-80">
+			<Post>
+				<Post.Header>
+					<Post.Author
+						avatar={{ uri: "https://i.pravatar.cc/96?img=33" }}
+						handle="@charles"
+						name="Charles Babbage"
+						timestamp="3d"
+					/>
+				</Post.Header>
+				<Post.Body expandable numberOfLines={3} testID="post-body">
+					{BODY}
+				</Post.Body>
+			</Post>
+		</View>
 	);
 }

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 		"Each toggle moves its count by one. The number rolls up from below when it rises and down from above when it falls; a lit glyph is the same outline, filled, with a one-shot pop. With Reduce Motion on, the number swaps instantly.",
 	note: "Post counts nothing — `active` and `value` are this demo's state. An app reconciles its optimistic count with the server's.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "post/live-counts" },
 };
 
 export function Demo(): ReactElement {

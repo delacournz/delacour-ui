@@ -239,6 +239,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"scroll-text": {
+		title: "ScrollText",
+		description: "Text that resolves word by word as the screen scrolls past it.",
+		categories: ["media"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

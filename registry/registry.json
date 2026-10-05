@@ -1113,6 +1113,39 @@
 			]
 		},
 		{
+			"name": "scroll-text",
+			"type": "registry:ui",
+			"title": "ScrollText",
+			"description": "Text that resolves word by word as the screen scrolls past it.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"color",
+				"screen",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/scroll-text/AGENTS.md",
+				"ui/scroll-text/index.ts",
+				"ui/scroll-text/scroll-text-source.ts",
+				"ui/scroll-text/scroll-text-unit.tsx",
+				"ui/scroll-text/scroll-text.tsx",
+				"ui/scroll-text/scroll-text.types.ts",
+				"ui/scroll-text/scroll-text.variants.ts"
+			]
+		},
+		{
 			"name": "separator",
 			"type": "registry:ui",
 			"title": "Separator",

@@ -34,13 +34,15 @@ const SCROLL_CANVAS_DEFAULT_END = 0.3;
 /**
  * Three slots. `frame` is the still, clipped box — `bg-muted` is the placeholder
  * until the picture paints, and stays if it never does. `image` is pinned to
- * both sides and positioned vertically per effect. `cover` is the panel a
+ * both sides and positioned vertically per effect; it restates `w-full`
+ * because an `Image` with a bundled source takes the asset's own width as a
+ * default style, and two insets do not override a width. `cover` is the panel a
  * `reveal` slides away; it takes the page colour so it reads as page.
  */
 export const scrollCanvasVariants = tv({
 	slots: {
 		frame: "relative w-full overflow-hidden rounded-lg bg-muted",
-		image: "absolute inset-x-0",
+		image: "absolute inset-x-0 w-full",
 		cover: "absolute inset-0 bg-background",
 	},
 });

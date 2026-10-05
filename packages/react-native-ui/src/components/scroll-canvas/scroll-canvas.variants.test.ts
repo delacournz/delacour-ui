@@ -205,7 +205,7 @@ describe("scrollCanvasVariants", () => {
 	test("frame is a clipped, card-cornered placeholder", () => {
 		const slots = scrollCanvasVariants();
 		expect(slots.frame()).toBe("relative w-full overflow-hidden rounded-lg bg-muted");
-		expect(slots.image()).toBe("absolute inset-x-0");
+		expect(slots.image()).toBe("absolute inset-x-0 w-full");
 		expect(slots.cover()).toBe("absolute inset-0 bg-background");
 	});
 

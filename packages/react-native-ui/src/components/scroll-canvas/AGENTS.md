@@ -90,7 +90,37 @@ thumb. The frame is the layout; only what is inside it moves. A single component
 
 ## Verification notes
 
-`bun test` covers the maths, the slots and the props union. Rendering — the
-`measureLayout` alignment, the edge-free parallax, the reveal direction, the
-sequence scrub and the Reduce Motion resting states — is checked in the
-playground's `/scroll-canvas` route on a simulator.
+`bun test` covers the maths, the slots and the props union. Rendering was checked
+on an iOS simulator (iPhone 17, warden lease, agent-device) on 2026-10-05:
+
+- **Parallax** drifts the picture down through the frame as the page rises and
+  never shows a frame edge. **Zoom** settles to scale 1. **Reveal** uncovers from
+  the bottom edge and ends fully uncovered. **Sequence** steps monotonically
+  with the scroll (15 → 19 → 23 → 24 of 24 across one drag, matching
+  `resolveEffectProgress` for that viewport). The resting-states demo draws all
+  four at rest with no source.
+- **`measureLayout` returns content-space coordinates**, not viewport ones: a
+  canvas nested in a `View` measured 628, and after a 100pt spacer grew above
+  it while scrolled 461pt, re-measured 744 (100 + the 16pt gap). The
+  `contentSize` reaction is what triggered that re-measure.
+- **Accessibility tree:** a labelled canvas is one `image` with its label (a
+  sequence once, not per frame); unlabelled canvases do not appear at all.
+- **`w-full` on the image slot is load-bearing.** The first run drew only the
+  left 36% of every picture — an `Image` with a bundled source keeps the
+  asset's width as a default style, and `inset-x-0` does not override it.
+
+Not yet checked, and why:
+
+- **The OS Reduce Motion switch** itself — the resting states were checked
+  through `enabled={false}`, which takes the same path (`resolveStaticProgress`)
+  as `useCalmMotion`.
+- **A `Screen`-ambient canvas** (`onLayout.y`, no ref): every demo passes a
+  `useScrollSource` source.
+- **Android** (`fadeDuration={0}` on sequence frames).
+- **Captured preview media.** `bun run previews` needs the argent CLI, which is
+  not installed on this machine, and a demo marked `capture` without a manifest
+  entry fails `demos.test.ts`. So no demo carries `capture` yet and the docs
+  page has no `<Preview>`. Once it can run: capture `parallax` (hero, flow
+  `scroll-canvas/parallax`), `zoom`, `reveal`, `sequence` (each with its flow
+  under `.argent/flows/previews/scroll-canvas/`) and `reduced-motion` (still),
+  then add a `<Preview>` under each section of the docs page.

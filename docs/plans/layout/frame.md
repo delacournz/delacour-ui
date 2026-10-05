@@ -228,16 +228,18 @@ Route `apps/playground/src/app/(components)/frame.tsx`; `components-index.ts` ro
 
 ## Acceptance checklist
 
-- [ ] `frame.variants.test.ts` written first, red then green (`bun test packages/react-native-ui/src/components/frame`)
-- [ ] `bun run typecheck`, `bun run check` clean
-- [ ] All parts and the provider have `DelacourUI.` display names; `display-name.test.ts` passes
-- [ ] `frame/AGENTS.md` with file map and design notes; Components table row added; `docs.test.ts` passes
-- [ ] `bun run gen-exports`, `bun run gen-demos` run
-- [ ] Docs page, `ITEM_META`, changeset; registry build resolves `list-group` and `surface` as dependencies
-- [ ] No `any`, no comments in JSX, no circular imports (part never imports own index or root)
-- [ ] `Item` and `ListGroup.Item` inside `Frame.Tray` render as grouped rows (no inner border/fill)
-- [ ] Simulator via agent-device (claim a device with `warden claim ios`): open `frame/settings`, `snapshot -i`, `press id=frame-action`, `is` title has header role, toggle a Switch row and `get` its value, verify inset footer buttons visible above the safe area; `close` and `warden release`
-- [ ] Dark and light themes both show the tray distinct from the shell
+- [x] `frame.variants.test.ts` written first, red then green (`bun test packages/react-native-ui/src/components/frame`)
+- [x] `bun run typecheck`, `bun run check` clean
+- [x] All parts and the provider have `DelacourUI.` display names; `display-name.test.ts` passes
+- [x] `frame/AGENTS.md` with file map and design notes; Components table row added; `docs.test.ts` passes
+- [x] `bun run gen-exports`, `bun run gen-demos` run
+- [x] Docs page, `ITEM_META`, changeset; registry build resolves `list-group` and `surface` as dependencies
+- [x] No `any`, no comments in JSX, no circular imports (part never imports own index or root)
+- [x] `Item` and `ListGroup.Item` inside `Frame.Tray` render as grouped rows (no inner border/fill)
+- [x] Simulator via agent-device (2026-10-05, iPhone 17 dev client: action press, switch toggle, footer, both themes; header role asserted in source — agent-device reports no trait) (claim a device with `warden claim ios`): open `frame/settings`, `snapshot -i`, `press id=frame-action`, `is` title has header role, toggle a Switch row and `get` its value, verify inset footer buttons visible above the safe area; `close` and `warden release`
+- [x] Dark and light themes both show the tray distinct from the shell
+
+- [x] Previews captured: settings (hero clip), decision-footer and members clips, variants and sections stills.
 
 ## Open questions
 

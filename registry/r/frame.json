@@ -1,0 +1,185 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "frame",
+	"type": "registry:ui",
+	"title": "Frame",
+	"description": "A titled shell around a card of divided rows, with sections and a footer.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"list-group",
+		"pressable",
+		"separator",
+		"surface",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/frame/AGENTS.md",
+			"target": "frame/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/frame",
+					"to": "@registry/ui/frame"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-action.tsx",
+			"target": "frame/frame-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-description.tsx",
+			"target": "frame/frame-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-dividers.tsx",
+			"target": "frame/frame-dividers.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-footer.tsx",
+			"target": "frame/frame-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-header.tsx",
+			"target": "frame/frame-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-section.tsx",
+			"target": "frame/frame-section.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-title.tsx",
+			"target": "frame/frame-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame-tray.tsx",
+			"target": "frame/frame-tray.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group/list-group.context",
+					"to": "@registry/ui/list-group/list-group.context"
+				},
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame.context.tsx",
+			"target": "frame/frame.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame.tsx",
+			"target": "frame/frame.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.context",
+					"to": "@registry/ui/surface/surface.context"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame.types.ts",
+			"target": "frame/frame.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame.variants.ts",
+			"target": "frame/frame.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/frame/index.ts",
+			"target": "frame/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

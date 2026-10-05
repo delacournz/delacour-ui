@@ -35,6 +35,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "fab", title: "Fab", description: "A floating action button, extended with a label or unfolding a dial of related actions." },
 	{ name: "feedback", title: "Feedback", description: "A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
+	{ name: "frame", title: "Frame", description: "A titled shell around a card of divided rows, with sections and a footer." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "image-viewer", title: "Image Viewer", description: "A fullscreen viewer that opens from a thumbnail: pinch, pan and double-tap zoom, swipe between images, drag down to dismiss." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border." },

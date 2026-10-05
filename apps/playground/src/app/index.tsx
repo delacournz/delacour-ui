@@ -128,6 +128,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	feedback: IconBubble2,
 	chip: IconFilter1,
 	field: IconParagraph,
+	frame: IconLayoutTop,
 	icon: IconStar,
 	input: IconWindowCursor,
 	item: IconLayoutLeft,

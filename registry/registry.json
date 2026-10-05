@@ -1166,6 +1166,44 @@
 			]
 		},
 		{
+			"name": "frame",
+			"type": "registry:ui",
+			"title": "Frame",
+			"description": "A titled shell around a card of divided rows, with sections and a footer.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"list-group",
+				"pressable",
+				"separator",
+				"surface",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/frame/AGENTS.md",
+				"ui/frame/frame-action.tsx",
+				"ui/frame/frame-description.tsx",
+				"ui/frame/frame-dividers.tsx",
+				"ui/frame/frame-footer.tsx",
+				"ui/frame/frame-header.tsx",
+				"ui/frame/frame-section.tsx",
+				"ui/frame/frame-title.tsx",
+				"ui/frame/frame-tray.tsx",
+				"ui/frame/frame.context.tsx",
+				"ui/frame/frame.tsx",
+				"ui/frame/frame.types.ts",
+				"ui/frame/frame.variants.ts",
+				"ui/frame/index.ts"
+			]
+		},
+		{
 			"name": "icon",
 			"type": "registry:ui",
 			"title": "Icon",

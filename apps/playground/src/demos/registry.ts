@@ -279,6 +279,12 @@ import * as demo_field_states_disabled from "./field/states/disabled";
 import * as demo_field_states_live from "./field/states/live";
 import * as demo_field_states_one_flag_three_things from "./field/states/one-flag-three-things";
 import * as demo_field_states_through_an_input_group from "./field/states/through-an-input-group";
+import * as demo_frame_decision_footer from "./frame/decision-footer";
+import * as demo_frame_members from "./frame/members";
+import * as demo_frame_sections from "./frame/sections";
+import * as demo_frame_settings from "./frame/settings";
+import * as demo_frame_sizes from "./frame/sizes";
+import * as demo_frame_variants from "./frame/variants";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -950,6 +956,12 @@ export const DEMOS = {
 	"field/states/live": demo_field_states_live,
 	"field/states/one-flag-three-things": demo_field_states_one_flag_three_things,
 	"field/states/through-an-input-group": demo_field_states_through_an_input_group,
+	"frame/decision-footer": demo_frame_decision_footer,
+	"frame/members": demo_frame_members,
+	"frame/sections": demo_frame_sections,
+	"frame/settings": demo_frame_settings,
+	"frame/sizes": demo_frame_sizes,
+	"frame/variants": demo_frame_variants,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,

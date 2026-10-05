@@ -41,7 +41,9 @@ const PANEL_CLOSED_SCALE = 0.92;
  *
  * Not portalled: it is positioned in the rail's own full-screen frame, so it
  * draws over whatever the rail is mounted above. A long outline scrolls inside
- * the panel rather than running off the screen.
+ * the panel rather than running off the screen; the scroller is `grow-0`, since
+ * React Native's default `flexGrow: 1` stretched a short outline's panel down to
+ * the frame's edge.
  */
 export function SectionRailContent({
 	maxWidth = SECTION_RAIL_DEFAULT_MAX_WIDTH,
@@ -80,7 +82,7 @@ export function SectionRailContent({
 				style={[{ maxWidth, transformOrigin }, animatedStyle, style]}
 				{...props}
 			>
-				<ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+				<ScrollView bounces={false} className="grow-0" showsVerticalScrollIndicator={false}>
 					{children}
 				</ScrollView>
 			</Animated.View>

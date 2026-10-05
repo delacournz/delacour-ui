@@ -307,6 +307,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
 		categories: ["controls"],
 	},
+	tooltip: {
+		title: "Tooltip",
+		description:
+			"A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
+		categories: ["overlays"],
+	},
 
 	expo: {
 		title: "Navigation theme",

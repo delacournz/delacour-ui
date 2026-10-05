@@ -4832,6 +4832,58 @@ export const install = {
 				],
 			},
 		],
+	},
+	"overlay": {
+		name: "overlay",
+		title: "Overlay",
+		description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with.",
+		importPath: "@delacour/react-native-ui/overlay",
+		exportName: "Overlay",
+		expo: ["react-native-reanimated", "react-native-teleport", "react-native-worklets", "uniwind"],
+		npm: ["tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 18,
+		groups: [
+			{
+				name: "overlay",
+				title: "Overlay",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/overlay/AGENTS.md", target: "src/components/ui/overlay/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/overlay/index.ts", target: "src/components/ui/overlay/index.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-portal.tsx", target: "src/components/ui/overlay/overlay-portal.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-presence.ts", target: "src/components/ui/overlay/overlay-presence.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-registry.ts", target: "src/components/ui/overlay/overlay-registry.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay-scrim.tsx", target: "src/components/ui/overlay/overlay-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.context.tsx", target: "src/components/ui/overlay/overlay.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.tsx", target: "src/components/ui/overlay/overlay.tsx" },
+					{ source: "packages/react-native-ui/src/components/overlay/overlay.variants.ts", target: "src/components/ui/overlay/overlay.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-back-handler.ts", target: "src/components/ui/overlay/use-overlay-back-handler.ts" },
+					{ source: "packages/react-native-ui/src/components/overlay/use-overlay-presence.ts", target: "src/components/ui/overlay/use-overlay-presence.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+		],
 	},} as const satisfies Record<string, InstallEntry>;
 
 export type InstallName = keyof typeof install;

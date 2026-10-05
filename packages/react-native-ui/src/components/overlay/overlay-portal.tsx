@@ -62,7 +62,7 @@ export function OverlayPortal({
 		if (!__DEV__ || registry !== null || isInline || hasWarnedMissingProvider) return;
 		hasWarnedMissingProvider = true;
 		console.warn(
-			"[@delacour/react-native-ui] An overlay rendered with no <OverlayProvider> above it, so it draws inline and may be clipped. Mount OverlayProvider at the app root."
+			"Overlay.Portal: an overlay rendered with no <OverlayProvider> above it, so it draws inline and may be clipped. Mount OverlayProvider once at the app root."
 		);
 	}, [registry, isInline]);
 

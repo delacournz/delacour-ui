@@ -51,14 +51,6 @@ development — but it can be clipped by any ancestor with `overflow: hidden`, a
 the navigator's header.
 </Callout>
 
-## API Reference
-
-<TypeTable
-  type={{
-    children: { type: "ReactNode" },
-  }}
-/>
-
 ## Building your own overlay
 
 The parts the library's overlays are drawn with are exported too:
@@ -85,3 +77,11 @@ function Sheetlet({ isOpen, onClose, children }) {
 `useOverlayPresence` keeps the overlay mounted until its exit animation finishes and drives
 `progress` from 0 to 1 and back; under reduce motion it still fades, and `isReduced` tells you to
 drop your transforms.
+
+## API Reference
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode" },
+  }}
+/>

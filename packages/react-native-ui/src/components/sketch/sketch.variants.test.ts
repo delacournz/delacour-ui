@@ -5,13 +5,17 @@ import {
 	clampSketchSize,
 	resolveSketchAccessibilityLabel,
 	resolveSketchColor,
+	resolveSketchExportBackground,
+	resolveSketchSwatches,
 	resolveSwatchLabel,
 	SKETCH_DEFAULT_COLORS,
 	SKETCH_DEFAULT_SIZE,
+	SKETCH_EXPORT_BACKGROUND,
 	SKETCH_LABELS,
 	SKETCH_MAX_SIZE,
 	SKETCH_MIN_SIZE,
 	SKETCH_SLOTS,
+	sketchTokenNames,
 	sketchVariants,
 } from "./sketch.variants";
 
@@ -152,5 +156,60 @@ describe("accessibility labels", () => {
 		expect(resolveSwatchLabel("primary", 0, 6)).toBe("Primary");
 		expect(resolveSwatchLabel("muted-foreground", 0, 6)).toBe("Muted foreground");
 		expect(resolveSwatchLabel("#ec4899", 2, 6)).toBe("Colour 3 of 6");
+	});
+});
+
+describe("sketchTokenNames", () => {
+	test("names the export background, then every token swatch once, and no literal", () => {
+		expect(sketchTokenNames(["foreground", "#ec4899", "primary", "foreground"])).toEqual([
+			SKETCH_EXPORT_BACKGROUND,
+			"card",
+			"foreground",
+			"primary",
+		]);
+	});
+
+	test("with no swatches it still names the surfaces the export can paint", () => {
+		expect(sketchTokenNames([])).toEqual([SKETCH_EXPORT_BACKGROUND, "card"]);
+	});
+});
+
+describe("resolveSketchSwatches", () => {
+	const tokens = { foreground: "#111111", primary: "oklch(0.2 0 0)" };
+
+	test("resolves each swatch to its ink and its label, in order", () => {
+		expect(resolveSketchSwatches(["foreground", "#ec4899"], tokens)).toEqual([
+			{ color: "foreground", ink: "#111111", label: "Foreground" },
+			{ color: "#ec4899", ink: "#ec4899", label: "Colour 2 of 2" },
+		]);
+	});
+
+	test("skips a swatch that resolves to nothing, and labels the rest by the list given", () => {
+		expect(resolveSketchSwatches(["nope", "#ec4899"], tokens)).toEqual([
+			{ color: "#ec4899", ink: "#ec4899", label: "Colour 2 of 2" },
+		]);
+	});
+
+	test("a repeated colour appears once", () => {
+		expect(resolveSketchSwatches(["primary", "primary"], tokens)).toHaveLength(1);
+	});
+});
+
+describe("resolveSketchExportBackground", () => {
+	const tokens = { background: "#fafafa", card: "#ffffff" };
+
+	test("undefined paints the theme's background", () => {
+		expect(resolveSketchExportBackground(undefined, tokens)).toBe("#fafafa");
+	});
+
+	test("null leaves it transparent", () => {
+		expect(resolveSketchExportBackground(null, tokens)).toBeNull();
+	});
+
+	test("a token or a literal resolves; anything else is transparent", () => {
+		expect(resolveSketchExportBackground("card", tokens)).toBe("#ffffff");
+		expect(resolveSketchExportBackground("#000", tokens)).toBe("#000");
+		expect(resolveSketchExportBackground("muted", tokens)).toBeNull();
+		expect(resolveSketchExportBackground('red" onload="x', tokens)).toBeNull();
 	});
 });

@@ -152,3 +152,60 @@ export function resolveSwatchLabel(color: string, index: number, total: number):
 	const words = color.replace(/^--/, "").split("-").join(" ");
 	return words.charAt(0).toUpperCase() + words.slice(1);
 }
+
+/**
+ * The theme tokens a sketch has to read to turn its colours into ink.
+ *
+ * The export's surfaces come first — `background`, its default, and `card`, the
+ * canvas's own fill — then each token swatch once. Literals need no lookup. One
+ * array, because a hook cannot be called once per swatch: the swatch count is
+ * data.
+ */
+export function sketchTokenNames(colors: readonly string[]): string[] {
+	const names = [SKETCH_EXPORT_BACKGROUND, "card"];
+	for (const color of colors) {
+		if (!isLiteralColor(color) && !names.includes(color)) names.push(color);
+	}
+	return names;
+}
+
+/** One swatch the toolbar draws: the colour as given, the ink it resolved to, and its name. */
+export type SketchSwatch = { color: string; ink: string; label: string };
+
+/**
+ * The swatches a toolbar offers, resolved against the active theme.
+ *
+ * A colour that resolves to nothing is dropped rather than drawn as an empty
+ * dot — see {@link resolveSketchColor} — and a repeated colour appears once, so
+ * two swatches can never be selected together. A literal is labelled by its
+ * place in the list the caller gave, which is the list they can see in code.
+ */
+export function resolveSketchSwatches(
+	colors: readonly string[],
+	tokens: Readonly<Record<string, string | undefined>>
+): SketchSwatch[] {
+	const swatches: SketchSwatch[] = [];
+	colors.forEach((color, index) => {
+		if (swatches.some((swatch) => swatch.color === color)) return;
+		const ink = resolveSketchColor(color, tokens);
+		if (ink === undefined) return;
+		swatches.push({ color, ink, label: resolveSwatchLabel(color, index, colors.length) });
+	});
+	return swatches;
+}
+
+/**
+ * The literal `toSVG` paints behind the drawing.
+ *
+ * Omitted, the theme's `background` at export time — so a drawing in near-white
+ * ink on a dark theme stays legible as a file. `null` is transparent. A token
+ * resolves only if the sketch read it (`sketchTokenNames`): `background`,
+ * `card` or one of its swatches. Anything else is transparent rather than wrong.
+ */
+export function resolveSketchExportBackground(
+	background: string | null | undefined,
+	tokens: Readonly<Record<string, string | undefined>>
+): string | null {
+	if (background === null) return null;
+	return resolveSketchColor(background ?? SKETCH_EXPORT_BACKGROUND, tokens) ?? null;
+}

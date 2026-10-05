@@ -11,20 +11,22 @@ import {
 	isSafeSketchPathData,
 	SKETCH_MIN_SHAPE_DRAG,
 	SKETCH_SHAPES,
+	type SketchEraser,
 	type SketchItem,
+	type SketchMark,
 	sketchItemsToSvg,
 	startSketchPath,
 	undoSketchItems,
 } from "./sketch.paths";
 
-const stroke = (id: string, d = "M0 0 L1 1", color = "#111111", width = 4): SketchItem => ({
+const stroke = (id: string, d = "M0 0 L1 1", color = "#111111", width = 4): SketchMark => ({
 	color,
 	d,
 	id,
 	kind: "stroke",
 	width,
 });
-const erase = (id: string, d = "M0 0 L5 5", width = 12): SketchItem => ({ d, id, kind: "erase", width });
+const erase = (id: string, d = "M0 0 L5 5", width = 12): SketchEraser => ({ d, id, kind: "erase", width });
 
 /** Every number in a path, paired as x, y. Only meaningful for paths with no arc commands. */
 function pointsOf(d: string): { x: number; y: number }[] {

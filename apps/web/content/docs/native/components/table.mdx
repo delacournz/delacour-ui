@@ -4,11 +4,15 @@ description: Rows and columns of short values, lined up by one set of column rul
 icon: Table
 ---
 
+<Preview id="table/sortable" title={null} />
+
 ## Installation
 
 <ComponentInstall name="table" />
 
 ## Usage
+
+<Preview id="table/basic" />
 
 ```tsx title="app/index.tsx"
 import { Table } from "@/components/ui/table";
@@ -51,6 +55,8 @@ export default function Example() {
 
 Declare each column once on the table — `{ flex }` shares the leftover width, `{ width }` is fixed — and every row reads it by cell index.
 
+<Preview id="table/columns" />
+
 ```tsx
 <Table columns={[{ flex: 1 }, { width: 72, align: "center" }, { width: 96, align: "end" }]}>…</Table>
 <Table.Cell column={{ align: "start" }}>Overrides one cell</Table.Cell>
@@ -60,6 +66,8 @@ Declare each column once on the table — `{ flex }` shares the leftover width, 
 
 A head with `sort` is a button that draws its direction; the caller reorders the rows in `onPress`.
 
+<Preview id="table/sortable" />
+
 ```tsx
 <Table.Head sort={{ direction: "desc", onPress: toggleQty }}>Qty</Table.Head>
 <Table.Head sort={{ onPress: sortByName }}>Name</Table.Head>
@@ -68,6 +76,8 @@ A head with `sort` is a button that draws its direction; the caller reorders the
 ## Selection
 
 `onPress` makes the whole row one button, and `isSelected` paints it on the accent.
+
+<Preview id="table/selectable" />
 
 ```tsx
 <Table.Row onPress={() => setSelected(row.id)} isSelected={row.id === selected}>…</Table.Row>
@@ -83,6 +93,8 @@ A head with `sort` is a button that draws its direction; the caller reorders the
 ## Frame
 
 `Table.Frame` puts the table in a card under a title, a description and an action.
+
+<Preview id="table/frame" />
 
 ```tsx
 <Table.Frame title="Invoices" description="Last 30 days" action={<Button size="sm">Export</Button>}>
@@ -104,6 +116,8 @@ A head with `sort` is a button that draws its direction; the caller reorders the
 ## Wide tables
 
 A `minWidth` wider than the screen scrolls sideways, with a fade at each edge that has more columns past it.
+
+<Preview id="table/wide-scroll" />
 
 ```tsx
 <Table minWidth={640} columns={columns}>…</Table>

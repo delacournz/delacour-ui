@@ -1,7 +1,7 @@
 executionPrerequisite: >-
-  The chrome-free preview route is open on countdown/urgent and has settled — a
-  countdown at about 1:15, ticking toward its sixty-second urgency threshold.
-  The capture script navigates there before running this.
+  The chrome-free preview route is open on countdown/urgent and has settled — a minutes-and-seconds
+  countdown inside its last minute, its digits already destructive. The capture script navigates there
+  before running this.
 steps:
-  - echo: Nothing to touch — the countdown ticks on its own; hold the camera until the digits cross into urgent
-  - wait: 17000
+  - echo: Nothing to touch — the urgent digits tick down on their own, so this only holds the camera on them
+  - wait: 3000

@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Labels",
 	align: "center",
+	capture: { settleMs: 150 },
 	caption:
 		"`labels` replaces the captions under the boxes, and names the units a screen reader hears — localise them with the rest of the screen.",
 };

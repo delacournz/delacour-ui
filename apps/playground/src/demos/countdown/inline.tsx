@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Inline",
 	caption:
 		"One run of tabular digits — `2d 14:03:22`, `14:03:22`, `3:22` — for a row or a banner. Days lead with a suffix; every unit after the first is padded.",
+	capture: { flow: "countdown/inline", settleMs: 150, align: "stretch" },
 };
 
 const HOUR = 60 * 60 * 1000;

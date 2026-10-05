@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	align: "center",
+	capture: { settleMs: 150 },
 	note: "The size steps the digits up the type scale — header, title, display — and the box padding with them.",
 };
 

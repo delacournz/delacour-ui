@@ -4,6 +4,8 @@ description: A string a camera can read, drawn as one vector path, with an optio
 icon: QrCode
 ---
 
+<Preview id="qr-code/module-styles" title={null} />
+
 ## Installation
 
 <ComponentInstall name="qr-code" />
@@ -26,10 +28,14 @@ export default function Example() {
 }
 ```
 
+<Preview id="qr-code/anatomy" />
+
 ## Module styles
 
 `square` merges runs into rectangles. `rounded` rounds only the corners with no dark neighbour, so
 runs fuse into one shape. `dots` draws each module as a dot.
+
+<Preview id="qr-code/module-styles" />
 
 ```tsx
 <QRCode value={url} moduleStyle="square" />
@@ -45,6 +51,8 @@ dots is one a decoder cannot lock onto.
 ## Error correction
 
 Each level survives more damage and pays for it in density. The default is `M`.
+
+<Preview id="qr-code/error-correction" />
 
 | Level | Recovers | Bytes at version 1 | Version 10 | Version 40 |
 | --- | --- | --- | --- | --- |
@@ -66,6 +74,8 @@ counts; anything else is encoded as UTF-8.
 correct, so its presence raises the level to `H` — a lower `errorCorrection` is overridden and
 warns in development. `logoSize` is the share of the side the plate may take, from `0.1` to `0.3`.
 
+<Preview id="qr-code/with-logo" />
+
 ```tsx
 <QRCode value={url} moduleStyle="rounded" logoSize={0.24} accessibilityLabel="Open the menu">
   <QRCode.Logo>
@@ -84,6 +94,8 @@ scans.
 
 The tile is black on white in both themes, and does not follow the theme on purpose: a QR code is
 read by someone else's camera, and light modules on a dark tile fail a large share of scanners.
+
+<Preview id="qr-code/colours" />
 
 ```tsx
 <QRCode value={url} color="#1e3a8a" backgroundColor="#fef3c7" />

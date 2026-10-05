@@ -47,6 +47,7 @@
 		"screen",
 		"surface",
 		"card",
+		"frame",
 		"---Utilities---",
 		"provider"
 	]

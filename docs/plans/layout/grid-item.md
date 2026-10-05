@@ -286,6 +286,6 @@ Shipped on `feature/layout-grid-item`, standalone (no cross-category imports). O
 
 Deviations from the checklist:
 
-- **No preview captures.** The argent CLI that `bun run previews` drives is not installed, so no demo sets `meta.capture` and the docs page has no `<Preview>`. The capture plan and the ready flow are recorded in `grid-item/AGENTS.md` under "Verification notes".
+- **Previews** captured on the dev client (2026-10-06): 3 stills, 2 clips, `dashboard` the animated hero. Its toggle tiles are a wrapper component that forwards `rowSpan`, which is the documented rule in practice.
 - **Simulator** verified with agent-device: aligned edges, joined labels, press and disabled state. Rotation, reduce motion and RTL not exercised (portrait-locked playground; LAYOUT-02 unmerged).
 - The dashboard demo carries seven tiles rather than four so its four columns have no holes.

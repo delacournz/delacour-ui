@@ -125,14 +125,15 @@ and `GridItem.Actions`.
   disabled tile reports `disabled`. Rotation, reduce motion and RTL were not
   exercised: the playground is portrait-locked and `Direction` (LAYOUT-02) is
   not merged.
-- **No preview captures yet.** `bun run previews` needs the argent CLI, which
-  is not installed on the machine that built this, and a demo with
-  `meta.capture` but no manifest entry fails `demos.test.ts`. So no demo opts
-  into capture and the docs page opens at `## Installation`. To publish: add
-  `capture: { align: "stretch" }` to `dashboard` (with `hero: true`),
-  `variants`, `backgrounds` and `quick-actions`, and
-  `capture: { align: "stretch", flow: "grid-item/interactive" }` to
-  `interactive` — the flow is already in `.argent/flows/previews/grid-item/` —
-  run `bun run previews -- -- --only grid-item`, then put `<Preview>`s on the
-  page. `align: "stretch"` is required: the preview route shrink-wraps, and a
-  group measured at width 0 draws nothing.
+- **Previews, 2026-10-06** (iPhone 17 Pro, dev client, this branch's Metro):
+  `dashboard` (hero, clip — tiles switch off and on and back) and
+  `interactive` (clip) are recorded from the flows in
+  `.argent/flows/previews/grid-item/`; `variants`, `backgrounds` and
+  `quick-actions` are stills. Every one is `align: "stretch"`: the preview
+  route shrink-wraps, and a group measured at width 0 draws nothing.
+  `row-sizing` stays gallery-only.
+- **`GridItem.Background` is found by display name**, not by
+  `child.type === GridItemBackground`: Metro's dev bundle wraps element types,
+  so the identity check never matched there and a background written after the
+  content would have drawn over it. `isGridItemBackgroundType` holds the rule
+  and a test pins the constant to the part's literal `displayName`.

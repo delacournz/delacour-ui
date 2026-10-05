@@ -4,6 +4,8 @@ description: A bento grid of whole-cell tiles with aligned edges, and the tile w
 icon: LayoutGrid
 ---
 
+<Preview id="grid-item/dashboard" title={null} />
+
 ## Installation
 
 <ComponentInstall name="grid-item" />
@@ -73,6 +75,8 @@ one track wide and, by default, as tall as it is wide. Each **direct** child tak
 cells and is placed first-fit in the order it is written — never in a hole earlier than the tile before
 it — so screen-reader order is writing order.
 
+<Preview id="grid-item/dashboard" />
+
 ```
 columns={4}
 ┌───────────┬─────┬─────┐
@@ -97,6 +101,8 @@ direct children's props. Accept them on the wrapper and pass them through. A dir
 `default` is a card, `outline` a border, `muted` a fill and `plain` nothing. Every variant reserves the same
 one-point border, so switching variant never moves the content. Set it once on the group, or per tile.
 
+<Preview id="grid-item/variants" />
+
 ```tsx
 <GridItem.Group variant="muted">
   <GridItem variant="outline">…</GridItem>
@@ -108,6 +114,8 @@ one-point border, so switching variant never moves the content. Set it once on t
 `default` and `sm` set the padding, the type scale and the media's icon size. A tile without its own takes
 the group's.
 
+<Preview id="grid-item/quick-actions" />
+
 ```tsx
 <GridItem.Group size="sm">…</GridItem.Group>
 ```
@@ -117,6 +125,8 @@ the group's.
 A tile with an `onPress` (or `onLongPress`) renders as a `Pressable`: it is announced as a button, scales
 gently on press and passes `haptic` through. Without one it is a plain view. `isDisabled` dims the tile and
 stops the press.
+
+<Preview id="grid-item/interactive" />
 
 ```tsx
 <GridItem haptic="selection" onPress={toggleLock}>
@@ -130,6 +140,8 @@ stops the press.
 `GridItem.Background` fills the tile behind its content and clips to its corner — a chart, a gradient, an
 oversized glyph. It is drawn first wherever it is written, and takes no touches, so a pressable tile stays
 pressable across its whole face.
+
+<Preview id="grid-item/backgrounds" />
 
 ```tsx
 <GridItem colSpan={2}>

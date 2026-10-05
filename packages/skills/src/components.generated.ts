@@ -39,6 +39,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
+	{ name: "split-view", title: "SplitView", description: "Two stacked panes with a grip that settles on named heights." },
 	{ name: "splitter", title: "Splitter", description: "Two or more panes divided by draggable handles, sized in percent." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },

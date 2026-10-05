@@ -259,6 +259,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
 	},
+	"split-view": {
+		title: "SplitView",
+		description: "Two stacked panes with a grip that settles on named heights.",
+		categories: ["layout"],
+	},
 	splitter: {
 		title: "Splitter",
 		description: "Two or more panes divided by draggable handles, sized in percent.",

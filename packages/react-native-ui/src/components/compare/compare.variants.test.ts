@@ -30,6 +30,7 @@ import {
 	resolveCompareValueText,
 	resolveCoveredLayer,
 	resolvePositionFromGesture,
+	resolveReleaseVelocity,
 	resolveRevealTransforms,
 	shouldTickCompareHaptic,
 	snapPosition,
@@ -152,7 +153,12 @@ describe("resolvePositionFromGesture", () => {
 				orientation: "horizontal",
 				isRtl: false,
 			});
-			const vertical = resolvePositionFromGesture({ along: fraction * size, size, orientation: "vertical", isRtl: false });
+			const vertical = resolvePositionFromGesture({
+				along: fraction * size,
+				size,
+				orientation: "vertical",
+				isRtl: false,
+			});
 			expect(vertical).toBe(horizontal);
 		}
 	});
@@ -368,24 +374,24 @@ describe("resolveCompareLabelOpacity", () => {
 
 describe("resolveCompareLabelClass", () => {
 	test("pins Before to the leading edge and After to the trailing one", () => {
-		expect(resolveCompareLabelClass({ side: "before", placement: "start", orientation: "horizontal", isRtl: false })).toBe(
-			"left-3 top-3"
-		);
+		expect(
+			resolveCompareLabelClass({ side: "before", placement: "start", orientation: "horizontal", isRtl: false })
+		).toBe("left-3 top-3");
 		expect(resolveCompareLabelClass({ side: "after", placement: "end", orientation: "horizontal", isRtl: false })).toBe(
 			"right-3 bottom-3"
 		);
-		expect(resolveCompareLabelClass({ side: "before", placement: "start", orientation: "vertical", isRtl: false })).toBe(
-			"top-3 left-3"
-		);
+		expect(
+			resolveCompareLabelClass({ side: "before", placement: "start", orientation: "vertical", isRtl: false })
+		).toBe("top-3 left-3");
 		expect(resolveCompareLabelClass({ side: "after", placement: "end", orientation: "vertical", isRtl: false })).toBe(
 			"bottom-3 right-3"
 		);
 	});
 
 	test("mirrors the horizontal edges under RTL", () => {
-		expect(resolveCompareLabelClass({ side: "before", placement: "start", orientation: "horizontal", isRtl: true })).toBe(
-			"right-3 top-3"
-		);
+		expect(
+			resolveCompareLabelClass({ side: "before", placement: "start", orientation: "horizontal", isRtl: true })
+		).toBe("right-3 top-3");
 		expect(resolveCompareLabelClass({ side: "before", placement: "start", orientation: "vertical", isRtl: true })).toBe(
 			"top-3 right-3"
 		);
@@ -457,25 +463,26 @@ describe("the handle", () => {
 	});
 
 	test("draws no shadow anywhere", () => {
-		for (const color of COMPARE_COLORS) {
-			for (const size of COMPARE_SIZES) {
-				for (const orientation of COMPARE_ORIENTATIONS) {
-					for (const isDisabled of [false, true]) {
-						const slots = compareVariants({ color, size, orientation, isDisabled });
-						for (const slot of [
-							slots.root(),
-							slots.layer(),
-							slots.mask(),
-							slots.inner(),
-							slots.handle(),
-							slots.divider(),
-							slots.capsule(),
-							slots.label(),
-						]) {
-							expect(cls(slot)).not.toMatch(/\b(shadow|elevation)-/);
-						}
-					}
-				}
+		const axes = COMPARE_COLORS.flatMap((color) =>
+			COMPARE_SIZES.flatMap((size) =>
+				COMPARE_ORIENTATIONS.flatMap((orientation) =>
+					[false, true].map((isDisabled) => compareVariants({ color, size, orientation, isDisabled }))
+				)
+			)
+		);
+		for (const slots of axes) {
+			const classes = [
+				slots.root(),
+				slots.layer(),
+				slots.mask(),
+				slots.inner(),
+				slots.handle(),
+				slots.divider(),
+				slots.capsule(),
+				slots.label(),
+			];
+			for (const slot of classes) {
+				expect(cls(slot)).not.toMatch(/\b(shadow|elevation)-/);
 			}
 		}
 	});
@@ -520,5 +527,22 @@ describe("motion", () => {
 
 	test("lets a scroll win on the cross axis before the seam does", () => {
 		expect(COMPARE_ANYWHERE_ACTIVE_OFFSET).toBeLessThan(COMPARE_ANYWHERE_FAIL_OFFSET);
+	});
+});
+
+describe("resolveReleaseVelocity", () => {
+	test("converts points per second to positions per second along the axis", () => {
+		expect(resolveReleaseVelocity(600, 300, "horizontal", false)).toBe(2);
+		expect(resolveReleaseVelocity(-150, 300, "vertical", false)).toBe(-0.5);
+	});
+
+	test("negates a horizontal fling under RTL, where Before grows leftward", () => {
+		expect(resolveReleaseVelocity(600, 300, "horizontal", true)).toBe(-2);
+		expect(resolveReleaseVelocity(600, 300, "vertical", true)).toBe(2);
+	});
+
+	test("an unmeasured frame or a non-finite fling releases at rest", () => {
+		expect(resolveReleaseVelocity(600, 0, "horizontal", false)).toBe(0);
+		expect(resolveReleaseVelocity(Number.NaN, 300, "horizontal", false)).toBe(0);
 	});
 });

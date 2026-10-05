@@ -309,6 +309,26 @@ export function resolveRevealTransforms(
 	};
 }
 
+/**
+ * A fling's velocity in positions per second, for the release spring.
+ *
+ * The pan reports points per second along the screen axis; the spring animates a
+ * 0–1 position. Under horizontal RTL Before grows leftward, so a rightward fling
+ * shrinks it. An unmeasured frame, or a velocity the platform failed to report,
+ * releases at rest rather than handing the spring a `NaN`.
+ */
+export function resolveReleaseVelocity(
+	velocity: number,
+	size: number,
+	orientation: CompareOrientation,
+	isRtl: boolean
+): number {
+	"worklet";
+	if (!(size > 0) || !Number.isFinite(velocity)) return 0;
+	const fraction = velocity / size;
+	return orientation === "horizontal" && isRtl ? -fraction : fraction;
+}
+
 /** Whether a touch at `along` lands on the handle's band centred at `seamAlong`. Edge inclusive. */
 export function isWithinGrabBand(along: number, seamAlong: number, band: number): boolean {
 	"worklet";

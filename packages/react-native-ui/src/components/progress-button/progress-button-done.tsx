@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from "react";
 import { View, type ViewProps } from "react-native";
-import { IconCheckmark2Small } from "../../icons/central";
+import { IconCheckmark2 } from "../../icons/central";
 import { cn } from "../../lib/cn";
 import { Icon } from "../icon";
 import { useProgressButtonPart } from "./progress-button.context";
@@ -26,7 +26,7 @@ export function ProgressButtonDone({ children, className, ...props }: ProgressBu
 	useProgressButtonPart("ProgressButton.Done");
 	return (
 		<View className={cn("flex-row items-center justify-center gap-2", className)} {...props}>
-			{children ?? <Icon icon={IconCheckmark2Small} />}
+			{children ?? <Icon icon={IconCheckmark2} />}
 		</View>
 	);
 }

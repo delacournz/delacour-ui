@@ -73,6 +73,7 @@ import {
 	IconToggle,
 	IconTree,
 	IconTrending4,
+	IconUnblur,
 	IconWindow,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
@@ -145,6 +146,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	skeleton: IconPlaceholder,
 	"slide-button": IconChevronDoubleRight,
 	screen: IconLayoutTopBottom,
+	"scroll-fade": IconUnblur,
 	"search-bar": IconMagnifyingGlass,
 	slider: IconSettingsSliderHor,
 	sortable: IconDotGrid2x3,

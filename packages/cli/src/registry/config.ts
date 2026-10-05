@@ -399,6 +399,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		categories: ["navigation"],
 		registryDependencies: ["use-scroll-sections"],
 	},
+	"scroll-fade": {
+		title: "ScrollFade",
+		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
+		categories: ["layout"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

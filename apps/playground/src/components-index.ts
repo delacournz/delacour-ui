@@ -244,6 +244,7 @@ const ROWS = [
 	{ slug: "tree", title: "Tree", description: "Nesting, selection, guide lines, lazy branches", group: "Navigation" },
 	{ slug: "tour", title: "Tour", description: "Spotlight, shapes, placement, interactive", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
+	{ slug: "scroll-fade", title: "ScrollFade", description: "Edges, axes, surfaces", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];

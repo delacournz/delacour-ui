@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-fade/horizontal-cards and has settled — a row of seven day cards at
+  the start, only the right edge faded. The capture script navigates there before running this.
+steps:
+  - wait: 400
+  - echo: Dragging the row to its end — the left edge fades in, the right one clears
+  # Three short drags rather than one long one: a drag from the centre may travel at most half the screen.
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: -0.45 }, momentum: false, duration: 600 }
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: -0.45 }, momentum: false, duration: 600 }
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: -0.45 }, momentum: false, duration: 600 }
+  - wait: 700
+  - echo: And back to the start, so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: 0.45 }, momentum: false, duration: 600 }
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: 0.45 }, momentum: false, duration: 600 }
+  - swipe: { from: { id: scroll-fade-horizontal }, by: { x: 0.45 }, momentum: false, duration: 600 }
+  - wait: 400

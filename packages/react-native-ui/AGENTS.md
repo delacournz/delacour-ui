@@ -138,6 +138,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollFade](src/components/scroll-fade/AGENTS.md) | `@delacour/react-native-ui/scroll-fade` | A gradient at a scrollable's edges while content runs past them |
 | [SectionRail](src/components/section-rail/AGENTS.md) | `@delacour/react-native-ui/section-rail` | A rail of bars along a screen edge that opens into a jump-to-section outline |
 | [SectionProgress](src/components/section-progress/AGENTS.md) | `@delacour/react-native-ui/section-progress` | A floating pill — a scroll-progress ring and the section being read, opening a list of sections |
 | [SearchBar](src/components/search-bar/AGENTS.md) | `@delacour/react-native-ui/search-bar` | The query field at the top of a list — clear, Cancel, debounce and filter tokens, on `Input.Group` |

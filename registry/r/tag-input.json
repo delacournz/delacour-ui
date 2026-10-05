@@ -1,0 +1,169 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tag-input",
+	"type": "registry:ui",
+	"title": "Tag Input",
+	"description": "Free-form tags typed into one field box, each a removable chip, with validation and a max.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"chip",
+		"cn",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/AGENTS.md",
+			"target": "tag-input/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/tag-input",
+					"to": "@registry/ui/tag-input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/index.ts",
+			"target": "tag-input/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input-chip.tsx",
+			"target": "tag-input/tag-input-chip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../chip",
+					"to": "@registry/ui/chip"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input-suffix.tsx",
+			"target": "tag-input/tag-input-suffix.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input.context.tsx",
+			"target": "tag-input/tag-input.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input.logic.ts",
+			"target": "tag-input/tag-input.logic.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input.tsx",
+			"target": "tag-input/tag-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input.types.ts",
+			"target": "tag-input/tag-input.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tag-input/tag-input.variants.ts",
+			"target": "tag-input/tag-input.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	]
+}

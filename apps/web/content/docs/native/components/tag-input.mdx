@@ -1,0 +1,251 @@
+---
+title: TagInput
+description: Free-form tags typed into one field box, each a removable chip.
+icon: Tags
+---
+
+## Installation
+
+<ComponentInstall name="tag-input" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Field } from "@/components/ui/field";
+import { TagInput } from "@/components/ui/tag-input";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [topics, setTopics] = useState<string[]>(["design", "mobile"]);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Field>
+        <Field.Label>Topics</Field.Label>
+        <TagInput value={topics} onValueChange={setTopics} placeholder="Add a topic" />
+      </Field>
+    </View>
+  );
+}
+```
+
+Type, then press Return: the text becomes a chip and the keyboard stays up for the next one. Every
+tag is trimmed, and whitespace on its own never commits.
+
+## Delimiters and paste
+
+`delimiters` lists the single characters that commit the text before them — a comma by default.
+Return always commits. A paste holding delimiters lands as several tags at once.
+
+```tsx
+<TagInput delimiters={[",", " ", ";"]} keyboardType="email-address" />
+```
+
+A delimiter longer than one character is ignored rather than half-matched.
+
+## Validation and `onReject`
+
+`validate` sees each trimmed, `transform`ed tag and the current list; returning `false` refuses
+it. Every refusal reaches `onReject` with one of four reasons — `empty`, `duplicate`, `invalid`,
+`max` — and a warning haptic. A tag refused as `invalid` goes back into the field so it can be
+corrected; the others are dropped.
+
+```tsx
+const HINTS: Record<TagInputRejectReason, string> = {
+  duplicate: "That address is already on the list.",
+  empty: "Type an address first.",
+  invalid: "That does not look like an email address.",
+  max: "The list is full.",
+};
+
+<Field isInvalid={hint !== null}>
+  <Field.Label>Recipients</Field.Label>
+  <TagInput
+    value={emails}
+    onValueChange={setEmails}
+    delimiters={[",", " ", ";"]}
+    validate={isEmail}
+    transform={(raw) => raw.toLowerCase()}
+    onReject={({ reason }) => setHint(HINTS[reason])}
+    onInputValueChange={() => setHint(null)}
+  />
+  {hint ? <Field.Error>{hint}</Field.Error> : null}
+</Field>
+```
+
+When more than one reason applies, the most specific wins: empty, then duplicate, then invalid,
+then max.
+
+## Duplicates and max
+
+Duplicates are refused by default, case-insensitively. `caseSensitiveDuplicates` tells `Design`
+and `design` apart; `allowDuplicates` accepts them.
+
+`max` caps the list, and `showCount` reads it back as `3/10`. Once the list is full the text field
+steps aside, so there is nothing to type into that would only be refused.
+
+```tsx
+<TagInput max={5} showCount defaultValue={["Swift", "Kotlin"]} />
+```
+
+`allowOverflow` accepts tags past `max` instead, and marks the field invalid — invalid chrome and a
+destructive counter — until the list is back under.
+
+```tsx
+<TagInput max={3} allowOverflow showCount />
+```
+
+## Removing tags
+
+Each chip carries a close control. Backspace on an empty field arms the last chip — it turns
+destructive — and a second Backspace removes it, so one stray press never deletes a tag.
+`isClearable` adds a clear-all control while there is anything to clear.
+
+```tsx
+<TagInput isClearable />
+```
+
+## Blur behaviour
+
+`blurBehavior` decides what leaving the field does with the text still in it: `add` commits it, as
+Return would (the default); `clear` throws it away; `keep` leaves it for next time.
+
+```tsx
+<TagInput blurBehavior="clear" />
+```
+
+## Controlled
+
+Both the tags and the draft are controlled or uncontrolled, independently: `value` /
+`defaultValue` / `onValueChange` for the tags, `inputValue` / `defaultInputValue` /
+`onInputValueChange` for the text being typed.
+
+A ref exposes `focus`, `blur`, `clear` and `add(raw)`, which commits text as though it had been
+typed and returns the first rejection's reason, or `null`.
+
+```tsx
+const ref = useRef<TagInputHandle>(null);
+
+<TagInput ref={ref} />
+<Button onPress={() => ref.current?.add("urgent")}>
+  <Button.Label>Mark urgent</Button.Label>
+</Button>
+```
+
+## Custom tags
+
+`renderTag` draws one tag in place of the default chip. It is handed the tag and its state — the
+index, whether Backspace armed it, whether it can be removed, and a `remove`. `useTagInput()`
+reads the rest of the input from inside it.
+
+```tsx
+<TagInput
+  renderTag={(tag, { isPendingRemove, remove }) => (
+    <Chip color={isPendingRemove ? "destructive" : "info"} onClose={remove} size="sm">
+      {tag}
+    </Chip>
+  )}
+/>
+```
+
+## In a Field
+
+Inside a `Field`, the input takes the field's invalid and disabled state, `Field.Label`'s text
+names it, and a tap on the label focuses it.
+
+```tsx
+<Field isDisabled={isLocked}>
+  <Field.Label>Labels</Field.Label>
+  <TagInput value={labels} onValueChange={setLabels} />
+  <Field.Description>Separate with a comma.</Field.Description>
+</Field>
+```
+
+## Sizes and variants
+
+The box is `Input`'s, so a tag input sits level with a field beside it at every size and variant.
+Chips step down a size — `md` takes `sm` chips — so the first tag never makes the box taller.
+
+```tsx
+<TagInput size="sm" />
+<TagInput size="md" variant="secondary" />
+<TagInput size="lg" chipVariant="outline" />
+```
+
+`isReadOnly` shows the tags with no field and no remove controls.
+
+## Accessibility
+
+- Each chip is one accessibility element named by its tag, with removal as a `remove` action —
+  VoiceOver's Actions rotor, TalkBack's actions menu. `removeAccessibilityLabel` names it.
+- The tag count is read with the field: "Recipients, 3 tags".
+- Adds, removals and refusals are announced. `rejectMessages` rewords a refusal per reason;
+  `announce` replaces the speaker, and `announce={false}` silences it.
+- Motion follows the system's reduce-motion setting.
+
+### Backspace on Android
+
+Backspace is read from `onKeyPress`, which fires reliably only on an empty field — the one case the
+arm-then-remove gesture needs. Some Android soft keyboards send no key event for it at all; on
+those, a chip's close control and its `remove` action are the way to delete.
+
+## TagInput or Combobox
+
+TagInput is entry first: the user supplies every value, and there is no option list. To pick from
+suggestions with an escape hatch for a custom value, use a combobox that allows custom values.
+
+## API Reference
+
+### TagInput
+
+Extends `Input`'s props, without `value`, `onChangeText`, `multiline` and `onSubmitEditing` — the
+text field is driven by the tags and the draft.
+
+<TypeTable
+  type={{
+    value: { type: "readonly string[]", description: "Controlled tags." },
+    defaultValue: { type: "readonly string[]", default: "[]", description: "Starting tags while uncontrolled." },
+    onValueChange: { type: "(tags: string[]) => void" },
+    inputValue: { type: "string", description: "Controlled draft — the text still being typed." },
+    defaultInputValue: { type: "string", default: '""' },
+    onInputValueChange: { type: "(text: string) => void" },
+    delimiters: { type: "readonly string[]", default: '[","]', description: "Single characters that commit. Return always commits." },
+    max: { type: "number", description: "The most tags the list holds." },
+    allowOverflow: { type: "boolean", default: "false", description: "Accept tags past `max`, and mark the field invalid while over." },
+    allowDuplicates: { type: "boolean", default: "false" },
+    caseSensitiveDuplicates: { type: "boolean", default: "false" },
+    validate: { type: "(tag: string, current: readonly string[]) => boolean", description: "Return `false` to refuse a tag as `invalid`." },
+    onReject: { type: "(rejection: { tag: string; reason: TagInputRejectReason }) => void", description: "Called once per refused tag." },
+    transform: { type: "(raw: string) => string", description: "Applied to every tag after trimming." },
+    blurBehavior: { type: '"add" | "clear" | "keep"', default: '"add"' },
+    isClearable: { type: "boolean", default: "false", description: "Show a clear-all control while there is something to clear." },
+    showCount: { type: "boolean", default: "false", description: "Show the tag count — `3/10` with a `max`." },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    chipVariant: { type: '"soft" | "outline"', default: '"soft"', description: "How a resting tag is painted." },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset. Overflowing `max` also sets it." },
+    isDisabled: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isReadOnly: { type: "boolean", default: "false", description: "Show the tags with no field and no remove controls." },
+    placeholder: { type: "string", description: "Shown only while there are no tags." },
+    removeAccessibilityLabel: { type: "(tag: string) => string", default: "`Remove ${tag}`" },
+    clearAccessibilityLabel: { type: "string", default: '"Clear all"' },
+    rejectMessages: { type: "Partial<Record<TagInputRejectReason, string>>", description: "What a screen reader hears per refusal reason." },
+    announce: { type: "((message: string) => void) | false", description: "Speaks add, remove and reject messages." },
+    renderTag: { type: "(tag: string, state: TagInputTagState) => ReactNode", description: "Draws one tag in place of the default chip." },
+    className: { type: "string", description: "Styles the box." },
+    testID: { type: "string", description: "Names the box; the parts derive `-input`, `-tag-${index}`, `-tag-${index}-remove`, `-clear` and `-count`." },
+    ref: { type: "Ref<TagInputHandle>" },
+  }}
+/>
+
+### TagInputHandle
+
+<TypeTable
+  type={{
+    focus: { type: "() => void" },
+    blur: { type: "() => void" },
+    clear: { type: "() => void", description: "Removes every tag and empties the draft." },
+    add: { type: "(raw: string) => TagInputRejectReason | null", description: "Commits text as though typed and confirmed." },
+  }}
+/>

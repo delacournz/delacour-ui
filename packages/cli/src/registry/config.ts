@@ -284,6 +284,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Typography: the type scale, weights and the page-level colours.",
 		categories: ["display"],
 	},
+	"tag-input": {
+		title: "Tag Input",
+		description: "Free-form tags typed into one field box, each a removable chip, with validation and a max.",
+		categories: ["forms"],
+	},
 	textarea: {
 		title: "Textarea",
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",

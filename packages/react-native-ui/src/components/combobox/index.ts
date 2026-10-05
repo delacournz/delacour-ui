@@ -31,12 +31,15 @@ export type {
 export {
 	COMBOBOX_CHIP_LAYOUT_MS,
 	COMBOBOX_DEFAULT_MAX_CHIPS,
+	COMBOBOX_KEYBOARD_ESTIMATE_FRACTION,
 	type ComboboxVariantProps,
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
+	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
 	resolveComboboxTriggerText,
+	resolveExpectedKeyboardHeight,
 	resolveVisibleChips,
 } from "./combobox.variants";
 export type { ComboboxEmptyProps } from "./combobox-empty";

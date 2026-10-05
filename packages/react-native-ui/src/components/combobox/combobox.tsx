@@ -8,8 +8,9 @@ import {
 	useWindowDimensions,
 	View,
 } from "react-native";
-import { useKeyboardState } from "react-native-keyboard-controller";
+import { useKeyboardHandler } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { scheduleOnRN } from "react-native-worklets";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconCrossSmall, IconMagnifyingGlass } from "../../icons/central";
 import { BottomSheet, type BottomSheetProps } from "../bottom-sheet";
@@ -53,7 +54,12 @@ import type {
 	ComboboxOptionInput,
 	ComboboxPresentation,
 } from "./combobox.types";
-import { comboboxVariants, resolveComboboxSheetMaxHeight, resolveComboboxTriggerText } from "./combobox.variants";
+import {
+	comboboxVariants,
+	resolveComboboxSheetMaxHeight,
+	resolveComboboxTriggerText,
+	resolveExpectedKeyboardHeight,
+} from "./combobox.variants";
 import { ComboboxChipRow } from "./combobox-chip-row";
 import { ComboboxCreateRow } from "./combobox-create-row";
 import { ComboboxEmpty } from "./combobox-empty";
@@ -110,7 +116,7 @@ type ComboboxBaseProps = {
 	highlight?: boolean;
 	/** Classes for the trigger. */
 	className?: string;
-	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, create `-create`, Done `-done`. */
+	/** On the trigger; rows take `${testID}-option-${value}`, search `-search`, create `-create`, Done `-done`; the trigger's chevron `-chevron`, clear `-clear`, chips `-chip-${value}` and `-remove-${value}`. */
 	testID?: string;
 	/** `Combobox.Item`, `Combobox.Group`, and optionally `Combobox.Trigger` or `Combobox.Empty`. */
 	children?: ReactNode;
@@ -195,7 +201,23 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const field = useFieldContext();
 	const { height: windowHeight } = useWindowDimensions();
 	const { top: topInset } = useSafeAreaInsets();
-	const keyboardHeight = useKeyboardState((state) => (state.isVisible ? state.height : 0));
+	// The keyboard's target height, read as it starts to move, and the last one
+	// measured — see `resolveExpectedKeyboardHeight` for why both.
+	const [keyboardHeight, setKeyboardHeight] = useState(0);
+	const [lastKeyboardHeight, setLastKeyboardHeight] = useState(0);
+	const handleKeyboardStart = (height: number) => {
+		setKeyboardHeight(height);
+		if (height > 0) setLastKeyboardHeight(height);
+	};
+	useKeyboardHandler(
+		{
+			onStart: (event) => {
+				"worklet";
+				scheduleOnRN(handleKeyboardStart, event.height);
+			},
+		},
+		[]
+	);
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
 	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
 
@@ -246,12 +268,14 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		if (canOpen) setOpen(true);
 	}, [canOpen]);
 
-	// One path for every close — a single pick, Done, a swipe, the overlay, the
-	// close button — and each one empties the query, so the next open starts
-	// from the whole list.
+	// One path for every close — Done, a swipe, the overlay, the close button —
+	// and each one empties the query, so the next open starts from the whole
+	// list, and blurs the field, so the keyboard leaves with the sheet rather
+	// than lingering over the screen after it.
 	const handleOpenChange = (next: boolean) => {
 		setOpen(next);
 		if (next) return;
+		inputRef.current?.blur();
 		setPending(IDLE);
 		resetQuery("close");
 	};
@@ -283,7 +307,10 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		if (result.change === "selected" || result.change === "limit-reached") remember(option);
 		setPending(IDLE);
 		resetQuery("select");
-		if (mode === "single") setOpen(false);
+		if (mode === "single") {
+			inputRef.current?.blur();
+			setOpen(false);
+		}
 	};
 
 	const toggle = (value: string) => {
@@ -521,7 +548,16 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			<BottomSheet
 				dynamicSizing={snapPoints === undefined}
 				isOpen={isOpen}
-				maxDynamicContentSize={resolveComboboxSheetMaxHeight({ keyboardHeight, topInset, windowHeight })}
+				maxDynamicContentSize={resolveComboboxSheetMaxHeight({
+					keyboardHeight: resolveExpectedKeyboardHeight({
+						expectsKeyboard: openOnFocus,
+						keyboardHeight,
+						lastKnown: lastKeyboardHeight,
+						windowHeight,
+					}),
+					topInset,
+					windowHeight,
+				})}
 				onIndexChange={handleIndexChange}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}

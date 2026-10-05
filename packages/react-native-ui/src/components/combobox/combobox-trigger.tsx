@@ -37,11 +37,13 @@ function ComboboxChevron({
 	className,
 	color,
 	size,
+	testID,
 }: {
 	isOpen: boolean;
 	className: string;
 	color: string;
 	size: InputSize;
+	testID?: string;
 }): ReactElement {
 	const isCalm = useCalmMotion();
 	const turn = useSharedValue(isOpen ? 1 : 0);
@@ -56,7 +58,7 @@ function ComboboxChevron({
 	const style = useAnimatedStyle(() => ({ transform: [{ rotate: `${turn.value * 180}deg` }] }));
 
 	return (
-		<Animated.View className={className} style={style}>
+		<Animated.View className={className} style={style} testID={testID}>
 			<Icon color={color} icon={IconChevronDownSmall} size={size} />
 		</Animated.View>
 	);
@@ -176,7 +178,13 @@ export function ComboboxTrigger({
 	const suffix = isLoading ? (
 		<Spinner color={iconToken} size={size} />
 	) : (
-		<ComboboxChevron className={select.chevron()} color={iconToken} isOpen={isOpen} size={size} />
+		<ComboboxChevron
+			className={select.chevron()}
+			color={iconToken}
+			isOpen={isOpen}
+			size={size}
+			testID={testID ? `${testID}-chevron` : undefined}
+		/>
 	);
 
 	return (

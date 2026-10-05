@@ -166,3 +166,33 @@ export function resolveComboboxSheetMaxHeight({
 	const aboveKeyboard = windowHeight - topInset - SELECT_SHEET_TOP_GAP - keyboardHeight;
 	return Math.max(0, Math.floor(Math.min(base, aboveKeyboard)));
 }
+
+/** A phone keyboard with its suggestion bar, as a share of the window, for before one has been measured. */
+export const COMBOBOX_KEYBOARD_ESTIMATE_FRACTION = 0.42;
+
+/**
+ * The keyboard height the sheet should leave room for.
+ *
+ * The engine lifts the sheet on the UI thread the instant the keyboard moves,
+ * and a self-sized sheet only re-measures a few frames later, so a cap that
+ * waits for the keyboard lets the list ride under the status bar for those
+ * frames. With `openOnFocus` the keyboard is certain to come, so the sheet is
+ * always capped for it — before it opens, too, or the cap would land mid-rise
+ * and the sheet would dip — at the keyboard on its way if there is one, else
+ * the last one measured, else an estimate.
+ */
+export function resolveExpectedKeyboardHeight({
+	expectsKeyboard,
+	keyboardHeight,
+	lastKnown,
+	windowHeight,
+}: {
+	expectsKeyboard: boolean;
+	keyboardHeight: number;
+	lastKnown: number;
+	windowHeight: number;
+}): number {
+	if (keyboardHeight > 0) return keyboardHeight;
+	if (!expectsKeyboard) return 0;
+	return lastKnown > 0 ? lastKnown : Math.round(windowHeight * COMBOBOX_KEYBOARD_ESTIMATE_FRACTION);
+}

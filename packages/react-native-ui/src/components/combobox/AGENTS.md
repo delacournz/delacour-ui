@@ -111,6 +111,20 @@ typed text can become a value.
   keyboard and the top inset (less Select's gap) while one is up. Passing the
   engine a `topInset` instead was tried and rejected: it shrinks the frame, and
   the scrim with it, leaving the status bar uncovered.
+- **The cap expects the keyboard before it arrives.** The search field focuses
+  as the sheet settles, so the sheet sized itself for an empty screen and the
+  keyboard's lift then carried its top under the Dynamic Island for a few
+  frames — `useKeyboardState` and even `useKeyboardHandler`'s `onStart` land a
+  frame too late to stop it. With `openOnFocus`, `resolveExpectedKeyboardHeight`
+  feeds the cap the keyboard it will get: the live height once one is up, else
+  the last one seen, else `COMBOBOX_KEYBOARD_ESTIMATE_FRACTION` (0.42) of the
+  window.
+- **Closing blurs the search field first.** Done, the scrim, the close button
+  and a single pick all `blur()` before the sheet leaves, so the keyboard goes
+  down with it rather than lingering over the screen for a beat.
+- **The chevron carries `${testID}-chevron`.** A tap on the trigger's centre
+  can land in a chip's remove hit slop; tests and capture flows open a
+  multiple-mode trigger from the chevron instead.
 - **Chips enter, leave and close gaps in 150ms; calm motion drops it all.**
 - **The result count is announced, not just shown.** Android reads the
   `accessibilityLiveRegion="polite"` line under the field; iOS has no live

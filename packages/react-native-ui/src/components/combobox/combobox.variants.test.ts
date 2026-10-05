@@ -8,12 +8,14 @@ import {
 } from "../select/select.variants";
 import {
 	COMBOBOX_DEFAULT_MAX_CHIPS,
+	COMBOBOX_KEYBOARD_ESTIMATE_FRACTION,
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
 	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
 	resolveComboboxTriggerText,
+	resolveExpectedKeyboardHeight,
 	resolveVisibleChips,
 } from "./combobox.variants";
 
@@ -186,6 +188,38 @@ describe("resolveComboboxSheetMaxHeight", () => {
 			resolveSelectSheetMaxHeight({ topInset: 0, windowHeight: 874 })
 		);
 		expect(resolveComboboxSheetMaxHeight({ keyboardHeight: 2000, topInset: 62, windowHeight: 874 })).toBe(0);
+	});
+});
+
+describe("resolveExpectedKeyboardHeight", () => {
+	test("a keyboard on its way wins", () => {
+		expect(
+			resolveExpectedKeyboardHeight({ expectsKeyboard: true, keyboardHeight: 300, lastKnown: 280, windowHeight: 874 })
+		).toBe(300);
+	});
+
+	test("before it starts, the last one measured stands in for it", () => {
+		expect(
+			resolveExpectedKeyboardHeight({ expectsKeyboard: true, keyboardHeight: 0, lastKnown: 336, windowHeight: 874 })
+		).toBe(336);
+	});
+
+	test("with none measured yet, a fraction of the window", () => {
+		expect(
+			resolveExpectedKeyboardHeight({ expectsKeyboard: true, keyboardHeight: 0, lastKnown: 0, windowHeight: 1000 })
+		).toBe(Math.round(1000 * COMBOBOX_KEYBOARD_ESTIMATE_FRACTION));
+	});
+
+	test("nothing is expected when the field will not focus, or the sheet is shut", () => {
+		expect(
+			resolveExpectedKeyboardHeight({ expectsKeyboard: false, keyboardHeight: 0, lastKnown: 336, windowHeight: 874 })
+		).toBe(0);
+	});
+
+	test("a keyboard that is up counts even when none was expected", () => {
+		expect(
+			resolveExpectedKeyboardHeight({ expectsKeyboard: false, keyboardHeight: 320, lastKnown: 0, windowHeight: 874 })
+		).toBe(320);
 	});
 });
 

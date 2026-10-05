@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled, with slow work",
 	caption:
 		"Controlled by `isCompleted`. The release asks for completion; the handle waits at the end while the request runs, and the tick lands only when the parent says so.",
-	align: "center",
+	align: "stretch",
 };
 
 type Transfer = { status: "idle" } | { status: "sending" } | { status: "sent"; at: string };
@@ -25,17 +25,20 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<View className="items-center gap-4">
+		<View className="gap-4">
 			<SlideButton
 				accessibilityActionLabel="Transfer $240"
 				isCompleted={transfer.status === "sent"}
+				isFullWidth
 				onComplete={send}
 				testID="controlled-transfer"
 				variant="success"
 			>
 				<SlideButton.Label>Slide to transfer $240</SlideButton.Label>
 			</SlideButton>
-			<Text.Code>{transfer.status === "sent" ? `sent at ${transfer.at}` : transfer.status}</Text.Code>
+			<Text.Code className="self-center">
+				{transfer.status === "sent" ? `sent at ${transfer.at}` : transfer.status}
+			</Text.Code>
 			<Button onPress={() => setTransfer({ status: "idle" })} size="sm" testID="controlled-reset" variant="ghost">
 				Reset
 			</Button>

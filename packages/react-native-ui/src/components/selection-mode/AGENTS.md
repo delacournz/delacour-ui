@@ -87,7 +87,11 @@ and `useSelectionMode()`.
   that closed over `selected` would see a stale list; `onPress(selected)` cannot.
   `isExitOnPress` exits afterwards — a delete, whose picks no longer exist.
 - **The root fills the height it is offered** (`flex-1`). Give it one: inside a
-  `ScrollView` with no height the bar has no bottom to sit on.
+  `ScrollView` with no height the bar has no bottom to sit on. An `h-*` class on
+  the root itself is not enough — `flex-1` sets a zero basis, and in a parent
+  with no height of its own the root collapses to nothing. Size the parent, or
+  add `flex-none` to a root that should take its content's height (an always-on
+  picker with no bar).
 - **Haptics are off by default.** `haptic` plays on entering the mode and on each
   toggle that changed something — called from JS through `playHaptic`, since
   neither moment is a gesture callback.
@@ -135,8 +139,10 @@ and `useSelectionMode()`.
 
 - **`SelectionMode.Sheet`.** Importing `../bottom-sheet` would force the optional
   sheet engine and `react-native-teleport` on every consumer of this component.
-  The `in-a-sheet` demo shows the composition instead —
-  `<BottomSheet>…<SelectionMode isActive>…</SelectionMode>…</BottomSheet>`. A
+  The `in-a-sheet` demo shows the composition instead: `SelectionMode` wraps the
+  `BottomSheet` (context reaches through the portal), the items go in the sheet's
+  scroll view, and the bar goes in `BottomSheet.Footer sticky` as
+  `className="relative border-t-0 bg-transparent"` with `isSafeAreaAware={false}`. A
   first-class part is a follow-up, possibly on its own subpath.
 - **Drag to select a range.** A pan across rows would fight the list's own
   scroll; not in v1.

@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption: "`placement` picks the side the panel prefers. It is a preference: a side without room flips.",
 	align: "center",
-	capture: { flow: "popover/placements", frame: "device" },
 };
 
 const LABELS: Record<PopoverPlacement, string> = {

@@ -19,6 +19,7 @@
 		"switch",
 		"slider",
 		"rating",
+		"color-picker",
 		"---Data Display---",
 		"text",
 		"chart",

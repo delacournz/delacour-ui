@@ -164,6 +164,14 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_color_picker_basic from "./color-picker/basic";
+import * as demo_color_picker_controlled from "./color-picker/controlled";
+import * as demo_color_picker_disabled_invalid from "./color-picker/disabled-invalid";
+import * as demo_color_picker_formats from "./color-picker/formats";
+import * as demo_color_picker_sheet_trigger from "./color-picker/sheet-trigger";
+import * as demo_color_picker_sizes from "./color-picker/sizes";
+import * as demo_color_picker_swatches from "./color-picker/swatches";
+import * as demo_color_picker_with_alpha from "./color-picker/with-alpha";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -530,6 +538,14 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"color-picker/basic": demo_color_picker_basic,
+	"color-picker/controlled": demo_color_picker_controlled,
+	"color-picker/disabled-invalid": demo_color_picker_disabled_invalid,
+	"color-picker/formats": demo_color_picker_formats,
+	"color-picker/sheet-trigger": demo_color_picker_sheet_trigger,
+	"color-picker/sizes": demo_color_picker_sizes,
+	"color-picker/swatches": demo_color_picker_swatches,
+	"color-picker/with-alpha": demo_color_picker_with_alpha,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

@@ -63,6 +63,7 @@ shares.
 | --- | --- | --- |
 | [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
 | [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
+| [Attachment](src/components/attachment/AGENTS.md) | `@delacour/react-native-ui/attachment` | A file, image or recording — thumbnail, name, size, upload progress, remove and retry |
 | [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A sheet over the app — a Uniwind skin on `@delacour/react-native-bottom-sheet` |

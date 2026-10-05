@@ -34,6 +34,7 @@ const SLOTS = [
 	"actions",
 	"action",
 	"dim",
+	"badge",
 	"group",
 ] as const;
 
@@ -282,5 +283,23 @@ describe("motion", () => {
 		expect(ATTACHMENT_ERROR_NUDGE.distance).toBeGreaterThan(0);
 		expect(ATTACHMENT_ERROR_NUDGE.distance).toBeLessThanOrEqual(6);
 		expect(ATTACHMENT_ERROR_NUDGE.stepMs * 3).toBeLessThanOrEqual(300);
+	});
+});
+
+describe("badge", () => {
+	test("the video badge is a frosted disc the action's size", () => {
+		const badge = attachmentVariants({}).badge();
+		expect(badge).toContain("bg-card/85");
+		expect(edgeOf(badge)).toBe(ATTACHMENT_ACTION_EDGE);
+	});
+});
+
+describe("group", () => {
+	test("each gap is a gap, and md is the wider", () => {
+		const sm = attachmentVariants({ gap: "sm" }).group();
+		const md = attachmentVariants({ gap: "md" }).group();
+		const step = (cls: string) => Number(cls.match(/\bgap-([\d.]+)\b/)?.[1]);
+		expect(step(md)).toBeGreaterThan(step(sm));
+		expect(sm).toContain("flex-row");
 	});
 });

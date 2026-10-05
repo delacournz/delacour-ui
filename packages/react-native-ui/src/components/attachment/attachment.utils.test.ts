@@ -12,6 +12,7 @@ import {
 	resolveAttachmentRole,
 	resolveFileExtension,
 	resolveProgressAnnouncement,
+	resolveAttachmentSourceKey,
 	resolveRemoveLabel,
 	spokenDuration,
 	spokenFileSize,
@@ -336,5 +337,22 @@ describe("resolveAttachmentActions", () => {
 				status: { type: "done" },
 			}).map((action) => action.name)
 		).toEqual(["activate", "longpress"]);
+	});
+});
+
+describe("resolveAttachmentSourceKey", () => {
+	test("a URI, a bundled asset, or nothing", () => {
+		expect(resolveAttachmentSourceKey({ uri: "https://x/a.jpg" })).toBe("uri:https://x/a.jpg");
+		expect(resolveAttachmentSourceKey(12)).toBe("asset:12");
+		expect(resolveAttachmentSourceKey(undefined)).toBeNull();
+		expect(resolveAttachmentSourceKey({})).toBeNull();
+	});
+
+	test("an inline object with the same URI is the same key", () => {
+		expect(resolveAttachmentSourceKey({ uri: "a" })).toBe(resolveAttachmentSourceKey({ uri: "a" }));
+	});
+
+	test("a list of resolutions keys on every entry", () => {
+		expect(resolveAttachmentSourceKey([{ uri: "a" }, { uri: "b" }])).toBe("uri:a|uri:b");
 	});
 });

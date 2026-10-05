@@ -4,6 +4,8 @@ description: Places and paths on a themed map — markers, labels, popups, route
 icon: Map
 ---
 
+<Preview id="map/places" title={null} />
+
 ## Installation
 
 <ComponentInstall name="map" />
@@ -65,6 +67,8 @@ map lands in the right hemisphere.
 `center`, `zoom` and `bounds` set the view the map opens on; changing them later does not move it. The
 `ref` moves the camera, and `useMap()` hands the same handle to anything inside the map.
 
+<Preview id="map/fly-to" />
+
 ```tsx
 const ref = useRef<MapHandle>(null);
 
@@ -80,6 +84,8 @@ ref.current?.recenter();
 A marker is a React view on a coordinate, and it anchors on its pin's tip, so a label under the pin moves
 nothing. Give it `onPress` and it becomes a button.
 
+<Preview id="map/places" />
+
 ```tsx
 <Map.Marker accessibilityLabel="Museum" lngLat={museum} onPress={() => setSelected("museum")}>
   <Map.Pin tone="primary" />
@@ -91,6 +97,8 @@ nothing. Give it `onPress` and it becomes a button.
 
 A themed card over the marker's pin — write it before the pin. It holds no open state: render it while
 the place is selected. Outside a marker it needs its own `lngLat`.
+
+<Preview id="map/popup" />
 
 ```tsx
 <Map.Marker accessibilityLabel="Corner café" lngLat={cafe} onPress={() => setOpen(true)}>
@@ -108,6 +116,10 @@ the place is selected. Outside a marker it needs its own `lngLat`.
 A route is a line through a list of coordinates; an arc is a curve between two points, for a connection
 rather than a path. Both are the theme's `primary` unless given a colour.
 
+<Preview id="map/route" />
+
+<Preview id="map/arcs" />
+
 ```tsx
 <Map.Route coordinates={walked} width={4} />
 <Map.Route coordinates={ahead} isDashed opacity={0.6} />
@@ -118,6 +130,8 @@ rather than a path. Both are the theme's `primary` unless given a colour.
 
 Zoom, compass, recenter and locate buttons, floated in a corner. Locate and `Map.UserLocation` turn on the
 platform's location dot, which asks for location permission the first time.
+
+<Preview id="map/controls" />
 
 ```tsx
 <Map.Controls corner="bottom-right" showCompass showLocate showRecenter />

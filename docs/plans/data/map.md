@@ -134,9 +134,34 @@ accessibility, API.
   theme turning the basemap dark. Found and fixed there: Apple Maps skips `onRegionChangeComplete` after a long
   animated move, so handle moves now settle themselves (`resolveSettleDelay`).
 - Not verified: Android (no Google Maps key on this machine), the locate button's permission flow.
-- **Previews not captured.** The capture tool is not installed on this machine, so no demo carries `capture` and
-  `map.mdx` has no `<Preview>`. Follow-up: mark `places` (hero), `route`, `arcs`, `popup`, `controls` as
-  `capture: { align: "stretch" }`, run `bun run previews -- -- --only map`, add the `<Preview>`s.
+- ~~Previews not captured.~~ Captured 2026-10-06 — see **Previews record** below.
 - The planned `dark` demo became `tones` (pins in every tone); the basemap's theme is checked with the gallery's
   own theme toggle rather than a demo that flips the app theme.
 - `bun --filter delacour run verify:expo` passes (map copied, `react-native-maps` expo-installed, app typechecks).
+
+## Previews record (2026-10-06)
+
+Six demos captured on the dev client (iPhone 17 Pro simulator), light and dark: 2 clips, 4 stills.
+
+| Demo | Media | Flow |
+| --- | --- | --- |
+| `places` (hero) | clip | taps Gardens → Market → Museum by `-content` id, back to the opening selection |
+| `popup` | clip | closes the café's card from its button and reopens it on the same pin |
+| `route`, `arcs` | still | — |
+| `controls`, `fly-to` | **still — clip not capturable** | — |
+
+- **`controls` and `fly-to` cannot be clips yet.** Every camera move into a zoom level not yet drawn since launch
+  paints Apple Maps' empty tile grid for about five frames (~170 ms) on the simulator. It reproduced in all 24
+  takes (both demos, both themes, six tries each), measured per frame rather than off a contact sheet, which
+  missed it. No demo or flow change avoids it: a zoom-out first, a shorter flight and warm network caches all
+  still showed it. **Harness change needed:** run a flow once, unrecorded, before the recorded take, so
+  the tiles for every view it reaches have been rendered. Until then both stay stills; the flows were written
+  (`zoom-in ×2 → recenter`, `flyTo → recenter`) and are trivial to restore.
+- **Library bug found by the popup clip, fixed:** an iOS annotation only ever grows, so a marker whose popup closed
+  kept the card-sized frame and drew its pin up and left of its coordinate. `Map.Marker` now remounts on a shrink
+  (`isMarkerShrink`).
+- **`Map.Marker` repeats `testID` on its content as `-content`.** The native annotation is not in the tree a test
+  runner walks, so flows could not select a marker.
+- Switching the selection from one pin to another makes Apple Maps pan to keep the new annotation in view, which no
+  flow can undo, so the popup clip closes and reopens one card instead.
+

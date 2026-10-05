@@ -33,10 +33,11 @@ entry point, and the folder name is its export subpath.
 ```
 src/
 ├── components/{name}/    one folder per component — see Components below
-├── expo/                 Expo-only entry points — navigation-theme
+├── expo/                 Expo-only entry points — navigation-theme, blur-layer
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
-│                         use-calm-motion, use-scroll-source
+│                         use-calm-motion, use-scroll-source,
+│                         use-reduce-transparency
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
@@ -117,6 +118,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |

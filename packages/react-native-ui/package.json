@@ -59,6 +59,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
+		"./scroll-blur": "./src/components/scroll-blur/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slider": "./src/components/slider/index.ts",
@@ -70,11 +71,13 @@
 		"./text": "./src/components/text/index.ts",
 		"./textarea": "./src/components/textarea/index.ts",
 		"./toggle-button": "./src/components/toggle-button/index.ts",
+		"./expo/blur-layer": "./src/expo/blur-layer.tsx",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-calm-motion": "./src/hooks/use-calm-motion.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",
 		"./hooks/use-navigation-theme": "./src/hooks/use-navigation-theme.ts",
+		"./hooks/use-reduce-transparency": "./src/hooks/use-reduce-transparency.ts",
 		"./hooks/use-scroll-source": "./src/hooks/use-scroll-source.tsx",
 		"./hooks/use-theme-color": "./src/hooks/use-theme-color.ts",
 		"./lib/calm-motion": "./src/lib/calm-motion.ts",
@@ -106,6 +109,7 @@
 		"@delacour/react-native-bottom-sheet": ">=0.1.0-alpha.0",
 		"@delacour/react-native-charts": ">=0.1.0-alpha.5",
 		"@legendapp/list": ">=3.3",
+		"expo-blur": ">=15",
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
@@ -132,6 +136,9 @@
 		"@legendapp/list": {
 			"optional": true
 		},
+		"expo-blur": {
+			"optional": true
+		},
 		"expo-router": {
 			"optional": true
 		},
@@ -149,6 +156,7 @@
 		"@delacour/tsconfig": "workspace:*",
 		"@types/bun": "^1.3.8",
 		"@types/react": "catalog:",
+		"expo-blur": "~57.0.3",
 		"expo-router": "~57.0.15",
 		"react-native-teleport": "^1.2.2",
 		"typescript": "^5.9.3"

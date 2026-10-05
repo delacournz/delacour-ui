@@ -166,6 +166,12 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_context_menu_anchored_to_row from "./context-menu/anchored-to-row";
+import * as demo_context_menu_hold_timing from "./context-menu/hold-timing";
+import * as demo_context_menu_lifted_preview from "./context-menu/lifted-preview";
+import * as demo_context_menu_message_actions from "./context-menu/message-actions";
+import * as demo_context_menu_stateful_rows from "./context-menu/stateful-rows";
+import * as demo_context_menu_with_own_press from "./context-menu/with-own-press";
 import * as demo_drawer_controlled from "./drawer/controlled";
 import * as demo_drawer_filters from "./drawer/filters";
 import * as demo_drawer_navigation from "./drawer/navigation";
@@ -585,6 +591,12 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"context-menu/anchored-to-row": demo_context_menu_anchored_to_row,
+	"context-menu/hold-timing": demo_context_menu_hold_timing,
+	"context-menu/lifted-preview": demo_context_menu_lifted_preview,
+	"context-menu/message-actions": demo_context_menu_message_actions,
+	"context-menu/stateful-rows": demo_context_menu_stateful_rows,
+	"context-menu/with-own-press": demo_context_menu_with_own_press,
 	"drawer/controlled": demo_drawer_controlled,
 	"drawer/filters": demo_drawer_filters,
 	"drawer/navigation": demo_drawer_navigation,

@@ -162,6 +162,10 @@ ContextMenu renders this component's rows and panel rather than a copy:
   `anchor` straight to `Menu.Content`.
 - **`hasScrim`** tints the screen behind the panel; **`iconPlacement="trailing"`**
   puts a row's icon at its end.
+- **`backdrop`** draws a node inside the `Modal`, over the scrim and behind the
+  panel, fading with them and taking no touches. A `Modal` covers everything,
+  so anything meant to show above the scrim — ContextMenu's lifted preview — has
+  to be inside it; outside, it would sit under the tint.
 
 ## Out of scope
 

@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on context-menu/lifted-preview and has settled — the three beach cards with
+  no menu open. The capture script navigates there before running this.
+steps:
+  - echo: Holding the middle card, which lifts a copy of it over the dimmed list
+  - long-press: { on: { id: context-menu-place-Karekare }, duration: 600 }
+  - await: { visible: { id: context-menu-place-Karekare-favourite } }
+  - wait: 1600
+  - echo: Dismissing it from the scrim, so the copy settles back and the clip loops
+  # A coordinate rather than the scrim's label: the scrim fills the screen, so a
+  # tap on its centre lands on the panel and chooses a row. Near the top the
+  # scrim is the only thing there, and the await below fails the flow if not.
+  - tool: gesture-tap
+    args: { x: 0.5, y: 0.12 }
+  - await: { hidden: { id: context-menu-place-Karekare-favourite } }

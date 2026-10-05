@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on context-menu/anchored-to-row and has settled — the three file rows with
+  no menu open. The capture script navigates there before running this.
+steps:
+  - echo: Holding the middle row; the panel hangs off the row's leading edge, not the finger
+  - long-press: { on: { id: context-menu-row-1 }, duration: 600 }
+  - await: { visible: { id: context-menu-row-1-rename } }
+  - wait: 1400
+  - echo: Dismissing it from the scrim, so the clip loops
+  # A coordinate rather than the scrim's label: the scrim fills the screen, so a
+  # tap on its centre lands on the panel and chooses a row. Near the top the
+  # scrim is the only thing there, and the await below fails the flow if not.
+  - tool: gesture-tap
+    args: { x: 0.5, y: 0.12 }
+  - await: { hidden: { id: context-menu-row-1-rename } }

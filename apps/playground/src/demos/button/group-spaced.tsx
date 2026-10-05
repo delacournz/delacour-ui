@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	caption:
 		"`isAttached={false}` keeps the shared variant and size and drops the joined shape. Every member draws its own corner, the run takes a gap, and a press scales again.",
 	align: "center",
-	capture: {},
 };
 
 export function Demo(): ReactElement {

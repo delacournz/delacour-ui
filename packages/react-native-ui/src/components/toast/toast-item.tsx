@@ -3,6 +3,7 @@ import { AccessibilityInfo, type LayoutChangeEvent, Platform, View } from "react
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
 	Easing,
+	type SharedValue,
 	useAnimatedStyle,
 	useReducedMotion,
 	useSharedValue,
@@ -33,6 +34,7 @@ import {
 	resolveToastHaptic,
 	resolveToastInterrupts,
 	resolveToastRelease,
+	resolveToastStackedHeight,
 	TOAST_ENTER_DISTANCE,
 	toastVariants,
 } from "./toast.variants";
@@ -54,6 +56,8 @@ export type ToastViewportItemProps = {
 	/** False while the app is backgrounded; the clock stops. */
 	isAppActive: boolean;
 	isScreenReaderEnabled: boolean;
+	/** The front toast's height in this stack — the front one writes it, the ones behind take it. */
+	frontHeight: SharedValue<number>;
 };
 
 /** The default card for a message toast. */
@@ -100,6 +104,7 @@ export function ToastViewportItem({
 	edgeOffset,
 	isAppActive,
 	isScreenReaderEnabled,
+	frontHeight,
 }: ToastViewportItemProps): ReactElement {
 	const { id, createdAt, batchIndex, revision, onHide } = item;
 	const isReduced = useReducedMotion();
@@ -109,6 +114,7 @@ export function ToastViewportItem({
 	const dragY = useSharedValue(0);
 	const width = useSharedValue(0);
 	const height = useSharedValue(0);
+	const isFront = depth === 0 && !isExiting;
 	const [isTouched, setTouched] = useState(false);
 
 	const hide = useCallback(() => store.dispatch({ type: "hide", id }), [store, id]);
@@ -134,6 +140,10 @@ export function ToastViewportItem({
 	useEffect(() => {
 		depthValue.value = withTiming(depth, { duration: DEPTH_MS, easing: ENTER_EASING });
 	}, [depth, depthValue]);
+
+	useEffect(() => {
+		if (isFront && height.value > 0) frontHeight.value = height.value;
+	}, [isFront, height, frontHeight]);
 
 	const duration =
 		item.kind === "message"
@@ -232,7 +242,13 @@ export function ToastViewportItem({
 		const stack = resolveToastDepthStyle(depthValue.value, placement);
 		const towardEdge = placement === "bottom" ? 1 : -1;
 		const enter = isReduced ? 0 : towardEdge * TOAST_ENTER_DISTANCE * (1 - presence.value);
+		const stackedHeight = resolveToastStackedHeight({
+			depth: depthValue.value,
+			natural: height.value,
+			front: frontHeight.value,
+		});
 		return {
+			height: stackedHeight ?? undefined,
 			opacity: Math.max(0, presence.value * stack.opacity),
 			transform: [
 				{ translateX: dragX.value },
@@ -245,9 +261,18 @@ export function ToastViewportItem({
 	const onLayout = useCallback(
 		(event: LayoutChangeEvent) => {
 			width.value = event.nativeEvent.layout.width;
-			height.value = event.nativeEvent.layout.height;
 		},
-		[width, height]
+		[width]
+	);
+
+	// The card's own height, measured inside the clip, so a toast behind still
+	// knows how tall it is when it moves up — and the front one publishes it.
+	const onCardLayout = useCallback(
+		(event: LayoutChangeEvent) => {
+			height.value = event.nativeEvent.layout.height;
+			if (isFront) frontHeight.value = event.nativeEvent.layout.height;
+		},
+		[height, isFront, frontHeight]
 	);
 
 	const zIndex = 2 * (50 - depth) - (isExiting ? 1 : 0);
@@ -260,13 +285,21 @@ export function ToastViewportItem({
 					onLayout={onLayout}
 					pointerEvents={isExiting ? "none" : "auto"}
 					style={[
-						{ width: "100%", maxWidth: 560, transformOrigin: placement === "bottom" ? "bottom" : "top" },
+						{
+							width: "100%",
+							maxWidth: 560,
+							overflow: "hidden",
+							justifyContent: placement === "bottom" ? "flex-end" : "flex-start",
+							transformOrigin: placement === "bottom" ? "bottom" : "top",
+						},
 						animatedStyle,
 					]}
 				>
-					<ToastItemProvider value={itemContext}>
-						{item.kind === "message" ? renderMessage(item, handle) : item.render(handle)}
-					</ToastItemProvider>
+					<View onLayout={onCardLayout} style={{ flexShrink: 0 }}>
+						<ToastItemProvider value={itemContext}>
+							{item.kind === "message" ? renderMessage(item, handle) : item.render(handle)}
+						</ToastItemProvider>
+					</View>
 				</Animated.View>
 			</GestureDetector>
 		</View>

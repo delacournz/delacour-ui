@@ -1,7 +1,7 @@
 import { type ReactElement, useEffect, useState, useSyncExternalStore } from "react";
 import { AccessibilityInfo, AppState, View } from "react-native";
 import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Overlay } from "../overlay";
 import type { ToastItem, ToastPlacement, ToastStore } from "./toast.store";
@@ -76,6 +76,8 @@ export function ToastViewport({ offset, store = toastStore }: ToastViewportProps
 	const isScreenReaderEnabled = useScreenReaderEnabled();
 	const keyboard = useReanimatedKeyboardAnimation();
 	const insetBottom = insets.bottom;
+	const topFrontHeight = useSharedValue(0);
+	const bottomFrontHeight = useSharedValue(0);
 
 	// The keyboard covers the home indicator, so the bottom stack lifts by the
 	// part of the keyboard above that inset — no more.
@@ -113,6 +115,7 @@ export function ToastViewport({ offset, store = toastStore }: ToastViewportProps
 								<ToastViewportItem
 									depth={entry.depth}
 									edgeOffset={edgeOffsets[placement]}
+									frontHeight={placement === "bottom" ? bottomFrontHeight : topFrontHeight}
 									isAppActive={isAppActive}
 									isExiting={entry.isExiting}
 									isScreenReaderEnabled={isScreenReaderEnabled}

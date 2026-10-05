@@ -12,6 +12,7 @@ import {
 	resolveToastRelease,
 	resolveToastRole,
 	resolveToastStack,
+	resolveToastStackedHeight,
 	TOAST_DURATION,
 	TOAST_ENTER_DISTANCE,
 	TOAST_FOREGROUND_TOKEN,
@@ -206,6 +207,26 @@ describe("resolveToastDepthStyle", () => {
 		expect(top.translateY).toBe(-16);
 		expect(top.scale).toBeCloseTo(0.9);
 		expect(top.opacity).toBeCloseTo(0.5);
+	});
+});
+
+describe("resolveToastStackedHeight", () => {
+	test("the front toast keeps its own height", () => {
+		expect(resolveToastStackedHeight({ depth: 0, natural: 90, front: 60 })).toBe(90);
+	});
+
+	test("a toast behind takes the front one's height, so a taller one cannot show over it", () => {
+		expect(resolveToastStackedHeight({ depth: 1, natural: 90, front: 60 })).toBe(60);
+		expect(resolveToastStackedHeight({ depth: 2, natural: 40, front: 60 })).toBe(60);
+	});
+
+	test("moving to the front, it eases from the front's height back to its own", () => {
+		expect(resolveToastStackedHeight({ depth: 0.5, natural: 90, front: 60 })).toBe(75);
+	});
+
+	test("unmeasured, it is left alone", () => {
+		expect(resolveToastStackedHeight({ depth: 1, natural: 0, front: 60 })).toBeNull();
+		expect(resolveToastStackedHeight({ depth: 1, natural: 90, front: 0 })).toBeNull();
 	});
 });
 

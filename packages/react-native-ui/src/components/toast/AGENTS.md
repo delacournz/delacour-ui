@@ -24,7 +24,7 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 | `toast.context.tsx` | **Leaf.** The card's context (`status`, `hide`, `registerAction`) and the viewport's per-item context |
 | `toast.store.ts` | **Pure.** Types, `reduceToasts`, `normalizeToastInput`, `createToastStore`, `createToastApi` |
 | `toast.timer.ts` | **Pure.** The pausable auto-hide clock |
-| `toast.variants.ts` | **Pure.** The slotted `tv()`, the constants and every resolver — duration, stack, depth, stagger, drag, release, haptic, announcement |
+| `toast.variants.ts` | **Pure.** The slotted `tv()`, the constants and every resolver — duration, stack, depth, stacked height, stagger, drag, release, haptic, announcement |
 | `toast-api.ts` | `toastStore`, `toast`, `useToast` |
 | `toast-viewport.tsx` | `ToastViewport` — two stacks in the overlay `toast` band; insets, keyboard, `AppState`, screen reader |
 | `toast-item.tsx` | One drawn toast: entrance, depth, exit, clock, swipe, announcement, haptic |
@@ -70,6 +70,12 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
   further toward its entry edge, `1 − 0.05·depth` scale and `1 − 0.25·depth` opacity, scaled about
   that edge (`transformOrigin`) so the peek is exactly 8pt. Depth is animated, and linear, so moving
   up is smooth.
+- **A toast behind takes the front toast's height.** Scaled about the edge, a taller older toast
+  rose past the front card and showed its title above it — seen on the simulator with a one-line
+  toast in front of a two-line one. The front item publishes its card height to a per-stack shared
+  value; `resolveToastStackedHeight` gives the ones behind that height, clipped from the centre side
+  so their edge-side border still peeks, and eases back to their own height as they move to the
+  front. The card is measured inside the clip, so the clip never feeds back into its own size.
 - **Toasts shown in one tick enter 220ms apart.** The store numbers toasts created before a microtask
   runs (`batchIndex`); `resolveToastEnterDelay` counts from `createdAt`, so a toast that sat in the
   queue enters as soon as it is drawn rather than paying its stagger late.

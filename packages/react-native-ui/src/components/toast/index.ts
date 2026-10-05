@@ -48,6 +48,7 @@ export {
 	resolveToastRelease,
 	resolveToastRole,
 	resolveToastStack,
+	resolveToastStackedHeight,
 	TOAST_DURATION,
 	TOAST_ENTER_DISTANCE,
 	TOAST_FOREGROUND_TOKEN,

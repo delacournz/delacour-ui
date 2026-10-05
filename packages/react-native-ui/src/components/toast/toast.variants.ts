@@ -175,6 +175,29 @@ export function resolveToastDepthStyle(
 }
 
 /**
+ * How tall a toast is drawn at `depth`, or `null` to leave it at its own height.
+ *
+ * A toast behind takes the front toast's height. Scaled about the entry edge,
+ * a taller one would otherwise rise past the front card and show its title
+ * over it. Between depth 0 and 1 the height eases from the front's to its own,
+ * so a toast moving up grows into place rather than jumping.
+ */
+export function resolveToastStackedHeight({
+	depth,
+	natural,
+	front,
+}: {
+	depth: number;
+	natural: number;
+	front: number;
+}): number | null {
+	"worklet";
+	if (natural <= 0 || front <= 0) return null;
+	const t = Math.min(1, Math.max(0, depth));
+	return natural + (front - natural) * t;
+}
+
+/**
  * How long a toast waits before entering, so several shown in one tick
  * arrive one after another. Counted from when it was shown, so a toast that
  * sat in the queue enters as soon as it is drawn.

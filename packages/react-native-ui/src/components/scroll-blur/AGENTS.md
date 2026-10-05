@@ -81,13 +81,14 @@ frame; vibrancy; Skia backdrop blur (it needs the scrollable inside a Skia canva
 
 ## Demos and preview media
 
-Six demos in `apps/playground/src/demos/scroll-blur/`. **None is marked `capture` yet**: the
-`argent` CLI `bun run previews` drives was not installed on the machine this branch was built on, so
-no media could be photographed, and a captured demo without a manifest entry fails `demos.test.ts`.
-The docs page therefore opens at `## Installation`, as `bottom-sheet`'s did. To publish, mark
-`list-under-button` (`hero`, with a scroll flow under `.argent/flows/previews/scroll-blur/`),
-`search-over-media`, `horizontal` and `blur-vs-fade` with `capture: { align: "stretch" }`, run
-`bun run previews -- -- --only scroll-blur`, and add a `<Preview>` above each matching docs section.
+Six demos in `apps/playground/src/demos/scroll-blur/`, four captured: `list-under-button` (the hero,
+a clip), `search-over-media` and `horizontal` (clips), and `blur-vs-fade` (a still).
+`layers-and-intensity` and `fallback` are gallery-only.
+
+**Every flow's return swipe matches its forward swipe.** With `momentum: false` the two cancel
+exactly, so the clip ends on its first frame. An overshoot back past the start rubber-bands, and the
+clip settles visibly before the loop seam. The list's swipe starts on the list, above the button: a
+drag that starts on the button is a press on it, not a scroll.
 
 `blur-vs-fade` compares against the wash fallback (`ScrollBlurLayerProvider layer={null}`) rather
 than `ScrollFade`, which ships on a separate branch and must not be imported from this one. A

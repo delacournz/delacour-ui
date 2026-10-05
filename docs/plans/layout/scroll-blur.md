@@ -223,5 +223,5 @@ The playground root mounts `ScrollBlurLayerProvider layer={ExpoBlurLayer}`. Rout
 - **`ScrollBlurLayerProvider` takes `layer: BlurLayerComponent | null`.** `null` turns the blur off for a subtree. The `fallback` and `blur-vs-fade` demos use it, because `layer={undefined}` still falls through to the root provider.
 - **`blur-vs-fade` compares against the wash fallback, not ScrollFade.** ScrollFade ships on a separate branch and is not imported here.
 - **`expo/blur-layer.tsx` is its own registry item, `blur-layer`, not part of `expo`.** Folded into `expo`, `delacour add expo` would install `expo-blur` and `add blur-layer` would install `expo-router`. `scroll-blur` alone pulls neither.
-- **No preview media yet.** The `argent` CLI that `bun run previews` drives was not installed, so no demo is marked `capture` and the docs page opens at Installation. The plan for publishing is in the component's AGENTS.md.
+- **Captured:** `list-under-button` (hero clip), `search-over-media`, `horizontal` (clips) and `blur-vs-fade` (still). `layers-and-intensity` and `fallback` are gallery-only.
 - **Simulator:** verified on iOS (see the component's AGENTS.md). Not checked: Reduce Transparency toggled live, the Android emulator, and a DevTools profile.

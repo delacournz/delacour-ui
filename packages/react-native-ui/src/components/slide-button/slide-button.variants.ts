@@ -64,6 +64,15 @@ export const SLIDE_BUTTON_FAR_END_SLOP = 0.5;
  */
 export const SLIDE_BUTTON_SPRING = { damping: 22, mass: 0.6, stiffness: 260 } as const;
 
+/**
+ * How far the handle travels, in points, before its trail is fully drawn.
+ *
+ * The trail ends under the handle's middle, so at rest it would peek out
+ * behind the handle's rear curve as a coloured sliver — a control that looks
+ * half-started before anyone touched it.
+ */
+export const SLIDE_BUTTON_TRAIL_FADE = 8;
+
 /** How long the chevron takes to cross into a tick, and how long a reduced-motion move takes. */
 export const SLIDE_BUTTON_GLYPH_MS = 180;
 export const SLIDE_BUTTON_REDUCED_MOTION_MS = 180;
@@ -101,7 +110,11 @@ export const slideButtonVariants = tv({
 	slots: {
 		root: "relative justify-center overflow-hidden",
 		trail: "absolute start-0 top-0 bottom-0",
-		label: "absolute start-0 end-0 px-4 text-center font-semibold",
+		labelFrame: "absolute inset-0 justify-center",
+		label: "text-center font-semibold",
+		labelClip: "absolute start-0 top-0 bottom-0 overflow-hidden",
+		labelOnTrailFrame: "absolute start-0 top-0 bottom-0 justify-center",
+		labelOnTrail: "text-center font-semibold",
 		thumb:
 			"absolute start-1 top-1 bottom-1 items-center justify-center rounded-full border border-border bg-background",
 		thumbGlyph: "",
@@ -112,26 +125,44 @@ export const slideButtonVariants = tv({
 				root: "bg-secondary",
 				trail: "bg-foreground/15",
 				label: "text-secondary-foreground",
+				labelOnTrail: "text-secondary-foreground",
 			},
 			destructive: {
 				root: "bg-destructive-soft",
 				trail: "bg-destructive",
 				label: "text-destructive-soft-foreground",
+				labelOnTrail: "text-destructive-foreground",
 			},
 			success: {
 				root: "bg-success-soft",
 				trail: "bg-success",
 				label: "text-success-soft-foreground",
+				labelOnTrail: "text-success-foreground",
 			},
 		},
 		size: {
-			sm: { root: "h-button-sm rounded-button-sm", label: "text-button-sm", thumbGlyph: "size-icon-sm" },
-			md: { root: "h-button-md rounded-button-md", label: "text-button-md", thumbGlyph: "size-icon-md" },
-			lg: { root: "h-button-lg rounded-button-lg", label: "text-button-lg", thumbGlyph: "size-icon-lg" },
+			sm: {
+				root: "h-button-sm rounded-button-sm",
+				label: "text-button-sm",
+				labelOnTrail: "text-button-sm",
+				thumbGlyph: "size-icon-sm",
+			},
+			md: {
+				root: "h-button-md rounded-button-md",
+				label: "text-button-md",
+				labelOnTrail: "text-button-md",
+				thumbGlyph: "size-icon-md",
+			},
+			lg: {
+				root: "h-button-lg rounded-button-lg",
+				label: "text-button-lg",
+				labelOnTrail: "text-button-lg",
+				thumbGlyph: "size-icon-lg",
+			},
 		},
 		isFullWidth: {
 			true: { root: "w-full self-stretch" },
-			false: { root: "w-72 self-start" },
+			false: { root: "w-72" },
 		},
 		isDisabled: {
 			true: { root: "opacity-50" },
@@ -210,6 +241,49 @@ export function isSlideArmed({
 	if (travel <= 0) return false;
 	if (threshold >= 1) return offset >= travel - SLIDE_BUTTON_FAR_END_SLOP;
 	return offset / travel >= threshold;
+}
+
+/**
+ * How visible the trail is at a given offset: nothing at rest, fully drawn after
+ * {@link SLIDE_BUTTON_TRAIL_FADE} points.
+ */
+export function resolveSlideTrailOpacity(offset: number): number {
+	"worklet";
+	if (offset <= 0) return 0;
+	return offset >= SLIDE_BUTTON_TRAIL_FADE ? 1 : offset / SLIDE_BUTTON_TRAIL_FADE;
+}
+
+/**
+ * How wide the trail is: from the rail's start edge to the handle's middle.
+ *
+ * It ends *under* the handle rather than at its rear edge — a stadium's rear is
+ * a curve, and a trail stopping at the straight edge leaves a sliver of rail
+ * above and below it. The label's trail-coloured copy is clipped to the same
+ * width, so the two cannot disagree.
+ */
+export function resolveSlideTrailWidth({
+	offset,
+	handleWidth,
+	inset,
+}: {
+	offset: number;
+	handleWidth: number;
+	inset: number;
+}): number {
+	"worklet";
+	return inset + offset + handleWidth / 2;
+}
+
+/**
+ * The label's horizontal padding, in points, on **each** side.
+ *
+ * One handle and two insets wide, applied symmetrically: the label stays centred
+ * in the whole rail, and a long one truncates before it runs under the resting
+ * handle instead of after.
+ */
+export function resolveSlideLabelGutter({ handleWidth, inset }: { handleWidth: number; inset: number }): number {
+	"worklet";
+	return handleWidth + inset * 2;
 }
 
 export type SlideRelease = "complete" | "return";

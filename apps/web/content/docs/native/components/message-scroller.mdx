@@ -4,6 +4,8 @@ description: A conversation list that sticks to the newest message, jumps back w
 icon: MessagesSquare
 ---
 
+<Preview id="message-scroller/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="message-scroller" />
@@ -55,12 +57,16 @@ While the reader is within `stickThreshold` points of the end (80 by default), a
 the list with it. Once they scroll up into history, new messages land without moving them. A
 message from `viewerId` always scrolls to the end — sending is a request to see what you sent.
 
+<Preview id="message-scroller/stick-to-bottom" />
+
 ## Jump to latest
 
 With no children, the scroller draws its list and a floating jump button. The button appears once
 the reader is half as far again past the threshold, so it cannot flicker at the edge, and shows how
 many messages from other people arrived while they were away. Tapping it scrolls to the end and
 clears the count.
+
+<Preview id="message-scroller/jump-to-latest" />
 
 Pass children to place it yourself, or to restyle it:
 
@@ -78,6 +84,8 @@ called again until the first message changes — the page you prepend is what re
 while `isLoadingOlder` is true, during which a spinner row sits above the first message. The page
 lands without moving what the reader was looking at.
 
+<Preview id="message-scroller/load-older" />
+
 ```tsx
 <MessageScroller
   {...props}
@@ -93,8 +101,12 @@ A separator is drawn at each new calendar day: Today, Yesterday, a weekday insid
 then the date. Turn them off with `separateDates={false}`, or write your own labels with
 `formatDate`. A new day always starts a new run, separator or not.
 
+<Preview id="message-scroller/date-separators" />
+
 `firstUnreadKey` draws an "N new messages" rule above that message, and
 `initialScrollTarget="unread"` opens the list there instead of at the end.
+
+<Preview id="message-scroller/unread-divider" />
 
 ## Keyboard
 

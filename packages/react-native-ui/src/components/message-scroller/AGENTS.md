@@ -122,7 +122,11 @@ scroll.
   list that ends above the bottom, the full keyboard lift scrolls every row out of a short list. The
   `keyboard` demo measures it with `measureInWindow`.
 
-**Preview media is a follow-up.** No demo carries `capture` yet, because a captured demo without a
-manifest entry fails `demos.test.ts`, and the docs page carries no `<Preview>` for the same reason.
-When capturing: `basic` (hero), `stick-to-bottom`, `jump-to-latest` and `load-older`, each
-`align: "stretch"`.
+**Preview media.** Six demos are captured, each `align: "stretch"`. Three are clips: `basic`
+(the hero) scrolls back through the history and returns to the end, `load-older` reaches the top,
+pulls in a page and comes back down, and `jump-to-latest` scrolls up while replies arrive and taps
+the button. `stick-to-bottom`, `date-separators` and `unread-divider` are stills.
+`stick-to-bottom` stays a still because every press appends a message, so no flow can bring it back
+to where the clip began. `jump-to-latest` keeps arriving for the same reason. Its seed therefore
+ends on a run of Kate's messages in the same form as the arrivals, so the newest end has the same
+shape whenever the clip loops.

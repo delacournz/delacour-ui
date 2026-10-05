@@ -4,6 +4,7 @@ import {
 	ANDROID_MAP_STYLE_TOKENS,
 	buildAndroidMapStyle,
 	hasInitialViewChanged,
+	isMarkerShrink,
 	MAP_ACCESSIBILITY_LABEL,
 	MAP_CAMERA_DURATION,
 	MAP_CONTROLS_CORNERS,
@@ -82,6 +83,26 @@ describe("resolvePinTipAnchor", () => {
 		expect(resolvePinTipAnchor({ marker: { width: 0, height: 0 }, pin: { x: 0, y: 0, width: 0, height: 0 } })).toBe(
 			undefined
 		);
+	});
+});
+
+describe("isMarkerShrink", () => {
+	test("a first measurement is not a shrink", () => {
+		expect(isMarkerShrink(null, { width: 28, height: 36 })).toBe(false);
+	});
+
+	test("growing is not a shrink", () => {
+		expect(isMarkerShrink({ width: 28, height: 36 }, { width: 160, height: 140 })).toBe(false);
+	});
+
+	test("the same size is not a shrink", () => {
+		expect(isMarkerShrink({ width: 28, height: 36 }, { width: 28, height: 36 })).toBe(false);
+	});
+
+	test("losing width or height is", () => {
+		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 28, height: 36 })).toBe(true);
+		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 160, height: 36 })).toBe(true);
+		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 28, height: 140 })).toBe(true);
 	});
 });
 

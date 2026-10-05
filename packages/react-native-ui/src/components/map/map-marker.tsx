@@ -1,10 +1,11 @@
 import { type ReactElement, type ReactNode, useEffect, useMemo, useState } from "react";
-import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
+import { type LayoutChangeEvent, Platform, View, type ViewProps } from "react-native";
 import { Marker } from "react-native-maps";
 import { useUniwind } from "uniwind";
 import { type MapMarkerContextValue, type MapMarkerFrame, MapMarkerProvider, useMapPart } from "./map.context";
 import type { LngLat } from "./map.types";
 import {
+	isMarkerShrink,
 	type MapMarkerAnchor,
 	mapVariants,
 	resolveMarkerAnchor,
@@ -47,6 +48,10 @@ const TRACKING_WINDOW = 500;
  *
  * A marker with `onPress` is a button, announced by its `accessibilityLabel`,
  * and its tap does not reach the map's `onPress`.
+ *
+ * `testID` goes on the native annotation and, suffixed `-content`, on the view
+ * inside it: the annotation is not in the view hierarchy a test runner walks,
+ * so the inner view is the one an e2e selector can find and tap.
  */
 export function MapMarker({
 	lngLat,
@@ -55,6 +60,7 @@ export function MapMarker({
 	accessibilityLabel,
 	className,
 	children,
+	testID,
 	...props
 }: MapMarkerProps): ReactElement {
 	useMapPart("Map.Marker");
@@ -62,6 +68,7 @@ export function MapMarker({
 	const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 	const [pin, setPin] = useState<MapMarkerFrame | null>(null);
 	const [isTracking, setIsTracking] = useState(true);
+	const [generation, setGeneration] = useState(0);
 
 	// Every change to what the marker draws — its size, where its pin sits, the
 	// theme — reopens the redraw window, then closes it once things settle.
@@ -83,9 +90,14 @@ export function MapMarker({
 
 	const onLayout = (event: LayoutChangeEvent) => {
 		const { width, height } = event.nativeEvent.layout;
-		setSize((current) => (current?.width === width && current.height === height ? current : { height, width }));
+		const next = { height, width };
+		if (Platform.OS === "ios" && isMarkerShrink(size, next)) setGeneration((current) => current + 1);
+		setSize((current) => (current?.width === width && current.height === height ? current : next));
 	};
 
+	// Apple's annotation view grows to fit its content and never shrinks back, so
+	// a marker whose content got smaller is remounted at its new size rather than
+	// drawn in the corner of the old frame.
 	return (
 		<Marker
 			accessibilityLabel={accessibilityLabel}
@@ -93,13 +105,20 @@ export function MapMarker({
 			anchor={anchorPoint}
 			centerOffset={centerOffset}
 			coordinate={lngLatToLatLng(lngLat)}
+			key={generation}
 			onPress={onPress === undefined ? undefined : () => onPress()}
 			stopPropagation={onPress !== undefined}
 			tracksViewChanges={isTracking}
+			testID={testID}
 			{...props}
 		>
 			<MapMarkerProvider value={markerContext}>
-				<View className={mapVariants().marker({ className })} collapsable={false} onLayout={onLayout}>
+				<View
+					className={mapVariants().marker({ className })}
+					collapsable={false}
+					onLayout={onLayout}
+					testID={testID === undefined ? undefined : `${testID}-content`}
+				>
 					{children}
 				</View>
 			</MapMarkerProvider>

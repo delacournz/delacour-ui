@@ -74,6 +74,17 @@ no directions.
   takes the unit-square `anchor`; Apple ignores it and takes `centerOffset` in
   points, so both are passed (`resolveMarkerCenterOffset`). The pin must be a
   direct child for its frame to be relative to the marker.
+- **A marker's `testID` is repeated on its content, suffixed `-content`.** The
+  native annotation the `testID` lands on is not in the view hierarchy a test
+  runner walks, so a flow selecting `map-places-museum` found nothing and the
+  preview capture recorded a still screen. `map-places-museum-content` is the
+  marker's own view, which the runner can find and tap.
+- **On iOS a marker whose content shrinks is remounted.** Apple's annotation view
+  grows to fit its content and never shrinks back, so closing a popup left the pin
+  drawn in the corner of a frame still sized for the card — up and left of its
+  coordinate by half the difference. `isMarkerShrink` spots the shrink on layout and
+  the marker takes a new `key`, so the annotation is rebuilt at its new size. Growing
+  needs nothing; Google redraws its bitmap either way.
 - **A marker redraws only while it is settling.** Google draws a custom marker as a
   bitmap and refreshes it only while `tracksViewChanges` is on; on for good it costs
   a redraw per frame per marker. It is on for half a second after the marker's size,

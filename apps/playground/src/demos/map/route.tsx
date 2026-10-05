@@ -4,7 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Route",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"A line through a list of coordinates, in the theme's primary with round caps. The walked leg is solid; the leg still to go is dashed and fainter.",
 };

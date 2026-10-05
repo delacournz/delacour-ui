@@ -269,7 +269,7 @@ function SketchRoot({
 			<View className={sketchVariants().root({ className })} {...props}>
 				{children ?? (
 					<>
-						<SketchCanvas />
+						<SketchCanvas testID="sketch-canvas" />
 						<SketchToolbar />
 					</>
 				)}

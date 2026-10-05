@@ -1,0 +1,22 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sketch/draw and has settled — an
+  empty canvas carrying the testID sketch-canvas, with the pen in hand. The
+  capture script navigates there before running this.
+steps:
+  - echo: Three strokes across the canvas
+  # The canvas has no accessibility children to aim at, so every stroke is
+  # anchored on its centre. momentum:false so each stroke ends under the finger.
+  - swipe: { from: { id: sketch-canvas }, by: { x: 0.3, y: -0.2 }, momentum: false, duration: 600 }
+  - wait: 200
+  - swipe: { from: { id: sketch-canvas }, by: { x: -0.35, y: 0.15 }, momentum: false, duration: 600 }
+  - wait: 200
+  - swipe: { from: { id: sketch-canvas }, by: { x: 0.2, y: 0.3 }, momentum: false, duration: 600 }
+  - wait: 300
+  - echo: A tap leaves a dot
+  - tap: { id: sketch-canvas }
+  - wait: 600
+  - echo: Undo four times, so the clip loops on the empty canvas it began on
+  - tap: { id: sketch-undo }
+  - tap: { id: sketch-undo }
+  - tap: { id: sketch-undo }
+  - tap: { id: sketch-undo }

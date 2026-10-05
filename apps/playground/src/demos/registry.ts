@@ -299,6 +299,12 @@ import * as demo_skeleton_group from "./skeleton/group";
 import * as demo_skeleton_lines from "./skeleton/lines";
 import * as demo_skeleton_profile_card from "./skeleton/profile-card";
 import * as demo_skeleton_shapes from "./skeleton/shapes";
+import * as demo_sketch_annotate from "./sketch/annotate";
+import * as demo_sketch_colours from "./sketch/colours";
+import * as demo_sketch_default from "./sketch/default";
+import * as demo_sketch_draw from "./sketch/draw";
+import * as demo_sketch_eraser from "./sketch/eraser";
+import * as demo_sketch_shapes from "./sketch/shapes";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_accessible_names from "./slider/accessible-names";
 import * as demo_slider_anatomy from "./slider/anatomy";
@@ -665,6 +671,12 @@ export const DEMOS = {
 	"skeleton/lines": demo_skeleton_lines,
 	"skeleton/profile-card": demo_skeleton_profile_card,
 	"skeleton/shapes": demo_skeleton_shapes,
+	"sketch/annotate": demo_sketch_annotate,
+	"sketch/colours": demo_sketch_colours,
+	"sketch/default": demo_sketch_default,
+	"sketch/draw": demo_sketch_draw,
+	"sketch/eraser": demo_sketch_eraser,
+	"sketch/shapes": demo_sketch_shapes,
 	"slider/a-range": demo_slider_a_range,
 	"slider/accessible-names": demo_slider_accessible_names,
 	"slider/anatomy": demo_slider_anatomy,

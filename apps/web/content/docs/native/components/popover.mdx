@@ -4,6 +4,8 @@ description: A small panel anchored to the control that opened it — it flips a
 icon: MessageSquare
 ---
 
+<Preview id="popover/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="popover" />
@@ -12,6 +14,8 @@ Popover draws through the overlay layer, so mount [OverlayProvider](/docs/native
 once at the app root.
 
 ## Usage
+
+<Preview id="popover/basic" />
 
 ```tsx title="app/index.tsx"
 import { Button } from "@/components/ui/button";
@@ -62,6 +66,8 @@ that side: `start`, `center` or `end`. It is a preference. When that side lacks 
 opposite side has more, the panel flips; then it slides along the anchor to stay inside the safe
 area, and the arrow keeps pointing at the trigger's centre.
 
+<Preview id="popover/placements" />
+
 ```tsx
 <Popover.Content placement="top" align="start" offset={12}>…</Popover.Content>
 ```
@@ -74,6 +80,8 @@ you which side it actually landed on.
 
 `Popover.Arrow` points from the panel at the anchor's centre — not the panel's — and follows a
 flip. It stays clear of the panel's rounded corners.
+
+<Preview id="popover/arrow" />
 
 ```tsx
 <Popover>
@@ -94,6 +102,8 @@ flip. It stays clear of the panel's rounded corners.
 inside its safe area, or `"content-fit"`, the default. `minWidth` raises any of them. The keyboard
 counts as the bottom of the screen, so a field inside the panel moves it above its trigger rather
 than typing under the keyboard.
+
+<Preview id="popover/trigger-width-form" />
 
 ```tsx
 const [isOpen, setOpen] = useState(false);
@@ -122,6 +132,8 @@ const [isOpen, setOpen] = useState(false);
 `isScrollable` scrolls what does not fit. The arrow is lifted out of the scrolling body, so it is
 never scrolled away or clipped.
 
+<Preview id="popover/scrollable" />
+
 ```tsx
 <Popover.Content isScrollable maxHeight={240} minWidth={220}>
   <Popover.Arrow />
@@ -141,6 +153,8 @@ A tap outside the panel closes it, and so do Android's back button and the iOS e
 outside tap is swallowed — it never presses what is under it. `hasScrim` dims the app behind the
 panel; without it the app stays visible and an outside tap still closes the popover.
 `isDismissible={false}` leaves only your own controls able to close it.
+
+<Preview id="popover/scrim" />
 
 ```tsx
 <Popover isDismissible={false}>…</Popover>

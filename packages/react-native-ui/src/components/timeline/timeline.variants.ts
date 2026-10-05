@@ -79,7 +79,7 @@ export const timelineVariants = tv({
 		/** The horizontal strip's scroll content. */
 		strip: "flex-row items-stretch",
 		/** A masthead above the first event — media, label, title. */
-		masthead: "flex-row items-center gap-3",
+		masthead: "flex-row items-center gap-3 pb-4",
 		mastheadText: "min-w-0 flex-1 gap-0.5",
 		/** One event's box. */
 		item: "",
@@ -99,8 +99,10 @@ export const timelineVariants = tv({
 		tick: "h-2 w-0.5 rounded-full",
 		/** The segment leaving an event. Square-ended, so two segments never pinch. */
 		rail: "",
-		/** The text column. */
+		/** The item's text column, laid out by the item: its alignment padding and the gap below. */
 		content: "min-w-0",
+		/** `Timeline.Content` — the caller's grouping inside that column; a `Surface` under `card`. */
+		body: "",
 		/** `Timeline.Header` — title and date on one line. */
 		header: "",
 		title: "",

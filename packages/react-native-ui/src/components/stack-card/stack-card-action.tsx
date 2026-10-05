@@ -16,6 +16,7 @@ export type StackCardActionProps = {
 	/** Called before the deck acts. */
 	onPress?: () => void;
 	className?: string;
+	testID?: string;
 };
 
 /**
@@ -28,7 +29,14 @@ export type StackCardActionProps = {
  * disabled while there is nothing to bring back; the directions disable once
  * the deck is empty.
  */
-export function StackCardAction({ action, icon, label, onPress, className }: StackCardActionProps): ReactElement {
+export function StackCardAction({
+	action,
+	icon,
+	label,
+	onPress,
+	className,
+	testID,
+}: StackCardActionProps): ReactElement {
 	const { swipe, undo, canUndo, index, count, isDisabled, labelFor, stampColors } =
 		useStackCardPart("StackCard.Action");
 	const isUndo = action === "undo";
@@ -48,6 +56,7 @@ export function StackCardAction({ action, icon, label, onPress, className }: Sta
 			isDisabled={isActionDisabled}
 			onPress={handlePress}
 			size="icon-lg"
+			testID={testID}
 			variant={isUndo ? "ghost" : "secondary"}
 		>
 			<Icon color={color} icon={icon} />

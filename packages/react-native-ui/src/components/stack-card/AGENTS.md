@@ -101,6 +101,11 @@ row.
   in from that side. `onSwipe` is not called for an undo. An index changed from
   outside (a refill) clears the history, since the cards it remembers may not be
   the ones now in the deck.
+- **A card returns on a critically damped spring.** An underdamped return
+  overshoots rest to the other side, and the stamp for the opposite direction
+  fades in there — a card undone from the left would land flashing the
+  right-hand answer. The damping sits just above `2·√(stiffness·mass)`, so the
+  card arrives without crossing.
 - **Only a window is mounted:** `[index − 1, index + depth + 1]` —
   one behind for undo, one beyond the visible depth so the next card fades in
   rather than popping. A deck of 500 mounts what a deck of five does

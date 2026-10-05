@@ -87,8 +87,13 @@ type StackCardPending =
 	| { kind: "throw"; from: number; direction: StackCardDirection }
 	| { kind: "undo"; from: number; direction: StackCardDirection };
 
-/** The spring a card returns to the pile on. */
-const RETURN_SPRING = { damping: 18, mass: 0.8, stiffness: 220 } as const;
+/**
+ * The spring a card returns to the pile on. Critically damped — damping is
+ * `2·√(stiffness·mass)` ≈ 26.5, rounded up — because any overshoot carries the
+ * card past rest to the other side, where the opposite stamp fades in: a card
+ * undone from the left would flash the right-hand answer as it lands.
+ */
+const RETURN_SPRING = { damping: 27, mass: 0.8, stiffness: 220 } as const;
 
 /** A reduced-motion fade, in milliseconds. */
 const FADE_MS = 180;

@@ -4,6 +4,8 @@ description: An image in a still frame that parallaxes, zooms, reveals or scrubs
 icon: Image
 ---
 
+<Preview id="scroll-canvas/parallax" title={null} />
+
 ## Installation
 
 <ComponentInstall name="scroll-canvas" />
@@ -61,6 +63,8 @@ The default. The picture drifts against the scroll, so it seems to sit further a
 It is oversized by `distance` (a share of the frame height, each way) and never shows a frame edge at
 either end of its travel. It runs for the frame's whole time on screen.
 
+<Preview id="scroll-canvas/parallax" />
+
 ```tsx
 <ScrollCanvas source={hero} />
 <ScrollCanvas distance={0.35} source={hero} />
@@ -71,6 +75,8 @@ either end of its travel. It runs for the frame's whole time on screen.
 The picture enters oversized by `distance` and settles to its natural size by the time the frame's
 top is 30% down the view.
 
+<Preview id="scroll-canvas/zoom" />
+
 ```tsx
 <ScrollCanvas effect="zoom" distance={0.3} source={hero} />
 ```
@@ -79,6 +85,8 @@ top is 30% down the view.
 
 A cover in the page's colour retreats upward as the frame rises, uncovering the picture from its
 bottom edge. `coverClassName` restyles it — `bg-card` inside a card, say.
+
+<Preview id="scroll-canvas/reveal" />
 
 ```tsx
 <ScrollCanvas effect="reveal" source={hero} />
@@ -89,6 +97,8 @@ bottom edge. `coverClassName` restyles it — `bg-card` inside a card, say.
 Scroll position picks which of N frames is showing — a product turning, a diagram assembling. Each
 band of progress is one frame, with no cross-fade, so a slow drag scrubs and stops on a frame. At rest
 above its window it shows frame 0: make that the poster.
+
+<Preview id="scroll-canvas/sequence" />
 
 ```tsx
 <ScrollCanvas effect="sequence" sources={spinFrames} />
@@ -134,6 +144,8 @@ A picture moving independently of the finger is a vestibular trigger, so with Re
 every effect draws its resting state: parallax centred, zoom at natural size, reveal uncovered, a
 sequence on frame 0. Nothing shifts when the setting flips. A canvas with `enabled={false}` needs no
 scroll source at all.
+
+<Preview id="scroll-canvas/reduced-motion" />
 
 ## Accessibility
 

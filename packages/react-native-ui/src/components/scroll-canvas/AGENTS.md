@@ -117,10 +117,15 @@ Not yet checked, and why:
 - **A `Screen`-ambient canvas** (`onLayout.y`, no ref): every demo passes a
   `useScrollSource` source.
 - **Android** (`fadeDuration={0}` on sequence frames).
-- **Captured preview media.** `bun run previews` needs the argent CLI, which is
-  not installed on this machine, and a demo marked `capture` without a manifest
-  entry fails `demos.test.ts`. So no demo carries `capture` yet and the docs
-  page has no `<Preview>`. Once it can run: capture `parallax` (hero, flow
-  `scroll-canvas/parallax`), `zoom`, `reveal`, `sequence` (each with its flow
-  under `.argent/flows/previews/scroll-canvas/`) and `reduced-motion` (still),
-  then add a `<Preview>` under each section of the docs page.
+
+## Captured previews
+
+`parallax` (hero), `zoom`, `reveal` and `sequence` are recorded clips and
+`reduced-motion` is a still, captured from the dev client on 2026-10-06. Each
+clip's flow drags the 560pt scroll window up about 300pt and back a little
+further, so it settles at offset 0 and loops. The windows are tuned for that
+drag: four paragraphs put the canvas a little over half way down at rest, and
+`zoom`, `reveal` and `sequence` set `start` / `end` so the drag covers the whole
+effect. `reveal` starts at 0.85, so its poster is half uncovered rather than an
+empty cover. `grow-0` on the scroll view matters: a vertical `ScrollView`
+defaults to `flexGrow: 1`, and on the capture stage it grew to the whole screen.

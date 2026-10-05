@@ -27,6 +27,7 @@ import {
 	IconCircleRecord,
 	IconClock,
 	IconColorPalette,
+	IconCompassPointer,
 	IconCursorClick,
 	IconDecimalNumberDot,
 	IconDiamond,
@@ -160,6 +161,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"theme-selector": IconCircleHalfFill,
 	"time-picker": IconClock,
 	"toggle-button": IconBold,
+	tour: IconCompassPointer,
 	tooltip: IconCircleInfo,
 	toast: IconBell,
 };

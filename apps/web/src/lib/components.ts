@@ -420,6 +420,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A row of tabs and the panels they switch between, with a swipeable pager.",
 	},
 	{
+		slug: "tour",
+		name: "Tour",
+		group: "Navigation",
+		blurb: "A guided walkthrough — the screen dims, a hole opens around one control and a card explains it.",
+	},
+	{
 		slug: "screen",
 		name: "Screen",
 		group: "Layout",

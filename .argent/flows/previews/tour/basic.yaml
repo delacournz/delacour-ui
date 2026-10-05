@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tour/basic and has settled — a toolbar of three icon buttons over a
+  "Show me around" button, the tour closed. The capture script navigates there before running this.
+steps:
+  - echo: Starting the tour — the screen dims and a hole opens around Search
+  - tap: { id: tour-basic-start }
+  - await: { visible: { id: tour-basic-next } }
+  - wait: 1100
+  - echo: Next glides the hole to Notifications, then Settings
+  - tap: { id: tour-basic-next }
+  - wait: 1100
+  - tap: { id: tour-basic-next }
+  - wait: 1100
+  - echo: Done closes it, so the clip loops back to the closed screen
+  - tap: { id: tour-basic-next }
+  - await: { hidden: { id: tour-basic-card } }

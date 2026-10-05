@@ -4,6 +4,8 @@ description: A month of days, each showing what falls on it — category dots, i
 icon: CalendarDays
 ---
 
+<Preview id="planner/training-plan" title={null} />
+
 ## Installation
 
 <ComponentInstall name="planner" />
@@ -47,6 +49,8 @@ export default function Example() {
 
 An entry is dated by its local calendar day; a category gives it a colour from the chart ramp, a legend row and a spoken group.
 
+<Preview id="planner/training-plan" />
+
 ```tsx
 const categories: PlannerCategory[] = [
   { id: "run", label: "Run", colorIndex: 1 },
@@ -63,6 +67,8 @@ const entries: PlannerEntry[] = [
 
 `variant="tiles"` draws one large icon per day, tinted by its first entry's category.
 
+<Preview id="planner/tiles" />
+
 ```tsx
 <Planner categories={categories} entries={entries} variant="tiles">…</Planner>
 ```
@@ -70,6 +76,8 @@ const entries: PlannerEntry[] = [
 ## Calendar
 
 `variant="calendar"` names each entry in a block of its colour, and `fill` gives the weeks the height to show them.
+
+<Preview id="planner/calendar-fill" />
 
 ```tsx
 <View className="h-[640px]">
@@ -86,6 +94,8 @@ const entries: PlannerEntry[] = [
 ## Day details
 
 `Planner.Details` opens a bottom sheet while a day is selected, and closing it clears the selection.
+
+<Preview id="planner/details-sheet" />
 
 ```tsx
 <Planner entries={entries}>
@@ -114,6 +124,8 @@ Leave `Details` out and use `onDayPress`, which fires before the day is selected
 
 `Planner.Scroller` is a virtualised list of weeks either side of the opening month, and the title follows the top week.
 
+<Preview id="planner/scroller" />
+
 ```tsx
 <Planner entries={shifts} fill variant="calendar">
   <Planner.Header>
@@ -128,6 +140,8 @@ Leave `Details` out and use `onDayPress`, which fires before the day is selected
 ## Custom days
 
 `renderDay` draws the inside of each day; its button, spoken label and selection stay the planner's.
+
+<Preview id="planner/custom-day" />
 
 ```tsx
 <Planner.Grid renderDay={({ date, entries, isToday }) => <DistanceDay date={date} entries={entries} isToday={isToday} />} />

@@ -128,13 +128,12 @@ custom days, dates and time zones, accessibility, API.
 
 ## Delivery notes
 
-- **Previews not captured (follow-up).** The argent CLI the capture script drives is not installed on
-  the build machine, so `bun run previews` cannot run. Every demo carries `align: "stretch"` but no
-  `capture` (a captured demo without a manifest entry fails `demos.test.ts`), and `planner.mdx` opens
-  at `## Installation` with no `<Preview>`. Follow-up: restore `capture` on `training-plan` (hero),
-  `tiles`, `calendar-fill`, `custom-day` and `details-sheet` (`flow: "planner/details-sheet"`,
-  `frame: "device"` — the flow is already in `.argent/flows/previews/planner/`), run
-  `bun run previews -- -- --only planner`, and add the `<Preview>`s back to the page.
+- **Previews captured** (warden-iphone-17-pro, dev client, `--dev --only planner`): six demos, both
+  themes. Clips — `training-plan` (hero: swipe to next month, `Nav` back), `details-sheet` (`device`:
+  tap the 14th → sheet, swipe down → closed, selection cleared), `scroller` (six weeks down, title
+  October → November, and back). Stills — `tiles`, `calendar-fill`, `custom-day`. Every flow ends
+  where it began, so each clip loops without a cut. `planner.mdx` opens on the hero and shows each
+  captured demo in its section.
 - **Simulator verified** (warden-iphone-17, iOS 26.5, dev client): grid, today ring, legend counts;
   `Nav` and `Today` (disabled on the current month, enabled off it); a pan pages both ways; the
   details sheet opens on the pressed day with its entries, and both its close button and a swipe

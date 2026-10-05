@@ -4,6 +4,8 @@ description: Free-form tags typed into one field box, each a removable chip.
 icon: Tags
 ---
 
+<Preview id="tag-input/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="tag-input" />
@@ -39,6 +41,8 @@ tag is trimmed, and whitespace on its own never commits.
 Return always commits, and on an empty field it blurs instead — the "done" key. A paste holding
 delimiters lands as several tags at once.
 
+<Preview id="tag-input/basic" />
+
 ```tsx
 <TagInput delimiters={[",", " ", ";"]} keyboardType="email-address" />
 ```
@@ -51,6 +55,8 @@ A delimiter longer than one character is ignored rather than half-matched.
 it. Every refusal reaches `onReject` with one of four reasons — `empty`, `duplicate`, `invalid`,
 `max` — and a warning haptic. A tag refused as `invalid` goes back into the field so it can be
 corrected; the others are dropped.
+
+<Preview id="tag-input/email-validation" />
 
 ```tsx
 const HINTS: Record<TagInputRejectReason, string> = {
@@ -86,12 +92,16 @@ and `design` apart; `allowDuplicates` accepts them.
 `max` caps the list, and `showCount` reads it back as `3/10`. Once the list is full the text field
 steps aside, so there is nothing to type into that would only be refused.
 
+<Preview id="tag-input/max-and-counter" />
+
 ```tsx
 <TagInput max={5} showCount defaultValue={["Swift", "Kotlin"]} />
 ```
 
 `allowOverflow` accepts tags past `max` instead, and marks the field invalid — invalid chrome and a
 destructive counter — until the list is back under.
+
+<Preview id="tag-input/overflow-invalid" />
 
 ```tsx
 <TagInput max={3} allowOverflow showCount />
@@ -102,6 +112,8 @@ destructive counter — until the list is back under.
 Each chip carries a close control. Backspace on an empty field arms the last chip — it turns
 destructive — and a second Backspace removes it, so one stray press never deletes a tag.
 `isClearable` adds a clear-all control while there is anything to clear.
+
+<Preview id="tag-input/in-field-with-clear" />
 
 ```tsx
 <TagInput isClearable />
@@ -167,6 +179,8 @@ names it, and a tap on the label focuses it.
 
 The box is `Input`'s, so a tag input sits level with a field beside it at every size and variant.
 Chips step down a size — `md` takes `sm` chips — so the first tag never makes the box taller.
+
+<Preview id="tag-input/sizes-and-variants" />
 
 ```tsx
 <TagInput size="sm" />

@@ -205,6 +205,12 @@ const ROWS = [
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{
+		slug: "support",
+		title: "Support",
+		description: "Availability, channels, topics, thread furniture",
+		group: "Media",
+	},
+	{
 		slug: "message-scroller",
 		title: "MessageScroller",
 		description: "Stick to bottom, jump to latest, load older",

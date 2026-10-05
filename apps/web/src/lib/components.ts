@@ -334,6 +334,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "support",
+		name: "Support",
+		group: "Media",
+		blurb: "A help section: availability, channels, topics, past requests and the furniture around a support thread.",
+	},
+	{
 		slug: "message-scroller",
 		name: "MessageScroller",
 		group: "Media",

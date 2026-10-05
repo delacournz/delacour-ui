@@ -557,6 +557,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
 		categories: ["navigation"],
 	},
+	support: {
+		title: "Support",
+		description:
+			"A help section: availability, channels, topics, past requests and the furniture around a support thread.",
+		categories: ["media"],
+	},
 	surface: {
 		title: "Surface",
 		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",

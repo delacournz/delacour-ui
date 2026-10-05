@@ -42,6 +42,12 @@ disabled. The caller owns fetching and slicing.
   the current page is far enough in to centre it, so the number under the reader's thumb never
   slides away as they tap through. `resolvePaginationRange` is that whole decision, and the suite
   checks it across counts 0/1/5/7/24/100 × siblings 0–2 × boundaries 0–2 × every page.
+- **`siblings` defaults to 0, because the run has to fit a phone.** Every target is 44 points
+  wide, so nine of them — one sibling either side, plus the arrows — need 428 points in `md`, and
+  a 375-point phone's row is 343 (`PAGINATION_NARROWEST_ROW`). `1 … 7 … 24` and two arrows is
+  seven targets, 332 points. The suite sums the default run against that row in every size, and
+  every target is `shrink-0`: a run a caller widens past its row overflows visibly rather than
+  crushing an arrow until its chevron disappears — which is what the simulator showed first.
 - **An ellipsis never hides one page.** The slot either side of the window is a gap only when
   it stands for two or more pages; standing for one, it shows that page — same width, nothing
   hidden behind a "…" that would take a tap to reveal a single number.

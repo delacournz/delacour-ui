@@ -16,6 +16,7 @@ import {
 	PAGINATION_FILL_DURATION_MS,
 	PAGINATION_HIT_SLOP,
 	PAGINATION_MIN_TARGET,
+	PAGINATION_NARROWEST_ROW,
 	PAGINATION_SIZES,
 	PAGINATION_VARIANTS,
 	type PaginationToken,
@@ -75,7 +76,7 @@ describe("constants", () => {
 	test("the defaults are the spec's", () => {
 		expect(PAGINATION_DEFAULT_VARIANT).toBe("numbers");
 		expect(PAGINATION_DEFAULT_SIZE).toBe("md");
-		expect(PAGINATION_DEFAULT_SIBLINGS).toBe(1);
+		expect(PAGINATION_DEFAULT_SIBLINGS).toBe(0);
 		expect(PAGINATION_DEFAULT_BOUNDARIES).toBe(1);
 		expect(PAGINATION_DEFAULT_PAGE_JUMP).toBe(5);
 	});
@@ -418,6 +419,20 @@ describe("paginationVariants", () => {
 		for (const size of PAGINATION_SIZES) {
 			expect(buttonSpacingPx(size) + 2 * PAGINATION_HIT_SLOP[size]).toBeGreaterThanOrEqual(PAGINATION_MIN_TARGET);
 		}
+	});
+
+	test("the default run and both arrows fit the narrowest phone's content row, in every size", () => {
+		const targets = resolvePaginationRunLength(PAGINATION_DEFAULT_SIBLINGS, PAGINATION_DEFAULT_BOUNDARIES) + 2;
+		for (const size of PAGINATION_SIZES) {
+			const gapPx = step(cls(paginationVariants({ size }).run()), "gap") * 4;
+			const width = targets * buttonSpacingPx(size) + (targets - 1) * gapPx;
+			expect(width).toBeLessThanOrEqual(PAGINATION_NARROWEST_ROW);
+		}
+	});
+
+	test("no target shrinks when the run outgrows its row", () => {
+		const slots = paginationVariants();
+		for (const slot of [slots.item(), slots.control(), slots.ellipsis()]) expect(cls(slot)).toContain("shrink-0");
 	});
 
 	test("the gap between targets is at least the slop either side, so neighbouring slops never overlap", () => {

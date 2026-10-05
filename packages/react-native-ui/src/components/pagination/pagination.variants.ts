@@ -21,12 +21,23 @@ export type PaginationSize = (typeof PAGINATION_SIZES)[number];
  */
 export const PAGINATION_DEFAULT_VARIANT: PaginationVariant = "numbers";
 export const PAGINATION_DEFAULT_SIZE: PaginationSize = "md";
-export const PAGINATION_DEFAULT_SIBLINGS = 1;
+/**
+ * No siblings by default: `1 … 7 … 24` and two arrows is seven targets, the most
+ * that fit {@link PAGINATION_NARROWEST_ROW} at 44 points each. One sibling either
+ * side makes nine — 428 points in `md`, wider than any phone's row.
+ */
+export const PAGINATION_DEFAULT_SIBLINGS = 0;
 export const PAGINATION_DEFAULT_BOUNDARIES = 1;
 export const PAGINATION_DEFAULT_PAGE_JUMP = 5;
 
 /** How long the current page's fill takes to cross-fade. Reduce motion snaps it. */
 export const PAGINATION_FILL_DURATION_MS = 150;
+
+/**
+ * The narrowest row the default run must fit, in points: a 375-point phone less
+ * 16 points of gutter either side. A test sums the default run against it.
+ */
+export const PAGINATION_NARROWEST_ROW = 343;
 
 /** The smallest target a thumb is promised, in points. */
 export const PAGINATION_MIN_TARGET = 44;
@@ -255,19 +266,19 @@ export const paginationVariants = tv({
 		/** The arrows, numbers and gaps, on the trailing edge. */
 		run: "flex-row items-center",
 		/** One page number. */
-		item: "items-center justify-center overflow-hidden",
+		item: "shrink-0 items-center justify-center overflow-hidden",
 		/** The current page's fill, behind the label. */
 		fill: "absolute inset-0 rounded-full bg-primary",
 		/** The number — a `Text`, so it owns its colour (rule 1). */
 		itemLabel: "font-medium",
 		/** The previous or next arrow. */
-		control: "flex-row items-center justify-center gap-1",
+		control: "shrink-0 flex-row items-center justify-center gap-1",
 		/** The chevron's size class, handed to its `IconDefaultsProvider`. */
 		glyph: "",
 		/** "Previous" / "Next" beside the chevron, when shown. */
 		controlLabel: "font-medium text-foreground",
 		/** A gap that jumps `pageJump` pages. */
-		ellipsis: "items-center justify-center",
+		ellipsis: "shrink-0 items-center justify-center",
 		/** The "…" itself. */
 		ellipsisLabel: "text-muted-foreground",
 		/** The compact "3 / 12" readout. */

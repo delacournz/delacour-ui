@@ -33,7 +33,7 @@ thumb never slides away; tap a gap to jump `pageJump` pages.
 
 ```tsx
 <Pagination count={100} page={page} onPageChange={setPage} />
-<Pagination count={100} siblings={2} boundaries={0} page={page} onPageChange={setPage} />
+<Pagination count={100} siblings={1} boundaries={0} page={page} onPageChange={setPage} />
 ```
 
 ## Compact
@@ -144,7 +144,11 @@ Extends `ViewProps`. Pages are one-based.
     },
     variant: { type: '"numbers" | "compact" | "simple"', default: '"numbers"' },
     size: { type: '"sm" | "md"', default: '"md"' },
-    siblings: { type: "number", default: "1", description: "Pages either side of the current one." },
+    siblings: {
+      type: "number",
+      default: "0",
+      description: "Pages either side of the current one. Each adds two targets — keep the run inside the row.",
+    },
     boundaries: { type: "number", default: "1", description: "Pages always drawn at each end." },
     hasControls: { type: "boolean", default: "true", description: "Show the previous and next arrows." },
     pageJump: { type: "number", default: "5", description: "Pages jumped by tapping a gap." },

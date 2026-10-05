@@ -101,3 +101,18 @@ export function resolvePageHeaderCoverStops({
 	const [first, second, ...rest] = resolved.filter((color): color is string => color !== undefined);
 	return first && second ? [first, second, ...rest] : null;
 }
+
+/**
+ * Whether a text part's children would draw nothing — absent, a boolean, or only
+ * whitespace — so the part can render nothing rather than leave a gap.
+ *
+ * A number is text, zero included. Anything else — an element — is taken at its
+ * word. Typed as `unknown` so it stays free of React's types and reachable from
+ * `bun test`.
+ */
+export function isEmptyText(children: unknown): boolean {
+	if (children === undefined || children === null || typeof children === "boolean") return true;
+	if (typeof children === "string") return children.trim() === "";
+	if (Array.isArray(children)) return children.every(isEmptyText);
+	return false;
+}

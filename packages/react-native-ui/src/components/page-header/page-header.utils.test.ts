@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
 	formatStatCount,
+	isEmptyText,
 	resolvePageHeaderAvatarLabel,
 	resolvePageHeaderCoverStops,
 	resolveStatLabel,
@@ -107,5 +108,24 @@ describe("resolvePageHeaderCoverStops", () => {
 	test("fewer than two colours draws no gradient, leaving the cover's own fill", () => {
 		expect(resolvePageHeaderCoverStops({ resolved: ["#111", undefined], isDefault: false })).toBeNull();
 		expect(resolvePageHeaderCoverStops({ resolved: [undefined, undefined], isDefault: true })).toBeNull();
+	});
+});
+
+describe("isEmptyText", () => {
+	test("nothing, or only whitespace, is empty", () => {
+		for (const value of [undefined, null, false, true, "", "   ", []]) {
+			expect(isEmptyText(value)).toBe(true);
+		}
+	});
+
+	test("text, a number — zero included — or an element is not", () => {
+		for (const value of ["Kate", 0, 12, ["Kate", " Austen"], { type: "span", props: {}, key: null }]) {
+			expect(isEmptyText(value)).toBe(false);
+		}
+	});
+
+	test("an array is empty only when every entry is", () => {
+		expect(isEmptyText(["", null, " "])).toBe(true);
+		expect(isEmptyText(["", "x"])).toBe(false);
 	});
 });

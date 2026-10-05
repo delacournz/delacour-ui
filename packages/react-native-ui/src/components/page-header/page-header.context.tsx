@@ -1,7 +1,7 @@
 import { createContext, type ReactElement, type ReactNode, use } from "react";
 import type { AvatarSize } from "../avatar/avatar.variants";
 import type { SurfacePlane } from "../surface/surface.variants";
-import type { PageHeaderAlign, PageHeaderVariant } from "./page-header.variants";
+import type { PageHeaderAlign, PageHeaderStatsLayout, PageHeaderVariant } from "./page-header.variants";
 
 export type PageHeaderContextValue = {
 	/** `card` or `page`. */
@@ -87,4 +87,29 @@ export function usePageHeaderPart(component: string): PageHeaderContextValue {
 /** The cover's registration callback, or null outside a `<PageHeader>`. Internal. */
 export function usePageHeaderCoverRegistry(): PageHeaderCoverRegistry | null {
 	return use(PageHeaderCoverRegistryContext);
+}
+
+/** What `PageHeader.Stats` tells each `PageHeader.Stat` inside it. */
+export type PageHeaderStatsContextValue = {
+	/** Value over label, or the two run together. */
+	layout: PageHeaderStatsLayout;
+};
+
+const PageHeaderStatsContext = createContext<PageHeaderStatsContextValue | null>(null);
+
+/** Supplies a stats strip's layout to its stats. Internal — `PageHeader.Stats` renders it. */
+export function PageHeaderStatsProvider({
+	value,
+	children,
+}: {
+	value: PageHeaderStatsContextValue;
+	children: ReactNode;
+}): ReactElement {
+	return <PageHeaderStatsContext value={value}>{children}</PageHeaderStatsContext>;
+}
+PageHeaderStatsProvider.displayName = "DelacourUI.PageHeader.Stats.Provider";
+
+/** The enclosing stats strip's layout, or null for a stat placed on its own. Internal. */
+export function usePageHeaderStatsContext(): PageHeaderStatsContextValue | null {
+	return use(PageHeaderStatsContext);
 }

@@ -15,6 +15,7 @@ import {
 	resolveDayPeriodLabels,
 	resolveHourCycle,
 	resolveInitialTime,
+	resolveLocale,
 	serialiseTime,
 	snapMinute,
 	snapTime,
@@ -318,5 +319,19 @@ describe("parseTime / serialiseTime", () => {
 			expect(parsed).not.toBeNull();
 			if (parsed) expect(serialiseTime(parsed)).toBe(text);
 		}
+	});
+});
+
+describe("resolveLocale", () => {
+	test("a valid locale is kept", () => {
+		expect(resolveLocale("en-GB")).toBe("en-GB");
+	});
+
+	test("no locale reads the device's", () => {
+		expect(resolveLocale(undefined).length).toBeGreaterThan(0);
+	});
+
+	test("an invalid locale falls back without throwing", () => {
+		expect(resolveLocale("not a locale!!")).toBe("en-US");
 	});
 });

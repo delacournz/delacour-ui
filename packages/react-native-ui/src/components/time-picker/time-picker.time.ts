@@ -198,6 +198,18 @@ export function currentTime(date: Date = new Date()): TimeValue {
 }
 
 /**
+ * The locale a picker formats with: the caller's when `Intl` accepts it, the
+ * device's when none is given, and `en-US` when the tag is invalid.
+ */
+export function resolveLocale(locale?: string): string {
+	try {
+		return new Intl.DateTimeFormat(locale).resolvedOptions().locale;
+	} catch {
+		return "en-US";
+	}
+}
+
+/**
  * The hour cycle a locale's clocks use. Unknown or invalid locales fall back to 12,
  * and nothing here throws — an `Intl` that rejects a tag must not take a form down.
  */

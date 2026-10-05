@@ -96,6 +96,7 @@ shares.
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
+| [TimePicker](src/components/time-picker/AGENTS.md) | `@delacour/react-native-ui/time-picker` | A time of day on snapping wheels, in a sheet or inline |
 | [ToggleButton](src/components/toggle-button/AGENTS.md) | `@delacour/react-native-ui/toggle-button` | A button that stays pressed, alone or in a group |
 | [DelacourProvider](src/components/provider/AGENTS.md) | `@delacour/react-native-ui/provider` | The app's root layer stack |
 

@@ -64,7 +64,8 @@ export const timePickerVariants = tv({
 		rowText: "font-sans text-foreground",
 		selectionBand: "absolute inset-x-0 rounded-lg bg-muted",
 		separator: "self-center font-sans font-medium text-foreground",
-		header: "pb-3",
+		/** The sheet title. No close control sits beside it, so the clearance `BottomSheet.Title` reserves is given back. */
+		header: "pr-0",
 		footer: "flex-row gap-3",
 	},
 	variants: {
@@ -77,12 +78,15 @@ export const timePickerVariants = tv({
 		isPlaceholder: { true: { value: "text-muted-foreground" }, false: {} },
 		isSelected: { true: { rowText: "font-semibold" }, false: {} },
 		isRowDisabled: { true: { rowText: "text-muted-foreground opacity-50" }, false: {} },
+		/** The whole wheel, inert. A disabled trigger fades through `Input`'s own box instead. */
+		isDisabled: { true: { wheel: "opacity-50" }, false: {} },
 	},
 	defaultVariants: {
 		size: "md",
 		isPlaceholder: false,
 		isSelected: false,
 		isRowDisabled: false,
+		isDisabled: false,
 	},
 });
 

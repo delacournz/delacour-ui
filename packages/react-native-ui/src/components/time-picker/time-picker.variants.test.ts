@@ -62,22 +62,21 @@ const column = (columns: TimeWheelColumnModel[], kind: TimeWheelColumnKind): Tim
 	return found;
 };
 
+const BOOLS = [true, false] as const;
+
 describe("tokens", () => {
 	test("every colour a slot paints exists in both themes", () => {
-		for (const size of INPUT_SIZES) {
-			for (const isSelected of [true, false]) {
-				for (const isRowDisabled of [true, false]) {
-					for (const isPlaceholder of [true, false]) {
-						const slots = timePickerVariants({ size, isSelected, isRowDisabled, isPlaceholder });
-						for (const name of SLOT_NAMES) {
-							for (const token of colorTokens(slots[name]())) {
-								expect(LIGHT.has(token)).toBe(true);
-								expect(DARK.has(token)).toBe(true);
-							}
-						}
-					}
-				}
-			}
+		const states = INPUT_SIZES.flatMap((size) =>
+			BOOLS.flatMap((isSelected) =>
+				BOOLS.flatMap((isRowDisabled) =>
+					BOOLS.map((isPlaceholder) => timePickerVariants({ size, isSelected, isRowDisabled, isPlaceholder }))
+				)
+			)
+		);
+		const tokens = states.flatMap((slots) => SLOT_NAMES.flatMap((name) => colorTokens(slots[name]())));
+		for (const token of tokens) {
+			expect(LIGHT.has(token)).toBe(true);
+			expect(DARK.has(token)).toBe(true);
 		}
 	});
 });
@@ -105,24 +104,16 @@ describe("rule 1: colour on the text, never the view", () => {
 
 describe("the trigger is Input's box", () => {
 	test("same height, border and corner as a lone Input, for every state", () => {
-		for (const variant of INPUT_VARIANTS) {
-			for (const size of INPUT_SIZES) {
-				for (const isInvalid of [true, false]) {
-					for (const isFocused of [true, false]) {
-						for (const isDisabled of [true, false]) {
-							const box = inputVariants({ variant, size, isInvalid, isFocused, isDisabled }).root();
-							const trigger = resolveTimePickerTriggerClass({
-								variant,
-								size,
-								isInvalid,
-								isFocused,
-								isDisabled,
-							});
-							for (const cls of box.split(" ")) expect(trigger.split(" ")).toContain(cls);
-						}
-					}
-				}
-			}
+		const states = INPUT_VARIANTS.flatMap((variant) =>
+			INPUT_SIZES.flatMap((size) =>
+				BOOLS.flatMap((isInvalid) =>
+					BOOLS.flatMap((isFocused) => BOOLS.map((isDisabled) => ({ variant, size, isInvalid, isFocused, isDisabled })))
+				)
+			)
+		);
+		for (const state of states) {
+			const trigger = resolveTimePickerTriggerClass(state).split(" ");
+			for (const cls of inputVariants(state).root().split(" ")) expect(trigger).toContain(cls);
 		}
 	});
 

@@ -4,6 +4,7 @@ import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Long press",
 	caption:
 		'`activation="long-press"` lifts the whole row after a hold. The grip stays as a hint; the row is what a screen reader focuses, with Move up and Move down.',

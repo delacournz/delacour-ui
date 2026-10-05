@@ -5,6 +5,7 @@ import Animated, { useAnimatedRef } from "react-native-reanimated";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Auto-scroll",
 	caption:
 		"Pass the scroller's animated ref as `scrollRef` and a row dragged near either edge scrolls the list, faster the closer it gets.",

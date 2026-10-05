@@ -4,6 +4,7 @@ import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "In a list group",
 	caption:
 		"Rows inside one `ListGroup` card. The lifted row takes an opaque card surface and a shadow, so the row it passes never shows through.",

@@ -4,6 +4,7 @@ import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Variable heights",
 	caption:
 		"Each row measures itself. A row changes slot as soon as its edge crosses the middle of the next one, however tall either is.",

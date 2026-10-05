@@ -6,6 +6,7 @@ import { type ReactElement, useState } from "react";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
+	align: "stretch",
 	title: "Pinned and disabled",
 	caption:
 		"A pinned row never moves and the others reorder around it. A disabled row cannot be lifted, but the others still move past it.",

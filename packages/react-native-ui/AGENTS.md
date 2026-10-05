@@ -81,6 +81,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Overlay](src/components/overlay/AGENTS.md) | `@delacour/react-native-ui/overlay` | The provider, portal, scrim, presence and back button every overlay is drawn with |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
 | [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
@@ -686,16 +687,20 @@ types, its context and its variants. Nothing outside reaches past the index.
 Wrap the app's root in `DelacourProvider` — the gesture root every `Pressable`
 needs above it, the safe-area provider and the keyboard provider `Screen` reads,
 and the keyboard state sync that keeps them honest. An app that uses
-`BottomSheet` mounts the engine's `BottomSheetProvider` inside it, from the
-sheet's own subpath — `DelacourProvider` cannot, because the engine is an
-optional peer:
+an overlay mounts `OverlayProvider` inside it, and an app that uses `BottomSheet`
+mounts the engine's `BottomSheetProvider` inside that — `DelacourProvider` cannot
+mount either, because teleport and the engine are optional peers. The two share
+one teleport host; see [Overlay](src/components/overlay/AGENTS.md):
 
 ```tsx
 import { BottomSheetProvider } from "@delacour/react-native-ui/bottom-sheet";
+import { OverlayProvider } from "@delacour/react-native-ui/overlay";
 import { DelacourProvider } from "@delacour/react-native-ui/provider";
 
 <DelacourProvider>
-  <BottomSheetProvider>{children}</BottomSheetProvider>
+  <OverlayProvider>
+    <BottomSheetProvider>{children}</BottomSheetProvider>
+  </OverlayProvider>
 </DelacourProvider>;
 ```
 

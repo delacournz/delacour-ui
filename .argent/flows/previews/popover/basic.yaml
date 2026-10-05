@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/basic and has settled — the trigger button with the panel closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the popover
+  - tap: { id: open-popover }
+  - await: { visible: { text: Version 2.4 } }
+  - wait: 1200
+  - echo: Closing it from its own button
+  - tap: { id: close-popover }
+  - await: { hidden: { text: Version 2.4 } }

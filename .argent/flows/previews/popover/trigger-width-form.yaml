@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/trigger-width-form and has settled — the full-width trigger with the
+  panel closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the rename panel; its field takes focus and the keyboard rises
+  - tap: { id: open-popover }
+  - await: { visible: { id: rename-input } }
+  - wait: 1200
+  - echo: Saving
+  - tap: { id: rename-save }
+  - await: { hidden: { id: rename-input } }

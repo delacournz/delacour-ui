@@ -164,6 +164,13 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_countdown_complete from "./countdown/complete";
+import * as demo_countdown_inline from "./countdown/inline";
+import * as demo_countdown_labels from "./countdown/labels";
+import * as demo_countdown_segmented from "./countdown/segmented";
+import * as demo_countdown_sizes from "./countdown/sizes";
+import * as demo_countdown_units from "./countdown/units";
+import * as demo_countdown_urgent from "./countdown/urgent";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -530,6 +537,13 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"countdown/complete": demo_countdown_complete,
+	"countdown/inline": demo_countdown_inline,
+	"countdown/labels": demo_countdown_labels,
+	"countdown/segmented": demo_countdown_segmented,
+	"countdown/sizes": demo_countdown_sizes,
+	"countdown/units": demo_countdown_units,
+	"countdown/urgent": demo_countdown_urgent,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

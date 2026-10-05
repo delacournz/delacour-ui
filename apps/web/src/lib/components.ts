@@ -92,6 +92,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"Line, area, bar, scatter, candlestick and pie marks drawn in Skia, coloured from the theme's five-slot series ramp.",
 	},
 	{
+		slug: "countdown",
+		name: "Countdown",
+		group: "Data display",
+		blurb:
+			"Time left until a fixed moment, read from the wall clock on every tick, in sliding segmented digits or one inline run.",
+	},
+	{
 		slug: "kpi",
 		name: "Kpi",
 		group: "Data display",

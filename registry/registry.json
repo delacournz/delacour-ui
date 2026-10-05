@@ -1130,6 +1130,36 @@
 			]
 		},
 		{
+			"name": "scroll-fade",
+			"type": "registry:ui",
+			"title": "ScrollFade",
+			"description": "A gradient at a scrollable's edges while content runs past them, on any axis.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"color",
+				"scroll-edges",
+				"scroll-maths",
+				"tv",
+				"use-scroll-source",
+				"use-theme-color"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"expo-linear-gradient",
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/scroll-fade/AGENTS.md",
+				"ui/scroll-fade/index.ts",
+				"ui/scroll-fade/scroll-fade-edge.tsx",
+				"ui/scroll-fade/scroll-fade.tsx",
+				"ui/scroll-fade/scroll-fade.variants.ts"
+			]
+		},
+		{
 			"name": "scroll-maths",
 			"type": "registry:lib",
 			"title": "scrollMaths",

@@ -4,6 +4,8 @@ description: Two layers of one frame with a seam you drag across — before and 
 icon: Columns2
 ---
 
+<Preview id="compare/anatomy" title={null} />
+
 ## Installation
 
 <ComponentInstall name="compare" />
@@ -42,6 +44,8 @@ export default function Example() {
 Both layers are laid out once, at the full frame size, and only a mask moves. The halves stay in
 register at every position: an image is revealed, never squashed, and text never reflows.
 
+<Preview id="compare/anatomy" />
+
 <Callout type="warn" title="The frame has no size of its own">
 Give `className` an `aspect-*` or an `h-*`. Without one the frame collapses to nothing.
 </Callout>
@@ -50,6 +54,8 @@ Give `className` an `aspect-*` or an `h-*`. Without one the frame collapses to n
 
 Each side takes any children — not only images. One `Card` under a light and a dark
 `ScopedTheme` is the realistic case: the seam cuts one card in half.
+
+<Preview id="compare/themes" />
 
 ```tsx
 import { ScopedTheme } from "uniwind";
@@ -71,6 +77,8 @@ import { ScopedTheme } from "uniwind";
 
 ## Vertical
 
+<Preview id="compare/vertical" />
+
 ```tsx
 <Compare accessibilityLabel="Sky" className="h-72" orientation="vertical">
   …
@@ -87,6 +95,8 @@ a width a vertical frame does not drag across.
 `color` paints the divider and the grip capsule; the glyph takes that colour's foreground. `size`
 moves the capsule only — the handle's touch band is 44pt at every size.
 
+<Preview id="compare/colours-and-sizes" />
+
 ```tsx
 <Compare color="default" size="sm" />
 <Compare color="primary" size="md" />
@@ -101,6 +111,8 @@ moves the capsule only — the handle's touch band is 44pt at every size.
 A release within `snapThreshold` of a point in `snapPoints` lands on it, with a haptic tick.
 Snapping waits for the release; a seam that snapped mid-drag would feel sticky.
 
+<Preview id="compare/snap-points" />
+
 ```tsx
 <Compare snapPoints={[0, 0.5, 1]} snapThreshold={0.08} onPositionChangeEnd={save}>
   …
@@ -109,8 +121,10 @@ Snapping waits for the release; a seam that snapped mid-drag would feel sticky.
 
 ## Controlled
 
+<Preview id="compare/controlled" />
+
 ```tsx
-const [position, setPosition] = useState(0.3);
+const [position, setPosition] = useState(0.5);
 
 <Compare position={position} onPositionChange={setPosition} onPositionChangeEnd={persist}>
   …

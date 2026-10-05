@@ -1729,6 +1729,60 @@
 			]
 		},
 		{
+			"name": "questionnaire",
+			"type": "registry:ui",
+			"title": "Questionnaire",
+			"description": "A guided form, one question at a time: single and multiple choice, text, rating, scale and yes/no, with branching, skips, validation and progress.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"button",
+				"checkbox",
+				"cn",
+				"field",
+				"input",
+				"pressable",
+				"progress",
+				"radio",
+				"rating",
+				"separator",
+				"steps",
+				"surface",
+				"text",
+				"textarea",
+				"toggle-button",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/questionnaire/AGENTS.md",
+				"ui/questionnaire/index.ts",
+				"ui/questionnaire/questionnaire-back.tsx",
+				"ui/questionnaire/questionnaire-control.tsx",
+				"ui/questionnaire/questionnaire-footer.tsx",
+				"ui/questionnaire/questionnaire-next.tsx",
+				"ui/questionnaire/questionnaire-progress.tsx",
+				"ui/questionnaire/questionnaire-question.tsx",
+				"ui/questionnaire/questionnaire-skip.tsx",
+				"ui/questionnaire/questionnaire-spacer.tsx",
+				"ui/questionnaire/questionnaire-submit.tsx",
+				"ui/questionnaire/questionnaire-title.tsx",
+				"ui/questionnaire/questionnaire.context.tsx",
+				"ui/questionnaire/questionnaire.logic.ts",
+				"ui/questionnaire/questionnaire.tsx",
+				"ui/questionnaire/questionnaire.types.ts",
+				"ui/questionnaire/questionnaire.variants.ts"
+			]
+		},
+		{
 			"name": "radio",
 			"type": "registry:ui",
 			"title": "Radio",

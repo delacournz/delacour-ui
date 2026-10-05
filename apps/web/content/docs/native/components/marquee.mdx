@@ -4,6 +4,8 @@ description: Content that travels across its container on a loop, at a speed in 
 icon: ArrowLeftRight
 ---
 
+<Preview id="marquee/two-rows" title={null} />
+
 ## Installation
 
 <ComponentInstall name="marquee" />
@@ -41,6 +43,8 @@ and slides the strip, so whatever you pass is what loops.
 `down` along the column. A vertical marquee needs a bounded height from its `className` — a column of
 unbounded height has nothing to clip against, and simply shows every copy stacked.
 
+<Preview id="marquee/vertical" />
+
 ```tsx
 <Marquee direction="right">
   <Badge>Travels left to right</Badge>
@@ -57,6 +61,8 @@ unbounded height has nothing to clip against, and simply shows every copy stacke
 `speed` is points per second, never a duration. A duration makes a three-badge strip crawl and a
 thirty-badge strip fly; a speed keeps every strip moving at the pace you asked for, however much it
 holds. The default is 40. Zero or less holds the strip still.
+
+<Preview id="marquee/speed" />
 
 ```tsx
 <Marquee speed={20}>…</Marquee>
@@ -84,11 +90,15 @@ off. The fade is drawn in a theme colour, so it has to name the surface the marq
 `color` is one of `background` (the default), `card`, `muted` or `elevated`; `size` is how far each
 fade reaches in, in points (default 24).
 
+<Preview id="marquee/badges" />
+
 ## Pausing
 
 By default a finger anywhere on the strip holds it — `pause={{ kind: "press" }}`. The strip eases to a
 stop over `easeMs` (default 250) and eases back up from exactly where it stopped. A child's own press
 still fires, moving or held, so a strip of tappable cards works.
+
+<Preview id="marquee/hold-to-pause" />
 
 Hand the decision to the app with `controlled`, or turn holding off with `none`:
 
@@ -103,6 +113,8 @@ const [isPaused, setIsPaused] = useState(false);
 
 `Marquee.Group` gives every strip inside it one speed and one pause. A finger on any row holds them
 all, and rows running opposite ways stay in proportion.
+
+<Preview id="marquee/two-rows" />
 
 ```tsx
 <Marquee.Group className="gap-3" speed={30}>

@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Custom separator",
 	caption:
 		"The root's `separator` replaces every chevron — a string is drawn as muted text. An `Icon` inside a link takes the glyph's size and colour.",
+	capture: {},
 };
 
 const TRAIL = ["Projects", "Delacour", "Docs"] as const;

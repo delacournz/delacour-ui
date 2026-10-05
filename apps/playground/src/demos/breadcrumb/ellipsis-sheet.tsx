@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Ellipsis opens a sheet",
 	caption:
 		"With `onEllipsisPress` the ellipsis is a button, handed the hidden levels' indices. Here it lists them in a bottom sheet; pick one to jump there.",
+	capture: { flow: "breadcrumb/ellipsis-sheet", frame: "device", hero: true },
 };
 
 const INITIAL = ["Home", "Music", "Artists", "Radiohead", "Albums", "In Rainbows", "Reckoner"] as const;
@@ -25,7 +26,7 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<View className="gap-4">
+		<View className="flex-1 items-center justify-center gap-4">
 			<Breadcrumb>
 				<Breadcrumb.List
 					maxItems={3}

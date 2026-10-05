@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Scroll overflow",
 	caption:
 		'`overflow="scroll"` keeps the whole trail on one line in a horizontal scroller, opened at its end so the current page is in view.',
+	capture: { align: "stretch", flow: "breadcrumb/scroll-overflow" },
 };
 
 const TRAIL = ["Workspace", "Engineering", "Platform", "Services", "Payments", "Webhooks", "Retries"] as const;

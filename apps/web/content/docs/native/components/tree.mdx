@@ -4,6 +4,8 @@ description: A hierarchy opened one level at a time — branches that expand and
 icon: FolderTree
 ---
 
+<Preview id="tree/file-browser" title={null} />
+
 ## Installation
 
 <ComponentInstall name="tree" />
@@ -46,6 +48,8 @@ so there is no `level` prop. An item with a `Tree.Group` among its direct childr
 `selectionMode="single"` selects the pressed row. With `expandOnPress={false}` only the chevron opens
 a branch, so a branch can be selected without opening it. Pressing the selected row keeps it selected.
 
+<Preview id="tree/single-select" />
+
 ```tsx
 <Tree selectionMode="single" expandOnPress={false} value={selected} onValueChange={setSelected}>
   …
@@ -57,10 +61,12 @@ a branch, so a branch can be selected without opening it. Pressing the selected 
 `selectionMode="multiple"` toggles each row in a flat set — selecting a branch does not select its
 children. Draw a check from `useTreeItem()` rather than nesting a control in the row.
 
+<Preview id="tree/multi-select" />
+
 ```tsx
 function Check() {
   const { isSelected } = useTreeItem();
-  return <Icon icon={isSelected ? IconCheckCircle2 : IconCircle} />;
+  return <Icon icon={isSelected ? IconCheckCircle2 : IconCirclePlaceholderOn} />;
 }
 
 <Tree selectionMode="multiple" value={selected} onValueChange={setSelected}>
@@ -77,11 +83,15 @@ function Check() {
 
 `hasLines` draws a hairline down every open group, under its branch's chevron.
 
+<Preview id="tree/lines" />
+
 ```tsx
 <Tree hasLines defaultExpanded={["guide"]}>…</Tree>
 ```
 
 ## Sizes
+
+<Preview id="tree/sizes" />
 
 ```tsx
 <Tree size="sm">…</Tree>
@@ -92,6 +102,8 @@ function Check() {
 
 `Tree.Icon` leads the row and an `Icon` inside inherits its size and colour. `Tree.Actions` trails it,
 outside the row's tap target, so a button there is pressed on its own.
+
+<Preview id="tree/file-browser" />
 
 ```tsx
 <Tree.Trigger>
@@ -105,6 +117,8 @@ outside the row's tap target, so a button there is pressed on its own.
 
 `hasChildren` marks a node a branch before its `Tree.Group` exists, so the chevron shows from the
 start. Fetch the children in `onExpandedChange`.
+
+<Preview id="tree/lazy-load" />
 
 ```tsx
 <Tree onExpandedChange={(_, { value, isExpanded }) => isExpanded && load(value)}>

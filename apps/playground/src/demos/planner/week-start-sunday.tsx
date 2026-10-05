@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Where the week starts",
 	caption:
 		"`weekStartsOn` takes any weekday, or `auto` to ask the locale. Here an American locale starts on Sunday; pick another to move the columns.",
+	align: "stretch",
 };
 
 const LABELS: Record<PlannerWeekStart, string> = { 0: "Su", 1: "Mo", 2: "Tu", 3: "We", 4: "Th", 5: "Fr", 6: "Sa" };

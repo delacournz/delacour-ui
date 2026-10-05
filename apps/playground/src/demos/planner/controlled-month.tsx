@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "A month you hold",
 	caption:
 		"`month` and `onMonthChange` put the month in your state. This parent refuses anything past December — the grid stays, nothing slides, and nothing is announced.",
+	align: "stretch",
 };
 
 const LAST = new Date(new Date().getFullYear(), 11, 1);

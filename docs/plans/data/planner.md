@@ -125,3 +125,24 @@ custom days, dates and time zones, accessibility, API.
 - [ ] VoiceOver day labels with counts and categories
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Delivery notes
+
+- **Previews not captured (follow-up).** The argent CLI the capture script drives is not installed on
+  the build machine, so `bun run previews` cannot run. Every demo carries `align: "stretch"` but no
+  `capture` (a captured demo without a manifest entry fails `demos.test.ts`), and `planner.mdx` opens
+  at `## Installation` with no `<Preview>`. Follow-up: restore `capture` on `training-plan` (hero),
+  `tiles`, `calendar-fill`, `custom-day` and `details-sheet` (`flow: "planner/details-sheet"`,
+  `frame: "device"` — the flow is already in `.argent/flows/previews/planner/`), run
+  `bun run previews -- -- --only planner`, and add the `<Preview>`s back to the page.
+- **Simulator verified** (warden-iphone-17, iOS 26.5, dev client): grid, today ring, legend counts;
+  `Nav` and `Today` (disabled on the current month, enabled off it); a pan pages both ways; the
+  details sheet opens on the pressed day with its entries, and both its close button and a swipe
+  down clear the selection; day labels read "Wednesday, October 14, 3 entries, Run, Strength, Ride"
+  with `selected` state; tiles, calendar `fill` and the scroller render.
+- **Found on the simulator and fixed:** at the spec's 20pt `activeOffsetX` the stack's full-width back
+  swipe claimed a rightward drag and popped the screen — now `PLANNER_PAN`, the `Tabs` pager's 10/14.
+  A calendar day with overflow drew `entryLimit` blocks plus "+N more" and spilled into the next week
+  — "+N more" now takes the last line, and the cell clips.
+- **Day details** use the existing `BottomSheet`, as planned; no Overlays code. Month math is local
+  to the folder; no Forms Calendar import.

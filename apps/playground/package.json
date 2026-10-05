@@ -76,6 +76,7 @@
 		"react-native": "catalog:",
 		"react-native-gesture-handler": "catalog:",
 		"react-native-keyboard-controller": "catalog:",
+		"react-native-maps": "catalog:",
 		"react-native-mmkv": "^4.3.2",
 		"react-native-nitro-modules": "^0.37.1",
 		"react-native-pager-view": "8.0.2",

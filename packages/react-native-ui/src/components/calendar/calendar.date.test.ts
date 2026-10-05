@@ -119,7 +119,7 @@ describe("weekdayOf", () => {
 	test("agrees with the platform for every day of a leap year", () => {
 		let day = d(2024, 1, 1);
 		for (let i = 0; i < 366; i += 1) {
-			expect(weekdayOf(day)).toBe(new Date(Date.UTC(day.year, day.month - 1, day.day)).getUTCDay());
+			expect<number>(weekdayOf(day)).toBe(new Date(Date.UTC(day.year, day.month - 1, day.day)).getUTCDay());
 			day = addDays(day, 1);
 		}
 	});

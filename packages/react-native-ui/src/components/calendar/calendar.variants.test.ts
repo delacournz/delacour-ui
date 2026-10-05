@@ -15,6 +15,7 @@ import {
 	resolveDayState,
 	resolveDayTone,
 	resolveMonthBounds,
+	resolvePageDirection,
 	resolveRangeRole,
 } from "./calendar.variants";
 
@@ -298,5 +299,35 @@ describe("resolveCalendarAxes", () => {
 			isInvalid: true,
 		});
 		expect(resolveCalendarAxes({ own: { isDisabled: false }, field: { isDisabled: true } }).isDisabled).toBe(false);
+	});
+});
+
+describe("resolvePageDirection", () => {
+	const base = { width: 320, canGoPrev: true, canGoNext: true };
+
+	test("a swipe left past the threshold pages forward, right pages back", () => {
+		expect(resolvePageDirection({ ...base, translationX: -120, velocityX: 0 })).toBe(1);
+		expect(resolvePageDirection({ ...base, translationX: 120, velocityX: 0 })).toBe(-1);
+	});
+
+	test("a short slow swipe settles back", () => {
+		expect(resolvePageDirection({ ...base, translationX: -40, velocityX: -100 })).toBe(0);
+	});
+
+	test("a short fast flick pages", () => {
+		expect(resolvePageDirection({ ...base, translationX: -40, velocityX: -900 })).toBe(1);
+	});
+
+	test("a flick against the drag settles back", () => {
+		expect(resolvePageDirection({ ...base, translationX: -120, velocityX: 900 })).toBe(0);
+	});
+
+	test("never pages past a bound", () => {
+		expect(resolvePageDirection({ ...base, canGoNext: false, translationX: -200, velocityX: -900 })).toBe(0);
+		expect(resolvePageDirection({ ...base, canGoPrev: false, translationX: 200, velocityX: 900 })).toBe(0);
+	});
+
+	test("an unmeasured grid never pages", () => {
+		expect(resolvePageDirection({ ...base, width: 0, translationX: -200, velocityX: 0 })).toBe(0);
 	});
 });

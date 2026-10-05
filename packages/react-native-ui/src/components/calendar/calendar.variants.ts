@@ -338,6 +338,42 @@ export function isMonthInBounds(
 	return true;
 }
 
+/**
+ * Which way a released swipe pages: `1` forward, `-1` back, `0` settle where it was.
+ *
+ * A swipe pages when it travelled past {@link CALENDAR_PAGE_THRESHOLD} of the width, or was
+ * released faster than {@link CALENDAR_PAGE_VELOCITY} — unless the flick goes against the drag,
+ * which is someone changing their mind. It never pages past a bound, and an unmeasured grid
+ * never pages at all.
+ */
+export function resolvePageDirection({
+	translationX,
+	velocityX,
+	width,
+	canGoPrev,
+	canGoNext,
+}: {
+	translationX: number;
+	velocityX: number;
+	width: number;
+	canGoPrev: boolean;
+	canGoNext: boolean;
+}): -1 | 0 | 1 {
+	"worklet";
+	if (width <= 0 || translationX === 0) return 0;
+	const direction = translationX < 0 ? 1 : -1;
+	const against =
+		(direction === 1 && velocityX > CALENDAR_PAGE_VELOCITY) ||
+		(direction === -1 && velocityX < -CALENDAR_PAGE_VELOCITY);
+	if (against) return 0;
+	const far = Math.abs(translationX) >= width * CALENDAR_PAGE_THRESHOLD;
+	const fast = Math.abs(velocityX) >= CALENDAR_PAGE_VELOCITY;
+	if (!far && !fast) return 0;
+	if (direction === 1 && !canGoNext) return 0;
+	if (direction === -1 && !canGoPrev) return 0;
+	return direction;
+}
+
 /** What a calendar was given at its own call site. */
 export type CalendarOwnAxes = {
 	variant?: CalendarVariant;

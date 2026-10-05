@@ -4,6 +4,8 @@ description: The actions that belong to a piece of content — a message, a card
 icon: MessageSquareMore
 ---
 
+<Preview id="context-menu/message-actions" title={null} />
+
 ## Installation
 
 <ComponentInstall name="context-menu" />
@@ -62,11 +64,15 @@ trailing edge and a taller row; `Label`, `Separator`, `CheckboxItem`, `RadioGrou
 `Sub`, `SubTrigger`, `SubContent` and `Background` are Menu's own components. Everything the
 [Menu page](/docs/native/components/menu) says about rows applies here unchanged.
 
+<Preview id="context-menu/stateful-rows" />
+
 ## Hold and tap
 
 Holding the trigger for 350ms opens the menu. A short press runs the trigger's `onPress`. One
 recogniser decides which before either fires, so a hold that opens the menu **never** also counts as
 a tap.
+
+<Preview id="context-menu/message-actions" />
 
 Put `onPress` on the trigger, not on a pressable inside it. An inner press races the hold instead
 of being arbitrated against it.
@@ -85,6 +91,8 @@ trigger still scrolls: the hold gives up once the finger drifts past `slop`.
 By default the panel opens at the finger. `anchor="target"` hangs it off the whole trigger instead,
 lined up with its leading edge — wherever on the trigger the hold landed.
 
+<Preview id="context-menu/anchored-to-row" />
+
 ```tsx
 <ContextMenu.Trigger anchor="target">
   <FileRow file={file} />
@@ -96,6 +104,8 @@ lined up with its leading edge — wherever on the trigger the hold landed.
 `ContextMenu.Preview`, placed among the rows, lifts a copy of the held content over the dimmed
 screen, a touch larger and casting a shadow. The panel then opens beside the copy rather than at the
 finger, so it never covers it.
+
+<Preview id="context-menu/lifted-preview" />
 
 ```tsx
 <ContextMenu.Content>
@@ -111,6 +121,8 @@ fresh. Pass children to `ContextMenu.Preview` when the copy should differ.
 
 `delay` is how long the hold lasts before the menu opens; `slop` is how far the finger may drift in
 the meantime. The delay never goes below 150ms — anything shorter is a tap.
+
+<Preview id="context-menu/hold-timing" />
 
 ```tsx
 <ContextMenu.Trigger delay={600} slop={8}>…</ContextMenu.Trigger>

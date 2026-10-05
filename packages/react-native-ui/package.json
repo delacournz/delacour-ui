@@ -48,6 +48,7 @@
 		"./chart": "./src/components/chart/index.ts",
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./chip": "./src/components/chip/index.ts",
+		"./circular-text": "./src/components/circular-text/index.ts",
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./color-picker": "./src/components/color-picker/index.ts",
 		"./combobox": "./src/components/combobox/index.ts",

@@ -647,6 +647,36 @@
 			]
 		},
 		{
+			"name": "circular-text",
+			"type": "registry:ui",
+			"title": "Circular Text",
+			"description": "Text set around a circle on an SVG path, optionally turning, with content in the middle.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"text",
+				"use-calm-motion"
+			],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/circular-text/AGENTS.md",
+				"ui/circular-text/circular-text-ring.tsx",
+				"ui/circular-text/circular-text-spin.ts",
+				"ui/circular-text/circular-text.tsx",
+				"ui/circular-text/circular-text.types.ts",
+				"ui/circular-text/circular-text.variants.ts",
+				"ui/circular-text/index.ts"
+			]
+		},
+		{
 			"name": "cn",
 			"type": "registry:lib",
 			"title": "cn",

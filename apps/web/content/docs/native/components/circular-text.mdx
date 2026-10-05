@@ -1,0 +1,184 @@
+---
+title: CircularText
+description: Text set around a circle — a seal, a badge, an arc of words — optionally turning.
+icon: RotateCw
+---
+
+<Preview id="circular-text/seal" title={null} />
+
+## Installation
+
+<ComponentInstall name="circular-text" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { CircularText } from "@/components/ui/circular-text";
+import { Icon } from "@/components/ui/icon";
+import { IconStar } from "@/lib/icons/central";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <CircularText
+        centerContent={<Icon icon={IconStar} size="xl" />}
+        radius={72}
+        repeat="fill"
+        spin={{ kind: "loop" }}
+      >
+        DELACOUR UI
+      </CircularText>
+    </View>
+  );
+}
+```
+
+## Spanning
+
+`span` decides how much of the circle the words cover.
+
+<Preview id="circular-text/arc" />
+
+| `span` | What it does |
+| --- | --- |
+| `{ kind: "full" }` | Spreads the text to close the ring exactly, whatever the font's metrics (default) |
+| `{ kind: "arc", sweep, startAngle? }` | Spreads it across `sweep` degrees, centred on the top unless `startAngle` says otherwise |
+| `{ kind: "natural", startAngle? }` | Lays it out at the font's own spacing; it may not close the ring |
+
+```tsx
+<CircularText radius={64} size="sm" span={{ kind: "arc", sweep: 140 }}>
+  Handmade in Wellington
+</CircularText>
+```
+
+## Direction and side
+
+`side` points glyph tops away from the centre (`outside`) or toward it (`inside`); `direction` is
+only the way a `loop` turns.
+
+<Preview id="circular-text/badge" />
+
+```tsx
+<CircularText radius={52} side="inside">TOP CONTRIBUTOR</CircularText>
+<CircularText direction="counterclockwise" radius={52} spin={{ kind: "loop" }}>
+  TOP CONTRIBUTOR
+</CircularText>
+```
+
+## Spinning
+
+`spin` is `none` (default), `loop` at `speed` degrees per second, or `controlled` by a
+`SharedValue<number>` your app drives from a scroll offset, a gesture or a slider.
+
+<Preview id="circular-text/seal" />
+
+<Preview id="circular-text/controlled" />
+
+```tsx
+<CircularText radius={72} spin={{ kind: "loop", speed: 24 }}>…</CircularText>
+<CircularText radius={72} spin={{ kind: "controlled", rotation }}>…</CircularText>
+```
+
+### Pausing
+
+`press` eases the ring to a halt under a finger, `controlled` from your state; either resumes from
+the same angle.
+
+<Preview id="circular-text/hold-to-pause" />
+
+```tsx
+<CircularText pause={{ kind: "press" }} radius={72} spin={{ kind: "loop", speed: 48 }}>
+  PRESS AND HOLD
+</CircularText>
+```
+
+## Content in the middle
+
+`centerContent` stays upright, still and independently focusable while the ring turns.
+
+```tsx
+<CircularText centerContent={<Avatar name="Kate Austen" size="xl" />} radius={52} repeat="fill">
+  TOP CONTRIBUTOR
+</CircularText>
+```
+
+## Repeating a phrase
+
+`repeat` writes `children` that many times with `separator` after each; `"fill"` estimates enough
+copies to close the ring.
+
+```tsx
+<CircularText radius={44} repeat="fill" separator=" · " spin={{ kind: "loop", speed: 60 }}>
+  UPLOADING
+</CircularText>
+```
+
+## Recipes
+
+**Seal** — a filled ring around an icon, turning slowly: `repeat="fill"`, `spin={{ kind: "loop" }}`,
+an `Icon` as `centerContent`.
+
+**Two rings** — pass one `CircularText` as another's `centerContent`, the inner one smaller,
+`direction="counterclockwise"` and faster.
+
+<Preview id="circular-text/two-rings" />
+
+**Badge** — a muted ring around an `Avatar`, `side="inside"` for words along the bottom.
+
+**Loading ring** — a `Spinner` in the middle and the action's name around it; the ring doubles as
+the accessible label for the wait.
+
+## Reduced motion
+
+Under reduce motion or `isMotionCalm`, a `loop` holds still at 0°; a `controlled` spin still follows
+its value.
+
+## Accessibility
+
+- A screen reader hears the words once, separators stripped — `"DELACOUR • UI • "` is read
+  "DELACOUR UI". Pass `accessibilityLabel` to say something else.
+- Keep ring text at 12pt or more and under about 28 characters per half circle.
+
+<Callout>
+SVG text does not grow with the system text size, because `radius` fixes the circle. Do not put
+information only in the ring.
+</Callout>
+
+## API Reference
+
+### CircularText
+
+Accepts every `View` prop except `children`.
+
+<TypeTable
+  type={{
+    children: { type: "string", description: "The text, plain. Required." },
+    radius: { type: "number", description: "The centreline of the text, in points. Required — a ring has no intrinsic size." },
+    span: {
+      type: '{ kind: "full" } | { kind: "arc"; sweep: number; startAngle?: number } | { kind: "natural"; startAngle?: number }',
+      default: '{ kind: "full" }',
+      description: "How much of the circle the text spans. Degrees, 0 at 12 o'clock.",
+    },
+    side: { type: '"outside" | "inside"', default: '"outside"', description: "Whether glyph tops face away from the centre or toward it." },
+    spin: {
+      type: '{ kind: "none" } | { kind: "loop"; speed?: number } | { kind: "controlled"; rotation: SharedValue<number> }',
+      default: '{ kind: "none" }',
+      description: "Whether and how the ring turns. `speed` is degrees per second, default 24; `rotation` is degrees.",
+    },
+    direction: { type: '"clockwise" | "counterclockwise"', default: '"clockwise"', description: "Which way a `loop` turns." },
+    pause: {
+      type: '{ kind: "none" } | { kind: "press" } | { kind: "controlled"; isPaused: boolean }',
+      default: '{ kind: "none" }',
+      description: "What eases a `loop` to a halt and back.",
+    },
+    repeat: { type: 'number | "fill"', default: "1", description: "Copies of `children`. `\"fill\"` estimates enough to close the ring." },
+    separator: { type: "string", default: '" • "', description: "Written after each copy, and stripped from the spoken label." },
+    centerContent: { type: "ReactNode", description: "Drawn in the middle, upright and still." },
+    size: { type: '"xs" | "sm" | "md" | "lg" | "xl" | "2xl" | "3xl"', default: '"xs"', description: "A step on `Text`'s scale." },
+    weight: { type: '"normal" | "medium" | "semibold" | "bold"', default: '"semibold"' },
+    color: { type: '"default" | "muted" | "destructive" | "success" | "warning" | "info"', default: '"default"' },
+    className: { type: "string", description: "`Text` classes — a family, tracking or colour. Resolved once and handed to the SVG text." },
+    accessibilityLabel: { type: "string", description: "What a screen reader says. Defaults to the text once, separators stripped." },
+  }}
+/>

@@ -371,6 +371,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One section shown and hidden by its own trigger.",
 	},
 	{
+		slug: "circular-text",
+		name: "CircularText",
+		group: "Media",
+		blurb: "Text set around a circle \u2014 a seal, a badge, an arc of words \u2014 optionally turning.",
+	},
+	{
 		slug: "message",
 		name: "Message",
 		group: "Media",

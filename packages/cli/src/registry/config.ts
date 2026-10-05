@@ -202,6 +202,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet.",
 		categories: ["forms"],
 	},
+	"circular-text": {
+		title: "Circular Text",
+		description: "Text set around a circle on an SVG path, optionally turning, with content in the middle.",
+		categories: ["media"],
+	},
 	collapsible: {
 		title: "Collapsible",
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",

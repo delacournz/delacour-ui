@@ -1,13 +1,13 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import Animated, { useAnimatedProps } from "react-native-reanimated";
-import Svg, { G, Path } from "react-native-svg";
+import Svg, { Path } from "react-native-svg";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useFlowPart } from "./flow.context";
 import { FLOW_DEFAULTS } from "./flow.variants";
 import { flowGeometry } from "./flow-geometry";
+import { AnimatedMatrixG, type FlowMatrixGProps } from "./flow-svg";
 
-const AnimatedG = Animated.createAnimatedComponent(G);
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 /** The side a preview arrives on — the one facing back at the handle it left. */
@@ -24,7 +24,7 @@ export function FlowConnectionPreview(): ReactElement {
 	const { viewport, preview } = useFlowPart("Flow.ConnectionPreview");
 	const stroke = useThemeColor("primary");
 
-	const groupProps = useAnimatedProps(() => {
+	const groupProps = useAnimatedProps<FlowMatrixGProps>(() => {
 		const { x, y, zoom } = viewport.value;
 		return { matrix: [zoom, 0, 0, zoom, x, y] };
 	});
@@ -38,7 +38,7 @@ export function FlowConnectionPreview(): ReactElement {
 	return (
 		<View className="absolute inset-0" pointerEvents="none">
 			<Svg height="100%" width="100%">
-				<AnimatedG animatedProps={groupProps}>
+				<AnimatedMatrixG animatedProps={groupProps}>
 					<AnimatedPath
 						animatedProps={lineProps}
 						fill="none"
@@ -47,7 +47,7 @@ export function FlowConnectionPreview(): ReactElement {
 						strokeLinecap="round"
 						strokeWidth={FLOW_DEFAULTS.edgeWidth}
 					/>
-				</AnimatedG>
+				</AnimatedMatrixG>
 			</Svg>
 		</View>
 	);

@@ -44,7 +44,7 @@ export function useDirectionSign(): 1 | -1;                      // sugar for us
 export function DirectionProvider(props: { value: DirectionContextValue; children: ReactNode }): ReactElement; // leaf, in direction.context.tsx
 ```
 
-No `className` or `style` prop: the wrapper is `display: contents`, so it adds no box and `flex-1` children keep flexing against the real parent. A caller who needs a box nests a `View` inside.
+No `style` prop. *Superseded on implementation:* the wrapper is a real `View` when `dir` is set (see open question 1), so it takes `className`.
 
 Worklet-safe helpers (pure, in `direction.variants.ts`, usable from `useAnimatedStyle`):
 
@@ -165,7 +165,7 @@ Then `bun run gen-exports`. Provider display name: `DelacourUI.Direction.Provide
 
 | File | Shows | Capture |
 | --- | --- | --- |
-| `mirrored-rows.tsx` (hero) | the same `ListGroup` rendered in LTR and RTL side by side | yes, `align: "stretch"` |
+| `mirrored-rows.tsx` (hero) | the same `ListGroup` rendered in LTR and RTL side by side | yes, `align: "stretch"` — deferred: argent is uninstalled, captures are off until previews can run |
 | `nested-override.tsx` | RTL paragraph with an LTR phone number | yes |
 | `toggle.tsx` | a `Switch` flipping `dir` for a sample card at runtime | yes, flow `direction/toggle` |
 | `uniwind-variants.tsx` | `rtl:`/`ltr:` classes resolving per subtree | no |
@@ -207,4 +207,6 @@ Registry: `ITEM_META.direction = { title: "Direction", description: "Sets LTR or
 ## Open questions
 
 1. Does Yoga honour `direction` on a `display: contents` node on RN 0.86 (Uniwind's own component relies on it)? Verify first on the simulator; if not, render a plain `View style={{ direction }}` with `flex: 1` and keep the Uniwind context. `1.a` verify, fallback ready.
+   **Resolved 2026-10-05 (iPhone 17 sim, warden + agent-device): no.** `LayoutDirection` alone left the toggle demo's row unflipped. `Direction` now renders a plain `View style={{ direction }}` (no default `flex: 1` — it takes `className` instead, `flex-1` around a screen) with `LayoutDirection` inside it for the Uniwind `rtl:`/`ltr:` scope, which does work per subtree. With `dir` omitted the View stays `display: contents`.
+   Also found: unset text alignment follows the app locale, not the subtree; set, `text-left` is read as start inside an RTL `Direction` (`text-right` lands on the left). Docs and demos use `text-left`.
 2. Should `useDirection()` throw outside a `Direction`? Recommended no: fall back to the system value, so library components work with zero setup. `2.a` no-throw.

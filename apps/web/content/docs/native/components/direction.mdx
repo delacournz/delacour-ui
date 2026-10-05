@@ -46,7 +46,7 @@ An inner `Direction` overrides the outer one for its own subtree, so a phone num
 
 ```tsx
 <Direction dir="rtl">
-  <Text.Header className="rtl:text-right">مكتب الاستقبال</Text.Header>
+  <Text.Header className="text-left">مكتب الاستقبال</Text.Header>
   <Direction dir="ltr">
     <View className="flex-row gap-2">
       <Text.Label>Tel</Text.Label>
@@ -58,10 +58,18 @@ An inner `Direction` overrides the outer one for its own subtree, so a phone num
 
 ## Text alignment
 
-Text alignment is not layout and does not flip; Uniwind's `rtl:` and `ltr:` variants resolve against the nearest `Direction`, so align with a class.
+Unset alignment follows the app's locale; inside a `Direction`, React Native reads `text-left` as the start edge and `text-right` as the end, so set it.
 
 ```tsx
-<Text.Paragraph className="rtl:text-right">…</Text.Paragraph>
+<Text.Paragraph className="text-left">…</Text.Paragraph>
+```
+
+## Uniwind variants
+
+`rtl:` and `ltr:` resolve against the nearest `Direction`, not the app.
+
+```tsx
+<View className="ltr:bg-primary rtl:bg-destructive" />
 <Icon icon={IconChevronRight} className="rtl:-scale-x-100" />
 ```
 

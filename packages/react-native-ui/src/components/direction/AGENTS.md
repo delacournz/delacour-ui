@@ -40,10 +40,13 @@ only because a component's pure resolvers live in a leaf with no React Native im
   style slot is the direction.
 - **With `dir` omitted it is `display: contents` and writes no direction**, so an unconditional
   wrapper adds nothing to layout. It still publishes the inherited value through context.
-- **Text alignment does not follow.** Yoga's direction mirrors rows, `start`/`end` insets, margins
-  and padding; native text keeps the app's natural alignment (seen on the simulator: Arabic header
-  left-aligned inside an RTL card). The docs and the nested-override demo use `rtl:text-right`.
-  Making `Text` read the direction is a follow-up, not this component.
+- **Text alignment needs setting.** A `Text` with no alignment (`auto`) keeps the app locale's
+  natural alignment — an Arabic header sat on the left inside an RTL card. Set, `textAlign` is read
+  logically inside a `Direction`: on the simulator `text-left` drew on the **right** in RTL and
+  `text-right` on the left (same as RN under `I18nManager.forceRTL`, where `left` means start). So
+  `text-left` is "align to start" in either direction, and `rtl:text-right` is wrong — it lands on
+  the left. `writingDirection: "rtl"` also right-aligns. Making `Text` default to start inside a
+  `Direction` is a follow-up.
 - **`useDirection()` never throws.** Outside any `Direction` it derives the value from
   `I18nManager.isRTL`, so a library component reading it works with no setup. That flag changes only
   on restart, so reading it per call is enough.
@@ -72,7 +75,7 @@ only because a component's pure resolvers live in a leaf with no React Native im
 | Tabs | `mirrorX` for the indicator; reverse pager order |
 | Carousel | initial offset and snap order from `sign` |
 | Progress, Meter | `start-0` fills |
-| Text | align by direction, so `rtl:text-right` is not needed |
+| Text | default to `text-left` (start) inside a `Direction` |
 | Chevrons, back arrows | `rtl:-scale-x-100` where the meaning is directional |
 
 ## Verification

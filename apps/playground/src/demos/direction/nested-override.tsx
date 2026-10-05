@@ -7,15 +7,15 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Nested override",
 	caption:
-		"An Arabic contact card reads right to left, but a phone number does not. The inner `Direction` puts the number's row back to left to right without touching the card around it. Text alignment is not layout, so the Arabic lines right-align with `rtl:text-right`.",
+		"An Arabic contact card reads right to left, but a phone number does not. The inner `Direction` puts the number's row back to left to right without touching the card around it. Alignment follows the app's locale until it is set; inside a `Direction`, React Native reads `text-left` as the start edge, so the Arabic lines carry it.",
 };
 
 export function Demo(): ReactElement {
 	return (
 		<Direction dir="rtl">
 			<View className="gap-3 rounded-lg border border-border bg-card p-4">
-				<Text.Header className="rtl:text-right">مكتب الاستقبال</Text.Header>
-				<Text.Paragraph className="rtl:text-right">
+				<Text.Header className="text-left">مكتب الاستقبال</Text.Header>
+				<Text.Paragraph className="text-left">
 					اتصل بنا من الأحد إلى الخميس، من التاسعة صباحاً حتى الخامسة مساءً.
 				</Text.Paragraph>
 				<Direction dir="ltr">

@@ -15,8 +15,8 @@ function Sample({ label }: { label: string }): ReactElement {
 		<View className="flex-row overflow-hidden rounded-lg border border-border bg-card">
 			<View className="w-1.5 ltr:bg-primary rtl:bg-destructive" />
 			<View className="flex-1 p-4">
-				<Text.Label>{label}</Text.Label>
-				<Text.Caption className="ltr:text-left rtl:text-right">ltr:bg-primary rtl:bg-destructive</Text.Caption>
+				<Text.Label className="text-left">{label}</Text.Label>
+				<Text.Caption className="text-left">ltr:bg-primary rtl:bg-destructive</Text.Caption>
 			</View>
 		</View>
 	);

@@ -427,6 +427,12 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_scroll_blur_blur_vs_fade from "./scroll-blur/blur-vs-fade";
+import * as demo_scroll_blur_fallback from "./scroll-blur/fallback";
+import * as demo_scroll_blur_horizontal from "./scroll-blur/horizontal";
+import * as demo_scroll_blur_layers_and_intensity from "./scroll-blur/layers-and-intensity";
+import * as demo_scroll_blur_list_under_button from "./scroll-blur/list-under-button";
+import * as demo_scroll_blur_search_over_media from "./scroll-blur/search-over-media";
 import * as demo_scroll_canvas_parallax from "./scroll-canvas/parallax";
 import * as demo_scroll_canvas_reduced_motion from "./scroll-canvas/reduced-motion";
 import * as demo_scroll_canvas_reveal from "./scroll-canvas/reveal";
@@ -1053,6 +1059,12 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"scroll-blur/blur-vs-fade": demo_scroll_blur_blur_vs_fade,
+	"scroll-blur/fallback": demo_scroll_blur_fallback,
+	"scroll-blur/horizontal": demo_scroll_blur_horizontal,
+	"scroll-blur/layers-and-intensity": demo_scroll_blur_layers_and_intensity,
+	"scroll-blur/list-under-button": demo_scroll_blur_list_under_button,
+	"scroll-blur/search-over-media": demo_scroll_blur_search_over_media,
 	"scroll-canvas/parallax": demo_scroll_canvas_parallax,
 	"scroll-canvas/reduced-motion": demo_scroll_canvas_reduced_motion,
 	"scroll-canvas/reveal": demo_scroll_canvas_reveal,

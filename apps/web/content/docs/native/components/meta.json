@@ -84,6 +84,7 @@
 		"scroll-fade",
 		"surface",
 		"card",
+		"scroll-blur",
 		"scroll-canvas",
 		"---Utilities---",
 		"provider",

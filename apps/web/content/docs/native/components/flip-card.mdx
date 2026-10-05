@@ -4,6 +4,8 @@ description: Two faces of one card and a turn between them, by tap, swipe or cod
 icon: FlipHorizontal2
 ---
 
+<Preview id="flip-card/anatomy" title={null} />
+
 ## Installation
 
 <ComponentInstall name="flip-card" />
@@ -39,6 +41,10 @@ accessibility tree the moment the turn is committed, not when it settles.
 
 `trigger` picks what turns the card.
 
+<Preview id="flip-card/anatomy" />
+
+<Preview id="flip-card/swipe" />
+
 | `trigger` | What turns it |
 | --- | --- |
 | `"press"` (default) | A tap anywhere on the card. The card dips to 0.98 while the finger is down |
@@ -68,6 +74,8 @@ deepest one takes the touch — pressing it fires its own `onPress` and does not
 
 `axis="y"`, the default, swings the card left and right; `axis="x"` tips it top over bottom. On a
 swipe card the axis also picks the drag: horizontal for `"y"`, vertical for `"x"`.
+
+<Preview id="flip-card/vertical-axis" />
 
 ```tsx
 <FlipCard axis="x">…</FlipCard>
@@ -106,6 +114,8 @@ const card = useRef<FlipCardHandle>(null);
 `FlipCard.Trigger` is a `Pressable` that turns the card — toggling, or to the face named by `to`.
 Anything passed to the root that is not a face renders **beneath** the card, so the back never
 covers it.
+
+<Preview id="flip-card/flashcard" />
 
 ```tsx
 <FlipCard className="h-44" trigger="manual">
@@ -147,6 +157,8 @@ that size.
 
 Each face is a [`Surface`](/docs/native/components/surface), with its `variant` and `padding`. The
 back defaults to `secondary`, one step under the front, so the two read apart.
+
+<Preview id="flip-card/faces" />
 
 <Callout type="warn">
 The back must be opaque. A `transparent` back shows the front through it on the frames either side

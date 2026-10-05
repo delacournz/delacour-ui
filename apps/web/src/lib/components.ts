@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -158,6 +159,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Collapsible",
 		group: "Data display",
 		blurb: "One section shown and hidden by its own trigger.",
+	},
+	{
+		slug: "compare",
+		name: "Compare",
+		group: "Media",
+		blurb: "Two layers of one frame with a seam you drag across, revealed rather than resized.",
 	},
 	{
 		slug: "meter",

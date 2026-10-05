@@ -139,3 +139,12 @@ scroll keeps the rest of the frame. On iOS a `ScrollView` delays content touches
 - No `Image` primitive, no blur-up, no zoom — `onPress` on the media is the app's.
 - No live snapping, no keyboard step (no hardware-keyboard surface in React Native).
 - No import of any sibling media component; compose through children.
+
+## Previews (follow-up)
+
+No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and the
+media are shot after integration. The five to capture: `anatomy` (**hero**), `themes`
+(`align: "stretch"`), `vertical`, `snap-points` and `colours-and-sizes` (`align: "stretch"`);
+`anatomy`, `vertical` and `snap-points` are clips whose flows drag the handle by its `testID`
+(`compare-*-handle`). Add the `<Preview>` blocks to `compare.mdx` in the same change — a
+`<Preview id>` for an uncaptured demo throws at render.

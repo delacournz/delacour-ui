@@ -164,6 +164,15 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_compare_accessible_names from "./compare/accessible-names";
+import * as demo_compare_anatomy from "./compare/anatomy";
+import * as demo_compare_colours_and_sizes from "./compare/colours-and-sizes";
+import * as demo_compare_controlled from "./compare/controlled";
+import * as demo_compare_disabled from "./compare/disabled";
+import * as demo_compare_grab_anywhere from "./compare/grab-anywhere";
+import * as demo_compare_snap_points from "./compare/snap-points";
+import * as demo_compare_themes from "./compare/themes";
+import * as demo_compare_vertical from "./compare/vertical";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -530,6 +539,15 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"compare/accessible-names": demo_compare_accessible_names,
+	"compare/anatomy": demo_compare_anatomy,
+	"compare/colours-and-sizes": demo_compare_colours_and_sizes,
+	"compare/controlled": demo_compare_controlled,
+	"compare/disabled": demo_compare_disabled,
+	"compare/grab-anywhere": demo_compare_grab_anywhere,
+	"compare/snap-points": demo_compare_snap_points,
+	"compare/themes": demo_compare_themes,
+	"compare/vertical": demo_compare_vertical,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

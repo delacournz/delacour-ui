@@ -488,6 +488,47 @@
 			]
 		},
 		{
+			"name": "compare",
+			"type": "registry:ui",
+			"title": "Compare",
+			"description": "Two layers of one frame with a seam you drag across, revealed by a transform rather than a resize.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/compare/AGENTS.md",
+				"ui/compare/compare-after.tsx",
+				"ui/compare/compare-before.tsx",
+				"ui/compare/compare-handle.tsx",
+				"ui/compare/compare-label.tsx",
+				"ui/compare/compare.context.tsx",
+				"ui/compare/compare.tsx",
+				"ui/compare/compare.types.ts",
+				"ui/compare/compare.variants.ts",
+				"ui/compare/index.ts"
+			]
+		},
+		{
 			"name": "compose-refs",
 			"type": "registry:lib",
 			"title": "composeRefs",

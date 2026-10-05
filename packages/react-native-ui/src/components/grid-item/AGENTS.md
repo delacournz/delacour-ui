@@ -113,3 +113,26 @@ and `GridItem.Actions`.
   (muted, a step smaller).
 - **Not a virtualised list.** The group is for tens of tiles on one screen. For
   hundreds of uniform cells use a list with `numColumns`.
+
+## Verification notes
+
+- **Simulator, 2026-10-05** (iPhone 17, dev client, agent-device): the
+  `dashboard` demo's tiles share edges exactly — the 2×2 and the 2×1 below it
+  both start at x 20, 195 + 12 gap = 207 where the next column starts, and the
+  tall tile's bottom matches the wide tile's at 719.33. Each tile is one
+  VoiceOver stop with the joined label (`Storage, 74 GB, of 100 GB used`); a
+  press re-registers a changed description (`Front door, Unlocked`); the
+  disabled tile reports `disabled`. Rotation, reduce motion and RTL were not
+  exercised: the playground is portrait-locked and `Direction` (LAYOUT-02) is
+  not merged.
+- **No preview captures yet.** `bun run previews` needs the argent CLI, which
+  is not installed on the machine that built this, and a demo with
+  `meta.capture` but no manifest entry fails `demos.test.ts`. So no demo opts
+  into capture and the docs page opens at `## Installation`. To publish: add
+  `capture: { align: "stretch" }` to `dashboard` (with `hero: true`),
+  `variants`, `backgrounds` and `quick-actions`, and
+  `capture: { align: "stretch", flow: "grid-item/interactive" }` to
+  `interactive` — the flow is already in `.argent/flows/previews/grid-item/` —
+  run `bun run previews -- -- --only grid-item`, then put `<Preview>`s on the
+  page. `align: "stretch"` is required: the preview route shrink-wraps, and a
+  group measured at width 0 draws nothing.

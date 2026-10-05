@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 		"`aspect` makes a cell's height follow its width, so a cell stays square — or 2:1 — at any column count. `rowHeight` fixes the height in points instead, whatever the width.",
 };
 
-const COLUMNS = [2, 3, 4] as const;
+const COLUMNS = [3, 4] as const;
 
 export function Demo(): ReactElement {
 	return (

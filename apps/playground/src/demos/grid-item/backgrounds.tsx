@@ -3,6 +3,7 @@ import { GridItem } from "@delacour/react-native-ui/grid-item";
 import { Icon } from "@delacour/react-native-ui/icon";
 import { IconCloud } from "@delacour/react-native-ui/icons/central";
 import type { ReactElement } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -38,7 +39,9 @@ export function Demo(): ReactElement {
 			</GridItem>
 			<GridItem testID="tile-weather" variant="muted">
 				<GridItem.Background className="items-end justify-end">
-					<Icon className="-mb-6 -me-6 size-28 opacity-20" icon={IconCloud} />
+					<View className="-mb-6 -me-6 opacity-15">
+						<Icon className="size-28" icon={IconCloud} />
+					</View>
 				</GridItem.Background>
 				<GridItem.Title>Wellington</GridItem.Title>
 				<GridItem.Value>14°</GridItem.Value>

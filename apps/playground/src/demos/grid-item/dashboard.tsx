@@ -4,6 +4,7 @@ import {
 	IconAirplane,
 	IconBatteryEmpty,
 	IconBluetooth,
+	IconLock,
 	IconMoon,
 	IconStorage,
 	IconWifiFull,
@@ -14,7 +15,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Dashboard",
 	caption:
-		"Four columns of square cells. A two-by-two tile, two small ones beside it, a tall one and a wide one below — every edge lands on the same columns, and the group is exactly as tall as the rows it used.",
+		"Four columns of square cells. A two-by-two tile, small ones beside it, a tall one in the middle and a wide one below — every edge lands on the same columns, and the group is exactly as tall as the rows it used.",
 };
 
 export function Demo(): ReactElement {
@@ -46,7 +47,7 @@ export function Demo(): ReactElement {
 				</GridItem.Media>
 				<GridItem.Title>Focus</GridItem.Title>
 				<GridItem.Footer>
-					<GridItem.Description>Until 7 am</GridItem.Description>
+					<GridItem.Description>To 7 am</GridItem.Description>
 				</GridItem.Footer>
 			</GridItem>
 			<GridItem onPress={() => {}} size="sm" testID="tile-airplane" variant="outline">
@@ -55,12 +56,18 @@ export function Demo(): ReactElement {
 				</GridItem.Media>
 				<GridItem.Title>Flight</GridItem.Title>
 			</GridItem>
-			<GridItem colSpan={3} size="sm" testID="tile-battery">
+			<GridItem colSpan={2} size="sm" testID="tile-battery">
 				<GridItem.Media>
 					<Icon icon={IconBatteryEmpty} />
 				</GridItem.Media>
 				<GridItem.Title>Battery</GridItem.Title>
 				<GridItem.Value>82%</GridItem.Value>
+			</GridItem>
+			<GridItem onPress={() => {}} size="sm" testID="tile-lock" variant="outline">
+				<GridItem.Media>
+					<Icon icon={IconLock} />
+				</GridItem.Media>
+				<GridItem.Title>Lock</GridItem.Title>
 			</GridItem>
 		</GridItem.Group>
 	);

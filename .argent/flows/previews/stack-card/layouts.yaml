@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on stack-card/layouts and has settled — the Stack / Fan / Flat toggle group
+  with Stack selected, over a deck of six. The capture script navigates there before running this.
+steps:
+  - echo: Fanning the cards behind the top one
+  - tap: { id: layout-fan }
+  - wait: 900
+  - echo: Hiding them
+  - tap: { id: layout-flat }
+  - wait: 900
+  - echo: And back to the stack, so the clip loops
+  - tap: { id: layout-stack }
+  - wait: 600

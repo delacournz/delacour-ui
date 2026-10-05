@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled, with a decline",
 	caption:
 		"A controlled deck that leaves `index` where it was declines the throw, and the card flies back. Here a throw to the left asks first: **No** keeps the card, **Yes** throws it again through the ref and lets it go.",
+	capture: { align: "stretch", flow: "stack-card/controlled-decline" },
 };
 
 const FILES = ["holiday.mov", "draft-v3.key", "receipts-2025.zip", "old-backup.dmg"] as const;
@@ -50,7 +51,11 @@ export function Demo(): ReactElement {
 					Keep
 				</StackCard.Stamp>
 				{FILES.map((file) => (
-					<StackCard.Card className="items-center justify-center p-6" key={file}>
+					<StackCard.Card
+						className="items-center justify-center p-6"
+						key={file}
+						testID={`decline-card-${file.split(".")[0]}`}
+					>
 						<Text variant="header">{file}</Text>
 					</StackCard.Card>
 				))}

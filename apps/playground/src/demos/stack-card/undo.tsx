@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Undo",
 	caption:
 		"`undo` brings the last card back from the side it left, and does not call `onSwipe`. `useStackCard()` reads the deck from inside it — here, the line the empty pile shows.",
+	capture: { align: "stretch", flow: "stack-card/undo" },
 };
 
 const WORDS = [
@@ -37,7 +38,11 @@ export function Demo(): ReactElement {
 				Got it
 			</StackCard.Stamp>
 			{WORDS.map((entry, position) => (
-				<StackCard.Card className="items-center justify-center gap-2 p-6" key={entry.word}>
+				<StackCard.Card
+					className="items-center justify-center gap-2 p-6"
+					key={entry.word}
+					testID={`undo-card-${position}`}
+				>
 					<Text variant="overline">
 						{position + 1} of {WORDS.length}
 					</Text>
@@ -51,9 +56,9 @@ export function Demo(): ReactElement {
 				<Finished />
 			</StackCard.Empty>
 			<StackCard.Actions>
-				<StackCard.Action action="left" icon={IconCrossSmall} />
-				<StackCard.Action action="undo" icon={IconArrowRotateCounterClockwise} />
-				<StackCard.Action action="right" icon={IconHeart} />
+				<StackCard.Action action="left" icon={IconCrossSmall} testID="undo-again" />
+				<StackCard.Action action="undo" icon={IconArrowRotateCounterClockwise} testID="undo-undo" />
+				<StackCard.Action action="right" icon={IconHeart} testID="undo-got-it" />
 			</StackCard.Actions>
 		</StackCard>
 	);

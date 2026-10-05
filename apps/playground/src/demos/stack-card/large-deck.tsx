@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Five hundred cards",
 	caption:
 		"Only a window around the top card is mounted — one behind for undo, `depth` drawn, one more fading in — so a deck of five hundred costs what a deck of five does.",
+	capture: { align: "stretch" },
 };
 
 const CARDS = Array.from({ length: 500 }, (_, position) => position + 1);

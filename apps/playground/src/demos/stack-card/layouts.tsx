@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Layouts",
 	caption:
 		"`layout` draws the cards behind the top: `stack` steps each one down and smaller, `fan` turns them about the bottom centre, `flat` hides them. `depth` says how many are drawn.",
+	capture: { align: "stretch", flow: "stack-card/layouts" },
 };
 
 const LABELS: Record<StackCardLayout, string> = {
@@ -44,7 +45,7 @@ export function Demo(): ReactElement {
 					</ToggleButton>
 				))}
 			</ToggleButton.Group>
-			<StackCard className="h-[360px]" depth={3} key={layout} layout={layout} testID="layout-deck">
+			<StackCard className="mx-16 h-[360px]" depth={3} key={layout} layout={layout} testID="layout-deck">
 				{CARDS.map((label) => (
 					<StackCard.Card className="items-center justify-center" key={label}>
 						<Text variant="display">{label}</Text>

@@ -357,7 +357,6 @@ import * as demo_textarea_sizes from "./textarea/sizes";
 import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
 import * as demo_toast_custom from "./toast/custom";
-import * as demo_toast_over_dialog from "./toast/over-dialog";
 import * as demo_toast_persistent from "./toast/persistent";
 import * as demo_toast_placement from "./toast/placement";
 import * as demo_toast_promise from "./toast/promise";
@@ -731,7 +730,6 @@ export const DEMOS = {
 	"textarea/states": demo_textarea_states,
 	"textarea/variants": demo_textarea_variants,
 	"toast/custom": demo_toast_custom,
-	"toast/over-dialog": demo_toast_over_dialog,
 	"toast/persistent": demo_toast_persistent,
 	"toast/placement": demo_toast_placement,
 	"toast/promise": demo_toast_promise,

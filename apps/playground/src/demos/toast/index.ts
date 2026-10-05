@@ -1,6 +1,5 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as custom from "./custom";
-import * as overDialog from "./over-dialog";
 import * as persistent from "./persistent";
 import * as placement from "./placement";
 import * as promise from "./promise";
@@ -17,5 +16,4 @@ export const toastDemos = defineDemoGroup("toast", {
 	stacking,
 	persistent,
 	custom,
-	"over-dialog": overDialog,
 });

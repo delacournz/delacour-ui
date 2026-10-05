@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Debounced filter list",
 	caption:
 		"`onDebouncedChange` waits 300 ms after the last keystroke before the list filters. The search key filters at once, and clearing restores the full list immediately.",
-	capture: { align: "stretch" },
+	align: "stretch",
 	keyboardAware: true,
 };
 

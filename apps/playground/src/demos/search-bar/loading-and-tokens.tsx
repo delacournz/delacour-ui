@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Loading and tokens",
 	caption:
 		"Active filters sit inside the box as chips, ahead of the text. Remove one with its own control, or press Backspace on an empty field. While a query runs, a spinner takes the clear button's place.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const FILTERS: readonly SearchBarToken[] = [

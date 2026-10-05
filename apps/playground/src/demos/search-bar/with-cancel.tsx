@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Cancel modes",
 	caption:
 		"`cancel` decides when the Cancel action shows: `focus` (the default) slides it in while the field has focus, `always` keeps it, `never` leaves the field the full width.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const LABELS: Record<SearchBarCancelMode, string> = {

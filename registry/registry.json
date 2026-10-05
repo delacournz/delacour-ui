@@ -586,6 +586,46 @@
 			]
 		},
 		{
+			"name": "grid-item",
+			"type": "registry:ui",
+			"title": "Grid Item",
+			"description": "A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/grid-item/AGENTS.md",
+				"ui/grid-item/grid-item-actions.tsx",
+				"ui/grid-item/grid-item-background.tsx",
+				"ui/grid-item/grid-item-description.tsx",
+				"ui/grid-item/grid-item-footer.tsx",
+				"ui/grid-item/grid-item-group.tsx",
+				"ui/grid-item/grid-item-media.tsx",
+				"ui/grid-item/grid-item-title.tsx",
+				"ui/grid-item/grid-item-value.tsx",
+				"ui/grid-item/grid-item.context.tsx",
+				"ui/grid-item/grid-item.layout.ts",
+				"ui/grid-item/grid-item.tsx",
+				"ui/grid-item/grid-item.types.ts",
+				"ui/grid-item/grid-item.variants.ts",
+				"ui/grid-item/index.ts"
+			]
+		},
+		{
 			"name": "icon",
 			"type": "registry:ui",
 			"title": "Icon",

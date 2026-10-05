@@ -173,6 +173,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One control with its label, description and error — and the state they all read.",
 		categories: ["forms"],
 	},
+	"grid-item": {
+		title: "Grid Item",
+		description:
+			"A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
+		categories: ["layout"],
+	},
 	icon: {
 		title: "Icon",
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",

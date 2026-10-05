@@ -25,6 +25,7 @@ import {
 	IconLayoutWindow,
 	IconNoteText,
 	IconNumberedList,
+	IconPaperclip1,
 	IconParagraph,
 	IconPeople,
 	IconPlaceholder,
@@ -61,6 +62,7 @@ import { LIST_GAP, SECTION_GAP } from "@/tokens";
 const ICONS: Record<ComponentSlug, IconComponent> = {
 	accordion: IconChevronGrabberVertical,
 	alert: IconExclamationTriangle,
+	attachment: IconPaperclip1,
 	avatar: IconPeople,
 	badge: IconTag,
 	"bottom-sheet": IconLayoutBottomFull,

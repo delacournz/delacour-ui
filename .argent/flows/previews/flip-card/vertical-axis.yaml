@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on flip-card/vertical-axis and has settled — two cards, one
+  per axis, testIDs flip-card-axis-x and flip-card-axis-y. The capture script navigates there before
+  running this.
+steps:
+  - echo: Turning the left/right card, then the top/bottom one
+  - tap: { id: flip-card-axis-y }
+  - wait: 700
+  - tap: { id: flip-card-axis-x }
+  - wait: 1200
+  - echo: Both back to the front for the loop
+  - tap: { id: flip-card-axis-y }
+  - wait: 300
+  - tap: { id: flip-card-axis-x }
+  - wait: 1000

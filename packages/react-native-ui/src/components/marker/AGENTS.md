@@ -110,10 +110,10 @@ Compound root plus `Marker.Icon` and `Marker.Content`.
   context, so `useMarker()` hands a custom child `isBusy` to read rather than a
   function to call. Calm motion does not clear it — the step is running whether
   or not the text moves.
-- **Only a static marker announces busy.** `Pressable` owns its
-  `accessibilityState` and its `busy` prop also **blocks the press**; a running
-  step must stay tappable — expanding it is the point — so an interactive
-  marker does not pass it. The running state is still in the words ("Searching
-  files"). Announcing busy without blocking would need `Pressable` to accept a
-  non-blocking busy, which is a change to the shared primitive and out of
-  scope here.
+- **A pressable marker announces busy too, and stays tappable.** The root
+  passes `accessibilityState={{ busy, disabled }}` to its `Pressable` rather
+  than the `busy` prop, which would **block the press** — and expanding a
+  running step is the point. That only works because `Pressable` merges a
+  caller's `busy: true` instead of overwriting it with its prop's `false`
+  (`resolvePressableAccessibilityState`); before that change it was dropped
+  silently. Role is `button`, set by `Pressable` itself.

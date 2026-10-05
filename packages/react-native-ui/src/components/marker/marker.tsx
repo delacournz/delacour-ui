@@ -100,6 +100,7 @@ function MarkerRoot({
 			<Pressable
 				accessibilityHint={accessibilityHint}
 				accessibilityLabel={accessibilityLabel}
+				accessibilityState={{ busy: isBusy, disabled: isDisabled }}
 				className={rootClassName}
 				disabled={isDisabled}
 				feedback={feedback}
@@ -161,7 +162,8 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * becomes a `Pressable` announced as a button, pressing with `fade`.
  *
  * `Marker.Content shimmer` says the step is still running: the text breathes,
- * and the marker is announced busy. Drop it the moment the step finishes.
+ * and the marker is announced busy — static or pressable, and a busy marker
+ * still takes its press. Drop it the moment the step finishes.
  *
  * String children are wrapped in `Marker.Content` automatically. A bare `<Icon>`
  * inside `Marker.Icon` comes out at the marker's size and muted colour.

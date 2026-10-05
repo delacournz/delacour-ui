@@ -78,3 +78,36 @@ export function resolveRestOpacity(resolved: unknown): number {
 	if (typeof resolved !== "number" || !Number.isFinite(resolved)) return 1;
 	return Math.min(1, Math.max(0, resolved));
 }
+
+/** The two keys of React Native's `AccessibilityState` this resolver decides. Structural, so no RN import. */
+type GatedAccessibilityState = { busy?: boolean; disabled?: boolean };
+
+/**
+ * The accessibility state a pressable announces.
+ *
+ * The `busy` and `disabled` props gate the gesture, so a gated control is
+ * always announced as gated: a caller's state can only add `true`, never
+ * override the props with `false`. Adding is the point for `busy`. A control
+ * whose work is running but which must stay tappable — a `Marker` whose step
+ * is still running, and which expands that step — announces busy through
+ * `accessibilityState` without the `busy` prop blocking the press. Before this
+ * the prop's default `false` overwrote it.
+ *
+ * Every other key a caller passes (`expanded`, `selected`, `checked`) goes
+ * through untouched.
+ */
+export function resolvePressableAccessibilityState<S extends GatedAccessibilityState>({
+	accessibilityState,
+	busy,
+	disabled,
+}: {
+	accessibilityState?: S;
+	busy: boolean;
+	disabled: boolean;
+}): S & { busy: boolean; disabled: boolean } {
+	return {
+		...(accessibilityState as S),
+		busy: busy || accessibilityState?.busy === true,
+		disabled: disabled || accessibilityState?.disabled === true,
+	};
+}

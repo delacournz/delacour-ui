@@ -73,6 +73,7 @@ shares.
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
+| [Fab](src/components/fab/AGENTS.md) | `@delacour/react-native-ui/fab` | A floating action button, and a dial of related actions that unfolds from it |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |

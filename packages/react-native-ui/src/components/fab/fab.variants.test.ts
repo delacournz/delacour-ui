@@ -126,6 +126,13 @@ describe("resolveFabIconSize", () => {
 		expect(resolveFabIconSize("lg")).toBe("lg");
 	});
 
+	test("the icon slot spells the same step as a class", () => {
+		for (const size of FAB_SIZES) {
+			expect(fabVariants({ size }).icon()).toBe(`size-icon-${resolveFabIconSize(size)}`);
+		}
+		expect(fabVariants({}).actionIcon()).toBe(`size-icon-${resolveFabIconSize("sm")}`);
+	});
+
 	test("names a step on the shared icon scale for every size", () => {
 		for (const size of FAB_SIZES) {
 			expect(ICON_SIZES).toContain(resolveFabIconSize(size));

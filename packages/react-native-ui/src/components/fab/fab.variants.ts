@@ -177,19 +177,22 @@ export const fabVariants = tv({
 	slots: {
 		root: "flex-row items-center justify-center rounded-full shadow-lg",
 		label: "text-button-md font-medium",
+		/** Edge length an `Icon` composed into the fab inherits. */
+		icon: "",
 		scrim: "absolute inset-0 bg-overlay",
 		dial: "gap-3",
 		action: "items-center gap-3",
 		actionAnchor: "items-center",
 		actionButton: "size-fab-sm items-center justify-center rounded-full border border-border bg-elevated shadow-lg",
+		actionIcon: "size-icon-md",
 		actionLabel: "rounded-md bg-popover px-2 py-1",
 		actionLabelText: "text-popover-foreground text-sm",
 	},
 	variants: {
 		size: {
-			sm: { actionAnchor: "w-fab-sm" },
-			md: { actionAnchor: "w-fab-md" },
-			lg: { actionAnchor: "w-fab-lg" },
+			sm: { icon: "size-icon-md", actionAnchor: "w-fab-sm" },
+			md: { icon: "size-icon-lg", actionAnchor: "w-fab-md" },
+			lg: { icon: "size-icon-lg", actionAnchor: "w-fab-lg" },
 		},
 		variant: {
 			primary: { root: "bg-primary", label: "text-primary-foreground" },
@@ -202,7 +205,7 @@ export const fabVariants = tv({
 			false: {},
 		},
 		isDisabled: {
-			true: { root: "opacity-50" },
+			true: { root: "opacity-50", actionButton: "opacity-50", actionLabel: "opacity-50" },
 			false: {},
 		},
 		labelSide: {

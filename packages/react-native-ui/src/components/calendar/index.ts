@@ -84,6 +84,7 @@ export {
 	resolveDayTone,
 	resolveMonthBounds,
 	resolvePageDirection,
+	resolvePartTestID,
 	resolveRangeRole,
 } from "./calendar.variants";
 export type { CalendarCaptionProps } from "./calendar-caption";

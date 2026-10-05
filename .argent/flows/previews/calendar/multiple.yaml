@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on calendar/multiple and has settled — October 2026, the 6th,
+  8th, 13th and 20th selected. The capture script navigates there before running this.
+steps:
+  - echo: Adding two days
+  - tap: { id: calendar-multiple-day-2026-10-22 }
+  - wait: 400
+  - tap: { id: calendar-multiple-day-2026-10-27 }
+  - wait: 800
+  - echo: And taking them out again, so the clip loops
+  - tap: { id: calendar-multiple-day-2026-10-27 }
+  - wait: 400
+  - tap: { id: calendar-multiple-day-2026-10-22 }
+  - wait: 300

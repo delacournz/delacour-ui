@@ -129,6 +129,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 		today: todayOverride,
 		className,
 		children,
+		testID,
 		mode: _mode,
 		selected: _selected,
 		defaultSelected: _defaultSelected,
@@ -248,6 +249,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			isInvalid: axes.isInvalid,
 			isReadOnly: axes.isReadOnly,
 			label: field?.label ?? null,
+			testID,
 			locale,
 			mode: selection.mode,
 			monthBounds,
@@ -277,6 +279,7 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 			canGoPrev,
 			captionLayout,
 			field?.label,
+			testID,
 			goNext,
 			goPrev,
 			goToMonth,
@@ -311,11 +314,11 @@ function CalendarRoot(props: CalendarProps): ReactElement {
 	return (
 		<CalendarProvider value={context}>
 			{isBordered ? (
-				<Surface className={rootClassName} padding="sm" {...viewProps}>
+				<Surface className={rootClassName} padding="sm" testID={testID} {...viewProps}>
 					{body}
 				</Surface>
 			) : (
-				<View className={rootClassName} {...viewProps}>
+				<View className={rootClassName} testID={testID} {...viewProps}>
 					{body}
 				</View>
 			)}

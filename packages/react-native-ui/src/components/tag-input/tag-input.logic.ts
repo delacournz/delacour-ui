@@ -251,6 +251,53 @@ export function shouldHideInput({
 	return isDisabled && count > 0;
 }
 
+/** A tag input's state once its own props, an enclosing `Field` and its tags are resolved. */
+export type TagInputState = {
+	isDisabled: boolean;
+	/** Own prop, else the field's — and always when overflowing. */
+	isInvalid: boolean;
+	isOverflowing: boolean;
+	/** Whether the text field is left out — see `shouldHideInput`. */
+	isHidden: boolean;
+	/** The last tag while armed, else `null`. */
+	pendingRemoveIndex: number | null;
+};
+
+/**
+ * Resolves the three state axes the way `Input` does — own prop, then the
+ * enclosing `Field`, then off — and derives what follows from them: overflow,
+ * whether the field is hidden, and which tag a Backspace armed.
+ */
+export function resolveTagInputState({
+	count,
+	max,
+	allowOverflow,
+	isReadOnly,
+	isArmed,
+	isDisabled,
+	isInvalid,
+	field,
+}: {
+	count: number;
+	max?: number;
+	allowOverflow: boolean;
+	isReadOnly: boolean;
+	isArmed: boolean;
+	isDisabled: boolean | undefined;
+	isInvalid: boolean | undefined;
+	field: { isDisabled: boolean; isInvalid: boolean } | null;
+}): TagInputState {
+	const overflowing = isOverflowing({ count, max });
+	const disabled = isDisabled ?? field?.isDisabled ?? false;
+	return {
+		isDisabled: disabled,
+		isHidden: shouldHideInput({ allowOverflow, count, isDisabled: disabled, isReadOnly, max }),
+		isInvalid: (isInvalid ?? field?.isInvalid ?? false) || overflowing,
+		isOverflowing: overflowing,
+		pendingRemoveIndex: isArmed && count > 0 ? count - 1 : null,
+	};
+}
+
 /** The shortest gap between two rejection haptics. A paste refused ten times buzzes once. */
 export const REJECT_HAPTIC_INTERVAL_MS = 400;
 

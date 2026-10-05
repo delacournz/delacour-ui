@@ -31,16 +31,15 @@ import { Pressable, playHaptic } from "../pressable";
 import { type TagInputContextValue, TagInputProvider } from "./tag-input.context";
 import {
 	commitDraft,
-	isOverflowing as computeIsOverflowing,
 	ingestText,
 	resolveAddAnnouncement,
 	resolveBackspace,
 	resolveBlur,
 	resolveRejectAnnouncement,
 	resolveRemoveAnnouncement,
+	resolveTagInputState,
 	resolveTagsAccessibilityLabel,
 	shouldFireRejectHaptic,
-	shouldHideInput,
 	type TagInputCommitOptions,
 	type TagInputCommitResult,
 } from "./tag-input.logic";
@@ -266,17 +265,22 @@ function TagInputRoot({
 	const [isFocused, setFocused] = useState(false);
 	const [isArmed, setArmed] = useState(false);
 
-	const isOverflowing = computeIsOverflowing({ count: tags.length, max });
-	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
-	const resolvedIsInvalid = (isInvalid ?? field?.isInvalid ?? false) || isOverflowing;
-	const isHidden = shouldHideInput({
+	const {
+		isDisabled: resolvedIsDisabled,
+		isInvalid: resolvedIsInvalid,
+		isOverflowing,
+		isHidden,
+		pendingRemoveIndex,
+	} = resolveTagInputState({
 		allowOverflow,
 		count: tags.length,
-		isDisabled: resolvedIsDisabled,
+		field,
+		isArmed,
+		isDisabled,
+		isInvalid,
 		isReadOnly,
 		max,
 	});
-	const pendingRemoveIndex = isArmed && tags.length > 0 ? tags.length - 1 : null;
 
 	const options: TagInputCommitOptions = {
 		allowDuplicates,

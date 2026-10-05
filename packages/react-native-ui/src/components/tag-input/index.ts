@@ -11,6 +11,7 @@ export {
 	resolveBackspace,
 	resolveBlur,
 	resolveCounterText,
+	resolveTagInputState,
 	shouldHideInput,
 	splitByDelimiters,
 	type TagInputAddOptions,
@@ -18,6 +19,7 @@ export {
 	type TagInputBackspaceAction,
 	type TagInputCommitOptions,
 	type TagInputCommitResult,
+	type TagInputState,
 } from "./tag-input.logic";
 export type {
 	TagInputBlurBehavior,

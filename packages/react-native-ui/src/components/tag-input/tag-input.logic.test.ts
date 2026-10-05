@@ -13,6 +13,7 @@ import {
 	resolveCounterText,
 	resolveRejectAnnouncement,
 	resolveRemoveAnnouncement,
+	resolveTagInputState,
 	resolveTagsAccessibilityLabel,
 	shouldFireRejectHaptic,
 	shouldHideInput,
@@ -353,5 +354,46 @@ describe("announcements", () => {
 		expect(resolveTagsAccessibilityLabel(0)).toBe("No tags");
 		expect(resolveTagsAccessibilityLabel(1)).toBe("1 tag");
 		expect(resolveTagsAccessibilityLabel(3)).toBe("3 tags");
+	});
+});
+
+describe("resolveTagInputState", () => {
+	const base = {
+		allowOverflow: false,
+		count: 2,
+		field: null,
+		isArmed: false,
+		isDisabled: undefined,
+		isInvalid: undefined,
+		isReadOnly: false,
+		max: undefined,
+	};
+
+	test("own props win over the field, which wins over the defaults", () => {
+		expect(resolveTagInputState(base)).toMatchObject({ isDisabled: false, isInvalid: false });
+		const field = { isDisabled: true, isInvalid: true };
+		expect(resolveTagInputState({ ...base, field })).toMatchObject({ isDisabled: true, isInvalid: true });
+		expect(resolveTagInputState({ ...base, field, isDisabled: false, isInvalid: false })).toMatchObject({
+			isDisabled: false,
+			isInvalid: false,
+		});
+	});
+
+	test("overflowing max is invalid whatever the props say", () => {
+		const state = resolveTagInputState({ ...base, allowOverflow: true, count: 4, isInvalid: false, max: 3 });
+		expect(state).toMatchObject({ isHidden: false, isInvalid: true, isOverflowing: true });
+	});
+
+	test("arming marks the last tag, and only when there is one", () => {
+		expect(resolveTagInputState({ ...base, isArmed: true }).pendingRemoveIndex).toBe(1);
+		expect(resolveTagInputState({ ...base, count: 0, isArmed: true }).pendingRemoveIndex).toBeNull();
+		expect(resolveTagInputState(base).pendingRemoveIndex).toBeNull();
+	});
+
+	test("hides the field by shouldHideInput's rules, on the resolved disabled state", () => {
+		expect(resolveTagInputState({ ...base, field: { isDisabled: true, isInvalid: false } }).isHidden).toBe(true);
+		expect(resolveTagInputState({ ...base, count: 3, max: 3 }).isHidden).toBe(true);
+		expect(resolveTagInputState({ ...base, isReadOnly: true }).isHidden).toBe(true);
+		expect(resolveTagInputState(base).isHidden).toBe(false);
 	});
 });

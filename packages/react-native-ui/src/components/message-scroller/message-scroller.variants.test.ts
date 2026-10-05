@@ -6,6 +6,7 @@ import {
 	MESSAGE_SCROLLER_JUMP_TIMING_MS,
 	type MessageScrollerJumpPlacement,
 	messageScrollerVariants,
+	resolveJumpButtonLift,
 	resolveJumpButtonMotion,
 } from "./message-scroller.variants";
 
@@ -174,5 +175,23 @@ describe("resolveJumpButtonMotion", () => {
 
 	test("runs on a 160 ms timing", () => {
 		expect(MESSAGE_SCROLLER_JUMP_TIMING_MS).toBe(160);
+	});
+});
+
+describe("resolveJumpButtonLift", () => {
+	test("rests on the composer clearance with the keyboard closed", () => {
+		expect(resolveJumpButtonLift({ keyboardHeight: 0, keyboardOffset: 0, bottomInset: 56 })).toBe(56);
+	});
+
+	test("rises by the keyboard's height less the offset", () => {
+		expect(resolveJumpButtonLift({ keyboardHeight: 300, keyboardOffset: 34, bottomInset: 56 })).toBe(322);
+	});
+
+	test("reads keyboard-controller's negative height the same as a positive one", () => {
+		expect(resolveJumpButtonLift({ keyboardHeight: -300, keyboardOffset: 34, bottomInset: 0 })).toBe(266);
+	});
+
+	test("never sinks below the clearance when the offset exceeds the keyboard", () => {
+		expect(resolveJumpButtonLift({ keyboardHeight: 20, keyboardOffset: 34, bottomInset: 10 })).toBe(10);
 	});
 });

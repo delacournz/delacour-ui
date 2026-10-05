@@ -171,18 +171,9 @@ export function buildMessageRows<T>(
 	const dates = messages.map(options.getDate);
 	const senders = messages.map(options.getSenderId);
 	const unreadIndex = options.firstUnreadKey === undefined ? -1 : keys.indexOf(options.firstUnreadKey);
-
-	const startsRun = (index: number): boolean => {
-		if (index === 0 || index === unreadIndex) return true;
-		const previous = index - 1;
-		if (senders[index] !== senders[previous]) return true;
-		const date = dates[index] as Date;
-		const previousDate = dates[previous] as Date;
-		if (!isSameCalendarDay(date, previousDate)) return true;
-		return Math.abs(date.getTime() - previousDate.getTime()) > options.runWindowMs;
-	};
-
-	const starts = keys.map((_, index) => startsRun(index));
+	const starts = keys.map((_, index) =>
+		startsRun(index, { dates, senders, unreadIndex, runWindowMs: options.runWindowMs })
+	);
 	const rows: MessageScrollerRow<T>[] = [];
 	// Keyed by the day, so a separator keeps its identity when an older page lands above it. A day
 	// seen twice (input out of order) takes a suffix rather than a duplicate key.
@@ -191,38 +182,65 @@ export function buildMessageRows<T>(
 	for (let index = 0; index < count; index++) {
 		const key = keys[index] as string;
 		const date = dates[index] as Date;
-		const previousDate = index > 0 ? (dates[index - 1] as Date) : undefined;
+		const previousDate = index > 0 ? dates[index - 1] : undefined;
 
 		if (options.separateDates && (previousDate === undefined || !isSameCalendarDay(date, previousDate))) {
-			const day = dayKey(date);
-			const seen = seenDays.get(day) ?? 0;
-			seenDays.set(day, seen + 1);
-			rows.push({
-				kind: "date",
-				key: `${DATE_KEY_PREFIX}${day}${seen > 0 ? `:${seen}` : ""}`,
-				date,
-				label: options.formatDate(date, options.now),
-			});
+			rows.push(dateRow(date, seenDays, options));
 		}
 		if (index === unreadIndex) {
 			rows.push({ kind: "unread", key: UNREAD_KEY, count: count - unreadIndex });
 		}
-
-		const isStart = starts[index] as boolean;
-		const isEnd = index === count - 1 || (starts[index + 1] as boolean);
-		const position: MessageRunPosition = isStart ? (isEnd ? "single" : "first") : isEnd ? "last" : "middle";
-
 		rows.push({
 			kind: "message",
 			key,
 			message: messages[index] as T,
-			position,
+			position: runPosition(starts[index] === true, index === count - 1 || starts[index + 1] === true),
 			isNew: options.newKeys?.has(key) ?? false,
 			index,
 		});
 	}
 
 	return rows;
+}
+
+/**
+ * Whether the message at `index` opens a new run: the first message, the first unread one, a change
+ * of sender, a new calendar day, or a gap longer than the window.
+ */
+function startsRun(
+	index: number,
+	context: { dates: readonly Date[]; senders: readonly string[]; unreadIndex: number; runWindowMs: number }
+): boolean {
+	if (index === 0 || index === context.unreadIndex) return true;
+	const previous = index - 1;
+	if (context.senders[index] !== context.senders[previous]) return true;
+	const date = context.dates[index] as Date;
+	const previousDate = context.dates[previous] as Date;
+	if (!isSameCalendarDay(date, previousDate)) return true;
+	return Math.abs(date.getTime() - previousDate.getTime()) > context.runWindowMs;
+}
+
+/** A message's place in its run, from whether it opens one and whether the next message opens another. */
+function runPosition(isStart: boolean, isEnd: boolean): MessageRunPosition {
+	if (isStart) return isEnd ? "single" : "first";
+	return isEnd ? "last" : "middle";
+}
+
+/** A day separator, keyed by its day, with a suffix for a day the input revisits. */
+function dateRow<T>(
+	date: Date,
+	seenDays: Map<string, number>,
+	options: Pick<BuildMessageRowsOptions<T>, "formatDate" | "now">
+): MessageScrollerRow<T> {
+	const day = dayKey(date);
+	const seen = seenDays.get(day) ?? 0;
+	seenDays.set(day, seen + 1);
+	return {
+		kind: "date",
+		key: `${DATE_KEY_PREFIX}${day}${seen > 0 ? `:${seen}` : ""}`,
+		date,
+		label: options.formatDate(date, options.now),
+	};
 }
 
 /**

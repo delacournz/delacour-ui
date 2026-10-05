@@ -38,6 +38,11 @@ export type MessageScrollerContextValue = {
 	isCalm: boolean;
 	keyboardOffset: number;
 	bottomInset: number;
+	/**
+	 * Spread onto the list: the stick threshold as the fraction of the viewport LegendList's
+	 * `maintainScrollAtEnd` measures in. `undefined` until the viewport has a height.
+	 */
+	maintainScrollAtEndThreshold: number | undefined;
 };
 
 /**

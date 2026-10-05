@@ -80,3 +80,19 @@ export function resolveJumpButtonMotion(input: { isVisible: boolean; isCalm: boo
 	if (input.isVisible) return { opacity: 1, translateY: 0 };
 	return { opacity: 0, translateY: input.isCalm ? 0 : JUMP_SLIDE_PX };
 }
+
+/**
+ * How far above the list's bottom edge the jump button floats: the composer clearance, plus the
+ * keyboard's height less the part of it `keyboardOffset` already accounts for.
+ *
+ * Keyboard-controller reports the height as a negative translation while the keyboard is open, so
+ * the sign is dropped; an offset larger than the keyboard never pulls the button below the clearance.
+ */
+export function resolveJumpButtonLift(input: {
+	keyboardHeight: number;
+	keyboardOffset: number;
+	bottomInset: number;
+}): number {
+	"worklet";
+	return input.bottomInset + Math.max(0, Math.abs(input.keyboardHeight) - input.keyboardOffset);
+}

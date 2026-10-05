@@ -4,5 +4,5 @@ executionPrerequisite: >-
 steps:
   - echo: Tapping the info glyph
   - tap: { id: tooltip-info }
-  - await: { visible: { text: Includes photos, files and backups } }
+  - await: { visible: { text: "Includes photos, files and backups" } }
   - wait: 2000

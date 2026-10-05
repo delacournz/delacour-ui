@@ -5,4 +5,5 @@ steps:
   - echo: Opening the surface tooltip
   - tap: { id: tooltip-surface }
   - await: { visible: { text: Changes reach your other devices within a minute. } }
-  - wait: 1200
+  - echo: Holding until it hides itself, so the clip loops on the bare button
+  - wait: 2000

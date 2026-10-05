@@ -4,6 +4,7 @@ import { TimePickerWheel } from "./time-picker-wheel";
 
 export type TimePickerWheelSlotProps = {
 	className?: string;
+	testID?: string;
 };
 
 /**
@@ -17,7 +18,7 @@ export type TimePickerWheelSlotProps = {
  *   <TimePicker.Wheel />
  * </TimePicker.Content>
  */
-export function TimePickerWheelSlot({ className }: TimePickerWheelSlotProps): ReactElement {
+export function TimePickerWheelSlot({ className, testID }: TimePickerWheelSlotProps): ReactElement {
 	const picker = useTimePickerPart("TimePicker.Wheel");
 
 	return (
@@ -29,6 +30,7 @@ export function TimePickerWheelSlot({ className }: TimePickerWheelSlotProps): Re
 			locale={picker.locale}
 			onValueChange={picker.setValue}
 			size={picker.size}
+			testID={testID}
 			value={picker.value ?? picker.wheelTime}
 		/>
 	);

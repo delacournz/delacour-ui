@@ -63,6 +63,7 @@ export function TimePickerWheel({
 	visibleRows = TIME_PICKER_DEFAULT_VISIBLE_ROWS,
 	isDisabled,
 	className,
+	testID,
 }: TimePickerWheelProps): ReactElement {
 	const field = useFieldContext();
 	const resolvedDisabled = isDisabled ?? field?.isDisabled ?? false;
@@ -98,7 +99,7 @@ export function TimePickerWheel({
 	const slots = timePickerVariants({ size, isDisabled: resolvedDisabled });
 
 	return (
-		<View className={slots.wheel({ className })} pointerEvents={resolvedDisabled ? "none" : "auto"}>
+		<View className={slots.wheel({ className })} pointerEvents={resolvedDisabled ? "none" : "auto"} testID={testID}>
 			<View
 				className={slots.selectionBand()}
 				pointerEvents="none"

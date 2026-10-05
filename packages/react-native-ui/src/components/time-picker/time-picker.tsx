@@ -49,6 +49,7 @@ function TimePickerRoot({
 	clearLabel = "Clear",
 	accessibilityLabel,
 	className,
+	testID,
 	children,
 }: TimePickerProps): ReactElement {
 	const field = useFieldContext();
@@ -181,7 +182,7 @@ function TimePickerRoot({
 	if (presentation === "inline") {
 		return (
 			<TimePickerProvider value={context}>
-				{children ?? <TimePickerWheelSlot className={className} />}
+				{children ?? <TimePickerWheelSlot className={className} testID={testID} />}
 			</TimePickerProvider>
 		);
 	}
@@ -191,7 +192,7 @@ function TimePickerRoot({
 			<BottomSheet enableContentPanningGesture={false} isOpen={isOpen} onOpenChange={handleOpenChange}>
 				{children ?? (
 					<>
-						<TimePickerTrigger className={className} />
+						<TimePickerTrigger className={className} testID={testID} />
 						<TimePickerContent />
 					</>
 				)}

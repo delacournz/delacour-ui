@@ -34,6 +34,7 @@ export type TimePickerWheelProps = TimePickerWheelOptions & {
 	/** Fires each time a wheel comes to rest, with the time pulled onto the step and inside the bounds. */
 	onValueChange: (value: TimeValue) => void;
 	className?: string;
+	testID?: string;
 };
 
 export type TimePickerProps = TimePickerWheelOptions & {
@@ -74,6 +75,8 @@ export type TimePickerProps = TimePickerWheelOptions & {
 	accessibilityLabel?: string;
 	/** Lands on the trigger in a sheet, on the wheel inline. */
 	className?: string;
+	/** Lands where `className` does: the trigger in a sheet, the wheel inline. */
+	testID?: string;
 	/** Omit for the default anatomy: a trigger with the value and a clock, and a sheet with the wheel. */
 	children?: ReactNode;
 };

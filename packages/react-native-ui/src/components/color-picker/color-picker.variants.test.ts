@@ -148,6 +148,12 @@ describe("tokens", () => {
 		expect(cls(slots.swatch())).toMatch(/\bborder-2\b/);
 	});
 
+	test("the root keeps a floor width, so a shrink-wrapping parent cannot collapse the area", () => {
+		// Every part is w-full, and 100% of a parent sized by its content is the
+		// content: without a floor the area and the field fold to a sliver.
+		expect(cls(colorPickerVariants().root())).toMatch(/\bmin-w-64\b/);
+	});
+
 	test("disabled fades each drawn part once, never the root", () => {
 		const disabled = colorPickerVariants({ isDisabled: true });
 		for (const slot of [disabled.area, disabled.touchArea, disabled.preview, disabled.swatches]) {

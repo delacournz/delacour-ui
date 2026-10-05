@@ -65,6 +65,9 @@ track, a hex field and preset swatches. Compound root plus nine parts. Presents 
 - **The hex field commits on blur and submit, never per keystroke.** It accepts every notation
   `parseColor` does; unparseable text leaves the value alone and turns the field invalid until it
   parses again. Inside a sheet it is a `BottomSheet.TextInput`, so the keyboard lifts the panel.
+- **The root has a floor width (`min-w-64`).** Every part is `w-full`, and 100% of a parent sized
+  by its content is the content — inside an `items-center` column the area and the hex field folded
+  to a sliver on device. The floor keeps a picker usable wherever it is dropped.
 - **Disabled fades each drawn part, not the root.** The trigger row and the hex field are Input
   boxes that fade themselves; a faded root would compound them to a quarter. Read-only renders
   normally and ignores every drag, tap and keystroke.

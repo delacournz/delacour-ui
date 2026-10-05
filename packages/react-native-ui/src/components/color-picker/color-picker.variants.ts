@@ -70,7 +70,7 @@ export const COLOR_PICKER_RING_FADE_MS = 160;
  */
 export const colorPickerVariants = tv({
 	slots: {
-		root: "w-full gap-3",
+		root: "w-full min-w-64 gap-3",
 		/** The inline surface: the column the area, tracks and field stack in. */
 		content: "w-full gap-3",
 		/** The saturation and brightness square. Positions its thumb. */

@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "A training plan",
 	caption:
 		"A dot per category, up to two icons and a `+N` on each day. Today is ringed, the legend counts the month, and a swipe on the grid pages it.",
-	capture: { align: "stretch", hero: true },
+	align: "stretch",
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [

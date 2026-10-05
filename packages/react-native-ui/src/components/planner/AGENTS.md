@@ -26,7 +26,7 @@ Compound root plus twelve parts: `Header`, `Title`, `Today`, `Nav`, `Action`,
 | `planner-grid.tsx` | `Planner.Grid` — six weeks, the swipe and the slide |
 | `planner-scroller.tsx` | `Planner.Scroller` — a `FlatList` of weeks |
 | `planner-weekdays.tsx` | The weekday row the grid and the scroller draw. Internal |
-| `planner-day.tsx` | `Planner.Day`, and the internal content, dot and block it draws |
+| `planner-day.tsx` | `Planner.Day`, and the internal per-variant content — tile, marks, blocks — with the marker, dot and block they share |
 | `planner-legend.tsx` | `Planner.Legend` |
 | `planner-summary.tsx` | `Planner.Summary` |
 | `planner-footer.tsx` | `Planner.Footer` |

@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Tiles",
 	caption:
 		'`variant="tiles"`: one large icon per day, tinted by its first entry\'s category, with the date in the corner — a habit log read at a glance.',
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [

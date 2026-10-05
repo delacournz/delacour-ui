@@ -25,16 +25,11 @@ export function Demo(): ReactElement {
 				<Planner.Grid />
 			</Planner>
 			<View className="flex-row flex-wrap gap-1">
-				<ToggleButton isSelected={weekStartsOn === "auto"} onSelectedChange={() => setWeekStartsOn("auto")} size="sm">
+				<ToggleButton isSelected={weekStartsOn === "auto"} onSelected={() => setWeekStartsOn("auto")} size="sm">
 					Auto
 				</ToggleButton>
 				{PLANNER_WEEK_STARTS.map((day) => (
-					<ToggleButton
-						isSelected={weekStartsOn === day}
-						key={day}
-						onSelectedChange={() => setWeekStartsOn(day)}
-						size="sm"
-					>
+					<ToggleButton isSelected={weekStartsOn === day} key={day} onSelected={() => setWeekStartsOn(day)} size="sm">
 						{LABELS[day]}
 					</ToggleButton>
 				))}

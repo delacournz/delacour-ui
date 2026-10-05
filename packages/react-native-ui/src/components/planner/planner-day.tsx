@@ -77,6 +77,8 @@ export function PlannerDay({ date, isInMonth = true, renderDay, className, testI
 }
 PlannerDay.displayName = "DelacourUI.Planner.Day";
 
+type PlannerDayContentProps = { info: PlannerDayInfo; planner: PlannerContextValue };
+
 /**
  * The variant's own drawing of a day.
  *
@@ -84,67 +86,92 @@ PlannerDay.displayName = "DelacourUI.Planner.Day";
  * nothing else — the button, its label and its state are never the caller's
  * to forget.
  */
-function PlannerDayContent({ info, planner }: { info: PlannerDayInfo; planner: PlannerContextValue }): ReactElement {
+function PlannerDayContent({ info, planner }: PlannerDayContentProps): ReactElement {
+	if (planner.variant === "tiles") return <PlannerDayTile info={info} planner={planner} />;
+	if (planner.variant === "calendar") return <PlannerDayBlocks info={info} planner={planner} />;
+	return <PlannerDayMarks info={info} planner={planner} />;
+}
+PlannerDayContent.displayName = "DelacourUI.Planner.Day.Content";
+
+/** `tiles`: one large icon tinted by the first entry's colour, the date in the corner. */
+function PlannerDayTile({ info, planner }: PlannerDayContentProps): ReactElement {
 	const { variant, fill, entryLimit, categories } = planner;
 	const { entries, isInMonth, isSelected, isToday } = info;
 	const slots = plannerVariants({ fill, isInMonth, isSelected, isToday, variant });
 	const { shown, overflow } = resolveDayDisplay(entries, variant, entryLimit);
-	const numeral = String(info.date.getDate());
+	const first = shown[0];
+	const color = first ? resolveEntryColor(first, categories) : undefined;
 
-	if (variant === "tiles") {
-		const first = shown[0];
-		const color = first ? resolveEntryColor(first, categories) : undefined;
-		return (
-			<View className={cn(slots.tile(), !isSelected && color ? tintClass(color) : undefined)}>
-				<Text className={slots.tileNumeral()}>{numeral}</Text>
-				{first?.icon && color ? (
-					<Icon color={isSelected ? "primary-foreground" : entryColorToken(color)} icon={first.icon} size="lg" />
-				) : first && color ? (
-					<PlannerDayDot className={slots.dot()} color={color} />
-				) : null}
-				{overflow > 0 ? <Text className={cn(slots.overflow(), "absolute right-1 bottom-0.5")}>+{overflow}</Text> : null}
-			</View>
-		);
+	let mark: ReactNode = null;
+	if (first?.icon && color) {
+		mark = <Icon color={isSelected ? "primary-foreground" : entryColorToken(color)} icon={first.icon} size="lg" />;
+	} else if (first && color) {
+		mark = <PlannerDayDot className={slots.dot()} color={color} />;
 	}
 
-	const marker = (
+	return (
+		<View className={cn(slots.tile(), !isSelected && color ? tintClass(color) : undefined)}>
+			<Text className={slots.tileNumeral()}>{String(info.date.getDate())}</Text>
+			{mark}
+			{overflow > 0 ? <Text className={cn(slots.overflow(), "absolute right-1 bottom-0.5")}>+{overflow}</Text> : null}
+		</View>
+	);
+}
+PlannerDayTile.displayName = "DelacourUI.Planner.Day.Tile";
+
+/** The date numeral in its ring-and-fill marker, shared by `default` and `calendar`. */
+function PlannerDayMarker({ info, planner }: PlannerDayContentProps): ReactElement {
+	const { isInMonth, isSelected, isToday } = info;
+	const slots = plannerVariants({ fill: planner.fill, isInMonth, isSelected, isToday, variant: planner.variant });
+	return (
 		<View className={slots.marker()}>
 			<View className={slots.markerFill()}>
-				<Text className={slots.numeral()}>{numeral}</Text>
+				<Text className={slots.numeral()}>{String(info.date.getDate())}</Text>
 			</View>
 		</View>
 	);
+}
+PlannerDayMarker.displayName = "DelacourUI.Planner.Day.Marker";
 
-	if (variant === "calendar") {
-		return (
-			<>
-				{marker}
-				<View className={slots.blocks()}>
-					{shown.map((entry) => (
-						<PlannerDayBlock
-							className={slots.block()}
-							color={resolveEntryColor(entry, categories)}
-							key={entry.id}
-							label={entry.label}
-							labelClassName={slots.blockLabel()}
-						/>
-					))}
-					{overflow > 0 ? (
-						<Text className={slots.more()} numberOfLines={1}>
-							+{overflow} more
-						</Text>
-					) : null}
-				</View>
-			</>
-		);
-	}
-
-	const dotColors = distinctColors(entries, planner);
-	const icons = shown.filter((entry) => entry.icon !== undefined);
-
+/** `calendar`: each entry's name in a block of its colour, then "+N more". */
+function PlannerDayBlocks({ info, planner }: PlannerDayContentProps): ReactElement {
+	const { variant, fill, entryLimit, categories } = planner;
+	const slots = plannerVariants({ fill, variant });
+	const { shown, overflow } = resolveDayDisplay(info.entries, variant, entryLimit);
 	return (
 		<>
-			{marker}
+			<PlannerDayMarker info={info} planner={planner} />
+			<View className={slots.blocks()}>
+				{shown.map((entry) => (
+					<PlannerDayBlock
+						className={slots.block()}
+						color={resolveEntryColor(entry, categories)}
+						key={entry.id}
+						label={entry.label}
+						labelClassName={slots.blockLabel()}
+					/>
+				))}
+				{overflow > 0 ? (
+					<Text className={slots.more()} numberOfLines={1}>
+						+{overflow} more
+					</Text>
+				) : null}
+			</View>
+		</>
+	);
+}
+PlannerDayBlocks.displayName = "DelacourUI.Planner.Day.Blocks";
+
+/** `default`: a dot per category, up to `entryLimit` icons, and "+N". */
+function PlannerDayMarks({ info, planner }: PlannerDayContentProps): ReactElement {
+	const { variant, fill, entryLimit, categories } = planner;
+	const slots = plannerVariants({ fill, variant });
+	const { shown, overflow } = resolveDayDisplay(info.entries, variant, entryLimit);
+	const dotColors = distinctColors(info.entries, planner);
+	const icons = shown.filter((entry) => entry.icon !== undefined);
+	return (
+		<>
+			<PlannerDayMarker info={info} planner={planner} />
 			<View className={slots.dots()}>
 				{dotColors.map(({ id, color }) => (
 					<PlannerDayDot className={slots.dot()} color={color} key={id} />
@@ -168,7 +195,7 @@ function PlannerDayContent({ info, planner }: { info: PlannerDayInfo; planner: P
 		</>
 	);
 }
-PlannerDayContent.displayName = "DelacourUI.Planner.Day.Content";
+PlannerDayMarks.displayName = "DelacourUI.Planner.Day.Marks";
 
 /** Up to three colours, one per distinct category (or literal), in the order they first appear. */
 function distinctColors(

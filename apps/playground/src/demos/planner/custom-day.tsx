@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Days of your own",
 	caption:
 		"`renderDay` draws the inside of each day — here a bar of the distance run. The button, its spoken label and the selection stay the planner's.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const DISTANCES = [0, 6, 0, 8, 5, 0, 18, 0, 7, 0, 10, 6, 0, 21, 0, 6, 0, 9, 5, 0, 16, 0, 8, 0, 12, 6, 0, 24, 0, 5, 7];

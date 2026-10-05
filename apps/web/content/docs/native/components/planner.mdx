@@ -4,8 +4,6 @@ description: A month of days, each showing what falls on it — category dots, i
 icon: CalendarDays
 ---
 
-<Preview id="planner/training-plan" title={null} />
-
 ## Installation
 
 <ComponentInstall name="planner" />
@@ -65,8 +63,6 @@ const entries: PlannerEntry[] = [
 
 `variant="tiles"` draws one large icon per day, tinted by its first entry's category.
 
-<Preview id="planner/tiles" />
-
 ```tsx
 <Planner categories={categories} entries={entries} variant="tiles">…</Planner>
 ```
@@ -74,8 +70,6 @@ const entries: PlannerEntry[] = [
 ## Calendar
 
 `variant="calendar"` names each entry in a block of its colour, and `fill` gives the weeks the height to show them.
-
-<Preview id="planner/calendar-fill" />
 
 ```tsx
 <View className="h-[640px]">
@@ -92,8 +86,6 @@ const entries: PlannerEntry[] = [
 ## Day details
 
 `Planner.Details` opens a bottom sheet while a day is selected, and closing it clears the selection.
-
-<Preview id="planner/details-sheet" />
 
 ```tsx
 <Planner entries={entries}>
@@ -136,8 +128,6 @@ Leave `Details` out and use `onDayPress`, which fires before the day is selected
 ## Custom days
 
 `renderDay` draws the inside of each day; its button, spoken label and selection stay the planner's.
-
-<Preview id="planner/custom-day" />
 
 ```tsx
 <Planner.Grid renderDay={({ date, entries, isToday }) => <DistanceDay date={date} entries={entries} isToday={isToday} />} />

@@ -10,7 +10,6 @@ export const meta: DemoMeta = {
 	title: "A sheet of the day",
 	caption:
 		"`Planner.Details` opens a sheet while a day is selected. Closing it — the button, a swipe, the scrim — clears the selection.",
-	capture: { flow: "planner/details-sheet", frame: "device" },
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [

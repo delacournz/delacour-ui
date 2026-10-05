@@ -78,6 +78,11 @@ export type ItemMeta = {
 	 * other.
 	 */
 	dependencies?: string[];
+	/**
+	 * Registry items an import scan cannot see — one the documented usage pairs
+	 * with this item although no file imports it. Added to the derived edges.
+	 */
+	registryDependencies?: string[];
 };
 
 export const ITEM_META: Record<string, ItemMeta> = {
@@ -238,6 +243,13 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Screen",
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
+	},
+	"section-rail": {
+		title: "SectionRail",
+		description:
+			"A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through.",
+		categories: ["navigation"],
+		registryDependencies: ["use-scroll-sections"],
 	},
 	separator: {
 		title: "Separator",

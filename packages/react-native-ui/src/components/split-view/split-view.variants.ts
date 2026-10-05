@@ -38,6 +38,13 @@ export const SPLIT_VIEW_SPRING = { damping: 28, mass: 0.9, stiffness: 260 } as c
  */
 export const SPLIT_VIEW_DECELERATION_RATE = 0.99;
 
+/**
+ * Points a finger may travel and still be a tap — `Tap.maxDistance` and the
+ * pan's "did it move" threshold are the same number, so one touch is either a
+ * tap that cycles or a drag that settles, never both.
+ */
+export const SPLIT_VIEW_TAP_SLOP = 6;
+
 /** The fewest stops a split view can have — one stop is not a choice. */
 const MIN_SNAP_POINTS = 2;
 

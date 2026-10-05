@@ -90,6 +90,7 @@ shares.
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [SplitView](src/components/split-view/AGENTS.md) | `@delacour/react-native-ui/split-view` | Two stacked panes with a drag row that settles on named snap points |
 | [Splitter](src/components/splitter/AGENTS.md) | `@delacour/react-native-ui/splitter` | Two or more panes divided by draggable, adjustable handles, sized in percent |
 | [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
 | [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |

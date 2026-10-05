@@ -60,6 +60,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
 	{ slug: "textarea", name: "Textarea", group: "Forms", blurb: "A multiline text field, sized in rows." },
 	{
+		slug: "number-input",
+		name: "NumberInput",
+		group: "Forms",
+		blurb: "A number between a minus and a plus \u2014 tap, hold to repeat, or type.",
+	},
+	{
 		slug: "label",
 		name: "Label",
 		group: "Forms",

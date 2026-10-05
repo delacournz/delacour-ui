@@ -12,6 +12,7 @@
 		"field",
 		"input",
 		"textarea",
+		"number-input",
 		"label",
 		"checkbox",
 		"chip",

@@ -7,7 +7,7 @@ context and the registry that `Portal` reads.
 
 | Path | What |
 | --- | --- |
-| `bottom-sheet-provider.tsx` | `BottomSheetProvider` — teleport's `PortalProvider`, the registry provider and the host-name context set to `"root"`. The app mounts it once |
+| `bottom-sheet-provider.tsx` | `BottomSheetProvider` — teleport's `PortalProvider`, the registry provider and the host-name context set to `"root"`. The app mounts it once. `hasPortalProvider` skips the teleport provider when one is already above |
 | `bottom-sheet-host.tsx` | `BottomSheet.Host` — a teleport `PortalHost` (absolute fill, `box-none`) that provides its own name as the nearest one. The recipe for a native modal |
 | `host.context.tsx` | `BottomSheetHostNameContext` — the nearest host's name, `null` with no provider; `useBottomSheetHostName` / `useOptionalBottomSheetHostName` |
 | `sheet-registry.ts` | The pure reducer: `reduceRegistry`, `topOf`, `zIndexOf`, `isTop`, `INITIAL_REGISTRY`. Tested without a renderer |
@@ -99,3 +99,12 @@ over-drag past the highest therefore leave the surface, the body and the
 footer exactly as they were and let `translateY` alone move the card, bottom
 corners included, through the gap and off the screen. `Content` clamps its
 body to `surfaceHeight − handleHeight` for the same reason.
+
+## Sharing teleport's provider
+
+There must be one teleport `PortalProvider` per app: teleport registers hosts natively by name,
+and two providers would mean two hosts called `"root"`. `hasPortalProvider` lets an app that
+already mounts one — `@delacour/react-native-ui`'s `OverlayProvider` is the case it was added for
+— mount the sheet registry and host name alone. Sheets then teleport into the outer provider's
+`"root"`, and their registry `z` (from 1) still orders them among themselves; the skin's overlays
+draw in bands above 1000. The skin's `BottomSheetProvider` passes the flag for you.

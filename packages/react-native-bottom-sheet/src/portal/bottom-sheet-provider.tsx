@@ -5,6 +5,13 @@ import { SheetRegistryProvider } from "./sheet-registry.context";
 
 export type BottomSheetProviderProps = {
 	children?: ReactNode;
+	/**
+	 * A teleport `PortalProvider` is already mounted above, so do not mount a
+	 * second. Teleport registers hosts natively by name, and two providers
+	 * would mean two hosts called `"root"`. Sheets then draw into the outer
+	 * provider's `"root"` host. Default `false`.
+	 */
+	hasPortalProvider?: boolean;
 };
 
 /**
@@ -18,16 +25,21 @@ export type BottomSheetProviderProps = {
  * without a ref; and the host-name context, set to `"root"`, which is what
  * makes a `Portal` written anywhere below teleport there without being told.
  *
+ * `hasPortalProvider` drops the first of the three, for an app that already
+ * mounts teleport's provider for something else — `@delacour/react-native-ui`'s
+ * `OverlayProvider` is the case it exists for.
+ *
  * Nothing else. `GestureHandlerRootView`, `SafeAreaProvider` and
  * `KeyboardProvider` are the app's — see the package `AGENTS.md`.
  */
-export function BottomSheetProvider({ children }: BottomSheetProviderProps): ReactElement {
-	return (
-		<PortalProvider>
-			<SheetRegistryProvider>
-				<BottomSheetHostNameContext.Provider value="root">{children}</BottomSheetHostNameContext.Provider>
-			</SheetRegistryProvider>
-		</PortalProvider>
+export function BottomSheetProvider({ children, hasPortalProvider = false }: BottomSheetProviderProps): ReactElement {
+	const registry = (
+		<SheetRegistryProvider>
+			<BottomSheetHostNameContext.Provider value="root">{children}</BottomSheetHostNameContext.Provider>
+		</SheetRegistryProvider>
 	);
+	if (hasPortalProvider) return registry;
+
+	return <PortalProvider>{registry}</PortalProvider>;
 }
 BottomSheetProvider.displayName = "DelacourBottomSheet.BottomSheet.Provider";

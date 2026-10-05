@@ -4,6 +4,8 @@ description: A closed set of choices behind a field-shaped trigger, picked from 
 icon: SquareChevronDown
 ---
 
+<Preview id="select/single" title={null} />
+
 ## Installation
 
 <ComponentInstall name="select" />
@@ -41,6 +43,8 @@ export default function Example() {
 
 `selectionMode="multiple"` keeps the sheet open, closes from a Done footer, and hands `onValueChange` an array.
 
+<Preview id="select/multiple" />
+
 ```tsx
 <Select
   maxSelected={3}
@@ -71,6 +75,8 @@ export default function Example() {
 
 `isSearchable` adds a search field that matches case- and accent-insensitively, hides emptied groups, and clears on close.
 
+<Preview id="select/grouped-searchable" />
+
 ```tsx
 <Select isSearchable options={cities} searchPlaceholder="Search cities" />
 ```
@@ -92,6 +98,8 @@ const options = [
 
 Inside a `Field` the select takes its invalid and disabled state, reads `Field.Label` as its name and sheet title, and opens when the label is tapped.
 
+<Preview id="select/in-a-field" />
+
 ```tsx
 <Field isInvalid={role === null}>
   <Field.Label>Role</Field.Label>
@@ -103,6 +111,8 @@ Inside a `Field` the select takes its invalid and disabled state, reads `Field.L
 ## States
 
 `isDisabled` fades the trigger, `isReadOnly` shows the value and never opens, and `isLoading` swaps the chevron for a spinner.
+
+<Preview id="select/disabled-and-loading" />
 
 ```tsx
 <Select isDisabled options={plans} value="team" />
@@ -168,7 +178,7 @@ Compose `Select.Trigger` with `asChild` to open the sheet from a control of your
     limitReachedText: { type: "string", default: '"Limit reached"', description: "Multiple only." },
     doneText: { type: "string", default: '"Done"', description: "Multiple only. The footer button." },
     className: { type: "string", description: "Classes for the trigger." },
-    testID: { type: "string", description: "Rows take `-option-<value>`, search `-search`, Done `-done`." },
+    testID: { type: "string", description: "Rows take `-option-<value>`, search `-search`, close `-close`, Done `-done`." },
   }}
 />
 

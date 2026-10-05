@@ -82,6 +82,49 @@
 			]
 		},
 		{
+			"name": "attachment",
+			"type": "registry:ui",
+			"title": "Attachment",
+			"description": "A file, image or recording chip with a thumbnail, size, upload progress and remove control.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"progress",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/attachment/AGENTS.md",
+				"ui/attachment/attachment-content.tsx",
+				"ui/attachment/attachment-group.tsx",
+				"ui/attachment/attachment-meta.tsx",
+				"ui/attachment/attachment-name.tsx",
+				"ui/attachment/attachment-preview.tsx",
+				"ui/attachment/attachment-progress.tsx",
+				"ui/attachment/attachment-remove.tsx",
+				"ui/attachment/attachment-retry.tsx",
+				"ui/attachment/attachment.context.tsx",
+				"ui/attachment/attachment.tsx",
+				"ui/attachment/attachment.types.ts",
+				"ui/attachment/attachment.utils.ts",
+				"ui/attachment/attachment.variants.ts",
+				"ui/attachment/index.ts"
+			]
+		},
+		{
 			"name": "avatar",
 			"type": "registry:ui",
 			"title": "Avatar",

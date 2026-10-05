@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"One slide per screen, swiped sideways. The dots are a reading of the same position the slides are, so the pill travels with the finger.",
+	capture: { align: "stretch", flow: "carousel/hero-track", hero: true },
 };
 
 const PHOTOS = [
@@ -21,7 +22,7 @@ const PHOTOS = [
 export function Demo(): ReactElement {
 	return (
 		<Carousel accessibilityLabel="Featured" testID="carousel-hero">
-			<Carousel.Content aspectRatio={4 / 3}>
+			<Carousel.Content testID="carousel-hero-content" aspectRatio={4 / 3}>
 				{PHOTOS.map((photo, index) => (
 					<Carousel.Item key={photo.id} testID={`carousel-item-${index}`}>
 						<Image className="size-full" source={{ uri: `https://picsum.photos/seed/${photo.id}/800/600` }} />

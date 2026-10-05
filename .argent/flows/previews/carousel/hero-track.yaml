@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on carousel/hero-track and has settled — the first of five
+  photos full width, its caption showing, the first dot a pill. The viewport carries the testID
+  carousel-hero-content. The capture script navigates there before running this.
+steps:
+  - echo: Swiping forward two slides
+  - swipe: { from: { id: carousel-hero-content }, by: { x: -0.45 }, momentum: false, duration: 450 }
+  - wait: 700
+  - swipe: { from: { id: carousel-hero-content }, by: { x: -0.45 }, momentum: false, duration: 450 }
+  - wait: 700
+  - echo: And back to the first, so the clip loops without a jump cut
+  - swipe: { from: { id: carousel-hero-content }, by: { x: 0.45 }, momentum: false, duration: 450 }
+  - wait: 700
+  - swipe: { from: { id: carousel-hero-content }, by: { x: 0.45 }, momentum: false, duration: 450 }
+  - wait: 700

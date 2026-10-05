@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-sections",
+	"type": "registry:lib",
+	"title": "scrollSections",
+	"description": "Which section a scroll offset is in, and how far down the content it is.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-sections.ts",
+			"target": "scroll-sections.ts",
+			"namespace": "lib"
+		}
+	]
+}

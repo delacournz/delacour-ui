@@ -36,10 +36,11 @@ src/
 ├── expo/                 Expo-only entry points — navigation-theme
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
-│                         use-calm-motion
+│                         use-calm-motion, use-scroll-sections
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
-│                         keyboard-animation, navigation-theme, calm-motion
+│                         keyboard-animation, navigation-theme, calm-motion,
+│                         scroll-sections
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing

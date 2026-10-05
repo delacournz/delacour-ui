@@ -14,6 +14,7 @@ import {
 	type GridItemSize,
 	type GridItemVariant,
 	gridItemVariants,
+	isGridItemBackgroundType,
 	joinGridItemLabel,
 	resolveGridItemRender,
 	resolveGridItemSize,
@@ -144,7 +145,7 @@ function GridItemRoot({
  */
 function backgroundFirst(children: ReactNode): ReactNode {
 	const items = Children.toArray(children);
-	const backgrounds = items.filter((child) => isValidElement(child) && child.type === GridItemBackground);
+	const backgrounds = items.filter((child) => isValidElement(child) && isGridItemBackgroundType(child.type));
 	if (backgrounds.length === 0) return items;
 	return [...backgrounds, ...items.filter((child) => !backgrounds.includes(child))];
 }

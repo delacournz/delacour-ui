@@ -27,6 +27,7 @@ export {
 export type { GridItemSlotProps, GridItemTextProps } from "./grid-item.types";
 export {
 	GRID_ITEM_ACTIONS_ICON_TOKEN,
+	GRID_ITEM_BACKGROUND_DISPLAY_NAME,
 	GRID_ITEM_MEDIA_ICON_TOKEN,
 	GRID_ITEM_SIZES,
 	GRID_ITEM_VARIANTS,
@@ -36,6 +37,7 @@ export {
 	type GridItemVariant,
 	type GridItemVariantProps,
 	gridItemVariants,
+	isGridItemBackgroundType,
 	joinGridItemLabel,
 	readGridItemText,
 	resolveGridItemRender,

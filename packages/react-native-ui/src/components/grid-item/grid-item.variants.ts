@@ -58,6 +58,22 @@ export function joinGridItemLabel(parts: GridItemLabelParts): string | undefined
 	return label.length > 0 ? label : undefined;
 }
 
+/** The display name `GridItem.Background` carries, and the one thing a tile sorts its children by. */
+export const GRID_ITEM_BACKGROUND_DISPLAY_NAME = "DelacourUI.GridItem.Background";
+
+/**
+ * Whether an element's type is `GridItem.Background`.
+ *
+ * Read from the display name rather than compared by identity: Metro's dev
+ * bundle hands a tile its children with their types wrapped, so
+ * `child.type === GridItemBackground` is false for every one of them there and
+ * the background would draw over the content it sits behind.
+ */
+export function isGridItemBackgroundType(type: unknown): boolean {
+	if ((typeof type !== "function" && typeof type !== "object") || type === null) return false;
+	return "displayName" in type && type.displayName === GRID_ITEM_BACKGROUND_DISPLAY_NAME;
+}
+
 /**
  * The plain text inside a text part's children, for the tile's joined label.
  *

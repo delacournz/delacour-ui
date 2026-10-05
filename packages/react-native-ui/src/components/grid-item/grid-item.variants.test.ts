@@ -1,8 +1,10 @@
 import { describe, expect, test } from "bun:test";
 import {
+	GRID_ITEM_BACKGROUND_DISPLAY_NAME,
 	GRID_ITEM_SIZES,
 	GRID_ITEM_VARIANTS,
 	gridItemVariants,
+	isGridItemBackgroundType,
 	joinGridItemLabel,
 	readGridItemText,
 	resolveGridItemRender,
@@ -211,5 +213,28 @@ describe("readGridItemText", () => {
 		expect(readGridItemText(true)).toBeUndefined();
 		expect(readGridItemText({ type: "View" })).toBeUndefined();
 		expect(readGridItemText(["Storage", { type: "View" }])).toBe("Storage");
+	});
+});
+
+describe("isGridItemBackgroundType", () => {
+	test("matches by display name, since a dev bundle wraps element types", () => {
+		expect(isGridItemBackgroundType({ displayName: "DelacourUI.GridItem.Background" })).toBe(true);
+		const wrapped = () => null;
+		wrapped.displayName = "DelacourUI.GridItem.Background";
+		expect(isGridItemBackgroundType(wrapped)).toBe(true);
+	});
+
+	test("anything else is not a background", () => {
+		expect(isGridItemBackgroundType({ displayName: "DelacourUI.GridItem.Title" })).toBe(false);
+		expect(isGridItemBackgroundType(() => null)).toBe(false);
+		expect(isGridItemBackgroundType("View")).toBe(false);
+		expect(isGridItemBackgroundType(undefined)).toBe(false);
+	});
+});
+
+describe("GRID_ITEM_BACKGROUND_DISPLAY_NAME", () => {
+	test("is the name grid-item-background.tsx assigns", async () => {
+		const source = await Bun.file(new URL("./grid-item-background.tsx", import.meta.url)).text();
+		expect(source).toInclude(`GridItemBackground.displayName = "${GRID_ITEM_BACKGROUND_DISPLAY_NAME}";`);
 	});
 });

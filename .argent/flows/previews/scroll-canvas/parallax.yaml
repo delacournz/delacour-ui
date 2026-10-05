@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-canvas/parallax and has settled — a short scrolling page with the
+  parallax canvas below a paragraph, scrolled to the top. The capture script navigates there before running this.
+steps:
+  - echo: Scrolling the page up, so the canvas rises through its window
+  - swipe: { from: { id: scroll-canvas-parallax }, by: { y: -0.35 }, momentum: false }
+  - wait: 500
+  - echo: And back down, so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-canvas-parallax }, by: { y: 0.35 }, momentum: false }
+  - wait: 400

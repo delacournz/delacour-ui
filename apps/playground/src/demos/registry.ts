@@ -290,6 +290,12 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_scroll_canvas_parallax from "./scroll-canvas/parallax";
+import * as demo_scroll_canvas_reduced_motion from "./scroll-canvas/reduced-motion";
+import * as demo_scroll_canvas_reveal from "./scroll-canvas/reveal";
+import * as demo_scroll_canvas_sequence from "./scroll-canvas/sequence";
+import * as demo_scroll_canvas_window_and_distance from "./scroll-canvas/window-and-distance";
+import * as demo_scroll_canvas_zoom from "./scroll-canvas/zoom";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
@@ -656,6 +662,12 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"scroll-canvas/parallax": demo_scroll_canvas_parallax,
+	"scroll-canvas/reduced-motion": demo_scroll_canvas_reduced_motion,
+	"scroll-canvas/reveal": demo_scroll_canvas_reveal,
+	"scroll-canvas/sequence": demo_scroll_canvas_sequence,
+	"scroll-canvas/window-and-distance": demo_scroll_canvas_window_and_distance,
+	"scroll-canvas/zoom": demo_scroll_canvas_zoom,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,

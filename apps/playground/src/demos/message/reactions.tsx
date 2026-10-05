@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Reactions",
 	caption:
 		"`Message.Reactions` takes chips as children. `overlap` hangs them over the bubble's bottom edge; `below` gives them a line of their own.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const TEXT: Record<MessageReactionPlacement, string> = {

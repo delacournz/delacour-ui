@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Runs",
 	caption:
 		"The list computes `position` from each message's neighbours — `first`, `middle`, `last`, or `single` — and the corners facing a neighbour tighten so a run reads as one stack. Only the last of an incoming run shows the avatar; the rest keep its width.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 type Line = { direction: MessageDirection; text: string };

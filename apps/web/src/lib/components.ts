@@ -196,6 +196,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
+		slug: "breadcrumb",
+		name: "Breadcrumb",
+		group: "Navigation",
+		blurb: "The path to the current screen, with automatic separators, a collapsing middle or a scrolling trail.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

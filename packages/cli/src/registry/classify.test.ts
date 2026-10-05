@@ -99,6 +99,12 @@ describe("classifySource", () => {
 		expect(classifySource("styles/tokens.test.ts")).toBeNull();
 	});
 
+	test("test-only support files are excluded with the tests they serve", () => {
+		expect(classifySource("components/qr-code/qr-code.test-helpers.ts")).toBeNull();
+		expect(classifySource("components/qr-code/qr-code.fixtures.ts")).toBeNull();
+		expect(classifySource("components/qr-code/qr-code.encode.ts")?.item).toBe("qr-code");
+	});
+
 	test("anything outside the known directories is excluded rather than guessed at", () => {
 		expect(classifySource("scratch.ts")).toBeNull();
 		expect(classifySource("components/button")).toBeNull();

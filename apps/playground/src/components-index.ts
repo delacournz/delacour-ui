@@ -204,6 +204,7 @@ const ROWS = [
 		group: "Data display",
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "qr-code", title: "QRCode", description: "Module styles, error correction, logo", group: "Media" },
 	{ slug: "post", title: "Post", description: "Feed, vote, compact, media; counts that roll", group: "Media" },
 	{ slug: "marquee", title: "Marquee", description: "Directions, speeds, fades, rows in step", group: "Media" },
 	{ slug: "flip-card", title: "FlipCard", description: "Tap, swipe, manual, axis, flashcard", group: "Media" },

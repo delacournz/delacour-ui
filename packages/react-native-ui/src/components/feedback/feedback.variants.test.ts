@@ -2,9 +2,12 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	canSubmitFeedback,
+	FEEDBACK_DEFAULT_MAX_ROWS,
 	FEEDBACK_DEFAULT_MIN_ROWS,
 	FEEDBACK_FIELD_LINE_HEIGHT,
+	FEEDBACK_PANEL_RESIZE_MS,
 	feedbackVariants,
+	resolveFeedbackFieldHeightStyle,
 	resolveFeedbackFieldMinHeight,
 } from "./feedback.variants";
 
@@ -29,7 +32,7 @@ function colorTokens(cls: string): string[] {
 }
 
 /** Pinned rather than derived — `tv` adds a `base` slot of its own. */
-const SLOT_NAMES = ["content", "panel", "title", "close", "field", "footer"] as const;
+const SLOT_NAMES = ["content", "clip", "panel", "title", "close", "field", "footer"] as const;
 
 describe("feedbackVariants", () => {
 	test("the shell paints the muted band and is tighter than a dialog's p-5", () => {
@@ -46,6 +49,12 @@ describe("feedbackVariants", () => {
 		expect(panel).toContain("border");
 		expect(panel).toContain("border-border");
 		expect(panel).toMatch(/\bp-\d/);
+	});
+
+	test("the clip hides the well's overflow mid-resize and shares its corner", () => {
+		const clip = feedbackVariants().clip();
+		expect(clip).toContain("overflow-hidden");
+		expect(clip).toContain("rounded-md");
 	});
 
 	test("the title reserves clearance for the close glyph and carries no type of its own", () => {
@@ -153,5 +162,24 @@ describe("resolveFeedbackFieldMinHeight", () => {
 	test("falls back to the default on a number that is not one", () => {
 		expect(resolveFeedbackFieldMinHeight(Number.NaN, 24)).toBe(144);
 		expect(resolveFeedbackFieldMinHeight(Number.POSITIVE_INFINITY, 24)).toBe(144);
+	});
+});
+
+describe("resolveFeedbackFieldHeightStyle", () => {
+	test("floors at minRows and caps at maxRows", () => {
+		expect(FEEDBACK_DEFAULT_MAX_ROWS).toBe(12);
+		expect(resolveFeedbackFieldHeightStyle({})).toEqual({ maxHeight: 288, minHeight: 144 });
+		expect(resolveFeedbackFieldHeightStyle({ maxRows: 4, minRows: 2 })).toEqual({ maxHeight: 96, minHeight: 48 });
+	});
+
+	test("lifts a ceiling below the floor up to it, so the field never shrinks as it grows", () => {
+		expect(resolveFeedbackFieldHeightStyle({ maxRows: 2, minRows: 6 })).toEqual({ maxHeight: 144, minHeight: 144 });
+	});
+});
+
+describe("FEEDBACK_PANEL_RESIZE_MS", () => {
+	test("is short and finite, so a step change settles before the next tap", () => {
+		expect(FEEDBACK_PANEL_RESIZE_MS).toBeGreaterThan(0);
+		expect(FEEDBACK_PANEL_RESIZE_MS).toBeLessThanOrEqual(250);
 	});
 });

@@ -67,6 +67,7 @@
 		"./surface": "./src/components/surface/index.ts",
 		"./switch": "./src/components/switch/index.ts",
 		"./tabs": "./src/components/tabs/index.ts",
+		"./tag-input": "./src/components/tag-input/index.ts",
 		"./text": "./src/components/text/index.ts",
 		"./textarea": "./src/components/textarea/index.ts",
 		"./toggle-button": "./src/components/toggle-button/index.ts",

@@ -1,0 +1,171 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "dialog",
+	"type": "registry:ui",
+	"title": "Dialog",
+	"description": "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"cn",
+		"compose-refs",
+		"icon",
+		"icons",
+		"overlay",
+		"pressable",
+		"slot",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-teleport"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/dialog/AGENTS.md",
+			"target": "dialog/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/dialog",
+					"to": "@registry/ui/dialog"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-body.tsx",
+			"target": "dialog/dialog-body.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-close.tsx",
+			"target": "dialog/dialog-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-content.tsx",
+			"target": "dialog/dialog-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-description.tsx",
+			"target": "dialog/dialog-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-footer.tsx",
+			"target": "dialog/dialog-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-header.tsx",
+			"target": "dialog/dialog-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-title.tsx",
+			"target": "dialog/dialog-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog-trigger.tsx",
+			"target": "dialog/dialog-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog.context.tsx",
+			"target": "dialog/dialog.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog.tsx",
+			"target": "dialog/dialog.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/dialog.variants.ts",
+			"target": "dialog/dialog.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/dialog/index.ts",
+			"target": "dialog/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

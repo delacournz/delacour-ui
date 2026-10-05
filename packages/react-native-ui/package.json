@@ -48,6 +48,7 @@
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",
+		"./image-viewer": "./src/components/image-viewer/index.ts",
 		"./input": "./src/components/input/index.ts",
 		"./item": "./src/components/item/index.ts",
 		"./kpi": "./src/components/kpi/index.ts",

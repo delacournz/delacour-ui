@@ -39,6 +39,7 @@ import {
 	IconTag,
 	IconToggle,
 	IconTrending4,
+	IconWindow,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
@@ -70,6 +71,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"empty-state": IconInboxEmpty,
 	chart: IconChart1,
 	collapsible: IconArrowExpandVer,
+	dialog: IconWindow,
 	chip: IconFilter1,
 	field: IconParagraph,
 	icon: IconStar,

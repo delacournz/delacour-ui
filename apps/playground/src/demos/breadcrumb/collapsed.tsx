@@ -7,7 +7,6 @@ export const meta: DemoMeta = {
 	title: "Collapsed",
 	caption:
 		"Past `maxItems` the middle of the trail folds into an ellipsis. `itemsBeforeCollapse` and `itemsAfterCollapse` choose how much of each end stays.",
-	capture: {},
 };
 
 const TRAIL = ["Home", "Documents", "Work", "Clients", "Northwind", "Invoices", "2026"] as const;

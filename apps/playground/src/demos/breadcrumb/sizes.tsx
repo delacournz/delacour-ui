@@ -7,7 +7,6 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes",
 	caption: "`sm` sets the labels on the caption step and `md` on the body step; the chevrons follow.",
-	capture: {},
 };
 
 const LABELS: Record<BreadcrumbSize, string> = {

@@ -6,7 +6,6 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Every crumb before the last goes back to that level; the last is the current page, in plain text. The list puts a chevron between each pair.",
-	capture: { hero: true },
 };
 
 export function Demo(): ReactElement {

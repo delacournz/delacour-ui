@@ -153,7 +153,10 @@ describe("tones", () => {
 	test("primary fills the selected day; secondary softens it", () => {
 		expect(calendarVariants({ variant: "primary", tone: "selected" }).dayBase()).toContain("bg-primary");
 		expect(calendarVariants({ variant: "primary", tone: "selected" }).dayLabel()).toContain("text-primary-foreground");
-		expect(calendarVariants({ variant: "secondary", tone: "selected" }).dayBase()).toContain("bg-secondary");
+		const soft = calendarVariants({ variant: "secondary", tone: "selected" });
+		expect(soft.dayBase()).toContain("bg-primary/25");
+		expect(soft.dayLabel()).toContain("text-foreground");
+		expect(calendarVariants({ variant: "secondary", rangeRole: "middle" }).band()).toContain("bg-primary/10");
 	});
 
 	test("the primary band is a tint of the selection colour, not the near-page accent", () => {

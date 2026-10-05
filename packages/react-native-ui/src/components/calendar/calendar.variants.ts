@@ -168,13 +168,13 @@ export const calendarVariants = tv({
 			variant: "secondary",
 			tone: "selected",
 			class: {
-				dayBase: "bg-secondary",
-				dayLabel: "text-secondary-foreground",
-				pickerItem: "bg-secondary",
-				pickerItemLabel: "text-secondary-foreground",
+				dayBase: "bg-primary/25",
+				dayLabel: "text-foreground",
+				pickerItem: "bg-primary/25",
+				pickerItemLabel: "text-foreground",
 			},
 		},
-		{ variant: "secondary", class: { band: "bg-muted" } },
+		{ variant: "secondary", class: { band: "bg-primary/10" } },
 		{ variant: "secondary", tone: "band", class: { dayLabel: "text-foreground" } },
 		{
 			isInvalid: true,

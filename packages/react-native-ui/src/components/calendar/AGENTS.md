@@ -85,10 +85,12 @@ sheets.
 - **Today is a ring (`border-ring`) and `text-primary`, never a fill**, so it cannot be mistaken
   for a selection.
 - **Variant:** `primary` fills `bg-primary`, band `bg-primary/15`; `secondary` fills
-  `bg-secondary`, band `bg-muted`. The primary band is a tint of the selection colour, not
+  `bg-primary/25` under `text-foreground`, band `bg-primary/10`. The primary band is a tint of the selection colour, not
   `bg-accent`: light `--accent` is 0.97 on a 0.985 page, so the band all but vanished in light
   while reading fine in dark. A tint of `primary` reads in both themes and joins the end caps
-  as one shape. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
+  as one shape. `secondary` is tinted from `primary` for the same reason — `bg-secondary`
+  and `bg-muted` are 0.97 on the same 0.985 page, and the recorded preview showed a soft
+  selection with no visible circle at all. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
 - **Colour is on the text slots only** (rule 1): `dayLabel`, `weekdayLabel`, `captionText`,
   `pickerItemLabel`. A test holds every `View` slot to carrying no `text-*` colour.
 - **Custom day content** gets `labelClassName` in its render props, so a price under the number

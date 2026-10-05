@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on grid-item/interactive and has
+  settled — four tiles in two columns, the camera tile disabled. The capture
+  script navigates there before running this.
+steps:
+  - echo: Pressing each live tile in turn, so the scale and the state change read
+  - tap: { id: tile-lock }
+  - wait: 500
+  - tap: { id: tile-bell }
+  - wait: 500
+  - long-press: { on: { id: tile-lights }, duration: 400 }
+  - wait: 300
+  - tap: { id: tile-camera }

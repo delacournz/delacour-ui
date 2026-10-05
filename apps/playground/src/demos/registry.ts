@@ -193,6 +193,12 @@ import * as demo_field_states_disabled from "./field/states/disabled";
 import * as demo_field_states_live from "./field/states/live";
 import * as demo_field_states_one_flag_three_things from "./field/states/one-flag-three-things";
 import * as demo_field_states_through_an_input_group from "./field/states/through-an-input-group";
+import * as demo_grid_item_backgrounds from "./grid-item/backgrounds";
+import * as demo_grid_item_dashboard from "./grid-item/dashboard";
+import * as demo_grid_item_interactive from "./grid-item/interactive";
+import * as demo_grid_item_quick_actions from "./grid-item/quick-actions";
+import * as demo_grid_item_row_sizing from "./grid-item/row-sizing";
+import * as demo_grid_item_variants from "./grid-item/variants";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -559,6 +565,12 @@ export const DEMOS = {
 	"field/states/live": demo_field_states_live,
 	"field/states/one-flag-three-things": demo_field_states_one_flag_three_things,
 	"field/states/through-an-input-group": demo_field_states_through_an_input_group,
+	"grid-item/backgrounds": demo_grid_item_backgrounds,
+	"grid-item/dashboard": demo_grid_item_dashboard,
+	"grid-item/interactive": demo_grid_item_interactive,
+	"grid-item/quick-actions": demo_grid_item_quick_actions,
+	"grid-item/row-sizing": demo_grid_item_row_sizing,
+	"grid-item/variants": demo_grid_item_variants,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,

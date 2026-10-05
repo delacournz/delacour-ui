@@ -10,6 +10,7 @@ import {
 	IconBulletList,
 	IconChart1,
 	IconChevronGrabberVertical,
+	IconCircleHalfFill,
 	IconCircleRecord,
 	IconCursorClick,
 	IconDiamond,
@@ -94,6 +95,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
 	textarea: IconNoteText,
+	"theme-selector": IconCircleHalfFill,
 	"toggle-button": IconBold,
 };
 

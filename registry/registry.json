@@ -1469,6 +1469,41 @@
 			]
 		},
 		{
+			"name": "theme-selector",
+			"type": "registry:ui",
+			"title": "Theme Selector",
+			"description": "System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"field",
+				"icon",
+				"icons",
+				"pressable",
+				"toggle-button",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/theme-selector/AGENTS.md",
+				"ui/theme-selector/index.ts",
+				"ui/theme-selector/theme-selector-option.tsx",
+				"ui/theme-selector/theme-selector.context.tsx",
+				"ui/theme-selector/theme-selector.logic.ts",
+				"ui/theme-selector/theme-selector.tsx",
+				"ui/theme-selector/theme-selector.types.ts",
+				"ui/theme-selector/theme-selector.variants.ts",
+				"ui/theme-selector/use-theme-selection.ts"
+			]
+		},
+		{
 			"name": "toggle-button",
 			"type": "registry:ui",
 			"title": "Toggle Button",

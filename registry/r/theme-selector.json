@@ -1,0 +1,116 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "theme-selector",
+	"type": "registry:ui",
+	"title": "Theme Selector",
+	"description": "System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"field",
+		"icon",
+		"icons",
+		"pressable",
+		"toggle-button",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/AGENTS.md",
+			"target": "theme-selector/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/theme-selector",
+					"to": "@registry/ui/theme-selector"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/index.ts",
+			"target": "theme-selector/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector-option.tsx",
+			"target": "theme-selector/theme-selector-option.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.context.tsx",
+			"target": "theme-selector/theme-selector.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.logic.ts",
+			"target": "theme-selector/theme-selector.logic.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.tsx",
+			"target": "theme-selector/theme-selector.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.types.ts",
+			"target": "theme-selector/theme-selector.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/theme-selector.variants.ts",
+			"target": "theme-selector/theme-selector.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../toggle-button/toggle-button.variants",
+					"to": "@registry/ui/toggle-button/toggle-button.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/theme-selector/use-theme-selection.ts",
+			"target": "theme-selector/use-theme-selection.ts",
+			"namespace": "ui"
+		}
+	]
+}

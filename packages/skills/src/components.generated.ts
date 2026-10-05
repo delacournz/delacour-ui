@@ -45,5 +45,6 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },
+	{ name: "theme-selector", title: "Theme Selector", description: "System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency." },
 	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },
 ];

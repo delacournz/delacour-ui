@@ -19,6 +19,7 @@
 		"switch",
 		"slider",
 		"rating",
+		"theme-selector",
 		"---Data Display---",
 		"text",
 		"chart",

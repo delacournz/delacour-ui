@@ -1,0 +1,142 @@
+---
+title: Leaderboard
+description: Ranked people or teams with ties, the top three on a podium, and the highlighted entry pinned below the cut.
+icon: Trophy
+---
+
+## Installation
+
+<ComponentInstall name="leaderboard" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Leaderboard, type LeaderboardEntry } from "@/components/ui/leaderboard";
+import { View } from "react-native";
+
+const ENTRIES: readonly LeaderboardEntry[] = [
+  { id: "tama", name: "Tama", value: 980 },
+  { id: "aroha", name: "Aroha", value: 1240 },
+  { id: "mere", name: "Mere", value: 1105 },
+  { id: "nikau", name: "Nikau", value: 860 },
+  { id: "kiri", name: "Kiri", value: 815 },
+];
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Leaderboard data={ENTRIES} highlightId="nikau" unit="points" />
+    </View>
+  );
+}
+```
+
+## Ranking and ties
+
+Pass entries in any order: the board sorts them stably and ranks them `1, 2, 2, 4`, with tied entries kept in the order given.
+
+```tsx
+<Leaderboard data={entries} unit="points" />
+<Leaderboard data={laps} formatValue={formatLapTime} order="asc" unit="seconds" />
+```
+
+## Podium
+
+`bars` grow on mount, third to first; `cards` lift the leader. Both need three entries on show, and fall back to rows without them.
+
+```tsx
+<Leaderboard data={entries} podium="bars" />
+<Leaderboard data={entries} podium="cards" />
+<Leaderboard data={entries} podium="none" />
+```
+
+## Podium scale
+
+`value` sizes each bar to its score, floored at 35% of `podiumHeight`; `rank` fixes them at 100, 75 and 55%, and `order="asc"` always uses it.
+
+```tsx
+<Leaderboard data={entries} podiumHeight={160} podiumScale="rank" />
+```
+
+## Limit and pinning
+
+`limit` cuts the board, and a highlighted entry below the cut is pinned after a gap with its true rank.
+
+```tsx
+<Leaderboard data={entries} highlightId={me} limit={5} unit="points" />
+```
+
+## Movement
+
+An entry's `change` draws ▲ or ▼ with the places moved, or a dash for none; the column only appears when some entry has one.
+
+```tsx
+<Leaderboard data={[{ id: "a", name: "Aroha", value: 1240, change: 3 }]} unit="points" />
+```
+
+## Custom media
+
+`renderMedia` puts an avatar or a flag beside each name, on the podium and in the rows.
+
+```tsx
+<Leaderboard data={entries} renderMedia={(entry) => <Avatar name={entry.name} size="sm" />} />
+```
+
+## Pressable
+
+`onPressEntry` makes every place a button, with a selection haptic.
+
+```tsx
+<Leaderboard data={entries} onPressEntry={(entry, rank) => open(entry.id, rank)} />
+```
+
+## Accessibility
+
+Each place and row is one element read as one sentence — "Rank 2, tied, Aroha, 1,240 points, up 3 places" — so pass `unit`.
+
+```tsx
+<Leaderboard data={entries} unit="steps" />
+```
+
+## API Reference
+
+### Leaderboard
+
+Extends `ViewProps`, without `children`.
+
+<TypeTable
+  type={{
+    data: {
+      type: "readonly LeaderboardEntry[]",
+      required: true,
+      description: "Everyone on the board, in any order.",
+    },
+    podium: { type: '"bars" | "cards" | "none"', default: '"bars"' },
+    order: { type: '"desc" | "asc"', default: '"desc"', description: "`asc` when less is better." },
+    podiumScale: {
+      type: '"value" | "rank"',
+      default: '"value"',
+      description: "What a bar's height says. Forced to `rank` when `order` is `asc`.",
+    },
+    podiumHeight: { type: "number", default: "132", description: "The tallest bar, in points." },
+    limit: { type: "number", description: "How many places to show, the podium included." },
+    highlightId: { type: "string", description: "The entry that is you — tinted, and pinned if cut." },
+    formatValue: { type: "(value: number) => string", description: "Defaults to the locale's grouping." },
+    unit: { type: "string", description: "Spoken after every value." },
+    renderMedia: { type: "(entry: LeaderboardEntry, rank: number) => ReactNode" },
+    onPressEntry: { type: "(entry: LeaderboardEntry, rank: number) => void" },
+    emptyText: { type: "string", default: '"No entries yet"' },
+  }}
+/>
+
+### LeaderboardEntry
+
+<TypeTable
+  type={{
+    id: { type: "string", required: true },
+    name: { type: "string", required: true },
+    value: { type: "number", required: true, description: "The score the board ranks by." },
+    change: { type: "number", description: "Places moved: positive climbed, negative fell." },
+    subtitle: { type: "string", description: "A second line under the name." },
+  }}
+/>

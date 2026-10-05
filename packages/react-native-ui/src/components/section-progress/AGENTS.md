@@ -107,6 +107,9 @@ rule keeps such a type in its consumer's file.
   panel has laid out). The panel is `accessibilityViewIsModal`, and `onAccessibilityEscape` closes it.
 - **Items are buttons, the active one `selected`.** The ring and the marker dots are hidden.
 - **Android back closes the panel** — a `BackHandler` subscription held only while it is open.
+- **The pill takes `${testID}-pill`** from the root's `testID`, through the context — it is internal,
+  so a test or a preview flow has no other way to name it. The closed capsule and the open panel's
+  edge row share the id; only one is mounted at a time, so one `tap` opens and the same `tap` closes.
 
 ## Colour
 

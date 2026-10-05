@@ -101,6 +101,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 		accessibilityLabel = "Sections",
 		children,
 		className,
+		testID,
 		...rest
 	} = props;
 
@@ -240,13 +241,26 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			color,
 			isOpen,
 			label,
+			pillTestID: testID === undefined ? undefined : `${testID}-pill`,
 			placement,
 			progress: ringProgress,
 			select,
 			setOpen,
 			value,
 		}),
-		[accessibilityLabel, accessibilityValue, color, isOpen, label, placement, ringProgress, select, setOpen, value]
+		[
+			accessibilityLabel,
+			accessibilityValue,
+			color,
+			isOpen,
+			label,
+			placement,
+			ringProgress,
+			select,
+			setOpen,
+			testID,
+			value,
+		]
 	);
 
 	const insets = useSafeAreaInsets();
@@ -254,7 +268,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 
 	return (
 		<SectionProgressProvider value={context}>
-			<View className={slots.root({ className })} pointerEvents="box-none" {...rest}>
+			<View className={slots.root({ className })} pointerEvents="box-none" testID={testID} {...rest}>
 				{isOpen ? (
 					<Pressable
 						accessibilityElementsHidden

@@ -25,6 +25,8 @@ export type SectionProgressContextValue = {
 	accessibilityValue: string;
 	/** The active item's view, so opening the panel can move screen-reader focus to it. */
 	activeItemRef: RefObject<ComponentRef<typeof Animated.View> | null>;
+	/** `${testID}-pill` when the root has a `testID` — the pill, closed or as the open panel's edge row. */
+	pillTestID: string | undefined;
 };
 
 const SectionProgressContext = createContext<SectionProgressContextValue | null>(null);

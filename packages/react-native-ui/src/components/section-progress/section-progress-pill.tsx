@@ -28,7 +28,7 @@ export type SectionProgressPillProps = {
  * VoiceOver reads it as "Sections, Pricing, 42 percent, button, collapsed".
  */
 export function SectionProgressPill({ isInPanel }: SectionProgressPillProps): ReactElement {
-	const { accessibilityLabel, accessibilityValue, isOpen, label, setOpen, value } =
+	const { accessibilityLabel, accessibilityValue, isOpen, label, pillTestID, setOpen, value } =
 		useSectionProgressPart("SectionProgress.Pill");
 	const { width } = useWindowDimensions();
 	const slots = sectionProgressVariants();
@@ -43,6 +43,7 @@ export function SectionProgressPill({ isInPanel }: SectionProgressPillProps): Re
 			className={isInPanel ? slots.pillRow() : slots.pill()}
 			feedback={isInPanel ? "fade" : "scale"}
 			onPress={toggle}
+			testID={pillTestID}
 		>
 			<SectionProgressRing />
 			<Animated.View

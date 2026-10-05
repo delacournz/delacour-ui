@@ -32,6 +32,14 @@ export const FLOW_DEFAULTS = {
 /** A handle's edge length in points — the `size-3` on its slot, which a test holds together. */
 export const FLOW_HANDLE_SIZE = 12;
 
+/**
+ * Half the node layer's edge, in points. The layer is laid out this far past the canvas on every
+ * side and the graph's origin sits at its centre, so every node is inside its parent's bounds and
+ * a touch on one is delivered — a node translated outside a zero-size parent draws, but on some
+ * platforms is never hit tested. An empty view this size allocates no backing store.
+ */
+export const FLOW_LAYER_EXTENT = 50000;
+
 /** How far past its box a handle still takes a touch. */
 export const FLOW_HANDLE_HIT_SLOP = 12;
 

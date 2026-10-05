@@ -4,6 +4,8 @@ description: Pick several things at once — a long press enters the mode — th
 icon: ListChecks
 ---
 
+<Preview id="selection-mode/inbox-mode" title={null} />
+
 ## Installation
 
 <ComponentInstall name="selection-mode" />
@@ -77,11 +79,15 @@ turns the mode on with the pressed item picked. From then on a press toggles, an
 `onPress` does not run. The header says the mode is on, counts the picks and offers the way out;
 the bar acts on what is picked.
 
+<Preview id="selection-mode/inbox-mode" />
+
 Closing the header, or calling `exit()`, clears an uncontrolled selection. A controlled `selected`
 is left alone — you may want a draft that survives leaving the mode.
 
 For an always-on picker, hold the mode on with `isActive` and show the marks from the start with
 `isIndicatorAlwaysShown`:
+
+<Preview id="selection-mode/share-picker" />
 
 ```tsx
 <SelectionMode className="flex-none" isActive defaultSelected={["oliver"]}>
@@ -128,6 +134,8 @@ list rather than shrinking it. So:
 `max` caps both a press and select-all. At the cap an unpicked item does not go on, but a picked one
 still comes off, and select-all reads "Deselect all" because there is nothing left for it to add.
 
+<Preview id="selection-mode/max-limit" />
+
 ```tsx
 <SelectionMode defaultActive max={3} values={toppings.map((t) => t.id)}>
   <SelectionMode.Header title="Toppings" />
@@ -158,6 +166,8 @@ while the mode is on. That is what a "Load more" row or a section header needs. 
 **The indicator is round on purpose.** A square box is a form control being filled in; a round one
 is a thing picked out of a set. [Checkbox](/docs/native/components/checkbox) stays square.
 
+<Preview id="selection-mode/swatch-grid" />
+
 ## Layouts
 
 `SelectionMode.Group` lays its items out three ways:
@@ -178,6 +188,8 @@ A stack is a card with hairlines between rows. A grid splits its measured width 
 lifts the actions into an inset rounded card. The bar is hidden while nothing is picked unless
 `isShownWhenEmpty`, and never shows with the mode off.
 
+<Preview id="selection-mode/floating-bar" />
+
 Each action's `onPress` is handed the selection as it stands at the press, so a handler never closes
 over a stale list. `isExitOnPress` leaves the mode afterwards — right for a delete, whose picks no
 longer exist.
@@ -187,6 +199,8 @@ longer exist.
 There is no sheet part, so the optional sheet engine is not forced on every consumer. Compose one:
 wrap the [BottomSheet](/docs/native/components/bottom-sheet) in `SelectionMode` — context reaches
 through the sheet's portal — and put the bar in the sheet's sticky footer.
+
+<Preview id="selection-mode/in-a-sheet" />
 
 ```tsx
 <SelectionMode className="flex-none" isActive values={channelIds}>
@@ -273,6 +287,8 @@ Renders only while the mode is on. Extends `ViewProps`.
   type={{
     title: { type: "string", default: '"Select"', description: "Leads the count when the root has `values`." },
     isSelectAllHidden: { type: "boolean", default: "false" },
+    closeTestID: { type: "string", description: "`testID` for the close control." },
+    selectAllTestID: { type: "string", description: "`testID` for the select-all control." },
     className: { type: "string" },
   }}
 />

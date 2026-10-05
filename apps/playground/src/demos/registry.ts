@@ -358,6 +358,7 @@ import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
 import * as demo_theme_selector_basic from "./theme-selector/basic";
 import * as demo_theme_selector_cards from "./theme-selector/cards";
+import * as demo_theme_selector_controlled from "./theme-selector/controlled";
 import * as demo_theme_selector_custom_labels_modes from "./theme-selector/custom-labels-modes";
 import * as demo_theme_selector_in_field from "./theme-selector/in-field";
 import * as demo_theme_selector_persisted from "./theme-selector/persisted";
@@ -730,6 +731,7 @@ export const DEMOS = {
 	"textarea/variants": demo_textarea_variants,
 	"theme-selector/basic": demo_theme_selector_basic,
 	"theme-selector/cards": demo_theme_selector_cards,
+	"theme-selector/controlled": demo_theme_selector_controlled,
 	"theme-selector/custom-labels-modes": demo_theme_selector_custom_labels_modes,
 	"theme-selector/in-field": demo_theme_selector_in_field,
 	"theme-selector/persisted": demo_theme_selector_persisted,

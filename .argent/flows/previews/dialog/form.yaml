@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on dialog/form and has settled — the Rename button with the dialog closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the form
+  - tap: { id: dialog-form-open }
+  - await: { visible: { id: dialog-form-input } }
+  - wait: 700
+  - echo: Focusing the field; the card lifts just clear of the keyboard
+  - tap: { id: dialog-form-input }
+  - wait: 900
+  - tool: keyboard
+    args: { text: " North", delayMs: 110 }
+  - wait: 800
+  - echo: Saving closes it and the keyboard with it
+  - tap: { id: dialog-form-save }
+  - await: { hidden: { id: dialog-form-input } }

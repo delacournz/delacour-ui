@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on dialog/alert-dialog and has settled — the Show terms button with the dialog
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the alert dialog
+  - tap: { id: dialog-alert-open }
+  - await: { visible: { text: Updated terms } }
+  - wait: 1200
+  - echo: Accepting — the only way out
+  - tap: { id: dialog-alert-accept }
+  - await: { hidden: { text: Updated terms } }

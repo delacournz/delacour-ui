@@ -1,0 +1,290 @@
+---
+title: Dialog
+description: A centred card over a dimmed app that asks for a decision or a short input — confirm a delete, rename a file, accept terms.
+icon: AppWindow
+---
+
+<Preview id="dialog/confirm" title={null} />
+
+## Installation
+
+<ComponentInstall name="dialog" />
+
+A dialog draws through the [overlay foundation](/docs/native/components/overlay), so mount
+`OverlayProvider` once at your app's root, inside `DelacourProvider` and around
+`BottomSheetProvider`. Without it the dialog draws inline and warns once in development.
+
+## Usage
+
+<Preview id="dialog/confirm" />
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Dialog>
+        <Dialog.Trigger asChild>
+          <Button variant="destructive">Delete project</Button>
+        </Dialog.Trigger>
+        <Dialog.Content>
+          <Dialog.Close />
+          <Dialog.Header>
+            <Dialog.Title>Delete project?</Dialog.Title>
+            <Dialog.Description>This cannot be undone.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Footer>
+            <Dialog.Close asChild>
+              <Button variant="secondary">Cancel</Button>
+            </Dialog.Close>
+            <Dialog.Close asChild>
+              <Button variant="destructive">Delete</Button>
+            </Dialog.Close>
+          </Dialog.Footer>
+        </Dialog.Content>
+      </Dialog>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Dialog>
+  <Dialog.Trigger />
+  <Dialog.Content>
+    <Dialog.Close />
+    <Dialog.Header>
+      <Dialog.Title />
+      <Dialog.Description />
+    </Dialog.Header>
+    <Dialog.Body />
+    <Dialog.Footer />
+  </Dialog.Content>
+</Dialog>
+```
+
+`Dialog.Content` renders nothing while the dialog is closed, and stays mounted through its exit
+animation. `Dialog.Close` without children is the ✕ in the card's corner; with `asChild` it turns
+any control into one that closes. `Dialog.Body` is optional — a confirmation is a header and a
+footer.
+
+Use a dialog when the user has to answer before going on. Use a `Popover` when the surrounding
+context must stay visible, and a [BottomSheet](/docs/native/components/bottom-sheet) when the
+content is long or scrolls.
+
+## Alert dialog
+
+`isDismissible={false}` turns off the ways out the user did not choose: the scrim still takes the
+touch but does nothing, Android back is ignored, the iOS escape gesture does nothing, and the card
+announces itself as an alert dialog. Its own actions still close it.
+
+<Preview id="dialog/alert-dialog" />
+
+```tsx
+<Dialog isDismissible={false}>
+  <Dialog.Trigger asChild>
+    <Button variant="outline">Show terms</Button>
+  </Dialog.Trigger>
+  <Dialog.Content size="sm">
+    <Dialog.Header>
+      <Dialog.Title>Updated terms</Dialog.Title>
+      <Dialog.Description>Review and accept the terms to keep working.</Dialog.Description>
+    </Dialog.Header>
+    <Dialog.Footer>
+      <Dialog.Close asChild>
+        <Button>Accept</Button>
+      </Dialog.Close>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog>
+```
+
+## A short form
+
+Put a field in `Dialog.Body`. When it takes focus the card lifts just far enough to keep its bottom
+edge 16pt above the keyboard — never so far that its top slides under the status bar — and settles
+back when the keyboard closes. `variant="panel"` sets the footer on a muted band that runs to the
+card's edges.
+
+<Preview id="dialog/form" />
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+const [name, setName] = useState("Harbour Bridge");
+
+<Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
+  <Dialog.Trigger asChild>
+    <Button variant="secondary">Rename</Button>
+  </Dialog.Trigger>
+  <Dialog.Content>
+    <Dialog.Close />
+    <Dialog.Header>
+      <Dialog.Title>Rename project</Dialog.Title>
+    </Dialog.Header>
+    <Dialog.Body>
+      <Field>
+        <Field.Label>Name</Field.Label>
+        <Input onChangeText={setName} value={name} />
+      </Field>
+    </Dialog.Body>
+    <Dialog.Footer variant="panel">
+      <Dialog.Close asChild>
+        <Button variant="secondary">Cancel</Button>
+      </Dialog.Close>
+      <Button onPress={() => setIsOpen(false)}>Save</Button>
+    </Dialog.Footer>
+  </Dialog.Content>
+</Dialog>;
+```
+
+## Sizes
+
+`size` caps the card's width: `sm` 320, `md` 400 (the default), `lg` 520, and `full`, which fills
+the screen gutter. The card is always full width up to its cap, so on a narrow phone the sizes
+look alike and only a wider screen tells them apart. An `sm` footer stacks its actions full width,
+in written order — write the primary action last and it sits last either way.
+
+<Preview id="dialog/sizes" />
+
+```tsx
+<Dialog.Content size="sm">…</Dialog.Content>
+<Dialog.Content size="md">…</Dialog.Content>
+<Dialog.Content size="lg">…</Dialog.Content>
+<Dialog.Content size="full">…</Dialog.Content>
+```
+
+## Controlled
+
+Pass `isOpen` and `onOpenChange` to own the state. A controlled dialog needs no `Dialog.Trigger` —
+any control can set it. `onOpenChange` fires once per change, whichever way it happened: the
+trigger, a close, the scrim, Android back or the escape gesture.
+
+```tsx
+const [isOpen, setIsOpen] = useState(false);
+
+<Button onPress={() => setIsOpen(true)}>Open</Button>
+<Dialog isOpen={isOpen} onOpenChange={setIsOpen}>
+  <Dialog.Content>…</Dialog.Content>
+</Dialog>;
+```
+
+`useDialog()` reads the enclosing dialog, so a custom child can close it without a setter threaded
+down:
+
+```tsx
+function SubmitButton() {
+  const { close } = useDialog();
+  return <Button onPress={async () => { await save(); close(); }}>Save</Button>;
+}
+```
+
+## Over a bottom sheet
+
+A dialog draws in the overlay foundation's `modal` band, above every bottom sheet and the
+navigator's header, so a dialog opened from inside a sheet appears over it, and Android back closes
+the dialog first. The reverse does not hold: a sheet opened from a dialog draws under it, so do not
+open a sheet from a dialog.
+
+<Preview id="dialog/over-sheet" />
+
+## Accessibility
+
+The card is modal to assistive technology — VoiceOver and TalkBack cannot move focus out of it —
+and announces itself as a `dialog`, or an `alertdialog` when it is not dismissible. On Android it is
+labelled by its title. Once the card has finished entering, focus moves to the title; once it has
+gone, focus returns to the trigger if it is still on screen. The iOS escape gesture (a two-finger
+Z) closes a dismissible dialog. The scrim is hidden from assistive technology. `Dialog.Close`
+without children is labelled `Close` and has 8pt of extra touch area around its glyph.
+
+Under Reduce Motion the card fades without growing or sliding.
+
+## API Reference
+
+### Dialog
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controls whether the dialog is open." },
+    defaultOpen: { type: "boolean", default: "false", description: "Whether an uncontrolled dialog starts open." },
+    onOpenChange: { type: "(isOpen: boolean) => void", description: "Called whenever the dialog opens or closes, from any path." },
+    isDismissible: {
+      type: "boolean",
+      default: "true",
+      description: "Whether a scrim tap, Android back and the iOS escape gesture close it. `false` makes an alert dialog.",
+    },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Dialog.Trigger
+
+Takes `Pressable`'s props. With `asChild` it hands its press to the single child — a `Button`, say —
+which then opens the dialog before running its own `onPress`.
+
+### Dialog.Content
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    size: { type: '"sm" | "md" | "lg" | "full"', default: '"md"', description: "The card's maximum width." },
+    className: { type: "string", description: "Classes for the card." },
+    scrimClassName: { type: "string", description: "Classes for the scrim behind it." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Dialog.Close
+
+Takes `Pressable`'s props. Without children it is the corner ✕; with `asChild` it hands its press to
+the single child. Either way it closes the dialog, then calls your `onPress`.
+
+<TypeTable
+  type={{
+    asChild: { type: "boolean", default: "false", description: "Close through the single child instead of drawing the ✕." },
+    accessibilityLabel: { type: "string", default: '"Close"', description: "The ✕'s label." },
+  }}
+/>
+
+### Dialog.Header, Dialog.Body
+
+Take React Native's `ViewProps` and `className`.
+
+### Dialog.Title, Dialog.Description
+
+Take `Text`'s props. The title is a `Text.Header`, the description a muted `Text.Paragraph`.
+
+### Dialog.Footer
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    variant: {
+      type: '"plain" | "panel"',
+      default: '"plain"',
+      description: "`plain` sits inside the card's padding; `panel` runs to its edges on a muted band.",
+    },
+    className: { type: "string" },
+  }}
+/>
+
+### useDialog
+
+Reads the enclosing dialog. Throws outside a `Dialog`.
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean" },
+    setOpen: { type: "(isOpen: boolean) => void" },
+    close: { type: "() => void", description: "Closes the dialog, as `Dialog.Close` does." },
+    isDismissible: { type: "boolean" },
+    titleId: { type: "string", description: "The title's `nativeID`." },
+    descriptionId: { type: "string", description: "The description's `nativeID`." },
+  }}
+/>

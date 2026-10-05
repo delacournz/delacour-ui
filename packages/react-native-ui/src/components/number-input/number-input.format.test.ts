@@ -4,6 +4,7 @@ import {
 	countDecimals,
 	formatNumber,
 	getNumberSeparators,
+	isDraftOutOfRange,
 	isOutOfRange,
 	NUMBER_INPUT_FAST_TICK,
 	NUMBER_INPUT_LARGE_STEP_TICK,
@@ -435,6 +436,20 @@ describe("isOutOfRange", () => {
 		expect(isOutOfRange(11, 0, 10)).toBe(true);
 		expect(isOutOfRange(-1, 0, 10)).toBe(true);
 		expect(isOutOfRange(5, 0, 10)).toBe(false);
+	});
+});
+
+describe("isDraftOutOfRange", () => {
+	test("reads the number a draft spells, partial or whole", () => {
+		expect(isDraftOutOfRange("40", "en", 0, 10)).toBe(true);
+		expect(isDraftOutOfRange("40.", "en", 0, 10)).toBe(true);
+		expect(isDraftOutOfRange("4", "en", 0, 10)).toBe(false);
+	});
+
+	test("text that spells no number is not out of range", () => {
+		expect(isDraftOutOfRange("-", "en", 0, 10)).toBe(false);
+		expect(isDraftOutOfRange("", "en", 0, 10)).toBe(false);
+		expect(isDraftOutOfRange(null, "en", 0, 10)).toBe(false);
 	});
 });
 

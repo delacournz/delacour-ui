@@ -41,7 +41,10 @@ export const NUMBER_INPUT_STEPPER_PRESSED_OPACITY = 0.5;
  */
 export const numberInputVariants = tv({
 	slots: {
+		/** The stepper's square — its width, its separator. Worn by the decorator it sits in. */
 		stepper: "items-center justify-center self-stretch border-border",
+		/** The pressable surface inside the square, filling it, so the press fade leaves the separator alone. */
+		stepperTarget: "flex-1 items-center justify-center self-stretch",
 		/** Edge length of the stepper's glyph. */
 		stepperIcon: "",
 	},

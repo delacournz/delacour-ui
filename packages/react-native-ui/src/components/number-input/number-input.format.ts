@@ -443,6 +443,19 @@ export function isOutOfRange(value: NumberInputValue, min: number, max: number):
 	return value !== null && (value < min || value > max);
 }
 
+/**
+ * Whether the number a draft already spells sits outside the bounds — what
+ * `validate` mode flags while the person is still typing. Text that spells no
+ * number yet is never out of range.
+ */
+export function isDraftOutOfRange(draft: string | null, locale: string | undefined, min: number, max: number): boolean {
+	if (draft === null) return false;
+	const parsed = parseNumberInput(draft, locale);
+	if (parsed.kind === "number") return isOutOfRange(parsed.value, min, max);
+	if (parsed.kind === "partial") return isOutOfRange(parsed.value, min, max);
+	return false;
+}
+
 /** The soft keyboard a number input asks for. */
 export type NumberInputKeyboard =
 	| { inputMode: "numeric" | "decimal"; keyboardType?: never }

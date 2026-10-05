@@ -15,15 +15,22 @@ import {
 const RAW_PALETTE = /\b(bg|text|border)-(slate|gray|zinc|neutral|stone|red|orange|amber|blue|green|black|white)\b/;
 
 describe("the stepper slot", () => {
-	test.each(INPUT_SIZES)("at %p is as wide as the box is tall", (size) => {
-		const cls = numberInputVariants({ size }).stepper();
-		expect(cls).toContain(`w-input-${size}`);
-		expect(cls).toContain("self-stretch");
+	test("is as wide as the box is tall, at every size", () => {
+		for (const size of INPUT_SIZES) {
+			const cls = numberInputVariants({ size }).stepper();
+			expect(cls).toContain(`w-input-${size}`);
+			expect(cls).toContain("self-stretch");
+		}
 	});
 
 	test("draws its separator on the field side", () => {
 		expect(numberInputVariants({ position: "start" }).stepper()).toContain("border-e");
 		expect(numberInputVariants({ position: "end" }).stepper()).toContain("border-s");
+	});
+
+	test("the target fills the square", () => {
+		expect(numberInputVariants().stepperTarget()).toContain("flex-1");
+		expect(numberInputVariants().stepperTarget()).toContain("self-stretch");
 	});
 
 	test("names no raw palette colour", () => {
@@ -33,6 +40,7 @@ describe("the stepper slot", () => {
 					const slots = numberInputVariants({ isDisabled, position, size });
 					expect(slots.stepper()).not.toMatch(RAW_PALETTE);
 					expect(slots.stepperIcon()).not.toMatch(RAW_PALETTE);
+					expect(slots.stepperTarget()).not.toMatch(RAW_PALETTE);
 				}
 			}
 		}

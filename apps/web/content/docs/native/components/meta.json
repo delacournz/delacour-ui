@@ -40,6 +40,7 @@
 		"empty-state",
 		"---Overlays---",
 		"bottom-sheet",
+		"toast",
 		"---Navigation---",
 		"steps",
 		"tabs",

@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on page-header/profile and has settled — the cover photo, the avatar, "Follow"
+  in the primary fill and 1.2K Followers. The capture script navigates there before running this.
+steps:
+  - echo: Follow — the button steps down to "Following" and the count ticks over
+  - tap: { id: page-header-profile-follow }
+  - wait: 1200
+  - echo: And unfollow, so the clip loops without a jump cut
+  - tap: { id: page-header-profile-follow }
+  - wait: 600

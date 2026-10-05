@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Card in a list",
 	caption:
 		'`variant="card"` is a clipped `Surface`: the cover is cut by its corner, the ring matches the card instead of the page, and nothing reaches under the status bar. A column of them is a list of people.',
+	capture: { align: "stretch" },
 };
 
 const PEOPLE = [

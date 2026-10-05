@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Gradient cover",
 	caption:
 		'With no picture the cover is a gradient — `primary` fading into the page by default, or two to four colours of your own. The rosette is drawn by `isVerified`, which also appends ", verified" to the avatar\'s spoken label.',
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

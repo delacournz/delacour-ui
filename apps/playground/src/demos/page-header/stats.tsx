@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	title: "Stats",
 	caption:
 		"`stacked` puts each value over its label in equal-width cells, so the middle stat stays under the title however wide the labels are. `inline` runs them together and wraps. `isDivided` adds hairlines, hidden from screen readers.",
+	capture: { align: "stretch" },
 };
 
 const LABELS: Record<PageHeaderStatsLayout, string> = {

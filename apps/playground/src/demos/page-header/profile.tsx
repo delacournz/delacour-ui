@@ -9,11 +9,11 @@ export const meta: DemoMeta = {
 	title: "Profile",
 	caption:
 		"Every part at once: a cover photo, a face lifted over its edge and ringed in the page colour, a title block, actions and a strip of stats. Compacted numbers are read in full — `1.2K` is announced as 1,234 Followers.",
+	capture: { align: "stretch", flow: "page-header/profile" },
 };
 
 export function Demo(): ReactElement {
 	const [isFollowing, setFollowing] = useState(false);
-	const [opened, setOpened] = useState<string | null>(null);
 
 	return (
 		<PageHeader testID="page-header-profile">
@@ -50,10 +50,10 @@ export function Demo(): ReactElement {
 			</PageHeader.Actions>
 			<PageHeader.Stats isDivided>
 				<PageHeader.Stat
-					label={opened === "followers" ? "Opened" : "Followers"}
-					onPress={() => setOpened("followers")}
+					label="Followers"
+					onPress={() => {}}
 					testID="page-header-profile-followers"
-					value={1234}
+					value={isFollowing ? 1235 : 1234}
 				/>
 				<PageHeader.Stat label="Posts" testID="page-header-profile-posts" value={87} />
 				<PageHeader.Stat label="Following" testID="page-header-profile-following" value={312} />

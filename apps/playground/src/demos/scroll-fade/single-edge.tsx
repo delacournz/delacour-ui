@@ -10,6 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "One edge",
 	caption: '`edges="end"` fades only where the terms run on into the button below them.',
+	capture: { align: "stretch", flow: "scroll-fade/single-edge" },
 };
 
 const CLAUSES = [
@@ -27,7 +28,13 @@ export function Demo(): ReactElement {
 	return (
 		<View className="gap-4">
 			<ScrollFade edges="end" scrollSource={source}>
-				<Animated.ScrollView className="h-48" contentContainerClassName="gap-3" nestedScrollEnabled {...scrollProps}>
+				<Animated.ScrollView
+					className="h-48"
+					contentContainerClassName="gap-3"
+					nestedScrollEnabled
+					testID="scroll-fade-single-edge"
+					{...scrollProps}
+				>
 					{CLAUSES.map((clause) => (
 						<Text.Paragraph key={clause}>{clause}</Text.Paragraph>
 					))}

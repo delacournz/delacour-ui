@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Name the surface",
 	caption:
 		"The fade is a colour, not a mask. Each strip passes its own surface as `color`; leave it at the default `background` over a card and the edge reads as a grey band.",
+	capture: { align: "stretch" },
 };
 
 type Surface = "background" | "card" | "secondary";

@@ -46,6 +46,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "The Gesture API primitive every pressable in the library is built on.",
 	},
 	{
+		slug: "stack-card",
+		name: "StackCard",
+		group: "Actions",
+		blurb: "A deck taken one card at a time by throwing the top one off \u2014 one decision per card.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",

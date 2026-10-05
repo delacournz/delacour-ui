@@ -7,6 +7,7 @@
 		"---Actions---",
 		"button",
 		"pressable",
+		"stack-card",
 		"toggle-button",
 		"---Forms---",
 		"field",

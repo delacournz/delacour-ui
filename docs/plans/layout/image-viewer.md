@@ -293,3 +293,9 @@ Registry: `ITEM_META["image-viewer"] = { title: "Image Viewer", description: "A 
 - [ ] Trigger scrolled out of view then closing: fades instead of flying to an off-screen rect
 - [ ] Reduce Motion on: no flight, cross-fade only; VoiceOver: focus moves in/out, "n of m" announced, zoomIn/zoomOut actions work, close button reachable
 - [ ] Release build checked (not only dev) — the Release-only Accordion regression is the precedent
+
+## Implementation notes
+
+- The full-screen layer shipped as planned: an internal React Native `Modal` inside `ImageViewerLayer`, with its own `GestureHandlerRootView` and the outer safe-area insets re-supplied. Overlays' `Dialog` is not imported.
+- `VIEWER_LOAD_WAIT_MS` (250 ms) was added: the opening flight waits for the active page's thumbnail to decode, or for that long, because a remote thumbnail had not drawn when the spring started.
+- Previews are not captured yet (the capture tooling was not installed), so the demos carry no `capture` and the docs page opens at `## Installation`.

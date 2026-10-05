@@ -157,4 +157,19 @@ See the simulator notes at the end of this file for what was checked.
 
 ### Simulator notes
 
-SIMULATOR_NOTES
+Verified on an iOS 26 simulator (iPhone 17, dev client, Debug) through `agent-device`:
+
+- The gallery grid renders; a tap opens at the tapped image ("3 / 6") with a fitted frame and the chrome.
+- **The opening flight waits for the thumbnail to decode.** A remote thumbnail in the page's new
+  `Image` had not drawn when the spring started, so the flight ran invisibly and the photo popped in at
+  rest. The entrance now starts when the active page's base layer reports `onLoad` (or `onError`), or
+  after `VIEWER_LOAD_WAIT_MS` (250 ms), whichever is first. Reduce Motion and a missing origin skip the
+  wait. Recorded frame by frame: the photo grows out of its tile.
+- A sideways swipe pages ("4 / 6"); `fullSource` fades in over the thumbnail.
+- Double-tap zooms 2.5× about the tapped point and hides the chrome; a zoomed drag pans and does not
+  page; a second double-tap resets and brings the chrome back.
+- A 60 pt drag springs back; a 260 pt drag dismisses. Close and dismiss both fly back into the thumbnail.
+
+Not verified: Android, Reduce Motion, VoiceOver, a Release build, and the controlled and data-mode
+demos. No demo carries `capture` and the docs page has no `<Preview>`: the capture tooling was not
+installed when this landed, so `bun run previews` could not run. Add both together.

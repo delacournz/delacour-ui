@@ -19,6 +19,7 @@
 		"switch",
 		"slider",
 		"rating",
+		"otp-input",
 		"---Data Display---",
 		"text",
 		"chart",

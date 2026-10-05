@@ -1,0 +1,199 @@
+---
+title: OtpInput
+description: A one-time code or PIN — cells drawn over one hidden field, with autofill and paste.
+icon: KeyRound
+---
+
+## Installation
+
+<ComponentInstall name="otp-input" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { OtpInput } from "@/components/ui/otp-input";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <OtpInput groupSize={3} onComplete={(code) => console.log(code)} />
+    </View>
+  );
+}
+```
+
+## Autofill
+
+iOS offers the code from Messages on the QuickType bar and Android's autofill service offers it from
+an SMS, with nothing to configure in the app.
+
+<Callout>
+Neither kind of autofill can be exercised on a simulator. A paste can — the iOS Simulator's
+pasteboard follows the Mac's.
+</Callout>
+
+## Completion
+
+`onComplete` fires once when the last cell fills, with a `success` haptic and the keyboard dismissed.
+
+```tsx
+<OtpInput onComplete={verify} />
+<OtpInput blurOnComplete={false} haptic={false} onComplete={verify} />
+```
+
+## Pattern and keyboard
+
+`pattern` decides which characters a cell takes, and `"digits"` shows the number pad.
+
+```tsx
+<OtpInput length={6} pattern="digits" />
+<OtpInput length={8} pattern="alphanumeric" groupSize={4} />
+<OtpInput length={6} pattern={/[0-9A-F]/} />
+```
+
+## Groups and separators
+
+`groupSize` splits the row into runs of cells with a short rule between them.
+
+```tsx
+<OtpInput groupSize={3} />
+<OtpInput length={8} groupSize={4} />
+```
+
+Write the anatomy out for any other shape.
+
+
+```tsx
+<OtpInput length={8}>
+  <OtpInput.Group>
+    <OtpInput.Slot index={0} />
+    <OtpInput.Slot index={1} />
+    <OtpInput.Slot index={2} />
+  </OtpInput.Group>
+  <OtpInput.Separator />
+  <OtpInput.Group>
+    <OtpInput.Slot index={3} />
+    <OtpInput.Slot index={4} />
+  </OtpInput.Group>
+  <OtpInput.Separator />
+  <OtpInput.Group>
+    <OtpInput.Slot index={5} />
+    <OtpInput.Slot index={6} />
+    <OtpInput.Slot index={7} />
+  </OtpInput.Group>
+</OtpInput>
+```
+
+## Masking and placeholder
+
+`isMasked` draws `•` in filled cells without switching off autofill, and `placeholder` dims one character into each empty cell.
+
+```tsx
+<OtpInput isMasked length={4} size="lg" />
+<OtpInput placeholder="○" />
+```
+
+## Sizes and variants
+
+`Input`'s own axes, so a code field sits level with a text field beside it.
+
+```tsx
+<OtpInput size="sm" />
+<OtpInput size="md" />
+<OtpInput size="lg" />
+<OtpInput variant="secondary" />
+```
+
+## In a form
+
+A `Field` cascades `isInvalid` and `isDisabled`, and its label names and focuses the field.
+
+```tsx
+<Field isInvalid={isWrong}>
+  <Field.Label>Verification code</Field.Label>
+  <OtpInput groupSize={3} onComplete={verify} />
+  <Field.Error>That code is incorrect.</Field.Error>
+</Field>
+```
+
+## Imperative ref
+
+`ref` exposes `focus()`, `blur()` and `clear()`.
+
+```tsx
+const ref = useRef<OtpInputRef>(null);
+
+ref.current?.clear();
+ref.current?.focus();
+```
+
+## Accessibility
+
+The row is one element to a screen reader, read as "1 2 3" or, masked, "2 of 4 digits entered".
+
+```tsx
+<OtpInput accessibilityLabel="Card PIN" isMasked length={4} />
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `OtpInput` | Owns the value and the hidden field. With no children, draws the row from `length` and `groupSize` |
+| `OtpInput.Group` | A row of cells |
+| `OtpInput.Slot` | One cell — its character, the mask or the placeholder, and the caret while active |
+| `OtpInput.Separator` | A short rule between groups |
+
+### OtpInput
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Controlled code. Drawn sanitised." },
+    defaultValue: { type: "string", default: '""', description: "Starting code while uncontrolled." },
+    onValueChange: { type: "(value: string) => void", description: "Every change, already sanitised." },
+    onComplete: { type: "(value: string) => void", description: "Once per transition to a full code." },
+    length: { type: "number", default: "6", description: "How many cells. Clamped to 1..12." },
+    pattern: {
+      type: '"digits" | "alphanumeric" | "alphabetic" | RegExp',
+      default: '"digits"',
+      description: "Which characters a cell takes. A RegExp tests one character.",
+    },
+    groupSize: { type: "number", description: "Cells per group, with a separator between groups. Unset draws one group." },
+    autoCapitalize: { type: "boolean", description: "Uppercase letters as typed. On for every pattern but digits." },
+    isMasked: { type: "boolean", default: "false", description: "Draws • in filled cells. Visual only." },
+    placeholder: { type: "string", description: "One character drawn dimmed in each empty cell." },
+    autoFocus: { type: "boolean" },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    isInvalid: { type: "boolean", description: "Paints every cell destructive. Inherited from an enclosing Field." },
+    isDisabled: { type: "boolean", description: "Blocks editing and fades the row. Inherited from an enclosing Field." },
+    isReadOnly: { type: "boolean", default: "false", description: "Focusable and readable, but not editable." },
+    blurOnComplete: { type: "boolean", default: "true", description: "Dismisses the keyboard when the code completes." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"success"',
+      description: "Played once when the code completes.",
+    },
+    accessibilityLabel: { type: "string", description: 'Falls back to the Field label, then "Verification code".' },
+    testID: { type: "string", description: "Lands on the hidden TextInput." },
+    ref: { type: "Ref<OtpInputRef>", description: "focus(), blur() and clear()." },
+    children: { type: "ReactNode", description: "A custom anatomy of Group, Slot and Separator." },
+  }}
+/>
+
+### OtpInput.Slot
+
+<TypeTable
+  type={{
+    index: { type: "number", description: "Which character of the code this cell draws, from zero." },
+    className: { type: "string" },
+  }}
+/>
+
+### useOtpInput
+
+Reads the enclosing field's state — `value`, `length`, `isFocused`, `activeIndex`, the axes, and
+`slot(index)` for one cell's character, fill and caret — for a custom cell.

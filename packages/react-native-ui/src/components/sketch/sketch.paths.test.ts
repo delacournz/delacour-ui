@@ -63,7 +63,7 @@ describe("formatSketchNumber", () => {
 		expect(formatSketchNumber(1.005)).toBe("1");
 		expect(formatSketchNumber(1.5)).toBe("1.5");
 		expect(formatSketchNumber(1.256)).toBe("1.26");
-		expect(formatSketchNumber(-2.71828)).toBe("-2.72");
+		expect(formatSketchNumber(-3.456)).toBe("-3.46");
 	});
 
 	test("negative zero and non-finite numbers write as 0", () => {

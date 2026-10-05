@@ -144,10 +144,10 @@ describe("colour", () => {
 	});
 
 	test("the indicator is quieter than the label until the row is selected", () => {
-		expect(resolveTreeIndicatorForeground({ isSelected: false })).not.toBe(
-			resolveTreeForeground({ isSelected: false })
-		);
-		expect(resolveTreeIndicatorForeground({ isSelected: true })).toBe(resolveTreeForeground({ isSelected: true }));
+		const indicator: string = resolveTreeIndicatorForeground({ isSelected: false });
+		const selectedIndicator: string = resolveTreeIndicatorForeground({ isSelected: true });
+		expect(indicator).not.toBe(resolveTreeForeground({ isSelected: false }));
+		expect(selectedIndicator).toBe(resolveTreeForeground({ isSelected: true }));
 	});
 
 	test("every token handed to a glyph is one theme.css declares", () => {
@@ -172,7 +172,7 @@ describe("toggleExpanded", () => {
 		{ expanded: ["a", "b"], value: "b", next: ["a"] },
 		{ expanded: ["a"], value: "b", next: ["a", "b"] },
 	])("$expanded toggling $value → $next", ({ expanded, value, next }) => {
-		expect(toggleExpanded(expanded, value)).toEqual(next);
+		expect(toggleExpanded(expanded, value)).toEqual([...next]);
 	});
 
 	test("returns a new array and leaves the input alone", () => {

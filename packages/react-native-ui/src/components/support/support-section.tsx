@@ -9,7 +9,13 @@ import { supportVariants } from "./support.variants";
  * `Support.Conversations`, `Support.Articles` and `Support.Topics` share, so none of them restates
  * the title markup. Internal: not on the compound surface.
  */
-export function SupportSection({ title, description, className, children, ...props }: SupportSectionProps): ReactElement {
+export function SupportSection({
+	title,
+	description,
+	className,
+	children,
+	...props
+}: SupportSectionProps): ReactElement {
 	const slots = supportVariants();
 	const hasHeader = Boolean(title) || Boolean(description);
 

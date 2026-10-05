@@ -40,6 +40,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
+	{ name: "support", title: "Support", description: "A help section: availability, channels, topics, past requests and the furniture around a support thread." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },

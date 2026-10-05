@@ -27,7 +27,13 @@ const SupportTopicsContext = createContext<SupportTopicsContextValue | null>(nul
  * Lives in its own module, importing nothing but types, so a part can read it without importing
  * `./support` and closing a cycle through the root. See AGENTS.md rule 3.
  */
-export function SupportProvider({ value, children }: { value: SupportContextValue; children: ReactNode }): ReactElement {
+export function SupportProvider({
+	value,
+	children,
+}: {
+	value: SupportContextValue;
+	children: ReactNode;
+}): ReactElement {
 	return <SupportContext value={value}>{children}</SupportContext>;
 }
 SupportProvider.displayName = "DelacourUI.Support.Provider";

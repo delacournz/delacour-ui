@@ -289,6 +289,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",
 		categories: ["forms"],
 	},
+	timeline: {
+		title: "Timeline",
+		description:
+			"Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories.",
+		categories: ["display"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

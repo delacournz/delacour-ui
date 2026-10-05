@@ -1469,6 +1469,56 @@
 			]
 		},
 		{
+			"name": "timeline",
+			"type": "registry:ui",
+			"title": "Timeline",
+			"description": "Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/timeline/AGENTS.md",
+				"ui/timeline/index.ts",
+				"ui/timeline/timeline-aside.tsx",
+				"ui/timeline/timeline-content.tsx",
+				"ui/timeline/timeline-date.tsx",
+				"ui/timeline/timeline-description.tsx",
+				"ui/timeline/timeline-header.tsx",
+				"ui/timeline/timeline-indicator.tsx",
+				"ui/timeline/timeline-item.tsx",
+				"ui/timeline/timeline-list.tsx",
+				"ui/timeline/timeline-masthead.tsx",
+				"ui/timeline/timeline-meta.tsx",
+				"ui/timeline/timeline-stat.tsx",
+				"ui/timeline/timeline-stats.tsx",
+				"ui/timeline/timeline-title.tsx",
+				"ui/timeline/timeline-track.tsx",
+				"ui/timeline/timeline-trailing.tsx",
+				"ui/timeline/timeline.context.tsx",
+				"ui/timeline/timeline.tsx",
+				"ui/timeline/timeline.types.ts",
+				"ui/timeline/timeline.variants.ts",
+				"ui/timeline/use-timeline-reading-edge.ts"
+			]
+		},
+		{
 			"name": "toggle-button",
 			"type": "registry:ui",
 			"title": "Toggle Button",

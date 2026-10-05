@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A 0–10 scale is a wrapping row of numbered toggles with captions at each end — each read as “7 out of 10”. A multiline text question grows with its answer and counts against `maxLength`.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "questionnaire/text-and-scale" },
 };
 
 const QUESTIONS: readonly Question[] = [
@@ -32,7 +33,7 @@ const QUESTIONS: readonly Question[] = [
 
 export function Demo(): ReactElement {
 	return (
-		<Questionnaire defaultAnswers={{ recommend: { kind: "scale", value: 8 } }} questions={QUESTIONS}>
+		<Questionnaire defaultAnswers={{ recommend: { kind: "scale", value: 8 } }} questions={QUESTIONS} testID="nps">
 			<Questionnaire.Title>Quick feedback</Questionnaire.Title>
 			<Questionnaire.Question />
 			<Questionnaire.Footer />

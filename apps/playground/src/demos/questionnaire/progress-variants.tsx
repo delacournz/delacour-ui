@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	title: "Progress variants",
 	caption:
 		"`Questionnaire.Progress` draws a bar, a stepper or a plain count. All three read “Question 2 of 4” to a screen reader, and all three count only the questions currently visible.",
+	capture: { align: "stretch" },
 };
 
 const QUESTIONS: readonly Question[] = [

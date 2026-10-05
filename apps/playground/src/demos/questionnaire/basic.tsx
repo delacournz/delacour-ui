@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Three questions — one choice, several choices, a rating — and `onSubmit`. With no children the questionnaire lays out its progress bar, the question and a footer whose buttons hide where they do not apply.",
+	capture: { align: "stretch", flow: "questionnaire/basic", hero: true },
 };
 
 const QUESTIONS: readonly Question[] = [
@@ -44,7 +45,12 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-4">
-			<Questionnaire onSubmit={setSubmitted} questions={QUESTIONS} />
+			<Questionnaire
+				defaultAnswers={{ role: { kind: "single", value: "design" } }}
+				onSubmit={setSubmitted}
+				questions={QUESTIONS}
+				testID="survey"
+			/>
 			{submitted ? <Text.Code testID="questionnaire-submitted">{JSON.stringify(submitted, null, 2)}</Text.Code> : null}
 		</View>
 	);

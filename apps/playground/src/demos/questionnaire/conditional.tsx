@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Answer “No” and the follow-up disappears: the count drops, Next skips past it, its stale answer is dropped, and Back from the last question returns to the one you actually saw.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "questionnaire/conditional" },
 };
 
 const QUESTIONS: readonly Question[] = [
@@ -38,7 +39,7 @@ const QUESTIONS: readonly Question[] = [
 
 export function Demo(): ReactElement {
 	return (
-		<Questionnaire defaultAnswers={{ pets: { kind: "yesNo", value: "yes" } }} questions={QUESTIONS}>
+		<Questionnaire defaultAnswers={{ pets: { kind: "yesNo", value: "yes" } }} questions={QUESTIONS} testID="pets">
 			<Questionnaire.Progress variant="count" />
 			<Questionnaire.Question />
 			<Questionnaire.Footer />

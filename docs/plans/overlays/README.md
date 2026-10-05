@@ -11,13 +11,13 @@ agent holding only that file (and the repository) can build the component.
 | OVL-P1-DRAWER | Drawer | [drawer.md](drawer.md) | P1 | OVL-P0 |
 | OVL-P1-POPOVER | Popover | [popover.md](popover.md) | P1 | OVL-P0 |
 | OVL-P1-TOAST | Toast | [toast.md](toast.md) | P1 | OVL-P0, `alert` (merged) |
-| OVL-P2-FEEDBACK | Feedback | [feedback.md](feedback.md) | P2 | OVL-P1-DIALOG merged into the category branch |
-| OVL-P2-TOOLTIP | Tooltip | [tooltip.md](tooltip.md) | P2 | OVL-P1-POPOVER merged into the category branch |
+| OVL-P2-FEEDBACK | Feedback | [feedback.md](feedback.md) | P2 | OVL-P1-DIALOG (stacked on its branch) |
+| OVL-P2-TOOLTIP | Tooltip | [tooltip.md](tooltip.md) | P2 | OVL-P1-POPOVER (stacked on its branch) |
 
 ## Build order
 
 ```
-OVL-P0  overlay foundation (lead, in the category branch)
+OVL-P0  overlay foundation (feature/overlays-foundation)
    │
    ├── OVL-P1-DIALOG ──► OVL-P2-FEEDBACK
    ├── OVL-P1-POPOVER ─► OVL-P2-TOOLTIP
@@ -25,9 +25,8 @@ OVL-P0  overlay foundation (lead, in the category branch)
    └── OVL-P1-TOAST
 ```
 
-P1 children branch from the category branch once P0 is committed and run in parallel. A P2 child
-branches from the category branch **after** its P1 dependency has been merged into it — never from
-the P1 child's branch.
+P1 children branch from `feature/overlays-foundation`. A P2 child is stacked on its P1
+dependency's branch, and carries none of that component's code beyond what it inherits.
 
 ## Why a foundation phase
 
@@ -84,18 +83,19 @@ and `BottomSheet` are already in `develop`.
 
 ## Where each component lives
 
-Each component stays on its own child branch, branched from this one, so it can be reviewed and
-merged on its own. This branch holds only the specs and the shared foundation (OVL-P0).
+Each component stays on its own child branch so it can be reviewed and merged on its own, as its
+own pull request into `develop`. `feature/overlays-foundation` holds only the specs and the shared
+foundation (OVL-P0), and is the first to merge.
 
 | Branch | Holds | Stacked on |
 | --- | --- | --- |
-| `feature/cat-overlays` | specs + overlay foundation | `develop` |
-| `feature/overlays-dialog` | Dialog | `feature/cat-overlays` |
-| `feature/overlays-popover` | Popover | `feature/cat-overlays` |
-| `feature/overlays-drawer` | Drawer | `feature/cat-overlays` |
+| `feature/overlays-foundation` | specs + overlay foundation | `develop` |
+| `feature/overlays-dialog` | Dialog | `feature/overlays-foundation` |
+| `feature/overlays-popover` | Popover | `feature/overlays-foundation` |
+| `feature/overlays-drawer` | Drawer | `feature/overlays-foundation` |
+| `feature/overlays-toast` | Toast | `feature/overlays-foundation` |
 | `feature/overlays-feedback` | Feedback | `feature/overlays-dialog` |
 | `feature/overlays-tooltip` | Tooltip | `feature/overlays-popover` |
-| `feature/overlays-toast` | Toast | `feature/overlays-dialog` (its over-dialog demo) |
 
 Merge in stack order. Generated files (below) are regenerated on each branch, so whichever lands
 second regenerates them again.

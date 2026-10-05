@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Movement",
 	caption:
 		"`change` is the places moved since the last period. Up is drawn in the success tone, down in the destructive one, and no change as a dash.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const ENTRIES: readonly LeaderboardEntry[] = [

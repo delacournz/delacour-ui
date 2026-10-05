@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Cards",
 	caption: '`podium="cards"` sets the top three on cards instead, the leader lifted above the other two.',
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const ENTRIES: readonly LeaderboardEntry[] = [

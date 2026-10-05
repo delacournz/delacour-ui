@@ -6,7 +6,9 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Pressable",
-	caption: "`onPressEntry` makes every place a button, and hands back the entry and its rank.",
+	caption:
+		"`onPressEntry` makes every place a button, and hands back the entry and its rank. Tap the picked place again to clear it.",
+	capture: { align: "stretch", flow: "leaderboard/pressable", hero: true },
 };
 
 const ENTRIES: readonly LeaderboardEntry[] = [
@@ -18,18 +20,21 @@ const ENTRIES: readonly LeaderboardEntry[] = [
 ];
 
 export function Demo(): ReactElement {
-	const [picked, setPicked] = useState("Tap a place");
+	const [picked, setPicked] = useState<string | null>(null);
 
 	return (
 		<View className="gap-4">
 			<Leaderboard
 				data={ENTRIES}
-				onPressEntry={(entry, rank) => setPicked(`${entry.name}, rank ${rank}`)}
+				onPressEntry={(entry, rank) => {
+					const label = `${entry.name}, rank ${rank}`;
+					setPicked((current) => (current === label ? null : label));
+				}}
 				testID="leaderboard-pressable"
 				unit="points"
 			/>
 			<Text.Caption align="center" testID="leaderboard-pressable-picked">
-				{picked}
+				{picked ?? "Tap a place"}
 			</Text.Caption>
 		</View>
 	);

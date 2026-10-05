@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on leaderboard/pressable and has settled — a bars podium of
+  three, two rows under it, and "Tap a place" beneath the board. The capture script navigates there
+  before running this.
+steps:
+  - echo: Picking the leader, then second, then a row
+  - long-press: { on: { id: leaderboard-pressable-podium-place-1 }, duration: 200 }
+  - wait: 600
+  - long-press: { on: { id: leaderboard-pressable-podium-place-2 }, duration: 200 }
+  - wait: 600
+  - long-press: { on: { id: leaderboard-pressable-row-nikau }, duration: 200 }
+  - wait: 700
+  - echo: Tapping the picked row again clears it, so the clip loops without a jump cut
+  - long-press: { on: { id: leaderboard-pressable-row-nikau }, duration: 200 }

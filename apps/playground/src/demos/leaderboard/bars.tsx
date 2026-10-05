@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Bars",
 	caption:
 		"The top three stand on bars that grow on mount — third, second, then first — with each height proportional to the score. Everyone else is a row.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const ENTRIES: readonly LeaderboardEntry[] = [

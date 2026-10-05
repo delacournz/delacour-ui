@@ -1,0 +1,349 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "support",
+	"type": "registry:ui",
+	"title": "Support",
+	"description": "A help section: availability, channels, topics, past requests and the furniture around a support thread.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"badge",
+		"chip",
+		"icon",
+		"icons",
+		"item",
+		"list-group",
+		"pressable",
+		"separator",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/support/AGENTS.md",
+			"target": "support/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/support",
+					"to": "@registry/ui/support"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/index.ts",
+			"target": "support/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-agent.tsx",
+			"target": "support/support-agent.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-article.tsx",
+			"target": "support/support-article.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../item",
+					"to": "@registry/ui/item"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-articles.tsx",
+			"target": "support/support-articles.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group",
+					"to": "@registry/ui/list-group"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-channel.tsx",
+			"target": "support/support-channel.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../item",
+					"to": "@registry/ui/item"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-channels.tsx",
+			"target": "support/support-channels.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group",
+					"to": "@registry/ui/list-group"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-conversation.tsx",
+			"target": "support/support-conversation.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../badge",
+					"to": "@registry/ui/badge"
+				},
+				{
+					"from": "../item",
+					"to": "@registry/ui/item"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-conversations.tsx",
+			"target": "support/support-conversations.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group",
+					"to": "@registry/ui/list-group"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-handoff.tsx",
+			"target": "support/support-handoff.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-header.tsx",
+			"target": "support/support-header.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-note.tsx",
+			"target": "support/support-note.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-replies.tsx",
+			"target": "support/support-replies.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-reply.tsx",
+			"target": "support/support-reply.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../chip",
+					"to": "@registry/ui/chip"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-resolution.tsx",
+			"target": "support/support-resolution.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-section.tsx",
+			"target": "support/support-section.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-status.tsx",
+			"target": "support/support-status.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-ticket.tsx",
+			"target": "support/support-ticket.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../badge",
+					"to": "@registry/ui/badge"
+				},
+				{
+					"from": "../item",
+					"to": "@registry/ui/item"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-topic.tsx",
+			"target": "support/support-topic.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-topics.tsx",
+			"target": "support/support-topics.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support-typing.tsx",
+			"target": "support/support-typing.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.context.tsx",
+			"target": "support/support.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.tsx",
+			"target": "support/support.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.types.ts",
+			"target": "support/support.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.utils.ts",
+			"target": "support/support.utils.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.variants.ts",
+			"target": "support/support.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				}
+			]
+		}
+	]
+}

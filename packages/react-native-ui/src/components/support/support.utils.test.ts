@@ -119,23 +119,23 @@ describe("resolveConversationA11yLabel", () => {
 describe("resolveAgentStatusLine", () => {
 	test("typing replaces the status line, by first name, and is live", () => {
 		expect(
-			resolveAgentStatusLine({ name: "Khalid Abdi", role: "Support", availability: "online", typing: true })
+			resolveAgentStatusLine({ name: "Khalid Abdi", title: "Support", availability: "online", typing: true })
 		).toEqual({ text: "Khalid is typing", live: true });
 	});
 
-	test("otherwise role and availability", () => {
-		expect(resolveAgentStatusLine({ name: "Khalid Abdi", role: "Support", availability: "away" })).toEqual({
+	test("otherwise title and availability", () => {
+		expect(resolveAgentStatusLine({ name: "Khalid Abdi", title: "Support", availability: "away" })).toEqual({
 			text: "Support · Away",
 			live: false,
 		});
 	});
 
-	test("availability alone without a role", () => {
+	test("availability alone without a title", () => {
 		expect(resolveAgentStatusLine({ name: "Khalid Abdi", availability: "offline" })).toEqual({
 			text: "Offline",
 			live: false,
 		});
-		expect(resolveAgentStatusLine({ name: "Khalid", role: "", availability: "online" })).toEqual({
+		expect(resolveAgentStatusLine({ name: "Khalid", title: "", availability: "online" })).toEqual({
 			text: "Online",
 			live: false,
 		});
@@ -147,15 +147,15 @@ describe("resolveAgentStatusLine", () => {
 });
 
 describe("resolveAgentA11yLabel", () => {
-	test("full name, role and availability", () => {
-		expect(resolveAgentA11yLabel({ name: "Khalid Abdi", role: "Support", availability: "online" })).toBe(
+	test("full name, title and availability", () => {
+		expect(resolveAgentA11yLabel({ name: "Khalid Abdi", title: "Support", availability: "online" })).toBe(
 			"Khalid Abdi, Support, online"
 		);
 		expect(resolveAgentA11yLabel({ name: "Khalid Abdi", availability: "away" })).toBe("Khalid Abdi, away");
 	});
 
 	test("typing is said by full name", () => {
-		expect(resolveAgentA11yLabel({ name: "Khalid Abdi", role: "Support", availability: "online", typing: true })).toBe(
+		expect(resolveAgentA11yLabel({ name: "Khalid Abdi", title: "Support", availability: "online", typing: true })).toBe(
 			"Khalid Abdi is typing"
 		);
 	});

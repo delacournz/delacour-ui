@@ -135,40 +135,40 @@ function firstName(name: string): string {
 /**
  * The agent's visible status line. While `typing`, the live state replaces the static one — the two
  * answer the same question and the live one wins — by first name, the way a chat says it. Otherwise
- * the role and availability, or the availability alone.
+ * the title and availability, or the availability alone.
  */
 export function resolveAgentStatusLine({
 	name,
-	role,
+	title,
 	availability,
 	typing,
 }: {
 	name: string;
-	role?: string;
+	title?: string;
 	availability: SupportAvailability;
 	typing?: boolean;
 }): { text: string; live: boolean } {
 	if (typing) return { text: `${firstName(name)} is typing`, live: true };
 	const word = AVAILABILITY_LABEL[availability];
-	const ownRole = present(role);
-	return { text: ownRole ? `${ownRole} · ${word}` : word, live: false };
+	const ownTitle = present(title);
+	return { text: ownTitle ? `${ownTitle} · ${word}` : word, live: false };
 }
 
-/** The agent row's spoken label — full name, role and availability, or that they are typing. */
+/** The agent row's spoken label — full name, title and availability, or that they are typing. */
 export function resolveAgentA11yLabel({
 	name,
-	role,
+	title,
 	availability,
 	typing,
 }: {
 	name: string;
-	role?: string;
+	title?: string;
 	availability: SupportAvailability;
 	typing?: boolean;
 }): string {
 	const fullName = present(name) ?? "Someone";
 	if (typing) return `${fullName} is typing`;
-	return [fullName, present(role), AVAILABILITY_LABEL[availability].toLowerCase()]
+	return [fullName, present(title), AVAILABILITY_LABEL[availability].toLowerCase()]
 		.filter((segment): segment is string => segment !== undefined)
 		.join(", ");
 }

@@ -318,6 +318,15 @@ import * as demo_steps_sizes from "./steps/sizes";
 import * as demo_steps_states from "./steps/states";
 import * as demo_steps_variants from "./steps/variants";
 import * as demo_steps_vertical from "./steps/vertical";
+import * as demo_support_articles from "./support/articles";
+import * as demo_support_availability from "./support/availability";
+import * as demo_support_conversations from "./support/conversations";
+import * as demo_support_disabled_channel from "./support/disabled-channel";
+import * as demo_support_escalation from "./support/escalation";
+import * as demo_support_help_screen from "./support/help-screen";
+import * as demo_support_resolution from "./support/resolution";
+import * as demo_support_thread from "./support/thread";
+import * as demo_support_topics from "./support/topics";
 import * as demo_surface_bleed from "./surface/bleed";
 import * as demo_surface_configurator from "./surface/configurator";
 import * as demo_surface_nesting from "./surface/nesting";
@@ -684,6 +693,15 @@ export const DEMOS = {
 	"steps/states": demo_steps_states,
 	"steps/variants": demo_steps_variants,
 	"steps/vertical": demo_steps_vertical,
+	"support/articles": demo_support_articles,
+	"support/availability": demo_support_availability,
+	"support/conversations": demo_support_conversations,
+	"support/disabled-channel": demo_support_disabled_channel,
+	"support/escalation": demo_support_escalation,
+	"support/help-screen": demo_support_help_screen,
+	"support/resolution": demo_support_resolution,
+	"support/thread": demo_support_thread,
+	"support/topics": demo_support_topics,
 	"surface/bleed": demo_surface_bleed,
 	"surface/configurator": demo_surface_configurator,
 	"surface/nesting": demo_surface_nesting,

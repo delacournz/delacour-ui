@@ -9,7 +9,11 @@ import { SupportTyping } from "./support-typing";
 
 export type SupportAgentProps = Omit<ViewProps, "children"> & {
 	name: string;
-	role?: string;
+	/**
+	 * What they do — `"Support"`, `"Billing specialist"`. Not `role`: React Native's `role` is the
+	 * ARIA role, so the name would collide with an accessibility prop every `View` takes.
+	 */
+	title?: string;
 	/** The agent's face — an `<Avatar>`, with an `Avatar.Badge` for presence if wanted. */
 	avatar?: ReactElement;
 	/** Replaces the status line while true: the two answer the same question and the live one wins. */
@@ -22,7 +26,7 @@ export type SupportAgentProps = Omit<ViewProps, "children"> & {
 };
 
 /**
- * Who is answering: a face, a name, and a status line — the role and availability, or, while
+ * Who is answering: a face, a name, and a status line — the title and availability, or, while
  * `typing`, three dots and "Khalid is typing".
  *
  * One element to a screen reader, `"Khalid Abdi, Support, online"`. When typing starts the label
@@ -33,7 +37,7 @@ export type SupportAgentProps = Omit<ViewProps, "children"> & {
  */
 export function SupportAgent({
 	name,
-	role,
+	title,
 	avatar,
 	typing = false,
 	availability: availabilityProp,
@@ -43,8 +47,8 @@ export function SupportAgent({
 }: SupportAgentProps): ReactElement {
 	const { availability: rootAvailability } = useSupport();
 	const availability = availabilityProp ?? rootAvailability;
-	const status = resolveAgentStatusLine({ name, role, availability, typing });
-	const label = resolveAgentA11yLabel({ name, role, availability, typing });
+	const status = resolveAgentStatusLine({ name, title, availability, typing });
+	const label = resolveAgentA11yLabel({ name, title, availability, typing });
 	const slots = supportVariants();
 
 	useEffect(() => {

@@ -66,7 +66,7 @@ function SupportRoot({ availability = "offline", className, children, ...props }
  * </Support>
  *
  * @example
- * <Support.Agent name="Khalid Abdi" role="Support" typing={isTyping} avatar={<Avatar name="Khalid Abdi" />} />
+ * <Support.Agent name="Khalid Abdi" title="Support" typing={isTyping} avatar={<Avatar name="Khalid Abdi" />} />
  * <Support.Handoff>You were passed to Khalid, who can see everything you told the assistant.</Support.Handoff>
  * <Support.Replies>
  *   <Support.Reply label="That fixed it" onPress={resolve} />

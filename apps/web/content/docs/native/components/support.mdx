@@ -1,0 +1,374 @@
+---
+title: Support
+description: A help section — availability, channels, topics, requests and the furniture around a support thread.
+icon: LifeBuoy
+---
+
+## Installation
+
+<ComponentInstall name="support" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Icon } from "@/components/ui/icon";
+import { Support } from "@/components/ui/support";
+import { IconBubbleText, IconEmail1 } from "@/lib/icons/central";
+import { Linking, ScrollView } from "react-native";
+
+const openChat = () => {};
+const openEmail = () => Linking.openURL("mailto:help@example.com");
+
+export default function Example() {
+  return (
+    <ScrollView contentContainerClassName="p-4">
+      <Support availability="online">
+        <Support.Header title="Help" description="Questions about an order or your account." />
+        <Support.Status replyTime="Typically replies in under an hour" />
+        <Support.Channels title="Get in touch">
+          <Support.Channel icon={<Icon icon={IconBubbleText} />} label="Chat" detail="~5m" onPress={openChat} />
+          <Support.Channel icon={<Icon icon={IconEmail1} />} label="Email" detail="~1d" onPress={openEmail} />
+        </Support.Channels>
+        <Support.Conversations title="Your requests">
+          <Support.Conversation title="Refund for order #4821" status="solved" timestamp="2h" unread />
+        </Support.Conversations>
+      </Support>
+    </ScrollView>
+  );
+}
+```
+
+## Composition
+
+```
+Support                     availability, once
+├── Support.Header          title, description, trailing faces
+├── Support.Status          the dot and the line
+├── Support.Channels        → Support.Channel …
+├── Support.Topics          → Support.Topic …      (radio group)
+├── Support.Conversations   → Support.Conversation …
+├── Support.Articles        → Support.Article …
+│
+│   on the thread route — no root needed
+├── Support.Agent           face, name, status or typing
+├── Support.Ticket          the request this thread belongs to
+├── Support.Handoff         between two turns
+├── Support.Replies         → Support.Reply …
+├── Support.Note            above the composer
+└── Support.Resolution      the closing question, your control
+```
+
+Every part is optional. No help centre, leave out `Articles`; one queue, leave out `Topics`.
+
+## The ways in
+
+A `Support.Channel` is a row with an icon, what it is, and what it costs in waiting. The app opens
+it in `onPress` — Support never calls `Linking`.
+
+```tsx
+<Support.Channels title="Get in touch">
+  <Support.Channel icon={<Icon icon={IconBubbleText} />} label="Chat" detail="~5m" onPress={openChat} />
+  <Support.Channel icon={<Icon icon={IconPhone} />} label="Call us" description="Weekdays, 9am to 5pm" isDisabled />
+</Support.Channels>
+```
+
+A shut channel stays on screen — dimmed, announced disabled, ignoring taps. A reader who knows the
+phone line exists and finds it gone assumes the app is broken.
+
+## Whether anyone is there
+
+`availability` is set once, on the root, and `Status`, `Agent` and `Note` all read it. A screen that
+is half "we are here" and half "we are not" is worse than either.
+
+```tsx
+<Support availability="away">
+  <Support.Status replyTime="Back at 9am tomorrow" />
+  <Support.Status />
+</Support>
+```
+
+Without `replyTime` the status falls back to the availability's own line — "We're away". A screen
+reader hears the availability first — "Away. Back at 9am tomorrow" — because the dot is decorative
+and colour must not carry it alone.
+
+## Routing to a queue
+
+`Support.Topics` is a radio group: one request goes to one queue. Controlled or not, and pressing
+the selected topic keeps it.
+
+```tsx
+const [topic, setTopic] = useState<string | null>(null);
+
+<Support.Topics title="What's it about?" value={topic} onValueChange={setTopic}>
+  <Support.Topic value="billing" label="Billing" description="Invoices, refunds and plans" />
+  <Support.Topic value="order" label="An order" description="Tracking, returns and damage" />
+</Support.Topics>
+<Button isDisabled={topic === null}>Continue</Button>
+```
+
+## What happened to the last one
+
+A `Support.Conversation` carries the ticket's status as a soft badge, and at most one dot:
+`unread` — a reply nobody has read, in the accent — or `updated` — the thread moved with nothing new
+to read, in grey. `unread` wins when both are set. The dots never speak; the row reads as one
+sentence — "Refund for order #4821, solved, unread reply, 2h. We've issued the refund."
+
+| `status` | Badge | |
+| --- | --- | --- |
+| `open` | Open | `info` |
+| `pending` | Waiting on you | `warning` — the one that asks the reader to act |
+| `solved` | Solved | `success` |
+| `closed` | Closed | `default` |
+
+## The conversation itself
+
+Support never renders the transcript or the composer. Those are your message list and your text
+field; Support is the furniture around them.
+
+```tsx
+<Support.Agent name="Khalid Abdi" title="Support" avatar={<Avatar name="Khalid Abdi" />} typing={isTyping} />
+<Support.Ticket title="Refund for order #4821" reference="#4821" status="open" />
+<Transcript messages={messages} />
+<Support.Replies>
+  <Support.Reply label="Thanks" onPress={send} />
+</Support.Replies>
+<Support.Note>We'll reply by email if you leave.</Support.Note>
+<Composer onSend={send} />
+```
+
+`Transcript` and `Composer` are yours.
+
+While `typing`, the agent's status line gives way to three dots and "Khalid is typing", announced
+once. The dots hold still under Reduce Motion.
+
+`Agent` and `Note` need no `<Support>` root. On a thread route without one, availability defaults
+to `offline` — `useSupport()` never throws.
+
+## Handing off to a person
+
+An `escalates` reply is the primary-soft chip, and adds the hint "Talk to a person". When the
+thread changes hands, put a `Support.Handoff` between the two turns.
+
+```tsx
+<Support.Reply escalates label="Talk to a person" onPress={escalate} />
+
+<Support.Handoff>You were passed to Khalid, who can see everything you told the assistant.</Support.Handoff>
+```
+
+A handoff is announced when it mounts. Pass `announce={false}` for one loaded as history, so opening
+a thread does not read every past handoff.
+
+## Closing the thread
+
+`Support.Resolution` holds the question; the control is yours — a `Rating`, or two buttons — and you
+swap it for a thank-you once it is answered.
+
+```tsx
+<Support.Resolution question="How did we do?">
+  <Rating value={score} onChange={setScore}>
+    <Rating.Stars accessibilityLabel="Rate this conversation" />
+  </Rating>
+</Support.Resolution>
+```
+
+## Accessibility
+
+- `Topics` is a `radiogroup` and each `Topic` a `radio` with its checked state.
+- `Status` is one polite live element, availability first.
+- A `Conversation` speaks everything its dots and badge draw.
+- `Agent` announces "is typing" once, not on every dot frame.
+- `Handoff` reads on mount; `Note` is plain text.
+- An escalating `Reply` adds the hint "Talk to a person".
+- `Resolution` is a group labelled by its question; your control keeps its own role.
+
+## Notes
+
+- **Rows, not tiles.** Channels, requests and articles are `Item` rows in a `ListGroup` card, so they
+  match every other list in the app and read top to bottom on a narrow screen.
+- **`Note` sits above the composer**, not in the transcript, because it is about the next message.
+- **Keep the thread its own route.** It scrolls differently from the landing screen and wants
+  keyboard handling.
+
+## API Reference
+
+### Support
+
+<TypeTable
+  type={{
+    availability: { type: '"online" | "away" | "offline"', default: '"offline"', description: "Whether anyone is there. Read by Status, Agent and Note." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Support.Header
+
+<TypeTable
+  type={{
+    title: { type: "string", required: true },
+    description: { type: "string" },
+    trailing: { type: "ReactNode", description: "The faces of the people who answer — an Avatar.Group." },
+  }}
+/>
+
+### Support.Status
+
+<TypeTable
+  type={{
+    replyTime: { type: "string", description: "Caller wording. Absent ⇒ the availability's own line." },
+    availability: { type: '"online" | "away" | "offline"', description: "Overrides the root for this one status." },
+  }}
+/>
+
+### Support.Channels, Support.Conversations, Support.Articles
+
+<TypeTable
+  type={{
+    title: { type: "string" },
+    description: { type: "string" },
+    children: { type: "ReactNode", required: true },
+  }}
+/>
+
+### Support.Channel
+
+<TypeTable
+  type={{
+    icon: { type: "ReactElement", required: true },
+    label: { type: "string", required: true },
+    description: { type: "string" },
+    detail: { type: "string", description: 'What it costs in waiting: "~1h".' },
+    isDisabled: { type: "boolean", description: "Shut — dimmed, announced disabled, still present." },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Support.Topics
+
+<TypeTable
+  type={{
+    title: { type: "string" },
+    description: { type: "string" },
+    value: { type: "string | null", description: "Controlled selection." },
+    defaultValue: { type: "string | null", default: "null" },
+    onValueChange: { type: "(value: string) => void" },
+    children: { type: "ReactNode", required: true },
+  }}
+/>
+
+### Support.Topic
+
+<TypeTable
+  type={{
+    value: { type: "string", required: true },
+    label: { type: "string", required: true },
+    description: { type: "string" },
+    icon: { type: "ReactElement" },
+    isDisabled: { type: "boolean" },
+  }}
+/>
+
+### Support.Conversation
+
+<TypeTable
+  type={{
+    title: { type: "string", required: true },
+    status: { type: '"open" | "pending" | "solved" | "closed"', required: true },
+    preview: { type: "string", description: "Two lines of the last message." },
+    reference: { type: "string", description: '"#4821".' },
+    timestamp: { type: "string", description: 'Caller wording: "2h", "Yesterday".' },
+    unread: { type: "boolean", description: "A reply nobody has read — the accent dot." },
+    updated: { type: "boolean", description: "The thread moved with nothing to read — the grey dot. unread wins." },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Support.Article
+
+<TypeTable
+  type={{
+    title: { type: "string", required: true },
+    collection: { type: "string", description: "The help-centre collection, as a caption." },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Support.Agent
+
+<TypeTable
+  type={{
+    name: { type: "string", required: true },
+    title: { type: "string", description: "What they do. Not `role`, which is React Native's ARIA prop." },
+    avatar: { type: "ReactElement" },
+    typing: { type: "boolean", default: "false", description: "Replaces the status line with three dots." },
+    availability: { type: '"online" | "away" | "offline"', description: "Absent ⇒ the root's, or offline with no root." },
+    typingTestID: { type: "string", description: "testID for the typing dots." },
+  }}
+/>
+
+### Support.Ticket
+
+<TypeTable
+  type={{
+    title: { type: "string", required: true },
+    status: { type: '"open" | "pending" | "solved" | "closed"', required: true },
+    reference: { type: "string" },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Support.Handoff
+
+<TypeTable
+  type={{
+    children: { type: "string", required: true },
+    announce: { type: "boolean", default: "true", description: "Announce on mount. false for history." },
+  }}
+/>
+
+### Support.Note
+
+<TypeTable
+  type={{
+    children: { type: "string", required: true },
+    icon: { type: "ReactElement", description: "Absent ⇒ a moon offline, a clock away, none online." },
+    availability: { type: '"online" | "away" | "offline"' },
+  }}
+/>
+
+### Support.Replies
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", required: true },
+  }}
+/>
+
+### Support.Reply
+
+<TypeTable
+  type={{
+    label: { type: "string", required: true },
+    icon: { type: "ReactElement" },
+    escalates: { type: "boolean", default: "false", description: "The way out to a person — primary-soft, with a hint." },
+    onPress: { type: "() => void" },
+  }}
+/>
+
+### Support.Resolution
+
+<TypeTable
+  type={{
+    question: { type: "string", description: '"Did that help?"' },
+    children: { type: "ReactNode", required: true, description: "Your control — a Rating, or two Buttons." },
+  }}
+/>
+
+### Hooks
+
+<TypeTable
+  type={{
+    "useSupport()": { type: "{ availability }", description: "Never throws — offline outside a root." },
+    "useSupportTopics()": { type: "{ value, select }", description: "The enclosing Topics' selection. Throws outside one." },
+  }}
+/>

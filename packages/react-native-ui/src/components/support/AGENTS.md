@@ -94,6 +94,9 @@ above the composer and the closing question. Compound root plus seventeen option
 
 ## Thread furniture
 
+- **`Agent` takes `title`, not `role`.** React Native's `role` is the ARIA role every `View` accepts;
+  a `role="Support"` intersected it into a type error at the call site and fails Biome's
+  `useValidAriaRole`. The spec said `role`; the collision is why it is not.
 - **`Agent` while `typing` replaces its status line** with three dots and "Khalid is typing" — the
   two answer the same question and the live one wins. The spoken label becomes
   `"Khalid Abdi is typing"` and is announced **once**: a polite live region on Android and
@@ -123,3 +126,12 @@ above the composer and the closing question. Compound root plus seventeen option
 - Swipe actions on a request row — the app's.
 - A composer — `Textarea` stands in on the demos until a real one exists.
 - Hover tooltips on agent faces, multi-column help-centre grids, keyboard shortcuts.
+
+## Previews (follow-up)
+
+No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and
+the media are shot after integration. The five to capture, all `align: "stretch"`: `help-screen`
+(**hero**), `availability` (flow `support/availability`), `topics` (flow `support/topics`),
+`conversations`, and `thread` (flow `support/thread`). The three flows are already written under
+`.argent/flows/previews/support/`. Add the `<Preview>` blocks to `support.mdx` in the same change —
+a `<Preview id>` for an uncaptured demo throws at render.

@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on support/topics and has settled — no topic selected and
+  Continue disabled. The capture script navigates there before running this.
+steps:
+  - echo: Pick Billing, which enables Continue
+  - tap: { id: support-topic-billing }
+  - wait: 900
+  - echo: Pick An order — the selection moves, never doubles
+  - tap: { id: support-topic-order }
+  - wait: 900

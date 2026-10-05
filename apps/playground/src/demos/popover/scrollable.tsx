@@ -2,12 +2,13 @@ import { Button } from "@delacour/react-native-ui/button";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
 import { Popover } from "@delacour/react-native-ui/popover";
 import { type ReactElement, useState } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Scrollable",
 	caption: "`maxHeight` caps the panel and `isScrollable` scrolls what does not fit. The arrow stays put.",
-	align: "center",
+	capture: { flow: "popover/scrollable", frame: "device" },
 };
 
 const TIMEZONES = [
@@ -31,30 +32,32 @@ export function Demo(): ReactElement {
 	const [isOpen, setOpen] = useState(false);
 
 	return (
-		<Popover isOpen={isOpen} onOpenChange={setOpen}>
-			<Popover.Trigger asChild>
-				<Button testID="open-popover" variant="outline">
-					{zone}
-				</Button>
-			</Popover.Trigger>
-			<Popover.Content className="p-1" isScrollable maxHeight={240} minWidth={220}>
-				<Popover.Arrow />
-				<ListGroup variant="transparent">
-					{TIMEZONES.map((name) => (
-						<ListGroup.Item
-							key={name}
-							onPress={() => {
-								setZone(name);
-								setOpen(false);
-							}}
-						>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>{name}</ListGroup.ItemTitle>
-							</ListGroup.ItemContent>
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-			</Popover.Content>
-		</Popover>
+		<View className="flex-1 items-center justify-center">
+			<Popover isOpen={isOpen} onOpenChange={setOpen}>
+				<Popover.Trigger asChild>
+					<Button testID="open-popover" variant="outline">
+						{zone}
+					</Button>
+				</Popover.Trigger>
+				<Popover.Content className="p-1" isScrollable maxHeight={240} minWidth={220} testID="timezone-list">
+					<Popover.Arrow />
+					<ListGroup variant="transparent">
+						{TIMEZONES.map((name) => (
+							<ListGroup.Item
+								key={name}
+								onPress={() => {
+									setZone(name);
+									setOpen(false);
+								}}
+							>
+								<ListGroup.ItemContent>
+									<ListGroup.ItemTitle>{name}</ListGroup.ItemTitle>
+								</ListGroup.ItemContent>
+							</ListGroup.Item>
+						))}
+					</ListGroup>
+				</Popover.Content>
+			</Popover>
+		</View>
 	);
 }

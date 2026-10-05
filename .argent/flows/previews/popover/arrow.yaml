@@ -6,3 +6,6 @@ steps:
   - tap: { id: open-popover }
   - await: { visible: { text: This feature is still changing. Tell us what breaks. } }
   - wait: 1200
+  - echo: Closing it from the badge, so the clip loops without a jump cut
+  - tap: { id: open-popover }
+  - await: { hidden: { text: This feature is still changing. Tell us what breaks. } }

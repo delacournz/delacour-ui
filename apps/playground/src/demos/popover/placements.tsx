@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Placements",
 	caption: "`placement` picks the side the panel prefers. It is a preference: a side without room flips.",
-	align: "center",
+	capture: { flow: "popover/placements", frame: "device" },
 };
 
 const LABELS: Record<PopoverPlacement, string> = {
@@ -36,7 +36,7 @@ function PlacementPopover({ placement }: { placement: PopoverPlacement }): React
 
 export function Demo(): ReactElement {
 	return (
-		<View className="items-center gap-3">
+		<View className="flex-1 items-center justify-center gap-3">
 			<PlacementPopover placement="top" />
 			<View className="flex-row gap-3">
 				<PlacementPopover placement="left" />

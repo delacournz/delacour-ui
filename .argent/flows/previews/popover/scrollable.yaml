@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/scrollable and has settled — the Auckland trigger with the panel
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the capped list
+  - tap: { id: open-popover }
+  - await: { visible: { id: timezone-list } }
+  - wait: 600
+  - echo: Scrolling down past the cap and back up
+  - swipe: { from: { id: timezone-list }, by: { y: -0.12 }, momentum: false }
+  - wait: 600
+  - swipe: { from: { id: timezone-list }, by: { y: 0.2 }, momentum: false }
+  - wait: 600
+  - echo: Closing it from the trigger, so the clip loops without a jump cut
+  - tap: { id: open-popover }
+  - await: { hidden: { id: timezone-list } }

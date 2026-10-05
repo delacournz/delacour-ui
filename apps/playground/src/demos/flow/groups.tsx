@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Groups",
 	caption:
 		"Drag the group's box and every node in it rides along; `onNodeDragEnd` fires for the group and each rider. `isConfined` keeps a node inside its group, and `isPinned` stops its own drag while it still rides.",
+	capture: { align: "stretch", flow: "flow/groups" },
 };
 
 const START: Record<string, FlowPoint> = {

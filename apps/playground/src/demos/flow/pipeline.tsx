@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Pipeline",
 	caption:
 		"Nodes are cards placed in graph units; edges name the handles they join and route themselves. Drag a card and its edges follow on the same frame; pinch and pan the canvas.",
+	capture: { align: "stretch", flow: "flow/pipeline", hero: true },
 };
 
 const STAGES = [

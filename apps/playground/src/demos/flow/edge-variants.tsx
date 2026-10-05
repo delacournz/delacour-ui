@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Edge variants",
 	caption:
 		"`bezier` bows out of each side, `smoothstep` turns with rounded corners, `step` turns square, and `straight` is a line. A step route stands `gap` off each side before it turns.",
+	capture: { align: "stretch" },
 };
 
 const VARIANTS: readonly FlowEdgeVariant[] = ["bezier", "smoothstep", "step", "straight"];

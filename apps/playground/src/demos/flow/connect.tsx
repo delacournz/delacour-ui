@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Connect",
 	caption:
 		"Drag from a handle to another node's handle. The canvas only asks: `isValidConnection` refuses a duplicate, and `onConnect` is where the app adds the edge.",
+	capture: { align: "stretch", flow: "flow/connect" },
 };
 
 const NODES = [

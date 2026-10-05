@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Variants",
 	caption:
 		"`default` a card, `outline` a border, `muted` a fill, `plain` nothing. Every variant reserves the same border, so switching one never moves the content.",
+	capture: { align: "stretch" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

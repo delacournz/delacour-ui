@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	title: "Backgrounds",
 	caption:
 		"`GridItem.Background` fills the tile behind its content and clips to its corner — here a chart, and an oversized glyph. It takes no touches, so the tile stays pressable across its whole face.",
+	capture: { align: "stretch" },
 };
 
 const DATA = [

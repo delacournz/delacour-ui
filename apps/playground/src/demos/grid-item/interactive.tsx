@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Pressable tiles",
 	caption:
 		"A tile with an `onPress` is a button: it scales gently, can fire a haptic, and announces itself as one stop. `isDisabled` dims it and stops the press.",
+	capture: { align: "stretch", flow: "grid-item/interactive" },
 };
 
 export function Demo(): ReactElement {

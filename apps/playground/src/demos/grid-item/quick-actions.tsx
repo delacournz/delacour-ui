@@ -14,6 +14,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Quick actions",
 	caption: "Three columns of small icon tiles — the `sm` size, with the label under the glyph.",
+	capture: { align: "stretch" },
 };
 
 const ACTIONS: readonly { id: string; label: string; icon: IconComponent }[] = [

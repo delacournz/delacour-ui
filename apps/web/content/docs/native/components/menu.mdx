@@ -1,0 +1,287 @@
+---
+title: Menu
+description: A list of actions dropped from the control that opens it — with checkbox, radio and in-place submenu rows.
+icon: Ellipsis
+---
+
+## Installation
+
+<ComponentInstall name="menu" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { Menu } from "@/components/ui/menu";
+import { IconDotGrid1x3Horizontal, IconPencil, IconTrashCan } from "@/lib/icons/central";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Menu>
+        <Menu.Trigger asChild>
+          <Button accessibilityLabel="Actions" size="icon-sm" variant="ghost">
+            <Icon icon={IconDotGrid1x3Horizontal} />
+          </Button>
+        </Menu.Trigger>
+        <Menu.Content align="end">
+          <Menu.Item icon={IconPencil} onSelect={() => {}}>Rename</Menu.Item>
+          <Menu.Separator />
+          <Menu.Item icon={IconTrashCan} variant="destructive" onSelect={() => {}}>
+            Delete
+          </Menu.Item>
+        </Menu.Content>
+      </Menu>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<Menu>
+  <Menu.Trigger asChild>
+    <Button variant="outline">Options</Button>
+  </Menu.Trigger>
+  <Menu.Content>
+    <Menu.Label>File</Menu.Label>
+    <Menu.Item icon={IconPencil} shortcut="⌘R" onSelect={rename}>Rename</Menu.Item>
+    <Menu.CheckboxItem isChecked={showDone} onCheckedChange={setShowDone}>Completed</Menu.CheckboxItem>
+    <Menu.RadioGroup value={density} onValueChange={setDensity}>
+      <Menu.RadioItem value="comfortable">Comfortable</Menu.RadioItem>
+      <Menu.RadioItem value="compact" indicator="dot">Compact</Menu.RadioItem>
+    </Menu.RadioGroup>
+    <Menu.Sub>
+      <Menu.SubTrigger icon={IconFolder1}>Move to</Menu.SubTrigger>
+      <Menu.SubContent>
+        <Menu.Item onSelect={moveToInbox}>Inbox</Menu.Item>
+      </Menu.SubContent>
+    </Menu.Sub>
+    <Menu.Separator />
+    <Menu.Item variant="destructive" icon={IconTrashCan} description="This cannot be undone">
+      Delete
+    </Menu.Item>
+  </Menu.Content>
+</Menu>
+```
+
+A menu holds **verbs** — rename, duplicate, share, delete. It is not a select: choosing a row runs
+an action, and the row never becomes the trigger's value.
+
+## Actions
+
+`Menu.Item` runs `onSelect` and closes the menu. `icon` draws in the leading column, `shortcut` and
+`trailing` at the row's end, and `description` adds a quieter second line. `variant="destructive"`
+colours the label and icon and tints the pressed fill.
+
+```tsx
+<Menu.Item icon={IconPencil} shortcut="⌘R" onSelect={rename}>Rename</Menu.Item>
+<Menu.Item icon={IconArchive} isDisabled>Archive</Menu.Item>
+<Menu.Item icon={IconTrashCan} variant="destructive" description="This cannot be undone">
+  Delete
+</Menu.Item>
+```
+
+## Checkbox and radio rows
+
+`Menu.CheckboxItem` toggles a setting and **stays open**, because several are usually toggled in one
+visit. `Menu.RadioItem` picks one value from its `Menu.RadioGroup` and **closes**: a choice made is a
+visit finished. Either rule can be overridden with `isClosedOnSelect`. `indicator="dot"` marks a
+radio row with a dot instead of a tick.
+
+```tsx
+<Menu.CheckboxItem isChecked={showDone} onCheckedChange={setShowDone}>Completed</Menu.CheckboxItem>
+<Menu.RadioGroup value={density} onValueChange={setDensity}>
+  <Menu.RadioItem value="comfortable">Comfortable</Menu.RadioItem>
+  <Menu.RadioItem value="compact" indicator="dot">Compact</Menu.RadioItem>
+</Menu.RadioGroup>
+```
+
+## Submenus
+
+`Menu.Sub` **expands in place** under its trigger row and pushes the rows below it down. It never
+flies out to a second panel: on a phone there is no room beside the first, and a layer over it hides
+where the user came from. The chevron turns to follow it, mirrored under right-to-left layouts.
+
+```tsx
+<Menu.Sub>
+  <Menu.SubTrigger icon={IconFolder1}>Move to</Menu.SubTrigger>
+  <Menu.SubContent>
+    <Menu.Item onSelect={moveToInbox}>Inbox</Menu.Item>
+    <Menu.Item onSelect={moveToArchive}>Archive</Menu.Item>
+  </Menu.SubContent>
+</Menu.Sub>
+```
+
+## Inset rows
+
+`isInset` reserves the icon column on a row or label with no icon, so its text lines up with the
+rows that have one.
+
+```tsx
+<Menu.Label isInset>Document</Menu.Label>
+<Menu.Item icon={IconPencil}>Rename</Menu.Item>
+<Menu.Item isInset>Version history</Menu.Item>
+```
+
+## Placement
+
+The panel is anchored to the trigger. `placement` names the side it prefers — `bottom` by default —
+and `align` which edge lines up with the trigger's, swapping `start` and `end` under right-to-left
+layouts. With no room on the preferred side it flips; with room on neither it takes the larger side
+and scrolls. It always stays inside the safe area, 8pt in from the screen's edges.
+
+The side is fixed for the whole visit, so a submenu expanding mid-visit grows the panel away from
+the trigger rather than flipping it under the finger.
+
+```tsx
+<Menu.Content placement="top" align="end" offset={8} width={240} maxHeight={360}>
+  …
+</Menu.Content>
+```
+
+## Custom background
+
+The panel's surface is a `Menu.Background` drawn behind the rows in `bg-popover`. Pass your own as a
+child of `Menu.Content` to repaint it; it stays put while the rows scroll.
+
+```tsx
+<Menu.Content>
+  <Menu.Background className="bg-muted" />
+  <Menu.Item icon={IconStar}>Add to favourites</Menu.Item>
+</Menu.Content>
+```
+
+## Accessibility
+
+The panel is a `menu` in a modal layer, so a screen reader stays inside it until it closes. Rows are
+`menuitem`s; a checkbox row announces `checked`, a radio row `selected`, a submenu trigger
+`expanded`, and a disabled row `disabled`. The trigger announces `expanded` while the menu is open,
+with the hint "Opens a menu". An outside tap and Android's back button both close it.
+
+## API Reference
+
+### Menu
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controlled. Pair with `onOpenChange`." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Played when a row is chosen." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Menu.Trigger
+
+Extends `Pressable`'s props.
+
+<TypeTable
+  type={{
+    asChild: {
+      type: "boolean",
+      default: "false",
+      description: "Donate the press, ref and accessibility props to the child — a `Button`, say.",
+    },
+  }}
+/>
+
+### Menu.Content
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    placement: { type: '"top" | "bottom"', default: '"bottom"', description: "The preferred side. Flips when there is no room." },
+    align: { type: '"start" | "center" | "end"', default: '"start"' },
+    offset: { type: "number", default: "6" },
+    width: { type: "number", description: "Default: the trigger's width, at least 200." },
+    minWidth: { type: "number" },
+    maxHeight: { type: "number", description: "Default: the room inside the safe area." },
+    isScrollable: { type: "boolean", default: "true" },
+    hasScrim: { type: "boolean", default: "false", description: "Tint the screen behind the panel." },
+    anchor: {
+      type: "{ x: number; y: number; width: number; height: number }",
+      description: "Anchor to this rect instead of the trigger. A zero-size rect is a point.",
+    },
+    className: { type: "string" },
+  }}
+/>
+
+### Menu.Item
+
+<TypeTable
+  type={{
+    onSelect: { type: "() => void" },
+    icon: { type: "IconComponent" },
+    iconPlacement: { type: '"leading" | "trailing"', default: '"leading"' },
+    description: { type: "string" },
+    shortcut: { type: "string" },
+    trailing: { type: "ReactNode" },
+    variant: { type: '"default" | "destructive"', default: '"default"' },
+    isInset: { type: "boolean", default: "false" },
+    isDisabled: { type: "boolean", default: "false" },
+    isClosedOnSelect: { type: "boolean", default: "true" },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "The label. A string is wrapped in a `Text`." },
+  }}
+/>
+
+### Menu.CheckboxItem
+
+`Menu.Item`'s props, without `onSelect`.
+
+<TypeTable
+  type={{
+    isChecked: { type: "boolean", description: "Controlled. Pair with `onCheckedChange`." },
+    defaultChecked: { type: "boolean", default: "false" },
+    onCheckedChange: { type: "(isChecked: boolean) => void" },
+    isClosedOnSelect: { type: "boolean", default: "false" },
+  }}
+/>
+
+### Menu.RadioGroup
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Controlled. Pair with `onValueChange`." },
+    defaultValue: { type: "string" },
+    onValueChange: { type: "(value: string) => void" },
+  }}
+/>
+
+### Menu.RadioItem
+
+`Menu.Item`'s props, without `onSelect`.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Required." },
+    indicator: { type: '"check" | "dot"', default: '"check"' },
+  }}
+/>
+
+### Menu.Sub
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean" },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+  }}
+/>
+
+`Menu.SubTrigger` takes `Menu.Item`'s props, without `onSelect`, `isClosedOnSelect` and `trailing`.
+`Menu.SubContent`, `Menu.Background` and `Menu.Label` (with `isInset`) take a `className`.
+`Menu.Separator` takes `Separator`'s props.
+
+### useMenu
+
+Returns `{ isOpen, open, close }` for a custom part. `open(anchor?)` opens at a rect of your own, or
+measures the trigger. Throws outside a `<Menu>`.

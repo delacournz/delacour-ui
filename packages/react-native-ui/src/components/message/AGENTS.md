@@ -130,10 +130,10 @@ Menu / context menu (the long-press menu is app code; `isSelected` is the visual
 seam), toast, markdown and link detection (pass nested `Text`), swipe to reply,
 an image viewer, text selection by default (`selectable` steals the long press).
 
-## Previews (follow-up)
+## Previews
 
-No demo carries `capture` yet: a captured demo with no manifest entry fails
-`demos.test.ts`, and the media are shot after integration. The four to capture,
-all `align: "stretch"`: `directions` (**hero**), `runs`, `status`, `reactions`.
-Add the `<Preview>` blocks to `message.mdx` in the same change — a `<Preview id>`
-for an uncaptured demo throws at render.
+Five demos are captured: `status` (**hero**, a clip — the receipt walks sending →
+read, the failed one retries and fails again), `typing` (a clip of the dots),
+and stills of `directions`, `runs` and `reactions`, all but `typing` at
+`align: "stretch"`. The Retry control carries no `testID`, so
+`.argent/flows/previews/message/status.yaml` taps it by its text.

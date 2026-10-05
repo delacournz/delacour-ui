@@ -4,6 +4,8 @@ description: A chat bubble with direction, run-aware corners, delivery status, r
 icon: MessageCircle
 ---
 
+<Preview id="message/status" title={null} />
+
 ## Installation
 
 <ComponentInstall name="message" />
@@ -48,6 +50,8 @@ export default function Example() {
 `direction` is required. Incoming sits at the start on `muted`; outgoing sits at the end on
 `primary`. `tone="accent"` moves an incoming bubble to `secondary`.
 
+<Preview id="message/directions" />
+
 ```tsx
 <Message direction="incoming">…</Message>
 <Message direction="outgoing">…</Message>
@@ -59,6 +63,8 @@ export default function Example() {
 Consecutive messages from one sender form a run. The message never looks at its neighbours —
 the list computes `position` and passes it, and the corners that face a neighbour tighten so the
 run reads as one stack. The gap below follows too: tight inside a run, a breath after it.
+
+<Preview id="message/runs" />
 
 ```tsx
 function positionOf(messages: Item[], index: number): MessagePosition {
@@ -81,6 +87,8 @@ bubble of a run and nowhere else. `sending` dims the bubble, `read` turns the ti
 `failed` edges the bubble in `destructive`. With `onRetry`, a failed receipt carries a Retry
 control.
 
+<Preview id="message/status" />
+
 ```tsx
 <Message direction="outgoing" status={{ type: "sending" }}>…</Message>
 <Message direction="outgoing" status={{ type: "read", readAt }}>…</Message>
@@ -102,6 +110,8 @@ Both are slots. `Message.Attachments` is a clipped stack for media and file tile
 `isMedia` when that is all it holds and the media fills it edge to edge. `Message.Reactions` takes
 chips, hung over the bubble's edge or on a line below.
 
+<Preview id="message/reactions" />
+
 ```tsx
 <Message.Bubble isMedia>
   <Message.Attachments>
@@ -117,6 +127,8 @@ chips, hung over the bubble's edge or on a line below.
 
 `Message.Typing` stands in for the bubble while the other side types: three staggered dots,
 read as "Kate is typing". Under reduce motion the dots rest.
+
+<Preview id="message/typing" />
 
 ```tsx
 <Message direction="incoming">

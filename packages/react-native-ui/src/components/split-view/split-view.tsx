@@ -24,6 +24,7 @@ import {
 	resolveInitialSnapIndex,
 	resolveNextIndex,
 	resolveSnapHeights,
+	resolveSplitViewChildKind,
 	SPLIT_VIEW_DEFAULT_SNAP_POINTS,
 	SPLIT_VIEW_DEFAULT_VARIANT,
 	SPLIT_VIEW_DRAG_AREA_HEIGHT,
@@ -63,11 +64,8 @@ export type SplitViewProps = Omit<ViewProps, "children" | "style"> &
 	};
 
 function kindOf(child: ReactNode): SplitViewChildKind {
-	if (!isValidElement(child)) return "other";
-	if (child.type === SplitViewTop) return "top";
-	if (child.type === SplitViewDragArea) return "dragArea";
-	if (child.type === SplitViewBottom) return "bottom";
-	return "other";
+	if (!isValidElement(child) || typeof child.type === "string") return "other";
+	return resolveSplitViewChildKind((child.type as { displayName?: string }).displayName);
 }
 
 function SplitViewRoot({

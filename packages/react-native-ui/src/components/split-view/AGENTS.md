@@ -112,7 +112,10 @@ over its table.
   even split rather than a garbage height.
 - **An invalid `snapIndex` is clamped** and warns in development.
 - **The child shape warns, never throws.** Anything but `Top`, `DragArea`,
-  `Bottom` in that order — `describeSplitViewChildren` names it.
+  `Bottom` in that order — `describeSplitViewChildren` names it. Each child is
+  classified by its `displayName` (`resolveSplitViewChildKind`), never by
+  `child.type === SplitViewTop`: Metro's dev bundle wraps element types, so
+  identity is false for every part and a correct tree would warn on every render.
 
 ## Motion
 

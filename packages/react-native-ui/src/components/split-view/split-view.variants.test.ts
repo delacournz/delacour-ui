@@ -11,6 +11,7 @@ import {
 	resolveSnapAccessibility,
 	resolveSnapHeights,
 	resolveSplitViewAction,
+	resolveSplitViewChildKind,
 	rubberBand,
 	SPLIT_VIEW_DEFAULT_SNAP_POINTS,
 	SPLIT_VIEW_DEFAULT_VARIANT,
@@ -325,6 +326,20 @@ describe("resolveSplitViewAction", () => {
 		expect(resolveSplitViewAction({ count: 3, index: 2, name: "increment" })).toBeNull();
 		expect(resolveSplitViewAction({ count: 3, index: 0, name: "decrement" })).toBeNull();
 		expect(resolveSplitViewAction({ count: 3, index: 1, name: "magicTap" })).toBeNull();
+	});
+});
+
+describe("resolveSplitViewChildKind", () => {
+	test("reads a part by its displayName, since the dev bundle wraps element types", () => {
+		expect(resolveSplitViewChildKind("DelacourUI.SplitView.Top")).toBe("top");
+		expect(resolveSplitViewChildKind("DelacourUI.SplitView.DragArea")).toBe("dragArea");
+		expect(resolveSplitViewChildKind("DelacourUI.SplitView.Bottom")).toBe("bottom");
+	});
+
+	test("calls anything else other", () => {
+		expect(resolveSplitViewChildKind(undefined)).toBe("other");
+		expect(resolveSplitViewChildKind("DelacourUI.SplitView.Handle")).toBe("other");
+		expect(resolveSplitViewChildKind("View")).toBe("other");
 	});
 });
 

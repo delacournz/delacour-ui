@@ -299,6 +299,26 @@ export function resolveSplitViewAction({
 /** What each child of the root turned out to be. */
 export type SplitViewChildKind = "top" | "dragArea" | "bottom" | "other";
 
+/**
+ * Which part a child of the root is, read off its `displayName`.
+ *
+ * Not `child.type === SplitViewTop`: Metro's dev bundle hands the root a
+ * wrapped element type, so identity is false for every part and the root would
+ * warn about a correct tree on every render in development.
+ */
+export function resolveSplitViewChildKind(displayName: string | undefined): SplitViewChildKind {
+	switch (displayName) {
+		case "DelacourUI.SplitView.Top":
+			return "top";
+		case "DelacourUI.SplitView.DragArea":
+			return "dragArea";
+		case "DelacourUI.SplitView.Bottom":
+			return "bottom";
+		default:
+			return "other";
+	}
+}
+
 /** Why the children are not `Top`, `DragArea`, `Bottom` in that order — or `null` when they are. */
 export function describeSplitViewChildren(kinds: readonly SplitViewChildKind[]): string | null {
 	if (kinds.length === 3 && kinds[0] === "top" && kinds[1] === "dragArea" && kinds[2] === "bottom") return null;

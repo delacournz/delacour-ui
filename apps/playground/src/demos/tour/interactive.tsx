@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Interactive",
 	caption:
-		"`isInteractive` lets touches inside the hole reach the control, and the control's own handler calls `next()`. The tour draws inside its root rather than a modal, so the rest of the screen stays dimmed but the spotlit button works.",
+		"`isInteractive` lets touches inside the hole reach the control, and the control's own handler calls `next()`. The tour draws inside its own root rather than a modal — so it dims, and places its card within, only what it wraps; put it around the whole screen.",
 	align: "stretch",
 };
 
@@ -70,9 +70,11 @@ function StartButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none gap-4" isInteractive>
-			<Controls />
-			<StartButton />
+		<Tour className="h-96 flex-none" isInteractive>
+			<View className="flex-1 justify-center gap-4">
+				<Controls />
+				<StartButton />
+			</View>
 		</Tour>
 	);
 }

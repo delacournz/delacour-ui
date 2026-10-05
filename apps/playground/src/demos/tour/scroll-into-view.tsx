@@ -39,25 +39,27 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<Tour className="flex-none gap-4" onStepChange={handleStepChange}>
-			<ScrollView className="h-44 rounded-lg border border-border" nestedScrollEnabled ref={scrollRef}>
-				{ROWS.map((row) => {
-					const order = Object.entries(STEPS).find(([, name]) => name === row)?.[0];
-					const content = <Text.Paragraph>{row}</Text.Paragraph>;
-					return (
-						<View className="h-16 justify-center px-4" key={row} onLayout={handleRowLayout(row)}>
-							{order ? (
-								<Tour.Step description={`Everything about ${row.toLowerCase()}.`} order={Number(order)} title={row}>
-									{content}
-								</Tour.Step>
-							) : (
-								content
-							)}
-						</View>
-					);
-				})}
-			</ScrollView>
-			<StartButton />
+		<Tour className="flex-none" onStepChange={handleStepChange}>
+			<View className="gap-4">
+				<ScrollView className="h-44 rounded-lg border border-border" nestedScrollEnabled ref={scrollRef}>
+					{ROWS.map((row) => {
+						const order = Object.entries(STEPS).find(([, name]) => name === row)?.[0];
+						const content = <Text.Paragraph>{row}</Text.Paragraph>;
+						return (
+							<View className="h-16 justify-center px-4" key={row} onLayout={handleRowLayout(row)}>
+								{order ? (
+									<Tour.Step description={`Everything about ${row.toLowerCase()}.`} order={Number(order)} title={row}>
+										{content}
+									</Tour.Step>
+								) : (
+									content
+								)}
+							</View>
+						);
+					})}
+				</ScrollView>
+				<StartButton />
+			</View>
 		</Tour>
 	);
 }

@@ -32,20 +32,22 @@ function StartButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none gap-4" hasSkip={false} isDismissible={false} labels={LABELS}>
-			<View className="flex-row justify-center gap-4">
-				<Tour.Step description="Trouvez votre chemin." order={1} title="Explorer">
-					<Button accessibilityLabel="Explorer" size="icon-md" testID="tour-labels-explore" variant="secondary">
-						<Icon icon={IconCompassPointer} />
-					</Button>
-				</Tour.Step>
-				<Tour.Step description="Une idée par jour." order={2} title="Astuces">
-					<Button accessibilityLabel="Astuces" size="icon-md" testID="tour-labels-tips" variant="secondary">
-						<Icon icon={IconLightbulbGlow} />
-					</Button>
-				</Tour.Step>
+		<Tour className="flex-none" hasSkip={false} isDismissible={false} labels={LABELS}>
+			<View className="gap-4">
+				<View className="flex-row justify-center gap-4">
+					<Tour.Step description="Trouvez votre chemin." order={1} title="Explorer">
+						<Button accessibilityLabel="Explorer" size="icon-md" testID="tour-labels-explore" variant="secondary">
+							<Icon icon={IconCompassPointer} />
+						</Button>
+					</Tour.Step>
+					<Tour.Step description="Une idée par jour." order={2} title="Astuces">
+						<Button accessibilityLabel="Astuces" size="icon-md" testID="tour-labels-tips" variant="secondary">
+							<Icon icon={IconLightbulbGlow} />
+						</Button>
+					</Tour.Step>
+				</View>
+				<StartButton />
 			</View>
-			<StartButton />
 		</Tour>
 	);
 }

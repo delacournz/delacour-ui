@@ -23,19 +23,21 @@ function StartButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none gap-4">
-			<View className="gap-3">
-				<Tour.Step className="rounded-md bg-secondary p-3" order={1} placement="auto" title="auto">
-					<Text.Paragraph>Below when it fits.</Text.Paragraph>
-				</Tour.Step>
-				<Tour.Step className="rounded-md bg-secondary p-3" order={2} placement="top" title="top">
-					<Text.Paragraph>Asks for the card above.</Text.Paragraph>
-				</Tour.Step>
-				<Tour.Step className="rounded-md bg-secondary p-3" order={3} placement="bottom" title="bottom">
-					<Text.Paragraph>Asks for the card below.</Text.Paragraph>
-				</Tour.Step>
+		<Tour className="flex-none">
+			<View className="gap-4">
+				<View className="gap-3">
+					<Tour.Step className="rounded-md bg-secondary p-3" order={1} placement="auto" title="auto">
+						<Text.Paragraph>Below when it fits.</Text.Paragraph>
+					</Tour.Step>
+					<Tour.Step className="rounded-md bg-secondary p-3" order={2} placement="top" title="top">
+						<Text.Paragraph>Asks for the card above.</Text.Paragraph>
+					</Tour.Step>
+					<Tour.Step className="rounded-md bg-secondary p-3" order={3} placement="bottom" title="bottom">
+						<Text.Paragraph>Asks for the card below.</Text.Paragraph>
+					</Tour.Step>
+				</View>
+				<StartButton />
 			</View>
-			<StartButton />
 		</Tour>
 	);
 }

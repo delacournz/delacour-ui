@@ -26,28 +26,30 @@ function StartButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none gap-4">
-			<View className="flex-row items-center justify-between rounded-lg border border-border p-2">
-				<Text.Label className="ps-2">Library</Text.Label>
-				<View className="flex-row gap-1">
-					<Tour.Step description="Find anything in your library by title or tag." order={1} title="Search">
-						<Button accessibilityLabel="Search" size="icon-md" testID="tour-basic-search" variant="ghost">
-							<Icon icon={IconMagnifyingGlass} />
-						</Button>
-					</Tour.Step>
-					<Tour.Step description="Replies and mentions land here." order={2} title="Notifications">
-						<Button accessibilityLabel="Notifications" size="icon-md" testID="tour-basic-bell" variant="ghost">
-							<Icon icon={IconBell} />
-						</Button>
-					</Tour.Step>
-					<Tour.Step description="Theme, account and sync." order={3} title="Settings">
-						<Button accessibilityLabel="Settings" size="icon-md" testID="tour-basic-settings" variant="ghost">
-							<Icon icon={IconSettingsGear1} />
-						</Button>
-					</Tour.Step>
+		<Tour className="flex-none">
+			<View className="gap-4">
+				<View className="flex-row items-center justify-between rounded-lg border border-border p-2">
+					<Text.Label className="ps-2">Library</Text.Label>
+					<View className="flex-row gap-1">
+						<Tour.Step description="Find anything in your library by title or tag." order={1} title="Search">
+							<Button accessibilityLabel="Search" size="icon-md" testID="tour-basic-search" variant="ghost">
+								<Icon icon={IconMagnifyingGlass} />
+							</Button>
+						</Tour.Step>
+						<Tour.Step description="Replies and mentions land here." order={2} title="Notifications">
+							<Button accessibilityLabel="Notifications" size="icon-md" testID="tour-basic-bell" variant="ghost">
+								<Icon icon={IconBell} />
+							</Button>
+						</Tour.Step>
+						<Tour.Step description="Theme, account and sync." order={3} title="Settings">
+							<Button accessibilityLabel="Settings" size="icon-md" testID="tour-basic-settings" variant="ghost">
+								<Icon icon={IconSettingsGear1} />
+							</Button>
+						</Tour.Step>
+					</View>
 				</View>
+				<StartButton />
 			</View>
-			<StartButton />
 		</Tour>
 	);
 }

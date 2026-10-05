@@ -25,20 +25,22 @@ function StartButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Tour className="flex-none gap-4">
-			<View className="h-40 justify-between rounded-lg border border-border p-4">
-				<Tour.Step description="Everything you have written, newest first." order={1} title="Your notes">
-					<Text.Header>Notes</Text.Header>
-				</Tour.Step>
-				<View className="items-end">
-					<Tour.Step description="Start a new note." order={2} padding={6} shape="circle" title="New note">
-						<Button accessibilityLabel="New note" className="rounded-full" size="icon-md" testID="tour-circle-fab">
-							<Icon icon={IconPlusMedium} />
-						</Button>
+		<Tour className="flex-none">
+			<View className="gap-4">
+				<View className="h-40 justify-between rounded-lg border border-border p-4">
+					<Tour.Step description="Everything you have written, newest first." order={1} title="Your notes">
+						<Text.Header>Notes</Text.Header>
 					</Tour.Step>
+					<View className="items-end">
+						<Tour.Step description="Start a new note." order={2} padding={6} shape="circle" title="New note">
+							<Button accessibilityLabel="New note" className="rounded-full" size="icon-md" testID="tour-circle-fab">
+								<Icon icon={IconPlusMedium} />
+							</Button>
+						</Tour.Step>
+					</View>
 				</View>
+				<StartButton />
 			</View>
-			<StartButton />
 		</Tour>
 	);
 }

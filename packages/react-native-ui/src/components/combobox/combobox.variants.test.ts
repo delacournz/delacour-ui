@@ -1,12 +1,17 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { INPUT_SIZES, INPUT_VARIANTS, inputVariants, resolveInputGroupClass } from "../input/input.variants";
-import { resolveSelectTriggerClass } from "../select/select.variants";
+import {
+	resolveSelectSheetMaxHeight,
+	resolveSelectTriggerClass,
+	SELECT_SHEET_TOP_GAP,
+} from "../select/select.variants";
 import {
 	COMBOBOX_DEFAULT_MAX_CHIPS,
 	comboboxVariants,
 	resolveComboboxChipColor,
 	resolveComboboxChipSize,
+	resolveComboboxSheetMaxHeight,
 	resolveComboboxTriggerClass,
 	resolveComboboxTriggerText,
 	resolveVisibleChips,
@@ -160,6 +165,27 @@ describe("resolveComboboxTriggerText", () => {
 		expect(
 			resolveComboboxTriggerText({ formatSelectedCount: (n) => `${n} choisis`, mode: "multiple", selected: [fig] })
 		).toBe("1 choisis");
+	});
+});
+
+describe("resolveComboboxSheetMaxHeight", () => {
+	test("is Select's cap with no keyboard", () => {
+		expect(resolveComboboxSheetMaxHeight({ keyboardHeight: 0, topInset: 62, windowHeight: 874 })).toBe(
+			resolveSelectSheetMaxHeight({ topInset: 62, windowHeight: 874 })
+		);
+	});
+
+	test("takes the keyboard out of the room below the top inset", () => {
+		expect(resolveComboboxSheetMaxHeight({ keyboardHeight: 336, topInset: 62, windowHeight: 874 })).toBe(
+			874 - 62 - SELECT_SHEET_TOP_GAP - 336
+		);
+	});
+
+	test("never exceeds Select's cap, and never goes below zero", () => {
+		expect(resolveComboboxSheetMaxHeight({ keyboardHeight: 1, topInset: 0, windowHeight: 874 })).toBe(
+			resolveSelectSheetMaxHeight({ topInset: 0, windowHeight: 874 })
+		);
+		expect(resolveComboboxSheetMaxHeight({ keyboardHeight: 2000, topInset: 62, windowHeight: 874 })).toBe(0);
 	});
 });
 

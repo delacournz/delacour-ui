@@ -4,7 +4,13 @@ import { tv } from "../../lib/tv";
 import type { ChipColor, ChipSize } from "../chip/chip.variants";
 import { type InputBoxState, type InputSize, resolveInputGroupClass } from "../input/input.variants";
 import type { SelectOption, SelectSelectionMode } from "../select/select.types";
-import { formatSelectedCount, resolveSelectTriggerClass, selectVariants } from "../select/select.variants";
+import {
+	formatSelectedCount,
+	resolveSelectSheetMaxHeight,
+	resolveSelectTriggerClass,
+	SELECT_SHEET_TOP_GAP,
+	selectVariants,
+} from "../select/select.variants";
 
 /** How many chips the trigger draws before the rest fold into a `+N`. */
 export const COMBOBOX_DEFAULT_MAX_CHIPS = 3;
@@ -30,8 +36,8 @@ export const COMBOBOX_CHIP_LAYOUT_MS = 150;
  */
 export const comboboxVariants = tv({
 	slots: {
-		/** The trigger's chips, wrapping. Takes the room the value text would. */
-		chips: "flex-1 flex-row flex-wrap items-center",
+		/** The trigger's chips, wrapping. Grows into the room the value text would, from an auto basis — `flex-1`'s zero basis collapsed them in a shrink-wrapped parent. */
+		chips: "shrink grow flex-row flex-wrap items-center",
 		/** The `+N` past the chip cap. Layout only — it is a `Chip` and owns its paint. */
 		chipOverflow: "",
 		/** The trigger's clear button, before the chevron. */
@@ -134,4 +140,29 @@ export function resolveComboboxTriggerText({
 }): string | undefined {
 	if (selected.length === 0) return undefined;
 	return mode === "single" ? selected[0]?.label : format(selected.length);
+}
+
+/**
+ * The ceiling for the sheet's self-sized list, with the keyboard taken out.
+ *
+ * Select's cap — the lower of 85% of the window and the room below the top
+ * inset — assumes nothing under the sheet. A combobox's search field keeps the
+ * keyboard up while the list fills the sheet, and the engine lifts the sheet by
+ * the keyboard's height, so a list capped for an empty screen rose under the
+ * status bar. While a keyboard is up the room is what lies between it and the
+ * top inset, less Select's gap.
+ */
+export function resolveComboboxSheetMaxHeight({
+	windowHeight,
+	topInset,
+	keyboardHeight,
+}: {
+	windowHeight: number;
+	topInset: number;
+	keyboardHeight: number;
+}): number {
+	const base = resolveSelectSheetMaxHeight({ topInset, windowHeight });
+	if (keyboardHeight <= 0) return base;
+	const aboveKeyboard = windowHeight - topInset - SELECT_SHEET_TOP_GAP - keyboardHeight;
+	return Math.max(0, Math.floor(Math.min(base, aboveKeyboard)));
 }

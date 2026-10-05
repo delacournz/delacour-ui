@@ -8,6 +8,7 @@ import {
 	useWindowDimensions,
 	View,
 } from "react-native";
+import { useKeyboardState } from "react-native-keyboard-controller";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import { IconCrossSmall, IconMagnifyingGlass } from "../../icons/central";
@@ -23,7 +24,6 @@ import { findChildOfType } from "../select/select.collect";
 import type { SelectOption } from "../select/select.types";
 import {
 	resolveSelectRowState,
-	resolveSelectSheetMaxHeight,
 	type SelectToggleOptions,
 	selectVariants,
 	toggleSelection,
@@ -53,7 +53,7 @@ import type {
 	ComboboxOptionInput,
 	ComboboxPresentation,
 } from "./combobox.types";
-import { comboboxVariants, resolveComboboxTriggerText } from "./combobox.variants";
+import { comboboxVariants, resolveComboboxSheetMaxHeight, resolveComboboxTriggerText } from "./combobox.variants";
 import { ComboboxChipRow } from "./combobox-chip-row";
 import { ComboboxCreateRow } from "./combobox-create-row";
 import { ComboboxEmpty } from "./combobox-empty";
@@ -147,6 +147,18 @@ const DEFAULT_FILTER: ComboboxFilter = { kind: "default" };
 const IDLE: ComboboxPendingRemoveState = { kind: "idle" };
 const CLEAR_HIT_SLOP = 8;
 
+/**
+ * Claims the JS responder for a touch inside the sheet.
+ *
+ * Every `Pressable` here is a Gesture Handler tap, which React Native's
+ * responder system never sees. The list is `keyboardShouldPersistTaps="handled"`,
+ * so it finds such a tap unclaimed, takes the responder itself and blurs the
+ * search field on release — the keyboard drops under a clear press, a chip
+ * removal, or a multiple-mode pick that should leave you typing. Claiming the
+ * touch on a wrapping view is what tells the list it was handled.
+ */
+const claimTouch = (): boolean => true;
+
 const defaultCreateLabel = (query: string): string => `Use “${query}”`;
 
 function ComboboxRoot(props: ComboboxProps): ReactElement {
@@ -183,6 +195,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 	const field = useFieldContext();
 	const { height: windowHeight } = useWindowDimensions();
 	const { top: topInset } = useSafeAreaInsets();
+	const keyboardHeight = useKeyboardState((state) => (state.isVisible ? state.height : 0));
 	const resolvedIsInvalid = isInvalid ?? field?.isInvalid ?? false;
 	const resolvedIsDisabled = isDisabled ?? field?.isDisabled ?? false;
 
@@ -372,7 +385,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		if (target) remove(target.value);
 	};
 
-	const renderRow = ({ item }: { item: ComboboxListRow }): ReactElement => {
+	const renderRowContent = (item: ComboboxListRow): ReactElement => {
 		if (item.kind === "heading") {
 			return (
 				<Text.Overline accessibilityRole="header" className={select.groupHeading()} color="muted">
@@ -416,20 +429,31 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 		);
 	};
 
+	// Multiple mode stays open for the next pick, so its rows keep the keyboard
+	// up; a single pick closes the sheet and lets it go.
+	const renderRow = ({ item }: { item: ComboboxListRow }): ReactElement =>
+		mode === "multiple" ? (
+			<View onStartShouldSetResponder={claimTouch}>{renderRowContent(item)}</View>
+		) : (
+			renderRowContent(item)
+		);
+
 	const searchSuffix = isLoading ? (
 		<Spinner color="muted-foreground" size={size} />
 	) : query !== "" ? (
-		<Pressable
-			accessibilityLabel="Clear search"
-			accessibilityRole="button"
-			className={slots.clear()}
-			feedback="fade"
-			hitSlop={CLEAR_HIT_SLOP}
-			onPress={() => resetQuery("clear")}
-			testID={testID ? `${testID}-search-clear` : undefined}
-		>
-			<Icon color="muted-foreground" icon={IconCrossSmall} size={size} />
-		</Pressable>
+		<View onStartShouldSetResponder={claimTouch}>
+			<Pressable
+				accessibilityLabel="Clear search"
+				accessibilityRole="button"
+				className={slots.clear()}
+				feedback="fade"
+				hitSlop={CLEAR_HIT_SLOP}
+				onPress={() => resetQuery("clear")}
+				testID={testID ? `${testID}-search-clear` : undefined}
+			>
+				<Icon color="muted-foreground" icon={IconCrossSmall} size={size} />
+			</Pressable>
+		</View>
 	) : null;
 
 	const searchLabel = field?.label ? `${field.label}, ${searchPlaceholder}` : searchPlaceholder;
@@ -441,14 +465,16 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			<BottomSheet.Close />
 			{sheetTitle ? <BottomSheet.Title>{sheetTitle}</BottomSheet.Title> : null}
 			{multiple && selectedOptions.length > 0 ? (
-				<ComboboxChipRow
-					chipVariant={chipVariant}
-					onRemove={remove}
-					options={selectedOptions}
-					pendingIndex={pending.kind === "pending" ? pending.index : null}
-					size={size}
-					testID={testID ? `${testID}-sheet` : undefined}
-				/>
+				<View onStartShouldSetResponder={claimTouch}>
+					<ComboboxChipRow
+						chipVariant={chipVariant}
+						onRemove={remove}
+						options={selectedOptions}
+						pendingIndex={pending.kind === "pending" ? pending.index : null}
+						size={size}
+						testID={testID ? `${testID}-sheet` : undefined}
+					/>
+				</View>
 			) : null}
 			<Input.Group size={size}>
 				<Input.Group.Prefix>
@@ -495,7 +521,7 @@ function ComboboxRoot(props: ComboboxProps): ReactElement {
 			<BottomSheet
 				dynamicSizing={snapPoints === undefined}
 				isOpen={isOpen}
-				maxDynamicContentSize={resolveSelectSheetMaxHeight({ topInset, windowHeight })}
+				maxDynamicContentSize={resolveComboboxSheetMaxHeight({ keyboardHeight, topInset, windowHeight })}
 				onIndexChange={handleIndexChange}
 				onOpenChange={handleOpenChange}
 				snapPoints={snapPoints}

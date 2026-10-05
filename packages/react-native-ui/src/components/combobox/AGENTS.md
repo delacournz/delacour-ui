@@ -32,7 +32,7 @@ typed text can become a value.
 | `combobox.context.tsx` | `ComboboxProvider`, `useCombobox()`, `useComboboxContext()`, `useComboboxPart()` |
 | `combobox.types.ts` | `ComboboxOption`, `ComboboxOptionGroup`, `ComboboxEntry`, `ComboboxFilter`, `ComboboxListRow`, … |
 | `combobox.filter.ts` | Pure: normalise, match, filter, create row, highlight ranges, pending remove, query reset, announcement, remembered selection |
-| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text |
+| `combobox.variants.ts` | Pure: the added slots, the trigger class, chip size / colour / cap, trigger text, the keyboard-aware sheet cap |
 | `*.test.ts` | |
 
 ## Design
@@ -90,10 +90,27 @@ typed text can become a value.
   removes chips from the sheet's chip row, where each chip is its own element.
 - **The chip trigger is Input's multiline box.** With chips the fixed height
   becomes a floor, the vertical padding returns and the row aligns to the first
-  line, so wrapped chips grow the field the way a textarea grows. Past
+  line, so wrapped chips grow the field the way a textarea grows. The chip row
+  grows from an auto basis, not `flex-1`'s zero one, which collapsed every chip
+  to nothing inside a shrink-wrapped parent. Past
   `maxVisibleChips` (3) the last slot becomes a `+N`; a count rather than a
   measured two-line limit, because measuring would lay every chip out once to
   throw most of them away.
+- **Touches inside the sheet are claimed for the keyboard's sake.** Every
+  `Pressable` is a Gesture Handler tap, invisible to React Native's responder
+  system, so the `keyboardShouldPersistTaps="handled"` list took the touch as
+  unhandled and blurred the search field: the keyboard dropped under the clear
+  button, a chip removal, and every multiple-mode pick. The clear button, the
+  sheet's chip row and multiple mode's rows sit in a view whose
+  `onStartShouldSetResponder` returns true. A single pick closes the sheet, so
+  its rows let the keyboard go.
+- **The sheet's cap takes the keyboard out.** The engine lifts the sheet by the
+  keyboard's height, and Select's cap assumes an empty screen, so with the
+  search field focused a long list rose under the status bar.
+  `resolveComboboxSheetMaxHeight` caps the list at the room between the
+  keyboard and the top inset (less Select's gap) while one is up. Passing the
+  engine a `topInset` instead was tried and rejected: it shrinks the frame, and
+  the scrim with it, leaving the status bar uncovered.
 - **Chips enter, leave and close gaps in 150ms; calm motion drops it all.**
 - **The result count is announced, not just shown.** Android reads the
   `accessibilityLiveRegion="polite"` line under the field; iOS has no live

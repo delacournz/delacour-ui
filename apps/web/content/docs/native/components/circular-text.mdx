@@ -4,6 +4,8 @@ description: Text set around a circle — a seal, a badge, an arc of words — o
 icon: RotateCw
 ---
 
+<Preview id="circular-text/seal" title={null} />
+
 ## Installation
 
 <ComponentInstall name="circular-text" />
@@ -36,6 +38,8 @@ export default function Example() {
 
 `span` decides how much of the circle the words cover.
 
+<Preview id="circular-text/arc" />
+
 | `span` | What it does |
 | --- | --- |
 | `{ kind: "full" }` | Spreads the text to close the ring exactly, whatever the font's metrics (default) |
@@ -53,6 +57,8 @@ export default function Example() {
 `side` points glyph tops away from the centre (`outside`) or toward it (`inside`); `direction` is
 only the way a `loop` turns.
 
+<Preview id="circular-text/badge" />
+
 ```tsx
 <CircularText radius={52} side="inside">TOP CONTRIBUTOR</CircularText>
 <CircularText direction="counterclockwise" radius={52} spin={{ kind: "loop" }}>
@@ -65,6 +71,10 @@ only the way a `loop` turns.
 `spin` is `none` (default), `loop` at `speed` degrees per second, or `controlled` by a
 `SharedValue<number>` your app drives from a scroll offset, a gesture or a slider.
 
+<Preview id="circular-text/seal" />
+
+<Preview id="circular-text/controlled" />
+
 ```tsx
 <CircularText radius={72} spin={{ kind: "loop", speed: 24 }}>…</CircularText>
 <CircularText radius={72} spin={{ kind: "controlled", rotation }}>…</CircularText>
@@ -74,6 +84,8 @@ only the way a `loop` turns.
 
 `press` eases the ring to a halt under a finger, `controlled` from your state; either resumes from
 the same angle.
+
+<Preview id="circular-text/hold-to-pause" />
 
 ```tsx
 <CircularText pause={{ kind: "press" }} radius={72} spin={{ kind: "loop", speed: 48 }}>
@@ -109,6 +121,8 @@ an `Icon` as `centerContent`.
 
 **Two rings** — pass one `CircularText` as another's `centerContent`, the inner one smaller,
 `direction="counterclockwise"` and faster.
+
+<Preview id="circular-text/two-rings" />
 
 **Badge** — a muted ring around an `Avatar`, `side="inside"` for words along the bottom.
 

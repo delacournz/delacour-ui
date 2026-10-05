@@ -149,8 +149,12 @@ Verified on an iOS 26 simulator (iPhone 17) on 2026-10-05:
 `apps/playground/src/demos/circular-text/`: `seal` (the intended hero), `two-rings`, `arc`, `badge`,
 `loading-ring`, `hold-to-pause`, `controlled`.
 
-**Previews are a follow-up.** No demo sets `meta.capture` yet: `demos.test.ts` requires a manifest
-entry and committed media for every captured demo, and the media is recaptured by the lead after
-integration. When it is, mark `seal` `hero: true`, capture `arc` as a still and the spinning ones as
-clips (`hold-to-pause` needs a press-and-hold flow on `circular-text-hold`), and add the
-`<Preview>` hero to the docs page.
+Six are captured: `seal` (hero) and `two-rings`, `badge`, `hold-to-pause` and `controlled` as
+clips, `arc` as a still. `loading-ring` stays gallery-only.
+
+**A spinning clip loops only if it lasts a whole period of the ring's symmetry.** `repeat="fill"`
+picks the copy count, so a ring of *n* copies repeats every 360/*n*°, and each flow's `wait:` is sized
+so lead + wait + tail equals that period at the demo's speed — seal 4 copies at 24°/s (3.75s),
+badge 2 at 24°/s (7.5s), two-rings 3 outer at 20°/s and 2 inner at 30°/s (both 6s, which is why
+those speeds). Change a ring's text, radius, size or speed and the copy count or period moves: re-time
+the flow, or the clip jump-cuts at the seam. Count copies off the poster, not from the phrase.

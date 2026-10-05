@@ -68,6 +68,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "swipe", title: "Swipe", description: "A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open." },
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },
 	{ name: "tabs", title: "Tabs", description: "A swipeable pager with an indicator measured against the active tab." },
+	{ name: "tag-input", title: "Tag Input", description: "Free-form tags typed into one field box, each a removable chip, with validation and a max." },
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },
 	{ name: "time-picker", title: "Time Picker", description: "A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline." },

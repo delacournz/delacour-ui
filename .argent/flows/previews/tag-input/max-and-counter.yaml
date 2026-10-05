@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tag-input/max-and-counter and has settled — a Skills field holding three
+  chips, a 3/5 counter and an empty unfocused input. The capture script navigates there before running this.
+steps:
+  - echo: Two more tags fill the list, and the input steps aside at 5/5
+  - tap: { id: tag-input-max-input }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "Go,", delayMs: 120 }
+  - wait: 400
+  - tool: keyboard
+    args: { text: "Rust,", delayMs: 120 }
+  - wait: 1000
+  - echo: Removing both, so the clip loops back to 3/5
+  - tap: { id: tag-input-max-tag-4-remove }
+  - wait: 500
+  - tap: { id: tag-input-max-tag-3-remove }
+  - wait: 500

@@ -105,6 +105,7 @@ const ROWS = [
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },
+	{ slug: "tag-input", title: "TagInput", description: "Delimiters, validation, max, clear-all", group: "Forms" },
 	{ slug: "otp-input", title: "OtpInput", description: "Autofill, paste, groups, masked PIN", group: "Forms" },
 	{
 		slug: "number-input",

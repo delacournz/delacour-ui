@@ -181,11 +181,13 @@ over its table.
 - **agent-device's synthetic flings are slow** (~300pt/s) and a 40ms `gesture
   pan` delivers no intermediate update, so neither proves a skip. A 100ms
   `gesture pan` of 50pt is what showed it.
-- **No captured previews yet.** The capture tool is not installed, so no demo
-  carries `capture` and the docs page has no `<Preview>`. When it is back: mark
-  `anatomy` (hero), `seam`, `snap-points`, `controlled` and `scrolling-panes` as
-  captured, run `bun run previews -- -- --only split-view`, and add the
-  `<Preview>`s back to the docs page.
+- **Previews, 2026-10-06** (dev client, iPhone 17 Pro, `--dev`): `anatomy`
+  (hero), `seam`, `snap-points`, `controlled` and `scrolling-panes` are captured
+  as clips, all `align: "stretch"`. Each flow in `.argent/flows/previews/split-view/`
+  ends on the stop it started from, so the clip loops. The drag flows use
+  `momentum: false`, so a release is slow and settles on the nearest stop. Their
+  `by` distances are fractions of the screen sized to reach a given stop, so a
+  change to a demo's height or stops means re-checking them.
 - **The scrolling-panes demo uses Gesture Handler's `ScrollView`, not
   `Screen.ScrollArea`.** The latter pads for the screen's insets and navbar,
   which a pane in the middle of a screen does not have.

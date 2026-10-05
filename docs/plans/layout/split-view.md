@@ -261,7 +261,8 @@ Registry `ITEM_META`:
 - **Announcement**: activate (VoiceOver double tap = tap-to-cycle) announces "Position N of M" when a screen reader is on; increment/decrement do not, since VoiceOver reads the adjustable value itself.
 - **Tap and pan share a 6pt slop** (`SPLIT_VIEW_TAP_SLOP`) so one touch is a tap or a drag, never both.
 - **Demos**: `scrolling-panes` uses Gesture Handler's `ScrollView`; `Screen.ScrollArea` pads for screen insets a pane does not have. Home-row icon is `IconLayoutAlignTopBottom` (`IconLayoutBottomFull` is `bottom-sheet`'s).
-- **Previews: deferred**, as for Splitter — the capture tool is not installed, so no demo carries `capture` and the docs page has no `<Preview>`.
+- **Previews**: five demos captured as clips on 2026-10-06 (dev client, iPhone 17 Pro); `accessible-names` and `disabled` stay gallery-only.
+- **Children are classified by `displayName`**, not `child.type ===`: the dev bundle wraps element types, which made a correct tree warn.
 - **Simulator**: checked 2026-10-05; see the component AGENTS.md. Rotation, Reduce Motion, haptics and VoiceOver actions not checked.
 
 ## Acceptance checklist

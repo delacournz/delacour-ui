@@ -4,6 +4,8 @@ description: Two stacked panes with a drag row that settles on named snap points
 icon: Rows2
 ---
 
+<Preview id="split-view/anatomy" title={null} />
+
 ## Installation
 
 <ComponentInstall name="split-view" />
@@ -38,19 +40,23 @@ export default function Example() {
 }
 ```
 
-Drag the row and the top pane follows the finger; let go and it settles on the nearest stop, or the
-next one along when flicked. A tap on the grip cycles to the next stop. `SplitView.DragArea` with no
-children draws the grip itself.
-
 <Callout type="warn" title="The root needs an extent">
 Stops are resolved against the box, so give the root `flex-1` or a fixed height. Until it has been
 measured both panes share it equally.
 </Callout>
 
+## Drag the row
+
+The top pane follows the finger and settles on the nearest stop, or the next one along when flicked; a tap on the grip cycles.
+
+<Preview id="split-view/anatomy" />
+
 ## Snap points
 
 A stop at or below `1` is a fraction of the box, less the 44pt drag row; above `1` it is points. The two
 can be mixed, and the stops are ordered by the height they resolve to.
+
+<Preview id="split-view/snap-points" />
 
 ```tsx
 <SplitView className="flex-1" snapPoints={[120, 0.5, 1]} defaultSnapIndex={0}>
@@ -73,6 +79,8 @@ and landscape keeps its index across a rotation, so the same index can name a di
 leaves the panes flush and draws a hairline behind the grip, for a split that already sits on a card or
 a sheet.
 
+<Preview id="split-view/seam" />
+
 ```tsx
 <Card className="overflow-hidden p-0">
   <SplitView className="h-96" variant="seam">
@@ -92,6 +100,8 @@ a sheet.
 `snapIndex` and `onSnapIndexChange` own the stop. `onSnapIndexChange` fires once per settle, never per
 frame. `useSplitView()` gives a child the same index and `snapTo`, so a toolbar inside a pane can move
 the divider.
+
+<Preview id="split-view/controlled" />
 
 ```tsx
 function Expand() {
@@ -118,6 +128,8 @@ const [index, setIndex] = useState(1);
 
 The gesture lives on the drag row only. A list in either pane scrolls without moving the divider, and a
 drag that starts on the row wins over the list. Scrollables inside a pane are yours to add.
+
+<Preview id="split-view/scrolling-panes" />
 
 ```tsx
 <SplitView className="flex-1" minTopHeight={80} minBottomHeight={120}>

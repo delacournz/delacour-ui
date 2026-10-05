@@ -4,6 +4,8 @@ description: A status pill that rolls its content and springs its width when the
 icon: Sparkles
 ---
 
+<Preview id="animated-badge/status-flow" title={null} />
+
 ## Installation
 
 <ComponentInstall name="animated-badge" />
@@ -36,6 +38,8 @@ for a tag, a count, or anything tappable.
 Each status picks a colour from `Badge`'s soft row and a glyph. `loading` draws a spinner, swells
 gently and marks the badge busy.
 
+<Preview id="animated-badge/statuses" />
+
 ```tsx
 <AnimatedBadge status="neutral">Queued</AnimatedBadge>
 <AnimatedBadge status="loading">Building</AnimatedBadge>
@@ -53,6 +57,8 @@ gently and marks the badge busy.
 step, so an `AnimatedBadge` and a `Badge` of the same size sit level. A size is padding, never a
 height, so the badge grows with OS font scaling.
 
+<Preview id="animated-badge/sizes" />
+
 ```tsx
 <AnimatedBadge size="sm" status="success">Small</AnimatedBadge>
 <AnimatedBadge size="md" status="success">Medium</AnimatedBadge>
@@ -62,6 +68,8 @@ height, so the badge grows with OS font scaling.
 
 `icon` replaces the status's glyph and takes an icon component, not an element — the badge renders
 it at its own icon size and colour. `showIcon={false}` drops the glyph.
+
+<Preview id="animated-badge/custom-icon" />
 
 ```tsx
 import { IconSparkle } from "@delacour/react-native-ui/icons/central";
@@ -76,6 +84,8 @@ Passing both `icon` and `showIcon={false}` is a type error.
 
 `animateLayout` (on by default) springs the badge to a new position when the layout around it
 moves. Inside a sentence that reflows, that would slide the badge across lines, so turn it off:
+
+<Preview id="animated-badge/inline-text" />
 
 ```tsx
 <View className="flex-row flex-wrap items-center gap-1">
@@ -108,6 +118,8 @@ Changes that arrive mid-roll are not queued: the badge settles on the newest one
 
 The roll, the width spring and the layout spring all run on the UI thread; nothing re-renders to
 animate.
+
+<Preview id="animated-badge/status-flow" />
 
 With the system's Reduce Motion setting on, every motion cuts over: the words swap in place, the
 capsule takes its new width at once, the badge does not slide, and nothing pulses. With

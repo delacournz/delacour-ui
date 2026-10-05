@@ -28,6 +28,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "kpi", title: "Kpi", description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card." },
 	{ name: "label", title: "Label", description: "A form control's name, with required, invalid and disabled states." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
+	{ name: "marker", title: "Marker", description: "A centred inline note for a step or a day break between conversation turns, static or pressable." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },

@@ -12,6 +12,9 @@ export const meta: DemoMeta = {
 
 const TEXT = "Letter by letter.";
 
+/** Tuned to the 320pt box: the block starts resolving three quarters down it and finishes near its top. */
+const WINDOW = { start: 0.75, end: 0.05 };
+
 export function Demo(): ReactElement {
 	const scrollY = useSharedValue(0);
 	const viewport = useAnimatedRef<Animated.ScrollView>();
@@ -27,7 +30,7 @@ export function Demo(): ReactElement {
 			scrollEventThrottle={16}
 			testID="scroll-text-host"
 		>
-			<View className="h-60" />
+			<View className="h-64" />
 			<View className="px-5">
 				<ScrollText
 					effect={{ kind: "fade" }}
@@ -36,6 +39,7 @@ export function Demo(): ReactElement {
 					split="character"
 					weight="bold"
 					source={{ kind: "offset", scrollY, viewport }}
+					window={WINDOW}
 				>
 					{TEXT}
 				</ScrollText>

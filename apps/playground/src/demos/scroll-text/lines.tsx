@@ -13,6 +13,9 @@ export const meta: DemoMeta = {
 const TEXT =
 	"Line by line, a paragraph resolves as it climbs the screen. The lines are the ones a plain Text of the same string would break into, measured once and re-measured only when the width changes.";
 
+/** Tuned to the 320pt box: the block starts resolving three quarters down it and finishes near its top. */
+const WINDOW = { start: 0.75, end: 0.05 };
+
 export function Demo(): ReactElement {
 	const scrollY = useSharedValue(0);
 	const viewport = useAnimatedRef<Animated.ScrollView>();
@@ -28,13 +31,14 @@ export function Demo(): ReactElement {
 			scrollEventThrottle={16}
 			testID="scroll-text-host"
 		>
-			<View className="h-60" />
+			<View className="h-28" />
 			<View className="px-5">
 				<ScrollText
 					effect={{ kind: "rise", distance: 10 }}
 					size="lg"
 					split="line"
 					source={{ kind: "offset", scrollY, viewport }}
+					window={WINDOW}
 				>
 					{TEXT}
 				</ScrollText>

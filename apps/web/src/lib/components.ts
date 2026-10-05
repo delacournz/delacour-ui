@@ -334,6 +334,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "attachment",
+		name: "Attachment",
+		group: "Media",
+		blurb: "A file, image or recording — thumbnail, name, size, upload progress, remove and retry.",
+	},
+	{
 		slug: "support",
 		name: "Support",
 		group: "Media",

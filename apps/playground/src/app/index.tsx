@@ -63,6 +63,7 @@ import {
 	IconNoteText,
 	IconNumberedList,
 	IconPageEmpty,
+	IconPaperclip1,
 	IconParagraph,
 	IconPasswordStars,
 	IconPeople,
@@ -113,6 +114,7 @@ import { LIST_GAP, SECTION_GAP } from "@/tokens";
 const ICONS: Record<ComponentSlug, IconComponent> = {
 	accordion: IconChevronGrabberVertical,
 	alert: IconExclamationTriangle,
+	attachment: IconPaperclip1,
 	"animated-badge": IconSparkle,
 	avatar: IconPeople,
 	badge: IconTag,

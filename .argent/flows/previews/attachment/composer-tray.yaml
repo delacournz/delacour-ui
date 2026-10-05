@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on attachment/composer-tray and has settled — four tiles in the tray (two photos,
+  a PDF and a recording) over the Reset tray button. The capture script navigates there before running this.
+steps:
+  - echo: Removing the PDF, then the second photo — the rest slide along
+  - tap: { id: attachment-tray-remove-b }
+  - wait: 700
+  - tap: { id: attachment-tray-remove-c }
+  - wait: 800
+  - echo: Resetting the tray fades both back in, so the clip loops without a jump cut
+  - tap: { id: attachment-tray-reset }
+  - wait: 900

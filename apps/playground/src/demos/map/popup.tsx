@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Popup",
+	align: "stretch",
 	caption:
 		"A themed card over a marker's pin, rendered or not by whoever knows which place is selected. Tap a marker to open its card, the map to close it.",
 };

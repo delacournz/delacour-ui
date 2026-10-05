@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Fly to",
+	align: "stretch",
 	caption:
 		"Props set the opening view only. The ref moves the camera afterwards — fly to a place, frame a box, or go back to where it opened.",
 };

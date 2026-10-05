@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Arcs",
+	align: "stretch",
 	caption:
 		"A curve from one point to another, for a connection rather than a path. Each starts and ends exactly on its coordinates, so the markers sit on the line.",
 };

@@ -126,3 +126,17 @@ accessibility, API.
 - [ ] `bun --filter delacour run verify:expo` passes (or failure recorded with cause)
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Build record (2026-10-05)
+
+- iOS simulator verified by hand (agent-device): markers + labels, marker press, route, arc, popup open/close,
+  controls (zoom in, recenter), `flyTo` / `fitBounds` / `recenter` with `onViewStateChange`, and the app's dark
+  theme turning the basemap dark. Found and fixed there: Apple Maps skips `onRegionChangeComplete` after a long
+  animated move, so handle moves now settle themselves (`resolveSettleDelay`).
+- Not verified: Android (no Google Maps key on this machine), the locate button's permission flow.
+- **Previews not captured.** The capture tool is not installed on this machine, so no demo carries `capture` and
+  `map.mdx` has no `<Preview>`. Follow-up: mark `places` (hero), `route`, `arcs`, `popup`, `controls` as
+  `capture: { align: "stretch" }`, run `bun run previews -- -- --only map`, add the `<Preview>`s.
+- The planned `dark` demo became `tones` (pins in every tone); the basemap's theme is checked with the gallery's
+  own theme toggle rather than a demo that flips the app theme.
+- `verify:expo` not run.

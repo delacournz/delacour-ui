@@ -4,6 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Tones and theme",
+	align: "stretch",
 	caption:
 		"Pins in each tone, labels on the card. The basemap follows the app's theme rather than the system's — switch the theme and it follows.",
 };

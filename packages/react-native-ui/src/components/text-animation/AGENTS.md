@@ -160,3 +160,13 @@ a follow-up after the media components merge, not something to do on this branch
 - **`tabular-nums` through Uniwind.** `Textarea`'s count already relies on it; if a
   face ignores it, set `fontVariant: ["tabular-nums"]` as a single style instead.
 - **A 1000-character Reveal at 60 fps** on a mid-tier device.
+
+## Preview media — a follow-up
+
+No demo carries `meta.capture` yet: `demos.test.ts` requires a manifest entry and
+both themes' media for every captured demo, and those come only from
+`bun run previews`, which the lead runs after the media components merge. When it
+does, capture `reveal-words` (`hero`, `align: "stretch"`), `reveal-characters`,
+`typing` (`align: "stretch"`), `rotating`, `counting` and `rolling` — every one a
+clip, since each is motion; `counting` and `rolling` need a flow that taps their
+`-next` button. `orders` stays gallery-only.

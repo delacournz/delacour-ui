@@ -23,6 +23,7 @@ import {
 	IconLayoutLeft,
 	IconLayoutTopBottom,
 	IconLayoutWindow,
+	IconMagicWand,
 	IconNoteText,
 	IconNumberedList,
 	IconParagraph,
@@ -93,6 +94,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	switch: IconToggle,
 	tabs: IconBrowserTabs,
 	text: IconFontStyle,
+	"text-animation": IconMagicWand,
 	textarea: IconNoteText,
 	"toggle-button": IconBold,
 };

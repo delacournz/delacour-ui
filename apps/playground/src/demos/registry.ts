@@ -342,6 +342,13 @@ import * as demo_tabs_swipe_controlled_rejecting_every_third_change from "./tabs
 import * as demo_tabs_swipe_is_swipeable_false from "./tabs/swipe/is-swipeable-false";
 import * as demo_tabs_swipe_swipeable_the_default from "./tabs/swipe/swipeable-the-default";
 import * as demo_tabs_variants_every_variant from "./tabs/variants/every-variant";
+import * as demo_text_animation_counting from "./text-animation/counting";
+import * as demo_text_animation_orders from "./text-animation/orders";
+import * as demo_text_animation_reveal_characters from "./text-animation/reveal-characters";
+import * as demo_text_animation_reveal_words from "./text-animation/reveal-words";
+import * as demo_text_animation_rolling from "./text-animation/rolling";
+import * as demo_text_animation_rotating from "./text-animation/rotating";
+import * as demo_text_animation_typing from "./text-animation/typing";
 import * as demo_text_alignment from "./text/alignment";
 import * as demo_text_colour from "./text/colour";
 import * as demo_text_inline_presets from "./text/inline-presets";
@@ -708,6 +715,13 @@ export const DEMOS = {
 	"tabs/swipe/is-swipeable-false": demo_tabs_swipe_is_swipeable_false,
 	"tabs/swipe/swipeable-the-default": demo_tabs_swipe_swipeable_the_default,
 	"tabs/variants/every-variant": demo_tabs_variants_every_variant,
+	"text-animation/counting": demo_text_animation_counting,
+	"text-animation/orders": demo_text_animation_orders,
+	"text-animation/reveal-characters": demo_text_animation_reveal_characters,
+	"text-animation/reveal-words": demo_text_animation_reveal_words,
+	"text-animation/rolling": demo_text_animation_rolling,
+	"text-animation/rotating": demo_text_animation_rotating,
+	"text-animation/typing": demo_text_animation_typing,
 	"text/alignment": demo_text_alignment,
 	"text/colour": demo_text_colour,
 	"text/inline-presets": demo_text_inline_presets,

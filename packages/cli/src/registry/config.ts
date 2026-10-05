@@ -368,6 +368,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
 		categories: ["display"],
 	},
+	message: {
+		title: "Message",
+		description: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

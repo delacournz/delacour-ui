@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -349,6 +350,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Collapsible",
 		group: "Data display",
 		blurb: "One section shown and hidden by its own trigger.",
+	},
+	{
+		slug: "message",
+		name: "Message",
+		group: "Media",
+		blurb: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
 	},
 	{
 		slug: "marker",

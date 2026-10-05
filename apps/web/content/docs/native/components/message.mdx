@@ -1,0 +1,276 @@
+---
+title: Message
+description: A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.
+icon: MessageCircle
+---
+
+<Preview id="message/status" title={null} />
+
+## Installation
+
+<ComponentInstall name="message" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Avatar } from "@/components/ui/avatar";
+import { Message } from "@/components/ui/message";
+import { View } from "react-native";
+
+const sentAt = new Date();
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Message direction="incoming">
+        <Message.Avatar>
+          <Avatar name="Kate Austen" size="sm" />
+        </Message.Avatar>
+        <Message.Header>
+          <Message.Author>Kate</Message.Author>
+          <Message.Timestamp date={sentAt} />
+        </Message.Header>
+        <Message.Bubble>
+          <Message.Text>Are we still on for tonight?</Message.Text>
+        </Message.Bubble>
+      </Message>
+      <Message direction="outgoing" status={{ type: "read" }}>
+        <Message.Bubble>
+          <Message.Text>Yes — 7pm at the usual place.</Message.Text>
+        </Message.Bubble>
+        <Message.Status />
+      </Message>
+    </View>
+  );
+}
+```
+
+## Direction
+
+`direction` is required. Incoming sits at the start on `muted`; outgoing sits at the end on
+`primary`. `tone="accent"` moves an incoming bubble to `secondary`.
+
+<Preview id="message/directions" />
+
+```tsx
+<Message direction="incoming">…</Message>
+<Message direction="outgoing">…</Message>
+<Message direction="incoming" tone="accent">…</Message>
+```
+
+## Runs and position
+
+Consecutive messages from one sender form a run. The message never looks at its neighbours —
+the list computes `position` and passes it, and the corners that face a neighbour tighten so the
+run reads as one stack. The gap below follows too: tight inside a run, a breath after it.
+
+<Preview id="message/runs" />
+
+```tsx
+function positionOf(messages: Item[], index: number): MessagePosition {
+  const sender = messages[index].sender;
+  const joinsAbove = messages[index - 1]?.sender === sender;
+  const joinsBelow = messages[index + 1]?.sender === sender;
+  if (joinsAbove && joinsBelow) return "middle";
+  if (joinsAbove) return "last";
+  if (joinsBelow) return "first";
+  return "single";
+}
+```
+
+Corners are logical, so a run mirrors under a right-to-left layout with nothing else said.
+
+## Status
+
+`status` is the delivery receipt of an outgoing message, drawn by `Message.Status` under the last
+bubble of a run and nowhere else. `sending` dims the bubble, `read` turns the ticks to `info`, and
+`failed` edges the bubble in `destructive`. With `onRetry`, a failed receipt carries a Retry
+control.
+
+<Preview id="message/status" />
+
+```tsx
+<Message direction="outgoing" status={{ type: "sending" }}>…</Message>
+<Message direction="outgoing" status={{ type: "read", readAt }}>…</Message>
+<Message direction="outgoing" status={{ type: "failed", reason: "No connection" }} onRetry={resend}>
+  <Message.Bubble>…</Message.Bubble>
+  <Message.Status />
+</Message>
+```
+
+## Avatar gutter
+
+`Message.Avatar` takes an `Avatar`, or anything, as children. It draws them beside the last
+incoming bubble of a run and an empty gutter of the same width beside the rest, so the run stays
+aligned. The gutter is an `Avatar` at `size="sm"`.
+
+## Attachments and reactions
+
+Both are slots. `Message.Attachments` is a clipped stack for media and file tiles; mark the bubble
+`isMedia` when that is all it holds and the media fills it edge to edge. `Message.Reactions` takes
+chips, hung over the bubble's edge or on a line below.
+
+<Preview id="message/reactions" />
+
+```tsx
+<Message.Bubble isMedia>
+  <Message.Attachments>
+    <Image source={photo} className="h-40 w-56" />
+  </Message.Attachments>
+</Message.Bubble>
+<Message.Reactions placement="below">
+  <Chip key="heart" size="sm">❤️ 2</Chip>
+</Message.Reactions>
+```
+
+## Typing
+
+`Message.Typing` stands in for the bubble while the other side types: three staggered dots,
+read as "Kate is typing". Under reduce motion the dots rest.
+
+<Preview id="message/typing" />
+
+```tsx
+<Message direction="incoming">
+  <Message.Header>
+    <Message.Author>Kate</Message.Author>
+  </Message.Header>
+  <Message.Typing />
+</Message>
+```
+
+## Long press and actions
+
+There is no hover toolbar on a phone. `onLongPress` opens whatever menu the app hosts, and
+`isSelected` highlights the row while it is open. `Message.Actions` is a row for controls under
+the bubble.
+
+```tsx
+<Message direction="incoming" isSelected={menuOpen} onLongPress={openMenu}>
+  …
+</Message>
+```
+
+## Emoji only
+
+`isEmojiOnly(text)` is exported for the app to decide; the component never guesses. A short emoji
+reply is usually drawn large with no fill:
+
+```tsx
+<Message direction="outgoing" size="lg" tone={isEmojiOnly(text) ? "plain" : "default"}>
+  …
+</Message>
+```
+
+## Accessibility
+
+- **One element per message.** The parts report their words and the root reads them as one label:
+  "Kate, 9:41 AM, Are we still on for tonight?". Your own last message adds its receipt.
+  `accessibilityLabel` replaces it.
+- **Gestures are actions.** `onLongPress` is offered as a "More actions" action and `onRetry` as
+  "Retry", so neither needs a gesture.
+- **Only failure is announced.** A turn into `failed` is spoken once; sent, delivered and read are
+  not.
+- **`isCompound`** keeps the parts separate, for a message that holds a control of its own — a
+  link, a pressable attachment or buttons in `Message.Actions`.
+
+## API Reference
+
+### Message
+
+<TypeTable
+  type={{
+    direction: { type: '"incoming" | "outgoing"', required: true },
+    position: {
+      type: '"single" | "first" | "middle" | "last"',
+      default: '"single"',
+      description: "Its place in a run of one sender's messages, computed by the list.",
+    },
+    status: {
+      type: "MessageStatus",
+      description: "`sending`, `sent`, `delivered`, `read` (with `readAt`) or `failed` (with `reason`). Outgoing only.",
+    },
+    tone: { type: '"default" | "accent" | "plain"', default: '"default"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isSelected: { type: "boolean", default: "false" },
+    animateEntrance: {
+      type: "boolean",
+      default: "false",
+      description: "Fade in on mount. Only for a message that arrived after first layout.",
+    },
+    isCompound: { type: "boolean", default: "false", description: "Leave the parts as separate accessibility elements." },
+    onPress: { type: "() => void" },
+    onLongPress: { type: "() => void" },
+    onRetry: { type: "() => void", description: "Retry on a failed receipt." },
+    accessibilityLabel: { type: "string", description: "Replaces the composed label." },
+    className: { type: "string" },
+    children: { type: "ReactNode", required: true },
+  }}
+/>
+
+### Message.Bubble
+
+<TypeTable
+  type={{
+    isMedia: { type: "boolean", default: "false", description: "Drop the padding and clip — the bubble holds only media." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Message.Author
+
+<TypeTable
+  type={{
+    children: { type: "string", required: true },
+    color: { type: '"default" | "primary"', default: '"default"' },
+    className: { type: "string" },
+  }}
+/>
+
+### Message.Timestamp
+
+<TypeTable
+  type={{
+    date: { type: "Date", required: true },
+    format: { type: "(date: Date) => string", description: "Replaces the chat-list format." },
+    locale: { type: "string" },
+    className: { type: "string" },
+  }}
+/>
+
+### Message.Status
+
+<TypeTable
+  type={{
+    label: { type: "string", description: "Replaces the receipt's words, drawn and spoken." },
+    className: { type: "string" },
+  }}
+/>
+
+### Message.Reactions
+
+<TypeTable
+  type={{
+    placement: { type: '"overlap" | "below"', default: '"overlap"' },
+    className: { type: "string" },
+    children: { type: "ReactNode", required: true },
+  }}
+/>
+
+### Message.Text
+
+`Text` props, minus `variant` and `color` — the bubble owns the colour and the message the size.
+
+### Message.Avatar / Header / Attachments / Actions
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Message.Typing
+
+<TypeTable type={{ className: { type: "string" } }} />
+
+### useMessage
+
+Returns the enclosing message's `direction`, `position`, `status`, `tone`, `size`, `isOutgoing`,
+`isInteractive` and `isSelected`, so a custom part can match it. Throws outside a `<Message>`.

@@ -76,6 +76,7 @@
 		"./markdown-editor": "./src/components/markdown-editor/index.ts",
 		"./marker": "./src/components/marker/index.ts",
 		"./menu": "./src/components/menu/index.ts",
+		"./message": "./src/components/message/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./number-input": "./src/components/number-input/index.ts",
 		"./otp-input": "./src/components/otp-input/index.ts",

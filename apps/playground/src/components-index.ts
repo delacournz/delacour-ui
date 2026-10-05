@@ -19,6 +19,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -203,6 +204,7 @@ const ROWS = [
 		group: "Data display",
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "message", title: "Message", description: "Sides, runs, receipts, reactions, typing", group: "Media" },
 	{ slug: "alert", title: "Alert", description: "Statuses, variants, dismiss, actions", group: "Feedback" },
 	{ slug: "marker", title: "Marker", description: "Steps, day breaks, pressable, running", group: "Feedback" },
 	{

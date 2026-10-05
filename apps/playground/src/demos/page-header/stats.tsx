@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Stats",
 	caption:
-		"`stacked` puts each value over its label in equal-width cells, so the middle stat stays under the title however wide the labels are. `inline` runs them together and wraps. `isDivided` adds hairlines, hidden from screen readers.",
+		"`stacked` puts each value over its label in equal-width cells, so the middle stat stays under the title however wide the labels are. `inline` runs them together and wraps. `isDivided` adds hairlines, hidden from screen readers — on stacked stats only here, since a divider cannot know where a wrapping inline row breaks.",
 	capture: { align: "stretch" },
 };
 
@@ -27,7 +27,7 @@ export function Demo(): ReactElement {
 					<PageHeader.Content>
 						<PageHeader.Title>{LABELS[layout]}</PageHeader.Title>
 					</PageHeader.Content>
-					<PageHeader.Stats isDivided layout={layout}>
+					<PageHeader.Stats isDivided={layout === "stacked"} layout={layout}>
 						<PageHeader.Stat label="Followers" testID={`page-header-stats-${layout}-followers`} value={12_500} />
 						<PageHeader.Stat label="Posts" testID={`page-header-stats-${layout}-posts`} value={87} />
 						<PageHeader.Stat label="Rank" testID={`page-header-stats-${layout}-rank`} value="Top 5" />

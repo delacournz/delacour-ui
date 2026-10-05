@@ -5,13 +5,13 @@ executionPrerequisite: >-
 steps:
   - echo: Join — the button steps down to "Joined" and Members ticks over
   - tap: { id: page-header-screen-join }
-  - wait: 700
+  - wait: 600
   - echo: Scroll the header away under the navbar
-  - swipe: { from: { id: page-header-screen-scroll }, by: { y: -0.3 }, momentum: false }
-  - wait: 700
+  - swipe: { from: { id: page-header-screen-scroll }, by: { y: -0.35 }, momentum: false }
+  - wait: 600
   - echo: Back to the top
-  - swipe: { from: { id: page-header-screen-scroll }, by: { y: 0.4 }, momentum: false }
-  - wait: 700
+  - swipe: { from: { id: page-header-screen-scroll }, by: { y: 0.5 }, momentum: false }
+  - wait: 500
   - echo: And leave, so the clip loops without a jump cut
   - tap: { id: page-header-screen-join }
   - wait: 600

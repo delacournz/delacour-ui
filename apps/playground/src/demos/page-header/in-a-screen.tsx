@@ -22,6 +22,14 @@ const POSTS = [
 	"Clubhouse working bee",
 	"Masters crew wins gold",
 	"Summer timetable",
+	"Coaching roster",
+	"Erg challenge leaderboard",
+	"Boat shed open day",
+	"Head of the harbour entries",
+	"Junior squad trials",
+	"Annual general meeting",
+	"Rigging workshop",
+	"End of season dinner",
 ] as const;
 
 export function Demo(): ReactElement {

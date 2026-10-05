@@ -7,9 +7,7 @@ import { useThemeColor } from "../../hooks/use-theme-color";
 import { transparentOf } from "../../lib/color";
 import { Text, TextClassProvider, type TextProps, useTextClass } from "../text";
 import { resolveTextClass, TEXT_MAX_FONT_SIZE_MULTIPLIER } from "../text/text.variants";
-import { useScrollTextProgress } from "./scroll-text-source";
 import type { ScrollTextProps, ScrollTextSource } from "./scroll-text.types";
-import { ScrollTextUnit, type ScrollTextUnitColors } from "./scroll-text-unit";
 import {
 	resolveEffectFrame,
 	resolveScrollTextColorTokens,
@@ -23,6 +21,8 @@ import {
 	splitText,
 	withAlpha,
 } from "./scroll-text.variants";
+import { useScrollTextProgress } from "./scroll-text-source";
+import { ScrollTextUnit, type ScrollTextUnitColors } from "./scroll-text-unit";
 
 export type { ScrollTextProps };
 

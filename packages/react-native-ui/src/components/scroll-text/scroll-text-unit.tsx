@@ -1,7 +1,12 @@
 import type { ReactElement } from "react";
 import Animated, { interpolateColor, type SharedValue, useAnimatedStyle } from "react-native-reanimated";
 import { Text, type TextProps } from "../text";
-import { resolveEffectFrame, resolveRevealProgress, type ScrollTextEffect, scrollTextVariants } from "./scroll-text.variants";
+import {
+	resolveEffectFrame,
+	resolveRevealProgress,
+	type ScrollTextEffect,
+	scrollTextVariants,
+} from "./scroll-text.variants";
 
 /** The colour values a unit interpolates between, resolved once by the block — never per frame. */
 export type ScrollTextUnitColors = {
@@ -65,12 +70,7 @@ export function ScrollTextUnit({
 	});
 
 	const unit = (
-		<Text
-			accessibilityElementsHidden
-			importantForAccessibility="no-hide-descendants"
-			style={textStyle}
-			{...props}
-		>
+		<Text accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={textStyle} {...props}>
 			{text}
 		</Text>
 	);

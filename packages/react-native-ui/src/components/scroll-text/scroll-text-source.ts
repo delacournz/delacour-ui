@@ -67,7 +67,7 @@ export function useScrollTextProgress({
 		if (__DEV__ && isDetached && !hasWarnedOutsideScreen) {
 			hasWarnedOutsideScreen = true;
 			console.warn(
-				"ScrollText: `source: { kind: \"screen\" }` needs a <Screen> above it. Rendering revealed; pass an `offset` or `progress` source instead."
+				'ScrollText: `source: { kind: "screen" }` needs a <Screen> above it. Rendering revealed; pass an `offset` or `progress` source instead.'
 			);
 		}
 	}, [isDetached]);

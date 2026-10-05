@@ -12789,6 +12789,87 @@ export const install = {
 			},
 		],
 	},
+	"scroll-canvas": {
+		name: "scroll-canvas",
+		title: "ScrollCanvas",
+		description: "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
+		importPath: "@delacour/react-native-ui/scroll-canvas",
+		exportName: "ScrollCanvas",
+		expo: ["react-native-reanimated", "react-native-worklets", "uniwind"],
+		npm: ["tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 19,
+		groups: [
+			{
+				name: "scroll-canvas",
+				title: "ScrollCanvas",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/AGENTS.md", target: "src/components/ui/scroll-canvas/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/index.ts", target: "src/components/ui/scroll-canvas/index.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas-image.tsx", target: "src/components/ui/scroll-canvas/scroll-canvas-image.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas-sequence.tsx", target: "src/components/ui/scroll-canvas/scroll-canvas-sequence.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.tsx", target: "src/components/ui/scroll-canvas/scroll-canvas.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.types.ts", target: "src/components/ui/scroll-canvas/scroll-canvas.types.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.variants.ts", target: "src/components/ui/scroll-canvas/scroll-canvas.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-canvas/use-frame-progress.ts", target: "src/components/ui/scroll-canvas/use-frame-progress.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "scroll-maths",
+				title: "scrollMaths",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-maths.ts", target: "src/lib/scroll-maths.ts" },
+				],
+			},
+			{
+				name: "use-scroll-source",
+				title: "useScrollSource",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-source.tsx", target: "src/hooks/use-scroll-source.tsx" },
+				],
+			},
+		],
+	},
 	"provider": {
 		name: "provider",
 		title: "DelacourProvider",

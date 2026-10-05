@@ -79,6 +79,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
+		"./scroll-canvas": "./src/components/scroll-canvas/index.ts",
 		"./scroll-fade": "./src/components/scroll-fade/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
 		"./section-progress": "./src/components/section-progress/index.ts",

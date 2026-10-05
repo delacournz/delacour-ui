@@ -247,6 +247,7 @@ const ROWS = [
 	{ slug: "scroll-fade", title: "ScrollFade", description: "Edges, axes, surfaces", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
+	{ slug: "scroll-canvas", title: "ScrollCanvas", description: "Four scroll effects", group: "Layout" },
 ] as const satisfies readonly Omit<ComponentIndexEntry, "href">[];
 
 /** A slug with a screen, as a literal union so a row without an icon is a type error. */

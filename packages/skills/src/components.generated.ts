@@ -55,6 +55,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "radio", title: "Radio", description: "A radio and the group that owns which one is selected." },
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
+	{ name: "scroll-canvas", title: "ScrollCanvas", description: "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls." },
 	{ name: "scroll-fade", title: "ScrollFade", description: "A gradient at a scrollable's edges while content runs past them, on any axis." },
 	{ name: "search-bar", title: "Search Bar", description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens." },
 	{ name: "section-progress", title: "SectionProgress", description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to." },

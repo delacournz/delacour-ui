@@ -446,6 +446,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline.",
 		categories: ["forms"],
 	},
+	"theme-selector": {
+		title: "Theme Selector",
+		description:
+			"System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency.",
+		categories: ["controls"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

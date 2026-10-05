@@ -134,6 +134,12 @@ const ROWS = [
 	{ slug: "slider", title: "Slider", description: "Range, orientation, colours, steps", group: "Forms" },
 	{ slug: "switch", title: "Switch", description: "Drag or tap, colours, sizes, end content", group: "Forms" },
 	{
+		slug: "theme-selector",
+		title: "ThemeSelector",
+		description: "System, light and dark, segmented or cards",
+		group: "Forms",
+	},
+	{
 		slug: "time-picker",
 		title: "TimePicker",
 		description: "Wheels in a sheet or inline, steps, bounds",

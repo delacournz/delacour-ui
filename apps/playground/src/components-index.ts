@@ -80,6 +80,7 @@ const ROWS = [
 		group: "Actions",
 	},
 	{ slug: "fab", title: "Fab", description: "Pinned, extended, speed dial", group: "Actions" },
+	{ slug: "calendar", title: "Calendar", description: "Single, multiple, range, bounds, locale", group: "Forms" },
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
 	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },

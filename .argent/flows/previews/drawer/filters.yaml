@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on drawer/filters and has settled — the Filters button with the drawer
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the filter panel from the end edge
+  - tap: { id: drawer-filters-open }
+  - await: { visible: { id: drawer-filters-panel } }
+  - wait: 900
+  - echo: Picking two cuisines
+  - tap: { id: drawer-filters-pizza }
+  - wait: 400
+  - tap: { id: drawer-filters-curry }
+  - wait: 700
+  - echo: Showing the results
+  - tap: { id: drawer-filters-apply }
+  - await: { hidden: { id: drawer-filters-panel } }

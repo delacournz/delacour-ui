@@ -1,0 +1,19 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on drawer/sizes and has settled — four size buttons, every drawer closed.
+  The capture script navigates there before running this.
+steps:
+  - echo: Small
+  - tap: { id: drawer-sizes-sm }
+  - await: { visible: { text: Small } }
+  - wait: 900
+  - tap: { x: 0.95, y: 0.5 }
+  - wait: 500
+  - echo: Large
+  - tap: { id: drawer-sizes-lg }
+  - wait: 900
+  - tap: { x: 0.97, y: 0.5 }
+  - wait: 500
+  - echo: Full
+  - tap: { id: drawer-sizes-full }
+  - wait: 900
+  - tap: { x: 0.98, y: 0.5 }

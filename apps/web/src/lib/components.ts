@@ -160,6 +160,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"A field that opens a calendar in a bottom sheet — one day, a range or several, closing when the pick is finished.",
 	},
 	{
+		slug: "date-time-picker",
+		name: "DateTimePicker",
+		group: "Forms",
+		blurb:
+			"A date and a time of day picked together — a calendar and a wheel in one sheet, filled in either order, with one Done.",
+	},
+	{
 		slug: "rating",
 		name: "Rating",
 		group: "Forms",

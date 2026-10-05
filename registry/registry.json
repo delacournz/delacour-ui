@@ -551,6 +551,136 @@
 			]
 		},
 		{
+			"name": "context-menu",
+			"type": "registry:ui",
+			"title": "Context Menu",
+			"description": "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"menu",
+				"pressable",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/context-menu/AGENTS.md",
+				"ui/context-menu/context-menu-content.tsx",
+				"ui/context-menu/context-menu-item.tsx",
+				"ui/context-menu/context-menu-preview.tsx",
+				"ui/context-menu/context-menu-trigger.tsx",
+				"ui/context-menu/context-menu.context.tsx",
+				"ui/context-menu/context-menu.tsx",
+				"ui/context-menu/context-menu.variants.ts",
+				"ui/context-menu/index.ts"
+			]
+		},
+		{
+			"name": "date-picker",
+			"type": "registry:ui",
+			"title": "Date Picker",
+			"description": "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"calendar",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"ui/date-picker/AGENTS.md",
+				"ui/date-picker/date-picker-calendar.tsx",
+				"ui/date-picker/date-picker-clear.tsx",
+				"ui/date-picker/date-picker-content.tsx",
+				"ui/date-picker/date-picker-done.tsx",
+				"ui/date-picker/date-picker-icon.tsx",
+				"ui/date-picker/date-picker-trigger.tsx",
+				"ui/date-picker/date-picker-value.tsx",
+				"ui/date-picker/date-picker.context.tsx",
+				"ui/date-picker/date-picker.tsx",
+				"ui/date-picker/date-picker.types.ts",
+				"ui/date-picker/date-picker.variants.ts",
+				"ui/date-picker/index.ts"
+			]
+		},
+		{
+			"name": "date-time-picker",
+			"type": "registry:ui",
+			"title": "Date Time Picker",
+			"description": "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"calendar",
+				"cn",
+				"date-picker",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"separator",
+				"tabs",
+				"text",
+				"time-picker",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/date-time-picker/AGENTS.md",
+				"ui/date-time-picker/date-time-picker-calendar.tsx",
+				"ui/date-time-picker/date-time-picker-clear.tsx",
+				"ui/date-time-picker/date-time-picker-content.tsx",
+				"ui/date-time-picker/date-time-picker-done.tsx",
+				"ui/date-time-picker/date-time-picker-icon.tsx",
+				"ui/date-time-picker/date-time-picker-time.tsx",
+				"ui/date-time-picker/date-time-picker-trigger.tsx",
+				"ui/date-time-picker/date-time-picker-value.tsx",
+				"ui/date-time-picker/date-time-picker.context.tsx",
+				"ui/date-time-picker/date-time-picker.tsx",
+				"ui/date-time-picker/date-time-picker.types.ts",
+				"ui/date-time-picker/date-time-picker.value.ts",
+				"ui/date-time-picker/date-time-picker.variants.ts",
+				"ui/date-time-picker/index.ts"
+			]
+		},
+		{
 			"name": "dialog",
 			"type": "registry:ui",
 			"title": "Dialog",
@@ -645,84 +775,6 @@
 			]
 		},
 		{
-			"name": "context-menu",
-			"type": "registry:ui",
-			"title": "Context Menu",
-			"description": "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
-			"categories": [
-				"controls"
-			],
-			"registryDependencies": [
-				"menu",
-				"pressable",
-				"tv"
-			],
-			"dependencies": [
-				"tailwind-variants"
-			],
-			"expoDependencies": [
-				"react-native-gesture-handler",
-				"react-native-reanimated",
-				"react-native-worklets"
-			],
-			"devDependencies": [],
-			"files": [
-				"ui/context-menu/AGENTS.md",
-				"ui/context-menu/context-menu-content.tsx",
-				"ui/context-menu/context-menu-item.tsx",
-				"ui/context-menu/context-menu-preview.tsx",
-				"ui/context-menu/context-menu-trigger.tsx",
-				"ui/context-menu/context-menu.context.tsx",
-				"ui/context-menu/context-menu.tsx",
-				"ui/context-menu/context-menu.variants.ts",
-				"ui/context-menu/index.ts"
-			]
-		},
-		{
-			"name": "date-picker",
-			"type": "registry:ui",
-			"title": "Date Picker",
-			"description": "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished.",
-			"categories": [
-				"forms"
-			],
-			"registryDependencies": [
-				"bottom-sheet",
-				"button",
-				"calendar",
-				"cn",
-				"field",
-				"icon",
-				"icons",
-				"input",
-				"pressable",
-				"text",
-				"tv",
-				"use-calm-motion",
-				"use-controllable-state"
-			],
-			"dependencies": [
-				"tailwind-variants"
-			],
-			"expoDependencies": [],
-			"devDependencies": [],
-			"files": [
-				"ui/date-picker/AGENTS.md",
-				"ui/date-picker/date-picker-calendar.tsx",
-				"ui/date-picker/date-picker-clear.tsx",
-				"ui/date-picker/date-picker-content.tsx",
-				"ui/date-picker/date-picker-done.tsx",
-				"ui/date-picker/date-picker-icon.tsx",
-				"ui/date-picker/date-picker-trigger.tsx",
-				"ui/date-picker/date-picker-value.tsx",
-				"ui/date-picker/date-picker.context.tsx",
-				"ui/date-picker/date-picker.tsx",
-				"ui/date-picker/date-picker.types.ts",
-				"ui/date-picker/date-picker.variants.ts",
-				"ui/date-picker/index.ts"
-			]
-		},
-		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",
@@ -772,6 +824,42 @@
 			]
 		},
 		{
+			"name": "fab",
+			"type": "registry:ui",
+			"title": "Fab",
+			"description": "A floating action button, extended with a label or unfolding a dial of related actions.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/fab/AGENTS.md",
+				"ui/fab/fab-action.tsx",
+				"ui/fab/fab-group.tsx",
+				"ui/fab/fab-label.tsx",
+				"ui/fab/fab.context.tsx",
+				"ui/fab/fab.tsx",
+				"ui/fab/fab.types.ts",
+				"ui/fab/fab.variants.ts",
+				"ui/fab/index.ts"
+			]
+		},
+		{
 			"name": "feedback",
 			"type": "registry:ui",
 			"title": "Feedback",
@@ -809,42 +897,6 @@
 				"ui/feedback/feedback.tsx",
 				"ui/feedback/feedback.variants.ts",
 				"ui/feedback/index.ts"
-			]
-		},
-		{
-			"name": "fab",
-			"type": "registry:ui",
-			"title": "Fab",
-			"description": "A floating action button, extended with a label or unfolding a dial of related actions.",
-			"categories": [
-				"controls"
-			],
-			"registryDependencies": [
-				"icon",
-				"pressable",
-				"text",
-				"tv",
-				"use-controllable-state"
-			],
-			"dependencies": [
-				"tailwind-variants"
-			],
-			"expoDependencies": [
-				"react-native-reanimated",
-				"react-native-safe-area-context",
-				"react-native-worklets"
-			],
-			"devDependencies": [],
-			"files": [
-				"ui/fab/AGENTS.md",
-				"ui/fab/fab-action.tsx",
-				"ui/fab/fab-group.tsx",
-				"ui/fab/fab-label.tsx",
-				"ui/fab/fab.context.tsx",
-				"ui/fab/fab.tsx",
-				"ui/fab/fab.types.ts",
-				"ui/fab/fab.variants.ts",
-				"ui/fab/index.ts"
 			]
 		},
 		{
@@ -2088,55 +2140,6 @@
 			]
 		},
 		{
-			"name": "toast",
-			"type": "registry:ui",
-			"title": "Toast",
-			"description": "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
-			"categories": [
-				"overlays"
-			],
-			"registryDependencies": [
-				"alert",
-				"icon",
-				"icons",
-				"overlay",
-				"pressable",
-				"spinner",
-				"text",
-				"tv"
-			],
-			"dependencies": [
-				"tailwind-variants"
-			],
-			"expoDependencies": [
-				"react-native-gesture-handler",
-				"react-native-keyboard-controller",
-				"react-native-reanimated",
-				"react-native-safe-area-context",
-				"react-native-teleport",
-				"react-native-worklets"
-			],
-			"devDependencies": [],
-			"files": [
-				"ui/toast/AGENTS.md",
-				"ui/toast/index.ts",
-				"ui/toast/toast-action.tsx",
-				"ui/toast/toast-api.ts",
-				"ui/toast/toast-close.tsx",
-				"ui/toast/toast-content.tsx",
-				"ui/toast/toast-description.tsx",
-				"ui/toast/toast-indicator.tsx",
-				"ui/toast/toast-item.tsx",
-				"ui/toast/toast-title.tsx",
-				"ui/toast/toast-viewport.tsx",
-				"ui/toast/toast.context.tsx",
-				"ui/toast/toast.store.ts",
-				"ui/toast/toast.timer.ts",
-				"ui/toast/toast.tsx",
-				"ui/toast/toast.variants.ts"
-			]
-		},
-		{
 			"name": "time-picker",
 			"type": "registry:ui",
 			"title": "Time Picker",
@@ -2184,6 +2187,55 @@
 				"ui/time-picker/time-picker.tsx",
 				"ui/time-picker/time-picker.types.ts",
 				"ui/time-picker/time-picker.variants.ts"
+			]
+		},
+		{
+			"name": "toast",
+			"type": "registry:ui",
+			"title": "Toast",
+			"description": "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"alert",
+				"icon",
+				"icons",
+				"overlay",
+				"pressable",
+				"spinner",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-teleport",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/toast/AGENTS.md",
+				"ui/toast/index.ts",
+				"ui/toast/toast-action.tsx",
+				"ui/toast/toast-api.ts",
+				"ui/toast/toast-close.tsx",
+				"ui/toast/toast-content.tsx",
+				"ui/toast/toast-description.tsx",
+				"ui/toast/toast-indicator.tsx",
+				"ui/toast/toast-item.tsx",
+				"ui/toast/toast-title.tsx",
+				"ui/toast/toast-viewport.tsx",
+				"ui/toast/toast.context.tsx",
+				"ui/toast/toast.store.ts",
+				"ui/toast/toast.timer.ts",
+				"ui/toast/toast.tsx",
+				"ui/toast/toast.variants.ts"
 			]
 		},
 		{

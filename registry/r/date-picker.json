@@ -47,6 +47,10 @@
 				{
 					"from": "../calendar",
 					"to": "@registry/ui/calendar"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -62,6 +66,10 @@
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -73,6 +81,10 @@
 				{
 					"from": "../bottom-sheet",
 					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -88,6 +100,10 @@
 				{
 					"from": "../button",
 					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
 				}
 			]
 		},
@@ -111,6 +127,10 @@
 			"target": "date-picker/date-picker-trigger.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../calendar/calendar.variants",
+					"to": "@registry/ui/calendar/calendar.variants"
+				},
 				{
 					"from": "../pressable",
 					"to": "@registry/ui/pressable"

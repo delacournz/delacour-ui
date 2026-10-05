@@ -104,10 +104,19 @@ accessibility, API.
 
 ## Acceptance
 
-- [ ] Resolvers unit-tested incl. boundaries: 0, 1 s, 59 s, 60 s, exactly 1 day, past `to`
-- [ ] Final second shows `0:01`; `0:00` and `onComplete` (once) at zero
-- [ ] Backgrounding 30 s then returning shows the correct remaining time immediately
+- [x] Resolvers unit-tested incl. boundaries: 0, 1 s, 59 s, 60 s, exactly 1 day, past `to`
+- [x] Final second shows `0:01`; `0:00` and `onComplete` (once) at zero
+- [x] Backgrounding 30 s then returning shows the correct remaining time immediately
 - [ ] Digit slide plays per changed digit only; none on mount or with reduce motion
-- [ ] VoiceOver announces coarse label; seconds only in final minute
-- [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
-- [ ] `bun test`, `bun run typecheck`, `bun run check` green
+- [x] VoiceOver announces coarse label; seconds only in final minute
+- [x] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
+- [x] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Status (2026-10-05)
+
+Simulator-verified on a warden-leased iPhone 17 (dev client, Metro on a warden port): `urgent` went from
+`1 minute left` to `59 seconds left` at the final minute, with the digits turning destructive; 21 s in the
+background took it from 46 s to 25 s, correct straight away; `complete` reached `Expired` and re-armed on
+Restart; `segmented` ticks from 2d 03:00:00. The accessibility label was read from the AX tree, not
+spoken by VoiceOver. Not checked on device: the per-digit slide and reduce motion. Preview media is not
+captured: the argent CLI is uninstalled, so `bun run previews` cannot run and no demo sets `capture`.

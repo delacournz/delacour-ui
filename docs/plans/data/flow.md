@@ -133,3 +133,23 @@ connections, viewport + controls + minimap, accessibility, performance notes, AP
 - [ ] Animated dashes stop under calm motion
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Build notes (2026-10-05)
+
+- **Built** on `feature/data-flow`, standalone off `origin/develop` — no stacked dependency.
+  Renderer as chosen: react-native-svg + Reanimated animated props + Gesture Handler; no new peer.
+  Controls are `Button size="icon-sm"` with Central Icons on an absolutely positioned `Surface`.
+- **Simulator verified** (warden-iphone-17, dev client): render, fit on mount, node drag with
+  edges following, handle-to-handle connect, duplicate refused by `isValidConnection`, group
+  drag carrying riders, `isConfined`, Controls zoom/fit/lock, MiniMap frame, tap-to-select ring,
+  nodes as single labelled AX elements. Found and fixed there: `flex-1` collapsing the canvas,
+  layer sorting by element identity (dev bundles wrap types), stale JS-side shared-value reads
+  (fit, handle map), `isMeasured` cleared on remount.
+- **Not verified on device**: VoiceOver custom actions (move/connect/delete) — the action list is
+  unit-tested via `resolveNodeAccessibilityActions`; 30 nodes / 40 edges at 60 fps; calm-motion
+  dashes (logic reads `useCalmMotion`).
+- **Captures deferred.** `bun run previews` needs the retired argent CLI, so no demo carries
+  `capture` and the docs page has no `<Preview>`. When previews can run: mark `pipeline` (hero),
+  `edge-variants`, `groups`, `controls-minimap` as `capture: { align: "stretch" }`, record
+  `connect` and `drag` as clips, run `bun run previews -- -- --only flow`, and add the hero
+  `<Preview id="flow/pipeline" title={null} />` plus per-section previews to `flow.mdx`.

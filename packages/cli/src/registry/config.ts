@@ -297,6 +297,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A row of media, text and actions for lists and settings, standalone or as a List Group row.",
 		categories: ["layout"],
 	},
+	flow: {
+		title: "Flow",
+		description:
+			"A pan-and-zoom canvas of nodes joined by self-routing edges, with groups, handle-to-handle connections, controls and a minimap — the app owns the graph.",
+		categories: ["display"],
+	},
 	kpi: {
 		title: "Kpi",
 		description:

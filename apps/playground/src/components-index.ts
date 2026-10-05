@@ -160,6 +160,7 @@ const ROWS = [
 	{ slug: "avatar", title: "Avatar", description: "Fallbacks, sizes, badges, groups", group: "Data display" },
 	{ slug: "badge", title: "Badge", description: "Variants, colours, sizes, dismiss", group: "Data display" },
 	{ slug: "chart", title: "Chart", description: "Line, area, bar, scatter, candlestick, pie", group: "Data display" },
+	{ slug: "flow", title: "Flow", description: "Nodes, edges, groups, connections, minimap", group: "Data display" },
 	{
 		slug: "countdown",
 		title: "Countdown",

@@ -1,6 +1,7 @@
 import { Children, isValidElement, type ReactElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import type { SurfacePlane } from "../surface/surface.variants";
 
 export const TABLE_SIZES = ["sm", "md"] as const;
 export const TABLE_VARIANTS = ["plain", "outline"] as const;
@@ -240,6 +241,34 @@ export function resolveTableEdgeFade({
 	return { end, start };
 }
 
+/** The theme token an edge fade dissolves into. */
+export type TableFadeToken = "background" | "card" | "secondary" | "tertiary";
+
+const PLANE_FADE_TOKENS: Record<SurfacePlane, TableFadeToken> = {
+	default: "card",
+	secondary: "secondary",
+	tertiary: "tertiary",
+};
+
+/**
+ * The colour a wide table's edge fades into: whatever is painted behind it.
+ *
+ * An `outline` table paints `card` itself. A `plain` one is transparent, so it
+ * takes the plane of the surface it sits on — a `Table.Frame` is a card — and
+ * the page's `background` on no surface at all. A fade into the wrong colour
+ * reads as a grey band rather than as the columns running on.
+ */
+export function resolveTableFadeToken({
+	variant,
+	plane,
+}: {
+	variant: TableVariant;
+	plane: SurfacePlane | null;
+}): TableFadeToken {
+	if (variant === "outline") return "card";
+	return plane ? PLANE_FADE_TOKENS[plane] : "background";
+}
+
 /** The text a node holds directly — strings and numbers, joined. `undefined` if it holds anything else. */
 export function readNodeText(node: ReactNode): string | undefined {
 	const parts = Children.toArray(node);
@@ -338,6 +367,10 @@ export function splitTableCaption(
  * Rule 1: `root`, `row` and `cell` carry no `text-*`. The text tokens live on
  * `cellText` and `headText`, because a `View` does not cascade colour.
  *
+ * A cell's horizontal padding is `Card`'s inset at the same size — 3 at `sm`, 4
+ * at `md` — so a table in a `Table.Frame` holds its first column under the
+ * frame's title rather than a few points off it.
+ *
  * `min-w-0` on the cell lets a flex column shrink below its longest word, so a
  * long name wraps inside its column instead of shoving the fixed columns off
  * the row.
@@ -370,20 +403,20 @@ export const tableVariants = tv({
 		size: {
 			sm: {
 				row: "min-h-9",
-				cell: "px-2 py-1.5",
-				head: "px-2 py-1.5",
+				cell: "px-3 py-1.5",
+				head: "px-3 py-1.5",
 				cellText: "text-sm",
 				headText: "text-xs",
-				caption: "px-2 text-xs",
+				caption: "px-3 text-xs",
 				empty: "py-6",
 			},
 			md: {
 				row: "min-h-11",
-				cell: "px-3 py-2.5",
-				head: "px-3 py-2",
+				cell: "px-4 py-2.5",
+				head: "px-4 py-2",
 				cellText: "text-base",
 				headText: "text-sm",
-				caption: "px-3",
+				caption: "px-4",
 			},
 		},
 		tone: {

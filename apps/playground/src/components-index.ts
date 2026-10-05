@@ -82,6 +82,12 @@ const ROWS = [
 	{ slug: "item", title: "Item", description: "Media, text and actions in a row", group: "Data display" },
 	{ slug: "list-group", title: "ListGroup", description: "Grouped rows, dividers, slots", group: "Data display" },
 	{ slug: "separator", title: "Separator", description: "Orientations, insets, weight", group: "Data display" },
+	{
+		slug: "table",
+		title: "Table",
+		description: "Columns, sorting, selection, wide and long tables",
+		group: "Data display",
+	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{ slug: "alert", title: "Alert", description: "Statuses, variants, dismiss, actions", group: "Feedback" },
 	{ slug: "meter", title: "Meter", description: "Regions, thresholds, segments, colours", group: "Feedback" },

@@ -7,6 +7,7 @@ import {
 	resolveTableColumn,
 	resolveTableContentWidth,
 	resolveTableEdgeFade,
+	resolveTableFadeToken,
 	resolveTableRowAccessibilityLabel,
 	resolveTableRowTone,
 	resolveTableSortAccessibility,
@@ -258,6 +259,22 @@ describe("resolveTableEdgeFade", () => {
 	test("clamps an overscroll", () => {
 		expect(resolveTableEdgeFade({ ...metrics, offset: -40 })).toEqual({ end: 1, start: 0 });
 		expect(resolveTableEdgeFade({ ...metrics, offset: 400 })).toEqual({ end: 0, start: 1 });
+	});
+});
+
+describe("resolveTableFadeToken", () => {
+	test("an outline table fades into its own card", () => {
+		expect(resolveTableFadeToken({ plane: "secondary", variant: "outline" })).toBe("card");
+	});
+
+	test("a plain table fades into the surface it sits on", () => {
+		expect(resolveTableFadeToken({ plane: "default", variant: "plain" })).toBe("card");
+		expect(resolveTableFadeToken({ plane: "secondary", variant: "plain" })).toBe("secondary");
+		expect(resolveTableFadeToken({ plane: "tertiary", variant: "plain" })).toBe("tertiary");
+	});
+
+	test("a plain table on no surface fades into the page", () => {
+		expect(resolveTableFadeToken({ plane: null, variant: "plain" })).toBe("background");
 	});
 });
 

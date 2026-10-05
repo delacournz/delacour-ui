@@ -136,6 +136,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A surface grouping related rows, with dividers inserted for you.",
 	},
 	{
+		slug: "table",
+		name: "Table",
+		group: "Data display",
+		blurb: "Rows and columns of short values, lined up by one set of column rules.",
+	},
+	{
 		slug: "separator",
 		name: "Separator",
 		group: "Data display",

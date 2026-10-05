@@ -1,4 +1,5 @@
-import { tv, type VariantProps } from "../../lib/tv";
+import type { VariantProps } from "tailwind-variants";
+import { tv } from "../../lib/tv";
 
 export const CAROUSEL_VARIANTS = ["track", "coverflow"] as const;
 export const CAROUSEL_ORIENTATIONS = ["horizontal", "vertical"] as const;
@@ -60,7 +61,11 @@ export const carouselVariants = tv({
 		root: "w-full gap-3",
 		/** Clips. The slides inside are absolutely placed and moved by transform, never by layout. */
 		viewport: "overflow-hidden",
-		/** One slide, on the card corner. Its size and offset are an animated style. */
+		/**
+		 * One slide, on the card corner, pinned to the viewport's start edge and
+		 * stretched across it. Its length and offset along the axis are an animated
+		 * style, never a class.
+		 */
 		item: "absolute overflow-hidden rounded-lg",
 		/** Pins a caption to the slide's foot on a scrim, so it reads over a photo. Layout only. */
 		captionFrame: "absolute inset-x-0 bottom-0 bg-background/80 px-3 py-2",
@@ -81,8 +86,8 @@ export const carouselVariants = tv({
 			coverflow: {},
 		},
 		orientation: {
-			horizontal: { controls: "flex-row", dots: "flex-row", dot: "h-1.5" },
-			vertical: { controls: "flex-col", dots: "flex-col", dot: "w-1.5" },
+			horizontal: { item: "inset-y-0 left-0", controls: "flex-row", dots: "flex-row", dot: "h-1.5" },
+			vertical: { item: "inset-x-0 top-0", controls: "flex-col", dots: "flex-col", dot: "w-1.5" },
 		},
 		tone: {
 			default: { dot: "bg-foreground/30", dotActive: "bg-foreground" },

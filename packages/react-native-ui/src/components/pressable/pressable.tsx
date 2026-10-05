@@ -17,7 +17,12 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useResolveClassNames } from "uniwind";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
-import { type PressableFeedback, resolvePressedState, resolveRestOpacity } from "./pressable.variants";
+import {
+	type PressableFeedback,
+	resolvePressableAccessibilityState,
+	resolvePressedState,
+	resolveRestOpacity,
+} from "./pressable.variants";
 
 const PRESS_SPRING = { damping: 18, mass: 0.4, stiffness: 320 } as const;
 
@@ -198,8 +203,9 @@ export function Pressable({
 
 	// Built once and spread at both render sites: a caller-supplied
 	// `accessibilityState` merges into it rather than being clobbered by the
-	// `{...props}` spread that lands after it.
-	const state: AccessibilityState = { ...accessibilityState, busy, disabled };
+	// `{...props}` spread that lands after it. A caller's `busy: true` survives
+	// the prop's default — see `resolvePressableAccessibilityState`.
+	const state: AccessibilityState = resolvePressableAccessibilityState({ accessibilityState, busy, disabled });
 
 	const content = asChild ? (
 		renderAsChild(children, {

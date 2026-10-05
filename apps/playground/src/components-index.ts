@@ -204,6 +204,7 @@ const ROWS = [
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{ slug: "alert", title: "Alert", description: "Statuses, variants, dismiss, actions", group: "Feedback" },
+	{ slug: "marker", title: "Marker", description: "Steps, day breaks, pressable, running", group: "Feedback" },
 	{
 		slug: "animated-badge",
 		title: "AnimatedBadge",

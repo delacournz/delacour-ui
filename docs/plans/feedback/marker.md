@@ -187,3 +187,20 @@ Variants, Pressable, Running (shimmer, and the rule to drop it), Accessibility, 
       registry entry, changeset.
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green.
 - [ ] Simulator verification via warden + agent-device, or its absence recorded in the commit body.
+
+## Previews
+
+Captured 2026-10-06 on an iPhone 17 Pro dev client: `conversation` (hero clip — a step in the
+thread opens and closes), `pressable` and `running` (clips), `variants` and `disabled` (stills).
+`conversation` and `pressable` hold their expanded height from the start (`min-h-[25rem]`,
+`min-h-32`): the stage crops to the collapsed size, so an expansion otherwise pushed the marker out
+of frame. `running` starts finished and its flow runs exactly two shimmer cycles before finishing,
+so its first and last frames match.
+
+## Simulator verification
+
+2026-10-05, iPhone 17 (warden), dev client on Metro: the conversation demo draws the `separator`
+rules to both edges and the `border` capsule hugging its words; each static marker reads once as
+text with its icon hidden; the pressable marker is a button and expands its files; the running
+marker is announced busy and settles to its finished label; the disabled one is a not-enabled
+button.

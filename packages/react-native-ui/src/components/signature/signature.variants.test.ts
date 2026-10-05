@@ -13,6 +13,7 @@ import {
 	SIGNATURE_SIZES,
 	SIGNATURE_STROKE_TOKEN,
 	SIGNATURE_TOOLBAR_BUTTON_SIZE,
+	SIGNATURE_TOOLBAR_LABEL_SIZE,
 	SIGNATURE_VARIANTS,
 	signatureVariants,
 } from "./signature.variants";
@@ -139,6 +140,12 @@ describe("constants", () => {
 		}
 		expect(SIGNATURE_TOOLBAR_BUTTON_SIZE.sm).toBe("icon-sm");
 		expect(SIGNATURE_TOOLBAR_BUTTON_SIZE.md).toBe("icon-md");
+	});
+
+	test("a labelled toolbar button steps with its icon-only square", () => {
+		for (const size of SIGNATURE_SIZES) {
+			expect(SIGNATURE_TOOLBAR_BUTTON_SIZE[size]).toBe(`icon-${SIGNATURE_TOOLBAR_LABEL_SIZE[size]}`);
+		}
 	});
 
 	test("the toolbar labels say what they do", () => {

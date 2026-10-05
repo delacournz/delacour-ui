@@ -60,6 +60,7 @@
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
+		"./signature": "./src/components/signature/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",

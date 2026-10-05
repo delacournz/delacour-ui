@@ -1,6 +1,6 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import type { ButtonIconSize } from "../button/button.variants";
+import type { ButtonIconSize, ButtonLabelSize } from "../button/button.variants";
 
 export const SIGNATURE_SIZES = ["sm", "md", "lg", "full"] as const;
 export const SIGNATURE_VARIANTS = ["primary", "secondary"] as const;
@@ -57,6 +57,20 @@ export const SIGNATURE_TOOLBAR_BUTTON_SIZE: Record<SignatureSize, ButtonIconSize
 	lg: "icon-md",
 	full: "icon-md",
 };
+
+/**
+ * Each pad size's toolbar button once a caller gives it a label, on the same
+ * two steps as the icon-only square.
+ */
+export const SIGNATURE_TOOLBAR_LABEL_SIZE: Record<SignatureSize, ButtonLabelSize> = {
+	sm: "sm",
+	md: "md",
+	lg: "md",
+	full: "md",
+};
+
+/** What `Signature.Alternative` says when the caller writes nothing. */
+export const SIGNATURE_ALTERNATIVE_LABEL = "Can't sign? Type your name";
 
 /** The actions a pad offers, by the name the accessibility API uses. */
 export type SignatureAction = "undo" | "redo" | "clear";

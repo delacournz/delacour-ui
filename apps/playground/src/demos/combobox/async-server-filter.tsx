@@ -1,12 +1,14 @@
 import type { ComboboxOption } from "@delacour/react-native-ui/combobox";
 import { Combobox } from "@delacour/react-native-ui/combobox";
 import { type ReactElement, useEffect, useState } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Server-driven",
 	caption:
 		'`filter={{ kind: "none" }}` shows `options` as given, so the matching can happen on a server: control the query with `inputValue` and `onInputValueChange`, fetch, and pass `isLoading` while you wait. A picked person stays on the trigger after the results that held them are gone.',
+	capture: { flow: "combobox/async-server-filter", frame: "device" },
 };
 
 const PEOPLE: ComboboxOption[] = [
@@ -30,6 +32,11 @@ function search(query: string): Promise<ComboboxOption[]> {
 	});
 }
 
+/**
+ * The root fills and centres because this demo is captured as a whole screen:
+ * the capture stage hands a `device` demo the full window with no gutter, and
+ * the sheet it opens needs the screen to rise over.
+ */
 export function Demo(): ReactElement {
 	const [assignee, setAssignee] = useState<string | null>(null);
 	const [query, setQuery] = useState("");
@@ -50,19 +57,21 @@ export function Demo(): ReactElement {
 	}, [query]);
 
 	return (
-		<Combobox
-			filter={{ kind: "none" }}
-			inputValue={query}
-			isClearable
-			isLoading={isFetching}
-			onInputValueChange={setQuery}
-			onValueChange={setAssignee}
-			options={results}
-			placeholder="Assign someone"
-			searchPlaceholder="Search people"
-			testID="combobox-server"
-			title="Assignee"
-			value={assignee}
-		/>
+		<View className="flex-1 justify-center px-screen-gutter">
+			<Combobox
+				filter={{ kind: "none" }}
+				inputValue={query}
+				isClearable
+				isLoading={isFetching}
+				onInputValueChange={setQuery}
+				onValueChange={setAssignee}
+				options={results}
+				placeholder="Assign someone"
+				searchPlaceholder="Search people"
+				testID="combobox-server"
+				title="Assignee"
+				value={assignee}
+			/>
+		</View>
 	);
 }

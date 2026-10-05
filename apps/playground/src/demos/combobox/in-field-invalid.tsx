@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "In a Field",
 	caption:
 		"Inside a `Field` the combobox takes its invalid and disabled state, reads `Field.Label` as its accessible name, sheet title and search label, and opens when the label is tapped.",
+	capture: { align: "stretch" },
 };
 
 const AIRPORTS = [

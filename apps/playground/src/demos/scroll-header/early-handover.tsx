@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "An early handover",
 	caption:
 		"`threshold={0.6}` hands the title to the bar after six-tenths of the Large block has scrolled, so a tall block with a paragraph under its title does not keep the bar empty for its whole height.",
+	align: "stretch",
 };
 
 const PARAGRAPHS = [

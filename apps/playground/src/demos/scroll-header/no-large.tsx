@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "A bar with no large title",
 	caption:
 		"Without `ScrollHeader.Large` there is nothing to collapse: the bar title is always shown, and the surface and hairline arrive over the first 24 points of scroll — a navbar that says when there is content beneath it.",
+	align: "stretch",
 };
 
 const SETTINGS = [

@@ -75,19 +75,24 @@ export function ScrollHeaderRoot({
 
 	const { source, scrollProps } = useScrollSource({ onEndDrag, onMomentumEnd: requestSnap });
 
-	const progress = useDerivedValue(() => resolveCollapseProgress(source.offset.value, collapseDistance.value));
+	const { offset } = source;
+	const progress = useDerivedValue(() => resolveCollapseProgress(offset.value, collapseDistance.value));
 	const topInset = useDerivedValue(() =>
 		resolveHeaderInset({ safeAreaTop, barHeight: barHeight.value, largeHeight: largeHeight.value })
 	);
+
+	// The ref alone: a worklet captures every object it reads a field of, and `scrollProps`
+	// carries the scroll handler, which cannot be copied to the UI thread.
+	const scrollRef = scrollProps.ref;
 
 	useAnimatedReaction(
 		() => snapTarget.value,
 		(target) => {
 			if (target === null) return;
-			scrollTo(scrollProps.ref, 0, target, !isCalm);
+			scrollTo(scrollRef, 0, target, !isCalm);
 			snapTarget.value = null;
 		},
-		[isCalm, scrollProps.ref]
+		[isCalm, scrollRef]
 	);
 
 	const handleCollapsedChange = useCallback(

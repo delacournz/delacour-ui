@@ -136,5 +136,28 @@ installed on the machine this branch was built on, and a captured demo without a
 
 ## Simulator check
 
-See the bottom of this file's git history and the workspace card for what was checked on a
-simulator; anything not listed there is unchecked.
+iPhone 17 simulator (warden lease), the existing dev client with `expo-blur`, through agent-device
+and the `/preview` route (each demo is `align: "stretch"`, so the preview stage does not
+shrink-wrap it):
+
+- `large-title-list`: at rest the first row sits flush under the Large block, and the bar title is
+  hidden; a long drag crossfades to the bar title with the surface and hairline in. A 25pt drag
+  (under half the distance) settles back open; a 65pt drag settles collapsed with the first row
+  flush under the bar.
+- `cover`: rests ending where the first row begins; a slow pull grows it from a fixed top edge while
+  the title rides down with the content.
+- `blur-bar`: the tiles frost under the collapsed bar.
+- `react-to-collapse`: once collapsed, `onCollapsedChange` swaps in the compact Follow button and
+  the `progress`-driven avatar is in.
+- `no-large`: the bar title is always shown; the surface and hairline arrive on scroll.
+
+The first run red-boxed with *Cannot copy value of type `WorkletEventHandlerNative`*: the snap
+reaction read `scrollProps.ref`, and a worklet captures the whole object it reads a field from —
+including the scroll handler. The root now lifts the ref into its own const first. Do the same for
+any new worklet: destructure the shared values or the ref, never read through `scrollProps` or
+`source` inside one.
+
+Not checked: VoiceOver (one title per state), Reduce Motion and Reduce Transparency toggled live,
+rotation and larger Dynamic Type, a fast fling (snap-fight), the `FlatList` part with 500 rows, a
+`SectionList` through `useScrollHeader` + `Inset`, `onCollapsedChange` fire count, composition
+inside a `<Screen>` with `Screen.Footer`, and Android.

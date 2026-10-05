@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	title: "A large title over a list",
 	caption:
 		"The title block scrolls away with the list while the bar's own title fades in to replace it, and the bar's surface and hairline arrive with it. Let go half way and it settles open or closed — never stuck between.",
+	align: "stretch",
 };
 
 const ALBUMS = [

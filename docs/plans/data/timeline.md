@@ -139,3 +139,15 @@ accessibility, API.
   snap table. The vertical `Timeline.List` is documented on the docs page.
 - **The last columns cannot reach the reading edge** — the strip ends where its content does.
   Recorded in the component AGENTS.md rather than padded with a measured width.
+
+## Previews (2026-10-06)
+
+- **Captured** on `iphone-17-pro` with the dev client and this worktree's Metro (`--dev`): four
+  stills — `order-history`, `tones`, `numbered`, `cards` — and one clip, `horizontal` (hero), whose
+  flow `.argent/flows/previews/timeline/horizontal.yaml` flings the strip along twice and back to
+  column 1, so it loops on "Column 1 of 7" with *Planted* raised. Validated by reading every poster
+  and a contact sheet of both clips. The docs page carries the hero and a `<Preview>` per section.
+- **Not captured:** `icons`, `compact`, `with-aside`, `masthead-stats` (variants already shown by
+  `numbered`/`cards`), and `long-list` (the same gesture as the hero over a 200-item list).
+- The clip shows the documented limit: the second fling stops on column 4, because the last
+  columns cannot reach the reading edge.

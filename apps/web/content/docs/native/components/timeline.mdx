@@ -4,6 +4,8 @@ description: Dated events down a rail or across a snapping strip — how far alo
 icon: GitCommitVertical
 ---
 
+<Preview id="timeline/horizontal" title={null} />
+
 ## Installation
 
 <ComponentInstall name="timeline" />
@@ -46,9 +48,13 @@ One zero-based `value` says how far along the sequence is: events before it are 
 at it is current, and the ones after it are upcoming. The rail fills off that value alone, so it is
 never half drawn between two events. The default `value` is `-1` — nothing has happened yet.
 
+<Preview id="timeline/order-history" />
+
 `tone` says what kind an event was — `info`, `success`, `warning` or `destructive` — and tints its
 marker whatever its progress. A failed step stays red after the sequence moves past it; how far
 along things are is the rail's job, not the marker's.
+
+<Preview id="timeline/tones" />
 
 ```tsx
 <Timeline value={4}>
@@ -72,6 +78,10 @@ passed one but never demotes the current event.
 | `numbered` | A circle holding the event's position |
 | `card` | A dot beside content set on a surface — wrap the content in `Timeline.Content` |
 | `compact` | A dot, with half the gap between events |
+
+<Preview id="timeline/numbered" />
+
+<Preview id="timeline/cards" />
 
 ```tsx
 <Timeline value={2} variant="icon">
@@ -114,6 +124,8 @@ optional media, and `Timeline.Stats` sums an event up in a row of `Timeline.Stat
 reading edge is the strip's left content inset: `onColumnChange` fires once each time a new column
 reaches it, `haptic` ticks a selection haptic at the same moment, and `snap` settles every fling with
 a column on the edge. The column at the edge brings its title up from muted to foreground.
+
+<Preview id="timeline/horizontal" />
 
 An item with no content collapses to a 24-point tick — a gap in time rather than an event.
 

@@ -1,0 +1,219 @@
+---
+title: Splitter
+description: Two or more panes divided by draggable, adjustable handles, sized in percent.
+icon: Columns2
+---
+
+<Preview id="splitter/anatomy" title={null} />
+
+## Installation
+
+<ComponentInstall name="splitter" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Splitter } from "@/components/ui/splitter";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 p-4">
+      <Splitter className="h-96" defaultLayout={[35, 65]}>
+        <Splitter.Pane minSize={20} maxSize={50}>
+          <Text.Label>Sidebar</Text.Label>
+        </Splitter.Pane>
+        <Splitter.Handle accessibilityLabel="Resize sidebar" />
+        <Splitter.Pane minSize={40}>
+          <Text.Label>Detail</Text.Label>
+        </Splitter.Pane>
+      </Splitter>
+    </View>
+  );
+}
+```
+
+<Callout type="warn" title="The root needs an extent">
+Sizes are percentages of the box, so give the root `flex-1` or a fixed height. A splitter with no
+size divides nothing.
+</Callout>
+
+## Panes
+
+`variant="panes"` gives each pane its own card surface, with a gap in place of the seam's rule.
+
+<Preview id="splitter/panes" />
+
+```tsx
+<Splitter className="h-64" variant="panes">
+  <Splitter.Pane />
+  <Splitter.Handle />
+  <Splitter.Pane />
+</Splitter>
+```
+
+## Three columns
+
+Any number of panes, one handle between each pair; a handle moves only the two panes beside it.
+
+<Preview id="splitter/three-columns" />
+
+```tsx
+<Splitter className="h-64" defaultLayout={[25, 50, 25]}>
+  <Splitter.Pane minSize={15} />
+  <Splitter.Handle accessibilityLabel="Resize files" />
+  <Splitter.Pane minSize={30} />
+  <Splitter.Handle accessibilityLabel="Resize inspector" />
+  <Splitter.Pane minSize={15} />
+</Splitter>
+```
+
+## Vertical
+
+`orientation="vertical"` stacks the panes and drags along y.
+
+<Preview id="splitter/vertical" />
+
+```tsx
+<Splitter className="h-80" orientation="vertical" defaultLayout={[60, 40]}>
+  <Splitter.Pane minSize={25} />
+  <Splitter.Handle accessibilityLabel="Resize editor" />
+  <Splitter.Pane minSize={20} />
+</Splitter>
+```
+
+## Collapsible
+
+A collapsible pane folds away once dragged past half its `minSize`, and `useSplitter()` can toggle it.
+
+<Preview id="splitter/collapsible" />
+
+```tsx
+function ToggleSidebar() {
+  const { togglePane } = useSplitter();
+  return (
+    <Button onPress={() => togglePane(0)}>
+      <Button.Label>Toggle sidebar</Button.Label>
+    </Button>
+  );
+}
+
+<Splitter className="h-64">
+  <Splitter.Pane isCollapsible minSize={25} maxSize={50} />
+  <Splitter.Handle accessibilityLabel="Resize sidebar" />
+  <Splitter.Pane minSize={40}>
+    <ToggleSidebar />
+  </Splitter.Pane>
+</Splitter>
+```
+
+## Controlled layout
+
+`onLayoutChange` fires once per release, never per frame — the place to persist a layout.
+
+```tsx
+const [layout, setLayout] = useState([30, 70]);
+
+<Splitter layout={layout} onLayoutChange={setLayout}>
+  <Splitter.Pane />
+  <Splitter.Handle />
+  <Splitter.Pane />
+</Splitter>
+```
+
+## Accessibility
+
+Each handle is `adjustable`: it reads its label and the size of the pane before it, and offers increment, decrement, reset and — beside a collapsible pane — collapse or expand.
+
+```tsx
+<Splitter step={10}>
+  <Splitter.Pane />
+  <Splitter.Handle accessibilityLabel="Resize navigation" />
+  <Splitter.Pane />
+</Splitter>
+```
+
+A double tap on a handle resets the layout.
+
+## Splitter or SplitView
+
+`Splitter` is the general engine: two or more panes, either axis, stopping where the finger lets go. `SplitView` is two stacked panes that settle on named snap points.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Splitter` | Owns the layout, the measurement and the settle |
+| `Splitter.Pane` | One region, sized in percent, with an optional floor, ceiling and collapse |
+| `Splitter.Handle` | The draggable, adjustable seam between the pane before it and the pane after it |
+
+### Splitter
+
+<TypeTable
+  type={{
+    orientation: {
+      type: '"horizontal" | "vertical"',
+      default: '"horizontal"',
+      description: "horizontal lays panes side by side; vertical stacks them.",
+    },
+    variant: {
+      type: '"seam" | "panes"',
+      default: '"seam"',
+      description: "seam is a hairline between flush panes; panes gives each pane a rounded surface with a gap.",
+    },
+    layout: { type: "number[]", description: "Controlled layout, percent per pane, summing to 100." },
+    defaultLayout: { type: "number[]", description: "Initial layout while uncontrolled. Defaults to each pane's defaultSize, the rest shared equally." },
+    onLayoutChange: { type: "(layout: number[]) => void", description: "Fires once when a drag, a step, a collapse or a reset settles." },
+    step: { type: "number", default: "5", description: "Percent. What an assistive increment moves by, and what a release rounds to." },
+    isDisabled: { type: "boolean", default: "false", description: "Freezes every handle." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"light"',
+      description: "Played when a seam meets a bound or a pane collapses.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Alternating Splitter.Pane and Splitter.Handle, starting and ending with a pane." },
+  }}
+/>
+
+### Splitter.Pane
+
+<TypeTable
+  type={{
+    defaultSize: { type: "number", description: "Share of the box when no layout is given. Percent." },
+    minSize: { type: "number", default: "0", description: "Floor, percent." },
+    maxSize: { type: "number", default: "100", description: "Ceiling, percent." },
+    isCollapsible: { type: "boolean", default: "false", description: "Past half of minSize the pane collapses to collapsedSize." },
+    collapsedSize: { type: "number", default: "0", description: "Size a collapsed pane holds. Percent." },
+    className: { type: "string" },
+  }}
+/>
+
+### Splitter.Handle
+
+<TypeTable
+  type={{
+    isDisabled: { type: "boolean", default: "false", description: "Freezes this seam alone." },
+    withGrip: { type: "boolean", default: "true", description: "Draw the grip capsule. A bare seam is still draggable." },
+    accessibilityLabel: { type: "string", default: '"Resize"', description: "Read before the value. Say which panes." },
+    hitSlop: { type: "number", default: "0", description: "Widens the touch box along the axis, in points." },
+    className: { type: "string" },
+  }}
+/>
+
+### useSplitter
+
+<TypeTable
+  type={{
+    layout: { type: "number[]", description: "The settled layout." },
+    orientation: { type: '"horizontal" | "vertical"' },
+    variant: { type: '"seam" | "panes"' },
+    isDisabled: { type: "boolean" },
+    setLayout: { type: "(next: number[]) => void", description: "Sets a whole layout, fitted to every pane's bounds." },
+    togglePane: { type: "(index: number) => void", description: "Collapses or restores a collapsible pane." },
+    reset: { type: "() => void", description: "Back to the layout the splitter started from." },
+  }}
+/>

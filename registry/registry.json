@@ -892,6 +892,59 @@
 			]
 		},
 		{
+			"name": "planner",
+			"type": "registry:ui",
+			"title": "Planner",
+			"description": "A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"card",
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/planner/AGENTS.md",
+				"ui/planner/index.ts",
+				"ui/planner/planner-action.tsx",
+				"ui/planner/planner-dates.ts",
+				"ui/planner/planner-day.tsx",
+				"ui/planner/planner-details.tsx",
+				"ui/planner/planner-footer.tsx",
+				"ui/planner/planner-grid.tsx",
+				"ui/planner/planner-header.tsx",
+				"ui/planner/planner-legend.tsx",
+				"ui/planner/planner-nav.tsx",
+				"ui/planner/planner-scroller.tsx",
+				"ui/planner/planner-summary.tsx",
+				"ui/planner/planner-title.tsx",
+				"ui/planner/planner-today.tsx",
+				"ui/planner/planner-weekdays.tsx",
+				"ui/planner/planner.context.tsx",
+				"ui/planner/planner.tsx",
+				"ui/planner/planner.types.ts",
+				"ui/planner/planner.variants.ts",
+				"ui/planner/use-planner-today.ts"
+			]
+		},
+		{
 			"name": "pressable",
 			"type": "registry:ui",
 			"title": "Pressable",

@@ -108,6 +108,7 @@ shares.
 | [Select](src/components/select/AGENTS.md) | `@delacour/react-native-ui/select` | A closed set of choices behind a field-shaped trigger, picked from a bottom sheet |
 | [SelectionMode](src/components/selection-mode/AGENTS.md) | `@delacour/react-native-ui/selection-mode` | Pick several things at once, then act on them from a bar |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
+| [Signature](src/components/signature/AGENTS.md) | `@delacour/react-native-ui/signature` | A pad to sign with a finger, handing back strokes as JSON or SVG |
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
 | [SlideButton](src/components/slide-button/AGENTS.md) | `@delacour/react-native-ui/slide-button` | A handle dragged across a rail to confirm an action |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |

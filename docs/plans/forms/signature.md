@@ -1,6 +1,6 @@
 # Signature
 
-- **Status**: spec, not started
+- **Status**: built on `feature/forms-signature`. Verified on an iOS simulator; previews captured from the dev client (2 stills, 3 clips)
 - **Wave**: 1 (independent)
 - **Depends on**: `Field`, `Pressable`, `Button`, `Text`, `Icon`, `Surface` conventions; `react-native-svg`, Gesture Handler, Reanimated, Pulsar. No new peers.
 

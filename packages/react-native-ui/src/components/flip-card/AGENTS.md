@@ -105,8 +105,45 @@ card. Both are Gesture Handler taps — the card's on its root, the button's fro
 the expectation was that Gesture Handler's default arbitration hands the touch to the deepest
 recogniser.
 
-**Outcome:** see the simulator note below.
+**Outcome (iOS, 2026-10-05):** holds with no extra wiring. On `flip-card/interactive-back`, pressing
+the back's `Button` counted a copy and the card stayed on its back. No `Gesture.Exclusive` or
+`requireExternalGestureToFail` was needed. Android is unchecked — see below.
 
 ## Verification
 
-<!-- simulator-outcome -->
+- **Faces are found by `displayName` as well as by reference.** `splitFlipCardChildren` asks
+  `isFlipCardFaceName` when `child.type` is not the imported part, the same as `Switch`'s
+  `isSwitchThumbElement`. The package ships raw `.tsx`, so React Compiler or a second Metro copy of
+  the module can hand over a `type` that is a different object for the same component.
+- **No worklet reads a module binding from a parameter default.** The worklets plugin captures what
+  a worklet's body reads, not its parameter defaults: `resolveRubberBand(rotation, max =
+  FLIP_CARD_RUBBER_BAND)` threw *Property 'FLIP_CARD_RUBBER_BAND' doesn't exist* on the UI thread
+  the first time a swipe card was dragged. The default is now resolved in the body, and a test in
+  `flip-card.variants.test.ts` fails on any worklet with an identifier default.
+
+Checked on an iOS 26 simulator (iPhone 17) through the `preview` route, with agent-device:
+
+| What | Result |
+| --- | --- |
+| Tap turns the card; the back reads upright at rest; perspective visible mid-turn | ✔ |
+| Only the visible face is in the accessibility tree after a turn | ✔ |
+| A `Button` on the back fires and does not turn the card | ✔ |
+| Swipe: a short drag settles back, a long drag turns it, a reverse drag returns it | ✔ |
+| `axis="x"` tips top over bottom, back upright | ✔ |
+| `trigger="manual"`: a tap on the card does nothing; the ref's `flip()` turns it | ✔ |
+| `FlipCard.Trigger` beneath the card turns it and is not covered by the back | ✔ |
+| Controlled parent refusing the change: card ends on the parent's face | ✔ |
+| `isMotionCalm`: crossfade, no rotation | ✔ |
+
+**Not yet checked:** Android (no emulator lease taken — the Android-specific concerns are the
+perspective squash and a flash of both faces at 90°), VoiceOver / TalkBack speech and the swipe
+card's `activate` action, a swipe card inside a vertical `ScrollView`.
+
+## Previews (follow-up)
+
+`anatomy` (**hero**), `swipe`, `flashcard`, `vertical-axis` and `faces` carry `meta.capture`, and
+the four animated ones have flows under `.argent/flows/previews/flip-card/`, written but never run.
+`flip-card` sits in `AWAITING_FIRST_CAPTURE` in `apps/playground/src/demos/demos.test.ts` until the
+media are shot; remove it in that commit, and add `<Preview id="flip-card/anatomy" title={null} />`
+plus a `<Preview>` per section to `flip-card.mdx` in the same change — a `<Preview id>` for an
+uncaptured demo throws at render.

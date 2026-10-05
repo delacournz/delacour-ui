@@ -1,6 +1,6 @@
 ---
 "@delacour/react-native-ui": minor
-"delacour": minor
+"delacour": patch
 ---
 
 Add `FlipCard` — two faces of one card and a turn between them

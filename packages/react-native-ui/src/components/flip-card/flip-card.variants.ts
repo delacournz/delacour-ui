@@ -233,16 +233,20 @@ export function rotationFromDrag(start: number, delta: number, distance: number)
  * `max * o / (o + max)` — monotonic, a little under `o` for a small overshoot
  * and never reaching `max`, so the card leans past a rest under a hard drag and
  * cannot be turned over by one.
+ *
+ * `max` is resolved in the body, not as a parameter default: the worklets plugin
+ * does not capture a module binding read from a default, and the UI thread throws.
  */
-export function resolveRubberBand(rotation: number, max: number = FLIP_CARD_RUBBER_BAND): number {
+export function resolveRubberBand(rotation: number, max?: number): number {
 	"worklet";
+	const limit = max ?? FLIP_CARD_RUBBER_BAND;
 	if (rotation < 0) {
 		const overshoot = -rotation;
-		return -((max * overshoot) / (overshoot + max));
+		return -((limit * overshoot) / (overshoot + limit));
 	}
 	if (rotation > 180) {
 		const overshoot = rotation - 180;
-		return 180 + (max * overshoot) / (overshoot + max);
+		return 180 + (limit * overshoot) / (overshoot + limit);
 	}
 	return rotation;
 }

@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "A button on the back",
+	align: "stretch",
 	caption:
 		"A control on a face is its own gesture, and the deepest one wins: pressing Copy counts a copy and leaves the card where it is. A tap anywhere else turns it.",
 };

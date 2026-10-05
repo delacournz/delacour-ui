@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Controlled",
+	align: "stretch",
 	caption:
 		"`face` and `onFaceChange`, driven from a `Switch` outside the card. A tap on the card asks; the parent decides. With the lock on, the parent refuses and the card springs back.",
 };

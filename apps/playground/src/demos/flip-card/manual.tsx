@@ -7,6 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Manual, by ref",
+	align: "stretch",
 	caption:
 		'`trigger="manual"` mounts no gesture: taps on the card do nothing, and the app turns it through the ref\'s `flip()` and `flipTo()`.',
 };

@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { SURFACE_PADDINGS, SURFACE_VARIANTS } from "../surface/surface.variants";
 import {
 	FLIP_CARD_AXES,
@@ -417,5 +419,18 @@ describe("isFlipCardFaceName", () => {
 		expect(isFlipCardFaceName("DelacourUI.FlipCard.Trigger")).toBe(false);
 		expect(isFlipCardFaceName("DelacourUI.Text")).toBe(false);
 		expect(isFlipCardFaceName(undefined)).toBe(false);
+	});
+});
+
+describe("worklet hygiene", () => {
+	// The worklets plugin captures identifiers a worklet's body reads, not those in its
+	// parameter defaults — `max = FLIP_CARD_RUBBER_BAND` threw "Property doesn't exist"
+	// on the UI thread the first time a swipe card was dragged.
+	test("no worklet reads a module binding from a parameter default", () => {
+		const source = readFileSync(join(import.meta.dir, "flip-card.variants.ts"), "utf8");
+		const offenders = [...source.matchAll(/export function (\w+)\(([^)]*)\)[^{]*\{\s*"worklet";/g)]
+			.filter(([, , params]) => /=\s*[A-Za-z_]/.test(params ?? ""))
+			.map(([, name]) => name);
+		expect(offenders).toEqual([]);
 	});
 });

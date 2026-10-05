@@ -6,6 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Reduced motion",
+	align: "stretch",
 	caption:
 		"Under the OS setting or `DelacourProvider`'s `isMotionCalm`, nothing turns: the faces crossfade in 150 ms, and the announcement, the haptic and `onFlipEnd` behave the same.",
 };

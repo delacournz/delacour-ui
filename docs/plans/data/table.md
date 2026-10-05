@@ -119,6 +119,14 @@ No new peers.
 capture), `selectable` (press to select, capture), `striped-small`, `frame` (capture), `wide-scroll`
 (minWidth 640), `empty`, `virtualised` (FlatList + `Table.Row index/isLast`).
 
+**Captures deferred (2026-10-05).** `bun run previews` shells out to the `argent` CLI, which is
+retired and not installed on the build machine, so no media could be recorded. The five demos
+above marked "capture" ship without `capture` meta (the BottomSheet arrangement: demos, no
+captures), because `demos.test.ts` fails a captured demo with no manifest entry. When the preview
+pipeline moves to agent-device, restore `capture: { align: "stretch" }` on `columns`, `sortable`,
+`selectable`, `frame`, and `capture: { align: "stretch", hero: true }` on `basic`, run
+`bun run previews -- -- --only table`, and add `<Preview>`s to `table.mdx`.
+
 ## Docs page
 
 `apps/web/content/docs/native/components/table.mdx`: overview, anatomy, columns, sorting (caller

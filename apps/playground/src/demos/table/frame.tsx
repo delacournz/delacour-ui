@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Frame",
 	caption:
 		"`Table.Frame` is a card with a title, a description and an action, holding the table flush to its sides and bottom.",
-	capture: { align: "stretch" },
 };
 
 const PAYMENTS = [

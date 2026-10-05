@@ -6,7 +6,6 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Columns are declared once on the table and every row reads them by position, so the header, the line items and the total line up.",
-	capture: { align: "stretch", hero: true },
 };
 
 const LINES = [

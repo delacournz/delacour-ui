@@ -6,7 +6,6 @@ export const meta: DemoMeta = {
 	title: "Columns",
 	caption:
 		"`{ flex }` columns share what the fixed ones leave, by weight; `{ width }` columns are exact. Each takes an `align`, and a cell's `column` prop overrides its own.",
-	capture: { align: "stretch" },
 };
 
 const FIXTURES = [

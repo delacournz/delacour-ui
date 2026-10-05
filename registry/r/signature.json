@@ -1,0 +1,208 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "signature",
+	"type": "registry:ui",
+	"title": "Signature",
+	"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"button",
+		"color",
+		"field",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-svg",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/signature/AGENTS.md",
+			"target": "signature/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/signature",
+					"to": "@registry/ui/signature"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/index.ts",
+			"target": "signature/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-action-button.tsx",
+			"target": "signature/signature-action-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-alternative.tsx",
+			"target": "signature/signature-alternative.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-clear.tsx",
+			"target": "signature/signature-clear.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-live-path.tsx",
+			"target": "signature/signature-live-path.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-pad.tsx",
+			"target": "signature/signature-pad.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-path.tsx",
+			"target": "signature/signature-path.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-redo.tsx",
+			"target": "signature/signature-redo.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-toolbar.tsx",
+			"target": "signature/signature-toolbar.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature-undo.tsx",
+			"target": "signature/signature-undo.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.context.tsx",
+			"target": "signature/signature.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.stroke.ts",
+			"target": "signature/signature.stroke.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.tsx",
+			"target": "signature/signature.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.types.ts",
+			"target": "signature/signature.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.variants.ts",
+			"target": "signature/signature.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				}
+			]
+		}
+	]
+}

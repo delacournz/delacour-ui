@@ -36,6 +36,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
+	{ name: "signature", title: "Signature", description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },

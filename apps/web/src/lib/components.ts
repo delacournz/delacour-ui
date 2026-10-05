@@ -104,6 +104,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A row of stars that reads or sets a score, in whole or half steps.",
 	},
 	{
+		slug: "signature",
+		name: "Signature",
+		group: "Forms",
+		blurb: "A pad to sign with a finger, handing back the strokes as JSON or as an SVG.",
+	},
+	{
 		slug: "slider",
 		name: "Slider",
 		group: "Forms",

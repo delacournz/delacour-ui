@@ -12,6 +12,7 @@
 		"field",
 		"input",
 		"textarea",
+		"markdown-editor",
 		"label",
 		"checkbox",
 		"chip",

@@ -60,6 +60,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
 	{ slug: "textarea", name: "Textarea", group: "Forms", blurb: "A multiline text field, sized in rows." },
 	{
+		slug: "markdown-editor",
+		name: "MarkdownEditor",
+		group: "Forms",
+		blurb: "A Markdown field \u2014 a formatting toolbar, a write pane and a rendered preview.",
+	},
+	{
 		slug: "label",
 		name: "Label",
 		group: "Forms",

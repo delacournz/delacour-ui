@@ -7,7 +7,6 @@ export const meta: DemoMeta = {
 	caption:
 		"Zoom, compass, recenter and locate, floated in a corner as ghost buttons on a card. Pans on the empty space around them still reach the map.",
 	note: "Locate asks for location permission the first time, and the position never leaves the device.",
-	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

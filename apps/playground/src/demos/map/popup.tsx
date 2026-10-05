@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Popup",
 	caption:
 		"A themed card over a marker's pin, rendered or not by whoever knows which place is selected. Tap a marker to open its card, the map to close it.",
-	capture: { align: "stretch" },
 };
 
 type Stop = { id: string; name: string; detail: string; lngLat: readonly [number, number] };

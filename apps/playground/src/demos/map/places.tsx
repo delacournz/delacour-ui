@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Places",
 	caption:
 		"Markers are React views pinned to a coordinate. Each one anchors on its pin's tip, so the label under it moves nothing; tap one to select it.",
-	capture: { align: "stretch", hero: true },
 };
 
 type Place = { id: string; name: string; lngLat: readonly [number, number] };

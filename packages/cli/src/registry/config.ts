@@ -258,6 +258,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",
 		categories: ["display"],
 	},
+	"image-viewer": {
+		title: "Image Viewer",
+		description:
+			"A fullscreen viewer that opens from a thumbnail: pinch, pan and double-tap zoom, swipe between images, drag down to dismiss.",
+		categories: ["display"],
+	},
 	input: {
 		title: "Input",
 		description:

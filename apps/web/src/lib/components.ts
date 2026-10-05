@@ -462,6 +462,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Swipeable slides on one fractional position \u2014 peek, loop, vertical, coverflow, dots and arrows.",
 	},
 	{
+		slug: "image-viewer",
+		name: "Image Viewer",
+		group: "Layout",
+		blurb:
+			"A full-screen viewer that opens out of a thumbnail \u2014 pinch, pan and double-tap zoom, swipe, drag to dismiss.",
+	},
+	{
 		slug: "scroll-blur",
 		name: "ScrollBlur",
 		group: "Layout",

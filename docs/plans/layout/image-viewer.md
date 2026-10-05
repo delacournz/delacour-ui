@@ -293,3 +293,10 @@ Registry: `ITEM_META["image-viewer"] = { title: "Image Viewer", description: "A 
 - [ ] Trigger scrolled out of view then closing: fades instead of flying to an off-screen rect
 - [ ] Reduce Motion on: no flight, cross-fade only; VoiceOver: focus moves in/out, "n of m" announced, zoomIn/zoomOut actions work, close button reachable
 - [ ] Release build checked (not only dev) — the Release-only Accordion regression is the precedent
+
+## Implementation notes
+
+- The full-screen layer shipped as planned: an internal React Native `Modal` inside `ImageViewerLayer`, with its own `GestureHandlerRootView` and the outer safe-area insets re-supplied. Overlays' `Dialog` is not imported.
+- `VIEWER_LOAD_WAIT_MS` (250 ms) was added: the opening flight waits for the active page's thumbnail to decode, or for that long, because a remote thumbnail had not drawn when the spring started.
+- Captured: `gallery-grid` (hero), `zoom` and `drag-to-dismiss` as device-frame clips, `custom-thumbnail` as a stage still. `captions-full-source` and `controlled` were left uncaptured to keep the media under `BUDGET_BYTES`, and `custom-thumbnail` became a compact list row for the same reason.
+- Capturing it found a bug: the Trigger's inner wrapper was always `height: "100%"`, so custom children with no fixed size stretched to their parent's height. Custom children now get a width-only wrapper.

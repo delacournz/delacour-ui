@@ -109,6 +109,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	calendar: IconCalendar1,
 	card: IconLayoutWindow,
 	carousel: IconSlidesWide,
+	"image-viewer": IconImages1,
 	checkbox: IconSquareCheck,
 	"date-picker": IconCalendarDays,
 	"date-time-picker": IconCalendarClock,

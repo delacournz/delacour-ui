@@ -107,7 +107,7 @@ function TimelineListBody<T>({
 		<TimelineProvider value={context}>
 			<Animated.FlatList<T>
 				{...props}
-				className={className}
+				className={isHorizontal ? timelineVariants({ orientation: "horizontal" }).root({ className }) : className}
 				contentContainerClassName={isHorizontal ? strip : contentContainerClassName}
 				data={data}
 				decelerationRate={horizontal?.snap ? "fast" : props.decelerationRate}

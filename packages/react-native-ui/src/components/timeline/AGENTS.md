@@ -53,6 +53,10 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
   `<tone>-soft-foreground` glyph whatever its progress. The failure this prevents is a marker
   asked to say two things: a failed payment three events back would otherwise turn primary once
   the order moved past it, and the error would vanish from the history. Progress is the rail's job.
+- **A toned dot is the tone's strong colour, not its soft fill.** `dot`, `card` and `compact` have
+  no glyph to carry the kind, and a soft fill alone is a near-white dot on a light page — invisible
+  on the simulator. So for those variants the fill and ring are `<tone>-soft-foreground`; circles
+  keep the soft pair with the glyph in the strong colour.
 - **`resolveTimelineIndicator` names the tokens and the slots emit them.** The number takes its
   colour as a class (rule 1) and the icon as a token through `IconDefaultsProvider`; the suite
   sweeps every variant × status × tone and asserts the slot emits `bg-<fill>`, `border-<ring>`
@@ -83,8 +87,11 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
 ## Horizontal
 
 - **Columns stretch to the tallest, and the content sits on the rail.** The strip is
-  `items-stretch`, each column's content band is `flex-1 justify-end`, so every rail lines up
-  however much text a column holds.
+  `items-stretch`, each column's content band is `grow justify-end`, so every rail lines up
+  however much text a column holds. `grow`, not `flex-1`: in an auto-height strip a zero flex
+  basis collapses the band to nothing and the titles disappear — seen on the simulator.
+- **A horizontal list does not grow down the page.** A horizontal `FlatList` is a ScrollView,
+  which grows along the cross axis by default; the root slot's `grow-0` keeps it to its columns.
 - **A column with no content collapses to a 24-point tick.** `resolveTimelineColumnWidth` returns
   `TIMELINE_TICK_WIDTH` whatever width was asked for — the column marks a gap in time, not an
   event — and the tick is hidden from assistive technology. The root sizes every column with the
@@ -135,5 +142,9 @@ Read-only and content-heavy. Compound root plus `Timeline.Item`, `Indicator`, `C
 
 - **No presses.** A timeline is a record; an event that opens something composes a `Pressable` in
   its content. Steps is the control.
+- **The last columns cannot reach the reading edge.** The strip ends where its content ends, so
+  once it is scrolled to the end the column reported is the one under the edge there, not the
+  last. Padding the end to a viewport would need a measured width; it is not worth breaking the
+  laid-out rule for.
 - **No entering animation.** Events are content, and a history that animates in on every mount
   is noise.

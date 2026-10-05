@@ -128,10 +128,12 @@ export const timelineVariants = tv({
 				meta: "pt-1",
 			},
 			horizontal: {
+				// A horizontal list is a ScrollView, which grows along the cross axis by default.
+				root: "grow-0",
 				item: "flex-col",
 				track: "flex-row items-center",
 				rail: "mx-1 h-0.5 flex-1",
-				content: "flex-1 justify-end pr-3 pb-3",
+				content: "grow justify-end pr-3 pb-3",
 				header: "gap-0.5",
 				date: "tabular-nums",
 				description: "pt-0.5",
@@ -213,6 +215,28 @@ export const timelineVariants = tv({
 				indicatorLabel: "text-destructive-soft-foreground",
 			},
 		},
+
+		// A toned dot has no glyph to carry its kind, so the dot itself takes the tone's strong colour.
+		{
+			variant: ["dot", "card", "compact"],
+			tone: "info",
+			class: { indicator: "border-info-soft-foreground bg-info-soft-foreground" },
+		},
+		{
+			variant: ["dot", "card", "compact"],
+			tone: "success",
+			class: { indicator: "border-success-soft-foreground bg-success-soft-foreground" },
+		},
+		{
+			variant: ["dot", "card", "compact"],
+			tone: "warning",
+			class: { indicator: "border-warning-soft-foreground bg-warning-soft-foreground" },
+		},
+		{
+			variant: ["dot", "card", "compact"],
+			tone: "destructive",
+			class: { indicator: "border-destructive-soft-foreground bg-destructive-soft-foreground" },
+		},
 	],
 	defaultVariants: {
 		orientation: TIMELINE_DEFAULT_ORIENTATION,
@@ -283,6 +307,11 @@ const TONE_SOFT: Record<Exclude<TimelineTone, "default">, { fill: string; foregr
 	destructive: { fill: "destructive-soft", foreground: "destructive-soft-foreground" },
 };
 
+/** The variants whose marker is a bare dot rather than a circle holding a glyph. */
+function isDotVariant(variant: TimelineVariant): boolean {
+	return variant === "dot" || variant === "card" || variant === "compact";
+}
+
 function resolveGlyph(variant: TimelineVariant, status: TimelineStatus, hasIcon: boolean): TimelineGlyph {
 	if (variant === "numbered") return "number";
 	if (variant !== "icon") return "dot";
@@ -296,7 +325,9 @@ function resolveGlyph(variant: TimelineVariant, status: TimelineStatus, hasIcon:
  * **Progress is solid, kind is tinted.** A default event fills `primary` once
  * reached and is a muted ring ahead of the value. A toned event is its
  * `<tone>-soft` pair whatever its progress — the rail says how far along the
- * sequence is, so the marker is free to say what kind of event it was.
+ * sequence is, so the marker is free to say what kind of event it was. A dot
+ * has no glyph to carry the kind, so a toned dot is the tone's strong colour
+ * (`<tone>-soft-foreground`) instead; a soft fill alone vanishes on the page.
  *
  * The glyph follows the variant: `numbered` draws the position, `icon` the
  * caller's glyph (a check once completed when none is given), the rest a dot.
@@ -319,6 +350,8 @@ export function resolveTimelineIndicator({
 	const glyph = resolveGlyph(variant, status, hasIcon);
 	if (tone !== "default") {
 		const soft = TONE_SOFT[tone];
+		if (isDotVariant(variant))
+			return { fill: soft.foreground, ring: soft.foreground, foreground: soft.foreground, glyph };
 		return { fill: soft.fill, ring: soft.fill, foreground: soft.foreground, glyph };
 	}
 	if (status === "upcoming") return { fill: "background", ring: "border", foreground: "muted-foreground", glyph };

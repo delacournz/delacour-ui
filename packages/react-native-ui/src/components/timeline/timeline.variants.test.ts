@@ -167,6 +167,19 @@ describe("resolveTimelineIndicator", () => {
 		}
 	});
 
+	test("a toned dot is drawn in its tone's strong colour — a soft fill alone vanishes against the page", () => {
+		for (const variant of ["dot", "card", "compact"] as const) {
+			for (const tone of TIMELINE_TONES.filter((t) => t !== "default")) {
+				for (const status of TIMELINE_STATUSES) {
+					expect(resolveTimelineIndicator({ variant, status, tone })).toMatchObject({
+						fill: `${tone}-soft-foreground`,
+						ring: `${tone}-soft-foreground`,
+					});
+				}
+			}
+		}
+	});
+
 	test("the glyph follows the variant", () => {
 		const glyph = (variant: TimelineVariant, status: TimelineStatus = "upcoming", hasIcon = false) =>
 			resolveTimelineIndicator({ hasIcon, status, tone: "default", variant }).glyph;
@@ -345,6 +358,16 @@ describe("slots", () => {
 		expect(has(slots.item(), "flex-col")).toBe(true);
 		expect(has(slots.track(), "flex-row")).toBe(true);
 		expect(has(slots.content(), "justify-end")).toBe(true);
+	});
+
+	test("a horizontal content band grows from its content's height, never from zero", () => {
+		const content = timelineVariants({ orientation: "horizontal" }).content();
+		expect(has(content, "grow")).toBe(true);
+		expect(has(content, "flex-1")).toBe(false);
+	});
+
+	test("a horizontal strip does not grow down the page", () => {
+		expect(has(timelineVariants({ orientation: "horizontal" }).root(), "grow-0")).toBe(true);
 	});
 
 	test("upcoming vertical titles are muted; reached ones are not", () => {

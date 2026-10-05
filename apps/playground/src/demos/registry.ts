@@ -304,6 +304,7 @@ import * as demo_sketch_colours from "./sketch/colours";
 import * as demo_sketch_default from "./sketch/default";
 import * as demo_sketch_draw from "./sketch/draw";
 import * as demo_sketch_eraser from "./sketch/eraser";
+import * as demo_sketch_export from "./sketch/export";
 import * as demo_sketch_shapes from "./sketch/shapes";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_accessible_names from "./slider/accessible-names";
@@ -676,6 +677,7 @@ export const DEMOS = {
 	"sketch/default": demo_sketch_default,
 	"sketch/draw": demo_sketch_draw,
 	"sketch/eraser": demo_sketch_eraser,
+	"sketch/export": demo_sketch_export,
 	"sketch/shapes": demo_sketch_shapes,
 	"slider/a-range": demo_slider_a_range,
 	"slider/accessible-names": demo_slider_accessible_names,

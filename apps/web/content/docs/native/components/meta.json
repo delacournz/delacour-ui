@@ -41,6 +41,7 @@
 		"---Overlays---",
 		"bottom-sheet",
 		"popover",
+		"tooltip",
 		"---Navigation---",
 		"steps",
 		"tabs",

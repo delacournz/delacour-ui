@@ -22,6 +22,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
+	{ name: "flip-card", title: "FlipCard", description: "Two faces of one card and a turn between them, by tap, swipe or code." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts a prefix or suffix inside its border." },
 	{ name: "item", title: "Item", description: "A row of media, text and actions for lists and settings, standalone or as a List Group row." },

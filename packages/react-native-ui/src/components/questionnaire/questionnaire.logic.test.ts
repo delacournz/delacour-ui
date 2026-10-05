@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import {
 	canBack,
 	canSkip,
+	chooseMultiple,
+	chooseSingle,
 	createQuestionnaireState,
 	defaultErrorMessage,
 	findDanglingReferences,
@@ -13,16 +15,19 @@ import {
 	getPrevId,
 	getProgress,
 	getScaleValues,
+	getSelectedValues,
 	getSubmission,
 	getVisibleQuestions,
 	isConditionMet,
 	isEmptyAnswer,
 	isLastVisible,
+	isOtherSelected,
 	normalizeAnswer,
 	pruneAnswers,
 	QUESTIONNAIRE_SCALE_MAX_STEPS,
 	type QuestionnaireState,
 	questionnaireReducer,
+	setOtherText,
 	syncAnswers,
 	validateAnswer,
 } from "./questionnaire.logic";
@@ -706,6 +711,21 @@ describe("questionnaireReducer", () => {
 		});
 	});
 
+	describe("reopen", () => {
+		test("returns a submitted flow to active, where it was", () => {
+			const submitted = run(start(), { answer: NO, id: "a", type: "answer" }, { type: "next" }, { type: "submit" });
+			const reopened = questionnaireReducer(submitted, { type: "reopen" });
+			expect(reopened.status).toBe("active");
+			expect(reopened.currentId).toBe(submitted.currentId);
+			expect(reopened.answers).toBe(submitted.answers);
+		});
+
+		test("is a no-op on an active flow", () => {
+			const state = start();
+			expect(questionnaireReducer(state, { type: "reopen" })).toBe(state);
+		});
+	});
+
 	test("reset returns to the initial state", () => {
 		const initial = createQuestionnaireState({ answers: { a: YES }, questions: branching });
 		const moved = run(initial, { type: "next" }, { answer: textAnswer("x"), id: "b", type: "answer" });
@@ -769,5 +789,48 @@ describe("wording helpers", () => {
 	test("getScaleValues refuses an inverted or absurd range", () => {
 		expect(getScaleValues(5, 1)).toEqual([]);
 		expect(getScaleValues(0, 1000)).toHaveLength(QUESTIONNAIRE_SCALE_MAX_STEPS);
+	});
+});
+
+describe("answer adapters", () => {
+	test("chooseSingle stores the value, keeping Other's text only while Other stays chosen", () => {
+		expect(chooseSingle(single, undefined, "eng")).toEqual({ kind: "single", value: "eng" });
+		const other = setOtherText(chooseSingle(single, undefined, "other"), "Writer");
+		expect(other).toEqual({ kind: "single", other: "Writer", value: "other" });
+		expect(chooseSingle(single, other, "other")).toEqual({ kind: "single", other: "Writer", value: "other" });
+		expect(chooseSingle(single, other, "design")).toEqual({ kind: "single", value: "design" });
+	});
+
+	test("chooseMultiple stores the list, drops Other's text with Other, and empties to undefined", () => {
+		const withOther = setOtherText(chooseMultiple(multiple, undefined, ["figma", "other"]), "Paper");
+		expect(withOther).toEqual({ kind: "multiple", other: "Paper", values: ["figma", "other"] });
+		expect(chooseMultiple(multiple, withOther, ["figma"])).toEqual({ kind: "multiple", values: ["figma"] });
+		expect(chooseMultiple(multiple, withOther, [])).toBeUndefined();
+	});
+
+	test("setOtherText clears an empty string and ignores answers with no choice", () => {
+		expect(setOtherText({ kind: "single", other: "x", value: "other" }, "")).toEqual({
+			kind: "single",
+			value: "other",
+		});
+		expect(setOtherText(undefined, "x")).toBeUndefined();
+		expect(setOtherText(textAnswer("a"), "x")).toEqual(textAnswer("a"));
+	});
+
+	test("isOtherSelected reads the Other option of the question", () => {
+		expect(isOtherSelected(single, { kind: "single", value: "other" })).toBe(true);
+		expect(isOtherSelected(single, { kind: "single", value: "eng" })).toBe(false);
+		expect(isOtherSelected(multiple, { kind: "multiple", values: ["xcode", "other"] })).toBe(true);
+		expect(isOtherSelected(text, textAnswer("other"))).toBe(false);
+		expect(isOtherSelected(single, undefined)).toBe(false);
+	});
+
+	test("getSelectedValues gives each choice kind's selection as a list of strings", () => {
+		expect(getSelectedValues({ kind: "single", value: "eng" })).toEqual(["eng"]);
+		expect(getSelectedValues({ kind: "multiple", values: ["a", "b"] })).toEqual(["a", "b"]);
+		expect(getSelectedValues(YES)).toEqual(["yes"]);
+		expect(getSelectedValues({ kind: "scale", value: 7 })).toEqual(["7"]);
+		expect(getSelectedValues(SKIPPED)).toEqual([]);
+		expect(getSelectedValues(undefined)).toEqual([]);
 	});
 });

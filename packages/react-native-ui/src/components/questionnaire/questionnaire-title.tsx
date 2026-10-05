@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import { cn } from "../../lib/cn";
 import { Text, type TextPresetProps } from "../text";
 import { useQuestionnairePart } from "./questionnaire.context";
 import { questionnaireVariants } from "./questionnaire.variants";
@@ -15,6 +16,6 @@ export function QuestionnaireTitle({ className, ...props }: QuestionnaireTitlePr
 	const { axes, isFramed, size } = useQuestionnairePart("Questionnaire.Title");
 	const slots = questionnaireVariants({ isFramed, size });
 	const TitleText = axes.titleVariant === "title" ? Text.Title : Text.Header;
-	return <TitleText className={slots.header({ class: slots.title(), className })} {...props} />;
+	return <TitleText className={slots.header({ className: cn(slots.title(), className) })} {...props} />;
 }
 QuestionnaireTitle.displayName = "DelacourUI.Questionnaire.Title";

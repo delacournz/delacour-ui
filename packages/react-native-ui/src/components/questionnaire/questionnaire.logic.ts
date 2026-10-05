@@ -426,6 +426,8 @@ export type QuestionnaireAction =
 	| { type: "back" }
 	| { type: "goTo"; id: string }
 	| { type: "submit" }
+	/** A submission failed — a promise from `onSubmit` rejected. Back to active, where it was. */
+	| { type: "reopen" }
 	| { type: "reset" }
 	/** A controlled `answers` prop changed. */
 	| { type: "syncAnswers"; answers: Answers }
@@ -617,6 +619,8 @@ export function questionnaireReducer(state: QuestionnaireState, action: Question
 			return reduceGoTo(state, action.id);
 		case "submit":
 			return reduceSubmit(state);
+		case "reopen":
+			return state.status === "active" ? state : { ...state, status: "active" };
 		case "reset":
 			return createQuestionnaireState({
 				answers: state.initial.answers,
@@ -693,4 +697,64 @@ export function getScaleValues(min: number, max: number): number[] {
 	if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) return [];
 	const count = Math.min(end - start + 1, QUESTIONNAIRE_SCALE_MAX_STEPS);
 	return Array.from({ length: count }, (_, index) => start + index);
+}
+
+// ─── Answer adapters ─────────────────────────────────────────────────────────
+
+type ChoiceQuestion = Extract<Question, { kind: "single" | "multiple" }>;
+
+function otherValueOf(question: Question): string | undefined {
+	if (question.kind !== "single" && question.kind !== "multiple") return undefined;
+	return question.options.find((option) => option.isOther)?.value;
+}
+
+/** Whether the answer has the question's free-text "Other" option chosen. */
+export function isOtherSelected(question: Question, answer: Answer | undefined): boolean {
+	const other = otherValueOf(question);
+	if (other === undefined || !answer) return false;
+	if (answer.kind === "single") return answer.value === other;
+	if (answer.kind === "multiple") return answer.values.includes(other);
+	return false;
+}
+
+/** A `single` answer for `value`, carrying the previous "Other" text only while Other stays chosen. */
+export function chooseSingle(question: ChoiceQuestion, previous: Answer | undefined, value: string): Answer {
+	const answer: Answer = { kind: "single", value };
+	const other = previous && (previous.kind === "single" || previous.kind === "multiple") ? previous.other : undefined;
+	return other !== undefined && isOtherSelected(question, answer) ? { ...answer, other } : answer;
+}
+
+/** A `multiple` answer for `values` — `undefined` when none are chosen, so clearing every box clears the answer. */
+export function chooseMultiple(
+	question: ChoiceQuestion,
+	previous: Answer | undefined,
+	values: readonly string[]
+): Answer | undefined {
+	if (values.length === 0) return undefined;
+	const answer: Answer = { kind: "multiple", values };
+	const other = previous && (previous.kind === "single" || previous.kind === "multiple") ? previous.other : undefined;
+	return other !== undefined && isOtherSelected(question, answer) ? { ...answer, other } : answer;
+}
+
+/** The answer with its "Other" text replaced. An empty string removes it; a non-choice answer is returned as is. */
+export function setOtherText(answer: Answer | undefined, text: string): Answer | undefined {
+	if (!answer || (answer.kind !== "single" && answer.kind !== "multiple")) return answer;
+	const { other: _previous, ...rest } = answer;
+	return text === "" ? rest : { ...rest, other: text };
+}
+
+/** The selection a choice control draws: a list of strings for single, multiple, yes/no and scale answers. */
+export function getSelectedValues(answer: Answer | undefined): string[] {
+	if (!answer) return [];
+	switch (answer.kind) {
+		case "single":
+		case "yesNo":
+			return [answer.value];
+		case "multiple":
+			return [...answer.values];
+		case "scale":
+			return [String(answer.value)];
+		default:
+			return [];
+	}
 }

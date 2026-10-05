@@ -1,5 +1,6 @@
 import type { ReactElement } from "react";
 import { View, type ViewProps } from "react-native";
+import { cn } from "../../lib/cn";
 import { Progress } from "../progress";
 import { Steps } from "../steps";
 import { Text } from "../text";
@@ -35,7 +36,7 @@ export function QuestionnaireProgress({
 
 	const slots = questionnaireVariants({ isFramed, size });
 	const now = isSubmitted ? progress.total : progress.index + 1;
-	const rootClass = slots.header({ class: slots.progress(), className });
+	const rootClass = slots.header({ className: cn(slots.progress(), className) });
 
 	if (variant === "count") {
 		return (

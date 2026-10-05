@@ -4,6 +4,8 @@ description: A floating pill over a long read — a ring filling with scroll pro
 icon: BookOpen
 ---
 
+<Preview id="section-progress/colored-sections" title={null} />
+
 ## Installation
 
 <ComponentInstall name="section-progress" />
@@ -72,6 +74,8 @@ relative to its parent.
 Six placements, `offset` points in from the safe area. A `top-*` pill opens its panel downward and a
 `bottom-*` one upward; `start` and `end` mirror under right-to-left.
 
+<Preview id="section-progress/placements" />
+
 ```tsx
 <SectionProgress placement="top-end" offset={12} …>…</SectionProgress>
 ```
@@ -85,6 +89,8 @@ on, so it never blinks near the top. `revealAt={0}` shows it at once.
 
 An item's `color` paints its marker in the panel, and the ring while that section is being read.
 
+<Preview id="section-progress/colored-sections" />
+
 ```tsx
 <SectionProgress.Item value="known-issues" color="warning">Known issues</SectionProgress.Item>
 ```
@@ -94,6 +100,8 @@ An item's `color` paints its marker in the panel, and the ring while that sectio
 `progress` overrides the scroll — a number or a shared value from 0 to 1. Small steps track
 directly; a jump of more than a tenth eases over 180ms.
 
+<Preview id="section-progress/manual-progress" />
+
 ```tsx
 <SectionProgress progress={step / steps.length} revealAt={0} value={current}>…</SectionProgress>
 ```
@@ -102,6 +110,8 @@ directly; a jump of more than a tenth eases over 180ms.
 
 `isOpen` and `onOpenChange` hand the panel to you. The pill, an outside tap, the escape gesture and
 Android back all close it through the same callback.
+
+<Preview id="section-progress/controlled-open" />
 
 ```tsx
 const [isOpen, setOpen] = useState(false);
@@ -151,6 +161,7 @@ Extends `ViewProps`.
     revealAt: { type: "number", default: "64", description: "Scroll Y before the pill appears. 0 is always visible." },
     haptic: { type: "false | HapticFeedback", default: "false", description: "Played when the active section changes." },
     accessibilityLabel: { type: "string", default: '"Sections"' },
+    testID: { type: "string", description: "Also gives the pill `${testID}-pill`, closed or as the open panel's edge row." },
     className: { type: "string" },
   }}
 />

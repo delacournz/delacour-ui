@@ -4,6 +4,8 @@ description: A field that shows a date, a range or several, and opens a calendar
 icon: CalendarDays
 ---
 
+<Preview id="date-picker/single" title={null} />
+
 ## Installation
 
 <ComponentInstall name="date-picker" />
@@ -39,7 +41,11 @@ from the value — never stored beside it. Picking a day closes the sheet a beat
 selection is seen. A value is a `CalendarDate` — `{ year, month, day }`, no time zone — and every
 helper for it comes from [`Calendar`](/docs/native/components/calendar#date-helpers).
 
+<Preview id="date-picker/single" />
+
 ## Range
+
+<Preview id="date-picker/range-booking" />
 
 ```tsx
 const [stay, setStay] = useState<CalendarDateRange>({ start: null, end: null });
@@ -61,6 +67,8 @@ A range within one month is written once — "5–9 Oct 2026" — where the plat
 it.
 
 ## Multiple
+
+<Preview id="date-picker/multiple" />
 
 ```tsx
 const [days, setDays] = useState<readonly CalendarDate[]>([]);
@@ -101,6 +109,8 @@ that would cross a disabled day starts again from the tapped day rather than com
 
 ## In a field
 
+<Preview id="date-picker/in-field-invalid" />
+
 ```tsx
 <Field isInvalid={day === null}>
   <Field.Label>Date of birth</Field.Label>
@@ -134,6 +144,8 @@ Draws the calendar on a card in place, with no trigger and no sheet. `presentati
 anchored popover can join it later without a breaking change.
 
 ## Sizes and variants
+
+<Preview id="date-picker/sizes-variants" />
 
 ```tsx
 <DatePicker size="sm" />

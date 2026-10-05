@@ -13,7 +13,8 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/alert` |
 | `alert.tsx` | Root + the `Object.assign` compound surface |
-| `alert-indicator.tsx` | `Alert.Indicator`, and the status → glyph map |
+| `alert-indicator.tsx` | `Alert.Indicator` |
+| `alert-glyphs.ts` | **Leaf.** `ALERT_GLYPHS`, the status → glyph map — `toast/` imports it |
 | `alert-content.tsx` | `Alert.Content` |
 | `alert-title.tsx` | `Alert.Title` |
 | `alert-description.tsx` | `Alert.Description` |
@@ -66,7 +67,7 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
 - **Glyphs differ in shape, not just colour.** `warning` is a triangle and
   `destructive` a circle, so the two stay apart for anyone who cannot tell amber
   from red. `default` shares `info`'s circle. The map lives in
-  `alert-indicator.tsx` because the glyphs are RN SVG components and
+  `alert-glyphs.ts`, a leaf `Toast` shares, because the glyphs are RN SVG components and
   `alert.variants.ts` must stay importable from `bun test`.
 - **The indicator is hidden from assistive technology.** The title says what
   happened; "image" announced before it adds nothing. Children replace the

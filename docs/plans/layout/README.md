@@ -29,8 +29,7 @@ into this category branch.
 
 | Shared file | Owner | Consumers |
 | --- | --- | --- |
-| `src/hooks/use-scroll-source.tsx`, `src/lib/scroll-maths.ts`, the `Screen` bridge in `screen-root.tsx` | LAYOUT-09 ScrollFade | 07, 08, 10 |
-| `scroll-fade/scroll-fade.variants.ts` (edge/band/gradient resolvers, leaf import) | LAYOUT-09 ScrollFade | 07 |
+| `src/hooks/use-scroll-source.tsx`, `src/lib/scroll-maths.ts`, `src/lib/scroll-edges.ts` (edge/band/gradient resolvers), the `Screen` bridge in `screen-root.tsx` | LAYOUT-09, shipped on its own `layout-scroll-source` branch | 07, 08, 09, 10 (each stacked on it) |
 | `src/expo/blur-layer.tsx`, `expo-blur` optional peer, `useReduceTransparency` | LAYOUT-07 ScrollBlur | 10 (`surface="blur"` only) |
 | `src/lib/paging.ts` | LAYOUT-01 Carousel | 05 |
 | `splitter/splitter.math.ts` (leaf import) | LAYOUT-13 Splitter | 12 |

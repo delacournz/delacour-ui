@@ -5,7 +5,7 @@ A progressive blur at a scrollable's start/end edges that defocuses content as i
 Plan ID: LAYOUT-07
 Folder: `packages/react-native-ui/src/components/scroll-blur` (+ `src/expo/blur-layer.tsx`)
 Import: `@delacour/react-native-ui/scroll-blur` and `@delacour/react-native-ui/expo/blur-layer`
-Build order: after LAYOUT-09 (uses `useScrollSource`, `scroll-maths`, `scroll-fade.variants`). Before LAYOUT-10 (ScrollHeader's blur bar surface reads this folder's context/types leaves).
+Build order: after LAYOUT-09 (uses `useScrollSource`, `scroll-maths`, `scroll-edges`; all three ship on the shared scroll-source branch, so this branch stacks on that one, not on ScrollFade). Before LAYOUT-10 (ScrollHeader's blur bar surface reads this folder's context/types leaves).
 
 ## Purpose on mobile
 
@@ -116,7 +116,7 @@ The floating control is a **sibling after** the ScrollBlur inside a `relative` p
 Pure resolvers:
 - `resolveBlurLayers({ size, layers, intensity }): { offset: number; height: number; intensity: number }[]` - strips ordered edge -> inward, `offset` measured from the edge, equal heights, intensity falling linearly (`intensity * (layers - k) / layers`), `layers` clamped to 1-16 and floored, `size <= 0` -> `[]`.
 - `resolveBlurWash({ tint }): { edgeAlpha: number }` - clamp 0-1.
-- Edge selection, band geometry and gradient axes: `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` imported from `../scroll-fade/scroll-fade.variants` (leaf import).
+- Edge selection, band geometry and gradient axes: `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` imported from `../../lib/scroll-edges` (moved out of `scroll-fade.variants.ts` with the shared scroll source, so ScrollBlur never imports ScrollFade's folder). `ScrollBlurEdges` may alias `ScrollEdges` from the same module.
 
 ## States
 
@@ -135,7 +135,7 @@ One `Animated.View` per edge holds the whole band (strips + wash); only its `opa
 
 ## Reuses
 
-`useScrollSource`/`useResolvedScrollSource`, `scrollEdgeOpacity` (LAYOUT-09); `scroll-fade.variants` geometry; `expo-linear-gradient` (wash); `useThemeColor`, `lib/color`; `tv`. The same `BlurLayerComponent` contract is what ScrollHeader.Bar `surface="blur"` renders.
+`useScrollSource`/`useResolvedScrollSource`, `scrollEdgeOpacity` (LAYOUT-09); `lib/scroll-edges` geometry; `expo-linear-gradient` (wash); `useThemeColor`, `lib/color`; `tv`. The same `BlurLayerComponent` contract is what ScrollHeader.Bar `surface="blur"` renders.
 
 ## New peer deps
 

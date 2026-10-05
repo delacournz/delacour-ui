@@ -23,14 +23,14 @@ Decision: **four standalone folders over one shared scroll source; `Screen` is e
 1. `Screen` already publishes `scrollY`, `contentHeight`, `layoutHeight` from whichever scrollable it holds, and `Screen.ScrollShadow` / `Screen.Navbar fadeBorderOnScroll` read them. That stays untouched. But those values are Screen-private context; a horizontal carousel, a card list or a sheet body has no Screen.
 2. A new hook module `src/hooks/use-scroll-source.tsx` defines `ScrollSource` (the same three shared values plus `orientation` and an optional animated ref) and a `ScrollSourceProvider`. Resolution order for every family member: explicit `scrollSource` prop -> nearest `ScrollSourceProvider` -> throw naming the component.
 3. `ScreenRoot` mounts a tiny internal `ScreenScrollSourceBridge` (`screen-scroll-source.tsx`) that provides a `ScrollSource` built from the context's existing shared values (`scrollY`->`offset`, `contentHeight`->`contentSize`, `layoutHeight`->`layoutSize`, `ref: null`). Result: inside a `<Screen>` every family member works with zero wiring; outside, the caller uses `useScrollSource()`. The dependency points one way (screen -> hook), so installing the hook never drags `Screen` (and its peers) into the registry closure.
-4. Pure maths shared by all four lives in `src/lib/scroll-maths.ts` (owner: this plan). Pure edge-band geometry lives in `scroll-fade.variants.ts` (leaf; ScrollBlur imports it across folders per package rule 3's leaf exception).
+4. Pure maths shared by all four lives in `src/lib/scroll-maths.ts` (owner: this plan). Pure edge-band geometry lives in `src/lib/scroll-edges.ts` (shared, so ScrollBlur never imports ScrollFade's folder). *Moved during implementation:* it was first written in `scroll-fade.variants.ts`; the shared scroll-source branch (`hooks/use-scroll-source.tsx`, `lib/scroll-maths.ts`, `lib/scroll-edges.ts`, the Screen bridge) ships on its own and all four family members stack on it.
 5. No component clones a child to attach `onScroll`. The caller spreads `scrollProps` (from `useScrollSource`) onto their scrollable. Cloning collides with Reanimated handler composition and with the handlers every Screen scrollable already owns.
 
 Ownership table (no two plans touch the same file):
 
 | Artifact | Owner |
 | --- | --- |
-| `hooks/use-scroll-source.tsx`, `lib/scroll-maths.ts` (+test), `screen/screen-scroll-source.tsx` and the one-line mount in `screen-root.tsx` | LAYOUT-09 |
+| `hooks/use-scroll-source.tsx`, `lib/scroll-maths.ts` (+test), `lib/scroll-edges.ts` (+test), `screen/screen-scroll-source.tsx` and the one-line mount in `screen-root.tsx` | LAYOUT-09, shipped as its own shared branch (`layout-scroll-source`) |
 | `components/scroll-fade/*` | LAYOUT-09 |
 | `hooks/use-reduce-transparency.ts`, `lib/color.ts#withAlpha`, `components/scroll-blur/*`, `expo/blur-layer.tsx` | LAYOUT-07 |
 | `components/scroll-canvas/*` | LAYOUT-08 |
@@ -183,7 +183,7 @@ Pattern A (styled wrapper) with a `tv()` in `scroll-fade.variants.ts`:
 - No `size` axis: `size` is a number prop (a numeric dimension can never be a class - package Sizing rule).
 - Tokens: none new. Colour via `useThemeColor("background")` (gradient stops need strings). `transparentOf` from `lib/color.ts` for the far stop; if it returns `undefined`, render children only (decline to draw, never the `transparent` keyword).
 
-Pure resolvers in `scroll-fade.variants.ts` (no RN imports):
+Pure resolvers in `src/lib/scroll-edges.ts` (no RN imports, every one a self-contained worklet; moved there from `scroll-fade.variants.ts` so ScrollBlur shares them without a cross-folder import). The edges union is `SCROLL_EDGES` / `ScrollEdges` there; `SCROLL_FADE_EDGES` / `ScrollFadeEdges` re-export it:
 - `resolveFadeEdges(edges): { start: boolean; end: boolean }`
 - `resolveFadeBand({ orientation, edge, size, inset }): { top?; bottom?; left?; right?; width?; height? }`
 - `resolveFadeGradient({ orientation, edge }): { start: {x; y}; end: {x; y} }` (near colour at the edge -> faded inward)
@@ -239,7 +239,7 @@ None. Composes with `Item`/`ListGroup`/`Card`/`BottomSheet.Body` as children onl
 `scrollProgress`: (5,0,10)=0.5; (-5,0,10)=0; (15,0,10)=1; (3,10,0)=0.7; (5,5,5)=1; (4,5,5)=0.
 `readScrollEvent`: vertical -> y / height; horizontal -> x / width; negative offsets pass through.
 
-`src/components/scroll-fade/scroll-fade.variants.test.ts`
+`src/lib/scroll-edges.test.ts` (the `tv()` slots stay in `scroll-fade.variants.test.ts`)
 - `resolveFadeEdges`: both->{true,true}; start->{true,false}; end->{false,true}; none->{false,false}.
 - `resolveFadeBand({vertical,start,size:48,inset:10})` -> `{ top: 10, height: 48 }`; `{vertical,end,size:48,inset:0}` -> `{ bottom: 0, height: 48 }`; `{horizontal,start,48,0}` -> `{ left: 0, width: 48 }`; `{horizontal,end,48,6}` -> `{ right: 6, width: 48 }`.
 - `resolveFadeGradient`: vertical start -> {x0,y0}->{x0,y1}; vertical end -> y1->y0; horizontal start -> x0->x1; horizontal end -> x1->x0.
@@ -250,6 +250,8 @@ None. Composes with `Item`/`ListGroup`/`Card`/`BottomSheet.Body` as children onl
 src/hooks/use-scroll-source.tsx            # hook, provider, types
 src/lib/scroll-maths.ts
 src/lib/scroll-maths.test.ts
+src/lib/scroll-edges.ts                     # edge-band geometry, shared with ScrollBlur
+src/lib/scroll-edges.test.ts
 src/components/screen/screen-scroll-source.tsx   # internal bridge, displayName DelacourUI.Screen.ScrollSourceBridge
 src/components/screen/screen-root.tsx            # edit: mount the bridge
 src/components/screen/AGENTS.md                  # edit: Files row + "publishes a ScrollSource" note
@@ -259,7 +261,7 @@ src/components/scroll-fade/scroll-fade-edge.tsx   # one animated edge (memoised,
 src/components/scroll-fade/scroll-fade.variants.ts
 src/components/scroll-fade/scroll-fade.variants.test.ts
 src/components/scroll-fade/AGENTS.md
-package.json                                # via bun run gen-exports (hooks/use-scroll-source, lib/scroll-maths, ./scroll-fade)
+package.json                                # via bun run gen-exports (hooks/use-scroll-source, lib/scroll-maths, lib/scroll-edges, ./scroll-fade)
 ```
 Plus `AGENTS.md` (package) Components table row: `[ScrollFade](src/components/scroll-fade/AGENTS.md) | @delacour/react-native-ui/scroll-fade | A gradient at a scrollable's edges while content runs past them`, and a "scroll family" note under Directory structure listing the two new hook/lib files.
 

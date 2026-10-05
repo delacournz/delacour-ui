@@ -246,7 +246,9 @@ function NumberInputRoot({
 	const context = useMemo<NumberInputInternalContextValue>(
 		() => ({
 			accessibilityLabel: accessibilityLabel ?? field?.label ?? undefined,
-			accessibilityText: formatted,
+			// A screen reader reads what is on screen: the draft while editing, so a
+			// half-typed entry is not announced as the value it replaces.
+			accessibilityText: displayText,
 			canDecrement,
 			canIncrement,
 			config,
@@ -283,7 +285,6 @@ function NumberInputRoot({
 			displayText,
 			draft,
 			field?.label,
-			formatted,
 			haptic,
 			inputProps,
 			isEditable,

@@ -132,6 +132,10 @@ The box is `Input`'s — it renders `Input.Group` — so it takes `Input`'s vari
 flush beside an `Input`. A stepper is as wide as the box is tall: 44pt at `md`, and `sm` makes up
 the difference with hit slop.
 
+The field takes whatever width the row leaves it. Inside a parent that shrink-wraps its children —
+`items-center`, say — there is nothing to take, and the field falls back to a 64pt floor; give the
+input a width (`className="w-56"`) when it holds a long formatted value.
+
 ```tsx
 <NumberInput variant="secondary" size="sm" />
 <NumberInput size="lg" />

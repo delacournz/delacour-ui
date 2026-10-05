@@ -44,6 +44,16 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   `100.5`. The step count is rounded before it is floored for the same reason:
   `0.25 / 0.1` is `2.4999999999999996`. Ten steps of `0.1` land on exactly `1`;
   a test holds it.
+- **Separators come from `format`, never `formatToParts`.** Hermes on iOS ships
+  `Intl.NumberFormat` without `formatToParts`; calling it threw on the first
+  keystroke on a simulator while `bun test` (JavaScriptCore) passed.
+  `readNumberSeparators` reads the runs between digits in a formatted
+  `11111.1` instead, with no regex lookbehind, and a test deletes
+  `formatToParts` to hold it.
+- **The field has a 64pt floor (`min-w-16`).** Its `flex-1` has nothing to grow
+  into inside a shrink-wrapping parent (`items-center`), and a `TextInput` has
+  no intrinsic width, so without the floor the steppers closed over it. A long
+  formatted value still needs a width from the caller.
 - **`null` is empty, and empty steps to zero held in range.** Never to `NaN`.
   With `min: 1` the first tap of either stepper lands on 1; with a range wholly
   below zero it lands on the max.

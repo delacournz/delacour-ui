@@ -91,9 +91,13 @@ export function resolveStepperHitSlop(size: InputSize): number {
  *
  * Centred between the steppers, with a hair of padding so a long value does not
  * touch the separators. The type scale and colour still come from `Input`.
+ *
+ * The minimum width is for a box with no width handed down — inside an
+ * `items-center` parent the field's `flex-1` has nothing to grow into, and
+ * without a floor it collapses to zero and the steppers close over it.
  */
 export function resolveNumberInputFieldClass(className?: string): string {
-	return cn("px-1 text-center", className);
+	return cn("min-w-16 px-1 text-center", className);
 }
 
 export type NumberInputVariantProps = VariantProps<typeof numberInputVariants>;

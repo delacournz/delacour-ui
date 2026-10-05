@@ -15,6 +15,7 @@ export function Demo(): ReactElement {
 	return (
 		<NumberInput
 			accessibilityLabel="Price"
+			className="w-56"
 			defaultValue={1249.5}
 			formatOptions={NZD}
 			locale="en-NZ"

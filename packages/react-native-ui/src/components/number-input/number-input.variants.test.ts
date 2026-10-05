@@ -81,6 +81,10 @@ describe("the field", () => {
 		expect(cls).toContain("px-1");
 	});
 
+	test("keeps a width of its own when the box is shrink-wrapped", () => {
+		expect(resolveNumberInputFieldClass()).toContain("min-w-16");
+	});
+
 	test("a caller's class merges last", () => {
 		expect(resolveNumberInputFieldClass("px-3")).toContain("px-3");
 		expect(resolveNumberInputFieldClass("px-3")).not.toContain("px-1");

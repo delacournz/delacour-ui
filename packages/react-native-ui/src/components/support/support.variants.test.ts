@@ -49,6 +49,8 @@ function everySlotClass(): { slot: SlotName; cls: string }[] {
 	for (const combo of combos) {
 		const slots = supportVariants(combo);
 		for (const slot of Object.keys(slots) as SlotName[]) {
+			// tailwind-variants adds an implicit `base` slot that resolves to nothing.
+			if ((slot as string) === "base") continue;
 			out.push({ slot, cls: slots[slot]() });
 		}
 	}

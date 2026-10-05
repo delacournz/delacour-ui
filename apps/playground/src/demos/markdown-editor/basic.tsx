@@ -8,9 +8,10 @@ export const meta: DemoMeta = {
 	caption:
 		"Select a word and press **B** — it is wrapped and stays selected, so a second press takes it off again. With nothing selected, the markers go in and the caret lands between them. Return on a list line starts the next item.",
 	keyboardAware: true,
+	capture: { align: "stretch", flow: "markdown-editor/basic", hero: true },
 };
 
-const NOTES = "## Release notes\n\nThe **sheet** now snaps to _named_ points.\n\n- Faster open\n- Calmer close";
+const NOTES = "## Release notes\n\nThe **sheet** now snaps to `named` points.\n\n- Faster open\n- Calmer close";
 
 export function Demo(): ReactElement {
 	return <MarkdownEditor defaultValue={NOTES} placeholder="Write something…" rows={8} testID="basic" />;

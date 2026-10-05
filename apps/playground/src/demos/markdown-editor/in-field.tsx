@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Inside a `Field` the editor takes the field's invalid and disabled states with nothing said at the call site. Clear the text and the border, caret and error go destructive together.",
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

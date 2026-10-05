@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	align: "stretch",
 	title: "Preview",
+	capture: { align: "stretch" },
 	caption:
 		"The preview draws the subset the toolbar writes on the library's own type scale: three heading levels, bold, italic, strikethrough, code, links, quotes, lists and fenced blocks. A link opens only for http, https, mailto and tel.",
 };

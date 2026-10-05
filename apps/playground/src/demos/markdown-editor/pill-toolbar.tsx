@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		'`variant="pill"` floats the actions in a capsule above the field instead of sitting on its top edge. `secondary` fills the field and the preview rather than outlining them.',
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 export function Demo(): ReactElement {

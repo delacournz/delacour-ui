@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		'Inside a `Field` the label names it to a screen reader and focuses it on tap. With `commitMode="validate"` an out-of-range number is kept and flagged rather than pulled in.',
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 const MAX = 12;

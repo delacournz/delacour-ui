@@ -7,16 +7,15 @@ export const meta: DemoMeta = {
 	caption: "Tap a stepper to move by one, hold it to repeat, or tap the number and type one.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "number-input/basic", hero: true },
 };
 
 export function Demo(): ReactElement {
 	return (
-		<NumberInput
-			accessibilityLabel="Quantity"
-			className="w-48"
-			defaultValue={2}
-			inputProps={{ testID: "number-input-basic" }}
-			min={0}
-		/>
+		<NumberInput accessibilityLabel="Quantity" className="w-48" defaultValue={2} min={0}>
+			<NumberInput.Decrement testID="basic-decrement" />
+			<NumberInput.Field testID="basic-field" />
+			<NumberInput.Increment testID="basic-increment" />
+		</NumberInput>
 	);
 }

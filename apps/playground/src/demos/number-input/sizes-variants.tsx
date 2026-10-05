@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The box is `Input`'s, so it takes `Input`'s two variants and three sizes. A stepper is always as wide as the box is tall.",
 	keyboardAware: true,
+	capture: { align: "stretch" },
 };
 
 const VARIANT_LABELS: Record<InputVariant, string> = {

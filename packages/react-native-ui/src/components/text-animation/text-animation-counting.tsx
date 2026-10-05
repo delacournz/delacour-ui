@@ -49,6 +49,17 @@ const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
 const slots = textAnimationVariants();
 
+/**
+ * Spread on every text a numeric part draws. The container's label is the
+ * whole reading; an `accessible` container alone did not keep iOS from
+ * listing a `TextInput` or a wheel's digits beneath it.
+ */
+const HIDDEN = {
+	accessible: false,
+	accessibilityElementsHidden: true,
+	importantForAccessibility: "no-hide-descendants",
+} as const;
+
 /** Whichever of two formatted numbers is longer — what the slot reserves so no in-flight value clips. */
 function longer(a: string, b: string): string {
 	return b.length > a.length ? b : a;
@@ -133,10 +144,11 @@ export function TextAnimationCounting({
 			testID={testID}
 		>
 			<View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-				<NativeText allowFontScaling={allowFontScaling} className={cn(textClass, "opacity-0")}>
+				<NativeText {...HIDDEN} allowFontScaling={allowFontScaling} className={cn(textClass, "opacity-0")}>
 					{reserve}
 				</NativeText>
 				<AnimatedTextInput
+					{...HIDDEN}
 					allowFontScaling={allowFontScaling}
 					animatedProps={animatedProps}
 					className={cn(textClass, "absolute inset-0 m-0 p-0")}

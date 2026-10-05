@@ -516,6 +516,12 @@ describe("textAnimationVariants", () => {
 		expect(probe).toMatch(/w-\[\d+px\]/);
 	});
 
+	test("inline boxes leave their own alignment to the parent", () => {
+		const slots = textAnimationVariants();
+		expect(slots.number()).not.toContain("self-");
+		expect(slots.slot()).not.toContain("self-");
+	});
+
 	test("the wheel window clips its column", () => {
 		expect(textAnimationVariants().wheel()).toContain("overflow-hidden");
 	});

@@ -38,6 +38,17 @@ export type TextAnimationRollingProps = TextAnimationBase & {
 
 const slots = textAnimationVariants();
 
+/**
+ * Spread on every text a numeric part draws. The container's label is the
+ * whole reading; an `accessible` container alone did not keep iOS from
+ * listing a `TextInput` or a wheel's digits beneath it.
+ */
+const HIDDEN = {
+	accessible: false,
+	accessibilityElementsHidden: true,
+	importantForAccessibility: "no-hide-descendants",
+} as const;
+
 /** The strip inside a wheel: 0–9, then 0 again so 9 rolls on into a zero. */
 const COLUMN = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0] as const;
 
@@ -104,12 +115,12 @@ function TextAnimationWheel({
 
 	return (
 		<View className={slots.wheel()}>
-			<NativeText {...textProps} className={cn(className, "opacity-0")}>
+			<NativeText {...HIDDEN} {...textProps} className={cn(className, "opacity-0")}>
 				0
 			</NativeText>
 			<Animated.View className={slots.column()} style={columnStyle}>
 				{COLUMN.map((entry, i) => (
-					<NativeText {...textProps} key={`${i}-${entry}`}>
+					<NativeText {...HIDDEN} {...textProps} key={`${i}-${entry}`}>
 						{entry}
 					</NativeText>
 				))}
@@ -205,6 +216,7 @@ export function TextAnimationRolling({
 		>
 			<View accessibilityElementsHidden className={slots.number()} importantForAccessibility="no-hide-descendants">
 				<NativeText
+					{...HIDDEN}
 					allowFontScaling={allowFontScaling}
 					className={cn(textClass, slots.layer(), "opacity-0")}
 					maxFontSizeMultiplier={maxFontSizeMultiplier}
@@ -230,6 +242,7 @@ export function TextAnimationRolling({
 						/>
 					) : (
 						<NativeText
+							{...HIDDEN}
 							allowFontScaling={allowFontScaling}
 							className={textClass}
 							key={key}

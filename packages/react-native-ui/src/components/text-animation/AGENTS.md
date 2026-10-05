@@ -152,14 +152,25 @@ graphemes are hand-split: combining marks, skin tones, variation selectors, ZWJ
 sequences, flag pairs, tag flags and CR LF. Hoisting both copies into `src/lib/` is
 a follow-up after the media components merge, not something to do on this branch.
 
-## Spikes, not yet verified on a device
+## Verified on the iOS simulator
 
-- **Counting's `TextInput` metrics against `Text`.** Android font padding and line
-  height can differ. If they do, rebuild `Counting` on `Rolling`'s wheels with
-  `stagger={0}`; the public API does not change.
-- **`tabular-nums` through Uniwind.** `Textarea`'s count already relies on it; if a
-  face ignores it, set `fontVariant: ["tabular-nums"]` as a single style instead.
-- **A 1000-character Reveal at 60 fps** on a mid-tier device.
+- **Counting's `TextInput` metrics match `Text` on iOS.** Mid-tween and at rest the
+  input sits exactly over the reserving `Text`, so `Counting` stays on the input.
+  **Android is unverified**: if its font padding or line height differ, rebuild
+  `Counting` on `Rolling`'s wheels with `stagger={0}`; the public API does not change.
+- **`tabular-nums` holds through Uniwind.** 1,248 → 9,731 → 10,004 → 999 rolled with
+  no sideways jitter; the new leading wheel rolled up from 0.
+- **An `accessible` container alone did not hide a `TextInput` or a wheel's digits
+  from iOS.** The tree listed the input and every `0` beneath the numeric parts'
+  labels, while Reveal's and Rotating's leaves stayed hidden. Every text the two
+  numeric parts draw now spreads `HIDDEN` (`accessible={false}` plus the two hide
+  flags), after which only the formatted target was listed.
+- **`self-start` on the inline boxes fought the parent.** An `items-center` column
+  left a shrinking odometer pinned to the left; the boxes now carry no
+  self-alignment, and a test holds them to it.
+- **Calm motion:** with Reduce Motion on, Reveal and Typing showed their final text
+  on the first frame, Typing's caret steady.
+- **Still to measure:** a 1000-character Reveal at 60 fps on a mid-tier device.
 
 ## Preview media — a follow-up
 

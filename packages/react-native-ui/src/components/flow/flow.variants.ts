@@ -58,7 +58,7 @@ export const FLOW_CONTROL_LABELS = {
 
 export const flowVariants = tv({
 	slots: {
-		root: "relative flex-1 overflow-hidden bg-background",
+		root: "relative overflow-hidden bg-background",
 		layer: "absolute top-0 left-0",
 		node: "absolute top-0 left-0",
 		selection: "absolute -inset-1 rounded-xl border-2 border-primary",
@@ -294,4 +294,24 @@ export function resolveNodeAccessibilityActions({
 
 	if (canDelete) actions.push({ label: "Delete", name: "delete" });
 	return { actions, connections };
+}
+
+export type FlowChildLayer = "svg" | "nodes" | "overlay";
+
+const FLOW_SVG_CHILDREN: readonly string[] = ["DelacourUI.Flow.Edge", "DelacourUI.Flow.Background"];
+const FLOW_OVERLAY_CHILDREN: readonly string[] = ["DelacourUI.Flow.Controls", "DelacourUI.Flow.MiniMap"];
+
+/**
+ * Which of the canvas's three layers a direct child draws in, by its `displayName`.
+ *
+ * By name rather than by `child.type === FlowEdge`: in a development bundle the element's type is
+ * not the function the root imported — Metro's transforms hand the app a wrapped copy — so an
+ * identity check sends every edge to the node layer, where it draws nothing. Anything unknown is
+ * a node, including a custom wrapper around an edge.
+ */
+export function resolveFlowChildLayer(displayName: string | undefined): FlowChildLayer {
+	if (displayName === undefined) return "nodes";
+	if (FLOW_SVG_CHILDREN.includes(displayName)) return "svg";
+	if (FLOW_OVERLAY_CHILDREN.includes(displayName)) return "overlay";
+	return "nodes";
 }

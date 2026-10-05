@@ -20,7 +20,17 @@ export type FlowRegistryMeta = {
 	isConfined: boolean;
 	handles: FlowRegistryHandle[];
 	isMounted: boolean;
+	/**
+	 * Has laid out at least once. Deliberately not cleared on unmount: a remount (Fast Refresh, a
+	 * strict-mode double effect) re-runs the effects but not `onLayout`, so clearing it would leave
+	 * the node unhittable for connections and keep `fitViewOnMount` waiting forever.
+	 */
 	isMeasured: boolean;
+	/**
+	 * The JS thread's copy of `size`. A shared value written on the JS thread reads back stale
+	 * until the UI thread has applied it, so a fit run straight after a layout would see zero.
+	 */
+	size: FlowSize;
 };
 
 /**
@@ -80,6 +90,7 @@ export function createFlowRegistry(): FlowRegistry {
 					kind: "node",
 					label: id,
 					ridesGroup: true,
+					size: { height: 0, width: 0 },
 				},
 				position: makeMutable<FlowPoint>({ x: 0, y: 0 }),
 				size: makeMutable<FlowSize>({ height: 0, width: 0 }),

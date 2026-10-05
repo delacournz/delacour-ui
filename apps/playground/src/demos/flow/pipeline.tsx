@@ -28,7 +28,7 @@ export function Demo(): ReactElement {
 	const move = (id: string, position: FlowPoint) => setPositions((current) => ({ ...current, [id]: position }));
 
 	return (
-		<Flow className="h-96 rounded-lg" fitViewOnMount onNodeDragEnd={move} testID="flow-pipeline">
+		<Flow className="h-96 rounded-lg" fitViewOnMount fitViewPadding={16} onNodeDragEnd={move} testID="flow-pipeline">
 			<Flow.Background />
 			{STAGES.map((stage) => (
 				<Flow.Node

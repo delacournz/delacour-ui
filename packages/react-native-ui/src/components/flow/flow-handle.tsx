@@ -11,7 +11,23 @@ import {
 	flowVariants,
 	resolveHandleStyle,
 } from "./flow.variants";
-import { type FlowHandleType, type FlowPoint, type FlowSide, flowGeometry } from "./flow-geometry";
+import {
+	type FlowHandlePlacement,
+	type FlowHandleType,
+	type FlowPoint,
+	type FlowSide,
+	flowGeometry,
+} from "./flow-geometry";
+import type { FlowRegistryHandle } from "./flow-registry";
+
+/**
+ * The UI thread's handle map, rebuilt from the JS thread's list. Never spread from
+ * `entry.handles.value`: a shared value written on the JS thread reads back stale until the UI
+ * thread applies it, so the second handle on a node would erase the first.
+ */
+function placements(handles: readonly FlowRegistryHandle[]): Record<string, FlowHandlePlacement> {
+	return Object.fromEntries(handles.map((handle) => [handle.id, { offset: handle.offset, side: handle.side }]));
+}
 
 export type FlowHandleProps = {
 	/** Unique within its node. An edge names it as `"nodeId.handleId"`. */
@@ -61,12 +77,11 @@ export function FlowHandle({
 	useLayoutEffect(() => {
 		const handle = { id, label: accessibilityLabel, offset, side, type };
 		entry.meta.handles = [...entry.meta.handles.filter((existing) => existing.id !== id), handle];
-		entry.handles.value = { ...entry.handles.value, [id]: { offset, side } };
+		entry.handles.value = placements(entry.meta.handles);
 		notifyHandles();
 		return () => {
 			entry.meta.handles = entry.meta.handles.filter((existing) => existing.id !== id);
-			const { [id]: _removed, ...rest } = entry.handles.value;
-			entry.handles.value = rest;
+			entry.handles.value = placements(entry.meta.handles);
 			notifyHandles();
 		};
 	}, [accessibilityLabel, entry, id, notifyHandles, offset, side, type]);

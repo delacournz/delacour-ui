@@ -23,6 +23,7 @@ export default function Example() {
 
   return (
     <Flow
+      className="h-96"
       fitViewOnMount
       onNodeDragEnd={(id, position) => setPositions((current) => ({ ...current, [id]: position }))}
     >
@@ -70,6 +71,9 @@ Children draw in three layers whatever order they are written in: the background
 SVG beneath the nodes, nodes and groups in the layer that pans and zooms, and the controls and minimap on
 top, unscaled. Edges and the background have to be direct children of `Flow` — a `.map()` or a fragment
 there is fine — so the canvas can find them.
+
+The canvas takes its size from its `className` — give it a height (`h-96`), or `flex-1` inside a parent
+that has one.
 
 ## The app owns the graph
 

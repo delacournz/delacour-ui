@@ -63,7 +63,6 @@ export function FlowGroup({
 	useLayoutEffect(
 		() => () => {
 			entry.meta.isMounted = false;
-			entry.meta.isMeasured = false;
 			notifyRegistry();
 		},
 		[entry, notifyRegistry]
@@ -75,6 +74,7 @@ export function FlowGroup({
 
 	useLayoutEffect(() => {
 		sizeValue.value = { height: size.height, width: size.width };
+		entry.meta.size = { height: size.height, width: size.width };
 		entry.meta.isMeasured = true;
 		notifyMeasured();
 	}, [entry, notifyMeasured, size.height, size.width, sizeValue]);

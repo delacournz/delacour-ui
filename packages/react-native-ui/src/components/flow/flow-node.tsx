@@ -100,7 +100,6 @@ export function FlowNode({
 	useLayoutEffect(
 		() => () => {
 			entry.meta.isMounted = false;
-			entry.meta.isMeasured = false;
 			notifyRegistry();
 		},
 		[entry, notifyRegistry]
@@ -114,6 +113,7 @@ export function FlowNode({
 		(event: LayoutChangeEvent) => {
 			const { width, height } = event.nativeEvent.layout;
 			sizeValue.value = { height, width };
+			entry.meta.size = { height, width };
 			entry.meta.isMeasured = true;
 			notifyMeasured();
 		},

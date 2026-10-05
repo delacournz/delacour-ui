@@ -12,6 +12,7 @@ import {
 	resolveBackgroundPattern,
 	resolveDraggedConnection,
 	resolveEdgeDash,
+	resolveFlowChildLayer,
 	resolveHandleStyle,
 	resolveNodeAccessibilityActions,
 	resolveNodeDrag,
@@ -349,5 +350,24 @@ describe("FLOW_CONTROL_LABELS", () => {
 describe("sides", () => {
 	test("every side places a handle", () => {
 		for (const side of FLOW_SIDES) expect(resolveHandleStyle(side, 0.5)).toBeDefined();
+	});
+});
+
+describe("resolveFlowChildLayer", () => {
+	test("edges and the background draw in the SVG layer", () => {
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Edge")).toBe("svg");
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Background")).toBe("svg");
+	});
+
+	test("controls and the minimap float on top", () => {
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Controls")).toBe("overlay");
+		expect(resolveFlowChildLayer("DelacourUI.Flow.MiniMap")).toBe("overlay");
+	});
+
+	test("nodes, groups and anything unknown go in the node layer", () => {
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Node")).toBe("nodes");
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Group")).toBe("nodes");
+		expect(resolveFlowChildLayer("MyEdgeWrapper")).toBe("nodes");
+		expect(resolveFlowChildLayer(undefined)).toBe("nodes");
 	});
 });

@@ -52,6 +52,22 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   children, fragments and arrays: `Edge` and `Background` go into one SVG beneath the nodes,
   `Node` and `Group` into the transformed view, `Controls` and `MiniMap` on top unscaled. An
   edge wrapped in a custom component is not found — it renders `null` and warns in development.
+- **Layers are chosen by `displayName`, never by `child.type === FlowEdge`.** In a development
+  bundle the element's type is not the function the root imported, so the identity check sent
+  every edge and the background to the node layer, where they drew nothing — a canvas of cards
+  with no lines. `resolveFlowChildLayer` is the pure, tested mapping. Every child is re-keyed
+  under its path, so a `.map()` of nodes and a `.map()` of edges sharing ids never collide.
+- **The canvas takes its size from the caller, not `flex-1`.** `flex: 1` sets a zero flex basis,
+  so inside a content-sized parent — a gallery, a scroll view — a `flex-1 h-96` canvas collapsed
+  to nothing. Pass `h-*`, or `flex-1` yourself where the parent has a height.
+- **The JS thread never reads back a shared value it just wrote.** A write from the JS thread
+  lands on the UI thread a frame later, and a read in between returns the old value. So sizes and
+  the container are mirrored on the JS side (`meta.size`, a ref), the handle map is rebuilt from
+  `meta.handles` rather than spread from `handles.value` — spreading made a node's second handle
+  erase its first, and edges fell back to automatic sides — and `fitViewOnMount` fits a frame
+  after the last layout.
+- **`isMeasured` survives an unmount.** A remount (Fast Refresh, a strict-mode double effect)
+  re-runs effects but not `onLayout`; clearing it left every node unhittable for connections.
 - **The node layer is huge and centred on the origin.** A view translated outside a zero-size
   parent draws but is not hit tested on every platform, so the layer extends
   `FLOW_LAYER_EXTENT` past the canvas each way and scales about its own centre, which is the

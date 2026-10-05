@@ -1,5 +1,6 @@
 import {
 	Children,
+	cloneElement,
 	Fragment,
 	isValidElement,
 	type ReactElement,
@@ -29,9 +30,11 @@ import {
 import {
 	FLOW_DEFAULTS,
 	FLOW_LAYER_EXTENT,
+	type FlowChildLayer,
 	type FlowHandleRef,
 	flowVariants,
 	resolveDraggedConnection,
+	resolveFlowChildLayer,
 } from "./flow.variants";
 import { FlowBackground } from "./flow-background";
 import { FlowConnectionPreview } from "./flow-connection-preview";
@@ -83,30 +86,39 @@ export type FlowProps = {
 	children?: ReactNode;
 };
 
-type FlowLayers = { svg: ReactNode[]; nodes: ReactNode[]; overlay: ReactNode[] };
+type FlowLayers = Record<FlowChildLayer, ReactNode[]>;
 
 /**
  * Sorts the canvas's children into the three layers they draw in: SVG beneath, nodes in the
- * transformed view, chrome on top. Fragments and arrays are walked, so a `.map()` of edges works.
+ * transformed view, chrome on top. Fragments and arrays are walked, so a `.map()` of edges works,
+ * and every child is re-keyed under its path so two `.map()`s sharing ids never collide in a layer.
  */
-function sortLayers(children: ReactNode, layers: FlowLayers = { nodes: [], overlay: [], svg: [] }): FlowLayers {
-	Children.forEach(children, (child) => {
+function sortLayers(
+	children: ReactNode,
+	prefix = "",
+	layers: FlowLayers = { nodes: [], overlay: [], svg: [] }
+): FlowLayers {
+	for (const child of Children.toArray(children)) {
 		if (!isValidElement<{ children?: ReactNode }>(child)) {
-			if (child !== null && child !== undefined && typeof child !== "boolean") layers.nodes.push(child);
-			return;
+			layers.nodes.push(child);
+			continue;
 		}
-		if (child.type === Fragment) sortLayers(child.props.children, layers);
-		else if (child.type === FlowEdge || child.type === FlowBackground) layers.svg.push(child);
-		else if (child.type === FlowControls || child.type === FlowMiniMap) layers.overlay.push(child);
-		else layers.nodes.push(child);
-	});
+		const key = `${prefix}${String(child.key)}`;
+		if (child.type === Fragment) {
+			sortLayers(child.props.children, `${key}/`, layers);
+			continue;
+		}
+		const displayName =
+			typeof child.type === "string" ? undefined : (child.type as { displayName?: string }).displayName;
+		layers[resolveFlowChildLayer(displayName)].push(cloneElement(child, { key }));
+	}
 	return layers;
 }
 
 /** The rect of a mounted, measured entry — read on the JS thread. */
 function rectOf(snapshot: FlowSnapshotEntry): FlowRect | null {
 	if (!snapshot.entry.meta.isMeasured) return null;
-	return { ...snapshot.entry.position.value, ...snapshot.entry.size.value };
+	return { ...snapshot.entry.position.value, ...snapshot.entry.meta.size };
 }
 
 function FlowRoot({
@@ -130,6 +142,7 @@ function FlowRoot({
 	const [isLocked, setLocked] = useState(false);
 	const isReducedMotion = useReducedMotion();
 	const hasFitted = useRef(false);
+	const containerSize = useRef<FlowSize>({ height: 0, width: 0 });
 
 	const viewport = useSharedValue<FlowViewport>(defaultViewport ?? { x: 0, y: 0, zoom: 1 });
 	const container = useSharedValue<FlowSize>({ height: 0, width: 0 });
@@ -161,30 +174,31 @@ function FlowRoot({
 				.filter((rect): rect is FlowRect => rect !== null);
 			const target = fitViewport({
 				bounds: unionRects(rects),
-				container: container.value,
+				container: containerSize.current,
 				maxZoom,
 				minZoom,
 				padding: fitViewPadding,
 			});
 			moveTo(target, options?.isAnimated ?? true);
 		},
-		[container, fitViewPadding, maxZoom, minZoom, moveTo, registry]
+		[fitViewPadding, maxZoom, minZoom, moveTo, registry]
 	);
 
 	const fitWhenReady = useCallback(() => {
 		if (!fitViewOnMount || hasFitted.current) return;
-		const { width, height } = container.value;
+		const { width, height } = containerSize.current;
 		if (width === 0 || height === 0) return;
 		const mounted = registry.snapshot();
 		if (mounted.length === 0 || mounted.some((snapshot) => !snapshot.entry.meta.isMeasured)) return;
 		hasFitted.current = true;
-		fitView({ isAnimated: false });
-	}, [container, fitView, fitViewOnMount, registry]);
+		requestAnimationFrame(() => fitView({ isAnimated: false }));
+	}, [fitView, fitViewOnMount, registry]);
 
 	const handleLayout = useCallback(
 		(event: LayoutChangeEvent) => {
 			const { width, height } = event.nativeEvent.layout;
 			container.value = { height, width };
+			containerSize.current = { height, width };
 			fitWhenReady();
 		},
 		[container, fitWhenReady]
@@ -192,10 +206,10 @@ function FlowRoot({
 
 	const zoomBy = useCallback(
 		(factor: number) => {
-			const { width, height } = container.value;
+			const { width, height } = containerSize.current;
 			moveTo(zoomAround(viewport.value, factor, { x: width / 2, y: height / 2 }, minZoom, maxZoom), true);
 		},
-		[container, maxZoom, minZoom, moveTo, viewport]
+		[maxZoom, minZoom, moveTo, viewport]
 	);
 
 	const getNodeRect = useCallback(

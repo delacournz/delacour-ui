@@ -9,21 +9,11 @@ export const meta: DemoMeta = {
 	title: "Debounced filter list",
 	caption:
 		"`onDebouncedChange` waits 300 ms after the last keystroke before the list filters. The search key filters at once, and clearing restores the full list immediately.",
-	align: "stretch",
+	capture: { align: "stretch", flow: "search-bar/debounced-filter-list" },
 	keyboardAware: true,
 };
 
-const CITIES = [
-	"Auckland",
-	"Christchurch",
-	"Dunedin",
-	"Hamilton",
-	"Napier",
-	"Nelson",
-	"Queenstown",
-	"Tauranga",
-	"Wellington",
-] as const;
+const CITIES = ["Auckland", "Wellington"] as const;
 
 export function Demo(): ReactElement {
 	const [query, setQuery] = useState("");
@@ -40,19 +30,21 @@ export function Demo(): ReactElement {
 				testID="city-search"
 				value={query}
 			/>
-			{results.length === 0 ? (
-				<Text.Caption color="muted">No city matches “{settled}”.</Text.Caption>
-			) : (
-				<ListGroup>
-					{results.map((city) => (
-						<ListGroup.Item key={city}>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>{city}</ListGroup.ItemTitle>
-							</ListGroup.ItemContent>
-						</ListGroup.Item>
-					))}
-				</ListGroup>
-			)}
+			<View className="min-h-28">
+				{results.length === 0 ? (
+					<Text.Caption color="muted">No city matches “{settled}”.</Text.Caption>
+				) : (
+					<ListGroup>
+						{results.map((city) => (
+							<ListGroup.Item key={city}>
+								<ListGroup.ItemContent>
+									<ListGroup.ItemTitle>{city}</ListGroup.ItemTitle>
+								</ListGroup.ItemContent>
+							</ListGroup.Item>
+						))}
+					</ListGroup>
+				)}
+			</View>
 		</View>
 	);
 }

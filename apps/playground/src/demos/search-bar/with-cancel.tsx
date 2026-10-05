@@ -1,5 +1,4 @@
 import { SEARCH_BAR_CANCEL_MODES, SearchBar, type SearchBarCancelMode } from "@delacour/react-native-ui/search-bar";
-import { Text } from "@delacour/react-native-ui/text";
 import type { ReactElement } from "react";
 import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
@@ -8,23 +7,20 @@ export const meta: DemoMeta = {
 	title: "Cancel modes",
 	caption:
 		"`cancel` decides when the Cancel action shows: `focus` (the default) slides it in while the field has focus, `always` keeps it, `never` leaves the field the full width.",
-	align: "stretch",
+	capture: { align: "stretch", flow: "search-bar/with-cancel" },
 };
 
 const LABELS: Record<SearchBarCancelMode, string> = {
-	never: "Never",
-	focus: "On focus",
-	always: "Always",
+	never: "Cancel never",
+	focus: "Cancel on focus",
+	always: "Cancel always",
 };
 
 export function Demo(): ReactElement {
 	return (
-		<View className="gap-4">
+		<View className="gap-3">
 			{SEARCH_BAR_CANCEL_MODES.map((mode) => (
-				<View className="gap-1.5" key={mode}>
-					<Text.Caption color="muted">{LABELS[mode]}</Text.Caption>
-					<SearchBar cancel={mode} testID={`cancel-${mode}`} />
-				</View>
+				<SearchBar cancel={mode} key={mode} placeholder={LABELS[mode]} testID={`cancel-${mode}`} />
 			))}
 		</View>
 	);

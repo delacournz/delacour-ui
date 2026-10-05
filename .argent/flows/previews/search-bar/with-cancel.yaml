@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on search-bar/with-cancel and has settled — three empty, unfocused bars labelled by placeholder:
+  never, on focus (no Cancel yet), always (Cancel shown). The capture script navigates there before running this.
+steps:
+  - echo: Focusing the on-focus bar slides its Cancel in
+  - tap: { id: cancel-focus }
+  - wait: 800
+  - echo: Cancel blurs it and slides back out, so the clip loops as it began
+  - tap: { id: cancel-focus-cancel }
+  - wait: 800

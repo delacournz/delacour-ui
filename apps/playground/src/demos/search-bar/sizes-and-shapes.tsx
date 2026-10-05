@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	title: "Sizes, shapes and variants",
 	caption:
 		"Input's three sizes and two variants, as a pill or with the field's own corner. The box is the same one a plain `Input` draws.",
-	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 const SIZE_LABELS: Record<SearchBarSize, string> = { sm: "Small", md: "Medium", lg: "Large" };

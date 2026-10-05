@@ -260,6 +260,13 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_pagination_compact from "./pagination/compact";
+import * as demo_pagination_controlled_list from "./pagination/controlled-list";
+import * as demo_pagination_disabled from "./pagination/disabled";
+import * as demo_pagination_numbers from "./pagination/numbers";
+import * as demo_pagination_simple from "./pagination/simple";
+import * as demo_pagination_sizes from "./pagination/sizes";
+import * as demo_pagination_with_summary from "./pagination/with-summary";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -626,6 +633,13 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"pagination/compact": demo_pagination_compact,
+	"pagination/controlled-list": demo_pagination_controlled_list,
+	"pagination/disabled": demo_pagination_disabled,
+	"pagination/numbers": demo_pagination_numbers,
+	"pagination/simple": demo_pagination_simple,
+	"pagination/sizes": demo_pagination_sizes,
+	"pagination/with-summary": demo_pagination_with_summary,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

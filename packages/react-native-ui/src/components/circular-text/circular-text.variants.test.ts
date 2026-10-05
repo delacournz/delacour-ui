@@ -9,6 +9,7 @@ import {
 	resolveCirclePath,
 	resolveCircularTextIssue,
 	resolveCircumference,
+	resolveCopies,
 	resolveFillLetterSpacing,
 	resolveGlyphAngles,
 	resolveGlyphPosition,
@@ -331,5 +332,16 @@ describe("resolveFillLetterSpacing", () => {
 		expect(resolveFillLetterSpacing(300, 0, 20, 1)).toBe(1);
 		expect(resolveFillLetterSpacing(300, 240, 0, 1)).toBe(1);
 		expect(resolveFillLetterSpacing(300, Number.NaN, 20, 1)).toBe(1);
+	});
+});
+
+describe("resolveCopies", () => {
+	test("passes an explicit count through", () => {
+		expect(resolveCopies(3, "A", " • ", 300, 12)).toBe(3);
+	});
+
+	test("estimates a fill from the text without its own trailing separator", () => {
+		expect(resolveCopies("fill", "DELACOUR UI • ", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
+		expect(resolveCopies("fill", "DELACOUR UI", " • ", 400, 10)).toBe(resolveRepeatCount(400, 11, 10, 3));
 	});
 });

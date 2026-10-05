@@ -1,7 +1,7 @@
 import { type ReactElement, useState } from "react";
-import { type ColorValue, type LayoutChangeEvent, StyleSheet, Text, View } from "react-native";
+import { type ColorValue, type LayoutChangeEvent, StyleSheet, Text, type TextStyle, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { useAnimatedStyle, useSharedValue } from "react-native-reanimated";
+import Animated, { type SharedValue, useAnimatedStyle, useSharedValue } from "react-native-reanimated";
 import { useResolveClassNames } from "uniwind";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { resolveTextClass } from "../text/text.variants";
@@ -12,8 +12,8 @@ import {
 	resolveBaselineRadius,
 	resolveCirclePath,
 	resolveCircularTextIssue,
+	resolveCopies,
 	resolveFillLetterSpacing,
-	resolveRepeatCount,
 	resolveRingBox,
 	resolveRingLabel,
 	resolveRingLength,
@@ -38,6 +38,59 @@ function warnOnce(message: string): void {
 /** A colour SVG `fill` can take: Uniwind resolves a token to a string, never a platform colour object. */
 function toFill(color: ColorValue | undefined): string | undefined {
 	return typeof color === "string" ? color : undefined;
+}
+
+type RingTypography = {
+	fill: string | undefined;
+	fontFamily: string | undefined;
+	fontSize: number;
+	fontWeight: TextStyle["fontWeight"];
+	letterSpacing: number;
+};
+
+/** The parts of a resolved `Text` style SVG text can take, with React Native's own fallbacks. */
+function toRingTypography(style: TextStyle): RingTypography {
+	return {
+		fill: toFill(style.color),
+		fontFamily: typeof style.fontFamily === "string" ? style.fontFamily : undefined,
+		fontSize: typeof style.fontSize === "number" ? style.fontSize : FALLBACK_FONT_SIZE,
+		fontWeight: style.fontWeight,
+		letterSpacing: typeof style.letterSpacing === "number" ? style.letterSpacing : 0,
+	};
+}
+
+/**
+ * The text's natural width, measured once per `key` by an invisible `Text`'s `onLayout`, or `null`
+ * until it arrives. Keyed so a change of text or face measures again instead of reusing a stale
+ * width.
+ */
+function useNaturalWidth(key: string): [number | null, (event: LayoutChangeEvent) => void] {
+	const [measured, setMeasured] = useState<{ key: string; width: number } | null>(null);
+	const onMeasure = (event: LayoutChangeEvent) => {
+		setMeasured({ key, width: event.nativeEvent.layout.width });
+	};
+	return [measured?.key === key ? measured.width : null, onMeasure];
+}
+
+/**
+ * Press-to-pause: a hold on the ring, read on the UI thread. `onBegin` and `onStart` both set the
+ * flag — on the iOS simulator `onBegin` never fired for this gesture.
+ */
+function createPressGesture(isPressed: SharedValue<boolean>, isEnabled: boolean) {
+	return Gesture.LongPress()
+		.minDuration(0)
+		.maxDistance(Number.MAX_SAFE_INTEGER)
+		.shouldCancelWhenOutside(false)
+		.enabled(isEnabled)
+		.onBegin(() => {
+			isPressed.value = true;
+		})
+		.onStart(() => {
+			isPressed.value = true;
+		})
+		.onFinalize(() => {
+			isPressed.value = false;
+		});
 }
 
 function CircularTextRoot({
@@ -75,22 +128,20 @@ function CircularTextRoot({
 		transform: [{ rotate: `${controlled ? controlled.value : rotation.value}deg` }],
 	}));
 
-	const [measured, setMeasured] = useState<{ key: string; width: number } | null>(null);
-
-	const press = Gesture.LongPress()
-		.minDuration(0)
-		.maxDistance(Number.MAX_SAFE_INTEGER)
-		.shouldCancelWhenOutside(false)
-		.enabled(pause.kind === "press" && spin.kind === "loop")
-		.onBegin(() => {
-			isPressed.value = true;
-		})
-		.onStart(() => {
-			isPressed.value = true;
-		})
-		.onFinalize(() => {
-			isPressed.value = false;
-		});
+	const press = createPressGesture(isPressed, pause.kind === "press" && spin.kind === "loop");
+	const type = toRingTypography(typography);
+	const box = resolveRingBox(radius, type.fontSize, side);
+	const baseline = resolveBaselineRadius(radius, type.fontSize, side);
+	const { startAngle, sweep, hasLength } = resolveSpan(span);
+	const text = resolveRingText(
+		children,
+		resolveCopies(repeat, children, separator, resolveRingLength(baseline, sweep), type.fontSize),
+		separator
+	);
+	const length = hasLength ? resolveRingLength(baseline, sweep) : undefined;
+	const [naturalWidth, onMeasure] = useNaturalWidth(
+		`${text}|${type.fontSize}|${type.fontFamily}|${String(type.fontWeight)}|${type.letterSpacing}`
+	);
 
 	const issue = resolveCircularTextIssue(radius, children);
 	if (issue) {
@@ -98,37 +149,12 @@ function CircularTextRoot({
 		return null;
 	}
 
-	const fontSize = typeof typography.fontSize === "number" ? typography.fontSize : FALLBACK_FONT_SIZE;
-	const box = resolveRingBox(radius, fontSize, side);
-	const baseline = resolveBaselineRadius(radius, fontSize, side);
-	const { startAngle, sweep, hasLength } = resolveSpan(span);
 	const d = resolveCirclePath(box / 2, box / 2, baseline, startAngle, sweep, side);
-
-	const copies =
-		repeat === "fill"
-			? resolveRepeatCount(
-					resolveRingLength(baseline, sweep),
-					countGlyphs(children.endsWith(separator) ? children.slice(0, -separator.length) : children),
-					fontSize,
-					countGlyphs(separator)
-				)
-			: repeat;
-
-	const text = resolveRingText(children, copies, separator);
-	const fontFamily = typeof typography.fontFamily === "string" ? typography.fontFamily : undefined;
-	const fontWeight = typography.fontWeight === undefined ? undefined : String(typography.fontWeight);
-	const baseSpacing = typeof typography.letterSpacing === "number" ? typography.letterSpacing : 0;
-	const length = hasLength ? resolveRingLength(baseline, sweep) : undefined;
-	const measureKey = `${text}|${fontSize}|${fontFamily}|${fontWeight}|${baseSpacing}`;
-	const naturalWidth = measured?.key === measureKey ? measured.width : null;
 	const letterSpacing =
 		length === undefined || naturalWidth === null
-			? baseSpacing
-			: resolveFillLetterSpacing(length, naturalWidth, countGlyphs(text), baseSpacing);
+			? type.letterSpacing
+			: resolveFillLetterSpacing(length, naturalWidth, countGlyphs(text), type.letterSpacing);
 	const isWaitingForWidth = length !== undefined && naturalWidth === null;
-	const onMeasure = (event: LayoutChangeEvent) => {
-		setMeasured({ key: measureKey, width: event.nativeEvent.layout.width });
-	};
 
 	// `textLength` alone would close the ring, but iOS ignores it, so a spanned ring measures its text
 	// once with the platform's own shaper — an invisible, unwrapped `Text` in the same face — and
@@ -148,7 +174,12 @@ function CircularTextRoot({
 						importantForAccessibility="no-hide-descendants"
 						numberOfLines={1}
 						onLayout={onMeasure}
-						style={{ fontFamily, fontSize, fontWeight: typography.fontWeight, letterSpacing: baseSpacing }}
+						style={{
+							fontFamily: type.fontFamily,
+							fontSize: type.fontSize,
+							fontWeight: type.fontWeight,
+							letterSpacing: type.letterSpacing,
+						}}
 					>
 						{text}
 					</Text>
@@ -165,10 +196,10 @@ function CircularTextRoot({
 						<CircularTextRing
 							box={box}
 							d={d}
-							fill={toFill(typography.color)}
-							fontFamily={fontFamily}
-							fontSize={fontSize}
-							fontWeight={fontWeight}
+							fill={type.fill}
+							fontFamily={type.fontFamily}
+							fontSize={type.fontSize}
+							fontWeight={type.fontWeight === undefined ? undefined : String(type.fontWeight)}
 							letterSpacing={letterSpacing === 0 ? undefined : letterSpacing}
 							text={text}
 							textLength={length}

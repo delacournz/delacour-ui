@@ -177,6 +177,19 @@ export function resolveRepeatCount(
 	return Math.max(1, Math.floor(circumference / unit));
 }
 
+/** How many copies to draw: an explicit count, or a `"fill"` estimate over `length`. */
+export function resolveCopies(
+	repeat: number | "fill",
+	text: string,
+	separator: string,
+	length: number,
+	fontSize: number
+): number {
+	if (repeat !== "fill") return repeat;
+	const unit = separator.length > 0 && text.endsWith(separator) ? text.slice(0, -separator.length) : text;
+	return resolveRepeatCount(length, countGlyphs(unit), fontSize, countGlyphs(separator));
+}
+
 /**
  * The string drawn on the ring.
  *

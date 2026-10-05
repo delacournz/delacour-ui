@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on progress-button/hold-to-erase and has settled — one destructive
+  button reading "Hold to erase", empty. The capture script navigates there before running this.
+steps:
+  - echo: A short hold, released early, so the fill plays back at the rate it went in
+  - long-press: { on: { id: hold-to-erase }, duration: 800 }
+  - wait: 1000
+  - echo: A full hold — the fill reaches the end and the tick replaces the label
+  - long-press: { on: { id: hold-to-erase }, duration: 2300 }
+  - echo: isAutoReset rewinds it after a second, travelling back to empty, so the clip loops
+  - wait: 1800

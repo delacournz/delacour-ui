@@ -14,19 +14,13 @@ export const meta: DemoMeta = {
 	keyboardAware: true,
 };
 
-const TILES = [
-	"#0ea5e9",
-	"#f43f5e",
-	"#a855f7",
-	"#10b981",
-	"#f59e0b",
-	"#6366f1",
-	"#14b8a6",
-	"#e11d48",
-	"#84cc16",
-	"#d946ef",
-	"#f97316",
-	"#0284c7",
+const PAIRS = [
+	["#0ea5e9", "#f43f5e"],
+	["#a855f7", "#10b981"],
+	["#f59e0b", "#6366f1"],
+	["#14b8a6", "#e11d48"],
+	["#84cc16", "#d946ef"],
+	["#f97316", "#0284c7"],
 ] as const;
 
 export function Demo(): ReactElement {
@@ -35,13 +29,13 @@ export function Demo(): ReactElement {
 	return (
 		<View className="h-[440px] overflow-hidden rounded-lg">
 			<ScrollBlur className="flex-1" edges="start" insetStart={0} scrollSource={source} size={96}>
-				<Animated.ScrollView
-					contentContainerClassName="flex-row flex-wrap gap-2 pt-16"
-					testID="scroll-blur-media"
-					{...scrollProps}
-				>
-					{TILES.map((color) => (
-						<View className="aspect-square w-[48.5%] rounded-lg" key={color} style={{ backgroundColor: color }} />
+				<Animated.ScrollView contentContainerClassName="gap-2 pt-16" testID="scroll-blur-media" {...scrollProps}>
+					{PAIRS.map((pair) => (
+						<View className="flex-row gap-2" key={pair[0]}>
+							{pair.map((color) => (
+								<View className="aspect-square flex-1 rounded-lg" key={color} style={{ backgroundColor: color }} />
+							))}
+						</View>
 					))}
 				</Animated.ScrollView>
 			</ScrollBlur>

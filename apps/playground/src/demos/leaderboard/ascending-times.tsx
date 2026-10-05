@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Ascending times",
 	caption:
 		'`order="asc"` ranks the smallest first, for lap times. The bars switch to fixed heights by place, because a bar proportional to the time would draw the winner shortest.',
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const LAPS: readonly LeaderboardEntry[] = [

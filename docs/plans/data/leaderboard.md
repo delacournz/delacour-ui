@@ -105,3 +105,12 @@ custom media, accessibility, API.
 - [ ] VoiceOver label per place/row incl. "tied" and movement
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Delivery notes
+
+- **Previews not captured (follow-up).** The argent CLI the capture script drives is not installed on
+  the build machine, so `bun run previews` cannot run. The demos carry `align: "stretch"` but no
+  `capture` (a captured demo without a manifest entry fails `demos.test.ts`), and `leaderboard.mdx`
+  opens at `## Installation` with no `<Preview>`. Follow-up: restore `capture` on `bars` (hero),
+  `cards`, `ascending-times`, `highlight-pinned` and `movement`, run
+  `bun run previews -- -- --only leaderboard`, and add the hero `<Preview>` to the page.

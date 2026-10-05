@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Highlight, pinned",
 	caption:
 		"`limit={5}` shows a top five. `highlightId` is fourteenth, so it is pinned under the cut with its true rank, tinted so it is found at a glance.",
-	capture: { align: "stretch" },
+	align: "stretch",
 };
 
 const NAMES = [

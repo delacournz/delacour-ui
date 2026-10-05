@@ -1,0 +1,197 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "drawer",
+	"type": "registry:ui",
+	"title": "Drawer",
+	"description": "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"cn",
+		"compose-refs",
+		"icon",
+		"icons",
+		"overlay",
+		"pressable",
+		"slot",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-teleport",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/drawer/AGENTS.md",
+			"target": "drawer/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/drawer",
+					"to": "@registry/ui/drawer"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-body.tsx",
+			"target": "drawer/drawer-body.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-close.tsx",
+			"target": "drawer/drawer-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-content.tsx",
+			"target": "drawer/drawer-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-description.tsx",
+			"target": "drawer/drawer-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-footer.tsx",
+			"target": "drawer/drawer-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-header.tsx",
+			"target": "drawer/drawer-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-title.tsx",
+			"target": "drawer/drawer-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer-trigger.tsx",
+			"target": "drawer/drawer-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer.context.tsx",
+			"target": "drawer/drawer.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer.tsx",
+			"target": "drawer/drawer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/drawer.variants.ts",
+			"target": "drawer/drawer.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/index.ts",
+			"target": "drawer/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/drawer/use-drawer-pan.ts",
+			"target": "drawer/use-drawer-pan.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay/overlay.variants",
+					"to": "@registry/ui/overlay/overlay.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		}
+	]
+}

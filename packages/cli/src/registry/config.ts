@@ -163,6 +163,13 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",
 		categories: ["display"],
 	},
+	drawer: {
+		title: "Drawer",
+		description:
+			"A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides.",
+		categories: ["overlays"],
+		dependencies: ["react-native-teleport"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

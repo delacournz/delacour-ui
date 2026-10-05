@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`threshold` is how far a release must reach. At `0.5` half the rail will do; at `1` there is no shortcut, and only a release at the far end confirms.",
 	align: "center",
+	capture: { flow: "slide-button/threshold" },
 };
 
 export function Demo(): ReactElement {
@@ -18,6 +19,7 @@ export function Demo(): ReactElement {
 				<Text.Code>threshold: 0.5</Text.Code>
 				<SlideButton isAutoReset testID="threshold-half" threshold={0.5}>
 					<SlideButton.Label>Slide to send</SlideButton.Label>
+					<SlideButton.Thumb testID="threshold-half-thumb" />
 				</SlideButton>
 			</View>
 			<View className="gap-2">
@@ -30,6 +32,7 @@ export function Demo(): ReactElement {
 					variant="destructive"
 				>
 					<SlideButton.Label>Slide to delete</SlideButton.Label>
+					<SlideButton.Thumb testID="threshold-full-thumb" />
 				</SlideButton>
 			</View>
 		</View>

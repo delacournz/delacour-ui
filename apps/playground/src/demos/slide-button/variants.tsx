@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`secondary`, `destructive` and `success`. The handle stays neutral in every one; only the rail, the trail and the label take the colour.",
 	align: "center",
+	capture: { flow: "slide-button/variants" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */
@@ -23,6 +24,7 @@ export function Demo(): ReactElement {
 			{SLIDE_BUTTON_VARIANTS.map((variant) => (
 				<SlideButton isAutoReset key={variant} testID={`variant-${variant}`} variant={variant}>
 					<SlideButton.Label>{LABELS[variant]}</SlideButton.Label>
+					<SlideButton.Thumb testID={`variant-${variant}-thumb`} />
 				</SlideButton>
 			))}
 		</View>

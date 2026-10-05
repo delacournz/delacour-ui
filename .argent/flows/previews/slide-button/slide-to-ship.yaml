@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slide-button/slide-to-ship and has settled — one rail with its
+  handle at the start, the handle carrying the testID slide-to-ship-thumb. The capture script navigates there
+  before running this.
+steps:
+  - echo: A drag released short of the threshold springs home
+  # Anchored on the handle rather than the rail: the pan reads translation, but
+  # the rail's centre leaves too little screen to the right for a full slide.
+  - swipe: { from: { id: slide-to-ship-thumb }, by: { x: 0.3 }, momentum: false, duration: 600 }
+  - wait: 700
+  - echo: One carried to the end confirms with a tick
+  - swipe: { from: { id: slide-to-ship-thumb }, by: { x: 0.65 }, momentum: false, duration: 800 }
+  - echo: isAutoReset takes it home after 1500ms, so the clip loops where it began
+  - wait: 2400

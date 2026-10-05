@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Controlled by `isCompleted`. The release asks for completion; the handle waits at the end while the request runs, and the tick lands only when the parent says so.",
 	align: "stretch",
+	capture: { flow: "slide-button/controlled-async", align: "stretch" },
 };
 
 type Transfer = { status: "idle" } | { status: "sending" } | { status: "sent"; at: string };
@@ -35,6 +36,7 @@ export function Demo(): ReactElement {
 				variant="success"
 			>
 				<SlideButton.Label>Slide to transfer $240</SlideButton.Label>
+				<SlideButton.Thumb testID="controlled-transfer-thumb" />
 			</SlideButton>
 			<Text.Code className="self-center">
 				{transfer.status === "sent" ? `sent at ${transfer.at}` : transfer.status}

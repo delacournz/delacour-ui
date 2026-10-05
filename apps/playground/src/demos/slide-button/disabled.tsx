@@ -6,6 +6,7 @@ export const meta: DemoMeta = {
 	title: "Disabled",
 	caption: "`isDisabled` fades the control and refuses the drag outright — the handle does not move at all.",
 	align: "center",
+	capture: {},
 };
 
 export function Demo(): ReactElement {

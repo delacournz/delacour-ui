@@ -15,6 +15,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`color` paints the divider and the grip capsule, and the glyph takes that colour's foreground. `size` moves the capsule only — its touch band stays 44pt at every size.",
 	align: "stretch",
+	capture: { align: "stretch" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

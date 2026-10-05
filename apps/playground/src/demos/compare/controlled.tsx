@@ -10,6 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Pass `position` to hold it yourself. The drag reports through `onPositionChange`, the buttons write it directly, and the seam springs to whatever the parent decides.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "compare/controlled" },
 };
 
 const PRESETS: readonly { label: string; position: ComparePosition }[] = [
@@ -19,7 +20,7 @@ const PRESETS: readonly { label: string; position: ComparePosition }[] = [
 ];
 
 export function Demo(): ReactElement {
-	const [position, setPosition] = useState<ComparePosition>(0.3);
+	const [position, setPosition] = useState<ComparePosition>(0.5);
 
 	return (
 		<View className="gap-3">
@@ -30,12 +31,12 @@ export function Demo(): ReactElement {
 				position={position}
 			>
 				<Compare.Before>
-					<View className="flex-1 items-center justify-center bg-secondary">
+					<View className="flex-1 items-start justify-center bg-secondary px-6">
 						<Text.Title>Original</Text.Title>
 					</View>
 				</Compare.Before>
 				<Compare.After>
-					<View className="flex-1 items-center justify-center bg-success">
+					<View className="flex-1 items-end justify-center bg-success px-6">
 						<Text.Title className="text-success-foreground">Redesign</Text.Title>
 					</View>
 				</Compare.After>

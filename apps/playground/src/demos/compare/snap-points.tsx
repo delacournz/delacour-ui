@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Snap points",
 	caption:
 		"`snapPoints` are stops a release lands on when it is within `snapThreshold` of one. Snapping waits for the release — a seam that snapped mid-drag would feel sticky — and the haptic ticks as the seam arrives at a stop, never per frame.",
+	capture: { align: "stretch", flow: "compare/snap-points" },
 };
 
 const SNAP_POINTS = [0, 0.5, 1] as const;

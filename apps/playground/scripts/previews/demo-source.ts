@@ -24,6 +24,9 @@ import ts from "typescript";
  * `bottom-sheet-engine/` demos, which render `@delacour/react-native-charts`
  * and `@delacour/react-native-bottom-sheet` with nothing themed in front of
  * them — so they, like a reader's app, take Skia and Reanimated directly.
+ *
+ * `uniwind` is a peer of `@delacour/react-native-ui`, so every reader's app
+ * already resolves it — `compare/themes` takes `ScopedTheme` from it.
  */
 const ALLOWED_IMPORT_PREFIXES = [
 	"@delacour/react-native-ui",
@@ -38,6 +41,7 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"react-native-worklets",
 	"react-native-safe-area-context",
 	"react-native-keyboard-controller",
+	"uniwind",
 ];
 
 /** The one project-local import a demo may make, and the one the spliced source drops. */

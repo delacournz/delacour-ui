@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Each side takes any children — here the same `Card` rendered under a light and a dark `ScopedTheme`. Both are laid out at the full frame, so the seam cuts one card in half rather than squeezing two.",
 	align: "stretch",
+	capture: { align: "stretch", flow: "compare/themes" },
 };
 
 /** The card under test, identical on both sides. */

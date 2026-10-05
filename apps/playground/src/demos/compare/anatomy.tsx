@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	title: "Anatomy",
 	caption:
 		"`Compare.Before` sits on the leading side, `Compare.After` behind it, and `Compare.Handle` is the seam between them. A `Compare.Label` pins a caption to its side and fades as the seam covers it. Drag the handle — both layers stay in register, because only a mask moves.",
+	capture: { align: "stretch", flow: "compare/anatomy", hero: true },
 };
 
 /** One composition, drawn twice: flat on the left, finished on the right. */

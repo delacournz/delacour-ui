@@ -57,8 +57,12 @@ export const DEVICE_MAX_EDGE = 1440;
  * Media does not delta-compress, so every regeneration is permanent history. A
  * budget nobody enforces is a wish, and the moment to enforce it is before
  * there is enough media for anyone to be tempted to raise it.
+ *
+ * Raised from 40 MB to 120 MB deliberately: 38 components filled 32 MB at four
+ * to six captured demos each, and the library roughly triples. The density per
+ * component is unchanged; the cap moved with the component count, not with it.
  */
-export const BUDGET_BYTES = 40 * 1024 * 1024;
+export const BUDGET_BYTES = 120 * 1024 * 1024;
 
 /**
  * Auto-stop for a recording, in seconds.

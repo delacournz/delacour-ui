@@ -239,6 +239,12 @@ describe("marqueeVariants", () => {
 		expect(marqueeVariants({ axis: "horizontal" }).root()).toContain("overflow-hidden");
 	});
 
+	test("the root lays out along the axis so the track keeps its full length", () => {
+		expect(marqueeVariants({ axis: "horizontal" }).root()).toContain("flex-row");
+		expect(marqueeVariants({ axis: "vertical" }).root()).toContain("flex-col");
+		expect(marqueeVariants({ axis: "horizontal" }).track()).toContain("shrink-0");
+	});
+
 	test("the track lays copies along the axis", () => {
 		expect(marqueeVariants({ axis: "horizontal" }).track()).toContain("flex-row");
 		expect(marqueeVariants({ axis: "vertical" }).track()).toContain("flex-col");

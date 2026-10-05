@@ -177,18 +177,24 @@ export function resolveMarqueeHeld(pause: MarqueePause, isPressed: boolean): boo
  * would leave the last one's uncounted, so the loop would jump by one gap on
  * every wrap. The compound variants put the padding on the trailing side of the
  * axis.
+ *
+ * The root lays out along the axis too, so the track is a main-axis item that
+ * keeps its full content size (`shrink-0`) rather than being stretched to the
+ * container's. A track only as wide as the container would hit-test only that
+ * far: once translated, the copies sliding in from the trailing edge would sit
+ * outside its bounds and take no touches.
  */
 export const marqueeVariants = tv({
 	slots: {
 		root: "overflow-hidden",
-		track: "",
+		track: "shrink-0",
 		copy: "shrink-0",
 		fade: "absolute",
 	},
 	variants: {
 		axis: {
-			horizontal: { track: "flex-row", copy: "flex-row items-center", fade: "inset-y-0" },
-			vertical: { track: "flex-col", copy: "flex-col", fade: "inset-x-0" },
+			horizontal: { root: "flex-row", track: "flex-row", copy: "flex-row items-center", fade: "inset-y-0" },
+			vertical: { root: "flex-col", track: "flex-col", copy: "flex-col", fade: "inset-x-0" },
 		},
 		gap: {
 			none: {},

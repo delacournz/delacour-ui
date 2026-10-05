@@ -52,6 +52,7 @@
 		"./kpi": "./src/components/kpi/index.ts",
 		"./label": "./src/components/label/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
+		"./marquee": "./src/components/marquee/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
 		"./progress": "./src/components/progress/index.ts",

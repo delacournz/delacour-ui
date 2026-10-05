@@ -74,6 +74,7 @@ shares.
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
 | [DatePicker](src/components/date-picker/AGENTS.md) | `@delacour/react-native-ui/date-picker` | A field-shaped trigger that opens a calendar in a bottom sheet — a day, a range or several |
+| [DateTimePicker](src/components/date-time-picker/AGENTS.md) | `@delacour/react-native-ui/date-time-picker` | A date and a time of day picked together — a calendar and a wheel in one sheet, one Done |
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |

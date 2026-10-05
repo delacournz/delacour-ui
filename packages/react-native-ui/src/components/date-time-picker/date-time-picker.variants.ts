@@ -64,6 +64,8 @@ export const dateTimePickerVariants = tv({
 		timeValue: "font-sans text-foreground text-input-md tabular-nums",
 		timeWheel: "overflow-hidden",
 		footer: "flex-row gap-3",
+		/** The inline panel's card — the frame a sheet would otherwise give it. */
+		inline: "rounded-lg border border-border bg-card p-3",
 	},
 	variants: {
 		layout: {

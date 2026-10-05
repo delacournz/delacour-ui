@@ -4,6 +4,8 @@ description: A Markdown field — a formatting toolbar, a write pane and a rende
 icon: FileText
 ---
 
+<Preview id="markdown-editor/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="markdown-editor" />
@@ -49,9 +51,11 @@ Return on a list or quote line starts the next item — the same bullet, the nex
 
 `actions` picks the buttons and their order.
 
+<Preview id="markdown-editor/custom-toolbar" />
+
 ```tsx
 <MarkdownEditor rows={4}>
-  <MarkdownEditor.Toolbar actions={["bold", "italic", "link", "bulletList"]} />
+  <MarkdownEditor.Toolbar actions={["bulletList", "bold", "italic", "link"]} />
   <MarkdownEditor.Input placeholder="Leave a comment" />
   <MarkdownEditor.Preview emptyText="Nothing to preview yet" />
 </MarkdownEditor>
@@ -73,6 +77,8 @@ Return on a list or quote line starts the next item — the same bullet, the nex
 ## Toolbar looks
 
 `bar` sits on the field's top edge as its lid. `pill` floats an icon-only capsule above it. `variant` styles the field and the preview together — outlined on `primary`, filled on `secondary`, the same two boxes as `Input`.
+
+<Preview id="markdown-editor/pill-toolbar" />
 
 ```tsx
 <MarkdownEditor variant="secondary">
@@ -97,6 +103,8 @@ const [mode, setMode] = useState<MarkdownMode>("write");
 Invalid and disabled come from an enclosing `Field`. Disabled blocks the text, the toolbar and the
 mode switch. `isReadOnly` keeps the text selectable and the switch working, and turns formatting off.
 
+<Preview id="markdown-editor/in-field" />
+
 ```tsx
 <Field isInvalid={description.trim() === ""}>
   <Field.Label>Description</Field.Label>
@@ -108,6 +116,8 @@ mode switch. `isReadOnly` keeps the text selectable and the switch working, and 
 ## Supported Markdown
 
 The preview draws the subset the toolbar writes, on the library's own `Text` presets.
+
+<Preview id="markdown-editor/preview-mode" />
 
 | Markdown | Renders as |
 | --- | --- |

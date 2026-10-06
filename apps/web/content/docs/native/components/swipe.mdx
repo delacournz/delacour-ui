@@ -4,6 +4,8 @@ description: A row that slides aside to reveal actions behind it — delete, arc
 icon: ArrowLeftRight
 ---
 
+<Preview id="swipe/both-sides" title={null} />
+
 ## Installation
 
 <ComponentInstall name="swipe" />
@@ -36,6 +38,8 @@ export default function Example() {
 }
 ```
 
+<Preview id="swipe/swipe-to-delete" />
+
 ## Anatomy
 
 ```tsx
@@ -65,6 +69,8 @@ left, so it never paints over the row and the row needs no background of its own
 
 `end` is the edge text runs toward, so sliding the row toward the start reveals `Swipe.End`. Under
 right to left the sides mirror with no change to your code.
+
+<Preview id="swipe/both-sides" />
 
 ```tsx
 <Swipe>
@@ -108,6 +114,8 @@ A tap on a tile runs its `onPress` and closes the row. `isKeptOpen` leaves it op
 such as a bookmark, whose new state the reader wants to see. Tapping the open row closes it without
 passing the tap through.
 
+<Preview id="swipe/kept-open" />
+
 ```tsx
 <Swipe.Action
   color="primary"
@@ -125,6 +133,8 @@ through context, so a row nested inside a `ListGroup`, a `.map()` or a component
 belongs. `useSwipeGroup().closeAll()` closes every row — outside a group it does nothing, so a
 screen can call it either way.
 
+<Preview id="swipe/one-open-at-a-time" />
+
 ```tsx
 <Swipe.Group>
   <ListGroup>
@@ -139,6 +149,8 @@ screen can call it either way.
 
 A ref exposes `open(side)` and `close()`. `onOpenChange` reports the side that settled open, or
 `null` once the row is shut.
+
+<Preview id="swipe/imperative" />
 
 ```tsx
 const swipe = useRef<SwipeHandle>(null);
@@ -202,6 +214,7 @@ Markers. Their children are the side's `Swipe.Action`s, in visual order.
     isKeptOpen: { type: "boolean", default: "false", description: "Leave the row open after the action runs." },
     className: { type: "string" },
     labelClassName: { type: "string" },
+    testID: { type: "string", description: "Forwarded to the tile's pressable, for a test to find it." },
   }}
 />
 

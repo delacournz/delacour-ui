@@ -193,6 +193,15 @@ import * as demo_field_states_disabled from "./field/states/disabled";
 import * as demo_field_states_live from "./field/states/live";
 import * as demo_field_states_one_flag_three_things from "./field/states/one-flag-three-things";
 import * as demo_field_states_through_an_input_group from "./field/states/through-an-input-group";
+import * as demo_flip_card_anatomy from "./flip-card/anatomy";
+import * as demo_flip_card_controlled from "./flip-card/controlled";
+import * as demo_flip_card_faces from "./flip-card/faces";
+import * as demo_flip_card_flashcard from "./flip-card/flashcard";
+import * as demo_flip_card_interactive_back from "./flip-card/interactive-back";
+import * as demo_flip_card_manual from "./flip-card/manual";
+import * as demo_flip_card_reduced_motion from "./flip-card/reduced-motion";
+import * as demo_flip_card_swipe from "./flip-card/swipe";
+import * as demo_flip_card_vertical_axis from "./flip-card/vertical-axis";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -559,6 +568,15 @@ export const DEMOS = {
 	"field/states/live": demo_field_states_live,
 	"field/states/one-flag-three-things": demo_field_states_one_flag_three_things,
 	"field/states/through-an-input-group": demo_field_states_through_an_input_group,
+	"flip-card/anatomy": demo_flip_card_anatomy,
+	"flip-card/controlled": demo_flip_card_controlled,
+	"flip-card/faces": demo_flip_card_faces,
+	"flip-card/flashcard": demo_flip_card_flashcard,
+	"flip-card/interactive-back": demo_flip_card_interactive_back,
+	"flip-card/manual": demo_flip_card_manual,
+	"flip-card/reduced-motion": demo_flip_card_reduced_motion,
+	"flip-card/swipe": demo_flip_card_swipe,
+	"flip-card/vertical-axis": demo_flip_card_vertical_axis,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,

@@ -173,6 +173,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One control with its label, description and error — and the state they all read.",
 		categories: ["forms"],
 	},
+	"flip-card": {
+		title: "FlipCard",
+		description: "Two faces of one card and a turn between them, by tap, swipe or code.",
+		categories: ["media"],
+	},
 	icon: {
 		title: "Icon",
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",

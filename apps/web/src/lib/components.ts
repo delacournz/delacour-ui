@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -146,6 +147,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Accordion",
 		group: "Data display",
 		blurb: "Sections that expand and collapse, animated from a measured height.",
+	},
+	{
+		slug: "flip-card",
+		name: "FlipCard",
+		group: "Media",
+		blurb: "Two faces of one card and a turn between them, by tap, swipe or code.",
 	},
 	{
 		slug: "alert",

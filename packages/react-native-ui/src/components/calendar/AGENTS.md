@@ -51,8 +51,10 @@ sheets.
   the mode named. Internally one `CalendarSelectionState` union flows through
   `useControllableState`, and `emitSelection` narrows back to the caller's shape.
 - **Single:** a tap on the selected day clears it. **Multiple:** toggles; always sorted, deduped.
-- **Range** (`applyRangeTap`): empty → start; start + later day → complete; start + earlier day →
-  the start moves; complete + tap → a new start. A range that would contain a disabled day
+- **Range** (`applyRangeTap`): empty → start; start + any day → complete, in either direction,
+  with the earlier day as `start` (`normaliseRange`); complete + tap → a new start. Backwards
+  completes rather than moving the start, because tapping check-out first is as common as
+  check-in first and a tap that silently discards the first one reads as a bug. A range that would contain a disabled day
   (`rangeContainsDisabled`) restarts at the tapped day instead of completing — a stay that spans a
   closed night is not bookable, and silently accepting it is worse than making the user tap again.
 - **Disabled vs read-only.** `isDisabled` makes everything inert and fades the root. `isReadOnly`
@@ -80,8 +82,11 @@ sheets.
   stops and resumes on the next row; it is not re-rounded there.
 - **Today is a ring (`border-ring`) and `text-primary`, never a fill**, so it cannot be mistaken
   for a selection.
-- **Variant:** `primary` fills `bg-primary`, band `bg-accent`; `secondary` fills `bg-secondary`,
-  band `bg-muted`. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
+- **Variant:** `primary` fills `bg-primary`, band `bg-primary/15`; `secondary` fills
+  `bg-secondary`, band `bg-muted`. The primary band is a tint of the selection colour, not
+  `bg-accent`: light `--accent` is 0.97 on a 0.985 page, so the band all but vanished in light
+  while reading fine in dark. A tint of `primary` reads in both themes and joins the end caps
+  as one shape. `isInvalid` overrides both with `bg-destructive` / `bg-destructive-soft`.
 - **Colour is on the text slots only** (rule 1): `dayLabel`, `weekdayLabel`, `captionText`,
   `pickerItemLabel`. A test holds every `View` slot to carrying no `text-*` colour.
 - **Custom day content** gets `labelClassName` in its render props, so a price under the number

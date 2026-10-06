@@ -147,6 +147,13 @@ describe("tones", () => {
 		expect(calendarVariants({ variant: "secondary", tone: "selected" }).dayBase()).toContain("bg-secondary");
 	});
 
+	test("the primary band is a tint of the selection colour, not the near-page accent", () => {
+		const band = calendarVariants({ variant: "primary", rangeRole: "middle" }).band();
+		expect(band).toMatch(/\bbg-primary\/\d+\b/);
+		expect(band).not.toContain("bg-accent");
+		expect(calendarVariants({ variant: "primary", tone: "band" }).dayLabel()).toContain("text-foreground");
+	});
+
 	test("invalid outranks the variant", () => {
 		for (const variant of CALENDAR_VARIANTS) {
 			expect(calendarVariants({ variant, tone: "selected", isInvalid: true }).dayBase()).toContain("bg-destructive");

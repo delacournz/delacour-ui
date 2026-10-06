@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on calendar/sizes-variants and has settled — Primary and Small
+  selected, the 12th to the 16th of October 2026 in range. The capture script navigates there before running this.
+steps:
+  - echo: The softer variant
+  - tap: { id: calendar-variant-secondary }
+  - wait: 1200
+  - echo: Back to Primary, so the clip loops
+  - tap: { id: calendar-variant-primary }
+  - wait: 600

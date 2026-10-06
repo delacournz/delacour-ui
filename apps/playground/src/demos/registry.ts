@@ -81,6 +81,15 @@ import * as demo_button_icons from "./button/icons";
 import * as demo_button_loading from "./button/loading";
 import * as demo_button_sizes from "./button/sizes";
 import * as demo_button_variants from "./button/variants";
+import * as demo_calendar_bordered_in_card from "./calendar/bordered-in-card";
+import * as demo_calendar_bounds_and_disabled from "./calendar/bounds-and-disabled";
+import * as demo_calendar_custom_day from "./calendar/custom-day";
+import * as demo_calendar_in_a_field from "./calendar/in-a-field";
+import * as demo_calendar_locale_week_start from "./calendar/locale-week-start";
+import * as demo_calendar_multiple from "./calendar/multiple";
+import * as demo_calendar_range from "./calendar/range";
+import * as demo_calendar_single from "./calendar/single";
+import * as demo_calendar_sizes_variants from "./calendar/sizes-variants";
 import * as demo_card_anatomy from "./card/anatomy";
 import * as demo_card_configurator from "./card/configurator";
 import * as demo_card_footer_band from "./card/footer-band";
@@ -460,6 +469,15 @@ export const DEMOS = {
 	"button/loading": demo_button_loading,
 	"button/sizes": demo_button_sizes,
 	"button/variants": demo_button_variants,
+	"calendar/bordered-in-card": demo_calendar_bordered_in_card,
+	"calendar/bounds-and-disabled": demo_calendar_bounds_and_disabled,
+	"calendar/custom-day": demo_calendar_custom_day,
+	"calendar/in-a-field": demo_calendar_in_a_field,
+	"calendar/locale-week-start": demo_calendar_locale_week_start,
+	"calendar/multiple": demo_calendar_multiple,
+	"calendar/range": demo_calendar_range,
+	"calendar/single": demo_calendar_single,
+	"calendar/sizes-variants": demo_calendar_sizes_variants,
 	"card/anatomy": demo_card_anatomy,
 	"card/configurator": demo_card_configurator,
 	"card/footer-band": demo_card_footer_band,

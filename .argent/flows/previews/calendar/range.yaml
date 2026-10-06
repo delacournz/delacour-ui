@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on calendar/range and has settled — October 2026, the 9th to
+  the 15th selected. The capture script navigates there before running this.
+steps:
+  - echo: A new range, from the 20th to the 24th
+  - tap: { id: calendar-range-day-2026-10-20 }
+  - wait: 450
+  - tap: { id: calendar-range-day-2026-10-24 }
+  - wait: 900
+  - echo: Back to the 9th to the 15th, so the clip loops
+  - tap: { id: calendar-range-day-2026-10-09 }
+  - wait: 450
+  - tap: { id: calendar-range-day-2026-10-15 }
+  - wait: 300

@@ -226,6 +226,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "frame",
+		name: "Frame",
+		group: "Layout",
+		blurb: "A titled shell around a card of divided rows, with sections and a footer.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

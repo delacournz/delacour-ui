@@ -54,9 +54,12 @@ export const CALENDAR_PAGE_VELOCITY = 500;
  * whole cell so neighbouring days join into one continuous strip — a gap between columns would
  * break it into beads.
  *
- * **The band is rounded at the range's two ends only.** Start rounds its left, end its right, a
- * one-day range both, and every day between is square — including at a week's edge, where the
- * strip simply stops and picks up again on the next row.
+ * **The band ends under the circle, never beside it.** Start runs from its cell's centre to the
+ * right edge, end from the left edge to its centre, and every day between spans the whole cell
+ * square — including at a week's edge, where the strip simply stops and picks up again on the
+ * next row. A cell is wider than its circle, so a band rounded across the whole end cell poked a
+ * crescent out beside the circle; stopping at the centre lets the circle itself be the cap. A
+ * one-day range draws no band at all.
  *
  * **The cell steps on the input scale** — `h-input-*` and `text-input-*` — so a calendar inline
  * beside a field shares its density, and a retune of the field retunes the calendar.
@@ -89,7 +92,7 @@ export const calendarVariants = tv({
 		/** One day's column share, and the height of its touch target. */
 		cell: "flex-1 items-center justify-center",
 		/** The strip behind a day inside a range. */
-		band: "absolute inset-0",
+		band: "absolute inset-y-0",
 		/** The circle a selection fills and today rings. */
 		dayBase: "items-center justify-center rounded-full border border-transparent",
 		/** The day's number. */
@@ -139,10 +142,10 @@ export const calendarVariants = tv({
 		},
 		rangeRole: {
 			none: { band: "hidden" },
-			start: { band: "rounded-l-full" },
-			middle: { band: "rounded-none" },
-			end: { band: "rounded-r-full" },
-			only: { band: "rounded-full" },
+			start: { band: "left-1/2 right-0" },
+			middle: { band: "inset-x-0" },
+			end: { band: "left-0 right-1/2" },
+			only: { band: "hidden" },
 		},
 		isToday: { true: {}, false: {} },
 		isOutside: { true: {}, false: {} },

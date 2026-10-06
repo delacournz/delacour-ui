@@ -109,26 +109,34 @@ describe("text colour stays on the text", () => {
 	});
 });
 
-describe("range band rounding", () => {
-	const roundingOf = (rangeRole: CalendarRangeRole) => calendarVariants({ rangeRole }).band();
+describe("range band geometry", () => {
+	const bandOf = (rangeRole: CalendarRangeRole) => calendarVariants({ rangeRole }).band();
 
-	test("start rounds the left end only", () => {
-		expect(roundingOf("start")).toContain("rounded-l-full");
-		expect(roundingOf("start")).not.toMatch(/rounded-r-full|rounded-full/);
+	// The cell is wider than the circle, so a band end rounded across the whole cell pokes out
+	// beside the circle. Each end instead stops at its cell's centre, under the circle.
+	test("start runs from the cell's centre to its right edge", () => {
+		expect(bandOf("start")).toMatch(/\bleft-1\/2\b/);
+		expect(bandOf("start")).toMatch(/\bright-0\b/);
 	});
 
-	test("end rounds the right end only", () => {
-		expect(roundingOf("end")).toContain("rounded-r-full");
-		expect(roundingOf("end")).not.toMatch(/rounded-l-full|\brounded-full/);
+	test("end runs from the cell's left edge to its centre", () => {
+		expect(bandOf("end")).toMatch(/\bleft-0\b/);
+		expect(bandOf("end")).toMatch(/\bright-1\/2\b/);
 	});
 
-	test("only rounds both, and is never square", () => {
-		expect(roundingOf("only")).toContain("rounded-full");
-		expect(roundingOf("only")).not.toContain("rounded-none");
+	test("middle spans the whole cell, square", () => {
+		expect(bandOf("middle")).toMatch(/\binset-x-0\b/);
+		expect(bandOf("middle")).not.toMatch(/rounded-(?:l-|r-)?full/);
 	});
 
-	test("middle is square at both ends", () => {
-		expect(roundingOf("middle")).toContain("rounded-none");
+	test("no band end is rounded — the circle is the cap", () => {
+		for (const rangeRole of ["start", "middle", "end"] as const) {
+			expect(bandOf(rangeRole)).not.toMatch(/rounded-(?:l-|r-)?full/);
+		}
+	});
+
+	test("a lone day draws no band", () => {
+		expect(bandOf("only")).toContain("hidden");
 	});
 
 	test("a selected day is a circle, never square", () => {

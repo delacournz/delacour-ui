@@ -3,6 +3,7 @@ import { Dialog } from "@delacour/react-native-ui/dialog";
 import { Field } from "@delacour/react-native-ui/field";
 import { Input } from "@delacour/react-native-ui/input";
 import { type ReactElement, useState } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -11,6 +12,7 @@ export const meta: DemoMeta = {
 	note: "Dismiss the keyboard and the card settles back to the centre. Save stays disabled until the name changes, and closing resets it.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "dialog/form", frame: "device" },
 };
 
 const INITIAL_NAME = "Harbour Bridge";
@@ -26,43 +28,45 @@ export function Demo(): ReactElement {
 	};
 
 	return (
-		<Dialog isOpen={isOpen} onOpenChange={handleOpenChange}>
-			<Dialog.Trigger asChild>
-				<Button testID="dialog-form-open" variant="secondary">
-					Rename
-				</Button>
-			</Dialog.Trigger>
-			<Dialog.Content>
-				<Dialog.Close />
-				<Dialog.Header>
-					<Dialog.Title>Rename project</Dialog.Title>
-					<Dialog.Description>Everyone with access sees the new name.</Dialog.Description>
-				</Dialog.Header>
-				<Dialog.Body>
-					<Field>
-						<Field.Label>Name</Field.Label>
-						<Input
-							onChangeText={setName}
-							placeholder="Project name"
-							returnKeyType="done"
-							testID="dialog-form-input"
-							value={name}
-						/>
-					</Field>
-				</Dialog.Body>
-				<Dialog.Footer variant="panel">
-					<Dialog.Close asChild>
-						<Button variant="secondary">Cancel</Button>
-					</Dialog.Close>
-					<Button
-						isDisabled={name.trim() === "" || name === INITIAL_NAME}
-						onPress={() => handleOpenChange(false)}
-						testID="dialog-form-save"
-					>
-						Save
+		<View className="flex-1 items-center justify-center">
+			<Dialog isOpen={isOpen} onOpenChange={handleOpenChange}>
+				<Dialog.Trigger asChild>
+					<Button testID="dialog-form-open" variant="secondary">
+						Rename
 					</Button>
-				</Dialog.Footer>
-			</Dialog.Content>
-		</Dialog>
+				</Dialog.Trigger>
+				<Dialog.Content>
+					<Dialog.Close />
+					<Dialog.Header>
+						<Dialog.Title>Rename project</Dialog.Title>
+						<Dialog.Description>Everyone with access sees the new name.</Dialog.Description>
+					</Dialog.Header>
+					<Dialog.Body>
+						<Field>
+							<Field.Label>Name</Field.Label>
+							<Input
+								onChangeText={setName}
+								placeholder="Project name"
+								returnKeyType="done"
+								testID="dialog-form-input"
+								value={name}
+							/>
+						</Field>
+					</Dialog.Body>
+					<Dialog.Footer variant="panel">
+						<Dialog.Close asChild>
+							<Button variant="secondary">Cancel</Button>
+						</Dialog.Close>
+						<Button
+							isDisabled={name.trim() === "" || name === INITIAL_NAME}
+							onPress={() => handleOpenChange(false)}
+							testID="dialog-form-save"
+						>
+							Save
+						</Button>
+					</Dialog.Footer>
+				</Dialog.Content>
+			</Dialog>
+		</View>
 	);
 }

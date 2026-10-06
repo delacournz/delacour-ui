@@ -50,6 +50,8 @@ export type CalendarContextValue = {
 	selectOutsideDays: boolean;
 	swipeToPage: boolean;
 	captionLayout: CalendarCaptionLayout;
+	/** The calendar's own `testID`, which its parts derive theirs from — see `resolvePartTestID`. */
+	testID: string | undefined;
 	/** The enclosing `Field.Label`'s text, for the grid's accessible name. */
 	label: string | null;
 };

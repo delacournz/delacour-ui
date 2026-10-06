@@ -7,7 +7,7 @@ import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
 import { compareMonths, formatYear, monthNames } from "./calendar.date";
-import { calendarVariants, isMonthInBounds } from "./calendar.variants";
+import { calendarVariants, isMonthInBounds, resolvePartTestID } from "./calendar.variants";
 
 export type CalendarPickerProps = Omit<ViewProps, "children"> & {
 	className?: string;
@@ -87,6 +87,7 @@ export function CalendarPicker({ className, ...props }: CalendarPickerProps): Re
 								haptic="selection"
 								key={name}
 								onPress={() => pickMonth(month)}
+								testID={resolvePartTestID(calendar.testID, `month-${month}`)}
 							>
 								<Text className={item.pickerItemLabel()}>{name}</Text>
 							</Pressable>
@@ -112,6 +113,7 @@ export function CalendarPicker({ className, ...props }: CalendarPickerProps): Re
 									key={year}
 									onLayout={isCurrent ? handleCurrentLayout : undefined}
 									onPress={() => pickYear(year)}
+									testID={resolvePartTestID(calendar.testID, `year-${year}`)}
 								>
 									<Text className={item.pickerItemLabel()}>{formatYear(year, locale)}</Text>
 								</Pressable>

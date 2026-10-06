@@ -3,6 +3,7 @@ import { IconChevronLeft, IconChevronRight } from "../../icons/central";
 import { Button, type ButtonProps } from "../button";
 import { Icon } from "../icon";
 import { useCalendarPart } from "./calendar.context";
+import { resolvePartTestID } from "./calendar.variants";
 
 export type CalendarNavProps = Omit<ButtonProps, "children" | "onPress"> & {
 	/** Which way the arrow pages. */
@@ -19,7 +20,15 @@ export type CalendarNavProps = Omit<ButtonProps, "children" | "onPress"> & {
  * does not, because looking at another month changes nothing.
  */
 export function CalendarNav({ direction, label, isDisabled, ...props }: CalendarNavProps): ReactElement {
-	const { canGoNext, canGoPrev, goNext, goPrev, isDisabled: calendarDisabled, view } = useCalendarPart("Calendar.Nav");
+	const {
+		canGoNext,
+		canGoPrev,
+		goNext,
+		goPrev,
+		isDisabled: calendarDisabled,
+		testID,
+		view,
+	} = useCalendarPart("Calendar.Nav");
 	const isPrev = direction === "prev";
 	const canGo = (isPrev ? canGoPrev : canGoNext) && view !== "years";
 	const unit = view === "months" ? "year" : "month";
@@ -31,6 +40,7 @@ export function CalendarNav({ direction, label, isDisabled, ...props }: Calendar
 			isDisabled={isDisabled ?? (calendarDisabled || !canGo)}
 			onPress={isPrev ? goPrev : goNext}
 			size="icon-sm"
+			testID={resolvePartTestID(testID, direction)}
 			variant="ghost"
 			{...props}
 		>

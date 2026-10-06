@@ -122,6 +122,12 @@ sheets.
   never on mount, because the caption already says it.
 - Today is re-read on `AppState` → `active`, so a calendar left open overnight marks the right day.
 
+- **Parts derive their `testID` from the root's** (`resolvePartTestID`): `testID="booking"`
+  names the days `booking-day-2026-10-05`, the arrows `booking-prev`/`booking-next`, the caption
+  `booking-caption` and the jump-view items `booking-month-10`/`booking-year-2026`. The default
+  anatomy renders forty-odd parts no caller writes, and an end-to-end test or a recorded preview
+  flow has to reach one particular day all the same. No root `testID`, no part ids.
+
 ## Field
 
 `resolveCalendarAxes` is the nearest-wins chain: the calendar's own `isDisabled` / `isInvalid` /

@@ -3,8 +3,8 @@ import { View } from "react-native";
 import { Pressable } from "../pressable";
 import { Text } from "../text";
 import { useCalendarPart } from "./calendar.context";
-import { type CalendarDate, formatDate, isSameMonth } from "./calendar.date";
-import { type CalendarDayState, calendarVariants, resolveDayState } from "./calendar.variants";
+import { type CalendarDate, formatDate, isSameMonth, serialiseDate } from "./calendar.date";
+import { type CalendarDayState, calendarVariants, resolveDayState, resolvePartTestID } from "./calendar.variants";
 
 /** What a function child of `Calendar.Day` is handed. */
 export type CalendarDayRenderProps = CalendarDayState & {
@@ -93,6 +93,7 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 			feedback="fade"
 			haptic="selection"
 			onPress={handlePress}
+			testID={resolvePartTestID(calendar.testID, `day-${serialiseDate(date)}`)}
 		>
 			{showsBand ? <View className={slots.band()} /> : null}
 			<View className={slots.dayBase()}>{content}</View>

@@ -1,0 +1,145 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "leaderboard",
+	"type": "registry:ui",
+	"title": "Leaderboard",
+	"description": "Ranked people or teams with ties, the top three on a podium of growing bars or lifted cards, and the highlighted entry pinned below the cut.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"empty-state",
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"text",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/AGENTS.md",
+			"target": "leaderboard/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/leaderboard",
+					"to": "@registry/ui/leaderboard"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/index.ts",
+			"target": "leaderboard/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard-empty.tsx",
+			"target": "leaderboard/leaderboard-empty.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../empty-state",
+					"to": "@registry/ui/empty-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard-movement.tsx",
+			"target": "leaderboard/leaderboard-movement.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard-podium-place.tsx",
+			"target": "leaderboard/leaderboard-podium-place.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard-podium.tsx",
+			"target": "leaderboard/leaderboard-podium.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard-row.tsx",
+			"target": "leaderboard/leaderboard-row.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard.context.tsx",
+			"target": "leaderboard/leaderboard.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard.tsx",
+			"target": "leaderboard/leaderboard.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard.types.ts",
+			"target": "leaderboard/leaderboard.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard.variants.ts",
+			"target": "leaderboard/leaderboard.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

@@ -196,6 +196,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
+		slug: "toast",
+		name: "Toast",
+		group: "Overlays",
+		blurb:
+			"A brief message from anywhere — even outside React — stacked at the edge of the screen, swiped away or gone on its own.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

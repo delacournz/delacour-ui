@@ -356,6 +356,13 @@ import * as demo_textarea_rows from "./textarea/rows";
 import * as demo_textarea_sizes from "./textarea/sizes";
 import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
+import * as demo_toast_custom from "./toast/custom";
+import * as demo_toast_persistent from "./toast/persistent";
+import * as demo_toast_placement from "./toast/placement";
+import * as demo_toast_promise from "./toast/promise";
+import * as demo_toast_stacking from "./toast/stacking";
+import * as demo_toast_statuses from "./toast/statuses";
+import * as demo_toast_with_action from "./toast/with-action";
 import * as demo_toggle_button_controlled from "./toggle-button/controlled";
 import * as demo_toggle_button_filters from "./toggle-button/filters";
 import * as demo_toggle_button_formatting from "./toggle-button/formatting";
@@ -722,6 +729,13 @@ export const DEMOS = {
 	"textarea/sizes": demo_textarea_sizes,
 	"textarea/states": demo_textarea_states,
 	"textarea/variants": demo_textarea_variants,
+	"toast/custom": demo_toast_custom,
+	"toast/persistent": demo_toast_persistent,
+	"toast/placement": demo_toast_placement,
+	"toast/promise": demo_toast_promise,
+	"toast/stacking": demo_toast_stacking,
+	"toast/statuses": demo_toast_statuses,
+	"toast/with-action": demo_toast_with_action,
 	"toggle-button/controlled": demo_toggle_button_controlled,
 	"toggle-button/filters": demo_toggle_button_filters,
 	"toggle-button/formatting": demo_toggle_button_formatting,

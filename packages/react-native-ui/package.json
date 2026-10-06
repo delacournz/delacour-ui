@@ -70,6 +70,7 @@
 		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",
 		"./textarea": "./src/components/textarea/index.ts",
+		"./toast": "./src/components/toast/index.ts",
 		"./toggle-button": "./src/components/toggle-button/index.ts",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-calm-motion": "./src/hooks/use-calm-motion.tsx",

@@ -301,6 +301,13 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
 		categories: ["controls"],
 	},
+	toast: {
+		title: "Toast",
+		description:
+			"A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
+		categories: ["overlays"],
+		dependencies: ["react-native-teleport"],
+	},
 
 	expo: {
 		title: "Navigation theme",

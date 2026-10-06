@@ -1,0 +1,269 @@
+---
+title: Toast
+description: A brief message about something that just happened — shown from anywhere, stacked at the edge of the screen, swiped away or gone on its own.
+icon: Bell
+---
+
+<Preview id="toast/statuses" title={null} />
+
+## Installation
+
+<ComponentInstall name="toast" />
+
+Toast draws through the overlay layer, so mount [OverlayProvider](/docs/native/components/overlay)
+once at the app root — and mount `ToastViewport` once inside it, beside the navigator. The viewport
+is what draws every toast; nothing appears without it.
+
+```tsx title="app/_layout.tsx"
+import { BottomSheetProvider } from "@/components/ui/bottom-sheet";
+import { OverlayProvider } from "@/components/ui/overlay";
+import { DelacourProvider } from "@/components/ui/provider";
+import { ToastViewport } from "@/components/ui/toast";
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <DelacourProvider>
+      <OverlayProvider>
+        <BottomSheetProvider>
+          <Stack />
+          <ToastViewport />
+        </BottomSheetProvider>
+      </OverlayProvider>
+    </DelacourProvider>
+  );
+}
+```
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
+import * as Clipboard from "expo-clipboard";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Button
+        onPress={async () => {
+          await Clipboard.setStringAsync("https://ui.delacour.co.nz");
+          toast("Link copied");
+        }}
+      >
+        Copy link
+      </Button>
+    </View>
+  );
+}
+```
+
+## Outside React
+
+`toast` is a plain function over a module-level store, not a hook. Call it from an API client, a
+mutation's `onError`, a background task — anywhere:
+
+```ts title="lib/api.ts"
+import { toast } from "@/components/ui/toast";
+
+export async function saveDraft(draft: Draft): Promise<void> {
+  const response = await fetch("/api/drafts", { method: "POST", body: JSON.stringify(draft) });
+  if (!response.ok) toast.error("Could not save the draft", { description: "Your changes are still here." });
+}
+```
+
+## Statuses
+
+The five statuses are [Alert](/docs/native/components/alert)'s, with the same glyphs and title
+colours, so a toast and an alert saying the same thing look like one family. Success, warning and
+destructive also play their notification haptic.
+
+<Preview id="toast/statuses" />
+
+```tsx
+toast("Link copied");
+toast.info("Sync paused");
+toast.success("Changes saved", { description: "Everyone on the project sees them now." });
+toast.warning("Storage almost full");
+toast.error("Upload failed"); // status "destructive"
+```
+
+## Action
+
+One action — an undo, a retry. Pressing it runs `onPress` and hides the toast. A toast with an
+action stays six seconds rather than four.
+
+<Preview id="toast/with-action" />
+
+```tsx
+toast.show({
+  title: "Conversation archived",
+  action: { label: "Undo", onPress: () => restore(conversation) },
+});
+```
+
+## Promise
+
+`toast.promise` shows one toast with a spinner and turns it into the success or the failure in
+place. It returns the promise it was given, so `await` still sees a rejection.
+
+<Preview id="toast/promise" />
+
+```tsx
+await toast.promise(uploadPhotos(), {
+  loading: "Uploading…",
+  success: (count) => `${count} photos uploaded`,
+  error: "Upload failed",
+});
+```
+
+## Placement and stacking
+
+`placement` is `"bottom"` by default, or `"top"`. Bottom toasts sit above the home indicator and
+ride up with the keyboard; top toasts sit under the status bar. `ToastViewport`'s `offset` adds
+space at either edge — to clear a tab bar, `<ToastViewport offset={{ bottom: 56 }} />`.
+
+<Preview id="toast/placement" />
+
+Each edge draws its three newest toasts, the newest in front and each older one a step further back.
+The rest wait their turn and appear as the ones in front leave. Several shown at once enter a beat
+apart.
+
+<Preview id="toast/stacking" />
+
+## Hiding
+
+A toast hides itself after `duration` ms: 4000, or 6000 with an action. `duration: 0` keeps it until
+it is hidden. Its clock pauses while the app is in the background and while a finger is on it.
+
+<Preview id="toast/persistent" />
+
+Swipe it toward its edge, or sideways, to dismiss it; pulled toward the middle it resists and
+springs back. The ✕, `toast.hide(id)` and `toast.hideAll()` hide it too, and `onHide` runs once it
+has gone.
+
+```tsx
+const { id } = toast.warning("You are offline", { duration: 0 });
+// later
+toast.hide(id);
+```
+
+Pass an `id` to replace a toast in place rather than adding another — `toast.update(id, patch)`
+merges into it.
+
+## Custom
+
+`render` draws the whole card. Compose `Toast` to keep the look; inside the viewport it hides the
+toast it is drawn in on its own.
+
+```tsx
+toast.show({
+  placement: "top",
+  render: () => (
+    <Toast status="info">
+      <Toast.Indicator>
+        <Icon icon={IconPeople} />
+      </Toast.Indicator>
+      <Toast.Content>
+        <Toast.Title>Priya joined the project</Toast.Title>
+        <Toast.Description>She can edit every file.</Toast.Description>
+      </Toast.Content>
+      <Toast.Close />
+    </Toast>
+  ),
+});
+```
+
+## Anatomy
+
+```tsx
+<Toast>
+  <Toast.Indicator />
+  <Toast.Content>
+    <Toast.Title />
+    <Toast.Description />
+  </Toast.Content>
+  <Toast.Action />
+  <Toast.Close />
+</Toast>
+```
+
+## Accessibility
+
+Every toast is announced as it appears — its title, then its description — and again when it is
+updated, so a promise toast is read out loading and then done. A warning or a failure interrupts
+what is being read. With VoiceOver or TalkBack on, a toast stays at least ten seconds, long enough
+to be read in full.
+
+A toast never takes focus. It is one element: its action is the element's activate action, and
+dismissing it is the escape gesture or the "Dismiss" action. A failure is announced as an alert.
+Under Reduce Motion it fades in without sliding. Android's back button is left to whatever is
+under the toasts.
+
+## API Reference
+
+### toast
+
+<TypeTable
+  type={{
+    "toast(input)": { type: "(input: string | ToastOptions | ToastCustomOptions) => ToastHandle", description: "Shows a toast. Same as toast.show." },
+    "toast.success / info / warning / error": { type: "(title: string, options?) => ToastHandle", description: "Shows a toast with that status. error is destructive." },
+    "toast.update": { type: "(id: string, patch) => void" },
+    "toast.hide": { type: "(id: string) => void" },
+    "toast.hideAll": { type: "() => void" },
+    "toast.promise": { type: "(promise, { loading, success, error }) => Promise<T>" },
+  }}
+/>
+
+### ToastOptions
+
+<TypeTable
+  type={{
+    title: { type: "string", required: true },
+    description: { type: "string" },
+    status: { type: '"default" | "info" | "success" | "warning" | "destructive"', default: '"default"' },
+    action: { type: "{ label: string; onPress: (handle: ToastHandle) => void }", description: "Pressing it also hides the toast." },
+    duration: { type: "number", default: "4000, 6000 with an action", description: "0 stays until hidden. At least 10000 under a screen reader." },
+    placement: { type: '"top" | "bottom"', default: '"bottom"' },
+    haptic: { type: "HapticFeedback | false", description: "Defaults to the status's: success, warning, error, or none." },
+    isLoading: { type: "boolean", default: "false", description: "A spinner for the glyph; stays until updated." },
+    id: { type: "string", description: "Replaces the toast with this id in place." },
+    onHide: { type: "() => void", description: "Runs once the toast has left the screen." },
+  }}
+/>
+
+A custom toast takes `render: (handle: ToastHandle) => ReactNode` in place of `title`,
+`description`, `status` and `action`.
+
+### ToastViewport
+
+<TypeTable
+  type={{
+    offset: { type: "{ top?: number; bottom?: number }", default: "8 each", description: "Space between each stack and its safe-area edge." },
+  }}
+/>
+
+### Toast
+
+Takes React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    status: { type: '"default" | "info" | "success" | "warning" | "destructive"', default: '"default"' },
+    onHide: { type: "() => void", description: "Defaults to hiding the toast the viewport is drawing." },
+    className: { type: "string" },
+  }}
+/>
+
+`Toast.Action` and `Toast.Close` take `Pressable`'s props; `Toast.Title` and `Toast.Description`
+take `Text`'s. `Toast.Indicator`'s children replace the status glyph.
+
+### useToast
+
+<TypeTable
+  type={{
+    toast: { type: "ToastApi" },
+    toasts: { type: "readonly ToastItem[]", description: "Every toast — shown, queued and leaving — oldest first." },
+  }}
+/>

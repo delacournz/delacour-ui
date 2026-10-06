@@ -36,6 +36,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "scroll-blur", title: "Scroll Blur", description: "A progressive blur at a scrollable's edges that falls back to a gradient fade." },
+	{ name: "scroll-header", title: "Scroll Header", description: "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },

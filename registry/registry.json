@@ -1183,6 +1183,54 @@
 			]
 		},
 		{
+			"name": "scroll-header",
+			"type": "registry:ui",
+			"title": "Scroll Header",
+			"description": "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"color",
+				"compose-refs",
+				"scroll-blur",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-reduce-transparency",
+				"use-scroll-source",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"expo-linear-gradient",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/scroll-header/AGENTS.md",
+				"ui/scroll-header/index.ts",
+				"ui/scroll-header/scroll-header-bar-surface.tsx",
+				"ui/scroll-header/scroll-header-bar-title.tsx",
+				"ui/scroll-header/scroll-header-bar.tsx",
+				"ui/scroll-header/scroll-header-cover.tsx",
+				"ui/scroll-header/scroll-header-flat-list.tsx",
+				"ui/scroll-header/scroll-header-inset.tsx",
+				"ui/scroll-header/scroll-header-large.tsx",
+				"ui/scroll-header/scroll-header-root.tsx",
+				"ui/scroll-header/scroll-header-scroll-view.tsx",
+				"ui/scroll-header/scroll-header.context.tsx",
+				"ui/scroll-header/scroll-header.tsx",
+				"ui/scroll-header/scroll-header.types.ts",
+				"ui/scroll-header/scroll-header.variants.ts",
+				"ui/scroll-header/use-scroll-header-scroll-props.ts"
+			]
+		},
+		{
 			"name": "scroll-maths",
 			"type": "registry:lib",
 			"title": "scrollMaths",

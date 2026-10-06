@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { ReactNode } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	partitionSwipeChildren,
@@ -15,6 +15,7 @@ import {
 	SWIPE_RUBBER_BAND,
 	SWIPE_START_DISPLAY_NAME,
 	SWIPE_TILE_WIDTH,
+	type SwipeTileProps,
 	swipeVariants,
 	toPhysicalOffset,
 } from "./swipe.variants";
@@ -23,8 +24,8 @@ const LIGHT = declaredTokens("light");
 const DARK = declaredTokens("dark");
 
 /** A plain object shaped like a React element — the partition reads nothing else. */
-function element(displayName: string, children?: ReactNode, key?: string): ReactNode {
-	return { key: key ?? null, props: { children }, type: { displayName } } as unknown as ReactNode;
+function element(displayName: string, children?: ReactNode, key?: string): ReactElement<SwipeTileProps> {
+	return { key: key ?? null, props: { children }, type: { displayName } } as unknown as ReactElement<SwipeTileProps>;
 }
 
 const START = (children?: ReactNode) => element(SWIPE_START_DISPLAY_NAME, children);

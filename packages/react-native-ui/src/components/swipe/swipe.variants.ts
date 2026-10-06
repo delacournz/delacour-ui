@@ -52,11 +52,14 @@ export const SWIPE_FLY_OFF_DURATION = 200;
 export const SWIPE_START_DISPLAY_NAME = "DelacourUI.Swipe.Start";
 export const SWIPE_END_DISPLAY_NAME = "DelacourUI.Swipe.End";
 
+/** What the root reads off a lifted tile — `Swipe.Action`'s props, as far as layout and dispatch need. */
+export type SwipeTileProps = { color?: SwipeActionColor; label?: string; onPress?: () => void };
+
 export type SwipeChildren = {
 	/** The tiles behind the start edge, in source order. */
-	start: ReactElement[];
+	start: ReactElement<SwipeTileProps>[];
 	/** The tiles behind the end edge, in source order. */
-	end: ReactElement[];
+	end: ReactElement<SwipeTileProps>[];
 	/** Everything that is not a panel — the row itself. */
 	row: ReactNode[];
 };
@@ -111,7 +114,7 @@ export function partitionSwipeChildren(children: ReactNode): SwipeChildren {
 		}
 		const tiles: ReactNode[] = [];
 		flatten(item.props.children, tiles);
-		for (const tile of tiles) if (isElementLike(tile)) result[side].push(tile as ReactElement);
+		for (const tile of tiles) if (isElementLike(tile)) result[side].push(tile as ReactElement<SwipeTileProps>);
 	}
 
 	return result;
@@ -262,7 +265,8 @@ export const swipeVariants = tv({
 		root: "relative overflow-hidden",
 		row: "w-full",
 		panel: "absolute inset-y-0 overflow-hidden",
-		tile: "absolute inset-y-0 flex-row overflow-hidden",
+		tile: "absolute inset-y-0 overflow-hidden",
+		tilePressable: "flex-1 flex-row",
 		tileContent: "w-18 items-center justify-center gap-1 px-1",
 		tileLabel: "text-center font-medium text-xs",
 	},
@@ -276,8 +280,8 @@ export const swipeVariants = tv({
 			destructive: { panel: "bg-destructive", tile: "bg-destructive", tileLabel: "text-destructive-foreground" },
 		},
 		side: {
-			start: { tile: "justify-end" },
-			end: { tile: "justify-start" },
+			start: { tilePressable: "justify-end" },
+			end: { tilePressable: "justify-start" },
 		},
 	},
 	defaultVariants: { color: "default", side: "end" },

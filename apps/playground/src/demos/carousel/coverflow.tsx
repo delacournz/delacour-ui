@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"The coverflow variant turns, shrinks and fades each slide by its distance from the centre. Under reduce motion it draws as a plain track.",
+	capture: { align: "stretch", flow: "carousel/coverflow" },
 };
 
 const ALBUMS = ["vinyl", "tape", "studio", "stage", "neon", "dusk", "echo"] as const;
@@ -21,7 +22,7 @@ export function Demo(): ReactElement {
 			testID="carousel-coverflow"
 			variant="coverflow"
 		>
-			<Carousel.Content aspectRatio={1.6}>
+			<Carousel.Content testID="carousel-coverflow-content" aspectRatio={1.6}>
 				{ALBUMS.map((album, index) => (
 					<Carousel.Item key={album} testID={`carousel-item-${index}`}>
 						<Image className="size-full" source={{ uri: `https://picsum.photos/seed/${album}/600/600` }} />

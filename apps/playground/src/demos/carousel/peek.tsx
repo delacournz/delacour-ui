@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Peek",
 	align: "stretch",
 	caption: "An itemSize smaller than the viewport centres the active slide and lets its neighbours show either side.",
+	capture: { align: "stretch" },
 };
 
 const SEEDS = ["fern", "kauri", "pohutukawa", "rimu", "totara", "manuka"] as const;

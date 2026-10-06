@@ -51,6 +51,7 @@
 		"screen",
 		"surface",
 		"card",
+		"carousel",
 		"---Utilities---",
 		"provider",
 		"overlay"

@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on carousel/controls and has settled — the Welcome card,
+  Previous disabled, Next enabled, the first dot a pill. The capture script navigates there before
+  running this.
+steps:
+  - echo: Stepping forward with Next
+  - tap: { id: carousel-next }
+  - wait: 600
+  - tap: { id: carousel-next }
+  - wait: 600
+  - echo: And back with Previous, so the clip loops on Welcome
+  - tap: { id: carousel-previous }
+  - wait: 600
+  - tap: { id: carousel-previous }
+  - wait: 600

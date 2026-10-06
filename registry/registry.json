@@ -339,6 +339,52 @@
 			]
 		},
 		{
+			"name": "carousel",
+			"type": "registry:ui",
+			"title": "Carousel",
+			"description": "Swipeable slides on one fractional position, with peek, loop, vertical and coverflow layouts, dots and arrows.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"button",
+				"cn",
+				"icon",
+				"icons",
+				"paging",
+				"slot",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/carousel/AGENTS.md",
+				"ui/carousel/carousel-caption.tsx",
+				"ui/carousel/carousel-content.tsx",
+				"ui/carousel/carousel-controls.tsx",
+				"ui/carousel/carousel-dots.tsx",
+				"ui/carousel/carousel-item.tsx",
+				"ui/carousel/carousel-next.tsx",
+				"ui/carousel/carousel-previous.tsx",
+				"ui/carousel/carousel.context.tsx",
+				"ui/carousel/carousel.tsx",
+				"ui/carousel/carousel.types.ts",
+				"ui/carousel/carousel.variants.ts",
+				"ui/carousel/index.ts",
+				"ui/carousel/use-carousel-autoplay.ts"
+			]
+		},
+		{
 			"name": "chart",
 			"type": "registry:ui",
 			"title": "Chart",
@@ -1019,6 +1065,19 @@
 				"ui/overlay/overlay.variants.ts",
 				"ui/overlay/use-overlay-back-handler.ts",
 				"ui/overlay/use-overlay-presence.ts"
+			]
+		},
+		{
+			"name": "paging",
+			"type": "registry:lib",
+			"title": "paging",
+			"description": "Worklet-safe maths of paging through slides on one fractional position.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/paging.ts"
 			]
 		},
 		{

@@ -99,6 +99,13 @@ import * as demo_card_plan_picker from "./card/plan-picker";
 import * as demo_card_sign_in from "./card/sign-in";
 import * as demo_card_sizes from "./card/sizes";
 import * as demo_card_variants from "./card/variants";
+import * as demo_carousel_controlled from "./carousel/controlled";
+import * as demo_carousel_controls from "./carousel/controls";
+import * as demo_carousel_coverflow from "./carousel/coverflow";
+import * as demo_carousel_hero_track from "./carousel/hero-track";
+import * as demo_carousel_loop_autoplay from "./carousel/loop-autoplay";
+import * as demo_carousel_peek from "./carousel/peek";
+import * as demo_carousel_vertical from "./carousel/vertical";
 import * as demo_chart_area_area from "./chart/area/area";
 import * as demo_chart_area_area_stacked from "./chart/area/area-stacked";
 import * as demo_chart_bar_bar from "./chart/bar/bar";
@@ -493,6 +500,13 @@ export const DEMOS = {
 	"card/sign-in": demo_card_sign_in,
 	"card/sizes": demo_card_sizes,
 	"card/variants": demo_card_variants,
+	"carousel/controlled": demo_carousel_controlled,
+	"carousel/controls": demo_carousel_controls,
+	"carousel/coverflow": demo_carousel_coverflow,
+	"carousel/hero-track": demo_carousel_hero_track,
+	"carousel/loop-autoplay": demo_carousel_loop_autoplay,
+	"carousel/peek": demo_carousel_peek,
+	"carousel/vertical": demo_carousel_vertical,
 	"chart/area/area": demo_chart_area_area,
 	"chart/area/area-stacked": demo_chart_area_area_stacked,
 	"chart/bar/bar": demo_chart_bar_bar,

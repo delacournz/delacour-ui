@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on questionnaire/basic and has settled — question 1 of 3 with
+  Designer chosen and Next enabled. The capture script navigates there before running this.
+steps:
+  - echo: Changing the answer and moving on
+  - tap: { id: survey-role-engineering }
+  - wait: 500
+  - tap: { id: survey-next }
+  - await: { visible: { id: survey-tools-figma } }
+  - wait: 600
+  - echo: Ticking and unticking a tool, so the second question is left as it was found
+  - tap: { id: survey-tools-figma }
+  - wait: 500
+  - tap: { id: survey-tools-figma }
+  - wait: 400
+  - echo: Back to the first question, and the original answer, so the clip loops
+  - tap: { id: survey-back }
+  - await: { visible: { id: survey-role-design } }
+  - wait: 500
+  - tap: { id: survey-role-design }
+  - wait: 400

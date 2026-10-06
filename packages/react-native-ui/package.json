@@ -56,6 +56,7 @@
 		"./pressable": "./src/components/pressable/index.ts",
 		"./progress": "./src/components/progress/index.ts",
 		"./provider": "./src/components/provider/index.ts",
+		"./questionnaire": "./src/components/questionnaire/index.ts",
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",

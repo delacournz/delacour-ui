@@ -328,8 +328,8 @@ function CalendarRoot(props: CalendarProps): ReactElement {
  *
  * **Three modes, one discriminant.** `mode="single"` (the default) holds one `CalendarDate` and a
  * tap on it clears it; `mode="multiple"` toggles days in and out of a sorted list; `mode="range"`
- * takes two taps, where a tap before the start moves the start and a range that would swallow a
- * disabled day restarts instead. `selected`/`onSelect` are typed for the mode named, and work
+ * takes two taps in either order, the earlier day becoming the start, and a range that would
+ * swallow a disabled day restarts instead. `selected`/`onSelect` are typed for the mode named, and work
  * controlled or uncontrolled.
  *
  * **Dates are `CalendarDate`s** — `{ year, month, day }`, with no time zone to shift them.

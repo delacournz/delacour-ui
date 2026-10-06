@@ -35,8 +35,9 @@ changes while paging — not even through a February that fits in four.
 
 ## Range
 
-`mode="range"` takes two taps and draws one band between them, rounded only at its ends. A tap
-before the start moves the start; a tap on a complete range begins a new one.
+`mode="range"` takes two taps and draws one band between them, rounded only at its ends. The second
+tap can come before the first — the earlier day is always the start. A tap on a complete range
+begins a new one.
 
 ```tsx
 const [stay, setStay] = useState<CalendarDateRange>({ start: null, end: null });

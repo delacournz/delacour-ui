@@ -9,16 +9,21 @@ export const meta: DemoMeta = {
 	title: "One open at a time",
 	caption:
 		"Rows inside a `Swipe.Group` register with it, however deeply they are nested. Opening one closes whichever was open.",
+	capture: { align: "stretch", flow: "swipe/one-open-at-a-time" },
 };
 
-const REMINDERS = ["Water the plants", "Call the bank", "Book the dentist"] as const;
+const REMINDERS = [
+	{ id: "plants", title: "Water the plants" },
+	{ id: "bank", title: "Call the bank" },
+	{ id: "dentist", title: "Book the dentist" },
+] as const;
 
 export function Demo(): ReactElement {
 	return (
 		<Swipe.Group>
 			<ListGroup>
-				{REMINDERS.map((title) => (
-					<Swipe key={title} testID={`swipe-${title}`}>
+				{REMINDERS.map(({ id, title }) => (
+					<Swipe key={id} testID={`swipe-${id}`}>
 						<Swipe.End>
 							<Swipe.Action color="warning" icon={IconBell2Snooze} label="Snooze" onPress={() => {}} />
 							<Swipe.Action color="destructive" icon={IconTrashCan} label="Delete" onPress={() => {}} />

@@ -24,6 +24,8 @@ export type SwipeActionProps = {
 	isKeptOpen?: boolean;
 	className?: string;
 	labelClassName?: string;
+	/** Forwarded to the tile's pressable, for an end-to-end test or a capture flow to find it. */
+	testID?: string;
 };
 
 /**
@@ -46,6 +48,7 @@ export function SwipeAction({
 	isKeptOpen = false,
 	className,
 	labelClassName,
+	testID,
 }: SwipeActionProps): ReactElement {
 	const swipe = useSwipePart("Swipe.Action");
 	const { side, index, count } = useSwipeTilePart("Swipe.Action");
@@ -77,6 +80,7 @@ export function SwipeAction({
 				className={slots.tilePressable()}
 				feedback="fade"
 				onPress={handlePress}
+				testID={testID}
 			>
 				<View className={slots.tileContent()}>
 					{icon ? (

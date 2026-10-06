@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on swipe/swipe-to-delete and has settled — four message rows, all shut. The
+  capture script navigates there before running this.
+steps:
+  - echo: Revealing Archive and Delete behind the first row, without a full swipe so nothing is removed
+  - swipe: { from: { id: swipe-invoice }, by: { x: -0.3 }, momentum: false }
+  - wait: 800
+  - echo: Tapping the open row closes it, so the clip loops with all four rows in place
+  - tap: { id: swipe-invoice }
+  - wait: 600

@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on swipe/imperative and has settled — one row, shut, reading "Open: none",
+  over three buttons. The capture script navigates there before running this.
+steps:
+  - echo: Opening each side from the ref
+  - tap: { id: swipe-open-start }
+  - wait: 700
+  - tap: { id: swipe-open-end }
+  - wait: 700
+  - echo: And closing it, so the clip loops without a jump cut
+  - tap: { id: swipe-close }
+  - wait: 600

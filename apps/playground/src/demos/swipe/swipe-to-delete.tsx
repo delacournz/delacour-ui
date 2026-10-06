@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Swipe to delete",
 	caption:
 		"Slide a row toward the start to reveal its actions. Keep going past them and the outermost one, Delete, fires on release and the row leaves the list.",
+	capture: { align: "stretch", flow: "swipe/swipe-to-delete" },
 };
 
 const MESSAGES = [

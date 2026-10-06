@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on swipe/both-sides and has settled — one row, shut, reading "Swipe either
+  way". The capture script navigates there before running this.
+steps:
+  - echo: Sliding the row toward the end edge to reveal Done and Flag
+  - swipe: { from: { id: swipe-both-sides }, by: { x: 0.3 }, momentum: false }
+  - wait: 700
+  - echo: Tapping the open row closes it
+  - tap: { id: swipe-both-sides }
+  - wait: 500
+  - echo: Sliding the other way to reveal Snooze and Delete
+  - swipe: { from: { id: swipe-both-sides }, by: { x: -0.3 }, momentum: false }
+  - wait: 700
+  - echo: And shut again, so the clip loops without a jump cut
+  - tap: { id: swipe-both-sides }
+  - wait: 500

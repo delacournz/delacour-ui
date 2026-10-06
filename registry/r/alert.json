@@ -76,14 +76,25 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/alert/alert-indicator.tsx",
-			"target": "alert/alert-indicator.tsx",
+			"path": "packages/react-native-ui/src/components/alert/alert-glyphs.ts",
+			"target": "alert/alert-glyphs.ts",
 			"namespace": "ui",
 			"rewrites": [
 				{
 					"from": "../../icons/central",
 					"to": "@registry/icons/central"
 				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/alert/alert-indicator.tsx",
+			"target": "alert/alert-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
 				{
 					"from": "../icon",
 					"to": "@registry/ui/icon"

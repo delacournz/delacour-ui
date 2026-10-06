@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on toast/stacking and has settled — the "Download five files" button, no
+  toast on screen. The capture script navigates there before running this.
+steps:
+  - echo: Five at once — three drawn, the newest in front, two queued behind them
+  - tap: { id: toast-stacking }
+  - await: { visible: { text: photo.jpg downloaded } }
+  - wait: 1200
+  - echo: Swiping the front one away, so a queued one comes forward
+  - swipe: { from: { text: photo.jpg downloaded }, by: { x: 0.4 }, duration: 200 }
+  - await: { hidden: { text: photo.jpg downloaded } }
+  - wait: 900
+  - echo: Letting every other one time out, so the clip loops with no toast on screen
+  - await: { hidden: { text: notes.md downloaded }, timeout: 15000 }
+  - await: { hidden: { text: logo.svg downloaded }, timeout: 15000 }
+  - await: { hidden: { text: budget.xlsx downloaded }, timeout: 15000 }
+  - await: { hidden: { text: brief.pdf downloaded }, timeout: 15000 }

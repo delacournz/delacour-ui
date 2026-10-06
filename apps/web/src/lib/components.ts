@@ -251,6 +251,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "carousel",
+		name: "Carousel",
+		group: "Layout",
+		blurb: "Swipeable slides on one fractional position \u2014 peek, loop, vertical, coverflow, dots and arrows.",
+	},
+	{
 		slug: "provider",
 		name: "DelacourProvider",
 		group: "Utilities",

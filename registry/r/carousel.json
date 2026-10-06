@@ -1,0 +1,203 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "carousel",
+	"type": "registry:ui",
+	"title": "Carousel",
+	"description": "Swipeable slides on one fractional position, with peek, loop, vertical and coverflow layouts, dots and arrows.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"button",
+		"cn",
+		"icon",
+		"icons",
+		"paging",
+		"slot",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/carousel/AGENTS.md",
+			"target": "carousel/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/carousel",
+					"to": "@registry/ui/carousel"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-caption.tsx",
+			"target": "carousel/carousel-caption.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-content.tsx",
+			"target": "carousel/carousel-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-controls.tsx",
+			"target": "carousel/carousel-controls.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-dots.tsx",
+			"target": "carousel/carousel-dots.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-item.tsx",
+			"target": "carousel/carousel-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-next.tsx",
+			"target": "carousel/carousel-next.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel-previous.tsx",
+			"target": "carousel/carousel-previous.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel.context.tsx",
+			"target": "carousel/carousel.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel.tsx",
+			"target": "carousel/carousel.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel.types.ts",
+			"target": "carousel/carousel.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/carousel.variants.ts",
+			"target": "carousel/carousel.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/index.ts",
+			"target": "carousel/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/carousel/use-carousel-autoplay.ts",
+			"target": "carousel/use-carousel-autoplay.ts",
+			"namespace": "ui"
+		}
+	]
+}

@@ -4,6 +4,8 @@ description: A centred card over a dimmed app that asks for a decision or a shor
 icon: AppWindow
 ---
 
+<Preview id="dialog/confirm" title={null} />
+
 ## Installation
 
 <ComponentInstall name="dialog" />
@@ -13,6 +15,8 @@ A dialog draws through the [overlay foundation](/docs/native/components/overlay)
 `BottomSheetProvider`. Without it the dialog draws inline and warns once in development.
 
 ## Usage
+
+<Preview id="dialog/confirm" />
 
 ```tsx title="app/index.tsx"
 import { Button } from "@/components/ui/button";
@@ -79,6 +83,8 @@ content is long or scrolls.
 touch but does nothing, Android back is ignored, the iOS escape gesture does nothing, and the card
 announces itself as an alert dialog. Its own actions still close it.
 
+<Preview id="dialog/alert-dialog" />
+
 ```tsx
 <Dialog isDismissible={false}>
   <Dialog.Trigger asChild>
@@ -104,6 +110,8 @@ Put a field in `Dialog.Body`. When it takes focus the card lifts just far enough
 edge 16pt above the keyboard — never so far that its top slides under the status bar — and settles
 back when the keyboard closes. `variant="panel"` sets the footer on a muted band that runs to the
 card's edges.
+
+<Preview id="dialog/form" />
 
 ```tsx
 const [isOpen, setIsOpen] = useState(false);
@@ -140,6 +148,8 @@ const [name, setName] = useState("Harbour Bridge");
 the screen gutter. The card is always full width up to its cap, so on a narrow phone the sizes
 look alike and only a wider screen tells them apart. An `sm` footer stacks its actions full width,
 in written order — write the primary action last and it sits last either way.
+
+<Preview id="dialog/sizes" />
 
 ```tsx
 <Dialog.Content size="sm">…</Dialog.Content>
@@ -179,6 +189,8 @@ A dialog draws in the overlay foundation's `modal` band, above every bottom shee
 navigator's header, so a dialog opened from inside a sheet appears over it, and Android back closes
 the dialog first. The reverse does not hold: a sheet opened from a dialog draws under it, so do not
 open a sheet from a dialog.
+
+<Preview id="dialog/over-sheet" />
 
 ## Accessibility
 

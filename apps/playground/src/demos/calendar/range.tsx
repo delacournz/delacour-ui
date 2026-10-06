@@ -13,6 +13,7 @@ export const meta: DemoMeta = {
 	title: "Range",
 	caption:
 		"Two taps make a range, drawn as one band rounded only at its ends. The second tap can come before the first; a tap on a complete range begins a new one.",
+	capture: { flow: "calendar/range", align: "stretch" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

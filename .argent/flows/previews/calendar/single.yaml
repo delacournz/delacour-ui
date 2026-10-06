@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on calendar/single and has settled — October 2026, the 14th
+  selected. The capture script navigates there before running this.
+steps:
+  - echo: Picking another day
+  - tap: { id: calendar-single-day-2026-10-21 }
+  - wait: 700
+  - echo: Jumping to November through the months view
+  - tap: { id: calendar-single-caption }
+  - wait: 600
+  - tap: { id: calendar-single-month-11 }
+  - wait: 700
+  - echo: Paging back to October and restoring the 14th, so the clip loops
+  - tap: { id: calendar-single-prev }
+  - wait: 700
+  - tap: { id: calendar-single-day-2026-10-14 }
+  - wait: 300

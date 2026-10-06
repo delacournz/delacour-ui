@@ -215,6 +215,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"A brief message from anywhere — even outside React — stacked at the edge of the screen, swiped away or gone on its own.",
 	},
 	{
+		slug: "dialog",
+		name: "Dialog",
+		group: "Overlays",
+		blurb: "A centred card over a dimmed app that asks for a decision or a short input — confirm, alert dialog, form.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on dialog/confirm and has settled — the Delete project button with the dialog
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the confirmation
+  - tap: { id: dialog-confirm-open }
+  - await: { visible: { text: Delete project? } }
+  - wait: 1200
+  - echo: Cancelling from the footer
+  - tap: { id: dialog-confirm-cancel }
+  - await: { hidden: { text: Delete project? } }
+  - wait: 500
+  - echo: Opening it again and closing it from the corner
+  - tap: { id: dialog-confirm-open }
+  - await: { visible: { id: dialog-confirm-close } }
+  - wait: 900
+  - tap: { id: dialog-confirm-close }
+  - await: { hidden: { text: Delete project? } }

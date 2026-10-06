@@ -173,6 +173,12 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_dialog_alert_dialog from "./dialog/alert-dialog";
+import * as demo_dialog_confirm from "./dialog/confirm";
+import * as demo_dialog_controlled from "./dialog/controlled";
+import * as demo_dialog_form from "./dialog/form";
+import * as demo_dialog_over_sheet from "./dialog/over-sheet";
+import * as demo_dialog_sizes from "./dialog/sizes";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -561,6 +567,12 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"dialog/alert-dialog": demo_dialog_alert_dialog,
+	"dialog/confirm": demo_dialog_confirm,
+	"dialog/controlled": demo_dialog_controlled,
+	"dialog/form": demo_dialog_form,
+	"dialog/over-sheet": demo_dialog_over_sheet,
+	"dialog/sizes": demo_dialog_sizes,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

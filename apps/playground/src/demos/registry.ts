@@ -252,6 +252,14 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_message_scroller_basic from "./message-scroller/basic";
+import * as demo_message_scroller_date_separators from "./message-scroller/date-separators";
+import * as demo_message_scroller_empty from "./message-scroller/empty";
+import * as demo_message_scroller_jump_to_latest from "./message-scroller/jump-to-latest";
+import * as demo_message_scroller_keyboard from "./message-scroller/keyboard";
+import * as demo_message_scroller_load_older from "./message-scroller/load-older";
+import * as demo_message_scroller_stick_to_bottom from "./message-scroller/stick-to-bottom";
+import * as demo_message_scroller_unread_divider from "./message-scroller/unread-divider";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -618,6 +626,14 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"message-scroller/basic": demo_message_scroller_basic,
+	"message-scroller/date-separators": demo_message_scroller_date_separators,
+	"message-scroller/empty": demo_message_scroller_empty,
+	"message-scroller/jump-to-latest": demo_message_scroller_jump_to_latest,
+	"message-scroller/keyboard": demo_message_scroller_keyboard,
+	"message-scroller/load-older": demo_message_scroller_load_older,
+	"message-scroller/stick-to-bottom": demo_message_scroller_stick_to_bottom,
+	"message-scroller/unread-divider": demo_message_scroller_unread_divider,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

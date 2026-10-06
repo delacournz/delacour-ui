@@ -3174,6 +3174,173 @@ export const install = {
 			},
 		],
 	},
+	"message-scroller": {
+		name: "message-scroller",
+		title: "MessageScroller",
+		description: "A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard.",
+		importPath: "@delacour/react-native-ui/message-scroller",
+		exportName: "MessageScroller",
+		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 49,
+		groups: [
+			{
+				name: "message-scroller",
+				title: "Message Scroller",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/message-scroller/AGENTS.md", target: "src/components/ui/message-scroller/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/index.ts", target: "src/components/ui/message-scroller/index.ts" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller-date-separator.tsx", target: "src/components/ui/message-scroller/message-scroller-date-separator.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller-jump-button.tsx", target: "src/components/ui/message-scroller/message-scroller-jump-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller-list.tsx", target: "src/components/ui/message-scroller/message-scroller-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller-loading-older.tsx", target: "src/components/ui/message-scroller/message-scroller-loading-older.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller-unread-divider.tsx", target: "src/components/ui/message-scroller/message-scroller-unread-divider.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller.context.tsx", target: "src/components/ui/message-scroller/message-scroller.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller.tsx", target: "src/components/ui/message-scroller/message-scroller.tsx" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller.types.ts", target: "src/components/ui/message-scroller/message-scroller.types.ts" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller.utils.ts", target: "src/components/ui/message-scroller/message-scroller.utils.ts" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/message-scroller.variants.ts", target: "src/components/ui/message-scroller/message-scroller.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/message-scroller/use-message-scroller-state.ts", target: "src/components/ui/message-scroller/use-message-scroller-state.ts" },
+				],
+			},
+			{
+				name: "icon",
+				title: "Icon",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "spinner",
+				title: "Spinner",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/spinner/AGENTS.md", target: "src/components/ui/spinner/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/spinner/index.ts", target: "src/components/ui/spinner/index.ts" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-arc.tsx", target: "src/components/ui/spinner/spinner-arc.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner-content.tsx", target: "src/components/ui/spinner/spinner-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.context.tsx", target: "src/components/ui/spinner/spinner.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.tsx", target: "src/components/ui/spinner/spinner.tsx" },
+					{ source: "packages/react-native-ui/src/components/spinner/spinner.variants.ts", target: "src/components/ui/spinner/spinner.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "icons",
+				title: "Icons",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+		],
+	},
 	"alert": {
 		name: "alert",
 		title: "Alert",

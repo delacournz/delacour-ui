@@ -32,6 +32,7 @@
 		"accordion",
 		"collapsible",
 		"---Media---",
+		"message-scroller",
 		"---Feedback---",
 		"alert",
 		"meter",

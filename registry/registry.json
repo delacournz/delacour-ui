@@ -844,6 +844,51 @@
 			]
 		},
 		{
+			"name": "message-scroller",
+			"type": "registry:ui",
+			"title": "Message Scroller",
+			"description": "A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"spinner",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"@legendapp/list",
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-worklets",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/message-scroller/AGENTS.md",
+				"ui/message-scroller/index.ts",
+				"ui/message-scroller/message-scroller-date-separator.tsx",
+				"ui/message-scroller/message-scroller-jump-button.tsx",
+				"ui/message-scroller/message-scroller-list.tsx",
+				"ui/message-scroller/message-scroller-loading-older.tsx",
+				"ui/message-scroller/message-scroller-unread-divider.tsx",
+				"ui/message-scroller/message-scroller.context.tsx",
+				"ui/message-scroller/message-scroller.tsx",
+				"ui/message-scroller/message-scroller.types.ts",
+				"ui/message-scroller/message-scroller.utils.ts",
+				"ui/message-scroller/message-scroller.variants.ts",
+				"ui/message-scroller/use-message-scroller-state.ts"
+			]
+		},
+		{
 			"name": "meter",
 			"type": "registry:ui",
 			"title": "Meter",

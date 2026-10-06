@@ -1,0 +1,6 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on message/typing and has settled — Aria's typing bubble, dots running. The
+  capture script navigates there before running this.
+steps:
+  - echo: Nothing to press — the wait makes the capture a recording of the dots
+  - wait: 2400

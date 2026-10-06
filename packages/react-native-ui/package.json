@@ -41,6 +41,7 @@
 		"./button": "./src/components/button/index.ts",
 		"./calendar": "./src/components/calendar/index.ts",
 		"./card": "./src/components/card/index.ts",
+		"./carousel": "./src/components/carousel/index.ts",
 		"./chart": "./src/components/chart/index.ts",
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./chip": "./src/components/chip/index.ts",
@@ -88,6 +89,7 @@
 		"./lib/keyboard-animation": "./src/lib/keyboard-animation.ts",
 		"./lib/merge-props": "./src/lib/merge-props.ts",
 		"./lib/navigation-theme": "./src/lib/navigation-theme.ts",
+		"./lib/paging": "./src/lib/paging.ts",
 		"./lib/slot": "./src/lib/slot.tsx",
 		"./lib/tv": "./src/lib/tv.ts",
 		"./icons/central": "./src/icons/central.ts"

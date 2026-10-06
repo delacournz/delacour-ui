@@ -325,6 +325,12 @@ import * as demo_surface_padding from "./surface/padding";
 import * as demo_surface_security_card from "./surface/security-card";
 import * as demo_surface_transparent from "./surface/transparent";
 import * as demo_surface_variants from "./surface/variants";
+import * as demo_swipe_both_sides from "./swipe/both-sides";
+import * as demo_swipe_imperative from "./swipe/imperative";
+import * as demo_swipe_kept_open from "./swipe/kept-open";
+import * as demo_swipe_no_full_swipe from "./swipe/no-full-swipe";
+import * as demo_swipe_one_open_at_a_time from "./swipe/one-open-at-a-time";
+import * as demo_swipe_swipe_to_delete from "./swipe/swipe-to-delete";
 import * as demo_switch_colours from "./switch/colours";
 import * as demo_switch_disabled_and_invalid from "./switch/disabled-and-invalid";
 import * as demo_switch_sizes from "./switch/sizes";
@@ -698,6 +704,12 @@ export const DEMOS = {
 	"surface/security-card": demo_surface_security_card,
 	"surface/transparent": demo_surface_transparent,
 	"surface/variants": demo_surface_variants,
+	"swipe/both-sides": demo_swipe_both_sides,
+	"swipe/imperative": demo_swipe_imperative,
+	"swipe/kept-open": demo_swipe_kept_open,
+	"swipe/no-full-swipe": demo_swipe_no_full_swipe,
+	"swipe/one-open-at-a-time": demo_swipe_one_open_at_a_time,
+	"swipe/swipe-to-delete": demo_swipe_swipe_to_delete,
 	"switch/colours": demo_switch_colours,
 	"switch/disabled-and-invalid": demo_switch_disabled_and_invalid,
 	"switch/sizes": demo_switch_sizes,

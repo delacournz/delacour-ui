@@ -163,7 +163,18 @@ file stable: its functions are the contract both consume.
 
 ## Notes
 
-- **Simulator check not yet run on this branch** — record the result here when it
-  is: one slide per hard flick, peek centring, loop wrapping both ways, release
-  mid-drag then scroll the page, rubber band, inside `Screen.ScrollArea`,
-  `Pressable` in a slide, autoplay stop, VoiceOver adjust, Release build.
+- **A demo has to stretch.** The root is `w-full`; inside a shrink-wrapped parent
+  that resolves to zero, the viewport measures 0 and no slide shows. Every demo
+  sets `align: "stretch"`, as every container demo does.
+- **Simulator check, 2026-10-05** (iPhone 17 sim, dev client): track, peek
+  centring, coverflow and vertical draw correctly; a ~290 pt fling moves exactly
+  one slide; the arrows step and `Next` disables at the non-looping end, where
+  further swipes rubber-band back; loop wraps both ways with no jump; autoplay
+  advances and stops for good after a swipe; a controlled `index` jumps from an
+  outside button and a swipe reports back through `onIndexChange`.
+- **Not yet verified on a device**: release mid-drag then scroll the page; inside
+  `Screen.ScrollArea`; a `Pressable` in a slide; VoiceOver's adjust gesture and
+  the "n of m" announcement; autoplay off under Reduce Motion / VoiceOver; a
+  Release build. Preview media is not captured either — the capture script needs
+  the argent CLI, which is not installed — so no demo is marked `capture` and the
+  docs page carries no `<Preview>`. Add both when previews can run.

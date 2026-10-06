@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Track",
+	align: "stretch",
 	caption:
 		"One slide per screen, swiped sideways. The dots are a reading of the same position the slides are, so the pill travels with the finger.",
 };

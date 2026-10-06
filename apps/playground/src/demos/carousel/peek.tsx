@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Peek",
+	align: "stretch",
 	caption: "An itemSize smaller than the viewport centres the active slide and lets its neighbours show either side.",
 };
 

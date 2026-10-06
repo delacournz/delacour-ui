@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Vertical",
+	align: "stretch",
 	caption:
 		'orientation="vertical" pages up and down, like a stack of stories. A vertical viewport takes its height from a class.',
 };

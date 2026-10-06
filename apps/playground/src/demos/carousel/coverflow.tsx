@@ -5,6 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Coverflow",
+	align: "stretch",
 	caption:
 		"The coverflow variant turns, shrinks and fades each slide by its distance from the centre. Under reduce motion it draws as a plain track.",
 };

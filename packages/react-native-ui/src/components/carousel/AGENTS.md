@@ -175,6 +175,8 @@ file stable: its functions are the contract both consume.
 - **Not yet verified on a device**: release mid-drag then scroll the page; inside
   `Screen.ScrollArea`; a `Pressable` in a slide; VoiceOver's adjust gesture and
   the "n of m" announcement; autoplay off under Reduce Motion / VoiceOver; a
-  Release build. Preview media is not captured either — the capture script needs
-  the argent CLI, which is not installed — so no demo is marked `capture` and the
-  docs page carries no `<Preview>`. Add both when previews can run.
+  Release build.
+- **Previews** (2026-10-06, dev client, iPhone 17 Pro): `hero-track`, `coverflow` and
+  `controls` are clips whose flows return to the first slide; `peek` and
+  `vertical` are stills. The photos load from the network, so check every poster
+  after a capture — the first `peek` poster caught its active slide still empty.

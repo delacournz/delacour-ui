@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on dialog/sizes and has settled — four size buttons with every dialog closed.
+  The capture script navigates there before running this.
+steps:
+  - echo: The small card, with its stacked footer
+  - tap: { id: dialog-size-sm }
+  - await: { visible: { id: dialog-size-sm-done } }
+  - wait: 1000
+  - tap: { id: dialog-size-sm-done }
+  - await: { hidden: { id: dialog-size-sm-done } }
+  - wait: 400
+  - echo: The full-width card
+  - tap: { id: dialog-size-full }
+  - await: { visible: { id: dialog-size-full-done } }
+  - wait: 1000
+  - tap: { id: dialog-size-full-done }
+  - await: { hidden: { id: dialog-size-full-done } }

@@ -43,6 +43,7 @@
 		"---Overlays---",
 		"bottom-sheet",
 		"toast",
+		"dialog",
 		"---Navigation---",
 		"steps",
 		"tabs",

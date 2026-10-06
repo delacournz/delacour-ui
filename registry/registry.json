@@ -551,6 +551,52 @@
 			]
 		},
 		{
+			"name": "dialog",
+			"type": "registry:ui",
+			"title": "Dialog",
+			"description": "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"cn",
+				"compose-refs",
+				"icon",
+				"icons",
+				"overlay",
+				"pressable",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-teleport"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/dialog/AGENTS.md",
+				"ui/dialog/dialog-body.tsx",
+				"ui/dialog/dialog-close.tsx",
+				"ui/dialog/dialog-content.tsx",
+				"ui/dialog/dialog-description.tsx",
+				"ui/dialog/dialog-footer.tsx",
+				"ui/dialog/dialog-header.tsx",
+				"ui/dialog/dialog-title.tsx",
+				"ui/dialog/dialog-trigger.tsx",
+				"ui/dialog/dialog.context.tsx",
+				"ui/dialog/dialog.tsx",
+				"ui/dialog/dialog.variants.ts",
+				"ui/dialog/index.ts"
+			]
+		},
+		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",

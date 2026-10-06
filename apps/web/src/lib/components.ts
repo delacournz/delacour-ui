@@ -77,6 +77,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		group: "Forms",
 		blurb: "An interactive pill — a filter that toggles, a tag, or a token with a remove control.",
 	},
+	{
+		slug: "combobox",
+		name: "Combobox",
+		group: "Forms",
+		blurb: "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet.",
+	},
 	{ slug: "radio", name: "Radio", group: "Forms", blurb: "One choice from a set, with a trailing indicator row." },
 	{
 		slug: "switch",

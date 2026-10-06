@@ -1,0 +1,340 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "combobox",
+	"type": "registry:ui",
+	"title": "Combobox",
+	"description": "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"bottom-sheet",
+		"button",
+		"chip",
+		"cn",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"select",
+		"slot",
+		"spinner",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/combobox/AGENTS.md",
+			"target": "combobox/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/combobox",
+					"to": "@registry/ui/combobox"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-chip-row.tsx",
+			"target": "combobox/combobox-chip-row.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../chip",
+					"to": "@registry/ui/chip"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-create-row.tsx",
+			"target": "combobox/combobox-create-row.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-empty.tsx",
+			"target": "combobox/combobox-empty.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-group.tsx",
+			"target": "combobox/combobox-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-item.tsx",
+			"target": "combobox/combobox-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon/icon",
+					"to": "@registry/ui/icon/icon"
+				},
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox-trigger.tsx",
+			"target": "combobox/combobox-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.collect.ts",
+			"target": "combobox/combobox.collect.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.context.tsx",
+			"target": "combobox/combobox.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.filter.ts",
+			"target": "combobox/combobox.filter.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.tsx",
+			"target": "combobox/combobox.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../select/select-option-row",
+					"to": "@registry/ui/select/select-option-row"
+				},
+				{
+					"from": "../select/select.collect",
+					"to": "@registry/ui/select/select.collect"
+				},
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.types.ts",
+			"target": "combobox/combobox.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/combobox.variants.ts",
+			"target": "combobox/combobox.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../select/select.types",
+					"to": "@registry/ui/select/select.types"
+				},
+				{
+					"from": "../select/select.variants",
+					"to": "@registry/ui/select/select.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/combobox/index.ts",
+			"target": "combobox/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

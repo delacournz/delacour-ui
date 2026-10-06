@@ -39,6 +39,7 @@ import {
 	IconTag,
 	IconToggle,
 	IconTrending4,
+	IconUnblur,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
@@ -86,6 +87,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	separator: IconDivider,
 	skeleton: IconPlaceholder,
 	screen: IconLayoutTopBottom,
+	"scroll-fade": IconUnblur,
 	slider: IconSettingsSliderHor,
 	spinner: IconArrowsRepeatCircle,
 	steps: IconNumberedList,

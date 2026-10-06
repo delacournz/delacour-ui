@@ -239,6 +239,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"scroll-fade": {
+		title: "ScrollFade",
+		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
+		categories: ["layout"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

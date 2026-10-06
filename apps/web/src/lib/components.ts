@@ -214,6 +214,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A screen's frame: pinned chrome, a content region, and whatever scrolls between them.",
 	},
 	{
+		slug: "scroll-fade",
+		name: "ScrollFade",
+		group: "Layout",
+		blurb: "A gradient at a scrollable's edges while content runs past them, on either axis.",
+	},
+	{
 		slug: "surface",
 		name: "Surface",
 		group: "Layout",

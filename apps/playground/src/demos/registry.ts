@@ -290,6 +290,12 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_scroll_fade_fade_distance from "./scroll-fade/fade-distance";
+import * as demo_scroll_fade_horizontal_cards from "./scroll-fade/horizontal-cards";
+import * as demo_scroll_fade_on_a_surface from "./scroll-fade/on-a-surface";
+import * as demo_scroll_fade_single_edge from "./scroll-fade/single-edge";
+import * as demo_scroll_fade_through_a_provider from "./scroll-fade/through-a-provider";
+import * as demo_scroll_fade_vertical_list from "./scroll-fade/vertical-list";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
@@ -656,6 +662,12 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"scroll-fade/fade-distance": demo_scroll_fade_fade_distance,
+	"scroll-fade/horizontal-cards": demo_scroll_fade_horizontal_cards,
+	"scroll-fade/on-a-surface": demo_scroll_fade_on_a_surface,
+	"scroll-fade/single-edge": demo_scroll_fade_single_edge,
+	"scroll-fade/through-a-provider": demo_scroll_fade_through_a_provider,
+	"scroll-fade/vertical-list": demo_scroll_fade_vertical_list,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,

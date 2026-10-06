@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-fade/single-edge and has settled — the terms scrolled to the top
+  above the Accept button, only the bottom edge faded. The capture script navigates there before running this.
+steps:
+  - wait: 400
+  - echo: Reading to the end of the terms — the one fade clears, and no top fade appears
+  - swipe: { from: { id: scroll-fade-single-edge }, by: { y: -0.2 }, momentum: false, duration: 900 }
+  - wait: 800
+  - echo: And back to the top, so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-fade-single-edge }, by: { y: 0.2 }, momentum: false, duration: 900 }
+  - wait: 400

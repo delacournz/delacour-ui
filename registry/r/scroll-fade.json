@@ -1,0 +1,99 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-fade",
+	"type": "registry:ui",
+	"title": "ScrollFade",
+	"description": "A gradient at a scrollable's edges while content runs past them, on any axis.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"color",
+		"scroll-edges",
+		"scroll-maths",
+		"tv",
+		"use-scroll-source",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"expo-linear-gradient",
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/AGENTS.md",
+			"target": "scroll-fade/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/scroll-fade",
+					"to": "@registry/ui/scroll-fade"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/index.ts",
+			"target": "scroll-fade/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/scroll-fade-edge.tsx",
+			"target": "scroll-fade/scroll-fade-edge.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				},
+				{
+					"from": "../../lib/scroll-edges",
+					"to": "@registry/lib/scroll-edges"
+				},
+				{
+					"from": "../../lib/scroll-maths",
+					"to": "@registry/lib/scroll-maths"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/scroll-fade.tsx",
+			"target": "scroll-fade/scroll-fade.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../../lib/scroll-edges",
+					"to": "@registry/lib/scroll-edges"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-fade/scroll-fade.variants.ts",
+			"target": "scroll-fade/scroll-fade.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/scroll-edges",
+					"to": "@registry/lib/scroll-edges"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

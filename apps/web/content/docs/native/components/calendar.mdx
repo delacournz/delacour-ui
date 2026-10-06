@@ -4,6 +4,8 @@ description: A month grid for picking a day, several days or a range — with no
 icon: Calendar
 ---
 
+<Preview id="calendar/single" title={null} />
+
 ## Installation
 
 <ComponentInstall name="calendar" />
@@ -33,11 +35,15 @@ Swipe the grid sideways or tap the arrows to page. Tap the caption to jump: once
 the year, twice for a list of years. The grid always draws six weeks, so the calendar's height never
 changes while paging — not even through a February that fits in four.
 
+<Preview id="calendar/single" />
+
 ## Range
 
 `mode="range"` takes two taps and draws one band between them, rounded only at its ends. The second
 tap can come before the first — the earlier day is always the start. A tap on a complete range
 begins a new one.
+
+<Preview id="calendar/range" />
 
 ```tsx
 const [stay, setStay] = useState<CalendarDateRange>({ start: null, end: null });
@@ -52,6 +58,8 @@ const [stay, setStay] = useState<CalendarDateRange>({ start: null, end: null });
 
 `mode="multiple"` toggles days in and out. The value is sorted earliest first, with no duplicates.
 
+<Preview id="calendar/multiple" />
+
 ```tsx
 const [days, setDays] = useState<readonly CalendarDate[]>([]);
 
@@ -62,6 +70,8 @@ const [days, setDays] = useState<readonly CalendarDate[]>([]);
 
 `minDate` and `maxDate` are inclusive. Days outside them cannot be picked, and the arrows stop at
 their months. `disabled` takes further matchers; a day any of them matches is disabled.
+
+<Preview id="calendar/bounds-and-disabled" />
 
 ```tsx
 <Calendar
@@ -107,6 +117,8 @@ views. `"label"` makes it plain text, for a calendar that only pages.
 
 `size` sets the cell height on the input scale — `sm` is 36, `md` 44, `lg` 52 points. `variant`
 picks the selection's fill: `primary` is solid, `secondary` soft.
+
+<Preview id="calendar/sizes-variants" />
 
 ```tsx
 <Calendar size="sm" variant="secondary" />

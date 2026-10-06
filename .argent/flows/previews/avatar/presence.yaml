@@ -1,6 +1,6 @@
 executionPrerequisite: >-
   The chrome-free preview route is open on avatar/presence and has settled —
-  Kate Austen with a green online dot. The capture script navigates there
+  Aria Whitlock with a green online dot. The capture script navigates there
   before running this.
 steps:
   - echo: Cycling through all four statuses, which lands back on online

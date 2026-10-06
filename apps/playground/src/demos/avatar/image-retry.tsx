@@ -12,8 +12,8 @@ export const meta: DemoMeta = {
 		"A failure is remembered for that source only. Swap in a working URL and the avatar tries again on its own; switch back to the dead one and the initials return without it being requested again.",
 };
 
-const WORKING = "https://i.pravatar.cc/160?img=32";
-const BROKEN = "https://invalid.example/dana.png";
+const WORKING = "https://i.pravatar.cc/160?img=26";
+const BROKEN = "https://invalid.example/lena.png";
 
 export function Demo(): ReactElement {
 	const [uri, setUri] = useState(BROKEN);
@@ -24,7 +24,7 @@ export function Demo(): ReactElement {
 		<View className="items-center gap-4">
 			<Avatar
 				imageProps={{ onError: () => setErrors((count) => count + 1) }}
-				name="Dana Kim"
+				name="Lena Varga"
 				size="xl"
 				source={{ uri }}
 				testID="avatar-retry"

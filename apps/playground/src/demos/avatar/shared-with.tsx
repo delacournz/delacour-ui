@@ -14,17 +14,17 @@ export const meta: DemoMeta = {
 };
 
 const PEOPLE = [
-	{ id: "kate", name: "Kate Austen", role: "Owner", photo: "https://i.pravatar.cc/160?img=47" },
-	{ id: "oliver", name: "Oliver Lee", role: "Editor", photo: "https://i.pravatar.cc/160?img=12" },
-	{ id: "chen", name: "Chen Wei", role: "Editor" },
-	{ id: "dana", name: "Dana Kim", role: "Viewer", photo: "https://i.pravatar.cc/160?img=32" },
-	{ id: "ana", name: "Ana Silva", role: "Viewer" },
+	{ id: "aria", name: "Aria Whitlock", role: "Owner", photo: "https://i.pravatar.cc/160?img=16" },
+	{ id: "rawiri", name: "Rawiri Kemp", role: "Editor", photo: "https://i.pravatar.cc/160?img=13" },
+	{ id: "kenji", name: "Kenji Moriyama", role: "Editor" },
+	{ id: "lena", name: "Lena Varga", role: "Viewer", photo: "https://i.pravatar.cc/160?img=26" },
+	{ id: "priya", name: "Priya Natarajan", role: "Viewer" },
 ] as const;
 
 type PersonId = (typeof PEOPLE)[number]["id"];
 
 export function Demo(): ReactElement {
-	const [shared, setShared] = useState<ReadonlySet<PersonId>>(new Set(["kate", "oliver", "chen", "dana"]));
+	const [shared, setShared] = useState<ReadonlySet<PersonId>>(new Set(["aria", "rawiri", "kenji", "lena"]));
 
 	const toggle = (id: PersonId) =>
 		setShared((current) => {

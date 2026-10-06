@@ -36,12 +36,12 @@ export function Demo(): ReactElement {
 	return (
 		<View className="items-center gap-3">
 			<Avatar
-				accessibilityLabel={`Kate Austen, ${STATUS_LABEL[status]}`}
+				accessibilityLabel={`Aria Whitlock, ${STATUS_LABEL[status]}`}
 				haptic="selection"
-				name="Kate Austen"
+				name="Aria Whitlock"
 				onPress={next}
 				size="xl"
-				source={{ uri: "https://i.pravatar.cc/160?img=47" }}
+				source={{ uri: "https://i.pravatar.cc/160?img=16" }}
 				testID="avatar-presence"
 			>
 				<Avatar.Badge color={STATUS_COLOR[status]} placement="bottom-right" />

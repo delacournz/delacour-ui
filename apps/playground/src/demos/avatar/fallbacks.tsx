@@ -14,11 +14,11 @@ export const meta: DemoMeta = {
 export function Demo(): ReactElement {
 	return (
 		<View className="flex-row flex-wrap items-center gap-3">
-			<Avatar name="Kate Austen" source={{ uri: "https://i.pravatar.cc/160?img=47" }} testID="avatar-photo" />
-			<Avatar name="Oliver Lee" testID="avatar-initials" />
-			<Avatar fallback="DX" name="Design Crew" testID="avatar-fallback" />
+			<Avatar name="Aria Whitlock" source={{ uri: "https://i.pravatar.cc/160?img=16" }} testID="avatar-photo" />
+			<Avatar name="Rawiri Kemp" testID="avatar-initials" />
+			<Avatar fallback="HQ" name="Harbour Studio" testID="avatar-fallback" />
 			<Avatar testID="avatar-glyph" />
-			<Avatar name="Mary Jane Watson" source={{ uri: "https://invalid.example/avatar.png" }} testID="avatar-broken" />
+			<Avatar name="Anahera Rose Tui" source={{ uri: "https://invalid.example/avatar.png" }} testID="avatar-broken" />
 		</View>
 	);
 }

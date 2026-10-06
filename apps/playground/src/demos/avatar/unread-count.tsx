@@ -19,10 +19,10 @@ export function Demo(): ReactElement {
 	return (
 		<View className="items-center gap-4">
 			<Avatar
-				accessibilityLabel={unread > 0 ? `Oliver Lee, ${unread} unread` : "Oliver Lee"}
-				name="Oliver Lee"
+				accessibilityLabel={unread > 0 ? `Rawiri Kemp, ${unread} unread` : "Rawiri Kemp"}
+				name="Rawiri Kemp"
 				size="lg"
-				source={{ uri: "https://i.pravatar.cc/160?img=12" }}
+				source={{ uri: "https://i.pravatar.cc/160?img=13" }}
 				testID="avatar-unread"
 			>
 				{unread > 0 ? (

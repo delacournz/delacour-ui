@@ -12,10 +12,10 @@ export const meta: DemoMeta = {
 
 /** One person per size, so the photo and the initials are both seen at every step. */
 const PEOPLE: Record<(typeof AVATAR_SIZES)[number], { name: string; photo?: string }> = {
-	sm: { name: "Ana Silva" },
-	md: { name: "Ben Okafor", photo: "https://i.pravatar.cc/160?img=12" },
-	lg: { name: "Chen Wei" },
-	xl: { name: "Dana Kim", photo: "https://i.pravatar.cc/160?img=32" },
+	sm: { name: "Priya Natarajan" },
+	md: { name: "Tomasi Fifita", photo: "https://i.pravatar.cc/160?img=51" },
+	lg: { name: "Kenji Moriyama" },
+	xl: { name: "Lena Varga", photo: "https://i.pravatar.cc/160?img=26" },
 };
 
 export function Demo(): ReactElement {

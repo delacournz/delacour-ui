@@ -14,13 +14,13 @@ export const meta: DemoMeta = {
 };
 
 const TEAM = [
-	{ name: "Kate Austen", photo: "https://i.pravatar.cc/160?img=47" },
-	{ name: "Oliver Lee", photo: "https://i.pravatar.cc/160?img=12" },
-	{ name: "Chen Wei" },
-	{ name: "Dana Kim", photo: "https://i.pravatar.cc/160?img=32" },
-	{ name: "Ben Okafor", photo: "https://i.pravatar.cc/160?img=15" },
-	{ name: "Ana Silva" },
-	{ name: "Sam Rivera", photo: "https://i.pravatar.cc/160?img=5" },
+	{ name: "Aria Whitlock", photo: "https://i.pravatar.cc/160?img=16" },
+	{ name: "Rawiri Kemp", photo: "https://i.pravatar.cc/160?img=13" },
+	{ name: "Kenji Moriyama" },
+	{ name: "Lena Varga", photo: "https://i.pravatar.cc/160?img=26" },
+	{ name: "Tomasi Fifita", photo: "https://i.pravatar.cc/160?img=51" },
+	{ name: "Priya Natarajan" },
+	{ name: "Isla Brennan", photo: "https://i.pravatar.cc/160?img=36" },
 ] as const;
 
 export function Demo(): ReactElement {

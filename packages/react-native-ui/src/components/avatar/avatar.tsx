@@ -165,7 +165,7 @@ function AvatarRoot({
  * is tried again. With no `fallback` and no `name` the fallback is a person glyph.
  *
  * `name` is what a screen reader reads, and its initials — first and last word,
- * `Mary Jane Watson` → `MW` — are the default fallback. `fallback` overrides the
+ * `Anahera Rose Tui` → `AT` — are the default fallback. `fallback` overrides the
  * drawn text only.
  *
  * `variant` and `color` paint the fallback surface, on the same six colours a
@@ -180,10 +180,10 @@ function AvatarRoot({
  * corner, outside the clipped circle so it is never cut in half.
  *
  * @example
- * <Avatar name="Kate Austen" source={{ uri: user.avatarUrl }} />
+ * <Avatar name="Aria Whitlock" source={{ uri: user.avatarUrl }} />
  *
  * @example
- * <Avatar accessibilityLabel="Kate Austen, online" name="Kate Austen">
+ * <Avatar accessibilityLabel="Aria Whitlock, online" name="Aria Whitlock">
  *   <Avatar.Badge placement="bottom-right" />
  * </Avatar>
  *

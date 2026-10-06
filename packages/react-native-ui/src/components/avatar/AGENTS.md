@@ -62,8 +62,11 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   `border-border` inside the box, so nothing moves, and the edge goes while a
   photo is mounted (`hasImage`), since a grey line around a face reads as a
   frame. The coloured fallbacks have fill enough without one.
-- **A size is a fixed edge, unlike a badge.** `sm`/`md`/`lg`/`xl` are
-  32/40/48/64 points. Faces line up against each other and against list rows, and
+- **A size is a fixed edge, unlike a badge.** `sm`/`md`/`lg`/`xl`/`2xl` are
+  32/40/48/64/96 points. `2xl` is the face a profile leads with — what
+  [`PageHeader`](../page-header/AGENTS.md) draws by default — and it is a step on
+  the scale rather than a `size-24` override so `AVATAR_SIZE_POINTS` never lies
+  about the edge the group maths and initials sizing read. Faces line up against each other and against list rows, and
   a circle that grew with OS font scaling would break the stack; the initials
   therefore set `allowFontScaling={false}` and are sized to fit the smallest
   step. `AVATAR_SIZE_POINTS` restates the scale as numbers because the group's

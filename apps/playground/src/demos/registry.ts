@@ -260,6 +260,13 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_page_header_aligned_start from "./page-header/aligned-start";
+import * as demo_page_header_card_in_list from "./page-header/card-in-list";
+import * as demo_page_header_gradient_cover from "./page-header/gradient-cover";
+import * as demo_page_header_in_a_screen from "./page-header/in-a-screen";
+import * as demo_page_header_no_cover from "./page-header/no-cover";
+import * as demo_page_header_profile from "./page-header/profile";
+import * as demo_page_header_stats from "./page-header/stats";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -626,6 +633,13 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"page-header/aligned-start": demo_page_header_aligned_start,
+	"page-header/card-in-list": demo_page_header_card_in_list,
+	"page-header/gradient-cover": demo_page_header_gradient_cover,
+	"page-header/in-a-screen": demo_page_header_in_a_screen,
+	"page-header/no-cover": demo_page_header_no_cover,
+	"page-header/profile": demo_page_header_profile,
+	"page-header/stats": demo_page_header_stats,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

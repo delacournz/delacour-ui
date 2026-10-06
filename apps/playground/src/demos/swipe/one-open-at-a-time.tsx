@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	title: "One open at a time",
 	caption:
 		"Rows inside a `Swipe.Group` register with it, however deeply they are nested. Opening one closes whichever was open.",
-	capture: { align: "stretch" },
 };
 
 const REMINDERS = ["Water the plants", "Call the bank", "Book the dentist"] as const;

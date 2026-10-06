@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	caption:
 		"A trigger that donates its press to a `Button`, a title, a description and two actions. The scrim, the ✕, Cancel and Android back all close it.",
 	align: "center",
-	capture: { flow: "dialog/confirm", frame: "device", hero: true },
 };
 
 /** The whole composition: the question, what it costs, and the two answers. */

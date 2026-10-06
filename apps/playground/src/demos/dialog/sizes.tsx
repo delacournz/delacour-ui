@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	caption:
 		"`sm` 320, `md` 400, `lg` 520 and `full`, each a cap on a full-width card — a phone narrower than the cap shows them alike. An `sm` footer stacks its actions.",
 	align: "center",
-	capture: { flow: "dialog/sizes", frame: "device" },
 };
 
 const LABELS: Record<DialogSize, string> = {

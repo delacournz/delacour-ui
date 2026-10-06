@@ -276,6 +276,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
 		categories: ["layout"],
 	},
+	swipe: {
+		title: "Swipe",
+		description:
+			"A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open.",
+		categories: ["controls"],
+	},
 	switch: {
 		title: "Switch",
 		description: "An on/off control whose thumb can be dragged as well as tapped.",

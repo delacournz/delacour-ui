@@ -1371,6 +1371,44 @@
 			]
 		},
 		{
+			"name": "swipe",
+			"type": "registry:ui",
+			"title": "Swipe",
+			"description": "A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"pressable",
+				"text",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/swipe/AGENTS.md",
+				"ui/swipe/index.ts",
+				"ui/swipe/swipe-action.tsx",
+				"ui/swipe/swipe-end.tsx",
+				"ui/swipe/swipe-group.tsx",
+				"ui/swipe/swipe-panel.tsx",
+				"ui/swipe/swipe-start.tsx",
+				"ui/swipe/swipe.context.tsx",
+				"ui/swipe/swipe.tsx",
+				"ui/swipe/swipe.types.ts",
+				"ui/swipe/swipe.variants.ts"
+			]
+		},
+		{
 			"name": "switch",
 			"type": "registry:ui",
 			"title": "Switch",

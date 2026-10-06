@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on swipe/kept-open and has settled — one article row, shut, reading "Not
+  saved". The capture script navigates there before running this.
+steps:
+  - echo: Revealing the Save tile
+  - swipe: { from: { id: swipe-kept-open }, by: { x: -0.25 }, momentum: false }
+  - wait: 600
+  - echo: Saving keeps the row open, so the tile shows its new state
+  - tap: { id: swipe-save }
+  - wait: 700
+  - echo: Unsaving, back to where it began
+  - tap: { id: swipe-save }
+  - wait: 600
+  - echo: Tapping the row closes it, so the clip loops without a jump cut
+  - tap: { id: swipe-kept-open }
+  - wait: 500

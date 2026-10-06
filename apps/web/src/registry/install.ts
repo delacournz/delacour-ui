@@ -2120,13 +2120,14 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 84,
+		fileCount: 85,
 		groups: [
 			{
 				name: "calendar",
 				title: "Calendar",
 				kind: "self",
 				files: [
+					{ source: "packages/react-native-ui/src/components/calendar/AGENTS.md", target: "src/components/ui/calendar/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/calendar/calendar-caption.tsx", target: "src/components/ui/calendar/calendar-caption.tsx" },
 					{ source: "packages/react-native-ui/src/components/calendar/calendar-day.tsx", target: "src/components/ui/calendar/calendar-day.tsx" },
 					{ source: "packages/react-native-ui/src/components/calendar/calendar-grid.tsx", target: "src/components/ui/calendar/calendar-grid.tsx" },

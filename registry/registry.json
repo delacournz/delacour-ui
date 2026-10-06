@@ -276,6 +276,7 @@
 			],
 			"devDependencies": [],
 			"files": [
+				"ui/calendar/AGENTS.md",
 				"ui/calendar/calendar-caption.tsx",
 				"ui/calendar/calendar-day.tsx",
 				"ui/calendar/calendar-grid.tsx",

@@ -892,6 +892,54 @@
 			]
 		},
 		{
+			"name": "post",
+			"type": "registry:ui",
+			"title": "Post",
+			"description": "A social card: author, body, media and animated counts, in four shapes.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"avatar",
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"expo-linear-gradient",
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/post/AGENTS.md",
+				"ui/post/index.ts",
+				"ui/post/post-action.tsx",
+				"ui/post/post-author.tsx",
+				"ui/post/post-body.tsx",
+				"ui/post/post-community.tsx",
+				"ui/post/post-footer.tsx",
+				"ui/post/post-header.tsx",
+				"ui/post/post-media.tsx",
+				"ui/post/post-stat-count.tsx",
+				"ui/post/post-stat.tsx",
+				"ui/post/post-title.tsx",
+				"ui/post/post-votes.tsx",
+				"ui/post/post.context.tsx",
+				"ui/post/post.tsx",
+				"ui/post/post.types.ts",
+				"ui/post/post.utils.ts",
+				"ui/post/post.variants.ts"
+			]
+		},
+		{
 			"name": "pressable",
 			"type": "registry:ui",
 			"title": "Pressable",

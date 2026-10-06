@@ -204,6 +204,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A surface grouping related rows, with dividers inserted automatically.",
 		categories: ["layout"],
 	},
+	post: {
+		title: "Post",
+		description: "A social card: author, body, media and animated counts, in four shapes.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

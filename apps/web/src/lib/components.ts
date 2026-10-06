@@ -104,6 +104,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One number, its change coloured by what it means, and a sparkline of how it got there.",
 	},
 	{
+		slug: "calendar",
+		name: "Calendar",
+		group: "Forms",
+		blurb: "A month grid for picking a day, several days or a range, with no date library and no time zone.",
+	},
+	{
 		slug: "rating",
 		name: "Rating",
 		group: "Forms",

@@ -1,0 +1,199 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "calendar",
+	"type": "registry:ui",
+	"title": "Calendar",
+	"description": "A month grid for picking a day, several days or a range, with swipe paging and month and year jump views.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"button",
+		"cn",
+		"field",
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-caption.tsx",
+			"target": "calendar/calendar-caption.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-day.tsx",
+			"target": "calendar/calendar-day.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-grid.tsx",
+			"target": "calendar/calendar-grid.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-header.tsx",
+			"target": "calendar/calendar-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-nav.tsx",
+			"target": "calendar/calendar-nav.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-picker.tsx",
+			"target": "calendar/calendar-picker.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar-weekdays.tsx",
+			"target": "calendar/calendar-weekdays.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar.context.tsx",
+			"target": "calendar/calendar.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar.date.ts",
+			"target": "calendar/calendar.date.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar.tsx",
+			"target": "calendar/calendar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				},
+				{
+					"from": "@delacour/react-native-ui/calendar",
+					"to": "@registry/ui/calendar"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar.types.ts",
+			"target": "calendar/calendar.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/calendar.variants.ts",
+			"target": "calendar/calendar.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/calendar/index.ts",
+			"target": "calendar/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

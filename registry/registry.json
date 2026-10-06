@@ -246,6 +246,52 @@
 			]
 		},
 		{
+			"name": "calendar",
+			"type": "registry:ui",
+			"title": "Calendar",
+			"description": "A month grid for picking a day, several days or a range, with swipe paging and month and year jump views.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"button",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/calendar/calendar-caption.tsx",
+				"ui/calendar/calendar-day.tsx",
+				"ui/calendar/calendar-grid.tsx",
+				"ui/calendar/calendar-header.tsx",
+				"ui/calendar/calendar-nav.tsx",
+				"ui/calendar/calendar-picker.tsx",
+				"ui/calendar/calendar-weekdays.tsx",
+				"ui/calendar/calendar.context.tsx",
+				"ui/calendar/calendar.date.ts",
+				"ui/calendar/calendar.tsx",
+				"ui/calendar/calendar.types.ts",
+				"ui/calendar/calendar.variants.ts",
+				"ui/calendar/index.ts"
+			]
+		},
+		{
 			"name": "calm-motion",
 			"type": "registry:lib",
 			"title": "calmMotion",

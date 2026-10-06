@@ -10,17 +10,17 @@ import {
 
 describe("resolveAvatarInitials", () => {
 	test("takes the first letter of the first and last words", () => {
-		expect(resolveAvatarInitials("Kate Austen")).toBe("KA");
-		expect(resolveAvatarInitials("Mary Jane Watson")).toBe("MW");
+		expect(resolveAvatarInitials("Aria Whitlock")).toBe("AW");
+		expect(resolveAvatarInitials("Anahera Rose Tui")).toBe("AT");
 	});
 
 	test("a single word gives a single letter", () => {
-		expect(resolveAvatarInitials("Cher")).toBe("C");
+		expect(resolveAvatarInitials("Mihi")).toBe("M");
 	});
 
 	test("uppercases, and ignores surrounding and repeated whitespace", () => {
-		expect(resolveAvatarInitials("  oliver   lee ")).toBe("OL");
-		expect(resolveAvatarInitials("ada\tlovelace")).toBe("AL");
+		expect(resolveAvatarInitials("  rawiri   kemp ")).toBe("RK");
+		expect(resolveAvatarInitials("lena\tvarga")).toBe("LV");
 	});
 
 	test("is empty for an empty, blank or missing name", () => {
@@ -31,15 +31,15 @@ describe("resolveAvatarInitials", () => {
 
 	test("never splits a letter outside the basic plane", () => {
 		// A naive `word[0]` would take half of a surrogate pair and draw a box.
-		expect(resolveAvatarInitials("𝒜da 𝒵ed")).toBe("𝒜𝒵");
+		expect(resolveAvatarInitials("𝒜ria 𝒲hitlock")).toBe("𝒜𝒲");
 	});
 
 	test("keeps letters in scripts with no case", () => {
-		expect(resolveAvatarInitials("李 小龍")).toBe("李小");
+		expect(resolveAvatarInitials("森山 健二")).toBe("森健");
 	});
 
 	test("skips a leading punctuation mark in a word", () => {
-		expect(resolveAvatarInitials("(Kate) 'Austen'")).toBe("KA");
+		expect(resolveAvatarInitials("(Aria) 'Whitlock'")).toBe("AW");
 	});
 });
 
@@ -156,11 +156,11 @@ describe("resolveAvatarOverflowLabel", () => {
 
 describe("resolveAvatarAccessibilityLabel", () => {
 	test("prefers the name", () => {
-		expect(resolveAvatarAccessibilityLabel({ name: "Kate Austen", fallback: "KA" })).toBe("Kate Austen");
+		expect(resolveAvatarAccessibilityLabel({ name: "Aria Whitlock", fallback: "AW" })).toBe("Aria Whitlock");
 	});
 
 	test("falls back to the fallback text", () => {
-		expect(resolveAvatarAccessibilityLabel({ fallback: "KA" })).toBe("KA");
+		expect(resolveAvatarAccessibilityLabel({ fallback: "AW" })).toBe("AW");
 	});
 
 	test("is undefined when there is nothing to read", () => {
@@ -169,6 +169,6 @@ describe("resolveAvatarAccessibilityLabel", () => {
 	});
 
 	test("an explicit label wins over both", () => {
-		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Kate Austen" })).toBe("You");
+		expect(resolveAvatarAccessibilityLabel({ accessibilityLabel: "You", name: "Aria Whitlock" })).toBe("You");
 	});
 });

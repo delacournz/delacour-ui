@@ -1,6 +1,6 @@
 executionPrerequisite: >-
   The chrome-free preview route is open on avatar/unread-count and has
-  settled — Oliver Lee with a red 3 badge. The capture script navigates there
+  settled — Rawiri Kemp with a red 3 badge. The capture script navigates there
   before running this.
 steps:
   - echo: Marking read clears the badge, then three new messages bring it back

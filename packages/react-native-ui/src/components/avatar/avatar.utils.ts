@@ -23,7 +23,7 @@ function initialOf(word: string): string {
 
 /**
  * Up to two initials from a name: the first letter of the first word and of the
- * last. `Mary Jane Watson` reads `MW`, which is how a person signs rather than
+ * last. `Anahera Rose Tui` reads `AT`, which is how a person signs rather than
  * how a form abbreviates them. A single word gives a single letter.
  *
  * Walks code points rather than UTF-16 units, so a letter outside the basic

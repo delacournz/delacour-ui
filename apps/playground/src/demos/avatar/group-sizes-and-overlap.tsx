@@ -25,7 +25,7 @@ const OVERLAP_LABELS: Record<Overlap, string> = {
 	row: "Row",
 };
 
-const NAMES = ["Kate Austen", "Oliver Lee", "Chen Wei", "Dana Kim", "Ben Okafor"] as const;
+const NAMES = ["Aria Whitlock", "Rawiri Kemp", "Kenji Moriyama", "Lena Varga", "Tomasi Fifita"] as const;
 
 export function Demo(): ReactElement {
 	const [overlap, setOverlap] = useState<Overlap>("default");

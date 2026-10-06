@@ -18,12 +18,12 @@ const LABELS: Record<(typeof AVATAR_VARIANTS)[number], string> = {
 
 /** One initial per colour, so the row reads as six people rather than one repeated. */
 const NAMES: Record<(typeof AVATAR_COLORS)[number], string> = {
-	default: "Dee Fault",
-	primary: "Pri Mary",
-	success: "Sue Cess",
-	warning: "Wren Ing",
-	destructive: "Des Troy",
-	info: "Ivy Nash",
+	default: "Callum Reid",
+	primary: "Priya Natarajan",
+	success: "Saskia Lund",
+	warning: "Walter Brightwell",
+	destructive: "Nico Santos",
+	info: "Isla Brennan",
 };
 
 export function Demo(): ReactElement {

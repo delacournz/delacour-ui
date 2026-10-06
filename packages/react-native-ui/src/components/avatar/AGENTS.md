@@ -44,11 +44,11 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   the clipped circle. An `Avatar.Badge` hangs over the circle's edge, and a
   single clipped box would cut it in half. A test asserts `overflow-hidden` is on
   `face` and never on `root`.
-- **Initials are the first letter of the first and last word.** `Mary Jane
-  Watson` is `MW`, the way a person signs, and `Cher` is `C`.
+- **Initials are the first letter of the first and last word.** `Anahera Rose
+  Tui` is `AT`, the way a person signs, and `Mihi` is `M`.
   `resolveAvatarInitials` walks code points rather than UTF-16 units, so a letter
   outside the basic plane is never split into a replacement box, and skips
-  leading punctuation so `"(Kate)"` still gives `K`. `fallback` overrides the
+  leading punctuation so `"(Aria)"` still gives `A`. `fallback` overrides the
   drawn text only; `name` is still what a screen reader reads.
 - **Two axes paint the fallback, on `Badge`'s six colours.** `variant` is `soft`
   or `solid`, `color` is `default` … `info`, and the twelve cells live in
@@ -77,7 +77,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
 - **The avatar is one element to assistive technology.** The root is
   `accessible`, so an `Avatar.Badge` inside it is never focused on its own. A
   presence dot has no words; put the status into the avatar's
-  `accessibilityLabel` (`"Kate Austen, online"`).
+  `accessibilityLabel` (`"Aria Whitlock, online"`).
 - **`Avatar.Badge` is a pin, and a dot only when empty.** Given children — a
   `Badge` with a count, an `Icon` — it positions them and adds nothing else, so a
   count keeps the look it has everywhere else. Empty, it draws a dot sized to

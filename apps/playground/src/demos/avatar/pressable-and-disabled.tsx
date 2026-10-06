@@ -19,15 +19,15 @@ export function Demo(): ReactElement {
 			<View className="flex-row items-center gap-4">
 				<Avatar
 					haptic="light"
-					name="Oliver Lee"
+					name="Rawiri Kemp"
 					onPress={() => setPresses((count) => count + 1)}
 					size="lg"
-					source={{ uri: "https://i.pravatar.cc/160?img=12" }}
+					source={{ uri: "https://i.pravatar.cc/160?img=13" }}
 					testID="avatar-pressable"
 				/>
 				<Avatar
 					isDisabled
-					name="Chen Wei"
+					name="Kenji Moriyama"
 					onPress={() => setPresses((count) => count + 1)}
 					size="lg"
 					testID="avatar-disabled"

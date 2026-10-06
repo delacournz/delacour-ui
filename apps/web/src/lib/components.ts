@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -146,6 +147,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Accordion",
 		group: "Data display",
 		blurb: "Sections that expand and collapse, animated from a measured height.",
+	},
+	{
+		slug: "support",
+		name: "Support",
+		group: "Media",
+		blurb: "A help section: availability, channels, topics, past requests and the furniture around a support thread.",
 	},
 	{
 		slug: "alert",

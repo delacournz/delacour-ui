@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -158,6 +159,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Collapsible",
 		group: "Data display",
 		blurb: "One section shown and hidden by its own trigger.",
+	},
+	{
+		slug: "circular-text",
+		name: "CircularText",
+		group: "Media",
+		blurb: "Text set around a circle \u2014 a seal, a badge, an arc of words \u2014 optionally turning.",
 	},
 	{
 		slug: "meter",

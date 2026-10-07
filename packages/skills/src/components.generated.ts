@@ -52,4 +52,5 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },
 	{ name: "toast", title: "Toast", description: "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses." },
 	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },
+	{ name: "tooltip", title: "Tooltip", description: "A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger." },
 ];

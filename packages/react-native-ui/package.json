@@ -103,7 +103,7 @@
 		"gen-exports": "bun scripts/gen-exports.ts"
 	},
 	"dependencies": {
-		"clsx": "^2.1.1",
+		"cn": "^0.4.0",
 		"tailwind-merge": "^3.6.0",
 		"tailwind-variants": "^3.3.1"
 	},

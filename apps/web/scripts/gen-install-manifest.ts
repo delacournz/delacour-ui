@@ -125,7 +125,7 @@ const ENGINES = new Set(["@delacour/react-native-charts", "@delacour/react-nativ
  *
  * The union of every closure is wider than the package's peer list in two ways
  * a consumer of the package should not be told about: the library's own
- * dependencies (`clsx`, `tailwind-merge`, `tailwind-variants`), which arrive
+ * dependencies (`cn`, `tailwind-merge`, `tailwind-variants`), which arrive
  * transitively, and the engines plus their own native peers — Skia for
  * `@delacour/react-native-charts`, teleport for `@delacour/react-native-bottom-sheet`.
  * Filtering the unions to this set is what keeps `peers` honest, and

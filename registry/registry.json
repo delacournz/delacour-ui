@@ -478,8 +478,7 @@
 				"styles"
 			],
 			"dependencies": [
-				"clsx",
-				"tailwind-merge"
+				"cn"
 			],
 			"expoDependencies": [],
 			"devDependencies": [],
@@ -1895,6 +1894,7 @@
 				"styles"
 			],
 			"dependencies": [
+				"tailwind-merge",
 				"tailwind-variants"
 			],
 			"expoDependencies": [],

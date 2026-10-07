@@ -50,7 +50,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/button",
 		exportName: "Button",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 48,
 		groups: [
@@ -202,7 +202,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/pressable",
 		exportName: "Pressable",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwindcss"],
+		npm: ["cn", "tailwindcss"],
 		dev: [],
 		fileCount: 13,
 		groups: [
@@ -263,7 +263,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/swipe",
 		exportName: "Swipe",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 37,
 		groups: [
@@ -390,7 +390,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/toggle-button",
 		exportName: "ToggleButton",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 56,
 		groups: [
@@ -564,7 +564,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/field",
 		exportName: "Field",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 36,
 		groups: [
@@ -676,7 +676,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/input",
 		exportName: "Input",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 72,
 		groups: [
@@ -866,7 +866,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/textarea",
 		exportName: "Textarea",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 76,
 		groups: [
@@ -1067,7 +1067,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/label",
 		exportName: "Label",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 17,
 		groups: [
@@ -1132,7 +1132,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/checkbox",
 		exportName: "Checkbox",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 54,
 		groups: [
@@ -1304,7 +1304,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/chip",
 		exportName: "Chip",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 48,
 		groups: [
@@ -1463,7 +1463,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/radio",
 		exportName: "Radio",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 45,
 		groups: [
@@ -1598,7 +1598,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/switch",
 		exportName: "Switch",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 54,
 		groups: [
@@ -1763,7 +1763,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/chart",
 		exportName: "Chart",
 		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["@delacour/react-native-charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@delacour/react-native-charts", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 44,
 		groups: [
@@ -1876,7 +1876,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/kpi",
 		exportName: "Kpi",
 		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 103,
 		groups: [
@@ -2118,7 +2118,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/calendar",
 		exportName: "Calendar",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 85,
 		groups: [
@@ -2356,7 +2356,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/rating",
 		exportName: "Rating",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 47,
 		groups: [
@@ -2507,7 +2507,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/slider",
 		exportName: "Slider",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 47,
 		groups: [
@@ -2644,7 +2644,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/text",
 		exportName: "Text",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 13,
 		groups: [
@@ -2698,7 +2698,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/avatar",
 		exportName: "Avatar",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 35,
 		groups: [
@@ -2830,7 +2830,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/badge",
 		exportName: "Badge",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 37,
 		groups: [
@@ -2964,7 +2964,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/icon",
 		exportName: "Icon",
 		expo: ["react-native-svg", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 15,
 		groups: [
@@ -3034,7 +3034,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/item",
 		exportName: "Item",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 57,
 		groups: [
@@ -3202,7 +3202,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/list-group",
 		exportName: "ListGroup",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 42,
 		groups: [
@@ -3348,7 +3348,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/separator",
 		exportName: "Separator",
 		expo: ["uniwind"],
-		npm: ["tailwind-variants", "tailwindcss"],
+		npm: ["tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 10,
 		groups: [
@@ -3392,7 +3392,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/accordion",
 		exportName: "Accordion",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 43,
 		groups: [
@@ -3546,7 +3546,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/alert",
 		exportName: "Alert",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 46,
 		groups: [
@@ -3703,7 +3703,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/collapsible",
 		exportName: "Collapsible",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 39,
 		groups: [
@@ -3846,7 +3846,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/meter",
 		exportName: "Meter",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 36,
 		groups: [
@@ -3937,7 +3937,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/progress",
 		exportName: "Progress",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 24,
 		groups: [
@@ -4009,7 +4009,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/spinner",
 		exportName: "Spinner",
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 22,
 		groups: [
@@ -4093,7 +4093,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/skeleton",
 		exportName: "Skeleton",
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 20,
 		groups: [
@@ -4182,7 +4182,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/empty-state",
 		exportName: "EmptyState",
 		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 31,
 		groups: [
@@ -4282,7 +4282,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/bottom-sheet",
 		exportName: "BottomSheet",
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 109,
 		groups: [
@@ -4551,7 +4551,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/toast",
 		exportName: "Toast",
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 80,
 		groups: [
@@ -4763,7 +4763,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/dialog",
 		exportName: "Dialog",
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 53,
 		groups: [
@@ -5744,7 +5744,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/steps",
 		exportName: "Steps",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 47,
 		groups: [
@@ -5902,7 +5902,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/tabs",
 		exportName: "Tabs",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 44,
 		groups: [
@@ -6050,7 +6050,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/screen",
 		exportName: "Screen",
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 64,
 		groups: [
@@ -6232,7 +6232,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/surface",
 		exportName: "Surface",
 		expo: ["uniwind"],
-		npm: ["tailwind-variants", "tailwindcss"],
+		npm: ["tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 12,
 		groups: [
@@ -6278,7 +6278,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/card",
 		exportName: "Card",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 30,
 		groups: [
@@ -6418,7 +6418,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/overlay",
 		exportName: "Overlay",
 		expo: ["react-native-reanimated", "react-native-teleport", "react-native-worklets", "uniwind"],
-		npm: ["tailwind-variants", "tailwindcss"],
+		npm: ["tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 18,
 		groups: [

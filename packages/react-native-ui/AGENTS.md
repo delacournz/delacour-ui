@@ -208,8 +208,12 @@ its slot set, so a sibling would buy nothing but a second file to open.
 9. **`cn()` for every caller-supplied `className`, and `tv` from `lib/tv`.**
    Uniwind does not deduplicate conflicting utilities on its own. There are
    **two** mergers here and both need the semantic size tokens: `cn()` merges a
-   caller's className, and `tv()` merges slots and variants through a
-   tailwind-merge instance of its own. Never import `tv` from
+   caller's className through the `cn` package (shadcn-ui/cn — `createCn` from
+   `cn/config`, tailwind-merge's semantics and output, no `clsx`), and `tv()`
+   merges slots and variants through a tailwind-merge instance of its own —
+   tailwind-variants v3 bundles it, which is why `tailwind-merge` stays a
+   dependency. `cn.parity.test.ts` holds `cn()` to tailwind-merge's output on
+   every class literal in a `*.variants.ts`. Never import `tv` from
    `tailwind-variants` directly — a bare `tv` does not know what `button-md`
    is, drops `text-button-md` into tailwind-merge's text *colour* group, and
    silently strips the label's colour. `src/styles/tokens.ts` holds the one

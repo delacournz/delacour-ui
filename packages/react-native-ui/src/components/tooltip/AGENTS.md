@@ -32,7 +32,7 @@ timer or the trigger.
 | `index.ts` | → `@delacour/react-native-ui/tooltip` |
 | `tooltip.tsx` | `Tooltip` — open state, the screen-reader check, activation, the outside-tap subscription, the one-open-at-a-time rule; the `Object.assign` names every part |
 | `tooltip.context.tsx` | **Leaf.** `TooltipContext`, `useTooltip`, and the content context the arrow and text read |
-| `tooltip.variants.ts` | The slotted `tv()` — `content`, `arrow`, `text`, `title`, `description` per variant — the defaults, and the pure `resolveTooltipDuration`, `shouldTooltipActivate`, `resolveTooltipAccessibility` |
+| `tooltip.variants.ts` | The slotted `tv()` — `content`, `arrow`, `text`, `title`, `description` per variant — the defaults, and the pure `resolveTooltipDuration`, `shouldTooltipActivate`, `resolveTooltipAccessibility`, `readableTextOf` |
 | `tooltip.variants.test.ts` | Both variants and their tokens in both themes, the three resolvers, the defaults |
 | `tooltip-trigger.tsx` | `Tooltip.Trigger` — `Pressable`, or `asChild` to donate the long press or the press; the anchor; the label or hint |
 | `tooltip-content.tsx` | `Tooltip.Content` — the portal, the panel, the timer |
@@ -100,7 +100,9 @@ card corner, which is larger than the inverted chip's `rounded-md`, so it clears
 - **The trigger carries the words.** `resolveTooltipAccessibility`: `label` becomes the trigger's
   `accessibilityLabel` when it has none — an icon button — or its `accessibilityHint` when it does;
   a label identical to the trigger's is dropped rather than read twice. An `asChild` trigger's
-  label is read off the child's props. So VoiceOver says the tooltip's words without anything
+  label is read off the child's props, and visible text counts as a label (`readableTextOf`): a
+  `<Button>Sync now</Button>` is already named, and an early build replaced "Sync now" with the
+  tooltip's words — found on a simulator with the `surface` demo. So VoiceOver says the tooltip's words without anything
   opening.
 - **The panel is never read and never takes focus.** `accessibilityElementsHidden` and
   `importantForAccessibility="no-hide-descendants"` on the positioner; non-modal overlays never move

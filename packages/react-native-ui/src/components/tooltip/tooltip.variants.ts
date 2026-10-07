@@ -1,3 +1,4 @@
+import { Children, isValidElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { PopoverAlign, PopoverPlacement, PopoverWidth } from "../popover/popover.position";
@@ -81,6 +82,28 @@ export function shouldTooltipActivate({
 }): boolean {
 	if (gesture !== openOn) return false;
 	return !(isScreenReaderEnabled && gesture === "longPress");
+}
+
+/**
+ * The text a screen reader would name a control by when it has no
+ * `accessibilityLabel` — every string and number in its children, at any depth.
+ *
+ * `resolveTooltipAccessibility` needs it: a `<Button>Sync now</Button>` already
+ * has a name, and treating it as unnamed would replace "Sync now" with the
+ * tooltip's words instead of adding them as a hint.
+ */
+export function readableTextOf(node: ReactNode): string | undefined {
+	const parts: string[] = [];
+	const visit = (child: ReactNode): void => {
+		if (typeof child === "string" || typeof child === "number") {
+			parts.push(String(child));
+			return;
+		}
+		if (isValidElement<{ children?: ReactNode }>(child)) Children.forEach(child.props.children, visit);
+	};
+	Children.forEach(node, visit);
+	const text = parts.join("").trim();
+	return text === "" ? undefined : text;
 }
 
 export type TooltipAccessibility = { accessibilityLabel?: string; accessibilityHint?: string };

@@ -193,6 +193,11 @@ import * as demo_empty_state_search from "./empty-state/search";
 import * as demo_empty_state_sizes from "./empty-state/sizes";
 import * as demo_empty_state_text_only from "./empty-state/text-only";
 import * as demo_empty_state_variants from "./empty-state/variants";
+import * as demo_feedback_basic from "./feedback/basic";
+import * as demo_feedback_controlled_draft from "./feedback/controlled-draft";
+import * as demo_feedback_multi_step from "./feedback/multi-step";
+import * as demo_feedback_sending from "./feedback/sending";
+import * as demo_feedback_with_chips from "./feedback/with-chips";
 import * as demo_field_anatomy_all_four from "./field/anatomy/all-four";
 import * as demo_field_anatomy_label_and_control from "./field/anatomy/label-and-control";
 import * as demo_field_anatomy_the_gap_ladder from "./field/anatomy/the-gap-ladder";
@@ -607,6 +612,11 @@ export const DEMOS = {
 	"empty-state/sizes": demo_empty_state_sizes,
 	"empty-state/text-only": demo_empty_state_text_only,
 	"empty-state/variants": demo_empty_state_variants,
+	"feedback/basic": demo_feedback_basic,
+	"feedback/controlled-draft": demo_feedback_controlled_draft,
+	"feedback/multi-step": demo_feedback_multi_step,
+	"feedback/sending": demo_feedback_sending,
+	"feedback/with-chips": demo_feedback_with_chips,
 	"field/anatomy/all-four": demo_field_anatomy_all_four,
 	"field/anatomy/label-and-control": demo_field_anatomy_label_and_control,
 	"field/anatomy/the-gap-ladder": demo_field_anatomy_the_gap_ladder,

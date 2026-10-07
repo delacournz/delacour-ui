@@ -16,3 +16,7 @@ steps:
   - tap: { id: feedback-steps-send }
   - await: { visible: { id: feedback-steps-done } }
   - wait: 1200
+  - echo: Done closes it and resets the rating, so the next open starts over
+  - tap: { id: feedback-steps-done }
+  - await: { hidden: { id: feedback-steps-done } }
+  - wait: 500

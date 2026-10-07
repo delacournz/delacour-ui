@@ -1,6 +1,7 @@
 import { Button } from "@delacour/react-native-ui/button";
 import { Feedback, useFeedback } from "@delacour/react-native-ui/feedback";
 import type { ReactElement } from "react";
+import { View } from "react-native";
 import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
@@ -10,6 +11,7 @@ export const meta: DemoMeta = {
 	note: "Close it with text in the field and open it again: the draft is still there. Sending clears it.",
 	align: "center",
 	keyboardAware: true,
+	capture: { flow: "feedback/basic", frame: "device", hero: true },
 };
 
 /** Send has to close and clear itself — `Feedback.Submit` never closes on its own. */
@@ -28,23 +30,25 @@ function SendButton(): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<Feedback>
-			<Feedback.Trigger asChild>
-				<Button testID="feedback-basic-open" variant="secondary">
-					Give feedback
-				</Button>
-			</Feedback.Trigger>
-			<Feedback.Content>
-				<Feedback.Panel>
-					<Feedback.Title>What should we fix first?</Feedback.Title>
-					<Feedback.Close testID="feedback-basic-close" />
-					<Feedback.Field placeholder="Tell us what got in your way" testID="feedback-basic-field" />
-				</Feedback.Panel>
-				<Feedback.Footer>
-					<Feedback.Cancel testID="feedback-basic-cancel" />
-					<SendButton />
-				</Feedback.Footer>
-			</Feedback.Content>
-		</Feedback>
+		<View className="flex-1 items-center justify-center">
+			<Feedback>
+				<Feedback.Trigger asChild>
+					<Button testID="feedback-basic-open" variant="secondary">
+						Give feedback
+					</Button>
+				</Feedback.Trigger>
+				<Feedback.Content>
+					<Feedback.Panel>
+						<Feedback.Title>What should we fix first?</Feedback.Title>
+						<Feedback.Close testID="feedback-basic-close" />
+						<Feedback.Field placeholder="Tell us what got in your way" testID="feedback-basic-field" />
+					</Feedback.Panel>
+					<Feedback.Footer>
+						<Feedback.Cancel testID="feedback-basic-cancel" />
+						<SendButton />
+					</Feedback.Footer>
+				</Feedback.Content>
+			</Feedback>
+		</View>
 	);
 }

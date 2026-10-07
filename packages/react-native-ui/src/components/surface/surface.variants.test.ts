@@ -6,6 +6,7 @@ import {
 	resolveSurfaceVariant,
 	SURFACE_FILLED_VARIANTS,
 	SURFACE_FOREGROUND_TOKENS,
+	SURFACE_MATERIALS,
 	SURFACE_PADDINGS,
 	SURFACE_VARIANTS,
 	surfaceVariants,
@@ -176,5 +177,51 @@ describe("resolveSurfacePlane", () => {
 	test("a surface inside a transparent one steps from the plane beneath both", () => {
 		const through = resolveSurfacePlane({ parentPlane: "default", variant: "transparent" });
 		expect(resolveSurfaceVariant({ parentPlane: through })).toBe("secondary");
+	});
+});
+
+describe("surface materials", () => {
+	test("flat is the default and adds nothing", () => {
+		expect(surfaceVariants().root()).toBe(surfaceVariants({ material: "flat" }).root());
+		expect(surfaceVariants().root()).not.toMatch(/shadow/);
+	});
+
+	test("etched lifts the edge with the light and dark highlight", () => {
+		const cls = surfaceVariants({ material: "etched" }).root();
+		expect(cls).toContain("shadow-etched");
+		expect(cls).toContain("dark:shadow-etched-dark");
+		expect(cls).toContain("bg-card");
+	});
+
+	test("a tray is a muted, squarely padded 2xl frame", () => {
+		const cls = surfaceVariants({ material: "tray", padding: "md" }).root();
+		expect(cls).toContain("bg-muted/70");
+		expect(cls).toContain("rounded-2xl");
+		expect(cls).toContain("p-1");
+		expect(cls).not.toMatch(/\bp-4\b/);
+		expect(cls).not.toContain("bg-card");
+	});
+
+	test("a panel in a tray takes the xl corner", () => {
+		expect(surfaceVariants({ inTray: true }).root()).toContain("rounded-xl");
+		expect(surfaceVariants({ inTray: true }).root()).not.toContain("rounded-lg");
+	});
+
+	test("lists every material", () => {
+		expect(SURFACE_MATERIALS).toEqual(["flat", "etched", "tray"]);
+	});
+});
+
+describe("tray planes", () => {
+	// The tray paints its own muted fill, so what sits in it steps from nothing:
+	// a default card panel, not a secondary one on a muted ground.
+	test("a tray resets the plane so its panels resolve to the card fill", () => {
+		const through = resolveSurfacePlane({ parentPlane: "tertiary", variant: "default", material: "tray" });
+		expect(through).toBeNull();
+		expect(resolveSurfaceVariant({ parentPlane: through })).toBe("default");
+	});
+
+	test("other materials leave the plane alone", () => {
+		expect(resolveSurfacePlane({ parentPlane: null, variant: "secondary", material: "etched" })).toBe("secondary");
 	});
 });

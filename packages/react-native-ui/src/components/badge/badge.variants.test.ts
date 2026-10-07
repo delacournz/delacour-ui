@@ -267,3 +267,29 @@ describe("resolveBadgeInteractive", () => {
 		expect(resolveBadgeInteractive({ onPress: noop, onLongPress: noop })).toBe(true);
 	});
 });
+
+describe("the etched badge material", () => {
+	test("flat keeps the capsule", () => {
+		expect(badgeVariants({}).root()).toContain("rounded-full");
+	});
+
+	test("etched squares the corner to the small step", () => {
+		const cls = badgeVariants({ material: "etched" }).root();
+		expect(cls).toContain("rounded-sm");
+		expect(cls).not.toContain("rounded-full");
+		expect(badgeVariants({ material: "etched" }).closeButton()).toContain("rounded-sm");
+	});
+
+	test("etched soft status fills are alpha tints of the status colour", () => {
+		for (const [color, fill] of [
+			["success", "bg-success/8"],
+			["warning", "bg-warning/8"],
+			["destructive", "bg-destructive/8"],
+			["info", "bg-info/8"],
+		] as const) {
+			const cls = badgeVariants({ color, material: "etched", variant: "soft" }).root();
+			expect(cls).toContain(fill);
+			expect(cls).toContain(`dark:${fill.replace("/8", "/16")}`);
+		}
+	});
+});

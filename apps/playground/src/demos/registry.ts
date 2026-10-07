@@ -30,6 +30,7 @@ import * as demo_avatar_unread_count from "./avatar/unread-count";
 import * as demo_avatar_variants_and_colours from "./avatar/variants-and-colours";
 import * as demo_badge_composed_icon from "./badge/composed-icon";
 import * as demo_badge_dismissible from "./badge/dismissible";
+import * as demo_badge_etched from "./badge/etched";
 import * as demo_badge_sizes from "./badge/sizes";
 import * as demo_badge_status_dot from "./badge/status-dot";
 import * as demo_badge_variants_and_colours from "./badge/variants-and-colours";
@@ -71,6 +72,7 @@ import * as demo_bottom_sheet_sizing_the_same_sheet_more_content from "./bottom-
 import * as demo_bottom_sheet_steps_per_step_snap_points from "./bottom-sheet/steps/per-step-snap-points";
 import * as demo_bottom_sheet_steps_three_step_form from "./bottom-sheet/steps/three-step-form";
 import * as demo_button_disabled from "./button/disabled";
+import * as demo_button_etched from "./button/etched";
 import * as demo_button_group from "./button/group";
 import * as demo_button_group_input from "./button/group-input";
 import * as demo_button_group_orientation from "./button/group-orientation";
@@ -92,6 +94,7 @@ import * as demo_calendar_single from "./calendar/single";
 import * as demo_calendar_sizes_variants from "./calendar/sizes-variants";
 import * as demo_card_anatomy from "./card/anatomy";
 import * as demo_card_configurator from "./card/configurator";
+import * as demo_card_etched from "./card/etched";
 import * as demo_card_footer_band from "./card/footer-band";
 import * as demo_card_media from "./card/media";
 import * as demo_card_nesting from "./card/nesting";
@@ -449,6 +452,7 @@ export const DEMOS = {
 	"avatar/variants-and-colours": demo_avatar_variants_and_colours,
 	"badge/composed-icon": demo_badge_composed_icon,
 	"badge/dismissible": demo_badge_dismissible,
+	"badge/etched": demo_badge_etched,
 	"badge/sizes": demo_badge_sizes,
 	"badge/status-dot": demo_badge_status_dot,
 	"badge/variants-and-colours": demo_badge_variants_and_colours,
@@ -490,6 +494,7 @@ export const DEMOS = {
 	"bottom-sheet/steps/per-step-snap-points": demo_bottom_sheet_steps_per_step_snap_points,
 	"bottom-sheet/steps/three-step-form": demo_bottom_sheet_steps_three_step_form,
 	"button/disabled": demo_button_disabled,
+	"button/etched": demo_button_etched,
 	"button/group": demo_button_group,
 	"button/group-input": demo_button_group_input,
 	"button/group-orientation": demo_button_group_orientation,
@@ -511,6 +516,7 @@ export const DEMOS = {
 	"calendar/sizes-variants": demo_calendar_sizes_variants,
 	"card/anatomy": demo_card_anatomy,
 	"card/configurator": demo_card_configurator,
+	"card/etched": demo_card_etched,
 	"card/footer-band": demo_card_footer_band,
 	"card/media": demo_card_media,
 	"card/nesting": demo_card_nesting,

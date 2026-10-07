@@ -1,4 +1,3 @@
-import { resolveFonts } from "@delacour/design-system/resolve";
 import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
 import {
 	IconArrowExpandVer,
@@ -50,6 +49,7 @@ import {
 } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
 import { Screen } from "@delacour/react-native-ui/screen";
+import { Surface } from "@delacour/react-native-ui/surface";
 import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
@@ -57,7 +57,6 @@ import { Alert, Linking, View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
-import { useDesignSystem } from "@/design-system/store";
 import { PRIVACY_POLICY_URL } from "@/lib/privacy-url";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
@@ -139,13 +138,11 @@ const MARK_SIZE = 28;
  * scale has no 34; the pair is written together so the leading survives the
  * size, the way the library's own presets pair them.
  *
- * The family is set inline from the resolved config rather than through
- * `font-heading`, the same move the customiser's `FontPreview` makes and for
- * the same reason: `--font-heading` is declared only inside the platform
- * `@variant` blocks of `theme.css`, so Tailwind mints no `font-heading`
- * utility from it and the class resolves to nothing — verified on device,
- * where switching the Heading axis to Raleway moved no title while switching
- * the body font moved every line. Inline, the family follows the axis.
+ * The family comes from `font-heading` on `Text.Display`. That utility
+ * resolved to nothing until `styles/global.css` declared `--font-heading`
+ * itself, because the library's `theme.css` sets it only inside its platform
+ * `@variant` blocks and Tailwind mints no class from those. The store's
+ * `applyConfig` then rewrites the variable from the Heading axis.
  */
 const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tight";
 
@@ -187,7 +184,6 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tig
 export default function Index(): ReactElement {
 	const router = useRouter();
 	const groups = groupedComponents();
-	const { heading } = resolveFonts(useDesignSystem());
 	const iconFor = (slug: ComponentSlug): IconComponent => ICONS[slug];
 
 	// `openURL` rejects when nothing is registered for https, which is an emulator
@@ -219,51 +215,55 @@ export default function Index(): ReactElement {
 
 			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
 				<View className="gap-1">
-					<Text.Display
-						accessibilityRole="header"
-						className={LARGE_TITLE_CLASS}
-						style={heading ? { fontFamily: heading } : undefined}
-					>
+					<Text.Display accessibilityRole="header" className={LARGE_TITLE_CLASS}>
 						Delacour UI
 					</Text.Display>
-					<Text.Paragraph color="muted">{`${componentCount()} components`}</Text.Paragraph>
+					<Text.Kicker>{`${componentCount()} components · ${groups.length} groups`}</Text.Kicker>
 				</View>
 
 				{groups.map((group) => (
 					<View className={SECTION_GAP} key={group.name}>
-						<Text.Overline>{group.name}</Text.Overline>
-						<ListGroup>{group.entries.map((entry) => row(entry, iconFor(entry.slug)))}</ListGroup>
+						<Text.Kicker>{group.name}</Text.Kicker>
+						<Surface material="tray">
+							<ListGroup className="rounded-xl">
+								{group.entries.map((entry) => row(entry, iconFor(entry.slug)))}
+							</ListGroup>
+						</Surface>
 					</View>
 				))}
 
 				<View className={SECTION_GAP}>
-					<Text.Overline>About</Text.Overline>
-					<ListGroup>
-						<ListGroup.Item
-							accessibilityHint="Opens in your browser"
-							accessibilityRole="link"
-							haptic="selection"
-							onPress={openPrivacyPolicy}
-							testID="home-privacy-policy"
-						>
-							<ListGroup.ItemPrefix>
-								<Icon icon={IconShieldCheck} />
-							</ListGroup.ItemPrefix>
-							<ListGroup.ItemContent>
-								<ListGroup.ItemTitle>Privacy policy</ListGroup.ItemTitle>
-								<ListGroup.ItemDescription>What this app sends, and to whom</ListGroup.ItemDescription>
-							</ListGroup.ItemContent>
-							<ListGroup.ItemSuffix>
-								<Icon icon={IconArrowUpRight} />
-							</ListGroup.ItemSuffix>
-						</ListGroup.Item>
-					</ListGroup>
+					<Text.Kicker>About</Text.Kicker>
+					<Surface material="tray">
+						<ListGroup className="rounded-xl">
+							<ListGroup.Item
+								accessibilityHint="Opens in your browser"
+								accessibilityRole="link"
+								haptic="selection"
+								onPress={openPrivacyPolicy}
+								testID="home-privacy-policy"
+							>
+								<ListGroup.ItemPrefix>
+									<Icon icon={IconShieldCheck} />
+								</ListGroup.ItemPrefix>
+								<ListGroup.ItemContent>
+									<ListGroup.ItemTitle>Privacy policy</ListGroup.ItemTitle>
+									<ListGroup.ItemDescription>What this app sends, and to whom</ListGroup.ItemDescription>
+								</ListGroup.ItemContent>
+								<ListGroup.ItemSuffix>
+									<Icon icon={IconArrowUpRight} />
+								</ListGroup.ItemSuffix>
+							</ListGroup.Item>
+						</ListGroup>
+					</Surface>
 				</View>
 
 				{__DEV__ ? (
 					<View className={SECTION_GAP}>
-						<Text.Overline>Development</Text.Overline>
-						<ListGroup>{DEV_ROWS.map((entry) => row(entry, entry.icon))}</ListGroup>
+						<Text.Kicker>Development</Text.Kicker>
+						<Surface material="tray">
+							<ListGroup className="rounded-xl">{DEV_ROWS.map((entry) => row(entry, entry.icon))}</ListGroup>
+						</Surface>
 					</View>
 				) : null}
 			</Screen.ScrollArea>

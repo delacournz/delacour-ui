@@ -73,6 +73,12 @@ export const CHART_SIZE_TOKENS = ["chart-sm", "chart-md", "chart-lg"] as const;
  * `borderCurve`. Unregistered, tailwind-merge reads it as a border *colour*,
  * and `border-continuous border-border` loses one of the two.
  */
+/** Names of the shadows the etched material declares in `tokens.css`. */
+export const ETCHED_SHADOW_TOKENS = ["etched", "etched-dark", "etched-primary", "focus", "focus-dark"] as const;
+
+/** The size and tracking token behind `Text variant="kicker"`; one name for both. */
+export const KICKER_TOKEN = "kicker";
+
 export const TW_MERGE_CONFIG = {
 	extend: {
 		classGroups: {
@@ -87,7 +93,9 @@ export const TW_MERGE_CONFIG = {
 				...INPUT_SIZE_TOKENS,
 				...SCREEN_SIZE_TOKENS,
 			],
-			text: [...BUTTON_TEXT_TOKENS, ...INPUT_TEXT_TOKENS],
+			shadow: [...ETCHED_SHADOW_TOKENS],
+			text: [...BUTTON_TEXT_TOKENS, ...INPUT_TEXT_TOKENS, KICKER_TOKEN],
+			tracking: [KICKER_TOKEN],
 		},
 	},
 } as const;

@@ -28,7 +28,8 @@ type Specimen = {
 
 /** The reset target a preset shortcut lands on. Named here so the store never learns preset names. */
 function targetFor(preset: PresetShortcut): ResetTarget {
-	return preset.name === "library" ? "library" : "house";
+	if (preset.name === "library") return "library";
+	return preset.name === "delacour-amber" ? "amber" : "house";
 }
 
 /**

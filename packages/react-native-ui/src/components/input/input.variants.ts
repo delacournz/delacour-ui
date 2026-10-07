@@ -3,7 +3,7 @@ import { cn } from "../../lib/cn";
 import { tv } from "../../lib/tv";
 import type { ButtonGroupOrientation, ButtonGroupSlotPosition } from "../button/button.variants";
 
-export const INPUT_VARIANTS = ["primary", "secondary"] as const;
+export const INPUT_VARIANTS = ["primary", "secondary", "etched"] as const;
 
 export const INPUT_SIZES = ["sm", "md", "lg"] as const;
 
@@ -79,6 +79,9 @@ export const inputVariants = tv({
 		variant: {
 			primary: { root: "border-input bg-card" },
 			secondary: { root: "border-transparent bg-secondary" },
+			// The card fill with the highlight set into its edge. Focus swaps
+			// that for a ring border and a three-point halo — see the compound.
+			etched: { root: "border-input bg-card shadow-etched dark:shadow-etched-dark" },
 		},
 		size: {
 			sm: {
@@ -145,6 +148,15 @@ export const inputVariants = tv({
 		// field that went grey the moment it was tapped would drop the only
 		// signal it has that its value is wrong, exactly while it is being fixed.
 		{ isFocused: true, isInvalid: true, class: { root: "border-destructive" } },
+		// An etched field trades its edge highlight for the halo while it holds
+		// focus. Invalid keeps the highlight and the destructive border instead,
+		// so a wrong value never glows in the ring's colour.
+		{
+			isFocused: true,
+			isInvalid: false,
+			variant: "etched",
+			class: { root: "border-ring shadow-focus dark:shadow-focus-dark" },
+		},
 		// The corner a lone field draws: the generic ramp, deliberately not the
 		// button's, because a field and the button beside it are meant to be
 		// retunable apart. `sm` steps down a notch; the other two share `lg`.

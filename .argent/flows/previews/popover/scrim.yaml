@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/scrim and has settled — the Share button with the panel closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the panel; the scrim dims everything behind it
+  - tap: { id: open-popover }
+  - await: { visible: { id: copy-link } }
+  - wait: 1200
+  - echo: Copy link closes it, so the clip loops without a jump cut
+  - tap: { id: copy-link }
+  - await: { hidden: { id: copy-link } }

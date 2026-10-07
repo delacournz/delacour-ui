@@ -3,6 +3,7 @@ import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import type { ReactElement } from "react";
+import { PILL_PRIMARY } from "@/components/landing/pill";
 import { ChartsSpecimen, CornerSpecimen, PrimarySpecimen, SurfaceSpecimen } from "@/components/theme-specimens";
 import { track } from "@/lib/analytics/track";
 import { type ThemeSummaryRow, themeSummary } from "@/lib/theme-preset";
@@ -42,7 +43,7 @@ function Specimen({ row, config }: { row: ThemeSummaryRow; config: DesignSystemC
  */
 export function ThemeSummary({ config }: { config: DesignSystemConfig }): ReactElement {
 	return (
-		<dl className="grid grid-cols-1 gap-px overflow-hidden rounded-card border border-fd-border bg-fd-border sm:grid-cols-2">
+		<dl className="grid grid-cols-1 gap-px overflow-hidden rounded-xl border border-fd-border bg-fd-border sm:grid-cols-2">
 			{themeSummary(config).map((row) => (
 				<div className="flex items-center justify-between gap-3 bg-fd-card px-4 py-3" key={row.label}>
 					<dt className="text-fd-muted-foreground text-sm">{row.label}</dt>
@@ -131,11 +132,7 @@ export function CopyThemeButton({ css }: { css: string }): ReactElement {
 	});
 
 	return (
-		<button
-			className="inline-flex h-11 w-full items-center justify-center rounded-full bg-fd-primary px-5 font-medium text-fd-primary-foreground text-sm transition hover:shadow-[0_8px_24px_-8px_var(--glow)] hover:brightness-105"
-			onClick={onClick}
-			type="button"
-		>
+		<button className={PILL_PRIMARY} onClick={onClick} type="button">
 			{copied ? "Copied" : "Copy theme.css"}
 		</button>
 	);

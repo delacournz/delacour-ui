@@ -23,13 +23,24 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
 import { type ResolvedMode, resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { houseFonts } from "../src/lib/house";
 
 const WEB = join(import.meta.dirname, "..");
 const CSS_OUT = join(WEB, "src", "styles", "house.css");
 const META_OUT = join(WEB, "src", "lib", "house-meta.ts");
+
+/**
+ * The preset the committed media under `public/previews/` was photographed on.
+ *
+ * The house moved to graphite; the captures did not, and `bun run previews`
+ * has not been rerun. A capture frame painted in today's house background
+ * would meet its image with a seam, so `--color-capture` stays on the preset
+ * the pixels were shot on until the previews are recaptured — then this line
+ * becomes `HOUSE_CONFIG` again.
+ */
+const CAPTURE_CONFIG = DELACOUR_AMBER_CONFIG;
 
 /**
  * Fumadocs slot ← library token.
@@ -98,9 +109,12 @@ export function fontDeclarations(): readonly (readonly [name: string, value: str
 	const mono = houseFonts().find((font) => font.type === "mono")?.family;
 	if (!sans || !heading || !mono) throw new Error("the house preset must name a sans, a heading and a mono face");
 
+	/** A body set in the mono face falls back to the platform mono, not the platform sans. */
+	const fallback = (family: string): string => (family === mono ? MONO_FALLBACK : SANS_FALLBACK);
+
 	return [
-		["--font-sans", `${quoted(sans)}, ${SANS_FALLBACK}`],
-		["--font-heading", `${quoted(heading)}, ${SANS_FALLBACK}`],
+		["--font-sans", `${quoted(sans)}, ${fallback(sans)}`],
+		["--font-heading", `${quoted(heading)}, ${fallback(heading)}`],
 		["--font-mono", `${quoted(mono)}, ${MONO_FALLBACK}`],
 	];
 }
@@ -121,7 +135,7 @@ function paletteLines(mode: ResolvedMode): string {
  */
 export function renderHouseCss(): string {
 	const { light, dark } = resolveTokens(HOUSE_CONFIG);
-	const captured = resolveTokens(HOUSE_CONFIG);
+	const captured = resolveTokens(CAPTURE_CONFIG);
 	const fonts = fontDeclarations()
 		.map(([name, value]) => `\t${name}: ${value};`)
 		.join("\n");

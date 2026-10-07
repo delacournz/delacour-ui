@@ -91,32 +91,32 @@ function ThemeColour() {
  * `<template>` — never rendered, never read by assistive technology, and
  * present in the SSR output where `grep` for the seed key finds it.
  *
- * THESIS: Delacour UI is the studio's own site continued into its component
- * library: one black ground, one amber, one reading column. It refuses the
- * wide grey docs hero with a glow behind it.
- * OWN-WORLD: black page, zinc-900 surfaces, zinc-800 hairlines, near-white
- * text, amber for every interactive and every marker; Outfit 600 tight
- * headings over Inter body, Geist Mono code; 8px corners, 1.8x cards, fully
- * round pills; a faint particle-dot field under everything.
- * STORY: a React Native developer recognises the studio, reads one column top
- * to bottom, sees real phone captures, copies one command, and tries it on
- * their phone.
- * FIRST VIEWPORT: floating pill nav; a single 36rem column; the mark, then the
- * headline in Outfit at 48/56, the lede in zinc-400, one amber pill CTA and
- * one ghost CTA, the install tabs as the single calm card; the phone capture
- * sits to the right only above 1024px.
- * FORM: pinned by the user to the studio site; seed 4a705b78 spent; code-led.
- * FINISH: unreviewed and undocumented is unfinished.
+ * THESIS: Delacour UI is a graphite instrument panel for a component library:
+ * greyscale, hairline-ruled, set entirely in mono with Inter only for headings.
+ * It refuses the coloured accent and the floating pill nav.
+ * OWN-WORLD: white or #131313 page, alpha hairlines at 12% / 10% drawn at 65%,
+ * foreground hover fills at 2-5%, a 1px inner highlight under a faint shadow on
+ * every surface; JetBrains Mono for the whole UI, Inter 600 tight for headings,
+ * 10px base radius, cards at 1.8x, controls h-8 / h-9; colour only for status
+ * and charts.
+ * STORY: a React Native developer reads a dense, calm index, sees real phone
+ * captures, copies one command, and tries it on their phone.
+ * FIRST VIEWPORT: a frosted h-14 bar with the tracked wordmark, a live
+ * component and category counter and a search pill; a mono kicker, the headline
+ * in Inter, the lede, one primary and one ghost control, the install tabs; the
+ * phone capture sits to the right only above 1024px.
+ * FORM: pinned by the user to the devl.dev design language, written from its
+ * token values and density rather than its source.
  */
 const DIRECTION_CONTRACT = `<!--
 impeccable direction contract · seed 4a705b78
-THESIS: Delacour UI is the studio's own site continued into its component library: one black ground, one amber, one reading column. It refuses the wide grey docs hero with a glow behind it.
-OWN-WORLD: black page, zinc-900 surfaces, zinc-800 hairlines, near-white text, amber for every interactive and every marker; Outfit 600 tight headings over Inter body, Geist Mono code; 8px corners, 1.8x cards, fully round pills; a faint particle-dot field under everything.
-STORY: a React Native developer recognises the studio, reads one column top to bottom, sees real phone captures, copies one command, and tries it on their phone.
-FIRST VIEWPORT: floating pill nav; a single 36rem column; the mark, then the headline (copy unchanged) in Outfit at 48/56, the lede in zinc-400, one amber pill CTA and one ghost CTA, the install tabs as the single calm card; the phone capture sits to the right only above 1024px.
-FORM: pinned by the user to the studio site; seed 4a705b78 spent; code-led.
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance.
-CITED ADAPTATIONS: the page ground is the zinc base's own value — #09090b dark, #fafafa light — rather than the studio's #000 / #fff, because every colour on the site is resolveTokens(HOUSE_CONFIG) and the axes have no pure black or white page; the showcase grid and the library index leave the 36rem column because thirteen phone captures and twenty names in eight groups are a picture wall and an index, not prose, and each keeps its heading on the column's left edge.
+THESIS: Delacour UI is a graphite instrument panel for a component library: greyscale, hairline-ruled, set entirely in mono with Inter only for headings. It refuses the coloured accent and the floating pill nav.
+OWN-WORLD: white or #131313 page, alpha hairlines at 12% / 10% drawn at 65%, foreground hover fills at 2-5%, a 1px inner highlight under a faint shadow on every surface; JetBrains Mono for the whole UI, Inter 600 tight for headings, 10px base radius, cards at 1.8x, controls h-8 / h-9; colour only for status and charts.
+STORY: a React Native developer reads a dense, calm index, sees real phone captures, copies one command, and tries it on their phone.
+FIRST VIEWPORT: a frosted h-14 bar with the tracked wordmark, a live component and category counter and a search pill; a mono kicker, the headline (copy unchanged) in Inter, the lede, one primary and one ghost control, the install tabs; the phone capture sits to the right only above 1024px.
+FORM: pinned by the user to the devl.dev design language, written from its token values and density rather than its source.
+FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict and DESIGN.md.
+CITED ADAPTATIONS: every colour on the site is resolveTokens(HOUSE_CONFIG), so the page ground is the graphite base's own value rather than a hand-picked one; the showcase grid and the component index fill the page container because they are a picture wall and an index, not prose, and each keeps its heading on the container's left edge; the committed previews were shot on the previous house, so --color-capture stays on that preset until they are recaptured.
 -->`;
 
 /**
@@ -137,8 +137,7 @@ function DirectionContract() {
 }
 
 /**
- * Dark by default. The studio site is dark first and the house palette was
- * composed dark first; light stays a real, working theme behind the toggle,
+ * Dark by default. The house palette is graphite and was composed dark first; light stays a real, working theme behind the toggle,
  * and a visitor's choice persists the way `next-themes` always has.
  *
  * Search is Fumadocs' own dialog rebuilt so the query can be counted — see

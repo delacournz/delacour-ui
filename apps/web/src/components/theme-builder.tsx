@@ -44,15 +44,15 @@ import {
  */
 
 const TILE =
-	"flex flex-col items-center gap-1.5 rounded-tile border px-2 py-2 text-center text-xs transition-colors hover:bg-fd-accent";
-const TILE_SELECTED = "border-fd-primary ring-1 ring-fd-primary";
+	"flex flex-col items-center gap-1.5 rounded-tile border px-2 py-2 text-center text-[11px] transition-[background-color,scale] duration-150 ease-out hover:bg-(--hover-fill) active:scale-[0.97]";
+const TILE_SELECTED = "border-fd-foreground ring-1 ring-fd-foreground";
 const TILE_IDLE = "border-fd-border";
 
 /** A row's frame: its name, the options, and an optional line describing the current one. */
 function Axis({ label, caption, children }: { label: string; caption?: string; children: ReactNode }): ReactElement {
 	return (
 		<div className="flex flex-col gap-2">
-			<h3 className="font-medium text-fd-muted-foreground text-xs uppercase tracking-wide">{label}</h3>
+			<h3 className="kicker">{label}</h3>
 			{children}
 			{caption ? <p className="text-fd-muted-foreground text-xs">{caption}</p> : null}
 		</div>
@@ -103,7 +103,7 @@ function StyleAxis({ config }: { config: DesignSystemConfig }): ReactElement {
 
 	return (
 		<Axis caption={selected?.description} label={AXIS_LABELS.style}>
-			<div className="grid grid-cols-4 gap-2 sm:grid-cols-8">
+			<div className="grid grid-cols-4 gap-2 @lg:grid-cols-8">
 				{options.map((option) => (
 					<OptionLink key={option.value} option={option}>
 						<StyleSpecimen config={option.config} isSelected={option.isSelected} />
@@ -166,7 +166,7 @@ function BaseColorAxis({ config }: { config: DesignSystemConfig }): ReactElement
 function PaletteAxis({ config, axis }: { config: DesignSystemConfig; axis: "theme" | "chartColor" }): ReactElement {
 	return (
 		<Axis label={AXIS_LABELS[axis]}>
-			<div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+			<div className="grid grid-cols-3 gap-2 @lg:grid-cols-6">
 				{axisOptions(config, axis).map((option) => (
 					<OptionLink key={option.value} option={option}>
 						{axis === "theme" ? <PrimarySpecimen config={option.config} /> : <ChartsSpecimen config={option.config} />}
@@ -242,7 +242,7 @@ function FontAxis({ config, axis }: { config: DesignSystemConfig; axis: "font" |
 			<div className="rounded-tile border border-fd-border p-3">
 				{fontOptionGroups(config, axis).map((group) => (
 					<div className="mb-3 flex flex-col gap-2 last:mb-0" key={group.type}>
-						<h4 className="font-medium text-fd-muted-foreground text-xs">{group.label}</h4>
+						<h4 className="kicker tracking-widest">{group.label}</h4>
 						<div className="flex flex-wrap gap-2">
 							{group.options.map((option) => (
 								<FontTile key={option.value} option={option} />
@@ -257,7 +257,7 @@ function FontAxis({ config, axis }: { config: DesignSystemConfig; axis: "font" |
 
 export function ThemeBuilder({ config }: { config: DesignSystemConfig }): ReactElement {
 	return (
-		<div className="flex flex-col gap-6">
+		<div className="@container flex flex-col gap-6">
 			<StyleAxis config={config} />
 			<RadiusAxis config={config} />
 			<BaseColorAxis config={config} />
@@ -279,7 +279,7 @@ export function ThemeBuilder({ config }: { config: DesignSystemConfig }): ReactE
 export function ResetThemeLink(): ReactElement {
 	return (
 		<Link
-			className="rounded-full border border-fd-border px-4 py-1.5 font-medium text-sm transition-colors hover:bg-fd-accent"
+			className="raised inline-flex h-8 items-center rounded-lg border border-fd-border bg-fd-card px-3 text-xs transition-[background-color,scale] duration-150 ease-out hover:bg-(--hover-fill) active:scale-[0.97]"
 			resetScroll={false}
 			search={{}}
 			to="/theme"

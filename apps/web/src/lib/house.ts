@@ -4,13 +4,14 @@ import { HOUSE_CONFIG } from "@delacour/design-system/house";
 /**
  * The house preset, as the docs site reads it.
  *
- * `HOUSE_CONFIG` names a sans and a heading face on the customiser's own axes.
- * It cannot name a code face — the design system has no mono rail — so the
- * site names one here, by catalogue id, and every other fact about it (the
- * family string Google Fonts takes, the weights it ships) still comes from
- * `fonts.ts` rather than being typed twice.
+ * `HOUSE_CONFIG` sets the whole UI in JetBrains Mono with Inter for headings,
+ * so the body face and the code face are the same family. The site still names
+ * its code face here, by catalogue id, so a house that moves its body back to
+ * a sans keeps a mono for code; every other fact about it (the family string
+ * Google Fonts takes, the weights it ships) comes from `fonts.ts` rather than
+ * being typed twice.
  */
-export const HOUSE_MONO_FONT = "geist-mono";
+export const HOUSE_MONO_FONT = "jetbrains-mono";
 
 /**
  * The three families the whole site loads: body, headings and code.

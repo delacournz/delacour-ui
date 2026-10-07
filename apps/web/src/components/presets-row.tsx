@@ -16,7 +16,7 @@ import { PRESETS } from "@/lib/theme-preset";
  */
 export function PresetsRow({ current }: { current: string | undefined }): ReactElement {
 	return (
-		<ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+		<ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
 			{PRESETS.map((preset) => (
 				<li key={preset.name}>
 					<PresetLink preset={preset} isSelected={current === preset.code} />
@@ -31,8 +31,8 @@ function PresetLink({ preset, isSelected }: { preset: PresetShortcut; isSelected
 		<Link
 			aria-current={isSelected ? "true" : undefined}
 			className={cn(
-				"flex h-full items-start gap-3 rounded-tile border p-3 text-left transition-colors hover:bg-fd-accent",
-				isSelected ? "border-fd-primary ring-1 ring-fd-primary" : "border-fd-border"
+				"flex h-full items-start gap-3 rounded-tile border p-3 text-left transition-[background-color,scale] duration-150 ease-out hover:bg-(--hover-fill) active:scale-[0.98]",
+				isSelected ? "border-fd-foreground ring-1 ring-fd-foreground" : "border-fd-border"
 			)}
 			resetScroll={false}
 			search={{ preset: preset.code }}
@@ -43,8 +43,8 @@ function PresetLink({ preset, isSelected }: { preset: PresetShortcut; isSelected
 				<SurfaceSpecimen config={preset.config} />
 			</span>
 			<span className="flex min-w-0 flex-col gap-0.5">
-				<span className="font-medium text-sm">{preset.title}</span>
-				<span className="text-fd-muted-foreground text-xs">{preset.blurb}</span>
+				<span className="font-medium text-[13px]">{preset.title}</span>
+				<span className="text-[11px] text-fd-muted-foreground leading-relaxed">{preset.blurb}</span>
 			</span>
 		</Link>
 	);

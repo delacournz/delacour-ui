@@ -16,8 +16,8 @@ import { PAGE_SECTION } from "@/components/section";
 /**
  * A glyph per principle, from the site's one icon set, keyed by the title so
  * a reordered list keeps its pictures. Drawn at `size-icon-lg` from the
- * library's own icon scale, in the accent — each is the marker for its row,
- * the way the eyebrow dot marks a section.
+ * library's own icon scale, in the muted foreground — each is the marker for its row,
+ * the way the kicker mark opens a section.
  */
 const GLYPHS: Readonly<Record<(typeof FEATURES_COPY.items)[number]["title"], LucideIcon>> = {
 	Composable: Blocks,
@@ -46,12 +46,12 @@ export function Features(): ReactElement {
 
 					return (
 						<li
-							className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-fd-border border-t py-5 sm:[&:nth-child(-n+2)]:border-t-0 lg:[&:nth-child(-n+3)]:border-t-0 [&:first-child]:border-t-0"
+							className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 border-fd-border/70 border-t py-5 sm:[&:nth-child(-n+2)]:border-t-0 lg:[&:nth-child(-n+3)]:border-t-0 [&:first-child]:border-t-0"
 							key={feature.title}
 						>
-							<Glyph aria-hidden className="mt-0.5 size-icon-lg text-fd-primary" strokeWidth={1.75} />
+							<Glyph aria-hidden className="mt-0.5 size-icon-lg text-fd-muted-foreground" strokeWidth={1.75} />
 							<h3 className="text-base">{feature.title}</h3>
-							<p className="col-start-2 text-fd-muted-foreground text-sm">{feature.body}</p>
+							<p className="col-start-2 text-fd-muted-foreground text-xs leading-relaxed">{feature.body}</p>
 						</li>
 					);
 				})}

@@ -46,7 +46,7 @@ function PresetChip({ preset }: { preset: PresetShortcut }): ReactElement {
 
 	return (
 		<Link
-			className="group/chip block overflow-hidden rounded-card border border-fd-border transition-colors hover:border-fd-primary/50"
+			className="group/chip block overflow-hidden rounded-card border border-fd-border transition-colors hover:border-fd-foreground/25"
 			search={{ preset: preset.code }}
 			to="/theme"
 		>

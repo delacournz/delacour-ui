@@ -16,3 +16,13 @@
  * `pt-section-sm`, or nothing at all where it sits against another.
  */
 export const PAGE_SECTION = "mx-auto w-full min-w-0 max-w-page px-6";
+
+/**
+ * The document column: `PAGE_SECTION`'s edges and gutter at a `max-w-3xl`
+ * measure, centred. A policy, a comparison's opening and any other page that
+ * is read rather than browsed takes this instead — a kicker over a text-3xl
+ * heading, then prose — so the line length is the page's, not the container's.
+ * It is Tailwind's own 48rem step rather than a third container token: the two
+ * in `app.css` stay the only widths a *browsing* section may take.
+ */
+export const COLUMN_SECTION = "mx-auto w-full min-w-0 max-w-3xl px-6";

@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import { PresetsRow } from "@/components/presets-row";
-import { PAGE_SECTION } from "@/components/section";
 import { ResetThemeLink, ThemeBuilder } from "@/components/theme-builder";
 import { CopyThemeButton, PresetNotice, ThemeCssPanel, ThemeSummary } from "@/components/theme-css";
 import { ThemePreview } from "@/components/theme-preview";
@@ -64,6 +63,17 @@ export const Route = createFileRoute("/theme")({
 	},
 });
 
+/**
+ * The customiser as an app shell: a frosted h-14 topbar under the site header
+ * carrying the page's kicker, the preset code and the two actions; a
+ * hairline-ruled sidebar of axes at 22rem on the left; and the work — presets,
+ * the live specimen, the summary and the file — in nested trays on the right.
+ *
+ * Below `lg` the shell stacks and the sidebar moves under the work, because on
+ * a phone the reader came to see the theme first and tune it second. The
+ * sidebar scrolls itself from `lg` up, so the topbar and the axes stay in
+ * reach while the files below scroll.
+ */
 function ThemePage(): ReactElement {
 	const { preset } = Route.useSearch();
 	const resolved = resolvePreset(preset);
@@ -72,78 +82,93 @@ function ThemePage(): ReactElement {
 
 	return (
 		<HomeLayout {...homeOptions()}>
-			<main className={`${PAGE_SECTION} flex flex-col gap-section-gap py-section-sm`}>
-				{resolved.status === "invalid" ? (
-					<div>
-						<PresetNotice code={resolved.code} />
-					</div>
-				) : null}
-
-				<header className="flex flex-col gap-3">
-					<h1 className="text-4xl sm:text-5xl">Your theme</h1>
-					<p className="text-fd-muted-foreground text-lg">
-						{resolved.status === "resolved"
-							? "Change any axis below, or copy theme.css straight into your project."
-							: "Build a theme by picking an option on any axis. The theme.css at the bottom is the result, ready to paste."}
-					</p>
-					{resolved.status === "resolved" ? (
-						<p className="text-fd-muted-foreground text-sm">
-							Preset code <code className="rounded bg-fd-muted px-1.5 py-0.5 font-mono text-xs">{resolved.code}</code>
-						</p>
-					) : null}
-				</header>
-
-				<section className="flex flex-col gap-4">
-					<h2 className="text-2xl">Presets</h2>
-					<PresetsRow current={resolved.status === "resolved" ? resolved.code : undefined} />
-				</section>
-
-				<section className="flex flex-col gap-4">
-					<ThemePreview config={resolved.config} />
-				</section>
-
-				<section className="flex flex-col gap-4">
+			<div className="flex min-w-0 flex-1 flex-col lg:flex-row">
+				<aside className="flex flex-col gap-5 border-fd-border/70 border-t bg-(--sidebar-fill) px-4 py-6 max-lg:order-last lg:sticky lg:top-14 lg:h-[calc(100dvh-3.5rem)] lg:w-[22rem] lg:shrink-0 lg:overflow-y-auto lg:border-e lg:border-t-0">
 					<div className="flex items-center justify-between gap-4">
-						<h2 className="text-2xl">Axes</h2>
+						<p className="kicker">Axes</p>
 						<ResetThemeLink />
 					</div>
 					<ThemeBuilder config={resolved.config} />
-				</section>
+				</aside>
 
-				<section className="flex flex-col gap-4">
-					<h2 className="text-2xl">What that adds up to</h2>
-					<ThemeSummary config={resolved.config} />
-				</section>
+				<div className="flex min-w-0 flex-1 flex-col">
+					<div className="sticky top-14 z-10 flex h-14 items-center justify-between gap-4 border-fd-border/70 border-b bg-(--frost) px-4 backdrop-blur-lg lg:px-8">
+						<div className="flex min-w-0 items-baseline gap-3">
+							<h1 className="truncate text-base">Your theme</h1>
+							{resolved.status === "resolved" ? (
+								<span className="kicker hidden rounded-md border border-fd-border/70 px-1.5 tracking-widest sm:inline">
+									{resolved.code}
+								</span>
+							) : null}
+						</div>
+						<CopyThemeButton css={native} />
+					</div>
 
-				<section className="flex flex-col gap-4">
-					<h2 className="text-2xl">Theme tokens</h2>
-					<ThemeCssPanel native={native} web={web} />
-				</section>
+					<main className="flex flex-col gap-10 px-4 py-8 lg:px-8">
+						{resolved.status === "invalid" ? <PresetNotice code={resolved.code} /> : null}
 
-				<CopyThemeButton css={native} />
+						<p className="max-w-reading text-fd-muted-foreground text-xs leading-relaxed">
+							{resolved.status === "resolved"
+								? "Change any axis, or copy theme.css straight into your project."
+								: "Build a theme by picking an option on any axis. The theme.css further down is the result, ready to paste."}
+						</p>
 
-				<section className="flex flex-col gap-3 border-fd-border border-t pt-8">
-					<h2 className="text-2xl">Using it</h2>
-					<p className="text-fd-muted-foreground text-sm">
-						Replace the whole of <code className="font-mono text-xs">src/styles/theme.css</code> with the first tab.
-						There is nothing else to run — that file is the one a{" "}
-						<code className="font-mono text-xs">delacour init</code> project edits, and the library reads it as it is.
-					</p>
-					<p className="text-fd-muted-foreground text-sm">
-						The second tab is shadcn&apos;s <code className="font-mono text-xs">globals.css</code>, for a web app that
-						shares the theme.
-					</p>
-					<p className="text-fd-muted-foreground text-sm">
-						<Link
-							className="underline decoration-fd-primary/60 underline-offset-4 hover:decoration-fd-primary"
-							to="/docs/$"
-							params={{ _splat: "native/getting-started/theming" }}
-						>
-							More on theming
-						</Link>
-					</p>
-				</section>
-			</main>
+						<Panel kicker="Presets">
+							<PresetsRow current={resolved.status === "resolved" ? resolved.code : undefined} />
+						</Panel>
+
+						<Panel kicker="Preview">
+							<ThemePreview config={resolved.config} />
+						</Panel>
+
+						<Panel kicker="What that adds up to">
+							<ThemeSummary config={resolved.config} />
+						</Panel>
+
+						<Panel kicker="Theme tokens">
+							<ThemeCssPanel native={native} web={web} />
+						</Panel>
+
+						<section className="flex max-w-reading flex-col gap-3 border-fd-border/70 border-t pt-8">
+							<p className="kicker">Using it</p>
+							<p className="text-fd-muted-foreground text-xs leading-relaxed">
+								Replace the whole of <code className="font-mono text-[11px]">src/styles/theme.css</code> with the first
+								tab. There is nothing else to run — that file is the one a{" "}
+								<code className="font-mono text-[11px]">delacour init</code> project edits, and the library reads it as
+								it is.
+							</p>
+							<p className="text-fd-muted-foreground text-xs leading-relaxed">
+								The second tab is shadcn&apos;s <code className="font-mono text-[11px]">globals.css</code>, for a web
+								app that shares the theme.
+							</p>
+							<p className="text-xs">
+								<Link
+									className="underline decoration-fd-foreground/30 underline-offset-4 hover:decoration-fd-foreground"
+									params={{ _splat: "native/getting-started/theming" }}
+									to="/docs/$"
+								>
+									More on theming
+								</Link>
+							</p>
+						</section>
+					</main>
+				</div>
+			</div>
 		</HomeLayout>
+	);
+}
+
+/**
+ * One block of the work: a kicker over a nested tray, so every panel on the
+ * page is the same muted frame around a panel — the shell's one container.
+ */
+function Panel({ kicker, children }: { kicker: string; children: ReactNode }): ReactElement {
+	return (
+		<section className="flex flex-col gap-3">
+			<p className="kicker">{kicker}</p>
+			<div className="tray">
+				<div className="min-w-0 rounded-xl bg-fd-card p-3">{children}</div>
+			</div>
+		</section>
 	);
 }

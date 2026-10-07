@@ -79,7 +79,7 @@ export function Showcase(): ReactElement {
  * image meets its frame with no seam; the caption is one line and one blurb.
  */
 export const CARD =
-	"group/preview flex flex-col overflow-hidden rounded-card border border-fd-border bg-fd-card transition-colors hover:border-fd-primary/50";
+	"group/preview raised flex flex-col overflow-hidden rounded-card border border-fd-border bg-fd-card transition-[border-color,scale] duration-150 ease-out hover:border-fd-foreground/25 active:scale-[0.99]";
 
 function ShowcaseCard({ tile }: { tile: ShowcaseTile }): ReactElement {
 	const component = componentBySlug(tile.slug);
@@ -88,17 +88,17 @@ function ShowcaseCard({ tile }: { tile: ShowcaseTile }): ReactElement {
 
 	return (
 		<Link className={`${CARD} ${span}`} params={{ _splat: `native/components/${component.slug}` }} to="/docs/$">
-			<div className="flex h-56 items-center justify-center overflow-hidden bg-fd-background p-4">
+			<div className="flex h-56 items-center justify-center overflow-hidden bg-capture p-4">
 				<ThemedPreview className="h-full w-full object-contain" entry={entry} fill />
 			</div>
-			<div className="flex items-start justify-between gap-3 border-fd-border border-t p-4">
+			<div className="flex items-start justify-between gap-3 border-fd-border/70 border-t p-4">
 				<div className="flex flex-col gap-1">
-					<span className="font-medium text-sm">{component.name}</span>
-					<span className="text-fd-muted-foreground text-xs">{component.blurb}</span>
+					<span className="font-medium text-[13px]">{component.name}</span>
+					<span className="text-[11px] text-fd-muted-foreground leading-relaxed">{component.blurb}</span>
 				</div>
 				<span
 					aria-hidden
-					className="text-fd-muted-foreground transition-[translate,color] group-hover/preview:translate-x-0.5 group-hover/preview:text-fd-primary"
+					className="text-fd-muted-foreground transition-[translate,color] group-hover/preview:translate-x-0.5 group-hover/preview:text-fd-foreground"
 				>
 					→
 				</span>

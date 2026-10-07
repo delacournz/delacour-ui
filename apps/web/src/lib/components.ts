@@ -234,6 +234,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 			"A short label on a long press — anchored to its control, gone on its own, never in the way of the next tap.",
 	},
 	{
+		slug: "drawer",
+		name: "Drawer",
+		group: "Overlays",
+		blurb: "A panel that slides in from an edge and swipes back to it — a menu, a filter panel, a notifications tray.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

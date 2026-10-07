@@ -46,6 +46,7 @@
 		"./chip": "./src/components/chip/index.ts",
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
+		"./drawer": "./src/components/drawer/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./field": "./src/components/field/index.ts",
 		"./icon": "./src/components/icon/index.ts",

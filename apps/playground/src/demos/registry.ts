@@ -179,6 +179,12 @@ import * as demo_dialog_controlled from "./dialog/controlled";
 import * as demo_dialog_form from "./dialog/form";
 import * as demo_dialog_over_sheet from "./dialog/over-sheet";
 import * as demo_dialog_sizes from "./dialog/sizes";
+import * as demo_drawer_controlled from "./drawer/controlled";
+import * as demo_drawer_filters from "./drawer/filters";
+import * as demo_drawer_navigation from "./drawer/navigation";
+import * as demo_drawer_notifications from "./drawer/notifications";
+import * as demo_drawer_rtl from "./drawer/rtl";
+import * as demo_drawer_sizes from "./drawer/sizes";
 import * as demo_empty_state_actions from "./empty-state/actions";
 import * as demo_empty_state_anatomy from "./empty-state/anatomy";
 import * as demo_empty_state_emptied_list from "./empty-state/emptied-list";
@@ -587,6 +593,12 @@ export const DEMOS = {
 	"dialog/form": demo_dialog_form,
 	"dialog/over-sheet": demo_dialog_over_sheet,
 	"dialog/sizes": demo_dialog_sizes,
+	"drawer/controlled": demo_drawer_controlled,
+	"drawer/filters": demo_drawer_filters,
+	"drawer/navigation": demo_drawer_navigation,
+	"drawer/notifications": demo_drawer_notifications,
+	"drawer/rtl": demo_drawer_rtl,
+	"drawer/sizes": demo_drawer_sizes,
 	"empty-state/actions": demo_empty_state_actions,
 	"empty-state/anatomy": demo_empty_state_anatomy,
 	"empty-state/emptied-list": demo_empty_state_emptied_list,

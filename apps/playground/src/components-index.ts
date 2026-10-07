@@ -126,6 +126,12 @@ const ROWS = [
 		description: "Long press, press, placements, surface, persistent",
 		group: "Overlays",
 	},
+	{
+		slug: "drawer",
+		title: "Drawer",
+		description: "Navigation, filters, notifications, sizes, RTL",
+		group: "Overlays",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

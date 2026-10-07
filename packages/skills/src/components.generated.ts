@@ -22,6 +22,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },
+	{ name: "drawer", title: "Drawer", description: "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides." },
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },

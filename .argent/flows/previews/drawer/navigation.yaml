@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on drawer/navigation and has settled — the Menu button with the drawer
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the menu from the start edge
+  - tap: { id: drawer-navigation-open }
+  - await: { visible: { text: Harbour Studio } }
+  - wait: 1200
+  - echo: Choosing a place closes it
+  - tap: { id: drawer-navigation-inbox }
+  - await: { hidden: { text: Harbour Studio } }
+  - wait: 500
+  - echo: Opening it again and swiping it back to the edge
+  - tap: { id: drawer-navigation-open }
+  - await: { visible: { id: drawer-navigation-panel } }
+  - wait: 900
+  - swipe: { from: { id: drawer-navigation-panel }, by: { x: -0.37 }, duration: 300 }
+  - await: { hidden: { text: Harbour Studio } }

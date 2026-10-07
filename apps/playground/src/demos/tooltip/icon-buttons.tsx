@@ -11,6 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Long-press any button to see what it does. A plain tap still presses it; the label hides itself, or on the next tap anywhere.",
 	align: "center",
+	capture: { flow: "tooltip/icon-buttons", frame: "device", hero: true },
 };
 
 type Action = "share" | "save" | "like" | "delete";
@@ -41,10 +42,12 @@ function ActionTooltip({ action }: { action: Action }): ReactElement {
 
 export function Demo(): ReactElement {
 	return (
-		<View className="flex-row gap-2 rounded-full border border-border bg-card p-1">
-			{(Object.keys(ACTIONS) as Action[]).map((action) => (
-				<ActionTooltip action={action} key={action} />
-			))}
+		<View className="flex-1 items-center justify-center">
+			<View className="flex-row gap-2 rounded-full border border-border bg-card p-1">
+				{(Object.keys(ACTIONS) as Action[]).map((action) => (
+					<ActionTooltip action={action} key={action} />
+				))}
+			</View>
 		</View>
 	);
 }

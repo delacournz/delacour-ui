@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/persistent and has settled — the Shortcut button with no tooltip
+  showing. The capture script navigates there before running this.
+steps:
+  - echo: Tapping Shortcut; with duration 0 the label stays
+  - tap: { id: tooltip-persistent }
+  - await: { visible: { text: Press ⌘K anywhere } }
+  - wait: 1800
+  - echo: Tapping it again closes it, so the clip loops on the bare button
+  - tap: { id: tooltip-persistent }
+  - wait: 700

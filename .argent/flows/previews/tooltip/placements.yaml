@@ -11,4 +11,5 @@ steps:
   - tap: { id: tooltip-bottom }
   - wait: 700
   - tap: { id: tooltip-left }
-  - wait: 700
+  - echo: Holding until the last label hides itself, so the clip loops on four bare buttons
+  - wait: 2000

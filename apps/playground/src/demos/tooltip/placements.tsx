@@ -9,6 +9,7 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption: "`placement` picks the side the label prefers — `top` by default. A side without room flips.",
 	align: "center",
+	capture: { flow: "tooltip/placements", frame: "device" },
 };
 
 const LABELS: Record<PopoverPlacement, string> = {
@@ -36,13 +37,15 @@ function PlacementTooltip({ placement }: { placement: PopoverPlacement }): React
 
 export function Demo(): ReactElement {
 	return (
-		<View className="items-center gap-3">
-			<PlacementTooltip placement="top" />
-			<View className="flex-row gap-3">
-				<PlacementTooltip placement="left" />
-				<PlacementTooltip placement="right" />
+		<View className="flex-1 items-center justify-center">
+			<View className="items-center gap-3">
+				<PlacementTooltip placement="top" />
+				<View className="flex-row gap-3">
+					<PlacementTooltip placement="left" />
+					<PlacementTooltip placement="right" />
+				</View>
+				<PlacementTooltip placement="bottom" />
 			</View>
-			<PlacementTooltip placement="bottom" />
 		</View>
 	);
 }

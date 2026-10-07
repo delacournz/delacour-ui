@@ -597,6 +597,54 @@
 			]
 		},
 		{
+			"name": "drawer",
+			"type": "registry:ui",
+			"title": "Drawer",
+			"description": "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"cn",
+				"compose-refs",
+				"icon",
+				"icons",
+				"overlay",
+				"pressable",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-teleport",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/drawer/AGENTS.md",
+				"ui/drawer/drawer-body.tsx",
+				"ui/drawer/drawer-close.tsx",
+				"ui/drawer/drawer-content.tsx",
+				"ui/drawer/drawer-description.tsx",
+				"ui/drawer/drawer-footer.tsx",
+				"ui/drawer/drawer-header.tsx",
+				"ui/drawer/drawer-title.tsx",
+				"ui/drawer/drawer-trigger.tsx",
+				"ui/drawer/drawer.context.tsx",
+				"ui/drawer/drawer.tsx",
+				"ui/drawer/drawer.variants.ts",
+				"ui/drawer/index.ts",
+				"ui/drawer/use-drawer-pan.ts"
+			]
+		},
+		{
 			"name": "empty-state",
 			"type": "registry:ui",
 			"title": "Empty State",

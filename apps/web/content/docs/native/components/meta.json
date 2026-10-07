@@ -45,6 +45,7 @@
 		"toast",
 		"dialog",
 		"popover",
+		"tooltip",
 		"---Navigation---",
 		"steps",
 		"tabs",

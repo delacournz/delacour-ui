@@ -1,0 +1,208 @@
+---
+title: Tooltip
+description: A short label naming the control under the finger — opened by a long press, gone on its own, and never in the way of the next tap.
+icon: Info
+---
+
+## Installation
+
+<ComponentInstall name="tooltip" />
+
+Tooltip draws through the overlay layer, so mount [OverlayProvider](/docs/native/components/overlay)
+once at the app root. The provider is also what notices a tap elsewhere and closes the tooltip.
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Icon } from "@/components/ui/icon";
+import { IconShareOs } from "@/lib/icons/central";
+import { Tooltip } from "@/components/ui/tooltip";
+import { Share, View } from "react-native";
+
+function share() {
+  Share.share({ message: "https://ui.delacour.co.nz" });
+}
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <Tooltip label="Share">
+        <Tooltip.Trigger asChild>
+          <Button onPress={share} size="icon-md" variant="ghost">
+            <Icon icon={IconShareOs} />
+          </Button>
+        </Tooltip.Trigger>
+        <Tooltip.Content>
+          <Tooltip.Arrow />
+          <Tooltip.Text>Share</Tooltip.Text>
+        </Tooltip.Content>
+      </Tooltip>
+    </View>
+  );
+}
+```
+
+A long press shows the label with a light haptic. A plain tap still presses the button.
+
+## Anatomy
+
+```tsx
+<Tooltip>
+  <Tooltip.Trigger />
+  <Tooltip.Content>
+    <Tooltip.Arrow />
+    <Tooltip.Text />
+    <Tooltip.Title />
+    <Tooltip.Description />
+  </Tooltip.Content>
+</Tooltip>
+```
+
+`Tooltip.Text` is the one-line label. `Tooltip.Title` and `Tooltip.Description` are for the
+`surface` variant, which has room for both.
+
+## Opening
+
+Phones have no hover, so a tooltip opens on a **long press** by default and leaves the trigger's
+tap alone — the trigger's own `onLongPress` still runs too. `openOn="press"` opens it on a tap
+instead, for a trigger with no tap of its own, like an info glyph:
+
+```tsx
+<Tooltip label="Includes photos, files and backups" openOn="press">
+  <Tooltip.Trigger accessibilityLabel="About storage" hitSlop={12}>
+    <Icon color="muted-foreground" icon={IconCircleInfo} size="sm" />
+  </Tooltip.Trigger>
+  <Tooltip.Content>
+    <Tooltip.Arrow />
+    <Tooltip.Text>Includes photos, files and backups</Tooltip.Text>
+  </Tooltip.Content>
+</Tooltip>
+```
+
+Opening one tooltip closes any other.
+
+## Hiding
+
+A tooltip hides itself `duration` milliseconds after it appears — 1500 by default. `duration={0}`
+keeps it until the trigger is used again or something else is tapped.
+
+A tap anywhere else closes it **and still lands**: the button you tapped is pressed, the list you
+touched scrolls. A tooltip is never something you have to dismiss before you can carry on. The
+tooltip itself takes no touch either.
+
+```tsx
+<Tooltip duration={0} openOn="press">…</Tooltip>
+```
+
+`isOpen` and `onOpenChange` control it from outside; it still hides itself after `duration`.
+
+## Placement
+
+`placement` is the side the label prefers — `top` by default — and `align` lines it up along that
+side. It is placed exactly as a [Popover](/docs/native/components/popover) is: it flips when that
+side lacks room, slides along the trigger to stay inside the safe area, and the arrow keeps
+pointing at the trigger's centre.
+
+```tsx
+<Tooltip.Content align="start" offset={10} placement="bottom">…</Tooltip.Content>
+```
+
+## Variants
+
+`inverted`, the default, is a compact chip in the foreground colour that reads over anything in
+light and dark. `surface` is the popover card, with room for a title and a line.
+
+```tsx
+<Tooltip.Content className="max-w-64" variant="surface">
+  <Tooltip.Arrow />
+  <Tooltip.Title>Sync</Tooltip.Title>
+  <Tooltip.Description>Changes reach your other devices within a minute.</Tooltip.Description>
+</Tooltip.Content>
+```
+
+The text parts take their colour from the variant, so neither needs a class.
+
+## Accessibility
+
+Give the tooltip a `label`. It becomes the trigger's accessibility label when the trigger has none
+— an icon button — or its accessibility hint when it does, so VoiceOver and TalkBack read the
+tooltip's words without anything opening. The tooltip itself is hidden from assistive technology
+and never takes focus, so nothing is read twice.
+
+With a screen reader running, a long press does not open the tooltip; a `press` tooltip still
+opens, and stays until it is dismissed. Under Reduce Motion it fades without sliding. Android's
+back button closes it.
+
+## API Reference
+
+### Tooltip
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controls whether the tooltip is open." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    openOn: {
+      type: '"longPress" | "press"',
+      default: '"longPress"',
+      description: "The gesture on the trigger that opens it.",
+    },
+    duration: {
+      type: "number",
+      default: "1500",
+      description: "Hide this many ms after it appears. 0 keeps it until it is dismissed.",
+    },
+    label: {
+      type: "string",
+      description: "Read by a screen reader on the trigger — as its label, or as its hint when it has one.",
+    },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Tooltip.Trigger
+
+Takes `Pressable`'s props. With `asChild` it hands its long press (or press) to its child instead of
+wrapping it, so the child must be built on `Pressable` — a `Button`, a `Chip`. The child's own
+handlers still run.
+
+### Tooltip.Content
+
+Takes React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    placement: { type: '"top" | "bottom" | "left" | "right"', default: '"top"' },
+    align: { type: '"start" | "center" | "end"', default: '"center"' },
+    offset: { type: "number", default: "6", description: "The gap between the trigger and the label." },
+    alignOffset: { type: "number", default: "0", description: "A nudge inward from the aligned edge." },
+    variant: { type: '"inverted" | "surface"', default: '"inverted"' },
+    width: { type: 'number | "trigger" | "content-fit" | "full"', default: '"content-fit"' },
+    minWidth: { type: "number" },
+    maxHeight: { type: "number", description: "Clamped to the room on the side it lands on." },
+    isScrollable: { type: "boolean", default: "false", description: "Scrolls a body taller than maxHeight." },
+    className: { type: "string" },
+  }}
+/>
+
+### Tooltip.Arrow
+
+<TypeTable type={{ className: { type: "string" } }} />
+
+### Tooltip.Text, Tooltip.Title, Tooltip.Description
+
+Take `Text`'s props. `Tooltip.Text` and `Tooltip.Description` are `Text.Caption`; `Tooltip.Title` is
+`Text.Label`.
+
+### useTooltip
+
+Reads the enclosing tooltip. Throws outside a `Tooltip`.
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean" },
+    setOpen: { type: "(isOpen: boolean) => void" },
+    close: { type: "() => void" },
+  }}
+/>

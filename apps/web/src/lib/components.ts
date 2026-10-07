@@ -227,6 +227,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A small panel anchored to its trigger — flips and shifts to stay on screen, with an arrow that follows.",
 	},
 	{
+		slug: "tooltip",
+		name: "Tooltip",
+		group: "Overlays",
+		blurb:
+			"A short label on a long press — anchored to its control, gone on its own, never in the way of the next tap.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

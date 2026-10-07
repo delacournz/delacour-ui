@@ -694,6 +694,46 @@
 			]
 		},
 		{
+			"name": "feedback",
+			"type": "registry:ui",
+			"title": "Feedback",
+			"description": "A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"button",
+				"dialog",
+				"input",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/feedback/AGENTS.md",
+				"ui/feedback/feedback-action.tsx",
+				"ui/feedback/feedback-cancel.tsx",
+				"ui/feedback/feedback-close.tsx",
+				"ui/feedback/feedback-content.tsx",
+				"ui/feedback/feedback-field.tsx",
+				"ui/feedback/feedback-footer.tsx",
+				"ui/feedback/feedback-panel.tsx",
+				"ui/feedback/feedback-submit.tsx",
+				"ui/feedback/feedback-title.tsx",
+				"ui/feedback/feedback-trigger.tsx",
+				"ui/feedback/feedback.context.tsx",
+				"ui/feedback/feedback.tsx",
+				"ui/feedback/feedback.variants.ts",
+				"ui/feedback/index.ts"
+			]
+		},
+		{
 			"name": "field",
 			"type": "registry:ui",
 			"title": "Field",

@@ -188,6 +188,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
 		categories: ["feedback"],
 	},
+	feedback: {
+		title: "Feedback",
+		description:
+			"A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights.",
+		categories: ["overlays"],
+	},
 	field: {
 		title: "Field",
 		description: "One control with its label, description and error — and the state they all read.",

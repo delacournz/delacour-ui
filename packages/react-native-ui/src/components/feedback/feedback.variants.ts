@@ -4,6 +4,16 @@ import { tv } from "../../lib/tv";
 /** How many lines tall the field is before it grows, when `minRows` is not named. */
 export const FEEDBACK_DEFAULT_MIN_ROWS = 6;
 
+/** The tallest the field grows before it scrolls, when `maxRows` is not named. */
+export const FEEDBACK_DEFAULT_MAX_ROWS = 12;
+
+/**
+ * How long the well takes to follow a change in its content's height — a
+ * multi-step swap, or a line added while typing. Short, so a new line is never
+ * clipped for long, and finite, so an E2E runner's settle wait ends.
+ */
+export const FEEDBACK_PANEL_RESIZE_MS = 200;
+
 /**
  * Points per line of the field — the `leading-6` its slot sets. The test reads
  * the class back, so the two cannot drift apart.
@@ -24,6 +34,11 @@ export const feedbackVariants = tv({
 	slots: {
 		/** The shell: the dialog's card, on the band colour, with a tight inset around the well. */
 		content: "gap-2 bg-muted p-2",
+		/**
+		 * The animated clip around the well. Its height follows the well's on a
+		 * timing; its corner matches the well's so nothing pokes out mid-resize.
+		 */
+		clip: "overflow-hidden rounded-md",
 		/**
 		 * The recessed well: the page colour, one step down the corner ramp from
 		 * the card it sits in so the two read as nested, and a hairline. Relative
@@ -87,4 +102,27 @@ export function resolveFeedbackFieldMinHeight(minRows: number | undefined, lineH
 	const rows =
 		minRows === undefined || !Number.isFinite(minRows) ? FEEDBACK_DEFAULT_MIN_ROWS : Math.max(1, Math.floor(minRows));
 	return rows * lineHeight;
+}
+
+/**
+ * The field's height bounds, as a style: floored at `minRows`, capped at
+ * `maxRows`, and between the two React Native's multiline `TextInput` sizes
+ * itself to its text. Past the cap it scrolls — a dialog that grew without
+ * one would push its footer under the keyboard.
+ *
+ * A ceiling below the floor is lifted up to it, so the field never shrinks as
+ * it grows. Pure, so it is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveFeedbackFieldHeightStyle({
+	minRows,
+	maxRows,
+	lineHeight = FEEDBACK_FIELD_LINE_HEIGHT,
+}: {
+	minRows?: number;
+	maxRows?: number;
+	lineHeight?: number;
+}): { minHeight: number; maxHeight: number } {
+	const minHeight = resolveFeedbackFieldMinHeight(minRows, lineHeight);
+	const ceiling = resolveFeedbackFieldMinHeight(maxRows ?? FEEDBACK_DEFAULT_MAX_ROWS, lineHeight);
+	return { maxHeight: Math.max(minHeight, ceiling), minHeight };
 }

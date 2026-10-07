@@ -4,6 +4,8 @@ description: A dialog for writing — "What should we fix first?", a bug report,
 icon: MessageSquareText
 ---
 
+<Preview id="feedback/basic" title={null} />
+
 ## Installation
 
 <ComponentInstall name="feedback" />
@@ -13,6 +15,8 @@ Feedback is a [Dialog](/docs/native/components/dialog), so it draws through the
 root, inside `DelacourProvider`.
 
 ## Usage
+
+<Preview id="feedback/basic" />
 
 ```tsx title="app/index.tsx"
 import { Button } from "@/components/ui/button";
@@ -106,6 +110,8 @@ its spinner and the field is read-only until the promise settles — and the dia
 a failure can be shown in the well with the draft intact. Close and clear from `onSubmit` on
 success.
 
+<Preview id="feedback/sending" />
+
 ```tsx
 function Send() {
   const { clear, close } = useFeedback();
@@ -138,6 +144,8 @@ app's error reporting rather than vanishing.
 `canSubmitEmpty` lets Submit through with no text — for when chips or a rating carry the answer.
 Tie it to whatever the user picked:
 
+<Preview id="feedback/with-chips" />
+
 ```tsx
 <Feedback.Panel>
   <Feedback.Title>What got in your way?</Feedback.Title>
@@ -156,6 +164,8 @@ A rating, then a message, then thanks: swap the panel's and the footer's childre
 on. The well eases to each step's height over 200ms and the card grows or shrinks with it, staying
 centred, so nothing jumps. `Feedback.Action` is a secondary button for the steps' own actions —
 Next, Back, Done.
+
+<Preview id="feedback/multi-step" />
 
 ```tsx
 <Feedback.Content>

@@ -44,6 +44,7 @@
 		"bottom-sheet",
 		"toast",
 		"dialog",
+		"popover",
 		"---Navigation---",
 		"steps",
 		"tabs",

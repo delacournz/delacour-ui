@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { contrastRatio, oklchToSrgb, parseOklch, relativeLuminance } from "./contrast";
-import { HOUSE_CONFIG } from "./house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG } from "./house";
 import { resolveTokens } from "./resolve";
 
 describe("parseOklch", () => {
@@ -51,15 +51,35 @@ describe("contrastRatio", () => {
 });
 
 /**
- * The house theme's first chart colour has to read on a light surface.
+ * The house theme's first chart colour has to read on the surfaces it is drawn on.
  *
- * `chart-1` is what a single-series sparkline, line or bar is drawn in, and
- * the delacour ramp's palest amber sat at 1.4:1 against the light page — a
- * highlight, not a series. WCAG's non-text minimum is 3:1, against both the
- * page and the card it is usually drawn over.
+ * `chart-1` is what a single-series sparkline, line or bar is drawn in. WCAG's
+ * non-text minimum is 3:1, against both the page and the card, in both modes.
  */
-describe("the house chart ramp in light mode", () => {
-	const { light } = resolveTokens(HOUSE_CONFIG);
+describe("the house chart ramp", () => {
+	const tokens = resolveTokens(HOUSE_CONFIG);
+	const token = (mode: "light" | "dark", key: string): string => {
+		const value = tokens[mode][key];
+		if (typeof value !== "string") throw new Error(`${key} is not a colour`);
+		return value;
+	};
+
+	for (const mode of ["light", "dark"] as const) {
+		test(`chart-1 clears 3:1 against the page and the card in ${mode}`, () => {
+			expect(contrastRatio(token(mode, "chart-1"), token(mode, "background"))).toBeGreaterThanOrEqual(3);
+			expect(contrastRatio(token(mode, "chart-1"), token(mode, "card"))).toBeGreaterThanOrEqual(3);
+		});
+	}
+});
+
+/**
+ * The amber studio ramp is sequential, so it must also step darker.
+ *
+ * Its palest amber once sat at 1.4:1 against the light page — a highlight, not
+ * a series — which is why the light ramp starts at amber-600.
+ */
+describe("the delacour amber chart ramp in light mode", () => {
+	const { light } = resolveTokens(DELACOUR_AMBER_CONFIG);
 	const token = (key: string): string => {
 		const value = light[key];
 		if (typeof value !== "string") throw new Error(`${key} is not a colour`);

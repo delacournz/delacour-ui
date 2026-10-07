@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/icon-buttons and has settled — the toolbar of four icon buttons with
+  no label showing. The capture script navigates there before running this.
+steps:
+  - echo: Long-pressing Share; its label rises above it
+  - long-press: { on: { id: tooltip-share }, duration: 700 }
+  - await: { visible: { text: Share } }
+  - wait: 900
+  - echo: Long-pressing Save; Share's label gives way to it
+  - long-press: { on: { id: tooltip-save }, duration: 700 }
+  - await: { visible: { text: Save } }
+  - wait: 2000

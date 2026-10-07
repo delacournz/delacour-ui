@@ -1,0 +1,8 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/press and has settled — the Storage used label and its info glyph,
+  with no tooltip showing. The capture script navigates there before running this.
+steps:
+  - echo: Tapping the info glyph
+  - tap: { id: tooltip-info }
+  - await: { visible: { text: Includes photos, files and backups } }
+  - wait: 2000

@@ -1,0 +1,8 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/arrow and has settled — the Beta badge with the panel closed. The
+  capture script navigates there before running this.
+steps:
+  - echo: Opening the popover from the badge
+  - tap: { id: open-popover }
+  - await: { visible: { text: This feature is still changing. Tell us what breaks. } }
+  - wait: 1200

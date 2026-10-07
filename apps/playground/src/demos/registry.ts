@@ -275,6 +275,14 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_popover_arrow from "./popover/arrow";
+import * as demo_popover_basic from "./popover/basic";
+import * as demo_popover_edge_collision from "./popover/edge-collision";
+import * as demo_popover_placements from "./popover/placements";
+import * as demo_popover_scrim from "./popover/scrim";
+import * as demo_popover_scrollable from "./popover/scrollable";
+import * as demo_popover_trigger_width_form from "./popover/trigger-width-form";
+import * as demo_popover_unstyled from "./popover/unstyled";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -669,6 +677,14 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"popover/arrow": demo_popover_arrow,
+	"popover/basic": demo_popover_basic,
+	"popover/edge-collision": demo_popover_edge_collision,
+	"popover/placements": demo_popover_placements,
+	"popover/scrim": demo_popover_scrim,
+	"popover/scrollable": demo_popover_scrollable,
+	"popover/trigger-width-form": demo_popover_trigger_width_form,
+	"popover/unstyled": demo_popover_unstyled,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

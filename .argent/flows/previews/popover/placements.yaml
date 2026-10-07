@@ -1,0 +1,20 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/placements and has settled — four trigger buttons with every panel closed.
+  The capture script navigates there before running this.
+steps:
+  - echo: Opening each placement in turn
+  - tap: { id: open-top }
+  - await: { visible: { text: Top } }
+  - wait: 700
+  - tap: { id: open-right }
+  - wait: 400
+  - tap: { id: open-right }
+  - wait: 700
+  - tap: { id: open-bottom }
+  - wait: 400
+  - tap: { id: open-bottom }
+  - wait: 700
+  - tap: { id: open-left }
+  - wait: 400
+  - tap: { id: open-left }
+  - wait: 700

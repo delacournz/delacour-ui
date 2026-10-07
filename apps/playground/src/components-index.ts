@@ -114,6 +114,12 @@ const ROWS = [
 		description: "Confirm, alert dialog, form, sizes, over a sheet",
 		group: "Overlays",
 	},
+	{
+		slug: "popover",
+		title: "Popover",
+		description: "Placement, flip and shift, arrow, trigger width",
+		group: "Overlays",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

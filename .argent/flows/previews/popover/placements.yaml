@@ -1,0 +1,23 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on popover/placements and has settled — four trigger buttons with every panel closed.
+  The capture script navigates there before running this.
+steps:
+  - echo: Opening each placement in turn
+  - tap: { id: open-top }
+  - await: { visible: { text: Top } }
+  - wait: 600
+  - tap: { id: open-right }
+  - wait: 250
+  - tap: { id: open-right }
+  - wait: 600
+  - tap: { id: open-bottom }
+  - wait: 250
+  - tap: { id: open-bottom }
+  - wait: 600
+  - tap: { id: open-left }
+  - wait: 250
+  - tap: { id: open-left }
+  - wait: 600
+  - echo: Closing the last one, so the clip loops without a jump cut
+  - tap: { id: open-left }
+  - wait: 600

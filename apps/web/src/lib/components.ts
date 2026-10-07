@@ -221,6 +221,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A centred card over a dimmed app that asks for a decision or a short input — confirm, alert dialog, form.",
 	},
 	{
+		slug: "popover",
+		name: "Popover",
+		group: "Overlays",
+		blurb: "A small panel anchored to its trigger — flips and shifts to stay on screen, with an arrow that follows.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

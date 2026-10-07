@@ -1022,6 +1022,51 @@
 			]
 		},
 		{
+			"name": "popover",
+			"type": "registry:ui",
+			"title": "Popover",
+			"description": "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"overlay",
+				"pressable",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-keyboard-controller",
+				"react-native-reanimated",
+				"react-native-safe-area-context"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/popover/AGENTS.md",
+				"ui/popover/index.ts",
+				"ui/popover/popover-anchor.tsx",
+				"ui/popover/popover-arrow.tsx",
+				"ui/popover/popover-close.tsx",
+				"ui/popover/popover-content.tsx",
+				"ui/popover/popover-description.tsx",
+				"ui/popover/popover-title.tsx",
+				"ui/popover/popover-trigger.tsx",
+				"ui/popover/popover.context.tsx",
+				"ui/popover/popover.position.ts",
+				"ui/popover/popover.tsx",
+				"ui/popover/popover.variants.ts",
+				"ui/popover/use-anchor-measure.ts",
+				"ui/popover/use-anchored-content.ts"
+			]
+		},
+		{
 			"name": "pressable",
 			"type": "registry:ui",
 			"title": "Pressable",

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { HOUSE_CONFIG } from "@delacour/design-system/house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG } from "@delacour/design-system/house";
 import { resolveTokens } from "@delacour/design-system/resolve";
 import { fontDeclarations, houseMeta, MAPPING, oklchToHex, renderHouseCss, renderHouseMeta } from "./gen-theme";
 
@@ -65,14 +65,17 @@ describe("renderHouseCss", () => {
 		}
 	});
 
-	test("the primary is the brand amber in dark", () => {
-		expect(css.slice(css.indexOf(".dark {"))).toContain("--color-fd-primary: oklch(0.837 0.164 84.429);");
-		// One unit of blue off the site's `#fbbf24` — the oklch transcription's rounding, not the converter's.
-		expect(["#fbbf24", "#fbbf25"]).toContain(oklchToHex("oklch(0.837 0.164 84.429)"));
+	test("the primary is greyscale in both modes — colour is for status and charts", () => {
+		const primary = (block: string): string => block.match(/--color-fd-primary: (oklch\([^)]*\));/)?.[1] ?? "";
+		const chroma = (value: string): number => Number(value.match(/^oklch\(\S+ (\S+)/)?.[1]);
+
+		expect(chroma(primary(css.slice(0, css.indexOf(".dark {"))))).toBe(0);
+		expect(chroma(primary(css.slice(css.indexOf(".dark {"))))).toBe(0);
 	});
 
-	test("a card is not the page in light", () => {
-		expect(String(light.card)).not.toBe(String(light.background));
+	test("a card is told from the page by an alpha hairline, in both modes", () => {
+		expect(String(light.border)).toContain("/");
+		expect(String(dark.border)).toContain("/");
 	});
 
 	/**
@@ -81,19 +84,21 @@ describe("renderHouseCss", () => {
 	 * to be that colour or the image meets its frame with a seam. It keeps its
 	 * own token so the day the capture preset changes, this line changes with it.
 	 */
-	test("carries the capture background from the house preset, in both modes", () => {
-		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(light.background)};`);
-		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(dark.background)};`);
+	test("carries the capture background the committed previews were shot on, in both modes", () => {
+		const shot = resolveTokens(DELACOUR_AMBER_CONFIG);
+
+		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(shot.light.background)};`);
+		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(shot.dark.background)};`);
 	});
 
 	test("the radius is the house corner in rem", () => {
-		expect(css).toContain("--radius: 0.45rem;");
+		expect(css).toContain("--radius: 0.625rem;");
 	});
 
 	test("names the three faces with a fallback stack each", () => {
-		expect(css).toContain("--font-sans: Inter, ui-sans-serif");
-		expect(css).toContain("--font-heading: Outfit, ui-sans-serif");
-		expect(css).toContain('--font-mono: "Geist Mono", ui-monospace');
+		expect(css).toContain('--font-sans: "JetBrains Mono", ui-monospace');
+		expect(css).toContain("--font-heading: Inter, ui-sans-serif");
+		expect(css).toContain('--font-mono: "JetBrains Mono", ui-monospace');
 	});
 
 	test("carries no hex literal", () => {
@@ -111,14 +116,14 @@ describe("fontDeclarations", () => {
 
 describe("houseMeta", () => {
 	test("is the page background in each mode", () => {
-		expect(houseMeta()).toEqual({ light: "#fafafa", dark: "#09090b" });
+		expect(houseMeta()).toEqual({ light: "#ffffff", dark: "#131313" });
 	});
 
 	test("renders as a module carrying both", () => {
 		const source = renderHouseMeta();
 
-		expect(source).toContain('light: "#fafafa"');
-		expect(source).toContain('dark: "#09090b"');
+		expect(source).toContain('light: "#ffffff"');
+		expect(source).toContain('dark: "#131313"');
 		expect(source).toContain("Do not edit");
 	});
 });

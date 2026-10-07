@@ -51,9 +51,9 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 	const playgroundSlug = playgroundSlugForDocsPath(path);
 
 	return (
-		<DocsPage toc={toc}>
-			<DocsTitle>{page.title}</DocsTitle>
-			<DocsDescription>{page.description}</DocsDescription>
+		<DocsPage breadcrumb={{ className: "kicker mb-1 [&_svg]:size-3 [&_a]:text-fd-muted-foreground" }} toc={toc}>
+			<DocsTitle className="text-3xl">{page.title}</DocsTitle>
+			<DocsDescription className="text-sm">{page.description}</DocsDescription>
 			<DocsToolbar markdownUrl={markdownUrl} path={path} slug={playgroundSlug} />
 			<DocsBody>
 				<MDX components={useMDXComponents()} />
@@ -63,6 +63,10 @@ function Content({ path, markdownUrl }: { path: string; markdownUrl: string }) {
 }
 
 /**
+ * The page head is the settings-page pattern: a mono-caps breadcrumb as the
+ * kicker, a text-3xl Inter title, a muted description, then one hairline under
+ * the toolbar. The reading column is capped by Fumadocs' own container.
+ *
  * The notebook layout, not `fumadocs-ui/layouts/docs`: only this one takes
  * `tabMode="navbar"`, which lifts the root-folder tabs (Getting Started,
  * Components, Releases) out of the sidebar and into the top bar.

@@ -6,7 +6,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { type DocsProduct, isDocsProduct } from "@/lib/seo";
 import { ogCardSvg } from "@/og/card";
 import interUrl from "@/og/inter-400.ttf?inline";
-import outfitUrl from "@/og/outfit-600.ttf?inline";
 
 /**
  * `/og/docs?title=Button` — a 1200×630 PNG for the social card.
@@ -15,9 +14,9 @@ import outfitUrl from "@/og/outfit-600.ttf?inline";
  * needs an entry in `PRODUCTS` and nothing here.
  *
  * The SVG comes from `og/card.ts` and resvg rasterises it here, on the server,
- * with the two faces the card sets. resvg reads fonts from paths only, and the
- * built server has no `node_modules/@expo-google-fonts` beside it, so the two
- * TTFs are bundled as inline data URLs and written to the temp directory once
+ * with the one face the card sets. resvg reads fonts from paths only, and the
+ * built server has no `node_modules/@expo-google-fonts` beside it, so the
+ * TTF is bundled as an inline data URL and written to the temp directory once
  * per process — the same bytes the site loads from Google Fonts, committed
  * under `src/og/` so the card cannot depend on a network fetch at render time.
  *
@@ -41,12 +40,10 @@ function fonts(): string[] {
 
 	const dir = join(tmpdir(), "delacour-og-fonts");
 	mkdirSync(dir, { recursive: true });
-	const outfit = join(dir, "outfit-600.ttf");
 	const inter = join(dir, "inter-400.ttf");
-	writeFileSync(outfit, decodeDataUrl(outfitUrl));
 	writeFileSync(inter, decodeDataUrl(interUrl));
 
-	fontFiles = [outfit, inter];
+	fontFiles = [inter];
 	return fontFiles;
 }
 

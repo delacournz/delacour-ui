@@ -26,11 +26,11 @@ const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
 const HERO_DEVICE: PreviewId = "screen/showcase";
 
 /**
- * The first viewport, as the direction contract has it: the mark, the
- * headline, the lede, one amber pill and one ghost, the install tabs as the
- * single calm card — with the phone to its right only above the `lg`
- * breakpoint. There is no glow and no grid behind it; the dot field under the
- * whole page is the only material, and the phone is the only object.
+ * The first viewport, as the direction contract has it: a mono kicker, the
+ * headline in the Inter display face, the lede, one primary and one ghost
+ * control, the install tabs as the single calm card — with the phone to its
+ * right only above the `lg` breakpoint. The only material behind it is the
+ * ambient wash on the body, and the phone is the only object.
  *
  * The column starts on the page container's left edge rather than centring
  * itself with the phone, so the headline is on the same line as every section
@@ -45,7 +45,7 @@ export function Hero(): ReactElement {
 		>
 			<div className="flex w-full min-w-0 flex-col items-start gap-8">
 				<Link
-					className="inline-flex items-center gap-2 rounded-full border border-fd-border bg-fd-card/60 py-1 ps-1.5 pe-3 font-medium text-fd-muted-foreground text-xs transition-colors hover:text-fd-foreground"
+					className="kicker raised inline-flex items-center gap-2.5 rounded-lg border border-fd-border bg-fd-card py-1 ps-1.5 pe-3 tracking-[0.12em] transition-colors duration-150 ease-out hover:text-fd-foreground"
 					params={{ _splat: "native/releases" }}
 					to="/docs/$"
 				>
@@ -55,8 +55,8 @@ export function Hero(): ReactElement {
 				</Link>
 
 				<div className="flex flex-col gap-5">
-					<h1 className="text-4xl leading-[1.1] tracking-[-0.025em] sm:text-5xl">{HERO.title}</h1>
-					<p className="max-w-reading text-fd-muted-foreground text-lg">{HERO.lede}</p>
+					<h1 className="text-4xl leading-[1.1] tracking-[-0.03em] sm:text-5xl">{HERO.title}</h1>
+					<p className="max-w-reading text-fd-muted-foreground text-sm leading-relaxed">{HERO.lede}</p>
 				</div>
 
 				<div className="flex flex-wrap items-center gap-3">
@@ -99,11 +99,11 @@ function TryOnYourPhone(): ReactElement {
 	const installable = isInstallable(NATIVE_APP.IOS_TESTFLIGHT_URL);
 
 	return (
-		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-fd-muted-foreground text-sm">
+		<p className="flex flex-wrap items-center gap-x-2 gap-y-1 text-fd-muted-foreground text-xs">
 			<span>{HERO.phone.lead}</span>
 			{installable ? (
 				<a
-					className="inline-flex items-center gap-1 font-medium text-fd-foreground underline decoration-fd-primary/60 underline-offset-4 transition-colors hover:decoration-fd-primary"
+					className="inline-flex items-center gap-1 font-medium text-fd-foreground underline decoration-fd-foreground/30 underline-offset-4 transition-colors hover:decoration-fd-foreground"
 					href={NATIVE_APP.IOS_TESTFLIGHT_URL}
 					rel="noreferrer noopener"
 					target="_blank"
@@ -113,7 +113,7 @@ function TryOnYourPhone(): ReactElement {
 				</a>
 			) : (
 				<span className="inline-flex items-center gap-2">
-					<span aria-hidden className="size-1.5 rounded-full bg-fd-primary" />
+					<span aria-hidden className="size-1.5 rounded-full bg-fd-foreground/40" />
 					{HERO.phone.soon}
 				</span>
 			)}

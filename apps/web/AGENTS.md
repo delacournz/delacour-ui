@@ -129,10 +129,10 @@ Open Graph / Twitter tags. Two things there are deliberate:
   contract this redesign was built to, as an HTML comment, so `grep 4a705b78 .output` finds it.
 - **The social card is a rendered 1200×630 PNG.** `og:image` and `twitter:image` point at
   `docsImageRoute` (`/og/docs`), a server handler in `src/routes/og/docs.ts` that rasterises
-  `src/og/card.ts`'s SVG with `@resvg/resvg-js` — the mark from `@delacour/brand`, the page title in
-  Outfit 600, a line in Inter, on the house dark page. A docs page adds `?title=` from its own
+  `src/og/card.ts`'s SVG with `@resvg/resvg-js` — the mark from `@delacour/brand`, the page title and a
+  line, both in Inter, on the house dark page. A docs page adds `?title=` from its own
   `head()`.
-  resvg reads fonts from paths only, so the two TTFs are committed under `src/og/`
+  resvg reads fonts from paths only, so the one TTF (Inter 400) is committed under `src/og/`
   (OFL, the same files the playground embeds), imported `?inline` and written to the temp
   directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
   it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
@@ -153,7 +153,7 @@ Open Graph / Twitter tags. Two things there are deliberate:
   Tailwind, Uniwind or shadcn. A fourth product is an entry in `PRODUCTS`, a motif in `MOTIFS`, a
   row in `content.test.ts`'s product table and a folder under `content/docs/`.
 - **The 404 is ours.** `src/components/not-found.tsx` replaces Fumadocs' default: the mark, the
-  heading face, and pills to the docs and the component index, under the same pill nav.
+  heading face, and controls to the docs and the component index, under the same frosted header.
 
 `siteUrl` in `src/lib/shared.ts` makes the `og:` URLs absolute, which every scraper requires.
 Staging serves production's origin in those tags; threading a per-environment origin through SSR
@@ -202,9 +202,9 @@ the one line still pointing away, because *almost always* is not *always*.
 **It is drawn in the house world, through the landing page's own parts** — `Reveal`,
 `SectionHeading`, `Eyebrow`, the pills, `Footer` — and it takes `DESIGN.md`'s rules rather than
 inventing a second look for a second marketing page. Two of those rules decided how it reads: a
-section separates with the vertical rhythm rather than a rule or a tinted band, and **amber marks
-only what a reader can act on**, so sixty-nine ticks and crosses are ink and hairline. An amber
-tick in every other row is the wash the One Amber Rule exists to prevent. Its prose lives in
+section separates with the vertical rhythm rather than a rule or a tinted band, and **the house is
+greyscale**, so sixty-nine ticks and crosses are ink and hairline. A coloured tick in every other row
+is the wash the Greyscale Rule exists to prevent. Its prose lives in
 `COMPARE_COPY`, beside the rows and the sources that back it, for the reason the landing page's
 lives in `copy.ts`.
 
@@ -678,7 +678,7 @@ bun run gen-theme       # after any change to HOUSE_CONFIG in @delacour/design-s
 
 `scripts/gen-theme.ts` reads `HOUSE_CONFIG`, resolves it with `resolveTokens` / `resolveFonts`,
 and maps the library's token names onto Fumadocs' `--color-fd-*` slots (the `MAPPING` table in the
-script). The docs site is therefore themed by the customiser it sells: `/theme?preset=AQACGBgCCgLk`
+script). The docs site is therefore themed by the customiser it sells: `/theme?preset=AQgHGRkTAgO_`
 is this site's own palette. The values are verbatim `oklch()`, the notation the design system
 authors, so a browser reads them natively and nothing is converted on the way to the CSS.
 
@@ -693,8 +693,8 @@ for the three stand. And `--color-fd-card` maps to `card` outright: the neutral 
 `background` were the same white, which is why the old transcription substituted `tertiary`; zinc's
 `card` is white on a `0.985` page, so a docs card reads as a surface without a special case.
 
-What the axes cannot express, `app.css` mixes from the tokens they can — `--dot`, `--glow`,
-`--pill`, `--selection` are each a `color-mix()` of a `--color-fd-*` variable, never a hex. The
+What the axes cannot express, `app.css` mixes from the tokens they can — `--hairline`,
+`--hover-fill`, `--frost`, `--wash`, `--glow`, `--selection` are each a `color-mix()` of a `--color-fd-*` variable, never a hex. The
 same file adds the line heights `tokens.css` omits (React Native sets `lineHeight` per component;
 the web inherits), the display steps above `3xl`, the vertical rhythm (`py-section`,
 `gap-section-gap`, `max-w-reading`) and the radius scale every card takes (`rounded-card`,

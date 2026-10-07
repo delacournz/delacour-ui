@@ -8,7 +8,7 @@ import { Footer } from "@/components/landing/footer";
 import { ARROW_LINK, PILL_GHOST, PillLink } from "@/components/landing/pill";
 import { Reveal } from "@/components/landing/reveal";
 import { Eyebrow, SectionHeading } from "@/components/landing/section-heading";
-import { PAGE_SECTION } from "@/components/section";
+import { COLUMN_SECTION, PAGE_SECTION } from "@/components/section";
 import { cn } from "@/lib/cn";
 import {
 	type Answer,
@@ -73,11 +73,11 @@ function CompareHeroUI(): ReactElement {
 
 function Hero(): ReactElement {
 	return (
-		<section className={`${PAGE_SECTION} flex flex-col items-start gap-8 pt-section-sm pb-section`}>
+		<section className={`${COLUMN_SECTION} flex flex-col items-start gap-8 pt-section-sm pb-section`}>
 			<Eyebrow>{COMPARE_COPY.eyebrow}</Eyebrow>
 			<div className="flex flex-col gap-5">
-				<h1 className="max-w-reading text-4xl leading-[1.1] sm:text-5xl">{COMPARE_COPY.title}</h1>
-				<p className="max-w-reading text-fd-muted-foreground text-lg">{COMPARE_COPY.lede}</p>
+				<h1 className="text-3xl">{COMPARE_COPY.title}</h1>
+				<p className="text-fd-muted-foreground text-sm leading-relaxed">{COMPARE_COPY.lede}</p>
 			</div>
 
 			<div className="grid w-full gap-4 lg:grid-cols-2">
@@ -103,12 +103,12 @@ function WhereCard({ card }: { card: (typeof COMPARE_COPY.where)[number] }): Rea
 		<div
 			className={cn(
 				"flex min-w-0 flex-col gap-1.5 rounded-card border p-5",
-				// A ring, never a fill: the same amber marker the customiser puts on
-				// a selected tile, and the reason the One Amber Rule tolerates it.
+				// A hairline, never a fill: the same marker the customiser puts on a
+				// selected tile.
 				card.ours ? "border-fd-primary/30 bg-fd-card" : "border-fd-border bg-fd-card/50"
 			)}
 		>
-			<p className="font-medium text-fd-muted-foreground text-xs uppercase tracking-eyebrow">{card.label}</p>
+			<p className="kicker">{card.label}</p>
 			<code className="font-mono text-fd-foreground text-sm">{card.path}</code>
 			<p className="mt-1.5 text-fd-muted-foreground text-sm">{card.body}</p>
 		</div>
@@ -334,9 +334,7 @@ function Verdict(): ReactElement {
 function Sources(): ReactElement {
 	return (
 		<Reveal className={`${PAGE_SECTION} pb-section`}>
-			<h2 className="font-medium text-fd-muted-foreground text-sm uppercase tracking-eyebrow">
-				{COMPARE_COPY.sources.title}
-			</h2>
+			<h2 className="kicker">{COMPARE_COPY.sources.title}</h2>
 			<p className="mt-3 max-w-reading text-fd-muted-foreground text-sm">
 				{COMPARE_COPY.sources.body}{" "}
 				<a

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_CONFIG, type DesignSystemConfig, SYSTEM_FONT } from "@delacour/design-system/config";
-import { HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
 import { decodePreset, encodePreset, PRESET_CODE_LENGTH } from "@delacour/design-system/preset";
 import { ACCENT_THEMES } from "@delacour/design-system/themes";
 import {
@@ -26,10 +26,11 @@ import {
  * silently repointing a chip on the landing page.
  */
 describe("PRESETS", () => {
-	test("the house is first, and the library default second", () => {
+	test("the house is first, the old amber house second and the library default third", () => {
 		expect(PRESETS[0]?.config).toEqual(HOUSE_CONFIG);
 		expect(PRESETS[0]?.code).toBe(HOUSE_PRESET_CODE);
-		expect(PRESETS[1]?.config).toEqual(DEFAULT_CONFIG);
+		expect(PRESETS[1]?.config).toEqual(DELACOUR_AMBER_CONFIG);
+		expect(PRESETS[2]?.config).toEqual(DEFAULT_CONFIG);
 	});
 
 	test("every code decodes to its own configuration", () => {

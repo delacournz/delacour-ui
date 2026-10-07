@@ -56,7 +56,7 @@ describe("ogCardSvg", () => {
 	});
 
 	test("paints the house dark page", () => {
-		expect(ogCardSvg()).toContain('fill="#09090b"');
+		expect(ogCardSvg()).toContain('fill="#131313"');
 	});
 });
 

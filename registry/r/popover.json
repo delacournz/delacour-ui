@@ -1,0 +1,182 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "popover",
+	"type": "registry:ui",
+	"title": "Popover",
+	"description": "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
+	"categories": [
+		"overlays"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"overlay",
+		"pressable",
+		"slot",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-keyboard-controller",
+		"react-native-reanimated",
+		"react-native-safe-area-context"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/popover/AGENTS.md",
+			"target": "popover/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/popover",
+					"to": "@registry/ui/popover"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/index.ts",
+			"target": "popover/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-anchor.tsx",
+			"target": "popover/popover-anchor.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-arrow.tsx",
+			"target": "popover/popover-arrow.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-close.tsx",
+			"target": "popover/popover-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-content.tsx",
+			"target": "popover/popover-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-description.tsx",
+			"target": "popover/popover-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-title.tsx",
+			"target": "popover/popover-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover-trigger.tsx",
+			"target": "popover/popover-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/slot",
+					"to": "@registry/lib/slot"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover.context.tsx",
+			"target": "popover/popover.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover.position.ts",
+			"target": "popover/popover.position.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover.tsx",
+			"target": "popover/popover.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/popover.variants.ts",
+			"target": "popover/popover.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/use-anchor-measure.ts",
+			"target": "popover/use-anchor-measure.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/popover/use-anchored-content.ts",
+			"target": "popover/use-anchored-content.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../overlay",
+					"to": "@registry/ui/overlay"
+				}
+			]
+		}
+	]
+}

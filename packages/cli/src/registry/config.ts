@@ -224,6 +224,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		categories: ["overlays"],
 		dependencies: ["react-native-teleport", "react-native-reanimated", "react-native-worklets"],
 	},
+	popover: {
+		title: "Popover",
+		description:
+			"A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
+		categories: ["overlays"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

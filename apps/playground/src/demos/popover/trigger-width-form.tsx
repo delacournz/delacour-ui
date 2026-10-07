@@ -10,7 +10,6 @@ export const meta: DemoMeta = {
 	caption:
 		'`width="trigger"` makes the panel as wide as the button, raised to `minWidth`. Focus the field: the keyboard counts as the bottom of the screen, so the panel moves above the trigger if it has to.',
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "popover/trigger-width-form", frame: "device" },
 };
 
 export function Demo(): ReactElement {

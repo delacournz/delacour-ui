@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	caption:
 		"`Popover.Arrow` points at the trigger's centre, not the panel's — with `align=\"start\"` the panel runs to the right and the arrow stays on the badge.",
 	align: "center",
-	capture: { flow: "popover/arrow", frame: "device" },
 };
 
 export function Demo(): ReactElement {

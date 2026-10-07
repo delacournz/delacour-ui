@@ -8,7 +8,6 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption: "Tap the button. The panel opens below it, pointing back at it; tap anywhere outside to close it.",
 	align: "center",
-	capture: { flow: "popover/basic", frame: "device", hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -91,7 +91,7 @@ Every `add` ends with the packages the components need, whether or not anything 
 ```txt
 ●  Needs 14 external packages, 2 not here yet:
 │    bunx expo install react-native-teleport react-native-keyboard-controller
-│    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
+│    already installed — cn, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
 The missing ones are shown as commands rather than as a list of names, because the command is the
@@ -211,7 +211,7 @@ copies in  styles, cn, tv, color, use-theme-color, icon, compose-refs, merge-pro
 
 needs installing
   bunx expo install react-native-gesture-handler react-native-pulsar react-native-reanimated react-native-svg react-native-worklets uniwind
-  bun add clsx tailwind-merge tailwind-variants tailwindcss
+  bun add cn tailwind-merge tailwind-variants tailwindcss
 ```
 
 The install lines cover the **whole closure**, not the item's own dependencies. `button` declares

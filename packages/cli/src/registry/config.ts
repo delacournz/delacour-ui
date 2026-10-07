@@ -62,7 +62,7 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	// teleport. Its own peers are what need the SDK, and
 	// `ITEM_META["bottom-sheet"].dependencies` names them.
 	"@delacour/react-native-bottom-sheet": "npm",
-	clsx: "npm",
+	cn: "npm",
 	tailwindcss: "npm",
 	"tailwind-merge": "npm",
 	"tailwind-variants": "npm",
@@ -350,7 +350,14 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
 	slot: { title: "Slot", description: "Renders into a child element instead of a wrapper." },
-	tv: { title: "tv", description: "tailwind-variants, taught the library's semantic size tokens." },
+	tv: {
+		title: "tv",
+		description: "tailwind-variants, taught the library's semantic size tokens.",
+		// tailwind-variants peer-depends on tailwind-merge for its own merger. `cn`
+		// replaced it behind `cn()`, so no file imports it any more and the scan
+		// cannot see it — but Yarn does not install peers, and `tv()` needs it.
+		dependencies: ["tailwind-merge"],
+	},
 
 	"use-calm-motion": {
 		title: "useCalmMotion",

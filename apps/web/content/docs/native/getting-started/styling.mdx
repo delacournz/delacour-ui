@@ -18,8 +18,9 @@ import { cn } from "@delacour/react-native-ui/lib/cn";
 ## `tv` comes from `lib/tv`, never from `tailwind-variants`
 
 There are **two** mergers in the library and both need the semantic size tokens: `cn()` merges a
-caller's className, and `tv()` merges slots and variants through a tailwind-merge instance of its
-own.
+caller's className through [`cn`](https://github.com/shadcn-ui/cn) — a drop-in, faster engine for
+`clsx` + tailwind-merge with the same output — and `tv()` merges slots and variants through a
+tailwind-merge instance of its own.
 
 <Callout type="warn">
 A bare `tv` from `tailwind-variants` does not know what `button-md` is. It drops `text-button-md`

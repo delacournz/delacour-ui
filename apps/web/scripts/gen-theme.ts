@@ -23,7 +23,7 @@
 
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
+import { HOUSE_CONFIG, HOUSE_PRESET_CODE } from "@delacour/design-system/house";
 import { type ResolvedMode, resolveFonts, resolveTokens } from "@delacour/design-system/resolve";
 import { houseFonts } from "../src/lib/house";
 
@@ -34,13 +34,12 @@ const META_OUT = join(WEB, "src", "lib", "house-meta.ts");
 /**
  * The preset the committed media under `public/previews/` was photographed on.
  *
- * The house moved to graphite; the captures did not, and `bun run previews`
- * has not been rerun. A capture frame painted in today's house background
- * would meet its image with a seam, so `--color-capture` stays on the preset
- * the pixels were shot on until the previews are recaptured — then this line
- * becomes `HOUSE_CONFIG` again.
+ * Recaptured in the house (graphite, JetBrains Mono, Inter), so it is
+ * `HOUSE_CONFIG`. It keeps its own name so a frame is painted from what the
+ * media was shot on, and the day the capture preset moves again only this line
+ * does.
  */
-const CAPTURE_CONFIG = DELACOUR_AMBER_CONFIG;
+const CAPTURE_CONFIG = HOUSE_CONFIG;
 
 /**
  * Fumadocs slot ← library token.

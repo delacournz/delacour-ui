@@ -20,8 +20,8 @@ colors:
   on-primary-light: "oklch(0.985 0 0)"
   error-dark: "oklch(0.704 0.191 22.216)"
   error-light: "oklch(0.637 0.237 25.331)"
-  capture-dark: "oklch(0.141 0.005 285.823)"
-  capture-light: "oklch(0.985 0 0)"
+  capture-dark: "oklch(0.188 0 0)"
+  capture-light: "oklch(1 0 0)"
 typography:
   display:
     fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
@@ -170,10 +170,10 @@ the foreground.
 - **Hairline** (`{colors.hairline-dark}` / `{colors.hairline-light}`, drawn at 65%): every border,
   and the divider between rows.
 - **Ink** / **Ink Muted**: headings and body; ledes, blurbs, kickers, links at rest.
-- **Capture** (`{colors.capture-dark}` / `{colors.capture-light}`): the one non-house colour — the
-  page the committed previews were photographed on (the previous house). A capture's frame is
-  painted with it so the image meets its frame with no seam. When `bun run previews` is rerun,
-  `CAPTURE_CONFIG` in `scripts/gen-theme.ts` returns to `HOUSE_CONFIG`.
+- **Capture** (`{colors.capture-dark}` / `{colors.capture-light}`): the page the committed previews
+  were photographed on — the house background, generated under its own name from `CAPTURE_CONFIG` in
+  `scripts/gen-theme.ts` (`HOUSE_CONFIG`). A capture's frame is painted with it so the image meets its
+  frame with no seam; if the capture preset moves again, only that line changes.
 - **Error** (`{colors.error-dark}` / `{colors.error-light}`): Fumadocs' error callouts only.
 
 ### Named Rules

@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on feedback/with-chips and has settled — the Tell us more button with the
+  dialog closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the dialog
+  - tap: { id: feedback-chips-open }
+  - await: { visible: { id: feedback-chips-slow } }
+  - wait: 700
+  - echo: Picking two chips; Send opens with the first
+  - tap: { id: feedback-chips-slow }
+  - wait: 600
+  - tap: { id: feedback-chips-confusing }
+  - wait: 900
+  - echo: Sending closes it and clears the chips
+  - tap: { id: feedback-chips-send }
+  - await: { hidden: { id: feedback-chips-slow } }
+  - wait: 500

@@ -240,6 +240,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A panel that slides in from an edge and swipes back to it — a menu, a filter panel, a notifications tray.",
 	},
 	{
+		slug: "feedback",
+		name: "Feedback",
+		group: "Overlays",
+		blurb: "A dialog for writing — the field in a recessed well, a send that waits, steps that ease between heights.",
+	},
+	{
 		slug: "steps",
 		name: "Steps",
 		group: "Navigation",

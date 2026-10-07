@@ -80,6 +80,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	collapsible: IconArrowExpandVer,
 	drawer: IconSidebar,
 	dialog: IconWindow,
+	feedback: IconBubble2,
 	chip: IconFilter1,
 	field: IconParagraph,
 	icon: IconStar,

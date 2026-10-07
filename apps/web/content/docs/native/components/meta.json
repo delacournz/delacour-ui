@@ -47,6 +47,7 @@
 		"popover",
 		"tooltip",
 		"drawer",
+		"feedback",
 		"---Navigation---",
 		"steps",
 		"tabs",

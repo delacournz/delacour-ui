@@ -401,6 +401,12 @@ import * as demo_toggle_button_single_selection from "./toggle-button/single-sel
 import * as demo_toggle_button_sizes from "./toggle-button/sizes";
 import * as demo_toggle_button_states from "./toggle-button/states";
 import * as demo_toggle_button_variants from "./toggle-button/variants";
+import * as demo_tooltip_controlled from "./tooltip/controlled";
+import * as demo_tooltip_icon_buttons from "./tooltip/icon-buttons";
+import * as demo_tooltip_persistent from "./tooltip/persistent";
+import * as demo_tooltip_placements from "./tooltip/placements";
+import * as demo_tooltip_press from "./tooltip/press";
+import * as demo_tooltip_surface from "./tooltip/surface";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -803,6 +809,12 @@ export const DEMOS = {
 	"toggle-button/sizes": demo_toggle_button_sizes,
 	"toggle-button/states": demo_toggle_button_states,
 	"toggle-button/variants": demo_toggle_button_variants,
+	"tooltip/controlled": demo_tooltip_controlled,
+	"tooltip/icon-buttons": demo_tooltip_icon_buttons,
+	"tooltip/persistent": demo_tooltip_persistent,
+	"tooltip/placements": demo_tooltip_placements,
+	"tooltip/press": demo_tooltip_press,
+	"tooltip/surface": demo_tooltip_surface,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

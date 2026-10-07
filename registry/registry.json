@@ -1760,6 +1760,45 @@
 			]
 		},
 		{
+			"name": "tooltip",
+			"type": "registry:ui",
+			"title": "Tooltip",
+			"description": "A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
+			"categories": [
+				"overlays"
+			],
+			"registryDependencies": [
+				"overlay",
+				"popover",
+				"pressable",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/tooltip/AGENTS.md",
+				"ui/tooltip/index.ts",
+				"ui/tooltip/tooltip-arrow.tsx",
+				"ui/tooltip/tooltip-content.tsx",
+				"ui/tooltip/tooltip-description.tsx",
+				"ui/tooltip/tooltip-text.tsx",
+				"ui/tooltip/tooltip-title.tsx",
+				"ui/tooltip/tooltip-trigger.tsx",
+				"ui/tooltip/tooltip.context.tsx",
+				"ui/tooltip/tooltip.tsx",
+				"ui/tooltip/tooltip.variants.ts"
+			]
+		},
+		{
 			"name": "tv",
 			"type": "registry:lib",
 			"title": "tv",

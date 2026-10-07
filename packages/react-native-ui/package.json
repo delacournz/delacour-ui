@@ -76,6 +76,7 @@
 		"./textarea": "./src/components/textarea/index.ts",
 		"./toast": "./src/components/toast/index.ts",
 		"./toggle-button": "./src/components/toggle-button/index.ts",
+		"./tooltip": "./src/components/tooltip/index.ts",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-calm-motion": "./src/hooks/use-calm-motion.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",

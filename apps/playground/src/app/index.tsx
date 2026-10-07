@@ -14,6 +14,7 @@ import {
 	IconCalendar1,
 	IconChart1,
 	IconChevronGrabberVertical,
+	IconCircleInfo,
 	IconCircleRecord,
 	IconCursorClick,
 	IconDiamond,
@@ -104,6 +105,7 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	text: IconFontStyle,
 	textarea: IconNoteText,
 	"toggle-button": IconBold,
+	tooltip: IconCircleInfo,
 	toast: IconBell,
 };
 

@@ -1,0 +1,9 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tooltip/surface and has settled — the Sync now button with no tooltip
+  showing. The capture script navigates there before running this.
+steps:
+  - echo: Opening the surface tooltip
+  - tap: { id: tooltip-surface }
+  - await: { visible: { text: Changes reach your other devices within a minute. } }
+  - echo: Holding until it hides itself, so the clip loops on the bare button
+  - wait: 2000

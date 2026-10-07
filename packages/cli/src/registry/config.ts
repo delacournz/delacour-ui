@@ -333,6 +333,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		categories: ["overlays"],
 		dependencies: ["react-native-teleport"],
 	},
+	tooltip: {
+		title: "Tooltip",
+		description:
+			"A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
+		categories: ["overlays"],
+	},
 
 	expo: {
 		title: "Navigation theme",

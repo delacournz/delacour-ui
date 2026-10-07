@@ -367,3 +367,35 @@ describe("a joined field's corner", () => {
 		}
 	});
 });
+
+describe("the etched input variant", () => {
+	test("is listed after the two flat variants", () => {
+		expect(INPUT_VARIANTS).toEqual(["primary", "secondary", "etched"]);
+	});
+
+	test("is a card fill with the input border and the light and dark edge", () => {
+		const cls = inputVariants({ variant: "etched" }).root();
+		expect(cls).toContain("bg-card");
+		expect(cls).toContain("border-input");
+		expect(cls).toContain("shadow-etched");
+		expect(cls).toContain("dark:shadow-etched-dark");
+	});
+
+	test("focus swaps the border to the ring and adds the 3px halo", () => {
+		const cls = inputVariants({ isFocused: true, variant: "etched" }).root();
+		expect(cls).toContain("border-ring");
+		expect(cls).toContain("shadow-focus");
+		expect(cls).toContain("dark:shadow-focus-dark");
+		expect(cls).not.toContain("shadow-etched");
+	});
+
+	test("invalid outranks focus", () => {
+		const cls = inputVariants({ isFocused: true, isInvalid: true, variant: "etched" }).root();
+		expect(cls).toContain("border-destructive");
+		expect(cls).not.toContain("shadow-focus");
+	});
+
+	test("the flat variants draw no shadow", () => {
+		expect(inputVariants({ isFocused: true, variant: "primary" }).root()).not.toMatch(/shadow/);
+	});
+});

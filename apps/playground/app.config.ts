@@ -183,8 +183,8 @@ const expoConfig: ExpoConfig = {
 	plugins: [
 		"expo-router",
 		"expo-status-bar",
-		// The colours mirror --background as the house preset resolves it — zinc's
-		// oklch(0.985 0 0) is #fafafa and oklch(0.141 0.005 285.823) is #09090b —
+		// The colours mirror --background as the house preset resolves it — graphite's
+		// light oklch(1 0 0) is #ffffff and dark oklch(0.188 0 0) is #131313 —
 		// because a fresh install opens in HOUSE_CONFIG and the splash is the frame
 		// before it. Restated as hex rather than imported: prebuild loads this file
 		// through Node's CJS resolver, and resolving the tokens here would evaluate
@@ -192,9 +192,9 @@ const expoConfig: ExpoConfig = {
 		// resolveTokens(HOUSE_CONFIG) and asserts both, which is what the import
 		// cannot do.
 		//
-		// Light was #ffffff until that test existed, against a token of #fafafa — the
-		// splash held pure white and the first frame repainted a shade darker. It is
-		// a near-white, not white; do not tidy it back.
+		// The amber house's light ground was #fafafa, a near-white; graphite's is
+		// true white. Both were once pinned by hand against drift, which is what the
+		// test is for.
 		//
 		// Without the dark variant the generated storyboard hardcodes white and
 		// declares appearance="light", so a dark-mode cold start flashes white
@@ -222,8 +222,8 @@ const expoConfig: ExpoConfig = {
 			{
 				image: "./assets/splash-icon.png",
 				imageWidth: 240,
-				backgroundColor: "#fafafa",
-				dark: { image: "./assets/splash-icon-dark.png", backgroundColor: "#09090b" },
+				backgroundColor: "#ffffff",
+				dark: { image: "./assets/splash-icon-dark.png", backgroundColor: "#131313" },
 			},
 		],
 		[

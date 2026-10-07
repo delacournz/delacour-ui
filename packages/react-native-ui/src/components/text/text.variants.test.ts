@@ -17,7 +17,7 @@ import {
 } from "./text.variants";
 
 /** Tailwind's type scale, smallest first — position, so a test can say "a step down". */
-const TYPE_SCALE = ["text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl"];
+const TYPE_SCALE = ["text-kicker", "text-xs", "text-sm", "text-base", "text-lg", "text-xl", "text-2xl", "text-3xl"];
 
 /** The three alignment utilities, which share the `text-` prefix with sizes and colours. */
 const ALIGNMENTS = ["text-left", "text-center", "text-right"];
@@ -418,5 +418,28 @@ describe("TEXT_MAX_FONT_SIZE_MULTIPLIER", () => {
 	// what a font-scaling cap is for.
 	test("caps growth without shrinking the default", () => {
 		expect(TEXT_MAX_FONT_SIZE_MULTIPLIER).toBeGreaterThan(1);
+	});
+});
+
+describe("the kicker variant", () => {
+	const cls = textVariants({ variant: "kicker" });
+
+	test("is a ten-point uppercase mono label, tracked wide", () => {
+		expect(cls).toContain("font-mono");
+		expect(cls).toContain("text-kicker");
+		expect(cls).toContain("uppercase");
+		expect(cls).toContain("tracking-kicker");
+		expect(cls).toContain("text-muted-foreground");
+	});
+
+	test("is listed, and is not an inline variant", () => {
+		expect(TEXT_VARIANTS).toContain("kicker");
+		expect(isInlineTextVariant("kicker")).toBe(false);
+	});
+
+	test("survives resolveTextClass without losing its size to the base class", () => {
+		const resolved = resolveTextClass({ variant: "kicker" });
+		expect(resolved).toContain("text-kicker");
+		expect(resolved).not.toContain("text-base");
 	});
 });

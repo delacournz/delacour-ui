@@ -1,5 +1,5 @@
 import { DEFAULT_CONFIG, type DesignSystemConfig, normalizeConfig } from "@delacour/design-system/config";
-import { HOUSE_CONFIG } from "@delacour/design-system/house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG } from "@delacour/design-system/house";
 
 /**
  * The half of the store `bun test` can reach.
@@ -61,8 +61,22 @@ export function parseStoredConfig(raw: string | undefined): DesignSystemConfig {
 	}
 }
 
+/**
+ * Moves a config persisted under the old amber house onto the current one.
+ *
+ * Amber was the playground's default until the Devl house replaced it, so a
+ * stored config that equals it exactly, on a build that has never run this
+ * migration, is the old default and not a choice. After the first run the flag
+ * is set, and amber — now a preset shortcut — can only have been picked on
+ * purpose, so it is left alone. A customised config never matches.
+ */
+export function migrateStoredConfig(config: DesignSystemConfig, hasMigrated: boolean): DesignSystemConfig {
+	if (hasMigrated) return config;
+	return configEquals(config, DELACOUR_AMBER_CONFIG) ? HOUSE_CONFIG : config;
+}
+
 /** Where a reset can land. */
-export type ResetTarget = "house" | "library";
+export type ResetTarget = "house" | "amber" | "library";
 
 export type ResetTargetEntry = {
 	readonly name: ResetTarget;
@@ -70,16 +84,19 @@ export type ResetTargetEntry = {
 };
 
 /**
- * The two configs a reset can land on, in the order the preset strip offers
- * them: the studio's own first, the shipped default second.
+ * The configs a reset can land on, in the order the preset strip offers them:
+ * the studio's own first, its former amber look second, the shipped default
+ * last.
  */
 export const RESET_TARGETS: readonly ResetTargetEntry[] = [
 	{ name: "house", config: HOUSE_CONFIG },
+	{ name: "amber", config: DELACOUR_AMBER_CONFIG },
 	{ name: "library", config: DEFAULT_CONFIG },
 ];
 
 export function resetTarget(target: ResetTarget): DesignSystemConfig {
-	return target === "house" ? HOUSE_CONFIG : DEFAULT_CONFIG;
+	if (target === "house") return HOUSE_CONFIG;
+	return target === "amber" ? DELACOUR_AMBER_CONFIG : DEFAULT_CONFIG;
 }
 
 const AXES: readonly (keyof DesignSystemConfig)[] = [

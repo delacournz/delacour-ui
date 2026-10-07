@@ -247,26 +247,24 @@ reaches, and nobody types URLs on a phone.
 `src/app/index.tsx` is the first screen and the first place the house shows: the
 `DelacourMark` leads a static `Screen.Navbar` whose one action is `ThemeToggle`
 — the customiser's trigger floats over every screen, this one included — and
-the content opens with "Delacour UI" as a large title —
-34 over 41, semibold, in the heading face — with the row count under it. The
-large title is where Outfit is actually legible as Outfit; at navbar size it is
-indistinguishable from the body face, which is how the finish review found the
-house's heading face nowhere on the phone.
+the content opens with "Delacour UI" as a large title — 34 over 41, semibold,
+in the heading face (Inter) — with a `Text.Kicker` under it: the component and
+group counts, uppercase mono. Each group is a kicker over a `Surface
+material="tray"` holding the `ListGroup`, whose own corner is `rounded-xl`, so
+the list reads as a panel in a tray.
 
-**Its family is set inline from `resolveFonts(config).heading`, not through
-`font-heading`.** `--font-heading` is declared only inside the platform
-`@variant` blocks of the library's `theme.css`, so Tailwind mints no
-`font-heading` utility from it and the class resolves to nothing — verified on
-device: switching the Heading axis to Raleway moved no title on any screen while
-switching the body font moved every line. The library's own `Text.Display`,
-`Title` and `Header` presets carry that class and so render in the body face
-today; that is a library gap, recorded in `DESIGN.md`, and the reason the
-customiser's `FontPreview` and the preset tiles were already setting `fontFamily`
-inline. `.impeccable/review/evidence-heading-class-fallback.png` is the capture
-that proved it. It is the one typeset lockup the
+**The heading face comes from `font-heading`.** `--font-heading` is declared by
+the library's `theme.css` only inside its platform `@variant` blocks, so
+Tailwind minted no `font-heading` utility and `Text.Display`, `Title` and
+`Header` drew in the body face. `styles/global.css` now declares
+`@theme { --font-heading: system-ui }` once, which mints the utility; the
+store's `applyConfig` overwrites the variable from the Heading axis, so it
+follows the axis. Verified on device: the title draws in Inter over a JetBrains
+Mono body. The customiser's `FontPreview` and the preset tiles still set
+`fontFamily` inline, which is harmless. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The rows
-are grouped under the documentation site's eight group names, in its order, so
+are grouped under the documentation site's group names, in its order, so
 a component found on the site is found in the same place here. An **About** group closes the list
 with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the browser —
 App Review wants the link inside the app, not only on the listing. It always opens production,
@@ -422,6 +420,12 @@ draw it at — and `DEVICE_MAX_EDGE` is 1440 for a device one, because the landi
 phone 300 CSS px wide and 720 on the long edge left only 332 across it. A demo's hash carries its
 own frame's edge, so moving one cap re-captures only the demos it governs.
 
+**Captures are in the house, and the house is the Devl material.** `preview.tsx` applies
+`HOUSE_CONFIG` before the sentinel can report ready, so every frame is graphite, JetBrains Mono and
+Inter. The faces are embedded in the native build (see Fonts are embedded), so they are present at
+first paint and there is nothing to await. Moving the captures off the library default changes every
+demo's pixels, not its hash: rerun with `--force` once, with the user's approval.
+
 **A run is incremental.** Each demo's source, meta, flow and the encode settings hash together, and
 an unchanged demo whose files are present is skipped. That is what keeps committed media from
 becoming permanent churn in a repository that cannot delta-compress it — a run after touching one
@@ -522,7 +526,7 @@ not the same one:
 
 | | Config | Where |
 | --- | --- | --- |
-| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — zinc, the `delacour` amber, Inter under Outfit, a small corner | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
+| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — the Devl material: graphite, JetBrains Mono under Inter headings, a medium corner, the `vela` geometry | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
 | **The library** | `DEFAULT_CONFIG` — Vega, neutral, the platform font | what `delacour init` ships to a consumer; the second tile of the preset strip, so that look is one tap away |
 
 The app is the studio's own site continued onto a phone, so it opens in the
@@ -537,13 +541,18 @@ holds the route to the house so the two cannot drift apart again. It sits outsid
 `src/app` because Expo Router registers every file there as a route, a test
 included — the first run put a `bun:test` import on the phone's red screen.
 
+**A stored amber config is migrated once.** Amber was the default before the Devl house, so a
+config equal to `DELACOUR_AMBER_CONFIG` on a build that has never run the migration is moved to the
+house (`migrateStoredConfig`, flagged in MMKV by `house-devl-migrated`). After that amber is a preset
+shortcut and a deliberate choice is kept. A customised config never matches.
+
 The splash follows the house: `app.config.ts`'s two `backgroundColor`s are the
 sRGB of the house `--background` in each mode, and `app.config.test.ts` resolves
 `HOUSE_CONFIG` to check them. The adaptive icon's `#18181B` is the brand card
 colour and is not a theme token; it stays.
 
-**Reset is the preset strip.** `resetConfig("house" | "library")` replaces every
-axis with one of the two, and the strip at the top of the Design tab is the only
+**Reset is the preset strip.** `resetConfig("house" | "amber" | "library")` replaces every
+axis with one of the three, and the strip at the top of the Design tab is the only
 control that calls it — a tile that shows which preset is applied says more than
 a ghost button at the foot of the scroll ever did. The pure halves — the
 fallbacks, the two targets, the equality the strip marks selection with — live in
@@ -1355,15 +1364,15 @@ Ingestion can be paused per project from the dashboard with no app change.
   puts either file back on its `STALE` list — the deletion that would otherwise
   re-break the build with no edit to blame.
 - **The two splash PNGs hold identical bytes, and are still two files.** The
-  glyph is an amber stroke on transparent and reads on both `#fafafa` and
-  `#09090b`, so dark needs no other art — but `image` and `dark.image` pointing
+  glyph is an amber stroke on transparent and reads on both `#ffffff` and
+  `#131313`, so dark needs no other art — but `image` and `dark.image` pointing
   at one file is a single decision wearing two names, and a later change to the
   light splash would move the dark one with it. The same argument
   `generate-icons.ts` already makes for `icon-dark.png`.
 - **The background colours are checked against the tokens, not trusted.** Light
-  was `#ffffff` against a `--background` of `#fafafa` for as long as nothing
-  compared them, so every light cold start stepped a shade darker at first
-  paint. The comment claimed a mirror; only the test makes it one.
+  was `#ffffff` against a `--background` of `#fafafa` under the old amber house
+  for as long as nothing compared them, so every light cold start stepped a
+  shade darker at first paint. The comment claimed a mirror; only the test makes it one.
 - **`react-native-bootsplash` was evaluated and rejected** — do not re-research
   it. It gates dark-mode assets behind a paid licence key (~$40, Gumroad), which
   this splash would have to give up. Its headline advantage over

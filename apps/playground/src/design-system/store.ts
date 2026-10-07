@@ -5,6 +5,7 @@ import { Platform } from "react-native";
 import { createMMKV } from "react-native-mmkv";
 import { Uniwind } from "uniwind";
 import {
+	migrateStoredConfig,
 	parseStoredConfig,
 	parseStoredMode,
 	type ResetTarget,
@@ -19,6 +20,7 @@ const storage = createMMKV({ id: "delacour-playground-design-system" });
 
 const CONFIG_KEY = "config";
 const MODE_KEY = "mode";
+const MIGRATED_KEY = "house-devl-migrated";
 
 /**
  * What the store holds, or the house when it holds nothing worth keeping.
@@ -29,7 +31,15 @@ const MODE_KEY = "mode";
  * this app is not meant to open in.
  */
 function readConfig(): DesignSystemConfig {
-	return parseStoredConfig(storage.getString(CONFIG_KEY));
+	const stored = parseStoredConfig(storage.getString(CONFIG_KEY));
+
+	if (storage.getBoolean(MIGRATED_KEY) === true) return stored;
+
+	const config = migrateStoredConfig(stored, false);
+	if (config !== stored) storage.set(CONFIG_KEY, JSON.stringify(config));
+	storage.set(MIGRATED_KEY, true);
+
+	return config;
 }
 
 /**

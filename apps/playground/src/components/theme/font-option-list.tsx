@@ -78,7 +78,7 @@ export function FontOptionList({ selected, onSelect, withInherit, withSystem }: 
 
 			{FONT_GROUPS.map((group) => (
 				<View className="gap-2" key={group.type}>
-					<Text.Overline>{group.label}</Text.Overline>
+					<Text.Kicker>{group.label}</Text.Kicker>
 					<ListGroup isDivided={false} variant="transparent">
 						{group.fonts.map((candidate) => (
 							<ListGroup.Item

@@ -6,10 +6,13 @@ import {
 	BUTTON_SIZE_TOKENS,
 	BUTTON_TEXT_TOKENS,
 	CHART_SIZE_TOKENS,
+	ETCHED_SHADOW_TOKENS,
 	ICON_SIZE_TOKENS,
 	INPUT_SIZE_TOKENS,
 	INPUT_TEXT_TOKENS,
+	KICKER_TOKEN,
 	SCREEN_SIZE_TOKENS,
+	TW_MERGE_CONFIG,
 } from "./tokens";
 
 const CSS = readFileSync(join(import.meta.dirname, "tokens.css"), "utf-8");
@@ -177,5 +180,36 @@ describe("the input scale", () => {
 		for (const [index, token] of INPUT_SIZE_TOKENS.entries()) {
 			expect(px(`spacing-${token}`)).toBe(px(`spacing-${BUTTON_SIZE_TOKENS[index]}`));
 		}
+	});
+});
+
+describe("the etched material", () => {
+	test("declares every shadow the registry names, and no other", () => {
+		const declared = [...CSS.matchAll(/--shadow-([\w-]+):/g)].map((match) => match[1]).sort();
+		expect(declared).toEqual([...ETCHED_SHADOW_TOKENS].sort());
+	});
+
+	// An inset layer is what makes it a highlight rather than a drop shadow, and
+	// the soft outer layer is what lifts the edge off the page.
+	test("light and dark edges sit on opposite sides of the surface", () => {
+		expect(CSS).toMatch(/--shadow-etched:\s*inset 0 -1px/);
+		expect(CSS).toMatch(/--shadow-etched-dark:\s*inset 0 1px/);
+		expect(CSS).toMatch(/--shadow-etched-primary:\s*inset 0 1px 0 0 rgb\(255 255 255 \/ 16%\)/);
+	});
+
+	test("registers its shadows so a caller's shadow-* can replace them", () => {
+		expect(TW_MERGE_CONFIG.extend.theme.shadow).toEqual([...ETCHED_SHADOW_TOKENS]);
+	});
+});
+
+describe("the kicker type style", () => {
+	test("is ten points, tracked at 0.2em", () => {
+		expect(px("text-kicker")).toBe(10);
+		expect(CSS).toMatch(/--tracking-kicker:\s*0\.2em;/);
+	});
+
+	test("registers both tokens so text-kicker is read as a size, not a colour", () => {
+		expect(TW_MERGE_CONFIG.extend.theme.text).toContain(KICKER_TOKEN);
+		expect(TW_MERGE_CONFIG.extend.theme.tracking).toEqual([KICKER_TOKEN]);
 	});
 });

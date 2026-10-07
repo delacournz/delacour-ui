@@ -1,6 +1,7 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as anatomy from "./anatomy";
 import * as configurator from "./configurator";
+import * as etched from "./etched";
 import * as footerBand from "./footer-band";
 import * as media from "./media";
 import * as nesting from "./nesting";
@@ -14,6 +15,7 @@ export const cardDemos = defineDemoGroup("card", {
 	anatomy,
 	variants,
 	sizes,
+	etched,
 	"footer-band": footerBand,
 	configurator,
 	nesting,

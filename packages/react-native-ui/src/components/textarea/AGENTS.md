@@ -84,3 +84,6 @@ A multiline text field, sized in rows. One component, no parts: it renders an
   either context and take its box or its corner, but a decorated or joined
   paragraph is not a control this library draws, and the height math assumes
   the box is the field's own.
+
+- **Takes `Input`'s `etched` variant** — the box is `Input`'s, so the third `INPUT_VARIANTS` value
+  reaches the textarea unchanged.

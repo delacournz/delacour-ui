@@ -61,7 +61,7 @@ export function AxisStrip({ label, caption, selectedIndex, itemWidth, children }
 
 	return (
 		<View className="gap-2">
-			<Text.Label>{label}</Text.Label>
+			<Text.Kicker>{label}</Text.Kicker>
 			<ScrollView
 				className="-mx-screen-gutter"
 				contentContainerClassName="gap-3 px-screen-gutter"

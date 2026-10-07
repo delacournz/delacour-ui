@@ -13,6 +13,14 @@ export const BUTTON_VARIANTS = [
 ] as const;
 
 /** Sizes that hold a label. Horizontal padding; the width comes from the content. */
+/**
+ * `flat` is the library default. `etched` sets the highlight into the fill's
+ * edge — a white inset top edge on `primary`, the light/dark edge on the quiet
+ * fills. Ghost and destructive buttons stay flat: a ghost has no surface to
+ * lift, and a signal colour does not take a second highlight.
+ */
+export const BUTTON_MATERIALS = ["flat", "etched"] as const;
+
 export const BUTTON_LABEL_SIZES = ["sm", "md", "lg"] as const;
 
 /** Sizes with a square footprint, for a button whose only content is an icon. */
@@ -33,6 +41,7 @@ export const BUTTON_GROUP_ORIENTATIONS = ["horizontal", "vertical"] as const;
 
 export const BUTTON_GROUP_POSITIONS = ["first", "middle", "last", "only"] as const;
 
+export type ButtonMaterial = (typeof BUTTON_MATERIALS)[number];
 export type ButtonVariant = (typeof BUTTON_VARIANTS)[number];
 export type ButtonLabelSize = (typeof BUTTON_LABEL_SIZES)[number];
 export type ButtonIconSize = (typeof BUTTON_ICON_SIZES)[number];
@@ -196,6 +205,7 @@ export const buttonVariants = tv({
 		// orientation, so it lands here rather than in six compound cells that
 		// would all say the same word.
 		groupPosition: { none: {}, first: {}, middle: { root: "rounded-none" }, last: {}, only: {} },
+		material: { flat: {}, etched: {} },
 		// The empty `false` branches are load-bearing typing, not placeholders.
 		// `tv` derives the prop type from the declared keys, so a map with only
 		// `true` types the prop as `true` rather than `boolean` and rejects
@@ -208,6 +218,12 @@ export const buttonVariants = tv({
 		isDimmedWhileLoading: { true: {}, false: {} },
 	},
 	compoundVariants: [
+		{ material: "etched", variant: "primary", class: { root: "shadow-etched-primary" } },
+		{
+			material: "etched",
+			variant: ["secondary", "tertiary", "outline"],
+			class: { root: "shadow-etched dark:shadow-etched-dark" },
+		},
 		// Loading is not a disabled state. The button keeps full contrast — the
 		// spinner already says the press landed — unless the caller opts in.
 		{ isLoading: true, isDimmedWhileLoading: true, class: { root: "opacity-50" } },

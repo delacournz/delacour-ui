@@ -86,3 +86,7 @@ A content surface with a header, a body and a footer, built on
   that knows what the press means. The playground's plan picker is the example.
 - **No text treatment on the root, header, content or footer** (rule 1). The
   tests assert it across every combination.
+
+- **`material` passes straight to `Surface`.** `etched` lifts the card with the edge highlight;
+  `tray` frames panels. A card inside a tray takes the xl corner and the card fill. Pair `etched`
+  with `className="rounded-2xl"` for the 18-point corner; the radius is not part of the material.

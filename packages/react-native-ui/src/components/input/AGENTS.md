@@ -124,3 +124,8 @@ reads as one control rather than two boxes touching.
   wins. Disabled is the outermost rung of an already-three-deep ladder
   (`Input.Group` → own prop → `Field` → `Button.Group`), so a single field in a
   run can still be the only one disabled.
+
+- **`variant="etched"` is the opt-in devl field.** `border-input bg-card` with the light/dark edge
+  highlight; focus swaps it for `border-ring` and a 3pt neutral halo (`shadow-focus`, `-dark`).
+  The halo is a plain alpha, not `color-mix` on the ring: `color-mix` inside a `box-shadow` does not
+  survive Uniwind's compile and draws nothing. Invalid keeps the highlight and the destructive border.

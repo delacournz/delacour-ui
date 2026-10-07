@@ -7,6 +7,7 @@ import {
 	BUTTON_GROUP_SEPARATOR_ORIENTATION,
 	BUTTON_ICON_SIZES,
 	BUTTON_LABEL_SIZES,
+	BUTTON_MATERIALS,
 	BUTTON_SIZES,
 	BUTTON_SPINNER_PLACEMENTS,
 	BUTTON_VARIANTS,
@@ -807,5 +808,40 @@ describe("resolveGroupedButtonSize", () => {
 				expect(BUTTON_SIZES as readonly string[]).toContain(resolveGroupedButtonSize(own, group));
 			}
 		}
+	});
+});
+
+describe("the etched button material", () => {
+	test("flat is the default and adds no shadow", () => {
+		for (const variant of BUTTON_VARIANTS) {
+			expect(buttonVariants({ variant }).root()).toBe(buttonVariants({ variant, material: "flat" }).root());
+			expect(buttonVariants({ variant }).root()).not.toMatch(/shadow/);
+		}
+	});
+
+	test("etched primary carries the white inset highlight", () => {
+		const cls = buttonVariants({ material: "etched", variant: "primary" }).root();
+		expect(cls).toContain("shadow-etched-primary");
+		expect(cls).not.toContain("shadow-etched ");
+	});
+
+	test("etched filled and outlined buttons carry the light and dark edge", () => {
+		for (const variant of ["secondary", "tertiary", "outline"] as const) {
+			const cls = buttonVariants({ material: "etched", variant }).root();
+			expect(cls).toContain("shadow-etched");
+			expect(cls).toContain("dark:shadow-etched-dark");
+		}
+	});
+
+	// A ghost has no surface to lift, and a destructive fill is a signal colour
+	// whose highlight would read as a second state.
+	test("ghost and destructive variants stay flat", () => {
+		for (const variant of ["ghost", "destructive", "destructive-soft"] as const) {
+			expect(buttonVariants({ material: "etched", variant }).root()).not.toMatch(/shadow/);
+		}
+	});
+
+	test("lists every material", () => {
+		expect(BUTTON_MATERIALS).toEqual(["flat", "etched"]);
 	});
 });

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG } from "@delacour/design-system/house";
+import { HOUSE_CONFIG } from "@delacour/design-system/house";
 import { resolveTokens } from "@delacour/design-system/resolve";
 import { fontDeclarations, houseMeta, MAPPING, oklchToHex, renderHouseCss, renderHouseMeta } from "./gen-theme";
 
@@ -85,7 +85,7 @@ describe("renderHouseCss", () => {
 	 * own token so the day the capture preset changes, this line changes with it.
 	 */
 	test("carries the capture background the committed previews were shot on, in both modes", () => {
-		const shot = resolveTokens(DELACOUR_AMBER_CONFIG);
+		const shot = resolveTokens(HOUSE_CONFIG);
 
 		expect(css.slice(0, css.indexOf(".dark {"))).toContain(`--color-capture: ${String(shot.light.background)};`);
 		expect(css.slice(css.indexOf(".dark {"))).toContain(`--color-capture: ${String(shot.dark.background)};`);

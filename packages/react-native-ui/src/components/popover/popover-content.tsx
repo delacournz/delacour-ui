@@ -194,31 +194,40 @@ export function PopoverContent({
 				/>
 			)}
 			<Animated.View
-				accessibilityLabelledBy={titleId}
-				accessibilityViewIsModal
-				className={slots.content({ className })}
-				onAccessibilityEscape={isDismissible ? close : undefined}
 				onLayout={anchored.onLayout}
-				ref={panelRef}
-				role="dialog"
-				style={[{ position: "absolute", left: 0, top: 0 }, anchored.frameStyle, style, anchored.animatedStyle]}
-				{...props}
+				pointerEvents="box-none"
+				style={[anchored.positionerStyle, anchored.animatedStyle]}
 			>
-				<PopoverContentContext.Provider value={contentContext}>
-					{background === undefined ? null : (
-						<View className="absolute inset-0" pointerEvents="none">
-							{background}
-						</View>
-					)}
-					{isScrollable ? (
-						<ScrollView className="shrink grow-0" contentContainerClassName="gap-2" keyboardShouldPersistTaps="handled">
-							{body}
-						</ScrollView>
-					) : (
-						body
-					)}
-					{arrows}
-				</PopoverContentContext.Provider>
+				<View
+					accessibilityLabelledBy={titleId}
+					accessibilityViewIsModal
+					className={slots.content({ className })}
+					onAccessibilityEscape={isDismissible ? close : undefined}
+					ref={panelRef}
+					role="dialog"
+					style={[anchored.frameStyle, style]}
+					{...props}
+				>
+					<PopoverContentContext.Provider value={contentContext}>
+						{background === undefined ? null : (
+							<View className="absolute inset-0" pointerEvents="none">
+								{background}
+							</View>
+						)}
+						{isScrollable ? (
+							<ScrollView
+								className="shrink grow-0"
+								contentContainerClassName="gap-2"
+								keyboardShouldPersistTaps="handled"
+							>
+								{body}
+							</ScrollView>
+						) : (
+							body
+						)}
+						{arrows}
+					</PopoverContentContext.Provider>
+				</View>
 			</Animated.View>
 		</Overlay.Portal>
 	);

@@ -52,6 +52,8 @@ export const STYLE_ORDINALS: Record<string, number> = {
 	luma: 5,
 	sera: 6,
 	rhea: 7,
+	// Appended for the house geometry; see `house.ts`.
+	vela: 8,
 };
 
 export const BASE_COLOR_ORDINALS: Record<string, number> = {
@@ -62,6 +64,8 @@ export const BASE_COLOR_ORDINALS: Record<string, number> = {
 	olive: 4,
 	mist: 5,
 	taupe: 6,
+	// Appended for the house page; see `house.ts`.
+	graphite: 7,
 };
 
 /**
@@ -98,6 +102,8 @@ export const PALETTE_ORDINALS: Record<string, number> = {
 	yellow: 23,
 	// Appended for the house accent; see `house.ts`.
 	delacour: 24,
+	// The house base colour, offered on the palette axes as "no accent".
+	graphite: 25,
 };
 
 /** `inherit` takes 0 because it is a legal `fontHeading`; it is never a legal `font`. */

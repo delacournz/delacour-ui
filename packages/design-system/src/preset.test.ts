@@ -73,7 +73,10 @@ describe("the ordinal tables", () => {
 			luma: 5,
 			sera: 6,
 			rhea: 7,
+			vela: 8,
 		});
+		expect(BASE_COLOR_ORDINALS.graphite).toBe(7);
+		expect(PALETTE_ORDINALS.graphite).toBe(25);
 		expect(RADIUS_ORDINALS).toEqual({ default: 0, none: 1, small: 2, medium: 3, large: 4 });
 		expect(FONT_ORDINALS.inherit).toBe(0);
 		expect(FONT_ORDINALS.geist).toBe(1);

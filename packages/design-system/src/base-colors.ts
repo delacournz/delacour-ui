@@ -11,7 +11,7 @@ export type RawToken = string;
 export type TokenValues = Record<RawToken, string>;
 
 /** The seven neutral ramps shadcn ships, by the name shadcn gives each one. */
-export type BaseColorName = "neutral" | "stone" | "zinc" | "mauve" | "olive" | "mist" | "taupe";
+export type BaseColorName = "neutral" | "stone" | "zinc" | "mauve" | "olive" | "mist" | "taupe" | "graphite";
 
 /** A full palette for both variants — the page, before an accent is laid over it. */
 export type BaseColor = {
@@ -532,6 +532,98 @@ export const BASE_COLORS: readonly BaseColor[] = [
 			"sidebar-accent-foreground": "oklch(0.986 0.002 67.8)",
 			"sidebar-border": "oklch(1 0 0 / 10%)",
 			"sidebar-ring": "oklch(0.547 0.021 43.1)",
+		},
+	},
+	/**
+	 * The house page: greyscale, tactile, and drawn in hairlines.
+	 *
+	 * Not one of shadcn's seven, so it is appended last and keeps every earlier
+	 * ordinal where it was. It is neutral's hue with three departures:
+	 *
+	 * - **A lifted dark.** The page is `L 0.188` rather than neutral-950, with the
+	 *   card a step above it and the sidebar a step below, so a surface reads by
+	 *   tone before it reads by border.
+	 * - **Alpha hairlines in both modes.** `border` and `input` are black or white
+	 *   at 10–14%, so a rule over a card, the page or the sidebar is the same
+	 *   weight on each. shadcn does this in the dark only.
+	 * - **A categorical chart ramp.** Five distinct hues rather than five greys,
+	 *   because a greyscale page leaves colour free to mean "series". The ramp is
+	 *   not sequential, so it is not held to darkening step by step; `chart-1` is
+	 *   held to 3:1 against the page and card in `contrast.test.ts`.
+	 *
+	 * The fills (`secondary`, `muted`, `accent`) are opaque on purpose. A 4%
+	 * alpha fill is what the look is modelled on, but the library stacks fills —
+	 * a muted chip inside a secondary row — and alpha compounds where opaque
+	 * stays the step it was chosen to be.
+	 */
+	{
+		name: "graphite",
+		title: "Graphite",
+		light: {
+			background: "oklch(1 0 0)",
+			foreground: "oklch(0.269 0 0)",
+			card: "oklch(1 0 0)",
+			"card-foreground": "oklch(0.269 0 0)",
+			popover: "oklch(1 0 0)",
+			"popover-foreground": "oklch(0.269 0 0)",
+			primary: "oklch(0.269 0 0)",
+			"primary-foreground": "oklch(0.985 0 0)",
+			secondary: "oklch(0.968 0 0)",
+			"secondary-foreground": "oklch(0.269 0 0)",
+			muted: "oklch(0.968 0 0)",
+			"muted-foreground": "oklch(0.439 0 0)",
+			accent: "oklch(0.955 0 0)",
+			"accent-foreground": "oklch(0.269 0 0)",
+			destructive: "oklch(0.637 0.237 25.331)",
+			border: "oklch(0 0 0 / 12%)",
+			input: "oklch(0 0 0 / 14%)",
+			ring: "oklch(0.708 0 0)",
+			"chart-1": "oklch(0.646 0.222 41.116)",
+			"chart-2": "oklch(0.6 0.118 184.704)",
+			"chart-3": "oklch(0.398 0.07 227.392)",
+			"chart-4": "oklch(0.828 0.189 84.429)",
+			"chart-5": "oklch(0.769 0.188 70.08)",
+			sidebar: "oklch(0.985 0 0)",
+			"sidebar-foreground": "oklch(0.355 0 0)",
+			"sidebar-primary": "oklch(0.269 0 0)",
+			"sidebar-primary-foreground": "oklch(0.985 0 0)",
+			"sidebar-accent": "oklch(0.955 0 0)",
+			"sidebar-accent-foreground": "oklch(0.269 0 0)",
+			"sidebar-border": "oklch(0 0 0 / 10%)",
+			"sidebar-ring": "oklch(0.708 0 0)",
+		},
+		dark: {
+			background: "oklch(0.188 0 0)",
+			foreground: "oklch(0.97 0 0)",
+			card: "oklch(0.204 0 0)",
+			"card-foreground": "oklch(0.97 0 0)",
+			popover: "oklch(0.204 0 0)",
+			"popover-foreground": "oklch(0.97 0 0)",
+			primary: "oklch(0.97 0 0)",
+			"primary-foreground": "oklch(0.269 0 0)",
+			secondary: "oklch(0.226 0 0)",
+			"secondary-foreground": "oklch(0.97 0 0)",
+			muted: "oklch(0.226 0 0)",
+			"muted-foreground": "oklch(0.708 0 0)",
+			accent: "oklch(0.25 0 0)",
+			"accent-foreground": "oklch(0.97 0 0)",
+			destructive: "oklch(0.704 0.191 22.216)",
+			border: "oklch(1 0 0 / 10%)",
+			input: "oklch(1 0 0 / 12%)",
+			ring: "oklch(0.556 0 0)",
+			"chart-1": "oklch(0.623 0.214 259.815)",
+			"chart-2": "oklch(0.696 0.17 162.48)",
+			"chart-3": "oklch(0.769 0.188 70.08)",
+			"chart-4": "oklch(0.627 0.265 303.9)",
+			"chart-5": "oklch(0.645 0.246 16.439)",
+			sidebar: "oklch(0.178 0 0)",
+			"sidebar-foreground": "oklch(0.88 0 0)",
+			"sidebar-primary": "oklch(0.97 0 0)",
+			"sidebar-primary-foreground": "oklch(0.269 0 0)",
+			"sidebar-accent": "oklch(0.226 0 0)",
+			"sidebar-accent-foreground": "oklch(0.97 0 0)",
+			"sidebar-border": "oklch(1 0 0 / 9%)",
+			"sidebar-ring": "oklch(0.556 0 0)",
 		},
 	},
 ];

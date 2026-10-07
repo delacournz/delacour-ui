@@ -52,6 +52,24 @@ const TYPE_SCALE: readonly [string, string][] = [
 ];
 
 /**
+ * The etched material and the kicker, which no axis varies either.
+ *
+ * Restated from `tokens.css` for the same reason as the type scale: a component
+ * opted into `material="etched"` or `Text.Kicker` reads these, and a pasted theme
+ * without them draws a flat edge and an unsized label. `emit.test.ts` holds them
+ * to that file.
+ */
+const MATERIAL: readonly [string, string][] = [
+	["--text-kicker", "10px"],
+	["--tracking-kicker", "0.2em"],
+	["--shadow-etched", "inset 0 -1px 0 0 rgb(0 0 0 / 4%), 0 1px 2px 0 rgb(0 0 0 / 5%)"],
+	["--shadow-etched-dark", "inset 0 1px 0 0 rgb(255 255 255 / 6%), 0 1px 2px 0 rgb(0 0 0 / 30%)"],
+	["--shadow-etched-primary", "inset 0 1px 0 0 rgb(255 255 255 / 16%), 0 1px 2px 0 rgb(0 0 0 / 5%)"],
+	["--shadow-focus", "0 0 0 3px rgb(0 0 0 / 10%)"],
+	["--shadow-focus-dark", "0 0 0 3px rgb(255 255 255 / 14%)"],
+];
+
+/**
  * The generic corner scale, as multipliers of `--radius`.
  *
  * `inline` is load-bearing: a utility has to read `var(--radius)` itself, so a
@@ -179,7 +197,12 @@ function baseline(geometry: Record<string, string>): readonly [string, string][]
 		(token) => [`--${token}`, geometry[`--${token}`] ?? ""] as [string, string]
 	);
 
-	return [["--radius", geometry["--radius"] ?? ""], ...TYPE_SCALE, ...resolved.filter(([, value]) => value !== "")];
+	return [
+		["--radius", geometry["--radius"] ?? ""],
+		...TYPE_SCALE,
+		...MATERIAL,
+		...resolved.filter(([, value]) => value !== ""),
+	];
 }
 
 function pairs(selector: string, entries: readonly [string, string][]): string {

@@ -3,9 +3,11 @@ import { DEFAULT_CONFIG, type DesignSystemConfig } from "./config";
 /**
  * The studio's own look, as a preset.
  *
- * This is what `delacour.co.nz` is set in, mapped onto the customiser's axes:
- * zinc for the near-black page and zinc-900 surfaces, the `delacour` accent for
- * the brand amber, Inter under Outfit, and a corner one step tighter than Vega's.
+ * A greyscale, tactile, keyboard-first interface: a graphite page drawn in alpha
+ * hairlines, the whole UI set in JetBrains Mono with Inter reserved for headings,
+ * a 10pt corner, and the dense Vela geometry. Colour is left free to mean
+ * something — status and chart series — rather than spent on the brand.
+ *
  * The docs site paints itself from it and the playground opens in it, which is
  * the whole pitch — the theme you build here is the theme you ship — proven on
  * our own two surfaces.
@@ -15,13 +17,13 @@ import { DEFAULT_CONFIG, type DesignSystemConfig } from "./config";
  * `theme.css` declares; `house.test.ts` pins that distance.
  */
 export const HOUSE_CONFIG: DesignSystemConfig = {
-	style: "vega",
-	baseColor: "zinc",
-	theme: "delacour",
-	chartColor: "delacour",
-	font: "inter",
-	fontHeading: "outfit",
-	radius: "small",
+	style: "vela",
+	baseColor: "graphite",
+	theme: "graphite",
+	chartColor: "graphite",
+	font: "jetbrains-mono",
+	fontHeading: "inter",
+	radius: "medium",
 };
 
 /**
@@ -31,7 +33,21 @@ export const HOUSE_CONFIG: DesignSystemConfig = {
  * codec change that silently moved it would repoint every one of those links.
  * A literal fails the test instead.
  */
-export const HOUSE_PRESET_CODE = "AQACGBgCCgLk";
+export const HOUSE_PRESET_CODE = "AQgHGRkTAgO_";
+
+/**
+ * The studio's previous look, kept as a starting point: delacour.co.nz's zinc
+ * page, the brand amber, Inter under Outfit.
+ */
+export const DELACOUR_AMBER_CONFIG: DesignSystemConfig = {
+	style: "vega",
+	baseColor: "zinc",
+	theme: "delacour",
+	chartColor: "delacour",
+	font: "inter",
+	fontHeading: "outfit",
+	radius: "small",
+};
 
 export type PresetShortcut = {
 	/** A stable id, used as a key and a query value. */
@@ -55,9 +71,16 @@ export const PRESET_SHORTCUTS: readonly PresetShortcut[] = [
 	{
 		name: "delacour",
 		title: "Delacour",
-		blurb: "The studio's own: zinc, amber, Inter and Outfit.",
+		blurb: "The studio's own: graphite, hairlines, JetBrains Mono and Inter.",
 		config: HOUSE_CONFIG,
 		code: HOUSE_PRESET_CODE,
+	},
+	{
+		name: "delacour-amber",
+		title: "Delacour amber",
+		blurb: "The studio site: zinc, amber, Inter and Outfit.",
+		config: DELACOUR_AMBER_CONFIG,
+		code: "AQACGBgCCgLk",
 	},
 	{
 		name: "library",

@@ -346,6 +346,14 @@ import * as demo_skeleton_group from "./skeleton/group";
 import * as demo_skeleton_lines from "./skeleton/lines";
 import * as demo_skeleton_profile_card from "./skeleton/profile-card";
 import * as demo_skeleton_shapes from "./skeleton/shapes";
+import * as demo_slide_button_auto_reset from "./slide-button/auto-reset";
+import * as demo_slide_button_controlled_async from "./slide-button/controlled-async";
+import * as demo_slide_button_custom_thumb from "./slide-button/custom-thumb";
+import * as demo_slide_button_disabled from "./slide-button/disabled";
+import * as demo_slide_button_sizes from "./slide-button/sizes";
+import * as demo_slide_button_slide_to_ship from "./slide-button/slide-to-ship";
+import * as demo_slide_button_threshold from "./slide-button/threshold";
+import * as demo_slide_button_variants from "./slide-button/variants";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_accessible_names from "./slider/accessible-names";
 import * as demo_slider_anatomy from "./slider/anatomy";
@@ -785,6 +793,14 @@ export const DEMOS = {
 	"skeleton/lines": demo_skeleton_lines,
 	"skeleton/profile-card": demo_skeleton_profile_card,
 	"skeleton/shapes": demo_skeleton_shapes,
+	"slide-button/auto-reset": demo_slide_button_auto_reset,
+	"slide-button/controlled-async": demo_slide_button_controlled_async,
+	"slide-button/custom-thumb": demo_slide_button_custom_thumb,
+	"slide-button/disabled": demo_slide_button_disabled,
+	"slide-button/sizes": demo_slide_button_sizes,
+	"slide-button/slide-to-ship": demo_slide_button_slide_to_ship,
+	"slide-button/threshold": demo_slide_button_threshold,
+	"slide-button/variants": demo_slide_button_variants,
 	"slider/a-range": demo_slider_a_range,
 	"slider/accessible-names": demo_slider_accessible_names,
 	"slider/anatomy": demo_slider_anatomy,

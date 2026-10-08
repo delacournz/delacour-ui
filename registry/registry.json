@@ -1513,6 +1513,42 @@
 			]
 		},
 		{
+			"name": "slide-button",
+			"type": "registry:ui",
+			"title": "Slide Button",
+			"description": "A handle dragged across a rail to confirm an action a tap should not reach.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/slide-button/AGENTS.md",
+				"ui/slide-button/index.ts",
+				"ui/slide-button/slide-button-label.tsx",
+				"ui/slide-button/slide-button-thumb.tsx",
+				"ui/slide-button/slide-button.context.tsx",
+				"ui/slide-button/slide-button.tsx",
+				"ui/slide-button/slide-button.variants.ts"
+			]
+		},
+		{
 			"name": "slider",
 			"type": "registry:ui",
 			"title": "Slider",

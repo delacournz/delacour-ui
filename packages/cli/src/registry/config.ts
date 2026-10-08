@@ -300,6 +300,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
 		categories: ["feedback"],
 	},
+	"slide-button": {
+		title: "Slide Button",
+		description: "A handle dragged across a rail to confirm an action a tap should not reach.",
+		categories: ["controls"],
+	},
 	slider: {
 		title: "Slider",
 		description: "A value along a track, dragged by a handle that follows the gesture.",

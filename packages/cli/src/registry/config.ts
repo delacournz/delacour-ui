@@ -200,6 +200,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights.",
 		categories: ["overlays"],
 	},
+	fab: {
+		title: "Fab",
+		description: "A floating action button, extended with a label or unfolding a dial of related actions.",
+		categories: ["controls"],
+	},
 	field: {
 		title: "Field",
 		description: "One control with its label, description and error — and the state they all read.",

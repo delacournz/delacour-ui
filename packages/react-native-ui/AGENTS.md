@@ -299,6 +299,7 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
+| `--spacing-fab-*` | `size-fab-md`, `h-fab-md` | a floating action button's circle, and an extended one's height |
 
 **The generic corner scale is derived, not enumerated.** `rounded-xs` through
 `rounded-4xl` are multiples of one `--radius` — shadcn's own scale — declared

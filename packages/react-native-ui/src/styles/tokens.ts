@@ -60,6 +60,15 @@ export const INPUT_TEXT_TOKENS = ["input-sm", "input-md", "input-lg"] as const;
 export const CHART_SIZE_TOKENS = ["chart-sm", "chart-md", "chart-lg"] as const;
 
 /**
+ * Suffixes in the `--spacing-*` namespace: `size-fab-md`, `h-fab-md`.
+ *
+ * A floating action button's footprint — the circle's edge, or an extended
+ * one's height. Its own scale rather than the button's, so a fab can be
+ * retuned without moving every control in a form.
+ */
+export const FAB_SIZE_TOKENS = ["fab-sm", "fab-md", "fab-lg"] as const;
+
+/**
  * The tailwind-merge extension both mergers in this package are built from.
  *
  * There are two, and they are easy to forget: `cn()` merges a caller's
@@ -83,6 +92,7 @@ export const TW_MERGE_CONFIG = {
 			spacing: [
 				...BUTTON_SIZE_TOKENS,
 				...CHART_SIZE_TOKENS,
+				...FAB_SIZE_TOKENS,
 				...ICON_SIZE_TOKENS,
 				...INPUT_SIZE_TOKENS,
 				...SCREEN_SIZE_TOKENS,

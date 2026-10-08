@@ -27,12 +27,15 @@ import {
 	IconLayoutLeft,
 	IconLayoutTopBottom,
 	IconLayoutWindow,
+	IconLock,
 	IconNoteText,
 	IconNumberedList,
 	IconParagraph,
+	IconPassword,
 	IconPeople,
 	IconPlaceholder,
 	IconProgress75,
+	IconReceiptBill,
 	IconSettingsSliderHor,
 	IconShieldCheck,
 	IconSidebar,
@@ -54,6 +57,7 @@ import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { Alert, Linking, View } from "react-native";
+import { BLOCKS, type BlockSlug } from "@/blocks/block-index";
 import { DelacourMark } from "@/components/delacour-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
@@ -109,6 +113,18 @@ const ICONS: Record<ComponentSlug, IconComponent> = {
 	"toggle-button": IconBold,
 	tooltip: IconCircleInfo,
 	toast: IconBell,
+};
+
+/** One glyph per block, keyed by slug for the same reason as {@link ICONS}. */
+const BLOCK_ICONS: Record<BlockSlug, IconComponent> = {
+	shell: IconLayoutTopBottom,
+	settings: IconSettingsSliderHor,
+	"sign-in": IconLock,
+	otp: IconPassword,
+	dashboard: IconChart1,
+	members: IconPeople,
+	invoices: IconReceiptBill,
+	"empty-states": IconInboxEmpty,
 };
 
 /**
@@ -231,6 +247,31 @@ export default function Index(): ReactElement {
 						</Surface>
 					</View>
 				))}
+
+				<View className={SECTION_GAP}>
+					<Text.Kicker>Blocks</Text.Kicker>
+					<Surface material="tray">
+						<ListGroup className="rounded-xl">
+							{BLOCKS.map((block) => (
+								<ListGroup.Item
+									haptic="selection"
+									key={block.slug}
+									onPress={() => router.push(block.href)}
+									testID={`home-block-${block.slug}`}
+								>
+									<ListGroup.ItemPrefix>
+										<Icon icon={BLOCK_ICONS[block.slug]} />
+									</ListGroup.ItemPrefix>
+									<ListGroup.ItemContent>
+										<ListGroup.ItemTitle>{block.title}</ListGroup.ItemTitle>
+										<ListGroup.ItemDescription>{block.description}</ListGroup.ItemDescription>
+									</ListGroup.ItemContent>
+									<ListGroup.ItemSuffix />
+								</ListGroup.Item>
+							))}
+						</ListGroup>
+					</Surface>
+				</View>
 
 				<View className={SECTION_GAP}>
 					<Text.Kicker>About</Text.Kicker>

@@ -59,13 +59,17 @@ src/
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
 │   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
+│   ├── (blocks)/                 the key screens — see Blocks
 │   └── (components)/             one route per component, grouped without a path segment
+├── blocks/                       the blocks' fixtures and pure logic, with their tests — see Blocks
 ├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
+│   ├── block-screen.tsx          BlockScreen — the frame every block shares
+│   ├── block-section.tsx         BlockSection — a kicker over a tray
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
@@ -241,6 +245,37 @@ from `@delacour/react-native-ui/icons/central`. The row is pure so `bun test` ca
 it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
 without one is a type error. A gallery with no row is a page only a URL
 reaches, and nobody types URLs on a phone.
+
+## Blocks
+
+`src/app/(blocks)/` holds eight key screens composed **only** from `@delacour/react-native-ui`: a
+route group like `(components)`, so `settings.tsx` is `/settings`. They are the answer to "does the
+house hold up on a whole screen", which no single-component gallery can say.
+
+| Route | What it is |
+| --- | --- |
+| `/shell` | A navbar over a tab's content and a tab bar in a sticky `Screen.Footer` — `Tabs` with no panels, glyph over label |
+| `/settings` | Kicker over tray groups: a profile row, switch `Item`s, navigation `ListGroup.Item`s, an etched sign-out |
+| `/sign-in` | Etched fields in an etched `Card`, validation from `blocks/sign-in.ts`, the primary etched button in the footer |
+| `/otp` | Six etched `Input`s behaving as one field; the rules are `blocks/otp.ts` |
+| `/dashboard` | `Kpi` tiles and sparkline, and a `Chart` area-and-line in a tray |
+| `/members` | Search, a `Tabs` role filter, `Item`s with etched status `Badge`s, an `EmptyState` when nothing matches |
+| `/invoices` | An outstanding `Kpi`, a status filter, amounts and etched badges |
+| `/empty-states` | `EmptyState` as first run, caught up, no results and offline |
+
+Fixtures are module-level consts in `src/blocks/` and any logic (filters, formatters, validation, the
+OTP rules) is pure and tested there — never under `src/app`, where a test file becomes a route. The
+home screen's **Blocks** group is `blocks/block-index.ts`, and `block-index.test.ts` holds every slug
+to a route file. A block is not a component, so it has no demo, no docs page and no row in
+`components-index.ts`, and `demos.test.ts` and the web component tests do not see it.
+
+`BlockScreen` is the shared frame (back button carrying the title, `ThemeToggle`, a scroll area at
+`LIST_GAP`, an optional sticky footer) and `BlockSection` the kicker-over-tray grouping. Both are
+playground chrome, not library components.
+
+**Gaps found, none filled:** the library has no one-time-code input (`/otp` composes six `Input`s
+and moves focus itself) and no icon-over-label tab bar (`/shell` styles `Tabs.Trigger` as a column
+with a class). Either earning a component is a decision for the library, not for a block.
 
 ## The home screen
 

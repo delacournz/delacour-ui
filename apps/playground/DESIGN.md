@@ -125,6 +125,14 @@ small corner, not a capsule.
 - **Signature component: the axis strip.** The customiser's horizontal scroller, each tile drawing
   what its axis actually varies.
 
+## Blocks
+
+Eight key screens under `(blocks)/` prove the language on whole screens rather than parts: settings
+is kickers over trays, auth is etched fields and one etched primary slab, the dashboard keeps colour
+for the chart and the trend, lists carry status in etched badges and nothing else. They add no
+tokens and no components; a block that needed a hex value or a new variant would be a finding about
+the library.
+
 ## Do's and Don'ts
 
 ### Do

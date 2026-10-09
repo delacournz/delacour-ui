@@ -1013,6 +1013,56 @@
 			]
 		},
 		{
+			"name": "menu",
+			"type": "registry:ui",
+			"title": "Menu",
+			"description": "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"compose-refs",
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/menu/AGENTS.md",
+				"ui/menu/index.ts",
+				"ui/menu/menu-background.tsx",
+				"ui/menu/menu-checkbox-item.tsx",
+				"ui/menu/menu-content.tsx",
+				"ui/menu/menu-item.tsx",
+				"ui/menu/menu-label.tsx",
+				"ui/menu/menu-radio-group.tsx",
+				"ui/menu/menu-radio-item.tsx",
+				"ui/menu/menu-separator.tsx",
+				"ui/menu/menu-sub-content.tsx",
+				"ui/menu/menu-sub-trigger.tsx",
+				"ui/menu/menu-sub.tsx",
+				"ui/menu/menu-trigger.tsx",
+				"ui/menu/menu.context.tsx",
+				"ui/menu/menu.tsx",
+				"ui/menu/menu.types.ts",
+				"ui/menu/menu.variants.ts"
+			]
+		},
+		{
 			"name": "merge-props",
 			"type": "registry:lib",
 			"title": "mergeProps",

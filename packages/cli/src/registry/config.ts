@@ -253,6 +253,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
 		categories: ["primitives"],
 	},
+	menu: {
+		title: "Menu",
+		description:
+			"A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
+		categories: ["controls"],
+	},
 	meter: {
 		title: "Meter",
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",

@@ -1,148 +1,17 @@
-import { Icon, type IconComponent } from "@delacour/react-native-ui/icon";
-import {
-	IconArrowExpandVer,
-	IconArrowLeftRight,
-	IconArrowsRepeatCircle,
-	IconArrowUpRight,
-	IconAsterisk,
-	IconBell,
-	IconBold,
-	IconBrowserTabs,
-	IconBubble2,
-	IconBulletList,
-	IconCalendar1,
-	IconChart1,
-	IconChevronGrabberVertical,
-	IconCircleInfo,
-	IconCircleRecord,
-	IconCursorClick,
-	IconDiamond,
-	IconDivider,
-	IconExclamationTriangle,
-	IconFilter1,
-	IconFontStyle,
-	IconGauge,
-	IconInboxEmpty,
-	IconLayoutBottomFull,
-	IconLayoutLeft,
-	IconLayoutTopBottom,
-	IconLayoutWindow,
-	IconLock,
-	IconNoteText,
-	IconNumberedList,
-	IconParagraph,
-	IconPassword,
-	IconPeople,
-	IconPlaceholder,
-	IconProgress75,
-	IconReceiptBill,
-	IconSettingsSliderHor,
-	IconShieldCheck,
-	IconSidebar,
-	IconSquareBehindSquare1,
-	IconSquareCheck,
-	IconSquareCursor,
-	IconStar,
-	IconStarLines,
-	IconTag,
-	IconToggle,
-	IconTrending4,
-	IconWindow,
-	IconWindowCursor,
-} from "@delacour/react-native-ui/icons/central";
+import { Icon } from "@delacour/react-native-ui/icon";
+import { IconArrowUpRight, IconShieldCheck } from "@delacour/react-native-ui/icons/central";
 import { ListGroup } from "@delacour/react-native-ui/list-group";
 import { Screen } from "@delacour/react-native-ui/screen";
 import { Surface } from "@delacour/react-native-ui/surface";
 import { Text } from "@delacour/react-native-ui/text";
-import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
 import { Alert, Linking, View } from "react-native";
-import { BLOCKS, type BlockSlug } from "@/blocks/block-index";
 import { DelacourMark } from "@/components/delacour-mark";
+import { HubCard } from "@/components/hub-card";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
+import { HUB_CARDS } from "@/lib/hub-cards";
 import { PRIVACY_POLICY_URL } from "@/lib/privacy-url";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
-
-/**
- * One glyph per screen, keyed by slug so a row added to `components-index.ts`
- * without a glyph here is a type error rather than a blank prefix.
- */
-const ICONS: Record<ComponentSlug, IconComponent> = {
-	accordion: IconChevronGrabberVertical,
-	alert: IconExclamationTriangle,
-	avatar: IconPeople,
-	badge: IconTag,
-	"bottom-sheet": IconLayoutBottomFull,
-	button: IconSquareCursor,
-	calendar: IconCalendar1,
-	card: IconLayoutWindow,
-	checkbox: IconSquareCheck,
-	"empty-state": IconInboxEmpty,
-	chart: IconChart1,
-	collapsible: IconArrowExpandVer,
-	drawer: IconSidebar,
-	dialog: IconWindow,
-	feedback: IconBubble2,
-	chip: IconFilter1,
-	field: IconParagraph,
-	icon: IconStar,
-	input: IconWindowCursor,
-	item: IconLayoutLeft,
-	kpi: IconTrending4,
-	label: IconAsterisk,
-	"list-group": IconBulletList,
-	meter: IconGauge,
-	popover: IconBubble2,
-	pressable: IconCursorClick,
-	progress: IconProgress75,
-	radio: IconCircleRecord,
-	rating: IconStarLines,
-	separator: IconDivider,
-	skeleton: IconPlaceholder,
-	screen: IconLayoutTopBottom,
-	slider: IconSettingsSliderHor,
-	spinner: IconArrowsRepeatCircle,
-	steps: IconNumberedList,
-	surface: IconSquareBehindSquare1,
-	swipe: IconArrowLeftRight,
-	switch: IconToggle,
-	tabs: IconBrowserTabs,
-	text: IconFontStyle,
-	textarea: IconNoteText,
-	"toggle-button": IconBold,
-	tooltip: IconCircleInfo,
-	toast: IconBell,
-};
-
-/** One glyph per block, keyed by slug for the same reason as {@link ICONS}. */
-const BLOCK_ICONS: Record<BlockSlug, IconComponent> = {
-	shell: IconLayoutTopBottom,
-	settings: IconSettingsSliderHor,
-	"sign-in": IconLock,
-	otp: IconPassword,
-	dashboard: IconChart1,
-	members: IconPeople,
-	invoices: IconReceiptBill,
-	"empty-states": IconInboxEmpty,
-};
-
-/**
- * Brand art, not part of the library — the row is a way to eyeball the app icon
- * against the component that redraws it, which is only ever a development
- * concern. `__DEV__` is compiled to `false` in a release bundle, so Metro's
- * dead-code pass drops the row and this group with it.
- */
-const DEV_ROWS: readonly (ComponentIndexEntry & { icon: IconComponent })[] = [
-	{
-		slug: "delacour-mark",
-		href: "/delacour-mark",
-		icon: IconDiamond,
-		title: "DelacourMark",
-		description: "The app icon, as react-native-svg",
-		group: "Utilities",
-	},
-];
 
 /** The size the mark is drawn at in the navbar: the navbar's own icon step, at life size. */
 const MARK_SIZE = 28;
@@ -163,45 +32,20 @@ const MARK_SIZE = 28;
 const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tight";
 
 /**
- * The playground index: the library, grouped the way the documentation groups it.
+ * The hub the app opens on: two doors, one to the component galleries and one
+ * to the blocks.
  *
- * The screen the app opens on, and the first place the house shows: the mark
- * leads the navbar, and the product's name — not the package's — opens the
- * content as a large title in the heading face. That title is the one typeset
- * lockup the brand has, since the mark's geometry is binding and there is no
- * wordmark, and the large-title step is where Outfit is actually legible as
- * Outfit; at navbar size it is indistinguishable from the body face, which is
- * why the finish review could find the house's heading face nowhere. Every
- * other title in the app stays inline, in the body face the platform expects
- * of a navigation bar. The count under it is derived from the same index the
- * rows are drawn from.
+ * The mark leads a static navbar and "Delacour UI" opens the content as a large
+ * title in the heading face — the one typeset lockup the brand has. Under it,
+ * one `HubCard` per entry in `HUB_CARDS`, each a full-width etched panel whose
+ * count is read from the index the screen behind it draws.
  *
- * The bar itself carries only the mark and the actions, the way a top-level
- * screen's bar reads before its large title collapses. It does not collapse:
- * that needs a native header this app does not mount, because the navbar on
- * show is the library's own `Screen.Navbar`, the one consumers get. A static
- * bar is HIG-acceptable for a tool; DESIGN.md records the trade.
- *
- * The groups are the docs' eight, in the docs' order, so a reader who found a
- * component on the site finds it in the same place here. Eight headings over
- * twenty rows is not many rows per heading, and that is the point: "Forms"
- * over six rows says what the six have in common where an alphabet says
- * nothing. `components-index.test.ts` holds the two apps' groupings together.
- *
- * Doubles as the ListGroup's own smoke test — automatic dividers, the leading
- * icon cascade and the default trailing chevron are all on screen here, so a
- * regression in any of them is visible before a gallery is even opened.
- *
- * The last group, About, is not a component: it holds the privacy policy link
- * App Review requires inside the app, not only on the listing. Its suffix is an
- * outbound arrow rather than the chevron, because the row leaves the app for
- * the browser instead of pushing a screen.
+ * The About group closes the screen with the privacy policy link App Review
+ * requires inside the app, not only on the listing. Its suffix is an outbound
+ * arrow rather than the chevron, because the row leaves the app for the
+ * browser instead of pushing a screen.
  */
 export default function Index(): ReactElement {
-	const router = useRouter();
-	const groups = groupedComponents();
-	const iconFor = (slug: ComponentSlug): IconComponent => ICONS[slug];
-
 	// `openURL` rejects when nothing is registered for https, which is an emulator
 	// image with no browser. The alert carries the URL so it can still be read.
 	const openPrivacyPolicy = () => {
@@ -210,19 +54,6 @@ export default function Index(): ReactElement {
 		});
 	};
 
-	const row = (entry: ComponentIndexEntry, icon: IconComponent) => (
-		<ListGroup.Item haptic="selection" key={entry.slug} onPress={() => router.push(entry.href)}>
-			<ListGroup.ItemPrefix>
-				<Icon icon={icon} />
-			</ListGroup.ItemPrefix>
-			<ListGroup.ItemContent>
-				<ListGroup.ItemTitle>{entry.title}</ListGroup.ItemTitle>
-				<ListGroup.ItemDescription>{entry.description}</ListGroup.ItemDescription>
-			</ListGroup.ItemContent>
-			<ListGroup.ItemSuffix />
-		</ListGroup.Item>
-	);
-
 	return (
 		<Screen>
 			<Screen.Navbar actions={<ThemeToggle />} placement="static">
@@ -230,48 +61,13 @@ export default function Index(): ReactElement {
 			</Screen.Navbar>
 
 			<Screen.ScrollArea contentContainerClassName={LIST_GAP}>
-				<View className="gap-1">
-					<Text.Display accessibilityRole="header" className={LARGE_TITLE_CLASS}>
-						Delacour UI
-					</Text.Display>
-					<Text.Kicker>{`${componentCount()} components · ${groups.length} groups`}</Text.Kicker>
-				</View>
+				<Text.Display accessibilityRole="header" className={LARGE_TITLE_CLASS}>
+					Delacour UI
+				</Text.Display>
 
-				{groups.map((group) => (
-					<View className={SECTION_GAP} key={group.name}>
-						<Text.Kicker>{group.name}</Text.Kicker>
-						<Surface material="tray">
-							<ListGroup className="rounded-xl">
-								{group.entries.map((entry) => row(entry, iconFor(entry.slug)))}
-							</ListGroup>
-						</Surface>
-					</View>
+				{HUB_CARDS.map((card) => (
+					<HubCard card={card} key={card.slug} />
 				))}
-
-				<View className={SECTION_GAP}>
-					<Text.Kicker>Blocks</Text.Kicker>
-					<Surface material="tray">
-						<ListGroup className="rounded-xl">
-							{BLOCKS.map((block) => (
-								<ListGroup.Item
-									haptic="selection"
-									key={block.slug}
-									onPress={() => router.push(block.href)}
-									testID={`home-block-${block.slug}`}
-								>
-									<ListGroup.ItemPrefix>
-										<Icon icon={BLOCK_ICONS[block.slug]} />
-									</ListGroup.ItemPrefix>
-									<ListGroup.ItemContent>
-										<ListGroup.ItemTitle>{block.title}</ListGroup.ItemTitle>
-										<ListGroup.ItemDescription>{block.description}</ListGroup.ItemDescription>
-									</ListGroup.ItemContent>
-									<ListGroup.ItemSuffix />
-								</ListGroup.Item>
-							))}
-						</ListGroup>
-					</Surface>
-				</View>
 
 				<View className={SECTION_GAP}>
 					<Text.Kicker>About</Text.Kicker>
@@ -298,15 +94,6 @@ export default function Index(): ReactElement {
 						</ListGroup>
 					</Surface>
 				</View>
-
-				{__DEV__ ? (
-					<View className={SECTION_GAP}>
-						<Text.Kicker>Development</Text.Kicker>
-						<Surface material="tray">
-							<ListGroup className="rounded-xl">{DEV_ROWS.map((entry) => row(entry, entry.icon))}</ListGroup>
-						</Surface>
-					</View>
-				) : null}
 			</Screen.ScrollArea>
 			<Screen.ScrollShadow />
 		</Screen>

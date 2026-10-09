@@ -55,21 +55,25 @@ running from another project does not silently serve this one.
 src/
 ├── app/                          expo-router routes
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
-│   ├── index.tsx                 the home screen — the mark, the count, and every gallery grouped as the docs group them
+│   ├── index.tsx                 the hub — the mark, the large title, a card each for Components and Blocks, and About
+│   ├── components.tsx            every gallery, grouped as the docs group them
+│   ├── blocks.tsx                every block, one row each
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
 │   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
 │   ├── (blocks)/                 the key screens — see Blocks
 │   └── (components)/             one route per component, grouped without a path segment
 ├── blocks/                       the blocks' fixtures and pure logic, with their tests — see Blocks
-├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
+├── components-index.ts           /components' rows and groups, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
+├── lib/hub-cards.ts             the hub's two cards — titles, counts, glows — pure and tested
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── block-screen.tsx          BlockScreen — the frame every block shares
 │   ├── block-section.tsx         BlockSection — a kicker over a tray
+│   ├── hub-card.tsx              HubCard — one of the hub's two etched doors, with a Skia glow
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
@@ -89,8 +93,8 @@ src/
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
 
-`/theme` and `/preview` are the only two top-level routes that are not a
-component's gallery. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
+`/theme`, `/preview`, `/components` and `/blocks` are the only top-level routes that are not a
+component's gallery or a block — the last two are the lists the hub opens. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
 `<Stack>` with no children, so expo-router registers both from their filenames and
 `/theme` pushes as an ordinary card. Its one setting is the anchor — see
 [Deep links](#deep-links).
@@ -240,7 +244,7 @@ The themed `bottom-sheet/` gallery has seven facets — `anatomy`, `sizing`, `sc
 
 As above, plus: create `src/app/(components)/{name}.tsx` as the shell, **add a
 row to `src/components-index.ts`** — `slug`, `title`, `description` and the
-docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/index.tsx`**,
+docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/components.tsx`**,
 from `@delacour/react-native-ui/icons/central`. The row is pure so `bun test` can hold
 it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
 without one is a type error. A gallery with no row is a page only a URL
@@ -265,7 +269,7 @@ house hold up on a whole screen", which no single-component gallery can say.
 
 Fixtures are module-level consts in `src/blocks/` and any logic (filters, formatters, validation, the
 OTP rules) is pure and tested there — never under `src/app`, where a test file becomes a route. The
-home screen's **Blocks** group is `blocks/block-index.ts`, and `block-index.test.ts` holds every slug
+`/blocks` list (`src/app/blocks.tsx`) is `blocks/block-index.ts`, and `block-index.test.ts` holds every slug
 to a route file. A block is not a component, so it has no demo, no docs page and no row in
 `components-index.ts`, and `demos.test.ts` and the web component tests do not see it.
 
@@ -279,14 +283,29 @@ with a class). Either earning a component is a decision for the library, not for
 
 ## The home screen
 
-`src/app/index.tsx` is the first screen and the first place the house shows: the
-`DelacourMark` leads a static `Screen.Navbar` whose one action is `ThemeToggle`
-— the customiser's trigger floats over every screen, this one included — and
-the content opens with "Delacour UI" as a large title — 34 over 41, semibold,
-in the heading face (Inter) — with a `Text.Kicker` under it: the component and
-group counts, uppercase mono. Each group is a kicker over a `Surface
-material="tray"` holding the `ListGroup`, whose own corner is `rounded-xl`, so
-the list reads as a panel in a tray.
+`src/app/index.tsx` is a hub, not a list. The `DelacourMark` leads a static `Screen.Navbar` whose one
+action is `ThemeToggle`, "Delacour UI" opens the content as a large title — 34 over 41, semibold, in
+the heading face (Inter) — and under it are two full-width `HubCard`s, **Components** and **Blocks**,
+then the About group.
+
+**A card is a door, not a preview.** `HubCard` (`src/components/hub-card.tsx`) is a library
+`Pressable` around a `Surface material="etched"`: an etched `Badge` with the count at the top, the
+title and a line at the bottom, and an outbound-arrow disc in the bottom corner. The whole card is
+the target and is announced as one button whose label carries the count. Its data is
+`src/lib/hub-cards.ts`, and `hub-cards.test.ts` holds each count to the index its list draws
+(`componentCount()`, `BLOCKS.length`) and each href to a route file.
+
+**The glow is Skia, in a theme colour.** A `RadialGradient` from one corner — Components
+bottom-right in `info`, Blocks top-left in `primary` — read with `useThemeColor` and faded with
+`transparentOf`, so it follows the preset and light/dark. `primary` is near-black in light and
+near-white in dark, so it blooms at half the alpha of the chromatic one; at the same strength the
+light card read as a smudge.
+
+`/components` (`src/app/components.tsx`) is the old home list: the back button carries the title
+and the component and group counts, and each group is a kicker over a `Surface material="tray"`
+holding the `ListGroup`, whose own corner is `rounded-xl`, so the list reads as a panel in a tray.
+The dev-only **Development** group (DelacourMark) lives there too. `/blocks` is `BlockScreen` over
+one tray of the eight blocks.
 
 **The heading face comes from `font-heading`.** `--font-heading` is declared by
 the library's `theme.css` only inside its platform `@variant` blocks, so
@@ -298,9 +317,9 @@ follows the axis. Verified on device: the title draws in Inter over a JetBrains
 Mono body. The customiser's `FontPreview` and the preset tiles still set
 `fontFamily` inline, which is harmless. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
-other title stays inline, in the body face a navigation bar expects. The rows
-are grouped under the documentation site's group names, in its order, so
-a component found on the site is found in the same place here. An **About** group closes the list
+other title stays inline, in the body face a navigation bar expects. The
+`/components` rows are grouped under the documentation site's group names, in its order, so
+a component found on the site is found in the same place here. An **About** group closes the hub
 with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the browser —
 App Review wants the link inside the app, not only on the listing. It always opens production,
 even from a dev build, and `src/lib/privacy-url.test.ts` holds its path to the site's

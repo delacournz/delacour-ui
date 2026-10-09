@@ -278,6 +278,13 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_menu_actions from "./menu/actions";
+import * as demo_menu_checkbox_and_radio from "./menu/checkbox-and-radio";
+import * as demo_menu_custom_background from "./menu/custom-background";
+import * as demo_menu_inset_rows from "./menu/inset-rows";
+import * as demo_menu_long_list from "./menu/long-list";
+import * as demo_menu_near_bottom_edge from "./menu/near-bottom-edge";
+import * as demo_menu_submenu from "./menu/submenu";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -704,6 +711,13 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"menu/actions": demo_menu_actions,
+	"menu/checkbox-and-radio": demo_menu_checkbox_and_radio,
+	"menu/custom-background": demo_menu_custom_background,
+	"menu/inset-rows": demo_menu_inset_rows,
+	"menu/long-list": demo_menu_long_list,
+	"menu/near-bottom-edge": demo_menu_near_bottom_edge,
+	"menu/submenu": demo_menu_submenu,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

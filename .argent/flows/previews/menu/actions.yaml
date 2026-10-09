@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on menu/actions and has settled — the report row with its ⋯ button and the
+  menu closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the menu from the ⋯ button
+  - tap: { id: menu-actions-trigger }
+  - await: { visible: { id: menu-actions-rename } }
+  - wait: 1400
+  - echo: Dismissing it from the scrim, so nothing is chosen and the clip loops
+  - tap: { text: Close menu }
+  - await: { hidden: { id: menu-actions-rename } }

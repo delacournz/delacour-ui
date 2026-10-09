@@ -4,6 +4,8 @@ description: A list of actions dropped from the control that opens it — with c
 icon: Ellipsis
 ---
 
+<Preview id="menu/actions" title={null} />
+
 ## Installation
 
 <ComponentInstall name="menu" />
@@ -77,6 +79,8 @@ an action, and the row never becomes the trigger's value.
 `trailing` at the row's end, and `description` adds a quieter second line. `variant="destructive"`
 colours the label and icon and tints the pressed fill.
 
+<Preview id="menu/actions" />
+
 ```tsx
 <Menu.Item icon={IconPencil} shortcut="⌘R" onSelect={rename}>Rename</Menu.Item>
 <Menu.Item icon={IconArchive} isDisabled>Archive</Menu.Item>
@@ -92,6 +96,8 @@ visit. `Menu.RadioItem` picks one value from its `Menu.RadioGroup` and **closes*
 visit finished. Either rule can be overridden with `isClosedOnSelect`. `indicator="dot"` marks a
 radio row with a dot instead of a tick.
 
+<Preview id="menu/checkbox-and-radio" />
+
 ```tsx
 <Menu.CheckboxItem isChecked={showDone} onCheckedChange={setShowDone}>Completed</Menu.CheckboxItem>
 <Menu.RadioGroup value={density} onValueChange={setDensity}>
@@ -105,6 +111,8 @@ radio row with a dot instead of a tick.
 `Menu.Sub` **expands in place** under its trigger row and pushes the rows below it down. It never
 flies out to a second panel: on a phone there is no room beside the first, and a layer over it hides
 where the user came from. The chevron turns to follow it, mirrored under right-to-left layouts.
+
+<Preview id="menu/submenu" />
 
 ```tsx
 <Menu.Sub>
@@ -133,6 +141,10 @@ The panel is anchored to the trigger. `placement` names the side it prefers — 
 and `align` which edge lines up with the trigger's, swapping `start` and `end` under right-to-left
 layouts. With no room on the preferred side it flips; with room on neither it takes the larger side
 and scrolls. It always stays inside the safe area, 8pt in from the screen's edges.
+
+<Preview id="menu/near-bottom-edge" />
+
+<Preview id="menu/long-list" />
 
 The side is fixed for the whole visit, so a submenu expanding mid-visit grows the panel away from
 the trigger rather than flipping it under the finger.

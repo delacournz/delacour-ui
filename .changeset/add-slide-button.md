@@ -1,5 +1,6 @@
 ---
 "@delacour/react-native-ui": minor
+"delacour": minor
 ---
 
 Add `SlideButton`, a control confirmed by dragging a handle across a rail

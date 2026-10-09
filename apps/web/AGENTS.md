@@ -429,7 +429,7 @@ page — a JSX expression holding an ellipsis does not parse. A bare `…` child
 (`<Tabs variant="primary">…</Tabs>`) is fine; those fragments illustrate one prop beside a preview
 and are not meant to be pasted whole.
 
-A component with no captured preview (`bottom-sheet`, `progress-button`, `provider`) opens at `## Installation` rather
+A component with no captured preview (`bottom-sheet`, `provider`) opens at `## Installation` rather
 than carrying a placeholder.
 
 Reasoning prose belongs in `packages/react-native-ui/src/components/<name>/AGENTS.md`, not here. A page
@@ -905,9 +905,8 @@ breaks hooks. Hydration warnings in the console are the first symptom.
 
 ## Known content gaps
 
-- **Two components have no preview.** `provider` has no captured demo, and `progress-button`'s
-  demos are not yet marked for capture (its media was never shot), so each card on the components
-  index shows a placeholder and each page opens at `## Installation`. Every other
+- **One component has no preview.** `provider` has no captured demo, so its card on the
+  components index shows a placeholder and its page opens at `## Installation`. Every other
   component page, and every engine page but `installation`, `animation` and `core`, opens on
   one. `apps/playground/src/demos/demos.test.ts` fails by name
   for a library component with no demo, so that list stays honest on its own.

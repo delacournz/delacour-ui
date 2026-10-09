@@ -68,6 +68,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
+		"./selection-mode": "./src/components/selection-mode/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
 		"./slide-button": "./src/components/slide-button/index.ts",

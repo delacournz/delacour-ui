@@ -1,0 +1,351 @@
+---
+title: SelectionMode
+description: Pick several things at once — a long press enters the mode — then act on them from a bar.
+icon: ListChecks
+---
+
+<Preview id="selection-mode/inbox-mode" title={null} />
+
+## Installation
+
+<ComponentInstall name="selection-mode" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { SelectionMode } from "@/components/ui/selection-mode";
+import { Item } from "@/components/ui/item";
+import { IconArchive, IconTrashCan } from "@/lib/icons/central";
+import { useState } from "react";
+import { FlatList, View } from "react-native";
+
+export default function Inbox() {
+  const [messages, setMessages] = useState(MESSAGES);
+  const remove = (ids: string[]) => setMessages((list) => list.filter((m) => !ids.includes(m.id)));
+
+  return (
+    <View className="flex-1">
+      <SelectionMode values={messages.map((m) => m.id)}>
+        <SelectionMode.Header title="Inbox" />
+        <FlatList
+          contentContainerClassName="pb-24"
+          data={messages}
+          renderItem={({ item }) => (
+            <SelectionMode.Item value={item.id} onPress={() => open(item)}>
+              <Item>
+                <Item.Content>
+                  <Item.Title>{item.from}</Item.Title>
+                  <Item.Description>{item.subject}</Item.Description>
+                </Item.Content>
+              </Item>
+            </SelectionMode.Item>
+          )}
+        />
+        <SelectionMode.Bar>
+          <SelectionMode.Action icon={IconArchive} isExitOnPress onPress={remove}>
+            Archive
+          </SelectionMode.Action>
+          <SelectionMode.Action icon={IconTrashCan} isDestructive isExitOnPress onPress={remove}>
+            Delete
+          </SelectionMode.Action>
+        </SelectionMode.Bar>
+      </SelectionMode>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<SelectionMode values={ids}>
+  <SelectionMode.Header />
+  <SelectionMode.Group>
+    <SelectionMode.Item value="a">…</SelectionMode.Item>
+  </SelectionMode.Group>
+  <SelectionMode.Bar>
+    <SelectionMode.Action onPress={act}>Act</SelectionMode.Action>
+  </SelectionMode.Bar>
+</SelectionMode>
+```
+
+`SelectionMode.Item` **wraps** what it holds — a row, an avatar, a swatch — rather than replacing it.
+`SelectionMode.Group` is optional: any list works, `FlatList` included.
+
+## It is a mode
+
+With the mode off the list is for reading, and each item runs its own `onPress`. A long press
+turns the mode on with the pressed item picked. From then on a press toggles, and the item's own
+`onPress` does not run. The header says the mode is on, counts the picks and offers the way out;
+the bar acts on what is picked.
+
+<Preview id="selection-mode/inbox-mode" />
+
+Closing the header, or calling `exit()`, clears an uncontrolled selection. A controlled `selected`
+is left alone — you may want a draft that survives leaving the mode.
+
+For an always-on picker, hold the mode on with `isActive` and show the marks from the start with
+`isIndicatorAlwaysShown`:
+
+<Preview id="selection-mode/share-picker" />
+
+```tsx
+<SelectionMode className="flex-none" isActive defaultSelected={["rawiri"]}>
+  <SelectionMode.Group label="Share with">
+    {people.map((person) => (
+      <SelectionMode.Item isIndicatorAlwaysShown key={person.id} value={person.id}>
+        <Item>…</Item>
+      </SelectionMode.Item>
+    ))}
+  </SelectionMode.Group>
+  <ShareButton />
+</SelectionMode>
+```
+
+`useSelectionMode()` reads the selection from anywhere inside the root:
+
+```tsx
+function ShareButton() {
+  const { count } = useSelectionMode();
+  return <Button isDisabled={count === 0}>{`Share with ${count}`}</Button>;
+}
+```
+
+## Selection is ids
+
+The selection is a `string[]` of item `value`s, in the order they were picked — never indices. An
+index changes meaning the moment a list is sorted, filtered or paged; an id does not, so a selection
+survives a refetch. Pass `values` — every pickable id, in list order — and the header counts
+`"n of m"` and offers select-all; without it the header reads `"n selected"`.
+
+## Give it a height, pad the list
+
+The root fills the height it is offered (`flex-1`), and the bar is drawn **over** the bottom of the
+list rather than shrinking it. So:
+
+- **Give the root a height.** Put it in a screen or a sized parent. A `flex-1` root in a parent with
+  no height collapses to nothing. A root that should take its content's height — a picker with no
+  bar — takes `className="flex-none"`.
+- **Pad the bottom of your list** (`contentContainerClassName="pb-24"`) so the last row scrolls clear
+  of the bar.
+
+## A cap
+
+`max` caps both a press and select-all. At the cap an unpicked item does not go on, but a picked one
+still comes off, and select-all reads "Deselect all" because there is nothing left for it to add.
+
+<Preview id="selection-mode/max-limit" />
+
+```tsx
+<SelectionMode defaultActive max={3} values={toppings.map((t) => t.id)}>
+  <SelectionMode.Header title="Toppings" />
+  …
+</SelectionMode>
+```
+
+## Disabled items
+
+`isDisabled` items never toggle and never start the mode — but their own `onPress` still runs, even
+while the mode is on. That is what a "Load more" row or a section header needs. Leave them out of
+`values` too, so select-all and the count skip them.
+
+```tsx
+<SelectionMode.Item indicator="none" isDisabled onPress={loadMore} value="load-more">
+  <Item>…</Item>
+</SelectionMode.Item>
+```
+
+## Indicators
+
+| `indicator` | Draws |
+| --- | --- |
+| `leading` (default) | A round mark that slides in from the leading edge and pushes the content 34pt. A picked row takes a faint primary fill |
+| `ring` | A 2pt primary ring a 2pt gap outside the item, with a check badge at the top end. `ringClassName` reshapes it — `rounded-full` round a swatch |
+| `none` | Nothing. Read `isSelected` from `useSelectionMode()` and draw your own |
+
+**The indicator is round on purpose.** A square box is a form control being filled in; a round one
+is a thing picked out of a set. [Checkbox](/docs/native/components/checkbox) stays square.
+
+<Preview id="selection-mode/swatch-grid" />
+
+## Layouts
+
+`SelectionMode.Group` lays its items out three ways:
+
+```tsx
+<SelectionMode.Group>…</SelectionMode.Group>
+<SelectionMode.Group columns={5}>…</SelectionMode.Group>
+<SelectionMode.Group isHorizontal itemWidth={40}>…</SelectionMode.Group>
+```
+
+A stack is a card with hairlines between rows. A grid splits its measured width evenly between
+`columns`. A strip scrolls sideways with room around each item for a ring. `isHorizontal` wins over
+`columns`.
+
+## The bar
+
+`edge` (default) spans the bottom of the root and pads itself with the safe-area inset. `floating`
+lifts the actions into an inset rounded card. The bar is hidden while nothing is picked unless
+`isShownWhenEmpty`, and never shows with the mode off.
+
+<Preview id="selection-mode/floating-bar" />
+
+Each action's `onPress` is handed the selection as it stands at the press, so a handler never closes
+over a stale list. `isExitOnPress` leaves the mode afterwards — right for a delete, whose picks no
+longer exist.
+
+## In a sheet
+
+There is no sheet part, so the optional sheet engine is not forced on every consumer. Compose one:
+wrap the [BottomSheet](/docs/native/components/bottom-sheet) in `SelectionMode` — context reaches
+through the sheet's portal — and put the bar in the sheet's sticky footer.
+
+<Preview id="selection-mode/in-a-sheet" />
+
+```tsx
+<SelectionMode className="flex-none" isActive values={channelIds}>
+  <BottomSheet>
+    <BottomSheet.Trigger asChild>
+      <Button>Post to channels</Button>
+    </BottomSheet.Trigger>
+    <BottomSheet.Portal>
+      <BottomSheet.Overlay />
+      <BottomSheet.Container>
+        <BottomSheet.ScrollView>
+          <SelectionMode.Group>…</SelectionMode.Group>
+        </BottomSheet.ScrollView>
+        <BottomSheet.Footer sticky>
+          <SelectionMode.Bar className="relative border-t-0 bg-transparent" isSafeAreaAware={false} isShownWhenEmpty>
+            <SelectionMode.Action icon={IconPaperPlane} onPress={post}>Post</SelectionMode.Action>
+          </SelectionMode.Bar>
+        </BottomSheet.Footer>
+      </BottomSheet.Container>
+    </BottomSheet.Portal>
+  </BottomSheet>
+</SelectionMode>
+```
+
+## Motion
+
+The mark pops on a spring, the header fades in from 8pt above, and the bar slides up. Under reduced
+motion every one of them becomes a 150ms fade — never nothing, because the change is the information
+that the mode moved.
+
+## Accessibility
+
+While the mode is on, an item is a `checkbox` with `accessibilityState={{ checked, disabled }}` and
+the hint "Double-tap to select". While it is off, the item keeps the semantics of what it wraps and
+adds a "Start selecting" action, so the mode can be entered without the long press. The header
+announces the count as it changes. A group's `label` is its accessibility label, and a grid or strip
+is a `list`.
+
+## API Reference
+
+### SelectionMode
+
+The root. Owns the mode and the selection. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    values: { type: "readonly string[]", description: "Every pickable id, in list order. Needed for select-all and `n of m`." },
+    isActive: { type: "boolean", description: "Controlled. Whether the mode is on." },
+    defaultActive: { type: "boolean", default: "false" },
+    onActiveChange: { type: "(isActive: boolean) => void" },
+    selected: { type: "readonly string[]", description: "Controlled. The picked ids, in pick order." },
+    defaultSelected: { type: "readonly string[]", default: "[]" },
+    onSelectedChange: {
+      type: "(selected: string[]) => void",
+      description: "Called with the whole new list. Never for a change that changes nothing.",
+    },
+    max: { type: "number", description: "The most ids that can be picked. Select-all stops here too." },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "On entering the mode and on each toggle." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### SelectionMode.Item
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The item's id. Required." },
+    onPress: { type: "() => void", description: "Runs while the mode is off — and always, for a disabled item." },
+    isDisabled: { type: "boolean", description: "Cannot start the mode or be picked. Its own `onPress` still runs." },
+    indicator: { type: '"leading" | "ring" | "none"', default: '"leading"' },
+    isIndicatorAlwaysShown: { type: "boolean", default: "false", description: "Show the mark while the mode is off." },
+    ringClassName: { type: "string", description: "Reshapes the ring — `rounded-full` round a round item." },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### SelectionMode.Header
+
+Renders only while the mode is on. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    title: { type: "string", default: '"Select"', description: "Leads the count when the root has `values`." },
+    isSelectAllHidden: { type: "boolean", default: "false" },
+    closeTestID: { type: "string", description: "`testID` for the close control." },
+    selectAllTestID: { type: "string", description: "`testID` for the select-all control." },
+    className: { type: "string" },
+  }}
+/>
+
+### SelectionMode.Bar
+
+Absolute over the bottom of the root. Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    placement: { type: '"edge" | "floating"', default: '"edge"' },
+    isShownWhenEmpty: { type: "boolean", default: "false" },
+    isSafeAreaAware: { type: "boolean", default: "true", description: "Clear the home indicator with the bottom inset." },
+    className: { type: "string" },
+  }}
+/>
+
+### SelectionMode.Action
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "The label, under the icon." },
+    icon: { type: "IconComponent" },
+    onPress: { type: "(selected: string[]) => void", description: "Handed the selection at the press. Required." },
+    isExitOnPress: { type: "boolean", default: "false" },
+    isDestructive: { type: "boolean", default: "false" },
+    isDisabled: { type: "boolean", default: "false" },
+    className: { type: "string" },
+    labelClassName: { type: "string" },
+  }}
+/>
+
+### SelectionMode.Group
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    columns: { type: "number", description: "A grid of this many columns." },
+    isHorizontal: { type: "boolean", default: "false", description: "A single scrolling row. Wins over `columns`." },
+    itemWidth: { type: "number", default: "44", description: "Each item's width in a strip." },
+    gap: { type: "number", default: "12" },
+    label: { type: "string", description: "A caption above the items, and the group's accessibility label." },
+    hasSeparators: { type: "boolean", description: "Default `true` for a stack, `false` for a grid or strip." },
+    className: { type: "string" },
+    labelClassName: { type: "string" },
+  }}
+/>
+
+### SelectionMode.Indicator
+
+The round mark on its own, for an item drawn with `indicator="none"`. Reads the enclosing item, or
+takes a `value`.
+
+<TypeTable type={{ value: { type: "string" }, className: { type: "string" } }} />
+
+### useSelectionMode
+
+Returns `{ isActive, selected, isSelected, toggle, selectAll, clear, enter, exit, count, total, max, isAllSelected }`.
+Every part but the root, and this hook, throws outside a `<SelectionMode>`.

@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/share-picker and has settled — four people, Rawiri
+  picked, the button reading "Share with 1". The capture script navigates there before running this.
+steps:
+  - echo: Picking two more
+  - tap: { id: person-aria }
+  - wait: 400
+  - tap: { id: person-kenji }
+  - wait: 800
+  - echo: And unpicking them, so the clip loops without a jump cut
+  - tap: { id: person-kenji }
+  - wait: 400
+  - tap: { id: person-aria }
+  - wait: 400

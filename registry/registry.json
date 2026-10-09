@@ -1496,6 +1496,47 @@
 			]
 		},
 		{
+			"name": "selection-mode",
+			"type": "registry:ui",
+			"title": "Selection Mode",
+			"description": "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/selection-mode/AGENTS.md",
+				"ui/selection-mode/index.ts",
+				"ui/selection-mode/selection-mode-action.tsx",
+				"ui/selection-mode/selection-mode-bar.tsx",
+				"ui/selection-mode/selection-mode-group.tsx",
+				"ui/selection-mode/selection-mode-header.tsx",
+				"ui/selection-mode/selection-mode-indicator.tsx",
+				"ui/selection-mode/selection-mode-item.tsx",
+				"ui/selection-mode/selection-mode.context.tsx",
+				"ui/selection-mode/selection-mode.tsx",
+				"ui/selection-mode/selection-mode.types.ts",
+				"ui/selection-mode/selection-mode.variants.ts"
+			]
+		},
+		{
 			"name": "separator",
 			"type": "registry:ui",
 			"title": "Separator",

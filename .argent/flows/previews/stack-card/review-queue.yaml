@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on stack-card/review-queue and has settled — a deck of five people with Aria
+  Whitlock on top (testID review-card-aria) and the Skip, Undo and Keep buttons under it. The capture script navigates
+  there before running this.
+steps:
+  - echo: Dragging Aria slowly right, so the Keep stamp fades in, and letting go past the threshold
+  - swipe: { from: { id: review-card-aria }, by: { x: 0.45 }, momentum: false, duration: 900 }
+  - wait: 700
+  - echo: Answering Tomasi with the Skip button instead of a drag
+  - tap: { id: review-skip }
+  - wait: 800
+  - echo: Undoing both, so each card flies back from the side it left and the clip loops on Aria
+  - tap: { id: review-undo }
+  - wait: 600
+  - tap: { id: review-undo }
+  - wait: 600

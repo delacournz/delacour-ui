@@ -8,6 +8,7 @@
 		"button",
 		"pressable",
 		"swipe",
+		"stack-card",
 		"toggle-button",
 		"---Forms---",
 		"field",

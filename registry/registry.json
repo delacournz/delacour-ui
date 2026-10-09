@@ -1512,6 +1512,47 @@
 			]
 		},
 		{
+			"name": "stack-card",
+			"type": "registry:ui",
+			"title": "Stack Card",
+			"description": "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"cn",
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/stack-card/AGENTS.md",
+				"ui/stack-card/index.ts",
+				"ui/stack-card/stack-card-action.tsx",
+				"ui/stack-card/stack-card-actions.tsx",
+				"ui/stack-card/stack-card-card.tsx",
+				"ui/stack-card/stack-card-empty.tsx",
+				"ui/stack-card/stack-card-slot.tsx",
+				"ui/stack-card/stack-card-stamp.tsx",
+				"ui/stack-card/stack-card.context.tsx",
+				"ui/stack-card/stack-card.tsx",
+				"ui/stack-card/stack-card.types.ts",
+				"ui/stack-card/stack-card.variants.ts"
+			]
+		},
+		{
 			"name": "steps",
 			"type": "registry:ui",
 			"title": "Steps",

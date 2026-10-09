@@ -45,6 +45,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
+	{ name: "stack-card", title: "Stack Card", description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },
 	{ name: "swipe", title: "Swipe", description: "A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open." },

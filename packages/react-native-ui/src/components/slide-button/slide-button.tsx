@@ -28,6 +28,8 @@ import {
 	resolveSlideHandleWidth,
 	resolveSlideRelease,
 	resolveSlideThreshold,
+	resolveSlideTrailOpacity,
+	resolveSlideTrailWidth,
 	resolveSlideTravel,
 	SLIDE_BUTTON_ACTIVE_OFFSET_X,
 	SLIDE_BUTTON_DEFAULT_AUTO_RESET_MS,
@@ -202,13 +204,16 @@ function SlideButtonRoot({
 				: withSpring(target, { ...SLIDE_BUTTON_SPRING, velocity });
 		};
 
+		// Disabled still claims the drag and then does nothing with it. A disabled
+		// recognizer lets the touch through to whatever sits behind — inside a
+		// stack with a full-screen back swipe, a drag on a refused slide navigated
+		// back.
 		return Gesture.Pan()
-			.enabled(!isDisabled)
 			.activeOffsetX([-SLIDE_BUTTON_ACTIVE_OFFSET_X, SLIDE_BUTTON_ACTIVE_OFFSET_X])
 			.failOffsetY([-SLIDE_BUTTON_FAIL_OFFSET_Y, SLIDE_BUTTON_FAIL_OFFSET_Y])
 			.onStart(() => {
 				"worklet";
-				if (pinned.value) return;
+				if (isDisabled || pinned.value) return;
 				cancelAnimation(offset);
 				grabbed.value = offset.value;
 				armed.value = false;
@@ -216,7 +221,7 @@ function SlideButtonRoot({
 			.onUpdate((event) => {
 				"worklet";
 				const span = travel.value;
-				if (pinned.value || span <= 0) return;
+				if (isDisabled || pinned.value || span <= 0) return;
 
 				// No easing on the way out: the handle tracks the finger exactly.
 				const next = Math.min(span, Math.max(0, grabbed.value + event.translationX * direction));
@@ -231,7 +236,7 @@ function SlideButtonRoot({
 			})
 			.onEnd((event, success) => {
 				"worklet";
-				if (pinned.value) return;
+				if (isDisabled || pinned.value) return;
 				armed.value = false;
 				const velocity = event.velocityX * direction;
 				const release = resolveSlideRelease({
@@ -348,8 +353,8 @@ function SlideButtonTrail({
 	handleWidth: SharedValue<number>;
 }): ReactElement {
 	const style = useAnimatedStyle(() => ({
-		opacity: handleWidth.value > 0 ? 1 : 0,
-		width: SLIDE_BUTTON_INSET + offset.value + handleWidth.value / 2,
+		opacity: handleWidth.value > 0 ? resolveSlideTrailOpacity(offset.value) : 0,
+		width: resolveSlideTrailWidth({ handleWidth: handleWidth.value, inset: SLIDE_BUTTON_INSET, offset: offset.value }),
 	}));
 	return <Animated.View className={className} style={style} />;
 }

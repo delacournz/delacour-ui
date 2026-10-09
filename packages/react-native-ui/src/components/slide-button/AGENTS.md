@@ -16,7 +16,7 @@ be too much ceremony. Compound root plus `SlideButton.Label` and
 | `slide-button-label.tsx` | `SlideButton.Label` |
 | `slide-button-thumb.tsx` | `SlideButton.Thumb`, and the internal chevron-to-tick glyph |
 | `slide-button.context.tsx` | `SlideButtonContext`, `useSlideButton` |
-| `slide-button.variants.ts` | The slotted `tv()`, the motion constants and four pure resolvers |
+| `slide-button.variants.ts` | The slotted `tv()`, the motion constants and the pure resolvers |
 | `slide-button.variants.test.ts` | |
 
 There is no `slide-button.types.ts`: every prop type has exactly one consumer.
@@ -44,6 +44,18 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   rear is a curve; a trail stopping at the straight edge leaves a sliver of rail
   above and below it. Ending under the handle reads as one shape — the handle
   dragging its colour along — while still sharing an edge with it as seen.
+- **The trail is invisible at rest.** It fades in over the first 8pt of travel
+  (`resolveSlideTrailOpacity`). Ending under the handle's middle, it would
+  otherwise peek out behind the resting handle's rear curve — a coloured sliver
+  that makes an untouched control look half-started.
+- **The label changes colour where the trail covers it.** A second copy in the
+  trail's foreground (`labelOnTrail`) is clipped to the trail's width
+  (`resolveSlideTrailWidth`, shared with the trail). A state variant's trail is
+  its full colour, and the soft label colour on it is the same hue on the same
+  hue: the words vanished exactly where the trail reached them.
+- **The label keeps a handle's width clear on both sides**
+  (`resolveSlideLabelGutter`). Symmetric, so it stays centred; a long label
+  truncates before it runs under the resting handle.
 - **The label is centred in the whole rail and never fades or moves.** The handle
   passes over it. A label that faded would leave the control saying nothing for
   the second half of the gesture, the half where the hand most wants to know what
@@ -71,9 +83,13 @@ There is no `slide-button.types.ts`: every prop type has exactly one consumer.
   handle springs back, so a failed request never looks confirmed and a
   controlled caller has a way out of the pending state that does not need a
   `true` it never meant.
-- **Disabled refuses the drag outright.** The gesture is disabled, so the handle
-  does not move at all. A handle that followed and sprang back would read as a
-  failed slide rather than a refused one.
+- **Disabled refuses the drag outright.** The handle does not move at all. A
+  handle that followed and sprang back would read as a failed slide rather than
+  a refused one.
+- **Disabled still claims the drag.** The pan stays enabled and every callback
+  returns early. A disabled recognizer lets the touch fall through to whatever
+  is behind it — inside a stack with a full-screen back swipe, dragging a
+  disabled slide navigated back. Found on the simulator.
 - **One `Gesture.Pan()` on the rail, `activeOffsetX ±8`, `failOffsetY ±12`.** A
   vertical scroll that starts on the rail fails the pan first, so the control
   survives inside a vertical `ScrollView`. A cancelled pan returns home.

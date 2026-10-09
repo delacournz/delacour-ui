@@ -3,8 +3,11 @@ import { aliasedTokens } from "../../styles/theme-tokens.test";
 import {
 	isSlideArmed,
 	resolveSlideHandleWidth,
+	resolveSlideLabelGutter,
 	resolveSlideRelease,
 	resolveSlideThreshold,
+	resolveSlideTrailOpacity,
+	resolveSlideTrailWidth,
 	resolveSlideTravel,
 	SLIDE_BUTTON_ARM_SLACK,
 	SLIDE_BUTTON_DEFAULT_THRESHOLD,
@@ -15,6 +18,7 @@ import {
 	SLIDE_BUTTON_LOOKAHEAD,
 	SLIDE_BUTTON_SIZES,
 	SLIDE_BUTTON_SPRING,
+	SLIDE_BUTTON_TRAIL_FADE,
 	SLIDE_BUTTON_VARIANTS,
 	slideButtonVariants,
 } from "./slide-button.variants";
@@ -29,6 +33,37 @@ function colourTokens(classes: string): string[] {
 		.filter((name): name is string => name !== undefined)
 		.filter((name) => name !== "center" && !name.startsWith("button-"));
 }
+
+describe("resolveSlideTrailOpacity", () => {
+	test("no trail shows while the handle rests", () => {
+		expect(resolveSlideTrailOpacity(0)).toBe(0);
+		expect(resolveSlideTrailOpacity(-3)).toBe(0);
+	});
+
+	test("it fades in over the first few points, then holds", () => {
+		expect(SLIDE_BUTTON_TRAIL_FADE).toBeGreaterThan(0);
+		expect(resolveSlideTrailOpacity(SLIDE_BUTTON_TRAIL_FADE / 2)).toBeCloseTo(0.5);
+		expect(resolveSlideTrailOpacity(SLIDE_BUTTON_TRAIL_FADE)).toBe(1);
+		expect(resolveSlideTrailOpacity(200)).toBe(1);
+	});
+});
+
+describe("resolveSlideTrailWidth", () => {
+	test("runs from the rail's start edge to the handle's middle", () => {
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 0 })).toBe(33);
+		expect(resolveSlideTrailWidth({ handleWidth: 58, inset: 4, offset: 100 })).toBe(133);
+	});
+});
+
+describe("resolveSlideLabelGutter", () => {
+	test("keeps the label clear of the resting handle on both sides", () => {
+		expect(resolveSlideLabelGutter({ handleWidth: 58, inset: 4 })).toBe(66);
+	});
+
+	test("is the inset alone before the handle is measured", () => {
+		expect(resolveSlideLabelGutter({ handleWidth: 0, inset: 4 })).toBe(8);
+	});
+});
 
 describe("resolveSlideThreshold", () => {
 	test("defaults to 0.9", () => {
@@ -165,6 +200,24 @@ describe("slideButtonVariants", () => {
 		}
 	});
 
+	test("the label frame fills the rail and centres its text", () => {
+		const frame = slideButtonVariants().labelFrame().split(/\s+/);
+		expect(frame).toEqual(expect.arrayContaining(["absolute", "inset-0", "justify-center"]));
+		expect(slideButtonVariants().label()).toContain("text-center");
+		expect(slideButtonVariants().label()).not.toContain("absolute");
+	});
+
+	test("the label over the trail takes the trail's own foreground", () => {
+		expect(slideButtonVariants({ variant: "secondary" }).labelOnTrail()).toContain("text-secondary-foreground");
+		expect(slideButtonVariants({ variant: "destructive" }).labelOnTrail()).toContain("text-destructive-foreground");
+		expect(slideButtonVariants({ variant: "success" }).labelOnTrail()).toContain("text-success-foreground");
+	});
+
+	test("the trail clip is pinned to the start edge and clips", () => {
+		const clip = slideButtonVariants().labelClip().split(/\s+/);
+		expect(clip).toEqual(expect.arrayContaining(["absolute", "start-0", "top-0", "bottom-0", "overflow-hidden"]));
+	});
+
 	test("the glyph takes the icon step that matches the size", () => {
 		expect(slideButtonVariants({ size: "sm" }).thumbGlyph()).toContain("size-icon-sm");
 		expect(slideButtonVariants({ size: "md" }).thumbGlyph()).toContain("size-icon-md");
@@ -218,7 +271,14 @@ describe("slideButtonVariants", () => {
 	test("every colour named exists in the theme", () => {
 		for (const variant of SLIDE_BUTTON_VARIANTS) {
 			const slots = slideButtonVariants({ variant });
-			const classes = [slots.root(), slots.trail(), slots.label(), slots.thumb(), slots.thumbGlyph()].join(" ");
+			const classes = [
+				slots.root(),
+				slots.trail(),
+				slots.label(),
+				slots.labelOnTrail(),
+				slots.thumb(),
+				slots.thumbGlyph(),
+			].join(" ");
 			const tokens = colourTokens(classes);
 			expect(tokens.length).toBeGreaterThan(0);
 			for (const token of tokens) expect(ALIASED.has(`--color-${token}`)).toBe(true);

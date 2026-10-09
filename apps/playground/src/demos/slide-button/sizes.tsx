@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`sm`, `md` and `lg` — the same heights and corners as a button at each size, so a slide button stacks level with one. The handle is measured from the rail.",
 	align: "center",
+	capture: {},
 };
 
 const LABELS: Record<SlideButtonSize, string> = {

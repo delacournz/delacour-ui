@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slide-button/threshold and has settled — two rails, both handles at
+  the start, carrying the testIDs threshold-half-thumb and threshold-full-thumb. The capture script navigates
+  there before running this.
+steps:
+  - echo: Half the rail confirms at threshold 0.5
+  - swipe: { from: { id: threshold-half-thumb }, by: { x: 0.36 }, momentum: false, duration: 700 }
+  - wait: 400
+  - echo: The same half springs home at threshold 1
+  - swipe: { from: { id: threshold-full-thumb }, by: { x: 0.36 }, momentum: false, duration: 700 }
+  - echo: The first auto-resets after 1000ms, so the clip loops with both handles home
+  - wait: 1400

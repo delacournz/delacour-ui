@@ -56,6 +56,12 @@ const ROWS = [
 		group: "Actions",
 	},
 	{
+		slug: "slide-button",
+		title: "SlideButton",
+		description: "Drag to confirm, thresholds, async completion",
+		group: "Actions",
+	},
+	{
 		slug: "toggle-button",
 		title: "ToggleButton",
 		description: "Variants, sizes, single and multiple groups",

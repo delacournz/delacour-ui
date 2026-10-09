@@ -1,0 +1,107 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "slide-button",
+	"type": "registry:ui",
+	"title": "Slide Button",
+	"description": "A handle dragged across a rail to confirm an action a tap should not reach.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/AGENTS.md",
+			"target": "slide-button/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/slide-button",
+					"to": "@registry/ui/slide-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/index.ts",
+			"target": "slide-button/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/slide-button-label.tsx",
+			"target": "slide-button/slide-button-label.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/slide-button-thumb.tsx",
+			"target": "slide-button/slide-button-thumb.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/slide-button.context.tsx",
+			"target": "slide-button/slide-button.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/slide-button.tsx",
+			"target": "slide-button/slide-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/slide-button/slide-button.variants.ts",
+			"target": "slide-button/slide-button.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

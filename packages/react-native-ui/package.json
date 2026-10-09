@@ -69,6 +69,7 @@
 		"./screen": "./src/components/screen/index.ts",
 		"./separator": "./src/components/separator/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
+		"./slide-button": "./src/components/slide-button/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./stack-card": "./src/components/stack-card/index.ts",

@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on slide-button/variants and has settled — three rails, every handle
+  at the start, the handles carrying the testIDs variant-<variant>-thumb. The capture script navigates there
+  before running this.
+steps:
+  - echo: Confirming each variant in turn, top to bottom
+  - swipe: { from: { id: variant-secondary-thumb }, by: { x: 0.65 }, momentum: false, duration: 600 }
+  - wait: 300
+  - swipe: { from: { id: variant-destructive-thumb }, by: { x: 0.65 }, momentum: false, duration: 600 }
+  - wait: 300
+  - swipe: { from: { id: variant-success-thumb }, by: { x: 0.65 }, momentum: false, duration: 600 }
+  - echo: Each auto-resets after 1000ms, so the clip loops with every handle home
+  - wait: 1900

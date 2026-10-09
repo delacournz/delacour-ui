@@ -18,13 +18,14 @@ export const meta: DemoMeta = {
 	title: "Actions",
 	caption:
 		"The verbs you can apply to one thing, dropped from the ⋯ button beside it. Each row runs its action and closes the menu; the destructive one sits apart, under a separator.",
+	capture: { frame: "device", flow: "menu/actions", hero: true },
 };
 
 export function Demo(): ReactElement {
 	const [last, setLast] = useState("Nothing chosen yet");
 
 	return (
-		<View className="gap-3">
+		<View className="flex-1 justify-center gap-3 px-screen-gutter">
 			<View className="flex-row items-center justify-between rounded-lg border border-border px-4 py-3">
 				<Text className="font-medium">Quarterly report.pdf</Text>
 				<Menu haptic="selection">

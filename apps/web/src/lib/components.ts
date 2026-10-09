@@ -83,6 +83,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A button that stays pressed \u2014 alone, or in a group choosing one option or several.",
 	},
 	{
+		slug: "fab",
+		name: "Fab",
+		group: "Actions",
+		blurb: "One primary action floating over the screen, extended with a label or unfolding a dial.",
+	},
+	{
 		slug: "field",
 		name: "Field",
 		group: "Forms",

@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
+import { DELACOUR_STROKE_COLOUR } from "@delacour/brand";
 import { BLOCKS } from "@/blocks/block-index";
 import { componentCount } from "@/components-index";
 import { HUB_CARDS } from "./hub-cards";
@@ -18,14 +19,18 @@ describe("HUB_CARDS", () => {
 		expect(count.blocks).toBe(BLOCKS.length);
 	});
 
-	test("every card's href is its slug, and the route file exists", () => {
+	test("every card's href is its slug, and the route file or folder index exists", () => {
 		for (const card of HUB_CARDS) {
 			expect(card.href).toBe(`/${card.slug}`);
-			expect(existsSync(join(APP, `${card.slug}.tsx`))).toBe(true);
+			expect(existsSync(join(APP, `${card.slug}.tsx`)) || existsSync(join(APP, card.slug, "index.tsx"))).toBe(true);
 		}
 	});
 
 	test("the two glows sit in opposite corners", () => {
 		expect(new Set(HUB_CARDS.map((card) => card.glow.corner)).size).toBe(HUB_CARDS.length);
+	});
+
+	test("components blooms in the brand amber", () => {
+		expect(HUB_CARDS.find((card) => card.slug === "components")?.glow.token).toBe(DELACOUR_STROKE_COLOUR);
 	});
 });

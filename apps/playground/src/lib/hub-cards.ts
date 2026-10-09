@@ -1,3 +1,4 @@
+import { DELACOUR_STROKE_COLOUR } from "@delacour/brand";
 import type { Href } from "expo-router";
 import { BLOCKS } from "@/blocks/block-index";
 import { componentCount } from "@/components-index";
@@ -12,8 +13,8 @@ export type HubCard = {
 	readonly description: string;
 	readonly count: number;
 	/**
-	 * A theme token, read with `useThemeColor`, where it blooms from, and its
-	 * alpha at the source. `primary` is near-black in light and near-white in
+	 * A theme token or a literal colour, read with `useThemeColor` (a literal
+	 * passes straight through), where it blooms from, and its alpha at the source. `primary` is near-black in light and near-white in
 	 * dark, so it takes half the strength a chromatic token does.
 	 */
 	readonly glow: { readonly token: string; readonly corner: GlowCorner; readonly opacity: number };
@@ -25,6 +26,10 @@ export type HubCard = {
  * Each count is read from the index its list screen draws, so the number on a
  * card can never disagree with the rows behind it. The glows sit in opposite
  * corners so the two cards read as two places rather than one card twice.
+ *
+ * Components blooms in the brand amber — the mark's own stroke, sitting in the
+ * navbar just above it — rather than a theme token: the hub is the brand's front
+ * door, and no theme token is that colour.
  */
 export const HUB_CARDS: readonly HubCard[] = [
 	{
@@ -33,7 +38,7 @@ export const HUB_CARDS: readonly HubCard[] = [
 		title: "Components",
 		description: "Explore every component",
 		count: componentCount(),
-		glow: { token: "info", corner: "bottom-right", opacity: 0.32 },
+		glow: { token: DELACOUR_STROKE_COLOUR, corner: "bottom-right", opacity: 0.32 },
 	},
 	{
 		slug: "blocks",

@@ -4,7 +4,14 @@ import {
 	COMPONENTS as WEB_COMPONENTS,
 	COMPONENT_GROUPS as WEB_GROUPS,
 } from "../../web/src/lib/components";
-import { COMPONENT_GROUPS, COMPONENT_INDEX, componentCount, groupedComponents } from "./components-index";
+import {
+	COMPONENT_GROUPS,
+	COMPONENT_INDEX,
+	componentCount,
+	componentGroup,
+	groupedComponents,
+	groupSummary,
+} from "./components-index";
 
 /**
  * The home screen's grouping is a copy of the documentation site's, and this is
@@ -64,5 +71,31 @@ describe("the home screen index", () => {
 
 			expect(titles).toEqual([...titles].sort((a, b) => a.localeCompare(b)));
 		}
+	});
+
+	test("each group has a kebab-case slug and routes under /components", () => {
+		const groups = groupedComponents();
+
+		expect(groups.map((group) => group.slug)).toContain("data-display");
+		expect(new Set(groups.map((group) => group.slug)).size).toBe(groups.length);
+		for (const group of groups) {
+			expect(group.slug).toMatch(/^[a-z]+(-[a-z]+)*$/);
+			expect(group.href).toBe(`/components/${group.slug}`);
+		}
+	});
+
+	test("a group is found by its slug, and an unknown slug finds nothing", () => {
+		for (const group of groupedComponents()) expect(componentGroup(group.slug)).toEqual(group);
+		expect(componentGroup("nope")).toBeUndefined();
+		expect(componentGroup(undefined)).toBeUndefined();
+	});
+
+	test("a group's summary names its first three components and counts the rest", () => {
+		const titles = (count: number) => Array.from({ length: count }, (_, index) => ({ title: `C${index + 1}` }));
+
+		expect(groupSummary(titles(1))).toBe("C1");
+		expect(groupSummary(titles(3))).toBe("C1, C2, C3");
+		expect(groupSummary(titles(4))).toBe("C1, C2, C3 and 1 more");
+		expect(groupSummary(titles(11))).toBe("C1, C2, C3 and 8 more");
 	});
 });

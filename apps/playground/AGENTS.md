@@ -56,7 +56,7 @@ src/
 ├── app/                          expo-router routes
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
 │   ├── index.tsx                 the hub — the mark, the large title, a card each for Components and Blocks, and About
-│   ├── components.tsx            every gallery, grouped as the docs group them
+│   ├── components/               index.tsx — the docs' groups, one row each; [group].tsx — one group's galleries
 │   ├── blocks.tsx                every block, one row each
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
@@ -64,7 +64,7 @@ src/
 │   ├── (blocks)/                 the key screens — see Blocks
 │   └── (components)/             one route per component, grouped without a path segment
 ├── blocks/                       the blocks' fixtures and pure logic, with their tests — see Blocks
-├── components-index.ts           /components' rows and groups, pure — held to apps/web by its test
+├── components-index.ts           the component rows, groups, group slugs and summaries, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
@@ -74,6 +74,7 @@ src/
 │   ├── block-screen.tsx          BlockScreen — the frame every block shares
 │   ├── block-section.tsx         BlockSection — a kicker over a tray
 │   ├── hub-card.tsx              HubCard — one of the hub's two etched doors, with a Skia glow
+│   ├── component-icons.ts        a glyph per component slug and per docs group, typed by key
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
@@ -93,8 +94,9 @@ src/
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
 
-`/theme`, `/preview`, `/components` and `/blocks` are the only top-level routes that are not a
-component's gallery or a block — the last two are the lists the hub opens. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
+`/theme`, `/preview`, `/components`, `/components/<group>` and `/blocks` are the only routes that
+are not a component's gallery or a block — the last three are the lists the hub opens. `components/`
+has no parentheses, so unlike `(components)/` it is a real path segment. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
 `<Stack>` with no children, so expo-router registers both from their filenames and
 `/theme` pushes as an ordinary card. Its one setting is the anchor — see
 [Deep links](#deep-links).
@@ -244,7 +246,7 @@ The themed `bottom-sheet/` gallery has seven facets — `anatomy`, `sizing`, `sc
 
 As above, plus: create `src/app/(components)/{name}.tsx` as the shell, **add a
 row to `src/components-index.ts`** — `slug`, `title`, `description` and the
-docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/components.tsx`**,
+docs' `group` — and **a glyph for the slug to `COMPONENT_ICONS` in `src/components/component-icons.ts`**,
 from `@delacour/react-native-ui/icons/central`. The row is pure so `bun test` can hold
 it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
 without one is a type error. A gallery with no row is a page only a URL
@@ -295,17 +297,23 @@ the target and is announced as one button whose label carries the count. Its dat
 `src/lib/hub-cards.ts`, and `hub-cards.test.ts` holds each count to the index its list draws
 (`componentCount()`, `BLOCKS.length`) and each href to a route file.
 
-**The glow is Skia, in a theme colour.** A `RadialGradient` from one corner — Components
-bottom-right in `info`, Blocks top-left in `primary` — read with `useThemeColor` and faded with
-`transparentOf`, so it follows the preset and light/dark. `primary` is near-black in light and
+**The glow is Skia.** A `RadialGradient` from one corner — Components bottom-right in the brand
+amber (`DELACOUR_STROKE_COLOUR`, the mark's own stroke), Blocks top-left in the `primary` token —
+read with `useThemeColor`, which passes a literal through, and faded with `transparentOf`. The
+amber is fixed on purpose: it ties the card to the mark above it; `primary` follows the preset and
+light/dark. `primary` is near-black in light and
 near-white in dark, so it blooms at half the alpha of the chromatic one; at the same strength the
 light card read as a smudge.
 
-`/components` (`src/app/components.tsx`) is the old home list: the back button carries the title
-and the component and group counts, and each group is a kicker over a `Surface material="tray"`
-holding the `ListGroup`, whose own corner is `rounded-xl`, so the list reads as a panel in a tray.
-The dev-only **Development** group (DelacourMark) lives there too. `/blocks` is `BlockScreen` over
-one tray of the eight blocks.
+`/components` (`src/app/components/index.tsx`) is one tray with a row per docs group: the group's
+glyph from `GROUP_ICONS`, its name, and `groupSummary` — the first three titles and a count of the
+rest — so eight rows say what is inside without forty on one scroll. Each row pushes
+`/components/<slug>` (`[group].tsx`), where `slug` is the group name in kebab-case
+(`data-display`) and `componentGroup(slug)` finds it; an unknown slug redirects back to
+`/components`. The group screen is one tray of that group's galleries, alphabetical. Both screens,
+and `/blocks`, are framed by `BlockScreen`. The dev-only **Development** group (DelacourMark) sits
+under the groups tray. `Utilities` has no row: no indexed component is filed under it, and
+`groupedComponents` drops an empty group.
 
 **The heading face comes from `font-heading`.** `--font-heading` is declared by
 the library's `theme.css` only inside its platform `@variant` blocks, so

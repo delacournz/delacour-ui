@@ -25,6 +25,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },
 	{ name: "drawer", title: "Drawer", description: "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides." },
 	{ name: "empty-state", title: "Empty State", description: "A placeholder for a list or screen with nothing in it: media, title, description and actions." },
+	{ name: "fab", title: "Fab", description: "A floating action button, extended with a label or unfolding a dial of related actions." },
 	{ name: "feedback", title: "Feedback", description: "A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },

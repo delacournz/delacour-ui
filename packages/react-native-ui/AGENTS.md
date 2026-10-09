@@ -77,6 +77,7 @@ shares.
 | [Drawer](src/components/drawer/AGENTS.md) | `@delacour/react-native-ui/drawer` | A panel that slides in from an edge and covers the app until dismissed |
 | [Dialog](src/components/dialog/AGENTS.md) | `@delacour/react-native-ui/dialog` | A centred card over a dimmed app that asks for a decision or a short input |
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
+| [Fab](src/components/fab/AGENTS.md) | `@delacour/react-native-ui/fab` | A floating action button, and a dial of related actions that unfolds from it |
 | [Feedback](src/components/feedback/AGENTS.md) | `@delacour/react-native-ui/feedback` | A dialog for writing — the field in a recessed well, the actions on the band around it |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
@@ -299,6 +300,7 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
+| `--spacing-fab-*` | `size-fab-md`, `h-fab-md` | a floating action button's circle, and an extended one's height |
 
 **The generic corner scale is derived, not enumerated.** `rounded-xs` through
 `rounded-4xl` are multiples of one `--radius` — shadcn's own scale — declared

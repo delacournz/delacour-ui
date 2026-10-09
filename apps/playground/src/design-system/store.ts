@@ -10,6 +10,7 @@ import {
 	parseStoredMode,
 	type ResetTarget,
 	resetTarget,
+	resolveMonoFamily,
 	THEME_MODES,
 	type ThemeMode,
 } from "@/design-system/store.pure";
@@ -64,9 +65,11 @@ function readConfig(): DesignSystemConfig {
  * then choose System, and the app would stay in Lora with the picker saying
  * otherwise. The two names are the ones `theme.css` ships in its `@variant ios`
  * and `@variant android` blocks, so "reset" lands on exactly what a fresh
- * install draws.
+ * install draws. `--font-mono` follows the same rule, falling back to
+ * `theme.css`'s Menlo / `monospace` when neither axis names a mono face.
  */
 const PLATFORM_SANS = Platform.select({ ios: "System", default: "sans-serif" });
+const PLATFORM_MONO = Platform.select({ ios: "Menlo", default: "monospace" });
 
 export function applyConfig(config: DesignSystemConfig): void {
 	const tokens = resolveTokens(config);
@@ -76,6 +79,7 @@ export function applyConfig(config: DesignSystemConfig): void {
 	const fonts: Record<string, string> = {
 		"--font-sans": sans ?? PLATFORM_SANS,
 		"--font-heading": heading ?? PLATFORM_SANS,
+		"--font-mono": resolveMonoFamily(config) ?? PLATFORM_MONO,
 	};
 
 	const active = Uniwind.currentTheme === "dark" ? "dark" : "light";

@@ -89,12 +89,12 @@ export default function ScreenChatDemo(): ReactElement {
 			<Screen.Footer sticky>
 				<View className="flex-row items-end gap-2">
 					<TextInput
-						className="h-button-md flex-1 rounded-full border border-border bg-card px-4 text-base text-foreground"
+						className="h-button-md flex-1 rounded-full border border-border bg-card px-4 font-sans text-base text-foreground"
 						multiline
 						nativeID={SCREEN_CHAT_INPUT_NATIVE_ID}
 						onChangeText={setDraft}
 						placeholder="Message"
-						placeholderTextColor="#9CA3AF"
+						placeholderTextColorClassName="accent-muted-foreground"
 						value={draft}
 					/>
 					<Button accessibilityLabel="Send" haptic="medium" onPress={send} size="icon-md">

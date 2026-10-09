@@ -64,7 +64,7 @@ export default function SignInBlock(): ReactElement {
 			title="Sign in"
 		>
 			<View className="gap-1">
-				<Text.Display accessibilityRole="header" className="font-semibold text-[28px] leading-[34px] tracking-tight">
+				<Text.Display accessibilityRole="header" className="font-semibold text-[28px] leading-[34px]">
 					Welcome back
 				</Text.Display>
 				<Text.Paragraph className="text-muted-foreground">Use the email you registered with.</Text.Paragraph>

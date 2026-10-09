@@ -10,6 +10,7 @@ import {
 	parseStoredMode,
 	RESET_TARGETS,
 	resetTarget,
+	resolveMonoFamily,
 	THEME_MODES,
 } from "./store.pure";
 
@@ -102,5 +103,32 @@ describe("migrateStoredConfig", () => {
 
 	test("the new house is left alone", () => {
 		expect(migrateStoredConfig(HOUSE_CONFIG, false)).toEqual(HOUSE_CONFIG);
+		expect(migrateStoredConfig(HOUSE_CONFIG, true)).toEqual(HOUSE_CONFIG);
+	});
+
+	// The house set its headings in Inter until they moved to the body's mono.
+	// No shortcut ever offered that config after the move, so a stored copy is
+	// the old default whether or not the amber migration has run.
+	test("the Inter-heading house moves to the mono house, migrated or not", () => {
+		const interHouse = { ...HOUSE_CONFIG, fontHeading: "inter" } as const;
+		expect(migrateStoredConfig(interHouse, false)).toEqual(HOUSE_CONFIG);
+		expect(migrateStoredConfig(interHouse, true)).toEqual(HOUSE_CONFIG);
+	});
+});
+
+describe("resolveMonoFamily", () => {
+	// Text.Kicker and Text.Code draw in `font-mono`. Under the house that has to
+	// be the house mono, not the platform's Menlo beside it.
+	test("is the body face when the body is a mono", () => {
+		expect(resolveMonoFamily(HOUSE_CONFIG)).toBe("JetBrains Mono");
+	});
+
+	test("falls to a mono heading when the body is not one", () => {
+		expect(resolveMonoFamily({ ...DEFAULT_CONFIG, font: "inter", fontHeading: "geist-mono" })).toBe("Geist Mono");
+	});
+
+	test("is nothing — the platform's own mono — when neither face is a mono", () => {
+		expect(resolveMonoFamily(DELACOUR_AMBER_CONFIG)).toBeUndefined();
+		expect(resolveMonoFamily(DEFAULT_CONFIG)).toBeUndefined();
 	});
 });

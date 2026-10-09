@@ -23,7 +23,7 @@ const PEOPLE = [
 function Avatar({ initials }: { initials: string }): ReactElement {
 	return (
 		<Chip.StartContent className="-ml-1.5 size-6 rounded-full bg-primary">
-			<Text className="font-semibold text-[10px] text-primary-foreground">{initials}</Text>
+			<Text className="font-semibold text-kicker text-primary-foreground">{initials}</Text>
 		</Chip.StartContent>
 	);
 }

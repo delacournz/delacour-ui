@@ -51,7 +51,7 @@ export default function OtpBlock(): ReactElement {
 			title="Verify code"
 		>
 			<View className="gap-1">
-				<Text.Display accessibilityRole="header" className="font-semibold text-[28px] leading-[34px] tracking-tight">
+				<Text.Display accessibilityRole="header" className="font-semibold text-[28px] leading-[34px]">
 					Check your email
 				</Text.Display>
 				<Text.Caption color="muted">We sent a six-digit code to rawiri@delacour.co.nz.</Text.Caption>

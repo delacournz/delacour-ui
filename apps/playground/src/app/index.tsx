@@ -21,7 +21,10 @@ const MARK_SIZE = 28;
  *
  * Arbitrary values rather than a scale step because `text-3xl` is 30 and the
  * scale has no 34; the pair is written together so the leading survives the
- * size, the way the library's own presets pair them.
+ * size. Not a playground `@theme` token either: the library's tailwind-merge
+ * reads an unknown `text-large-title` as a text colour and drops
+ * `text-foreground`, painting the title in the default black. No tracking: the
+ * heading face is the house mono, and a mono tracked in loses its grid.
  *
  * The family comes from `font-heading` on `Text.Display`. That utility
  * resolved to nothing until `styles/global.css` declared `--font-heading`
@@ -29,7 +32,7 @@ const MARK_SIZE = 28;
  * `@variant` blocks and Tailwind mints no class from those. The store's
  * `applyConfig` then rewrites the variable from the Heading axis.
  */
-const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tight";
+const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px]";
 
 /**
  * The hub the app opens on: two doors, one to the component galleries and one

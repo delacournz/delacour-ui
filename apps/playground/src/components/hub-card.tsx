@@ -87,7 +87,7 @@ export function HubCard({ card }: { card: HubCardEntry }): ReactElement {
 					</View>
 					<View className="flex-row items-end gap-4">
 						<View className="min-w-0 flex-1 gap-1">
-							<Text.Title className="font-heading">{card.title}</Text.Title>
+							<Text.Title>{card.title}</Text.Title>
 							<Text.Caption>{card.description}</Text.Caption>
 						</View>
 						<View className="size-11 items-center justify-center rounded-full bg-muted">

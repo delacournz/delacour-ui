@@ -12,7 +12,6 @@ export const meta: DemoMeta = {
 	caption:
 		"The button's own heights, padding and label steps — a progress button sits level with a `Button` beside it.",
 	align: "center",
-	capture: {},
 };
 
 const LABELS: Record<ProgressButtonSize, string> = {

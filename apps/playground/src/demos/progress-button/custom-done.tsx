@@ -9,7 +9,6 @@ export const meta: DemoMeta = {
 	caption:
 		"Write a `ProgressButton.Done` to replace the default tick. A bare `Icon` and a `ProgressButton.Label` inside it take the fill's foreground.",
 	align: "center",
-	capture: {},
 };
 
 export function Demo(): ReactElement {

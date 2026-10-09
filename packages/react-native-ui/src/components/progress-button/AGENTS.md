@@ -50,7 +50,7 @@ falls into; a two-second hold cannot be done by accident or by habit.
 - **Bare strings are wrapped in a `ProgressButton.Label`**, consecutive ones collapsing into
   one, for the reason `Button` gives: React Native crashes on text outside a `<Text>`.
 - **`ProgressButton.Done` is lifted out of the children by type** and drawn over the full fill.
-  With none written the root draws one, which is a `IconCheckmark2Small` at `size-icon-*` in
+  With none written the root draws one, which is a full-size `IconCheckmark2` at `size-icon-*` (the `Small` glyph, alone on a button, read as a speck) in
   the fill's foreground. A caller's `Done` replaces it whole.
 
 ## Behaviour

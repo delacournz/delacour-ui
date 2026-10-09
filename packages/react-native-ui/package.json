@@ -47,6 +47,7 @@
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
 		"./drawer": "./src/components/drawer/index.ts",
+		"./context-menu": "./src/components/context-menu/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./feedback": "./src/components/feedback/index.ts",
 		"./field": "./src/components/field/index.ts",

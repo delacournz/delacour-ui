@@ -6,6 +6,7 @@
 		"index",
 		"---Actions---",
 		"button",
+		"context-menu",
 		"menu",
 		"pressable",
 		"swipe",

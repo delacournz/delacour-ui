@@ -296,6 +296,8 @@ export const menuVariants = tv({
 		background: "absolute inset-0 bg-popover",
 		/** The full-screen tint behind the panel, when `hasScrim`. */
 		scrim: "absolute inset-0 bg-overlay",
+		/** What `backdrop` is drawn in — full-screen, over the scrim, behind the panel. */
+		backdrop: "absolute inset-0",
 		/** The scroller's padding, around the rows. */
 		scroll: "p-1",
 		/** One row. */

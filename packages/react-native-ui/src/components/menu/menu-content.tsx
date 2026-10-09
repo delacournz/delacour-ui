@@ -52,6 +52,12 @@ export type MenuContentProps = Omit<ViewProps, "children"> & {
 	hasScrim?: boolean;
 	/** Anchor to this rect instead of the trigger. A zero-size rect is a point. */
 	anchor?: MenuAnchorRect;
+	/**
+	 * Drawn inside the `Modal`, over the scrim and behind the panel, fading with
+	 * them. It takes no touches — a tap on it is an outside tap. ContextMenu's
+	 * lifted preview is the reason it exists.
+	 */
+	backdrop?: ReactNode;
 };
 
 /**
@@ -88,6 +94,7 @@ export function MenuContent({
 	isScrollable = true,
 	hasScrim = false,
 	anchor: anchorProp,
+	backdrop,
 	...props
 }: MenuContentProps): ReactElement | null {
 	const { anchor: contextAnchor, close, isOpen } = useMenuPart("Menu.Content");
@@ -201,6 +208,16 @@ export function MenuContent({
 				>
 					{hasScrim ? <Animated.View className={slots.scrim()} style={scrimStyle} /> : null}
 				</Pressable>
+				{backdrop ? (
+					<Animated.View
+						className={slots.backdrop()}
+						importantForAccessibility="no-hide-descendants"
+						pointerEvents="none"
+						style={scrimStyle}
+					>
+						{backdrop}
+					</Animated.View>
+				) : null}
 				<Animated.View
 					accessibilityRole="menu"
 					accessibilityViewIsModal

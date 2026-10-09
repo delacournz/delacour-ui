@@ -1,0 +1,202 @@
+---
+title: ContextMenu
+description: The actions that belong to a piece of content — a message, a card, a row — reached by holding the content itself.
+icon: MessageSquareMore
+---
+
+<Preview id="context-menu/message-actions" title={null} />
+
+## Installation
+
+<ComponentInstall name="context-menu" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { ContextMenu } from "@/components/ui/context-menu";
+import { Text } from "@/components/ui/text";
+import { IconShareOs, IconTrashCan } from "@/lib/icons/central";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <ContextMenu>
+        <ContextMenu.Trigger haptic="medium" onPress={() => {}}>
+          <View className="rounded-lg border border-border bg-card px-4 py-3">
+            <Text>Are we still on for Thursday?</Text>
+          </View>
+        </ContextMenu.Trigger>
+        <ContextMenu.Content>
+          <ContextMenu.Item icon={IconShareOs} onSelect={() => {}}>Share</ContextMenu.Item>
+          <ContextMenu.Separator />
+          <ContextMenu.Item icon={IconTrashCan} variant="destructive" onSelect={() => {}}>
+            Delete
+          </ContextMenu.Item>
+        </ContextMenu.Content>
+      </ContextMenu>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<ContextMenu>
+  <ContextMenu.Trigger haptic="medium" onPress={openThread}>
+    <Card>…</Card>
+  </ContextMenu.Trigger>
+  <ContextMenu.Content>
+    <ContextMenu.Preview />
+    <ContextMenu.Item icon={IconShareOs} onSelect={share}>Share</ContextMenu.Item>
+    <ContextMenu.Separator />
+    <ContextMenu.Item variant="destructive" icon={IconTrashCan} onSelect={remove}>Delete</ContextMenu.Item>
+  </ContextMenu.Content>
+</ContextMenu>
+```
+
+A [Menu](/docs/native/components/menu) hangs off a control that exists to be opened. A context menu
+has no such control, because the target is the content: hold it and its actions appear.
+
+**The rows and the panel are Menu's.** `ContextMenu.Item` is `Menu.Item` with its icon at the
+trailing edge and a taller row; `Label`, `Separator`, `CheckboxItem`, `RadioGroup`, `RadioItem`,
+`Sub`, `SubTrigger`, `SubContent` and `Background` are Menu's own components. Everything the
+[Menu page](/docs/native/components/menu) says about rows applies here unchanged.
+
+<Preview id="context-menu/stateful-rows" />
+
+## Hold and tap
+
+Holding the trigger for 350ms opens the menu. A short press runs the trigger's `onPress`. One
+recogniser decides which before either fires, so a hold that opens the menu **never** also counts as
+a tap.
+
+<Preview id="context-menu/message-actions" />
+
+Put `onPress` on the trigger, not on a pressable inside it. An inner press races the hold instead
+of being arbitrated against it.
+
+```tsx
+<ContextMenu.Trigger onPress={openThread} haptic="medium">
+  <ThreadRow thread={thread} />
+</ContextMenu.Trigger>
+```
+
+The content is not cloned or altered, and need not be pressable. A scroll that starts on the
+trigger still scrolls: the hold gives up once the finger drifts past `slop`.
+
+## Anchor
+
+By default the panel opens at the finger. `anchor="target"` hangs it off the whole trigger instead,
+lined up with its leading edge — wherever on the trigger the hold landed.
+
+<Preview id="context-menu/anchored-to-row" />
+
+```tsx
+<ContextMenu.Trigger anchor="target">
+  <FileRow file={file} />
+</ContextMenu.Trigger>
+```
+
+## Lifted preview
+
+`ContextMenu.Preview`, placed among the rows, lifts a copy of the held content over the dimmed
+screen, a touch larger and casting a shadow. The panel then opens beside the copy rather than at the
+finger, so it never covers it.
+
+<Preview id="context-menu/lifted-preview" />
+
+```tsx
+<ContextMenu.Content>
+  <ContextMenu.Preview />
+  <ContextMenu.Item icon={IconHeart}>Favourite</ContextMenu.Item>
+</ContextMenu.Content>
+```
+
+The preview renders the trigger's children a second time, so any local state inside them starts
+fresh. Pass children to `ContextMenu.Preview` when the copy should differ.
+
+## Hold timing
+
+`delay` is how long the hold lasts before the menu opens; `slop` is how far the finger may drift in
+the meantime. The delay never goes below 150ms — anything shorter is a tap.
+
+<Preview id="context-menu/hold-timing" />
+
+```tsx
+<ContextMenu.Trigger delay={600} slop={8}>…</ContextMenu.Trigger>
+```
+
+## Haptics
+
+`haptic` on the trigger plays the moment the hold is accepted. `haptic` on the root is Menu's,
+played when a row is chosen. Both are off by default.
+
+## Accessibility
+
+The trigger is a single accessible element: a `button` when it has `onPress`, and no role
+otherwise. It offers two actions. **Activate** runs `onPress`, or opens the menu when there is none;
+**Show menu** opens it against the whole trigger, since a screen reader has no finger position. A
+disabled trigger announces itself disabled and does nothing. The panel is Menu's — a `menu` in a
+modal layer, with `menuitem` rows. A tap on the scrim and Android's back button both close it.
+
+## API Reference
+
+### ContextMenu
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controlled. Pair with `onOpenChange`." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Played when a row is chosen." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### ContextMenu.Trigger
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    anchor: { type: '"point" | "target"', default: '"point"', description: "Open at the finger, or against the whole trigger." },
+    delay: { type: "number", default: "350", description: "Hold length in ms. At least 150." },
+    slop: { type: "number", default: "12", description: "How far the finger may drift during the hold, in pt." },
+    onPress: { type: "() => void", description: "A short press, arbitrated against the hold." },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Played when the hold is accepted." },
+    isDisabled: { type: "boolean", default: "false" },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### ContextMenu.Content
+
+`Menu.Content`'s props, without `anchor`, and with different defaults.
+
+<TypeTable
+  type={{
+    hasScrim: { type: "boolean", default: "true" },
+    placement: { type: '"top" | "bottom"', default: '"bottom"' },
+    align: { type: '"start" | "center" | "end"', default: '"start"' },
+    offset: { type: "number", default: "8" },
+    minWidth: { type: "number", default: "280" },
+  }}
+/>
+
+### ContextMenu.Item
+
+`Menu.Item`'s props, with `iconPlacement` defaulting to `"trailing"`.
+
+### ContextMenu.Preview
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "What to lift. Default: the trigger's own children." },
+    className: { type: "string" },
+  }}
+/>

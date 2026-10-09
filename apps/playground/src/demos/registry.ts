@@ -199,6 +199,12 @@ import * as demo_empty_state_search from "./empty-state/search";
 import * as demo_empty_state_sizes from "./empty-state/sizes";
 import * as demo_empty_state_text_only from "./empty-state/text-only";
 import * as demo_empty_state_variants from "./empty-state/variants";
+import * as demo_fab_controlled_dial from "./fab/controlled-dial";
+import * as demo_fab_extended from "./fab/extended";
+import * as demo_fab_over_a_list from "./fab/over-a-list";
+import * as demo_fab_placements from "./fab/placements";
+import * as demo_fab_sizes_and_variants from "./fab/sizes-and-variants";
+import * as demo_fab_speed_dial from "./fab/speed-dial";
 import * as demo_feedback_basic from "./feedback/basic";
 import * as demo_feedback_controlled_draft from "./feedback/controlled-draft";
 import * as demo_feedback_multi_step from "./feedback/multi-step";
@@ -646,6 +652,12 @@ export const DEMOS = {
 	"empty-state/sizes": demo_empty_state_sizes,
 	"empty-state/text-only": demo_empty_state_text_only,
 	"empty-state/variants": demo_empty_state_variants,
+	"fab/controlled-dial": demo_fab_controlled_dial,
+	"fab/extended": demo_fab_extended,
+	"fab/over-a-list": demo_fab_over_a_list,
+	"fab/placements": demo_fab_placements,
+	"fab/sizes-and-variants": demo_fab_sizes_and_variants,
+	"fab/speed-dial": demo_fab_speed_dial,
 	"feedback/basic": demo_feedback_basic,
 	"feedback/controlled-draft": demo_feedback_controlled_draft,
 	"feedback/multi-step": demo_feedback_multi_step,

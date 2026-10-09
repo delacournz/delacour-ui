@@ -728,6 +728,42 @@
 			]
 		},
 		{
+			"name": "fab",
+			"type": "registry:ui",
+			"title": "Fab",
+			"description": "A floating action button, extended with a label or unfolding a dial of related actions.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/fab/AGENTS.md",
+				"ui/fab/fab-action.tsx",
+				"ui/fab/fab-group.tsx",
+				"ui/fab/fab-label.tsx",
+				"ui/fab/fab.context.tsx",
+				"ui/fab/fab.tsx",
+				"ui/fab/fab.types.ts",
+				"ui/fab/fab.variants.ts",
+				"ui/fab/index.ts"
+			]
+		},
+		{
 			"name": "feedback",
 			"type": "registry:ui",
 			"title": "Feedback",

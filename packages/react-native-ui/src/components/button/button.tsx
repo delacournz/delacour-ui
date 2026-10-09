@@ -74,6 +74,7 @@ function ButtonRoot({
 		isDisabled: resolvedIsDisabled,
 		isLoading,
 		isSeamed: item?.isSeamed ?? false,
+		isStretched: item?.isStretched ?? false,
 		orientation: item?.orientation ?? "horizontal",
 		size: resolvedSize,
 		variant: resolvedVariant,
@@ -96,7 +97,7 @@ function ButtonRoot({
 				busy={isLoading}
 				className={slots.root({ className })}
 				disabled={resolvedIsDisabled}
-				feedback={resolveButtonFeedback(feedback, item?.feedback, item !== null)}
+				feedback={resolveButtonFeedback(feedback, item?.feedback, item !== null, item?.isAttached)}
 				{...props}
 			>
 				<IconDefaultsProvider value={iconDefaults}>

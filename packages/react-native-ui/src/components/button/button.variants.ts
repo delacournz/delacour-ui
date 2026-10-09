@@ -41,6 +41,11 @@ export type ButtonSpinnerPlacement = (typeof BUTTON_SPINNER_PLACEMENTS)[number];
 export type ButtonGroupOrientation = (typeof BUTTON_GROUP_ORIENTATIONS)[number];
 export type ButtonGroupPosition = (typeof BUTTON_GROUP_POSITIONS)[number];
 
+/** How a group shapes its run. Omitted, a group joins — that is what a group is. */
+export type ButtonGroupShapeOptions = {
+	isAttached?: boolean;
+};
+
 /** A member's place in its group, or `none` for a button standing on its own. */
 export type ButtonGroupSlotPosition = ButtonGroupPosition | "none";
 
@@ -135,8 +140,9 @@ export const buttonVariants = tv({
 		/**
 		 * A `Button.Group`'s box.
 		 *
-		 * Holds no `gap` and no `overflow-hidden`, and both absences are
-		 * load-bearing. A gap is the seam this component exists to close. A clip
+		 * Holds no `gap` while attached and no `overflow-hidden` ever, and both
+		 * absences are load-bearing. A gap is the seam a joined run exists to
+		 * close — only `isAttached: false` adds one, where there is no seam. A clip
 		 * would square off the very corners the position compounds just rounded,
 		 * and would have to restate the group's own corner to avoid it — while the
 		 * members already square themselves, which is the whole point.
@@ -192,6 +198,21 @@ export const buttonVariants = tv({
 			horizontal: { group: "flex-row self-start" },
 			vertical: { group: "flex-col" },
 		},
+		// Declared after `orientation` on purpose: `tv` merges in declaration
+		// order, so `self-stretch` here replaces the horizontal run's `self-start`
+		// rather than losing to it.
+		/** A `Button.Group` that spans its parent. The members split it — see `isStretched`. */
+		isFullWidth: { true: { group: "w-full self-stretch" }, false: {} },
+		/** A `Button.Group` whose members join into one shape. Detached, they stand apart by a gap. */
+		isAttached: { true: {}, false: { group: "gap-2" } },
+		/**
+		 * A member of a full-width horizontal run, taking an equal share of it.
+		 *
+		 * `basis-0` is the half that matters. With `flex-1` alone Yoga shares out
+		 * only the space left over after each member's content width, so the
+		 * widths still follow the labels; from a zero basis every share is equal.
+		 */
+		isStretched: { true: { root: "flex-1 basis-0" }, false: {} },
 		// `middle` is the one position whose corner needs neither the size nor the
 		// orientation, so it lands here rather than in six compound cells that
 		// would all say the same word.
@@ -304,6 +325,9 @@ export const buttonVariants = tv({
 		orientation: "horizontal",
 		groupPosition: "none",
 		isSeamed: false,
+		isFullWidth: false,
+		isAttached: true,
+		isStretched: false,
 		isDisabled: false,
 		isLoading: false,
 		isDimmedWhileLoading: false,
@@ -413,9 +437,18 @@ export function resolveGroupedButtonSize(own: ButtonSize | undefined, group: But
  * trade {@link resolveSpinnerSwapIndex} already makes. React Native has no
  * sibling selector, so this is the only place a member's corner can be decided.
  *
+ * A detached run (`isAttached: false`) places every member `only` — the lone
+ * position, which draws the lone button's corner — rather than minting a fourth
+ * sentinel: a spaced member *is* a button on its own that happens to share props.
+ *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
-export function resolveGroupPositions(isMember: readonly boolean[]): (ButtonGroupPosition | null)[] {
+export function resolveGroupPositions(
+	isMember: readonly boolean[],
+	{ isAttached = true }: ButtonGroupShapeOptions = {}
+): (ButtonGroupPosition | null)[] {
+	if (!isAttached) return isMember.map((member) => (member ? "only" : null));
+
 	const count = isMember.reduce((total, member) => (member ? total + 1 : total), 0);
 	let seen = 0;
 
@@ -445,9 +478,16 @@ export function resolveGroupPositions(isMember: readonly boolean[]): (ButtonGrou
  * `isMember[-1]` is `undefined`, so the first child falls out as `false` without
  * a case of its own.
  *
+ * A detached run has no shared edge, so nothing overlaps: a point of overlap
+ * there would only eat into the gap.
+ *
  * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
  */
-export function resolveGroupSeams(isMember: readonly boolean[]): boolean[] {
+export function resolveGroupSeams(
+	isMember: readonly boolean[],
+	{ isAttached = true }: ButtonGroupShapeOptions = {}
+): boolean[] {
+	if (!isAttached) return isMember.map(() => false);
 	return isMember.map((member, index) => member && isMember[index - 1] === true);
 }
 
@@ -463,6 +503,10 @@ export function resolveGroupSeams(isMember: readonly boolean[]): boolean[] {
  * while its neighbours hold still, so the seam the group exists to close tears
  * open for the length of the press. `fade` moves no geometry.
  *
+ * Only while the group is *attached*. A detached run has no seam to tear, so
+ * its members fall back to the lone button's `scale`. `isAttached` defaults to
+ * `true`, because joining is what a group does when it says nothing.
+ *
  * A caller still gets `scale` by asking for it, on one button or on a whole
  * group. `pressedScale` beats both, because `resolvePressedState` lets an
  * explicit value win on the axis it names — see `pressable.variants.ts`.
@@ -472,9 +516,30 @@ export function resolveGroupSeams(isMember: readonly boolean[]): boolean[] {
 export function resolveButtonFeedback(
 	own: PressableFeedback | undefined,
 	group: PressableFeedback | undefined,
-	isGrouped: boolean
+	isGrouped: boolean,
+	isAttached = true
 ): PressableFeedback {
-	return own ?? group ?? (isGrouped ? BUTTON_GROUP_FEEDBACK : BUTTON_FEEDBACK);
+	return own ?? group ?? (isGrouped && isAttached ? BUTTON_GROUP_FEEDBACK : BUTTON_FEEDBACK);
+}
+
+/**
+ * Whether a group's members take an equal share of its width.
+ *
+ * Horizontal only. A vertical run already stretches its members on the cross
+ * axis, and `basis-0` on the main axis of a column with no definite height
+ * would collapse every member to nothing — so `isFullWidth` on a vertical group
+ * widens the group and does nothing further.
+ *
+ * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ */
+export function resolveGroupMemberStretch({
+	isFullWidth,
+	orientation,
+}: {
+	isFullWidth: boolean;
+	orientation: ButtonGroupOrientation;
+}): boolean {
+	return isFullWidth && orientation === "horizontal";
 }
 
 export type ButtonVariantProps = VariantProps<typeof buttonVariants>;

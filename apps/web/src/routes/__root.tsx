@@ -92,11 +92,11 @@ function ThemeColour() {
  * present in the SSR output where `grep` for the seed key finds it.
  *
  * THESIS: Delacour UI is a graphite instrument panel for a component library:
- * greyscale, hairline-ruled, set entirely in mono with Inter only for headings.
+ * greyscale, hairline-ruled, set entirely in mono, headings included.
  * It refuses the coloured accent and the floating pill nav.
  * OWN-WORLD: white or #131313 page, alpha hairlines at 12% / 10% drawn at 65%,
  * foreground hover fills at 2-5%, a 1px inner highlight under a faint shadow on
- * every surface; JetBrains Mono for the whole UI, Inter 600 tight for headings,
+ * every surface; JetBrains Mono for the whole UI, headings included (600, tracking normal),
  * 10px base radius, cards at 1.8x, controls h-8 / h-9; colour only for status
  * and charts.
  * STORY: a React Native developer reads a dense, calm index, sees real phone
@@ -110,10 +110,10 @@ function ThemeColour() {
  */
 const DIRECTION_CONTRACT = `<!--
 impeccable direction contract · seed 4a705b78
-THESIS: Delacour UI is a graphite instrument panel for a component library: greyscale, hairline-ruled, set entirely in mono with Inter only for headings. It refuses the coloured accent and the floating pill nav.
-OWN-WORLD: white or #131313 page, alpha hairlines at 12% / 10% drawn at 65%, foreground hover fills at 2-5%, a 1px inner highlight under a faint shadow on every surface; JetBrains Mono for the whole UI, Inter 600 tight for headings, 10px base radius, cards at 1.8x, controls h-8 / h-9; colour only for status and charts.
+THESIS: Delacour UI is a graphite instrument panel for a component library: greyscale, hairline-ruled, set entirely in mono, headings included. It refuses the coloured accent and the floating pill nav.
+OWN-WORLD: white or #131313 page, alpha hairlines at 12% / 10% drawn at 65%, foreground hover fills at 2-5%, a 1px inner highlight under a faint shadow on every surface; JetBrains Mono for the whole UI, headings included (600, tracking normal), 10px base radius, cards at 1.8x, controls h-8 / h-9; colour only for status and charts.
 STORY: a React Native developer reads a dense, calm index, sees real phone captures, copies one command, and tries it on their phone.
-FIRST VIEWPORT: a frosted h-14 bar with the tracked wordmark, a live component and category counter and a search pill; a mono kicker, the headline (copy unchanged) in Inter, the lede, one primary and one ghost control, the install tabs; the phone capture sits to the right only above 1024px.
+FIRST VIEWPORT: a frosted h-14 bar with the tracked wordmark, a live component and category counter and a search pill; a mono kicker, the headline (copy unchanged) in mono, the lede, one primary and one ghost control, the install tabs; the phone capture sits to the right only above 1024px.
 FORM: pinned by the user to the devl.dev design language, written from its token values and density rather than its source.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict and DESIGN.md.
 CITED ADAPTATIONS: every colour on the site is resolveTokens(HOUSE_CONFIG), so the page ground is the graphite base's own value rather than a hand-picked one; the showcase grid and the component index fill the page container because they are a picture wall and an index, not prose, and each keeps its heading on the container's left edge; the committed previews were shot on the previous house, so --color-capture stays on that preset until they are recaptured.

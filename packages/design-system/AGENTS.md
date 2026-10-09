@@ -192,8 +192,8 @@ the darkening rule for the amber ramp. `vela` is 32/36/44 controls over a 12/13/
 enough for a mono UI, with 36 as the smallest comfortable touch height.
 
 `house.ts` names the studio's own look — the `graphite` base (which is also its own accent and
-chart ramp), JetBrains Mono for the UI under Inter headings, a `medium` 10pt corner and the dense
-`vela` geometry — and pins its code, `AQgHGRkTAgO_`. The previous studio look (zinc, the `delacour`
+chart ramp), JetBrains Mono for the UI and the headings alike, a `medium` 10pt corner and the dense
+`vela` geometry — and pins its code, `AQgHGRkTEwPe`. The previous studio look (zinc, the `delacour`
 amber, Inter under Outfit, `small`) survives as `DELACOUR_AMBER_CONFIG`, the second preset
 shortcut, still at `AQACGBgCCgLk`, so every link that was shared to it still opens it. `apps/web` paints itself from it and `apps/playground` opens in
 it; that is the product's pitch proven on our own surfaces. It lives here rather than in either app

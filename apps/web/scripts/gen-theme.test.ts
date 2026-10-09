@@ -97,7 +97,7 @@ describe("renderHouseCss", () => {
 
 	test("names the three faces with a fallback stack each", () => {
 		expect(css).toContain('--font-sans: "JetBrains Mono", ui-monospace');
-		expect(css).toContain("--font-heading: Inter, ui-sans-serif");
+		expect(css).toContain('--font-heading: "JetBrains Mono", ui-monospace');
 		expect(css).toContain('--font-mono: "JetBrains Mono", ui-monospace');
 	});
 

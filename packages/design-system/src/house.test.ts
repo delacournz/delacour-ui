@@ -30,7 +30,7 @@ describe("the house preset", () => {
 		const fonts = resolveFonts(HOUSE_CONFIG);
 
 		expect(fonts.sans).toBe("JetBrains Mono");
-		expect(fonts.heading).toBe("Inter");
+		expect(fonts.heading).toBe("JetBrains Mono");
 	});
 
 	test("is not the library default, and leaves the default alone", () => {

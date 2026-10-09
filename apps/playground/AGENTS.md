@@ -287,7 +287,7 @@ with a class). Either earning a component is a decision for the library, not for
 
 `src/app/index.tsx` is a hub, not a list. The `DelacourMark` leads a static `Screen.Navbar` whose one
 action is `ThemeToggle`, "Delacour UI" opens the content as a large title — 34 over 41, semibold, in
-the heading face (Inter) — and under it are two full-width `HubCard`s, **Components** and **Blocks**,
+the heading face (JetBrains Mono) — and under it are two full-width `HubCard`s, **Components** and **Blocks**,
 then the About group.
 
 **A card is a door, not a preview.** `HubCard` (`src/components/hub-card.tsx`) is a library
@@ -321,8 +321,8 @@ Tailwind minted no `font-heading` utility and `Text.Display`, `Title` and
 `Header` drew in the body face. `styles/global.css` now declares
 `@theme { --font-heading: system-ui }` once, which mints the utility; the
 store's `applyConfig` overwrites the variable from the Heading axis, so it
-follows the axis. Verified on device: the title draws in Inter over a JetBrains
-Mono body. The customiser's `FontPreview` and the preset tiles still set
+follows the axis. Verified on device: the title draws in the heading face over the body
+face (both JetBrains Mono in the house). The customiser's `FontPreview` and the preset tiles still set
 `fontFamily` inline, which is harmless. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The
@@ -483,8 +483,8 @@ phone 300 CSS px wide and 720 on the long edge left only 332 across it. A demo's
 own frame's edge, so moving one cap re-captures only the demos it governs.
 
 **Captures are in the house, and the house is the Devl material.** `preview.tsx` applies
-`HOUSE_CONFIG` before the sentinel can report ready, so every frame is graphite, JetBrains Mono and
-Inter. The faces are embedded in the native build (see Fonts are embedded), so they are present at
+`HOUSE_CONFIG` before the sentinel can report ready, so every frame is graphite, JetBrains Mono, headings
+included. The faces are embedded in the native build (see Fonts are embedded), so they are present at
 first paint and there is nothing to await. Moving the captures off the library default changes every
 demo's pixels, not its hash: rerun with `--force` once, with the user's approval.
 
@@ -588,7 +588,7 @@ not the same one:
 
 | | Config | Where |
 | --- | --- | --- |
-| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — the Devl material: graphite, JetBrains Mono under Inter headings, a medium corner, the `vela` geometry | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
+| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — the Devl material: graphite, JetBrains Mono throughout, headings included, a medium corner, the `vela` geometry | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
 | **The library** | `DEFAULT_CONFIG` — Vega, neutral, the platform font | what `delacour init` ships to a consumer; the second tile of the preset strip, so that look is one tap away |
 
 The app is the studio's own site continued onto a phone, so it opens in the

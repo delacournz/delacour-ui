@@ -1,6 +1,6 @@
 ---
 name: Delacour UI Playground
-description: The library on a phone in the Devl material — graphite, hairlines, mono type under Inter headings, one inner highlight on every surface.
+description: The library on a phone in the Devl material — graphite, hairlines, mono type throughout, headings included, one inner highlight on every surface.
 colors:
   ground-dark: "#131313"
   surface-dark: "oklch(0.204 0 0)"
@@ -19,11 +19,11 @@ colors:
   destructive-light: "#e7000b"
 typography:
   large-title:
-    fontFamily: "Inter, system-ui, sans-serif"
+    fontFamily: "JetBrains Mono, ui-monospace, monospace"
     fontSize: "34px"
     fontWeight: 600
     lineHeight: "41px"
-    letterSpacing: "-0.025em"
+    letterSpacing: "0"
   body:
     fontFamily: "JetBrains Mono, ui-monospace, monospace"
     fontSize: "13px"
@@ -63,8 +63,8 @@ components:
 **Creative North Star: "The instrument panel."**
 
 The playground is the library's harness, and it looks like the instrument you would test a library
-with: graphite grounds, hairline edges at low alpha, set type in a monospace face, with Inter reserved
-for the one large title. Nothing here is decorated. Colour belongs to status and to charts; every
+with: graphite grounds, hairline edges at low alpha, set type in a monospace face, headings included,
+so the one large title is the same mono, only larger and heavier. Nothing here is decorated. Colour belongs to status and to charts; every
 other surface is a step of grey, and depth is a single inner highlight rather than a shadow stack.
 
 It replaces the earlier amber world (zinc, Outfit, one amber accent). That look survives as the
@@ -92,7 +92,7 @@ to it by `app.config.test.ts`.
 ## Typography
 
 - **Body is JetBrains Mono**, embedded, at the Vela scale: 12, 13 and 15 points.
-- **Headings are Inter**, tight-tracked. They reach the screen through `font-heading`, which the
+- **Headings are JetBrains Mono** semibold or bold, tracking normal. They reach the screen through `font-heading`, which the
   playground's `global.css` declares so the library's `Text.Display`, `Title` and `Header` resolve it.
 - **The kicker** is the mono label over a group: ten points, uppercase, 0.2em tracking, muted. It is
   `Text.Kicker`. It names a group or a count and never decorates a heading.
@@ -137,7 +137,7 @@ the library.
 
 ### Do
 
-- Set labels in mono and the one title in Inter.
+- Set labels and the one title in mono; let weight, not a second face, mark the title.
 - Group with a kicker and a tray rather than a heading and a divider.
 - Let status carry the colour; keep chrome in graphite.
 - Take every colour from the tokens, so a preset change repaints the whole app.

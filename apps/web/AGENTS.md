@@ -678,7 +678,7 @@ bun run gen-theme       # after any change to HOUSE_CONFIG in @delacour/design-s
 
 `scripts/gen-theme.ts` reads `HOUSE_CONFIG`, resolves it with `resolveTokens` / `resolveFonts`,
 and maps the library's token names onto Fumadocs' `--color-fd-*` slots (the `MAPPING` table in the
-script). The docs site is therefore themed by the customiser it sells: `/theme?preset=AQgHGRkTAgO_`
+script). The docs site is therefore themed by the customiser it sells: `/theme?preset=AQgHGRkTEwPe`
 is this site's own palette. The values are verbatim `oklch()`, the notation the design system
 authors, so a browser reads them natively and nothing is converted on the way to the CSS.
 

@@ -4,7 +4,7 @@ import { DEFAULT_CONFIG, type DesignSystemConfig } from "./config";
  * The studio's own look, as a preset.
  *
  * A greyscale, tactile, keyboard-first interface: a graphite page drawn in alpha
- * hairlines, the whole UI set in JetBrains Mono with Inter reserved for headings,
+ * hairlines, the whole UI set in JetBrains Mono, headings included,
  * a 10pt corner, and the dense Vela geometry. Colour is left free to mean
  * something — status and chart series — rather than spent on the brand.
  *
@@ -22,7 +22,7 @@ export const HOUSE_CONFIG: DesignSystemConfig = {
 	theme: "graphite",
 	chartColor: "graphite",
 	font: "jetbrains-mono",
-	fontHeading: "inter",
+	fontHeading: "jetbrains-mono",
 	radius: "medium",
 };
 
@@ -33,7 +33,7 @@ export const HOUSE_CONFIG: DesignSystemConfig = {
  * codec change that silently moved it would repoint every one of those links.
  * A literal fails the test instead.
  */
-export const HOUSE_PRESET_CODE = "AQgHGRkTAgO_";
+export const HOUSE_PRESET_CODE = "AQgHGRkTEwPe";
 
 /**
  * The studio's previous look, kept as a starting point: delacour.co.nz's zinc
@@ -71,7 +71,7 @@ export const PRESET_SHORTCUTS: readonly PresetShortcut[] = [
 	{
 		name: "delacour",
 		title: "Delacour",
-		blurb: "The studio's own: graphite, hairlines, JetBrains Mono and Inter.",
+		blurb: "The studio's own: graphite, hairlines, JetBrains Mono throughout.",
 		config: HOUSE_CONFIG,
 		code: HOUSE_PRESET_CODE,
 	},

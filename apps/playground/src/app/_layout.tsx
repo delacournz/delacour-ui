@@ -98,8 +98,8 @@ function SystemBackground(): null {
  * its provenance.
  *
  * ON THE PHONE the contract is read through the platform: the house reaches
- * this app as `HOUSE_CONFIG` — zinc, the `delacour` amber, Inter under Outfit,
- * a small corner — applied through the design system's own axes and nothing
+ * this app as `HOUSE_CONFIG` — graphite, the `vela` geometry, JetBrains Mono
+ * throughout (headings included), a medium corner — applied through the design system's own axes and nothing
  * else. Structure, navigation and controls stay native (HIG on iOS, Material
  * on Android): the library's own `Screen.Navbar`, 44pt targets, the edge-swipe
  * back, crossfades that are opacity only so Reduce Motion has nothing to

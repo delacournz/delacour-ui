@@ -86,7 +86,7 @@ const splash = pluginEntry("expo-splash-screen") as SplashConfig;
 /**
  * Every relative path anywhere in the config, found by walking it rather than by
  * listing the keys. Listing them means the next asset added is the one nobody
- * checks — and the 97 embedded font faces, whose paths reach out of this
+ * checks — and the 99 embedded font faces, whose paths reach out of this
  * workspace into the hoisted root, are worth the walk on their own.
  */
 function relativePaths(value: unknown, found: Set<string> = new Set()): Set<string> {

@@ -55,7 +55,7 @@ export function Hero(): ReactElement {
 				</Link>
 
 				<div className="flex flex-col gap-5">
-					<h1 className="text-4xl leading-[1.1] tracking-[-0.03em] sm:text-5xl">{HERO.title}</h1>
+					<h1 className="text-4xl leading-[1.1] tracking-display sm:text-5xl">{HERO.title}</h1>
 					<p className="max-w-reading text-fd-muted-foreground text-sm leading-relaxed">{HERO.lede}</p>
 				</div>
 

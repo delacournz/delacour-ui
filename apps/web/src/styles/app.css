@@ -36,7 +36,7 @@
 	--text-2xl--line-height: 32px;
 	--text-3xl--line-height: 36px;
 
-	/* Display steps the library has no use for. h1 is 48/56, tracked -1.2px. */
+	/* Display steps the library has no use for. h1 is 48/56. */
 	--text-4xl: 36px;
 	--text-4xl--line-height: 40px;
 	--text-5xl: 48px;
@@ -44,7 +44,9 @@
 	--text-6xl: 60px;
 	--text-6xl--line-height: 64px;
 
-	--tracking-display: -0.025em;
+	/* Headings are the body's mono, which is drawn to its own fixed advance:
+	   tracking it in closes the counters and loses the terminal grid. */
+	--tracking-display: 0em;
 	--tracking-eyebrow: 0.08em;
 	--tracking-kicker: 0.22em;
 	--tracking-wordmark: 0.28em;

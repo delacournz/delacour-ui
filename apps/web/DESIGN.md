@@ -1,6 +1,6 @@
 ---
 name: Delacour UI docs
-description: A graphite instrument panel for a component library — greyscale, hairline-ruled, set in mono with Inter only for headings.
+description: A graphite instrument panel for a component library — greyscale, hairline-ruled, set entirely in mono, headings included.
 colors:
   page-dark: "oklch(0.188 0 0)"
   page-light: "oklch(1 0 0)"
@@ -24,23 +24,23 @@ colors:
   capture-light: "oklch(1 0 0)"
 typography:
   display:
-    fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     fontSize: "48px"
     fontWeight: 600
     lineHeight: "56px"
-    letterSpacing: "-0.03em"
+    letterSpacing: "0"
   headline:
-    fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     fontSize: "30px"
     fontWeight: 600
     lineHeight: "36px"
-    letterSpacing: "-0.025em"
+    letterSpacing: "0"
   title:
-    fontFamily: "Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+    fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     fontSize: "20px"
     fontWeight: 600
     lineHeight: "28px"
-    letterSpacing: "-0.025em"
+    letterSpacing: "0"
   body:
     fontFamily: "JetBrains Mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace"
     fontSize: "13px"
@@ -125,7 +125,7 @@ light), surfaces a half-step above it, hairlines drawn as alpha strokes at about
 no accent colour at all: the primary is the foreground itself, so a call to action is a dark pill
 on white or a light pill on graphite. Colour belongs to status and to charts, nowhere else.
 
-The whole UI is set in JetBrains Mono. Inter appears only as the heading face, tracked in. Small
+The whole UI is set in JetBrains Mono, headings included, at tracking normal. Small
 tracked-caps mono kickers (10px, 0.22em) open every section, label every counter and form the
 docs breadcrumb. Controls are dense — h-8 in the header and the customiser, h-9 for the two calls
 to action — and corners come from one 10px radius.
@@ -136,14 +136,14 @@ the nested frame — a muted wrapper with a 4px inset around a rounded panel —
 customiser's panels, the promo cards and the component index's grid cards.
 
 Every colour on the site is `resolveTokens(HOUSE_CONFIG)`, generated into `src/styles/house.css`
-(`/theme?preset=AQgHGRkTAgO_`). The things the axes cannot express — the hairline at 65%, the
+(`/theme?preset=AQgHGRkTEwPe`). The things the axes cannot express — the hairline at 65%, the
 hover fills, the highlight, the ambient wash behind the page — are `color-mix()` of the tokens,
 never a hex.
 
 **Key Characteristics:**
 - Dark first; light is the same system with the roles swapped.
 - Greyscale. No accent; colour only for status and charts.
-- JetBrains Mono for the UI and code; Inter 600, tracked −0.025em, for headings only.
+- JetBrains Mono for everything, headings included (600, tracking normal).
 - Kickers: 10px mono caps, +0.22em, muted ink.
 - Alpha hairlines at 65%; hover fills the foreground at 4–5%.
 - 10px base radius; controls 1×, tiles 1.4×, cards and trays 1.8×.
@@ -188,17 +188,17 @@ token. `app.css` carries no hex and no `--color-fd-*` literal; the test fails if
 
 ## Typography
 
-**Display Font:** Inter (tracked −0.025em, 600), for `h1`–`h4`
-**Body / Label / Mono Font:** JetBrains Mono (400/500; it ships no 600, so emphasis is 500)
+**Display Font:** JetBrains Mono (600, tracking normal), for `h1`–`h4`
+**Body / Label / Mono Font:** JetBrains Mono (400/500)
 
 All load from Google Fonts through `src/lib/google-fonts.ts`; Google Fonts is the site's only
 third-party origin.
 
 ### Hierarchy
-- **Display** (Inter 600, 48/56, −0.03em; 36/40 below `sm`): the landing headline.
-- **Headline** (Inter 600, 30/36): a landing section's heading (24/32 below `sm`); the page title
+- **Display** (mono 600, 48/56; 36/40 below `sm`): the landing headline.
+- **Headline** (mono 600, 30/36): a landing section's heading (24/32 below `sm`); the page title
   of docs, the policy and the comparison is `text-3xl`.
-- **Title** (Inter 600, 20/28): card titles, policy section headings.
+- **Title** (mono 600, 20/28): card titles, policy section headings.
 - **Lede** (mono 14/22 muted): the sentence under a heading; on dense pages 12/20.
 - **Body** (mono 13/22): prose; docs prose is 13px/1.7.
 - **Kicker** (mono 500, 10/16, +0.22em, uppercase, muted): the section opener, with a 16px
@@ -206,7 +206,7 @@ third-party origin.
 - **Code** (mono 13): blocks, inline `code`, the preset code chip.
 
 ### Named Rules
-**The Heading Face Rule.** `h1`–`h4` are Inter 600, tracked and balanced, by one base rule in
+**The Heading Face Rule.** `h1`–`h4` are JetBrains Mono 600, tracking normal and balanced, by one base rule in
 `app.css`; no element re-declares a heading face.
 
 **The Line-Height Rule.** Every px type step carries its own line height (`--text-*--line-height`).
@@ -233,7 +233,7 @@ by space, not by rules or tinted bands.
 
 The docs keep Fumadocs' notebook layout — sidebar, navbar tabs, table of contents — restyled
 through its own CSS variables and rules scoped to its ids: a 256px sidebar on a 1.5% fill with a
-hairline, h-8 rows, a mono-caps breadcrumb as the page kicker, and a text-3xl Inter title.
+hairline, h-8 rows, a mono-caps breadcrumb as the page kicker, and a text-3xl mono title.
 
 ## Elevation & Depth
 
@@ -309,7 +309,7 @@ title in Inter, one Inter line under an amber dot (the mark's own colour, which 
 ### Do:
 - **Do** take every colour from `house.css` (`--color-fd-*`) or a `color-mix()` of one; regenerate
   with `bun run gen-theme` when the house preset moves.
-- **Do** open a section with a kicker; set headings in Inter 600 and everything else in mono.
+- **Do** open a section with a kicker; set headings in mono 600 and everything else in mono 400/500.
 - **Do** draw a surface with a hairline plus the highlight, and group panels in a tray.
 - **Do** keep controls dense: h-8 in chrome, h-9 for a call to action.
 - **Do** put a captured preview on `bg-capture`, in a 16:10 frame.

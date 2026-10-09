@@ -190,7 +190,7 @@ export const FONTS: readonly FontFamily[] = [
 		type: "mono",
 		family: "JetBrains Mono",
 		file: "JetBrainsMono",
-		weights: [400, 500],
+		weights: [400, 500, 600, 700],
 	},
 	{
 		name: "noto-serif",

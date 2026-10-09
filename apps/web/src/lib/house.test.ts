@@ -2,8 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { HOUSE_MONO_FONT, houseFonts, isHouseFont } from "./house";
 
 describe("houseFonts", () => {
-	test("is JetBrains Mono for the body and code, Inter for headings", () => {
-		expect(houseFonts().map((font) => font.family)).toEqual(["JetBrains Mono", "Inter"]);
+	test("is JetBrains Mono for the body, the code and the headings", () => {
+		expect(houseFonts().map((font) => font.family)).toEqual(["JetBrains Mono"]);
 	});
 
 	test("the code face is a real catalogue entry", () => {

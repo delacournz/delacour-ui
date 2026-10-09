@@ -40,6 +40,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },
+	{ name: "progress-button", title: "Progress Button", description: "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end." },
 	{ name: "provider", title: "Provider", description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling." },
 	{ name: "radio", title: "Radio", description: "A radio and the group that owns which one is selected." },
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },

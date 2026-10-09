@@ -1336,6 +1336,42 @@
 			]
 		},
 		{
+			"name": "progress-button",
+			"type": "registry:ui",
+			"title": "Progress Button",
+			"description": "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress-button/AGENTS.md",
+				"ui/progress-button/index.ts",
+				"ui/progress-button/progress-button-done.tsx",
+				"ui/progress-button/progress-button-label.tsx",
+				"ui/progress-button/progress-button.context.tsx",
+				"ui/progress-button/progress-button.tsx",
+				"ui/progress-button/progress-button.variants.ts"
+			]
+		},
+		{
 			"name": "provider",
 			"type": "registry:ui",
 			"title": "Provider",

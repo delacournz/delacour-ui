@@ -83,6 +83,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Pick several things at once \u2014 a long press enters the mode \u2014 then act on them from a bar.",
 	},
 	{
+		slug: "progress-button",
+		name: "ProgressButton",
+		group: "Actions",
+		blurb: "A button held, not tapped, to confirm \u2014 the action fires when the fill reaches the end.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",

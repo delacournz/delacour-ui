@@ -317,6 +317,14 @@ import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
+import * as demo_progress_button_auto_reset from "./progress-button/auto-reset";
+import * as demo_progress_button_controlled from "./progress-button/controlled";
+import * as demo_progress_button_custom_done from "./progress-button/custom-done";
+import * as demo_progress_button_disabled from "./progress-button/disabled";
+import * as demo_progress_button_hold_to_erase from "./progress-button/hold-to-erase";
+import * as demo_progress_button_shape_rounded from "./progress-button/shape-rounded";
+import * as demo_progress_button_sizes from "./progress-button/sizes";
+import * as demo_progress_button_variants from "./progress-button/variants";
 import * as demo_progress_anatomy from "./progress/anatomy";
 import * as demo_progress_colours from "./progress/colours";
 import * as demo_progress_controlled from "./progress/controlled";
@@ -778,6 +786,14 @@ export const DEMOS = {
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,
 	"pressable/named-feedback": demo_pressable_named_feedback,
+	"progress-button/auto-reset": demo_progress_button_auto_reset,
+	"progress-button/controlled": demo_progress_button_controlled,
+	"progress-button/custom-done": demo_progress_button_custom_done,
+	"progress-button/disabled": demo_progress_button_disabled,
+	"progress-button/hold-to-erase": demo_progress_button_hold_to_erase,
+	"progress-button/shape-rounded": demo_progress_button_shape_rounded,
+	"progress-button/sizes": demo_progress_button_sizes,
+	"progress-button/variants": demo_progress_button_variants,
 	"progress/anatomy": demo_progress_anatomy,
 	"progress/colours": demo_progress_colours,
 	"progress/controlled": demo_progress_controlled,

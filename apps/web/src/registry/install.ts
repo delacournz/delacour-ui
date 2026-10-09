@@ -1240,6 +1240,145 @@ export const install = {
 			},
 		],
 	},
+	"progress-button": {
+		name: "progress-button",
+		title: "ProgressButton",
+		description: "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+		importPath: "@delacour/react-native-ui/progress-button",
+		exportName: "ProgressButton",
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 35,
+		groups: [
+			{
+				name: "progress-button",
+				title: "Progress Button",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/progress-button/AGENTS.md", target: "src/components/ui/progress-button/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/progress-button/index.ts", target: "src/components/ui/progress-button/index.ts" },
+					{ source: "packages/react-native-ui/src/components/progress-button/progress-button-done.tsx", target: "src/components/ui/progress-button/progress-button-done.tsx" },
+					{ source: "packages/react-native-ui/src/components/progress-button/progress-button-label.tsx", target: "src/components/ui/progress-button/progress-button-label.tsx" },
+					{ source: "packages/react-native-ui/src/components/progress-button/progress-button.context.tsx", target: "src/components/ui/progress-button/progress-button.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/progress-button/progress-button.tsx", target: "src/components/ui/progress-button/progress-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/progress-button/progress-button.variants.ts", target: "src/components/ui/progress-button/progress-button.variants.ts" },
+				],
+			},
+			{
+				name: "icon",
+				title: "Icon",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "icons",
+				title: "Icons",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+		],
+	},
 	"toggle-button": {
 		name: "toggle-button",
 		title: "ToggleButton",

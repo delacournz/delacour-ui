@@ -68,6 +68,12 @@ const ROWS = [
 		group: "Actions",
 	},
 	{
+		slug: "progress-button",
+		title: "ProgressButton",
+		description: "Hold to confirm, with a fill and a done mark",
+		group: "Actions",
+	},
+	{
 		slug: "toggle-button",
 		title: "ToggleButton",
 		description: "Variants, sizes, single and multiple groups",

@@ -1012,6 +1012,56 @@
 			]
 		},
 		{
+			"name": "menu",
+			"type": "registry:ui",
+			"title": "Menu",
+			"description": "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"compose-refs",
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"slot",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/menu/AGENTS.md",
+				"ui/menu/index.ts",
+				"ui/menu/menu-background.tsx",
+				"ui/menu/menu-checkbox-item.tsx",
+				"ui/menu/menu-content.tsx",
+				"ui/menu/menu-item.tsx",
+				"ui/menu/menu-label.tsx",
+				"ui/menu/menu-radio-group.tsx",
+				"ui/menu/menu-radio-item.tsx",
+				"ui/menu/menu-separator.tsx",
+				"ui/menu/menu-sub-content.tsx",
+				"ui/menu/menu-sub-trigger.tsx",
+				"ui/menu/menu-sub.tsx",
+				"ui/menu/menu-trigger.tsx",
+				"ui/menu/menu.context.tsx",
+				"ui/menu/menu.tsx",
+				"ui/menu/menu.types.ts",
+				"ui/menu/menu.variants.ts"
+			]
+		},
+		{
 			"name": "merge-props",
 			"type": "registry:lib",
 			"title": "mergeProps",
@@ -1508,6 +1558,47 @@
 				"ui/spinner/spinner.context.tsx",
 				"ui/spinner/spinner.tsx",
 				"ui/spinner/spinner.variants.ts"
+			]
+		},
+		{
+			"name": "stack-card",
+			"type": "registry:ui",
+			"title": "Stack Card",
+			"description": "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"cn",
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/stack-card/AGENTS.md",
+				"ui/stack-card/index.ts",
+				"ui/stack-card/stack-card-action.tsx",
+				"ui/stack-card/stack-card-actions.tsx",
+				"ui/stack-card/stack-card-card.tsx",
+				"ui/stack-card/stack-card-empty.tsx",
+				"ui/stack-card/stack-card-slot.tsx",
+				"ui/stack-card/stack-card-stamp.tsx",
+				"ui/stack-card/stack-card.context.tsx",
+				"ui/stack-card/stack-card.tsx",
+				"ui/stack-card/stack-card.types.ts",
+				"ui/stack-card/stack-card.variants.ts"
 			]
 		},
 		{

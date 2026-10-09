@@ -40,6 +40,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A pressable action, with composed icons and a loading state that costs no layout.",
 	},
 	{
+		slug: "menu",
+		name: "Menu",
+		group: "Actions",
+		blurb:
+			"A list of actions dropped from the control that opens it \u2014 with checkbox, radio and in-place submenu rows.",
+	},
+	{
 		slug: "pressable",
 		name: "Pressable",
 		group: "Actions",
@@ -50,6 +57,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Swipe",
 		group: "Actions",
 		blurb: "A row that slides aside to reveal actions behind it, with a full swipe that fires the outermost.",
+	},
+	{
+		slug: "stack-card",
+		name: "StackCard",
+		group: "Actions",
+		blurb: "A deck taken one card at a time by throwing the top one off \u2014 one decision per card.",
 	},
 	{
 		slug: "toggle-button",

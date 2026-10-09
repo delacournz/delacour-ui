@@ -85,6 +85,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Menu](src/components/menu/AGENTS.md) | `@delacour/react-native-ui/menu` | A list of actions dropped from the control that opens it |
 | [Overlay](src/components/overlay/AGENTS.md) | `@delacour/react-native-ui/overlay` | The provider, portal, scrim, presence and back button every overlay is drawn with |
 | [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
@@ -96,6 +97,7 @@ shares.
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [StackCard](src/components/stack-card/AGENTS.md) | `@delacour/react-native-ui/stack-card` | A deck taken one card at a time by throwing the top one off |
 | [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
 | [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |
 | [Swipe](src/components/swipe/AGENTS.md) | `@delacour/react-native-ui/swipe` | A row that slides aside to reveal actions behind it |

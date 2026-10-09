@@ -281,6 +281,13 @@ import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
 import * as demo_list_group_variants from "./list-group/variants";
+import * as demo_menu_actions from "./menu/actions";
+import * as demo_menu_checkbox_and_radio from "./menu/checkbox-and-radio";
+import * as demo_menu_custom_background from "./menu/custom-background";
+import * as demo_menu_inset_rows from "./menu/inset-rows";
+import * as demo_menu_long_list from "./menu/long-list";
+import * as demo_menu_near_bottom_edge from "./menu/near-bottom-edge";
+import * as demo_menu_submenu from "./menu/submenu";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -346,6 +353,13 @@ import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_stack_card_controlled_decline from "./stack-card/controlled-decline";
+import * as demo_stack_card_empty from "./stack-card/empty";
+import * as demo_stack_card_four_directions from "./stack-card/four-directions";
+import * as demo_stack_card_large_deck from "./stack-card/large-deck";
+import * as demo_stack_card_layouts from "./stack-card/layouts";
+import * as demo_stack_card_review_queue from "./stack-card/review-queue";
+import * as demo_stack_card_undo from "./stack-card/undo";
 import * as demo_steps_checkout from "./steps/checkout";
 import * as demo_steps_custom_indicator from "./steps/custom-indicator";
 import * as demo_steps_horizontal from "./steps/horizontal";
@@ -703,6 +717,13 @@ export const DEMOS = {
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,
 	"list-group/variants": demo_list_group_variants,
+	"menu/actions": demo_menu_actions,
+	"menu/checkbox-and-radio": demo_menu_checkbox_and_radio,
+	"menu/custom-background": demo_menu_custom_background,
+	"menu/inset-rows": demo_menu_inset_rows,
+	"menu/long-list": demo_menu_long_list,
+	"menu/near-bottom-edge": demo_menu_near_bottom_edge,
+	"menu/submenu": demo_menu_submenu,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,
@@ -768,6 +789,13 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"stack-card/controlled-decline": demo_stack_card_controlled_decline,
+	"stack-card/empty": demo_stack_card_empty,
+	"stack-card/four-directions": demo_stack_card_four_directions,
+	"stack-card/large-deck": demo_stack_card_large_deck,
+	"stack-card/layouts": demo_stack_card_layouts,
+	"stack-card/review-queue": demo_stack_card_review_queue,
+	"stack-card/undo": demo_stack_card_undo,
 	"steps/checkout": demo_steps_checkout,
 	"steps/custom-indicator": demo_steps_custom_indicator,
 	"steps/horizontal": demo_steps_horizontal,

@@ -551,6 +551,40 @@
 			]
 		},
 		{
+			"name": "context-menu",
+			"type": "registry:ui",
+			"title": "Context Menu",
+			"description": "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"menu",
+				"pressable",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/context-menu/AGENTS.md",
+				"ui/context-menu/context-menu-content.tsx",
+				"ui/context-menu/context-menu-item.tsx",
+				"ui/context-menu/context-menu-preview.tsx",
+				"ui/context-menu/context-menu-trigger.tsx",
+				"ui/context-menu/context-menu.context.tsx",
+				"ui/context-menu/context-menu.tsx",
+				"ui/context-menu/context-menu.variants.ts",
+				"ui/context-menu/index.ts"
+			]
+		},
+		{
 			"name": "dialog",
 			"type": "registry:ui",
 			"title": "Dialog",

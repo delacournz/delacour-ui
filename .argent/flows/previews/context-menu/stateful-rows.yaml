@@ -1,0 +1,23 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on context-menu/stateful-rows and has settled — the invoice card reading
+  "Not starred · unread · comfortable" with no menu open. The capture script navigates there before running this.
+steps:
+  - echo: Holding the invoice
+  - long-press: { on: { id: context-menu-stateful }, duration: 600 }
+  - await: { visible: { id: context-menu-stateful-starred } }
+  - wait: 600
+  - echo: A checkbox row toggles and the menu stays open
+  - tap: { id: context-menu-stateful-starred }
+  - wait: 800
+  - tap: { id: context-menu-stateful-starred }
+  - wait: 700
+  - echo: A radio row chooses and closes
+  - tap: { id: context-menu-stateful-compact }
+  - await: { hidden: { id: context-menu-stateful-starred } }
+  - wait: 600
+  - echo: Back to Comfortable, so the clip loops without a jump cut
+  - long-press: { on: { id: context-menu-stateful }, duration: 600 }
+  - await: { visible: { id: context-menu-stateful-comfortable } }
+  - wait: 500
+  - tap: { id: context-menu-stateful-comfortable }
+  - await: { hidden: { id: context-menu-stateful-starred } }

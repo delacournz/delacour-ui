@@ -45,6 +45,7 @@
 		"./checkbox": "./src/components/checkbox/index.ts",
 		"./chip": "./src/components/chip/index.ts",
 		"./collapsible": "./src/components/collapsible/index.ts",
+		"./context-menu": "./src/components/context-menu/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
 		"./drawer": "./src/components/drawer/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",

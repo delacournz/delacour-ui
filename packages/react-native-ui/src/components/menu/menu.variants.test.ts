@@ -315,6 +315,13 @@ describe("menuVariants", () => {
 		expect(menuVariants().scrim()).toContain("bg-overlay");
 	});
 
+	test("the backdrop layer fills the screen and paints nothing of its own", () => {
+		const backdrop = menuVariants().backdrop();
+		expect(backdrop).toContain("absolute");
+		expect(backdrop).toContain("inset-0");
+		expect(backdrop).not.toMatch(/\b(bg|text)-/);
+	});
+
 	test("a row is at least a touch target tall", () => {
 		expect(menuVariants().item()).toContain("min-h-11");
 	});
@@ -338,7 +345,7 @@ describe("menuVariants", () => {
 
 	test("no slot worn by a View carries a text colour", () => {
 		const slots = menuVariants({ variant: "destructive" });
-		for (const name of ["content", "background", "item", "itemFill", "subContent", "scrim"] as const) {
+		for (const name of ["content", "background", "item", "itemFill", "subContent", "scrim", "backdrop"] as const) {
 			expect(slots[name]()).not.toMatch(/\btext-/);
 		}
 	});

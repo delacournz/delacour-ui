@@ -4,6 +4,8 @@ description: A handle dragged across a rail to confirm — for an action a stray
 icon: ChevronsRight
 ---
 
+<Preview id="slide-button/slide-to-ship" title={null} />
+
 ## Installation
 
 <ComponentInstall name="slide-button" />
@@ -45,10 +47,14 @@ export default function Example() {
 `SlideButton.Thumb` is composed in when you leave it out. The handle tracks the finger exactly; only
 the release is sprung.
 
+<Preview id="slide-button/slide-to-ship" />
+
 ## Variants
 
 `secondary`, `destructive` and `success`. The handle stays neutral; the rail, trail and label take
 the colour.
+
+<Preview id="slide-button/variants" />
 
 ```tsx
 <SlideButton variant="secondary">
@@ -66,6 +72,8 @@ the colour.
 
 The same heights and corners as a [Button](/docs/native/components/button) at each size.
 
+<Preview id="slide-button/sizes" />
+
 ```tsx
 <SlideButton size="sm">…</SlideButton>
 <SlideButton size="md">…</SlideButton>
@@ -75,6 +83,8 @@ The same heights and corners as a [Button](/docs/native/components/button) at ea
 ## Threshold
 
 How far a release must reach, from `0.1` to `1`. At `1` only a release at the far end confirms.
+
+<Preview id="slide-button/threshold" />
 
 ```tsx
 <SlideButton threshold={0.5}>
@@ -88,6 +98,8 @@ How far a release must reach, from `0.1` to `1`. At `1` only a release at the fa
 ## Controlled, with slow work
 
 The handle waits at the end until `isCompleted` answers, so a request in flight never looks refused.
+
+<Preview id="slide-button/controlled-async" />
 
 ```tsx
 const [isSent, setIsSent] = useState(false);
@@ -123,6 +135,8 @@ Children on `SlideButton.Thumb` replace the chevron.
 ## Disabled
 
 `isDisabled` fades the control and refuses the drag — the handle does not move at all.
+
+<Preview id="slide-button/disabled" />
 
 ```tsx
 <SlideButton isDisabled>

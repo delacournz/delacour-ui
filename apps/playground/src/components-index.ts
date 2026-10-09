@@ -62,6 +62,12 @@ const ROWS = [
 		group: "Actions",
 	},
 	{
+		slug: "selection-mode",
+		title: "SelectionMode",
+		description: "Long press to pick several, then act from a bar",
+		group: "Actions",
+	},
+	{
 		slug: "toggle-button",
 		title: "ToggleButton",
 		description: "Variants, sizes, single and multiple groups",

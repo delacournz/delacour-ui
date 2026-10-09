@@ -77,6 +77,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A handle dragged across a rail to confirm — for an action a stray tap should never reach.",
 	},
 	{
+		slug: "selection-mode",
+		name: "SelectionMode",
+		group: "Actions",
+		blurb: "Pick several things at once \u2014 a long press enters the mode \u2014 then act on them from a bar.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",

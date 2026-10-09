@@ -343,6 +343,14 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_selection_mode_disabled_rows from "./selection-mode/disabled-rows";
+import * as demo_selection_mode_floating_bar from "./selection-mode/floating-bar";
+import * as demo_selection_mode_in_a_sheet from "./selection-mode/in-a-sheet";
+import * as demo_selection_mode_inbox_mode from "./selection-mode/inbox-mode";
+import * as demo_selection_mode_max_limit from "./selection-mode/max-limit";
+import * as demo_selection_mode_share_picker from "./selection-mode/share-picker";
+import * as demo_selection_mode_swatch_grid from "./selection-mode/swatch-grid";
+import * as demo_selection_mode_swatch_strip from "./selection-mode/swatch-strip";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
@@ -796,6 +804,14 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"selection-mode/disabled-rows": demo_selection_mode_disabled_rows,
+	"selection-mode/floating-bar": demo_selection_mode_floating_bar,
+	"selection-mode/in-a-sheet": demo_selection_mode_in_a_sheet,
+	"selection-mode/inbox-mode": demo_selection_mode_inbox_mode,
+	"selection-mode/max-limit": demo_selection_mode_max_limit,
+	"selection-mode/share-picker": demo_selection_mode_share_picker,
+	"selection-mode/swatch-grid": demo_selection_mode_swatch_grid,
+	"selection-mode/swatch-strip": demo_selection_mode_swatch_strip,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,

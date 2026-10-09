@@ -71,6 +71,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A deck taken one card at a time by throwing the top one off \u2014 one decision per card.",
 	},
 	{
+		slug: "slide-button",
+		name: "SlideButton",
+		group: "Actions",
+		blurb: "A handle dragged across a rail to confirm — for an action a stray tap should never reach.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",

@@ -11,6 +11,7 @@
 		"pressable",
 		"swipe",
 		"stack-card",
+		"slide-button",
 		"toggle-button",
 		"---Forms---",
 		"field",

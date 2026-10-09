@@ -6,6 +6,7 @@
 		"index",
 		"---Actions---",
 		"button",
+		"menu",
 		"pressable",
 		"swipe",
 		"stack-card",

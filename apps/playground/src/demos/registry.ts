@@ -72,9 +72,11 @@ import * as demo_bottom_sheet_steps_per_step_snap_points from "./bottom-sheet/st
 import * as demo_bottom_sheet_steps_three_step_form from "./bottom-sheet/steps/three-step-form";
 import * as demo_button_disabled from "./button/disabled";
 import * as demo_button_group from "./button/group";
+import * as demo_button_group_full_width from "./button/group-full-width";
 import * as demo_button_group_input from "./button/group-input";
 import * as demo_button_group_orientation from "./button/group-orientation";
 import * as demo_button_group_separator from "./button/group-separator";
+import * as demo_button_group_spaced from "./button/group-spaced";
 import * as demo_button_group_text from "./button/group-text";
 import * as demo_button_icon_button from "./button/icon-button";
 import * as demo_button_icons from "./button/icons";
@@ -541,9 +543,11 @@ export const DEMOS = {
 	"bottom-sheet/steps/three-step-form": demo_bottom_sheet_steps_three_step_form,
 	"button/disabled": demo_button_disabled,
 	"button/group": demo_button_group,
+	"button/group-full-width": demo_button_group_full_width,
 	"button/group-input": demo_button_group_input,
 	"button/group-orientation": demo_button_group_orientation,
 	"button/group-separator": demo_button_group_separator,
+	"button/group-spaced": demo_button_group_spaced,
 	"button/group-text": demo_button_group_text,
 	"button/icon-button": demo_button_icon_button,
 	"button/icons": demo_button_icons,

@@ -298,6 +298,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "An animated loading indicator drawn on the icon scale.",
 		categories: ["feedback"],
 	},
+	"stack-card": {
+		title: "Stack Card",
+		description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
+		categories: ["controls"],
+	},
 	steps: {
 		title: "Steps",
 		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",

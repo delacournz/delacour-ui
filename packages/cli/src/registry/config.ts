@@ -280,6 +280,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
 		categories: ["feedback"],
 	},
+	"progress-button": {
+		title: "Progress Button",
+		description:
+			"A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+		categories: ["controls"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",

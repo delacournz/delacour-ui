@@ -12,6 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Every variant rests on the same surface and carries its colour in the label and the fill. The label is drawn twice, so it stays readable across the wipe.",
 	align: "center",
+	capture: { flow: "progress-button/variants" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

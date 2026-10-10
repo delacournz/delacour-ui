@@ -145,8 +145,9 @@ markers. Nothing else needs doing — the lock already names the new registry te
 ### `update` skipped a file "not in the lock"
 
 The file was copied in before the lock existed and no longer matches the registry, so there is
-nothing to merge it from. Name the ref it came from with `--base <ref>`, or take the registry's
-copy with `add <name> --overwrite`.
+nothing to merge it from. At a terminal, `update` asks what to do with those files once the run is
+done. Anywhere else, name the ref it came from with `--base <ref>`, or take the registry's copy
+with `add <name> --overwrite`.
 
 ### The registry does not have a component I can see on this site
 

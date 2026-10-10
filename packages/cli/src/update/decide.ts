@@ -49,6 +49,12 @@ export type DecideOptions = {
 	prune: boolean;
 	/** Whether this file has changes git has not got, and nobody said to merge into them anyway. */
 	unsafe: boolean;
+	/**
+	 * Write the registry's text over a file that has no lock entry and differs.
+	 * Never a flag: it is set only by someone answering the question `update`
+	 * asks after a run, because it is the one decision here that drops an edit.
+	 */
+	replaceUntracked: boolean;
 };
 
 export function decide(file: UpdateFile, options: DecideOptions): Decision {
@@ -77,7 +83,7 @@ export function decide(file: UpdateFile, options: DecideOptions): Decision {
 			return decideRemoved(result, options);
 
 		case "untracked":
-			return decideUntracked(file, result);
+			return decideUntracked(file, result, options);
 	}
 }
 
@@ -109,8 +115,18 @@ function decideRemoved(result: Extract<FileState, { state: "removed-upstream" }>
 	};
 }
 
-function decideUntracked(file: UpdateFile, result: Extract<FileState, { state: "untracked" }>): Decision {
+function decideUntracked(
+	file: UpdateFile,
+	result: Extract<FileState, { state: "untracked" }>,
+	options: DecideOptions
+): Decision {
 	if (result.adopt) return { action: "adopted", record: true };
+
+	if (result.reason === "no-entry" && options.replaceUntracked) {
+		if (options.unsafe) return { action: "skipped", note: "has uncommitted changes — commit them, or pass --force" };
+
+		return { action: "updated", write: result.content, record: true };
+	}
 
 	return {
 		action: "skipped",

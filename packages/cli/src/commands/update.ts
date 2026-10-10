@@ -31,6 +31,13 @@ import { settleDependencies } from "./add";
  * edit is never overwritten, and a file is only deleted under `--prune`, and
  * only if it was never touched.
  *
+ * One case has no answer the lock can give: a file copied before the lock
+ * existed, which differs from the registry. The run skips it, and then — with
+ * someone to ask — asks what to do about the files it skipped: merge them from
+ * a ref the reader names, replace them, or leave them. Whatever they pick is a
+ * second pass over the same plan with that answer filled in, so the question
+ * changes nothing about how a file is classified or written.
+ *
  * The ref it updates to is the one the running CLI was built against, so
  * updating a project means running a newer CLI: `bunx delacour@latest update`.
  */
@@ -55,6 +62,11 @@ export type UpdateOptions = {
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
+	/**
+	 * Write the registry's copy over files with no lock entry that differ from it.
+	 * Not a flag — set by the answer to the question asked after a run.
+	 */
+	replaceUntracked?: boolean;
 };
 
 export type UpdatedFile = {
@@ -77,22 +89,68 @@ export type UpdateResult = {
 	installed: boolean;
 };
 
+/** What to do with the files a run skipped for having no lock entry. */
+export type UntrackedAnswer = { kind: "leave" } | { kind: "merge"; base: string } | { kind: "replace" };
+
 /** The registries an update reads, injected so a test can stand two directories in for two refs. */
 export type UpdateClients = {
 	target: RegistryClient;
 	baseClient: (ref: string) => RegistryClient;
 	format?: Format;
+	/** Asks about the skipped files, by display path. The prompt, unless a test answers instead. */
+	askUntracked?: (files: readonly string[]) => Promise<UntrackedAnswer>;
 };
 
 export async function update(names: string[], options: UpdateOptions, clients?: UpdateClients): Promise<UpdateResult> {
 	const output = createOutput({ ...options, silent: options.silent || options.json });
+	const first = await runUpdate(names, options, output, clients);
+
+	const ask = clients?.askUntracked ?? (output.interactive ? promptUntracked : undefined);
+	const answered = options.dryRun || options.base !== undefined || options.replaceUntracked;
+	if (!ask || answered || first.untracked.length === 0) return first.result;
+
+	const answer = await ask(first.untracked);
+	if (answer.kind === "leave") return first.result;
+
+	// Everything the first pass settled is current now, so the second touches only the files asked about.
+	const second = await runUpdate(
+		names,
+		answer.kind === "merge" ? { ...options, base: answer.base } : { ...options, replaceUntracked: true },
+		output,
+		clients
+	);
+
+	return {
+		...second.result,
+		written: first.result.written + second.result.written,
+		conflicts: first.result.conflicts + second.result.conflicts,
+		dependencies: second.result.dependencies ?? first.result.dependencies,
+		installed: first.result.installed || second.result.installed,
+	};
+}
+
+/** One pass: plan, decide, apply, report. `untracked` is what it skipped for want of a lock entry. */
+async function runUpdate(
+	names: string[],
+	options: UpdateOptions,
+	output: Output,
+	clients?: UpdateClients
+): Promise<{ result: UpdateResult; untracked: string[] }> {
 	const { plan, config, lock, ref } = await readPlan(names, options, output, clients);
 
 	const unsafe = await unsafeToMerge(plan, options, output);
 	const decided = plan.files.map((file) => ({
 		file,
-		decision: decide(file, { prune: options.prune ?? false, unsafe: unsafe.has(file.path) }),
+		decision: decide(file, {
+			prune: options.prune ?? false,
+			unsafe: unsafe.has(file.path),
+			replaceUntracked: options.replaceUntracked ?? false,
+		}),
 	}));
+
+	const untracked = decided
+		.filter(({ file, decision }) => isUnrecorded(file) && decision.action === "skipped")
+		.map(({ file }) => file.displayPath);
 
 	const files = decided.map(({ file, decision }) => ({
 		item: file.item,
@@ -111,7 +169,7 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 		installed: false,
 	};
 
-	if (options.dryRun) return finish(result, options, output);
+	if (options.dryRun) return { result: finish(result, options, output), untracked };
 
 	await apply(decided, config, lock, ref);
 
@@ -124,7 +182,43 @@ export async function update(names: string[], options: UpdateOptions, clients?: 
 		result.installed = settled.installed;
 	}
 
-	return finish(result, options, output);
+	return { result: finish(result, options, output), untracked };
+}
+
+/** On disk, differing from the registry, and with no lock entry to say which side moved. */
+function isUnrecorded(file: UpdateFile): boolean {
+	return file.result.state === "untracked" && file.result.reason === "no-entry" && !file.result.adopt;
+}
+
+/**
+ * The question asked after a run that skipped files for having no lock entry.
+ *
+ * Leaving them is the default and what Escape means: the run before this has
+ * already finished, so there is nothing to cancel, only more to decline.
+ */
+async function promptUntracked(files: readonly string[]): Promise<UntrackedAnswer> {
+	const several = files.length !== 1;
+
+	const choice = await clack.select<UntrackedAnswer["kind"]>({
+		message: `${files.length} skipped file${several ? "s were" : " was"} copied before the lock existed. Update ${several ? "them" : "it"} now?`,
+		initialValue: "leave",
+		options: [
+			{ value: "leave", label: "No, leave as is" },
+			{ value: "merge", label: "Merge", hint: "keeps your edits — needs the ref they were copied from" },
+			{ value: "replace", label: "Replace with the registry's copy", hint: "your edits to these files are lost" },
+		],
+	});
+
+	if (clack.isCancel(choice) || choice === "leave") return { kind: "leave" };
+	if (choice === "replace") return { kind: "replace" };
+
+	const base = await clack.text({
+		message: "Which ref were they copied from?",
+		placeholder: "a commit, tag or branch of the registry",
+		validate: (value) => (value?.trim() ? undefined : "A ref is needed to merge from."),
+	});
+
+	return clack.isCancel(base) ? { kind: "leave" } : { kind: "merge", base: base.trim() };
 }
 
 /** What reading a plan needs of the options — the part `diff` shares. */
@@ -203,9 +297,10 @@ async function apply(
 /**
  * The files it would be reckless to merge into.
  *
- * Only a merge is at stake. Replacing an untouched file loses nothing, and the
- * other outcomes write nothing — but a merge rewrites a file somebody edited,
- * and if that edit was never committed there is no way back to it.
+ * Only a merge is at stake, and a replacement someone asked for after the run.
+ * Replacing an untouched file loses nothing, and the other outcomes write
+ * nothing — but these two rewrite a file somebody edited, and if that edit was
+ * never committed there is no way back to it.
  *
  * With someone to ask, they are asked once. With no one, the files are skipped
  * and named, and `--force` is how a script says it means it.
@@ -213,7 +308,10 @@ async function apply(
 async function unsafeToMerge(plan: UpdatePlan, options: UpdateOptions, output: Output): Promise<Set<string>> {
 	if (options.force || options.dryRun) return new Set();
 
-	const merges = plan.files.filter((file) => file.result.state === "both");
+	const verb = options.replaceUntracked ? "replace" : "merge into";
+	const merges = plan.files.filter(
+		(file) => file.result.state === "both" || (options.replaceUntracked && isUnrecorded(file))
+	);
 	const states = await Promise.all(merges.map((file) => hasUncommittedChanges(file.path)));
 	const dirty = merges.filter((_, index) => states[index] === true);
 
@@ -226,12 +324,13 @@ async function unsafeToMerge(plan: UpdatePlan, options: UpdateOptions, output: O
 
 	output.warn(
 		[
-			"These files have uncommitted changes, and the update would merge into them:",
+			`These files have uncommitted changes, and the update would ${verb} them:`,
 			...dirty.map((file) => `  ${style.path(file.displayPath)}`),
 		].join("\n")
 	);
 
-	return (await output.confirm("Merge into them anyway?", false)) ? new Set() : new Set(dirty.map((file) => file.path));
+	const anyway = await output.confirm(`${verb[0]?.toUpperCase()}${verb.slice(1)} them anyway?`, false);
+	return anyway ? new Set() : new Set(dirty.map((file) => file.path));
 }
 
 async function projectFormat(config: ResolvedConfig, options: PlanOptions, output: Output): Promise<Format> {

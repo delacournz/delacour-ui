@@ -19,6 +19,8 @@
 		"version-packages": "bun .github/changeset-version.ts",
 		"release": "bun .github/changeset-stage.ts",
 		"verify:expo": "cd packages/cli && bun scripts/verify-expo.ts",
+		"cli:link": "cd packages/cli && bun run build && bun scripts/link.ts link",
+		"cli:unlink": "cd packages/cli && bun scripts/link.ts unlink",
 		"nuke": "rm -rf node_modules ./apps/**/node_modules ./packages/**/node_modules && bun install --no-cache -f",
 		"previews": "turbo previews --filter=@delacour/playground"
 	},

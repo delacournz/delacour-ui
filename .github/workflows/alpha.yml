@@ -9,7 +9,7 @@ name: Alpha
 # stage-only publisher, so a stable version still does. The publisher binds to this filename —
 # rename the file and every publish is refused until the publisher is recreated.
 #
-# A push with nothing pending — the release commit `release.yml` pushes, a docs-only merge —
+# A push with nothing pending — the release pull request's merge, a docs-only merge —
 # publishes nothing and exits green.
 on:
   push:

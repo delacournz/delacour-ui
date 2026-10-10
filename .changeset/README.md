@@ -16,6 +16,7 @@ Only four packages are releasable: `delacour` (the CLI), `@delacour/react-native
 workspace is private.
 
 Once merged into `develop`, a changeset publishes an `x.y.z-alpha.<datetime>` snapshot of every
-package it names to npm under `alpha`, and stays pending. `gh workflow run release.yml --ref develop`
-consumes every pending changeset into a stable release on `latest` and fast-forwards `main`. See
+package it names to npm under `alpha`, and stays pending. The same merge opens or updates the
+release pull request against `develop`; merging that consumes every pending changeset into a stable
+release on `latest` and fast-forwards `main`. See
 [the root AGENTS.md](../AGENTS.md#releases) for the whole flow, diagrams included.

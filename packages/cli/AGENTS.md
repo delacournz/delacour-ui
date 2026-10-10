@@ -353,7 +353,7 @@ run is caught before a build renders its dark theme as a utility class.
 
 `tsdown.config.ts` defines `__REGISTRY_REF__` from `DELACOUR_REGISTRY_REF`, and release CI passes
 **the commit it is publishing**, not the tag — `alpha.yml` the pushed `develop` commit, `release.yml`
-the release commit it just made. A published version therefore always
+the release pull request's merge commit. A published version therefore always
 reads the registry it shipped against; `--ref develop` opts into what has landed since. `main`
 is the last release — `release.yml` fast-forwards it — so `--ref main` is only ever as new as the
 newest published CLI.
@@ -363,8 +363,8 @@ would name something that does not exist yet, and a publish that succeeded befor
 push would ship a CLI pointing at a ref that never appears. `raw.githubusercontent.com` serves a
 full SHA just as happily.
 
-`DELACOUR_REGISTRY_REF` is never set on the build step alone: `alpha.yml` sets it at job level, and
-`release.yml` writes it to `GITHUB_ENV` once the release commit exists. `npm publish` re-runs
+`DELACOUR_REGISTRY_REF` is never set on the build step alone: `alpha.yml` and `release.yml` both set
+it at job level. `npm publish` re-runs
 `prepublishOnly`, which rebuilds the bundle — if the ref were unset for that rebuild it would
 silently bake `main` over the correct value.
 

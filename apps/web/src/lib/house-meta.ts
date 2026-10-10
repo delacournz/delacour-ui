@@ -6,6 +6,6 @@
 
 /** The house preset's page background, light and dark, as `#rrggbb`. */
 export const HOUSE_BACKGROUND = {
-	light: "#fafafa",
-	dark: "#09090b",
+	light: "#ffffff",
+	dark: "#131313",
 } as const;

@@ -6,7 +6,7 @@
  * system must stay app-free and the library ships to consumers, so neither can
  * hold a list that exists to arrange two apps' indexes; `components-index.test.ts`
  * reads the web file back by relative path and fails by name when the two
- * drift. Icons live beside the rows in `app/index.tsx` rather than here, so
+ * drift. Icons live in `components/component-icons.ts` rather than here, so
  * `bun test` can load this file without React Native.
  *
  * `slug` is the route, the demo folder and the docs page in one string; the
@@ -189,8 +189,14 @@ export const COMPONENT_INDEX: readonly ComponentIndexRow[] = ROWS.map((entry) =>
 
 export type ComponentGroupSection = {
 	readonly name: ComponentGroup;
+	/** The name in kebab-case — `Data display` is `data-display` — and the route's `[group]` segment. */
+	readonly slug: string;
+	readonly href: Href;
 	readonly entries: readonly ComponentIndexRow[];
 };
+
+/** How many titles a group's summary names before it counts the rest. */
+const SUMMARY_NAMED = 3;
 
 /** How many components have a screen — the navbar's subtitle, derived rather than typed. */
 export function componentCount(): number {
@@ -198,12 +204,38 @@ export function componentCount(): number {
 }
 
 /**
- * The index as the home screen draws it: the docs' group order, alphabetical
- * inside each, and no heading over an empty group.
+ * The index as `/components` draws it: the docs' group order, alphabetical
+ * inside each, and no row for an empty group. Each group is a screen of its
+ * own at `/components/<slug>`.
  */
 export function groupedComponents(): readonly ComponentGroupSection[] {
-	return COMPONENT_GROUPS.map((name) => ({
-		name,
-		entries: COMPONENT_INDEX.filter((entry) => entry.group === name).sort((a, b) => a.title.localeCompare(b.title)),
-	})).filter((group) => group.entries.length > 0);
+	return COMPONENT_GROUPS.map((name) => {
+		const slug = name.toLowerCase().replaceAll(" ", "-");
+
+		return {
+			name,
+			slug,
+			href: `/components/${slug}` as const,
+			entries: COMPONENT_INDEX.filter((entry) => entry.group === name).sort((a, b) => a.title.localeCompare(b.title)),
+		};
+	}).filter((group) => group.entries.length > 0);
+}
+
+/** The group a `[group]` route segment names, or `undefined` for a slug no group has. */
+export function componentGroup(slug: string | undefined): ComponentGroupSection | undefined {
+	return groupedComponents().find((group) => group.slug === slug);
+}
+
+/**
+ * A group's row description: its first few titles, then a count of the rest —
+ * enough to say what is inside without the row wrapping to four lines.
+ */
+export function groupSummary(entries: readonly { readonly title: string }[]): string {
+	const named = entries
+		.slice(0, SUMMARY_NAMED)
+		.map((entry) => entry.title)
+		.join(", ");
+	const rest = entries.length - SUMMARY_NAMED;
+
+	return rest > 0 ? `${named} and ${rest} more` : named;
 }

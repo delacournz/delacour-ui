@@ -183,8 +183,19 @@ dependency inlines exactly as `commander` and `zod` already do.
 
 ## The house preset is not the default
 
-`house.ts` names the studio's own look — zinc, the `delacour` accent, Inter under Outfit, a
-`small` corner — and pins its code. `apps/web` paints itself from it and `apps/playground` opens in
+`graphite` and `vela` are the two axis values the house added, each appended after shadcn's own
+(base ordinal 7, palette ordinal 25, style ordinal 8). `graphite` is neutral's hue with a lifted dark
+page (`L 0.188`, card a step up, sidebar a step down), alpha `border` and `input` in **both** modes,
+opaque fills (alpha compounds where the library stacks fills), and a categorical chart ramp — five
+hues, not a sequential one, so `contrast.test.ts` holds only `chart-1` to 3:1 in both modes and keeps
+the darkening rule for the amber ramp. `vela` is 32/36/44 controls over a 12/13/15 type scale: dense
+enough for a mono UI, with 36 as the smallest comfortable touch height.
+
+`house.ts` names the studio's own look — the `graphite` base (which is also its own accent and
+chart ramp), JetBrains Mono for the UI and the headings alike, a `medium` 10pt corner and the dense
+`vela` geometry — and pins its code, `AQgHGRkTEwPe`. The previous studio look (zinc, the `delacour`
+amber, Inter under Outfit, `small`) survives as `DELACOUR_AMBER_CONFIG`, the second preset
+shortcut, still at `AQACGBgCCgLk`, so every link that was shared to it still opens it. `apps/web` paints itself from it and `apps/playground` opens in
 it; that is the product's pitch proven on our own surfaces. It lives here rather than in either app
 because both read it, and because the CLI must not: `delacour init` ships `DEFAULT_CONFIG`, the
 neutral identity theme that `theme.css` declares, and `house.test.ts` fails if the two ever meet.

@@ -1,14 +1,16 @@
 import { describe, expect, test } from "bun:test";
 import { DEFAULT_CONFIG } from "@delacour/design-system/config";
-import { HOUSE_CONFIG, PRESET_SHORTCUTS } from "@delacour/design-system/house";
+import { DELACOUR_AMBER_CONFIG, HOUSE_CONFIG, PRESET_SHORTCUTS } from "@delacour/design-system/house";
 import {
 	configEquals,
 	DEFAULT_THEME_MODE,
 	isThemeMode,
+	migrateStoredConfig,
 	parseStoredConfig,
 	parseStoredMode,
 	RESET_TARGETS,
 	resetTarget,
+	resolveMonoFamily,
 	THEME_MODES,
 } from "./store.pure";
 
@@ -46,12 +48,13 @@ describe("parseStoredConfig", () => {
 describe("reset targets", () => {
 	test("house is the studio preset and library is the shipped default", () => {
 		expect(resetTarget("house")).toBe(HOUSE_CONFIG);
+		expect(resetTarget("amber")).toBe(DELACOUR_AMBER_CONFIG);
 		expect(resetTarget("library")).toBe(DEFAULT_CONFIG);
 	});
 
-	test("the two targets are the two preset shortcuts, in the same order", () => {
+	test("the targets are the preset shortcuts, in the same order", () => {
 		expect(RESET_TARGETS.map((target) => target.config)).toEqual(PRESET_SHORTCUTS.map((preset) => preset.config));
-		expect(RESET_TARGETS.map((target) => target.name)).toEqual(["house", "library"]);
+		expect(RESET_TARGETS.map((target) => target.name)).toEqual(["house", "amber", "library"]);
 	});
 });
 
@@ -76,5 +79,56 @@ describe("configEquals", () => {
 		expect(configEquals({ ...HOUSE_CONFIG }, HOUSE_CONFIG)).toBe(true);
 		expect(configEquals({ ...HOUSE_CONFIG, radius: "large" }, HOUSE_CONFIG)).toBe(false);
 		expect(configEquals(DEFAULT_CONFIG, HOUSE_CONFIG)).toBe(false);
+	});
+});
+
+describe("migrateStoredConfig", () => {
+	// The studio's look was amber until the Devl house replaced it. A stored
+	// amber config on a build that has never migrated is the old default, not a
+	// choice, so it moves to the new house.
+	test("an unmigrated stored amber config moves to the new house", () => {
+		expect(migrateStoredConfig(DELACOUR_AMBER_CONFIG, false)).toEqual(HOUSE_CONFIG);
+	});
+
+	// Once migrated, amber can only have been picked from the preset strip.
+	test("a migrated amber config is a deliberate choice and stays", () => {
+		expect(migrateStoredConfig(DELACOUR_AMBER_CONFIG, true)).toEqual(DELACOUR_AMBER_CONFIG);
+	});
+
+	test("a customised config is never touched", () => {
+		const custom = { ...DELACOUR_AMBER_CONFIG, radius: "large" } as const;
+		expect(migrateStoredConfig(custom, false)).toEqual(custom);
+		expect(migrateStoredConfig(DEFAULT_CONFIG, false)).toEqual(DEFAULT_CONFIG);
+	});
+
+	test("the new house is left alone", () => {
+		expect(migrateStoredConfig(HOUSE_CONFIG, false)).toEqual(HOUSE_CONFIG);
+		expect(migrateStoredConfig(HOUSE_CONFIG, true)).toEqual(HOUSE_CONFIG);
+	});
+
+	// The house set its headings in Inter until they moved to the body's mono.
+	// No shortcut ever offered that config after the move, so a stored copy is
+	// the old default whether or not the amber migration has run.
+	test("the Inter-heading house moves to the mono house, migrated or not", () => {
+		const interHouse = { ...HOUSE_CONFIG, fontHeading: "inter" } as const;
+		expect(migrateStoredConfig(interHouse, false)).toEqual(HOUSE_CONFIG);
+		expect(migrateStoredConfig(interHouse, true)).toEqual(HOUSE_CONFIG);
+	});
+});
+
+describe("resolveMonoFamily", () => {
+	// Text.Kicker and Text.Code draw in `font-mono`. Under the house that has to
+	// be the house mono, not the platform's Menlo beside it.
+	test("is the body face when the body is a mono", () => {
+		expect(resolveMonoFamily(HOUSE_CONFIG)).toBe("JetBrains Mono");
+	});
+
+	test("falls to a mono heading when the body is not one", () => {
+		expect(resolveMonoFamily({ ...DEFAULT_CONFIG, font: "inter", fontHeading: "geist-mono" })).toBe("Geist Mono");
+	});
+
+	test("is nothing — the platform's own mono — when neither face is a mono", () => {
+		expect(resolveMonoFamily(DELACOUR_AMBER_CONFIG)).toBeUndefined();
+		expect(resolveMonoFamily(DEFAULT_CONFIG)).toBeUndefined();
 	});
 });

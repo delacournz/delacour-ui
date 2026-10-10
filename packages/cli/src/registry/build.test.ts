@@ -79,7 +79,8 @@ describe("buildRegistry", () => {
 		expect(pressable?.expoDependencies).toContain("react-native-gesture-handler");
 		expect(pressable?.dependencies).not.toContain("react-native-reanimated");
 
-		expect(byName.get("cn")?.dependencies).toEqual(["clsx", "tailwind-merge"]);
+		expect(byName.get("cn")?.dependencies).toEqual(["cn"]);
+		expect(byName.get("tv")?.dependencies).toEqual(["tailwind-merge", "tailwind-variants"]);
 	});
 
 	test("installs the bottom sheet's engine from npm and its native peers through expo", () => {

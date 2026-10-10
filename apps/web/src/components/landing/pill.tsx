@@ -3,20 +3,23 @@ import type { ReactElement, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * The site's two calls to action, as the studio site draws them: a fully
- * round pill, 14/500, `10px 20px`. The primary is amber with the card colour
- * for text; the ghost is a hairline on the page. The amber one carries a soft,
- * offset shadow mixed from itself on hover — the only place the site glows.
+ * The site's two calls to action, as the language draws a control: a h-9
+ * rounded-lg, 13px, pressing to .97. The primary is the greyscale primary with
+ * the 16% inner highlight; the ghost is a hairline on the page that fills with
+ * 4% foreground on hover. Nothing glows — colour is for status and charts.
  */
 export const PILL =
-	"inline-flex h-11 items-center justify-center gap-2 rounded-full px-5 font-medium text-sm transition";
+	"inline-flex h-9 items-center justify-center gap-2 rounded-lg px-4 font-medium text-[13px] transition-[color,background-color,box-shadow,scale] duration-150 ease-out active:scale-[0.97]";
 
 export const PILL_PRIMARY = cn(
 	PILL,
-	"bg-fd-primary text-fd-primary-foreground hover:shadow-[0_8px_24px_-8px_var(--glow)] hover:brightness-105"
+	"bg-fd-primary text-fd-primary-foreground shadow-(--highlight-primary) hover:bg-fd-primary/90"
 );
 
-export const PILL_GHOST = cn(PILL, "border border-fd-border bg-fd-card/60 text-fd-foreground hover:bg-fd-accent");
+export const PILL_GHOST = cn(
+	PILL,
+	"raised border border-fd-border bg-fd-card text-fd-foreground hover:bg-(--hover-fill)"
+);
 
 type PillLinkProps = Pick<LinkProps, "to" | "params" | "search"> & {
 	variant?: "primary" | "ghost";
@@ -34,4 +37,4 @@ export function PillLink({ variant = "primary", className, children, ...link }: 
 
 /** An in-line "→" link in the site's muted voice, brightening on hover. */
 export const ARROW_LINK =
-	"inline-flex items-center gap-1 font-medium text-fd-muted-foreground text-sm transition-colors hover:text-fd-foreground";
+	"inline-flex items-center gap-1 text-fd-muted-foreground text-xs transition-colors duration-150 ease-out hover:text-fd-foreground";

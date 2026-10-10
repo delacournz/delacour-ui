@@ -30,7 +30,7 @@ export function Demo(): ReactElement {
 						{({ date, labelClassName }) => (
 							<View className="items-center">
 								<Text className={labelClassName}>{date.day}</Text>
-								<Text className={cn(labelClassName, "text-[10px] leading-3 opacity-70")}>{`$${priceOf(date)}`}</Text>
+								<Text className={cn(labelClassName, "text-kicker leading-3 opacity-70")}>{`$${priceOf(date)}`}</Text>
 							</View>
 						)}
 					</Calendar.Day>

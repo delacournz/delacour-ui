@@ -5,6 +5,15 @@
 
 @source "../**/*.{ts,tsx}";
 
+/* The utility the library's Text.Display, Title and Header carry. The library's
+   own theme.css declares --font-heading only inside its platform variants, so
+   Tailwind mints no `font-heading` class from it and the presets drew in the
+   body face. Declared here once, as the fallback the store's applyConfig then
+   overwrites with the resolved Heading axis. */
+@theme {
+	--font-heading: system-ui;
+}
+
 /* Real workspace path, not node_modules: Bun symlinks workspace packages and
    Tailwind's scanner cannot follow symlinks, so the library's classes would be
    silently dropped from production builds. */

@@ -65,8 +65,11 @@ feedback, and they can read exactly why every decision was made and change it in
   (`@delacour/react-native-charts`, an optional peer).
 - Bottom sheet: a headless engine of our own (`@delacour/react-native-bottom-sheet`, an optional
   peer) — snap points, keyboard, sticky footer, portal, detached and multi-step sheets.
-- Design system axes: 7 neutral base ramps, 17 accents, 8 style geometries, 5 radii, 26 fonts;
-  presets encode to a short shareable code.
+- Design system axes: 8 neutral base ramps (shadcn's 7 plus the house `graphite`), 18 accents,
+  9 style geometries (plus the house `vela`), 5 radii, 26 fonts; presets encode to a short shareable code.
+- House look (docs site + playground): greyscale graphite, alpha hairlines, JetBrains Mono throughout,
+  headings included, dense Vela controls, 10pt corners — `HOUSE_CONFIG`, code `AQgHGRkTEwPe`. The
+  previous amber studio look stays a preset ("Delacour amber"). The library default is untouched.
 - Unit tests cover pure logic only; renderer behaviour is verified in the playground on a simulator.
 - Icons: Central Icons is the library's only icon set.
 - Undecided: stable (non-alpha) release date; Android-specific design adaptations beyond what

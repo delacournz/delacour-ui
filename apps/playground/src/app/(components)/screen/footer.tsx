@@ -60,10 +60,10 @@ export default function ScreenFooterDemo(): ReactElement {
 						</Button>
 					</View>
 					<TextInput
-						className="h-button-md rounded-lg border border-border bg-card px-3 text-base text-foreground"
+						className="h-button-md rounded-lg border border-border bg-card px-3 font-sans text-base text-foreground"
 						onChangeText={setDraft}
 						placeholder="Focus me to move the keyboard"
-						placeholderTextColor="#9CA3AF"
+						placeholderTextColorClassName="accent-muted-foreground"
 						value={draft}
 					/>
 					<Text.Caption>

@@ -21,8 +21,8 @@ const families = (href: string): string[] =>
 	[...new URL(href).searchParams.getAll("family")].map((clause) => clause.split(":")[0] ?? "");
 
 describe("siteStylesheetHref", () => {
-	test("names the three house faces and nothing else", () => {
-		expect(families(siteStylesheetHref()).sort()).toEqual(["Geist Mono", "Inter", "Outfit"]);
+	test("names the one house face and nothing else", () => {
+		expect(families(siteStylesheetHref()).sort()).toEqual(["JetBrains Mono"]);
 	});
 
 	test("at full coverage", () => {
@@ -30,8 +30,8 @@ describe("siteStylesheetHref", () => {
 	});
 
 	test("asks each face only for weights it ships", () => {
-		expect(siteStylesheetHref()).toContain("family=Geist+Mono:wght@400;500");
-		expect(siteStylesheetHref()).toContain("family=Inter:wght@400;500;600;700");
+		expect(siteStylesheetHref()).toContain("family=JetBrains+Mono:wght@400;500;600;700");
+		expect(siteStylesheetHref()).not.toContain("family=Inter");
 	});
 });
 

@@ -16,7 +16,7 @@ import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
 
 /**
  * The social card, as an SVG string: 1200×630, the house dark page, the mark,
- * the page title in Outfit and one line under it in Inter.
+ * the page title and one line under it, all in Inter.
  *
  * Pure — a string in, a string out — so the layout is testable with no
  * rasteriser, and `routes/og/docs.ts` only has to hand it to resvg. The mark is
@@ -35,7 +35,7 @@ import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
 export const OG_WIDTH = 1200;
 export const OG_HEIGHT = 630;
 
-/** Outfit 600 at 64px on a 1000px measure — a hard wrap past this many characters. */
+/** Inter 400 at 64px on a 1000px measure — a hard wrap past this many characters. */
 const TITLE_CHARS_PER_LINE = 30;
 const TITLE_MAX_LINES = 3;
 
@@ -191,7 +191,7 @@ export function ogCardSvg({ title, subtitle, product = "ui" }: OgCard = {}): str
 	const titleText = lines
 		.map(
 			(text, index) =>
-				`<text x="96" y="${Math.round(titleTop + index * lineHeight)}" font-family="Outfit" font-weight="600" font-size="${titleSize}" letter-spacing="-1.5" fill="#fafafa">${escapeXml(text)}</text>`
+				`<text x="96" y="${Math.round(titleTop + index * lineHeight)}" font-family="Inter" font-weight="400" font-size="${titleSize}" letter-spacing="-1.5" fill="#fafafa">${escapeXml(text)}</text>`
 		)
 		.join("");
 
@@ -201,7 +201,7 @@ export function ogCardSvg({ title, subtitle, product = "ui" }: OgCard = {}): str
 		`<svg width="${OG_WIDTH}" height="${OG_HEIGHT}" viewBox="0 0 ${OG_WIDTH} ${OG_HEIGHT}" xmlns="http://www.w3.org/2000/svg">`,
 		`<rect width="${OG_WIDTH}" height="${OG_HEIGHT}" fill="${HOUSE_BACKGROUND.dark}"/>`,
 		mark(96, 96, 72),
-		`<text x="192" y="146" font-family="Outfit" font-weight="600" font-size="34" letter-spacing="-0.5" fill="#fafafa">${escapeXml(seo.name)}</text>`,
+		`<text x="192" y="146" font-family="Inter" font-weight="400" font-size="34" letter-spacing="-0.5" fill="#fafafa">${escapeXml(seo.name)}</text>`,
 		titleText,
 		`<circle cx="102" cy="${subtitleTop - 9}" r="5" fill="${DELACOUR_STROKE_COLOUR}"/>`,
 		`<text x="120" y="${subtitleTop}" font-family="Inter" font-size="28" fill="#a1a1aa">${escapeXml(line)}</text>`,

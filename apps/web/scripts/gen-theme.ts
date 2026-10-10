@@ -32,6 +32,16 @@ const CSS_OUT = join(WEB, "src", "styles", "house.css");
 const META_OUT = join(WEB, "src", "lib", "house-meta.ts");
 
 /**
+ * The preset the committed media under `public/previews/` was photographed on.
+ *
+ * Recaptured in the house (graphite, JetBrains Mono, Inter), so it is
+ * `HOUSE_CONFIG`. It keeps its own name so a frame is painted from what the
+ * media was shot on, and the day the capture preset moves again only this line
+ * does.
+ */
+const CAPTURE_CONFIG = HOUSE_CONFIG;
+
+/**
  * Fumadocs slot ← library token.
  *
  * `fd-card` maps to `card` outright. The old transcription substituted
@@ -98,9 +108,12 @@ export function fontDeclarations(): readonly (readonly [name: string, value: str
 	const mono = houseFonts().find((font) => font.type === "mono")?.family;
 	if (!sans || !heading || !mono) throw new Error("the house preset must name a sans, a heading and a mono face");
 
+	/** A body set in the mono face falls back to the platform mono, not the platform sans. */
+	const fallback = (family: string): string => (family === mono ? MONO_FALLBACK : SANS_FALLBACK);
+
 	return [
-		["--font-sans", `${quoted(sans)}, ${SANS_FALLBACK}`],
-		["--font-heading", `${quoted(heading)}, ${SANS_FALLBACK}`],
+		["--font-sans", `${quoted(sans)}, ${fallback(sans)}`],
+		["--font-heading", `${quoted(heading)}, ${fallback(heading)}`],
 		["--font-mono", `${quoted(mono)}, ${MONO_FALLBACK}`],
 	];
 }
@@ -121,7 +134,7 @@ function paletteLines(mode: ResolvedMode): string {
  */
 export function renderHouseCss(): string {
 	const { light, dark } = resolveTokens(HOUSE_CONFIG);
-	const captured = resolveTokens(HOUSE_CONFIG);
+	const captured = resolveTokens(CAPTURE_CONFIG);
 	const fonts = fontDeclarations()
 		.map(([name, value]) => `\t${name}: ${value};`)
 		.join("\n");

@@ -55,19 +55,28 @@ running from another project does not silently serve this one.
 src/
 ├── app/                          expo-router routes
 │   ├── _layout.tsx               DelacourProvider + NavigationTheme + the global.css import
-│   ├── index.tsx                 the home screen — the mark, the count, and every gallery grouped as the docs group them
+│   ├── index.tsx                 the hub — the mark, the large title, a card each for Components and Blocks, and About
+│   ├── components/               index.tsx — the docs' groups, one row each; [group].tsx — one group's galleries
+│   ├── blocks.tsx                every block, one row each
 │   ├── preview.tsx               the chrome-free capture frame — see Demos below
 │   ├── +native-intent.ts         rewrites an incoming playground link — see Deep links
 │   ├── theme/                    the customizer, as two swipeable tabs — see Customizer
+│   ├── (blocks)/                 the key screens — see Blocks
 │   └── (components)/             one route per component, grouped without a path segment
-├── components-index.ts           the home screen's rows and groups, pure — held to apps/web by its test
+├── blocks/                       the blocks' fixtures and pure logic, with their tests — see Blocks
+├── components-index.ts           the component rows, groups, group slugs and summaries, pure — held to apps/web by its test
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
+├── lib/hub-cards.ts             the hub's two cards — titles, counts, glows — pure and tested
 ├── lib/open-web-page.ts         the one way a link reaches the web — the in-app browser; see Web pages
 ├── lib/web-page.ts              its order of attempts and double-tap guard, pure and tested
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
+│   ├── block-screen.tsx          BlockScreen — the frame every block shares
+│   ├── block-section.tsx         BlockSection — a kicker over a tray
+│   ├── hub-card.tsx              HubCard — one of the hub's two etched doors, with a Skia glow
+│   ├── component-icons.ts        a glyph per component slug and per docs group, typed by key
 │   ├── demo-pager/               the paged gallery — one demo per screen
 │   ├── folder-index.tsx          FolderIndex — the one shape every folder route's index takes
 │   ├── gallery-screen.tsx        GalleryScreen — a scrolling frame, for a hand-written page
@@ -87,8 +96,9 @@ src/
 `(components)` is a **route group**: the parentheses keep it out of the URL, so
 the file `(components)/button.tsx` is the route `/button`.
 
-`/theme` and `/preview` are the only two top-level routes that are not a
-component's gallery. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
+`/theme`, `/preview`, `/components`, `/components/<group>` and `/blocks` are the only routes that
+are not a component's gallery or a block — the last three are the lists the hub opens. `components/`
+has no parentheses, so unlike `(components)/` it is a real path segment. Neither has a `Stack.Screen` of its own: `_layout.tsx` is a
 `<Stack>` with no children, so expo-router registers both from their filenames and
 `/theme` pushes as an ordinary card. Its one setting is the anchor — see
 [Deep links](#deep-links).
@@ -238,38 +248,88 @@ The themed `bottom-sheet/` gallery has seven facets — `anatomy`, `sizing`, `sc
 
 As above, plus: create `src/app/(components)/{name}.tsx` as the shell, **add a
 row to `src/components-index.ts`** — `slug`, `title`, `description` and the
-docs' `group` — and **a glyph for the slug to `ICONS` in `src/app/index.tsx`**,
+docs' `group` — and **a glyph for the slug to `COMPONENT_ICONS` in `src/components/component-icons.ts`**,
 from `@delacour/react-native-ui/icons/central`. The row is pure so `bun test` can hold
 it to `apps/web/src/lib/components.ts`; the glyph is keyed by slug so a row
 without one is a type error. A gallery with no row is a page only a URL
 reaches, and nobody types URLs on a phone.
 
+## Blocks
+
+`src/app/(blocks)/` holds eight key screens composed **only** from `@delacour/react-native-ui`: a
+route group like `(components)`, so `settings.tsx` is `/settings`. They are the answer to "does the
+house hold up on a whole screen", which no single-component gallery can say.
+
+| Route | What it is |
+| --- | --- |
+| `/shell` | A navbar over a tab's content and a tab bar in a sticky `Screen.Footer` — `Tabs` with no panels, glyph over label |
+| `/settings` | Kicker over tray groups: a profile row, switch `Item`s, navigation `ListGroup.Item`s, an etched sign-out |
+| `/sign-in` | Etched fields in an etched `Card`, validation from `blocks/sign-in.ts`, the primary etched button in the footer |
+| `/otp` | Six etched `Input`s behaving as one field; the rules are `blocks/otp.ts` |
+| `/dashboard` | `Kpi` tiles and sparkline, and a `Chart` area-and-line in a tray |
+| `/members` | Search, a `Tabs` role filter, `Item`s with etched status `Badge`s, an `EmptyState` when nothing matches |
+| `/invoices` | An outstanding `Kpi`, a status filter, amounts and etched badges |
+| `/empty-states` | `EmptyState` as first run, caught up, no results and offline |
+
+Fixtures are module-level consts in `src/blocks/` and any logic (filters, formatters, validation, the
+OTP rules) is pure and tested there — never under `src/app`, where a test file becomes a route. The
+`/blocks` list (`src/app/blocks.tsx`) is `blocks/block-index.ts`, and `block-index.test.ts` holds every slug
+to a route file. A block is not a component, so it has no demo, no docs page and no row in
+`components-index.ts`, and `demos.test.ts` and the web component tests do not see it.
+
+`BlockScreen` is the shared frame (back button carrying the title, `ThemeToggle`, a scroll area at
+`LIST_GAP`, an optional sticky footer) and `BlockSection` the kicker-over-tray grouping. Both are
+playground chrome, not library components.
+
+**Gaps found, none filled:** the library has no one-time-code input (`/otp` composes six `Input`s
+and moves focus itself) and no icon-over-label tab bar (`/shell` styles `Tabs.Trigger` as a column
+with a class). Either earning a component is a decision for the library, not for a block.
+
 ## The home screen
 
-`src/app/index.tsx` is the first screen and the first place the house shows: the
-`DelacourMark` leads a static `Screen.Navbar` whose one action is `ThemeToggle`
-— the customiser's trigger floats over every screen, this one included — and
-the content opens with "Delacour UI" as a large title —
-34 over 41, semibold, in the heading face — with the row count under it. The
-large title is where Outfit is actually legible as Outfit; at navbar size it is
-indistinguishable from the body face, which is how the finish review found the
-house's heading face nowhere on the phone.
+`src/app/index.tsx` is a hub, not a list. The `DelacourMark` leads a static `Screen.Navbar` whose one
+action is `ThemeToggle`, "Delacour UI" opens the content as a large title — 34 over 41, semibold, in
+the heading face (JetBrains Mono) — and under it are two full-width `HubCard`s, **Components** and **Blocks**,
+then the About group.
 
-**Its family is set inline from `resolveFonts(config).heading`, not through
-`font-heading`.** `--font-heading` is declared only inside the platform
-`@variant` blocks of the library's `theme.css`, so Tailwind mints no
-`font-heading` utility from it and the class resolves to nothing — verified on
-device: switching the Heading axis to Raleway moved no title on any screen while
-switching the body font moved every line. The library's own `Text.Display`,
-`Title` and `Header` presets carry that class and so render in the body face
-today; that is a library gap, recorded in `DESIGN.md`, and the reason the
-customiser's `FontPreview` and the preset tiles were already setting `fontFamily`
-inline. `.impeccable/review/evidence-heading-class-fallback.png` is the capture
-that proved it. It is the one typeset lockup the
+**A card is a door, not a preview.** `HubCard` (`src/components/hub-card.tsx`) is a library
+`Pressable` around a `Surface material="etched"`: an etched `Badge` with the count at the top, the
+title and a line at the bottom, and an outbound-arrow disc in the bottom corner. The whole card is
+the target and is announced as one button whose label carries the count. Its data is
+`src/lib/hub-cards.ts`, and `hub-cards.test.ts` holds each count to the index its list draws
+(`componentCount()`, `BLOCKS.length`) and each href to a route file.
+
+**The glow is Skia.** A `RadialGradient` from one corner — Components bottom-right in the brand
+amber (`DELACOUR_STROKE_COLOUR`, the mark's own stroke), Blocks top-left in the `primary` token —
+read with `useThemeColor`, which passes a literal through, and faded with `transparentOf`. The
+amber is fixed on purpose: it ties the card to the mark above it; `primary` follows the preset and
+light/dark. `primary` is near-black in light and
+near-white in dark, so it blooms at half the alpha of the chromatic one; at the same strength the
+light card read as a smudge.
+
+`/components` (`src/app/components/index.tsx`) is one tray with a row per docs group: the group's
+glyph from `GROUP_ICONS`, its name, and `groupSummary` — the first three titles and a count of the
+rest — so eight rows say what is inside without forty on one scroll. Each row pushes
+`/components/<slug>` (`[group].tsx`), where `slug` is the group name in kebab-case
+(`data-display`) and `componentGroup(slug)` finds it; an unknown slug redirects back to
+`/components`. The group screen is one tray of that group's galleries, alphabetical. Both screens,
+and `/blocks`, are framed by `BlockScreen`. The dev-only **Development** group (DelacourMark) sits
+under the groups tray. `Utilities` has no row: no indexed component is filed under it, and
+`groupedComponents` drops an empty group.
+
+**The heading face comes from `font-heading`.** `--font-heading` is declared by
+the library's `theme.css` only inside its platform `@variant` blocks, so
+Tailwind minted no `font-heading` utility and `Text.Display`, `Title` and
+`Header` drew in the body face. `styles/global.css` now declares
+`@theme { --font-heading: system-ui }` once, which mints the utility; the
+store's `applyConfig` overwrites the variable from the Heading axis, so it
+follows the axis. Verified on device: the title draws in the heading face over the body
+face (both JetBrains Mono in the house). The customiser's `FontPreview` and the preset tiles still set
+`fontFamily` inline, which is harmless. It is the one typeset lockup the
 brand has, since the mark's geometry is binding and there is no wordmark; every
-other title stays inline, in the body face a navigation bar expects. The rows
-are grouped under the documentation site's eight group names, in its order, so
-a component found on the site is found in the same place here. An **About** group closes the list
+other title stays inline, in the body face a navigation bar expects. The
+`/components` rows are grouped under the documentation site's group names, in its order, so
+a component found on the site is found in the same place here. An **About** group closes the hub
 with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the in-app browser —
 see [Web pages](#web-pages). App Review wants the link inside the app, not only on the listing. It always opens production,
 even from a dev build, and `src/lib/privacy-url.test.ts` holds its path to the site's
@@ -452,6 +512,12 @@ draw it at — and `DEVICE_MAX_EDGE` is 1440 for a device one, because the landi
 phone 300 CSS px wide and 720 on the long edge left only 332 across it. A demo's hash carries its
 own frame's edge, so moving one cap re-captures only the demos it governs.
 
+**Captures are in the house, and the house is the Devl material.** `preview.tsx` applies
+`HOUSE_CONFIG` before the sentinel can report ready, so every frame is graphite, JetBrains Mono, headings
+included. The faces are embedded in the native build (see Fonts are embedded), so they are present at
+first paint and there is nothing to await. Moving the captures off the library default changes every
+demo's pixels, not its hash: rerun with `--force` once, with the user's approval.
+
 **A run is incremental.** Each demo's source, meta, flow and the encode settings hash together, and
 an unchanged demo whose files are present is skipped. That is what keeps committed media from
 becoming permanent churn in a repository that cannot delta-compress it — a run after touching one
@@ -552,7 +618,7 @@ not the same one:
 
 | | Config | Where |
 | --- | --- | --- |
-| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — zinc, the `delacour` amber, Inter under Outfit, a small corner | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
+| **The house** | `HOUSE_CONFIG` from `@delacour/design-system/house` — the Devl material: graphite, JetBrains Mono throughout, headings included, a medium corner, the `vela` geometry | what a fresh install opens in, dark; what a broken or partial store falls back to; what `/preview` pins for every documentation capture; the first tile of the preset strip |
 | **The library** | `DEFAULT_CONFIG` — Vega, neutral, the platform font | what `delacour init` ships to a consumer; the second tile of the preset strip, so that look is one tap away |
 
 The app is the studio's own site continued onto a phone, so it opens in the
@@ -567,13 +633,18 @@ holds the route to the house so the two cannot drift apart again. It sits outsid
 `src/app` because Expo Router registers every file there as a route, a test
 included — the first run put a `bun:test` import on the phone's red screen.
 
+**A stored amber config is migrated once.** Amber was the default before the Devl house, so a
+config equal to `DELACOUR_AMBER_CONFIG` on a build that has never run the migration is moved to the
+house (`migrateStoredConfig`, flagged in MMKV by `house-devl-migrated`). After that amber is a preset
+shortcut and a deliberate choice is kept. A customised config never matches.
+
 The splash follows the house: `app.config.ts`'s two `backgroundColor`s are the
 sRGB of the house `--background` in each mode, and `app.config.test.ts` resolves
 `HOUSE_CONFIG` to check them. The adaptive icon's `#18181B` is the brand card
 colour and is not a theme token; it stays.
 
-**Reset is the preset strip.** `resetConfig("house" | "library")` replaces every
-axis with one of the two, and the strip at the top of the Design tab is the only
+**Reset is the preset strip.** `resetConfig("house" | "amber" | "library")` replaces every
+axis with one of the three, and the strip at the top of the Design tab is the only
 control that calls it — a tile that shows which preset is applied says more than
 a ghost button at the foot of the scroll ever did. The pure halves — the
 fallbacks, the two targets, the equality the strip marks selection with — live in
@@ -1385,15 +1456,15 @@ Ingestion can be paused per project from the dashboard with no app change.
   puts either file back on its `STALE` list — the deletion that would otherwise
   re-break the build with no edit to blame.
 - **The two splash PNGs hold identical bytes, and are still two files.** The
-  glyph is an amber stroke on transparent and reads on both `#fafafa` and
-  `#09090b`, so dark needs no other art — but `image` and `dark.image` pointing
+  glyph is an amber stroke on transparent and reads on both `#ffffff` and
+  `#131313`, so dark needs no other art — but `image` and `dark.image` pointing
   at one file is a single decision wearing two names, and a later change to the
   light splash would move the dark one with it. The same argument
   `generate-icons.ts` already makes for `icon-dark.png`.
 - **The background colours are checked against the tokens, not trusted.** Light
-  was `#ffffff` against a `--background` of `#fafafa` for as long as nothing
-  compared them, so every light cold start stepped a shade darker at first
-  paint. The comment claimed a mirror; only the test makes it one.
+  was `#ffffff` against a `--background` of `#fafafa` under the old amber house
+  for as long as nothing compared them, so every light cold start stepped a
+  shade darker at first paint. The comment claimed a mirror; only the test makes it one.
 - **`react-native-bootsplash` was evaluated and rejected** — do not re-research
   it. It gates dark-mode assets behind a paid licence key (~$40, Gumroad), which
   this splash would have to give up. Its headline advantage over

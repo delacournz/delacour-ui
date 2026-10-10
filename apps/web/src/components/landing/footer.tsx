@@ -11,9 +11,9 @@ const GITHUB_URL = `https://github.com/${gitConfig.user}/${gitConfig.repo}`;
 
 export function Footer(): ReactElement {
 	return (
-		<footer className="border-fd-border border-t">
+		<footer className="border-fd-border/70 border-t">
 			<div
-				className={`${PAGE_SECTION} flex flex-wrap items-center justify-between gap-4 py-10 text-fd-muted-foreground text-sm`}
+				className={`${PAGE_SECTION} flex flex-wrap items-center justify-between gap-4 py-8 text-fd-muted-foreground text-xs`}
 			>
 				<span className="inline-flex items-center gap-2">
 					<DelacourIcon size={16} />
@@ -21,34 +21,34 @@ export function Footer(): ReactElement {
 				</span>
 				<div className="flex gap-5">
 					<Link
-						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 						to="/compare/heroui"
 					>
 						{FOOTER_COPY.compare}
 					</Link>
 					<a
-						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 						href={GITHUB_URL}
 						rel="noreferrer noopener"
 					>
 						{FOOTER_COPY.github}
 					</a>
 					<a
-						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 						href="/llms.txt"
 						rel="noreferrer noopener"
 					>
 						{FOOTER_COPY.llms}
 					</a>
 					<Link
-						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 						to={privacyRoute}
 					>
 						{FOOTER_COPY.privacy}
 					</Link>
 					{ANALYTICS.ga.kind === "on" ? (
 						<button
-							className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-primary"
+							className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 							onClick={() => window.dispatchEvent(new Event(CONSENT_OPEN_EVENT))}
 							type="button"
 						>

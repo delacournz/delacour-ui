@@ -48,7 +48,7 @@ function PlaygroundFallback(): ReactElement {
 		<main className="flex flex-1 flex-col items-center justify-center gap-8 px-6 py-16">
 			<DelacourIcon size={56} />
 			<div className="flex max-w-md flex-col items-center gap-3 text-center">
-				<h1 className="font-bold text-3xl tracking-tight">Open in {NATIVE_APP.NAME}</h1>
+				<h1 className="font-bold text-3xl tracking-display">Open in {NATIVE_APP.NAME}</h1>
 				<p className="text-fd-muted-foreground text-sm leading-relaxed">
 					{component
 						? `${component.name} is available inside the ${NATIVE_APP.NAME} app. Install it to preview the component live on your device.`

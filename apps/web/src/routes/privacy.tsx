@@ -4,7 +4,7 @@ import type { ReactElement } from "react";
 import { Footer } from "@/components/landing/footer";
 import { RichText } from "@/components/landing/rich-text";
 import { Eyebrow } from "@/components/landing/section-heading";
-import { PAGE_SECTION } from "@/components/section";
+import { COLUMN_SECTION } from "@/components/section";
 import { homeOptions } from "@/lib/layout.shared";
 import { type Disclosure, PRIVACY, PRIVACY_SECTIONS, type PrivacySection } from "@/lib/privacy";
 import { appName } from "@/lib/shared";
@@ -19,10 +19,10 @@ import { appName } from "@/lib/shared";
  *
  * It is a document, so it is drawn quieter than the landing page. No `Reveal`
  * — a policy is read top to bottom and nothing in it should arrive late — and
- * a title step for each heading rather than the landing's headline step, which
- * ten times down one page would shout. Prose keeps the reading measure; the
- * disclosure tables span the container, like every other table on the site.
- * Amber appears only on the links, which is the One Amber Rule doing its job.
+ * a text-3xl title and text-xl section headings rather than the landing's headline
+ * step, which ten times down one page would shout. The whole page is one
+ * `COLUMN_SECTION` — a centred max-w-3xl — and the disclosure tables fill it.
+ * Links are underlined in the foreground, and nothing on the page carries colour.
  *
  * The date is formatted in UTC so the server and the browser print the same
  * day, whatever time zone either is in.
@@ -45,7 +45,7 @@ function Privacy(): ReactElement {
 	return (
 		<HomeLayout {...homeOptions()}>
 			<Header />
-			<div className={`${PAGE_SECTION} flex flex-col gap-section-sm pb-section`}>
+			<div className={`${COLUMN_SECTION} flex flex-col gap-section-sm pb-section`}>
 				<Glance />
 				{PRIVACY_SECTIONS.map((section) => (
 					<Section key={section.id} section={section} />
@@ -58,11 +58,11 @@ function Privacy(): ReactElement {
 
 function Header(): ReactElement {
 	return (
-		<section className={`${PAGE_SECTION} flex flex-col items-start gap-5 pt-section-sm pb-section-gap`}>
+		<section className={`${COLUMN_SECTION} flex flex-col items-start gap-4 pt-section-sm pb-section-gap`}>
 			<Eyebrow>{PRIVACY.eyebrow}</Eyebrow>
-			<h1 className="max-w-reading text-4xl leading-[1.1] sm:text-5xl">{PRIVACY.title}</h1>
-			<p className="max-w-reading text-fd-muted-foreground text-lg">{PRIVACY.lede}</p>
-			<p className="text-fd-muted-foreground text-sm">
+			<h1 className="text-3xl">{PRIVACY.title}</h1>
+			<p className="text-fd-muted-foreground text-sm leading-relaxed">{PRIVACY.lede}</p>
+			<p className="kicker">
 				Last updated <time dateTime={PRIVACY.updated}>{UPDATED}</time>
 			</p>
 		</section>
@@ -73,10 +73,10 @@ function Header(): ReactElement {
 function Glance(): ReactElement {
 	return (
 		<section aria-labelledby="at-a-glance" className="flex flex-col gap-4">
-			<h2 className="scroll-mt-24 text-2xl" id="at-a-glance">
+			<h2 className="scroll-mt-24 text-xl" id="at-a-glance">
 				At a glance
 			</h2>
-			<ul className="max-w-reading divide-y divide-fd-border border-fd-border border-y">
+			<ul className="divide-y divide-fd-border border-fd-border border-y">
 				{PRIVACY.glance.map((line) => (
 					<li className="py-4" key={line}>
 						<RichText text={line} />
@@ -90,7 +90,7 @@ function Glance(): ReactElement {
 function Section({ section }: { section: PrivacySection }): ReactElement {
 	return (
 		<section aria-labelledby={section.id} className="flex flex-col gap-4">
-			<h2 className="scroll-mt-24 text-2xl" id={section.id}>
+			<h2 className="scroll-mt-24 text-xl" id={section.id}>
 				{section.title}
 			</h2>
 			<Prose paragraphs={section.body} />
@@ -102,7 +102,7 @@ function Section({ section }: { section: PrivacySection }): ReactElement {
 
 function Prose({ paragraphs }: { paragraphs: readonly string[] }): ReactElement {
 	return (
-		<div className="flex max-w-reading flex-col gap-4">
+		<div className="flex flex-col gap-4">
 			{paragraphs.map((paragraph) => (
 				<p key={paragraph}>
 					<RichText text={paragraph} />

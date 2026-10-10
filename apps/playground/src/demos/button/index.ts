@@ -1,5 +1,6 @@
 import { defineDemoGroup } from "../define-demo-group";
 import * as disabled from "./disabled";
+import * as etched from "./etched";
 import * as group from "./group";
 import * as groupFullWidth from "./group-full-width";
 import * as groupInput from "./group-input";
@@ -22,6 +23,7 @@ import * as variants from "./variants";
 export const buttonDemos = defineDemoGroup("button", {
 	variants,
 	sizes,
+	etched,
 	disabled,
 	loading,
 	icons,

@@ -38,7 +38,7 @@ const ENVIRONMENTS = [
 function PreviewSection({ label, children }: { label: string; children: ReactNode }): ReactElement {
 	return (
 		<View className="gap-2">
-			<Text.Label>{label}</Text.Label>
+			<Text.Kicker>{label}</Text.Kicker>
 			{children}
 		</View>
 	);

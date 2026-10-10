@@ -19,7 +19,7 @@
  * `borderRadius`, `fontSize` — ignores it with no error at all.
  */
 
-export type StyleName = "vega" | "nova" | "maia" | "lyra" | "mira" | "luma" | "sera" | "rhea";
+export type StyleName = "vega" | "nova" | "maia" | "lyra" | "mira" | "luma" | "sera" | "rhea" | "vela";
 
 /** The geometry tokens a style writes, without the leading `--`. */
 export type GeometryValues = {
@@ -275,6 +275,24 @@ export const STYLES: readonly Style[] = [
 			navbar: 52,
 			gutter: 18,
 			buttonRadius: CAPSULE,
+		}),
+	},
+	{
+		name: "vela",
+		title: "Vela",
+		description: "Dense and tactile. For mono interfaces",
+		// Not one of shadcn's eight: the house geometry, appended so every earlier
+		// ordinal holds. A desktop-dense 32 at the small step and 36 — the
+		// smallest height that is still a comfortable touch target with its hit
+		// slop — at the medium, with a mono-sized type scale under it.
+		geometry: geometry({
+			radius: 10,
+			heights: [32, 36, 44],
+			text: [12, 13, 15],
+			icons: [13, 15, 16, 18, 22, 30],
+			navbar: 56,
+			gutter: 16,
+			buttonRadius: [8, 10, 10],
 		}),
 	},
 ];

@@ -8,8 +8,7 @@
 		"styles"
 	],
 	"dependencies": [
-		"clsx",
-		"tailwind-merge"
+		"cn"
 	],
 	"expoDependencies": [],
 	"devDependencies": [],

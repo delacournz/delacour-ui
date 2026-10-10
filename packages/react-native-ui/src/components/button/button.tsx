@@ -7,6 +7,7 @@ import { type ButtonContextValue, ButtonProvider, useButtonGroupItemContext } fr
 import {
 	BUTTON_FOREGROUND_TOKEN,
 	type ButtonLayout,
+	type ButtonMaterial,
 	type ButtonSize,
 	type ButtonSpinnerPlacement,
 	type ButtonVariant,
@@ -23,6 +24,8 @@ import { ButtonStartContent } from "./button-start-content";
 
 export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" | "pressedOpacity" | "pressedScale"> & {
 	variant?: ButtonVariant;
+	/** `flat` by default; `etched` sets a highlight into the fill's edge. */
+	material?: ButtonMaterial;
 	/** Height, label step, icon step, corner and padding on one axis. `icon-*` is a square. */
 	size?: ButtonSize;
 	isDisabled?: boolean;
@@ -37,6 +40,7 @@ export type ButtonProps = Omit<PressableProps, "busy" | "children" | "disabled" 
 
 function ButtonRoot({
 	variant,
+	material = "flat",
 	size,
 	isDisabled,
 	isLoading = false,
@@ -75,6 +79,7 @@ function ButtonRoot({
 		isLoading,
 		isSeamed: item?.isSeamed ?? false,
 		isStretched: item?.isStretched ?? false,
+		material,
 		orientation: item?.orientation ?? "horizontal",
 		size: resolvedSize,
 		variant: resolvedVariant,

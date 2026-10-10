@@ -86,3 +86,8 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
 - **String children** are wrapped in a `Badge.Label` automatically, consecutive
   strings collapsing into one — the same rule, and the same reason, as
   [`Button`](../button/AGENTS.md).
+
+- **`material="etched"` squares the capsule and tints.** The root and the close button take
+  `rounded-sm`; `soft` status fills become `bg-<status>/8` in light and `/16` in dark, written out
+  per colour because Tailwind's scanner cannot see a built class. The material rides the badge
+  context so the close button follows the root.

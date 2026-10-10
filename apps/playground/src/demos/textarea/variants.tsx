@@ -7,7 +7,8 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Variants",
-	caption: "The box is `Input`'s, so the two variants are too — a bordered card, and a filled one with no border.",
+	caption:
+		"The box is `Input`'s, so its variants are too — a bordered card, a filled one with no border, and an etched card that rings on focus.",
 	keyboardAware: true,
 	capture: { align: "stretch" },
 };
@@ -15,6 +16,7 @@ export const meta: DemoMeta = {
 const LABELS: Record<InputVariant, string> = {
 	primary: "Primary",
 	secondary: "Secondary",
+	etched: "Etched",
 };
 
 export function Demo(): ReactElement {

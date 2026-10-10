@@ -90,9 +90,7 @@ export default function ScreenListsDemo(): ReactElement {
 					keyExtractor={(row) => row.id}
 					renderItem={({ item }) => <RowView row={item} />}
 					renderSectionHeader={({ section }) => (
-						<Text className="bg-background px-screen-gutter py-2 font-semibold text-muted-foreground text-xs uppercase">
-							{section.title}
-						</Text>
+						<Text.Kicker className="bg-background px-screen-gutter py-2">{section.title}</Text.Kicker>
 					)}
 					sections={SECTIONS}
 					stickySectionHeadersEnabled

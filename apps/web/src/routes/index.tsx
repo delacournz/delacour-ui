@@ -6,6 +6,7 @@ import { Features } from "@/components/landing/features";
 import { Footer } from "@/components/landing/footer";
 import { GetStarted } from "@/components/landing/get-started";
 import { Hero } from "@/components/landing/hero";
+import { PromoCards } from "@/components/landing/promo-cards";
 import { Showcase } from "@/components/landing/showcase";
 import { ThemeTeaser } from "@/components/landing/theme-teaser";
 import { Tokens } from "@/components/landing/tokens";
@@ -20,19 +21,20 @@ export const Route = createFileRoute("/")({
 });
 
 /**
- * The landing page: one reading column, top to bottom, in the studio's world.
+ * The landing page: one container, top to bottom, in the house's graphite world.
  *
  * Each section is its own file under `components/landing/`, and every word
  * on the page is in `components/landing/copy.ts`, held verbatim by its test.
  * Sections separate with the rhythm token rather than with rules or tinted
- * bands — the dot field under the page is the only material, and the
- * showcase grid and the component index are the two places the page leaves
- * the column.
+ * bands — the ambient wash under the page is the only material, and the
+ * showcase grid and the component index are the two places the page fills the
+ * container with pictures.
  */
 function Home(): ReactElement {
 	return (
 		<HomeLayout {...homeOptions()}>
 			<Hero />
+			<PromoCards />
 			<Showcase />
 			<Tokens />
 			<Features />

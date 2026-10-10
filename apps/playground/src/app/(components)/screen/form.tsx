@@ -43,10 +43,10 @@ export default function ScreenFormDemo(): ReactElement {
 					<View className="gap-1.5" key={field}>
 						<Text.Label>{field}</Text.Label>
 						<TextInput
-							className="h-button-md rounded-lg border border-border bg-card px-3 text-base text-foreground"
+							className="h-button-md rounded-lg border border-border bg-card px-3 font-sans text-base text-foreground"
 							onChangeText={(text) => setValues((current) => ({ ...current, [field]: text }))}
 							placeholder={field}
-							placeholderTextColor="#9CA3AF"
+							placeholderTextColorClassName="accent-muted-foreground"
 							value={values[field] ?? ""}
 						/>
 					</View>

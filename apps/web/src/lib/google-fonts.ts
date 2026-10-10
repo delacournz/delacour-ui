@@ -6,7 +6,7 @@ import { houseFonts, isHouseFont } from "@/lib/house";
 /**
  * The site's three faces, and the twenty-six the Font axis needs.
  *
- * Every page loads the house faces — Inter, Outfit and Geist Mono — through
+ * Every page loads the house faces — JetBrains Mono and Inter — through
  * `siteFontLinks`. `/theme` adds the catalogue on top, because the Font axis is
  * the one axis a name cannot carry: "Lora" tells you nothing unless you already
  * know Lora. So the option tiles are set in the face they choose — and the cost

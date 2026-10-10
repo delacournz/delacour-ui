@@ -503,6 +503,13 @@ async function main(): Promise<void> {
 			let captured: Captured = { height: 0, width: 0 };
 			for (const theme of options.themes) {
 				captured = await captureDemo(device.udid, demo, theme, geometry);
+				// A flow that typed leaves the app's accessibility tree unreadable
+				// (`ax-service` times out), so the next theme's sentinel is never
+				// found. A fresh process reads again.
+				if (demo.flowPath) {
+					await restartApp(device.udid, BUNDLE_ID);
+					await Bun.sleep(6000);
+				}
 			}
 
 			const animated = demo.flowPath !== undefined;

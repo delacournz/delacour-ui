@@ -2,6 +2,7 @@ import { relative } from "node:path";
 import * as clack from "@clack/prompts";
 import { findConfig, loadConfig, MissingConfigError, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
+import { readLock, recordFiles, writeLock } from "../lock/lock";
 import { detectProject, type ProjectInfo } from "../project/detect";
 import {
 	commandLine,
@@ -15,6 +16,7 @@ import { type PlannedFile, planFiles, writeFiles } from "../project/write-files"
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
 import type { RegistryItem } from "../registry/schema";
+import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 // A cycle — `init` ends in an `add`. Safe, because neither module touches the
 // other at load time, only inside a call.
@@ -118,8 +120,27 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	if (toWrite === null) return null;
 
 	await writeFiles(toWrite);
+	await recordLock(config, planned, toWrite, options.ref || config.registry.ref || DEFAULT_REGISTRY_REF);
 	report(toWrite, planned, requested, output);
 
+	const settled = await settleDependencies(items, config, project, options, output);
+	return { items: items.map((item) => item.name), written: toWrite.length, ...settled };
+}
+
+/**
+ * Everything that follows a write: the shared package's manifest, the report of
+ * what the components need from npm, and the install if it is wanted.
+ *
+ * Shared with `update`, because a component that moved upstream can need a
+ * package it did not need before.
+ */
+export async function settleDependencies(
+	items: readonly RegistryItem[],
+	config: ResolvedConfig,
+	project: ProjectInfo,
+	options: Pick<AddOptions, "cwd" | "install">,
+	output: Output
+): Promise<Pick<AddResult, "dependencies" | "installed">> {
 	// After the write, so the map is derived from what is on disk rather than
 	// from what this run believed it wrote.
 	await syncPackage(config, items, output);
@@ -138,11 +159,10 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	);
 
 	reportDependencies(plan, output);
-	const result = { items: items.map((item) => item.name), written: toWrite.length, dependencies: plan };
 
 	if (!(await shouldInstall(plan, options, output))) {
 		printSkippedInstall(plan, relative(options.cwd, appRoot), output);
-		return { ...result, installed: false };
+		return { dependencies: plan, installed: false };
 	}
 
 	for (const group of plan.groups) {
@@ -152,7 +172,26 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 	}
 
 	warnAboutNativeRebuild(items, project, output);
-	return { ...result, installed: true };
+	return { dependencies: plan, installed: true };
+}
+
+/**
+ * Notes where each file came from, for `update` to merge from later.
+ *
+ * A file already on disk byte for byte is recorded along with the ones written:
+ * it is the registry's text either way. A conflict the user declined is not —
+ * what is on disk there is theirs, and an entry would claim otherwise.
+ */
+async function recordLock(
+	config: ResolvedConfig,
+	planned: readonly PlannedFile[],
+	written: readonly PlannedFile[],
+	ref: string
+): Promise<void> {
+	const pristine = [...written, ...planned.filter((file) => file.unchanged)];
+	if (pristine.length === 0) return;
+
+	await writeLock(config.root, recordFiles(await readLock(config.root), pristine, ref));
 }
 
 /**
@@ -263,7 +302,11 @@ function reportDependencies(plan: DependencyPlan, output: Output): void {
  * CI job or an agent gets the report and decides for itself. `--install` is how
  * any of them says yes.
  */
-async function shouldInstall(plan: DependencyPlan, options: AddOptions, output: Output): Promise<boolean> {
+async function shouldInstall(
+	plan: DependencyPlan,
+	options: Pick<AddOptions, "install">,
+	output: Output
+): Promise<boolean> {
 	if (plan.groups.length === 0) return false;
 	if (options.install !== undefined) return options.install;
 	if (!output.interactive) return false;

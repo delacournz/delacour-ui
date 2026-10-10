@@ -6,6 +6,8 @@ import { detectThemeShape } from "@delacour/design-system/convert";
 import { x } from "tinyexec";
 import { loadConfig, type ResolvedConfig } from "../config/resolve";
 import { CONFIG_FILENAME } from "../config/schema";
+import { lockPath } from "../lock/lock";
+import { LOCK_FILENAME } from "../lock/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
 import { findRootLayout } from "../project/root-layout";
@@ -74,7 +76,36 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkCssEntryImported(config),
 		await checkGestureHandlerRoot(config),
 		await checkDuplicateNativeModules(project),
+		checkLock(existsSync(lockPath(config.root)), await hasEntries(config.directories.ui)),
 	];
+}
+
+/**
+ * Components copied in before the lock existed have nothing to merge from.
+ *
+ * A warning, never a failure: the components work exactly as they did. What is
+ * missing is the record `update` needs to tell an edit from an upstream change,
+ * and the first `update` writes it for every file that still matches the
+ * registry.
+ */
+export function checkLock(lockExists: boolean, hasComponents: boolean): Check {
+	if (lockExists) return { name: "Lock file", status: "pass", detail: `${LOCK_FILENAME} present` };
+	if (!hasComponents) return { name: "Lock file", status: "pass", detail: "no components copied in yet" };
+
+	return {
+		name: "Lock file",
+		status: "warn",
+		detail: `components are here but ${LOCK_FILENAME} is not, so updates have nothing to merge from`,
+		fix: "Run `delacour update` to record the files that still match the registry.",
+	};
+}
+
+async function hasEntries(directory: string): Promise<boolean> {
+	try {
+		return (await readdir(directory)).length > 0;
+	} catch {
+		return false;
+	}
 }
 
 /** Prints the checks and turns them into an exit code. */

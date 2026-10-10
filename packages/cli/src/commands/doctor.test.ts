@@ -7,6 +7,7 @@ import { configSchema } from "../config/schema";
 import type { ProjectInfo } from "../project/detect";
 import {
 	checkGestureHandlerRoot,
+	checkLock,
 	checkNewArchitecture,
 	checkStylingConflict,
 	cssImportSpecifier,
@@ -326,5 +327,20 @@ describe("cssImportSpecifier", () => {
 	test("falls back to an app-relative path when there is no layout to anchor on", async () => {
 		const root = await app({ "package.json": "{}" });
 		expect(cssImportSpecifier(config(root))).toBe("./src/styles/global.css");
+	});
+});
+
+describe("checkLock", () => {
+	test("passes with a lock, and with nothing copied in to need one", () => {
+		expect(checkLock(true, true).status).toBe("pass");
+		expect(checkLock(false, false).status).toBe("pass");
+	});
+
+	// A warning: the components work, they just cannot be merged into yet.
+	test("warns when components are here and the lock is not, and says what writes it", () => {
+		const check = checkLock(false, true);
+
+		expect(check.status).toBe("warn");
+		expect(check.fix).toContain("delacour update");
 	});
 });

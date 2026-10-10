@@ -41,7 +41,8 @@ Unlike shadcn, the target is Expo, which changes real things:
 | `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |
-| `diff [name]` | What has changed upstream since you copied it |
+| `update [components...]` | Bring copied components up to the registry, merged with your edits |
+| `diff [name]` | What `update` would change, without changing it |
 | `doctor` | Check this app is wired up correctly |
 | `info` | The resolved config and what was detected |
 | `skills` | Install the agent skill into Claude Code, Cursor, OpenCode or Codex |

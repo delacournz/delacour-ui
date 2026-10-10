@@ -97,7 +97,7 @@ const OWNERSHIP: Section = {
 		},
 		{
 			feature: "Your edits survive an upgrade",
-			delacour: { support: "yes", note: "delacour diff prints both sides and picks no winner" },
+			delacour: { support: "yes", note: "delacour update merges upstream changes into the file you edited" },
 			heroui: { support: "no", note: "npm update replaces the package wholesale" },
 			pro: { support: "no", note: "the CLI re-downloads the licensed build" },
 		},
@@ -368,7 +368,7 @@ export const COMPARE_COPY = {
 		{
 			label: "Delacour UI",
 			path: "app/components/ui/button.tsx",
-			body: "Written by delacour add, MIT, committed by you. Open it and change it. delacour diff will tell you what moved upstream and will never overwrite your work to do it.",
+			body: "Written by delacour add, MIT, committed by you. Open it and change it. delacour update merges what moved upstream into your copy and never overwrites your work to do it.",
 			ours: true,
 		},
 	],
@@ -424,7 +424,7 @@ export const COMPARE_COPY = {
 			{
 				title: "You keep the updates anyway",
 				body: (): string =>
-					"Owning the files is usually a trade against ever upgrading again. It is not here: delacour diff shows what moved upstream on each component, prints both sides, and picks no winner. You take what you want and keep what you changed.",
+					"Owning the files is usually a trade against ever upgrading again. It is not here: delacour update merges what moved upstream into the files you edited, and where you both changed the same lines it marks the conflict for you to settle. It never picks a winner for you.",
 			},
 			{
 				title: "Nothing is behind a licence",

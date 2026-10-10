@@ -263,26 +263,125 @@ Options:
   -h, --help        display help for command
 ```
 
+## update
+
+Brings the components you copied up to what the registry holds now, and keeps your edits.
+
+```bash
+bunx delacour@latest update
+bunx delacour@latest update button
+bunx delacour@latest update --dry-run
+```
+
+`add` records where each file came from in [`native-components.lock.json`](/docs/native/cli/configuration#the-lock-file):
+the registry ref, and a hash of the text as the registry served it. That is what lets `update` tell
+the two histories apart — the registry's, which may have fixed something, and yours, which may have
+changed something.
+
+| The file | What `update` does |
+| --- | --- |
+| Changed in the registry only | Replaces it |
+| Changed by you only | Leaves it alone |
+| Changed by both, on different lines | Merges the two |
+| Changed by both, on the same lines | Writes both sides between conflict markers, and exits `1` |
+| New to the component | Writes it |
+| Dropped from the component | Leaves it and says so. `--prune` deletes it, if you never edited it |
+
+An edit is never overwritten. A conflict looks the way git's do, because your editor already knows
+what to do with one:
+
+```tsx
+<<<<<<< local
+	const padding = 12;
+=======
+	const padding = 6;
+>>>>>>> registry@3ac4ac4
+```
+
+Keep the side you want, delete the markers, and that file is done.
+
+**It updates to the ref your CLI was published from**, so `bunx delacour@latest update` is the
+whole upgrade: the newest CLI, and the registry it shipped against.
+
+### Your formatter
+
+A project with a formatter will have run it over the copied files, and after that every line
+differs from the registry's. So before comparing anything, `update` runs **your** formatter over
+the registry's side — Biome or Prettier, whichever the project configures, from your own
+`node_modules` and with your own config. A file you only reformatted counts as untouched, and an
+update arrives already in your style.
+
+It only ever runs a formatter you have installed. With none, it falls back to ignoring layout —
+whitespace, quotes, semicolons, trailing commas — when deciding whether a file was edited.
+`--no-format` skips the formatter.
+
+### Uncommitted changes
+
+A merge rewrites a file you edited. If that edit was never committed there is no way back to it, so
+`update` asks before merging into a file with uncommitted changes — and with no one to ask, skips
+it and names it. `--force` merges anyway. Replacing a file you never touched needs no such care.
+
+### Components copied before the lock existed
+
+They have no entry to merge from. `update` records every such file that still matches the registry,
+and leaves the rest alone. If you know the ref they were copied from, name it and they merge like
+any other:
+
+```bash
+delacour update --base v0.1.0
+```
+
+**Options**
+
+```txt
+Usage: delacour update [options] [components...]
+
+bring copied components up to the registry, merging with your edits
+
+Arguments:
+  components        components to update, or every one in this project
+
+Options:
+  -n, --dry-run     show what would change and write nothing
+  --base <ref>      the ref to merge from, for files copied before the lock
+                    existed
+  --prune           delete untouched files their component no longer has
+  -f, --force       merge into files with uncommitted changes
+  --no-format       compare without running the project's formatter
+  -y, --yes         accept every default without asking
+  --install         install any packages the updated components need, without
+                    asking
+  --no-install      write the files and install nothing
+  --json            print JSON
+  --silent          print nothing but errors
+  --registry <url>  registry to read from: a URL, github:owner/repo, or a local
+                    path
+  --ref <ref>       git ref to read the registry at (default: "main")
+  --offline         use only what is already cached
+  -c, --cwd <path>  directory to work in (default: the current directory)
+  -h, --help        display help for command
+```
+
 ## diff
 
-Shows what has moved upstream since you copied a component.
+Shows what `update` would change, and changes nothing.
 
 ```bash
 delacour diff
 delacour diff button
 ```
 
-Read-only, and deliberately so. Once a component is in your repository it is yours, and the changes
-on each side are both legitimate — a fix upstream, a tweak locally. Printing both and stopping is
-the only behaviour that does not quietly pick a winner. `add <name> --overwrite` takes the
-registry's copy when that is what you want.
+It prints the plan `update` applies rather than a comparison of its own, so the two cannot disagree.
+For a file the lock knows, that is the registry's change by itself — your edits are not in the
+diff, because they are not what moved. For a file with no lock entry there is nothing to tell the
+two apart, so both sides are printed and no winner is picked.
 
 **Options**
 
 ```txt
 Usage: delacour diff [options] [name]
 
-show what has changed upstream since these files were copied
+show what an update would change in the files you copied
 
 Arguments:
   name              one component, or every installed one

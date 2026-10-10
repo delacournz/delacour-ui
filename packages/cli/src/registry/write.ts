@@ -2,6 +2,7 @@ import { mkdir, readdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { z } from "zod";
 import { configSchema } from "../config/schema";
+import { lockSchema } from "../lock/schema";
 import type { BuildResult } from "./build";
 import { registryIndexSchema, registryItemSchema } from "./schema";
 
@@ -101,6 +102,7 @@ function schemas(): [string, unknown][] {
 		["config.schema.json", z.toJSONSchema(configSchema, { io: "input" })],
 		["item.schema.json", z.toJSONSchema(registryItemSchema, { io: "input" })],
 		["index.schema.json", z.toJSONSchema(registryIndexSchema, { io: "input" })],
+		["lock.schema.json", z.toJSONSchema(lockSchema, { io: "input" })],
 	];
 }
 

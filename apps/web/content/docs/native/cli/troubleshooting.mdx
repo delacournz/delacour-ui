@@ -128,11 +128,25 @@ Reanimated 4 is New Architecture only. `doctor` reads your resolved Expo config 
 ### `add` overwrote something I had edited
 
 It asks first — unless you passed `--overwrite`, or ran non-interactively without it, in which
-case it refuses and names the files. To see what you had changed before deciding:
+case it refuses and names the files. `--overwrite` is for taking the registry's copy on purpose. To
+bring a component up to date and keep what you changed, use `update` instead:
 
 ```bash
-bunx delacour@latest diff button
+bunx delacour@latest update button
 ```
+
+### `update` left conflict markers in a file
+
+You and the registry changed the same lines, and it will not guess between you. Open the file,
+keep the side you want from each `<<<<<<< local` … `>>>>>>> registry` region, and delete the
+markers. Nothing else needs doing — the lock already names the new registry text, so the next
+`update` starts from there.
+
+### `update` skipped a file "not in the lock"
+
+The file was copied in before the lock existed and no longer matches the registry, so there is
+nothing to merge it from. Name the ref it came from with `--base <ref>`, or take the registry's
+copy with `add <name> --overwrite`.
 
 ### The registry does not have a component I can see on this site
 

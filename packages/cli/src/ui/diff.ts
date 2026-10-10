@@ -1,10 +1,8 @@
 /**
- * A line diff, for showing what a project has changed in a component.
+ * A line diff, for showing what an update would change in a file.
  *
- * `diff` never merges. The premise of copying source in is that the user owns
- * it, so the only honest thing the CLI can offer is to show what moved
- * upstream and let them decide — an automatic three-way merge would be
- * resolving conflicts in code it does not understand.
+ * Only for showing. Merging is `merge.ts`, which needs a third text this has no
+ * use for; a diff is two.
  *
  * The registry items are a few hundred lines each, so the quadratic LCS table
  * is cheaper than the dependency a proper Myers implementation would cost.

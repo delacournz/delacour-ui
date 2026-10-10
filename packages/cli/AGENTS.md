@@ -26,8 +26,13 @@ bun test                 # unit + end-to-end against the local registry
 src/
 ├── index.ts              the shebang and the parse, and nothing else
 ├── program.ts            commander wiring, and the one place a failure becomes a message
-├── commands/             init, add, browse (list/search/view/info), diff, doctor, theme, mcp, skills
+├── commands/             init, add, update, browse (list/search/view/info), diff, doctor, theme, mcp, skills
 │   └── manifest.ts       the command surface as data — read at test time only
+├── lock/                 native-components.lock.json — schema.ts (zod), lock.ts (read, write, amend), hash.ts
+├── update/               what an update means, with no I/O of its own beyond reading
+│   ├── classify.ts       three texts and a lock entry → what happened to one file (pure)
+│   ├── decide.ts         that, plus the flags → what is done about it (pure)
+│   └── plan.ts           every file in scope, classified; registry clients are injected
 ├── config/               native-components.json — schema.ts (zod), resolve.ts (nearest-wins walk)
 ├── project/              everything that reads or patches a consumer's project
 │   ├── detect.ts         package manager, Expo SDK, workspace root, app root, tsconfig paths
@@ -39,6 +44,9 @@ src/
 │   ├── css-entry.ts      the Tailwind entry an app already has
 │   ├── root-layout.ts    where the app mounts everything, and what to put there
 │   ├── write-files.ts    plan every file before writing any of it
+│   ├── installed.ts      which registry items are on disk, from the index alone
+│   ├── formatter.ts      find and run the project's own Biome or Prettier, over stdin
+│   ├── git.ts            whether a file has changes git has not got
 │   ├── exports-map.ts, package-scaffold.ts, shared-package.ts   the shared-package layout
 │   └── uniwind-env.ts    the type-shim constants
 ├── registry/             the registry, both halves
@@ -52,7 +60,8 @@ src/
 │   │                     also holds the file-fetch concurrency cap
 │   ├── resolve.ts        the dependency closure
 │   ├── source.ts, namespaces.ts, schema.ts
-└── ui/                   output.ts (all printing), diff.ts (the line diff)
+└── ui/                   output.ts (all printing), diff.ts (the line diff), merge.ts (the three-way merge),
+                          normalise.ts (is this difference only layout?)
 
 The theme converter is NOT here. `@delacour/design-system/convert` owns it — see that package's
 `AGENTS.md` — and `tsdown` bundles it into `dist/`.
@@ -193,6 +202,71 @@ depends on — the `expo` navigation theme and its two helpers — are reachable
 why `verify:expo` names them explicitly rather than trusting `--all` to cover the registry.
 
 ## Gotchas
+
+### The lock records the registry's text, never what is on disk
+
+`native-components.lock.json` holds one entry per copied file: the ref it came from and a hash of
+the text **as the registry served it**, after the alias transform and before anyone's formatter or
+edits. `add` writes it; `update` reads it, and it is the only thing that lets `update` tell a
+user's edit from an upstream change.
+
+This reverses a decision this package used to document — "a lockfile would be one more thing to
+drift from reality". It still is not the list of what is installed: `installedItems` reads the disk
+for that, and a project with no lock is a supported state, not a broken one. What the lock adds is
+the one fact the disk cannot hold, which is where a file started.
+
+Three things follow, and each is easy to undo by accident:
+
+- **After a merge, the entry is the hash of the registry's new text, not of the merged file.** The
+  hash names the base the *next* update starts from. Hash what was written and every merged or
+  formatted file reads as "edited" forever, with a base nobody can fetch.
+- **The hash is the fast path and the safety check at once.** A local file that still hashes to its
+  entry was never touched, so most files are settled with no fetch. And a base re-fetched from
+  `ref` is only used if *it* hashes to the entry — `--ref develop` records a branch, the branch
+  moves, and merging from the wrong base would silently revert upstream work.
+  `classify` returns `untracked: base-unavailable` instead, and the file is left alone.
+- **No file content is stored.** Rule 6 is what makes that possible: an item names the library's
+  source at a commit, so `ref` is enough to fetch the base again.
+
+### `update` never picks a side
+
+A file both sides changed is merged by line (`ui/merge.ts`, over `node-diff3`). Where they changed
+the same lines the file is written with git's conflict markers and the command exits `1`. An edit is
+never overwritten, a file is deleted only under `--prune` and only if it was never edited, and a
+file that already holds markers is not merged into a second time. `--overwrite` on `add` remains the
+one way to take the registry's copy wholesale, and it is the user who has to type it.
+
+Merging into a file with uncommitted changes is refused without `--force` when there is no one to
+ask — that is every MCP call, so `update_components` takes `force` explicitly.
+
+### The consumer's formatter runs on the registry's side, not on theirs
+
+A project that formats its files has changed every line of every copy. `project/formatter.ts` finds
+the Biome or Prettier the project configures, resolves the binary from **their** `node_modules`, and
+pipes the registry's base and new text through it on stdin with the destination path as the file
+name — so their config and overrides apply, and nothing is written to be formatted. `classify` then
+compares and merges in the project's own style, and writes the update in it.
+
+It never downloads a formatter: a different version formats differently, and that difference would
+read as an edit in every file. With none installed, `ui/normalise.ts` decides "only layout
+changed" instead. That function is allowed to be wrong in one direction only — the inside of a
+string is compared exactly, so a changed class list is always an edit, and anything it is unsure of
+is merged rather than replaced.
+
+Biome has no Markdown formatter and exits non-zero when asked, and every component ships an
+`AGENTS.md`. `HANDLES` is the list of extensions each formatter is handed; a file outside it is
+compared as it is.
+
+### `planUpdate` takes its registry clients as arguments
+
+The base of a file lives at another ref, and a registry read from a local path has no refs — the
+directory is the whole address. So `update(names, options, clients?)` accepts
+`{ target, baseClient }`, the command builds real ones, and `test/update.test.ts` passes two
+directories built on the fly as `v1` and `v2`. Do not "simplify" this by having `plan.ts` call
+`createRegistryClient` itself: the merge path would then be untestable offline.
+
+`diff` prints that same plan (`readPlan`), so the command that reports and the command that writes
+cannot disagree.
 
 ### `--install` and `--no-install` are both declared, on purpose
 

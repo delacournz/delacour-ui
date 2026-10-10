@@ -73,6 +73,14 @@ version.
       type: "(names, overwrite?, install?) => string",
       description: "Copies components in, with rewritten imports, and reports the packages they need. Sets the project up first if it has no native-components.json. install defaults to false — the reply carries the exact commands, so the agent decides.",
     },
+    check_updates: {
+      type: "(names?) => string",
+      description: "Compares the copied components with the registry and writes nothing: which files the registry changed, which the project edited, which would conflict.",
+    },
+    update_components: {
+      type: "(names?, force?, prune?, install?) => string",
+      description: "Brings copied components up to the registry. Replaces untouched files, three-way merges edited ones, and writes git conflict markers where both changed the same lines. Never discards an edit.",
+    },
     init_project: {
       type: "(src?, packageName?, packagePath?, force?, install?) => string",
       description: "Sets the project up deliberately — a shared package in a monorepo, or a source directory that is not src. Not needed for a plain app; add_components handles that on its own.",

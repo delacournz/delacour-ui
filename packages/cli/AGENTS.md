@@ -20,6 +20,18 @@ bun run check            # Biome
 bun test                 # unit + end-to-end against the local registry
 ```
 
+To run this tree's CLI in another app, `bun run cli:link` from the repository root builds it and
+registers `delacour` globally with `bun link`; `bun run dev` here then keeps `dist/` current. A
+linked build has no `DELACOUR_REGISTRY_REF`, so it reads the registry at `main` — pass
+`--registry <path to this repository's registry/>` to read this branch's instead.
+
+`bun run cli:unlink` undoes it, and restores rather than removes. `bun link` silently replaces two
+global entries — `<global>/node_modules/delacour` and `<bin>/delacour` — so `scripts/link.ts`
+snapshots both first, into `.delacour-link.json` beside them, moving a real `bun add -g` install
+aside instead of letting it be deleted. Unlinking puts back another worktree's link, the published
+install, or nothing, whichever was there. The snapshot is machine-wide, not per worktree, and a
+second `cli:link` keeps the first one: what is on disk by then is a link, not what the user had.
+
 ## Directory structure
 
 ```
@@ -69,6 +81,8 @@ The theme converter is NOT here. `@delacour/design-system/convert` owns it — s
 scripts/
 ├── verify-expo.ts        the integration script
 ├── verify/               harness (scaffold, run), checks (the assertions), render (bundle, boot)
+├── link.ts               cli:link / cli:unlink — `bun link`, and restoring what it replaced
+├── link/                 state.ts: snapshot and restore the two global entries (tested)
 └── check-bundle.ts       prepublish guard
 ```
 

@@ -38,6 +38,8 @@ bun run lint               # lint only
 bun run fmt                # format only
 bun test                   # unit tests
 bun run previews           # recapture component preview media from a simulator
+bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
+bun run cli:unlink         # put back whatever `delacour` was before cli:link
 bun run nuke               # delete every node_modules and reinstall from scratch
 ```
 

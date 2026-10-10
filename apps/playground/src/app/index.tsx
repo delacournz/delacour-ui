@@ -60,11 +60,12 @@ import { Screen } from "@delacour/react-native-ui/screen";
 import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import type { ReactElement } from "react";
-import { Alert, Linking, View } from "react-native";
+import { View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { type ComponentIndexEntry, type ComponentSlug, componentCount, groupedComponents } from "@/components-index";
 import { useDesignSystem } from "@/design-system/store";
+import { openWebPage } from "@/lib/open-web-page";
 import { PRIVACY_POLICY_URL } from "@/lib/privacy-url";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
@@ -195,8 +196,8 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px] tracking-tig
  *
  * The last group, About, is not a component: it holds the privacy policy link
  * App Review requires inside the app, not only on the listing. Its suffix is an
- * outbound arrow rather than the chevron, because the row leaves the app for
- * the browser instead of pushing a screen.
+ * outbound arrow rather than the chevron, because the row opens a web page in
+ * the in-app browser instead of pushing a screen — see `lib/open-web-page.ts`.
  */
 export default function Index(): ReactElement {
 	const router = useRouter();
@@ -204,12 +205,8 @@ export default function Index(): ReactElement {
 	const { heading } = resolveFonts(useDesignSystem());
 	const iconFor = (slug: ComponentSlug): IconComponent => ICONS[slug];
 
-	// `openURL` rejects when nothing is registered for https, which is an emulator
-	// image with no browser. The alert carries the URL so it can still be read.
 	const openPrivacyPolicy = () => {
-		Linking.openURL(PRIVACY_POLICY_URL).catch(() => {
-			Alert.alert("Could not open a browser", PRIVACY_POLICY_URL);
-		});
+		void openWebPage(PRIVACY_POLICY_URL);
 	};
 
 	const row = (entry: ComponentIndexEntry, icon: IconComponent) => (
@@ -254,7 +251,7 @@ export default function Index(): ReactElement {
 					<Text.Overline>About</Text.Overline>
 					<ListGroup>
 						<ListGroup.Item
-							accessibilityHint="Opens in your browser"
+							accessibilityHint="Opens a web page"
 							accessibilityRole="link"
 							haptic="selection"
 							onPress={openPrivacyPolicy}

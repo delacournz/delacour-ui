@@ -64,6 +64,8 @@ src/
 ├── demos/                        one file per demo — see demos/AGENTS.md
 ├── lib/deep-link.ts             the rewrite itself, pure and tested
 ├── lib/privacy-url.ts           the home screen's privacy-policy link, held to the site's route
+├── lib/open-web-page.ts         the one way a link reaches the web — the in-app browser; see Web pages
+├── lib/web-page.ts              its order of attempts and double-tap guard, pure and tested
 ├── components/
 │   ├── demo-gallery.tsx          DemoGallery — renders a gallery from a demo group
 │   ├── demo-pager/               the paged gallery — one demo per screen
@@ -268,8 +270,8 @@ brand has, since the mark's geometry is binding and there is no wordmark; every
 other title stays inline, in the body face a navigation bar expects. The rows
 are grouped under the documentation site's eight group names, in its order, so
 a component found on the site is found in the same place here. An **About** group closes the list
-with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the browser —
-App Review wants the link inside the app, not only on the listing. It always opens production,
+with one row, **Privacy policy**, which opens `https://ui.delacour.co.nz/privacy` in the in-app browser —
+see [Web pages](#web-pages). App Review wants the link inside the app, not only on the listing. It always opens production,
 even from a dev build, and `src/lib/privacy-url.test.ts` holds its path to the site's
 `privacyRoute` and to a route file that exists.
 
@@ -388,6 +390,34 @@ until it is reinstalled — with no error anywhere to say why.
 
 Note too that adding these entitlements **changes the fingerprint**, so this is a real build on both
 platforms rather than an OTA. See [Fingerprints are the whole economy](#fingerprints-are-the-whole-economy).
+
+## Web pages
+
+**Every link that opens a web page opens it inside the app**, through `openWebPage` in
+`src/lib/open-web-page.ts`. There are two today — **Privacy policy** on the home screen and
+**Generate CSS** in `/theme`'s footer — and a third goes through the same function rather than
+calling `Linking.openURL` or `expo-web-browser` itself.
+
+`expo-web-browser`'s `openBrowserAsync` presents `SFSafariViewController` on iOS and a Custom Tab on
+Android. `src/lib/web-page.ts` is the pure half, covered by `web-page.test.ts`, and holds the two
+rules that are not obvious:
+
+- **The system browser is the fallback, not the alternative.** The in-app call rejects on an Android
+  image with no Custom Tabs provider and on any scheme that is not `http(s)`; the URL then goes to
+  `Linking.openURL`, and only when that rejects too does an alert put the URL on screen.
+- **One page at a time.** iOS resolves the call only when the sheet is dismissed and rejects a second
+  presentation while one is up, so an unguarded double tap opened the page in the app *and* fell
+  through to Safari behind it. A press made while a page is opening is dropped.
+
+**A universal link to this app's own hosts does not bounce back into the app.** Neither
+`SFSafariViewController` nor a Custom Tab hands its initial load to an app link, so
+`ui.delacour.co.nz/…` renders as a page; only `/playground/components/*` is claimed in any case.
+
+No config plugin is listed for it: the plugin only sets Android's `experimentalLauncherActivity`,
+which nothing here uses. **Adding the module moved the fingerprint**, so the first release push after
+it builds and submits rather than shipping an OTA update, and a clone needs a `prebuild` and a native
+rebuild. An older dev client does not degrade to the fallback: `expo-web-browser` calls
+`requireNativeModule` at import, so a binary built before it red-screens on the home screen.
 
 ## Capturing preview media
 
@@ -632,9 +662,9 @@ the thumb beside the one people came for — least of all on the Preview tab, wh
 eight decisions you cannot see. It lives in the preset strip at the head of the Design tab instead;
 see [Two defaults](#two-defaults).
 
-`Linking.openURL` from `react-native`, not `expo-web-browser`: the destination is a page you want
-left open on a desktop, not a modal that dies on dismiss, and the alternative costs a `prebuild` and
-a native rebuild for every clone.
+It opens in the in-app browser, like every other link here — see [Web pages](#web-pages). It was
+`Linking.openURL` until 2026-10-10, on the argument that the page is one you want left open on a
+desktop; the in-app browser's own share and open-in-Safari buttons are what carry it there now.
 
 **A dev build opens the local documentation site**, so working on that page means the button reaches
 the page you are working on rather than the deployed one. `design-system/docs-origin.ts` picks

@@ -3,10 +3,10 @@ import { Icon } from "@delacour/react-native-ui/icon";
 import { IconArrowUpRight } from "@delacour/react-native-ui/icons/central";
 import { Screen } from "@delacour/react-native-ui/screen";
 import type { ReactElement } from "react";
-import { Alert, Linking } from "react-native";
 import { docsOrigin } from "@/design-system/docs-origin";
 import { presetUrl } from "@/design-system/preset-url";
 import { useDesignSystem } from "@/design-system/store";
+import { openWebPage } from "@/lib/open-web-page";
 
 /**
  * The way a theme leaves the phone.
@@ -14,8 +14,10 @@ import { useDesignSystem } from "@/design-system/store";
  * Eight axes prove the library survives someone else's brand, and until this
  * button existed that proof was a dead end — a palette you could build and then
  * only throw away. It encodes the configuration as a twelve-character code and
- * opens the documentation site, which renders the same tokens as a `globals.css`
- * with a copy button. That is the half of the job a phone cannot do.
+ * opens the documentation site in the in-app browser, which renders the same
+ * tokens as a `globals.css` with a copy button. That is the half of the job a
+ * phone cannot do. The browser's own share button is how the page leaves for
+ * Safari or a desktop — see `lib/open-web-page.ts`.
  *
  * **It lives in `_layout.tsx`, so it sits under both tabs.** Not decoration:
  * `Screen.Footer` writes its measured height into the screen context and *both*
@@ -49,16 +51,8 @@ import { useDesignSystem } from "@/design-system/store";
 export function ThemeFooter(): ReactElement {
 	const config = useDesignSystem();
 
-	// `openURL` rejects when nothing is registered for https — an emulator image
-	// with no browser. The message body is the URL itself, so it can still be
-	// read off the screen; a silent no-op on a button whose whole job is to leave
-	// the app is indistinguishable from a broken encoder.
 	const open = () => {
-		const url = presetUrl(config, docsOrigin());
-
-		Linking.openURL(url).catch(() => {
-			Alert.alert("Could not open a browser", url);
-		});
+		void openWebPage(presetUrl(config, docsOrigin()));
 	};
 
 	return (

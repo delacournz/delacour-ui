@@ -48,7 +48,7 @@ const MAIL = `[${CONTACT}](mailto:${CONTACT})`;
 const HISTORY = `https://github.com/${gitConfig.user}/${gitConfig.repo}/commits/${gitConfig.branch}/apps/web/src/lib/privacy.ts`;
 
 export const PRIVACY = {
-	updated: "2026-09-23",
+	updated: "2026-10-10",
 	controller: "Delacour Limited",
 	contact: CONTACT,
 	eyebrow: "Privacy",
@@ -158,7 +158,7 @@ export const PRIVACY_SECTIONS: readonly PrivacySection[] = [
 		after: [
 			"The install ID is a random number the app makes the first time it runs. It is not your name, your email address or your device's advertising identifier, and it is not linked to any of them. Deleting the app discards it, and reinstalling makes a new one. The session ID is another random number, made each time you open the app, which only groups one visit's reports together.",
 			"The app cannot ask before sending the launch ping: it goes out as the app starts, before anything is on screen. The app has no setting that turns off the launch ping or the performance reports. If you would rather neither were sent, the way to stop them is to delete the app.",
-			"Two buttons open the website in your browser — Generate CSS, which puts your theme into the page address as a short code, and Privacy policy, which opens this page. The website section above then applies.",
+			"Two buttons open the website in a browser inside the app — Generate CSS, which puts your theme into the page address as a short code, and Privacy policy, which opens this page. The website section above then applies.",
 			"If you have chosen to share analytics with app developers in your device's settings, Apple or Google may also show us summary statistics about the app, such as crash counts. Their policies cover that sharing, and you can turn it off there.",
 		],
 	},

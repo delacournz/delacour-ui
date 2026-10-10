@@ -85,14 +85,21 @@ jobs:
       TURBO_TELEMETRY_DISABLED: 1
 
     steps:
-      # The PAT, so the push to `changeset-release/develop` is made by a user. A push made with
-      # `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on the release pull
-      # request and its four required checks would never report — unmergeable. The fallback only
-      # keeps the job from failing outright when the secret is missing.
+      # The release app's token, so the push to `changeset-release/develop` is not made with
+      # `GITHUB_TOKEN`. A push made with that starts no workflows, so `ci.yml` would never run on
+      # the release pull request and its four required checks would never report — unmergeable.
+      # No fallback to `GITHUB_TOKEN`: a missing variable or key fails here, by name.
+      - name: Mint the release app's token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -115,7 +122,7 @@ jobs:
       - name: Version packages into the release pull request
         uses: changesets/action@v2
         with:
-          github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
           version: bun .github/changeset-version.ts
           title: "🔖 chore(release): version packages"
           commit: "🔖 chore(release): version packages"
@@ -154,13 +161,21 @@ jobs:
       DELACOUR_REGISTRY_REF: ${{ github.sha }}
 
     steps:
-      # The PAT, so the credentials checkout persists are the ones the fast-forward of `main` uses:
-      # `main-protected` restricts updates to admins, so `RELEASE_TOKEN` must belong to one.
-      # `GITHUB_TOKEN` cannot make that push.
+      # The release app's token, so the credentials checkout persists are the ones the
+      # fast-forward of `main` uses: `main-protected` restricts updates to its bypass list, and the
+      # app is on it. `GITHUB_TOKEN` cannot make that push, so there is no fallback to it — a
+      # missing variable or key fails here, by name, before anything is built.
+      - name: Mint the release app's token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_PRIVATE_KEY }}
+
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -217,7 +232,7 @@ jobs:
         id: changesets
         uses: changesets/action@v2
         with:
-          github-token: ${{ secrets.RELEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.app-token.outputs.token }}
           # Not `changeset publish`: it would run `npm publish`, which the
           # trusted publisher refuses. The script stages every unpublished
           # package, writes the stage ids to the step summary, then runs

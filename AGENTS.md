@@ -79,10 +79,10 @@ review threads are resolved, and whose branch is up to date with `develop`. Squa
 method.
 
 `.github/rulesets/main.json` (`main-protected`) is release-only: it blocks deletion and non-fast-forward
-pushes, requires linear history, and restricts updates to its bypass list — repository admins. There
-is no pull request rule on it, because nothing reaches `main` by pull request. The one routine update
-is the release job's fast-forward, made with `RELEASE_TOKEN`, which is why that token has to belong to
-an admin. Because `develop` only takes squash merges and `main` only fast-forwards,
+pushes, requires linear history, and restricts updates to its bypass list — repository admins and
+the release app. There is no pull request rule on it, because nothing reaches `main` by pull
+request. The one routine update is the release job's fast-forward, made with the release app's
+token, which is why the app is on that list. Because `develop` only takes squash merges and `main` only fast-forwards,
 `main` is always an ancestor of `develop`; a hand-made commit on `main` breaks that, and the next
 release then fails at the push.
 
@@ -101,9 +101,17 @@ applied. To change protection, edit the JSON, apply it, and commit both in the s
 REPO=delacournz/delacour-ui
 for NAME in main develop; do
   ID=$(gh api "repos/$REPO/rulesets" --jq ".[] | select(.name==\"$NAME-protected\") | .id")
-  gh api --method PUT "repos/$REPO/rulesets/$ID" --input ".github/rulesets/$NAME.json"
+  if [ -n "$ID" ]; then
+    gh api --method PUT "repos/$REPO/rulesets/$ID" --input ".github/rulesets/$NAME.json"
+  else
+    gh api --method POST "repos/$REPO/rulesets" --input ".github/rulesets/$NAME.json"
+  fi
 done
 ```
+
+The `POST` branch is not decoration: the files were once committed and never applied, `develop` ran
+with no ruleset at all, and the loop as first written could only update one that already existed.
+Check `gh api "repos/$REPO/rulesets"` after applying.
 
 ## CI
 
@@ -450,16 +458,39 @@ maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot d
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
 build are Bun's.
 
-**`RELEASE_TOKEN` is a GitHub PAT, not an npm one**, and it must belong to a **repository admin**.
-It does two things `GITHUB_TOKEN` cannot. It pushes the release pull request's branch as a user: a
-push made with `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that pull request
-and its four required checks would never report. And it fast-forwards `main`, which `main-protected`
-lets only admins update. Create the secret with a fine-grained PAT scoped to this repository with
-**Contents** and **Pull requests** read/write:
+**The GitHub side is a GitHub App, not a PAT.** `release.yml` mints a short-lived installation token
+from the `delacour-release` app with `actions/create-github-app-token` at the top of both jobs that
+write. That token does two things `GITHUB_TOKEN` cannot. It pushes the release pull request's
+branch: a push made with `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that
+pull request and its four required checks would never report. And it fast-forwards `main`, which
+`main-protected` lets only its bypass list update — the app is on it, as an `Integration` actor
+whose `actor_id` is the app id.
+
+An app rather than a PAT because a fine-grained PAT expires within a year and belongs to one
+person; the app does neither, and its token lasts an hour. There is deliberately no fallback to
+`GITHUB_TOKEN`: the first release run under this flow fell back to it silently, got as far as the
+push to `main`, and was refused there with a ruleset error that named neither the missing secret
+nor the token.
+
+The app is owned by the `delacournz` organisation, installed on this repository only, with no
+webhook and three repository permissions, all read/write:
+
+| Permission | For |
+| --- | --- |
+| Contents | Pushing `changeset-release/develop`, `main` and the tags; cutting GitHub Releases |
+| Pull requests | Opening and updating the release pull request |
+| Workflows | Either push, whenever the commits it carries touch `.github/workflows/**` — GitHub refuses those from a token without it |
+
+Its id and key reach the workflow as a variable and a secret:
 
 ```bash
-gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui
+gh variable set RELEASE_APP_ID --repo delacournz/delacour-ui --body <app id>
+gh secret set RELEASE_APP_PRIVATE_KEY --repo delacournz/delacour-ui < <downloaded>.private-key.pem
 ```
+
+Rotating the key is generating a new one on the app's settings page, setting the secret again and
+deleting the old key there. Uninstalling the app, or removing it from `main-protected`'s bypass
+list, stops every release at the push to `main`.
 
 The first publish of each package had to be manual: npm can only bind a trusted publisher to a
 package that already exists. That applies to any package added later — publish it by hand once,

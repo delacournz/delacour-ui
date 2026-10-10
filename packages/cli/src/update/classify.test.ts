@@ -117,6 +117,7 @@ describe("classify — a file with nothing to merge from", () => {
 			state: "untracked",
 			reason: "no-entry",
 			adopt: true,
+			content: NEXT,
 		});
 	});
 
@@ -125,6 +126,7 @@ describe("classify — a file with nothing to merge from", () => {
 			state: "untracked",
 			reason: "no-entry",
 			adopt: false,
+			content: NEXT,
 		});
 	});
 

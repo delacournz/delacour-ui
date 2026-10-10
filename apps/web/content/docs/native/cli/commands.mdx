@@ -331,6 +331,12 @@ any other:
 delacour update --base v0.1.0
 ```
 
+At a terminal you do not have to know that in advance. When a run skips files for this reason it
+finishes, shows what it did, and then asks what to do with them: leave them, merge them from a ref
+you type in, or replace them with the registry's copy. Replacing drops your edits to those files,
+so it asks again before touching one with uncommitted changes. Under `--yes`, `--json`, in CI and
+over MCP nothing is asked and the files stay skipped.
+
 **Options**
 
 ```txt

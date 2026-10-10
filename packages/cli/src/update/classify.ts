@@ -38,8 +38,11 @@ export type FileState =
 	 * On disk with nothing to merge from: copied before the lock existed, or
 	 * recorded against a ref that no longer serves the text it did. `adopt` is
 	 * whether it matches the registry closely enough to simply be recorded.
+	 * A file with no entry carries the registry's text in the project's style,
+	 * for the one caller allowed to write it: someone asked, who said to.
 	 */
-	| { state: "untracked"; reason: "no-entry" | "base-unavailable"; adopt: boolean };
+	| { state: "untracked"; reason: "no-entry"; adopt: boolean; content: string }
+	| { state: "untracked"; reason: "base-unavailable"; adopt: false };
 
 export type ClassifyInput = {
 	local: string | null;
@@ -63,15 +66,22 @@ export async function classify(input: ClassifyInput): Promise<FileState> {
 
 	if (next === null) return removed(local, entry, base, format);
 
-	if (!entry) {
-		if (local === null) return { state: "added", content: next };
-		return { state: "untracked", reason: "no-entry", adopt: await sameAfterFormat(next, local, format) };
-	}
-
+	if (!entry && local === null) return { state: "added", content: next };
 	if (local === null) return { state: "deleted-locally" };
 
-	const result = await tracked({ local, next, entry, base, format, nextLabel: input.nextLabel });
+	const result = entry
+		? await tracked({ local, next, entry, base, format, nextLabel: input.nextLabel })
+		: await unrecorded(local, next, format);
+
 	return crlf && "content" in result ? { ...result, content: result.content.replaceAll("\n", "\r\n") } : result;
+}
+
+/** A file on disk with no lock entry: copied before the lock existed. */
+async function unrecorded(local: string, next: string, format: ClassifyInput["format"]): Promise<FileState> {
+	const content = next === local ? next : await format(next);
+	const adopt = content === local || sameModuloFormatting(next, local);
+
+	return { state: "untracked", reason: "no-entry", adopt, content };
 }
 
 /** A file the item no longer has: all that is left to say is whether the project made it its own. */

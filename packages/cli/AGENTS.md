@@ -234,7 +234,25 @@ A file both sides changed is merged by line (`ui/merge.ts`, over `node-diff3`). 
 the same lines the file is written with git's conflict markers and the command exits `1`. An edit is
 never overwritten, a file is deleted only under `--prune` and only if it was never edited, and a
 file that already holds markers is not merged into a second time. `--overwrite` on `add` remains the
-one way to take the registry's copy wholesale, and it is the user who has to type it.
+one flag that takes the registry's copy wholesale, and it is the user who has to type it.
+
+**The one question it asks is asked afterwards, and never answers itself.** A file copied before the
+lock existed that differs from the registry has no base, so the run skips it. With a TTY, `update`
+then asks about the files it skipped — leave, merge from a ref the reader types, or replace — and
+the answer is a *second pass* (`runUpdate` again, with `base` or `replaceUntracked` filled in), not a
+new code path: by then everything else is current, so only those files move. Three things keep that
+from eroding the rule above:
+
+- **`replaceUntracked` is not a flag and must not become one.** It is set only by a person choosing
+  it from a list whose default is "leave". Under `--yes`, `--json`, a pipe and every MCP call
+  `output.interactive` is false, nothing is asked, and the files stay skipped.
+- **A replacement goes through `unsafeToMerge` like a merge does.** It drops an edit, so a file with
+  uncommitted changes is confirmed separately, default no.
+- **Escape means leave.** The first pass has already been applied and reported; there is nothing
+  left to cancel, so the prompt does not throw `CancelledError`.
+
+`UpdateClients.askUntracked` is the seam `test/update.test.ts` answers through, for the same reason
+the registry clients are injected: a prompt cannot be driven offline.
 
 Merging into a file with uncommitted changes is refused without `--force` when there is no one to
 ask — that is every MCP call, so `update_components` takes `force` explicitly.

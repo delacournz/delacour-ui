@@ -425,6 +425,82 @@ describe("update, in a project with no lock", () => {
 		expect(text).toContain("const padding = 6;");
 		expect(text).toContain('cn("border-2"');
 	});
+
+	describe("and someone to ask about the files it skipped", () => {
+		test("is asked once the run is done, with the files by name", async () => {
+			const root = await unlocked();
+			const asked: string[][] = [];
+
+			await run(
+				root,
+				{},
+				{
+					askUntracked: async (files) => {
+						asked.push([...files]);
+						return { kind: "leave" };
+					},
+				}
+			);
+
+			expect(asked).toEqual([[CARD]]);
+		});
+
+		test("leaves them when told to", async () => {
+			const root = await unlocked();
+			const result = await run(root, {}, { askUntracked: async () => ({ kind: "leave" }) });
+
+			expect(action(result, CARD)).toBe("skipped");
+			expect(await read(root, CARD)).toBe(local(CARD_V1));
+		});
+
+		test("replaces them with the registry's copy when told to, and records them", async () => {
+			const root = await unlocked();
+			await edit(root, CARD, (text) => text.replace('cn("border"', 'cn("border-2"'));
+
+			const result = await run(root, {}, { askUntracked: async () => ({ kind: "replace" }) });
+
+			expect(action(result, CARD)).toBe("updated");
+			expect(await read(root, CARD)).toBe(local(CARD_V2));
+			expect((await readLock(root)).items.card?.files[CARD_KEY]).toEqual({
+				ref: "v2",
+				hash: contentHash(local(CARD_V2)),
+			});
+		});
+
+		test("merges them from the ref the answer names", async () => {
+			const root = await unlocked();
+			await edit(root, CARD, (text) => text.replace('cn("border"', 'cn("border-2"'));
+
+			const result = await run(root, {}, { askUntracked: async () => ({ kind: "merge", base: "v1" }) });
+			const text = await read(root, CARD);
+
+			expect(action(result, CARD)).toBe("merged");
+			expect(text).toContain("const padding = 6;");
+			expect(text).toContain('cn("border-2"');
+		});
+
+		test("counts what both passes wrote", async () => {
+			const root = await unlocked();
+			const first = await run(root, { dryRun: true });
+			const result = await run(await unlocked(), {}, { askUntracked: async () => ({ kind: "replace" }) });
+
+			expect(result.written).toBe(first.written + 1);
+		});
+
+		test("is not asked on a dry run, with --base, or when nothing was skipped", async () => {
+			let asked = 0;
+			const askUntracked = async () => {
+				asked += 1;
+				return { kind: "replace" } as const;
+			};
+
+			await run(await unlocked(), { dryRun: true }, { askUntracked });
+			await run(await unlocked(), { base: "v1" }, { askUntracked });
+			await run(await project(), {}, { askUntracked });
+
+			expect(asked).toBe(0);
+		});
+	});
 });
 
 describe("update, when the ref a file came from has moved", () => {

@@ -151,6 +151,27 @@ export async function openUrl(udid: string, url: string): Promise<void> {
 	await runJson("open-url", ["--udid", udid, "--url", url]);
 }
 
+type Selector = { text: string } | { identifier: string };
+
+async function awaitSelector(
+	udid: string,
+	selector: Selector,
+	condition: "exists" | "hidden",
+	timeoutMs: number
+): Promise<boolean> {
+	const result = await runJson<{ success: boolean }>("await-ui-element", [
+		"--udid",
+		udid,
+		"--condition",
+		condition,
+		"--selector-json",
+		JSON.stringify(selector),
+		"--timeoutMs",
+		String(timeoutMs),
+	]);
+	return result.success;
+}
+
 /**
  * Blocks until an element exists, and reports whether it appeared.
  *
@@ -159,18 +180,30 @@ export async function openUrl(udid: string, url: string): Promise<void> {
  * selector.
  */
 export async function awaitElement(udid: string, text: string, timeoutMs = 10_000): Promise<boolean> {
-	const result = await runJson<{ success: boolean }>("await-ui-element", [
-		"--udid",
-		udid,
-		"--condition",
-		"exists",
-		"--selector-json",
-		JSON.stringify({ text }),
-		"--timeoutMs",
-		String(timeoutMs),
-	]);
-	return result.success;
+	return await awaitSelector(udid, { text }, "exists", timeoutMs);
 }
+
+/**
+ * Blocks until a freshly loaded JS bundle has drawn the home screen.
+ *
+ * Two waits, because one is not enough. After a refresh the *old* React tree
+ * stays readable for several seconds while the new bundle downloads — measured
+ * at ten — so waiting only for the home screen passes at once on the instance
+ * that is about to be torn down, and the first deep link is then sent into a
+ * splash screen. The navbar's theme toggle has to go, and then come back.
+ *
+ * After a restart the first wait is free: the launcher and the splash have no
+ * toggle. The second is long because a dev client's JS load is not the six
+ * seconds a fixed sleep once assumed — 23s to 42s on a machine busy with other
+ * simulators, which is exactly when a capture run is likely to be sharing it.
+ */
+export async function awaitFreshHome(udid: string, timeoutMs = 90_000): Promise<boolean> {
+	await awaitSelector(udid, HOME_MARKER, "hidden", 20_000);
+	return await awaitSelector(udid, HOME_MARKER, "exists", timeoutMs);
+}
+
+/** The home navbar's theme toggle: on the index route, and on neither the launcher nor `/preview`. */
+const HOME_MARKER: Selector = { identifier: "theme-toggle" };
 
 /**
  * Waits for the screen to stop changing.

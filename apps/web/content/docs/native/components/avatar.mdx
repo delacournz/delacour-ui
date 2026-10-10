@@ -76,7 +76,7 @@ An empty `Avatar.Badge` is a presence dot; say the status in the avatar's own la
 
 ## Unread count
 
-Given children, `Avatar.Badge` only pins them to the corner.
+Given children, `Avatar.Badge` only pins them to the corner. A `Badge` with a `count` hides itself at zero.
 
 <Preview id="avatar/unread-count" />
 
@@ -85,7 +85,7 @@ import { Badge } from "@/components/ui/badge";
 
 <Avatar name="Oliver Lee" source={photo}>
   <Avatar.Badge>
-    <Badge color="destructive" size="sm">3</Badge>
+    <Badge color="destructive" count={unread} size="sm" />
   </Avatar.Badge>
 </Avatar>;
 ```

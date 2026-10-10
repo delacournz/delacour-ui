@@ -3,16 +3,15 @@
 	"name": "badge",
 	"type": "registry:ui",
 	"title": "Badge",
-	"description": "A compact label for status or a count, composed from parts like the button.",
+	"description": "A read-only mark: a status label, a count or a dot, optionally pinned to a corner of an icon.",
 	"categories": [
 		"display"
 	],
 	"registryDependencies": [
 		"icon",
-		"icons",
-		"pressable",
 		"text",
-		"tv"
+		"tv",
+		"wrap-text-children"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -32,23 +31,9 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/badge/badge-close-button.tsx",
-			"target": "badge/badge-close-button.tsx",
-			"namespace": "ui",
-			"rewrites": [
-				{
-					"from": "../../icons/central",
-					"to": "@registry/icons/central"
-				},
-				{
-					"from": "../icon",
-					"to": "@registry/ui/icon"
-				},
-				{
-					"from": "../pressable",
-					"to": "@registry/ui/pressable"
-				}
-			]
+			"path": "packages/react-native-ui/src/components/badge/badge-anchor.tsx",
+			"target": "badge/badge-anchor.tsx",
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/badge/badge-end-content.tsx",
@@ -82,12 +67,12 @@
 			"namespace": "ui",
 			"rewrites": [
 				{
-					"from": "../icon",
-					"to": "@registry/ui/icon"
+					"from": "../../lib/wrap-text-children",
+					"to": "@registry/lib/wrap-text-children"
 				},
 				{
-					"from": "../pressable",
-					"to": "@registry/ui/pressable"
+					"from": "../icon",
+					"to": "@registry/ui/icon"
 				},
 				{
 					"from": "../text/text.context",

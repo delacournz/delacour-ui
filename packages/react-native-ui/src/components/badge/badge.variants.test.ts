@@ -4,10 +4,13 @@ import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BADGE_COLORS,
 	BADGE_FOREGROUND_TOKEN,
+	BADGE_PLACEMENTS,
 	BADGE_SIZES,
+	BADGE_SURFACE_CELLS,
 	BADGE_VARIANTS,
 	badgeVariants,
-	resolveBadgeInteractive,
+	resolveBadgeCount,
+	resolveBadgeShape,
 } from "./badge.variants";
 
 const LIGHT = declaredTokens("light");
@@ -21,6 +24,21 @@ function paddingX(cls: string): number {
 /** Tailwind's spacing step a class string sets its vertical padding from. */
 function paddingY(cls: string): number {
 	return Number(cls.match(/\bpy-([\d.]+)\b/)?.[1]);
+}
+
+/** Tailwind's spacing step a class string sets its minimum width from. */
+function minWidth(cls: string): number {
+	return Number(cls.match(/\bmin-w-([\d.]+)\b/)?.[1]);
+}
+
+/** Tailwind's spacing step a class string sets its square edge from. */
+function edgeOf(cls: string): number {
+	return Number(cls.match(/\bsize-([\d.]+)\b/)?.[1]);
+}
+
+/** The `bg-*` utility a root class string paints with. */
+function fillOf(cls: string): string | undefined {
+	return cls.match(/\bbg-[\w-]+\b/)?.[0];
 }
 
 /** Tailwind's spacing step a class string sets its gap from. */
@@ -95,10 +113,6 @@ describe("badgeVariants root slot", () => {
 		expect(badgeVariants({ variant: "solid" }).root()).toContain("border-transparent");
 	});
 
-	test("clips, so a pressed badge fades to the edge of its own box", () => {
-		expect(badgeVariants().root()).toContain("overflow-hidden");
-	});
-
 	test("only outline names a border colour", () => {
 		for (const color of BADGE_COLORS) {
 			expect(badgeVariants({ variant: "outline", color }).root()).not.toContain("border-transparent");
@@ -130,11 +144,6 @@ describe("badgeVariants root slot", () => {
 		}
 
 		expect(seen.size).toBe(BADGE_VARIANTS.length * BADGE_COLORS.length);
-	});
-
-	test("adds the disabled treatment only when disabled", () => {
-		expect(badgeVariants({ isDisabled: true }).root()).toContain("opacity-50");
-		expect(badgeVariants({ isDisabled: false }).root()).not.toContain("opacity-50");
 	});
 
 	test("merges an incoming className last", () => {
@@ -254,16 +263,196 @@ describe("BADGE_FOREGROUND_TOKEN", () => {
 	});
 });
 
-describe("resolveBadgeInteractive", () => {
-	const noop = () => {};
+describe("BADGE_SURFACE_CELLS", () => {
+	// Chip builds its resting surfaces from these, so a gap here is a chip with
+	// no paint rather than a test that fails beside the mistake.
+	test("holds one cell for every variant and colour pair", () => {
+		for (const variant of BADGE_VARIANTS) {
+			expect(BADGE_SURFACE_CELLS[variant].map((cell) => cell.color)).toEqual([...BADGE_COLORS]);
+			for (const cell of BADGE_SURFACE_CELLS[variant]) expect(cell.variant).toBe(variant);
+		}
+	});
+});
 
-	test("a badge with no handler stays a plain view", () => {
-		expect(resolveBadgeInteractive({})).toBe(false);
+describe("resolveBadgeShape", () => {
+	test("a badge with content is a label", () => {
+		expect(resolveBadgeShape({ hasChildren: true })).toBe("label");
 	});
 
-	test("either press handler upgrades it to a pressable", () => {
-		expect(resolveBadgeInteractive({ onPress: noop })).toBe(true);
-		expect(resolveBadgeInteractive({ onLongPress: noop })).toBe(true);
-		expect(resolveBadgeInteractive({ onPress: noop, onLongPress: noop })).toBe(true);
+	test("a badge given a count is a count, whatever else it holds", () => {
+		expect(resolveBadgeShape({ count: 3, hasChildren: false })).toBe("count");
+		expect(resolveBadgeShape({ count: 0, hasChildren: false })).toBe("count");
+		expect(resolveBadgeShape({ count: 3, hasChildren: true })).toBe("count");
+	});
+
+	// The rule `Avatar.Badge` follows: empty, it is a dot.
+	test("a badge with nothing in it is a dot", () => {
+		expect(resolveBadgeShape({ hasChildren: false })).toBe("dot");
+	});
+});
+
+describe("resolveBadgeCount", () => {
+	test("reads a count back as written", () => {
+		expect(resolveBadgeCount({ count: 1 })).toBe("1");
+		expect(resolveBadgeCount({ count: 99 })).toBe("99");
+	});
+
+	test("caps at 99 by default", () => {
+		expect(resolveBadgeCount({ count: 100 })).toBe("99+");
+		expect(resolveBadgeCount({ count: 12_345 })).toBe("99+");
+	});
+
+	test("caps at a caller's own maximum", () => {
+		expect(resolveBadgeCount({ count: 9, max: 9 })).toBe("9");
+		expect(resolveBadgeCount({ count: 10, max: 9 })).toBe("9+");
+		expect(resolveBadgeCount({ count: 1000, max: 999 })).toBe("999+");
+	});
+
+	// Nothing to report is nothing to draw: a zero that stayed on screen would
+	// pull the eye to an inbox with nothing in it.
+	test("hides at zero unless asked to show it", () => {
+		expect(resolveBadgeCount({ count: 0 })).toBeNull();
+		expect(resolveBadgeCount({ count: 0, showZero: true })).toBe("0");
+	});
+
+	test("hides a count that is not a count", () => {
+		expect(resolveBadgeCount({ count: -3 })).toBeNull();
+		expect(resolveBadgeCount({ count: Number.NaN })).toBeNull();
+		expect(resolveBadgeCount({ count: -3, showZero: true })).toBe("0");
+	});
+
+	test("drops a fraction rather than printing it", () => {
+		expect(resolveBadgeCount({ count: 2.9 })).toBe("2");
+	});
+});
+
+describe("badgeVariants count shape", () => {
+	// One digit should sit in a circle, and that takes a floor on the width —
+	// the box is otherwise as narrow as a `1`.
+	test("floors the width at every size, increasing with it", () => {
+		const floors = BADGE_SIZES.map((size) => minWidth(badgeVariants({ shape: "count", size }).root()));
+		expect(floors.every(Number.isFinite)).toBe(true);
+		expect(new Set(floors).size).toBe(BADGE_SIZES.length);
+		expect([...floors]).toEqual([...floors].sort((a, b) => a - b));
+	});
+
+	test("pads tighter than the label of the same size", () => {
+		for (const size of BADGE_SIZES) {
+			const count = badgeVariants({ shape: "count", size }).root();
+			const label = badgeVariants({ shape: "label", size }).root();
+			expect(paddingX(count)).toBeLessThan(paddingX(label));
+			expect(paddingY(count)).toBeLessThan(paddingY(label));
+		}
+	});
+
+	test("still takes no height, so the number grows with OS font scaling", () => {
+		for (const size of BADGE_SIZES) {
+			expect(badgeVariants({ shape: "count", size }).root()).not.toMatch(/\bh-/);
+		}
+	});
+
+	test("is painted by variant and colour exactly as a label is", () => {
+		for (const variant of BADGE_VARIANTS) {
+			for (const color of BADGE_COLORS) {
+				const count = badgeVariants({ color, shape: "count", variant });
+				const label = badgeVariants({ color, shape: "label", variant });
+				expect(fillOf(count.root())).toBe(fillOf(label.root()));
+				expect(count.label()).toBe(label.label());
+			}
+		}
+	});
+});
+
+describe("badgeVariants dot shape", () => {
+	test("is a square edge at every size, increasing with it", () => {
+		const edges = BADGE_SIZES.map((size) => edgeOf(badgeVariants({ shape: "dot", size }).root()));
+		expect(edges.every(Number.isFinite)).toBe(true);
+		expect(new Set(edges).size).toBe(BADGE_SIZES.length);
+		expect([...edges]).toEqual([...edges].sort((a, b) => a - b));
+	});
+
+	test("carries no padding and no border, so the edge is the whole dot", () => {
+		for (const size of BADGE_SIZES) {
+			const cls = badgeVariants({ shape: "dot", size }).root();
+			expect(cls).toContain("p-0");
+			expect(cls).toContain("border-0");
+			expect(cls).not.toMatch(/\bp[xy]-/);
+		}
+	});
+
+	test("gives every colour a distinct fill", () => {
+		const fills = BADGE_COLORS.map((color) => fillOf(badgeVariants({ color, shape: "dot" }).root()));
+		expect(fills.every(Boolean)).toBe(true);
+		expect(new Set(fills).size).toBe(BADGE_COLORS.length);
+	});
+
+	// A dot has no surface to paint four ways — soft would be a tint six points
+	// wide and ghost would be nothing at all.
+	test("is the same solid dot on every variant", () => {
+		for (const color of BADGE_COLORS) {
+			const fills = BADGE_VARIANTS.map((variant) => fillOf(badgeVariants({ color, shape: "dot", variant }).root()));
+			expect(new Set(fills).size).toBe(1);
+			expect(fills[0]).not.toBe("bg-transparent");
+		}
+	});
+
+	// `secondary` sits a hair from the page in this theme. A default dot painted
+	// with it is a dot nobody sees.
+	test("paints a default dot in the foreground, not in secondary", () => {
+		expect(badgeVariants({ shape: "dot" }).root()).toContain("bg-foreground");
+		expect(badgeVariants({ shape: "dot" }).root()).not.toContain("bg-secondary");
+	});
+});
+
+describe("badgeVariants placement axis", () => {
+	test("leaves an unplaced badge in the flow", () => {
+		expect(badgeVariants().root()).not.toContain("absolute");
+	});
+
+	test("lifts a placed badge out of the flow, at every corner", () => {
+		for (const placement of BADGE_PLACEMENTS) {
+			expect(badgeVariants({ placement }).root()).toContain("absolute");
+		}
+	});
+
+	test("gives every corner a distinct position", () => {
+		const seen = new Set(BADGE_PLACEMENTS.map((placement) => badgeVariants({ placement }).root()));
+		expect(seen.size).toBe(BADGE_PLACEMENTS.length);
+	});
+
+	// Pinned by the edge nearest the anchor's centre, so a count that gains a
+	// digit grows away from the glyph instead of across it.
+	test("pins the inner edge, so a longer count grows outward", () => {
+		expect(badgeVariants({ placement: "top-right" }).root()).toContain("left-full");
+		expect(badgeVariants({ placement: "bottom-right" }).root()).toContain("left-full");
+		expect(badgeVariants({ placement: "top-left" }).root()).toContain("right-full");
+		expect(badgeVariants({ placement: "bottom-left" }).root()).toContain("right-full");
+	});
+
+	// A dot is a third the size of a count. The overlap that tucks a count onto
+	// a corner would bury a dot inside it.
+	test("overlaps the corner less for a dot than for a count", () => {
+		const overlap = (cls: string): number => Number(cls.match(/-m[lr]-([\d.]+)\b/)?.[1]);
+		for (const placement of BADGE_PLACEMENTS) {
+			const dot = overlap(badgeVariants({ placement, shape: "dot" }).root());
+			const count = overlap(badgeVariants({ placement, shape: "count" }).root());
+			expect(Number.isFinite(dot)).toBe(true);
+			expect(dot).toBeLessThan(count);
+		}
+	});
+});
+
+describe("badgeVariants anchor slot", () => {
+	// The same reason the root carries it: stretched across a column, the corner
+	// a badge is pinned to is the far edge of the screen.
+	test("is sized by what it holds", () => {
+		expect(badgeVariants().anchor()).toContain("self-start");
+	});
+
+	// Yoga caps an absolute child at its parent's width when the parent is a
+	// column, so a `99+` pinned over a 24pt glyph wrapped onto two lines. A row
+	// measures it unconstrained. Seen on a simulator.
+	test("is a row, so a count wider than the glyph does not wrap", () => {
+		expect(badgeVariants().anchor()).toContain("flex-row");
 	});
 });

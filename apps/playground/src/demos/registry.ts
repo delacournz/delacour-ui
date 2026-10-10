@@ -29,7 +29,9 @@ import * as demo_avatar_sizes from "./avatar/sizes";
 import * as demo_avatar_unread_count from "./avatar/unread-count";
 import * as demo_avatar_variants_and_colours from "./avatar/variants-and-colours";
 import * as demo_badge_composed_icon from "./badge/composed-icon";
-import * as demo_badge_dismissible from "./badge/dismissible";
+import * as demo_badge_counts from "./badge/counts";
+import * as demo_badge_dots from "./badge/dots";
+import * as demo_badge_pinned from "./badge/pinned";
 import * as demo_badge_sizes from "./badge/sizes";
 import * as demo_badge_status_dot from "./badge/status-dot";
 import * as demo_badge_variants_and_colours from "./badge/variants-and-colours";
@@ -395,7 +397,9 @@ export const DEMOS = {
 	"avatar/unread-count": demo_avatar_unread_count,
 	"avatar/variants-and-colours": demo_avatar_variants_and_colours,
 	"badge/composed-icon": demo_badge_composed_icon,
-	"badge/dismissible": demo_badge_dismissible,
+	"badge/counts": demo_badge_counts,
+	"badge/dots": demo_badge_dots,
+	"badge/pinned": demo_badge_pinned,
 	"badge/sizes": demo_badge_sizes,
 	"badge/status-dot": demo_badge_status_dot,
 	"badge/variants-and-colours": demo_badge_variants_and_colours,

@@ -117,16 +117,15 @@
 			"name": "badge",
 			"type": "registry:ui",
 			"title": "Badge",
-			"description": "A compact label for status or a count, composed from parts like the button.",
+			"description": "A read-only mark: a status label, a count or a dot, optionally pinned to a corner of an icon.",
 			"categories": [
 				"display"
 			],
 			"registryDependencies": [
 				"icon",
-				"icons",
-				"pressable",
 				"text",
-				"tv"
+				"tv",
+				"wrap-text-children"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -135,7 +134,7 @@
 			"devDependencies": [],
 			"files": [
 				"ui/badge/AGENTS.md",
-				"ui/badge/badge-close-button.tsx",
+				"ui/badge/badge-anchor.tsx",
 				"ui/badge/badge-end-content.tsx",
 				"ui/badge/badge-label.tsx",
 				"ui/badge/badge-start-content.tsx",
@@ -399,7 +398,8 @@
 				"pressable",
 				"text",
 				"tv",
-				"use-controllable-state"
+				"use-controllable-state",
+				"wrap-text-children"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -1596,6 +1596,19 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-theme-color.ts"
+			]
+		},
+		{
+			"name": "wrap-text-children",
+			"type": "registry:lib",
+			"title": "wrapTextChildren",
+			"description": "Wraps the bare text in a root's children in that root's own label part.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/wrap-text-children.ts"
 			]
 		}
 	]

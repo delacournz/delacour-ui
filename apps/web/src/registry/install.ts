@@ -1179,7 +1179,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 48,
+		fileCount: 49,
 		groups: [
 			{
 				name: "chip",
@@ -1211,17 +1211,6 @@ export const install = {
 				],
 			},
 			{
-				name: "pressable",
-				title: "Pressable",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
-				],
-			},
-			{
 				name: "text",
 				title: "Text",
 				kind: "component",
@@ -1239,7 +1228,7 @@ export const install = {
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-anchor.tsx", target: "src/components/ui/badge/badge-anchor.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
@@ -1248,6 +1237,17 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/badge/badge.types.ts", target: "src/components/ui/badge/badge.types.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/badge.variants.ts", target: "src/components/ui/badge/badge.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/badge/index.ts", target: "src/components/ui/badge/index.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -1293,6 +1293,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 			{
@@ -1748,10 +1756,10 @@ export const install = {
 		description: "One number, its change coloured by what it means, and a sparkline of how it got there, built on Card.",
 		importPath: "@delacour/react-native-ui/kpi",
 		exportName: "Kpi",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-charts", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 103,
+		fileCount: 98,
 		groups: [
 			{
 				name: "kpi",
@@ -1790,17 +1798,6 @@ export const install = {
 				],
 			},
 			{
-				name: "pressable",
-				title: "Pressable",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
-				],
-			},
-			{
 				name: "text",
 				title: "Text",
 				kind: "component",
@@ -1818,7 +1815,7 @@ export const install = {
 				kind: "component",
 				files: [
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-anchor.tsx", target: "src/components/ui/badge/badge-anchor.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
@@ -1951,27 +1948,11 @@ export const install = {
 				],
 			},
 			{
-				name: "icons",
-				title: "Icons",
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 			{
@@ -1980,6 +1961,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "icons",
+				title: "Icons",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
 				],
 			},
 		],
@@ -2461,13 +2450,13 @@ export const install = {
 	"badge": {
 		name: "badge",
 		title: "Badge",
-		description: "A compact label for status or a count, composed from parts like the button.",
+		description: "A read-only mark: a status label, a count or a dot, optionally pinned to a corner of an icon.",
 		importPath: "@delacour/react-native-ui/badge",
 		exportName: "Badge",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
-		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		expo: ["react-native-reanimated", "react-native-svg", "uniwind"],
+		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 37,
+		fileCount: 31,
 		groups: [
 			{
 				name: "badge",
@@ -2475,7 +2464,7 @@ export const install = {
 				kind: "self",
 				files: [
 					{ source: "packages/react-native-ui/src/components/badge/AGENTS.md", target: "src/components/ui/badge/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/badge/badge-close-button.tsx", target: "src/components/ui/badge/badge-close-button.tsx" },
+					{ source: "packages/react-native-ui/src/components/badge/badge-anchor.tsx", target: "src/components/ui/badge/badge-anchor.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-end-content.tsx", target: "src/components/ui/badge/badge-end-content.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-label.tsx", target: "src/components/ui/badge/badge-label.tsx" },
 					{ source: "packages/react-native-ui/src/components/badge/badge-start-content.tsx", target: "src/components/ui/badge/badge-start-content.tsx" },
@@ -2496,17 +2485,6 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
 					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
 					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
-				],
-			},
-			{
-				name: "pressable",
-				title: "Pressable",
-				kind: "component",
-				files: [
-					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
-					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
-					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
 				],
 			},
 			{
@@ -2567,27 +2545,11 @@ export const install = {
 				],
 			},
 			{
-				name: "icons",
-				title: "Icons",
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
 				kind: "shared",
 				files: [
-					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
-				],
-			},
-			{
-				name: "compose-refs",
-				title: "composeRefs",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
-				],
-			},
-			{
-				name: "merge-props",
-				title: "mergeProps",
-				kind: "shared",
-				files: [
-					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 		],

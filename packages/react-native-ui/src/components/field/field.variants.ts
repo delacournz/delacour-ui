@@ -120,7 +120,7 @@ export function resolveFieldTextColor(part: FieldTextPart, isInvalid: boolean): 
  *
  * Only once a control inside has offered a press. A field is layout until then,
  * and mounting a `GestureDetector` regardless would put one under every label
- * and description in a form — the same thing `Badge` refuses to do for a list of
+ * and description in a form — the same thing `Chip` refuses to do for a list of
  * fifty tags, and for the same reason: assistive technology would announce a row
  * of static text as something you can activate.
  *

@@ -12,7 +12,7 @@ export type BottomSheetCloseProps = Omit<PressableProps, "asChild" | "busy" | "c
  *
  * The engine's `Close asChild` around this library's `Pressable`, so the press
  * is the library's — `fade` rather than a spring, because a scale on a glyph
- * this small reads as a jitter, the reason `Badge.CloseButton` presses the same
+ * this small reads as a jitter, the reason `Chip.CloseButton` presses the same
  * way — and the close is the engine's: the same path a swipe-down and a scrim
  * press take, so a caller has one `onOpenChange` to watch rather than three.
  *

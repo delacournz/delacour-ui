@@ -80,7 +80,7 @@ component, no parts.
   focus its control passes one — the same thing `Field`'s whole-row press does
   for a checkbox. Mounting a gesture detector under every label in a form would
   announce static text as something to activate, which
-  [`Badge`](../badge/AGENTS.md) refuses for the same reason. A `Text` with `onPress` is exposed to VoiceOver as a **link**, and
+  [`Chip`](../chip/AGENTS.md) refuses for the same reason. A `Text` with `onPress` is exposed to VoiceOver as a **link**, and
   `accessible={false}` does not change that on iOS — checked on a simulator,
   where it still read as `AXLink`. A caller wiring one should pass
   `accessibilityElementsHidden` and `importantForAccessibility="no-hide-descendants"`,

@@ -25,13 +25,9 @@ export function Demo(): ReactElement {
 				source={{ uri: "https://i.pravatar.cc/160?img=12" }}
 				testID="avatar-unread"
 			>
-				{unread > 0 ? (
-					<Avatar.Badge>
-						<Badge color="destructive" size="sm">
-							{unread > 99 ? "99+" : unread}
-						</Badge>
-					</Avatar.Badge>
-				) : null}
+				<Avatar.Badge>
+					<Badge color="destructive" count={unread} size="sm" />
+				</Avatar.Badge>
 			</Avatar>
 			<View className="flex-row gap-2">
 				<Button onPress={() => setUnread((count) => count + 1)} size="sm" testID="unread-add" variant="secondary">

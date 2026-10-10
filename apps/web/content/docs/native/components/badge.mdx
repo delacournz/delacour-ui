@@ -1,6 +1,6 @@
 ---
 title: Badge
-description: A compact label for status, category or count.
+description: A read-only mark for a status, a category, a count or a dot.
 icon: Tag
 ---
 
@@ -95,56 +95,97 @@ Use `Badge.StartContent` or `Badge.EndContent` for leading and trailing content 
 </Badge>
 ```
 
-## Pressable badges
+## Counts
 
-With no `onPress` and no `onLongPress` the root is a plain `View`; supply either and it becomes a
-`Pressable`.
+Pass `count` instead of children. One digit sits in a circle and more in a capsule; past `max` the
+number stops at `99+`. A count of zero draws nothing, so there is no condition to write — set
+`showZero` to keep it.
 
-```tsx
-<Badge onPress={filterByTag}>Design</Badge>
-```
-
-## Dismissing
-
-<Preview id="badge/dismissible" />
+<Preview id="badge/counts" />
 
 ```tsx
-<Badge onClose={remove}>Design</Badge>
+<Badge color="destructive" count={3} />
+<Badge color="destructive" count={128} />
+<Badge color="destructive" count={12} max={9} />
+<Badge count={0} showZero />
 ```
 
-`onClose` composes a `Badge.CloseButton` in at the end. Its tap is claimed by the inner detector, so
-it never also fires the badge's `onPress`. Reach for the part by hand only to place it somewhere
-other than last.
+## Dots
+
+A badge with no children and no count is a dot. It is solid in its `color` whatever the `variant`.
+
+<Preview id="badge/dots" />
+
+```tsx
+<Badge color="success" />
+<Badge color="destructive" size="lg" />
+```
+
+## Pinned to a corner
+
+`placement` pins a badge to a corner of its parent. Wrap the pair in a `Badge.Anchor`, which sizes
+the parent to what it holds — without it, a `View` in a column stretches and the corner is the far
+edge of the screen.
+
+<Preview id="badge/pinned" />
+
+```tsx
+<Badge.Anchor accessible accessibilityLabel={`Inbox, ${unread} unread`}>
+  <Icon icon={IconEmail1} size="lg" />
+  <Badge color="destructive" count={unread} placement="top-right" size="sm" />
+</Badge.Anchor>
+```
+
+The badge is pinned by its inner edge, so a count that gains a digit grows away from the glyph
+rather than across it. A dot or a count says nothing useful to a screen reader on its own — put the
+meaning into the `accessibilityLabel` of the thing it sits on.
+
+An [`Avatar`](/docs/native/components/avatar) pins its own: put the badge in an `Avatar.Badge` and
+leave `placement` off.
+
+## Pressing and dismissing
+
+A badge is read-only: it takes no `onPress` and no `onClose`. Something a user taps, toggles or
+removes is a [`Chip`](/docs/native/components/chip), which shares Badge's colours and tones.
+
+```tsx
+<Chip onClose={remove}>Design</Chip>
+```
 
 ## API Reference
 
 ### BadgeProps
 
-A badge is a `Pressable`, so `feedback`, `haptic`, `onPress` and the rest are inherited rather than
-restated — see [Pressable](/docs/native/components/pressable). `asChild`, `busy` and `disabled` are
-withheld: use `isDisabled`, which the parts read through context.
+A badge is a `View`, so `style`, `testID` and the accessibility props are inherited rather than
+restated. `count` and `children` are alternatives: passing both is a type error.
 
 <TypeTable
   type={{
-    variant: { type: '"solid" | "soft" | "outline" | "ghost"', default: '"solid"' },
+    variant: {
+      type: '"solid" | "soft" | "outline" | "ghost"',
+      default: '"solid"',
+      description: "How the surface is painted. A dot is solid whichever is set.",
+    },
     color: {
       type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
       default: '"default"',
     },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
-    isDisabled: { type: "boolean", description: "Fades the badge and blocks both its press and its close button." },
-    onClose: {
-      type: "() => void",
-      description: "Composes a `Badge.CloseButton` in when the badge holds none of its own.",
+    count: {
+      type: "number",
+      description: "Shows a number instead of children. Draws nothing at zero unless `showZero` is set.",
     },
-    closeAccessibilityLabel: {
-      type: "string",
-      default: '"Remove"',
-      description: "The name a screen reader reads for that composed button.",
+    max: { type: "number", default: "99", description: "The largest count printed; past it the badge reads `99+`." },
+    showZero: { type: "boolean", default: "false", description: "Draws a count of zero rather than hiding it." },
+    placement: {
+      type: '"top-right" | "top-left" | "bottom-right" | "bottom-left"',
+      description: "Pins the badge to a corner of its parent. Wrap the pair in a `Badge.Anchor`.",
     },
-    closeTestID: { type: "string", description: "The `testID` of that composed button." },
     className: { type: "string" },
-    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Badge.Label` automatically." },
+    children: {
+      type: "ReactNode",
+      description: "Bare strings are wrapped in a `Badge.Label` automatically. With none, and no `count`, the badge is a dot.",
+    },
   }}
 />
 
@@ -155,22 +196,16 @@ Extends React Native's `TextProps`.
 
 <TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
 
-### Badge.CloseButton
-
-The dismiss pressable. Defaults its `accessibilityLabel` to `"Remove"` and its `feedback` to
-`fade`. Extends `PressableProps`.
-
-<TypeTable
-  type={{
-    accessibilityLabel: { type: "string", default: '"Remove"' },
-    onPress: { type: "() => void" },
-    className: { type: "string" },
-  }}
-/>
-
 ### Badge.StartContent / Badge.EndContent
 
 Centred wrappers for leading and trailing content that is not an `Icon`. An `Icon` needs neither —
 it inherits the badge's icon size and its colour from the subtree.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Badge.Anchor
+
+The content-sized box a badge with a `placement` is pinned to a corner of. Extends React Native's
+`ViewProps`.
 
 <TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />

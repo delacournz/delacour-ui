@@ -70,7 +70,7 @@ Compound root plus `Avatar.Badge` and `Avatar.Group`.
   overlap is a runtime margin and cannot be a class; a test pins the two
   together.
 - **An avatar is content until it is given something to do** — the rule
-  [`Badge`](../badge/AGENTS.md) follows. With no `onPress` or `onLongPress` it
+  [`Chip`](../chip/AGENTS.md) follows. With no `onPress` or `onLongPress` it
   is a plain `View` announced as an image (or not announced at all when it has
   no name); supply either and it becomes a [`Pressable`](../pressable/AGENTS.md)
   announced as a button. `resolveAvatarInteractive` is that decision.

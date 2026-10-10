@@ -98,7 +98,7 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	badge: {
 		title: "Badge",
-		description: "A compact label for status or a count, composed from parts like the button.",
+		description: "A read-only mark: a status label, a count or a dot, optionally pinned to a corner of an icon.",
 		categories: ["display"],
 	},
 	"bottom-sheet": {
@@ -318,6 +318,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
 	slot: { title: "Slot", description: "Renders into a child element instead of a wrapper." },
 	tv: { title: "tv", description: "tailwind-variants, taught the library's semantic size tokens." },
+	"wrap-text-children": {
+		title: "wrapTextChildren",
+		description: "Wraps the bare text in a root's children in that root's own label part.",
+	},
 
 	"use-calm-motion": {
 		title: "useCalmMotion",

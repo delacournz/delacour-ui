@@ -84,7 +84,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   Two defaults differ from a bare `Pressable` and only two: `feedback="fade"`,
   since a spring on a 20pt square reads as a jitter rather than a press, and
   `haptic="selection"`, since a checkbox is a state toggle and the tick landing
-  is the confirmation — [`Button`](../button/AGENTS.md) and [`Badge`](../badge/AGENTS.md) leave it off because their press is
+  is the confirmation — [`Button`](../button/AGENTS.md) leaves it off because its press is
   an action, not a state change. Both are ordinary props, so `haptic={false}`
   silences it. `onPress` is the one prop `Omit`ed rather than forwarded: the
   press *is* the toggle, and `onCheckedChange` is where a side effect goes.
@@ -164,9 +164,9 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   [`Spinner`](../spinner/AGENTS.md). Under it `withTiming` completes instantly, which for a checkbox is
   right: the state change is the point and the travel is decoration. A spinner
   had to opt out because its animation *is* the status signal.
-- **`hitSlop` is new to this package, and only a bare box gets any.** A bare `md`
+- **Only a bare box gets any `hitSlop`.** A bare `md`
   checkbox is a 20pt square against a 44pt minimum, with no padded capsule to
-  absorb the difference the way [`Badge.CloseButton`](../badge/AGENTS.md) has. Once there is a label
+  absorb the difference. Once there is a label
   the row is the target and is already wide, so `resolveCheckboxHitSlop` returns
   nothing — slop on top of that would overlap the row below and make a tap
   between two checkboxes ambiguous, which is worse than a merely adequate target.

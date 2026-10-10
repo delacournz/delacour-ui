@@ -49,7 +49,7 @@ and only `onPress` and `onLongPress` cross back to JS.
 - **A className's opacity is multiplied into the press, never overwritten.**
   The press feedback is an animated style, and an animated style owns every key
   it writes on the view — so its resting `opacity: 1` silently replaced a
-  variant's `opacity-50`, and a disabled `Button`, `Badge`, `Checkbox`,
+  variant's `opacity-50`, and a disabled `Button`, `Checkbox`,
   `ListGroup.Item` or `Input.Group` never faded while blocking taps correctly.
   The root now resolves its own `className` with Uniwind's
   `useResolveClassNames` and animates `rest * press` instead, with

@@ -34,8 +34,7 @@ export const BOTTOM_SHEET_BACKDROP_INDICES = { appearsOnIndex: 0, disappearsOnIn
  * Slop around `BottomSheet.Close`.
  *
  * The glyph is a bare icon in a corner with no padded capsule to absorb the
- * difference against the 44pt minimum — the case `Checkbox` mints slop for and
- * `Badge.CloseButton` does not need.
+ * difference against the 44pt minimum — the case `Checkbox` mints slop for.
  */
 export const BOTTOM_SHEET_CLOSE_HIT_SLOP = 8;
 

@@ -8,14 +8,12 @@ export type BadgeContextValue = {
 	variant: BadgeVariant;
 	/** What the badge's surface means. */
 	color: BadgeColor;
-	/** Whether the badge is disabled. */
-	isDisabled: boolean;
 };
 
 const BadgeContext = createContext<BadgeContextValue | null>(null);
 
 /**
- * Supplies the enclosing badge's variant, colour, size and state to its subtree.
+ * Supplies the enclosing badge's variant, colour and size to its subtree.
  *
  * Lives in its own module, importing nothing but `badge.variants`, so a part can
  * read it without importing `./badge`. That import would close a cycle, and
@@ -33,7 +31,7 @@ export function useBadgeContext(): BadgeContextValue | null {
 }
 
 /**
- * Reads the enclosing badge's variant, colour, size and state.
+ * Reads the enclosing badge's variant, colour and size.
  *
  * Lets a custom child style itself to match without the badge having to pass
  * props down through every slot. Throws outside a `<Badge>` — use

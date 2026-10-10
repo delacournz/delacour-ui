@@ -39,7 +39,8 @@ src/
 │                         use-calm-motion
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
-│                         keyboard-animation, navigation-theme, calm-motion
+│                         keyboard-animation, navigation-theme, calm-motion,
+│                         wrap-text-children
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
@@ -64,7 +65,7 @@ shares.
 | [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
 | [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
 | [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
-| [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
+| [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A read-only mark — a status, a category, a count or a dot, optionally pinned to a corner |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A sheet over the app — a Uniwind skin on `@delacour/react-native-bottom-sheet` |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
 | [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |

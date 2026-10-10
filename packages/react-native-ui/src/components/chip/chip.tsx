@@ -1,6 +1,7 @@
-import { Children, type ReactElement, type ReactNode, useCallback, useMemo } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo } from "react";
 import { type AccessibilityActionEvent, View } from "react-native";
 import { useControllableState } from "../../hooks/use-controllable-state";
+import { wrapTextChildren } from "../../lib/wrap-text-children";
 import { IconDefaultsProvider } from "../icon";
 import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
@@ -100,7 +101,10 @@ function ChipRoot({
 		[iconClassName, foregroundToken]
 	);
 
-	const content = useMemo(() => wrapTextChildren(children), [children]);
+	const content = useMemo(
+		() => wrapTextChildren(children, (text, key) => <ChipLabel key={key}>{text}</ChipLabel>),
+		[children]
+	);
 	const rootClassName = slots.root({ className });
 
 	// Inside a pressable chip the close control is folded into the chip's own
@@ -181,38 +185,6 @@ function ChipRoot({
 			</Pressable>
 		</ChipProvider>
 	);
-}
-
-/**
- * Wraps bare text children in a `Chip.Label`.
- *
- * React Native cannot render a string outside a `<Text>`, so `<Chip>Design</Chip>`
- * would otherwise crash. Consecutive strings and numbers are collected into a
- * single label rather than one each — `{count} open` is one piece of text, and
- * wrapping the parts separately would space them apart by the chip's gap.
- */
-function wrapTextChildren(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(<ChipLabel key={`label-${output.length}`}>{run.join("")}</ChipLabel>);
-		run = [];
-	};
-
-	for (const child of items) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output;
 }
 
 /**

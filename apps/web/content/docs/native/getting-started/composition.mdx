@@ -26,7 +26,7 @@ import { Button, useButton } from "@delacour/react-native-ui/button";
 
 function ButtonBadge({ count }: { count: number }) {
   const { variant, size, isDisabled } = useButton();
-  return <Badge color={variant === "destructive" ? "destructive" : "default"}>{count}</Badge>;
+  return <Badge color={variant === "destructive" ? "destructive" : "default"} count={count} />;
 }
 
 <Button variant="destructive">

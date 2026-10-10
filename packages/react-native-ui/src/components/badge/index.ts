@@ -4,14 +4,18 @@ export type { BadgeSlotProps } from "./badge.types";
 export {
 	BADGE_COLORS,
 	BADGE_FOREGROUND_TOKEN,
+	BADGE_PLACEMENTS,
 	BADGE_SIZES,
+	BADGE_SURFACE_CELLS,
 	BADGE_VARIANTS,
 	type BadgeColor,
+	type BadgePlacement,
+	type BadgeShape,
 	type BadgeSize,
 	type BadgeVariant,
 	type BadgeVariantProps,
 	badgeVariants,
-	resolveBadgeInteractive,
+	resolveBadgeCount,
+	resolveBadgeShape,
 } from "./badge.variants";
-export type { BadgeCloseButtonProps } from "./badge-close-button";
 export type { BadgeLabelProps } from "./badge-label";

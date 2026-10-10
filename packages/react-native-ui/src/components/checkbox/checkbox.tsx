@@ -169,7 +169,7 @@ function requireValue(value: string | undefined): string {
  * `<Checkbox>Remember me</Checkbox>` would otherwise crash. Consecutive strings
  * and numbers are collected into a single label rather than one each — the row's
  * gap would otherwise space the parts of one sentence apart, the same rule and
- * the same reason as `Badge`.
+ * the same reason as `Button`.
  */
 function wrapTextChildren(children: ReactNode): ReactNode {
 	const items = Children.toArray(children);

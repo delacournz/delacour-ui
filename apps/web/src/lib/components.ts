@@ -121,7 +121,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		group: "Data display",
 		blurb: "A person as a picture, with an initials fallback, a corner badge and a stack.",
 	},
-	{ slug: "badge", name: "Badge", group: "Data display", blurb: "A compact label for status, category or count." },
+	{
+		slug: "badge",
+		name: "Badge",
+		group: "Data display",
+		blurb: "A read-only mark for a status, a category, a count or a dot.",
+	},
 	{ slug: "icon", name: "Icon", group: "Data display", blurb: "Central Icons, sized and coloured by inheritance." },
 	{
 		slug: "item",

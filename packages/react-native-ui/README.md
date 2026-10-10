@@ -81,7 +81,7 @@ import { IconArrowRight } from "@delacour/react-native-ui/icons/central";
 | Component | Import | |
 | --- | --- | --- |
 | Accordion | `@delacour/react-native-ui/accordion` | Selection modes, measured panels, indicators |
-| Badge | `@delacour/react-native-ui/badge` | Variants, colours, sizes, dismiss |
+| Badge | `@delacour/react-native-ui/badge` | Variants, colours, sizes, counts, dots, corner placement |
 | BottomSheet | `@delacour/react-native-ui/bottom-sheet` | Snap points, keyboard, sticky footer, scrollables, steps, detached, teleported portal |
 | Button | `@delacour/react-native-ui/button` | Variants, sizes, icons, loading |
 | Checkbox | `@delacour/react-native-ui/checkbox` | Colours, sizes, indeterminate, groups |

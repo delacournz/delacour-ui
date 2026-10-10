@@ -14,7 +14,8 @@
 		"pressable",
 		"text",
 		"tv",
-		"use-controllable-state"
+		"use-controllable-state",
+		"wrap-text-children"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -86,6 +87,10 @@
 				{
 					"from": "../../hooks/use-controllable-state",
 					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/wrap-text-children",
+					"to": "@registry/lib/wrap-text-children"
 				},
 				{
 					"from": "../icon",

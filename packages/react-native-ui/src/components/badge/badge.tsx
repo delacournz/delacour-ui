@@ -1,62 +1,79 @@
-import { Children, type ReactElement, type ReactNode, useMemo } from "react";
-import { View } from "react-native";
+import { type ReactElement, type ReactNode, useMemo } from "react";
+import { View, type ViewProps } from "react-native";
+import { wrapTextChildren } from "../../lib/wrap-text-children";
 import { IconDefaultsProvider } from "../icon";
-import { Pressable, type PressableProps } from "../pressable";
 import { TextClassProvider } from "../text/text.context";
 import { type BadgeContextValue, BadgeProvider } from "./badge.context";
 import {
 	BADGE_FOREGROUND_TOKEN,
 	type BadgeColor,
+	type BadgePlacement,
 	type BadgeSize,
 	type BadgeVariant,
 	badgeVariants,
-	resolveBadgeInteractive,
+	resolveBadgeCount,
+	resolveBadgeShape,
 } from "./badge.variants";
-import { BadgeCloseButton } from "./badge-close-button";
+import { BadgeAnchor } from "./badge-anchor";
 import { BadgeEndContent } from "./badge-end-content";
 import { BadgeLabel } from "./badge-label";
 import { BadgeStartContent } from "./badge-start-content";
 
-export type BadgeProps = Omit<PressableProps, "asChild" | "busy" | "children" | "disabled"> & {
-	/** How the surface is painted. */
+type BadgeBaseProps = ViewProps & {
+	/** How the surface is painted. A dot is solid whichever is set. */
 	variant?: BadgeVariant;
 	/** What the surface means. */
 	color?: BadgeColor;
 	size?: BadgeSize;
-	isDisabled?: boolean;
-	/** Composes a trailing dismiss control in. Its press never reaches `onPress`. */
-	onClose?: () => void;
-	/** Name a screen reader gives the dismiss control. Defaults to `Remove`. */
-	closeAccessibilityLabel?: string;
-	/** `testID` for the dismiss control, so a test or automation can press it. */
-	closeTestID?: string;
+	/**
+	 * Pins the badge to a corner of its parent, hanging over the edge. The parent
+	 * has to be sized by its content — wrap the pair in a `Badge.Anchor`.
+	 */
+	placement?: BadgePlacement;
+	className?: string;
+};
+
+/** A label, or — with no children at all — a dot. */
+type BadgeContentProps = {
+	count?: undefined;
+	max?: never;
+	showZero?: never;
 	children?: ReactNode;
 };
+
+/** A count. It is the whole content, so it takes no children. */
+type BadgeCountProps = {
+	/** The number to show. Draws nothing at zero unless `showZero` is set. */
+	count: number;
+	/** The largest number printed; past it the badge reads `99+`. Default `99`. */
+	max?: number;
+	/** Draw the badge at zero rather than hiding it. */
+	showZero?: boolean;
+	children?: never;
+};
+
+export type BadgeProps = BadgeBaseProps & (BadgeContentProps | BadgeCountProps);
 
 function BadgeRoot({
 	variant = "solid",
 	color = "default",
 	size = "md",
-	isDisabled = false,
-	onClose,
-	closeAccessibilityLabel,
-	closeTestID,
-	onPress,
-	onLongPress,
-	haptic,
-	feedback = "scale",
-	pressedScale,
-	pressedOpacity,
+	placement,
+	count,
+	max,
+	showZero,
 	className,
 	children,
 	...props
-}: BadgeProps): ReactElement {
-	const context = useMemo<BadgeContextValue>(
-		() => ({ variant, color, size, isDisabled }),
-		[variant, color, size, isDisabled]
-	);
+}: BadgeProps): ReactElement | null {
+	const context = useMemo<BadgeContextValue>(() => ({ variant, color, size }), [variant, color, size]);
 
-	const slots = badgeVariants({ color, isDisabled, size, variant });
+	const content = useMemo(
+		() => wrapTextChildren(children, (text, key) => <BadgeLabel key={key}>{text}</BadgeLabel>),
+		[children]
+	);
+	const shape = resolveBadgeShape({ count, hasChildren: content.length > 0 });
+	const slots = badgeVariants({ color, placement, shape, size, variant });
 
 	// Icons composed into the badge adopt these unless told otherwise.
 	const iconClassName = slots.icon();
@@ -66,86 +83,32 @@ function BadgeRoot({
 		[iconClassName, foregroundToken]
 	);
 
-	const content = useMemo(() => wrapTextChildren(children), [children]);
-	const rootClassName = slots.root({ className });
-
-	const inner = (
-		<IconDefaultsProvider value={iconDefaults}>
-			<TextClassProvider value={slots.label()}>
-				{content}
-				{onClose ? (
-					<BadgeCloseButton accessibilityLabel={closeAccessibilityLabel} onPress={onClose} testID={closeTestID} />
-				) : null}
-			</TextClassProvider>
-		</IconDefaultsProvider>
-	);
-
-	// A badge with nothing to do stays a plain box — see `resolveBadgeInteractive`.
-	if (!resolveBadgeInteractive({ onPress, onLongPress })) {
-		return (
-			<BadgeProvider value={context}>
-				<View className={rootClassName} {...props}>
-					{inner}
-				</View>
-			</BadgeProvider>
-		);
-	}
+	// A count that resolves to nothing — zero, without `showZero` — draws nothing,
+	// so a caller never has to wrap the badge in a condition of their own.
+	const countText = count === undefined ? null : resolveBadgeCount({ count, max, showZero });
+	if (shape === "count" && countText === null) return null;
 
 	return (
 		<BadgeProvider value={context}>
-			<Pressable
-				accessibilityRole="button"
-				className={rootClassName}
-				disabled={isDisabled}
-				feedback={feedback}
-				haptic={haptic}
-				onLongPress={onLongPress}
-				onPress={onPress}
-				pressedOpacity={pressedOpacity}
-				pressedScale={pressedScale}
-				{...props}
-			>
-				{inner}
-			</Pressable>
+			<View className={slots.root({ className })} {...props}>
+				<IconDefaultsProvider value={iconDefaults}>
+					<TextClassProvider value={slots.label()}>
+						{shape === "count" ? <BadgeLabel>{countText}</BadgeLabel> : content}
+					</TextClassProvider>
+				</IconDefaultsProvider>
+			</View>
 		</BadgeProvider>
 	);
 }
 
 /**
- * Wraps bare text children in a `Badge.Label`.
+ * A compact, read-only mark — a status, a category, a count, or a dot that says
+ * only that there is something. Composed from parts rather than configured by
+ * flags.
  *
- * React Native cannot render a string outside a `<Text>`, so `<Badge>New</Badge>`
- * would otherwise crash. Consecutive strings and numbers are collected into a
- * single label rather than one each — `{count} left` is one piece of text, and
- * wrapping the parts separately would space them apart by the badge's gap.
- */
-function wrapTextChildren(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(<BadgeLabel key={`label-${output.length}`}>{run.join("")}</BadgeLabel>);
-		run = [];
-	};
-
-	for (const child of items) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output;
-}
-
-/**
- * A compact label for status, category or count — composed from parts rather
- * than configured by flags.
+ * **A badge is never pressed.** It is a plain `View` with no gesture detector
+ * and nothing announced as a control. Something to tap, toggle or remove is a
+ * [`Chip`](../chip/AGENTS.md), which shares this component's colours and tones.
  *
  * Two axes describe the surface: `variant` says how it is painted (`solid`,
  * `soft`, `outline`, `ghost`) and `color` says what it means (`default`,
@@ -153,22 +116,27 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * every one of the twenty-four pairings is reachable without the library naming
  * each combination.
  *
- * **A badge is content until it is given something to do.** With no `onPress` or
- * `onLongPress` it renders a plain `View` — no gesture detector, and nothing
- * announced to assistive technology as a control. Supply either and the root
- * becomes a `Pressable`, inheriting `feedback`, `haptic` and the rest; only the
- * default differs, `scale`.
+ * **What it draws is read from what it is given:**
  *
- * `onClose` composes a dismiss control in at the end. It is a pressable of its
- * own, so dismissing never also fires `onPress`.
+ * - **Children** — a label. Plain strings and numbers are wrapped in a
+ *   `Badge.Label` automatically; pass the parts when a layout needs more control.
+ * - **`count`** — a number, in a circle while it is one digit. Past `max` it
+ *   reads `99+`, and at zero it draws nothing unless `showZero` is set.
+ * - **Neither** — a dot, solid in its `color`.
  *
- * Plain string or number children are wrapped in a `Badge.Label` automatically;
- * pass the compound parts when a layout needs more control.
+ * `placement` pins any of the three to a corner of its parent, pinned by its
+ * inner edge so a count that gains a digit grows outward. Wrap the pair in a
+ * `Badge.Anchor`, which sizes the parent to what it holds. An `Avatar` pins its
+ * own through `Avatar.Badge`, so a badge inside one takes no `placement`.
  *
  * Icons are composed in, not passed as props. Anything in the subtree inherits
  * the badge's icon size and its surface's colour, so an `Icon` needs nothing but
  * the glyph. Text works the same way — a bare `<Text>` comes out at the label's
  * colour and type scale without being told.
+ *
+ * A dot and a count say nothing useful to a screen reader on their own — "3" is
+ * not "3 unread". Put the meaning into the `accessibilityLabel` of the thing the
+ * badge sits on.
  *
  * @example
  * <Badge color="success" variant="soft">Active</Badge>
@@ -180,9 +148,10 @@ function wrapTextChildren(children: ReactNode): ReactNode {
  * </Badge>
  *
  * @example
- * <Badge onClose={() => remove(tag)} onPress={() => filter(tag)}>
- *   {tag}
- * </Badge>
+ * <Badge.Anchor>
+ *   <Icon icon={IconBell} size="lg" />
+ *   <Badge color="destructive" count={unread} placement="top-right" size="sm" />
+ * </Badge.Anchor>
  */
 export const Badge = Object.assign(BadgeRoot, {
 	/** The badge's text. Picks its colour and type scale from the badge's variant, colour and size. */
@@ -191,7 +160,7 @@ export const Badge = Object.assign(BadgeRoot, {
 	StartContent: BadgeStartContent,
 	/** A centred wrapper for trailing content that is not an `Icon`. */
 	EndContent: BadgeEndContent,
-	/** The trailing dismiss control. Composed in automatically whenever `onClose` is set. */
-	CloseButton: BadgeCloseButton,
+	/** The content-sized box a badge with a `placement` is pinned to a corner of. */
+	Anchor: BadgeAnchor,
 	displayName: "DelacourUI.Badge",
 });

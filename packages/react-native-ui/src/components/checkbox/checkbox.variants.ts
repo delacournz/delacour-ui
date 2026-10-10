@@ -315,9 +315,8 @@ export const CHECKBOX_INDICATOR_ANIMATION = {
 /**
  * Points of slop that bring a bare box up to the 44pt minimum touch target.
  *
- * New to this package, and deliberate: `Badge.CloseButton` needs none because it
- * sits inside a padded capsule, while a bare `md` checkbox is a 20pt square with
- * nothing around it.
+ * Deliberate: a bare `md` checkbox is a 20pt square with nothing around it —
+ * no padded capsule to absorb the difference.
  */
 export const CHECKBOX_HIT_SLOP: Record<CheckboxSize, number> = { sm: 13, md: 12, lg: 10 };
 

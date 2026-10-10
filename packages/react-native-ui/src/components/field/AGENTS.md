@@ -48,7 +48,7 @@ A form field's layout, and the one place its state is written down. Root plus
   `resolveFieldInteractive` is the decision and it is pure, so `bun test` reaches
   it. A field of static text registers nothing and stays a `View` — mounting a
   detector regardless would put one under every label and description in a form,
-  the thing [`Badge`](../badge/AGENTS.md) refuses for a list of fifty tags. The row is
+  the thing [`Chip`](../chip/AGENTS.md) refuses for a list of fifty tags. The row is
   `accessible={false}`, so the control stays the element a screen reader sees,
   and the inner detector claims a tap on the box itself rather than firing both.
   A field holds one control, so a second registration replaces the first.

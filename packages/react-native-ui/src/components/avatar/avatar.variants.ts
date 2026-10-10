@@ -253,7 +253,7 @@ export function resolveAvatarOverlap({ size, overlap }: { size: AvatarSize; over
 /**
  * Whether the root should render as a `Pressable` rather than a plain `View`.
  *
- * The rule `Badge` follows, for the reason it does: an avatar is content until a
+ * The rule `Chip` follows, for the reason it does: an avatar is content until a
  * caller gives it something to do, and a list of fifty should not mount fifty
  * gesture detectors or announce fifty buttons with no action.
  */

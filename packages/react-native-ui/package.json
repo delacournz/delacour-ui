@@ -85,6 +85,7 @@
 		"./lib/navigation-theme": "./src/lib/navigation-theme.ts",
 		"./lib/slot": "./src/lib/slot.tsx",
 		"./lib/tv": "./src/lib/tv.ts",
+		"./lib/wrap-text-children": "./src/lib/wrap-text-children.ts",
 		"./icons/central": "./src/icons/central.ts"
 	},
 	"scripts": {

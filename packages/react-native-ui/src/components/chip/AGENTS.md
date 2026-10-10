@@ -26,9 +26,8 @@ and `Chip.CloseButton`.
 - **What a chip does is read from its props, never from a `type` flag.**
   `resolveChipMode` returns `static`, `button` or `toggle`. No handler is a tag,
   rendered as a plain `View` — a detector under every tag in a list of fifty
-  would announce each as a button with no action, the same reason
-  [`Badge`](../badge/AGENTS.md) stays inert. `onPress` or `onLongPress` is a
-  button. **Any** selection prop — `isSelected` even when `false`,
+  would announce each as a button with no action. `onPress` or `onLongPress` is
+  a button. **Any** selection prop — `isSelected` even when `false`,
   `defaultSelected`, `onSelectedChange` — is a toggle, and it outranks a bare
   press handler, because a chip with an on state that is announced as a plain
   button leaves a screen-reader user unable to tell which chips are on. A
@@ -42,16 +41,20 @@ and `Chip.CloseButton`.
 - **Controlled or uncontrolled, through `useControllableState`**, the same hook
   and the same prop shape as [`Checkbox`](../checkbox/AGENTS.md):
   `isSelected` / `defaultSelected` / `onSelectedChange`. A toggle ticks a
-  `selection` haptic by default; a button plays none, as a badge does. Pass
+  `selection` haptic by default; a button plays none. Pass
   `haptic` to override either.
 - **Tone is Badge's, not a copy of it.** `CHIP_COLORS` and `CHIP_SIZES` *are*
-  `BADGE_COLORS` and `BADGE_SIZES`, and the resting entries of
-  `CHIP_FOREGROUND_TOKEN` are Badge's own objects. The class strings in
-  `chipVariants` are restated (Tailwind's scanner is static, so a class has to
-  appear literally somewhere), and a test pins every resting cell's `bg-*`,
-  `border-*` and label colour to the badge of the same variant and colour. A
-  soft `success` chip beside a soft `success` badge is one shade by
-  construction.
+  `BADGE_COLORS` and `BADGE_SIZES`, the resting entries of
+  `CHIP_FOREGROUND_TOKEN` are Badge's own objects, and the resting paint in
+  `chipVariants` is `BADGE_SURFACE_CELLS.soft` and `.outline` spread in rather
+  than restated — the strings are literal in `badge.variants.ts`, which is all
+  Tailwind's static scanner needs. A soft `success` chip beside a soft `success`
+  badge is one shade by construction; a test still pins every cell, so a chip
+  that stops spreading them fails by name.
+- **Chip is the interactive one of the pair.** [`Badge`](../badge/AGENTS.md)
+  is read-only — it takes no `onPress` and no `onClose`. Anything a user taps,
+  toggles or removes is a chip, including the removable tag a badge used to
+  cover.
 - **Two resting variants, `soft` and `outline`.** `solid` is what selection
   paints, so a resting solid chip would read as already on; `ghost` has neither
   fill nor border, so there is no edge to aim at. `soft` is the default.
@@ -106,7 +109,8 @@ and `Chip.CloseButton`.
   surface, so a bare `<Icon>` or `<Text>` follows the chip into and out of
   selection. `useChip()` exposes `isSelected` for a custom child that needs more.
 - **String children** are wrapped in a `Chip.Label` automatically, consecutive
-  strings collapsing into one — the same rule as [`Badge`](../badge/AGENTS.md).
+  strings collapsing into one — the same rule as [`Badge`](../badge/AGENTS.md),
+  and the same walk: `lib/wrap-text-children`, handed this component's label.
 - **No group, yet.** Single- and multi-select filter rows are composed from
   controlled chips (the playground's `filter-row` demo). A `Chip.Group` owning
   the value, as `Checkbox.Group` does, is the obvious next step once a second

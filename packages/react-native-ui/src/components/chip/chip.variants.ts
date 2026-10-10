@@ -4,6 +4,7 @@ import {
 	BADGE_COLORS,
 	BADGE_FOREGROUND_TOKEN,
 	BADGE_SIZES,
+	BADGE_SURFACE_CELLS,
 	type BadgeColor,
 	type BadgeSize,
 } from "../badge/badge.variants";
@@ -96,10 +97,10 @@ export const CHIP_CLOSE_HIT_SLOP: Record<ChipSize, number> = { sm: 8, md: 10, lg
 /**
  * Styling for every part of a chip.
  *
- * Shares Badge's two axes and its tones — a resting chip is painted exactly as
- * the badge of the same variant and colour, a test pins every cell — and adds a
- * third, `isSelected`, which replaces the resting paint with a solid fill in the
- * chip's colour. The selected cells come **after** the resting ones, so
+ * Shares Badge's two axes and its tones — the resting cells are spread in from
+ * `BADGE_SURFACE_CELLS`, so a resting chip is painted exactly as the badge of the
+ * same variant and colour by construction — and adds a third, `isSelected`,
+ * which replaces the resting paint with a solid fill in the chip's colour. The selected cells come **after** the resting ones, so
  * tailwind-merge lets them win whatever the chip rests on.
  *
  * `border border-transparent` sits in the base for the reason it does in Badge,
@@ -162,43 +163,9 @@ export const chipVariants = tv({
 		isDisabled: { true: { root: "opacity-50" }, false: {} },
 	},
 	compoundVariants: [
-		{ variant: "soft", color: "default", class: { root: "bg-muted", label: "text-muted-foreground" } },
-		{ variant: "soft", color: "primary", class: { root: "bg-tertiary", label: "text-tertiary-foreground" } },
-		{
-			variant: "soft",
-			color: "success",
-			class: { root: "bg-success-soft", label: "text-success-soft-foreground" },
-		},
-		{
-			variant: "soft",
-			color: "warning",
-			class: { root: "bg-warning-soft", label: "text-warning-soft-foreground" },
-		},
-		{
-			variant: "soft",
-			color: "destructive",
-			class: { root: "bg-destructive-soft", label: "text-destructive-soft-foreground" },
-		},
-		{ variant: "soft", color: "info", class: { root: "bg-info-soft", label: "text-info-soft-foreground" } },
-
-		{ variant: "outline", color: "default", class: { root: "border-border", label: "text-muted-foreground" } },
-		{ variant: "outline", color: "primary", class: { root: "border-primary", label: "text-foreground" } },
-		{
-			variant: "outline",
-			color: "success",
-			class: { root: "border-success", label: "text-success-soft-foreground" },
-		},
-		{
-			variant: "outline",
-			color: "warning",
-			class: { root: "border-warning", label: "text-warning-soft-foreground" },
-		},
-		{
-			variant: "outline",
-			color: "destructive",
-			class: { root: "border-destructive", label: "text-destructive-soft-foreground" },
-		},
-		{ variant: "outline", color: "info", class: { root: "border-info", label: "text-info-soft-foreground" } },
+		// The resting paint is Badge's own cells, not a copy of them.
+		...BADGE_SURFACE_CELLS.soft,
+		...BADGE_SURFACE_CELLS.outline,
 
 		{
 			isSelected: true,

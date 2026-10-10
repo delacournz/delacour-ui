@@ -64,3 +64,21 @@ describe("planRelease", () => {
 		);
 	});
 });
+
+describe("release.yml", () => {
+	const workflow = Bun.file(new URL("./workflows/release.yml", import.meta.url)).text();
+	const input = async (name: string) =>
+		[...(await workflow).matchAll(new RegExp(`^\\s+${name}: (.+)$`, "gm"))].map((match) => match[1]);
+
+	test("titles the release pull request and its commit with RELEASE_TITLE", async () => {
+		expect(await input("pr-title")).toEqual([JSON.stringify(RELEASE_TITLE)]);
+		expect(await input("commit-message")).toEqual([JSON.stringify(RELEASE_TITLE)]);
+	});
+
+	test("uses the input names changesets/action v2 accepts, which fails the job on a v1 name", async () => {
+		expect(await input("version-script")).toEqual(["bun .github/changeset-version.ts"]);
+		for (const renamed of ["version", "title", "commit", "publish"]) {
+			expect(await input(renamed)).toEqual([]);
+		}
+	});
+});

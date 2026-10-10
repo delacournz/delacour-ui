@@ -373,7 +373,7 @@ package on `latest`, pushes the tags and cuts a GitHub Release per package.
 
 The merge is recognised by its subject — the pull request title, plus the ` (#n)` GitHub appends to
 a squash — with no changeset left pending. The title lives twice, as `RELEASE_TITLE` in
-`changeset-plan.ts` and as `title` / `commit` in `release.yml`; change both or the merge publishes
+`changeset-plan.ts` and as `pr-title` / `commit-message` in `release.yml`; change both or the merge publishes
 nothing. Do not edit the title when merging, for the same reason.
 
 The plan reads the commit the run was started for, not `develop`'s tip, so a merge that lands
@@ -402,8 +402,8 @@ Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the producti
 each release and not with each merge. It lands before the staged versions are approved; approve them
 promptly, or the site documents a version `latest` does not serve yet.
 
-The action is `changesets/action@v2`, used one half per job. `release-pr` gives it a `version`
-script and no publish script, so that job cannot publish. `release` gives it only `publish-script`:
+The action is `changesets/action@v2`, used one half per job. `release-pr` gives it a `version-script`
+and no `publish-script`, so that job cannot publish. `release` gives it only `publish-script`:
 the release commit consumed every changeset, so it goes straight there, then pushes the tags that
 script wrote and cuts the Releases. v2 rather than v1 because `@changesets/cli` 3 files the changesets a pre-mode
 `changeset version` consumes under `.changeset/pre/`, and v1 read that directory as a Changesets-v1

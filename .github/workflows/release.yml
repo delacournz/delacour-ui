@@ -115,7 +115,7 @@ jobs:
       # consumes into `.changeset/pre/`, and v1 read that directory as a Changesets-v1 changeset
       # and died on `.changeset/pre/changes.md`.
       #
-      # `title` and `commit` are `RELEASE_TITLE` in `.github/changeset-plan.ts`, which is how the
+      # `pr-title` and `commit-message` are `RELEASE_TITLE` in `.github/changeset-plan.ts`, which is how the
       # merge is recognised afterwards. Change one and change the other. The token has to arrive
       # through `github-token`; the action hands it to the version script as `GITHUB_TOKEN`, which
       # `@changesets/changelog-github` needs.
@@ -123,9 +123,9 @@ jobs:
         uses: changesets/action@v2
         with:
           github-token: ${{ steps.app-token.outputs.token }}
-          version: bun .github/changeset-version.ts
-          title: "🔖 chore(release): version packages"
-          commit: "🔖 chore(release): version packages"
+          version-script: bun .github/changeset-version.ts
+          pr-title: "🔖 chore(release): version packages"
+          commit-message: "🔖 chore(release): version packages"
 
   release:
     name: Release

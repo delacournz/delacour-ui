@@ -5,11 +5,12 @@ import { Screen } from "@delacour/react-native-ui/screen";
 import { Surface } from "@delacour/react-native-ui/surface";
 import { Text } from "@delacour/react-native-ui/text";
 import type { ReactElement } from "react";
-import { Alert, Linking, View } from "react-native";
+import { View } from "react-native";
 import { DelacourMark } from "@/components/delacour-mark";
 import { HubCard } from "@/components/hub-card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { HUB_CARDS } from "@/lib/hub-cards";
+import { openWebPage } from "@/lib/open-web-page";
 import { PRIVACY_POLICY_URL } from "@/lib/privacy-url";
 import { LIST_GAP, SECTION_GAP } from "@/tokens";
 
@@ -45,16 +46,12 @@ const LARGE_TITLE_CLASS = "font-semibold text-[34px] leading-[41px]";
  *
  * The About group closes the screen with the privacy policy link App Review
  * requires inside the app, not only on the listing. Its suffix is an outbound
- * arrow rather than the chevron, because the row leaves the app for the
- * browser instead of pushing a screen.
+ * arrow rather than the chevron, because the row opens a web page in the
+ * in-app browser instead of pushing a screen — see `lib/open-web-page.ts`.
  */
 export default function Index(): ReactElement {
-	// `openURL` rejects when nothing is registered for https, which is an emulator
-	// image with no browser. The alert carries the URL so it can still be read.
 	const openPrivacyPolicy = () => {
-		Linking.openURL(PRIVACY_POLICY_URL).catch(() => {
-			Alert.alert("Could not open a browser", PRIVACY_POLICY_URL);
-		});
+		void openWebPage(PRIVACY_POLICY_URL);
 	};
 
 	return (
@@ -77,7 +74,7 @@ export default function Index(): ReactElement {
 					<Surface material="tray">
 						<ListGroup className="rounded-xl">
 							<ListGroup.Item
-								accessibilityHint="Opens in your browser"
+								accessibilityHint="Opens a web page"
 								accessibilityRole="link"
 								haptic="selection"
 								onPress={openPrivacyPolicy}

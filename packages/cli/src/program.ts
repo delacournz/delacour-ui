@@ -34,6 +34,7 @@ import { init } from "./commands/init";
 import { mcp } from "./commands/mcp";
 import { AGENT_IDS, skills } from "./commands/skills";
 import { theme } from "./commands/theme";
+import { update } from "./commands/update";
 import { MissingConfigError } from "./config/resolve";
 import { CONFIG_FILENAME } from "./config/schema";
 import { RegistryFetchError } from "./registry/client";
@@ -124,6 +125,32 @@ withRegistryOptions(
 withRegistryOptions(
 	program.command("info").description("show the resolved config and what was detected").option("--json", "print JSON")
 ).action((options) => run(() => info({ ...options, cwd: resolve(options.cwd) })));
+
+withRegistryOptions(
+	program
+		.command("update")
+		.description("bring copied components up to the registry, merging with your edits")
+		.argument("[components...]", "components to update, or every one in this project")
+		.option("-n, --dry-run", "show what would change and write nothing")
+		.option("--base <ref>", "the ref to merge from, for files copied before the lock existed")
+		.option("--prune", "delete untouched files their component no longer has")
+		.option("-f, --force", "merge into files with uncommitted changes")
+		// Declared alone, so it defaults to true: the project's formatter is run
+		// unless a caller says not to.
+		.option("--no-format", "compare without running the project's formatter")
+		.option("-y, --yes", "accept every default without asking")
+		// The pair, for the three states `add` has: unset means ask.
+		.option("--install", "install any packages the updated components need, without asking")
+		.option("--no-install", "write the files and install nothing")
+		.option("--json", "print JSON")
+		.option("--silent", "print nothing but errors")
+).action((components: string[], options) =>
+	run(async () => {
+		const result = await update(components, { ...options, cwd: resolve(options.cwd) });
+		// Conflict markers were written: a script has to be able to tell.
+		return result.conflicts > 0 ? 1 : 0;
+	})
+);
 
 withRegistryOptions(
 	program

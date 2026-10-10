@@ -168,6 +168,15 @@ const SHOTS: Shot[] = [
 	{ id: "48-sheet-steps-desktop-dark", path: "/docs/bottom-sheet/steps", frame: "desktop", theme: "dark" },
 	{ id: "49-sheet-detached-desktop-light", path: "/docs/bottom-sheet/detached", frame: "desktop", theme: "light" },
 	{ id: "50-sheet-index-mobile-dark", path: "/docs/bottom-sheet", frame: "phone", theme: "dark", full: true },
+	{ id: "51-cli-update-desktop-dark", path: "/docs/native/cli/commands#update", frame: "desktop", theme: "dark" },
+	{ id: "52-cli-update-desktop-light", path: "/docs/native/cli/commands#update", frame: "desktop", theme: "light" },
+	{
+		id: "53-cli-lock-file-desktop-dark",
+		path: "/docs/native/cli/configuration#the-lock-file",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{ id: "54-cli-update-mobile-dark", path: "/docs/native/cli/commands#update", frame: "phone", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

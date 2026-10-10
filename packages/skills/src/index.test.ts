@@ -73,6 +73,7 @@ describe("every skill", () => {
 					"search",
 					"view",
 					"info",
+					"update",
 					"diff",
 					"doctor",
 					"theme",

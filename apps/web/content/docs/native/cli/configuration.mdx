@@ -134,6 +134,32 @@ live in a shared package — see [Monorepos](/docs/native/cli/monorepo).
 
 Covered in [The registry](/docs/native/cli/registry).
 
+## The lock file
+
+`native-components.lock.json` sits beside the config and is written by `add` and `update`, never by
+you. Commit it.
+
+```json title="native-components.lock.json"
+{
+  "version": 1,
+  "items": {
+    "button": {
+      "files": {
+        "ui/button/button.tsx": { "ref": "3ac4ac48…", "hash": "sha256-fa741b99…" }
+      }
+    }
+  }
+}
+```
+
+One entry per file: the registry ref it was copied from, and a hash of the text as the registry
+served it — before you edited or formatted it. That pair is what
+[`update`](/docs/native/cli/commands#update) merges from. The file's own text is not stored; the
+registry names the library's source at a commit, so it can be fetched again from `ref`.
+
+Delete the file and nothing breaks: the components work as they did, and `update` goes back to
+recording whatever still matches the registry.
+
 ## The rest
 
 <TypeTable

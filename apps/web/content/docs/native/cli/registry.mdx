@@ -101,6 +101,10 @@ delacour add tabs --ref develop            # 1. the flag
 { "registry": { "ref": "v0.2.0" } }        // 2. the config
 ```
 
+The ref a file was copied from is recorded in the
+[lock file](/docs/native/cli/configuration#the-lock-file), so a later `update` knows what to merge
+from whichever ref you are on by then.
+
 `--ref develop` is how you take a component that has landed since your CLI was published —
 `main` only moves on a release, so it holds nothing your newest CLI does not already read. `bunx
 delacour@latest` gets you both the newest CLI and its matching registry.

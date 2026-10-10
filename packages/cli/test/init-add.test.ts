@@ -5,6 +5,10 @@ import { join } from "node:path";
 import { add } from "../src/commands/add";
 import { init } from "../src/commands/init";
 import { readConfig } from "../src/config/resolve";
+import { contentHash } from "../src/lock/hash";
+import { readLock } from "../src/lock/lock";
+import { LOCK_FILENAME } from "../src/lock/schema";
+import { DEFAULT_REGISTRY_REF } from "../src/registry/source";
 
 /**
  * End to end, against the registry this repository actually builds.
@@ -401,6 +405,68 @@ describe("an app with a Tailwind entry but no Metro wrapper", () => {
 	test("leaves the block where the layout's import already points", async () => {
 		expect(await read(root, "src/global.css")).toContain("delacour:start");
 		expect(await read(root, "src/app/_layout.tsx")).toContain('import "../global.css"');
+	});
+});
+
+/**
+ * The lock is what a later `update` merges from, so what matters is that it
+ * names the registry's text for a file and not whatever is on disk — and that a
+ * file the user kept is left out of it.
+ */
+describe("the lock file", () => {
+	let root: string;
+	const BUTTON = "src/components/ui/button/button.tsx";
+	const KEY = "ui/button/button.tsx";
+
+	beforeAll(async () => {
+		root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root });
+		await add(["button"], { ...SHARED, cwd: root });
+	});
+
+	test("is written beside the config, with an entry for every file copied", async () => {
+		await expect(exists(root, LOCK_FILENAME)).resolves.toBe(true);
+
+		const lock = await readLock(root);
+		const entry = lock.items.button?.files[KEY];
+
+		expect(entry).toEqual({ ref: DEFAULT_REGISTRY_REF, hash: contentHash(await read(root, BUTTON)) });
+		// The closure and what `init` copied are in it too, not only the item named.
+		expect(Object.keys(lock.items)).toEqual(expect.arrayContaining(["button", "icon", "spinner", "styles"]));
+	});
+
+	test("records the ref the files were asked for", async () => {
+		const other = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: other });
+		await add(["button"], { ...SHARED, cwd: other, ref: "abc1234" });
+
+		expect((await readLock(other)).items.button?.files[KEY]?.ref).toBe("abc1234");
+	});
+
+	test("does not change when the same component is added again", async () => {
+		const before = await read(root, LOCK_FILENAME);
+		await add(["button"], { ...SHARED, cwd: root });
+
+		expect(await read(root, LOCK_FILENAME)).toBe(before);
+	});
+
+	test("keeps naming the registry's text for a file the user edited and kept", async () => {
+		const pristine = (await readLock(root)).items.button?.files[KEY];
+		await write(root, BUTTON, `${await read(root, BUTTON)}\n// mine\n`);
+
+		// Declined: `--yes` without `--overwrite` writes nothing over a conflict.
+		await add(["button"], { ...SHARED, cwd: root });
+
+		expect(await read(root, BUTTON)).toContain("// mine");
+		expect((await readLock(root)).items.button?.files[KEY]).toEqual(pristine);
+	});
+
+	test("records the registry's copy once it is taken with --overwrite", async () => {
+		await add(["button"], { ...SHARED, cwd: root, overwrite: true });
+
+		const text = await read(root, BUTTON);
+		expect(text).not.toContain("// mine");
+		expect((await readLock(root)).items.button?.files[KEY]?.hash).toBe(contentHash(text));
 	});
 });
 

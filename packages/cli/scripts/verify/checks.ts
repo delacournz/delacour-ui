@@ -311,6 +311,39 @@ export const CHECKS: Check[] = [
 	},
 
 	{
+		// The lock is written by `add` and read by `update`, and nothing else in
+		// this run would notice if the two stopped agreeing about a file's key or
+		// its hash: every file would read as edited, in every project.
+		name: "The lock records every file, and an update finds nothing to do",
+		async run({ configDir, registryDir, reporter }) {
+			const bundle = join(import.meta.dirname, "../../dist/index.js");
+			const output = await run(
+				"node",
+				[bundle, "update", "--dry-run", "--json", "--no-install", "--registry", registryDir],
+				{ cwd: configDir, reporter, label: "delacour update --dry-run", allowFailure: true }
+			);
+
+			let files: { path: string; action: string }[];
+			try {
+				files = JSON.parse(output.slice(output.indexOf("{"), output.lastIndexOf("}") + 1)).files;
+			} catch {
+				return { ok: false, summary: "update produced no parseable report", details: [output.slice(0, 400)] };
+			}
+
+			const moved = files.filter((file) => file.action !== "current");
+
+			return files.length > 0 && moved.length === 0
+				? { ok: true, summary: `${files.length} files recorded, all current` }
+				: {
+						ok: false,
+						summary:
+							files.length === 0 ? "no files in the lock" : `${moved.length} files not current straight after add`,
+						details: moved.slice(0, 20).map((file) => `${file.action}: ${file.path}`),
+					};
+		},
+	},
+
+	{
 		name: "The whole app typechecks",
 		needsInstall: true,
 		async run({ appDir, reporter }) {

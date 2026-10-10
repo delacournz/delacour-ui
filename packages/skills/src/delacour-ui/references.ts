@@ -153,7 +153,7 @@ running it is how an afternoon goes.
 | A red box naming a module you just installed | A native module needs a rebuilt dev client. \`npx expo run:ios\` — a JS reload will not pick it up |
 | Every \`className\` is a type error | \`uniwind-env.d.ts\` is not inside the app's own \`tsconfig\` include. It is one triple-slash reference and only works from there |
 | \`Ref<never>\`, or two copies of React Native's types | Two realpaths for one package. A Bun workspace needs \`linker = "hoisted"\` in \`bunfig.toml\` |
-| \`add\` overwrote something you had edited | A file that differs is a conflict and \`add\` asks; \`--overwrite\` answers yes. \`bunx delacour@latest diff <name>\` shows what upstream changed |
+| \`add\` overwrote something you had edited | A file that differs is a conflict and \`add\` asks; \`--overwrite\` answers yes. To take upstream changes and keep the edits, \`bunx delacour@latest update <name>\` — it three-way merges, and marks a conflict rather than picking a side |
 | A component on the docs site is not in the registry | The published CLI reads the registry at the commit it shipped against. \`--ref main\` opts into what has landed since |
 
 ## What \`doctor\` checks

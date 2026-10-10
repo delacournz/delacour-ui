@@ -1,6 +1,7 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, relative, sep } from "node:path";
 import type { ResolvedConfig } from "../config/resolve";
+import { fileKey } from "../lock/lock";
 import type { Namespace } from "../registry/namespaces";
 import type { LoadedFile, LoadedItem } from "../registry/schema";
 import { transformContent } from "../registry/transform";
@@ -18,6 +19,8 @@ import { transformContent } from "../registry/transform";
 export type PlannedFile = {
 	item: string;
 	namespace: Namespace;
+	/** `<namespace>/<target>` — what the index and the lock both call this file. */
+	key: string;
 	/** Absolute destination. */
 	path: string;
 	/** Path relative to the config, for printing. */
@@ -35,20 +38,16 @@ export function planFiles(items: readonly LoadedItem[], config: ResolvedConfig):
 }
 
 async function planFile(item: LoadedItem, file: LoadedFile, config: ResolvedConfig): Promise<PlannedFile> {
-	const path = join(config.directories[file.namespace], file.target);
-	const content = transformContent(file.content, {
-		fileDirectory: dirname(path),
-		directories: config.directories,
-		aliases: config.aliases,
-	});
-
-	const current = await read(path);
+	const { path, displayPath } = destination(config, file.namespace, file.target);
+	const content = transformFile(file.content, path, config);
+	const current = await readText(path);
 
 	return {
 		item: item.name,
 		namespace: file.namespace,
+		key: fileKey(file.namespace, file.target),
 		path,
-		displayPath: toPosix(relative(config.root, path)),
+		displayPath,
 		content,
 		current,
 		exists: current !== null,
@@ -56,14 +55,34 @@ async function planFile(item: LoadedItem, file: LoadedFile, config: ResolvedConf
 	};
 }
 
-export async function writeFiles(files: readonly PlannedFile[]): Promise<void> {
+/** Where a registry file lands in this project, absolutely and as printed. */
+export function destination(
+	config: ResolvedConfig,
+	namespace: Namespace,
+	target: string
+): { path: string; displayPath: string } {
+	const path = join(config.directories[namespace], target);
+	return { path, displayPath: toPosix(relative(config.root, path)) };
+}
+
+/** A fetched file's text as this project would hold it at `path`: placeholders resolved to its aliases. */
+export function transformFile(content: string, path: string, config: ResolvedConfig): string {
+	return transformContent(content, {
+		fileDirectory: dirname(path),
+		directories: config.directories,
+		aliases: config.aliases,
+	});
+}
+
+export async function writeFiles(files: readonly Pick<PlannedFile, "path" | "content">[]): Promise<void> {
 	for (const file of files) {
 		await mkdir(dirname(file.path), { recursive: true });
 		await writeFile(file.path, file.content, "utf-8");
 	}
 }
 
-async function read(path: string): Promise<string | null> {
+/** A file's text, or `null` if there is no file. */
+export async function readText(path: string): Promise<string | null> {
 	try {
 		return await readFile(path, "utf-8");
 	} catch {

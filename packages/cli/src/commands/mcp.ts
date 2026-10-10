@@ -10,6 +10,7 @@ import { resolveItemGraph } from "../registry/resolve";
 import { type AddResult, add } from "./add";
 import { runChecks } from "./doctor";
 import { init } from "./init";
+import { type UpdateResult, update } from "./update";
 
 /**
  * The same commands, over MCP, for an agent working inside someone's project.
@@ -130,6 +131,62 @@ export async function mcp(options: McpOptions): Promise<void> {
 	);
 
 	server.registerTool(
+		"check_updates",
+		{
+			title: "Check for component updates",
+			description:
+				"Compare the components copied into this project with the registry, without writing anything. Says which files the registry has changed, which the project has edited, and which would conflict. Call this before `update_components`.",
+			inputSchema: {
+				names: z.array(z.string()).optional().describe("Components to check. Omit for every one in the project."),
+			},
+		},
+		async ({ names }) => {
+			const result = await update(names ?? [], {
+				cwd: options.cwd,
+				ref: options.ref,
+				registry: options.registry,
+				dryRun: true,
+				yes: true,
+				silent: true,
+			});
+
+			return text(describeUpdate(result).join("\n"));
+		}
+	);
+
+	server.registerTool(
+		"update_components",
+		{
+			title: "Update components",
+			description:
+				"Bring copied components up to the registry. A file only the registry changed is replaced; a file the project also edited is three-way merged, and where both changed the same lines it is written with git conflict markers (`<<<<<<< local` … `>>>>>>> registry`) for you to resolve. Edits are never discarded. Files with uncommitted changes are skipped unless `force` is set.",
+			inputSchema: {
+				names: z.array(z.string()).optional().describe("Components to update. Omit for every one in the project."),
+				force: z.boolean().optional().describe("Merge into files that have uncommitted changes"),
+				prune: z.boolean().optional().describe("Delete untouched files a component no longer has"),
+				install: z
+					.boolean()
+					.optional()
+					.describe("Run the package manager for anything the updated components newly need. Defaults to false."),
+			},
+		},
+		async ({ names, force, prune, install }) => {
+			const result = await update(names ?? [], {
+				cwd: options.cwd,
+				ref: options.ref,
+				registry: options.registry,
+				force,
+				prune,
+				install: install ?? false,
+				yes: true,
+				silent: true,
+			});
+
+			return text(describeUpdate(result).join("\n"));
+		}
+	);
+
+	server.registerTool(
 		"init_project",
 		{
 			title: "Set this project up",
@@ -216,6 +273,32 @@ export async function mcp(options: McpOptions): Promise<void> {
 
 function text(body: string) {
 	return { content: [{ type: "text" as const, text: body }] };
+}
+
+/** An update, or a dry run of one, as lines an agent can act on. */
+function describeUpdate(result: UpdateResult): string[] {
+	const moved = result.files.filter((file) => file.action !== "current" && file.action !== "adopted");
+
+	if (result.files.length === 0) return ["No components from the registry are in this project yet."];
+	if (moved.length === 0) return [`Everything matches the registry at ${result.ref}.`];
+
+	const lines = [
+		result.dryRun ? `An update to ${result.ref} would do this:` : `Updated to ${result.ref}:`,
+		...moved.map((file) => `  ${file.action}: ${file.path}${file.note ? ` — ${file.note}` : ""}`),
+	];
+
+	if (result.conflicts > 0) {
+		lines.push(
+			`${result.conflicts} file(s) now hold conflict markers. Open each, keep the right side of every <<<<<<< local / >>>>>>> registry region, and delete the markers.`
+		);
+	}
+
+	const groups = result.installed ? [] : (result.dependencies?.groups ?? []);
+	if (groups.length > 0) {
+		lines.push("Not installed. Run from the app:", ...groups.map((group) => `  ${commandLine(group)}`));
+	}
+
+	return lines;
 }
 
 /**

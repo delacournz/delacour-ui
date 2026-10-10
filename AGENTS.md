@@ -63,7 +63,7 @@ Two long-lived branches, and they move differently:
 
 | Branch | Holds | Moves by |
 | --- | --- | --- |
-| `develop` | Everything merged — where work lands | A squash-merged pull request, or the release commit `release.yml` pushes |
+| `develop` | Everything merged — where work lands | A squash-merged pull request — the release pull request `release.yml` opens included |
 | `main` | The last release — the repository's default branch and front page | `release.yml` fast-forwarding it to the commit it released |
 
 `main` is the default branch so that anyone reaching the repository sees what was last published.
@@ -82,7 +82,7 @@ method.
 pushes, requires linear history, and restricts updates to its bypass list — repository admins. There
 is no pull request rule on it, because nothing reaches `main` by pull request. The one routine update
 is the release job's fast-forward, made with `RELEASE_TOKEN`, which is why that token has to belong to
-an admin. Because `develop` only takes squash merges and release commits and `main` only fast-forwards,
+an admin. Because `develop` only takes squash merges and `main` only fast-forwards,
 `main` is always an ancestor of `develop`; a hand-made commit on `main` breaks that, and the next
 release then fails at the push.
 
@@ -232,7 +232,7 @@ workflows:
 | Line | npm dist-tag | Version | Published by | When |
 | --- | --- | --- | --- | --- |
 | alpha | `alpha` | `x.y.z-alpha.<datetime>` | `.github/workflows/alpha.yml` | Every push to `develop` that carries a pending changeset |
-| stable | `latest` | `x.y.z` | `.github/workflows/release.yml` | By hand: `gh workflow run release.yml --ref develop` |
+| stable | `latest` | `x.y.z` | `.github/workflows/release.yml` | Merging the release pull request it keeps open against `develop` |
 
 ### The flow
 
@@ -254,24 +254,37 @@ workflows:
                  │    never committed)               │                       │
                  │ npm publish --tag alpha  (direct) │──► npm  @alpha        │
                  └───────────────────────────────────┘                       │
-                               │                                             │
-                    … more merges, more alphas …                             │
-                               │                                             │
-  gh workflow run release.yml --ref develop                                  │
+                               │ same push                                   │
                                ▼                                             │
                  ┌───────────────────────────────────┐                       │
-                 │ release.yml                       │                       │
-                 │ 1. ref != develop → skipped       │                       │
-                 │ 2. nothing pending → fail         │                       │
-                 │    (tip is a release commit →     │                       │
-                 │     resume from step 5)           │                       │
-                 │ 3. changeset version → x.y.z      │                       │
-                 │ 4. commit "version packages",     │                       │
-                 │    push to develop (admin PAT) ───┼──► ● release commit   │
-                 │ 5. build CLI at that SHA          │    │ (alpha.yml: none  │
-                 │ 6. npm stage publish --tag latest │    │  pending → skip)  │
-                 │ 7. git tags + GitHub Releases     │                       │
-                 │ 8. git push SHA:main ─────────────┼──── fast-forward ────►● = release commit
+                 │ release.yml · plan                │                       │
+                 │ pending changesets → release-pr   │                       │
+                 │ release commit     → release      │                       │
+                 │ neither            → exit green   │                       │
+                 └───────────────────────────────────┘                       │
+                               │ pending                                     │
+                               ▼                                             │
+                 ┌───────────────────────────────────┐                       │
+                 │ release.yml · release-pr          │                       │
+                 │ changeset version → x.y.z         │                       │
+                 │ force-push changeset-release/     │                       │
+                 │   develop, open or update the PR  │                       │
+                 │   "version packages" → develop    │                       │
+                 └───────────────────────────────────┘                       │
+                               │                                             │
+                    … more merges: more alphas, PR rebuilt …                 │
+                               │                                             │
+  maintainer merges the release PR                                           │
+  (squash, 4 checks) ────────► ● release commit                              │
+                               │ (alpha.yml: none pending → skip)            │
+                               ▼                                             │
+                 ┌───────────────────────────────────┐                       │
+                 │ release.yml · release             │                       │
+                 │ 1. registry check, build CLI      │                       │
+                 │    at the release commit          │                       │
+                 │ 2. git push SHA:main ─────────────┼──── fast-forward ────►● = release commit
+                 │ 3. npm stage publish --tag latest │                       │
+                 │ 4. git tags + GitHub Releases     │                       │
                  └───────────────────────────────────┘                       │
                                │                                             ▼
                                ▼                                   Railway production
@@ -297,20 +310,17 @@ flowchart TD
     H --> I[npm publish --tag alpha<br/>direct, trusted publisher]
     I --> J[npm alpha]
 
-    E -->|gh workflow run release.yml --ref develop| K{ref is develop?}
-    K -->|no| X[skipped]
-    K -->|yes| L{pending changesets?}
-    L -->|none, tip is release commit| P
-    L -->|none| Y[fail: nothing to release]
+    E -->|push| L{release.yml plan:<br/>pending changesets?}
     L -->|yes| M[changeset version<br/>stable x.y.z + changelogs]
-    M --> N[commit version packages<br/>push to develop with admin PAT]
-    N --> E
-    N --> P[build CLI at release commit]
-    P --> Q[npm stage publish --tag latest]
-    Q --> R[git tags + GitHub Releases]
-    R --> T[git push SHA:main<br/>fast-forward, never forced]
+    M --> N[open or update the release PR<br/>changeset-release/develop into develop]
+    N -->|maintainer squash-merges| E
+    L -->|none, commit is the release merge| P[registry check, build CLI<br/>at the release commit]
+    L -->|none| Y[exit green]
+    P --> T[git push SHA:main<br/>fast-forward, never forced]
     T --> U[(main = release commit)]
     U --> V[Railway production<br/>ui.delacour.co.nz]
+    T --> Q[npm stage publish --tag latest]
+    Q --> R[git tags + GitHub Releases]
     Q -.->|maintainer 2FA<br/>charts before ui| W[npm latest]
 ```
 
@@ -330,35 +340,50 @@ never touched. No git tag and no GitHub Release is cut: a snapshot is a build, n
 After a stable release `alpha` still names the last snapshot, which is older than the new
 `latest`, until the next merge with a changeset publishes a new one.
 
-### Stable: by hand
+### Stable: merge the release pull request
 
-`release.yml` has no push trigger. Run it on `develop` when the alphas are right:
+`release.yml` runs on every push to `develop`, and `.github/changeset-plan.ts` decides what the
+pushed commit means:
 
-```bash
-gh workflow run release.yml --ref develop
-```
+| The commit | Job | What happens |
+| --- | --- | --- |
+| Carries pending changesets | `release-pr` | Opens the release pull request, or rebuilds the open one on this commit |
+| Is the release pull request's merge | `release` | Builds, fast-forwards `main`, stages on npm, tags |
+| Neither — a docs-only merge | — | Nothing; the run is green |
 
-It runs `changeset version` for real, consuming every pending changeset into stable versions and
-changelogs, and pushes the result to `develop` as **🔖 chore(release): version packages** — a direct
-push, which `RELEASE_TOKEN` makes as an admin bypassing `develop-protected`. The alphas published
-from those changesets are what reviewing the versions looks like, so there is no version pull
-request. The CLI is built with its registry ref pinned to that commit, every unpublished package is
-staged on `latest`, the tags are pushed, a GitHub Release is cut per package, and `main` is
-fast-forwarded to the release commit.
+The release pull request is **🔖 chore(release): version packages**, from `changeset-release/develop`
+into `develop`. It holds what `changeset version` produces — every pending changeset consumed into
+stable versions and changelogs, and `bun.lock` regenerated to match. Each merge to `develop`
+force-pushes it from scratch on top of the new tip, so it always describes the release that merging
+it would cut and it is always up to date for `develop-protected`. It is an ordinary pull request:
+the four checks run on it and it squash-merges like any other.
 
-A run from any other branch is skipped. A run with nothing pending fails, unless `develop`'s tip is
-already a release commit — an earlier run pushed it and then failed — in which case it resumes at
-the build, and the stage script counts an already-staged version as success. The push to `develop`
-fails if a merge landed during the run; run it again. The fast-forward is the last step and is never
-forced: if `main` has diverged the push is refused, and once `main` is reconciled a re-run resumes.
+**Merging it is the release.** The squash lands on `develop` as the release commit, `alpha.yml` finds
+nothing pending and skips, and the `release` job rebuilds and checks the registry, builds the CLI
+with its registry ref pinned to that commit, fast-forwards `main` to it, stages every unpublished
+package on `latest`, pushes the tags and cuts a GitHub Release per package.
+
+The merge is recognised by its subject — the pull request title, plus the ` (#n)` GitHub appends to
+a squash — with no changeset left pending. The title lives twice, as `RELEASE_TITLE` in
+`changeset-plan.ts` and as `title` / `commit` in `release.yml`; change both or the merge publishes
+nothing. Do not edit the title when merging, for the same reason.
+
+The plan reads the commit the run was started for, not `develop`'s tip, so a merge that lands
+straight after the release pull request cannot hide it. The fast-forward comes before staging and is
+never forced: if `main` has diverged the push is refused with nothing staged. To retry a failed
+release, re-run the failed run — the fast-forward is then a no-op and the stage script counts an
+already-staged version as success. `gh workflow run release.yml --ref develop` re-plans from the
+tip instead: it rebuilds the release pull request, or resumes the release while the tip is still
+the release commit.
 
 Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the production docs move with
 each release and not with each merge. It lands before the staged versions are approved; approve them
 promptly, or the site documents a version `latest` does not serve yet.
 
-The action is `changesets/action@v2`, used for its publish half only: the release commit consumed
-every changeset, so it goes straight to `publish-script`, then pushes the tags that script wrote and
-cuts the Releases. v2 rather than v1 because `@changesets/cli` 3 files the changesets a pre-mode
+The action is `changesets/action@v2`, used one half per job. `release-pr` gives it a `version`
+script and no publish script, so that job cannot publish. `release` gives it only `publish-script`:
+the release commit consumed every changeset, so it goes straight there, then pushes the tags that
+script wrote and cuts the Releases. v2 rather than v1 because `@changesets/cli` 3 files the changesets a pre-mode
 `changeset version` consumes under `.changeset/pre/`, and v1 read that directory as a Changesets-v1
 changeset and died on `.changeset/pre/changes.md`.
 
@@ -411,11 +436,12 @@ maintainer's machine may need `npx npm@latest stage …`. `bun publish` cannot d
 has no OIDC, provenance or staging support, so the publish call is npm's even though install and
 build are Bun's.
 
-**`RELEASE_TOKEN` is a GitHub PAT, not an npm one**, and it must belong to a **repository admin**:
-`release.yml` pushes the release commit to `develop` past `develop-protected`'s pull request rule
-and fast-forwards `main`, which `main-protected` lets only admins update. `GITHUB_TOKEN` can do
-neither, so on the fallback — the secret unset — both pushes are refused. Create the secret with a
-fine-grained PAT scoped to this repository with **Contents** read/write:
+**`RELEASE_TOKEN` is a GitHub PAT, not an npm one**, and it must belong to a **repository admin**.
+It does two things `GITHUB_TOKEN` cannot. It pushes the release pull request's branch as a user: a
+push made with `GITHUB_TOKEN` starts no workflows, so `ci.yml` would never run on that pull request
+and its four required checks would never report. And it fast-forwards `main`, which `main-protected`
+lets only admins update. Create the secret with a fine-grained PAT scoped to this repository with
+**Contents** and **Pull requests** read/write:
 
 ```bash
 gh secret set RELEASE_TOKEN --repo delacournz/delacour-ui

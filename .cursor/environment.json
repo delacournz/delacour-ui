@@ -4,14 +4,8 @@
 		"dockerfile": "Dockerfile"
 	},
 	"user": "ubuntu",
-	"install": "bun install",
-	"terminals": [
-		{
-			"name": "web",
-			"command": "bun run dev:web",
-			"description": "The docs site (apps/web) on http://localhost:3000 — TanStack Start via Vite dev."
-		}
-	],
+	"install": "bun install --frozen-lockfile",
+	"start": "bash .cursor/start.sh",
 	"ports": [
 		{
 			"name": "web",

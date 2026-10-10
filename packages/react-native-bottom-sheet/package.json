@@ -1,6 +1,6 @@
 {
 	"name": "@delacour/react-native-bottom-sheet",
-	"version": "0.1.0-alpha.0",
+	"version": "0.1.0",
 	"description": "Headless bottom sheet engine for React Native — no tokens, no className",
 	"type": "module",
 	"license": "MIT",

@@ -24,9 +24,13 @@ name: Release
 # `E403 OIDC permission denied for this action`. That is what authenticates the
 # job; there is no npm token anywhere, and `bun publish` cannot do either.
 #
-# `workflow_dispatch` is the retry: on `develop` it re-plans from the tip, which re-opens the
-# release pull request or, while the tip is still the release commit, resumes a failed release.
-# Re-running the failed run does the same and does not depend on the tip.
+# Nothing here versions twice. `release-pr` only runs for `develop`'s tip, so a re-run of an old
+# run cannot rebuild the pull request from changesets `develop` has since consumed. And a release
+# commit that is on `develop` but not on `main` is a release that never finished: any later run
+# resumes it — `main` moves, and a version already staged counts as staged.
+#
+# `workflow_dispatch` is the retry: on `develop` it re-plans from the tip. Re-running a failed
+# release run works too.
 on:
   push:
     branches: [develop]
@@ -46,8 +50,11 @@ jobs:
 
     steps:
       # The default ref: the commit this run was started for, not `develop`'s tip. A merge that
-      # lands right after the release pull request must not turn its run into a no-op.
+      # lands right after the release pull request must not turn its run into a no-op. Full
+      # history, because the plan compares this commit with `origin/develop` and `origin/main`.
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - uses: oven-sh/setup-bun@v2
         with:

@@ -347,9 +347,9 @@ pushed commit means:
 
 | The commit | Job | What happens |
 | --- | --- | --- |
-| Carries pending changesets | `release-pr` | Opens the release pull request, or rebuilds the open one on this commit |
-| Is the release pull request's merge | `release` | Builds, fast-forwards `main`, stages on npm, tags |
-| Neither — a docs-only merge | — | Nothing; the run is green |
+| Carries pending changesets, and is `develop`'s tip | `release-pr` | Opens the release pull request, or rebuilds the open one on this commit |
+| Is the release pull request's merge, or follows a release commit `main` never took | `release` | Builds, fast-forwards `main`, stages on npm, tags |
+| Neither — a docs-only merge, a stale run | — | Nothing; the run is green and its summary says why |
 
 The release pull request is **🔖 chore(release): version packages**, from `changeset-release/develop`
 into `develop`. It holds what `changeset version` produces — every pending changeset consumed into
@@ -369,12 +369,26 @@ a squash — with no changeset left pending. The title lives twice, as `RELEASE_
 nothing. Do not edit the title when merging, for the same reason.
 
 The plan reads the commit the run was started for, not `develop`'s tip, so a merge that lands
-straight after the release pull request cannot hide it. The fast-forward comes before staging and is
-never forced: if `main` has diverged the push is refused with nothing staged. To retry a failed
-release, re-run the failed run — the fast-forward is then a no-op and the stage script counts an
-already-staged version as success. `gh workflow run release.yml --ref develop` re-plans from the
-tip instead: it rebuilds the release pull request, or resumes the release while the tip is still
-the release commit.
+straight after the release pull request cannot hide it.
+
+**A release is never versioned twice.** That happened once: a release was versioned and pushed, one
+package failed to stage, and re-running the run checked out the commit it had started on, ran
+`changeset version` over changesets `develop` had already consumed, and was refused at the push.
+Two rules in `planRelease` close it:
+
+- **Versioning only happens from `develop`'s tip.** A run for a commit `develop` has moved past is
+  stale — the newer push has its own run — so it does nothing rather than rebuild the release pull
+  request from old changesets.
+- **A release commit on `develop` that `main` does not have is an unfinished release.** `main` only
+  moves when a release does, so `origin/main..HEAD` holding a release commit means one was versioned
+  and never completed. Any later run with nothing pending resumes it from its own commit instead of
+  doing nothing: `main` moves there, and the stage script counts a version already staged as
+  success.
+
+So every retry is safe. Re-run the failed run, push anything to `develop`, or
+`gh workflow run release.yml --ref develop` to re-plan from the tip. The fast-forward comes before
+staging and is never forced: if `main` has diverged the push is refused with nothing staged, and on
+a retry after a staging failure it is a no-op.
 
 Fast-forwarding `main` is also what deploys `ui.delacour.co.nz`, so the production docs move with
 each release and not with each merge. It lands before the staged versions are approved; approve them

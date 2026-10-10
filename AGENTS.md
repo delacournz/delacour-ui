@@ -625,6 +625,14 @@ showing none, because nobody reads a pull request twice. For the docs site,
 they are keyed to a commit rather than overwritten, is in
 [apps/web/AGENTS.md](apps/web/AGENTS.md#pull-request-screenshots).
 
+## Cursor Cloud specific instructions
+
+The Cloud Agent image is `.cursor/Dockerfile` (Ubuntu 24.04, Bun 1.3.9, Node 24). Install is `bun install --frozen-lockfile`.
+
+`.cursor/start.sh` serves the docs site with `bun run dev:web` on port 3000. On a fresh agent it is already running. A second copy fails because Vite's `strictPort` will not move off 3000. The playground needs Xcode or Android Studio and does not start in this environment.
+
+`bun run check`, `bun test`, `bun run typecheck` and `bun run build` are the four CI checks. `typecheck` builds `apps/web` first so `routeTree.gen.ts` exists. Analytics env vars are optional; unset, the site ships no analytics.
+
 ## Generated, do not edit
 
 `apps/*/ios`, `apps/*/android` (`expo prebuild`), `.expo`, `.turbo`,

@@ -40,6 +40,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A pressable action, with composed icons and a loading state that costs no layout.",
 	},
 	{
+		slug: "context-menu",
+		name: "ContextMenu",
+		group: "Actions",
+		blurb: "The actions that belong to a piece of content, reached by holding it \u2014 with a lifted preview.",
+	},
+	{
 		slug: "menu",
 		name: "Menu",
 		group: "Actions",
@@ -65,10 +71,34 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A deck taken one card at a time by throwing the top one off \u2014 one decision per card.",
 	},
 	{
+		slug: "slide-button",
+		name: "SlideButton",
+		group: "Actions",
+		blurb: "A handle dragged across a rail to confirm — for an action a stray tap should never reach.",
+	},
+	{
+		slug: "selection-mode",
+		name: "SelectionMode",
+		group: "Actions",
+		blurb: "Pick several things at once \u2014 a long press enters the mode \u2014 then act on them from a bar.",
+	},
+	{
+		slug: "progress-button",
+		name: "ProgressButton",
+		group: "Actions",
+		blurb: "A button held, not tapped, to confirm \u2014 the action fires when the fill reaches the end.",
+	},
+	{
 		slug: "toggle-button",
 		name: "ToggleButton",
 		group: "Actions",
 		blurb: "A button that stays pressed \u2014 alone, or in a group choosing one option or several.",
+	},
+	{
+		slug: "fab",
+		name: "Fab",
+		group: "Actions",
+		blurb: "One primary action floating over the screen, extended with a label or unfolding a dial.",
 	},
 	{
 		slug: "field",

@@ -28,6 +28,7 @@ export {
 	BUTTON_VARIANTS,
 	type ButtonGroupOrientation,
 	type ButtonGroupPosition,
+	type ButtonGroupShapeOptions,
 	type ButtonGroupSlotPosition,
 	type ButtonIconSize,
 	type ButtonLabelSize,
@@ -41,6 +42,7 @@ export {
 	resolveButtonLayout,
 	resolveButtonSizeStep,
 	resolveGroupedButtonSize,
+	resolveGroupMemberStretch,
 	resolveGroupPositions,
 	resolveGroupSeams,
 } from "./button.variants";

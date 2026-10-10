@@ -1,0 +1,8 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on progress-button/custom-done and has settled — one large success
+  button reading "Hold to pay", empty. The capture script navigates there before running this.
+steps:
+  - echo: A full hold — the custom done mark, a lock and "Paid", fades in over the fill
+  - long-press: { on: { id: custom-done }, duration: 2300 }
+  - echo: isAutoReset rewinds it after a second, so the clip loops without a jump cut
+  - wait: 1800

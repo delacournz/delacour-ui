@@ -73,9 +73,11 @@ shares.
 | [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
+| [ContextMenu](src/components/context-menu/AGENTS.md) | `@delacour/react-native-ui/context-menu` | The actions that belong to a piece of content, reached by holding it |
 | [Drawer](src/components/drawer/AGENTS.md) | `@delacour/react-native-ui/drawer` | A panel that slides in from an edge and covers the app until dismissed |
 | [Dialog](src/components/dialog/AGENTS.md) | `@delacour/react-native-ui/dialog` | A centred card over a dimmed app that asks for a decision or a short input |
 | [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
+| [Fab](src/components/fab/AGENTS.md) | `@delacour/react-native-ui/fab` | A floating action button, and a dial of related actions that unfolds from it |
 | [Feedback](src/components/feedback/AGENTS.md) | `@delacour/react-native-ui/feedback` | A dialog for writing — the field in a recessed well, the actions on the band around it |
 | [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
@@ -90,11 +92,14 @@ shares.
 | [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
 | [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
+| [ProgressButton](src/components/progress-button/AGENTS.md) | `@delacour/react-native-ui/progress-button` | A button held, not tapped, to confirm — a fill that fires when it reaches the end |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [SelectionMode](src/components/selection-mode/AGENTS.md) | `@delacour/react-native-ui/selection-mode` | Pick several things at once, then act on them from a bar |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
+| [SlideButton](src/components/slide-button/AGENTS.md) | `@delacour/react-native-ui/slide-button` | A handle dragged across a rail to confirm an action |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
 | [StackCard](src/components/stack-card/AGENTS.md) | `@delacour/react-native-ui/stack-card` | A deck taken one card at a time by throwing the top one off |
@@ -301,6 +306,7 @@ in Tailwind's own namespaces, so they compile to ordinary utilities:
 | `--text-input-*` | `text-input-md` | a field's value, paired with its height |
 | `--spacing-navbar-row` | `h-navbar-row` | the navbar's control row, without its safe-area band |
 | `--spacing-screen-gutter` | `px-screen-gutter` | the gutter `Screen.Header`, `Screen.Navbar` and content share |
+| `--spacing-fab-*` | `size-fab-md`, `h-fab-md` | a floating action button's circle, and an extended one's height |
 
 **The generic corner scale is derived, not enumerated.** `rounded-xs` through
 `rounded-4xl` are multiples of one `--radius` — shadcn's own scale — declared

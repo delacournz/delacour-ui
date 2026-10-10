@@ -1,0 +1,198 @@
+---
+title: SlideButton
+description: A handle dragged across a rail to confirm — for an action a stray tap should never reach.
+icon: ChevronsRight
+---
+
+<Preview id="slide-button/slide-to-ship" title={null} />
+
+## Installation
+
+<ComponentInstall name="slide-button" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { SlideButton } from "@/components/ui/slide-button";
+import { useState } from "react";
+import { Text, View } from "react-native";
+
+export default function Example() {
+  const [shipped, setShipped] = useState(0);
+
+  return (
+    <View className="flex-1 items-center justify-center gap-4 p-4">
+      <SlideButton
+        accessibilityActionLabel="Ship order"
+        isAutoReset
+        onComplete={() => setShipped((count) => count + 1)}
+      >
+        <SlideButton.Label>Slide to ship</SlideButton.Label>
+      </SlideButton>
+      <Text className="text-muted-foreground">Shipped {shipped}</Text>
+    </View>
+  );
+}
+```
+
+## Anatomy
+
+```tsx
+<SlideButton onComplete={ship}>
+  <SlideButton.Label>Slide to ship</SlideButton.Label>
+  <SlideButton.Thumb />
+</SlideButton>
+```
+
+`SlideButton.Thumb` is composed in when you leave it out. The handle tracks the finger exactly; only
+the release is sprung.
+
+<Preview id="slide-button/slide-to-ship" />
+
+## Variants
+
+`secondary`, `destructive` and `success`. The handle stays neutral; the rail, trail and label take
+the colour.
+
+<Preview id="slide-button/variants" />
+
+```tsx
+<SlideButton variant="secondary">
+  <SlideButton.Label>Slide to archive</SlideButton.Label>
+</SlideButton>
+<SlideButton variant="destructive">
+  <SlideButton.Label>Slide to delete</SlideButton.Label>
+</SlideButton>
+<SlideButton variant="success">
+  <SlideButton.Label>Slide to pay</SlideButton.Label>
+</SlideButton>
+```
+
+## Sizes
+
+The same heights and corners as a [Button](/docs/native/components/button) at each size.
+
+<Preview id="slide-button/sizes" />
+
+```tsx
+<SlideButton size="sm">…</SlideButton>
+<SlideButton size="md">…</SlideButton>
+<SlideButton size="lg">…</SlideButton>
+```
+
+## Threshold
+
+How far a release must reach, from `0.1` to `1`. At `1` only a release at the far end confirms.
+
+<Preview id="slide-button/threshold" />
+
+```tsx
+<SlideButton threshold={0.5}>
+  <SlideButton.Label>Slide to send</SlideButton.Label>
+</SlideButton>
+<SlideButton accessibilityActionLabel="Delete account" threshold={1} variant="destructive">
+  <SlideButton.Label>Slide to delete</SlideButton.Label>
+</SlideButton>
+```
+
+## Controlled, with slow work
+
+The handle waits at the end until `isCompleted` answers, so a request in flight never looks refused.
+
+<Preview id="slide-button/controlled-async" />
+
+```tsx
+const [isSent, setIsSent] = useState(false);
+
+<SlideButton isCompleted={isSent} onComplete={() => transfer().then(() => setIsSent(true))} variant="success">
+  <SlideButton.Label>Slide to transfer $240</SlideButton.Label>
+</SlideButton>
+```
+
+## Auto reset
+
+`isAutoReset` takes the handle home `autoResetDelay` after it confirms.
+
+```tsx
+<SlideButton autoResetDelay={800} haptic="selection" isAutoReset>
+  <SlideButton.Label>Slide to clock in</SlideButton.Label>
+</SlideButton>
+```
+
+## Custom handle
+
+Children on `SlideButton.Thumb` replace the chevron.
+
+```tsx
+<SlideButton isFullWidth size="lg">
+  <SlideButton.Label>Slide to unlock</SlideButton.Label>
+  <SlideButton.Thumb>
+    <Icon icon={IconUnlocked} />
+  </SlideButton.Thumb>
+</SlideButton>
+```
+
+## Disabled
+
+`isDisabled` fades the control and refuses the drag — the handle does not move at all.
+
+<Preview id="slide-button/disabled" />
+
+```tsx
+<SlideButton isDisabled>
+  <SlideButton.Label>Slide to ship</SlideButton.Label>
+</SlideButton>
+```
+
+## API Reference
+
+### SlideButton
+
+The rail. Extends `ViewProps`, except `style`.
+
+<TypeTable
+  type={{
+    variant: { type: '"secondary" | "destructive" | "success"', default: '"secondary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isFullWidth: { type: "boolean", default: "false", description: "Stretches the rail across its parent. Otherwise 288pt." },
+    threshold: { type: "number", default: "0.9", description: "How far a release must reach, from 0.1 to 1." },
+    onComplete: { type: "() => void", description: "Called once when the slide confirms. A rejected promise takes the handle home." },
+    isCompleted: { type: "boolean", description: "Controlled. Pair with `onCompletedChange`." },
+    defaultCompleted: { type: "boolean", default: "false" },
+    onCompletedChange: { type: "(isCompleted: boolean) => void" },
+    isAutoReset: { type: "boolean", default: "false" },
+    autoResetDelay: { type: "number", default: "1000", description: "Milliseconds." },
+    isDisabled: { type: "boolean", default: "false", description: "Refuses the drag outright." },
+    haptic: { type: "false | HapticFeedback", default: "false", description: "Played on crossing the threshold; a success knock follows on commit." },
+    accessibilityActionLabel: { type: "string", default: '"Confirm"', description: "The screen reader's activate action. Name the outcome." },
+    className: { type: "string", description: "Classes for the rail." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### SlideButton.Label
+
+Centred in the rail; never fades. Its text is the rail's accessibility label. Extends `TextProps`.
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode" },
+    className: { type: "string" },
+  }}
+/>
+
+### SlideButton.Thumb
+
+The handle. Extends `ViewProps`, except `style`.
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "Replaces the chevron. An `Icon` inherits the glyph size and colour." },
+    className: { type: "string" },
+  }}
+/>
+
+### useSlideButton
+
+Returns `{ variant, size, isCompleted, isDisabled, isRTL, offset, travel, handleWidth, glyph }` — the
+last four are Reanimated shared values. Throws outside a `<SlideButton>`.

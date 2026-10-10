@@ -50,6 +50,9 @@ export type GeometryValues = {
 	"spacing-chart-sm": number;
 	"spacing-chart-md": number;
 	"spacing-chart-lg": number;
+	"spacing-fab-sm": number;
+	"spacing-fab-md": number;
+	"spacing-fab-lg": number;
 };
 
 export type Style = {
@@ -117,6 +120,9 @@ function geometry({
 		"spacing-chart-sm": chartHeight(LIBRARY_CHART[0], heights[1]),
 		"spacing-chart-md": chartHeight(LIBRARY_CHART[1], heights[1]),
 		"spacing-chart-lg": chartHeight(LIBRARY_CHART[2], heights[1]),
+		"spacing-fab-sm": LIBRARY_FAB[0],
+		"spacing-fab-md": LIBRARY_FAB[1],
+		"spacing-fab-lg": LIBRARY_FAB[2],
 	};
 }
 
@@ -125,6 +131,14 @@ const LIBRARY_TEXT = [14, 16, 18] as const;
 const LIBRARY_ICONS = [14, 16, 18, 20, 24, 32] as const;
 const CAPSULE = [18, 22, 26] as const;
 const LIBRARY_CHART = [160, 220, 280] as const;
+
+/**
+ * A floating action button's footprint, the same under every style. It floats
+ * over content rather than sitting in a row of controls, so a denser style's
+ * shorter buttons are no reason to shrink the one target above the list — and
+ * 44 is the floor a touch target cannot go under.
+ */
+const LIBRARY_FAB = [44, 56, 64] as const;
 
 /**
  * A chart's height, scaled to a style's control density.
@@ -319,6 +333,9 @@ export const GEOMETRY_TOKENS: readonly (keyof GeometryValues)[] = [
 	"spacing-chart-sm",
 	"spacing-chart-md",
 	"spacing-chart-lg",
+	"spacing-fab-sm",
+	"spacing-fab-md",
+	"spacing-fab-lg",
 ];
 
 export function styleByName(name: string): Style | undefined {

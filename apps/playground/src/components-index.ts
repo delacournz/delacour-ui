@@ -40,6 +40,12 @@ export type ComponentIndexEntry = {
 
 const ROWS = [
 	{ slug: "button", title: "Button", description: "Variants, sizes, icons, loading", group: "Actions" },
+	{
+		slug: "context-menu",
+		title: "ContextMenu",
+		description: "Hold content for its actions, with a lifted preview",
+		group: "Actions",
+	},
 	{ slug: "menu", title: "Menu", description: "Actions, checkbox and radio rows, submenus", group: "Actions" },
 	{ slug: "pressable", title: "Pressable", description: "Gestures, haptics, asChild", group: "Actions" },
 	{ slug: "swipe", title: "Swipe", description: "Actions behind a row, full swipe, groups", group: "Actions" },
@@ -50,11 +56,30 @@ const ROWS = [
 		group: "Actions",
 	},
 	{
+		slug: "slide-button",
+		title: "SlideButton",
+		description: "Drag to confirm, thresholds, async completion",
+		group: "Actions",
+	},
+	{
+		slug: "selection-mode",
+		title: "SelectionMode",
+		description: "Long press to pick several, then act from a bar",
+		group: "Actions",
+	},
+	{
+		slug: "progress-button",
+		title: "ProgressButton",
+		description: "Hold to confirm, with a fill and a done mark",
+		group: "Actions",
+	},
+	{
 		slug: "toggle-button",
 		title: "ToggleButton",
 		description: "Variants, sizes, single and multiple groups",
 		group: "Actions",
 	},
+	{ slug: "fab", title: "Fab", description: "Pinned, extended, speed dial", group: "Actions" },
 	{ slug: "calendar", title: "Calendar", description: "Single, multiple, range, bounds, locale", group: "Forms" },
 	{ slug: "checkbox", title: "Checkbox", description: "Colours, sizes, indeterminate, groups", group: "Forms" },
 	{ slug: "chip", title: "Chip", description: "Filters, tags, removable tokens", group: "Forms" },

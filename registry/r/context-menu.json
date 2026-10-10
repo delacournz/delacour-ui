@@ -1,0 +1,169 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "context-menu",
+	"type": "registry:ui",
+	"title": "Context Menu",
+	"description": "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+	"categories": [
+		"controls"
+	],
+	"registryDependencies": [
+		"menu",
+		"pressable",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/AGENTS.md",
+			"target": "context-menu/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/context-menu",
+					"to": "@registry/ui/context-menu"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu-content.tsx",
+			"target": "context-menu/context-menu-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../menu/menu-content",
+					"to": "@registry/ui/menu/menu-content"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu-item.tsx",
+			"target": "context-menu/context-menu-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../menu/menu-item",
+					"to": "@registry/ui/menu/menu-item"
+				},
+				{
+					"from": "../menu/menu.types",
+					"to": "@registry/ui/menu/menu.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu-preview.tsx",
+			"target": "context-menu/context-menu-preview.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu-trigger.tsx",
+			"target": "context-menu/context-menu-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../menu/menu.context",
+					"to": "@registry/ui/menu/menu.context"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu.context.tsx",
+			"target": "context-menu/context-menu.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../menu/menu.context",
+					"to": "@registry/ui/menu/menu.context"
+				},
+				{
+					"from": "../menu/menu.variants",
+					"to": "@registry/ui/menu/menu.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu.tsx",
+			"target": "context-menu/context-menu.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../menu/menu",
+					"to": "@registry/ui/menu/menu"
+				},
+				{
+					"from": "../menu/menu-background",
+					"to": "@registry/ui/menu/menu-background"
+				},
+				{
+					"from": "../menu/menu-checkbox-item",
+					"to": "@registry/ui/menu/menu-checkbox-item"
+				},
+				{
+					"from": "../menu/menu-label",
+					"to": "@registry/ui/menu/menu-label"
+				},
+				{
+					"from": "../menu/menu-radio-group",
+					"to": "@registry/ui/menu/menu-radio-group"
+				},
+				{
+					"from": "../menu/menu-radio-item",
+					"to": "@registry/ui/menu/menu-radio-item"
+				},
+				{
+					"from": "../menu/menu-separator",
+					"to": "@registry/ui/menu/menu-separator"
+				},
+				{
+					"from": "../menu/menu-sub",
+					"to": "@registry/ui/menu/menu-sub"
+				},
+				{
+					"from": "../menu/menu-sub-content",
+					"to": "@registry/ui/menu/menu-sub-content"
+				},
+				{
+					"from": "../menu/menu-sub-trigger",
+					"to": "@registry/ui/menu/menu-sub-trigger"
+				},
+				{
+					"from": "../menu/menu.context",
+					"to": "@registry/ui/menu/menu.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/context-menu.variants.ts",
+			"target": "context-menu/context-menu.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../menu/menu.variants",
+					"to": "@registry/ui/menu/menu.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/context-menu/index.ts",
+			"target": "context-menu/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { cn } from "../../lib/cn";
 import { BUTTON_RADIUS_TOKENS, ICON_SIZE_TOKENS } from "../../styles/tokens";
 import {
 	BUTTON_FOREGROUND_TOKEN,
@@ -17,6 +18,7 @@ import {
 	resolveButtonFeedback,
 	resolveButtonLayout,
 	resolveGroupedButtonSize,
+	resolveGroupMemberStretch,
 	resolveGroupPositions,
 	resolveGroupSeams,
 	resolveSpinnerSwapIndex,
@@ -843,5 +845,157 @@ describe("the etched button material", () => {
 
 	test("lists every material", () => {
 		expect(BUTTON_MATERIALS).toEqual(["flat", "etched"]);
+	});
+});
+
+describe("a detached group", () => {
+	test("places every member on its own", () => {
+		// `only` is the lone member's position and draws the lone button's corner,
+		// so a spaced run is a row of whole buttons rather than a joined shape with
+		// gaps punched in it.
+		expect(resolveGroupPositions([true, true, true], { isAttached: false })).toEqual(["only", "only", "only"]);
+		expect(resolveGroupPositions([true, false, true], { isAttached: false })).toEqual(["only", null, "only"]);
+	});
+
+	test("still skips a separator", () => {
+		expect(resolveGroupPositions([false, true, false], { isAttached: false })).toEqual([null, "only", null]);
+	});
+
+	test("joins by default", () => {
+		expect(resolveGroupPositions([true, true], { isAttached: true })).toEqual(["first", "last"]);
+		expect(resolveGroupPositions([true, true], {})).toEqual(["first", "last"]);
+	});
+
+	test("overlaps nothing", () => {
+		// There is no shared edge to draw once, and a point of overlap would eat
+		// into the gap instead.
+		for (const shape of SHAPES) {
+			expect(resolveGroupSeams(shape, { isAttached: false }).every((seamed) => !seamed)).toBe(true);
+		}
+		expect(resolveGroupSeams([true, true, true], { isAttached: true })).toEqual([false, true, true]);
+	});
+
+	test("draws each member's own corner", () => {
+		for (const size of BUTTON_SIZES) {
+			const step = size.startsWith("icon-") ? size.slice("icon-".length) : size;
+			const cls = buttonVariants({ groupPosition: "only", size }).root();
+			expect(cls).toContain(`rounded-button-${step}`);
+			expect(cls).not.toMatch(/\brounded-[sebt]-/);
+		}
+	});
+
+	test("spaces its members with a gap on either axis", () => {
+		for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
+			expect(buttonVariants({ isAttached: false, orientation }).group()).toMatch(/\bgap-2\b/);
+		}
+	});
+
+	test("an attached group still holds no gap", () => {
+		for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
+			expect(buttonVariants({ isAttached: true, orientation }).group()).not.toMatch(/\bgap-/);
+		}
+	});
+});
+
+describe("resolveButtonFeedback in a detached group", () => {
+	test("falls back to the lone button's scale", () => {
+		// Tearing a seam is impossible with no seam, so the group rung is dropped.
+		expect(resolveButtonFeedback(undefined, undefined, true, false)).toBe("scale");
+	});
+
+	test("still fades when attached", () => {
+		expect(resolveButtonFeedback(undefined, undefined, true, true)).toBe("fade");
+	});
+
+	test("defaults to attached, which is what a group is", () => {
+		expect(resolveButtonFeedback(undefined, undefined, true)).toBe("fade");
+	});
+
+	test("honours an explicit `none` either way", () => {
+		for (const isAttached of [true, false]) {
+			expect(resolveButtonFeedback("none", undefined, true, isAttached)).toBe("none");
+			expect(resolveButtonFeedback(undefined, "none", true, isAttached)).toBe("none");
+		}
+	});
+
+	test("still lets the group or the member name a treatment", () => {
+		expect(resolveButtonFeedback(undefined, "fade", true, false)).toBe("fade");
+		expect(resolveButtonFeedback("scale-fade", "fade", true, false)).toBe("scale-fade");
+	});
+});
+
+describe("a full-width group", () => {
+	test("spans its parent instead of hugging its content", () => {
+		const cls = buttonVariants({ isFullWidth: true, orientation: "horizontal" }).group();
+		expect(cls).toMatch(/\bw-full\b/);
+		expect(cls).toMatch(/\bself-stretch\b/);
+		expect(cls).not.toMatch(/\bself-start\b/);
+	});
+
+	test("fills the width when vertical too", () => {
+		const cls = buttonVariants({ isFullWidth: true, orientation: "vertical" }).group();
+		expect(cls).toMatch(/\bw-full\b/);
+		expect(cls).toMatch(/\bself-stretch\b/);
+	});
+
+	test("hugs its content by default", () => {
+		const cls = buttonVariants({ orientation: "horizontal" }).group();
+		expect(cls).toMatch(/\bself-start\b/);
+		expect(cls).not.toMatch(/\bw-full\b/);
+	});
+
+	test("keeps a gap when it is also detached", () => {
+		const cls = buttonVariants({ isAttached: false, isFullWidth: true }).group();
+		expect(cls).toMatch(/\bgap-2\b/);
+		expect(cls).toMatch(/\bw-full\b/);
+	});
+});
+
+describe("a stretched member", () => {
+	test("splits the run equally rather than by content", () => {
+		// `basis-0` is the half that matters: with `flex-1` alone Yoga shares out
+		// only the space left over, and the widths still follow the labels.
+		const cls = buttonVariants({ isStretched: true }).root();
+		expect(cls).toMatch(/\bflex-1\b/);
+		expect(cls).toMatch(/\bbasis-0\b/);
+	});
+
+	test("does not stretch by default", () => {
+		const cls = buttonVariants().root();
+		expect(cls).not.toMatch(/\bflex-1\b/);
+		expect(cls).not.toMatch(/\bbasis-0\b/);
+	});
+
+	test("yields to a caller's flex", () => {
+		const slot = buttonVariants({ isStretched: true }).root({ className: "flex-none" });
+		expect(slot).toMatch(/\bflex-none\b/);
+		expect(slot).not.toMatch(/\bflex-1\b/);
+		const merged = cn(buttonVariants({ isStretched: true }).root(), "flex-none");
+		expect(merged).toMatch(/\bflex-none\b/);
+		expect(merged).not.toMatch(/\bflex-1\b/);
+	});
+
+	test("keeps its own corner and height", () => {
+		const cls = buttonVariants({ groupPosition: "first", isStretched: true, size: "md" }).root();
+		expect(cls).toContain("h-button-md");
+		expect(cls).toContain("rounded-s-button-md");
+	});
+});
+
+describe("resolveGroupMemberStretch", () => {
+	test("stretches members of a full-width horizontal run", () => {
+		expect(resolveGroupMemberStretch({ isFullWidth: true, orientation: "horizontal" })).toBe(true);
+	});
+
+	test("leaves a vertical run to the cross axis it already stretches on", () => {
+		// `basis-0` on the main axis of a column with no definite height would
+		// collapse every member to nothing.
+		expect(resolveGroupMemberStretch({ isFullWidth: true, orientation: "vertical" })).toBe(false);
+	});
+
+	test("stretches nothing by default", () => {
+		for (const orientation of BUTTON_GROUP_ORIENTATIONS) {
+			expect(resolveGroupMemberStretch({ isFullWidth: false, orientation })).toBe(false);
+		}
 	});
 });

@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on button/group-spaced and has settled — a small outline
+  toolbar of three spaced buttons, and a secondary run of three with a separator before the last.
+  The capture script navigates there before running this.
+steps:
+  - echo: Pressing and holding each spaced member, so each one scales on its own
+  - long-press: { on: { id: spaced-find }, duration: 260 }
+  - long-press: { on: { id: spaced-export }, duration: 260 }
+  - long-press: { on: { id: spaced-share }, duration: 260 }
+  - long-press: { on: { id: spaced-undo }, duration: 260 }
+  - long-press: { on: { id: spaced-redo }, duration: 260 }
+  - long-press: { on: { id: spaced-clear }, duration: 260 }

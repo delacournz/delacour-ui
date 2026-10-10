@@ -220,6 +220,10 @@ Extends `ViewProps`.
       type: "{ x: number; y: number; width: number; height: number }",
       description: "Anchor to this rect instead of the trigger. A zero-size rect is a point.",
     },
+    backdrop: {
+      type: "ReactNode",
+      description: "Drawn over the scrim and behind the panel, fading with them. Takes no touches.",
+    },
     className: { type: "string" },
   }}
 />

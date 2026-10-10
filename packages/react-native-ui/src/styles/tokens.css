@@ -139,6 +139,17 @@
 	--shadow-etched-primary: inset 0 1px 0 0 rgb(255 255 255 / 16%), 0 1px 2px 0 rgb(0 0 0 / 5%);
 	--shadow-focus: 0 0 0 3px rgb(0 0 0 / 10%);
 	--shadow-focus-dark: 0 0 0 3px rgb(255 255 255 / 14%);
+
+	/*
+	 * A floating action button's footprint — the circle's edge, and the
+	 * height of an extended one. A scale of its own rather than
+	 * `--spacing-button-*`: a fab sits over content rather than in a row of
+	 * controls, so it is a step larger, and retuning a toolbar's density must
+	 * not move the one thing floating over the list.
+	 */
+	--spacing-fab-sm: 44px;
+	--spacing-fab-md: 56px;
+	--spacing-fab-lg: 64px;
 }
 
 /*

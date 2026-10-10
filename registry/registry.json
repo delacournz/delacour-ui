@@ -550,6 +550,40 @@
 			]
 		},
 		{
+			"name": "context-menu",
+			"type": "registry:ui",
+			"title": "Context Menu",
+			"description": "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"menu",
+				"pressable",
+				"tv"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/context-menu/AGENTS.md",
+				"ui/context-menu/context-menu-content.tsx",
+				"ui/context-menu/context-menu-item.tsx",
+				"ui/context-menu/context-menu-preview.tsx",
+				"ui/context-menu/context-menu-trigger.tsx",
+				"ui/context-menu/context-menu.context.tsx",
+				"ui/context-menu/context-menu.tsx",
+				"ui/context-menu/context-menu.variants.ts",
+				"ui/context-menu/index.ts"
+			]
+		},
+		{
 			"name": "dialog",
 			"type": "registry:ui",
 			"title": "Dialog",
@@ -690,6 +724,42 @@
 			"devDependencies": [],
 			"files": [
 				"lib/expo/navigation-theme.tsx"
+			]
+		},
+		{
+			"name": "fab",
+			"type": "registry:ui",
+			"title": "Fab",
+			"description": "A floating action button, extended with a label or unfolding a dial of related actions.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/fab/AGENTS.md",
+				"ui/fab/fab-action.tsx",
+				"ui/fab/fab-group.tsx",
+				"ui/fab/fab-label.tsx",
+				"ui/fab/fab.context.tsx",
+				"ui/fab/fab.tsx",
+				"ui/fab/fab.types.ts",
+				"ui/fab/fab.variants.ts",
+				"ui/fab/index.ts"
 			]
 		},
 		{
@@ -1265,6 +1335,42 @@
 			]
 		},
 		{
+			"name": "progress-button",
+			"type": "registry:ui",
+			"title": "Progress Button",
+			"description": "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/progress-button/AGENTS.md",
+				"ui/progress-button/index.ts",
+				"ui/progress-button/progress-button-done.tsx",
+				"ui/progress-button/progress-button-label.tsx",
+				"ui/progress-button/progress-button.context.tsx",
+				"ui/progress-button/progress-button.tsx",
+				"ui/progress-button/progress-button.variants.ts"
+			]
+		},
+		{
 			"name": "provider",
 			"type": "registry:ui",
 			"title": "Provider",
@@ -1425,6 +1531,47 @@
 			]
 		},
 		{
+			"name": "selection-mode",
+			"type": "registry:ui",
+			"title": "Selection Mode",
+			"description": "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"button",
+				"icon",
+				"icons",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated",
+				"react-native-safe-area-context"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/selection-mode/AGENTS.md",
+				"ui/selection-mode/index.ts",
+				"ui/selection-mode/selection-mode-action.tsx",
+				"ui/selection-mode/selection-mode-bar.tsx",
+				"ui/selection-mode/selection-mode-group.tsx",
+				"ui/selection-mode/selection-mode-header.tsx",
+				"ui/selection-mode/selection-mode-indicator.tsx",
+				"ui/selection-mode/selection-mode-item.tsx",
+				"ui/selection-mode/selection-mode.context.tsx",
+				"ui/selection-mode/selection-mode.tsx",
+				"ui/selection-mode/selection-mode.types.ts",
+				"ui/selection-mode/selection-mode.variants.ts"
+			]
+		},
+		{
 			"name": "separator",
 			"type": "registry:ui",
 			"title": "Separator",
@@ -1475,6 +1622,42 @@
 				"ui/skeleton/skeleton.context.tsx",
 				"ui/skeleton/skeleton.tsx",
 				"ui/skeleton/skeleton.variants.ts"
+			]
+		},
+		{
+			"name": "slide-button",
+			"type": "registry:ui",
+			"title": "Slide Button",
+			"description": "A handle dragged across a rail to confirm an action a tap should not reach.",
+			"categories": [
+				"controls"
+			],
+			"registryDependencies": [
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/slide-button/AGENTS.md",
+				"ui/slide-button/index.ts",
+				"ui/slide-button/slide-button-label.tsx",
+				"ui/slide-button/slide-button-thumb.tsx",
+				"ui/slide-button/slide-button.context.tsx",
+				"ui/slide-button/slide-button.tsx",
+				"ui/slide-button/slide-button.variants.ts"
 			]
 		},
 		{

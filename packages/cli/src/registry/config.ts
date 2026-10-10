@@ -183,6 +183,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		categories: ["overlays"],
 		dependencies: ["react-native-teleport"],
 	},
+	"context-menu": {
+		title: "Context Menu",
+		description:
+			"The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
+		categories: ["controls"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",
@@ -193,6 +199,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights.",
 		categories: ["overlays"],
+	},
+	fab: {
+		title: "Fab",
+		description: "A floating action button, extended with a label or unfolding a dial of related actions.",
+		categories: ["controls"],
 	},
 	field: {
 		title: "Field",
@@ -269,6 +280,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
 		categories: ["feedback"],
 	},
+	"progress-button": {
+		title: "Progress Button",
+		description:
+			"A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+		categories: ["controls"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",
@@ -284,6 +301,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
 		categories: ["layout"],
 	},
+	"selection-mode": {
+		title: "Selection Mode",
+		description:
+			"Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
+		categories: ["controls"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",
@@ -293,6 +316,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "Skeleton",
 		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
 		categories: ["feedback"],
+	},
+	"slide-button": {
+		title: "Slide Button",
+		description: "A handle dragged across a rail to confirm an action a tap should not reach.",
+		categories: ["controls"],
 	},
 	slider: {
 		title: "Slider",

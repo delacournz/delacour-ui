@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/in-a-sheet and has settled — the "Post to channels"
+  button with the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet
+  - tap: { id: open-sheet }
+  - await: { visible: { id: channel-design } }
+  - wait: 600
+  - echo: Picking two channels
+  - tap: { id: channel-design }
+  - wait: 400
+  - tap: { id: channel-releases }
+  - wait: 800
+  - echo: Unpicking them and dragging the sheet away, so the clip loops without a jump cut
+  - tap: { id: channel-releases }
+  - wait: 300
+  - tap: { id: channel-design }
+  - wait: 400
+  - swipe: { from: { text: Post to }, by: { y: 0.3 }, duration: 250 }
+  - await: { hidden: { id: channel-design } }
+  - wait: 400

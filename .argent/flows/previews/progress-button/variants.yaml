@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on progress-button/variants and has settled — four buttons, one per
+  variant, all empty. The capture script navigates there before running this.
+steps:
+  - echo: Holding each variant half way and letting go, so the wipe crosses its label and plays back
+  - long-press: { on: { id: variant-primary }, duration: 1000 }
+  - long-press: { on: { id: variant-secondary }, duration: 1000 }
+  - long-press: { on: { id: variant-destructive }, duration: 1000 }
+  - long-press: { on: { id: variant-success }, duration: 1000 }
+  - echo: The last fill drains to empty, so the clip loops without a jump cut
+  - wait: 1200

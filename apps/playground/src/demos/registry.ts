@@ -74,9 +74,11 @@ import * as demo_bottom_sheet_steps_three_step_form from "./bottom-sheet/steps/t
 import * as demo_button_disabled from "./button/disabled";
 import * as demo_button_etched from "./button/etched";
 import * as demo_button_group from "./button/group";
+import * as demo_button_group_full_width from "./button/group-full-width";
 import * as demo_button_group_input from "./button/group-input";
 import * as demo_button_group_orientation from "./button/group-orientation";
 import * as demo_button_group_separator from "./button/group-separator";
+import * as demo_button_group_spaced from "./button/group-spaced";
 import * as demo_button_group_text from "./button/group-text";
 import * as demo_button_icon_button from "./button/icon-button";
 import * as demo_button_icons from "./button/icons";
@@ -176,6 +178,12 @@ import * as demo_collapsible_order_summary from "./collapsible/order-summary";
 import * as demo_collapsible_sizes from "./collapsible/sizes";
 import * as demo_collapsible_starts_open from "./collapsible/starts-open";
 import * as demo_collapsible_variants from "./collapsible/variants";
+import * as demo_context_menu_anchored_to_row from "./context-menu/anchored-to-row";
+import * as demo_context_menu_hold_timing from "./context-menu/hold-timing";
+import * as demo_context_menu_lifted_preview from "./context-menu/lifted-preview";
+import * as demo_context_menu_message_actions from "./context-menu/message-actions";
+import * as demo_context_menu_stateful_rows from "./context-menu/stateful-rows";
+import * as demo_context_menu_with_own_press from "./context-menu/with-own-press";
 import * as demo_dialog_alert_dialog from "./dialog/alert-dialog";
 import * as demo_dialog_confirm from "./dialog/confirm";
 import * as demo_dialog_controlled from "./dialog/controlled";
@@ -196,6 +204,12 @@ import * as demo_empty_state_search from "./empty-state/search";
 import * as demo_empty_state_sizes from "./empty-state/sizes";
 import * as demo_empty_state_text_only from "./empty-state/text-only";
 import * as demo_empty_state_variants from "./empty-state/variants";
+import * as demo_fab_controlled_dial from "./fab/controlled-dial";
+import * as demo_fab_extended from "./fab/extended";
+import * as demo_fab_over_a_list from "./fab/over-a-list";
+import * as demo_fab_placements from "./fab/placements";
+import * as demo_fab_sizes_and_variants from "./fab/sizes-and-variants";
+import * as demo_fab_speed_dial from "./fab/speed-dial";
 import * as demo_feedback_basic from "./feedback/basic";
 import * as demo_feedback_controlled_draft from "./feedback/controlled-draft";
 import * as demo_feedback_multi_step from "./feedback/multi-step";
@@ -308,6 +322,14 @@ import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
 import * as demo_pressable_named_feedback from "./pressable/named-feedback";
+import * as demo_progress_button_auto_reset from "./progress-button/auto-reset";
+import * as demo_progress_button_controlled from "./progress-button/controlled";
+import * as demo_progress_button_custom_done from "./progress-button/custom-done";
+import * as demo_progress_button_disabled from "./progress-button/disabled";
+import * as demo_progress_button_hold_to_erase from "./progress-button/hold-to-erase";
+import * as demo_progress_button_shape_rounded from "./progress-button/shape-rounded";
+import * as demo_progress_button_sizes from "./progress-button/sizes";
+import * as demo_progress_button_variants from "./progress-button/variants";
 import * as demo_progress_anatomy from "./progress/anatomy";
 import * as demo_progress_colours from "./progress/colours";
 import * as demo_progress_controlled from "./progress/controlled";
@@ -334,6 +356,14 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_selection_mode_disabled_rows from "./selection-mode/disabled-rows";
+import * as demo_selection_mode_floating_bar from "./selection-mode/floating-bar";
+import * as demo_selection_mode_in_a_sheet from "./selection-mode/in-a-sheet";
+import * as demo_selection_mode_inbox_mode from "./selection-mode/inbox-mode";
+import * as demo_selection_mode_max_limit from "./selection-mode/max-limit";
+import * as demo_selection_mode_share_picker from "./selection-mode/share-picker";
+import * as demo_selection_mode_swatch_grid from "./selection-mode/swatch-grid";
+import * as demo_selection_mode_swatch_strip from "./selection-mode/swatch-strip";
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
@@ -343,6 +373,14 @@ import * as demo_skeleton_group from "./skeleton/group";
 import * as demo_skeleton_lines from "./skeleton/lines";
 import * as demo_skeleton_profile_card from "./skeleton/profile-card";
 import * as demo_skeleton_shapes from "./skeleton/shapes";
+import * as demo_slide_button_auto_reset from "./slide-button/auto-reset";
+import * as demo_slide_button_controlled_async from "./slide-button/controlled-async";
+import * as demo_slide_button_custom_thumb from "./slide-button/custom-thumb";
+import * as demo_slide_button_disabled from "./slide-button/disabled";
+import * as demo_slide_button_sizes from "./slide-button/sizes";
+import * as demo_slide_button_slide_to_ship from "./slide-button/slide-to-ship";
+import * as demo_slide_button_threshold from "./slide-button/threshold";
+import * as demo_slide_button_variants from "./slide-button/variants";
 import * as demo_slider_a_range from "./slider/a-range";
 import * as demo_slider_accessible_names from "./slider/accessible-names";
 import * as demo_slider_anatomy from "./slider/anatomy";
@@ -510,9 +548,11 @@ export const DEMOS = {
 	"button/disabled": demo_button_disabled,
 	"button/etched": demo_button_etched,
 	"button/group": demo_button_group,
+	"button/group-full-width": demo_button_group_full_width,
 	"button/group-input": demo_button_group_input,
 	"button/group-orientation": demo_button_group_orientation,
 	"button/group-separator": demo_button_group_separator,
+	"button/group-spaced": demo_button_group_spaced,
 	"button/group-text": demo_button_group_text,
 	"button/icon-button": demo_button_icon_button,
 	"button/icons": demo_button_icons,
@@ -612,6 +652,12 @@ export const DEMOS = {
 	"collapsible/sizes": demo_collapsible_sizes,
 	"collapsible/starts-open": demo_collapsible_starts_open,
 	"collapsible/variants": demo_collapsible_variants,
+	"context-menu/anchored-to-row": demo_context_menu_anchored_to_row,
+	"context-menu/hold-timing": demo_context_menu_hold_timing,
+	"context-menu/lifted-preview": demo_context_menu_lifted_preview,
+	"context-menu/message-actions": demo_context_menu_message_actions,
+	"context-menu/stateful-rows": demo_context_menu_stateful_rows,
+	"context-menu/with-own-press": demo_context_menu_with_own_press,
 	"dialog/alert-dialog": demo_dialog_alert_dialog,
 	"dialog/confirm": demo_dialog_confirm,
 	"dialog/controlled": demo_dialog_controlled,
@@ -632,6 +678,12 @@ export const DEMOS = {
 	"empty-state/sizes": demo_empty_state_sizes,
 	"empty-state/text-only": demo_empty_state_text_only,
 	"empty-state/variants": demo_empty_state_variants,
+	"fab/controlled-dial": demo_fab_controlled_dial,
+	"fab/extended": demo_fab_extended,
+	"fab/over-a-list": demo_fab_over_a_list,
+	"fab/placements": demo_fab_placements,
+	"fab/sizes-and-variants": demo_fab_sizes_and_variants,
+	"fab/speed-dial": demo_fab_speed_dial,
 	"feedback/basic": demo_feedback_basic,
 	"feedback/controlled-draft": demo_feedback_controlled_draft,
 	"feedback/multi-step": demo_feedback_multi_step,
@@ -744,6 +796,14 @@ export const DEMOS = {
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,
 	"pressable/named-feedback": demo_pressable_named_feedback,
+	"progress-button/auto-reset": demo_progress_button_auto_reset,
+	"progress-button/controlled": demo_progress_button_controlled,
+	"progress-button/custom-done": demo_progress_button_custom_done,
+	"progress-button/disabled": demo_progress_button_disabled,
+	"progress-button/hold-to-erase": demo_progress_button_hold_to_erase,
+	"progress-button/shape-rounded": demo_progress_button_shape_rounded,
+	"progress-button/sizes": demo_progress_button_sizes,
+	"progress-button/variants": demo_progress_button_variants,
 	"progress/anatomy": demo_progress_anatomy,
 	"progress/colours": demo_progress_colours,
 	"progress/controlled": demo_progress_controlled,
@@ -770,6 +830,14 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"selection-mode/disabled-rows": demo_selection_mode_disabled_rows,
+	"selection-mode/floating-bar": demo_selection_mode_floating_bar,
+	"selection-mode/in-a-sheet": demo_selection_mode_in_a_sheet,
+	"selection-mode/inbox-mode": demo_selection_mode_inbox_mode,
+	"selection-mode/max-limit": demo_selection_mode_max_limit,
+	"selection-mode/share-picker": demo_selection_mode_share_picker,
+	"selection-mode/swatch-grid": demo_selection_mode_swatch_grid,
+	"selection-mode/swatch-strip": demo_selection_mode_swatch_strip,
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
@@ -779,6 +847,14 @@ export const DEMOS = {
 	"skeleton/lines": demo_skeleton_lines,
 	"skeleton/profile-card": demo_skeleton_profile_card,
 	"skeleton/shapes": demo_skeleton_shapes,
+	"slide-button/auto-reset": demo_slide_button_auto_reset,
+	"slide-button/controlled-async": demo_slide_button_controlled_async,
+	"slide-button/custom-thumb": demo_slide_button_custom_thumb,
+	"slide-button/disabled": demo_slide_button_disabled,
+	"slide-button/sizes": demo_slide_button_sizes,
+	"slide-button/slide-to-ship": demo_slide_button_slide_to_ship,
+	"slide-button/threshold": demo_slide_button_threshold,
+	"slide-button/variants": demo_slide_button_variants,
 	"slider/a-range": demo_slider_a_range,
 	"slider/accessible-names": demo_slider_accessible_names,
 	"slider/anatomy": demo_slider_anatomy,

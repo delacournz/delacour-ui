@@ -2,9 +2,11 @@ import { defineDemoGroup } from "../define-demo-group";
 import * as disabled from "./disabled";
 import * as etched from "./etched";
 import * as group from "./group";
+import * as groupFullWidth from "./group-full-width";
 import * as groupInput from "./group-input";
 import * as groupOrientation from "./group-orientation";
 import * as groupSeparator from "./group-separator";
+import * as groupSpaced from "./group-spaced";
 import * as groupText from "./group-text";
 import * as iconButton from "./icon-button";
 import * as icons from "./icons";
@@ -31,4 +33,6 @@ export const buttonDemos = defineDemoGroup("button", {
 	"group-separator": groupSeparator,
 	"group-text": groupText,
 	"group-input": groupInput,
+	"group-spaced": groupSpaced,
+	"group-full-width": groupFullWidth,
 });

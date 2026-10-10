@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on selection-mode/swatch-grid and has settled — ten swatches in two rows,
+  Amber and Sky ringed. The capture script navigates there before running this.
+steps:
+  - echo: Ringing two more swatches
+  - tap: { id: swatch-flame }
+  - wait: 400
+  - tap: { id: swatch-violet }
+  - wait: 800
+  - echo: And clearing them, so the clip loops without a jump cut
+  - tap: { id: swatch-violet }
+  - wait: 400
+  - tap: { id: swatch-flame }
+  - wait: 400

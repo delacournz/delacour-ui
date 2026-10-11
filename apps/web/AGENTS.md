@@ -129,11 +129,14 @@ Open Graph / Twitter tags. Two things there are deliberate:
   contract this redesign was built to, as an HTML comment, so `grep 4a705b78 .output` finds it.
 - **The social card is a rendered 1200×630 PNG.** `og:image` and `twitter:image` point at
   `docsImageRoute` (`/og/docs`), a server handler in `src/routes/og/docs.ts` that rasterises
-  `src/og/card.ts`'s SVG with `@resvg/resvg-js` — the mark from `@delacour/brand`, the page title and a
-  line, both in Inter, on the house dark page. A docs page adds `?title=` from its own
-  `head()`.
-  resvg reads fonts from paths only, so the one TTF (Inter 400) is committed under `src/og/`
-  (OFL, the same files the playground embeds), imported `?inline` and written to the temp
+  `src/og/card.ts`'s SVG with `@resvg/resvg-js`. The card is set the way the site is: the house dark
+  page, JetBrains Mono throughout (600 for the title, 400 for the rest), in two columns. The left
+  is the words — the mark from `@delacour/brand` and the tracked wordmark over a hairline, the page
+  title, one line, and the docs URL. The right is the proof, standing the card's full height and
+  cropped by its bottom edge. The mark is the only amber on it.
+  A docs page adds `?title=` from its own `head()`.
+  resvg reads fonts from paths only, so the two TTFs (JetBrains Mono 400 and 600) are committed
+  under `src/og/` (OFL, the same files the playground embeds), imported `?inline` and written to the temp
   directory once per process — the built server has no `node_modules/@expo-google-fonts` beside
   it. `@resvg/resvg-js` is therefore a runtime dependency, and Nitro traces its native binary into
   `.output`; the builder's OS and architecture have to match the runtime's, which on Railway they do.
@@ -145,9 +148,13 @@ Open Graph / Twitter tags. Two things there are deliberate:
   description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the root's
   site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
   `isDocsProduct()` is the one place a product name is checked — `/og/docs?product=` goes through
-  it — and `MOTIFS` in `src/og/card.ts` is the one place a product's drawing is named: an amber
-  line chart on the charts card, a sheet resting on a snap point inside a phone frame on the
-  bottom-sheet card, nothing on the library's. A charts page gets `og:site_name` "Delacour
+  it — and `MOTIFS` in `src/og/card.ts` is the one place a product's proof is named. The
+  library's is not a drawing: it is the hero's own capture, `public/previews/screen/showcase/dark.png`,
+  in the bezel `DeviceBezel` draws — `routes/og/docs.ts` imports the committed file `?inline` and
+  hands it to the pure card as a data URL, so a recapture reaches the card with the next build. The
+  charts card draws a line chart in the chart blue, and the bottom-sheet card a sheet resting under
+  two snap point lines in the same phone. Title and line are wrapped by character count (the face
+  is monospaced, so a measure is a count), balanced, and ellipsised past three lines and two. A charts page gets `og:site_name` "Delacour
   Charts" and `/og/docs?product=charts`; a bottom-sheet page the same with its own name and
   `/docs/bottom-sheet` in the footer. `seo.test.ts` fails if an engine page's tags mention
   Tailwind, Uniwind or shadcn. A fourth product is an entry in `PRODUCTS`, a motif in `MOTIFS`, a

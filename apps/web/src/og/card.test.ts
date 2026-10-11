@@ -8,11 +8,16 @@ describe("wrapTitle", () => {
 	});
 
 	test("wraps on words, never inside one", () => {
-		const lines = wrapTitle("Build your React Native component library, and own every file of it");
+		const lines = wrapTitle("Build your React Native component library");
 
 		expect(lines.length).toBeGreaterThan(1);
-		for (const line of lines) expect(line.length).toBeLessThanOrEqual(30);
-		expect(lines.join(" ")).toBe("Build your React Native component library, and own every file of it");
+		for (const line of lines) expect(line.length).toBeLessThanOrEqual(17);
+		expect(lines.join(" ")).toBe("Build your React Native component library");
+	});
+
+	test("balances its lines rather than orphaning the last word", () => {
+		expect(wrapTitle("Skia charts for React Native")).toEqual(["Skia charts for", "React Native"]);
+		expect(wrapTitle("Progress Button with a label")).toEqual(["Progress Button", "with a label"]);
 	});
 
 	test("never runs past three lines", () => {
@@ -22,8 +27,8 @@ describe("wrapTitle", () => {
 		expect(lines[2]?.endsWith("…")).toBe(true);
 	});
 
-	test("a single word longer than the measure still lands", () => {
-		expect(wrapTitle("Supercalifragilisticexpialidociousness")).toEqual(["Supercalifragilisticexpialidociousness"]);
+	test("a single word longer than the measure is cut, not run under the phone", () => {
+		expect(wrapTitle("Supercalifragilisticexpialidociousness")).toEqual(["Supercalifragili…"]);
 	});
 });
 
@@ -38,13 +43,51 @@ describe("ogCardSvg", () => {
 		const svg = ogCardSvg({ title: "Button" });
 
 		expect(svg).toContain(">Button</text>");
-		expect(svg).toContain(">Delacour UI</text>");
+		expect(svg).toContain(">DELACOUR UI</text>");
 		expect(svg).toContain('stroke="#FBBF24"');
 	});
 
+	test("is set in the house mono, headings included, and in nothing else", () => {
+		const svg = ogCardSvg({ title: "Button" });
+		const families = new Set([...svg.matchAll(/font-family="([^"]+)"/g)].map((match) => match[1]));
+
+		expect([...families]).toEqual(["JetBrains Mono"]);
+		expect(svg).toMatch(/font-weight="600"[^>]*>Button<\/text>/);
+	});
+
+	test("spends amber on the mark and nowhere else", () => {
+		for (const product of ["ui", "charts", "bottom-sheet"] as const) {
+			const svg = ogCardSvg({ product });
+			const outsideMark = svg.replace(/<g id="mark"[\s\S]*?<\/g><\/g>/, "");
+
+			expect(svg).toContain('id="mark"');
+			expect(outsideMark).not.toMatch(/#FBBF24/i);
+		}
+	});
+
+	test("stands the library's real capture in the phone, and fakes nothing without one", () => {
+		const svg = ogCardSvg({ capture: "data:image/png;base64,AAAA" });
+
+		expect(svg).toContain('id="device"');
+		expect(svg).toContain('href="data:image/png;base64,AAAA"');
+		expect(svg).toContain('clip-path="url(#glass)"');
+		expect(ogCardSvg()).not.toContain('id="device"');
+	});
+
+	test("keeps a three-line title and a two-line subtitle above the URL", () => {
+		const svg = ogCardSvg({ title: "word ".repeat(60), subtitle: "word ".repeat(60) });
+		const baselines = [...svg.matchAll(/<text[^>]* y="(\d+)"/g)].map((match) => Number(match[1]));
+		const url = baselines.pop() ?? 0;
+
+		expect(url).toBe(OG_HEIGHT - 64);
+		expect(Math.max(...baselines)).toBeLessThan(url - 40);
+	});
+
 	test("falls back to the site's own line", () => {
-		expect(ogCardSvg()).toContain(`>${OG_DEFAULT_TITLE}</text>`);
-		expect(ogCardSvg({ title: "   " })).toContain(`>${OG_DEFAULT_TITLE}</text>`);
+		for (const line of wrapTitle(OG_DEFAULT_TITLE)) {
+			expect(ogCardSvg()).toContain(`>${line}</text>`);
+			expect(ogCardSvg({ title: "   " })).toContain(`>${line}</text>`);
+		}
 	});
 
 	test("escapes markup in a title that arrived over a URL", () => {
@@ -67,10 +110,10 @@ describe("ogCardSvg", () => {
  * from arriving without one.
  */
 const PACKAGE_CARDS: { product: DocsProduct; name: string; path: string; motif: string; page: string }[] = [
-	{ product: "charts", name: "Delacour Charts", path: "/docs/charts", motif: "chart", page: "Line" },
+	{ product: "charts", name: "DELACOUR CHARTS", path: "/docs/charts", motif: "chart", page: "Line" },
 	{
 		product: "bottom-sheet",
-		name: "Delacour Bottom Sheet",
+		name: "DELACOUR BOTTOM SHEET",
 		path: "/docs/bottom-sheet",
 		motif: "sheet",
 		page: "Snap points",
@@ -82,14 +125,15 @@ describe.each(PACKAGE_CARDS)("ogCardSvg for $product", ({ product, name, path, m
 		const svg = ogCardSvg({ product });
 
 		expect(svg).toContain(`>${name}</text>`);
-		expect(svg).not.toContain(">Delacour UI</text>");
-		expect(svg).toContain(`>${PRODUCTS[product].cardTitle}</text>`);
+		expect(svg).not.toContain(">DELACOUR UI</text>");
+		for (const line of wrapTitle(PRODUCTS[product].cardTitle)) expect(svg).toContain(`>${line}</text>`);
 		expect(svg).toContain(`ui.delacour.co.nz${path}`);
 	});
 
 	test("draws its motif, which the library's card does not", () => {
 		expect(ogCardSvg({ product })).toContain(`id="${motif}"`);
 		expect(ogCardSvg()).not.toContain(`id="${motif}"`);
+		expect(ogCardSvg({ product, capture: "data:image/png;base64,AAAA" })).not.toContain('id="device"');
 	});
 
 	test("draws no other package's motif", () => {

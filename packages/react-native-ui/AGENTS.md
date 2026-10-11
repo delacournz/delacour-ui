@@ -106,6 +106,7 @@ shares.
 | [Carousel](src/components/carousel/AGENTS.md) | `@delacour/react-native-ui/carousel` | Swipeable slides on one fractional position — peek, loop, vertical, coverflow, dots and arrows |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
+| [Countdown](src/components/countdown/AGENTS.md) | `@delacour/react-native-ui/countdown` | Time left until a fixed moment, as sliding segmented digits or an inline run |
 | [ContextMenu](src/components/context-menu/AGENTS.md) | `@delacour/react-native-ui/context-menu` | The actions that belong to a piece of content, reached by holding it |
 | [Drawer](src/components/drawer/AGENTS.md) | `@delacour/react-native-ui/drawer` | A panel that slides in from an edge and covers the app until dismissed |
 | [Dialog](src/components/dialog/AGENTS.md) | `@delacour/react-native-ui/dialog` | A centred card over a dimmed app that asks for a decision or a short input |

@@ -630,6 +630,37 @@
 			]
 		},
 		{
+			"name": "countdown",
+			"type": "registry:ui",
+			"title": "Countdown",
+			"description": "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"cn",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/countdown/AGENTS.md",
+				"ui/countdown/countdown-digit.tsx",
+				"ui/countdown/countdown-segment.tsx",
+				"ui/countdown/countdown.tsx",
+				"ui/countdown/countdown.variants.ts",
+				"ui/countdown/index.ts",
+				"ui/countdown/use-countdown-clock.ts"
+			]
+		},
+		{
 			"name": "dialog",
 			"type": "registry:ui",
 			"title": "Dialog",

@@ -199,6 +199,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview.",
 		categories: ["controls"],
 	},
+	countdown: {
+		title: "Countdown",
+		description:
+			"Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
+		categories: ["display"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

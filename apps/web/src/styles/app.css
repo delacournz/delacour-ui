@@ -369,16 +369,11 @@ body {
 
 /*
  * Nav links never wrap — "Bottom Sheet" on two lines pushed the toggle out of
- * its slot — and the notebook layout's title column is the 256px sidebar's
- * width, too narrow for the counter beside the wordmark.
+ * its slot.
  */
 #nd-nav a,
 #nd-notebook-layout header a {
 	white-space: nowrap;
-}
-
-#nd-notebook-layout [data-counter] {
-	display: none;
 }
 
 /*

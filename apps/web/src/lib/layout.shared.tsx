@@ -7,28 +7,28 @@ import {
 import type { ReactElement } from "react";
 import { DelacourIcon } from "@/components/delacour-icon";
 import { cn } from "./cn";
-import { COMPONENT_GROUPS, COMPONENTS } from "./components";
 import { appName, gitConfig } from "./shared";
 
 /**
+ * The home header's links. Charts and Bottom Sheet are namespaces of the docs,
+ * so the docs header carries them and the marketing pages reach them from the
+ * landing page's footer: five links, a counter, search, the theme switch and
+ * GitHub was more than one bar could say at once.
+ */
+const HOME_LINKS: ReadonlySet<string> = new Set(["/docs/native/getting-started", "/docs/native/components", "/theme"]);
+
+/**
  * The lockup is the mark beside "Delacour UI" set in tracked mono capitals,
- * and — from `xl` up — a counter of what is in the box, computed from the
- * component list rather than written down, so it cannot go stale. There is no
- * wordmark: the mark's geometry is binding and the typeset name is the
- * lockup, on every layout this returns options for.
+ * and nothing else. There is no wordmark: the mark's geometry is binding and
+ * the typeset name is the lockup, on every layout this returns options for.
  */
 export function baseOptions(): BaseLayoutProps {
 	return {
 		nav: {
 			title: (
-				<span className="inline-flex items-center gap-3 whitespace-nowrap">
-					<span className="inline-flex items-center gap-2.5 font-medium text-xs uppercase tracking-wordmark">
-						<DelacourIcon size={20} />
-						{appName}
-					</span>
-					<span className="kicker hidden whitespace-nowrap border-fd-border/70 border-s ps-3 xl:inline" data-counter>
-						{COMPONENTS.length} components · {COMPONENT_GROUPS.length} categories
-					</span>
+				<span className="inline-flex items-center gap-2.5 whitespace-nowrap font-medium text-xs uppercase tracking-wordmark">
+					<DelacourIcon size={20} />
+					{appName}
 				</span>
 			),
 		},
@@ -82,8 +82,13 @@ function HeaderSearch({ className, ...props }: FullSearchTriggerProps): ReactEle
 
 /**
  * The home layout's options. The header is the same frosted h-14 bar the docs
- * draw, so it takes the same search pill and the same lockup.
+ * draw, so it takes the same search pill and the same lockup — and only the
+ * `HOME_LINKS` of the docs header's five.
  */
 export function homeOptions(): BaseLayoutProps {
-	return baseOptions();
+	const options = baseOptions();
+	return {
+		...options,
+		links: options.links?.filter((link) => "url" in link && link.url !== undefined && HOME_LINKS.has(link.url)),
+	};
 }

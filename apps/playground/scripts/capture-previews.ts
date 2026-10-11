@@ -10,7 +10,8 @@
  *     bun run previews                      # everything, incremental
  *     bun run previews -- --only switch     # one component
  *     bun run previews -- --force           # ignore the source hashes
- *     bun run previews -- --dev             # against a running dev client
+ *     bun run previews -- --dev             # against a dev client, on Metro at 8088
+ *     bun run previews -- --dev --port 8091 # …or on this worktree's own bundler
  *
  * **It writes into another workspace.** The demos are the source of truth and
  * generators live with their source, so this script owns
@@ -28,6 +29,7 @@ import { mkdir, readdir, rm, stat } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import {
 	awaitElement,
+	awaitFreshHome,
 	awaitIdle,
 	bootDevice,
 	type Device,
@@ -46,6 +48,7 @@ import {
 import {
 	BUDGET_BYTES,
 	BUNDLE_ID,
+	DEFAULT_PORT,
 	DEVICE_MAX_EDGE,
 	DEVICE_NAME,
 	MANIFEST_PATH,
@@ -57,6 +60,7 @@ import {
 	THEMES,
 	type Theme,
 } from "./previews/config";
+import { bundlerRunning, devClientUrl } from "./previews/dev-client";
 import { type PreviewEntryJson, renderManifest } from "./previews/manifest";
 import {
 	boundsCrop,
@@ -76,13 +80,20 @@ type Options = {
 	only?: string;
 	force: boolean;
 	dev: boolean;
+	port: number;
 	device?: string;
 	themes: readonly Theme[];
 	prune: boolean;
 };
 
 function parseArgs(argv: readonly string[]): Options {
-	const options: Options = { dev: false, force: false, prune: true, themes: THEMES };
+	const options: Options = {
+		dev: false,
+		force: false,
+		port: Number(process.env.RCT_METRO_PORT) || DEFAULT_PORT,
+		prune: true,
+		themes: THEMES,
+	};
 
 	for (let index = 0; index < argv.length; index += 1) {
 		const arg = argv[index];
@@ -93,13 +104,31 @@ function parseArgs(argv: readonly string[]): Options {
 			return value;
 		};
 
-		if (arg === "--only") options.only = next();
-		else if (arg === "--device") options.device = next();
-		else if (arg === "--themes") options.themes = next().split(",") as Theme[];
-		else if (arg === "--force") options.force = true;
-		else if (arg === "--dev") options.dev = true;
-		else if (arg === "--no-prune") options.prune = false;
-		else throw new Error(`Unknown flag ${arg}`);
+		switch (arg) {
+			case "--only":
+				options.only = next();
+				break;
+			case "--device":
+				options.device = next();
+				break;
+			case "--themes":
+				options.themes = next().split(",") as Theme[];
+				break;
+			case "--port":
+				options.port = Number(next());
+				break;
+			case "--force":
+				options.force = true;
+				break;
+			case "--dev":
+				options.dev = true;
+				break;
+			case "--no-prune":
+				options.prune = false;
+				break;
+			default:
+				throw new Error(`Unknown flag ${arg}`);
+		}
 	}
 
 	return options;
@@ -154,6 +183,13 @@ async function preflight(options: Options, all: readonly PlannedDemo[]): Promise
 					"  The hero fronts that component's card on the components index."
 			);
 		}
+	}
+
+	if (options.dev && !(await bundlerRunning(options.port))) {
+		fail(
+			`No Metro bundler is answering on port ${options.port}, so the dev client has nothing to load.\n` +
+				`  Fix: bun expo start --dev-client --port ${options.port}   (or pass --port <n> for the one that is running)`
+		);
 	}
 
 	if (!options.dev) {
@@ -286,7 +322,7 @@ async function captureDemo(
 	const url = `${SCHEME}://preview?component=${demo.component}&demo=${demo.demo}&theme=${theme}`;
 	await openUrl(udid, url);
 
-	// The first deep link after `restartApp` waits on a cold JS load — measured at
+	// The first deep link after a restart or a refresh waits on a cold JS load — measured at
 	// 15s against a dev client — so the sentinel gets more than the default 10s.
 	const sentinel = `preview-ready:${demo.id}:${theme}:`;
 	if (!(await awaitElement(udid, sentinel, NAVIGATION_TIMEOUT_MS))) {
@@ -439,6 +475,56 @@ function mb(bytes: number): string {
 	return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
+/**
+ * Reloads the JS in the running process, and on a dev client points it at this
+ * run's bundler on the way. Reports whether the app came back.
+ *
+ * On a dev client the deep link does both and skips the launcher — see
+ * `devClientUrl`. A Release build has no bundler and nothing to reload: its
+ * next preview deep link replaces whatever is on screen, which is all the
+ * refresh a capture needs.
+ */
+async function refresh(udid: string, options: Options): Promise<boolean> {
+	if (!options.dev) return true;
+	await openUrl(udid, devClientUrl(SCHEME, options.port));
+	return await awaitFreshHome(udid);
+}
+
+/**
+ * Terminates and relaunches — only for what a refresh cannot fix: a process
+ * with no devtools bridge, or one whose accessibility tree a typing flow broke.
+ *
+ * On a dev client the floating dev-menu button is switched off first, because
+ * that preference is read at launch, and the relaunched app is then sent to
+ * the bundler rather than left on whatever the launcher opens by default.
+ */
+async function restart(udid: string, options: Options): Promise<boolean> {
+	if (options.dev) await hideDevMenuButton(udid, BUNDLE_ID);
+	await restartApp(udid, BUNDLE_ID);
+	return options.dev ? await refresh(udid, options) : await awaitFreshHome(udid);
+}
+
+/**
+ * A loaded app on a live devtools bridge, by the cheapest route that gets one.
+ *
+ * A process whose bridge is already connected is refreshed, not restarted: the
+ * bridge is the only thing a restart buys, and it is injected once per
+ * process. A stale or absent process is relaunched — as is one whose refresh
+ * did not come back, since a dev client can answer a reload with "There was a
+ * problem loading the project" and a relaunch clears it.
+ */
+async function ready(udid: string, options: Options): Promise<void> {
+	const live = await devtoolsConnected(udid, BUNDLE_ID, 0);
+	if (live && (await refresh(udid, options))) return;
+	if (await restart(udid, options)) return;
+	fail(
+		"the app never reached its home screen.\n" +
+			(options.dev
+				? `  Check that the dev client can load http://localhost:${options.port} — open it by hand once.`
+				: "  Check that a Release build is installed on this simulator.")
+	);
+}
+
 async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const all = await planDemos();
@@ -457,12 +543,7 @@ async function main(): Promise<void> {
 	console.log(`\n  ${device.name} (${device.udid})`);
 	console.log(`  ${demos.length} demos × ${options.themes.length} themes\n`);
 
-	// restart, not launch — see restartApp. A stale process has no devtools
-	// bridge, and every flow's `id:` selector then fails. On a dev client the
-	// dev menu's floating button is switched off first, or it is in every frame.
-	if (options.dev) await hideDevMenuButton(device.udid, BUNDLE_ID);
-	await restartApp(device.udid, BUNDLE_ID);
-	await Bun.sleep(6000);
+	await ready(device.udid, options);
 
 	if (demos.some((demo) => demo.flowPath) && !(await devtoolsConnected(device.udid, BUNDLE_ID))) {
 		fail(
@@ -503,13 +584,10 @@ async function main(): Promise<void> {
 			let captured: Captured = { height: 0, width: 0 };
 			for (const theme of options.themes) {
 				captured = await captureDemo(device.udid, demo, theme, geometry);
-				// A flow that typed leaves the app's accessibility tree unreadable
-				// (`ax-service` times out), so the next theme's sentinel is never
-				// found. A fresh process reads again.
-				if (demo.flowPath) {
-					await restartApp(device.udid, BUNDLE_ID);
-					await Bun.sleep(6000);
-				}
+				// Only a flow that typed needs a fresh process — see `flowTypes`.
+				// Any other leaves the app as it found it, and the next deep
+				// link navigates the same process.
+				if (demo.types) await restart(device.udid, options);
 			}
 
 			const animated = demo.flowPath !== undefined;

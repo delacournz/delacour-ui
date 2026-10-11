@@ -1,5 +1,8 @@
+executionPrerequisite: >-
+  The app has just been launched and is on its home screen. goldie restarts it
+  before the first segment and starts recording afterwards, so a `launch:` here
+  would restart it a second time, on camera.
 steps:
-  - launch: nz.co.delacour.ui.playground
   - await: { visible: { id: theme-trigger } }
   - wait: 1000
   - echo: Open the customizer from the floating trigger

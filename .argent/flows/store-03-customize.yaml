@@ -1,5 +1,11 @@
+executionPrerequisite: >-
+  The app is running with argent's devtools bridge live, on any screen — goldie
+  installs and launches it before the first scene, and every scene after that
+  inherits the process the last one left. Nothing here needs a fresh process.
 steps:
-  - launch: nz.co.delacour.ui.playground
+  - echo: Refresh, not relaunch — the home deep link resets navigation in the running process
+  - tool: open-url
+    args: { url: "dlc-ui-playground:///" }
   - await: { visible: { id: theme-trigger } }
   - echo: The customizer is its own screen; zinc base and amber accent are the house palette
   - tap: { id: theme-trigger }

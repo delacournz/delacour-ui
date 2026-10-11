@@ -8,8 +8,9 @@ capture script uses:
 dlc-ui-playground://preview?component=<component>&demo=<facet>/<demo>&theme=dark
 ```
 
-Run one with the app restarted so argent's devtools bridge is live (`restart-app`, then the deep
-link), from the repo root:
+Run one against the running app — open the deep link and go, from the repo root. A restart is only
+needed when argent's devtools bridge is not live (`argent run native-devtools-status` reports
+anything but `connected`); then `restart-app` once, and the deep link:
 
 ```bash
 argent flow run qa/bottom-sheet/<name> --device <UDID> --json

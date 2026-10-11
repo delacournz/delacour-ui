@@ -12,6 +12,9 @@ export const FLOWS_DIR = join(REPO, ".argent/flows/previews");
 export const SCHEME = "dlc-ui-playground";
 export const BUNDLE_ID = "nz.co.delacour.ui.playground";
 
+/** The port `bun dev` pins Metro to. A worktree on its own bundler passes `--port`. */
+export const DEFAULT_PORT = 8088;
+
 /**
  * The capture device is pinned.
  *

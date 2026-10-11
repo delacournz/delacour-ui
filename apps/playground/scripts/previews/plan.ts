@@ -23,6 +23,8 @@ export type PlannedDemo = {
 	source: DemoSource;
 	frame: DemoFrame;
 	flowPath?: string;
+	/** Whether the flow types — the one interaction that costs a restart. See `flowTypes`. */
+	types: boolean;
 	/** Still frames held before the flow, and after it. Defaults in `DemoCapture`. */
 	leadMs: number;
 	tailMs: number;
@@ -42,6 +44,18 @@ export type PlannedDemo = {
  */
 function componentOf(id: string): string {
 	return id.split("/")[0] as string;
+}
+
+/**
+ * Whether a flow drives the software keyboard.
+ *
+ * A flow that typed leaves the app's accessibility tree unreadable
+ * (`ax-service` times out), and only a fresh process reads again. Every other
+ * flow leaves the app as it found it, so this is what decides between a
+ * restart and carrying straight on to the next deep link.
+ */
+export function flowTypes(flowText: string): boolean {
+	return /^\s*-\s*tool:\s*keyboard\s*$/m.test(flowText);
 }
 
 async function walk(dir: string): Promise<string[]> {
@@ -108,6 +122,7 @@ export async function planDemos(only?: string): Promise<PlannedDemo[]> {
 			path,
 			source,
 			sourceHash: hashOf(source, flowText, frame),
+			types: flowText !== null && flowTypes(flowText),
 		});
 	}
 

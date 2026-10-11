@@ -63,6 +63,13 @@ and set. A fragment runs against the device's current state, and is the only flo
 declare an `executionPrerequisite`: the human-readable contract describing what must already be on
 screen. Write a real one. It is what an agent reads six months from now.
 
+**No flow here launches, and that includes the store ones.** `flows/store-*.yaml` each began with
+`launch:` purely to get back to the home screen, which cost a cold start per scene and, in
+`store-preview-01-open`, put a second launch inside the recording goldie had already started. They
+are fragments now: a scene that needs the home screen opens `dlc-ui-playground:///`, which resets
+navigation in the running process. Reach for `launch:` only in a flow whose subject *is* a cold
+start — what survives a restart, the splash, first-run state — and there is none of those yet.
+
 **What the flow owns, and what it does not.** A flow cannot loop, cannot be parameterised, and
 cannot name the file its recording lands in — so it is not the pipeline. It owns exactly one thing:
 *what the finger does*. The script owns the route, the theme, the recording, ffmpeg and the
@@ -128,21 +135,50 @@ finds the playground. So `argent flags` run from there reports the **global** de
 see this directory at all — the watermark check passes while the watermark is still on. Every
 argent call in the capture script therefore runs with `cwd` at the repo root, and so should yours.
 
-**A running app has no devtools bridge unless it was restarted.** argent injects the bridge at
+**A process has a devtools bridge only if argent launched it.** argent injects the bridge at
 process start, and that bridge is what resolves a flow's `id:` selectors against the full view
 hierarchy. `launch-app` against an already-running process only foregrounds it, so the process
 stays stale and every `tap: { id: … }` fails with *"No native-devtools-connected apps are available
 for auto-targeting"* — and because a flow hard-stops on a failed directive, the rest is skipped.
-Use `restart-app`, and check with:
+Check with:
 
 ```bash
 argent run native-devtools-status --udid <UDID> --bundleId nz.co.delacour.ui.playground
 ```
 
-`"state": "stale_process"` means exactly this. The capture script restarts the app once per run and
-asserts the bridge is connected before it records anything — polling for up to 30 seconds while
-argent reports `connecting`, because a dev client loading its bundle from Metro takes far longer to
-open the bridge than a Release build does.
+`"state": "stale_process"` or `"not_running"` is the one case that needs `restart-app`. `"connected"`
+needs nothing: the bridge belongs to the process, not to the JS, so it survives a reload and every
+deep link.
+
+**Refresh; restart only for what a refresh cannot fix.** The capture script reads that status
+first. A connected process is refreshed and reused; only a stale or absent one is relaunched. After
+that it restarts in exactly one case — a flow that typed (`tool: keyboard`), which leaves the
+accessibility tree unreadable until the process is replaced. It used to restart after every flow,
+twice per animated demo, for a problem 12 of the 182 flows can have.
+
+A refresh on a dev client is the deep link in `scripts/previews/dev-client.ts`:
+
+```
+dlc-ui-playground://expo-development-client/?url=http%3A%2F%2Flocalhost%3A<port>&disableOnboarding=1&disableFab=1&disableAutoLaunch=1
+```
+
+It takes the app past expo-dev-launcher's project list and onto the bundler named in `url` —
+`--port`, 8088 by default — whether the launcher is showing or an app is already running, and the
+three flags switch off the onboarding sheet, the floating Tools button and the dev menu opening
+itself. Never rely on the launcher's "most recent" choice: it lists every worktree's Metro, and the
+last one it loaded is not necessarily yours.
+
+Two measurements that shape the waits, both from a dev client:
+
+- **A refresh is not faster than a restart.** Either one downloads and boots the bundle again —
+  23s to 42s on a machine busy with other simulators. The saving is in not doing either between
+  demos, not in which one is chosen.
+- **The old screen stays readable for about ten seconds after a refresh is requested.** Waiting
+  for the home screen alone therefore passes at once, on the instance about to be torn down.
+  `awaitFreshHome` waits for the navbar's theme toggle to go and then to come back, and nothing is
+  sent to the app before it has.
+
+A Release build has no bundler and no reload; its refresh is simply the next deep link.
 
 `"state": "unregistered"` is the other one: the app loaded argent's dylib but the tool-server never
 saw it dial in, and no app restart changes that. `argent server stop && argent server start --detach`

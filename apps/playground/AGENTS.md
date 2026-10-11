@@ -488,13 +488,22 @@ capture in both themes, and writes the media and manifest the documentation site
 bun run previews                      # everything, incremental
 bun run previews -- -- --only switch  # one component, or one demo
 bun run previews -- -- --force        # ignore the source hashes
-bun run previews -- -- --dev          # against a dev client already on Metro
+bun run previews -- -- --dev          # against a dev client, on Metro at 8088
+bun run previews -- -- --dev --port 8091   # …or on this worktree's own bundler
 ```
 
 **Two `--`, and the second is not a typo.** The root script is `turbo previews --filter=…`, so the
 first `--` gets the flags past `bun run` and the second gets them past turbo. With one, turbo reads
 `--only switch` as its own and fails with `Could not find task "switch"`. From inside this workspace
 `bun scripts/capture-previews.ts --only switch` takes them directly.
+
+**`--dev` never leaves the choice to the dev launcher, and never restarts what it can refresh.** The script
+opens the dev client with a deep link naming the bundler on `--port`, which skips
+expo-dev-launcher's project list and loads this worktree's bundle rather than whichever Metro the
+launcher remembers. A process whose devtools bridge is already live is reused; the app is
+relaunched only when that bridge is missing, or after a flow that typed. Preflight fails if nothing
+answers on the port. The reasons, and the timings behind the waits, are in
+[`.argent/AGENTS.md`](../../.argent/AGENTS.md).
 
 **It writes into another workspace** — `apps/web/public/previews/**` and
 `apps/web/src/previews/manifest.ts`. Both are generated; neither is edited by hand. The script

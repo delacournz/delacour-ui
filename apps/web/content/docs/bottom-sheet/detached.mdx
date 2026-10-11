@@ -69,6 +69,21 @@ Every snap point is a height above that line, so `"50%"` is half of the height b
 line and the top inset, and the card's snap points read the same as an attached sheet's.
 
 ```txt
+  +--------------------------------------+ <-- the frame's top         ^
+  |                                      |                             |
+  |     +--------------------------+     |  ^                          |
+  |     |           ====           |     |  |                          | available
+  |<--->| the card                 |<--->|  | height, a snap point     |
+  |     |                          |     |  |                          |
+  |     +--------------------------+     |  v  <-- the resting line    v
+  | horizontalMargin                     |  ^
+  |                                      |  |  bottomOffset
+  |  - - - - - - - - - - - - - - - - -   |  |               restingBottom, the gap
+  |               ______                 |  |  bottomInset
+  +--------------------------------------+  v  <-- the frame's bottom
+```
+
+```txt
 restingBottom = bottomOffset + bottomInset
 available     = containerHeight − restingBottom
 closed        = translateY = containerHeight        the card's top edge at the frame's bottom, fully off-screen

@@ -53,6 +53,19 @@ under the buttons, counted **once** in the sheet's height whether there is a foo
 with no footer reserves the same band under its content.
 
 ```txt
+                +------------------------------+ <-- the sheet's top
+  handle        |             ====             |  ^
+                +------------------------------+  |
+  content       | Discard changes?             |  |
+                | Two lines of copy.           |  |  dynamicSnapPoint
+                +------------------------------+  |
+  footerContent | [   Keep   ]  [  Discard  ]  |  |
+                +------------------------------+  |
+  band          |            ______            |  v  bottomInset, the home indicator
+                +------------------------------+ <-- the screen's bottom edge
+```
+
+```txt
 dynamicSnapPoint = handle + content + footerContent + band
 ```
 
@@ -66,9 +79,28 @@ When the keyboard rises the sheet lifts by the keyboard's height **less the band
 on the keyboard's top edge, with no home-indicator's height of dead space between them.
 
 ```txt
+      progress = 0                    progress = 1
+                                  +----------------------+
+                                  | handle               |
+  +----------------------+        | content              |
+  | handle               |        +----------------------+
+  | content              |        | footerContent        |
+  +----------------------+        +======================+ <-- the keyboard's top edge
+  | footerContent        |        | : : : : : : : : : :  |
+  +----------------------+        | : : keyboard : : : : |
+  | band                 |        | : : : : : : : : : :  |
+  +----------------------+        +----------------------+ <-- the screen's bottom edge
+  height = base                   height = base + keyboard - band
+```
+
+```txt
 footerTop = height − keyboard − footerContent − band · (1 − progress)
           = base − footerContent − band                    for every progress
 ```
+
+`footerTop` is measured down from the sheet's top. On the left the footer ends a band above the
+screen's edge; on the right the sheet is taller by the keyboard less that band, so the footer ends
+on the keyboard and the band is the part the keys cover.
 
 The footer's position inside the panel is therefore **constant** while the keyboard animates; only
 the panel moves. That is the property the library this replaces committed React state per keyboard
@@ -77,9 +109,25 @@ steps rather than by a screenshot.
 
 ## Padding
 
-`padding` goes on the footer's **measured inner view**, so it counts in the sheet's height. Padding
-in `style` goes on the outer view and does not. Use `padding` for the space around the buttons and
-`style` for the surface and the hairline.
+The footer is **one view**. `padding` and `style` are flattened onto it together, so padding from
+either counts in `footerContent` and therefore in the sheet's height. The footer then adds the band
+to its own bottom padding, which is what carries the surface's colour down to the sheet's bottom
+line; the band is taken back off the measurement, so it is counted once, as the band.
+
+```txt
+  +----------------------------------------+ <-- footerTop, and the hairline from style
+  |                padding                 |  ^
+  |    +------------+    +------------+    |  |  footerContent
+  |    |    Keep    |    |  Discard   |    |  |  the measured height, padding included
+  |    +------------+    +------------+    |  |
+  |                padding                 |  v
+  |  - - - - - - - - - - - - - - - - - -   |
+  |    band, added by the footer itself    |     bottomInset, not measured
+  +----------------------------------------+ <-- the sheet's bottom line
+```
+
+Use `padding` for the space around the buttons and `style` for the surface and the hairline. A
+`paddingBottom` given as a string cannot be added to the band and is read as zero.
 
 ```tsx
 <BottomSheet.Footer padding={16} style={{ backgroundColor: "#2C2C2E", borderTopWidth: StyleSheet.hairlineWidth }}>
@@ -103,7 +151,7 @@ registers its controller with the root for the footer to find.
       default: "true",
       description: "Stay put over the body and ride the keyboard by transform. Off, a plain View that scrolls with the content.",
     },
-    padding: { type: "number", description: "Padding on the measured inner view, so it counts in the sheet's height." },
-    "...ViewProps": { type: "ViewProps", description: "style lands on the outer view." },
+    padding: { type: "number", description: "Padding on the footer's view, merged with style. It counts in the sheet's height." },
+    "...ViewProps": { type: "ViewProps", description: "style lands on the same view; the footer adds the band to its bottom padding." },
   }}
 />

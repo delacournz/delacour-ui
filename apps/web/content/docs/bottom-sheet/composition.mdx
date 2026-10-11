@@ -48,6 +48,27 @@ BottomSheet              the root — state, geometry, animation, the pans, the 
       Footer             sticky over the body, riding the keyboard; or a plain view that scrolls
 ```
 
+The same parts, as they are laid out on the screen:
+
+```txt
+  +-- Portal: the frame ---------------------+
+  |                                          |
+  |   Overlay: fills the frame, behind       |
+  |                                          |
+  | +-- Container: the panel, the one -----+ |
+  | |   view that moves                    | |
+  | | +----------------------------------+ | |
+  | | | Handle          ====             | | |
+  | | +----------------------------------+ | |
+  | | | Content                          | | |   Background fills the panel
+  | | |   Title                          | | |   under all three
+  | | |   Description                    | | |
+  | | +----------------------------------+ | |
+  | | | Footer: absolute, over the body  | | |
+  | | +----------------------------------+ | |
+  +-+--------------------------------------+-+
+```
+
 Exactly one body: `Content`, or one of the [scrollables](/docs/bottom-sheet/scrollables), or
 [`Steps`](/docs/bottom-sheet/steps). `Footer` is written **beside** the body, not inside it, so it
 can stay put while the body scrolls under it.
@@ -284,7 +305,7 @@ Sticky over the body by default, riding the keyboard by transform. See [Footer](
       default: "true",
       description: "Stay put over the body. Off, a plain View for a footer that scrolls with the content.",
     },
-    padding: { type: "number", description: "Padding on the measured inner view, so it counts in the sheet's height." },
+    padding: { type: "number", description: "Padding on the footer's view, merged with style. It counts in the sheet's height." },
     "...ViewProps": { type: "ViewProps" },
   }}
 />

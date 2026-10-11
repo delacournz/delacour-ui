@@ -40,6 +40,19 @@ both snaps with `source: "keyboard"`.
 ## The lift, exactly
 
 ```txt
+    keyboard down         keyboard up
+                        +--------------+
+                        | footer       |
+                        +==============+ <-- the keyboard's top     ^         ^
+                        | : : : : : : :|                            |         |
+   +--------------+     | : : : : : : :|                            | lift    |
+   | footer       |     | : keyboard : |                            |         | keyboard
+   +--------------+     | : : : : : : :| <-- the band's top         v         |
+   | band         |     | : : : : : : :|                            | band    |
+   +--------------+     +--------------+ <-- the screen's edge      v         v
+```
+
+```txt
 lift = keyboard − band · progress − (detached ? gap : 0)
 ```
 

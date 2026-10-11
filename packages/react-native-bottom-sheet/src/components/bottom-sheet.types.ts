@@ -188,7 +188,7 @@ export type BottomSheetFooterProps = ViewProps & {
 	 * plain `View` for a footer that scrolls with the content. @default true
 	 */
 	sticky?: boolean;
-	/** Padding on the measured inner view, so it counts in the sheet's height. */
+	/** Padding on the footer's view, merged with `style`. It counts in the sheet's height. */
 	padding?: number;
 };
 

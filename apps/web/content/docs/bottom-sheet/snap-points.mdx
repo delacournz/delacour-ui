@@ -21,6 +21,24 @@ the public surface; the engine derives it from a height at the moment a view nee
 else. That is why a detached card's snap points read the same as an attached sheet's even though the
 card rests above the screen's bottom edge.
 
+```txt
+  +--------------------------+      the host's top
+  | topInset                 |
+  +--------------------------+ ---  "100%"   the frame's top, the available height
+  |                          |
+  |  +--------------------+  | ---  "85%"    index 1
+  |  |        ====        |  |
+  |  |                    |  |
+  |  | - - - - - - - - -  |  | ---  "40%"    index 0
+  |  |                    |  |
+  |  | - - - - - - - - -  |  | ---  240      a height in pixels
+  |  |                    |  |
+  +--+--------------------+--+ ---  0        the resting line; closed, index -1
+```
+
+Heights are read upward from the resting line, never downward from the top. An attached sheet's
+resting line is the frame's bottom edge.
+
 ## Three kinds of snap point
 
 | Written as | Resolves to |

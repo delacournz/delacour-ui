@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { deepLinkToRoute } from "./deep-link";
+import { deepLinkToRoute, isKnownRoute } from "./deep-link";
 
 /**
  * The rewrite is the whole contract between the documentation site and this
@@ -81,5 +81,35 @@ describe("deepLinkToRoute", () => {
 	// and throwing here crashes the launch rather than failing a navigation.
 	test.each(["::::", "", "https://", "%%%"])("%p does not throw", (path) => {
 		expect(() => deepLinkToRoute(path, known)).not.toThrow();
+	});
+});
+
+/**
+ * The predicate `+native-intent.ts` hands the rewrite, fed a handful of ids in
+ * the registry's shape.
+ */
+describe("isKnownRoute", () => {
+	const ids = ["button/variants", "tabs/variants/primary", "bottom-sheet-engine/detached/floating-card"];
+
+	test.each(["button", "tabs", "tabs/variants", "button/variants"])("%s is a gallery or a demo", (route) => {
+		expect(isKnownRoute(route, ids)).toBe(true);
+	});
+
+	// A prefix of a segment is not a prefix of a route.
+	test.each(["provider", "but", "tabs/var", ""])("%p is not a route", (route) => {
+		expect(isKnownRoute(route, ids)).toBe(false);
+	});
+
+	// The engine galleries are keyed `bottom-sheet-engine/…` and `charts/…` but
+	// routed under the skinned component, so no demo id starts with their route.
+	test.each(["bottom-sheet/engine", "chart/engine"])("%s is an engine gallery", (route) => {
+		expect(isKnownRoute(route, ids)).toBe(true);
+	});
+
+	test("an engine link reaches its gallery", () => {
+		const known = (route: string): boolean => isKnownRoute(route, ids);
+		expect(deepLinkToRoute("https://ui.delacour.co.nz/playground/components/bottom-sheet/engine", known)).toBe(
+			"/bottom-sheet/engine"
+		);
 	});
 });

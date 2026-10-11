@@ -12,8 +12,8 @@ import { bottomSheetEngineStepsDemos } from "./steps";
  *
  * Keyed `bottom-sheet-engine` rather than `bottom-sheet` on purpose:
  * `bottom-sheet/` is the themed library's component and these demos import
- * nothing from it. The other facets — snap points, gestures, keyboard, footer,
- * scrollables, portal, detached, steps — arrive with BSHEET-8.
+ * nothing from it. One demo per facet is captured, for the engine docs page
+ * that facet has; each of those fills the device frame and centres its trigger.
  */
 export const bottomSheetEngineDemos = concatDemoGroups(
 	bottomSheetEngineAnatomyDemos,

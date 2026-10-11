@@ -20,8 +20,10 @@ const QR_LIGHT = "#ffffff";
 const QR_DARK = "#0a0a0a";
 
 type ScanToPreviewProps = {
-	/** The component slug — the URL segment, and the app's route name. */
+	/** The playground route — the URL's tail, and the app's route name. */
 	slug: string;
+	/** What the link opens, as the popover says it. An engine page names its demos. */
+	subject?: string;
 	className?: string;
 };
 
@@ -42,7 +44,7 @@ type ScanToPreviewProps = {
  * identical under SSR and hydration — and a code scanned off a `localhost` page
  * still points somewhere the phone can actually reach.
  */
-export function ScanToPreview({ className, slug }: ScanToPreviewProps): ReactElement {
+export function ScanToPreview({ className, slug, subject = "this component" }: ScanToPreviewProps): ReactElement {
 	return (
 		<Popover
 			onOpenChange={(open) => {
@@ -83,7 +85,7 @@ export function ScanToPreview({ className, slug }: ScanToPreviewProps): ReactEle
 					<span className="text-fd-muted-foreground text-xs">Tap to launch the app</span>
 				</a>
 				<p className="text-center text-fd-muted-foreground text-xs">
-					Opens this component in the {NATIVE_APP.NAME} app, live on your device.
+					Opens {subject} in the {NATIVE_APP.NAME} app, live on your device.
 				</p>
 				<InstallButtons />
 			</PopoverContent>

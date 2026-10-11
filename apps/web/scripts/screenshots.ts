@@ -177,6 +177,40 @@ const SHOTS: Shot[] = [
 		theme: "dark",
 	},
 	{ id: "54-cli-update-mobile-dark", path: "/docs/native/cli/commands#update", frame: "phone", theme: "dark" },
+	{ id: "55-sheet-overview-desktop-dark", path: "/docs/bottom-sheet", frame: "desktop", theme: "dark" },
+	{ id: "56-sheet-overview-desktop-light", path: "/docs/bottom-sheet", frame: "desktop", theme: "light" },
+	{ id: "57-sheet-overview-mobile-dark", path: "/docs/bottom-sheet", frame: "phone", theme: "dark" },
+	{
+		id: "58-sheet-footer-band-desktop-dark",
+		path: "/docs/bottom-sheet/footer#the-band",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "59-sheet-footer-padding-desktop-dark",
+		path: "/docs/bottom-sheet/footer#padding",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "60-sheet-keyboard-lift-desktop-dark",
+		path: "/docs/bottom-sheet/keyboard#the-lift-exactly",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "61-sheet-snap-points-desktop-dark",
+		path: "/docs/bottom-sheet/snap-points#height-space",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{
+		id: "62-sheet-detached-desktop-dark",
+		path: "/docs/bottom-sheet/detached#geometry",
+		frame: "desktop",
+		theme: "dark",
+	},
+	{ id: "63-sheet-footer-mobile-dark", path: "/docs/bottom-sheet/footer#the-band", frame: "phone", theme: "dark" },
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

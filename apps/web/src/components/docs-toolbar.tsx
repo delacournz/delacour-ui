@@ -10,6 +10,8 @@ import { gitConfig } from "@/lib/shared";
 /**
  * The row under a docs page's description: copy as Markdown, open elsewhere,
  * and — on a component page — open the component's source and scan to preview.
+ * An engine's pages get the scan button too, pointed at the engine's gallery;
+ * a `slug` with no component is how this row tells the two apart.
  * One hairline below it, on the house border, and the rhythm token's gap above
  * the body.
  *
@@ -54,7 +56,9 @@ export function DocsToolbar({
 					Open Source
 				</a>
 			) : null}
-			{slug ? <ScanToPreview className="ms-auto" slug={slug} /> : null}
+			{slug ? (
+				<ScanToPreview className="ms-auto" slug={slug} subject={component ? undefined : "the engine's demos"} />
+			) : null}
 		</div>
 	);
 }

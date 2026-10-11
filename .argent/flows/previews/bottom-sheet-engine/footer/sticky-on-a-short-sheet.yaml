@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/footer/sticky-on-a-short-sheet and has settled — the trigger button with the
+  sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet — handle, two lines of copy, and the footer above the home indicator
+  - tap: { id: footer-short-open }
+  - await: { visible: { id: footer-short-discard } }
+  - wait: 1200
+  - echo: Dragging it down to dismiss, the footer travelling with the sheet
+  - swipe: { from: { id: footer-short-handle }, by: { y: 0.2 }, duration: 250 }
+  - await: { hidden: { id: footer-short-discard } }

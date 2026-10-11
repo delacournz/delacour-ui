@@ -4,6 +4,8 @@ description: What the sheet does when a keyboard appears, which keyboards count 
 icon: Keyboard
 ---
 
+<Preview id="bottom-sheet-engine/keyboard/interactive-with-sticky-footer" title={null} />
+
 ```tsx
 <BottomSheet keyboardBehavior="interactive" keyboardBlurBehavior="restore" keyboardScope="inside">
 ```
@@ -36,6 +38,19 @@ from there; the return key drops the keyboard and the sheet is back at 35%. `onI
 both snaps with `source: "keyboard"`.
 
 ## The lift, exactly
+
+```txt
+    keyboard down         keyboard up
+                        +--------------+
+                        | footer       |
+                        +==============+ <-- the keyboard's top     ^         ^
+                        | : : : : : : :|                            |         |
+   +--------------+     | : : : : : : :|                            | lift    |
+   | footer       |     | : keyboard : |                            |         | keyboard
+   +--------------+     | : : : : : : :| <-- the band's top         v         |
+   | band         |     | : : : : : : :|                            | band    |
+   +--------------+     +--------------+ <-- the screen's edge      v         v
+```
 
 ```txt
 lift = keyboard − band · progress − (detached ? gap : 0)

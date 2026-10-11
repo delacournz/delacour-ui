@@ -361,16 +361,40 @@ export function hasPlaygroundScreen(slug: string): boolean {
 /** A component page's path under `content/docs`, as Fumadocs reports it. */
 const DOCS_COMPONENT_PATH = /^native\/components\/([a-z0-9-]+)\.mdx$/;
 
+/** A page directly inside a top-level docs folder — the shape every engine page has. */
+const DOCS_ENGINE_PATH = /^([a-z0-9-]+)\/[a-z0-9-]+\.mdx$/;
+
 /**
- * The playground slug for a documentation page, or `null` if the page has none.
+ * An engine's docs folder, and the playground route its demos are on.
  *
- * `null` covers three cases the docs toolbar must not offer a QR for: a page
- * outside `native/components`, that folder's `index.mdx`, and a component with
- * no screen in the playground.
+ * An engine's gallery sits inside the skinned component's folder —
+ * `(components)/bottom-sheet/engine.tsx` — because `components.test.ts` holds
+ * `(components)/` to the library's component list. So the route is two
+ * segments, and it is not derivable from the folder name: charts' docs folder
+ * is `charts` and its route would be `chart/engine`.
+ *
+ * The app cannot vouch for these from its demo registry, whose ids start
+ * `bottom-sheet-engine/`, so `apps/playground/src/lib/deep-link.ts` names each
+ * one too. `components.test.ts` fails when a route here is missing from there.
+ */
+export const ENGINE_PLAYGROUND_ROUTES: Readonly<Record<string, string>> = {
+	"bottom-sheet": "bottom-sheet/engine",
+};
+
+/**
+ * The playground route for a documentation page, or `null` if the page has none.
+ *
+ * A component page names its component's gallery; an engine page names the
+ * engine's. `null` covers what the docs toolbar must not offer a QR for: any
+ * other page, the components `index.mdx`, and a component with no screen in
+ * the playground.
  */
 export function playgroundSlugForDocsPath(path: string): string | null {
 	const slug = componentSlugForDocsPath(path);
-	return slug !== null && hasPlaygroundScreen(slug) ? slug : null;
+	if (slug !== null) return hasPlaygroundScreen(slug) ? slug : null;
+
+	const engine = DOCS_ENGINE_PATH.exec(path)?.[1];
+	return engine === undefined ? null : (ENGINE_PLAYGROUND_ROUTES[engine] ?? null);
 }
 
 /**

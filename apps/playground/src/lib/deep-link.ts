@@ -18,6 +18,33 @@ const RELATIVE_BASE = "dlc-ui-playground://";
 const HOME_ROUTE = "/";
 
 /**
+ * The engine galleries, which the demo registry cannot vouch for.
+ *
+ * Their demos are keyed `bottom-sheet-engine/…` and `charts/…` so the captures
+ * stay apart from the skinned component's, but their routes sit inside that
+ * component's folder — `(components)/bottom-sheet/engine.tsx`. No demo id
+ * starts with either, so each is named here. The documentation site's engine
+ * pages link to these; `apps/web/src/lib/components.ts` owns the other end.
+ */
+const ENGINE_ROUTES: readonly string[] = ["bottom-sheet/engine", "chart/engine"];
+
+/**
+ * Does the app have this route?
+ *
+ * A demo id is `{component}/{demo}` or `{component}/{facet}/{demo}`, and every
+ * gallery route is a proper prefix of one — so a prefix test accepts `tabs` and
+ * `tabs/variants` alike, and rejects `provider`, which has no screen, with
+ * nothing left to keep in sync. The engine galleries are the exception, above.
+ *
+ * @param demoIds The generated registry's `DEMO_IDS`. A parameter so this
+ *   module never imports the registry, which imports React Native.
+ */
+export function isKnownRoute(route: string, demoIds: readonly string[]): boolean {
+	if (route === "") return false;
+	return ENGINE_ROUTES.includes(route) || demoIds.some((id) => id === route || id.startsWith(`${route}/`));
+}
+
+/**
  * Rewrite an incoming universal link into the in-app route it names.
  *
  * `https://ui.delacour.co.nz/playground/components/tabs/variants` → `/tabs/variants`

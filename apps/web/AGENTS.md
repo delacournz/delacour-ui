@@ -474,6 +474,27 @@ nothing listed that is not on disk — and, for the reference pages in the table
 `## API Reference` the component pages end on. The table there is `PRODUCTS`; a third engine is a
 row in it and a folder here.
 
+A bottom sheet page that has a clip opens with it, `<Preview id="bottom-sheet-engine/…" title={null} />`
+before the first line of prose — a sheet is motion, and a reader deciding on one wants to see it move
+before reading how. `portal-and-host` is the exception: its clip is two stacked sheets, so it sits
+under `## The registry`, where stacking is explained. `snap-points`, `gestures`, `composition`,
+`installation`, `animation` and `core` have none, and a preview may not be reused across pages.
+
+**A page that states a height or an inset draws it.** The bottom sheet pages carry a layout diagram
+in a ```txt block wherever the prose is arithmetic — the band and the footer's padding on `footer`,
+the lift on `keyboard`, height space on `snap-points`, the card's margins on `detached`, the layers
+on `composition` — with the formula in a block of its own underneath. Three rules, each from a
+render that went wrong:
+
+- **ASCII only: `+`, `-`, `|`, `=`, `^`, `v`.** The site's JetBrains Mono comes from Google Fonts
+  without the box-drawing block, so `┌─│` fall back to a system face with a different advance and
+  every vertical rule drifts a little further right along the line.
+- **Keep a space between a dash and a bar.** The face has ligatures on, and `-|` and `|-` are drawn
+  as one tee glyph; `<--` becoming an arrow is the same feature and is welcome.
+- **Draw what the source does, not what the prose says.** The footer diagram was drawn from
+  `bottom-sheet-footer.tsx` and contradicted the page, which described an inner and an outer view
+  the component does not have; the page was wrong.
+
 Previews come from a demo group in `apps/playground/src/demos/` that renders the engine directly —
 `charts/` and `bottom-sheet-engine/` — importing from the engine and never from
 `@delacour/react-native-ui`. Their component keys are `charts` and `bottom-sheet-engine`,
@@ -963,6 +984,24 @@ documentation URLs, and one careless widening would send readers into an app ins
 The trigger is rendered from `docs/$.tsx` for any page matching `native/components/{slug}.mdx` —
 not from MDX. Nothing in `content/` changes, so `src/content.test.ts`'s page-shape assertions stay
 exactly as they were, and a new component gets its QR by existing.
+
+### An engine's pages open the engine's gallery
+
+Every page under `content/docs/bottom-sheet/` carries the button too, and all of them encode
+`/playground/components/bottom-sheet/engine` — the gallery of the engine's own demos, the ones the
+clips on those pages were recorded from. `ENGINE_PLAYGROUND_ROUTES` in `src/lib/components.ts` maps
+a docs folder to its route; it is a table rather than a rule because the route sits inside the
+skinned component's folder and is not the docs folder's name. Charts has no row yet: adding
+`charts: "chart/engine"` is the whole change, since the app already accepts that route.
+
+The app cannot vouch for an engine route from its demo registry, so
+`apps/playground/src/lib/deep-link.ts` names each one, and `components.test.ts` fails when a route
+here has no screen or is missing from that file. **The app half ships in the bundle**: a playground
+binary whose JavaScript predates the entry opens its home screen for an engine link, so an OTA
+update has to follow the docs deploy.
+
+The popover says "the engine's demos" rather than "this component" on these pages; `DocsToolbar`
+tells the two apart by whether the path names a component.
 
 ### The association files are handlers, not `public/` files
 

@@ -4,6 +4,8 @@ description: A floating card — inset from the sides, resting above the safe ar
 icon: Square
 ---
 
+<Preview id="bottom-sheet-engine/detached/floating-card" title={null} />
+
 ```tsx
 import { BottomSheet } from "@delacour/react-native-bottom-sheet";
 import { StyleSheet, Text, View } from "react-native";
@@ -65,6 +67,21 @@ in from each side, resting 16 above `bottomInset`. The corners are yours — `bo
 The card rests `bottomOffset + bottomInset` above the frame's bottom edge — the **resting line**.
 Every snap point is a height above that line, so `"50%"` is half of the height between the resting
 line and the top inset, and the card's snap points read the same as an attached sheet's.
+
+```txt
+  +--------------------------------------+ <-- the frame's top         ^
+  |                                      |                             |
+  |     +--------------------------+     |  ^                          |
+  |     |           ====           |     |  |                          | available
+  |<--->| the card                 |<--->|  | height, a snap point     |
+  |     |                          |     |  |                          |
+  |     +--------------------------+     |  v  <-- the resting line    v
+  | horizontalMargin                     |  ^
+  |                                      |  |  bottomOffset
+  |  - - - - - - - - - - - - - - - - -   |  |               restingBottom, the gap
+  |               ______                 |  |  bottomInset
+  +--------------------------------------+  v  <-- the frame's bottom
+```
 
 ```txt
 restingBottom = bottomOffset + bottomInset

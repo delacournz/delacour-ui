@@ -220,9 +220,11 @@ Reanimated, gesture-handler, keyboard-controller and safe-area-context for the s
 reader of an engine's docs takes those directly.
 
 The sheet engine's demos are grouped by what the engine owns — `anatomy`, `keyboard`, `footer`,
-`scrollables`, `portal`, `detached`, `steps` — and three of them opt into capture:
-`detached/floating-card` (the hero), `steps/three-step-form` and
-`scrollables/scroll-view-two-snap-points`. A captured engine demo is a `device` frame, because the
+`scrollables`, `portal`, `detached`, `steps` — and seven of them opt into capture, one for each
+engine docs page that shows a clip: `anatomy/two-snap-points` (the overview),
+`keyboard/interactive-with-sticky-footer`, `footer/sticky-on-a-short-sheet`,
+`scrollables/scroll-view-two-snap-points`, `portal/two-sheets-stacked`, `detached/floating-card`
+(the hero) and `steps/three-step-form`. A captured engine demo is a `device` frame, because the
 sheet teleports out of the measured stage, so its root fills and centres the trigger the way
 `bottom-sheet/anatomy/the-whole-composition` does; a trigger left at the top of a device frame sits
 under the Dynamic Island.
@@ -412,7 +414,8 @@ declares the association — `ios.associatedDomains` and two `autoVerify` Androi
 
 `src/app/+native-intent.ts` does the rewrite, and does almost nothing itself: it hands the path to
 `src/lib/deep-link.ts` along with a predicate answering *does this app have this route?*. The
-split is what makes the rewrite testable. `+native-intent` reads the answer from the generated demo
+split is what makes the rewrite testable. The predicate is `isKnownRoute` in the same pure file;
+`+native-intent` only feeds it the ids from the generated demo
 registry, which imports every demo, which imports React Native — Flow-typed source Bun's transpiler
 cannot parse, so a test could never import it. The pure half has no such problem, and
 `src/lib/deep-link.test.ts` covers every rule.
@@ -420,6 +423,13 @@ cannot parse, so a test could never import it. The pure half has no such problem
 **Only `https:` is rewritten.** That is the load-bearing line. The capture pipeline drives
 `dlc-ui-playground://preview?…` through this same function on every single capture, and rewriting it
 would break `bun run previews` in a way whose first symptom is a wall of identical screenshots.
+
+**The engine galleries are named, not derived.** `isKnownRoute` answers from the demo registry by
+prefix, and the engines' demos are keyed `bottom-sheet-engine/…` and `charts/…` while their routes
+are `/bottom-sheet/engine` and `/chart/engine` — so no demo id starts with either. `deep-link.ts`
+lists both in `ENGINE_ROUTES`. The engine's own docs pages link to `/bottom-sheet/engine`, and
+`apps/web/src/lib/components.test.ts` fails when a route the site links to is missing from that
+list. A binary whose bundle predates the entry opens home for that link.
 
 A slug with no screen — `provider`, a typo, a truncated scan — opens the home screen. An unmatched
 route in a release build is a blank screen and a console warning nobody sees.

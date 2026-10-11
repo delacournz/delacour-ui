@@ -105,6 +105,13 @@ jobs:
         with:
           bun-version: 1.3.9
 
+      # `bunx changeset` runs the CLI's `bin.js` under its `#!/usr/bin/env node` shebang, and
+      # `@changesets/cli` 3 calls `module.enableCompileCache()`, which Node only has from 22.1. The
+      # runner's own Node is 20, where that is `TypeError: enableCompileCache is not a function`.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
       - run: bun install --frozen-lockfile
 
       # Version half only — no `publish-script`, so this job can never publish. The action resets

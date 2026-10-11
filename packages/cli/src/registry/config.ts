@@ -258,6 +258,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A form control's name, with required, invalid and disabled states.",
 		categories: ["forms"],
 	},
+	leaderboard: {
+		title: "Leaderboard",
+		description:
+			"Ranked people or teams with ties, the top three on a podium of growing bars or lifted cards, and the highlighted entry pinned below the cut.",
+		categories: ["display"],
+	},
 	"list-group": {
 		title: "List Group",
 		description: "A surface grouping related rows, with dividers inserted automatically.",

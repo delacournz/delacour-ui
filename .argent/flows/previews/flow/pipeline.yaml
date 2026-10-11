@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on flow/pipeline and has settled — four cards, Source feeding Clean and Enrich,
+  both feeding Warehouse, fitted to the canvas. Each card carries the testID flow-node-<id>. The capture script
+  navigates there before running this.
+steps:
+  - echo: Dragging Enrich down and out, so its two edges reroute on the same frame
+  # A swipe anchored on the card rather than a coordinate, so a layout change moves the gesture with it.
+  # momentum:false so the card stops where the finger does.
+  - swipe: { from: { id: flow-node-enrich }, by: { x: 0.08, y: 0.07 }, momentum: false, duration: 800 }
+  - wait: 500
+  - echo: And back by the same distance, so the clip loops without a jump cut
+  - swipe: { from: { id: flow-node-enrich }, by: { x: -0.08, y: -0.07 }, momentum: false, duration: 800 }

@@ -251,6 +251,14 @@ import * as demo_field_states_disabled from "./field/states/disabled";
 import * as demo_field_states_live from "./field/states/live";
 import * as demo_field_states_one_flag_three_things from "./field/states/one-flag-three-things";
 import * as demo_field_states_through_an_input_group from "./field/states/through-an-input-group";
+import * as demo_flow_accessible_move from "./flow/accessible-move";
+import * as demo_flow_animated_edges from "./flow/animated-edges";
+import * as demo_flow_connect from "./flow/connect";
+import * as demo_flow_controls_minimap from "./flow/controls-minimap";
+import * as demo_flow_drag from "./flow/drag";
+import * as demo_flow_edge_variants from "./flow/edge-variants";
+import * as demo_flow_groups from "./flow/groups";
+import * as demo_flow_pipeline from "./flow/pipeline";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
@@ -747,6 +755,14 @@ export const DEMOS = {
 	"field/states/live": demo_field_states_live,
 	"field/states/one-flag-three-things": demo_field_states_one_flag_three_things,
 	"field/states/through-an-input-group": demo_field_states_through_an_input_group,
+	"flow/accessible-move": demo_flow_accessible_move,
+	"flow/animated-edges": demo_flow_animated_edges,
+	"flow/connect": demo_flow_connect,
+	"flow/controls-minimap": demo_flow_controls_minimap,
+	"flow/drag": demo_flow_drag,
+	"flow/edge-variants": demo_flow_edge_variants,
+	"flow/groups": demo_flow_groups,
+	"flow/pipeline": demo_flow_pipeline,
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,

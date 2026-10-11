@@ -19,7 +19,19 @@ export function Footer(): ReactElement {
 					<DelacourIcon size={16} />
 					{FOOTER_COPY.line}
 				</span>
-				<div className="flex gap-5">
+				<div className="flex flex-wrap gap-x-5 gap-y-2">
+					<a
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
+						href="/docs/charts"
+					>
+						{FOOTER_COPY.charts}
+					</a>
+					<a
+						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
+						href="/docs/bottom-sheet"
+					>
+						{FOOTER_COPY.bottomSheet}
+					</a>
 					<Link
 						className="underline decoration-fd-border underline-offset-4 transition-colors hover:text-fd-foreground hover:decoration-fd-foreground"
 						to="/compare/heroui"

@@ -58,7 +58,7 @@ src/
 ├── lib/privacy.ts         the privacy policy, as data — see "/privacy is held to the code"
 ├── lib/analytics/         PostHog, Google Analytics and consent — see "Analytics"
 ├── lib/native-app.ts      the playground app, and the two association bodies
-├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL
+├── lib/layout.shared.tsx  baseOptions() — navbar title, links, GitHub URL; homeOptions() — the same with three links
 ├── lib/theme-preset.ts    /theme's URL contract — decode, the axis options, the summary
 ├── lib/google-fonts.ts    the two Google Fonts requests the Font axis needs
 ├── routes/
@@ -197,6 +197,13 @@ not tell a reader how to do anything, and a comparison against a named competito
 Getting Started sidebar would be the site's own voice arguing in the middle of its instructions. It
 is linked from the landing page's `Footer` rather than from `baseOptions().links` — the navbar is
 the docs' tab strip.
+
+**The home header is the docs header minus two links.** `homeOptions()` keeps Docs, Components and
+Theme and drops Charts and Bottom Sheet, which the landing page's `Footer` links instead; the
+lockup is the mark and the name, with no component counter beside it. Five links, a counter,
+search, the theme switch and GitHub read as clutter on a marketing page. The docs header keeps all
+five, because there they are how a reader moves between namespaces. `layout.shared.test.ts` holds
+both lists.
 
 **The last section is one-sided, and that is the point.** It used to be a three-way *which one you
 should use*, with a card telling the reader to buy HeroUI Pro — a fair scoreboard and a bad closing

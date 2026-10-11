@@ -157,6 +157,8 @@ export const COMPONENT_INDEX_COPY = {
 
 export const FOOTER_COPY = {
 	line: `${appName} — React Native only. iOS and Android, Expo or bare.`,
+	charts: "Charts",
+	bottomSheet: "Bottom Sheet",
 	compare: "vs HeroUI",
 	github: "GitHub",
 	llms: "llms.txt",

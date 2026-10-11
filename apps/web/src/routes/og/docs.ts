@@ -5,7 +5,9 @@ import { Resvg } from "@resvg/resvg-js";
 import { createFileRoute } from "@tanstack/react-router";
 import { type DocsProduct, isDocsProduct } from "@/lib/seo";
 import { ogCardSvg } from "@/og/card";
-import interUrl from "@/og/inter-400.ttf?inline";
+import regularUrl from "@/og/jetbrains-mono-400.ttf?inline";
+import semiBoldUrl from "@/og/jetbrains-mono-600.ttf?inline";
+import captureUrl from "../../../public/previews/screen/showcase/dark.png?inline";
 
 /**
  * `/og/docs?title=Button` — a 1200×630 PNG for the social card.
@@ -14,11 +16,16 @@ import interUrl from "@/og/inter-400.ttf?inline";
  * needs an entry in `PRODUCTS` and nothing here.
  *
  * The SVG comes from `og/card.ts` and resvg rasterises it here, on the server,
- * with the one face the card sets. resvg reads fonts from paths only, and the
- * built server has no `node_modules/@expo-google-fonts` beside it, so the
- * TTF is bundled as an inline data URL and written to the temp directory once
- * per process — the same bytes the site loads from Google Fonts, committed
+ * with the two weights of the one face the card sets. resvg reads fonts from
+ * paths only, and the built server has no `node_modules/@expo-google-fonts`
+ * beside it, so each TTF is bundled as an inline data URL and written to the
+ * temp directory once per process — the same bytes the site loads from Google Fonts, committed
  * under `src/og/` so the card cannot depend on a network fetch at render time.
+ *
+ * The library's card stands a real capture in its phone — `screen/showcase`,
+ * the hero's device, dark — bundled the same way, as an inline data URL, read
+ * from the committed file `bun run previews` writes, so a recapture reaches
+ * the card with the next build and the server needs no `public/` beside it.
  *
  * Rendered cards are memoised by title; a scraper fetches each once and the
  * set of titles is the set of docs pages. The cap is a guard against a URL
@@ -40,10 +47,13 @@ function fonts(): string[] {
 
 	const dir = join(tmpdir(), "delacour-og-fonts");
 	mkdirSync(dir, { recursive: true });
-	const inter = join(dir, "inter-400.ttf");
-	writeFileSync(inter, decodeDataUrl(interUrl));
+	const faces = { "jetbrains-mono-400.ttf": regularUrl, "jetbrains-mono-600.ttf": semiBoldUrl };
 
-	fontFiles = [inter];
+	fontFiles = Object.entries(faces).map(([name, url]) => {
+		const path = join(dir, name);
+		writeFileSync(path, decodeDataUrl(url));
+		return path;
+	});
 	return fontFiles;
 }
 
@@ -52,8 +62,8 @@ function render(product: DocsProduct, title: string | undefined): Uint8Array {
 	const cached = cache.get(key);
 	if (cached) return cached;
 
-	const png = new Resvg(ogCardSvg({ product, title }), {
-		font: { fontFiles: fonts(), loadSystemFonts: false, defaultFontFamily: "Inter" },
+	const png = new Resvg(ogCardSvg({ product, title, capture: captureUrl }), {
+		font: { fontFiles: fonts(), loadSystemFonts: false, defaultFontFamily: "JetBrains Mono" },
 	})
 		.render()
 		.asPng();

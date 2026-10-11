@@ -1,0 +1,24 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/keyboard/interactive-with-sticky-footer and has settled — the trigger button
+  with the sheet closed and no keyboard up. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet
+  - tap: { id: kb-interactive-open }
+  - await: { visible: { id: kb-interactive-save } }
+  - wait: 600
+  - echo: Focusing a field — the sheet rides the keyboard up and the footer lands on its top edge
+  - tap: { id: kb-interactive-plain }
+  - wait: 900
+  - tool: keyboard
+    args: { text: Ada, delayMs: 90 }
+  - wait: 400
+  - echo: The next field resizes nothing
+  - tap: { id: kb-interactive-registered }
+  - wait: 800
+  - echo: Return blurs the field, and the sheet follows the keyboard back down
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 900
+  - echo: Dragging the sheet away
+  - swipe: { from: { id: kb-interactive-handle }, by: { y: 0.4 }, duration: 250 }
+  - await: { hidden: { id: kb-interactive-save } }

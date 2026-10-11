@@ -7,6 +7,7 @@ export const meta: DemoMeta = {
 	title: "Two sheets, stacked",
 	caption:
 		'The second sheet is opened from inside the first and lands on top of it: the registry stamps each open with a larger `zIndex`. The third opens with `stackBehavior="replace"`, which closes every other sheet in the host first. `Dismiss all` is `useBottomSheetRegistry()`, no ref in hand.',
+	capture: { flow: "bottom-sheet-engine/portal/two-sheets-stacked", frame: "device" },
 };
 
 const FIRST = ["40%"] as const;
@@ -14,10 +15,9 @@ const SECOND = ["60%"] as const;
 const THIRD = ["30%"] as const;
 
 const styles = StyleSheet.create({
-	root: { gap: 12, width: "100%" },
+	root: { alignItems: "center", flex: 1, gap: 12, justifyContent: "center", width: "100%" },
 	row: { flexDirection: "row", flexWrap: "wrap", gap: 8 },
 	button: {
-		alignSelf: "flex-start",
 		backgroundColor: "#8E8E9326",
 		borderRadius: 8,
 		paddingHorizontal: 12,

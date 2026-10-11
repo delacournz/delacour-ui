@@ -8,12 +8,12 @@ export const meta: DemoMeta = {
 	title: "Interactive, with a sticky footer",
 	caption:
 		"The default `keyboardBehavior`. A sheet sized to its content, three fields and a sticky footer. Tap any field: the sheet rides the keyboard up by exactly its height less the safe-area band, so the footer's bottom lands on the keyboard's top edge and the band is the only thing that collapses. Tap the next field and nothing resizes twice. `bottomInset` is the safe-area bottom from `useSafeAreaInsets`.",
+	capture: { flow: "bottom-sheet-engine/keyboard/interactive-with-sticky-footer", frame: "device" },
 };
 
 const styles = StyleSheet.create({
-	root: { gap: 12, width: "100%" },
+	root: { alignItems: "center", flex: 1, gap: 12, justifyContent: "center", width: "100%" },
 	button: {
-		alignSelf: "flex-start",
 		backgroundColor: "#8E8E9326",
 		borderRadius: 8,
 		paddingHorizontal: 12,

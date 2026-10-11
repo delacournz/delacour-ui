@@ -1,7 +1,13 @@
 import { describe, expect, test } from "bun:test";
-import { readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, join } from "node:path";
-import { COMPONENTS, COMPONENTS_WITHOUT_SCREENS, PLAYGROUND_SLUGS, playgroundSlugForDocsPath } from "./components";
+import {
+	COMPONENTS,
+	COMPONENTS_WITHOUT_SCREENS,
+	ENGINE_PLAYGROUND_ROUTES,
+	PLAYGROUND_SLUGS,
+	playgroundSlugForDocsPath,
+} from "./components";
 
 /**
  * `COMPONENTS` is hand-maintained, and until now nothing checked it against
@@ -80,6 +86,8 @@ describe("playgroundSlugForDocsPath", () => {
 		["native/components/provider.mdx", "a component with no screen"],
 		["native/getting-started/theming.mdx", "a page outside the components tree"],
 		["native/cli/index.mdx", "the CLI docs"],
+		["charts/line.mdx", "an engine with no route named for it"],
+		["bottom-sheet/nested/page.mdx", "a path deeper than an engine page"],
 		["native/components/button", "a path with no extension"],
 	])("%s has none", (path) => {
 		expect(playgroundSlugForDocsPath(path)).toBeNull();
@@ -90,5 +98,36 @@ describe("playgroundSlugForDocsPath", () => {
 			(slug) => playgroundSlugForDocsPath(`native/components/${slug}.mdx`) === null
 		);
 		expect(unresolved).toEqual([]);
+	});
+
+	// An engine's pages are not component pages, but its demos are a gallery
+	// like any other, one level down inside the skinned component's folder.
+	test.each([["bottom-sheet/index.mdx"], ["bottom-sheet/snap-points.mdx"], ["bottom-sheet/steps.mdx"]])(
+		"%s opens the bottom sheet engine's gallery",
+		(path) => {
+			expect(playgroundSlugForDocsPath(path)).toBe("bottom-sheet/engine");
+		}
+	);
+});
+
+describe("ENGINE_PLAYGROUND_ROUTES", () => {
+	const routes = Object.entries(ENGINE_PLAYGROUND_ROUTES);
+
+	test("every folder is an engine's docs folder", () => {
+		const content = join(REPO, "apps", "web", "content", "docs");
+		expect(routes.filter(([folder]) => !existsSync(join(content, folder, "meta.json")))).toEqual([]);
+	});
+
+	// The QR is only as good as the screen behind it: a route the app does not
+	// have opens its home screen and says nothing.
+	test("every route is a screen the playground has", () => {
+		expect(routes.filter(([, route]) => !existsSync(join(ROUTES, `${route}.tsx`)))).toEqual([]);
+	});
+
+	// No demo id starts with an engine route, so the app's registry-derived
+	// predicate cannot vouch for one. `deep-link.ts` names them itself.
+	test("every route is one the app's deep-link rewrite accepts", () => {
+		const deepLink = readFileSync(join(REPO, "apps", "playground", "src", "lib", "deep-link.ts"), "utf-8");
+		expect(routes.filter(([, route]) => !deepLink.includes(`"${route}"`))).toEqual([]);
 	});
 });

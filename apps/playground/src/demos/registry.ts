@@ -35,6 +35,7 @@ import * as demo_badge_sizes from "./badge/sizes";
 import * as demo_badge_status_dot from "./badge/status-dot";
 import * as demo_badge_variants_and_colours from "./badge/variants-and-colours";
 import * as demo_bottom_sheet_engine_anatomy_inline_two_snap_points from "./bottom-sheet-engine/anatomy/inline-two-snap-points";
+import * as demo_bottom_sheet_engine_anatomy_two_snap_points from "./bottom-sheet-engine/anatomy/two-snap-points";
 import * as demo_bottom_sheet_engine_detached_custom_margins from "./bottom-sheet-engine/detached/custom-margins";
 import * as demo_bottom_sheet_engine_detached_floating_card from "./bottom-sheet-engine/detached/floating-card";
 import * as demo_bottom_sheet_engine_footer_sticky_on_a_short_sheet from "./bottom-sheet-engine/footer/sticky-on-a-short-sheet";
@@ -509,6 +510,7 @@ export const DEMOS = {
 	"badge/status-dot": demo_badge_status_dot,
 	"badge/variants-and-colours": demo_badge_variants_and_colours,
 	"bottom-sheet-engine/anatomy/inline-two-snap-points": demo_bottom_sheet_engine_anatomy_inline_two_snap_points,
+	"bottom-sheet-engine/anatomy/two-snap-points": demo_bottom_sheet_engine_anatomy_two_snap_points,
 	"bottom-sheet-engine/detached/custom-margins": demo_bottom_sheet_engine_detached_custom_margins,
 	"bottom-sheet-engine/detached/floating-card": demo_bottom_sheet_engine_detached_floating_card,
 	"bottom-sheet-engine/footer/sticky-on-a-short-sheet": demo_bottom_sheet_engine_footer_sticky_on_a_short_sheet,

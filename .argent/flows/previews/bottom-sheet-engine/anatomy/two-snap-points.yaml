@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on bottom-sheet-engine/anatomy/two-snap-points and has settled — the trigger button with the sheet
+  closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening at the first snap point
+  - tap: { id: two-snap-open }
+  - await: { visible: { id: two-snap-close } }
+  - wait: 700
+  - echo: Dragging the handle up to the second
+  - swipe: { from: { id: two-snap-handle }, by: { y: -0.35 }, duration: 300, momentum: false }
+  - wait: 800
+  - echo: And back down to the first
+  - swipe: { from: { id: two-snap-handle }, by: { y: 0.35 }, duration: 300, momentum: false }
+  - wait: 800
+  - echo: Dragging past the first closes it
+  - swipe: { from: { id: two-snap-handle }, by: { y: 0.3 }, duration: 250 }
+  - await: { hidden: { id: two-snap-close } }

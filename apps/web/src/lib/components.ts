@@ -160,6 +160,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One number, its change coloured by what it means, and a sparkline of how it got there.",
 	},
 	{
+		slug: "leaderboard",
+		name: "Leaderboard",
+		group: "Data display",
+		blurb:
+			"Ranked people or teams with ties, the top three on a podium, and the highlighted entry pinned below the cut.",
+	},
+	{
 		slug: "calendar",
 		name: "Calendar",
 		group: "Forms",

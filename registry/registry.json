@@ -916,6 +916,53 @@
 			]
 		},
 		{
+			"name": "flow",
+			"type": "registry:ui",
+			"title": "Flow",
+			"description": "A pan-and-zoom canvas of nodes joined by self-routing edges, with groups, handle-to-handle connections, controls and a minimap — the app owns the graph.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"button",
+				"icon",
+				"icons",
+				"surface",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/flow/AGENTS.md",
+				"ui/flow/flow-background.tsx",
+				"ui/flow/flow-connection-preview.tsx",
+				"ui/flow/flow-controls.tsx",
+				"ui/flow/flow-edge.tsx",
+				"ui/flow/flow-geometry.ts",
+				"ui/flow/flow-group.tsx",
+				"ui/flow/flow-handle.tsx",
+				"ui/flow/flow-minimap.tsx",
+				"ui/flow/flow-node.tsx",
+				"ui/flow/flow-registry.ts",
+				"ui/flow/flow-svg.ts",
+				"ui/flow/flow.context.tsx",
+				"ui/flow/flow.tsx",
+				"ui/flow/flow.variants.ts",
+				"ui/flow/index.ts"
+			]
+		},
+		{
 			"name": "icon",
 			"type": "registry:ui",
 			"title": "Icon",

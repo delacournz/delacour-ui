@@ -1,0 +1,27 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on flow/groups and has settled — the Ingest group holding Fetch and a pinned
+  Parse, with Report outside it, the canvas filling the stage between y 0.28 and y 0.72 of the screen and the group's
+  label near x 0.21, y 0.45. The capture script navigates there before running this.
+steps:
+  - echo: Dragging the Ingest group by its label, so both riders and the edge out to Report follow
+  # A raw gesture-custom rather than a swipe directive: the group's centre is where Fetch's handle meets Parse's, and a
+  # swipe from { id: flow-group-ingest } would start a connection there instead of a group drag. The start point is the
+  # group's own label strip, which nothing else covers.
+  - tool: gesture-custom
+    args:
+      interpolate: 10
+      events:
+        - { type: Down, x: 0.21, y: 0.449 }
+        - { type: Move, x: 0.27, y: 0.42, delayMs: 400 }
+        - { type: Move, x: 0.33, y: 0.39, delayMs: 400 }
+        - { type: Up, x: 0.33, y: 0.39, delayMs: 120 }
+  - wait: 600
+  - echo: And back by the same vector, so the clip loops without a jump cut
+  - tool: gesture-custom
+    args:
+      interpolate: 10
+      events:
+        - { type: Down, x: 0.32, y: 0.392 }
+        - { type: Move, x: 0.26, y: 0.422, delayMs: 400 }
+        - { type: Move, x: 0.20, y: 0.452, delayMs: 400 }
+        - { type: Up, x: 0.20, y: 0.452, delayMs: 120 }

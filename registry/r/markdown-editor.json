@@ -1,0 +1,189 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "markdown-editor",
+	"type": "registry:ui",
+	"title": "Markdown Editor",
+	"description": "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"button",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"tabs",
+		"text",
+		"textarea",
+		"toggle-button",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/AGENTS.md",
+			"target": "markdown-editor/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/markdown-editor",
+					"to": "@registry/ui/markdown-editor"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/index.ts",
+			"target": "markdown-editor/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-action.tsx",
+			"target": "markdown-editor/markdown-editor-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-input.tsx",
+			"target": "markdown-editor/markdown-editor-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../textarea",
+					"to": "@registry/ui/textarea"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-preview.tsx",
+			"target": "markdown-editor/markdown-editor-preview.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../textarea",
+					"to": "@registry/ui/textarea"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-render.tsx",
+			"target": "markdown-editor/markdown-editor-render.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor-toolbar.tsx",
+			"target": "markdown-editor/markdown-editor-toolbar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../tabs",
+					"to": "@registry/ui/tabs"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.commands.ts",
+			"target": "markdown-editor/markdown-editor.commands.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.context.tsx",
+			"target": "markdown-editor/markdown-editor.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.parse.ts",
+			"target": "markdown-editor/markdown-editor.parse.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.tsx",
+			"target": "markdown-editor/markdown-editor.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.types.ts",
+			"target": "markdown-editor/markdown-editor.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.variants.ts",
+			"target": "markdown-editor/markdown-editor.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../tabs/tabs.variants",
+					"to": "@registry/ui/tabs/tabs.variants"
+				}
+			]
+		}
+	]
+}

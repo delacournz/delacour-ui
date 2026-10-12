@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on planner/details-sheet and has settled — October 2026
+  in the grid, no day selected and the sheet closed. The capture script navigates there before
+  running this.
+steps:
+  - echo: Tapping the busiest day opens its sheet
+  - tap: { id: planner-details-2026-10-14 }
+  - await: { visible: { text: Tempo run · 8 km } }
+  - wait: 1200
+  - echo: Dragging the sheet down closes it and clears the selection
+  - swipe: { from: { text: 3 sessions planned }, by: { y: 0.12 }, duration: 250 }
+  - await: { hidden: { text: Tempo run · 8 km } }
+  - wait: 600

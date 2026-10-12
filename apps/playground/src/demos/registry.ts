@@ -349,6 +349,14 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_planner_calendar_fill from "./planner/calendar-fill";
+import * as demo_planner_controlled_month from "./planner/controlled-month";
+import * as demo_planner_custom_day from "./planner/custom-day";
+import * as demo_planner_details_sheet from "./planner/details-sheet";
+import * as demo_planner_scroller from "./planner/scroller";
+import * as demo_planner_tiles from "./planner/tiles";
+import * as demo_planner_training_plan from "./planner/training-plan";
+import * as demo_planner_week_start_sunday from "./planner/week-start-sunday";
 import * as demo_popover_arrow from "./popover/arrow";
 import * as demo_popover_basic from "./popover/basic";
 import * as demo_popover_edge_collision from "./popover/edge-collision";
@@ -862,6 +870,14 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"planner/calendar-fill": demo_planner_calendar_fill,
+	"planner/controlled-month": demo_planner_controlled_month,
+	"planner/custom-day": demo_planner_custom_day,
+	"planner/details-sheet": demo_planner_details_sheet,
+	"planner/scroller": demo_planner_scroller,
+	"planner/tiles": demo_planner_tiles,
+	"planner/training-plan": demo_planner_training_plan,
+	"planner/week-start-sunday": demo_planner_week_start_sunday,
 	"popover/arrow": demo_popover_arrow,
 	"popover/basic": demo_popover_basic,
 	"popover/edge-collision": demo_popover_edge_collision,

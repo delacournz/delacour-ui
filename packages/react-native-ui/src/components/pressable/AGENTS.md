@@ -44,7 +44,13 @@ and only `onPress` and `onLongPress` cross back to JS.
 - **`disabled` vs `busy`.** Both block the gesture; only `disabled` announces
   the control as disabled. Use `busy` for a temporary state the component clears
   itself, so assistive tech reports a control that is momentarily unavailable
-  rather than one that is inert. Neither applies any opacity — that is the
+  rather than one that is inert. A caller who needs the announcement without
+  the block passes `accessibilityState={{ busy: true }}` instead:
+  `resolvePressableAccessibilityState` lets a caller's state add `true` to
+  either key but never override a gating prop with `false`. Before it, the
+  prop's default `false` overwrote a caller's `busy` silently —
+  [`Marker`](../marker/AGENTS.md), a running step that must stay tappable,
+  is the case that found it. Neither applies any opacity — that is the
   caller's variant's job, and the point below is what lets it do that job.
 - **A className's opacity is multiplied into the press, never overwritten.**
   The press feedback is an animated style, and an animated style owns every key

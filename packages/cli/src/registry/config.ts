@@ -309,6 +309,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
 		categories: ["controls"],
 	},
+	marker: {
+		title: "Marker",
+		description: "A centred inline note for a step or a day break between conversation turns, static or pressable.",
+		categories: ["feedback"],
+	},
 	meter: {
 		title: "Meter",
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",

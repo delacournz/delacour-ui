@@ -1,0 +1,152 @@
+---
+title: Marker
+description: A centred inline note for a step or a day break between conversation turns.
+icon: History
+---
+
+<Preview id="marker/conversation" title={null} />
+
+## Installation
+
+<ComponentInstall name="marker" />
+
+## Usage
+
+<Preview id="marker/conversation" />
+
+```tsx title="app/index.tsx"
+import { Icon } from "@/components/ui/icon";
+import { IconMagnifyingGlass } from "@/lib/icons/central";
+import { Marker } from "@/components/ui/marker";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Marker>
+        <Marker.Icon>
+          <Icon icon={IconMagnifyingGlass} />
+        </Marker.Icon>
+        <Marker.Content>Explored 4 files</Marker.Content>
+      </Marker>
+    </View>
+  );
+}
+```
+
+## Variants
+
+`default` is a bare row, `border` a hairline capsule for closing a section, `separator` a label
+ruled off to both edges for day breaks.
+
+<Preview id="marker/variants" />
+
+```tsx
+<Marker>Explored 4 files</Marker>
+<Marker variant="border">Task complete</Marker>
+<Marker variant="separator">Yesterday</Marker>
+```
+
+## Pressable
+
+With no `onPress` and no `onLongPress` a marker is a plain `View`, read as text; give it either and
+it becomes a `Pressable` announced as a button.
+
+<Preview id="marker/pressable" />
+
+```tsx
+<Marker accessibilityHint="Shows the files" onPress={() => setIsOpen((open) => !open)}>
+  <Marker.Icon>
+    <Icon icon={IconMagnifyingGlass} />
+  </Marker.Icon>
+  <Marker.Content>Explored 4 files</Marker.Content>
+</Marker>
+```
+
+## Running
+
+`shimmer` on `Marker.Content` says the step is still running: the text breathes, and the marker is
+announced busy.
+
+<Preview id="marker/running" />
+
+```tsx
+<Marker>
+  <Marker.Icon>
+    <Icon icon={IconMagnifyingGlass} />
+  </Marker.Icon>
+  <Marker.Content shimmer={step.isRunning}>Searching files</Marker.Content>
+</Marker>
+```
+
+<Callout type="warn">Drop `shimmer` the moment the step finishes. A marker that shimmers forever reads as a stuck one.</Callout>
+
+## Disabled
+
+`isDisabled` dims the marker. On a pressable one it also blocks the press and is announced.
+
+<Preview id="marker/disabled" />
+
+```tsx
+<Marker isDisabled onPress={() => expand(step)}>
+  <Marker.Icon>
+    <Icon icon={IconMagnifyingGlass} />
+  </Marker.Icon>
+  <Marker.Content>Explored 4 files</Marker.Content>
+</Marker>
+```
+
+## Accessibility
+
+- A static marker is one element with the `text` role; its words are read once.
+- A pressable marker has the `button` role, and stays tappable while busy. Pass `accessibilityHint` to say what the press does.
+- `Marker.Icon` is hidden from assistive technology, because the glyph restates the text.
+- The `separator` rules are hidden too.
+- While any `Marker.Content` inside shimmers, the marker is announced busy.
+
+## API Reference
+
+### MarkerProps
+
+`feedback`, `haptic`, `hitSlop`, `pressedOpacity`, `pressedScale` and `accessibilityHint` are
+accepted only alongside `onPress` or `onLongPress`. On a static marker there is nothing for them to
+press. See [Pressable](/docs/native/components/pressable).
+
+<TypeTable
+  type={{
+    variant: { type: '"default" | "border" | "separator"', default: '"default"' },
+    isDisabled: {
+      type: "boolean",
+      description: "Dims the marker. On a pressable one, also blocks the press and is announced.",
+    },
+    onPress: { type: "() => void", description: "Makes the marker a pressable button." },
+    onLongPress: { type: "() => void", description: "Makes the marker a pressable button." },
+    feedback: { type: '"scale" | "fade" | "scale-fade" | "none"', default: '"fade"' },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Bare strings are wrapped in a `Marker.Content` automatically." },
+    testID: { type: "string" },
+    accessibilityLabel: { type: "string" },
+  }}
+/>
+
+### Marker.Icon
+
+The leading glyph slot, hidden from assistive technology. Extends React Native's `ViewProps`.
+
+<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+
+### Marker.Content
+
+The marker's text. It extends `Text`'s props.
+
+<TypeTable
+  type={{
+    shimmer: {
+      type: "boolean",
+      default: "false",
+      description: "A breath across the text while the step runs. Drop it when the step ends.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>

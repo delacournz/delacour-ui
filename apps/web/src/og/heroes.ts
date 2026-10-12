@@ -77,6 +77,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/surface": "surface/nesting",
 	"native/components/swipe": "swipe/both-sides",
 	"native/components/switch": "switch/tap-or-drag",
+	"native/components/table": "table/sortable",
 	"native/components/tabs": "tabs/variants/every-variant",
 	"native/components/text": "text/type-scale",
 	"native/components/textarea": "textarea/character-count",
@@ -202,6 +203,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"surface/nesting": { load: () => import("../../public/previews/surface/nesting/dark.png?inline") },
 	"swipe/both-sides": { load: () => import("../../public/previews/swipe/both-sides/dark.png?inline") },
 	"switch/tap-or-drag": { load: () => import("../../public/previews/switch/tap-or-drag/dark.png?inline") },
+	"table/sortable": { load: () => import("../../public/previews/table/sortable/dark.png?inline") },
 	"tabs/variants/every-variant": {
 		load: () => import("../../public/previews/tabs/variants/every-variant/dark.png?inline"),
 	},

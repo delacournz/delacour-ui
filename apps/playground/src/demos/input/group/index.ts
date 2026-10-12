@@ -1,7 +1,11 @@
 import { defineDemoGroup } from "../../define-demo-group";
+import * as composer from "./composer";
 import * as controls from "./controls";
+import * as decorative from "./decorative";
+import * as groupButton from "./group-button";
 import * as icons from "./icons";
 import * as multiline from "./multiline";
+import * as separator from "./separator";
 import * as sideBySide from "./side-by-side";
 import * as sizesAndStates from "./sizes-and-states";
 import * as textAffixes from "./text-affixes";
@@ -11,7 +15,11 @@ export const inputGroupDemos = defineDemoGroup("input/group", {
 	"side-by-side": sideBySide,
 	icons,
 	"text-affixes": textAffixes,
+	decorative,
 	controls,
+	"group-button": groupButton,
+	separator,
+	composer,
 	"sizes-and-states": sizesAndStates,
 	multiline,
 });

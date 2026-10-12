@@ -3,7 +3,7 @@
 	"name": "input",
 	"type": "registry:ui",
 	"title": "Input",
-	"description": "A text field, with a group that puts a prefix or suffix inside its border.",
+	"description": "A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border.",
 	"categories": [
 		"forms"
 	],
@@ -40,6 +40,36 @@
 			"namespace": "ui"
 		},
 		{
+			"path": "packages/react-native-ui/src/components/input/input-group-block.tsx",
+			"target": "input/input-group-block.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/input/input-group-button.tsx",
+			"target": "input/input-group-button.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
 			"path": "packages/react-native-ui/src/components/input/input-group-decorator.tsx",
 			"target": "input/input-group-decorator.tsx",
 			"namespace": "ui",
@@ -61,6 +91,11 @@
 		{
 			"path": "packages/react-native-ui/src/components/input/input-group-prefix.tsx",
 			"target": "input/input-group-prefix.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/input/input-group-separator.tsx",
+			"target": "input/input-group-separator.tsx",
 			"namespace": "ui"
 		},
 		{

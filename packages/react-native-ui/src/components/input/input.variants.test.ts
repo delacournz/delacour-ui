@@ -8,6 +8,7 @@ import {
 	resolveButtonSizeStep,
 } from "../button/button.variants";
 import {
+	INPUT_GROUP_PLACEMENTS,
 	INPUT_INVALID_SELECTION_ACCENT_CLASS,
 	INPUT_PLACEHOLDER_ACCENT_CLASS,
 	INPUT_SELECTION_ACCENT_CLASS,
@@ -15,8 +16,13 @@ import {
 	INPUT_VARIANTS,
 	type InputBoxState,
 	inputVariants,
+	resolveGroupButtonClass,
+	resolveGroupButtonSize,
+	resolveGroupSegments,
 	resolveInputFieldClass,
 	resolveInputGroupClass,
+	resolveInputGroupRowClass,
+	resolveIsDecorative,
 	resolvePlaceholderAccentClass,
 	resolveSelectionAccentClass,
 } from "./input.variants";
@@ -169,7 +175,7 @@ describe("a multiline field", () => {
 	// side of a paragraph. They belong on the first line.
 	test("aligns the row to the top", () => {
 		for (const size of INPUT_SIZES) {
-			const row = resolveInputGroupClass({ isMultiline: true, size });
+			const row = resolveInputGroupRowClass({ isMultiline: true, size });
 			expect(row).toContain("items-start");
 			expect(row).not.toContain("items-center");
 		}
@@ -265,9 +271,10 @@ describe("the standalone and grouped boxes", () => {
 		}
 	});
 
-	test("keep the text on the field, never on the row", () => {
+	test("keep the text on the field, never on the box or the row", () => {
 		for (const state of everyBoxState()) {
 			expect(resolveInputGroupClass(state)).not.toMatch(/\btext-/);
+			expect(resolveInputGroupRowClass(state)).not.toMatch(/\btext-/);
 			expect(resolveInputFieldClass({ ...state, isGrouped: true })).toMatch(/\btext-/);
 			expect(resolveInputFieldClass({ ...state, isGrouped: false })).toMatch(/\btext-/);
 		}
@@ -275,7 +282,7 @@ describe("the standalone and grouped boxes", () => {
 
 	test("lay the row out as a row, which a lone field has no need to be", () => {
 		const state = { size: "md" as const, variant: "primary" as const };
-		expect(resolveInputGroupClass(state)).toContain("flex-row");
+		expect(resolveInputGroupRowClass(state)).toContain("flex-row");
 		expect(resolveInputFieldClass({ ...state, isGrouped: false })).not.toContain("flex-row");
 	});
 
@@ -397,5 +404,242 @@ describe("the etched input variant", () => {
 
 	test("the flat variants draw no shadow", () => {
 		expect(inputVariants({ isFocused: true, variant: "primary" }).root()).not.toMatch(/shadow/);
+	});
+});
+
+// The group's box and its row used to be one element. The row is now an inner
+// view, so a block can sit above or below it inside the same box — and the box
+// must still be drawn exactly once, on the outer element.
+describe("the group's box and its inner row", () => {
+	test("put every chrome utility on the box and none on the row", () => {
+		for (const state of everyBoxState()) {
+			const box = resolveInputGroupClass(state);
+			const row = resolveInputGroupRowClass(state);
+			for (const utility of inputVariants(state).root().split(" ")) {
+				expect(box.split(" ")).toContain(utility);
+			}
+			expect(row).not.toMatch(/\bborder\b|\bborder-/);
+			expect(row).not.toMatch(/\bbg-/);
+			expect(row).not.toMatch(/\brounded/);
+			expect(row).not.toMatch(/h-input-/);
+			expect(row).not.toMatch(/\bopacity-/);
+		}
+	});
+
+	test("keep the row's layout off the box", () => {
+		for (const state of everyBoxState()) {
+			expect(resolveInputGroupClass(state)).not.toContain("flex-row");
+			expect(resolveInputGroupRowClass(state)).toContain("flex-row");
+		}
+	});
+
+	test("grow the row to the box's height without collapsing an unsized box", () => {
+		const row = resolveInputGroupRowClass({});
+		expect(row).toMatch(/\bgrow\b/);
+		expect(row).not.toMatch(/\bflex-1\b/);
+	});
+
+	test("lets the box grow past one line once it holds a block", () => {
+		for (const size of INPUT_SIZES) {
+			const box = resolveInputGroupClass({ hasBlocks: true, size });
+			expect(box).toMatch(/\bmin-h-input-/);
+			expect(box).not.toMatch(/(?<![\w-])h-input-/);
+		}
+	});
+
+	test("keeps a single-line field centred in its row when a block is present", () => {
+		const row = resolveInputGroupRowClass({ hasBlocks: true, size: "md" });
+		expect(row).toContain("items-center");
+		expect(row).not.toContain("items-start");
+	});
+
+	test("tops a multiline field's row and drops the fixed height with blocks present", () => {
+		for (const size of INPUT_SIZES) {
+			const box = resolveInputGroupClass({ hasBlocks: true, isMultiline: true, size });
+			const row = resolveInputGroupRowClass({ hasBlocks: true, isMultiline: true, size });
+			expect(row).toContain("items-start");
+			expect(box).not.toMatch(/(?<![\w-])h-input-/);
+		}
+	});
+
+	test("keeps invalid above focus with blocks present", () => {
+		const box = resolveInputGroupClass({ hasBlocks: true, isFocused: true, isInvalid: true });
+		expect(box).toContain("border-destructive");
+		expect(box).not.toContain("border-ring");
+	});
+
+	test("merges an incoming className onto the box", () => {
+		expect(resolveInputGroupClass({ className: "w-full" })).toContain("w-full");
+		expect(resolveInputGroupRowClass({ className: "gap-0" })).toContain("gap-0");
+	});
+});
+
+describe("a block", () => {
+	test("steps its vertical padding with the group's size", () => {
+		const paddings = INPUT_SIZES.map(
+			(size) =>
+				inputVariants({ size })
+					.block()
+					.match(/\bpy-[\d.]+\b/)?.[0]
+		);
+		expect(paddings.every(Boolean)).toBe(true);
+		expect(new Set(paddings).size).toBe(INPUT_SIZES.length);
+	});
+
+	test("takes its horizontal inset from the box rather than restating it", () => {
+		for (const size of INPUT_SIZES) {
+			expect(inputVariants({ size }).block()).not.toMatch(/\bpx-/);
+		}
+	});
+
+	test("lays its content out as a row", () => {
+		expect(inputVariants().block()).toContain("flex-row");
+	});
+
+	test("carries no raw palette colour and no chrome", () => {
+		for (const state of everyBoxState()) {
+			const block = inputVariants(state).block();
+			expect(block).not.toMatch(/\b(bg|text|border)-(?:[a-z]+-\d{2,3}|black|white)\b/);
+			expect(block).not.toMatch(/\bborder\b|\bbg-|\brounded/);
+		}
+	});
+});
+
+describe("a separator", () => {
+	test("draws a vertical hairline inside a row", () => {
+		const cls = inputVariants({ placement: "row" }).separator();
+		expect(cls).toContain("w-px");
+		expect(cls).toContain("self-stretch");
+		expect(cls).not.toContain("h-px");
+	});
+
+	test("draws a horizontal hairline between the box's sections", () => {
+		const cls = inputVariants({ placement: "box" }).separator();
+		expect(cls).toContain("h-px");
+		expect(cls).not.toContain("w-px");
+	});
+
+	test("uses the border token at both placements", () => {
+		for (const placement of INPUT_GROUP_PLACEMENTS) {
+			expect(inputVariants({ placement }).separator()).toContain("bg-border");
+		}
+	});
+
+	// The box's own horizontal padding would leave a horizontal hairline short
+	// of both edges. It bleeds out by exactly that padding, so it meets the border.
+	test("bleeds a horizontal hairline out by exactly the box's inset", () => {
+		for (const size of INPUT_SIZES) {
+			const inset = inputVariants({ size })
+				.root()
+				.match(/\bpx-([\d.]+)\b/)?.[1];
+			const bleed = inputVariants({ placement: "box", size })
+				.separator()
+				.match(/(?:^|\s)-mx-([\d.]+)\b/)?.[1];
+			expect(bleed).toBe(inset);
+			expect(inputVariants({ placement: "row", size }).separator()).not.toMatch(/-mx-/);
+		}
+	});
+});
+
+describe("resolveIsDecorative", () => {
+	test("lets an explicit value win", () => {
+		expect(resolveIsDecorative({ explicit: true, kinds: ["other"] })).toBe(true);
+		expect(resolveIsDecorative({ explicit: false, kinds: ["text"] })).toBe(false);
+		expect(resolveIsDecorative({ explicit: false, kinds: ["icon"] })).toBe(false);
+	});
+
+	test("treats bare text as decorative", () => {
+		expect(resolveIsDecorative({ kinds: ["text"] })).toBe(true);
+		expect(resolveIsDecorative({ kinds: ["text", "text"] })).toBe(true);
+	});
+
+	test("treats a lone icon, or an icon beside text, as decorative", () => {
+		expect(resolveIsDecorative({ kinds: ["icon"] })).toBe(true);
+		expect(resolveIsDecorative({ kinds: ["icon", "text"] })).toBe(true);
+	});
+
+	test("keeps anything else interactive", () => {
+		expect(resolveIsDecorative({ kinds: ["other"] })).toBe(false);
+		expect(resolveIsDecorative({ kinds: ["icon", "other"] })).toBe(false);
+	});
+
+	test("keeps an empty decorator interactive", () => {
+		expect(resolveIsDecorative({ kinds: [] })).toBe(false);
+	});
+});
+
+describe("resolveGroupButtonSize", () => {
+	test("steps a labelled button one below the box", () => {
+		expect(resolveGroupButtonSize("sm", false)).toBe("sm");
+		expect(resolveGroupButtonSize("md", false)).toBe("sm");
+		expect(resolveGroupButtonSize("lg", false)).toBe("md");
+	});
+
+	test("squares an icon-only button at the same step", () => {
+		expect(resolveGroupButtonSize("sm", true)).toBe("icon-sm");
+		expect(resolveGroupButtonSize("md", true)).toBe("icon-sm");
+		expect(resolveGroupButtonSize("lg", true)).toBe("icon-md");
+	});
+
+	test("never makes a button taller than the box it sits in", () => {
+		for (const size of INPUT_SIZES) {
+			for (const isIconOnly of [false, true]) {
+				const step = resolveButtonSizeStep(resolveGroupButtonSize(size, isIconOnly));
+				expect(INPUT_SIZES.indexOf(step)).toBeLessThanOrEqual(INPUT_SIZES.indexOf(size));
+			}
+		}
+	});
+});
+
+// The group fades the whole box once. A button inside it that faded itself too
+// would sit at a quarter opacity, darker-than-disabled.
+describe("resolveGroupButtonClass", () => {
+	test("cancels the button's own fade while the group is disabled", () => {
+		const root = buttonVariants({ isDisabled: true }).root({
+			className: resolveGroupButtonClass({ isDisabled: true }),
+		});
+		expect(root).not.toContain("opacity-50");
+		expect(root).toContain("opacity-100");
+	});
+
+	test("adds nothing while the group is enabled", () => {
+		expect(resolveGroupButtonClass({ isDisabled: false })).toBe("");
+	});
+
+	test("keeps a caller's className", () => {
+		expect(resolveGroupButtonClass({ className: "-me-2", isDisabled: true })).toContain("-me-2");
+	});
+});
+
+describe("resolveGroupSegments", () => {
+	test("puts everything in the row when there are no blocks", () => {
+		expect(resolveGroupSegments(["content", "separator", "content"])).toEqual(["row", "row", "row"]);
+	});
+
+	test("sends a block where its position says, whatever its order", () => {
+		expect(resolveGroupSegments(["block-end", "content", "block-start"])).toEqual(["end", "row", "start"]);
+	});
+
+	test("lifts a separator out of the row when it sits outside the content", () => {
+		expect(resolveGroupSegments(["block-start", "separator", "content", "separator", "block-end"])).toEqual([
+			"start",
+			"start",
+			"row",
+			"end",
+			"end",
+		]);
+	});
+
+	test("keeps a separator between content in the row", () => {
+		expect(resolveGroupSegments(["content", "separator", "content", "block-end"])).toEqual([
+			"row",
+			"row",
+			"row",
+			"end",
+		]);
+	});
+
+	test("handles an empty group", () => {
+		expect(resolveGroupSegments([])).toEqual([]);
 	});
 });

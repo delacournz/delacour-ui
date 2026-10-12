@@ -1801,13 +1801,13 @@ export const install = {
 	"input": {
 		name: "input",
 		title: "Input",
-		description: "A text field, with a group that puts a prefix or suffix inside its border.",
+		description: "A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border.",
 		importPath: "@delacour/react-native-ui/input",
 		exportName: "Input",
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 72,
+		fileCount: 75,
 		groups: [
 			{
 				name: "input",
@@ -1816,8 +1816,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
@@ -1997,7 +2000,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 76,
+		fileCount: 79,
 		groups: [
 			{
 				name: "textarea",
@@ -2116,8 +2119,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
@@ -3544,7 +3550,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 133,
+		fileCount: 136,
 		groups: [
 			{
 				name: "color-picker",
@@ -3680,8 +3686,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
@@ -4023,7 +4032,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 148,
+		fileCount: 151,
 		groups: [
 			{
 				name: "planner",
@@ -4159,8 +4168,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
@@ -7384,7 +7396,7 @@ export const install = {
 		expo: ["@legendapp/list", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "@delacour/react-native-bottom-sheet", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 109,
+		fileCount: 112,
 		groups: [
 			{
 				name: "bottom-sheet",
@@ -7521,8 +7533,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },
@@ -8572,7 +8587,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 114,
+		fileCount: 117,
 		groups: [
 			{
 				name: "feedback",
@@ -8740,8 +8755,11 @@ export const install = {
 				files: [
 					{ source: "packages/react-native-ui/src/components/input/AGENTS.md", target: "src/components/ui/input/AGENTS.md" },
 					{ source: "packages/react-native-ui/src/components/input/index.ts", target: "src/components/ui/input/index.ts" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-block.tsx", target: "src/components/ui/input/input-group-block.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-button.tsx", target: "src/components/ui/input/input-group-button.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-decorator.tsx", target: "src/components/ui/input/input-group-decorator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-prefix.tsx", target: "src/components/ui/input/input-group-prefix.tsx" },
+					{ source: "packages/react-native-ui/src/components/input/input-group-separator.tsx", target: "src/components/ui/input/input-group-separator.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group-suffix.tsx", target: "src/components/ui/input/input-group-suffix.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input-group.tsx", target: "src/components/ui/input/input-group.tsx" },
 					{ source: "packages/react-native-ui/src/components/input/input.context.tsx", target: "src/components/ui/input/input.context.tsx" },

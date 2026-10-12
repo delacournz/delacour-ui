@@ -27,6 +27,8 @@ bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
 bun run gen-theme    # regenerate house.css + house-meta.ts from the house preset
 bun run screenshots  # recapture the pull request screenshot set (needs the site running)
+bun run og-assets    # regenerate src/og/heroes.ts and cut src/og/frames/ (needs ffmpeg)
+bun run og-cards     # render every page's social card to node_modules/.temp/og, to look at
 ```
 
 ## Directory structure
@@ -147,17 +149,43 @@ Open Graph / Twitter tags. Two things there are deliberate:
   for `ui`, `charts` and `bottom-sheet` — and `docsHead()` builds each docs page's `<title>`,
   description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the root's
   site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
-  `isDocsProduct()` is the one place a product name is checked — `/og/docs?product=` goes through
-  it — and `MOTIFS` in `src/og/card.ts` is the one place a product's proof is named. The
-  library's is not a drawing: it is the hero's own capture, `public/previews/screen/showcase/dark.png`,
-  in the bezel `DeviceBezel` draws — `routes/og/docs.ts` imports the committed file `?inline` and
-  hands it to the pure card as a data URL, so a recapture reaches the card with the next build. The
-  charts card draws a line chart in the chart blue, and the bottom-sheet card a sheet resting under
-  two snap point lines in the same phone. Title and line are wrapped by character count (the face
+  `isDocsProduct()` is the one place a product name is checked.
+- **A docs page's card is its own.** `docsHead()` points `og:image` at `/og/docs?page=<slugs>` and
+  the route looks the rest up, so a card exists only for a page that does; bare, the route is the
+  library's default. `src/og/page.ts` decides what a page gets, and it is pure, so
+  `scripts/og-cards.ts` renders exactly what the server serves:
+  - **The capture is the page's hero** — the first `<Preview id>` in its MDX. A page with none
+    (the CLI, getting started, `provider`) stands on its product's, `PRODUCT_HERO`.
+  - **The line is the page's description** when it has a hero, and the product's line when it has
+    not. An engine's landing page is the product's card whole.
+  - **A `stage` hero** is its dark poster, set on the phone's glass at its own proportions. **A
+    `device` hero** fills the bezel `DeviceBezel` draws, anchored `top` or `bottom`: a sheet or a
+    toast sits at the foot of the screen, so its phone stands on the card's bottom edge and runs
+    off the top.
+
+  **A device hero's poster is the wrong picture, and it has to stay that way.** Every device clip
+  opens on the closed state — a screen with one "Open" button — and its poster is that first
+  frame on purpose: `extractPoster` in the playground takes it from the clip so the docs page does
+  not flick when playback starts. So `MOMENTS` in `page.ts` names, per clip, how far in the frame
+  worth a card is, and `bun run og-assets` cuts it from the committed dark clip into
+  `src/og/frames/<id>.png`. The frames are committed: Railway has no `ffmpeg`. A new device hero
+  is a new row in `MOMENTS`.
+
+  `og-assets` also writes `src/og/heroes.ts` — the page → hero map, since the server has no
+  `content/` to read, and one lazy `?inline` import per capture, so a card bundles its own image and
+  the route does not carry all seventy. **Run it after `bun run previews` recaptures a device hero,
+  and after a page's first `<Preview>` changes.** `src/og/page.test.ts` fails by name until you do:
+  it re-reads the MDX, and compares each frame's recorded `cut` hash with the manifest's
+  `sourceHash`.
+
+  `?title=` and `?product=` still answer, for links shared before the card was a page's own. With
+  no capture passed, `ogCardSvg` falls back to `MOTIFS` — a drawn line chart, a drawn sheet — which
+  nothing served reaches now.
+  Title and line are wrapped by character count (the face
   is monospaced, so a measure is a count), balanced, and ellipsised past three lines and two. A charts page gets `og:site_name` "Delacour
-  Charts" and `/og/docs?product=charts`; a bottom-sheet page the same with its own name and
+  Charts"; a bottom-sheet page the same with its own name and
   `/docs/bottom-sheet` in the footer. `seo.test.ts` fails if an engine page's tags mention
-  Tailwind, Uniwind or shadcn. A fourth product is an entry in `PRODUCTS`, a motif in `MOTIFS`, a
+  Tailwind, Uniwind or shadcn. A fourth product is an entry in `PRODUCTS`, a capture in `PRODUCT_HERO`, a motif in `MOTIFS`, a
   row in `content.test.ts`'s product table and a folder under `content/docs/`.
 - **The 404 is ours.** `src/components/not-found.tsx` replaces Fumadocs' default: the mark, the
   heading face, and controls to the docs and the component index, under the same frosted header.
@@ -1119,6 +1147,7 @@ the harness rather than the component.
 | `src/components/preview.tsx` | here | hand-written |
 | `src/previews/manifest.ts` | here, **generated** | `bun run previews` |
 | `public/previews/**` | here, **generated** | `bun run previews` |
+| `src/og/heroes.ts`, `src/og/frames/**` | here, **generated** | `bun run og-assets` |
 | The demos | `apps/playground/src/demos/` | hand-written |
 | The interactions | `.argent/flows/previews/` | recorded with argent |
 

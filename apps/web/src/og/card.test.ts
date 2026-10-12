@@ -66,12 +66,44 @@ describe("ogCardSvg", () => {
 	});
 
 	test("stands the library's real capture in the phone, and fakes nothing without one", () => {
-		const svg = ogCardSvg({ capture: "data:image/png;base64,AAAA" });
+		const svg = ogCardSvg({ proof: { kind: "device", href: "data:image/png;base64,AAAA" } });
 
 		expect(svg).toContain('id="device"');
 		expect(svg).toContain('href="data:image/png;base64,AAAA"');
 		expect(svg).toContain('clip-path="url(#glass)"');
 		expect(ogCardSvg()).not.toContain('id="device"');
+	});
+
+	test("stands a phone on the card's bottom edge when the capture's subject is at the foot of the screen", () => {
+		const top = ogCardSvg({ proof: { kind: "device", href: "data:image/png;base64,AAAA" } });
+		const bottom = ogCardSvg({ proof: { kind: "device", href: "data:image/png;base64,AAAA", anchor: "bottom" } });
+		const imageY = (svg: string): number => Number(svg.match(/<image[^>]* y="(-?\d+)"/)?.[1]);
+		const imageHeight = (svg: string): number => Number(svg.match(/<image[^>]* height="(\d+)"/)?.[1]);
+
+		expect(imageY(top)).toBeGreaterThan(0);
+		expect(imageY(top) + imageHeight(top)).toBeGreaterThan(OG_HEIGHT);
+		expect(imageY(bottom)).toBeLessThan(0);
+		expect(imageY(bottom) + imageHeight(bottom)).toBeLessThan(OG_HEIGHT);
+	});
+
+	test("sets a stage capture on the glass at its own proportions, inside what the card shows of the phone", () => {
+		for (const [width, height] of [
+			[720, 158],
+			[720, 666],
+			[512, 720],
+		] as const) {
+			const svg = ogCardSvg({ proof: { kind: "stage", href: "data:image/png;base64,AAAA", width, height } });
+			const image = svg.match(/<image[^>]*>/)?.[0] ?? "";
+			const read = (name: string): number => Number(image.match(new RegExp(` ${name}="(-?[\\d.]+)"`))?.[1]);
+
+			expect(svg).toContain('id="stage"');
+			expect(image).toContain('clip-path="url(#glass)"');
+			expect(read("width") / read("height")).toBeCloseTo(width / height, 1);
+			expect(read("x")).toBeGreaterThanOrEqual(780);
+			expect(read("x") + read("width")).toBeLessThanOrEqual(1128);
+			expect(read("y")).toBeGreaterThan(60);
+			expect(read("y") + read("height")).toBeLessThan(OG_HEIGHT);
+		}
 	});
 
 	test("keeps a three-line title and a two-line subtitle above the URL", () => {
@@ -133,7 +165,14 @@ describe.each(PACKAGE_CARDS)("ogCardSvg for $product", ({ product, name, path, m
 	test("draws its motif, which the library's card does not", () => {
 		expect(ogCardSvg({ product })).toContain(`id="${motif}"`);
 		expect(ogCardSvg()).not.toContain(`id="${motif}"`);
-		expect(ogCardSvg({ product, capture: "data:image/png;base64,AAAA" })).not.toContain('id="device"');
+	});
+
+	test("stands a capture in place of the motif when a page has one", () => {
+		const svg = ogCardSvg({ product, proof: { kind: "device", href: "data:image/png;base64,AAAA" } });
+
+		expect(svg).toContain('id="device"');
+		expect(svg).not.toContain(`id="${motif}"`);
+		expect(svg).toContain(`>${name}</text>`);
 	});
 
 	test("draws no other package's motif", () => {

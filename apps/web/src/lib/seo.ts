@@ -76,13 +76,17 @@ export function docsProduct(slugs: readonly string[]): DocsProduct {
 	return isDocsProduct(first) && NAMESPACED_PRODUCTS.includes(first) ? first : "ui";
 }
 
-/** The social card for a docs page, absolute. `ui` and a missing title are the route's defaults, so they stay out of the query. */
-export function docsImageUrl({ product, title }: { product: DocsProduct; title?: string }): string {
-	const query = new URLSearchParams();
-	if (product !== "ui") query.set("product", product);
-	if (title) query.set("title", title);
-	const search = query.toString();
-	return `${siteUrl}${docsImageRoute}${search ? `?${search}` : ""}`;
+/**
+ * The social card for a docs page, absolute. The page is named by its slugs and
+ * the route works out the rest — title, line and capture — so the URL cannot
+ * ask for a card no page has. The docs root is the bare route, the library's
+ * default card.
+ */
+export function docsImageUrl(slugs: readonly string[]): string {
+	if (!slugs.length) return `${siteUrl}${docsImageRoute}`;
+
+	const query = new URLSearchParams({ page: slugs.join("/") });
+	return `${siteUrl}${docsImageRoute}?${query.toString()}`;
 }
 
 export type DocsPageSeo = { slugs: readonly string[]; title: string; description?: string };
@@ -96,8 +100,8 @@ export type HeadLink = { rel: string; href: string };
  * deepest route's.
  *
  * A product's landing page (`/docs/charts`, whose MDX title is "Overview") is
- * titled with the product's headline and gets the product's default card; an
- * inner page is "Line — Delacour Charts" and carries its own title on the card.
+ * titled with the product's headline; an inner page is "Line — Delacour
+ * Charts". The card is the page's own — see `og/page.ts`.
  */
 export function docsHead({ slugs, title, description }: DocsPageSeo): { meta: HeadMeta[]; links: HeadLink[] } {
 	const product = docsProduct(slugs);
@@ -106,7 +110,7 @@ export function docsHead({ slugs, title, description }: DocsPageSeo): { meta: He
 	const isLanding = product !== "ui" && url === `${siteUrl}${seo.path}`;
 	const pageTitle = isLanding ? seo.headline : `${title} — ${seo.name}`;
 	const body = description || seo.description;
-	const image = docsImageUrl({ product, title: isLanding ? undefined : title });
+	const image = docsImageUrl(slugs);
 
 	return {
 		meta: [

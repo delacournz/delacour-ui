@@ -211,6 +211,12 @@ const SHOTS: Shot[] = [
 		theme: "dark",
 	},
 	{ id: "63-sheet-footer-mobile-dark", path: "/docs/bottom-sheet/footer#the-band", frame: "phone", theme: "dark" },
+	{
+		id: "64-sheet-core-vocabulary-desktop-dark",
+		path: "/docs/bottom-sheet/core#vocabulary",
+		frame: "desktop",
+		theme: "dark",
+	},
 ];
 
 const OUT_DIR = join(import.meta.dir, "..", "screenshots");

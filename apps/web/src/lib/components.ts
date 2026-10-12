@@ -253,6 +253,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A status message with a glyph picked from its status, a title, a description and an optional action.",
 	},
 	{
+		slug: "animated-badge",
+		name: "AnimatedBadge",
+		group: "Feedback",
+		blurb: "A status pill that rolls its content and springs its width when the status changes.",
+	},
+	{
 		slug: "collapsible",
 		name: "Collapsible",
 		group: "Data display",

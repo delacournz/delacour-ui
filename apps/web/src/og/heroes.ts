@@ -28,6 +28,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"charts/scatter": "charts/scatter/scatter",
 	"native/components/accordion": "accordion/one-at-a-time",
 	"native/components/alert": "alert/statuses",
+	"native/components/animated-badge": "animated-badge/status-flow",
 	"native/components/avatar": "avatar/group",
 	"native/components/badge": "badge/variants-and-colours",
 	"native/components/bottom-sheet": "bottom-sheet/anatomy/the-whole-composition",
@@ -91,6 +92,9 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"accordion/one-at-a-time": { load: () => import("../../public/previews/accordion/one-at-a-time/dark.png?inline") },
 	"alert/statuses": { load: () => import("../../public/previews/alert/statuses/dark.png?inline") },
+	"animated-badge/status-flow": {
+		load: () => import("../../public/previews/animated-badge/status-flow/dark.png?inline"),
+	},
 	"avatar/group": { load: () => import("../../public/previews/avatar/group/dark.png?inline") },
 	"badge/variants-and-colours": {
 		load: () => import("../../public/previews/badge/variants-and-colours/dark.png?inline"),

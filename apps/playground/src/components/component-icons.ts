@@ -45,6 +45,7 @@ import {
 	IconSettingsSliderHor,
 	IconSidebar,
 	IconSlidesWide,
+	IconSparkle,
 	IconSquareBehindSquare1,
 	IconSquareCheck,
 	IconSquareCursor,
@@ -124,6 +125,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	planner: IconCalendar1,
 	table: IconTable,
 	timeline: IconClock,
+	"animated-badge": IconSparkle,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

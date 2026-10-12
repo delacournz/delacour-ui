@@ -1,0 +1,199 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "table",
+	"type": "registry:ui",
+	"title": "Table",
+	"description": "Rows and columns of short values lined up by one set of column rules, with sortable heads, selectable rows, a horizontal scroll for wide tables and a card frame.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"card",
+		"cn",
+		"color",
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"text",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"expo-linear-gradient",
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/table/AGENTS.md",
+			"target": "table/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/table",
+					"to": "@registry/ui/table"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/index.ts",
+			"target": "table/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-body.tsx",
+			"target": "table/table-body.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-caption.tsx",
+			"target": "table/table-caption.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-cell.tsx",
+			"target": "table/table-cell.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-empty.tsx",
+			"target": "table/table-empty.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-footer.tsx",
+			"target": "table/table-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-frame.tsx",
+			"target": "table/table-frame.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../card",
+					"to": "@registry/ui/card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-head.tsx",
+			"target": "table/table-head.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-header.tsx",
+			"target": "table/table-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-row.tsx",
+			"target": "table/table-row.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-scroll.tsx",
+			"target": "table/table-scroll.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../surface/surface.context",
+					"to": "@registry/ui/surface/surface.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table-section.tsx",
+			"target": "table/table-section.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table.context.tsx",
+			"target": "table/table.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table.tsx",
+			"target": "table/table.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table.types.ts",
+			"target": "table/table.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/table/table.variants.ts",
+			"target": "table/table.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		}
+	]
+}

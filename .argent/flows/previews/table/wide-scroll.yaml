@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on table/wide-scroll and has settled — the table scrolled
+  to its start, with a fade on the trailing edge. The capture script navigates there before
+  running this.
+steps:
+  - echo: Scrolling to the last month
+  - swipe: { from: { id: table-wide }, by: { x: -0.45 }, momentum: false, duration: 800 }
+  - wait: 700
+  - echo: And flicked back to the start, so the clip loops without a jump cut
+  # With momentum, so the scroll view lands on its leading edge rather than a few points short.
+  - swipe: { from: { id: table-wide }, by: { x: 0.45 }, duration: 500 }
+  - wait: 600

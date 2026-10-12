@@ -49,6 +49,7 @@ import {
 	IconSquareCursor,
 	IconStar,
 	IconStarLines,
+	IconTable,
 	IconTag,
 	IconToggle,
 	IconTrending4,
@@ -120,6 +121,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	flow: IconConnectors1,
 	leaderboard: IconTrophy,
 	planner: IconCalendar1,
+	table: IconTable,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

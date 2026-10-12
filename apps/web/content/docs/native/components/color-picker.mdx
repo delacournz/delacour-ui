@@ -1,0 +1,227 @@
+---
+title: ColorPicker
+description: Pick a colour by dragging — an area, a hue track, an optional opacity track, a hex field and swatches.
+icon: Palette
+---
+
+<Preview id="color-picker/basic" title={null} />
+
+## Installation
+
+<ComponentInstall name="color-picker" />
+
+<Callout type="warn" title="It needs the sheet engine, even inline">
+The `color-picker` subpath imports `BottomSheet` for its sheet presentation, and Metro resolves
+static imports whichever branch renders — so install `@delacour/react-native-bottom-sheet` even
+for an inline picker, the way `chart` needs its engine. For `presentation="sheet"`, mount
+[`BottomSheetProvider`](/docs/native/components/bottom-sheet#provider) once in the app.
+</Callout>
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { ColorPicker } from "@/components/ui/color-picker";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [accent, setAccent] = useState("#f59e0b");
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <ColorPicker defaultValue={accent} onValueCommit={setAccent} />
+    </View>
+  );
+}
+```
+
+A bare `<ColorPicker />` draws its default anatomy: the saturation and brightness area, the hue
+track, the opacity track when `hasAlpha`, and the hex field.
+
+## In a sheet
+
+`presentation="sheet"` puts the surface in a `BottomSheet` behind a trigger row — a preview, the
+hex and a chevron, drawn on `Input`'s own box so it sits level with every field beside it.
+
+<Preview id="color-picker/sheet-trigger" />
+
+```tsx
+<Field>
+  <Field.Label>Accent</Field.Label>
+  <ColorPicker defaultValue="#f59e0b" hasAlpha presentation="sheet" onValueCommit={save}>
+    <ColorPicker.Trigger />
+    <ColorPicker.Content>
+      <ColorPicker.Area />
+      <ColorPicker.Hue />
+      <ColorPicker.Alpha />
+      <ColorPicker.Input />
+      <ColorPicker.Swatches colors={PRESETS} />
+    </ColorPicker.Content>
+  </ColorPicker>
+</Field>
+```
+
+Inside a `Field` the picker takes its disabled and invalid states, prefixes each part's accessible
+name with the label, and opens when the label is tapped — or, inline, focuses the hex field.
+
+## Value and formats
+
+`value` and `defaultValue` accept `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa`, `rgb()`, `rgba()`,
+`hsl()` and `hsla()`. `format` picks what the callbacks report:
+
+| `format` | Reported |
+| --- | --- |
+| `"hex"` (default) | `#rrggbb`, or `#rrggbbaa` below full opacity |
+| `"rgb"` | `rgb(r, g, b)`, or `rgba(r, g, b, a)` |
+| `"hsl"` | `hsl(h, s%, l%)`, or `hsla(h, s%, l%, a)` |
+
+`onValueChange` fires on every frame of a drag; `onValueCommit` fires once the change is settled —
+a drag released, the field submitted, a swatch tapped. A network write belongs in the second.
+
+```tsx
+<ColorPicker format="hsl" value={value} onValueChange={setValue} onValueCommit={save} />
+```
+
+A controlled parent can store whatever `onValueChange` hands it: the picker recognises its own echo
+and keeps the hue of a grey or black rather than snapping it to red.
+
+## Alpha
+
+`hasAlpha` adds the opacity track — the colour fading to a checkerboard, with the same RGB the whole
+way. Without it the alpha is pinned at one on every path, and `ColorPicker.Alpha` renders nothing.
+
+<Preview id="color-picker/with-alpha" />
+
+```tsx
+<ColorPicker defaultValue="#3b82f6b3" hasAlpha>
+  <ColorPicker.Content>
+    <ColorPicker.Area />
+    <ColorPicker.Hue />
+    <ColorPicker.Alpha />
+    <View className="flex-row items-center gap-3">
+      <ColorPicker.Preview />
+      <ColorPicker.Input className="flex-1" />
+    </View>
+  </ColorPicker.Content>
+</ColorPicker>
+```
+
+## Swatches
+
+Presets in any notation. Tapping one sets the colour and commits; the current colour's swatch is
+ringed, compared as hex.
+
+<Preview id="color-picker/swatches" />
+
+```tsx
+<ColorPicker.Swatches colors={["#ef4444", "#f59e0b", "#22c55e", "#3b82f6"]} />
+```
+
+## Sizes and variants
+
+`size` is `Input`'s `sm`, `md` or `lg`: the area is 160, 200 or 240 points tall, and the tracks,
+thumbs, swatches and field step with it. `variant` (`primary`, `secondary` or `etched`) reaches the trigger
+row and the hex field — never the gradients.
+
+<Preview id="color-picker/sizes" />
+
+## States
+
+`isDisabled` fades the picker and blocks every input path. `isReadOnly` draws the colour normally
+and ignores every drag, tap and keystroke. `isInvalid` turns the trigger and the field destructive.
+Text in the hex field that is not a colour leaves the value alone and marks the field invalid until
+it parses.
+
+## Accessibility
+
+- The area is adjustable: swipe up and down to step saturation, and use the **Brighter** and
+  **Darker** actions for brightness. It reads "Saturation 60 percent, brightness 80 percent".
+- The hue track reads "Hue 210 degrees, blue" and steps ten degrees, wrapping; the opacity track
+  steps five percent.
+- Swatches are a radio group, labelled by hex.
+- The value is announced when a change is committed, never per frame.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `ColorPicker` | Owns the colour, the format and the axes |
+| `ColorPicker.Trigger` | The row that opens the sheet. Sheet presentation only |
+| `ColorPicker.Content` | The surface — a column inline, the sheet's panel otherwise |
+| `ColorPicker.Area` | Saturation across, brightness down |
+| `ColorPicker.Hue` | The hue track |
+| `ColorPicker.Alpha` | The opacity track. Nothing without `hasAlpha` |
+| `ColorPicker.Preview` | The current colour over a checkerboard |
+| `ColorPicker.Input` | The hex field |
+| `ColorPicker.Swatches` | A row of presets |
+| `ColorPicker.Swatch` | One preset |
+
+### ColorPicker
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Controlled colour, in any accepted notation." },
+    defaultValue: { type: "string", default: '"#000000"', description: "Starting colour while uncontrolled." },
+    onValueChange: { type: "(value: string) => void", description: "Every frame of a drag, and every other change." },
+    onValueCommit: { type: "(value: string) => void", description: "Once a change is settled." },
+    format: { type: '"hex" | "rgb" | "hsl"', default: '"hex"', description: "The notation reported." },
+    hasAlpha: { type: "boolean", default: "false", description: "Shows the opacity track and lets the alpha move." },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    variant: { type: '"primary" | "secondary" | "etched"', default: '"primary"', description: "The trigger row's and the hex field's box." },
+    isDisabled: { type: "boolean", description: "Blocks every input path. Inherited from an enclosing Field." },
+    isInvalid: { type: "boolean", description: "Destructive trigger and field. Inherited from an enclosing Field." },
+    isReadOnly: { type: "boolean", description: "Draws the colour, ignores every input." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"selection"',
+      description: "Played as a drag begins; a light tick follows on release.",
+    },
+    presentation: { type: '"inline" | "sheet"', default: '"inline"' },
+    isOpen: { type: "boolean", description: "Controlled sheet state." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    children: { type: "ReactNode", description: "The parts. Omitted, the default anatomy." },
+  }}
+/>
+
+### ColorPicker.Area, .Hue, .Alpha
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", description: "Defaults to the part's name, prefixed by the Field label." },
+    className: { type: "string" },
+  }}
+/>
+
+### ColorPicker.Input
+
+Every `Input` prop except `value`, `onChangeText`, `size`, `variant` and `isDisabled`, which are the
+picker's. `isInvalid` overrides the picker's own state.
+
+### ColorPicker.Swatches
+
+<TypeTable
+  type={{
+    colors: { type: "readonly string[]", description: "One swatch per colour." },
+    children: { type: "ReactNode", description: "Swatches of your own. Replaces colors." },
+    className: { type: "string" },
+  }}
+/>
+
+### ColorPicker.Swatch
+
+<TypeTable
+  type={{
+    color: { type: "string", description: "The preset, in any accepted notation." },
+    accessibilityLabel: { type: "string", description: "Defaults to the colour's hex." },
+    className: { type: "string" },
+  }}
+/>
+
+### useColorPicker
+
+Returns the settled state — `hsva`, `rgba`, `value`, `hex`, the axes, and `setHsva(next, { commit })`
+— for a custom part that has to match the picker it sits in. Throws outside a `ColorPicker`. The
+settled state catches up when a drag ends; it does not follow the finger frame by frame.

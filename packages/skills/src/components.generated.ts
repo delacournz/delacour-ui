@@ -23,6 +23,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
+	{ name: "color-picker", title: "Color Picker", description: "A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet." },
 	{ name: "context-menu", title: "Context Menu", description: "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview." },
 	{ name: "countdown", title: "Countdown", description: "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run." },
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },

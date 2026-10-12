@@ -179,6 +179,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"react-native-worklets",
 		],
 	},
+	"color-picker": {
+		title: "Color Picker",
+		description:
+			"A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet.",
+		categories: ["forms"],
+	},
 	collapsible: {
 		title: "Collapsible",
 		description: "One section shown and hidden by its own trigger, animated to its measured height.",

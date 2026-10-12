@@ -1,4 +1,4 @@
-import { type ReactElement, type Ref, useCallback, useState } from "react";
+import { type ReactElement, type Ref, useCallback, useLayoutEffect, useState } from "react";
 import { TextInput, type TextInputInstance, type TextInputProps } from "react-native";
 import { composeRefs } from "../../lib/compose-refs";
 import { useButtonGroupItemContext } from "../button/button.context";
@@ -95,6 +95,17 @@ function InputRoot({
 	// focus of, so focus is reported upward when there is a group and held here
 	// when there is not. Picking the setter is a plain branch, not a hook, so
 	// hook order is the same either way.
+	// A multiline field in a group tells the box, which trades its fixed height
+	// for a floor and tops the row. A layout effect, so the box is right before
+	// the first frame is drawn rather than one frame after it.
+	const setGroupMultiline = group?.setMultiline;
+	const isMultiline = multiline === true;
+	useLayoutEffect(() => {
+		if (!setGroupMultiline) return;
+		setGroupMultiline(isMultiline);
+		return () => setGroupMultiline(false);
+	}, [setGroupMultiline, isMultiline]);
+
 	const isFocused = group ? group.isFocused : ownFocused;
 	const setFocused = group ? group.setFocused : setOwnFocused;
 

@@ -56,9 +56,13 @@ export const textareaVariants = tv({
 			md: { field: "leading-6" },
 			lg: { field: "leading-7" },
 		},
+		// Inside an `Input.Group` the wrapper shares the group's row with the
+		// decorators, so it takes the width they leave, as a grouped `Input` does.
+		isGrouped: { true: { root: "flex-1" }, false: {} },
 	},
 	defaultVariants: {
 		size: "md",
+		isGrouped: false,
 	},
 });
 
@@ -103,10 +107,23 @@ export function resolveTextareaRows({ rows, maxRows }: { rows?: number; maxRows?
  * Points tall a box of `rows` lines is: the lines, plus the padding and the
  * border either side.
  *
+ * Inside an `Input.Group` the group draws the box — border and vertical
+ * padding — around every section at once, so a grouped field is its lines and
+ * nothing else. Adding the box back gives exactly the lone height.
+ *
  * Pure, so it is reachable from `bun test`. See AGENTS.md.
  */
-export function resolveTextareaRowsHeight({ rows, size }: { rows: number; size: InputSize }): number {
-	return rows * TEXTAREA_LINE_HEIGHTS[size] + 2 * TEXTAREA_PADDING_Y[size] + 2 * TEXTAREA_BORDER_WIDTH;
+export function resolveTextareaRowsHeight({
+	rows,
+	size,
+	isGrouped = false,
+}: {
+	rows: number;
+	size: InputSize;
+	isGrouped?: boolean;
+}): number {
+	const lines = rows * TEXTAREA_LINE_HEIGHTS[size];
+	return isGrouped ? lines : lines + 2 * TEXTAREA_PADDING_Y[size] + 2 * TEXTAREA_BORDER_WIDTH;
 }
 
 /**
@@ -128,17 +145,20 @@ export function resolveTextareaHeightStyle({
 	rows,
 	maxRows,
 	autoGrow = false,
+	isGrouped = false,
 }: {
 	size: InputSize;
 	rows?: number;
 	maxRows?: number;
 	autoGrow?: boolean;
+	/** Inside an `Input.Group`, which draws the box. */
+	isGrouped?: boolean;
 }): { height: number } | { minHeight: number; maxHeight: number } {
 	const lines = resolveTextareaRows({ maxRows, rows });
-	if (!autoGrow) return { height: resolveTextareaRowsHeight({ rows: lines.rows, size }) };
+	if (!autoGrow) return { height: resolveTextareaRowsHeight({ isGrouped, rows: lines.rows, size }) };
 	return {
-		maxHeight: resolveTextareaRowsHeight({ rows: lines.maxRows, size }),
-		minHeight: resolveTextareaRowsHeight({ rows: lines.rows, size }),
+		maxHeight: resolveTextareaRowsHeight({ isGrouped, rows: lines.maxRows, size }),
+		minHeight: resolveTextareaRowsHeight({ isGrouped, rows: lines.rows, size }),
 	};
 }
 

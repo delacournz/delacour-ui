@@ -1,0 +1,142 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "animated-badge",
+	"type": "registry:ui",
+	"title": "AnimatedBadge",
+	"description": "A status pill that rolls its content and springs its width when the status changes.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"badge",
+		"calm-motion",
+		"icon",
+		"icons",
+		"spinner",
+		"text",
+		"use-calm-motion"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/AGENTS.md",
+			"target": "animated-badge/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/animated-badge",
+					"to": "@registry/ui/animated-badge"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge-content.tsx",
+			"target": "animated-badge/animated-badge-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge-glyph.tsx",
+			"target": "animated-badge/animated-badge-glyph.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../spinner",
+					"to": "@registry/ui/spinner"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge-measure.tsx",
+			"target": "animated-badge/animated-badge-measure.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.context",
+					"to": "@registry/ui/text/text.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge.tsx",
+			"target": "animated-badge/animated-badge.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge.types.ts",
+			"target": "animated-badge/animated-badge.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/animated-badge.variants.ts",
+			"target": "animated-badge/animated-badge.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/calm-motion",
+					"to": "@registry/lib/calm-motion"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/index.ts",
+			"target": "animated-badge/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/animated-badge/use-animated-badge-roll.ts",
+			"target": "animated-badge/use-animated-badge-roll.ts",
+			"namespace": "ui"
+		}
+	]
+}

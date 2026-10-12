@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on animated-badge/status-flow and has settled — a neutral "Queued" badge
+  above a "Next step" button. The capture script navigates there before running this.
+steps:
+  - echo: Stepping Queued → Building → Deploying → Live
+  - tap: { id: next-step }
+  - wait: 900
+  - tap: { id: next-step }
+  - wait: 900
+  - tap: { id: next-step }
+  - wait: 1100
+  - echo: A fourth step wraps back to Queued, so the clip loops without a jump cut
+  - tap: { id: next-step }
+  - wait: 900

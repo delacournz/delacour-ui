@@ -3,17 +3,24 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import { createFileRoute } from "@tanstack/react-router";
-import { type DocsProduct, isDocsProduct } from "@/lib/seo";
-import { type OgProof, ogCardSvg } from "@/og/card";
+import { type DocsProduct, docsProduct, isDocsProduct } from "@/lib/seo";
+import { source } from "@/lib/source";
+import { type OgCard, ogCardSvg } from "@/og/card";
+import { captures, pageHeroes } from "@/og/heroes";
 import regularUrl from "@/og/jetbrains-mono-400.ttf?inline";
 import semiBoldUrl from "@/og/jetbrains-mono-600.ttf?inline";
-import captureUrl from "../../../public/previews/screen/showcase/dark.png?inline";
+import { cardCopy, PRODUCT_HERO, pageKey, proofOf } from "@/og/page";
+import type { PreviewId } from "@/previews/manifest";
 
 /**
- * `/og/docs?title=Button` — a 1200×630 PNG for the social card.
- * `&product=charts` or `&product=bottom-sheet` draws that package's card instead of the
- * library's; `isDocsProduct` is the one place a product name is checked, so a fourth product
- * needs an entry in `PRODUCTS` and nothing here.
+ * `/og/docs?page=native/components/button` — a 1200×630 PNG for the social card
+ * of one docs page. The page is all the URL names: its title, its line and the
+ * capture in its phone are looked up here, so a card exists only for a page
+ * that does. Bare, the route is the library's default card.
+ *
+ * `?title=` and `?product=` are the query this route took before a card was a
+ * page's own. Links shared then still carry it, so it still answers: that
+ * product's default capture under the title asked for.
  *
  * The SVG comes from `og/card.ts` and resvg rasterises it here, on the server,
  * with the two weights of the one face the card sets. resvg reads fonts from
@@ -22,14 +29,14 @@ import captureUrl from "../../../public/previews/screen/showcase/dark.png?inline
  * temp directory once per process — the same bytes the site loads from Google Fonts, committed
  * under `src/og/` so the card cannot depend on a network fetch at render time.
  *
- * The library's card stands a real capture in its phone — `screen/showcase`,
- * the hero's device, dark — bundled the same way, as an inline data URL, read
- * from the committed file `bun run previews` writes, so a recapture reaches
- * the card with the next build and the server needs no `public/` beside it.
+ * The capture is bundled the same way and for the same reason — the server
+ * needs no `public/` beside it — but on demand: `og/heroes.ts` holds one lazy
+ * import per capture, so a card loads its own image and not the other sixty-nine.
+ * `og/page.ts` says which capture a page gets.
  *
- * Rendered cards are memoised by title; a scraper fetches each once and the
- * set of titles is the set of docs pages. The cap is a guard against a URL
- * fuzzer, not a working limit.
+ * Rendered cards are memoised by query; a scraper fetches each once and the
+ * set of pages is finite. The cap is a guard against a URL fuzzer, not a
+ * working limit.
  */
 
 const CACHE_LIMIT = 256;
@@ -57,13 +64,17 @@ function fonts(): string[] {
 	return fontFiles;
 }
 
-function render(product: DocsProduct, title: string | undefined): Uint8Array {
-	const key = `${product}:${title ?? ""}`;
+async function render(
+	key: string,
+	copy: Pick<OgCard, "product" | "title" | "subtitle">,
+	hero: PreviewId
+): Promise<Uint8Array> {
 	const cached = cache.get(key);
 	if (cached) return cached;
 
-	const proof: OgProof | undefined = product === "ui" ? { kind: "device", href: captureUrl } : undefined;
-	const png = new Resvg(ogCardSvg({ product, title, proof }), {
+	const capture = await captures[hero]?.load();
+	const proof = capture ? proofOf(hero, capture.default) : undefined;
+	const png = new Resvg(ogCardSvg({ ...copy, proof }), {
 		font: { fontFiles: fonts(), loadSystemFonts: false, defaultFontFamily: "JetBrains Mono" },
 	})
 		.render()
@@ -74,15 +85,32 @@ function render(product: DocsProduct, title: string | undefined): Uint8Array {
 	return png;
 }
 
+/** The card of the page `?page=` names, or nothing when no such page exists. */
+function pageCard(key: string | null): Promise<Uint8Array> | undefined {
+	const page = key ? source.getPage(key.split("/")) : undefined;
+	if (!page) return undefined;
+
+	const slugs = page.slugs;
+	const hero = pageHeroes[pageKey(slugs)];
+	const copy = cardCopy({ slugs, title: page.data.title, description: page.data.description }, hero !== undefined);
+
+	return render(`page:${pageKey(slugs)}`, copy, hero ?? PRODUCT_HERO[docsProduct(slugs)]);
+}
+
+function legacyCard(params: URLSearchParams): Promise<Uint8Array> {
+	const title = params.get("title")?.slice(0, 200) || undefined;
+	const requested = params.get("product");
+	const product: DocsProduct = isDocsProduct(requested) ? requested : "ui";
+
+	return render(`${product}:${title ?? ""}`, { product, title }, PRODUCT_HERO[product]);
+}
+
 export const Route = createFileRoute("/og/docs")({
 	server: {
 		handlers: {
-			GET({ request }) {
+			async GET({ request }) {
 				const params = new URL(request.url).searchParams;
-				const title = params.get("title")?.slice(0, 200) ?? undefined;
-				const requested = params.get("product");
-				const product: DocsProduct = isDocsProduct(requested) ? requested : "ui";
-				const png = render(product, title || undefined);
+				const png = await (pageCard(params.get("page")) ?? legacyCard(params));
 
 				return new Response(Buffer.from(png), {
 					headers: {

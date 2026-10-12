@@ -16,6 +16,7 @@
 		"test": "bun test",
 		"icons": "bun scripts/generate-icons.ts",
 		"screenshots": "bun scripts/screenshots.ts",
+		"og-assets": "bun scripts/og-assets.ts",
 		"og-cards": "bun scripts/og-cards.ts"
 	},
 	"dependencies": {

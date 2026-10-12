@@ -631,5 +631,6 @@ they are keyed to a commit rather than overwritten, is in
 `apps/playground/src/uniwind-types.d.ts` (Uniwind's Metro plugin),
 `apps/playground/assets/{icon*,splash-icon*}.png` and `apps/web/public/{favicon*,icon-*,apple-touch-icon}.*`
 (`bun run icons`, in each app — the source is `packages/brand`),
+`apps/web/src/og/heroes.ts` and `apps/web/src/og/frames/**` (`bun run og-assets`, in `apps/web`),
 `apps/playground/src/demos/registry.ts` (`bun run gen-demos`), and `react-native-ui`'s
 `package.json` `exports` map (`bun run gen-exports`).

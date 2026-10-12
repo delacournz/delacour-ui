@@ -48,17 +48,16 @@ describe("isDocsProduct", () => {
 });
 
 describe("docsImageUrl", () => {
-	test("is absolute and names the product", () => {
-		const url = new URL(docsImageUrl({ product: "charts", title: "Line" }));
+	test("is absolute and names the page", () => {
+		const url = new URL(docsImageUrl(["charts", "line"]));
 
 		expect(url.origin).toBe("https://ui.delacour.co.nz");
 		expect(url.pathname).toBe("/og/docs");
-		expect(url.searchParams.get("product")).toBe("charts");
-		expect(url.searchParams.get("title")).toBe("Line");
+		expect(url.searchParams.get("page")).toBe("charts/line");
 	});
 
-	test("leaves the default product and an absent title out of the query", () => {
-		expect(docsImageUrl({ product: "ui" })).toBe("https://ui.delacour.co.nz/og/docs");
+	test("is the bare route for the docs root, which is the library's default card", () => {
+		expect(docsImageUrl([])).toBe("https://ui.delacour.co.nz/og/docs");
 	});
 });
 
@@ -75,7 +74,7 @@ describe("docsHead", () => {
 		expect(content(meta, "og:title")).toBe(PRODUCTS.charts.headline);
 		expect(content(meta, "description")).toBe("A headless charting engine for React Native.");
 		expect(content(meta, "og:url")).toBe("https://ui.delacour.co.nz/docs/charts");
-		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=charts");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=charts");
 		expect(content(meta, "twitter:image")).toBe(content(meta, "og:image"));
 		expect(links).toContainEqual({ rel: "canonical", href: "https://ui.delacour.co.nz/docs/charts" });
 	});
@@ -94,7 +93,7 @@ describe("docsHead", () => {
 		expect(meta.find((tag) => tag.title)?.title).toBe("Line — Delacour Charts");
 		expect(content(meta, "og:title")).toBe("Line — Delacour Charts");
 		expect(content(meta, "og:description")).toBe("A stroked line.");
-		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=charts&title=Line");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=charts%2Fline");
 	});
 
 	test("a page with no description falls back to its product's", () => {
@@ -108,7 +107,7 @@ describe("docsHead", () => {
 
 		expect(meta.find((tag) => tag.title)?.title).toBe(PRODUCTS["bottom-sheet"].headline);
 		expect(content(meta, "og:site_name")).toBe("Delacour Bottom Sheet");
-		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=bottom-sheet");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=bottom-sheet");
 		expect(links).toContainEqual({ rel: "canonical", href: "https://ui.delacour.co.nz/docs/bottom-sheet" });
 	});
 
@@ -117,7 +116,7 @@ describe("docsHead", () => {
 		const text = meta.map((tag) => `${tag.title ?? ""} ${tag.content ?? ""}`).join(" ");
 
 		expect(meta.find((tag) => tag.title)?.title).toBe("Steps — Delacour Bottom Sheet");
-		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?product=bottom-sheet&title=Steps");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=bottom-sheet%2Fsteps");
 		expect(text).not.toMatch(/tailwind|uniwind|shadcn|design tokens/i);
 		expect(text).toMatch(/keyboard/i);
 	});
@@ -127,6 +126,6 @@ describe("docsHead", () => {
 
 		expect(meta.find((tag) => tag.title)?.title).toBe("Button — Delacour UI");
 		expect(content(meta, "og:site_name")).toBe("Delacour UI");
-		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?title=Button");
+		expect(content(meta, "og:image")).toBe("https://ui.delacour.co.nz/og/docs?page=native%2Fcomponents%2Fbutton");
 	});
 });

@@ -124,6 +124,7 @@ shares.
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
 | [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on MapLibre with a token-painted basemap |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Planner](src/components/planner/AGENTS.md) | `@delacour/react-native-ui/planner` | A month of days, each showing what falls on it, with a details sheet |
 | [Menu](src/components/menu/AGENTS.md) | `@delacour/react-native-ui/menu` | A list of actions dropped from the control that opens it |
 | [Overlay](src/components/overlay/AGENTS.md) | `@delacour/react-native-ui/overlay` | The provider, portal, scrim, presence and back button every overlay is drawn with |
 | [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |

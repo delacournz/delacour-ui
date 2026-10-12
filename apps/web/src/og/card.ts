@@ -25,19 +25,21 @@ import { type DocsProduct, PRODUCTS, type ProductSeo } from "@/lib/seo";
  * card and running off its bottom edge the way the hero's device runs off its
  * column.
  *
- * `product` picks whose card it is, and `MOTIFS` is the one place a product's
- * proof is named. The library's is not a drawing: it is `capture`, the hero's
- * own simulator photograph (`screen/showcase`), in the bezel `DeviceBezel`
- * draws — tabs, a Skia chart, a field, the selection controls, a slider and a
- * settings group, every one the real component. The charts card draws a line
- * chart and the bottom-sheet card a sheet under two snap point lines in the
- * same phone, because neither engine has a single capture that says what it is
- * at this size.
+ * `product` picks whose card it is, and `proof` is what stands in its right
+ * column: a simulator photograph of the real thing, in the bezel `DeviceBezel`
+ * draws. A `device` proof is a whole screen and fills the glass; a `stage`
+ * proof is one component on the capture ground, set on the glass at its own
+ * proportions. A page hands in its own hero capture, so a link to Button
+ * previews as buttons and a link to Dialog as a dialog.
+ *
+ * With no proof, `MOTIFS` is the fallback and the one place a product's is
+ * named: the charts card draws a line chart and the bottom-sheet card a sheet
+ * under two snap point lines in the same phone. The library has none — without
+ * a capture its column is empty rather than faked.
  *
  * Pure — strings in, a string out — so the layout is testable with no
- * rasteriser and no file: `routes/og/docs.ts` hands in the capture as a data
- * URL and hands the result to resvg. Without one the library's column is
- * empty rather than faked. The mark is drawn from `@delacour/brand`'s numbers
+ * rasteriser and no file: the caller hands in the capture as a data URL and
+ * hands the result to resvg. The mark is drawn from `@delacour/brand`'s numbers
  * like every other rendering of it, and it is the only amber on the card: the
  * house spends colour on status and chart series, so the chart takes the
  * chart blue and everything else drawn here is a grey read off the house
@@ -78,12 +80,24 @@ const LINE = { size: 22, lineHeight: 32, chars: 48, maxLines: 2 };
 export const OG_DEFAULT_TITLE = PRODUCTS.ui.cardTitle;
 export const OG_DEFAULT_SUBTITLE = PRODUCTS.ui.cardLine;
 
+/**
+ * A capture standing in the phone, as an `href` resvg can load — a data URL.
+ *
+ * The card crops the phone, so `anchor` picks which end of a `device` screen
+ * survives: `top` stands the phone on the card's top margin and lets the
+ * bottom edge cut it, `bottom` does the reverse for a capture whose subject is
+ * at the foot of the screen — a sheet, a toast. A `stage` capture carries its
+ * intrinsic size, which is what it is scaled from.
+ */
+export type OgProof =
+	| { kind: "device"; href: string; anchor?: "top" | "bottom" }
+	| { kind: "stage"; href: string; width: number; height: number };
+
 export type OgCard = {
 	title?: string;
 	subtitle?: string;
 	product?: DocsProduct;
-	/** The library card's device capture, as an `href` resvg can load — a data URL. */
-	capture?: string;
+	proof?: OgProof;
 };
 
 /**
@@ -100,6 +114,10 @@ const SCREEN = {
 	height: Math.round(((PHONE.width - PHONE.bezel * 2) * 1440) / 662),
 	radius: PHONE.radius - PHONE.bezel,
 };
+/** How far the phone moves up when it stands on the card's bottom margin instead of its top one. */
+const BOTTOM_SHIFT = PHONE.y + PHONE.height - (OG_HEIGHT - PHONE.y);
+/** The tallest a stage capture is drawn, which keeps it inside what the card shows of the glass. */
+const STAGE_MAX_HEIGHT = 500;
 /** What a drawn screen keeps clear of the glass's edge. */
 const INSET = 26;
 
@@ -187,16 +205,16 @@ function mark(x: number, y: number, size: number): string {
 	].join("");
 }
 
-/** The phone's body: the card fill under a hairline, cropped by the bottom of the canvas. */
-function bezel(): string {
+/** The phone's body: the card fill under a hairline, cropped by an edge of the canvas. `lift` moves it up. */
+function bezel(lift = 0): string {
 	const { x, y, width, height, radius } = PHONE;
-	return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${radius}" fill="${CARD}" ${HAIRLINE} stroke-width="2"/>`;
+	return `<rect x="${x}" y="${y - lift}" width="${width}" height="${height}" rx="${radius}" fill="${CARD}" ${HAIRLINE} stroke-width="2"/>`;
 }
 
 /** The glass, as a rounded rect — the capture's clip and a drawn screen's ground. */
-function glass(attributes: string): string {
+function glass(attributes: string, lift = 0): string {
 	const { x, y, width, height, radius } = SCREEN;
-	return `<rect x="${x}" y="${y}" width="${width}" height="${height}" rx="${radius}" ${attributes}/>`;
+	return `<rect x="${x}" y="${y - lift}" width="${width}" height="${height}" rx="${radius}" ${attributes}/>`;
 }
 
 /** A rounded bar standing in for a line of text. */
@@ -205,20 +223,41 @@ function bar(x: number, y: number, width: number, fill: string): string {
 }
 
 /**
- * The library's proof: the hero's simulator capture behind the bezel, clipped
- * to the glass. It is a photograph of the real components, so nothing here
- * redraws one; with no capture there is nothing honest to show, and the column
- * stays empty.
+ * A whole-screen capture behind the bezel, clipped to the glass. It is a
+ * photograph of the real components, so nothing here redraws one.
  */
-function device(capture: string | undefined): string {
-	if (!capture) return "";
+function device({ href, anchor = "top" }: Extract<OgProof, { kind: "device" }>): string {
+	const lift = anchor === "bottom" ? BOTTOM_SHIFT : 0;
 	const { x, y, width, height } = SCREEN;
 
 	return [
 		'<g id="device">',
+		`<clipPath id="glass">${glass("", lift)}</clipPath>`,
+		bezel(lift),
+		`<image href="${escapeXml(href)}" x="${x}" y="${y - lift}" width="${width}" height="${height}" preserveAspectRatio="xMidYMin slice" clip-path="url(#glass)"/>`,
+		"</g>",
+	].join("");
+}
+
+/**
+ * One component's capture on the glass: as wide as the screen unless that
+ * would make it taller than `STAGE_MAX_HEIGHT`, and centred in the part of the
+ * glass the card shows. The glass is filled with the page colour the capture
+ * was photographed on, so the capture has no edge.
+ */
+function stage({ href, width, height }: Extract<OgProof, { kind: "stage" }>): string {
+	const scale = Math.min(SCREEN.width / width, STAGE_MAX_HEIGHT / height);
+	const drawnWidth = Math.round(width * scale);
+	const drawnHeight = Math.round(height * scale);
+	const x = Math.round(SCREEN.x + (SCREEN.width - drawnWidth) / 2);
+	const y = Math.round((SCREEN.y + OG_HEIGHT - drawnHeight) / 2);
+
+	return [
+		'<g id="stage">',
 		`<clipPath id="glass">${glass("")}</clipPath>`,
 		bezel(),
-		`<image href="${escapeXml(capture)}" x="${x}" y="${y}" width="${width}" height="${height}" preserveAspectRatio="xMidYMin slice" clip-path="url(#glass)"/>`,
+		glass(`fill="${HOUSE_BACKGROUND.dark}"`),
+		`<image href="${escapeXml(href)}" x="${x}" y="${y}" width="${drawnWidth}" height="${drawnHeight}" clip-path="url(#glass)"/>`,
 		"</g>",
 	].join("");
 }
@@ -302,19 +341,24 @@ function sheet(): string {
 	].join("");
 }
 
-/** The proof each product's card carries in its right column. */
-const MOTIFS: Record<DocsProduct, (card: OgCard) => string> = {
-	ui: ({ capture }) => device(capture),
+/** What a product's card draws in its right column when it is handed no capture. */
+const MOTIFS: Record<DocsProduct, () => string> = {
+	ui: () => "",
 	charts: chart,
 	"bottom-sheet": sheet,
 };
+
+function proofOrMotif(product: DocsProduct, proof: OgProof | undefined): string {
+	if (!proof) return MOTIFS[product]();
+	return proof.kind === "device" ? device(proof) : stage(proof);
+}
 
 function text(attributes: string, content: string): string {
 	return `<text font-family="${FONT}" ${attributes}>${escapeXml(content)}</text>`;
 }
 
 export function ogCardSvg(card: OgCard = {}): string {
-	const { title, subtitle, product = "ui" } = card;
+	const { title, subtitle, product = "ui", proof } = card;
 	const seo = PRODUCTS[product];
 	const titleLines = wrap(title?.trim() || seo.cardTitle, TITLE);
 	const lines = wrap(subtitle?.trim() || seo.cardLine, LINE);
@@ -342,7 +386,7 @@ export function ogCardSvg(card: OgCard = {}): string {
 				content
 			)
 		),
-		MOTIFS[product](card),
+		proofOrMotif(product, proof),
 		text(`x="${GUTTER}" y="${OG_HEIGHT - 64}" font-weight="400" font-size="20" fill="${FAINT}"`, footer(seo)),
 		"</svg>",
 	].join("\n");

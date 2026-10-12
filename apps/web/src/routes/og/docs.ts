@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { Resvg } from "@resvg/resvg-js";
 import { createFileRoute } from "@tanstack/react-router";
 import { type DocsProduct, isDocsProduct } from "@/lib/seo";
-import { ogCardSvg } from "@/og/card";
+import { type OgProof, ogCardSvg } from "@/og/card";
 import regularUrl from "@/og/jetbrains-mono-400.ttf?inline";
 import semiBoldUrl from "@/og/jetbrains-mono-600.ttf?inline";
 import captureUrl from "../../../public/previews/screen/showcase/dark.png?inline";
@@ -62,7 +62,8 @@ function render(product: DocsProduct, title: string | undefined): Uint8Array {
 	const cached = cache.get(key);
 	if (cached) return cached;
 
-	const png = new Resvg(ogCardSvg({ product, title, capture: captureUrl }), {
+	const proof: OgProof | undefined = product === "ui" ? { kind: "device", href: captureUrl } : undefined;
+	const png = new Resvg(ogCardSvg({ product, title, proof }), {
 		font: { fontFiles: fonts(), loadSystemFonts: false, defaultFontFamily: "JetBrains Mono" },
 	})
 		.render()

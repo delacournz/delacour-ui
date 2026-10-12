@@ -27,6 +27,7 @@ bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
 bun run gen-theme    # regenerate house.css + house-meta.ts from the house preset
 bun run screenshots  # recapture the pull request screenshot set (needs the site running)
+bun run og-cards     # render every page's social card to node_modules/.temp/og (needs ffmpeg)
 ```
 
 ## Directory structure
@@ -148,12 +149,22 @@ Open Graph / Twitter tags. Two things there are deliberate:
   description, `og:*`, `twitter:*` and `rel="canonical"` from its slugs, overriding the root's
   site-wide set (TanStack dedupes `head.meta` by `name` / `property`, deepest route wins).
   `isDocsProduct()` is the one place a product name is checked — `/og/docs?product=` goes through
-  it — and `MOTIFS` in `src/og/card.ts` is the one place a product's proof is named. The
-  library's is not a drawing: it is the hero's own capture, `public/previews/screen/showcase/dark.png`,
-  in the bezel `DeviceBezel` draws — `routes/og/docs.ts` imports the committed file `?inline` and
-  hands it to the pure card as a data URL, so a recapture reaches the card with the next build. The
-  charts card draws a line chart in the chart blue, and the bottom-sheet card a sheet resting under
-  two snap point lines in the same phone. Title and line are wrapped by character count (the face
+  it. The card's proof is an `OgProof` the caller passes: a `device` capture fills the bezel
+  `DeviceBezel` draws, anchored `top` or `bottom` (a sheet or a toast sits at the foot of the screen,
+  so its phone stands on the card's bottom edge and runs off the top), and a `stage` capture — one
+  component — is set on the phone's glass at its own proportions. With no proof the card falls back
+  to `MOTIFS` in `src/og/card.ts`: a line chart in the chart blue for charts, a sheet resting under
+  two snap point lines for the bottom sheet, nothing for the library.
+  **Only the library's card is served with a capture today.** `routes/og/docs.ts` imports
+  `public/previews/screen/showcase/dark.png` `?inline` and hands it over as a data URL, so a
+  recapture reaches the card with the next build; every engine page still gets its motif and every
+  component page the showcase. `bun run og-cards` (`scripts/og-cards.ts`) renders what the per-page
+  set would be — each page's hero, the first `<Preview id>` in its MDX, with the page description
+  as the line — into `node_modules/.temp/og/`, which is ignored, with an `index.html` contact
+  sheet. It is a review tool, not a build step: every device clip's poster is its closed state, so
+  the script cuts a frame from the dark clip with `ffmpeg` at the moment its `MOMENTS` table names,
+  and Railway has no `ffmpeg`. Serving those cards means committing the frames or recapturing the
+  posters at the open state first. Title and line are wrapped by character count (the face
   is monospaced, so a measure is a count), balanced, and ellipsised past three lines and two. A charts page gets `og:site_name` "Delacour
   Charts" and `/og/docs?product=charts`; a bottom-sheet page the same with its own name and
   `/docs/bottom-sheet` in the footer. `seo.test.ts` fails if an engine page's tags mention

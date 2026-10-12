@@ -41,6 +41,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "leaderboard", title: "Leaderboard", description: "Ranked people or teams with ties, the top three on a podium of growing bars or lifted cards, and the highlighted entry pinned below the cut." },
 	{ name: "list-group", title: "List Group", description: "A surface grouping related rows, with dividers inserted automatically." },
 	{ name: "map", title: "Map", description: "A themed MapLibre map on a token-painted basemap: markers, pins, labels, popups, routes, arcs and controls, with a camera ref." },
+	{ name: "markdown-editor", title: "Markdown Editor", description: "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview." },
 	{ name: "marker", title: "Marker", description: "A centred inline note for a step or a day break between conversation turns, static or pressable." },
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },

@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on markdown-editor/basic and has settled — release notes in the write pane, the
+  Write tab selected, the field unfocused. The capture script navigates there before running this.
+steps:
+  - echo: Flipping to the preview, so the source renders as headings, bold, code and a list
+  - wait: 500
+  - tap: { id: markdown-mode-preview }
+  - wait: 1600
+  - echo: And back to the source, so the clip loops without a jump cut
+  - tap: { id: markdown-mode-write }
+  - wait: 700

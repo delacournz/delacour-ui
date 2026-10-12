@@ -90,6 +90,7 @@
 		"./tabs": "./src/components/tabs/index.ts",
 		"./text": "./src/components/text/index.ts",
 		"./textarea": "./src/components/textarea/index.ts",
+		"./timeline": "./src/components/timeline/index.ts",
 		"./toast": "./src/components/toast/index.ts",
 		"./toggle-button": "./src/components/toggle-button/index.ts",
 		"./tooltip": "./src/components/tooltip/index.ts",

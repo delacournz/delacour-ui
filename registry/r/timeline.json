@@ -1,0 +1,233 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "timeline",
+	"type": "registry:ui",
+	"title": "Timeline",
+	"description": "Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"text",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/timeline/AGENTS.md",
+			"target": "timeline/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/timeline",
+					"to": "@registry/ui/timeline"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/index.ts",
+			"target": "timeline/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-aside.tsx",
+			"target": "timeline/timeline-aside.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-content.tsx",
+			"target": "timeline/timeline-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-date.tsx",
+			"target": "timeline/timeline-date.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-description.tsx",
+			"target": "timeline/timeline-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-header.tsx",
+			"target": "timeline/timeline-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-indicator.tsx",
+			"target": "timeline/timeline-indicator.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-item.tsx",
+			"target": "timeline/timeline-item.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-list.tsx",
+			"target": "timeline/timeline-list.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-masthead.tsx",
+			"target": "timeline/timeline-masthead.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-meta.tsx",
+			"target": "timeline/timeline-meta.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-stat.tsx",
+			"target": "timeline/timeline-stat.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-stats.tsx",
+			"target": "timeline/timeline-stats.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-title.tsx",
+			"target": "timeline/timeline-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-track.tsx",
+			"target": "timeline/timeline-track.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline-trailing.tsx",
+			"target": "timeline/timeline-trailing.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline.context.tsx",
+			"target": "timeline/timeline.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline.tsx",
+			"target": "timeline/timeline.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline.types.ts",
+			"target": "timeline/timeline.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/timeline.variants.ts",
+			"target": "timeline/timeline.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/timeline/use-timeline-reading-edge.ts",
+			"target": "timeline/use-timeline-reading-edge.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		}
+	]
+}

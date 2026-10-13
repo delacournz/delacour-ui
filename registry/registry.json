@@ -2358,6 +2358,55 @@
 			]
 		},
 		{
+			"name": "signature",
+			"type": "registry:ui",
+			"title": "Signature",
+			"description": "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"button",
+				"color",
+				"field",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/signature/AGENTS.md",
+				"ui/signature/index.ts",
+				"ui/signature/signature-action-button.tsx",
+				"ui/signature/signature-alternative.tsx",
+				"ui/signature/signature-clear.tsx",
+				"ui/signature/signature-live-path.tsx",
+				"ui/signature/signature-pad.tsx",
+				"ui/signature/signature-path.tsx",
+				"ui/signature/signature-redo.tsx",
+				"ui/signature/signature-toolbar.tsx",
+				"ui/signature/signature-undo.tsx",
+				"ui/signature/signature.context.tsx",
+				"ui/signature/signature.stroke.ts",
+				"ui/signature/signature.tsx",
+				"ui/signature/signature.types.ts",
+				"ui/signature/signature.variants.ts"
+			]
+		},
+		{
 			"name": "skeleton",
 			"type": "registry:ui",
 			"title": "Skeleton",

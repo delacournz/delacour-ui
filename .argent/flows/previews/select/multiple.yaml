@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on select/multiple and has settled — the Toppings trigger reading
+  "Cheese, Rocket", the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet and ticking a third — the limit disables the rest
+  - tap: { id: select-multiple }
+  - await: { visible: { id: select-multiple-done } }
+  - wait: 600
+  - tap: { id: select-multiple-option-olives }
+  - wait: 900
+  - echo: Unticking it again, so the selection ends where it began
+  - tap: { id: select-multiple-option-olives }
+  - wait: 600
+  - tap: { id: select-multiple-done }
+  - await: { hidden: { id: select-multiple-done } }
+  - wait: 400

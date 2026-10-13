@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on select/single and has settled — the Fruit trigger reading Kiwifruit, the
+  sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet and picking Feijoa — a pick closes it
+  - tap: { id: select-single }
+  - await: { visible: { id: select-single-option-feijoa } }
+  - wait: 600
+  - tap: { id: select-single-option-feijoa }
+  - await: { hidden: { id: select-single-option-feijoa } }
+  - wait: 700
+  - echo: And back to Kiwifruit, so the clip loops without a jump cut
+  - tap: { id: select-single }
+  - await: { visible: { id: select-single-option-kiwifruit } }
+  - wait: 600
+  - tap: { id: select-single-option-kiwifruit }
+  - await: { hidden: { id: select-single-option-kiwifruit } }
+  - wait: 400

@@ -300,6 +300,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
 		categories: ["overlays"],
 	},
+	"number-input": {
+		title: "Number Input",
+		description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur.",
+		categories: ["forms"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

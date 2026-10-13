@@ -13,6 +13,7 @@ import {
 	IconCalendar1,
 	IconChart1,
 	IconCheckCircle2,
+	IconChecklist,
 	IconChevronDoubleRight,
 	IconChevronGrabberVertical,
 	IconCircleInfo,
@@ -136,6 +137,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"markdown-editor": IconTextEdit,
 	"number-input": IconDecimalNumberDot,
 	"otp-input": IconPasswordStars,
+	questionnaire: IconChecklist,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

@@ -1,0 +1,295 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "questionnaire",
+	"type": "registry:ui",
+	"title": "Questionnaire",
+	"description": "A guided form, one question at a time: single and multiple choice, text, rating, scale and yes/no, with branching, skips, validation and progress.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"button",
+		"checkbox",
+		"cn",
+		"field",
+		"input",
+		"pressable",
+		"progress",
+		"radio",
+		"rating",
+		"separator",
+		"steps",
+		"surface",
+		"text",
+		"textarea",
+		"toggle-button",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/AGENTS.md",
+			"target": "questionnaire/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/questionnaire",
+					"to": "@registry/ui/questionnaire"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/index.ts",
+			"target": "questionnaire/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-back.tsx",
+			"target": "questionnaire/questionnaire-back.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-control.tsx",
+			"target": "questionnaire/questionnaire-control.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../checkbox",
+					"to": "@registry/ui/checkbox"
+				},
+				{
+					"from": "../input",
+					"to": "@registry/ui/input"
+				},
+				{
+					"from": "../radio",
+					"to": "@registry/ui/radio"
+				},
+				{
+					"from": "../rating",
+					"to": "@registry/ui/rating"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../textarea",
+					"to": "@registry/ui/textarea"
+				},
+				{
+					"from": "../toggle-button",
+					"to": "@registry/ui/toggle-button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-footer.tsx",
+			"target": "questionnaire/questionnaire-footer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-next.tsx",
+			"target": "questionnaire/questionnaire-next.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-progress.tsx",
+			"target": "questionnaire/questionnaire-progress.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				},
+				{
+					"from": "../steps",
+					"to": "@registry/ui/steps"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-question.tsx",
+			"target": "questionnaire/questionnaire-question.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../field",
+					"to": "@registry/ui/field"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-skip.tsx",
+			"target": "questionnaire/questionnaire-skip.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-spacer.tsx",
+			"target": "questionnaire/questionnaire-spacer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-submit.tsx",
+			"target": "questionnaire/questionnaire-submit.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire-title.tsx",
+			"target": "questionnaire/questionnaire-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.context.tsx",
+			"target": "questionnaire/questionnaire.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.logic.ts",
+			"target": "questionnaire/questionnaire.logic.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.tsx",
+			"target": "questionnaire/questionnaire.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.types.ts",
+			"target": "questionnaire/questionnaire.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/questionnaire/questionnaire.variants.ts",
+			"target": "questionnaire/questionnaire.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../checkbox/checkbox.variants",
+					"to": "@registry/ui/checkbox/checkbox.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../progress/progress.variants",
+					"to": "@registry/ui/progress/progress.variants"
+				},
+				{
+					"from": "../radio/radio.variants",
+					"to": "@registry/ui/radio/radio.variants"
+				},
+				{
+					"from": "../rating/rating.variants",
+					"to": "@registry/ui/rating/rating.variants"
+				},
+				{
+					"from": "../steps/steps.variants",
+					"to": "@registry/ui/steps/steps.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				},
+				{
+					"from": "../toggle-button/toggle-button.variants",
+					"to": "@registry/ui/toggle-button/toggle-button.variants"
+				}
+			]
+		}
+	]
+}

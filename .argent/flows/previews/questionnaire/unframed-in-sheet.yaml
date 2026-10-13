@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on questionnaire/unframed-in-sheet and has settled — the
+  "Cancel subscription" trigger with the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet
+  - tap: { id: questionnaire-open-sheet }
+  - await: { visible: { id: cancel-reason-price } }
+  - wait: 600
+  - echo: Answering, moving on and coming back
+  - tap: { id: cancel-reason-price }
+  - wait: 400
+  - tap: { id: cancel-next }
+  - await: { visible: { id: cancel-return-yes } }
+  - wait: 600
+  - tap: { id: cancel-back }
+  - await: { visible: { id: cancel-reason-price } }
+  - wait: 500
+  - echo: Closing it, so the clip ends on the trigger it began with
+  - tap: { id: questionnaire-close-sheet }
+  - await: { hidden: { id: cancel-reason-price } }
+  - wait: 500

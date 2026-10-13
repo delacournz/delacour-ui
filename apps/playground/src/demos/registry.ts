@@ -483,6 +483,13 @@ import * as demo_selection_mode_swatch_strip from "./selection-mode/swatch-strip
 import * as demo_separator_inside_a_list_group from "./separator/inside-a-list-group";
 import * as demo_separator_orientations from "./separator/orientations";
 import * as demo_separator_weight_and_colour from "./separator/weight-and-colour";
+import * as demo_signature_alternative from "./signature/alternative";
+import * as demo_signature_basic from "./signature/basic";
+import * as demo_signature_disabled_and_read_only from "./signature/disabled-and-read-only";
+import * as demo_signature_export from "./signature/export";
+import * as demo_signature_in_field from "./signature/in-field";
+import * as demo_signature_sizes from "./signature/sizes";
+import * as demo_signature_with_toolbar from "./signature/with-toolbar";
 import * as demo_skeleton_animations from "./skeleton/animations";
 import * as demo_skeleton_feed_post from "./skeleton/feed-post";
 import * as demo_skeleton_group from "./skeleton/group";
@@ -1092,6 +1099,13 @@ export const DEMOS = {
 	"separator/inside-a-list-group": demo_separator_inside_a_list_group,
 	"separator/orientations": demo_separator_orientations,
 	"separator/weight-and-colour": demo_separator_weight_and_colour,
+	"signature/alternative": demo_signature_alternative,
+	"signature/basic": demo_signature_basic,
+	"signature/disabled-and-read-only": demo_signature_disabled_and_read_only,
+	"signature/export": demo_signature_export,
+	"signature/in-field": demo_signature_in_field,
+	"signature/sizes": demo_signature_sizes,
+	"signature/with-toolbar": demo_signature_with_toolbar,
 	"skeleton/animations": demo_skeleton_animations,
 	"skeleton/feed-post": demo_skeleton_feed_post,
 	"skeleton/group": demo_skeleton_group,

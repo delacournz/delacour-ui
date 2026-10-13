@@ -141,6 +141,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [SearchBar](src/components/search-bar/AGENTS.md) | `@delacour/react-native-ui/search-bar` | The query field at the top of a list — clear, Cancel, debounce and filter tokens, on `Input.Group` |
 | [SelectionMode](src/components/selection-mode/AGENTS.md) | `@delacour/react-native-ui/selection-mode` | Pick several things at once, then act on them from a bar |
 | [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
 | [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |

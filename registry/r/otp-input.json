@@ -1,0 +1,118 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "otp-input",
+	"type": "registry:ui",
+	"title": "OTP Input",
+	"description": "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"field",
+		"input",
+		"pressable",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/AGENTS.md",
+			"target": "otp-input/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/otp-input",
+					"to": "@registry/ui/otp-input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/index.ts",
+			"target": "otp-input/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input-group.tsx",
+			"target": "otp-input/otp-input-group.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input-separator.tsx",
+			"target": "otp-input/otp-input-separator.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input-slot.tsx",
+			"target": "otp-input/otp-input-slot.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.context.tsx",
+			"target": "otp-input/otp-input.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.logic.ts",
+			"target": "otp-input/otp-input.logic.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.tsx",
+			"target": "otp-input/otp-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/otp-input/otp-input.variants.ts",
+			"target": "otp-input/otp-input.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	]
+}

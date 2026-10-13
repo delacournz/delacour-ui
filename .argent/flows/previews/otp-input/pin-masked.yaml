@@ -1,0 +1,20 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on otp-input/pin-masked and has settled — four large cells,
+  the first two masked, not focused. The capture script navigates there before running this.
+steps:
+  - echo: Finishing the PIN; every filled cell stays a dot
+  - tap: { id: otp-pin }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "84", delayMs: 180 }
+  - wait: 1000
+  - echo: Deleting the two digits typed, so the clip loops back to two dots
+  - tap: { id: otp-pin }
+  - wait: 200
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: backspace }
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 400

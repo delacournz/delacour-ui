@@ -70,6 +70,7 @@
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./number-input": "./src/components/number-input/index.ts",
+		"./otp-input": "./src/components/otp-input/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",
 		"./planner": "./src/components/planner/index.ts",
 		"./popover": "./src/components/popover/index.ts",

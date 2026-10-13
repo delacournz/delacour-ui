@@ -48,6 +48,7 @@
 		"./chip": "./src/components/chip/index.ts",
 		"./collapsible": "./src/components/collapsible/index.ts",
 		"./color-picker": "./src/components/color-picker/index.ts",
+		"./combobox": "./src/components/combobox/index.ts",
 		"./context-menu": "./src/components/context-menu/index.ts",
 		"./countdown": "./src/components/countdown/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",

@@ -94,6 +94,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/text": "text/type-scale",
 	"native/components/textarea": "textarea/character-count",
 	"native/components/theme-selector": "theme-selector/controlled",
+	"native/components/time-picker": "time-picker/basic-sheet",
 	"native/components/timeline": "timeline/horizontal",
 	"native/components/toast": "toast/statuses",
 	"native/components/toggle-button": "toggle-button/variants",
@@ -240,6 +241,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"theme-selector/controlled": {
 		load: () => import("../../public/previews/theme-selector/controlled/dark.png?inline"),
 	},
+	"time-picker/basic-sheet": { cut: "65d25363d501", load: () => import("./frames/time-picker/basic-sheet.png?inline") },
 	"timeline/horizontal": { load: () => import("../../public/previews/timeline/horizontal/dark.png?inline") },
 	"toast/statuses": { cut: "ebbb56630c98", load: () => import("./frames/toast/statuses.png?inline") },
 	"toggle-button/variants": { load: () => import("../../public/previews/toggle-button/variants/dark.png?inline") },

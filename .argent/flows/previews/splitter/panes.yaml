@@ -1,0 +1,8 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on splitter/panes and has settled — two
+  card panes at 40/60, the handle in the gap carrying the testID handle-0.
+steps:
+  - echo: Widening the inbox, then giving the room back
+  - swipe: { from: { id: handle-0 }, by: { x: 0.15 }, momentum: false, duration: 600 }
+  - wait: 500
+  - swipe: { from: { id: handle-0 }, by: { x: -0.15 }, momentum: false, duration: 600 }

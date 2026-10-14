@@ -1,0 +1,110 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "splitter",
+	"type": "registry:ui",
+	"title": "Splitter",
+	"description": "Two or more panes divided by draggable handles, sized in percent.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"pressable",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/splitter/AGENTS.md",
+			"target": "splitter/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/splitter",
+					"to": "@registry/ui/splitter"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/index.ts",
+			"target": "splitter/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter-grip.tsx",
+			"target": "splitter/splitter-grip.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter-handle.tsx",
+			"target": "splitter/splitter-handle.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter-pane.tsx",
+			"target": "splitter/splitter-pane.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter.context.tsx",
+			"target": "splitter/splitter.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter.math.ts",
+			"target": "splitter/splitter.math.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter.tsx",
+			"target": "splitter/splitter.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter.types.ts",
+			"target": "splitter/splitter.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/splitter/splitter.variants.ts",
+			"target": "splitter/splitter.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

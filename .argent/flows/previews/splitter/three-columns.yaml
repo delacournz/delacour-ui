@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on splitter/three-columns and has settled —
+  three panes at 25/50/25, handles carrying the testIDs handle-0 and handle-1.
+steps:
+  - echo: The second seam moves only the editor and the inspector
+  - swipe: { from: { id: handle-1 }, by: { x: -0.15 }, momentum: false, duration: 600 }
+  - wait: 400
+  - swipe: { from: { id: handle-1 }, by: { x: 0.15 }, momentum: false, duration: 600 }
+  - wait: 400
+  - echo: The first seam moves only the files and the editor
+  - swipe: { from: { id: handle-0 }, by: { x: 0.12 }, momentum: false, duration: 600 }
+  - wait: 400
+  - swipe: { from: { id: handle-0 }, by: { x: -0.12 }, momentum: false, duration: 600 }

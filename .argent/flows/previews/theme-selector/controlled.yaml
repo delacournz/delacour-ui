@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on theme-selector/controlled and has settled — System, Light and Dark
+  with System selected, and "value: system" beneath. The capture script navigates there before running this.
+steps:
+  - echo: Choosing Light, then Dark
+  - tap: { id: theme-selector-controlled-light }
+  - wait: 700
+  - tap: { id: theme-selector-controlled-dark }
+  - wait: 700
+  - echo: And back to System, so the clip loops without a jump cut
+  - tap: { id: theme-selector-controlled-system }
+  - wait: 600

@@ -109,6 +109,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 	{ slug: "input", name: "Input", group: "Forms", blurb: "A text field, and the box that can hold content beside it." },
 	{ slug: "textarea", name: "Textarea", group: "Forms", blurb: "A multiline text field, sized in rows." },
 	{
+		slug: "theme-selector",
+		name: "ThemeSelector",
+		group: "Forms",
+		blurb: "System, Light or Dark \u2014 read from the live theme, and applied to it.",
+	},
+	{
 		slug: "tag-input",
 		name: "TagInput",
 		group: "Forms",

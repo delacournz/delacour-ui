@@ -589,6 +589,13 @@ import * as demo_textarea_rows from "./textarea/rows";
 import * as demo_textarea_sizes from "./textarea/sizes";
 import * as demo_textarea_states from "./textarea/states";
 import * as demo_textarea_variants from "./textarea/variants";
+import * as demo_theme_selector_basic from "./theme-selector/basic";
+import * as demo_theme_selector_cards from "./theme-selector/cards";
+import * as demo_theme_selector_controlled from "./theme-selector/controlled";
+import * as demo_theme_selector_custom_labels_modes from "./theme-selector/custom-labels-modes";
+import * as demo_theme_selector_in_field from "./theme-selector/in-field";
+import * as demo_theme_selector_persisted from "./theme-selector/persisted";
+import * as demo_theme_selector_sizes from "./theme-selector/sizes";
 import * as demo_timeline_cards from "./timeline/cards";
 import * as demo_timeline_compact from "./timeline/compact";
 import * as demo_timeline_horizontal from "./timeline/horizontal";
@@ -1211,6 +1218,13 @@ export const DEMOS = {
 	"textarea/sizes": demo_textarea_sizes,
 	"textarea/states": demo_textarea_states,
 	"textarea/variants": demo_textarea_variants,
+	"theme-selector/basic": demo_theme_selector_basic,
+	"theme-selector/cards": demo_theme_selector_cards,
+	"theme-selector/controlled": demo_theme_selector_controlled,
+	"theme-selector/custom-labels-modes": demo_theme_selector_custom_labels_modes,
+	"theme-selector/in-field": demo_theme_selector_in_field,
+	"theme-selector/persisted": demo_theme_selector_persisted,
+	"theme-selector/sizes": demo_theme_selector_sizes,
 	"timeline/cards": demo_timeline_cards,
 	"timeline/compact": demo_timeline_compact,
 	"timeline/horizontal": demo_timeline_horizontal,

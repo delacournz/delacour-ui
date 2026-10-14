@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on time-picker/inline-wheel and has settled — an
+  inline wheel at 7:00 AM above its readout. The capture script navigates there before
+  running this.
+steps:
+  - echo: Rolling the minute wheel forward
+  - swipe: { from: { text: Minute }, by: { y: -0.14 }, momentum: false, duration: 700 }
+  - wait: 1000
+  # Past each column's end on purpose: PM is the last row and AM and 00 the first,
+  # so an overshoot always rests on them and the clip loops exactly.
+  - echo: Flipping to PM and back to AM
+  - swipe: { from: { text: AM or PM }, by: { y: -0.1 }, momentum: false, duration: 500 }
+  - wait: 1000
+  - swipe: { from: { text: AM or PM }, by: { y: 0.1 }, momentum: false, duration: 500 }
+  - wait: 1000
+  - echo: And the minute back to 00, so the clip loops on 7:00 AM
+  - swipe: { from: { text: Minute }, by: { y: 0.45 }, momentum: false, duration: 700 }
+  - wait: 1000

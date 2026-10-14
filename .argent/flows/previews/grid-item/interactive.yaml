@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on grid-item/interactive and has
+  settled — four tiles in two columns, the door locked, the doorbell ringing
+  and the camera disabled. The capture script navigates there before running this.
+steps:
+  - echo: Unlocking the door and muting the bell, holding Lights, then putting both back so the clip loops
+  - tap: { id: tile-lock }
+  - wait: 500
+  - tap: { id: tile-bell }
+  - wait: 500
+  - long-press: { on: { id: tile-lights }, duration: 400 }
+  - wait: 400
+  - tap: { id: tile-lock }
+  - wait: 500
+  - tap: { id: tile-bell }

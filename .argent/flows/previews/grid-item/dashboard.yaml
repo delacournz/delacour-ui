@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on grid-item/dashboard and has
+  settled — a four-column bento with Wi-Fi, Bluetooth and Lock on, Focus and
+  Flight off. The capture script navigates there before running this.
+steps:
+  - echo: Switching tiles off and on, then putting every one back so the clip loops
+  - tap: { id: tile-wifi }
+  - wait: 450
+  - tap: { id: tile-focus }
+  - wait: 450
+  - tap: { id: tile-airplane }
+  - wait: 900
+  - tap: { id: tile-airplane }
+  - wait: 450
+  - tap: { id: tile-focus }
+  - wait: 450
+  - tap: { id: tile-wifi }

@@ -12606,6 +12606,31 @@ export const install = {
 			},
 		],
 	},
+	"direction": {
+		name: "direction",
+		title: "Direction",
+		description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
+		importPath: "@delacour/react-native-ui/direction",
+		exportName: "Direction",
+		expo: ["uniwind"],
+		npm: [],
+		dev: [],
+		fileCount: 5,
+		groups: [
+			{
+				name: "direction",
+				title: "Direction",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/direction/AGENTS.md", target: "src/components/ui/direction/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.context.tsx", target: "src/components/ui/direction/direction.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.tsx", target: "src/components/ui/direction/direction.tsx" },
+					{ source: "packages/react-native-ui/src/components/direction/direction.variants.ts", target: "src/components/ui/direction/direction.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/direction/index.ts", target: "src/components/ui/direction/index.ts" },
+				],
+			},
+		],
+	},
 	"carousel": {
 		name: "carousel",
 		title: "Carousel",

@@ -222,6 +222,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values.",
 		categories: ["forms"],
 	},
+	direction: {
+		title: "Direction",
+		description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths.",
+		categories: ["layout"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

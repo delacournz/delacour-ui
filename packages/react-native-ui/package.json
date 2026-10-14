@@ -52,6 +52,7 @@
 		"./context-menu": "./src/components/context-menu/index.ts",
 		"./countdown": "./src/components/countdown/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
+		"./direction": "./src/components/direction/index.ts",
 		"./drawer": "./src/components/drawer/index.ts",
 		"./empty-state": "./src/components/empty-state/index.ts",
 		"./fab": "./src/components/fab/index.ts",

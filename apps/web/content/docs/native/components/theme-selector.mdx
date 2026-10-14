@@ -1,0 +1,204 @@
+---
+title: ThemeSelector
+description: System, Light or Dark — read from the live theme, and applied to it.
+icon: SunMoon
+---
+
+<Preview id="theme-selector/controlled" title={null} />
+
+## Installation
+
+<ComponentInstall name="theme-selector" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { ThemeSelector } from "@/components/ui/theme-selector";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <ThemeSelector />
+    </View>
+  );
+}
+```
+
+## How it reads the theme
+
+The selection is Uniwind's, not the component's: System is selected while the app follows the
+device, so a theme changed anywhere else re-selects every mounted selector.
+
+<Preview id="theme-selector/basic" />
+
+```tsx
+<ThemeSelector onValueChange={(mode) => console.log(mode)} />
+```
+
+## Controlled
+
+`value` with `onValueChange` holds the choice in your state, and `applyTheme={false}` keeps a press
+from re-theming the app.
+
+<Preview id="theme-selector/controlled" />
+
+```tsx
+const [mode, setMode] = useState<ThemeMode>("system");
+
+<ThemeSelector applyTheme={false} onValueChange={setMode} value={mode} />
+```
+
+## Cards
+
+`variant="cards"` stands the options apart as tiles, a larger glyph over each label.
+
+<Preview id="theme-selector/cards" />
+
+```tsx
+<ThemeSelector variant="cards" />
+```
+
+## Sizes
+
+The button's label steps; `sm` reaches past its edges to stay a 44pt target.
+
+<Preview id="theme-selector/sizes" />
+
+```tsx
+<ThemeSelector size="sm" />
+<ThemeSelector size="md" />
+<ThemeSelector size="lg" />
+```
+
+## Modes and labels
+
+`modes` picks the options and their order, and `labels` renames them for localisation.
+
+```tsx
+<ThemeSelector labels={{ light: "Day", dark: "Night" }} modes={["light", "dark"]} />
+```
+
+## Persisting the choice
+
+Uniwind forgets its theme on restart; with `applyTheme={false}` the selector only reports, so the
+app saves the choice, applies it and passes the saved mode back as `value`.
+
+<Preview id="theme-selector/persisted" />
+
+```tsx
+import { restoreThemeMode, ThemeSelector, type ThemeMode } from "@/components/ui/theme-selector";
+import { useState } from "react";
+import { createMMKV } from "react-native-mmkv";
+import { Uniwind } from "uniwind";
+
+const storage = createMMKV();
+
+Uniwind.setTheme(restoreThemeMode(storage.getString("theme")));
+
+export function AppearanceSetting() {
+  const [saved, setSaved] = useState<ThemeMode>(() => restoreThemeMode(storage.getString("theme")));
+
+  return (
+    <ThemeSelector
+      applyTheme={false}
+      onValueChange={(mode) => {
+        storage.set("theme", mode);
+        setSaved(mode);
+        Uniwind.setTheme(mode);
+      }}
+      value={saved}
+    />
+  );
+}
+```
+
+<Callout type="warn">
+  `Uniwind.setTheme` throws on a name it does not know. Pass a stored string through
+  `restoreThemeMode`, which falls back to `"system"`, rather than straight to `setTheme`.
+</Callout>
+
+## In a field
+
+Inside a `Field`, the label names the group and `isDisabled` cascades.
+
+<Preview id="theme-selector/in-field" />
+
+```tsx
+<Field>
+  <Field.Label>Appearance</Field.Label>
+  <ThemeSelector variant="cards" />
+  <Field.Description>System follows your device's light and dark setting.</Field.Description>
+</Field>
+```
+
+## useThemeSelection
+
+The live mode, what it resolves to and a setter, with no selector mounted — for a custom control or
+a row that only shows the choice.
+
+```tsx
+const { mode, resolved, setMode } = useThemeSelection();
+```
+
+## Accessibility
+
+The group is a `radiogroup` named by `accessibilityLabel`, the enclosing `Field.Label`, or "Theme";
+each option is a `radio` announced by its label.
+
+## API Reference
+
+### ThemeSelector
+
+<TypeTable
+  type={{
+    value: { type: '"system" | "light" | "dark"', description: "Shown as selected instead of the live theme." },
+    onValueChange: {
+      type: "(mode: ThemeMode) => void",
+      description: "Called on every press that changes the choice, after the theme is applied.",
+    },
+    applyTheme: {
+      type: "boolean",
+      default: "true",
+      description: "Apply the mode with `Uniwind.setTheme`. Off, the selector only reports.",
+    },
+    modes: { type: "ThemeMode[]", default: '["system", "light", "dark"]', description: "The options, in order." },
+    labels: { type: "Partial<Record<ThemeMode, string>>", description: "Per-mode label overrides." },
+    variant: { type: '"segmented" | "cards"', default: '"segmented"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isDisabled: { type: "boolean", description: "Inherited from an enclosing `Field`." },
+    haptic: { type: "false | HapticFeedback", default: '"selection"' },
+    accessibilityLabel: { type: "string", description: "Defaults to the `Field.Label`, then \"Theme\"." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Custom `ThemeSelector.Option`s." },
+  }}
+/>
+
+### ThemeSelector.Option
+
+<TypeTable
+  type={{
+    value: { type: '"system" | "light" | "dark"', description: "The mode this option selects." },
+    label: { type: "string", description: "Overrides the label for this option." },
+    icon: { type: "IconComponent", description: "Overrides the mode's default glyph." },
+    className: { type: "string" },
+  }}
+/>
+
+### useThemeSelection
+
+<TypeTable
+  type={{
+    mode: { type: "ThemeMode", description: "The mode in force — `system` while following the device." },
+    resolved: { type: '"light" | "dark"', description: "What is on screen right now." },
+    setMode: { type: "(mode: ThemeMode) => void", description: "Applies a mode. Stores nothing." },
+  }}
+/>
+
+### restoreThemeMode
+
+<TypeTable
+  type={{
+    saved: { type: "string | null | undefined", description: "A stored value. Anything unknown returns `\"system\"`." },
+  }}
+/>

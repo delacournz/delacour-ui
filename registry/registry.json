@@ -1840,6 +1840,55 @@
 			]
 		},
 		{
+			"name": "page-header",
+			"type": "registry:ui",
+			"title": "Page Header",
+			"description": "A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen.",
+			"categories": [
+				"layout"
+			],
+			"registryDependencies": [
+				"avatar",
+				"cn",
+				"color",
+				"icon",
+				"icons",
+				"pressable",
+				"screen",
+				"surface",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"expo-linear-gradient",
+				"react-native-reanimated",
+				"react-native-safe-area-context"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/page-header/AGENTS.md",
+				"ui/page-header/index.ts",
+				"ui/page-header/page-header-actions.tsx",
+				"ui/page-header/page-header-avatar.tsx",
+				"ui/page-header/page-header-content.tsx",
+				"ui/page-header/page-header-cover.tsx",
+				"ui/page-header/page-header-description.tsx",
+				"ui/page-header/page-header-meta.tsx",
+				"ui/page-header/page-header-stat.tsx",
+				"ui/page-header/page-header-stats.tsx",
+				"ui/page-header/page-header-title.tsx",
+				"ui/page-header/page-header.context.tsx",
+				"ui/page-header/page-header.tsx",
+				"ui/page-header/page-header.types.ts",
+				"ui/page-header/page-header.utils.ts",
+				"ui/page-header/page-header.variants.ts"
+			]
+		},
+		{
 			"name": "paging",
 			"type": "registry:lib",
 			"title": "paging",

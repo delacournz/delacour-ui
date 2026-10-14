@@ -332,6 +332,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste.",
 		categories: ["forms"],
 	},
+	"page-header": {
+		title: "Page Header",
+		description:
+			"A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen.",
+		categories: ["layout"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

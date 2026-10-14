@@ -519,6 +519,13 @@ import * as demo_skeleton_group from "./skeleton/group";
 import * as demo_skeleton_lines from "./skeleton/lines";
 import * as demo_skeleton_profile_card from "./skeleton/profile-card";
 import * as demo_skeleton_shapes from "./skeleton/shapes";
+import * as demo_sketch_annotate from "./sketch/annotate";
+import * as demo_sketch_colours from "./sketch/colours";
+import * as demo_sketch_default from "./sketch/default";
+import * as demo_sketch_draw from "./sketch/draw";
+import * as demo_sketch_eraser from "./sketch/eraser";
+import * as demo_sketch_export from "./sketch/export";
+import * as demo_sketch_shapes from "./sketch/shapes";
 import * as demo_slide_button_auto_reset from "./slide-button/auto-reset";
 import * as demo_slide_button_controlled_async from "./slide-button/controlled-async";
 import * as demo_slide_button_custom_thumb from "./slide-button/custom-thumb";
@@ -1178,6 +1185,13 @@ export const DEMOS = {
 	"skeleton/lines": demo_skeleton_lines,
 	"skeleton/profile-card": demo_skeleton_profile_card,
 	"skeleton/shapes": demo_skeleton_shapes,
+	"sketch/annotate": demo_sketch_annotate,
+	"sketch/colours": demo_sketch_colours,
+	"sketch/default": demo_sketch_default,
+	"sketch/draw": demo_sketch_draw,
+	"sketch/eraser": demo_sketch_eraser,
+	"sketch/export": demo_sketch_export,
+	"sketch/shapes": demo_sketch_shapes,
 	"slide-button/auto-reset": demo_slide_button_auto_reset,
 	"slide-button/controlled-async": demo_slide_button_controlled_async,
 	"slide-button/custom-thumb": demo_slide_button_custom_thumb,

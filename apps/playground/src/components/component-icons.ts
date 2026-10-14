@@ -28,6 +28,7 @@ import {
 	IconDivider,
 	IconDotGrid1x3Horizontal,
 	IconDotGrid2x3,
+	IconDraw,
 	IconExclamationTriangle,
 	IconFilter1,
 	IconFontStyle,
@@ -158,6 +159,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	frame: IconLayoutTop,
 	"grid-item": IconDotGrid2x3,
 	"page-header": IconPersona,
+	sketch: IconDraw,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

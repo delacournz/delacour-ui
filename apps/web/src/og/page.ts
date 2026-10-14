@@ -35,6 +35,7 @@ export const MOMENTS: Partial<Record<PreviewId, Moment>> = {
 	"drawer/navigation": { at: 0.3, anchor: "top" },
 	"feedback/basic": { at: 0.8, anchor: "top" },
 	"menu/actions": { at: 0.6, anchor: "bottom" },
+	"page-header/in-a-screen": POSTER,
 	"popover/basic": { at: 0.6, anchor: "top" },
 	"select/single": { at: 0.25, anchor: "bottom" },
 	"time-picker/basic-sheet": { at: 0.35, anchor: "bottom" },

@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on frame/settings and has settled — a Notifications frame with three switch
+  rows: Push on, Email off, Quiet hours on. The capture script navigates there before running this.
+steps:
+  - echo: Flipping each row in the tray, top to bottom
+  - tap: { id: switch-push }
+  - wait: 450
+  - tap: { id: switch-email }
+  - wait: 450
+  - tap: { id: switch-quiet }
+  - wait: 800
+  - echo: And back, so the clip loops without a jump cut
+  - tap: { id: switch-quiet }
+  - wait: 450
+  - tap: { id: switch-email }
+  - wait: 450
+  - tap: { id: switch-push }

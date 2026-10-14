@@ -83,6 +83,7 @@
 		"screen",
 		"surface",
 		"card",
+		"frame",
 		"direction",
 		"carousel",
 		"---Utilities---",

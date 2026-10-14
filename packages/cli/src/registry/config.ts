@@ -248,6 +248,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "One control with its label, description and error — and the state they all read.",
 		categories: ["forms"],
 	},
+	frame: {
+		title: "Frame",
+		description: "A titled shell around a card of divided rows, with sections and a footer.",
+		categories: ["layout"],
+	},
 	icon: {
 		title: "Icon",
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",

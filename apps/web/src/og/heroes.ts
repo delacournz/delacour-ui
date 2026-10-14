@@ -52,6 +52,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/feedback": "feedback/basic",
 	"native/components/field": "field/states/live",
 	"native/components/flow": "flow/pipeline",
+	"native/components/frame": "frame/settings",
 	"native/components/icon": "icon/the-size-scale",
 	"native/components/input": "input/states/live-validation",
 	"native/components/item": "item/in-a-list-group",
@@ -185,6 +186,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"feedback/basic": { cut: "68362b3b1f50", load: () => import("./frames/feedback/basic.png?inline") },
 	"field/states/live": { load: () => import("../../public/previews/field/states/live/dark.png?inline") },
 	"flow/pipeline": { load: () => import("../../public/previews/flow/pipeline/dark.png?inline") },
+	"frame/settings": { load: () => import("../../public/previews/frame/settings/dark.png?inline") },
 	"icon/the-size-scale": { load: () => import("../../public/previews/icon/the-size-scale/dark.png?inline") },
 	"input/states/live-validation": {
 		load: () => import("../../public/previews/input/states/live-validation/dark.png?inline"),

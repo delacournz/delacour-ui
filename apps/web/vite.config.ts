@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
+import { pageCacheRules } from "./src/lib/cache-rules";
 
 export default defineConfig({
 	server: {
@@ -41,6 +42,12 @@ export default defineConfig({
 		// `/previews` is not content-hashed, so it cannot be `immutable` like
 		// `/assets`; a day, revalidated in the background, still turns a returning
 		// reader's clips and posters into cache hits instead of refetches.
+		//
+		// Rendered pages and the text endpoints carried no `Cache-Control` at all, so
+		// nothing downstream could cache them and every crawler hit re-rendered. They
+		// are only as fresh as the last deploy, so five minutes fresh plus a day of
+		// stale-while-revalidate costs readers nothing and lets an edge cache absorb
+		// repeat traffic. See `src/lib/cache-rules.ts`.
 		nitro({
 			preset: "bun",
 			compressPublicAssets: true,
@@ -48,6 +55,7 @@ export default defineConfig({
 				"/previews/**": {
 					headers: { "cache-control": "public, max-age=86400, stale-while-revalidate=604800" },
 				},
+				...pageCacheRules,
 			},
 		}),
 	],

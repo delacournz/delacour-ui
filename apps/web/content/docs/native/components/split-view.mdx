@@ -1,0 +1,286 @@
+---
+title: SplitView
+description: Two stacked panes with a drag row that settles on named snap points.
+icon: Rows2
+---
+
+<Preview id="split-view/anatomy" title={null} />
+
+## Installation
+
+<ComponentInstall name="split-view" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { SplitView } from "@/components/ui/split-view";
+import { Text } from "@/components/ui/text";
+import { View } from "react-native";
+
+const RESULTS = ["Harbour Café", "Kelburn Park", "Cuba Street", "Te Papa"];
+
+export default function Example() {
+  return (
+    <SplitView className="flex-1" snapPoints={[0.3, 0.6, 1]} defaultSnapIndex={1}>
+      <SplitView.Top>
+        <View className="flex-1 items-center justify-center bg-muted">
+          <Text.Label>Map</Text.Label>
+        </View>
+      </SplitView.Top>
+      <SplitView.DragArea accessibilityLabel="Resize map" />
+      <SplitView.Bottom>
+        <View className="gap-3 p-4">
+          {RESULTS.map((name) => (
+            <Text.Paragraph key={name}>{name}</Text.Paragraph>
+          ))}
+        </View>
+      </SplitView.Bottom>
+    </SplitView>
+  );
+}
+```
+
+<Callout type="warn" title="The root needs an extent">
+Stops are resolved against the box, so give the root `flex-1` or a fixed height. Until it has been
+measured both panes share it equally.
+</Callout>
+
+## Drag the row
+
+The top pane follows the finger and settles on the nearest stop, or the next one along when flicked; a tap on the grip cycles.
+
+<Preview id="split-view/anatomy" />
+
+## Snap points
+
+A stop at or below `1` is a fraction of the box, less the 44pt drag row; above `1` it is points. The two
+can be mixed, and the stops are ordered by the height they resolve to.
+
+<Preview id="split-view/snap-points" />
+
+```tsx
+<SplitView className="flex-1" snapPoints={[120, 0.5, 1]} defaultSnapIndex={0}>
+  <SplitView.Top />
+  <SplitView.DragArea />
+  <SplitView.Bottom />
+</SplitView>
+```
+
+`minTopHeight` and `minBottomHeight` are floors in points. A stop below the top floor is lifted to it;
+a stop that would crush the bottom pane is lowered, so `1` with `minBottomHeight={100}` leaves the
+bottom pane its hundred points.
+
+Prefer one unit unless a stop has to be a fixed size. A mixed list whose order differs between portrait
+and landscape keeps its index across a rotation, so the same index can name a different stop.
+
+## Variants
+
+`panes`, the default, gives each pane a rounded card surface with the drag row between them. `seam`
+leaves the panes flush and draws a hairline behind the grip, for a split that already sits on a card or
+a sheet.
+
+<Preview id="split-view/seam" />
+
+```tsx
+<Card className="overflow-hidden p-0">
+  <SplitView className="h-96" variant="seam">
+    <SplitView.Top>
+      <Chart />
+    </SplitView.Top>
+    <SplitView.DragArea accessibilityLabel="Resize chart" />
+    <SplitView.Bottom>
+      <Table />
+    </SplitView.Bottom>
+  </SplitView>
+</Card>
+```
+
+## Controlled index
+
+`snapIndex` and `onSnapIndexChange` own the stop. `onSnapIndexChange` fires once per settle, never per
+frame. `useSplitView()` gives a child the same index and `snapTo`, so a toolbar inside a pane can move
+the divider.
+
+<Preview id="split-view/controlled" />
+
+```tsx
+function Expand() {
+  const { snapCount, snapTo } = useSplitView();
+  return (
+    <Button onPress={() => snapTo(snapCount - 1)}>
+      <Button.Label>Expand map</Button.Label>
+    </Button>
+  );
+}
+
+const [index, setIndex] = useState(1);
+
+<SplitView className="flex-1" snapIndex={index} onSnapIndexChange={setIndex}>
+  <SplitView.Top>
+    <Expand />
+  </SplitView.Top>
+  <SplitView.DragArea />
+  <SplitView.Bottom />
+</SplitView>
+```
+
+## Scrolling content
+
+The gesture lives on the drag row only. A list in either pane scrolls without moving the divider, and a
+drag that starts on the row wins over the list. Scrollables inside a pane are yours to add.
+
+<Preview id="split-view/scrolling-panes" />
+
+```tsx
+<SplitView className="flex-1" minTopHeight={80} minBottomHeight={120}>
+  <SplitView.Top>
+    <Document />
+  </SplitView.Top>
+  <SplitView.DragArea accessibilityLabel="Resize comments" />
+  <SplitView.Bottom>
+    <ScrollView>{comments}</ScrollView>
+  </SplitView.Bottom>
+</SplitView>
+```
+
+## Accessibility
+
+The drag row is `adjustable`. A screen reader reads its label and position — "Resize map, Position 2 of
+3". Swiping up or down steps one stop, and the step is only offered where there is a stop to step to.
+A double tap cycles and announces where it landed. The grip is hidden from assistive technology.
+
+Under Reduce Motion the drag still follows the finger, but a release jumps to its stop rather than
+springing.
+
+## SplitView, Splitter or BottomSheet
+
+| | SplitView | Splitter | BottomSheet |
+| --- | --- | --- | --- |
+| Panes | exactly two | two or more | content over the app |
+| Axis | vertical | either | vertical |
+| Release | a named stop | where it was let go | a snap point, or dismissed |
+| Value | `snapIndex` | `layout`, in percent | the sheet's index |
+| Backdrop, dismissal, keyboard | no | no | yes |
+
+Both panes of a SplitView are always on screen and nothing is dismissed. Use `Splitter` for free
+resizing or more than two panes, and `BottomSheet` for content that floats over the screen.
+
+## Tablets and landscape
+
+SplitView never switches to side by side by itself. Deciding that is up to the app: on a wide window,
+render a horizontal `Splitter` instead.
+
+```tsx
+import { useWindowDimensions } from "react-native";
+
+function Results() {
+  const { width } = useWindowDimensions();
+
+  if (width >= 768) {
+    return (
+      <Splitter className="flex-1" defaultLayout={[60, 40]}>
+        <Splitter.Pane minSize={40}>
+          <ResultsMap />
+        </Splitter.Pane>
+        <Splitter.Handle accessibilityLabel="Resize map" />
+        <Splitter.Pane minSize={30}>
+          <ResultsList />
+        </Splitter.Pane>
+      </Splitter>
+    );
+  }
+
+  return (
+    <SplitView className="flex-1">
+      <SplitView.Top>
+        <ResultsMap />
+      </SplitView.Top>
+      <SplitView.DragArea accessibilityLabel="Resize map" />
+      <SplitView.Bottom>
+        <ResultsList />
+      </SplitView.Bottom>
+    </SplitView>
+  );
+}
+```
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `SplitView` | Resolves the stops, owns the top pane's height and the settle |
+| `SplitView.Top` | The upper pane, whose height moves |
+| `SplitView.DragArea` | The 44pt row that drags, taps to cycle and is the adjustable element |
+| `SplitView.Bottom` | The lower pane, filling what is left |
+| `SplitView.Handle` | The grip capsule, drawn by `DragArea` when it has no children |
+
+### SplitView
+
+<TypeTable
+  type={{
+    snapPoints: {
+      type: "number[]",
+      default: "[0.35, 0.65, 1]",
+      description: "Stops for the top pane. At or below 1 is a fraction of the box; above 1 is points. At least two.",
+    },
+    snapIndex: { type: "number", description: "Controlled index into the stops, ascending by height." },
+    defaultSnapIndex: { type: "number", description: "Initial index while uncontrolled. Defaults to the middle stop." },
+    onSnapIndexChange: { type: "(index: number) => void", description: "Fires once when a release, a tap or an assistive action settles." },
+    minTopHeight: { type: "number", default: "0", description: "Floor for the top pane, in points." },
+    minBottomHeight: { type: "number", default: "0", description: "Floor for the bottom pane, in points." },
+    variant: {
+      type: '"panes" | "seam"',
+      default: '"panes"',
+      description: "panes gives each pane a rounded surface; seam leaves them flush with a hairline behind the grip.",
+    },
+    isDisabled: { type: "boolean", default: "false", description: "No drag, no tap, no assistive actions." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"selection"',
+      description: "Played when the stop a release would land on changes.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "SplitView.Top, SplitView.DragArea and SplitView.Bottom, in that order." },
+  }}
+/>
+
+### SplitView.Top and SplitView.Bottom
+
+<TypeTable
+  type={{
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### SplitView.DragArea
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Resize panes"', description: "Read before the position. Name the pane being resized." },
+    children: { type: "ReactNode", description: "Defaults to a SplitView.Handle." },
+    className: { type: "string" },
+  }}
+/>
+
+### SplitView.Handle
+
+<TypeTable
+  type={{
+    className: { type: "string" },
+  }}
+/>
+
+### useSplitView
+
+<TypeTable
+  type={{
+    snapIndex: { type: "number", description: "The settled stop." },
+    snapCount: { type: "number", description: "How many stops there are." },
+    variant: { type: '"panes" | "seam"' },
+    isDisabled: { type: "boolean" },
+    snapTo: { type: "(index: number) => void", description: "Animates to a stop, clamped to range." },
+  }}
+/>

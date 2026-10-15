@@ -465,6 +465,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
 		categories: ["controls"],
 	},
+	"split-view": {
+		title: "SplitView",
+		description: "Two stacked panes with a grip that settles on named heights.",
+		categories: ["layout"],
+	},
 	splitter: {
 		title: "Splitter",
 		description: "Two or more panes divided by draggable handles, sized in percent.",

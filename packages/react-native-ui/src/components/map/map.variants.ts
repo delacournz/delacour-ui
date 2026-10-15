@@ -130,6 +130,18 @@ export function resolveMarkerCenterOffset(anchor: MapAnchorPoint, size: Size): M
 	return { x: (0.5 - anchor.x) * size.width, y: (0.5 - anchor.y) * size.height };
 }
 
+/**
+ * Whether a marker's content got smaller in either direction. Apple's annotation
+ * view only ever grows to fit its content, so after a shrink the content sits in
+ * the corner of a frame still sized for what it held before, and the pin draws up
+ * and to the left of its coordinate; `Map.Marker` remounts the annotation when
+ * this is true. A first measurement is not a shrink.
+ */
+export function isMarkerShrink(previous: Size | null, next: Size): boolean {
+	if (previous === null) return false;
+	return next.width < previous.width || next.height < previous.height;
+}
+
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 const RGB = /^rgba?\(\s*([^,]+),\s*([^,]+),\s*([^,)]+)/i;
 

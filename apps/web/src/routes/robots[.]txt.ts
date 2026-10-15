@@ -12,11 +12,22 @@ import { siteUrl } from "@/lib/shared";
  * at ~40 requests a second, and that crawl was ~99% of the service's egress.
  * `/theme` itself, the named presets' landing, stays crawlable.
  *
+ * **Meta's crawlers are barred from `/theme` entirely.** The bare path is cheap to
+ * render but was fetched ~13k times an hour from 57.141.0.0/16 (AS32934), which
+ * `Disallow: /theme?` does not cover. Some of that traffic spoofs Chrome and will
+ * ignore this; that part needs an edge rule, not a robots line.
+ *
  * No `Sitemap:` line. Prerendering is off, so nothing produces a page list at
  * build time, and a hand-written sitemap is a transcription that would go stale
  * the first time a page moved.
  */
-const BODY = `User-agent: *
+export const BODY = `User-agent: meta-externalagent
+User-agent: meta-externalfetcher
+User-agent: FacebookBot
+User-agent: facebookexternalhit
+Disallow: /theme
+
+User-agent: *
 Allow: /
 Disallow: /theme?
 

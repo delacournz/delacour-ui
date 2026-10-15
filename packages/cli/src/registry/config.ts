@@ -274,6 +274,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
 		categories: ["layout"],
 	},
+	"flip-card": {
+		title: "FlipCard",
+		description: "Two faces of one card and a turn between them, by tap, swipe or code.",
+		categories: ["media"],
+	},
 	icon: {
 		title: "Icon",
 		description: "A Central Icons glyph that inherits size and colour from the surrounding component.",

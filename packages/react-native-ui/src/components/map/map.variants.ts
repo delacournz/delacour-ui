@@ -297,11 +297,11 @@ export const mapVariants = tv({
 		/** The layer floating parts sit on. `box-none` passes touches on empty space to the map. */
 		overlay: "absolute inset-0",
 		marker: "items-center",
-		label: "max-w-40 rounded-full border border-border bg-card px-2 py-0.5",
+		label: "max-w-40 rounded-full px-2 py-0.5",
 		labelText: "font-medium",
 		popup: "max-w-64 gap-1",
 		popupTitle: "font-semibold text-card-foreground",
-		popupCaret: "-mt-px h-2 w-3 self-center",
+		popupCaret: "-mt-px self-center",
 		controls: "absolute gap-2",
 		userHeading: "items-center justify-center",
 	},

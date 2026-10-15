@@ -21,6 +21,17 @@
 					"style": { "useFilenamingConvention": "off" }
 				}
 			}
+		},
+		{
+			// The library's component is called `Map`, and a demo imports it by that
+			// name because a reader writes it by that name. It shadows the global
+			// only inside these files, none of which wants the global.
+			"includes": ["src/demos/map/**/*", "src/app/(components)/map.tsx"],
+			"linter": {
+				"rules": {
+					"suspicious": { "noShadowRestrictedNames": "off" }
+				}
+			}
 		}
 	]
 }

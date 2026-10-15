@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on compare/themes and has settled — one report card cut in half, light on the
+  left and dark on the right, its seam at the centre on the handle carrying the testID compare-themes-handle. The
+  capture script navigates there before running this.
+steps:
+  - echo: Sweeping the seam across the card, light to dark and back
+  - swipe: { from: { id: compare-themes-handle }, by: { x: 0.3 }, momentum: false, duration: 700 }
+  - wait: 400
+  - swipe: { from: { id: compare-themes-handle }, by: { x: -0.6 }, momentum: false, duration: 1000 }
+  - wait: 400
+  - echo: And back to the centre, so the clip loops without a jump cut
+  - swipe: { from: { id: compare-themes-handle }, by: { x: 0.3 }, momentum: false, duration: 700 }

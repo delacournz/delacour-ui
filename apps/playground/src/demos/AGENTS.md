@@ -57,7 +57,8 @@ map.
 ## The rules
 
 **Imports are restricted, and this is the load-bearing one.** A demo may import
-only from `@delacour/react-native-ui/*`, `react`, `react-native`, the native peers, and
+only from `@delacour/react-native-ui/*`, `react`, `react-native`, the native peers,
+`uniwind` (a peer too — `compare/themes` takes `ScopedTheme` from it), and
 `@/demos/types`. Nothing else — not `@/components/section`, not `expo-router`,
 not a helper two folders up. The source extractor **throws** on a violation,
 because a demo that only resolves inside this repository has stopped

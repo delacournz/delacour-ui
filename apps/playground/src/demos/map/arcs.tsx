@@ -6,7 +6,6 @@ export const meta: DemoMeta = {
 	title: "Arcs",
 	caption:
 		"A curve from one point to another, for a connection rather than a path. Each starts and ends exactly on its coordinates, so the markers sit on the line.",
-	capture: { align: "stretch" },
 };
 
 type City = { name: string; lngLat: readonly [number, number] };

@@ -363,6 +363,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Content that travels across its container on a loop, held still on touch.",
 		categories: ["media"],
 	},
+	message: {
+		title: "Message",
+		description: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

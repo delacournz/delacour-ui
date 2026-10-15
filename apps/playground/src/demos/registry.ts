@@ -432,6 +432,15 @@ import * as demo_menu_inset_rows from "./menu/inset-rows";
 import * as demo_menu_long_list from "./menu/long-list";
 import * as demo_menu_near_bottom_edge from "./menu/near-bottom-edge";
 import * as demo_menu_submenu from "./menu/submenu";
+import * as demo_message_directions from "./message/directions";
+import * as demo_message_emoji_and_plain from "./message/emoji-and-plain";
+import * as demo_message_long_press from "./message/long-press";
+import * as demo_message_reactions from "./message/reactions";
+import * as demo_message_rtl from "./message/rtl";
+import * as demo_message_runs from "./message/runs";
+import * as demo_message_status from "./message/status";
+import * as demo_message_typing from "./message/typing";
+import * as demo_message_with_attachments from "./message/with-attachments";
 import * as demo_meter_anatomy from "./meter/anatomy";
 import * as demo_meter_colours from "./meter/colours";
 import * as demo_meter_formatting from "./meter/formatting";
@@ -1152,6 +1161,15 @@ export const DEMOS = {
 	"menu/long-list": demo_menu_long_list,
 	"menu/near-bottom-edge": demo_menu_near_bottom_edge,
 	"menu/submenu": demo_menu_submenu,
+	"message/directions": demo_message_directions,
+	"message/emoji-and-plain": demo_message_emoji_and_plain,
+	"message/long-press": demo_message_long_press,
+	"message/reactions": demo_message_reactions,
+	"message/rtl": demo_message_rtl,
+	"message/runs": demo_message_runs,
+	"message/status": demo_message_status,
+	"message/typing": demo_message_typing,
+	"message/with-attachments": demo_message_with_attachments,
 	"meter/anatomy": demo_meter_anatomy,
 	"meter/colours": demo_meter_colours,
 	"meter/formatting": demo_meter_formatting,

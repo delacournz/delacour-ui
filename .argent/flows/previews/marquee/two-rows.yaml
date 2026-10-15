@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on marquee/two-rows and has settled — two badge strips in one
+  Marquee.Group, the top drifting left and the bottom right, already moving. The capture script navigates
+  there before running this.
+steps:
+  - echo: Both rows drifting in step
+  - wait: 1200
+  - echo: A finger on the top row holds both, then lets them ease back up to speed
+  - long-press: { on: { id: marquee-two-rows-top }, duration: 1400 }
+  - wait: 1200

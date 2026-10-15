@@ -1,0 +1,109 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "marquee",
+	"type": "registry:ui",
+	"title": "Marquee",
+	"description": "Content that travels across its container on a loop, held still on touch.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"tv",
+		"use-calm-motion",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/marquee/AGENTS.md",
+			"target": "marquee/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/marquee",
+					"to": "@registry/ui/marquee"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/index.ts",
+			"target": "marquee/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee-fade.tsx",
+			"target": "marquee/marquee-fade.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee-group.tsx",
+			"target": "marquee/marquee-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee-scroller.tsx",
+			"target": "marquee/marquee-scroller.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee-track.tsx",
+			"target": "marquee/marquee-track.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee.context.tsx",
+			"target": "marquee/marquee.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee.tsx",
+			"target": "marquee/marquee.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee.types.ts",
+			"target": "marquee/marquee.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marquee/marquee.variants.ts",
+			"target": "marquee/marquee.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

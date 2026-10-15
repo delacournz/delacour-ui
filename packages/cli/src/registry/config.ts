@@ -53,6 +53,9 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
+	// Ships Apple and Google map views, and Expo 57 bundles 1.27.2. Only `map`
+	// imports it, so an app without a map never installs it.
+	"react-native-maps": "expo",
 
 	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "npm",
 	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
@@ -253,6 +256,214 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
 		categories: ["overlays"],
+	},
+	pressable: {
+		title: "Pressable",
+		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",
+		categories: ["primitives"],
+	},
+	provider: {
+		title: "Provider",
+		description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling.",
+		categories: ["primitives"],
+	},
+	menu: {
+		title: "Menu",
+		description:
+			"A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus.",
+		categories: ["controls"],
+	},
+	meter: {
+		title: "Meter",
+		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
+		categories: ["feedback"],
+	},
+	progress: {
+		title: "Progress",
+		description: "A bar showing how far a task has got, or a looping segment while it is under way.",
+		categories: ["feedback"],
+	},
+	"progress-button": {
+		title: "Progress Button",
+		description:
+			"A button held to confirm: a fill grows while it is held and the action fires when it reaches the end.",
+		categories: ["controls"],
+	},
+	radio: {
+		title: "Radio",
+		description: "A radio and the group that owns which one is selected.",
+		categories: ["forms"],
+	},
+	rating: {
+		title: "Rating",
+		description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps.",
+		categories: ["forms"],
+	},
+	screen: {
+		title: "Screen",
+		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",
+		categories: ["layout"],
+	},
+	"selection-mode": {
+		title: "Selection Mode",
+		description:
+			"Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
+		categories: ["controls"],
+	},
+	separator: {
+		title: "Separator",
+		description: "A one-pixel rule, hidden from assistive technology.",
+		categories: ["layout"],
+	},
+	skeleton: {
+		title: "Skeleton",
+		description: "A placeholder that shimmers or pulses while content loads, in step across a group.",
+		categories: ["feedback"],
+	},
+	"slide-button": {
+		title: "Slide Button",
+		description: "A handle dragged across a rail to confirm an action a tap should not reach.",
+		categories: ["controls"],
+	},
+	slider: {
+		title: "Slider",
+		description: "A value along a track, dragged by a handle that follows the gesture.",
+		categories: ["forms"],
+	},
+	spinner: {
+		title: "Spinner",
+		description: "An animated loading indicator drawn on the icon scale.",
+		categories: ["feedback"],
+	},
+	"stack-card": {
+		title: "Stack Card",
+		description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
+		categories: ["controls"],
+	},
+	steps: {
+		title: "Steps",
+		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",
+		categories: ["navigation"],
+	},
+	surface: {
+		title: "Surface",
+		description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests.",
+		categories: ["layout"],
+	},
+	swipe: {
+		title: "Swipe",
+		description:
+			"A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open.",
+		categories: ["controls"],
+	},
+	switch: {
+		title: "Switch",
+		description: "An on/off control whose thumb can be dragged as well as tapped.",
+		categories: ["forms"],
+	},
+	tabs: {
+		title: "Tabs",
+		description: "A swipeable pager with an indicator measured against the active tab.",
+		categories: ["navigation"],
+	},
+	text: {
+		title: "Text",
+		description: "Typography: the type scale, weights and the page-level colours.",
+		categories: ["display"],
+	},
+	textarea: {
+		title: "Textarea",
+		description: "A multiline text field sized in rows, with auto-grow and a character count.",
+		categories: ["forms"],
+	},
+	"toggle-button": {
+		title: "Toggle Button",
+		description: "A button that stays pressed, alone or in a group with single or multiple selection.",
+		categories: ["controls"],
+	},
+	toast: {
+		title: "Toast",
+		description:
+			"A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses.",
+		categories: ["overlays"],
+		dependencies: ["react-native-teleport"],
+	},
+	tooltip: {
+		title: "Tooltip",
+		description:
+			"A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
+		categories: ["overlays"],
+	},
+
+	expo: {
+		title: "Navigation theme",
+		description: "Hands expo-router's navigator this library's colours, including the slab behind a push.",
+	},
+
+	"calm-motion": {
+		title: "calmMotion",
+		description: "Whether decorative loops hold still: reduce motion, or an app's E2E build asking.",
+	},
+	cn: { title: "cn", description: "Class merging that understands the library's semantic size tokens." },
+	color: { title: "isLiteralColor", description: "Tells a literal colour from a theme token name." },
+	"compose-refs": { title: "composeRefs", description: "Merges several refs onto one node." },
+	"keyboard-animation": {
+		title: "keyboardAnimation",
+		description: "The timing the keyboard opens with, so content moving with it stays in step.",
+	},
+	"navigation-theme": {
+		title: "navigationTheme",
+		description: "Maps the theme's tokens onto the colours React Navigation asks for.",
+	},
+	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
+	slot: { title: "Slot", description: "Renders into a child element instead of a wrapper." },
+	tv: {
+		title: "tv",
+		description: "tailwind-variants, taught the library's semantic size tokens.",
+		// tailwind-variants peer-depends on tailwind-merge for its own merger. `cn`
+		// replaced it behind `cn()`, so no file imports it any more and the scan
+		// cannot see it — but Yarn does not install peers, and `tv()` needs it.
+		dependencies: ["tailwind-merge"],
+	},
+
+	"use-calm-motion": {
+		title: "useCalmMotion",
+		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-keyboard-state-sync": {
+		title: "useKeyboardStateSync",
+		description: "Keeps the keyboard's height and progress on the UI thread, for layout that tracks it.",
+	},
+	"use-navigation-theme": {
+		title: "useNavigationTheme",
+		description: "Resolves the theme's colours for the active scheme, ready for a navigator.",
+	},
+	"use-controllable-state": {
+		title: "useControllableState",
+		description: "State that works controlled or uncontrolled from the same prop pair.",
+	},
+	"use-theme-color": {
+		title: "useThemeColor",
+		description: "Resolves a theme token to the colour the active scheme gives it.",
+	},
+
+	icons: {
+		title: "Icons",
+		description: "The Central Icons set, re-exported so components import glyphs from one place.",
+	},
+	styles: {
+		title: "Styles",
+		description: "Tailwind base, the semantic size tokens, and the light and dark theme palettes.",
+		// base.css pulls both in through CSS, which no import scan can see.
+		dependencies: ["tailwindcss", "uniwind"],
+	},
+};
+{
+	map: {
+		title: "Map",
+		description:
+			"A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+		categories: ["display"],
 	},
 	pressable: {
 		title: "Pressable",

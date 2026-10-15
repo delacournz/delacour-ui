@@ -40,6 +40,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/chart": "chart/line/line",
 	"native/components/checkbox": "checkbox/colours",
 	"native/components/chip": "chip/filter-row",
+	"native/components/circular-text": "circular-text/seal",
 	"native/components/collapsible": "collapsible/a-section-of-detail",
 	"native/components/color-picker": "color-picker/basic",
 	"native/components/combobox": "combobox/single",
@@ -175,6 +176,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"charts/scatter/scatter": { load: () => import("../../public/previews/charts/scatter/scatter/dark.png?inline") },
 	"checkbox/colours": { load: () => import("../../public/previews/checkbox/colours/dark.png?inline") },
 	"chip/filter-row": { load: () => import("../../public/previews/chip/filter-row/dark.png?inline") },
+	"circular-text/seal": { load: () => import("../../public/previews/circular-text/seal/dark.png?inline") },
 	"collapsible/a-section-of-detail": {
 		load: () => import("../../public/previews/collapsible/a-section-of-detail/dark.png?inline"),
 	},

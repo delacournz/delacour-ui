@@ -23,6 +23,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "chart", title: "Chart", description: "Skia charts on the theme's series ramp: line, area, bar, scatter, candlestick and pie, with grid, axes, legend and tooltip." },
 	{ name: "checkbox", title: "Checkbox", description: "A checkbox with an indeterminate state, and a group that owns the selection." },
 	{ name: "chip", title: "Chip", description: "An interactive pill: a filter that toggles, a tag, or a token with a remove control." },
+	{ name: "circular-text", title: "Circular Text", description: "Text set around a circle on an SVG path, optionally turning, with content in the middle." },
 	{ name: "collapsible", title: "Collapsible", description: "One section shown and hidden by its own trigger, animated to its measured height." },
 	{ name: "color-picker", title: "Color Picker", description: "A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet." },
 	{ name: "combobox", title: "Combobox", description: "A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values." },

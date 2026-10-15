@@ -2,7 +2,8 @@ import { redirect } from "@tanstack/react-router";
 import { createCsrfMiddleware, createMiddleware, createStart } from "@tanstack/react-start";
 import { isMarkdownPreferred } from "fumadocs-core/negotiation";
 import { reportAgentFetch } from "@/lib/analytics/server";
-import { gzipResponse } from "@/lib/compress";
+import { compressResponse } from "@/lib/compress";
+import { blockCrawlerResponse, isBlockedCrawler } from "@/lib/crawler-block";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
 
 const csrfMiddleware = createCsrfMiddleware({
@@ -27,12 +28,21 @@ const llmMiddleware = createMiddleware().server(({ next, request }) => {
 });
 
 /**
- * Outermost, so it wraps whatever the rest of the chain renders. See
+ * First of all: a refused crawler costs one tiny 403, never a render. A request the
+ * edge cache answers does not reach this process — see `src/lib/crawler-block.ts`.
+ */
+const crawlerBlockMiddleware = createMiddleware().server(({ next, request }) => {
+	if (isBlockedCrawler(request)) return blockCrawlerResponse();
+	return next();
+});
+
+/**
+ * Just inside the block, so it wraps whatever the rest of the chain renders. See
  * `src/lib/compress.ts`.
  */
 const compressionMiddleware = createMiddleware().server(async ({ next, request }) => {
 	const result = await next();
-	return gzipResponse(request, result.response);
+	return compressResponse(request, result.response);
 });
 
 /**
@@ -47,6 +57,12 @@ const analyticsMiddleware = createMiddleware().server(({ next, request }) => {
 
 export const startInstance = createStart(() => {
 	return {
-		requestMiddleware: [compressionMiddleware, csrfMiddleware, analyticsMiddleware, llmMiddleware],
+		requestMiddleware: [
+			crawlerBlockMiddleware,
+			compressionMiddleware,
+			csrfMiddleware,
+			analyticsMiddleware,
+			llmMiddleware,
+		],
 	};
 });

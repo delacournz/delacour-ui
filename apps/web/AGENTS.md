@@ -77,7 +77,7 @@ src/
 │   ├── api/search.ts
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
-├── start.ts               gzip + csrf + Accept: text/markdown negotiation
+├── start.ts               crawler block + br/gzip + csrf + Accept: text/markdown negotiation
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 source.config.ts           global mdxOptions — remarkComponentCount, merged into Fumadocs' defaults
@@ -923,13 +923,34 @@ extension would.
 
 ### Nothing is compressed unless this app does it
 
-Railway's edge passes the process's bytes through as written, and Nitro's Bun preset writes them
-raw. So `vite.config.ts` sets `compressPublicAssets` (static files are served from `.br`/`.gz`
-siblings written at build) and `src/start.ts` runs `gzipResponse` from `src/lib/compress.ts` as its
-outermost request middleware (rendered pages, gzipped as they stream). A new binary content type
-needs nothing; a new text type the regex there does not match goes out uncompressed.
+Nitro's Bun preset writes responses raw, and Railway's edge forwards anything that already carries
+`Content-Encoding` as-is (it only compresses responses that arrive uncompressed, caching each
+encoding as its own entry). So `vite.config.ts` sets `compressPublicAssets` (static files are served
+from `.br`/`.gz` siblings written at build) and `src/start.ts` runs `compressResponse` from
+`src/lib/compress.ts` just inside the crawler block (rendered pages, compressed as they stream):
+Brotli (`node:zlib`, quality 4, flushed per chunk, works under Bun) when `Accept-Encoding` allows
+it by q-value, else gzip, else identity. HEAD is deliberately left uncompressed, so measure with
+GET. A new binary content type needs nothing; a new text type the regex there does not match goes
+out uncompressed.
 `/previews/**` gets a one-day `Cache-Control` from `routeRules` — it is not content-hashed, so it
 cannot be `immutable` the way `/assets` is.
+
+### Crawler block, and why the edge is the real fix
+
+`src/lib/crawler-block.ts` holds one typed constant, `BLOCKED_CRAWLERS` (Meta's `57.141.0.0/16`
+and the `meta-externalagent` / `meta-externalfetcher` / `facebookexternalhit` / `FacebookBot` user
+agents), and `src/start.ts` runs it as the first request middleware: a match gets a bare `403`
+with `Cache-Control: no-store` (so the edge never caches it under the path's key), everything but
+`/robots.txt`. The client IP is Railway's `X-Real-IP` (set by the edge, documented in Public
+Networking specs); `X-Forwarded-For` is never read because a client can prepend to it.
+
+**This only sees requests that reach the process.** Railway's CDN (`--html-caching force`, and the
+pages already send `s-maxage`) answers a cached URL at the edge: a `x-cache: HIT` never touches
+the app, so this middleware cannot stop a crawler from being served `/theme` from cache. Query
+strings are part of the cache key, so `/theme?x=…` always misses and does reach it. The complete
+fix is a Railway **edge rule** (service Settings > Edge > Edge Rules: block on Client IP in
+`57.141.0.0/16`, or Header `user-agent` matches `*meta-external*`), evaluated before the cache.
+Keep the two in step.
 
 ### Prerendering is off
 

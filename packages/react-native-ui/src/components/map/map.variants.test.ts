@@ -16,6 +16,7 @@ import {
 	MAP_PIN_TONE_TOKENS,
 	MAP_PIN_TONES,
 	MAP_ROUTE_TOKEN,
+	MAP_SETTLE_GRACE,
 	mapPinPath,
 	mapVariants,
 	resolveCameraDuration,
@@ -26,6 +27,7 @@ import {
 	resolveMarkerCenterOffset,
 	resolvePinTipAnchor,
 	resolveRouteDashPattern,
+	resolveSettleDelay,
 	resolveUserInterfaceStyle,
 	withAlpha,
 } from "./map.variants";
@@ -241,6 +243,16 @@ describe("resolveUserInterfaceStyle", () => {
 		expect(resolveUserInterfaceStyle("dark")).toBe("dark");
 		expect(resolveUserInterfaceStyle("light")).toBe("light");
 		expect(resolveUserInterfaceStyle(undefined)).toBe("light");
+	});
+});
+
+describe("resolveSettleDelay", () => {
+	test("waits out the flight, then a grace for the native event to land first", () => {
+		expect(resolveSettleDelay(600)).toBe(600 + MAP_SETTLE_GRACE);
+	});
+
+	test("a jump still waits the grace, so the native event can win", () => {
+		expect(resolveSettleDelay(0)).toBe(MAP_SETTLE_GRACE);
 	});
 });
 

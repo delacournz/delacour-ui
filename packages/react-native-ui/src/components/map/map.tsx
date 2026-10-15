@@ -27,6 +27,7 @@ import {
 	resolveCameraDuration,
 	resolveInitialRegion,
 	resolveMapGestures,
+	resolveSettleDelay,
 	resolveUserInterfaceStyle,
 } from "./map.variants";
 import { MapArc } from "./map-arc";
@@ -118,6 +119,11 @@ function MapRoot({
 	const userLocationRef = useRef<LngLat | null>(null);
 	const pendingLocateRef = useRef<{ onLocate?: (lngLat: LngLat) => void } | null>(null);
 	const [overlays, setOverlays] = useState<Readonly<Record<string, ReactNode>>>({});
+	const settleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const onViewStateChangeRef = useRef(onViewStateChange);
+	useEffect(() => {
+		onViewStateChangeRef.current = onViewStateChange;
+	}, [onViewStateChange]);
 
 	const background = useThemeColor(ANDROID_MAP_STYLE_TOKENS.background);
 	const border = useThemeColor(ANDROID_MAP_STYLE_TOKENS.border);
@@ -151,11 +157,41 @@ function MapRoot({
 		props.onLayout?.(event);
 	};
 
+	const cancelSettle = useCallback(() => {
+		if (settleRef.current !== null) clearTimeout(settleRef.current);
+		settleRef.current = null;
+	}, []);
+
+	useEffect(() => cancelSettle, [cancelSettle]);
+
+	// Reports a view the camera came to rest on: the region the zoom buttons
+	// step from, and the caller's `onViewStateChange`. The camera's own centre
+	// and zoom win over the region's where the platform reports them.
+	const settle = useCallback((region: MapRegion) => {
+		regionRef.current = region;
+		const report = onViewStateChangeRef.current;
+		if (report === undefined) return;
+		mapRef.current
+			?.getCamera()
+			.then((camera) => report(regionToViewState(region, camera)))
+			.catch(() => report(regionToViewState(region)));
+	}, []);
+
+	// Apple Maps does not always report the end of a long animated move, which
+	// left `onViewStateChange` and the zoom buttons on the view before it. A move
+	// made here therefore settles itself once it should have landed, unless the
+	// native event arrives first and cancels it.
 	const animateToRegion = useCallback(
 		(region: MapRegion, duration: number | undefined) => {
-			mapRef.current?.animateToRegion(region, resolveCameraDuration(duration, isReducedMotion));
+			const resolved = resolveCameraDuration(duration, isReducedMotion);
+			mapRef.current?.animateToRegion(region, resolved);
+			cancelSettle();
+			settleRef.current = setTimeout(() => {
+				settleRef.current = null;
+				settle(region);
+			}, resolveSettleDelay(resolved));
 		},
-		[isReducedMotion]
+		[cancelSettle, isReducedMotion, settle]
 	);
 
 	const currentRegion = useCallback(
@@ -254,12 +290,8 @@ function MapRoot({
 	};
 
 	const onRegionChangeComplete = (region: Region) => {
-		regionRef.current = region;
-		if (onViewStateChange === undefined) return;
-		mapRef.current
-			?.getCamera()
-			.then((camera) => onViewStateChange(regionToViewState(region, camera)))
-			.catch(() => onViewStateChange(regionToViewState(region)));
+		cancelSettle();
+		settle(region);
 	};
 
 	// Android reports a tap on a marker to the map as well; that tap belongs to

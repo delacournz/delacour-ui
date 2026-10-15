@@ -1,0 +1,196 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "attachment",
+	"type": "registry:ui",
+	"title": "Attachment",
+	"description": "A file, image or recording chip with a thumbnail, size, upload progress and remove control.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"progress",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/attachment/AGENTS.md",
+			"target": "attachment/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/attachment",
+					"to": "@registry/ui/attachment"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-content.tsx",
+			"target": "attachment/attachment-content.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-group.tsx",
+			"target": "attachment/attachment-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-meta.tsx",
+			"target": "attachment/attachment-meta.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-name.tsx",
+			"target": "attachment/attachment-name.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-preview.tsx",
+			"target": "attachment/attachment-preview.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-progress.tsx",
+			"target": "attachment/attachment-progress.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../progress",
+					"to": "@registry/ui/progress"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-remove.tsx",
+			"target": "attachment/attachment-remove.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment-retry.tsx",
+			"target": "attachment/attachment-retry.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment.context.tsx",
+			"target": "attachment/attachment.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment.tsx",
+			"target": "attachment/attachment.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment.types.ts",
+			"target": "attachment/attachment.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment.utils.ts",
+			"target": "attachment/attachment.utils.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/attachment.variants.ts",
+			"target": "attachment/attachment.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/attachment/index.ts",
+			"target": "attachment/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

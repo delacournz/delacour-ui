@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import {
 	Bell,
+	CirclePlay,
 	Compass,
 	Layers,
 	LayoutGrid,
@@ -33,6 +34,7 @@ const GROUP_ICONS: Readonly<Record<ComponentGroup, LucideIcon>> = {
 	Actions: MousePointerClick,
 	Forms: TextCursorInput,
 	"Data display": Rows3,
+	Media: CirclePlay,
 	Feedback: Bell,
 	Overlays: Layers,
 	Navigation: Compass,

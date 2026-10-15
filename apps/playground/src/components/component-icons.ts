@@ -51,11 +51,13 @@ import {
 	IconMap,
 	IconNoteText,
 	IconNumberedList,
+	IconPaperclip1,
 	IconParagraph,
 	IconPasswordStars,
 	IconPeople,
 	IconPersona,
 	IconPlaceholder,
+	IconPlayCircle,
 	IconPlusLarge,
 	IconProgress75,
 	IconSettingsSliderHor,
@@ -164,6 +166,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	sketch: IconDraw,
 	splitter: IconLayoutLeftRight,
 	"split-view": IconLayoutAlignTopBottom,
+	attachment: IconPaperclip1,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */
@@ -171,6 +174,7 @@ export const GROUP_ICONS: Record<ComponentGroup, IconComponent> = {
 	Actions: IconSquareCursor,
 	Forms: IconWindowCursor,
 	"Data display": IconChart1,
+	Media: IconPlayCircle,
 	Feedback: IconBell,
 	Overlays: IconSquareBehindSquare1,
 	Navigation: IconBrowserTabs,

@@ -1868,6 +1868,51 @@
 			]
 		},
 		{
+			"name": "message",
+			"type": "registry:ui",
+			"title": "Message",
+			"description": "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"cn",
+				"icon",
+				"icons",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/message/AGENTS.md",
+				"ui/message/index.ts",
+				"ui/message/message-actions.tsx",
+				"ui/message/message-attachments.tsx",
+				"ui/message/message-author.tsx",
+				"ui/message/message-avatar.tsx",
+				"ui/message/message-bubble.tsx",
+				"ui/message/message-header.tsx",
+				"ui/message/message-reactions.tsx",
+				"ui/message/message-status.tsx",
+				"ui/message/message-text.tsx",
+				"ui/message/message-timestamp.tsx",
+				"ui/message/message-typing.tsx",
+				"ui/message/message.context.tsx",
+				"ui/message/message.tsx",
+				"ui/message/message.types.ts",
+				"ui/message/message.utils.ts",
+				"ui/message/message.variants.ts"
+			]
+		},
+		{
 			"name": "meter",
 			"type": "registry:ui",
 			"title": "Meter",

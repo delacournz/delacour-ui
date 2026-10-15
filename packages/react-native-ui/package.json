@@ -78,6 +78,7 @@
 		"./marquee": "./src/components/marquee/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./message": "./src/components/message/index.ts",
+		"./message-scroller": "./src/components/message-scroller/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./number-input": "./src/components/number-input/index.ts",
 		"./otp-input": "./src/components/otp-input/index.ts",

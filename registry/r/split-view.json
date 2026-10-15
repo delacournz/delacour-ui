@@ -1,0 +1,123 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "split-view",
+	"type": "registry:ui",
+	"title": "SplitView",
+	"description": "Two stacked panes with a grip that settles on named heights.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"pressable",
+		"splitter",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/split-view/AGENTS.md",
+			"target": "split-view/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/split-view",
+					"to": "@registry/ui/split-view"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/index.ts",
+			"target": "split-view/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view-bottom.tsx",
+			"target": "split-view/split-view-bottom.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view-drag-area.tsx",
+			"target": "split-view/split-view-drag-area.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../splitter/splitter.math",
+					"to": "@registry/ui/splitter/splitter.math"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view-handle.tsx",
+			"target": "split-view/split-view-handle.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view-top.tsx",
+			"target": "split-view/split-view-top.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view.context.tsx",
+			"target": "split-view/split-view.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view.tsx",
+			"target": "split-view/split-view.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../splitter/splitter.math",
+					"to": "@registry/ui/splitter/splitter.math"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view.types.ts",
+			"target": "split-view/split-view.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/split-view/split-view.variants.ts",
+			"target": "split-view/split-view.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../splitter/splitter.math",
+					"to": "@registry/ui/splitter/splitter.math"
+				}
+			]
+		}
+	]
+}

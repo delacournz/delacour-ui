@@ -447,6 +447,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "split-view",
+		name: "SplitView",
+		group: "Layout",
+		blurb: "Two stacked panes with a drag row that settles on named snap points.",
+	},
+	{
 		slug: "splitter",
 		name: "Splitter",
 		group: "Layout",

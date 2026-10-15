@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on split-view/controlled and has settled —
+  snapIndex 1, a toolbar of three buttons carrying the testIDs snap-0, snap-1 and
+  snap-2 in the top pane.
+steps:
+  - echo: The buttons call snapTo, and the readout follows
+  - tap: { id: snap-2 }
+  - wait: 800
+  - tap: { id: snap-0 }
+  - wait: 800
+  - tap: { id: snap-1 }
+  - wait: 800

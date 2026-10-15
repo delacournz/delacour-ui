@@ -4,7 +4,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Controls",
-	align: "stretch",
+	capture: { align: "stretch" },
 	caption:
 		"Zoom, compass, recenter and locate, floated in a corner as ghost buttons on a card. Pans on the empty space around them still reach the map.",
 	note: "Locate asks for location permission the first time, and the position never leaves the device.",

@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on map/popup and has settled — two pins with their tiles loaded, the café's
+  card open over its pin. The capture script navigates there before running this. Each marker is tapped by
+  its `-content` id — the marker's own view, which the runner tree can see. The flow never switches the selection
+  from one pin to another: Apple Maps pans to keep a newly selected annotation in view, and that pan would not
+  undo itself, so the clip closes the café's card and reopens it on the same pin.
+steps:
+  - echo: Closing the café's card from its own button
+  - tap: { id: map-popup-cafe-close }
+  - wait: 900
+  - echo: And opening it again, so the clip loops without a jump cut
+  - tap: { id: map-popup-cafe-content }
+  - wait: 900

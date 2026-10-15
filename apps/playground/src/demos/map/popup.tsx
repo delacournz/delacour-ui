@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Popup",
-	align: "stretch",
+	capture: { align: "stretch", flow: "map/popup" },
 	caption:
 		"A themed card over a marker's pin, rendered or not by whoever knows which place is selected. Tap a marker to open its card, the map to close it.",
 };
@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 type Stop = { id: string; name: string; detail: string; lngLat: readonly [number, number] };
 
 const STOPS: readonly Stop[] = [
-	{ detail: "Open until 6 pm", id: "cafe", lngLat: [174.7752, -41.2938], name: "Corner café" },
+	{ detail: "Open until 6 pm", id: "cafe", lngLat: [174.7752, -41.2899], name: "Corner café" },
 	{ detail: "Two-hour parking", id: "car-park", lngLat: [174.7808, -41.2899], name: "Car park" },
 ];
 
@@ -22,7 +22,7 @@ export function Demo(): ReactElement {
 	const [openId, setOpenId] = useState<string | null>("cafe");
 
 	return (
-		<Map center={[174.778, -41.2905]} className="h-96" onPress={() => setOpenId(null)} testID="map-popup" zoom={15}>
+		<Map center={[174.778, -41.2889]} className="h-96" onPress={() => setOpenId(null)} testID="map-popup" zoom={15}>
 			{STOPS.map((stop) => (
 				<Map.Marker
 					accessibilityLabel={stop.name}

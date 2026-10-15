@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on flip-card/anatomy and has settled — a travel card on its
+  front, carrying the testID flip-card. The capture script navigates there before running this.
+steps:
+  - echo: Tapping the card over to its back
+  - tap: { id: flip-card }
+  - wait: 1200
+  - echo: And over again, so the clip loops on the front without a jump cut
+  - tap: { id: flip-card }
+  - wait: 1000

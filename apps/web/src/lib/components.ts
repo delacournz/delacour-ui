@@ -16,6 +16,7 @@ export const COMPONENT_GROUPS = [
 	"Actions",
 	"Forms",
 	"Data display",
+	"Media",
 	"Feedback",
 	"Overlays",
 	"Navigation",
@@ -317,6 +318,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		name: "Accordion",
 		group: "Data display",
 		blurb: "Sections that expand and collapse, animated from a measured height.",
+	},
+	{
+		slug: "attachment",
+		name: "Attachment",
+		group: "Media",
+		blurb: "A file, image or recording — thumbnail, name, size, upload progress, remove and retry.",
 	},
 	{
 		slug: "alert",

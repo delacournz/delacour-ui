@@ -1,0 +1,114 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-text",
+	"type": "registry:ui",
+	"title": "ScrollText",
+	"description": "Text that resolves word by word as the screen scrolls past it.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"color",
+		"screen",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/AGENTS.md",
+			"target": "scroll-text/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/scroll-text",
+					"to": "@registry/ui/scroll-text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/index.ts",
+			"target": "scroll-text/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text-source.ts",
+			"target": "scroll-text/scroll-text-source.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../screen/screen.context",
+					"to": "@registry/ui/screen/screen.context"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text-unit.tsx",
+			"target": "scroll-text/scroll-text-unit.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text.tsx",
+			"target": "scroll-text/scroll-text.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text.types.ts",
+			"target": "scroll-text/scroll-text.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text.variants.ts",
+			"target": "scroll-text/scroll-text.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

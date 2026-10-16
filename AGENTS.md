@@ -69,7 +69,8 @@ Two long-lived branches, and they move differently:
 `main` is the default branch so that anyone reaching the repository sees what was last published.
 GitHub also offers the default branch as the base of every new pull request, and it has no setting
 to offer a different one, so `.github/workflows/retarget-pr.yml` moves any pull request opened
-against `main` to `develop`. Open against `develop` in the first place — `gh pr create --base develop`,
+against `main` to `develop` — from a branch in this repository; a fork's runs no workflow without a
+maintainer's approval, so a maintainer retargets it by hand. Open against `develop` in the first place — `gh pr create --base develop`,
 or `git config branch.<name>.gh-merge-base develop` once per branch — and branch off `origin/develop`,
 not `main`.
 

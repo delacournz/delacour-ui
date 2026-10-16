@@ -1082,6 +1082,50 @@
 			]
 		},
 		{
+			"name": "map",
+			"type": "registry:ui",
+			"title": "Map",
+			"description": "A themed MapLibre map on a token-painted basemap: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"button",
+				"icon",
+				"icons",
+				"surface",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"@maplibre/maplibre-react-native",
+				"react-native-reanimated",
+				"react-native-svg"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/map/AGENTS.md",
+				"ui/map/index.ts",
+				"ui/map/map-arc.tsx",
+				"ui/map/map-controls.tsx",
+				"ui/map/map-geometry.ts",
+				"ui/map/map-label.tsx",
+				"ui/map/map-marker.tsx",
+				"ui/map/map-pin.tsx",
+				"ui/map/map-popup.tsx",
+				"ui/map/map-route.tsx",
+				"ui/map/map-user-location.tsx",
+				"ui/map/map.context.tsx",
+				"ui/map/map.tsx",
+				"ui/map/map.types.ts",
+				"ui/map/map.variants.ts"
+			]
+		},
+		{
 			"name": "menu",
 			"type": "registry:ui",
 			"title": "Menu",

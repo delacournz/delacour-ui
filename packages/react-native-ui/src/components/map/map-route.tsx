@@ -1,10 +1,9 @@
-import type { ReactElement } from "react";
-import { Polyline } from "react-native-maps";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
+import { type ReactElement, useId, useMemo } from "react";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useMapPart } from "./map.context";
 import type { LngLat } from "./map.types";
-import { MAP_ROUTE_TOKEN, resolveRouteDashPattern, withAlpha } from "./map.variants";
-import { lngLatToLatLng } from "./map-geometry";
+import { MAP_ROUTE_TOKEN, resolveRouteDashArray, toStyleColor } from "./map.variants";
 
 export type MapRouteProps = {
 	/** The points the line runs through, in order. */
@@ -21,12 +20,16 @@ export type MapRouteProps = {
 	onPress?: () => void;
 };
 
+/** Points of slack round a line a tap still lands on — a 3-point line is a hard target. */
+const ROUTE_HITBOX = 12;
+
 /**
  * A line through a list of coordinates — a route, a run, a boundary.
  *
  * Round caps and joins, in the theme's `primary` unless given a colour, which
- * may be a token as well as a literal. The native polyline takes no opacity, so
- * `opacity` is folded into the colour's alpha.
+ * may be a token as well as a literal. Drawn by the map itself — a GeoJSON
+ * source and a line layer — so it sits over the basemap and under every
+ * marker, and `opacity` is the layer's own rather than folded into the colour.
  */
 export function MapRoute({
 	coordinates,
@@ -37,19 +40,48 @@ export function MapRoute({
 	onPress,
 }: MapRouteProps): ReactElement {
 	useMapPart("Map.Route");
-	const stroke = withAlpha(useThemeColor(color), opacity);
+	const stroke = toStyleColor(useThemeColor(color));
+	const id = `delacour-route-${useId()}`;
+	const data = useMemo<GeoJSON.Feature<GeoJSON.LineString>>(
+		() => ({
+			geometry: { coordinates: coordinates.map(([longitude, latitude]) => [longitude, latitude]), type: "LineString" },
+			properties: {},
+			type: "Feature",
+		}),
+		[coordinates]
+	);
+	const dashArray = resolveRouteDashArray(isDashed);
 
 	return (
-		<Polyline
-			coordinates={coordinates.map(lngLatToLatLng)}
-			lineCap="round"
-			lineDashPattern={resolveRouteDashPattern(isDashed, width)}
-			lineJoin="round"
-			onPress={onPress === undefined ? undefined : () => onPress()}
-			strokeColor={stroke}
-			strokeWidth={width}
-			tappable={onPress !== undefined}
-		/>
+		<GeoJSONSource
+			data={data}
+			hitbox={
+				onPress === undefined
+					? undefined
+					: { bottom: ROUTE_HITBOX, left: ROUTE_HITBOX, right: ROUTE_HITBOX, top: ROUTE_HITBOX }
+			}
+			id={id}
+			onPress={
+				onPress === undefined
+					? undefined
+					: (event) => {
+							event.stopPropagation();
+							onPress();
+						}
+			}
+		>
+			<Layer
+				id={`${id}-line`}
+				layout={{ "line-cap": "round", "line-join": "round" }}
+				paint={{
+					...(stroke === undefined ? {} : { "line-color": stroke }),
+					...(dashArray === undefined ? {} : { "line-dasharray": dashArray }),
+					"line-opacity": Math.min(1, Math.max(0, opacity)),
+					"line-width": width,
+				}}
+				type="line"
+			/>
+		</GeoJSONSource>
 	);
 }
 MapRoute.displayName = "DelacourUI.Map.Route";

@@ -1,18 +1,15 @@
-import { type ReactElement, type ReactNode, useEffect, useMemo, useState } from "react";
-import { type LayoutChangeEvent, Platform, View, type ViewProps } from "react-native";
-import { Marker } from "react-native-maps";
-import { useUniwind } from "uniwind";
+import { Marker } from "@maplibre/maplibre-react-native";
+import { type ReactElement, type ReactNode, useMemo, useState } from "react";
+import { type LayoutChangeEvent, View, type ViewProps } from "react-native";
 import { type MapMarkerContextValue, type MapMarkerFrame, MapMarkerProvider, useMapPart } from "./map.context";
 import type { LngLat } from "./map.types";
 import {
-	isMarkerShrink,
 	type MapMarkerAnchor,
 	mapVariants,
 	resolveMarkerAnchor,
-	resolveMarkerCenterOffset,
+	resolveMarkerOffset,
 	resolvePinTipAnchor,
 } from "./map.variants";
-import { lngLatToLatLng } from "./map-geometry";
 
 export type MapMarkerProps = Omit<ViewProps, "children"> & {
 	/** Where it sits. */
@@ -31,14 +28,6 @@ export type MapMarkerProps = Omit<ViewProps, "children"> & {
 };
 
 /**
- * How long a marker keeps redrawing after its content last moved, in ms.
- * Google Maps draws a custom marker as a bitmap and only refreshes it while
- * `tracksViewChanges` is on; leaving it on for good costs a redraw per frame
- * per marker, so it is on just long enough for a layout or a theme to settle.
- */
-const TRACKING_WINDOW = 500;
-
-/**
  * A React view pinned to a coordinate.
  *
  * Anchors on the tip of the `Map.Pin` inside it, wherever the pin sits — so a
@@ -49,9 +38,8 @@ const TRACKING_WINDOW = 500;
  * A marker with `onPress` is a button, announced by its `accessibilityLabel`,
  * and its tap does not reach the map's `onPress`.
  *
- * `testID` goes on the native annotation and, suffixed `-content`, on the view
- * inside it: the annotation is not in the view hierarchy a test runner walks,
- * so the inner view is the one an e2e selector can find and tap.
+ * `testID` goes on the native marker and, suffixed `-content`, on the view
+ * inside it, which is the one an e2e selector can always find and tap.
  */
 export function MapMarker({
 	lngLat,
@@ -64,51 +52,41 @@ export function MapMarker({
 	...props
 }: MapMarkerProps): ReactElement {
 	useMapPart("Map.Marker");
-	const { theme } = useUniwind();
 	const [size, setSize] = useState<{ width: number; height: number } | null>(null);
 	const [pin, setPin] = useState<MapMarkerFrame | null>(null);
-	const [isTracking, setIsTracking] = useState(true);
-	const [generation, setGeneration] = useState(0);
-
-	// Every change to what the marker draws — its size, where its pin sits, the
-	// theme — reopens the redraw window, then closes it once things settle.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: the dependencies are the re-run triggers, see above
-	useEffect(() => {
-		setIsTracking(true);
-		const timeout = setTimeout(() => setIsTracking(false), TRACKING_WINDOW);
-		return () => clearTimeout(timeout);
-	}, [size, pin, theme]);
 
 	const anchorPoint =
 		anchor !== undefined
 			? resolveMarkerAnchor(anchor)
 			: ((size !== null && pin !== null ? resolvePinTipAnchor({ marker: size, pin }) : undefined) ??
 				resolveMarkerAnchor("center"));
-	const centerOffset = size === null ? undefined : resolveMarkerCenterOffset(anchorPoint, size);
+	const offset = size === null ? undefined : resolveMarkerOffset(anchorPoint, size);
 
 	const markerContext = useMemo<MapMarkerContextValue>(() => ({ reportPin: setPin }), []);
 
 	const onLayout = (event: LayoutChangeEvent) => {
 		const { width, height } = event.nativeEvent.layout;
-		const next = { height, width };
-		if (Platform.OS === "ios" && isMarkerShrink(size, next)) setGeneration((current) => current + 1);
-		setSize((current) => (current?.width === width && current.height === height ? current : next));
+		setSize((current) => (current?.width === width && current.height === height ? current : { height, width }));
 	};
 
-	// Apple's annotation view grows to fit its content and never shrinks back, so
-	// a marker whose content got smaller is remounted at its new size rather than
-	// drawn in the corner of the old frame.
+	// MapLibre places a marker by a named anchor plus a pixel offset, so the
+	// marker is centred on its coordinate and moved until the anchor point —
+	// a pin's tip, wherever it sits — lands there instead.
 	return (
 		<Marker
 			accessibilityLabel={accessibilityLabel}
 			accessibilityRole={onPress === undefined ? undefined : "button"}
-			anchor={anchorPoint}
-			centerOffset={centerOffset}
-			coordinate={lngLatToLatLng(lngLat)}
-			key={generation}
-			onPress={onPress === undefined ? undefined : () => onPress()}
-			stopPropagation={onPress !== undefined}
-			tracksViewChanges={isTracking}
+			anchor="center"
+			lngLat={[lngLat[0], lngLat[1]]}
+			offset={offset}
+			onPress={
+				onPress === undefined
+					? undefined
+					: (event) => {
+							event.stopPropagation();
+							onPress();
+						}
+			}
 			testID={testID}
 			{...props}
 		>

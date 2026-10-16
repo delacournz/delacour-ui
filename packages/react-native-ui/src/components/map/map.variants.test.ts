@@ -1,13 +1,13 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
-	ANDROID_MAP_STYLE_TOKENS,
-	buildAndroidMapStyle,
+	buildMapStyle,
 	hasInitialViewChanged,
-	isMarkerShrink,
 	MAP_ACCESSIBILITY_LABEL,
 	MAP_CAMERA_DURATION,
 	MAP_CONTROLS_CORNERS,
+	MAP_DEFAULT_BASEMAP,
+	MAP_DEFAULT_ZOOM,
 	MAP_LABEL_SIDES,
 	MAP_LABEL_SIZES,
 	MAP_LABEL_TONES,
@@ -17,22 +17,20 @@ import {
 	MAP_PIN_TONE_TOKENS,
 	MAP_PIN_TONES,
 	MAP_ROUTE_TOKEN,
-	MAP_SETTLE_GRACE,
+	MAP_STYLE_TOKENS,
 	mapPinPath,
 	mapVariants,
 	resolveCameraDuration,
 	resolveHeadingRotation,
-	resolveInitialRegion,
+	resolveInitialCamera,
 	resolveMapGestures,
 	resolveMarkerAnchor,
-	resolveMarkerCenterOffset,
+	resolveMarkerOffset,
 	resolvePinTipAnchor,
-	resolveRouteDashPattern,
-	resolveSettleDelay,
-	resolveUserInterfaceStyle,
-	withAlpha,
+	resolveRouteDashArray,
+	toStyleColor,
 } from "./map.variants";
-import { centerZoomToRegion } from "./map-geometry";
+import { fitBoundsCamera } from "./map-geometry";
 
 const TEXT_COLOR = /(^|\s)text-(?!(xs|sm|base|lg|xl|\dxl|center|left|right)\b)[a-z-]+/;
 
@@ -86,37 +84,17 @@ describe("resolvePinTipAnchor", () => {
 	});
 });
 
-describe("isMarkerShrink", () => {
-	test("a first measurement is not a shrink", () => {
-		expect(isMarkerShrink(null, { width: 28, height: 36 })).toBe(false);
-	});
-
-	test("growing is not a shrink", () => {
-		expect(isMarkerShrink({ width: 28, height: 36 }, { width: 160, height: 140 })).toBe(false);
-	});
-
-	test("the same size is not a shrink", () => {
-		expect(isMarkerShrink({ width: 28, height: 36 }, { width: 28, height: 36 })).toBe(false);
-	});
-
-	test("losing width or height is", () => {
-		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 28, height: 36 })).toBe(true);
-		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 160, height: 36 })).toBe(true);
-		expect(isMarkerShrink({ width: 160, height: 140 }, { width: 28, height: 140 })).toBe(true);
-	});
-});
-
-describe("resolveMarkerCenterOffset", () => {
+describe("resolveMarkerOffset", () => {
 	test("a centred anchor needs no offset", () => {
-		expect(resolveMarkerCenterOffset({ x: 0.5, y: 0.5 }, { width: 40, height: 40 })).toEqual({ x: 0, y: 0 });
+		expect(resolveMarkerOffset({ x: 0.5, y: 0.5 }, { width: 40, height: 60 })).toEqual([0, 0]);
 	});
 
 	test("a bottom anchor lifts the view by half its height", () => {
-		expect(resolveMarkerCenterOffset({ x: 0.5, y: 1 }, { width: 28, height: 36 })).toEqual({ x: 0, y: -18 });
+		expect(resolveMarkerOffset({ x: 0.5, y: 1 }, { width: 40, height: 60 })).toEqual([0, -30]);
 	});
 
 	test("a left anchor pushes the view right by half its width", () => {
-		expect(resolveMarkerCenterOffset({ x: 0, y: 0.5 }, { width: 40, height: 20 })).toEqual({ x: 20, y: 0 });
+		expect(resolveMarkerOffset({ x: 0, y: 0.5 }, { width: 40, height: 60 })).toEqual([20, 0]);
 	});
 });
 
@@ -151,78 +129,90 @@ describe("pin", () => {
 	});
 });
 
-describe("withAlpha", () => {
-	test("full opacity is the colour untouched", () => {
-		expect(withAlpha("#3b82f6", 1)).toBe("#3b82f6");
+describe("toStyleColor", () => {
+	test("hex MapLibre reads passes through", () => {
+		expect(toStyleColor("#3b82f6")).toBe("#3b82f6");
+		expect(toStyleColor("#abc")).toBe("#abc");
 	});
 
-	test("appends an alpha byte to a six-digit hex", () => {
-		expect(withAlpha("#3b82f6", 0.5)).toBe("#3b82f680");
-		expect(withAlpha("#3b82f6", 0)).toBe("#3b82f600");
+	test("eight-digit hex, which it does not, becomes rgba", () => {
+		expect(toStyleColor("#3b82f680")).toBe("rgba(59, 130, 246, 0.502)");
+		expect(toStyleColor("#000000ff")).toBe("rgba(0, 0, 0, 1)");
 	});
 
-	test("expands a short hex first", () => {
-		expect(withAlpha("#abc", 0.5)).toBe("#aabbcc80");
-	});
-
-	test("multiplies an alpha the colour already has", () => {
-		expect(withAlpha("#3b82f680", 0.5)).toBe("#3b82f640");
-	});
-
-	test("rewrites rgb as rgba", () => {
-		expect(withAlpha("rgb(1, 2, 3)", 0.25)).toBe("rgba(1, 2, 3, 0.25)");
-	});
-
-	test("clamps, and passes an unknown notation through rather than guessing", () => {
-		expect(withAlpha("#000000", 2)).toBe("#000000");
-		expect(withAlpha("oklch(0.5 0.1 200)", 0.5)).toBe("oklch(0.5 0.1 200)");
-		expect(withAlpha(undefined, 0.5)).toBeUndefined();
+	test("anything else is left alone", () => {
+		expect(toStyleColor("rgb(1, 2, 3)")).toBe("rgb(1, 2, 3)");
+		expect(toStyleColor(undefined)).toBeUndefined();
 	});
 });
 
-describe("buildAndroidMapStyle", () => {
+describe("buildMapStyle", () => {
 	const TOKENS = { background: "#fafafa", border: "#e4e4e7", muted: "#f4f4f5", mutedForeground: "#71717a" };
+	type Paint = Record<string, unknown>;
+	const layer = (style: ReturnType<typeof buildMapStyle>, id: string) =>
+		style.layers.find((entry) => entry.id === id) as { paint?: Paint; layout?: Paint } | undefined;
 
-	test("water is muted, land the page, roads the border, labels the muted foreground", () => {
-		const style = buildAndroidMapStyle(TOKENS);
-		const colorOf = (featureType: string, elementType: string) =>
-			style.find((rule) => rule.featureType === featureType && rule.elementType === elementType)?.stylers;
-
-		expect(colorOf("water", "geometry")).toEqual([{ color: "#f4f4f5" }]);
-		expect(colorOf("landscape", "geometry")).toEqual([{ color: "#fafafa" }]);
-		expect(colorOf("road", "geometry")).toEqual([{ color: "#e4e4e7" }]);
-		expect(colorOf("all", "labels.text.fill")).toEqual([{ color: "#71717a" }]);
-		expect(colorOf("all", "labels.text.stroke")).toEqual([{ color: "#fafafa" }]);
+	test("land is the page, water muted, roads the border, labels the muted foreground haloed in the page", () => {
+		const style = buildMapStyle(TOKENS);
+		expect(layer(style, "background")?.paint?.["background-color"]).toBe("#fafafa");
+		expect(layer(style, "water")?.paint?.["fill-color"]).toBe("#f4f4f5");
+		expect(layer(style, "road-major")?.paint?.["line-color"]).toBe("#e4e4e7");
+		expect(layer(style, "place")?.paint?.["text-color"]).toBe("#71717a");
+		expect(layer(style, "place")?.paint?.["text-halo-color"]).toBe("#fafafa");
 	});
 
-	test("drops the alpha byte Google's styler cannot read", () => {
-		const style = buildAndroidMapStyle({ ...TOKENS, muted: "#f4f4f5ff" });
-		expect(JSON.stringify(style)).toContain('"#f4f4f5"');
-		expect(JSON.stringify(style)).not.toContain("#f4f4f5ff");
+	test("reads its tiles and glyphs from the basemap, OpenFreeMap by default", () => {
+		const style = buildMapStyle(TOKENS);
+		expect(style.glyphs).toBe(MAP_DEFAULT_BASEMAP.glyphs);
+		expect(style.sources.openmaptiles).toEqual({ type: "vector", url: MAP_DEFAULT_BASEMAP.tiles });
+		expect(layer(style, "place")?.layout?.["text-font"]).toEqual([MAP_DEFAULT_BASEMAP.font]);
+
+		const own = buildMapStyle(TOKENS, {
+			font: "Inter Regular",
+			glyphs: "https://x/{fontstack}/{range}",
+			tiles: "https://x",
+		});
+		expect(own.sources.openmaptiles).toEqual({ type: "vector", url: "https://x" });
+		expect(layer(own, "place")?.layout?.["text-font"]).toEqual(["Inter Regular"]);
 	});
 
-	test("a token that did not resolve leaves that feature on the basemap's own colour", () => {
-		const style = buildAndroidMapStyle({ ...TOKENS, muted: undefined });
-		expect(style.some((rule) => rule.featureType === "water")).toBe(false);
-		expect(style.some((rule) => rule.featureType === "landscape")).toBe(true);
+	test("an alpha token is written as rgba, which the style parser reads", () => {
+		const style = buildMapStyle({ ...TOKENS, muted: "#f4f4f580" });
+		expect(layer(style, "water")?.paint?.["fill-color"]).toBe("rgba(244, 244, 245, 0.502)");
+	});
+
+	test("a token that did not resolve drops its layers rather than painting them black", () => {
+		const style = buildMapStyle({ ...TOKENS, muted: undefined });
+		expect(layer(style, "water")).toBeUndefined();
+		expect(layer(style, "background")).toBeDefined();
+	});
+
+	test("labels drop their halo, not themselves, when the page colour is missing", () => {
+		const style = buildMapStyle({ ...TOKENS, background: undefined });
+		expect(layer(style, "place")?.paint?.["text-halo-color"]).toBeUndefined();
+		expect(layer(style, "place")?.paint?.["text-color"]).toBe("#71717a");
+	});
+
+	test("every layer id is unique", () => {
+		const ids = buildMapStyle(TOKENS).layers.map((entry) => entry.id);
+		expect(new Set(ids).size).toBe(ids.length);
 	});
 
 	test("reads tokens every theme declares", () => {
-		for (const token of Object.values(ANDROID_MAP_STYLE_TOKENS)) {
+		for (const token of Object.values(MAP_STYLE_TOKENS)) {
 			expect(declaredTokens("light").has(token)).toBe(true);
 			expect(declaredTokens("dark").has(token)).toBe(true);
 		}
 	});
 });
 
-describe("resolveRouteDashPattern", () => {
+describe("resolveRouteDashArray", () => {
 	test("solid by default", () => {
-		expect(resolveRouteDashPattern(false, 3)).toBeUndefined();
+		expect(resolveRouteDashArray(false)).toBeUndefined();
 	});
 
-	test("dashes scale with the stroke so they stay dashes at any width", () => {
-		expect(resolveRouteDashPattern(true, 3)).toEqual([6, 6]);
-		expect(resolveRouteDashPattern(true, 6)).toEqual([12, 12]);
+	test("dashes are in line widths, so one pattern holds at any weight", () => {
+		expect(resolveRouteDashArray(true)).toEqual([2, 2]);
 	});
 
 	test("the default line colour is a token the theme declares", () => {
@@ -233,47 +223,25 @@ describe("resolveRouteDashPattern", () => {
 describe("resolveMapGestures", () => {
 	test("interactive and flat by default", () => {
 		expect(resolveMapGestures({ isInteractive: true, isRotatable: false })).toEqual({
-			pitchEnabled: false,
-			rotateEnabled: false,
-			scrollEnabled: true,
-			zoomEnabled: true,
+			doubleTapHoldZoom: true,
+			doubleTapZoom: true,
+			dragPan: true,
+			touchPitch: false,
+			touchRotate: false,
+			touchZoom: true,
 		});
 	});
 
 	test("rotatable turns on rotation and tilt together", () => {
-		expect(resolveMapGestures({ isInteractive: true, isRotatable: true })).toEqual({
-			pitchEnabled: true,
-			rotateEnabled: true,
-			scrollEnabled: true,
-			zoomEnabled: true,
-		});
+		const gestures = resolveMapGestures({ isInteractive: true, isRotatable: true });
+		expect(gestures.touchRotate).toBe(true);
+		expect(gestures.touchPitch).toBe(true);
 	});
 
 	test("not interactive turns everything off, rotation included", () => {
-		expect(resolveMapGestures({ isInteractive: false, isRotatable: true })).toEqual({
-			pitchEnabled: false,
-			rotateEnabled: false,
-			scrollEnabled: false,
-			zoomEnabled: false,
-		});
-	});
-});
-
-describe("resolveUserInterfaceStyle", () => {
-	test("follows the active theme, not the system", () => {
-		expect(resolveUserInterfaceStyle("dark")).toBe("dark");
-		expect(resolveUserInterfaceStyle("light")).toBe("light");
-		expect(resolveUserInterfaceStyle(undefined)).toBe("light");
-	});
-});
-
-describe("resolveSettleDelay", () => {
-	test("waits out the flight, then a grace for the native event to land first", () => {
-		expect(resolveSettleDelay(600)).toBe(600 + MAP_SETTLE_GRACE);
-	});
-
-	test("a jump still waits the grace, so the native event can win", () => {
-		expect(resolveSettleDelay(0)).toBe(MAP_SETTLE_GRACE);
+		expect(Object.values(resolveMapGestures({ isInteractive: false, isRotatable: true }))).toEqual(
+			Array(6).fill(false)
+		);
 	});
 });
 
@@ -298,18 +266,22 @@ describe("resolveHeadingRotation", () => {
 	});
 });
 
-describe("resolveInitialRegion", () => {
-	test("bounds win over a centre and zoom", () => {
-		const region = resolveInitialRegion({ aspect: 1, bounds: [174, -42, 176, -40], center: [0, 0], zoom: 10 });
-		expect(region.longitude).toBe(175);
-		expect(region.latitude).toBe(-41);
+describe("resolveInitialCamera", () => {
+	const SIZE = { width: 400, height: 300 };
+
+	test("bounds win over a centre and zoom, framed for the view", () => {
+		const bounds = [174, -42, 176, -40] as const;
+		expect(resolveInitialCamera({ bounds, center: [0, 0], size: SIZE, zoom: 10 })).toEqual(
+			fitBoundsCamera(bounds, SIZE)
+		);
 	});
 
-	test("a centre and zoom, else the world at zoom 2", () => {
-		expect(resolveInitialRegion({ aspect: 1, center: [174.776, -41.286], zoom: 12 })).toEqual(
-			centerZoomToRegion([174.776, -41.286], 12, 1)
-		);
-		expect(resolveInitialRegion({ aspect: 1 })).toEqual(centerZoomToRegion([0, 0], 2, 1));
+	test("a centre and zoom, else the world at the default zoom", () => {
+		expect(resolveInitialCamera({ center: [174.776, -41.286], size: SIZE, zoom: 12 })).toEqual({
+			center: [174.776, -41.286],
+			zoom: 12,
+		});
+		expect(resolveInitialCamera({ size: SIZE })).toEqual({ center: [0, 0], zoom: MAP_DEFAULT_ZOOM });
 	});
 });
 

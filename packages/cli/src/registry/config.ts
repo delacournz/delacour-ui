@@ -53,9 +53,10 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	// Ships a native 2D renderer, and Expo 57 bundles 2.6.2 — a bare `bun add`
 	// would fetch the newest and fail at the linker rather than at install.
 	"@shopify/react-native-skia": "expo",
-	// Ships Apple and Google map views, and Expo 57 bundles 1.27.2. Only `map`
-	// imports it, so an app without a map never installs it.
-	"react-native-maps": "expo",
+	// Ships MapLibre's native map view and a config plugin, so it needs a
+	// rebuild. Expo does not bundle it; `expo install` takes npm's latest. Only
+	// `map` imports it, so an app without a map never installs it.
+	"@maplibre/maplibre-react-native": "expo",
 
 	"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "npm",
 	// Plain TypeScript — the marks, the scales and the layout. Its own peers are
@@ -256,6 +257,8 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description:
 			"A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim.",
 		categories: ["overlays"],
+			"A themed MapLibre map on a token-painted basemap: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+		categories: ["display"],
 	},
 	pressable: {
 		title: "Pressable",

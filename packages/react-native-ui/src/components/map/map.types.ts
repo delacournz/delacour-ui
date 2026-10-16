@@ -1,8 +1,7 @@
 /**
  * A point on the map, longitude first — the order GeoJSON and every web map
  * library use, so a coordinate pasted from one lands in the right hemisphere.
- * `react-native-maps` takes `{ latitude, longitude }`; the conversion happens
- * at the boundary and nowhere else.
+ * It is MapLibre's order too, so nothing is converted on the way in.
  */
 export type LngLat = readonly [longitude: number, latitude: number];
 
@@ -18,18 +17,6 @@ export type ViewState = {
 	zoom: number;
 	bearing: number;
 	pitch: number;
-};
-
-/**
- * The visible span of the map — a centre and the degrees of latitude and
- * longitude it covers. Structurally `react-native-maps`' `Region`, written out
- * here so the geometry stays free of the native module.
- */
-export type MapRegion = {
-	latitude: number;
-	longitude: number;
-	latitudeDelta: number;
-	longitudeDelta: number;
 };
 
 /** What a camera move takes. `duration` in milliseconds; `0` jumps. */

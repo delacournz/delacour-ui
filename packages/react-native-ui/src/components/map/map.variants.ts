@@ -1,7 +1,8 @@
+import type { StyleSpecification, SymbolLayerSpecification } from "@maplibre/maplibre-react-native";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import type { LngLat, LngLatBounds, MapRegion } from "./map.types";
-import { boundsToRegion, centerZoomToRegion } from "./map-geometry";
+import type { LngLat, LngLatBounds } from "./map.types";
+import { fitBoundsCamera } from "./map-geometry";
 
 /** Which point of a marker sits on its coordinate. */
 export const MAP_MARKER_ANCHORS = ["center", "top", "bottom", "left", "right"] as const;
@@ -120,119 +121,224 @@ export function resolvePinTipAnchor({ marker, pin }: { marker: Size; pin: Frame 
 }
 
 /**
- * The anchor as Apple Maps wants it: a shift of the marker's centre in points.
+ * The anchor as a shift in points, for a marker placed by its centre.
  *
- * Google Maps takes the unit-square `anchor`; Apple Maps ignores it and centres
- * every custom view on its coordinate, moved by `centerOffset`. Positive moves
- * right and down, so a bottom anchor is a lift of half the view's height.
+ * MapLibre takes a named anchor and a pixel `offset`, not a point in the unit
+ * square, so a pin's tip — which can sit anywhere in its marker — is reached by
+ * centring the marker and moving it. Positive moves right and down, so a
+ * bottom anchor is a lift of half the view's height.
  */
-export function resolveMarkerCenterOffset(anchor: MapAnchorPoint, size: Size): MapAnchorPoint {
-	return { x: (0.5 - anchor.x) * size.width, y: (0.5 - anchor.y) * size.height };
-}
-
-/**
- * Whether a marker's content got smaller in either direction. Apple's annotation
- * view only ever grows to fit its content, so after a shrink the content sits in
- * the corner of a frame still sized for what it held before, and the pin draws up
- * and to the left of its coordinate; `Map.Marker` remounts the annotation when
- * this is true. A first measurement is not a shrink.
- */
-export function isMarkerShrink(previous: Size | null, next: Size): boolean {
-	if (previous === null) return false;
-	return next.width < previous.width || next.height < previous.height;
+export function resolveMarkerOffset(anchor: MapAnchorPoint, size: Size): [x: number, y: number] {
+	return [(0.5 - anchor.x) * size.width, (0.5 - anchor.y) * size.height];
 }
 
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-const RGB = /^rgba?\(\s*([^,]+),\s*([^,]+),\s*([^,)]+)/i;
-
-function expandHex(color: string): string {
-	const digits = color.slice(1);
-	if (digits.length !== 3) return digits;
-	return digits
-		.split("")
-		.map((digit) => digit + digit)
-		.join("");
-}
 
 /**
- * A colour at a fraction of its opacity, for a native prop that takes a colour
- * but no opacity — a polyline's stroke.
+ * A theme colour as the style spec reads it.
  *
- * Uniwind hands theme colours to JavaScript as hex, so hex is the case that
- * matters; an alpha the colour already carries is multiplied rather than
- * replaced. A notation it cannot take apart comes back untouched rather than
- * guessed at: a line drawn opaque beats a line drawn the wrong colour.
+ * Uniwind hands theme colours to JavaScript as hex. MapLibre parses three- and
+ * six-digit hex but not eight, so a token carrying alpha is rewritten as
+ * `rgba()` rather than drawn opaque or not at all. Any other notation passes
+ * through untouched.
  */
-export function withAlpha(color: string | undefined, opacity: number): string | undefined {
-	if (color === undefined) return undefined;
-	const alpha = Math.min(1, Math.max(0, opacity));
-	if (alpha === 1) return color;
-
-	if (HEX.test(color)) {
-		const digits = expandHex(color);
-		const existing = digits.length === 8 ? Number.parseInt(digits.slice(6), 16) / 255 : 1;
-		const byte = Math.round(existing * alpha * 255)
-			.toString(16)
-			.padStart(2, "0");
-		return `#${digits.slice(0, 6)}${byte}`;
-	}
-
-	const channels = RGB.exec(color);
-	if (channels) return `rgba(${channels[1]?.trim()}, ${channels[2]?.trim()}, ${channels[3]?.trim()}, ${alpha})`;
-
-	return color;
+export function toStyleColor(color: string | undefined): string | undefined {
+	if (color === undefined || !HEX.test(color) || color.length !== 9) return color;
+	const channel = (index: number) => Number.parseInt(color.slice(1 + index * 2, 3 + index * 2), 16);
+	const alpha = Math.round((channel(3) / 255) * 1000) / 1000;
+	return `rgba(${channel(0)}, ${channel(1)}, ${channel(2)}, ${alpha})`;
 }
 
-/** Google's styler reads six-digit hex only; an eight-digit token loses its alpha byte. */
-function opaqueHex(color: string): string {
-	return HEX.test(color) ? `#${expandHex(color).slice(0, 6)}` : color;
-}
-
-/** The theme tokens the Android basemap is painted from. */
-export const ANDROID_MAP_STYLE_TOKENS = {
+/** The theme tokens the basemap is painted from. */
+export const MAP_STYLE_TOKENS = {
 	background: "background",
 	border: "border",
 	muted: "muted",
 	mutedForeground: "muted-foreground",
 } as const;
 
-export type AndroidMapStyleTokens = Record<keyof typeof ANDROID_MAP_STYLE_TOKENS, string | undefined>;
+export type MapStyleTokens = Record<keyof typeof MAP_STYLE_TOKENS, string | undefined>;
 
-/** One rule of a Google Maps style — `react-native-maps`' `MapStyleElement`. */
-export type MapStyleRule = {
-	featureType: string;
-	elementType: string;
-	stylers: { color: string }[];
+/**
+ * Where the basemap's data comes from: a TileJSON URL for vector tiles in the
+ * OpenMapTiles schema, the glyph URL template its labels are set from, and the
+ * font stack to ask that server for.
+ */
+export type MapBasemap = {
+	tiles: string;
+	glyphs: string;
+	font: string;
 };
 
 /**
- * A Google Maps style painted from the theme: water in `muted`, land on the
- * page's `background`, roads in `border`, and labels in `muted-foreground`
- * haloed in `background`.
- *
- * Apple Maps takes no style — it follows light and dark and nothing finer — so
- * this is Android's alone. A token that did not resolve drops its rules, which
- * leaves that feature on Google's own colour rather than painting it black.
+ * OpenFreeMap: OpenMapTiles-schema vector tiles of OpenStreetMap, free and with
+ * no key. The data is © OpenStreetMap contributors under the ODbL, which is why
+ * the map keeps its attribution button.
  */
-export function buildAndroidMapStyle(tokens: AndroidMapStyleTokens): MapStyleRule[] {
-	const rule = (featureType: string, elementType: string, color: string | undefined): MapStyleRule[] =>
-		color === undefined ? [] : [{ featureType, elementType, stylers: [{ color: opaqueHex(color) }] }];
+export const MAP_DEFAULT_BASEMAP: MapBasemap = {
+	tiles: "https://tiles.openfreemap.org/planet",
+	glyphs: "https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf",
+	font: "Noto Sans Regular",
+};
 
-	return [
-		...rule("landscape", "geometry", tokens.background),
-		...rule("poi", "geometry", tokens.background),
-		...rule("water", "geometry", tokens.muted),
-		...rule("road", "geometry", tokens.border),
-		...rule("transit", "geometry", tokens.border),
-		...rule("administrative", "geometry.stroke", tokens.border),
-		...rule("all", "labels.text.fill", tokens.mutedForeground),
-		...rule("all", "labels.text.stroke", tokens.background),
-	];
+type StyleLayer = StyleSpecification["layers"][number];
+
+/** A place's name, in English where the data has it. */
+const NAME: NonNullable<SymbolLayerSpecification["layout"]>["text-field"] = [
+	"coalesce",
+	["get", "name:en"],
+	["get", "name"],
+];
+
+/**
+ * A MapLibre style painted from the theme: land on the page's `background`,
+ * water and green space in `muted`, roads and buildings in `border`, and labels
+ * in `muted-foreground` haloed in `background`. Retune the theme and the map
+ * retunes with it, on both platforms.
+ *
+ * A token that did not resolve drops the layers it paints rather than leaving
+ * MapLibre to draw them in its default black.
+ */
+export function buildMapStyle(tokens: MapStyleTokens, basemap: MapBasemap = MAP_DEFAULT_BASEMAP): StyleSpecification {
+	const background = toStyleColor(tokens.background);
+	const border = toStyleColor(tokens.border);
+	const muted = toStyleColor(tokens.muted);
+	const label = toStyleColor(tokens.mutedForeground);
+	const source = "openmaptiles";
+	const font = [basemap.font];
+	const when = (color: string | undefined, layers: (color: string) => StyleLayer[]): StyleLayer[] =>
+		color === undefined ? [] : layers(color);
+
+	const halo = background === undefined ? {} : { "text-halo-color": background, "text-halo-width": 1.2 };
+
+	return {
+		version: 8,
+		name: "Delacour",
+		glyphs: basemap.glyphs,
+		sources: { [source]: { type: "vector", url: basemap.tiles } },
+		layers: [
+			...when(background, (color) => [{ id: "background", type: "background", paint: { "background-color": color } }]),
+			...when(muted, (color) => [
+				{
+					id: "landcover",
+					type: "fill",
+					source,
+					"source-layer": "landcover",
+					filter: ["in", ["get", "class"], ["literal", ["wood", "grass", "farmland", "wetland"]]],
+					paint: { "fill-color": color, "fill-opacity": 0.5 },
+				},
+				{
+					id: "park",
+					type: "fill",
+					source,
+					"source-layer": "park",
+					paint: { "fill-color": color, "fill-opacity": 0.6 },
+				},
+				{ id: "water", type: "fill", source, "source-layer": "water", paint: { "fill-color": color } },
+				{
+					id: "waterway",
+					type: "line",
+					source,
+					"source-layer": "waterway",
+					paint: { "line-color": color, "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.5, 16, 3] },
+				},
+			]),
+			...when(border, (color) => [
+				{
+					id: "building",
+					type: "fill",
+					source,
+					"source-layer": "building",
+					minzoom: 14,
+					paint: { "fill-color": color, "fill-opacity": 0.6 },
+				},
+				{
+					id: "boundary",
+					type: "line",
+					source,
+					"source-layer": "boundary",
+					filter: ["all", ["<=", ["get", "admin_level"], 4], ["!=", ["get", "maritime"], 1]],
+					paint: {
+						"line-color": color,
+						"line-dasharray": ["case", ["<=", ["get", "admin_level"], 2], ["literal", [1, 0]], ["literal", [3, 2]]],
+						"line-width": ["interpolate", ["linear"], ["zoom"], 2, 0.5, 10, 1.5],
+					},
+				},
+				{
+					id: "road-minor",
+					type: "line",
+					source,
+					"source-layer": "transportation",
+					minzoom: 12,
+					filter: ["in", ["get", "class"], ["literal", ["minor", "service", "track", "path"]]],
+					layout: { "line-cap": "round", "line-join": "round" },
+					paint: {
+						"line-color": color,
+						"line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 12, 0.5, 18, 8],
+					},
+				},
+				{
+					id: "road-major",
+					type: "line",
+					source,
+					"source-layer": "transportation",
+					minzoom: 5,
+					filter: ["in", ["get", "class"], ["literal", ["motorway", "trunk", "primary", "secondary", "tertiary"]]],
+					layout: { "line-cap": "round", "line-join": "round" },
+					paint: {
+						"line-color": color,
+						"line-width": ["interpolate", ["exponential", 1.5], ["zoom"], 5, 0.5, 18, 14],
+					},
+				},
+			]),
+			...when(label, (color) => [
+				{
+					id: "water-name",
+					type: "symbol",
+					source,
+					"source-layer": "water_name",
+					layout: { "text-field": NAME, "text-font": font, "text-size": 11 },
+					paint: { "text-color": color, ...halo },
+				},
+				{
+					id: "road-name",
+					type: "symbol",
+					source,
+					"source-layer": "transportation_name",
+					minzoom: 14,
+					layout: {
+						"symbol-placement": "line",
+						"text-field": NAME,
+						"text-font": font,
+						"text-size": 11,
+					},
+					paint: { "text-color": color, ...halo },
+				},
+				{
+					id: "place",
+					type: "symbol",
+					source,
+					"source-layer": "place",
+					filter: ["!=", ["get", "class"], "continent"],
+					layout: {
+						"text-field": NAME,
+						"text-font": font,
+						"text-max-width": 8,
+						"text-size": ["match", ["get", "class"], "country", 13, "city", 14, "town", 12, 11],
+					},
+					paint: { "text-color": color, ...halo },
+				},
+			]),
+		],
+	};
 }
 
-/** A dashed route's on and off lengths, scaled to its stroke. `undefined` is solid. */
-export function resolveRouteDashPattern(isDashed: boolean, width: number): number[] | undefined {
-	return isDashed ? [width * 2, width * 2] : undefined;
+/**
+ * A dashed route's on and off lengths. MapLibre measures a dash in multiples of
+ * the line's width, so one pattern stays dashes at any weight. `undefined` is solid.
+ */
+export function resolveRouteDashArray(isDashed: boolean): [on: number, off: number] | undefined {
+	return isDashed ? [2, 2] : undefined;
 }
 
 /**
@@ -241,42 +347,28 @@ export function resolveRouteDashPattern(isDashed: boolean, width: number): numbe
  * map that is not interactive takes none, rotation included.
  */
 export function resolveMapGestures({ isInteractive, isRotatable }: { isInteractive: boolean; isRotatable: boolean }): {
-	scrollEnabled: boolean;
-	zoomEnabled: boolean;
-	rotateEnabled: boolean;
-	pitchEnabled: boolean;
+	dragPan: boolean;
+	touchZoom: boolean;
+	doubleTapZoom: boolean;
+	doubleTapHoldZoom: boolean;
+	touchRotate: boolean;
+	touchPitch: boolean;
 } {
 	const rotates = isInteractive && isRotatable;
-	return { pitchEnabled: rotates, rotateEnabled: rotates, scrollEnabled: isInteractive, zoomEnabled: isInteractive };
-}
-
-/** Uniwind's active theme as the native map's appearance. Never the system's. */
-export function resolveUserInterfaceStyle(theme: string | undefined): "light" | "dark" {
-	return theme === "dark" ? "dark" : "light";
+	return {
+		doubleTapHoldZoom: isInteractive,
+		doubleTapZoom: isInteractive,
+		dragPan: isInteractive,
+		touchPitch: rotates,
+		touchRotate: rotates,
+		touchZoom: isInteractive,
+	};
 }
 
 /** A camera move's duration: the caller's, else the default, and a jump when motion is reduced. */
 export function resolveCameraDuration(duration: number | undefined, isReducedMotion: boolean): number {
 	if (isReducedMotion) return 0;
 	return Math.max(0, duration ?? MAP_CAMERA_DURATION);
-}
-
-/**
- * How long past a camera move's duration the map waits for the native
- * "region settled" event before reporting the view itself, in ms.
- */
-export const MAP_SETTLE_GRACE = 250;
-
-/**
- * When a camera move the map made itself counts as settled.
- *
- * Apple Maps does not always report the end of a long animated move, so the
- * map reports it itself once the flight and a grace period have passed — the
- * grace lets the native event, which carries the true region, arrive first
- * and cancel this one.
- */
-export function resolveSettleDelay(duration: number): number {
-	return duration + MAP_SETTLE_GRACE;
 }
 
 /** A device heading as a rotation in degrees, or `undefined` when the device does not know it. */
@@ -288,10 +380,18 @@ export function resolveHeadingRotation(heading: number | undefined): number | un
 /** The view a map mounts with. `bounds` wins; then a centre and zoom; then the world at zoom 2. */
 export type MapInitialView = { center?: LngLat; zoom?: number; bounds?: LngLatBounds };
 
-/** The region a map mounts on, for a view of the given aspect. */
-export function resolveInitialRegion({ aspect, bounds, center, zoom }: MapInitialView & { aspect: number }): MapRegion {
-	if (bounds !== undefined) return boundsToRegion(bounds);
-	return centerZoomToRegion(center ?? [0, 0], zoom ?? MAP_DEFAULT_ZOOM, aspect);
+/**
+ * The centre and zoom a map mounts on, for a view of the given size. A box is
+ * framed edge to edge — the caller's box, not the caller's box plus a margin.
+ */
+export function resolveInitialCamera({
+	size,
+	bounds,
+	center,
+	zoom,
+}: MapInitialView & { size: { width: number; height: number } }): { center: LngLat; zoom: number } {
+	if (bounds !== undefined) return fitBoundsCamera(bounds, size);
+	return { center: center ?? [0, 0], zoom: zoom ?? MAP_DEFAULT_ZOOM };
 }
 
 function sameNumbers(a: readonly number[] | undefined, b: readonly number[] | undefined): boolean {

@@ -1,20 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { LngLat, LngLatBounds } from "./map.types";
-import {
-	arcCoordinates,
-	boundsOf,
-	boundsToRegion,
-	centerZoomToRegion,
-	latLngToLngLat,
-	lngLatToLatLng,
-	longitudeDeltaToZoom,
-	MAP_MAX_LONGITUDE_DELTA,
-	normalizeLongitude,
-	padRegion,
-	regionToBounds,
-	regionToViewState,
-	zoomToLongitudeDelta,
-} from "./map-geometry";
+import type { LngLat } from "./map.types";
+import { arcCoordinates, boundsOf, fitBoundsCamera, MAP_FIT_MAX_ZOOM, normalizeLongitude } from "./map-geometry";
 
 const WELLINGTON: LngLat = [174.776, -41.286];
 const AUCKLAND: LngLat = [174.763, -36.848];
@@ -36,117 +22,67 @@ describe("normalizeLongitude", () => {
 	});
 });
 
-describe("lngLat ⇄ latLng", () => {
-	test("swaps the order at the boundary and nowhere else", () => {
-		expect(lngLatToLatLng(WELLINGTON)).toEqual({ latitude: -41.286, longitude: 174.776 });
-		expect(latLngToLngLat({ latitude: -41.286, longitude: 174.776 })).toEqual(WELLINGTON);
-	});
-});
+describe("fitBoundsCamera", () => {
+	const SQUARE = { width: 512, height: 512 };
 
-describe("zoom ⇄ longitude delta", () => {
-	test("zoom 0 is the whole world, and each step halves it", () => {
-		expect(zoomToLongitudeDelta(0)).toBe(360);
-		expect(zoomToLongitudeDelta(1)).toBe(180);
-		expect(zoomToLongitudeDelta(12)).toBe(360 / 4096);
+	test("the whole world in one tile's width is zoom 0", () => {
+		const { center, zoom } = fitBoundsCamera([-180, -85.0511287798, 180, 85.0511287798], SQUARE);
+		close(zoom, 0, 6);
+		close(center[0], 0, 6);
+		close(center[1], 0, 6);
 	});
 
-	test("round-trips", () => {
-		for (const zoom of [0, 2, 5.5, 12, 18]) {
-			close(longitudeDeltaToZoom(zoomToLongitudeDelta(zoom)), zoom);
-		}
+	test("half the world's longitude in the same width is one step in", () => {
+		const { zoom } = fitBoundsCamera([0, -1, 180, 1], SQUARE);
+		close(zoom, 1, 6);
 	});
 
-	test("a delta wider than the world is zoom 0, never negative", () => {
-		expect(longitudeDeltaToZoom(720)).toBe(0);
-	});
-});
-
-describe("centerZoomToRegion", () => {
-	test("centres on the point it was given", () => {
-		const region = centerZoomToRegion(WELLINGTON, 12, 1);
-		expect(region.longitude).toBe(174.776);
-		expect(region.latitude).toBe(-41.286);
-	});
-
-	test("the longitude span is the zoom's", () => {
-		close(centerZoomToRegion(WELLINGTON, 12, 1).longitudeDelta, 360 / 4096);
+	test("the tighter axis decides: a wide box is held by the width, a tall one by the height", () => {
+		const square = { width: 256, height: 256 };
+		const wideBox = [0, -1, 4, 1] as const;
+		const tallBox = [0, -2, 1, 2] as const;
+		close(fitBoundsCamera(wideBox, { width: 256, height: 1024 }).zoom, fitBoundsCamera(wideBox, square).zoom, 6);
+		close(fitBoundsCamera(tallBox, { width: 1024, height: 256 }).zoom, fitBoundsCamera(tallBox, square).zoom, 6);
+		expect(fitBoundsCamera(wideBox, { width: 1024, height: 256 }).zoom).toBeGreaterThan(
+			fitBoundsCamera(wideBox, square).zoom
+		);
 	});
 
-	test("a square view near the equator spans the same latitude as longitude", () => {
-		const region = centerZoomToRegion([0, 0], 10, 1);
-		close(region.latitudeDelta, region.longitudeDelta, 5);
+	test("centres on the box in Web Mercator, which sits poleward of the mean latitude", () => {
+		const { center } = fitBoundsCamera([0, 40, 10, 70], SQUARE);
+		close(center[0], 5);
+		expect(center[1]).toBeGreaterThan(55);
 	});
 
-	test("away from the equator a degree of latitude is longer, so fewer fit", () => {
-		const region = centerZoomToRegion(WELLINGTON, 10, 1);
-		expect(region.latitudeDelta).toBeLessThan(region.longitudeDelta);
-		close(region.latitudeDelta / region.longitudeDelta, Math.cos((41.286 * Math.PI) / 180), 3);
+	test("padding zooms out so the box clears it", () => {
+		const bare = fitBoundsCamera([174, -42, 176, -40], SQUARE);
+		const padded = fitBoundsCamera([174, -42, 176, -40], SQUARE, 128);
+		close(padded.zoom, bare.zoom - 1, 6);
 	});
 
-	test("a tall view spans more latitude than a wide one", () => {
-		const tall = centerZoomToRegion(WELLINGTON, 10, 0.5);
-		const wide = centerZoomToRegion(WELLINGTON, 10, 2);
-		close(tall.latitudeDelta / wide.latitudeDelta, 4, 2);
+	test("padding that would leave no room is ignored", () => {
+		const bare = fitBoundsCamera([174, -42, 176, -40], SQUARE);
+		expect(fitBoundsCamera([174, -42, 176, -40], SQUARE, 300)).toEqual(bare);
 	});
 
-	test("an unmeasured aspect falls back to square rather than dividing by zero", () => {
-		expect(centerZoomToRegion(WELLINGTON, 10, 0)).toEqual(centerZoomToRegion(WELLINGTON, 10, 1));
-		expect(centerZoomToRegion(WELLINGTON, 10, Number.NaN)).toEqual(centerZoomToRegion(WELLINGTON, 10, 1));
+	test("a box across the antimeridian is framed across it, not round the world", () => {
+		const across = fitBoundsCamera([170, -20, -170, -10], SQUARE);
+		const plain = fitBoundsCamera([-10, -20, 10, -10], SQUARE);
+		close(Math.abs(across.center[0]), 180);
+		close(across.zoom, plain.zoom, 6);
 	});
 
-	test("the world view is capped short of a full turn", () => {
-		expect(centerZoomToRegion([0, 0], 0, 1).longitudeDelta).toBe(MAP_MAX_LONGITUDE_DELTA);
-		expect(centerZoomToRegion([0, 0], 0, 0.3).latitudeDelta).toBeLessThan(180);
-	});
-});
-
-describe("regionToViewState", () => {
-	test("round-trips a centre and zoom", () => {
-		const view = regionToViewState(centerZoomToRegion(WELLINGTON, 12, 0.75));
-		expect(view.center).toEqual(WELLINGTON);
-		close(view.zoom, 12);
-		expect(view.bearing).toBe(0);
-		expect(view.pitch).toBe(0);
-	});
-
-	test("takes the bearing and pitch from a camera when there is one", () => {
-		const view = regionToViewState(centerZoomToRegion(WELLINGTON, 4, 1), { heading: 45, pitch: 30 });
-		expect(view.bearing).toBe(45);
-		expect(view.pitch).toBe(30);
-	});
-
-	test("prefers the camera's own zoom when the platform reports one", () => {
-		const view = regionToViewState(centerZoomToRegion(WELLINGTON, 4, 1), { heading: 0, pitch: 0, zoom: 7.5 });
-		expect(view.zoom).toBe(7.5);
-	});
-});
-
-describe("boundsToRegion ⇄ regionToBounds", () => {
-	test("a box becomes its centre and its spans", () => {
-		const region = boundsToRegion([174, -42, 176, -40]);
-		expect(region).toEqual({ latitude: -41, longitude: 175, latitudeDelta: 2, longitudeDelta: 2 });
-	});
-
-	test("round-trips", () => {
-		const bounds: LngLatBounds = [172.5, -43.6, 178.1, -36.2];
-		const back = regionToBounds(boundsToRegion(bounds));
-		bounds.forEach((value, index) => {
-			close(back[index] as number, value);
+	test("a box of no size is a close view, not an infinite zoom", () => {
+		expect(fitBoundsCamera([174.776, -41.286, 174.776, -41.286], SQUARE)).toEqual({
+			center: WELLINGTON,
+			zoom: MAP_FIT_MAX_ZOOM,
 		});
 	});
 
-	test("a box across the antimeridian is centred on it, not on Greenwich", () => {
-		const region = boundsToRegion([170, -20, -170, -10]);
-		close(region.longitudeDelta, 20);
-		close(Math.abs(region.longitude), 180);
-	});
-
-	test("round-trips across the antimeridian", () => {
-		const bounds: LngLatBounds = [175, -21, -178, -15];
-		const back = regionToBounds(boundsToRegion(bounds));
-		bounds.forEach((value, index) => {
-			close(back[index] as number, value);
-		});
+	test("an unmeasured view is never a negative or non-finite zoom", () => {
+		const { zoom } = fitBoundsCamera([0, 0, 10, 10], { width: 0, height: 0 });
+		expect(Number.isFinite(zoom)).toBe(true);
+		expect(zoom).toBeGreaterThanOrEqual(0);
 	});
 });
 
@@ -219,26 +155,5 @@ describe("arcCoordinates", () => {
 
 	test("a zero-length arc is its one point, twice", () => {
 		expect(arcCoordinates(WELLINGTON, WELLINGTON, 0.2, 8)).toEqual([WELLINGTON, WELLINGTON]);
-	});
-});
-
-describe("padRegion", () => {
-	const REGION = { latitude: -41, longitude: 175, latitudeDelta: 2, longitudeDelta: 2 };
-
-	test("no padding is the region untouched", () => {
-		expect(padRegion(REGION, 0, { width: 400, height: 300 })).toEqual(REGION);
-	});
-
-	test("widens each span so the box clears the padding on both sides", () => {
-		const padded = padRegion(REGION, 50, { width: 400, height: 300 });
-		close(padded.longitudeDelta, 2 * (400 / 300));
-		close(padded.latitudeDelta, 2 * (300 / 200));
-		expect(padded.longitude).toBe(175);
-		expect(padded.latitude).toBe(-41);
-	});
-
-	test("padding that would leave no room is ignored rather than inverting the region", () => {
-		expect(padRegion(REGION, 200, { width: 400, height: 300 })).toEqual(REGION);
-		expect(padRegion(REGION, 20, { width: 0, height: 0 })).toEqual(REGION);
 	});
 });

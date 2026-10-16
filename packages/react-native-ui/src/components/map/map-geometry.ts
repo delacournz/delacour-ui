@@ -1,14 +1,17 @@
-import type { LngLat, LngLatBounds, MapRegion, ViewState } from "./map.types";
+import type { LngLat, LngLatBounds } from "./map.types";
 
 /**
- * The widest span a region asks for. A full 360° is the same longitude at both
- * edges, which the native maps read as a span of nothing and answer by zooming
- * all the way in.
+ * A tile's edge in points. MapLibre lays the world out on 512-point tiles, so
+ * at zoom `z` the world is `512 × 2^z` points across — the same scale as every
+ * web map, which is what lets a zoom copied from one mean the same here.
  */
-export const MAP_MAX_LONGITUDE_DELTA = 359;
+export const MAP_TILE_SIZE = 512;
 
-/** Short of the poles, where Web Mercator runs to infinity. */
-const MAX_LATITUDE_DELTA = 170;
+/** How far in a box of no size — one point — is framed. A street, not a doorstep. */
+export const MAP_FIT_MAX_ZOOM = 16;
+
+/** Where Web Mercator stops: the latitude at which the world is square. */
+const MAX_LATITUDE = 85.0511287798;
 
 const DEG = Math.PI / 180;
 
@@ -18,32 +21,9 @@ export function normalizeLongitude(longitude: number): number {
 	return ((((longitude + 180) % 360) + 360) % 360) - 180;
 }
 
-/** `[lng, lat]` → `react-native-maps`' `{ latitude, longitude }`. */
-export function lngLatToLatLng([longitude, latitude]: LngLat): { latitude: number; longitude: number } {
-	return { latitude, longitude };
-}
-
-/** `react-native-maps`' `{ latitude, longitude }` → `[lng, lat]`. */
-export function latLngToLngLat({ latitude, longitude }: { latitude: number; longitude: number }): LngLat {
-	return [longitude, latitude];
-}
-
-/**
- * The degrees of longitude across the view at a zoom. Zoom 0 is the whole
- * world; each step halves it — the tile pyramid every web map shares, so a
- * zoom copied from one means the same thing here.
- */
-export function zoomToLongitudeDelta(zoom: number): number {
-	return 360 / 2 ** zoom;
-}
-
-/** The inverse of {@link zoomToLongitudeDelta}, never below zoom 0. */
-export function longitudeDeltaToZoom(longitudeDelta: number): number {
-	return Math.max(0, Math.log2(360 / longitudeDelta));
-}
-
 function mercatorY(latitude: number): number {
-	return Math.log(Math.tan(Math.PI / 4 + (latitude * DEG) / 2));
+	const clamped = Math.max(-MAX_LATITUDE, Math.min(MAX_LATITUDE, latitude));
+	return Math.log(Math.tan(Math.PI / 4 + (clamped * DEG) / 2));
 }
 
 function latitudeOfMercatorY(y: number): number {
@@ -51,68 +31,45 @@ function latitudeOfMercatorY(y: number): number {
 }
 
 /**
- * The region a centre and zoom show in a view of a given aspect (width over
- * height).
+ * The centre and zoom that frame a box in a view of `size`, clearing `padding`
+ * points on every side.
  *
- * The latitude span is projected rather than copied from the longitude's: on
- * Web Mercator a degree of latitude grows towards the poles, so Wellington at
- * a given zoom shows about three quarters as many degrees north to south as it
- * does east to west. Copying the longitude span would zoom a high-latitude map
- * out further than asked. An unmeasured aspect is read as square.
+ * Worked out here rather than handed to the native fit, for two reasons. A box
+ * with `west > east` crosses the antimeridian, and a fit that takes corners
+ * frames it the long way round the world. And the opening view has to be a
+ * centre and zoom before the map exists, so the same sum serves both.
+ *
+ * The latitude is measured in Web Mercator, so the centre sits where the box's
+ * middle is drawn — poleward of the mean latitude — and a tall box at high
+ * latitude is not cropped. Padding that would leave no room is ignored, and an
+ * unmeasured view is read as one tile square.
  */
-export function centerZoomToRegion(center: LngLat, zoom: number, aspect: number): MapRegion {
-	const ratio = Number.isFinite(aspect) && aspect > 0 ? aspect : 1;
-	const longitudeDelta = Math.min(MAP_MAX_LONGITUDE_DELTA, zoomToLongitudeDelta(zoom));
-	const [longitude, latitude] = center;
+export function fitBoundsCamera(
+	[west, south, east, north]: LngLatBounds,
+	size: { width: number; height: number },
+	padding = 0
+): { center: LngLat; zoom: number } {
+	const longitudeSpan = west <= east ? east - west : east + 360 - west;
+	const longitude = normalizeLongitude(west + longitudeSpan / 2);
+	const ySouth = mercatorY(south);
+	const yNorth = mercatorY(north);
+	const latitude = south === north ? south : latitudeOfMercatorY((ySouth + yNorth) / 2);
 
-	const halfSpanY = (longitudeDelta * DEG) / ratio / 2;
-	const y = mercatorY(latitude);
-	const latitudeDelta = latitudeOfMercatorY(y + halfSpanY) - latitudeOfMercatorY(y - halfSpanY);
+	const width = size.width > 0 ? size.width : MAP_TILE_SIZE;
+	const height = size.height > 0 ? size.height : MAP_TILE_SIZE;
+	const fits = padding > 0 && width - 2 * padding > 0 && height - 2 * padding > 0;
+	const innerWidth = fits ? width - 2 * padding : width;
+	const innerHeight = fits ? height - 2 * padding : height;
 
-	return { latitude, longitude, latitudeDelta: Math.min(MAX_LATITUDE_DELTA, latitudeDelta), longitudeDelta };
-}
+	// The fraction of the world's width and height the box takes, and the zoom
+	// at which that fraction of a `512 × 2^z` world fills the inner view.
+	const xFraction = longitudeSpan / 360;
+	const yFraction = Math.abs(yNorth - ySouth) / (2 * Math.PI);
+	const zoomX = xFraction > 0 ? Math.log2(innerWidth / (MAP_TILE_SIZE * xFraction)) : Number.POSITIVE_INFINITY;
+	const zoomY = yFraction > 0 ? Math.log2(innerHeight / (MAP_TILE_SIZE * yFraction)) : Number.POSITIVE_INFINITY;
+	const zoom = Math.max(0, Math.min(MAP_FIT_MAX_ZOOM, zoomX, zoomY));
 
-/**
- * Where a region puts the camera. The zoom is the camera's own when the
- * platform reports one (Google Maps does; Apple Maps reports an altitude
- * instead), else it is read off the region's longitude span.
- */
-export function regionToViewState(
-	region: MapRegion,
-	camera?: { heading: number; pitch: number; zoom?: number }
-): ViewState {
-	return {
-		bearing: camera?.heading ?? 0,
-		center: [region.longitude, region.latitude],
-		pitch: camera?.pitch ?? 0,
-		zoom: camera?.zoom ?? longitudeDeltaToZoom(region.longitudeDelta),
-	};
-}
-
-/**
- * The region a box covers. A box with `west > east` crosses the antimeridian,
- * so its span is measured eastwards across 180° and its centre lands in the
- * Pacific rather than at Greenwich.
- */
-export function boundsToRegion([west, south, east, north]: LngLatBounds): MapRegion {
-	const longitudeDelta = west <= east ? east - west : east + 360 - west;
-
-	return {
-		latitude: (south + north) / 2,
-		latitudeDelta: north - south,
-		longitude: normalizeLongitude(west + longitudeDelta / 2),
-		longitudeDelta,
-	};
-}
-
-/** The box a region covers — the inverse of {@link boundsToRegion}. */
-export function regionToBounds({ latitude, longitude, latitudeDelta, longitudeDelta }: MapRegion): LngLatBounds {
-	return [
-		normalizeLongitude(longitude - longitudeDelta / 2),
-		latitude - latitudeDelta / 2,
-		normalizeLongitude(longitude + longitudeDelta / 2),
-		latitude + latitudeDelta / 2,
-	];
+	return { center: [longitude, latitude], zoom };
 }
 
 /**
@@ -193,24 +150,4 @@ export function arcCoordinates(from: LngLat, to: LngLat, curvature = 0.2, sample
 	points.push(to);
 
 	return points;
-}
-
-/**
- * A region widened so that, framed in a view of `size`, the original box clears
- * `padding` points on every side.
- *
- * Done on the region rather than handed to the native fit, because the native
- * fit takes corner coordinates and would frame a box across the antimeridian
- * the long way round. Padding that would leave no room is ignored.
- */
-export function padRegion(region: MapRegion, padding: number, size: { width: number; height: number }): MapRegion {
-	const innerWidth = size.width - 2 * padding;
-	const innerHeight = size.height - 2 * padding;
-	if (padding <= 0 || innerWidth <= 0 || innerHeight <= 0) return region;
-
-	return {
-		...region,
-		latitudeDelta: Math.min(MAX_LATITUDE_DELTA, region.latitudeDelta * (size.height / innerHeight)),
-		longitudeDelta: Math.min(MAP_MAX_LONGITUDE_DELTA, region.longitudeDelta * (size.width / innerWidth)),
-	};
 }

@@ -1,6 +1,6 @@
 ---
 title: Map
-description: Places and paths on a themed map — markers, labels, popups, routes, arcs and controls, on react-native-maps.
+description: Places and paths on a themed map — markers, labels, popups, routes, arcs and controls, on MapLibre.
 icon: Map
 ---
 
@@ -11,15 +11,13 @@ icon: Map
 <ComponentInstall name="map" />
 
 <Callout type="warn" title="Rebuild the dev client">
-`react-native-maps` is a native module, so after installing, rebuild the dev client (`npx expo run:ios`,
-or an EAS development build). It does not run in Expo Go. Android needs a Google Maps API key — without
-one the map renders blank, with no error.
+`@maplibre/maplibre-react-native` is a native module, so after installing, add its config plugin and
+rebuild the dev client (`npx expo run:ios`, or an EAS development build). It does not run in Expo Go.
+No API key is needed on either platform.
 </Callout>
 
 ```ts title="app.config.ts"
-plugins: [
-  ["react-native-maps", { androidGoogleMapsApiKey: process.env.GOOGLE_MAPS_ANDROID_API_KEY }],
-],
+plugins: ["@maplibre/maplibre-react-native"],
 ```
 
 ## Usage
@@ -129,7 +127,8 @@ rather than a path. Both are the theme's `primary` unless given a colour.
 ## Controls and location
 
 Zoom, compass, recenter and locate buttons, floated in a corner. Locate and `Map.UserLocation` turn on the
-platform's location dot, which asks for location permission the first time.
+map's location updates, which ask for location permission the first time. The dot is drawn in the theme's
+`primary`, ringed in `background`.
 
 <Preview id="map/controls" />
 
@@ -145,9 +144,38 @@ permission prompt never appears and the dot never shows.
 
 ## Theming
 
-Light and dark follow the app's active theme, not the system's. On Android the basemap is painted from
-the theme's tokens — water `muted`, land `background`, roads `border`, labels `muted-foreground`. Apple
-Maps takes no style beyond light and dark.
+The basemap is painted from the theme's tokens on both platforms — land `background`, water and parks
+`muted`, roads and buildings `border`, labels `muted-foreground` haloed in `background`. Retune the theme
+and the map follows, light and dark included; it reads the app's active theme, never the system's.
+
+The tiles are [OpenFreeMap](https://openfreemap.org)'s OpenStreetMap vector tiles: free, with no key. The
+data is © OpenStreetMap contributors, so the map keeps its attribution button, bottom left.
+
+To use your own tiles — any OpenMapTiles-schema source, such as MapTiler — build the same themed style on
+them, or pass any MapLibre style:
+
+```tsx
+import { useThemeColor } from "@/hooks/use-theme-color";
+import { buildMapStyle, Map } from "@/components/ui/map";
+
+function StoreMap() {
+  const style = buildMapStyle(
+    {
+      background: useThemeColor("background"),
+      border: useThemeColor("border"),
+      muted: useThemeColor("muted"),
+      mutedForeground: useThemeColor("muted-foreground"),
+    },
+    {
+      tiles: "https://api.maptiler.com/tiles/v3/tiles.json?key=…",
+      glyphs: "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=…",
+      font: "Noto Sans Regular",
+    }
+  );
+
+  return <Map mapStyle={style} />;
+}
+```
 
 ## Accessibility
 
@@ -170,6 +198,10 @@ Extends `ViewProps`.
     bounds: { type: "LngLatBounds", description: "A box to open framed on. Beats `center` and `zoom`." },
     isRotatable: { type: "boolean", default: "false", description: "Whether two fingers turn and tilt the map." },
     isInteractive: { type: "boolean", default: "true", description: "Whether the map pans and zooms at all." },
+    mapStyle: {
+      type: "string | StyleSpecification",
+      description: "Replaces the theme-painted basemap — a style URL or a style object.",
+    },
     onViewStateChange: { type: "(viewState: ViewState) => void", description: "Called when the camera comes to rest." },
     onPress: { type: "(lngLat: LngLat) => void", description: "A tap on the map, not on a marker." },
     onReady: { type: "() => void", description: "Called once the native map has loaded." },

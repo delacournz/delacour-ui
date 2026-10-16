@@ -3,7 +3,7 @@
 	"name": "map",
 	"type": "registry:ui",
 	"title": "Map",
-	"description": "A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+	"description": "A themed MapLibre map on a token-painted basemap: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
 	"categories": [
 		"display"
 	],
@@ -20,10 +20,9 @@
 		"tailwind-variants"
 	],
 	"expoDependencies": [
-		"react-native-maps",
+		"@maplibre/maplibre-react-native",
 		"react-native-reanimated",
-		"react-native-svg",
-		"uniwind"
+		"react-native-svg"
 	],
 	"devDependencies": [],
 	"files": [

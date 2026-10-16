@@ -64,14 +64,6 @@ const rawVersion = (process.env as Record<string, string | undefined>).APP_VERSI
 const APP_VERSION = rawVersion && /^\d+\.\d+\.\d+$/.test(rawVersion) ? rawVersion : "1.0.0";
 
 /**
- * Google Maps' key for the Android map, from the build's environment. Apple Maps
- * needs none, so iOS builds ignore it; an Android build without one renders a
- * blank map rather than failing.
- */
-const GOOGLE_MAPS_ANDROID_API_KEY =
-	(process.env as Record<string, string | undefined>).GOOGLE_MAPS_ANDROID_API_KEY || undefined;
-
-/**
  * Icon art comes from `packages/brand`'s `assets/icon-source.svg` via
  * `bun run icons`. The PNGs
  * below are generated — edit the SVG, not them. `ios/` and `android/` are
@@ -244,8 +236,9 @@ const expoConfig: ExpoConfig = {
 				android: { fonts: androidFonts },
 			},
 		],
-		// Apple Maps on iOS needs no key; Google Maps on Android does.
-		["react-native-maps", { androidGoogleMapsApiKey: GOOGLE_MAPS_ANDROID_API_KEY }],
+		// MapLibre's native SDK on both platforms. The basemap is keyless
+		// OpenStreetMap tiles, so there is nothing to configure.
+		["@maplibre/maplibre-react-native", {}],
 		// Required for the root view background to be settable at all on iOS,
 		// and what SystemUI.setBackgroundColorAsync drives at runtime.
 		"expo-system-ui",

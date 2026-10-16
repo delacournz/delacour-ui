@@ -268,7 +268,7 @@ describe("ios.privacyManifests", () => {
 	});
 });
 
-describe("react-native-maps", () => {
+describe("@maplibre/maplibre-react-native", () => {
 	/**
 	 * The Map demos turn on the location dot, and iOS refuses the permission
 	 * prompt outright — no dialog, no dot — when the usage string is missing.
@@ -278,16 +278,17 @@ describe("react-native-maps", () => {
 	});
 
 	/**
-	 * The key is read from the environment at build time. An empty string
-	 * written into the manifest is a key Google rejects, and a blank map with no
-	 * error; no key at all is the same blank map, but the plugin then writes no
-	 * meta-data entry for anyone to mistake for a working one.
+	 * The config plugin wires MapLibre's native SDK into both builds. Without it
+	 * iOS links no MapLibre framework and the app crashes on the first map.
 	 */
-	test("passes the Android key only when the build has one", () => {
-		const options = pluginEntry("react-native-maps") as { androidGoogleMapsApiKey?: string };
-		const key = (process.env as Record<string, string | undefined>).GOOGLE_MAPS_ANDROID_API_KEY;
+	test("registers the config plugin", () => {
+		expect(pluginEntry("@maplibre/maplibre-react-native")).toBeDefined();
+	});
 
-		expect(options.androidGoogleMapsApiKey).toBe(key || undefined);
+	/** The basemap is keyless OpenStreetMap tiles; nothing should still ask for Google's. */
+	test("carries no Google Maps key", () => {
+		expect(JSON.stringify(expoConfig)).not.toContain("GoogleMaps");
+		expect(() => pluginEntry("react-native-maps")).toThrow();
 	});
 });
 

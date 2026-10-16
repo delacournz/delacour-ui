@@ -1,10 +1,10 @@
-import { type ReactElement, useMemo } from "react";
-import { Polyline } from "react-native-maps";
+import { GeoJSONSource, Layer } from "@maplibre/maplibre-react-native";
+import { type ReactElement, useId, useMemo } from "react";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useMapPart } from "./map.context";
 import type { LngLat } from "./map.types";
-import { MAP_ROUTE_TOKEN, withAlpha } from "./map.variants";
-import { arcCoordinates, lngLatToLatLng } from "./map-geometry";
+import { MAP_ROUTE_TOKEN, toStyleColor } from "./map.variants";
+import { arcCoordinates } from "./map-geometry";
 
 export type MapArcProps = {
 	from: LngLat;
@@ -29,8 +29,8 @@ const ARC_SAMPLES = 64;
  * A curve from one point to another — a flight, a transfer, a connection
  * rather than a path someone travelled.
  *
- * A quadratic curve sampled into a polyline, not a great circle: at the scale
- * a connection is drawn the two are indistinguishable, and the curve's bow is a
+ * A quadratic curve sampled into a line, not a great circle: at the scale a
+ * connection is drawn the two are indistinguishable, and the curve's bow is a
  * choice the caller makes rather than one the globe makes for them. The line
  * starts and ends exactly on `from` and `to`, so markers there sit on it.
  */
@@ -43,14 +43,37 @@ export function MapArc({
 	opacity = 0.9,
 }: MapArcProps): ReactElement {
 	useMapPart("Map.Arc");
-	const stroke = withAlpha(useThemeColor(color), opacity);
+	const stroke = toStyleColor(useThemeColor(color));
+	const id = `delacour-arc-${useId()}`;
 	const [fromLng, fromLat] = from;
 	const [toLng, toLat] = to;
-	const coordinates = useMemo(
-		() => arcCoordinates([fromLng, fromLat], [toLng, toLat], curvature, ARC_SAMPLES).map(lngLatToLatLng),
+	const data = useMemo<GeoJSON.Feature<GeoJSON.LineString>>(
+		() => ({
+			geometry: {
+				coordinates: arcCoordinates([fromLng, fromLat], [toLng, toLat], curvature, ARC_SAMPLES).map(
+					([longitude, latitude]) => [longitude, latitude]
+				),
+				type: "LineString",
+			},
+			properties: {},
+			type: "Feature",
+		}),
 		[fromLng, fromLat, toLng, toLat, curvature]
 	);
 
-	return <Polyline coordinates={coordinates} lineCap="round" strokeColor={stroke} strokeWidth={width} />;
+	return (
+		<GeoJSONSource data={data} id={id}>
+			<Layer
+				id={`${id}-line`}
+				layout={{ "line-cap": "round" }}
+				paint={{
+					...(stroke === undefined ? {} : { "line-color": stroke }),
+					"line-opacity": Math.min(1, Math.max(0, opacity)),
+					"line-width": width,
+				}}
+				type="line"
+			/>
+		</GeoJSONSource>
+	);
 }
 MapArc.displayName = "DelacourUI.Map.Arc";

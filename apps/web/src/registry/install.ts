@@ -4473,10 +4473,10 @@ export const install = {
 	"map": {
 		name: "map",
 		title: "Map",
-		description: "A themed map on react-native-maps: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
+		description: "A themed MapLibre map on a token-painted basemap: markers, pins, labels, popups, routes, arcs and controls, with a camera ref.",
 		importPath: "@delacour/react-native-ui/map",
 		exportName: "Map",
-		expo: ["react-native-gesture-handler", "react-native-maps", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["@maplibre/maplibre-react-native", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 69,
@@ -7796,7 +7796,7 @@ export type InstallName = keyof typeof install;
  * package's declared peers — see `peerNames` in the generator.
  */
 export const peers = {
-	expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-maps", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
+	expo: ["@legendapp/list", "@maplibre/maplibre-react-native", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-teleport", "react-native-worklets", "uniwind"],
 	npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "tailwindcss"],
 	dev: [],
 } as const;

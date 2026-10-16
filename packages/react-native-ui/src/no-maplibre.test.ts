@@ -7,20 +7,20 @@ const SRC = import.meta.dirname;
 /** The one folder allowed to import the native map module. */
 const MAP_FOLDER = join(SRC, "components", "map") + sep;
 
-/** An import or re-export of `react-native-maps`, static or dynamic. */
-const MAPS_IMPORT = /(?:from\s+|import\s*\(\s*|require\s*\(\s*)["']react-native-maps["']/;
+/** An import or re-export of MapLibre, static or dynamic, the package or any path inside it. */
+const MAPS_IMPORT = /(?:from\s+|import\s*\(\s*|require\s*\(\s*)["']@maplibre\/[^"']+["']/;
 
 /** An import that reaches into the map folder from outside it. */
 const MAP_FOLDER_IMPORT = /from\s+["'](?:\.\.\/)+(?:components\/)?map(?:\/[^"']*)?["']/;
 
 /**
- * `react-native-maps` stays behind `@delacour/react-native-ui/map`.
+ * `@maplibre/maplibre-react-native` stays behind `@delacour/react-native-ui/map`.
  *
  * It is an **optional** peer: an app that never imports the map never installs
  * it, and the granular exports are what make that safe — but only for as long
  * as no other component's import graph reaches it. One stray import from a
  * shared helper and every app using that helper fails to bundle with "Unable
- * to resolve module react-native-maps", for a map it never drew. The same
+ * to resolve module @maplibre/maplibre-react-native", for a map it never drew. The same
  * holds for an import of the map folder itself, which would pull the module in
  * transitively.
  *
@@ -38,7 +38,7 @@ function sourceFiles(dir: string): string[] {
 const FILES = sourceFiles(SRC);
 const OUTSIDE = FILES.filter((path) => !path.startsWith(MAP_FOLDER));
 
-describe("react-native-maps stays inside the map folder", () => {
+describe("MapLibre stays inside the map folder", () => {
 	// An empty walk would let the assertions below pass on nothing.
 	test("finds the source tree, and the map folder in it", () => {
 		expect(OUTSIDE.length).toBeGreaterThan(50);
@@ -67,8 +67,8 @@ describe("react-native-maps stays inside the map folder", () => {
 			peerDependencies?: Record<string, string>;
 			peerDependenciesMeta?: Record<string, { optional?: boolean }>;
 		};
-		expect(pkg.dependencies?.["react-native-maps"]).toBeUndefined();
-		expect(pkg.peerDependencies?.["react-native-maps"]).toBeDefined();
-		expect(pkg.peerDependenciesMeta?.["react-native-maps"]?.optional).toBe(true);
+		expect(pkg.dependencies?.["@maplibre/maplibre-react-native"]).toBeUndefined();
+		expect(pkg.peerDependencies?.["@maplibre/maplibre-react-native"]).toBeDefined();
+		expect(pkg.peerDependenciesMeta?.["@maplibre/maplibre-react-native"]?.optional).toBe(true);
 	});
 });

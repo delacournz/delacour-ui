@@ -9,7 +9,16 @@ A themed map for showing places and paths — a store finder, a delivery route, 
 React views; routes and arcs are lines; the map's light/dark follows the active theme. It is a
 display component: no search, no geocoding, no turn-by-turn.
 
-## Engine decision
+## Engine change (2026-10-06)
+
+Replaced `react-native-maps` with `@maplibre/maplibre-react-native` `^11.5.0`, before the first stable
+release, with the public API unchanged but for an added `mapStyle` prop and exports
+(`buildMapStyle`, `MAP_DEFAULT_BASEMAP`, `fitBoundsCamera`); the region helpers and `MapRegion` are gone.
+Why: one engine on both platforms, a basemap painted from the theme on iOS as well as Android, no Google
+key, real line opacity. Tiles: OpenFreeMap (OpenMapTiles schema, ODbL attribution kept on). Not in the
+catalog — Expo does not bundle it. The section below records the original decision.
+
+## Engine decision (original, superseded)
 
 `react-native-maps` — **bundled by Expo SDK 57 (`1.27.2`)**, so it goes in the root
 `workspaces.catalog` at exactly that version and is referenced as `catalog:`. Declared an **optional

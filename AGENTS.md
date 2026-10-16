@@ -152,9 +152,9 @@ Shared native and React versions are pinned once, in the root `package.json`
 
 ```
 @legendapp/list  @shopify/react-native-skia 2.6.2  react 19.2.3  react-native 0.86.2
-react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-maps 1.27.2
-react-native-reanimated 4.5.1  react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0
-react-native-svg 15.15.4  react-native-worklets 0.10.1
+react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-reanimated 4.5.1
+react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0  react-native-svg 15.15.4
+react-native-worklets 0.10.1
 ```
 
 Every version here is the one Expo SDK 57 bundles. That is the rule, not a coincidence: `expo
@@ -162,9 +162,9 @@ install` and `expo-doctor` both check against it, and a native module a minor ah
 fails at the linker rather than at install.
 
 A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
-and nothing else. `react-native-pulsar` (`^1.7.0`) and `react-native-teleport` (`^1.2.2`) are the
-two today; each workspace that needs one repeats the range verbatim, and a bump is a search for
-the range rather than a catalog edit.
+and nothing else. `react-native-pulsar` (`^1.7.0`), `react-native-teleport` (`^1.2.2`) and
+`@maplibre/maplibre-react-native` (`^11.5.0`) are the three today; each workspace that needs one
+repeats the range verbatim, and a bump is a search for the range rather than a catalog edit.
 
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two

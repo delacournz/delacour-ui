@@ -109,6 +109,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/table": "table/sortable",
 	"native/components/tabs": "tabs/variants/every-variant",
 	"native/components/tag-input": "tag-input/basic",
+	"native/components/text-animation": "text-animation/reveal-words",
 	"native/components/text": "text/type-scale",
 	"native/components/textarea": "textarea/character-count",
 	"native/components/theme-selector": "theme-selector/controlled",
@@ -272,6 +273,9 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/tabs/variants/every-variant/dark.png?inline"),
 	},
 	"tag-input/basic": { load: () => import("../../public/previews/tag-input/basic/dark.png?inline") },
+	"text-animation/reveal-words": {
+		load: () => import("../../public/previews/text-animation/reveal-words/dark.png?inline"),
+	},
 	"text/type-scale": { load: () => import("../../public/previews/text/type-scale/dark.png?inline") },
 	"textarea/character-count": { load: () => import("../../public/previews/textarea/character-count/dark.png?inline") },
 	"theme-selector/controlled": {

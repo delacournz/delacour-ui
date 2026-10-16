@@ -33,7 +33,7 @@ export function Demo(): ReactElement {
 			))}
 			{[HUB, ...DESTINATIONS].map((city) => (
 				<Map.Marker accessibilityLabel={city.name} key={city.name} lngLat={city.lngLat}>
-					<Map.Pin size="sm" tone={city === HUB ? "primary" : "default"} />
+					<Map.Pin size={city === HUB ? "md" : "sm"} tone={city === HUB ? "primary" : "default"} />
 				</Map.Marker>
 			))}
 		</Map>

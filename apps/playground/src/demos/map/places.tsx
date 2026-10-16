@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Places",
 	capture: { align: "stretch", flow: "map/places", hero: true },
 	caption:
-		"Markers are React views pinned to a coordinate. Each one anchors on its pin's tip, so the label under it moves nothing; tap one to select it.",
+		"Markers are React views pinned to a coordinate. Each one anchors on its pin's tip, so the label under it moves nothing. Tap one to select it: the selected pin steps up a size and its label comes forward.",
 };
 
 type Place = { id: string; name: string; lngLat: readonly [number, number] };
@@ -25,7 +25,7 @@ export function Demo(): ReactElement {
 
 	return (
 		<View className="gap-3">
-			<Map center={[174.779, -41.2895]} className="h-96" testID="map-places" zoom={13}>
+			<Map center={[174.7815, -41.2888]} className="h-96" testID="map-places" zoom={12.6}>
 				{PLACES.map((place) => (
 					<Map.Marker
 						accessibilityLabel={place.name}
@@ -34,8 +34,8 @@ export function Demo(): ReactElement {
 						onPress={() => setSelected(place.id)}
 						testID={`map-places-${place.id}`}
 					>
-						<Map.Pin tone={place.id === selected ? "primary" : "default"} />
-						<Map.Label tone={place.id === selected ? "primary" : "default"}>{place.name}</Map.Label>
+						<Map.Pin size={place.id === selected ? "md" : "sm"} tone={place.id === selected ? "primary" : "default"} />
+						<Map.Label tone={place.id === selected ? "default" : "muted"}>{place.name}</Map.Label>
 					</Map.Marker>
 				))}
 			</Map>

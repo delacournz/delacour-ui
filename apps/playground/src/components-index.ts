@@ -193,6 +193,12 @@ const ROWS = [
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{
+		slug: "support",
+		title: "Support",
+		description: "Availability, channels, topics, thread furniture",
+		group: "Media",
+	},
+	{
 		slug: "scroll-text",
 		title: "ScrollText",
 		description: "Colour, rise, highlight, by character and line",

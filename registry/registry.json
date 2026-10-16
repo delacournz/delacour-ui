@@ -3325,6 +3325,64 @@
 			]
 		},
 		{
+			"name": "support",
+			"type": "registry:ui",
+			"title": "Support",
+			"description": "A help section: availability, channels, topics, past requests and the furniture around a support thread.",
+			"categories": [
+				"media"
+			],
+			"registryDependencies": [
+				"badge",
+				"chip",
+				"icon",
+				"icons",
+				"item",
+				"list-group",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/support/AGENTS.md",
+				"ui/support/index.ts",
+				"ui/support/support-agent.tsx",
+				"ui/support/support-article.tsx",
+				"ui/support/support-articles.tsx",
+				"ui/support/support-channel.tsx",
+				"ui/support/support-channels.tsx",
+				"ui/support/support-conversation.tsx",
+				"ui/support/support-conversations.tsx",
+				"ui/support/support-handoff.tsx",
+				"ui/support/support-header.tsx",
+				"ui/support/support-note.tsx",
+				"ui/support/support-replies.tsx",
+				"ui/support/support-reply.tsx",
+				"ui/support/support-resolution.tsx",
+				"ui/support/support-section.tsx",
+				"ui/support/support-status.tsx",
+				"ui/support/support-ticket.tsx",
+				"ui/support/support-topic.tsx",
+				"ui/support/support-topics.tsx",
+				"ui/support/support-typing.tsx",
+				"ui/support/support.context.tsx",
+				"ui/support/support.tsx",
+				"ui/support/support.types.ts",
+				"ui/support/support.utils.ts",
+				"ui/support/support.variants.ts"
+			]
+		},
+		{
 			"name": "surface",
 			"type": "registry:ui",
 			"title": "Surface",

@@ -76,6 +76,15 @@ the unit is the whole file rather than a bare JSX fragment.
 **No `GalleryScreen`, no `Section`, no scroll view.** A demo is the component
 and nothing else. The gallery supplies the frame.
 
+**One exception: `scroll-text`.** `ScrollText` is scroll-linked — the scroll
+position is its clock — so it cannot be shown without something to scroll. Its
+demos host it in a *bounded* `Animated.ScrollView` (`h-80`, `testID`
+`scroll-text-host`), and the host is part of the specimen: it is what a reader
+writes too. The block's window is read against that scroll view's own bounds
+through the `offset` source's `viewport`, not against the device. Its `scrub`
+demo drives a `progress` source from a `Slider` and needs no scroll at all. No
+other component takes this exception.
+
 **`testID` anything a flow will touch.** Interaction for an animated demo lives
 in an argent flow that targets elements by id, and a flow that cannot find its
 target still reports success — so a missing `testID` produces a video of a

@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-text/characters and has settled — a bounded scroll view with the testID
+  scroll-text-host, scrolled to the top, the text resting fully inside the box near the start of its window. The capture script navigates there before
+  running this.
+steps:
+  - echo: Scrolling the text up through its window
+  - swipe: { from: { id: scroll-text-host }, by: { y: -0.3 }, momentum: false, duration: 2200 }
+  - wait: 600
+  - echo: And back down by the same distance, so the clip loops near where it began
+  - swipe: { from: { id: scroll-text-host }, by: { y: 0.3 }, momentum: false, duration: 2200 }

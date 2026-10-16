@@ -155,6 +155,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollText](src/components/scroll-text/AGENTS.md) | `@delacour/react-native-ui/scroll-text` | Text that resolves word by word as the screen scrolls |
 | [Select](src/components/select/AGENTS.md) | `@delacour/react-native-ui/select` | A closed set of choices behind a field-shaped trigger, picked from a bottom sheet |
 | [SearchBar](src/components/search-bar/AGENTS.md) | `@delacour/react-native-ui/search-bar` | The query field at the top of a list — clear, Cancel, debounce and filter tokens, on `Input.Group` |
 | [SelectionMode](src/components/selection-mode/AGENTS.md) | `@delacour/react-native-ui/selection-mode` | Pick several things at once, then act on them from a bar |

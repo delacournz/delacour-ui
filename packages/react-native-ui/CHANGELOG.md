@@ -1,5 +1,28 @@
 # @delacour/react-native-ui
 
+## 0.2.0
+
+### Minor Changes
+
+- [#159](https://github.com/delacournz/delacour-ui/pull/159) [`db7f90d`](https://github.com/delacournz/delacour-ui/commit/db7f90de243b919bc2ef73202c4d3ac9a1b31395) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Map` — a themed map for places and paths, at `@delacour/react-native-ui/map`
+
+  Markers that are React views and anchor on their pin's tip, labels, themed popups, routes, arcs and
+  floating zoom, compass, recenter and locate controls, on MapLibre (`@maplibre/maplibre-react-native`).
+  The basemap is OpenStreetMap vector tiles from OpenFreeMap — free, no key — painted from the theme's
+  tokens on both platforms, so light, dark and any retuned theme carry through to the map; `mapStyle`
+  or `buildMapStyle` swap in other tiles. Props set the opening view; a ref moves the camera with
+  `flyTo`, `fitBounds` and `recenter`. `@maplibre/maplibre-react-native` is a new optional peer,
+  resolved only by an app that imports `/map`; `delacour add map` copies the component into a project
+  and `expo install`s it.
+
+- [#131](https://github.com/delacournz/delacour-ui/pull/131) [`1bb7d69`](https://github.com/delacournz/delacour-ui/commit/1bb7d69c169b541a41c0943a69d94fc25022f36d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `cn()` now runs on [`cn`](https://github.com/shadcn-ui/cn) instead of `clsx` + `tailwind-merge`: the same output (held to tailwind-merge's on every variant class), much faster on repeated render calls. `clsx` is no longer a dependency; `tailwind-merge` stays, as `tailwind-variants`' peer for `tv()`. Components added with `delacour add` now install `cn`.
+
+- [#131](https://github.com/delacournz/delacour-ui/pull/131) [`1bb7d69`](https://github.com/delacournz/delacour-ui/commit/1bb7d69c169b541a41c0943a69d94fc25022f36d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add the etched material, the tray and the kicker — opt-in, the default look is unchanged
+
+  `Surface` and `Card` take `material`: `flat` (default), `etched` (a one-pixel highlight set into the edge, with a very soft drop) and `tray` (a muted frame, 4pt padding, 2xl corner, whose panels take the xl corner and the card fill). `Button` and `Badge` take `material="etched"` — the primary button gains a white inset top edge, the quiet fills the light/dark edge, and an etched badge squares to the small corner with 8%/16% alpha soft status fills. `Input` and `Textarea` gain an `etched` variant that rings on focus. `Text.Kicker` is the ten-point, 0.2em-tracked uppercase mono label.
+
+  New tokens in `tokens.css`: `--text-kicker`, `--tracking-kicker`, `--shadow-etched`, `--shadow-etched-dark`, `--shadow-etched-primary`, `--shadow-focus` and `--shadow-focus-dark`, registered with `tailwind-merge`. `theme.css` is untouched.
+
 ## 0.1.0
 
 ### Minor Changes

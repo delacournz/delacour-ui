@@ -1,0 +1,253 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "post",
+	"type": "registry:ui",
+	"title": "Post",
+	"description": "A social card: author, body, media and animated counts, in four shapes.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"avatar",
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"expo-linear-gradient",
+		"react-native-reanimated",
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/post/AGENTS.md",
+			"target": "post/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/post",
+					"to": "@registry/ui/post"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/index.ts",
+			"target": "post/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-action.tsx",
+			"target": "post/post-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-author.tsx",
+			"target": "post/post-author.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../avatar",
+					"to": "@registry/ui/avatar"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-body.tsx",
+			"target": "post/post-body.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-community.tsx",
+			"target": "post/post-community.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../avatar",
+					"to": "@registry/ui/avatar"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-footer.tsx",
+			"target": "post/post-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-header.tsx",
+			"target": "post/post-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-media.tsx",
+			"target": "post/post-media.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-stat-count.tsx",
+			"target": "post/post-stat-count.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-stat.tsx",
+			"target": "post/post-stat.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-title.tsx",
+			"target": "post/post-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post-votes.tsx",
+			"target": "post/post-votes.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.context.tsx",
+			"target": "post/post.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.tsx",
+			"target": "post/post.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.types.ts",
+			"target": "post/post.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.utils.ts",
+			"target": "post/post.utils.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/post/post.variants.ts",
+			"target": "post/post.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../avatar/avatar.variants",
+					"to": "@registry/ui/avatar/avatar.variants"
+				}
+			]
+		}
+	]
+}

@@ -518,6 +518,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A value along a track, dragged by a handle that follows the gesture.",
 		categories: ["forms"],
 	},
+	sortable: {
+		title: "Sortable",
+		description:
+			"A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions.",
+		categories: ["navigation"],
+	},
 	spinner: {
 		title: "Spinner",
 		description: "An animated loading indicator drawn on the icon scale.",

@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sortable/variable-heights and has settled — five recipe steps in their
+  starting order, the short "Mix the dough" second and the tall "Rest" third. The capture script navigates there
+  before running this.
+steps:
+  - echo: Dragging the short row past the tall one
+  - swipe: { from: { id: sortable-variable-mix }, by: { y: 0.14 }, momentum: false, duration: 900 }
+  - wait: 700
+  - echo: And back above it, so the clip loops without a jump cut
+  - swipe: { from: { id: sortable-variable-mix }, by: { y: -0.14 }, momentum: false, duration: 900 }

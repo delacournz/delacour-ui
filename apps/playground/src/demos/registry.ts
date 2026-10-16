@@ -634,6 +634,12 @@ import * as demo_slider_colours from "./slider/colours";
 import * as demo_slider_disabled_and_invalid from "./slider/disabled-and-invalid";
 import * as demo_slider_sizes from "./slider/sizes";
 import * as demo_slider_vertical from "./slider/vertical";
+import * as demo_sortable_handle from "./sortable/handle";
+import * as demo_sortable_in_scroll_view from "./sortable/in-scroll-view";
+import * as demo_sortable_list_group from "./sortable/list-group";
+import * as demo_sortable_long_press from "./sortable/long-press";
+import * as demo_sortable_pinned from "./sortable/pinned";
+import * as demo_sortable_variable_heights from "./sortable/variable-heights";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
@@ -1424,6 +1430,12 @@ export const DEMOS = {
 	"slider/disabled-and-invalid": demo_slider_disabled_and_invalid,
 	"slider/sizes": demo_slider_sizes,
 	"slider/vertical": demo_slider_vertical,
+	"sortable/handle": demo_sortable_handle,
+	"sortable/in-scroll-view": demo_sortable_in_scroll_view,
+	"sortable/list-group": demo_sortable_list_group,
+	"sortable/long-press": demo_sortable_long_press,
+	"sortable/pinned": demo_sortable_pinned,
+	"sortable/variable-heights": demo_sortable_variable_heights,
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,

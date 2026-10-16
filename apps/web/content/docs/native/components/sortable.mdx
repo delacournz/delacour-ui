@@ -1,0 +1,219 @@
+---
+title: Sortable
+description: A vertical list the user reorders by dragging — by a handle, or by holding the row.
+icon: GripVertical
+---
+
+<Preview id="sortable/handle" title={null} />
+
+## Installation
+
+<ComponentInstall name="sortable" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Item } from "@/components/ui/item";
+import { Sortable } from "@/components/ui/sortable";
+import { useState } from "react";
+import { View } from "react-native";
+
+const TRACKS: Record<string, string> = {
+  dawn: "Dawn Chorus",
+  tide: "Low Tide",
+  ember: "Ember",
+};
+
+export default function Example() {
+  const [order, setOrder] = useState(["dawn", "tide", "ember"]);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Sortable value={order} onReorder={setOrder} gap={8}>
+        {order.map((id) => (
+          <Sortable.Item key={id} id={id}>
+            <Item variant="outline">
+              <Item.Content>
+                <Item.Title>{TRACKS[id]}</Item.Title>
+              </Item.Content>
+              <Item.Actions>
+                <Sortable.Handle />
+              </Item.Actions>
+            </Item>
+          </Sortable.Item>
+        ))}
+      </Sortable>
+    </View>
+  );
+}
+```
+
+The order is yours: render the rows from `value` and store what `onReorder` hands back. A drag
+renders nothing — the rows move by transform on the UI thread — and `onReorder` fires once, after
+the row has landed, with the new order and `{ id, from, to }`.
+
+<Preview id="sortable/handle" />
+
+## Long press
+
+`activation="long-press"` lifts the whole row after a hold (`longPressDelay`, 220ms by default). A
+move before the hold completes still scrolls the screen. The handle stays as a visual hint.
+
+<Preview id="sortable/long-press" />
+
+```tsx
+<Sortable activation="long-press" value={order} onReorder={setOrder}>
+  …
+</Sortable>
+```
+
+## Variable heights
+
+Every row measures itself, so rows can be any height. A row changes slot as soon as its edge
+crosses the middle of the next row — not when it is nearer that slot — so a short row passes a tall
+one without feeling stuck.
+
+<Preview id="sortable/variable-heights" />
+
+## Pinned and disabled rows
+
+```tsx
+<Sortable.Item id="inbox" isPinned>…</Sortable.Item>
+<Sortable.Item id="later" isDisabled>…</Sortable.Item>
+```
+
+A pinned row never moves and the others reorder around it. A disabled row cannot be lifted, but
+the others move past it. `isDisabled` on the root disables the whole list.
+
+<Preview id="sortable/pinned" />
+
+## In a list group
+
+Wrap each `ListGroup.Item` in a `Sortable.Item` and the lifted row takes an opaque card surface and
+a shadow, so the row it passes never shows through.
+
+<Preview id="sortable/list-group" />
+
+## Auto-scroll
+
+Inside a scroll view, pass its animated ref as `scrollRef`. A row dragged within
+`autoscrollThreshold` (72pt) of either edge scrolls the list, up to `autoscrollSpeed` (8pt per
+frame) right at the edge.
+
+```tsx
+import Animated, { useAnimatedRef } from "react-native-reanimated";
+
+const scrollRef = useAnimatedRef<Animated.ScrollView>();
+
+<Animated.ScrollView ref={scrollRef}>
+  <Sortable value={order} onReorder={setOrder} scrollRef={scrollRef}>
+    …
+  </Sortable>
+</Animated.ScrollView>
+```
+
+<Callout type="warn">
+Every row stays mounted — there is no virtualisation. Sortable is comfortable to about a hundred
+rows. It reads `isPinned` from the `Sortable.Item`s that are its direct children (or a `.map()`); a
+row behind a wrapper component counts as unpinned.
+</Callout>
+
+## Haptics
+
+A lift and each slot passed play a haptic — `{ lift: "medium", pass: "selection" }` by default.
+
+```tsx
+<Sortable haptic={{ lift: "heavy", pass: "light" }} …>…</Sortable>
+<Sortable haptic={false} …>…</Sortable>
+```
+
+## Custom handle
+
+`useSortableItem()` reads the enclosing row: its `id`, `index`, `isActive` (a shared value, for an
+animated style that follows the lift without a render), and `moveUp` / `moveDown`.
+
+## Accessibility
+
+- A drag is invisible to a screen reader, so the handle — or the row, in `long-press` mode — offers
+  **Move up** and **Move down** actions and the value "Position 2 of 5". An action reorders
+  immediately and announces the new position.
+- A row only offers the moves it can make: none when pinned or disabled, no Move up at the top.
+- The handle is a 44-point button labelled "Drag to reorder"; pass `accessibilityLabel` to change it.
+- With reduce motion on, rows snap to their slots instead of springing. The row under your finger
+  still follows it.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Sortable` | The list — owns the drag, the order it renders and auto-scroll |
+| `Sortable.Item` | One row: measured, lifted and moved. Keyed by `id` |
+| `Sortable.Handle` | The grip a row is dragged by, and its screen-reader actions |
+
+### Sortable
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    value: { type: "readonly string[]", description: "Row ids in render order. Required." },
+    onReorder: {
+      type: "(order: string[], details: { id: string; from: number; to: number }) => void",
+      description: "Called once per move, after the row lands. Required.",
+    },
+    gap: { type: "number", default: "0" },
+    activation: { type: '"handle" | "long-press"', default: '"handle"' },
+    longPressDelay: { type: "number", default: "220" },
+    haptic: {
+      type: "false | { lift: HapticFeedback; pass: HapticFeedback }",
+      default: '{ lift: "medium", pass: "selection" }',
+    },
+    isDisabled: { type: "boolean" },
+    scrollRef: { type: "AnimatedRef<Animated.ScrollView>", description: "The enclosing scroller, for auto-scroll." },
+    autoscrollThreshold: { type: "number", default: "72" },
+    autoscrollSpeed: { type: "number", default: "8" },
+    onDragStart: { type: "(id: string) => void" },
+    onDragEnd: { type: "(id: string) => void" },
+    className: { type: "string" },
+  }}
+/>
+
+### Sortable.Item
+
+Extends `ViewProps`.
+
+<TypeTable
+  type={{
+    id: { type: "string", description: "One of the list's `value`. Required." },
+    isDisabled: { type: "boolean", description: "Cannot be lifted; the others move past it." },
+    isPinned: { type: "boolean", description: "Never moves; the others reorder around it." },
+    activeClassName: { type: "string", description: "Added while the row is lifted." },
+    className: { type: "string" },
+  }}
+/>
+
+### Sortable.Handle
+
+Extends `ViewProps`. Children replace the grip glyph.
+
+<TypeTable
+  type={{
+    accessibilityLabel: { type: "string", default: '"Drag to reorder"' },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  Sortable,
+  type SortableProps,
+  type SortableReorderDetails,
+  reorderItems,
+  useSortableItem,
+  sortableVariants,
+} from "@delacour/react-native-ui/sortable";
+```

@@ -574,6 +574,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Free-form tags typed into one field box, each a removable chip, with validation and a max.",
 		categories: ["forms"],
 	},
+	"text-animation": {
+		title: "TextAnimation",
+		description: "Five ways a piece of text or a number arrives — reveal, typing, rotating, counting, rolling.",
+		categories: ["media"],
+	},
 	textarea: {
 		title: "Textarea",
 		description: "A multiline text field sized in rows, with auto-grow and a character count.",

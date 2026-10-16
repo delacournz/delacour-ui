@@ -36,6 +36,7 @@ import {
 	IconGauge,
 	IconHandTouch,
 	IconHashtag,
+	IconHeadphones,
 	IconHeart,
 	IconHistory,
 	IconHourglass,
@@ -182,6 +183,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	post: IconHeart,
 	"qr-code": IconQrCode,
 	"scroll-text": IconTextMotion,
+	support: IconHeadphones,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

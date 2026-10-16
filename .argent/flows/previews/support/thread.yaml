@@ -1,0 +1,12 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on support/thread and has settled — the agent typing. The
+  capture script navigates there before running this.
+steps:
+  - echo: Let the typing dots run
+  - wait: 1800
+  - echo: Stop typing — the status line returns to role and availability
+  - tap: { id: support-typing-toggle }
+  - wait: 1200
+  - echo: Start typing again, so the clip loops
+  - tap: { id: support-typing-toggle }
+  - wait: 900

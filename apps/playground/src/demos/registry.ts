@@ -484,6 +484,13 @@ import * as demo_page_header_in_a_screen from "./page-header/in-a-screen";
 import * as demo_page_header_no_cover from "./page-header/no-cover";
 import * as demo_page_header_profile from "./page-header/profile";
 import * as demo_page_header_stats from "./page-header/stats";
+import * as demo_pagination_compact from "./pagination/compact";
+import * as demo_pagination_controlled_list from "./pagination/controlled-list";
+import * as demo_pagination_disabled from "./pagination/disabled";
+import * as demo_pagination_numbers from "./pagination/numbers";
+import * as demo_pagination_simple from "./pagination/simple";
+import * as demo_pagination_sizes from "./pagination/sizes";
+import * as demo_pagination_with_summary from "./pagination/with-summary";
 import * as demo_planner_calendar_fill from "./planner/calendar-fill";
 import * as demo_planner_controlled_month from "./planner/controlled-month";
 import * as demo_planner_custom_day from "./planner/custom-day";
@@ -1267,6 +1274,13 @@ export const DEMOS = {
 	"page-header/no-cover": demo_page_header_no_cover,
 	"page-header/profile": demo_page_header_profile,
 	"page-header/stats": demo_page_header_stats,
+	"pagination/compact": demo_pagination_compact,
+	"pagination/controlled-list": demo_pagination_controlled_list,
+	"pagination/disabled": demo_pagination_disabled,
+	"pagination/numbers": demo_pagination_numbers,
+	"pagination/simple": demo_pagination_simple,
+	"pagination/sizes": demo_pagination_sizes,
+	"pagination/with-summary": demo_pagination_with_summary,
 	"planner/calendar-fill": demo_planner_calendar_fill,
 	"planner/controlled-month": demo_planner_controlled_month,
 	"planner/custom-day": demo_planner_custom_day,

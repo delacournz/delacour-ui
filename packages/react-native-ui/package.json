@@ -85,6 +85,7 @@
 		"./otp-input": "./src/components/otp-input/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",
 		"./page-header": "./src/components/page-header/index.ts",
+		"./pagination": "./src/components/pagination/index.ts",
 		"./planner": "./src/components/planner/index.ts",
 		"./popover": "./src/components/popover/index.ts",
 		"./post": "./src/components/post/index.ts",

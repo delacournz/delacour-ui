@@ -134,8 +134,9 @@ export function resolveModuleId(fromPath: string, specifier: string, known: read
 	return candidates.find((candidate) => known.includes(candidate)) ?? null;
 }
 
+/** A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`. */
 function isTest(path: string): boolean {
-	return /\.test\.tsx?$/.test(path);
+	return /\.(test|test-helpers|fixtures)\.tsx?$/.test(path);
 }
 
 /** `button/index.ts` → `button`; `cn.ts` → `cn`; `theme.css` → `null`. */

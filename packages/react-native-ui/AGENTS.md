@@ -149,6 +149,7 @@ shares.
 | [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |
 | [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
 | [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
+| [QRCode](src/components/qr-code/AGENTS.md) | `@delacour/react-native-ui/qr-code` | A string a camera can read, drawn as one vector path, with an optional centre logo |
 | [Questionnaire](src/components/questionnaire/AGENTS.md) | `@delacour/react-native-ui/questionnaire` | A guided form, one question at a time — branching, skips, validation and progress |
 | [ProgressButton](src/components/progress-button/AGENTS.md) | `@delacour/react-native-ui/progress-button` | A button held, not tapped, to confirm — a fill that fires when it reaches the end |
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |

@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on breadcrumb/scroll-overflow and has settled — the seven-level trail on one
+  line, scrolled to its end with Retries in view. The capture script navigates there before running this.
+steps:
+  - echo: Dragging back to the start of the trail, two strokes since one cannot cross it
+  - swipe: { from: { id: breadcrumb-scroll-list }, by: { x: 0.45 }, duration: 450, momentum: false }
+  - swipe: { from: { id: breadcrumb-scroll-list }, by: { x: 0.45 }, duration: 450, momentum: false }
+  - wait: 700
+  - echo: And forward to the current page again — a third stroke so it lands flush on the end, as it began
+  - swipe: { from: { id: breadcrumb-scroll-list }, by: { x: -0.45 }, duration: 450, momentum: false }
+  - swipe: { from: { id: breadcrumb-scroll-list }, by: { x: -0.45 }, duration: 450, momentum: false }
+  - swipe: { from: { id: breadcrumb-scroll-list }, by: { x: -0.45 }, duration: 450, momentum: false }
+  - wait: 600

@@ -284,6 +284,7 @@ const ROWS = [
 		description: "Basic, sending, multi-step, chips, controlled draft",
 		group: "Overlays",
 	},
+	{ slug: "breadcrumb", title: "Breadcrumb", description: "Separators, sizes, collapse, scroll", group: "Navigation" },
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },

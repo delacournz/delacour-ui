@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on breadcrumb/ellipsis-sheet and has settled — the full seven-level trail
+  collapsed to Home, an ellipsis and Reckoner, with the sheet closed and "Back to the track" disabled. The capture
+  script navigates there before running this.
+steps:
+  - echo: Opening the hidden levels from the ellipsis
+  - tap: { text: Show 5 hidden levels }
+  - await: { visible: { id: breadcrumb-ellipsis-sheet-3 } }
+  - wait: 700
+  - echo: Jumping to Radiohead, which shortens the trail
+  - tap: { id: breadcrumb-ellipsis-sheet-3 }
+  - await: { hidden: { id: breadcrumb-ellipsis-sheet-3 } }
+  - wait: 900
+  - echo: And back to the track, so the clip loops without a jump cut
+  - tap: { id: breadcrumb-ellipsis-reset }
+  - wait: 700

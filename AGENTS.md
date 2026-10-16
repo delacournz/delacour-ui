@@ -162,9 +162,9 @@ install` and `expo-doctor` both check against it, and a native module a minor ah
 fails at the linker rather than at install.
 
 A native module the SDK does not bundle is **not** catalogued, because the catalog is that list
-and nothing else. `react-native-pulsar` (`^1.7.0`) and `react-native-teleport` (`^1.2.2`) are the
-two today; each workspace that needs one repeats the range verbatim, and a bump is a search for
-the range rather than a catalog edit.
+and nothing else. `react-native-pulsar` (`^1.7.0`), `react-native-teleport` (`^1.2.2`) and
+`@maplibre/maplibre-react-native` (`^11.5.0`) are the three today; each workspace that needs one
+repeats the range verbatim, and a bump is a search for the range rather than a catalog edit.
 
 `@types/react` is catalogued for the same reason a native module is, and it was added after the
 proof: four packages declared three different ranges (`^19.2.0`, `~19.2.2`, `^19.2.18`), so two

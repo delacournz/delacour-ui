@@ -58,6 +58,7 @@
 		"./kpi": "./src/components/kpi/index.ts",
 		"./label": "./src/components/label/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
+		"./map": "./src/components/map/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",
@@ -115,6 +116,7 @@
 		"tailwind-variants": "^3.3.1"
 	},
 	"peerDependencies": {
+		"@maplibre/maplibre-react-native": "^11.5.0",
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/react-native-bottom-sheet": ">=0.1.0",
 		"@delacour/react-native-charts": ">=0.1.0",
@@ -136,6 +138,9 @@
 		"uniwind": "^1.11.0"
 	},
 	"peerDependenciesMeta": {
+		"@maplibre/maplibre-react-native": {
+			"optional": true
+		},
 		"@delacour/react-native-bottom-sheet": {
 			"optional": true
 		},
@@ -156,6 +161,7 @@
 		}
 	},
 	"devDependencies": {
+		"@maplibre/maplibre-react-native": "^11.5.0",
 		"@delacour/biome-config": "workspace:*",
 		"@delacour/react-native-bottom-sheet": "workspace:*",
 		"@delacour/react-native-charts": "workspace:*",

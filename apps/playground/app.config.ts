@@ -84,6 +84,9 @@ const expoConfig: ExpoConfig = {
 		supportsTablet: false,
 		infoPlist: {
 			ITSAppUsesNonExemptEncryption: false,
+			// The Map demos' location dot. The position is drawn on the map and goes
+			// nowhere else, so the privacy manifest below does not change for it.
+			NSLocationWhenInUseUsageDescription: "Shows where you are on the Map demos. Your location stays on this device.",
 		},
 		bundleIdentifier: "nz.co.delacour.ui.playground",
 		// What the app sends, declared the way Apple builds its privacy report:
@@ -233,6 +236,9 @@ const expoConfig: ExpoConfig = {
 				android: { fonts: androidFonts },
 			},
 		],
+		// MapLibre's native SDK on both platforms. The basemap is keyless
+		// OpenStreetMap tiles, so there is nothing to configure.
+		["@maplibre/maplibre-react-native", {}],
 		// Required for the root view background to be settable at all on iOS,
 		// and what SystemUI.setBackgroundColorAsync drives at runtime.
 		"expo-system-ui",

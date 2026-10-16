@@ -268,6 +268,30 @@ describe("ios.privacyManifests", () => {
 	});
 });
 
+describe("@maplibre/maplibre-react-native", () => {
+	/**
+	 * The Map demos turn on the location dot, and iOS refuses the permission
+	 * prompt outright — no dialog, no dot — when the usage string is missing.
+	 */
+	test("declares why the app asks for location", () => {
+		expect(expoConfig.ios?.infoPlist?.NSLocationWhenInUseUsageDescription).toBeString();
+	});
+
+	/**
+	 * The config plugin wires MapLibre's native SDK into both builds. Without it
+	 * iOS links no MapLibre framework and the app crashes on the first map.
+	 */
+	test("registers the config plugin", () => {
+		expect(pluginEntry("@maplibre/maplibre-react-native")).toBeDefined();
+	});
+
+	/** The basemap is keyless OpenStreetMap tiles; nothing should still ask for Google's. */
+	test("carries no Google Maps key", () => {
+		expect(JSON.stringify(expoConfig)).not.toContain("GoogleMaps");
+		expect(() => pluginEntry("react-native-maps")).toThrow();
+	});
+});
+
 describe("generate-icons.ts", () => {
 	const source = readFileSync(GENERATOR, "utf8");
 

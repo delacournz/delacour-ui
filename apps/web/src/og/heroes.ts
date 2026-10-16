@@ -33,6 +33,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/avatar": "avatar/group",
 	"native/components/badge": "badge/variants-and-colours",
 	"native/components/bottom-sheet": "bottom-sheet/anatomy/the-whole-composition",
+	"native/components/breadcrumb": "breadcrumb/ellipsis-sheet",
 	"native/components/button": "button/variants",
 	"native/components/calendar": "calendar/single",
 	"native/components/card": "card/anatomy",
@@ -163,6 +164,10 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"bottom-sheet/anatomy/the-whole-composition": {
 		cut: "43edbb550de8",
 		load: () => import("./frames/bottom-sheet/anatomy/the-whole-composition.png?inline"),
+	},
+	"breadcrumb/ellipsis-sheet": {
+		cut: "a9d12f560cf0",
+		load: () => import("./frames/breadcrumb/ellipsis-sheet.png?inline"),
 	},
 	"button/variants": { load: () => import("../../public/previews/button/variants/dark.png?inline") },
 	"calendar/single": { load: () => import("../../public/previews/calendar/single/dark.png?inline") },

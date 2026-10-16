@@ -1,5 +1,58 @@
 # delacour
 
+## 0.2.0
+
+### Minor Changes
+
+- [#159](https://github.com/delacournz/delacour-ui/pull/159) [`db7f90d`](https://github.com/delacournz/delacour-ui/commit/db7f90de243b919bc2ef73202c4d3ac9a1b31395) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Map` — a themed map for places and paths, at `@delacour/react-native-ui/map`
+
+  Markers that are React views and anchor on their pin's tip, labels, themed popups, routes, arcs and
+  floating zoom, compass, recenter and locate controls, on MapLibre (`@maplibre/maplibre-react-native`).
+  The basemap is OpenStreetMap vector tiles from OpenFreeMap — free, no key — painted from the theme's
+  tokens on both platforms, so light, dark and any retuned theme carry through to the map; `mapStyle`
+  or `buildMapStyle` swap in other tiles. Props set the opening view; a ref moves the camera with
+  `flyTo`, `fitBounds` and `recenter`. `@maplibre/maplibre-react-native` is a new optional peer,
+  resolved only by an app that imports `/map`; `delacour add map` copies the component into a project
+  and `expo install`s it.
+
+- [#144](https://github.com/delacournz/delacour-ui/pull/144) [`60ff656`](https://github.com/delacournz/delacour-ui/commit/60ff656d85e7b0abfee850950ac0447033b72859) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `delacour update`, which brings copied components up to the registry and keeps your edits.
+
+  `add` now records where each file came from in `native-components.lock.json` — the registry ref and
+  a hash of the text as the registry served it. `update` uses that to tell an upstream fix from a
+  local change: a file only the registry moved is replaced, a file only you moved is left alone, and
+  a file both moved is three-way merged. Where both changed the same lines the file is written with
+  git conflict markers and the command exits `1`; an edit is never overwritten.
+
+  Your own formatter (Biome or Prettier, from your `node_modules`) is run over the registry's side
+  before anything is compared, so a file you only reformatted counts as untouched and an update
+  arrives in your style.
+
+  - `update --dry-run` reports the plan and writes nothing; `--json` prints it.
+  - `update --base <ref>` merges files that were copied before the lock existed.
+  - `update --prune` deletes untouched files a component no longer has.
+  - `diff` now prints the plan `update` would apply, so for a tracked file it shows the registry's
+    change on its own rather than both sides.
+  - The MCP server gains `check_updates` and `update_components`, and `doctor` warns when components
+    are present with no lock file.
+
+  Commit `native-components.lock.json`. A project without one keeps working: the first `update`
+  records every file that still matches the registry.
+
+- [#131](https://github.com/delacournz/delacour-ui/pull/131) [`1bb7d69`](https://github.com/delacournz/delacour-ui/commit/1bb7d69c169b541a41c0943a69d94fc25022f36d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `cn()` now runs on [`cn`](https://github.com/shadcn-ui/cn) instead of `clsx` + `tailwind-merge`: the same output (held to tailwind-merge's on every variant class), much faster on repeated render calls. `clsx` is no longer a dependency; `tailwind-merge` stays, as `tailwind-variants`' peer for `tv()`. Components added with `delacour add` now install `cn`.
+
+### Patch Changes
+
+- [#148](https://github.com/delacournz/delacour-ui/pull/148) [`0c3f4c8`](https://github.com/delacournz/delacour-ui/commit/0c3f4c8ee55e21185be9114a181eaf5e4be75a95) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `delacour update` now asks what to do with the files it skipped.
+
+  A file copied before `native-components.lock.json` existed, which no longer matches the registry,
+  has nothing to merge from, so `update` leaves it alone. Run at a terminal, it now finishes, reports,
+  and then asks about those files: leave them, merge them from a ref you type in (what `--base <ref>`
+  does), or replace them with the registry's copy. Replacing asks again before touching a file with
+  uncommitted changes.
+
+  Nothing is asked under `--yes`, `--json`, in CI or over MCP — there the files stay skipped, as
+  before.
+
 ## 0.1.0
 
 ### Minor Changes

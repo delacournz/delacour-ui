@@ -91,6 +91,7 @@
 		"./progress": "./src/components/progress/index.ts",
 		"./progress-button": "./src/components/progress-button/index.ts",
 		"./provider": "./src/components/provider/index.ts",
+		"./qr-code": "./src/components/qr-code/index.ts",
 		"./questionnaire": "./src/components/questionnaire/index.ts",
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",

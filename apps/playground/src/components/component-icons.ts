@@ -63,6 +63,7 @@ import {
 	IconPlayCircle,
 	IconPlusLarge,
 	IconProgress75,
+	IconQrCode,
 	IconRotate360Right,
 	IconSettingsSliderHor,
 	IconSidebar,
@@ -178,6 +179,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	message: IconBubble2,
 	"message-scroller": IconBubble2,
 	post: IconHeart,
+	"qr-code": IconQrCode,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

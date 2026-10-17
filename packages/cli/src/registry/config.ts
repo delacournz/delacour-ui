@@ -506,6 +506,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Text that resolves word by word as the screen scrolls past it.",
 		categories: ["media"],
 	},
+	"scroll-fade": {
+		title: "ScrollFade",
+		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
+		categories: ["layout"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

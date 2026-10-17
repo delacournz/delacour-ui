@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-scroll-source",
+	"type": "registry:hook",
+	"title": "useScrollSource",
+	"description": "The scroll offset and sizes of a scrollable, on the UI thread, for effects that follow it.",
+	"registryDependencies": [
+		"scroll-maths"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-scroll-source.tsx",
+			"target": "use-scroll-source.tsx",
+			"namespace": "hooks",
+			"rewrites": [
+				{
+					"from": "../lib/scroll-maths",
+					"to": "@registry/lib/scroll-maths"
+				}
+			]
+		}
+	]
+}

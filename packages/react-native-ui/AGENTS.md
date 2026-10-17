@@ -36,7 +36,8 @@ src/
 ├── expo/                 Expo-only entry points — navigation-theme
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
-│                         use-calm-motion, use-scroll-sections
+│                         use-calm-motion, use-scroll-sections,
+│                         use-scroll-source
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
@@ -46,6 +47,292 @@ src/
 ├── docs.test.ts          The package-wide documentation check — see Testing
 └── uniwind-env.d.ts      /// <reference types="uniwind/types" />
 ```
+
+### The scroll family's shared code
+
+`ScrollFade`, `ScrollBlur`, `ScrollCanvas` and `ScrollHeader` follow a scrollable
+without wrapping it, and they share three modules that sit outside any one
+folder, so none of the four imports another:
+
+| Module | What it holds |
+| --- | --- |
+| `hooks/use-scroll-source.tsx` | `ScrollSource` — offset, content and layout size as shared values, plus the axis and an animated ref. `useScrollSource()` makes one for a scrollable of your own and returns the props to spread onto it; `ScrollSourceProvider` shares one; `useResolvedScrollSource(name, explicit?)` is how an effect finds its source — the prop, else the nearest provider, else a thrown error naming the effect |
+| `lib/scroll-maths.ts` | The pure maths: `readScrollEvent`, `scrollEdgeOpacity`, `scrollProgress` |
+| `lib/scroll-edges.ts` | The pure edge-band geometry: `SCROLL_EDGES`, `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` |
+
+Three rules hold them together:
+
+- **Nothing clones a scrollable to attach `onScroll`.** The caller spreads
+  `scrollProps` onto it. Cloning collides with Reanimated's handler composition
+  and with the handlers every `Screen` scrollable already owns.
+- **A `<Screen>` is a source with no wiring.** `ScreenRoot` mounts an internal
+  bridge (`screen/screen-scroll-source.tsx`) that republishes the screen's own
+  `scrollY` / `contentHeight` / `layoutHeight`. The import points screen → hook,
+  never back, so installing the hook never drags `Screen` in. A Screen's source
+  learns its sizes only from scroll events; `useScrollSource` also measures on
+  layout. `scrollEdgeOpacity`'s unmeasured policy — start follows the offset,
+  end draws — covers the gap.
+- **Every function in `scroll-maths.ts` and `scroll-edges.ts` is a
+  self-contained `"worklet"`.** A module-scope helper called from inside a worklet
+  can be missing from its closure on the UI thread — `undefined is not a
+  function` mid-scroll, invisible to `bun test`. Each writes its own clamp inline
+  and none calls another; do not tidy the repetition into a helper.
+
+Everything belonging to a component — sub-components, variants, tests, local
+hooks, helpers — lives in its folder and is re-exported from that `index.ts`.
+Nothing outside reaches past the index into a component's internals.
+
+**Each component folder holds its own `AGENTS.md`**, and that file is where the
+component's design decisions live: its axes, what it refuses to do, and the
+failure each rule prevents. It also carries the folder's file map, so the list
+of parts is documented beside the parts rather than in a tree here that drifts
+the moment a file is added. This document holds only what every component
+shares.
+
+## Components
+
+| Component | Import | |
+| --- | --- | --- |
+| [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
+| [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
+| [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
+| [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
+| [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A sheet over the app — a Uniwind skin on `@delacour/react-native-bottom-sheet` |
+| [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
+| [Calendar](src/components/calendar/AGENTS.md) | `@delacour/react-native-ui/calendar` | A month grid for picking a day, several days or a range |
+| [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |
+| [Checkbox](src/components/checkbox/AGENTS.md) | `@delacour/react-native-ui/checkbox` | A box that is ticked or not, alone or in a group |
+| [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
+| [Carousel](src/components/carousel/AGENTS.md) | `@delacour/react-native-ui/carousel` | Swipeable slides on one fractional position — peek, loop, vertical, coverflow, dots and arrows |
+| [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
+| [ContextMenu](src/components/context-menu/AGENTS.md) | `@delacour/react-native-ui/context-menu` | The actions that belong to a piece of content, reached by holding it |
+| [Drawer](src/components/drawer/AGENTS.md) | `@delacour/react-native-ui/drawer` | A panel that slides in from an edge and covers the app until dismissed |
+| [Dialog](src/components/dialog/AGENTS.md) | `@delacour/react-native-ui/dialog` | A centred card over a dimmed app that asks for a decision or a short input |
+| [EmptyState](src/components/empty-state/AGENTS.md) | `@delacour/react-native-ui/empty-state` | A placeholder for a list or screen with no content |
+| [Fab](src/components/fab/AGENTS.md) | `@delacour/react-native-ui/fab` | A floating action button, and a dial of related actions that unfolds from it |
+| [Feedback](src/components/feedback/AGENTS.md) | `@delacour/react-native-ui/feedback` | A dialog for writing — the field in a recessed well, the actions on the band around it |
+| [Field](src/components/field/AGENTS.md) | `@delacour/react-native-ui/field` | A form field's layout, and where its state is written down |
+| [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
+| [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside it |
+| [Item](src/components/item/AGENTS.md) | `@delacour/react-native-ui/item` | A row of media, text and actions — standalone, or as a `ListGroup` row |
+| [Kpi](src/components/kpi/AGENTS.md) | `@delacour/react-native-ui/kpi` | One number, its change and a sparkline, on `Card` |
+| [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
+| [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on MapLibre with a token-painted basemap |
+| [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Menu](src/components/menu/AGENTS.md) | `@delacour/react-native-ui/menu` | A list of actions dropped from the control that opens it |
+| [Overlay](src/components/overlay/AGENTS.md) | `@delacour/react-native-ui/overlay` | The provider, portal, scrim, presence and back button every overlay is drawn with |
+| [Popover](src/components/popover/AGENTS.md) | `@delacour/react-native-ui/popover` | A small panel anchored to its trigger — flips and shifts to stay on screen |
+| [Pressable](src/components/pressable/AGENTS.md) | `@delacour/react-native-ui/pressable` | The gesture primitive every other control is built on |
+| [Progress](src/components/progress/AGENTS.md) | `@delacour/react-native-ui/progress` | How far a task has got, or that it is under way |
+| [ProgressButton](src/components/progress-button/AGENTS.md) | `@delacour/react-native-ui/progress-button` | A button held, not tapped, to confirm — a fill that fires when it reaches the end |
+| [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
+| [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
+| [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [SelectionMode](src/components/selection-mode/AGENTS.md) | `@delacour/react-native-ui/selection-mode` | Pick several things at once, then act on them from a bar |
+| [Separator](src/components/separator/AGENTS.md) | `@delacour/react-native-ui/separator` | A one-pixel rule, hidden from assistive technology |
+| [Skeleton](src/components/skeleton/AGENTS.md) | `@delacour/react-native-ui/skeleton` | A placeholder that shimmers or pulses while content loads |
+| [SlideButton](src/components/slide-button/AGENTS.md) | `@delacour/react-native-ui/slide-button` | A handle dragged across a rail to confirm an action |
+| [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
+| [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [StackCard](src/components/stack-card/AGENTS.md) | `@delacour/react-native-ui/stack-card` | A deck taken one card at a time by throwing the top one off |
+| [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
+| [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |
+| [Swipe](src/components/swipe/AGENTS.md) | `@delacour/react-native-ui/swipe` | A row that slides aside to reveal actions behind it |
+| [Switch](src/components/switch/AGENTS.md) | `@delacour/react-native-ui/switch` | A track and a knob, dragged or tapped |
+| [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
+| [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
+| [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
+| [Toast](src/components/toast/AGENTS.md) | `@delacour/react-native-ui/toast` | A brief message from anywhere — stacked at an edge, swiped away, gone on its own |
+| [ToggleButton](src/components/toggle-button/AGENTS.md) | `@delacour/react-native-ui/toggle-button` | A button that stays pressed, alone or in a group |
+| [Tooltip](src/components/tooltip/AGENTS.md) | `@delacour/react-native-ui/tooltip` | A short label on a long press — anchored to its control, gone on its own |
+| [DelacourProvider](src/components/provider/AGENTS.md) | `@delacour/react-native-ui/provider` | The app's root layer stack |
+
+A component missing from this table, or from its own folder, fails `bun test` —
+see **Testing**.
+
+## The three component patterns
+
+**A — Styled wrapper.** A component with no state that maps props to classes.
+Example: `Icon`, which also reads `IconDefaultsProvider` so a parent can set
+size and colour for its whole subtree instead of every call site repeating them.
+
+**B — Compound + context.** A root that shares `variant`/`size`/`isDisabled`
+through context with dot-notation sub-components, plus a `useX()` hook so a
+custom child can match the parent without prop drilling. Example: `Button` with
+`Button.Label`, `Button.StartContent`, `Button.EndContent` and `useButton()`.
+Reach for this over adding boolean props. See **Compound component layout**
+below for how the files are arranged.
+
+**C — `tv()` variants.** Size and variant axes defined in a `tv()`, never inline
+at the call site. Where that `tv()` lives depends on how many parts read it.
+
+A component with more than one styled part uses **one slotted `tv()` in a
+`*.variants.ts` sibling**, so a shared axis is declared once rather than restated
+per part. `Button`, `ListGroup` and `Spinner` all do, and the sibling is what
+makes it possible: the slot set is read by files that cannot import each other's
+roots without closing a cycle (rule 3), so it needs a leaf of its own. The same
+file is where that component's pure resolvers live — see **Testing**.
+
+A component that is a **single styled element with no pure resolvers** declares
+its `tv()` above the component in its own file and exports it from there, the way
+shadcn/ui does. `Separator` is the one that qualifies today. Nothing else shares
+its slot set, so a sibling would buy nothing but a second file to open.
+
+`Pressable` holds no `tv()` at all — see its section for why.
+
+## Rules
+
+1. **Text colour goes on the `Text`, never the parent.** A React Native `View`
+   does not cascade colour to a `Text` descendant the way a DOM element does.
+   `buttonVariants`' `label` slot owns `text-*`; its `root` slot must not.
+2. **No `"use client"`.** That is an RSC directive; it means nothing here.
+3. **No package-wide barrel.** Import from the subpath:
+   `@delacour/react-native-ui/button`. This is what lets an app skip resolving
+   optional peers it never uses. A component folder's own `index.ts` is its
+   entry point, not a barrel — never add a top-level `src/index.ts`.
+
+   *One exception, and it exists to prevent a cycle:* a **leaf** module —
+   `button.context.tsx`, `button.variants.ts` — may be imported directly across
+   component folders. The hazard is real: `Button` renders a `Spinner`, so if
+   `spinner.tsx` imported `../button`, that index would pull `button.tsx`
+   straight back in. Metro serves a partially initialised module for a cycle, so
+   `ButtonContext` would be `undefined` at import time and the app would red-box
+   on a cold start. If a cross-folder import is ever needed, reach for the leaf
+   and never for `../button`.
+
+   *`Spinner` no longer needs one at all.* It used to read the button's context
+   to recompute the icon size and foreground the button had **already** published
+   through `IconDefaultsProvider` around the very subtree the spinner sits in.
+   One inheritance path is now the whole story — `useIconDefaults()`. Do not add
+   the second one back.
+
+   *The same hazard applies inside a folder.* Now that compound parts have their
+   own files, there are two new ways to close a cycle. **A part must never
+   import its own folder's `index.ts`, and never import its own root**
+   (`./button`, `./spinner`). It reaches shared state through the
+   `{name}.context.tsx` leaf and shared prop types through `{name}.types.ts` —
+   both import nothing but React and React Native types. `spinner.context.tsx`
+   exists precisely for this: `SpinnerContent` needs `useSpinner`, and reading it
+   from `./spinner` would close `spinner.tsx ⇄ spinner-content.tsx`.
+4. **Anything importing an Expo package lives in `src/expo/`.** That directory
+   is the one place a framework dependency is allowed, and the import path says
+   so: `@delacour/react-native-ui/expo/navigation-theme`. Everything under it depends
+   on an **optional** peer, which is what the granular exports make safe — an
+   app that never imports `./expo/*` never resolves them, and one on a
+   different navigator keeps the rest of the library.
+
+   Elsewhere the no-framework rule still holds. `useNavigationTheme` returns
+   plain colour values from `src/hooks/`, and only the component that feeds them
+   to `ThemeProvider` sits under `expo/`. That split is deliberate: the values
+   are useful to any navigator, and `Screen.Navbar.BackButton` still takes an
+   `onPress` rather than calling a router.
+
+5. **Central Icons only**, via `@delacour/react-native-ui/icons/central`.
+6. **Run `bun run gen-exports`** after adding or removing a component folder or
+   a file under `src/expo`, `src/hooks`, `src/lib`, or `src/icons`. Never hand-edit the
+   `exports` map. A component folder without an `index.ts` fails the script.
+7. **Never wrap a React Native or Reanimated component with `withUniwind`.**
+   `View`, `Text`, `Pressable`, `Animated.View` and friends already accept
+   `className`. `withUniwind` is only for third-party components (`expo-image`,
+   `expo-blur`), and a given component may only be wrapped once, in one file.
+
+   *Central Icons is the one carve-out, and it is already spent.* `icon.tsx`
+   wraps a local `IconGlyph` proxy that takes the glyph as **data**, so a single
+   wrapper covers the whole two-thousand-icon set instead of one per glyph —
+   still one component wrapped once, in one file. Do not wrap a Central Icon
+   directly, do not wrap the proxy anywhere else, and do not add a second
+   wrapper for `Svg`. See **Sizing** for why the wrapper has to exist at all.
+8. **Native modules are peer dependencies, never dependencies.** Two copies of
+   a native module register twice and break at runtime.
+9. **`cn()` for every caller-supplied `className`, and `tv` from `lib/tv`.**
+   Uniwind does not deduplicate conflicting utilities on its own. There are
+   **two** mergers here and both need the semantic size tokens: `cn()` merges a
+   caller's className through the `cn` package (shadcn-ui/cn — `createCn` from
+   `cn/config`, tailwind-merge's semantics and output, no `clsx`), and `tv()`
+   merges slots and variants through a tailwind-merge instance of its own —
+   tailwind-variants v3 bundles it, which is why `tailwind-merge` stays a
+   dependency. `cn.parity.test.ts` holds `cn()` to tailwind-merge's output on
+   every class literal in a `*.variants.ts`. Never import `tv` from
+   `tailwind-variants` directly — a bare `tv` does not know what `button-md`
+   is, drops `text-button-md` into tailwind-merge's text *colour* group, and
+   silently strips the label's colour. `src/styles/tokens.ts` holds the one
+   config both are built from.
+10. **No `any`.** Discriminated unions over loose types.
+11. **The token vocabulary is shadcn's, and a new token has to justify not
+    being.** Every name shadcn defines is here, spelled the way shadcn spells it
+    — `destructive`, not `danger` — so a theme written for a web app moves
+    across as a copy rather than a translation. The package adds `elevated`,
+    `tertiary`, `success` / `warning` / `info`, the `-soft` pairs and `overlay`,
+    which shadcn has no name for; each is **derived** from a token shadcn does
+    define, so a pasted palette drags it along instead of leaving it on this
+    package's defaults. Add a token only when nothing in shadcn's set carries
+    the meaning, and derive it. `X-foreground` always means "content drawn on an
+    `X` surface" — keep that meaning.
+12. **Every component carries a `DelacourUI.`-prefixed `displayName`.** Not just
+    compound roots — every part, every context provider, every internal leaf that
+    renders. React DevTools reads `displayName || name`, so an unnamed component
+    shows its private symbol (`ScreenNavbarTitle`) in every tree row, error stack
+    and profiler entry instead of its place in the API
+    (`DelacourUI.Screen.Navbar.Title`). The derivation and the two legal
+    assignment forms are in **Compound component layout**;
+    `src/display-name.test.ts` fails the build with the name of any component
+    that lacks one.
+
+## Sizing
+
+**An icon's size is a class, and it drives the glyph's `size` prop — not a
+style.** That indirection is forced, not stylistic. `CentralIconBase` spreads
+its props onto `<Svg>` *before* setting its own `width`/`height` from `size`,
+and `react-native-svg`'s `Svg.render()` then merges `{...style, ...props}` (props
+win) and pushes the width/height-derived styles onto the root **last**. A
+`size-4` that resolved to `style.width` is overridden every single time.
+
+So `icon.tsx` runs the class through `withUniwind` in manual mode to recover the
+width and hands that number to the glyph:
+
+```tsx
+const StyledIconGlyph = withUniwind(IconGlyph, {
+	size: { fromClassName: "className", styleProperty: "width" },
+});
+{
+│                         scroll-maths, scroll-edges
+├── styles/               index / base / tokens / theme CSS, plus tokens.ts
+├── display-name.test.ts  The package-wide displayName check — see rule 12
+├── docs.test.ts          The package-wide documentation check — see Testing
+└── uniwind-env.d.ts      /// <reference types="uniwind/types" />
+```
+
+### The scroll family's shared code
+
+`ScrollFade`, `ScrollBlur`, `ScrollCanvas` and `ScrollHeader` follow a scrollable
+without wrapping it, and they share three modules that sit outside any one
+folder, so none of the four imports another:
+
+| Module | What it holds |
+| --- | --- |
+| `hooks/use-scroll-source.tsx` | `ScrollSource` — offset, content and layout size as shared values, plus the axis and an animated ref. `useScrollSource()` makes one for a scrollable of your own and returns the props to spread onto it; `ScrollSourceProvider` shares one; `useResolvedScrollSource(name, explicit?)` is how an effect finds its source — the prop, else the nearest provider, else a thrown error naming the effect |
+| `lib/scroll-maths.ts` | The pure maths: `readScrollEvent`, `scrollEdgeOpacity`, `scrollProgress` |
+| `lib/scroll-edges.ts` | The pure edge-band geometry: `SCROLL_EDGES`, `resolveFadeEdges`, `resolveFadeBand`, `resolveFadeGradient` |
+
+Three rules hold them together:
+
+- **Nothing clones a scrollable to attach `onScroll`.** The caller spreads
+  `scrollProps` onto it. Cloning collides with Reanimated's handler composition
+  and with the handlers every `Screen` scrollable already owns.
+- **A `<Screen>` is a source with no wiring.** `ScreenRoot` mounts an internal
+  bridge (`screen/screen-scroll-source.tsx`) that republishes the screen's own
+  `scrollY` / `contentHeight` / `layoutHeight`. The import points screen → hook,
+  never back, so installing the hook never drags `Screen` in. A Screen's source
+  learns its sizes only from scroll events; `useScrollSource` also measures on
+  layout. `scrollEdgeOpacity`'s unmeasured policy — start follows the offset,
+  end draws — covers the gap.
+- **Every function in `scroll-maths.ts` and `scroll-edges.ts` is a
+  self-contained `"worklet"`.** A module-scope helper called from inside a worklet
+  can be missing from its closure on the UI thread — `undefined is not a
+  function` mid-scroll, invisible to `bun test`. Each writes its own clamp inline
+  and none calls another; do not tidy the repetition into a helper.
 
 Everything belonging to a component — sub-components, variants, tests, local
 hooks, helpers — lives in its folder and is re-exported from that `index.ts`.

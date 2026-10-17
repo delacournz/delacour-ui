@@ -14,6 +14,7 @@ whole-screen states.
 | `index.ts` | → `@registry/ui/screen` |
 | `screen.tsx` | The `Object.assign` compound surface |
 | `screen-root.tsx` | The root box and its provider — see below for why it is split out |
+| `screen-scroll-source.tsx` | The bridge publishing the screen's scroll values as a `ScrollSource` — internal |
 | `screen-navbar.tsx` | `Screen.Navbar`, plus its own nested surface |
 | `screen-navbar-title.tsx` | `Screen.Navbar.Title` |
 | `screen-navbar-subtitle.tsx` | `Screen.Navbar.Subtitle` |
@@ -265,6 +266,16 @@ the first row is still leaving.
 - **A nested `<Screen>` passes the outer context through** rather than shadowing
   it, so `Screen.Loading` returned from inside a screen does not start a second,
   unread set of measurements.
+- **A screen publishes a `ScrollSource`.** `ScreenRoot` mounts
+  `ScreenScrollSourceBridge` inside its provider, which hands the same
+  `scrollY` / `contentHeight` / `layoutHeight` to a `ScrollSourceProvider`
+  (`hooks/use-scroll-source.tsx`) as `offset` / `contentSize` / `layoutSize`,
+  vertical, with no ref. That is what lets the scroll family — `ScrollFade`,
+  `ScrollBlur`, `ScrollCanvas`, `ScrollHeader`; see [The scroll family's shared
+  code](../../../AGENTS.md#the-scroll-familys-shared-code) — work inside a
+  `<Screen>` with no wiring. It adds no handler and no new shared value — the
+  scrollables write exactly what they did — and the import points one way,
+  screen to hook, so installing the hook never pulls `Screen` in after it.
 
 ## Dependencies
 

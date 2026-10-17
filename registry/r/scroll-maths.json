@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-maths",
+	"type": "registry:lib",
+	"title": "scrollMaths",
+	"description": "The pure maths behind the scroll-linked components.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-maths.ts",
+			"target": "scroll-maths.ts",
+			"namespace": "lib"
+		}
+	]
+}

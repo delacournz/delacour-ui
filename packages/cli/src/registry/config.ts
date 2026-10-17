@@ -505,6 +505,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
 		categories: ["layout"],
 	},
+	"scroll-canvas": {
+		title: "ScrollCanvas",
+		description:
+			"An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
+		categories: ["layout"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

@@ -102,6 +102,7 @@
 		"scroll-fade",
 		"surface",
 		"card",
+		"scroll-canvas",
 		"scroll-blur",
 		"split-view",
 		"splitter",

@@ -76,6 +76,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },
 	{ name: "scroll-blur", title: "Scroll Blur", description: "A progressive blur at a scrollable's edges that falls back to a gradient fade." },
+	{ name: "scroll-canvas", title: "ScrollCanvas", description: "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls." },
 	{ name: "scroll-fade", title: "ScrollFade", description: "A gradient at a scrollable's edges while content runs past them, on any axis." },
 	{ name: "scroll-text", title: "ScrollText", description: "Text that resolves word by word as the screen scrolls past it." },
 	{ name: "search-bar", title: "Search Bar", description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens." },

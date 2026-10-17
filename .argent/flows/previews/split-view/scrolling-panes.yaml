@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on split-view/scrolling-panes and has
+  settled — the document over a list of comments at the middle stop, the list
+  carrying the testID comments and the drag row drag-area, the list at its top.
+steps:
+  - echo: Scrolling the comments leaves the divider where it is
+  - swipe: { from: { id: comments }, by: { y: -0.15 }, momentum: false, duration: 600 }
+  - wait: 400
+  - swipe: { from: { id: comments }, by: { y: 0.2 }, momentum: false, duration: 600 }
+  - wait: 500
+  - echo: The row still moves the divider, and back
+  - swipe: { from: { id: drag-area }, by: { y: -0.15 }, momentum: false, duration: 600 }
+  - wait: 500
+  - swipe: { from: { id: drag-area }, by: { y: 0.15 }, momentum: false, duration: 600 }
+  - wait: 500

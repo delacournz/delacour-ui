@@ -82,6 +82,7 @@
 		"screen",
 		"surface",
 		"card",
+		"split-view",
 		"splitter",
 		"sketch",
 		"page-header",

@@ -314,6 +314,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "message-scroller",
+		name: "MessageScroller",
+		group: "Media",
+		blurb:
+			"A conversation list that sticks to the newest message, jumps back with an unread count and loads older history.",
+	},
+	{
 		slug: "marquee",
 		name: "Marquee",
 		group: "Media",

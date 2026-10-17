@@ -191,6 +191,12 @@ const ROWS = [
 		group: "Data display",
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{
+		slug: "message-scroller",
+		title: "MessageScroller",
+		description: "Stick to bottom, jump to latest, load older",
+		group: "Media",
+	},
 	{ slug: "message", title: "Message", description: "Sides, runs, receipts, reactions, typing", group: "Media" },
 	{ slug: "marquee", title: "Marquee", description: "Directions, speeds, fades, rows in step", group: "Media" },
 	{ slug: "flip-card", title: "FlipCard", description: "Tap, swipe, manual, axis, flashcard", group: "Media" },

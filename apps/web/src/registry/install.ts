@@ -3005,7 +3005,7 @@ export const install = {
 		importPath: "@delacour/react-native-ui/countdown",
 		exportName: "Countdown",
 		expo: ["react-native-reanimated", "uniwind"],
-		npm: ["clsx", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
 		fileCount: 22,
 		groups: [

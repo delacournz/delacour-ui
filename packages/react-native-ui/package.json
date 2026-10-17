@@ -95,6 +95,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
+		"./scroll-text": "./src/components/scroll-text/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
 		"./select": "./src/components/select/index.ts",
 		"./selection-mode": "./src/components/selection-mode/index.ts",

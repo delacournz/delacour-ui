@@ -76,6 +76,7 @@ import {
 	IconTable,
 	IconTag,
 	IconTextEdit,
+	IconTextMotion,
 	IconToggle,
 	IconTrending4,
 	IconTrophy,
@@ -177,6 +178,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"message-scroller": IconBubble2,
 	post: IconHeart,
 	"qr-code": IconQrCode,
+	"scroll-text": IconTextMotion,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

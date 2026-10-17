@@ -92,6 +92,7 @@
 		"./separator": "./src/components/separator/index.ts",
 		"./signature": "./src/components/signature/index.ts",
 		"./skeleton": "./src/components/skeleton/index.ts",
+		"./sketch": "./src/components/sketch/index.ts",
 		"./slide-button": "./src/components/slide-button/index.ts",
 		"./slider": "./src/components/slider/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
@@ -151,6 +152,7 @@
 		"@delacour/react-native-bottom-sheet": ">=0.1.0",
 		"@delacour/react-native-charts": ">=0.1.0",
 		"@legendapp/list": ">=3.3",
+		"@shopify/react-native-skia": ">=2",
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
@@ -178,6 +180,9 @@
 			"optional": true
 		},
 		"@legendapp/list": {
+			"optional": true
+		},
+		"@shopify/react-native-skia": {
 			"optional": true
 		},
 		"expo-router": {

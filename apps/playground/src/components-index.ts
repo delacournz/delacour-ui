@@ -255,6 +255,7 @@ const ROWS = [
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
+	{ slug: "sketch", title: "Sketch", description: "Pen, shapes, eraser, colours, SVG export", group: "Layout" },
 	{
 		slug: "page-header",
 		title: "PageHeader",

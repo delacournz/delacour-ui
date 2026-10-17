@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on sketch/eraser and has settled — four
+  coloured lines on a canvas carrying the testID sketch-canvas, the eraser in
+  hand. The capture script navigates there before running this.
+steps:
+  - echo: Erase down through all four lines
+  - swipe: { from: { id: sketch-canvas }, by: { y: -0.3 }, momentum: false, duration: 700 }
+  - wait: 300
+  - echo: Pick up the pen and draw back over the erased gap — the new stroke is untouched
+  - tap: { id: sketch-tool-pen }
+  - wait: 400
+  - swipe: { from: { id: sketch-canvas }, by: { y: -0.3 }, momentum: false, duration: 700 }
+  - wait: 600
+  - echo: Undo the stroke and the erase, and take the eraser back, so the clip loops
+  - tap: { id: sketch-undo }
+  - wait: 200
+  - tap: { id: sketch-undo }
+  - tap: { id: sketch-tool-eraser }

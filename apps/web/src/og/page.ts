@@ -40,6 +40,7 @@ export const MOMENTS: Partial<Record<PreviewId, Moment>> = {
 	"menu/actions": { at: 0.6, anchor: "bottom" },
 	"page-header/in-a-screen": POSTER,
 	"popover/basic": { at: 0.6, anchor: "top" },
+	"scroll-header/large-title-list": { at: 0.38, anchor: "top" },
 	"select/single": { at: 0.25, anchor: "bottom" },
 	"time-picker/basic-sheet": { at: 0.35, anchor: "bottom" },
 	"toast/statuses": { at: 0.3, anchor: "bottom" },

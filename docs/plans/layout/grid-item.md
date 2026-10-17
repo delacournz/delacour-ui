@@ -279,3 +279,13 @@ Route `apps/playground/src/app/(components)/grid-item.tsx`, `components-index.ts
 1. Placement: monotonic first-fit (writing order, may leave holes) or dense backfill? Recommended monotonic. `1.a` monotonic.
 2. Export names: `GridItem` with `GridItem.Group`, or also a `Grid` alias? Recommended no alias. `2.a` no alias.
 3. Should a non-pressable tile be `accessible` as one stop by default? Recommended yes, with the label joined from its text parts. `3.a` yes.
+
+## Implementation status (2026-10-05)
+
+Shipped on `feature/layout-grid-item`, standalone (no cross-category imports). Open questions resolved as recommended: `1.a` monotonic, `2.a` no alias, `3.a` a non-pressable tile is one accessible stop.
+
+Deviations from the checklist:
+
+- **Previews** captured on the dev client (2026-10-06): 3 stills, 2 clips, `dashboard` the animated hero. Its toggle tiles are a wrapper component that forwards `rowSpan`, which is the documented rule in practice.
+- **Simulator** verified with agent-device: aligned edges, joined labels, press and disabled state. Rotation, reduce motion and RTL not exercised (portrait-locked playground; LAYOUT-02 unmerged).
+- The dashboard demo carries seven tiles rather than four so its four columns have no holes.

@@ -35,6 +35,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "feedback", title: "Feedback", description: "A dialog for writing: the field in a recessed well, a send that waits on a promise, a draft kept across close, and steps that ease between heights." },
 	{ name: "field", title: "Field", description: "One control with its label, description and error — and the state they all read." },
 	{ name: "frame", title: "Frame", description: "A titled shell around a card of divided rows, with sections and a footer." },
+	{ name: "grid-item", title: "Grid Item", description: "A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts." },
 	{ name: "icon", title: "Icon", description: "A Central Icons glyph that inherits size and colour from the surrounding component." },
 	{ name: "input", title: "Input", description: "A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border." },
 	{ name: "item", title: "Item", description: "A row of media, text and actions for lists and settings, standalone or as a List Group row." },

@@ -1,0 +1,155 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "grid-item",
+	"type": "registry:ui",
+	"title": "Grid Item",
+	"description": "A bento grid of whole-cell tiles with aligned edges, and the tile with title, value and background parts.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"icon",
+		"pressable",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/AGENTS.md",
+			"target": "grid-item/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/grid-item",
+					"to": "@registry/ui/grid-item"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-actions.tsx",
+			"target": "grid-item/grid-item-actions.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-background.tsx",
+			"target": "grid-item/grid-item-background.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-description.tsx",
+			"target": "grid-item/grid-item-description.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-footer.tsx",
+			"target": "grid-item/grid-item-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-group.tsx",
+			"target": "grid-item/grid-item-group.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-media.tsx",
+			"target": "grid-item/grid-item-media.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-title.tsx",
+			"target": "grid-item/grid-item-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item-value.tsx",
+			"target": "grid-item/grid-item-value.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.context.tsx",
+			"target": "grid-item/grid-item.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.layout.ts",
+			"target": "grid-item/grid-item.layout.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.tsx",
+			"target": "grid-item/grid-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.types.ts",
+			"target": "grid-item/grid-item.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.variants.ts",
+			"target": "grid-item/grid-item.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/index.ts",
+			"target": "grid-item/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

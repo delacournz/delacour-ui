@@ -82,6 +82,7 @@
 		"screen",
 		"surface",
 		"card",
+		"grid-item",
 		"frame",
 		"direction",
 		"carousel",

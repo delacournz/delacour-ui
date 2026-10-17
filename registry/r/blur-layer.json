@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "blur-layer",
+	"type": "registry:lib",
+	"title": "Expo blur layer",
+	"description": "expo-blur as ScrollBlur's engine — mount it once with ScrollBlurLayerProvider.",
+	"registryDependencies": [
+		"scroll-blur"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"expo-blur"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/expo/blur-layer.tsx",
+			"target": "expo/blur-layer.tsx",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../components/scroll-blur/scroll-blur.types",
+					"to": "@registry/ui/scroll-blur/scroll-blur.types"
+				}
+			]
+		}
+	]
+}

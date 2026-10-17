@@ -1,0 +1,18 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "use-reduce-transparency",
+	"type": "registry:hook",
+	"title": "useReduceTransparency",
+	"description": "Whether iOS's Reduce Transparency is on, live, so a blur can swap for an opaque wash.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/hooks/use-reduce-transparency.ts",
+			"target": "use-reduce-transparency.ts",
+			"namespace": "hooks"
+		}
+	]
+}

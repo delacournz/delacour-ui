@@ -113,6 +113,7 @@
 		"screen",
 		"surface",
 		"card",
+		"scroll-blur",
 		"split-view",
 		"splitter",
 		"sketch",

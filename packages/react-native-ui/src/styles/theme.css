@@ -162,6 +162,17 @@
 			--overlay: oklch(0 0 0 / 45%);
 
 			/*
+			 * The stage ImageViewer draws a photo on, and the chrome drawn over it.
+			 *
+			 * Dark in both themes — a photo reads against black, not against a
+			 * white page — so it is the foreground in light and the background in
+			 * dark. Derived, never literal, so a pasted palette drags it along.
+			 * Not `overlay`: that is a translucent scrim, this is an opaque stage.
+			 */
+			--media: var(--foreground);
+			--media-foreground: var(--background);
+
+			/*
 			 * Carried so a pasted theme survives intact. No component in this
 			 * package draws a shadow — three tests assert it — so nothing reads
 			 * these today; a consumer's own `shadow-md` will.
@@ -238,6 +249,9 @@
 			--info-soft-foreground: var(--info);
 
 			--overlay: oklch(0 0 0 / 65%);
+
+			--media: var(--background);
+			--media-foreground: var(--foreground);
 
 			--shadow: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
 			--shadow-2xs: 0 1px 3px 0 hsl(0 0% 0% / 0.05);
@@ -428,6 +442,8 @@
 	--color-info-soft-foreground: var(--info-soft-foreground);
 
 	--color-overlay: var(--overlay);
+	--color-media: var(--media);
+	--color-media-foreground: var(--media-foreground);
 
 	/*
 	 * The fonts are deliberately absent.

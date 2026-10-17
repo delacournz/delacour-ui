@@ -257,6 +257,13 @@ import * as demo_date_picker_multiple from "./date-picker/multiple";
 import * as demo_date_picker_range_booking from "./date-picker/range-booking";
 import * as demo_date_picker_single from "./date-picker/single";
 import * as demo_date_picker_sizes_variants from "./date-picker/sizes-variants";
+import * as demo_date_time_picker_bounds_from_now from "./date-time-picker/bounds-from-now";
+import * as demo_date_time_picker_in_field_invalid from "./date-time-picker/in-field-invalid";
+import * as demo_date_time_picker_inline from "./date-time-picker/inline";
+import * as demo_date_time_picker_native_date_interop from "./date-time-picker/native-date-interop";
+import * as demo_date_time_picker_stacked_layout from "./date-time-picker/stacked-layout";
+import * as demo_date_time_picker_step_15_24h from "./date-time-picker/step-15-24h";
+import * as demo_date_time_picker_tabs_layout from "./date-time-picker/tabs-layout";
 import * as demo_dialog_alert_dialog from "./dialog/alert-dialog";
 import * as demo_dialog_confirm from "./dialog/confirm";
 import * as demo_dialog_controlled from "./dialog/controlled";
@@ -1108,6 +1115,13 @@ export const DEMOS = {
 	"date-picker/range-booking": demo_date_picker_range_booking,
 	"date-picker/single": demo_date_picker_single,
 	"date-picker/sizes-variants": demo_date_picker_sizes_variants,
+	"date-time-picker/bounds-from-now": demo_date_time_picker_bounds_from_now,
+	"date-time-picker/in-field-invalid": demo_date_time_picker_in_field_invalid,
+	"date-time-picker/inline": demo_date_time_picker_inline,
+	"date-time-picker/native-date-interop": demo_date_time_picker_native_date_interop,
+	"date-time-picker/stacked-layout": demo_date_time_picker_stacked_layout,
+	"date-time-picker/step-15-24h": demo_date_time_picker_step_15_24h,
+	"date-time-picker/tabs-layout": demo_date_time_picker_tabs_layout,
 	"dialog/alert-dialog": demo_dialog_alert_dialog,
 	"dialog/confirm": demo_dialog_confirm,
 	"dialog/controlled": demo_dialog_controlled,

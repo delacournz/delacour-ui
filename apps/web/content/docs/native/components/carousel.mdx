@@ -4,6 +4,8 @@ description: Swipeable slides on one fractional position — peek, loop, vertica
 icon: GalleryHorizontal
 ---
 
+<Preview id="carousel/hero-track" title={null} />
+
 ## Installation
 
 <ComponentInstall name="carousel" />
@@ -48,6 +50,8 @@ for a handful of hand-written slides — a feed belongs in a list.
 `itemSize`, in points, smaller than the viewport centres the active slide and lets its neighbours show
 either side. Omitted, each slide is the viewport's length.
 
+<Preview id="carousel/peek" />
+
 ```tsx
 <Carousel accessibilityLabel="Trees" itemSize={260}>
   <Carousel.Content aspectRatio={1.2}>{slides}</Carousel.Content>
@@ -70,6 +74,8 @@ either side. Omitted, each slide is the viewport's length.
 `orientation="vertical"` pages up and down. A vertical viewport takes its height from a class —
 `aspectRatio` is horizontal only. The controls row and the dots turn into columns.
 
+<Preview id="carousel/vertical" />
+
 ```tsx
 <Carousel accessibilityLabel="Stories" className="flex-row" orientation="vertical">
   <Carousel.Content className="h-96 flex-1">{slides}</Carousel.Content>
@@ -81,6 +87,8 @@ either side. Omitted, each slide is the viewport's length.
 
 `variant="coverflow"` turns, shrinks and fades each slide by its distance from the centre. Pair it
 with `itemSize` so the neighbours show. Under reduce motion it draws as a plain track.
+
+<Preview id="carousel/coverflow" />
 
 ```tsx
 <Carousel accessibilityLabel="Albums" itemSize={200} variant="coverflow">
@@ -109,6 +117,8 @@ and it pauses while the app is in the background.
 `Carousel.Controls` lays out `Previous` · `Dots` · `Next`. The arrows disable at the ends unless the
 carousel loops. Dots are decoration — not tappable and hidden from assistive tech; past `maxDots`
 (default 7) they show a sliding window. `tone="overlay"` draws light dots for sitting on a photo.
+
+<Preview id="carousel/controls" />
 
 ```tsx
 <Carousel accessibilityLabel="Tour">

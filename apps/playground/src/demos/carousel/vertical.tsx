@@ -8,6 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		'orientation="vertical" pages up and down, like a stack of stories. A vertical viewport takes its height from a class.',
+	capture: { align: "stretch" },
 };
 
 const STORIES = ["morning", "market", "ferry", "evening"] as const;

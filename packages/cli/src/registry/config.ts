@@ -484,6 +484,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories.",
 		categories: ["display"],
 	},
+	"theme-selector": {
+		title: "Theme Selector",
+		description:
+			"System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency.",
+		categories: ["controls"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

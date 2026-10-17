@@ -49,6 +49,7 @@ import {
 	IconLayoutTop,
 	IconLayoutTopBottom,
 	IconLayoutWindow,
+	IconMagicWand,
 	IconMagnifyingGlass,
 	IconMagnifyingGlass2,
 	IconMap,
@@ -181,6 +182,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"qr-code": IconQrCode,
 	"scroll-text": IconTextMotion,
 	support: IconHeadphones,
+	"text-animation": IconMagicWand,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

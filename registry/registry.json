@@ -2805,6 +2805,46 @@
 			]
 		},
 		{
+			"name": "tag-input",
+			"type": "registry:ui",
+			"title": "Tag Input",
+			"description": "Free-form tags typed into one field box, each a removable chip, with validation and a max.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"chip",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/tag-input/AGENTS.md",
+				"ui/tag-input/index.ts",
+				"ui/tag-input/tag-input-chip.tsx",
+				"ui/tag-input/tag-input-suffix.tsx",
+				"ui/tag-input/tag-input.context.tsx",
+				"ui/tag-input/tag-input.logic.ts",
+				"ui/tag-input/tag-input.tsx",
+				"ui/tag-input/tag-input.types.ts",
+				"ui/tag-input/tag-input.variants.ts"
+			]
+		},
+		{
 			"name": "text",
 			"type": "registry:ui",
 			"title": "Text",

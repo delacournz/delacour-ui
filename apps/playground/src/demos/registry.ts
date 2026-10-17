@@ -561,6 +561,12 @@ import * as demo_tabs_swipe_controlled_rejecting_every_third_change from "./tabs
 import * as demo_tabs_swipe_is_swipeable_false from "./tabs/swipe/is-swipeable-false";
 import * as demo_tabs_swipe_swipeable_the_default from "./tabs/swipe/swipeable-the-default";
 import * as demo_tabs_variants_every_variant from "./tabs/variants/every-variant";
+import * as demo_tag_input_basic from "./tag-input/basic";
+import * as demo_tag_input_email_validation from "./tag-input/email-validation";
+import * as demo_tag_input_in_field_with_clear from "./tag-input/in-field-with-clear";
+import * as demo_tag_input_max_and_counter from "./tag-input/max-and-counter";
+import * as demo_tag_input_overflow_invalid from "./tag-input/overflow-invalid";
+import * as demo_tag_input_sizes_and_variants from "./tag-input/sizes-and-variants";
 import * as demo_text_alignment from "./text/alignment";
 import * as demo_text_colour from "./text/colour";
 import * as demo_text_inline_presets from "./text/inline-presets";
@@ -1169,6 +1175,12 @@ export const DEMOS = {
 	"tabs/swipe/is-swipeable-false": demo_tabs_swipe_is_swipeable_false,
 	"tabs/swipe/swipeable-the-default": demo_tabs_swipe_swipeable_the_default,
 	"tabs/variants/every-variant": demo_tabs_variants_every_variant,
+	"tag-input/basic": demo_tag_input_basic,
+	"tag-input/email-validation": demo_tag_input_email_validation,
+	"tag-input/in-field-with-clear": demo_tag_input_in_field_with_clear,
+	"tag-input/max-and-counter": demo_tag_input_max_and_counter,
+	"tag-input/overflow-invalid": demo_tag_input_overflow_invalid,
+	"tag-input/sizes-and-variants": demo_tag_input_sizes_and_variants,
 	"text/alignment": demo_text_alignment,
 	"text/colour": demo_text_colour,
 	"text/inline-presets": demo_text_inline_presets,

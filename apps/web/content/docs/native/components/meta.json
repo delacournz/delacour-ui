@@ -20,6 +20,7 @@
 		"field",
 		"input",
 		"textarea",
+		"tag-input",
 		"number-input",
 		"markdown-editor",
 		"label",

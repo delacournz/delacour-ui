@@ -1,0 +1,24 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tag-input/email-validation and has settled — a Recipients field holding one
+  address chip, an empty unfocused input and the description below. The capture script navigates there before running this.
+steps:
+  - echo: A word that is not an address is refused and stays in the field, with the error below
+  - tap: { id: tag-input-email-input }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "aria ", delayMs: 120 }
+  - wait: 900
+  - echo: Finishing the address commits it as a chip
+  - tool: keyboard
+    args: { text: "@mail.com ", delayMs: 80 }
+  - wait: 900
+  - echo: Backspace twice removes it again, and Return on the empty field blurs, so the clip loops
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 600
+  - tool: keyboard
+    args: { key: backspace }
+  - wait: 500
+  - tool: keyboard
+    args: { key: enter }
+  - wait: 300

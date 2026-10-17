@@ -30,6 +30,7 @@ import {
 	IconFontStyle,
 	IconGauge,
 	IconHandTouch,
+	IconHashtag,
 	IconHistory,
 	IconHourglass,
 	IconInboxEmpty,
@@ -144,6 +145,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	select: IconChevronDownMedium,
 	combobox: IconMagnifyingGlass2,
 	signature: IconSignature,
+	"tag-input": IconHashtag,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

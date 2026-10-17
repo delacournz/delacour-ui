@@ -155,6 +155,7 @@ shares.
 | [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |
 | [Swipe](src/components/swipe/AGENTS.md) | `@delacour/react-native-ui/swipe` | A row that slides aside to reveal actions behind it |
 | [Switch](src/components/switch/AGENTS.md) | `@delacour/react-native-ui/switch` | A track and a knob, dragged or tapped |
+| [TagInput](src/components/tag-input/AGENTS.md) | `@delacour/react-native-ui/tag-input` | Free-form tags typed into one field box, as removable chips |
 | [Table](src/components/table/AGENTS.md) | `@delacour/react-native-ui/table` | Rows and columns of short values, lined up by one set of column rules |
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |

@@ -29,6 +29,7 @@
 		"switch",
 		"slider",
 		"rating",
+		"questionnaire",
 		"otp-input",
 		"color-picker",
 		"calendar",

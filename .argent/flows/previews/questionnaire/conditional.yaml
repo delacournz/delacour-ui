@@ -1,0 +1,21 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on questionnaire/conditional and has settled — question 1 of 3,
+  "Do you have any pets?", answered Yes. The capture script navigates there before running this.
+steps:
+  - echo: Answering No hides the follow-up, and the count drops
+  - tap: { id: pets-pets-no }
+  - wait: 700
+  - tap: { id: pets-pets-yes }
+  - wait: 500
+  - echo: Into the follow-up, where choosing Dog reveals one more question
+  - tap: { id: pets-next }
+  - await: { visible: { id: pets-which-dog } }
+  - wait: 500
+  - tap: { id: pets-which-dog }
+  - wait: 700
+  - tap: { id: pets-which-dog }
+  - wait: 400
+  - echo: Back to the start, as the clip began
+  - tap: { id: pets-back }
+  - await: { visible: { id: pets-pets-yes } }
+  - wait: 400

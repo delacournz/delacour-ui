@@ -53,6 +53,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },
 	{ name: "progress-button", title: "Progress Button", description: "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end." },
 	{ name: "provider", title: "Provider", description: "The root provider: safe-area insets seeded from the launch snapshot, and gesture handling." },
+	{ name: "questionnaire", title: "Questionnaire", description: "A guided form, one question at a time: single and multiple choice, text, rating, scale and yes/no, with branching, skips, validation and progress." },
 	{ name: "radio", title: "Radio", description: "A radio and the group that owns which one is selected." },
 	{ name: "rating", title: "Rating", description: "A row of stars that reads or sets a score, by tap or by drag, in whole or half steps." },
 	{ name: "screen", title: "Screen", description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them." },

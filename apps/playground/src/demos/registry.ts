@@ -583,6 +583,12 @@ import * as demo_scroll_blur_horizontal from "./scroll-blur/horizontal";
 import * as demo_scroll_blur_layers_and_intensity from "./scroll-blur/layers-and-intensity";
 import * as demo_scroll_blur_list_under_button from "./scroll-blur/list-under-button";
 import * as demo_scroll_blur_search_over_media from "./scroll-blur/search-over-media";
+import * as demo_scroll_fade_fade_distance from "./scroll-fade/fade-distance";
+import * as demo_scroll_fade_horizontal_cards from "./scroll-fade/horizontal-cards";
+import * as demo_scroll_fade_on_a_surface from "./scroll-fade/on-a-surface";
+import * as demo_scroll_fade_single_edge from "./scroll-fade/single-edge";
+import * as demo_scroll_fade_through_a_provider from "./scroll-fade/through-a-provider";
+import * as demo_scroll_fade_vertical_list from "./scroll-fade/vertical-list";
 import * as demo_scroll_text_characters from "./scroll-text/characters";
 import * as demo_scroll_text_colour from "./scroll-text/colour";
 import * as demo_scroll_text_highlight from "./scroll-text/highlight";
@@ -1405,6 +1411,12 @@ export const DEMOS = {
 	"scroll-blur/layers-and-intensity": demo_scroll_blur_layers_and_intensity,
 	"scroll-blur/list-under-button": demo_scroll_blur_list_under_button,
 	"scroll-blur/search-over-media": demo_scroll_blur_search_over_media,
+	"scroll-fade/fade-distance": demo_scroll_fade_fade_distance,
+	"scroll-fade/horizontal-cards": demo_scroll_fade_horizontal_cards,
+	"scroll-fade/on-a-surface": demo_scroll_fade_on_a_surface,
+	"scroll-fade/single-edge": demo_scroll_fade_single_edge,
+	"scroll-fade/through-a-provider": demo_scroll_fade_through_a_provider,
+	"scroll-fade/vertical-list": demo_scroll_fade_vertical_list,
 	"scroll-text/characters": demo_scroll_text_characters,
 	"scroll-text/colour": demo_scroll_text_colour,
 	"scroll-text/highlight": demo_scroll_text_highlight,

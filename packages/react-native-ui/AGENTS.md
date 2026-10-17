@@ -158,6 +158,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollFade](src/components/scroll-fade/AGENTS.md) | `@delacour/react-native-ui/scroll-fade` | A gradient at a scrollable's edges while content runs past them |
 | [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
 | [ScrollText](src/components/scroll-text/AGENTS.md) | `@delacour/react-native-ui/scroll-text` | Text that resolves word by word as the screen scrolls |
 | [Select](src/components/select/AGENTS.md) | `@delacour/react-native-ui/select` | A closed set of choices behind a field-shaped trigger, picked from a bottom sheet |

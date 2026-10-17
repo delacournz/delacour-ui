@@ -638,6 +638,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger.",
 		categories: ["overlays"],
 	},
+	tour: {
+		title: "Tour",
+		description:
+			"A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
+		categories: ["navigation"],
+	},
 
 	expo: {
 		title: "Navigation theme",

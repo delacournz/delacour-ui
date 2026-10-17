@@ -126,6 +126,7 @@ export const selectVariants = tv({
 		variant: {
 			primary: {},
 			secondary: {},
+			etched: {},
 		},
 		size: {
 			sm: {

@@ -53,7 +53,7 @@ export const comboboxVariants = tv({
 		sheetBody: "gap-0",
 	},
 	variants: {
-		variant: { primary: {}, secondary: {} },
+		variant: { primary: {}, secondary: {}, etched: {} },
 		size: {
 			sm: { chips: "gap-1", clear: "size-icon-sm", results: "text-xs" },
 			md: { chips: "gap-1.5", clear: "size-icon-md", results: "text-sm" },

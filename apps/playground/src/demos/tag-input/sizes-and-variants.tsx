@@ -16,6 +16,7 @@ export const meta: DemoMeta = {
 const VARIANT_LABELS: Record<InputVariant, string> = {
 	primary: "Primary",
 	secondary: "Secondary",
+	etched: "Etched",
 };
 
 const TAGS = ["alpha", "beta"];

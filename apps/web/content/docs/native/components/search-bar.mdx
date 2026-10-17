@@ -137,7 +137,7 @@ const sheetInput = useBottomSheetInput();
 
 ## Sizes, shapes and variants
 
-The box is `Input`'s — three sizes and two variants — drawn as a pill or with the field's own corner.
+The box is `Input`'s — three sizes and three variants — drawn as a pill or with the field's own corner.
 
 <Preview id="search-bar/sizes-and-shapes" />
 
@@ -181,7 +181,7 @@ the row holding the field and Cancel.
     onFocusChange: { type: "(isFocused: boolean) => void" },
     cancel: { type: '"never" | "focus" | "always"', default: '"focus"' },
     cancelLabel: { type: "string", default: '"Cancel"' },
-    variant: { type: '"primary" | "secondary"', default: '"secondary"' },
+    variant: { type: '"primary" | "secondary" | "etched"', default: '"secondary"' },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
     shape: { type: '"pill" | "rounded"', default: '"pill"' },
     isLoading: { type: "boolean", default: "false", description: "A spinner replaces the clear button." },

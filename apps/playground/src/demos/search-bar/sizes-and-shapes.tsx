@@ -14,13 +14,17 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes, shapes and variants",
 	caption:
-		"Input's three sizes and two variants, as a pill or with the field's own corner. The box is the same one a plain `Input` draws.",
+		"Input's three sizes and three variants, as a pill or with the field's own corner. The box is the same one a plain `Input` draws.",
 	capture: { align: "stretch" },
 };
 
 const SIZE_LABELS: Record<SearchBarSize, string> = { sm: "Small", md: "Medium", lg: "Large" };
 const SHAPE_LABELS: Record<SearchBarShape, string> = { pill: "pill", rounded: "rounded" };
-const VARIANT_LABELS: Record<SearchBarVariant, string> = { primary: "primary", secondary: "secondary" };
+const VARIANT_LABELS: Record<SearchBarVariant, string> = {
+	primary: "primary",
+	secondary: "secondary",
+	etched: "etched",
+};
 
 export function Demo(): ReactElement {
 	return (

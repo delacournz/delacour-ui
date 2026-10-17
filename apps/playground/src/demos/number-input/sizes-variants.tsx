@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Sizes and variants",
 	caption:
-		"The box is `Input`'s, so it takes `Input`'s two variants and three sizes. A stepper is always as wide as the box is tall.",
+		"The box is `Input`'s, so it takes `Input`'s three variants and three sizes. A stepper is always as wide as the box is tall.",
 	keyboardAware: true,
 	capture: { align: "stretch" },
 };
@@ -16,6 +16,7 @@ export const meta: DemoMeta = {
 const VARIANT_LABELS: Record<InputVariant, string> = {
 	primary: "Primary",
 	secondary: "Secondary",
+	etched: "Etched",
 };
 
 const SIZE_LABELS: Record<InputSize, string> = {

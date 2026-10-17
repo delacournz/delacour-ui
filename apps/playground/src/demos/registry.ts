@@ -306,6 +306,15 @@ import * as demo_label_sizes from "./label/sizes";
 import * as demo_label_states from "./label/states";
 import * as demo_label_toggle_states from "./label/toggle-states";
 import * as demo_label_wrapping from "./label/wrapping";
+import * as demo_leaderboard_ascending_times from "./leaderboard/ascending-times";
+import * as demo_leaderboard_bars from "./leaderboard/bars";
+import * as demo_leaderboard_cards from "./leaderboard/cards";
+import * as demo_leaderboard_empty from "./leaderboard/empty";
+import * as demo_leaderboard_highlight_pinned from "./leaderboard/highlight-pinned";
+import * as demo_leaderboard_movement from "./leaderboard/movement";
+import * as demo_leaderboard_pressable from "./leaderboard/pressable";
+import * as demo_leaderboard_ties from "./leaderboard/ties";
+import * as demo_leaderboard_with_avatars from "./leaderboard/with-avatars";
 import * as demo_list_group_custom_suffix from "./list-group/custom-suffix";
 import * as demo_list_group_dividers from "./list-group/dividers";
 import * as demo_list_group_sizes from "./list-group/sizes";
@@ -802,6 +811,15 @@ export const DEMOS = {
 	"label/states": demo_label_states,
 	"label/toggle-states": demo_label_toggle_states,
 	"label/wrapping": demo_label_wrapping,
+	"leaderboard/ascending-times": demo_leaderboard_ascending_times,
+	"leaderboard/bars": demo_leaderboard_bars,
+	"leaderboard/cards": demo_leaderboard_cards,
+	"leaderboard/empty": demo_leaderboard_empty,
+	"leaderboard/highlight-pinned": demo_leaderboard_highlight_pinned,
+	"leaderboard/movement": demo_leaderboard_movement,
+	"leaderboard/pressable": demo_leaderboard_pressable,
+	"leaderboard/ties": demo_leaderboard_ties,
+	"leaderboard/with-avatars": demo_leaderboard_with_avatars,
 	"list-group/custom-suffix": demo_list_group_custom_suffix,
 	"list-group/dividers": demo_list_group_dividers,
 	"list-group/sizes": demo_list_group_sizes,

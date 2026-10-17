@@ -59,6 +59,7 @@
 		"./item": "./src/components/item/index.ts",
 		"./kpi": "./src/components/kpi/index.ts",
 		"./label": "./src/components/label/index.ts",
+		"./leaderboard": "./src/components/leaderboard/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
 		"./map": "./src/components/map/index.ts",
 		"./menu": "./src/components/menu/index.ts",

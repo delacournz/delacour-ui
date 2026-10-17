@@ -89,8 +89,8 @@ hidden. `unit` documented as required for meaning.
 
 ## Playground demos
 
-`bars` (hero, capture), `cards` (capture), `ascending-times` (capture), `highlight-pinned` (limit 5,
-me at 14, capture), `ties`, `movement`, `with-avatars` (renderMedia + Avatar), `empty`, `pressable`.
+`bars` (capture), `cards` (capture), `ascending-times` (capture), `highlight-pinned` (limit 5,
+me at 14, capture), `ties`, `with-avatars` (renderMedia + Avatar), `empty`, `movement` (capture), `pressable` (hero, capture, flow).
 
 ## Docs page
 
@@ -105,3 +105,13 @@ custom media, accessibility, API.
 - [ ] VoiceOver label per place/row incl. "tied" and movement
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Delivery notes
+
+- **Previews captured.** Six demos, both themes, from the dev client: stills of `bars`, `cards`,
+  `ascending-times`, `highlight-pinned` and `movement` (all `align: "stretch"`), and one clip,
+  `pressable`, the hero. The hero is `pressable` rather than `bars` because the bars grow on mount,
+  before the capture starts recording, so a `bars` clip would be a motionless screen — replaying the
+  mount needs a harness change this branch does not make. `pressable` taps the leader, second, then
+  a row, and taps that row again to clear the pick (the demo now toggles), so the clip loops on
+  "Tap a place". Flow: `.argent/flows/previews/leaderboard/pressable.yaml`.

@@ -1,0 +1,167 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "image-viewer",
+	"type": "registry:ui",
+	"title": "Image Viewer",
+	"description": "A fullscreen viewer that opens from a thumbnail: pinch, pan and double-tap zoom, swipe between images, drag down to dismiss.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"button",
+		"cn",
+		"icon",
+		"icons",
+		"paging",
+		"pressable",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-worklets",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/AGENTS.md",
+			"target": "image-viewer/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/image-viewer",
+					"to": "@registry/ui/image-viewer"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-chrome.tsx",
+			"target": "image-viewer/image-viewer-chrome.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-close.tsx",
+			"target": "image-viewer/image-viewer-close.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-image.tsx",
+			"target": "image-viewer/image-viewer-image.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-layer.tsx",
+			"target": "image-viewer/image-viewer-layer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/paging",
+					"to": "@registry/lib/paging"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-page.tsx",
+			"target": "image-viewer/image-viewer-page.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer-trigger.tsx",
+			"target": "image-viewer/image-viewer-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.context.tsx",
+			"target": "image-viewer/image-viewer.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.tsx",
+			"target": "image-viewer/image-viewer.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.types.ts",
+			"target": "image-viewer/image-viewer.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/image-viewer.variants.ts",
+			"target": "image-viewer/image-viewer.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/image-viewer/index.ts",
+			"target": "image-viewer/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

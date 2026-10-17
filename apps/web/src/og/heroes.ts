@@ -61,6 +61,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/frame": "frame/settings",
 	"native/components/grid-item": "grid-item/dashboard",
 	"native/components/icon": "icon/the-size-scale",
+	"native/components/image-viewer": "image-viewer/gallery-grid",
 	"native/components/input": "input/states/live-validation",
 	"native/components/item": "item/in-a-list-group",
 	"native/components/kpi": "kpi/anatomy",
@@ -221,6 +222,10 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"frame/settings": { load: () => import("../../public/previews/frame/settings/dark.png?inline") },
 	"grid-item/dashboard": { load: () => import("../../public/previews/grid-item/dashboard/dark.png?inline") },
 	"icon/the-size-scale": { load: () => import("../../public/previews/icon/the-size-scale/dark.png?inline") },
+	"image-viewer/gallery-grid": {
+		cut: "95fdc0a1870b",
+		load: () => import("./frames/image-viewer/gallery-grid.png?inline"),
+	},
 	"input/states/live-validation": {
 		load: () => import("../../public/previews/input/states/live-validation/dark.png?inline"),
 	},

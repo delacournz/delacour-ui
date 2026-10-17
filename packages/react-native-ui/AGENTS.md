@@ -128,6 +128,7 @@ shares.
 | [Frame](src/components/frame/AGENTS.md) | `@delacour/react-native-ui/frame` | A titled shell around a card of rows, with sections and a footer |
 | [Flow](src/components/flow/AGENTS.md) | `@delacour/react-native-ui/flow` | A pan-and-zoom canvas of nodes, handles, edges and groups the app owns |
 | [Icon](src/components/icon/AGENTS.md) | `@delacour/react-native-ui/icon` | A Central Icon, with inherited size and colour |
+| [ImageViewer](src/components/image-viewer/AGENTS.md) | `@delacour/react-native-ui/image-viewer` | A full-screen gallery opened from a thumbnail — pinch, pan and double-tap zoom, swipe, drag to dismiss |
 | [Input](src/components/input/AGENTS.md) | `@delacour/react-native-ui/input` | A text field, and the box that holds content beside, above and below it |
 | [Item](src/components/item/AGENTS.md) | `@delacour/react-native-ui/item` | A row of media, text and actions — standalone, or as a `ListGroup` row |
 | [Kpi](src/components/kpi/AGENTS.md) | `@delacour/react-native-ui/kpi` | One number, its change and a sparkline, on `Card` |
@@ -309,8 +310,8 @@ its slot set, so a sibling would buy nothing but a second file to open.
     being.** Every name shadcn defines is here, spelled the way shadcn spells it
     — `destructive`, not `danger` — so a theme written for a web app moves
     across as a copy rather than a translation. The package adds `elevated`,
-    `tertiary`, `success` / `warning` / `info`, the `-soft` pairs and `overlay`,
-    which shadcn has no name for; each is **derived** from a token shadcn does
+    `tertiary`, `success` / `warning` / `info`, the `-soft` pairs, `overlay`
+    and the `media` pair, which shadcn has no name for; each is **derived** from a token shadcn does
     define, so a pasted palette drags it along instead of leaving it on this
     package's defaults. Add a token only when nothing in shadcn's set carries
     the meaning, and derive it. `X-foreground` always means "content drawn on an

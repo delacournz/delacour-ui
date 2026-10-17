@@ -155,6 +155,7 @@ shares.
 | [SlideButton](src/components/slide-button/AGENTS.md) | `@delacour/react-native-ui/slide-button` | A handle dragged across a rail to confirm an action |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
+| [Splitter](src/components/splitter/AGENTS.md) | `@delacour/react-native-ui/splitter` | Two or more panes divided by draggable, adjustable handles, sized in percent |
 | [StackCard](src/components/stack-card/AGENTS.md) | `@delacour/react-native-ui/stack-card` | A deck taken one card at a time by throwing the top one off |
 | [Steps](src/components/steps/AGENTS.md) | `@delacour/react-native-ui/steps` | A stepper — completed, current and upcoming steps, joined by a line |
 | [Surface](src/components/surface/AGENTS.md) | `@delacour/react-native-ui/surface` | A rounded container on the theme's fill ladder, stepping as it nests |

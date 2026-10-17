@@ -459,6 +459,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline.",
 		categories: ["controls"],
 	},
+	splitter: {
+		title: "Splitter",
+		description: "Two or more panes divided by draggable handles, sized in percent.",
+		categories: ["layout"],
+	},
 	steps: {
 		title: "Steps",
 		description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line.",

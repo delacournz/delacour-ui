@@ -72,6 +72,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "slide-button", title: "Slide Button", description: "A handle dragged across a rail to confirm an action a tap should not reach." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
+	{ name: "splitter", title: "Splitter", description: "Two or more panes divided by draggable handles, sized in percent." },
 	{ name: "stack-card", title: "Stack Card", description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },

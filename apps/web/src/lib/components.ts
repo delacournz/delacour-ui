@@ -441,6 +441,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "splitter",
+		name: "Splitter",
+		group: "Layout",
+		blurb: "Two or more panes divided by draggable, adjustable handles, sized in percent.",
+	},
+	{
 		slug: "sketch",
 		name: "Sketch",
 		group: "Layout",

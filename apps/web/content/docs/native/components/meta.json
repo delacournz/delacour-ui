@@ -82,6 +82,7 @@
 		"screen",
 		"surface",
 		"card",
+		"direction",
 		"carousel",
 		"---Utilities---",
 		"provider",

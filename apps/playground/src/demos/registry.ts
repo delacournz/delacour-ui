@@ -273,9 +273,13 @@ import * as demo_input_colors_defaults from "./input/colors/defaults";
 import * as demo_input_colors_invalid_wins_by_default from "./input/colors/invalid-wins-by-default";
 import * as demo_input_colors_placeholder from "./input/colors/placeholder";
 import * as demo_input_form_in_a_form from "./input/form/in-a-form";
+import * as demo_input_group_composer from "./input/group/composer";
 import * as demo_input_group_controls from "./input/group/controls";
+import * as demo_input_group_decorative from "./input/group/decorative";
+import * as demo_input_group_group_button from "./input/group/group-button";
 import * as demo_input_group_icons from "./input/group/icons";
 import * as demo_input_group_multiline from "./input/group/multiline";
+import * as demo_input_group_separator from "./input/group/separator";
 import * as demo_input_group_side_by_side from "./input/group/side-by-side";
 import * as demo_input_group_sizes_and_states from "./input/group/sizes-and-states";
 import * as demo_input_group_text_affixes from "./input/group/text-affixes";
@@ -824,9 +828,13 @@ export const DEMOS = {
 	"input/colors/invalid-wins-by-default": demo_input_colors_invalid_wins_by_default,
 	"input/colors/placeholder": demo_input_colors_placeholder,
 	"input/form/in-a-form": demo_input_form_in_a_form,
+	"input/group/composer": demo_input_group_composer,
 	"input/group/controls": demo_input_group_controls,
+	"input/group/decorative": demo_input_group_decorative,
+	"input/group/group-button": demo_input_group_group_button,
 	"input/group/icons": demo_input_group_icons,
 	"input/group/multiline": demo_input_group_multiline,
+	"input/group/separator": demo_input_group_separator,
 	"input/group/side-by-side": demo_input_group_side_by_side,
 	"input/group/sizes-and-states": demo_input_group_sizes_and_states,
 	"input/group/text-affixes": demo_input_group_text_affixes,

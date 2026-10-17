@@ -217,3 +217,38 @@ describe("the count slot", () => {
 		expect(textareaVariants().count()).not.toMatch(/\btext-(?:muted|destructive|foreground)/);
 	});
 });
+
+// Inside an `Input.Group` the box belongs to the group, which draws the border
+// and the vertical padding once around every section. The field is then just
+// its lines — counting the padding again would make a grouped textarea taller
+// than a lone one by exactly the box it no longer draws.
+describe("a grouped textarea", () => {
+	test("counts only its lines", () => {
+		for (const size of INPUT_SIZES) {
+			expect(resolveTextareaRowsHeight({ isGrouped: true, rows: 3, size })).toBe(3 * TEXTAREA_LINE_HEIGHTS[size]);
+		}
+	});
+
+	test("ends up exactly as tall as a lone one once the group's box is added back", () => {
+		for (const size of INPUT_SIZES) {
+			const grouped = resolveTextareaRowsHeight({ isGrouped: true, rows: 4, size });
+			const box = 2 * TEXTAREA_PADDING_Y[size] + 2 * TEXTAREA_BORDER_WIDTH;
+			expect(grouped + box).toBe(resolveTextareaRowsHeight({ rows: 4, size }));
+		}
+	});
+
+	test("threads the flag through both height shapes", () => {
+		expect(resolveTextareaHeightStyle({ isGrouped: true, rows: 2, size: "md" })).toEqual({
+			height: 2 * TEXTAREA_LINE_HEIGHTS.md,
+		});
+		expect(resolveTextareaHeightStyle({ autoGrow: true, isGrouped: true, maxRows: 5, rows: 2, size: "sm" })).toEqual({
+			maxHeight: 5 * TEXTAREA_LINE_HEIGHTS.sm,
+			minHeight: 2 * TEXTAREA_LINE_HEIGHTS.sm,
+		});
+	});
+
+	test("stretches its wrapper across the group's row", () => {
+		expect(textareaVariants({ isGrouped: true }).root()).toContain("flex-1");
+		expect(textareaVariants({ isGrouped: false }).root()).not.toContain("flex-1");
+	});
+});

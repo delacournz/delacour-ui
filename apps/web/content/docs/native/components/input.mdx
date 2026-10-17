@@ -1,6 +1,6 @@
 ---
 title: Input
-description: A text field, and the box that can hold content beside it.
+description: A text field, and the box that can hold content beside, above and below it.
 icon: TextCursorInput
 ---
 
@@ -70,6 +70,77 @@ Use `Input.Group` to put a prefix or a suffix inside the field's own border.
 `variant`, `size`, `isInvalid` and `isDisabled` live on the group, and an `Input` inside one reads
 them from context. Pressing anywhere on the group focuses the field; a `Button` inside a decorator
 still receives its own press.
+
+### Decorative and interactive decorators
+
+A decorator holding only bare text and `Icon`s is decorative: screen readers skip it and a tap on
+it falls through to the group, which focuses the field. Anything else — a `Button`, a custom
+view — stays reachable. Pass `isDecorative` to override either way. When the affix carries
+meaning, say it in the field's `accessibilityLabel`.
+
+<Preview id="input/group/decorative" />
+
+```tsx
+<Input.Group>
+  <Input accessibilityLabel="Discount, percent" inputMode="decimal" />
+  <Input.Group.Suffix>
+    <Icon icon={IconPercent} />
+  </Input.Group.Suffix>
+</Input.Group>
+```
+
+### Group buttons
+
+`Input.Group.Button` is a `Button` sized one step below the box, squared when it holds only an
+icon, and disabled with the group without fading twice. Its press is its own. Name an icon-only one
+with `accessibilityLabel`; development builds warn when it is missing.
+
+<Preview id="input/group/group-button" />
+
+```tsx
+<Input.Group>
+  <Input value={query} onChangeText={setQuery} placeholder="Search" />
+  <Input.Group.Button accessibilityLabel="Clear" onPress={() => setQuery("")}>
+    <Icon icon={IconCrossSmall} />
+  </Input.Group.Button>
+</Input.Group>
+```
+
+### Separators
+
+`Input.Group.Separator` draws a hairline. Its direction comes from where it is written: in the row
+it is vertical, between a block and the row it is horizontal and meets the border on both sides.
+
+<Preview id="input/group/separator" />
+
+```tsx
+<Input.Group size="lg">
+  <Input.Group.Prefix>$</Input.Group.Prefix>
+  <Input.Group.Separator />
+  <Input inputMode="decimal" placeholder="0.00" />
+</Input.Group>
+```
+
+### Blocks and Textarea
+
+`Input.Group.Block` adds a full-width section above (`position="start"`) or below
+(`position="end"`) the field, inside the same border and focus ring. A `Textarea` can take the
+field's place, which makes a message composer one box. A block must be a direct child of the group.
+
+<Preview id="input/group/composer" />
+
+```tsx
+<Input.Group>
+  <Textarea autoGrow rows={2} placeholder="Write a message" />
+  <Input.Group.Separator />
+  <Input.Group.Block position="end">
+    <Input.Group.Button variant="secondary" onPress={send}>Send</Input.Group.Button>
+  </Input.Group.Block>
+</Input.Group>
+```
+
+Disabling or invalidating the group reaches every part at once: the box fades once, decorators and
+block text turn destructive, and every `Input.Group.Button` goes inert.
 
 ## States
 
@@ -146,4 +217,41 @@ input inside does not restate them.
 Content drawn inside the group's border, before or after the field. An `Icon` inside one inherits
 the input's icon size and a muted foreground.
 
-<TypeTable type={{ className: { type: "string" }, children: { type: "ReactNode" } }} />
+<TypeTable
+  type={{
+    isDecorative: {
+      type: "boolean",
+      description: "Hide from screen readers and let touches through to the field. Defaults to true when every child is bare text or an `Icon`.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Input.Group.Button
+
+Takes every `Button` prop except `size` and `isDisabled`, which come from the group.
+
+<TypeTable
+  type={{
+    variant: { type: '"ghost" | "secondary"', default: '"ghost"' },
+    accessibilityLabel: { type: "string", description: "Required for an icon-only button." },
+    onPress: { type: "() => void" },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Input.Group.Separator
+
+<TypeTable type={{ className: { type: "string" } }} />
+
+### Input.Group.Block
+
+<TypeTable
+  type={{
+    position: { type: '"start" | "end"', description: "Above the field's row, or below it.", required: true },
+    className: { type: "string" },
+    children: { type: "ReactNode" },
+  }}
+/>

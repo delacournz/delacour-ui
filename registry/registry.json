@@ -1052,7 +1052,7 @@
 			"name": "input",
 			"type": "registry:ui",
 			"title": "Input",
-			"description": "A text field, with a group that puts a prefix or suffix inside its border.",
+			"description": "A text field, with a group that puts prefixes, suffixes, buttons and full-width blocks inside its border.",
 			"categories": [
 				"forms"
 			],
@@ -1074,8 +1074,11 @@
 			"files": [
 				"ui/input/AGENTS.md",
 				"ui/input/index.ts",
+				"ui/input/input-group-block.tsx",
+				"ui/input/input-group-button.tsx",
 				"ui/input/input-group-decorator.tsx",
 				"ui/input/input-group-prefix.tsx",
+				"ui/input/input-group-separator.tsx",
 				"ui/input/input-group-suffix.tsx",
 				"ui/input/input-group.tsx",
 				"ui/input/input.context.tsx",

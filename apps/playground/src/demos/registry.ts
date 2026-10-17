@@ -452,6 +452,12 @@ import * as demo_search_bar_in_sheet from "./search-bar/in-sheet";
 import * as demo_search_bar_loading_and_tokens from "./search-bar/loading-and-tokens";
 import * as demo_search_bar_sizes_and_shapes from "./search-bar/sizes-and-shapes";
 import * as demo_search_bar_with_cancel from "./search-bar/with-cancel";
+import * as demo_select_data_driven from "./select/data-driven";
+import * as demo_select_disabled_and_loading from "./select/disabled-and-loading";
+import * as demo_select_grouped_searchable from "./select/grouped-searchable";
+import * as demo_select_in_a_field from "./select/in-a-field";
+import * as demo_select_multiple from "./select/multiple";
+import * as demo_select_single from "./select/single";
 import * as demo_selection_mode_disabled_rows from "./selection-mode/disabled-rows";
 import * as demo_selection_mode_floating_bar from "./selection-mode/floating-bar";
 import * as demo_selection_mode_in_a_sheet from "./selection-mode/in-a-sheet";
@@ -1041,6 +1047,12 @@ export const DEMOS = {
 	"search-bar/loading-and-tokens": demo_search_bar_loading_and_tokens,
 	"search-bar/sizes-and-shapes": demo_search_bar_sizes_and_shapes,
 	"search-bar/with-cancel": demo_search_bar_with_cancel,
+	"select/data-driven": demo_select_data_driven,
+	"select/disabled-and-loading": demo_select_disabled_and_loading,
+	"select/grouped-searchable": demo_select_grouped_searchable,
+	"select/in-a-field": demo_select_in_a_field,
+	"select/multiple": demo_select_multiple,
+	"select/single": demo_select_single,
 	"selection-mode/disabled-rows": demo_selection_mode_disabled_rows,
 	"selection-mode/floating-bar": demo_selection_mode_floating_bar,
 	"selection-mode/in-a-sheet": demo_selection_mode_in_a_sheet,

@@ -15,6 +15,7 @@ import {
 	IconCheckCircle2,
 	IconChecklist,
 	IconChevronDoubleRight,
+	IconChevronDownMedium,
 	IconChevronGrabberVertical,
 	IconCircleInfo,
 	IconCircleRecord,
@@ -138,6 +139,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"otp-input": IconPasswordStars,
 	questionnaire: IconChecklist,
 	"search-bar": IconMagnifyingGlass,
+	select: IconChevronDownMedium,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

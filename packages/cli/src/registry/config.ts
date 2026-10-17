@@ -511,6 +511,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
 		categories: ["layout"],
 	},
+	"section-progress": {
+		title: "SectionProgress",
+		description:
+			"A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
+		categories: ["navigation"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

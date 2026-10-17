@@ -7,6 +7,7 @@ import {
 	IconBell,
 	IconBlur,
 	IconBold,
+	IconBookmark,
 	IconBrowserTabs,
 	IconBubble2,
 	IconBubbleDots,
@@ -202,6 +203,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"scroll-fade": IconUnblur,
 	"scroll-canvas": IconImages1,
 	"scroll-header": IconLayoutTop,
+	"section-progress": IconBookmark,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

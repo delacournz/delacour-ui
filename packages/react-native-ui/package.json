@@ -105,6 +105,7 @@
 		"./scroll-header": "./src/components/scroll-header/index.ts",
 		"./scroll-text": "./src/components/scroll-text/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
+		"./section-progress": "./src/components/section-progress/index.ts",
 		"./select": "./src/components/select/index.ts",
 		"./selection-mode": "./src/components/selection-mode/index.ts",
 		"./separator": "./src/components/separator/index.ts",

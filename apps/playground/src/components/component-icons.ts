@@ -22,6 +22,7 @@ import {
 	IconCircleRecord,
 	IconClock,
 	IconColorPalette,
+	IconCompassPointer,
 	IconCursorClick,
 	IconDecimalNumberDot,
 	IconDivider,
@@ -188,6 +189,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	breadcrumb: IconFolder1,
 	pagination: IconPageEmpty,
 	sortable: IconDotGrid2x3,
+	tour: IconCompassPointer,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

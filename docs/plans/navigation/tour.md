@@ -122,6 +122,13 @@ type TourStepProps = ViewProps & {
 
 ## Decisions
 
+- **The anchored card is built inside Tour, not borrowed from Overlays.** The Overlays
+  category's popover, dialog and overlay foundation are on unmerged branches, and no Navigation
+  component may import from another category's unmerged branch. Tour therefore owns the minimal
+  pieces it needs: a React Native `Modal` (or, interactive, an absolutely positioned layer inside
+  its own root), an SVG `evenodd` cutout for the hole, and a positioned `Surface`-styled card
+  placed by `resolveCardPlacement`. When the Overlays foundation lands, the card can move onto
+  its popover without changing Tour's API.
 - No arrow on the card in v1.
 - No persistence ("seen") — `onFinish`/`onSkip` give the app the hook.
 - Labels English by default, overridable.

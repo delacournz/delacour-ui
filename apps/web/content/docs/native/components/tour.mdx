@@ -1,0 +1,241 @@
+---
+title: Tour
+description: A guided walkthrough — the screen dims, a hole opens around one control, and a card beside it explains it.
+icon: Signpost
+---
+
+<Preview id="tour/interactive" title={null} />
+
+## Installation
+
+<ComponentInstall name="tour" />
+
+## Usage
+
+Wrap the screen in a `Tour` and each control you want to point at in a `Tour.Step`.
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { Tour, useTour } from "@/components/ui/tour";
+import { View } from "react-native";
+
+function StartTour() {
+  const tour = useTour();
+  return <Button onPress={() => tour.start()}>Show me around</Button>;
+}
+
+export default function Example() {
+  return (
+    <Tour onFinish={markSeen} onSkip={markSeen}>
+      <View className="flex-1 justify-center gap-4 p-4">
+        <Tour.Step order={1} title="Search" description="Find anything in your library.">
+          <SearchButton />
+        </Tour.Step>
+        <Tour.Step order={2} title="New note" description="Start writing." shape="circle">
+          <Fab />
+        </Tour.Step>
+        <StartTour />
+      </View>
+    </Tour>
+  );
+}
+```
+
+Steps are sorted by `order`, so gaps are fine — 10, 20, 30 leaves room to insert one later. A
+`Tour.Step` that is not mounted is not in the tour.
+
+<Preview id="tour/basic" />
+
+## Opening it
+
+Three ways, the same as any disclosure in the library:
+
+```tsx
+<Tour defaultOpen>…</Tour>
+<Tour isOpen={isOpen} onOpenChange={setOpen}>…</Tour>
+useTour().start();      // or start(order) to begin part-way through
+```
+
+The tour keeps no record of having been seen. `onFinish` (Done on the last step) and `onSkip`
+(Skip, a scrim tap, Android back or VoiceOver's escape) are where an app writes that down.
+
+## Hole shape
+
+`rect` (the default) is a rounded rectangle grown by `padding`; `circle` is a circle around the
+target's larger side, for a floating button. Set it on the tour for every step, or on one step.
+The hole glides between the two.
+
+<Preview id="tour/circle-shape" />
+
+```tsx
+<Tour.Step order={2} shape="circle" padding={6} title="New note">
+  <Fab />
+</Tour.Step>
+```
+
+## Placement
+
+`auto` puts the card below the hole when it fits inside the safe area, and above otherwise. `top`
+and `bottom` are honoured when they fit and flip when only the other side does. The card is
+centred on the hole and clamped to the screen's gutters, at most 360 points wide.
+
+<Preview id="tour/placement" />
+
+```tsx
+<Tour.Step order={3} placement="top" title="Composer">…</Tour.Step>
+```
+
+## Interactive
+
+By default the tour is a `Modal`: it covers the status bar and the tab bar and swallows every
+touch. `isInteractive` draws it inside the tour's own root instead and lets touches inside the
+hole reach the control — whose handler then advances the tour.
+
+<Preview id="tour/interactive" />
+
+```tsx
+function LikeButton() {
+  const tour = useTour();
+  return (
+    <Button
+      onPress={() => {
+        like();
+        if (tour.isOpen && tour.step === 1) tour.next();
+      }}
+    >
+      Like
+    </Button>
+  );
+}
+
+<Tour isInteractive>
+  <Tour.Step order={1} title="Like it" description="Tap the heart.">
+    <LikeButton />
+  </Tour.Step>
+</Tour>
+```
+
+<Callout type="warn">
+An interactive tour can only dim what is inside it. Put `Tour` around the whole screen — a status
+bar or tab bar outside it stays lit.
+</Callout>
+
+## Scrolling a step into view
+
+`onStepChange` fires before the step is measured. Scroll the target on screen there, without
+animation — the tour measures one frame later.
+
+```tsx
+<Tour onStepChange={(order) => scrollRef.current?.scrollTo({ y: offsets[order], animated: false })}>
+  …
+</Tour>
+```
+
+## Labels
+
+Every string on the card can be replaced. `progress` is the visible "2 of 5"; `announcement` is
+what a screen reader hears before the title.
+
+<Preview id="tour/custom-labels" />
+
+```tsx
+<Tour
+  hasSkip={false}
+  labels={{
+    next: "Suivant",
+    back: "Retour",
+    finish: "Terminé",
+    progress: (current, total) => `${current}/${total}`,
+    announcement: (current, total) => `Étape ${current} sur ${total}`,
+  }}
+>
+  …
+</Tour>
+```
+
+## Accessibility
+
+- Focus moves to the card on every step, and the card is announced as one element: "Step 2 of 5.
+  Search. Find anything in your library."
+- The card is `accessibilityViewIsModal`, so VoiceOver stays inside it. A non-interactive tour also
+  hides the app beneath from assistive technology; an interactive one leaves it reachable.
+- VoiceOver's escape gesture and Android back skip the tour when `isDismissible` (the default).
+- Under reduce motion the hole jumps between steps instead of gliding. The card only fades, so it
+  fades either way.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Tour` | Owns the open state and the current step; draws the mask, the scrim and the card |
+| `Tour.Step` | Wraps one control. Registers itself and is measured for the hole |
+| `useTour()` | Reads and drives the enclosing tour |
+
+### Tour
+
+<TypeTable
+  type={{
+    isOpen: { type: "boolean", description: "Controlled." },
+    defaultOpen: { type: "boolean", default: "false" },
+    onOpenChange: { type: "(isOpen: boolean) => void" },
+    step: { type: "number", description: "The current step's `order`. Controlled." },
+    defaultStep: { type: "number", default: "the lowest order" },
+    onStepChange: { type: "(step: number) => void", description: "Fires before the step is measured." },
+    onFinish: { type: "() => void" },
+    onSkip: { type: "() => void" },
+    shape: { type: '"rect" | "circle"', default: '"rect"' },
+    padding: { type: "number", default: "8" },
+    radius: { type: "number", default: "12" },
+    placement: { type: '"auto" | "top" | "bottom"', default: '"auto"' },
+    isDismissible: { type: "boolean", default: "true", description: "Scrim tap, Android back and VoiceOver escape skip." },
+    hasProgress: { type: "boolean", default: "true" },
+    hasSkip: { type: "boolean", default: "true" },
+    isInteractive: { type: "boolean", default: "false" },
+    haptic: { type: "false | HapticFeedback", default: "false" },
+    labels: { type: "Partial<TourLabels>" },
+    cardClassName: { type: "string" },
+    className: { type: "string", description: "The root `View`, which fills its parent." },
+    testID: { type: "string", description: "The root's, and the stem of the card's: `-card`, `-next`, `-back`, `-skip`." },
+  }}
+/>
+
+### Tour.Step
+
+Extends `ViewProps`. `shape`, `padding`, `radius` and `placement` override the tour's for this step.
+
+<TypeTable
+  type={{
+    order: { type: "number", required: true },
+    title: { type: "string", required: true },
+    description: { type: "string" },
+    shape: { type: '"rect" | "circle"' },
+    padding: { type: "number" },
+    radius: { type: "number" },
+    placement: { type: '"auto" | "top" | "bottom"' },
+    className: { type: "string" },
+  }}
+/>
+
+### useTour
+
+```ts
+const { isOpen, step, index, total, start, next, back, skip, finish, goTo } = useTour();
+```
+
+Throws outside a `Tour`.
+
+### Exports
+
+```tsx
+import {
+  Tour,
+  type TourProps,
+  type TourStepProps,
+  type TourLabels,
+  TOUR_DEFAULT_LABELS,
+  resolveCardPlacement,
+  useTour,
+} from "@delacour/react-native-ui/tour";
+```

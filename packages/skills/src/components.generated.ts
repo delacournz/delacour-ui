@@ -86,6 +86,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "splitter", title: "Splitter", description: "Two or more panes divided by draggable handles, sized in percent." },
 	{ name: "stack-card", title: "Stack Card", description: "A deck taken one card at a time by throwing the top one off, with stamps, undo and a decline." },
 	{ name: "steps", title: "Steps", description: "A stepper for multi-step flows: completed, current and upcoming steps joined by a line." },
+	{ name: "support", title: "Support", description: "A help section: availability, channels, topics, past requests and the furniture around a support thread." },
 	{ name: "surface", title: "Surface", description: "A rounded container on the theme's fill ladder, stepping to the next fill as it nests." },
 	{ name: "swipe", title: "Swipe", description: "A row that slides aside to reveal actions behind it, with a full swipe and a group that keeps one open." },
 	{ name: "switch", title: "Switch", description: "An on/off control whose thumb can be dragged as well as tapped." },

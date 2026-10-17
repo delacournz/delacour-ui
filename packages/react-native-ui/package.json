@@ -110,6 +110,7 @@
 		"./splitter": "./src/components/splitter/index.ts",
 		"./stack-card": "./src/components/stack-card/index.ts",
 		"./steps": "./src/components/steps/index.ts",
+		"./support": "./src/components/support/index.ts",
 		"./surface": "./src/components/surface/index.ts",
 		"./swipe": "./src/components/swipe/index.ts",
 		"./switch": "./src/components/switch/index.ts",

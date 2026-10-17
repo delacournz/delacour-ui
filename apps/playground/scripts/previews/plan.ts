@@ -28,6 +28,8 @@ export type PlannedDemo = {
 	/** Still frames held before the flow, and after it. Defaults in `DemoCapture`. */
 	leadMs: number;
 	tailMs: number;
+	/** The stable-for window `awaitIdle` waits on. Default in `DemoCapture`. */
+	settleMs: number;
 	hero: boolean;
 	sourceHash: string;
 };
@@ -117,6 +119,7 @@ export async function planDemos(only?: string): Promise<PlannedDemo[]> {
 			frame,
 			leadMs: capture.leadMs ?? 400,
 			tailMs: capture.tailMs ?? 800,
+			settleMs: capture.settleMs ?? 500,
 			hero: capture.hero === true,
 			id,
 			path,

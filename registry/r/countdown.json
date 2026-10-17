@@ -1,0 +1,106 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "countdown",
+	"type": "registry:ui",
+	"title": "Countdown",
+	"description": "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"cn",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/countdown/AGENTS.md",
+			"target": "countdown/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/countdown",
+					"to": "@registry/ui/countdown"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/countdown-digit.tsx",
+			"target": "countdown/countdown-digit.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/countdown-segment.tsx",
+			"target": "countdown/countdown-segment.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/countdown.tsx",
+			"target": "countdown/countdown.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/countdown.variants.ts",
+			"target": "countdown/countdown.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/index.ts",
+			"target": "countdown/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/countdown/use-countdown-clock.ts",
+			"target": "countdown/use-countdown-clock.ts",
+			"namespace": "ui"
+		}
+	]
+}

@@ -40,6 +40,7 @@
 		"./avatar": "./src/components/avatar/index.ts",
 		"./badge": "./src/components/badge/index.ts",
 		"./bottom-sheet": "./src/components/bottom-sheet/index.ts",
+		"./breadcrumb": "./src/components/breadcrumb/index.ts",
 		"./button": "./src/components/button/index.ts",
 		"./calendar": "./src/components/calendar/index.ts",
 		"./card": "./src/components/card/index.ts",

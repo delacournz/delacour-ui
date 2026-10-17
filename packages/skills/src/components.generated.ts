@@ -16,6 +16,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "avatar", title: "Avatar", description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group." },
 	{ name: "badge", title: "Badge", description: "A compact label for status or a count, composed from parts like the button." },
 	{ name: "bottom-sheet", title: "Bottom Sheet", description: "A draggable sheet over the screen: snap points, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet." },
+	{ name: "breadcrumb", title: "Breadcrumb", description: "The path to the current screen: links back up each level, the current page last, with automatic separators, a collapsing middle or a scrolling trail." },
 	{ name: "button", title: "Button", description: "A pressable action composed from parts, with variants, sizes and a loading state." },
 	{ name: "calendar", title: "Calendar", description: "A month grid for picking a day, several days or a range, with swipe paging and month and year jump views." },
 	{ name: "card", title: "Card", description: "A content surface with a header, a body and a footer, built on Surface." },

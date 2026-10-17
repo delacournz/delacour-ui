@@ -248,6 +248,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "Two layers of one frame with a seam you drag across, revealed by a transform rather than a resize.",
 		categories: ["media"],
 	},
+	"date-picker": {
+		title: "Date Picker",
+		description:
+			"An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished.",
+		categories: ["forms"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

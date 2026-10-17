@@ -131,6 +131,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [Leaderboard](src/components/leaderboard/AGENTS.md) | `@delacour/react-native-ui/leaderboard` | Ranked entries with ties, a podium for the top three and the highlighted entry pinned below the cut |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Message](src/components/message/AGENTS.md) | `@delacour/react-native-ui/message` | A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter |
 | [Marquee](src/components/marquee/AGENTS.md) | `@delacour/react-native-ui/marquee` | Content looping across its container at a speed in points per second, held still on touch |
 | [MarkdownEditor](src/components/markdown-editor/AGENTS.md) | `@delacour/react-native-ui/markdown-editor` | A Markdown field — a formatting toolbar, a write pane and a rendered preview |
 | [Marker](src/components/marker/AGENTS.md) | `@delacour/react-native-ui/marker` | A centred inline note for a step or a day break between conversation turns |

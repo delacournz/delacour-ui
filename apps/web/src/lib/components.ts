@@ -350,6 +350,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One section shown and hidden by its own trigger.",
 	},
 	{
+		slug: "message",
+		name: "Message",
+		group: "Media",
+		blurb: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
+	},
+	{
 		slug: "compare",
 		name: "Compare",
 		group: "Media",

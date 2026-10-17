@@ -95,6 +95,7 @@ shares.
 | --- | --- | --- |
 | [Accordion](src/components/accordion/AGENTS.md) | `@delacour/react-native-ui/accordion` | Rows that each disclose a panel |
 | [Alert](src/components/alert/AGENTS.md) | `@delacour/react-native-ui/alert` | A status message with a glyph, title, description and optional action |
+| [Attachment](src/components/attachment/AGENTS.md) | `@delacour/react-native-ui/attachment` | A file, image or recording — thumbnail, name, size, upload progress, remove and retry |
 | [AnimatedBadge](src/components/animated-badge/AGENTS.md) | `@delacour/react-native-ui/animated-badge` | A status pill that rolls its content and springs its width when the status changes |
 | [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |

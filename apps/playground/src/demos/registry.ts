@@ -24,6 +24,14 @@ import * as demo_animated_badge_reduced_motion from "./animated-badge/reduced-mo
 import * as demo_animated_badge_sizes from "./animated-badge/sizes";
 import * as demo_animated_badge_status_flow from "./animated-badge/status-flow";
 import * as demo_animated_badge_statuses from "./animated-badge/statuses";
+import * as demo_attachment_composer_tray from "./attachment/composer-tray";
+import * as demo_attachment_in_message from "./attachment/in-message";
+import * as demo_attachment_kinds from "./attachment/kinds";
+import * as demo_attachment_layouts from "./attachment/layouts";
+import * as demo_attachment_pressable_and_disabled from "./attachment/pressable-and-disabled";
+import * as demo_attachment_sizes from "./attachment/sizes";
+import * as demo_attachment_truncation from "./attachment/truncation";
+import * as demo_attachment_upload_states from "./attachment/upload-states";
 import * as demo_avatar_fallbacks from "./avatar/fallbacks";
 import * as demo_avatar_group from "./avatar/group";
 import * as demo_avatar_group_sizes_and_overlap from "./avatar/group-sizes-and-overlap";
@@ -697,6 +705,14 @@ export const DEMOS = {
 	"animated-badge/sizes": demo_animated_badge_sizes,
 	"animated-badge/status-flow": demo_animated_badge_status_flow,
 	"animated-badge/statuses": demo_animated_badge_statuses,
+	"attachment/composer-tray": demo_attachment_composer_tray,
+	"attachment/in-message": demo_attachment_in_message,
+	"attachment/kinds": demo_attachment_kinds,
+	"attachment/layouts": demo_attachment_layouts,
+	"attachment/pressable-and-disabled": demo_attachment_pressable_and_disabled,
+	"attachment/sizes": demo_attachment_sizes,
+	"attachment/truncation": demo_attachment_truncation,
+	"attachment/upload-states": demo_attachment_upload_states,
 	"avatar/fallbacks": demo_avatar_fallbacks,
 	"avatar/group": demo_avatar_group,
 	"avatar/group-sizes-and-overlap": demo_avatar_group_sizes_and_overlap,

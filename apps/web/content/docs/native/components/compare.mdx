@@ -1,0 +1,250 @@
+---
+title: Compare
+description: Two layers of one frame with a seam you drag across — before and after, revealed rather than resized.
+icon: Columns2
+---
+
+<Preview id="compare/anatomy" title={null} />
+
+## Installation
+
+<ComponentInstall name="compare" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Compare } from "@/components/ui/compare";
+import { Image, View } from "react-native";
+
+const original = { uri: "https://example.com/harbour-original.jpg" };
+const retouched = { uri: "https://example.com/harbour-retouched.jpg" };
+
+export default function Example() {
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Compare accessibilityLabel="Retouch" className="aspect-[4/3]">
+        <Compare.Before>
+          <Image accessibilityLabel="Original photo" className="size-full" source={original} />
+        </Compare.Before>
+        <Compare.After>
+          <Image accessibilityLabel="Retouched photo" className="size-full" source={retouched} />
+        </Compare.After>
+        <Compare.Label side="before">Original</Compare.Label>
+        <Compare.Label side="after">Retouched</Compare.Label>
+        <Compare.Handle />
+      </Compare>
+    </View>
+  );
+}
+```
+
+`Compare.Before` sits on the leading side — left, top when vertical, right under RTL — and
+`Compare.After` fills the frame behind it. A position of `1` shows only Before, `0` only After.
+
+Both layers are laid out once, at the full frame size, and only a mask moves. The halves stay in
+register at every position: an image is revealed, never squashed, and text never reflows.
+
+<Preview id="compare/anatomy" />
+
+<Callout type="warn" title="The frame has no size of its own">
+Give `className` an `aspect-*` or an `h-*`. Without one the frame collapses to nothing.
+</Callout>
+
+## Themes
+
+Each side takes any children — not only images. One `Card` under a light and a dark
+`ScopedTheme` is the realistic case: the seam cuts one card in half.
+
+<Preview id="compare/themes" />
+
+```tsx
+import { ScopedTheme } from "uniwind";
+
+<Compare accessibilityLabel="Light and dark theme" className="h-64">
+  <Compare.Before>
+    <ScopedTheme theme="light">
+      <ReportCard />
+    </ScopedTheme>
+  </Compare.Before>
+  <Compare.After>
+    <ScopedTheme theme="dark">
+      <ReportCard />
+    </ScopedTheme>
+  </Compare.After>
+  <Compare.Handle />
+</Compare>
+```
+
+## Vertical
+
+<Preview id="compare/vertical" />
+
+```tsx
+<Compare accessibilityLabel="Sky" className="h-72" orientation="vertical">
+  …
+</Compare>
+```
+
+<Callout type="warn" title="A vertical comparison needs a definite height">
+It fills the height it is given, so the frame needs an `h-*` — an aspect ratio alone is measured from
+a width a vertical frame does not drag across.
+</Callout>
+
+## Colours and sizes
+
+`color` paints the divider and the grip capsule; the glyph takes that colour's foreground. `size`
+moves the capsule only — the handle's touch band is 44pt at every size.
+
+<Preview id="compare/colours-and-sizes" />
+
+```tsx
+<Compare color="default" size="sm" />
+<Compare color="primary" size="md" />
+<Compare color="success" size="lg" />
+<Compare color="warning" />
+<Compare color="destructive" />
+<Compare color="info" />
+```
+
+## Snap points
+
+A release within `snapThreshold` of a point in `snapPoints` lands on it, with a haptic tick.
+Snapping waits for the release; a seam that snapped mid-drag would feel sticky.
+
+<Preview id="compare/snap-points" />
+
+```tsx
+<Compare snapPoints={[0, 0.5, 1]} snapThreshold={0.08} onPositionChangeEnd={save}>
+  …
+</Compare>
+```
+
+## Controlled
+
+<Preview id="compare/controlled" />
+
+```tsx
+const [position, setPosition] = useState(0.5);
+
+<Compare position={position} onPositionChange={setPosition} onPositionChangeEnd={persist}>
+  …
+</Compare>
+```
+
+`onPositionChange` follows the drag at percent resolution. `onPositionChangeEnd` fires once, after
+the snap — that is where a network write belongs. A parent that refuses a value leaves `position`
+unchanged and the seam springs back to it.
+
+## Inside a scroll view
+
+With the default `grab="handle"`, only the handle's 44pt band claims a touch. A vertical flick
+anywhere else on the frame scrolls the list.
+
+`grab="anywhere"` lets a drag start anywhere on the frame and a tap jump the seam. Activation is
+axis-aware: a drag along the seam's axis takes the touch, a flick across it goes to the scroll view.
+
+```tsx
+<ScrollView delaysContentTouches={false}>
+  <Compare grab="anywhere" accessibilityLabel="Exposure" className="aspect-[4/3]">…</Compare>
+</ScrollView>
+```
+
+<Callout type="warn">
+On iOS the handle feels late until the scrollable sets `delaysContentTouches={false}`. That is a
+prop at your call site, not something the component can set.
+</Callout>
+
+## Accessibility
+
+- The handle is an `adjustable` — the frame is not, so each layer's content stays reachable on its
+  own. Label your images.
+- Its value reads the Before layer's share: "50 percent before", or "Showing only after" at an end.
+  A plain-string `Compare.Label` substitutes its text — "50 percent Original" — and is itself hidden
+  from screen readers, so the name is heard once.
+- A VoiceOver or TalkBack swipe steps the seam by `step` (default `0.1`), through the same snap and
+  bounds as a drag, and fires `onPositionChangeEnd`.
+- Name it with `accessibilityLabel`, or wrap it in a `Field` and the `Field.Label` names it. With
+  neither, a development warning fires.
+- A layer the seam covers completely leaves the accessibility tree, so nothing invisible is focusable.
+- Under reduce motion the release does not spring; the drag itself still follows the finger.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Compare` | The frame. Owns the position, the gesture and the axes |
+| `Compare.Before` | The front layer, on the leading side, revealed by a sliding mask |
+| `Compare.After` | The back layer: the full frame, never moved |
+| `Compare.Handle` | The divider, the grip and the whole accessibility surface |
+| `Compare.Label` | A caption pinned to one side, fading as that side is covered |
+
+### Compare
+
+<TypeTable
+  type={{
+    position: { type: "number", description: "Controlled position, 0–1 — the share of the frame Before covers." },
+    defaultPosition: { type: "number", default: "0.5", description: "Starting position while uncontrolled." },
+    onPositionChange: { type: "(position: number) => void", description: "Fires as the seam moves, and on every assistive step." },
+    onPositionChangeEnd: { type: "(position: number) => void", description: "Fires once on release, after snapping." },
+    orientation: { type: '"horizontal" | "vertical"', default: '"horizontal"', description: "vertical puts Before on top, and needs a definite height." },
+    grab: { type: '"handle" | "anywhere"', default: '"handle"', description: "Where a drag may begin." },
+    snapPoints: { type: "readonly number[]", description: "Stops a release lands on when it is within snapThreshold of one." },
+    snapThreshold: { type: "number", default: "0.04" },
+    step: { type: "number", default: "0.1", description: "What one assistive increment moves the seam by." },
+    minPosition: { type: "number", default: "0" },
+    maxPosition: { type: "number", default: "1" },
+    color: {
+      type: '"default" | "primary" | "success" | "warning" | "destructive" | "info"',
+      default: '"default"',
+      description: "The handle and divider's paint.",
+    },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"', description: "The handle's size. Its touch band is 44pt at every size." },
+    isDisabled: { type: "boolean", description: "Blocks the drag and the assistive actions. Inherited from an enclosing Field." },
+    haptic: {
+      type: 'false | "selection" | "light" | "medium" | "heavy" | "success" | "warning" | "error"',
+      default: '"selection"',
+      description: "Played on grab, at snap points and at either bound.",
+    },
+    accessibilityLabel: { type: "string", description: "Names the handle. Defaults to an enclosing Field.Label's text." },
+    className: { type: "string", description: "The frame. Give it an aspect-* or h-* class." },
+    children: { type: "ReactNode" },
+  }}
+/>
+
+### Compare.Before / Compare.After
+
+<TypeTable
+  type={{
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Anything — an image, a themed card, a map. Laid out at the full frame size." },
+    testID: { type: "string" },
+  }}
+/>
+
+### Compare.Handle
+
+<TypeTable
+  type={{
+    className: { type: "string", description: "Merged onto the grip capsule." },
+    children: { type: "ReactNode", description: "Replaces the default grip glyph." },
+    testID: { type: "string" },
+  }}
+/>
+
+### Compare.Label
+
+<TypeTable
+  type={{
+    side: { type: '"before" | "after"', required: true, description: "Which side it names." },
+    placement: { type: '"start" | "end"', default: '"start"', description: "Along the cross axis — top or bottom of a horizontal frame." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "A plain string also names that side in the handle's value text." },
+  }}
+/>
+
+### useCompare
+
+Reads the enclosing comparison's state — the live `position` shared value, the frame size and the
+axes — for a custom handle or overlay that has to follow the seam. Throws outside a `Compare`.

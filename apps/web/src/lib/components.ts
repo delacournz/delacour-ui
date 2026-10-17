@@ -338,6 +338,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One section shown and hidden by its own trigger.",
 	},
 	{
+		slug: "compare",
+		name: "Compare",
+		group: "Media",
+		blurb: "Two layers of one frame with a seam you drag across, revealed rather than resized.",
+	},
+	{
 		slug: "circular-text",
 		name: "CircularText",
 		group: "Media",

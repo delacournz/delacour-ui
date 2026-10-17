@@ -40,6 +40,7 @@ import {
 	IconLayersTwo,
 	IconLayoutAlignTopBottom,
 	IconLayoutBottomFull,
+	IconLayoutColumn,
 	IconLayoutLeft,
 	IconLayoutLeftRight,
 	IconLayoutTop,
@@ -166,6 +167,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"split-view": IconLayoutAlignTopBottom,
 	attachment: IconPaperclip1,
 	"circular-text": IconRotate360Right,
+	compare: IconLayoutColumn,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

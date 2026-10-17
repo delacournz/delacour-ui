@@ -1,0 +1,40 @@
+export { Compare, type CompareProps } from "./compare";
+export { type CompareContextValue, CompareProvider, useCompare, useCompareContext } from "./compare.context";
+export type { CompareLayerProps } from "./compare.types";
+export {
+	COMPARE_ANYWHERE_ACTIVE_OFFSET,
+	COMPARE_ANYWHERE_FAIL_OFFSET,
+	COMPARE_COLORS,
+	COMPARE_DEFAULT_COLOR,
+	COMPARE_DEFAULT_GRAB,
+	COMPARE_DEFAULT_ORIENTATION,
+	COMPARE_DEFAULT_POSITION,
+	COMPARE_DEFAULT_SIZE,
+	COMPARE_GRAB_SCALE,
+	COMPARE_HANDLE_BAND,
+	COMPARE_HANDLE_SPRING,
+	COMPARE_ORIENTATIONS,
+	COMPARE_SIZES,
+	COMPARE_SNAP_THRESHOLD,
+	COMPARE_STEP,
+	type CompareColor,
+	type CompareGrab,
+	type CompareLabelPlacement,
+	type CompareOrientation,
+	type ComparePosition,
+	type CompareSide,
+	type CompareSize,
+	type CompareVariantProps,
+	clampPosition,
+	compareVariants,
+	isWithinGrabBand,
+	resolveCompareValueText,
+	resolveCoveredLayer,
+	resolvePositionFromGesture,
+	resolveRevealTransforms,
+	shouldTickCompareHaptic,
+	snapPosition,
+	stepPosition,
+} from "./compare.variants";
+export type { CompareHandleProps } from "./compare-handle";
+export type { CompareLabelProps } from "./compare-label";

@@ -139,6 +139,7 @@ shares.
 | [Marker](src/components/marker/AGENTS.md) | `@delacour/react-native-ui/marker` | A centred inline note for a step or a day break between conversation turns |
 | [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on MapLibre with a token-painted basemap |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [Pagination](src/components/pagination/AGENTS.md) | `@delacour/react-native-ui/pagination` | A fixed-width run of pages and gaps, a compact readout, or labelled arrows |
 | [Post](src/components/post/AGENTS.md) | `@delacour/react-native-ui/post` | A social card — author, body, media and animated counts and votes |
 | [PageHeader](src/components/page-header/AGENTS.md) | `@delacour/react-native-ui/page-header` | A cover, an overlapping avatar, a title block, actions and stats — the head of a profile |
 | [OtpInput](src/components/otp-input/AGENTS.md) | `@delacour/react-native-ui/otp-input` | A one-time code or PIN — cells drawn over one hidden field, with autofill and paste |

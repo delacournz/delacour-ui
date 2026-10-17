@@ -56,6 +56,7 @@ import {
 	IconMap,
 	IconNoteText,
 	IconNumberedList,
+	IconPageEmpty,
 	IconPaperclip1,
 	IconParagraph,
 	IconPasswordStars,
@@ -185,6 +186,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	support: IconHeadphones,
 	"text-animation": IconMagicWand,
 	breadcrumb: IconFolder1,
+	pagination: IconPageEmpty,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

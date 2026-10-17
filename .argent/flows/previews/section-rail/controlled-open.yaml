@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on section-rail/controlled-open and has settled — Summary as the title, a
+  Show outline button, and the rail closed on its end edge. The capture script navigates there before running this.
+steps:
+  - echo: The button opens the panel; a pick closes it
+  - tap: { id: section-rail-controlled-open }
+  - await: { visible: { id: section-rail-controlled-budget } }
+  - wait: 600
+  - tap: { id: section-rail-controlled-budget }
+  - wait: 1100
+  - echo: And back to Summary, so the clip loops without a jump cut
+  - tap: { id: section-rail-controlled-open }
+  - await: { visible: { id: section-rail-controlled-summary } }
+  - wait: 500
+  - tap: { id: section-rail-controlled-summary }
+  - wait: 900

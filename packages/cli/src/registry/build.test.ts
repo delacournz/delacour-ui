@@ -73,6 +73,13 @@ describe("buildRegistry", () => {
 		expect(byName.get("separator")?.registryDependencies).not.toContain("button");
 	});
 
+	test("adds the registry edges ITEM_META names, for a pairing no import records", () => {
+		// SectionRail never imports useScrollSections — the caller wires the hook's
+		// value into the rail — but every documented use needs both, so `add`
+		// brings the hook along.
+		expect(byName.get("section-rail")?.registryDependencies).toContain("use-scroll-sections");
+	});
+
 	test("routes native modules to expo install and plain packages to the package manager", () => {
 		const pressable = byName.get("pressable");
 		expect(pressable?.expoDependencies).toContain("react-native-reanimated");

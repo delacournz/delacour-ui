@@ -298,6 +298,12 @@ const ROWS = [
 		description: "Article, placements, colours, manual, controlled",
 		group: "Navigation",
 	},
+	{
+		slug: "section-rail",
+		title: "Section rail",
+		description: "Placement, nesting, scrub, pagers",
+		group: "Navigation",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "tree", title: "Tree", description: "Nesting, selection, guide lines, lazy branches", group: "Navigation" },

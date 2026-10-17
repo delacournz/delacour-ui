@@ -31,7 +31,7 @@ function FrameRoot({ variant = "default", size = "md", className, children, ...p
 	const plane = resolveSurfacePlane({ parentPlane, variant: fill });
 
 	const frame = useMemo<FrameContextValue>(() => ({ plane, size, variant }), [plane, size, variant]);
-	const surface = useMemo<SurfaceContextValue>(() => ({ plane, variant: fill }), [plane, fill]);
+	const surface = useMemo<SurfaceContextValue>(() => ({ material: "flat", plane, variant: fill }), [plane, fill]);
 
 	return (
 		<FrameProvider value={frame}>

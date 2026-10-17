@@ -57,6 +57,7 @@
         "@shopify/react-native-skia": "catalog:",
         "culori": "^4.0.2",
         "expo": "~57.0.15",
+        "expo-blur": "~57.0.3",
         "expo-constants": "~57.0.13",
         "expo-dev-client": "~57.0.14",
         "expo-font": "^57.0.2",
@@ -255,6 +256,7 @@
         "@maplibre/maplibre-react-native": "^11.5.0",
         "@types/bun": "^1.3.8",
         "@types/react": "catalog:",
+        "expo-blur": "~57.0.3",
         "expo-router": "~57.0.15",
         "react-native-teleport": "^1.2.2",
         "typescript": "^5.9.3",
@@ -266,6 +268,7 @@
         "@legendapp/list": ">=3.3",
         "@maplibre/maplibre-react-native": "^11.5.0",
         "@shopify/react-native-skia": ">=2",
+        "expo-blur": ">=15",
         "expo-linear-gradient": ">=15",
         "expo-router": ">=57",
         "react": ">=19",
@@ -288,6 +291,7 @@
         "@legendapp/list",
         "@maplibre/maplibre-react-native",
         "@shopify/react-native-skia",
+        "expo-blur",
         "expo-router",
         "react-native-screens",
         "react-native-teleport",
@@ -1649,6 +1653,8 @@
     "expo-app-metrics": ["expo-app-metrics@57.0.20", "", { "dependencies": { "expo-updates-interface": "~57.0.2" }, "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-6iGKrav1D9I3GOvXy/g94MoaJmzJo98hoI9bQOIeV4pCi1/JY7DBgObItmE6yY2YdjuBmKoerTIHdWdN5L+c7Q=="],
 
     "expo-asset": ["expo-asset@57.0.18", "", { "dependencies": { "@expo/image-utils": "^0.11.5", "expo-constants": "~57.0.19" }, "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-zDIQkUr0NM2S7YRj98Zohf/OBuM1q0o4ctxLz1C1oe4/33lHNLjp+2v3qUtBWVwn0zKka8UGADmS8M+83Wi6pw=="],
+
+    "expo-blur": ["expo-blur@57.0.3", "", { "peerDependencies": { "expo": "*", "react": "*", "react-native": "*" } }, "sha512-uyBeJwxIuXzWXXNrnRub5pcF8VzQsiOz0VBTWDpMG2UztmaFyfAz6pI/GCwRtWpHhiOpLoJj79WLdg1GMB+9cg=="],
 
     "expo-constants": ["expo-constants@57.0.19", "", { "dependencies": { "@expo/env": "~2.4.3" }, "peerDependencies": { "expo": "*", "react-native": "*" } }, "sha512-3eK1kZRwCdMizQLlM/PPlPwjaPnB5qKvdRDMBMnB1ZxmvWJBf9TB4uEO4DMMfIPaFUxYFs29dsR5fPr1gh3FTQ=="],
 

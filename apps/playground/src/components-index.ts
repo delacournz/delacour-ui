@@ -300,6 +300,7 @@ const ROWS = [
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
+	{ slug: "scroll-blur", title: "ScrollBlur", description: "Edges, layers, fallback", group: "Layout" },
 	{
 		slug: "split-view",
 		title: "SplitView",

@@ -15519,6 +15519,110 @@ export const install = {
 			},
 		],
 	},
+	"scroll-blur": {
+		name: "scroll-blur",
+		title: "ScrollBlur",
+		description: "A progressive blur at a scrollable's edges that falls back to a gradient fade.",
+		importPath: "@delacour/react-native-ui/scroll-blur",
+		exportName: "ScrollBlur",
+		expo: ["expo-linear-gradient", "react-native-reanimated", "uniwind"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 21,
+		groups: [
+			{
+				name: "scroll-blur",
+				title: "Scroll Blur",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/scroll-blur/AGENTS.md", target: "src/components/ui/scroll-blur/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/index.ts", target: "src/components/ui/scroll-blur/index.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur-band.tsx", target: "src/components/ui/scroll-blur/scroll-blur-band.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.context.tsx", target: "src/components/ui/scroll-blur/scroll-blur.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.tsx", target: "src/components/ui/scroll-blur/scroll-blur.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.types.ts", target: "src/components/ui/scroll-blur/scroll-blur.types.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.variants.ts", target: "src/components/ui/scroll-blur/scroll-blur.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "scroll-maths",
+				title: "scrollMaths",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-maths.ts", target: "src/lib/scroll-maths.ts" },
+				],
+			},
+			{
+				name: "scroll-edges",
+				title: "scrollEdges",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-edges.ts", target: "src/lib/scroll-edges.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-reduce-transparency",
+				title: "useReduceTransparency",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-reduce-transparency.ts", target: "src/hooks/use-reduce-transparency.ts" },
+				],
+			},
+			{
+				name: "use-scroll-source",
+				title: "useScrollSource",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-source.tsx", target: "src/hooks/use-scroll-source.tsx" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+		],
+	},
 	"split-view": {
 		name: "split-view",
 		title: "SplitView",

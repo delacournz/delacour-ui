@@ -38,6 +38,7 @@ import {
 	IconLayersTwo,
 	IconLayoutBottomFull,
 	IconLayoutLeft,
+	IconLayoutTop,
 	IconLayoutTopBottom,
 	IconLayoutWindow,
 	IconMagnifyingGlass,
@@ -150,6 +151,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"theme-selector": IconCircleHalfFill,
 	"time-picker": IconClock,
 	direction: IconArrowLeftRight,
+	frame: IconLayoutTop,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

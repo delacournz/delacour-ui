@@ -92,6 +92,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/rating": "rating/anatomy",
 	"native/components/screen": "screen/inbox",
 	"native/components/scroll-blur": "scroll-blur/list-under-button",
+	"native/components/scroll-canvas": "scroll-canvas/parallax",
 	"native/components/scroll-fade": "scroll-fade/vertical-list",
 	"native/components/scroll-text": "scroll-text/colour",
 	"native/components/search-bar": "search-bar/basic",
@@ -267,6 +268,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"scroll-blur/list-under-button": {
 		load: () => import("../../public/previews/scroll-blur/list-under-button/dark.png?inline"),
 	},
+	"scroll-canvas/parallax": { load: () => import("../../public/previews/scroll-canvas/parallax/dark.png?inline") },
 	"scroll-fade/vertical-list": {
 		load: () => import("../../public/previews/scroll-fade/vertical-list/dark.png?inline"),
 	},

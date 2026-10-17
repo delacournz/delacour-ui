@@ -1,0 +1,95 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-canvas",
+	"type": "registry:ui",
+	"title": "ScrollCanvas",
+	"description": "An image in a still frame that parallaxes, zooms, reveals or scrubs a frame sequence as the page scrolls.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"tv",
+		"use-calm-motion",
+		"use-scroll-source"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/AGENTS.md",
+			"target": "scroll-canvas/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/scroll-canvas",
+					"to": "@registry/ui/scroll-canvas"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/index.ts",
+			"target": "scroll-canvas/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas-image.tsx",
+			"target": "scroll-canvas/scroll-canvas-image.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas-sequence.tsx",
+			"target": "scroll-canvas/scroll-canvas-sequence.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.tsx",
+			"target": "scroll-canvas/scroll-canvas.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.types.ts",
+			"target": "scroll-canvas/scroll-canvas.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/scroll-canvas.variants.ts",
+			"target": "scroll-canvas/scroll-canvas.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-canvas/use-frame-progress.ts",
+			"target": "scroll-canvas/use-frame-progress.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				}
+			]
+		}
+	]
+}

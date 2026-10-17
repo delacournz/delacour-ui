@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-blur/search-over-media and has settled — a grid of coloured tiles at
+  the top of its list under a search field, the start band clear. The capture script navigates there before running this.
+steps:
+  - echo: Scrolling the tiles under the field — the start band arrives as they pass beneath it
+  - swipe: { from: { id: scroll-blur-media }, by: { y: -0.2 }, momentum: false, duration: 1000 }
+  - wait: 600
+  - echo: And back to the top, where the band clears again, so the clip loops
+  - swipe: { from: { id: scroll-blur-media }, by: { y: 0.2 }, momentum: false, duration: 1000 }
+  - wait: 600

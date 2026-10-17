@@ -618,6 +618,62 @@
 			]
 		},
 		{
+			"name": "color-picker",
+			"type": "registry:ui",
+			"title": "Color Picker",
+			"description": "A colour picked by dragging a saturation and brightness area and a hue track, with optional opacity, a hex field and swatches, inline or in a bottom sheet.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"compose-refs",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-svg",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/color-picker/AGENTS.md",
+				"ui/color-picker/color-picker-alpha.tsx",
+				"ui/color-picker/color-picker-area.tsx",
+				"ui/color-picker/color-picker-checkerboard.tsx",
+				"ui/color-picker/color-picker-content.tsx",
+				"ui/color-picker/color-picker-gradient.tsx",
+				"ui/color-picker/color-picker-hue.tsx",
+				"ui/color-picker/color-picker-input.tsx",
+				"ui/color-picker/color-picker-preview.tsx",
+				"ui/color-picker/color-picker-sheet.tsx",
+				"ui/color-picker/color-picker-swatch.tsx",
+				"ui/color-picker/color-picker-swatches.tsx",
+				"ui/color-picker/color-picker-thumb.tsx",
+				"ui/color-picker/color-picker-track.tsx",
+				"ui/color-picker/color-picker-trigger.tsx",
+				"ui/color-picker/color-picker.color.ts",
+				"ui/color-picker/color-picker.context.tsx",
+				"ui/color-picker/color-picker.tsx",
+				"ui/color-picker/color-picker.types.ts",
+				"ui/color-picker/color-picker.variants.ts",
+				"ui/color-picker/index.ts"
+			]
+		},
+		{
 			"name": "compose-refs",
 			"type": "registry:lib",
 			"title": "composeRefs",

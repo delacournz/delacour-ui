@@ -18,6 +18,7 @@ import {
 	IconCircleInfo,
 	IconCircleRecord,
 	IconClock,
+	IconColorPalette,
 	IconCursorClick,
 	IconDivider,
 	IconDotGrid1x3Horizontal,
@@ -126,6 +127,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	timeline: IconClock,
 	"animated-badge": IconSparkle,
 	marker: IconHistory,
+	"color-picker": IconColorPalette,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

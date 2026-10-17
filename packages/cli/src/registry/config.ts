@@ -299,6 +299,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur.",
 		categories: ["forms"],
 	},
+	"otp-input": {
+		title: "OTP Input",
+		description: "A one-time code or PIN: cells drawn over one hidden field, with autofill and paste.",
+		categories: ["forms"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

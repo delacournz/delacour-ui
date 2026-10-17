@@ -379,6 +379,12 @@ import * as demo_number_input_decimal_step from "./number-input/decimal-step";
 import * as demo_number_input_hold_to_repeat from "./number-input/hold-to-repeat";
 import * as demo_number_input_in_field from "./number-input/in-field";
 import * as demo_number_input_sizes_variants from "./number-input/sizes-variants";
+import * as demo_otp_input_alphanumeric from "./otp-input/alphanumeric";
+import * as demo_otp_input_basic from "./otp-input/basic";
+import * as demo_otp_input_in_field from "./otp-input/in-field";
+import * as demo_otp_input_pin_masked from "./otp-input/pin-masked";
+import * as demo_otp_input_sizes from "./otp-input/sizes";
+import * as demo_otp_input_states from "./otp-input/states";
 import * as demo_planner_calendar_fill from "./planner/calendar-fill";
 import * as demo_planner_controlled_month from "./planner/controlled-month";
 import * as demo_planner_custom_day from "./planner/custom-day";
@@ -949,6 +955,12 @@ export const DEMOS = {
 	"number-input/hold-to-repeat": demo_number_input_hold_to_repeat,
 	"number-input/in-field": demo_number_input_in_field,
 	"number-input/sizes-variants": demo_number_input_sizes_variants,
+	"otp-input/alphanumeric": demo_otp_input_alphanumeric,
+	"otp-input/basic": demo_otp_input_basic,
+	"otp-input/in-field": demo_otp_input_in_field,
+	"otp-input/pin-masked": demo_otp_input_pin_masked,
+	"otp-input/sizes": demo_otp_input_sizes,
+	"otp-input/states": demo_otp_input_states,
 	"planner/calendar-fill": demo_planner_calendar_fill,
 	"planner/controlled-month": demo_planner_controlled_month,
 	"planner/custom-day": demo_planner_custom_day,

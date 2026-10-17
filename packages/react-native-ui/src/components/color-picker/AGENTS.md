@@ -31,7 +31,7 @@ track, a hex field and preset swatches. Compound root plus nine parts. Presents 
 
 ## Design
 
-- **Sizes** `sm | md | lg` and **variants** `primary | secondary` are `Input`'s, and a test pins
+- **Sizes** `sm | md | lg` and **variants** `primary | secondary | etched` are `Input`'s, and a test pins
   the sets equal. Size drives the area height (160/200/240), track and thumb thickness, the
   swatch and preview edge (24/32/40) and the field. Variant reaches only the trigger row and the
   hex field — the gradients are the colour, not chrome.

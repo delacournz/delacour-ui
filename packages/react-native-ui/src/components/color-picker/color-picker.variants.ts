@@ -1,13 +1,14 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
+import { INPUT_VARIANTS } from "../input/input.variants";
 import { describeHue } from "./color-picker.color";
 import type { Hsva } from "./color-picker.types";
 
 /** Input's three steps, so a hex field and a trigger row sit level with every other field. */
 export const COLOR_PICKER_SIZES = ["sm", "md", "lg"] as const;
 
-/** Input's two box treatments. They reach the trigger row and the hex field, never the gradients. */
-export const COLOR_PICKER_VARIANTS = ["primary", "secondary"] as const;
+/** Input's box treatments. They reach the trigger row and the hex field, never the gradients. */
+export const COLOR_PICKER_VARIANTS = INPUT_VARIANTS;
 
 export type ColorPickerSize = (typeof COLOR_PICKER_SIZES)[number];
 export type ColorPickerVariant = (typeof COLOR_PICKER_VARIANTS)[number];
@@ -140,7 +141,7 @@ export const colorPickerVariants = tv({
 		},
 		// Declared so `tv` types and defaults it; the treatment lives in Input's
 		// resolver, which the trigger and the hex field both call.
-		variant: { primary: {}, secondary: {} },
+		variant: { primary: {}, secondary: {}, etched: {} },
 		// The empty `false` branches are load-bearing typing — see button.variants.ts.
 		// Each drawn part fades, never the root: the trigger row and the hex field
 		// are Input boxes that fade themselves, and a faded root would compound them.

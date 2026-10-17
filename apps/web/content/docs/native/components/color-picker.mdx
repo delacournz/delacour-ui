@@ -120,7 +120,7 @@ ringed, compared as hex.
 ## Sizes and variants
 
 `size` is `Input`'s `sm`, `md` or `lg`: the area is 160, 200 or 240 points tall, and the tracks,
-thumbs, swatches and field step with it. `variant` (`primary` or `secondary`) reaches the trigger
+thumbs, swatches and field step with it. `variant` (`primary`, `secondary` or `etched`) reaches the trigger
 row and the hex field — never the gradients.
 
 <Preview id="color-picker/sizes" />
@@ -169,7 +169,7 @@ it parses.
     format: { type: '"hex" | "rgb" | "hsl"', default: '"hex"', description: "The notation reported." },
     hasAlpha: { type: "boolean", default: "false", description: "Shows the opacity track and lets the alpha move." },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
-    variant: { type: '"primary" | "secondary"', default: '"primary"', description: "The trigger row's and the hex field's box." },
+    variant: { type: '"primary" | "secondary" | "etched"', default: '"primary"', description: "The trigger row's and the hex field's box." },
     isDisabled: { type: "boolean", description: "Blocks every input path. Inherited from an enclosing Field." },
     isInvalid: { type: "boolean", description: "Destructive trigger and field. Inherited from an enclosing Field." },
     isReadOnly: { type: "boolean", description: "Draws the colour, ignores every input." },

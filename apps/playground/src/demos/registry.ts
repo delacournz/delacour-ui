@@ -588,6 +588,13 @@ import * as demo_theme_selector_custom_labels_modes from "./theme-selector/custo
 import * as demo_theme_selector_in_field from "./theme-selector/in-field";
 import * as demo_theme_selector_persisted from "./theme-selector/persisted";
 import * as demo_theme_selector_sizes from "./theme-selector/sizes";
+import * as demo_time_picker_basic_sheet from "./time-picker/basic-sheet";
+import * as demo_time_picker_bounds from "./time-picker/bounds";
+import * as demo_time_picker_in_field_invalid from "./time-picker/in-field-invalid";
+import * as demo_time_picker_inline_wheel from "./time-picker/inline-wheel";
+import * as demo_time_picker_minute_step_15 from "./time-picker/minute-step-15";
+import * as demo_time_picker_twenty_four_hour from "./time-picker/twenty-four-hour";
+import * as demo_time_picker_with_seconds from "./time-picker/with-seconds";
 import * as demo_timeline_cards from "./timeline/cards";
 import * as demo_timeline_compact from "./timeline/compact";
 import * as demo_timeline_horizontal from "./timeline/horizontal";
@@ -1209,6 +1216,13 @@ export const DEMOS = {
 	"theme-selector/in-field": demo_theme_selector_in_field,
 	"theme-selector/persisted": demo_theme_selector_persisted,
 	"theme-selector/sizes": demo_theme_selector_sizes,
+	"time-picker/basic-sheet": demo_time_picker_basic_sheet,
+	"time-picker/bounds": demo_time_picker_bounds,
+	"time-picker/in-field-invalid": demo_time_picker_in_field_invalid,
+	"time-picker/inline-wheel": demo_time_picker_inline_wheel,
+	"time-picker/minute-step-15": demo_time_picker_minute_step_15,
+	"time-picker/twenty-four-hour": demo_time_picker_twenty_four_hour,
+	"time-picker/with-seconds": demo_time_picker_with_seconds,
 	"timeline/cards": demo_timeline_cards,
 	"timeline/compact": demo_timeline_compact,
 	"timeline/horizontal": demo_timeline_horizontal,

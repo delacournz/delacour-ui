@@ -2932,6 +2932,56 @@
 			]
 		},
 		{
+			"name": "time-picker",
+			"type": "registry:ui",
+			"title": "Time Picker",
+			"description": "A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"bottom-sheet",
+				"button",
+				"cn",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-pulsar",
+				"react-native-reanimated",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/time-picker/AGENTS.md",
+				"ui/time-picker/index.ts",
+				"ui/time-picker/time-picker-clear.tsx",
+				"ui/time-picker/time-picker-content.tsx",
+				"ui/time-picker/time-picker-done.tsx",
+				"ui/time-picker/time-picker-icon.tsx",
+				"ui/time-picker/time-picker-trigger.tsx",
+				"ui/time-picker/time-picker-value.tsx",
+				"ui/time-picker/time-picker-wheel-column.tsx",
+				"ui/time-picker/time-picker-wheel-slot.tsx",
+				"ui/time-picker/time-picker-wheel.tsx",
+				"ui/time-picker/time-picker.context.tsx",
+				"ui/time-picker/time-picker.time.ts",
+				"ui/time-picker/time-picker.tsx",
+				"ui/time-picker/time-picker.types.ts",
+				"ui/time-picker/time-picker.variants.ts"
+			]
+		},
+		{
 			"name": "timeline",
 			"type": "registry:ui",
 			"title": "Timeline",

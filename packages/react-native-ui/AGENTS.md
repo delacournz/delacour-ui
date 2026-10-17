@@ -160,6 +160,7 @@ shares.
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
+| [TimePicker](src/components/time-picker/AGENTS.md) | `@delacour/react-native-ui/time-picker` | A time of day on snapping wheels, in a sheet or inline |
 | [ThemeSelector](src/components/theme-selector/AGENTS.md) | `@delacour/react-native-ui/theme-selector` | System, Light or Dark, read from and applied to the live theme |
 | [Timeline](src/components/timeline/AGENTS.md) | `@delacour/react-native-ui/timeline` | Dated events down a rail or across a strip — progress on the rail, kind on the marker |
 | [Toast](src/components/toast/AGENTS.md) | `@delacour/react-native-ui/toast` | A brief message from anywhere — stacked at an edge, swiped away, gone on its own |

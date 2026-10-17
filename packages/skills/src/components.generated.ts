@@ -78,6 +78,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "text", title: "Text", description: "Typography: the type scale, weights and the page-level colours." },
 	{ name: "textarea", title: "Textarea", description: "A multiline text field sized in rows, with auto-grow and a character count." },
 	{ name: "theme-selector", title: "Theme Selector", description: "System, Light or Dark, read from the live Uniwind theme and applied to it, with no storage dependency." },
+	{ name: "time-picker", title: "Time Picker", description: "A time of day on snapping wheels — hour, minute, optional second and AM/PM — in a bottom sheet or inline." },
 	{ name: "timeline", title: "Timeline", description: "Dated events down a rail or across a swipeable strip: progress fills the rail, tone tints the marker, and a list virtualises long histories." },
 	{ name: "toast", title: "Toast", description: "A brief message shown from anywhere, even outside React: stacked at an edge, swiped away, paused while touched, with a promise form and Alert's statuses." },
 	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },

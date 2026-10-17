@@ -380,6 +380,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable.",
 		categories: ["forms"],
 	},
+	signature: {
+		title: "Signature",
+		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+		categories: ["forms"],
+	},
 	screen: {
 		title: "Screen",
 		description: "A screen frame: pinned chrome, a content region, and whatever scrolls between them.",

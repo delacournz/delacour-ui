@@ -62,6 +62,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "select", title: "Select", description: "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable." },
 	{ name: "selection-mode", title: "Selection Mode", description: "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },
+	{ name: "signature", title: "Signature", description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG." },
 	{ name: "skeleton", title: "Skeleton", description: "A placeholder that shimmers or pulses while content loads, in step across a group." },
 	{ name: "slide-button", title: "Slide Button", description: "A handle dragged across a rail to confirm an action a tap should not reach." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },

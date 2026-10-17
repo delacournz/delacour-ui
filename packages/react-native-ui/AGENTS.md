@@ -107,6 +107,7 @@ shares.
 | [Chip](src/components/chip/AGENTS.md) | `@delacour/react-native-ui/chip` | An interactive pill — a filter, a tag, or a removable token |
 | [Carousel](src/components/carousel/AGENTS.md) | `@delacour/react-native-ui/carousel` | Swipeable slides on one fractional position — peek, loop, vertical, coverflow, dots and arrows |
 | [Chart](src/components/chart/AGENTS.md) | `@delacour/react-native-ui/chart` | Skia charts — line, area, bar, scatter, candlestick, pie — on the theme's five-colour ramp |
+| [CircularText](src/components/circular-text/AGENTS.md) | `@delacour/react-native-ui/circular-text` | Text set around a circle, optionally turning |
 | [ColorPicker](src/components/color-picker/AGENTS.md) | `@delacour/react-native-ui/color-picker` | A colour dragged on an area and tracks, typed as hex, or tapped from swatches |
 | [Collapsible](src/components/collapsible/AGENTS.md) | `@delacour/react-native-ui/collapsible` | One section shown and hidden by its own trigger |
 | [Direction](src/components/direction/AGENTS.md) | `@delacour/react-native-ui/direction` | LTR or RTL for a subtree, and the sign gesture maths multiplies by |

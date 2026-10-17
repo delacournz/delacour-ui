@@ -1335,6 +1335,52 @@
 			]
 		},
 		{
+			"name": "markdown-editor",
+			"type": "registry:ui",
+			"title": "Markdown Editor",
+			"description": "A Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview.",
+			"categories": [
+				"forms"
+			],
+			"registryDependencies": [
+				"button",
+				"field",
+				"icon",
+				"icons",
+				"input",
+				"pressable",
+				"tabs",
+				"text",
+				"textarea",
+				"toggle-button",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/markdown-editor/AGENTS.md",
+				"ui/markdown-editor/index.ts",
+				"ui/markdown-editor/markdown-editor-action.tsx",
+				"ui/markdown-editor/markdown-editor-input.tsx",
+				"ui/markdown-editor/markdown-editor-preview.tsx",
+				"ui/markdown-editor/markdown-editor-render.tsx",
+				"ui/markdown-editor/markdown-editor-toolbar.tsx",
+				"ui/markdown-editor/markdown-editor.commands.ts",
+				"ui/markdown-editor/markdown-editor.context.tsx",
+				"ui/markdown-editor/markdown-editor.parse.ts",
+				"ui/markdown-editor/markdown-editor.tsx",
+				"ui/markdown-editor/markdown-editor.types.ts",
+				"ui/markdown-editor/markdown-editor.variants.ts"
+			]
+		},
+		{
 			"name": "marker",
 			"type": "registry:ui",
 			"title": "Marker",

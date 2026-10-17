@@ -149,6 +149,12 @@ const ROWS = [
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
 	{ slug: "alert", title: "Alert", description: "Statuses, variants, dismiss, actions", group: "Feedback" },
+	{
+		slug: "animated-badge",
+		title: "AnimatedBadge",
+		description: "Status changes that roll, statuses, sizes",
+		group: "Feedback",
+	},
 	{ slug: "meter", title: "Meter", description: "Regions, thresholds, segments, colours", group: "Feedback" },
 	{ slug: "progress", title: "Progress", description: "Values, indeterminate, colours, sizes", group: "Feedback" },
 	{ slug: "spinner", title: "Spinner", description: "Sizes, colours, custom glyphs", group: "Feedback" },

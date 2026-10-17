@@ -48,6 +48,7 @@
 		"collapsible",
 		"---Feedback---",
 		"alert",
+		"animated-badge",
 		"meter",
 		"progress",
 		"spinner",

@@ -20,6 +20,7 @@ import {
 	IconClock,
 	IconColorPalette,
 	IconCursorClick,
+	IconDecimalNumberDot,
 	IconDivider,
 	IconDotGrid1x3Horizontal,
 	IconExclamationTriangle,
@@ -130,6 +131,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	marker: IconHistory,
 	"color-picker": IconColorPalette,
 	"markdown-editor": IconTextEdit,
+	"number-input": IconDecimalNumberDot,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

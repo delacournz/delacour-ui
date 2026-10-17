@@ -371,6 +371,14 @@ import * as demo_meter_regions from "./meter/regions";
 import * as demo_meter_segments from "./meter/segments";
 import * as demo_meter_sizes from "./meter/sizes";
 import * as demo_meter_thresholds from "./meter/thresholds";
+import * as demo_number_input_basic from "./number-input/basic";
+import * as demo_number_input_bounds from "./number-input/bounds";
+import * as demo_number_input_currency from "./number-input/currency";
+import * as demo_number_input_custom_anatomy from "./number-input/custom-anatomy";
+import * as demo_number_input_decimal_step from "./number-input/decimal-step";
+import * as demo_number_input_hold_to_repeat from "./number-input/hold-to-repeat";
+import * as demo_number_input_in_field from "./number-input/in-field";
+import * as demo_number_input_sizes_variants from "./number-input/sizes-variants";
 import * as demo_planner_calendar_fill from "./planner/calendar-fill";
 import * as demo_planner_controlled_month from "./planner/controlled-month";
 import * as demo_planner_custom_day from "./planner/custom-day";
@@ -933,6 +941,14 @@ export const DEMOS = {
 	"meter/segments": demo_meter_segments,
 	"meter/sizes": demo_meter_sizes,
 	"meter/thresholds": demo_meter_thresholds,
+	"number-input/basic": demo_number_input_basic,
+	"number-input/bounds": demo_number_input_bounds,
+	"number-input/currency": demo_number_input_currency,
+	"number-input/custom-anatomy": demo_number_input_custom_anatomy,
+	"number-input/decimal-step": demo_number_input_decimal_step,
+	"number-input/hold-to-repeat": demo_number_input_hold_to_repeat,
+	"number-input/in-field": demo_number_input_in_field,
+	"number-input/sizes-variants": demo_number_input_sizes_variants,
 	"planner/calendar-fill": demo_planner_calendar_fill,
 	"planner/controlled-month": demo_planner_controlled_month,
 	"planner/custom-day": demo_planner_custom_day,

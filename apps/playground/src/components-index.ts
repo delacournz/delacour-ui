@@ -289,6 +289,7 @@ const ROWS = [
 	{ slug: "sortable", title: "Sortable", description: "Handle, long press, pinned, auto-scroll", group: "Navigation" },
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
+	{ slug: "tree", title: "Tree", description: "Nesting, selection, guide lines, lazy branches", group: "Navigation" },
 	{ slug: "tour", title: "Tour", description: "Spotlight, shapes, placement, interactive", group: "Navigation" },
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },

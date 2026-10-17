@@ -107,4 +107,5 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "toggle-button", title: "Toggle Button", description: "A button that stays pressed, alone or in a group with single or multiple selection." },
 	{ name: "tooltip", title: "Tooltip", description: "A short label on a long press, anchored to its control: hides itself, lets an outside tap through, and reads to a screen reader on the trigger." },
 	{ name: "tour", title: "Tour", description: "A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip." },
+	{ name: "tree", title: "Tree", description: "A hierarchy opened one level at a time: branches that expand and collapse, with optional single or multiple selection." },
 ];

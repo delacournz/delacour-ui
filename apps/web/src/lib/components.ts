@@ -522,6 +522,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A row of tabs and the panels they switch between, with a swipeable pager.",
 	},
 	{
+		slug: "tree",
+		name: "Tree",
+		group: "Navigation",
+		blurb: "A hierarchy opened one level at a time: branches that expand and collapse, with optional selection.",
+	},
+	{
 		slug: "tour",
 		name: "Tour",
 		group: "Navigation",

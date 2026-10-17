@@ -122,6 +122,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/toggle-button": "toggle-button/variants",
 	"native/components/tooltip": "tooltip/icon-buttons",
 	"native/components/tour": "tour/interactive",
+	"native/components/tree": "tree/file-browser",
 };
 
 /** Every capture a card can stand in its phone: the heroes above and each product's default. */
@@ -297,4 +298,5 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"toggle-button/variants": { load: () => import("../../public/previews/toggle-button/variants/dark.png?inline") },
 	"tooltip/icon-buttons": { cut: "98365e2d4e0f", load: () => import("./frames/tooltip/icon-buttons.png?inline") },
 	"tour/interactive": { load: () => import("../../public/previews/tour/interactive/dark.png?inline") },
+	"tree/file-browser": { load: () => import("../../public/previews/tree/file-browser/dark.png?inline") },
 };

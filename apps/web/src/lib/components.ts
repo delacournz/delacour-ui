@@ -577,6 +577,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A progressive blur at a scrollable's edges that falls back to a gradient fade.",
 	},
 	{
+		slug: "scroll-header",
+		name: "ScrollHeader",
+		group: "Layout",
+		blurb: "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
+	},
+	{
 		slug: "split-view",
 		name: "SplitView",
 		group: "Layout",

@@ -204,6 +204,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"scroll-blur": IconBlur,
 	"scroll-fade": IconUnblur,
 	"scroll-canvas": IconImages1,
+	"scroll-header": IconLayoutTop,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

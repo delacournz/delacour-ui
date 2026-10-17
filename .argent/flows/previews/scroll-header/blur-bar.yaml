@@ -1,0 +1,10 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on scroll-header/blur-bar and has settled — the large "Photos" title over a
+  grid of coloured tiles. The capture script navigates there before running this.
+steps:
+  - echo: Scrolling the tiles up under the bar — it frosts in as the title hands over
+  - swipe: { from: { id: scroll-header-blur }, by: { y: -0.3 }, momentum: false, duration: 1400 }
+  - wait: 800
+  - echo: And back to the top, so the clip loops without a jump cut
+  - swipe: { from: { id: scroll-header-blur }, by: { y: 0.35 }, momentum: false, duration: 1400 }
+  - wait: 800

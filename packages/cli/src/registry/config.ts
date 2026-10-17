@@ -650,6 +650,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A progressive blur at a scrollable's edges that falls back to a gradient fade.",
 		categories: ["layout"],
 	},
+	"scroll-header": {
+		title: "Scroll Header",
+		description:
+			"A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
+		categories: ["layout"],
+	},
 	"toggle-button": {
 		title: "Toggle Button",
 		description: "A button that stays pressed, alone or in a group with single or multiple selection.",

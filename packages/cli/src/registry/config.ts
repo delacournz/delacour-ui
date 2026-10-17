@@ -433,6 +433,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "paging",
 		description: "Worklet-safe maths of paging through slides on one fractional position.",
 	},
+	"scroll-sections": {
+		title: "scrollSections",
+		description: "Which section a scroll offset is in, and how far down the content it is.",
+	},
 	slot: { title: "Slot", description: "Renders into a child element instead of a wrapper." },
 	tv: {
 		title: "tv",
@@ -446,6 +450,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-scroll-sections": {
+		title: "useScrollSections",
+		description: "Tracks the section a scroll view is showing and its progress, on the UI thread.",
 	},
 	"use-keyboard-state-sync": {
 		title: "useKeyboardStateSync",

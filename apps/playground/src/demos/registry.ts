@@ -332,6 +332,11 @@ import * as demo_map_places from "./map/places";
 import * as demo_map_popup from "./map/popup";
 import * as demo_map_route from "./map/route";
 import * as demo_map_tones from "./map/tones";
+import * as demo_marker_conversation from "./marker/conversation";
+import * as demo_marker_disabled from "./marker/disabled";
+import * as demo_marker_pressable from "./marker/pressable";
+import * as demo_marker_running from "./marker/running";
+import * as demo_marker_variants from "./marker/variants";
 import * as demo_menu_actions from "./menu/actions";
 import * as demo_menu_checkbox_and_radio from "./menu/checkbox-and-radio";
 import * as demo_menu_custom_background from "./menu/custom-background";
@@ -870,6 +875,11 @@ export const DEMOS = {
 	"map/popup": demo_map_popup,
 	"map/route": demo_map_route,
 	"map/tones": demo_map_tones,
+	"marker/conversation": demo_marker_conversation,
+	"marker/disabled": demo_marker_disabled,
+	"marker/pressable": demo_marker_pressable,
+	"marker/running": demo_marker_running,
+	"marker/variants": demo_marker_variants,
 	"menu/actions": demo_menu_actions,
 	"menu/checkbox-and-radio": demo_menu_checkbox_and_radio,
 	"menu/custom-background": demo_menu_custom_background,

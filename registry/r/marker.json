@@ -1,0 +1,103 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "marker",
+	"type": "registry:ui",
+	"title": "Marker",
+	"description": "A centred inline note for a step or a day break between conversation turns, static or pressable.",
+	"categories": [
+		"feedback"
+	],
+	"registryDependencies": [
+		"icon",
+		"pressable",
+		"separator",
+		"text",
+		"tv",
+		"use-calm-motion"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/marker/AGENTS.md",
+			"target": "marker/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/marker",
+					"to": "@registry/ui/marker"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/index.ts",
+			"target": "marker/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker-content.tsx",
+			"target": "marker/marker-content.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker-icon.tsx",
+			"target": "marker/marker-icon.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker-shimmer-clock.ts",
+			"target": "marker/marker-shimmer-clock.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker.context.tsx",
+			"target": "marker/marker.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker.tsx",
+			"target": "marker/marker.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../separator",
+					"to": "@registry/ui/separator"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/marker/marker.variants.ts",
+			"target": "marker/marker.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

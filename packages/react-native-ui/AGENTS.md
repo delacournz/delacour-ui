@@ -122,6 +122,7 @@ shares.
 | [Label](src/components/label/AGENTS.md) | `@delacour/react-native-ui/label` | A form control's name, with required, invalid and disabled states |
 | [Leaderboard](src/components/leaderboard/AGENTS.md) | `@delacour/react-native-ui/leaderboard` | Ranked entries with ties, a podium for the top three and the highlighted entry pinned below the cut |
 | [ListGroup](src/components/list-group/AGENTS.md) | `@delacour/react-native-ui/list-group` | A surface grouping related rows |
+| [Marker](src/components/marker/AGENTS.md) | `@delacour/react-native-ui/marker` | A centred inline note for a step or a day break between conversation turns |
 | [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on MapLibre with a token-painted basemap |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
 | [Planner](src/components/planner/AGENTS.md) | `@delacour/react-native-ui/planner` | A month of days, each showing what falls on it, with a details sheet |

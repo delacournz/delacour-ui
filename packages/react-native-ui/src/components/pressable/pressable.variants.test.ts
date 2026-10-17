@@ -3,6 +3,7 @@ import {
 	PRESSABLE_FEEDBACK,
 	PRESSABLE_FEEDBACK_FALLBACK,
 	PRESSABLE_FEEDBACKS,
+	resolvePressableAccessibilityState,
 	resolvePressedState,
 	resolveRestOpacity,
 } from "./pressable.variants";
@@ -124,5 +125,48 @@ describe("resolveRestOpacity", () => {
 	test("clamps a number into the unit range", () => {
 		expect(resolveRestOpacity(1.5)).toBe(1);
 		expect(resolveRestOpacity(-0.2)).toBe(0);
+	});
+});
+
+describe("resolvePressableAccessibilityState", () => {
+	test("announces the gating props", () => {
+		expect(resolvePressableAccessibilityState({ busy: true, disabled: false })).toEqual({
+			busy: true,
+			disabled: false,
+		});
+		expect(resolvePressableAccessibilityState({ busy: false, disabled: true })).toEqual({
+			busy: false,
+			disabled: true,
+		});
+	});
+
+	// A running step stays tappable but is still announced busy — the busy prop
+	// would block the press, so the caller says it through accessibilityState.
+	test("keeps a caller's busy rather than overwriting it with the prop's false", () => {
+		const state = resolvePressableAccessibilityState({
+			accessibilityState: { busy: true },
+			busy: false,
+			disabled: false,
+		});
+		expect(state.busy).toBe(true);
+	});
+
+	test("never lets a caller announce a gated control as not busy or not disabled", () => {
+		const state = resolvePressableAccessibilityState({
+			accessibilityState: { busy: false, disabled: false },
+			busy: true,
+			disabled: true,
+		});
+		expect(state).toMatchObject({ busy: true, disabled: true });
+	});
+
+	test("passes the caller's other keys through", () => {
+		const caller: { expanded: boolean; busy?: boolean } = { expanded: true };
+		const state = resolvePressableAccessibilityState({
+			accessibilityState: caller,
+			busy: false,
+			disabled: false,
+		});
+		expect(state.expanded).toBe(true);
 	});
 });

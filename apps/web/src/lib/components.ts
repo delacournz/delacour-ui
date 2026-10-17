@@ -259,6 +259,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One section shown and hidden by its own trigger.",
 	},
 	{
+		slug: "marker",
+		name: "Marker",
+		group: "Feedback",
+		blurb: "A centred inline note for a step or a day break between conversation turns.",
+	},
+	{
 		slug: "meter",
 		name: "Meter",
 		group: "Feedback",

@@ -793,6 +793,13 @@ import * as demo_tour_custom_labels from "./tour/custom-labels";
 import * as demo_tour_interactive from "./tour/interactive";
 import * as demo_tour_placement from "./tour/placement";
 import * as demo_tour_scroll_into_view from "./tour/scroll-into-view";
+import * as demo_tree_controlled_expanded from "./tree/controlled-expanded";
+import * as demo_tree_file_browser from "./tree/file-browser";
+import * as demo_tree_lazy_load from "./tree/lazy-load";
+import * as demo_tree_lines from "./tree/lines";
+import * as demo_tree_multi_select from "./tree/multi-select";
+import * as demo_tree_single_select from "./tree/single-select";
+import * as demo_tree_sizes from "./tree/sizes";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -1587,6 +1594,13 @@ export const DEMOS = {
 	"tour/interactive": demo_tour_interactive,
 	"tour/placement": demo_tour_placement,
 	"tour/scroll-into-view": demo_tour_scroll_into_view,
+	"tree/controlled-expanded": demo_tree_controlled_expanded,
+	"tree/file-browser": demo_tree_file_browser,
+	"tree/lazy-load": demo_tree_lazy_load,
+	"tree/lines": demo_tree_lines,
+	"tree/multi-select": demo_tree_multi_select,
+	"tree/single-select": demo_tree_single_select,
+	"tree/sizes": demo_tree_sizes,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

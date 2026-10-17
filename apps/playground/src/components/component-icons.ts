@@ -50,6 +50,7 @@ import {
 	IconParagraph,
 	IconPasswordStars,
 	IconPeople,
+	IconPersona,
 	IconPlaceholder,
 	IconPlusLarge,
 	IconProgress75,
@@ -154,6 +155,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	direction: IconArrowLeftRight,
 	frame: IconLayoutTop,
 	"grid-item": IconDotGrid2x3,
+	"page-header": IconPersona,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

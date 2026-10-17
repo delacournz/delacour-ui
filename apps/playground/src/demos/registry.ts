@@ -407,6 +407,13 @@ import * as demo_otp_input_in_field from "./otp-input/in-field";
 import * as demo_otp_input_pin_masked from "./otp-input/pin-masked";
 import * as demo_otp_input_sizes from "./otp-input/sizes";
 import * as demo_otp_input_states from "./otp-input/states";
+import * as demo_page_header_aligned_start from "./page-header/aligned-start";
+import * as demo_page_header_card_in_list from "./page-header/card-in-list";
+import * as demo_page_header_gradient_cover from "./page-header/gradient-cover";
+import * as demo_page_header_in_a_screen from "./page-header/in-a-screen";
+import * as demo_page_header_no_cover from "./page-header/no-cover";
+import * as demo_page_header_profile from "./page-header/profile";
+import * as demo_page_header_stats from "./page-header/stats";
 import * as demo_planner_calendar_fill from "./planner/calendar-fill";
 import * as demo_planner_controlled_month from "./planner/controlled-month";
 import * as demo_planner_custom_day from "./planner/custom-day";
@@ -1051,6 +1058,13 @@ export const DEMOS = {
 	"otp-input/pin-masked": demo_otp_input_pin_masked,
 	"otp-input/sizes": demo_otp_input_sizes,
 	"otp-input/states": demo_otp_input_states,
+	"page-header/aligned-start": demo_page_header_aligned_start,
+	"page-header/card-in-list": demo_page_header_card_in_list,
+	"page-header/gradient-cover": demo_page_header_gradient_cover,
+	"page-header/in-a-screen": demo_page_header_in_a_screen,
+	"page-header/no-cover": demo_page_header_no_cover,
+	"page-header/profile": demo_page_header_profile,
+	"page-header/stats": demo_page_header_stats,
 	"planner/calendar-fill": demo_planner_calendar_fill,
 	"planner/controlled-month": demo_planner_controlled_month,
 	"planner/custom-day": demo_planner_custom_day,

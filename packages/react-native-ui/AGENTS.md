@@ -131,6 +131,7 @@ shares.
 | [Marker](src/components/marker/AGENTS.md) | `@delacour/react-native-ui/marker` | A centred inline note for a step or a day break between conversation turns |
 | [Map](src/components/map/AGENTS.md) | `@delacour/react-native-ui/map` | A themed map — markers, labels, popups, routes, arcs and controls, on MapLibre with a token-painted basemap |
 | [Meter](src/components/meter/AGENTS.md) | `@delacour/react-native-ui/meter` | A measurement on a fixed scale, coloured by where it falls |
+| [PageHeader](src/components/page-header/AGENTS.md) | `@delacour/react-native-ui/page-header` | A cover, an overlapping avatar, a title block, actions and stats — the head of a profile |
 | [OtpInput](src/components/otp-input/AGENTS.md) | `@delacour/react-native-ui/otp-input` | A one-time code or PIN — cells drawn over one hidden field, with autofill and paste |
 | [NumberInput](src/components/number-input/AGENTS.md) | `@delacour/react-native-ui/number-input` | A number between a minus and a plus — tap, hold to repeat, or type |
 | [Planner](src/components/planner/AGENTS.md) | `@delacour/react-native-ui/planner` | A month of days, each showing what falls on it, with a details sheet |

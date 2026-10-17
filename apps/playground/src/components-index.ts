@@ -255,6 +255,12 @@ const ROWS = [
 	{ slug: "screen", title: "Screen", description: "Navbar, footer, scrollables, keyboard", group: "Layout" },
 	{ slug: "surface", title: "Surface", description: "Fills, padding, nesting, bleed", group: "Layout" },
 	{ slug: "card", title: "Card", description: "Header, action, footer band, sizes", group: "Layout" },
+	{
+		slug: "page-header",
+		title: "PageHeader",
+		description: "Cover, overlapping avatar, actions, stats",
+		group: "Layout",
+	},
 	{ slug: "grid-item", title: "GridItem", description: "Bento tiles on aligned cells", group: "Layout" },
 	{ slug: "frame", title: "Frame", description: "Titled card of rows, sections, footer", group: "Layout" },
 	{ slug: "direction", title: "Direction", description: "RTL and LTR for a subtree", group: "Layout" },

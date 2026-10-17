@@ -82,6 +82,7 @@
 		"screen",
 		"surface",
 		"card",
+		"page-header",
 		"grid-item",
 		"frame",
 		"direction",

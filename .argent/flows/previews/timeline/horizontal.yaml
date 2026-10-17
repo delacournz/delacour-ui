@@ -1,0 +1,14 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on timeline/horizontal and has settled — the strip scrolled to its first column,
+  "Column 1 of 7" above it. The capture script navigates there before running this.
+steps:
+  - echo: Swiping the strip along, one fling at a time, so each title lights as it reaches the left edge
+  - swipe: { from: { id: timeline-horizontal }, by: { x: -0.35 }, duration: 400 }
+  - wait: 700
+  - swipe: { from: { id: timeline-horizontal }, by: { x: -0.35 }, duration: 400 }
+  - wait: 900
+  - echo: And back to the first column, so the clip loops without a jump cut
+  - swipe: { from: { id: timeline-horizontal }, by: { x: 0.4 }, duration: 350 }
+  - wait: 250
+  - swipe: { from: { id: timeline-horizontal }, by: { x: 0.4 }, duration: 350 }
+  - wait: 900

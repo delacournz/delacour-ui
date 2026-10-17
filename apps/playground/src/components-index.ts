@@ -114,6 +114,12 @@ const ROWS = [
 	},
 	{ slug: "kpi", title: "Kpi", description: "Trend tones, sparkline layouts, scrub, groups", group: "Data display" },
 	{
+		slug: "timeline",
+		title: "Timeline",
+		description: "Progress and tone, variants, horizontal strip, long lists",
+		group: "Data display",
+	},
+	{
 		slug: "planner",
 		title: "Planner",
 		description: "A month of entries — dots, tiles, named blocks, a day sheet",

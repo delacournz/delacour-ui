@@ -148,6 +148,7 @@ shares.
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
+| [Timeline](src/components/timeline/AGENTS.md) | `@delacour/react-native-ui/timeline` | Dated events down a rail or across a strip — progress on the rail, kind on the marker |
 | [Toast](src/components/toast/AGENTS.md) | `@delacour/react-native-ui/toast` | A brief message from anywhere — stacked at an edge, swiped away, gone on its own |
 | [ToggleButton](src/components/toggle-button/AGENTS.md) | `@delacour/react-native-ui/toggle-button` | A button that stays pressed, alone or in a group |
 | [Tooltip](src/components/tooltip/AGENTS.md) | `@delacour/react-native-ui/tooltip` | A short label on a long press — anchored to its control, gone on its own |

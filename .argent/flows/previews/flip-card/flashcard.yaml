@@ -1,0 +1,11 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on flip-card/flashcard and has settled — the question face
+  up, with a Reveal button carrying the testID flip-card-trigger beneath it. The capture script
+  navigates there before running this.
+steps:
+  - echo: Revealing the answer
+  - tap: { id: flip-card-trigger }
+  - wait: 1400
+  - echo: And back to the question for the loop
+  - tap: { id: flip-card-trigger }
+  - wait: 1000

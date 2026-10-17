@@ -30,6 +30,7 @@ import {
 	IconDraw,
 	IconExclamationTriangle,
 	IconFilter1,
+	IconFlashcards,
 	IconFontStyle,
 	IconGauge,
 	IconHandTouch,
@@ -168,6 +169,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	attachment: IconPaperclip1,
 	"circular-text": IconRotate360Right,
 	compare: IconLayoutColumn,
+	"flip-card": IconFlashcards,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

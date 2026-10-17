@@ -61,6 +61,7 @@
 		"./fab": "./src/components/fab/index.ts",
 		"./feedback": "./src/components/feedback/index.ts",
 		"./field": "./src/components/field/index.ts",
+		"./flip-card": "./src/components/flip-card/index.ts",
 		"./frame": "./src/components/frame/index.ts",
 		"./grid-item": "./src/components/grid-item/index.ts",
 		"./icon": "./src/components/icon/index.ts",

@@ -1,0 +1,141 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "flip-card",
+	"type": "registry:ui",
+	"title": "FlipCard",
+	"description": "Two faces of one card and a turn between them, by tap, swipe or code.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"surface",
+		"tv",
+		"use-calm-motion",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/AGENTS.md",
+			"target": "flip-card/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/flip-card",
+					"to": "@registry/ui/flip-card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card-back.tsx",
+			"target": "flip-card/flip-card-back.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card-face.tsx",
+			"target": "flip-card/flip-card-face.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface",
+					"to": "@registry/ui/surface"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card-front.tsx",
+			"target": "flip-card/flip-card-front.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card-trigger.tsx",
+			"target": "flip-card/flip-card-trigger.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card.context.tsx",
+			"target": "flip-card/flip-card.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card.tsx",
+			"target": "flip-card/flip-card.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card.types.ts",
+			"target": "flip-card/flip-card.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card.variants.ts",
+			"target": "flip-card/flip-card.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/index.ts",
+			"target": "flip-card/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

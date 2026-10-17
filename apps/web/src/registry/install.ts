@@ -9225,6 +9225,164 @@ export const install = {
 			},
 		],
 	},
+	"flip-card": {
+		name: "flip-card",
+		title: "FlipCard",
+		description: "Two faces of one card and a turn between them, by tap, swipe or code.",
+		importPath: "@delacour/react-native-ui/flip-card",
+		exportName: "FlipCard",
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
+		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 40,
+		groups: [
+			{
+				name: "flip-card",
+				title: "FlipCard",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/flip-card/AGENTS.md", target: "src/components/ui/flip-card/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card-back.tsx", target: "src/components/ui/flip-card/flip-card-back.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card-face.tsx", target: "src/components/ui/flip-card/flip-card-face.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card-front.tsx", target: "src/components/ui/flip-card/flip-card-front.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card-trigger.tsx", target: "src/components/ui/flip-card/flip-card-trigger.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card.context.tsx", target: "src/components/ui/flip-card/flip-card.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card.tsx", target: "src/components/ui/flip-card/flip-card.tsx" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card.types.ts", target: "src/components/ui/flip-card/flip-card.types.ts" },
+					{ source: "packages/react-native-ui/src/components/flip-card/flip-card.variants.ts", target: "src/components/ui/flip-card/flip-card.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/flip-card/index.ts", target: "src/components/ui/flip-card/index.ts" },
+				],
+			},
+			{
+				name: "icon",
+				title: "Icon",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/icon/AGENTS.md", target: "src/components/ui/icon/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.context.tsx", target: "src/components/ui/icon/icon.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.tsx", target: "src/components/ui/icon/icon.tsx" },
+					{ source: "packages/react-native-ui/src/components/icon/icon.variants.ts", target: "src/components/ui/icon/icon.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/icon/index.ts", target: "src/components/ui/icon/index.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "surface",
+				title: "Surface",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/surface/AGENTS.md", target: "src/components/ui/surface/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/surface/index.ts", target: "src/components/ui/surface/index.ts" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.context.tsx", target: "src/components/ui/surface/surface.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.tsx", target: "src/components/ui/surface/surface.tsx" },
+					{ source: "packages/react-native-ui/src/components/surface/surface.variants.ts", target: "src/components/ui/surface/surface.variants.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "icons",
+				title: "Icons",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/icons/central.ts", target: "src/lib/icons/central.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+		],
+	},
 	"attachment": {
 		name: "attachment",
 		title: "Attachment",

@@ -191,6 +191,7 @@ const ROWS = [
 		group: "Data display",
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "flip-card", title: "FlipCard", description: "Tap, swipe, manual, axis, flashcard", group: "Media" },
 	{ slug: "compare", title: "Compare", description: "Before and after, a draggable seam", group: "Media" },
 	{ slug: "circular-text", title: "CircularText", description: "Spans, sides, spin, pause, a centre", group: "Media" },
 	{ slug: "attachment", title: "Attachment", description: "Kinds, layouts, upload states, trays", group: "Media" },

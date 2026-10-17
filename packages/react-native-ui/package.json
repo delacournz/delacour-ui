@@ -74,6 +74,7 @@
 		"./map": "./src/components/map/index.ts",
 		"./markdown-editor": "./src/components/markdown-editor/index.ts",
 		"./marker": "./src/components/marker/index.ts",
+		"./marquee": "./src/components/marquee/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./number-input": "./src/components/number-input/index.ts",

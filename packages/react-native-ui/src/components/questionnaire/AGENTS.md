@@ -35,7 +35,7 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
 - **Axes**: `size` (`sm | md | lg`) passes straight through to every control — they all share the
   scale, and a test holds that. `variant` (`primary | secondary`) is translated by
   `resolveQuestionnaireAxes`, because the controls do not share a word for it: `Input`, `Radio`
-  and `Steps` say `primary | secondary`, `ToggleButton` says `default | outline`, `Checkbox` and
+  and `Steps` say `primary | secondary` (`Input` also has an opt-in `etched`, which the questionnaire does not offer), `ToggleButton` says `default | outline`, `Checkbox` and
   `Progress` have colours. One table, tested, rather than a ternary per part.
 - **Framed or bare.** `isFramed` (default) is a `Surface` with no padding, so the footer's
   `Separator` runs to the card's edges and each part pads itself. Unframed is a plain column

@@ -82,7 +82,8 @@ describe("the axes", () => {
 
 	test("variant is primary or secondary, the pair Input, Radio and Steps own", () => {
 		expect([...QUESTIONNAIRE_VARIANTS]).toEqual(["primary", "secondary"]);
-		expect([...QUESTIONNAIRE_VARIANTS]).toEqual([...INPUT_VARIANTS]);
+		// Input also owns `etched`, an opt-in material Radio and Steps do not draw; the shared pair is the rest.
+		expect([...QUESTIONNAIRE_VARIANTS]).toEqual(INPUT_VARIANTS.filter((variant) => variant !== "etched"));
 		expect([...QUESTIONNAIRE_VARIANTS]).toEqual([...RADIO_VARIANTS]);
 		expect([...QUESTIONNAIRE_VARIANTS]).toEqual([...STEPS_VARIANTS]);
 	});

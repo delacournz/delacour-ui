@@ -109,6 +109,7 @@
 		"frame",
 		"direction",
 		"carousel",
+		"image-viewer",
 		"---Utilities---",
 		"provider",
 		"overlay"

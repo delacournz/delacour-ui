@@ -337,6 +337,13 @@ import * as demo_grid_item_variants from "./grid-item/variants";
 import * as demo_icon_colour_is_a_token from "./icon/colour-is-a-token";
 import * as demo_icon_inherited_from_a_button from "./icon/inherited-from-a-button";
 import * as demo_icon_the_size_scale from "./icon/the-size-scale";
+import * as demo_image_viewer_captions_full_source from "./image-viewer/captions-full-source";
+import * as demo_image_viewer_controlled from "./image-viewer/controlled";
+import * as demo_image_viewer_custom_thumbnail from "./image-viewer/custom-thumbnail";
+import * as demo_image_viewer_data_mode_list from "./image-viewer/data-mode-list";
+import * as demo_image_viewer_drag_to_dismiss from "./image-viewer/drag-to-dismiss";
+import * as demo_image_viewer_gallery_grid from "./image-viewer/gallery-grid";
+import * as demo_image_viewer_zoom from "./image-viewer/zoom";
 import * as demo_input_colors_caret_and_selection from "./input/colors/caret-and-selection";
 import * as demo_input_colors_defaults from "./input/colors/defaults";
 import * as demo_input_colors_invalid_wins_by_default from "./input/colors/invalid-wins-by-default";
@@ -1146,6 +1153,13 @@ export const DEMOS = {
 	"icon/colour-is-a-token": demo_icon_colour_is_a_token,
 	"icon/inherited-from-a-button": demo_icon_inherited_from_a_button,
 	"icon/the-size-scale": demo_icon_the_size_scale,
+	"image-viewer/captions-full-source": demo_image_viewer_captions_full_source,
+	"image-viewer/controlled": demo_image_viewer_controlled,
+	"image-viewer/custom-thumbnail": demo_image_viewer_custom_thumbnail,
+	"image-viewer/data-mode-list": demo_image_viewer_data_mode_list,
+	"image-viewer/drag-to-dismiss": demo_image_viewer_drag_to_dismiss,
+	"image-viewer/gallery-grid": demo_image_viewer_gallery_grid,
+	"image-viewer/zoom": demo_image_viewer_zoom,
 	"input/colors/caret-and-selection": demo_input_colors_caret_and_selection,
 	"input/colors/defaults": demo_input_colors_defaults,
 	"input/colors/invalid-wins-by-default": demo_input_colors_invalid_wins_by_default,

@@ -130,6 +130,10 @@ const EXTENSIONS: Record<string, { dark: string; light: string }> = {
 	// A scrim is black in both themes; deriving it from `--foreground` would
 	// paint a white one over a dark app.
 	"--overlay": { light: "oklch(0 0 0 / 45%)", dark: "oklch(0 0 0 / 65%)" },
+	// ImageViewer's stage: dark in both themes, so it swaps sides — the text
+	// colour in light, the page in dark — and its foreground swaps with it.
+	"--media": { light: "var(--foreground)", dark: "var(--background)" },
+	"--media-foreground": { light: "var(--background)", dark: "var(--foreground)" },
 	// tweakcn writes a shadow scale and `shadcn init` does not. No component
 	// here draws one, but a consumer's `shadow-md` reads `--shadow-md`, and a
 	// theme that arrived without the scale would leave it resolving to nothing.

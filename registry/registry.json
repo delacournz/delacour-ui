@@ -1436,6 +1436,52 @@
 			]
 		},
 		{
+			"name": "image-viewer",
+			"type": "registry:ui",
+			"title": "Image Viewer",
+			"description": "A fullscreen viewer that opens from a thumbnail: pinch, pan and double-tap zoom, swipe between images, drag down to dismiss.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"button",
+				"cn",
+				"icon",
+				"icons",
+				"paging",
+				"pressable",
+				"text",
+				"tv",
+				"use-calm-motion",
+				"use-controllable-state"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets",
+				"uniwind"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/image-viewer/AGENTS.md",
+				"ui/image-viewer/image-viewer-chrome.tsx",
+				"ui/image-viewer/image-viewer-close.tsx",
+				"ui/image-viewer/image-viewer-image.tsx",
+				"ui/image-viewer/image-viewer-layer.tsx",
+				"ui/image-viewer/image-viewer-page.tsx",
+				"ui/image-viewer/image-viewer-trigger.tsx",
+				"ui/image-viewer/image-viewer.context.tsx",
+				"ui/image-viewer/image-viewer.tsx",
+				"ui/image-viewer/image-viewer.types.ts",
+				"ui/image-viewer/image-viewer.variants.ts",
+				"ui/image-viewer/index.ts"
+			]
+		},
+		{
 			"name": "input",
 			"type": "registry:ui",
 			"title": "Input",

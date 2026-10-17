@@ -65,6 +65,7 @@
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",
+		"./planner": "./src/components/planner/index.ts",
 		"./popover": "./src/components/popover/index.ts",
 		"./pressable": "./src/components/pressable/index.ts",
 		"./progress": "./src/components/progress/index.ts",

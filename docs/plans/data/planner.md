@@ -125,3 +125,23 @@ custom days, dates and time zones, accessibility, API.
 - [ ] VoiceOver day labels with counts and categories
 - [ ] Folder AGENTS.md, Components row, ITEM_META, gen-exports, registry:build, demos, docs, changeset
 - [ ] `bun test`, `bun run typecheck`, `bun run check` green
+
+## Delivery notes
+
+- **Previews captured** (warden-iphone-17-pro, dev client, `--dev --only planner`): six demos, both
+  themes. Clips — `training-plan` (hero: swipe to next month, `Nav` back), `details-sheet` (`device`:
+  tap the 14th → sheet, swipe down → closed, selection cleared), `scroller` (six weeks down, title
+  October → November, and back). Stills — `tiles`, `calendar-fill`, `custom-day`. Every flow ends
+  where it began, so each clip loops without a cut. `planner.mdx` opens on the hero and shows each
+  captured demo in its section.
+- **Simulator verified** (warden-iphone-17, iOS 26.5, dev client): grid, today ring, legend counts;
+  `Nav` and `Today` (disabled on the current month, enabled off it); a pan pages both ways; the
+  details sheet opens on the pressed day with its entries, and both its close button and a swipe
+  down clear the selection; day labels read "Wednesday, October 14, 3 entries, Run, Strength, Ride"
+  with `selected` state; tiles, calendar `fill` and the scroller render.
+- **Found on the simulator and fixed:** at the spec's 20pt `activeOffsetX` the stack's full-width back
+  swipe claimed a rightward drag and popped the screen — now `PLANNER_PAN`, the `Tabs` pager's 10/14.
+  A calendar day with overflow drew `entryLimit` blocks plus "+N more" and spilled into the next week
+  — "+N more" now takes the last line, and the cell clips.
+- **Day details** use the existing `BottomSheet`, as planned; no Overlays code. Month math is local
+  to the folder; no Forms Calendar import.

@@ -303,6 +303,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks.",
 		categories: ["feedback"],
 	},
+	planner: {
+		title: "Planner",
+		description:
+			"A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day.",
+		categories: ["display"],
+	},
 	progress: {
 		title: "Progress",
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",

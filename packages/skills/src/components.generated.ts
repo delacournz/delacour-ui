@@ -41,6 +41,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "menu", title: "Menu", description: "A list of actions anchored to the control that opens it — checkbox and radio rows, in-place submenus." },
 	{ name: "meter", title: "Meter", description: "A measurement on a fixed scale, coloured by where it falls — by regions, thresholds or whole blocks." },
 	{ name: "overlay", title: "Overlay", description: "The provider, teleported portal, scrim, presence lifecycle and back-button handling every dialog, drawer, popover, tooltip and toast is drawn with." },
+	{ name: "planner", title: "Planner", description: "A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day." },
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },

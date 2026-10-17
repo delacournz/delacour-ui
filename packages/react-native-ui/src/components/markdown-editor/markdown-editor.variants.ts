@@ -1,7 +1,7 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { ButtonIconSize } from "../button/button.variants";
-import type { InputSize, InputVariant } from "../input/input.variants";
+import { INPUT_VARIANTS, type InputSize, type InputVariant, inputVariants } from "../input/input.variants";
 import type { TabsSize } from "../tabs/tabs.variants";
 import { getNextHeadingLevel } from "./markdown-editor.commands";
 import type { MarkdownInline } from "./markdown-editor.parse";
@@ -13,7 +13,19 @@ import type {
 } from "./markdown-editor.types";
 
 export const MARKDOWN_EDITOR_SIZES = ["sm", "md", "lg"] as const satisfies readonly InputSize[];
-export const MARKDOWN_EDITOR_VARIANTS = ["primary", "secondary"] as const satisfies readonly InputVariant[];
+/**
+ * The fill, edge and shadow utilities Input draws for a variant, read from
+ * `inputVariants` itself so an `etched` (or any later) variant follows Input.
+ */
+function inputSurface(variant: InputVariant): string {
+	return inputVariants({ variant })
+		.root()
+		.split(/\s+/)
+		.filter((cls) => /^(dark:)?(bg|border|shadow)-/.test(cls))
+		.join(" ");
+}
+
+export const MARKDOWN_EDITOR_VARIANTS = INPUT_VARIANTS;
 export const MARKDOWN_TOOLBAR_VARIANTS = ["bar", "pill"] as const;
 
 export type MarkdownEditorSize = (typeof MARKDOWN_EDITOR_SIZES)[number];
@@ -125,6 +137,7 @@ export const markdownEditorVariants = tv({
 		variant: {
 			primary: { preview: "border border-input bg-card" },
 			secondary: { preview: "border border-transparent bg-secondary", inlineCode: "bg-card" },
+			etched: { preview: `border ${inputSurface("etched")}` },
 		},
 	},
 	defaultVariants: {

@@ -96,8 +96,9 @@ parts.
   collapsed to its padding beside an action row that takes every point it is
   offered — seen on a simulator as an empty grey pill.
 - **The preview restates the field's box.** `Input`'s `primary` is outlined
-  on `bg-card` and its `secondary` filled `bg-secondary`, and the preview
-  draws the same two — a test reads `inputVariants` and fails if they part —
+  on `bg-card` and its `secondary` filled `bg-secondary`, and its `etched` the same
+  card fill with the highlight set into its edge; the preview draws the same
+  three — a test reads `inputVariants` and fails if they part —
   so flipping modes never changes what kind of box is on screen. On the
   filled one an inline code run lifts to `bg-card`, or `Text.Code`'s muted run
   would vanish into it. Floored at the write pane's height

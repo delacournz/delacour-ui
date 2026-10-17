@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import { BUTTON_ICON_SIZES } from "../button/button.variants";
-import { INPUT_SIZES, INPUT_VARIANTS, inputVariants } from "../input/input.variants";
+import { INPUT_SIZES, INPUT_VARIANTS, type InputVariant, inputVariants } from "../input/input.variants";
 import { TABS_SIZES } from "../tabs/tabs.variants";
 import type { MarkdownInline } from "./markdown-editor.parse";
 import type { MarkdownToolbarAction } from "./markdown-editor.types";
@@ -148,7 +148,7 @@ describe("panes", () => {
 	});
 
 	test("the preview restates Input's box for each variant", () => {
-		const box = (variant: "primary" | "secondary"): string[] =>
+		const box = (variant: InputVariant): string[] =>
 			(inputVariants({ variant }).root() ?? "").split(" ").filter((cls) => /^(?:bg|border)-[a-z]/.test(cls));
 		for (const variant of MARKDOWN_EDITOR_VARIANTS) {
 			const preview = markdownEditorVariants({ variant }).preview() ?? "";

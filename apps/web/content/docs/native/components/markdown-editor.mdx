@@ -76,7 +76,7 @@ Return on a list or quote line starts the next item — the same bullet, the nex
 
 ## Toolbar looks
 
-`bar` sits on the field's top edge as its lid. `pill` floats an icon-only capsule above it. `variant` styles the field and the preview together — outlined on `primary`, filled on `secondary`, the same two boxes as `Input`.
+`bar` sits on the field's top edge as its lid. `pill` floats an icon-only capsule above it. `variant` styles the field and the preview together — outlined on `primary`, filled on `secondary`, set-in on `etched` — the same three boxes as `Input`.
 
 <Preview id="markdown-editor/pill-toolbar" />
 
@@ -193,7 +193,7 @@ else — `javascript:`, `data:`, `file:` — is drawn as its label, with nothing
     placeholder: { type: "string", description: "For a bare editor. Composed, give it to `MarkdownEditor.Input`." },
     rows: { type: "number", default: "8", description: "Lines tall — and the preview's floor." },
     size: { type: '"sm" | "md" | "lg"', default: '"md"' },
-    variant: { type: '"primary" | "secondary"', default: '"primary"' },
+    variant: { type: '"primary" | "secondary" | "etched"', default: '"primary"' },
     isDisabled: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
     isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
     isReadOnly: { type: "boolean", default: "false" },

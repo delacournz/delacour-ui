@@ -3,6 +3,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { basename, dirname, join, relative } from "node:path";
 import { demoIds, renderRegistry } from "../../scripts/gen-demo-registry";
 import { readGroupOrder } from "../../scripts/previews/demo-source";
+import { captureBlocks } from "../../scripts/previews/spec-source";
 
 /**
  * The demo tree, the generated registry and the captured media must agree.
@@ -28,7 +29,7 @@ const REPO = join(PLAYGROUND, "..", "..");
 const DEMOS = join(PLAYGROUND, "src", "demos");
 const MEDIA = join(REPO, "apps", "web", "public", "previews");
 const MANIFEST = join(REPO, "apps", "web", "src", "previews", "manifest.ts");
-const FLOWS = join(REPO, ".argent", "flows", "previews");
+const SPECS = join(PLAYGROUND, "e2e", "previews");
 const COMPONENTS = join(REPO, "packages", "react-native-ui", "src", "components");
 
 /**
@@ -148,14 +149,38 @@ describe("demos", () => {
 		expect(wrong).toEqual([]);
 	});
 
-	test("every animated demo names a flow that exists", () => {
-		const missing: string[] = [];
-		for (const id of FILES) {
+	// The flow of an animated demo is its `capture()` block in the component
+	// spec, so a demo marked `flow: true` with no body there would be published
+	// as a still under a clip's name — and a captured demo with no block at all
+	// would never be captured and never be missed.
+	test("every captured demo has a capture block in its component spec, with a body iff it is a flow", () => {
+		const blocks = new Map<string, Map<string, boolean>>();
+		const blocksOf = (component: string): Map<string, boolean> => {
+			let found = blocks.get(component);
+			if (!found) {
+				const spec = join(SPECS, `${component}.e2e.ts`);
+				found = new Map(
+					existsSync(spec) ? captureBlocks(readFileSync(spec, "utf-8"), spec).map((b) => [b.id, b.animated]) : []
+				);
+				blocks.set(component, found);
+			}
+			return found;
+		};
+
+		const wrong: string[] = [];
+		for (const id of capturedIds()) {
 			const source = readFileSync(join(DEMOS, `${id}.tsx`), "utf-8");
-			const flow = source.match(/\bflow:\s*"([^"]+)"/)?.[1];
-			if (flow && !existsSync(join(FLOWS, `${flow}.yaml`))) missing.push(`${id} → ${flow}.yaml`);
+			const animated = /\bflow:\s*true\b/.test(source);
+			const block = blocksOf(id.split("/")[0] as string).get(id);
+			if (block === undefined) wrong.push(`${id} has no capture() block`);
+			else if (block !== animated) wrong.push(`${id} is ${animated ? "a flow with no body" : "a still with a body"}`);
 		}
-		expect(missing).toEqual([]);
+		expect(wrong).toEqual([]);
+	});
+
+	test("no demo still names a YAML flow", () => {
+		const named = FILES.filter((id) => /\bflow:\s*"/.test(readFileSync(join(DEMOS, `${id}.tsx`), "utf-8")));
+		expect(named).toEqual([]);
 	});
 });
 

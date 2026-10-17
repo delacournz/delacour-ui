@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Menu.Sub` expands in place under its row and pushes the rows below down — it never flies out to a second panel. The chevron turns to follow it.",
 	align: "center",
-	capture: { frame: "device", flow: "menu/submenu" },
+	capture: { frame: "device", flow: true },
 };
 
 const FOLDERS = ["Inbox", "Projects", "Receipts", "Travel"] as const;

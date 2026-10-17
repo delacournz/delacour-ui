@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Drag the handle across the rail to confirm. The handle tracks the finger exactly; a release short of the threshold springs it home, and one past it confirms with a tick.",
 	align: "center",
-	capture: { flow: "slide-button/slide-to-ship", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

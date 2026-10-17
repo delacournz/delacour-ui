@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Start typing and the whole field turns destructive until there is an `@` — then everything leaves together, and the error removes itself.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "field/states/live", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

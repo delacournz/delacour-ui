@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Imperative",
 	caption: "A ref opens and closes the row from outside, and `onOpenChange` reports the side that settled.",
-	capture: { align: "stretch", flow: "swipe/imperative" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

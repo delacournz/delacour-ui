@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	title: "Message actions",
 	caption:
 		"Hold a message for what you can do with it. The panel opens at your finger, over a dimmed screen; each row runs its action and closes.",
-	capture: { frame: "device", flow: "context-menu/message-actions", hero: true },
+	capture: { frame: "device", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

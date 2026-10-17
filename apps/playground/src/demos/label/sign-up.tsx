@@ -28,7 +28,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Two required fields and an optional one. Tap Create account with them empty and both labels turn destructive with their fields; each clears as soon as its value is acceptable, and emptying every field starts the form over.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "label/sign-up", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 function Row({

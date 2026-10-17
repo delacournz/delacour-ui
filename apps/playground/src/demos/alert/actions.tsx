@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Actions",
 	caption:
 		"`Alert.Action` is a wrapping row under the description, and the buttons in it are the caller's. `useAlert().dismiss` closes the alert from inside. Reset brings it back.",
-	capture: { align: "stretch", flow: "alert/actions" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** An action that closes the alert it sits in, with no setter passed down. */

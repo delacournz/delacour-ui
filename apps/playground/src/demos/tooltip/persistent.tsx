@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Persistent",
 	caption: "`duration={0}` keeps the label until the trigger is pressed again or something else is tapped.",
 	align: "center",
-	capture: { flow: "tooltip/persistent", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

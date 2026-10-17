@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Dismissible",
 	caption:
 		"Uncontrolled: `isDismissible` adds the close control and the alert hides itself when it is pressed. Reset remounts them.",
-	capture: { align: "stretch", flow: "alert/dismissible" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

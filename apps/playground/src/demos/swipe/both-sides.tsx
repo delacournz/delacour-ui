@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Both sides",
 	caption:
 		"`Swipe.Start` and `Swipe.End` hold separate actions. The edge text runs toward is always `end`, so the layout mirrors right to left.",
-	capture: { align: "stretch", flow: "swipe/both-sides", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A dialog opened from inside a sheet draws above it — the `modal` band sits over every sheet — and Android back closes the dialog before the sheet.",
 	align: "center",
-	capture: { flow: "dialog/over-sheet", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /** The z-order case: a sheet, and a dialog it opens. */

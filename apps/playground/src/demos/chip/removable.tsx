@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Removable",
 	caption:
 		"`onClose` adds a remove control with a press of its own. On these selectable chips, removing one never also toggles it.",
-	capture: { align: "stretch", flow: "chip/removable" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TOPICS = ["React Native", "Reanimated", "Uniwind", "Gesture Handler", "Expo", "Skia"] as const;

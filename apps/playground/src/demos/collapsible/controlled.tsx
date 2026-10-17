@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled",
 	caption:
 		"Pass `isOpen` and the collapsible follows it; `onOpenChange` is where the trigger's press arrives. Here a button outside it drives the same state, and the line underneath reads it back.",
-	capture: { align: "stretch", flow: "collapsible/controlled" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

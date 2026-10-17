@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Detached",
 	caption:
 		"`detached` floats the sheet as a card: a margin on each side, a gap above the home indicator, and every corner rounded. A tap in the margins or in the gap under the card closes it, and a drag down carries the whole card off-screen as one body — nothing clips at the resting line.",
-	capture: { flow: "bottom-sheet/sizing/detached", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /**

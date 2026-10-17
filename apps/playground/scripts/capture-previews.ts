@@ -1,99 +1,68 @@
 #!/usr/bin/env bun
 /**
- * Captures component preview media from a simulator.
+ * Captures component preview media, through warden.
  *
- * For every demo that opts into capture, in both themes: deep-link the
- * chrome-free preview route, wait for the demo to announce itself, screenshot,
- * crop the stage out, and write the result into `apps/web/public/previews/`.
- * Then emit the manifest the documentation site reads.
+ * For every demo that opts into capture, in both themes: the chrome-free
+ * preview route is opened on a leased simulator, the demo announces itself,
+ * and it is photographed or recorded and cropped to its stage — see
+ * `e2e/previews/capture.ts`, which is where that happens. This script is the
+ * orchestrator around it:
  *
- *     bun run previews                      # everything, incremental
- *     bun run previews -- --only switch     # one component
- *     bun run previews -- --force           # ignore the source hashes
- *     bun run previews -- --dev             # against a dev client, on Metro at 8088
- *     bun run previews -- --dev --port 8091 # …or on this worktree's own bundler
+ *   1. plans — which demos' media is stale, by source hash
+ *   2. runs `warden e2e previews --flows <components> --count N`, which leases
+ *      N simulators, installs the dev build, starts one Metro and runs each
+ *      component's spec on one of them
+ *   3. assembles `apps/web/src/previews/manifest.ts` from the fragments the
+ *      specs wrote
+ *   4. prunes media whose demo is gone, and enforces the size budget
+ *
+ *     bun run previews -- --                    # everything, incremental
+ *     bun run previews -- -- --only switch,tabs  # these components, or one demo
+ *     bun run previews -- -- --force             # ignore the source hashes
+ *     bun run previews -- -- --count 3           # fan out over three simulators
+ *     bun run previews -- -- --dry-run           # plan, print, run nothing
  *
  * **It writes into another workspace.** The demos are the source of truth and
  * generators live with their source, so this script owns
  * `apps/web/public/previews/**` and `apps/web/src/previews/manifest.ts`. Both
  * are generated; neither is edited by hand.
  *
- * A run is incremental. Each demo's source, meta, flow and the encode settings
- * are hashed together, and a demo whose hash is unchanged and whose files are
- * all present is skipped — so a run after touching one component rewrites that
- * component's media and nothing else. That is what keeps captured media from
- * becoming permanent churn in a repository that cannot delta-compress it.
+ * A run is incremental. Each demo's source, meta, spec block and the encode
+ * settings are hashed together, and a demo whose hash is unchanged and whose
+ * files are all present is skipped — so a run after touching one component
+ * rewrites that component's media and nothing else. That is what keeps
+ * captured media from becoming permanent churn in a repository that cannot
+ * delta-compress it.
  */
 
 import { mkdir, readdir, rm, stat } from "node:fs/promises";
 import { dirname, join, relative } from "node:path";
 import {
-	awaitElement,
-	awaitFreshHome,
-	awaitIdle,
-	bootDevice,
-	type Device,
-	describe,
-	devtoolsConnected,
-	hideDevMenuButton,
-	listDevices,
-	openUrl,
-	readFlags,
-	restartApp,
-	runFlow,
-	screenshot,
-	startRecording,
-	stopRecording,
-} from "./previews/argent";
-import {
 	BUDGET_BYTES,
-	BUNDLE_ID,
-	DEFAULT_PORT,
-	DEVICE_MAX_EDGE,
-	DEVICE_NAME,
+	DEVICE_PROFILE,
 	MANIFEST_PATH,
-	MAX_EDGE,
 	MEDIA_DIR,
-	PAD_POINTS,
-	RECORDING_CAP_SECONDS,
-	SCHEME,
+	mediaPaths,
+	PLAYGROUND,
 	THEMES,
-	type Theme,
 } from "./previews/config";
-import { bundlerRunning, devClientUrl } from "./previews/dev-client";
+import { FRAGMENTS_DIR, type Fragment, fragmentPath, PLAN_PATH, type PlanFile } from "./previews/fragments";
 import { type PreviewEntryJson, renderManifest } from "./previews/manifest";
-import {
-	boundsCrop,
-	type CropRect,
-	cropImage,
-	type DemoBounds,
-	deviceCrop,
-	encodeVideo,
-	extractPoster,
-	hasBinary,
-	probeDurationMs,
-	targetSize,
-} from "./previews/media";
+import { hasBinary } from "./previews/media";
 import { type PlannedDemo, planDemos } from "./previews/plan";
+import { specPath } from "./previews/spec-source";
 
 type Options = {
-	only?: string;
+	only: string[];
 	force: boolean;
-	dev: boolean;
-	port: number;
-	device?: string;
-	themes: readonly Theme[];
+	count: number;
 	prune: boolean;
+	dryRun: boolean;
+	headless: boolean;
 };
 
 function parseArgs(argv: readonly string[]): Options {
-	const options: Options = {
-		dev: false,
-		force: false,
-		port: Number(process.env.RCT_METRO_PORT) || DEFAULT_PORT,
-		prune: true,
-		themes: THEMES,
-	};
+	const options: Options = { count: 1, dryRun: false, force: false, headless: false, only: [], prune: true };
 
 	for (let index = 0; index < argv.length; index += 1) {
 		const arg = argv[index];
@@ -106,31 +75,40 @@ function parseArgs(argv: readonly string[]): Options {
 
 		switch (arg) {
 			case "--only":
-				options.only = next();
+				options.only.push(
+					...next()
+						.split(",")
+						.map((id) => id.trim())
+						.filter(Boolean)
+				);
 				break;
-			case "--device":
-				options.device = next();
-				break;
-			case "--themes":
-				options.themes = next().split(",") as Theme[];
-				break;
-			case "--port":
-				options.port = Number(next());
+			case "--count":
+				options.count = Number(next());
 				break;
 			case "--force":
 				options.force = true;
 				break;
-			case "--dev":
-				options.dev = true;
+			case "--dry-run":
+				options.dryRun = true;
+				break;
+			case "--headless":
+				options.headless = true;
 				break;
 			case "--no-prune":
 				options.prune = false;
 				break;
+			case "--dev":
+			case "--port":
+			case "--device":
+				throw new Error(
+					`${arg} is gone: warden owns the simulator, the dev build and Metro now. See apps/playground/AGENTS.md.`
+				);
 			default:
 				throw new Error(`Unknown flag ${arg}`);
 		}
 	}
 
+	if (!Number.isInteger(options.count) || options.count < 1) throw new Error("--count needs a whole number ≥ 1");
 	return options;
 }
 
@@ -140,32 +118,26 @@ function fail(message: string): never {
 }
 
 /**
- * Every check that can fail the run, run before anything is captured.
+ * Every check that can fail the run, run before anything is leased.
  *
- * Each one names its own fix. The two argent flags are asserted rather than
- * assumed because both default the wrong way for this job, and the failure they
- * cause is invisible until somebody looks closely at published media.
+ * Each one names its own fix. The spec checks are the ones that matter most:
+ * a demo marked `flow: true` whose block has no body would be published as a
+ * still under a clip's name, and a captured demo with no block at all would
+ * never be captured and never be missed.
  */
-async function preflight(options: Options, all: readonly PlannedDemo[]): Promise<void> {
+async function preflight(all: readonly PlannedDemo[]): Promise<void> {
 	if (!(await hasBinary("ffmpeg"))) fail("ffmpeg is not on PATH. Install it with `brew install ffmpeg`.");
-
-	const flags = await readFlags();
-	if (flags["video-watermark"] !== false) {
-		fail(
-			"argent's video-watermark flag is on, so every recording would carry its logo.\n" +
-				"  Fix: argent disable video-watermark --scope project"
-		);
-	}
-	if (flags["disable-auto-screenshot"] !== true) {
-		fail(
-			"argent's disable-auto-screenshot flag is off, so every interaction round-trips a\n" +
-				"  screenshot nothing reads.\n  Fix: argent enable disable-auto-screenshot --scope project"
-		);
-	}
+	if (!(await hasBinary("warden")))
+		fail("warden is not on PATH. Install it with `npm i -g @delacour/warden && warden install`.");
 
 	for (const demo of all) {
-		if (demo.flowPath && !(await Bun.file(demo.flowPath).exists())) {
-			fail(`${demo.id} names a flow that does not exist: ${demo.flowPath}`);
+		const spec = relative(PLAYGROUND, specPath(demo.component));
+		if (!demo.block) fail(`${demo.id} opts into capture but ${spec} has no capture("${demo.id}") block.`);
+		if (demo.source.meta.capture?.flow === true && !demo.block.animated) {
+			fail(`${demo.id} is marked \`flow: true\` but its capture("${demo.id}") block in ${spec} has no flow body.`);
+		}
+		if (demo.source.meta.capture?.flow !== true && demo.block.animated) {
+			fail(`${demo.id} has a flow body in ${spec} but its meta does not set \`capture.flow: true\`.`);
 		}
 	}
 
@@ -184,54 +156,6 @@ async function preflight(options: Options, all: readonly PlannedDemo[]): Promise
 			);
 		}
 	}
-
-	if (options.dev && !(await bundlerRunning(options.port))) {
-		fail(
-			`No Metro bundler is answering on port ${options.port}, so the dev client has nothing to load.\n` +
-				`  Fix: bun expo start --dev-client --port ${options.port}   (or pass --port <n> for the one that is running)`
-		);
-	}
-
-	if (!options.dev) {
-		console.log("  note: --dev not passed, but the Release build step is not wired up yet.");
-	}
-}
-
-async function resolveDevice(options: Options): Promise<Device> {
-	const devices = await listDevices();
-	const wanted = options.device;
-
-	const match = wanted
-		? devices.find((device) => device.udid === wanted || device.name === wanted)
-		: (devices.find((device) => device.name === DEVICE_NAME && device.state === "Booted") ??
-			devices.find((device) => device.name === DEVICE_NAME));
-
-	if (!match) fail(`No simulator matching ${wanted ?? DEVICE_NAME}. Run \`argent run list-devices\`.`);
-	if (match.state !== "Booted") {
-		console.log(`  booting ${match.name}…`);
-		await bootDevice(match.udid);
-	}
-
-	return match;
-}
-
-/**
- * Where a demo's media lives, and the URLs the manifest points at.
- *
- * Keyed on the **full id**, not component + demo. A folder gallery nests
- * (`screen/navbar/default`), and two facets are free to name a demo the same
- * thing — `screen/navbar/default` and `screen/chat/default` would collide the
- * moment the path were flattened to component + name.
- */
-function mediaPaths(demo: PlannedDemo, theme: Theme, hash: string) {
-	const dir = join(MEDIA_DIR, demo.id);
-	return {
-		dir,
-		poster: join(dir, `${theme}.png`),
-		posterUrl: `/previews/${demo.id}/${theme}.png?v=${hash}`,
-		video: join(dir, `${theme}.mp4`),
-		videoUrl: `/previews/${demo.id}/${theme}.mp4?v=${hash}`,
-	};
 }
 
 async function exists(path: string): Promise<boolean> {
@@ -271,147 +195,70 @@ async function readExistingManifest(): Promise<Map<string, PreviewEntryJson>> {
 	}
 }
 
-/**
- * Pulls the demo's measured rect out of the sentinel's accessibility label.
- *
- * The label is `preview-ready:<id>:<theme>:<x>,<y>,<w>,<h>:<winW>x<winH>`, all
- * in points. Points rather than pixels because that is what React Native
- * measures in; the caller scales by the screenshot's own width.
- */
-function parseBounds(description: string, sentinel: string): DemoBounds | null {
-	for (const line of description.split("\n")) {
-		const index = line.indexOf(sentinel);
-		if (index === -1) continue;
+/** Whether a demo's published files all exist for the hash the manifest holds. */
+async function filesPresent(demo: PlannedDemo): Promise<boolean> {
+	const checks = THEMES.flatMap((theme) => {
+		const paths = mediaPaths(demo.id, theme, demo.sourceHash);
+		return demo.animated ? [exists(paths.poster), exists(paths.video)] : [exists(paths.poster)];
+	});
+	return (await Promise.all(checks)).every(Boolean);
+}
 
-		const match = line.slice(index + sentinel.length).match(/^(-?\d+),(-?\d+),(\d+),(\d+):(\d+)x(\d+)/);
-		if (!match) continue;
-
-		const [, x, y, width, height, windowWidth, windowHeight] = match.map(Number);
-		if (width === undefined || height === undefined) continue;
-
-		return {
-			height,
-			width,
-			windowHeight: windowHeight as number,
-			windowWidth: windowWidth as number,
-			x: x as number,
-			y: y as number,
+/** What the specs will read: every stale demo, with what a spec cannot cheaply work out itself. */
+async function writePlan(stale: readonly PlannedDemo[]): Promise<void> {
+	await rm(FRAGMENTS_DIR, { force: true, recursive: true });
+	await mkdir(dirname(PLAN_PATH), { recursive: true });
+	const plan: PlanFile = { demos: {}, plannedAt: new Date().toISOString() };
+	for (const demo of stale) {
+		plan.demos[demo.id] = {
+			animated: demo.animated,
+			caption: demo.source.meta.caption,
+			component: demo.component,
+			demo: demo.demo,
+			frame: demo.frame,
+			id: demo.id,
+			leadMs: demo.leadMs,
+			sourceHash: demo.sourceHash,
+			tailMs: demo.tailMs,
+			title: demo.source.meta.title,
 		};
 	}
-	return null;
+	await Bun.write(PLAN_PATH, `${JSON.stringify(plan, null, "\t")}\n`);
 }
 
-const NAVIGATION_TIMEOUT_MS = 30_000;
-
-type Captured = { width: number; height: number; durationMs?: number };
+/** `warden e2e previews --flows <components> --count N`, from the playground, where `warden.config.ts` is. */
+function wardenArgv(components: readonly string[], options: Options): string[] {
+	return [
+		"warden",
+		"e2e",
+		"previews",
+		"--flows",
+		components.join(","),
+		"--count",
+		String(options.count),
+		"--profile",
+		DEVICE_PROFILE,
+		"--report",
+		join(dirname(PLAN_PATH), "report.json"),
+		...(options.headless ? ["--headless"] : []),
+	];
+}
 
 /**
- * Navigates to a demo and captures it — a still, or a clip if it names a flow.
- *
- * The order is load-bearing. Recording starts *before* the lead pad so the clip
- * opens on a settled screen rather than mid-transition; the tail pad runs
- * before the stop so the last interaction's touch pulse has faded, which is
- * what stops the loop showing a ghost tap at the seam.
+ * Runs the suite. A failed flow makes warden exit 1, and that is not the end
+ * of the run here: every fragment that was written still counts, and the
+ * demos with none are reported by name below.
  */
-async function captureDemo(
-	udid: string,
-	demo: PlannedDemo,
-	theme: Theme,
-	geometry: { width: number; height: number }
-): Promise<Captured> {
-	const url = `${SCHEME}://preview?component=${demo.component}&demo=${demo.demo}&theme=${theme}`;
-	await openUrl(udid, url);
-
-	// The first deep link after a restart or a refresh waits on a cold JS load — measured at
-	// 15s against a dev client — so the sentinel gets more than the default 10s.
-	const sentinel = `preview-ready:${demo.id}:${theme}:`;
-	if (!(await awaitElement(udid, sentinel, NAVIGATION_TIMEOUT_MS))) {
-		throw new Error(
-			`the preview never announced itself (${sentinel}).\n` +
-				"      Either the deep link did not navigate, or the demo threw while rendering."
-		);
-	}
-
-	// The screen must hold still before it is worth photographing — see awaitIdle.
-	await awaitIdle(udid);
-
-	const bounds = parseBounds(await describe(udid), sentinel);
-	if (!bounds) throw new Error(`could not read the demo's measured bounds from ${sentinel}`);
-
-	const { dir, poster, video } = mediaPaths(demo, theme, demo.sourceHash);
-	await mkdir(dir, { recursive: true });
-
-	const crop = demo.frame === "device" ? deviceCrop(geometry) : boundsCrop(geometry, bounds, PAD_POINTS);
-	const size = targetSize(crop, demo.frame === "device" ? DEVICE_MAX_EDGE : MAX_EDGE);
-
-	if (!demo.flowPath) {
-		const raw = join(dir, `.${theme}.raw.png`);
-		await screenshot(udid, raw);
-		await cropImage(raw, poster, crop, size);
-		await rm(raw, { force: true });
-		return size;
-	}
-
-	return await captureMotion(udid, demo, { crop, dir, poster, size, theme, video });
+async function runWarden(argv: readonly string[]): Promise<number> {
+	console.log(`\n  $ ${argv.join(" ")}\n`);
+	const proc = Bun.spawn([...argv], { cwd: PLAYGROUND, stderr: "inherit", stdin: "inherit", stdout: "inherit" });
+	return await proc.exited;
 }
 
-async function captureMotion(
-	udid: string,
-	demo: PlannedDemo,
-	target: {
-		crop: CropRect;
-		dir: string;
-		poster: string;
-		size: { width: number; height: number };
-		theme: Theme;
-		video: string;
-	}
-): Promise<Captured> {
-	const lead = demo.leadMs;
-	const tail = demo.tailMs;
-
-	await startRecording(udid, RECORDING_CAP_SECONDS);
-
-	let raw: string;
-	let warning: string | undefined;
-	try {
-		await Bun.sleep(lead);
-		const flow = await runFlow(demo.flowPath as string, udid);
-		if (!flow.ok) throw new Error(`the flow failed: ${flow.detail || "see argent flow run output"}`);
-		await Bun.sleep(tail);
-	} finally {
-		// Always stop: a recording left running holds the device's single slot
-		// and every later demo fails on "a recording is already running".
-		const recording = await stopRecording(udid);
-		raw = recording.video;
-		warning = recording.warning;
-	}
-
-	// Outside the `finally` on purpose. A throw in there replaces whatever the
-	// try block was throwing, so a failed flow got reported as an untrustworthy
-	// recording and the operator never saw the message that would have helped.
-	if (warning) throw new Error(`the recording is not trustworthy: ${warning}`);
-
-	await encodeVideo(raw, target.video, target.crop, target.size);
-	await extractPoster(target.video, target.poster);
-	await rm(raw, { force: true });
-
-	return { ...target.size, durationMs: await probeDurationMs(target.video) };
-}
-
-/** Device pixel size, read off the first screenshot rather than hardcoded per model. */
-async function readGeometry(udid: string): Promise<{ width: number; height: number }> {
-	const probe = join(MEDIA_DIR, ".probe.png");
-	await mkdir(dirname(probe), { recursive: true });
-	await screenshot(udid, probe);
-
-	const result =
-		await Bun.$`ffprobe -v error -select_streams v:0 -show_entries stream=width,height -of csv=p=0 ${probe}`.quiet();
-	await rm(probe, { force: true });
-
-	const [width, height] = result.stdout.toString().trim().split(",").map(Number);
-	if (!width || !height) throw new Error("could not read the device's screen size from a screenshot");
-	return { height, width };
+async function readFragment(id: string): Promise<Fragment | undefined> {
+	const file = Bun.file(fragmentPath(id));
+	if (!(await file.exists())) return undefined;
+	return (await file.json()) as Fragment;
 }
 
 /**
@@ -475,198 +322,114 @@ function mb(bytes: number): string {
 	return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
 }
 
-/**
- * Reloads the JS in the running process, and on a dev client points it at this
- * run's bundler on the way. Reports whether the app came back.
- *
- * On a dev client the deep link does both and skips the launcher — see
- * `devClientUrl`. A Release build has no bundler and nothing to reload: its
- * next preview deep link replaces whatever is on screen, which is all the
- * refresh a capture needs.
- */
-async function refresh(udid: string, options: Options): Promise<boolean> {
-	if (!options.dev) return true;
-	await openUrl(udid, devClientUrl(SCHEME, options.port));
-	return await awaitFreshHome(udid);
-}
-
-/**
- * Terminates and relaunches — only for what a refresh cannot fix: a process
- * with no devtools bridge, or one whose accessibility tree a typing flow broke.
- *
- * On a dev client the floating dev-menu button is switched off first, because
- * that preference is read at launch, and the relaunched app is then sent to
- * the bundler rather than left on whatever the launcher opens by default.
- */
-async function restart(udid: string, options: Options): Promise<boolean> {
-	if (options.dev) await hideDevMenuButton(udid, BUNDLE_ID);
-	await restartApp(udid, BUNDLE_ID);
-	return options.dev ? await refresh(udid, options) : await awaitFreshHome(udid);
-}
-
-/**
- * A loaded app on a live devtools bridge, by the cheapest route that gets one.
- *
- * A process whose bridge is already connected is refreshed, not restarted: the
- * bridge is the only thing a restart buys, and it is injected once per
- * process. A stale or absent process is relaunched — as is one whose refresh
- * did not come back, since a dev client can answer a reload with "There was a
- * problem loading the project" and a relaunch clears it.
- */
-async function ready(udid: string, options: Options): Promise<void> {
-	const live = await devtoolsConnected(udid, BUNDLE_ID, 0);
-	if (live && (await refresh(udid, options))) return;
-	if (await restart(udid, options)) return;
-	fail(
-		"the app never reached its home screen.\n" +
-			(options.dev
-				? `  Check that the dev client can load http://localhost:${options.port} — open it by hand once.`
-				: "  Check that a Release build is installed on this simulator.")
-	);
+function selected(all: readonly PlannedDemo[], only: readonly string[]): PlannedDemo[] {
+	if (only.length === 0) return [...all];
+	return all.filter((demo) => only.some((wanted) => demo.id === wanted || demo.id.startsWith(`${wanted}/`)));
 }
 
 async function main(): Promise<void> {
 	const options = parseArgs(process.argv.slice(2));
 	const all = await planDemos();
-	const demos = options.only
-		? all.filter((demo) => demo.id === options.only || demo.id.startsWith(`${options.only}/`))
-		: all;
+	const demos = selected(all, options.only);
 
 	if (demos.length === 0) {
-		fail(options.only ? `No captured demos match "${options.only}".` : "No demos opt into capture yet.");
-	}
-
-	await preflight(options, all);
-
-	const device = await resolveDevice(options);
-	const deviceLabel = `${device.name} · ${device.runtime.split(".").pop()?.replace("iOS-", "iOS ").replace("-", ".")}`;
-	console.log(`\n  ${device.name} (${device.udid})`);
-	console.log(`  ${demos.length} demos × ${options.themes.length} themes\n`);
-
-	await ready(device.udid, options);
-
-	if (demos.some((demo) => demo.flowPath) && !(await devtoolsConnected(device.udid, BUNDLE_ID))) {
 		fail(
-			"argent's native-devtools bridge is not connected, so a flow's `id:` selectors\n" +
-				"  cannot resolve and every animated demo would record a still screen.\n" +
-				`  Check: argent run native-devtools-status --udid ${device.udid} --bundleId ${BUNDLE_ID}`
+			options.only.length > 0
+				? `No captured demos match "${options.only.join(", ")}".`
+				: "No demos opt into capture yet."
 		);
 	}
 
-	const geometry = await readGeometry(device.udid);
+	await preflight(all);
 
 	const previous = await readExistingManifest();
-	const entries: PreviewEntryJson[] = [];
-	const failures: { id: string; reason: string }[] = [];
-	const capturedAt = new Date().toISOString();
-
+	const stale: PlannedDemo[] = [];
 	for (const demo of demos) {
-		const stale = previous.get(demo.id);
-		const unchanged = stale?.sourceHash === demo.sourceHash;
-		const filesPresent =
-			unchanged &&
-			(
-				await Promise.all(
-					options.themes.flatMap((theme) => {
-						const paths = mediaPaths(demo, theme, demo.sourceHash);
-						return demo.flowPath ? [exists(paths.poster), exists(paths.video)] : [exists(paths.poster)];
-					})
-				)
-			).every(Boolean);
+		const entry = previous.get(demo.id);
+		const unchanged = entry?.sourceHash === demo.sourceHash && (await filesPresent(demo));
+		if (!options.force && unchanged) continue;
+		stale.push(demo);
+	}
 
-		if (!options.force && unchanged && filesPresent && stale) {
-			console.log(`  · ${demo.id} (unchanged)`);
-			entries.push(stale);
-			continue;
+	const components = [...new Set(stale.map((demo) => demo.component))];
+	console.log(`\n  ${demos.length} demos selected · ${stale.length} to capture across ${components.length} specs`);
+	for (const demo of demos) {
+		if (!stale.includes(demo)) console.log(`  · ${demo.id} (unchanged)`);
+	}
+
+	const failures: { id: string; reason: string }[] = [];
+	const entries = new Map<string, PreviewEntryJson>();
+
+	if (stale.length > 0) {
+		await writePlan(stale);
+		const argv = wardenArgv(components, options);
+		if (options.dryRun) {
+			console.log(`\n  would run: ${argv.join(" ")}`);
+			console.log(`  plan written to ${relative(PLAYGROUND, PLAN_PATH)}:`);
+			for (const demo of stale) console.log(`    ${demo.animated ? "▶" : "▪"} ${demo.id}`);
+			return;
 		}
 
-		try {
-			let captured: Captured = { height: 0, width: 0 };
-			for (const theme of options.themes) {
-				captured = await captureDemo(device.udid, demo, theme, geometry);
-				// Only a flow that typed needs a fresh process — see `flowTypes`.
-				// Any other leaves the app as it found it, and the next deep
-				// link navigates the same process.
-				if (demo.types) await restart(device.udid, options);
+		const exit = await runWarden(argv);
+		if (exit !== 0) console.log(`\n  warden e2e exited ${exit}; assembling what was captured.`);
+
+		for (const demo of stale) {
+			const fragment = await readFragment(demo.id);
+			if (fragment && fragment.sourceHash === demo.sourceHash) {
+				entries.set(demo.id, fragment);
+				continue;
 			}
-
-			const animated = demo.flowPath !== undefined;
-			const media = (theme: Theme) => {
-				const paths = mediaPaths(demo, theme, demo.sourceHash);
-				return animated ? { poster: paths.posterUrl, video: paths.videoUrl } : { poster: paths.posterUrl };
-			};
-
-			entries.push({
-				animated,
-				capturedAt,
-				component: demo.component,
-				dark: media("dark"),
-				demo: demo.demo,
-				description: demo.source.meta.caption,
-				device: deviceLabel,
-				durationMs: captured.durationMs,
-				frame: demo.frame,
-				height: captured.height,
-				id: demo.id,
-				light: media("light"),
-				sourceHash: demo.sourceHash,
-				title: demo.source.meta.title,
-				width: captured.width,
-			});
-
-			const seconds = captured.durationMs ? ` · ${(captured.durationMs / 1000).toFixed(1)}s` : "";
-			console.log(`  ✓ ${demo.id}  ${captured.width}×${captured.height}${seconds}`);
-		} catch (error) {
 			// A flake must not delete working media, so the previous entry stands
 			// and the run reports the failure instead of publishing a gap.
-			const reason = error instanceof Error ? error.message : String(error);
-			failures.push({ id: demo.id, reason });
-			if (stale) entries.push(stale);
-			console.log(`  ✗ ${demo.id}\n      ${reason}`);
+			failures.push({
+				id: demo.id,
+				reason: fragment ? "the fragment is from another hash" : "no fragment was written",
+			});
+			const old = previous.get(demo.id);
+			if (old) entries.set(demo.id, old);
 		}
 	}
 
-	// Only a full run knows the complete set, so a filtered one leaves the rest
-	// of the manifest and the media alone.
-	if (!options.only) {
-		for (const [id, entry] of previous) {
-			if (!entries.some((existing) => existing.id === id) && !demos.some((demo) => demo.id === id)) continue;
-			if (!entries.some((existing) => existing.id === id)) entries.push(entry);
-		}
-	} else {
-		for (const [id, entry] of previous) {
-			if (!entries.some((existing) => existing.id === id)) entries.push(entry);
-		}
+	// Everything that was not captured this run keeps its entry: the unchanged
+	// selection, and — only a full run knows the complete set — on a filtered
+	// run, every demo outside the selection as well.
+	for (const demo of all) {
+		if (entries.has(demo.id)) continue;
+		const entry = previous.get(demo.id);
+		if (entry && (demos.includes(demo) || options.only.length > 0)) entries.set(demo.id, entry);
 	}
 
-	entries.sort((a, b) => a.id.localeCompare(b.id));
+	const sorted = [...entries.values()].sort((a, b) => a.id.localeCompare(b.id));
 
 	const byComponent = new Map<string, string[]>();
 	for (const demo of all) {
 		const ids = byComponent.get(demo.component) ?? [];
-		if (entries.some((entry) => entry.id === demo.id)) ids.push(demo.id);
+		if (entries.has(demo.id)) ids.push(demo.id);
 		byComponent.set(demo.component, ids);
 	}
 
 	const heroes = new Map<string, string>();
 	for (const demo of all) {
-		if (demo.hero && entries.some((entry) => entry.id === demo.id)) heroes.set(demo.component, demo.id);
+		if (demo.hero && entries.has(demo.id)) heroes.set(demo.component, demo.id);
 	}
 
 	await mkdir(dirname(MANIFEST_PATH), { recursive: true });
-	await Bun.write(MANIFEST_PATH, renderManifest(entries, byComponent, heroes));
+	await Bun.write(MANIFEST_PATH, renderManifest(sorted, byComponent, heroes));
 
-	if (options.prune && !options.only) {
-		const removed = await prune(new Set(entries.map((entry) => entry.id)));
+	if (options.prune && options.only.length === 0) {
+		const removed = await prune(new Set(entries.keys()));
 		if (removed > 0) console.log(`\n  pruned ${removed} demo${removed === 1 ? "" : "s"} whose source is gone`);
 	}
 
 	const { bytes, largest } = await directorySize(MEDIA_DIR);
-	console.log(`\n  ${entries.length} entries · ${mb(bytes)}`);
+	console.log(`\n  ${sorted.length} entries · ${mb(bytes)}`);
 
 	if (failures.length > 0) {
 		console.error(`\n  ${failures.length} demo${failures.length === 1 ? "" : "s"} failed:`);
-		for (const failure of failures) console.error(`    ${failure.id}`);
+		for (const failure of failures) console.error(`    ${failure.id}  (${failure.reason})`);
+		console.error(
+			`\n  Evidence: ${relative(PLAYGROUND, join(dirname(PLAN_PATH), "report.json"))}, then the batch dir it names.`
+		);
 		process.exit(1);
 	}
 

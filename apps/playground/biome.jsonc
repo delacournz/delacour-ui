@@ -6,7 +6,7 @@
 		// Both are generated. `registry.ts` is written by `bun run gen-demos`, and
 		// letting the formatter reflow it means the file on disk stops matching what
 		// the generator produces — which `demos.test.ts` reads as a stale registry.
-		"includes": ["src/**/*", "!src/uniwind-types.d.ts", "!src/demos/registry.ts"]
+		"includes": ["src/**/*", "e2e/**/*", "warden.config.ts", "!src/uniwind-types.d.ts", "!src/demos/registry.ts"]
 	},
 	"css": {
 		"parser": { "tailwindDirectives": true }

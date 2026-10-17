@@ -20,7 +20,7 @@ export const meta: DemoMeta = {
 	title: "A readout on a plain view",
 	caption:
 		"Every field on the scrub is a number, so the pill above the chart is an ordinary `Animated.View`. `useAnimatedStyle` moves it with `snappedX` on the UI thread, and the text crosses to JavaScript only when the nearest datum's `index` changes.",
-	capture: { align: "stretch", flow: "charts/cursor/readout" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

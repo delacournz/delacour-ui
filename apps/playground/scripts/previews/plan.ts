@@ -8,12 +8,10 @@
 import { createHash } from "node:crypto";
 import { readdir } from "node:fs/promises";
 import { join, relative } from "node:path";
-import { DEMOS_DIR, DEVICE_MAX_EDGE, FLOWS_DIR, MAX_EDGE } from "./config";
+import { DEMOS_DIR, DEVICE_MAX_EDGE, type DemoFrame, MAX_EDGE } from "./config";
 import { type DemoSource, readDemoSource, readGroupOrder } from "./demo-source";
 import { VIDEO_ENCODING } from "./media";
-
-/** Mirrors `DemoFrame` in `src/demos/types.ts`, which imports React and cannot be read here. */
-export type DemoFrame = "stage" | "device";
+import { type CaptureBlock, readSpecBlocks } from "./spec-source";
 
 export type PlannedDemo = {
 	id: string;
@@ -22,9 +20,10 @@ export type PlannedDemo = {
 	path: string;
 	source: DemoSource;
 	frame: DemoFrame;
-	flowPath?: string;
-	/** Whether the flow types — the one interaction that costs a restart. See `flowTypes`. */
-	types: boolean;
+	/** Whether the demo is a clip: `meta.capture.flow` is set, and its spec block has a body. */
+	animated: boolean;
+	/** The demo's `capture()` block in its component spec, if the spec has one. */
+	block?: CaptureBlock;
 	/** Still frames held before the flow, and after it. Defaults in `DemoCapture`. */
 	leadMs: number;
 	tailMs: number;
@@ -42,20 +41,8 @@ export type PlannedDemo = {
  * `screen/navbar` in `heroPreviews` where the components index looks up plain
  * `screen`.
  */
-function componentOf(id: string): string {
+export function componentOf(id: string): string {
 	return id.split("/")[0] as string;
-}
-
-/**
- * Whether a flow drives the software keyboard.
- *
- * A flow that typed leaves the app's accessibility tree unreadable
- * (`ax-service` times out), and only a fresh process reads again. Every other
- * flow leaves the app as it found it, so this is what decides between a
- * restart and carrying straight on to the next deep link.
- */
-export function flowTypes(flowText: string): boolean {
-	return /^\s*-\s*tool:\s*keyboard\s*$/m.test(flowText);
 }
 
 async function walk(dir: string): Promise<string[]> {
@@ -71,7 +58,9 @@ async function walk(dir: string): Promise<string[]> {
 /**
  * Everything a capture depends on, hashed.
  *
- * Includes the encode settings as well as the source: bumping an edge has to
+ * The demo's source and meta, the text of its `capture()` block in the
+ * component spec — a still's bare `capture(id)` included, so promoting one to
+ * a clip re-captures it — and the encode settings. Bumping an edge has to
  * invalidate every entry it governs, or half the media would silently stay at
  * the old size.
  *
@@ -82,12 +71,12 @@ async function walk(dir: string): Promise<string[]> {
  * whole tree for a change that reaches six files. The video encoding is
  * hashed for the same reason, and only into a demo that has a flow.
  */
-function hashOf(source: DemoSource, flow: string | null, frame: DemoFrame): string {
+export function hashOf(source: DemoSource, block: string | null, animated: boolean, frame: DemoFrame): string {
 	return createHash("sha256")
 		.update(source.code)
 		.update(JSON.stringify(source.meta))
-		.update(flow ?? "")
-		.update(flow === null ? "" : `video:${VIDEO_ENCODING}`)
+		.update(block ?? "")
+		.update(animated ? `video:${VIDEO_ENCODING}` : "")
 		.update(`edge:${frame === "device" ? DEVICE_MAX_EDGE : MAX_EDGE}`)
 		.digest("hex")
 		.slice(0, 12);
@@ -106,23 +95,24 @@ export async function planDemos(only?: string): Promise<PlannedDemo[]> {
 		if (!source.meta.capture) continue;
 
 		const capture = source.meta.capture;
+		const component = componentOf(id);
 		const frame: DemoFrame = capture.frame ?? "stage";
-		const flowPath = capture.flow ? join(FLOWS_DIR, `${capture.flow}.yaml`) : undefined;
-		const flowText = flowPath && (await Bun.file(flowPath).exists()) ? await Bun.file(flowPath).text() : null;
+		const block = (await readSpecBlocks(component)).get(id);
+		const animated = capture.flow === true && block?.animated === true;
 
 		planned.push({
-			component: componentOf(id),
-			demo: id.slice(componentOf(id).length + 1),
-			flowPath,
+			animated,
+			block,
+			component,
+			demo: id.slice(component.length + 1),
 			frame,
-			leadMs: capture.leadMs ?? 400,
-			tailMs: capture.tailMs ?? 800,
 			hero: capture.hero === true,
 			id,
+			leadMs: capture.leadMs ?? 400,
 			path,
 			source,
-			sourceHash: hashOf(source, flowText, frame),
-			types: flowText !== null && flowTypes(flowText),
+			sourceHash: hashOf(source, block?.text ?? null, animated, frame),
+			tailMs: capture.tailMs ?? 800,
 		});
 	}
 

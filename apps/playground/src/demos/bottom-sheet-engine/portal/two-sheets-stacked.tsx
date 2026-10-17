@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Two sheets, stacked",
 	caption:
 		'The second sheet is opened from inside the first and lands on top of it: the registry stamps each open with a larger `zIndex`. The third opens with `stackBehavior="replace"`, which closes every other sheet in the host first. `Dismiss all` is `useBottomSheetRegistry()`, no ref in hand.',
-	capture: { flow: "bottom-sheet-engine/portal/two-sheets-stacked", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const FIRST = ["40%"] as const;

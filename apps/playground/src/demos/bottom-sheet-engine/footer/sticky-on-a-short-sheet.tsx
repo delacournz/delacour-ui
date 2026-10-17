@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Sticky, on a short sheet",
 	caption:
 		"A sheet sized to its content with a sticky footer and no keyboard in sight. The footer's height is part of the dynamic snap point — handle, content, footer, then the safe-area band once — so the buttons sit fully above the home indicator rather than on it, and the content's last line clears them.",
-	capture: { flow: "bottom-sheet-engine/footer/sticky-on-a-short-sheet", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const styles = StyleSheet.create({

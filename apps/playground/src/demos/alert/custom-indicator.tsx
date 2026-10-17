@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Custom indicator",
 	caption:
 		"Children replace the status glyph and inherit its size and colour. Omit `Alert.Indicator` for a text-only alert.",
-	capture: { align: "stretch", flow: "alert/custom-indicator" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

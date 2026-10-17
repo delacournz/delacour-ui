@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Kept open",
 	caption:
 		"`isKeptOpen` leaves the row open after the action runs, so a toggle can be flipped and checked in one place. Tap the row to close it.",
-	capture: { align: "stretch", flow: "swipe/kept-open" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

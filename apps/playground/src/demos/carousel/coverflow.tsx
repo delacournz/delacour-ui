@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"The coverflow variant turns, shrinks and fades each slide by its distance from the centre. Under reduce motion it draws as a plain track.",
-	capture: { align: "stretch", flow: "carousel/coverflow" },
+	capture: { align: "stretch", flow: true },
 };
 
 const ALBUMS = ["vinyl", "tape", "studio", "stage", "neon", "dusk", "echo"] as const;

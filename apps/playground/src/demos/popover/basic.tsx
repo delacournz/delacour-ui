@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Basic",
 	caption: "Tap the button. The panel opens below it, pointing back at it; tap anywhere outside to close it.",
-	capture: { flow: "popover/basic", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 export function Demo(): ReactElement {

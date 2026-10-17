@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`showCount` with `maxLength` puts a count under the trailing edge. It turns destructive the moment typing stops working, at the limit rather than past it.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "textarea/character-count", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const LIMIT = 80;

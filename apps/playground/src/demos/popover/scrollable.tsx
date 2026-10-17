@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Scrollable",
 	caption: "`maxHeight` caps the panel and `isScrollable` scrolls what does not fit. The arrow stays put.",
-	capture: { flow: "popover/scrollable", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TIMEZONES = [

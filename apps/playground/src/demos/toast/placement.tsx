@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`placement` picks the edge. Top toasts sit under the status bar; bottom ones above the home indicator, and above the keyboard when it is open.",
 	align: "center",
-	capture: { flow: "toast/placement", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const LABELS: Record<ToastPlacement, string> = {

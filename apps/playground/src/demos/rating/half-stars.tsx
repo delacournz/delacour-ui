@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"`step={0.5}` splits every star at its centre: the left half of a star is the half, the right half the whole.",
-	capture: { flow: "rating/half-stars" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

@@ -76,10 +76,11 @@ the unit is the whole file rather than a bare JSX fragment.
 and nothing else. The gallery supplies the frame.
 
 **`testID` anything a flow will touch.** Interaction for an animated demo lives
-in an argent flow that targets elements by id, and a flow that cannot find its
-target still reports success — so a missing `testID` produces a video of a
-motionless screen rather than an error. See
-[`.argent/AGENTS.md`](../../../../.argent/AGENTS.md).
+in its component's spec, `apps/playground/e2e/previews/<component>.e2e.ts`,
+which targets elements by id. A tap on an id that is not on screen fails the
+spec; a `testID` on a wrapper rather than the part that answers the touch
+passes and produces a video of a motionless screen. See
+[`../../AGENTS.md`](../../AGENTS.md#capturing-preview-media).
 
 **Keep the `.map()` over the library's exported tuples.** `SWITCH_COLORS.map(…)`
 is why a colour added to the library shows up here with no edit — in the gallery
@@ -156,11 +157,13 @@ it for a demo that *is* a screen, and for anything that mounts into a portal:
 `BottomSheet` renders outside the measured stage entirely, so cropping to those
 bounds would frame an empty box.
 
-Adding `flow` makes the demo animated — it is recorded and published as an MP4
-with a poster instead of a still.
+`flow: true` makes the demo animated — it is recorded and published as an MP4
+with a poster instead of a still, and its `capture()` block in the component's
+spec carries the body that runs while the screen records. `demos.test.ts` holds
+the two together.
 
 ## Related
 
 - [`../../AGENTS.md`](../../AGENTS.md) — the playground, the preview route and the capture script
-- [`.argent/AGENTS.md`](../../../../.argent/AGENTS.md) — the interaction flows
+- [`../../e2e/previews/`](../../e2e/previews/) — the specs, one per component, that hold the interactions
 - [`packages/react-native-ui/AGENTS.md`](../../../../packages/react-native-ui/AGENTS.md) — the components themselves

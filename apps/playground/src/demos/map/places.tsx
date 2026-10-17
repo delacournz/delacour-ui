@@ -6,7 +6,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Places",
-	capture: { align: "stretch", flow: "map/places", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 	caption:
 		"Markers are React views pinned to a coordinate. Each one anchors on its pin's tip, so the label under it moves nothing. Tap one to select it: the selected pin steps up a size and its label comes forward.",
 };

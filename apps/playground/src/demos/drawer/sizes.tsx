@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A fraction of the window with a cap: `sm` 62% to 280pt, `md` 78% to 320pt, `lg` 88% to 400pt, `full` 94% with no cap — so a phone always keeps a strip of the app to tap away on.",
 	align: "center",
-	capture: { flow: "drawer/sizes", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

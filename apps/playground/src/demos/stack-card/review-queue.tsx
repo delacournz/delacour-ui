@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 	title: "Review queue",
 	caption:
 		"Throw the top card right to keep it and left to skip it, or answer with the buttons under the pile. The stamps fade in as the card leans their way, and the card behind is already in place when the top one leaves.",
-	capture: { align: "stretch", flow: "stack-card/review-queue", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const PEOPLE = [

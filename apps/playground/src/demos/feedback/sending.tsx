@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 	note: "Turn on the failure switch and send: the error shows in the well and the draft is still there to retry.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "feedback/sending", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const SEND_MS = 1500;

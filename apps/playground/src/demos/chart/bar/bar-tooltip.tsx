@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Hold and drag. Over bars, `Chart.Tooltip.X` is a band one step wide rather than a rule, so it picks out the whole column the readout names.",
 	note: "The band always snaps: one that glided between columns would highlight half of two bars. Set `band={false}` to get the hairline back.",
-	capture: { align: "stretch", flow: "chart/bar/bar-tooltip" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

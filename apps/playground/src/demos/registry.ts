@@ -514,6 +514,15 @@ import * as demo_progress_formatting from "./progress/formatting";
 import * as demo_progress_indeterminate from "./progress/indeterminate";
 import * as demo_progress_sizes from "./progress/sizes";
 import * as demo_progress_upload from "./progress/upload";
+import * as demo_qr_code_anatomy from "./qr-code/anatomy";
+import * as demo_qr_code_colours from "./qr-code/colours";
+import * as demo_qr_code_dark_theme from "./qr-code/dark-theme";
+import * as demo_qr_code_error_correction from "./qr-code/error-correction";
+import * as demo_qr_code_module_styles from "./qr-code/module-styles";
+import * as demo_qr_code_sizes from "./qr-code/sizes";
+import * as demo_qr_code_too_long from "./qr-code/too-long";
+import * as demo_qr_code_wifi_share from "./qr-code/wifi-share";
+import * as demo_qr_code_with_logo from "./qr-code/with-logo";
 import * as demo_questionnaire_basic from "./questionnaire/basic";
 import * as demo_questionnaire_conditional from "./questionnaire/conditional";
 import * as demo_questionnaire_controlled from "./questionnaire/controlled";
@@ -1252,6 +1261,15 @@ export const DEMOS = {
 	"progress/indeterminate": demo_progress_indeterminate,
 	"progress/sizes": demo_progress_sizes,
 	"progress/upload": demo_progress_upload,
+	"qr-code/anatomy": demo_qr_code_anatomy,
+	"qr-code/colours": demo_qr_code_colours,
+	"qr-code/dark-theme": demo_qr_code_dark_theme,
+	"qr-code/error-correction": demo_qr_code_error_correction,
+	"qr-code/module-styles": demo_qr_code_module_styles,
+	"qr-code/sizes": demo_qr_code_sizes,
+	"qr-code/too-long": demo_qr_code_too_long,
+	"qr-code/wifi-share": demo_qr_code_wifi_share,
+	"qr-code/with-logo": demo_qr_code_with_logo,
 	"questionnaire/basic": demo_questionnaire_basic,
 	"questionnaire/conditional": demo_questionnaire_conditional,
 	"questionnaire/controlled": demo_questionnaire_controlled,

@@ -427,6 +427,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A guided form, one question at a time: single and multiple choice, text, rating, scale and yes/no, with branching, skips, validation and progress.",
 		categories: ["forms"],
 	},
+	"qr-code": {
+		title: "QRCode",
+		description: "A string a camera can read, drawn as one vector path, with an optional centre logo.",
+		categories: ["media"],
+	},
 	radio: {
 		title: "Radio",
 		description: "A radio and the group that owns which one is selected.",

@@ -1,0 +1,136 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "qr-code",
+	"type": "registry:ui",
+	"title": "QRCode",
+	"description": "A string a camera can read, drawn as one vector path, with an optional centre logo.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"cn",
+		"tv",
+		"use-theme-color"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/AGENTS.md",
+			"target": "qr-code/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/qr-code",
+					"to": "@registry/ui/qr-code"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/index.ts",
+			"target": "qr-code/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code-logo.tsx",
+			"target": "qr-code/qr-code-logo.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.constants.ts",
+			"target": "qr-code/qr-code.constants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.context.tsx",
+			"target": "qr-code/qr-code.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.encode.ts",
+			"target": "qr-code/qr-code.encode.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.format.ts",
+			"target": "qr-code/qr-code.format.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.gf.ts",
+			"target": "qr-code/qr-code.gf.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.logo.ts",
+			"target": "qr-code/qr-code.logo.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.mask.ts",
+			"target": "qr-code/qr-code.mask.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.matrix.ts",
+			"target": "qr-code/qr-code.matrix.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.path.ts",
+			"target": "qr-code/qr-code.path.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.tables.ts",
+			"target": "qr-code/qr-code.tables.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.tsx",
+			"target": "qr-code/qr-code.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.types.ts",
+			"target": "qr-code/qr-code.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.variants.ts",
+			"target": "qr-code/qr-code.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.warn.ts",
+			"target": "qr-code/qr-code.warn.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/use-qr-code.ts",
+			"target": "qr-code/use-qr-code.ts",
+			"namespace": "ui"
+		}
+	]
+}

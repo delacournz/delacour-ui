@@ -314,6 +314,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "Sections that expand and collapse, animated from a measured height.",
 	},
 	{
+		slug: "qr-code",
+		name: "QRCode",
+		group: "Media",
+		blurb: "A string a camera can read, drawn as one vector path, with an optional logo in the middle.",
+	},
+	{
 		slug: "message-scroller",
 		name: "MessageScroller",
 		group: "Media",

@@ -25,7 +25,7 @@ keeps a type with one consumer in that consumer's file.
 
 ## Design
 
-- **Variants**: `primary`, `secondary`. **Sizes**: `sm`, `md`, `lg` — `Input`'s own axes, typed from
+- **Variants**: `primary`, `secondary`, `etched` (Input's fill and border, without its shadow). **Sizes**: `sm`, `md`, `lg` — `Input`'s own axes, typed from
   `../input/input.variants`, so a code field sits level with a text field beside it.
 - **One `TextInput`, drawn as cells — never an input per cell.** Per-cell inputs have to hand focus
   along on every keystroke and back on every backspace, and they split a paste or an autofill
@@ -71,7 +71,7 @@ keeps a type with one consumer in that consumer's file.
   cell stays `border-destructive` — `Input`'s rule, for `Input`'s reason: a field that lost its error
   colour the moment it was tapped would drop the signal exactly while the code is being retyped. The
   caret goes destructive too.
-- **A cell is `Input`'s box cut square.** Same `border-input bg-card` / `bg-secondary` per variant,
+- **A cell is `Input`'s box cut square.** Same `border-input bg-card` / `bg-secondary` / etched's card fill per variant,
   same `--spacing-input-*` edge, same `--text-input-*` character, same corner ramp (`rounded-md` at
   `sm`, `rounded-lg` above). The variants test compares the fill and border against `inputVariants`
   itself, so retuning the field drags the cells with it.

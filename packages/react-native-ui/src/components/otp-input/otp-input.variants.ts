@@ -1,8 +1,21 @@
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
-import type { InputSize, InputVariant } from "../input/input.variants";
+import { type InputSize, type InputVariant, inputVariants } from "../input/input.variants";
 
 export const OTP_DEFAULT_SIZE: InputSize = "md";
+/**
+ * The fill and border utilities Input draws for a variant, read from
+ * `inputVariants` itself so an `etched` (or any later) variant follows Input.
+ * Its shadow is left out: a cell is a small square and the test keeps `dark:` out of it.
+ */
+function inputSurface(variant: InputVariant): string {
+	return inputVariants({ variant })
+		.root()
+		.split(/\s+/)
+		.filter((cls) => /^(bg|border)-/.test(cls))
+		.join(" ");
+}
+
 export const OTP_DEFAULT_VARIANT: InputVariant = "primary";
 
 /**
@@ -59,6 +72,7 @@ export const otpInputVariants = tv({
 		variant: {
 			primary: { slot: "border-input bg-card" },
 			secondary: { slot: "border-transparent bg-secondary" },
+			etched: { slot: inputSurface("etched") },
 		},
 		size: {
 			sm: {

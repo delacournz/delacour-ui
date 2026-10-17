@@ -1,0 +1,16 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on tour/placement and has settled — three stacked rows labelled auto, top and
+  bottom over a "Start tour" button, the tour closed. The capture script navigates there before running this.
+steps:
+  - echo: auto puts the card below the first row
+  - tap: { id: tour-placement-start }
+  - await: { visible: { id: tour-placement-next } }
+  - wait: 1100
+  - echo: top moves it above the second, bottom back below the third
+  - tap: { id: tour-placement-next }
+  - wait: 1100
+  - tap: { id: tour-placement-next }
+  - wait: 1100
+  - echo: Done closes it, so the clip loops back to the closed screen
+  - tap: { id: tour-placement-next }
+  - await: { hidden: { id: tour-placement-card } }

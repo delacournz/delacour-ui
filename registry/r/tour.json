@@ -1,0 +1,139 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "tour",
+	"type": "registry:ui",
+	"title": "Tour",
+	"description": "A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"button",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-svg"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/tour/AGENTS.md",
+			"target": "tour/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/tour",
+					"to": "@registry/ui/tour"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/index.ts",
+			"target": "tour/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour-card.tsx",
+			"target": "tour/tour-card.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour-mask.tsx",
+			"target": "tour/tour-mask.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour-overlay.tsx",
+			"target": "tour/tour-overlay.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour-scrim.tsx",
+			"target": "tour/tour-scrim.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour-step.tsx",
+			"target": "tour/tour-step.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour.context.tsx",
+			"target": "tour/tour.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour.tsx",
+			"target": "tour/tour.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour.types.ts",
+			"target": "tour/tour.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/tour/tour.variants.ts",
+			"target": "tour/tour.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		}
+	]
+}

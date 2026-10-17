@@ -795,6 +795,12 @@ import * as demo_tooltip_persistent from "./tooltip/persistent";
 import * as demo_tooltip_placements from "./tooltip/placements";
 import * as demo_tooltip_press from "./tooltip/press";
 import * as demo_tooltip_surface from "./tooltip/surface";
+import * as demo_tour_basic from "./tour/basic";
+import * as demo_tour_circle_shape from "./tour/circle-shape";
+import * as demo_tour_custom_labels from "./tour/custom-labels";
+import * as demo_tour_interactive from "./tour/interactive";
+import * as demo_tour_placement from "./tour/placement";
+import * as demo_tour_scroll_into_view from "./tour/scroll-into-view";
 import type { DemoModule } from "./types";
 
 /** Every demo, keyed by the id that is also its deep link and its media path. */
@@ -1591,6 +1597,12 @@ export const DEMOS = {
 	"tooltip/placements": demo_tooltip_placements,
 	"tooltip/press": demo_tooltip_press,
 	"tooltip/surface": demo_tooltip_surface,
+	"tour/basic": demo_tour_basic,
+	"tour/circle-shape": demo_tour_circle_shape,
+	"tour/custom-labels": demo_tour_custom_labels,
+	"tour/interactive": demo_tour_interactive,
+	"tour/placement": demo_tour_placement,
+	"tour/scroll-into-view": demo_tour_scroll_into_view,
 } as const satisfies Record<string, DemoModule>;
 
 export type DemoId = keyof typeof DEMOS;

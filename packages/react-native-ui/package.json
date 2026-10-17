@@ -107,6 +107,7 @@
 		"./sketch": "./src/components/sketch/index.ts",
 		"./slide-button": "./src/components/slide-button/index.ts",
 		"./slider": "./src/components/slider/index.ts",
+		"./sortable": "./src/components/sortable/index.ts",
 		"./spinner": "./src/components/spinner/index.ts",
 		"./split-view": "./src/components/split-view/index.ts",
 		"./splitter": "./src/components/splitter/index.ts",

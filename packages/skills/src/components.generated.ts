@@ -83,6 +83,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "sketch", title: "Sketch", description: "A finger-drawing surface with a pen, eight shapes, an eraser, colours, stroke width and undo, drawn with Skia and exported as SVG or PNG." },
 	{ name: "slide-button", title: "Slide Button", description: "A handle dragged across a rail to confirm an action a tap should not reach." },
 	{ name: "slider", title: "Slider", description: "A value along a track, dragged by a handle that follows the gesture." },
+	{ name: "sortable", title: "Sortable", description: "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions." },
 	{ name: "spinner", title: "Spinner", description: "An animated loading indicator drawn on the icon scale." },
 	{ name: "split-view", title: "SplitView", description: "Two stacked panes with a grip that settles on named heights." },
 	{ name: "splitter", title: "Splitter", description: "Two or more panes divided by draggable handles, sized in percent." },

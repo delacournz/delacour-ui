@@ -89,6 +89,7 @@
 		"drawer",
 		"feedback",
 		"---Navigation---",
+		"sortable",
 		"pagination",
 		"breadcrumb",
 		"steps",

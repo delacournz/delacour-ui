@@ -166,6 +166,7 @@ shares.
 | [Sketch](src/components/sketch/AGENTS.md) | `@delacour/react-native-ui/sketch` | A drawing surface — pen, shapes, eraser, colours, width and undo — on Skia, exported as SVG or PNG |
 | [SlideButton](src/components/slide-button/AGENTS.md) | `@delacour/react-native-ui/slide-button` | A handle dragged across a rail to confirm an action |
 | [Slider](src/components/slider/AGENTS.md) | `@delacour/react-native-ui/slider` | A value, or a range, dragged along a track |
+| [Sortable](src/components/sortable/AGENTS.md) | `@delacour/react-native-ui/sortable` | A vertical list reordered by dragging, on the UI thread |
 | [Spinner](src/components/spinner/AGENTS.md) | `@delacour/react-native-ui/spinner` | A rotating glyph, sharing the icon scale |
 | [SplitView](src/components/split-view/AGENTS.md) | `@delacour/react-native-ui/split-view` | Two stacked panes with a drag row that settles on named snap points |
 | [Splitter](src/components/splitter/AGENTS.md) | `@delacour/react-native-ui/splitter` | Two or more panes divided by draggable, adjustable handles, sized in percent |

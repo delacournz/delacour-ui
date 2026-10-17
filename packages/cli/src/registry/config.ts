@@ -392,6 +392,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "An on/off control whose thumb can be dragged as well as tapped.",
 		categories: ["forms"],
 	},
+	table: {
+		title: "Table",
+		description:
+			"Rows and columns of short values lined up by one set of column rules, with sortable heads, selectable rows, a horizontal scroll for wide tables and a card frame.",
+		categories: ["display"],
+	},
 	tabs: {
 		title: "Tabs",
 		description: "A swipeable pager with an indicator measured against the active tab.",

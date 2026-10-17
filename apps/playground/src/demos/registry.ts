@@ -464,6 +464,15 @@ import * as demo_switch_disabled_and_invalid from "./switch/disabled-and-invalid
 import * as demo_switch_sizes from "./switch/sizes";
 import * as demo_switch_start_and_end_content from "./switch/start-and-end-content";
 import * as demo_switch_tap_or_drag from "./switch/tap-or-drag";
+import * as demo_table_basic from "./table/basic";
+import * as demo_table_columns from "./table/columns";
+import * as demo_table_empty from "./table/empty";
+import * as demo_table_frame from "./table/frame";
+import * as demo_table_selectable from "./table/selectable";
+import * as demo_table_sortable from "./table/sortable";
+import * as demo_table_striped_small from "./table/striped-small";
+import * as demo_table_virtualised from "./table/virtualised";
+import * as demo_table_wide_scroll from "./table/wide-scroll";
 import * as demo_tabs_composition_a_restyled_indicator_and_a_disabled_tab from "./tabs/composition/a-restyled-indicator-and-a-disabled-tab";
 import * as demo_tabs_composition_a_scroller_inside_a_panel from "./tabs/composition/a-scroller-inside-a-panel";
 import * as demo_tabs_composition_composed_icons_and_a_render_prop from "./tabs/composition/composed-icons-and-a-render-prop";
@@ -977,6 +986,15 @@ export const DEMOS = {
 	"switch/sizes": demo_switch_sizes,
 	"switch/start-and-end-content": demo_switch_start_and_end_content,
 	"switch/tap-or-drag": demo_switch_tap_or_drag,
+	"table/basic": demo_table_basic,
+	"table/columns": demo_table_columns,
+	"table/empty": demo_table_empty,
+	"table/frame": demo_table_frame,
+	"table/selectable": demo_table_selectable,
+	"table/sortable": demo_table_sortable,
+	"table/striped-small": demo_table_striped_small,
+	"table/virtualised": demo_table_virtualised,
+	"table/wide-scroll": demo_table_wide_scroll,
 	"tabs/composition/a-restyled-indicator-and-a-disabled-tab": demo_tabs_composition_a_restyled_indicator_and_a_disabled_tab,
 	"tabs/composition/a-scroller-inside-a-panel": demo_tabs_composition_a_scroller_inside_a_panel,
 	"tabs/composition/composed-icons-and-a-render-prop": demo_tabs_composition_composed_icons_and_a_render_prop,

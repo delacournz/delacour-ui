@@ -2215,6 +2215,54 @@
 			]
 		},
 		{
+			"name": "table",
+			"type": "registry:ui",
+			"title": "Table",
+			"description": "Rows and columns of short values lined up by one set of column rules, with sortable heads, selectable rows, a horizontal scroll for wide tables and a card frame.",
+			"categories": [
+				"display"
+			],
+			"registryDependencies": [
+				"card",
+				"cn",
+				"color",
+				"icon",
+				"icons",
+				"pressable",
+				"surface",
+				"text",
+				"tv",
+				"use-theme-color"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"expo-linear-gradient",
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/table/AGENTS.md",
+				"ui/table/index.ts",
+				"ui/table/table-body.tsx",
+				"ui/table/table-caption.tsx",
+				"ui/table/table-cell.tsx",
+				"ui/table/table-empty.tsx",
+				"ui/table/table-footer.tsx",
+				"ui/table/table-frame.tsx",
+				"ui/table/table-head.tsx",
+				"ui/table/table-header.tsx",
+				"ui/table/table-row.tsx",
+				"ui/table/table-scroll.tsx",
+				"ui/table/table-section.tsx",
+				"ui/table/table.context.tsx",
+				"ui/table/table.tsx",
+				"ui/table/table.types.ts",
+				"ui/table/table.variants.ts"
+			]
+		},
+		{
 			"name": "tabs",
 			"type": "registry:ui",
 			"title": "Tabs",

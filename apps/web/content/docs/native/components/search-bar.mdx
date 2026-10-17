@@ -1,0 +1,222 @@
+---
+title: SearchBar
+description: The query field at the top of a list — clear, Cancel, debounced change reporting and filter tokens.
+icon: Search
+---
+
+<Preview id="search-bar/basic" title={null} />
+
+## Installation
+
+<ComponentInstall name="search-bar" />
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { SearchBar } from "@/components/ui/search-bar";
+import { useState } from "react";
+import { View } from "react-native";
+
+export default function Example() {
+  const [query, setQuery] = useState("");
+
+  return (
+    <View className="flex-1 p-4">
+      <SearchBar onValueChange={setQuery} value={query} />
+    </View>
+  );
+}
+```
+
+## Debounce and submit
+
+`onDebouncedChange` fires `debounce` ms after the last keystroke, at once on the search key, and with `""` at once on clear or Cancel.
+
+<Preview id="search-bar/debounced-filter-list" />
+
+```tsx
+<SearchBar
+  debounce={300}
+  onDebouncedChange={runSearch}
+  onSubmit={runSearch}
+  onValueChange={setQuery}
+  value={query}
+/>
+```
+
+## Cancel modes
+
+`cancel` is `focus` by default; `always` keeps the action on screen and `never` leaves the field the full width.
+
+<Preview id="search-bar/with-cancel" />
+
+```tsx
+<SearchBar cancel="focus" />
+<SearchBar cancel="always" cancelLabel="Done" />
+<SearchBar cancel="never" />
+```
+
+## Custom Cancel
+
+Pass a `SearchBar.Cancel` as the child to change its label, variant or content; the bar still decides when it shows.
+
+```tsx
+<SearchBar cancel="always">
+  <SearchBar.Cancel variant="link">Close</SearchBar.Cancel>
+</SearchBar>
+```
+
+## Loading
+
+`isLoading` swaps the clear button for a spinner and reports the field as busy.
+
+```tsx
+<SearchBar isLoading={isSearching} onValueChange={setQuery} value={query} />
+```
+
+## Tokens
+
+Active filters sit inside the box as chips; Backspace on an empty field removes the last one.
+
+<Preview id="search-bar/loading-and-tokens" />
+
+```tsx
+const [filters, setFilters] = useState([
+  { id: "open", label: "Open", icon: IconTag },
+  { id: "this-week", label: "This week" },
+]);
+
+<SearchBar
+  onTokenRemove={(token) => setFilters((current) => current.filter((entry) => entry.id !== token.id))}
+  tokens={filters}
+/>;
+```
+
+## Results on focus
+
+`onFocusChange` is where a screen swaps its content for results — the bar is a field, not a results surface.
+
+```tsx
+const [isSearching, setSearching] = useState(false);
+
+<View className="flex-1">
+  <SearchBar onFocusChange={setSearching} onValueChange={setQuery} value={query} />
+  {isSearching ? <Results query={query} /> : <Browse />}
+</View>;
+```
+
+## Inside a list header
+
+Render it as the list's header, and pin it with the list's own sticky header index.
+
+```tsx
+<FlatList
+  data={rows}
+  keyboardShouldPersistTaps="handled"
+  ListHeaderComponent={<SearchBar onValueChange={setQuery} value={query} />}
+  renderItem={renderRow}
+  stickyHeaderIndices={[0]}
+/>
+```
+
+## Inside a BottomSheet
+
+Spread `useBottomSheetInput()` across `inputRef`, `onFocus` and `onBlur`, and the sheet lifts for the keyboard.
+
+```tsx
+const sheetInput = useBottomSheetInput();
+
+<SearchBar
+  inputRef={sheetInput.ref}
+  onBlur={sheetInput.onBlur}
+  onFocus={sheetInput.onFocus}
+  onValueChange={setQuery}
+  value={query}
+/>;
+```
+
+## Sizes, shapes and variants
+
+The box is `Input`'s — three sizes and two variants — drawn as a pill or with the field's own corner.
+
+<Preview id="search-bar/sizes-and-shapes" />
+
+```tsx
+<SearchBar size="sm" />
+<SearchBar size="lg" variant="primary" />
+<SearchBar shape="rounded" />
+```
+
+## Accessibility
+
+The field has the `search` role and takes its name from an enclosing `Field.Label`, else the placeholder; clear and Cancel are labelled buttons, and a hidden Cancel is out of the accessibility tree.
+
+```tsx
+<Field>
+  <Field.Label>Search orders</Field.Label>
+  <SearchBar clearAccessibilityLabel="Clear order search" />
+</Field>
+```
+
+## API Reference
+
+### SearchBarProps
+
+Everything `Input` accepts is accepted and reaches the field, except `multiline`; `className` lands on
+the row holding the field and Cancel.
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Controlled text." },
+    defaultValue: { type: "string", description: "Starting text while uncontrolled." },
+    onValueChange: { type: "(value: string) => void", description: "Every keystroke, clear and cancel." },
+    debounce: { type: "number", default: "0", description: "Milliseconds `onDebouncedChange` waits." },
+    onDebouncedChange: {
+      type: "(value: string) => void",
+      description: "The settled text. Immediate on submit, clear and Cancel.",
+    },
+    onSubmit: { type: "(value: string) => void", description: "The search key. Flushes a pending debounce." },
+    onClear: { type: "() => void", description: "The clear button was pressed. Focus stays." },
+    onCancel: { type: "() => void", description: "Cancel was pressed. The keyboard is dismissed." },
+    onFocusChange: { type: "(isFocused: boolean) => void" },
+    cancel: { type: '"never" | "focus" | "always"', default: '"focus"' },
+    cancelLabel: { type: "string", default: '"Cancel"' },
+    variant: { type: '"primary" | "secondary"', default: '"secondary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    shape: { type: '"pill" | "rounded"', default: '"pill"' },
+    isLoading: { type: "boolean", default: "false", description: "A spinner replaces the clear button." },
+    isDisabled: { type: "boolean", description: "Inherited from an enclosing `Field`." },
+    isInvalid: { type: "boolean", description: "Inherited from an enclosing `Field`." },
+    tokens: { type: "readonly SearchBarToken[]", description: "`{ id, label, icon? }`, drawn as chips." },
+    onTokenRemove: { type: "(token: SearchBarToken) => void" },
+    placeholder: { type: "string", default: '"Search"' },
+    clearAccessibilityLabel: { type: "string", default: '"Clear search"' },
+    inputRef: { type: "Ref<TextInput>", description: "The `TextInput` node itself." },
+    ref: { type: "Ref<SearchBarHandle>", description: "`focus()`, `blur()` and `clear()`." },
+    testID: {
+      type: "string",
+      description: "Names the field; clear, Cancel and each token take it as a prefix.",
+    },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "A `SearchBar.Cancel` that replaces the default." },
+  }}
+/>
+
+### SearchBar.Cancel
+
+A ghost `Button` at the field's size that cancels the search after its own `onPress`. Extends `ButtonProps`
+except `size`.
+
+<TypeTable
+  type={{
+    variant: { type: "ButtonVariant", default: '"ghost"' },
+    haptic: { type: "false | HapticFeedback", default: '"selection"' },
+    onPress: { type: "() => void" },
+    children: { type: "ReactNode", description: "Defaults to the bar's `cancelLabel`." },
+  }}
+/>
+
+### useSearchBar
+
+Reads the enclosing bar's `value`, `isFocused`, `isDisabled`, `isLoading`, `size` and `isCancelVisible`,
+and its `clear()` and `cancel()` actions, for a custom child. Throws outside a `<SearchBar>`.

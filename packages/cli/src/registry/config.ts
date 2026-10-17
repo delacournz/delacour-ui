@@ -379,6 +379,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip.",
 		categories: ["controls"],
 	},
+	"search-bar": {
+		title: "Search Bar",
+		description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens.",
+		categories: ["forms"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

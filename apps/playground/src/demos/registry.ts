@@ -446,6 +446,12 @@ import * as demo_screen_a_pushed_screen from "./screen/a-pushed-screen";
 import * as demo_screen_inbox from "./screen/inbox";
 import * as demo_screen_loading_and_error from "./screen/loading-and-error";
 import * as demo_screen_showcase from "./screen/showcase";
+import * as demo_search_bar_basic from "./search-bar/basic";
+import * as demo_search_bar_debounced_filter_list from "./search-bar/debounced-filter-list";
+import * as demo_search_bar_in_sheet from "./search-bar/in-sheet";
+import * as demo_search_bar_loading_and_tokens from "./search-bar/loading-and-tokens";
+import * as demo_search_bar_sizes_and_shapes from "./search-bar/sizes-and-shapes";
+import * as demo_search_bar_with_cancel from "./search-bar/with-cancel";
 import * as demo_selection_mode_disabled_rows from "./selection-mode/disabled-rows";
 import * as demo_selection_mode_floating_bar from "./selection-mode/floating-bar";
 import * as demo_selection_mode_in_a_sheet from "./selection-mode/in-a-sheet";
@@ -1029,6 +1035,12 @@ export const DEMOS = {
 	"screen/inbox": demo_screen_inbox,
 	"screen/loading-and-error": demo_screen_loading_and_error,
 	"screen/showcase": demo_screen_showcase,
+	"search-bar/basic": demo_search_bar_basic,
+	"search-bar/debounced-filter-list": demo_search_bar_debounced_filter_list,
+	"search-bar/in-sheet": demo_search_bar_in_sheet,
+	"search-bar/loading-and-tokens": demo_search_bar_loading_and_tokens,
+	"search-bar/sizes-and-shapes": demo_search_bar_sizes_and_shapes,
+	"search-bar/with-cancel": demo_search_bar_with_cancel,
 	"selection-mode/disabled-rows": demo_selection_mode_disabled_rows,
 	"selection-mode/floating-bar": demo_selection_mode_floating_bar,
 	"selection-mode/in-a-sheet": demo_selection_mode_in_a_sheet,

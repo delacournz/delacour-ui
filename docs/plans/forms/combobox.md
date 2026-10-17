@@ -1,6 +1,6 @@
 # Combobox
 
-Status: spec, not started · Wave: 2 · Depends on: Select (leaves `select/select.variants`, `select/select-option-row`, `select/select.types`), Input (`input/input.variants`, `BottomSheet.TextInput`), Chip, Field, BottomSheet (+ optional engine peer). Do not start until Select is merged into cat-forms.
+Status: built on `feature/forms-combobox` (stacked on `feature/forms-select`) · Wave: 2 · Depends on: Select (leaves `select/select.variants`, `select/select-option-row`, `select/select.types`), Input (`input/input.variants`, `BottomSheet.TextInput`), Chip, Field, BottomSheet (+ optional engine peer). Do not start until Select is merged into cat-forms.
 
 ## Purpose on mobile
 
@@ -176,3 +176,34 @@ Anchored popover presentation (after Overlays) · virtualised async pagination/i
 - [ ] Single pick closes, multiple stays + chips update; maxSelected enforced with haptic.
 - [ ] Screen reader: result count announced, chip remove action works.
 - [ ] Docs, AGENTS.md, exports, demos, registry, changeset done; typecheck + check pass.
+
+## Implementation decisions
+
+Recorded while building it; each overrides the spec text above where they disagree.
+
+- **Sheet only, nothing anchored.** The spec already presents in `BottomSheet`; nothing in the build
+  assumes the Overlays popover, which is unmerged and not imported. `presentation` is `"sheet"`, a
+  union of one, to grow an anchored member later.
+- **The query always clears on a pick, single mode included.** The spec had a single pick reset the
+  query to the chosen label (`reason: "select"`). In a sheet the trigger already shows the label,
+  and a reopened sheet pre-filtered to the one chosen row would hide every other option, so a pick,
+  the clear button and a close all empty the query and report `select`, `clear` or `close`
+  (`resolveQueryReset`). `resolveInputValueAfterSelect` was therefore not needed.
+- **Select's leaves are reused rather than restated.** `normalizeText` and `splitByRanges` from the
+  spec are Select's `normalizeSearchText` and `splitHighlight`; `combobox.filter.ts` imports them.
+  `normalizeComboboxOptions` and `collectComboboxOptions` are Combobox's own because Select's typed
+  outputs drop `keywords` and its walk matches only `Select.Item`. Select's chevron is private to
+  `select-trigger.tsx`, so `combobox-trigger.tsx` carries the one copy — consolidation is README
+  decision 6's follow-up.
+- **The chip cap is a count, not two measured lines.** `maxVisibleChips` (default 3) with the last
+  slot becoming `+N` (`resolveVisibleChips`); measuring would lay every chip out to discard most.
+  With chips the trigger is Input's multiline box (height becomes a floor, first-line aligned).
+- **Chips come from `../chip`** (README decision 4); Select only through its leaf files.
+- **Trigger chips and screen readers.** The chips on the trigger sit inside its button, which a
+  screen reader hears as "N selected"; the sheet repeats the chip row above the search field, where
+  each chip is its own element with "Remove {label}". Backspace on Android soft keyboards is not
+  reported on an empty field by every IME, so the remove buttons are the path that always works.
+- **A picked option is remembered** (value and label), so a server-driven list can drop it from
+  `options` without the trigger losing its name (`resolveSelectedComboboxOptions`).
+- **No captured media yet.** Like Select's, the demos carry no `capture` until `bun run previews` is
+  run on a Mac with a simulator; marking them without media fails `demos.test.ts`.

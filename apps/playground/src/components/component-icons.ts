@@ -39,6 +39,7 @@ import {
 	IconLayoutTopBottom,
 	IconLayoutWindow,
 	IconMagnifyingGlass,
+	IconMagnifyingGlass2,
 	IconMap,
 	IconNoteText,
 	IconNumberedList,
@@ -140,6 +141,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	questionnaire: IconChecklist,
 	"search-bar": IconMagnifyingGlass,
 	select: IconChevronDownMedium,
+	combobox: IconMagnifyingGlass2,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

@@ -1,0 +1,20 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-edges",
+	"type": "registry:lib",
+	"title": "scrollEdges",
+	"description": "Where an affordance at a scrollable's edges sits, and which way its gradient runs.",
+	"registryDependencies": [
+		"scroll-maths"
+	],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-edges.ts",
+			"target": "scroll-edges.ts",
+			"namespace": "lib"
+		}
+	]
+}

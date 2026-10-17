@@ -428,6 +428,14 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		title: "navigationTheme",
 		description: "Maps the theme's tokens onto the colours React Navigation asks for.",
 	},
+	"scroll-edges": {
+		title: "scrollEdges",
+		description: "Where an affordance at a scrollable's edges sits, and which way its gradient runs.",
+	},
+	"scroll-maths": {
+		title: "scrollMaths",
+		description: "The pure maths behind the scroll-linked components.",
+	},
 	"merge-props": { title: "mergeProps", description: "Merges slot props onto a child's own." },
 	paging: {
 		title: "paging",
@@ -450,6 +458,10 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	"use-calm-motion": {
 		title: "useCalmMotion",
 		description: "Whether decorative loops hold still, and the provider an E2E build sets it from.",
+	},
+	"use-scroll-source": {
+		title: "useScrollSource",
+		description: "The scroll offset and sizes of a scrollable, on the UI thread, for effects that follow it.",
 	},
 	"use-scroll-sections": {
 		title: "useScrollSections",

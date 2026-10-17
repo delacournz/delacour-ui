@@ -18,6 +18,7 @@
 		"text",
 		"tv",
 		"use-keyboard-state-sync",
+		"use-scroll-source",
 		"use-theme-color"
 	],
 	"dependencies": [
@@ -218,6 +219,17 @@
 				{
 					"from": "../../lib/color",
 					"to": "@registry/lib/color"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/screen/screen-scroll-source.tsx",
+			"target": "screen/screen-scroll-source.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
 				}
 			]
 		},

@@ -357,6 +357,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One section shown and hidden by its own trigger.",
 	},
 	{
+		slug: "post",
+		name: "Post",
+		group: "Media",
+		blurb: "A social card: author, body, media and animated counts, in four shapes.",
+	},
+	{
 		slug: "message",
 		name: "Message",
 		group: "Media",

@@ -486,6 +486,15 @@ import * as demo_popover_scrim from "./popover/scrim";
 import * as demo_popover_scrollable from "./popover/scrollable";
 import * as demo_popover_trigger_width_form from "./popover/trigger-width-form";
 import * as demo_popover_unstyled from "./popover/unstyled";
+import * as demo_post_compact_timeline from "./post/compact-timeline";
+import * as demo_post_expandable_body from "./post/expandable-body";
+import * as demo_post_feed_card from "./post/feed-card";
+import * as demo_post_hashtags_and_mentions from "./post/hashtags-and-mentions";
+import * as demo_post_live_counts from "./post/live-counts";
+import * as demo_post_media_first from "./post/media-first";
+import * as demo_post_media_states from "./post/media-states";
+import * as demo_post_sizes from "./post/sizes";
+import * as demo_post_vote from "./post/vote";
 import * as demo_pressable_as_child from "./pressable/as-child";
 import * as demo_pressable_disabled_and_busy from "./pressable/disabled-and-busy";
 import * as demo_pressable_haptics from "./pressable/haptics";
@@ -1215,6 +1224,15 @@ export const DEMOS = {
 	"popover/scrollable": demo_popover_scrollable,
 	"popover/trigger-width-form": demo_popover_trigger_width_form,
 	"popover/unstyled": demo_popover_unstyled,
+	"post/compact-timeline": demo_post_compact_timeline,
+	"post/expandable-body": demo_post_expandable_body,
+	"post/feed-card": demo_post_feed_card,
+	"post/hashtags-and-mentions": demo_post_hashtags_and_mentions,
+	"post/live-counts": demo_post_live_counts,
+	"post/media-first": demo_post_media_first,
+	"post/media-states": demo_post_media_states,
+	"post/sizes": demo_post_sizes,
+	"post/vote": demo_post_vote,
 	"pressable/as-child": demo_pressable_as_child,
 	"pressable/disabled-and-busy": demo_pressable_disabled_and_busy,
 	"pressable/haptics": demo_pressable_haptics,

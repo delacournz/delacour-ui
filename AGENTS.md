@@ -51,8 +51,8 @@ cd apps/playground && bun run icons   # launcher, adaptive and tinted app-icon P
 cd apps/web        && bun run icons   # favicons, PWA icons, apple-touch-icon
 ```
 
-`previews` is the odd one out: it drives an iOS simulator, so it needs a Mac with Xcode and it is
-deliberately **not** part of `build`. Its output — `apps/web/public/previews/**` and
+`previews` is the odd one out: it drives an iOS simulator through warden, so it needs a Mac with
+Xcode and `warden` on the PATH, and it is deliberately **not** part of `build`. Its output — `apps/web/public/previews/**` and
 `apps/web/src/previews/manifest.ts` — is committed, which is what lets the docs site deploy on a
 machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
 

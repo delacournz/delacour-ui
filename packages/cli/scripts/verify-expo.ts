@@ -242,7 +242,7 @@ try {
 		reporter.step("Building a dev client and launching it (this takes a while)");
 		await bootOnSimulator(workspace.appRoot, reporter);
 		reporter.pass("the app is running on a simulator");
-		reporter.detail("Verify what it renders with argent; the app is left in place below.");
+		reporter.detail("Verify what it renders with `warden ui`; the app is left in place below.");
 	}
 } finally {
 	// Cleanup means the whole directory, `node_modules` included. Emptying

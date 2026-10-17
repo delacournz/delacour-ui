@@ -1188,7 +1188,7 @@ the harness rather than the component.
 | `public/previews/**` | here, **generated** | `bun run previews` |
 | `src/og/heroes.ts`, `src/og/frames/**` | here, **generated** | `bun run og-assets` |
 | The demos | `apps/playground/src/demos/` | hand-written |
-| The interactions | `.argent/flows/previews/` | recorded with argent |
+| The interactions | `apps/playground/e2e/previews/` | hand-written warden specs |
 
 Regenerate everything with **`bun run previews`** from the repo root. It drives a simulator, so it
 needs a Mac with Xcode — it is not part of `bun run build` and never runs on Railway. The media is

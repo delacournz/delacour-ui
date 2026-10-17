@@ -161,6 +161,7 @@ shares.
 | [ScrollCanvas](src/components/scroll-canvas/AGENTS.md) | `@delacour/react-native-ui/scroll-canvas` | An image in a still frame that moves as the page scrolls |
 | [ScrollFade](src/components/scroll-fade/AGENTS.md) | `@delacour/react-native-ui/scroll-fade` | A gradient at a scrollable's edges while content runs past them |
 | [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
+| [ScrollHeader](src/components/scroll-header/AGENTS.md) | `@delacour/react-native-ui/scroll-header` | A large title that collapses into a pinned bar as the page scrolls |
 | [ScrollText](src/components/scroll-text/AGENTS.md) | `@delacour/react-native-ui/scroll-text` | Text that resolves word by word as the screen scrolls |
 | [Select](src/components/select/AGENTS.md) | `@delacour/react-native-ui/select` | A closed set of choices behind a field-shaped trigger, picked from a bottom sheet |
 | [SearchBar](src/components/search-bar/AGENTS.md) | `@delacour/react-native-ui/search-bar` | The query field at the top of a list — clear, Cancel, debounce and filter tokens, on `Input.Group` |

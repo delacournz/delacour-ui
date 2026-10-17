@@ -102,6 +102,7 @@
 		"./scroll-blur": "./src/components/scroll-blur/index.ts",
 		"./scroll-canvas": "./src/components/scroll-canvas/index.ts",
 		"./scroll-fade": "./src/components/scroll-fade/index.ts",
+		"./scroll-header": "./src/components/scroll-header/index.ts",
 		"./scroll-text": "./src/components/scroll-text/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
 		"./select": "./src/components/select/index.ts",

@@ -104,6 +104,7 @@
 		"card",
 		"scroll-canvas",
 		"scroll-blur",
+		"scroll-header",
 		"split-view",
 		"splitter",
 		"sketch",

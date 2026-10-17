@@ -15579,6 +15579,169 @@ export const install = {
 			},
 		],
 	},
+	"scroll-header": {
+		name: "scroll-header",
+		title: "ScrollHeader",
+		description: "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
+		importPath: "@delacour/react-native-ui/scroll-header",
+		exportName: "ScrollHeader",
+		expo: ["expo-linear-gradient", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 45,
+		groups: [
+			{
+				name: "scroll-header",
+				title: "Scroll Header",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/scroll-header/AGENTS.md", target: "src/components/ui/scroll-header/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/index.ts", target: "src/components/ui/scroll-header/index.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-bar-surface.tsx", target: "src/components/ui/scroll-header/scroll-header-bar-surface.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-bar-title.tsx", target: "src/components/ui/scroll-header/scroll-header-bar-title.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-bar.tsx", target: "src/components/ui/scroll-header/scroll-header-bar.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-cover.tsx", target: "src/components/ui/scroll-header/scroll-header-cover.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-flat-list.tsx", target: "src/components/ui/scroll-header/scroll-header-flat-list.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-inset.tsx", target: "src/components/ui/scroll-header/scroll-header-inset.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-large.tsx", target: "src/components/ui/scroll-header/scroll-header-large.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-root.tsx", target: "src/components/ui/scroll-header/scroll-header-root.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header-scroll-view.tsx", target: "src/components/ui/scroll-header/scroll-header-scroll-view.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header.context.tsx", target: "src/components/ui/scroll-header/scroll-header.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header.tsx", target: "src/components/ui/scroll-header/scroll-header.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header.types.ts", target: "src/components/ui/scroll-header/scroll-header.types.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/scroll-header.variants.ts", target: "src/components/ui/scroll-header/scroll-header.variants.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-header/use-scroll-header-scroll-props.ts", target: "src/components/ui/scroll-header/use-scroll-header-scroll-props.ts" },
+				],
+			},
+			{
+				name: "scroll-blur",
+				title: "Scroll Blur",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/scroll-blur/AGENTS.md", target: "src/components/ui/scroll-blur/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/index.ts", target: "src/components/ui/scroll-blur/index.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur-band.tsx", target: "src/components/ui/scroll-blur/scroll-blur-band.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.context.tsx", target: "src/components/ui/scroll-blur/scroll-blur.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.tsx", target: "src/components/ui/scroll-blur/scroll-blur.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.types.ts", target: "src/components/ui/scroll-blur/scroll-blur.types.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-blur/scroll-blur.variants.ts", target: "src/components/ui/scroll-blur/scroll-blur.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "scroll-maths",
+				title: "scrollMaths",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-maths.ts", target: "src/lib/scroll-maths.ts" },
+				],
+			},
+			{
+				name: "scroll-edges",
+				title: "scrollEdges",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-edges.ts", target: "src/lib/scroll-edges.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-reduce-transparency",
+				title: "useReduceTransparency",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-reduce-transparency.ts", target: "src/hooks/use-reduce-transparency.ts" },
+				],
+			},
+			{
+				name: "use-scroll-source",
+				title: "useScrollSource",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-source.tsx", target: "src/hooks/use-scroll-source.tsx" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+			{
+				name: "calm-motion",
+				title: "calmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/calm-motion.ts", target: "src/lib/calm-motion.ts" },
+				],
+			},
+			{
+				name: "use-calm-motion",
+				title: "useCalmMotion",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-calm-motion.tsx", target: "src/hooks/use-calm-motion.tsx" },
+				],
+			},
+		],
+	},
 	"split-view": {
 		name: "split-view",
 		title: "SplitView",

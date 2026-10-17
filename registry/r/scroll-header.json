@@ -1,0 +1,193 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "scroll-header",
+	"type": "registry:ui",
+	"title": "Scroll Header",
+	"description": "A large title that collapses into a pinned bar as the page scrolls, with a cover, a blur bar and snap.",
+	"categories": [
+		"layout"
+	],
+	"registryDependencies": [
+		"color",
+		"compose-refs",
+		"scroll-blur",
+		"text",
+		"tv",
+		"use-calm-motion",
+		"use-reduce-transparency",
+		"use-scroll-source",
+		"use-theme-color"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"expo-linear-gradient",
+		"react-native-reanimated",
+		"react-native-safe-area-context",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/AGENTS.md",
+			"target": "scroll-header/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/scroll-header",
+					"to": "@registry/ui/scroll-header"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/index.ts",
+			"target": "scroll-header/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-bar-surface.tsx",
+			"target": "scroll-header/scroll-header-bar-surface.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-reduce-transparency",
+					"to": "@registry/hooks/use-reduce-transparency"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/color",
+					"to": "@registry/lib/color"
+				},
+				{
+					"from": "../scroll-blur/scroll-blur.context",
+					"to": "@registry/ui/scroll-blur/scroll-blur.context"
+				},
+				{
+					"from": "../scroll-blur/scroll-blur.types",
+					"to": "@registry/ui/scroll-blur/scroll-blur.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-bar-title.tsx",
+			"target": "scroll-header/scroll-header-bar-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-bar.tsx",
+			"target": "scroll-header/scroll-header-bar.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../scroll-blur/scroll-blur.types",
+					"to": "@registry/ui/scroll-blur/scroll-blur.types"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-cover.tsx",
+			"target": "scroll-header/scroll-header-cover.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-flat-list.tsx",
+			"target": "scroll-header/scroll-header-flat-list.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-inset.tsx",
+			"target": "scroll-header/scroll-header-inset.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-large.tsx",
+			"target": "scroll-header/scroll-header-large.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-root.tsx",
+			"target": "scroll-header/scroll-header-root.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header-scroll-view.tsx",
+			"target": "scroll-header/scroll-header-scroll-view.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header.context.tsx",
+			"target": "scroll-header/scroll-header.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header.tsx",
+			"target": "scroll-header/scroll-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header.types.ts",
+			"target": "scroll-header/scroll-header.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header.variants.ts",
+			"target": "scroll-header/scroll-header.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/use-scroll-header-scroll-props.ts",
+			"target": "scroll-header/use-scroll-header-scroll-props.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-scroll-source",
+					"to": "@registry/hooks/use-scroll-source"
+				}
+			]
+		}
+	]
+}

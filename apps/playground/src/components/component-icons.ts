@@ -11,6 +11,7 @@ import {
 	IconBubbleDots,
 	IconBulletList,
 	IconCalendar1,
+	IconCalendarDays,
 	IconChart1,
 	IconCheckCircle2,
 	IconChecklist,
@@ -192,6 +193,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	sortable: IconDotGrid2x3,
 	tour: IconCompassPointer,
 	tree: IconTree,
+	"date-picker": IconCalendarDays,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

@@ -249,6 +249,14 @@ import * as demo_countdown_segmented from "./countdown/segmented";
 import * as demo_countdown_sizes from "./countdown/sizes";
 import * as demo_countdown_units from "./countdown/units";
 import * as demo_countdown_urgent from "./countdown/urgent";
+import * as demo_date_picker_bounds_and_disabled_weekends from "./date-picker/bounds-and-disabled-weekends";
+import * as demo_date_picker_controlled_open from "./date-picker/controlled-open";
+import * as demo_date_picker_custom_format_locale from "./date-picker/custom-format-locale";
+import * as demo_date_picker_in_field_invalid from "./date-picker/in-field-invalid";
+import * as demo_date_picker_multiple from "./date-picker/multiple";
+import * as demo_date_picker_range_booking from "./date-picker/range-booking";
+import * as demo_date_picker_single from "./date-picker/single";
+import * as demo_date_picker_sizes_variants from "./date-picker/sizes-variants";
 import * as demo_dialog_alert_dialog from "./dialog/alert-dialog";
 import * as demo_dialog_confirm from "./dialog/confirm";
 import * as demo_dialog_controlled from "./dialog/controlled";
@@ -1050,6 +1058,14 @@ export const DEMOS = {
 	"countdown/sizes": demo_countdown_sizes,
 	"countdown/units": demo_countdown_units,
 	"countdown/urgent": demo_countdown_urgent,
+	"date-picker/bounds-and-disabled-weekends": demo_date_picker_bounds_and_disabled_weekends,
+	"date-picker/controlled-open": demo_date_picker_controlled_open,
+	"date-picker/custom-format-locale": demo_date_picker_custom_format_locale,
+	"date-picker/in-field-invalid": demo_date_picker_in_field_invalid,
+	"date-picker/multiple": demo_date_picker_multiple,
+	"date-picker/range-booking": demo_date_picker_range_booking,
+	"date-picker/single": demo_date_picker_single,
+	"date-picker/sizes-variants": demo_date_picker_sizes_variants,
 	"dialog/alert-dialog": demo_dialog_alert_dialog,
 	"dialog/confirm": demo_dialog_confirm,
 	"dialog/controlled": demo_dialog_controlled,

@@ -12960,6 +12960,128 @@ export const install = {
 			},
 		],
 	},
+	"section-rail": {
+		name: "section-rail",
+		title: "SectionRail",
+		description: "A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through.",
+		importPath: "@delacour/react-native-ui/section-rail",
+		exportName: "SectionRail",
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
+		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 32,
+		groups: [
+			{
+				name: "section-rail",
+				title: "SectionRail",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/section-rail/AGENTS.md", target: "src/components/ui/section-rail/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/section-rail/index.ts", target: "src/components/ui/section-rail/index.ts" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail-bar.tsx", target: "src/components/ui/section-rail/section-rail-bar.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail-content.tsx", target: "src/components/ui/section-rail/section-rail-content.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail-item.tsx", target: "src/components/ui/section-rail/section-rail-item.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail-scrim.tsx", target: "src/components/ui/section-rail/section-rail-scrim.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail-trigger.tsx", target: "src/components/ui/section-rail/section-rail-trigger.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail.context.tsx", target: "src/components/ui/section-rail/section-rail.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail.tsx", target: "src/components/ui/section-rail/section-rail.tsx" },
+					{ source: "packages/react-native-ui/src/components/section-rail/section-rail.variants.ts", target: "src/components/ui/section-rail/section-rail.variants.ts" },
+				],
+			},
+			{
+				name: "pressable",
+				title: "Pressable",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/pressable/AGENTS.md", target: "src/components/ui/pressable/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/pressable/index.ts", target: "src/components/ui/pressable/index.ts" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.tsx", target: "src/components/ui/pressable/pressable.tsx" },
+					{ source: "packages/react-native-ui/src/components/pressable/pressable.variants.ts", target: "src/components/ui/pressable/pressable.variants.ts" },
+				],
+			},
+			{
+				name: "text",
+				title: "Text",
+				kind: "component",
+				files: [
+					{ source: "packages/react-native-ui/src/components/text/AGENTS.md", target: "src/components/ui/text/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/text/index.ts", target: "src/components/ui/text/index.ts" },
+					{ source: "packages/react-native-ui/src/components/text/text.context.tsx", target: "src/components/ui/text/text.context.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.tsx", target: "src/components/ui/text/text.tsx" },
+					{ source: "packages/react-native-ui/src/components/text/text.variants.ts", target: "src/components/ui/text/text.variants.ts" },
+				],
+			},
+			{
+				name: "compose-refs",
+				title: "composeRefs",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/compose-refs.ts", target: "src/lib/compose-refs.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "cn",
+				title: "cn",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/cn.ts", target: "src/lib/cn.ts" },
+				],
+			},
+			{
+				name: "merge-props",
+				title: "mergeProps",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-controllable-state",
+				title: "useControllableState",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "scroll-sections",
+				title: "scrollSections",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-sections.ts", target: "src/lib/scroll-sections.ts" },
+				],
+			},
+			{
+				name: "use-scroll-sections",
+				title: "useScrollSections",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-sections.ts", target: "src/hooks/use-scroll-sections.ts" },
+				],
+			},
+		],
+	},
 	"section-progress": {
 		name: "section-progress",
 		title: "SectionProgress",

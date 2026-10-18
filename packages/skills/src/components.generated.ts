@@ -83,6 +83,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "scroll-text", title: "ScrollText", description: "Text that resolves word by word as the screen scrolls past it." },
 	{ name: "search-bar", title: "Search Bar", description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens." },
 	{ name: "section-progress", title: "SectionProgress", description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to." },
+	{ name: "section-rail", title: "SectionRail", description: "A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through." },
 	{ name: "select", title: "Select", description: "A closed set of choices behind a field-shaped trigger, picked from a bottom sheet — single or multiple, grouped, searchable." },
 	{ name: "selection-mode", title: "Selection Mode", description: "Pick several things at once — a long press enters the mode — then act on them from a bar, in a list, a grid or a strip." },
 	{ name: "separator", title: "Separator", description: "A one-pixel rule, hidden from assistive technology." },

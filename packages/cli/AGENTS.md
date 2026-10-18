@@ -142,6 +142,12 @@ Nothing to write by hand except metadata. See the **The registry** section of
 `PACKAGE_INSTALL`, then `bun run registry:build` and commit `registry/`. The rebuild touches item
 JSON only — the component's `.tsx` appears in the diff once, where you wrote it.
 
+**`ITEM_META.registryDependencies` is for a pairing no import records.** The graph is derived from
+imports, so it misses an item every documented use needs but no file imports — `section-rail` is
+driven by `useScrollSections` from the caller's side and never imports it. Naming the edge there
+adds it to the derived ones, so `add section-rail` brings the hook. Anything an import already
+records stays out of it.
+
 ## Testing
 
 `bun test` is unit tests plus an end-to-end pass over a fixture, all offline. It runs the real

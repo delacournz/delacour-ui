@@ -6,6 +6,7 @@ import { compressResponse } from "@/lib/compress";
 import { blockCrawlerResponse, isBlockedCrawler } from "@/lib/crawler-block";
 import { createPresetLimiter, presetLimitedResponse } from "@/lib/preset-rate-limit";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
+import { withServerSpan } from "@/lib/tracing";
 
 const csrfMiddleware = createCsrfMiddleware({
 	filter: (ctx) => ctx.handlerType === "serverFn",
@@ -31,7 +32,13 @@ const llmMiddleware = createMiddleware().server(({ next, request }) => {
 const presetLimiter = createPresetLimiter();
 
 /**
- * First of all: a refused crawler costs one tiny 403, never a render. A request the
+ * Outermost, so the SERVER span covers everything below it, including a refused crawler. See
+ * `src/lib/tracing.ts`; `otel/register.mjs` supplies the provider.
+ */
+const tracingMiddleware = createMiddleware().server(({ next, request }) => withServerSpan(request, () => next()));
+
+/**
+ * Just inside the span: a refused crawler costs one tiny 403, never a render. A request the
  * edge cache answers does not reach this process — see `src/lib/crawler-block.ts`.
  * An IP loading `/theme?preset=` pages faster than a reader can gets a 429 — see
  * `src/lib/preset-rate-limit.ts`.
@@ -64,6 +71,7 @@ const analyticsMiddleware = createMiddleware().server(({ next, request }) => {
 export const startInstance = createStart(() => {
 	return {
 		requestMiddleware: [
+			tracingMiddleware,
 			crawlerBlockMiddleware,
 			compressionMiddleware,
 			csrfMiddleware,

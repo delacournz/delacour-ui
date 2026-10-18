@@ -5,12 +5,14 @@ name: Retarget PR
 # for "base new PRs on X", so this does it after the fact: a pull request opened against `main` is
 # moved to `develop`, where work lands. `main` only moves when `release.yml` fast-forwards it.
 #
-# `pull_request_target`, not `pull_request`: a fork's `GITHUB_TOKEN` is read-only under
-# `pull_request`, so it could not edit its own base. The target event runs this file as it is on
-# `main` with a write token, which is safe here only because nothing checks out or runs the pull
-# request's code — the job is one API call.
+# Same-repo pull requests only; a fork pull request opened against `main` is retargeted by hand.
+# `pull_request`, never `pull_request_target`: the target event is the one the fork approval setting
+# ("require approval for all external contributors") does not gate, so any stranger's fork pull
+# request would start a job on our runners with a write token. Under `pull_request` a same-repo
+# branch gets the write token this needs, a fork waits for approval, and the `if:` skips it even
+# once approved — its token is read-only, so `gh pr edit` would only fail.
 on:
-  pull_request_target:
+  pull_request:
     types: [opened, reopened]
     branches: [main]
 
@@ -20,6 +22,7 @@ permissions:
 jobs:
   retarget:
     name: retarget to develop
+    if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: namespace-profile-linux-small
     timeout-minutes: 5
     steps:

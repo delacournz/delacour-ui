@@ -1,0 +1,15 @@
+version: 2
+updates:
+  # Actions are pinned to commit SHAs; this keeps the pins current. The cooldown keeps a freshly
+  # published (possibly compromised) release out until it has been public for a week.
+  # Pull requests target `develop`, where work lands — `main` only moves on a release.
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      actions:
+        patterns: ["*"]

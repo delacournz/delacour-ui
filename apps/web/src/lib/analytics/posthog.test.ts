@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { consentReplay, posthogOptions } from "./posthog";
+import { consentReplay, isAutomatedBrowser, posthogOptions } from "./posthog";
 
 const posthog = { kind: "on", token: "phc_test", host: "https://i.delacour.co.nz" } as const;
 
@@ -61,5 +61,16 @@ describe("consentReplay", () => {
 		expect(consentReplay("denied", "denied")).toBeNull();
 		expect(consentReplay(null, "pending")).toBeNull();
 		expect(consentReplay(null, "granted")).toBeNull();
+	});
+});
+
+describe("isAutomatedBrowser", () => {
+	test("is true when WebDriver, Playwright or Puppeteer drive the page", () => {
+		expect(isAutomatedBrowser({ webdriver: true })).toBe(true);
+	});
+
+	test("is false for a person's browser, and where there is no navigator", () => {
+		expect(isAutomatedBrowser({ webdriver: false })).toBe(false);
+		expect(isAutomatedBrowser(undefined)).toBe(false);
 	});
 });

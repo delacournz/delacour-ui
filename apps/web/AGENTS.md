@@ -638,6 +638,12 @@ What is load-bearing:
   config or extra scripts — so a switch flipped in the PostHog UI cannot reach a visitor without a
   code change and a policy change. `track()` is the only way a click reaches PostHog, so nothing is
   counted twice. Page views are `capture_pageview: "history_change"`, which follows the router.
+- **An automated browser is never counted.** `startPosthog` returns early when
+  `navigator.webdriver` is true (`isAutomatedBrowser`). WebDriver, Playwright and Puppeteer set it,
+  and the SDK's own bot list reads only the user agent, which a scraper fakes. A fleet that hides the
+  flag gets through anyway, so the PostHog project also carries custom bot rules for the
+  `/theme?preset=` crawler, and its *Filter out internal and test users* default drops anything
+  classified as a bot. The rules are documented in the monorepo's `packages/analytics/AGENTS.md`.
 - **PostHog goes through the managed reverse proxy, `i.delacour.co.nz`.** It is a CNAME to PostHog,
   set up in PostHog's UI and added in Cloudflare as **DNS-only** (grey cloud), as PostHog's
   managed-proxy setup requires. One proxy serves both projects; the token picks
@@ -951,6 +957,18 @@ strings are part of the cache key, so `/theme?x=…` always misses and does reac
 fix is a Railway **edge rule** (service Settings > Edge > Edge Rules: block on Client IP in
 `57.141.0.0/16`, or Header `user-agent` matches `*meta-external*`), evaluated before the cache.
 Keep the two in step.
+
+**A crawler with no name gets a rate limit instead.** `src/lib/preset-rate-limit.ts` refuses an
+IP's 31st `/theme?preset=` load in a 10-minute window with an uncacheable `429` + `Retry-After`,
+from the same middleware, just after the block list. Readers never get near it: the builder's
+links go to a route with no loader, so clicking through it never reaches the server, and only a
+first load, a paste or a reload does. It exists for the headless fleet that started on
+2026-10-16 (Asia/Shanghai timezone, a browser user agent, outside Meta's range, ignoring
+`Disallow: /theme?`), which loaded 10–30k fresh `?preset=` URLs an hour, each one a CDN miss and a
+full render. It also showed up as ~520k PostHog pageviews, which PostHog bot rules now filter.
+The counter lives in the process, which is the whole service because `ui-web` runs one replica.
+Add replicas and the effective ceiling multiplies by their count. Once the fleet's IP range shows
+up in `railway logs --http`, it belongs in `BLOCKED_CRAWLERS` and an edge rule as well.
 
 ### Prerendering is off
 

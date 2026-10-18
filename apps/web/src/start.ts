@@ -4,6 +4,7 @@ import { isMarkdownPreferred } from "fumadocs-core/negotiation";
 import { reportAgentFetch } from "@/lib/analytics/server";
 import { compressResponse } from "@/lib/compress";
 import { blockCrawlerResponse, isBlockedCrawler } from "@/lib/crawler-block";
+import { createPresetLimiter, presetLimitedResponse } from "@/lib/preset-rate-limit";
 import { docsRoute, encodeMarkdownUrl } from "@/lib/shared";
 
 const csrfMiddleware = createCsrfMiddleware({
@@ -27,12 +28,17 @@ const llmMiddleware = createMiddleware().server(({ next, request }) => {
 	return next();
 });
 
+const presetLimiter = createPresetLimiter();
+
 /**
  * First of all: a refused crawler costs one tiny 403, never a render. A request the
  * edge cache answers does not reach this process — see `src/lib/crawler-block.ts`.
+ * An IP loading `/theme?preset=` pages faster than a reader can gets a 429 — see
+ * `src/lib/preset-rate-limit.ts`.
  */
 const crawlerBlockMiddleware = createMiddleware().server(({ next, request }) => {
 	if (isBlockedCrawler(request)) return blockCrawlerResponse();
+	if (presetLimiter.isLimited(request)) return presetLimitedResponse(presetLimiter.retryAfterSeconds());
 	return next();
 });
 

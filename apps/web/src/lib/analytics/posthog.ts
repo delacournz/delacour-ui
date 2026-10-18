@@ -60,11 +60,25 @@ export function consentReplay(
 	return null;
 }
 
+/**
+ * Whether the page is being driven by automation rather than read by a person.
+ *
+ * WebDriver, Playwright and Puppeteer all set `navigator.webdriver`, and the SDK's
+ * own bot list only reads the user agent, which a scraper spoofs. A headless
+ * fleet walking `/theme?preset=` (Oct 2026, ~20k page views an hour, every one
+ * a fresh cookieless "visitor") is what this keeps out of the numbers; it is
+ * also what PostHog's custom bot rules filter after the fact.
+ */
+export function isAutomatedBrowser(nav: Pick<Navigator, "webdriver"> | undefined): boolean {
+	return nav?.webdriver === true;
+}
+
 let client: PostHog | null = null;
 
-/** Load and start PostHog, once, if this build and this host have it. */
+/** Load and start PostHog, once, if this build and this host have it, for a person. */
 export function startPosthog(posthog: PosthogConfig = ANALYTICS.posthog): void {
 	if (posthog.kind === "off" || client || !isCountedHost(window.location.host)) return;
+	if (isAutomatedBrowser(window.navigator)) return;
 
 	void import("posthog-js").then(({ default: instance }) => {
 		if (client) return;

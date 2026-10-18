@@ -1,5 +1,29 @@
 import { describe, expect, test } from "bun:test";
-import { dragPath, parseBounds, toPoint, toTouchPath } from "./geometry";
+import { dragPath, parseBounds, toPoint, toTouchPath, untimed } from "./geometry";
+
+describe("untimed", () => {
+	test("drops the holds and keeps the total time as the duration", () => {
+		const path = untimed({
+			points: [
+				{ t: 0, x: 10, y: 10 },
+				{ t: 500, x: 10, y: 10 },
+				{ t: 800, x: 50, y: 10 },
+				{ t: 950, x: 50, y: 10 },
+			],
+		});
+		expect(path).toEqual({
+			durationMs: 950,
+			points: [
+				{ x: 10, y: 10 },
+				{ x: 50, y: 10 },
+			],
+		});
+	});
+
+	test("never asks for a zero duration", () => {
+		expect(untimed({ points: [{ t: 0, x: 1, y: 1 }] }).durationMs).toBe(1);
+	});
+});
 
 describe("parseBounds", () => {
 	test("reads the rect and the window out of the label", () => {

@@ -533,9 +533,16 @@ the evidence is in warden's batch directory, which the script prints.
 `f.wait(ms)` — plus the raw `screen`, `device` and `app` fixtures and the window size for anything
 else. Coordinates are fractions of the screen, as the old flows wrote them. `momentum: false` is a
 timed path that eases into its end point and rests there, so nothing flings; `gesture` replays a
-down–move–up route with the flow's own pauses. A demo that types passes `{ types: true }` and is
-relaunched after each theme, because a process that has typed answers the next accessibility read
-late or not at all.
+down–move–up route with the flow's own pauses. Both are timed paths, and today warden's
+`screen.gesture.path` cannot carry one: it attaches a `durationMs` of its own and the driver refuses
+the pair. The helper offers the timed route once per process and, on that refusal, replays every
+route untimed — the same span at constant speed, with the holds dropped. A momentum-free drag
+survives that well enough; a chart's scrub does not, because the 500 ms hold is what arms it, and
+without it the drag is a plain pan that the navigation stack reads as a back-swipe. So the tooltip
+clips in `chart`, `charts` and `kpi` are wrong until warden passes a timed path (or `holdMs`) through
+its screen API; the fallback retires itself the day it does, and `previews:verify`'s contact sheets
+are where to see it happen. A demo that types passes `{ types: true }` and is relaunched after each
+theme, because a process that has typed answers the next accessibility read late or not at all.
 
 **Rules for a body.** Target `testID`s, not coordinates — a tap that finds nothing now fails the spec
 rather than passing with a warning. End where you began: the media loops, so a body that toggles a
@@ -555,7 +562,9 @@ still-heavy component, the gesture-heavy one, a typing demo and a portal), compa
 selection owns pixel for pixel against the copy on `--base` (`origin/develop`), reads every clip's
 duration against its baseline's and tiles a contact sheet of it, then writes
 `.previews/verify/report.md` and exits 1 on a failed capture, a missing or resized file, or a still
-that moved more than `--max-diff` percent (2) of its pixels. `--no-capture` judges the tree as it is;
+that moved more than `--max-diff` percent (2) of its pixels, counting a pixel only when it is more than
+`--fuzz` percent (10) off — two renders differ by antialiasing on every glyph, and under 10% that noise
+is a handful of pixels while a real change is thousands. `--no-capture` judges the tree as it is;
 `--only`, `--count` and `--headless` pass through. Run it after any change to the capture pipeline
 and read the report, not the terminal.
 
@@ -569,6 +578,12 @@ simulator and AudioToolbox aborts the process when the simulator has no audio ou
 has none — so `preview.tsx` mutes it before a demo mounts; and a deep link that reaches
 expo-dev-launcher while the bundle is still loading cancels the load and leaves the launcher's home
 up, so the first capture in a process waits for the home screen's navbar before it opens a link.
+
+**Waiting on warden.** Three things the helper works around, each behind a check that retires it
+when warden ships the piece: a timed path through `screen.gesture.path` (above); a recorder, for
+which the clip is `xcrun simctl io recordVideo` on the leased device and so shows no touch indicator;
+and the `from`/`to` form of `screen.swipe` having no `momentum` switch, which is why a momentum-free
+drag is written as a path at all. Check warden's log before blaming a clip.
 
 **The converter stays.** `scripts/previews/convert-flows.ts` turned the retired YAML fragments into
 these specs — `bun scripts/previews/convert-flows.ts --flows <dir> [--only switch] [--flip]` — and is

@@ -75,6 +75,27 @@ export function toTouchPath(events: readonly GestureEvent[], window: Window): To
 /** A point in screen points. */
 export type Point = { x: number; y: number };
 
+/** An untimed route plus the time warden spreads it over — all `screen.gesture.path` takes today. */
+export type UntimedPath = { points: Point[]; durationMs: number };
+
+/**
+ * Flattens a timed path for `screen.gesture.path`, which attaches a
+ * `durationMs` of its own and so cannot carry points with a `t` — the driver
+ * refuses the pair. An untimed route is replayed at constant speed by arc
+ * length, so a hold (a repeated point) would collapse to nothing and is
+ * dropped; the path's total time becomes the duration. The ease-out and the
+ * hold return when warden lets a spec hand its driver a timed path.
+ */
+export function untimed(path: TouchPath): UntimedPath {
+	const points: Point[] = [];
+	for (const { x, y } of path.points) {
+		const last = points.at(-1);
+		if (last && last.x === x && last.y === y) continue;
+		points.push({ x, y });
+	}
+	return { durationMs: Math.max(1, path.points.at(-1)?.t ?? 0), points };
+}
+
 /** One sample per 16 ms frame, which is the rate the driver replays a route at. */
 const DRAG_SAMPLES_PER_SECOND = 60;
 

@@ -11,7 +11,7 @@
  * Steps:
  *   1. `capture-previews.ts --only <list> --force`, with the simulator run
  *      inherited to the terminal — nothing is hidden.
- *   2. Every PNG the selection owns is compared pixel for pixel (2% fuzz)
+ *   2. Every PNG the selection owns is compared pixel for pixel (`--fuzz`, 10%)
  *      with the baseline's copy, read straight out of git.
  *   3. Every MP4 gets its duration read and a contact sheet written to
  *      `.previews/verify/`, next to the markdown report, so a look at the
@@ -44,12 +44,16 @@ const { values } = parseArgs({
 		count: { type: "string" },
 		headless: { default: false, type: "boolean" },
 		"max-diff": { default: "2", type: "string" },
+		fuzz: { default: "10", type: "string" },
 		only: { default: DEFAULT_ONLY, type: "string" },
 	},
 	strict: true,
 });
 
 const maxDiff = Number(values["max-diff"]);
+const fuzz = Number(values.fuzz);
+if (!Number.isFinite(fuzz) || fuzz < 0 || fuzz > 100)
+	throw new Error(`--fuzz must be a percentage, got ${values.fuzz}`);
 if (!Number.isFinite(maxDiff)) throw new Error(`--max-diff must be a number, got ${values["max-diff"]}`);
 const selection = values.only
 	.split(",")
@@ -168,12 +172,16 @@ for (const file of all) {
 		rows.push({
 			file: short,
 			kind,
-			size: `${was.width}x${now.height} → ${now.width}x${now.height}`,
+			size: `${was.width}x${was.height} → ${now.width}x${now.height}`,
 			status: "resized",
 		});
 		continue;
 	}
-	const compared = await $`compare -metric AE -fuzz 2% ${baseline} ${current} null:`.nothrow().quiet();
+	// Two renders of the same screen differ by antialiasing on every glyph and
+	// curve: a few percent of pixels, each a few percent off. A real change moves
+	// a pixel's colour by far more, so a 10% fuzz drops the noise to a handful of
+	// pixels and leaves the budget for what moved.
+	const compared = await $`compare -metric AE -fuzz ${fuzz}% ${baseline} ${current} null:`.nothrow().quiet();
 	const diff = parseAbsoluteError(compared.stderr.toString(), now.width, now.height);
 	rows.push({ file: short, kind, percent: diff?.percent, size: `${now.width}x${now.height}`, status: "compared" });
 }

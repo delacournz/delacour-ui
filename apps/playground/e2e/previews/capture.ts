@@ -53,7 +53,16 @@ import {
 	targetSize,
 } from "../../scripts/previews/media";
 import { planDemos } from "../../scripts/previews/plan";
-import { dragPath, type GestureEvent, parseBounds, toPoint, toTouchPath, type Window } from "./geometry";
+import {
+	dragPath,
+	type GestureEvent,
+	parseBounds,
+	type TouchPath,
+	toPoint,
+	toTouchPath,
+	untimed,
+	type Window,
+} from "./geometry";
 import { startRecording } from "./video";
 
 /** How a flow names what it touches: a `testID`, visible text, a regex over text, or a screen fraction. */
@@ -219,7 +228,7 @@ function makeFlow(fixtures: { screen: Screen; device: Device; app: App }, window
 			const end = { x: start.x + (by.x ?? 0) * window.width, y: start.y + (by.y ?? 0) * window.height };
 			const durationMs = options.durationMs ?? 300;
 			if (options.momentum === false) {
-				await screen.gesture.path({ paths: [dragPath(start, end, { durationMs }).points] });
+				await replay(screen, dragPath(start, end, { durationMs }));
 				return;
 			}
 			await screen.swipe({ durationMs, from: start, to: end });
@@ -232,13 +241,64 @@ function makeFlow(fixtures: { screen: Screen; device: Device; app: App }, window
 		visible: (target, options) => expect(locate(screen, target)).toBeVisible(options),
 		hidden: (target, options) => expect(locate(screen, target)).toBeHidden(options),
 		containsText: (id, text, options) => expect(screen.getByTestId(id)).toContainText(text, options),
-		gesture: (events) => screen.gesture.path({ paths: [toTouchPath(events, window).points] }),
+		gesture: (events) => replay(screen, toTouchPath(events, window)),
 	};
 }
 
 // ---- one theme of one demo ----
 
 type Captured = { width: number; height: number; durationMs?: number };
+
+/**
+ * Replays a timed route. Warden's driver takes timed points, but its
+ * `screen.gesture.path` attaches a `durationMs` of its own and the driver then
+ * refuses the pair — so the first replay in a process offers the timed route
+ * and, on that refusal, this one and every later one go through `untimed`,
+ * which keeps the span and loses the holds. The fallback retires itself the
+ * day warden's screen API passes a timed path through.
+ */
+let timedPaths: boolean | undefined;
+async function replay(screen: Screen, path: TouchPath): Promise<void> {
+	if (timedPaths !== false) {
+		try {
+			await screen.gesture.path({ paths: [path.points] });
+			timedPaths = true;
+			return;
+		} catch (error) {
+			if (!refusesTimedPaths(error)) throw error;
+			timedPaths = false;
+		}
+	}
+	const { durationMs, points } = untimed(path);
+	await screen.gesture.path({ durationMs, paths: [points] });
+}
+
+function refusesTimedPaths(error: unknown): boolean {
+	return error instanceof Error && error.message.includes("`durationMs` is for untimed paths");
+}
+
+/**
+ * The demo's bounds once its layout has stopped moving. The sentinel re-labels
+ * itself on every layout pass and the first pass is rarely the last — a chart
+ * fills its parent until it has measured it, a list is as tall as its first
+ * frame — so the label `waitFor` matched is the one the demo mounted with.
+ * Settle, read again, and stop when two reads agree.
+ */
+async function settledBounds(
+	fixtures: { screen: Screen; device: Device },
+	id: string,
+	theme: Theme,
+	first: { bounds: DemoBounds; label: string }
+): Promise<DemoBounds> {
+	let last = first;
+	for (let attempt = 0; attempt < 4; attempt += 1) {
+		await fixtures.device.settle({ quietMs: 500, timeout: 8000 });
+		const next = await awaitSentinel(fixtures.screen, id, theme);
+		if (next.label === last.label) return next.bounds;
+		last = next;
+	}
+	return last.bounds;
+}
 
 async function awaitSentinel(screen: Screen, id: string, theme: Theme): Promise<{ bounds: DemoBounds; label: string }> {
 	const sentinel = `preview-ready:${id}:${theme}:`;
@@ -276,12 +336,11 @@ async function captureTheme(
 	await ensureLoaded(fixtures);
 	await device.openLink(`${SCHEME}://preview?component=${planned.component}&demo=${planned.demo}&theme=${theme}`);
 
-	const { bounds } = await awaitSentinel(screen, planned.id, theme);
-
 	// The screen must hold still before it is worth photographing: almost every
 	// component springs from a measured zero, so the first frame after a
-	// navigation is reliably wrong.
-	await device.settle({ quietMs: 500, timeout: 8000 });
+	// navigation is reliably wrong — and so are the bounds it announced.
+	const first = await awaitSentinel(screen, planned.id, theme);
+	const bounds = await settledBounds(fixtures, planned.id, theme, first);
 
 	const { dir, poster, video } = mediaPaths(planned.id, theme, planned.sourceHash);
 	await mkdir(dir, { recursive: true });

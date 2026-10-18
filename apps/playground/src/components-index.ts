@@ -293,6 +293,12 @@ const ROWS = [
 	{ slug: "breadcrumb", title: "Breadcrumb", description: "Separators, sizes, collapse, scroll", group: "Navigation" },
 	{ slug: "pagination", title: "Pagination", description: "Numbers, compact, simple, summary", group: "Navigation" },
 	{ slug: "sortable", title: "Sortable", description: "Handle, long press, pinned, auto-scroll", group: "Navigation" },
+	{
+		slug: "section-progress",
+		title: "SectionProgress",
+		description: "Article, placements, colours, manual, controlled",
+		group: "Navigation",
+	},
 	{ slug: "steps", title: "Steps", description: "Orientation, states, linear flows, panels", group: "Navigation" },
 	{ slug: "tabs", title: "Tabs", description: "Variants, sizes, swipe, scrolling", group: "Navigation" },
 	{ slug: "tree", title: "Tree", description: "Nesting, selection, guide lines, lazy branches", group: "Navigation" },

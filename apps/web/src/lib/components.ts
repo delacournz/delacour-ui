@@ -460,6 +460,13 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A sheet that rises from the bottom edge — snap points, keyboard, sticky footer, scrollables and steps.",
 	},
 	{
+		slug: "section-progress",
+		name: "SectionProgress",
+		group: "Navigation",
+		blurb:
+			"A floating pill over a long read: a ring filling with scroll progress, the section being read, and a list to jump between them.",
+	},
+	{
 		slug: "sortable",
 		name: "Sortable",
 		group: "Navigation",

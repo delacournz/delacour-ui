@@ -102,6 +102,7 @@
 		"drawer",
 		"feedback",
 		"---Navigation---",
+		"section-progress",
 		"sortable",
 		"pagination",
 		"breadcrumb",

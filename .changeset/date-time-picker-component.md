@@ -1,0 +1,6 @@
+---
+"@delacour/react-native-ui": minor
+"delacour": minor
+---
+
+Add `DateTimePicker`, one field for a date and a time of day picked together: an `Input`-shaped trigger that opens a `Calendar` and `TimePicker`'s wheel in one bottom sheet with one Done, or draws them in place with `presentation="inline"`. The value is a whole `{ date, time }` or `null`, never half — a day picked first takes the time from the clock, rounded up onto `minuteStep`; a time picked first lands on today or the nearest allowed day — and every pick and settle reports it, so Done only closes and announces. `layout="tabs"` (default) puts Date and Time behind tabs and moves to Time once after the first date pick; `layout="stacked"` draws the calendar over a time row that opens the wheel. `minDateTime`/`maxDateTime` are one window that bounds the calendar to its days and the wheel to its times on those days only, re-clamping the time when the date moves; plus `disabledDates`, `hourCycle`, `showSeconds`, `locale`, a custom `format`, `isClearable`, controlled or uncontrolled value and open state, and the `Field` cascade. The subpath exports the pure `DateTimeValue` helpers — `toNativeDate`/`fromNativeDate`, `formatDateTime`, `serialiseDateTime`/`parseDateTime`, `clampDateTime`, `timeBoundsForDate` and more. Needs `BottomSheetProvider`. `bunx delacour add date-time-picker` copies it.

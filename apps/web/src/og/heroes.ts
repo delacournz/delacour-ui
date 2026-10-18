@@ -49,6 +49,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/context-menu": "context-menu/message-actions",
 	"native/components/countdown": "countdown/segmented",
 	"native/components/date-picker": "date-picker/single",
+	"native/components/date-time-picker": "date-time-picker/tabs-layout",
 	"native/components/dialog": "dialog/confirm",
 	"native/components/direction": "direction/toggle",
 	"native/components/drawer": "drawer/navigation",
@@ -216,6 +217,10 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	},
 	"countdown/segmented": { load: () => import("../../public/previews/countdown/segmented/dark.png?inline") },
 	"date-picker/single": { cut: "a8e20e72e13e", load: () => import("./frames/date-picker/single.png?inline") },
+	"date-time-picker/tabs-layout": {
+		cut: "79ca97d02f44",
+		load: () => import("./frames/date-time-picker/tabs-layout.png?inline"),
+	},
 	"dialog/confirm": { cut: "e2b7824ce5b9", load: () => import("./frames/dialog/confirm.png?inline") },
 	"direction/toggle": { load: () => import("../../public/previews/direction/toggle/dark.png?inline") },
 	"drawer/navigation": { cut: "a14153d3c8a8", load: () => import("./frames/drawer/navigation.png?inline") },

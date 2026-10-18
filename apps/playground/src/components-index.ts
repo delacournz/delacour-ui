@@ -97,6 +97,12 @@ const ROWS = [
 		group: "Forms",
 	},
 	{ slug: "color-picker", title: "ColorPicker", description: "Area, hue, alpha, hex, swatches, sheet", group: "Forms" },
+	{
+		slug: "date-time-picker",
+		title: "Date Time Picker",
+		description: "Tabs or stacked, bounds from now, 24-hour, inline",
+		group: "Forms",
+	},
 	{ slug: "field", title: "Field", description: "Form layout, grouping, state cascade", group: "Forms" },
 	{ slug: "input", title: "Input", description: "Variants, sizes, prefix and suffix", group: "Forms" },
 	{ slug: "textarea", title: "Textarea", description: "Rows, auto-grow, character count", group: "Forms" },

@@ -1,0 +1,31 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on date-time-picker/step-15-24h and has settled — the
+  trigger reads Mon 5 Oct at 15:00 in en-GB and the sheet is closed. The capture script
+  navigates there before running this.
+# Each wheel column is dragged once per opening. A column that has already settled can miss
+# a second drag (it is still realigning), so the way back to the start is a second opening.
+steps:
+  - echo: Opening the sheet on the Time tab, rolling the hour forward
+  - tap: { id: date-time-picker-24h-trigger }
+  - await: { visible: { id: date-time-picker-24h-tab-time } }
+  - wait: 600
+  - tap: { id: date-time-picker-24h-tab-time }
+  - await: { visible: { text: Hour } }
+  - wait: 700
+  - swipe: { from: { text: Hour }, by: { y: -0.09 }, momentum: false, duration: 600 }
+  - wait: 1000
+  - tap: { id: date-time-picker-24h-done }
+  - await: { hidden: { id: date-time-picker-24h-calendar } }
+  - wait: 900
+  - echo: Reopening to roll it back to 15, so the clip loops on 15:00
+  - tap: { id: date-time-picker-24h-trigger }
+  - await: { visible: { id: date-time-picker-24h-tab-time } }
+  - wait: 600
+  - tap: { id: date-time-picker-24h-tab-time }
+  - await: { visible: { text: Hour } }
+  - wait: 700
+  - swipe: { from: { text: Hour }, by: { y: 0.09 }, momentum: false, duration: 600 }
+  - wait: 1000
+  - tap: { id: date-time-picker-24h-done }
+  - await: { hidden: { id: date-time-picker-24h-calendar } }
+  - wait: 500

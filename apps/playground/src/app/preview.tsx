@@ -4,9 +4,19 @@ import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { type ReactElement, useCallback, useLayoutEffect, useRef, useState } from "react";
 import { Dimensions, Keyboard, Pressable, View } from "react-native";
+import { Settings as PulsarSettings } from "react-native-pulsar";
 import { Uniwind } from "uniwind";
 import { DEMOS, type DemoId } from "@/demos/registry";
 import { applyConfig } from "@/design-system/store";
+
+// Pulsar stands in for the simulator's missing Taptic Engine by playing each
+// haptic as a short sound. A capture run taps hundreds of controls on a
+// simulator that may have no audio output at all — a headless one has none —
+// and AudioToolbox then aborts the process on an RPC timeout inside Pulsar's
+// AudioSimulator the first time its engine is torn down. Nobody listens to a
+// capture, so the preview route keeps the haptics and drops the sound before a
+// single demo mounts.
+PulsarSettings.enableSound(false);
 
 type PreviewTheme = "light" | "dark";
 

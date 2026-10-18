@@ -549,6 +549,27 @@ and `bun run previews` picks them up on its next run only if their hashes still 
 Metro or export `WARDEN_*` yourself — `warden e2e` is the only supported way in, and a bare
 `bun test --preload @delacour/warden-e2e/preload` run without that environment refuses to start.
 
+**`bun run previews:verify` is the whole check, with nobody at the keyboard.** It recaptures a
+selection with `--force` (`accordion,chart,input/variants/at-rest,bottom-sheet` by default — a
+still-heavy component, the gesture-heavy one, a typing demo and a portal), compares every PNG the
+selection owns pixel for pixel against the copy on `--base` (`origin/develop`), reads every clip's
+duration against its baseline's and tiles a contact sheet of it, then writes
+`.previews/verify/report.md` and exits 1 on a failed capture, a missing or resized file, or a still
+that moved more than `--max-diff` percent (2) of its pixels. `--no-capture` judges the tree as it is;
+`--only`, `--count` and `--headless` pass through. Run it after any change to the capture pipeline
+and read the report, not the terminal.
+
+```bash
+bun run previews:verify                                   # from the root, through turbo
+bun run previews:verify -- -- --only switch --headless    # the same two -- as previews
+```
+
+Two things the first runs taught, both now built in: Pulsar plays every haptic as a sound on a
+simulator and AudioToolbox aborts the process when the simulator has no audio output — a headless one
+has none — so `preview.tsx` mutes it before a demo mounts; and a deep link that reaches
+expo-dev-launcher while the bundle is still loading cancels the load and leaves the launcher's home
+up, so the first capture in a process waits for the home screen's navbar before it opens a link.
+
 **The converter stays.** `scripts/previews/convert-flows.ts` turned the retired YAML fragments into
 these specs — `bun scripts/previews/convert-flows.ts --flows <dir> [--only switch] [--flip]` — and is
 kept because the aggregate's flows are converted with it next.

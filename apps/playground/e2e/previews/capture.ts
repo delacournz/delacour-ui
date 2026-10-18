@@ -273,6 +273,7 @@ async function captureTheme(
 	flow: FlowBody | undefined
 ): Promise<Captured> {
 	const { screen, device } = fixtures;
+	await ensureLoaded(fixtures);
 	await device.openLink(`${SCHEME}://preview?component=${planned.component}&demo=${planned.demo}&theme=${theme}`);
 
 	const { bounds } = await awaitSentinel(screen, planned.id, theme);
@@ -328,10 +329,29 @@ async function captureClip(
  * typed. The relaunch goes back through Metro, so the first deep link after it
  * waits on a cold JS load; `NAVIGATION_TIMEOUT_MS` covers that.
  */
-async function relaunch(fixtures: { screen: Screen; device: Device; app: App }): Promise<void> {
-	await fixtures.app.restart();
+/** The app has loaded its bundle and is drawing the home screen's navbar. */
+async function awaitLoaded(fixtures: { screen: Screen; device: Device }): Promise<void> {
 	await fixtures.screen.getByTestId("theme-toggle").waitFor({ state: "visible", timeout: 90_000 });
 	await fixtures.device.settle({ quietMs: 500, timeout: 5000 });
+}
+
+async function relaunch(fixtures: { screen: Screen; device: Device; app: App }): Promise<void> {
+	await fixtures.app.restart();
+	await awaitLoaded(fixtures);
+}
+
+/**
+ * Once per process: the suite opens the dev client on Metro before the first
+ * spec, but the bundle takes 10–20 s to download and boot, and a deep link that
+ * reaches expo-dev-launcher while that is still under way cancels the load and
+ * leaves the launcher's own home screen up — every sentinel then times out. So
+ * the first capture waits for the app to be on screen before it opens a link.
+ */
+let loaded = false;
+async function ensureLoaded(fixtures: { screen: Screen; device: Device }): Promise<void> {
+	if (loaded) return;
+	await awaitLoaded(fixtures);
+	loaded = true;
 }
 
 // ---- the spec API ----

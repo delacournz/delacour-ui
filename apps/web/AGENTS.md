@@ -21,7 +21,7 @@ previews**.
 ```bash
 bun run dev          # vite dev on :3000
 bun run build        # → .output/server/index.mjs
-bun run start        # bun --preload ./scripts/otel-preload.ts .output/server/index.mjs
+bun run start        # bun --preload @delacournz/otel-start/preload .output/server/index.mjs
 bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
@@ -79,11 +79,10 @@ src/
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
 ├── start.ts               crawler block + br/gzip + csrf + Accept: text/markdown negotiation
 ├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
-├── server/trace.ts        traceRequest(), the span itself — see "Tracing"
+├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 source.config.ts           global mdxOptions — remarkComponentCount, merged into Fumadocs' defaults
-scripts/otel-preload.ts    the OpenTelemetry SDK, `--preload`ed by `start` — see "Tracing"
 scripts/generate-icons.ts  the browser icon set — see "Branding"
 public/favicon.*           generated
 public/icon-*.png          generated
@@ -883,30 +882,29 @@ package rather than externalising it. Verified against `bun run build && bun run
 
 ## Tracing
 
-Production exports OpenTelemetry traces to Railway. The setup is the same as warden's docs site
-(`delacournz/warden` `apps/docs`) — both are TanStack Start + Fumadocs on Nitro's Bun preset — so
-change both together.
+Production exports OpenTelemetry traces to Railway through `@delacournz/otel-start`, the shared
+package family from `delacournz/delacour-monorepo` (`packages/otel*`). Its `AGENTS.md` is the
+reference; warden's docs site consumes it the same way.
 
 | Piece | Where |
 | --- | --- |
-| SDK start + flush on `SIGTERM` / `SIGINT` | `scripts/otel-preload.ts`, `bun --preload`ed by the `start` script |
+| SDK boot, before the bundle loads | `@delacournz/otel-start/preload`, `bun --preload`ed by the `start` script |
 | The middleware | `src/server/otel.ts`, registered in `vite.config.ts`'s Nitro `handlers` |
-| The SERVER span | `src/server/trace.ts` |
+| The SERVER span + `http.server.*` metrics | `withServerSpan`, adapted in `src/server/trace.ts` |
 
-- **The span is made by hand.** `Bun.serve` never touches node `http`, so the SDK's
-  auto-instrumentations would patch nothing. `traceRequest` continues an incoming `traceparent`
-  and records method, path, status and errors. It is a Nitro middleware rather than a TanStack
-  Start `requestMiddleware`, so it wraps all of `src/start.ts` and the static handler too.
-- **Nothing is hardcoded.** Endpoint, protocol, headers, service name and version are the `OTEL_*`
-  vars Railway injects when tracing is enabled on the service. With neither
-  `OTEL_EXPORTER_OTLP_ENDPOINT` nor `OTEL_TRACES_EXPORTER` set the SDK never starts, so dev, CI and
-  `bun test` are untouched. Traces only: `start` sets `OTEL_METRICS_EXPORTER=none` and
-  `OTEL_LOGS_EXPORTER=none`.
-- **The start command must run from `apps/web`.** The preload is not bundled; it resolves
-  `@opentelemetry/*` from the workspace `node_modules` at run time.
-
-Verify locally: `bun run build`, then `OTEL_TRACES_EXPORTER=console bun run start` and request a
-page with a `traceparent` header — the console prints a `GET` span, kind SERVER, parented on it.
+- **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`; the
+  token is a classic PAT with only `read:packages`. Railway has it on `ui-web`; CI reads the
+  `NPM_TOKEN` Actions secret; locally, export it.
+- **The span is a Nitro middleware**, not TanStack Start's server entry as in the monorepo, so it
+  wraps all of `src/start.ts` and the static handler too. `withServerSpan` wants a `fetch`-shaped
+  handler; `traceRequest` hands it a stand-in `Response` carrying `event.res.status` when `next()`
+  resolves to a plain body, and returns the original body.
+- **Nothing is hardcoded.** The core boots only when a sink is configured — Railway's injected
+  `OTEL_EXPORTER_OTLP_ENDPOINT`, or `DASH0_OTLP_ENDPOINT` — and never under `NODE_ENV=test`, a
+  `build` lifecycle or the vite CLI, so dev, CI and `bun test` are untouched. With Railway alone
+  there is no metric reader or log exporter, so nothing reaches its traces-only receiver.
+- **The start command must run from `apps/web`.** `--preload` resolves the package specifier from
+  the cwd; Railway's `bun run --filter=@delacour/web start` does.
 
 ## Gotchas
 

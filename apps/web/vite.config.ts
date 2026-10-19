@@ -51,7 +51,7 @@ export default defineConfig({
 		//
 		// `src/server/otel.ts` opens one OpenTelemetry SERVER span per request, as a Nitro
 		// middleware so it wraps everything TanStack Start does, `src/start.ts`'s middleware
-		// included. `scripts/otel-preload.ts` supplies the provider.
+		// included. `@delacournz/otel-start/preload`, in the `start` script, supplies the provider.
 		nitro({
 			preset: "bun",
 			compressPublicAssets: true,

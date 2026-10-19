@@ -90,13 +90,15 @@
       },
       "devDependencies": {
         "@delacour/biome-config": "workspace:*",
-        "@delacour/warden-core": "link:@delacour/warden-core",
-        "@delacour/warden-e2e": "link:@delacour/warden-e2e",
         "@resvg/resvg-js": "^2.6.2",
         "@types/culori": "^4.0.1",
         "@types/react": "catalog:",
         "dotenv-cli": "^11.0.0",
         "typescript": "^5.9.3",
+      },
+      "optionalDependencies": {
+        "@delacour/warden-core": "link:@delacour/warden-core",
+        "@delacour/warden-e2e": "link:@delacour/warden-e2e",
       },
     },
     "apps/web": {
@@ -561,10 +563,6 @@
     "@delacour/tsconfig": ["@delacour/tsconfig@workspace:packages/tsconfig"],
 
     "@delacour/types": ["@delacour/types@workspace:packages/types"],
-
-    "@delacour/warden-core": ["@delacour/warden-core@link:@delacour/warden-core", {}],
-
-    "@delacour/warden-e2e": ["@delacour/warden-e2e@link:@delacour/warden-e2e", {}],
 
     "@delacour/web": ["@delacour/web@workspace:apps/web"],
 

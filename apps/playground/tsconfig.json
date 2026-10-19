@@ -21,5 +21,9 @@
 			"react-native/*": ["../../node_modules/react-native/*"]
 		}
 	},
-	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+	"include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"],
+	// These import warden, a workspace from another repository linked in as an
+	// optional dependency. CI has no copy of it, so they type-check on their
+	// own: `bun run typecheck:e2e`, on a machine with warden linked.
+	"exclude": ["node_modules", "warden.config.ts", "e2e/**/*.e2e.ts", "e2e/previews/capture.ts", "e2e/previews/video.ts"]
 }

@@ -25,9 +25,17 @@ bun android                # ensure-prebuild, then expo run:android --device --p
 bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from @delacour/brand
 bun run check              # Biome
-bun run typecheck          # tsc --noEmit
+bun run typecheck          # tsc --noEmit — everything but the warden specs
+bun run typecheck:e2e      # tsc on the warden specs and warden.config.ts; needs warden linked
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
+
+`@delacour/warden-core` and `@delacour/warden-e2e` are `link:` packages from the separate
+`delacournz/warden` repository, unpublished, so they are **optional** dependencies: with
+`bun link` run in warden's `packages/core` and `packages/e2e` they install, and on a CI
+runner, which has neither, `bun install --frozen-lockfile` skips them instead of failing. As
+plain devDependencies they failed every CI job at install. For the same reason
+`tsconfig.json` excludes the files that import them, and `tsconfig.e2e.json` checks those.
 
 EAS, all wrapped in `dotenv -e .env` so `EXPO_TOKEN` is picked up:
 

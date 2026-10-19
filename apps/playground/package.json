@@ -14,6 +14,7 @@
 		"check": "biome check ./src",
 		"test": "bun test",
 		"typecheck": "tsc --noEmit",
+		"typecheck:e2e": "tsc --noEmit -p tsconfig.e2e.json",
 		"gen-demos": "bun scripts/gen-demo-registry.ts",
 		"previews": "bun scripts/capture-previews.ts",
 		"eas": "dotenv -e .env eas",
@@ -95,12 +96,14 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
-		"@delacour/warden-core": "link:@delacour/warden-core",
-		"@delacour/warden-e2e": "link:@delacour/warden-e2e",
 		"@resvg/resvg-js": "^2.6.2",
 		"@types/culori": "^4.0.1",
 		"@types/react": "catalog:",
 		"dotenv-cli": "^11.0.0",
 		"typescript": "^5.9.3"
+	},
+	"optionalDependencies": {
+		"@delacour/warden-core": "link:@delacour/warden-core",
+		"@delacour/warden-e2e": "link:@delacour/warden-e2e"
 	}
 }

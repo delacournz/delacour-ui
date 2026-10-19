@@ -1,4 +1,4 @@
-import type { WardenConfig, WardenE2eSpec } from "@delacour/warden-core/builds/define-config";
+import type { WardenConfig, WardenE2eSpec } from "@delacour/warden/config";
 
 /** The playground's bundle id, on both platforms. */
 const BUNDLE_ID = "nz.co.delacour.ui.playground";

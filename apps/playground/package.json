@@ -96,8 +96,8 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
-		"@delacour/warden-core": "^0.1.0",
-		"@delacour/warden-e2e": "^0.1.0",
+		"@delacour/warden": "0.1.1",
+		"@delacour/warden-e2e": "0.1.1",
 		"@resvg/resvg-js": "^2.6.2",
 		"@types/culori": "^4.0.1",
 		"@types/react": "catalog:",

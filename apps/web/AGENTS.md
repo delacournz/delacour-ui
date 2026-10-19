@@ -895,6 +895,11 @@ reference; warden's docs site consumes it the same way.
 - **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`; the
   token is a classic PAT with only `read:packages`. Railway has it on `ui-web`; CI reads the
   `NPM_TOKEN` Actions secret; locally, export it.
+- **The root `overrides` pins `@delacournz/otel` to `0.1.0`.** The published
+  `@delacournz/otel-start@0.1.0` depends on `@delacournz/otel@0.0.0`: the monorepo's `bun publish`
+  rewrote `workspace:*` from a `bun.lock` that still listed the workspaces at `0.0.0`, and that
+  version was never published. Drop the override once a fixed `otel-start` is out, and bump it in
+  step with `otel-start` until then.
 - **The span is a Nitro middleware**, not TanStack Start's server entry as in the monorepo, so it
   wraps all of `src/start.ts` and the static handler too. `withServerSpan` wants a `fetch`-shaped
   handler; `traceRequest` hands it a stand-in `Response` carrying `event.res.status` when `next()`

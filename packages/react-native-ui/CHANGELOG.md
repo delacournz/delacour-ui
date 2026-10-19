@@ -1,5 +1,28 @@
 # @delacour/react-native-ui
 
+## 0.3.0
+
+### Minor Changes
+
+- [#126](https://github.com/delacournz/delacour-ui/pull/126) [`2f720c5`](https://github.com/delacournz/delacour-ui/commit/2f720c588b43e0d1a036ed1be5d3e81b744a3f9e) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add Carousel: swipeable slides with peek, loop, vertical, coverflow, autoplay, dots and arrows. Adds `lib/paging`, the shared worklet-safe paging maths.
+
+- [#163](https://github.com/delacournz/delacour-ui/pull/163) [`870cb5c`](https://github.com/delacournz/delacour-ui/commit/870cb5ce9988bfa46887ec66dbaa9abbb0a19791) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add the scroll family's shared base: `useScrollSource`, `scroll-maths` and `scroll-edges`
+
+  `@delacour/react-native-ui/hooks/use-scroll-source` gives any scrollable a `ScrollSource` — its
+  offset, content size and layout size as shared values, plus its axis — and the props to spread onto
+  it; `ScrollSourceProvider` shares one and `useResolvedScrollSource` is how an effect finds it.
+  `lib/scroll-maths` holds the worklet maths an edge affordance needs (`scrollEdgeOpacity`,
+  `scrollProgress`, `readScrollEvent`) and `lib/scroll-edges` the band geometry. A `Screen` now
+  publishes its own body as a scroll source, so scroll-linked effects inside one need no wiring. The
+  CLI registry gains the three items, and `screen` now depends on `use-scroll-source`.
+
+- [#164](https://github.com/delacournz/delacour-ui/pull/164) [`9ea878d`](https://github.com/delacournz/delacour-ui/commit/9ea878de09b3623cb8ba7b1631f9ee4f20563d08) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `useScrollSections` — section-aware scroll tracking for long screens.
+
+  - `useScrollSections({ readingLine })` returns a `scrollHandler` for an `Animated.ScrollView`, a `register(id)` that hands back each section's `onLayout`, the `activeId` (React state that changes only when the reader crosses into another section), `progress` and `scrollY` as shared values, and `scrollTo(id)`.
+  - The active section is resolved on the UI thread and crosses to React only on a change, so scrolling never re-renders the screen.
+  - The pure resolvers behind it — `resolveActiveSection`, `resolveScrollProgress` and `resolveSectionScrollTarget` — are worklet-safe and exported from `lib/scroll-sections`.
+  - `delacour add use-scroll-sections` copies the hook and its resolvers into a project.
+
 ## 0.2.0
 
 ### Minor Changes

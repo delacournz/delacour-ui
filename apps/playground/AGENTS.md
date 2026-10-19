@@ -30,12 +30,14 @@ bun run typecheck:e2e      # tsc on the warden specs and warden.config.ts; needs
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
 
-`@delacour/warden-core` and `@delacour/warden-e2e` are `link:` packages from the separate
-`delacournz/warden` repository, unpublished, so they are **optional** dependencies: with
-`bun link` run in warden's `packages/core` and `packages/e2e` they install, and on a CI
-runner, which has neither, `bun install --frozen-lockfile` skips them instead of failing. As
-plain devDependencies they failed every CI job at install. For the same reason
-`tsconfig.json` excludes the files that import them, and `tsconfig.e2e.json` checks those.
+`@delacour/warden-core` and `@delacour/warden-e2e` are ordinary devDependencies, installed from
+npm like everything else: the specs under `e2e/` import them and `previews` cannot run without
+them. They come from the separate `delacournz/warden` repository, whose release workflow publishes
+them; until the first version is on the registry, `bun install` fails on these two with a 404 and
+this workspace cannot be installed at all — there is deliberately no `link:` or optional fallback,
+because an install that silently skips the e2e stack passes CI with specs nobody can run.
+`tsconfig.json` still excludes the files that import them, and `tsconfig.e2e.json` checks those,
+so `typecheck` stays independent of a simulator-bearing machine's setup.
 
 EAS, all wrapped in `dotenv -e .env` so `EXPO_TOKEN` is picked up:
 

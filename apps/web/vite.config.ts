@@ -48,6 +48,10 @@ export default defineConfig({
 		// are only as fresh as the last deploy, so five minutes fresh plus a day of
 		// stale-while-revalidate costs readers nothing and lets an edge cache absorb
 		// repeat traffic. See `src/lib/cache-rules.ts`.
+		//
+		// `src/server/otel.ts` opens one OpenTelemetry SERVER span per request, as a Nitro
+		// middleware so it wraps everything TanStack Start does, `src/start.ts`'s middleware
+		// included. `@delacournz/otel-start/preload`, in the `start` script, supplies the provider.
 		nitro({
 			preset: "bun",
 			compressPublicAssets: true,
@@ -57,6 +61,7 @@ export default defineConfig({
 				},
 				...pageCacheRules,
 			},
+			handlers: [{ route: "/**", middleware: true, handler: "./src/server/otel.ts" }],
 		}),
 	],
 	// `@resvg/resvg-js` is a native N-API binary the OG route loads on the server.

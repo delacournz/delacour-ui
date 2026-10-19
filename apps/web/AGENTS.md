@@ -21,7 +21,7 @@ previews**.
 ```bash
 bun run dev          # vite dev on :3000
 bun run build        # → .output/server/index.mjs
-bun run start        # bun .output/server/index.mjs
+bun run start        # bun --preload @delacournz/otel-start/preload .output/server/index.mjs
 bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
@@ -78,6 +78,8 @@ src/
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
 ├── start.ts               crawler block + br/gzip + csrf + Accept: text/markdown negotiation
+├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
+├── server/trace.ts        traceRequest(), adapts withServerSpan to the middleware — see "Tracing"
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 source.config.ts           global mdxOptions — remarkComponentCount, merged into Fumadocs' defaults
@@ -877,6 +879,37 @@ worked fine from the same machine. Metro is already on the LAN on 8088 for the s
 Nothing needed adding to `vite.config.ts` for the workspace dependency — `apps/web` already imports
 raw `.ts` from `@delacour/brand` in an SSR'd component, and Vite transpiles a linked workspace
 package rather than externalising it. Verified against `bun run build && bun run start`, not `dev`.
+
+## Tracing
+
+Production exports OpenTelemetry traces to Railway through `@delacournz/otel-start`, the shared
+package family from `delacournz/delacour-monorepo` (`packages/otel*`). Its `AGENTS.md` is the
+reference; warden's docs site consumes it the same way.
+
+| Piece | Where |
+| --- | --- |
+| SDK boot, before the bundle loads | `@delacournz/otel-start/preload`, `bun --preload`ed by the `start` script |
+| The middleware | `src/server/otel.ts`, registered in `vite.config.ts`'s Nitro `handlers` |
+| The SERVER span + `http.server.*` metrics | `withServerSpan`, adapted in `src/server/trace.ts` |
+
+- **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`; the
+  token is a classic PAT with only `read:packages`. Railway has it on `ui-web`; CI reads the
+  `NPM_TOKEN` Actions secret; locally, export it.
+- **The root `overrides` pins `@delacournz/otel` to `0.1.0`.** The published
+  `@delacournz/otel-start@0.1.0` depends on `@delacournz/otel@0.0.0`: the monorepo's `bun publish`
+  rewrote `workspace:*` from a `bun.lock` that still listed the workspaces at `0.0.0`, and that
+  version was never published. Drop the override once a fixed `otel-start` is out, and bump it in
+  step with `otel-start` until then.
+- **The span is a Nitro middleware**, not TanStack Start's server entry as in the monorepo, so it
+  wraps all of `src/start.ts` and the static handler too. `withServerSpan` wants a `fetch`-shaped
+  handler; `traceRequest` hands it a stand-in `Response` carrying `event.res.status` when `next()`
+  resolves to a plain body, and returns the original body.
+- **Nothing is hardcoded.** The core boots only when a sink is configured — Railway's injected
+  `OTEL_EXPORTER_OTLP_ENDPOINT`, or `DASH0_OTLP_ENDPOINT` — and never under `NODE_ENV=test`, a
+  `build` lifecycle or the vite CLI, so dev, CI and `bun test` are untouched. With Railway alone
+  there is no metric reader or log exporter, so nothing reaches its traces-only receiver.
+- **The start command must run from `apps/web`.** `--preload` resolves the package specifier from
+  the cwd; Railway's `bun run --filter=@delacour/web start` does.
 
 ## Gotchas
 

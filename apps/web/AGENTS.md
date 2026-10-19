@@ -21,7 +21,7 @@ previews**.
 ```bash
 bun run dev          # vite dev on :3000
 bun run build        # → .output/server/index.mjs
-bun run start        # bun .output/server/index.mjs
+bun run start        # bun --preload ./scripts/otel-preload.ts .output/server/index.mjs
 bun run check        # Biome lint + format
 bun run typecheck    # tsc --noEmit
 bun run icons        # regenerate the browser icon set from @delacour/brand
@@ -78,9 +78,12 @@ src/
 │   ├── skills/$.ts        the agent skill, as files — see "The skill is served, not copied"
 │   └── llms[.]txt.ts, llms-full[.]txt.ts, robots[.]txt.ts
 ├── start.ts               crawler block + br/gzip + csrf + Accept: text/markdown negotiation
+├── server/otel.ts         Nitro middleware — one OpenTelemetry SERVER span per request
+├── server/trace.ts        traceRequest(), the span itself — see "Tracing"
 └── styles/app.css         Tailwind + Fumadocs preset + the react-native-ui palette
 
 source.config.ts           global mdxOptions — remarkComponentCount, merged into Fumadocs' defaults
+scripts/otel-preload.ts    the OpenTelemetry SDK, `--preload`ed by `start` — see "Tracing"
 scripts/generate-icons.ts  the browser icon set — see "Branding"
 public/favicon.*           generated
 public/icon-*.png          generated
@@ -877,6 +880,33 @@ worked fine from the same machine. Metro is already on the LAN on 8088 for the s
 Nothing needed adding to `vite.config.ts` for the workspace dependency — `apps/web` already imports
 raw `.ts` from `@delacour/brand` in an SSR'd component, and Vite transpiles a linked workspace
 package rather than externalising it. Verified against `bun run build && bun run start`, not `dev`.
+
+## Tracing
+
+Production exports OpenTelemetry traces to Railway. The setup is the same as warden's docs site
+(`delacournz/warden` `apps/docs`) — both are TanStack Start + Fumadocs on Nitro's Bun preset — so
+change both together.
+
+| Piece | Where |
+| --- | --- |
+| SDK start + flush on `SIGTERM` / `SIGINT` | `scripts/otel-preload.ts`, `bun --preload`ed by the `start` script |
+| The middleware | `src/server/otel.ts`, registered in `vite.config.ts`'s Nitro `handlers` |
+| The SERVER span | `src/server/trace.ts` |
+
+- **The span is made by hand.** `Bun.serve` never touches node `http`, so the SDK's
+  auto-instrumentations would patch nothing. `traceRequest` continues an incoming `traceparent`
+  and records method, path, status and errors. It is a Nitro middleware rather than a TanStack
+  Start `requestMiddleware`, so it wraps all of `src/start.ts` and the static handler too.
+- **Nothing is hardcoded.** Endpoint, protocol, headers, service name and version are the `OTEL_*`
+  vars Railway injects when tracing is enabled on the service. With neither
+  `OTEL_EXPORTER_OTLP_ENDPOINT` nor `OTEL_TRACES_EXPORTER` set the SDK never starts, so dev, CI and
+  `bun test` are untouched. Traces only: `start` sets `OTEL_METRICS_EXPORTER=none` and
+  `OTEL_LOGS_EXPORTER=none`.
+- **The start command must run from `apps/web`.** The preload is not bundled; it resolves
+  `@opentelemetry/*` from the workspace `node_modules` at run time.
+
+Verify locally: `bun run build`, then `OTEL_TRACES_EXPORTER=console bun run start` and request a
+page with a `traceparent` header — the console prints a `GET` span, kind SERVER, parented on it.
 
 ## Gotchas
 

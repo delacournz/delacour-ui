@@ -36,6 +36,11 @@ on:
     branches: [develop]
   workflow_dispatch:
 
+# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
+# with only `read:packages`, never a broader token.
+env:
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   plan:
     name: Plan

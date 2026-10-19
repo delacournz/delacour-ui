@@ -44,8 +44,11 @@ concurrency:
   # red run on `develop` or a release branch should mean the tree is broken, not superseded.
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
+# `bun install` resolves `@delacournz/*` from GitHub Packages (see `bunfig.toml`): a classic PAT
+# with only `read:packages`, never a broader token.
 env:
   TURBO_TELEMETRY_DISABLED: 1
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
 jobs:
   typecheck:

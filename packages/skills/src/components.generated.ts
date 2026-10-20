@@ -12,6 +12,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "accordion", title: "Accordion", description: "Collapsible sections whose panels animate to their measured height." },
 	{ name: "alert", title: "Alert", description: "A status message with a glyph picked from its status, a title, a description and an optional action." },
 	{ name: "animated-badge", title: "AnimatedBadge", description: "A status pill that rolls its content and springs its width when the status changes." },
+	{ name: "attachment", title: "Attachment", description: "A file, image or recording chip with a thumbnail, size, upload progress and remove control." },
 	{ name: "avatar", title: "Avatar", description: "A person as a picture, with an initials fallback, a corner badge and an overlapping group." },
 	{ name: "badge", title: "Badge", description: "A compact label for status or a count, composed from parts like the button." },
 	{ name: "bottom-sheet", title: "Bottom Sheet", description: "A draggable sheet over the screen: snap points, keyboard, sticky footer, scrollables, steps and a teleported portal, on @delacour/react-native-bottom-sheet." },

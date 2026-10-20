@@ -29,6 +29,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/accordion": "accordion/one-at-a-time",
 	"native/components/alert": "alert/statuses",
 	"native/components/animated-badge": "animated-badge/status-flow",
+	"native/components/attachment": "attachment/upload-states",
 	"native/components/avatar": "avatar/group",
 	"native/components/badge": "badge/variants-and-colours",
 	"native/components/bottom-sheet": "bottom-sheet/anatomy/the-whole-composition",
@@ -115,6 +116,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"animated-badge/status-flow": {
 		load: () => import("../../public/previews/animated-badge/status-flow/dark.png?inline"),
 	},
+	"attachment/upload-states": { load: () => import("../../public/previews/attachment/upload-states/dark.png?inline") },
 	"avatar/group": { load: () => import("../../public/previews/avatar/group/dark.png?inline") },
 	"badge/variants-and-colours": {
 		load: () => import("../../public/previews/badge/variants-and-colours/dark.png?inline"),

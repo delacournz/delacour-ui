@@ -368,6 +368,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "A chat bubble with direction, run-aware corners, delivery status, reactions and an avatar gutter.",
 		categories: ["media"],
 	},
+	"message-scroller": {
+		title: "Message Scroller",
+		description:
+			"A bottom-anchored conversation list: sticks to the newest message, jumps to latest with an unread count, loads older history, rises with the keyboard.",
+		categories: ["media"],
+	},
 	pressable: {
 		title: "Pressable",
 		description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states.",

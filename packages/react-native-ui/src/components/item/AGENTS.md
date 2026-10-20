@@ -24,7 +24,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
 | `item-separator.tsx` | `Item.Separator` |
 | `item.context.tsx` | `ItemProvider`, `useItem()`, `useItemContext()`, `useItemPart()` |
 | `item.types.ts` | Prop types shared by two or more parts |
-| `item.variants.ts` | Pure `tv()` slots and the four resolvers, no RN imports |
+| `item.variants.ts` | Pure `tv()` slots, the four resolvers and `wrapItemTextChildren`, no RN imports |
 | `item.variants.test.ts` | |
 
 ## Design
@@ -87,6 +87,10 @@ A row of media, text and actions, for lists and settings. Compound root plus
   hand-placed rule in a group.
 - **String children** are wrapped in a `Content` around a `Title`, consecutive
   strings collapsing into one — the same rule, and the same reason, as
-  [`ListGroup`](../list-group/AGENTS.md).
+  [`ListGroup`](../list-group/AGENTS.md). `wrapItemTextChildren` does it and
+  hands one node back as that node, never a one-item array: `Pressable` with
+  `asChild` passes its children to `Children.only`, which rejects any array,
+  so `<Item asChild onPress={…}><View /></Item>` threw until it did. The
+  tests hold that case.
 - **Text colour goes on the text.** No slot but `title` and `description` holds
   a `text-*` colour; the tests assert the root never does.

@@ -1323,6 +1323,40 @@
 			]
 		},
 		{
+			"name": "marker",
+			"type": "registry:ui",
+			"title": "Marker",
+			"description": "A centred inline note for a step or a day break between conversation turns, static or pressable.",
+			"categories": [
+				"feedback"
+			],
+			"registryDependencies": [
+				"icon",
+				"pressable",
+				"separator",
+				"text",
+				"tv",
+				"use-calm-motion"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/marker/AGENTS.md",
+				"ui/marker/index.ts",
+				"ui/marker/marker-content.tsx",
+				"ui/marker/marker-icon.tsx",
+				"ui/marker/marker-shimmer-clock.ts",
+				"ui/marker/marker.context.tsx",
+				"ui/marker/marker.tsx",
+				"ui/marker/marker.variants.ts"
+			]
+		},
+		{
 			"name": "menu",
 			"type": "registry:ui",
 			"title": "Menu",

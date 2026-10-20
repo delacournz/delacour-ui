@@ -64,6 +64,7 @@
 		"./leaderboard": "./src/components/leaderboard/index.ts",
 		"./list-group": "./src/components/list-group/index.ts",
 		"./map": "./src/components/map/index.ts",
+		"./marker": "./src/components/marker/index.ts",
 		"./menu": "./src/components/menu/index.ts",
 		"./meter": "./src/components/meter/index.ts",
 		"./overlay": "./src/components/overlay/index.ts",

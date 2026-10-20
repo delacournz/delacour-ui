@@ -893,8 +893,9 @@ reference; warden's docs site consumes it the same way.
 | The SERVER span + `http.server.*` metrics | `withServerSpan`, adapted in `src/server/trace.ts` |
 
 - **Installing it needs `NPM_TOKEN`.** The scope is on GitHub Packages, routed by `bunfig.toml`; the
-  token is a classic PAT with only `read:packages`. Railway has it on `ui-web`; CI reads the
-  `NPM_TOKEN` Actions secret; locally, export it.
+  token is a classic PAT with only `read:packages`, owned by a machine user. Railway has it on `ui-web`;
+  CI reads the `NPM_TOKEN` Actions secret; EAS has it as a secret env var, because the playground's
+  build installs the whole workspace from the same lockfile; locally, export it.
 - **The root `overrides` pins `@delacournz/otel` to `0.1.0`.** The published
   `@delacournz/otel-start@0.1.0` depends on `@delacournz/otel@0.0.0`: the monorepo's `bun publish`
   rewrote `workspace:*` from a `bun.lock` that still listed the workspaces at `0.0.0`, and that

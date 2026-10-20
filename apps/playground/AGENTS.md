@@ -1264,6 +1264,32 @@ uncreatable — `cannot lock ref … 'refs/heads/release/playground' exists`. It
 exist briefly, and had to be deleted from origin before the first versioned
 release branch could be cut.
 
+### `NPM_TOKEN` is an EAS secret
+
+EAS runs `bun install --frozen-lockfile` at the repository root, so the build installs every
+workspace — including `apps/web`'s `@delacournz/otel-start`, which lives on GitHub Packages and
+not npm. Without the token the build dies before anything native runs:
+
+```
+error: GET https://npm.pkg.github.com/download/@delacournz/otel-start/0.1.0/… - 401
+```
+
+`NPM_TOKEN` is therefore a project env var on expo.dev, visibility **secret**, in `development`,
+`preview` **and** `production`. All three, because only the `production` profile names its
+environment; the rest take EAS's default for their shape, and a profile that lands in an
+environment without the token fails the same way. Installing only the playground's workspaces
+was considered and rejected: EAS owns the install command, and a filtered install against a
+hoisted, frozen lockfile breaks the single copies `metro.config.js` pins.
+
+It is the same classic `read:packages` PAT, owned by a machine user, that CI and Railway use — see
+`bunfig.toml`. Rotate it in all three places at once:
+
+```bash
+cd apps/playground && bunx eas-cli@latest env:create --scope project --name NPM_TOKEN \
+  --value <token> --visibility secret --environment development --environment preview \
+  --environment production --force
+```
+
 ### `working_directory` is deliberately absent
 
 The skill this was scaffolded from tells monorepos to set

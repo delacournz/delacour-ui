@@ -90,6 +90,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/switch": "switch/tap-or-drag",
 	"native/components/table": "table/sortable",
 	"native/components/tabs": "tabs/variants/every-variant",
+	"native/components/tag-input": "tag-input/basic",
 	"native/components/text": "text/type-scale",
 	"native/components/textarea": "textarea/character-count",
 	"native/components/timeline": "timeline/horizontal",
@@ -232,6 +233,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"tabs/variants/every-variant": {
 		load: () => import("../../public/previews/tabs/variants/every-variant/dark.png?inline"),
 	},
+	"tag-input/basic": { load: () => import("../../public/previews/tag-input/basic/dark.png?inline") },
 	"text/type-scale": { load: () => import("../../public/previews/text/type-scale/dark.png?inline") },
 	"textarea/character-count": { load: () => import("../../public/previews/textarea/character-count/dark.png?inline") },
 	"timeline/horizontal": { load: () => import("../../public/previews/timeline/horizontal/dark.png?inline") },

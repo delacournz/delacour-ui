@@ -7,34 +7,42 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-// Workspace packages are consumed as source, so Metro has to watch and resolve
-// outside this app's directory.
-config.watchFolders = [workspaceRoot];
-config.resolver.nodeModulesPaths = [
-	path.resolve(projectRoot, "node_modules"),
-	path.resolve(workspaceRoot, "node_modules"),
-];
-config.resolver.disableHierarchicalLookup = true;
+// Expo's monorepo defaults already watch the workspace root and resolve from
+// both node_modules directories; overriding them fails expo-doctor.
 
 // One instance of each native module for the whole bundle. Bun materialises a
 // second copy of these under this app, and two registrations of a native module
-// break at runtime.
-config.resolver.extraNodeModules = {
-	react: path.resolve(workspaceRoot, "node_modules/react"),
-	"@shopify/react-native-skia": path.resolve(workspaceRoot, "node_modules/@shopify/react-native-skia"),
-	"react-native": path.resolve(workspaceRoot, "node_modules/react-native"),
-	"react-native-gesture-handler": path.resolve(workspaceRoot, "node_modules/react-native-gesture-handler"),
-	"react-native-keyboard-controller": path.resolve(workspaceRoot, "node_modules/react-native-keyboard-controller"),
-	culori: path.resolve(workspaceRoot, "node_modules/culori"),
-	"react-native-mmkv": path.resolve(workspaceRoot, "node_modules/react-native-mmkv"),
-	"react-native-nitro-modules": path.resolve(workspaceRoot, "node_modules/react-native-nitro-modules"),
-	"react-native-pager-view": path.resolve(workspaceRoot, "node_modules/react-native-pager-view"),
-	"react-native-reanimated": path.resolve(workspaceRoot, "node_modules/react-native-reanimated"),
-	"react-native-safe-area-context": path.resolve(workspaceRoot, "node_modules/react-native-safe-area-context"),
-	"react-native-svg": path.resolve(workspaceRoot, "node_modules/react-native-svg"),
-	"react-native-teleport": path.resolve(workspaceRoot, "node_modules/react-native-teleport"),
-	"react-native-worklets": path.resolve(workspaceRoot, "node_modules/react-native-worklets"),
+// break at runtime. extraNodeModules cannot do this: Metro consults it only when
+// every node_modules lookup has failed, so each request is resolved as if it
+// came from the workspace root instead.
+const pinned = new Set([
+	"react",
+	"@shopify/react-native-skia",
+	"react-native",
+	"react-native-gesture-handler",
+	"react-native-keyboard-controller",
+	"culori",
+	"react-native-mmkv",
+	"react-native-nitro-modules",
+	"react-native-pager-view",
+	"react-native-reanimated",
+	"react-native-safe-area-context",
+	"react-native-svg",
+	"react-native-teleport",
+	"react-native-worklets",
+]);
+const workspaceOrigin = path.join(workspaceRoot, "package.json");
+
+/** The package a bare specifier names: `@scope/name` or `name`, without a subpath. */
+const packageName = (moduleName) => {
+	const parts = moduleName.split("/");
+	return moduleName.startsWith("@") ? parts.slice(0, 2).join("/") : parts[0];
 };
+
+config.resolver.resolveRequest = (context, moduleName, platform) =>
+	pinned.has(packageName(moduleName))
+		? context.resolveRequest({ ...context, originModulePath: workspaceOrigin }, moduleName, platform)
+		: context.resolveRequest(context, moduleName, platform);
 
 // withUniwindConfig must stay the outermost wrapper.
 module.exports = withUniwindConfig(config, {

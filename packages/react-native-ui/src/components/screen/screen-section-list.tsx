@@ -42,11 +42,15 @@ export const ScreenSectionList = forwardRef(function ScreenSectionListRender<Ite
 		contentContainerClassName,
 		ListHeaderComponent: ListHeaderComponentProp,
 		ListFooterComponent: ListFooterComponentProp,
+		onScroll,
 		...props
 	}: ScreenSectionListProps<ItemT, SectionT>,
 	ref: ForwardedRef<SectionList<ItemT, SectionT>>
 ): ReactElement {
-	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets("standard");
+	const { scrollHandler, insetTopAnimatedStyle, insetBottomAnimatedStyle } = useScreenScrollInsets(
+		"standard",
+		onScroll
+	);
 
 	const ListHeaderComponent = useMemo<ReactElement>(
 		() => (

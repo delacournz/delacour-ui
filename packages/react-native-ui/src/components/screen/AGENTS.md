@@ -34,6 +34,8 @@ whole-screen states.
 | `screen-loading.tsx` | `Screen.Loading` |
 | `screen-error.tsx` | `Screen.Error` |
 | `screen-list-component.tsx` | A list header/footer prop, as a node — internal |
+| `screen-scroll-handler.ts` | `classifyScrollHandler` — sorts a caller's `onScroll` into JS or worklet, no RN imports |
+| `screen-scroll-handler.test.ts` | |
 | `screen-debug.ts` | `SCREEN_DEBUG_COLORS` |
 | `screen.context.tsx` | `ScreenProvider`, `useScreen()`, `useScreenContext()`, `useScreenPart()`, `useScreenDebug()` |
 | `screen.types.ts` | Prop types shared by two or more parts |
@@ -122,6 +124,20 @@ whole-screen states.
 
 ## Lists
 
+- **A caller's `onScroll` is composed with the screen's tracking, never
+  swapped for it.** Every scrollable but `ChatList` takes one, and hands it to
+  `useScreenScrollInsets` rather than spreading it. Spread before the screen's
+  handler it never ran; spread after, it replaced the handler and froze
+  `scrollY`, `contentHeight` and `layoutHeight` — so `ScrollShadow`, the
+  navbar's scroll border and every `ScrollSource` effect stopped moving the
+  moment a consumer listened to the scroll. A `useAnimatedScrollHandler` result
+  runs beside the tracking on the UI thread through `useComposedEventHandler`; a
+  plain function is called back on the JS thread with `{ nativeEvent }` only,
+  because a worklet holds the native payload, not React Native's synthetic
+  wrapper. Prefer the worklet form for anything frame-bound.
+- **`Screen.ChatList` takes no `onScroll`.** Its engines own the scroll for
+  anchoring and the keyboard lift, so the prop is omitted from its types rather
+  than half-supported.
 - **`Screen.ChatList` is a discriminated union on `variant`.** `legend`
   (default) takes chronological oldest-first data and LegendList's own
   `renderItem`; `flat` is an inverted `FlatList` with newest-first data and RN's.

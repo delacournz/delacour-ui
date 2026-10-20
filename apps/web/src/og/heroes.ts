@@ -82,6 +82,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/pressable": "pressable/named-feedback",
 	"native/components/progress-button": "progress-button/hold-to-erase",
 	"native/components/progress": "progress/anatomy",
+	"native/components/qr-code": "qr-code/module-styles",
 	"native/components/questionnaire": "questionnaire/basic",
 	"native/components/radio": "radio/variants-and-states",
 	"native/components/rating": "rating/anatomy",
@@ -233,6 +234,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/progress-button/hold-to-erase/dark.png?inline"),
 	},
 	"progress/anatomy": { load: () => import("../../public/previews/progress/anatomy/dark.png?inline") },
+	"qr-code/module-styles": { load: () => import("../../public/previews/qr-code/module-styles/dark.png?inline") },
 	"questionnaire/basic": { load: () => import("../../public/previews/questionnaire/basic/dark.png?inline") },
 	"radio/variants-and-states": {
 		load: () => import("../../public/previews/radio/variants-and-states/dark.png?inline"),

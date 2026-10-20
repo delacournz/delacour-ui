@@ -1,0 +1,233 @@
+---
+title: QRCode
+description: A string a camera can read, drawn as one vector path, with an optional logo in the middle.
+icon: QrCode
+---
+
+<Preview id="qr-code/module-styles" title={null} />
+
+## Installation
+
+<ComponentInstall name="qr-code" />
+
+`QRCode` needs nothing beyond `react-native-svg`, which the library already requires. The encoder
+is part of the component — no QR package is added to your project.
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { QRCode } from "@/components/ui/qr-code";
+import { View } from "react-native";
+
+export default function Example() {
+  return (
+    <View className="flex-1 items-center justify-center p-4">
+      <QRCode value="https://ui.delacour.co.nz" accessibilityLabel="Open the Delacour docs" />
+    </View>
+  );
+}
+```
+
+<Preview id="qr-code/anatomy" />
+
+## Module styles
+
+`square` merges runs into rectangles. `rounded` rounds only the corners with no dark neighbour, so
+runs fuse into one shape. `dots` draws each module as a dot.
+
+<Preview id="qr-code/module-styles" />
+
+```tsx
+<QRCode value={url} moduleStyle="square" />
+<QRCode value={url} moduleStyle="rounded" />
+<QRCode value={url} moduleStyle="dots" />
+```
+
+<Callout>
+The three finder patterns in the corners stay a ring and a core in every style. A finder made of
+dots is one a decoder cannot lock onto.
+</Callout>
+
+## Error correction
+
+Each level survives more damage and pays for it in density. The default is `M`.
+
+<Preview id="qr-code/error-correction" />
+
+| Level | Recovers | Bytes at version 1 | Version 10 | Version 40 |
+| --- | --- | --- | --- | --- |
+| `L` | ~7% | 17 | 271 | 2 953 |
+| `M` | ~15% | 14 | 213 | 2 331 |
+| `Q` | ~25% | 11 | 151 | 1 663 |
+| `H` | ~30% | 7 | 119 | 1 273 |
+
+```tsx
+<QRCode value={url} errorCorrection="Q" />
+```
+
+Digits-only and upper-case values (`0–9`, `A–Z`, space and `$%*+-./:`) pack tighter than these byte
+counts; anything else is encoded as UTF-8.
+
+## A logo in the middle
+
+`QRCode.Logo` puts a mark on a plate cleared out of the centre. A logo is damage the code has to
+correct, so its presence raises the level to `H` — a lower `errorCorrection` is overridden and
+warns in development. `logoSize` is the share of the side the plate may take, from `0.1` to `0.3`.
+
+<Preview id="qr-code/with-logo" />
+
+```tsx
+<QRCode value={url} moduleStyle="rounded" logoSize={0.24} accessibilityLabel="Open the menu">
+  <QRCode.Logo>
+    <Icon icon={IconStar} size={32} color="#000000" />
+  </QRCode.Logo>
+</QRCode>
+```
+
+<Callout type="warn">
+To keep every block recoverable, the code may grow a version, then shrink the logo toward `0.1`.
+If even that is too much, the logo is dropped and a development warning says so — the code always
+scans.
+</Callout>
+
+## Colours
+
+The tile is black on white in both themes, and does not follow the theme on purpose: a QR code is
+read by someone else's camera, and light modules on a dark tile fail a large share of scanners.
+
+<Preview id="qr-code/colours" />
+
+```tsx
+<QRCode value={url} color="#1e3a8a" backgroundColor="#fef3c7" />
+```
+
+`color` and `backgroundColor` take a literal or a theme token. A pair that is inverted, or under
+3:1 contrast, warns in development. Never invert a code.
+
+## Using the encoder directly
+
+`encodeQr` is the pure encoder the component sits on. It returns a matrix any renderer can draw —
+Skia, a printed label, a server.
+
+```tsx
+import { encodeQr } from "@/components/ui/qr-code";
+
+const result = encodeQr("https://ui.delacour.co.nz", { errorCorrection: "Q" });
+if (result.ok) {
+  const { size, modules } = result.matrix;
+  const isDark = (row: number, col: number) => modules[row * size + col] === 1;
+}
+```
+
+Inside a component, `useQRCode(value, options)` returns the same result, memoised. Encoding a
+version-40 payload takes tens of milliseconds on the JS thread, so keep `value` stable rather than
+building it inside a list row's render.
+
+## Errors
+
+The component never throws. An empty value or one too long for any version calls `onEncodeError`
+and renders an empty tile labelled "QR code unavailable".
+
+```tsx
+<QRCode
+  value={payload}
+  onEncodeError={(error) => {
+    if (error.kind === "too-long") setMessage(`${error.bytes} bytes; the limit is ${error.capacity}.`);
+  }}
+/>
+```
+
+## Accessibility
+
+The tile is an image to assistive technology. Its label is your `accessibilityLabel`, or
+"QR code: " followed by the value cut at 60 characters. Say what the code is for — a URL means
+nothing read aloud — and a development warning reminds you when you have not.
+
+When the value is printed beside the code, as with a Wi-Fi password, pass `isDecorative` so a screen
+reader reads it once rather than twice. The logo is always hidden from assistive technology.
+
+## Printing and size
+
+`size` is the whole tile, quiet zone included: `sm` 128, `md` 192, `lg` 256 points, or any number.
+Each module is snapped to a whole number of device pixels, so abutting runs never show a hairline
+seam. Keep the quiet zone at its default of four modules — below two warns — and print a code no
+smaller than 2 × 2 cm.
+
+A QR code does not animate: motion mid-scan breaks the scan. Fade it in with opacity if you must,
+never with a scale or a transform.
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `QRCode` | The tile — encodes the value and draws it as one path |
+| `QRCode.Logo` | A centred mark on a tile-coloured plate. Raises the level to `H` |
+
+### QRCode
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "The string to encode." },
+    errorCorrection: { type: '"L" | "M" | "Q" | "H"', default: '"M"', description: "Raised to H whenever a Logo is present." },
+    moduleStyle: { type: '"square" | "rounded" | "dots"', default: '"square"' },
+    size: { type: '"sm" | "md" | "lg" | number', default: '"md"', description: "The tile's side in points, quiet zone included." },
+    quietZone: { type: "number", default: "4", description: "Margin in modules. Below 2 warns." },
+    mask: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | "auto"', default: '"auto"', description: "A fixed mask, or the lowest-penalty one." },
+    minVersion: { type: "number", default: "1", description: "The smallest version to use, 1–40." },
+    color: { type: "string", default: '"#000000"', description: "Module colour — a literal or a theme token." },
+    backgroundColor: { type: "string", default: '"#ffffff"', description: "Tile colour — a literal or a theme token." },
+    logoSize: { type: "number", default: "0.2", description: "The logo plate's share of the side, 0.1–0.3." },
+    accessibilityLabel: { type: "string", description: 'Defaults to "QR code: " and the value, truncated.' },
+    isDecorative: { type: "boolean", default: "false", description: "Hide the code from assistive technology." },
+    onEncodeError: { type: "(error: QrEncodeError) => void", description: "Called when the value cannot be encoded." },
+    className: { type: "string", description: "The tile — corner, margin. Its fill is backgroundColor." },
+    children: { type: "ReactNode", description: "QRCode.Logo only." },
+  }}
+/>
+
+### QRCode.Logo
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "The mark — an Image, an Icon, anything." },
+    className: { type: "string" },
+  }}
+/>
+
+### QrEncodeOptions
+
+<TypeTable
+  type={{
+    errorCorrection: { type: '"L" | "M" | "Q" | "H"', default: '"M"' },
+    minVersion: { type: "number", default: "1" },
+    maxVersion: { type: "number", default: "40" },
+    mask: { type: '0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | "auto"', default: '"auto"' },
+    boostEcc: { type: "boolean", default: "false", description: "Raise the level for free while the chosen version still holds the value." },
+  }}
+/>
+
+### QrMatrix
+
+<TypeTable
+  type={{
+    version: { type: "number", description: "1–40." },
+    errorCorrection: { type: '"L" | "M" | "Q" | "H"' },
+    mask: { type: "0 | 1 | 2 | 3 | 4 | 5 | 6 | 7" },
+    mode: { type: '"numeric" | "alphanumeric" | "byte"' },
+    size: { type: "number", description: "Modules per side: 17 + 4 × version." },
+    modules: { type: "Uint8Array", description: "Row-major, 1 = dark." },
+    owner: { type: "Int16Array", description: "Row-major codeword index owning each module; -1 for a function module." },
+  }}
+/>
+
+### QrEncodeError
+
+<TypeTable
+  type={{
+    '{ kind: "empty" }': { type: "object", description: "The value was an empty string." },
+    '{ kind: "too-long" }': { type: "object", description: "Carries bytes, capacity and errorCorrection." },
+    '{ kind: "invalid-option" }': { type: "object", description: "Carries the option name — minVersion, maxVersion or mask — and its value." },
+  }}
+/>

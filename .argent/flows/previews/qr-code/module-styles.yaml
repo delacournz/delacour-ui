@@ -1,0 +1,13 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on qr-code/module-styles and has settled — one code drawn square, with a
+  Square / Rounded / Dots picker under it and Square selected. The capture script navigates there before running this.
+steps:
+  - echo: Redrawing the same code rounded, then as dots
+  - wait: 700
+  - tap: { id: qr-code-style-rounded }
+  - wait: 1100
+  - tap: { id: qr-code-style-dots }
+  - wait: 1100
+  - echo: And back to square, so the clip loops without a jump cut
+  - tap: { id: qr-code-style-square }
+  - wait: 700

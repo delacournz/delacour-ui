@@ -178,6 +178,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One number, its change coloured by what it means, and a sparkline of how it got there.",
 	},
 	{
+		slug: "questionnaire",
+		name: "Questionnaire",
+		group: "Forms",
+		blurb: "A guided form, one question at a time, with branching, skips, validation and progress.",
+	},
+	{
 		slug: "color-picker",
 		name: "ColorPicker",
 		group: "Forms",

@@ -101,6 +101,12 @@ const ROWS = [
 		group: "Forms",
 	},
 	{ slug: "label", title: "Label", description: "Required, invalid and disabled states", group: "Forms" },
+	{
+		slug: "questionnaire",
+		title: "Questionnaire",
+		description: "One question at a time, branching, skips",
+		group: "Forms",
+	},
 	{ slug: "radio", title: "Radio", description: "Groups, selection, sizes, orientation", group: "Forms" },
 	{ slug: "rating", title: "Rating", description: "Half stars, read-only, drag, clear", group: "Forms" },
 	{ slug: "slider", title: "Slider", description: "Range, orientation, colours, steps", group: "Forms" },

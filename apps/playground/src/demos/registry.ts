@@ -352,6 +352,13 @@ import * as demo_map_places from "./map/places";
 import * as demo_map_popup from "./map/popup";
 import * as demo_map_route from "./map/route";
 import * as demo_map_tones from "./map/tones";
+import * as demo_markdown_editor_basic from "./markdown-editor/basic";
+import * as demo_markdown_editor_controlled_mode from "./markdown-editor/controlled-mode";
+import * as demo_markdown_editor_custom_toolbar from "./markdown-editor/custom-toolbar";
+import * as demo_markdown_editor_disabled_read_only from "./markdown-editor/disabled-read-only";
+import * as demo_markdown_editor_in_field from "./markdown-editor/in-field";
+import * as demo_markdown_editor_pill_toolbar from "./markdown-editor/pill-toolbar";
+import * as demo_markdown_editor_preview_mode from "./markdown-editor/preview-mode";
 import * as demo_marker_conversation from "./marker/conversation";
 import * as demo_marker_disabled from "./marker/disabled";
 import * as demo_marker_pressable from "./marker/pressable";
@@ -915,6 +922,13 @@ export const DEMOS = {
 	"map/popup": demo_map_popup,
 	"map/route": demo_map_route,
 	"map/tones": demo_map_tones,
+	"markdown-editor/basic": demo_markdown_editor_basic,
+	"markdown-editor/controlled-mode": demo_markdown_editor_controlled_mode,
+	"markdown-editor/custom-toolbar": demo_markdown_editor_custom_toolbar,
+	"markdown-editor/disabled-read-only": demo_markdown_editor_disabled_read_only,
+	"markdown-editor/in-field": demo_markdown_editor_in_field,
+	"markdown-editor/pill-toolbar": demo_markdown_editor_pill_toolbar,
+	"markdown-editor/preview-mode": demo_markdown_editor_preview_mode,
 	"marker/conversation": demo_marker_conversation,
 	"marker/disabled": demo_marker_disabled,
 	"marker/pressable": demo_marker_pressable,

@@ -97,6 +97,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/scroll-header": "scroll-header/large-title-list",
 	"native/components/scroll-text": "scroll-text/colour",
 	"native/components/search-bar": "search-bar/basic",
+	"native/components/section-progress": "section-progress/colored-sections",
 	"native/components/select": "select/single",
 	"native/components/selection-mode": "selection-mode/inbox-mode",
 	"native/components/separator": "separator/orientations",
@@ -279,6 +280,9 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	},
 	"scroll-text/colour": { load: () => import("../../public/previews/scroll-text/colour/dark.png?inline") },
 	"search-bar/basic": { load: () => import("../../public/previews/search-bar/basic/dark.png?inline") },
+	"section-progress/colored-sections": {
+		load: () => import("../../public/previews/section-progress/colored-sections/dark.png?inline"),
+	},
 	"select/single": { cut: "8d4d23378ac5", load: () => import("./frames/select/single.png?inline") },
 	"selection-mode/inbox-mode": {
 		load: () => import("../../public/previews/selection-mode/inbox-mode/dark.png?inline"),

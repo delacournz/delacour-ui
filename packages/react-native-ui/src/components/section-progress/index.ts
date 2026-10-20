@@ -1,0 +1,37 @@
+export { SectionProgress, type SectionProgressProps, type SectionProgressScroll } from "./section-progress";
+export {
+	type SectionProgressContextValue,
+	SectionProgressProvider,
+	useSectionProgress,
+	useSectionProgressContext,
+} from "./section-progress.context";
+export {
+	resolveLabelMaxWidth,
+	resolvePanelDirection,
+	resolvePanelMaxHeight,
+	resolvePanelTransformOrigin,
+	resolvePlacementStyle,
+	resolveProgressPercent,
+	resolveRevealed,
+	resolveRingDashOffset,
+	resolveRingGeometry,
+	resolveRingTransition,
+	resolveSectionColor,
+	resolveSectionColorToken,
+	resolveSectionLabel,
+	resolveSectionProgressAccessibilityValue,
+	SECTION_PROGRESS_COLORS,
+	SECTION_PROGRESS_DEFAULT_COLOR,
+	SECTION_PROGRESS_DEFAULT_PLACEMENT,
+	SECTION_PROGRESS_PLACEMENTS,
+	SECTION_PROGRESS_RING_JUMP,
+	type SectionProgressColor,
+	type SectionProgressEntry,
+	type SectionProgressInsets,
+	type SectionProgressPanelDirection,
+	type SectionProgressPlacement,
+	type SectionProgressPlacementStyle,
+	type SectionProgressVariantProps,
+	sectionProgressVariants,
+} from "./section-progress.variants";
+export type { SectionProgressItemProps } from "./section-progress-item";

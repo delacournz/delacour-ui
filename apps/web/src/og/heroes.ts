@@ -84,6 +84,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/separator": "separator/orientations",
 	"native/components/signature": "signature/with-toolbar",
 	"native/components/skeleton": "skeleton/profile-card",
+	"native/components/sketch": "sketch/default",
 	"native/components/slide-button": "slide-button/slide-to-ship",
 	"native/components/slider": "slider/anatomy",
 	"native/components/spinner": "spinner/sizes",
@@ -229,6 +230,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"separator/orientations": { load: () => import("../../public/previews/separator/orientations/dark.png?inline") },
 	"signature/with-toolbar": { load: () => import("../../public/previews/signature/with-toolbar/dark.png?inline") },
 	"skeleton/profile-card": { load: () => import("../../public/previews/skeleton/profile-card/dark.png?inline") },
+	"sketch/default": { load: () => import("../../public/previews/sketch/default/dark.png?inline") },
 	"slide-button/slide-to-ship": {
 		load: () => import("../../public/previews/slide-button/slide-to-ship/dark.png?inline"),
 	},

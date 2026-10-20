@@ -644,6 +644,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
 		categories: ["navigation"],
 	},
+	tree: {
+		title: "Tree",
+		description:
+			"A hierarchy opened one level at a time: branches that expand and collapse, with optional single or multiple selection.",
+		categories: ["navigation"],
+	},
 
 	expo: {
 		title: "Navigation theme",

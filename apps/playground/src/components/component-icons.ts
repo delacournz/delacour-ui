@@ -52,6 +52,7 @@ import {
 	IconTag,
 	IconToggle,
 	IconTrending4,
+	IconTrophy,
 	IconWindow,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
@@ -117,6 +118,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	toast: IconBell,
 	countdown: IconHourglass,
 	flow: IconConnectors1,
+	leaderboard: IconTrophy,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

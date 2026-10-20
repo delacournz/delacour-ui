@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Dismissible",
-	capture: { flow: "badge/dismissible" },
+	capture: { flow: true },
 	note: 'The dismiss control is its own pressable. On the "Both" badge below, its tap moves the dismissed counter and leaves the pressed counter alone.',
 };
 

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Floating bar",
 	caption:
 		'`placement="floating"` lifts the actions into an inset card instead of a full-width edge. `isShownWhenEmpty` keeps it up while nothing is picked.',
-	capture: { align: "stretch", flow: "selection-mode/floating-bar" },
+	capture: { align: "stretch", flow: true },
 };
 
 const ALBUMS = [

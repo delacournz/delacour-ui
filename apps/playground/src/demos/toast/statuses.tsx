@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`toast()` from a button — Alert's five statuses, glyphs and title colours. Success, warning and destructive play their haptic.",
 	align: "center",
-	capture: { flow: "toast/statuses", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const LABELS: Record<ToastStatus, string> = {

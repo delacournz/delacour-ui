@@ -100,17 +100,16 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
   accessible. The ✕ is labelled `"Close"`.
 - **No blur backdrop.** Frosted scrims need `expo-blur`, not a peer; a follow-up for every overlay.
 
-## Preview capture (not yet shot)
+## Preview capture
 
-No demo is marked `capture` until a capture tool is available. When one is, these are the settings,
-and the flows are in `.argent/flows/previews/drawer/`:
+The settings, with the bodies in `apps/playground/e2e/previews/drawer.e2e.ts`:
 
 | Demo | Capture |
 | --- | --- |
-| `navigation` | `{ flow: "drawer/navigation", frame: "device", hero: true }` |
-| `filters` | `{ flow: "drawer/filters", frame: "device" }` |
-| `sizes` | `{ flow: "drawer/sizes", frame: "device" }` |
-| `notifications` | `{ flow: "drawer/notifications", frame: "device" }` |
+| `navigation` | `{ flow: true, frame: "device", hero: true }` |
+| `filters` | `{ flow: true, frame: "device" }` |
+| `sizes` | `{ flow: true, frame: "device" }` |
+| `notifications` | `{ flow: true, frame: "device" }` |
 
 ## Testing
 

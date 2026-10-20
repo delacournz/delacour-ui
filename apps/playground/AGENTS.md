@@ -8,7 +8,7 @@ requires a route here for anything new.
 
 ## Stack
 
-- **Expo 58** with **expo-router** — file-based routing, `expo-dev-client`
+- **Expo 57** with **expo-router** — file-based routing, `expo-dev-client`
 - **Uniwind** — the same styling layer the library uses, configured in Metro
 - **`@delacour/react-native-ui`** as a workspace source dependency, not a build
 - **Central Icons** — the icon set, same as the library
@@ -25,9 +25,21 @@ bun android                # ensure-prebuild, then expo run:android --device --p
 bun run prebuild           # expo prebuild — regenerate ios/ and android/
 bun run icons              # rasterise the app icon from @delacour/brand
 bun run check              # Biome
-bun run typecheck          # tsc --noEmit
+bun run typecheck          # tsc --noEmit — everything but the warden specs
+bun run typecheck:e2e      # tsc on the warden specs and warden.config.ts; needs warden linked
 bun run gen-demos          # regenerate src/demos/registry.ts
 ```
+
+`@delacour/warden` and `@delacour/warden-e2e` are ordinary devDependencies, installed from npm
+like everything else: `warden.config.ts` takes its types from `@delacour/warden/config`, the specs
+under `e2e/` import `@delacour/warden-e2e`, and `previews` cannot run without either. Both are
+pinned to the **same exact version**, because the e2e package declares the CLI as an exact peer —
+its preload handshakes with the `warden` that started the specs — so a bump is always the pair.
+There is no `@delacour/warden-core` on npm: warden bundles it into both packages. And there is
+deliberately no `link:` or optional fallback, because an install that silently skips the e2e stack
+passes CI with specs nobody can run.
+`tsconfig.json` still excludes the files that import them, and `tsconfig.e2e.json` checks those,
+so `typecheck` stays independent of a simulator-bearing machine's setup.
 
 EAS, all wrapped in `dotenv -e .env` so `EXPO_TOKEN` is picked up:
 
@@ -491,15 +503,17 @@ rebuild. An older dev client does not degrade to the fallback: `expo-web-browser
 
 ## Capturing preview media
 
-`bun run previews` (from the repo root) drives a simulator, photographs every demo that opts into
-capture in both themes, and writes the media and manifest the documentation site reads:
+`bun run previews` (from the repo root) drives a warden-leased simulator, photographs every demo
+that opts into capture in both themes, and writes the media and manifest the documentation site
+reads:
 
 ```bash
-bun run previews                      # everything, incremental
-bun run previews -- -- --only switch  # one component, or one demo
-bun run previews -- -- --force        # ignore the source hashes
-bun run previews -- -- --dev          # against a dev client, on Metro at 8088
-bun run previews -- -- --dev --port 8091   # …or on this worktree's own bundler
+bun run previews                           # everything, incremental
+bun run previews -- -- --only switch       # one component, or one demo (`switch/sizes`); comma-separated
+bun run previews -- -- --force             # ignore the source hashes
+bun run previews -- -- --count 3           # three simulators, the specs shared out between them
+bun run previews -- -- --dry-run           # print the plan and the warden command, run nothing
+bun run previews -- -- --headless          # no simulator windows
 ```
 
 **Two `--`, and the second is not a typo.** The root script is `turbo previews --filter=…`, so the
@@ -507,13 +521,85 @@ first `--` gets the flags past `bun run` and the second gets them past turbo. Wi
 `--only switch` as its own and fails with `Could not find task "switch"`. From inside this workspace
 `bun scripts/capture-previews.ts --only switch` takes them directly.
 
-**`--dev` never leaves the choice to the dev launcher, and never restarts what it can refresh.** The script
-opens the dev client with a deep link naming the bundler on `--port`, which skips
-expo-dev-launcher's project list and loads this worktree's bundle rather than whichever Metro the
-launcher remembers. A process whose devtools bridge is already live is reused; the app is
-relaunched only when that bridge is missing, or after a flow that typed. Preflight fails if nothing
-answers on the port. The reasons, and the timings behind the waits, are in
-[`.argent/AGENTS.md`](../../.argent/AGENTS.md).
+**Three pieces, and the script is only the first.**
+
+| Piece | What it owns |
+| --- | --- |
+| `scripts/capture-previews.ts` | The plan, the `warden e2e` call, and the manifest — never a finger on the screen |
+| `warden.config.ts` | The `previews` suite: the `playground` project warden builds and caches by native fingerprint, `flowsDir: e2e/previews`, the `iphone-17-pro` profile, Metro with the dev-menu-off launch args, one device per spec, idle devices shut down |
+| `e2e/previews/<component>.e2e.ts` | One spec per component. `capture("id")` is a still; `capture("id", async (f) => { … })` is a clip whose body runs while the screen records. `capture.ts` is the helper every spec shares; `geometry.ts` and `video.ts` are its pure arithmetic and the recorder |
+
+A run goes: the script hashes every captured demo and writes the stale ones to `.previews/plan.json`;
+`warden e2e previews --flows <components> --count N` claims the simulators, builds or reuses the app,
+starts Metro and runs the specs; each `capture()` reads the plan and `test.skipIf`s a demo not in it;
+per theme it opens the deep link, waits for the preview route's sentinel to attach, reads the
+measured bounds off its label, settles, then screenshots or records, pads, crops and encodes, and
+writes a fragment to `.previews/fragments/<id>.json`; the script reads the fragments back, merges
+them with the unchanged entries, renders `manifest.ts`, prunes and checks the budget. A demo with no
+fragment, or one whose hash no longer matches, fails the run by name and keeps its previous entry;
+the evidence is in warden's batch directory, which the script prints.
+
+**What the flow helper gives a body.** `f.tap(id)`, `f.tapText`, `f.tapAt(nx, ny)`,
+`f.longPress(id, ms)`, `f.swipe(from, by, { durationMs, momentum })`, `f.type(id, text)`,
+`f.press(id, key, times)`, `f.visible`, `f.hidden`, `f.containsText`, `f.gesture(events)` and
+`f.wait(ms)` — plus the raw `screen`, `device` and `app` fixtures and the window size for anything
+else. Coordinates are fractions of the screen, as the old flows wrote them. `momentum: false` is a
+timed path that eases into its end point and rests there, so nothing flings; `gesture` replays a
+down–move–up route with the flow's own pauses. Both are timed paths, and today warden's
+`screen.gesture.path` cannot carry one: it attaches a `durationMs` of its own and the driver refuses
+the pair. The helper offers the timed route once per process and, on that refusal, replays every
+route untimed — the same span at constant speed, with the holds dropped. A momentum-free drag
+survives that well enough; a chart's scrub does not, because the 500 ms hold is what arms it, and
+without it the drag is a plain pan that the navigation stack reads as a back-swipe. So the tooltip
+clips in `chart`, `charts` and `kpi` are wrong until warden passes a timed path (or `holdMs`) through
+its screen API; the fallback retires itself the day it does, and `previews:verify`'s contact sheets
+are where to see it happen. A demo that types passes `{ types: true }` and is relaunched after each
+theme, because a process that has typed answers the next accessibility read late or not at all.
+
+**Rules for a body.** Target `testID`s, not coordinates — a tap that finds nothing now fails the spec
+rather than passing with a warning. End where you began: the media loops, so a body that toggles a
+switch on and stops jump-cuts at the seam. Keep it under about three seconds. `demos.test.ts` holds a
+demo's `capture.flow: true` and its block's body together, so a still cannot grow a body by accident
+and a clip cannot lose one.
+
+**Running a spec by hand.** `cd apps/playground && warden e2e previews --flows switch` runs one
+component's spec with no plan, which captures every demo in it; the fragments land in `.previews/`
+and `bun run previews` picks them up on its next run only if their hashes still match. Never start
+Metro or export `WARDEN_*` yourself — `warden e2e` is the only supported way in, and a bare
+`bun test --preload @delacour/warden-e2e/preload` run without that environment refuses to start.
+
+**`bun run previews:verify` is the whole check, with nobody at the keyboard.** It recaptures a
+selection with `--force` (`accordion,chart,input/variants/at-rest,bottom-sheet` by default — a
+still-heavy component, the gesture-heavy one, a typing demo and a portal), compares every PNG the
+selection owns pixel for pixel against the copy on `--base` (`origin/develop`), reads every clip's
+duration against its baseline's and tiles a contact sheet of it, then writes
+`.previews/verify/report.md` and exits 1 on a failed capture, a missing or resized file, or a still
+that moved more than `--max-diff` percent (2) of its pixels, counting a pixel only when it is more than
+`--fuzz` percent (10) off — two renders differ by antialiasing on every glyph, and under 10% that noise
+is a handful of pixels while a real change is thousands. `--no-capture` judges the tree as it is;
+`--only`, `--count` and `--headless` pass through. Run it after any change to the capture pipeline
+and read the report, not the terminal.
+
+```bash
+bun run previews:verify                                   # from the root, through turbo
+bun run previews:verify -- -- --only switch --headless    # the same two -- as previews
+```
+
+Two things the first runs taught, both now built in: Pulsar plays every haptic as a sound on a
+simulator and AudioToolbox aborts the process when the simulator has no audio output — a headless one
+has none — so `preview.tsx` mutes it before a demo mounts; and a deep link that reaches
+expo-dev-launcher while the bundle is still loading cancels the load and leaves the launcher's home
+up, so the first capture in a process waits for the home screen's navbar before it opens a link.
+
+**Waiting on warden.** Three things the helper works around, each behind a check that retires it
+when warden ships the piece: a timed path through `screen.gesture.path` (above); a recorder, for
+which the clip is `xcrun simctl io recordVideo` on the leased device and so shows no touch indicator;
+and the `from`/`to` form of `screen.swipe` having no `momentum` switch, which is why a momentum-free
+drag is written as a path at all. Check warden's log before blaming a clip.
+
+**The converter stays.** `scripts/previews/convert-flows.ts` turned the retired YAML fragments into
+these specs — `bun scripts/previews/convert-flows.ts --flows <dir> [--only switch] [--flip]` — and is
+kept because the aggregate's flows are converted with it next.
 
 **It writes into another workspace** — `apps/web/public/previews/**` and
 `apps/web/src/previews/manifest.ts`. Both are generated; neither is edited by hand. The script
@@ -537,37 +623,35 @@ included. The faces are embedded in the native build (see Fonts are embedded), s
 first paint and there is nothing to await. Moving the captures off the library default changes every
 demo's pixels, not its hash: rerun with `--force` once, with the user's approval.
 
-**A run is incremental.** Each demo's source, meta, flow and the encode settings hash together, and
-an unchanged demo whose files are present is skipped. That is what keeps committed media from
-becoming permanent churn in a repository that cannot delta-compress it — a run after touching one
-component rewrites that component and nothing else. The same hash is the media's `?v=`
+**A run is incremental.** Each demo's source, meta, capture block and the encode settings hash
+together, and an unchanged demo whose files are present is skipped. That is what keeps committed
+media from becoming permanent churn in a repository that cannot delta-compress it — a run after
+touching one component rewrites that component and nothing else. The same hash is the media's `?v=`
 cache-buster, because Vite copies `public/` with no content hashing of its own.
 
 The script fails the run if the media directory passes its size budget, naming the largest files.
 Raise `BUDGET_BYTES` in `scripts/previews/config.ts` deliberately or not at all.
 
-The stage `src/app/preview.tsx` renders is **not** in a demo's hash — only its source, meta, flow
+The stage `src/app/preview.tsx` renders is **not** in a demo's hash — only its source, meta, block
 and edge are. So a change to the harness alone re-captures nothing, and has to be published with
 `--force`.
 
 ### Static and animated
 
-A demo with no `capture.flow` is a screenshot. One that names a flow is recorded: the script pads,
-replays the flow from `.argent/flows/previews/`, pads again, then crops and encodes the clip and
-takes its poster from the clip's own first frame. See [`.argent/AGENTS.md`](../../.argent/AGENTS.md)
-for the flows themselves — and for the two argent behaviours that will otherwise cost you an hour.
+A demo with no `capture.flow` is a screenshot. One with `flow: true` is recorded: the helper pads,
+runs the body, pads again, then crops and encodes the clip and takes its poster from the clip's own
+first frame. The recording is `xcrun simctl io recordVideo` on the leased device until warden grows a
+recorder of its own, which is why a clip shows no touch indicator.
 
-### Release, not the dev client
+### The build warden runs
 
-`--dev` exists for authoring and is not how media should be published. One dev-client artefact the
-script does remove: expo-dev-menu's floating "Tools" button, a round gear drawn over the top-right of
-every screen, `/preview` included. A `device` frame keeps the whole screen, so every clip carried it
-until the script began writing the app's `EXDevMenuShowFloatingActionButton` default to `NO` through
-`simctl` before its restart (`hideDevMenuButton` in `scripts/previews/argent.ts`). A Release build has
-no dev menu and needs nothing hidden. A Release build has no
-dev-launcher screen, no dev menu, no LogBox overlay along the bottom of every frame, and no Fast
-Refresh to reload something mid-recording — and Reanimated and Hermes run at production speed,
-which is what the documentation should actually show.
+The suite builds the app itself (`app: true` in `warden.config.ts`) — a development-simulator build,
+keyed by native fingerprint and reused until a native dependency moves — and serves it from a Metro
+it owns. A dev client draws expo-dev-menu's floating "Tools" button over the top-right of every
+screen, `/preview` included, and a `device` frame would keep it; the suite's `metro.launchArgs`
+turn that button, the onboarding sheet and the dev menu off at launch. What a dev client still is:
+Hermes without optimisation, Reanimated at debug speed and a LogBox that can open on a warning.
+Publishing from a Release variant is the follow-up.
 
 ### If a capture looks wrong
 
@@ -575,10 +659,11 @@ which is what the documentation should actually show.
 | --- | --- |
 | Rows collapsed, text missing | The demo is a container and needs `capture.align: "stretch"` — unless it is a `device` frame, which is full-bleed already and cannot be fixed this way |
 | Empty box | The demo mounts into a portal; it needs `capture.frame: "device"` |
-| A control caught mid-animation | The idle gate settled early — the demo probably animates for longer than it looks |
-| A clock-driven demo caught mid-tick, every time | The default 500 ms idle window closes most of a second after a tick, so the capture lands on the next one. Set `capture.settleMs` lower — `countdown` uses 150 |
-| The clip jump-cuts at the loop | Its flow does not return the UI to where it started |
-| A clip of a motionless screen | The flow's `id:` selectors found nothing; see the devtools note in `.argent/AGENTS.md` |
+| A control caught mid-animation | The settle gate ended early — the demo probably animates for longer than it looks |
+| A clock-driven demo caught mid-tick, every time | The default 500 ms settle window closes most of a second after a tick, so the capture lands on the next one. Set `capture.settleMs` lower — `countdown` uses 150 |
+| The clip jump-cuts at the loop | Its body does not return the UI to where it started |
+| A clip of a motionless screen | Every step found its target and the demo did not move: the `testID` is on a wrapper, not the part that answers the touch |
+| `preview-ready` never attached | The deep link did not land — the id in `capture()` is not a demo, or the app warden launched is not this worktree's; read `screen-at-failure.txt` in the batch directory |
 
 ## `_layout.tsx` is `DelacourProvider`'s only test
 
@@ -1309,7 +1394,7 @@ the project ID` and sends nothing — no build error, no crash, an Insights tab 
 empty. `app.config.test.ts` asserts the id is there and matches `updates.url`.
 
 **Every build reports, dev client included.** The payload has no channel and no build profile, so
-simulator sessions, argent QA runs and `bun run previews` land on the same chart as TestFlight and
+simulator sessions, warden runs and `bun run previews` land on the same chart as TestFlight and
 the stores. The app version is the only field that separates them, and a local build stamps
 `1.0.0` — read small numbers with that in mind.
 

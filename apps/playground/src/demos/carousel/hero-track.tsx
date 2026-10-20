@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"One slide per screen, swiped sideways. The dots are a reading of the same position the slides are, so the pill travels with the finger.",
-	capture: { align: "stretch", flow: "carousel/hero-track", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const PHOTOS = [

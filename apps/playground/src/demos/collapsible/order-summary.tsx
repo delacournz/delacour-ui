@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	title: "Order summary",
 	caption:
 		"A checkout's collapsed summary: the total rides on the row, the line items wait in the panel, and the button below follows the panel down as it opens rather than jumping.",
-	capture: { align: "stretch", flow: "collapsible/order-summary" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LINES = [

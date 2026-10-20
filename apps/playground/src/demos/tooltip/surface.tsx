@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Surface",
 	caption: '`variant="surface"` draws the popover card instead of the inverted chip, with room for a title and a line.',
 	align: "center",
-	capture: { flow: "tooltip/surface", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 	title: "A spring",
 	caption:
 		'`{ type: "spring" }` takes Reanimated\'s own spring config. Every corner of a bar is a cubic, so a bar can overshoot and settle without its path ever changing shape.',
-	capture: { align: "stretch", flow: "charts/animation/spring" },
+	capture: { align: "stretch", flow: true },
 };
 
 type Region = "north" | "south";

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Controlled by `isCompleted`. The release asks for completion; the handle waits at the end while the request runs, and the tick lands only when the parent says so.",
 	align: "stretch",
-	capture: { flow: "slide-button/controlled-async", align: "stretch" },
+	capture: { flow: true, align: "stretch" },
 };
 
 type Transfer = { status: "idle" } | { status: "sending" } | { status: "sent"; at: string };

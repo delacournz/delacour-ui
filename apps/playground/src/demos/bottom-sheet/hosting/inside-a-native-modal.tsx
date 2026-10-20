@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Inside a native modal",
 	caption:
 		"A native `Modal` is its own window, so a sheet teleported to the app's root host would draw behind it. The fix is one wrapper: `<BottomSheet.Host name=\"modal\">` as the modal's outermost view, and every sheet written inside it teleports there without naming a `hostName`.",
-	capture: { flow: "bottom-sheet/hosting/inside-a-native-modal", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const SNAP_POINTS = ["50%"] as const;

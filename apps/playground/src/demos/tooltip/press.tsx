@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Open on press",
 	caption: '`openOn="press"` opens it on a tap — for an info glyph, which has no tap of its own to protect.',
 	align: "center",
-	capture: { flow: "tooltip/press", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

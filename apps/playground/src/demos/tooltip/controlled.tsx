@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`isOpen` and `onOpenChange` hand the state to the screen — here a second button shows the hint, and the tooltip still hides itself.",
 	align: "center",
-	capture: { flow: "tooltip/controlled", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

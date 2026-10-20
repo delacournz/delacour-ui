@@ -18,7 +18,7 @@ export const meta: DemoMeta = {
 	caption:
 		"From the start edge. Every row is a `Drawer.Close asChild`, so choosing a place also shuts the menu. Swipe it back toward the edge, tap the scrim, press ✕ or Android back.",
 	align: "center",
-	capture: { flow: "drawer/navigation", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 type Place = "home" | "inbox" | "archive" | "settings";

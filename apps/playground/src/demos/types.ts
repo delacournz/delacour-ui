@@ -55,13 +55,15 @@ export type DemoCapture = {
 	 */
 	align?: DemoAlign;
 	/**
-	 * Path under `.argent/flows/previews/`, without the `.yaml`.
+	 * This demo is a clip, not a still.
 	 *
-	 * Its presence is what makes this demo animated: a demo with a flow is
-	 * recorded and published as an MP4 plus a poster, one without is a single
-	 * PNG.
+	 * The flow — what the finger does — is the demo's own `capture()` block in
+	 * its component's spec, `apps/playground/e2e/previews/<component>.e2e.ts`,
+	 * and `demos.test.ts` fails by name when a demo marked here has no body
+	 * there. Set, the demo is recorded and published as an MP4 plus a poster;
+	 * absent, it is a single PNG.
 	 */
-	flow?: string;
+	flow?: boolean;
 	/** Still frames held before the flow runs, in ms. Default 400. */
 	leadMs?: number;
 	/**

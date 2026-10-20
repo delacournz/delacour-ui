@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Start typing and the field turns destructive until there is an `@` in it. The border, the caret and the selection highlight leave destructive together — one state, not three places that have to be kept in step.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "input/states/live-validation", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

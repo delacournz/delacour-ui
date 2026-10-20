@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Sizes",
 	caption:
 		"Padding, never a height — the label grows with the system text size. The glyph and the remove control step up the shared icon scale with the chip.",
-	capture: { align: "center", flow: "chip/sizes" },
+	capture: { align: "center", flow: true },
 };
 
 const LABELS: Record<ChipSize, string> = {

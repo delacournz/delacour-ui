@@ -38,6 +38,7 @@ bun run lint               # lint only
 bun run fmt                # format only
 bun test                   # unit tests
 bun run previews           # recapture component preview media from a simulator
+bun run previews:verify    # recapture a selection, pixel-diff it against origin/develop, write a report
 bun run cli:link           # build the CLI and link it, so `delacour` on PATH is this tree
 bun run cli:unlink         # put back whatever `delacour` was before cli:link
 bun run nuke               # delete every node_modules and reinstall from scratch
@@ -51,8 +52,8 @@ cd apps/playground && bun run icons   # launcher, adaptive and tinted app-icon P
 cd apps/web        && bun run icons   # favicons, PWA icons, apple-touch-icon
 ```
 
-`previews` is the odd one out: it drives an iOS simulator, so it needs a Mac with Xcode and it is
-deliberately **not** part of `build`. Its output — `apps/web/public/previews/**` and
+`previews` is the odd one out: it drives an iOS simulator through warden, so it needs a Mac with
+Xcode and `warden` on the PATH, and it is deliberately **not** part of `build`. Its output — `apps/web/public/previews/**` and
 `apps/web/src/previews/manifest.ts` — is committed, which is what lets the docs site deploy on a
 machine with no simulator. See [apps/playground/AGENTS.md](apps/playground/AGENTS.md#capturing-preview-media).
 

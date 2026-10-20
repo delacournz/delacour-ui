@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Speed dial",
 	caption:
 		"`Fab.Group` unfolds a dial of related actions over a scrim, on one spring with a stagger. The plus turns into a cross. Tap an action, the scrim or the cross to fold it away.",
-	capture: { align: "stretch", flow: "fab/speed-dial", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

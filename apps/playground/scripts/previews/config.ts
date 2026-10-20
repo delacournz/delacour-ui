@@ -7,22 +7,24 @@ export const WEB = join(REPO, "apps/web");
 export const DEMOS_DIR = join(PLAYGROUND, "src/demos");
 export const MEDIA_DIR = join(WEB, "public/previews");
 export const MANIFEST_PATH = join(WEB, "src/previews/manifest.ts");
-export const FLOWS_DIR = join(REPO, ".argent/flows/previews");
+/** One warden e2e spec per component; each captured demo is a `capture()` in its component's spec. */
+export const SPECS_DIR = join(PLAYGROUND, "e2e/previews");
 
 export const SCHEME = "dlc-ui-playground";
 export const BUNDLE_ID = "nz.co.delacour.ui.playground";
 
-/** The port `bun dev` pins Metro to. A worktree on its own bundler passes `--port`. */
-export const DEFAULT_PORT = 8088;
+/** Mirrors `DemoFrame` in `src/demos/types.ts`, which imports React and cannot be read by a script. */
+export type DemoFrame = "stage" | "device";
 
 /**
- * The capture device is pinned.
+ * The capture device is pinned, as a warden profile.
  *
  * Output resolution follows the device's pixel size, so capturing half a run on
  * one model and half on another publishes media at two sizes for no reason
- * anyone could see from the diff.
+ * anyone could see from the diff. `warden e2e previews` claims this profile;
+ * `--count N` claims N of it.
  */
-export const DEVICE_NAME = "iPhone 17 Pro";
+export const DEVICE_PROFILE = "iphone-17-pro";
 
 export const THEMES = ["light", "dark"] as const;
 export type Theme = (typeof THEMES)[number];
@@ -68,10 +70,30 @@ export const DEVICE_MAX_EDGE = 1440;
 export const BUDGET_BYTES = 120 * 1024 * 1024;
 
 /**
- * Auto-stop for a recording, in seconds.
+ * How long a spec waits for the preview route to announce a demo.
  *
- * Generous relative to a clip — a preview interaction runs about ten seconds —
- * because the cap firing truncates the video, and a truncated clip is reported
- * as a warning the script turns into a failure rather than publishing.
+ * The first deep link after a relaunch waits on a cold JS load — measured at
+ * 15 s against a dev client, and twice that on a machine busy with other
+ * simulators — so the sentinel gets far more than warden's default action
+ * timeout.
  */
-export const RECORDING_CAP_SECONDS = 45;
+export const NAVIGATION_TIMEOUT_MS = 60_000;
+
+/**
+ * Where a demo's media lives, and the URLs the manifest points at.
+ *
+ * Keyed on the **full id**, not component + demo. A folder gallery nests
+ * (`screen/navbar/default`), and two facets are free to name a demo the same
+ * thing — `screen/navbar/default` and `screen/chat/default` would collide the
+ * moment the path were flattened to component + name.
+ */
+export function mediaPaths(id: string, theme: Theme, hash: string) {
+	const dir = join(MEDIA_DIR, id);
+	return {
+		dir,
+		poster: join(dir, `${theme}.png`),
+		posterUrl: `/previews/${id}/${theme}.png?v=${hash}`,
+		video: join(dir, `${theme}.mp4`),
+		videoUrl: `/previews/${id}/${theme}.mp4?v=${hash}`,
+	};
+}

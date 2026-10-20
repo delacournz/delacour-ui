@@ -9,7 +9,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Emptied list",
 	caption: "Remove every item and the list gives way to an empty state whose action puts them back.",
-	capture: { align: "stretch", flow: "empty-state/emptied-list" },
+	capture: { align: "stretch", flow: true },
 };
 
 const ITEMS = ["Linen shirt", "Canvas tote", "Wool socks"] as const;

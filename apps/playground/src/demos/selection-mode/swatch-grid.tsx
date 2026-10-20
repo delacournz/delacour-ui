@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Swatch grid",
 	caption:
 		"`columns={5}` with the `ring` indicator: the ring draws round the swatch with a gap, and a check badge sits at its top end. `ringClassName` rounds it to match.",
-	capture: { align: "stretch", flow: "selection-mode/swatch-grid" },
+	capture: { align: "stretch", flow: true },
 };
 
 const SWATCHES = [

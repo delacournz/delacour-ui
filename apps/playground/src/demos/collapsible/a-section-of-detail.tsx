@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "A section of detail",
 	caption:
 		"A row, a chevron, and a panel that opens under it — starting open here with `defaultOpen`. It holds its own state, so nothing needs wiring — the panel's height is measured, then sprung from zero to whatever its content came out at.",
-	capture: { align: "stretch", flow: "collapsible/a-section-of-detail", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Filters",
 	caption:
 		'`layout="detached"` spaces the toggles apart and wraps them — a row of filters over a list. Clear every filter and the whole list comes back.',
-	capture: { align: "stretch", flow: "toggle-button/filters" },
+	capture: { align: "stretch", flow: true },
 };
 
 type Status = "open" | "review" | "done" | "blocked";

@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Long-press any button to see what it does. A plain tap still presses it; the label hides itself, or on the next tap anywhere.",
 	align: "center",
-	capture: { flow: "tooltip/icon-buttons", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 type Action = "share" | "save" | "like" | "delete";

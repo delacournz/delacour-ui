@@ -1,28 +1,28 @@
 import { describe, expect, test } from "bun:test";
-import { flowTypes } from "./plan";
+import type { DemoSource } from "./demo-source";
+import { componentOf, hashOf } from "./plan";
 
-describe("flowTypes", () => {
-	test("is true for a flow with a keyboard step", () => {
-		const flow = [
-			"steps:",
-			"  - tap: { id: field }",
-			"  - tool: keyboard",
-			'    args: { text: "ada", delayMs: 60 }',
-		].join("\n");
-		expect(flowTypes(flow)).toBe(true);
+const source: DemoSource = { code: "export function Demo() {}\n", meta: { title: "A demo" } };
+
+describe("hashOf", () => {
+	test("changes with the spec block, so editing a flow re-captures its demo", () => {
+		const before = hashOf(source, 'capture("a/b", async (f) => { await f.wait(500); })', true, "stage");
+		const after = hashOf(source, 'capture("a/b", async (f) => { await f.wait(700); })', true, "stage");
+		expect(before).not.toBe(after);
 	});
 
-	test("is false for a flow that only taps, swipes and waits", () => {
-		const flow = ["steps:", "  - tap: { id: switch-md }", "  - wait: 500", "  - tool: gesture-custom"].join("\n");
-		expect(flowTypes(flow)).toBe(false);
+	test("a clip and a still of the same source hash differently", () => {
+		expect(hashOf(source, 'capture("a/b")', false, "stage")).not.toBe(hashOf(source, 'capture("a/b")', true, "stage"));
 	});
 
-	test("ignores the word in prose", () => {
-		const flow = [
-			"executionPrerequisite: The keyboard is down.",
-			"steps:",
-			"  - echo: tool: keyboard is not used",
-		].join("\n");
-		expect(flowTypes(flow)).toBe(false);
+	test("the device edge reaches only device frames", () => {
+		expect(hashOf(source, null, false, "stage")).not.toBe(hashOf(source, null, false, "device"));
+	});
+});
+
+describe("componentOf", () => {
+	test("is the first segment, however deep the gallery nests", () => {
+		expect(componentOf("switch/colours")).toBe("switch");
+		expect(componentOf("screen/navbar/default")).toBe("screen");
 	});
 });

@@ -53,9 +53,9 @@ expo-env.d.ts
 .vite
 .source
 
-# argent — `flags.json` and `flows/previews/**` are committed; everything else
-# under .argent is per-run scratch. `recordings/` is the important one: raw
-# device-native h264 at 1206x2622, tens of MB per capture run.
+# argent — only `flows/store-*.yaml` (goldie) and `flows/qa/**` are committed;
+# everything else under .argent is per-run scratch. `recordings/` is the
+# important one: raw device-native h264 at 1206x2622, tens of MB per run.
 /.argent/recordings
 /.argent/reports
 /.argent/artifacts
@@ -70,3 +70,8 @@ expo-env.d.ts
 # goldie — rendered App Store assets; `goldie/goldie.config.ts` and the store-* flows are committed
 /goldie/out
 /goldie/goldie.design.json
+
+# warden — the preview capture's per-demo fragments (`bun run previews` reads
+# them into the manifest) and the spec runner's own artefacts
+/apps/playground/.previews
+.warden-e2e

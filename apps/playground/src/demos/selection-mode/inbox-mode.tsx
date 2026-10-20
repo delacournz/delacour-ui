@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The list is for reading until a long press: that enters the mode with the pressed message picked. Taps then toggle, the header counts and offers the way out, and the bar acts on what is picked.",
 	note: "Delete and Archive leave the mode once they have run. The list pads its bottom so the last row scrolls clear of the bar.",
-	capture: { align: "stretch", flow: "selection-mode/inbox-mode", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 type Message = { id: string; from: string; subject: string; isRead: boolean };

@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	caption:
 		'Details, confirm, success — one `defineSheetMachine`, one `BottomSheet.Steps`. NEXT stays disabled until the guard passes, and the sheet\'s height glides to each step rather than jumping: the step measures, the dynamic snap point moves, and the panel follows with the same spring the body is using. The confirm step is `dismissible: false`, so a swipe down and a tap on the scrim do nothing there; the success step names `snapPoints: ["35%"]` and is sized by them. Closing resets the machine, so the next open starts at details.',
 	keyboardAware: true,
-	capture: { flow: "bottom-sheet-engine/steps/three-step-form", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 type Step = "details" | "confirm" | "success";

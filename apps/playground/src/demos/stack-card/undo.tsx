@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Undo",
 	caption:
 		"`undo` brings the last card back from the side it left, and does not call `onSwipe`. `useStackCard()` reads the deck from inside it — here, the line the empty pile shows.",
-	capture: { align: "stretch", flow: "stack-card/undo" },
+	capture: { align: "stretch", flow: true },
 };
 
 const WORDS = [

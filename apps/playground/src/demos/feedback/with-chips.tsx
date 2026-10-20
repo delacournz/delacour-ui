@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 		"Chips above the field answer the common cases in a tap. `canSubmitEmpty` follows them, so Send opens for a chip or for text.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "feedback/with-chips", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 type Topic = "slow" | "confusing" | "missing" | "broken";

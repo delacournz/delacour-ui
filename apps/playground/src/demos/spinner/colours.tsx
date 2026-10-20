@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Colours",
 	align: "center",
 	caption: "Named colours, a theme token and a literal hex. All four should survive a theme switch.",
-	capture: { flow: "spinner/colours" },
+	capture: { flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

@@ -18,7 +18,7 @@ export const meta: DemoMeta = {
 	title: "Dates on the x axis",
 	caption:
 		"A `Date` field switches the x scale to `time` on its own, and the ticks land on calendar boundaries rather than on even multiples of milliseconds. Hold and drag: the scrub finds the nearest day by time, not by index.",
-	capture: { align: "stretch", flow: "charts/line/time-series" },
+	capture: { align: "stretch", flow: true },
 };
 
 const START = new Date(2026, 0, 1).getTime();

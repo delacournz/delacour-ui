@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`delay` is how long the hold lasts before it opens, and `slop` how far the finger may drift meanwhile — past it, a scroll takes the touch.",
 	note: "The delay has a 150ms floor: anything shorter is a tap.",
-	capture: { frame: "device", flow: "context-menu/hold-timing" },
+	capture: { frame: "device", flow: true },
 };
 
 const TIMINGS = [

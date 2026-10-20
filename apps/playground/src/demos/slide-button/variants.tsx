@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`secondary`, `destructive` and `success`. The handle stays neutral in every one; only the rail, the trail and the label take the colour.",
 	align: "center",
-	capture: { flow: "slide-button/variants" },
+	capture: { flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

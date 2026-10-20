@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Custom indicator",
 	note: "Writing the indicator out by hand suppresses the automatic one, which is what puts a ring at the end of the row.",
-	capture: { align: "stretch", flow: "radio/custom-indicator" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

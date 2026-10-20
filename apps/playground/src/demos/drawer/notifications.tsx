@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"From the top edge, at `sm`: the panel clears the status bar and rounds only the corners facing the app. Swipe it up to dismiss.",
 	align: "center",
-	capture: { flow: "drawer/notifications", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const NOTIFICATIONS: readonly { id: string; title: string; description: string }[] = [

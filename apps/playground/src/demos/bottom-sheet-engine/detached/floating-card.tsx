@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Floating card",
 	caption:
 		"`detached` floats the sheet as a card: 16 in from each side, 16 above the bottom inset, every corner the `Background`'s to round. Closed is fully off-screen, and a tap in the margins or the gap under the card closes it — the overlay covers the whole frame.",
-	capture: { flow: "bottom-sheet-engine/detached/floating-card", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const styles = StyleSheet.create({

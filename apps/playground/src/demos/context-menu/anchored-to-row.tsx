@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Anchored to the row",
 	caption:
 		'`anchor="target"` hangs the panel off the whole row rather than the finger, lined up with its leading edge — wherever on the row the hold landed.',
-	capture: { frame: "device", flow: "context-menu/anchored-to-row" },
+	capture: { frame: "device", flow: true },
 };
 
 const FILES = ["Brief.pdf", "Moodboard.fig", "Budget.xlsx"] as const;

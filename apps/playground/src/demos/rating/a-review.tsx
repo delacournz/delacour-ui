@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Three scores and a comment on a card. The overall score is their average, drawn read-only to the tenth, and Submit waits until every score is set.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "rating/a-review" },
+	capture: { align: "stretch", flow: true },
 };
 
 const ASPECTS = ["Food", "Service", "Value"] as const;

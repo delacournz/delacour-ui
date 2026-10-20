@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Lifted preview",
 	caption:
 		"`ContextMenu.Preview` lifts a copy of the held card over the dimmed list, and the panel opens beside it — never across it.",
-	capture: { frame: "device", flow: "context-menu/lifted-preview" },
+	capture: { frame: "device", flow: true },
 };
 
 const PLACES = [

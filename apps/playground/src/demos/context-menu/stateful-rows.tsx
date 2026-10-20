@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Checkbox and radio rows",
 	caption:
 		"Every Menu row works here, because they are Menu's rows. Checkboxes stay open while you toggle several; choosing a radio closes.",
-	capture: { frame: "device", flow: "context-menu/stateful-rows" },
+	capture: { frame: "device", flow: true },
 };
 
 type Density = "compact" | "comfortable";

@@ -52,6 +52,7 @@ import {
 	IconProgress75,
 	IconSettingsSliderHor,
 	IconSidebar,
+	IconSignature,
 	IconSlidesWide,
 	IconSparkle,
 	IconSquareBehindSquare1,
@@ -144,6 +145,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"search-bar": IconMagnifyingGlass,
 	select: IconChevronDownMedium,
 	combobox: IconMagnifyingGlass2,
+	signature: IconSignature,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

@@ -1,0 +1,81 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "circular-text",
+	"type": "registry:ui",
+	"title": "Circular Text",
+	"description": "Text set around a circle on an SVG path, optionally turning, with content in the middle.",
+	"categories": [
+		"media"
+	],
+	"registryDependencies": [
+		"text",
+		"use-calm-motion"
+	],
+	"dependencies": [],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-svg",
+		"uniwind"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/AGENTS.md",
+			"target": "circular-text/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/circular-text",
+					"to": "@registry/ui/circular-text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text-ring.tsx",
+			"target": "circular-text/circular-text-ring.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text-spin.ts",
+			"target": "circular-text/circular-text-spin.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text.tsx",
+			"target": "circular-text/circular-text.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text.types.ts",
+			"target": "circular-text/circular-text.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/circular-text.variants.ts",
+			"target": "circular-text/circular-text.variants.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/circular-text/index.ts",
+			"target": "circular-text/index.ts",
+			"namespace": "ui"
+		}
+	]
+}

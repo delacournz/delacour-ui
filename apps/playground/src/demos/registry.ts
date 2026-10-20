@@ -192,6 +192,13 @@ import * as demo_chip_states from "./chip/states";
 import * as demo_chip_tags from "./chip/tags";
 import * as demo_chip_variants_and_colours from "./chip/variants-and-colours";
 import * as demo_chip_with_content from "./chip/with-content";
+import * as demo_circular_text_arc from "./circular-text/arc";
+import * as demo_circular_text_badge from "./circular-text/badge";
+import * as demo_circular_text_controlled from "./circular-text/controlled";
+import * as demo_circular_text_hold_to_pause from "./circular-text/hold-to-pause";
+import * as demo_circular_text_loading_ring from "./circular-text/loading-ring";
+import * as demo_circular_text_seal from "./circular-text/seal";
+import * as demo_circular_text_two_rings from "./circular-text/two-rings";
 import * as demo_collapsible_a_custom_indicator from "./collapsible/a-custom-indicator";
 import * as demo_collapsible_a_section_of_detail from "./collapsible/a-section-of-detail";
 import * as demo_collapsible_controlled from "./collapsible/controlled";
@@ -881,6 +888,13 @@ export const DEMOS = {
 	"chip/tags": demo_chip_tags,
 	"chip/variants-and-colours": demo_chip_variants_and_colours,
 	"chip/with-content": demo_chip_with_content,
+	"circular-text/arc": demo_circular_text_arc,
+	"circular-text/badge": demo_circular_text_badge,
+	"circular-text/controlled": demo_circular_text_controlled,
+	"circular-text/hold-to-pause": demo_circular_text_hold_to_pause,
+	"circular-text/loading-ring": demo_circular_text_loading_ring,
+	"circular-text/seal": demo_circular_text_seal,
+	"circular-text/two-rings": demo_circular_text_two_rings,
 	"collapsible/a-custom-indicator": demo_collapsible_a_custom_indicator,
 	"collapsible/a-section-of-detail": demo_collapsible_a_section_of_detail,
 	"collapsible/controlled": demo_collapsible_controlled,

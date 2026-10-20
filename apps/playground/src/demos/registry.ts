@@ -591,6 +591,12 @@ import * as demo_scroll_blur_horizontal from "./scroll-blur/horizontal";
 import * as demo_scroll_blur_layers_and_intensity from "./scroll-blur/layers-and-intensity";
 import * as demo_scroll_blur_list_under_button from "./scroll-blur/list-under-button";
 import * as demo_scroll_blur_search_over_media from "./scroll-blur/search-over-media";
+import * as demo_scroll_canvas_parallax from "./scroll-canvas/parallax";
+import * as demo_scroll_canvas_reduced_motion from "./scroll-canvas/reduced-motion";
+import * as demo_scroll_canvas_reveal from "./scroll-canvas/reveal";
+import * as demo_scroll_canvas_sequence from "./scroll-canvas/sequence";
+import * as demo_scroll_canvas_window_and_distance from "./scroll-canvas/window-and-distance";
+import * as demo_scroll_canvas_zoom from "./scroll-canvas/zoom";
 import * as demo_scroll_fade_fade_distance from "./scroll-fade/fade-distance";
 import * as demo_scroll_fade_horizontal_cards from "./scroll-fade/horizontal-cards";
 import * as demo_scroll_fade_on_a_surface from "./scroll-fade/on-a-surface";
@@ -1427,6 +1433,12 @@ export const DEMOS = {
 	"scroll-blur/layers-and-intensity": demo_scroll_blur_layers_and_intensity,
 	"scroll-blur/list-under-button": demo_scroll_blur_list_under_button,
 	"scroll-blur/search-over-media": demo_scroll_blur_search_over_media,
+	"scroll-canvas/parallax": demo_scroll_canvas_parallax,
+	"scroll-canvas/reduced-motion": demo_scroll_canvas_reduced_motion,
+	"scroll-canvas/reveal": demo_scroll_canvas_reveal,
+	"scroll-canvas/sequence": demo_scroll_canvas_sequence,
+	"scroll-canvas/window-and-distance": demo_scroll_canvas_window_and_distance,
+	"scroll-canvas/zoom": demo_scroll_canvas_zoom,
 	"scroll-fade/fade-distance": demo_scroll_fade_fade_distance,
 	"scroll-fade/horizontal-cards": demo_scroll_fade_horizontal_cards,
 	"scroll-fade/on-a-surface": demo_scroll_fade_on_a_surface,

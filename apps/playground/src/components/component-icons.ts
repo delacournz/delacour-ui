@@ -151,6 +151,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"tag-input": IconHashtag,
 	"theme-selector": IconCircleHalfFill,
 	"time-picker": IconClock,
+	direction: IconArrowLeftRight,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

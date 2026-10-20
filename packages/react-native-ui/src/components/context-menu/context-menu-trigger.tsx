@@ -1,5 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useEffect, useMemo, useRef } from "react";
-import { type AccessibilityActionEvent, View, type ViewProps } from "react-native";
+import { type AccessibilityActionEvent, View, type ViewInstance, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { scheduleOnRN } from "react-native-worklets";
 import { type MenuMeasurable, useMenuPart } from "../menu/menu.context";
@@ -75,9 +75,9 @@ export function ContextMenuTrigger({
 		registerContent(children);
 	}, [children, registerContent]);
 
-	const nodeRef = useRef<View | null>(null);
+	const nodeRef = useRef<ViewInstance | null>(null);
 	const setNode = useCallback(
-		(node: View | null) => {
+		(node: ViewInstance | null) => {
 			nodeRef.current = node;
 			triggerRef.current = node as MenuMeasurable | null;
 		},

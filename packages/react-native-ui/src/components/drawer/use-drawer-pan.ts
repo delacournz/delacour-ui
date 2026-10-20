@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Gesture, type PanGesture } from "react-native-gesture-handler";
+import { Gesture, type LegacyPanGesture } from "react-native-gesture-handler";
 import { cancelAnimation, Easing, type SharedValue, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { OVERLAY_MOTION } from "../overlay/overlay.variants";
@@ -48,7 +48,7 @@ const PAN_RANGE: [number, number] = [-DRAWER_PAN_ACTIVE_OFFSET, DRAWER_PAN_ACTIV
  * Per-gesture memory lives in shared values: each worklet gets its own copy of
  * a captured `let`.
  */
-export function useDrawerPan({ edge, extent, isEnabled, drag, onDismiss }: UseDrawerPanOptions): PanGesture {
+export function useDrawerPan({ edge, extent, isEnabled, drag, onDismiss }: UseDrawerPanOptions): LegacyPanGesture {
 	const isDragging = useSharedValue(false);
 	const isPastThreshold = useSharedValue(false);
 

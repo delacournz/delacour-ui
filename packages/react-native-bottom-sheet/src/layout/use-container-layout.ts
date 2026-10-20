@@ -1,10 +1,10 @@
 import { type RefObject, useCallback, useEffect, useRef } from "react";
-import { Dimensions, type LayoutChangeEvent, type View } from "react-native";
+import { Dimensions, type LayoutChangeEvent, type ViewInstance } from "react-native";
 import { acceptContainerLayout, UNMEASURED } from "../core";
 import type { SheetSharedState } from "../state/state.types";
 
 export type ContainerLayout = {
-	ref: RefObject<View | null>;
+	ref: RefObject<ViewInstance | null>;
 	onLayout: (event: LayoutChangeEvent) => void;
 };
 
@@ -25,7 +25,7 @@ export type ContainerLayout = {
  * `useMeasureHeight` does.
  */
 export function useContainerLayout(state: SheetSharedState): ContainerLayout {
-	const ref = useRef<View | null>(null);
+	const ref = useRef<ViewInstance | null>(null);
 	const { containerHeight, containerWidth, containerBottomOffset, keyboardHeight, keyboardProgress } = state;
 
 	useEffect(

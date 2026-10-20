@@ -3,7 +3,7 @@ import { Input } from "@delacour/react-native-ui/input";
 import { Text } from "@delacour/react-native-ui/text";
 import { useRouter } from "expo-router";
 import { type ReactElement, useRef, useState } from "react";
-import { Keyboard, type TextInput, View } from "react-native";
+import { Keyboard, type TextInputInstance, View } from "react-native";
 import { applyOtpInput, isOtpComplete, OTP_LENGTH } from "@/blocks/otp";
 import { BlockScreen } from "@/components/block-screen";
 
@@ -20,7 +20,7 @@ const BOXES = Array.from({ length: OTP_LENGTH }, (_, index) => index);
 export default function OtpBlock(): ReactElement {
 	const router = useRouter();
 	const [digits, setDigits] = useState<readonly string[]>(() => BOXES.map(() => ""));
-	const refs = useRef<(TextInput | null)[]>([]);
+	const refs = useRef<(TextInputInstance | null)[]>([]);
 
 	const change = (index: number, raw: string) => {
 		const next = applyOtpInput(digits, index, raw);

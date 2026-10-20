@@ -282,8 +282,14 @@ const OBSERVE_READINGS: Record<string, string> = {
 	"expo.network.requests.bytesReceived": "network requests",
 	"expo.network.requests.bytesSent": "network requests",
 	"expo.network.requests.totalDuration": "network requests",
-	"expo.network.requests.slowestDuration": "network requests",
-	"expo.network.requests.slowestHost": "host",
+	"expo.network.isExpensive": "metered",
+	"expo.network.isConstrained": "low-data mode",
+	"expo.network.requests.throughputBytesPerSecond": "speed",
+	"expo.network.requests.slowest.bytesReceived": "the slowest",
+	"expo.network.requests.slowest.duration": "the slowest",
+	"expo.network.requests.slowest.timeToFirstByte": "the slowest",
+	"expo.network.requests.slowest.statusCode": "status",
+	"expo.network.requests.slowest.host": "host",
 };
 
 /**

@@ -1,5 +1,5 @@
 import { type ReactElement, useCallback, useMemo, useRef } from "react";
-import { type LayoutChangeEvent, ScrollView, View, type ViewProps } from "react-native";
+import { type LayoutChangeEvent, ScrollView, type ScrollViewInstance, View, type ViewProps } from "react-native";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useCalmMotion } from "../../hooks/use-calm-motion";
 import { cn } from "../../lib/cn";
@@ -42,7 +42,7 @@ export function CalendarPicker({ className, ...props }: CalendarPickerProps): Re
 		return list;
 	}, [yearSpan.from, yearSpan.to]);
 
-	const scroller = useRef<ScrollView>(null);
+	const scroller = useRef<ScrollViewInstance>(null);
 	const hasScrolled = useRef(false);
 	const handleCurrentLayout = useCallback((event: LayoutChangeEvent) => {
 		if (hasScrolled.current) return;

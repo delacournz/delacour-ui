@@ -10,14 +10,14 @@ import {
 	useRef,
 	useState,
 } from "react";
-import type { View } from "react-native";
+import type { ViewInstance } from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import { useControllableState } from "../../hooks/use-controllable-state";
 import type { HapticFeedback } from "../pressable/pressable";
 import type { MenuAnchorRect } from "./menu.variants";
 
 /** Anything `measureInWindow` can be called on — a host view, or an animated one. */
-export type MenuMeasurable = Pick<View, "measureInWindow">;
+export type MenuMeasurable = Pick<ViewInstance, "measureInWindow">;
 
 export type MenuContextValue = {
 	isOpen: boolean;

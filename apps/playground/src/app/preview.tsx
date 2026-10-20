@@ -3,7 +3,7 @@ import { Text } from "@delacour/react-native-ui/text";
 import { Stack, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { type ReactElement, useCallback, useLayoutEffect, useRef, useState } from "react";
-import { Dimensions, Keyboard, Pressable, View } from "react-native";
+import { Dimensions, Keyboard, Pressable, View, type ViewInstance } from "react-native";
 import { Uniwind } from "uniwind";
 import { DEMOS, type DemoId } from "@/demos/registry";
 import { applyConfig } from "@/design-system/store";
@@ -43,7 +43,7 @@ export default function Preview(): ReactElement {
 	const applied = useAppliedTheme(requested);
 
 	const [bounds, setBounds] = useState<Bounds | null>(null);
-	const stage = useRef<View>(null);
+	const stage = useRef<ViewInstance>(null);
 
 	// measureInWindow rather than onLayout's own rect: the crop is taken from a
 	// screenshot, so the script needs where the demo sits on the *screen*, not

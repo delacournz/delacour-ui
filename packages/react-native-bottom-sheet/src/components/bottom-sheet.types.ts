@@ -1,5 +1,12 @@
 import type { ReactNode, Ref } from "react";
-import type { PressableProps, TextInput, TextInputProps, TextProps, View, ViewProps } from "react-native";
+import type {
+	PressableProps,
+	TextInputInstance,
+	TextInputProps,
+	TextProps,
+	ViewInstance,
+	ViewProps,
+} from "react-native";
 import type { SharedValue } from "react-native-reanimated";
 import type { SheetAnimation } from "../animation/animation.types";
 import type {
@@ -121,13 +128,13 @@ export type BottomSheetTriggerProps = Omit<PressableProps, "children"> & {
 	children?: ReactNode;
 	/** Hand `onPress` to the child rather than rendering a Pressable around it. */
 	asChild?: boolean;
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 };
 
 export type BottomSheetPortalProps = {
 	children?: ReactNode;
 	style?: ViewProps["style"];
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 	/**
 	 * Render where written — an absolute fill of the nearest positioned
 	 * ancestor — rather than teleporting to a host. A persistent drawer, a map's
@@ -145,7 +152,7 @@ export type BottomSheetPortalProps = {
 
 export type BottomSheetOverlayProps = Omit<ViewProps, "style"> & {
 	style?: ViewProps["style"];
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 	/** The index the scrim is fully in by. @default 0 */
 	appearsOnIndex?: number;
 	/** The index the scrim is gone by. @default -1 */
@@ -162,27 +169,27 @@ export type BottomSheetOverlayProps = Omit<ViewProps, "style"> & {
 };
 
 export type BottomSheetContainerProps = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 };
 
 export type BottomSheetBackgroundProps = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 };
 
 export type BottomSheetHandleProps = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 	/** Overrides the root's `enableHandlePanningGesture` for this handle. */
 	enablePanningGesture?: boolean;
 };
 
 export type BottomSheetContentProps = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 	/** Extra space between the content and a sticky footer. @default 0 */
 	footerGap?: number;
 };
 
 export type BottomSheetFooterProps = ViewProps & {
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 	/**
 	 * Stay put over the body and ride the keyboard by transform. Off, it is a
 	 * plain `View` for a footer that scrolls with the content. @default true
@@ -193,13 +200,13 @@ export type BottomSheetFooterProps = ViewProps & {
 };
 
 export type BottomSheetTextInputProps = TextInputProps & {
-	ref?: Ref<TextInput>;
+	ref?: Ref<TextInputInstance>;
 };
 
 export type BottomSheetCloseProps = Omit<PressableProps, "children"> & {
 	children?: ReactNode;
 	asChild?: boolean;
-	ref?: Ref<View>;
+	ref?: Ref<ViewInstance>;
 };
 
 export type BottomSheetTitleProps = TextProps & {

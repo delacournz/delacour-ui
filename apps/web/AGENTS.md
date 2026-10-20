@@ -1034,7 +1034,7 @@ what gives the routes their types — without it every `createFileRoute("/docs/$
 
 ### `react` and `react-dom` come from the catalog
 
-Both are `"catalog:"` (19.2.3), pinned alongside React Native's copy. `bunfig.toml` sets
+Both are `"catalog:"` (19.3.0), pinned alongside React Native's copy. `bunfig.toml` sets
 `linker = "hoisted"`, so a version that drifts from the catalog materialises a second React and
 breaks hooks. Hydration warnings in the console are the first symptom.
 

@@ -544,6 +544,14 @@ import * as demo_slider_vertical from "./slider/vertical";
 import * as demo_spinner_colours from "./spinner/colours";
 import * as demo_spinner_custom_glyph from "./spinner/custom-glyph";
 import * as demo_spinner_sizes from "./spinner/sizes";
+import * as demo_splitter_accessible_names from "./splitter/accessible-names";
+import * as demo_splitter_anatomy from "./splitter/anatomy";
+import * as demo_splitter_collapsible from "./splitter/collapsible";
+import * as demo_splitter_controlled from "./splitter/controlled";
+import * as demo_splitter_disabled from "./splitter/disabled";
+import * as demo_splitter_panes from "./splitter/panes";
+import * as demo_splitter_three_columns from "./splitter/three-columns";
+import * as demo_splitter_vertical from "./splitter/vertical";
 import * as demo_stack_card_controlled_decline from "./stack-card/controlled-decline";
 import * as demo_stack_card_empty from "./stack-card/empty";
 import * as demo_stack_card_four_directions from "./stack-card/four-directions";
@@ -1210,6 +1218,14 @@ export const DEMOS = {
 	"spinner/colours": demo_spinner_colours,
 	"spinner/custom-glyph": demo_spinner_custom_glyph,
 	"spinner/sizes": demo_spinner_sizes,
+	"splitter/accessible-names": demo_splitter_accessible_names,
+	"splitter/anatomy": demo_splitter_anatomy,
+	"splitter/collapsible": demo_splitter_collapsible,
+	"splitter/controlled": demo_splitter_controlled,
+	"splitter/disabled": demo_splitter_disabled,
+	"splitter/panes": demo_splitter_panes,
+	"splitter/three-columns": demo_splitter_three_columns,
+	"splitter/vertical": demo_splitter_vertical,
 	"stack-card/controlled-decline": demo_stack_card_controlled_decline,
 	"stack-card/empty": demo_stack_card_empty,
 	"stack-card/four-directions": demo_stack_card_four_directions,

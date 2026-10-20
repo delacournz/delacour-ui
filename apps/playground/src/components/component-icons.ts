@@ -41,6 +41,7 @@ import {
 	IconLayersTwo,
 	IconLayoutBottomFull,
 	IconLayoutLeft,
+	IconLayoutLeftRight,
 	IconLayoutTop,
 	IconLayoutTopBottom,
 	IconLayoutWindow,
@@ -160,6 +161,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"grid-item": IconDotGrid2x3,
 	"page-header": IconPersona,
 	sketch: IconDraw,
+	splitter: IconLayoutLeftRight,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

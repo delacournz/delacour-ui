@@ -178,6 +178,7 @@ shares.
 | [Table](src/components/table/AGENTS.md) | `@delacour/react-native-ui/table` | Rows and columns of short values, lined up by one set of column rules |
 | [Tabs](src/components/tabs/AGENTS.md) | `@delacour/react-native-ui/tabs` | A bar, a measured indicator and a swipeable pager |
 | [Text](src/components/text/AGENTS.md) | `@delacour/react-native-ui/text` | The type scale, as twelve presets |
+| [TextAnimation](src/components/text-animation/AGENTS.md) | `@delacour/react-native-ui/text-animation` | Reveal, typing, rotating, counting and rolling text on one clock |
 | [Textarea](src/components/textarea/AGENTS.md) | `@delacour/react-native-ui/textarea` | A multiline field, sized in rows |
 | [TimePicker](src/components/time-picker/AGENTS.md) | `@delacour/react-native-ui/time-picker` | A time of day on snapping wheels, in a sheet or inline |
 | [ThemeSelector](src/components/theme-selector/AGENTS.md) | `@delacour/react-native-ui/theme-selector` | System, Light or Dark, read from and applied to the live theme |

@@ -1,19 +1,27 @@
 /**
- * An integer from 0 to 99 as English words — `20` is `"twenty"`, `21` is
- * `"twenty-one"`.
+ * An integer from 0 to 999 as English words — `21` is `"twenty-one"`, `108` is
+ * `"one hundred and eight"`.
  *
  * Exists so the components index can say *Twenty components* without anyone
  * typing the word: prose counts a number and spells it, and a spelled number
  * hand-written next to a list is wrong the moment the list grows. Lowercase;
- * a sentence opening capitalises it itself.
+ * a sentence opening capitalises it itself. Hundreds take "and", as written in
+ * New Zealand English.
  *
- * Stops at 99 on purpose. The library has one count to spell, and it is a long
- * way from a hundred; a helper that handled thousands would be untested weight.
+ * Stops at 999. The library's one count passed a hundred; a thousand is a long
+ * way off, and a helper for it would be untested weight.
  */
 export function numberToWords(n: number): string {
-	if (!Number.isInteger(n) || n < 0 || n > 99) {
-		throw new RangeError(`numberToWords: expected an integer from 0 to 99, got ${n}`);
+	if (!Number.isInteger(n) || n < 0 || n > 999) {
+		throw new RangeError(`numberToWords: expected an integer from 0 to 999, got ${n}`);
 	}
+	if (n < 100) return underHundred(n);
+	const hundreds = `${UNDER_TWENTY[Math.floor(n / 100)]} hundred`;
+	const rest = n % 100;
+	return rest === 0 ? hundreds : `${hundreds} and ${underHundred(rest)}`;
+}
+
+function underHundred(n: number): string {
 	const under = UNDER_TWENTY[n];
 	if (under !== undefined) return under;
 	const tens = TENS[Math.floor(n / 10)];

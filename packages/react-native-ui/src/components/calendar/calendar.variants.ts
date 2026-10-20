@@ -54,12 +54,14 @@ export const CALENDAR_PAGE_VELOCITY = 500;
  * whole cell so neighbouring days join into one continuous strip — a gap between columns would
  * break it into beads.
  *
- * **The band ends under the circle, never beside it.** Start runs from its cell's centre to the
- * right edge, end from the left edge to its centre, and every day between spans the whole cell
- * square — including at a week's edge, where the strip simply stops and picks up again on the
- * next row. A cell is wider than its circle, so a band rounded across the whole end cell poked a
- * crescent out beside the circle; stopping at the centre lets the circle itself be the cap. A
- * one-day range draws no band at all.
+ * **The band ends under the whole circle, never beside it.** `bandTrack` clips to the cell and
+ * centres `bandAnchor`, a box as wide as the circle — `w-input-*`, the width `size-input-*` sets,
+ * so a runtime retune of the input scale moves both. The band hangs off the anchor: start from
+ * its left edge, capped at the circle's radius, out past the cell's right; end the mirror; every
+ * day between past both edges, so the clip leaves it spanning the whole cell square — including at a week's edge, where the strip simply stops and
+ * picks up again on the next row. A band rounded across the whole end cell poked a crescent out
+ * beside the circle; one stopped at the cell's centre left half a translucent `secondary` circle
+ * over band and half over the page, a two-tone circle. A one-day range draws no band at all.
  *
  * **The cell steps on the input scale** — `h-input-*` and `text-input-*` — so a calendar inline
  * beside a field shares its density, and a retune of the field retunes the calendar.
@@ -91,7 +93,11 @@ export const calendarVariants = tv({
 		week: "flex-row",
 		/** One day's column share, and the height of its touch target. */
 		cell: "flex-1 items-center justify-center",
-		/** The strip behind a day inside a range. */
+		/** The cell-sized clip behind a day inside a range, centring the band's anchor. */
+		bandTrack: "absolute inset-0 items-center overflow-hidden",
+		/** A circle-wide box where the circle sits, that the band hangs off. */
+		bandAnchor: "h-full",
+		/** The strip behind a day inside a range, run past the cell and clipped by the track. */
 		band: "absolute inset-y-0",
 		/** The circle a selection fills and today rings. */
 		dayBase: "items-center justify-center rounded-full border border-transparent",
@@ -113,6 +119,7 @@ export const calendarVariants = tv({
 			sm: {
 				captionText: "text-input-sm",
 				cell: "h-input-sm",
+				bandAnchor: "w-input-sm",
 				dayBase: "size-input-sm",
 				dayLabel: "text-input-sm",
 				pickerItem: "h-input-sm",
@@ -121,6 +128,7 @@ export const calendarVariants = tv({
 			md: {
 				captionText: "text-input-md",
 				cell: "h-input-md",
+				bandAnchor: "w-input-md",
 				dayBase: "size-input-md",
 				dayLabel: "text-input-md",
 				pickerItem: "h-input-md",
@@ -129,6 +137,7 @@ export const calendarVariants = tv({
 			lg: {
 				captionText: "text-input-lg",
 				cell: "h-input-lg",
+				bandAnchor: "w-input-lg",
 				dayBase: "size-input-lg",
 				dayLabel: "text-input-lg",
 				pickerItem: "h-input-lg",
@@ -141,11 +150,11 @@ export const calendarVariants = tv({
 			band: { dayBase: "bg-transparent" },
 		},
 		rangeRole: {
-			none: { band: "hidden" },
-			start: { band: "left-1/2 right-0" },
-			middle: { band: "inset-x-0" },
-			end: { band: "left-0 right-1/2" },
-			only: { band: "hidden" },
+			none: { bandTrack: "hidden" },
+			start: { band: "-right-[1000px] left-0 rounded-l-full" },
+			middle: { band: "-left-[1000px] -right-[1000px]" },
+			end: { band: "-left-[1000px] right-0 rounded-r-full" },
+			only: { bandTrack: "hidden" },
 		},
 		isToday: { true: {}, false: {} },
 		isOutside: { true: {}, false: {} },

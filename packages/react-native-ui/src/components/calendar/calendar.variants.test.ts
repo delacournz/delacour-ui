@@ -90,6 +90,8 @@ describe("text colour stays on the text", () => {
 						"week",
 						"cell",
 						"dayBase",
+						"bandTrack",
+						"bandAnchor",
 						"band",
 						"pickerGrid",
 						"pickerItem",
@@ -111,33 +113,52 @@ describe("text colour stays on the text", () => {
 });
 
 describe("range band geometry", () => {
-	const bandOf = (rangeRole: CalendarRangeRole) => calendarVariants({ rangeRole }).band();
+	const slotsOf = (rangeRole: CalendarRangeRole) => calendarVariants({ rangeRole });
+	const bandOf = (rangeRole: CalendarRangeRole) => slotsOf(rangeRole).band();
 
 	// The cell is wider than the circle, so a band end rounded across the whole cell pokes out
-	// beside the circle. Each end instead stops at its cell's centre, under the circle.
-	test("start runs from the cell's centre to its right edge", () => {
-		expect(bandOf("start")).toMatch(/\bleft-1\/2\b/);
-		expect(bandOf("start")).toMatch(/\bright-0\b/);
+	// beside the circle. Each end instead runs under the whole circle with a cap of its radius, so a
+	// translucent circle lies over band everywhere and never shows a two-tone half.
+	test("the track clips to the cell and centres the anchor", () => {
+		const track = slotsOf("start").bandTrack();
+		expect(track).toMatch(/\babsolute\b/);
+		expect(track).toMatch(/\binset-0\b/);
+		expect(track).toMatch(/\bitems-center\b/);
+		expect(track).toMatch(/\boverflow-hidden\b/);
 	});
 
-	test("end runs from the cell's left edge to its centre", () => {
-		expect(bandOf("end")).toMatch(/\bleft-0\b/);
-		expect(bandOf("end")).toMatch(/\bright-1\/2\b/);
-	});
-
-	test("middle spans the whole cell, square", () => {
-		expect(bandOf("middle")).toMatch(/\binset-x-0\b/);
-		expect(bandOf("middle")).not.toMatch(/rounded-(?:l-|r-)?full/);
-	});
-
-	test("no band end is rounded — the circle is the cap", () => {
-		for (const rangeRole of ["start", "middle", "end"] as const) {
-			expect(bandOf(rangeRole)).not.toMatch(/rounded-(?:l-|r-)?full/);
+	// `w-input-*` is the width `size-input-*` sets, so the anchor tracks the circle through a
+	// runtime retune of the input scale; `basis-input-*` did not, and the cap slid off the circle.
+	test("the anchor is exactly as wide as the circle", () => {
+		for (const size of ["sm", "md", "lg"] as const) {
+			const slots = calendarVariants({ rangeRole: "start", size });
+			expect(slots.bandAnchor()).toContain(`w-input-${size}`);
+			expect(slots.dayBase()).toContain(`size-input-${size}`);
 		}
 	});
 
+	test("start runs from the circle's left edge out past the cell, capped on the left", () => {
+		expect(bandOf("start")).toMatch(/(?:^|\s)left-0\b/);
+		expect(bandOf("start")).toMatch(/-right-\[\d+px\]/);
+		expect(bandOf("start")).toMatch(/\brounded-l-full\b/);
+		expect(bandOf("start")).not.toMatch(/\brounded-r-full\b/);
+	});
+
+	test("end mirrors start", () => {
+		expect(bandOf("end")).toMatch(/(?:^|\s)right-0\b/);
+		expect(bandOf("end")).toMatch(/-left-\[\d+px\]/);
+		expect(bandOf("end")).toMatch(/\brounded-r-full\b/);
+		expect(bandOf("end")).not.toMatch(/\brounded-l-full\b/);
+	});
+
+	test("middle runs past both edges, square", () => {
+		expect(bandOf("middle")).toMatch(/-left-\[\d+px\]/);
+		expect(bandOf("middle")).toMatch(/-right-\[\d+px\]/);
+		expect(bandOf("middle")).not.toMatch(/rounded-(?:l-|r-)?full/);
+	});
+
 	test("a lone day draws no band", () => {
-		expect(bandOf("only")).toContain("hidden");
+		expect(slotsOf("only").bandTrack()).toContain("hidden");
 	});
 
 	test("a selected day is a circle, never square", () => {

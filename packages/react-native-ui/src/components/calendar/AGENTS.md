@@ -75,13 +75,18 @@ sheets.
 
 ## Drawing
 
-- **A day is three layers:** `band` (absolute, edge to edge, behind), `dayBase` (the circle) and
-  the label. The band spans the full cell so adjacent days join into one strip.
-- **The band ends at the centre of each end cell, and the circle is the cap.** Start runs from its
-  cell's centre to the right edge, end from the left edge to its centre, middle spans the cell; none
-  is rounded. A cell is wider than its circle, so the first version — a band rounded across the
-  whole end cell — showed a crescent of band beside the circle at both ends. A lone `only` day
-  draws no band. At a week's edge the strip simply stops and resumes on the next row.
+- **A day is three layers:** the band (`bandTrack`, absolute, edge to edge, behind), `dayBase`
+  (the circle) and the label. The band spans the full cell so adjacent days join into one strip.
+- **An end's band runs under the whole circle, capped at the circle's radius.** `bandTrack` clips
+  to the cell and centres `bandAnchor`, a box `w-input-*` wide — the width `size-input-*` gives the
+  circle. The band hangs off the anchor: start from its left edge (`rounded-l-full`) out past the
+  cell's right, end the mirror, middle past both edges and square; the clip trims each to the
+  cell. Three earlier versions failed: a band rounded across the whole end cell showed a crescent
+  beside the circle; one stopped at the cell's centre put half a translucent `secondary` circle
+  over band and half over the page — a two-tone circle; and one sized by `basis-input-*` did not
+  follow the house style's runtime retune of the input scale, so at `lg` the cap slid ~6pt off
+  the circle. A lone `only` day draws no band. At a week's edge the strip simply stops and
+  resumes on the next row.
 - **Today is a ring (`border-ring`) and `text-primary`, never a fill**, so it cannot be mistaken
   for a selection.
 - **Variant:** `primary` fills `bg-primary`, band `bg-primary/15`; `secondary` fills

@@ -95,7 +95,13 @@ export function CalendarDay({ date, children, className }: CalendarDayProps): Re
 			onPress={handlePress}
 			testID={resolvePartTestID(calendar.testID, `day-${serialiseDate(date)}`)}
 		>
-			{showsBand ? <View className={slots.band()} /> : null}
+			{showsBand ? (
+				<View className={slots.bandTrack()}>
+					<View className={slots.bandAnchor()}>
+						<View className={slots.band()} />
+					</View>
+				</View>
+			) : null}
 			<View className={slots.dayBase()}>{content}</View>
 		</Pressable>
 	);

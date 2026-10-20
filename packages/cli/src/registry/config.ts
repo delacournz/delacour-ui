@@ -422,6 +422,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day.",
 		categories: ["display"],
 	},
+	pagination: {
+		title: "Pagination",
+		description:
+			"Moves through pages of a result set: a fixed-width run of numbers and gaps, a compact readout, or labelled arrows.",
+		categories: ["navigation"],
+	},
 	progress: {
 		title: "Progress",
 		description: "A bar showing how far a task has got, or a looping segment while it is under way.",

@@ -1,6 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
-import { LIST_GROUP_SIZES, LIST_GROUP_VARIANTS, listGroupVariants } from "./list-group.variants";
+import {
+	LIST_GROUP_SIZES,
+	LIST_GROUP_VARIANTS,
+	listGroupVariants,
+	resolveListGroupItemRender,
+} from "./list-group.variants";
 
 /** Pulls the horizontal padding step out of a class string — `px-4` yields 4. */
 function paddingStep(cls: string): string | undefined {
@@ -219,5 +224,28 @@ describe("listGroupVariants icon slots", () => {
 			expect(slots.prefixIcon()).not.toMatch(/\b(bg|text|border)-/);
 			expect(slots.suffixIcon()).not.toMatch(/\b(bg|text|border)-/);
 		}
+	});
+});
+
+describe("resolveListGroupItemRender", () => {
+	const noop = () => {};
+
+	// A Settings row with only a value or a switch-for-show is not a control;
+	// announcing it as a button is a lie VoiceOver tells on every swipe.
+	test("is static without a press handler, disabled or not", () => {
+		expect(resolveListGroupItemRender({ isDisabled: false })).toBe("static");
+		expect(resolveListGroupItemRender({ isDisabled: true })).toBe("static");
+	});
+
+	test("is a pressable with a handler", () => {
+		expect(resolveListGroupItemRender({ isDisabled: false, onPress: noop })).toBe("pressable");
+		expect(resolveListGroupItemRender({ isDisabled: false, onLongPress: noop })).toBe("pressable");
+	});
+
+	// A disabled action is still an action: it keeps the button role and
+	// reports `disabled`, rather than vanishing into a plain view.
+	test("stays a pressable when disabled", () => {
+		expect(resolveListGroupItemRender({ isDisabled: true, onPress: noop })).toBe("pressable");
+		expect(resolveListGroupItemRender({ isDisabled: true, onLongPress: noop })).toBe("pressable");
 	});
 });

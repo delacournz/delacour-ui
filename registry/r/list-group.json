@@ -19,7 +19,9 @@
 	"dependencies": [
 		"tailwind-variants"
 	],
-	"expoDependencies": [],
+	"expoDependencies": [
+		"react-native-reanimated"
+	],
 	"devDependencies": [],
 	"files": [
 		{

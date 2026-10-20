@@ -1,0 +1,194 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "number-input",
+	"type": "registry:ui",
+	"title": "Number Input",
+	"description": "A number between a minus and a plus: tap to step, hold to repeat, or type and commit on blur.",
+	"categories": [
+		"forms"
+	],
+	"registryDependencies": [
+		"cn",
+		"compose-refs",
+		"field",
+		"icon",
+		"icons",
+		"input",
+		"pressable",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/number-input/AGENTS.md",
+			"target": "number-input/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/number-input",
+					"to": "@registry/ui/number-input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/index.ts",
+			"target": "number-input/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input-decrement.tsx",
+			"target": "number-input/number-input-decrement.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input-field.tsx",
+			"target": "number-input/number-input-field.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/compose-refs",
+					"to": "@registry/lib/compose-refs"
+				},
+				{
+					"from": "../input/input",
+					"to": "@registry/ui/input/input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input-increment.tsx",
+			"target": "number-input/number-input-increment.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input-stepper.tsx",
+			"target": "number-input/number-input-stepper.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../input/input-group-prefix",
+					"to": "@registry/ui/input/input-group-prefix"
+				},
+				{
+					"from": "../input/input-group-suffix",
+					"to": "@registry/ui/input/input-group-suffix"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.context.tsx",
+			"target": "number-input/number-input.context.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.format.ts",
+			"target": "number-input/number-input.format.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.tsx",
+			"target": "number-input/number-input.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../field/field.context",
+					"to": "@registry/ui/field/field.context"
+				},
+				{
+					"from": "../input/input-group",
+					"to": "@registry/ui/input/input-group"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.types.ts",
+			"target": "number-input/number-input.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input",
+					"to": "@registry/ui/input/input"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.variants.ts",
+			"target": "number-input/number-input.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/use-step-repeat.ts",
+			"target": "number-input/use-step-repeat.ts",
+			"namespace": "ui"
+		}
+	]
+}

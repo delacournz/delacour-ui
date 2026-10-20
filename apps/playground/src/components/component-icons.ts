@@ -32,6 +32,7 @@ import {
 	IconExclamationTriangle,
 	IconFilter1,
 	IconFlashcards,
+	IconFolder1,
 	IconFontStyle,
 	IconGauge,
 	IconHandTouch,
@@ -186,6 +187,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"scroll-text": IconTextMotion,
 	support: IconHeadphones,
 	"text-animation": IconMagicWand,
+	breadcrumb: IconFolder1,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

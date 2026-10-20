@@ -100,6 +100,7 @@ shares.
 | [Avatar](src/components/avatar/AGENTS.md) | `@delacour/react-native-ui/avatar` | A person as a picture, with an initials fallback, a corner badge and a stack |
 | [Badge](src/components/badge/AGENTS.md) | `@delacour/react-native-ui/badge` | A compact label for status, category or count |
 | [BottomSheet](src/components/bottom-sheet/AGENTS.md) | `@delacour/react-native-ui/bottom-sheet` | A sheet over the app — a Uniwind skin on `@delacour/react-native-bottom-sheet` |
+| [Breadcrumb](src/components/breadcrumb/AGENTS.md) | `@delacour/react-native-ui/breadcrumb` | The path to the current screen — links back up, the current page last, collapsible |
 | [Button](src/components/button/AGENTS.md) | `@delacour/react-native-ui/button` | The reference implementation for the patterns below |
 | [Calendar](src/components/calendar/AGENTS.md) | `@delacour/react-native-ui/calendar` | A month grid for picking a day, several days or a range |
 | [Card](src/components/card/AGENTS.md) | `@delacour/react-native-ui/card` | A content surface with a header, a body and a footer, on `Surface` |

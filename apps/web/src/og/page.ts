@@ -29,6 +29,7 @@ export const MOMENTS: Partial<Record<PreviewId, Moment>> = {
 	"screen/showcase": POSTER,
 	"screen/inbox": POSTER,
 	"bottom-sheet/anatomy/the-whole-composition": { at: 0.24, anchor: "bottom" },
+	"breadcrumb/ellipsis-sheet": { at: 0.25, anchor: "bottom" },
 	"combobox/single": { at: 0.45, anchor: "top" },
 	"context-menu/message-actions": { at: 0.55, anchor: "bottom" },
 	"dialog/confirm": { at: 0.3, anchor: "top" },

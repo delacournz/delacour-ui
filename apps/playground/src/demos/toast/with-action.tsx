@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"One action, here an undo. Pressing it runs `onPress` and hides the toast; with an action it stays six seconds rather than four.",
 	align: "center",
-	capture: { flow: "toast/with-action", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

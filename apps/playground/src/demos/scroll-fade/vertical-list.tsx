@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "A list in a card",
 	caption:
 		"At rest only the bottom edge fades, because there is more below and nothing above. Scroll and the top fades in over the first few points; reach the end and the bottom clears. The fade is the card's own colour, so it reads as rows passing under the edge rather than a grey band.",
-	capture: { align: "stretch", flow: "scroll-fade/vertical-list", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const ROWS = [

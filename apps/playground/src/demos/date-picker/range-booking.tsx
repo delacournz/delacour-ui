@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		'`mode="range"` holds the first tap inside the sheet — the trigger shows "12 Oct 2026 –" behind it — and closes once both ends exist. `onValueChange` only ever sees a complete range, or an empty one from Clear.',
 	align: "stretch",
-	capture: { flow: "date-picker/range-booking", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

@@ -14,6 +14,7 @@
 		"check": "biome check ./src",
 		"test": "bun test",
 		"typecheck": "tsc --noEmit",
+		"typecheck:e2e": "tsc --noEmit -p tsconfig.e2e.json",
 		"gen-demos": "bun scripts/gen-demo-registry.ts",
 		"previews": "bun scripts/capture-previews.ts",
 		"eas": "dotenv -e .env eas",
@@ -21,7 +22,8 @@
 		"eas:build:native:dev": "bun run eas workflow:run build:native:dev.yml",
 		"eas:build:native:prod": "bun run eas workflow:run \"build:native:prod.yml\"",
 		"eas:release:prod": "bun run eas workflow:run release:prod.yml",
-		"eas:submit:prod": "bun run eas workflow:run submit:native:prod.yml"
+		"eas:submit:prod": "bun run eas workflow:run submit:native:prod.yml",
+		"previews:verify": "bun scripts/previews/verify.ts"
 	},
 	"dependencies": {
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.2.17",
@@ -95,6 +97,8 @@
 	},
 	"devDependencies": {
 		"@delacour/biome-config": "workspace:*",
+		"@delacour/warden": "0.1.1",
+		"@delacour/warden-e2e": "0.1.1",
 		"@resvg/resvg-js": "^2.6.2",
 		"@types/culori": "^4.0.1",
 		"@types/react": "catalog:",

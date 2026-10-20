@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Several days",
 	caption: '`mode="multiple"` reports every toggle and stays open until Done. The trigger lists two days, then counts.',
 	align: "stretch",
-	capture: { flow: "date-picker/multiple", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

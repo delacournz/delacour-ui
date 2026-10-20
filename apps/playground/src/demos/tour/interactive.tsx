@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`isInteractive` lets touches inside the hole reach the control, and the control's own handler calls `next()`. The tour draws inside its own root rather than a modal — so it dims, and places its card within, only what it wraps; put it around the whole screen.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "tour/interactive", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 /** The two controls, each advancing the tour when pressed during it. */

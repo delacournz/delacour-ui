@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`expandable` with `numberOfLines` clamps the body and offers more only when it actually overflows, then less once it is open.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "post/expandable-body" },
+	capture: { align: "stretch", flow: true },
 };
 
 const BODY =

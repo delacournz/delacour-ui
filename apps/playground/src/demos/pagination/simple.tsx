@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Simple",
 	caption: "Two labelled arrows and nothing between them, for a reader who only ever goes one page on.",
-	capture: { flow: "pagination/simple" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

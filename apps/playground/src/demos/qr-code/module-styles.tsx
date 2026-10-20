@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Square merges runs into rectangles; rounded softens only the corners with no neighbour, so runs fuse; dots draws each module as a dot. The three finders stay a ring and a core in every style — a finder made of dots is one a decoder cannot lock onto.",
-	capture: { flow: "qr-code/module-styles", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 const LABELS: Record<QrModuleStyle, string> = {

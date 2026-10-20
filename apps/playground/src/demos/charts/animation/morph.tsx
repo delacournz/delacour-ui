@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	title: "A change of data",
 	caption:
 		"Swap the rows and every mark morphs from the path it drew to the path it will draw. Nothing on the call site asks for it: `animation` defaults to a 300 ms timing, and this chart only slows it down.",
-	capture: { align: "stretch", flow: "charts/animation/morph" },
+	capture: { align: "stretch", flow: true },
 };
 
 type Week = "this" | "last";

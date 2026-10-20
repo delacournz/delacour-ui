@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`threshold` is how far a release must reach. At `0.5` half the rail will do; at `1` there is no shortcut, and only a release at the far end confirms.",
 	align: "center",
-	capture: { flow: "slide-button/threshold" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

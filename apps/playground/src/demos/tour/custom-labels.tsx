@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`labels` replaces any of the English defaults — the buttons, the progress text and the screen reader's position. `hasSkip={false}` drops Skip, and `isDismissible={false}` stops a scrim tap closing the tour.",
 	align: "stretch",
-	capture: { flow: "tour/custom-labels", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const LABELS: Partial<TourLabels> = {

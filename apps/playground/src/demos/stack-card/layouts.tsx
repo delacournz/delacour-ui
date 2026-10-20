@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Layouts",
 	caption:
 		"`layout` draws the cards behind the top: `stack` steps each one down and smaller, `fan` turns them about the bottom centre, `flat` hides them. `depth` says how many are drawn.",
-	capture: { align: "stretch", flow: "stack-card/layouts" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LABELS: Record<StackCardLayout, string> = {

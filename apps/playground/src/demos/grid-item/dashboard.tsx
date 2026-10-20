@@ -16,7 +16,7 @@ export const meta: DemoMeta = {
 	title: "Dashboard",
 	caption:
 		"Four columns of square cells. A two-by-two tile, small ones beside it, a tall one in the middle and a wide one below — every edge lands on the same columns, and the group is exactly as tall as the rows it used. Tap a toggle and its tile fills.",
-	capture: { align: "stretch", flow: "grid-item/dashboard", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 type ToggleId = "wifi" | "bluetooth" | "focus" | "airplane" | "lock";

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The saturation and brightness area, the hue track and the hex field — what a bare `<ColorPicker />` draws. The readout updates on release, through `onValueCommit`.",
 	keyboardAware: true,
-	capture: { flow: "color-picker/basic", hero: true, align: "stretch" },
+	capture: { flow: true, hero: true, align: "stretch" },
 };
 
 export function Demo(): ReactElement {

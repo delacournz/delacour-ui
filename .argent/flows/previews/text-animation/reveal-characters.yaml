@@ -1,7 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on text-animation/reveal-characters and has settled — "Delacour" fully
-  revealed, a Replay button under it. The capture script navigates there before running this.
-steps:
-  - echo: Replaying the reveal — the letters scale in from the middle outwards
-  - tap: { id: text-animation-reveal-characters-replay }
-  - wait: 1200

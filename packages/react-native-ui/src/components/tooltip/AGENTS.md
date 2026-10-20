@@ -127,7 +127,5 @@ Everything else — the long press and its haptic, the button's tap surviving it
 outside tap closing it and still landing, one-at-a-time, VoiceOver reading `label` — is verified on
 a simulator through `apps/playground`'s `/tooltip` gallery.
 
-Preview media is not captured yet (see the overlay plan); the flows are in
-`.argent/flows/previews/tooltip/`. When a capture tool is back, mark these `capture`:
-`icon-buttons` `{ flow: "tooltip/icon-buttons", frame: "device", hero: true }`, and `press`,
-`placements`, `surface` `{ flow: "tooltip/<id>", frame: "device" }`.
+Preview media: the bodies are in `apps/playground/e2e/previews/tooltip.e2e.ts`, and the captured
+demos carry `{ flow: true, frame: "device" }`, `icon-buttons` as the hero.

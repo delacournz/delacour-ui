@@ -50,7 +50,7 @@ const TYPES_IMPORT = "@/demos/types";
 export type DemoCaptureMeta = {
 	frame?: "stage" | "device";
 	align?: "center" | "stretch";
-	flow?: string;
+	flow?: boolean;
 	leadMs?: number;
 	tailMs?: number;
 	settleMs?: number;

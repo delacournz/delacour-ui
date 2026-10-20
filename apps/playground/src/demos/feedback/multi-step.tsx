@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 		"A rating, then a message, then thanks — the caller swaps the panel's and footer's children. The well eases between heights; the shell never jumps.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "feedback/multi-step", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 type Step = "rating" | "message" | "thanks";

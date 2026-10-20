@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`shape=\"circle\"` on a step cuts a round hole — a square around the target's larger side — for a floating button. The first step keeps the tour's rounded rectangle, and the hole morphs between them.",
 	align: "stretch",
-	capture: { flow: "tour/circle-shape", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 function StartButton(): ReactElement {

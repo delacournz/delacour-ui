@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Zoom",
-	capture: { align: "stretch", flow: "scroll-canvas/zoom" },
+	capture: { align: "stretch", flow: true },
 	caption:
 		"The picture starts oversized and settles to its natural size as the frame rises. Here `start` and `end` run the effect from 45% down the view to just past the top.",
 };

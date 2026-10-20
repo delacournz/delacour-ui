@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Sized by its content",
 	caption:
 		"Pass the real content as children and the placeholder takes its exact size — it is rendered invisibly underneath. Flip `isLoading` and the content fades in with nothing moving.",
-	capture: { align: "stretch", flow: "skeleton/profile-card", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

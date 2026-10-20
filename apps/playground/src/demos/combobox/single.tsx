@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Single",
 	caption:
 		"The sheet opens with its search field focused and the rows filter as you type — case- and accent-insensitive, on the label and on `keywords`, with the match in bold. A pick closes the sheet and the trigger reads the choice.",
-	capture: { flow: "combobox/single", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const COUNTRIES = [

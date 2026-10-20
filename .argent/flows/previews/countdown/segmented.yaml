@@ -1,7 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on countdown/segmented and has settled — four boxes, days to
-  seconds, already counting down from two days and three hours. The capture script navigates there before
-  running this.
-steps:
-  - echo: Nothing to touch — a countdown is its motion, so this only holds the camera while the seconds slide
-  - wait: 3000

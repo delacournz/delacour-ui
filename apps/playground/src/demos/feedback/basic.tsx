@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	note: "Close it with text in the field and open it again: the draft is still there. Sending clears it.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "feedback/basic", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 /** Send has to close and clear itself — `Feedback.Submit` never closes on its own. */

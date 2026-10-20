@@ -17,7 +17,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Four `yKeys` — open, high, low, close — and one mark that names which is which. `candleColors` paints a rising, a falling and a flat candle, and the wicks are drawn under the bodies.",
 	note: "The scrub works here as on any other chart: name the keys, and `ChartCursorLine` with a `yKey` sits at that series — here, the close.",
-	capture: { align: "stretch", flow: "charts/candlestick/candlestick" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

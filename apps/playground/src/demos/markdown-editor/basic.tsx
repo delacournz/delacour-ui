@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Select a word and press **B** — it is wrapped and stays selected, so a second press takes it off again. With nothing selected, the markers go in and the caret lands between them. Return on a list line starts the next item.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "markdown-editor/basic", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const NOTES = "## Release notes\n\nThe **sheet** now snaps to `named` points.\n\n- Faster open\n- Calmer close";

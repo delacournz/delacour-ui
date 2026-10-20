@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Drag the open photo up or down. The stage fades as it goes; past 15% of the screen, or with a flick, it flies home to the thumbnail. A shorter drag springs back.",
-	capture: { flow: "image-viewer/drag-to-dismiss", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /**

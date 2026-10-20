@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"A row of stars and a readout. Tap a star to set it, or drag along the row and the fill follows your finger — the whole row is one target.",
-	capture: { flow: "rating/anatomy", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

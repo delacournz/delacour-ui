@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on circular-text/seal and has settled — one ring of
-  "DELACOUR UI" around a star, already turning. The capture script navigates there before running this.
-steps:
-  - echo: Nothing to touch — the seal is its motion, so this only holds the camera on it
-  # repeat="fill" sets four copies, so the ring repeats every 90°: 3.75s at 24°/s. This wait makes
-  # the whole clip, lead and tail included, last exactly that, so it loops without a jump.
-  - wait: 2250

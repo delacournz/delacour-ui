@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Compact",
 	caption: "One readout between the arrows — and one adjustable element for VoiceOver, which swipes a page at a time.",
-	capture: { flow: "pagination/compact" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

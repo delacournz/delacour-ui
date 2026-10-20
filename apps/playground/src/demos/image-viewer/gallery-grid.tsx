@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "stretch",
 	caption:
 		"Tap a tile: the photo grows out of its own frame. Swipe sideways through the six, pinch or double-tap to zoom, drag down to send it back.",
-	capture: { flow: "image-viewer/gallery-grid", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const PHOTOS = [

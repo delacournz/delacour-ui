@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A pie has no x to scrub along, so `PieChart.Tooltip` answers a tap. The tapped slice keeps its colour and the rest dim; tapping outside clears it.",
 	note: "The readout sits just past the slice's outer edge on its bisector, where a callout line would point. Placing a tooltip is what makes the chart take taps at all — without one, or an `onSelect`, a pie is a picture.",
-	capture: { align: "stretch", flow: "chart/pie/pie-tap" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

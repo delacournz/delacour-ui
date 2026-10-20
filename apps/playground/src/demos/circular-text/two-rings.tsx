@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Rings nest by radius alone, because `radius` names the middle of the type. The outer turns clockwise, the inner counterclockwise and faster.",
-	capture: { flow: "circular-text/two-rings" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

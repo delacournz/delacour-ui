@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption: "`placement` picks the side the label prefers — `top` by default. A side without room flips.",
 	align: "center",
-	capture: { flow: "tooltip/placements", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const LABELS: Record<PopoverPlacement, string> = {

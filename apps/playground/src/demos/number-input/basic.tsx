@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption: "Tap a stepper to move by one, hold it to repeat, or tap the number and type one.",
 	align: "center",
 	keyboardAware: true,
-	capture: { flow: "number-input/basic", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

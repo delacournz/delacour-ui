@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"More rows than the room holds: the panel caps its height inside the safe area and the rows scroll. A drag scrolls without choosing a row.",
 	align: "center",
-	capture: { frame: "device", flow: "menu/long-list" },
+	capture: { frame: "device", flow: true },
 };
 
 const TIME_ZONES = [

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"An empty `Avatar.Badge` is a presence dot, ringed in the page background. Tap the avatar to cycle its status; the status is part of the avatar's own label, because the dot has no words.",
-	capture: { flow: "avatar/presence" },
+	capture: { flow: true },
 };
 
 const STATUSES = ["online", "away", "busy", "offline"] as const;

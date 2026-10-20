@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Speed is points per second, never a duration — so a short strip and a long one at the same speed move at the same pace.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "marquee/speed" },
+	capture: { align: "stretch", flow: true },
 };
 
 const SPEEDS = [20, 60, 120] as const;

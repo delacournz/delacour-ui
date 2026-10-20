@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A textarea under a single-line field reads as the same control at a different height. Send it empty and the `Field` reports the error; start typing and it clears. The thank-you stays for two seconds, then the form is ready for the next one.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "textarea/feedback-form" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LIMIT = 500;

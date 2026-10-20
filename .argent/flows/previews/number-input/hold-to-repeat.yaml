@@ -1,9 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on number-input/hold-to-repeat and has settled — one number
-  input at 0 of 0 to 1000, the minus dimmed. The capture script navigates there before running this.
-steps:
-  - echo: Holding the plus until the repeat speeds up and jumps by tens
-  - long-press: { on: { id: repeat-increment }, duration: 3600 }
-  - wait: 500
-  - echo: Holding the minus longer than the plus was held, so it stops at 0 and the clip loops
-  - long-press: { on: { id: repeat-decrement }, duration: 4400 }

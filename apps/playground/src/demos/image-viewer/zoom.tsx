@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"Double-tap zooms to 2.5× about the point you tapped, and back. A pinch holds the point under your fingers; past 1× or 4× it gives, then settles.",
-	capture: { flow: "image-viewer/zoom", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /**

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Press and hold. The fill grows from the leading edge and the action fires only when it reaches the end; let go early and it plays back at the same rate.",
 	align: "center",
-	capture: { flow: "progress-button/hold-to-erase", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		'`presentation="sheet"` puts the surface in a `BottomSheet` behind a trigger row drawn on Input\'s box. Tapping the label opens it too. Mount `BottomSheetProvider` once in the app.',
 	keyboardAware: true,
-	capture: { flow: "color-picker/sheet-trigger", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const PRESETS = ["#f59e0b", "#ef4444", "#3b82f6", "#22c55e", "#a855f7"] as const;

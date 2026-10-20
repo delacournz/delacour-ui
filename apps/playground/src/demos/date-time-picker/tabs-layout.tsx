@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The default layout: Date and Time behind two tabs in one sheet, so it fits the shortest phone. Pick a day on an empty field and the sheet moves to Time once — the time it shows was only a guess from the clock. Every pick commits; Done closes.",
 	align: "stretch",
-	capture: { flow: "date-time-picker/tabs-layout", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

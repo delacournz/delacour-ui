@@ -179,7 +179,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("./frames/bottom-sheet/anatomy/the-whole-composition.png?inline"),
 	},
 	"breadcrumb/ellipsis-sheet": {
-		cut: "a9d12f560cf0",
+		cut: "cf187411b3ab",
 		load: () => import("./frames/breadcrumb/ellipsis-sheet.png?inline"),
 	},
 	"button/variants": { load: () => import("../../public/previews/button/variants/dark.png?inline") },
@@ -209,16 +209,16 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/collapsible/a-section-of-detail/dark.png?inline"),
 	},
 	"color-picker/basic": { load: () => import("../../public/previews/color-picker/basic/dark.png?inline") },
-	"combobox/single": { cut: "0a0fac445866", load: () => import("./frames/combobox/single.png?inline") },
+	"combobox/single": { cut: "6a3012b8eb54", load: () => import("./frames/combobox/single.png?inline") },
 	"compare/anatomy": { load: () => import("../../public/previews/compare/anatomy/dark.png?inline") },
 	"context-menu/message-actions": {
 		cut: "0c55c2766e09",
 		load: () => import("./frames/context-menu/message-actions.png?inline"),
 	},
 	"countdown/segmented": { load: () => import("../../public/previews/countdown/segmented/dark.png?inline") },
-	"date-picker/single": { cut: "a8e20e72e13e", load: () => import("./frames/date-picker/single.png?inline") },
+	"date-picker/single": { cut: "3d66e8b33fb1", load: () => import("./frames/date-picker/single.png?inline") },
 	"date-time-picker/tabs-layout": {
-		cut: "79ca97d02f44",
+		cut: "3839b45439d2",
 		load: () => import("./frames/date-time-picker/tabs-layout.png?inline"),
 	},
 	"dialog/confirm": { cut: "e2b7824ce5b9", load: () => import("./frames/dialog/confirm.png?inline") },
@@ -234,7 +234,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"grid-item/dashboard": { load: () => import("../../public/previews/grid-item/dashboard/dark.png?inline") },
 	"icon/the-size-scale": { load: () => import("../../public/previews/icon/the-size-scale/dark.png?inline") },
 	"image-viewer/gallery-grid": {
-		cut: "95fdc0a1870b",
+		cut: "c62b5f9db57d",
 		load: () => import("./frames/image-viewer/gallery-grid.png?inline"),
 	},
 	"input/states/live-validation": {
@@ -281,7 +281,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/scroll-fade/vertical-list/dark.png?inline"),
 	},
 	"scroll-header/large-title-list": {
-		cut: "ebf6b8f77fec",
+		cut: "b6e28e06b2b0",
 		load: () => import("./frames/scroll-header/large-title-list.png?inline"),
 	},
 	"scroll-text/colour": { load: () => import("../../public/previews/scroll-text/colour/dark.png?inline") },
@@ -290,7 +290,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/section-progress/colored-sections/dark.png?inline"),
 	},
 	"section-rail/docs-page": { load: () => import("../../public/previews/section-rail/docs-page/dark.png?inline") },
-	"select/single": { cut: "8d4d23378ac5", load: () => import("./frames/select/single.png?inline") },
+	"select/single": { cut: "e07a904198a6", load: () => import("./frames/select/single.png?inline") },
 	"selection-mode/inbox-mode": {
 		load: () => import("../../public/previews/selection-mode/inbox-mode/dark.png?inline"),
 	},
@@ -325,7 +325,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"theme-selector/controlled": {
 		load: () => import("../../public/previews/theme-selector/controlled/dark.png?inline"),
 	},
-	"time-picker/basic-sheet": { cut: "65d25363d501", load: () => import("./frames/time-picker/basic-sheet.png?inline") },
+	"time-picker/basic-sheet": { cut: "9608fcbeeb1d", load: () => import("./frames/time-picker/basic-sheet.png?inline") },
 	"timeline/horizontal": { load: () => import("../../public/previews/timeline/horizontal/dark.png?inline") },
 	"toast/statuses": { cut: "ebbb56630c98", load: () => import("./frames/toast/statuses.png?inline") },
 	"toggle-button/variants": { load: () => import("../../public/previews/toggle-button/variants/dark.png?inline") },

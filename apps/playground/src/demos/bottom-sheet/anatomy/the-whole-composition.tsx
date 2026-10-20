@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "The whole composition",
-	capture: { flow: "bottom-sheet/anatomy/the-whole-composition", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 /**

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Over a list",
 	caption:
 		"One primary action pinned to the bottom corner of the screen it belongs to. The list pads its bottom by the fab's height plus its offset, so the last row can scroll clear of it.",
-	capture: { align: "stretch", flow: "fab/over-a-list" },
+	capture: { align: "stretch", flow: true },
 };
 
 const NOTES = [

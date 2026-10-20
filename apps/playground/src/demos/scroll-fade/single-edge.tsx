@@ -10,7 +10,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "One edge",
 	caption: '`edges="end"` fades only where the terms run on into the button below them.',
-	capture: { align: "stretch", flow: "scroll-fade/single-edge" },
+	capture: { align: "stretch", flow: true },
 };
 
 const CLAUSES = [

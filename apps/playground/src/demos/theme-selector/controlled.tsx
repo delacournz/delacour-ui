@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Controlled",
 	caption:
 		"`value` with `onValueChange` puts the choice in your hands, and `applyTheme={false}` keeps a press from re-theming the app — the selector only reports.",
-	capture: { align: "stretch", flow: "theme-selector/controlled", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

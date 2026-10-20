@@ -1,0 +1,5 @@
+{
+	"extends": "./tsconfig.json",
+	"include": ["warden.config.ts", "e2e/**/*.ts", "expo-env.d.ts"],
+	"exclude": ["node_modules"]
+}

@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Persistent",
 	caption: "`duration: 0` stays until the ✕, a swipe or `toast.hide` — here `toast.hideAll`.",
 	align: "center",
-	capture: { flow: "toast/persistent", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

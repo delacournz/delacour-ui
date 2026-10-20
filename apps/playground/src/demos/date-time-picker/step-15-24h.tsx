@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`minuteStep={15}` and `hourCycle={24}`, in en-GB. Month names, the trigger's text and the wheel all follow the locale; the stored hour is 24-hour whatever the clock shows.",
 	align: "stretch",
-	capture: { flow: "date-time-picker/step-15-24h", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Snap points",
 	note: "A stop at or below 1 is a fraction of the box; above 1 it is points. [120, 0.5, 1] mixes both: a fixed 120pt peek, half, and everything.",
-	capture: { align: "stretch", flow: "split-view/snap-points" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LABELS = ["120pt", "Half", "All"] as const;

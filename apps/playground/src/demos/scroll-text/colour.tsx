@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Colour",
 	note: "The default effect: each word goes from muted-foreground to foreground as the block's top travels up the scroll view — a `window` of 0.75 to 0.05, tuned to this short box. Scroll back and it dims again — the scroll position is the clock.",
-	capture: { align: "stretch", flow: "scroll-text/colour", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const TEXT =

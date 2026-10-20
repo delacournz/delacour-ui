@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Panes",
 	note: 'variant="panes" gives each pane its own card surface with a gap between, and draws no rule on the seam. The handle sits in the middle of the gap.',
-	capture: { align: "stretch", flow: "splitter/panes" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Between turns",
 	caption:
 		"Markers note what happened between two turns: no speaker, no bubble. Tap a step to see what it covered; a separator marker breaks the day.",
-	capture: { align: "stretch", flow: "marker/conversation", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 /** A turn in the conversation, drawn from `Surface` and `Text` alone. */

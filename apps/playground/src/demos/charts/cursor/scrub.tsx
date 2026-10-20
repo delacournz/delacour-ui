@@ -18,7 +18,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`useChartScrub` allocates shared values, the root writes them on the UI thread as a finger drags, and `ChartCursorLine` and `ChartCursorDot` read them. Every field is a number, so a readout on a plain view can read them too.",
 	note: "Hold first, then drag. `hold` is the default behaviour because a chart usually lives in a scrolling feed, and a scrub that activated on a plain drag would steal the scroll.",
-	capture: { align: "stretch", flow: "charts/cursor/scrub" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

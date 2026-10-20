@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Scrolling weeks",
 	caption:
 		"`Planner.Scroller` is a virtualised list of weeks either side of the opening month. The title follows the week at the top; `Nav` and `Today` scroll to their week.",
-	capture: { align: "stretch", flow: "planner/scroller" },
+	capture: { align: "stretch", flow: true },
 };
 
 const CATEGORIES: readonly PlannerCategory[] = [

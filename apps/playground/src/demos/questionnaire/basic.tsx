@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"Three questions — one choice, several choices, a rating — and `onSubmit`. With no children the questionnaire lays out its progress bar, the question and a footer whose buttons hide where they do not apply.",
-	capture: { align: "stretch", flow: "questionnaire/basic", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const QUESTIONS: readonly Question[] = [

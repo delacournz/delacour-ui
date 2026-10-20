@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A `Textarea` takes the field's place and `Input.Group.Block` stacks a toolbar above and a footer below it — one box, one border, one focus ring.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "input/group/composer" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LIMIT = 280;

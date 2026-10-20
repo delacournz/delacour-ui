@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Lazy loading",
 	caption:
 		"`hasChildren` marks a node a branch before its children exist, so the chevron shows from the start. Opening it fetches the children, with a spinner in `Tree.Actions` until they arrive. Northland starts loaded and open; the rest fetch on first open.",
-	capture: { align: "stretch", flow: "tree/lazy-load" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** How long the pretend fetch takes, so the loading state is visible. */

@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Multiple selection",
 	caption:
 		'`selectionMode="multiple"` toggles each row in a flat set — selecting a branch does not select its children. The check glyph is drawn from `useTreeItem`, not a nested control, so the row stays one tap target.',
-	capture: { align: "stretch", flow: "tree/multi-select" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** A check that follows the row's selection. */

@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Variants",
-	capture: { align: "stretch", flow: "list-group/variants" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

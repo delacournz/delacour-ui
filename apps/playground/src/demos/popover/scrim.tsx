@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Scrim",
 	caption: "`hasScrim` dims the app behind the panel. Without it an outside tap still closes the popover.",
-	capture: { flow: "popover/scrim", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

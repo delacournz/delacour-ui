@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Horizontal",
 	caption:
 		"Titles sit under their indicators, and the line between two steps fills once the value has passed the first. Tap a step to jump there.",
-	capture: { align: "stretch", flow: "steps/horizontal", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const STEPS = ["Account", "Shipping", "Payment"] as const;

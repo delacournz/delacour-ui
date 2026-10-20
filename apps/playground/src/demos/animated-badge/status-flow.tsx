@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Status flow",
 	align: "center",
 	caption: "Each step rolls the old status out and the new one in, and the capsule springs to the new width.",
-	capture: { flow: "animated-badge/status-flow", hero: true },
+	capture: { flow: true, hero: true },
 };
 
 const STEPS: readonly { status: AnimatedBadgeStatus; label: string }[] = [

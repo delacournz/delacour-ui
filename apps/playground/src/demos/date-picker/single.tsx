@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A field that opens a calendar in a bottom sheet. Picking a day closes the sheet a beat later, so the selection is seen; the trigger's text is formatted from the value, never stored beside it.",
 	align: "stretch",
-	capture: { flow: "date-picker/single", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

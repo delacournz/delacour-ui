@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Two snap points",
 	caption:
 		"The sheet the overview's code draws: two explicit snap points, an overlay, a handle and a close button, teleported over the screen. A drag on the handle carries it from the first snap point to the second and back, and a drag past the first closes it.",
-	capture: { flow: "bottom-sheet-engine/anatomy/two-snap-points", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const SNAP_POINTS = ["40%", "85%"] as const;

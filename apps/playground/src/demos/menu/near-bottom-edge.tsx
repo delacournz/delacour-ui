@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Near the bottom edge",
 	caption:
 		"With no room below the trigger the panel flips above it, and it stays inside the safe area at the sides. `placement` names the side it prefers; the room decides.",
-	capture: { frame: "device", flow: "menu/near-bottom-edge" },
+	capture: { frame: "device", flow: true },
 };
 
 export function Demo(): ReactElement {

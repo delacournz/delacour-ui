@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Profile",
 	caption:
 		"Every part at once: a cover photo, a face lifted over its edge and ringed in the page colour, a title block, actions and a strip of stats. Compacted numbers are read in full — `1.2K` is announced as 1,234 Followers.",
-	capture: { align: "stretch", flow: "page-header/profile" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

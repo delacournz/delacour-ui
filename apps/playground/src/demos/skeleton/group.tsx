@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "In step, as a group",
 	caption:
 		"Every skeleton inside a `Skeleton.Group` reads one clock, so a list shimmers as one sweep instead of a ripple of unrelated glints. The group's `animation` reaches every row.",
-	capture: { align: "stretch", flow: "skeleton/group" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Lines",
 	note: "A hidden full Text reports its lines; each becomes a single-line unit, so the breaks match a plain Text exactly.",
-	capture: { align: "stretch", flow: "scroll-text/lines" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TEXT =

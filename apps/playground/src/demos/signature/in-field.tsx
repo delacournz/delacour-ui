@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "In a field",
 	caption:
 		"Inside a `Field` the pad takes its label as its name and its invalid state as a destructive border. Submit with nothing drawn to see it; the error clears with the first stroke.",
-	capture: { align: "stretch", flow: "signature/in-field" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

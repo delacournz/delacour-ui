@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Controlled, with a decline",
 	caption:
 		"A controlled deck that leaves `index` where it was declines the throw, and the card flies back. Here a throw to the left asks first: **No** keeps the card, **Yes** throws it again through the ref and lets it go.",
-	capture: { align: "stretch", flow: "stack-card/controlled-decline" },
+	capture: { align: "stretch", flow: true },
 };
 
 const FILES = ["holiday.mov", "draft-v3.key", "receipts-2025.zip", "old-backup.dmg"] as const;

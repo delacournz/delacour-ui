@@ -125,16 +125,15 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 clock and every resolver. Motion, gestures, insets, the keyboard and announcements are verified on a
 simulator through `/toast`.
 
-## Preview capture (not yet shot)
+## Preview capture
 
-No demo is marked `capture` — the capture tool is unavailable (see `docs/plans/overlays/README.md`).
-The flows are in `.argent/flows/previews/toast/`. When it is back, set:
+The bodies are in `apps/playground/e2e/previews/toast.e2e.ts`; the captured demos are:
 
 | Demo | `capture` |
 | --- | --- |
-| `statuses` | `{ flow: "toast/statuses", frame: "device", hero: true }` |
-| `with-action` | `{ flow: "toast/with-action", frame: "device" }` |
-| `placement` | `{ flow: "toast/placement", frame: "device" }` |
-| `promise` | `{ flow: "toast/promise", frame: "device" }` |
+| `statuses` | `{ flow: true, frame: "device", hero: true }` |
+| `with-action` | `{ flow: true, frame: "device" }` |
+| `placement` | `{ flow: true, frame: "device" }` |
+| `promise` | `{ flow: true, frame: "device" }` |
 
 `frame: "device"` because a toast draws in a portal, outside the demo's measured stage.

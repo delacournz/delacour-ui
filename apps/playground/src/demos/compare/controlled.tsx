@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Pass `position` to hold it yourself. The drag reports through `onPositionChange`, the buttons write it directly, and the seam springs to whatever the parent decides.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "compare/controlled" },
+	capture: { align: "stretch", flow: true },
 };
 
 const PRESETS: readonly { label: string; position: ComparePosition }[] = [

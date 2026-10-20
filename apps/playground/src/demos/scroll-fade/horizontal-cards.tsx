@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "A row of cards",
 	caption:
 		'The axis belongs to the source: `useScrollSource({ orientation: "horizontal" })` and the bands stand at the left and right edges instead.',
-	capture: { align: "stretch", flow: "scroll-fade/horizontal-cards" },
+	capture: { align: "stretch", flow: true },
 };
 
 const CARDS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"] as const;

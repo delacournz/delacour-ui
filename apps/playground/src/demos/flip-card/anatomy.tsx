@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Anatomy",
 	caption:
 		"`FlipCard.Front` sits in flow and sets the card's size; `FlipCard.Back` fills it. Tap anywhere on the card to turn it — the face is state, and the rotation follows it.",
-	capture: { align: "stretch", flow: "flip-card/anatomy", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

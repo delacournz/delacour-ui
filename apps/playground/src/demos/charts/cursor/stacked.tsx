@@ -17,7 +17,7 @@ export const meta: DemoMeta = {
 	title: "Scrubbing a stack",
 	caption:
 		"For a key in `stackKeys` the dot rides the top of that series' band, where the eye expects it, while `series[key].value` keeps the raw measurement a label would print.",
-	capture: { align: "stretch", flow: "charts/cursor/stacked" },
+	capture: { align: "stretch", flow: true },
 };
 
 const DATA = [

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Share picker",
 	caption:
 		"An always-on picker: the mode is held on and the marks show from the start, so a tap picks. `useSelectionMode()` reads the count for the button underneath.",
-	capture: { align: "stretch", flow: "selection-mode/share-picker" },
+	capture: { align: "stretch", flow: true },
 };
 
 const PEOPLE = [

@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Multiple with chips",
 	caption:
 		'`selectionMode="multiple"` keeps the sheet open and shows the selection as removable chips — on the trigger, folding into `+N` past three, and above the search field. Backspace in an empty field marks the last chip, and a second press removes it.',
-	capture: { flow: "combobox/multiple-chips", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const SKILLS = [

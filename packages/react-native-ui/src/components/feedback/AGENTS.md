@@ -88,8 +88,6 @@ field-height resolvers. Opening, the submit gate, the async send, the draft acro
 reopen, the keyboard, the multi-step resize and every dismissal path are verified on a simulator
 through `/feedback` in the playground.
 
-Preview media is held back with the rest of the overlays (see `docs/plans/overlays/README.md`).
-When a capture tool is back, re-add `capture` with these settings and run
-`bun run previews -- -- --only feedback`: `basic` `{ flow: "feedback/basic", frame: "device", hero: true }`,
-and `sending`, `multi-step` `{ flow: "feedback/<id>", frame: "device" }`. The flows are in
-`.argent/flows/previews/feedback/`.
+Preview media: `basic` is the hero and `sending` and `multi-step` are clips, all
+`{ flow: true, frame: "device" }`, with their bodies in
+`apps/playground/e2e/previews/feedback.e2e.ts`; `bun run previews -- -- --only feedback` recaptures them.

@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on splitter/vertical and has settled — the
-  editor over the preview at 60/40, the handle carrying the testID handle-0.
-steps:
-  - echo: Dragging the seam up gives the preview more room, then back
-  - swipe: { from: { id: handle-0 }, by: { y: -0.08 }, momentum: false, duration: 600 }
-  - wait: 500
-  - swipe: { from: { id: handle-0 }, by: { y: 0.08 }, momentum: false, duration: 600 }

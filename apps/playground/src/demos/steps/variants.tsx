@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Variants",
 	caption:
 		"`primary` rings the current step and leaves the steps ahead hollow. `secondary` fills every indicator — completed soft, current solid, upcoming muted.",
-	capture: { align: "stretch", flow: "steps/variants" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

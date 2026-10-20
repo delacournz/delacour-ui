@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "A cap of three",
 	caption:
 		"`max={3}` caps both a tap and select-all. At the cap the rest stop going on, but a pick still comes off, and select-all reads Deselect all because there is nothing left for it to add.",
-	capture: { align: "stretch", flow: "selection-mode/max-limit" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TOPPINGS = [

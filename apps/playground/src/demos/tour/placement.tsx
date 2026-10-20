@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`auto` puts the card below the hole when it fits and above it otherwise. A step can ask for `top` or `bottom`; the tour honours it when it fits and flips when only the other side does.",
 	align: "stretch",
-	capture: { flow: "tour/placement", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 function StartButton(): ReactElement {

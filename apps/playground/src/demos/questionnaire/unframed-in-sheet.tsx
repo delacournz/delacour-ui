@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Unframed, in a sheet",
 	caption:
 		"`isFramed={false}` drops the card for a bare column the sheet's own gutter frames. Submitting closes the sheet from `onSubmit`.",
-	capture: { flow: "questionnaire/unframed-in-sheet", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const QUESTIONS: readonly Question[] = [

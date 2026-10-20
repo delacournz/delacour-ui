@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Sketch.Canvas` children are painted under the marks, so the drawing goes over whatever is there — a receipt here, a photo in an app. The handle's `toSVG` exports only the marks.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "sketch/annotate" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LINES = [

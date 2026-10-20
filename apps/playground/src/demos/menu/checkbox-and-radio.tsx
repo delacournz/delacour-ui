@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		'Checkbox rows stay open, because several are usually toggled in one visit. A radio row closes: a choice made is a visit finished. `indicator="dot"` marks the choice with a dot instead of a tick.',
 	align: "center",
-	capture: { frame: "device", flow: "menu/checkbox-and-radio" },
+	capture: { frame: "device", flow: true },
 };
 
 export function Demo(): ReactElement {

@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Three steps over a toolbar. The screen dims, a hole opens around the control and the card explains it; Next glides the hole to the next one, Back returns, Skip closes early.",
 	align: "stretch",
-	capture: { flow: "tour/basic", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /** Lives inside the tour, so `useTour()` can start it. */

@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Two strips in one `Marquee.Group`, drifting opposite ways at the group's speed. A finger on either row holds both.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "marquee/two-rows", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const TOP = ["React Native", "Expo", "Reanimated", "Gesture Handler", "Skia", "SVG"] as const;

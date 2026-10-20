@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Vertical, with descriptions",
 	caption: "Titles sit beside their indicators and the line runs down between them. Uncontrolled — tap any step.",
-	capture: { align: "stretch", flow: "steps/vertical" },
+	capture: { align: "stretch", flow: true },
 };
 
 const STEPS = [

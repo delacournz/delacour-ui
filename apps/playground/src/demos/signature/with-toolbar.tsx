@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "With the toolbar written out",
 	caption:
 		"Write the anatomy out to choose the actions. Redo joins undo and clear; each one is disabled while it would do nothing, and a new stroke drops whatever was undone.",
-	capture: { align: "stretch", flow: "signature/with-toolbar", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

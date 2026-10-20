@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Animations",
 	caption:
 		"`shimmer` sweeps a glint across the shape, `pulse` breathes its opacity, `none` holds it still. Under the OS reduce-motion setting every one of them holds still.",
-	capture: { align: "stretch", flow: "skeleton/animations" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

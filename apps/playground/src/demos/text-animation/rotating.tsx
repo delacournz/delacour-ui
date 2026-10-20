@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"One word swapped in place inside a sentence. The slot holds its widest phrase, so the words around it never move.",
-	capture: { flow: "text-animation/rotating", leadMs: 0, tailMs: 0 },
+	capture: { flow: true, leadMs: 0, tailMs: 0 },
 };
 
 const WORDS = ["fast", "small", "remote", "growing"] as const;

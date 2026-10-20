@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 	caption:
 		"From the end edge, at `lg`. The slider's own drag wins over the drawer's swipe because it claims the touch first; the body does not scroll, so `isScrollable={false}`.",
 	align: "center",
-	capture: { flow: "drawer/filters", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 type Cuisine = "pizza" | "noodles" | "tacos" | "salads" | "curry";

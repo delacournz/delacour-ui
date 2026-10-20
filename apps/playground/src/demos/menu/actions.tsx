@@ -18,7 +18,7 @@ export const meta: DemoMeta = {
 	title: "Actions",
 	caption:
 		"The verbs you can apply to one thing, dropped from the ⋯ button beside it. Each row runs its action and closes the menu; the destructive one sits apart, under a separator.",
-	capture: { frame: "device", flow: "menu/actions", hero: true },
+	capture: { frame: "device", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

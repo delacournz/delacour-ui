@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	caption:
 		"One request goes to one queue, so the topics are a radio group: one is ever selected, and pressing it again keeps it. Continue waits until one is picked, and sending the request clears the form.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "support/topics", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

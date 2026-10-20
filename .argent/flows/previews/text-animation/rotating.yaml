@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on text-animation/rotating — "Built for … teams", the middle word already
-  rotating. The capture script navigates there before running this.
-steps:
-  - echo: >-
-      Nothing to touch — Rotating swaps on its own. One full cycle (four words × 2200 ms, less the ~300 ms the recorder spends starting) with no lead or tail pad, so
-      the clip ends on the word it began on and loops without a jump cut
-  - wait: 8500

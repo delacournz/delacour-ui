@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Settings",
 	caption:
 		"A title and a link above a card of rows — the settings-screen shape. The rows are plain `Item`s; the tray groups them.",
-	capture: { align: "stretch", flow: "frame/settings", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

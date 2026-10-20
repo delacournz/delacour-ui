@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Coloured sections",
 	caption:
 		"An item's `color` paints its marker in the panel, and the ring while that section is being read — a warning section turns the ring amber as the reader enters it.",
-	capture: { align: "stretch", flow: "section-progress/colored-sections", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const SECTIONS: readonly { id: string; title: string; color: SectionProgressColor }[] = [

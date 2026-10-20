@@ -126,7 +126,8 @@ whose push run checked that exact SHA, so a run there would only repeat it. Rail
 check suites, so no deploy depends on one either.
 
 Every job runs on a [Namespace](https://namespace.so) runner, never a GitHub-hosted label:
-`namespace-profile-linux-small` for Linux work, `namespace-profile-mac-small` for any job that
+`namespace-profile-linux-small` for Linux work — `namespace-profile-linux-medium` for `typecheck`,
+whose tsc runs were OOM-killed on the small profile — `namespace-profile-mac-small` for any job that
 needs macOS (Xcode, a simulator), and `namespace-profile-windows-small` for any job that needs
 Windows. Nothing needs macOS or Windows today, so those two profiles are unused.
 The `ubuntu-latest` / `macos-*` / `windows-*` labels are not to be reintroduced — with one exception, below.

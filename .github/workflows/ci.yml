@@ -53,7 +53,9 @@ env:
 jobs:
   typecheck:
     name: typecheck
-    runs-on: namespace-profile-linux-small
+    # tsc over every workspace at once outgrew the small profile: with the component stack applied,
+    # the playground's tsc was OOM-killed (exit 137) on every run.
+    runs-on: namespace-profile-linux-medium
     # No job here has ever taken more than a minute. The default is 360, which on a private repo
     # bills six hours against the plan's minutes if a runner ever wedges.
     timeout-minutes: 15

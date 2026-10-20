@@ -15388,6 +15388,92 @@ export const install = {
 			},
 		],
 	},
+	"scroll-fade": {
+		name: "scroll-fade",
+		title: "ScrollFade",
+		description: "A gradient at a scrollable's edges while content runs past them, on any axis.",
+		importPath: "@delacour/react-native-ui/scroll-fade",
+		exportName: "ScrollFade",
+		expo: ["expo-linear-gradient", "react-native-reanimated", "uniwind"],
+		npm: ["tailwind-merge", "tailwind-variants", "tailwindcss"],
+		dev: [],
+		fileCount: 17,
+		groups: [
+			{
+				name: "scroll-fade",
+				title: "ScrollFade",
+				kind: "self",
+				files: [
+					{ source: "packages/react-native-ui/src/components/scroll-fade/AGENTS.md", target: "src/components/ui/scroll-fade/AGENTS.md" },
+					{ source: "packages/react-native-ui/src/components/scroll-fade/index.ts", target: "src/components/ui/scroll-fade/index.ts" },
+					{ source: "packages/react-native-ui/src/components/scroll-fade/scroll-fade-edge.tsx", target: "src/components/ui/scroll-fade/scroll-fade-edge.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-fade/scroll-fade.tsx", target: "src/components/ui/scroll-fade/scroll-fade.tsx" },
+					{ source: "packages/react-native-ui/src/components/scroll-fade/scroll-fade.variants.ts", target: "src/components/ui/scroll-fade/scroll-fade.variants.ts" },
+				],
+			},
+			{
+				name: "color",
+				title: "isLiteralColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/color.ts", target: "src/lib/color.ts" },
+				],
+			},
+			{
+				name: "scroll-maths",
+				title: "scrollMaths",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-maths.ts", target: "src/lib/scroll-maths.ts" },
+				],
+			},
+			{
+				name: "scroll-edges",
+				title: "scrollEdges",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/scroll-edges.ts", target: "src/lib/scroll-edges.ts" },
+				],
+			},
+			{
+				name: "styles",
+				title: "Styles",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/styles/base.css", target: "src/styles/base.css" },
+					{ source: "packages/react-native-ui/src/styles/index.css", target: "src/styles/index.css" },
+					{ source: "packages/react-native-ui/src/styles/theme.css", target: "src/styles/theme.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.css", target: "src/styles/tokens.css" },
+					{ source: "packages/react-native-ui/src/styles/tokens.ts", target: "src/styles/tokens.ts" },
+					{ source: "packages/react-native-ui/src/uniwind-env.d.ts", target: "src/styles/uniwind-env.d.ts" },
+				],
+			},
+			{
+				name: "tv",
+				title: "tv",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/tv.ts", target: "src/lib/tv.ts" },
+				],
+			},
+			{
+				name: "use-scroll-source",
+				title: "useScrollSource",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-scroll-source.tsx", target: "src/hooks/use-scroll-source.tsx" },
+				],
+			},
+			{
+				name: "use-theme-color",
+				title: "useThemeColor",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/hooks/use-theme-color.ts", target: "src/hooks/use-theme-color.ts" },
+				],
+			},
+		],
+	},
 	"surface": {
 		name: "surface",
 		title: "Surface",

@@ -91,6 +91,7 @@ import {
 	IconTree,
 	IconTrending4,
 	IconTrophy,
+	IconUnblur,
 	IconWindow,
 	IconWindowCursor,
 } from "@delacour/react-native-ui/icons/central";
@@ -201,6 +202,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"date-picker": IconCalendarDays,
 	"image-viewer": IconImages1,
 	"scroll-blur": IconBlur,
+	"scroll-fade": IconUnblur,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

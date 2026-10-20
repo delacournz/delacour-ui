@@ -447,6 +447,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "A content surface with a header, a body and a footer, built on Surface.",
 	},
 	{
+		slug: "page-header",
+		name: "PageHeader",
+		group: "Layout",
+		blurb: "The head of a profile or place screen: a cover, an overlapping avatar, a title block, actions and stats.",
+	},
+	{
 		slug: "grid-item",
 		name: "GridItem",
 		group: "Layout",

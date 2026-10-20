@@ -56,6 +56,7 @@
 		"./context-menu": "./src/components/context-menu/index.ts",
 		"./countdown": "./src/components/countdown/index.ts",
 		"./date-picker": "./src/components/date-picker/index.ts",
+		"./date-time-picker": "./src/components/date-time-picker/index.ts",
 		"./dialog": "./src/components/dialog/index.ts",
 		"./direction": "./src/components/direction/index.ts",
 		"./drawer": "./src/components/drawer/index.ts",

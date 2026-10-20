@@ -32,6 +32,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "context-menu", title: "Context Menu", description: "The actions that belong to a piece of content, reached by holding it — Menu's rows over a scrim, with a lifted preview." },
 	{ name: "countdown", title: "Countdown", description: "Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run." },
 	{ name: "date-picker", title: "Date Picker", description: "An Input-shaped trigger that opens a Calendar in a bottom sheet for a day, a range or several days, closing when the pick is finished." },
+	{ name: "date-time-picker", title: "Date Time Picker", description: "An Input-shaped trigger that opens a Calendar and a time wheel in one bottom sheet — tabs or stacked, filled in either order, bounded by one date-time window." },
 	{ name: "dialog", title: "Dialog", description: "A centred card over a dimmed app that asks for a decision or a short input: confirm, alert dialog, form, with keyboard lift and focus handling." },
 	{ name: "direction", title: "Direction", description: "Sets LTR or RTL for a subtree and exposes the sign for gesture maths." },
 	{ name: "drawer", title: "Drawer", description: "A panel that slides in from an edge and covers the app until dismissed: a navigation menu, a filter panel, a notifications tray, with swipe-to-dismiss and RTL-aware sides." },

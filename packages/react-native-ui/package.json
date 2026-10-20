@@ -118,7 +118,7 @@
 		"gen-exports": "bun scripts/gen-exports.ts"
 	},
 	"dependencies": {
-		"cn": "^0.4.0",
+		"cn": "^0.5.0",
 		"tailwind-merge": "^3.6.0",
 		"tailwind-variants": "^3.3.1"
 	},
@@ -131,8 +131,8 @@
 		"expo-linear-gradient": ">=15",
 		"expo-router": ">=57",
 		"react": ">=19",
-		"react-native": ">=0.81",
-		"react-native-gesture-handler": ">=2.28",
+		"react-native": ">=0.88",
+		"react-native-gesture-handler": ">=3.3",
 		"react-native-keyboard-controller": ">=1.18",
 		"react-native-pulsar": "^1.7.0",
 		"react-native-reanimated": ">=4",
@@ -175,8 +175,8 @@
 		"@delacour/tsconfig": "workspace:*",
 		"@types/bun": "^1.3.8",
 		"@types/react": "catalog:",
-		"expo-router": "~57.0.15",
+		"expo-router": "~58.0.24",
 		"react-native-teleport": "^1.2.2",
-		"typescript": "^5.9.3"
+		"typescript": "~6.0.3"
 	}
 }

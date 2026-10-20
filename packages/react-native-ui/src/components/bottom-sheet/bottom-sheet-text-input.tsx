@@ -1,6 +1,6 @@
 import { useBottomSheetTextInput } from "@delacour/react-native-bottom-sheet";
 import { type ReactElement, useCallback, useMemo } from "react";
-import type { BlurEvent, FocusEvent, TextInput } from "react-native";
+import type { BlurEvent, FocusEvent, TextInputInstance } from "react-native";
 import { composeRefs } from "../../lib/compose-refs";
 import { Input, type InputProps } from "../input";
 
@@ -22,7 +22,7 @@ export type BottomSheetTextInputProps = InputProps;
  */
 export function BottomSheetTextInput({ ref, onFocus, onBlur, ...props }: BottomSheetTextInputProps): ReactElement {
 	const handlers = useBottomSheetTextInput();
-	const composed = useMemo(() => composeRefs<TextInput | null>(ref, handlers.ref), [ref, handlers.ref]);
+	const composed = useMemo(() => composeRefs<TextInputInstance | null>(ref, handlers.ref), [ref, handlers.ref]);
 
 	const handleFocus = useCallback(
 		(event: FocusEvent) => {

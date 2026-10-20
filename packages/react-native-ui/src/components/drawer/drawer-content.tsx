@@ -41,7 +41,7 @@ export type DrawerContentProps = ViewProps & {
 function focus(target: DrawerFocusTarget | null): void {
 	if (target === null) return;
 	const handle = findNodeHandle(target as Parameters<typeof findNodeHandle>[0]);
-	if (handle !== null) AccessibilityInfo.setAccessibilityFocus(handle);
+	if (handle !== undefined) AccessibilityInfo.setAccessibilityFocus(handle);
 }
 
 /**

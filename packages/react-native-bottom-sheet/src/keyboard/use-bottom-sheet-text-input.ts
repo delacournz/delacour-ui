@@ -1,5 +1,5 @@
 import { type RefCallback, useCallback, useRef } from "react";
-import { findNodeHandle, TextInput } from "react-native";
+import { findNodeHandle, TextInput, type TextInputInstance } from "react-native";
 import { useOptionalBottomSheetInternal } from "../components/bottom-sheet.context";
 
 /**
@@ -10,11 +10,11 @@ import { useOptionalBottomSheetInternal } from "../components/bottom-sheet.conte
  * accepts it. One cast, in one place.
  */
 function nodeHandleOf(instance: unknown): number | null {
-	return findNodeHandle(instance as Parameters<typeof findNodeHandle>[0]);
+	return findNodeHandle(instance as Parameters<typeof findNodeHandle>[0]) ?? null;
 }
 
 export type BottomSheetTextInputHandlers = {
-	ref: RefCallback<TextInput | null>;
+	ref: RefCallback<TextInputInstance | null>;
 	onFocus: () => void;
 	onBlur: () => void;
 };
@@ -45,7 +45,7 @@ export function useBottomSheetTextInput(): BottomSheetTextInputHandlers {
 	const registry = useOptionalBottomSheetInternal()?.keyboard ?? null;
 	const registered = useRef<number | null>(null);
 
-	const ref = useCallback<RefCallback<TextInput | null>>(
+	const ref = useCallback<RefCallback<TextInputInstance | null>>(
 		(instance) => {
 			if (registry === null) return;
 			const previous = registered.current;

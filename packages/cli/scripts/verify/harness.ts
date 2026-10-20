@@ -23,7 +23,7 @@ export type Reporter = {
 };
 
 /** Pinned to the SDK this monorepo develops against. */
-const EXPO_SDK = "~57.0.15";
+const EXPO_SDK = "~58.0.16";
 
 const PACKAGE_JSON = {
 	name: "delacour-verify-app",
@@ -36,13 +36,13 @@ const PACKAGE_JSON = {
 	},
 	dependencies: {
 		expo: EXPO_SDK,
-		react: "19.2.3",
-		"react-native": "0.86.2",
+		react: "19.3.0",
+		"react-native": "0.88.0",
 		// Uniwind and Tailwind are the styling foundation every component
 		// resolves its classes through, so a real consumer has them before the
 		// first `add`. Installed here rather than left to the CLI so the run
 		// proves `init` copes with a project that already has them.
-		uniwind: "^1.11.0",
+		uniwind: "^1.13.0",
 		tailwindcss: "^4.3.3",
 	},
 	devDependencies: {

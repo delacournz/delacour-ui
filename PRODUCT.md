@@ -46,7 +46,7 @@ feedback, and they can read exactly why every decision was made and change it in
 
 ## Operating Context
 
-- Consumers run Expo SDK 57 dev clients; Expo Go is unsupported. Native module versions are pinned to
+- Consumers run Expo SDK 58 dev clients; Expo Go is unsupported. Native module versions are pinned to
   the SDK's and declared as peers.
 - Bun workspace + Turbo monorepo. Metro needs `linker = "hoisted"`.
 - Docs at `ui.delacour.co.nz` (prod, `main`) and `ui.staging.delacour.co.nz` (`develop`), on Railway.

@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, type RefObject, use } from "react";
-import type { TextInput } from "react-native";
+import type { TextInputInstance } from "react-native";
 import type { InputSize, InputVariant } from "./input.variants";
 
 export type InputGroupContextValue = {
@@ -22,7 +22,7 @@ export type InputGroupContextValue = {
 	 * the middle of the box, and a tap on the padding either side would otherwise
 	 * do nothing.
 	 */
-	fieldRef: RefObject<TextInput | null>;
+	fieldRef: RefObject<TextInputInstance | null>;
 };
 
 const InputGroupContext = createContext<InputGroupContextValue | null>(null);

@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Gesture, type GestureType, type PanGesture } from "react-native-gesture-handler";
+import { Gesture, type GestureType, type LegacyPanGesture } from "react-native-gesture-handler";
 import { KeyboardController } from "react-native-keyboard-controller";
 import { cancelAnimation, useSharedValue } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
@@ -215,7 +215,7 @@ export function useSheetPan(
 			settle(target, closed, velocity);
 		};
 
-		const attach = (pan: PanGesture, source: GestureSource, enabled: boolean): GestureType =>
+		const attach = (pan: LegacyPanGesture, source: GestureSource, enabled: boolean): GestureType =>
 			pan
 				.enabled(enabled)
 				.shouldCancelWhenOutside(false)

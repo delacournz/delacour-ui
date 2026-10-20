@@ -1,5 +1,5 @@
 import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import type { TextInput } from "react-native";
+import type { TextInputInstance } from "react-native";
 import { useButtonGroupItemContext } from "../button/button.context";
 import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
@@ -36,7 +36,7 @@ function InputGroupRoot({
 	className,
 	children,
 }: InputGroupProps): ReactElement {
-	const fieldRef = useRef<TextInput | null>(null);
+	const fieldRef = useRef<TextInputInstance | null>(null);
 	const field = useFieldContext();
 	const [isFocused, setFocused] = useState(false);
 

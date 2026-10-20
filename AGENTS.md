@@ -154,13 +154,13 @@ Shared native and React versions are pinned once, in the root `package.json`
 `workspaces.catalog`, and referenced as `catalog:` from each package:
 
 ```
-@legendapp/list  @shopify/react-native-skia 2.6.2  react 19.2.3  react-native 0.86.2
-react-native-gesture-handler ~2.32.0  react-native-keyboard-controller  react-native-reanimated 4.5.1
-react-native-safe-area-context ~5.7.0  react-native-screens ~4.26.0  react-native-svg 15.15.4
-react-native-worklets 0.10.1
+@legendapp/list  @shopify/react-native-skia 2.14.0  react 19.3.0  react-native 0.88.0
+react-native-gesture-handler ~3.3.0  react-native-keyboard-controller 1.22.7  react-native-reanimated 4.7.1
+react-native-safe-area-context ~5.10.1  react-native-screens ~4.30.0  react-native-svg 15.16.0
+react-native-worklets 0.13.0
 ```
 
-Every version here is the one Expo SDK 57 bundles. That is the rule, not a coincidence: `expo
+Every version here is the one Expo SDK 58 bundles. That is the rule, not a coincidence: `expo
 install` and `expo-doctor` both check against it, and a native module a minor ahead of the SDK
 fails at the linker rather than at install.
 

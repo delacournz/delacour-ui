@@ -32,6 +32,7 @@ export const MOMENTS: Partial<Record<PreviewId, Moment>> = {
 	"breadcrumb/ellipsis-sheet": { at: 0.25, anchor: "bottom" },
 	"combobox/single": { at: 0.45, anchor: "top" },
 	"context-menu/message-actions": { at: 0.55, anchor: "bottom" },
+	"date-picker/single": { at: 0.25, anchor: "bottom" },
 	"dialog/confirm": { at: 0.3, anchor: "top" },
 	"drawer/navigation": { at: 0.3, anchor: "top" },
 	"feedback/basic": { at: 0.8, anchor: "top" },

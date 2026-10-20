@@ -1,9 +1,11 @@
 import { describe, expect, test } from "bun:test";
 import {
+	isPressableInteractive,
 	PRESSABLE_FEEDBACK,
 	PRESSABLE_FEEDBACK_FALLBACK,
 	PRESSABLE_FEEDBACKS,
 	resolvePressableAccessibilityState,
+	resolvePressableActivation,
 	resolvePressedState,
 	resolveRestOpacity,
 } from "./pressable.variants";
@@ -168,5 +170,95 @@ describe("resolvePressableAccessibilityState", () => {
 			disabled: false,
 		});
 		expect(state.expanded).toBe(true);
+	});
+});
+
+describe("isPressableInteractive", () => {
+	test("only a control that is neither disabled nor busy takes a press", () => {
+		expect(isPressableInteractive({ busy: false, disabled: false })).toBe(true);
+		expect(isPressableInteractive({ busy: true, disabled: false })).toBe(false);
+		expect(isPressableInteractive({ busy: false, disabled: true })).toBe(false);
+		expect(isPressableInteractive({ busy: true, disabled: true })).toBe(false);
+	});
+});
+
+describe("resolvePressableActivation", () => {
+	test("iOS wires onAccessibilityTap and adds no custom action", () => {
+		expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "ios" })).toEqual({
+			accessibilityActions: undefined,
+			routesActivate: false,
+			wiresAccessibilityTap: true,
+		});
+	});
+
+	test("iOS leaves a caller's own actions untouched, so the rotor gains no 'activate' entry", () => {
+		const actions = [{ label: "Remove", name: "remove" }];
+		const resolved = resolvePressableActivation({
+			accessibilityActions: actions,
+			hasAccessibilityTap: false,
+			hasPress: true,
+			platform: "ios",
+		});
+		expect(resolved.accessibilityActions).toBe(actions);
+		expect(resolved.wiresAccessibilityTap).toBe(true);
+	});
+
+	test("Android appends 'activate' after a caller's actions and routes it", () => {
+		const resolved = resolvePressableActivation({
+			accessibilityActions: [{ label: "Remove", name: "remove" }],
+			hasAccessibilityTap: false,
+			hasPress: true,
+			platform: "android",
+		});
+		expect(resolved).toEqual({
+			accessibilityActions: [{ label: "Remove", name: "remove" }, { name: "activate" }],
+			routesActivate: true,
+			wiresAccessibilityTap: false,
+		});
+	});
+
+	test("Android with no caller actions gets exactly one 'activate'", () => {
+		expect(
+			resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "android" })
+				.accessibilityActions
+		).toEqual([{ name: "activate" }]);
+	});
+
+	test("a caller that lists 'activate' owns it on both platforms, so it never fires twice", () => {
+		const actions = [{ name: "activate" }, { name: "increment" }];
+		for (const platform of ["ios", "android"] as const) {
+			expect(
+				resolvePressableActivation({
+					accessibilityActions: actions,
+					hasAccessibilityTap: false,
+					hasPress: true,
+					platform,
+				})
+			).toEqual({ accessibilityActions: actions, routesActivate: false, wiresAccessibilityTap: false });
+		}
+	});
+
+	test("a caller's own onAccessibilityTap wins on iOS", () => {
+		expect(
+			resolvePressableActivation({ hasAccessibilityTap: true, hasPress: true, platform: "ios" }).wiresAccessibilityTap
+		).toBe(false);
+	});
+
+	test("nothing is wired without an onPress to reach", () => {
+		for (const platform of ["ios", "android"] as const) {
+			expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: false, platform })).toEqual({
+				accessibilityActions: undefined,
+				routesActivate: false,
+				wiresAccessibilityTap: false,
+			});
+		}
+	});
+
+	test("any other platform is left alone", () => {
+		expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "web" })).toEqual({
+			accessibilityActions: undefined,
+			routesActivate: false,
+			wiresAccessibilityTap: false,
+		});
 	});
 });

@@ -9,7 +9,7 @@ import {
 	type Ref,
 	useMemo,
 } from "react";
-import type { AccessibilityState, ViewProps } from "react-native";
+import { type AccessibilityActionEvent, type AccessibilityState, Platform, type ViewProps } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Presets } from "react-native-pulsar";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
@@ -18,8 +18,10 @@ import { useResolveClassNames } from "uniwind";
 import { composeRefs } from "../../lib/compose-refs";
 import { mergeProps } from "../../lib/merge-props";
 import {
+	isPressableInteractive,
 	type PressableFeedback,
 	resolvePressableAccessibilityState,
+	resolvePressableActivation,
 	resolvePressedState,
 	resolveRestOpacity,
 } from "./pressable.variants";
@@ -137,6 +139,11 @@ export type PressableProps = Omit<ViewProps, "style"> & {
  * Built on the Gesture API rather than a ready-made pressable so the animation,
  * the haptic and the gesture stay on one thread, and so nothing depends on
  * Gesture Handler's own `Pressable`, which was renamed in its v3.
+ *
+ * A gesture only ever sees touches, so a screen reader's activation is wired
+ * to `onPress` separately — `onAccessibilityTap` on iOS, an `activate` action on
+ * Android — behind the same `disabled` / `busy` guard. See
+ * `resolvePressableActivation`.
  */
 export function Pressable({
 	children,
@@ -151,11 +158,14 @@ export function Pressable({
 	pressedOpacity,
 	asChild = false,
 	accessibilityState,
+	accessibilityActions,
+	onAccessibilityAction,
+	onAccessibilityTap,
 	ref,
 	...props
 }: PressableProps): ReactElement {
 	const pressed = useSharedValue(0);
-	const interactive = !disabled && !busy;
+	const interactive = isPressableInteractive({ busy, disabled });
 	// Destructured to primitives on purpose. Reanimated's plugin collects what
 	// the worklet closes over, and a fresh object each render would rebuild the
 	// animated style every render.
@@ -207,6 +217,31 @@ export function Pressable({
 	// the prop's default — see `resolvePressableAccessibilityState`.
 	const state: AccessibilityState = resolvePressableAccessibilityState({ accessibilityState, busy, disabled });
 
+	const activation = resolvePressableActivation({
+		accessibilityActions,
+		hasAccessibilityTap: onAccessibilityTap !== undefined,
+		hasPress: onPress !== undefined,
+		platform: Platform.OS,
+	});
+	const activate = () => {
+		if (interactive) onPress?.();
+	};
+	// Built once and spread last at both render sites, after `{...props}`, so a
+	// caller's actions and handlers are merged in here rather than replacing the
+	// activation the pressable adds. `activate` is consumed only when the
+	// pressable added it; every other action reaches the caller's handler.
+	const accessibilityWiring = {
+		accessibilityActions: activation.accessibilityActions,
+		onAccessibilityAction: (event: AccessibilityActionEvent) => {
+			if (activation.routesActivate && event.nativeEvent.actionName === "activate") {
+				activate();
+				return;
+			}
+			onAccessibilityAction?.(event);
+		},
+		onAccessibilityTap: activation.wiresAccessibilityTap ? activate : onAccessibilityTap,
+	};
+
 	const content = asChild ? (
 		renderAsChild(children, {
 			accessibilityState: state,
@@ -215,6 +250,7 @@ export function Pressable({
 			ref,
 			style: animatedStyle,
 			...props,
+			...accessibilityWiring,
 		})
 	) : (
 		<Animated.View
@@ -229,6 +265,7 @@ export function Pressable({
 			ref={ref}
 			style={animatedStyle}
 			{...props}
+			{...accessibilityWiring}
 		>
 			{children}
 		</Animated.View>

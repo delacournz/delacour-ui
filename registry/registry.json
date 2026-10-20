@@ -1822,7 +1822,9 @@
 			"dependencies": [
 				"tailwind-variants"
 			],
-			"expoDependencies": [],
+			"expoDependencies": [
+				"react-native-reanimated"
+			],
 			"devDependencies": [],
 			"files": [
 				"ui/list-group/AGENTS.md",

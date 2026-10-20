@@ -1,7 +1,9 @@
 import { Children, type ReactElement, type ReactNode, useMemo } from "react";
+import type { AccessibilityState } from "react-native";
+import Animated from "react-native-reanimated";
 import { Pressable, type PressableProps } from "../pressable";
 import { useListGroupPart } from "./list-group.context";
-import { listGroupVariants } from "./list-group.variants";
+import { listGroupVariants, resolveListGroupItemRender } from "./list-group.variants";
 import { ListGroupItemContent } from "./list-group-item-content";
 import { ListGroupItemTitle } from "./list-group-item-title";
 
@@ -19,30 +21,63 @@ export type ListGroupItemProps = Omit<PressableProps, "children" | "disabled"> &
  * not a convenience — without it `<ListGroup.Item>Wi-Fi</ListGroup.Item>` would
  * crash.
  *
- * A row is a `Pressable`, so `feedback`, `haptic` and the rest come from there
- * rather than being restated here. Only the default differs: `fade`, because a
- * full-bleed row that scales reads as the whole card flexing rather than as one
- * row responding.
+ * Give it an `onPress` or `onLongPress` and it is a `Pressable`, announced as a
+ * button — disabled too, when it keeps the role and reports `disabled`. Leave
+ * both off and it is a plain view with the same layout, no role and no press
+ * feedback, so a static Settings row never claims to be a control.
+ * `resolveListGroupItemRender` makes that call.
+ *
+ * `feedback`, `haptic` and the rest come from `Pressable` rather than being
+ * restated here. Only the default differs: `fade`, because a full-bleed row
+ * that scales reads as the whole card flexing rather than as one row
+ * responding.
  */
 export function ListGroupItem({
 	feedback = "fade",
 	isDisabled = false,
+	haptic,
+	pressedScale,
+	pressedOpacity,
+	busy,
+	asChild,
+	onPress,
+	onLongPress,
+	accessibilityState,
 	className,
 	children,
 	...props
 }: ListGroupItemProps): ReactElement {
 	const { size } = useListGroupPart("ListGroup.Item");
 	const content = useMemo(() => wrapTextChildren(children), [children]);
+	const itemClassName = listGroupVariants({ isDisabled, size }).item({ className });
+
+	if (resolveListGroupItemRender({ isDisabled, onLongPress, onPress }) === "pressable") {
+		return (
+			<Pressable
+				accessibilityState={accessibilityState}
+				asChild={asChild}
+				busy={busy}
+				className={itemClassName}
+				disabled={isDisabled}
+				feedback={feedback}
+				haptic={haptic}
+				onLongPress={onLongPress}
+				onPress={onPress}
+				pressedOpacity={pressedOpacity}
+				pressedScale={pressedScale}
+				{...props}
+			>
+				{content}
+			</Pressable>
+		);
+	}
+
+	const state: AccessibilityState = { ...accessibilityState, busy, disabled: isDisabled };
 
 	return (
-		<Pressable
-			className={listGroupVariants({ isDisabled, size }).item({ className })}
-			disabled={isDisabled}
-			feedback={feedback}
-			{...props}
-		>
+		<Animated.View accessibilityState={state} className={itemClassName} {...props}>
 			{content}
-		</Pressable>
+		</Animated.View>
 	);
 }
 ListGroupItem.displayName = "DelacourUI.ListGroup.Item";

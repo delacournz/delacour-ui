@@ -46,14 +46,27 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
 - **The root clips.** `overflow-hidden` is load-bearing: a pressed row fades to
   the edge of its own box, and the first and last rows would square off the
   group's corners without it.
-- **A row is a `Pressable`.** `ListGroupItemProps` extends `PressableProps`, so
-  `feedback`, `haptic`, `pressedScale` and the rest are inherited rather than
-  restated — the row owns no vocabulary of its own. Only the default differs:
-  `feedback` defaults to `fade`, because a full-bleed row that scales reads as
-  the whole card flexing rather than as one row responding. A prop is only
-  redeclared where it genuinely changes, as [`Button`](../button/AGENTS.md) does
-  with its narrower union; redeclaring one unchanged just to hang a doc comment
-  on it puts a second definition in the tree that can drift.
+- **A row is a `Pressable` only when it has a handler.**
+  `resolveListGroupItemRender` returns `pressable` for an `onPress` or
+  `onLongPress` — role `button`, children merged into one accessible element;
+  disabled, it keeps the role, reports `disabled` and dims through
+  `opacity-50`, which `Pressable` composes with its press animation — and
+  `static` for neither: a plain `Animated.View` with the same `item` slot, no
+  role and no press feedback. A Settings row showing a value is not a control,
+  and VoiceOver announcing it as a button on every swipe is the bug this
+  prevents. The rule is `Item`'s `resolveItemRender`, restated in this folder
+  rather than imported so a list group copied by the CLI does not drag `item`
+  along; the tests pin both. `Animated.View` rather than `View` keeps the `ref`
+  one type across both branches.
+- **The pressable props are `Pressable`'s.** `ListGroupItemProps` extends
+  `PressableProps`, so `feedback`, `haptic`, `pressedScale` and the rest are
+  inherited rather than restated — the row owns no vocabulary of its own. A
+  static row ignores them. Only the default differs: `feedback` defaults to
+  `fade`, because a full-bleed row that scales reads as the whole card flexing
+  rather than as one row responding. A prop is only redeclared where it
+  genuinely changes, as [`Button`](../button/AGENTS.md) does with its narrower
+  union; redeclaring one unchanged just to hang a doc comment on it puts a
+  second definition in the tree that can drift.
 - **Icons are composed, never passed as props.** `ItemPrefix` wraps its subtree
   in an `IconDefaultsProvider` carrying the `prefixIcon` slot — a step on the
   shared icon scale, like every other glyph in the library — and `foreground`,

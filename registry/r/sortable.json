@@ -1,0 +1,111 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "sortable",
+	"type": "registry:ui",
+	"title": "Sortable",
+	"description": "A vertical list reordered by dragging a handle or a long-pressed row, on the UI thread, with pinned rows, auto-scroll and screen-reader move actions.",
+	"categories": [
+		"navigation"
+	],
+	"registryDependencies": [
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"tv"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/sortable/AGENTS.md",
+			"target": "sortable/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/sortable",
+					"to": "@registry/ui/sortable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/index.ts",
+			"target": "sortable/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable-handle.tsx",
+			"target": "sortable/sortable-handle.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable-item.tsx",
+			"target": "sortable/sortable-item.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable.context.tsx",
+			"target": "sortable/sortable.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable.tsx",
+			"target": "sortable/sortable.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable.types.ts",
+			"target": "sortable/sortable.types.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/sortable.variants.ts",
+			"target": "sortable/sortable.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				},
+				{
+					"from": "../pressable/pressable",
+					"to": "@registry/ui/pressable/pressable"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/sortable/use-sortable-drag-gesture.ts",
+			"target": "sortable/use-sortable-drag-gesture.ts",
+			"namespace": "ui"
+		}
+	]
+}

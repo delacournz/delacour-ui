@@ -17,6 +17,7 @@ import {
 	IconChevronDoubleRight,
 	IconChevronDownMedium,
 	IconChevronGrabberVertical,
+	IconCircleHalfFill,
 	IconCircleInfo,
 	IconCircleRecord,
 	IconClock,
@@ -148,6 +149,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	combobox: IconMagnifyingGlass2,
 	signature: IconSignature,
 	"tag-input": IconHashtag,
+	"theme-selector": IconCircleHalfFill,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

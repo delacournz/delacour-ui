@@ -1,0 +1,15 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on input/group/composer and has settled — an empty composer reading 0/280, not
+  focused. The capture script navigates there before running this.
+steps:
+  - echo: Writing a message, which runs the count in the footer block
+  - tap: { id: composer-field }
+  - wait: 300
+  - tool: keyboard
+    args: { text: "On my way, see you soon", delayMs: 70 }
+  - wait: 700
+  - echo: Sending clears it, and dismissing the keyboard leaves it as it began
+  - tap: { id: composer-send }
+  - wait: 400
+  - tap: { id: preview-dismiss-keyboard }
+  - wait: 600

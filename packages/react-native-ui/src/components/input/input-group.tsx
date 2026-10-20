@@ -1,12 +1,32 @@
-import { type ReactElement, type ReactNode, useCallback, useMemo, useRef, useState } from "react";
-import type { TextInputInstance } from "react-native";
+import {
+	Children,
+	isValidElement,
+	type ReactElement,
+	type ReactNode,
+	useCallback,
+	useMemo,
+	useRef,
+	useState,
+} from "react";
+import { type TextInputInstance, View } from "react-native";
 import { useButtonGroupItemContext } from "../button/button.context";
 import { resolveButtonSizeStep } from "../button/button.variants";
 import { useFieldContext } from "../field/field.context";
 import { Pressable } from "../pressable";
-import { type InputGroupContextValue, InputGroupProvider } from "./input.context";
-import { type InputSize, type InputVariant, resolveInputGroupClass } from "./input.variants";
+import { type InputGroupContextValue, InputGroupPlacementProvider, InputGroupProvider } from "./input.context";
+import {
+	type InputGroupChildKind,
+	type InputGroupSegment,
+	type InputSize,
+	type InputVariant,
+	resolveGroupSegments,
+	resolveInputGroupClass,
+	resolveInputGroupRowClass,
+} from "./input.variants";
+import { InputGroupBlock, type InputGroupBlockProps } from "./input-group-block";
+import { InputGroupButton } from "./input-group-button";
 import { InputGroupPrefix } from "./input-group-prefix";
+import { InputGroupSeparator } from "./input-group-separator";
 import { InputGroupSuffix } from "./input-group-suffix";
 
 export type InputGroupProps = {
@@ -39,6 +59,7 @@ function InputGroupRoot({
 	const fieldRef = useRef<TextInputInstance | null>(null);
 	const field = useFieldContext();
 	const [isFocused, setFocused] = useState(false);
+	const [isMultiline, setMultiline] = useState(false);
 
 	// An enclosing `Field` is the outermost source, so it is the last fallback:
 	// a group inside an invalid field turns destructive with it, and a group that
@@ -63,6 +84,7 @@ function InputGroupRoot({
 			isFocused,
 			isInvalid: resolvedIsInvalid,
 			setFocused,
+			setMultiline,
 			size: resolvedSize,
 			variant,
 		}),
@@ -74,29 +96,68 @@ function InputGroupRoot({
 	// decorator have to hand the press on rather than swallow it.
 	const focusField = useCallback(() => fieldRef.current?.focus(), []);
 
+	const sections = useMemo(() => sortIntoSections(children), [children]);
+	const hasBlocks = sections.start.length > 0 || sections.end.length > 0;
+
+	const box = {
+		groupPosition: member?.position ?? "none",
+		hasBlocks,
+		isDisabled: resolvedIsMemberDisabled,
+		isFocused,
+		isInvalid: resolvedIsInvalid,
+		isMultiline,
+		isSeamed: member?.isSeamed ?? false,
+		orientation: member?.orientation ?? "horizontal",
+		size: resolvedSize,
+		variant,
+	} as const;
+
+	// The row is rendered whether or not a block is, so adding one moves
+	// nothing that was already there — the field is never remounted, and never
+	// loses focus, when a toolbar appears above it.
 	return (
 		<InputGroupProvider value={context}>
 			<Pressable
 				accessible={false}
-				className={resolveInputGroupClass({
-					className,
-					groupPosition: member?.position ?? "none",
-					isDisabled: resolvedIsMemberDisabled,
-					isFocused,
-					isInvalid: resolvedIsInvalid,
-					isSeamed: member?.isSeamed ?? false,
-					orientation: member?.orientation ?? "horizontal",
-					size: resolvedSize,
-					variant,
-				})}
+				className={resolveInputGroupClass({ ...box, className })}
 				disabled={resolvedIsMemberDisabled}
 				feedback="none"
 				onPress={focusField}
 			>
-				{children}
+				<InputGroupPlacementProvider value="box">{sections.start}</InputGroupPlacementProvider>
+				<View className={resolveInputGroupRowClass(box)}>
+					<InputGroupPlacementProvider value="row">{sections.row}</InputGroupPlacementProvider>
+				</View>
+				<InputGroupPlacementProvider value="box">{sections.end}</InputGroupPlacementProvider>
 			</Pressable>
 		</InputGroupProvider>
 	);
+}
+
+/**
+ * Sorts a group's direct children into the box's three sections — above the
+ * row, in it, and below it. `resolveGroupSegments` holds the rule; this only
+ * names what each child is.
+ */
+function sortIntoSections(children: ReactNode): Record<InputGroupSegment, ReactNode[]> {
+	const items = Children.toArray(children);
+	const segments = resolveGroupSegments(items.map(classifyGroupChild));
+	const sections: Record<InputGroupSegment, ReactNode[]> = { end: [], row: [], start: [] };
+
+	for (const [index, child] of items.entries()) {
+		sections[segments[index] ?? "row"].push(child);
+	}
+
+	return sections;
+}
+
+function classifyGroupChild(child: ReactNode): InputGroupChildKind {
+	if (!isValidElement(child)) return "content";
+	if (child.type === InputGroupBlock) {
+		return (child.props as InputGroupBlockProps).position === "start" ? "block-start" : "block-end";
+	}
+	if (child.type === InputGroupSeparator) return "separator";
+	return "content";
 }
 
 /**
@@ -116,6 +177,11 @@ function InputGroupRoot({
  * Pressing the box focuses the field, so the gutter behaves the way a lone
  * field's does. A control inside a decorator still receives its own press.
  *
+ * A `Block` adds a full-width section above or below the field inside the same
+ * box, and a `Textarea` takes the field's place for a multiline composer. A
+ * `Separator` draws a hairline, vertical in the row and horizontal between
+ * sections.
+ *
  * @example
  * <Input.Group>
  *   <Input.Group.Prefix>
@@ -130,11 +196,25 @@ function InputGroupRoot({
  *   <Input inputMode="decimal" placeholder="0.00" />
  *   <Input.Group.Suffix>NZD</Input.Group.Suffix>
  * </Input.Group>
+ *
+ * @example
+ * <Input.Group>
+ *   <Textarea rows={3} placeholder="Message" />
+ *   <Input.Group.Block position="end">
+ *     <Input.Group.Button variant="secondary" onPress={send}>Send</Input.Group.Button>
+ *   </Input.Group.Block>
+ * </Input.Group>
  */
 export const InputGroup = Object.assign(InputGroupRoot, {
 	/** Leading content inside the box. An `Icon` or a bare string needs nothing else. */
 	Prefix: InputGroupPrefix,
 	/** Trailing content inside the box — a clear button, a unit, a reveal toggle. */
 	Suffix: InputGroupSuffix,
+	/** A `Button` sized from the group and disabled with it. */
+	Button: InputGroupButton,
+	/** A hairline — vertical in the row, horizontal between a block and the row. */
+	Separator: InputGroupSeparator,
+	/** A full-width section above (`start`) or below (`end`) the field's row. */
+	Block: InputGroupBlock,
 	displayName: "DelacourUI.Input.Group",
 });

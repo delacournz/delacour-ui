@@ -13,7 +13,7 @@ and only `onPress` and `onLongPress` cross back to JS.
 | `index.ts` | → `@delacour/react-native-ui/pressable` |
 | `pressable.tsx` | The Gesture API primitive |
 | `pressable.variants.ts` | Shared feedback vocabulary, no RN imports |
-| `pressable.variants.test.ts` | |
+| `pressable.variants.test.ts` | Feedback, rest opacity, accessibility state and activation matrices |
 
 ## Design
 
@@ -52,6 +52,30 @@ and only `onPress` and `onLongPress` cross back to JS.
   [`Marker`](../marker/AGENTS.md), a running step that must stay tappable,
   is the case that found it. Neither applies any opacity — that is the
   caller's variant's job, and the point below is what lets it do that job.
+- **A screen reader's activation is wired to `onPress`, not left to the
+  gesture.** A Gesture Handler tap only ever sees touches. VoiceOver's
+  double-tap calls `accessibilityActivate`, which React Native answers only
+  when `onAccessibilityTap` is set; without it UIKit synthesises a touch at the
+  element's centre and the gesture happens to catch it. TalkBack's double-tap
+  performs `ACTION_CLICK`, which React Native routes only to a listed
+  `activate` action and otherwise drops into `View.performClick`, with no
+  listener behind it. `resolvePressableActivation` decides per platform:
+  `onAccessibilityTap` on iOS (an `activate` entry there would become a literal
+  "activate" in every button's rotor, since Fabric lists every entry as a custom
+  action), an appended `activate` action on Android. Both go through
+  `isPressableInteractive`, the same guard the gesture uses, so a disabled or
+  busy control consumes the activation and does nothing. Returning `YES` from
+  `accessibilityActivate` also stops UIKit synthesising the touch, so one
+  double-tap is one `onPress`. A caller that lists `activate` itself — the
+  `NumberInput` stepper, `Message`, `FlipCard`, `SectionRail.Trigger`,
+  `ProgressButton` — owns it on both platforms and the pressable wires nothing;
+  a caller's own `onAccessibilityTap` wins the same way. A caller's other
+  actions and its `onAccessibilityAction` are merged in, never replaced.
+  `Button`, `ListGroup.Item`, `Screen.Navbar.BackButton`, `Dialog.Close`,
+  `BottomSheet.Close` and every other `Pressable` consumer inherit it.
+  Verified on an iOS simulator with `AXPress` through Simulator.app's
+  accessibility bridge, which calls `accessibilityActivate` — `warden ui press`
+  does not, it synthesises a touch, so it cannot tell the two paths apart.
 - **A className's opacity is multiplied into the press, never overwritten.**
   The press feedback is an animated style, and an animated style owns every key
   it writes on the view — so its resting `opacity: 1` silently replaced a

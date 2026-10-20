@@ -111,3 +111,82 @@ export function resolvePressableAccessibilityState<S extends GatedAccessibilityS
 		disabled: disabled || accessibilityState?.disabled === true,
 	};
 }
+
+/**
+ * Whether a pressable takes a press at all — the one guard the tap gesture, the
+ * long press and screen-reader activation all go through, so a gated control
+ * cannot be reached by one of them and not the others.
+ */
+export function isPressableInteractive({ busy, disabled }: { busy: boolean; disabled: boolean }): boolean {
+	return !disabled && !busy;
+}
+
+/** The shape of an entry in React Native's `accessibilityActions`. Structural, so no RN import. */
+type PressableAccessibilityAction = { name: string; label?: string };
+
+export type PressableActivation<A extends PressableAccessibilityAction> = {
+	/** What the view's `accessibilityActions` becomes — the caller's own, plus `activate` on Android. */
+	accessibilityActions: ReadonlyArray<A | { name: "activate" }> | undefined;
+	/** The pressable consumes `activate` in `onAccessibilityAction` and calls `onPress` itself. */
+	routesActivate: boolean;
+	/** The pressable sets `onAccessibilityTap`, which is what VoiceOver's double-tap reaches. */
+	wiresAccessibilityTap: boolean;
+};
+
+/**
+ * How a screen reader's activation reaches `onPress`.
+ *
+ * The press is a Gesture Handler tap, which only ever sees touches. Each
+ * platform's activation is something else:
+ *
+ * - **iOS.** A VoiceOver double-tap calls `accessibilityActivate`, which React
+ *   Native answers only when `onAccessibilityTap` is set. Without it UIKit falls
+ *   back to synthesising a touch at the element's centre, which the gesture
+ *   happens to recognise — so it worked, but by accident. Setting it makes the
+ *   call return `YES`, which also stops UIKit synthesising the touch: one
+ *   activation, one `onPress`. An `activate` entry in `accessibilityActions` is
+ *   no use here: Fabric lists every entry as a rotor custom action, so it would
+ *   add a literal "activate" to every button's rotor.
+ * - **Android.** A TalkBack double-tap performs `ACTION_CLICK`, which React
+ *   Native routes to `onAccessibilityAction` only when `activate` is listed.
+ *   Without it the click falls to `View.performClick`, with no listener behind
+ *   it. React Native ignores `onAccessibilityTap` on Android.
+ *
+ * A caller that lists `activate` itself owns it on both platforms — a
+ * `NumberInput` stepper, a `Message`, a `FlipCard` — and the pressable wires
+ * nothing, so the press cannot fire twice. A caller's own `onAccessibilityTap`
+ * wins the same way. With no `onPress` there is nothing to reach.
+ *
+ * The `disabled` / `busy` guard is not decided here: activation stays wired on
+ * a gated control and the handler checks `isPressableInteractive`, so a gated
+ * control's double-tap is consumed and does nothing rather than falling back
+ * to a synthesised touch.
+ */
+export function resolvePressableActivation<A extends PressableAccessibilityAction>({
+	accessibilityActions,
+	hasAccessibilityTap,
+	hasPress,
+	platform,
+}: {
+	accessibilityActions?: ReadonlyArray<A>;
+	hasAccessibilityTap: boolean;
+	hasPress: boolean;
+	platform: string;
+}): PressableActivation<A> {
+	const ownedByCaller = accessibilityActions?.some((action) => action.name === "activate") === true;
+	const wires = hasPress && !ownedByCaller;
+
+	if (wires && platform === "android") {
+		return {
+			accessibilityActions: [...(accessibilityActions ?? []), { name: "activate" }],
+			routesActivate: true,
+			wiresAccessibilityTap: false,
+		};
+	}
+
+	return {
+		accessibilityActions,
+		routesActivate: false,
+		wiresAccessibilityTap: wires && platform === "ios" && !hasAccessibilityTap,
+	};
+}

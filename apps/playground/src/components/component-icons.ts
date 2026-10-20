@@ -76,6 +76,7 @@ import {
 	IconRotate360Right,
 	IconSettingsSliderHor,
 	IconSidebar,
+	IconSidebarFloating,
 	IconSignature,
 	IconSlidesWide,
 	IconSparkle,
@@ -207,6 +208,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	"scroll-canvas": IconImages1,
 	"scroll-header": IconLayoutTop,
 	"section-progress": IconBookmark,
+	"section-rail": IconSidebarFloating,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

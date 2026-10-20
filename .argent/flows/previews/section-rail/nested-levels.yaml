@@ -1,0 +1,17 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on section-rail/nested-levels and has settled — a scrolled-to-top page of
+  eight sections at three levels, the rail closed on the end edge with The basics active. The capture script
+  navigates there before running this.
+steps:
+  - echo: Opening the outline and jumping to the level-2 row whose title wraps
+  - tap: { id: section-rail-nested-trigger }
+  - await: { visible: { id: section-rail-nested-layout-flex-wrap } }
+  - wait: 900
+  - tap: { id: section-rail-nested-layout-flex-wrap }
+  - wait: 1200
+  - echo: And back to The basics, so the clip loops without a jump cut
+  - tap: { id: section-rail-nested-trigger }
+  - await: { visible: { id: section-rail-nested-basics } }
+  - wait: 600
+  - tap: { id: section-rail-nested-basics }
+  - wait: 900

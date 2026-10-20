@@ -105,7 +105,7 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 	if (!first) throw new Error(`Registry item "${context.name}" has no files`);
 
 	const files: RegistryFile[] = [];
-	const registryDependencies = new Set<string>();
+	const registryDependencies = new Set<string>(meta.registryDependencies ?? []);
 	const bareImports = new Set<string>(meta.dependencies ?? []);
 
 	for (const { path, classification } of context.sources) {

@@ -3164,6 +3164,45 @@
 			]
 		},
 		{
+			"name": "section-rail",
+			"type": "registry:ui",
+			"title": "SectionRail",
+			"description": "A thin rail of bars along a screen edge, one per section, that opens into a labelled outline to jump or scrub through.",
+			"categories": [
+				"navigation"
+			],
+			"registryDependencies": [
+				"compose-refs",
+				"pressable",
+				"text",
+				"tv",
+				"use-controllable-state",
+				"use-scroll-sections"
+			],
+			"dependencies": [
+				"tailwind-variants"
+			],
+			"expoDependencies": [
+				"react-native-gesture-handler",
+				"react-native-reanimated",
+				"react-native-safe-area-context",
+				"react-native-worklets"
+			],
+			"devDependencies": [],
+			"files": [
+				"ui/section-rail/AGENTS.md",
+				"ui/section-rail/index.ts",
+				"ui/section-rail/section-rail-bar.tsx",
+				"ui/section-rail/section-rail-content.tsx",
+				"ui/section-rail/section-rail-item.tsx",
+				"ui/section-rail/section-rail-scrim.tsx",
+				"ui/section-rail/section-rail-trigger.tsx",
+				"ui/section-rail/section-rail.context.tsx",
+				"ui/section-rail/section-rail.tsx",
+				"ui/section-rail/section-rail.variants.ts"
+			]
+		},
+		{
 			"name": "select",
 			"type": "registry:ui",
 			"title": "Select",

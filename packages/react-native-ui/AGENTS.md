@@ -33,11 +33,11 @@ entry point, and the folder name is its export subpath.
 ```
 src/
 ├── components/{name}/    one folder per component — see Components below
-├── expo/                 Expo-only entry points — navigation-theme
+├── expo/                 Expo-only entry points — navigation-theme, blur-layer
 ├── hooks/                use-controllable-state, use-theme-color,
 │                         use-keyboard-state-sync, use-navigation-theme,
 │                         use-calm-motion, use-scroll-sections,
-│                         use-scroll-source
+│                         use-scroll-source, use-reduce-transparency
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
@@ -159,6 +159,7 @@ shares.
 | [Radio](src/components/radio/AGENTS.md) | `@delacour/react-native-ui/radio` | One choice from a group |
 | [Rating](src/components/rating/AGENTS.md) | `@delacour/react-native-ui/rating` | A row of stars that reads or sets a score |
 | [Screen](src/components/screen/AGENTS.md) | `@delacour/react-native-ui/screen` | A screen's chrome, insets and scrollables |
+| [ScrollBlur](src/components/scroll-blur/AGENTS.md) | `@delacour/react-native-ui/scroll-blur` | A progressive blur at a scrollable's edges, with a gradient fallback |
 | [ScrollText](src/components/scroll-text/AGENTS.md) | `@delacour/react-native-ui/scroll-text` | Text that resolves word by word as the screen scrolls |
 | [Select](src/components/select/AGENTS.md) | `@delacour/react-native-ui/select` | A closed set of choices behind a field-shaped trigger, picked from a bottom sheet |
 | [SearchBar](src/components/search-bar/AGENTS.md) | `@delacour/react-native-ui/search-bar` | The query field at the top of a list — clear, Cancel, debounce and filter tokens, on `Input.Group` |

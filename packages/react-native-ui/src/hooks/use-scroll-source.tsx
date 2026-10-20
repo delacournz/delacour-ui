@@ -1,5 +1,5 @@
 import { createContext, type ReactElement, type ReactNode, use, useCallback, useMemo } from "react";
-import type { LayoutChangeEvent } from "react-native";
+import type { LayoutChangeEvent, ScrollViewInstance } from "react-native";
 import {
 	type AnimatedRef,
 	type SharedValue,
@@ -24,7 +24,7 @@ export type ScrollSource = {
 	 * Present when the source came from `useScrollSource`; null from a Screen.
 	 * Lets an effect `measureLayout` against the scroller.
 	 */
-	ref: AnimatedRef | null;
+	ref: AnimatedRef<ScrollViewInstance> | null;
 };
 
 export type UseScrollSourceOptions = {
@@ -39,7 +39,7 @@ export type UseScrollSourceOptions = {
 
 /** Props to spread onto an `Animated.ScrollView` / `Animated.FlatList` / `Animated.SectionList`. */
 export type ScrollSourceProps = {
-	ref: AnimatedRef;
+	ref: AnimatedRef<ScrollViewInstance>;
 	onScroll: ReturnType<typeof useAnimatedScrollHandler>;
 	onLayout: (event: LayoutChangeEvent) => void;
 	onContentSizeChange: (width: number, height: number) => void;
@@ -75,7 +75,7 @@ export type UseScrollSourceResult = { source: ScrollSource; scrollProps: ScrollS
  */
 export function useScrollSource(options: UseScrollSourceOptions = {}): UseScrollSourceResult {
 	const { orientation = "vertical", onBeginDrag, onEndDrag, onMomentumBegin, onMomentumEnd } = options;
-	const ref = useAnimatedRef();
+	const ref = useAnimatedRef<ScrollViewInstance>();
 	const offset = useSharedValue(0);
 	const contentSize = useSharedValue(0);
 	const layoutSize = useSharedValue(0);

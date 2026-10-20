@@ -1,0 +1,177 @@
+---
+title: ScrollBlur
+description: A progressive blur at a scrollable's edges that keeps floating controls legible over any background, with a gradient fallback.
+icon: Blend
+---
+
+<Preview id="scroll-blur/list-under-button" title={null} />
+
+## Installation
+
+<ComponentInstall name="scroll-blur" />
+
+The blur comes from an engine you name once at the root; without one, the band is a gradient fade.
+
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add blur-layer"] }]} />
+
+<Callout type="warn" title="Rebuild the dev client">
+`expo-blur` is a native module: after installing it, rebuild the dev client (`npx expo run:ios`, or
+an EAS development build). An over-the-air update cannot add it, and without the rebuild every band
+silently draws the gradient fallback.
+</Callout>
+
+```tsx title="app/_layout.tsx"
+import { ScrollBlurLayerProvider } from "@/components/ui/scroll-blur";
+import { DelacourProvider } from "@/components/ui/provider";
+import { ExpoBlurLayer } from "@/lib/expo/blur-layer";
+import { Stack } from "expo-router";
+
+export default function RootLayout() {
+  return (
+    <DelacourProvider>
+      <ScrollBlurLayerProvider layer={ExpoBlurLayer}>
+        <Stack />
+      </ScrollBlurLayerProvider>
+    </DelacourProvider>
+  );
+}
+```
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Button } from "@/components/ui/button";
+import { ScrollBlur } from "@/components/ui/scroll-blur";
+import { Text } from "@/components/ui/text";
+import { useScrollSource } from "@/hooks/use-scroll-source";
+import { View } from "react-native";
+import Animated from "react-native-reanimated";
+
+const COLORS = ["#f59e0b", "#06b6d4", "#22c55e", "#8b5cf6", "#ef4444", "#3b82f6", "#ec4899"];
+
+export default function Example() {
+  const { source, scrollProps } = useScrollSource();
+
+  return (
+    <View className="flex-1">
+      <ScrollBlur className="flex-1" edges="end" scrollSource={source} size={96}>
+        <Animated.ScrollView contentContainerClassName="gap-2 p-4 pb-24" {...scrollProps}>
+          {COLORS.map((color) => (
+            <View className="h-20 justify-end rounded-lg p-4" key={color} style={{ backgroundColor: color }}>
+              <Text.Header className="text-white">{color}</Text.Header>
+            </View>
+          ))}
+        </Animated.ScrollView>
+      </ScrollBlur>
+      <View className="absolute inset-x-0 bottom-0 p-4">
+        <Button>
+          <Button.Label>Continue</Button.Label>
+        </Button>
+      </View>
+    </View>
+  );
+}
+```
+
+The floating control is a sibling after the `ScrollBlur`, never a child, or it sits under its own blur.
+
+## Start edge
+
+A start band is clear at rest and arrives over the first `fadeInDistance` points of travel.
+
+<Preview id="scroll-blur/search-over-media" />
+
+```tsx
+<ScrollBlur edges="start" scrollSource={source} size={96}>
+  <Animated.ScrollView {...scrollProps}>…</Animated.ScrollView>
+</ScrollBlur>
+```
+
+## Horizontal
+
+The source fixes the axis, so a horizontal scrollable gets left and right bands.
+
+<Preview id="scroll-blur/horizontal" />
+
+```tsx
+const { source, scrollProps } = useScrollSource({ orientation: "horizontal" });
+```
+
+## Blur or fade
+
+Over coloured content a fade reads as a grey band and a blur keeps the colour; over a plain page a fade is cheaper and looks the same.
+
+<Preview id="scroll-blur/blur-vs-fade" />
+
+## Layers and intensity
+
+`layers` strips approximate the ramp — more is smoother and costs a native view each — and `intensity` is the blur at the edge.
+
+```tsx
+<ScrollBlur intensity={90} layers={16} scrollSource={source}>…</ScrollBlur>
+```
+
+## Fallback
+
+With no engine, `layer={null}` on a provider, Reduce Transparency on, or on Android, the band is a gradient solid at the edge.
+
+```tsx
+<ScrollBlurLayerProvider layer={null}>…</ScrollBlurLayerProvider>
+```
+
+## Accessibility
+
+The bands take no touches and are hidden from assistive technology, and Reduce Transparency swaps the blur for an opaque wash live.
+
+## API Reference
+
+### ScrollBlurProps
+
+Extends React Native's `ViewProps`.
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "The scrollable the blur overlays." },
+    scrollSource: {
+      type: "ScrollSource",
+      description: "The scrollable to follow. Defaults to the nearest ScrollSourceProvider or Screen.",
+    },
+    size: { type: "number", default: "80", description: "Band depth in points." },
+    edges: { type: '"both" | "start" | "end" | "none"', default: '"both"' },
+    layers: { type: "number", default: "8", description: "Blur strips per band, clamped 1–16." },
+    intensity: { type: "number", default: "56", description: "Blur at the edge, 0–100." },
+    material: { type: '"default" | "light" | "dark" | "chrome" | "thick"', default: '"default"' },
+    color: { type: "string", description: "The wash colour. Defaults to the background token." },
+    tint: { type: "number", default: "0.9", description: "Wash opacity at the edge, 0–1." },
+    fadeInDistance: { type: "number", default: "24", description: "Scroll travel from clear to full." },
+    insetStart: { type: "number", default: "0" },
+    insetEnd: { type: "number", default: "0" },
+    layer: { type: "BlurLayerComponent", description: "The engine for this blur; overrides the provider." },
+    enabled: { type: "boolean", default: "true" },
+    className: { type: "string" },
+  }}
+/>
+
+### ScrollBlurLayerProvider
+
+<TypeTable
+  type={{
+    layer: {
+      type: "BlurLayerComponent | null",
+      required: true,
+      description: "The engine every ScrollBlur beneath uses. null turns the blur off for the subtree.",
+    },
+  }}
+/>
+
+### BlurLayerProps
+
+What an engine receives — implement it to use a blur view other than `expo-blur`'s.
+
+<TypeTable
+  type={{
+    intensity: { type: "number", required: true, description: "0–100." },
+    material: { type: "BlurMaterial", required: true },
+    style: { type: "StyleProp<ViewStyle>", required: true },
+  }}
+/>

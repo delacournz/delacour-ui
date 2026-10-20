@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { isLiteralColor, themeVariableName, transparentOf } from "./color";
+import { isLiteralColor, themeVariableName, transparentOf, withAlpha } from "./color";
 
 describe("isLiteralColor", () => {
 	test("treats hex as a literal", () => {
@@ -76,5 +76,39 @@ describe("transparentOf", () => {
 		expect(transparentOf(undefined)).toBeUndefined();
 		expect(transparentOf("rebeccapurple")).toBeUndefined();
 		expect(transparentOf("oklch(0.5 0.1 200)")).toBeUndefined();
+	});
+});
+
+describe("withAlpha", () => {
+	test("sets the alpha of a hex colour as a two-digit suffix", () => {
+		expect(withAlpha("#ffffff", 0.5)).toBe("#ffffff80");
+		expect(withAlpha("#000000", 1)).toBe("#000000ff");
+		expect(withAlpha("#000000", 0)).toBe("#00000000");
+	});
+
+	test("expands a short hex before suffixing it", () => {
+		expect(withAlpha("#fff", 0.5)).toBe("#ffffff80");
+		expect(withAlpha("#abcd", 0.5)).toBe("#aabbcc80");
+	});
+
+	test("replaces an alpha the colour already carries", () => {
+		expect(withAlpha("#11223344", 0.5)).toBe("#11223380");
+	});
+
+	test("rewrites functional notation in place", () => {
+		expect(withAlpha("rgb(1, 2, 3)", 0.25)).toBe("rgba(1, 2, 3, 0.25)");
+		expect(withAlpha("rgba(1,2,3,0.9)", 0.1)).toBe("rgba(1, 2, 3, 0.1)");
+	});
+
+	test("clamps alpha to 0..1", () => {
+		expect(withAlpha("#ffffff", 2)).toBe("#ffffffff");
+		expect(withAlpha("#ffffff", -1)).toBe("#ffffff00");
+		expect(withAlpha("rgb(1, 2, 3)", 4)).toBe("rgba(1, 2, 3, 1)");
+	});
+
+	test("gives up on a notation it cannot take apart", () => {
+		expect(withAlpha(undefined, 0.5)).toBeUndefined();
+		expect(withAlpha("oklch(0.2 0 0)", 0.5)).toBeUndefined();
+		expect(withAlpha("rebeccapurple", 0.5)).toBeUndefined();
 	});
 });

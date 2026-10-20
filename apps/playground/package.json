@@ -30,6 +30,7 @@
 		"@delacour/react-native-bottom-sheet": "workspace:*",
 		"@delacour/react-native-charts": "workspace:*",
 		"@delacour/react-native-ui": "workspace:*",
+		"expo-blur": "~58.0.5",
 		"@expo-google-fonts/dm-sans": "^0.4.2",
 		"@expo-google-fonts/eb-garamond": "^0.4.3",
 		"@expo-google-fonts/figtree": "^0.4.1",

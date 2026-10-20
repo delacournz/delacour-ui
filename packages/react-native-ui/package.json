@@ -100,6 +100,7 @@
 		"./radio": "./src/components/radio/index.ts",
 		"./rating": "./src/components/rating/index.ts",
 		"./screen": "./src/components/screen/index.ts",
+		"./scroll-blur": "./src/components/scroll-blur/index.ts",
 		"./scroll-text": "./src/components/scroll-text/index.ts",
 		"./search-bar": "./src/components/search-bar/index.ts",
 		"./select": "./src/components/select/index.ts",
@@ -134,11 +135,13 @@
 		"./tooltip": "./src/components/tooltip/index.ts",
 		"./tour": "./src/components/tour/index.ts",
 		"./tree": "./src/components/tree/index.ts",
+		"./expo/blur-layer": "./src/expo/blur-layer.tsx",
 		"./expo/navigation-theme": "./src/expo/navigation-theme.tsx",
 		"./hooks/use-calm-motion": "./src/hooks/use-calm-motion.tsx",
 		"./hooks/use-controllable-state": "./src/hooks/use-controllable-state.ts",
 		"./hooks/use-keyboard-state-sync": "./src/hooks/use-keyboard-state-sync.tsx",
 		"./hooks/use-navigation-theme": "./src/hooks/use-navigation-theme.ts",
+		"./hooks/use-reduce-transparency": "./src/hooks/use-reduce-transparency.ts",
 		"./hooks/use-scroll-sections": "./src/hooks/use-scroll-sections.ts",
 		"./hooks/use-scroll-source": "./src/hooks/use-scroll-source.tsx",
 		"./hooks/use-theme-color": "./src/hooks/use-theme-color.ts",
@@ -169,6 +172,7 @@
 		"tailwind-variants": "^3.3.1"
 	},
 	"peerDependencies": {
+		"expo-blur": ">=15",
 		"@maplibre/maplibre-react-native": "^11.5.0",
 		"@central-icons-react-native/round-outlined-radius-1-stroke-1.5": "^1.1",
 		"@delacour/react-native-bottom-sheet": ">=0.1.0",
@@ -192,6 +196,9 @@
 		"uniwind": "^1.11.0"
 	},
 	"peerDependenciesMeta": {
+		"expo-blur": {
+			"optional": true
+		},
 		"@maplibre/maplibre-react-native": {
 			"optional": true
 		},
@@ -218,6 +225,7 @@
 		}
 	},
 	"devDependencies": {
+		"expo-blur": "~58.0.5",
 		"@maplibre/maplibre-react-native": "^11.5.0",
 		"@delacour/biome-config": "workspace:*",
 		"@delacour/react-native-bottom-sheet": "workspace:*",

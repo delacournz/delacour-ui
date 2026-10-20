@@ -192,6 +192,7 @@ const ROWS = [
 		group: "Data display",
 	},
 	{ slug: "text", title: "Text", description: "Type scale, presets, inline nesting", group: "Data display" },
+	{ slug: "post", title: "Post", description: "Feed, vote, compact, media; counts that roll", group: "Media" },
 	{
 		slug: "message-scroller",
 		title: "MessageScroller",

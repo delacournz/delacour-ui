@@ -62,6 +62,7 @@ export const COMPONENTS: readonly SkillComponent[] = [
 	{ name: "page-header", title: "Page Header", description: "A cover, an overlapping avatar, a title block, actions and stats — the head of a profile or place screen." },
 	{ name: "planner", title: "Planner", description: "A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day." },
 	{ name: "popover", title: "Popover", description: "A small panel anchored to its trigger that flips and shifts to stay on screen, with an arrow, a title, a close control and an optional scrim." },
+	{ name: "post", title: "Post", description: "A social card: author, body, media and animated counts, in four shapes." },
 	{ name: "pressable", title: "Pressable", description: "The Gesture API press primitive: scale and fade feedback, haptics, disabled and busy states." },
 	{ name: "progress", title: "Progress", description: "A bar showing how far a task has got, or a looping segment while it is under way." },
 	{ name: "progress-button", title: "Progress Button", description: "A button held to confirm: a fill grows while it is held and the action fires when it reaches the end." },

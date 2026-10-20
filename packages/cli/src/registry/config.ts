@@ -475,6 +475,11 @@ export const ITEM_META: Record<string, ItemMeta> = {
 		description: "The query field at the top of a list: clear, Cancel, debounced reporting and filter tokens.",
 		categories: ["forms"],
 	},
+	"scroll-text": {
+		title: "ScrollText",
+		description: "Text that resolves word by word as the screen scrolls past it.",
+		categories: ["media"],
+	},
 	separator: {
 		title: "Separator",
 		description: "A one-pixel rule, hidden from assistive technology.",

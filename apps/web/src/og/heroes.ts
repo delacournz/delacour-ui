@@ -87,6 +87,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/radio": "radio/variants-and-states",
 	"native/components/rating": "rating/anatomy",
 	"native/components/screen": "screen/inbox",
+	"native/components/scroll-text": "scroll-text/colour",
 	"native/components/search-bar": "search-bar/basic",
 	"native/components/select": "select/single",
 	"native/components/selection-mode": "selection-mode/inbox-mode",
@@ -242,6 +243,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"rating/anatomy": { load: () => import("../../public/previews/rating/anatomy/dark.png?inline") },
 	"screen/inbox": { load: () => import("../../public/previews/screen/inbox/dark.png?inline") },
 	"screen/showcase": { load: () => import("../../public/previews/screen/showcase/dark.png?inline") },
+	"scroll-text/colour": { load: () => import("../../public/previews/scroll-text/colour/dark.png?inline") },
 	"search-bar/basic": { load: () => import("../../public/previews/search-bar/basic/dark.png?inline") },
 	"select/single": { cut: "8d4d23378ac5", load: () => import("./frames/select/single.png?inline") },
 	"selection-mode/inbox-mode": {

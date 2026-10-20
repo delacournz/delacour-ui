@@ -57,6 +57,9 @@ ListGroupItem.displayName = "DelacourUI.ListGroup.Item";
  * Lives here rather than with the root: it is the row that wraps its own text,
  * and importing it from `./list-group` would close a cycle back through the
  * root. See AGENTS.md rule 3.
+ *
+ * One node comes back as that node, never a one-item array: `Pressable` with
+ * `asChild` hands its children to `Children.only`, which rejects any array.
  */
 function wrapTextChildren(children: ReactNode): ReactNode {
 	const items = Children.toArray(children);
@@ -83,5 +86,5 @@ function wrapTextChildren(children: ReactNode): ReactNode {
 	}
 	flushRun();
 
-	return output;
+	return output.length === 1 ? output[0] : output;
 }

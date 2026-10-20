@@ -1,4 +1,4 @@
-import { Children, type ReactElement, type ReactNode, useMemo } from "react";
+import { type ReactElement, type ReactNode, useMemo } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
 import { useListGroupContext } from "../list-group/list-group.context";
@@ -13,6 +13,7 @@ import {
 	resolveItemRender,
 	resolveItemSize,
 	resolveItemSurface,
+	wrapItemTextChildren,
 } from "./item.variants";
 import { ItemActions } from "./item-actions";
 import { ItemContent } from "./item-content";
@@ -115,40 +116,20 @@ function ItemRoot({
 /**
  * Wraps bare text children in a title inside a content column.
  *
- * Consecutive strings and numbers are collected into a single title rather
- * than one each — `Row {index}` is one piece of text. React Native cannot
- * render a string outside a `<Text>`, so without this `<Item>Wi-Fi</Item>`
- * would crash.
+ * React Native cannot render a string outside a `<Text>`, so without this
+ * `<Item>Wi-Fi</Item>` would crash. The run-collapsing and the single-child
+ * rule `asChild` depends on live in `wrapItemTextChildren`, where they are
+ * tested.
  *
  * Lives with the root because the root is what wraps its own text; a part
  * importing it from here would close a cycle. See AGENTS.md rule 3.
  */
 function wrapTextChildren(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(
-			<ItemContent key={`content-${output.length}`}>
-				<ItemTitle>{run.join("")}</ItemTitle>
-			</ItemContent>
-		);
-		run = [];
-	};
-
-	for (const child of items) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output;
+	return wrapItemTextChildren(children, (text, key) => (
+		<ItemContent key={key}>
+			<ItemTitle>{text}</ItemTitle>
+		</ItemContent>
+	));
 }
 
 /**

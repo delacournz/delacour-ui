@@ -1,3 +1,4 @@
+import { Children, type ReactElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { PressableFeedback } from "../pressable/pressable.variants";
@@ -82,6 +83,44 @@ export function resolveItemRender(options: {
 }): ItemRender {
 	const hasHandler = options.onPress !== undefined || options.onLongPress !== undefined;
 	return hasHandler ? "pressable" : "static";
+}
+
+/**
+ * Wraps each run of bare text children through `wrap`, leaving every other
+ * child as it is.
+ *
+ * Consecutive strings and numbers are collected into a single run rather than
+ * one each — `Row {index}` is one piece of text.
+ *
+ * One node comes back as that node, never as a one-item array: `Pressable`
+ * with `asChild` hands its children to `Children.only`, which rejects an
+ * array whatever its length, so `<Item asChild onPress={…}><View /></Item>`
+ * threw before this.
+ */
+export function wrapItemTextChildren(
+	children: ReactNode,
+	wrap: (text: string, key: string) => ReactElement
+): ReactNode {
+	const output: ReactNode[] = [];
+	let run: (string | number)[] = [];
+
+	const flushRun = () => {
+		if (run.length === 0) return;
+		output.push(wrap(run.join(""), `content-${output.length}`));
+		run = [];
+	};
+
+	for (const child of Children.toArray(children)) {
+		if (typeof child === "string" || typeof child === "number") {
+			run.push(child);
+			continue;
+		}
+		flushRun();
+		output.push(child);
+	}
+	flushRun();
+
+	return output.length === 1 ? output[0] : output;
 }
 
 /**

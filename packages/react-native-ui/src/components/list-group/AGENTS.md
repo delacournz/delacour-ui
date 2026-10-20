@@ -62,6 +62,8 @@ five slots: `ItemPrefix`, `ItemContent`, `ItemTitle`, `ItemDescription`,
   tunes that glyph and is ignored once it does.
 - **String children** are wrapped in an `ItemContent` around an `ItemTitle`
   automatically, consecutive strings collapsing into one — the same rule, and
-  the same reason, as [`Button`](../button/AGENTS.md).
+  the same reason, as [`Button`](../button/AGENTS.md). A single node comes
+  back unwrapped, not as a one-item array, so `asChild` (which calls
+  `Children.only`) takes it.
 - **Title colour goes on the title.** The `item` slot carries no `text-*`; a row
   is a `View` and cannot cascade colour to a `Text`. The tests assert this.

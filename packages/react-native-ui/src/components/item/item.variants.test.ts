@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { Children, createElement, isValidElement, type ReactElement } from "react";
 import { ICON_SIZE_TOKENS } from "../../styles/tokens";
 import { LIST_GROUP_SIZES, listGroupVariants } from "../list-group/list-group.variants";
 import {
@@ -11,6 +12,7 @@ import {
 	resolveItemRender,
 	resolveItemSize,
 	resolveItemSurface,
+	wrapItemTextChildren,
 } from "./item.variants";
 
 /** Pulls the horizontal padding step out of a class string — `px-4` yields 4. */
@@ -259,5 +261,43 @@ describe("itemVariants orientation", () => {
 	test("a group runs down by default and across when horizontal", () => {
 		expect(itemVariants({ groupOrientation: "vertical" }).group()).toContain("flex-col");
 		expect(itemVariants({ groupOrientation: "horizontal" }).group()).toContain("flex-row");
+	});
+});
+
+describe("wrapItemTextChildren", () => {
+	const wrap = (text: string, key: string): ReactElement => createElement("title", { key }, text);
+
+	test("hands a single element back as that element, never a one-item array", () => {
+		const child = createElement("view");
+		const result = wrapItemTextChildren(child, wrap);
+		expect(Array.isArray(result)).toBe(false);
+		expect(isValidElement(result)).toBe(true);
+	});
+
+	test("survives Children.only — the check Pressable asChild makes", () => {
+		const result = wrapItemTextChildren(createElement("view"), wrap);
+		expect(() => Children.only(result)).not.toThrow();
+	});
+
+	test("hands a lone wrapped string back as one element", () => {
+		const result = wrapItemTextChildren("Wi-Fi", wrap);
+		expect(Array.isArray(result)).toBe(false);
+		expect(isValidElement(result) && result.type).toBe("title");
+	});
+
+	test("collapses consecutive strings and numbers into one run", () => {
+		const result = wrapItemTextChildren(["Row ", 3], wrap);
+		expect(isValidElement(result)).toBe(true);
+		expect(isValidElement(result) && (result.props as { children: string }).children).toBe("Row 3");
+	});
+
+	test("keeps an array when there is more than one node", () => {
+		const result = wrapItemTextChildren(["Wi-Fi", createElement("view", { key: "switch" }), "On"], wrap);
+		expect(Array.isArray(result)).toBe(true);
+		expect(Children.count(result)).toBe(3);
+	});
+
+	test("returns nothing for no children", () => {
+		expect(Children.count(wrapItemTextChildren(undefined, wrap))).toBe(0);
 	});
 });

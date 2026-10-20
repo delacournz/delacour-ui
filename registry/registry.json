@@ -2903,6 +2903,7 @@
 				"ui/screen/screen-navbar.tsx",
 				"ui/screen/screen-root.tsx",
 				"ui/screen/screen-scroll-area.tsx",
+				"ui/screen/screen-scroll-handler.ts",
 				"ui/screen/screen-scroll-shadow.tsx",
 				"ui/screen/screen-scroll-source.tsx",
 				"ui/screen/screen-section-list.tsx",

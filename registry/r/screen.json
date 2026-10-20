@@ -208,6 +208,11 @@
 			]
 		},
 		{
+			"path": "packages/react-native-ui/src/components/screen/screen-scroll-handler.ts",
+			"target": "screen/screen-scroll-handler.ts",
+			"namespace": "ui"
+		},
+		{
 			"path": "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx",
 			"target": "screen/screen-scroll-shadow.tsx",
 			"namespace": "ui",

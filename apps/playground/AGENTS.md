@@ -1170,15 +1170,20 @@ missing, so the next rename fails `bun test` instead of a release.
 
 ## Metro
 
-`metro.config.js` does three things no default config does, and each has a
+`metro.config.js` does two things no default config does, and each has a
 failure attached:
 
-- **`watchFolders` + `nodeModulesPaths` reach the workspace root**, because
-  `react-native-ui` is consumed as source. `disableHierarchicalLookup` stops Metro
-  walking up and finding a second copy on its own.
-- **`extraNodeModules` pins ten native modules to the root copy.** Bun
-  materialises a second copy under this app, and two registrations of a native
-  module break at runtime.
+- **`resolveRequest` pins fourteen packages to the root copy** — the native
+  modules plus `react` and `culori`. Bun materialises a second copy of some under
+  this app, and two registrations of a native module break at runtime. Each
+  request for one is resolved as if it came from the workspace root.
+  `extraNodeModules` cannot do this: Metro consults it only after every
+  `node_modules` lookup has failed, so it never beats a copy that exists.
+
+The workspace-root reach `react-native-ui` needs as source — `watchFolders`,
+`nodeModulesPaths` — is Expo's own monorepo default. Do not set them, or
+`resolver.disableHierarchicalLookup`, by hand: the `expo-doctor` step in the EAS
+workflows fails on any mismatch with `expo/metro-config`.
 - **`withUniwindConfig` must stay the outermost wrapper**, taking `global.css`
   as its entry and generating `src/uniwind-types.d.ts`.
 

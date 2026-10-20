@@ -160,6 +160,12 @@ export const COMPONENTS: readonly ComponentEntry[] = [
 		blurb: "One number, its change coloured by what it means, and a sparkline of how it got there.",
 	},
 	{
+		slug: "planner",
+		name: "Planner",
+		group: "Data display",
+		blurb: "A month of days, each showing what falls on it, with a sheet of the selected day.",
+	},
+	{
 		slug: "leaderboard",
 		name: "Leaderboard",
 		group: "Data display",

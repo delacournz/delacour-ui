@@ -58,6 +58,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/map": "map/places",
 	"native/components/menu": "menu/actions",
 	"native/components/meter": "meter/anatomy",
+	"native/components/planner": "planner/training-plan",
 	"native/components/popover": "popover/basic",
 	"native/components/pressable": "pressable/named-feedback",
 	"native/components/progress-button": "progress-button/hold-to-erase",
@@ -173,6 +174,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 	"map/places": { load: () => import("../../public/previews/map/places/dark.png?inline") },
 	"menu/actions": { cut: "2fe7ccc2f3a9", load: () => import("./frames/menu/actions.png?inline") },
 	"meter/anatomy": { load: () => import("../../public/previews/meter/anatomy/dark.png?inline") },
+	"planner/training-plan": { load: () => import("../../public/previews/planner/training-plan/dark.png?inline") },
 	"popover/basic": { cut: "6008fd59fe46", load: () => import("./frames/popover/basic.png?inline") },
 	"pressable/named-feedback": { load: () => import("../../public/previews/pressable/named-feedback/dark.png?inline") },
 	"progress-button/hold-to-erase": {

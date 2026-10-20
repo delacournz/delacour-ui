@@ -1,0 +1,268 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "planner",
+	"type": "registry:ui",
+	"title": "Planner",
+	"description": "A month of days, each showing what falls on it — category dots, icons, tiles or named blocks — with swipe paging, a week scroller and a sheet of the selected day.",
+	"categories": [
+		"display"
+	],
+	"registryDependencies": [
+		"bottom-sheet",
+		"button",
+		"card",
+		"cn",
+		"icon",
+		"icons",
+		"pressable",
+		"text",
+		"tv",
+		"use-controllable-state"
+	],
+	"dependencies": [
+		"tailwind-variants"
+	],
+	"expoDependencies": [
+		"react-native-gesture-handler",
+		"react-native-reanimated",
+		"react-native-worklets"
+	],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/components/planner/AGENTS.md",
+			"target": "planner/AGENTS.md",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "@delacour/react-native-ui/planner",
+					"to": "@registry/ui/planner"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/index.ts",
+			"target": "planner/index.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-action.tsx",
+			"target": "planner/planner-action.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-dates.ts",
+			"target": "planner/planner-dates.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-day.tsx",
+			"target": "planner/planner-day.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "../pressable",
+					"to": "@registry/ui/pressable"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-details.tsx",
+			"target": "planner/planner-details.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../bottom-sheet",
+					"to": "@registry/ui/bottom-sheet"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-footer.tsx",
+			"target": "planner/planner-footer.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-grid.tsx",
+			"target": "planner/planner-grid.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-header.tsx",
+			"target": "planner/planner-header.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-legend.tsx",
+			"target": "planner/planner-legend.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-nav.tsx",
+			"target": "planner/planner-nav.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../icons/central",
+					"to": "@registry/icons/central"
+				},
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				},
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-scroller.tsx",
+			"target": "planner/planner-scroller.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-summary.tsx",
+			"target": "planner/planner-summary.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-title.tsx",
+			"target": "planner/planner-title.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-today.tsx",
+			"target": "planner/planner-today.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button",
+					"to": "@registry/ui/button"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-weekdays.tsx",
+			"target": "planner/planner-weekdays.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../text",
+					"to": "@registry/ui/text"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner.context.tsx",
+			"target": "planner/planner.context.tsx",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner.tsx",
+			"target": "planner/planner.tsx",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-controllable-state",
+					"to": "@registry/hooks/use-controllable-state"
+				},
+				{
+					"from": "../../lib/cn",
+					"to": "@registry/lib/cn"
+				},
+				{
+					"from": "../card",
+					"to": "@registry/ui/card"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner.types.ts",
+			"target": "planner/planner.types.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon",
+					"to": "@registry/ui/icon"
+				},
+				{
+					"from": "@delacour/react-native-ui/icons/central",
+					"to": "@registry/icons/central"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner.variants.ts",
+			"target": "planner/planner.variants.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../lib/tv",
+					"to": "@registry/lib/tv"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/use-planner-today.ts",
+			"target": "planner/use-planner-today.ts",
+			"namespace": "ui"
+		}
+	]
+}

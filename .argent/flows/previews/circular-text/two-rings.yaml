@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on circular-text/two-rings and has settled — an outer ring
-  turning clockwise around an inner one turning counterclockwise. The capture script navigates there before running this.
-steps:
-  - echo: Nothing to touch — the rings are their motion, so this only holds the camera on them
-  # The outer ring holds three copies (120°, 6s at 20°/s) and the inner two (180°, 6s at 30°/s).
-  # This wait makes the whole clip, lead and tail included, 6s, so both end where they began.
-  - wait: 4500

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		'A ring around an `Avatar`. `side="outside"` stands the glyphs with their tops away from the centre; `side="inside"` turns them toward it, so the words read along the bottom.',
-	capture: { flow: "circular-text/badge" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

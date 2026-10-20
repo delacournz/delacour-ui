@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "Nested levels",
 	caption:
 		"`level` shortens a bar and indents its row by the same step, so the rail and the outline agree about what nests. Level 2 and deeper share the shortest bar; long titles wrap to two lines, then truncate.",
-	capture: { align: "stretch", flow: "section-rail/nested-levels" },
+	capture: { align: "stretch", flow: true },
 };
 
 const SECTIONS = [

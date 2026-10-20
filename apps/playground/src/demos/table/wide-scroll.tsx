@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Wide",
 	caption:
 		"A `minWidth` wider than the screen scrolls sideways, with a fade at each edge that has more columns past it.",
-	capture: { align: "stretch", flow: "table/wide-scroll" },
+	capture: { align: "stretch", flow: true },
 };
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"] as const;

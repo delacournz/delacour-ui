@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Hold a stepper: it repeats after 400ms, speeds up, and from the 25th repeat moves ten steps at a time. It stops at the limit with one light tap.",
 	keyboardAware: true,
-	capture: { flow: "number-input/hold-to-repeat" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`min` and `max` hold the value in range. The minus dims at the floor and the plus at the ceiling, and a typed 40 comes back as 4 on blur.",
 	keyboardAware: true,
-	capture: { flow: "number-input/bounds" },
+	capture: { flow: true },
 };
 
 const MIN = 1;

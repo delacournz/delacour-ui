@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "A flashcard",
 	caption:
 		'`trigger="manual"` and a `FlipCard.Trigger` beneath it. Anything passed to the root that is not a face renders under the card, so the back never covers the button.',
-	capture: { align: "stretch", flow: "flip-card/flashcard" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Anatomy",
 	note: "SplitView.Top, SplitView.DragArea and SplitView.Bottom, in that order. Drag the row: the top pane follows the finger and settles on the nearest of three stops, or the next one along when flicked. Tap the grip to cycle.",
-	capture: { align: "stretch", flow: "split-view/anatomy", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const RESULTS = ["Harbour Café", "Kelburn Park", "Cuba Street", "Te Papa", "Oriental Bay"] as const;

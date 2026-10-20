@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Upload states",
 	note: "The app owns the upload and hands the attachment its `status`. Uploading draws a bar — determinate with a `progress`, looping without — and remove becomes cancel. An error edges it in the destructive colour, shows the app's message and offers retry.",
-	capture: { align: "stretch", flow: "attachment/upload-states", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const TICK_MS = 120;

@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	title: "Placements",
 	caption:
 		"Six placements, `offset` points in from the safe area. A `top-*` pill opens its panel downward, a `bottom-*` one upward, and `start` and `end` mirror under right-to-left.",
-	capture: { align: "stretch", flow: "section-progress/placements" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LABELS: Record<SectionProgressPlacement, string> = {

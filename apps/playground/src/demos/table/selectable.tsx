@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Selectable",
 	caption:
 		"With `onPress` a row is one button, named by all of its cells. `isSelected` paints it on the accent; `isDisabled` fades its cells and blocks the press.",
-	capture: { align: "stretch", flow: "table/selectable" },
+	capture: { align: "stretch", flow: true },
 };
 
 const INVOICES = [

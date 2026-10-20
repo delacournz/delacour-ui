@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Animated edges",
 	caption:
 		"`isAnimated` marches an edge's dashes toward its target. It is decorative, so it holds still under reduce motion.",
-	capture: { align: "stretch", flow: "flow/animated-edges" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

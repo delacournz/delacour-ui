@@ -15,7 +15,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The full card: an author with a verified check and a relative time, a body whose tag is picked out, a picture in a fixed 16:10 frame, and the counts underneath. Like and Save are caller state; the heart fills and its count rolls.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "post/feed-card", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const POSTED_AT = new Date(Date.now() - 1000 * 60 * 42);

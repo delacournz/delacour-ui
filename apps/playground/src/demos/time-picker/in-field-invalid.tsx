@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Inside a `Field` the picker takes the field's invalid state, reads the label as its accessible name, and opens when the label is tapped.",
 	align: "stretch",
-	capture: { flow: "time-picker/in-field-invalid", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 /** Fills and centres for the whole-screen capture, which the sheet's portal needs. */

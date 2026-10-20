@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"An odometer: each digit is a wheel that rolls the short way to its new digit, least significant first. Separators stay put, and tabular figures keep every wheel the same width.",
-	capture: { flow: "text-animation/rolling" },
+	capture: { flow: true },
 };
 
 const READINGS = [1248, 9731, 10004, 999] as const;

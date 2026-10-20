@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Single",
 	caption:
 		"A field-shaped trigger over a bottom sheet of options. A pick closes the sheet and the trigger reads the chosen label; the box is Input's own, so a select sits level with a text field beside it.",
-	capture: { flow: "select/single", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 export function Demo(): ReactElement {

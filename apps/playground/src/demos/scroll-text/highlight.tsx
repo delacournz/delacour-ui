@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Highlight",
 	note: "The default band is primary at 20%, fading in from its own colour at zero alpha so it never passes through grey.",
-	capture: { align: "stretch", flow: "scroll-text/highlight" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TEXT = "A marker band sweeps through the sentence as you reach it, one word after the next.";

@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The eraser hides the ink under it that was drawn before it. A stroke drawn afterwards over the same spot is left alone, and undo brings the erased ink back.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "sketch/eraser" },
+	capture: { align: "stretch", flow: true },
 };
 
 const COLOURS = ["#ef4444", "#f59e0b", "#22c55e", "#3b82f6"] as const;

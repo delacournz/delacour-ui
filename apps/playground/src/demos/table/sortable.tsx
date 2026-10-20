@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Sortable",
 	caption:
 		"A head with `sort` is a button that draws the sort state; the caller owns the order. Tap a heading to sort by it, and again to reverse.",
-	capture: { align: "stretch", flow: "table/sortable", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 type Key = "name" | "points";

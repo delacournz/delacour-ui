@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A ranked-community card: a community header, a headline and a clamped body, with the score pill leading the footer. Tap an arrow to vote; tap it again to clear. The pill tints with the cast direction.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "post/vote" },
+	capture: { align: "stretch", flow: true },
 };
 
 const BASE_SCORE = 1_240;

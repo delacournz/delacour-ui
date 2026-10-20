@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"The trigger is an `Input`'s box. Pressing it opens a bottom sheet of wheels, and the value changes each time a wheel comes to rest.",
 	align: "stretch",
-	capture: { flow: "time-picker/basic-sheet", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 /**

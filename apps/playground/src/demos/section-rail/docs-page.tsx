@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "A documentation page",
 	caption:
 		'Paired with `useScrollSections`: the rail follows the scroll, and a pick scrolls there. `align="bottom"` keeps it in the thumb\'s reach. Tap the rail to open the outline, or drag along it to scrub.',
-	capture: { align: "stretch", flow: "section-rail/docs-page", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const SECTIONS = [

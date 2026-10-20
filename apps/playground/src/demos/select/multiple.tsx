@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Multiple",
 	caption:
 		'`selectionMode="multiple"` keeps the sheet open, draws a box on every row and closes from a Done footer. The trigger joins two labels, then counts. `maxSelected` disables the rest once the limit is reached.',
-	capture: { flow: "select/multiple", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TOPPINGS = [

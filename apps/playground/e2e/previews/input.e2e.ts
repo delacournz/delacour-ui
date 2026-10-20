@@ -55,3 +55,33 @@ capture("input/variants/at-rest", { types: true }, async (f) => {
 });
 
 capture("input/variants/invalid");
+
+capture("input/group/composer", { types: true }, async (f) => {
+	// Writing a message, which runs the count in the footer block
+	await f.tap("composer-field");
+	await f.wait(300);
+	await f.type("composer-field", "On my way, see you soon");
+	await f.wait(700);
+	// Sending clears it, and dismissing the keyboard leaves it as it began
+	await f.tap("composer-send");
+	await f.wait(400);
+	await f.tap("preview-dismiss-keyboard");
+	await f.wait(600);
+});
+
+capture("input/group/decorative");
+
+capture("input/group/group-button", { types: true }, async (f) => {
+	// Typing a search, which brings the group's clear button in
+	await f.tap("group-button-search");
+	await f.wait(300);
+	await f.type("group-button-search", "tabs");
+	await f.wait(800);
+	// Clearing it with the group button, and submitting so the field blurs as it began
+	await f.tap("group-button-clear");
+	await f.wait(400);
+	await f.press("group-button-search", "Enter");
+	await f.wait(500);
+});
+
+capture("input/group/separator");

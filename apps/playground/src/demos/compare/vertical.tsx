@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Vertical",
 	caption:
 		'`orientation="vertical"` puts Before on top and drags the seam up and down. Like a vertical `Slider` it fills the height it is given, so the frame needs a definite one.',
-	capture: { align: "stretch", flow: "compare/vertical" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

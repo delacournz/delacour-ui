@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Sequence",
-	capture: { align: "stretch", flow: "scroll-canvas/sequence" },
+	capture: { align: "stretch", flow: true },
 	caption:
 		"Twenty-four frames, scrubbed by the scroll: each band of progress shows one of them, with no cross-fade. At rest above its window — here 40% down the view to just past the top — it shows frame 0, the poster.",
 	note: "Every frame is mounted at once, so keep a sequence to 20–30 frames at the size it is drawn.",

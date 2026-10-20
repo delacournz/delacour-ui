@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Inline",
 	caption: '`presentation="inline"` draws the bare wheel in place, with no trigger and no sheet.',
 	align: "stretch",
-	capture: { flow: "time-picker/inline-wheel", align: "stretch" },
+	capture: { flow: true, align: "stretch" },
 };
 
 export function Demo(): ReactElement {

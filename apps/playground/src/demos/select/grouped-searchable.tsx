@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Grouped and searchable",
 	caption:
 		"`Select.Group` puts a heading over a run of options. `isSearchable` adds a field above the rows that matches case- and accent-insensitively, hides a group it empties, and clears when the sheet closes. It is never focused for you — the keyboard would cover the rows.",
-	capture: { flow: "select/grouped-searchable", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 export function Demo(): ReactElement {

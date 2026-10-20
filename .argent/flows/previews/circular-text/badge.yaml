@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on circular-text/badge and has settled — two avatars, each
-  in a slowly turning ring, one outside and one inside. The capture script navigates there before running this.
-steps:
-  - echo: Nothing to touch — the rings are their motion, so this only holds the camera on them
-  # Each ring holds two copies, so it repeats every 180°: 7.5s at the default 24°/s. This wait
-  # makes the whole clip, lead and tail included, 7.5s, so both rings end where they began.
-  - wait: 6000

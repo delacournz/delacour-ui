@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Not everyone can trace a path with a finger, and no accessibility label changes that. `onRequestAlternative` adds a link that hands off to a typed name — offer it on every pad.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "signature/alternative" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

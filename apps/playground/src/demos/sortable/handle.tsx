@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Handle",
 	caption:
 		"Drag a row by its grip. The rows it passes step aside on the UI thread, and `onReorder` hears the new order once, after the row lands.",
-	capture: { align: "stretch", flow: "sortable/handle", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const TRACKS: Record<string, { title: string; artist: string }> = {

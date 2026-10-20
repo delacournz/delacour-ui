@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "In a list group",
 	caption:
 		"Rows inside one `ListGroup` card. The lifted row takes an opaque card surface and a shadow, so the row it passes never shows through.",
-	capture: { align: "stretch", flow: "sortable/list-group" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TABS: Record<string, string> = {

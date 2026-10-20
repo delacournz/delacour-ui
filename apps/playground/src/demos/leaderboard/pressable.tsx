@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Pressable",
 	caption:
 		"`onPressEntry` makes every place a button, and hands back the entry and its rank. Tap the picked place again to clear it.",
-	capture: { align: "stretch", flow: "leaderboard/pressable", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const ENTRIES: readonly LeaderboardEntry[] = [

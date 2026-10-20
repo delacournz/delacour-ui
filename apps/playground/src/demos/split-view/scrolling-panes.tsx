@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Scrolling panes",
 	note: "The gesture lives on the drag row alone, so a list in a pane scrolls without ever moving the divider, and the row wins a drag that starts on it.",
-	capture: { align: "stretch", flow: "split-view/scrolling-panes" },
+	capture: { align: "stretch", flow: true },
 };
 
 const ROWS = Array.from({ length: 30 }, (_, index) => `Comment ${index + 1}`);

@@ -6,7 +6,7 @@ export const meta: DemoMeta = {
 	title: "Basic",
 	caption:
 		"A search glyph, a clear button once there is text, and Cancel while the field has focus. Clearing keeps the keyboard up; Cancel puts it away.",
-	capture: { align: "stretch", flow: "search-bar/basic", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 export function Demo(): ReactElement {

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		'`layout="stacked"` draws the calendar, a hairline and a time row; tapping the row opens the wheel beneath it. Both halves are on screen at once — for tablets and tall sheets.',
 	align: "stretch",
-	capture: { flow: "date-time-picker/stacked-layout", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const TODAY: CalendarDate = { year: 2026, month: 10, day: 5 };

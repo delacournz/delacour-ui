@@ -13,7 +13,7 @@ export const meta: DemoMeta = {
 		"The furniture around a transcript: the agent, the ticket, a handoff between turns, suggested replies and a note above the composer. The turns here are stand-in markup — they are the app's, never Support's. Toggle typing to see the status line give way.",
 	keyboardAware: true,
 	align: "stretch",
-	capture: { align: "stretch", flow: "support/thread" },
+	capture: { align: "stretch", flow: true },
 };
 
 type Side = "them" | "you";

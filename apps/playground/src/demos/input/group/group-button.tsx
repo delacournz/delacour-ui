@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`Input.Group.Button` is sized one step below the box, squared when it holds only an icon, and disabled with the group without fading twice.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "input/group/group-button" },
+	capture: { align: "stretch", flow: true },
 };
 
 /** A search field whose clear button appears once there is something to clear. */

@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Set once on the root and read by every status. The first line is the caller's wording; the second falls back to the availability's own. Tap to cycle.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "support/availability" },
+	capture: { align: "stretch", flow: true },
 };
 
 const REPLY_TIME: Record<SupportAvailability, string> = {

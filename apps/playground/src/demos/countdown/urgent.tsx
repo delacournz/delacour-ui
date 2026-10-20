@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Urgent",
 	align: "center",
-	capture: { flow: "countdown/urgent", settleMs: 150 },
+	capture: { flow: true, settleMs: 150 },
 	caption:
 		"`urgentBelow` takes seconds. At or below it the digits turn destructive — here, the last minute of a booking hold.",
 };

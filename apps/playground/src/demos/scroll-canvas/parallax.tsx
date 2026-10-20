@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Parallax",
-	capture: { align: "stretch", flow: "scroll-canvas/parallax", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 	caption:
 		"The frame scrolls with the page; the picture inside it drifts more slowly, so it seems to sit further away. It never shows a frame edge at either end of its travel.",
 };

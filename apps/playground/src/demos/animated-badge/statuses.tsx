@@ -11,7 +11,7 @@ export const meta: DemoMeta = {
 	title: "Statuses",
 	align: "center",
 	note: "Each status picks its colour and its glyph. Loading spins and gently swells.",
-	capture: { flow: "animated-badge/statuses" },
+	capture: { flow: true },
 };
 
 /** Written out rather than mapped from the value, so no reader is shown a raw prop. */

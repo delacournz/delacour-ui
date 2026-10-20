@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Rise",
 	note: "Words lift 16 points and fade up from a 0.15 floor. The floor is a minimum: un-revealed text stays legible.",
-	capture: { align: "stretch", flow: "scroll-text/rise" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TEXT = "Every word arrives on time.";

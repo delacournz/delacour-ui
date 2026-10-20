@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"`isMasked` draws a dot in each filled cell. The mask is visual only — the field is never a secure entry, so autofill and paste keep working.",
-	capture: { flow: "otp-input/pin-masked" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

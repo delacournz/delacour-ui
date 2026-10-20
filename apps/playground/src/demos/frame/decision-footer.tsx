@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Decision footer",
 	caption:
 		'An `inset` frame sets its footer in the band under the tray. `align="stretch"` gives each button an equal share of the row.',
-	capture: { align: "stretch", flow: "frame/decision-footer" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

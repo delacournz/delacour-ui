@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	caption:
 		"`actions` picks the buttons and their order. A comment box rarely needs a heading or a code block. A row longer than the screen scrolls sideways under the mode switch.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "markdown-editor/custom-toolbar" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

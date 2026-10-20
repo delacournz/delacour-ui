@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Eight shapes, drawn by dragging. A line and an arrow follow the drag; the rest fill its bounds, whichever way it runs. A drag under four points draws nothing.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "sketch/shapes" },
+	capture: { align: "stretch", flow: true },
 };
 
 function shape(shape: SketchShape, x: number, y: number, size: number, color: string): SketchItem {

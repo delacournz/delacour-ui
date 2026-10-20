@@ -5,7 +5,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Segmented",
 	align: "center",
-	capture: { flow: "countdown/segmented", settleMs: 150, hero: true },
+	capture: { flow: true, settleMs: 150, hero: true },
 	caption:
 		"Each unit in its own box with its caption beneath. A changed digit slides in from above; an unchanged one never moves.",
 };

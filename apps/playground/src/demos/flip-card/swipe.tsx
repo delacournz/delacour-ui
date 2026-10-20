@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Swipe",
 	caption:
 		'`trigger="swipe"`: the turn follows your finger, leans past either rest, and settles on the nearer face — or the way you flicked. `swipeDistance` is the drag that makes a half turn. A screen reader gets a "Flip card" action in its place.',
-	capture: { align: "stretch", flow: "flip-card/swipe" },
+	capture: { align: "stretch", flow: true },
 };
 
 export function Demo(): ReactElement {

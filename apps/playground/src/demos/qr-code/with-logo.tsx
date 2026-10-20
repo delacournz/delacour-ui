@@ -12,7 +12,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"`QRCode.Logo` sits on a plate cleared out of the middle. A logo is damage the code has to correct, so the level is raised to H and the code may grow a version to keep every block recoverable — switch it on and the whole code re-encodes, denser.",
-	capture: { flow: "qr-code/with-logo" },
+	capture: { flow: true },
 };
 
 /** The switch adds and removes the Logo, so the re-encode at level H is visible as it happens. */

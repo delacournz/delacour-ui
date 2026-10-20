@@ -1,8 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on text-animation/typing — the field already typing its two phrases on a loop.
-  The capture script navigates there before running this.
-steps:
-  - echo: >-
-      Nothing to touch — Typing cycles on its own. One full cycle (25 + 29 characters typed at 22/s, held 1400 ms each,
-      erased at 40/s ≈ 6604 ms, less the ~300 ms the recorder spends starting) with no lead or tail pad, so the clip ends where it began and loops without a jump cut
-  - wait: 6300

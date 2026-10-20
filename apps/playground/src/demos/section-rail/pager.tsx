@@ -14,7 +14,7 @@ export const meta: DemoMeta = {
 	title: "Driving a pager",
 	caption:
 		"There is no pager mode: the rail's `value` is the page index, and a pick scrolls the pager. Swipe the pages or scrub the rail — each follows the other.",
-	capture: { align: "stretch", flow: "section-rail/pager" },
+	capture: { align: "stretch", flow: true },
 };
 
 const PAGES = [

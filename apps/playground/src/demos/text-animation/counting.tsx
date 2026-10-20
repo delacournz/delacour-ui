@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	align: "center",
 	caption:
 		"A formatted figure tweened to its new value on the UI thread. A tap mid-count retargets from what is on screen, and a screen reader hears only the target.",
-	capture: { flow: "text-animation/counting" },
+	capture: { flow: true },
 };
 
 const BALANCES = [1284.5, 24310.75, 312.2, 98765.43] as const;

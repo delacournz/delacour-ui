@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 
 export const meta: DemoMeta = {
 	title: "Reveal",
-	capture: { align: "stretch", flow: "scroll-canvas/reveal" },
+	capture: { align: "stretch", flow: true },
 	caption:
 		"A cover in the page's own colour retreats upward as the frame rises, uncovering the picture from its bottom edge. Here `start` and `end` run it from 85% down the view to just past the top.",
 };

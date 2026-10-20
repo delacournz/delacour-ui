@@ -1,6 +1,0 @@
-executionPrerequisite: >-
-  The chrome-free preview route is open on flow/animated-edges and has settled — a queue badge joined to a worker by a
-  marching primary edge and to a dead letter by a dashed one. The capture script navigates there before running this.
-steps:
-  - echo: Nothing to touch — the marching dashes are the motion, so the flow only holds the recording open
-  - wait: 2400

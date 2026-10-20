@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "In a Screen",
 	caption:
 		"Passed to `Screen.ScrollArea`'s `header`, under an overlay navbar. The cover runs under the status bar and the navbar with no gap, takes the screen's side gutter back so it meets both edges, and scrolls away with the content.",
-	capture: { flow: "page-header/in-a-screen", frame: "device", hero: true },
+	capture: { flow: true, frame: "device", hero: true },
 };
 
 const POSTS = [

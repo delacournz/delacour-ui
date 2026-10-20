@@ -8,7 +8,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Controlled",
 	note: "Pass snapIndex and onSnapIndexChange to own the stop. useSplitView() hands a child the same index and snapTo, so a toolbar inside a pane can move the divider.",
-	capture: { align: "stretch", flow: "split-view/controlled" },
+	capture: { align: "stretch", flow: true },
 };
 
 const STOPS = ["Small", "Medium", "Large"] as const;

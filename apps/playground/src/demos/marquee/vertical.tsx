@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	caption:
 		"A column of notices travelling up. A vertical marquee needs a bounded height — here `h-48` — to clip against.",
 	align: "stretch",
-	capture: { align: "stretch", flow: "marquee/vertical" },
+	capture: { align: "stretch", flow: true },
 };
 
 const NOTICES = [

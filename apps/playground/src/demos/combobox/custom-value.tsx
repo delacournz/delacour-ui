@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	title: "Custom values",
 	caption:
 		"`allowCustomValue` offers what you typed as a value of its own whenever no option says exactly that. The value is the text itself, so it reads back as its own label.",
-	capture: { flow: "combobox/custom-value", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const LABELS = [

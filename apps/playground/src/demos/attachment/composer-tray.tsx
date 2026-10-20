@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "A composer tray",
 	note: "`Attachment.Group` scrolls sideways, hands its layout down, and slides the rest along when one is removed. Each attachment hears where it sits — `2 of 4`.",
-	capture: { align: "stretch", flow: "attachment/composer-tray" },
+	capture: { align: "stretch", flow: true },
 };
 
 type Draft = AttachmentMedia & { id: string; name: string; sizeBytes?: number };

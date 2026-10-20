@@ -7,7 +7,7 @@ import type { DemoMeta } from "@/demos/types";
 export const meta: DemoMeta = {
 	title: "Characters",
 	note: "One unit per grapheme, grouped per word so a word never breaks mid-glyph. A low overlap makes the stagger read as typing.",
-	capture: { align: "stretch", flow: "scroll-text/characters" },
+	capture: { align: "stretch", flow: true },
 };
 
 const TEXT = "Letter by letter.";

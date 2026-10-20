@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Typing",
 	caption:
 		'`Message.Typing` stands in for the bubble while the other side types — three staggered dots, read as "Aria is typing". Under reduce motion the dots rest.',
-	capture: { flow: "message/typing" },
+	capture: { flow: true },
 };
 
 export function Demo(): ReactElement {

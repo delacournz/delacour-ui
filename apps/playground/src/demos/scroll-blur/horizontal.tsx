@@ -10,7 +10,7 @@ export const meta: DemoMeta = {
 	title: "A horizontal card row",
 	caption:
 		"The source fixes the axis, so a horizontal scrollable gets left and right bands with nothing else said. Both edges blur while there is a card past them.",
-	capture: { align: "stretch", flow: "scroll-blur/horizontal" },
+	capture: { align: "stretch", flow: true },
 };
 
 const CARDS = [

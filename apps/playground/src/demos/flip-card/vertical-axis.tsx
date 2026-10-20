@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Axis",
 	caption:
 		'`axis="y"`, the default, swings the card left and right; `axis="x"` tips it top over bottom. On a swipe card the axis also picks the drag direction.',
-	capture: { align: "stretch", flow: "flip-card/vertical-axis" },
+	capture: { align: "stretch", flow: true },
 };
 
 const LABELS: Record<FlipCardAxis, string> = {

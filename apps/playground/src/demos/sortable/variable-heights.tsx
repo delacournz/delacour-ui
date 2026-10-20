@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Variable heights",
 	caption:
 		"Each row measures itself. A row changes slot as soon as its edge crosses the middle of the next one, however tall either is.",
-	capture: { align: "stretch", flow: "sortable/variable-heights" },
+	capture: { align: "stretch", flow: true },
 };
 
 const STEPS: Record<string, { title: string; detail?: string }> = {

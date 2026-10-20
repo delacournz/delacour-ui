@@ -9,7 +9,7 @@ export const meta: DemoMeta = {
 	title: "Toggle at runtime",
 	caption:
 		"`dir` is an ordinary prop. Flip it and the card relayouts on the next frame — no remount, no restart, which is what `I18nManager.forceRTL` would need. The step numbers sit in their own left-to-right `Direction`, so their order holds.",
-	capture: { align: "stretch", flow: "direction/toggle", hero: true },
+	capture: { align: "stretch", flow: true, hero: true },
 };
 
 const LABELS: Record<DirectionValue, string> = {

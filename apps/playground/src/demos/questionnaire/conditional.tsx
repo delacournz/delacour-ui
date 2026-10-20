@@ -7,7 +7,7 @@ export const meta: DemoMeta = {
 	caption:
 		"Answer “No” and the follow-up disappears: the count drops, Next skips past it, its stale answer is dropped, and Back from the last question returns to the one you actually saw.",
 	keyboardAware: true,
-	capture: { align: "stretch", flow: "questionnaire/conditional" },
+	capture: { align: "stretch", flow: true },
 };
 
 const QUESTIONS: readonly Question[] = [

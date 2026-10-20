@@ -8,7 +8,7 @@ export const meta: DemoMeta = {
 	title: "Server-driven",
 	caption:
 		'`filter={{ kind: "none" }}` shows `options` as given, so the matching can happen on a server: control the query with `inputValue` and `onInputValueChange`, fetch, and pass `isLoading` while you wait. A picked person stays on the trigger after the results that held them are gone.',
-	capture: { flow: "combobox/async-server-filter", frame: "device" },
+	capture: { flow: true, frame: "device" },
 };
 
 const PEOPLE: ComboboxOption[] = [

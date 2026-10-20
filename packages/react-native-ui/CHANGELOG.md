@@ -1,5 +1,353 @@
 # @delacour/react-native-ui
 
+## 0.4.0
+
+### Minor Changes
+
+- [#211](https://github.com/delacournz/delacour-ui/pull/211) [`f8dadbe`](https://github.com/delacournz/delacour-ui/commit/f8dadbeeb5232d4ceff641831481010b451238d7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Breadcrumb` — the path to the current screen, links back up each level and the current page last.
+
+  - `Breadcrumb.List` counts its direct `Breadcrumb.Item`s and puts a separator between every pair, none after the last. A hand-placed `Breadcrumb.Separator` stands in for the automatic one beside it, and the root's `separator` replaces the chevron everywhere.
+  - Past `maxItems` the middle folds into an ellipsis, keeping `itemsBeforeCollapse` and `itemsAfterCollapse` at each end; `onEllipsisPress` makes it a button and hands over the hidden indices. `overflow="scroll"` runs the trail on in a horizontal scroller opened at the current page.
+  - `Breadcrumb.Link` is a `Pressable` announced as a link with a 44-point target and takes an `onPress` — no router coupling. `Breadcrumb.Page` is announced selected; separators are hidden from screen readers; chevrons flip in right-to-left layouts.
+  - `sm` and `md` sizes, on the caption and body text steps.
+  - `delacour add breadcrumb` copies it into a project.
+
+- [#216](https://github.com/delacournz/delacour-ui/pull/216) [`b31b518`](https://github.com/delacournz/delacour-ui/commit/b31b51866b44c109a141f8973f88c42dc0ba6aa5) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `CircularText` — text set around a circle, optionally turning
+
+  The text sits on a `react-native-svg` `TextPath`, laid out once by the platform's shaper and closed
+  exactly with `textLength`. `span` is a full ring, an arc or natural spacing; `side` stands the glyphs
+  outside or inside the circle; `repeat="fill"` repeats a phrase until the ring closes. `spin` is a
+  steady `loop` in degrees per second, driven by a frame-callback integrator so a `pause` (by press or
+  by state) eases to a halt and resumes without a snap, or a `controlled` angle from a shared value.
+  `centerContent` stays upright and independently accessible, the ring reads once with separators
+  stripped, and a `loop` holds still under reduce motion or `isMotionCalm`.
+
+- [#182](https://github.com/delacournz/delacour-ui/pull/182) [`93189f8`](https://github.com/delacournz/delacour-ui/commit/93189f853a43a560b532d9971e41c1f7b121f574) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ColorPicker` — pick a colour by dragging, typing or tapping a preset.
+
+  - Compound anatomy: `ColorPicker.Area` (saturation and brightness), `.Hue`, `.Alpha`, `.Preview`, `.Input` (a hex field), `.Swatches` / `.Swatch`, `.Content` and `.Trigger`. A bare `<ColorPicker />` draws the area, the hue track and the field.
+  - Every drag runs on the UI thread through one shared value, so nothing re-renders while a finger moves. `onValueChange` fires per frame, `onValueCommit` once a change settles.
+  - Accepts hex (3, 4, 6, 8 digits), `rgb()`, `rgba()`, `hsl()` and `hsla()`; reports in `format` — `hex`, `rgb` or `hsl`. Greys and black keep their hue, and a controlled echo never drifts it.
+  - `hasAlpha` adds an opacity track whose fade keeps the same RGB end to end. `presentation="sheet"` puts the surface in a `BottomSheet` behind a trigger row drawn on `Input`'s box.
+  - Joins `Field`, takes `Input`'s sizes and variants, and is adjustable for screen readers in every axis, announcing on commit.
+  - The `color-picker` subpath imports `BottomSheet`, so it needs `@delacour/react-native-bottom-sheet` installed even inline.
+  - `delacour add color-picker` copies it into a project.
+
+- [#206](https://github.com/delacournz/delacour-ui/pull/206) [`e6dc71c`](https://github.com/delacournz/delacour-ui/commit/e6dc71c92576381c08253c58aed99de797cd5fa2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Compare`, two layers of one frame with a seam the finger drags across — before and after, one screen in two themes, a redesign against the original. The front layer is revealed by a sliding mask rather than resized, so both halves stay in register; the handle is an `adjustable` with stepped assistive actions, snap points on release, haptics at stops and bounds, horizontal or vertical orientation, and a `grab` mode that leaves vertical scrolling to the list
+
+- [#190](https://github.com/delacournz/delacour-ui/pull/190) [`bcbaaea`](https://github.com/delacournz/delacour-ui/commit/bcbaaea43d31b30e8c9e67271eb844439962bc98) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Direction`, a per-subtree LTR/RTL wrapper with `useDirection` and `useDirectionSign`.
+
+  - `<Direction dir="rtl">` mirrors its subtree on the next frame — rows reverse, `start`/`end` insets swap — with no restart and no remount, and nests: an inner `<Direction dir="ltr">` holds a phone number's order inside an RTL card.
+  - Uniwind's `rtl:` and `ltr:` variants resolve against the nearest `Direction`, not the app.
+  - `useDirection()` and `useDirectionSign()` report the direction to gesture and `translateX` maths. Outside any `Direction` they fall back to `I18nManager.isRTL` rather than throwing.
+  - Worklet-safe helpers — `resolveDirection`, `directionSign`, `physicalSide`, `mirrorX`, `logicalDelta` — for code that runs on the UI thread.
+  - `delacour add direction` copies it into a project.
+
+- [#222](https://github.com/delacournz/delacour-ui/pull/222) [`e4e27d0`](https://github.com/delacournz/delacour-ui/commit/e4e27d07824d617912a37812d1bd0fed10aa0552) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add ImageViewer: a fullscreen gallery that opens from a thumbnail, with pinch, pan and double-tap zoom, swipe between images and drag-to-dismiss, plus the `media` / `media-foreground` colour tokens.
+
+- [#208](https://github.com/delacournz/delacour-ui/pull/208) [`720b3b8`](https://github.com/delacournz/delacour-ui/commit/720b3b81483e3a9846049454b096d9328a5e7501) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `MessageScroller`, a conversation list anchored at the newest message
+
+  It follows new messages while the reader is at the end and leaves them alone once they have
+  scrolled up, with a floating "jump to latest" button carrying an unread count. Older history loads
+  when the reader reaches the top, guarded to one request per page, and lands without moving the
+  viewport. The list rises with the keyboard, draws day separators and an unread divider, and passes
+  each message's place in its sender's run to `renderMessage`. `useMessageScrollerState` drives the
+  same behaviour on another list, such as `Screen.ChatList`.
+
+- [#218](https://github.com/delacournz/delacour-ui/pull/218) [`ff22d48`](https://github.com/delacournz/delacour-ui/commit/ff22d48e480cb1161d55f7397dc8ee3e56836401) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Message`, a chat bubble with incoming and outgoing sides, run-aware logical corners, an avatar gutter, author and timestamp, delivery receipts with retry, reactions, actions and a typing indicator — read by a screen reader as one composed label
+
+- [#205](https://github.com/delacournz/delacour-ui/pull/205) [`8732bb9`](https://github.com/delacournz/delacour-ui/commit/8732bb9ecc9c94dca439f4cbeca5e7f54b5926ed) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Pagination`, for moving through the pages of a result set. The `numbers` variant draws a
+  fixed-length run of page numbers and gaps, so the number under the reader's thumb never slides away
+  as the window moves; a gap never hides a single page, and tapping one jumps `pageJump` pages.
+  `compact` draws one "3 / 12" readout that VoiceOver swipes a page at a time, and `simple` the two
+  labelled arrows alone. `Pagination.Summary` and `Pagination.Status` ("41–60 of 472") sit at the
+  leading edge. A controlled `page` outside `[1, count]` is drawn clamped and reported once through
+  `onPageChange`. `sm` targets reach 44 points with hit slop. `delacour add pagination` copies it in.
+
+- [#200](https://github.com/delacournz/delacour-ui/pull/200) [`d612861`](https://github.com/delacournz/delacour-ui/commit/d6128617dd7b7cecb274f6811deb8ae5b8dda474) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Post`, a social card in four shapes — feed, vote, compact and media — with an author, a tokenised body with tags, mentions and links, a fixed-shape media frame with a scrim, stats whose glyph fills and whose count rolls, and a score pill; all counts and votes stay caller state
+
+- [#219](https://github.com/delacournz/delacour-ui/pull/219) [`698fd6f`](https://github.com/delacournz/delacour-ui/commit/698fd6f779fff9bb2464008a931913a669d13cf4) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `QRCode`: a string a camera can read, drawn as one `react-native-svg` path, with an optional
+  `QRCode.Logo` in the middle
+
+  The encoder is in-house and dependency-free — numeric, alphanumeric and UTF-8 byte modes, versions
+  1–40, levels L/M/Q/H — and is exported as `encodeQr` and `useQRCode` for custom renderers. Three
+  module styles (`square`, `rounded`, `dots`) keep the finders concentric; modules snap to whole device
+  pixels; a logo forces level H and grows the version until every block stays recoverable. The tile is
+  dark-on-light in both themes, and an inverted or low-contrast pair warns in development. The
+  registry now also skips `*.test-helpers.ts` and `*.fixtures.ts` alongside tests.
+
+- [#195](https://github.com/delacournz/delacour-ui/pull/195) [`b2719e6`](https://github.com/delacournz/delacour-ui/commit/b2719e63f7e8ae07ae24b14593ee999e4b740a02) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Questionnaire` — a guided form, one question at a time. Six question kinds (single and multiple choice with a free-text "Other", text, rating, a numbered scale and yes/no), conditional questions that drop their stale answers, Back that follows the questions actually visited, deliberate skips, a dimmed-not-disabled Next that explains a blocked answer, async submit, controlled answers and navigation, and bar, stepper or count progress. The flow's rules are exported as pure functions, so a server can re-validate a submission.
+
+- [#223](https://github.com/delacournz/delacour-ui/pull/223) [`82c569b`](https://github.com/delacournz/delacour-ui/commit/82c569b3d5557937e46a17cbb1b788fcc7c775ce) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `SectionProgress` — a floating pill over a long reading screen: a ring filling with scroll progress beside the title of the section being read, opening a card that lists every section.
+
+  - Reads `useScrollSections`: `scroll` drives the ring and the reveal, `value` takes `activeId`, `onValueChange` takes `scrollTo`. The ring runs on the UI thread, so scrolling renders nothing; a jump eases over 180ms.
+  - Six placements against the safe area, an `offset`, and a `revealAt` that latches once crossed. The panel grows out of the pill, scrolls past six rows, and closes on an outside tap, the escape gesture or Android back.
+  - `SectionProgress.Item` takes a `color` for its marker and for the ring while it is active. `progress` overrides the scroll; `isOpen` / `onOpenChange` control the panel; `haptic` plays on a section change.
+  - VoiceOver reads "Sections, Pricing, 42 percent"; opening moves focus to the active section. Reduce motion turns the panel's scale into a fade.
+  - `delacour add section-progress` copies it into a project, with `use-scroll-sections`.
+
+- [#214](https://github.com/delacournz/delacour-ui/pull/214) [`d370d83`](https://github.com/delacournz/delacour-ui/commit/d370d83b91d231f6a6bfa8c8d709b5e6cf6943b3) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `SectionRail` — a thin rail of bars along a screen edge, one per section of a long screen, that opens into a labelled outline.
+
+  - `SectionRail.Trigger` holds one `SectionRail.Bar` per section and `SectionRail.Content` one `SectionRail.Item` per row; `level` shortens a bar and indents its row by the same step. The active bar's colour eases in, and the active row is drawn in the foreground.
+  - Tap the rail to open the outline, or scrub: drag along it and the row under the finger highlights — mapped on the UI thread, with an optional `haptic` tick per section crossed — and releasing jumps there. A pick lingers for `closeDelay` before closing; an outside tap or Android's back closes it.
+  - `placement` (`end`, `start`) and `align` (`center`, `bottom`) are logical and mirror in right-to-left; the rail clears the safe area by `offset`. It fills its container and passes every other touch through, so the content under it keeps scrolling.
+  - Pairs with `useScrollSections`: `value={sections.activeId}` and `onValueChange={sections.scrollTo}`. `value={undefined}` stays controlled, so a hook's empty first value does not flip modes.
+  - One `adjustable` element to VoiceOver, named "Sections" and valued by the active title; swiping steps through the sections and focus lands on the active row when the outline opens.
+  - `delacour add section-rail` copies it into a project, along with `use-scroll-sections`. The registry builder now reads a `registryDependencies` list from `ITEM_META` for edges no import records.
+
+- [#221](https://github.com/delacournz/delacour-ui/pull/221) [`44a5182`](https://github.com/delacournz/delacour-ui/commit/44a5182c4cd2c84a9c2a0c5d150fe126b849a9af) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Sortable` — a vertical list the user reorders by dragging.
+
+  - Rows move by transform on the UI thread, so a drag renders nothing; `onReorder(order, { id, from, to })` fires once, after the row lands, and the transforms clear in the commit that renders the new order.
+  - `activation="handle"` drags from `Sortable.Handle`; `"long-press"` lifts the whole row after `longPressDelay`. A row changes slot when its edge crosses the next row's midpoint, at any heights.
+  - `isPinned` rows never move and the others reorder around them; `isDisabled` rows cannot be lifted.
+  - `scrollRef` auto-scrolls the enclosing scroller near its edges. `haptic` plays one feedback on lift and one per slot passed.
+  - Screen readers get Move up / Move down actions and "Position 2 of 5", with the new position announced.
+  - `reorderItems` and `useSortableItem` are exported. `delacour add sortable` copies it into a project.
+
+- [#179](https://github.com/delacournz/delacour-ui/pull/179) [`a566fa1`](https://github.com/delacournz/delacour-ui/commit/a566fa1dde77e74598a4680c7861336135e24c43) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `SplitView`, two stacked panes with a drag row that settles on named snap points.
+
+- [#177](https://github.com/delacournz/delacour-ui/pull/177) [`c7c5930`](https://github.com/delacournz/delacour-ui/commit/c7c59302bf1363236644a4ff074ee704af277928) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Splitter`, resizable panes divided by draggable, adjustable handles, sized in percent.
+
+- [#198](https://github.com/delacournz/delacour-ui/pull/198) [`424b075`](https://github.com/delacournz/delacour-ui/commit/424b0756212fe7b8e08c7ffa8a60ce5de457eded) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `TagInput` — free-form tags typed into one field box, each a removable chip
+
+  Return or a delimiter commits the text as a chip and keeps the keyboard up; a paste holding
+  delimiters lands as several tags. Duplicates, a `max` and a `validate` hook refuse tags through
+  `onReject` with a reason, and `allowOverflow` accepts past `max` while marking the field invalid.
+  Backspace on an empty field arms the last chip, and a second removes it. The box is `Input`'s, it
+  joins an enclosing `Field`, and tags and draft are each controlled or uncontrolled.
+
+- [#220](https://github.com/delacournz/delacour-ui/pull/220) [`b34c88f`](https://github.com/delacournz/delacour-ui/commit/b34c88f04f23e1a928df4521e0b38265e583571d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `TextAnimation` — five ways a piece of text or a number arrives, on one clock.
+
+  The root reveals a string by word, character or line with a fade, slide or scale, staggered
+  forward, in reverse, from the centre or in a seeded random order. `TextAnimation.Typing` types a
+  phrase or cycles several with a bar or block caret, `TextAnimation.Rotating` swaps one word in
+  place inside a sentence, `TextAnimation.Counting` tweens a formatted number on the UI thread, and
+  `TextAnimation.Rolling` rolls an odometer whose wheels take the short way round. Nothing reflows
+  while it plays, a screen reader hears the final text once, and under reduce motion every part shows
+  its final text on the first frame.
+
+- [#212](https://github.com/delacournz/delacour-ui/pull/212) [`b431d88`](https://github.com/delacournz/delacour-ui/commit/b431d88799fe32e1c43894a6ed75d9a96812a3fc) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Tour` — a guided walkthrough: the screen dims, a hole opens around one control, and a card beside it explains it.
+
+  - Wrap each control in a `Tour.Step` with an `order` and a `title`; the tour sorts the steps, measures the current one in window coordinates and re-measures on rotation. `onStepChange` fires first, so a target can be scrolled into view.
+  - The hole is an SVG cutout, `rect` or `circle`, that glides between targets on the UI thread and jumps under reduce motion. `shape`, `padding`, `radius` and `placement` are set on the tour and overridden per step.
+  - The card sits below the hole when it fits and above otherwise, centred and clamped to the safe area. Next, Back, Skip and Done, a "2 of 5" progress, and every label replaceable.
+  - A React Native `Modal` by default; `isInteractive` draws inside the tour's root and passes touches inside the hole through to the control.
+  - Open with `defaultOpen`, the `isOpen` triple or `useTour().start()`. `onFinish` and `onSkip` are where an app records that the tour was seen.
+  - Focus moves to the card on each step; VoiceOver's escape and Android back skip when dismissible.
+  - `delacour add tour` copies it into a project.
+
+- [#207](https://github.com/delacournz/delacour-ui/pull/207) [`a1079b2`](https://github.com/delacournz/delacour-ui/commit/a1079b25597b5439945b60ac5950da8c20d39fc7) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Tree` — a hierarchy opened one level at a time, with branches that expand and collapse and
+  optional single or multiple selection. Depth comes from context, closed groups unmount, and
+  `hasChildren` marks a lazy branch before its children load.
+
+- [#183](https://github.com/delacournz/delacour-ui/pull/183) [`4cc10e3`](https://github.com/delacournz/delacour-ui/commit/4cc10e3aab8c323dd5330a244f0b421e4764eb25) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add AnimatedBadge, a status pill that rolls its content and springs its width when the status changes.
+
+- [#192](https://github.com/delacournz/delacour-ui/pull/192) [`2d0b288`](https://github.com/delacournz/delacour-ui/commit/2d0b28807cb919be250eccbb70ad024d5a0a7049) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Attachment` — a file, image, video or recording with a thumbnail, size, upload state and remove
+
+  `AttachmentMedia` is discriminated by `kind`, so an image without a `source` is a type error. Three
+  layouts — `chip` for a composer, `tile` for a photo tray, `card` for inside a message — at three
+  sizes. Upload stays the app's: `status` is `idle`, `uploading` (determinate or looping), `error`
+  with the app's message, or `done`, and `onRemove` / `onRetry` compose their controls in beside the
+  press target so a remove tap never opens the attachment. A screen reader meets one element with a
+  composed label, progress in ten-point steps and remove / retry as actions. `Attachment.Group` is a
+  horizontal tray that fades attachments in and out and slides the rest along, stilled under calm
+  motion. `delacour add attachment` installs it.
+
+- [#175](https://github.com/delacournz/delacour-ui/pull/175) [`0a4b432`](https://github.com/delacournz/delacour-ui/commit/0a4b432644ec8a8b59c83fb6b7d7ab6bbcfe9304) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Combobox` — a long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet.
+
+  - The sheet opens with its search field focused once it has settled. The default filter matches the label and `keywords` case- and accent-insensitively; `filter={{ kind: "custom", match }}` takes a predicate and `{ kind: "none" }` shows the options as given, for a server. The matched run of each label is bold, through accents.
+  - Single selection by default, where a pick closes the sheet; `selectionMode="multiple"` keeps it open and shows removable chips on the trigger (folding into `+N`) and above the search field, with a two-step Backspace remove. `value` and `onValueChange` are typed per mode; `maxSelected` disables the rest once reached.
+  - The query is controlled separately with `inputValue` and `onInputValueChange`, which reports `type`, `select`, `clear` or `close`. A picked option stays on the trigger after a server's results move on. `allowCustomValue` offers the typed text as a value.
+  - Built from Select's leaves — the same trigger box and option rows — and joins `Field` the same way. `isClearable`, `isReadOnly`, `isLoading`, `Combobox.Empty` and a replaceable `Combobox.Trigger` cover the rest; the result count is announced to screen readers.
+  - Needs `@delacour/react-native-bottom-sheet` and `BottomSheetProvider`. `delacour add combobox` copies it into a project, along with `select`, `chip` and `bottom-sheet`.
+
+- [#174](https://github.com/delacournz/delacour-ui/pull/174) [`7557b64`](https://github.com/delacournz/delacour-ui/commit/7557b64dbff0e9a869faee8d66e9b181af48c95e) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Countdown`, the time left until a fixed moment, read from the wall clock on every tick
+
+  It reads the clock rather than decrementing a counter, so it is right after the app was backgrounded or the
+  device slept, and it re-reads on returning to the foreground. Seconds round up — the final second shows `0:01`
+  and `onComplete` fires once at zero, re-arming when `to` moves into the future. `units` picks which units show,
+  the largest absorbing everything above it; `trim` drops leading zero units. `variant` is `segmented` — boxed
+  digits that slide per changed digit, with captions from `labels` — or `inline`, one tabular run. `urgentBelow`
+  turns the digits destructive. The `timer` label is coarse and names seconds only in the final minute.
+  `bunx delacour add countdown` copies it into a project.
+
+- [#172](https://github.com/delacournz/delacour-ui/pull/172) [`7bc6b74`](https://github.com/delacournz/delacour-ui/commit/7bc6b741931907a0bfd651c8a9e517165d8ee234) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `DatePicker`, a field-shaped trigger that shows a date (`mode="single"`), a range (`"range"`) or several (`"multiple"`) and opens a `Calendar` in a bottom sheet to change it. The sheet closes when the pick is finished — on a day, on a range's second end, or on Done for several — and a half-picked range is held inside the sheet rather than reported. The trigger is the `Input` box at every `size` and `variant`; its text is formatted from the value through the calendar's `Intl` formatters, with `format` and `formatRange` overrides and a long-form screen-reader value. `minDate`/`maxDate`/`disabledDates`, `locale` and week start pass to the calendar; `isOpen`/`onOpenChange` and the value work controlled or uncontrolled; Clear, read-only, `presentation="inline"`, and `isInvalid`/`isDisabled`/label/label-tap from a `Field`. Needs `BottomSheetProvider`. `bunx delacour add date-picker` copies it.
+
+- [#199](https://github.com/delacournz/delacour-ui/pull/199) [`0a6db15`](https://github.com/delacournz/delacour-ui/commit/0a6db15d372408b2c3e149b9cb550fd96bb7a177) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `DateTimePicker`, one field for a date and a time of day picked together: an `Input`-shaped trigger that opens a `Calendar` and `TimePicker`'s wheel in one bottom sheet with one Done, or draws them in place with `presentation="inline"`. The value is a whole `{ date, time }` or `null`, never half — a day picked first takes the time from the clock, rounded up onto `minuteStep`; a time picked first lands on today or the nearest allowed day — and every pick and settle reports it, so Done only closes and announces. `layout="tabs"` (default) puts Date and Time behind tabs and moves to Time once after the first date pick; `layout="stacked"` draws the calendar over a time row that opens the wheel. `minDateTime`/`maxDateTime` are one window that bounds the calendar to its days and the wheel to its times on those days only, re-clamping the time when the date moves; plus `disabledDates`, `hourCycle`, `showSeconds`, `locale`, a custom `format`, `isClearable`, controlled or uncontrolled value and open state, and the `Field` cascade. The subpath exports the pure `DateTimeValue` helpers — `toNativeDate`/`fromNativeDate`, `formatDateTime`, `serialiseDateTime`/`parseDateTime`, `clampDateTime`, `timeBoundsForDate` and more. Needs `BottomSheetProvider`. `bunx delacour add date-time-picker` copies it.
+
+- [#226](https://github.com/delacournz/delacour-ui/pull/226) [`c6f3e76`](https://github.com/delacournz/delacour-ui/commit/c6f3e76b1f0a421d09107793dea1acfcb3c18361) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Move to Expo SDK 58: React Native 0.88, React 19.3, Gesture Handler 3
+
+  The peer floors are now `react-native >=0.88` and `react-native-gesture-handler >=3.3`. React Native
+  0.88 types its components through the strict API by default, so every ref is typed as the host
+  instance it receives — `ViewInstance`, `TextInputInstance`, `ScrollViewInstance` — rather than as
+  the component, and `ScreenScrollViewRef` is now `ScrollViewInstance`. Those types do not exist
+  before 0.88. The sheet's and the drawer's pans keep the builder API under Gesture Handler 3's
+  `LegacyPanGesture` type. The CLI's
+  `verify:expo` scaffolds against SDK 58.
+
+- [#170](https://github.com/delacournz/delacour-ui/pull/170) [`aa15324`](https://github.com/delacournz/delacour-ui/commit/aa15324729cd5d769cf50266e4b29cdea20b2726) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `FlipCard` — two faces of one card and a turn between them
+
+  `FlipCard.Front` sits in flow and sizes the card, `FlipCard.Back` fills it, and `FlipCard.Trigger`
+  turns it under every trigger. `trigger` is a discriminated union: `"press"` (a tap anywhere),
+  `"swipe"` (a drag that scrubs the turn, rubber-bands past either rest and settles on the nearer face
+  or the way it was flicked; `swipeDistance` exists only here) and `"manual"` (only `face`, the ref's
+  `flip()` / `flipTo()` or a trigger). The face is state and the rotation follows it: the hidden face
+  leaves the accessibility tree and stops taking touches the moment a turn is committed, which face is
+  drawn is decided by the angle rather than `backfaceVisibility`, the settled face is announced, and a
+  gesture card always offers an `activate` action. Under reduce motion or `isMotionCalm` the faces
+  crossfade instead of turning. `delacour add flip-card` installs it.
+
+- [#173](https://github.com/delacournz/delacour-ui/pull/173) [`f1d5ff8`](https://github.com/delacournz/delacour-ui/commit/f1d5ff85feb381f3b15901f7ced7ea175c30e94c) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Flow`, a pan-and-zoom canvas of nodes joined by edges that route themselves — handles, groups, drag-to-connect, controls, a minimap and assistive move/connect/delete actions, all reporting to an app that owns the graph.
+
+- [#202](https://github.com/delacournz/delacour-ui/pull/202) [`ccdc785`](https://github.com/delacournz/delacour-ui/commit/ccdc785ff27b161d1c368f20edc50ffa4e8b8b88) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add Frame, a titled shell with a header action, a divided tray of rows, labelled sections and a footer.
+
+- [#189](https://github.com/delacournz/delacour-ui/pull/189) [`9319bf3`](https://github.com/delacournz/delacour-ui/commit/9319bf3caadc88d56726dea8367cbc3d685cb087) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `GridItem` and `GridItem.Group`, a bento tile grid with whole-cell spans
+
+  `GridItem.Group` measures its width, sizes a cell from `columns`, `gap` and `aspect` or `rowHeight`, and
+  places each direct child first-fit in writing order from its `colSpan` and `rowSpan`, on pixel-snapped edges
+  and the logical `start` inset. It reserves its height before the first measure, so nothing jumps, and glides
+  tiles to new cells on a relayout unless reduce motion is on. `GridItem` takes four variants and two sizes,
+  renders a `Pressable` only when it has a press handler, and announces itself as one stop labelled from its
+  title, value and description. Parts: `Background`, `Media`, `Title`, `Value`, `Description`, `Footer` and
+  `Actions`; `useGridItem()` and `useGridItemGroup()` expose the tile's box and the group's cell size, and
+  `bunx delacour add grid-item` copies it into a project.
+
+- [#186](https://github.com/delacournz/delacour-ui/pull/186) [`3b9e383`](https://github.com/delacournz/delacour-ui/commit/3b9e38394fae796a20cda65a002ebe5e221cd560) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Input.Group.Button`, `Input.Group.Separator` and `Input.Group.Block`, decorative decorators, and `Textarea` inside a group
+
+  - `Input.Group.Prefix` / `.Suffix` take `isDecorative`, which hides them from screen readers and lets
+    touches through to the field. It defaults to true when every child is bare text or an `Icon`.
+  - `Input.Group.Button` is a `Button` sized one step below the box (square when icon-only), disabled
+    with the group without fading twice, and warns in development when icon-only with no label.
+  - `Input.Group.Separator` draws a hairline whose direction comes from where it is written: vertical
+    in the row, horizontal between a block and the row.
+  - `Input.Group.Block` adds a full-width section above (`position="start"`) or below (`"end"`) the
+    field inside the same border and focus ring. The group always renders an inner row, so adding a
+    block never remounts the field.
+  - `Textarea` reads the group's context and drops its own box, so a message composer is one box.
+
+- [#176](https://github.com/delacournz/delacour-ui/pull/176) [`4b21258`](https://github.com/delacournz/delacour-ui/commit/4b21258b4ef10ff944c9d687160ed25cf3a54023) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Leaderboard`: ranked people or teams with standard competition ties, the top three on a podium of growing bars or lifted cards, a movement column, and the highlighted entry pinned below the `limit` cut with its true rank.
+
+  Its podium and rows read entries in any order and rank them stably, `order="asc"` for times; `unit` is spoken after every value. `bunx delacour add leaderboard` copies it into a project.
+
+- [#191](https://github.com/delacournz/delacour-ui/pull/191) [`500a0c0`](https://github.com/delacournz/delacour-ui/commit/500a0c07e967278d443ef57b55ce6611064877de) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `MarkdownEditor`, a Markdown field with a formatting toolbar, a monospaced write pane and a rendered preview
+
+  The toolbar wraps a selection or inserts markers at the caret, toggles a format off when pressed
+  again, applies headings, quotes and lists to every touched line, and lights from the caret. Return
+  continues a list. The preview draws the toolbar's subset on the `Text` presets and opens a link only
+  for http, https, mailto and tel. It joins `Field` like `Input`, comes in a `bar` or `pill` toolbar,
+  and ships `applyMarkdownCommand`, `continueMarkdownList` and `parseMarkdown` as plain functions. The
+  CLI adds it with `delacour add markdown-editor`.
+
+- [#188](https://github.com/delacournz/delacour-ui/pull/188) [`402ffc7`](https://github.com/delacournz/delacour-ui/commit/402ffc75452df2f3cb5e0b8ca1e2a522fa8b2a66) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Marker`, a centred inline note for steps and day breaks between conversation turns
+
+  It comes as a bare `default` row, a hairline `border` capsule, or a `separator` label ruled to both edges. With no handler it is a plain view read as text; give it `onPress` or `onLongPress` and it becomes a pressable announced as a button. `Marker.Content shimmer` breathes the text on the UI thread while a step runs and announces the marker busy, stilled under reduce motion. `bunx delacour add marker` copies it in.
+
+- [#196](https://github.com/delacournz/delacour-ui/pull/196) [`9f3e5ab`](https://github.com/delacournz/delacour-ui/commit/9f3e5abd8a7544205cae6152ceb6877390aa3df1) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Marquee`: content that travels across its container on a loop at a speed in points per second — horizontal or vertical, edge fades, held on touch, `Marquee.Group` to keep rows in step, and a still, hand-scrollable strip under reduce motion.
+
+- [#203](https://github.com/delacournz/delacour-ui/pull/203) [`136bf8c`](https://github.com/delacournz/delacour-ui/commit/136bf8cc5b9ba231bf774c9ea91f2789dcb71106) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Support`: the chrome around a help conversation — availability, channels, topics, past requests, articles, and a thread's agent, ticket, handoff, suggested replies, note and resolution.
+
+- [#184](https://github.com/delacournz/delacour-ui/pull/184) [`ebb7ed7`](https://github.com/delacournz/delacour-ui/commit/ebb7ed7947478725ed7100e1a2ce5e0334a439e4) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `NumberInput` — a number between a minus and a plus
+
+  Tap a stepper to move by `step`, hold it to repeat after 400ms and accelerate, or type: while
+  focused the field takes half-typed text (`""`, `"-"`, `"1."`) and commits on blur or submit, so it
+  never fights the person typing. Every path goes through one reconcile — snapped to the step, held
+  inside `[min, max]`, rounded to the step's precision — and `onValueChange` fires only on a committed
+  change. The box is `Input.Group`'s, so it takes `Input`'s variants and sizes and an enclosing
+  `Field`'s label, invalid and disabled state. `formatOptions` formats the value at rest through
+  `Intl`; `commitMode="validate"` keeps an out-of-range number and flags it instead of clamping. The
+  field is `adjustable` with increment and decrement actions for VoiceOver and TalkBack. The parse,
+  format and step maths are exported as pure helpers. `bunx delacour add number-input` installs it.
+
+- [#215](https://github.com/delacournz/delacour-ui/pull/215) [`79c4a7c`](https://github.com/delacournz/delacour-ui/commit/79c4a7c29cfd755385efea754dff51bd89f9dcde) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `OtpInput`, a one-time code or PIN drawn as a row of cells over one hidden `TextInput`, so the number pad, a paste, iOS's QuickType code from Messages and Android's SMS autofill all fill every cell at once. Every change is sanitised to `pattern` (`digits`, `alphanumeric`, `alphabetic` or a one-character `RegExp`) and cut to `length`; `onComplete` fires once per transition to a full code with a `success` haptic. `groupSize` draws separators between groups, or write the anatomy out with `OtpInput.Group`, `OtpInput.Slot` and `OtpInput.Separator`. `isMasked` draws dots without switching off autofill, the caret holds still under reduce motion, the row is one accessible element, and `isInvalid` / `isDisabled` cascade from a `Field`. `bunx delacour add otp-input` copies it.
+
+- [#217](https://github.com/delacournz/delacour-ui/pull/217) [`6e86b00`](https://github.com/delacournz/delacour-ui/commit/6e86b00e2ac781b6781bef66600fb89f384c69d2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add PageHeader: the head of a profile or place screen — a cover that reaches under the status bar, an avatar lifted over its edge, a title block, actions and a strip of stats that compacts on screen and reads in full. Add a `2xl` (96pt) Avatar size.
+
+- [#178](https://github.com/delacournz/delacour-ui/pull/178) [`fdfe40e`](https://github.com/delacournz/delacour-ui/commit/fdfe40e864845850929f5257e1204a021b8cb213) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Planner`: a month of days, each showing what falls on it — category dots and icons, tinted tiles or named blocks — with swipe paging, a virtualised week scroller, a legend with counts and a bottom sheet of the selected day.
+
+- [#194](https://github.com/delacournz/delacour-ui/pull/194) [`9679152`](https://github.com/delacournz/delacour-ui/commit/9679152ab9485be24d46a88ebb8334ab5fb6e0d5) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ScrollBlur` — a progressive blur at a scrollable's edges that keeps floating controls legible over any background, falling back to a gradient wash with no engine or with Reduce Transparency on. Ships with `ScrollBlurLayerProvider`, the `expo/blur-layer` engine (`ExpoBlurLayer`, behind the new optional peer `expo-blur`), `useReduceTransparency` and `withAlpha` in `lib/color`. The CLI gains `scroll-blur`, `blur-layer` and `use-reduce-transparency` registry items, and classifies `expo-blur` as an `expo install` package.
+
+- [#209](https://github.com/delacournz/delacour-ui/pull/209) [`2a4dd77`](https://github.com/delacournz/delacour-ui/commit/2a4dd77c8e21cf6618de905847bddd0188c635da) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ScrollCanvas`, an image in a still frame that moves as the page scrolls — `parallax`, `zoom`, `reveal`, or a `sequence` of frames scrubbed by the scroll. It follows a `Screen` with no wiring or a `useScrollSource` source at any depth, takes a `progress` shared value to drive it directly, and draws each effect's resting state under Reduce Motion.
+
+- [#213](https://github.com/delacournz/delacour-ui/pull/213) [`41e2238`](https://github.com/delacournz/delacour-ui/commit/41e2238cac88b0fd313485036b95e735bfed7b55) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ScrollFade`, a gradient at a scrollable's edges while content runs past them
+
+  `@delacour/react-native-ui/scroll-fade` overlays any scrollable — a card row, a list in a `Card`, a
+  sheet body — and fades its start and end edges only while there is content past them, on either
+  axis. It reads a `ScrollSource` from `useScrollSource`, or needs no wiring at all inside a `Screen`.
+  The fade is a colour, so name the surface with `color`; `edges`, `size`, `fadeInDistance` and
+  `insetStart` / `insetEnd` tune it. The CLI registry gains the `scroll-fade` item.
+
+- [#201](https://github.com/delacournz/delacour-ui/pull/201) [`9b5a518`](https://github.com/delacournz/delacour-ui/commit/9b5a518d982b7441d49e62e3646e68d01ec9764a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add ScrollHeader, a collapsing large title with a pinned bar, cover and snap.
+
+- [#210](https://github.com/delacournz/delacour-ui/pull/210) [`875e78c`](https://github.com/delacournz/delacour-ui/commit/875e78ca24928d7eb6b0b1ed48266ac5251790fd) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ScrollText`, text that resolves unit by unit as the screen scrolls past it. Four effects —
+  `colour`, `fade`, `rise` and `highlight` — over a `word`, `character` (by grapheme) or `line` split,
+  staggered by `overlap` inside a viewport `window`. Progress comes from the enclosing `Screen`, from
+  any scroll view's offset (read against its own bounds with `viewport`), or from a shared value
+  already in 0..1. Every frame runs on the UI thread and writes only opacity, transform and colour;
+  un-revealed text never drops below a legible floor, reduce motion and `isMotionCalm` show it fully
+  revealed, and the block reads as one accessibility element with the whole string.
+  `delacour add scroll-text` copies it in.
+
+- [#197](https://github.com/delacournz/delacour-ui/pull/197) [`7c96aa8`](https://github.com/delacournz/delacour-ui/commit/7c96aa8a10d0f41a184595fc086378aa95fdf952) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `SearchBar`, the query field at the top of a list, on `Input.Group` with no chrome of its own. A clear button that keeps focus and the keyboard, a Cancel action shown never, on focus or always that empties the text and dismisses the keyboard, `debounce` with `onDebouncedChange` (flushed by the search key, immediate on clear), `isLoading` swapping clear for a spinner, and `tokens` drawn as removable chips with Backspace removing the last. `pill` and `rounded` shapes over `Input`'s variants and sizes, and it joins an enclosing `Field`. `delacour add search-bar` copies it.
+
+- [#171](https://github.com/delacournz/delacour-ui/pull/171) [`176847d`](https://github.com/delacournz/delacour-ui/commit/176847dbcb8dd8840b662aec2b84bc16ab14e08d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Select` — a closed set of choices behind a field-shaped trigger, picked from a bottom sheet.
+
+  - Single selection by default, where a pick closes the sheet; `selectionMode="multiple"` keeps it open, draws a box on each row and closes from a Done footer. `value` and `onValueChange` are typed per mode — a string or `null`, or an array — and `maxSelected` disables the remaining rows once reached.
+  - Options come as data through `options`, or as `Select.Item` and `Select.Group` children, and both are drawn from one normalised, virtualised list. `isSearchable` adds a search field that matches case- and accent-insensitively, hides groups it empties and clears on close.
+  - The trigger is `Input`'s own box at every variant and size. Inside a `Field` the select takes its invalid and disabled state, reads `Field.Label` as its accessible name and sheet title, and opens when the label is tapped. `isReadOnly`, `isLoading`, `renderValue` and a replaceable `Select.Trigger` cover the rest.
+  - Rows are radios in single mode and checkboxes in multiple to a screen reader; group headings are headers. `SelectOptionRow` is exported as the leaf a later picker reuses.
+  - Needs `@delacour/react-native-bottom-sheet` and `BottomSheetProvider`. `delacour add select` copies it into a project, along with `bottom-sheet`.
+
+- [#187](https://github.com/delacournz/delacour-ui/pull/187) [`44edcd7`](https://github.com/delacournz/delacour-ui/commit/44edcd73a58cad7a15d5236d64da2137a9d0935e) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Signature`, a pad to sign with a finger or a stylus. Strokes are drawn on the UI thread and smoothed into ink, a tap leaves a dot, and React renders once per stroke rather than per move. `Signature.Undo`, `.Redo` and `.Clear` disable themselves when they would do nothing, and `onRequestAlternative` adds a "Can't sign? Type your name" link for anyone who cannot draw. The value is plain JSON that re-fits a pad of another size; the ref adds `toSVG()` and `toPaths()`. Four sizes, two variants, read-only and disabled states, and `isInvalid` / `isDisabled` cascade from a `Field`. `bunx delacour add signature` copies it.
+
+- [#204](https://github.com/delacournz/delacour-ui/pull/204) [`5157898`](https://github.com/delacournz/delacour-ui/commit/515789859513ea24a0ecfea5e85df0705d639ad3) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add Sketch: a drawing surface with pen, shapes, eraser, colours, size and undo, drawn with Skia and exported as SVG or PNG. Needs `@shopify/react-native-skia`, now an optional peer.
+
+- [#181](https://github.com/delacournz/delacour-ui/pull/181) [`6ac8e95`](https://github.com/delacournz/delacour-ui/commit/6ac8e95f8c8962acb866c7fdd102b85d268a710b) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Table`, rows and columns of short values lined up by one set of column rules
+
+  `columns` on the table declares each column once — `{ flex }` or `{ width }`, with an `align` — and every row's
+  Nth cell reads the Nth rule, so a header, the body and a footer line up without a width on any cell. Bare text is
+  set in tabular figures. `Table.Head` takes `sort` to become a button that draws and announces its direction while
+  the caller owns the order; `Table.Row` takes `onPress` and `isSelected` to become one selectable button named by its
+  cells, and each cell announces its column's heading. `size`, `variant="outline"` and `striped` set density and
+  chrome; `minWidth` scrolls a wide table sideways with edge fades that dissolve into the surface behind it; rows
+  render from a `FlatList` with `index` and `isLast`; `Table.Empty` keeps the header; `Table.Frame` puts the table in a
+  card under a title and an action. `bunx delacour add table` copies it into a project.
+
+- [#185](https://github.com/delacournz/delacour-ui/pull/185) [`9dccb2f`](https://github.com/delacournz/delacour-ui/commit/9dccb2f9b10414d328e21298d36aaa7376646db2) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `ThemeSelector`, a System, Light or Dark choice read from the live Uniwind theme and applied to
+  it. System is selected while the app follows the device, so a theme changed anywhere else
+  re-selects it. `segmented` joins the options into one attached run; `cards` stands them apart as
+  tiles. `applyTheme={false}` with `value` turns it into a presentation layer so the app can persist
+  the preference itself — there is no storage dependency — and `restoreThemeMode` validates a stored
+  string before it reaches `Uniwind.setTheme`. `useThemeSelection` reads and sets the mode with no
+  selector mounted. `delacour add theme-selector` copies it, with `toggle-button`, `icon` and `field`
+  as registry dependencies.
+
+- [#193](https://github.com/delacournz/delacour-ui/pull/193) [`5af1ed2`](https://github.com/delacournz/delacour-ui/commit/5af1ed2b51f073ba867c362cfa3113b8d2442d7e) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `TimePicker`, a time of day on snapping wheels — hour, minute, optional second and, on a 12-hour clock, AM/PM. It presents as an `Input`-shaped trigger that opens a `BottomSheet`, or inline with `presentation="inline"`. The value is always a 24-hour `TimeValue`; `hourCycle` and `locale` change only how it reads. It takes `minuteStep`, `minTime`/`maxTime` (out-of-bounds rows dim and a wheel resting on one moves back), `showSeconds`, `visibleRows`, a custom `format`, `clearable`, controlled or uncontrolled value and open state, and joins an enclosing `Field`. Parts are `TimePicker.Trigger`, `.Value`, `.Icon`, `.Content`, `.Wheel`, `.Done` and `.Clear`; `TimePickerWheel` renders the bare wheel on its own, and the subpath exports the pure time helpers (`parseTime`, `serialiseTime`, `formatTime`, `snapTime`, `clampTime` and more). Each wheel column is one adjustable element to screen readers. The subpath imports the sheet engine, so it needs `@delacour/react-native-bottom-sheet` installed. The CLI can now `add time-picker`.
+
+- [#180](https://github.com/delacournz/delacour-ui/pull/180) [`8fad439`](https://github.com/delacournz/delacour-ui/commit/8fad4399d219694825896b77422d5ceab326aca0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Add `Timeline`, a sequence of dated events down a rail or across a snapping strip
+
+  `Timeline` lays out an order's history, a project's milestones or a match's key moments: each `Timeline.Item` is a
+  marker on a rail with a title, a date, a description and optional side columns. One zero-based `value` says how far
+  along the sequence is — events before it completed, at it current, after it upcoming — and the rail fills off that
+  value alone, so it is never half drawn between two events. `tone` says what kind an event is (`info`, `success`,
+  `warning`, `destructive`) and tints its marker whatever its progress. Five variants (`dot`, `icon`, `numbered`, `card`,
+  `compact`) and two sizes. Horizontally it is a swipeable strip of columns that can snap, fires `onColumnChange` and a
+  selection haptic as each column reaches the reading edge, and collapses an empty column to a tick. `Timeline.List`
+  virtualises a long history over a `FlatList` and supplies each item's position itself. `Timeline.Masthead` and
+  `Timeline.Stats` head the sequence. Each event is one VoiceOver stop, read as "Event 2 of 6, completed, success".
+
+  `bunx delacour add timeline` copies it into your project.
+
+### Patch Changes
+
+- [#233](https://github.com/delacournz/delacour-ui/pull/233) [`4ed1b06`](https://github.com/delacournz/delacour-ui/commit/4ed1b063d76644a21febf620ff3d1609d6e2fd6b) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Fix `Item` and `ListGroup.Item` throwing with `asChild` and one child. Their text wrapping always returned an array, and `Pressable`'s `asChild` path calls `Children.only`, which rejects an array of one — so `<Item asChild onPress={…}><View /></Item>` threw. A single child now passes through as itself.
+
+- [#234](https://github.com/delacournz/delacour-ui/pull/234) [`6ca108f`](https://github.com/delacournz/delacour-ui/commit/6ca108fb7e4566b8cf299228e76dd56f2b508521) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `ListGroup.Item` renders a plain view when it has neither `onPress` nor `onLongPress`, so a static row is no longer announced as a button and runs no press feedback. Rows with a handler keep button semantics, disabled ones included.
+
+- [#235](https://github.com/delacournz/delacour-ui/pull/235) [`b1cc1bc`](https://github.com/delacournz/delacour-ui/commit/b1cc1bc0307d3db3b59e9085ba000a9ea594dda9) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `Pressable` wires screen-reader activation to `onPress` behind the same `disabled` / `busy` guard as the tap: `onAccessibilityTap` on iOS, so a VoiceOver double-tap no longer relies on UIKit synthesising a touch, and an `activate` action on Android, where a TalkBack double-tap previously fell through to a click with no listener. A caller that lists `activate` itself still owns it, and a caller's other actions are merged in. Every control built on `Pressable` — `Button`, `ListGroup.Item`, back and close buttons — inherits it.
+
+- [#232](https://github.com/delacournz/delacour-ui/pull/232) [`266f5bf`](https://github.com/delacournz/delacour-ui/commit/266f5bffa062c688483e8198d8faafebdf5ea726) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Screen scrollables compose a caller's `onScroll` with their own scroll tracking. `Screen.FlatList`, `SectionList` and `LegendList` used to drop it; `Screen.ScrollArea` let it replace the tracking, freezing `ScrollShadow` and the navbar border. A plain callback and a `useAnimatedScrollHandler` result are both accepted.
+- Updated dependencies [[`c6f3e76`](https://github.com/delacournz/delacour-ui/commit/c6f3e76b1f0a421d09107793dea1acfcb3c18361)]:
+  - @delacour/react-native-bottom-sheet@0.2.0
+
 ## 0.3.0
 
 ### Minor Changes

@@ -17,6 +17,7 @@ import {
 	IconChevronGrabberVertical,
 	IconCircleInfo,
 	IconCircleRecord,
+	IconConnectors1,
 	IconCursorClick,
 	IconDivider,
 	IconDotGrid1x3Horizontal,
@@ -115,6 +116,7 @@ export const COMPONENT_ICONS: Record<ComponentSlug, IconComponent> = {
 	tooltip: IconCircleInfo,
 	toast: IconBell,
 	countdown: IconHourglass,
+	flow: IconConnectors1,
 };
 
 /** One glyph per docs group, for the rows on `/components`. Keyed by name so a new group without one is a type error. */

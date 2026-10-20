@@ -10557,7 +10557,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 76,
+		fileCount: 77,
 		groups: [
 			{
 				name: "scroll-text",
@@ -10647,6 +10647,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-handler.ts", target: "src/components/ui/screen/screen-scroll-handler.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-source.tsx", target: "src/components/ui/screen/screen-scroll-source.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
@@ -15872,7 +15873,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 67,
+		fileCount: 68,
 		groups: [
 			{
 				name: "screen",
@@ -15899,6 +15900,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-handler.ts", target: "src/components/ui/screen/screen-scroll-handler.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-source.tsx", target: "src/components/ui/screen/screen-scroll-source.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },
@@ -17082,7 +17084,7 @@ export const install = {
 		expo: ["@legendapp/list", "expo-linear-gradient", "react-native-gesture-handler", "react-native-keyboard-controller", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 96,
+		fileCount: 97,
 		groups: [
 			{
 				name: "page-header",
@@ -17196,6 +17198,7 @@ export const install = {
 					{ source: "packages/react-native-ui/src/components/screen/screen-navbar.tsx", target: "src/components/ui/screen/screen-navbar.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-root.tsx", target: "src/components/ui/screen/screen-root.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-area.tsx", target: "src/components/ui/screen/screen-scroll-area.tsx" },
+					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-handler.ts", target: "src/components/ui/screen/screen-scroll-handler.ts" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-shadow.tsx", target: "src/components/ui/screen/screen-scroll-shadow.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-scroll-source.tsx", target: "src/components/ui/screen/screen-scroll-source.tsx" },
 					{ source: "packages/react-native-ui/src/components/screen/screen-section-list.tsx", target: "src/components/ui/screen/screen-section-list.tsx" },

@@ -11,7 +11,7 @@ capture("input/group/controls", { types: true }, async (f) => {
 	// Clearing it, and submitting so the field blurs as it began
 	await f.tap("clear");
 	await f.wait(300);
-	await f.press("clear", "Enter");
+	await f.press("search", "Enter");
 	await f.wait(500);
 	// Revealing the password and hiding it again
 	await f.tap("reveal");

@@ -8,14 +8,14 @@ capture("table/columns");
 
 capture("table/sortable", async (f) => {
 	// Sorting by team name, then reversing it
-	await f.tapText("Team");
+	await f.screen.getByText("Team", { exact: true }).tap();
 	await f.wait(700);
-	await f.tapText("Team");
+	await f.screen.getByText("Team", { exact: true }).tap();
 	await f.wait(700);
 	// Back to points — ascending, then descending, where the clip began
-	await f.tapText("Points");
+	await f.screen.getByText("Points", { exact: true }).tap();
 	await f.wait(700);
-	await f.tapText("Points");
+	await f.screen.getByText("Points", { exact: true }).tap();
 });
 
 capture("table/selectable", async (f) => {
@@ -23,9 +23,6 @@ capture("table/selectable", async (f) => {
 	await f.tap("table-selectable-INV-044");
 	await f.wait(600);
 	await f.tap("table-selectable-INV-041");
-	await f.wait(600);
-	// The disabled row ignores the press
-	await f.tap("table-selectable-INV-043");
 	await f.wait(600);
 	// And back to INV-042, so the clip loops without a jump cut
 	await f.tap("table-selectable-INV-042");

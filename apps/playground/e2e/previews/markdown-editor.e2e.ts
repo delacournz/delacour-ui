@@ -20,13 +20,13 @@ capture("markdown-editor/custom-toolbar", { types: true }, async (f) => {
 	await f.wait(500);
 	await f.tap("markdown-action-bulletList");
 	await f.wait(600);
-	await f.type("markdown-action-bulletList", "Milk");
-	await f.press("markdown-action-bulletList", "Enter");
+	await f.type("custom-toolbar", "Milk");
+	await f.press("custom-toolbar", "Enter");
 	await f.wait(200);
-	await f.type("markdown-action-bulletList", "Eggs");
+	await f.type("custom-toolbar", "Eggs");
 	await f.wait(800);
 	// Deleting all thirteen characters and blurring, so the clip ends empty and unfocused as it began
-	await f.press("markdown-action-bulletList", "Backspace", 13);
+	await f.press("custom-toolbar", "Backspace", 13);
 	await f.wait(200);
 	await f.tap("preview-dismiss-keyboard");
 	await f.wait(500);

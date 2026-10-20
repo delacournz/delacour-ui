@@ -58,6 +58,6 @@ capture("otp-input/in-field", { types: true }, async (f) => {
 	// Clear empties the code and resets the error; submitting blurs it, so it loops empty and unfocused as it began
 	await f.tap("otp-field-clear");
 	await f.wait(300);
-	await f.press("otp-field-clear", "Enter");
+	await f.press("otp-field", "Enter");
 	await f.wait(400);
 });

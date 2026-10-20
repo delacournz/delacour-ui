@@ -10,10 +10,10 @@ capture("search-bar/basic", { types: true }, async (f) => {
 	await f.tap("search-clear");
 	await f.wait(500);
 	// Typing the query back, so the clear button returns
-	await f.type("search-clear", "Wellington");
+	await f.type("search", "Wellington");
 	await f.wait(500);
 	// Submitting blurs the field and Cancel slides out, so the clip loops as it began
-	await f.press("search-clear", "Enter");
+	await f.press("search", "Enter");
 	await f.wait(700);
 });
 
@@ -27,7 +27,7 @@ capture("search-bar/debounced-filter-list", { types: true }, async (f) => {
 	await f.tap("city-search-clear");
 	await f.wait(600);
 	// Submitting blurs the field, so the clip loops unfocused as it began
-	await f.press("city-search-clear", "Enter");
+	await f.press("city-search", "Enter");
 	await f.wait(600);
 });
 

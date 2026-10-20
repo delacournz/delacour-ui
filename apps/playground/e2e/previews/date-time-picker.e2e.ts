@@ -16,7 +16,8 @@ capture("date-time-picker/tabs-layout", async (f) => {
 	await f.swipe({ text: "Hour" }, { y: -0.09 }, { durationMs: 600, momentum: false });
 	await f.wait(1000);
 	await f.tap("date-time-picker-tabs-done");
-	await f.hidden({ id: "date-time-picker-tabs-calendar" });
+	// The Time tab is up, so the calendar is already hidden: wait on the tab, or the reopen lands mid-close
+	await f.hidden({ id: "date-time-picker-tabs-tab-time" });
 	await f.wait(900);
 	// Reopening to put it back — the hour to 12, the day to the 14th — so the clip loops
 	await f.tap("date-time-picker-tabs-trigger");

@@ -216,6 +216,12 @@ export const ITEM_META: Record<string, ItemMeta> = {
 			"Time left until a fixed moment, read from the wall clock every tick — sliding segmented digits or an inline run.",
 		categories: ["display"],
 	},
+	combobox: {
+		title: "Combobox",
+		description:
+			"A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet — chips, server results, custom values.",
+		categories: ["forms"],
+	},
 	"empty-state": {
 		title: "Empty State",
 		description: "A placeholder for a list or screen with nothing in it: media, title, description and actions.",

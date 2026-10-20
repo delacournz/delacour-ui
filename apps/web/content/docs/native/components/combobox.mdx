@@ -1,0 +1,310 @@
+---
+title: Combobox
+description: A long or remote list behind a field-shaped trigger, filtered as you type in a bottom sheet.
+icon: TextSearch
+---
+
+<Preview id="combobox/single" title={null} />
+
+## Installation
+
+<ComponentInstall name="combobox" />
+
+<Callout type="warn" title="Mount BottomSheetProvider">
+The options open in a [BottomSheet](/docs/native/components/bottom-sheet), so the app installs
+`@delacour/react-native-bottom-sheet` and mounts `BottomSheetProvider` once, inside
+`DelacourProvider`. Without it the trigger renders and the sheet never opens.
+</Callout>
+
+## Usage
+
+```tsx title="app/index.tsx"
+import { Combobox } from "@/components/ui/combobox";
+import { useState } from "react";
+import { View } from "react-native";
+
+const countries = [
+  { label: "Australia", value: "au" },
+  { keywords: ["NZ", "Aotearoa"], label: "New Zealand", value: "nz" },
+  { keywords: ["Austria"], label: "Österreich", value: "at" },
+];
+
+export default function Example() {
+  const [country, setCountry] = useState<string | null>(null);
+
+  return (
+    <View className="flex-1 justify-center p-4">
+      <Combobox
+        onValueChange={setCountry}
+        options={countries}
+        placeholder="Choose a country"
+        title="Country"
+        value={country}
+      />
+    </View>
+  );
+}
+```
+
+The sheet opens with its search field focused once it has settled, and the rows filter as you type.
+A pick closes the sheet and the trigger reads the choice.
+
+<Preview id="combobox/single" />
+
+## Multiple with chips
+
+`selectionMode="multiple"` keeps the sheet open and shows the selection as removable chips, on the
+trigger and above the search field. Past `maxVisibleChips` (three) the trigger folds the rest into
+`+N`. Backspace in an empty search field marks the last chip, and a second press removes it.
+
+<Preview id="combobox/multiple-chips" />
+
+```tsx
+<Combobox
+  maxSelected={6}
+  onValueChange={setSkills}
+  options={skills}
+  placeholder="Add skills"
+  selectionMode="multiple"
+  value={selected}
+/>
+```
+
+## Client filtering and a custom predicate
+
+The default filter matches a substring of the label, then of each option's `keywords`, ignoring
+case and accents — "oster" finds "Österreich". Pass your own predicate with `kind: "custom"`; it
+gets the raw option and the raw query.
+
+```tsx
+<Combobox
+  filter={{ kind: "custom", match: (option, query) => option.label.startsWith(query) }}
+  options={airports}
+/>
+```
+
+## Server-driven
+
+`filter={{ kind: "none" }}` shows `options` exactly as given, so a server can do the matching.
+Control the query with `inputValue` and `onInputValueChange` — it is separate from the value — and
+pass `isLoading` while a request is in flight. A picked option stays on the trigger after the
+results that held it are gone.
+
+<Preview id="combobox/async-server-filter" />
+
+```tsx
+const [query, setQuery] = useState("");
+const { data = [], isFetching } = usePeopleSearch(query);
+
+<Combobox
+  filter={{ kind: "none" }}
+  inputValue={query}
+  isClearable
+  isLoading={isFetching}
+  onInputValueChange={setQuery}
+  onValueChange={setAssignee}
+  options={data}
+  value={assignee}
+/>;
+```
+
+`onInputValueChange` reports why the query changed as its second argument: `"type"`, or
+`"select"`, `"clear"` and `"close"` — each of which empties it.
+
+## Custom values
+
+`allowCustomValue` adds a row that accepts the typed text whenever no option's label is exactly
+that. The value is the trimmed text itself; compare against `options` to tell the two apart.
+
+<Preview id="combobox/custom-value" />
+
+```tsx
+<Combobox
+  allowCustomValue
+  createLabel={(query) => `Create label “${query}”`}
+  onValueChange={setLabels}
+  options={labels}
+  selectionMode="multiple"
+  value={selected}
+/>
+```
+
+## Highlight
+
+The run of each label the query matched is bold — through accents, so "ecl" bolds "Écl" in
+"Éclair". `highlight={false}` turns it off.
+
+## Groups and items
+
+`Combobox.Group` and `Combobox.Item` declare the same shape the `options` prop takes. A group the
+query empties disappears with its heading.
+
+```tsx
+<Combobox onValueChange={setZone} title="Time zone" value={zone}>
+  <Combobox.Group label="Pacific">
+    <Combobox.Item description="UTC+13 in summer" keywords={["NZDT"]} label="Auckland" value="Pacific/Auckland" />
+    <Combobox.Item description="UTC+12" label="Fiji" value="Pacific/Fiji" />
+  </Combobox.Group>
+  <Combobox.Empty>No time zone by that name.</Combobox.Empty>
+</Combobox>
+```
+
+## In a Field
+
+Inside a `Field` the combobox takes its invalid and disabled state, reads `Field.Label` as its
+accessible name, sheet title and search label, and opens when the label is tapped.
+
+<Preview id="combobox/in-field-invalid" />
+
+```tsx
+<Field isInvalid={airport === null}>
+  <Field.Label>Departure</Field.Label>
+  <Combobox onValueChange={setAirport} options={airports} placeholder="Airport" value={airport} />
+  <Field.Error>Choose where you are flying from.</Field.Error>
+</Field>
+```
+
+## How it differs from Select
+
+[Select](/docs/native/components/select) is for a short, known set — a plan, a role, a sort order —
+searchable at most. Combobox is for a long or remote one: the search field is the point and is
+focused on open, the filter can be yours or a server's, matches are highlighted, and typed text can
+become a value. Both draw the same trigger box and the same rows, so they sit together in a form.
+
+## Accessibility
+
+- The trigger is a button named by the enclosing `Field.Label`, valued with the label in single mode
+  or "N selected" in multiple, with its `expanded` state.
+- The search field is named by the field label and the search placeholder. After a query, the
+  result count — or `emptyText` — is announced: a live region on Android, an announcement on iOS.
+- Rows are radios in single mode and checkboxes in multiple; group headings are headers. The bold
+  match is visual only.
+- Each chip's remove control is labelled "Remove {label}". On the trigger the chips sit inside its
+  button; in the sheet each chip is its own element.
+- The create row is a button, "Add {query}".
+
+## API Reference
+
+### Anatomy
+
+| Part | What it is |
+| --- | --- |
+| `Combobox` | The root: owns the selection and the query, renders the trigger and the sheet |
+| `Combobox.Item` | One option, declared as a child. Renders nothing; the root reads its props |
+| `Combobox.Group` | A titled run of `Combobox.Item`s |
+| `Combobox.Trigger` | The field-shaped control that opens the sheet. Compose it only to replace it |
+| `Combobox.Empty` | What the sheet shows when no row is left. Replaces `emptyText` |
+
+### Combobox
+
+<TypeTable
+  type={{
+    selectionMode: { type: '"single" | "multiple"', default: '"single"' },
+    value: { type: "string | null (single) · string[] (multiple)", description: "Controlled." },
+    defaultValue: { type: "string | null (single) · string[] (multiple)" },
+    onValueChange: {
+      type: "(value: string | null) => void (single) · (value: string[]) => void (multiple)",
+    },
+    options: {
+      type: "(ComboboxOption | ComboboxOptionGroup)[]",
+      description: "The options as data. Leave it off to compose `Combobox.Item` children.",
+    },
+    inputValue: { type: "string", description: "The query, controlled." },
+    defaultInputValue: { type: "string", default: '""' },
+    onInputValueChange: {
+      type: '(query: string, reason: "type" | "select" | "clear" | "close") => void',
+    },
+    filter: {
+      type: '{ kind: "default" } | { kind: "custom"; match } | { kind: "none" }',
+      default: '{ kind: "default" }',
+    },
+    placeholder: { type: "string" },
+    title: { type: "string", description: "The sheet's heading. Defaults to the enclosing `Field.Label`." },
+    variant: { type: '"primary" | "secondary" | "etched"', default: '"primary"' },
+    size: { type: '"sm" | "md" | "lg"', default: '"md"' },
+    isInvalid: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isDisabled: { type: "boolean", description: "Read from an enclosing `Field` when unset." },
+    isReadOnly: { type: "boolean", default: "false" },
+    isLoading: { type: "boolean", default: "false" },
+    isClearable: { type: "boolean", default: "false", description: "A clear button on the trigger." },
+    openOnFocus: { type: "boolean", default: "true", description: "Focus the search field once the sheet settles." },
+    allowCustomValue: { type: "boolean", default: "false" },
+    createLabel: { type: "(query: string) => string", default: "(q) => `Use “${q}”`" },
+    emptyText: { type: "string", default: '"No results"' },
+    searchPlaceholder: { type: "string", default: '"Search"' },
+    formatResultsCount: { type: "(count: number) => string", description: "What a screen reader hears." },
+    highlight: { type: "boolean", default: "true" },
+    presentation: { type: '"sheet"', default: '"sheet"' },
+    snapPoints: { type: "(string | number)[]", description: "Forwarded to the sheet. Unset, it sizes to its rows." },
+    maxSelected: { type: "number", description: "Multiple only. Disables the remaining rows once reached." },
+    limitReachedText: { type: "string", default: '"Limit reached"', description: "Multiple only." },
+    chipVariant: { type: '"soft" | "outline"', default: '"soft"', description: "Multiple only." },
+    maxVisibleChips: { type: "number", default: "3", description: "Multiple only. Chips on the trigger before `+N`." },
+    doneText: { type: "string", default: '"Done"', description: "Multiple only. The footer button." },
+    className: { type: "string", description: "Classes for the trigger." },
+    testID: {
+      type: "string",
+      description: "Rows take `-option-<value>`, search `-search`, create `-create`, clear `-clear`, Done `-done`.",
+    },
+  }}
+/>
+
+### Combobox.Item
+
+<TypeTable
+  type={{
+    value: { type: "string", description: "Unique within the list. A duplicate is dropped." },
+    label: { type: "string", description: "The trigger text, the accessible name and what the filter matches." },
+    keywords: { type: "string[]", description: "Extra text the default filter matches. Never shown." },
+    description: { type: "string" },
+    isDisabled: { type: "boolean" },
+    icon: { type: "IconComponent", description: "A leading glyph." },
+    className: { type: "string" },
+    children: { type: "ReactNode", description: "Drawn in place of the label." },
+  }}
+/>
+
+### Combobox.Group
+
+<TypeTable
+  type={{
+    label: { type: "string", description: "The heading over the group's rows." },
+    children: { type: "ReactNode", description: "`Combobox.Item`s." },
+  }}
+/>
+
+### Combobox.Trigger
+
+A `Pressable`, so `feedback`, `haptic` and the rest are inherited.
+
+<TypeTable
+  type={{
+    asChild: { type: "boolean", default: "false", description: "Hand the press to the single child instead of drawing the box." },
+    children: { type: "ReactNode", description: "Replaces the value and chevron, or the whole trigger with `asChild`." },
+    className: { type: "string" },
+  }}
+/>
+
+### Combobox.Empty
+
+<TypeTable
+  type={{
+    children: { type: "ReactNode", description: "A string is drawn as muted text and announced." },
+    className: { type: "string" },
+  }}
+/>
+
+### Exports
+
+```tsx
+import {
+  Combobox,
+  useCombobox,
+  type ComboboxProps,
+  type ComboboxOption,
+  type ComboboxFilter,
+  filterItems,
+  getHighlightRanges,
+  matchOption,
+} from "@delacour/react-native-ui/combobox";
+```

@@ -41,6 +41,7 @@ export const pageHeroes: Readonly<Record<string, PreviewId>> = {
 	"native/components/chip": "chip/filter-row",
 	"native/components/collapsible": "collapsible/a-section-of-detail",
 	"native/components/color-picker": "color-picker/basic",
+	"native/components/combobox": "combobox/single",
 	"native/components/context-menu": "context-menu/message-actions",
 	"native/components/countdown": "countdown/segmented",
 	"native/components/dialog": "dialog/confirm",
@@ -165,6 +166,7 @@ export const captures: Readonly<Partial<Record<PreviewId, Capture>>> = {
 		load: () => import("../../public/previews/collapsible/a-section-of-detail/dark.png?inline"),
 	},
 	"color-picker/basic": { load: () => import("../../public/previews/color-picker/basic/dark.png?inline") },
+	"combobox/single": { cut: "0a0fac445866", load: () => import("./frames/combobox/single.png?inline") },
 	"context-menu/message-actions": {
 		cut: "0c55c2766e09",
 		load: () => import("./frames/context-menu/message-actions.png?inline"),

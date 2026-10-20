@@ -1,0 +1,18 @@
+executionPrerequisite: >-
+  The chrome-free preview route is open on combobox/single and has settled — one empty trigger reading "Choose a
+  country", the sheet closed. The capture script navigates there before running this.
+steps:
+  - echo: Opening the sheet; the search field focuses once it settles
+  - tap: { id: combobox-single }
+  - await: { visible: { id: combobox-single-search } }
+  - wait: 700
+  - echo: Typing without the accent still finds Österreich, and the match goes bold
+  - tool: keyboard
+    args: { text: oster, delayMs: 130 }
+  - wait: 700
+  - tap: { id: combobox-single-option-at }
+  - await: { hidden: { id: combobox-single-search } }
+  - wait: 900
+  - echo: Clearing it, so the clip loops back to the placeholder
+  - tap: { id: combobox-single-clear }
+  - wait: 600

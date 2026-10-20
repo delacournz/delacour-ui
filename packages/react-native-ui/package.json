@@ -60,6 +60,7 @@
 		"./field": "./src/components/field/index.ts",
 		"./flow": "./src/components/flow/index.ts",
 		"./frame": "./src/components/frame/index.ts",
+		"./grid-item": "./src/components/grid-item/index.ts",
 		"./icon": "./src/components/icon/index.ts",
 		"./input": "./src/components/input/index.ts",
 		"./item": "./src/components/item/index.ts",

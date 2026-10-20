@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import {
+	collectFlowCanvasTokens,
 	FLOW_ACCESSIBILITY_MOVES,
 	FLOW_BACKGROUND_VARIANTS,
 	FLOW_CONTROL_LABELS,
@@ -12,6 +13,7 @@ import {
 	resolveBackgroundPattern,
 	resolveDraggedConnection,
 	resolveEdgeDash,
+	resolveFlowCanvasToken,
 	resolveFlowChildLayer,
 	resolveHandleStyle,
 	resolveNodeAccessibilityActions,
@@ -113,30 +115,72 @@ describe("resolveBackgroundPattern", () => {
 		}
 	});
 
-	test("dots sit in the middle of each tile, sized by `size`", () => {
-		expect(resolveBackgroundPattern("dots", 24, 1.6)).toEqual({ cx: 12, cy: 12, kind: "dots", r: 1.6, tile: 24 });
-	});
-
-	test("lines trace two edges of each tile, so the tiles join into a grid", () => {
-		expect(resolveBackgroundPattern("lines", 20, 2)).toEqual({
-			d: "M0 0 H20 M0 0 V20",
-			kind: "lines",
-			strokeWidth: 1,
-			tile: 20,
+	test("dots sit in the middle of each tile, `size` is their radius", () => {
+		expect(resolveBackgroundPattern("dots", 24, 1.6)).toEqual({
+			arm: 0,
+			kind: "dots",
+			shape: 0,
+			tile: 24,
+			weight: 1.6,
 		});
 	});
 
-	test("a cross is centred in its tile", () => {
+	test("lines run along the tile edges, half a stroke of `size / 2` either side", () => {
+		expect(resolveBackgroundPattern("lines", 20, 2)).toEqual({
+			arm: 0,
+			kind: "lines",
+			shape: 1,
+			tile: 20,
+			weight: 0.5,
+		});
+	});
+
+	test("a cross is centred in its tile, each arm a quarter of the tile", () => {
 		expect(resolveBackgroundPattern("cross", 24, 2)).toEqual({
-			d: "M6 12 H18 M12 6 V18",
+			arm: 6,
 			kind: "cross",
-			strokeWidth: 1,
+			shape: 2,
 			tile: 24,
+			weight: 0.5,
 		});
 	});
 
 	test("a gap below one is drawn as none rather than a solid fill", () => {
 		expect(resolveBackgroundPattern("dots", 0, 1.6).kind).toBe("none");
+	});
+});
+
+describe("resolveFlowCanvasToken", () => {
+	test("an edge defaults to muted-foreground, the background to border", () => {
+		expect(resolveFlowCanvasToken("DelacourUI.Flow.Edge", undefined)).toBe("muted-foreground");
+		expect(resolveFlowCanvasToken("DelacourUI.Flow.Background", undefined)).toBe("border");
+	});
+
+	test("an explicit colour wins", () => {
+		expect(resolveFlowCanvasToken("DelacourUI.Flow.Edge", "#ff0000")).toBe("#ff0000");
+	});
+
+	test("anything else names no colour", () => {
+		expect(resolveFlowCanvasToken("DelacourUI.Flow.Node", "primary")).toBeUndefined();
+		expect(resolveFlowCanvasToken(undefined, undefined)).toBeUndefined();
+	});
+});
+
+describe("collectFlowCanvasTokens", () => {
+	test("deduplicated and sorted, so the lookup array is stable across renders", () => {
+		expect(
+			collectFlowCanvasTokens([
+				{ color: undefined, displayName: "DelacourUI.Flow.Edge" },
+				{ color: "primary", displayName: "DelacourUI.Flow.Edge" },
+				{ color: undefined, displayName: "DelacourUI.Flow.Edge" },
+				{ color: undefined, displayName: "DelacourUI.Flow.Background" },
+				{ color: "primary", displayName: "DelacourUI.Flow.Node" },
+			])
+		).toEqual(["border", "muted-foreground", "primary"]);
+	});
+
+	test("empty for no canvas children", () => {
+		expect(collectFlowCanvasTokens([])).toEqual([]);
 	});
 });
 
@@ -354,9 +398,9 @@ describe("sides", () => {
 });
 
 describe("resolveFlowChildLayer", () => {
-	test("edges and the background draw in the SVG layer", () => {
-		expect(resolveFlowChildLayer("DelacourUI.Flow.Edge")).toBe("svg");
-		expect(resolveFlowChildLayer("DelacourUI.Flow.Background")).toBe("svg");
+	test("edges and the background draw in the Skia canvas", () => {
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Edge")).toBe("canvas");
+		expect(resolveFlowChildLayer("DelacourUI.Flow.Background")).toBe("canvas");
 	});
 
 	test("controls and the minimap float on top", () => {

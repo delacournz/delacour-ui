@@ -10,24 +10,29 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { type LayoutChangeEvent, View } from "react-native";
+import { type LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
-	useAnimatedProps,
 	useAnimatedStyle,
+	useDerivedValue,
 	useReducedMotion,
 	useSharedValue,
 	withTiming,
 } from "react-native-reanimated";
-import Svg from "react-native-svg";
+import { Canvas, Group } from "react-native-skia";
 import { scheduleOnRN } from "react-native-worklets";
+import "../../lib/skia-native-id";
+import { useCalmMotion } from "../../hooks/use-calm-motion";
+import { useThemeColors } from "../../hooks/use-theme-color";
 import {
+	FlowCanvasLayerProvider,
+	type FlowCanvasLayerValue,
 	type FlowContextValue,
 	type FlowConnectionPreview as FlowPreviewValue,
 	FlowProvider,
-	FlowSvgLayerProvider,
 } from "./flow.context";
 import {
+	collectFlowCanvasTokens,
 	FLOW_DEFAULTS,
 	FLOW_LAYER_EXTENT,
 	type FlowChildLayer,
@@ -58,7 +63,6 @@ import { FlowHandle } from "./flow-handle";
 import { FlowMiniMap } from "./flow-minimap";
 import { FlowNode } from "./flow-node";
 import { createFlowRegistry, type FlowSnapshotEntry } from "./flow-registry";
-import { AnimatedMatrixG, type FlowMatrixGProps } from "./flow-svg";
 
 export type FlowProps = {
 	/** Where the canvas starts, when it does not fit on mount. */
@@ -88,15 +92,27 @@ export type FlowProps = {
 
 type FlowLayers = Record<FlowChildLayer, ReactNode[]>;
 
+/** The `displayName` of an element's component, or `undefined` for a host element. */
+function displayNameOf(element: ReactElement): string | undefined {
+	return typeof element.type === "string" ? undefined : (element.type as { displayName?: string }).displayName;
+}
+
+/** The colour prop of a canvas child, read without trusting its shape. */
+function colorOf(element: ReactNode): { displayName: string | undefined; color: string | undefined } {
+	if (!isValidElement<{ color?: unknown }>(element)) return { color: undefined, displayName: undefined };
+	const { color } = element.props;
+	return { color: typeof color === "string" ? color : undefined, displayName: displayNameOf(element) };
+}
+
 /**
- * Sorts the canvas's children into the three layers they draw in: SVG beneath, nodes in the
+ * Sorts the canvas's children into the three layers they draw in: the Skia canvas beneath, nodes in the
  * transformed view, chrome on top. Fragments and arrays are walked, so a `.map()` of edges works,
  * and every child is re-keyed under its path so two `.map()`s sharing ids never collide in a layer.
  */
 function sortLayers(
 	children: ReactNode,
 	prefix = "",
-	layers: FlowLayers = { nodes: [], overlay: [], svg: [] }
+	layers: FlowLayers = { canvas: [], nodes: [], overlay: [] }
 ): FlowLayers {
 	for (const child of Children.toArray(children)) {
 		if (!isValidElement<{ children?: ReactNode }>(child)) {
@@ -108,9 +124,7 @@ function sortLayers(
 			sortLayers(child.props.children, `${key}/`, layers);
 			continue;
 		}
-		const displayName =
-			typeof child.type === "string" ? undefined : (child.type as { displayName?: string }).displayName;
-		layers[resolveFlowChildLayer(displayName)].push(cloneElement(child, { key }));
+		layers[resolveFlowChildLayer(displayNameOf(child))].push(cloneElement(child, { key }));
 	}
 	return layers;
 }
@@ -343,13 +357,17 @@ function FlowRoot({
 		transform: [{ translateX: viewport.value.x }, { translateY: viewport.value.y }, { scale: viewport.value.zoom }],
 	}));
 
-	const svgProps = useAnimatedProps<FlowMatrixGProps>(() => {
+	const canvasTransform = useDerivedValue(() => {
 		const { x, y, zoom } = viewport.value;
-		return { matrix: [zoom, 0, 0, zoom, x, y] };
+		return [{ translateX: x }, { translateY: y }, { scale: zoom }];
 	});
 
 	const slots = flowVariants();
 	const layers = sortLayers(children);
+
+	const isCalm = useCalmMotion();
+	const colors = useThemeColors(collectFlowCanvasTokens(layers.canvas.map(colorOf)));
+	const canvasLayer = useMemo<FlowCanvasLayerValue>(() => ({ colors, isCalm }), [colors, isCalm]);
 
 	return (
 		<FlowProvider value={context}>
@@ -361,11 +379,13 @@ function FlowRoot({
 						importantForAccessibility="no-hide-descendants"
 						pointerEvents="none"
 					>
-						<Svg height="100%" width="100%">
-							<AnimatedMatrixG animatedProps={svgProps}>
-								<FlowSvgLayerProvider>{layers.svg}</FlowSvgLayerProvider>
-							</AnimatedMatrixG>
-						</Svg>
+						<Canvas style={StyleSheet.absoluteFill}>
+							<FlowProvider value={context}>
+								<FlowCanvasLayerProvider value={canvasLayer}>
+									<Group transform={canvasTransform}>{layers.canvas}</Group>
+								</FlowCanvasLayerProvider>
+							</FlowProvider>
+						</Canvas>
 					</View>
 					<Animated.View className={slots.layer()} pointerEvents="box-none" style={[LAYER_BOX, layerStyle]}>
 						{layers.nodes}
@@ -394,7 +414,7 @@ const LAYER_BOX = {
  * `onNodeDragEnd` and `onConnect` and never changes the graph itself.
  *
  * Children draw in three layers whatever order they are written in: `Flow.Background` and every
- * `Flow.Edge` in an SVG beneath the nodes; `Flow.Node` and `Flow.Group` in the transformed layer;
+ * `Flow.Edge` on a Skia canvas beneath the nodes; `Flow.Node` and `Flow.Group` in the transformed layer;
  * `Flow.Controls` and `Flow.MiniMap` on top, unscaled. Edges and backgrounds must be direct
  * children (or a `.map()` / fragment there) so the canvas can find them.
  *

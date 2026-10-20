@@ -261,6 +261,7 @@
         "@types/react": "catalog:",
         "expo-blur": "~58.0.5",
         "expo-router": "~58.0.24",
+        "react-native-skia": "catalog:",
         "react-native-teleport": "^1.2.2",
         "typescript": "~6.0.3",
       },

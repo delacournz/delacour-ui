@@ -1581,6 +1581,7 @@
 				"button",
 				"icon",
 				"icons",
+				"skia-native-id",
 				"surface",
 				"text",
 				"tv",
@@ -1593,7 +1594,7 @@
 			"expoDependencies": [
 				"react-native-gesture-handler",
 				"react-native-reanimated",
-				"react-native-svg",
+				"react-native-skia",
 				"react-native-worklets"
 			],
 			"devDependencies": [],
@@ -1609,7 +1610,6 @@
 				"ui/flow/flow-minimap.tsx",
 				"ui/flow/flow-node.tsx",
 				"ui/flow/flow-registry.ts",
-				"ui/flow/flow-svg.ts",
 				"ui/flow/flow.context.tsx",
 				"ui/flow/flow.tsx",
 				"ui/flow/flow.variants.ts",

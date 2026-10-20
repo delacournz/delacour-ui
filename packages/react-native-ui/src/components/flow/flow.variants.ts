@@ -114,16 +114,20 @@ export function resolveHandleStyle(side: FlowSide, offset: number): FlowHandleSt
 	return { ...margins, left: 0, top: along };
 }
 
-/** One tile of the background, in graph units. */
+/**
+ * One tile of the background, in graph units, as the shader draws it. `shape` is the shader's
+ * branch (0 dots, 1 lines, 2 cross); `weight` is a dot's radius or half a stroke; `arm` is half a
+ * cross's span.
+ */
 export type FlowBackgroundPattern =
 	| { kind: "none" }
-	| { kind: "dots"; tile: number; cx: number; cy: number; r: number }
-	| { kind: "lines"; tile: number; d: string; strokeWidth: number }
-	| { kind: "cross"; tile: number; d: string; strokeWidth: number };
+	| { kind: "dots"; shape: 0; tile: number; weight: number; arm: 0 }
+	| { kind: "lines"; shape: 1; tile: number; weight: number; arm: 0 }
+	| { kind: "cross"; shape: 2; tile: number; weight: number; arm: number };
 
 /**
  * The tile the background repeats. `size` is the mark's weight: a dot's radius, and twice a line's
- * or a cross's stroke. Lines trace two edges of each tile so neighbours join into a grid.
+ * or a cross's stroke. Lines run along the tile's edges so neighbours join into a grid.
  */
 export function resolveBackgroundPattern(
 	variant: FlowBackgroundVariant,
@@ -131,16 +135,9 @@ export function resolveBackgroundPattern(
 	size: number
 ): FlowBackgroundPattern {
 	if (variant === "none" || gap < 1) return { kind: "none" };
-	const centre = gap / 2;
-	if (variant === "dots") return { cx: centre, cy: centre, kind: "dots", r: size, tile: gap };
-	if (variant === "lines") return { d: `M0 0 H${gap} M0 0 V${gap}`, kind: "lines", strokeWidth: size / 2, tile: gap };
-	const arm = gap / 4;
-	return {
-		d: `M${centre - arm} ${centre} H${centre + arm} M${centre} ${centre - arm} V${centre + arm}`,
-		kind: "cross",
-		strokeWidth: size / 2,
-		tile: gap,
-	};
+	if (variant === "dots") return { arm: 0, kind: "dots", shape: 0, tile: gap, weight: size };
+	if (variant === "lines") return { arm: 0, kind: "lines", shape: 1, tile: gap, weight: size / 4 };
+	return { arm: gap / 4, kind: "cross", shape: 2, tile: gap, weight: size / 4 };
 }
 
 /** An arrowhead is four strokes long, and never smaller than six points. */
@@ -296,9 +293,14 @@ export function resolveNodeAccessibilityActions({
 	return { actions, connections };
 }
 
-export type FlowChildLayer = "svg" | "nodes" | "overlay";
+export type FlowChildLayer = "canvas" | "nodes" | "overlay";
 
-const FLOW_SVG_CHILDREN: readonly string[] = ["DelacourUI.Flow.Edge", "DelacourUI.Flow.Background"];
+/** The colour each canvas child draws in when it names none. */
+const FLOW_CANVAS_DEFAULT_TOKENS: Readonly<Record<string, string>> = {
+	"DelacourUI.Flow.Background": "border",
+	"DelacourUI.Flow.Edge": "muted-foreground",
+};
+const FLOW_CANVAS_CHILDREN: readonly string[] = Object.keys(FLOW_CANVAS_DEFAULT_TOKENS);
 const FLOW_OVERLAY_CHILDREN: readonly string[] = ["DelacourUI.Flow.Controls", "DelacourUI.Flow.MiniMap"];
 
 /**
@@ -311,7 +313,33 @@ const FLOW_OVERLAY_CHILDREN: readonly string[] = ["DelacourUI.Flow.Controls", "D
  */
 export function resolveFlowChildLayer(displayName: string | undefined): FlowChildLayer {
 	if (displayName === undefined) return "nodes";
-	if (FLOW_SVG_CHILDREN.includes(displayName)) return "svg";
+	if (FLOW_CANVAS_CHILDREN.includes(displayName)) return "canvas";
 	if (FLOW_OVERLAY_CHILDREN.includes(displayName)) return "overlay";
 	return "nodes";
+}
+
+/** The colour token a canvas child draws in — its own `color`, or its default. `undefined` off the canvas. */
+export function resolveFlowCanvasToken(displayName: string | undefined, color: string | undefined): string | undefined {
+	if (displayName === undefined) return undefined;
+	const fallback = FLOW_CANVAS_DEFAULT_TOKENS[displayName];
+	if (fallback === undefined) return undefined;
+	return color ?? fallback;
+}
+
+/**
+ * Every colour the canvas's children draw in, deduplicated and sorted.
+ *
+ * The Skia canvas is a second React reconciler, so a theme hook called inside it reads no
+ * `ScopedTheme`. The root resolves this list above the canvas in one lookup and hands the result
+ * in; sorted, the list is equal across renders and the lookup does not re-subscribe.
+ */
+export function collectFlowCanvasTokens(
+	children: readonly { displayName: string | undefined; color: string | undefined }[]
+): string[] {
+	const tokens = new Set<string>();
+	for (const child of children) {
+		const token = resolveFlowCanvasToken(child.displayName, child.color);
+		if (token !== undefined) tokens.add(token);
+	}
+	return [...tokens].sort();
 }

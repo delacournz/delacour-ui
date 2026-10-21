@@ -110,5 +110,21 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-text/scroll-text.variants.test.ts",
+			"target": "scroll-text/scroll-text.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

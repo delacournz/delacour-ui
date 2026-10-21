@@ -87,5 +87,34 @@
 			"target": "overlay/use-overlay-presence.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-presence.test.ts",
+			"target": "overlay/overlay-presence.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay-registry.test.ts",
+			"target": "overlay/overlay-registry.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/overlay/overlay.variants.test.ts",
+			"target": "overlay/overlay.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

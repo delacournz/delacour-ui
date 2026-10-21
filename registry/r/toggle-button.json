@@ -114,5 +114,21 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/toggle-button/toggle-button.variants.test.ts",
+			"target": "toggle-button/toggle-button.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -9,6 +9,7 @@ describe("classifySource", () => {
 			namespace: "ui",
 			target: "button/button.tsx",
 			moduleId: "button/button.tsx".replace(/\.tsx$/, ""),
+			test: false,
 		});
 	});
 
@@ -30,6 +31,7 @@ describe("classifySource", () => {
 			namespace: "lib",
 			target: "cn.ts",
 			moduleId: "cn",
+			test: false,
 		});
 		expect(classifySource("lib/slot.tsx")?.item).toBe("slot");
 	});
@@ -41,6 +43,7 @@ describe("classifySource", () => {
 			namespace: "hooks",
 			target: "use-theme-color.ts",
 			moduleId: "use-theme-color",
+			test: false,
 		});
 	});
 
@@ -52,6 +55,7 @@ describe("classifySource", () => {
 			namespace: "styles",
 			target: "theme.css",
 			moduleId: null,
+			test: false,
 		});
 	});
 
@@ -67,6 +71,7 @@ describe("classifySource", () => {
 			namespace: "icons",
 			target: "central.ts",
 			moduleId: "central",
+			test: false,
 		});
 	});
 
@@ -77,6 +82,7 @@ describe("classifySource", () => {
 			namespace: "lib",
 			target: "expo/navigation-theme.tsx",
 			moduleId: "expo/navigation-theme",
+			test: false,
 		});
 	});
 
@@ -90,19 +96,50 @@ describe("classifySource", () => {
 			namespace: "lib",
 			target: "expo/blur-layer.tsx",
 			moduleId: "expo/blur-layer",
+			test: false,
 		});
 	});
 
-	test("tests are excluded — they reach into internals a consumer will not have", () => {
-		expect(classifySource("components/button/button.variants.test.ts")).toBeNull();
-		expect(classifySource("lib/cn.test.ts")).toBeNull();
-		expect(classifySource("styles/tokens.test.ts")).toBeNull();
+	test("a component's test belongs to its folder's item, marked as a test", () => {
+		expect(classifySource("components/button/button.variants.test.ts")).toEqual({
+			item: "button",
+			type: "registry:ui",
+			namespace: "ui",
+			target: "button/button.variants.test.ts",
+			moduleId: "button/button.variants.test",
+			test: true,
+		});
 	});
 
-	test("test-only support files are excluded with the tests they serve", () => {
-		expect(classifySource("components/qr-code/qr-code.test-helpers.ts")).toBeNull();
-		expect(classifySource("components/qr-code/qr-code.fixtures.ts")).toBeNull();
-		expect(classifySource("components/qr-code/qr-code.encode.ts")?.item).toBe("qr-code");
+	test("test-only support files are tests of the item they serve", () => {
+		expect(classifySource("components/qr-code/qr-code.test-helpers.ts")).toMatchObject({ item: "qr-code", test: true });
+		expect(classifySource("components/qr-code/qr-code.fixtures.ts")).toMatchObject({ item: "qr-code", test: true });
+		expect(classifySource("components/qr-code/qr-code.encode.ts")).toMatchObject({ item: "qr-code", test: false });
+	});
+
+	test("a lib test belongs to the file it is named for, not an item of its own", () => {
+		expect(classifySource("lib/cn.test.ts")).toEqual({
+			item: "cn",
+			type: "registry:lib",
+			namespace: "lib",
+			target: "cn.test.ts",
+			moduleId: "cn.test",
+			test: true,
+		});
+		expect(classifySource("lib/scroll-maths.test.ts")?.item).toBe("scroll-maths");
+	});
+
+	test("a styles test rides with the styles item", () => {
+		expect(classifySource("styles/theme-tokens.test.ts")).toMatchObject({
+			item: "styles",
+			target: "theme-tokens.test.ts",
+			moduleId: "theme-tokens.test",
+			test: true,
+		});
+	});
+
+	test("a library-wide test at the root belongs to no item", () => {
+		expect(classifySource("docs.test.ts")).toBeNull();
 	});
 
 	test("anything outside the known directories is excluded rather than guessed at", () => {

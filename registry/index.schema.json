@@ -69,6 +69,20 @@
 							"type": "string"
 						}
 					},
+					"testRegistryDependencies": {
+						"default": [],
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"testDependencies": {
+						"default": [],
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
 					"files": {
 						"default": [],
 						"type": "array",

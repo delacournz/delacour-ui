@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { registryFileSchema, registryItemSchema } from "./schema";
+import { registryFileSchema, registryItemSchema, toIndexEntry, withTests } from "./schema";
 
 const FILE = {
 	path: "packages/react-native-ui/src/components/button/button.tsx",
@@ -91,5 +91,68 @@ describe("registryItemSchema", () => {
 
 		expect(result.success).toBe(false);
 		expect(result.error?.issues[0]?.path).toEqual(["files", 1, "content"]);
+	});
+
+	test("defaults the test lists, so a registry built before them still parses", () => {
+		const item = registryItemSchema.parse(ITEM);
+
+		expect(item.tests).toEqual([]);
+		expect(item.testRegistryDependencies).toEqual([]);
+		expect(item.testDependencies).toEqual([]);
+	});
+});
+
+describe("withTests", () => {
+	const TEST_FILE = {
+		path: "packages/react-native-ui/src/components/button/button.variants.test.ts",
+		target: "button/button.variants.test.ts",
+		namespace: "ui",
+	} as const;
+
+	const item = registryItemSchema.parse({
+		name: "button",
+		type: "registry:ui",
+		title: "Button",
+		description: "A pressable action.",
+		registryDependencies: ["icon"],
+		devDependencies: ["a"],
+		files: [FILE],
+		tests: [TEST_FILE],
+		testRegistryDependencies: ["text"],
+		testDependencies: ["@types/bun"],
+	});
+
+	test("folds the tests into the files, after the source", () => {
+		expect(withTests(item).files.map((file) => file.target)).toEqual(["button/button.tsx", TEST_FILE.target]);
+	});
+
+	test("folds what the tests need into what the item needs", () => {
+		expect(withTests(item).registryDependencies).toEqual(["icon", "text"]);
+		expect(withTests(item).devDependencies).toEqual(["@types/bun", "a"]);
+	});
+
+	test("leaves the item alone otherwise", () => {
+		expect(item.files).toHaveLength(1);
+		expect(item.registryDependencies).toEqual(["icon"]);
+	});
+});
+
+describe("toIndexEntry", () => {
+	test("lists the source files and not the tests, which are only on the item", () => {
+		const entry = toIndexEntry(
+			registryItemSchema.parse({
+				name: "button",
+				type: "registry:ui",
+				title: "Button",
+				description: "A pressable action.",
+				files: [FILE],
+				tests: [{ ...FILE, target: "button/button.test.ts" }],
+				testRegistryDependencies: ["text"],
+			})
+		);
+
+		expect(entry.files).toEqual(["ui/button/button.tsx"]);
+		expect(entry.testRegistryDependencies).toEqual(["text"]);
+		expect("tests" in entry).toBe(false);
 	});
 });

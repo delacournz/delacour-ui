@@ -101,15 +101,63 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 	const meta = ITEM_META[context.name];
 	if (!meta) throw new Error(`No metadata for registry item "${context.name}" — add it to src/registry/config.ts`);
 
-	const first = context.sources[0];
-	if (!first) throw new Error(`Registry item "${context.name}" has no files`);
+	const sources = context.sources.filter((source) => !source.classification.test);
+	const testSources = context.sources.filter((source) => source.classification.test);
 
+	const first = sources[0];
+	if (!first) {
+		throw new Error(
+			`Registry item "${context.name}" has tests and no files — is a test named for a file that is gone?`
+		);
+	}
+
+	const source = await collectFiles(sources, context);
+	const tests = await collectFiles(testSources, context);
+
+	const registryDependencies = new Set<string>([...(meta.registryDependencies ?? []), ...source.registryDependencies]);
+	const { dependencies, expoDependencies, devDependencies } = classifyPackages(
+		context.name,
+		new Set([...(meta.dependencies ?? []), ...source.bareImports])
+	);
+
+	return {
+		name: context.name,
+		type: first.classification.type,
+		title: meta.title,
+		description: meta.description,
+		...(meta.categories ? { categories: meta.categories } : {}),
+		registryDependencies: [...registryDependencies].sort(),
+		dependencies,
+		expoDependencies,
+		devDependencies,
+		files: source.files,
+		tests: tests.files,
+		testRegistryDependencies: [...tests.registryDependencies]
+			.filter((name) => name !== context.name && !registryDependencies.has(name))
+			.sort(),
+		testDependencies: testPackages(context.name, tests.bareImports, [
+			...dependencies,
+			...expoDependencies,
+			...devDependencies,
+		]),
+	};
+}
+
+type CollectedFiles = {
+	files: RegistryFile[];
+	registryDependencies: Set<string>;
+	bareImports: Set<string>;
+};
+
+/** Canonicalises a set of an item's sources, and gathers what they import. */
+async function collectFiles(sources: readonly SourceFile[], context: BuildItemContext): Promise<CollectedFiles> {
 	const files: RegistryFile[] = [];
-	const registryDependencies = new Set<string>(meta.registryDependencies ?? []);
-	const bareImports = new Set<string>(meta.dependencies ?? []);
+	const registryDependencies = new Set<string>();
+	const bareImports = new Set<string>();
 
-	for (const { path, classification } of context.sources) {
+	for (const { path, classification } of sources) {
 		const raw = await readFile(join(context.sourceRoot, path), "utf-8");
+		if (classification.test) assertReadsStayLocal(path, raw);
 
 		// CSS carries no module specifiers a scanner could rewrite, and its own
 		// `@import "./base.css"` siblings all land in the same directory anyway.
@@ -138,20 +186,49 @@ async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
 		});
 	}
 
-	const { dependencies, expoDependencies, devDependencies } = classifyPackages(context.name, bareImports);
+	return { files: files.sort((a, b) => a.target.localeCompare(b.target)), registryDependencies, bareImports };
+}
 
-	return {
-		name: context.name,
-		type: first.classification.type,
-		title: meta.title,
-		description: meta.description,
-		...(meta.categories ? { categories: meta.categories } : {}),
-		registryDependencies: [...registryDependencies].sort(),
-		dependencies,
-		expoDependencies,
-		devDependencies,
-		files: files.sort((a, b) => a.target.localeCompare(b.target)),
-	};
+/**
+ * The dev packages a test needs that its item does not already bring.
+ *
+ * `node:*` needs nothing. `bun:test` needs `@types/bun`, or the copied suite is
+ * a type error in a project whose `tsc` covers it — Bun runs it either way.
+ * Anything else is classified like a source import, and an unlisted one throws
+ * for the same reason.
+ */
+function testPackages(item: string, bareImports: ReadonlySet<string>, already: readonly string[]): string[] {
+	const runtime = [...bareImports].filter((specifier) => !specifier.startsWith("node:"));
+	const packages = runtime.map((specifier) => (specifier.startsWith("bun:") ? "@types/bun" : specifier));
+	const classified = classifyPackages(item, new Set(packages));
+
+	return [...new Set([...classified.dependencies, ...classified.expoDependencies, ...classified.devDependencies])]
+		.filter((name) => !already.includes(name))
+		.sort();
+}
+
+/**
+ * The relative paths a test reads off disk that climb out of its own folder.
+ *
+ * A copied test lands wherever the consumer keeps that namespace, so
+ * `join(import.meta.dirname, "../../styles/theme.css")` names a file that is
+ * there in this repository and nowhere in theirs. An import survives the move —
+ * the builder rewrites it — and a read does not, so a suite that needs another
+ * folder's file imports a helper that reads it from beside itself.
+ */
+export function escapingReads(content: string): string[] {
+	const pattern = /import\.meta\.dir(?:name)?\s*,\s*["'](\.\.\/[^"']*)["']/g;
+	return [...content.matchAll(pattern)].map((match) => match[1] as string);
+}
+
+function assertReadsStayLocal(path: string, content: string): void {
+	const reads = escapingReads(content);
+	if (reads.length === 0) return;
+
+	throw new Error(
+		`${path}: reads ${reads.map((read) => `"${read}"`).join(", ")} off disk, which will not exist where the test is copied. ` +
+			"Import what it needs instead — `styles/theme-tokens.test.ts` exports the stylesheets."
+	);
 }
 
 /**
@@ -220,7 +297,6 @@ function toPackageName(specifier: string): string {
 	return specifier.startsWith("@") ? segments.slice(0, 2).join("/") : (segments[0] as string);
 }
 
-/** Every registry dependency must name an item that exists, or `add` would 404 mid-copy. */
 /**
  * No two items share a name.
  *
@@ -245,11 +321,12 @@ function assertNoDuplicateItems(items: readonly RegistryItem[]): void {
 	}
 }
 
+/** Every registry dependency must name an item that exists, or `add` would 404 mid-copy. */
 function assertDependenciesResolve(items: readonly RegistryItem[]): void {
 	const names = new Set(items.map((item) => item.name));
 
 	for (const item of items) {
-		for (const dependency of item.registryDependencies) {
+		for (const dependency of [...item.registryDependencies, ...item.testRegistryDependencies]) {
 			if (!names.has(dependency)) {
 				throw new Error(`${item.name} depends on "${dependency}", which is not a registry item`);
 			}

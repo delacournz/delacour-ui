@@ -43,5 +43,25 @@
 			"target": "uniwind-env.d.ts",
 			"namespace": "styles"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/styles/geometry.test.ts",
+			"target": "geometry.test.ts",
+			"namespace": "styles"
+		},
+		{
+			"path": "packages/react-native-ui/src/styles/theme-tokens.test.ts",
+			"target": "theme-tokens.test.ts",
+			"namespace": "styles"
+		},
+		{
+			"path": "packages/react-native-ui/src/styles/tokens.test.ts",
+			"target": "tokens.test.ts",
+			"namespace": "styles"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

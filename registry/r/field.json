@@ -155,5 +155,21 @@
 			"target": "field/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/field/field.variants.test.ts",
+			"target": "field/field.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

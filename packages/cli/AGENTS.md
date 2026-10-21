@@ -495,6 +495,30 @@ the version, so the snapshot bump in `alpha.yml` is what switches it.
 `process.env.npm_package_version`, which only exists under a package manager running a script —
 `bunx delacour` is not that, so every published build reported the hardcoded fallback.
 
+### Tests ship in `tests`, not in `files`
+
+A `*.test.ts` (and a `*.test-helpers.ts` / `*.fixtures.ts`) is classified like the file beside it,
+marked `test: true`, and lands in its item's `tests` list with its own `testRegistryDependencies` and
+`testDependencies` — what only the tests need. `add --tests` folds all three into the item with
+`withTests` (in `registry/schema.ts`) before resolving or loading anything, so from there a test is
+an ordinary file: planned, written, recorded in the lock, updated. Four things are load-bearing:
+
+- **A separate list, not a flag on `files`.** zod strips the unknown key, so a CLI from before
+  `tests` reads a new registry and copies exactly what it always did. A `test: true` on a file entry
+  would have handed every old CLI the whole suite.
+- **The lock is the record of the choice.** `planUpdate` takes an item's tests when `--tests` is
+  passed or the lock already holds one of that item's tests (`isTest` on the key). A project that
+  never asked is never handed them; one that did keeps them current without repeating the flag.
+- **A test reads off disk only from its own folder.** `escapingReads` fails the build on
+  `join(import.meta.dirname, "../…")` — that path is this repository's layout, not the consumer's.
+  Suites import `THEME_CSS` / `TOKENS_CSS` from `styles/theme-tokens.test.ts` instead, which the
+  canonicaliser rewrites like any import. Source that imports a test fails the build too: a plain
+  `add` would not copy it.
+- **A suite at the root of `src` belongs to no item.** `docs.test.ts`, `cn.parity.test.ts` and the
+  rest check the library as a whole and never ship.
+
+`bun:test` maps to `@types/bun` (classified `dev` in `PACKAGE_INSTALL`); `node:*` needs nothing.
+
 ### Markdown is canonicalised too, but differently
 
 Each component folder's `AGENTS.md` travels with its source, so an agent in the consumer's

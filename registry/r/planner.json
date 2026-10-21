@@ -264,5 +264,34 @@
 			"target": "planner/use-planner-today.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner-dates.test.ts",
+			"target": "planner/planner-dates.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/planner/planner.variants.test.ts",
+			"target": "planner/planner.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../tabs/tabs.variants",
+					"to": "@registry/ui/tabs/tabs.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles",
+		"tabs"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

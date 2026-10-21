@@ -126,5 +126,32 @@
 			"target": "chip/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/chip/chip.variants.test.ts",
+			"target": "chip/chip.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../../styles/tokens",
+					"to": "@registry/styles/tokens"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

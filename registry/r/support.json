@@ -345,5 +345,37 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/support/support.utils.test.ts",
+			"target": "support/support.utils.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/support/support.variants.test.ts",
+			"target": "support/support.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../badge/badge.variants",
+					"to": "@registry/ui/badge/badge.variants"
+				},
+				{
+					"from": "../chip/chip.variants",
+					"to": "@registry/ui/chip/chip.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

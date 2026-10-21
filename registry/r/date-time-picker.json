@@ -325,5 +325,43 @@
 			"target": "date-time-picker/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.value.test.ts",
+			"target": "date-time-picker/date-time-picker.value.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../calendar/calendar.date",
+					"to": "@registry/ui/calendar/calendar.date"
+				},
+				{
+					"from": "../time-picker/time-picker.time",
+					"to": "@registry/ui/time-picker/time-picker.time"
+				}
+			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/date-time-picker/date-time-picker.variants.test.ts",
+			"target": "date-time-picker/date-time-picker.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../time-picker/time-picker.variants",
+					"to": "@registry/ui/time-picker/time-picker.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

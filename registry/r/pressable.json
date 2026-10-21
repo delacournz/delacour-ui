@@ -57,5 +57,15 @@
 			"target": "pressable/pressable.variants.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/pressable/pressable.variants.test.ts",
+			"target": "pressable/pressable.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

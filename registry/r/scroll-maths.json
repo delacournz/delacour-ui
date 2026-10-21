@@ -14,5 +14,15 @@
 			"target": "scroll-maths.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-maths.test.ts",
+			"target": "scroll-maths.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

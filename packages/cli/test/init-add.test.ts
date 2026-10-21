@@ -470,6 +470,51 @@ describe("the lock file", () => {
 	});
 });
 
+describe("add --tests", () => {
+	let root: string;
+	let result: Awaited<ReturnType<typeof add>>;
+	const TEST = "src/components/ui/button/button.variants.test.ts";
+	const HELPER = "src/styles/theme-tokens.test.ts";
+
+	beforeAll(async () => {
+		root = await scaffold("expo-app");
+		await init([], { ...SHARED, cwd: root });
+		result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+	});
+
+	test("copies the component's tests beside it", async () => {
+		await expect(exists(root, TEST)).resolves.toBe(true);
+	});
+
+	test("copies the tests of everything it pulled in, helpers included", async () => {
+		await expect(exists(root, "src/lib/cn.test.ts")).resolves.toBe(true);
+		await expect(exists(root, HELPER)).resolves.toBe(true);
+	});
+
+	test("rewrites a test's imports like any other file", async () => {
+		for (const path of await written(root)) {
+			if (!path.includes(".test.")) continue;
+
+			const content = await read(root, path);
+			expect(`${path}: ${content}`).not.toContain("@registry/");
+			expect(`${path}: ${content}`).not.toContain("@delacour/react-native-ui");
+		}
+	});
+
+	test("records every test in the lock, under the item it tests", async () => {
+		const lock = await readLock(root);
+
+		expect(lock.items.button?.files["ui/button/button.variants.test.ts"]?.hash).toBe(
+			contentHash(await read(root, TEST))
+		);
+		expect(lock.items.styles?.files["styles/theme-tokens.test.ts"]?.hash).toBe(contentHash(await read(root, HELPER)));
+	});
+
+	test("asks for the types bun:test needs, as a dev dependency", () => {
+		expect(result?.dependencies.wanted).toContain("@types/bun");
+	});
+});
+
 const UNWIRED_METRO = `const { getDefaultConfig } = require("expo/metro-config");
 
 const config = getDefaultConfig(__dirname);

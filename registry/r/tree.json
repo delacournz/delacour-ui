@@ -154,5 +154,37 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/tree/tree.variants.test.ts",
+			"target": "tree/tree.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../collapsible/collapsible.variants",
+					"to": "@registry/ui/collapsible/collapsible.variants"
+				},
+				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"collapsible",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

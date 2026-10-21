@@ -72,6 +72,8 @@ export const PACKAGE_INSTALL: Record<string, PackageInstall> = {
 	tailwindcss: "npm",
 	"tailwind-merge": "npm",
 	"tailwind-variants": "npm",
+	// Only ever a test's: the types for `bun:test`, which a copied suite imports.
+	"@types/bun": "dev",
 };
 
 export type ItemMeta = {

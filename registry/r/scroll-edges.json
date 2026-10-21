@@ -16,5 +16,15 @@
 			"target": "scroll-edges.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/scroll-edges.test.ts",
+			"target": "scroll-edges.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

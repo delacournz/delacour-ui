@@ -111,6 +111,74 @@
 					"namespace"
 				]
 			}
+		},
+		"tests": {
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"path": {
+						"type": "string",
+						"minLength": 1
+					},
+					"target": {
+						"type": "string",
+						"minLength": 1
+					},
+					"namespace": {
+						"type": "string",
+						"enum": [
+							"ui",
+							"lib",
+							"hooks",
+							"styles",
+							"icons"
+						]
+					},
+					"rewrites": {
+						"default": [],
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"from": {
+									"type": "string",
+									"minLength": 1
+								},
+								"to": {
+									"type": "string"
+								}
+							},
+							"required": [
+								"from",
+								"to"
+							]
+						}
+					},
+					"content": {
+						"not": {}
+					}
+				},
+				"required": [
+					"path",
+					"target",
+					"namespace"
+				]
+			}
+		},
+		"testRegistryDependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
+		},
+		"testDependencies": {
+			"default": [],
+			"type": "array",
+			"items": {
+				"type": "string"
+			}
 		}
 	},
 	"required": [

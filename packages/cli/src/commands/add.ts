@@ -15,7 +15,7 @@ import { linkPackageToApp, syncSharedPackage } from "../project/shared-package";
 import { type PlannedFile, planFiles, writeFiles } from "../project/write-files";
 import { createRegistryClient } from "../registry/client";
 import { resolveItemGraph } from "../registry/resolve";
-import type { RegistryItem } from "../registry/schema";
+import { type RegistryIndexEntry, type RegistryItem, withTests } from "../registry/schema";
 import { DEFAULT_REGISTRY_REF } from "../registry/source";
 import { createOutput, type Output, style } from "../ui/output";
 // A cycle — `init` ends in an `add`. Safe, because neither module touches the
@@ -53,6 +53,8 @@ export type AddOptions = {
 	offline?: boolean;
 	ref?: string;
 	registry?: string;
+	/** Copy each item's tests too, and install what they need. */
+	tests?: boolean;
 };
 
 /**
@@ -106,13 +108,19 @@ export async function add(names: string[], options: AddOptions): Promise<AddResu
 		return null;
 	}
 
+	// With tests, an item is its tests too — files, the items they import, the
+	// types `bun:test` needs — so everything after this treats them as source.
+	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T => (options.tests ? withTests(item) : item);
 	const byName = new Map(index.items.map((item) => [item.name, item]));
-	const order = resolveItemGraph(requested, (name) => byName.get(name));
+	const order = resolveItemGraph(requested, (name) => {
+		const entry = byName.get(name);
+		return entry && scope(entry);
+	});
 	// Metadata first, then the files it names. The client caps how many of those
 	// are in flight, so asking for the whole closure at once is safe.
 	const items = await output.task(`Fetching ${order.length} item${order.length === 1 ? "" : "s"}`, async () => {
 		const fetched = await Promise.all(order.map((name) => client.getItem(name)));
-		return Promise.all(fetched.map((item) => client.loadItem(item)));
+		return Promise.all(fetched.map((item) => client.loadItem(scope(item))));
 	});
 
 	const planned = await planFiles(items, config);

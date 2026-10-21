@@ -190,5 +190,26 @@
 			"target": "number-input/use-step-repeat.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.format.test.ts",
+			"target": "number-input/number-input.format.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/number-input/number-input.variants.test.ts",
+			"target": "number-input/number-input.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -90,6 +90,7 @@ withRegistryOptions(
 		.argument("[components...]", "components to add")
 		.option("-a, --all", "add every component")
 		.option("-o, --overwrite", "replace files that differ")
+		.option("-t, --tests", "copy each component's tests too, and record them in the lock")
 		.option("-y, --yes", "accept every default without asking")
 		// Forwarded to `init`, and read only when this run is the one that sets
 		// the project up. The default is `src`, which is where `with-router-uniwind`
@@ -135,6 +136,7 @@ withRegistryOptions(
 		.option("--base <ref>", "the ref to merge from, for files copied before the lock existed")
 		.option("--prune", "delete untouched files their component no longer has")
 		.option("-f, --force", "merge into files with uncommitted changes")
+		.option("-t, --tests", "bring every component's tests, not only those already copied")
 		// Declared alone, so it defaults to true: the project's formatter is run
 		// unless a caller says not to.
 		.option("--no-format", "compare without running the project's formatter")
@@ -157,6 +159,7 @@ withRegistryOptions(
 		.command("diff")
 		.description("show what has changed upstream since these files were copied")
 		.argument("[name]", "one component, or every installed one")
+		.option("-t, --tests", "compare every component's tests, not only those already copied")
 		.option("--silent", "print nothing but errors")
 ).action((name: string | undefined, options) => run(() => diff(name, { ...options, cwd: resolve(options.cwd) })));
 

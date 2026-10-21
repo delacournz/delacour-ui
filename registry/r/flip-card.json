@@ -137,5 +137,21 @@
 			"target": "flip-card/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/flip-card/flip-card.variants.test.ts",
+			"target": "flip-card/flip-card.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

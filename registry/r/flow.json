@@ -180,5 +180,20 @@
 			"target": "flow/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/flow/flow-geometry.test.ts",
+			"target": "flow/flow-geometry.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/flow/flow.variants.test.ts",
+			"target": "flow/flow.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

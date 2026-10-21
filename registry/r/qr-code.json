@@ -132,5 +132,65 @@
 			"target": "qr-code/use-qr-code.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.encode.test.ts",
+			"target": "qr-code/qr-code.encode.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.fixtures.ts",
+			"target": "qr-code/qr-code.fixtures.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.format.test.ts",
+			"target": "qr-code/qr-code.format.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.gf.test.ts",
+			"target": "qr-code/qr-code.gf.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.logo.test.ts",
+			"target": "qr-code/qr-code.logo.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.mask.test.ts",
+			"target": "qr-code/qr-code.mask.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.matrix.test.ts",
+			"target": "qr-code/qr-code.matrix.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.path.test.ts",
+			"target": "qr-code/qr-code.path.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.tables.test.ts",
+			"target": "qr-code/qr-code.tables.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.test-helpers.ts",
+			"target": "qr-code/qr-code.test-helpers.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/qr-code/qr-code.variants.test.ts",
+			"target": "qr-code/qr-code.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

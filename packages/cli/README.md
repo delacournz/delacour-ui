@@ -37,7 +37,7 @@ Unlike shadcn, the target is Expo, which changes real things:
 
 | | |
 |---|---|
-| `add <components...>` | Copy components and everything they need, and say what to install. Sets the project up first if it has none |
+| `add <components...>` | Copy components and everything they need, and say what to install. Sets the project up first if it has none. `--tests` copies their `bun test` suites too |
 | `init [components...]` | Do that setup deliberately — choose the source directory, or a shared package |
 | `list` / `search <q>` | Browse the registry |
 | `view <name>` | One item: its files, what it pulls in, what it installs |

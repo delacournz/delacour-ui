@@ -898,6 +898,19 @@ imports crossing a folder — `../icon`, `../../lib/cn` — are recorded as
 placeholders at build time and resolved to the consumer's own aliases at `add`
 time, so write them exactly as you would anyway.
 
+**Tests ship too, on request.** A `*.test.ts` — and a `*.test-helpers.ts` or
+`*.fixtures.ts` — goes into its item's `tests` list, and `delacour add --tests`
+copies it beside the source. Two rules follow from a test landing in someone
+else's layout:
+
+- **A test reads off disk only from its own folder.** `join(import.meta.dirname,
+  "../../styles/theme.css")` resolves here and nowhere else; the builder fails on
+  it. Import `THEME_CSS` / `TOKENS_CSS` from `styles/theme-tokens.test.ts`
+  instead — an import is rewritten with the copy.
+- **A suite about the whole library lives at the root of `src`.** `docs.test.ts`,
+  `display-name.test.ts`, `cn.parity.test.ts` scan every folder, belong to no
+  item, and never ship.
+
 ## Publishing
 
 This package ships **two ways**, and both come off the same source:

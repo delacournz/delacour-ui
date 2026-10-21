@@ -151,5 +151,20 @@
 			"target": "grid-item/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.layout.test.ts",
+			"target": "grid-item/grid-item.layout.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/grid-item/grid-item.variants.test.ts",
+			"target": "grid-item/grid-item.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

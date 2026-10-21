@@ -185,5 +185,46 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.commands.test.ts",
+			"target": "markdown-editor/markdown-editor.commands.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.parse.test.ts",
+			"target": "markdown-editor/markdown-editor.parse.test.ts",
+			"namespace": "ui"
+		},
+		{
+			"path": "packages/react-native-ui/src/components/markdown-editor/markdown-editor.variants.test.ts",
+			"target": "markdown-editor/markdown-editor.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../button/button.variants",
+					"to": "@registry/ui/button/button.variants"
+				},
+				{
+					"from": "../input/input.variants",
+					"to": "@registry/ui/input/input.variants"
+				},
+				{
+					"from": "../tabs/tabs.variants",
+					"to": "@registry/ui/tabs/tabs.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

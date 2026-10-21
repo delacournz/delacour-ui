@@ -14,5 +14,24 @@
 			"target": "navigation-theme.ts",
 			"namespace": "lib"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/navigation-theme.test.ts",
+			"target": "navigation-theme.test.ts",
+			"namespace": "lib",
+			"rewrites": [
+				{
+					"from": "../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

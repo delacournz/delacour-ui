@@ -102,5 +102,33 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/progress/progress.variants.test.ts",
+			"target": "progress/progress.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../styles/theme-tokens.test",
+					"to": "@registry/styles/theme-tokens.test"
+				},
+				{
+					"from": "../slider/slider.variants",
+					"to": "@registry/ui/slider/slider.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"slider",
+		"styles"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

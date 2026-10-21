@@ -59,5 +59,28 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/label/label.variants.test.ts",
+			"target": "label/label.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../field/field.variants",
+					"to": "@registry/ui/field/field.variants"
+				},
+				{
+					"from": "../text/text.variants",
+					"to": "@registry/ui/text/text.variants"
+				}
+			]
+		}
+	],
+	"testRegistryDependencies": [
+		"field"
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

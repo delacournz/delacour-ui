@@ -141,5 +141,15 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/leaderboard/leaderboard.variants.test.ts",
+			"target": "leaderboard/leaderboard.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

@@ -5,10 +5,11 @@ import type { Lock, LockFile } from "../lock/schema";
 import type { Format } from "../project/formatter";
 import { installedItems } from "../project/installed";
 import { destination, planFiles, readText, transformFile } from "../project/write-files";
+import { isTest } from "../registry/classify";
 import type { RegistryClient } from "../registry/client";
 import { isNamespace, type Namespace } from "../registry/namespaces";
 import { resolveItemGraph } from "../registry/resolve";
-import type { LoadedItem } from "../registry/schema";
+import { type LoadedItem, type RegistryIndexEntry, type RegistryItem, withTests } from "../registry/schema";
 import { classify, type FileState } from "./classify";
 
 /**
@@ -62,6 +63,12 @@ export type PlanInput = {
 	format: Format;
 	/** The ref to assume for a file the lock has no entry for. */
 	baseRef?: string;
+	/**
+	 * Bring every item's tests along. Without it an item's tests are in scope
+	 * only when the lock already records one of them — a project that copied
+	 * tests keeps them current, and one that did not is not handed any.
+	 */
+	tests?: boolean;
 };
 
 export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
@@ -77,12 +84,17 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 	// An item the lock knows and the registry has since dropped is not an unknown
 	// name: every file of it is simply no longer upstream.
 	const dropped = candidates.filter((name) => !byName.has(name) && lock.items[name] !== undefined);
+	const scope = <T extends RegistryItem | RegistryIndexEntry>(item: T): T =>
+		input.tests || hasTests(lock, item.name) ? withTests(item) : item;
 	const order = resolveItemGraph(
 		candidates.filter((name) => !dropped.includes(name)),
-		(name) => byName.get(name)
+		(name) => {
+			const entry = byName.get(name);
+			return entry && scope(entry);
+		}
 	);
 
-	const items = await Promise.all(order.map(async (name) => target.loadItem(await target.getItem(name))));
+	const items = await Promise.all(order.map(async (name) => target.loadItem(scope(await target.getItem(name)))));
 	const planned = await planFiles(items, config);
 	const clients = new Map<string, RegistryClient>();
 	const clientAt = (ref: string) => {
@@ -139,6 +151,11 @@ export async function planUpdate(input: PlanInput): Promise<UpdatePlan> {
 	);
 
 	return { ref: input.ref, items, files: [...present, ...gone.filter((file) => file !== null)] };
+}
+
+/** Whether the project copied any of this item's tests — the lock is the only record of that choice. */
+function hasTests(lock: Lock, item: string): boolean {
+	return Object.keys(lock.items[item]?.files ?? {}).some(isTest);
 }
 
 /** A commit is shown as git shows it; a branch or a tag is shown whole. */

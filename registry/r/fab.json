@@ -149,5 +149,21 @@
 			"target": "fab/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/fab/fab.variants.test.ts",
+			"target": "fab/fab.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../icon/icon.variants",
+					"to": "@registry/ui/icon/icon.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

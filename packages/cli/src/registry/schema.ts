@@ -117,11 +117,22 @@ export const registryItemSchema = z.object({
 	expoDependencies: z.array(z.string()).default([]),
 	devDependencies: z.array(z.string()).default([]),
 	files: z.array(registryFileSchema),
+	/**
+	 * The item's tests, and the files that exist only to serve them. Copied only
+	 * when asked for — `add --tests` — so they are kept out of `files`, which a
+	 * CLI from before this list existed copies whole and would otherwise fill
+	 * with suites nobody asked for.
+	 */
+	tests: z.array(registryFileSchema).default([]),
+	/** Items the tests import that the source does not. Followed only when tests are copied. */
+	testRegistryDependencies: z.array(z.string()).default([]),
+	/** Dev packages the tests need that the source does not — `@types/bun` for `bun:test`. */
+	testDependencies: z.array(z.string()).default([]),
 });
 
 /** An item without its file list — enough for `list`, `search` and dependency resolution. */
 export const registryIndexEntrySchema = registryItemSchema
-	.omit({ $schema: true, files: true })
+	.omit({ $schema: true, files: true, tests: true })
 	.extend({ files: z.array(z.string()).default([]) });
 
 export const registryIndexSchema = z.object({
@@ -143,6 +154,29 @@ export type LoadedFile = RegistryFile & { content: string };
 export type LoadedItem = Omit<RegistryItem, "files"> & { files: LoadedFile[] };
 
 export function toIndexEntry(item: RegistryItem): RegistryIndexEntry {
-	const { $schema: _schema, files, ...rest } = item;
+	const { $schema: _schema, files, tests: _tests, ...rest } = item;
 	return { ...rest, files: files.map((file) => `${file.namespace}/${file.target}`) };
+}
+
+/**
+ * The item as `add --tests` copies it: its tests appended to its files, and
+ * what they need folded into what the item needs.
+ *
+ * Everything downstream — the closure, the plan, the lock, the install report —
+ * then treats a test like any other file, which is the point: a copied test is
+ * the consumer's from then on, recorded and updated exactly as the source is.
+ */
+export function withTests<T extends RegistryItem | RegistryIndexEntry>(item: T): T {
+	const tests = "tests" in item ? item.tests : [];
+
+	return {
+		...item,
+		...("files" in item && "tests" in item ? { files: [...item.files, ...tests] } : {}),
+		registryDependencies: union(item.registryDependencies, item.testRegistryDependencies),
+		devDependencies: union(item.devDependencies, item.testDependencies),
+	};
+}
+
+function union(a: readonly string[], b: readonly string[]): string[] {
+	return [...new Set([...a, ...b])].sort();
 }

@@ -189,5 +189,15 @@
 				}
 			]
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/scroll-header/scroll-header.variants.test.ts",
+			"target": "scroll-header/scroll-header.variants.test.ts",
+			"namespace": "ui"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

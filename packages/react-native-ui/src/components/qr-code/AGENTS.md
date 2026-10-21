@@ -33,8 +33,8 @@ renderer can use.
 
 Every `qr-code.*.ts` imports nothing from React or React Native, so `bun test` reaches the whole
 encoder and the path builder. Only `qr-code.tsx`, `qr-code-logo.tsx`, `qr-code.context.tsx` and
-`use-qr-code.ts` touch React. The registry builder skips `*.test-helpers.ts` and `*.fixtures.ts`
-along with the tests.
+`use-qr-code.ts` touch React. The registry ships `*.test-helpers.ts` and `*.fixtures.ts` with the
+tests, in the item's `tests` — copied only by `delacour add qr-code --tests`.
 
 ## Design
 

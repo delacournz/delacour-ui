@@ -40,6 +40,12 @@
 				"ui/accordion/accordion.variants.ts",
 				"ui/accordion/AGENTS.md",
 				"ui/accordion/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -80,6 +86,12 @@
 				"ui/alert/alert.types.ts",
 				"ui/alert/alert.variants.ts",
 				"ui/alert/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -115,6 +127,12 @@
 				"ui/animated-badge/animated-badge.variants.ts",
 				"ui/animated-badge/index.ts",
 				"ui/animated-badge/use-animated-badge-roll.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -158,6 +176,12 @@
 				"ui/attachment/attachment.utils.ts",
 				"ui/attachment/attachment.variants.ts",
 				"ui/attachment/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -190,6 +214,12 @@
 				"ui/avatar/avatar.utils.ts",
 				"ui/avatar/avatar.variants.ts",
 				"ui/avatar/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -223,6 +253,12 @@
 				"ui/badge/badge.types.ts",
 				"ui/badge/badge.variants.ts",
 				"ui/badge/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -302,6 +338,12 @@
 				"ui/bottom-sheet/bottom-sheet.variants.ts",
 				"ui/bottom-sheet/index.ts",
 				"ui/bottom-sheet/use-bottom-sheet-input.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -338,6 +380,12 @@
 				"ui/breadcrumb/breadcrumb.types.ts",
 				"ui/breadcrumb/breadcrumb.variants.ts",
 				"ui/breadcrumb/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -374,6 +422,13 @@
 				"ui/button/button.types.ts",
 				"ui/button/button.variants.ts",
 				"ui/button/index.ts"
+			],
+			"testRegistryDependencies": [
+				"cn",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -421,6 +476,12 @@
 				"ui/calendar/calendar.types.ts",
 				"ui/calendar/calendar.variants.ts",
 				"ui/calendar/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -434,6 +495,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/calm-motion.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -467,6 +531,9 @@
 				"ui/card/card.types.ts",
 				"ui/card/card.variants.ts",
 				"ui/card/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -513,6 +580,12 @@
 				"ui/carousel/carousel.variants.ts",
 				"ui/carousel/index.ts",
 				"ui/carousel/use-carousel-autoplay.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -571,6 +644,12 @@
 				"ui/chart/pie-chart.tsx",
 				"ui/chart/use-chart-font.ts",
 				"ui/chart/use-chart-palette.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -609,6 +688,12 @@
 				"ui/checkbox/checkbox.types.ts",
 				"ui/checkbox/checkbox.variants.ts",
 				"ui/checkbox/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -644,6 +729,12 @@
 				"ui/chip/chip.types.ts",
 				"ui/chip/chip.variants.ts",
 				"ui/chip/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -674,6 +765,9 @@
 				"ui/circular-text/circular-text.types.ts",
 				"ui/circular-text/circular-text.variants.ts",
 				"ui/circular-text/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -691,6 +785,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/cn.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -728,6 +825,13 @@
 				"ui/collapsible/collapsible.types.ts",
 				"ui/collapsible/collapsible.variants.ts",
 				"ui/collapsible/index.ts"
+			],
+			"testRegistryDependencies": [
+				"accordion",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -741,6 +845,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/color.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -797,6 +904,12 @@
 				"ui/color-picker/color-picker.types.ts",
 				"ui/color-picker/color-picker.variants.ts",
 				"ui/color-picker/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -850,6 +963,12 @@
 				"ui/combobox/combobox.types.ts",
 				"ui/combobox/combobox.variants.ts",
 				"ui/combobox/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -891,6 +1010,12 @@
 				"ui/compare/compare.types.ts",
 				"ui/compare/compare.variants.ts",
 				"ui/compare/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -904,6 +1029,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/compose-refs.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -938,6 +1066,12 @@
 				"ui/context-menu/context-menu.tsx",
 				"ui/context-menu/context-menu.variants.ts",
 				"ui/context-menu/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -969,6 +1103,9 @@
 				"ui/countdown/countdown.variants.ts",
 				"ui/countdown/index.ts",
 				"ui/countdown/use-countdown-clock.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1013,6 +1150,12 @@
 				"ui/date-picker/date-picker.types.ts",
 				"ui/date-picker/date-picker.variants.ts",
 				"ui/date-picker/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1065,6 +1208,12 @@
 				"ui/date-time-picker/date-time-picker.value.ts",
 				"ui/date-time-picker/date-time-picker.variants.ts",
 				"ui/date-time-picker/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1111,6 +1260,12 @@
 				"ui/dialog/dialog.tsx",
 				"ui/dialog/dialog.variants.ts",
 				"ui/dialog/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1133,6 +1288,9 @@
 				"ui/direction/direction.tsx",
 				"ui/direction/direction.variants.ts",
 				"ui/direction/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1181,6 +1339,12 @@
 				"ui/drawer/drawer.variants.ts",
 				"ui/drawer/index.ts",
 				"ui/drawer/use-drawer-pan.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1213,6 +1377,12 @@
 				"ui/empty-state/empty-state.types.ts",
 				"ui/empty-state/empty-state.variants.ts",
 				"ui/empty-state/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1266,6 +1436,9 @@
 				"ui/fab/fab.types.ts",
 				"ui/fab/fab.variants.ts",
 				"ui/fab/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1306,6 +1479,12 @@
 				"ui/feedback/feedback.tsx",
 				"ui/feedback/feedback.variants.ts",
 				"ui/feedback/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1342,6 +1521,9 @@
 				"ui/field/field.types.ts",
 				"ui/field/field.variants.ts",
 				"ui/field/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1382,6 +1564,9 @@
 				"ui/flip-card/flip-card.types.ts",
 				"ui/flip-card/flip-card.variants.ts",
 				"ui/flip-card/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1429,6 +1614,9 @@
 				"ui/flow/flow.tsx",
 				"ui/flow/flow.variants.ts",
 				"ui/flow/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1467,6 +1655,9 @@
 				"ui/frame/frame.types.ts",
 				"ui/frame/frame.variants.ts",
 				"ui/frame/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1507,6 +1698,9 @@
 				"ui/grid-item/grid-item.types.ts",
 				"ui/grid-item/grid-item.variants.ts",
 				"ui/grid-item/index.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1534,6 +1728,12 @@
 				"ui/icon/icon.tsx",
 				"ui/icon/icon.variants.ts",
 				"ui/icon/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1595,6 +1795,12 @@
 				"ui/image-viewer/image-viewer.types.ts",
 				"ui/image-viewer/image-viewer.variants.ts",
 				"ui/image-viewer/index.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1634,6 +1840,12 @@
 				"ui/input/input.tsx",
 				"ui/input/input.types.ts",
 				"ui/input/input.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1675,6 +1887,12 @@
 				"ui/item/item.tsx",
 				"ui/item/item.types.ts",
 				"ui/item/item.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1688,6 +1906,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/keyboard-animation.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1738,6 +1959,9 @@
 				"ui/kpi/kpi.tsx",
 				"ui/kpi/kpi.types.ts",
 				"ui/kpi/kpi.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1762,6 +1986,12 @@
 				"ui/label/index.ts",
 				"ui/label/label.tsx",
 				"ui/label/label.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"field"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1800,6 +2030,9 @@
 				"ui/leaderboard/leaderboard.tsx",
 				"ui/leaderboard/leaderboard.types.ts",
 				"ui/leaderboard/leaderboard.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1839,6 +2072,12 @@
 				"ui/list-group/list-group.tsx",
 				"ui/list-group/list-group.types.ts",
 				"ui/list-group/list-group.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1883,6 +2122,12 @@
 				"ui/map/map.tsx",
 				"ui/map/map.types.ts",
 				"ui/map/map.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1929,6 +2174,12 @@
 				"ui/markdown-editor/markdown-editor.tsx",
 				"ui/markdown-editor/markdown-editor.types.ts",
 				"ui/markdown-editor/markdown-editor.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1963,6 +2214,12 @@
 				"ui/marker/marker.context.tsx",
 				"ui/marker/marker.tsx",
 				"ui/marker/marker.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -1997,6 +2254,9 @@
 				"ui/marquee/marquee.tsx",
 				"ui/marquee/marquee.types.ts",
 				"ui/marquee/marquee.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2047,6 +2307,12 @@
 				"ui/menu/menu.tsx",
 				"ui/menu/menu.types.ts",
 				"ui/menu/menu.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2062,6 +2328,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/merge-props.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2107,6 +2376,12 @@
 				"ui/message/message.types.ts",
 				"ui/message/message.utils.ts",
 				"ui/message/message.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2152,6 +2427,12 @@
 				"ui/message-scroller/message-scroller.utils.ts",
 				"ui/message-scroller/message-scroller.variants.ts",
 				"ui/message-scroller/use-message-scroller-state.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2187,6 +2468,12 @@
 				"ui/meter/meter.tsx",
 				"ui/meter/meter.types.ts",
 				"ui/meter/meter.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2200,6 +2487,12 @@
 			"devDependencies": [],
 			"files": [
 				"lib/navigation-theme.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2243,6 +2536,9 @@
 				"ui/number-input/number-input.types.ts",
 				"ui/number-input/number-input.variants.ts",
 				"ui/number-input/use-step-repeat.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2278,6 +2574,9 @@
 				"ui/otp-input/otp-input.logic.ts",
 				"ui/otp-input/otp-input.tsx",
 				"ui/otp-input/otp-input.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2312,6 +2611,12 @@
 				"ui/overlay/overlay.variants.ts",
 				"ui/overlay/use-overlay-back-handler.ts",
 				"ui/overlay/use-overlay-presence.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2361,6 +2666,12 @@
 				"ui/page-header/page-header.types.ts",
 				"ui/page-header/page-header.utils.ts",
 				"ui/page-header/page-header.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2401,6 +2712,12 @@
 				"ui/pagination/pagination.tsx",
 				"ui/pagination/pagination.types.ts",
 				"ui/pagination/pagination.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2414,6 +2731,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/paging.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2467,6 +2787,13 @@
 				"ui/planner/planner.types.ts",
 				"ui/planner/planner.variants.ts",
 				"ui/planner/use-planner-today.ts"
+			],
+			"testRegistryDependencies": [
+				"styles",
+				"tabs"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2512,6 +2839,12 @@
 				"ui/popover/popover.variants.ts",
 				"ui/popover/use-anchor-measure.ts",
 				"ui/popover/use-anchored-content.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2560,6 +2893,12 @@
 				"ui/post/post.types.ts",
 				"ui/post/post.utils.ts",
 				"ui/post/post.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2588,6 +2927,9 @@
 				"ui/pressable/index.ts",
 				"ui/pressable/pressable.tsx",
 				"ui/pressable/pressable.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2621,6 +2963,13 @@
 				"ui/progress/progress.tsx",
 				"ui/progress/progress.types.ts",
 				"ui/progress/progress.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"slider",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2657,6 +3006,13 @@
 				"ui/progress-button/progress-button.context.tsx",
 				"ui/progress-button/progress-button.tsx",
 				"ui/progress-button/progress-button.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"button",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2721,6 +3077,9 @@
 				"ui/qr-code/qr-code.variants.ts",
 				"ui/qr-code/qr-code.warn.ts",
 				"ui/qr-code/use-qr-code.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2775,6 +3134,12 @@
 				"ui/questionnaire/questionnaire.tsx",
 				"ui/questionnaire/questionnaire.types.ts",
 				"ui/questionnaire/questionnaire.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2808,6 +3173,12 @@
 				"ui/radio/radio.context.tsx",
 				"ui/radio/radio.tsx",
 				"ui/radio/radio.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2845,6 +3216,12 @@
 				"ui/rating/rating.context.tsx",
 				"ui/rating/rating.tsx",
 				"ui/rating/rating.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2913,6 +3290,9 @@
 				"ui/screen/screen.types.ts",
 				"ui/screen/screen.variants.ts",
 				"ui/screen/use-screen-scroll-insets.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2949,6 +3329,9 @@
 				"ui/scroll-blur/scroll-blur.tsx",
 				"ui/scroll-blur/scroll-blur.types.ts",
 				"ui/scroll-blur/scroll-blur.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2981,6 +3364,9 @@
 				"ui/scroll-canvas/scroll-canvas.types.ts",
 				"ui/scroll-canvas/scroll-canvas.variants.ts",
 				"ui/scroll-canvas/use-frame-progress.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -2996,6 +3382,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/scroll-edges.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3026,6 +3415,9 @@
 				"ui/scroll-fade/scroll-fade-edge.tsx",
 				"ui/scroll-fade/scroll-fade.tsx",
 				"ui/scroll-fade/scroll-fade.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3074,6 +3466,9 @@
 				"ui/scroll-header/scroll-header.types.ts",
 				"ui/scroll-header/scroll-header.variants.ts",
 				"ui/scroll-header/use-scroll-header-scroll-props.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3087,6 +3482,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/scroll-maths.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3100,6 +3498,9 @@
 			"devDependencies": [],
 			"files": [
 				"lib/scroll-sections.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3133,6 +3534,9 @@
 				"ui/scroll-text/scroll-text.tsx",
 				"ui/scroll-text/scroll-text.types.ts",
 				"ui/scroll-text/scroll-text.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3177,6 +3581,12 @@
 				"ui/search-bar/search-bar.tsx",
 				"ui/search-bar/search-bar.types.ts",
 				"ui/search-bar/search-bar.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3216,6 +3626,12 @@
 				"ui/section-progress/section-progress.context.tsx",
 				"ui/section-progress/section-progress.tsx",
 				"ui/section-progress/section-progress.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3255,6 +3671,12 @@
 				"ui/section-rail/section-rail.context.tsx",
 				"ui/section-rail/section-rail.tsx",
 				"ui/section-rail/section-rail.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3301,6 +3723,13 @@
 				"ui/select/select.tsx",
 				"ui/select/select.types.ts",
 				"ui/select/select.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"list-group",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3342,6 +3771,12 @@
 				"ui/selection-mode/selection-mode.tsx",
 				"ui/selection-mode/selection-mode.types.ts",
 				"ui/selection-mode/selection-mode.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3413,6 +3848,12 @@
 				"ui/signature/signature.tsx",
 				"ui/signature/signature.types.ts",
 				"ui/signature/signature.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3444,6 +3885,9 @@
 				"ui/skeleton/skeleton.context.tsx",
 				"ui/skeleton/skeleton.tsx",
 				"ui/skeleton/skeleton.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3492,6 +3936,12 @@
 				"ui/sketch/sketch.tsx",
 				"ui/sketch/sketch.types.ts",
 				"ui/sketch/sketch.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3528,6 +3978,12 @@
 				"ui/slide-button/slide-button.context.tsx",
 				"ui/slide-button/slide-button.tsx",
 				"ui/slide-button/slide-button.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3565,6 +4021,12 @@
 				"ui/slider/slider.tsx",
 				"ui/slider/slider.types.ts",
 				"ui/slider/slider.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3617,6 +4079,12 @@
 				"ui/sortable/sortable.types.ts",
 				"ui/sortable/sortable.variants.ts",
 				"ui/sortable/use-sortable-drag-gesture.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3647,6 +4115,12 @@
 				"ui/spinner/spinner.context.tsx",
 				"ui/spinner/spinner.tsx",
 				"ui/spinner/spinner.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3683,6 +4157,12 @@
 				"ui/split-view/split-view.tsx",
 				"ui/split-view/split-view.types.ts",
 				"ui/split-view/split-view.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3718,6 +4198,12 @@
 				"ui/splitter/splitter.tsx",
 				"ui/splitter/splitter.types.ts",
 				"ui/splitter/splitter.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3759,6 +4245,12 @@
 				"ui/stack-card/stack-card.tsx",
 				"ui/stack-card/stack-card.types.ts",
 				"ui/stack-card/stack-card.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3798,6 +4290,12 @@
 				"ui/steps/steps.context.tsx",
 				"ui/steps/steps.tsx",
 				"ui/steps/steps.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3820,6 +4318,9 @@
 				"styles/tokens.css",
 				"styles/tokens.ts",
 				"styles/uniwind-env.d.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3878,6 +4379,12 @@
 				"ui/support/support.types.ts",
 				"ui/support/support.utils.ts",
 				"ui/support/support.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3902,6 +4409,12 @@
 				"ui/surface/surface.context.tsx",
 				"ui/surface/surface.tsx",
 				"ui/surface/surface.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3940,6 +4453,12 @@
 				"ui/swipe/swipe.tsx",
 				"ui/swipe/swipe.types.ts",
 				"ui/swipe/swipe.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -3979,6 +4498,12 @@
 				"ui/switch/switch.tsx",
 				"ui/switch/switch.types.ts",
 				"ui/switch/switch.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4027,6 +4552,9 @@
 				"ui/table/table.tsx",
 				"ui/table/table.types.ts",
 				"ui/table/table.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4071,6 +4599,12 @@
 				"ui/tabs/tabs.tsx",
 				"ui/tabs/tabs.types.ts",
 				"ui/tabs/tabs.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4111,6 +4645,12 @@
 				"ui/tag-input/tag-input.tsx",
 				"ui/tag-input/tag-input.types.ts",
 				"ui/tag-input/tag-input.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4138,6 +4678,9 @@
 				"ui/text/text.context.tsx",
 				"ui/text/text.tsx",
 				"ui/text/text.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4173,6 +4716,9 @@
 				"ui/text-animation/text-animation.tsx",
 				"ui/text-animation/text-animation.types.ts",
 				"ui/text-animation/text-animation.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4198,6 +4744,12 @@
 				"ui/textarea/index.ts",
 				"ui/textarea/textarea.tsx",
 				"ui/textarea/textarea.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4233,6 +4785,9 @@
 				"ui/theme-selector/theme-selector.types.ts",
 				"ui/theme-selector/theme-selector.variants.ts",
 				"ui/theme-selector/use-theme-selection.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4283,6 +4838,12 @@
 				"ui/time-picker/time-picker.tsx",
 				"ui/time-picker/time-picker.types.ts",
 				"ui/time-picker/time-picker.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4333,6 +4894,12 @@
 				"ui/timeline/timeline.types.ts",
 				"ui/timeline/timeline.variants.ts",
 				"ui/timeline/use-timeline-reading-edge.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4382,6 +4949,12 @@
 				"ui/toast/toast.timer.ts",
 				"ui/toast/toast.tsx",
 				"ui/toast/toast.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4411,6 +4984,9 @@
 				"ui/toggle-button/toggle-button.context.tsx",
 				"ui/toggle-button/toggle-button.tsx",
 				"ui/toggle-button/toggle-button.variants.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4450,6 +5026,12 @@
 				"ui/tooltip/tooltip.context.tsx",
 				"ui/tooltip/tooltip.tsx",
 				"ui/tooltip/tooltip.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4490,6 +5072,12 @@
 				"ui/tour/tour.tsx",
 				"ui/tour/tour.types.ts",
 				"ui/tour/tour.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{
@@ -4529,6 +5117,13 @@
 				"ui/tree/tree.tsx",
 				"ui/tree/tree.types.ts",
 				"ui/tree/tree.variants.ts"
+			],
+			"testRegistryDependencies": [
+				"collapsible",
+				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		},
 		{

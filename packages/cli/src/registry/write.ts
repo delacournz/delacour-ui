@@ -4,7 +4,13 @@ import { z } from "zod";
 import { configSchema } from "../config/schema";
 import { lockSchema } from "../lock/schema";
 import type { BuildResult } from "./build";
-import { registryIndexSchema, registryItemSchema } from "./schema";
+import {
+	type RegistryFile,
+	type RegistryIndexEntry,
+	type RegistryItem,
+	registryIndexSchema,
+	registryItemSchema,
+} from "./schema";
 
 /**
  * Writes a built registry to disk.
@@ -46,11 +52,16 @@ export async function writeRegistry(outDir: string, result: BuildResult): Promis
 
 	for (const item of result.items) {
 		const path = join(itemsDir, `${item.name}.json`);
-		await writeFile(path, stringify({ $schema: ITEM_SCHEMA_URL, ...item, files: item.files.map(trim) }), "utf-8");
+		await writeFile(
+			path,
+			stringify({ $schema: ITEM_SCHEMA_URL, ...trimTests(item), files: item.files.map(trim) }),
+			"utf-8"
+		);
 		written.push(`r/${item.name}.json`);
 	}
 
-	await writeFile(join(outDir, "registry.json"), stringify({ $schema: INDEX_SCHEMA_URL, ...result.index }), "utf-8");
+	const index = { ...result.index, items: result.index.items.map(trimTests) };
+	await writeFile(join(outDir, "registry.json"), stringify({ $schema: INDEX_SCHEMA_URL, ...index }), "utf-8");
 	written.push("registry.json");
 
 	// The `$schema` URLs above have to resolve to something, or an editor opening
@@ -72,9 +83,25 @@ export async function writeRegistry(outDir: string, result: BuildResult): Promis
  * in it would be four lines of `"rewrites": []` on two thirds of the registry —
  * noise in exactly the document a reader opens to see what `add` will copy.
  */
-function trim(file: BuildResult["items"][number]["files"][number]): unknown {
+function trim(file: RegistryFile): unknown {
 	const { rewrites, ...rest } = file;
 	return rewrites.length > 0 ? { ...rest, rewrites } : rest;
+}
+
+/**
+ * Drops the test fields from an item that has no tests, which the schema
+ * defaults anyway — most lib and hook items, and three empty lists each.
+ */
+function trimTests(item: RegistryItem | RegistryIndexEntry): Record<string, unknown> {
+	const { testRegistryDependencies, testDependencies, ...rest } = item;
+	const { tests, ...source } = "tests" in rest ? rest : { ...rest, tests: [] };
+
+	return {
+		...source,
+		...(tests.length > 0 ? { tests: tests.map(trim) } : {}),
+		...(testRegistryDependencies.length > 0 ? { testRegistryDependencies } : {}),
+		...(testDependencies.length > 0 ? { testDependencies } : {}),
+	};
 }
 
 /** A component deleted upstream must not linger as a fetchable item. */

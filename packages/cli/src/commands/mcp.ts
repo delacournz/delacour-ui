@@ -105,6 +105,12 @@ export async function mcp(options: McpOptions): Promise<void> {
 			inputSchema: {
 				names: z.array(z.string()).describe("Component names to add"),
 				overwrite: z.boolean().optional().describe("Replace files that differ from the registry"),
+				tests: z
+					.boolean()
+					.optional()
+					.describe(
+						"Copy each component's `bun test` suites beside it too. They are recorded in the lock and kept current by updates."
+					),
 				install: z
 					.boolean()
 					.optional()
@@ -113,12 +119,13 @@ export async function mcp(options: McpOptions): Promise<void> {
 					),
 			},
 		},
-		async ({ names, overwrite, install }) => {
+		async ({ names, overwrite, tests, install }) => {
 			const result = await add(names, {
 				cwd: options.cwd,
 				ref: options.ref,
 				registry: options.registry,
 				overwrite,
+				tests,
 				install: install ?? false,
 				yes: true,
 				silent: true,
@@ -164,19 +171,24 @@ export async function mcp(options: McpOptions): Promise<void> {
 				names: z.array(z.string()).optional().describe("Components to update. Omit for every one in the project."),
 				force: z.boolean().optional().describe("Merge into files that have uncommitted changes"),
 				prune: z.boolean().optional().describe("Delete untouched files a component no longer has"),
+				tests: z
+					.boolean()
+					.optional()
+					.describe("Bring every component's tests along. Tests the project already copied are updated either way."),
 				install: z
 					.boolean()
 					.optional()
 					.describe("Run the package manager for anything the updated components newly need. Defaults to false."),
 			},
 		},
-		async ({ names, force, prune, install }) => {
+		async ({ names, force, prune, tests, install }) => {
 			const result = await update(names ?? [], {
 				cwd: options.cwd,
 				ref: options.ref,
 				registry: options.registry,
 				force,
 				prune,
+				tests,
 				install: install ?? false,
 				yes: true,
 				silent: true,

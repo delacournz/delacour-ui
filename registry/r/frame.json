@@ -181,5 +181,25 @@
 			"target": "frame/index.ts",
 			"namespace": "ui"
 		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/components/frame/frame.variants.test.ts",
+			"target": "frame/frame.variants.test.ts",
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../list-group/list-group.variants",
+					"to": "@registry/ui/list-group/list-group.variants"
+				},
+				{
+					"from": "../surface/surface.variants",
+					"to": "@registry/ui/surface/surface.variants"
+				}
+			]
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
 	]
 }

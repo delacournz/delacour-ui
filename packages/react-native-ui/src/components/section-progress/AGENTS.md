@@ -165,8 +165,11 @@ rule keeps such a type in its consumer's file.
 
 ## Peers
 
-- **`@shopify/react-native-skia` is an optional peer, needed here.** The ring draws with it, as
+- **`react-native-skia` (3 or later) is an optional peer, needed here.** The ring draws with it, as
   `Chart`, `Flow` and `Sketch` do; `react-native-svg` is no longer imported by this component.
+- **The ring imports `lib/skia-native-id` for its effect.** After a JS reload Skia reuses the old
+  runtime's canvas ids, so a ring mounted then would draw nothing until it re-rendered. The import
+  moves this runtime's ids to a fresh range before the canvas asks for one, as `Sketch` does.
 
 ## What it does not do
 

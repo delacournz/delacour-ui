@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"compose-refs",
 		"pressable",
+		"skia-native-id",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -20,9 +21,9 @@
 		"tailwind-variants"
 	],
 	"expoDependencies": [
-		"@shopify/react-native-skia",
 		"react-native-reanimated",
 		"react-native-safe-area-context",
+		"react-native-skia",
 		"react-native-worklets",
 		"uniwind"
 	],
@@ -91,6 +92,10 @@
 				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/skia-native-id",
+					"to": "@registry/lib/skia-native-id"
 				}
 			]
 		},

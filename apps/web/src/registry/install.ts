@@ -13528,10 +13528,10 @@ export const install = {
 		description: "A floating pill over a long reading screen: a ring filling with scroll progress and the section being read, opening a list of sections to jump to.",
 		importPath: "@delacour/react-native-ui/section-progress",
 		exportName: "SectionProgress",
-		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 33,
+		fileCount: 34,
 		groups: [
 			{
 				name: "section-progress",
@@ -13607,6 +13607,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "skia-native-id",
+				title: "skiaNativeId",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

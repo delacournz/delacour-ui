@@ -191,6 +191,13 @@ collapse to `never`. Metro cannot follow that layout either.
 linker = "hoisted"
 ```
 
+### `Must use import to load ES Module` under Jest
+
+A suite reached `chart` or `bottom-sheet`, whose engines ship TypeScript source that Jest leaves
+untransformed by default. Add `@delacour/.*` — and for `chart`, `d3-.*` and `internmap` — to the
+packages `transformIgnorePatterns` lets through, beside `jest-expo`'s own. `delacour doctor` warns
+about this under **Jest transforms**.
+
 ### A copied component does not typecheck
 
 That is a registry defect rather than something wrong with your project — an import the registry
@@ -230,6 +237,11 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
     },
     "Gesture Handler": { type: "check", description: "A GestureHandlerRootView exists at the app root." },
     "Native modules": { type: "check", description: "One copy of each native module, not two." },
+    "Jest transforms": {
+      type: "check",
+      description:
+        "On Jest with chart or bottom-sheet installed, transformIgnorePatterns lets @delacour/.* through, and d3-.* and internmap for chart. The engines ship TypeScript source; untransformed, every suite importing them fails with \"Must use import to load ES Module\". A warning: only the tests break.",
+    },
   }}
 />
 

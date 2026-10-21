@@ -569,7 +569,8 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
   runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
 - **What the runner itself needs is out of scope.** Vitest needs the project's `@/` alias in its own
   config, and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
-  `chart` and `bottom-sheet`. The docs say so; the CLI does not write a runner's config.
+  `chart` and `bottom-sheet`. The docs say so, and `doctor`'s `checkJestTransform` warns when the
+  Jest config's text lacks them; the CLI does not write a runner's config.
 
 Verified by hand: `add --all --tests` into a Vitest app and a `jest-expo` app ran 163 suites and
 7279 tests green under each.

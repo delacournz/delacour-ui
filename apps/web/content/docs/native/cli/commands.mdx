@@ -134,7 +134,7 @@ Vitest does not read `tsconfig` paths, so a project importing through `@/` needs
 `vitest.config.ts` (`resolve.alias`, or `vite-tsconfig-paths`). Under Jest, `chart` and
 `bottom-sheet` import engines published as TypeScript source, so `transformIgnorePatterns` has to
 let `@delacour/.*` through, and for `chart` also `d3-.*` and `internmap`, which ship ES modules
-only.
+only. [`doctor`](#doctor) warns when it does not.
 </Callout>
 
 `update` keeps the tests you copied current and leaves alone the components you copied without

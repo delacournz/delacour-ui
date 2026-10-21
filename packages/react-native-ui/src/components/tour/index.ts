@@ -13,6 +13,7 @@ export {
 	resolveCardPlacement,
 	resolveCurrentOrder,
 	resolveHoleRect,
+	resolveMaskHole,
 	resolveOverlayInsets,
 	resolveRelativeRect,
 	resolveScrimRects,

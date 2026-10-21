@@ -14,7 +14,7 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
 | `tour.tsx` | Root — open and step state, the step registry, the `Modal` or in-tree overlay, and the `Object.assign` |
 | `tour-step.tsx` | `Tour.Step` — the measured wrapper; registers on mount |
 | `tour-overlay.tsx` | Everything drawn while open: measuring, the hole's shared values, card placement — internal |
-| `tour-mask.tsx` | The dimmed window with the hole cut out — one animated SVG path — internal |
+| `tour-mask.tsx` | The dimmed window with the hole cut out — one Skia canvas, a rect clipped by the hole — internal |
 | `tour-scrim.tsx` | What a touch on the dim meets: one full-window `Pressable`, or four around the hole — internal |
 | `tour-card.tsx` | The card: position, title, description, footer actions — internal |
 | `tour.context.tsx` | The state context (`useTour`) and the registry context `Tour.Step` reads |
@@ -35,10 +35,17 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   (`resolveCurrentOrder`) rather than leaving an open tour pointing at nothing.
 - **Geometry is inherited.** `shape`, `padding`, `radius` and `placement` on the root are the
   defaults; a step names only what differs (`resolveStepOptions`).
-- **Two hole shapes, one path.** `resolveHoleRect` grows the target by the padding; `circle` is a
-  square around the larger side with a radius of half of it. `buildMaskPath` always draws the
-  four-arc rounded rectangle — a circle is the case where the straight runs are zero — so a hole
-  travelling from a rectangle to a circle never changes its command list and nothing pops.
+- **Two hole shapes, one rounded rectangle.** `resolveHoleRect` grows the target by the padding;
+  `circle` is a square around the larger side with a radius of half of it. `resolveMaskHole`
+  clamps the size to zero and the radius to half the shorter side, and the mask always cuts a
+  rounded rectangle — a circle is the case where the straight runs are zero — so a hole travelling
+  from a rectangle to a circle never changes kind and nothing pops.
+- **The mask is Skia, not SVG.** A window-sized `Rect` in a `Group` with `clip` set to the hole and
+  `invertClip`, so the hole is subtracted. The clip is a `Skia.RRectXY` derived on the UI thread
+  from the five shared values — no path string is built or parsed per frame, which the SVG
+  `evenodd` path it replaced did on every frame of a transition. `@shopify/react-native-skia` is
+  therefore a peer of `Tour`. `buildMaskPath`, the old path builder, stays exported and
+  deprecated so the public surface does not shrink in a patch; nothing in the tour reads it.
 - **Card placement** (`resolveCardPlacement`): `auto` is below the hole when the card fits inside
   the safe area, else above. Horizontally centred on the hole, clamped between gutters that clear
   the side insets, at most 360pt wide.
@@ -50,7 +57,7 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   `requestAnimationFrame` and calls `measureInWindow`. It re-measures on every window change,
   which is rotation. A measurement is tagged with its step, so a stale one is never placed.
 - **The hole is five shared values**, eased with `withTiming` 280ms to each new target, read by
-  the mask's `useAnimatedProps` and by an interactive scrim's animated styles — the hole travels
+  the mask's `useDerivedValue` clip and by an interactive scrim's animated styles — the hole travels
   on the UI thread with no render. The first hole of an opening jumps (travelling in from a zero
   rect would grow it out of the corner), and so does every hole under reduce motion
   (`resolveTourTransitionDuration`).
@@ -66,8 +73,9 @@ and a card beside it explains it; Next, Back and Skip move through the steps. Co
   the root's `testID` is the stem `resolveTourTestIDs` derives `<testID>-card`, `-next`, `-back`
   and `-skip` from. One stem rather than a `closeTestID`-style prop per action, because there are
   four of them. A capture flow presses Next through `-next`.
-- **Scrim colour is the `overlay` token**, through `useThemeColor`; the suite asserts both themes
-  declare it.
+- **Scrim colour is the `overlay` token**, through `useThemeColor`, resolved above the canvas where
+  the theme is in reach and handed to the `Rect` as a colour; the suite asserts both themes declare
+  it.
 
 ## Interactive mode
 

@@ -6,6 +6,7 @@ import {
 	resolveCardPlacement,
 	resolveCurrentOrder,
 	resolveHoleRect,
+	resolveMaskHole,
 	resolveOverlayInsets,
 	resolveRelativeRect,
 	resolveScrimRects,
@@ -200,6 +201,44 @@ describe("resolveOverlayInsets", () => {
 				window: WINDOW,
 			})
 		).toEqual({ top: 27, bottom: 24, left: 0, right: 0 });
+	});
+});
+
+describe("resolveMaskHole", () => {
+	test("a rect hole passes through unchanged", () => {
+		expect(resolveMaskHole({ x: 10, y: 20, width: 30, height: 40, radius: 5 })).toEqual({
+			x: 10,
+			y: 20,
+			width: 30,
+			height: 40,
+			radius: 5,
+		});
+	});
+
+	test("a zero radius stays a square-cornered rect", () => {
+		expect(resolveMaskHole({ x: 0, y: 0, width: 10, height: 10, radius: 0 }).radius).toBe(0);
+	});
+
+	test("circle: radius half the side is kept, so the corners meet", () => {
+		expect(resolveMaskHole({ x: 10, y: 10, width: 40, height: 40, radius: 20 }).radius).toBe(20);
+	});
+
+	test("a radius past half the shorter side is clamped, so the corners never cross", () => {
+		expect(resolveMaskHole({ x: 0, y: 0, width: 20, height: 10, radius: 50 }).radius).toBe(5);
+	});
+
+	test("a negative radius is clamped to square corners", () => {
+		expect(resolveMaskHole({ x: 0, y: 0, width: 20, height: 10, radius: -3 }).radius).toBe(0);
+	});
+
+	test("a negative size, mid-flight or unmeasured, collapses to an empty hole at its origin", () => {
+		expect(resolveMaskHole({ x: 5, y: 6, width: -4, height: -2, radius: 8 })).toEqual({
+			x: 5,
+			y: 6,
+			width: 0,
+			height: 0,
+			radius: 0,
+		});
 	});
 });
 

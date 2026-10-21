@@ -184,6 +184,22 @@ export function resolveOverlayInsets({
 	};
 }
 
+/**
+ * The hole as the mask cuts it: a rounded rectangle whose size is never negative and whose radius
+ * never passes half its shorter side, so the corners never cross.
+ *
+ * The hole is always a rounded rectangle; a circle is the case where the radius is half the side.
+ * One shape means the hole can travel from a rectangle to a circle without changing kind, so
+ * nothing pops mid-way. A worklet — the mask derives its clip from it every frame of a transition.
+ */
+export function resolveMaskHole(hole: TourHoleRect): TourHoleRect {
+	"worklet";
+	const width = Math.max(0, hole.width);
+	const height = Math.max(0, hole.height);
+	const radius = Math.max(0, Math.min(hole.radius, width / 2, height / 2));
+	return { x: hole.x, y: hole.y, width, height, radius };
+}
+
 /** Two decimals: an animating hole is redrawn every frame, and the path string is the cost. */
 function round(value: number): number {
 	"worklet";
@@ -194,10 +210,13 @@ function round(value: number): number {
  * The scrim as one SVG path: the whole window, then the hole, drawn with `fillRule="evenodd"`
  * so the hole is subtracted.
  *
+ * @deprecated The mask now draws with Skia from `resolveMaskHole`; nothing in the tour reads this.
+ * Kept for callers drawing their own scrim, and removed in the next minor.
+ *
  * The hole is always the four-arc rounded rectangle; a circle is the case where the radius is
  * half the side and the straight runs have zero length. One shape means the hole can travel from
  * a rectangle to a circle without the path changing its command list, so nothing pops mid-way.
- * A worklet — it runs inside `useAnimatedProps` every frame of a transition.
+ * A worklet.
  */
 export function buildMaskPath(window: TourSize, hole: TourHoleRect): string {
 	"worklet";

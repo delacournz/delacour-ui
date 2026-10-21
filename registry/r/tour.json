@@ -19,10 +19,10 @@
 		"tailwind-variants"
 	],
 	"expoDependencies": [
+		"@shopify/react-native-skia",
 		"react-native-gesture-handler",
 		"react-native-reanimated",
-		"react-native-safe-area-context",
-		"react-native-svg"
+		"react-native-safe-area-context"
 	],
 	"devDependencies": [],
 	"files": [

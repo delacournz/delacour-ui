@@ -67,6 +67,7 @@ src/
 │   ├── scan-imports.ts   TypeScript's preProcessFile           (build time)
 │   ├── build.ts, write.ts, cli.ts, config.ts                   (build time)
 │   ├── rewrite.ts        the specifier list an item ships, and applying it
+│   ├── ship.ts           what a copy leaves out, and the guard on what it keeps (both halves)
 │   ├── transform.ts      @registry/* → the consumer's aliases  (add time)
 │   ├── client.ts         fetch + ETag cache + zod validation   (add time)
 │   │                     also holds the file-fetch concurrency cap
@@ -86,7 +87,7 @@ scripts/
 └── check-bundle.ts       prepublish guard
 ```
 
-## The seven rules
+## The eight rules
 
 1. **`src/index.ts` must never reach `scan-imports.ts`.** It imports the whole of `typescript` —
    about ten megabytes — to read type-only imports out of the library's source. That runs at
@@ -134,6 +135,33 @@ scripts/
    canonicalised*; a specifier quoted somewhere other than an import fails the build rather than
    reaching a stranger's repository. `rewrites[].to` must parse as a placeholder, so the one field
    that edits a fetched file cannot be used to splice arbitrary source into someone's project.
+
+8. **Nothing a consumer receives cites Bun or a file the registry does not ship.** A copy lands in
+   a project on npm, pnpm, yarn or bun, and `classifySource` drops every `*.test.ts`,
+   `*.test-helpers.ts` and `*.fixtures.ts` — so `bun test`, `bunx`, `tokens.test.ts` or a playground
+   `*.e2e.ts` in a copied file names a toolchain and a file that are not there, and an agent reading
+   the copy takes it at its word. `registry/ship.ts` holds both halves:
+
+   - **`shipContent`** strips a component `AGENTS.md` at add time, in `client.loadItem` after the
+     rewrites — so `add`, `update`, `view` and the MCP server receive the same text and the lock
+     hashes it. It removes every `<!-- registry:omit -->` … `<!-- /registry:omit -->` span (whole
+     lines when the markers sit alone on theirs, an exact cut otherwise; unbalanced or nested markers
+     throw), and every table row whose first cell is a backticked file the registry drops. The Files
+     tables therefore keep listing tests in this repository, where `src/docs.test.ts` wants them, and
+     list the folder as it lands in the copy.
+   - **`findUnshippableReferences`** is run by the builder over the shipped text of every file —
+     Markdown, `.ts`, `.tsx`, `.css` — and any hit fails `registry:build` with every offence listed
+     at once. `build.test.ts` holds the same guard over what `loadItem` delivers.
+
+   The fix for a hit is to state the invariant rather than what checks it — "pure, so it is
+   unit-testable", not "reachable from `bun test`". A pointer that is genuinely maintainer-only (which
+   test pins a rule, a `bun run previews` capture command) goes inside an omit span in the
+   `AGENTS.md`; source comments have no omit span, so they are rewritten. The rule is about shipped
+   text only: this file, the package `AGENTS.md` and every script keep using Bun.
+
+   The same rule holds for what the CLI prints: a command is spelled for the detected package
+   manager (`installCommands`, `expoCommand` in `project/package-manager.ts`), never as a bare `npx`
+   or `bunx`.
 
 ## Adding a component to the registry
 

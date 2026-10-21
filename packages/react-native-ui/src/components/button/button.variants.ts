@@ -63,7 +63,7 @@ export type ButtonGroupSlotPosition = ButtonGroupPosition | "none";
  *
  * Typed on the group's own union rather than on `SeparatorOrientation`, which
  * lives in `separator.tsx` beside a React Native import and would make this file
- * unparseable by `bun test`. The two vocabularies are the same two words, and a
+ * import React Native. The two vocabularies are the same two words, and a
  * test asserts this map still names one of them.
  */
 export const BUTTON_GROUP_SEPARATOR_ORIENTATION: Record<ButtonGroupOrientation, ButtonGroupOrientation> = {
@@ -135,8 +135,7 @@ export const BUTTON_FOREGROUND_TOKEN: Record<ButtonVariant, string> = {
  * button fades to the edge of its own box, and the fade is clipped to the same
  * corner the button draws.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const buttonVariants = tv({
 	slots: {
@@ -366,7 +365,7 @@ export type ButtonLayout = {
  * square is a `size`, so `only` cannot reach it — see the note on the `size`
  * axis for the `alignItems: stretch` failure that rules out earning one here.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveButtonLayout({
 	isLoading = false,
@@ -394,7 +393,7 @@ export function resolveButtonLayout({
  * the spinner, so taking the one icon a button holds regardless of which side
  * it sits on would draw the spinner opposite the side that was asked for.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveSpinnerSwapIndex(isIcon: readonly boolean[], side: "start" | "end"): number | null {
 	const index = side === "start" ? 0 : isIcon.length - 1;
@@ -411,7 +410,7 @@ export function resolveSpinnerSwapIndex(isIcon: readonly boolean[], side: "start
  * `Button.Group` has to line up with the run without having a square form of its
  * own, which is exactly what an `Input` does.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveButtonSizeStep(size: ButtonSize): ButtonLabelSize {
 	return (size.startsWith("icon-") ? size.slice("icon-".length) : size) as ButtonLabelSize;
@@ -430,7 +429,7 @@ export function resolveButtonSizeStep(size: ButtonSize): ButtonLabelSize {
  * to the group's own shape when the member names no size. `icon-md` inside a
  * `sm` group is `icon-sm` — square, and the same height as everything beside it.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveGroupedButtonSize(own: ButtonSize | undefined, group: ButtonSize | undefined): ButtonSize {
 	if (group === undefined) return own ?? "md";
@@ -449,7 +448,7 @@ export function resolveGroupedButtonSize(own: ButtonSize | undefined, group: But
  * one button conditionally look no different from the button on its own.
  *
  * Takes an array of "is this child a member" rather than the children
- * themselves, so it stays free of React and reachable from `bun test` — the
+ * themselves, so it stays free of React and unit-testable — the
  * trade {@link resolveSpinnerSwapIndex} already makes. React Native has no
  * sibling selector, so this is the only place a member's corner can be decided.
  *
@@ -457,7 +456,7 @@ export function resolveGroupedButtonSize(own: ButtonSize | undefined, group: But
  * position, which draws the lone button's corner — rather than minting a fourth
  * sentinel: a spaced member *is* a button on its own that happens to share props.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveGroupPositions(
 	isMember: readonly boolean[],
@@ -497,7 +496,7 @@ export function resolveGroupPositions(
  * A detached run has no shared edge, so nothing overlaps: a point of overlap
  * there would only eat into the gap.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveGroupSeams(
 	isMember: readonly boolean[],
@@ -527,7 +526,7 @@ export function resolveGroupSeams(
  * group. `pressedScale` beats both, because `resolvePressedState` lets an
  * explicit value win on the axis it names — see `pressable.variants.ts`.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveButtonFeedback(
 	own: PressableFeedback | undefined,
@@ -546,7 +545,7 @@ export function resolveButtonFeedback(
  * would collapse every member to nothing — so `isFullWidth` on a vertical group
  * widens the group and does nothing further.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveGroupMemberStretch({
 	isFullWidth,

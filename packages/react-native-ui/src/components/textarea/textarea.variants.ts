@@ -14,8 +14,7 @@ export const TEXTAREA_DEFAULT_MAX_ROWS = 10;
  * A paragraph needs more leading than the one line `Input` sets `leading-tight`
  * for, and a row count only becomes a height once the height of a line is a
  * number. So the number lives here, and the `leading-*` class that sets it lives
- * in {@link textareaVariants} beside it; `textarea.variants.test.ts` reads the
- * class back and fails if the two ever disagree.
+ * in {@link textareaVariants} beside it; the two must never disagree.
  */
 export const TEXTAREA_LINE_HEIGHTS: Record<InputSize, number> = { sm: 20, md: 24, lg: 28 };
 
@@ -75,7 +74,7 @@ export type TextareaVariantProps = VariantProps<typeof textareaVariants>;
  * the `leading-tight` that slot sets rather than sitting beside it — and a
  * caller's className, merged last here, still wins over both.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveTextareaFieldClass({ size, className }: { size: InputSize; className?: string }): string {
 	return textareaVariants({ size }).field({ className });
@@ -93,7 +92,7 @@ function wholeRows(value: number | undefined, fallback: number): number {
  * A ceiling below the floor is lifted up to it — otherwise a growing field
  * would shrink as it grew.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveTextareaRows({ rows, maxRows }: { rows?: number; maxRows?: number }): {
 	rows: number;
@@ -111,7 +110,7 @@ export function resolveTextareaRows({ rows, maxRows }: { rows?: number; maxRows?
  * padding — around every section at once, so a grouped field is its lines and
  * nothing else. Adding the box back gives exactly the lone height.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveTextareaRowsHeight({
 	rows,
@@ -138,7 +137,7 @@ export function resolveTextareaRowsHeight({
  * own multiline `TextInput` sizes itself to its content — no measuring pass, so
  * no frame drawn at the old height after a line is added.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveTextareaHeightStyle({
 	size,
@@ -178,7 +177,7 @@ export type TextareaCount = {
  * can never see, and the count has to say something at the moment typing stops
  * working. A controlled value set past the limit in code still reads as at it.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveTextareaCount({ length, maxLength }: { length: number; maxLength: number }): TextareaCount {
 	const isAtLimit = length >= maxLength;

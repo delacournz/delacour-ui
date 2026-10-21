@@ -107,8 +107,7 @@ export function resolvePageHeaderCoverStops({
  * whitespace — so the part can render nothing rather than leave a gap.
  *
  * A number is text, zero included. Anything else — an element — is taken at its
- * word. Typed as `unknown` so it stays free of React's types and reachable from
- * `bun test`.
+ * word. Typed as `unknown` so it stays free of React's types and unit-testable.
  */
 export function isEmptyText(children: unknown): boolean {
 	if (children === undefined || children === null || typeof children === "boolean") return true;

@@ -36,8 +36,8 @@ export const NUMBER_INPUT_STEPPER_PRESSED_OPACITY = 0.5;
  * edge rather than a button floating in a gutter. At `md` and `lg` that is 44pt
  * and over; `sm` makes the rest up with {@link resolveStepperHitSlop}.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const numberInputVariants = tv({
 	slots: {

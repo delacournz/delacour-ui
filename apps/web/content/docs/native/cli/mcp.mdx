@@ -17,11 +17,13 @@ With it, the agent reads the real component and copies it.
 
 ## Wiring it up
 
+`npx` is shown; `pnpm dlx`, `yarn dlx` and `bunx` run the same command. In the JSON configs, pnpm is `"command": "pnpm"` with `"args": ["dlx", "delacour@latest", "mcp"]`.
+
 <Tabs items={["Claude Code", "Cursor", "Any MCP client"]}>
 <Tab value="Claude Code">
 
 ```bash
-claude mcp add delacour -- bunx delacour@latest mcp
+claude mcp add delacour -- npx delacour@latest mcp
 ```
 
 </Tab>
@@ -31,7 +33,7 @@ claude mcp add delacour -- bunx delacour@latest mcp
 {
   "mcpServers": {
     "delacour": {
-      "command": "bunx",
+      "command": "npx",
       "args": ["delacour@latest", "mcp"]
     }
   }
@@ -43,7 +45,7 @@ claude mcp add delacour -- bunx delacour@latest mcp
 
 ```json
 {
-  "command": "bunx",
+  "command": "npx",
   "args": ["delacour@latest", "mcp", "--cwd", "/path/to/your/app"]
 }
 ```
@@ -110,8 +112,8 @@ is missing, the commands that would install it:
 ```txt
 Added button, icon, pressable, spinner, text, … — 43 files.
 Not installed. These have to be run from the app before it will build:
-  bunx expo install react-native-gesture-handler react-native-reanimated react-native-svg uniwind
-  bun add cn tailwind-merge tailwind-variants tailwindcss
+  npx expo install react-native-gesture-handler react-native-reanimated react-native-svg uniwind
+  npm install cn tailwind-merge tailwind-variants tailwindcss
 Re-run this tool with install: true to have them run for you.
 A native module changed — rebuild the dev client; a JS reload will not pick it up.
 ```

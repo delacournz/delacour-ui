@@ -18,7 +18,7 @@ which way is start.
 
 There is no `tv()`: Direction has no tokens and no styled parts. The `*.variants.ts` file exists
 only because a component's pure resolvers live in a leaf with no React Native imports, so
-`bun test` reaches them.
+they are unit-testable.
 
 ## Design
 
@@ -80,7 +80,9 @@ only because a component's pure resolvers live in a leaf with no React Native im
 
 ## Verification
 
+<!-- registry:omit -->
 - `bun test packages/react-native-ui/src/components/direction` — the resolvers.
+<!-- /registry:omit -->
 - Simulator, 2026-10-05, via warden + agent-device on the toggle demo: before the toggle,
   `dir-step-one` at x 37; after, at x 261 and `dir-step-three` at x 37. The nested LTR row
   (`dir-fixed-1..3`) kept x 37 / 149 / 261 in both states.

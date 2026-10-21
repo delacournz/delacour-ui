@@ -77,7 +77,7 @@ export type CanSubmitFeedbackInput = {
  * Whitespace is empty: a message of three spaces sends nothing, and `onSubmit`
  * receives the trimmed text anyway. Disabled outranks `canSubmitEmpty`.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function canSubmitFeedback({
 	value,
@@ -96,7 +96,7 @@ export function canSubmitFeedback({
  * Tailwind's static scanner. A bad row count degrades the way `Textarea`'s
  * does — floored to whole lines, clamped to one, the default on `NaN`.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveFeedbackFieldMinHeight(minRows: number | undefined, lineHeight: number): number {
 	const rows =
@@ -111,7 +111,7 @@ export function resolveFeedbackFieldMinHeight(minRows: number | undefined, lineH
  * one would push its footer under the keyboard.
  *
  * A ceiling below the floor is lifted up to it, so the field never shrinks as
- * it grows. Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * it grows. Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveFeedbackFieldHeightStyle({
 	minRows,

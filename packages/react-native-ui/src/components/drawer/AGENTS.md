@@ -102,7 +102,8 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 
 ## Preview capture
 
-The settings, with the bodies in `apps/playground/e2e/previews/drawer.e2e.ts`:
+The settings:<!-- registry:omit --> the bodies are in `apps/playground/e2e/previews/drawer.e2e.ts`.<!-- /registry:omit -->
+
 
 | Demo | Capture |
 | --- | --- |
@@ -113,7 +114,7 @@ The settings, with the bodies in `apps/playground/e2e/previews/drawer.e2e.ts`:
 
 ## Testing
 
-`bun test` reaches the edge resolution in both directions, the extents on a small and a wide window, the frame extent with the docked inset,
+The edge resolution in both directions is unit-testable, as are the extents on a small and a wide window, the frame extent with the docked inset,
 the offset, the drag and its rubber band, the drag fraction, the release (threshold, fling toward,
 fling away), the exit duration, the insets per edge and the slots per edge with their tokens in both
 themes. All four sides from every dismissal path, the swipe's continue-and-restore, the scrolling

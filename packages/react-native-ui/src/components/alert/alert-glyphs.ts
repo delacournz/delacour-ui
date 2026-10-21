@@ -14,7 +14,7 @@ import type { AlertStatus } from "./alert.variants";
  * draws the same glyph per status, so the two read as one family, and it may
  * import a leaf across folders where it may not import a part (package rule 3).
  * Not in `alert.variants.ts` because the glyphs are React Native SVG components,
- * and that file must stay importable from `bun test`.
+ * and that file must stay free of React Native imports.
  */
 export const ALERT_GLYPHS: Record<AlertStatus, IconComponent> = {
 	default: IconCircleInfo,

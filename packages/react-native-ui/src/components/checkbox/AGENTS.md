@@ -64,8 +64,8 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   `destructive`" are different questions and both get an answer. `??` throughout and
   never `||`, so `isDisabled={false}` opts a child out of a disabled group.
 - **`Checkbox.Group`'s state is one array of the children's `value`s.**
-  `toggleCheckedValue` is the whole transition and it is pure, so `bun test`
-  reaches it — including that it always returns a *new* array, since React bails
+  `toggleCheckedValue` is the whole transition and it is pure, so it
+  is unit-testable — including that it always returns a *new* array, since React bails
   out of a re-render on an unchanged reference and a mutation would flip the
   state while leaving the screen alone. A grouped checkbox with no `value`
   throws by name: group membership is invisible in the child's props at compile
@@ -139,12 +139,11 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   `resolveCheckboxFillRadius` takes the live `--radius` and applies
   `CHECKBOX_RADIUS_MULTIPLIER`, which is why a consumer pasting a theme with a
   different `--radius` moves the fill with the border instead of leaving it
-  behind. `checkbox.variants.test.ts` reads `tokens.css` and asserts the
-  multipliers match it, that the result *is* the box's own step at any
-  `--radius`, that `CHECKBOX_RADIUS_STEP` names the `rounded-*` the `box` slot
-  actually wears, and that the box's border really is the bare 1pt `border` the
-  `-inset-px` assumes. Retuning the scale, or reaching for `border-2`, fails the
-  build rather than quietly reopening the gap.
+  behind. The multipliers must match `tokens.css`, the result must *be* the box's own step at any
+  `--radius`, `CHECKBOX_RADIUS_STEP` must name the `rounded-*` the `box` slot
+  actually wears, and the box's border must really be the bare 1pt `border` the
+  `-inset-px` assumes. Retuning the scale, or reaching for `border-2`, would
+  quietly reopen the gap.<!-- registry:omit --> `checkbox.variants.test.ts` asserts each of these.<!-- /registry:omit -->
 - **The border is the one part of the box no `tv()` describes.** A colour that
   fades cannot be a class, so it interpolates between two token *values* —
   `resolveCheckboxBorderTokens` names them, and `CHECKBOX_SURFACE_TOKEN` is the
@@ -159,7 +158,7 @@ Root plus `Checkbox.Label` and `Checkbox.Group`.
   `size-checkbox-md` cannot be read from JavaScript, so it comes from the fill
   layer's own `onLayout` — that layer is already exactly the width the clip has
   to span. A table of numbers here would be `tokens.css` restated in TypeScript,
-  which is the drift `tokens.test.ts` exists to catch everywhere else.
+  which is the drift every other measurement here is built to avoid.
 - **Reduce-motion takes Reanimated's default `System` policy here**, unlike
   [`Spinner`](../spinner/AGENTS.md). Under it `withTiming` completes instantly, which for a checkbox is
   right: the state change is the point and the travel is decoration. A spinner

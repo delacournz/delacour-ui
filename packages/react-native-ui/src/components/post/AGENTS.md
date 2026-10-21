@@ -27,7 +27,8 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 | `post.types.ts` | `PostSlotProps`, shared by `Header` and `Footer` |
 | `post.variants.ts` | The slotted `tv()`, the layout/scrim/vote/tone/fill resolvers, no RN imports |
 | `post.utils.ts` | `formatCompactCount`, `formatRelativeTime`, `tokenizePostBody` and the a11y label builders |
-| `post.variants.test.ts`, `post.utils.test.ts` | |
+| `post.variants.test.ts` | |
+| `post.utils.test.ts` | |
 
 ## Design
 
@@ -122,7 +123,7 @@ animated. Compound root plus `Post.Header`, `Post.Author`, `Post.Community`, `Po
 
 ## Previews (follow-up)
 
-No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and
+No demo carries `capture` yet: a captured demo needs a manifest entry<!-- registry:omit --> (`demos.test.ts` fails without one)<!-- /registry:omit -->, and
 the media are shot after integration. The five to capture, all `align: "stretch"`: `feed-card`
 (**hero**), `vote` (flow `post/vote` — tap `post-vote-up`, then again to clear), `compact-timeline`,
 `media-first` and `live-counts` (flow `post/live-counts` — tap `post-like`, `post-repost`, then each

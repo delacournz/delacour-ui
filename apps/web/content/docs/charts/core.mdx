@@ -11,7 +11,7 @@ import { closestIndex, invertValue, makeScale, scaleValue } from "@delacour/reac
 `@delacour/react-native-charts/core` is every number the package computes and nothing that draws.
 Nothing under it imports a runtime value from React, React Native, Skia, Reanimated or Gesture
 Handler, which is what lets a legend or a tooltip do scale arithmetic without mounting a canvas —
-and what lets the whole of it run under `bun test` with no simulator.
+and what lets the whole of it run as plain unit tests with no simulator.
 
 ```ts
 import { buildTicks, makeScale, scaleValue } from "@delacour/react-native-charts/core";

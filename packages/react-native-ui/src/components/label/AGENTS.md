@@ -60,9 +60,9 @@ component, no parts.
   field's state, and it is **not** built on `Label`, because doing so would
   change its public surface — `Label` narrows `children`, and a disabled `Label`
   reports `accessibilityState.disabled`, which `Field.Label` does not. The two
-  must still read as one component, so `label.variants.test.ts` pins
-  `resolveLabelColor` and the disabled fade to `fieldVariants`' label slot and
-  `resolveFieldTextColor("label", …)`. Change one and the test names the other.
+  must still read as one component, so `resolveLabelColor` and the disabled
+  fade must match `fieldVariants`' label slot and
+  `resolveFieldTextColor("label", …)`. <!-- registry:omit -->`label.variants.test.ts` pins them; change one and the test names the other.<!-- /registry:omit -->
 - **Inside a `Field`, `Label` is the way to say "required".** `Field.Label` has
   no `isRequired`. Pass the field's state yourself —
   `<Label isInvalid={isInvalid} isRequired>Email</Label>` — or read it in a

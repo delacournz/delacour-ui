@@ -1,7 +1,7 @@
 /**
  * A time of day, and everything a picker needs to reason about one.
  *
- * Pure: no React, no React Native, so `bun test` reaches every function here and
+ * Pure: no React, no React Native, so a unit test reaches every function here and
  * a picker in another folder (`date-time-picker`) can import this module as a
  * leaf without pulling the `TimePicker` component in with it.
  *

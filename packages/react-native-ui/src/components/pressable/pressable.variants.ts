@@ -18,8 +18,8 @@ export type PressedState = {
  * There is no mode involving a ripple, ink or highlight overlay — AGENTS.md
  * rules those out for every pressable in this library.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const PRESSABLE_FEEDBACK: Record<PressableFeedback, PressedState> = {
 	scale: { opacity: 1, scale: 0.97 },
@@ -47,7 +47,7 @@ export const PRESSABLE_FEEDBACK_FALLBACK: PressedState = { opacity: 0.9, scale: 
  * `pressedOpacity={0.2}` is a deeper fade at the mode's scale rather than an
  * all-or-nothing choice between the two APIs.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolvePressedState(
 	feedback: PressableFeedback | undefined,
@@ -72,7 +72,7 @@ export function resolvePressedState(
  * types the value as animatable, so anything that is not a finite number is
  * treated as unset, and a number is clamped into `[0, 1]`.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveRestOpacity(resolved: unknown): number {
 	if (typeof resolved !== "number" || !Number.isFinite(resolved)) return 1;

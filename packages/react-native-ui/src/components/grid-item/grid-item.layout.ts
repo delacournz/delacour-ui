@@ -1,8 +1,7 @@
 /**
  * The placement maths behind `GridItem.Group`.
  *
- * Pure and free of React Native imports, so the whole matrix is reachable from
- * `bun test` — React Native ships Flow-typed source Bun cannot parse. The group
+ * Pure and free of React Native imports, so the whole matrix is unit-testable. The group
  * calls these in order: measure, `resolveCellSize`, `placeTiles`, then
  * `tileRect` per tile and `gridHeight` for itself.
  */

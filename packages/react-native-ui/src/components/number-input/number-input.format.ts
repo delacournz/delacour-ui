@@ -4,8 +4,8 @@
  * Every path into the value — a stepper tap, a held repeat, a committed draft,
  * an accessibility action — funnels through {@link reconcile}, so a value can
  * only ever be on the step grid, inside the bounds and at the precision. This
- * module is the whole of that decision and imports nothing, so `bun test`
- * reaches every branch of it. See AGENTS.md.
+ * module is the whole of that decision and imports nothing, so every
+ * branch of it is unit-testable. See AGENTS.md.
  */
 
 /** A number input's value. `null` is empty — a field with nothing typed in it. */

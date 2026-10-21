@@ -56,8 +56,8 @@ export const SEARCH_BAR_CLEAR_FADE_DURATION = 100;
  * `Input.Group`'s, drawn by `inputVariants`' `root` slot, and none of it is
  * restated here: the `field` slot adds only the shape's corner on top. A second
  * border or height would be a second definition of one box, and the drift
- * would be a pixel nobody notices until it ships. `search-bar.variants.test.ts`
- * asserts the slot stays free of chrome.
+ * would be a pixel nobody notices until it ships. The slot
+ * must stay free of chrome.
  *
  * `root` is the row holding the field and the Cancel action, with no gap: the
  * gap lives inside Cancel's own measured width, so it collapses with it rather

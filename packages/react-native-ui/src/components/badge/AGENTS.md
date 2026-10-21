@@ -36,7 +36,7 @@ A compact label for status, category or count. Compound root plus `Badge.Label`,
   and no `onLongPress` the root is a plain `View`. Mounting a `GestureDetector`
   regardless would put one under every tag in a list of fifty and announce each
   of them to assistive technology as a button with no action. `resolveBadgeInteractive`
-  is that decision, and it is pure so `bun test` reaches it. Supply either
+  is that decision, and it is pure so it is unit-testable. Supply either
   handler and the root becomes a [`Pressable`](../pressable/AGENTS.md),
   inheriting `feedback`, `haptic` and the rest; only the default differs,
   `scale`.

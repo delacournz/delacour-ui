@@ -30,7 +30,7 @@ Compound root plus `Fab.Label`, `Fab.Group` and `Fab.Action`.
   button, and a form retuning `--spacing-button-*` must not move the one thing
   floating over its list. Declared in both `tokens.css` and theme.css's
   `@variant native` block, per the package rule, and registered in
-  `styles/tokens.ts`; `tokens.test.ts` holds the floor at 44pt.
+  `styles/tokens.ts`. The floor is 44pt.
 - **Icons on `Fab` are composed; on `Fab.Group` and `Fab.Action` they are a
   prop.** `Fab` matches `Button`: it publishes its icon step (`sm` → `icon-md`,
   `md`/`lg` → `icon-lg`, `resolveFabIconSize`) and its variant's foreground

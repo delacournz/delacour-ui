@@ -14,18 +14,18 @@ export type SliderFillProps = Omit<ViewProps, "children" | "style"> & {
  * A lone thumb fills from the start of the track, because that is what a single
  * value means — how far along. A range fills *between* its own thumbs, because
  * the ends are what the caller excluded. {@link fillBounds} is that decision and
- * is pure, so `bun test` sweeps it.
+ * is pure, so a unit test sweeps it.
  *
  * **The far end lands on the thumb's far edge**, which is what makes both extremes
  * exact: one thumb's width of fill at the minimum, so the handle covers it
  * completely and a slider at rest shows a plain track, and the track's full length
  * at the maximum, with no sliver of empty groove past the handle. That works only
  * because the thumb's diameter is the track's thickness — {@link fillExtent} is
- * where the arithmetic lives, and where `bun test` can hold it down.
+ * where the arithmetic lives, and where a unit test can hold it down.
  *
  * The extent is an animated style rather than a class because it is a measured
  * length in points, and a class cannot name one. The *colour* is a class, which
- * is what keeps the whole colour matrix inside `bun test`.
+ * is what keeps the whole colour matrix inside unit tests.
  *
  * Nothing here reads React state: the fill follows the shared value the pan
  * writes, so it tracks the finger at the display's refresh rate rather than at

@@ -6,7 +6,7 @@ import type { PackageJson, PackageManager } from "./detect";
  * Installing dependencies, split by how they have to be installed.
  *
  * The `expo install` route is the reason this file is not one line. Expo pins
- * every native module to a version its SDK can build, and `bun add
+ * every native module to a version its SDK can build, and a plain `npm install
  * react-native-reanimated` fetches the newest release instead — which for
  * anything but the current SDK is a package that fails at the linker rather
  * than at install time. `expo install` asks the SDK what it supports and
@@ -49,12 +49,22 @@ const DEV_FLAG: Record<PackageManager, string> = {
 };
 
 /** `expo` is a dependency of the app, so each of these runs the locally installed CLI. */
-const EXPO_RUNNER: Record<PackageManager, [string, string[]]> = {
-	bun: ["bunx", ["expo", "install"]],
-	pnpm: ["pnpm", ["expo", "install"]],
-	yarn: ["yarn", ["expo", "install"]],
-	npm: ["npx", ["expo", "install"]],
+const EXPO_BIN: Record<PackageManager, [string, string[]]> = {
+	bun: ["bunx", ["expo"]],
+	pnpm: ["pnpm", ["expo"]],
+	yarn: ["yarn", ["expo"]],
+	npm: ["npx", ["expo"]],
 };
+
+/**
+ * An Expo CLI call as the project's own package manager spells it, for
+ * advice the CLI prints — `pnpm expo run:ios`, not an `npx` a pnpm user has to
+ * translate.
+ */
+export function expoCommand(packageManager: PackageManager, args: readonly string[]): string {
+	const [command, prefix] = EXPO_BIN[packageManager];
+	return [command, ...prefix, ...args].join(" ");
+}
 
 /**
  * The packages this repository publishes, which follow the CLI's channel.
@@ -100,11 +110,11 @@ export function installCommands(request: InstallRequest): InstallGroup[] {
 	const [addCommand, addArgs] = ADD[request.packageManager];
 
 	if (request.expoDependencies.length > 0) {
-		const [command, args] = EXPO_RUNNER[request.packageManager];
+		const [command, prefix] = EXPO_BIN[request.packageManager];
 		groups.push({
 			label: "expo install",
 			command,
-			args: [...args, ...request.expoDependencies.map(spec)],
+			args: [...prefix, "install", ...request.expoDependencies.map(spec)],
 			packages: [...request.expoDependencies],
 		});
 	}

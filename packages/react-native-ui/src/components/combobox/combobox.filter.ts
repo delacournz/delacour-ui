@@ -13,7 +13,7 @@ import type {
 /**
  * Pure filtering, highlighting and editing logic for `Combobox`.
  *
- * Free of React Native imports so `bun test` reaches all of it. Text folding is
+ * Free of React Native imports so all of it is unit-testable. Text folding is
  * Select's `normalizeSearchText` — defined once for every picker that filters a
  * list — so a combobox and a searchable select agree on what "matches" means.
  */

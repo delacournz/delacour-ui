@@ -46,7 +46,7 @@ Root plus `NumberInput.Field`, `.Decrement` and `.Increment`, and
   a test holds it.
 - **Separators come from `format`, never `formatToParts`.** Hermes on iOS ships
   `Intl.NumberFormat` without `formatToParts`; calling it threw on the first
-  keystroke on a simulator while `bun test` (JavaScriptCore) passed.
+  keystroke on a simulator while a JavaScriptCore unit test passed.
   `readNumberSeparators` reads the runs between digits in a formatted
   `11111.1` instead, with no regex lookbehind, and a test deletes
   `formatToParts` to hold it.

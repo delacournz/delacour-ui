@@ -904,6 +904,18 @@ believe it: it scaffolds a real Expo app, adds every item, and typechecks the
 result. A component whose imports only resolve inside this monorepo passes
 `bun test` and fails there.
 
+**What a copy carries is read by someone with neither Bun nor this package's tests.**
+`add` copies every non-test file of a folder, `AGENTS.md` included, into a project on any
+package manager, and drops each `*.test.ts`. So no shipped file — source comment, CSS
+comment or `AGENTS.md` — may name Bun (`bun test`, `bun run …`, `bunx`) or a specific test,
+fixture or `*.e2e.ts` file; `registry:build` fails on one, listing every offence. Write
+the invariant instead of what checks it: "pure, so it is unit-testable", not "reachable
+from `bun test`". In an `AGENTS.md`, a maintainer-only pointer — which test pins a rule,
+a preview capture command — goes inside `<!-- registry:omit -->` … `<!-- /registry:omit -->`,
+on its own lines or inline mid-sentence, and the copy leaves it out. A Files-table row
+whose first cell names a test is dropped from the copy automatically, so keep listing
+tests there. See rule 8 in `packages/cli/AGENTS.md`.
+
 A component folder that follows the rules above needs nothing else. Relative
 imports crossing a folder — `../icon`, `../../lib/cn` — are recorded as
 placeholders at build time and resolved to the consumer's own aliases at `add`

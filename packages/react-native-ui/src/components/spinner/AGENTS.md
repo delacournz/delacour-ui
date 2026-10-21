@@ -63,7 +63,7 @@ that rotates.
   reads as a bright chunk beside a flat grey quadrant rather than as an even
   comet. `spinnerArcStops` places each stop at the offset the arc actually
   occupies at that angle while stepping the opacity evenly, which inverts the
-  skew; it is pure, so `bun test` pins the whole ladder.
+  skew; it is pure, so a unit test pins the whole ladder.
   `gradientUnits="userSpaceOnUse"` then keeps the endpoints exact, where an
   object bounding box would leave open whether a given renderer includes the
   stroke — which shifts both ends off 0 and 1 and clips the head and the tail.

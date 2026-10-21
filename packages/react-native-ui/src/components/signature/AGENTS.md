@@ -68,7 +68,7 @@ a standalone SVG document.
 - **The history is a pure reducer, and a no-op returns the same reference.** That
   is what lets the root skip both the render and `onValueChange` for an undo with
   nothing to undo, and what makes undo, redo and the redo-dropped-by-a-new-stroke
-  rule reachable from `bun test`.
+  rule unit-testable.
 - **Clear is final.** It empties the redo stack too and is not undoable. A clear
   that undo could reverse is a clear that needs explaining, and the button is
   labelled "Clear signature" because that label is the only warning there is.

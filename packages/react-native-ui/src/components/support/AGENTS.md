@@ -31,7 +31,8 @@ above the composer and the closing question. Compound root plus seventeen option
 | `support.types.ts` | `SupportAvailability`, `SupportTicketStatus`, their tuples, `SupportSectionProps` |
 | `support.variants.ts` | The slotted `tv()`, the badge/chip/icon-token constants, `resolveReplyColor` |
 | `support.utils.ts` | Labels, spoken labels, the dot and the topic resolvers — no RN imports |
-| `support.variants.test.ts`, `support.utils.test.ts` | |
+| `support.variants.test.ts` | |
+| `support.utils.test.ts` | |
 
 ## Scope
 
@@ -129,7 +130,7 @@ above the composer and the closing question. Compound root plus seventeen option
 
 ## Previews (follow-up)
 
-No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and
+No demo carries `capture` yet: a captured demo needs a manifest entry, and
 the media are shot after integration. The five to capture, all `align: "stretch"`: `help-screen`
 (**hero**), `availability` (flow `support/availability`), `topics` (flow `support/topics`),
 `conversations`, and `thread` (flow `support/thread`). The three flows are already written under

@@ -27,8 +27,8 @@ export const LABEL_REQUIRED_MARK_COLOR: TextColor = "destructive";
  * Only the root fades. The mark is a run inside the root's text, so the root's
  * opacity already reaches it; fading it again would square the fade.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const labelVariants = tv({
 	slots: {
@@ -57,7 +57,7 @@ export const labelVariants = tv({
  * `Text.Label`'s own `text-foreground` without this module knowing which token
  * the preset chose.
  *
- * Pure, so the matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
  */
 export function resolveLabelColor(isInvalid: boolean): TextColor | undefined {
 	return isInvalid ? "destructive" : undefined;
@@ -74,7 +74,7 @@ export function resolveLabelColor(isInvalid: boolean): TextColor | undefined {
  * screen reader's mouth the caller never wrote.
  *
  * Typed on `unknown` rather than `ReactNode` so this module takes not even a
- * type import from React, which is what keeps it reachable from `bun test`.
+ * type import from React, which is what keeps it unit-testable.
  */
 export function labelText(children: unknown): string | undefined {
 	const parts = Array.isArray(children) ? children : [children];
@@ -102,7 +102,7 @@ export function labelText(children: unknown): string | undefined {
  * one whose children cannot be read as text, returns `undefined` and is left to
  * the platform.
  *
- * Pure, so the matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
  */
 export function resolveLabelAccessibilityLabel({
 	accessibilityLabel,

@@ -4,7 +4,7 @@ import { NAVIGATION_THEME_TOKENS, type NavigationTheme, omitUnresolvedColors } f
 import { useThemeColor } from "./use-theme-color";
 
 // Re-exported so the mapping is reachable beside the hook that reads it; it
-// lives in `lib` only because `bun test` cannot follow this module's React
+// lives in `lib` only because a plain unit test cannot follow this module's React
 // Native imports.
 export {
 	NAVIGATION_THEME_TOKENS,

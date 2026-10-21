@@ -1,9 +1,8 @@
 /**
  * React Navigation's colour slots, mapped to this library's semantic tokens.
  *
- * Lives here, free of React Native imports, so the mapping is reachable from
- * `bun test` — `hooks/use-navigation-theme` cannot be, since Bun's transpiler
- * cannot parse React Native's Flow-typed source. See AGENTS.md.
+ * Lives here, free of React Native imports, so the mapping is unit-testable —
+ * `hooks/use-navigation-theme` cannot be, since a bare JS runtime cannot parse React Native's Flow-typed source. See AGENTS.md.
  *
  * A slot pointing at a token no theme emits would resolve to `undefined`, be
  * dropped, and silently leave React Navigation's own light default in place —

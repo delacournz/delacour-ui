@@ -205,8 +205,8 @@ Drawing is a pointer task; the goal is operable and honest, not equivalent.
 
 ## Verification
 
-- `bun test packages/react-native-ui/src/components/sketch` covers the leaf and
-  the resolvers.
+- <!-- registry:omit -->`bun test packages/react-native-ui/src/components/sketch` covers the leaf and
+  the resolvers.<!-- /registry:omit -->
 - **Checked on Skia (iPhone 17 Pro simulator, dev client, 2026-10-06):** the
   seeded picture renders; a red stroke drawn with no pause after the swatch tap
   is red; the eraser clears earlier marks and a later pen stroke over the gap is

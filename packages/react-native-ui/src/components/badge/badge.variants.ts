@@ -106,8 +106,7 @@ export const BADGE_FOREGROUND_TOKEN: Record<BadgeVariant, Record<BadgeColor, str
  * colour to a `Text` descendant, so label colour lives on the `label` slot and
  * icon colour is resolved from {@link BADGE_FOREGROUND_TOKEN}.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const badgeVariants = tv({
 	slots: {
@@ -244,7 +243,7 @@ export const badgeVariants = tv({
  * `onClose` is deliberately not read here: the dismiss control is its own
  * pressable, so a badge that can only be dismissed still has an inert root.
  *
- * Pure, so the matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the matrix is unit-testable. See AGENTS.md.
  */
 export function resolveBadgeInteractive({
 	onPress,

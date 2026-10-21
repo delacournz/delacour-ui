@@ -18,7 +18,7 @@ export type StepRepeat = {
  * {@link NUMBER_INPUT_REPEAT_DELAY_MS} and repeats on `resolveRepeatInterval`'s
  * schedule until `stop`, until a tick answers `"stop"`, or until unmount. The
  * schedule is pure and lives in `number-input.format.ts`; this hook owns only
- * the timer, so the one thing `bun test` cannot reach is a `setTimeout`.
+ * the timer, so the one thing a unit test cannot reach is a `setTimeout`.
  *
  * `onTick` is read through a ref, so a tick always sees the latest render's
  * value and bounds rather than the ones captured when the press began.

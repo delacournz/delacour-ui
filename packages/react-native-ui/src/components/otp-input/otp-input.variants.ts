@@ -37,8 +37,8 @@ export const OTP_MAX_FONT_SCALE = 1.5;
  *
  * A cell is a lone `Input` box cut square: the same `border-input bg-card` / `bg-secondary` per
  * variant, the same `--spacing-input-*` edge and `--text-input-*` character, the same corner ramp
- * (`rounded-md` at `sm`, `rounded-lg` above) and the same ring on focus. `otp-input.variants.test.ts`
- * pins the fill and border against `inputVariants` itself, so a retuned field drags the cells along.
+ * (`rounded-md` at `sm`, `rounded-lg` above) and the same ring on focus. The fill and border
+ * track `inputVariants` itself, so a retuned field drags the cells along.
  *
  * A cell is `w-input-*` **and** `shrink`. Twelve cells at `md` are wider than a phone; shrinking
  * lets the row fit the space it is given, and a row that fits is worth more than a square corner
@@ -128,7 +128,7 @@ export type OtpSlotClasses = { slot: string; char: string; placeholder: string; 
 /**
  * The four classes one cell draws with. A caller's `className` lands on the cell's box and wins.
  *
- * Pure, so the whole matrix is reachable from `bun test`.
+ * Pure, so the whole matrix is unit-testable.
  */
 export function resolveOtpSlotClasses({
 	className,

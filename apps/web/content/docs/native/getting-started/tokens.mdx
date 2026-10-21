@@ -174,7 +174,7 @@ Two edits, and both are required:
 2. Alias it in the **`@theme inline`** block — `--color-<name>: var(--<name>);`
 
 Miss the second and the token is declared but unreachable: no `bg-*` exists for it, and nothing
-reports that. `bun test` fails on the gap, and so does `delacour doctor`.
+reports that. the library's own unit tests fail on the gap, and so does `delacour doctor`.
 
 Add one only when nothing in shadcn's set already carries the meaning, and derive it from a token
 that set defines — otherwise a theme brought across from the web leaves it behind.

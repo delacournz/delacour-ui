@@ -7,9 +7,11 @@ icon: FolderTree
 Components can live in the app that uses them, or in a package several apps share. The CLI decides
 from where you run it.
 
+Commands use `npx`; `pnpm dlx`, `yarn dlx` and `bunx` work the same way.
+
 ```bash
-cd apps/mobile && bunx delacour@latest init     # into the app
-cd packages/ui && bunx delacour@latest init     # into a shared package
+cd apps/mobile && npx delacour@latest init     # into the app
+cd packages/ui && npx delacour@latest init     # into a shared package
 ```
 
 Running inside a package that is not the app **is** the answer — there is no prompt and no flag.
@@ -170,8 +172,8 @@ names one app in `app.root` — the one `init` and `doctor` work against — so 
 app's directory to check the others:
 
 ```bash
-bunx delacour@latest doctor --cwd apps/mobile
-bunx delacour@latest doctor --cwd apps/tablet
+npx delacour@latest doctor --cwd apps/mobile
+npx delacour@latest doctor --cwd apps/tablet
 ```
 
 <Callout type="warn">

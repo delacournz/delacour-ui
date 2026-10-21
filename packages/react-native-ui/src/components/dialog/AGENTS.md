@@ -91,7 +91,7 @@ It is drawn with the [overlay foundation](../overlay/AGENTS.md) — `Overlay.Por
 
 ## Testing
 
-`bun test` reaches `dialogVariants`, the size classes, the footer direction, the role and the
-keyboard lift. Opening from a trigger and controlled, every dismissal path, the alert dialog, the
+`dialogVariants`, the size classes, the footer direction, the role and the
+keyboard lift are unit-testable. Opening from a trigger and controlled, every dismissal path, the alert dialog, the
 z-order over a sheet, the exit, the keyboard, VoiceOver focus and reduce motion are verified on a
 simulator through `/dialog` in the playground — `over-sheet` is the z-order case.

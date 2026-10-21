@@ -1,7 +1,7 @@
 /**
  * A date and a time of day, held together — and everything a picker needs to reason about one.
  *
- * Pure: no React, no React Native, so `bun test` reaches every function here. It composes the two
+ * Pure: no React, no React Native, so every function here is unit-testable. It composes the two
  * leaves it stands on rather than restating them: every day sum is `calendar.date`'s and every
  * minute sum is `time-picker.time`'s. What lives here is only what neither can answer alone —
  * the order of two date-times, and how a bound on one day becomes a bound on that day's clock.

@@ -71,7 +71,7 @@ Compound root plus `Attachment.Preview`, `.Content`, `.Name`, `.Meta`, `.Progres
   the surface as a class for Tailwind's scanner, and the glyph takes the foreground as a token. A
   test pins every pair to tokens both themes declare, the class to the map, and no two kinds to
   one tone. The glyph itself is `ATTACHMENT_KIND_ICON` in `attachment-preview.tsx` — kept out of
-  the variants file because an icon import would drag React Native into `bun test`.
+  the variants file because an icon import would drag React Native into it.
 - **The glyph is painted first and the image mounts over it** — the `Avatar` rule. A slow or dead
   URL leaves the type glyph, never a hole. A failure is remembered by
   `resolveAttachmentSourceKey`, not by object identity: an inline `source={{ uri }}` is a new

@@ -31,8 +31,8 @@ renderer can use.
 | `qr-code.fixtures.ts` | **Test-only** golden matrices from an independent encoder |
 | `qr-code.*.test.ts` | One per module: `gf`, `tables`, `format`, `matrix`, `mask`, `encode`, `logo`, `path`, `variants` |
 
-Every `qr-code.*.ts` imports nothing from React or React Native, so `bun test` reaches the whole
-encoder and the path builder. Only `qr-code.tsx`, `qr-code-logo.tsx`, `qr-code.context.tsx` and
+Every `qr-code.*.ts` imports nothing from React or React Native, so the whole
+encoder and the path builder are unit-testable. Only `qr-code.tsx`, `qr-code-logo.tsx`, `qr-code.context.tsx` and
 `use-qr-code.ts` touch React. The registry builder skips `*.test-helpers.ts` and `*.fixtures.ts`
 along with the tests.
 
@@ -124,7 +124,7 @@ The spec's vectors were written from memory, and three were wrong:
   code (BCH(18,6)) does reach 8.
 - **Mask 6 at (1, 1) is dark and mask 7 at (1, 1) is light**, by the standard's formulas.
 
-The golden matrices in `qr-code.fixtures.ts` were generated once, offline, from an independent
+The golden matrices in the test fixtures were generated once, offline, from an independent
 encoder run from a throwaway script outside the repo — it is not a dependency. They cover numeric,
 alphanumeric and byte modes, version 7 (version word) and 14, and a full 40-L symbol. The round-trip
 test reads 192 generated payloads back through the reverse reader and requires zero syndromes and an

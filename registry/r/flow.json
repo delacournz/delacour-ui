@@ -11,6 +11,7 @@
 		"button",
 		"icon",
 		"icons",
+		"skia-native-id",
 		"surface",
 		"text",
 		"tv",
@@ -23,7 +24,7 @@
 	"expoDependencies": [
 		"react-native-gesture-handler",
 		"react-native-reanimated",
-		"react-native-svg",
+		"react-native-skia",
 		"react-native-worklets"
 	],
 	"devDependencies": [],
@@ -42,13 +43,7 @@
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow-background.tsx",
 			"target": "flow/flow-background.tsx",
-			"namespace": "ui",
-			"rewrites": [
-				{
-					"from": "../../hooks/use-theme-color",
-					"to": "@registry/hooks/use-theme-color"
-				}
-			]
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow-connection-preview.tsx",
@@ -87,17 +82,7 @@
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow-edge.tsx",
 			"target": "flow/flow-edge.tsx",
-			"namespace": "ui",
-			"rewrites": [
-				{
-					"from": "../../hooks/use-calm-motion",
-					"to": "@registry/hooks/use-calm-motion"
-				},
-				{
-					"from": "../../hooks/use-theme-color",
-					"to": "@registry/hooks/use-theme-color"
-				}
-			]
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow-geometry.ts",
@@ -150,11 +135,6 @@
 			"namespace": "ui"
 		},
 		{
-			"path": "packages/react-native-ui/src/components/flow/flow-svg.ts",
-			"target": "flow/flow-svg.ts",
-			"namespace": "ui"
-		},
-		{
 			"path": "packages/react-native-ui/src/components/flow/flow.context.tsx",
 			"target": "flow/flow.context.tsx",
 			"namespace": "ui"
@@ -162,7 +142,21 @@
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow.tsx",
 			"target": "flow/flow.tsx",
-			"namespace": "ui"
+			"namespace": "ui",
+			"rewrites": [
+				{
+					"from": "../../hooks/use-calm-motion",
+					"to": "@registry/hooks/use-calm-motion"
+				},
+				{
+					"from": "../../hooks/use-theme-color",
+					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/skia-native-id",
+					"to": "@registry/lib/skia-native-id"
+				}
+			]
 		},
 		{
 			"path": "packages/react-native-ui/src/components/flow/flow.variants.ts",

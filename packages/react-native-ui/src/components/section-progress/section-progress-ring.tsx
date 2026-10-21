@@ -1,42 +1,46 @@
 import type { ReactElement } from "react";
 import { View } from "react-native";
-import Animated, { useAnimatedProps } from "react-native-reanimated";
-import Svg, { Circle } from "react-native-svg";
+import { useDerivedValue } from "react-native-reanimated";
+import { Canvas, Circle, Path, Skia } from "react-native-skia";
+import "../../lib/skia-native-id";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { useSectionProgressPart } from "./section-progress.context";
 import {
-	resolveRingDashOffset,
 	resolveRingGeometry,
+	resolveRingOval,
+	resolveRingTrimEnd,
 	resolveSectionColorToken,
 	SECTION_PROGRESS_RING_SIZE,
 	SECTION_PROGRESS_RING_STROKE,
 	sectionProgressVariants,
 } from "./section-progress.variants";
 
-const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-
 const CENTRE = SECTION_PROGRESS_RING_SIZE / 2;
-const { radius: RADIUS, circumference: CIRCUMFERENCE } = resolveRingGeometry(
-	SECTION_PROGRESS_RING_SIZE,
-	SECTION_PROGRESS_RING_STROKE
-);
+const { radius: RADIUS } = resolveRingGeometry(SECTION_PROGRESS_RING_SIZE, SECTION_PROGRESS_RING_STROKE);
+const CANVAS_STYLE = { height: SECTION_PROGRESS_RING_SIZE, width: SECTION_PROGRESS_RING_SIZE };
 
 /**
- * The ring: a faint full track and a fill whose `strokeDashoffset` follows the
- * progress shared value on the UI thread, so scrolling costs no React render.
+ * The whole circle as one contour from twelve o'clock, clockwise — start index 0 is the oval's
+ * top point — so the trim grows from the top. Built once: the trim is all that moves.
+ */
+const FILL_PATH = Skia.PathBuilder.Make()
+	.addOval(resolveRingOval(SECTION_PROGRESS_RING_SIZE, SECTION_PROGRESS_RING_STROKE), false, 0)
+	.detach();
+
+/**
+ * The ring: a faint full track and a fill trimmed to the progress shared value on the UI
+ * thread, so scrolling costs no React render and builds no path.
  *
- * The fill starts at twelve o'clock — the circle is rotated a quarter turn back
- * — and takes the active section's colour. Hidden from assistive technology; the
- * percent is in the pill's accessibility value.
+ * The fill starts at twelve o'clock and takes the active section's colour. Colours are resolved
+ * here, above the canvas — context does not cross into Skia's reconciler. Hidden from assistive
+ * technology; the percent is in the pill's accessibility value.
  */
 export function SectionProgressRing(): ReactElement {
 	const { color, progress } = useSectionProgressPart("SectionProgress.Ring");
-	const stroke = useThemeColor(resolveSectionColorToken(color));
-	const track = useThemeColor("border");
+	const stroke = useThemeColor(resolveSectionColorToken(color)) ?? "transparent";
+	const track = useThemeColor("border") ?? "transparent";
 
-	const animatedProps = useAnimatedProps(() => ({
-		strokeDashoffset: resolveRingDashOffset(progress.value, CIRCUMFERENCE),
-	}));
+	const end = useDerivedValue(() => resolveRingTrimEnd(progress.value));
 
 	return (
 		<View
@@ -44,29 +48,25 @@ export function SectionProgressRing(): ReactElement {
 			className={sectionProgressVariants().ring()}
 			importantForAccessibility="no-hide-descendants"
 		>
-			<Svg height={SECTION_PROGRESS_RING_SIZE} width={SECTION_PROGRESS_RING_SIZE}>
+			<Canvas style={CANVAS_STYLE}>
 				<Circle
+					color={track}
 					cx={CENTRE}
 					cy={CENTRE}
-					fill="none"
 					r={RADIUS}
-					stroke={track}
 					strokeWidth={SECTION_PROGRESS_RING_STROKE}
+					style="stroke"
 				/>
-				<AnimatedCircle
-					animatedProps={animatedProps}
-					cx={CENTRE}
-					cy={CENTRE}
-					fill="none"
-					origin={`${CENTRE}, ${CENTRE}`}
-					r={RADIUS}
-					rotation={-90}
-					stroke={stroke}
-					strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-					strokeLinecap="butt"
+				<Path
+					color={stroke}
+					end={end}
+					path={FILL_PATH}
+					start={0}
+					strokeCap="butt"
 					strokeWidth={SECTION_PROGRESS_RING_STROKE}
+					style="stroke"
 				/>
-			</Svg>
+			</Canvas>
 		</View>
 	);
 }

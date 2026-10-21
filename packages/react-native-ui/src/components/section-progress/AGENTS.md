@@ -29,9 +29,9 @@ const sections = useScrollSections({ readingLine: 96 });
 | `index.ts` | → `@delacour/react-native-ui/section-progress` |
 | `section-progress.tsx` | Root — value, open state, reveal latch, ring source, a11y percent, haptic, back handler, and the `Object.assign` |
 | `section-progress-item.tsx` | `SectionProgress.Item` — one row of the panel: marker and title |
-| `section-progress-pill.tsx` | The pill — ring and label, as a capsule or as the panel's edge row. Internal |
-| `section-progress-panel.tsx` | The open card — the pill row, a rule, the scrolling list. Internal |
-| `section-progress-ring.tsx` | The SVG ring, driven by a shared value. Internal |
+| `section-progress-pill.tsx` | The pill's row — ring and label, one button. No chrome of its own. Internal |
+| `section-progress-panel.tsx` | The one surface — the capsule closed, the card open — with the row, a rule and the scrolling list. Internal |
+| `section-progress-ring.tsx` | The Skia ring — a track circle and a trimmed fill path, driven by a shared value. Internal |
 | `section-progress.context.tsx` | The root's context and `useSectionProgress` |
 | `section-progress.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
 | `section-progress.variants.test.ts` | |
@@ -66,10 +66,20 @@ rule keeps such a type in its consumer's file.
   horizontal inset + `offset`, and `alignItems`. The spec named the last field `alignSelf`; it is
   `alignItems` because the box spans the gutter and aligns its one child. A symmetric gutter is what
   keeps `start`/`end` correct under RTL without reading the layout direction.
-- **The panel is the pill grown into a card.** Open, the pill's content is drawn as the card's
-  edge row — the bottom edge for `bottom-*`, via `flex-col-reverse`, and the top for `top-*` — with a
-  rule between it and the list. Closed, it wears its own capsule. One `SectionProgressPill` renders
-  both, so the two can never disagree.
+- **The panel is the pill grown into a card — one surface, never two.** `SectionProgressPanel` is
+  always mounted: closed it is the capsule around the pill's row, open the card. The row is the
+  surface's one in-flow child, at the bottom edge for `bottom-*` (`flex-col-reverse`) and the top
+  for `top-*`; the rule and the list sit in `listBox`, absolute and pinned to the row's far side, so
+  they never size the capsule. Closed, the list box is clipped away, transparent, hidden from
+  assistive technology and takes no touches.
+- **The card is `SECTION_PROGRESS_PANEL_WIDTH` (288) wide, or the gutter's width when less**
+  (`resolvePanelWidth`, from the stack's measured width), **and hugs its list up to six rows**
+  (`resolveOpenPanelHeight`): a three-section list makes a three-row card.
+- **The list box is sized explicitly** — the rule plus the list's content height up to its max. An
+  absolute box sized by its content is capped at its container's height, which is the closed
+  pill's when it first lays out; the list was cut to two rows before this was explicit.
+- **The list box's `top`/`bottom` is React state, not animated.** An animated style never drops a
+  key it once set, so a box moved from `top` to `bottom` by a placement change kept both.
 - **The list scrolls past six rows.** Rows are `min-h-11` — a 44pt touch target — and the list's
   max height is six of them plus its `py-1`. Both numbers are read
   back out of the slots, so retuning a row moves the threshold with it<!-- registry:omit --> (`section-progress.variants.test.ts` pins this)<!-- /registry:omit -->.
@@ -79,21 +89,48 @@ rule keeps such a type in its consumer's file.
 
 ## Motion
 
-- **The ring never renders React.** `strokeDashoffset` is an animated prop on the UI thread,
-  following a shared value. A scroll moves that value directly, frame by frame; a jump of more than
+- **The ring never renders React.** It is one small Skia canvas: a track `Circle` and a fill
+  `Path` — the whole circle, built once at module scope from twelve o'clock clockwise — whose
+  `end` trim is a derived value (`resolveRingTrimEnd`, clamped 0..1, NaN → 0) passed straight
+  to the Skia prop. Nothing crosses to the JS thread per frame and no path is rebuilt; the
+  trim follows a shared value. A scroll moves that value directly, frame by frame; a jump of more than
   `SECTION_PROGRESS_RING_JUMP` — a picked section, a new `progress` — eases over 180ms
   (`resolveRingTransition`). That is how the spec's "eases to the settled value" is read: scroll
   events already arrive every frame, so the ease belongs to the moments the value leaps.
 - **The reveal latches.** `resolveRevealed` is true once `scrollY` reaches `revealAt` and never
   false again, so the pill does not blink near the top. `revealAt={0}`, or no `scroll`, shows it at
   once. It fades in over 200ms, once.
-- **The label fades in when the section changes**, keyed by value (120ms). There is no matching
-  fade-out: the old label would hold its width in the row while it faded, and the pill would grow
-  wide for a frame — so the new title simply replaces it and fades up.
-- **The panel scales out of the pill's own corner and fades**, on a damped spring that does not
-  overshoot. `transformOrigin` takes no `start`/`end`, so `resolvePanelTransformOrigin` resolves
-  the side against `I18nManager.isRTL`. Reduce motion: a fade only. The ring keeps tracking under
-  reduce motion — it is information, not decoration.
+- **On a section change the pill resizes and the titles slide.** The label sits in a clipping box
+  (`labelBox`) whose width eases to the new title's over 220ms (`SECTION_PROGRESS_LABEL_RESIZE_MS`);
+  the width comes from `onTextLayout`'s first line, through `resolveLabelWidth` (rounded up, capped
+  at `resolveLabelMaxWidth`). Each title is laid out at the cap's width and only clipped, so
+  neither is truncated mid-resize, and the leaving one is an exiting view, out of the row's layout.
+  The old title slides `SECTION_PROGRESS_LABEL_SHIFT` points out and fades (120ms) while the new one
+  slides in and fades up: upward for a later section, downward for an earlier one
+  (`resolveLabelStep`, from the context's `index`).
+- **The step commits before the title swaps.** Reanimated takes a view's `exiting` from its last
+  committed render, so the pill first commits the new direction onto the still-shown title, then
+  swaps the shown title in an effect — one render later. Swapping in the same render would send the
+  leaving title off in the previous change's direction.
+- **The first measure snaps.** The box starts at width 0 and takes its first title's width without
+  animating, so the pill does not grow open on mount. Reduce motion: the width always snaps and the
+  titles only fade.
+- **Opening grows the surface; it never swaps one view for another.** Width, height and corner
+  radius move together (`resolvePanelFrame`) from the pill's — `resolvePillSize`: the row's chrome
+  plus the title box, inside the border, fully rounded — to the card's, whose corner is the theme's
+  `rounded-lg` resolved to points (`panelCorner`, through `useResolveClassNames`). Open is a damped
+  spring that settles without overshoot; close is a 220ms ease-out, quicker, because the reader has
+  already chosen. The row the reader tapped never moves off its edge, so the ring keeps tracking
+  through the change; the growing edge reveals the list rather than dragging it.
+- **The list fades over the back of the grow** (`resolveListOpacity`: nothing until 40%, full by
+  the end) and so over the front of the shrink, so rows never show cramped in a half-grown card.
+- **The capsule's width is the row's chrome plus `labelWidth`, on the UI thread.** The chrome —
+  padding, ring and gap — is resolved from the slots, and `labelWidth` is the shared value the
+  title box eases, so a title change while closed moves the capsule in the same frame. Measuring
+  the row instead would be circular: it sits inside the surface it would be sizing.
+- **Reduce motion: the size snaps and the list only fades** (160ms). The ring keeps tracking under
+  reduce motion — it is information, not decoration. `resolvePanelTransformOrigin` is exported but
+  no longer used: nothing scales.
 
 ## Accessibility
 
@@ -108,13 +145,14 @@ rule keeps such a type in its consumer's file.
 - **Items are buttons, the active one `selected`.** The ring and the marker dots are hidden.
 - **Android back closes the panel** — a `BackHandler` subscription held only while it is open.
 - **The pill takes `${testID}-pill`** from the root's `testID`, through the context — it is internal,
-  so a test or a preview flow has no other way to name it. The closed capsule and the open panel's
-  edge row share the id; only one is mounted at a time, so one `tap` opens and the same `tap` closes.
+  so a test or a preview flow has no other way to name it. It is one row, closed and open, so one
+  `tap` opens and the same `tap` closes.
 
 ## Colour
 
 - **An item's `color` paints its marker, and the ring while that section is active.** The marker is
-  a `bg-*` class; the ring is SVG and takes the same token through `useThemeColor`.
+  a `bg-*` class; the ring is Skia and takes the same token through `useThemeColor`, resolved
+  above the canvas — context does not cross into Skia's reconciler.
   `resolveSectionColorToken` names it, and the suite asserts each one is declared in both themes and
   that the marker slot emits the matching `bg-*`. The ring's track is `border`.
 - **Text colour is on the label slots, never the pressables** (rule 1). The active row is tinted
@@ -124,6 +162,14 @@ rule keeps such a type in its consumer's file.
 
 - **`haptic` plays on a section change**, through `playHaptic` — scrolling across a boundary, or a
   pick. Off by default: a long article would otherwise buzz at every heading.
+
+## Peers
+
+- **`react-native-skia` (3 or later) is an optional peer, needed here.** The ring draws with it, as
+  `Chart`, `Flow` and `Sketch` do; `react-native-svg` is no longer imported by this component.
+- **The ring imports `lib/skia-native-id` for its effect.** After a JS reload Skia reuses the old
+  runtime's canvas ids, so a ring mounted then would draw nothing until it re-rendered. The import
+  moves this runtime's ids to a fresh range before the canvas asks for one, as `Sketch` does.
 
 ## What it does not do
 

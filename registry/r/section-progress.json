@@ -10,6 +10,7 @@
 	"registryDependencies": [
 		"compose-refs",
 		"pressable",
+		"skia-native-id",
 		"text",
 		"tv",
 		"use-controllable-state",
@@ -22,8 +23,9 @@
 	"expoDependencies": [
 		"react-native-reanimated",
 		"react-native-safe-area-context",
-		"react-native-svg",
-		"react-native-worklets"
+		"react-native-skia",
+		"react-native-worklets",
+		"uniwind"
 	],
 	"devDependencies": [],
 	"files": [
@@ -90,6 +92,10 @@
 				{
 					"from": "../../hooks/use-theme-color",
 					"to": "@registry/hooks/use-theme-color"
+				},
+				{
+					"from": "../../lib/skia-native-id",
+					"to": "@registry/lib/skia-native-id"
 				}
 			]
 		},

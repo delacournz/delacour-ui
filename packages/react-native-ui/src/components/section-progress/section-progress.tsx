@@ -229,6 +229,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 	);
 	const close = useCallback(() => setOpen(false), [setOpen]);
 
+	const index = entries.findIndex((entry) => entry.value === value);
 	const label = resolveSectionLabel(entries, value ?? undefined);
 	const color = resolveSectionColor(entries, value ?? undefined);
 	const accessibilityValue = resolveSectionProgressAccessibilityValue(label, percent / 100);
@@ -239,6 +240,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			accessibilityValue,
 			activeItemRef,
 			color,
+			index,
 			isOpen,
 			label,
 			pillTestID: testID === undefined ? undefined : `${testID}-pill`,
@@ -252,6 +254,7 @@ function SectionProgressRoot(props: SectionProgressProps): ReactElement {
 			accessibilityLabel,
 			accessibilityValue,
 			color,
+			index,
 			isOpen,
 			label,
 			placement,

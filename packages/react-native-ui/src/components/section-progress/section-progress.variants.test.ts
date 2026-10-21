@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import { declaredTokens } from "../../styles/theme-tokens.test";
 import {
 	resolveLabelMaxWidth,
+	resolveLabelStep,
+	resolveLabelWidth,
 	resolvePanelDirection,
 	resolvePanelMaxHeight,
 	resolvePanelTransformOrigin,
@@ -290,7 +292,44 @@ describe("resolveLabelMaxWidth", () => {
 	});
 });
 
+describe("resolveLabelWidth", () => {
+	test("the title's own width, rounded up so the last glyph is never clipped", () => {
+		expect(resolveLabelWidth(87.2, 234)).toBe(88);
+	});
+
+	test("capped at the label's max width", () => {
+		expect(resolveLabelWidth(310, 234)).toBe(234);
+	});
+
+	test("zero for a missing or nonsense measure", () => {
+		expect(resolveLabelWidth(Number.NaN, 234)).toBe(0);
+		expect(resolveLabelWidth(-4, 234)).toBe(0);
+	});
+});
+
+describe("resolveLabelStep", () => {
+	test("a later section steps forward", () => {
+		expect(resolveLabelStep(1, 3)).toBe("forward");
+	});
+
+	test("an earlier section steps back", () => {
+		expect(resolveLabelStep(3, 1)).toBe("back");
+	});
+
+	test("the first section after none steps forward", () => {
+		expect(resolveLabelStep(-1, 0)).toBe("forward");
+	});
+
+	test("an unknown section steps forward", () => {
+		expect(resolveLabelStep(2, -1)).toBe("forward");
+	});
+});
+
 describe("sectionProgressVariants", () => {
+	test("the label box clips the titles it resizes around", () => {
+		expect(cls(sectionProgressVariants().labelBox())).toContain("overflow-hidden");
+	});
+
 	test("the root lets touches through to the screen", () => {
 		expect(cls(sectionProgressVariants().root())).toContain("absolute");
 		expect(cls(sectionProgressVariants().root())).toContain("inset-0");

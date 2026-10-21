@@ -6,6 +6,8 @@ import type { SectionProgressColor, SectionProgressPlacement } from "./section-p
 export type SectionProgressContextValue = {
 	/** The active section, or null before any is. */
 	value: string | null;
+	/** The active section's position among the items, or -1 before any is. */
+	index: number;
 	/** What an item calls on press: emits the section and closes the panel. */
 	select: (value: string) => void;
 	/** Whether the panel is open. */

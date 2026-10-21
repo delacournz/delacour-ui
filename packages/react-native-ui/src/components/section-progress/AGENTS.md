@@ -90,9 +90,21 @@ rule keeps such a type in its consumer's file.
 - **The reveal latches.** `resolveRevealed` is true once `scrollY` reaches `revealAt` and never
   false again, so the pill does not blink near the top. `revealAt={0}`, or no `scroll`, shows it at
   once. It fades in over 200ms, once.
-- **The label fades in when the section changes**, keyed by value (120ms). There is no matching
-  fade-out: the old label would hold its width in the row while it faded, and the pill would grow
-  wide for a frame — so the new title simply replaces it and fades up.
+- **On a section change the pill resizes and the titles slide.** The label sits in a clipping box
+  (`labelBox`) whose width eases to the new title's over 220ms (`SECTION_PROGRESS_LABEL_RESIZE_MS`);
+  the width comes from `onTextLayout`'s first line, through `resolveLabelWidth` (rounded up, capped
+  at `resolveLabelMaxWidth`). Each title is laid out at the cap's width and only clipped, so
+  neither is truncated mid-resize, and the leaving one is an exiting view, out of the row's layout.
+  The old title slides `SECTION_PROGRESS_LABEL_SHIFT` points out and fades (120ms) while the new one
+  slides in and fades up: upward for a later section, downward for an earlier one
+  (`resolveLabelStep`, from the context's `index`).
+- **The step commits before the title swaps.** Reanimated takes a view's `exiting` from its last
+  committed render, so the pill first commits the new direction onto the still-shown title, then
+  swaps the shown title in an effect — one render later. Swapping in the same render would send the
+  leaving title off in the previous change's direction.
+- **The first measure snaps.** The box starts at width 0 and takes its first title's width without
+  animating, so the pill does not grow open on mount. Reduce motion: the width always snaps and the
+  titles only fade.
 - **The panel scales out of the pill's own corner and fades**, on a damped spring that does not
   overshoot. `transformOrigin` takes no `start`/`end`, so `resolvePanelTransformOrigin` resolves
   the side against `I18nManager.isRTL`. Reduce motion: a fade only. The ring keeps tracking under

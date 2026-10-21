@@ -41,6 +41,10 @@ export const SECTION_PROGRESS_RING_JUMP = 0.1;
 export const SECTION_PROGRESS_REVEAL_MS = 200;
 /** The label's cross-fade when the section changes. */
 export const SECTION_PROGRESS_LABEL_FADE_MS = 120;
+/** How long the pill takes to resize to a new section's title. */
+export const SECTION_PROGRESS_LABEL_RESIZE_MS = 220;
+/** How far, in points, a title slides as it leaves and the next arrives. */
+export const SECTION_PROGRESS_LABEL_SHIFT = 8;
 
 /** One `SectionProgress.Item`, as the root reads it from its children. */
 export type SectionProgressEntry = {
@@ -93,6 +97,8 @@ export const sectionProgressVariants = tv({
 		pillRow: "min-h-11 flex-row items-center gap-2 py-2 ps-2.5 pe-4",
 		/** The Skia ring's box. Hidden from assistive technology. */
 		ring: "size-5",
+		/** The box the pill's title sits in — eased to each title's width, clipping the titles that slide through it. */
+		labelBox: "overflow-hidden",
 		/** The section title in the pill — one line, truncated. */
 		label: "shrink text-foreground",
 		/** The open card. */
@@ -265,4 +271,22 @@ export function resolvePanelTransformOrigin(placement: SectionProgressPlacement,
 /** The pill label's width cap: sixty percent of the window, so the pill never spans the screen. */
 export function resolveLabelMaxWidth(windowWidth: number): number {
 	return Math.round(windowWidth * 0.6);
+}
+
+/**
+ * The width the pill's label box animates to: the title as laid out, rounded up so the last
+ * glyph is never clipped, and capped at `resolveLabelMaxWidth`. A missing measure is 0.
+ */
+export function resolveLabelWidth(textWidth: number, maxWidth: number): number {
+	if (Number.isNaN(textWidth) || textWidth <= 0) return 0;
+	return Math.ceil(Math.min(textWidth, maxWidth));
+}
+
+/**
+ * Which way the titles slide when the section changes: forward — the old one up and out, the new
+ * one up from below — for a later section, back for an earlier one. Coming from no section, or
+ * to one not among the items, is forward.
+ */
+export function resolveLabelStep(previous: number, next: number): "forward" | "back" {
+	return previous >= 0 && next >= 0 && next < previous ? "back" : "forward";
 }

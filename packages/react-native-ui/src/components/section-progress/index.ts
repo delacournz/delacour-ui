@@ -7,6 +7,8 @@ export {
 } from "./section-progress.context";
 export {
 	resolveLabelMaxWidth,
+	resolveLabelStep,
+	resolveLabelWidth,
 	resolvePanelDirection,
 	resolvePanelMaxHeight,
 	resolvePanelTransformOrigin,

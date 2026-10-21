@@ -32,6 +32,14 @@ export const SECTION_PROGRESS_ITEM_HEIGHT = 44;
 export const SECTION_PROGRESS_PANEL_PADDING = 4;
 /** How many rows the panel shows before its list scrolls. */
 export const SECTION_PROGRESS_PANEL_ROWS = 6;
+/** The open card's width, in points, when the screen has room for it. */
+export const SECTION_PROGRESS_PANEL_WIDTH = 288;
+/** The surface's border, in points — `border` on the `panel` slot. */
+export const SECTION_PROGRESS_BORDER = 1;
+/** The rule between the row and the list, in points — `h-px` on the `divider` slot. */
+export const SECTION_PROGRESS_DIVIDER = 1;
+/** How far into the grow the list starts to fade in, 0–1. */
+export const SECTION_PROGRESS_LIST_FADE_FROM = 0.4;
 
 /** How long the ring takes to ease onto the settled value once scrolling stops. */
 export const SECTION_PROGRESS_RING_SETTLE_MS = 180;
@@ -41,6 +49,10 @@ export const SECTION_PROGRESS_RING_JUMP = 0.1;
 export const SECTION_PROGRESS_REVEAL_MS = 200;
 /** The label's cross-fade when the section changes. */
 export const SECTION_PROGRESS_LABEL_FADE_MS = 120;
+/** How long the pill takes to resize to a new section's title. */
+export const SECTION_PROGRESS_LABEL_RESIZE_MS = 220;
+/** How far, in points, a title slides as it leaves and the next arrives. */
+export const SECTION_PROGRESS_LABEL_SHIFT = 8;
 
 /** One `SectionProgress.Item`, as the root reads it from its children. */
 export type SectionProgressEntry = {
@@ -87,16 +99,23 @@ export const sectionProgressVariants = tv({
 		scrim: "absolute inset-0",
 		/** The box at the placement's edge, holding the pill or the panel. */
 		stack: "absolute",
-		/** The closed pill: the ring and the label in a capsule. */
-		pill: "min-h-11 flex-row items-center gap-2 rounded-full border border-border bg-card py-2 ps-2.5 pe-4",
-		/** The pill's row inside the open panel — the same content, without the capsule. */
+		/** The pill's row — the ring and the title. The capsule closed, the card's edge row open. */
 		pillRow: "min-h-11 flex-row items-center gap-2 py-2 ps-2.5 pe-4",
-		/** The SVG ring's box. Hidden from assistive technology. */
+		/** The Skia ring's box. Hidden from assistive technology. */
 		ring: "size-5",
+		/** The box the pill's title sits in — eased to each title's width, clipping the titles that slide through it. */
+		labelBox: "overflow-hidden",
 		/** The section title in the pill — one line, truncated. */
 		label: "shrink text-foreground",
-		/** The open card. */
-		panel: "w-72 max-w-full overflow-hidden rounded-lg border border-border bg-card",
+		/**
+		 * The one surface: the pill closed, the card open. Its width, height and corner are animated
+		 * inline, so it carries no size or radius class.
+		 */
+		panel: "overflow-hidden border border-border bg-card",
+		/** The open card's corner — resolved to a number, never applied as a class. */
+		panelCorner: "rounded-lg",
+		/** The rule and the list: pinned to the row, out of the surface's layout, revealed as it grows. */
+		listBox: "absolute start-0",
 		/** The scrolling list of sections. */
 		list: "py-1",
 		/** One section row. */
@@ -146,14 +165,22 @@ export function resolveRingGeometry(size: number, stroke: number): { radius: num
 }
 
 /**
- * The `strokeDashoffset` that draws `progress` of the ring: the whole
- * circumference at 0 (nothing drawn), none of it at 1. Clamped, and a NaN —
- * a progress read before layout — draws an empty ring rather than none at all.
+ * The box the ring's stroke is centred on: inset half a stroke from the ring's own box, so the
+ * stroke sits wholly inside it, as `resolveRingGeometry`'s radius does.
  */
-export function resolveRingDashOffset(progress: number, circumference: number): number {
+export function resolveRingOval(size: number, stroke: number): { x: number; y: number; width: number; height: number } {
+	const inset = stroke / 2;
+	const diameter = size - stroke;
+	return { x: inset, y: inset, width: diameter, height: diameter };
+}
+
+/**
+ * How far round the fill's trim reaches: `progress`, clamped to 0..1. A NaN — a progress read
+ * before layout — draws an empty ring rather than none at all.
+ */
+export function resolveRingTrimEnd(progress: number): number {
 	"worklet";
-	const clamped = Number.isNaN(progress) ? 0 : Math.min(1, Math.max(0, progress));
-	return circumference * (1 - clamped);
+	return Number.isNaN(progress) ? 0 : Math.min(1, Math.max(0, progress));
 }
 
 /**
@@ -257,4 +284,78 @@ export function resolvePanelTransformOrigin(placement: SectionProgressPlacement,
 /** The pill label's width cap: sixty percent of the window, so the pill never spans the screen. */
 export function resolveLabelMaxWidth(windowWidth: number): number {
 	return Math.round(windowWidth * 0.6);
+}
+
+/**
+ * The width the pill's label box animates to: the title as laid out, rounded up so the last
+ * glyph is never clipped, and capped at `resolveLabelMaxWidth`. A missing measure is 0.
+ */
+export function resolveLabelWidth(textWidth: number, maxWidth: number): number {
+	if (Number.isNaN(textWidth) || textWidth <= 0) return 0;
+	return Math.ceil(Math.min(textWidth, maxWidth));
+}
+
+/**
+ * Which way the titles slide when the section changes: forward — the old one up and out, the new
+ * one up from below — for a later section, back for an earlier one. Coming from no section, or
+ * to one not among the items, is forward.
+ */
+export function resolveLabelStep(previous: number, next: number): "forward" | "back" {
+	return previous >= 0 && next >= 0 && next < previous ? "back" : "forward";
+}
+
+/** The open card's width: `SECTION_PROGRESS_PANEL_WIDTH`, or the room there is when that is less. */
+export function resolvePanelWidth(available: number): number {
+	return available > 0 ? Math.min(SECTION_PROGRESS_PANEL_WIDTH, available) : SECTION_PROGRESS_PANEL_WIDTH;
+}
+
+/** The closed pill's outer size: the row's chrome, the title's box and the row, inside the border. */
+export function resolvePillSize(
+	chrome: number,
+	labelWidth: number,
+	rowHeight: number
+): { width: number; height: number } {
+	"worklet";
+	return {
+		width: chrome + labelWidth + SECTION_PROGRESS_BORDER * 2,
+		height: rowHeight + SECTION_PROGRESS_BORDER * 2,
+	};
+}
+
+/**
+ * The open card's outer height: the row, the rule and the list, inside the border. The list
+ * counts at its content's height up to `listMaxHeight`, so a short list is hugged and a long one
+ * scrolls.
+ */
+export function resolveOpenPanelHeight(rowHeight: number, listHeight: number, listMaxHeight: number): number {
+	"worklet";
+	return rowHeight + SECTION_PROGRESS_DIVIDER + Math.min(listHeight, listMaxHeight) + SECTION_PROGRESS_BORDER * 2;
+}
+
+/** The surface's frame: its width, height and corner radius. */
+export type SectionProgressPanelFrame = { width: number; height: number; radius: number };
+
+/** The surface's frame at `progress` from the pill (0) to the card (1): every edge moves together. */
+export function resolvePanelFrame(
+	closed: SectionProgressPanelFrame,
+	open: SectionProgressPanelFrame,
+	progress: number
+): SectionProgressPanelFrame {
+	"worklet";
+	return {
+		width: closed.width + (open.width - closed.width) * progress,
+		height: closed.height + (open.height - closed.height) * progress,
+		radius: closed.radius + (open.radius - closed.radius) * progress,
+	};
+}
+
+/**
+ * The list's opacity at `progress`: nothing until `SECTION_PROGRESS_LIST_FADE_FROM` of the grow,
+ * then up to full by the end. Closing runs it backwards, so the rows are gone before the card has
+ * shrunk far. Clamped, as a spring may carry the progress a hair past either end.
+ */
+export function resolveListOpacity(progress: number): number {
+	"worklet";
+	const t = (progress - SECTION_PROGRESS_LIST_FADE_FROM) / (1 - SECTION_PROGRESS_LIST_FADE_FROM);
+	return Math.min(1, Math.max(0, t));
 }

@@ -22,7 +22,7 @@ scope — it is an input, not a text effect.
 | `text-animation-caret.tsx` | Internal leaf: the typing caret |
 | `text-animation-clock.ts` | `useTextAnimationClock` — a frame-callback elapsed-ms shared value, pausable, keyed by run |
 | `text-animation.types.ts` | `TextAnimationBase`, the props every part shares |
-| `text-animation.variants.ts` | The slotted `tv()` + every pure resolver: splitting, stagger, effect frames, typing timeline, number format, roll targets |
+| `text-animation.variants.ts` | The slotted `tv()` + every pure resolver: splitting, stagger, effect frames, typing timeline, number format, roll targets — and the five axes (`TEXT_ANIMATION_UNITS`, `_ORDERS`, `_EFFECT_KINDS`, `_CARET_KINDS`, `_SLIDE_DIRECTIONS`), each exported with its union |
 | `text-animation.variants.test.ts` | |
 
 ## The root is Reveal

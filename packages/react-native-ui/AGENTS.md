@@ -45,6 +45,7 @@ src/
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
+├── variant-axes.test.ts  The package-wide axis-export check — see Testing
 └── uniwind-env.d.ts      /// <reference types="uniwind/types" />
 ```
 
@@ -620,6 +621,15 @@ exported, tested and rendered in the playground and stayed undocumented for
 fifteen commits, while nine bullets in other components already pointed at rules
 nobody had written down. Documentation belongs in the commit that changes the
 code, and this is what holds that.
+
+`src/variant-axes.test.ts` is why every variant axis reaches its component's
+`index.ts`. An axis is a `const` array and the union read off it —
+`export type BadgeMaterial = (typeof BADGE_MATERIALS)[number]` — and the test
+fails by name for either half missing from the folder's export lists. Declaring a
+union that way is declaring it public; a union nothing outside the folder may
+name is written as a plain string-literal type instead. It exists because
+`Badge`, `Button` and `Surface` each grew a public `material` prop whose type and
+values stayed behind the index, so a caller could pass the prop but not name it.
 
 Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.

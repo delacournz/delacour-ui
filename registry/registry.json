@@ -5068,6 +5068,7 @@
 			"registryDependencies": [
 				"button",
 				"pressable",
+				"skia-native-id",
 				"text",
 				"tv",
 				"use-controllable-state",
@@ -5080,7 +5081,7 @@
 				"react-native-gesture-handler",
 				"react-native-reanimated",
 				"react-native-safe-area-context",
-				"react-native-svg"
+				"react-native-skia"
 			],
 			"devDependencies": [],
 			"files": [

@@ -63,7 +63,8 @@ The tour keeps no record of having been seen. `onFinish` (Done on the last step)
 
 `rect` (the default) is a rounded rectangle grown by `padding`; `circle` is a circle around the
 target's larger side, for a floating button. Set it on the tour for every step, or on one step.
-The hole glides between the two.
+Between steps the old hole fades closed while the new one opens, and the card glides to its new
+place.
 
 <Preview id="tour/circle-shape" />
 
@@ -160,7 +161,7 @@ what a screen reader hears before the title.
 - The card is `accessibilityViewIsModal`, so VoiceOver stays inside it. A non-interactive tour also
   hides the app beneath from assistive technology; an interactive one leaves it reachable.
 - VoiceOver's escape gesture and Android back skip the tour when `isDismissible` (the default).
-- Under reduce motion the hole jumps between steps instead of gliding. The card only fades, so it
+- Under reduce motion the card jumps between steps instead of gliding. The hole only fades, so it
   fades either way.
 
 ## API Reference

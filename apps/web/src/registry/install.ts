@@ -15731,10 +15731,10 @@ export const install = {
 		description: "A guided walkthrough: the screen dims, a hole is cut around one control and a card beside it explains it, with Next, Back and Skip.",
 		importPath: "@delacour/react-native-ui/tour",
 		exportName: "Tour",
-		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-svg", "react-native-worklets", "uniwind"],
+		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-safe-area-context", "react-native-skia", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 60,
+		fileCount: 61,
 		groups: [
 			{
 				name: "tour",
@@ -15891,6 +15891,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "skia-native-id",
+				title: "skiaNativeId",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/skia-native-id.ts", target: "src/lib/skia-native-id.ts" },
 				],
 			},
 			{

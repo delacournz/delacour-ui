@@ -16,10 +16,18 @@ export const TOUR_DEFAULT_PADDING = 8;
 /** The hole's corner, in points. Clamped to half the shorter side. */
 export const TOUR_DEFAULT_RADIUS = 12;
 
-/** How long the hole takes to travel from one target to the next. */
+/** How long the card takes to glide from one step's place to the next. */
 export const TOUR_TRANSITION_MS = 280;
+/** How long the old hole takes to fill in, and the new one to open, between steps. */
+export const TOUR_HOLE_FADE_MS = 220;
+/** How long the dim takes to fade up around the first hole when the tour opens. */
+export const TOUR_ENTER_MS = 240;
 /** How long the card takes to fade in once it is placed. A fade, so reduce motion keeps it. */
-export const TOUR_CARD_FADE_MS = 180;
+export const TOUR_CARD_FADE_MS = 240;
+/** How far below its place the card starts its entrance, in points. */
+const TOUR_CARD_RISE = 8;
+/** How long after the dim starts the card starts, so the eye goes to the hole first. */
+const TOUR_CARD_ENTER_DELAY_MS = 60;
 
 /** Space between the hole and the card, and between the card and the safe area. */
 export const TOUR_CARD_GAP = 12;
@@ -184,6 +192,22 @@ export function resolveOverlayInsets({
 	};
 }
 
+/**
+ * The hole as the mask cuts it: a rounded rectangle whose size is never negative and whose radius
+ * never passes half its shorter side, so the corners never cross.
+ *
+ * The hole is always a rounded rectangle; a circle is the case where the radius is half the side.
+ * One shape means one drawing serves both. A worklet — the mask derives each hole from it on the
+ * UI thread.
+ */
+export function resolveMaskHole(hole: TourHoleRect): TourHoleRect {
+	"worklet";
+	const width = Math.max(0, hole.width);
+	const height = Math.max(0, hole.height);
+	const radius = Math.max(0, Math.min(hole.radius, width / 2, height / 2));
+	return { x: hole.x, y: hole.y, width, height, radius };
+}
+
 /** Two decimals: an animating hole is redrawn every frame, and the path string is the cost. */
 function round(value: number): number {
 	"worklet";
@@ -194,10 +218,13 @@ function round(value: number): number {
  * The scrim as one SVG path: the whole window, then the hole, drawn with `fillRule="evenodd"`
  * so the hole is subtracted.
  *
+ * @deprecated The mask now draws with Skia from `resolveMaskHole`; nothing in the tour reads this.
+ * Kept for callers drawing their own scrim, and removed in the next minor.
+ *
  * The hole is always the four-arc rounded rectangle; a circle is the case where the radius is
  * half the side and the straight runs have zero length. One shape means the hole can travel from
  * a rectangle to a circle without the path changing its command list, so nothing pops mid-way.
- * A worklet — it runs inside `useAnimatedProps` every frame of a transition.
+ * A worklet.
  */
 export function buildMaskPath(window: TourSize, hole: TourHoleRect): string {
 	"worklet";
@@ -400,11 +427,10 @@ export function resolveTourTestIDs(testID: string | undefined): TourTestIDs {
 }
 
 /**
- * How long the hole takes to reach a new target. Zero jumps.
+ * How long the card takes to glide to a new step's place. Zero jumps.
  *
- * Reduce motion jumps — the hole is travel, which is what the setting asks to remove. So does the
- * first hole of an opening: there is no previous target, and travelling in from a zero rect would
- * draw the hole growing out of the top-left corner.
+ * Reduce motion jumps — the glide is travel, which is what the setting asks to remove. So does the
+ * first step of an opening: there is no previous place to glide from.
  */
 export function resolveTourTransitionDuration({
 	isReducedMotion,
@@ -414,6 +440,49 @@ export function resolveTourTransitionDuration({
 	isFirst: boolean;
 }): number {
 	return isReducedMotion || isFirst ? 0 : TOUR_TRANSITION_MS;
+}
+
+/** The card's entrance when the tour opens. */
+export type TourCardEntrance = { delay: number; duration: number; rise: number };
+
+/**
+ * How the card arrives when the tour opens: a beat after the dim, fading in while it rises a few
+ * points into place. Reduce motion keeps the fade and drops the rise, which is travel.
+ */
+export function resolveTourCardEntrance({ isReducedMotion }: { isReducedMotion: boolean }): TourCardEntrance {
+	return {
+		delay: TOUR_CARD_ENTER_DELAY_MS,
+		duration: TOUR_CARD_FADE_MS,
+		rise: isReducedMotion ? 0 : TOUR_CARD_RISE,
+	};
+}
+
+/**
+ * How long the old hole takes to fill in while the new one opens. Zero swaps at once.
+ *
+ * Reduce motion keeps it: nothing travels, the dim only changes where it is. The first hole of
+ * an opening appears with the tour, and a re-measure that lands where the hole already is swaps at
+ * once — crossfading a hole with itself would dim it for a moment.
+ */
+export function resolveTourHoleFadeDuration({
+	isFirst,
+	isSameHole,
+}: {
+	isFirst: boolean;
+	isSameHole: boolean;
+}): number {
+	return isFirst || isSameHole ? 0 : TOUR_HOLE_FADE_MS;
+}
+
+/** Whether two holes are the same to within half a point on every edge and the corner. */
+export function isSameHoleRect(a: TourHoleRect, b: TourHoleRect): boolean {
+	return (
+		Math.abs(a.x - b.x) < 0.5 &&
+		Math.abs(a.y - b.y) < 0.5 &&
+		Math.abs(a.width - b.width) < 0.5 &&
+		Math.abs(a.height - b.height) < 0.5 &&
+		Math.abs(a.radius - b.radius) < 0.5
+	);
 }
 
 /**

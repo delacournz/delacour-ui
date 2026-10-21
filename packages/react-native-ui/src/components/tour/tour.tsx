@@ -240,8 +240,8 @@ function TourRoot({
  * around it — re-measuring on rotation. Nothing about the screen changes while the tour is
  * closed.
  *
- * **The hole glides** between targets on the UI thread, and jumps under reduce motion. The card
- * sits below the hole when it fits and above it otherwise.
+ * **The hole crossfades** between targets on the UI thread, and **the card glides** with it —
+ * jumping under reduce motion. The card sits below the hole when it fits and above it otherwise.
  *
  * By default the tour is a `Modal`, which covers the status bar and the tab bar and swallows every
  * touch. `isInteractive` draws it inside the tour's own root instead, and passes touches inside the

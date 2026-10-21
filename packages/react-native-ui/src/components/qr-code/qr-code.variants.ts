@@ -3,8 +3,8 @@ import type { QrErrorCorrection } from "./qr-code.constants";
 
 /**
  * The tile's slots and every pure decision the root makes — size, quiet zone,
- * level, label, the contrast guard. No React Native imports, so `bun test`
- * reaches all of it.
+ * level, label, the contrast guard. No React Native imports, all of it
+ * is unit-testable.
  */
 
 export const QR_SIZES = ["sm", "md", "lg"] as const;

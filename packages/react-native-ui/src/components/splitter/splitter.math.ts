@@ -6,7 +6,7 @@
  * compound in and risk a cycle. Two rules hold it together, and a test pins both:
  *
  * - **It imports nothing.** No React Native, no Reanimated, no `tv`. It is
- *   reachable from `bun test` and from any worklet without dragging a renderer in.
+ *   unit-testable and from any worklet without dragging a renderer in.
  * - **Every export is a worklet.** These run inside gesture callbacks on the UI
  *   thread; a function without the directive throws there, and only on a device.
  *

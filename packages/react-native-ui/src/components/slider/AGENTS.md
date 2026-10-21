@@ -158,7 +158,7 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
 - **Every length is measured, never tabulated.** `trackSize` and `thumbSize` come
   from their own `onLayout` — `size-5` cannot be read from JavaScript, and a
   table of numbers here would be `tokens.css` restated in TypeScript, the drift
-  `tokens.test.ts` exists to catch everywhere else. A measured `0` therefore means
+  that would otherwise go uncaught everywhere else. A measured `0` therefore means
   **not measured yet**, never "a track with no length": every geometry helper
   guards `travel <= 0` and the thumb renders at `opacity: 0` until the track has
   reported, because a thumb drawn before then sits at a garbage offset for a frame
@@ -229,7 +229,7 @@ package's first drag-driven control, and its first `Gesture.Pan()`.
   300pt track is a step every three points, and a flick crosses a hundred of them
   in a fifth of a second — a buzz, and a hundred synchronous calls into the haptic
   engine to produce it. `shouldTickHaptic` gates on `SLIDER_HAPTIC_MIN_TRAVEL`,
-  which keeps the rule pure so `bun test` reaches it and makes it degrade the right
+  which keeps the rule pure so a unit test reaches it and makes it degrade the right
   way: a coarse scale ticks on every stop, a fine one thins to a cadence a hand can
   feel. Either **end** of the range always ticks — it is the one moment a slider
   has something to say the screen does not already show. The grab itself always

@@ -41,10 +41,12 @@ src/
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
-│                         paging, scroll-sections, scroll-maths, scroll-edges
+│                         paging, scroll-sections, scroll-maths, scroll-edges,
+│                         wrap-text-children
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
+├── variant-axes.test.ts  The package-wide axis-export check — see Testing
 └── uniwind-env.d.ts      /// <reference types="uniwind/types" />
 ```
 
@@ -621,6 +623,15 @@ fifteen commits, while nine bullets in other components already pointed at rules
 nobody had written down. Documentation belongs in the commit that changes the
 code, and this is what holds that.
 
+`src/variant-axes.test.ts` is why every variant axis reaches its component's
+`index.ts`. An axis is a `const` array and the union read off it —
+`export type BadgeMaterial = (typeof BADGE_MATERIALS)[number]` — and the test
+fails by name for either half missing from the folder's export lists. Declaring a
+union that way is declaring it public; a union nothing outside the folder may
+name is written as a plain string-literal type instead. It exists because
+`Badge`, `Button` and `Surface` each grew a public `material` prop whose type and
+values stayed behind the index, so a caller could pass the prop but not name it.
+
 Rendering is verified in `apps/playground` on a simulator. If render tests
 become necessary, add `jest-expo` to the playground rather than to this package.
 
@@ -768,7 +779,7 @@ files to close a cycle with. A part that calls a `useXPart` hook or wraps its ow
 children — `Button.Label`, `ListGroup.Item` — does **not** qualify. Do not
 "tidy" `Text`'s presets into twelve files.
 
-Helpers follow their caller, not the root: `wrapTextChildren` lives in
+Helpers follow their caller, not the root: `wrapListGroupItemText` lives in
 `list-group-item.tsx` because `ListGroup.Item` wraps its own bare text, while
 `withDividers` stays in `list-group.tsx` because the root inserts the dividers.
 Putting a part's helper in the root file closes a cycle.
@@ -892,6 +903,18 @@ diff once, here.
 believe it: it scaffolds a real Expo app, adds every item, and typechecks the
 result. A component whose imports only resolve inside this monorepo passes
 `bun test` and fails there.
+
+**What a copy carries is read by someone with neither Bun nor this package's tests.**
+`add` copies every non-test file of a folder, `AGENTS.md` included, into a project on any
+package manager, and drops each `*.test.ts`. So no shipped file — source comment, CSS
+comment or `AGENTS.md` — may name Bun (`bun test`, `bun run …`, `bunx`) or a specific test,
+fixture or `*.e2e.ts` file; `registry:build` fails on one, listing every offence. Write
+the invariant instead of what checks it: "pure, so it is unit-testable", not "reachable
+from `bun test`". In an `AGENTS.md`, a maintainer-only pointer — which test pins a rule,
+a preview capture command — goes inside `<!-- registry:omit -->` … `<!-- /registry:omit -->`,
+on its own lines or inline mid-sentence, and the copy leaves it out. A Files-table row
+whose first cell names a test is dropped from the copy automatically, so keep listing
+tests there. See rule 8 in `packages/cli/AGENTS.md`.
 
 A component folder that follows the rules above needs nothing else. Relative
 imports crossing a folder — `../icon`, `../../lib/cn` — are recorded as

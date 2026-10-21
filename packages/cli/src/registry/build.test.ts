@@ -2,10 +2,12 @@ import { beforeAll, describe, expect, test } from "bun:test";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { type BuildResult, buildRegistry, escapingReads } from "./build";
+import { isTest } from "./classify";
 import { PLACEHOLDER_PREFIX, parsePlaceholder } from "./namespaces";
 import { applyRewrites } from "./rewrite";
 import { scanImports } from "./scan-imports";
 import type { RegistryFile, RegistryItem } from "./schema";
+import { findUnshippableReferences, shipContent } from "./ship";
 
 /**
  * Built against the real `packages/react-native-ui`, not a fixture.
@@ -37,12 +39,35 @@ beforeAll(async () => {
 	for (const item of registry.items) {
 		for (const file of [...item.files, ...item.tests]) {
 			const source = await readFile(join(REPO_ROOT, file.path), "utf-8");
-			delivered.set(file.path, applyRewrites(source, file.rewrites));
+			delivered.set(file.path, shipContent(file.target, applyRewrites(source, file.rewrites)));
 		}
 	}
 });
 
 describe("buildRegistry", () => {
+	// The guard the builder also enforces, held here over what a consumer
+	// actually receives: a copy lands on any package manager with none of the
+	// library's tests, so it must cite neither. A test is exempt — it is Bun's
+	// by nature and only lands under `add --tests`, beside its own suite.
+	test("nothing shipped cites Bun or a file the registry does not ship", () => {
+		const offences = [...delivered]
+			.filter(([path]) => !isTest(path))
+			.flatMap(([path, content]) =>
+				findUnshippableReferences(content).map(({ line, match }) => `${path}:${line} ${match}`)
+			);
+
+		expect(offences).toEqual([]);
+	});
+
+	test("a copied Files table lists the folder as it lands, without its tests", async () => {
+		const path = "packages/react-native-ui/src/components/button/AGENTS.md";
+		const source = await readFile(join(REPO_ROOT, path), "utf-8");
+
+		expect(source).toContain("`button.variants.test.ts`");
+		expect(delivered.get(path)).not.toContain("button.variants.test.ts");
+		expect(delivered.get(path)).toContain("| `button.variants.ts` |");
+	});
+
 	test("emits one ui item per component folder, and no others", async () => {
 		const folders = (await readdir(join(PACKAGE_ROOT, "src/components"), { withFileTypes: true }))
 			.filter((entry) => entry.isDirectory())

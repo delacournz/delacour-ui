@@ -2,7 +2,7 @@
  * The avatar's pure decisions — initials, image retry, group overflow and the
  * name a screen reader reads.
  *
- * Free of React Native imports so `bun test` reaches every one of them. The
+ * Free of React Native imports so every one of them is unit-testable. The
  * source type is restated structurally rather than imported as
  * `ImageSourcePropType` for the same reason. See AGENTS.md.
  */

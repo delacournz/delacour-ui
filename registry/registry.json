@@ -1862,7 +1862,8 @@
 				"pressable",
 				"separator",
 				"text",
-				"tv"
+				"tv",
+				"wrap-text-children"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -2050,7 +2051,8 @@
 				"pressable",
 				"separator",
 				"text",
-				"tv"
+				"tv",
+				"wrap-text-children"
 			],
 			"dependencies": [
 				"tailwind-variants"
@@ -5274,6 +5276,22 @@
 			"devDependencies": [],
 			"files": [
 				"hooks/use-theme-color.ts"
+			]
+		},
+		{
+			"name": "wrap-text-children",
+			"type": "registry:lib",
+			"title": "wrapTextChildren",
+			"description": "Wraps bare text children in an element React Native can render; asChild is left alone.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [],
+			"devDependencies": [],
+			"files": [
+				"lib/wrap-text-children.ts"
+			],
+			"testDependencies": [
+				"@types/bun"
 			]
 		}
 	]

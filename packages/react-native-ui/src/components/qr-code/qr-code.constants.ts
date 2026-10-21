@@ -1,7 +1,7 @@
 /**
  * The encoder's vocabulary — tuples, the matrix it produces and the errors it
  * reports. Plain data with no React and no React Native, so every module in the
- * encoder can import it and `bun test` can reach all of them.
+ * encoder can import it and all of them stay unit-testable.
  */
 
 /** Error-correction levels, weakest first: roughly 7%, 15%, 25% and 30% of codewords recoverable. */

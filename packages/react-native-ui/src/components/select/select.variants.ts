@@ -75,8 +75,8 @@ export function resolveSelectSheetMaxHeight({
  * reached through `resolveInputGroupClass` — the same row a decorated field
  * wears — so a select sitting under a text field in a form is the same box
  * rather than a lookalike. The `trigger` slot adds only what a trigger has and
- * a field does not. `select.variants.test.ts` sweeps every variant, size and
- * state and asserts every utility of the field's box is present on the trigger.
+ * a field does not. Every utility of the field's box, in every
+ * variant, size and state, must be present on the trigger.
  *
  * **A row's floor is ListGroup's.** `min-h-12/14/16` at `sm/md/lg`, so a row in
  * the sheet sits level with a `ListGroup` row on the screen behind it; the test
@@ -91,8 +91,8 @@ export function resolveSelectSheetMaxHeight({
  * `../checkbox`, whose animated, measured box is a control in its own right and
  * would answer presses the row already answers.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const selectVariants = tv({
 	slots: {
@@ -197,7 +197,7 @@ export type SelectVariantProps = VariantProps<typeof selectVariants>;
  * `isFocused` is the sheet being open — the ring says which field the sheet
  * belongs to. Invalid outranks it, exactly as it does on a field.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveSelectTriggerClass({
 	className,

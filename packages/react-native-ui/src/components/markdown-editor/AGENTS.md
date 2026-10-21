@@ -35,7 +35,7 @@ parts.
   thing that guards against.
 - **Formatting is data in, data out.** `applyMarkdownCommand(text, selection,
   command)` returns `{ text, selection }` and imports nothing from React
-  Native, so every rule below is reachable from `bun test` and the same on
+  Native, so every rule below is unit-testable and the same on
   both platforms. Each command is a list of splices applied in one pass, with
   the selection's ends carried through the same list — no command works out by
   hand how far an earlier insertion pushed the caret.

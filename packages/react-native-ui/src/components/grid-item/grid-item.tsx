@@ -1,4 +1,4 @@
-import { Children, isValidElement, type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
+import { type ReactElement, type ReactNode, useCallback, useMemo, useState } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
 import { Pressable, type PressableProps } from "../pressable";
@@ -14,8 +14,8 @@ import {
 	type GridItemSize,
 	type GridItemVariant,
 	gridItemVariants,
-	isGridItemBackgroundType,
 	joinGridItemLabel,
+	orderGridItemChildren,
 	resolveGridItemRender,
 	resolveGridItemSize,
 	resolveGridItemVariant,
@@ -90,7 +90,7 @@ function GridItemRoot({
 		[cell, own.colSpan, own.rowSpan, isDisabled, registerLabel, resolvedSize, resolvedVariant]
 	);
 
-	const content = useMemo(() => backgroundFirst(children), [children]);
+	const content = useMemo(() => orderGridItemChildren(children, { asChild }), [asChild, children]);
 	const label = accessibilityLabel ?? joinGridItemLabel(labelParts);
 	const rootClassName = gridItemVariants({ isDisabled, size: resolvedSize, variant: resolvedVariant }).root({
 		className,
@@ -135,19 +135,6 @@ function GridItemRoot({
 			</Animated.View>
 		</GridItemProvider>
 	);
-}
-
-/**
- * Moves every `GridItem.Background` to the front of the children, so it is
- * drawn first — behind the content — wherever the caller wrote it.
- *
- * Lives with the root because the root is what orders its own children.
- */
-function backgroundFirst(children: ReactNode): ReactNode {
-	const items = Children.toArray(children);
-	const backgrounds = items.filter((child) => isValidElement(child) && isGridItemBackgroundType(child.type));
-	if (backgrounds.length === 0) return items;
-	return [...backgrounds, ...items.filter((child) => !backgrounds.includes(child))];
 }
 
 /**

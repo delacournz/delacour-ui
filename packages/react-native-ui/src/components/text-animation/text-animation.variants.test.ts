@@ -23,6 +23,7 @@ import {
 	splitText,
 	TEXT_ANIMATION_CARET_KINDS,
 	TEXT_ANIMATION_ORDERS,
+	TEXT_ANIMATION_SLIDE_DIRECTIONS,
 	TEXT_ANIMATION_UNITS,
 	textAnimationVariants,
 } from "./text-animation.variants";
@@ -203,6 +204,14 @@ describe("resolveEffectFrame", () => {
 
 	test("fade starts invisible and in place", () => {
 		expect(resolveEffectFrame({ kind: "fade" }, 0)).toEqual({ opacity: 0, translateX: 0, translateY: 0, scale: 1 });
+	});
+
+	// The array is the public list of `from` values, so every entry must move the unit.
+	test("every slide direction starts off its rest position", () => {
+		for (const from of TEXT_ANIMATION_SLIDE_DIRECTIONS) {
+			const frame = resolveEffectFrame({ kind: "slide", from }, 0);
+			expect(Math.abs(frame.translateX) + Math.abs(frame.translateY)).toBe(12);
+		}
 	});
 
 	test("slide starts its distance away on the side it comes from", () => {

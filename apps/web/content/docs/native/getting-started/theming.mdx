@@ -55,7 +55,8 @@ Or point the command at the source and it writes `theme.css` for you:
 It also reads stdin, which is the shortest path from a generator's Copy button:
 
 ```bash
-pbpaste | bunx delacour@latest theme -
+# npx, pnpm dlx, yarn dlx or bunx
+pbpaste | npx delacour@latest theme -
 ```
 
 The one thing that cannot survive a straight paste is the wrapper. Uniwind reads a theme only from

@@ -30,7 +30,7 @@ no directions.
 | `map.variants.ts` | The slotted `tv()`, the axes, the pin outline, anchors, the themed basemap style — type imports only |
 | `map.variants.test.ts` | |
 
-`src/no-maplibre.test.ts`, one level up, holds the import-graph rule below.
+<!-- registry:omit -->The import-graph rule below is pinned by `src/no-maplibre.test.ts`, one level up.<!-- /registry:omit -->
 
 ## Design
 
@@ -38,9 +38,9 @@ no directions.
   import it.** It is the one native module the library adds for a single component.
   Expo does not bundle it, so it is not in the root catalog; each workspace that
   needs it repeats the range. An app that never imports `/map` never installs it —
-  but only while nothing else reaches it, so `src/no-maplibre.test.ts` reads the
-  whole tree as text and fails by file name for any import of an `@maplibre/`
-  package, or of this folder, from outside it. Types come from the RN package's
+  but only while nothing else reaches it, so no file outside this folder may import this folder, and none may import an
+  `@maplibre/` package. <!-- registry:omit -->`src/no-maplibre.test.ts` reads the whole tree as text and fails by file name
+  for either.<!-- /registry:omit --> Types come from the RN package's
   own re-exports, never `@maplibre/maplibre-gl-style-spec`, which is only a
   transitive dependency.
 - **MapLibre over the platform maps.** Apple Maps takes no style beyond light and

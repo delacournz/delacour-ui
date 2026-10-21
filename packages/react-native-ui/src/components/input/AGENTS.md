@@ -31,9 +31,8 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
 - **The box is one slot with two homes, and that is the whole design.** The
   `root` slot of `inputVariants` lands on the `TextInput` when a field stands
   alone and on `Input.Group`'s outer element when it does not. `resolveInputFieldClass` is
-  the decision, and it is pure, so `input.variants.test.ts` sweeps the entire
-  matrix and asserts that every chrome utility a lone field wears is present on
-  the group's box. The inner `row` slot is layout only — no border, background,
+  the decision, and it is pure, so every chrome utility a lone field wears must be present on
+  the group's box.<!-- registry:omit --> `input.variants.test.ts` sweeps the entire matrix and asserts it.<!-- /registry:omit --> The inner `row` slot is layout only — no border, background,
   corner or height — and the test asserts that too. A grouped field is therefore the *same* box rather than a
   similar one. **Do not give `Input.Group` a border, background or height of its
   own** — a second class string is a second thing that can drift, and the drift
@@ -71,7 +70,7 @@ Root plus `Input.Group` and its parts: `Prefix`, `Suffix`, `Button`,
   track its own focus, and `focus:border-ring` would work on a lone field — and
   do nothing at all for the box `Input.Group` draws around a grouped one, since a
   `View` cannot see a sibling's focus. One state, read by an `isFocused` variant,
-  keeps the two identical and puts the decision somewhere `bun test` can reach.
+  keeps the two identical and puts the decision somewhere a unit test can reach.
 - **Invalid outranks focus.** A field that went grey the moment it was tapped
   would drop the only signal it has that its value is wrong, exactly while the
   value is being corrected. The border, the caret and the decorators all stay
@@ -155,8 +154,8 @@ reads as one control rather than two boxes touching.
   `h-button-md`. In a group that independence is exactly wrong: a run capped by
   a field at one end and a button at the other would draw two different arcs.
   The group owns the shape of its run, so a joined field switches to
-  `--radius-button-*`. `input.variants.test.ts` asserts the two emit identical
-  corner classes cell for cell, so the copies cannot drift.
+  `--radius-button-*`. The two must emit identical
+  corner classes cell for cell, so the copies cannot drift.<!-- registry:omit --> `input.variants.test.ts` asserts it.<!-- /registry:omit -->
 - **A field nested in an `Input.Group` never consults the member axes.** That
   group owns the box, and `resolveInputFieldClass` already drops the `root` slot
   entirely when the field is grouped — so the corner and the seam land on the

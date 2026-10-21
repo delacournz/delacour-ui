@@ -80,7 +80,7 @@ const NEXT_PLANE = {
  * The root carries no `text-*`: a React Native `View` does not cascade colour
  * to a `Text` descendant, so a class here would reach nothing.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
+ * Free of React Native imports so it stays unit-testable — a bare JS runtime cannot
  * parse React Native's Flow-typed source. See AGENTS.md.
  */
 export const surfaceVariants = tv({

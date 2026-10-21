@@ -82,8 +82,8 @@ export const RADIO_LABEL_TEXT_SIZE: Record<RadioSize, TextSize> = { sm: "sm", md
  * No slot worn by a `View` carries `text-*`, and the `label` slot carries no type
  * scale, weight or colour at all — see {@link RADIO_LABEL_TEXT_SIZE}.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const radioVariants = tv({
 	slots: {
@@ -91,7 +91,7 @@ export const radioVariants = tv({
 		group: "w-full",
 		/** The pressable row. Deliberately neither `self-start` nor `w-full`. */
 		root: "flex-row items-center",
-		/** The ring. Its colour is a class, so the whole matrix stays in `bun test`. */
+		/** The ring. Its colour is a class, so the whole matrix stays unit-testable. */
 		indicator: "items-center justify-center rounded-full border-2",
 		/** The inner dot. Its scale and opacity are an animated style, never a class. */
 		dot: "rounded-full bg-primary",
@@ -167,7 +167,7 @@ export const radioVariants = tv({
  * between the two, which is the shape a caller would otherwise have to reach for.
  *
  * Takes an array of "is this child an indicator" rather than the children
- * themselves, so it stays free of React and reachable from `bun test` — the trade
+ * themselves, so it stays free of React and unit-testable — the trade
  * `resolveSpinnerSwapIndex` already makes.
  */
 export function resolveIndicatorPlacement(isIndicator: readonly boolean[]): "start" | "end" | "none" {
@@ -230,7 +230,7 @@ export type RadioState = {
  * `value` inside a group can never be selected — the dev warning for that lives
  * in `radio.tsx`, where the component name is available to name in the message.
  *
- * Pure, so the whole matrix is reachable from `bun test`. `Input` runs this same
+ * Pure, so the whole matrix is unit-testable. `Input` runs this same
  * ladder inline in its own render, where no unit test can see it. See AGENTS.md.
  */
 export function resolveRadioState({
@@ -262,7 +262,7 @@ export function resolveRadioState({
  * re-notify the caller with a value it already holds. HTML's own radio does not
  * fire `change` there either.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function shouldEmitSelection(current: string | null, next: string): boolean {
 	return current !== next;

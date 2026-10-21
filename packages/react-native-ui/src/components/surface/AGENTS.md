@@ -80,3 +80,4 @@ components built on it (`Card`, `Alert`) can read the plane they sit on.
   down; `SurfaceContext.material` is how that panel knows to take `rounded-xl`, one step under the
   tray's corner. A single `shadow-*` utility sets one `box-shadow`, which is why light and dark are
   two tokens joined by `dark:` and not one composed class. Opt-in: nothing in the default look uses it.
+  `SURFACE_MATERIALS` and `SurfaceMaterial` are exported from the index like every other axis.

@@ -44,8 +44,8 @@ export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
  * `root` slot is the whole bordered box, and it lands on the `TextInput` when
  * the field stands alone or on `Input.Group`'s row when it does not. That is
  * what makes a grouped field identical to a lone one by construction rather
- * than by two class strings happening to agree; `input.variants.test.ts` pins
- * it as a property over every combination of the axes.
+ * than by two class strings happening to agree; it holds
+ * as a property over every combination of the axes.
  *
  * `root` therefore holds no `text-*` utility. When the field is grouped that
  * slot is worn by a `View`, and a React Native `View` does not cascade colour
@@ -62,8 +62,8 @@ export const INPUT_INVALID_SELECTION_ACCENT_CLASS = "accent-destructive";
  * different places, and a second identical slot is a second definition that can
  * drift.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const inputVariants = tv({
 	slots: {
@@ -199,8 +199,8 @@ export const inputVariants = tv({
 		// Joined, it takes the *group's* corner instead. A group owns the shape
 		// of its run, so a field capping one end of it has to draw the same arc
 		// the button capping the other end does — two ramps meeting in one row
-		// is the mismatch this replaces. `button.variants.test.ts` asserts these
-		// strings match the button's cell for cell.
+		// is the mismatch this replaces. These strings must match the button's
+		// cell for cell.
 		{ groupPosition: "only", size: "sm", class: { root: "rounded-button-sm" } },
 		{ groupPosition: "only", size: "md", class: { root: "rounded-button-md" } },
 		{ groupPosition: "only", size: "lg", class: { root: "rounded-button-lg" } },
@@ -322,7 +322,7 @@ export type InputBoxState = {
  * a lone one: both read the same `root` slot, so there is no second class
  * string that could drift from the first.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveInputFieldClass({
 	className,
@@ -349,7 +349,7 @@ export type InputGroupBoxState = InputBoxState & {
  * the field is. The row keeps its own alignment, so a single-line field stays
  * centred in it.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveInputGroupClass({
 	className,
@@ -364,7 +364,7 @@ export function resolveInputGroupClass({
  * The class `Input.Group`'s inner row wears — layout only, never chrome. The
  * row is always rendered, blocks or not, so adding one never remounts the field.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveInputGroupRowClass({ className, hasBlocks: _hasBlocks, ...state }: InputGroupBoxState): string {
 	return inputVariants({ ...state, isGrouped: true }).row({ className });
@@ -382,7 +382,7 @@ export type InputDecoratorChildKind = "text" | "icon" | "other";
  * holding anything else might be a control, so it stays reachable. An empty
  * decorator has nothing to hide.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveIsDecorative({
 	explicit,
@@ -400,7 +400,7 @@ export function resolveIsDecorative({
  * inside the border with room around it, and square when it holds only an icon.
  * `sm` has no smaller step, so it stays `sm`.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveGroupButtonSize(size: InputSize, isIconOnly: boolean): ButtonSize {
 	const step = GROUP_BUTTON_STEP[size];
@@ -417,7 +417,7 @@ const GROUP_BUTTON_STEP: Record<InputSize, InputSize> = { sm: "sm", md: "sm", lg
  * a quarter. `opacity-100` replaces that one utility through the button's own
  * className merge, and leaves the rest of its disabled treatment alone.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveGroupButtonClass({
 	isDisabled,
@@ -448,7 +448,7 @@ export type InputGroupSegment = "start" | "row" | "end";
  * sections are known in the first render, so the box never draws one frame as a
  * row and the next as a column.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveGroupSegments(kinds: readonly InputGroupChildKind[]): InputGroupSegment[] {
 	const first = kinds.indexOf("content");
@@ -468,7 +468,7 @@ export function resolveGroupSegments(kinds: readonly InputGroupChildKind[]): Inp
 /**
  * The `accent-*` class uniwind resolves the placeholder colour from.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolvePlaceholderAccentClass(className?: string): string {
 	return cn(INPUT_PLACEHOLDER_ACCENT_CLASS, className);
@@ -481,7 +481,7 @@ export function resolvePlaceholderAccentClass(className?: string): string {
  * still legible while the value is being corrected — the moment the border is
  * the only thing carrying it. A caller's class still wins.
  *
- * Pure, so it is reachable from `bun test`. See AGENTS.md.
+ * Pure, so it is unit-testable. See AGENTS.md.
  */
 export function resolveSelectionAccentClass({
 	className,

@@ -137,8 +137,8 @@ from the scroller's testID with `momentum: false` and returns to rest, so the lo
 | `blur-bar` | collapse under the blur bar, back open | The blur bar |
 | `react-to-collapse` | collapse (avatar and Follow arrive), back open | Reacting to collapse |
 
-`early-handover` and `no-large` stay gallery-only (`align: "stretch"`). Recapture with
-`bun run previews -- -- --only scroll-header`; `cover` loads a remote image, so it needs network.
+`early-handover` and `no-large` stay gallery-only (`align: "stretch"`). `cover` loads a remote image, so it needs network.
+<!-- registry:omit -->Recapture with `bun run previews -- -- --only scroll-header`.<!-- /registry:omit -->
 
 ## Simulator check
 

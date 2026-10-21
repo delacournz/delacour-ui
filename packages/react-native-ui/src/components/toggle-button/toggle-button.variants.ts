@@ -79,7 +79,7 @@ export const toggleButtonVariants = tv({
 /**
  * The `Button` variant a toggle draws with right now.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveToggleButtonVariant(variant: ToggleButtonVariant, isSelected: boolean): ButtonVariant {
 	return TOGGLE_BUTTON_APPEARANCE[variant][isSelected ? "on" : "off"];
@@ -102,7 +102,7 @@ export function resolveToggleButtonVariant(variant: ToggleButtonVariant, isSelec
  * A controlled `single` group handed several values collapses to the one pressed
  * rather than carrying the others along.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveToggleSelection({
 	current,
@@ -145,7 +145,7 @@ export type ToggleButtonAccessibility =
  *
  * `null` is "not in a group".
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveToggleButtonAccessibility(
 	selectionMode: ToggleButtonSelectionMode | null,

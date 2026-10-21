@@ -267,7 +267,7 @@ export function resolveTreeAccessibilityAction(actionName: string, isExpanded: b
  * so the whole tree mirrors under right-to-left.
  *
  * No slot worn by a `View` carries `text-*` (rule 1). Free of React Native imports
- * so it stays reachable from `bun test`.
+ * so it stays unit-testable.
  */
 export const treeVariants = tv({
 	slots: {

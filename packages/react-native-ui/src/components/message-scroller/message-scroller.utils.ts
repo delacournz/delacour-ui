@@ -1,11 +1,11 @@
 /**
  * The pure decisions behind `MessageScroller`: how messages become rows, when the reader counts as
  * "at the end", when the jump button shows, what counts as unread, when to ask for older history and
- * what to announce. Free of React Native imports so `bun test` reaches every one of them.
+ * what to announce. Free of React Native imports so every one of them is unit-testable.
  *
  * The scroll-position helpers carry a `"worklet"` directive because the jump button's visibility is
  * resolved on the UI thread, inside the list's animated scroll handler. The directive is a string
- * expression, so the same functions run unchanged under `bun test`.
+ * expression, so the same functions run unchanged outside the UI thread.
  */
 
 /**

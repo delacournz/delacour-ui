@@ -31,8 +31,7 @@ export const COMBOBOX_CHIP_LAYOUT_MS = 150;
  * `rowLabel`, so the create row is the same height and type as the options
  * under it.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const comboboxVariants = tv({
 	slots: {
@@ -74,7 +73,7 @@ export type ComboboxVariantProps = VariantProps<typeof comboboxVariants>;
  * grow the field the way a textarea grows with its text, rather than spilling
  * out of a box the height of one line.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveComboboxTriggerClass({
 	hasChips,

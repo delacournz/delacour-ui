@@ -12,7 +12,7 @@ import { dynamicSnapPoint, keyboardLift, positionFor, UNMEASURED } from "@delaco
 renders. Nothing under it imports a runtime value from React, React Native, Reanimated, Gesture
 Handler, keyboard-controller, safe-area-context or teleport, which is what lets a skin re-export the
 footer's inset rules without mounting a sheet — and what lets the whole of it, the footer-on-keyboard
-proof included, run under `bun test` with no simulator.
+proof included, run as plain unit tests with no simulator.
 
 ```ts
 import { footerTop, keyboardLift } from "@delacour/react-native-bottom-sheet/core";

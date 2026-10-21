@@ -118,8 +118,7 @@ the back's `Button` counted a copy and the card stayed on its back. No `Gesture.
 - **No worklet reads a module binding from a parameter default.** The worklets plugin captures what
   a worklet's body reads, not its parameter defaults: `resolveRubberBand(rotation, max =
   FLIP_CARD_RUBBER_BAND)` threw *Property 'FLIP_CARD_RUBBER_BAND' doesn't exist* on the UI thread
-  the first time a swipe card was dragged. The default is now resolved in the body, and a test in
-  `flip-card.variants.test.ts` fails on any worklet with an identifier default.
+  the first time a swipe card was dragged. The default is now resolved in the body, and a test fails on any worklet with an identifier default.
 
 Checked on an iOS 26 simulator (iPhone 17) through the `preview` route, with agent-device:
 
@@ -143,7 +142,7 @@ card's `activate` action, a swipe card inside a vertical `ScrollView`.
 
 `anatomy` (**hero**), `swipe`, `flashcard`, `vertical-axis` and `faces` carry `meta.capture`, and
 the four animated ones have flows under `.argent/flows/previews/flip-card/`, written but never run.
-`flip-card` sits in `AWAITING_FIRST_CAPTURE` in `apps/playground/src/demos/demos.test.ts` until the
+`flip-card` sits in `AWAITING_FIRST_CAPTURE` in the playground's demo registry test until the
 media are shot; remove it in that commit, and add `<Preview id="flip-card/anatomy" title={null} />`
 plus a `<Preview>` per section to `flip-card.mdx` in the same change — a `<Preview id>` for an
 uncaptured demo throws at render.

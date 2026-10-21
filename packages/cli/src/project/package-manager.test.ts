@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
 	commandLine,
+	expoCommand,
 	type InstallGroup,
 	installCommands,
 	missingPackages,
@@ -185,5 +186,24 @@ describe("channel dist tags", () => {
 
 		expect(plan.satisfied).toEqual(["@delacour/react-native-charts"]);
 		expect(plan.missing).toEqual([]);
+	});
+});
+
+describe("expoCommand", () => {
+	// Printed advice is copied into a terminal, so it is spelled for the
+	// project's own package manager rather than for npm.
+	test.each([
+		["npm", "npx expo run:ios"],
+		["pnpm", "pnpm expo run:ios"],
+		["yarn", "yarn expo run:ios"],
+		["bun", "bunx expo run:ios"],
+	] as const)("spells an Expo CLI call for %s", (packageManager, expected) => {
+		expect(expoCommand(packageManager, ["run:ios"])).toBe(expected);
+	});
+
+	test("matches the runner installCommands uses for expo install", () => {
+		const [group] = installCommands({ ...NONE, packageManager: "pnpm", expoDependencies: ["uniwind"] });
+
+		expect(expoCommand("pnpm", ["install", "uniwind"])).toBe(commandLine(group as InstallGroup));
 	});
 });

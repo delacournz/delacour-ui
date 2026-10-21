@@ -25,7 +25,8 @@ engine. An app that imports no picker still never resolves it.
 | `select.context.tsx` | `SelectProvider`, `useSelect()`, `useSelectContext()`, `useSelectPart()` |
 | `select.types.ts` | `SelectOption`, `SelectOptionGroup`, `SelectRowOption`, `SelectEntry`, `SelectListRow`, `SelectHighlightRange` |
 | `select.variants.ts` | Pure `tv()` slots + every resolver, no RN imports |
-| `select.variants.test.ts`, `select.collect.test.ts` | |
+| `select.variants.test.ts` | |
+| `select.collect.test.ts` | |
 
 ## Design
 

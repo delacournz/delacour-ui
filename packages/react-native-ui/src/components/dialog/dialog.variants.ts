@@ -114,7 +114,7 @@ export type DialogVariantProps = VariantProps<typeof dialogVariants>;
  *
  * Only the `sm` card stacks: two labelled buttons in a row on a 320pt card
  * leave each label a few characters before it truncates. Pure so the rule is
- * reachable from `bun test`.
+ * unit-testable.
  */
 export function resolveDialogFooterDirection(size: DialogSize): DialogFooterDirection {
 	return size === "sm" ? "column" : "row";

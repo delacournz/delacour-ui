@@ -25,7 +25,7 @@ whole-screen states.
 | `screen-header.tsx` | `Screen.Header` |
 | `screen-footer.tsx` | `Screen.Footer` |
 | `screen-footer-background.tsx` | The footer's backing and its top hairline — internal |
-| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and `SCROLL_SHADOW_EDGES` |
+| `screen-scroll-shadow.tsx` | `Screen.ScrollShadow`, and its two axes — `SCROLL_SHADOW_EDGES` and `SCROLL_SHADOW_ANCHORS` |
 | `screen-scroll-area.tsx` | `Screen.ScrollArea` |
 | `screen-flat-list.tsx` | `Screen.FlatList` |
 | `screen-section-list.tsx` | `Screen.SectionList` |
@@ -196,7 +196,7 @@ whole-screen states.
   flush against the chrome wants the line from the first frame — with the fade
   always on, screens re-added a border by hand, which is the signal the default
   was wrong. Both ramps are written out rather than calling Reanimated's
-  `interpolate`, so they stay reachable from `bun test`, and both clamp at each
+  `interpolate`, so they stay unit-testable, and both clamp at each
   end because a rubber-banded overscroll reports a negative offset.
 
 ## ScrollShadow

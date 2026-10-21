@@ -192,6 +192,6 @@ problem it has:
 
 Pattern B, compound and context — the contexts are the engine's. The parts
 never import `./bottom-sheet` or `./index` (rule 3); they import the engine and
-`./bottom-sheet.variants`. `bun test` reaches the variants and the constants;
+`./bottom-sheet.variants`. The variants and the constants are unit-testable;
 the behaviour is the engine's and is verified there, and the skin on a
 simulator through `apps/playground`'s Bottom sheet galleries.

@@ -2,8 +2,8 @@
  * Post's pure, non-styling logic — counts, times, the tokenised body and the
  * spoken labels.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 
 const COMPACT_UNITS = [

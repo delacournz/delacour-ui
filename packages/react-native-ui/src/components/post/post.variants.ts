@@ -190,8 +190,8 @@ export function resolveVoteKey(vote: PostVote): "up" | "down" | "none" {
  * under it is what guarantees the contrast. Nothing else names a raw colour or
  * a `dark:` variant.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const postVariants = tv({
 	slots: {

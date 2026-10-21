@@ -27,8 +27,8 @@ const LEGACY_PREFIX = "--color-";
  * caller wrote before this package took shadcn's names, and left alone it would
  * miss silently on every render.
  *
- * Pure, and separate from `useThemeColor` so it is reachable from `bun test` —
- * the hook imports `uniwind`, which Bun's transpiler cannot parse. See AGENTS.md.
+ * Pure, and separate from `useThemeColor` so it is unit-testable —
+ * the hook imports `uniwind`, whose source a bare JS runtime cannot parse. See AGENTS.md.
  */
 export function themeVariableName(token: string): string {
 	if (token.startsWith(LEGACY_PREFIX)) return `--${token.slice(LEGACY_PREFIX.length)}`;

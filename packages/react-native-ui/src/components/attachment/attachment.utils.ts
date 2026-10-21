@@ -2,7 +2,7 @@
  * The attachment's pure decisions — sizes and durations as text, what kind a
  * file is, how a long name is cut, and everything a screen reader hears.
  *
- * Free of React Native imports so `bun test` reaches every one of them. See
+ * Free of React Native imports so every one of them is unit-testable. See
  * AGENTS.md.
  */
 import type { AttachmentKind, AttachmentStatus } from "./attachment.variants";

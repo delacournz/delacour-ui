@@ -135,7 +135,7 @@ imports this folder's maths leaf rather than copying it.
 - **Actions**: `increment` / `decrement` move the seam by `step` and land on the
   step grid; `reset` ("Reset sizes"); and `collapse` / `expand` when a pane beside
   the handle is collapsible. `resolveSplitterAction` maps an action to what the
-  root does, as a discriminated union, so the mapping is reachable from `bun test`.
+  root does, as a discriminated union, so the mapping is unit-testable.
 - **`accessibilityState.expanded`** reports the adjacent collapsible pane;
   `disabled` reports a frozen seam.
 - **A collapsed pane is hidden from screen readers**, with everything in it —
@@ -151,8 +151,7 @@ imports this folder's maths leaf rather than copying it.
 
 - **`splitter.math.ts` is the one copy of the size maths.** `SplitView` imports
   it as a leaf — `../splitter/splitter.math`, never `../splitter`. It imports
-  nothing and every export carries `"worklet"`; `splitter.math.test.ts` pins both
-  by reading the source. Keep its API stable: `clamp`, `snapToStep`,
+  nothing and every export carries `"worklet"`; both are pinned by reading the source. Keep its API stable: `clamp`, `snapToStep`,
   `percentToFraction`, `fractionToPercent`, `nearestSnapIndex`, `projectSnap`,
   `DEFAULT_DECELERATION_RATE`.
 - `nearestSnapIndex` and `projectSnap` are unused here — no snap points — and
@@ -160,10 +159,10 @@ imports this folder's maths leaf rather than copying it.
 - **A worklet helper is declared above its first caller.** The worklets plugin
   captures a worklet's closure where the function is *declared*, so a worklet
   calling a helper further down the file captures `undefined` and throws
-  "undefined is not a function" on a device — while `bun test`, which runs no
+  "undefined is not a function" on a device — while a plain unit test, which runs no
   plugin, passes. It shipped once (`resolveInitialLayout → sumDefaults`); the
-  "worklet declaration order" test in `splitter.variants.test.ts` now reads the
-  source and fails by name.
+  <!-- registry:omit -->"worklet declaration order" test in `splitter.variants.test.ts` now reads the
+  source and fails by name.<!-- /registry:omit -->
 
 ## Out of scope
 

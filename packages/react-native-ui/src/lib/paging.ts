@@ -14,7 +14,7 @@
  * why the rubber band is written out again inside {@link resolvePanPosition}
  * rather than called. Module constants are plain numbers and are captured fine.
  *
- * Pure: no React, no React Native, no Reanimated — `bun test` reaches all of it.
+ * Pure: no React, no React Native, no Reanimated — a unit test reaches all of it.
  */
 
 /** The furthest a rubber band ever gives past an end, in slides. */

@@ -8,11 +8,11 @@ import { tv } from "../../lib/tv";
  * **Every resolver is a self-contained `"worklet"`.** They run inside
  * `useDerivedValue` / `useAnimatedStyle` on the UI thread, and a module-scope
  * helper called from a worklet can be missing from its closure there —
- * `undefined is not a function` mid-scroll, invisible to `bun test`. So each
+ * `undefined is not a function` mid-scroll, invisible to unit tests. So each
  * writes its own clamp inline and none calls another; do not tidy the
  * repetition into a helper.
  *
- * Free of React Native imports, so the whole table is reachable from `bun test`.
+ * Free of React Native imports, so the whole table is unit-testable.
  */
 
 /** What moves inside the still frame. */

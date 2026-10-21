@@ -64,7 +64,7 @@ export type ThemeSelectorGroupProps = {
  * selected option does nothing rather than clearing it. `segmented` is an
  * attached run; `cards` is detached, so each tile keeps its own corners.
  *
- * Pure, so the whole matrix is reachable from `bun test`.
+ * Pure, so the whole matrix is unit-testable.
  */
 export function resolveGroupProps(variant: ThemeSelectorVariant): ThemeSelectorGroupProps {
 	return {

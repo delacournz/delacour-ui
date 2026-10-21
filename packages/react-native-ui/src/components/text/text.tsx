@@ -188,7 +188,7 @@ TextLink.displayName = "DelacourUI.Text.Link";
  *
  * @example
  * <View className="rounded-lg bg-muted p-3">
- *   <Text.Code className="bg-transparent" size="sm">bun run gen-exports</Text.Code>
+ *   <Text.Code className="bg-transparent" size="sm">npm run build</Text.Code>
  * </View>
  */
 function TextCode(props: TextPresetProps): ReactElement {
@@ -220,7 +220,7 @@ TextCode.displayName = "DelacourUI.Text.Code";
  *
  * @example
  * <Text.Paragraph>
- *   Run <Text.Code>bun test</Text.Code> before you <Text.Strong>commit</Text.Strong>.
+ *   Run <Text.Code>npm test</Text.Code> before you <Text.Strong>commit</Text.Strong>.
  * </Text.Paragraph>
  *
  * @example

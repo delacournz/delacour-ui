@@ -167,8 +167,7 @@ function classifyGroupChild(child: ReactNode): InputGroupChildKind {
  * The box is the same one a lone `Input` draws. It is not a copy: both read the
  * one `root` slot of `inputVariants`, which lands on the `TextInput` when a
  * field stands alone and on this row when it does not. A grouped field is
- * therefore indistinguishable from an ungrouped one by construction, and
- * `input.variants.test.ts` pins that as a property rather than a comment.
+ * therefore indistinguishable from an ungrouped one by construction, as a property rather than a comment.
  *
  * The group owns the box, so it owns the axes that draw one — `variant`, `size`,
  * `isInvalid`, `isDisabled` all live here and the `Input` inside reads them from

@@ -1,0 +1,28 @@
+{
+	"$schema": "https://raw.githubusercontent.com/delacournz/delacour-ui/main/registry/item.schema.json",
+	"name": "wrap-text-children",
+	"type": "registry:lib",
+	"title": "wrapTextChildren",
+	"description": "Wraps bare text children in an element React Native can render; asChild is left alone.",
+	"registryDependencies": [],
+	"dependencies": [],
+	"expoDependencies": [],
+	"devDependencies": [],
+	"files": [
+		{
+			"path": "packages/react-native-ui/src/lib/wrap-text-children.ts",
+			"target": "wrap-text-children.ts",
+			"namespace": "lib"
+		}
+	],
+	"tests": [
+		{
+			"path": "packages/react-native-ui/src/lib/wrap-text-children.test.ts",
+			"target": "wrap-text-children.test.ts",
+			"namespace": "lib"
+		}
+	],
+	"testDependencies": [
+		"@types/bun"
+	]
+}

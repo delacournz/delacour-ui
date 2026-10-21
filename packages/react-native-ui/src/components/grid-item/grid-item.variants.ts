@@ -1,3 +1,4 @@
+import { Children, isValidElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 
@@ -72,6 +73,22 @@ export const GRID_ITEM_BACKGROUND_DISPLAY_NAME = "DelacourUI.GridItem.Background
 export function isGridItemBackgroundType(type: unknown): boolean {
 	if ((typeof type !== "function" && typeof type !== "object") || type === null) return false;
 	return "displayName" in type && type.displayName === GRID_ITEM_BACKGROUND_DISPLAY_NAME;
+}
+
+/**
+ * Moves every `GridItem.Background` to the front of a tile's children, so it is
+ * drawn first — behind the content — wherever the caller wrote it.
+ *
+ * A single child, or any children under `asChild`, comes back untouched: there
+ * is nothing to reorder, and `Pressable` with `asChild` hands its children to
+ * `Children.only`, which throws on any array — even one holding one element.
+ */
+export function orderGridItemChildren(children: ReactNode, { asChild = false }: { asChild?: boolean } = {}): ReactNode {
+	if (asChild || !Array.isArray(children)) return children;
+	const items = Children.toArray(children);
+	const backgrounds = items.filter((child) => isValidElement(child) && isGridItemBackgroundType(child.type));
+	if (backgrounds.length === 0) return items;
+	return [...backgrounds, ...items.filter((child) => !backgrounds.includes(child))];
 }
 
 /**

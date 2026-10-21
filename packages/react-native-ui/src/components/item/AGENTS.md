@@ -24,7 +24,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
 | `item-separator.tsx` | `Item.Separator` |
 | `item.context.tsx` | `ItemProvider`, `useItem()`, `useItemContext()`, `useItemPart()` |
 | `item.types.ts` | Prop types shared by two or more parts |
-| `item.variants.ts` | Pure `tv()` slots, the four resolvers and `wrapItemTextChildren`, no RN imports |
+| `item.variants.ts` | Pure `tv()` slots and the four resolvers, no RN imports |
 | `item.variants.test.ts` | |
 
 ## Design
@@ -49,7 +49,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
   its text and its divider out of line. The tests assert the item's `min-h`,
   `gap`, `px` and `py` against `listGroupVariants().item()` at every size, and
   the bare media icon against the group's `prefixIcon` — change one without the
-  other and `bun test` fails by name.
+  other and they drift apart<!-- registry:omit --> — `bun test` fails by name<!-- /registry:omit -->.
 - **Pressable only with a handler.** `resolveItemRender` returns one of two:
   `pressable` (a handler — a `Pressable`, role `button`, children merged into
   one accessible element; disabled, it keeps the role, reports `disabled` and
@@ -87,10 +87,18 @@ A row of media, text and actions, for lists and settings. Compound root plus
   hand-placed rule in a group.
 - **String children** are wrapped in a `Content` around a `Title`, consecutive
   strings collapsing into one — the same rule, and the same reason, as
-  [`ListGroup`](../list-group/AGENTS.md). `wrapItemTextChildren` does it and
-  hands one node back as that node, never a one-item array: `Pressable` with
-  `asChild` passes its children to `Children.only`, which rejects any array,
-  so `<Item asChild onPress={…}><View /></Item>` threw until it did. The
-  tests hold that case.
+  [`ListGroup`](../list-group/AGENTS.md). The shared `lib/wrap-text-children`
+  does it, and both rows call the one copy so the rule cannot drift between
+  them.
+- **`asChild` gets the caller's child exactly as written.** `Pressable` with
+  `asChild` passes its children to `Children.only`, which throws on any array —
+  even one holding a single element — so
+  `<Item asChild onPress={…}><View /></Item>` threw while the wrap always
+  rebuilt the children as an array. Under `asChild` nothing is wrapped at all;
+  without it, a lone element still comes back as that same element, not a
+  re-keyed copy or a one-item array. Text under `asChild` is the caller's to
+  wrap — `Slot` cannot pass props to a string.
+  <!-- registry:omit -->`wrap-text-children.test.ts` holds the single-element,
+  `asChild`, string and mixed cases.<!-- /registry:omit -->
 - **Text colour goes on the text.** No slot but `title` and `description` holds
   a `text-*` colour; the tests assert the root never does.

@@ -1,6 +1,6 @@
 /**
  * CircularText's geometry and resolvers, free of React Native imports so every decision is
- * reachable from `bun test`. Angles are degrees, 0 at 12 o'clock, growing clockwise on screen.
+ * unit-testable. Angles are degrees, 0 at 12 o'clock, growing clockwise on screen.
  */
 
 export const CIRCULAR_TEXT_DIRECTIONS = ["clockwise", "counterclockwise"] as const;

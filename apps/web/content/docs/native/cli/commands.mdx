@@ -86,11 +86,11 @@ files rather than a silent overwrite; pass `--overwrite` when you mean it.
 
 ### What it needs installed
 
-Every `add` ends with the packages the components need, whether or not anything is missing:
+Every `add` ends with the packages the components need, whether or not anything is missing. The install lines are printed for your project's package manager; the `npm` spelling is shown below:
 
 ```txt
 ●  Needs 14 external packages, 2 not here yet:
-│    bunx expo install react-native-teleport react-native-keyboard-controller
+│    npx expo install react-native-teleport react-native-keyboard-controller
 │    already installed — cn, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
@@ -229,8 +229,8 @@ files      ui/button/button.tsx
 copies in  styles, cn, tv, color, use-theme-color, icon, compose-refs, merge-props, pressable, spinner, text
 
 needs installing
-  bunx expo install react-native-gesture-handler react-native-pulsar react-native-reanimated react-native-svg react-native-worklets uniwind
-  bun add cn tailwind-merge tailwind-variants tailwindcss
+  npx expo install react-native-gesture-handler react-native-pulsar react-native-reanimated react-native-svg react-native-worklets uniwind
+  npm install cn tailwind-merge tailwind-variants tailwindcss
 ```
 
 The install lines cover the **whole closure**, not the item's own dependencies. `button` declares
@@ -287,9 +287,10 @@ Options:
 Brings the components you copied up to what the registry holds now, and keeps your edits.
 
 ```bash
-bunx delacour@latest update
-bunx delacour@latest update button
-bunx delacour@latest update --dry-run
+# npx, pnpm dlx, yarn dlx or bunx
+npx delacour@latest update
+npx delacour@latest update button
+npx delacour@latest update --dry-run
 ```
 
 `add` records where each file came from in [`native-components.lock.json`](/docs/native/cli/configuration#the-lock-file):
@@ -319,7 +320,7 @@ what to do with one:
 
 Keep the side you want, delete the markers, and that file is done.
 
-**It updates to the ref your CLI was published from**, so `bunx delacour@latest update` is the
+**It updates to the ref your CLI was published from**, so `npx delacour@latest update` is the
 whole upgrade: the newest CLI, and the registry it shipped against.
 
 ### Your formatter

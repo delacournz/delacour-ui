@@ -41,7 +41,7 @@ Compound root plus `Questionnaire.Title`, `.Progress`, `.Question`, `.Footer`, `
   `Separator` runs to the card's edges and each part pads itself. Unframed is a plain column
   spaced by a gap, for a sheet or screen that already has a gutter.
 - **All the decisions are in `questionnaire.logic.ts`, and it imports nothing but types.** That
-  is what lets `bun test` reach every rule — and lets a server import `getVisibleQuestions` and
+  is what keeps every rule unit-testable — and lets a server import `getVisibleQuestions` and
   `validateAnswer` to re-check a submission against the rules the device applied.
 
 ## Flow rules

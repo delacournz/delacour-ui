@@ -91,7 +91,7 @@ instead of every call site repeating them.
 - **Central Icons only**, via `@delacour/react-native-ui/icons/central` — never Lucide,
   Hugeicons, or anything else. That is rule 5.
 - **`icon.variants.ts` is free of React Native imports** so the whole ladder is
-  reachable from `bun test` — `resolveIconSizeClass`, `isIconSize` and
+  unit-testable — `resolveIconSizeClass`, `isIconSize` and
   `iconVariants` are all pure. See [Testing](../../../AGENTS.md#testing).
 
 ## Known gaps

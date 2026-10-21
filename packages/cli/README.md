@@ -5,8 +5,10 @@ repository — you own `button.tsx` and can edit it, rather than waiting for a
 release.
 
 ```bash
-bunx delacour@latest add button
+npx delacour@latest add button
 ```
+
+The examples use `npx`; `pnpm dlx delacour@latest`, `yarn dlx delacour@latest` and `bunx delacour@latest` do the same. The CLI prints install commands for the package manager your project uses.
 
 That is the whole install. `add` sets the project up on its first run — config, Metro, the Tailwind
 globs, the theme and the root provider — and then copies the component in. Reach for `init`
@@ -21,7 +23,7 @@ your project, rewrites the imports to your own aliases, and gets out of the way.
 Unlike shadcn, the target is Expo, which changes real things:
 
 - Native modules install through **`expo install`**, so the SDK resolves a
-  version it can build. `bun add react-native-reanimated` fetches the newest
+  version it can build. `npm install react-native-reanimated` (or any package manager's add) fetches the newest
   release, which on any older SDK does not compile.
 - `init` wraps **Metro** with Uniwind's config, outermost, so `className`
   compiles.
@@ -59,7 +61,7 @@ whether or not any are missing:
 
 ```txt
 ●  Needs 14 external packages, 2 not here yet:
-│    bunx expo install react-native-teleport react-native-keyboard-controller
+│    npx expo install react-native-teleport react-native-keyboard-controller
 │    already installed — clsx, react-native-reanimated, react-native-svg, tailwind-variants, …
 ```
 
@@ -67,7 +69,7 @@ Then it asks. `--install` answers yes without asking, `--no-install` answers no,
 nobody to ask — a script, CI, an agent — installs nothing and prints the commands instead:
 
 ```bash
-bunx delacour@latest add bottom-sheet --install
+npx delacour@latest add bottom-sheet --install
 ```
 
 The missing packages are shown as commands, not names, because the command is the part that is not
@@ -87,7 +89,7 @@ import { Button } from "@acme/ui/button";
 ```
 
 ```bash
-bunx delacour@latest init --package-name @acme/ui --package-path packages/ui   # no prompts
+npx delacour@latest init --package-name @acme/ui --package-path packages/ui   # no prompts
 ```
 
 
@@ -96,8 +98,8 @@ bunx delacour@latest init --package-name @acme/ui --package-path packages/ui   #
 walking up from `--cwd`. In a monorepo that means:
 
 ```bash
-cd packages/ui && bunx delacour@latest init    # shared package, several apps use it
-cd apps/mobile && bunx delacour@latest init    # straight into the app
+cd packages/ui && npx delacour@latest init    # shared package, several apps use it
+cd apps/mobile && npx delacour@latest init    # straight into the app
 ```
 
 Either way the CLI finds the Expo app and wires *its* Metro config and CSS

@@ -38,8 +38,8 @@ export const LIST_GROUP_SUFFIX_ICON_TOKEN = "muted-foreground";
  * `w-full` on the item matters because the root clips: without it a short row
  * leaves the press feedback ending mid-card instead of spanning it.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const listGroupVariants = tv({
 	slots: {

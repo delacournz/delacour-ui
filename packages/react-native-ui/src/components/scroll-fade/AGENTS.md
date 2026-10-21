@@ -86,7 +86,7 @@ Their rules and tests live with them. Nothing here keeps a copy.
   values; the gradient itself is static and only its opacity moves.
 - **Every worklet in `scroll-maths.ts` and `scroll-edges.ts` is self-contained.** A module-scope helper
   called from inside a worklet can be missing from its closure on the UI thread
-  — `undefined is not a function` mid-scroll, invisible to `bun test`. Each
+  — `undefined is not a function` mid-scroll, invisible to unit tests. Each
   function writes its own clamp inline and calls no other. Do not tidy that into
   a shared helper.
 - **No calm-motion branch.** The opacity follows the user's own finger; nothing

@@ -10,6 +10,7 @@ import { lockPath } from "../lock/lock";
 import { LOCK_FILENAME } from "../lock/schema";
 import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
+import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
 import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
@@ -220,12 +221,14 @@ function checkUniwindInstalled(project: ProjectInfo): Check {
 		return { name: "Uniwind", status: "pass", detail: "uniwind and tailwindcss installed" };
 	}
 
-	const missing = [!project.hasUniwind && "uniwind", !project.hasTailwind && "tailwindcss"].filter(Boolean);
+	const missing = [!project.hasUniwind && "uniwind", !project.hasTailwind && "tailwindcss"].filter(
+		(name): name is string => name !== false
+	);
 	return {
 		name: "Uniwind",
 		status: "fail",
 		detail: `missing ${missing.join(", ")}`,
-		fix: `npx expo install ${missing.join(" ")}`,
+		fix: expoCommand(project.packageManager, ["install", ...missing]),
 	};
 }
 

@@ -132,7 +132,7 @@ half-initialised.
 
 ## Testing
 
-`bun test` reaches the position resolver and the variants. Everything else — the measure frame,
+The position resolver and the variants are pure and unit-tested. Everything else — the measure frame,
 the motion, the keyboard, dismissal, focus — is verified on a simulator through
 `apps/playground`'s `/popover` gallery, whose `edge-collision` demo puts triggers in the four
 corners to prove flip and shift.

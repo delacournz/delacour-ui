@@ -1,6 +1,7 @@
 import { type ReactElement, type ReactNode, useMemo } from "react";
 import type { AccessibilityState } from "react-native";
 import Animated from "react-native-reanimated";
+import { wrapTextChildren } from "../../lib/wrap-text-children";
 import { useListGroupContext } from "../list-group/list-group.context";
 import { Pressable, type PressableProps } from "../pressable";
 import { type ItemContextValue, ItemProvider } from "./item.context";
@@ -13,7 +14,6 @@ import {
 	resolveItemRender,
 	resolveItemSize,
 	resolveItemSurface,
-	wrapItemTextChildren,
 } from "./item.variants";
 import { ItemActions } from "./item-actions";
 import { ItemContent } from "./item-content";
@@ -72,7 +72,7 @@ function ItemRoot({
 		() => ({ isDisabled, isSelected, orientation, size: resolvedSize, surface }),
 		[isDisabled, isSelected, orientation, resolvedSize, surface]
 	);
-	const content = useMemo(() => wrapTextChildren(children), [children]);
+	const content = useMemo(() => wrapItemText(children, asChild), [asChild, children]);
 	const rootClassName = itemVariants({ isDisabled, isSelected, orientation, size: resolvedSize, surface }).root({
 		className,
 	});
@@ -117,19 +117,24 @@ function ItemRoot({
  * Wraps bare text children in a title inside a content column.
  *
  * React Native cannot render a string outside a `<Text>`, so without this
- * `<Item>Wi-Fi</Item>` would crash. The run-collapsing and the single-child
- * rule `asChild` depends on live in `wrapItemTextChildren`, where they are
- * tested.
+ * `<Item>Wi-Fi</Item>` would crash. The run-collapsing, and the rule that a
+ * single child — and every child under `asChild` — comes back untouched for
+ * `Pressable`'s `Children.only`, live in the shared `wrapTextChildren`, where
+ * they are tested.
  *
  * Lives with the root because the root is what wraps its own text; a part
  * importing it from here would close a cycle. See AGENTS.md rule 3.
  */
-function wrapTextChildren(children: ReactNode): ReactNode {
-	return wrapItemTextChildren(children, (text, key) => (
-		<ItemContent key={key}>
-			<ItemTitle>{text}</ItemTitle>
-		</ItemContent>
-	));
+function wrapItemText(children: ReactNode, asChild: boolean | undefined): ReactNode {
+	return wrapTextChildren(
+		children,
+		(text, key) => (
+			<ItemContent key={key}>
+				<ItemTitle>{text}</ItemTitle>
+			</ItemContent>
+		),
+		{ asChild }
+	);
 }
 
 /**

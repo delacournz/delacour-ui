@@ -1,4 +1,3 @@
-import { Children, type ReactElement, type ReactNode } from "react";
 import type { VariantProps } from "tailwind-variants";
 import { tv } from "../../lib/tv";
 import type { PressableFeedback } from "../pressable/pressable.variants";
@@ -86,44 +85,6 @@ export function resolveItemRender(options: {
 }
 
 /**
- * Wraps each run of bare text children through `wrap`, leaving every other
- * child as it is.
- *
- * Consecutive strings and numbers are collected into a single run rather than
- * one each — `Row {index}` is one piece of text.
- *
- * One node comes back as that node, never as a one-item array: `Pressable`
- * with `asChild` hands its children to `Children.only`, which rejects an
- * array whatever its length, so `<Item asChild onPress={…}><View /></Item>`
- * threw before this.
- */
-export function wrapItemTextChildren(
-	children: ReactNode,
-	wrap: (text: string, key: string) => ReactElement
-): ReactNode {
-	const output: ReactNode[] = [];
-	let run: (string | number)[] = [];
-
-	const flushRun = () => {
-		if (run.length === 0) return;
-		output.push(wrap(run.join(""), `content-${output.length}`));
-		run = [];
-	};
-
-	for (const child of Children.toArray(children)) {
-		if (typeof child === "string" || typeof child === "number") {
-			run.push(child);
-			continue;
-		}
-		flushRun();
-		output.push(child);
-	}
-	flushRun();
-
-	return output.length === 1 ? output[0] : output;
-}
-
-/**
  * Styling for every part of an item.
  *
  * Row metrics are the same numbers a `ListGroup` row uses, per size — asserted
@@ -143,8 +104,8 @@ export function wrapItemTextChildren(
  * No slot but the two text slots holds a `text-*` colour — a React Native
  * `View` does not cascade one to a `Text`.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays unit-testable — it must not
+ * pull in React Native's Flow-typed source. See AGENTS.md.
  */
 export const itemVariants = tv({
 	slots: {

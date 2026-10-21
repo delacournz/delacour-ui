@@ -2,7 +2,7 @@
  * The pure decisions behind `ThemeSelector`: which mode is selected, what a
  * press changes, what a stored string restores to and which options to draw.
  *
- * Imports neither React Native nor Uniwind, so `bun test` reaches all of it.
+ * Imports neither React Native nor Uniwind, so a unit test reaches all of it.
  * `use-theme-selection.ts` is the one file that binds these to the live theme.
  * See AGENTS.md.
  */

@@ -7,6 +7,7 @@ import { detectProject, type ProjectInfo } from "../project/detect";
 import {
 	commandLine,
 	type DependencyPlan,
+	expoCommand,
 	missingPackages,
 	planDependencies,
 	runInstall,
@@ -378,7 +379,7 @@ function warnAboutNativeRebuild(items: readonly RegistryItem[], project: Project
 		[
 			`Added native modules: ${added.join(", ")}`,
 			"Rebuild the dev client before reloading — a JS reload alone will not pick them up:",
-			`  ${style.code("npx expo run:ios")}   ${style.dim("(or run:android)")}`,
+			`  ${style.code(expoCommand(project.packageManager, ["run:ios"]))}   ${style.dim("(or run:android)")}`,
 		].join("\n")
 	);
 }

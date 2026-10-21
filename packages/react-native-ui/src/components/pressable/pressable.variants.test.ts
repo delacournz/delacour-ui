@@ -1,5 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import {
+	dispatchPressableAccessibilityAction,
+	invokePressableHandler,
 	isPressableInteractive,
 	PRESSABLE_FEEDBACK,
 	PRESSABLE_FEEDBACK_FALLBACK,
@@ -187,6 +189,7 @@ describe("resolvePressableActivation", () => {
 		expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "ios" })).toEqual({
 			accessibilityActions: undefined,
 			routesActivate: false,
+			routesLongPress: false,
 			wiresAccessibilityTap: true,
 		});
 	});
@@ -213,6 +216,7 @@ describe("resolvePressableActivation", () => {
 		expect(resolved).toEqual({
 			accessibilityActions: [{ label: "Remove", name: "remove" }, { name: "activate" }],
 			routesActivate: true,
+			routesLongPress: false,
 			wiresAccessibilityTap: false,
 		});
 	});
@@ -234,7 +238,12 @@ describe("resolvePressableActivation", () => {
 					hasPress: true,
 					platform,
 				})
-			).toEqual({ accessibilityActions: actions, routesActivate: false, wiresAccessibilityTap: false });
+			).toEqual({
+				accessibilityActions: actions,
+				routesActivate: false,
+				routesLongPress: false,
+				wiresAccessibilityTap: false,
+			});
 		}
 	});
 
@@ -249,6 +258,7 @@ describe("resolvePressableActivation", () => {
 			expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: false, platform })).toEqual({
 				accessibilityActions: undefined,
 				routesActivate: false,
+				routesLongPress: false,
 				wiresAccessibilityTap: false,
 			});
 		}
@@ -258,7 +268,176 @@ describe("resolvePressableActivation", () => {
 		expect(resolvePressableActivation({ hasAccessibilityTap: false, hasPress: true, platform: "web" })).toEqual({
 			accessibilityActions: undefined,
 			routesActivate: false,
+			routesLongPress: false,
 			wiresAccessibilityTap: false,
 		});
+	});
+
+	test("Android appends 'longpress' when there is an onLongPress, and routes it", () => {
+		expect(
+			resolvePressableActivation({
+				hasAccessibilityTap: false,
+				hasLongPress: true,
+				hasPress: true,
+				platform: "android",
+			})
+		).toEqual({
+			accessibilityActions: [{ name: "activate" }, { name: "longpress" }],
+			routesActivate: true,
+			routesLongPress: true,
+			wiresAccessibilityTap: false,
+		});
+	});
+
+	test("Android routes 'longpress' alone for a long-press-only pressable", () => {
+		expect(
+			resolvePressableActivation({
+				hasAccessibilityTap: false,
+				hasLongPress: true,
+				hasPress: false,
+				platform: "android",
+			})
+		).toEqual({
+			accessibilityActions: [{ name: "longpress" }],
+			routesActivate: false,
+			routesLongPress: true,
+			wiresAccessibilityTap: false,
+		});
+	});
+
+	test("a caller that lists 'longpress' owns it, and still gets 'activate' added", () => {
+		const resolved = resolvePressableActivation({
+			accessibilityActions: [{ label: "Start selecting", name: "longpress" }],
+			hasAccessibilityTap: false,
+			hasLongPress: true,
+			hasPress: true,
+			platform: "android",
+		});
+		expect(resolved).toEqual({
+			accessibilityActions: [{ label: "Start selecting", name: "longpress" }, { name: "activate" }],
+			routesActivate: true,
+			routesLongPress: false,
+			wiresAccessibilityTap: false,
+		});
+	});
+
+	test("iOS adds no 'longpress' entry — VoiceOver's double-tap-and-hold is a held touch the gesture sees", () => {
+		expect(
+			resolvePressableActivation({ hasAccessibilityTap: false, hasLongPress: true, hasPress: true, platform: "ios" })
+		).toEqual({
+			accessibilityActions: undefined,
+			routesActivate: false,
+			routesLongPress: false,
+			wiresAccessibilityTap: true,
+		});
+	});
+});
+
+describe("invokePressableHandler", () => {
+	test("fires the handler exactly once when interactive", () => {
+		let calls = 0;
+		expect(invokePressableHandler(() => calls++, { busy: false, disabled: false })).toBe(true);
+		expect(calls).toBe(1);
+	});
+
+	test("never fires when disabled or busy", () => {
+		let calls = 0;
+		const handler = () => calls++;
+		expect(invokePressableHandler(handler, { busy: false, disabled: true })).toBe(false);
+		expect(invokePressableHandler(handler, { busy: true, disabled: false })).toBe(false);
+		expect(invokePressableHandler(handler, { busy: true, disabled: true })).toBe(false);
+		expect(calls).toBe(0);
+	});
+
+	test("a missing handler is a no-op", () => {
+		expect(invokePressableHandler(undefined, { busy: false, disabled: false })).toBe(false);
+	});
+});
+
+describe("dispatchPressableAccessibilityAction", () => {
+	const routed = { routesActivate: true, routesLongPress: true };
+
+	function counters() {
+		const calls = { longPress: 0, press: 0 };
+		return {
+			calls,
+			onLongPress: () => {
+				calls.longPress++;
+			},
+			onPress: () => {
+				calls.press++;
+			},
+		};
+	}
+
+	test("'activate' fires onPress once and is consumed", () => {
+		const { calls, onLongPress, onPress } = counters();
+		const consumed = dispatchPressableAccessibilityAction({
+			actionName: "activate",
+			activation: routed,
+			busy: false,
+			disabled: false,
+			onLongPress,
+			onPress,
+		});
+		expect(consumed).toBe(true);
+		expect(calls).toEqual({ longPress: 0, press: 1 });
+	});
+
+	test("'longpress' fires onLongPress once, never onPress", () => {
+		const { calls, onLongPress, onPress } = counters();
+		const consumed = dispatchPressableAccessibilityAction({
+			actionName: "longpress",
+			activation: routed,
+			busy: false,
+			disabled: false,
+			onLongPress,
+			onPress,
+		});
+		expect(consumed).toBe(true);
+		expect(calls).toEqual({ longPress: 1, press: 0 });
+	});
+
+	test("a disabled or busy control consumes both actions and fires nothing", () => {
+		const { calls, onLongPress, onPress } = counters();
+		for (const gate of [
+			{ busy: false, disabled: true },
+			{ busy: true, disabled: false },
+		]) {
+			for (const actionName of ["activate", "longpress"]) {
+				expect(
+					dispatchPressableAccessibilityAction({ actionName, activation: routed, ...gate, onLongPress, onPress })
+				).toBe(true);
+			}
+		}
+		expect(calls).toEqual({ longPress: 0, press: 0 });
+	});
+
+	test("an action the pressable does not route is forwarded, untouched", () => {
+		const { calls, onLongPress, onPress } = counters();
+		const unrouted = { routesActivate: false, routesLongPress: false };
+		for (const actionName of ["activate", "longpress", "increment"]) {
+			expect(
+				dispatchPressableAccessibilityAction({
+					actionName,
+					activation: unrouted,
+					busy: false,
+					disabled: false,
+					onLongPress,
+					onPress,
+				})
+			).toBe(false);
+		}
+		expect(
+			dispatchPressableAccessibilityAction({
+				actionName: "increment",
+				activation: routed,
+				busy: false,
+				disabled: false,
+				onLongPress,
+				onPress,
+			})
+		).toBe(false);
+		expect(calls).toEqual({ longPress: 0, press: 0 });
 	});
 });

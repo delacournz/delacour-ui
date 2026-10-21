@@ -22,7 +22,7 @@ scope — it is an input, not a text effect.
 | `text-animation-caret.tsx` | Internal leaf: the typing caret |
 | `text-animation-clock.ts` | `useTextAnimationClock` — a frame-callback elapsed-ms shared value, pausable, keyed by run |
 | `text-animation.types.ts` | `TextAnimationBase`, the props every part shares |
-| `text-animation.variants.ts` | The slotted `tv()` + every pure resolver: splitting, stagger, effect frames, typing timeline, number format, roll targets |
+| `text-animation.variants.ts` | The slotted `tv()` + every pure resolver: splitting, stagger, effect frames, typing timeline, number format, roll targets — and the five axes (`TEXT_ANIMATION_UNITS`, `_ORDERS`, `_EFFECT_KINDS`, `_CARET_KINDS`, `_SLIDE_DIRECTIONS`), each exported with its union |
 | `text-animation.variants.test.ts` | |
 
 ## The root is Reveal
@@ -174,10 +174,10 @@ a follow-up after the media components merge, not something to do on this branch
 
 ## Preview media — a follow-up
 
-No demo carries `meta.capture` yet: `demos.test.ts` requires a manifest entry and
-both themes' media for every captured demo, and those come only from
-`bun run previews`, which the lead runs after the media components merge. When it
-does, capture `reveal-words` (`hero`, `align: "stretch"`), `reveal-characters`,
+No demo carries `meta.capture` yet: a captured demo needs a manifest entry and
+both themes' media<!-- registry:omit -->, which come only from
+`bun run previews` (`demos.test.ts` checks this), run by the lead after the media components merge<!-- /registry:omit -->. When it
+is added, capture `reveal-words` (`hero`, `align: "stretch"`), `reveal-characters`,
 `typing` (`align: "stretch"`), `rotating`, `counting` and `rolling` — every one a
 clip, since each is motion; `counting` and `rolling` need a flow that taps their
 `-next` button. `orders` stays gallery-only.

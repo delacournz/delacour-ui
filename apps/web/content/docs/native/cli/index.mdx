@@ -27,7 +27,7 @@ rather than carrying a copy of it, so the two cannot drift. The choice is about 
 
 | | [Install the package](/docs/native/getting-started/installation) | This CLI |
 | --- | --- | --- |
-| Upgrades | `bun update` | `delacour update` — merged with your edits |
+| Upgrades | Your package manager's update | `delacour update` — merged with your edits |
 | Editing a component | Fork or wrap it | Edit the file |
 | Import path | `@delacour/react-native-ui/button` | `@/components/ui/button` |
 | New components | Arrive with the package | `delacour add` when you want one |
@@ -46,7 +46,7 @@ these is a failure that produces **no error at all** when it goes wrong:
 
 <Cards>
   <Card title="Native modules go through expo install" href="/docs/native/cli/commands">
-    `bun add react-native-reanimated` fetches the newest release, which on any older SDK does not
+    `npm install react-native-reanimated` (or any package manager's add) fetches the newest release, which on any older SDK does not
     compile. The CLI asks the SDK what it supports.
   </Card>
   <Card title="Metro is wrapped, outermost" href="/docs/native/cli/init">

@@ -83,11 +83,11 @@ Not for confirmations or warnings — those are a `Dialog`. Like every overlay i
 
 ## Testing
 
-`bun test` reaches `feedbackVariants`, the tokens in both themes, `canSubmitFeedback` and the
-field-height resolvers. Opening, the submit gate, the async send, the draft across close and
+`feedbackVariants`, the tokens in both themes, `canSubmitFeedback` and the
+field-height resolvers are unit-testable. Opening, the submit gate, the async send, the draft across close and
 reopen, the keyboard, the multi-step resize and every dismissal path are verified on a simulator
 through `/feedback` in the playground.
 
 Preview media: `basic` is the hero and `sending` and `multi-step` are clips, all
-`{ flow: true, frame: "device" }`, with their bodies in
-`apps/playground/e2e/previews/feedback.e2e.ts`; `bun run previews -- -- --only feedback` recaptures them.
+`{ flow: true, frame: "device" }`.<!-- registry:omit --> Their bodies are in
+`apps/playground/e2e/previews/feedback.e2e.ts`; `bun run previews -- -- --only feedback` recaptures them.<!-- /registry:omit -->

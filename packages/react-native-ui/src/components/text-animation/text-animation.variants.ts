@@ -5,6 +5,7 @@ export const TEXT_ANIMATION_UNITS = ["character", "word", "line"] as const;
 export const TEXT_ANIMATION_ORDERS = ["forward", "reverse", "center", "random"] as const;
 export const TEXT_ANIMATION_EFFECT_KINDS = ["fade", "slide", "scale"] as const;
 export const TEXT_ANIMATION_CARET_KINDS = ["none", "bar", "block"] as const;
+export const TEXT_ANIMATION_SLIDE_DIRECTIONS = ["up", "down", "left", "right"] as const;
 
 /** What one entering piece of a `Reveal` is. */
 export type TextAnimationUnit = (typeof TEXT_ANIMATION_UNITS)[number];
@@ -12,7 +13,8 @@ export type TextAnimationUnit = (typeof TEXT_ANIMATION_UNITS)[number];
 export type TextAnimationOrder = (typeof TEXT_ANIMATION_ORDERS)[number];
 export type TextAnimationEffectKind = (typeof TEXT_ANIMATION_EFFECT_KINDS)[number];
 export type TextAnimationCaretKind = (typeof TEXT_ANIMATION_CARET_KINDS)[number];
-export type TextAnimationSlideFrom = "up" | "down" | "left" | "right";
+/** Where a `slide` effect enters from. */
+export type TextAnimationSlideFrom = (typeof TEXT_ANIMATION_SLIDE_DIRECTIONS)[number];
 
 /** How a unit arrives. Every kind fades in; `slide` and `scale` add a transform on top. */
 export type TextAnimationEffect =

@@ -13,7 +13,8 @@
 		"pressable",
 		"separator",
 		"text",
-		"tv"
+		"tv",
+		"wrap-text-children"
 	],
 	"dependencies": [
 		"tailwind-variants"
@@ -124,6 +125,10 @@
 			"target": "item/item.tsx",
 			"namespace": "ui",
 			"rewrites": [
+				{
+					"from": "../../lib/wrap-text-children",
+					"to": "@registry/lib/wrap-text-children"
+				},
 				{
 					"from": "../list-group/list-group.context",
 					"to": "@registry/ui/list-group/list-group.context"

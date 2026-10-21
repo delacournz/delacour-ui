@@ -91,7 +91,7 @@ a word in a row of words reads as a jitter. No underline on press: that is a poi
 ## Deviations from the design spec
 
 - **`resolveBreadcrumbSeparatorGlyph` returns `"chevron-right" | "chevron-left"`, not the icon
-  components.** `*.variants.ts` must stay free of React Native imports so `bun test` can reach it,
+  components.** `*.variants.ts` must stay free of React Native imports so it stays unit-testable,
   and a Central Icon pulls in `react-native-svg`. `Breadcrumb.Separator` maps the name to the glyph.
 - **`Breadcrumb.Ellipsis` takes `hiddenCount`, `onPress` and `haptic`** beyond the spec's
   `ViewProps`. The list wires them itself; a hand-placed ellipsis in a custom layout needs the same

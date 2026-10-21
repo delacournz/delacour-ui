@@ -90,7 +90,7 @@ thumb. The frame is the layout; only what is inside it moves. A single component
 
 ## Verification notes
 
-`bun test` covers the maths, the slots and the props union. Rendering was checked
+The maths, the slots and the props union are unit-tested. Rendering was checked
 on an iOS simulator (iPhone 17, warden lease, agent-device) on 2026-10-05:
 
 - **Parallax** drifts the picture down through the frame as the page rises and

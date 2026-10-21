@@ -6,6 +6,7 @@ import { ITEM_META, PACKAGE_INSTALL } from "./config";
 import { applyRewrites, type Rewrite } from "./rewrite";
 import type { RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { toIndexEntry } from "./schema";
+import { findUnshippableReferences, shipContent } from "./ship";
 import { sourceFilePath } from "./source";
 
 /**
@@ -61,6 +62,7 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 	}
 
 	const items: RegistryItem[] = [];
+	const unshippable: string[] = [];
 
 	for (const [name, sources] of [...grouped].sort(([a], [b]) => a.localeCompare(b))) {
 		items.push(
@@ -71,10 +73,12 @@ export async function buildRegistry(options: BuildOptions): Promise<BuildResult>
 				sourcePaths,
 				packageSubpaths,
 				packageDir: options.packageDir,
+				unshippable,
 			})
 		);
 	}
 
+	assertShippable(unshippable);
 	assertNoDuplicateItems(items);
 	assertDependenciesResolve(items);
 
@@ -95,6 +99,8 @@ type BuildItemContext = {
 	sourcePaths: readonly string[];
 	packageSubpaths: ReadonlyMap<string, string>;
 	packageDir: string;
+	/** Collects every reference a consumer's copy cannot honour, across all items, for one error. */
+	unshippable: string[];
 };
 
 async function buildItem(context: BuildItemContext): Promise<RegistryItem> {
@@ -178,6 +184,8 @@ async function collectFiles(sources: readonly SourceFile[], context: BuildItemCo
 
 		assertRewritesReproduce(path, raw, canonical);
 
+		collectUnshippable(path, classification, canonical.content, context.unshippable);
+
 		files.push({
 			path: sourceFilePath(context.packageDir, path),
 			target: classification.target,
@@ -248,6 +256,43 @@ function assertRewritesReproduce(path: string, raw: string, canonical: { content
 
 	throw new Error(
 		`${path}: the rewrites do not reproduce the canonicalised file. A specifier is probably quoted somewhere other than an import.`
+	);
+}
+
+/**
+ * Records what in one shipped file cites Bun or a file the registry does not
+ * copy. A test is exempt: it is Bun-only by nature, and lands only beside the
+ * suite it belongs to, under `add --tests`.
+ */
+function collectUnshippable(
+	path: string,
+	classification: SourceClassification,
+	content: string,
+	unshippable: string[]
+): void {
+	if (classification.test) return;
+	for (const { line, match } of findUnshippableReferences(shipContent(classification.target, content))) {
+		unshippable.push(`  ${path}:${line}  ${match}`);
+	}
+}
+
+/**
+ * Nothing that ships may cite Bun or a file the registry drops.
+ *
+ * A consumer's project is on any package manager and has none of the library's
+ * tests, so `bun test` or `tokens.test.ts` in a copied file names a toolchain
+ * and a file that are not there — and an agent reading the copy takes it at its
+ * word. Every hit is listed at once, so a sweep is one build rather than one per
+ * file. The fix is to state the rule itself rather than what checks it, or, in
+ * an `AGENTS.md`, to put a maintainer-only note inside an omit block (`ship.ts`).
+ */
+function assertShippable(unshippable: readonly string[]): void {
+	if (unshippable.length === 0) return;
+
+	throw new Error(
+		`${unshippable.length} reference(s) a consumer's copy cannot honour — Bun, or a file the registry does not ship:\n` +
+			`${unshippable.join("\n")}\n` +
+			"State the invariant instead, or wrap a maintainer-only note in <!-- registry:omit --> … <!-- /registry:omit -->."
 	);
 }
 

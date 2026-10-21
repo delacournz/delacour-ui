@@ -281,7 +281,7 @@ export function resolveMenuItemAccessibility(input: MenuItemAccessibilityInput):
  * `transform`, so a class opacity there is not overwritten.
  *
  * No slot worn by a `View` carries `text-*` (rule 1). Free of React Native
- * imports so it stays reachable from `bun test`.
+ * imports so it stays unit-testable.
  */
 export const menuVariants = tv({
 	slots: {

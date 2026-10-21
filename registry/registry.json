@@ -3829,9 +3829,9 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
+				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
-				"react-native-svg",
 				"react-native-worklets"
 			],
 			"devDependencies": [],
@@ -3841,13 +3841,13 @@
 				"ui/signature/signature-action-button.tsx",
 				"ui/signature/signature-alternative.tsx",
 				"ui/signature/signature-clear.tsx",
-				"ui/signature/signature-live-path.tsx",
+				"ui/signature/signature-ink.tsx",
 				"ui/signature/signature-pad.tsx",
-				"ui/signature/signature-path.tsx",
 				"ui/signature/signature-redo.tsx",
 				"ui/signature/signature-toolbar.tsx",
 				"ui/signature/signature-undo.tsx",
 				"ui/signature/signature.context.tsx",
+				"ui/signature/signature.skia.ts",
 				"ui/signature/signature.stroke.ts",
 				"ui/signature/signature.tsx",
 				"ui/signature/signature.types.ts",

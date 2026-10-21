@@ -93,6 +93,56 @@ export function smoothStroke(points: SignatureStroke): string {
 	return `${path}${end}`;
 }
 
+/**
+ * What {@link traceStroke} draws into — the three path verbs it uses. A Skia
+ * `SkPathBuilder` is one; so is anything that records the calls.
+ */
+export type SignaturePathSink = {
+	moveTo: (x: number, y: number) => unknown;
+	lineTo: (x: number, y: number) => unknown;
+	quadTo: (x1: number, y1: number, x2: number, y2: number) => unknown;
+};
+
+/**
+ * One stroke drawn straight into a path, verb by verb — the curve
+ * {@link smoothStroke} writes, without a string to build and parse back.
+ *
+ * Coordinates go in unrounded, so the live stroke and its committed copy, both
+ * traced here, match to the bit; a non-finite one is traced as zero, as the
+ * string form writes it. Self-contained, with no helper of this module's: a
+ * module-scope function called from a worklet can be missing from its closure on
+ * the UI thread.
+ *
+ * A worklet: the live stroke calls this on the UI thread on every move.
+ */
+export function traceStroke(points: SignatureStroke, sink: SignaturePathSink): void {
+	"worklet";
+	const count = points.length;
+	if (count === 0) return;
+
+	const first = points[0] as SignaturePoint;
+	const firstX = Number.isFinite(first.x) ? first.x : 0;
+	const firstY = Number.isFinite(first.y) ? first.y : 0;
+	sink.moveTo(firstX, firstY);
+	if (count === 1) {
+		sink.lineTo(firstX, firstY);
+		return;
+	}
+
+	for (let index = 1; index < count - 1; index++) {
+		const control = points[index] as SignaturePoint;
+		const next = points[index + 1] as SignaturePoint;
+		const controlX = Number.isFinite(control.x) ? control.x : 0;
+		const controlY = Number.isFinite(control.y) ? control.y : 0;
+		const midX = (control.x + next.x) / 2;
+		const midY = (control.y + next.y) / 2;
+		sink.quadTo(controlX, controlY, Number.isFinite(midX) ? midX : 0, Number.isFinite(midY) ? midY : 0);
+	}
+
+	const last = points[count - 1] as SignaturePoint;
+	sink.lineTo(Number.isFinite(last.x) ? last.x : 0, Number.isFinite(last.y) ? last.y : 0);
+}
+
 /** One smoothed path per stroke, in order. */
 export function strokesToPaths(strokes: readonly SignatureStroke[]): readonly string[] {
 	return strokes.map((stroke) => smoothStroke(stroke));

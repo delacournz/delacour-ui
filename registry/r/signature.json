@@ -23,9 +23,9 @@
 		"tailwind-variants"
 	],
 	"expoDependencies": [
+		"@shopify/react-native-skia",
 		"react-native-gesture-handler",
 		"react-native-reanimated",
-		"react-native-svg",
 		"react-native-worklets"
 	],
 	"devDependencies": [],
@@ -84,8 +84,8 @@
 			]
 		},
 		{
-			"path": "packages/react-native-ui/src/components/signature/signature-live-path.tsx",
-			"target": "signature/signature-live-path.tsx",
+			"path": "packages/react-native-ui/src/components/signature/signature-ink.tsx",
+			"target": "signature/signature-ink.tsx",
 			"namespace": "ui"
 		},
 		{
@@ -114,11 +114,6 @@
 					"to": "@registry/ui/text"
 				}
 			]
-		},
-		{
-			"path": "packages/react-native-ui/src/components/signature/signature-path.tsx",
-			"target": "signature/signature-path.tsx",
-			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature-redo.tsx",
@@ -157,6 +152,11 @@
 					"to": "@registry/ui/pressable"
 				}
 			]
+		},
+		{
+			"path": "packages/react-native-ui/src/components/signature/signature.skia.ts",
+			"target": "signature/signature.skia.ts",
+			"namespace": "ui"
 		},
 		{
 			"path": "packages/react-native-ui/src/components/signature/signature.stroke.ts",

@@ -115,7 +115,17 @@ const pad = useRef<SignatureHandle>(null);
 const svg = pad.current?.toSVG({ viewBox: "tight", padding: 8, background: "#ffffff" });
 ```
 
-`toPaths()` returns one path `d` per stroke instead, for drawing it elsewhere with `react-native-svg`.
+`toPaths()` returns one path `d` per stroke instead, for drawing it elsewhere with `react-native-svg`. To draw a stroke
+with Skia, as the pad itself does, trace it into a path builder rather than parsing that string back:
+
+```tsx
+import { Skia } from "react-native-skia";
+import { traceStroke } from "@/components/ui/signature";
+
+const builder = Skia.PathBuilder.Make();
+traceStroke(stroke, builder);
+const path = builder.detach();
+```
 
 ## Sizes and variants
 

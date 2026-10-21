@@ -36,8 +36,8 @@ export type SignatureContextValue = SignatureState & {
 	/** Played as a stroke begins. `false` silences every haptic the signature plays. */
 	haptic: false | HapticFeedback;
 	/**
-	 * Bumped by every clear. The pad keys its ink layer on it, so a clear unmounts
-	 * the old layer and lets it fade out rather than snapping the paths away.
+	 * Bumped by every clear. The pad's ink fades out the picture a clear replaced
+	 * when it changes, rather than snapping the strokes away.
 	 */
 	clearCount: number;
 	/** The typed-name escape hatch, when the caller offers one. */

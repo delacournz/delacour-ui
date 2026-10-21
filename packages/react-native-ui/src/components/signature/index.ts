@@ -15,11 +15,13 @@ export {
 	SIGNATURE_MIN_DISTANCE,
 	SIGNATURE_STROKE_WIDTH,
 	type SignatureBounds,
+	type SignaturePathSink,
 	scaleValue,
 	serializeSignature,
 	smoothStroke,
 	strokesToPaths,
 	toSVG,
+	traceStroke,
 } from "./signature.stroke";
 export type {
 	SignatureExportOptions,

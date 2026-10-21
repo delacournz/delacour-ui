@@ -13,6 +13,7 @@ import {
 	SIGNATURE_EXPORT_PADDING,
 	SIGNATURE_EXPORT_STROKE_COLOR,
 	type SignatureHistory,
+	type SignaturePathSink,
 	scaleValue,
 	serializeSignature,
 	shouldAddPoint,
@@ -20,6 +21,7 @@ import {
 	strokeCount,
 	strokesToPaths,
 	toSVG,
+	traceStroke,
 } from "./signature.stroke";
 import type { SignatureStroke, SignatureValue } from "./signature.types";
 
@@ -104,6 +106,83 @@ describe("strokesToPaths", () => {
 	});
 });
 
+/** A sink that writes what it is handed back out as path data, rounded the way `smoothStroke` rounds. */
+function recordingSink(): SignaturePathSink & { calls: string[]; d: () => string } {
+	const calls: string[] = [];
+	const n = (value: number): string => {
+		const rounded = Math.round(value * 100) / 100;
+		return String(rounded === 0 ? 0 : rounded);
+	};
+	return {
+		calls,
+		d: () => calls.join(" "),
+		lineTo: (x, y) => calls.push(`L${n(x)} ${n(y)}`),
+		moveTo: (x, y) => calls.push(`M${n(x)} ${n(y)}`),
+		quadTo: (x1, y1, x2, y2) => calls.push(`Q${n(x1)} ${n(y1)} ${n(x2)} ${n(y2)}`),
+	};
+}
+
+describe("traceStroke", () => {
+	test("no points draws nothing", () => {
+		const sink = recordingSink();
+		traceStroke([], sink);
+		expect(sink.calls).toEqual([]);
+	});
+
+	test("one point is a zero-length segment, which a round cap draws as a dot", () => {
+		const sink = recordingSink();
+		traceStroke([{ x: 4, y: 6 }], sink);
+		expect(sink.calls).toEqual(["M4 6", "L4 6"]);
+	});
+
+	test("two points are a line", () => {
+		const sink = recordingSink();
+		traceStroke(LINE, sink);
+		expect(sink.calls).toEqual(["M0 0", "L10 10"]);
+	});
+
+	test("three or more points are midpoint quadratics ending on the last point", () => {
+		const sink = recordingSink();
+		traceStroke(CURVE, sink);
+		expect(sink.calls).toEqual(["M0 0", "Q10 0 15 5", "Q20 10 25 10", "L30 10"]);
+	});
+
+	test("coordinates are passed unrounded", () => {
+		const calls: number[][] = [];
+		traceStroke([{ x: 1.23456, y: 2.34567 }], {
+			lineTo: (x, y) => calls.push([x, y]),
+			moveTo: (x, y) => calls.push([x, y]),
+			quadTo: () => undefined,
+		});
+		expect(calls).toEqual([
+			[1.23456, 2.34567],
+			[1.23456, 2.34567],
+		]);
+	});
+
+	test("a non-finite coordinate is traced as zero, as the string form writes it", () => {
+		const sink = recordingSink();
+		traceStroke([{ x: Number.NaN, y: Number.POSITIVE_INFINITY }], sink);
+		expect(sink.calls).toEqual(["M0 0", "L0 0"]);
+	});
+
+	const SAMPLES: readonly SignatureStroke[] = [
+		[],
+		[{ x: 0.004, y: -0.004 }],
+		LINE,
+		CURVE,
+		Array.from({ length: 40 }, (_, index) => ({ x: index * 3.137, y: Math.sin(index / 3) * 21.5 + 40 })),
+	];
+
+	for (const [index, stroke] of SAMPLES.entries()) {
+		test(`draws exactly what smoothStroke writes (sample ${index})`, () => {
+			const sink = recordingSink();
+			traceStroke(stroke, sink);
+			expect(sink.d()).toBe(smoothStroke(stroke));
+		});
+	}
+});
+
 describe("the smoother is a worklet", () => {
 	const source = readFileSync(join(import.meta.dirname, "signature.stroke.ts"), "utf-8");
 
@@ -111,7 +190,7 @@ describe("the smoother is a worklet", () => {
 		expect(source).not.toMatch(/from "react-native/);
 	});
 
-	for (const name of ["shouldAddPoint", "smoothStroke", "formatCoordinate"]) {
+	for (const name of ["shouldAddPoint", "smoothStroke", "formatCoordinate", "traceStroke"]) {
 		test(`${name} carries the worklet directive`, () => {
 			const body = source.slice(source.indexOf(`function ${name}(`));
 			expect(body.slice(0, body.indexOf("\n}"))).toContain('"worklet";');

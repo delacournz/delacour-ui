@@ -1,5 +1,23 @@
 # @delacour/react-native-ui
 
+## 0.4.1
+
+### Patch Changes
+
+- [#238](https://github.com/delacournz/delacour-ui/pull/238) [`936cff3`](https://github.com/delacournz/delacour-ui/commit/936cff334a7efb28026302bb9f72fe8201667bb0) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Calendar: a `secondary` range's start and end circles are one even colour — the band now runs under the whole circle instead of half of it.
+
+- [#244](https://github.com/delacournz/delacour-ui/pull/244) [`cb11cbb`](https://github.com/delacournz/delacour-ui/commit/cb11cbbcf216dd5fadf2f34300690839fbe77789) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` copies each component's `bun test` suites beside it, records them in the lock, and asks for `@types/bun`; `update` keeps copied tests current and `update --tests` brings them in. The registry ships each item's tests in a separate `tests` list, so older CLIs are unaffected.
+
+- [#246](https://github.com/delacournz/delacour-ui/pull/246) [`292d502`](https://github.com/delacournz/delacour-ui/commit/292d502bbcd141a17c65e62d09defe080afb6a4d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` writes copied suites for the project's own runner — Vitest, Jest or Bun, read from `package.json` or set with `tests.runner` in `native-components.json` — and asks for that runner's packages instead of `@types/bun`. The shipped suites keep to the API all three share, and the registry build fails on one that does not. `add --tests` and `doctor` check that the runner can run them — its packages, a Jest config or a Vitest alias, and `tsconfigRaw` on Expo's tsconfig — and name the fix.
+
+- [#241](https://github.com/delacournz/delacour-ui/pull/241) [`3c76b6c`](https://github.com/delacournz/delacour-ui/commit/3c76b6cd6cc9242ee04a0ffc3b74f4785c9cc551) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Item, ListGroup.Item and GridItem: `asChild` takes a single child element as written. The text wrap (and GridItem's background ordering) always rebuilt the children as an array, which `Pressable`'s `Children.only` rejects even with one element, so `<Item asChild onPress={…}><View /></Item>` threw. Under `asChild` the children now pass through untouched, and without it a lone element comes back as that same element. The wrap is one shared helper, `lib/wrap-text-children`.
+
+- [#243](https://github.com/delacournz/delacour-ui/pull/243) [`c0b0a87`](https://github.com/delacournz/delacour-ui/commit/c0b0a87b4a32c164eb34f6fc664abd01f821ff6f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Copied components no longer assume Bun or cite tests that are not copied. `add` strips maintainer-only notes and test-file rows from each component's `AGENTS.md`, the registry build fails on any shipped file that names Bun or an unshipped test, and the CLI prints Expo commands for the project's own package manager. The agent skill shows `npx` with its pnpm, yarn and bun equivalents.
+
+- [#240](https://github.com/delacournz/delacour-ui/pull/240) [`2f6f1d3`](https://github.com/delacournz/delacour-ui/commit/2f6f1d398bfb30c72a24fcfd7e8983f782f5f79a) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Pressable: TalkBack's double-tap-and-hold now reaches `onLongPress` through a `longpress` accessibility action on Android, behind the same `disabled` / `busy` guard as the press. Screen-reader activation and long press are dispatched by `dispatchPressableAccessibilityAction`, which fires each handler once and never on a gated control.
+
+- [#242](https://github.com/delacournz/delacour-ui/pull/242) [`3f1cfb8`](https://github.com/delacournz/delacour-ui/commit/3f1cfb8dbe1b92ecb1ac130113b50f623bc09d1c) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Export every public variant axis from its component's entry point. `BADGE_MATERIALS` / `BadgeMaterial`, `BUTTON_MATERIALS` / `ButtonMaterial`, `SURFACE_MATERIALS` / `SurfaceMaterial` and `SCROLL_SHADOW_ANCHORS` / `ScreenScrollShadowAnchor` were declared but only reachable by importing a component's internal files; `@delacour/react-native-ui/text-animation` now also exports `TextAnimationEffectKind`, `TextAnimationCaretKind`, `TextAnimationSlideFrom` and a new `TEXT_ANIMATION_SLIDE_DIRECTIONS`. A package test now fails for any axis left unexported.
+
 ## 0.4.0
 
 ### Minor Changes

@@ -1,5 +1,17 @@
 # delacour
 
+## 0.5.0
+
+### Minor Changes
+
+- [#244](https://github.com/delacournz/delacour-ui/pull/244) [`cb11cbb`](https://github.com/delacournz/delacour-ui/commit/cb11cbbcf216dd5fadf2f34300690839fbe77789) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` copies each component's `bun test` suites beside it, records them in the lock, and asks for `@types/bun`; `update` keeps copied tests current and `update --tests` brings them in. The registry ships each item's tests in a separate `tests` list, so older CLIs are unaffected.
+
+- [#246](https://github.com/delacournz/delacour-ui/pull/246) [`292d502`](https://github.com/delacournz/delacour-ui/commit/292d502bbcd141a17c65e62d09defe080afb6a4d) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - `add --tests` writes copied suites for the project's own runner — Vitest, Jest or Bun, read from `package.json` or set with `tests.runner` in `native-components.json` — and asks for that runner's packages instead of `@types/bun`. The shipped suites keep to the API all three share, and the registry build fails on one that does not. `add --tests` and `doctor` check that the runner can run them — its packages, a Jest config or a Vitest alias, and `tsconfigRaw` on Expo's tsconfig — and name the fix.
+
+### Patch Changes
+
+- [#243](https://github.com/delacournz/delacour-ui/pull/243) [`c0b0a87`](https://github.com/delacournz/delacour-ui/commit/c0b0a87b4a32c164eb34f6fc664abd01f821ff6f) Thanks [@UrbanChrisy](https://github.com/UrbanChrisy)! - Copied components no longer assume Bun or cite tests that are not copied. `add` strips maintainer-only notes and test-file rows from each component's `AGENTS.md`, the registry build fails on any shipped file that names Bun or an unshipped test, and the CLI prints Expo commands for the project's own package manager. The agent skill shows `npx` with its pnpm, yarn and bun equivalents.
+
 ## 0.4.0
 
 ### Minor Changes

@@ -27,8 +27,8 @@
  * structure-only half of it (`verify:expo --no-install`) runs inside `registry`.
  *
  * `tests` is the one installed verify that does run here: every component's suites copied into a real
- * app on Jest and on Vitest, and run by them. A guard can only reject what someone already knew only
- * Bun runs; this is what finds the rest. It is path-gated on everything but markdown rather than
+ * app on Bun, on Jest and on Vitest, and run by each. A guard can only reject what someone already
+ * knew only Bun runs; this is what finds the rest. It is path-gated on everything but markdown rather than
  * `always`, so it gates through the umbrella and the ruleset's required list stays as it is.
  */
 
@@ -150,11 +150,12 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 	},
 	{
 		context: "tests",
-		label: "copied tests under Jest and Vitest",
+		label: "copied tests under Bun, Jest and Vitest",
 		always: false,
 		paths: ["**"],
 		workflow: "ci.yml",
 		run: [
+			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "bun"] },
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "jest"] },
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "vitest"] },
 		],

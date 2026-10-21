@@ -217,7 +217,7 @@ the scaffold's SDK with the engines in `transformIgnorePatterns`, or a `vitest.c
 project's `tsconfig` paths — then runs `add --all --tests`, runs the suites, and fails unless every
 suite the lock records ran and none failed. A runner that matched no files passes everything it
 found, which is why the count is checked as well. Under it `doctor`'s **Jest transforms** must pass,
-not merely warn. `signoff/tests` runs the Jest and Vitest legs on every change but markdown.
+not merely warn. `signoff/tests` runs all three runners on every change but markdown.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
 imports by name. That layout has wiring the standalone one does not — a workspace link, an
@@ -581,8 +581,8 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
   `chart` and `bottom-sheet`. The docs say so, and `doctor`'s `checkJestTransform` warns when the
   Jest config's text lacks them; the CLI does not write a runner's config.
 
-`verify:expo --tests jest` and `--tests vitest` (see Testing) prove it end to end, and `signoff/tests`
-runs both.
+`verify:expo --tests bun`, `--tests jest` and `--tests vitest` (see Testing) prove it end to end, and
+`signoff/tests` runs all three.
 
 ### Markdown is canonicalised too, but differently
 

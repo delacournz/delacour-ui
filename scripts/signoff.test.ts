@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { existsSync } from "node:fs";
+import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
 import {
 	commandLabel,
 	describeRunner,
@@ -52,10 +53,16 @@ describe("planChecks", () => {
 		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
 	});
 
-	test("every change but markdown runs the copied tests under Jest and Vitest", () => {
+	test("every change but markdown runs the copied tests", () => {
 		expect(applicable(["packages/cli/src/registry/test-runner.ts"])).toContain("tests");
 		expect(applicable(["bun.lock"])).toContain("tests");
 		expect(applicable(["README.md"])).not.toContain("tests");
+	});
+
+	test("the copied tests run under every runner a consumer may use", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		const runners = (tests?.run ?? []).map((step) => step.argv[step.argv.indexOf("--tests") + 1]);
+		expect(runners.sort()).toEqual([...TEST_RUNNERS].sort());
 	});
 
 	test("the two checks that rebuild .verify/app never run at once", () => {

@@ -149,7 +149,7 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | `signoff/test` | yes | always | `turbo test test:release test:scripts` |
 | `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
 | `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
-| `signoff/tests` | no | anything but markdown changed | `turbo verify:expo -- --tests jest`, then `-- --tests vitest` — every component's suites copied into an installed app and run by that runner |
+| `signoff/tests` | no | anything but markdown changed | `turbo verify:expo -- --tests bun`, then `-- --tests jest` and `-- --tests vitest` — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
 `registry` and `tests` both rebuild `packages/cli/.verify/app`, so they hold one pool lock and never

@@ -196,14 +196,14 @@ describe("every slot", () => {
 
 	test("resolves to a string, never undefined", () => {
 		for (const [name, slot] of declared(screenVariants())) {
-			expect(typeof slot(), `slot "${name}"`).toBe("string");
+			expect([name, typeof slot()]).toEqual([name, "string"]);
 		}
 	});
 
 	test("resolves to a string at either placement", () => {
 		for (const placement of SCREEN_PLACEMENTS) {
 			for (const [name, slot] of declared(screenVariants({ placement }))) {
-				expect(typeof slot(), `slot "${name}" at placement "${placement}"`).toBe("string");
+				expect([placement, name, typeof slot()]).toEqual([placement, name, "string"]);
 			}
 		}
 	});

@@ -1,4 +1,4 @@
-import { Skia, type SkPath } from "@shopify/react-native-skia";
+import { Skia, type SkPath } from "react-native-skia";
 
 /** A path with nothing in it — what an empty series draws. */
 export function emptyPath(): SkPath {

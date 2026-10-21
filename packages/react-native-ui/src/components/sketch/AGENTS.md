@@ -2,7 +2,7 @@
 
 A freehand drawing surface with its tools around it: a pen, eight shapes, an
 eraser, colour swatches, a stroke width and undo — delivered as SVG or PNG.
-Drawn with Skia (`@shopify/react-native-skia`, an optional peer), driven by one
+Drawn with Skia (`react-native-skia`, an optional peer), driven by one
 Gesture Handler pan on the UI thread.
 
 `import { Sketch } from "@delacour/react-native-ui/sketch";`
@@ -136,7 +136,11 @@ DisplayNames: `DelacourUI.Sketch`, `.Sketch.Canvas`, `.Toolbar`, `.Tool`,
 - **`toSVG()` is vector and `toPNG()` is raster; both hold the marks and the
   background only.** Neither includes what `Sketch.Canvas` children paint under
   the marks.
-- **`toPNG()` renders off screen**, on a CPU surface (`Skia.Surface.Make`) sized
+- **The canvas imports `lib/skia-native-id` for its effect.** After a JS reload Skia reused the
+  old runtime's canvas ids, which its native registry still held as torn down, so a sketch came up
+  blank until something re-rendered it. The import moves this runtime's ids to a fresh range
+  before the canvas asks for one.
+- **`toPNG()` renders off screen**, on a CPU surface (`Skia.Surface.MakeRaster`) sized
   to the canvas times `scale` (default the screen's pixel ratio), by the same
   `drawSketchItems` the picture records — not a snapshot of the visible canvas,
   which would need the view mounted and would capture nothing of the background

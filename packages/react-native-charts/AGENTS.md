@@ -24,7 +24,7 @@ bun run check            # Biome
 ## The rule everything else falls out of
 
 **Nothing under `src/core` may import a runtime value from `react`,
-`react-native`, `@shopify/react-native-skia`, `react-native-reanimated`,
+`react-native`, `react-native-skia`, `react-native-reanimated`,
 `react-native-gesture-handler` or `react-native-worklets`.** Type-only imports
 are fine; `d3-*` is fine.
 

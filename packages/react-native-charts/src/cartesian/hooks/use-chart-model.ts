@@ -1,5 +1,5 @@
-import type { SkFont } from "@shopify/react-native-skia";
 import { useMemo } from "react";
+import type { SkFont } from "react-native-skia";
 import type { ChartAnimation } from "../../animation/animation.types";
 import { DEFAULT_CHART_ANIMATION } from "../../animation/animation.types";
 import type { ChartRow, ChartSize } from "../../core/chart.types";

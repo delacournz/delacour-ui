@@ -1,6 +1,6 @@
-import { type SkPath, usePathInterpolation } from "@shopify/react-native-skia";
 import { useEffect, useRef, useState } from "react";
 import { type SharedValue, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { type SkPath, usePathInterpolation } from "react-native-skia";
 import { type ChartAnimation, DEFAULT_CHART_ANIMATION } from "./animation.types";
 
 export type AnimatedPathOptions = {

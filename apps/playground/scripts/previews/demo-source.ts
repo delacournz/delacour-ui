@@ -35,7 +35,7 @@ const ALLOWED_IMPORT_PREFIXES = [
 	"react",
 	"react-native",
 	"@legendapp/list",
-	"@shopify/react-native-skia",
+	"react-native-skia",
 	"react-native-gesture-handler",
 	"react-native-reanimated",
 	"react-native-worklets",

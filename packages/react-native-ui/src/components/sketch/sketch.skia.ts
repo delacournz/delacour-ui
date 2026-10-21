@@ -7,7 +7,7 @@ import {
 	type SkPicture,
 	StrokeCap,
 	StrokeJoin,
-} from "@shopify/react-native-skia";
+} from "react-native-skia";
 import type { SketchItem } from "./sketch.paths";
 
 /** What `drawSketchItems` paints into: the canvas size in points. */
@@ -77,7 +77,7 @@ export function renderSketchPng(items: readonly SketchItem[], target: SketchPngT
 	const pixelHeight = Math.round(target.height * target.scale);
 	if (pixelWidth <= 0 || pixelHeight <= 0) return "";
 
-	const surface = Skia.Surface.Make(pixelWidth, pixelHeight);
+	const surface = Skia.Surface.MakeRaster(pixelWidth, pixelHeight);
 	if (surface === null) return "";
 	const canvas = surface.getCanvas();
 	canvas.scale(target.scale, target.scale);

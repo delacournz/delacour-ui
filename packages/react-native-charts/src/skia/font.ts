@@ -1,5 +1,5 @@
-import { matchFont, type SkFont } from "@shopify/react-native-skia";
 import { useMemo } from "react";
+import { matchFont, type SkFont } from "react-native-skia";
 import type { LabelMetrics } from "../core/text/label-anchor";
 
 /** Re-exported so a consumer can hold a font without importing Skia itself. */

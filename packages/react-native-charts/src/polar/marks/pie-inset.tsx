@@ -1,5 +1,5 @@
-import { Path, type SkPath } from "@shopify/react-native-skia";
 import { type ReactElement, useMemo } from "react";
+import { Path, type SkPath } from "react-native-skia";
 import type { ChartAnimation } from "../../animation/animation.types";
 import { useAnimatedPath } from "../../animation/use-animated-path";
 import { buildSliceEdgePath } from "../../core/polar/build-slice-path";

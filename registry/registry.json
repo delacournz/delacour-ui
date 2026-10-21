@@ -608,9 +608,9 @@
 				"@delacour/react-native-charts"
 			],
 			"expoDependencies": [
-				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
+				"react-native-skia",
 				"react-native-worklets",
 				"uniwind"
 			],
@@ -3906,6 +3906,7 @@
 				"icon",
 				"icons",
 				"pressable",
+				"skia-native-id",
 				"slider",
 				"toggle-button",
 				"tv",
@@ -3915,9 +3916,9 @@
 				"tailwind-variants"
 			],
 			"expoDependencies": [
-				"@shopify/react-native-skia",
 				"react-native-gesture-handler",
 				"react-native-reanimated",
+				"react-native-skia",
 				"react-native-svg",
 				"react-native-worklets",
 				"uniwind"
@@ -3941,6 +3942,24 @@
 			],
 			"testRegistryDependencies": [
 				"styles"
+			],
+			"testDependencies": [
+				"@types/bun"
+			]
+		},
+		{
+			"name": "skia-native-id",
+			"type": "registry:lib",
+			"title": "skiaNativeId",
+			"description": "Starts each JS runtime's Skia canvas ids in a fresh range, so a canvas is not blank after a reload.",
+			"registryDependencies": [],
+			"dependencies": [],
+			"expoDependencies": [
+				"react-native-skia"
+			],
+			"devDependencies": [],
+			"files": [
+				"lib/skia-native-id.ts"
 			],
 			"testDependencies": [
 				"@types/bun"

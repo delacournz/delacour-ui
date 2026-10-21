@@ -1,7 +1,8 @@
-import { Canvas } from "@shopify/react-native-skia";
 import { type ReactElement, useEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
+import { Canvas } from "react-native-skia";
+import "../skia/native-id";
 import type { ChartRow } from "../core/chart.types";
 import { buildLinePath } from "../core/curve/build-line";
 import { toCurvePath } from "../core/interaction/path-segments";

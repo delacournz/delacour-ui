@@ -769,7 +769,7 @@ async function checkDuplicateNativeModules(project: ProjectInfo): Promise<Check>
 	}
 
 	const watched = [
-		"@shopify/react-native-skia",
+		"react-native-skia",
 		"react-native",
 		"react-native-reanimated",
 		"react-native-gesture-handler",

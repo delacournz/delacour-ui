@@ -1,6 +1,6 @@
 # skia
 
-The only folder that imports Skia values. Four small translators.
+The only folder that imports Skia values. Small translators, plus the canvas-id seed.
 
 Everything below `core/` computes numbers; this turns them into things Skia can
 draw. Keeping the surface this narrow is deliberate — Skia 2.x renamed and
@@ -13,6 +13,8 @@ files and nothing else.
 | --- | --- |
 | `build-path.ts` | An SVG path string from `core/curve` into an `SkPath` |
 | `font.ts` | A system font, label advance widths, and line height |
+| `native-id.ts` | Seeds Skia's canvas-id counter per JS runtime, imported for its effect by both chart roots |
+| `native-id.test.ts` | The seed: floor, spacing between runtimes, idempotence, the 32-bit bound |
 
 ## Design
 
@@ -37,3 +39,11 @@ files and nothing else.
 - **Line height comes from the font's metrics, not its point size.** An axis
   gutter has to reserve the full glyph box — ascent plus descent — and the
   nominal size is neither.
+
+- **Each JS runtime numbers its canvases from somewhere new.** Skia's counter restarts at 1000 on
+  every reload while its native view registry outlives the runtime, so the reloaded app's first
+  canvases reused ids the old views had tombstoned and drew nothing until they re-rendered — a
+  chart came up empty after a dev reload or an OTA `Updates.reloadAsync`. `native-id.ts` moves the
+  counter to a random range on import, before any canvas asks for an id. It reaches
+  `SkiaViewNativeId` by path because the package root does not export it; `react-native-ui` holds
+  an identical copy for `Flow` and `Sketch`.

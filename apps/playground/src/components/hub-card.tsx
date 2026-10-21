@@ -6,10 +6,10 @@ import { transparentOf } from "@delacour/react-native-ui/lib/color";
 import { Pressable } from "@delacour/react-native-ui/pressable";
 import { Surface } from "@delacour/react-native-ui/surface";
 import { Text } from "@delacour/react-native-ui/text";
-import { Canvas, RadialGradient, Rect, vec } from "@shopify/react-native-skia";
 import { useRouter } from "expo-router";
 import { type ReactElement, useState } from "react";
 import { type LayoutChangeEvent, StyleSheet, View } from "react-native";
+import { Canvas, RadialGradient, Rect, vec } from "react-native-skia";
 import type { GlowCorner, HubCard as HubCardEntry } from "@/lib/hub-cards";
 
 type Size = { width: number; height: number };

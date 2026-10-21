@@ -1,5 +1,5 @@
-import { Path, Skia } from "@shopify/react-native-skia";
 import { type ReactElement, useMemo } from "react";
+import { Path, Skia } from "react-native-skia";
 import { type GridAxis, gridSegments } from "../../core/geometry/grid-lines";
 import { useChartContext } from "../cartesian-chart.context";
 

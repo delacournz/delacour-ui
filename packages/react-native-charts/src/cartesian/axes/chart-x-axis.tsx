@@ -1,5 +1,5 @@
-import { Text } from "@shopify/react-native-skia";
 import type { ReactElement } from "react";
+import { Text } from "react-native-skia";
 import { anchorX, anchorY } from "../../core/text/label-anchor";
 import { measureLabelWidth } from "../../skia/font";
 import { useChartContext } from "../cartesian-chart.context";

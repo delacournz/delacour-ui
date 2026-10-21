@@ -1,5 +1,5 @@
-import { type SkFont, Text } from "@shopify/react-native-skia";
 import type { ReactElement, ReactNode } from "react";
+import { type SkFont, Text } from "react-native-skia";
 import { sliceLabelPosition } from "../../core/polar/label-position";
 import type { PieSliceData } from "../../core/polar/polar.types";
 import { anchorX, anchorY } from "../../core/text/label-anchor";

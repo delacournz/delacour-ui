@@ -49,6 +49,27 @@ const CARD_TEST = "src/components/ui/card/card.test.ts";
 const CARD_TEST_V1 = 'import { test } from "bun:test";\n\ntest("card", () => {});\n';
 const CARD_TEST_V2 = CARD_TEST_V1.replace('"card"', '"card pads"');
 
+/**
+ * A component doc as an older CLI served it: the registry's text whole, its
+ * Files table still naming a test. Today's CLI drops that row, so the same
+ * ref no longer hashes to what such a project recorded.
+ */
+const GUIDE_DOC_V1 = [
+	"# Guide",
+	"",
+	"| File | |",
+	"| --- | --- |",
+	"| `guide.tsx` | |",
+	"| `guide.test.ts` | |",
+	"",
+	"Pure, so `bun test` reaches it.",
+	"",
+].join("\n");
+const GUIDE_DOC_V2 = GUIDE_DOC_V1.replace("Pure, so `bun test` reaches it.", "Pure, so it is unit-testable.");
+const GUIDE_DOC = "src/components/ui/guide/AGENTS.md";
+const GUIDE_DOC_KEY = "ui/guide/AGENTS.md";
+const GUIDE = "export const Guide = null;\n";
+
 const BADGE = 'export function Badge() {\n\treturn "badge";\n}\n';
 const CN = 'export function cn(...parts: string[]) {\n\treturn parts.join(" ");\n}\n';
 
@@ -72,6 +93,7 @@ const V1: FixtureItem[] = [
 	},
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
+	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V1 } },
 ];
 
 const V2: FixtureItem[] = [
@@ -85,6 +107,7 @@ const V2: FixtureItem[] = [
 	{ name: "badge", type: "registry:ui", files: { "ui/badge/badge.tsx": BADGE } },
 	{ name: "cn", type: "registry:lib", files: { "lib/cn.ts": CN } },
 	{ name: "tag", type: "registry:ui", files: { "ui/tag/tag.tsx": "export const Tag = null;\n" } },
+	{ name: "guide", type: "registry:ui", files: { "ui/guide/guide.tsx": GUIDE, [GUIDE_DOC_KEY]: GUIDE_DOC_V2 } },
 ];
 
 const CARD = "src/components/ui/card/card.tsx";
@@ -571,6 +594,38 @@ describe("update, when the ref a file came from has moved", () => {
 		const result = await run(root, {}, { baseClient: () => clientAt("v2") });
 
 		expect(action(result, CARD)).toBe("updated");
+	});
+});
+
+describe("update, in a project an older CLI wrote", () => {
+	// The ref is a commit and its text has not moved; only what the CLI strips
+	// from a doc on the way out has. The lock's hash still picks the right base.
+	test("merges an edited doc from the text that CLI served, not today's shipped copy", async () => {
+		const root = await project();
+		await add(["guide"], {
+			cwd: root,
+			registry: join(registries, "v1", "registry"),
+			ref: "v1",
+			install: false,
+			silent: true,
+			yes: true,
+		});
+
+		const lock = await readLock(root);
+		const guide = lock.items.guide;
+		if (!guide) throw new Error("guide was not recorded");
+		guide.files[GUIDE_DOC_KEY] = { ref: "v1", hash: contentHash(GUIDE_DOC_V1) };
+		await writeFile(lockPath(root), JSON.stringify(lock), "utf-8");
+		await put(join(root, GUIDE_DOC), GUIDE_DOC_V1.replace("# Guide", "# Guide, with my notes"));
+
+		const result = await run(root);
+		const text = await read(root, GUIDE_DOC);
+
+		expect(action(result, GUIDE_DOC)).toBe("merged");
+		expect(text).toContain("unit-testable");
+		expect(text).toContain("# Guide, with my notes");
+		expect(text).not.toContain("bun test");
+		expect(text).not.toContain("guide.test.ts");
 	});
 });
 

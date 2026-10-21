@@ -27,6 +27,8 @@ export type CheckContext = {
 	/** The project's outermost directory. Bounds the module walk. */
 	workspaceRoot: string;
 	registryDir: string;
+	/** The CLI bundle this run built — not `dist`, which another run may be rebuilding. */
+	cli: string;
 	/** The items requested, or `null` for `--all`. */
 	only: string[] | null;
 	/** The runner `--tests` copied suites for, or `null` when none were asked for. */
@@ -283,8 +285,7 @@ export const CHECKS: Check[] = [
 	{
 		name: "The app is wired up (delacour doctor)",
 		needsInstall: true,
-		async run({ configDir, reporter }) {
-			const bundle = join(import.meta.dirname, "../../dist/index.js");
+		async run({ cli: bundle, configDir, reporter }) {
 			// From the config, not the app: `findConfig` walks *up*, and in the
 			// shared-package layout the config is a sibling of the app rather than
 			// an ancestor. `doctor` finds the app through `app.root` regardless.
@@ -328,8 +329,7 @@ export const CHECKS: Check[] = [
 		// this run would notice if the two stopped agreeing about a file's key or
 		// its hash: every file would read as edited, in every project.
 		name: "The lock records every file, and an update finds nothing to do",
-		async run({ configDir, registryDir, reporter }) {
-			const bundle = join(import.meta.dirname, "../../dist/index.js");
+		async run({ cli: bundle, configDir, registryDir, reporter }) {
 			const output = await run(
 				"node",
 				[bundle, "update", "--dry-run", "--json", "--no-install", "--registry", registryDir],

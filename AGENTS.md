@@ -149,11 +149,12 @@ The checks are defined once, in `scripts/signoff-checks.ts`:
 | `signoff/test` | yes | always | `turbo test test:release test:scripts` |
 | `signoff/build` | yes | always | `turbo build --filter=@delacour/web` |
 | `signoff/registry` | no | the library, CLI, skills, registry or a manifest changed | `turbo registry:build gen-install gen-skill`, `git diff --exit-code`, `turbo verify:expo -- --no-install` (both layouts) |
-| `signoff/tests` | no | anything but markdown changed | `turbo verify:expo -- --tests bun`, then `-- --tests jest` and `-- --tests vitest` — every component's suites copied into an installed app and run by that runner |
+| `signoff/tests` | no | anything but markdown changed | `verify:expo --tests <runner> --dir .verify/tests-<runner>` for `bun`, `jest` and `vitest`, at once — every component's suites copied into an installed app and run by that runner |
 | `signoff` | yes | — | the umbrella, written only when every applicable check passed |
 
-`registry` and `tests` both rebuild `packages/cli/.verify/app`, so they hold one pool lock and never
-run side by side. `tests` installs from npm and takes minutes; it is path-gated on everything but
+`registry`'s two runs share `packages/cli/.verify/app` and hold its pool lock. `tests` runs its three
+runners at the same time, each in its own `--dir` with its own CLI build and packed engines beside
+it, so it shares nothing with `registry` or with itself and needs no lock. `tests` installs from npm and takes minutes; it is path-gated on everything but
 markdown rather than `always`, which keeps the ruleset's required list unchanged — it gates through
 the umbrella like `registry` does, and `ci.yml`'s `copied-tests` job runs it for the release pull
 request and a dispatched signoff.

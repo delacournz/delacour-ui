@@ -1,3 +1,5 @@
+import { TEST_RUNNERS } from "../packages/cli/src/registry/test-runner";
+
 /**
  * What a pull request has to pass before it can merge, and which of it a given diff actually needs.
  *
@@ -28,8 +30,10 @@
  *
  * `tests` is the one installed verify that does run here: every component's suites copied into a real
  * app on Bun, on Jest and on Vitest, and run by each. A guard can only reject what someone already
- * knew only Bun runs; this is what finds the rest. It is path-gated on everything but markdown rather than
- * `always`, so it gates through the umbrella and the ruleset's required list stays as it is.
+ * knew only Bun runs; this is what finds the rest. The three run at once, each in its own
+ * `verify:expo --dir`, so the check costs one runner's time rather than three. It is path-gated on
+ * everything but markdown rather than `always`, so it gates through the umbrella and the ruleset's
+ * required list stays as it is.
  */
 
 /** One process to spawn. `cwd` is repo-root-relative; omitted means the repo root. */
@@ -47,6 +51,8 @@ export type SignoffCheck = {
 	/** The workflow that still runs this check on `workflow_dispatch`, for the escape hatch. */
 	workflow: string;
 	run: readonly SignoffCommand[];
+	/** Run the commands at once rather than in order; every one runs, and the check fails if any did. */
+	parallel?: boolean;
 	/**
 	 * Resources this check holds for its whole run; `signoff.ts` never runs two checks naming the
 	 * same one at once (see ./signoff-pool.ts).
@@ -154,12 +160,12 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 		always: false,
 		paths: ["**"],
 		workflow: "ci.yml",
-		run: [
-			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "bun"] },
-			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "jest"] },
-			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "vitest"] },
-		],
-		locks: [VERIFY_APP],
+		// Each runner in its own `--dir`, which also keeps it off `registry`'s `.verify/app`.
+		run: TEST_RUNNERS.map((runner) => ({
+			argv: ["bun", "run", "verify:expo", "--tests", runner, "--dir", `.verify/tests-${runner}`],
+			cwd: "packages/cli",
+		})),
+		parallel: true,
 	},
 ];
 

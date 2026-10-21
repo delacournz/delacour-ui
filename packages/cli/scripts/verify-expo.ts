@@ -14,7 +14,7 @@ import {
 	resetVerifyDir,
 	runCli,
 	scaffoldWorkspace,
-	VERIFY_DIR,
+	verifyPaths,
 } from "./verify/harness";
 import { bootOnSimulator, bundleWithMetro, writeVerifyScreen } from "./verify/render";
 import { copiedSuites, prepareTestRunner, runCopiedTests } from "./verify/test-runner";
@@ -62,6 +62,8 @@ type Options = {
 	simulator: boolean;
 	/** Copy every component's tests too, and run them under this runner. */
 	tests: TestRunner | null;
+	/** Where to scaffold, from `--dir`; the default `.verify/app` when unset. */
+	dir: string | undefined;
 };
 
 function parseOptions(argv: string[]): Options {
@@ -90,6 +92,7 @@ function parseOptions(argv: string[]): Options {
 		registry: value("--registry") ?? join(import.meta.dirname, "../../../registry"),
 		only: only ? only.split(",").map((name) => name.trim()) : null,
 		tests: (tests as TestRunner | undefined) ?? null,
+		dir: value("--dir"),
 	};
 }
 
@@ -117,6 +120,9 @@ Options
   --layout <name>  standalone (default) or monorepo — components in a shared
                    package the app imports by name
   --registry <p>   a registry directory or URL (default: this repo's)
+  --dir <path>     scaffold here instead of .verify/app; the CLI build and the
+                   packed engines go beside it, so runs with different
+                   directories can run at the same time
   --verbose        stream every subprocess
   --help           this
 
@@ -140,14 +146,15 @@ const reporter: Reporter = {
 	verbose: options.verbose,
 };
 
-const appDir = VERIFY_DIR;
+const paths = verifyPaths(options.dir, process.cwd());
+const appDir = paths.app;
 await resetVerifyDir(appDir, { fresh: options.fresh });
 
 let failures = 0;
 
 try {
 	reporter.step("Building the CLI");
-	const cli = await buildCli(reporter);
+	const cli = await buildCli(paths.cli, reporter);
 
 	reporter.step(`Scaffolding a ${options.layout} project in ${relative(process.cwd(), appDir)}`);
 	const workspace = await scaffoldWorkspace(appDir, {
@@ -180,7 +187,7 @@ try {
 	// this repo — and, until its first publish, is not on npm at all.
 	if (options.install) {
 		reporter.step("Installing the workspace packages the registry depends on");
-		await installWorkspacePackages(workspace, reporter);
+		await installWorkspacePackages(workspace, paths.packages, reporter);
 	}
 
 	// Before `add`, which reads the runner off this package.json to decide what
@@ -249,6 +256,7 @@ try {
 			configDir: workspace.configRoot,
 			workspaceRoot: workspace.installRoot,
 			registryDir: options.registry,
+			cli,
 			only: options.only,
 			tests: options.tests,
 			reporter,

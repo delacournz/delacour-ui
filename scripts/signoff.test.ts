@@ -65,11 +65,14 @@ describe("planChecks", () => {
 		expect(runners.sort()).toEqual([...TEST_RUNNERS].sort());
 	});
 
-	test("the two checks that rebuild .verify/app never run at once", () => {
-		const locks = SIGNOFF_CHECKS.filter((check) => ["registry", "tests"].includes(check.context)).map(
-			(check) => check.locks ?? []
-		);
-		expect(locks[0]?.some((lock) => locks[1]?.includes(lock))).toBe(true);
+	test("each runner verifies in its own directory, so the three run side by side", () => {
+		const tests = SIGNOFF_CHECKS.find((check) => check.context === "tests");
+		const dirs = (tests?.run ?? []).map((step) => step.argv[step.argv.indexOf("--dir") + 1]);
+
+		expect(tests?.parallel).toBe(true);
+		expect(new Set(dirs).size).toBe(TEST_RUNNERS.length);
+		expect(dirs).not.toContain(".verify/app");
+		expect(tests?.locks ?? []).toEqual([]);
 	});
 
 	test("markdown never triggers a path-gated check", () => {

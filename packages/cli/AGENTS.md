@@ -238,7 +238,10 @@ Both were found by building it, and both are silent:
 
 The app is built at `.verify/app` — gitignored and outside the workspace globs. The default run
 removes it afterwards, `node_modules` and all; `--keep` retains it and makes the next run take
-seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left.
+seconds rather than two minutes, and `--fresh` discards what a previous `--keep` left. `--dir <path>`
+builds somewhere else instead, with the CLI bundle and the packed engines beside it (`<path>.cli`,
+`<path>.packages`) rather than in `dist` and a shared folder — so runs with different directories
+share nothing they write and can run at once, which is how `signoff/tests` runs its three runners.
 
 <!-- Cleaning up means all of it. -->
 An earlier version kept `node_modules` through cleanup, on the theory that it was only a cache.

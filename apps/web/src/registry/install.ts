@@ -9420,7 +9420,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 57,
+		fileCount: 58,
 		groups: [
 			{
 				name: "item",
@@ -9577,6 +9577,14 @@ export const install = {
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
 				],
 			},
+			{
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
+				],
+			},
 		],
 	},
 	"list-group": {
@@ -9588,7 +9596,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 42,
+		fileCount: 43,
 		groups: [
 			{
 				name: "list-group",
@@ -9721,6 +9729,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 		],
@@ -10298,7 +10314,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 106,
+		fileCount: 107,
 		groups: [
 			{
 				name: "support",
@@ -10528,6 +10544,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/hooks/use-controllable-state.ts", target: "src/hooks/use-controllable-state.ts" },
+				],
+			},
+			{
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 			{
@@ -17481,7 +17505,7 @@ export const install = {
 		expo: ["react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],
 		npm: ["@central-icons-react-native/round-outlined-radius-1-stroke-1.5", "cn", "tailwind-merge", "tailwind-variants", "tailwindcss"],
 		dev: [],
-		fileCount: 61,
+		fileCount: 62,
 		groups: [
 			{
 				name: "frame",
@@ -17647,6 +17671,14 @@ export const install = {
 				kind: "shared",
 				files: [
 					{ source: "packages/react-native-ui/src/lib/merge-props.ts", target: "src/lib/merge-props.ts" },
+				],
+			},
+			{
+				name: "wrap-text-children",
+				title: "wrapTextChildren",
+				kind: "shared",
+				files: [
+					{ source: "packages/react-native-ui/src/lib/wrap-text-children.ts", target: "src/lib/wrap-text-children.ts" },
 				],
 			},
 		],

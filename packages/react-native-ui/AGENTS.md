@@ -41,7 +41,8 @@ src/
 ├── icons/central.ts      Central Icons re-export
 ├── lib/                  cn, tv, merge-props, compose-refs, slot, color,
 │                         keyboard-animation, navigation-theme, calm-motion,
-│                         paging, scroll-sections, scroll-maths, scroll-edges
+│                         paging, scroll-sections, scroll-maths, scroll-edges,
+│                         wrap-text-children
 ├── styles/               index / base / tokens / theme CSS, plus tokens.ts
 ├── display-name.test.ts  The package-wide displayName check — see rule 12
 ├── docs.test.ts          The package-wide documentation check — see Testing
@@ -778,7 +779,7 @@ files to close a cycle with. A part that calls a `useXPart` hook or wraps its ow
 children — `Button.Label`, `ListGroup.Item` — does **not** qualify. Do not
 "tidy" `Text`'s presets into twelve files.
 
-Helpers follow their caller, not the root: `wrapTextChildren` lives in
+Helpers follow their caller, not the root: `wrapListGroupItemText` lives in
 `list-group-item.tsx` because `ListGroup.Item` wraps its own bare text, while
 `withDividers` stays in `list-group.tsx` because the root inserts the dividers.
 Putting a part's helper in the root file closes a cycle.

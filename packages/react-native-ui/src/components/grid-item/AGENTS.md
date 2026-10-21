@@ -25,7 +25,7 @@ and `GridItem.Actions`.
 | `grid-item.types.ts` | Prop types shared by two or more parts |
 | `grid-item.layout.ts` | `resolveCellSize`, `placeTiles`, `tileRect`, `gridHeight`, `resolveInitialAspect`, `readGridItemSpan` — pure, no RN imports |
 | `grid-item.layout.test.ts` | |
-| `grid-item.variants.ts` | The slotted `tv()`, the variant/size/render resolvers and the label joiner — no RN imports |
+| `grid-item.variants.ts` | The slotted `tv()`, the variant/size/render resolvers, the label joiner and the background-first ordering — no RN imports |
 | `grid-item.variants.test.ts` | |
 
 ## Design
@@ -137,3 +137,9 @@ and `GridItem.Actions`.
   so the identity check never matched there and a background written after the
   content would have drawn over it. `isGridItemBackgroundType` holds the rule
   and a test pins the constant to the part's literal `displayName`.
+- **`asChild` takes the caller's child as written.** `orderGridItemChildren`
+  moves backgrounds to the front, and used to hand back an array every time —
+  `Pressable` with `asChild` calls `Children.only`, which throws on any array,
+  so `<GridItem asChild onPress={…}><View /></GridItem>` threw. A single child,
+  or any children under `asChild`, now comes back untouched; the tests hold
+  both.

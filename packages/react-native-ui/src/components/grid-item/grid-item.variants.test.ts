@@ -1,4 +1,5 @@
 import { describe, expect, test } from "bun:test";
+import { Children, createElement, isValidElement } from "react";
 import {
 	GRID_ITEM_BACKGROUND_DISPLAY_NAME,
 	GRID_ITEM_SIZES,
@@ -6,6 +7,7 @@ import {
 	gridItemVariants,
 	isGridItemBackgroundType,
 	joinGridItemLabel,
+	orderGridItemChildren,
 	readGridItemText,
 	resolveGridItemRender,
 	resolveGridItemSize,
@@ -229,6 +231,40 @@ describe("isGridItemBackgroundType", () => {
 		expect(isGridItemBackgroundType(() => null)).toBe(false);
 		expect(isGridItemBackgroundType("View")).toBe(false);
 		expect(isGridItemBackgroundType(undefined)).toBe(false);
+	});
+});
+
+describe("orderGridItemChildren", () => {
+	const Background = Object.assign(() => null, { displayName: GRID_ITEM_BACKGROUND_DISPLAY_NAME });
+	const Title = Object.assign(() => null, { displayName: "DelacourUI.GridItem.Title" });
+
+	test("hands a single element back as that element, never a one-item array", () => {
+		const child = createElement(Title);
+		const result = orderGridItemChildren(child);
+		expect(result).toBe(child);
+		expect(() => Children.only(result)).not.toThrow();
+	});
+
+	test("with asChild, hands the children back untouched", () => {
+		const child = createElement(Title);
+		const result = orderGridItemChildren(child, { asChild: true });
+		expect(result).toBe(child);
+		expect(() => Children.only(result)).not.toThrow();
+	});
+
+	test("moves a background to the front of mixed children", () => {
+		const result = orderGridItemChildren([
+			createElement(Title, { key: "title" }),
+			createElement(Background, { key: "background" }),
+		]);
+		const types = Children.toArray(result).map((child) => isValidElement(child) && child.type);
+		expect(types).toEqual([Background, Title]);
+	});
+
+	test("keeps the order when there is no background", () => {
+		const result = orderGridItemChildren([createElement(Title, { key: "a" }), "text"]);
+		expect(Children.toArray(result)).toHaveLength(2);
+		expect(Children.toArray(result)[1]).toBe("text");
 	});
 });
 

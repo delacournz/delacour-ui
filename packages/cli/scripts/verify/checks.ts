@@ -285,7 +285,7 @@ export const CHECKS: Check[] = [
 	{
 		name: "The app is wired up (delacour doctor)",
 		needsInstall: true,
-		async run({ cli: bundle, configDir, reporter }) {
+		async run({ cli: bundle, configDir, reporter, tests }) {
 			// From the config, not the app: `findConfig` walks *up*, and in the
 			// shared-package layout the config is a sibling of the app rather than
 			// an ancestor. `doctor` finds the app through `app.root` regardless.
@@ -308,10 +308,12 @@ export const CHECKS: Check[] = [
 
 			// The gesture root lives in the consumer's own layout, which this
 			// scaffold deliberately does not write — the CLI never creates it.
-			// Jest transforms is only a warning to a consumer, but `--tests jest`
-			// sets the project up the way the docs say, so here it has to pass.
+			// Test runner and Jest transforms are only warnings to a consumer, but
+			// `--tests` sets the project up the way the docs say, so here both have
+			// to pass — Test runner included, since a skip means no test was copied.
+			const mustPass = tests ? ["Test runner", "Jest transforms"] : ["Jest transforms"];
 			const failed = checks.filter(
-				(check) => check.status === "fail" || (check.name === "Jest transforms" && check.status !== "pass")
+				(check) => check.status === "fail" || (mustPass.includes(check.name) && check.status !== "pass")
 			);
 
 			return failed.length === 0

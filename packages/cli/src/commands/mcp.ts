@@ -340,5 +340,11 @@ function describeAdd(result: AddResult): string[] {
 		lines.push("A native module changed — rebuild the dev client; a JS reload will not pick it up.");
 	}
 
+	for (const check of result.testSetup.filter((entry) => entry.status === "warn" || entry.status === "fail")) {
+		lines.push(
+			`The copied tests will not run yet — ${check.name}: ${check.detail}.${check.fix ? ` ${check.fix}` : ""}`
+		);
+	}
+
 	return lines;
 }

@@ -216,8 +216,8 @@ holds on either line.
 the scaffold's SDK with the engines in `transformIgnorePatterns`, or a `vitest.config.ts` mapping the
 project's `tsconfig` paths — then runs `add --all --tests`, runs the suites, and fails unless every
 suite the lock records ran and none failed. A runner that matched no files passes everything it
-found, which is why the count is checked as well. Under it `doctor`'s **Jest transforms** must pass,
-not merely warn. `signoff/tests` runs all three runners on every change but markdown.
+found, which is why the count is checked as well. Under it `doctor`'s **Test runner** and **Jest
+transforms** must pass, not merely warn. `signoff/tests` runs all three runners on every change but markdown.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
 imports by name. That layout has wiring the standalone one does not — a workspace link, an
@@ -580,11 +580,16 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
 - **It happens in `transformFile`, so the lock agrees.** The lock hashes the text after the
   transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
   runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
-- **What the runner itself needs is out of scope.** Vitest needs the project's `@/` alias in its own
+- **The runner's own setup is checked, never written.** Vitest needs the project's `@/` alias in its own
   config, and on SDK 58 `esbuild: { tsconfigRaw: "{}" }` too, because `expo`'s `exports` map hides
   `tsconfig.base` from Vite's tsconfig loader (and from `vite-tsconfig-paths`), and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
-  `chart` and `bottom-sheet`. The docs say so, and `doctor`'s `checkJestTransform` warns when the
-  Jest config's text lacks them; the CLI does not write a runner's config.
+  `chart` and `bottom-sheet`. The CLI does not write a runner's config — that file is the project's —
+  so `project/test-setup.ts` checks it instead: `checkTestRunner` (packages installed, the `test`
+  script on the same runner, a Jest config with `jest-expo` or a `moduleNameMapper` for the alias,
+  a Vitest alias and `tsconfigRaw`) and `checkJestTransform`. `doctor` runs both as `testChecks`, and
+  `add --tests` runs them after its install, warns, and returns them as `AddResult.testSetup` for
+  the MCP reply. The config is read as text, so a setting built in code can be missed; both stay
+  warnings, since only the tests break. Under `verify:expo --tests` both have to pass.
 
 `verify:expo --tests bun`, `--tests jest` and `--tests vitest` (see Testing) prove it end to end, and
 `signoff/tests` runs all three.

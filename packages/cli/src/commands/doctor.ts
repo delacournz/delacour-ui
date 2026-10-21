@@ -12,6 +12,7 @@ import { isCovered, parseSources } from "../project/css";
 import { detectProject, majorOf, type ProjectInfo } from "../project/detect";
 import { expoCommand } from "../project/package-manager";
 import { findRootLayout } from "../project/root-layout";
+import { checkTestRunner, readTestSetup, type TestSetup } from "../project/test-setup";
 import { UNIWIND_ENV_FILENAME, UNIWIND_ENV_REFERENCE } from "../project/uniwind-env";
 import { NAMESPACES } from "../registry/namespaces";
 import type { TestRunner } from "../registry/test-runner";
@@ -78,7 +79,7 @@ export async function runChecks(options: DoctorOptions): Promise<Check[]> {
 		await checkCssEntryImported(config),
 		await checkGestureHandlerRoot(config),
 		await checkDuplicateNativeModules(project),
-		checkJestTransform(await readJestSetup(config, project)),
+		...testChecks(await readTestSetup(config, project)),
 		checkLock(existsSync(lockPath(config.root)), await hasEntries(config.directories.ui)),
 	];
 }
@@ -93,13 +94,10 @@ const ENGINE_TRANSFORMS: Record<string, readonly string[]> = {
 	"@delacour/react-native-charts": ["@delacour/.*", "d3-.*", "internmap"],
 };
 
-const JEST_CONFIG_FILES = [
-	"jest.config.js",
-	"jest.config.ts",
-	"jest.config.cjs",
-	"jest.config.mjs",
-	"jest.config.json",
-];
+/** Whether copied tests can run: the runner's setup, then what Jest has to transform. */
+export function testChecks(setup: TestSetup): Check[] {
+	return [checkTestRunner(setup), checkJestTransform(setup)];
+}
 
 export type JestSetup = {
 	runner: TestRunner;
@@ -138,50 +136,6 @@ export function checkJestTransform(setup: JestSetup): Check {
 		detail: `${engines.join(", ")} ship${engines.length === 1 ? "s" : ""} untranspiled, and transformIgnorePatterns does not let ${missing.join(", ")} through`,
 		fix: `Add ${missing.map((pattern) => `\`${pattern}\``).join(", ")} to the packages transformIgnorePatterns lets through, beside jest-expo's own.`,
 	};
-}
-
-async function readJestSetup(config: ResolvedConfig, project: ProjectInfo): Promise<JestSetup> {
-	const roots = [...new Set([config.root, config.app.resolved.root])];
-	const manifests = await Promise.all(roots.map((root) => readJsonFile(join(root, "package.json"))));
-	const dependencies = Object.assign(
-		{},
-		project.packageJson?.dependencies,
-		project.packageJson?.devDependencies,
-		...manifests.flatMap((manifest) => [manifest?.dependencies, manifest?.devDependencies])
-	);
-
-	return { runner: config.testRunner, dependencies, jestConfig: await readJestConfig(roots, manifests) };
-}
-
-async function readJestConfig(
-	roots: readonly string[],
-	manifests: readonly (PackageManifest | null)[]
-): Promise<string | null> {
-	for (const [index, root] of roots.entries()) {
-		for (const file of JEST_CONFIG_FILES) {
-			const path = join(root, file);
-			if (existsSync(path)) return readFile(path, "utf-8");
-		}
-
-		const inline = manifests[index]?.jest;
-		if (inline !== undefined) return JSON.stringify(inline);
-	}
-
-	return null;
-}
-
-type PackageManifest = {
-	dependencies?: Record<string, string>;
-	devDependencies?: Record<string, string>;
-	jest?: unknown;
-};
-
-async function readJsonFile(path: string): Promise<PackageManifest | null> {
-	try {
-		return JSON.parse(await readFile(path, "utf-8"));
-	} catch {
-		return null;
-	}
 }
 
 /**

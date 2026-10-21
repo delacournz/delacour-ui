@@ -564,6 +564,40 @@ describe("add --tests, in a project on another runner", () => {
 		expect(await read(root, TEST)).toContain('from "vitest"');
 	});
 
+	test("says what Vitest is missing — a config mapping the alias — once the tests are copied", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0", "@types/node": "^24.0.0" } });
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		const runner = result?.testSetup.find((check) => check.name === "Test runner");
+		expect(runner?.status).toBe("warn");
+		expect(runner?.detail).toContain("@/");
+		expect(runner?.fix).toContain("vitest.config.ts");
+	});
+
+	test("finds nothing to say once Jest is set up the way the docs say", async () => {
+		const root = await scaffoldOn({
+			scripts: { test: "jest" },
+			devDependencies: {
+				jest: "^30.0.0",
+				"jest-expo": "~57.0.0",
+				"@jest/globals": "^30.0.0",
+				"@types/node": "^24.0.0",
+			},
+			jest: { preset: "jest-expo" },
+		});
+		const result = await add(["button"], { ...SHARED, cwd: root, tests: true });
+
+		expect(result?.testSetup.map((check) => [check.name, check.status])).toEqual([
+			["Test runner", "pass"],
+			["Jest transforms", "pass"],
+		]);
+	});
+
+	test("checks no runner when no tests were asked for", async () => {
+		const root = await scaffoldOn({ devDependencies: { vitest: "^3.2.0" } });
+		expect((await add(["button"], { ...SHARED, cwd: root }))?.testSetup).toEqual([]);
+	});
+
 	test("leaves the source a plain add copies untouched by the runner", async () => {
 		const root = await scaffoldOn({ scripts: { test: "jest" } });
 		await add(["button"], { ...SHARED, cwd: root, tests: true });

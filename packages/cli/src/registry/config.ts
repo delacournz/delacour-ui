@@ -495,7 +495,8 @@ export const ITEM_META: Record<string, ItemMeta> = {
 	},
 	signature: {
 		title: "Signature",
-		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+		description:
+			"A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 		categories: ["forms"],
 	},
 	screen: {

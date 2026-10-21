@@ -10,6 +10,7 @@ import {
 	historyToValue,
 	isHistoryEmpty,
 	parseSignature,
+	resolveSignatureExport,
 	SIGNATURE_EXPORT_PADDING,
 	SIGNATURE_EXPORT_STROKE_COLOR,
 	type SignatureHistory,
@@ -17,6 +18,7 @@ import {
 	scaleValue,
 	serializeSignature,
 	shouldAddPoint,
+	signaturePngSize,
 	smoothStroke,
 	strokeCount,
 	strokesToPaths,
@@ -428,6 +430,66 @@ describe("toSVG", () => {
 
 	test("an empty value cropped tight falls back to the pad", () => {
 		expect(toSVG({ width: 200, height: 100, strokes: [] }, { viewBox: "tight" })).toContain('viewBox="0 0 200 100"');
+	});
+});
+
+describe("resolveSignatureExport", () => {
+	test("the default is the whole pad, black ink, the default width, no background", () => {
+		expect(resolveSignatureExport(VALUE)).toEqual({
+			background: null,
+			box: { x: 0, y: 0, width: 200, height: 100 },
+			strokeColor: SIGNATURE_EXPORT_STROKE_COLOR,
+			strokeWidth: 2.5,
+		});
+	});
+
+	test("literal colours and the width pass through", () => {
+		const resolved = resolveSignatureExport(VALUE, { background: "#fff", strokeColor: "#123456", strokeWidth: 4 });
+		expect(resolved.background).toBe("#fff");
+		expect(resolved.strokeColor).toBe("#123456");
+		expect(resolved.strokeWidth).toBe(4);
+	});
+
+	test("a token name or transparent is no colour", () => {
+		const resolved = resolveSignatureExport(VALUE, { background: "transparent", strokeColor: "foreground" });
+		expect(resolved.background).toBeNull();
+		expect(resolved.strokeColor).toBe(SIGNATURE_EXPORT_STROKE_COLOR);
+	});
+
+	test("tight crops to the ink plus padding", () => {
+		const value: SignatureValue = { width: 200, height: 100, strokes: [CURVE] };
+		expect(resolveSignatureExport(value, { padding: 0, strokeWidth: 2, viewBox: "tight" }).box).toEqual({
+			x: -1,
+			y: -1,
+			width: 32,
+			height: 12,
+		});
+		const pad = SIGNATURE_EXPORT_PADDING;
+		expect(resolveSignatureExport(value, { strokeWidth: 2, viewBox: "tight" }).box).toEqual({
+			x: -1 - pad,
+			y: -1 - pad,
+			width: 32 + pad * 2,
+			height: 12 + pad * 2,
+		});
+	});
+
+	test("tight with no ink falls back to the pad", () => {
+		const resolved = resolveSignatureExport({ width: 200, height: 100, strokes: [] }, { viewBox: "tight" });
+		expect(resolved.box).toEqual({ x: 0, y: 0, width: 200, height: 100 });
+	});
+});
+
+describe("signaturePngSize", () => {
+	test("points times scale, rounded to whole pixels", () => {
+		expect(signaturePngSize({ x: 0, y: 0, width: 200, height: 100 }, 3)).toEqual({ width: 600, height: 300 });
+		expect(signaturePngSize({ x: -9, y: -9, width: 50.4, height: 10.2 }, 2)).toEqual({ width: 101, height: 20 });
+	});
+
+	test("an unmeasured box or a bad scale has no pixels", () => {
+		expect(signaturePngSize({ x: 0, y: 0, width: 0, height: 100 }, 3)).toBeNull();
+		expect(signaturePngSize({ x: 0, y: 0, width: 200, height: 100 }, 0)).toBeNull();
+		expect(signaturePngSize({ x: 0, y: 0, width: 200, height: 100 }, Number.NaN)).toBeNull();
+		expect(signaturePngSize({ x: 0, y: 0, width: 0.1, height: 0.1 }, 1)).toBeNull();
 	});
 });
 

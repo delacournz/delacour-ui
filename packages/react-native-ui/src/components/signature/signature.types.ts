@@ -46,6 +46,12 @@ export type SignatureExportOptions = {
 	padding?: number;
 };
 
+/** Options for `toPNG()`: the SVG's, plus the pixel density. */
+export type SignaturePngOptions = SignatureExportOptions & {
+	/** Pixels per point. Default: the screen's pixel ratio. */
+	scale?: number;
+};
+
 /** What a signature's ref is handed. */
 export type SignatureHandle = {
 	/** Removes the last stroke. A no-op with nothing to undo. */
@@ -60,6 +66,12 @@ export type SignatureHandle = {
 	readonly value: SignatureValue | null;
 	/** The signature as a standalone SVG document. Valid, if blank, when empty. */
 	toSVG: (options?: SignatureExportOptions) => string;
+	/**
+	 * The signature as a base64-encoded PNG (no `data:` prefix), framed and
+	 * coloured as `toSVG` with the same options would be, at `scale` pixels per
+	 * point. Transparent unless `background` is set. `""` before the pad is measured.
+	 */
+	toPNG: (options?: SignaturePngOptions) => string;
 	/** One smoothed SVG path `d` per stroke, in pad coordinates. */
 	toPaths: () => readonly string[];
 };

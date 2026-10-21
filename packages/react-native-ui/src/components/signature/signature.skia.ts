@@ -1,6 +1,15 @@
-import { PaintStyle, Skia, type SkPath, type SkPicture, StrokeCap, StrokeJoin } from "react-native-skia";
-import { traceStroke } from "./signature.stroke";
-import type { SignatureStroke } from "./signature.types";
+import {
+	ImageFormat,
+	PaintStyle,
+	type SkCanvas,
+	Skia,
+	type SkPath,
+	type SkPicture,
+	StrokeCap,
+	StrokeJoin,
+} from "react-native-skia";
+import { resolveSignatureExport, signaturePngSize, traceStroke } from "./signature.stroke";
+import type { SignaturePngOptions, SignatureStroke, SignatureValue } from "./signature.types";
 
 /**
  * Every stroke's traced path, keyed by the stroke itself.
@@ -36,16 +45,45 @@ type SignatureInkStyle = { color: string | undefined; strokeWidth: number };
  */
 export function recordSignaturePicture(strokes: readonly SignatureStroke[], ink: SignatureInkStyle): SkPicture {
 	const recorder = Skia.PictureRecorder();
-	const canvas = recorder.beginRecording();
-	if (ink.color !== undefined) {
-		const paint = Skia.Paint();
-		paint.setAntiAlias(true);
-		paint.setStyle(PaintStyle.Stroke);
-		paint.setStrokeCap(StrokeCap.Round);
-		paint.setStrokeJoin(StrokeJoin.Round);
-		paint.setStrokeWidth(ink.strokeWidth);
-		paint.setColor(Skia.Color(ink.color));
-		for (const stroke of strokes) canvas.drawPath(signatureStrokePath(stroke), paint);
-	}
+	drawSignatureStrokes(recorder.beginRecording(), strokes, ink);
 	return recorder.finishRecordingAsPicture();
+}
+
+/** Each stroke as its own `drawPath`, with a round-capped pen. Nothing when the ink did not resolve. */
+function drawSignatureStrokes(canvas: SkCanvas, strokes: readonly SignatureStroke[], ink: SignatureInkStyle): void {
+	if (ink.color === undefined) return;
+	const paint = Skia.Paint();
+	paint.setAntiAlias(true);
+	paint.setStyle(PaintStyle.Stroke);
+	paint.setStrokeCap(StrokeCap.Round);
+	paint.setStrokeJoin(StrokeJoin.Round);
+	paint.setStrokeWidth(ink.strokeWidth);
+	paint.setColor(Skia.Color(ink.color));
+	for (const stroke of strokes) canvas.drawPath(signatureStrokePath(stroke), paint);
+}
+
+/**
+ * The signature as a base64 PNG, rendered off screen on a CPU surface.
+ *
+ * Framed and coloured by {@link resolveSignatureExport}, the function `toSVG`
+ * uses, so the PNG is the SVG rasterised: the same box, the same literal ink,
+ * the same background or none. Off screen rather than a snapshot of the pad, so
+ * the guideline, the placeholder and the pad's own fill never reach the file.
+ * The strokes are the cached paths the pad draws. Returns `""` when the frame
+ * has no pixels — an unmeasured pad.
+ */
+export function renderSignaturePng(value: SignatureValue, options: SignaturePngOptions & { scale: number }): string {
+	const { background, box, strokeColor, strokeWidth } = resolveSignatureExport(value, options);
+	const size = signaturePngSize(box, options.scale);
+	if (size === null) return "";
+
+	const surface = Skia.Surface.Make(size.width, size.height);
+	if (surface === null) return "";
+	const canvas = surface.getCanvas();
+	canvas.scale(size.width / box.width, size.height / box.height);
+	canvas.translate(-box.x, -box.y);
+	if (background !== null) canvas.drawColor(Skia.Color(background));
+	drawSignatureStrokes(canvas, value.strokes, { color: strokeColor, strokeWidth });
+	surface.flush();
+	return surface.makeImageSnapshot().encodeToBase64(ImageFormat.PNG);
 }

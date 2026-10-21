@@ -103,9 +103,10 @@ type SignatureValue = {
 />
 ```
 
-## Exporting SVG
+## Exporting SVG and PNG
 
-The ref's `toSVG()` returns a standalone SVG document, with literal colours and `#000000` ink by default.
+The ref's `toSVG()` returns a standalone SVG document, with literal colours and `#000000` ink by default. `toPNG()` takes the
+same options plus `scale` and returns the same frame as a base64 PNG, transparent unless `background` is set.
 
 ```tsx
 const pad = useRef<SignatureHandle>(null);
@@ -113,6 +114,8 @@ const pad = useRef<SignatureHandle>(null);
 <Signature ref={pad} />;
 
 const svg = pad.current?.toSVG({ viewBox: "tight", padding: 8, background: "#ffffff" });
+const png = pad.current?.toPNG({ viewBox: "tight", background: "#ffffff", scale: 3 });
+const uri = `data:image/png;base64,${png}`;
 ```
 
 `toPaths()` returns one path `d` per stroke instead, for drawing it elsewhere with `react-native-svg`. To draw a stroke
@@ -211,6 +214,7 @@ so no downstroke is lost. Leave room around it to scroll from.
     strokeCount: { type: "number" },
     value: { type: "SignatureValue | null" },
     toSVG: { type: "(options?: SignatureExportOptions) => string", description: "A standalone SVG document. Valid, if blank, when empty." },
+    toPNG: { type: "(options?: SignaturePngOptions) => string", description: "Base64 PNG, no data: prefix, framed as toSVG. Empty string before the pad is measured." },
     toPaths: { type: "() => readonly string[]", description: "One smoothed path d per stroke, in pad coordinates." },
   }}
 />
@@ -224,6 +228,16 @@ so no downstroke is lost. Leave room around it to scroll from.
     background: { type: "string", default: '"transparent"', description: "A literal colour painted behind the ink." },
     viewBox: { type: '"pad" | "tight"', default: '"pad"', description: "tight crops to the ink plus padding." },
     padding: { type: "number", default: "8" },
+  }}
+/>
+
+### SignaturePngOptions
+
+`SignatureExportOptions`, plus:
+
+<TypeTable
+  type={{
+    scale: { type: "number", description: "Pixels per point. Defaults to the screen's pixel ratio." },
   }}
 />
 

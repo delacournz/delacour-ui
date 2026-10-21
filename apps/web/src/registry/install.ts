@@ -7674,7 +7674,7 @@ export const install = {
 	"signature": {
 		name: "signature",
 		title: "Signature",
-		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON or SVG.",
+		description: "A pad to sign with a finger, with undo, redo and clear, handing back the strokes as JSON, SVG or PNG.",
 		importPath: "@delacour/react-native-ui/signature",
 		exportName: "Signature",
 		expo: ["@shopify/react-native-skia", "react-native-gesture-handler", "react-native-pulsar", "react-native-reanimated", "react-native-svg", "react-native-worklets", "uniwind"],

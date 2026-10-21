@@ -2,8 +2,8 @@
 
 A pad to sign with a finger or a stylus. Compound root plus `Signature.Pad`,
 `Signature.Toolbar`, `Signature.Undo`, `Signature.Redo`, `Signature.Clear` and
-`Signature.Alternative`. Hands back the strokes as JSON, as SVG path data, or as
-a standalone SVG document.
+`Signature.Alternative`. Hands back the strokes as JSON, as SVG path data, as a
+standalone SVG document, or as a PNG.
 
 `import { Signature } from "@delacour/react-native-ui/signature";`
 
@@ -15,7 +15,7 @@ a standalone SVG document.
 | `signature.tsx` | Root: the history, the controlled-value sync, the imperative handle, the announcements, and the `Object.assign` surface |
 | `signature-pad.tsx` | `Signature.Pad` — the pan, the live stroke, the guideline, the placeholder and the accessibility surface |
 | `signature-ink.tsx` | The one Skia canvas: the finished strokes' picture, the live stroke traced on the UI thread, and the clear's fade. Internal |
-| `signature.skia.ts` | Skia only: a stroke's cached `SkPath` and the recorded picture of the finished strokes |
+| `signature.skia.ts` | Skia only: a stroke's cached `SkPath`, the recorded picture of the finished strokes, and the off-screen PNG render |
 | `signature-toolbar.tsx` | `Signature.Toolbar` |
 | `signature-action-button.tsx` | The shared body of the three action buttons. Internal |
 | `signature-undo.tsx` | `Signature.Undo` |
@@ -23,8 +23,8 @@ a standalone SVG document.
 | `signature-clear.tsx` | `Signature.Clear` |
 | `signature-alternative.tsx` | `Signature.Alternative` — the typed-name link |
 | `signature.context.tsx` | `SignatureContext`, `useSignature()`, `useSignatureContext()`, `useSignaturePart()` |
-| `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions` |
-| `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, SVG export, JSON round trip |
+| `signature.types.ts` | `SignaturePoint`, `SignatureStroke`, `SignatureValue`, `SignatureHandle`, `SignatureExportOptions`, `SignaturePngOptions` |
+| `signature.stroke.ts` | Pure, no RN: point filter, smoother and path tracer (worklets), history reducer, bounds, re-fit, the export frame and PNG size, SVG export, JSON round trip |
 | `signature.stroke.test.ts` | |
 | `signature.variants.ts` | Pure `tv()` slots, the size tables, the axis ladder and the accessibility resolvers |
 | `signature.variants.test.ts` | |
@@ -122,8 +122,12 @@ a standalone SVG document.
 - **Haptics**: the `haptic` preset (default `light`) as each stroke begins,
   nothing while drawing — a buzz per point would be a motor running — and a
   selection tick on clear. `haptic={false}` silences both.
-- **No raster export, yet.** The pad now draws with Skia, so a PNG is an
-  off-screen render of `recordSignaturePicture` away, as `Sketch` does it; it is
-  an open question rather than a missing feature, since SVG already covers a
-  printed signature. The point's `t` is stored so a speed-eased stroke width
-  can follow without a format change.
+- **`toPNG()` is `toSVG()` rasterised.** Both resolve their options through one
+  `resolveSignatureExport`, so the same options give the same box, the same
+  literal ink and the same background or none — a PNG is transparent unless
+  `background` is set. It renders the cached stroke paths off screen on a CPU
+  surface at `scale` pixels per point (default the screen's ratio) and returns
+  base64 with no `data:` prefix, as `Sketch.toPNG` does. Off screen rather than a
+  snapshot of the pad, so the guideline, the placeholder and the pad's fill never
+  reach the file. `""` before the pad is measured. The point's `t` is stored so
+  a speed-eased stroke width can follow without a format change.

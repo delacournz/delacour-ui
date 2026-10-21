@@ -14,7 +14,7 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
 | --- | --- |
 | `index.ts` | → `@delacour/react-native-ui/flow` |
 | `flow.tsx` | Root: the viewport, the canvas gestures, the three layers, fit/zoom/connect, the `Object.assign` surface |
-| `flow-background.tsx` | `Flow.Background` — one pattern-filled rect sized to the visible graph |
+| `flow-background.tsx` | `Flow.Background` — one shader-filled rect sized to the visible graph |
 | `flow-node.tsx` | `Flow.Node` — drag, tap, confine, and the node's accessibility actions |
 | `flow-handle.tsx` | `Flow.Handle` — placement, registration, and the connection drag |
 | `flow-edge.tsx` | `Flow.Edge` — the route worklet, dashes, arrowhead |
@@ -23,8 +23,7 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
 | `flow-minimap.tsx` | `Flow.MiniMap` — every entry as a block, plus the visible-area frame |
 | `flow-connection-preview.tsx` | Internal: the line a connection drag draws, above the nodes |
 | `flow-registry.ts` | Internal: the node/group index — a shared position, size and handle map per entry |
-| `flow-svg.ts` | Internal: an animated `G` whose native `matrix` a worklet drives |
-| `flow.context.tsx` | `FlowProvider`, `useFlow()`, `useFlowContext()`, `useFlowPart()`, the SVG-layer, group and node contexts |
+| `flow.context.tsx` | `FlowProvider`, `useFlow()`, `useFlowContext()`, `useFlowPart()`, the canvas-layer, group and node contexts |
 | `flow-geometry.ts` | Types, routing, fit, zoom and minimap maths — one worklet, plus JS-thread copies |
 | `flow-geometry.test.ts` | Every side pair, every variant, overlap, zero size, fit, zoom, clamp |
 | `flow.variants.ts` | The slotted `tv()`, the defaults, and every non-geometry resolver — no RN imports |
@@ -49,7 +48,7 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   function" the first time a node moves. Worklets reach geometry as `flowGeometry().route…`; the
   JS thread and the tests use the destructured copies, which are not worklets.
 - **Children draw in three layers whatever order they are written in.** `sortLayers` walks
-  children, fragments and arrays: `Edge` and `Background` go into one SVG beneath the nodes,
+  children, fragments and arrays: `Edge` and `Background` go into one Skia canvas beneath the nodes,
   `Node` and `Group` into the transformed view, `Controls` and `MiniMap` on top unscaled. An
   edge wrapped in a custom component is not found — it renders `null` and warns in development.
 - **Layers are chosen by `displayName`, never by `child.type === FlowEdge`.** In a development
@@ -72,9 +71,25 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   parent draws but is not hit tested on every platform, so the layer extends
   `FLOW_LAYER_EXTENT` past the canvas each way and scales about its own centre, which is the
   graph's origin. An empty view allocates no backing store at that size.
-- **The SVG layer is driven by `matrix`, not `transform`.** `react-native-svg` folds `transform`
-  into `matrix` on the JS side; a worklet's animated prop bypasses that fold, so `flow-svg.ts`
-  types the native prop and writes it directly.
+- **The canvas is a second React reconciler, so nothing inside it reaches the app.** Context does
+  not cross `<Canvas>`: an edge calling `useThemeColor` there would read no `ScopedTheme`, and
+  `useCalmMotion` no `CalmMotionProvider`. The root collects every colour its canvas children
+  name (`collectFlowCanvasTokens`), resolves them above the canvas in one `useThemeColors` call
+  with `isCalm` beside them, and re-renders `FlowProvider` plus `FlowCanvasLayerProvider` inside
+  the canvas — the trick `@delacour/react-native-charts` uses. A part off the canvas gets `null`
+  from `useFlowCanvasLayer()` and warns. The preview and the minimap own their canvases and
+  resolve their colours just outside them.
+- **`flow.tsx` imports `lib/skia-native-id` for its effect.** After a JS reload Skia reused the old
+  runtime's canvas ids, which its native registry still held as torn down, so the edges and the
+  background came up blank — the minimap too — until a re-render (pressing the lock was enough).
+  The import moves this runtime's ids to a fresh range before any of the three canvases asks for one.
+- **Shared values go straight into Skia props.** The pan and zoom are one derived `transform` on
+  the canvas's `Group`; an edge's route is a derived `SkPath` (`Skia.Path.MakeFromSVGString` in
+  the worklet), its march a `DashPathEffect` `phase`. Nothing crosses to the JS thread per frame.
+- **The background is a runtime shader, not a pattern.** One SkSL effect draws dots, a grid or
+  crosses as a signed distance in graph units, so the marks scale with the zoom and stay sharp at
+  any of it. Runtime SkSL has no `fwidth`, so the antialias width — one device pixel in graph
+  units — is a uniform, `1 / (zoom × PixelRatio)`.
 - **Gestures nest innermost-first.** A handle's drag blocks its node's and the canvas's, a
   node's drag blocks the canvas's, and a node that cannot be dragged lets the canvas pan
   straight through it. The canvas's pan and pinch are simultaneous and both incremental, so a
@@ -103,8 +118,9 @@ parts: `Background`, `Node`, `Handle`, `Edge`, `Group`, `Controls`, `MiniMap`, a
   layer is needed for something that never leaves the canvas.
 - **The minimap's bounds hold the visible area too**, so its frame never slides off the map
   when the canvas is panned past the graph. It takes no touches.
-- **No Skia.** The renderer is `react-native-svg` + Reanimated animated props + Gesture Handler,
-  all existing peers, so `flow` adds no peer dependency.
+- **Skia is an optional peer.** The renderer is `react-native-skia` + Reanimated +
+  Gesture Handler. Skia was already the `Chart` renderer, so an app with either has it; one with
+  neither installs it when it adds `flow`.
 
 ## Accessibility
 

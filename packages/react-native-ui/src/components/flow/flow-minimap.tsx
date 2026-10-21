@@ -1,14 +1,14 @@
 import { type ReactElement, useMemo } from "react";
-import Animated, { type SharedValue, useAnimatedProps, useDerivedValue } from "react-native-reanimated";
-import Svg, { Rect } from "react-native-svg";
+import { type SharedValue, useDerivedValue } from "react-native-reanimated";
+import { Canvas, Group, Rect, RoundedRect, Skia } from "react-native-skia";
 import { useThemeColor } from "../../hooks/use-theme-color";
 import { Surface } from "../surface";
 import { useFlowPart } from "./flow.context";
 import { FLOW_DEFAULTS, type FlowMiniMapCorner, flowVariants } from "./flow.variants";
 import { type FlowPoint, type FlowSize, flowGeometry } from "./flow-geometry";
-import { AnimatedMatrixG, type FlowMatrixGProps } from "./flow-svg";
 
-const AnimatedRect = Animated.createAnimatedComponent(Rect);
+/** A block's corner, in graph units. */
+const BLOCK_RADIUS = 4;
 
 export type FlowMiniMapProps = {
 	/** Which corner of the canvas it floats in. */
@@ -22,16 +22,20 @@ export type FlowMiniMapProps = {
 
 type MiniMapShape = { id: string; isGroup: boolean; position: SharedValue<FlowPoint>; size: SharedValue<FlowSize> };
 
-/** One node or group, as a block that follows its drag. */
-function FlowMiniMapBlock({ shape, fill }: { shape: MiniMapShape; fill: string | undefined }): ReactElement {
+/**
+ * One node or group, as a block that follows its drag. Drawn inside the minimap's canvas, so its
+ * colour arrives as a plain value — no theme hook can reach the app from in there.
+ */
+function FlowMiniMapBlock({ shape, fill }: { shape: MiniMapShape; fill: string }): ReactElement {
 	const { position, size } = shape;
-	const props = useAnimatedProps(() => ({
-		height: size.value.height,
-		width: size.value.width,
-		x: position.value.x,
-		y: position.value.y,
-	}));
-	return <AnimatedRect animatedProps={props} fill={fill} fillOpacity={shape.isGroup ? 0.25 : 0.6} rx={4} />;
+	const rect = useDerivedValue(() =>
+		Skia.RRectXY(
+			Skia.XYWHRect(position.value.x, position.value.y, size.value.width, size.value.height),
+			BLOCK_RADIUS,
+			BLOCK_RADIUS
+		)
+	);
+	return <RoundedRect color={fill} opacity={shape.isGroup ? 0.25 : 0.6} rect={rect} />;
 }
 FlowMiniMapBlock.displayName = "DelacourUI.Flow.MiniMap.Block";
 
@@ -54,8 +58,8 @@ export function FlowMiniMap({
 }: FlowMiniMapProps): ReactElement {
 	const { entries, viewport, container } = useFlowPart("Flow.MiniMap");
 	const slots = flowVariants({ miniMapCorner: corner });
-	const nodeFill = useThemeColor(nodeColor ?? "muted-foreground");
-	const frameStroke = useThemeColor("primary");
+	const nodeFill = useThemeColor(nodeColor ?? "muted-foreground") ?? "transparent";
+	const frameStroke = useThemeColor("primary") ?? "transparent";
 
 	const shapes = useMemo<MiniMapShape[]>(
 		() =>
@@ -80,21 +84,12 @@ export function FlowMiniMap({
 		return { transform: geometry.miniMapTransform(bounds, width, height, FLOW_DEFAULTS.miniMapPadding), visible };
 	});
 
-	const groupProps = useAnimatedProps<FlowMatrixGProps>(() => {
+	const transform = useDerivedValue(() => {
 		const { scale, x, y } = fit.value.transform;
-		return { matrix: [scale, 0, 0, scale, x, y] };
+		return [{ translateX: x }, { translateY: y }, { scale }];
 	});
-
-	const frameProps = useAnimatedProps(() => {
-		const { visible, transform } = fit.value;
-		return {
-			height: visible.height,
-			strokeWidth: 1.5 / transform.scale,
-			width: visible.width,
-			x: visible.x,
-			y: visible.y,
-		};
-	});
+	const frame = useDerivedValue(() => fit.value.visible);
+	const frameWidth = useDerivedValue(() => 1.5 / fit.value.transform.scale);
 
 	return (
 		<Surface
@@ -105,14 +100,14 @@ export function FlowMiniMap({
 			pointerEvents="none"
 			style={{ height, width }}
 		>
-			<Svg height={height} width={width}>
-				<AnimatedMatrixG animatedProps={groupProps}>
+			<Canvas style={{ height, width }}>
+				<Group transform={transform}>
 					{shapes.map((shape) => (
 						<FlowMiniMapBlock fill={nodeFill} key={shape.id} shape={shape} />
 					))}
-					<AnimatedRect animatedProps={frameProps} fill="none" stroke={frameStroke} />
-				</AnimatedMatrixG>
-			</Svg>
+					<Rect color={frameStroke} rect={frame} strokeWidth={frameWidth} style="stroke" />
+				</Group>
+			</Canvas>
 		</Surface>
 	);
 }

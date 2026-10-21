@@ -70,7 +70,7 @@ export default function Example() {
 ```
 
 Children draw in three layers whatever order they are written in: the background and every edge in one
-SVG beneath the nodes, nodes and groups in the layer that pans and zooms, and the controls and minimap on
+Skia canvas beneath the nodes, nodes and groups in the layer that pans and zooms, and the controls and minimap on
 top, unscaled. Edges and the background have to be direct children of `Flow` — a `.map()` or a fragment
 there is fine — so the canvas can find them.
 

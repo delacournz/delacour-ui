@@ -74,8 +74,8 @@ export const SLIDER_OUTPUT_TEXT_SIZE: Record<SliderSize, TextSize> = { sm: "sm",
  * in a fifth of a second. That is not a hundred ticks, it is a buzz — and a
  * hundred synchronous calls into the haptic engine to produce it.
  *
- * Gating on distance rather than on a clock keeps the rule pure, so `bun test`
- * reaches it, and makes it degrade the right way: a coarse step scale ticks on
+ * Gating on distance rather than on a clock keeps the rule pure, so a unit
+ * test reaches it, and makes it degrade the right way: a coarse step scale ticks on
  * every stop, and a fine one thins out to a cadence a hand can actually feel.
  */
 export const SLIDER_HAPTIC_MIN_TRAVEL = 6;
@@ -172,7 +172,7 @@ export const SLIDER_RANGE_SEPARATOR = " – ";
  * No slot worn by a `View` carries `text-*` or `font-*`: `Slider.Output` renders
  * a `Text` preset and names a step — see {@link SLIDER_OUTPUT_TEXT_SIZE}.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot parse
+ * Free of React Native imports so it stays unit-testable — a bare JS runtime cannot parse
  * React Native's Flow-typed source. See AGENTS.md.
  */
 export const sliderVariants = tv({
@@ -478,7 +478,7 @@ export function fillBounds(
  * Inset the thumb inside the track and every one of them is off by the inset — a
  * few points of stray colour at one end and of empty groove at the other, at every
  * size. This is the arithmetic that pays for that proportion, so it is the
- * arithmetic `bun test` has to be able to reach.
+ * arithmetic a unit test has to be able to reach.
  *
  * It replaced a `+ thumbSize / 2`, which stopped the fill at the thumb's *centre*.
  * That was correct but invisible while a large disc overhung a hairline groove; it
@@ -537,7 +537,7 @@ export function formatSliderValue(values: readonly number[], formatOptions?: Int
  * - otherwise the drag must have travelled {@link SLIDER_HAPTIC_MIN_TRAVEL}
  *   points since the last tick.
  *
- * Pure, so the whole ladder is reachable from `bun test`, and flat, so it is safe
+ * Pure, so the whole ladder is unit-testable, and flat, so it is safe
  * to call from the pan's worklet. See AGENTS.md.
  */
 export function shouldTickHaptic({
@@ -591,7 +591,7 @@ export type SliderAxes = Required<SliderOwnAxes>;
  * A `Field` reaches the two *state* axes only. It carries no colour, size or
  * orientation, and a test pins that it cannot acquire one by accident.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveSliderAxes({ own, field }: { own?: SliderOwnAxes; field?: SliderFieldAxes | null }): SliderAxes {
 	return {
@@ -626,7 +626,7 @@ export const SLIDER_THUMB_NAMES = { minimum: "Minimum", maximum: "Maximum", thum
  * since two thumbs reading the same bare number are indistinguishable. Past two
  * thumbs there are no ends to name, so they count: "Stops, 2 of 3".
  *
- * Pure, so the whole ladder is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole ladder is unit-testable. See AGENTS.md.
  */
 export function resolveThumbAccessibilityLabel({
 	label,

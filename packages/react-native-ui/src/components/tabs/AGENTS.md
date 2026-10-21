@@ -195,12 +195,12 @@ A row of tabs and the panels they switch between. Compound root plus `Tabs.List`
   because all three write that one value.
   [`Checkbox`](../checkbox/AGENTS.md)'s animated border makes the same trade for
   the same reason: a colour that travels cannot be a class.
-  `resolveTabSelectedness` is the ramp, and it is pure, so `bun test` reaches it.
+  `resolveTabSelectedness` is the ramp, and it is pure, so a unit test reaches it.
 - **The `label` slot therefore names no colour at all, and a test enforces that.**
   Two sources for one colour is how a class and a style end up disagreeing for a
   frame on every commit. `TABS_FOREGROUND_TOKEN` is the whole matrix now, swept
   for distinctness and asserted present in both themes — the decision stayed
-  reachable from `bun test`, it just moved from class strings to token names.
+  unit-testable, it just moved from class strings to token names.
 - **`visualIndex` survives for the things that cannot fade.** A composed `Icon`
   takes its colour as a resolved *value* rather than a style, so it has no way to
   be half way between two; it swaps at the midpoint, with a hysteresis band

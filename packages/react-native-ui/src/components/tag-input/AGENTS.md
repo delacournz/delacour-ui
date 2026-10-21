@@ -26,7 +26,7 @@ list.
 - **Every decision is in `tag-input.logic.ts`, and the root only wires it to
   events.** Splitting, trimming, the four rejection reasons, what Backspace and
   blur do, the counter and the haptic throttle are pure functions, so the whole
-  behaviour is reachable from `bun test` where no renderer is. A rule added
+  behaviour is unit-testable where no renderer is. A rule added
   inline in `tag-input.tsx` is a rule nothing checks.
 - **The box is `Input.Group`'s, at its multiline floor.** `resolveTagInputBoxClass`
   calls `resolveInputGroupClass` with `isMultiline: true` — a minimum height and

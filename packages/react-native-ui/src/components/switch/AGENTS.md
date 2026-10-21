@@ -198,8 +198,7 @@ section to read first — what follows is only where a switch differs.
   component. The failure is silent and nearly invisible: detection returns false,
   a second knob is composed on top of the caller's, and because the two are the
   same size and colour the only symptom is that **anything inside the caller's
-  knob disappears**. `displayName` survives all of it — rule 12 requires one and
-  `display-name.test.ts` enforces that they are present and unique — so that is
+  knob disappears**. `displayName` survives all of it — rule 12 requires one, present and unique — so that is
   what `isSwitchThumbElement` asks for, with reference equality kept only as the
   fast path.
 

@@ -1,6 +1,5 @@
 /**
- * Where an anchored panel goes — pure, so the whole matrix is reachable from
- * `bun test`.
+ * Where an anchored panel goes — pure, so the whole matrix is unit-testable.
  *
  * **A leaf.** Popover, Tooltip and, later, Menu and Select all import this
  * file, so it imports nothing at all: never `./popover`, never `./index`.

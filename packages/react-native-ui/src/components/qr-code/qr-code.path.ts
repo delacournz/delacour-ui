@@ -2,8 +2,8 @@ import type { QrLogoRegion, QrMatrix } from "./qr-code.constants";
 
 /**
  * A matrix as one SVG `d` string, in module units with the quiet zone as an
- * offset — the renderer scales it with a `viewBox`. Pure, so `bun test` reaches
- * every module style.
+ * offset — the renderer scales it with a `viewBox`. Pure, so every module
+ * style is unit-testable.
  */
 
 export const QR_MODULE_STYLES = ["square", "rounded", "dots"] as const;

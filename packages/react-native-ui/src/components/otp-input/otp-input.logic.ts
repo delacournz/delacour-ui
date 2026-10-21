@@ -2,7 +2,7 @@
  * The pure half of `OtpInput`: what a keystroke, a paste or an autofill is allowed to leave in the
  * field, which cell is active, when the code counts as complete, and what a screen reader hears.
  *
- * Free of React Native imports so `bun test` reaches every decision — see AGENTS.md.
+ * Free of React Native imports so every decision is unit-testable — see AGENTS.md.
  */
 
 /** Which characters a cell takes. A `RegExp` tests one character at a time. */

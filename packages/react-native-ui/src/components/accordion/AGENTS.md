@@ -102,8 +102,8 @@ a list of rows.
   `onLayout` that wrote the height, can read `ACCORDION_UNMEASURED`. A Release
   build does, deterministically: the effect bailed, nothing re-ran it, and the
   panel reported `expanded` while never opening (a Debug client is slow enough
-  for the write to land first, which is why it hid). `accordion.variants.test.ts`
-  sweeps both files for such a read outside `useAnimatedStyle`.
+  for the write to land first, which is why it hid).<!-- registry:omit --> `accordion.variants.test.ts`
+  sweeps both files for such a read outside `useAnimatedStyle`.<!-- /registry:omit -->
 - **`ACCORDION_UNMEASURED` is negative, and that is load-bearing.** A panel that
   measured `0` is a real answer — content that rendered nothing — and must still
   open, indicator and all. Only a value no layout can produce can mean

@@ -3,8 +3,7 @@
  *
  * `startedAt` is `null` while paused; `remaining` is what was left when it last
  * stopped. Every function returns a new value and reads the time it is given,
- * so pause and resume are exact and the whole clock is reachable from
- * `bun test`. The viewport turns `toastTimerRemaining` into one `setTimeout`
+ * so pause and resume are exact and the whole clock is unit-testable. The viewport turns `toastTimerRemaining` into one `setTimeout`
  * per run and clears it on every pause.
  *
  * A duration of `0` means "until hidden" and is stored as an infinite

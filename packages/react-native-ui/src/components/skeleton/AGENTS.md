@@ -102,7 +102,7 @@ with a glint sweeping across it, or a pulse, on the UI thread. Compound root plu
   each line. Once loaded the skeleton contributes no accessibility props at all
   and the content speaks for itself. `resolveSkeletonAccessibility` returns a
   discriminated union (`hidden` / `status` / `content`) so the three cases are
-  pinned in `bun test`.
+  pinned by a unit test.
 - **An unlabelled group takes no role.** It may hold real content beside its
   placeholders, and hiding the group would hide that too; each skeleton already
   hides itself.

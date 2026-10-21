@@ -24,7 +24,7 @@ copies of Skia or Reanimated register twice and fail at runtime, which is why th
 dependencies.
 
 <Callout type="warn" title="Do not install native modules with your package manager">
-`bun add react-native-reanimated` fetches the newest release, which on any older SDK is a package
+`npm install react-native-reanimated` (or any package manager's add) fetches the newest release, which on any older SDK is a package
 that fails at the linker rather than at install time. `expo install` asks the SDK what it supports.
 </Callout>
 

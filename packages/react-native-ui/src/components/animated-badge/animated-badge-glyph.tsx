@@ -35,7 +35,7 @@ import {
  * `loading` is absent because it spins instead.
  *
  * Lives here rather than in `animated-badge.variants.ts` because the glyphs are
- * React Native SVG components, and that file must stay importable from `bun test`.
+ * React Native SVG components, and that file must stay free of React Native imports.
  */
 const STATUS_GLYPHS: Record<Exclude<AnimatedBadgeStatus, "loading">, IconComponent> = {
 	neutral: IconCircle,

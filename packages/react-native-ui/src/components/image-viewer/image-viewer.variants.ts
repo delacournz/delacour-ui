@@ -66,8 +66,7 @@ export type ViewerImageLike = {
 /**
  * ImageViewer's slots.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
- * parse React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const imageViewerVariants = tv({
 	slots: {

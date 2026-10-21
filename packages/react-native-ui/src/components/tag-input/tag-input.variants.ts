@@ -15,7 +15,7 @@ import {
  *
  * A step down from the field's own size, so a row of chips fits inside the
  * field's floor rather than pushing it taller: the first tag added must not
- * make the box jump. `tag-input.variants.test.ts` adds the heights up.
+ * make the box jump. The heights must add up.
  */
 export const TAG_INPUT_CHIP_SIZE: Record<InputSize, ChipSize> = { sm: "sm", md: "sm", lg: "md" };
 
@@ -71,7 +71,7 @@ export const tagInputVariants = tv({
  * height a minimum and the content top-aligned, the rule `Input` applies to a
  * field that grows — with the vertical padding tightened to fit a chip row.
  *
- * Pure, so the parity with `Input` is reachable from `bun test`.
+ * Pure, so the parity with `Input` is unit-testable.
  */
 export function resolveTagInputBoxClass({
 	className,

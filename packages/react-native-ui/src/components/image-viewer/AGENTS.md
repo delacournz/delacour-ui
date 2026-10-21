@@ -152,7 +152,7 @@ pass it through `renderImage`.
 
 ## Verification
 
-Rendering is verified in the playground (`/image-viewer`), not by `bun test`.
+Rendering is verified in the playground (`/image-viewer`), not by unit tests.
 See the simulator notes at the end of this file for what was checked.
 
 ### Simulator notes

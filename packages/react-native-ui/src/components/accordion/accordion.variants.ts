@@ -174,8 +174,7 @@ export const ACCORDION_CONTENT_FADE = { start: 0.1, end: 0.6 } as const;
  * cascade colour to a `Text` descendant, so the treatment lives on the `title` and
  * `description` slots. See AGENTS.md rule 1.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot parse
- * React Native's Flow-typed source. See AGENTS.md.
+ * Free of React Native imports so it stays pure and unit-testable. See AGENTS.md.
  */
 export const accordionVariants = tv({
 	slots: {
@@ -283,8 +282,7 @@ export type AccordionMultipleSelection = {
  * rather than a union of functions.
  *
  * Lives here rather than in `accordion.types.ts` because that file imports React
- * Native's `ViewProps`, and the root's selection maths has to stay reachable from
- * `bun test`.
+ * Native's `ViewProps`, and the root's selection maths has to stay unit-testable.
  */
 export type AccordionSelection = AccordionSingleSelection | AccordionMultipleSelection;
 
@@ -312,7 +310,7 @@ export function toExpandedList(value: string | readonly string[] | null | undefi
 /**
  * The whole state transition a tap on a trigger makes.
  *
- * Pure, so `bun test` reaches the entire matrix — the trade `toggleCheckedValue`
+ * Pure, so the entire matrix is unit-testable — the trade `toggleCheckedValue`
  * already makes for `Checkbox.Group`.
  *
  * **A real change is always a new array**, because React bails out of a re-render
@@ -369,7 +367,7 @@ export type AccordionItemAxes = { isDisabled: boolean };
  * The accordion reaches this one *state* axis only; it cannot acquire a paint axis
  * by accident, and a test pins that.
  *
- * Pure, so the whole matrix is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole matrix is unit-testable. See AGENTS.md.
  */
 export function resolveAccordionItemAxes({
 	own,

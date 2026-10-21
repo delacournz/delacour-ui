@@ -4,7 +4,7 @@ import type { ColorFormat, Hsla, Hsva, HsvaChannel, Rgba } from "./color-picker.
  * The picker's colour maths — parsing, conversion, formatting and the geometry
  * the gestures map through.
  *
- * Free of React Native imports so `bun test` reaches all of it. The functions a
+ * Free of React Native imports so all of it is unit-testable. The functions a
  * gesture or an animated style calls on the UI thread carry a `'worklet'`
  * directive, and every one of those is **flat**: none calls another. A
  * module-scope worklet binds at import time in source order, so one calling a

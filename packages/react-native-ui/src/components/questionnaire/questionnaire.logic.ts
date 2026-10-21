@@ -14,7 +14,7 @@ import type {
  * The questionnaire's whole flow, as pure functions.
  *
  * No React and no React Native: everything that decides what is shown, what is
- * valid and where Next goes lives here so `bun test` reaches all of it — and so
+ * valid and where Next goes lives here so all of it is unit-testable — and so
  * a server can import `getVisibleQuestions` and `validateAnswer` to re-check a
  * submission against the same rules the device applied.
  */

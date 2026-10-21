@@ -6,7 +6,7 @@
  *
  * Every function is a self-contained worklet, for the reason `scroll-maths.ts`
  * gives: a helper called from inside a worklet can be missing from its closure
- * on the UI thread. Free of React Native imports, so `bun test` reaches it all.
+ * on the UI thread. Free of React Native imports, so a unit test reaches it all.
  */
 
 import type { ScrollEdge, ScrollOrientation } from "./scroll-maths";

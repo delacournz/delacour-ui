@@ -5,10 +5,10 @@
  * **Every function here is a self-contained worklet.** A module-scope helper
  * called from inside a worklet can be missing from that worklet's closure on
  * the UI thread, which surfaces as `undefined is not a function` mid-scroll and
- * is invisible to `bun test`. So each function writes its own clamp inline and
+ * is invisible to a unit test. So each function writes its own clamp inline and
  * none of them calls another — do not "tidy" the repetition into a helper.
  *
- * Free of React Native imports, so the whole table is reachable from `bun test`.
+ * Free of React Native imports, so the whole table is unit-testable.
  */
 
 /** The axis a scrollable moves along. */

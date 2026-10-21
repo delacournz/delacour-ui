@@ -5,7 +5,7 @@ import type { SignatureExportOptions, SignaturePoint, SignatureStroke, Signature
  * The pure half of a signature: smoothing, the undo history, bounds, re-fitting
  * and SVG export.
  *
- * Free of React Native imports so `bun test` reaches all of it. The smoother and
+ * Free of React Native imports so a unit test reaches all of it. The smoother and
  * the point filter carry `"worklet"`, because the live stroke is rebuilt from
  * them on the UI thread on every move — the same function that draws the
  * finished path, so a stroke does not shift when it is committed.

@@ -37,8 +37,7 @@ section first. What follows is only where a standalone disclosure differs.
   derives an item's dependencies from its imports, so importing even the
   accordion's leaf would make `delacour add collapsible` copy an accordion in
   too. The spring, fade, rotation, variants, sizes and glyph step are written
-  again here and pinned equal by `collapsible.variants.test.ts` — the test file
-  is the only thing that imports both, and tests are not shipped.
+  again here and must stay equal to the accordion's.
 - **The root owns the state and the travel.** With no item layer, what
   `Accordion.Item` owns — `progress`, `contentHeight`, the spring, the
   `isMeasured` state `onMeasured` flips — lives on the root. The race it closes
@@ -86,8 +85,7 @@ section first. What follows is only where a standalone disclosure differs.
 
 - **`resolveCollapsibleAccessibility` is the one source.** The trigger announces
   `expanded` and `disabled` from it; the panel takes
-  `accessibilityElementsHidden` and `importantForAccessibility` from it. Pure, so
-  `bun test` holds the matrix.
+  `accessibilityElementsHidden` and `importantForAccessibility` from it. Pure, so the matrix is unit-testable.
 - **A closed panel is out of the tree, not just clipped.** It stays mounted after
   its first open, and mounted content is content a screen reader reads. A
   disabled but open panel is still on screen and still read.

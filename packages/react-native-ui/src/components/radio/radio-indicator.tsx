@@ -29,8 +29,8 @@ export type RadioIndicatorProps = Omit<ViewProps, "children"> & {
  * `Spinner`'s arc is the precedent for primitives; here the set has no
  * ring-with-a-centred-dot glyph at all. Two things follow from drawing it: the
  * dot can scale from the ring's centre entirely on the UI thread, and the ring's
- * four themed colours stay classes in `radio.variants.ts` where `bun test`
- * reaches them. An `Icon` would take its colour as a resolved value, splitting
+ * four themed colours stay classes in `radio.variants.ts` where
+ * they stay unit-testable. An `Icon` would take its colour as a resolved value, splitting
  * one decision across two mechanisms.
  *
  * **The animated style lives on the dot, never on the ring.** `Pressable`'s root

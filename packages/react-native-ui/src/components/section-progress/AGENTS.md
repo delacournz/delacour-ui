@@ -71,8 +71,8 @@ rule keeps such a type in its consumer's file.
   rule between it and the list. Closed, it wears its own capsule. One `SectionProgressPill` renders
   both, so the two can never disagree.
 - **The list scrolls past six rows.** Rows are `min-h-11` — a 44pt touch target — and the list's
-  max height is six of them plus its `py-1`. `section-progress.variants.test.ts` reads both numbers
-  back out of the slots, so retuning a row moves the threshold with it.
+  max height is six of them plus its `py-1`. Both numbers are read
+  back out of the slots, so retuning a row moves the threshold with it<!-- registry:omit --> (`section-progress.variants.test.ts` pins this)<!-- /registry:omit -->.
 - **A transparent full-screen scrim closes the panel on an outside tap.** It is a `Pressable` with
   `feedback="none"`, hidden from assistive technology — the escape gesture is VoiceOver's way out.
 - **The label is capped at sixty percent of the window, on one line.** `resolveLabelMaxWidth`.

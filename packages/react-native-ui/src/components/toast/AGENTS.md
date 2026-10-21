@@ -121,13 +121,13 @@ once, it draws the store) and `<Toast>` (the card, compound, also usable inside 
 
 ## Testing
 
-`bun test` reaches the reducer, the store's batching, the api (including `promise` both ways), the
+A unit test reaches the reducer, the store's batching, the api (including `promise` both ways), the
 clock and every resolver. Motion, gestures, insets, the keyboard and announcements are verified on a
 simulator through `/toast`.
 
 ## Preview capture
 
-The bodies are in `apps/playground/e2e/previews/toast.e2e.ts`; the captured demos are:
+The <!-- registry:omit -->bodies are in `apps/playground/e2e/previews/toast.e2e.ts`; the <!-- /registry:omit -->captured demos are:
 
 | Demo | `capture` |
 | --- | --- |

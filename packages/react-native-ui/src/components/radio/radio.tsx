@@ -134,7 +134,7 @@ function RadioRoot({
  * which is what buys a settings row for free: place a `<Radio.Indicator />` last
  * and the row lays out `[label and description] [ring]`, spread to the far edge,
  * with nothing else said. {@link resolveIndicatorPlacement} is that decision and
- * is pure, so `bun test` reaches it.
+ * is pure, so it is unit-testable.
  *
  * Lives here rather than with the parts: it is the root that wraps its own
  * children, and importing it from a part would close a cycle. See AGENTS.md.

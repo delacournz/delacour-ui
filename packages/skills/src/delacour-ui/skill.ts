@@ -46,14 +46,14 @@ onto this project's own aliases, and reports what it needs from npm.
 
 ## The four commands
 
-Run them with the project's package manager — \`bunx\`, \`npx\`, \`pnpm dlx\` or \`yarn dlx\`.
+Run them with the project's package manager — \`npx\`, \`pnpm dlx\`, \`yarn dlx\` or \`bunx\`; \`npx\` is written below.
 
 | You need | Run |
 | --- | --- |
-| what exists, and what each one is for | \`bunx delacour@latest list\` |
-| one component's files, props, closure and packages | \`bunx delacour@latest view <name>\` |
-| to add one | \`bunx delacour@latest add <name>\` |
-| to find out why something renders wrong with no error | \`bunx delacour@latest doctor\` |
+| what exists, and what each one is for | \`npx delacour@latest list\` |
+| one component's files, props, closure and packages | \`npx delacour@latest view <name>\` |
+| to add one | \`npx delacour@latest add <name>\` |
+| to find out why something renders wrong with no error | \`npx delacour@latest doctor\` |
 
 **Always \`list\` before writing any React Native UI in this project.** A component that exists here
 should be added, never reimplemented.
@@ -63,7 +63,7 @@ Uniwind's transform, points Tailwind at where the components landed, and copies 
 root provider in. There is no separate setup step to run first.
 
 \`\`\`bash
-bunx delacour@latest add button input field
+npx delacour@latest add button input field
 \`\`\`
 
 It prints what the components need from npm and **installs nothing** unless told to. Add
@@ -74,7 +74,7 @@ If the layout is not the default — a monorepo where the components belong to a
 source directory this project does not call \`src\` — run \`init\` deliberately instead:
 
 \`\`\`bash
-bunx delacour@latest init --src app --package-name @acme/ui --package-path packages/ui
+npx delacour@latest init --src app --package-name @acme/ui --package-path packages/ui
 \`\`\`
 
 ## Six things that fail silently
@@ -90,7 +90,7 @@ skill exists; everything else a compiler will tell you.
 2. **\`DelacourProvider\` wraps the app, once, at the root.** It is the gesture root every press needs
    above it. Leave it out and presses stop landing — the component still renders, and nothing says
    why.
-3. **Native modules go through \`expo install\`, never \`bun add\` / \`npm install\`.** The package
+3. **Native modules go through \`expo install\`, never \`npm install\` / \`pnpm add\`.** The package
    manager fetches the newest release, which on the project's SDK fails at the linker rather than at
    install. \`add\` already spells each command correctly — run what it prints, verbatim.
 4. **After a new native module, the dev client must be rebuilt.** \`npx expo run:ios\` or
@@ -153,7 +153,7 @@ The palette is one file, \`styles/theme.css\`, in Uniwind's \`@variant light\` /
 shape. Two ways to change it, and neither is editing a component:
 
 - build one at <https://ui.delacour.co.nz/theme> and paste the \`theme.css\` tab over the file;
-- bring a web app's across — \`bunx delacour@latest theme ./globals.css\` converts it in place.
+- bring a web app's across — \`npx delacour@latest theme ./globals.css\` converts it in place.
 
 A literal \`.dark { … }\` block is the trap. Uniwind registers it as a **utility class named \`dark\`**
 that contributes nothing — no error, and a dark theme that never arrives. That is what \`theme\`
@@ -169,7 +169,7 @@ converts, and what \`doctor\` fails on.
 | composition, sizing, tokens, styling | \`references/rules.md\` beside this file |
 | something rendering wrong | \`references/troubleshooting.md\` beside this file |
 
-There is also an MCP server — \`bunx delacour@latest mcp\` — which exposes \`list_components\`,
+There is also an MCP server — \`npx delacour@latest mcp\` — which exposes \`list_components\`,
 \`get_component\`, \`add_components\`, \`init_project\` and \`check_project\` as tools. Prefer it when the
 host supports MCP; the commands above are the same functions and need nothing installed.
 `;

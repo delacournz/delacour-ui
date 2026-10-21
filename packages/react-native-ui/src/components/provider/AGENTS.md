@@ -95,7 +95,7 @@ everything — a root layout, an `App.tsx`.
   resolution error coming out of the app's root layout. Rule 3's promise is
   per-subpath and survives intact: `/button` still pulls nothing
   keyboard-related.
-- **Nothing here for `bun test`, and no `provider.variants.ts` to give it
+- **Nothing here for a unit test, and no `provider.variants.ts` to give it
   some.** The component is five nested elements and one default parameter;
   extracting a `resolveInitialMetrics()` would be a unit test of `??`. The rule
   that pure decisions live in a `*.variants.ts` has no decision here to

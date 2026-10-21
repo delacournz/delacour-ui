@@ -70,7 +70,7 @@ measuring text inherit the identical class.
   come from `useThemeColor` once per theme and reach each unit as plain strings, so a frame
   interpolates two constants. The stagger (`resolveRevealProgress`) and the effect
   (`resolveEffectFrame`) are pure worklet functions in the variants file, which is how the whole
-  motion model is under `bun test`.
+  motion model is unit-testable.
 - **The stagger fits inside the window.** Slot `span = 1 / (1 + (n−1)(1−overlap))`, step
   `span·(1−overlap)`; the last unit ends exactly at 1, so the block is fully revealed the moment its
   top reaches `end`, whatever `n` and `overlap` are.

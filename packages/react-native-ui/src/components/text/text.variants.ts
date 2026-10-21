@@ -117,7 +117,7 @@ export const TEXT_MAX_FONT_SIZE_MULTIPLIER = 1.4;
  * `--text-paragraph--line-height` *pair* in `tokens.css` and register the
  * bespoke name in `tokens.ts` — one utility carrying both.
  *
- * Free of React Native imports so it stays unit-testable — `bun test` cannot
+ * Free of React Native imports so it stays unit-testable — a bare JS runtime cannot
  * parse React Native's Flow-typed source. See AGENTS.md.
  */
 export const textVariants = tv({
@@ -222,7 +222,7 @@ export function isInlineTextVariant(variant: TextVariant): boolean {
  * rather than a guess, which is what makes skipping the provider safe.
  *
  * Deliberately typed on `unknown` rather than `ReactNode`: keeping this module
- * free of even a type import is what lets `bun test` reach it.
+ * free of even a type import is what lets a unit test reach it.
  */
 export function canNestText(children: unknown): boolean {
 	return typeof children !== "string" && typeof children !== "number";
@@ -253,7 +253,7 @@ export function canNestText(children: unknown): boolean {
  * composed into a `Button` matches it without being told to. See
  * `resolveIconSizeClass`.
  *
- * Pure, so the whole ladder is reachable from `bun test`. See AGENTS.md.
+ * Pure, so the whole ladder is unit-testable. See AGENTS.md.
  */
 export function resolveTextClass({
 	align,

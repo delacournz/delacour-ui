@@ -6,8 +6,8 @@ import type { QrErrorCorrection, QrVersion } from "./qr-code.constants";
  * Two 4 x 40 tables carry everything that cannot be derived: error-correction
  * codewords per block and the number of blocks, per level and version. Every
  * other count follows — total codewords from the module geometry, data
- * codewords by subtraction, the block split by division. `qr-code.tables.test.ts`
- * holds every pair against those closed forms, which is the net for a typo here.
+ * codewords by subtraction, the block split by division. Every pair
+ * must agree with those closed forms, which is the net for a typo here.
  */
 
 export const QR_MIN_VERSION = 1;

@@ -45,7 +45,7 @@ const UNIWIND_ENV = "uniwind-env.d.ts";
  * shipping a test that cannot run is worse than shipping none.
  */
 export function classifySource(path: string): SourceClassification | null {
-	if (isTest(path)) return null;
+	if (isUnshippedSource(path)) return null;
 	if (path === UNIWIND_ENV) {
 		return { item: "styles", type: "registry:style", namespace: "styles", target: UNIWIND_ENV, moduleId: null };
 	}
@@ -151,8 +151,11 @@ export function resolveModuleId(fromPath: string, specifier: string, known: read
 	return candidates.find((candidate) => known.includes(candidate)) ?? null;
 }
 
-/** A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`. */
-function isTest(path: string): boolean {
+/**
+ * A test, or a file that exists only to serve tests — `*.test-helpers.ts`, `*.fixtures.ts`.
+ * Exported for `ship.ts`, which drops a copied doc's mention of one.
+ */
+export function isUnshippedSource(path: string): boolean {
 	return /\.(test|test-helpers|fixtures)\.tsx?$/.test(path);
 }
 

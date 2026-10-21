@@ -1,6 +1,6 @@
 /**
  * The planner's month math — Gregorian, local-calendar, and free of React
- * Native so `bun test` reaches all of it.
+ * Native so all of it is unit-testable.
  *
  * **A day is a `YYYY-MM-DD` key, never a timestamp.** Two `Date`s on one
  * calendar day differ by hours, and a day is 23 or 25 hours long on a

@@ -68,7 +68,7 @@ plus `Alert.Indicator`, `Alert.Content`, `Alert.Title`, `Alert.Description`,
   `destructive` a circle, so the two stay apart for anyone who cannot tell amber
   from red. `default` shares `info`'s circle. The map lives in
   `alert-glyphs.ts`, a leaf `Toast` shares, because the glyphs are RN SVG components and
-  `alert.variants.ts` must stay importable from `bun test`.
+  `alert.variants.ts` must stay free of React Native imports.
 - **The indicator is hidden from assistive technology.** The title says what
   happened; "image" announced before it adds nothing. Children replace the
   glyph and inherit the alert's icon size and colour — a `Spinner` for a

@@ -137,7 +137,7 @@ runtime, \`--radius-md\` does not, so anything computing a corner applies the mu
 
 export const TROUBLESHOOTING_MD = `# Delacour UI — symptom to cause
 
-Run \`bunx delacour@latest doctor\` first. Every symptom below is configuration, produces no error of
+Run \`npx delacour@latest doctor\` first. Every symptom below is configuration, produces no error of
 its own, and \`doctor\` names the file and the fix for nine of them. Changing component code before
 running it is how an afternoon goes.
 
@@ -146,14 +146,14 @@ running it is how an afternoon goes.
 | Components render, but unstyled | Nothing imports the CSS entry, or the import is not the **first** statement of the root layout |
 | Styled in dev, unstyled in a release build | Tailwind's \`@source\` globs do not cover where the components landed — the scanner does not follow a monorepo's symlink, so the glob must be a real path |
 | Some classes work, others do nothing | \`withUniwindConfig\` is present but not the **outermost** Metro wrapper; an outer wrapper replaced the transformer |
-| Light works, dark never arrives | \`theme.css\` has a literal \`.dark { … }\` block. Run \`bunx delacour@latest theme\` to convert it |
+| Light works, dark never arrives | \`theme.css\` has a literal \`.dark { … }\` block. Run \`npx delacour@latest theme\` to convert it |
 | Classes resolve oddly, or the build fails naming no library | NativeWind is installed. It compiles \`className\` and wraps Metro too, and two Tailwind transforms cannot share one Metro config — move across with [Uniwind's migration guide](https://docs.uniwind.dev/migration-from-nativewind) |
 | Presses do nothing | No \`GestureHandlerRootView\` above the component — mount \`DelacourProvider\` at the root |
 | \`Unable to resolve "@/components/ui/button"\` | \`experiments.tsconfigPaths\` is not \`true\` in the Expo config; Metro ignores tsconfig paths without it |
 | A red box naming a module you just installed | A native module needs a rebuilt dev client. \`npx expo run:ios\` — a JS reload will not pick it up |
 | Every \`className\` is a type error | \`uniwind-env.d.ts\` is not inside the app's own \`tsconfig\` include. It is one triple-slash reference and only works from there |
 | \`Ref<never>\`, or two copies of React Native's types | Two realpaths for one package. A Bun workspace needs \`linker = "hoisted"\` in \`bunfig.toml\` |
-| \`add\` overwrote something you had edited | A file that differs is a conflict and \`add\` asks; \`--overwrite\` answers yes. To take upstream changes and keep the edits, \`bunx delacour@latest update <name>\` — it three-way merges, and marks a conflict rather than picking a side |
+| \`add\` overwrote something you had edited | A file that differs is a conflict and \`add\` asks; \`--overwrite\` answers yes. To take upstream changes and keep the edits, \`npx delacour@latest update <name>\` — it three-way merges, and marks a conflict rather than picking a side |
 | A component on the docs site is not in the registry | The published CLI reads the registry at the commit it shipped against. \`--ref main\` opts into what has landed since |
 
 ## What \`doctor\` checks
@@ -164,9 +164,9 @@ actually imports the CSS entry · New Architecture · path aliases and \`tsconfi
 copies of a native module.
 
 \`\`\`bash
-bunx delacour@latest doctor          # a report, with a fix per failure
-bunx delacour@latest doctor --json   # the same, for a tool to read
-bunx delacour@latest info            # the resolved config, and what was detected
+npx delacour@latest doctor          # a report, with a fix per failure
+npx delacour@latest doctor --json   # the same, for a tool to read
+npx delacour@latest info            # the resolved config, and what was detected
 \`\`\`
 
 ## When none of it fits

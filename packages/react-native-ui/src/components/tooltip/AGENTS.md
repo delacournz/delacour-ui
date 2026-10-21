@@ -122,10 +122,10 @@ card corner, which is larger than the inverted chip's `rounded-md`, so it clears
 
 ## Testing
 
-`bun test` reaches the variants and the three resolvers. Positioning is Popover's and tested there.
+A unit test reaches the variants and the three resolvers. Positioning is Popover's and tested there.
 Everything else — the long press and its haptic, the button's tap surviving it, the timer, an
 outside tap closing it and still landing, one-at-a-time, VoiceOver reading `label` — is verified on
 a simulator through `apps/playground`'s `/tooltip` gallery.
 
-Preview media: the bodies are in `apps/playground/e2e/previews/tooltip.e2e.ts`, and the captured
+Preview media: <!-- registry:omit -->the bodies are in `apps/playground/e2e/previews/tooltip.e2e.ts`, and <!-- /registry:omit -->the captured
 demos carry `{ flow: true, frame: "device" }`, `icon-buttons` as the hero.

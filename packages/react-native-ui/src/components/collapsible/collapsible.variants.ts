@@ -115,7 +115,7 @@ export const COLLAPSIBLE_CONTENT_FADE = { start: 0.1, end: 0.6 } as const;
  * measure as a single unwrapped line.
  *
  * No slot worn by a `View` carries `text-*` (rule 1). Free of React Native
- * imports so it stays reachable from `bun test`.
+ * imports so it stays unit-testable.
  */
 export const collapsibleVariants = tv({
 	slots: {

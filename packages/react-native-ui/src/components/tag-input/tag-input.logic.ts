@@ -4,8 +4,8 @@ import type { TagInputBlurBehavior, TagInputRejection, TagInputRejectReason } fr
  * The pure half of `TagInput`: parsing typed and pasted text into tags, the
  * rules a tag has to pass, and the two-press Backspace.
  *
- * Free of React and React Native imports so every decision here is reachable
- * from `bun test` — the component only wires these to events. See AGENTS.md.
+ * Free of React and React Native imports so every decision here is unit-testable
+ * — the component only wires these to events. See AGENTS.md.
  */
 
 /** The rules a single tag is checked against. */

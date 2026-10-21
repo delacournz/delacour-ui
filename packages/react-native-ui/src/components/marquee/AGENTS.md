@@ -138,7 +138,7 @@ rotation re-resolving the copy count.
 
 ## Previews (follow-up)
 
-No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and the
+No demo carries `capture` yet: a captured demo needs a manifest entry<!-- registry:omit --> (`demos.test.ts` fails without one)<!-- /registry:omit -->, and the
 media are shot after integration. The five to capture, all `align: "stretch"` and all clips, each
 with its flow already written under `.argent/flows/previews/marquee/`: `badges` (**hero**),
 `two-rows`, `vertical`, `hold-to-pause`, `speed`. `cards` stays gallery-only. Add

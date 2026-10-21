@@ -6,7 +6,7 @@
  * not `react-native-svg` — not even a sibling. A freehand signature is the same
  * stroke pipeline with fixed ink, and it should take this file rather than fork
  * it; anything imported here would be a dependency of every such reuse.
- * `sketch.paths.test.ts` asserts the file has no `import` at all.
+ * The file must have no `import` at all.
  *
  * **Strings, not points.** A stroke is built as a path string, one segment
  * appended per touch sample, because the live stroke is drawn from a string on
@@ -14,7 +14,7 @@
  * array copy per sample and a join per frame.
  *
  * The functions the gesture calls are marked `"worklet"` and are still plain
- * functions to `bun test`. They read no module-scope binding but each other, and
+ * functions to a unit test. They read no module-scope binding but each other, and
  * every number they need is inlined — see AGENTS.md on worklet capture.
  */
 

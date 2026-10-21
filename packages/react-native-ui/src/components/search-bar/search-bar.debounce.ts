@@ -1,6 +1,6 @@
 /**
- * A debouncer with its clock injected, so every rule below is reachable from
- * `bun test` with a fake one and no real timer.
+ * A debouncer with its clock injected, so every rule below is unit-testable
+ * with a fake one and no real timer.
  *
  * `H` is whatever the scheduler hands back — `ReturnType<typeof setTimeout>` in
  * the component, a plain number in the test.

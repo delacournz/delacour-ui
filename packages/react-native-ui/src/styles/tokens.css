@@ -29,7 +29,7 @@
 	 * The corner is half the height at every step, so a button is a capsule and
 	 * a square one a circle. A token rather than `rounded-full` because the
 	 * shape is a default, not a law: a kit that wants squarer buttons changes
-	 * three numbers here and touches no component. `tokens.test.ts` keeps each
+	 * three numbers here and touches no component. Each must stay
 	 * under half its height — past that the renderer clamps and the number
 	 * stops meaning what it says.
 	 */

@@ -4,9 +4,7 @@ description: The eleven doctor checks, and the silent failure each one exists to
 icon: Stethoscope
 ---
 
-```bash
-bunx delacour@latest doctor
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest doctor"] }]} />
 
 ```txt
 ✓ Expo             SDK ~58.0.16, react-native 0.88.0
@@ -56,9 +54,11 @@ were never compiled.
 In a monorepo, the usual cause is a `@source` pointing through `node_modules` — the scanner does
 not follow symlinks, so it scans nothing. See [Monorepos](/docs/native/cli/monorepo).
 
+The commands below use `npx`; `pnpm dlx`, `yarn dlx` and `bunx` work the same way.
+
 ```bash
-bunx delacour@latest doctor    # "Tailwind sources — not scanned: …"
-bunx delacour@latest init -f   # rewrites the managed @source block
+npx delacour@latest doctor    # "Tailwind sources — not scanned: …"
+npx delacour@latest init -f   # rewrites the managed @source block
 ```
 
 **Metro's wrapper ordering.** If `withUniwindConfig` is present but not the **outermost** wrapper,
@@ -73,8 +73,8 @@ warning, and every dark value silently never reaches a component. Uniwind takes 
 `@variant light` / `@variant dark`.
 
 ```bash
-bunx delacour@latest doctor    # "Theme tokens — theme.css is in shadcn's :root / .dark shape"
-bunx delacour@latest theme     # rewrites theme.css in place
+npx delacour@latest doctor    # "Theme tokens — theme.css is in shadcn's :root / .dark shape"
+npx delacour@latest theme     # rewrites theme.css in place
 ```
 
 The command also fills in the tokens shadcn has no name for — `--destructive-foreground` among
@@ -131,9 +131,7 @@ It asks first — unless you passed `--overwrite`, or ran non-interactively with
 case it refuses and names the files. `--overwrite` is for taking the registry's copy on purpose. To
 bring a component up to date and keep what you changed, use `update` instead:
 
-```bash
-bunx delacour@latest update button
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest update button"] }]} />
 
 ### `update` left conflict markers in a file
 
@@ -153,9 +151,7 @@ with `add <name> --overwrite`.
 
 Your CLI is pinned to the ref it was published from. Take the newest:
 
-```bash
-bunx delacour@latest add tabs --ref main
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add tabs --ref main"] }]} />
 
 See [The registry](/docs/native/cli/registry).
 
@@ -239,9 +235,7 @@ and `tsconfig.json` for an alias that resolves somewhere unexpected.
 
 ## When doctor is not enough
 
-```bash
-bunx delacour@latest info
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest info"] }]} />
 
 Prints the resolved config and everything that was detected — package manager, workspace root, app
 root, the path aliases found in `tsconfig.json`, and the absolute directory for each namespace.

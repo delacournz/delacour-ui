@@ -33,8 +33,8 @@ A multiline text field, sized in rows. One component, no parts: it renders an
   a small three-row field and a large one are both three rows.
 - **Every number the height counts is pinned to the class that draws it.** The
   line height is set by a `leading-*` class in `textareaVariants`' `field` slot,
-  and the padding is `Input`'s multiline `py-*`. `textarea.variants.test.ts`
-  resolves both classes and fails if either disagrees with its number — a
+  and the padding is `Input`'s multiline `py-*`. Both classes are resolved and must
+  agree with the number — a
   retune of `Input`'s padding would otherwise mis-size every textarea by a few
   points, silently, with the last line clipped at the bottom edge.
 - **A paragraph gets paragraph leading.** `Input` sets `leading-tight` because

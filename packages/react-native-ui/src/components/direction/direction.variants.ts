@@ -1,6 +1,6 @@
 /**
- * Direction's pure resolvers. No React Native imports, so `bun test` reaches
- * every one, and each is tagged `"worklet"` so a gesture or `useAnimatedStyle`
+ * Direction's pure resolvers. No React Native imports, so every one is
+ * unit-testable, and each is tagged `"worklet"` so a gesture or `useAnimatedStyle`
  * can call it on the UI thread.
  */
 

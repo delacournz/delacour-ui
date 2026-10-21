@@ -101,7 +101,7 @@ export type TimePickerVariantProps = VariantProps<typeof timePickerVariants>;
  * scale comes from this file's `value` slot instead, which names the same
  * `text-input-*` token.
  *
- * Pure, so the whole matrix is reachable from `bun test`.
+ * Pure, so the whole matrix is unit-testable.
  */
 export function resolveTimePickerTriggerClass({
 	className,
@@ -212,7 +212,7 @@ function closestIndex(rows: readonly TimeWheelRow[], value: number): number {
  * period — 12, 1 … 11 — and each row carries its stored hour, so moving the
  * hour wheel never flips AM and PM. The period column is two rows.
  *
- * Pure: every rule the wheel follows is reachable from `bun test`.
+ * Pure: every rule the wheel follows is unit-testable.
  */
 export function resolveTimeWheelColumns({
 	time,

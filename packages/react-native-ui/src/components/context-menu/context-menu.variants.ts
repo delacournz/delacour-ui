@@ -134,7 +134,7 @@ export function resolveContextMenuAccessibility({
  * - `item` makes a row taller: content menus are reached by a held finger, and a
  *   48pt row is easier to land after the lift.
  *
- * Free of React Native imports so it stays reachable from `bun test`.
+ * Free of React Native imports so it stays unit-testable.
  */
 export const contextMenuVariants = tv({
 	slots: {

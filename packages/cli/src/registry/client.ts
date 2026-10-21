@@ -6,6 +6,7 @@ import type { z } from "zod";
 import { applyRewrites } from "./rewrite";
 import type { LoadedItem, RegistryFile, RegistryIndex, RegistryItem } from "./schema";
 import { registryIndexSchema, registryItemSchema } from "./schema";
+import { shipContent } from "./ship";
 import { filePath, indexPath, itemPath, type RegistrySource, resolveRegistrySource } from "./source";
 
 /**
@@ -127,11 +128,12 @@ export function createRegistryClient(options: ClientOptions): RegistryClient {
 		async loadItem(item) {
 			// The fetch is shared by registry path, the rewrite is per file entry.
 			// Two items naming one library file are naming one document, but each
-			// says for itself how that document's specifiers are to be read.
+			// says for itself how that document's specifiers are to be read. A
+			// Markdown file then loses its maintainer-only parts — see `ship.ts`.
 			const loaded = await Promise.all(
 				item.files.map(async (file) => ({
 					...file,
-					content: applyRewrites(await client.getFile(file), file.rewrites),
+					content: shipContent(file.target, applyRewrites(await client.getFile(file), file.rewrites)),
 				}))
 			);
 

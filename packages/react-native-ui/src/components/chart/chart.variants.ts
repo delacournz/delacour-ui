@@ -188,7 +188,7 @@ export function resolvePieSeries(
  * The axis formatter is deliberately not used: a tick label sits in a column
  * where `1240` and `1,240` differ only in width, but a readout sits beside
  * `PieChart.Center`, and the two must print one number one way. Hand-rolled
- * rather than `toLocaleString` so it prints the same under `bun test` and
+ * rather than `toLocaleString` so it prints the same in a unit test and
  * on a Hermes build with no Intl data.
  */
 export function formatPieValue(value: number): string {
@@ -335,7 +335,7 @@ export function applyChartColors(
  *
  * A worklet, so the tooltip tracks the finger on the UI thread. The directive
  * is a string rather than an import, which is what keeps this module free of
- * React Native and reachable from `bun test`.
+ * React Native and unit-testable.
  */
 export function chartTooltipOffset(input: ChartTooltipInput): { x: number; y: number } {
 	"worklet";
@@ -636,9 +636,8 @@ export const BAR_RADIUS_STEP: Record<ChartSize, "xs" | "sm"> = { sm: "xs", md: "
  * Restated because the corner scale is `@theme inline`: Tailwind substitutes
  * each step into its utilities and emits no `--radius-xs` variable, so
  * `--radius` is the only one that survives to runtime and anything computing
- * a corner in JavaScript multiplies for itself. `chart.variants.test.ts` pins
- * these against the file, so retuning the scale fails the build rather than
- * quietly leaving the bars on the old curve.
+ * a corner in JavaScript multiplies for itself. These must stay
+ * in step with the file, or retuning the scale quietly leaves the bars on the old curve.
  */
 export const BAR_RADIUS_MULTIPLIER: Record<ChartSize, number> = { sm: 0.4, md: 0.6, lg: 0.6 };
 

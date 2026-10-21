@@ -50,7 +50,7 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   not a change and a radio group has no deselect gesture, so without
   `shouldEmitSelection` a tap on the current selection would re-notify the caller
   with a value it already holds. HTML's own radio does not fire `change` there
-  either. The decision is pure, so `bun test` reaches it.
+  either. The decision is pure, so it is unit-testable.
 - **The axis ladder is `group ?? own ?? field ?? default`, and it deliberately
   puts the group *first*** — the inverse of `Checkbox`'s
   `own ?? group ?? field ?? default`. A radio group puts itself first because
@@ -61,8 +61,8 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   deliberately: a group holds many radios, so disabling one option out of five
   has to be possible. A group that names the axis still wins outright, so
   `isDisabled={false}` opts a radio out of a disabled `Field` and not out of a
-  disabled group. `resolveRadioState` is pure, so the whole matrix is reachable
-  from `bun test` — [Input](../input/AGENTS.md) runs this same ladder inline in
+  disabled group. `resolveRadioState` is pure, so the whole matrix is
+  unit-testable — [Input](../input/AGENTS.md) runs this same ladder inline in
   its own render, where no unit test can see it.
 - **`Radio` takes no `asChild`.** `Pressable`'s root `Animated.View` already owns
   `opacity` and `transform` through a `useAnimatedStyle` of its own, and two
@@ -91,7 +91,7 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   primitives; here the set has no ring-with-a-centred-dot glyph at all. Two
   things follow from drawing it: the dot can scale from the ring's centre
   entirely on the UI thread, and the ring's four themed colours stay classes in
-  `radio.variants.ts` where `bun test` reaches them. An `Icon` would take its
+  `radio.variants.ts` where they stay unit-testable. An `Icon` would take its
   colour as a resolved value, splitting one decision across two mechanisms.
 - **The dot springs on `RADIO_DOT_SPRING`, deliberately near `Pressable`'s
   `PRESS_SPRING` but a touch looser**, so it settles just after the row it sits
@@ -133,7 +133,7 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   landed, and a test asserts a trailing row differs from a leading one by exactly
   that one class. `resolveIndicatorPlacement` takes an array of "is this child an
   indicator" rather than the children themselves, so it stays free of React and
-  reachable from `bun test` — the trade `resolveSpinnerSwapIndex` already makes.
+  unit-testable — the trade `resolveSpinnerSwapIndex` already makes.
 - **Bare text is wrapped in a `Radio.Label`, consecutive strings collapsing into
   one.** React Native cannot render a string outside a `<Text>`, so
   `<Radio>Yes</Radio>` would otherwise crash. They collapse rather than wrapping
@@ -154,8 +154,7 @@ sit in `radio.variants.ts` beside the pure resolver that reads them. See
   reported it because the duplicate overlaps invisibly rather than hiding
   content — a second ring exactly behind the first — where the same bug in
   `Switch` swallowed anything inside the caller's knob. `displayName` survives
-  all of it, rule 12 requires one, and `display-name.test.ts` already enforces
-  that they are present and unique. Worth fixing the next time this file is
+  all of it, rule 12 requires one, and every component's `displayName` must be present and unique. Worth fixing the next time this file is
   touched.
 - **`Radio.Label` *is* `Text.Label`.** It renders the preset and names a size
   step from `RADIO_LABEL_TEXT_SIZE`, never a scale, a weight or a colour of its

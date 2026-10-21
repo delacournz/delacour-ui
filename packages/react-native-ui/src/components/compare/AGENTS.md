@@ -142,7 +142,7 @@ scroll keeps the rest of the frame. On iOS a `ScrollView` delays content touches
 
 ## Previews (follow-up)
 
-No demo carries `capture` yet: a captured demo with no manifest entry fails `demos.test.ts`, and the
+No demo carries `capture` yet: a captured demo with no manifest entry fails the demo registry test, and the
 media are shot after integration. The five to capture: `anatomy` (**hero**), `themes`
 (`align: "stretch"`), `vertical`, `snap-points` and `colours-and-sizes` (`align: "stretch"`);
 `anatomy`, `vertical` and `snap-points` are clips whose flows drag the handle by its `testID`

@@ -84,6 +84,6 @@ imports an overlay never resolves it. The consequence is the same one thing to d
 
 ## Testing
 
-`bun test` reaches the registry, the presence machine, the scrim token and the motion constants.
+The registry, the presence machine, the scrim token and the motion constants are pure and unit-tested.
 The provider, the portal and the hooks are verified on a simulator through every overlay's
 gallery — the foundation has no gallery of its own, the way `DelacourProvider` has none.

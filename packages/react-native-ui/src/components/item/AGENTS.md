@@ -49,7 +49,7 @@ A row of media, text and actions, for lists and settings. Compound root plus
   its text and its divider out of line. The tests assert the item's `min-h`,
   `gap`, `px` and `py` against `listGroupVariants().item()` at every size, and
   the bare media icon against the group's `prefixIcon` — change one without the
-  other and `bun test` fails by name.
+  other and they drift apart<!-- registry:omit --> — `bun test` fails by name<!-- /registry:omit -->.
 - **Pressable only with a handler.** `resolveItemRender` returns one of two:
   `pressable` (a handler — a `Pressable`, role `button`, children merged into
   one accessible element; disabled, it keeps the role, reports `disabled` and

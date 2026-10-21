@@ -76,8 +76,8 @@
 			/*
 			 * The neutral ramp shadcn ships today, in both themes: five greys, not
 			 * five hues. It is what a fresh `shadcn init` writes and what the
-			 * default preset on /theme resolves to — `emit.test.ts` holds the
-			 * two equal. An accent recolours all five.
+			 * default preset on /theme resolves to — the
+			 * two must stay equal. An accent recolours all five.
 			 */
 			--chart-1: oklch(0.87 0 0);
 			--chart-2: oklch(0.556 0 0);
@@ -325,7 +325,7 @@
 		 * step. None of these are light/dark dependent; a corner does not change
 		 * shape at dusk.
 		 *
-		 * `styles/geometry.test.ts` asserts this block and `tokens.css` agree,
+		 * This block and `tokens.css` must agree,
 		 * because two hand-maintained copies of one number always drift.
 		 */
 		@variant native {
@@ -379,8 +379,7 @@
  * reach it.
  *
  * A name added to a `@variant` block and forgotten here is declared but
- * unreachable — no `bg-*` will exist for it. `styles/theme-tokens.test.ts`
- * fails on the gap.
+ * unreachable — no `bg-*` will exist for it. Keep the two in step.
  */
 @theme inline {
 	--color-background: var(--background);

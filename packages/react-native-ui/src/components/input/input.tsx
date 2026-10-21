@@ -169,7 +169,7 @@ function InputRoot({
  * Focus styling is driven from React state rather than a `focus:` class.
  * Uniwind tracks focus per component, so a `focus:` utility would light up a
  * lone field and do nothing for the box `Input.Group` draws around a grouped
- * one — and the decision would sit somewhere `bun test` cannot reach.
+ * one — and the decision would sit somewhere a unit test cannot reach.
  *
  * Everything `TextInput` accepts is accepted here, with one name removed:
  * uniwind's `placeholderTextColorClassName` is replaced by

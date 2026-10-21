@@ -46,7 +46,7 @@ The reference implementation for the patterns in the package
   never picking between two. The shape is a default rather than a law: three
   numbers in `tokens.css` square the whole kit off without touching a
   component. Values above half the height are clamped by the renderer, which is
-  why `tokens.test.ts` holds them under it.
+  why they must stay under it.
 - **A square footprint is a size, not a flag.** `icon-sm` / `icon-md` /
   `icon-lg` are `sm` / `md` / `lg` with the horizontal padding traded for a width
   off the same token. Padding and width are then mutually exclusive by
@@ -133,7 +133,7 @@ for a chunk that says something rather than doing something. An
   emitted after it, and `tv` emits variants in declaration order. A surviving
   `rounded-button-md` on the size axis would therefore delete the squaring pair
   as soon as someone reordered two keys in `buttonVariants`, with nothing to see
-  in the diff. `cn.test.ts` pins the asymmetry in both directions.
+  in the diff.<!-- registry:omit --> `cn.test.ts` pins the asymmetry in both directions.<!-- /registry:omit -->
 - **Horizontal squares on the logical axis; vertical squares on the physical
   one. Never mix them.** `rounded-s-*` / `rounded-e-*` compile to
   `border-start-start-radius` and friends, survive lightningcss, and flip under
@@ -159,7 +159,7 @@ for a chunk that says something rather than doing something. An
   invisible rule. `resolveGroupPositions` and `resolveGroupSeams` are two walks
   rather than one because they ask different questions — "how many of us are
   there" and "what is immediately before me" — and both are pure, so the whole
-  matrix is reachable from `bun test`.
+  matrix is unit-testable.
 - **Membership is a deny-list.** Anything that is not a separator is a member.
   Not `child.type === Button`, for two reasons: it lets a custom control join,
   and it means `button-group.tsx` never imports its own root for an identity

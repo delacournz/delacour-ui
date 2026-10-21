@@ -75,8 +75,8 @@ Expo build compiles:
 />
 
 <Callout title="Why expoDependencies is its own field">
-Expo pins every native module to a version its SDK can build. `bun add react-native-reanimated`
-fetches the newest release instead, which on any older SDK is a package that fails at the linker
+Expo pins every native module to a version its SDK can build. `npm install react-native-reanimated`
+(or any package manager's add) fetches the newest release instead, which on any older SDK is a package that fails at the linker
 rather than at install time. A single `dependencies` field cannot express that difference.
 </Callout>
 
@@ -106,7 +106,7 @@ The ref a file was copied from is recorded in the
 from whichever ref you are on by then.
 
 `--ref develop` is how you take a component that has landed since your CLI was published —
-`main` only moves on a release, so it holds nothing your newest CLI does not already read. `bunx
+`main` only moves on a release, so it holds nothing your newest CLI does not already read. `npx
 delacour@latest` gets you both the newest CLI and its matching registry.
 
 ## Reading from somewhere else
@@ -116,9 +116,7 @@ delacour@latest` gets you both the newest CLI and its matching registry.
 <Tabs items={["A fork", "A hosted registry", "A local path"]}>
 <Tab value="A fork">
 
-```bash
-bunx delacour@latest add button --registry github:acme/ui --ref main
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button --registry github:acme/ui --ref main"] }]} />
 
 Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shorthand
 (`github:acme/ui#next`) wins over `--ref`.
@@ -126,9 +124,7 @@ Expands to `raw.githubusercontent.com/acme/ui/<ref>/registry`. A ref in the shor
 </Tab>
 <Tab value="A hosted registry">
 
-```bash
-bunx delacour@latest add card --registry https://ui.acme.com/r
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add card --registry https://ui.acme.com/r"] }]} />
 
 Used exactly as given — a hosted registry owns its own layout. It must serve `registry.json` and
 `r/<name>.json` at that base, and every `path` those items name **one level above it**, the same
@@ -137,9 +133,7 @@ relationship `<ref>/registry` has to `<ref>`.
 </Tab>
 <Tab value="A local path">
 
-```bash
-bunx delacour@latest add button --registry ./registry
-```
+<InstallTabs commands={[{ verb: "dlx", packages: ["delacour@latest add button --registry ./registry"] }]} />
 
 Reads from disk, skipping the network and the cache entirely. This is how the CLI's own tests run,
 and it is the fastest way to try a change to a component before publishing it.

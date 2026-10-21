@@ -753,8 +753,10 @@ async function outcomeFor(entry: PlannedCheck, args: Args): Promise<CheckOutcome
 	}
 	const sink: string[] | null = args.concurrency === 1 ? null : [];
 	console.log(sink === null ? `\n━━ ${check.label} ━━` : `▶ ${check.label}`);
+	// Wall clock, not the sum of the commands: a parallel check's commands overlap.
+	const started = Bun.nanoseconds();
 	const { code, timings } = await runCheck(check, sink);
-	const durationMs = timings.reduce((total, timing) => total + timing.durationMs, 0);
+	const durationMs = (Bun.nanoseconds() - started) / 1e6;
 	if (sink !== null) {
 		console.log(`\n━━ ${check.label} ${code === 0 ? "✓" : "✗"} ${formatDuration(durationMs)} ━━`);
 		process.stdout.write(sink.join(""));

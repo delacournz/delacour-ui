@@ -23,7 +23,7 @@ export type Reporter = {
 };
 
 /** Pinned to the SDK this monorepo develops against. */
-const EXPO_SDK = "~58.0.16";
+export const EXPO_SDK = "~58.0.16";
 
 const PACKAGE_JSON = {
 	name: "delacour-verify-app",

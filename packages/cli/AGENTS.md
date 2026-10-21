@@ -210,6 +210,14 @@ holds on either line.
 | *(default)* | Every import resolves and every type lines up. |
 | `--bundle` | Metro resolves every module and **Uniwind compiles every class**. |
 | `--simulator` | The components render on a device. Needs a Mac with Xcode. |
+| `--tests <runner>` | Every copied suite passes under `bun`, `jest` or `vitest`, set up the way the docs say. Combines with any level. |
+
+`--tests` sets the package the tests land in up on the runner before `add` reads it — `jest-expo` at
+the scaffold's SDK with the engines in `transformIgnorePatterns`, or a `vitest.config.ts` mapping the
+project's `tsconfig` paths — then runs `add --all --tests`, runs the suites, and fails unless every
+suite the lock records ran and none failed. A runner that matched no files passes everything it
+found, which is why the count is checked as well. Under it `doctor`'s **Jest transforms** must pass,
+not merely warn. `signoff/tests` runs the Jest and Vitest legs on every change but markdown.
 
 `--layout monorepo` runs the whole thing again with the components in a shared package the app
 imports by name. That layout has wiring the standalone one does not — a workspace link, an
@@ -568,12 +576,13 @@ test through `adaptTest` after the alias transform, and `withTests(item, runner)
   transform, and `add`, `update` and `diff` all go through `transformFile`, so the hash is of the
   runner's text. Switching runners reads as an upstream change on the next `update`, not an edit.
 - **What the runner itself needs is out of scope.** Vitest needs the project's `@/` alias in its own
-  config, and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
+  config, and on SDK 58 `esbuild: { tsconfigRaw: "{}" }` too, because `expo`'s `exports` map hides
+  `tsconfig.base` from Vite's tsconfig loader (and from `vite-tsconfig-paths`), and Jest needs `@delacour/.*`, `d3-.*` and `internmap` in `transformIgnorePatterns` for
   `chart` and `bottom-sheet`. The docs say so, and `doctor`'s `checkJestTransform` warns when the
   Jest config's text lacks them; the CLI does not write a runner's config.
 
-Verified by hand: `add --all --tests` into a Vitest app and a `jest-expo` app ran 163 suites and
-7279 tests green under each.
+`verify:expo --tests jest` and `--tests vitest` (see Testing) prove it end to end, and `signoff/tests`
+runs both.
 
 ### Markdown is canonicalised too, but differently
 

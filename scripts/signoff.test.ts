@@ -47,13 +47,27 @@ describe("planChecks", () => {
 		expect(applicable(["bun.lock"])).toContain("registry");
 	});
 
-	test("a docs-site or playground change runs only the always-on checks", () => {
-		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
-		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS]);
+	test("a docs-site or playground change runs the always-on checks and the copied tests, not the registry", () => {
+		expect(applicable(["apps/web/src/routes/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+		expect(applicable(["apps/playground/src/app/index.tsx"])).toEqual([...ALWAYS_CONTEXTS, "tests"]);
+	});
+
+	test("every change but markdown runs the copied tests under Jest and Vitest", () => {
+		expect(applicable(["packages/cli/src/registry/test-runner.ts"])).toContain("tests");
+		expect(applicable(["bun.lock"])).toContain("tests");
+		expect(applicable(["README.md"])).not.toContain("tests");
+	});
+
+	test("the two checks that rebuild .verify/app never run at once", () => {
+		const locks = SIGNOFF_CHECKS.filter((check) => ["registry", "tests"].includes(check.context)).map(
+			(check) => check.locks ?? []
+		);
+		expect(locks[0]?.some((lock) => locks[1]?.includes(lock))).toBe(true);
 	});
 
 	test("markdown never triggers a path-gated check", () => {
 		expect(applicable(["packages/cli/AGENTS.md"])).toEqual([...ALWAYS_CONTEXTS]);
+		expect(applicable(["apps/web/content/docs/native/cli/commands.mdx"])).not.toContain("registry");
 	});
 
 	test("a markdown file alongside real source does not mask the real source", () => {

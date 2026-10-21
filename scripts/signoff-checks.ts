@@ -25,6 +25,11 @@
  * `verify-expo` (the CLI against a real, npm-installed Expo app) is absent on purpose. It installs
  * from the registry and takes minutes; it stays a `workflow_dispatch` job in `ci.yml`, and the
  * structure-only half of it (`verify:expo --no-install`) runs inside `registry`.
+ *
+ * `tests` is the one installed verify that does run here: every component's suites copied into a real
+ * app on Jest and on Vitest, and run by them. A guard can only reject what someone already knew only
+ * Bun runs; this is what finds the rest. It is path-gated on everything but markdown rather than
+ * `always`, so it gates through the umbrella and the ruleset's required list stays as it is.
  */
 
 /** One process to spawn. `cwd` is repo-root-relative; omitted means the repo root. */
@@ -48,6 +53,9 @@ export type SignoffCheck = {
 	 */
 	locks?: readonly string[];
 };
+
+/** `packages/cli/.verify/app`, which every `verify:expo` run empties and rebuilds — two at once wreck each other. */
+const VERIFY_APP = "verify-app";
 
 /** The bare context the ruleset requires. Emitted last, and only when everything passed. */
 export const UMBRELLA_CONTEXT = "signoff";
@@ -138,6 +146,19 @@ export const SIGNOFF_CHECKS: readonly SignoffCheck[] = [
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--no-install"] },
 			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--no-install", "--layout", "monorepo"] },
 		],
+		locks: [VERIFY_APP],
+	},
+	{
+		context: "tests",
+		label: "copied tests under Jest and Vitest",
+		always: false,
+		paths: ["**"],
+		workflow: "ci.yml",
+		run: [
+			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "jest"] },
+			{ argv: ["bunx", "turbo", "verify:expo", "--filter=delacour", "--", "--tests", "vitest"] },
+		],
+		locks: [VERIFY_APP],
 	},
 ];
 

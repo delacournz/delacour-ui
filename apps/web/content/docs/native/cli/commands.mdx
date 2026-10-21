@@ -131,7 +131,9 @@ suite reading a file beside itself does so through `__dirname`.
 
 <Callout title="Two settings your runner may need">
 Vitest does not read `tsconfig` paths, so a project importing through `@/` needs the same alias in
-`vitest.config.ts` (`resolve.alias`, or `vite-tsconfig-paths`). Under Jest, `chart` and
+`vitest.config.ts` (`resolve.alias`). On SDK 58, Vite also cannot follow
+`extends: "expo/tsconfig.base"` — `expo`'s `exports` map does not include it — so every suite fails
+to load until the config sets `esbuild: { tsconfigRaw: "{}" }`. Under Jest, `chart` and
 `bottom-sheet` import engines published as TypeScript source, so `transformIgnorePatterns` has to
 let `@delacour/.*` through, and for `chart` also `d3-.*` and `internmap`, which ship ES modules
 only. [`doctor`](#doctor) warns when it does not.
